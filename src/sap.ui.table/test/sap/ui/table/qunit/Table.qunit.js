@@ -254,28 +254,6 @@ sap.ui.define([
 		}
 	}
 
-	function createSortingTableData() {
-		var aData = [
-			{lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: personImg, gender: "male", rating: 4, money: 3.45},
-			{lastName: "Friese", name: "Andy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: jobPosImg, gender: "male", rating: 2, money: 4.64},
-			{lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: personImg, gender: "female", rating: 3, money: 7.34},
-			{lastName: "Case", name: "Justin", checked: false, linkText: "www.sap.com", href: "http://www.sap.com", src: personImg, gender: "male", rating: 3, money: 4563.3},
-			{lastName: "Time", name: "Justin", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "male", rating: 4, money: 665.4},
-			{lastName: "Schutt", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "female", rating: 4, money: 1.46},
-			{lastName: "Open", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "female", rating: 2, money: 32.76}
-		];
-
-		var oModel = new JSONModel();
-		oModel.setData({modelData: aData});
-		oTable.setModel(oModel);
-	}
-
-	function sortTable() {
-		var aColumns = oTable.getColumns();
-		oTable.sort(aColumns[1], SortOrder.Ascending, false);
-		oTable.sort(aColumns[0], SortOrder.Ascending, true);
-	}
-
 	QUnit.module("Basic checks", {
 		beforeEach: function() {
 			createTable({
@@ -2450,358 +2428,321 @@ sap.ui.define([
 
 	QUnit.module("Sorting", {
 		beforeEach: function() {
-			createTable({
-				title: "TABLEHEADER",
-				footer: "Footer"
+			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
+				columns: [
+					TableQUnitUtils.createTextColumn({text: "LastName", bind: true}).setSortProperty("LastName"),
+					TableQUnitUtils.createTextColumn({text: "FirstName", bind: true}).setSortProperty("FirstName"),
+					TableQUnitUtils.createTextColumn({text: "City", bind: true})
+				],
+				models: TableQUnitUtils.createJSONModel(20)
 			});
+			this.oTable.sort(this.oTable.getColumns()[0], SortOrder.Ascending);
+			this.oTable.sort(this.oTable.getColumns()[1], SortOrder.Descending, true);
+
+			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
-			destroyTable();
+			this.oTable.destroy();
 		}
 	});
 
-	QUnit.test("#pushSortedColumn, #getSortedColumns", function(assert) {
-		function assertSortedColumns(aExpectedColumns) {
-			var aSortedColumns = oTable.getSortedColumns();
+	QUnit.test("#pushSortedColumn, #_removeSortedColumn, #getSortedColumns", function(assert) {
+		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[0], this.oTable.getColumns()[1]]);
 
-			assert.equal(aSortedColumns.length, aExpectedColumns.length, "Number of sorted columns");
+		this.oTable.pushSortedColumn(this.oTable.getColumns()[1]);
+		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[1]]);
 
-			for (var i = 0; i < aSortedColumns.length; i++) {
-				assert.strictEqual(aSortedColumns[i], aExpectedColumns[i], "Sorted column #" + i);
-			}
-		}
+		this.oTable.pushSortedColumn(this.oTable.getColumns()[0], true);
+		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[1], this.oTable.getColumns()[0]]);
 
-		oTable.pushSortedColumn(oTable.getColumns()[1]);
-		assertSortedColumns([oTable.getColumns()[1]]);
+		this.oTable.pushSortedColumn(this.oTable.getColumns()[0], true);
+		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[1], this.oTable.getColumns()[0]]);
 
-		oTable.pushSortedColumn(oTable.getColumns()[0], true);
-		assertSortedColumns([oTable.getColumns()[1], oTable.getColumns()[0]]);
+		this.oTable._removeSortedColumn(this.oTable.getColumns()[0]);
+		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[1]]);
 
-		oTable.pushSortedColumn(oTable.getColumns()[0], true);
-		assertSortedColumns([oTable.getColumns()[1], oTable.getColumns()[0]]);
-
-		oTable.pushSortedColumn(oTable.getColumns()[0]);
-		assertSortedColumns([oTable.getColumns()[0]]);
-	});
-
-	QUnit.test("Multi-columns sorting", function(assert) {
-		var done = assert.async();
-		createSortingTableData();
-
-		var fnHandler = function() {
-			var aSortedColumns = oTable.getSortedColumns();
-
-			assert.equal(aSortedColumns.length, 2, "2 columns are sorted");
-			assert.strictEqual(aSortedColumns[0].getSortProperty(), "name", "First column sort property");
-			assert.strictEqual(aSortedColumns[0].getSortOrder(), SortOrder.Ascending, "First column sort order");
-			assert.strictEqual(aSortedColumns[1].getSortProperty(), "lastName", "Second column sort property");
-			assert.strictEqual(aSortedColumns[1].getSortOrder(), SortOrder.Ascending, "Second column sort order");
-
-			assert.strictEqual(oTable.getRows()[3].getCells()[0].getText(), "Open", "Second sorting column works.");
-			assert.strictEqual(oTable.getRows()[3].getCells()[1].getText(), "Doris", "First sorting column works.");
-
-			oTable.sort(aSortedColumns[0], SortOrder.Descending, true);
-
-			aSortedColumns = oTable.getSortedColumns();
-			assert.equal(aSortedColumns.length, 2, "2 columns are sorted");
-			assert.strictEqual(aSortedColumns[0].getSortProperty(), "name", "First column sort property");
-			assert.strictEqual(aSortedColumns[0].getSortOrder(), SortOrder.Descending, "First column sort order");
-			assert.strictEqual(aSortedColumns[1].getSortProperty(), "lastName", "Second column sort property");
-			assert.strictEqual(aSortedColumns[1].getSortOrder(), SortOrder.Ascending, "Second column sort order");
-
-			done();
-		};
-
-		oTable.attachEventOnce("rowsUpdated", fnHandler);
-		sortTable();
-	});
-
-	QUnit.test("Sort Icon", function(assert) {
-		var done = assert.async();
-		createSortingTableData();
-
-		var fnHandler = function() {
-			var aSortedColumns = oTable.getSortedColumns();
-			var cell;
-
-			if (aSortedColumns.length === 2) {
-				cell = aSortedColumns[0].$();
-				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
-				assert.ok(!cell.hasClass("sapUiTableColSortedD"), "Sort icon is ascending");
-
-				cell = aSortedColumns[1].$();
-				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
-				assert.ok(cell.hasClass("sapUiTableColSortedD"), "Sort icon is descending");
-
-				oTable.detachRowsUpdated(fnHandler);
-
-				oTable.invalidate();
-				oCore.applyChanges();
-				cell = aSortedColumns[0].$();
-				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is still shown after rendering");
-				assert.ok(!cell.hasClass("sapUiTableColSortedD"), "Sort icon is ascending");
-
-				cell = aSortedColumns[1].$();
-				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is still shown after rendering");
-				assert.ok(cell.hasClass("sapUiTableColSortedD"), "Sort icon is descending");
-
-				done();
-			}
-		};
-
-		oTable.attachRowsUpdated(fnHandler);
-		var aColumns = oTable.getColumns();
-		oTable.sort(aColumns[0], SortOrder.Ascending, false);
-		oTable.sort(aColumns[1], SortOrder.Descending, true);
+		this.oTable.pushSortedColumn(this.oTable.getColumns()[1]);
+		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[1]]);
 	});
 
 	QUnit.test("#sort, #getSortedColumns, and 'sort' event", function(assert) {
-		var done = assert.async();
-		var aColumns = oTable.getColumns();
+		var aColumns = this.oTable.getColumns();
 		var aSortEventParameters = [];
 
-		createSortingTableData();
-		oTable.attachSort((oEvent) => {
+		this.oTable.attachSort((oEvent) => {
 			var mParameters = oEvent.getParameters();
 			delete mParameters.id;
 			aSortEventParameters.push(mParameters);
 		});
 
-		var fnHandler = function() {
-			assert.deepEqual(oTable.getSortedColumns(), [aColumns[0], aColumns[1]], "Sorted columns");
-			/** @deprecated As of version 1.120 */
-			assert.ok(aColumns[0].getSorted(), "First column sorted");
-			/** @deprecated As of version 1.120 */
-			assert.ok(aColumns[1].getSorted(), "Second column sorted");
-			assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Ascending, "Sort order of first column");
-			assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Descending, "Sort order of second column");
+		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[0], aColumns[1]], "Sorted columns");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[0].getSorted(), "First column sorted");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[1].getSorted(), "Second column sorted");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Ascending, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Descending, "Sort order of second column");
+		assert.deepEqual(this.oTable.getBinding().aSorters, [
+			new Sorter("LastName", false),
+			new Sorter("FirstName", true)
+		], "Binding sorters");
 
-			assert.deepEqual(aSortEventParameters, [{
-				column: aColumns[0],
-				sortOrder: SortOrder.Ascending,
-				columnAdded: false
-			}, {
-				column: aColumns[1],
-				sortOrder: SortOrder.Descending,
-				columnAdded: true
-			}], "Sort events");
+		aSortEventParameters = [];
+		this.oTable.sort(aColumns[0], SortOrder.None);
 
-			aSortEventParameters = [];
-			oTable.detachRowsUpdated(fnHandler);
-			oTable.attachRowsUpdated(fnHandler2);
-			oTable.sort(aColumns[0], SortOrder.None);
-		};
+		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[1]], "Sorted columns");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[0].getSorted() == false, "First column not sorted");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[1].getSorted() == true, "Second column sorted");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Descending, "Sort order of second column");
+		assert.deepEqual(this.oTable.getBinding().aSorters, [new Sorter("FirstName", true)], "Binding sorters");
+		assert.deepEqual(aSortEventParameters, [{
+			column: aColumns[0],
+			sortOrder: SortOrder.None,
+			columnAdded: false
+		}], "Sort events");
 
-		var fnHandler2 = function() {
-			assert.deepEqual(oTable.getSortedColumns(), [aColumns[1]], "Sorted columns");
-			/** @deprecated As of version 1.120 */
-			assert.ok(aColumns[0].getSorted() == false, "First column not sorted");
-			/** @deprecated As of version 1.120 */
-			assert.ok(aColumns[1].getSorted() == true, "Second column sorted");
-			assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
-			assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Descending, "Sort order of second column");
+		aSortEventParameters = [];
+		this.oTable.sort(aColumns[0], SortOrder.Ascending);
 
-			assert.deepEqual(aSortEventParameters, [{
-				column: aColumns[0],
-				sortOrder: SortOrder.None,
-				columnAdded: false
-			}], "Sort events");
+		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[0]], "Sorted columns");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[0].getSorted() == true, "First column sorted");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[1].getSorted() == false, "Second column not sorted");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Ascending, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.None, "Sort order of second column");
+		assert.deepEqual(this.oTable.getBinding().aSorters, [new Sorter("LastName", false)], "Binding sorters");
+		assert.deepEqual(aSortEventParameters, [{
+			column: aColumns[0],
+			sortOrder: SortOrder.Ascending,
+			columnAdded: false
+		}], "Sort events");
 
-			aSortEventParameters = [];
-			oTable.detachRowsUpdated(fnHandler2);
-			oTable.attachRowsUpdated(fnHandler3);
-			oTable.sort(aColumns[0], SortOrder.Ascending);
-		};
+		aSortEventParameters = [];
+		this.oTable.sort(aColumns[1], SortOrder.Ascending);
+		this.oTable.sort(aColumns[0], SortOrder.None, true); // The second parameter should have no effect if sortOrder=None.
 
-		var fnHandler3 = function() {
-			assert.deepEqual(oTable.getSortedColumns(), [aColumns[0]], "Sorted columns");
-			/** @deprecated As of version 1.120 */
-			assert.ok(aColumns[0].getSorted() == true, "First column sorted");
-			/** @deprecated As of version 1.120 */
-			assert.ok(aColumns[1].getSorted() == false, "Second column not sorted");
-			assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Ascending, "Sort order of first column");
-			assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.None, "Sort order of second column");
+		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[1]], "Sorted columns");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[0].getSorted() == false, "First column not sorted");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[1].getSorted() == true, "Second column sorted");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Ascending, "Sort order of second column");
+		assert.deepEqual(this.oTable.getBinding().aSorters, [new Sorter("FirstName", false)], "Binding sorters");
+		assert.deepEqual(aSortEventParameters, [{
+			column: aColumns[1],
+			sortOrder: SortOrder.Ascending,
+			columnAdded: false
+		}, {
+			column: aColumns[0],
+			sortOrder: SortOrder.None,
+			columnAdded: false
+		}], "Sort events");
 
-			assert.deepEqual(aSortEventParameters, [{
-				column: aColumns[0],
-				sortOrder: SortOrder.Ascending,
-				columnAdded: false
-			}], "Sort events");
+		aSortEventParameters = [];
+		this.oTable.sort();
 
-			aSortEventParameters = [];
-			oTable.detachRowsUpdated(fnHandler3);
-			oTable.attachRowsUpdated(fnHandler4);
-			oTable.sort(aColumns[1], SortOrder.Ascending);
-			oTable.sort(aColumns[0], SortOrder.None, true); // The second parameter should have no effect if sortOrder=None.
-		};
+		assert.deepEqual(this.oTable.getSortedColumns(), [], "Sorted columns");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[0].getSorted() == false, "First column not sorted");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[1].getSorted() == false, "Second column not sorted");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.None, "Sort order of second column");
+		assert.equal(this.oTable.getBinding().aSorters, null, "Binding sorters");
+		assert.deepEqual(aSortEventParameters, [], "Sort events"); // Calling Table#sort without arguments does not fire the sort event.
 
-		var fnHandler4 = function() {
-			assert.deepEqual(oTable.getSortedColumns(), [aColumns[1]], "Sorted columns");
-			/** @deprecated As of version 1.120 */
-			assert.ok(aColumns[0].getSorted() == false, "First column not sorted");
-			/** @deprecated As of version 1.120 */
-			assert.ok(aColumns[1].getSorted() == true, "Second column sorted");
-			assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
-			assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Ascending, "Sort order of second column");
+		aSortEventParameters = [];
+		this.oTable.sort(aColumns[0], SortOrder.Ascending);
 
-			assert.deepEqual(aSortEventParameters, [{
-				column: aColumns[1],
-				sortOrder: SortOrder.Ascending,
-				columnAdded: false
-			}, {
-				column: aColumns[0],
-				sortOrder: SortOrder.None,
-				columnAdded: false
-			}], "Sort events");
-
-			aSortEventParameters = [];
-			oTable.detachRowsUpdated(fnHandler4);
-			oTable.attachRowsUpdated(fnHandler5);
-			oTable.sort();
-		};
-
-		var fnHandler5 = function() {
-			assert.deepEqual(oTable.getSortedColumns(), [], "Sorted columns");
-			/** @deprecated As of version 1.120 */
-			assert.ok(aColumns[0].getSorted() == false, "First column not sorted");
-			/** @deprecated As of version 1.120 */
-			assert.ok(aColumns[1].getSorted() == false, "Second column not sorted");
-			assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
-			assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.None, "Sort order of second column");
-
-			assert.deepEqual(aSortEventParameters, [], "Sort events"); // Calling Table#sort without arguments does not fire the sort event.
-
-			aSortEventParameters = [];
-			oTable.detachRowsUpdated(fnHandler5);
-			done();
-		};
-
-		oTable.attachRowsUpdated(fnHandler);
-		oTable.sort(aColumns[0], SortOrder.Ascending);
-		oTable.sort(aColumns[1], SortOrder.Descending, true);
+		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[0]], "Sorted columns");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[0].getSorted() == true, "First column sorted");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[1].getSorted() == false, "Second column not sorted");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Ascending, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.None, "Sort order of second column");
+		assert.deepEqual(this.oTable.getBinding().aSorters, [new Sorter("LastName", false)], "Binding sorters");
+		assert.deepEqual(aSortEventParameters, [{
+			column: aColumns[0],
+			sortOrder: SortOrder.Ascending,
+			columnAdded: false
+		}], "Sort events");
 	});
 
-	QUnit.test("remove column", function(assert) {
-		var done = assert.async();
-		createSortingTableData();
-		var oRemovedColumn;
+	QUnit.test("Sort column without 'sortProperty'", function(assert) {
+		var aColumns = this.oTable.getColumns();
+		var aSortEventParameters = [];
 
-		var fnHandler = function() {
-			var aSortedColumns = oTable.getSortedColumns();
+		this.oTable.attachSort((oEvent) => {
+			var mParameters = oEvent.getParameters();
+			delete mParameters.id;
+			aSortEventParameters.push(mParameters);
+		});
+		this.oTable.sort(aColumns[2]);
 
-			if (aSortedColumns.length === 2) {
-				oTable.detachRowsUpdated(fnHandler);
-				oRemovedColumn = oTable.removeColumn(oTable.getSortedColumns()[0]);
-				oTable.attachRowsUpdated(fnHandler2);
-			}
-		};
-
-		var fnHandler2 = function() {
-			var aSortedColumns = oTable.getSortedColumns();
-			assert.strictEqual(aSortedColumns.length, 1, "sorted column deletion.");
-			assert.strictEqual(oRemovedColumn.getSortProperty(), "name", "first name is removed");
-			assert.strictEqual(aSortedColumns[0].getSortProperty(), "lastName", "second column becomes the first column.");
-			oTable.detachRowsUpdated(fnHandler2);
-			done();
-		};
-
-		oTable.attachRowsUpdated(fnHandler);
-		sortTable();
-		oCore.applyChanges();
+		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[0], aColumns[1]], "Sorted columns");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Ascending, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Descending, "Sort order of second column");
+		assert.deepEqual(this.oTable.getBinding().aSorters, [
+			new Sorter("LastName", false),
+			new Sorter("FirstName", true)
+		], "Binding sorters");
+		assert.deepEqual(aSortEventParameters, [], "Sort events");
 	});
 
-	QUnit.test("remove all columns", function(assert) {
-		var done = assert.async();
-		createSortingTableData();
+	QUnit.test("Rebind", function(assert) {
+		var aColumns = this.oTable.getColumns();
 
-		var fnHandler = function() {
-
-			var aSortedColumns = oTable.getSortedColumns();
-
-			if (aSortedColumns.length === 2) {
-				oTable.detachRowsUpdated(fnHandler);
-				oTable.removeAllColumns();
-				oTable.attachRowsUpdated(fnHandler2);
-			}
-		};
-
-		var fnHandler2 = function() {
-			oTable.detachRowsUpdated(fnHandler2);
-			var aSortedColumns = oTable.getSortedColumns();
-			assert.strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
-			done();
-		};
-
-		oTable.attachRowsUpdated(fnHandler);
-		sortTable();
-		oCore.applyChanges();
+		this.oTable.bindRows({path: "/"}); // Unbind/Rebind neither removes nor reapplies the sorting.
+		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[0], aColumns[1]], "Sorted columns");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Ascending, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Descending, "Sort order of second column");
+		assert.deepEqual(this.oTable.getBinding().aSorters, [], "Binding sorters");
 	});
 
-	QUnit.test("destroy columns", function(assert) {
-		var done = assert.async();
-		createSortingTableData();
+	QUnit.test("Sort without binding", function(assert) {
+		var aColumns = this.oTable.getColumns();
+		var aSortEventParameters = [];
 
-		var fnHandler = function() {
+		this.oTable.attachSort((oEvent) => {
+			var mParameters = oEvent.getParameters();
+			delete mParameters.id;
+			aSortEventParameters.push(mParameters);
+		});
+		this.oTable.unbindRows();
 
-			var aSortedColumns = oTable.getSortedColumns();
+		this.oTable.sort(this.oTable.getColumns()[0], SortOrder.Descending);
+		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[0]], "Sorted columns");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Descending, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.None, "Sort order of second column");
+		assert.deepEqual(aSortEventParameters, [{
+			column: aColumns[0],
+			sortOrder: SortOrder.Descending,
+			columnAdded: false
+		}], "Sort events");
 
-			if (aSortedColumns.length === 2) {
-				oTable.detachRowsUpdated(fnHandler);
-				oTable.destroyColumns();
-				oTable.attachRowsUpdated(fnHandler2);
-			}
-		};
-
-		var fnHandler2 = function() {
-			oTable.detachRowsUpdated(fnHandler2);
-			var aSortedColumns = oTable.getSortedColumns();
-			assert.strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
-			done();
-		};
-
-		oTable.attachRowsUpdated(fnHandler);
-		sortTable();
-		oCore.applyChanges();
+		this.oTable.sort();
+		assert.deepEqual(this.oTable.getSortedColumns(), [], "Sorted columns");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.None, "Sort order of second column");
 	});
 
-	QUnit.test("change column order", function(assert) {
-		var done = assert.async();
-		createSortingTableData();
-		var oRemovedColumn;
+	QUnit.test("Custom sort handling", function(assert) {
+		var aColumns = this.oTable.getColumns();
+		var bAlwaysPreventDefault = false;
 
-		var fnHandler = function() {
-
-			var aSortedColumns = oTable.getSortedColumns();
-
-			if (aSortedColumns.length === 2) {
-				oTable.detachRowsUpdated(fnHandler);
-				oTable._bReorderInProcess = true;
-				oRemovedColumn = oTable.removeColumn(aSortedColumns[1]);
-
-				oTable.attachRowsUpdated(fnHandler2);
+		this.oTable.sort();
+		this.oTable.attachSort((oEvent) => {
+			if (oEvent.getParameter("column").getSortProperty() === "LastName" || bAlwaysPreventDefault) {
+				oEvent.preventDefault();
 			}
-		};
+		});
+		this.oTable.sort(this.oTable.getColumns()[0], SortOrder.Ascending);
+		this.oTable.sort(this.oTable.getColumns()[1], SortOrder.Descending, true);
 
-		var fnHandler2 = function() {
-			oTable.detachRowsUpdated(fnHandler2);
-			oTable.insertColumn(oRemovedColumn, 0);
-			oTable._bReorderInProcess = false;
-			oTable.attachRowsUpdated(fnHandler3);
-		};
+		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[1]], "Sorted columns");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Descending, "Sort order of second column");
+		assert.deepEqual(this.oTable.getBinding().aSorters, [
+			new Sorter("FirstName", true)
+		], "Binding sorters");
 
-		var fnHandler3 = function() {
+		bAlwaysPreventDefault = true;
+		this.oTable.sort(this.oTable.getColumns()[1], SortOrder.Ascending);
+		this.oTable.sort(this.oTable.getColumns()[1], SortOrder.None);
 
-			var aSortedColumns = oTable.getSortedColumns();
-			assert.strictEqual(aSortedColumns.length, 2, "2 sorted columns.");
-			assert.strictEqual(aSortedColumns[0].getSortProperty(), "name", "first name stays in first sorted column");
-			assert.strictEqual(aSortedColumns[1].getSortProperty(), "lastName", "last name stays in second sorted column");
-			oTable.detachRowsUpdated(fnHandler3);
-			done();
-		};
+		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[1]], "Sorted columns");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Descending, "Sort order of second column");
+		assert.deepEqual(this.oTable.getBinding().aSorters, [
+			new Sorter("FirstName", true)
+		], "Binding sorters");
 
-		oTable.attachRowsUpdated(fnHandler);
-		sortTable();
-		oCore.applyChanges();
+		this.oTable.sort();
+		assert.deepEqual(this.oTable.getSortedColumns(), [], "Sorted columns");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.None, "Sort order of second column");
+		assert.equal(this.oTable.getBinding().aSorters, null, "Binding sorters");
+	});
+
+	QUnit.test("Sort Icon", async function(assert) {
+		var aSortedColumns = this.oTable.getSortedColumns();
+		var oCell;
+
+		oCell = aSortedColumns[0].getDomRef();
+		assert.ok(oCell.classList.contains("sapUiTableColSorted"), "First column: Sort icon is visible");
+		assert.ok(!oCell.classList.contains("sapUiTableColSortedD"), "First column: Sort icon is ascending");
+
+		oCell = aSortedColumns[1].getDomRef();
+		assert.ok(oCell.classList.contains("sapUiTableColSorted"), "Second column: Sort icon is visible");
+		assert.ok(oCell.classList.contains("sapUiTableColSortedD"), "Second column: Sort icon is descending");
+
+		this.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+
+		oCell = aSortedColumns[0].getDomRef();
+		assert.ok(oCell.classList.contains("sapUiTableColSorted"), "First column: Sort icon is still visible after rendering");
+		assert.ok(!oCell.classList.contains("sapUiTableColSortedD"), "First column: Sort icon is ascending");
+
+		oCell = aSortedColumns[1].getDomRef();
+		assert.ok(oCell.classList.contains("sapUiTableColSorted"), "Second column: Sort icon is still visible after rendering");
+		assert.ok(oCell.classList.contains("sapUiTableColSortedD"), "Second column: Sort icon is descending");
+
+		this.oTable.sort(this.oTable.getColumns()[0], SortOrder.Descending);
+
+		oCell = aSortedColumns[0].getDomRef();
+		assert.ok(oCell.classList.contains("sapUiTableColSorted"), "First column: Sort icon is visible after sort change");
+		assert.ok(oCell.classList.contains("sapUiTableColSortedD"), "First column: Sort icon is descending");
+
+		oCell = aSortedColumns[1].getDomRef();
+		assert.ok(!oCell.classList.contains("sapUiTableColSorted"), "Second column: Sort icon is not visible after sort change");
+
+		this.oTable.sort();
+
+		oCell = aSortedColumns[0].getDomRef();
+		assert.ok(!oCell.classList.contains("sapUiTableColSorted"), "First column: Sort icon is not visible after removing sorting");
+	});
+
+	QUnit.test("Remove a sorted column", function(assert) {
+		var oSortSpy = sinon.spy(this.oTable.getBinding(), "sort");
+		var oRemovedColumn = this.oTable.removeColumn(this.oTable.getSortedColumns()[0]);
+		var aSortedColumns = this.oTable.getSortedColumns();
+
+		assert.ok(!aSortedColumns.includes(oRemovedColumn), "#getSortedColumns does not return the removed column");
+		assert.deepEqual(aSortedColumns, [this.oTable.getColumns()[0]], "Sorted columns");
+		assert.ok(oSortSpy.notCalled, "Binding#sort not called");
+	});
+
+	QUnit.test("Remove all columns", function(assert) {
+		var oSortSpy = sinon.spy(this.oTable.getBinding(), "sort");
+
+		this.oTable.removeAllColumns();
+		assert.deepEqual(this.oTable.getSortedColumns(), [], "#getSortedColumns");
+		assert.ok(oSortSpy.notCalled, "Binding#sort not called");
+	});
+
+	QUnit.test("Destroy columns", function(assert) {
+		var oSortSpy = sinon.spy(this.oTable.getBinding(), "sort");
+
+		this.oTable.destroyColumns();
+		assert.deepEqual(this.oTable.getSortedColumns(), [], "#getSortedColumns");
+		assert.ok(oSortSpy.notCalled, "Binding#sort not called");
+	});
+
+	QUnit.test("Reorder a column", function(assert) {
+		var oSortSpy = sinon.spy(this.oTable.getBinding(), "sort");
+
+		this.oTable._bReorderInProcess = true;
+		this.oTable.insertColumn(this.oTable.removeColumn(this.oTable.getSortedColumns()[1]), 0);
+		this.oTable._bReorderInProcess = false;
+		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[1], this.oTable.getColumns()[0]], "#getSortedColumns");
+		assert.ok(oSortSpy.notCalled, "Binding#sort not called");
 	});
 
 	QUnit.module("Performance improvements", {

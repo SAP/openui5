@@ -1,7 +1,6 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Element",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/utils/TableUtils",
@@ -14,14 +13,12 @@ sap.ui.define([
 	"sap/ui/unified/Menu",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
-	"sap/m/table/columnmenu/QuickSort",
-	"sap/m/table/columnmenu/QuickSortItem",
 	"sap/m/table/columnmenu/Item",
 	"sap/m/Button",
+	"sap/ui/core/Element",
 	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragDropInfo"
 ], function(
-	Element,
 	TableQUnitUtils,
 	qutils,
 	TableUtils,
@@ -34,10 +31,9 @@ sap.ui.define([
 	Menu,
 	ColumnMenu,
 	QuickAction,
-	QuickSort,
-	QuickSortItem,
 	Item,
 	Button,
+	Element,
 	oCore,
 	DragDropInfo
 ) {
@@ -236,6 +232,22 @@ sap.ui.define([
 		this._oColumn._setCellContentVisibilitySettings({standard: false});
 		this._oColumn._setCellContentVisibilitySettings();
 		assert.ok(oInvalidate.notCalled, "Column is not invalidated");
+	});
+
+	/**
+	 * @deprecated As of version 1.120
+	 */
+	QUnit.test("'sorted' and 'sortOrder' are bound", function(assert) {
+		this._oColumn.setModel(new JSONModel());
+		this._oColumn.bindProperty("sorted", {path: "/sorted"});
+		this._oColumn.bindProperty("sortOrder", {path: "/sortOrder"});
+		this._oColumn.getModel().setData({
+			sorted: true,
+			sortOrder: "Descending"
+		});
+
+		assert.strictEqual(this._oColumn.getSorted(), true, "sorted property");
+		assert.strictEqual(this._oColumn.getSortOrder(), "Descending", "sortOrder property");
 	});
 
 	QUnit.module("Lazy aggregations", {
