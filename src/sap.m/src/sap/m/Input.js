@@ -301,6 +301,7 @@ function(
 				/**
 				 * Specifies whether the suggestions highlighting is enabled.
 				 * <b>Note:</b> Due to performance constraints, the functionality will be disabled above 200 items.
+				 * <b>Note:</b> Highlighting in table suggestions will work only for cells containing sap.m.Label or sap.m.Text controls.
 				 *
 				 * @since 1.46
 				 */
@@ -2463,7 +2464,7 @@ function(
 					return;
 				}
 
-				aTableCellsDomRef = oSuggestionsTable.$().find('tbody .sapMLabel');
+				aTableCellsDomRef = oSuggestionsTable.$().find('tbody .sapMText, tbody .sapMLabel');
 
 				highlightDOMElements(aTableCellsDomRef, this._getTypedInValue());
 			}

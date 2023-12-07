@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/Page",
 	"sap/m/Title",
+	"sap/m/Text",
 	"sap/m/ToolbarSpacer",
 	"sap/m/VBox",
 	"sap/ui/core/Item",
@@ -36,6 +37,7 @@ sap.ui.define([
 		Link,
 		Page,
 		Title,
+		Text,
 		ToolbarSpacer,
 		VBox,
 		Item,
@@ -287,6 +289,42 @@ sap.ui.define([
 		oSuggestTableInput.setModel(oModel);
 		oSuggestTableInput.bindAggregation("suggestionRows", "/tabularSuggestionItems", oSuggestionRowTemplate);
 
+		var oSuggestTableInput2 = new Input("inputWithTabularSuggestions2", {
+			width: "300px",
+			showSuggestion: true,
+			placeholder: "Tabular items with sap.m.Text",
+			suggestionColumns : [
+				new Column({
+					header : new Label({
+						text : "Column 1"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "Column 2"
+					})
+				})
+			]
+		});
+
+		var oSuggestionRowTemplate2 = new ColumnListItem({
+			type : "Active",
+			vAlign : "Middle",
+			cells : [
+				new Text({
+					text : "{name}"
+				}),
+				new Text({
+					text: "{qty}"
+				})
+			]
+		});
+
+		oModel = new JSONModel();
+		oModel.setData(aData);
+		oSuggestTableInput2.setModel(oModel);
+		oSuggestTableInput2.bindAggregation("suggestionRows", "/tabularSuggestionItems", oSuggestionRowTemplate2);
+
 		var aSuggestionsData = [
 			{
 				name: "Proctra X"
@@ -492,8 +530,10 @@ sap.ui.define([
 						oSuggestionsInput,
 						new Label({text: "Input with sticky column header suggestions", labelFor: "inputWithStickySuggestions"}),
 						oInputWithStickySuggestions,
-						new Label({text: "Input with tabular suggetions", labelFor: "oSuggestTableInput"}),
+						new Label({text: "Input with tabular suggetions with sap.m.Label", labelFor: "oSuggestTableInput"}),
 						oSuggestTableInput,
+						new Label({text: "Input with tabular suggetions with sap.m.Text", labelFor: "oSuggestTableInput"}),
+						oSuggestTableInput2,
 						new Label({text: "Input with startSuggestions = 2", labelFor: "inputStartSuggestions"}),
 						oStartSuggestionsInput,
 						new Label({text: "Input with tabular suggestion separators", labelFor: "inputWithTabularSuggestionSeparators"}),
