@@ -1,5 +1,6 @@
 sap.ui.require([
 	"sap/ui/core/library",
+	"sap/ui/core/Element",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
@@ -24,6 +25,7 @@ sap.ui.require([
 	],
 	function(
 		CoreLib,
+		Element,
 		Form,
 		FormContainer,
 		FormElement,
@@ -59,7 +61,7 @@ sap.ui.require([
 	Input.prototype.isA = myTypeCheck;
 
 	var changeLayoutData = function(oEvent){
-		var oControl = sap.ui.getCore().byId("Sel_C5");
+		var oControl = Element.getElementById("Sel_C5");
 		var oLayoutData = oControl.getLayoutData();
 		if (!oLayoutData){
 			oLayoutData = new GridData({span: "L3 M3 S3"});
@@ -74,7 +76,7 @@ sap.ui.require([
 	};
 
 	var deleteLayoutData = function(oEvent){
-		var oControl = sap.ui.getCore().byId("Sel_C5");
+		var oControl = Element.getElementById("Sel_C5");
 		var oLayoutData = oControl.getLayoutData();
 		if (oLayoutData){
 			oControl.setLayoutData(null);
@@ -83,8 +85,8 @@ sap.ui.require([
 
 	var moveContainer = function(oEvent){
 
-		var oForm = sap.ui.getCore().byId("F1");
-		var oContainer = sap.ui.getCore().byId("C2");
+		var oForm = Element.getElementById("F1");
+		var oContainer = Element.getElementById("C2");
 		oForm.removeFormContainer(oContainer);
 		if (oEvent.getParameter("pressed")){
 			oForm.insertFormContainer(oContainer, 0);
@@ -96,7 +98,7 @@ sap.ui.require([
 
 	var newContainer = function(oEvent){
 
-		var oForm = sap.ui.getCore().byId("F1");
+		var oForm = Element.getElementById("F1");
 		if (oEvent.getParameter("pressed")){
 			oForm.addFormContainer(oNewContainer);
 		} else {
@@ -107,7 +109,7 @@ sap.ui.require([
 
 	var visibilityContainer = function(oEvent){
 
-		var oContainer = sap.ui.getCore().byId("C6");
+		var oContainer = Element.getElementById("C6");
 		if (oEvent.getParameter("pressed")){
 			oContainer.setVisible(false);
 		} else {
@@ -118,7 +120,7 @@ sap.ui.require([
 
 	var toggleAdjustLabelSpan = function(oEvent){
 
-		var oLayout = sap.ui.getCore().byId("L1");
+		var oLayout = Element.getElementById("L1");
 		if (oEvent.getParameter("pressed")){
 			oLayout.setAdjustLabelSpan(true);
 		} else {

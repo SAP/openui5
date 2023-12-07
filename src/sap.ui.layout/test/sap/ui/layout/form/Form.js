@@ -1,5 +1,6 @@
 sap.ui.require([
 	"sap/ui/core/library",
+	"sap/ui/core/Element",
 	"sap/ui/layout/library",
 	"sap/m/library",
 	"sap/ui/layout/form/Form",
@@ -44,6 +45,7 @@ sap.ui.require([
 	],
 	function(
 		CoreLib,
+		Element,
 		LayoutLib,
 		MLib,
 		Form,
@@ -258,7 +260,7 @@ sap.ui.require([
 						fields: [new ToggleButton({text: 'move container',
 													press: function(oEvent) {
 														var bPressed = oEvent.getParameter("pressed");
-														var oContainer = sap.ui.getCore().byId("C1");
+														var oContainer = Element.getElementById("C1");
 														oForm1.removeFormContainer(oContainer);
 														if (bPressed) {
 															oForm1.insertFormContainer(oContainer, 1);
@@ -272,8 +274,8 @@ sap.ui.require([
 											new ToggleButton({text: 'move element',
 												press: function(oEvent) {
 													var bPressed = oEvent.getParameter("pressed");
-													var oContainer = sap.ui.getCore().byId("C1");
-													var oElement = sap.ui.getCore().byId("F1C1E1");
+													var oContainer = Element.getElementById("C1");
+													var oElement = Element.getElementById("F1C1E1");
 													oContainer.removeFormElement(oElement);
 													if (bPressed) {
 														oContainer.insertFormElement(oElement, 1);
@@ -404,7 +406,7 @@ sap.ui.require([
 					content: [
 						new Button({icon: "sap-icon://slim-arrow-down",
 							press: function(oEvent) {
-								var oContainer = sap.ui.getCore().byId("F2C2");
+								var oContainer = Element.getElementById("F2C2");
 								if (oContainer.getExpanded()) {
 									oContainer.setExpanded(false);
 									oEvent.oSource.setIcon("sap-icon://slim-arrow-right");
@@ -462,7 +464,7 @@ sap.ui.require([
 								pressed: true,
 								press: function(oEvent) {
 									var bPressed = oEvent.getParameter("pressed");
-									var oContainer = sap.ui.getCore().byId("F3C1");
+									var oContainer = Element.getElementById("F3C1");
 									if (bPressed) {
 										oContainer.setTitle("Title");
 									} else {

@@ -1,5 +1,6 @@
 sap.ui.require([
 	"sap/ui/core/library",
+	"sap/ui/core/Element",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
@@ -19,6 +20,7 @@ sap.ui.require([
 	],
 	function(
 		CoreLib,
+		Element,
 		Form,
 		FormContainer,
 		FormElement,
@@ -40,8 +42,8 @@ sap.ui.require([
 
 	var moveContainer = function(oEvent){
 
-		var oForm = sap.ui.getCore().byId("F1");
-		var oContainer = sap.ui.getCore().byId("C2");
+		var oForm = Element.getElementById("F1");
+		var oContainer = Element.getElementById("C2");
 		oForm.removeFormContainer(oContainer);
 		if (oEvent.getParameter("pressed")){
 			oForm.insertFormContainer(oContainer, 0);
@@ -53,7 +55,7 @@ sap.ui.require([
 
 	var newContainer = function(oEvent){
 
-		var oForm = sap.ui.getCore().byId("F1");
+		var oForm = Element.getElementById("F1");
 		if (oEvent.getParameter("pressed")){
 			oForm.addFormContainer(oNewContainer);
 		} else {
@@ -84,16 +86,16 @@ sap.ui.require([
 
 	var toggleExpandable = function(oEvent){
 
-		var oContainer = sap.ui.getCore().byId("CX");
+		var oContainer = Element.getElementById("CX");
 		oContainer.setExpandable(oEvent.getParameter("pressed"));
 
 	};
 
 	var toggleTitle = function(oEvent){
 
-		var oContainer = sap.ui.getCore().byId("CX");
+		var oContainer = Element.getElementById("CX");
 		if (oEvent.getParameter("pressed")){
-			oContainer.setTitle(sap.ui.getCore().byId("TitleX"));
+			oContainer.setTitle(Element.getElementById("TitleX"));
 		} else {
 			oContainer.setTitle();
 		}
@@ -102,7 +104,7 @@ sap.ui.require([
 
 	var lineBreakContainer = function(oEvent){
 
-		var oContainer = sap.ui.getCore().byId("CX");
+		var oContainer = Element.getElementById("CX");
 		var oLayoutData = oContainer.getLayoutData();
 		oLayoutData.setLinebreak(oEvent.getParameter("pressed"));
 
@@ -110,7 +112,7 @@ sap.ui.require([
 
 	var lineBreakElement = function(oEvent){
 
-		var oElement = sap.ui.getCore().byId("EX");
+		var oElement = Element.getElementById("EX");
 		var oLayoutData = oElement.getLayoutData();
 		if (!oLayoutData){
 			oLayoutData = new ResponsiveFlowLayoutData({linebreak: oEvent.getParameter("pressed"), margin: false});
@@ -123,7 +125,7 @@ sap.ui.require([
 
 	var lineBreakField = function(oEvent){
 
-		var oField = sap.ui.getCore().byId("TX");
+		var oField = Element.getElementById("TX");
 		var oLayoutData = oField.getLayoutData();
 		if (!oLayoutData){
 			oLayoutData = new ResponsiveFlowLayoutData({linebreak: oEvent.getParameter("pressed")});
@@ -137,14 +139,14 @@ sap.ui.require([
 	var iState = 0;
 	var switchVisible = function(oEvent){
 		if ( iState == 0 ){
-			sap.ui.getCore().byId("C4E4").setVisible(false);
+			Element.getElementById("C4E4").setVisible(false);
 			iState++;
 		} else if ( iState == 1 ){
-			sap.ui.getCore().byId("C4E1").setVisible(false);
-			sap.ui.getCore().byId("C4E4").setVisible(true);
+			Element.getElementById("C4E1").setVisible(false);
+			Element.getElementById("C4E4").setVisible(true);
 			iState++;
 		} else {
-			sap.ui.getCore().byId("C4E1").setVisible(true);
+			Element.getElementById("C4E1").setVisible(true);
 			iState = 0;
 		}
 	};
