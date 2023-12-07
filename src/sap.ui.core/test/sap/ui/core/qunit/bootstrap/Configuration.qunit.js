@@ -1,4 +1,9 @@
 /*global QUnit, sinon */
+
+/**
+ * @fileoverview
+ * @deprecated
+ */
 sap.ui.define([
 	'sap/ui/core/CalendarType',
 	'sap/ui/core/Configuration',
@@ -7,14 +12,13 @@ sap.ui.define([
 	'sap/ui/core/date/CalendarWeekNumbering',
 	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/Theming',
-	'sap/ui/security/Security',
 	'sap/base/config',
 	'sap/base/Log',
 	"sap/base/config/GlobalConfigurationProvider",
 	'../routing/HistoryUtils',
 	'sap/ui/base/config/URLConfigurationProvider',
 	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
-], function(CalendarType, Configuration, Core, Library, CalendarWeekNumbering, TimezoneUtil, Theming, Security, BaseConfig, Log,
+], function(CalendarType, Configuration, Core, Library, CalendarWeekNumbering, TimezoneUtil, Theming, BaseConfig, Log,
 		GlobalConfigurationProvider, HistoryUtils, URLConfigurationProvider/*, LocaleData*/) {
 	"use strict";
 
@@ -69,7 +73,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Settings", function(assert) {
-		assert.equal(Theming.getTheme(), "SapSampleTheme2", "tag config should override global config");
+		assert.equal(Configuration.getTheme(), "SapSampleTheme2", "tag config should override global config");
 		assert.ok(Library.all()["sap.ui.core"], "Core library loaded");
 	});
 
@@ -1067,7 +1071,7 @@ sap.ui.define([
 						return oStub.wrappedMethod.call(this, mParameters);
 				}
 			});
-			assert.equal(Theming.getTheme(), "custom", "Configuration 'getTheme' returns expected 'theme' " + Theming.getTheme());
+			assert.equal(Configuration.getTheme(), "custom", "Configuration 'getTheme' returns expected 'theme' " + Configuration.getTheme());
 			assert.equal(Theming.getThemeRoot(), oSetup.noProtocol ? oSetup.expectedThemeRoot : new URL(oSetup.expectedThemeRoot, location.href).toString(),
 				"Theming 'getThemeRoot' returns expected 'themeRoot' " + Theming.getThemeRoot());
 			oStub.restore();
@@ -1106,7 +1110,7 @@ sap.ui.define([
 		var SERVICE_URL = "/service/url/from/config";
 		mConfigStubValues["sapUiAllowlistService"] = SERVICE_URL;
 
-		assert.equal(Security.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
+		assert.equal(Configuration.getAllowlistService(), SERVICE_URL, "Successor getAllowlistService should return service url");
 		/**
 		 * @deprecated Since 1.85.0.
 		 */
@@ -1148,37 +1152,37 @@ sap.ui.define([
 		BaseConfig._.invalidate();
 
 		// code under test
-		assert.deepEqual(Security.getSecurityTokenHandlers(), []);
+		assert.deepEqual(Configuration.getSecurityTokenHandlers(), []);
 
 		// bootstrap does some magic and converts to lower case, test does not :-(
 		mConfigStubValues["sapUiSecurityTokenHandlers"] = [];
 		BaseConfig._.invalidate();
 
 		// code under test
-		assert.strictEqual(Security.getSecurityTokenHandlers().length, 0, "check length");
+		assert.strictEqual(Configuration.getSecurityTokenHandlers().length, 0, "check length");
 
 		mConfigStubValues["sapUiSecurityTokenHandlers"] = [fnSecurityTokenHandler1];
 		BaseConfig._.invalidate();
 
 		// code under test
-		assert.strictEqual(Security.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1, "check Fn");
-		assert.strictEqual(Security.getSecurityTokenHandlers().length, 1, "check length");
+		assert.strictEqual(Configuration.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1, "check Fn");
+		assert.strictEqual(Configuration.getSecurityTokenHandlers().length, 1, "check length");
 
 		mConfigStubValues["sapUiSecurityTokenHandlers"]
 			= [fnSecurityTokenHandler1, fnSecurityTokenHandler2];
 		BaseConfig._.invalidate();
 
 		// code under test
-		assert.strictEqual(Security.getSecurityTokenHandlers().length, 2, "check length");
-		assert.strictEqual(Security.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1, "check Fn");
-		assert.strictEqual(Security.getSecurityTokenHandlers()[1], fnSecurityTokenHandler2, "check Fn");
+		assert.strictEqual(Configuration.getSecurityTokenHandlers().length, 2, "check length");
+		assert.strictEqual(Configuration.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1, "check Fn");
+		assert.strictEqual(Configuration.getSecurityTokenHandlers()[1], fnSecurityTokenHandler2, "check Fn");
 
 		mConfigStubValues["sapUiSecurityTokenHandlers"] = fnSecurityTokenHandler1;
 		BaseConfig._.invalidate();
 
 		assert.throws(function () {
 			// code under test
-			Security.getSecurityTokenHandlers();
+			Configuration.getSecurityTokenHandlers();
 		}); // aSecurityTokenHandlers.forEach is not a function
 
 		mConfigStubValues["sapUiSecurityTokenHandlers"] = [fnSecurityTokenHandler1, "foo"];
@@ -1186,42 +1190,42 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			Security.getSecurityTokenHandlers();
+			Configuration.getSecurityTokenHandlers();
 		}, "Not a function: foo");
 
 		// code under test
-		Security.setSecurityTokenHandlers([fnSecurityTokenHandler1]);
+		Configuration.setSecurityTokenHandlers([fnSecurityTokenHandler1]);
 
-		assert.notStrictEqual([fnSecurityTokenHandler1], Security.securityTokenHandlers);
-		assert.notStrictEqual(Security.getSecurityTokenHandlers(), Security.securityTokenHandlers);
-		assert.strictEqual(Security.getSecurityTokenHandlers().length, 1);
-		assert.strictEqual(Security.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1);
+		assert.notStrictEqual([fnSecurityTokenHandler1], Configuration.securityTokenHandlers);
+		assert.notStrictEqual(Configuration.getSecurityTokenHandlers(), Configuration.securityTokenHandlers);
+		assert.strictEqual(Configuration.getSecurityTokenHandlers().length, 1);
+		assert.strictEqual(Configuration.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1);
 
 		assert.throws(function () {
 			// code under test
-			Security.setSecurityTokenHandlers([fnSecurityTokenHandler1, "foo"]);
+			Configuration.setSecurityTokenHandlers([fnSecurityTokenHandler1, "foo"]);
 		}, "Not a function: foo");
 
 		assert.throws(function () {
 			// code under test
-			Security.setSecurityTokenHandlers([undefined]);
+			Configuration.setSecurityTokenHandlers([undefined]);
 		}, "Not a function: undefined");
 
 		assert.throws(function () {
 			// code under test
-			Security.setSecurityTokenHandlers("foo");
+			Configuration.setSecurityTokenHandlers("foo");
 		}); // aSecurityTokenHandlers.forEach is not a function
 
 		// code under test
-		Security.setSecurityTokenHandlers([fnSecurityTokenHandler1, fnSecurityTokenHandler2]);
+		Configuration.setSecurityTokenHandlers([fnSecurityTokenHandler1, fnSecurityTokenHandler2]);
 
-		assert.strictEqual(Security.getSecurityTokenHandlers().length, 2);
-		assert.strictEqual(Security.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1);
-		assert.strictEqual(Security.getSecurityTokenHandlers()[1], fnSecurityTokenHandler2);
+		assert.strictEqual(Configuration.getSecurityTokenHandlers().length, 2);
+		assert.strictEqual(Configuration.getSecurityTokenHandlers()[0], fnSecurityTokenHandler1);
+		assert.strictEqual(Configuration.getSecurityTokenHandlers()[1], fnSecurityTokenHandler2);
 
 		// code under test
-		Security.setSecurityTokenHandlers([]);
+		Configuration.setSecurityTokenHandlers([]);
 
-		assert.deepEqual(Security.getSecurityTokenHandlers(), []);
+		assert.deepEqual(Configuration.getSecurityTokenHandlers(), []);
 	});
 });

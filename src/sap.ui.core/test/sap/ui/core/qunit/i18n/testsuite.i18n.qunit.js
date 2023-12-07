@@ -17,38 +17,38 @@ sap.ui.define(function() {
 		tests: {
 			"_Calendars": {
 				module: "./../date/_Calendars.qunit",
-				coverage : {
-					only : "sap/ui/core/date/_Calendars"
+				coverage: {
+					only: "sap/ui/core/date/_Calendars"
 				}
 			},
 			"CalendarUtils": {
-				coverage : {
-					only : "sap/ui/core/date/CalendarUtils"
+				coverage: {
+					only: "sap/ui/core/date/CalendarUtils"
 				}
 			},
 			"CalendarWeekNumbering": {
-				coverage : {
-					only : "sap/ui/core/date/CalendarWeekNumbering"
+				coverage: {
+					only: "sap/ui/core/date/CalendarWeekNumbering"
 				}
 			},
 			"Buddhist": {
-				coverage : {
-					only : "sap/ui/core/date/Buddhist"
+				coverage: {
+					only: "sap/ui/core/date/Buddhist"
 				}
 			},
 			"Islamic": {
-				coverage : {
-					only : "sap/ui/core/date/Islamic"
+				coverage: {
+					only: "sap/ui/core/date/Islamic"
 				}
 			},
 			"Japanese": {
-				coverage : {
-					only : "sap/ui/core/date/Japanese"
+				coverage: {
+					only: "sap/ui/core/date/Japanese"
 				}
 			},
 			"Locale": {
-				coverage : {
-					only : "sap/ui/core/Locale"
+				coverage: {
+					only: "sap/ui/core/Locale"
 				}
 			},
 			"LocaleData": {
@@ -58,14 +58,14 @@ sap.ui.define(function() {
 			},
 			"GenericLocaleData": {},
 			"Persian": {
-				coverage : {
-					only : "sap/ui/core/date/Persian"
+				coverage: {
+					only: "sap/ui/core/date/Persian"
 				}
 			},
 			"ResourceBundle": {
 				module: "./../base/i18n/ResourceBundle.qunit",
-				coverage : {
-					only : "sap/base/i18n/ResourceBundle"
+				coverage: {
+					only: "sap/base/i18n/ResourceBundle"
 				}
 			},
 			"Formatting": {
@@ -73,8 +73,8 @@ sap.ui.define(function() {
 				ui5: {
 					language: undefined
 				},
-				coverage : {
-					only : "sap/base/i18n/Formatting"
+				coverage: {
+					only: "sap/base/i18n/Formatting"
 				}
 			},
 			"Localization": {
@@ -82,24 +82,25 @@ sap.ui.define(function() {
 				ui5: {
 					language: undefined
 				},
-				coverage : {
-					only : "sap/base/i18n/Localization"
+				coverage: {
+					only: "sap/base/i18n/Localization",
+					instrumenter: "istanbul"
 				}
 			},
 			"UI5Date": {
-				coverage : {
-					only : "sap/ui/core/date/UI5Date"
+				coverage: {
+					only: "sap/ui/core/date/UI5Date"
 				}
 			},
 			"UniversalDate": {
-				coverage : {
-					only : "sap/ui/core/date/UniversalDate"
+				coverage: {
+					only: "sap/ui/core/date/UniversalDate"
 				}
 			},
 			"UniversalDateUtils": {
 				title: "sap.ui.core.date.UniversalDateUtils: UniversalDate Utility Functions",
-				coverage : {
-					only : "sap/ui/core/date/UniversalDateUtils"
+				coverage: {
+					only: "sap/ui/core/date/UniversalDateUtils"
 				}
 			}
 		}

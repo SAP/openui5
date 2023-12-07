@@ -11,6 +11,10 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					"testdata/core": "test-resources/sap/ui/core/qunit/"
 				}
 			},
+			coverage: {
+				instrumenter: "istanbul",
+				only: ["sap/ui/core/Theming", "sap/ui/core/theming"]
+			},
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},
 		tests: {
