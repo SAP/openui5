@@ -3,12 +3,14 @@
  */
 sap.ui.define([
 	"./SelectionPlugin",
+	"./PluginBase",
 	"../library",
 	"../utils/TableUtils",
 	"sap/ui/core/Icon",
 	"sap/ui/core/IconPool"
 ], function(
 	SelectionPlugin,
+	PluginBase,
 	library,
 	TableUtils,
 	Icon,
@@ -30,6 +32,7 @@ sap.ui.define([
 	 * @since TODO
 	 * @author SAP SE
 	 * @private
+	 * @borrows sap.ui.table.plugins.PluginBase.findOn as findOn
 	 */
 	var ODataV4Selection = SelectionPlugin.extend("sap.ui.table.plugins.ODataV4Selection", {
 		metadata: {
@@ -77,6 +80,8 @@ sap.ui.define([
 			}
 		}
 	});
+
+	ODataV4Selection.findOn = PluginBase.findOn;
 
 	ODataV4Selection.prototype.init = function() {
 		SelectionPlugin.prototype.init.apply(this, arguments);

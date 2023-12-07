@@ -35,6 +35,7 @@ sap.ui.define([
 	 * @since 1.76
 	 * @ui5-restricted sap.ui.mdc
 	 * @alias sap.ui.table.plugins.V4Aggregation
+	 * @borrows sap.ui.table.plugins.PluginBase.findOn as findOn
 	 */
 	var V4Aggregation = PluginBase.extend("sap.ui.table.plugins.V4Aggregation", /** @lends sap.ui.table.plugins.V4Aggregation.prototype */ {
 		metadata: {
@@ -58,6 +59,8 @@ sap.ui.define([
 			}
 		}
 	});
+
+	V4Aggregation.findOn = PluginBase.findOn;
 
 	/**
 	 * @override

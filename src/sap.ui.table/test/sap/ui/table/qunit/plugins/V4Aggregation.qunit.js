@@ -630,6 +630,10 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("findOn", function(assert) {
+		assert.ok(V4Aggregation.findOn(this.oTable) === this.oPlugin, "Plugin found on dependents aggregation via V4Aggregation.findOn");
+	});
+
 	QUnit.test("No column state", function(assert) {
 		this.oPlugin.setAggregationInfo({
 			visible: []

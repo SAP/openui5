@@ -88,26 +88,47 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	};
 
 	/**
-	 * Returns the first applied plugin for the given control instance and the plugin name.
+	 * Searches a control plugin with a given type in the aggregations of the given <code>Element</code> instance.
+	 * The first plugin that is found is returned.
 	 *
-	 * @param {sap.ui.core.Control} oControl The control instance to check for
-	 * @param {string|function} [vPlugin] The full name or the constructor of the plugin
-	 * @return {undefined|sap.m.plugins.PluginBase} The found plugin instance or <code>undefined</code> if not found
-	 * @public
+	 * @param {sap.ui.core.Element} oElement The <code>Element</code> instance to check for
+	 * @param {string|function} [vPlugin] The full name or the constructor of the plugin name; if nothing is given, <code>PluginBase</code> is used
+	 * @return {sap.ui.core.Element|undefined} The found plugin instance or <code>undefined</code> if not found
+	 * @private
 	 * @static
 	 */
-	PluginBase.getPlugin = function(oControl, vPlugin) {
-		if (vPlugin == undefined) {
-			vPlugin = this.getMetadata().getName();
-		} else if (typeof vPlugin == "function") {
+	PluginBase.getPlugin = function(oElement, vPlugin = PluginBase) {
+		// Keep this function in sync with sap.m.plugins.PluginBase.getPlugin
+		// until the library dependencies are cleaned up and a reuse can happen!
+
+		if (!oElement) {
+			return;
+		}
+
+		if (typeof vPlugin === "function" && vPlugin.getMetadata) {
 			vPlugin = vPlugin.getMetadata().getName();
 		}
 
-		return oControl.getDependents().filter(function(oDependent) {
-			return oDependent.isA(vPlugin);
-		})[0] || oControl.findElements(false, function(oElement) {
-			return oElement.isA(vPlugin);
-		})[0];
+		const fnCheck = function(oElem) {
+			/* TBD Cleanup sap.m and sap.ui.table plugins should be aligned in future.*/
+			return oElem.isA(vPlugin) && (
+					oElem.isA(["sap.m.plugins.PluginBase", "sap.ui.table.plugins.PluginBase"]));
+		};
+
+		return oElement.getDependents().find(fnCheck) || oElement.findElements(false, fnCheck)[0];
+	};
+
+	/**
+	 * Searches a plugin of the corresponding type in the aggregations of the given <code>Element</code> instance.
+	 * The first plugin that is found is returned.
+	 *
+	 * @param {sap.ui.core.Element} oElement The <code>Element</code> instance to check for
+	 * @return {sap.ui.core.Element|undefined} The found plugin instance or <code>undefined</code> if not found
+	 * @public
+	 * @static
+	 */
+	PluginBase.findOn = function(oElement) {
+		return PluginBase.getPlugin(oElement, this);
 	};
 
 	/**

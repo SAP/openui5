@@ -22,6 +22,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 	 * @public
 	 * @since 1.73
 	 * @alias sap.m.plugins.DataStateIndicator
+	 * @borrows sap.m.plugins.PluginBase.findOn as findOn
 	 */
 	var DataStateIndicator = PluginBase.extend("sap.m.plugins.DataStateIndicator", /** @lends sap.m.plugins.DataStateIndicator.prototype */ { metadata: {
 		library: "sap.m",
@@ -93,6 +94,8 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			close: {}
 		}
 	}});
+
+	DataStateIndicator.findOn = PluginBase.findOn;
 
 	DataStateIndicator.prototype.onActivate = function(oControl) {
 		this._bFiltering = false;

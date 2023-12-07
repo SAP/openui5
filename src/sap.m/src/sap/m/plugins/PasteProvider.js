@@ -31,6 +31,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Element", "sap/ui/core/Lib", "sap/ui
 	 * @public
 	 * @since 1.91
 	 * @alias sap.m.plugins.PasteProvider
+	 * @borrows sap.m.plugins.PluginBase.findOn as findOn
 	 */
 	var PasteProvider = PluginBase.extend("sap.m.plugins.PasteProvider", /** @lends sap.m.plugins.PasteProvider.prototype */ { metadata: {
 		library: "sap.m",
@@ -68,6 +69,8 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Element", "sap/ui/core/Lib", "sap/ui
 	var oPopover = null;
 	var oActivePlugin = null;
 	var sPasteRegionSelector = "[data-sap-ui-pasteregion]";
+
+	PasteProvider.findOn = PluginBase.findOn;
 
 	PasteProvider.prototype.onActivate = function(oControl) {
 		oControl.attachEvent(this.getConfig("pressEvent"), this._onPress, this);
