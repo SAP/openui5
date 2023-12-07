@@ -3,15 +3,15 @@
  */
 
 // Provides control sap.ui.unified.MenuItem.
-sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItemBase', 'sap/ui/unified/library', 'sap/ui/core/library'],
-	function(IconPool, MenuItemBase, library, coreLibrary) {
+sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItemBase', 'sap/ui/unified/library', 'sap/ui/core/library', 'sap/ui/core/Icon'],
+	function(IconPool, MenuItemBase, library, coreLibrary, Icon) {
 	"use strict";
 
-
+	const EXTERNAL_LINK_ICON = "sap-icon://arrow-right";
 	/**
 	 * Constructor for a new NavigationListMenuItem element.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
@@ -36,7 +36,7 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItemBase', 'sap/ui/un
 			text : {type : "string", group : "Appearance", defaultValue : ''},
 
 			/**
-			 * Defines the icon of the {@link sap.ui.core.IconPool sap.ui.core.IconPool} or an image which should be displayed on the item.
+			 * Defines an icon from the {@link sap.ui.core.IconPool sap.ui.core.IconPool} or an image which should be displayed on the item.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
 
@@ -48,6 +48,14 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItemBase', 'sap/ui/un
 			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+		},
+		aggregations: {
+
+			/**
+			 * The icon for external links.
+			 * @since 1.121
+			 */
+			_externalLinkIcon: { type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
 		}
 	}});
 
@@ -145,6 +153,13 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItemBase', 'sap/ui/un
 		}
 		rm.close("div");
 
+		// External link icon
+		if (oItem.getIsExternalLink()) {
+
+			const oIcon = this._getExternalLinkIcon();
+			rm.renderControl(oIcon);
+		}
+
 		// Right border
 		rm.openStart("div");
 		rm.class("sapUiMnuItmR");
@@ -164,6 +179,24 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItemBase', 'sap/ui/un
 		} else {
 			oMenu.focus();
 		}
+	};
+
+	/**
+	 * Returns the <code>sap.ui.core.Icon</code> control used to display the external link icon.
+	 *
+	 * @returns {sap.ui.core.Icon} Icon control instance
+	 * @private
+	 */
+	NavigationListMenuItem.prototype._getExternalLinkIcon = function () {
+		var oIcon = this.getAggregation("_externalLinkIcon");
+
+		if (!oIcon) {
+			oIcon = new Icon({
+				src: EXTERNAL_LINK_ICON
+			}).addStyleClass(`sapTntNLIExternalLinkIcon`);
+			this.setAggregation("_externalLinkIcon", oIcon);
+		}
+		return oIcon;
 	};
 
 	return NavigationListMenuItem;

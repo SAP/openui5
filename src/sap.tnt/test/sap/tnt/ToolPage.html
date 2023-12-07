@@ -22,7 +22,13 @@
 					title: 'Child Item 1 Child Item 1 Child Item 1 Child Item 1',
 					key: 'page1',
 					href: '#/page1'
-				}, {
+				},  {
+						title: 'www.sap.com',
+						selectable: false,
+						icon: 'sap-icon://building',
+						href: 'https://www.sap.com',
+						target: '_blank'
+					}, {
 					title: 'Child Item 2 (Disabled)',
 					enabled: false
 				}, {
@@ -33,6 +39,13 @@
 					title: 'Child Item 4',
 					key: 'page3',
 					href: '#/page3'
+				}, {
+					title: 'www.sap.com',
+					selectable: false,
+					icon: 'sap-icon://building',
+					key: 'fixeditem1',
+					href: 'https://www.sap.com',
+					target: '_blank'
 				}]
 			}, {
 				title: 'Root Item (Disabled)',
@@ -241,8 +254,31 @@
 					title: 'Child Item 2'
 				}, {
 					title: 'Child Item 3'
+				}, {
+					title: 'www.sap.com',
+					selectable: false,
+					icon: 'sap-icon://building',
+					key: 'fixeditem1',
+					href: 'https://www.sap.com',
+					target: '_blank'
 				}]
-			}
+			}, {
+				title: "Root Item",
+				icon: "sap-icon://kpi-managing-my-area",
+				items: [
+					{ selectable: false, href: "https://sap.com", target: "_blank", title: "External Link", icon: "sap-icon://attachment" },
+					{ title: "Child Item" },
+					{ title: "Child Item 2" },
+				]
+			}, {
+				title: "Mileage",
+				icon: "sap-icon://mileage",
+				items: [
+					{ selectable: false, href: "https://sap.com", target: "_blank", title: "External Link", icon: "sap-icon://attachment" },
+					{ title: "Driven" },
+					{ title: "Walked" },
+				]
+			},
 			],
 			fixedNavigation: [{
 				title: 'Fixed Item 1',
@@ -279,13 +315,15 @@
 						selectable: '{selectable}',
 						key: '{key}',
 						href: '{href}',
+						target: '{target}',
 						items: {
 							template: new sap.tnt.NavigationListItem({
 								selectable: '{selectable}',
 								text: '{title}',
 								key: '{key}',
 								href: '{href}',
-								enabled: '{enabled}'
+								enabled: '{enabled}',
+								target: '{target}'
 							}),
 							path: 'items',
 							templateShareable : true

@@ -356,6 +356,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Render external link icon
+	 *  @param {sap.ui.core.RenderManager} oRM renderer instance
+	 */
+	NavigationListItem.prototype._renderExternalLinkIcon =  function (oRM) {
+		if (!(this.getHref() && this.getTarget() === "_blank")) {
+			return;
+		}
+		const oIcon = this._getExternalIcon();
+		oRM.renderControl(oIcon);
+	};
+
+	/**
 	 * Renders the group item.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM renderer instance
@@ -432,6 +444,8 @@ sap.ui.define([
 
 		this._renderText(oRM);
 
+		this._renderExternalLinkIcon(oRM);
+
 		if (bListExpanded) {
 			oRM.icon(SELECTION_INDICATOR_ICON_SRC, ["sapTntNLISelectionIndicator"]);
 
@@ -440,6 +454,11 @@ sap.ui.define([
 				.setSrc(bExpanded ? COLLAPSE_ICON_SRC : EXPAND_ICON_SRC)
 				.setTooltip(this._getExpandIconTooltip(!bExpanded));
 
+			oRM.renderControl(oIcon);
+		}
+
+		if (!bListExpanded && this.getItems().length) {
+			const oIcon = this._getExpandIconControl().setSrc(EXPAND_ICON_SRC);
 			oRM.renderControl(oIcon);
 		}
 
@@ -481,9 +500,13 @@ sap.ui.define([
 		};
 		this._renderStartLink(oRM, oLinkAriaProps, bDisabled);
 
+		this._renderIcon(oRM);
+
 		this._renderText(oRM);
 
 		oRM.icon(SELECTION_INDICATOR_ICON_SRC, ["sapTntNLISelectionIndicator"]);
+
+		this._renderExternalLinkIcon(oRM);
 
 		this._renderCloseLink(oRM);
 
@@ -723,6 +746,16 @@ sap.ui.define([
 		var oMainRef = this.getDomRef()?.querySelector(".sapTntNLIFirstLevel");
 		if (oMainRef) {
 			oMainRef.classList.remove("sapTntNLINoHoverEffect");
+		}
+	};
+
+	NavigationListItem.prototype.onmouseout = function () {
+		const oMainRef = this.getDomRef()?.querySelector(".sapTntNLIFirstLevel");
+		const oNavList = this.getNavigationList();
+		const oSubItemSelected = this.getItems().find((oItem) => oItem === oNavList.getSelectedItem());
+
+		if (oMainRef && (this === oNavList.getSelectedItem() || oSubItemSelected)) {
+			oMainRef.classList.add("sapTntNLINoHoverEffect");
 		}
 	};
 
