@@ -1157,12 +1157,9 @@ sap.ui.define([
 				const aChangePromises = this._aOngoingChangeAppliance.slice();
 				this._aOngoingChangeAppliance = [];
 
-				if (this._oApplyingChanges) {
-					aChangePromises.push(this._oApplyingChanges);
-				}
-
 				Promise.all(aChangePromises).then(() => {
-						fnCallBack(bFireSearch);
+						const pWait = this._oApplyingChanges ? this._oApplyingChanges : Promise.resolve();
+						pWait.then(() => fnCallBack(bFireSearch));
 					},
 					() => {
 						this._bFieldInErrorState = true;
