@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/table/Util",
 	"sap/ui/core/theming/Parameters",
+	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/model/odata/type/Byte",
 	"sap/ui/model/odata/type/Date",
@@ -21,8 +22,9 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/model/odata/type/TimeOfDay",
+	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/core/InvisibleMessage"
-], function(Core, Library, Theming, List, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, InvisibleMessage) {
+], function(Core, Library, Theming, List, Util, ThemeParameters, JSONListBinding, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, ODataListBinding, InvisibleMessage) {
 	"use strict";
 	/* global QUnit,sinon */
 
@@ -320,4 +322,39 @@ sap.ui.define([
 		assert.ok(Util.isEmpty(oRowBinding), "Row binding is empty");
 	});
 
+	QUnit.test("isExportable", function(assert) {
+		const oJSONListBinding = sinon.createStubInstance(JSONListBinding);
+		const oODataListBinding = sinon.createStubInstance(ODataListBinding, {
+			getDownloadUrl: "http://some.fake.path/service"
+		});
+
+		/* Test before Util.isEmpty is stubbed */
+		assert.notOk(Util.isExportable(), "Returns false when binding is unavailable");
+
+		sinon.stub(Util, "isEmpty").returns(false);
+
+		assert.equal(typeof oJSONListBinding.getDownloadUrl, "undefined", "No getDownloadUrl function available");
+		assert.equal(typeof oODataListBinding.getDownloadUrl, "function", "Function getDownloadUrl is available");
+
+		assert.ok(Util.isExportable(oJSONListBinding), "Non-empty JSONListBinding results in true");
+		assert.ok(Util.isExportable(oODataListBinding), "Non-empty ODataListBinding with download Url results in true");
+
+		/* Test getDownloadUrl -> null (Filter.None scenario) */
+		oODataListBinding.getDownloadUrl.returns(null);
+
+		assert.notOk(Util.isExportable(oODataListBinding), "Download URL null results in not exportable");
+
+		/* Test empty binding scenario */
+		Util.isEmpty.returns(true);
+
+		assert.notOk(Util.isExportable(oJSONListBinding), "Empty JSONListBinding results in false");
+		assert.notOk(Util.isExportable(oODataListBinding), "Empty ODataListBinding without download Url results in false");
+
+		/* Test empty binding with download URL */
+		oODataListBinding.getDownloadUrl.returns("http://some.fake.path/service");
+
+		assert.notOk(Util.isExportable(oODataListBinding), "Empty ODataListBinding with download Url results in false");
+
+		Util.isEmpty.restore();
+	});
 });

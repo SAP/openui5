@@ -4235,15 +4235,39 @@ sap.ui.define([
 
 		return TableQUnitUtils.waitForBinding(this.oTable).then(function() {
 			assert.notOk(this.oTable._oExportButton.getEnabled(), "Export button is disabled since there are no rows");
-			const oUpdateExportButtonSpy = sinon.spy(this.oTable, "_updateExportButton"),
-				fGetLengthStub = sinon.stub(this.oTable.getRowBinding(), "getLength");
+			assert.equal(this.oTable._oExportButton.getEnabled(), MTableUtil.isExportable(this.oTable.getRowBinding()) , "Export button enabled state is in sync with sap/m/table/Util#isExportable");
+
+			const oUpdateExportButtonSpy = sinon.spy(this.oTable, "_updateExportButton");
+			const oIsExportableSpy = sinon.spy(MTableUtil, "isExportable");
+			const fGetLengthStub = sinon.stub(this.oTable.getRowBinding(), "getLength");
+
 			fGetLengthStub.returns(1);
 
-			// simulate binding change
+			// Update export button state based on binding length
 			this.oTable.getRowBinding().fireEvent("change");
 			assert.ok(oUpdateExportButtonSpy.calledOnce);
+			assert.ok(oIsExportableSpy.calledOnce, "sap/m/table/Util#isExportable has been invoked");
+			assert.ok(oIsExportableSpy.calledWith(this.oTable.getRowBinding()), "Called with binding");
 			assert.ok(this.oTable._oExportButton.getEnabled(), "Export button enabled, since binding change added a row to the table");
+			assert.equal(this.oTable._oExportButton.getEnabled(), MTableUtil.isExportable(this.oTable.getRowBinding()), "Export button enabled state is in sync with sap/m/table/Util#isExportable");
 
+			oIsExportableSpy.restore();
+
+			const fIsExportableStub = sinon.stub(MTableUtil, "isExportable");
+
+			fIsExportableStub.returns(false);
+
+			// Update export button state based on isExportable
+			this.oTable.getRowBinding().fireEvent("change");
+			assert.notOk(this.oTable._oExportButton.getEnabled(), "Export button disabled, since sap/m/table/Util#isExportable returns false");
+
+			fIsExportableStub.returns(true);
+
+			this.oTable.getRowBinding().fireEvent("change");
+			assert.ok(this.oTable._oExportButton.getEnabled(), "Export button enabled, since sap/m/table/Util#isExportable returns true");
+
+			oUpdateExportButtonSpy.restore();
+			fIsExportableStub.restore();
 			fGetLengthStub.restore();
 		}.bind(this));
 	});
