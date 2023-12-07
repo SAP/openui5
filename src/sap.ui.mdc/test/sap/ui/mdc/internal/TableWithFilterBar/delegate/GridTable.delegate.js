@@ -122,7 +122,7 @@ sap.ui.define([
 					}
 				} else {
 					var oProperty = FilterUtil.getPropertyByKey(aPropertiesMetadata, oFilter.sPath);
-					if (oProperty && oProperty.typeConfig.typeInstance.getMetadata().getName() === "sap.ui.model.odata.type.DateTimeOffset") {
+					if (oProperty && oProperty.typeConfig && oProperty.typeConfig.typeInstance.getMetadata().getName() === "sap.ui.model.odata.type.DateTimeOffset") {
 						fnAdjustDateTimeFilter(oFilter);
 					}
 				}

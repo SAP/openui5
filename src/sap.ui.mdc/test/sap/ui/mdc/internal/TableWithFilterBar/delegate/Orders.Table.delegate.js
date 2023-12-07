@@ -86,7 +86,7 @@ sap.ui.define([
 
 		var oCtrlProperties = DelegateCache.merge({
 			id: getFullId(oTable, "F_" + oProperty.name),
-			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
+			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig && oProperty.typeConfig.typeInstance},
 			editMode: FieldEditMode.Display,
 			width:"100%",
 			multipleLines: false,
@@ -113,8 +113,10 @@ sap.ui.define([
 		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
 			var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
 
-			var oTemplate = OrdersTableDelegate._createColumnTemplate(oTable, oProperty);
-			oColumn.setTemplate(oTemplate);
+			if (!oProperty.name.endsWith("_ComplexWithUnit")) {
+				var oTemplate = OrdersTableDelegate._createColumnTemplate(oTable, oProperty);
+				oColumn.setTemplate(oTemplate);
+			}
 
 			return oColumn;
 		});

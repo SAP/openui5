@@ -106,8 +106,10 @@ sap.ui.define([
 			// 	delete oColumn._oTemplateClone;
 			// }
 
-			var oTemplate = AuthorsTableDelegate._createColumnTemplate(oTable, oProperty);
-			oColumn.setTemplate(oTemplate);
+			if (!oProperty.name.endsWith("_ComplexWithUnit")) {
+				var oTemplate = AuthorsTableDelegate._createColumnTemplate(oTable, oProperty);
+				oColumn.setTemplate(oTemplate);
+			}
 
 			return oColumn;
 		});

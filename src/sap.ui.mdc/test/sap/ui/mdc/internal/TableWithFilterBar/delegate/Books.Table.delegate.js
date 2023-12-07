@@ -163,8 +163,10 @@ sap.ui.define([
 			if (oColumn) { // in XML templating there is no column
 				var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
 
-				var oTemplate = BooksTableDelegate._createColumnTemplate(oTable, oProperty);
-				oColumn.setTemplate(oTemplate);
+				if (!oProperty.name.endsWith("_ComplexWithUnit")) {
+					var oTemplate = BooksTableDelegate._createColumnTemplate(oTable, oProperty);
+					oColumn.setTemplate(oTemplate);
+				}
 			}
 
 			return oColumn;
