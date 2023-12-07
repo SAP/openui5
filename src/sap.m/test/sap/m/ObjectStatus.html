@@ -450,69 +450,119 @@
 
 	// sap.ui.table.Table
 	var oTable = new sap.ui.table.Table({
-				columns : [
-					new sap.ui.table.Column({
-						name : "ID1",
-						label : new sap.m.Label({
-							text : "Test"
-						}),
-						template : new sap.m.ObjectStatus({
-							text : "{value}",
-							inverted: "{inverted}",
-							icon: "sap-icon://alert",
-							state: "{state}"
-						})
+		columns : [
+			new sap.ui.table.Column({
+				name : "ID1",
+				label : new sap.m.Label({
+					text : "Test"
+				}),
+				template : new sap.m.ObjectStatus({
+					text : "{value}",
+					inverted: "{inverted}",
+					icon: "sap-icon://alert",
+					state: "{state}"
+				})
+			}),
+			new sap.ui.table.Column({
+				name : "ID2",
+				label : new sap.m.Label({
+					text : "ObjectStatus"
+				}),
+				template : new sap.m.ObjectStatus({
+					text : "{value}",
+					inverted: "{inverted}"
+				})
+			}),
+			new sap.ui.table.Column({
+				name : "ID3",
+				label : new sap.m.Label({
+					text : "in"
+				}),
+				hAlign:"End",
+				template : new sap.m.ObjectStatus({
+					text : "{value}",
+					icon: "{icon}",
+					inverted: "{inverted}"
+				})
+			}),
+			new sap.ui.table.Column({
+				name : "ID4",
+				label : new sap.m.Label({
+					text : "sap.ui.table.Table"
+				}),
+				template : new sap.m.ObjectStatus({
+					icon: "sap-icon://error",
+					inverted: "{inverted}",
+					state: "{state}"
+				})
+			})
+		]
+	});
+
+	var aData = [
+		{value : "Error status", inverted: true, state: "Error", icon: "sap-icon://alert"},
+		{value : "Very very very long status text Very very very long status text Very very very long status text", inverted: false, state: "None", icon: "sap-icon://information"},
+		{value : "Very very very long inverted status text vVery very very long inverted status textVery very very long inverted status text", inverted: true, state: "Warning"},
+		{value : "Some status", inverted: false, state: "Success"}
+	];
+
+	oTable.setModel(new sap.ui.model.json.JSONModel(aData));
+
+	oTable.bindAggregation("rows", {
+		path : "/"
+	});
+
+	oVBox.addItem(oTable);
+
+		// sap.ui.table.TreeTable
+	var oTreeTable = new sap.ui.table.TreeTable({
+		rows:"{path: '/' }",
+			columns : [
+				new sap.ui.table.Column({
+					name : "IDT1",
+					label : new sap.m.Label({
+						text : "Expanded TreeTable"
 					}),
-					new sap.ui.table.Column({
-						name : "ID2",
-						label : new sap.m.Label({
-							text : "ObjectStatus"
-						}),
-						template : new sap.m.ObjectStatus({
-							text : "{value}",
-							inverted: "{inverted}"
-						})
-					}),
-					new sap.ui.table.Column({
-						name : "ID3",
-						label : new sap.m.Label({
-							text : "in"
-						}),
-						hAlign:"End",
-						template : new sap.m.ObjectStatus({
-							text : "{value}",
-							icon: "{icon}",
-							inverted: "{inverted}"
-						})
-					}),
-					new sap.ui.table.Column({
-						name : "ID4",
-						label : new sap.m.Label({
-							text : "sap.ui.table.Table"
-						}),
-						template : new sap.m.ObjectStatus({
-							icon: "sap-icon://error",
-							inverted: "{inverted}",
-							state: "{state}"
-						})
+					template : new sap.m.ObjectStatus({
+						text : "{value}",
+						inverted: "{inverted}",
+						icon: "sap-icon://error",
+						state: "{state}"
 					})
+				}),
+				new sap.ui.table.Column({
+					name : "IDT4",
+					label : new sap.m.Label({
+						text : "sap.ui.table.TreeTable"
+					}),
+					template : new sap.m.ObjectStatus({
+						icon: "sap-icon://error",
+						inverted: "{inverted}",
+						state: "{state}"
+					})
+				})
+			]
+		});
+
+	var jsonData= {
+		"Incidents": [
+			{ "state" : "Warning", "inverted": false,
+			"childIncidents": [
+					{"state": "Error", "inverted": false, "issueType": "others1"},
+					{"state": "Success", "inverted": true, "issueType": "others2"}
 				]
-			});//.placeAt("content");
+			}
+		]
+	};
 
-			var aData = [
-				{value : "Error status", inverted: true, state: "Error", icon: "sap-icon://alert"},
-				{value : "Very very very long status text Very very very long status text Very very very long status text", inverted: false, state: "None", icon: "sap-icon://information"},
-				{value : "Very very very long inverted status text vVery very very long inverted status textVery very very long inverted status text", inverted: true, state: "Warning"},
-				{value : "Some status", inverted: false, state: "Success"}
-			];
+	oTreeTable.setModel(new sap.ui.model.json.JSONModel(jsonData));
 
-			oTable.setModel(new sap.ui.model.json.JSONModel(aData));
+	oTreeTable.bindAggregation("rows", {
+		path : "/"
+	});
 
-			oTable.bindAggregation("rows", {
-				path : "/"
-			});
-
-			oVBox.addItem(oTable);
+	oVBox.addItem(oTreeTable);
+	oTreeTable.expandToLevel(1);
 
 	var oPage = new sap.m.Page("testPage", {
 		showHeader : false,
