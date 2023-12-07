@@ -20,8 +20,8 @@
 		</style>
 
 		<script>
-		sap.ui.getCore().attachInit(function() {
 			sap.ui.require([
+				"sap/ui/core/Core",
 				"sap/m/App",
 				"sap/m/Button",
 				"sap/m/Input",
@@ -39,11 +39,13 @@
 				"sap/ui/layout/library",
 				"sap/ui/layout/form/ResponsiveLayout", // to render only after everything is loaded to keep initial focus stable
 				"sap/ui/layout/ResponsiveFlowLayoutData"
-			], function(App, Button, Input, Label, Link, Page, SegmentedButton, SegmentedButtonItem, Text, Title, Toolbar, ToolbarSpacer, CoreTitle, SimpleForm, layoutLibrary) {
+			], async function(Core, App, Button, Input, Label, Link, Page, SegmentedButton, SegmentedButtonItem, Text, Title, Toolbar, ToolbarSpacer, CoreTitle, SimpleForm, layoutLibrary) {
 				"use strict";
 
 				var BackgroundDesign = layoutLibrary.BackgroundDesign;
 				var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
+
+				await Core.ready();
 
 				var aContentEdit = [
 				                    new CoreTitle({text:"Person"}),
@@ -204,7 +206,6 @@
 				// to render only after everything is loaded to keep initial focus stable
 				oApp.addPage(oPage);
 			});
-		});
 		</script>
 
 	</head>

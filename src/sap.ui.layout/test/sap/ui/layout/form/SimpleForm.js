@@ -1,5 +1,6 @@
 sap.ui.require([
 	"sap/ui/core/library",
+	"sap/ui/core/Element",
 	"sap/ui/layout/library",
 	"sap/m/library",
 	"sap/ui/layout/form/SimpleForm",
@@ -33,6 +34,7 @@ sap.ui.require([
 	],
 	function(
 		CoreLib,
+		Element,
 		LayoutLib,
 		MLib,
 		SimpleForm,
@@ -165,13 +167,13 @@ sap.ui.require([
 					new Label({text:"Change the visibility"}),
 					new ToggleButton("myButton1",{text:"Hide Fields",press:function(oEvent) {
 						if (oEvent.getParameter("pressed")) {
-							sap.ui.getCore().byId("I1").setVisible(false);
-							sap.ui.getCore().byId("I2").setVisible(false);
-							sap.ui.getCore().byId("I3").setVisible(false);
+							Element.getElementById("I1").setVisible(false);
+							Element.getElementById("I2").setVisible(false);
+							Element.getElementById("I3").setVisible(false);
 						} else {
-							sap.ui.getCore().byId("I1").setVisible(true);
-							sap.ui.getCore().byId("I2").setVisible(true);
-							sap.ui.getCore().byId("I3").setVisible(true);
+							Element.getElementById("I1").setVisible(true);
+							Element.getElementById("I2").setVisible(true);
+							Element.getElementById("I3").setVisible(true);
 						}
 					}}),
 					new Button("myButton3",{text:"Destroy",press:function(oEvent) {
@@ -179,7 +181,7 @@ sap.ui.require([
 					}}),
 					new ToggleButton("myButton4",{text:"Label colons",press:function(oEvent) {
 						var bPressed = oEvent.getParameter("pressed");
-						var oForm = sap.ui.getCore().byId("SF1");
+						var oForm = Element.getElementById("SF1");
 						if (bPressed) {
 							oForm.addStyleClass("sapUiFormLblColon");
 						} else {

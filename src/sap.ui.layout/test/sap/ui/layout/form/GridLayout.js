@@ -1,5 +1,6 @@
 sap.ui.require([
 	"sap/ui/core/library",
+	"sap/ui/core/Element",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
@@ -24,6 +25,7 @@ sap.ui.require([
 	],
 	function(
 		CoreLib,
+		Element,
 		Form,
 		FormContainer,
 		FormElement,
@@ -49,7 +51,7 @@ sap.ui.require([
 	"use strict";
 
 	var changeLayoutData = function(oEvent){
-		var oControl = sap.ui.getCore().byId("Sel_C5");
+		var oControl = Element.getElementById("Sel_C5");
 		var oLayoutData = oControl.getLayoutData();
 		if (!oLayoutData){
 			oLayoutData = new GridElementData({hCells: "3"});
@@ -64,7 +66,7 @@ sap.ui.require([
 	};
 
 	var deleteLayoutData = function(oEvent){
-		var oControl = sap.ui.getCore().byId("Sel_C5");
+		var oControl = Element.getElementById("Sel_C5");
 		var oLayoutData = oControl.getLayoutData();
 		if (oLayoutData){
 			oControl.setLayoutData(null);
