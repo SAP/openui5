@@ -173,9 +173,10 @@ sap.ui.define([
 			done();
 		};
 		var sFontRequired = ThemeParameters.get({ name: "sapMFontLargeSize" }) || "normal";
+		var sFontHeader = ThemeParameters.get({ name: "sapUiColumnHeaderFontWeight" }) || "normal";
 
-		assert.equal(Util.calcHeaderWidth("Header"), Util.measureText("Header"), "Column header width calculation without parameters");
-		assert.equal(Util.calcHeaderWidth("Header", 2, 19, 2, true), Util.measureText("Header") + Util.measureText("*", sFontRequired) + 0.125, "Column header width calculation with required parameter");
+		assert.equal(Util.calcHeaderWidth("Header"), Util.measureText("Header", sFontHeader), "Column header width calculation without parameters");
+		assert.equal(Util.calcHeaderWidth("Header", 2, 19, 2, true), Util.measureText("Header", sFontHeader) + Util.measureText("*", sFontRequired) + 0.125, "Column header width calculation with required parameter");
 		assert.equal(Util.calcHeaderWidth("Header", 11, 10), 10, "fContentWidth > iMaxWidth");
 		assert.equal(Util.calcHeaderWidth("Hea", 2, 0, 4), 4, "iMinWidth > iHeaderLength");
 		assert.equal(Util.calcHeaderWidth("He", 3, 0, 5), 5, "fContentWidth > iHeaderLength");
@@ -187,7 +188,7 @@ sap.ui.define([
 		fSizeBeforeNewThemeApplied = Util.calcHeaderWidth("Some Long Header Text", 9);
 
 		oThemeParametersStub = sinon.stub(ThemeParameters, "get");
-		oThemeParametersStub.withArgs({ name: "sapMFontMediumSize" }).returns("0.875rem");
+		oThemeParametersStub.withArgs({ name: "sapMFontMediumSize" }).returns("1rem");
 		oThemeParametersStub.withArgs({ name: "sapUiFontFamily" }).returns("Arial");
 		oThemeParametersStub.withArgs({ name: "sapUiColumnHeaderFontWeight" }).returns("bold");
 		Theming.notifyContentDensityChanged();
