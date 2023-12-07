@@ -6,10 +6,7 @@ sap.ui.define([
 	"../../TableDelegate",
 	"../../table/V4AnalyticsPropertyHelper",
 	"../../util/loadModules",
-	"sap/m/ColumnPopoverSelectListItem",
-	"sap/m/MessageBox",
 	"sap/m/plugins/PluginBase",
-	"sap/ui/core/Item",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/format/ListFormat",
@@ -21,10 +18,7 @@ sap.ui.define([
 	TableDelegate,
 	V4AnalyticsPropertyHelper,
 	loadModules,
-	ColumnPopoverSelectListItem,
-	MessageBox,
 	PluginBase,
-	Item,
 	Library,
 	coreLibrary,
 	ListFormat,
@@ -391,52 +385,6 @@ sap.ui.define([
 		TableDelegate.rebind.apply(this, arguments);
 	};
 
-	Delegate.addColumnMenuItems = function(oTable, oMDCColumn) {
-		const oPropertyHelper = oTable.getPropertyHelper();
-		const oProperty = oPropertyHelper.getProperty(oMDCColumn.getPropertyKey());
-		const aItems = [];
-
-		if (!oProperty) {
-			return [];
-		}
-
-		if (oTable.isGroupingEnabled()) {
-			const aGroupableProperties = oProperty.getGroupableProperties();
-
-			if (aGroupableProperties.length > 0) {
-				aItems.push(createGroupPopoverItem(aGroupableProperties, oMDCColumn));
-			}
-		}
-
-		if (oTable.isAggregationEnabled()) {
-			const aPropertiesThatCanBeTotaled = oProperty.getAggregatableProperties().filter((oProperty) => {
-				return oProperty.extension.customAggregate != null;
-			});
-
-			if (aPropertiesThatCanBeTotaled.length > 0) {
-				aItems.push(createAggregatePopoverItem(aPropertiesThatCanBeTotaled, oMDCColumn));
-			}
-		}
-
-		const oPopover = oTable._oPopover;
-		if (oPopover) {
-			oPopover.getItems().forEach((oItem, iIndex, aItems) => {
-				const sLabel = oItem.getLabel();
-				const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
-
-				if (sLabel === oResourceBundle.getText("table.SETTINGS_GROUP") || sLabel === oResourceBundle.getText("table.SETTINGS_TOTALS")) {
-					aItems[iIndex].destroy();
-				}
-
-				if (aItems.length == 0) {
-					oPopover.destroy();
-				}
-			});
-		}
-
-		return aItems;
-	};
-
 	/**
 	 * @inheritDoc
 	 */
@@ -530,117 +478,6 @@ sap.ui.define([
 			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), { expandTo: 1 }));
 		}
 	};
-
-	function createGroupPopoverItem(aGroupProperties, oMDCColumn) {
-		const aGroupChildren = aGroupProperties.map((oGroupProperty) => {
-			return new Item({
-				text: oGroupProperty.label,
-				key: oGroupProperty.name
-			});
-		});
-
-		if (aGroupChildren.length > 0) {
-			return new ColumnPopoverSelectListItem({
-				items: aGroupChildren,
-				label: Library.getResourceBundleFor("sap.ui.mdc").getText("table.SETTINGS_GROUP"),
-				icon: "sap-icon://group-2",
-				action: [{
-					sName: "Group",
-					oMDCColumn
-				}, checkForPreviousAnalytics, this]
-			});
-		}
-	}
-
-	function createAggregatePopoverItem(aAggregateProperties, oMDCColumn) {
-		const aAggregateChildren = aAggregateProperties.map((oAggregateProperty) => {
-			return new Item({
-				text: oAggregateProperty.label,
-				key: oAggregateProperty.name
-			});
-		});
-
-		if (aAggregateChildren.length > 0) {
-			return new ColumnPopoverSelectListItem({
-				items: aAggregateChildren,
-				label: Library.getResourceBundleFor("sap.ui.mdc").getText("table.SETTINGS_TOTALS"),
-				icon: "sap-icon://sum",
-				action: [{
-					sName: "Aggregate",
-					oMDCColumn
-				}, checkForPreviousAnalytics, this]
-			});
-		}
-	}
-
-	function checkForPreviousAnalytics(oEvent, oData) {
-		const { sName } = oData,
-		oTable = oData.oMDCColumn.getParent(),
-			aGroupLevels = oTable.getCurrentState().groupLevels || [],
-			oAggregate = oTable.getCurrentState().aggregations || {},
-			aAggregate = Object.keys(oAggregate),
-			sPath = oEvent.getParameter("property"),
-			aAnalytics = sName === "Aggregate" ? aGroupLevels : aAggregate,
-			bForce = aAnalytics.filter((mItem) => {
-				return sName === "Aggregate" ? mItem.name === sPath : mItem === sPath;
-			}).length > 0;
-
-		let bForcedAnalytics = false;
-
-		if (bForce) {
-			const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
-			let sTitle;
-			let sMessage;
-			let sActionText;
-
-			if (sName === "Aggregate") {
-				sTitle = oResourceBundle.getText("table.SETTINGS_WARNING_TITLE_TOTALS");
-				sMessage = oResourceBundle.getText("table.SETTINGS_MESSAGE2");
-				sActionText = oResourceBundle.getText("table.SETTINGS_WARNING_BUTTON_TOTALS");
-			} else {
-				sTitle = oResourceBundle.getText("table.SETTINGS_WARNING_TITLE_GROUPS");
-				sMessage = oResourceBundle.getText("table.SETTINGS_MESSAGE1");
-				sActionText = oResourceBundle.getText("table.SETTINGS_WARNING_BUTTON_GROUP");
-			}
-
-			bForcedAnalytics = true;
-
-			MessageBox.warning(sMessage, {
-				id: oTable.getId() + "-messageBox",
-				title: sTitle,
-				actions: [sActionText, oResourceBundle.getText("table.SETTINGS_WARNING_BUTTON_CANCEL")],
-				onClose: function(oAction) {
-					if (oAction === sActionText) {
-						forceAnalytics(sName, oTable, sPath);
-					}
-				}
-			});
-		}
-
-		if (sName === "Aggregate" && !bForcedAnalytics) {
-			onAction(sName, oTable, sPath);
-		} else if (sName === "Group" && !bForcedAnalytics) {
-			onAction(sName, oTable, sPath);
-		}
-	}
-
-	function onAction(sAction, oTable, sPath) {
-		if (sAction === "Group") {
-			oTable._onCustomGroup(sPath);
-		} else {
-			oTable._onCustomAggregate(sPath);
-		}
-	}
-
-	function forceAnalytics(sName, oTable, sPath) {
-		if (sName === "Aggregate") {
-			oTable._onCustomGroup(sPath);
-			oTable._onCustomAggregate(sPath);
-		} else if (sName === "Group") {
-			oTable._onCustomAggregate(sPath);
-			oTable._onCustomGroup(sPath);
-		}
-	}
 
 	/**
 	 * Updates the aggregation info if the plugin is enabled.
