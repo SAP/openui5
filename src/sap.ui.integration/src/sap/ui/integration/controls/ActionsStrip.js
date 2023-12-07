@@ -346,5 +346,25 @@ sap.ui.define([
 		return oActionsStrip;
 	};
 
+	ActionsStrip.hasVisibleTemplateItems = function (oConfiguration, oContent) {
+		const vActionsStrip = oConfiguration;
+
+		if (!Array.isArray(vActionsStrip)) {
+			//@todo fix this case
+			return false;
+		}
+
+		const vResolvedConfig = BindingResolver.resolveValue(vActionsStrip, oContent);
+
+		return vResolvedConfig.some((oItem) => !oItem.hasOwnProperty("visible") || !!oItem.visible);
+	};
+
+	ActionsStrip.prototype.hasVisibleItems = function () {
+		const oToolbar = this._getToolbar(),
+			aContent = oToolbar.getContent();
+
+		return aContent.some((oItem) => !(oItem instanceof ToolbarSpacer) && oItem.getVisible());
+	};
+
 	return ActionsStrip;
 });

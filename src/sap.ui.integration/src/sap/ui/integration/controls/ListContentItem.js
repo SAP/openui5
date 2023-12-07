@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/integration/library",
 	"./ListContentItemRenderer",
+	"./ActionsStrip",
 	"sap/ui/integration/controls/ObjectStatus",
 	"sap/m/library",
 	"sap/m/Avatar",
@@ -18,6 +19,7 @@ sap.ui.define([
 	Library,
 	library,
 	ListContentItemRenderer,
+	ActionsStrip,
 	ObjectStatus,
 	mLibrary,
 	Avatar,
@@ -163,18 +165,19 @@ sap.ui.define([
 		renderer: ListContentItemRenderer
 	});
 
-	ListContentItem.getPlaceholderInfo  = function (oResolvedConfigItem) {
+	ListContentItem.getPlaceholderInfo = function (oResolvedConfigItem, oContent) {
 		const aVisibleAttributes = oResolvedConfigItem?.attributes?.filter(function (oAttribute) {
 			return oAttribute.hasOwnProperty("visible") ? oAttribute.visible : true;
 		});
 
 		const bVisibleIcon = oResolvedConfigItem?.icon?.hasOwnProperty("visible") ? oResolvedConfigItem?.icon.visible : !!oResolvedConfigItem?.icon;
+		const bHasVisibleActionsStrip = oResolvedConfigItem?.actionsStrip ? ActionsStrip.hasVisibleTemplateItems(oResolvedConfigItem.actionsStrip, oContent) : false;
 
 		return {
 			hasIcon: bVisibleIcon,
 			attributesLength: aVisibleAttributes ? aVisibleAttributes.length : 0,
 			hasChart: !!oResolvedConfigItem?.chart,
-			hasActionsStrip: !!(oResolvedConfigItem?.actionsStrip?.length > 0),
+			hasActionsStrip: bHasVisibleActionsStrip,
 			hasDescription: !!oResolvedConfigItem?.description
 		};
 	};
@@ -182,7 +185,7 @@ sap.ui.define([
 	ListContentItem.getLinesCount = function (oConfiguration, oContent) {
 		let iLines = 1; // at least 1 line for the mandatory title
 		const oResolvedConfig = BindingResolver.resolveValue(oConfiguration, oContent);
-		const oPlaceholderInfo = ListContentItem.getPlaceholderInfo(oResolvedConfig);
+		const oPlaceholderInfo = ListContentItem.getPlaceholderInfo(oResolvedConfig, oContent);
 
 		const bDescriptionVisible = oResolvedConfig.description?.hasOwnProperty("visible") ? oResolvedConfig.description?.visible : true;
 		if (oResolvedConfig.description && bDescriptionVisible) {
