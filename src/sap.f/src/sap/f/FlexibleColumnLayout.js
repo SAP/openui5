@@ -1505,9 +1505,9 @@ sap.ui.define([
 
 	FlexibleColumnLayout.prototype._getDraggedSeparatorStartOffset = function (oSeparator, bRtl) {
 		if (bRtl) {
-			return window.innerWidth - oSeparator.getBoundingClientRect().right;
+			return this.getDomRef().clientWidth - oSeparator.offsetLeft - oSeparator.offsetWidth;
 		}
-		return oSeparator.getBoundingClientRect().left;
+		return oSeparator.offsetLeft;
 	};
 
 	FlexibleColumnLayout.prototype._onColumnSeparatorMove = function (oEvent) {
