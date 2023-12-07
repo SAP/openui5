@@ -16,7 +16,7 @@ sap.ui.define([
 			var sODataServiceUrl = "/here/goes/your/odata/service/url/";
 
 			// init our mock server
-			mockserver.init(sODataServiceUrl);
+			this.oMockServer = mockserver.init(sODataServiceUrl);
 
 			// set model on component
 			this.setModel(
@@ -25,6 +25,14 @@ sap.ui.define([
 					useBatch: true
 				})
 			);
+		},
+		exit: function() {
+			var oModel = this.getModel();
+			this.setModel();
+			oModel.destroy();
+
+			this.oMockServer.destroy();
+			this.oMockServer = null;
 		}
 	});
 });
