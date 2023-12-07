@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
@@ -24,6 +25,7 @@ sap.ui.define([
 	Reverter,
 	URLHandler,
 	States,
+	FlexState,
 	ControlVariantApplyAPI,
 	JsControlTreeModifier,
 	Element,
@@ -337,19 +339,26 @@ sap.ui.define([
 	 * Saves changes sequentially on the associated change persistence instance;
 	 * This API must be only used in scenarios without draft (like personalization).
 	 *
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aDirtyChanges Array of dirty changes to be saved
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} [aDirtyChanges] - Dirty changes to be saved
 	 * @param {sap.ui.core.UIComponent} [oAppComponent] - AppComponent instance
-	 * @returns {Promise} A Promise which resolves when all changes have been saved with the backend response
+	 * @returns {Promise<object>} Resolves when all changes have been saved with the backend response
 	 * @public
 	 */
-	FlexController.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, oAppComponent) {
-		return this._oChangePersistence.saveDirtyChanges(oAppComponent, false, aDirtyChanges)
-		.then(function(oResponse) {
-			aDirtyChanges.forEach(function(oDirtyChange) {
-				oDirtyChange.setState(States.LifecycleState.PERSISTED);
+	FlexController.prototype.saveSequenceOfDirtyChanges = async function(aDirtyChanges, oAppComponent) {
+		// the same fallback is used in the ChangePersistence, but to update the state we need the changes also here
+		const aChanges = aDirtyChanges || this._oChangePersistence.getDirtyChanges();
+		const oResponse = await this._oChangePersistence.saveDirtyChanges(oAppComponent, false, aChanges);
+
+		if (oResponse?.response?.length) {
+			var aFilenames = oResponse.response.map((oChangeJson) => oChangeJson.fileName);
+			aChanges.forEach(function(oDirtyChange) {
+				if (aFilenames.includes(oDirtyChange.getId())) {
+					oDirtyChange.setState(States.LifecycleState.PERSISTED);
+				}
 			});
-			return oResponse;
-		});
+			FlexState.getFlexObjectsDataSelector().checkUpdate({reference: this._sComponentName});
+		}
+		return oResponse;
 	};
 
 	return FlexController;
