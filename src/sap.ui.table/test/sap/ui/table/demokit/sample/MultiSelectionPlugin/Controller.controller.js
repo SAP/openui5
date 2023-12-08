@@ -85,6 +85,10 @@ sap.ui.define([
 		},
 
 		onExit: function() {
+			var oModel = this.getView().getModel();
+			this.getView().setModel();
+			oModel.destroy();
+
 			this.oMockServer.destroy();
 			this.oMockServer = null;
 			MockServer.config({autoRespondAfter: 0});

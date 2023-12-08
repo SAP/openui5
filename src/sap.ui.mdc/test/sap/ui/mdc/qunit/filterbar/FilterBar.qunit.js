@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/mdc/util/FilterUtil",
 	'sap/base/util/merge',
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName"
@@ -36,7 +36,7 @@ sap.ui.define([
 	FilterUtil,
 	merge,
 	CoreLibrary,
-	oCore,
+	nextUIUpdate,
 	TestModificationHandler,
 	ConditionValidated,
 	OperatorName
@@ -150,7 +150,7 @@ sap.ui.define([
 		assert.ok(oButton.getVisible(), "Clear is now visible");
 	});
 
-	QUnit.test("check Clear delegate call", function (assert) {
+	QUnit.test("check Clear delegate call", async function (assert) {
 		const done = assert.async();
 		sinon.spy(oFilterBar,"onClear");
 
@@ -166,7 +166,7 @@ sap.ui.define([
 		oFilterBar.placeAt("qunit-fixture-visible");
 
 		oFilterBar.setShowClearButton(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const oButton = oFilterBar._btnClear;
 		assert.ok(oButton, "clear button available");

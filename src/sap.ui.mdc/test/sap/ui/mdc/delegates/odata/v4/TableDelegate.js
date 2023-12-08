@@ -46,10 +46,10 @@ sap.ui.define([
 				return new Currency({
 					useSymbol: false,
 					value: {
-						path: aProperties[0].getPath()
+						path: aProperties[0].path
 					},
 					currency: {
-						path: aProperties[1].getPath()
+						path: aProperties[1].path
 					}
 				});
 			}

@@ -1,4 +1,5 @@
 sap.ui.require([
+	"sap/ui/core/Element",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
@@ -8,6 +9,7 @@ sap.ui.require([
 	"sap/m/Text"
 	],
 	function(
+		Element,
 		Form,
 		FormContainer,
 		FormElement,
@@ -68,6 +70,6 @@ sap.ui.require([
 	});
 	oForm1.placeAt("content");
 
-	sap.ui.getCore().byId("C1").setExpandable(true); // to check button is not created twice
+	Element.getElementById("C1").setExpandable(true); // to check button is not created twice
 
 });

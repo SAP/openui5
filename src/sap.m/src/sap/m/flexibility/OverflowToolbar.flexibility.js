@@ -11,16 +11,10 @@ sap.ui.define([
 	return {
 		"moveControls": "default",
 		"combineButtons": {
-			"changeHandler": CombineButtonsHandler,
-			"layers": {
-				"CUSTOMER": false
-			}
+			"changeHandler": CombineButtonsHandler
 		},
 		"splitMenuButton": {
-			"changeHandler": SplitMenuButtonHandler,
-			"layers": {
-				"CUSTOMER": false
-			}
+			"changeHandler": SplitMenuButtonHandler
 		}
 	};
 });

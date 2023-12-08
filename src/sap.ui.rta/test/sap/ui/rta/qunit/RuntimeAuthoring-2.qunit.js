@@ -150,7 +150,7 @@ sap.ui.define([
 			.catch(function(oError) {
 				assert.ok(true, "then the start promise rejects");
 				assert.equal(oFireFailedStub.callCount, 0, "and fireFailed was not called");
-				assert.equal(oError, "Reload triggered", "and the Error is 'Reload triggered'");
+				assert.equal(oError.message, "Reload triggered", "and the Error is 'Reload triggered'");
 				assert.equal(fnRemovePopupFilterStub.callCount, 2, "then the popup filter from the old rta popupManager are removed from ZIndexManager");
 			});
 		});
@@ -159,14 +159,14 @@ sap.ui.define([
 			assert.expect(3);
 			sandbox.stub(DesignTime.prototype, "addRootElement").callsFake(function() {
 				setTimeout(function() {
-					this.fireSyncFailed({error: "DesignTime failed"});
+					this.fireSyncFailed({error: Error("DesignTime failed")});
 				}.bind(this), 0);
 			});
 			const oFireFailedStub = sandbox.stub(this.oRta, "fireFailed");
 			return this.oRta.start()
 			.catch(function(oError) {
 				assert.ok(true, "the start function rejects the promise");
-				assert.equal(oError, "DesignTime failed", "with the correct Error");
+				assert.equal(oError.message, "DesignTime failed", "with the correct Error");
 				assert.equal(oFireFailedStub.callCount, 1, "and fireFailed was called");
 			});
 		});
@@ -668,7 +668,7 @@ sap.ui.define([
 		const DEFAULT_ADAPTATION = { id: "DEFAULT", type: "DEFAULT" };
 		function stubCBA() {
 			ContextBasedAdaptationsAPI.clearInstances();
-			stubToolbarButtonsVisibility(true, true);
+			stubToolbarButtonsVisibility(true, false);
 			sandbox.stub(FeaturesAPI, "isContextBasedAdaptationAvailable").resolves(true);
 			this.oContextBasedAdaptationsAPILoadStub = sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves({adaptations: [{id: "12345"}, DEFAULT_ADAPTATION]});
 			this.oFlexUtilsGetAppDescriptor = sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});

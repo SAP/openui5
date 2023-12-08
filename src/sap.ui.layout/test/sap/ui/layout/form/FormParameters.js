@@ -1,4 +1,5 @@
 sap.ui.require([
+	"sap/ui/core/Element",
 	"sap/m/library",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
@@ -21,6 +22,7 @@ sap.ui.require([
 	"sap/m/CheckBox"
 	],
 	function(
+		Element,
 		MLib,
 		Form,
 		FormContainer,
@@ -63,22 +65,22 @@ sap.ui.require([
 		switch (sKey) {
 		case "RGL":
 			oLayout = new ResponsiveGridLayout("RGL", {
-				labelSpanS: parseInt(sap.ui.getCore().byId("I-labelSpanS").getValue()),
-				labelSpanM: parseInt(sap.ui.getCore().byId("I-labelSpanM").getValue()),
-				labelSpanL: parseInt(sap.ui.getCore().byId("I-labelSpanL").getValue()),
-				labelSpanXL: parseInt(sap.ui.getCore().byId("I-labelSpanXL").getValue()),
-				adjustLabelSpan: sap.ui.getCore().byId("CB-adjustLabelSpan").getSelected(),
-				emptySpanS: parseInt(sap.ui.getCore().byId("I-emptySpanS").getValue()),
-				emptySpanM: parseInt(sap.ui.getCore().byId("I-emptySpanM").getValue()),
-				emptySpanL: parseInt(sap.ui.getCore().byId("I-emptySpanL").getValue()),
-				emptySpanXL: parseInt(sap.ui.getCore().byId("I-emptySpanXL").getValue()),
-				columnsM: parseInt(sap.ui.getCore().byId("I-columnsM").getValue()),
-				columnsL: parseInt(sap.ui.getCore().byId("I-columnsL").getValue()),
-				columnsXL: parseInt(sap.ui.getCore().byId("I-columnsXL").getValue()),
-				singleContainerFullSize: sap.ui.getCore().byId("CB-singleContainerFullSize").getSelected(),
-				breakpointM: parseInt(sap.ui.getCore().byId("I-breakpointM").getValue()),
-				breakpointL: parseInt(sap.ui.getCore().byId("I-breakpointL").getValue()),
-				breakpointXL: parseInt(sap.ui.getCore().byId("I-breakpointXL").getValue())
+				labelSpanS: parseInt(Element.getElementById("I-labelSpanS").getValue()),
+				labelSpanM: parseInt(Element.getElementById("I-labelSpanM").getValue()),
+				labelSpanL: parseInt(Element.getElementById("I-labelSpanL").getValue()),
+				labelSpanXL: parseInt(Element.getElementById("I-labelSpanXL").getValue()),
+				adjustLabelSpan: Element.getElementById("CB-adjustLabelSpan").getSelected(),
+				emptySpanS: parseInt(Element.getElementById("I-emptySpanS").getValue()),
+				emptySpanM: parseInt(Element.getElementById("I-emptySpanM").getValue()),
+				emptySpanL: parseInt(Element.getElementById("I-emptySpanL").getValue()),
+				emptySpanXL: parseInt(Element.getElementById("I-emptySpanXL").getValue()),
+				columnsM: parseInt(Element.getElementById("I-columnsM").getValue()),
+				columnsL: parseInt(Element.getElementById("I-columnsL").getValue()),
+				columnsXL: parseInt(Element.getElementById("I-columnsXL").getValue()),
+				singleContainerFullSize: Element.getElementById("CB-singleContainerFullSize").getSelected(),
+				breakpointM: parseInt(Element.getElementById("I-breakpointM").getValue()),
+				breakpointL: parseInt(Element.getElementById("I-breakpointL").getValue()),
+				breakpointXL: parseInt(Element.getElementById("I-breakpointXL").getValue())
 			});
 			break;
 
@@ -88,7 +90,7 @@ sap.ui.require([
 			break;
 
 		case "GL":
-			var bSingleColumn = sap.ui.getCore().byId("CB-singleColumn").getSelected();
+			var bSingleColumn = Element.getElementById("CB-singleColumn").getSelected();
 			oLayout = new GridLayout("GL", {
 				singleColumn: bSingleColumn
 			});
@@ -100,11 +102,11 @@ sap.ui.require([
 
 		case "CL":
 			oLayout = new ColumnLayout("CL", {
-				columnsM: parseInt(sap.ui.getCore().byId("I-columnsM-CL").getValue()),
-				columnsL: parseInt(sap.ui.getCore().byId("I-columnsL-CL").getValue()),
-				columnsXL: parseInt(sap.ui.getCore().byId("I-columnsXL-CL").getValue()),
-				labelCellsLarge: parseInt(sap.ui.getCore().byId("I-labelCellsLarge").getValue()),
-				emptyCellsLarge: parseInt(sap.ui.getCore().byId("I-emptyCellsLarge").getValue())
+				columnsM: parseInt(Element.getElementById("I-columnsM-CL").getValue()),
+				columnsL: parseInt(Element.getElementById("I-columnsL-CL").getValue()),
+				columnsXL: parseInt(Element.getElementById("I-columnsXL-CL").getValue()),
+				labelCellsLarge: parseInt(Element.getElementById("I-labelCellsLarge").getValue()),
+				emptyCellsLarge: parseInt(Element.getElementById("I-emptyCellsLarge").getValue())
 			});
 			break;
 
@@ -114,13 +116,13 @@ sap.ui.require([
 		}
 
 		oForm.setLayout(oLayout);
-		sap.ui.getCore().byId("C-" + sOldKey).setVisible(false);
-		sap.ui.getCore().byId("C-" + sKey).setVisible(true);
+		Element.getElementById("C-" + sOldKey).setVisible(false);
+		Element.getElementById("C-" + sKey).setVisible(true);
 	};
 
 	var handleFieldsChange = function(oEvent){
 		var iFields = parseInt(oEvent.getParameter("value"));
-		var oElement = sap.ui.getCore().byId("E-Fields");
+		var oElement = Element.getElementById("E-Fields");
 		var aFields = oElement.getFields();
 
 		if (aFields.length > iFields) {
@@ -174,34 +176,34 @@ sap.ui.require([
 					new FormElement({
 						label: "labelSpan (S, M, L, XL)",
 						fields: [new Input("I-labelSpanS",{
-											value: sap.ui.getCore().byId("RGL").getLabelSpanS(),
+											value: Element.getElementById("RGL").getLabelSpanS(),
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setLabelSpanS(parseInt(sValue));
 											}}),
 										 new Input("I-labelSpanM",{
-											value: sap.ui.getCore().byId("RGL").getLabelSpanM(),
+											value: Element.getElementById("RGL").getLabelSpanM(),
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setLabelSpanM(parseInt(sValue));
 											}}),
 										 new Input("I-labelSpanL",{
-											value: sap.ui.getCore().byId("RGL").getLabelSpanL(),
+											value: Element.getElementById("RGL").getLabelSpanL(),
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setLabelSpanL(parseInt(sValue));
 											}}),
 										 new Input("I-labelSpanXL",{
-											value: sap.ui.getCore().byId("RGL").getLabelSpanXL(),
+											value: Element.getElementById("RGL").getLabelSpanXL(),
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setLabelSpanXL(parseInt(sValue));
 											}})]
@@ -209,9 +211,9 @@ sap.ui.require([
 					new FormElement({
 						label: "adjustLabelSpan",
 						fields: [new CheckBox("CB-adjustLabelSpan",{
-											selected: sap.ui.getCore().byId("RGL").getAdjustLabelSpan(),
+											selected: Element.getElementById("RGL").getAdjustLabelSpan(),
 											select: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var bSelected = oEvent.getParameter("selected");
 												oLayout.setAdjustLabelSpan(bSelected);
 											}})]
@@ -219,34 +221,34 @@ sap.ui.require([
 					new FormElement({
 						label: "emptySpan (S, M, L, XL)",
 						fields: [new Input("I-emptySpanS",{
-											value: sap.ui.getCore().byId("RGL").getEmptySpanS(),
+											value: Element.getElementById("RGL").getEmptySpanS(),
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setEmptySpanS(parseInt(sValue));
 											}}),
 										 new Input("I-emptySpanM",{
-											value: sap.ui.getCore().byId("RGL").getEmptySpanM(),
+											value: Element.getElementById("RGL").getEmptySpanM(),
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setEmptySpanM(parseInt(sValue));
 											}}),
 										 new Input("I-emptySpanL",{
-											value: sap.ui.getCore().byId("RGL").getEmptySpanL(),
+											value: Element.getElementById("RGL").getEmptySpanL(),
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setEmptySpanL(parseInt(sValue));
 											}}),
 										 new Input("I-emptySpanXL",{
-											value: sap.ui.getCore().byId("RGL").getEmptySpanXL(),
+											value: Element.getElementById("RGL").getEmptySpanXL(),
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setEmptySpanXL(parseInt(sValue));
 											}})]
@@ -254,26 +256,26 @@ sap.ui.require([
 					new FormElement({
 						label: "columns (M, L, XL)",
 						fields: [new Input("I-columnsM",{
-											value: sap.ui.getCore().byId("RGL").getColumnsM(),
+											value: Element.getElementById("RGL").getColumnsM(),
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setColumnsM(parseInt(sValue));
 											}}),
 										 new Input("I-columnsL",{
-											value: sap.ui.getCore().byId("RGL").getColumnsL(),
+											value: Element.getElementById("RGL").getColumnsL(),
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setColumnsL(parseInt(sValue));
 											}}),
 										 new Input("I-columnsXL",{
-											value: sap.ui.getCore().byId("RGL").getColumnsXL(),
+											value: Element.getElementById("RGL").getColumnsXL(),
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setColumnsXL(parseInt(sValue));
 											}})]
@@ -281,9 +283,9 @@ sap.ui.require([
 					new FormElement({
 						label: "singleContainerFullSize",
 						fields: [new CheckBox("CB-singleContainerFullSize",{
-											selected: sap.ui.getCore().byId("RGL").getSingleContainerFullSize(),
+											selected: Element.getElementById("RGL").getSingleContainerFullSize(),
 											select: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var bSelected = oEvent.getParameter("selected");
 												oLayout.setSingleContainerFullSize(bSelected);
 											}})]
@@ -291,26 +293,26 @@ sap.ui.require([
 					new FormElement({
 						label: "breakpoint (M, L, XL)",
 						fields: [new Input("I-breakpointM",{
-											value: sap.ui.getCore().byId("RGL").getBreakpointM(),
+											value: Element.getElementById("RGL").getBreakpointM(),
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setBreakpointM(parseInt(sValue));
 											}}),
 										 new Input("I-breakpointL",{
-											value: sap.ui.getCore().byId("RGL").getBreakpointL(),
+											value: Element.getElementById("RGL").getBreakpointL(),
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setBreakpointL(parseInt(sValue));
 											}}),
 										 new Input("I-breakpointXL",{
-											value: sap.ui.getCore().byId("RGL").getBreakpointXL(),
+											value: Element.getElementById("RGL").getBreakpointXL(),
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("RGL");
+												var oLayout = Element.getElementById("RGL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setBreakpointXL(parseInt(sValue));
 											}})]
@@ -325,7 +327,7 @@ sap.ui.require([
 						label: "no properties",
 						fields: [new Input({enabled: false,
 											change: function(oEvent){
-//												var oLayout = sap.ui.getCore().byId("RL");
+//												var oLayout = Element.getElementById("RL");
 											}})]
 					})
 				]
@@ -338,7 +340,7 @@ sap.ui.require([
 						label: "singleColumn",
 						fields: [new CheckBox("CB-singleColumn", {selected: false,
 											select: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("GL");
+												var oLayout = Element.getElementById("GL");
 												var bSelected = oEvent.getParameter("selected");
 												oLayout.setSingleColumn(bSelected);
 											}})]
@@ -355,7 +357,7 @@ sap.ui.require([
 											value: 1,
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("CL");
+												var oLayout = Element.getElementById("CL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setColumnsM(parseInt(sValue));
 											}}),
@@ -363,7 +365,7 @@ sap.ui.require([
 											value: 2,
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("CL");
+												var oLayout = Element.getElementById("CL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setColumnsL(parseInt(sValue));
 											}}),
@@ -371,7 +373,7 @@ sap.ui.require([
 											value: 2,
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("CL");
+												var oLayout = Element.getElementById("CL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setColumnsXL(parseInt(sValue));
 											}})]
@@ -382,7 +384,7 @@ sap.ui.require([
 											value: 4,
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("CL");
+												var oLayout = Element.getElementById("CL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setLabelCellsLarge(parseInt(sValue));
 											}})]
@@ -393,7 +395,7 @@ sap.ui.require([
 											value: 0,
 											type: MLib.InputType.Number,
 											change: function(oEvent){
-												var oLayout = sap.ui.getCore().byId("CL");
+												var oLayout = Element.getElementById("CL");
 												var sValue = oEvent.getParameter("value");
 												oLayout.setEmptyCellsLarge(parseInt(sValue));
 											}})]

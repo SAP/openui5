@@ -20,8 +20,8 @@
 		</style>
 
 		<script>
-		sap.ui.getCore().attachInit(function() {
 			sap.ui.require([
+				"sap/ui/core/Core",
 				"sap/ui/core/library",
 				"sap/ui/layout/library",
 				"sap/m/library",
@@ -46,7 +46,8 @@
 				"sap/m/App",
 				"sap/m/Page"
 				],
-				function(
+				async function(
+					Core,
 					CoreLib,
 					LayoutLib,
 					MLib,
@@ -72,6 +73,8 @@
 					Page
 					) {
 				"use strict";
+
+				await Core.ready();
 
 				// TODO: Fake iSematicFormContent on controls until it is official supported
 				var myTypeCheck = function(vTypeName) {
@@ -220,7 +223,6 @@
 				oApp.addPage(oPage);
 
 			});
-		});
 		</script>
 
 	</head>

@@ -485,6 +485,21 @@ sap.ui.define([
 		return iRowCount <= 0;
 	};
 
+	/**
+	 * Checks whether the binding supports exporting the table data.
+	 * This can be used to define the enabled property of the export
+	 * button.
+	 *
+	 * @param {sap.ui.model.Binding} oBinding The row binding
+	 * @returns {boolean} Whether the binding can be used for exporting
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.ui.comp
+	 * @since 1.121
+	 */
+	Util.isExportable = function(oBinding) {
+		return !Util.isEmpty(oBinding) && (!oBinding?.getDownloadUrl || oBinding.getDownloadUrl() !== null);
+	};
+
 	return Util;
 
 });
