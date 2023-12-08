@@ -253,15 +253,28 @@ sap.ui.define([], function() {
 	 * @ui5-restricted sap.ui.core.date.UI5Date, sap.ui.core.format.DateFormat, sap.m.DynamicDateUtil
 	 */
 	TimezoneUtils.calculateOffset = function(oDate, sTimezoneSource) {
-		var oFirstGuess = this.convertToTimezone(oDate, sTimezoneSource),
-			iInitialOffset = oDate.getTime() - oFirstGuess.getTime(),
-			// to get the correct summer/wintertime (daylight saving time) handling use the source
-			// date (apply the diff);
-			// no need to use UI5Date.getInstance as only the UTC timestamp is used
-			oDateSource = new Date(oDate.getTime() + iInitialOffset),
-			oDateTarget = this.convertToTimezone(oDateSource, sTimezoneSource);
+		const oDateInTimezone = TimezoneUtils.convertToTimezone(oDate, sTimezoneSource);
+		const iGivenTimestamp = oDate.getTime();
+		const iInitialOffset = iGivenTimestamp - oDateInTimezone.getTime();
+		// no need to use UI5Date.getInstance as only the UTC timestamp is used
+		const oFirstGuess = new Date(iGivenTimestamp + iInitialOffset);
+		const oFirstGuessInTimezone = TimezoneUtils.convertToTimezone(oFirstGuess, sTimezoneSource);
+		const iFirstGuessInTimezoneTimestamp = oFirstGuessInTimezone.getTime();
+		const iSecondOffset = oFirstGuess.getTime() - iFirstGuessInTimezoneTimestamp;
+		let iTimezoneOffset = iSecondOffset;
 
-		return (oDateSource.getTime() - oDateTarget.getTime()) / 1000;
+		if (iInitialOffset !== iSecondOffset) {
+			const oSecondGuess = new Date(iGivenTimestamp + iSecondOffset);
+			const oSecondGuessInTimezone = TimezoneUtils.convertToTimezone(oSecondGuess, sTimezoneSource);
+			const iSecondGuessInTimezoneTimestamp = oSecondGuessInTimezone.getTime();
+			// if time is different, the given date/time does not exist in the target time zone (switch to Daylight
+			// Saving Time) -> take the offset for the greater date
+			if (iSecondGuessInTimezoneTimestamp !== iGivenTimestamp
+					&& iFirstGuessInTimezoneTimestamp > iSecondGuessInTimezoneTimestamp) {
+				iTimezoneOffset = iInitialOffset;
+			}
+		}
+		return iTimezoneOffset / 1000;
 	};
 
 	/**
