@@ -1,5 +1,5 @@
 /* eslint-env node */
-/* global describe, it, browser */
+/* global describe, element, by, it, browser */
 
 var utils = require("./cardVisualTestUtils");
 
@@ -97,6 +97,27 @@ describe("sap.ui.integration.CardHeaderFooterVisualTests", function () {
 
 			utils.takePictureOfElement(oElement, "10_HiddenFooter_" + oCard.id);
 		});
+		utils.navigateBack();
+	});
+
+	it("Card Actions Label", function () {
+		utils.navigateTo("Footer (experimental)");
+
+		var oCard = {id: "card3"};
+
+		var oElement = {
+			control: {
+				viewNamespace: "sap.f.cardsdemo.view.",
+				viewName: "Footer",
+				interaction: "root",
+				id: oCard.id
+			}
+		};
+
+		element(by.id("__toolbar6-overflowButton")).click();
+
+		utils.takePictureOfElement(oElement, "10_Card_Actions_Label" + oCard.id);
+
 		utils.navigateBack();
 	});
 });

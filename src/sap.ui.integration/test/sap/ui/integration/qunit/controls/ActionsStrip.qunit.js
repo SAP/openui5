@@ -77,6 +77,20 @@ sap.ui.define([
 		oActionsStrip.destroy();
 	});
 
+	QUnit.test("type=Label", function (assert) {
+		// Arrange
+		var oActionsStrip = ActionsStrip.create([
+			{ text: "Text1", type: "Label"}
+		], this.oCard);
+
+		// Assert
+		assert.ok(oActionsStrip._getToolbar().getContent()[1].isA("sap.m.Label"), "If 'type' is set to 'Label', an sap.m.Label should be created");
+		assert.strictEqual(oActionsStrip._getToolbar().getContent()[1].getText(), "Text1", "The label text is correct");
+
+		// Clean up
+		oActionsStrip.destroy();
+	});
+
 	QUnit.test("Item template", function (assert) {
 		// Arrange
 		const oActionsStrip = ActionsStrip.create({
@@ -166,8 +180,6 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oActionsStrip._getToolbar().getContent().length, 0, "There are no items created");
 
-		// Clean up
-		oActionsStrip.destroy();
 	});
 
 	QUnit.module("Events", {

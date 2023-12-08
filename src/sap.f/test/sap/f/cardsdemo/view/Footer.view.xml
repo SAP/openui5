@@ -26,6 +26,12 @@
 						<f:GridContainerItemLayoutData columns="5" />
 					</w:layoutData>
 				</w:Card>
+				<w:Card id="card3"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/footer/cardActionsLabel.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="5" />
+					</w:layoutData>
+				</w:Card>
 			</f:GridContainer>
 		</Panel>
 	</Page>
