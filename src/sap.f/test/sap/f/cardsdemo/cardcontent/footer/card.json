@@ -167,12 +167,25 @@
 				{
 					"buttonType": "Transparent",
 					"icon": "sap-icon://email",
-					"text": "Contact",
+					"tooltip": "Contact",
 					"actions": [
 						{
 							"type": "Navigation",
 							"parameters": {
 								"url": "mailto:{email}"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"icon": "sap-icon://world",
+					"text": "Share",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "/share"
 							}
 						}
 					]

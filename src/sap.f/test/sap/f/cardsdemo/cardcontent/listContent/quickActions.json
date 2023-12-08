@@ -105,19 +105,6 @@
 								}
 							}
 						]
-					},
-					{
-						"buttonType": "Reject",
-						"icon": "sap-icon://email",
-						"text": "text only",
-						"actions": [
-							{
-								"type": "Navigation",
-								"parameters": {
-									"url": "http://sap.com"
-								}
-							}
-						]
 					}
 				]
 			}
