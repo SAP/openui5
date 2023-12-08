@@ -3254,6 +3254,13 @@ sap.ui.define([
 					oClonedType_DEBIA.property[2/*LAND1*/]
 						["com.sap.vocabularies.Common.v1.Label"].String,
 					"Country");
+				// check that also sap:unit annotations are added as V4 annotations, incident DINC0007105
+				assert.strictEqual(oClonedType_DEBIA.property[7/*Price*/]["sap:unit"], "CurrencyCode");
+				assert.strictEqual(oClonedType_DEBIA.property[7/*Price*/]["Org.OData.Measures.V1.ISOCurrency"].Path,
+					"CurrencyCode");
+				assert.strictEqual(oClonedType_DEBIA.property[9/*Weight*/]["sap:unit"], "WeightUnit");
+				assert.strictEqual(oClonedType_DEBIA.property[9/*Weight*/]["Org.OData.Measures.V1.Unit"].Path,
+					"WeightUnit");
 
 				assert.strictEqual(oClonedSet_DEBIA["sap:creatable"], "false");
 				assert.strictEqual(oClonedSet_DEBIA["sap:deletable"], "false");
