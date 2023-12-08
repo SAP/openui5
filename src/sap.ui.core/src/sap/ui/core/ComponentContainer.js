@@ -404,7 +404,7 @@ sap.ui.define([
 			if (oOwnerComponent) {
 				mConfig = oOwnerComponent._enhanceWithUsageConfig(sUsageId, mConfig);
 			} else {
-				Log.error("ComponentContainer \"" + this.getId() + "\" does have a \"usage\", but no owner component!");
+				Log.error("[FUTURE FATAL] ComponentContainer \"" + this.getId() + "\" does have a \"usage\", but no owner component!");
 			}
 		}
 
@@ -455,7 +455,7 @@ sap.ui.define([
 					delete this._oComponentPromise;
 					// listeners can prevent the default log entry
 					if ( this.fireComponentFailed({ reason: oReason }) ) {
-						Log.error("Failed to load component for container " + this.getId(), oReason);
+						Log.error("[FUTURE FATAL] Failed to load component for container " + this.getId(), oReason);
 					}
 				}.bind(this));
 			} else if (oComponent) {

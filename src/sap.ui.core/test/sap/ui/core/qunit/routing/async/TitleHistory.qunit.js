@@ -634,7 +634,7 @@ sap.ui.define([
 
 		return this.oRouteMatchedSpies["product"].returnValues[0].then(function() {
 			// Assert
-			sinon.assert.calledWith(this.spy, "Routes with dynamic parts cannot be resolved as home route.");
+			assert.ok(this.spy.calledWith(sinon.match(/Routes with dynamic parts cannot be resolved as home route./)));
 			assert.strictEqual(oParameters.history.length, 0, "Home route shouldn't be added to history.");
 			assert.deepEqual(this.oRouter.getTitleHistory()[0], {
 				hash: "/product",

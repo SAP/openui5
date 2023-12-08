@@ -134,12 +134,12 @@ sap.ui.define([
 
 		// immediately call the resolving handler
 		EventHandlerResolver.resolveEventHandler("Module.someMethod()", oController, {Module: {}});
-		sinon.assert.calledWithExactly(logSpy, "Event handler name 'Module.someMethod()' could not be resolved to an event handler function");
+		assert.ok(logSpy.calledWith(sinon.match(/Event handler name 'Module.someMethod\(\)' could not be resolved to an event handler function/)));
 		logSpy.resetHistory();
 
 		// test without associated controller
 		EventHandlerResolver.resolveEventHandler("Module.someMethod()", null, {Module: {}});
-		sinon.assert.calledWithExactly(logSpy, "Event handler name 'Module.someMethod()' could not be resolved to an event handler function");
+		assert.ok(logSpy.calledWith(sinon.match(/Event handler name 'Module.someMethod\(\)' could not be resolved to an event handler function/)));
 
 		logSpy.restore();
 	});

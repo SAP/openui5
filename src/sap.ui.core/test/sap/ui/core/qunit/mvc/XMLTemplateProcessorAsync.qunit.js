@@ -528,7 +528,7 @@ sap.ui.define([
 			assert.equal(oInputInvalidType.getValue(), "1234", "Input field has correct unformatted(!) value '1234'.");
 
 			// test error log for invalid/missing type
-			assert.ok(this.logErrorSpy.calledWith("Failed to resolve type 'sap.ui.non.existing.Type'. Maybe not loaded or a typo?"), "Error message for missing type is logged.");
+			assert.ok(this.logErrorSpy.calledWith(sinon.match(/Failed to resolve type 'sap.ui.non.existing.Type'. Maybe not loaded or a typo\?/)), "Error message for missing type is logged.");
 
 			// test CustomData binding values
 			var oPanel = oView.byId("panel");

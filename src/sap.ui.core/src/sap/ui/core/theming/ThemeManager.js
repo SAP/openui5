@@ -470,7 +470,7 @@ sap.ui.define([
 
 			} catch (e) {
 				// parsing error
-				Log.error("Custom check: Error parsing JSON string for custom.css indication.", e);
+				Log.error("[FUTURE FATAL] Custom check: Error parsing JSON string for custom.css indication.", e);
 			}
 		}
 
@@ -521,7 +521,7 @@ sap.ui.define([
 			ThemeManager.themeLoaded = true;
 			ThemeManager.fireThemeApplied();
 			if (bEmergencyExit) {
-				Log.error("ThemeManager: max. check cycles reached.");
+				Log.error("[FUTURE FATAL] ThemeManager: max. check cycles reached.");
 			}
 		} else {
 			ThemeManager.themeLoaded = true;

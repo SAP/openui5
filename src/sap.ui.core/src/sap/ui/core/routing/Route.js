@@ -137,9 +137,9 @@ sap.ui.define([
 				if (oConfig.parent) {
 					var oRoute = this._getParentRoute(oConfig.parent);
 					if (!oRoute) {
-						Log.error("No parent route with '" + oConfig.parent + "' could be found", this);
+						Log.error("[FUTURE FATAL] No parent route with '" + oConfig.parent + "' could be found", this);
 					} else if (oRoute._aPattern.length > 1) {
-						Log.error("Routes with multiple patterns cannot be used as parent for nested routes", this);
+						Log.error("[FUTURE FATAL] Routes with multiple patterns cannot be used as parent for nested routes", this);
 						return;
 					} else {
 						this._oNestingParent = oRoute;
@@ -366,7 +366,7 @@ sap.ui.define([
 										oHashChanger.setHash(oRoute.getURL(oRouteInfo.parameters), bParentRouteSwitched || !bRouteSwitched);
 										return oRoute._changeHashWithComponentTargets(oRouteInfo.componentTargetInfo, bParentRouteSwitched || bRouteSwitched);
 									} else {
-										Log.error("Can not navigate to route with name '" + sRouteName + "' because the route does not exist in component with id '" + oComponent.getId() + "'");
+										Log.error("[FUTURE FATAL] Can not navigate to route with name '" + sRouteName + "' because the route does not exist in component with id '" + oComponent.getId() + "'");
 									}
 								}
 							});
@@ -637,11 +637,11 @@ sap.ui.define([
 
 			_validateConfig: function(oConfig) {
 				if (!oConfig.name) {
-					Log.error("A name has to be specified for every route", this);
+					Log.error("[FUTURE FATAL] A name has to be specified for every route", this);
 				}
 
 				if (oConfig.viewName) {
-					Log.error("The 'viewName' option shouldn't be used in Route. please use 'view' instead", this);
+					Log.error("[FUTURE FATAL] The 'viewName' option shouldn't be used in Route. please use 'view' instead", this);
 				}
 			},
 

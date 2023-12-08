@@ -139,7 +139,7 @@ sap.ui.define([
 		var oUI5ElementFound = Element.closestTo(jQuery("#startPoint"));
 		assert.strictEqual(oUI5ElementFound, oUI5Element);
 
-		sinon.assert.calledWithExactly(oErrorLogSpy, "[FUTURE] Do not call Element.closestTo() with jQuery object as parameter. \
+		sinon.assert.calledWithExactly(oErrorLogSpy, "[FUTURE FATAL] Do not call Element.closestTo() with jQuery object as parameter. \
 				The function should be called with either a DOM Element or a CSS selector. \
 				(future error, ignored for now)");
 

@@ -85,7 +85,7 @@ function(
 
 				// if the parsed value is not valid, we don't fail but only log an error
 				if (!oType.isValid(vValue)) {
-					Log.error("Value '" + sValue + "' is not valid for type '" + oType.getName() + "'.");
+					Log.error("[FUTURE FATAL] Value '" + sValue + "' is not valid for type '" + oType.getName() + "'.");
 				}
 			}
 			// else keep original sValue (e.g. for enums)
@@ -739,7 +739,7 @@ function(
 			sNodeName = localName(node);
 			if (oView.isA("sap.ui.core.mvc.XMLView")) {
 				if ((sNodeName !== "View" && sNodeName !== "XMLView") || node.namespaceURI !== CORE_MVC_NAMESPACE) {
-					Log.error("XMLView's root node must be 'View' or 'XMLView' and have the namespace 'sap.ui.core.mvc'" + (sCurrentName ? " (View name: " + sCurrentName + ")" : ""));
+					Log.error("[FUTURE FATAL] XMLView's root node must be 'View' or 'XMLView' and have the namespace 'sap.ui.core.mvc'" + (sCurrentName ? " (View name: " + sCurrentName + ")" : ""));
 				}
 				// createRegularControls
 				pResultChain = pChain.then(function() {
@@ -798,7 +798,7 @@ function(
 			 */
 			function validateClass(fnClass) {
 				if (!fnClass) {
-					let sErrorLogMessage = `[FUTURE-FATAL] Control '${sClassName}' did not return a class definition from sap.ui.define.`;
+					let sErrorLogMessage = `[FUTURE FATAL] Control '${sClassName}' did not return a class definition from sap.ui.define.`;
 					/**
 					 * Some modules might not return a class definition, so we fallback to the global namespace.
 					 * This is against the AMD definition, but is required for backward compatibility.
@@ -1260,7 +1260,7 @@ function(
 								try {
 									mMetaContextsInfo = XMLTemplateProcessor._calculatedModelMapping(sValue, oView._oContainingView.oController, true);
 								} catch (e) {
-									Log.error(oView + ":" + e.message);
+									Log.error("[FUTURE FATAL] " + oView + ":" + e.message);
 								}
 
 								if (mMetaContextsInfo) {
@@ -1322,8 +1322,7 @@ function(
 								if ( oBindingInfo ) {
 									mSettings[sName] = oBindingInfo;
 								} else {
-									// TODO we now in theory allow more than just a binding path. Update message?
-									Log.error(oView + ": aggregations with cardinality 0..n only allow binding paths as attribute value (wrong value: " + sName + "='" + sValue + "')");
+									Log.error("[FUTURE FATAL] " + oView + ": aggregations with cardinality 0..n specifies a non valid BindingInfo (wrong value: " + sName + "='" + sValue + "')");
 								}
 							}
 
@@ -1349,7 +1348,7 @@ function(
 									if (vEventHandler) {
 										aEventHandlers.push(vEventHandler);
 									} else  {
-										Log.warning(oView + ": event handler function \"" + sEventHandler + "\" is not a function or does not exist in the controller.");
+										Log.warning("[FUTURE FATAL] " + oView + ": event handler function \"" + sEventHandler + "\" is not a function or does not exist in the controller.");
 									}
 								});
 
@@ -1363,10 +1362,10 @@ function(
 							if (oMetadata.isA("sap.ui.core.mvc.View") && sName == "async") {
 								mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController, oRequireModules);
 							} else {
-								Log.warning(oView + ": setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "') is not supported");
+								Log.warning("[FUTURE FATAL] " + oView + ": setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "') is not supported");
 							}
 						} else {
-							assert(sName === 'xmlns', oView + ": encountered unknown setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "')");
+							assert(sName === 'xmlns', "[FUTURE FATAL] " + oView + ": encountered unknown setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "')");
 							if (XMLTemplateProcessor._supportInfo) {
 								XMLTemplateProcessor._supportInfo({
 									context : node,

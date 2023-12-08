@@ -156,7 +156,7 @@ sap.ui.define([
 					if (!oOrigExtensionMetadata.isMethodFinal(sOverrideMember)) {
 						ControllerExtension.overrideMethod(sOverrideMember, oExtension, oStaticOverrides, oExtension, oOrigExtensionMetadata.getOverrideExecution(sOverrideMember));
 					}  else {
-						Log.error("Method '" + sOverrideMember + "' of extension '" + sNamespace + "' is flagged final and cannot be overridden by calling 'override'");
+						Log.error("[FUTURE FATAL] Method '" + sOverrideMember + "' of extension '" + sNamespace + "' is flagged final and cannot be overridden by calling 'override'");
 					}
 				}
 				//handle 'normal' overrides
@@ -175,13 +175,13 @@ sap.ui.define([
 									if (!oOrigExtensionMetadata.isMethodFinal(sExtensionOverride)) {
 										ControllerExtension.overrideMethod(sExtensionOverride, fnOriginal, vMember, oExtension, oOrigExtensionMetadata.getOverrideExecution(sExtensionOverride));
 									}  else {
-										Log.error("Method '" + sExtensionOverride + "' of extension '" + oOrigExtensionInfo.namespace + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
+										Log.error("[FUTURE FATAL] Method '" + sExtensionOverride + "' of extension '" + oOrigExtensionInfo.namespace + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
 									}
 								}
 							} else if (!oControllerMetadata.isMethodFinal(sOverrideMember)) {
 								ControllerExtension.overrideMethod(sOverrideMember, oController, oOverrides, oExtension, oControllerMetadata.getOverrideExecution(sOverrideMember));
 							} else {
-								Log.error("Method '" + sOverrideMember + "' of controller '" + oController.getMetadata().getName() + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
+								Log.error("[FUTURE FATAL] Method '" + sOverrideMember + "' of controller '" + oController.getMetadata().getName() + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
 							}
 						} else if (sOverrideMember in mLifecycleConfig) {
 							//apply lifecycle hooks even if they don't exist on controller
@@ -192,7 +192,7 @@ sap.ui.define([
 						} else if (sOverrideMember.startsWith("extHook") && oController[sOverrideMember] === null) {
 							ControllerExtension.overrideMethod(sOverrideMember, oController, oOverrides, oExtension);
 						} else {
-							Log.error("Method '" + sOverrideMember + "' does not exist in controller " + oController.getMetadata().getName() + " and cannot be overridden");
+							Log.error("[FUTURE FATAL] Method '" + sOverrideMember + "' does not exist in controller " + oController.getMetadata().getName() + " and cannot be overridden");
 						}
 					}
 					oExtensionInfo.reloadNeeded = true;
@@ -212,7 +212,7 @@ sap.ui.define([
 								//override Extension so 'this' is working for overrides
 								ControllerExtension.overrideMethod(sExtensionOverride, oOrigExtension, oExtensionOverrides, oExtension, oOrigExtensionMetadata.getOverrideExecution(sExtensionOverride));
 							} else {
-								Log.error("Method '" + sExtensionOverride + "' of extension '" + sExtensionNamespace + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
+								Log.error("[FUTURE FATAL] Method '" + sExtensionOverride + "' of extension '" + sExtensionNamespace + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
 							}
 						}
 					}
@@ -406,7 +406,7 @@ sap.ui.define([
 						}
 
 					}, function(err) {
-						Log.error("Attempt to load Extension Controller " + sControllerName + " was not successful - is the Controller correctly defined in its file?");
+						Log.error("[FUTURE FATAL] Attempt to load Extension Controller " + sControllerName + " was not successful - is the Controller correctly defined in its file?");
 					});
 				} else {
 					// sync load Controller extension if necessary
@@ -452,7 +452,7 @@ sap.ui.define([
 							return oController;
 						});
 					}, function(err){
-						Log.error("Controller Extension Provider: Error '" + err + "' thrown in " + Controller._sExtensionProvider + "; extension provider ignored.");
+						Log.error("[FUTURE FATAL] Controller Extension Provider: Error '" + err + "' thrown in " + Controller._sExtensionProvider + "; extension provider ignored.");
 						return oController;
 					});
 			} else {
@@ -616,7 +616,7 @@ sap.ui.define([
 		 */
 		Controller.prototype._getDestroyables = function() {
 			if (!this._aDestroyables) {
-				Log.error("Mandatory super constructor not called for Controller: '" + this.getMetadata().getName() + "'.",
+				Log.error("[FUTURE FATAL] Mandatory super constructor not called for Controller: '" + this.getMetadata().getName() + "'.",
 					null,
 					"sap.ui.support",
 					function() {

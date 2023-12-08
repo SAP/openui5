@@ -79,7 +79,7 @@ sap.ui.define([
 				assert.ok(true, "Was not able to create component, componentFailed fired");
 				assert.ok(oReason.message.indexOf("failed to load") === 0, "Error object is passed as reason");
 				Promise.resolve().then(function() {
-					assert.ok(oLogErrorSpy.calledWith(sinon.match(/^Failed to load component for container/)));
+					assert.ok(oLogErrorSpy.calledWith(sinon.match(/Failed to load component for container/)));
 					assert.strictEqual(oLogErrorSpy.callCount, 1, "One error should have been logged");
 					done();
 				});

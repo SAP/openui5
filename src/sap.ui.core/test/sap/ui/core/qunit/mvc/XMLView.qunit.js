@@ -1185,7 +1185,7 @@ sap.ui.define([
 			definition: sContent
 		}).then(function(oView) {
 			assert.equal(oLogErrorSpy.callCount, 1, "Error is logged");
-			assert.equal(oLogErrorSpy.getCall(0).args[0], "XMLView's root node must be 'View' or 'XMLView' and have the namespace 'sap.ui.core.mvc'", "Log message is correct");
+			assert.ok(oLogErrorSpy.calledWith(sinon.match(/XMLView's root node must be 'View' or 'XMLView' and have the namespace 'sap.ui.core.mvc'/)), "Log message is correct");
 
 			assert.ok(oView.byId("panel"), "The panel control is created");
 			assert.equal(oView.getContent()[0], oView.byId("panel"), "The panel is added to the view's content aggregation");

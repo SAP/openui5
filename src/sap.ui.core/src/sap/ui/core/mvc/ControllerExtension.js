@@ -186,7 +186,7 @@ sap.ui.define([
 					} else if (typeof fnCust === "function") {
 						oOrigDef[sMemberName] = fnCust;
 					} else {
-						Log.error("Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
+						Log.error("[FUTURE FATAL] Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
 					}
 					break;
 				case OverrideExecution.After:
@@ -195,7 +195,7 @@ sap.ui.define([
 					} else if (typeof fnCust === "function") {
 						oOrigDef[sMemberName] = fnCust;
 					} else {
-						Log.error("Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
+						Log.error("[FUTURE FATAL] Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
 					}
 					break;
 				case OverrideExecution.Instead:
@@ -205,7 +205,7 @@ sap.ui.define([
 						if (!this.getMetadata().isMethodFinal(sMemberName)) {
 							oOrigDef[sMemberName] = fnCust;
 						}  else {
-							Log.error("Error in ControllerExtension.override: Method '" + sMemberName + "' of extension '" + this.getMetadata().getName() + "' is flagged final and cannot be overridden!");
+							Log.error("[FUTURE FATAL] Error in ControllerExtension.override: Method '" + sMemberName + "' of extension '" + this.getMetadata().getName() + "' is flagged final and cannot be overridden!");
 						}
 					} else {
 						oOrigDef[sMemberName] = fnCust;

@@ -409,7 +409,7 @@ sap.ui.define([
 						vValueToSet = vValue;
 					} else if ( sKey != "name" ) {
 						// ignore other values (silently ignore "name")
-						Log.warning("library info setting ignored: " + sKey + "=" + vValue);
+						Log.warning("[FUTURE FATAL] library info setting ignored: " + sKey + "=" + vValue);
 					}
 
 					if (vValueToSet !== undefined) {
@@ -477,10 +477,10 @@ sap.ui.define([
 		 */
 		preload: function(mOptions) {
 			if (mOptions && (mOptions.hasOwnProperty("async") || mOptions.hasOwnProperty("sync"))) {
-				Log.error("The 'preload' function of class sap/ui/core/Lib only support preloading a library asynchronously. The given 'async' or 'sync' setting is ignored.");
+				Log.error("[FUTURE FATAL] The 'preload' function of class sap/ui/core/Lib only support preloading a library asynchronously. The given 'async' or 'sync' setting is ignored.");
 			}
 			if (mOptions && mOptions.hasOwnProperty("json")) {
-				Log.error("The 'preload' function of class sap/ui/core/Lib only support preloading in JS Format. The given 'json' setting is ignored.");
+				Log.error("[FUTURE FATAL] The 'preload' function of class sap/ui/core/Lib only support preloading in JS Format. The given 'json' setting is ignored.");
 			}
 
 			return this._preload(["url", "lazy"].reduce(function(acc, sProperty) {

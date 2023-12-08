@@ -58,7 +58,7 @@ sap.ui.define([
 		}
 
 		if (!oHashChanger) {
-			Log.error("sap.ui.core.routing.History constructor was called and it did not get a hashChanger as parameter");
+			Log.error("[FUTURE FATAL] sap.ui.core.routing.History constructor was called and it did not get a hashChanger as parameter");
 		}
 
 		this._setHashChanger(oHashChanger);

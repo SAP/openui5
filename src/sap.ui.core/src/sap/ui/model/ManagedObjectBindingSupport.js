@@ -438,7 +438,7 @@ sap.ui.define([
 							oClone.destroy("KeepDom");
 							break;
 						default:
-							Log.error("Unknown diff type \"" + oDiff.type + "\"");
+							Log.error("[FUTURE FATAL] Unknown diff type \"" + oDiff.type + "\"");
 					}
 				}
 
@@ -665,7 +665,7 @@ sap.ui.define([
 						// 2. Global lookup
 						TypeClass = ObjectPath.get(sTypeName);
 						if (typeof TypeClass === "function" && !TypeClass._sapUiLazyLoader) {
-							Log.error("[FUTURE] The type class '" + sTypeName + "' is exported to the global namespace without being set as an export value of a UI5 module. " +
+							Log.error("[FUTURE FATAL] The type class '" + sTypeName + "' is exported to the global namespace without being set as an export value of a UI5 module. " +
 							"This scenario will not be supported in the future and a separate UI5 module needs to be created which exports this type class.");
 						} else {
 							// 3. requireSync fallback

@@ -359,7 +359,7 @@ sap.ui.define([
 		 */
 		getEntry: function(sPath) {
 			if (!sPath || sPath.indexOf(".") <= 0) {
-				Log.warning("Manifest entries with keys without namespace prefix can not be read via getEntry. Key: " + sPath + ", Component: " + this.getComponentName());
+				Log.warning("[FUTURE FATAL] Manifest entries with keys without namespace prefix can not be read via getEntry. Key: " + sPath + ", Component: " + this.getComponentName());
 				return null;
 			}
 
@@ -368,7 +368,7 @@ sap.ui.define([
 
 			// top-level manifest section must be an object (e.g. sap.ui5)
 			if (sPath && sPath[0] !== "/" && !isPlainObject(oEntry)) {
-				Log.warning("Manifest entry with key '" + sPath + "' must be an object. Component: " + this.getComponentName());
+				Log.warning("[FUTURE FATAL] Manifest entry with key '" + sPath + "' must be an object. Component: " + this.getComponentName());
 				return null;
 			}
 
@@ -401,7 +401,6 @@ sap.ui.define([
 					Log.warning("The validation of the version for Component \"" + this.getComponentName() + "\" failed! Reason: " + e);
 				}.bind(this));
 			}
-
 		},
 
 
@@ -608,7 +607,7 @@ sap.ui.define([
 					var sResourceRootPath = mResourceRoots[sResourceRoot];
 					var oResourceRootURI = new URI(sResourceRootPath);
 					if (oResourceRootURI.is("absolute") || (oResourceRootURI.path() && oResourceRootURI.path()[0] === "/")) {
-						Log.error("Resource root for \"" + sResourceRoot + "\" is absolute and therefore won't be registered! \"" + sResourceRootPath + "\"", this.getComponentName());
+						Log.error("[FUTURE FATAL] Resource root for \"" + sResourceRoot + "\" is absolute and therefore won't be registered! \"" + sResourceRootPath + "\"", this.getComponentName());
 						continue;
 					}
 					sResourceRootPath = this.resolveUri(sResourceRootPath);
