@@ -5,6 +5,7 @@
 sap.ui.define([
 	"../library",
 	"sap/m/library",
+	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/integration/cards/actions/CardActions",
@@ -21,6 +22,7 @@ sap.ui.define([
 ], function (
 	library,
 	mLibrary,
+	coreLibrary,
 	Control,
 	Element,
 	CardActions,
@@ -37,10 +39,13 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ToolbarStyle = mLibrary.ToolbarStyle;
-	var ToolbarDesign = mLibrary.ToolbarDesign;
+	const ToolbarStyle = mLibrary.ToolbarStyle;
+	const ToolbarDesign = mLibrary.ToolbarDesign;
 
-	var ActionArea = library.CardActionArea;
+	const AriaHasPopup = coreLibrary.aria.HasPopup;
+
+	const ActionArea = library.CardActionArea;
+	const CardActionType = library.CardActionType;
 
 	/**
 	 * Constructor for a new ActionsStrip.
@@ -272,7 +277,7 @@ sap.ui.define([
 			icon: mConfig.icon,
 			text: mConfig.text,
 			tooltip: mConfig.tooltip,
-			ariaHasPopup: mConfig.ariaHasPopup,
+			ariaHasPopup: mConfig.ariaHasPopup ?? this._getAriaHasPopup(mConfig),
 			emphasized: mConfig.emphasized,
 			visible: mConfig.visible
 		});
@@ -281,7 +286,9 @@ sap.ui.define([
 	};
 
 	ActionsStrip.prototype._createButton = function (mConfig) {
-		var oButton;
+		const vAriaHasPopup = mConfig.ariaHasPopup ?? this._getAriaHasPopup(mConfig);
+
+		let oButton;
 
 		if (mConfig.icon) {
 			oButton = new OverflowToolbarButton({
@@ -289,7 +296,7 @@ sap.ui.define([
 				text: mConfig.text || mConfig.tooltip,
 				tooltip: mConfig.tooltip || mConfig.text,
 				type: mConfig.buttonType,
-				ariaHasPopup: mConfig.ariaHasPopup,
+				ariaHasPopup: vAriaHasPopup,
 				visible: mConfig.visible
 			});
 
@@ -300,11 +307,28 @@ sap.ui.define([
 			text: mConfig.text,
 			tooltip: mConfig.tooltip,
 			type: mConfig.buttonType,
-			ariaHasPopup: mConfig.ariaHasPopup,
+			ariaHasPopup: vAriaHasPopup,
 			visible: mConfig.visible
 		});
 
 		return oButton;
+	};
+
+	/**
+	 * Checks the correct value for ariaHasPopup for the given item configuration.
+	 * Note: Only checks the first action since we support only one action for now.
+	 * Note: If custom action opens a popup - the custom action developer is responsible to add the ariaHasPopup property.
+	 * @param {map} mConfig The config for the item.
+	 * @returns {sap.ui.core.aria.HasPopup|null} True if the item opens a popup. False otherwise.
+	 */
+	ActionsStrip.prototype._getAriaHasPopup = function (mConfig) {
+		const aActions = mConfig.actions;
+
+		if (aActions?.length > 0 && aActions[0].type === CardActionType.ShowCard) {
+			return AriaHasPopup.Dialog;
+		}
+
+		return null;
 	};
 
 	ActionsStrip.create = function (oConfiguration, oCard, bDisableItemsInitially) {

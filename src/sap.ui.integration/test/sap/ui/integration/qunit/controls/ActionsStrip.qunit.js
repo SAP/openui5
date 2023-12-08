@@ -4,14 +4,18 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/integration/controls/ActionsStrip",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/library"
 ], function (
 	Core,
 	ActionsStrip,
 	Card,
-	JSONModel
+	JSONModel,
+	coreLibrary
 ) {
 	"use strict";
+
+	const AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
@@ -72,6 +76,35 @@ sap.ui.define([
 		// Assert
 		assert.ok(oActionsStrip._getToolbar().getContent()[1].isA("sap.m.Button"), "If no 'type' is specified, an sap.m.Button should be created");
 		assert.ok(oActionsStrip._getToolbar().getContent()[2].isA("sap.m.Button"), "If 'type' is set to 'Button', an sap.m.Button should be created");
+
+		// Clean up
+		oActionsStrip.destroy();
+	});
+
+	QUnit.test("Automatic ariaHasPopup", function (assert) {
+		// Arrange
+		const oActionsStrip = ActionsStrip.create([
+			{ text: "Item"},
+			{ text: "Item", type: "Button", actions: [ { type: "ShowCard"}] },
+			{ text: "Item", type: "Link", actions: [ { type: "ShowCard"}] },
+			{ text: "Item", actions: [ { type: "Navigation"}] },
+			{ text: "Item", ariaHasPopup: AriaHasPopup.None, actions: [ { type: "ShowCard"}] },
+			{ text: "Item", ariaHasPopup: AriaHasPopup.Grid, actions: [ { type: "ShowCard"}] },
+			{ text: "Item", ariaHasPopup: AriaHasPopup.Dialog }
+		], this.oCard);
+
+		const aItems = oActionsStrip._getToolbar().getContent();
+
+		// Assert
+		assert.strictEqual(aItems[1].getAriaHasPopup(), AriaHasPopup.None, "Item with hasAriaPopup=None when no actions");
+
+		assert.strictEqual(aItems[2].getAriaHasPopup(), AriaHasPopup.Dialog, "Button with hasAriaPopup=Dialog when action ShowCard");
+		assert.strictEqual(aItems[3].getAriaHasPopup(), AriaHasPopup.Dialog, "Link with hasAriaPopup=Dialog when action ShowCard");
+
+		assert.strictEqual(aItems[4].getAriaHasPopup(), AriaHasPopup.None, "Item with hasAriaPopup=None when action Navigation");
+		assert.strictEqual(aItems[5].getAriaHasPopup(), AriaHasPopup.None, "Item with hasAriaPopup=None explicitly set by property, ignoring ShowCard");
+		assert.strictEqual(aItems[6].getAriaHasPopup(), AriaHasPopup.Grid, "Item with hasAriaPopup=Grid explicitly set by property, ignoring ShowCard");
+		assert.strictEqual(aItems[7].getAriaHasPopup(), AriaHasPopup.Dialog, "Item with hasAriaPopup=Dialog explicitly set by property");
 
 		// Clean up
 		oActionsStrip.destroy();
