@@ -13708,56 +13708,74 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Call bound action on a context of a relative ListBinding.
 	//
-	// Ensure that a Return Value Context is created and the structure of the path is same like the
-	// binding parameter
-	// JIRA: CPOUI5ODATAV4-2096
-	QUnit.test("Read entity for a relative ListBinding, call bound action", function (assert) {
-		var oModel = this.createTeaBusiModel(),
-			that = this,
+	// Ensure that no Return Value Context is created, because the back end does not return the
+	// needed key properties.
+	// SNOW: DINC0010118
+[{ID : "2"}, {EMPLOYEE_2_TEAM : {Team_Id : "TEAM_02"}}].forEach(function (oPredicates, i) {
+	var sTitle = "Read entity for a relative ListBinding, call bound action, key for the "
+		+ (i ? "first" : "second") + " segment is missing";
+
+	QUnit.test(sTitle, function (assert) {
+		var that = this,
 			sView = '\
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
-	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID\'}}}}">\
+	parameters : {\
+		$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,__CT__FAKE__Message/__FAKE__Messages\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
 		<Text id="id" text="{ID}"/>\
 	</Table>\
 </FlexBox>';
 
-		this.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($select=ID)", {
+		this.expectRequest("TEAMS('42')"
+			+ "?$expand=TEAM_2_EMPLOYEES($select=ID,__CT__FAKE__Message/__FAKE__Messages)", {
 				TEAM_2_EMPLOYEES : [{ID : "2"}]
 			})
 			.expectChange("id", ["2"]);
 
-		return this.createView(assert, sView, oModel).then(function () {
+		return this.createView(assert, sView).then(function () {
 			var oEmployeeContext = that.oView.byId("table").getItems()[0].getBindingContext(),
-				oAction = that.oModel.bindContext(
-					"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)",
-					oEmployeeContext);
+				sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+				oAction = that.oModel.bindContext(sAction + "(...)",
+					oEmployeeContext, {$$inheritExpandSelect : true}),
+				oResponse = Object.assign({
+					__CT__FAKE__Message : {
+						__FAKE__Messages : [{
+							code : "1",
+							message : "Text",
+							numericSeverity : 3,
+							target : "Name",
+							transition : false
+						}]
+					}
+				}, oPredicates);
 
 			that.expectRequest({
 					method : "POST",
 					url : "TEAMS('42')/TEAM_2_EMPLOYEES('2')/"
 						+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee"
-						+ "?$expand=EMPLOYEE_2_TEAM($select=Team_Id)",
+						+ "?$select=ID,__CT__FAKE__Message/__FAKE__Messages"
+						+ "&$expand=EMPLOYEE_2_TEAM($select=Team_Id)",
 					payload : {TeamID : "TEAM_02"}
-				}, {
-					EMPLOYEE_2_TEAM : {
-						Team_Id : "TEAM_02"
-					},
-					ID : "2"
-				});
+				}, oResponse)
+				.expectMessages([{
+					code : "1",
+					message : "Text",
+					target : "/TEAMS('42')/TEAM_2_EMPLOYEES('2')/" + sAction + "(...)/Name",
+					type : "Warning"
+				}]);
 			oAction.setParameter("TeamID", "TEAM_02");
 
 			return Promise.all([
 				// code under test
-				oAction.execute().then(function (oReturnValueContext) {
-					assert.strictEqual(
-						oReturnValueContext.getPath(),
-						"/TEAMS('TEAM_02')/TEAM_2_EMPLOYEES('2')");
+				oAction.execute().then(function (oResult) {
+					assert.strictEqual(oResult, undefined,
+						"no R.V.C. because EMPLOYEE_2_TEAM is missing");
 				}),
 				that.waitForChanges(assert)
 			]);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Execute a bound action for an entity in a list binding and afterwards call refresh
