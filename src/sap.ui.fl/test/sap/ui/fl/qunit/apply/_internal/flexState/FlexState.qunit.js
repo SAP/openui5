@@ -209,7 +209,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("When multiple FlexObjects over max layer are added and removed together", async function(assert) {
-			sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationLayer: Layer.CUSTOMER});
 			await FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
@@ -217,8 +216,9 @@ sap.ui.define([
 			var aDummyFlexObjects = [
 				{ test: "test", getLayer: () => "USER" },
 				{ test2: "test2", getLayer: () => "USER" }
-			];			this.oCheckUpdateSelectorStub.reset();
+			];
 			this.oCheckUpdateSelectorStub.reset();
+			sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationLayer: Layer.CUSTOMER});
 			FlexState.addDirtyFlexObjects(sReference, aDummyFlexObjects);
 			assert.deepEqual(
 				FlexState.getFlexObjectsDataSelector().get({reference: sReference}),
@@ -244,7 +244,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("When multiple FlexObjects with just one with over adaptation layer are added and removed together", async function(assert) {
-			sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationLayer: Layer.VENDOR});
 			await FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
@@ -254,6 +253,7 @@ sap.ui.define([
 				{ test2: "test2", getLayer: () => "VENDOR" }
 			];
 			this.oCheckUpdateSelectorStub.reset();
+			sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationLayer: Layer.VENDOR});
 			FlexState.addDirtyFlexObjects(sReference, aDummyFlexObjects);
 			assert.deepEqual(
 				FlexState.getFlexObjectsDataSelector().get({reference: sReference}),

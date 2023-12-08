@@ -399,7 +399,6 @@ sap.ui.define([
 
 		try {
 			await this._loadUShellServicesPromise;
-			PersistenceWriteAPI.setAdaptationLayer(this.getLayer(), this.getRootControl());
 			await initVersioning.call(this);
 			await initContextBasedAdaptations.call(this, RuntimeAuthoring.needsRestart(this.getLayer()));
 
@@ -416,6 +415,7 @@ sap.ui.define([
 				// FLP Plugin reacts on this error string and doesn't pass the error on the UI
 				throw Error("Reload triggered");
 			}
+			PersistenceWriteAPI.setAdaptationLayer(this.getLayer(), this.getRootControlInstance());
 			const oFlexInfoSession = PersistenceWriteAPI.getResetAndPublishInfoFromSession(this.getRootControlInstance());
 			this.bInitialResetEnabled = !!oFlexInfoSession.isResetEnabled;
 

@@ -37,7 +37,13 @@ sap.ui.define([
 			});
 
 			var oFlexInfoSession = FlexInfoSession.getByReference(mPropertyBag.reference);
-			if (!oConnectorConfig.layers || (oConnectorConfig.layers[0] !== "ALL" && oConnectorConfig.layers.indexOf(Layer.CUSTOMER) === -1)) {
+			if (
+				!oConnectorConfig.layers
+				|| (
+					oConnectorConfig.layers[0] !== "ALL"
+					&& oConnectorConfig.layers.indexOf(Layer.CUSTOMER) === -1
+				)
+			) {
 				delete oConnectorSpecificPropertyBag.version;
 			} else {
 				// a sign that we are in the RTA mode and allContexts query parameter should be set for flex/data request
@@ -53,6 +59,7 @@ sap.ui.define([
 			if (!bIsRtaStarting && !oFlexInfoSession.saveChangeKeepSession) {
 				delete oFlexInfoSession.version;
 				delete oFlexInfoSession.maxLayer;
+				delete oFlexInfoSession.adaptationLayer;
 				FlexInfoSession.setByReference(oFlexInfoSession, mPropertyBag.reference);
 			}
 
@@ -61,7 +68,12 @@ sap.ui.define([
 				// ensure an object with the corresponding properties
 				return oResponse || StorageUtils.getEmptyFlexDataResponse();
 			})
-			.catch(StorageUtils.logAndResolveDefault.bind(undefined, StorageUtils.getEmptyFlexDataResponse(), oConnectorConfig, "loadFlexData"));
+			.catch(StorageUtils.logAndResolveDefault.bind(
+				undefined,
+				StorageUtils.getEmptyFlexDataResponse(),
+				oConnectorConfig,
+				"loadFlexData"
+			));
 		});
 
 		return Promise.all(aConnectorPromises);
