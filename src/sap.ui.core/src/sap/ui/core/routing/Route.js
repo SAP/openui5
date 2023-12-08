@@ -278,6 +278,8 @@ sap.ui.define([
 			 *
 			 * @param {object} oParameters Parameters for the route
 			 * @return {string} the unencoded pattern with interpolated arguments
+			 * @throws {Error} Error will be thrown when any mandatory parameter in the route's pattern is missing from
+			 *  <code>oParameters</code> or assigned with empty string.
 			 * @public
 			 */
 			getURL : function (oParameters) {
