@@ -23,7 +23,7 @@ sap.ui.define([
 
 	const sTitle = "IFrame Title";
 	const sProtocol = "https";
-	const sOpenUI5Url = `${sProtocol}://openui5/`;
+	const sOpenUI5Url = `${sProtocol}://openui5.com/`;
 	const sDefaultSize = "500px";
 	const sUserFirstName = "John";
 	const sUserLastName = "Doe";
@@ -67,18 +67,16 @@ sap.ui.define([
 			var sNewUrl = `${sOpenUI5Url}#someNavParameter`;
 			const oReplaceLocationSpy = sandbox.spy(this.oIFrame, "_replaceIframeLocation");
 			this.oIFrame.setUrl(sNewUrl);
-			await checkUrl(assert, this.oIFrame, sNewUrl);
-			await nextUIUpdate();
-			assert.strictEqual(oReplaceLocationSpy.callCount, 2, "then the iframe location is properly replaced");
-			assert.strictEqual(
-				oReplaceLocationSpy.firstCall.args[0],
-				"about:blank",
-				"then the iframe is unloaded"
+			const sTestUrlRegex = new RegExp(`${sOpenUI5Url}\\?sap-ui-xx-fl-forceEmbeddedContentRefresh=\\d+#someNavParameter`);
+			assert.ok(
+				sTestUrlRegex.test(this.oIFrame.getUrl()),
+				"then the url is properly updated"
 			);
-			assert.strictEqual(
-				oReplaceLocationSpy.lastCall.args[0],
-				sNewUrl,
-				"then the proper url is loaded"
+			await nextUIUpdate();
+			assert.strictEqual(oReplaceLocationSpy.callCount, 1, "then the iframe location is properly replaced");
+			assert.ok(
+				sTestUrlRegex.test(oReplaceLocationSpy.lastCall.args[0]),
+				"then the proper url is loaded and a frame buster search parameter is added"
 			);
 		});
 
@@ -112,7 +110,7 @@ sap.ui.define([
 			await nextUIUpdate();
 			assert.strictEqual(
 				oReplaceLocationSpy.callCount,
-				2,
+				1,
 				"then the new useLegacyNavigation approach is chosen by default and the iframe location is properly replaced"
 			);
 			assert.strictEqual(
