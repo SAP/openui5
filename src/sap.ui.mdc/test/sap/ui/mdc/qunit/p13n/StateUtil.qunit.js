@@ -58,8 +58,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	oCore.loadLibrary("sap.ui.fl");
-
 	function createFilterItem(oFilterBar, sPropertyName, mPropertyBag) {
 		return new Promise(function(resolve, reject){
 			resolve(new FilterField({

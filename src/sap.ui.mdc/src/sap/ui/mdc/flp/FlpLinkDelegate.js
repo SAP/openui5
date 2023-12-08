@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/mdc/LinkDelegate",
 	"sap/ui/mdc/link/LinkItem",
 	"sap/ui/mdc/link/Factory",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/ui/mdc/link/SemanticObjectMappingItem",
 	"sap/ui/mdc/link/SemanticObjectUnavailableAction",
 	"sap/ui/mdc/enums/LinkType"
-], (Element, LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, SemanticObjectMapping, SemanticObjectMappingItem, SemanticObjectUnavailableAction, LinkType) => {
+], (Element, Library, LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, SemanticObjectMapping, SemanticObjectMappingItem, SemanticObjectUnavailableAction, LinkType) => {
 	"use strict";
 	/**
 	 * Extension of the Delegate for {@link sap.ui.mdc.Link}. This extension provides all historical featurs of the FlpLinkHandler.
@@ -238,9 +239,7 @@ sap.ui.define([
 			ownNavigation: undefined,
 			availableActions: []
 		};
-		return sap.ui.getCore().loadLibrary('sap.ui.fl', {
-			async: true
-		}).then(() => {
+		return Library.load({name: 'sap.ui.fl'}).then(() => {
 			return new Promise((resolve) => {
 				sap.ui.require([
 					'sap/ui/fl/Utils'

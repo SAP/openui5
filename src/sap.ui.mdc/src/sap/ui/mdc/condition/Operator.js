@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual',
+	'sap/base/i18n/Localization',
 	'./Condition',
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/base/strings/escapeRegExp',
@@ -24,6 +25,7 @@ sap.ui.define([
 	Log,
 	merge,
 	deepEqual,
+	Localization,
 	Condition,
 	ConditionValidated,
 	escapeRegExp,
@@ -34,8 +36,8 @@ sap.ui.define([
 
 	// translation utils
 	let oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
-	sap.ui.getCore().attachLocalizationChanged(() => {
-		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	Localization.attachChange(() => {
+		oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
 	});
 
 	/**

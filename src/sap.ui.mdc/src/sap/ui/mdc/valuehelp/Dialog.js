@@ -14,6 +14,7 @@ sap.ui.define([
 	'sap/ui/mdc/util/Common',
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/base/strings/formatMessage',
+	'sap/base/i18n/Localization',
 	'sap/ui/core/library',
 	'sap/ui/core/InvisibleMessage'
 ], (
@@ -28,6 +29,7 @@ sap.ui.define([
 	Common,
 	ValueHelpSelectionType,
 	formatMessage,
+	Localization,
 	coreLibrary,
 	InvisibleMessage
 ) => {
@@ -46,8 +48,8 @@ sap.ui.define([
 
 	// translation utils
 	let oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
-	sap.ui.getCore().attachLocalizationChanged(() => {
-		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	Localization.attachChange(() => {
+		oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
 	});
 
 	let MDialog, MLibrary, Button, ManagedObjectModel, IconTabBar, IconTabFilter;

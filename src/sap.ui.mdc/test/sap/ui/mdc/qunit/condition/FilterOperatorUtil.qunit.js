@@ -27,7 +27,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/m/library",
 	"sap/ui/mdc/enums/OperatorOverwrite",
-	"sap/ui/core/Core"
+	"sap/ui/core/Lib"
 ], function(
 	FilterOperatorUtil,
 	Operator,
@@ -50,11 +50,11 @@ sap.ui.define([
 	UI5Date,
 	mLibrary,
 	OperatorOverwrite,
-	Core
+	Library
 ) {
 	"use strict";
 
-	const mdcMessageBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+	const mdcMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 	QUnit.module("Operator", {
 		beforeEach: function() {

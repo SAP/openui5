@@ -110,8 +110,6 @@ sap.ui.define([
 		}
 	}]);
 
-	Core.loadLibrary("sap.ui.fl");
-
 	const sTableView1 =
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
 		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "odata.v4.TestDelegate" \}\'>' +

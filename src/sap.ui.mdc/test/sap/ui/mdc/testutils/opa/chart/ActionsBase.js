@@ -7,12 +7,12 @@ sap.ui.define([
     "sap/ui/test/matchers/Properties",
     "../p13n/Util",
 	"../p13n/waitForP13nButtonWithMatchers",
-	"../p13n/waitForP13nDialog"
-], function (Opa5, Press, Log, Ancestor, PropertyStrictEquals, Properties, p13nUtil, waitForP13nButtonWithMatchers, waitForP13nDialog) {
+	"../p13n/waitForP13nDialog",
+    "sap/ui/core/Lib"
+], function (Opa5, Press, Log, Ancestor, PropertyStrictEquals, Properties, p13nUtil, waitForP13nButtonWithMatchers, waitForP13nDialog, Library) {
 	"use strict";
 
-    var oCore = Opa5.getWindow().sap.ui.getCore();
-    var oMDCBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+    var oMDCBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
     var waitForMDCChartWithId = function(sId, oSettings) {
         return this.waitFor({
@@ -191,7 +191,7 @@ sap.ui.define([
         iClickOnTheDrillDownButton: function(sId){
             return waitForMDCChartWithId.call(this, sId, {
                 success: function(oMDCChart){
-                    iClickOnButtonWithText.call(this, oMDCChart, oCore.getLibraryResourceBundle("sap.ui.mdc").getText("chart.CHART_DRILLDOWN_TITLE"));
+                    iClickOnButtonWithText.call(this, oMDCChart, Library.getResourceBundleFor("sap.ui.mdc").getText("chart.CHART_DRILLDOWN_TITLE"));
                 }
             });
         },
@@ -309,7 +309,7 @@ sap.ui.define([
          iDrillDownInDimension: function(sId, sDrillName) {
             return waitForMDCChartWithId.call(this, sId, {
                 success: function(oMDCChart){
-                    iClickOnButtonWithText.call(this, oMDCChart, oCore.getLibraryResourceBundle("sap.ui.comp").getText("CHART_DRILLDOWNBTN_TEXT"), {
+                    iClickOnButtonWithText.call(this, oMDCChart, Library.getResourceBundleFor("sap.ui.comp").getText("CHART_DRILLDOWNBTN_TEXT"), {
                         success: function(){
                             this.iSelectChartTypeInPopover(sDrillName);
                         }

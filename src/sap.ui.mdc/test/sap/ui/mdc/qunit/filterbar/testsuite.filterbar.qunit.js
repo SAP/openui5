@@ -72,7 +72,12 @@ sap.ui.define([
 			},
 			"FilterBarFlex": {
 				group: "FilterBar",
-				module: "./FilterBarFlex.qunit"
+				module: "./FilterBarFlex.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
 			},
 			"valueHelp.FilterBar": {
 				group: "FilterBar",

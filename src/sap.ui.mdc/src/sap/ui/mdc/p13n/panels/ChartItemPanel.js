@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/m/Column',
 	"sap/m/Table",
 	"sap/ui/core/Lib",
+	"sap/ui/core/Element",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/VBox",
@@ -28,7 +29,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/mdc/enums/ChartItemRoleType",
 	"sap/ui/core/InvisibleMessage"
-], (BasePanel, Label, ColumnListItem, Select, Text, Item, Button, Column, Table, Library, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, coreLibrary, KeyCode, ChartItemRoleType, InvisibleMessage) => {
+], (BasePanel, Label, ColumnListItem, Select, Text, Item, Button, Column, Table, Library, Element, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, coreLibrary, KeyCode, ChartItemRoleType, InvisibleMessage) => {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -36,7 +37,6 @@ sap.ui.define([
 
 	// shortcut for sap.m.FlexJustifyContent
 	const { FlexJustifyContent } = mLibrary;
-	const core = sap.ui.getCore();
 
 	/**
 	 * Constructor for ChartItemPanel
@@ -503,7 +503,7 @@ sap.ui.define([
 			//Ctrl+D
 			//Remove
 			let oRemoveBtn;
-			const oListItem = core.byId(oEvent.currentTarget.id);
+			const oListItem = Element.getElementById(oEvent.currentTarget.id);
 
 			if (this._bMobileMode) {
 				oRemoveBtn = oListItem.getCells()[1].getItems()[oListItem.getCells()[1].getItems().length - 1];
@@ -524,7 +524,7 @@ sap.ui.define([
 
 	ChartItemPanel.prototype._focusHandler = function(oEvt) {
 
-		const oTarget = core.byId(oEvt.target.id);
+		const oTarget = Element.getElementById(oEvt.target.id);
 
 		//Don't handle focus on button presses as this messes up event propagation
 		if (oTarget instanceof Button) {

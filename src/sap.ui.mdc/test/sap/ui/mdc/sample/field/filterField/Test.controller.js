@@ -11,7 +11,7 @@ sap.ui.define([
 	'sap/ui/mdc/enums/BaseType',
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
-	"sap/ui/core/Core",
+	"sap/base/i18n/Formatting",
 	"sap/ui/core/date/UI5Date",
 	"sap/m/DatePicker"
 ], function(
@@ -27,7 +27,7 @@ sap.ui.define([
 	BaseType,
 	ConditionValidated,
 	OperatorName,
-	oCore,
+	Formatting,
 	UI5Date,
 	DatePicker
 ) {
@@ -36,8 +36,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.mdc.base.sample.field.filterField.Test", {
 
 		onInit: function(oEvent) {
-			var oFormatSettings = oCore.getConfiguration().getFormatSettings();
-			oFormatSettings.setUnitMappings({
+			Formatting.setUnitMappings({
 				"g": "mass-gram",
 				"kg": "mass-kilogram",
 				"mg": "mass-milligram",

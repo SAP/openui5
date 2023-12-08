@@ -7,7 +7,7 @@ sap.ui.define([
 	"use strict";
 
 	var oMDCBundle = Library.getResourceBundleFor("sap.ui.mdc");
-	//var oMBundle = oCore.getLibraryResourceBundle("sap.m");
+	//var oMBundle = Library.getResourceBundleFor("sap.m");
 
 	var Util = {
 

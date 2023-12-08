@@ -22,7 +22,6 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/MessageBox",
 	"sap/m/plugins/PluginBase",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/format/NumberFormat",
@@ -75,7 +74,6 @@ sap.ui.define([
 	ColumnMenu,
 	MessageBox,
 	PluginBase,
-	Core,
 	Element,
 	Library,
 	NumberFormat,
@@ -2428,7 +2426,7 @@ sap.ui.define([
 	 */
 	Table.prototype._loadExportLibrary = function() {
 		if (!this._oExportLibLoadPromise) {
-			this._oExportLibLoadPromise = Core.loadLibrary("sap.ui.export", true);
+			this._oExportLibLoadPromise = Library.load({name: "sap.ui.export"});
 		}
 		return this._oExportLibLoadPromise;
 	};

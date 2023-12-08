@@ -14,8 +14,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Event",
-	"sap/m/Link"
-], function(layoutLibrary, Panel, PanelItem, SimpleForm, Icon, Engine, oCore, Text, Link, LinkItem, JSONModel, jQuery, Event, MLink) {
+	"sap/m/Link",
+	"sap/ui/core/Lib"
+], function(layoutLibrary, Panel, PanelItem, SimpleForm, Icon, Engine, oCore, Text, Link, LinkItem, JSONModel, jQuery, Event, MLink, Library) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.form.SimpleFormLayout
@@ -77,7 +78,7 @@ sap.ui.define([
 	}
 	function fnHasVisibleMoreLinksButton(assert, oPanel, bVisible) {
 		assert.equal(oPanel.$().find("button:visible").length, bVisible ? 1 : 0);
-		// fnHasVisibleText(assert, oPanel, sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("info.POPOVER_DEFINE_LINKS"), bVisible);
+		// fnHasVisibleText(assert, oPanel, Library.getResourceBundleFor("sap.ui.mdc").getText("info.POPOVER_DEFINE_LINKS"), bVisible);
 	}
 	QUnit.test("no 'item'", function(assert) {
 		this.oPanel = new Panel({
@@ -349,9 +350,7 @@ sap.ui.define([
 
 		// act
 		const done = assert.async();
-		oCore.loadLibrary('sap.ui.fl', {
-			async: true
-		}).then(function() {
+		Library.load({name: 'sap.ui.fl'}).then(function() {
 			sap.ui.require([
 				"sap/ui/fl/apply/api/FlexRuntimeInfoAPI"
 			], function(FlexRuntimeInfoAPI) {

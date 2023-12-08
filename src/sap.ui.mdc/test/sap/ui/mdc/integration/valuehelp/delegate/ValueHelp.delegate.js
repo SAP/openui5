@@ -267,7 +267,7 @@ sap.ui.define([
 			// Example field extraction:
 			/*
 			var TypeUtil = ODataV4ValueHelpDelegate.getTypeMap();
-			var oField = Core.byId("FB0-SO");
+			var oField = Element.getElementById("FB0-SO");
 			var aSalesOrganizationConditions = oField.getConditions();
 			if (aSalesOrganizationConditions && aSalesOrganizationConditions.length) {
 				oConditions["salesOrganization"] = aSalesOrganizationConditions.map(function (oCondition) {

@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/base/Log",
 	'sap/ui/mdc/odata/v4/TypeMap',
-	'../../util/PayloadSearchKeys',
-	'sap/ui/core/Core'
+	'../../util/PayloadSearchKeys'
 ], function(
 	TableDelegateUtils,
 	Element,
@@ -28,8 +27,7 @@ sap.ui.define([
 	Filter,
 	Log,
 	ODataV4TypeMap,
-	PayloadSearchKeys,
-	Core
+	PayloadSearchKeys
 ) {
 	"use strict";
 
@@ -88,7 +86,7 @@ sap.ui.define([
 	TestTableDelegate.getFilters = function (oControl) {
 		return PayloadSearchKeys.combineFilters([
 			...TableDelegate.getFilters.apply(this, arguments),
-			...PayloadSearchKeys.getFilters(oControl, Core.byId(oControl.getFilter())?.getSearch())
+			...PayloadSearchKeys.getFilters(oControl, Element.getElementById(oControl.getFilter())?.getSearch())
 		], true);
 	};
 

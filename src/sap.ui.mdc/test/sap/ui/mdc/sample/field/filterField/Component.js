@@ -21,8 +21,7 @@ sap.ui.define([
 	'sap/ui/model/odata/type/TimeOfDay', // to have it loaded
 	'sap/ui/model/odata/type/Unit', // to have it loaded
 	'sap/ui/model/odata/v2/ODataModel',
-	'sap/ui/core/util/MockServer',
-	'sap/ui/core/Core'
+	'sap/ui/core/util/MockServer'
 ], function(
 	View,
 	ViewType,
@@ -42,8 +41,7 @@ sap.ui.define([
 	ODataTimeOfDayType,
 	ODataUnitType,
 	ODataModel,
-	MockServer,
-	oCore
+	MockServer
 ) {
 	"use strict";
 
@@ -56,8 +54,6 @@ sap.ui.define([
 
 		init: function() {
 			// initialization has to be done here because parent.init() calls createContent()
-			oCore.loadLibrary("sap.ui.mdc");
-
 			var sMockServerUrl = "/odata/";
 
 			var oMockServer = new MockServer({
