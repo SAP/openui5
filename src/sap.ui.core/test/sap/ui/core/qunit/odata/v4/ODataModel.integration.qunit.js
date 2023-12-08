@@ -16095,6 +16095,8 @@ sap.ui.define([
 	//
 	// BCP: 2180279839
 	// BCP: 2280024694
+	//
+	// Same with prefetch of preceeding entries (SNOW: CS20230006538459)
 	QUnit.test("BCP: 2180279839: dataReceived follows each dataRequested", function (assert) {
 		var oListBinding,
 			aValues = [],
@@ -16102,7 +16104,7 @@ sap.ui.define([
 			that = this;
 
 		for (i = 0; i < 1110; i += 1) {
-			if (i < 10 || i >= 1098) {
+			if (i < 17 || i >= 1093) {
 				aValues[i] = {Team_Id : "TEAM_" + i};
 			}
 		}
@@ -16156,6 +16158,42 @@ sap.ui.define([
 			assert.deepEqual(oListBinding.getContexts(1103, 2, 5).map(getPath), [
 				"/TEAMS('TEAM_1103')",
 				"/TEAMS('TEAM_1104')"
+			]);
+
+			return that.waitForChanges(assert);
+		}).then(function () { // prefetch *before* existing data
+			that.expectRequest("TEAMS?$skip=1093&$top=5", {value : aValues.slice(1093, 1098)})
+				.expectEvents(assert, oListBinding, [
+					[, "dataRequested"],
+					[, "dataReceived", {data : {}}]
+				]);
+
+			assert.deepEqual(oListBinding.getContexts(1098, 7, 5).map(getPath), [
+				"/TEAMS('TEAM_1098')",
+				"/TEAMS('TEAM_1099')",
+				"/TEAMS('TEAM_1100')",
+				"/TEAMS('TEAM_1101')",
+				"/TEAMS('TEAM_1102')",
+				"/TEAMS('TEAM_1103')",
+				"/TEAMS('TEAM_1104')"
+			]);
+
+			return that.waitForChanges(assert);
+		}).then(function () { // iIndex - iPrefetchLength becomes negative here
+			that.expectRequest("TEAMS?$skip=10&$top=7", {value : aValues.slice(10, 17)})
+				.expectEvents(assert, oListBinding, [
+					[, "dataRequested"],
+					[, "dataReceived", {data : {}}]
+				]);
+
+			assert.deepEqual(oListBinding.getContexts(0, 7, 10).map(getPath), [
+				"/TEAMS('TEAM_0')",
+				"/TEAMS('TEAM_1')",
+				"/TEAMS('TEAM_2')",
+				"/TEAMS('TEAM_3')",
+				"/TEAMS('TEAM_4')",
+				"/TEAMS('TEAM_5')",
+				"/TEAMS('TEAM_6')"
 			]);
 
 			return that.waitForChanges(assert);
