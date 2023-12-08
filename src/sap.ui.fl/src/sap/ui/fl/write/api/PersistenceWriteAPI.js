@@ -470,9 +470,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds additionally properties to the flex info session.
+	 * Adds layer property to the flex info session.
 	 *
-	 * @param {string} sLayer - layer of the adaptation
+	 * @param {string} sLayer - Layer of the adaptation
 	 * @param {object} oControl - Control
 	 * @private
 	 * @ui5-restricted sap.ui.rta
