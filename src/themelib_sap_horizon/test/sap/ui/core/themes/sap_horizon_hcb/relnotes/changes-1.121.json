@@ -3,6 +3,28 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "3b0a6f667339c39870d5912d1e4222e69f2a1068",
+        "type": "FIX",
+        "text": " sap.m.Select: Fiori 3 hc height fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380138990"
+          }
+        ]
+      },
+      {
+        "id": "e2b622a759159041b8902a89af7c6f96d3ee478c",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Today's date border doesn't overlap the Month and Year pickers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370145267"
+          }
+        ]
+      },
+      {
         "id": "cbea4076b7f47495f49d6de789881f039cc4edde",
         "type": "FIX",
         "text": " sap.m.MenuButton - text is vertically aligned correctly now",

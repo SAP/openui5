@@ -3,6 +3,49 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "c6175a00a6e95daf8c2e4c195a78f989530fc75b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMetaModel#_mergeMetadata: add unit annotations"
+      },
+      {
+        "id": "b1c70a5bdf1103ee81a19c2c1fafb8c7fd737cf6",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._CollectionCache#read: avoid endless busy indicator sometimes when scrolling up",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "8ec0e35c75a003b23550b74acc0b075aadd8704b",
+        "type": "FIX",
+        "text": " sap.base.i18n.date.TimezoneUtils.calculateOffset: Fix Daylight Saving Time issues",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370140369"
+          }
+        ]
+      },
+      {
+        "id": "a3b041789cefcffa67c7122dda23cbf0bacd4454",
+        "type": "FIX",
+        "text": " sap.ui.test: Cross-version testing issue prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370142398"
+          }
+        ]
+      },
+      {
+        "id": "01815bc02122519e953e7ca36bd9e6e123fca352",
+        "type": "FEATURE",
+        "text": " Introduce sap/base/future module for throwing erors when 'sap-ui-xx-future=true'"
+      },
+      {
         "id": "ad17dd7ad0b762fb68b23f3e2a60a9e2488d0e9b",
         "type": "FIX",
         "text": " sap.ui.core.InvisibleMessage: Ensure core is ready before making DOM operations",

@@ -3,6 +3,11 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "64e10bf510614712a163ace06a9a9277b073aff4",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Fixed incorrect rendering of separator"
+      },
+      {
         "id": "9851362ee3422651da1bf5f2d1ccbc6f3f8752eb",
         "type": "FIX",
         "text": " sap.f.FlexibleColumnLayout: samples updated"

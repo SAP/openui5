@@ -3,6 +3,28 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "424ad7689fc854d0357099782e700f081c6d0270",
+        "type": "FIX",
+        "text": " Field: invalid unit/currency leads to runtime error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "4f3d4a762ff021f414af1a2e45c657e7941acb83",
+        "type": "FIX",
+        "text": " mTable: consider useFirstMatch on filtering existing items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500010450352023"
+          }
+        ]
+      },
+      {
         "id": "8ac9f1b6a2f20dc323e98e7e6ddf334fe0ca0462",
         "type": "FIX",
         "text": " ActionToolbar: separator visibility",

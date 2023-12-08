@@ -3,6 +3,17 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "4b565ec3ce0a3d86d8fefd910e23bde610d82eff",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Improve week numbers calculation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370080241"
+          }
+        ]
+      },
+      {
         "id": "c58a5faa680eeab781d273df2d393c4cd24ff89d",
         "type": "FIX",
         "text": " sap.ui.unified.CalendarAppointment: fixed background colors calculation",

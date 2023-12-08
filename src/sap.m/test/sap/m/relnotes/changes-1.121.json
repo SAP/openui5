@@ -3,6 +3,28 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "90440b291dbfc2af3a2e4d878477d37cbf95980c",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSliders: Replace innerHTML by textContent for better performance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380126303"
+          }
+        ]
+      },
+      {
+        "id": "cb3d672ca9f6e031de92a0beff9ab306d7322ead",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: improve accessibility semantics",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370080832"
+          }
+        ]
+      },
+      {
         "id": "b1b6f655a7fcac824c48221136f9d763d57173c9",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendarMonthGrid: fixed focus on selected date or appointment",
@@ -157,6 +179,17 @@
         "id": "978e339a177689cdb05249c5c7ff83a63d371f2b",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendarMonthGrid: improve appointment sorting"
+      },
+      {
+        "id": "8bc2312dcb70d08a68027d76ca4b1b827c28a2a2",
+        "type": "FIX",
+        "text": " sap.m.Input, sap.m.MultiInput: Correct model update on item selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370126368"
+          }
+        ]
       },
       {
         "id": "42db8206f7e68a82d0d13970f6446ad1372298bd",
