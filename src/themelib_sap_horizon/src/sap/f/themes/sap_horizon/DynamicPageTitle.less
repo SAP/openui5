@@ -64,16 +64,13 @@
 	padding: 0;
 }
 
+// General alignment styles for header text
+.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading {
+	align-self: center;
+}
+
 .sapFDynamicPageTitleMainNavigationArea > .sapMTBSeparator {
 	margin: 0 0.5rem;
-}
-
-.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner {
-	margin-top: 0.6875rem;
-}
-
-.sapUiSizeCompact .sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner {
-	margin-top: 0.3125rem;
 }
 
 .sapUxAPObjectPageLayoutNoHeaderContent.sapUxAPObjectPageLayoutNoAnchorBar .sapFDynamicPageTitle {
@@ -138,12 +135,15 @@ html.sap-desktop {
     margin-top: 0.3125rem;
 }
 
+.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainContent {
+	.sapMGenericTag.sapMBarChild {
+		margin-top: 0.5625rem;
+		margin-bottom: 0.5625rem;
+	}
+}
+
 .sapUiSizeCompact {
 	.sapFDynamicPageTitle .sapMTB {
 		height: 2.75rem;
-	}
-
-	.sapFDynamicPageTitleMain .sapMGenericTag.sapMBarChild {
-		margin-top: 0;
 	}
 }
