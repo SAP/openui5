@@ -144,7 +144,7 @@ sap.ui.define([
 	 *   <li><code>visualSettings.widthCalculation</code></li>
 	 *   <li><code>propertyInfos</code></li>
 	 *   <li><code>groupable</code></li>
-	 *   <li><code>key</code></li>
+	 *   <li><code>isKey</code></li>
 	 *   <li><code>unit</code></li>
 	 *   <li><code>text</code></li>
 	 * </ul>
@@ -162,7 +162,7 @@ sap.ui.define([
 	 *   Defines whether a property is sortable.
 	 * @property {boolean} [groupable=false]
 	 *   Defines whether a property is groupable.
-	 * @property {boolean} [key=false]
+	 * @property {boolean} [isKey=false]
 	 *   Defines whether a property is a key or part of a key in the data.
 	 * @property {string} [unit]
 	 *   Name of the unit property that is related to this property.
@@ -219,7 +219,7 @@ sap.ui.define([
 	 *   <li><code>visualSettings.widthCalculation</code></li>
 	 *   <li><code>propertyInfos</code></li>
 	 *   <li><code>groupable</code></li>
-	 *   <li><code>key</code></li>
+	 *   <li><code>isKey</code></li>
 	 *   <li><code>unit</code></li>
 	 *   <li><code>text</code></li>
 	 *   <li><code>aggregatable</code></li>

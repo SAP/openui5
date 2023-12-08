@@ -58,6 +58,15 @@ sap.ui.define([
 						valueIfNotAllowed: false
 					}
 				},
+				isKey: {
+					type: "boolean",
+					"default": {
+						value: "attribute:key"
+					},
+					forComplexProperty: {
+						valueIfNotAllowed: false
+					}
+				},
 				unit: {
 					type: "PropertyReference"
 				},
