@@ -166,7 +166,19 @@ sap.ui.define([
 					this._setUrlLegacy(sEncodedUrl);
 				} else {
 					// Set by replacing the last entry
-					this.setProperty("url", sEncodedUrl);
+					const oNewUrl = IFrame._toUrl(sEncodedUrl);
+					const oOldUrl = IFrame._toUrl(this.getUrl() || "about:blank");
+					if (
+						oOldUrl.origin === oNewUrl.origin
+						&& oOldUrl.pathname === oNewUrl.pathname
+						&& oOldUrl.search === oNewUrl.search
+						&& oOldUrl.hash !== oNewUrl.hash
+					) {
+						// Only the hash changed, site is not going to reload automatically
+						// Set an artificial frame buster search parameter to force a refresh
+						oNewUrl.searchParams.append("sap-ui-xx-fl-forceEmbeddedContentRefresh", Date.now());
+					}
+					this.setProperty("url", oNewUrl.toString());
 				}
 			} else {
 				Log.error("Provided URL is not valid as an IFrame src");
@@ -182,7 +194,6 @@ sap.ui.define([
 
 		onAfterRendering() {
 			if (!this.getUseLegacyNavigation()) {
-				this._replaceIframeLocation("about:blank");
 				this._replaceIframeLocation(this.getUrl());
 			}
 		},
@@ -223,6 +234,11 @@ sap.ui.define([
 		return document.location;
 	};
 
+	IFrame._toUrl = function(sUrl) {
+		const oDocumentLocation = IFrame._getDocumentLocation();
+		return new URL(sUrl, oDocumentLocation.href);
+	};
+
 	IFrame.VALIDATION_ERROR = {
 		UNSAFE_PROTOCOL: "unsafeProtocol",
 		MIXED_CONTENT: "mixedContent",
@@ -232,8 +248,7 @@ sap.ui.define([
 
 	IFrame.isValidUrl = function(sUrl) {
 		try {
-			const oDocumentLocation = IFrame._getDocumentLocation();
-			const oUrl = new URL(sUrl, oDocumentLocation.href);
+			const oUrl = IFrame._toUrl(sUrl);
 
 			// Forbid dangerous javascript pseudo protocol
 			if (/javascript/i.test(oUrl.protocol)) {
@@ -248,7 +263,7 @@ sap.ui.define([
 				/http(?!s)/.test(oUrl.protocol)
 				// Exception: Host is using http, no protocol downgrade happening
 				// Required for local testing and onPrem systems
-				&& !/http(?!s)/.test(oDocumentLocation.protocol)
+				&& !/http(?!s)/.test(IFrame._getDocumentLocation().protocol)
 			) {
 				return {
 					result: false,
