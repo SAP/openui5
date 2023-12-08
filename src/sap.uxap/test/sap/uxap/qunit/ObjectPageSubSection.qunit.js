@@ -19,8 +19,9 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Panel",
 	"sap/m/Text",
+	"sap/m/Title",
 	"sap/ui/core/HTML"],
-function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, HTML) {
+function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, Title, HTML) {
 	"use strict";
 
 	var TitleLevel = coreLibrary.TitleLevel;
@@ -980,6 +981,7 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 					})
 				]
 			}),
+		oApp = new App({pages: [opl]}),
 		oSpy = this.spy(Log, "error"),
 		oSetParentSpy,
 		done = assert.async();
@@ -1000,11 +1002,11 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 				assert.strictEqual(oSubSection.getBlocks().length, 2, "ObjectPageSubSection has two controls in 'blocks' aggregation");
 				done();
 				oSubSection.removeAllDependents();
-				opl.destroy();
+				oApp.destroy();
 			}
 		});
 
-		new App({pages: [opl]}).placeAt("qunit-fixture");
+		oApp.placeAt("qunit-fixture");
 		Core.applyChanges();
 	});
 
@@ -1602,6 +1604,42 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 			}
 			assert.strictEqual(isPageScrollable(), false, "no scrolling when single subsection fits container");
 			done();
+		}, this);
+	});
+
+	QUnit.test("height of single subSection with sapUxAPObjectPageSubSectionFitContainer adjusts with headerTitle adjusments", function(assert) {
+		var oPage = this.oObjectPage,
+			oSection = this.oObjectPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			oBlock = oSubSection.getBlocks()[0],
+			done = assert.async();
+
+		assert.expect(2);
+
+		//act
+		oBlock.setHeight("845px");
+		oPage.setHeaderTitle(new ObjectPageDynamicHeaderTitle({
+			heading: new Title({ text: "Title" })
+		}));
+		Core.applyChanges();
+		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+
+		//setup
+		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			//check
+			var sHeight = oSubSection._height;
+			assert.strictEqual(sHeight, "", "Height is auto when content is bigger than SubSection's height");
+
+			//act
+			oPage.destroyHeaderTitle();
+
+			oPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+				var sNewHeight = oSubSection._height;
+				assert.ok(sHeight !== sNewHeight, "Fixed height is changed when headerTitle is added/removed");
+
+				done();
+			});
+			Core.applyChanges();
 		}, this);
 	});
 
