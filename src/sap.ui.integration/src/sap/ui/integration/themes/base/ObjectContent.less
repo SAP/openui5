@@ -5,6 +5,15 @@
 
 .sapFCardObjectContent {
 	padding: 1rem;
+
+	&.sapFCardObjectContentWithOverlay {
+		.sapMFlexBox.sapUiIntImgWithOverlayLayout,
+		.sapMFlexBox.sapFCardObjectGroup:has( > .sapUiIntImageWithOverlay:only-child ),
+		 > .sapMFlexBox,
+		.sapUiIntImageWithOverlay:only-child {
+			height: 100%;
+		}
+	}
 }
 
 .sapUiIntCardWithFooter .sapFCardObjectContent {
@@ -59,26 +68,35 @@
 
 	// Image
 
-	> .sapMImg.sapFCardObjectImage {
+	> .sapFCardObjectImage:not(:first-child) {
 		margin-top: 1rem;
 	}
 
+	.sapUiIntImageWithOverlay.sapFCardObjectImageFullWidth:first-child,
 	.sapMImg.sapFCardObjectImageFullWidth:first-child {
 		top: -16px;
 		margin-top: 0;
+		height: ~"calc(100% + 16px)";
 	}
 
+	.sapUiIntImageWithOverlay.sapFCardObjectImageFullWidth:last-child,
 	.sapMImg.sapFCardObjectImageFullWidth:last-child {
 		margin-bottom: -16px;
 	}
 
+	.sapUiIntImageWithOverlay.sapFCardObjectImageFullWidth:only-child,
 	.sapMImg.sapFCardObjectImageFullWidth:only-child {
 		margin-bottom: -32px;
 	}
 
+	.sapUiIntImageWithOverlay.sapFCardObjectImageFullWidth,
 	.sapMImg.sapFCardObjectImageFullWidth {
-		width: calc(100% + 32px);
+		width: ~"calc(100% + 32px)";
 		left: -16px;
+	}
+
+	.sapFCardObjectImage  {
+		position: relative;
 	}
 }
 

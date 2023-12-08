@@ -1,0 +1,39 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.object.justImageWithOverlayTextPosition",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Object",
+		"header": {
+			"icon": {
+				"src": "sap-icon://business-objects-experience"
+			},
+			"title": "Object Card",
+			"subTitle": "With Image Only and Action on the Content",
+			"visible": false
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"type": "Image",
+							"src": "../../images/grass.jpg",
+							"fullWidth": true,
+							"overlay": {
+								"supertitle": "{=  format.date(Date.now(), {pattern: 'E, MMM d '})}",
+								"title": "Hello John, John, John, John and Steve!",
+								"verticalPosition": "Center",
+								"horizontalPosition": "Center",
+								"textColor": "#fff",
+								"background": "rgb(34, 38, 43, 0.4)"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

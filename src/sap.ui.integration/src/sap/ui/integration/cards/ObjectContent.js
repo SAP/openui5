@@ -34,6 +34,7 @@ sap.ui.define([
 	"sap/ui/integration/util/Form",
 	"sap/ui/integration/util/DateRangeHelper",
 	"sap/ui/integration/util/Duration",
+	"sap/ui/integration/controls/ImageWithOverlay",
 	"sap/f/AvatarGroup",
 	"sap/f/AvatarGroupItem",
 	"sap/f/cards/NumericIndicators",
@@ -76,6 +77,7 @@ sap.ui.define([
 	Form,
 	DateRangeHelper,
 	Duration,
+	ImageWithOverlay,
 	AvatarGroup,
 	AvatarGroupItem,
 	NumericIndicators,
@@ -109,6 +111,8 @@ sap.ui.define([
 	var AvatarGroupType = fLibrary.AvatarGroupType;
 
 	var ToolbarStyle = mLibrary.ToolbarStyle;
+
+	var ImageMode = mLibrary.ImageMode;
 
 	/**
 	 * Constructor for a new <code>ObjectContent</code>.
@@ -886,12 +890,43 @@ sap.ui.define([
 			return this._oIconFormatter.formatSrc(sValue);
 		}.bind(this));
 
-		var oControl = new Image({
+		var oControl;
+
+		var oImage = new Image({
 			src: vSrc,
 			alt: oItem.alt,
-			tooltip: oItem.tooltip,
-			visible: BindingHelper.reuse(vVisible)
-		}).addStyleClass("sapFCardObjectImage");
+			height: oItem.height
+		});
+
+		if (oItem.imageFit || oItem.imagePosition) {
+			oImage.setMode(ImageMode.Background);
+			oImage.setBackgroundSize(oItem.imageFit);
+			oImage.setBackgroundPosition(oItem.imagePosition);
+		}
+
+		if (oItem.overlay) {
+			oImage.addStyleClass("sapUiIntImgWithOverlayImg");
+
+			oControl = new ImageWithOverlay({
+				image: oImage,
+				tooltip: oItem.tooltip,
+				supertitle:  oItem.overlay.supertitle,
+				title: oItem.overlay.title,
+				subTitle: oItem.overlay.subTitle,
+				verticalPosition: oItem.overlay.verticalPosition,
+				horizontalPosition: oItem.overlay.horizontalPosition,
+				textColor: oItem.overlay.textColor,
+				background: oItem.overlay.background,
+				visible: BindingHelper.reuse(vVisible)
+			}).addStyleClass("sapFCardObjectImage");
+
+			this.addStyleClass("sapFCardObjectContentWithOverlay");
+		} else {
+			oImage.setTooltip(oItem.tooltip);
+			oImage.setVisible(BindingHelper.reuse(vVisible));
+			oImage.addStyleClass("sapFCardObjectImage");
+			oControl = oImage;
+		}
 
 		if (oItem.fullWidth) {
 			oControl.addStyleClass("sapFCardObjectImageFullWidth");

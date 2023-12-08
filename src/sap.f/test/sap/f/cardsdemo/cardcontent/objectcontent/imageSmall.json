@@ -19,7 +19,12 @@
 					"items": [
 						{
 							"type": "Image",
-							"src": "../../images/grass.jpg"
+							"src": "../../images/grass.jpg",
+							"overlay": {
+								"title": "Title",
+								"textColor": "#fff"
+
+							}
 						},
 						{
 							"label": "Name",

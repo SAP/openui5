@@ -52,7 +52,8 @@
         "1.39.0",
         "1.40.0",
         "1.41.0",
-        "1.42.0"
+        "1.42.0",
+        "1.43.0"
       ]
     },
     "designtime": {
@@ -1722,6 +1723,52 @@
               "$ref": "#/definitions/simpleBinding"
             }
           ]
+        },
+        "height": {
+          "description": "The height of the image",
+          "type": "string"
+        },
+        "imageFit": {
+          "description": "This property is for adjusting the image size using the CSS style <code>background-size</code>.",
+          "type": "string"
+        },
+        "imagePosition": {
+          "description": "This property is for adjusting the image position using the CSS style <code>background-position</code>.",
+          "type": "string"
+        },
+        "overlay": {
+          "description": "Overlay on the Image",
+          "type": "object",
+          "properties": {
+            "supertitle": {
+              "description": "The text before the title",
+              "type": "string"
+            },
+            "title": {
+              "description": "The title",
+              "type": "string"
+            },
+            "subTitle": {
+              "description": "The subTitle",
+              "type": "string"
+            },
+            "verticalPosition": {
+              "description": "The vertical alignment of the texts",
+              "type": "string"
+            },
+            "horizontalPosition": {
+              "description": "The horizontal alignment of the texts",
+              "type": "string"
+            },
+            "textColor": {
+              "description": "The color of the texts",
+              "type": "string"
+            },
+            "background": {
+              "description": "The background behind the texts and over the image",
+              "type": "string"
+            }
+          }
         }
       }
     },

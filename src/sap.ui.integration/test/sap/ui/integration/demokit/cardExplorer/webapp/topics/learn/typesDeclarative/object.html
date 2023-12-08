@@ -1004,6 +1004,128 @@
 						<td>1.52</td>
 						<td>1.112</td>
 					</tr>
+					<tr>
+						<td>height</td>
+						<td>string</td>
+						<td>""</td>
+						<td>No</td>
+						<td>The height of the image.</td>
+						<td>1.61</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>imageFit</td>
+						<td>string</td>
+						<td>""</td>
+						<td>No</td>
+						<td>This property is for adjusting the image size using the CSS style <code>background-size</code>.</td>
+						<td>1.61</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>imagePosition</td>
+						<td>string</td>
+						<td>""</td>
+						<td>No</td>
+						<td>This property is for adjusting the image position using the CSS style <code>background-position</code>.</td>
+						<td>1.61</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>overlay</td>
+						<td><a href="#imageOverlayProperties">Overlay</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Defines if the image will have overlay with texts (experimental since 1.121)</td>
+						<td>1.61</td>
+						<td>1.121</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="imageOverlayProperties" class="boldBlock">Properties of Overlay property (experimental since 1.121)</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>supertitle</td>
+						<td>string</td>
+						<td>""</td>
+						<td>No</td>
+						<td>The text that will be displayed before the title.</td>
+						<td>1.61</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>title</td>
+						<td>string</td>
+						<td>""</td>
+						<td>No</td>
+						<td>The title.</td>
+						<td>1.61</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>subTitle</td>
+						<td>string</td>
+						<td>""</td>
+						<td>No</td>
+						<td>The text that will be displayed after the title.</td>
+						<td>1.61</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>verticalPosition</td>
+						<td>string</td>
+						<td>"Start"</td>
+						<td>No</td>
+						<td>The vertical position of the texts. Possible values are: "Start", "End", "Center"</td>
+						<td>1.61</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>horizontalPosition</td>
+						<td>string</td>
+						<td>"Start"</td>
+						<td>No</td>
+						<td>The horizontal position of the texts. Possible values are: "Start", "End", "Center"</td>
+						<td>1.61</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>textColor</td>
+						<td>string</td>
+						<td>""</td>
+						<td>No</td>
+						<td>The color of the texts.
+							<br>
+							<b>Note:</b> If set, the text color would not be themeable (will stay the same as provided with this property and won't change with the theme).
+							<br>
+							<b>Note:</b> The card developer is responsible for the contrast ratio - right text color and overlay background effect should be set.</td>
+						<td>1.61</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>background</td>
+						<td>string</td>
+						<td>""</td>
+						<td>No</td>
+						<td>The color of the background, which is placed under the texts and over the image.
+							<br>
+							<b>Note:</b> If set, the text background color would not be themeable (will stay the same as provided with this property and won't change with the theme).
+							<br>
+							<b>Note:</b> The card developer is responsible for the contrast ratio - right text color and overlay background effect should be set.</td>
+						<td>1.61</td>
+						<td>1.121</td>
+					</tr>
 				</table>
 			</div>
 

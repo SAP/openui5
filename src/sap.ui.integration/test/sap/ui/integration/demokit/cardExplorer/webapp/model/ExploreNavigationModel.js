@@ -393,6 +393,21 @@ sap.ui.define([
 										key: 'manifest.json'
 									}
 								]
+							},
+							{
+								title: 'Image With Overlay',
+								key: 'objectCardWithImageWithOverlay',
+								experimental: true,
+								settings: {
+									columns: 8
+								},
+								files: [
+									{
+										url: '/samples/object/imageWithOverlay/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},

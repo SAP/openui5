@@ -1,0 +1,45 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.object.imageAndOverlayWithFooter2",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Object",
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"type": "Image",
+							"src": "../../images/grass.jpg",
+							"fullWidth": false,
+							"overlay": {
+								"title": "Some title",
+								"textColor": "#fff"
+							}
+						},
+						{
+							"type": "NumericData",
+							"mainIndicator": {
+								"number": "35",
+								"unit": "h",
+								"state": "Error",
+								"size": "S"
+							},
+							"details": "Project Nanga Prabat (Ingo) 0 hours recorded. Please, record your time by the end of the month."
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Send Reminder",
+					"buttonType": "Accept"
+				}
+			]
+		}
+	}
+}

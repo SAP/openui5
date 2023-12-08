@@ -1,0 +1,48 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.object.justImageWithOverlayImgHeight",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Object",
+		"configuration": {
+			"parameters": {
+				"firstName": {
+					"value": "John"
+				}
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "sap-icon://business-objects-experience"
+			},
+			"title": "Object Card",
+			"subTitle": "With Image Only and Action on the Content",
+			"visible": false
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"type": "Image",
+							"src": "../../images/grass.jpg",
+							"fullWidth": true,
+							"height": "200px",
+							"imagePosition": "bottom",
+							"imageFit": "cover",
+							"overlay": {
+								"title": "Hello, {parameters>/firstName/value}",
+								"subTitle": "Today will be a good day!",
+								"textColor": "#fff",
+								"verticalPosition": "Center",
+								"background": "linear-gradient(90deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0))"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

@@ -99,8 +99,18 @@
 				width="auto"
 				class="sapUiTinyMargin" />
 			<w:Card
+				id="cardImageAndOverlayWithFooter2"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageAndOverlayWithFooter2.json"
+				width="auto"
+				class="sapUiTinyMargin" />
+			<w:Card
 				id="cardImageWithFooter"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageWithFooter.json"
+				width="auto"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="cardImageAndOverlayWithFooter"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageAndOverlayWithFooter.json"
 				width="auto"
 				class="sapUiTinyMargin" />
 			<w:Card
@@ -108,7 +118,56 @@
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageNoHeaderAndNoFooter.json"
 				width="400px"
 				class="sapUiTinyMargin" />
-
+				<w:Card
+			id="cardImageAndOverlayNoHeaderNoFooter"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageAndOverlayNoHeaderAndNoFooter.json"
+				width="400px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="cardImagePositionNoHeaderNoFooter"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imagePositionNoHeaderNoFooter.json"
+				width="600px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="cardJustImageWithOverlay"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/justImageWithTextOverlay.json"
+				width="auto"
+				class="sapUiTinyMargin" />
+			<VBox width="500px">
+				<w:Card
+					id="cardJustImageWithOverlayTextPosition"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/justImageWithOverlayTextPosition.json"
+					width="auto"
+					class="sapUiTinyMargin" />
+			</VBox>
+			<w:Card
+				id="cardJustImageWithOverlayGradient"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/justImageWithOverlayGradient.json"
+				width="600px"
+				height="200px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="justImageWithOverlayImagePosition"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/justImageWithOverlayImagePosition.json"
+				width="600px"
+				height="200px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="justImageWithOverlayNotFullWidth"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/justImageWithOverlayNotFullWidth.json"
+				width="600px"
+				height="200px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="justImageWithOverlayCalcHeight"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/justImageWithOverlayCalcHeight.json"
+				width="600px"
+				class="sapUiTinyMargin" />
+			<w:Card
+				id="justImageWithOverlayImgHeight"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/justImageWithOverlayImgHeight.json"
+				width="600px"
+				class="sapUiTinyMargin" />
 		</Panel>
 	</Page>
 </mvc:View>
