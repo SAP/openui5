@@ -74,7 +74,9 @@ sap.ui.define([
 	 * three columns (referred to as <code>Begin</code>, <code>Mid</code> and <code>End</code>) rather than two
 	 * (<code>Master</code>, <code>Detail</code>). The width of the three columns is variable.
 	 *
-	 * There are several possible layouts that can be changed either with the control's API, or by the user with the help of layout arrows.
+	 * There are several possible layouts that can be changed either with the control's API, or by the user with the help of the draggable column separators.
+	 * The draggable column separators allow the user to customize the column widths for the current layout, or to switch to a new layout (if the user drags the column separator past a breakpoint that delimits two different layouts).
+	 * After the user customized the column widths for a given layout, these user preferences are internally saved and automatically re-applied whenever the user re-visits the same layout.
 	 *
 	 * Internally the control makes use of three instances of {@link sap.m.NavContainer}, thus forming the three columns.
 	 *
@@ -220,8 +222,8 @@ sap.ui.define([
 				 * Fired when there is a change in the <code>layout</code> property or in the maximum number of columns that can be displayed at once.
 				 * <br/></br>
 				 * <ul>The interactions that may lead to a state change are:
-				 *  <li>the property <code>layout</code> was changed indirectly by the user clicking a layout arrow</li>
-				 *  <li>the user resized the browser beyond a breakpoint, thus changing the maximum number of columns that can be displayed at once.</li></ul>
+				 *  <li>The property <code>layout</code> was changed indirectly by the user dragging the column separator or clicking on its arrow (where arrow is available).</li>
+				 *  <li>The user resized the browser window beyond a breakpoint, thus changing the maximum number of columns that can be displayed at once.</li></ul>
 				 * <br/><br/>
 				 * <b>Note: </b>The event is suppressed while the control has zero width and will be fired the first time it gets a non-zero width
 				 *
@@ -246,13 +248,13 @@ sap.ui.define([
 							type: "int"
 						},
 						/**
-						 * Indicates whether the layout changed as a result of the user clicking a layout arrow
+						 * Indicates whether the layout changed as a result of the user clicking a column separator's arrow or dragging the column separators
 						 */
 						isNavigationArrow: {
 							type: "boolean"
 						},
 						/**
-						 * Indicates whether the maximum number of columns that can be displayed at once changed
+						 * Indicates whether the maximum number of columns that can be displayed at once changed due to resize of the entire browser window
 						 */
 						isResize: {
 							type: "boolean"
@@ -1088,7 +1090,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Saves the DOM references of the columns and layout arrows.
+	 * Saves the DOM references of the columns and column separators.
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._cacheDOMElements = function () {
@@ -2385,7 +2387,7 @@ sap.ui.define([
 		// Always resize the columns when the browser is resized
 		this._resizeColumns();
 
-		// Only update the arrows and fire the event if the maximum number of columns that can be shown has changed
+		// only fire the event if the maximum number of columns that can be shown has changed
 		if (iMaxColumnsCount !== iOldMaxColumnsCount) {
 			this._fireStateChange(false, true);
 		}
@@ -2429,7 +2431,7 @@ sap.ui.define([
 
 		iMaxColumnsCount = this.getMaxColumnsCount();
 
-		// Only show arrows if 2 or 3 columns can be displayed at a time
+		// Only show separators if 2 or 3 columns can be displayed at a time
 		if (iMaxColumnsCount > 1) {
 			oMap[LT.TwoColumnsBeginExpanded] = ["begin"];
 			oMap[LT.TwoColumnsMidExpanded] = ["begin"];
@@ -2455,7 +2457,7 @@ sap.ui.define([
 		var aNeededSeparators = [],
 			bIsNavContainersContentRendered;
 
-		// Stop here if the control isn't rendered yet or in phone mode, where arrows aren't necessary
+		// Stop here if the control isn't rendered yet or in phone mode, where separators aren't necessary
 		if (!this.isActive() || Device.system.phone) {
 			return;
 		}
@@ -2483,7 +2485,7 @@ sap.ui.define([
 		this._oColumnSeparators[sKey].data("visible", bShow);
 	};
 
-	FlexibleColumnLayout.prototype._fireStateChange = function (bIsNavigationArrow, bIsResize) {
+	FlexibleColumnLayout.prototype._fireStateChange = function (bIsColumnSeparatorInteraction, bIsResize) {
 
 		// The event should not be fired if the control has zero width as all relevant layout calculations are size-based
 		if (this._getControlWidth() === 0) {
@@ -2491,7 +2493,7 @@ sap.ui.define([
 		}
 
 		this.fireStateChange({
-			isNavigationArrow: bIsNavigationArrow,
+			isNavigationArrow: bIsColumnSeparatorInteraction,
 			isResize: bIsResize,
 			layout: this.getLayout(),
 			maxColumnsCount: this.getMaxColumnsCount()
