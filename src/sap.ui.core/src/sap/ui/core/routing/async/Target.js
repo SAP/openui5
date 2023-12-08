@@ -2,13 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
 	"sap/ui/core/Placeholder",
 	"sap/ui/core/library"
-], function(Log, ManagedObjectMetadata, ComponentContainer, Element, Placeholder, coreLib) {
+], function(future, Log, ManagedObjectMetadata, ComponentContainer, Element, Placeholder, coreLib) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ComponentLifecycle
@@ -676,17 +677,17 @@ sap.ui.define([
 				sLogMessage = "";
 
 			if (!bHasTargetControl) {
-				sLogMessage = "[FUTURE FATAL] The target " + oOptions._name + " has no controlId set and no parent so the target cannot be displayed.";
+				sLogMessage = "The target " + oOptions._name + " has no controlId set and no parent so the target cannot be displayed.";
 				bIsValid = false;
 			}
 
 			if (!oOptions.controlAggregation) {
-				sLogMessage = "[FUTURE FATAL] The target " + oOptions._name + " has a control id or a parent but no 'controlAggregation' was set, so the target could not be displayed.";
+				sLogMessage = "The target " + oOptions._name + " has a control id or a parent but no 'controlAggregation' was set, so the target could not be displayed.";
 				bIsValid = false;
 			}
 
 			if (sLogMessage) {
-				Log.error(sLogMessage, this);
+				future.errorThrows(sLogMessage, this);
 			}
 
 			return bIsValid || sLogMessage;

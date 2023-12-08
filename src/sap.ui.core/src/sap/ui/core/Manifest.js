@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/thirdparty/URI',
 	'sap/ui/VersionInfo',
 	'sap/base/util/Version',
+	'sap/base/future',
 	'sap/base/Log',
 	'sap/ui/dom/includeStylesheet',
 	'sap/base/i18n/ResourceBundle',
@@ -20,25 +21,25 @@ sap.ui.define([
 	'sap/ui/core/Supportability',
 	'sap/ui/core/Lib',
 	'./_UrlResolver'
-],
-	function(
-		Localization,
-		BaseObject,
-		URI,
-		VersionInfo,
-		Version,
-		Log,
-		includeStylesheet,
-		ResourceBundle,
-		uid,
-		merge,
-		isPlainObject,
-		LoaderExtensions,
-		BaseConfig,
-		Supportability,
-		Library,
-		_UrlResolver
-	) {
+], function(
+	Localization,
+	BaseObject,
+	URI,
+	VersionInfo,
+	Version,
+	future,
+	Log,
+	includeStylesheet,
+	ResourceBundle,
+	uid,
+	merge,
+	isPlainObject,
+	LoaderExtensions,
+	BaseConfig,
+	Supportability,
+	Library,
+	_UrlResolver
+) {
 	"use strict";
 
 	/*global Promise */
@@ -359,7 +360,7 @@ sap.ui.define([
 		 */
 		getEntry: function(sPath) {
 			if (!sPath || sPath.indexOf(".") <= 0) {
-				Log.warning("[FUTURE FATAL] Manifest entries with keys without namespace prefix can not be read via getEntry. Key: " + sPath + ", Component: " + this.getComponentName());
+				future.warningThrows("Manifest entries with keys without namespace prefix can not be read via getEntry. Key: " + sPath + ", Component: " + this.getComponentName());
 				return null;
 			}
 
@@ -368,7 +369,7 @@ sap.ui.define([
 
 			// top-level manifest section must be an object (e.g. sap.ui5)
 			if (sPath && sPath[0] !== "/" && !isPlainObject(oEntry)) {
-				Log.warning("[FUTURE FATAL] Manifest entry with key '" + sPath + "' must be an object. Component: " + this.getComponentName());
+				future.warningThrows("Manifest entry with key '" + sPath + "' must be an object. Component: " + this.getComponentName());
 				return null;
 			}
 
@@ -607,7 +608,7 @@ sap.ui.define([
 					var sResourceRootPath = mResourceRoots[sResourceRoot];
 					var oResourceRootURI = new URI(sResourceRootPath);
 					if (oResourceRootURI.is("absolute") || (oResourceRootURI.path() && oResourceRootURI.path()[0] === "/")) {
-						Log.error("[FUTURE FATAL] Resource root for \"" + sResourceRoot + "\" is absolute and therefore won't be registered! \"" + sResourceRootPath + "\"", this.getComponentName());
+						future.errorThrows("Resource root for \"" + sResourceRoot + "\" is absolute and therefore won't be registered! \"" + sResourceRootPath + "\"", this.getComponentName());
 						continue;
 					}
 					sResourceRootPath = this.resolveUri(sResourceRootPath);

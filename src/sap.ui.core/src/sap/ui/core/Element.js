@@ -10,12 +10,11 @@ sap.ui.define([
 	'./ElementMetadata',
 	'../Device',
 	"sap/ui/performance/trace/Interaction",
-	"sap/base/Log",
+	"sap/base/future",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/F6Navigation",
 	"./RenderManager",
-	"./Configuration",
 	"./EnabledPropagator",
 	"./ElementRegistry",
 	"./Theming",
@@ -28,12 +27,11 @@ sap.ui.define([
 		ElementMetadata,
 		Device,
 		Interaction,
-		Log,
+		future,
 		assert,
 		jQuery,
 		F6Navigation,
 		RenderManager,
-		Configuration,
 		EnabledPropagator,
 		ElementRegistry,
 		Theming,
@@ -1246,7 +1244,7 @@ sap.ui.define([
 		var value = this.getValue();
 
 		function error(reason) {
-			Log.error("[FUTURE FATAL] CustomData with key " + key + " should be written to HTML of " + oRelated + " but " + reason);
+			future.errorThrows("CustomData with key " + key + " should be written to HTML of " + oRelated + " but " + reason);
 			return null;
 		}
 
@@ -1470,7 +1468,7 @@ sap.ui.define([
 		var argLength = arguments.length;
 		if ( argLength === 1 && arguments[0] !== null && typeof arguments[0] == "object"
 			 || argLength > 1 && argLength < 4 && arguments[1] !== null ) {
-			Log.error("[FUTURE FATAL] Cannot create custom data on an already destroyed element '" + this + "'");
+			future.errorThrows("Cannot create custom data on an already destroyed element '" + this + "'");
 			return this;
 		}
 		return Element.prototype.data.apply(this, arguments);
@@ -1878,7 +1876,7 @@ sap.ui.define([
 			oDomRef = vParam;
 		} else if (vParam.jquery) {
 			oDomRef = vParam[0];
-			Log.error("[FUTURE FATAL] Do not call Element.closestTo() with jQuery object as parameter. \
+			future.errorThrows("Do not call Element.closestTo() with jQuery object as parameter. \
 				The function should be called with either a DOM Element or a CSS selector. \
 				(future error, ignored for now)");
 		} else {

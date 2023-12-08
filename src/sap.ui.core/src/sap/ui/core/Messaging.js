@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/base/Log",
+	"sap/base/future",
 	"sap/base/util/deepEqual",
 	"sap/base/util/merge",
 	"sap/ui/core/message/ControlMessageProcessor",
@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/core/message/MessageProcessor",
 	"sap/ui/model/message/MessageModel"
 ], (
-	Log,
+	future,
 	deepEqual,
 	merge,
 	ControlMessageProcessor,
@@ -164,7 +164,7 @@ sap.ui.define([
 		 */
 		registerObject: function(oObject, bHandleValidation) {
 			if (!(oObject && oObject.isA && (oObject.isA(["sap.ui.base.ManagedObject", "sap.ui.core.Core"])))) {
-				Log.error("[FUTURE FATAL] Messaging: " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
+				future.errorThrows("Messaging: " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
 			} else {
 				oObject.attachValidationSuccess(bHandleValidation, _handleSuccess);
 				oObject.attachValidationError(bHandleValidation, _handleError);
@@ -181,7 +181,7 @@ sap.ui.define([
 		 */
 		unregisterObject: function(oObject) {
 			if (!(oObject && oObject.isA && oObject.isA("sap.ui.base.ManagedObject"))) {
-				Log.error("[FUTURE FATAL] Messaging: " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
+				future.errorThrows("Messaging: " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
 			} else {
 				oObject.detachValidationSuccess(_handleSuccess);
 				oObject.detachValidationError(_handleError);
