@@ -7,30 +7,18 @@
 	max-height: var(--sapUiIntegrationEditorPreviewHeight, 350px) !important;
 	box-sizing: border-box;
 	display: inline-block;
+	border-radius: 2px;
+}
+
+.sapUiIntegrationDTPreview.sapUiIntegrationDTPreviewScaleBackground{
 	background-color: rgba(222, 222, 222, 0.3) !important;
 	border: 1px solid rgba(222, 222, 222, 0.5) !important;
-	border-radius: 2px;
 }
 
 .sapUiIntegrationDTPreview.sapUiIntegrationDTPreviewSeparate {
 	width: auto;
 	height: auto;
 	display: block;
-}
-
-.sapUiIntegrationDTPreview::-webkit-scrollbar {
-	width: 7px !important;
-	background-color: transparent !important	;
-	transition: all 0.5s ease-in;
-}
-
-.sapUiIntegrationDTPreview::-webkit-scrollbar-thumb {
-	background-color: transparent !important;
-	width: 7px;
-}
-
-.sapUiIntegrationDTPreview:hover::-webkit-scrollbar-thumb {
-	background-color: var(--sapUiChartScrollbarBorderColor, rgba(148, 148, 148, 0.4))!important;
 }
 
 .sapUiIntegrationDTPreview.sapUiIntegrationDTPreviewDark {
@@ -61,6 +49,7 @@
     max-height: calc((var(--sapUiIntegrationEditorPreviewHeight, 350px) - 4rem) / 0.45) !important;
 	overflow-y: auto;
     width: calc(400px + 10rem) !important;
+	padding: 0.1rem;
 }
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewScale.withSpec {
@@ -75,10 +64,34 @@
 	overflow: auto;
 	min-height: calc(350px - 4rem) !important;
 	max-height: calc(var(--sapUiIntegrationEditorPreviewHeight, 350px) - 4rem) !important;
+	padding: 0.1rem;
 }
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewNoScale .sapUiIntegrationDTPreviewCard {
 	min-height: calc(350px - 4rem) !important;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewScale::-webkit-scrollbar {
+	width: 12px !important;
+	background-color: transparent !important;
+	transition: all 0.5s ease-in;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewNoScale::-webkit-scrollbar {
+	width: 7px !important;
+	background-color: transparent !important;
+	transition: all 0.5s ease-in;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewScale::-webkit-scrollbar-thumb,
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewNoScale::-webkit-scrollbar-thumb {
+	background-color: transparent !important;
+	width: 7px;
+}
+
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewScale:hover::-webkit-scrollbar-thumb,
+.sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewNoScale:hover::-webkit-scrollbar-thumb {
+	background-color: var(--sapUiChartScrollbarBorderColor, rgba(148, 148, 148, 0.4))!important;
 }
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewScale .sapUiIntegrationDTPreviewCard {
@@ -88,7 +101,7 @@
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewModeButton {
 	position: absolute !important;
 	margin: calc(min(var(--sapUiIntegrationEditorPreviewCardHeight, calc(350px - 4rem)), calc(var(--sapUiIntegrationEditorPreviewHeight, 350px) - 4rem)) + 0.5rem) 0 0 calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 8rem) !important
-	}
+}
 
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewModeButtonSpec {
 	position: absolute !important;

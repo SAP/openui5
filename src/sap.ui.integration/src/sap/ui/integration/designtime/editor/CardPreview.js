@@ -88,6 +88,9 @@ sap.ui.define([
 				}
 				oRm.openStart("div", oControl);
 				oRm.class("sapUiIntegrationDTPreview");
+				if ((!oControl.getSettings().preview || oControl.getSettings().preview.scaled !== false) && oControl._getCurrentSize() !== "Full") {
+					oRm.class("sapUiIntegrationDTPreviewScaleBackground");
+				}
 				if (isDark()) {
 					oRm.class("sapUiIntegrationDTPreviewDark");
 				}
