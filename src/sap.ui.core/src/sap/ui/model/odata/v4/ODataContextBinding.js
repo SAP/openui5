@@ -593,10 +593,12 @@ sap.ui.define([
 		 */
 		function getOriginalResourcePath(oResponseEntity) {
 			if (that.isReturnValueLikeBindingParameter(oOperationMetadata)) {
-				if (that.hasReturnValueContext()) {
-					return that.getReturnValueContextPath(oResponseEntity);
+				const sRVCPath = that.getReturnValueContextPath(oResponseEntity);
+				if (sRVCPath) {
+					return sRVCPath;
 				}
-				if (_Helper.getPrivateAnnotation(vEntity, "predicate")
+				if (that.oOperation.bAdditionalQueryOptionsForRVC === false
+						&& _Helper.getPrivateAnnotation(vEntity, "predicate")
 						=== _Helper.getPrivateAnnotation(oResponseEntity, "predicate")) {
 					// return value is *same* as binding parameter: attach messages to the latter
 					return sOriginalResourcePath.slice(0, sOriginalResourcePath.lastIndexOf("/"));
@@ -1265,13 +1267,14 @@ sap.ui.define([
 	 *
 	 * @param {object} oResponseEntity
 	 *   The result of the executed operation
-	 * @returns {string} The path for the return value context.
+	 * @returns {string|undefined} The path for the return value context or <code>undefined</code>
+	 *   if it is not possible to create one
 	 *
 	 * @privat
 	 */
 	ODataContextBinding.prototype.getReturnValueContextPath = function (oResponseEntity) {
-		if (this.oOperation.bAdditionalQueryOptionsForRVC === undefined) {
-			throw new Error("Unexpected Value for bAdditionalQueryOptionsForRVC: undefined");
+		if (!this.hasReturnValueContext()) {
+			return undefined;
 		}
 		const sBindingParameterPath = this.oContext.getPath().slice(1);
 		const sPredicate = _Helper.getPrivateAnnotation(oResponseEntity, "predicate");
@@ -1283,10 +1286,14 @@ sap.ui.define([
 		const aMetaPathSegments = _Helper.getMetaPath(sBindingParameterPath).split("/");
 		const sPartner = this.oModel.getMetaModel()
 			.getObject("/" + aMetaPathSegments[0] + "/" + aMetaPathSegments[1] + "/$Partner");
+		const oPartner = oResponseEntity[sPartner];
 		const sPartnerPredicate
-			= this.oModel.getKeyPredicate("/" + aMetaPathSegments[0], oResponseEntity[sPartner]);
+			= oPartner && this.oModel.getKeyPredicate("/" + aMetaPathSegments[0], oPartner);
 
-		return sBindingParameterPath.split("/").map(function (sSegment, i) {
+		if (!(sPartnerPredicate && sPredicate)) {
+			return undefined;
+		}
+		return sBindingParameterPath.split("/").map((sSegment, i) => {
 			return sSegment.slice(0, sSegment.lastIndexOf("("))
 				+ (i ? sPredicate : sPartnerPredicate);
 		}).join("/");
@@ -1326,9 +1333,8 @@ sap.ui.define([
 					// the context (we already read its predicate)
 					this.oContext.patch(oResponseEntity);
 				}
-				if (this.hasReturnValueContext()) {
-					// determine the new path
-					sNewPath = this.getReturnValueContextPath(oResponseEntity);
+				sNewPath = this.getReturnValueContextPath(oResponseEntity);
+				if (sNewPath) {
 					if (bReplaceWithRVC) {
 						// replace is only possible if the path does not contain any navigation
 						// property or the key predicate of the first segment has not changed!
