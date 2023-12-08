@@ -13,24 +13,25 @@ sap.ui.define([
 	'./RenderManager',
 	'./BusyIndicatorUtils',
 	'./BlockLayerUtils',
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/ui/performance/trace/Interaction",
 	"sap/ui/thirdparty/jquery"
-],
-	function(
-		CustomStyleClassSupport,
-		Core,
-		Element,
-		ElementRegistry,
-		UIArea,
-		StaticArea,
-		RenderManager,
-		BusyIndicatorUtils,
-		BlockLayerUtils,
-		Log,
-		Interaction,
-		jQuery
-	) {
+], function(
+	CustomStyleClassSupport,
+	Core,
+	Element,
+	ElementRegistry,
+	UIArea,
+	StaticArea,
+	RenderManager,
+	BusyIndicatorUtils,
+	BlockLayerUtils,
+	future,
+	Log,
+	Interaction,
+	jQuery
+) {
 	"use strict";
 
 	// soft dependency
@@ -662,7 +663,7 @@ sap.ui.define([
 
 			if (oContainer instanceof Element) {
 				if (!isSuitableAsContainer(oContainer)) {
-					Log.warning("[FUTURE FATAL] placeAt cannot be processed because container " + oContainer + " does not have an aggregation 'content'.");
+					future.warningThrows("placeAt cannot be processed because container " + oContainer + " does not have an aggregation 'content'.");
 					return this;
 				}
 			} else {
@@ -691,7 +692,7 @@ sap.ui.define([
 						oContainer.addContent(this);
 						break;
 					default:
-						Log.warning("[FUTURE FATAL] Position " + vPosition + " is not supported for function placeAt.");
+						future.warningThrows("Position " + vPosition + " is not supported for function placeAt.");
 				}
 			}
 		}.bind(this));

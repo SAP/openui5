@@ -10,6 +10,7 @@ sap.ui.define([
 	"./Object",
 	"./BindingInfo",
 	"sap/ui/util/ActivityDetection",
+	"sap/base/future",
 	"sap/base/util/ObjectPath",
 	"sap/base/Log",
 	"sap/base/assert",
@@ -25,6 +26,7 @@ sap.ui.define([
 	BaseObject,
 	BindingInfo,
 	ActivityDetection,
+	future,
 	ObjectPath,
 	Log,
 	assert,
@@ -1344,7 +1346,7 @@ sap.ui.define([
 						if (Array.isArray(oValue)){
 							// assumption: we have an extensionPoint here which is always an array, even if it contains a single control
 							if (oValue.length > 1){
-								Log.error("[FUTURE FATAL] Tried to add an array of controls to a single aggregation");
+								future.errorThrows("Tried to add an array of controls to a single aggregation");
 							}
 							oValue = oValue[0];
 						}
@@ -1922,7 +1924,7 @@ sap.ui.define([
 
 		if (typeof (vObject) == "number") { // "object" is the index now
 			if (vObject < 0 || vObject >= aIds.length) {
-				Log.warning("[FUTURE FATAL] ManagedObject.removeAssociation called with invalid index: " + sAssociationName + ", " + vObject);
+				future.warningThrows("ManagedObject.removeAssociation called with invalid index: " + sAssociationName + ", " + vObject);
 			} else {
 				sId = aIds[vObject];
 				aIds.splice(vObject, 1);
@@ -2313,7 +2315,7 @@ sap.ui.define([
 			i = iIndex;
 		}
 		if (i !== iIndex) {
-			Log.warning("[FUTURE FATAL] ManagedObject.insertAggregation: index '" + iIndex + "' out of range [0," + aChildren.length + "], forced to " + i);
+			future.warningThrows("ManagedObject.insertAggregation: index '" + iIndex + "' out of range [0," + aChildren.length + "], forced to " + i);
 		}
 		aChildren.splice(i, 0, oObject);
 		oObject.setParent(this, sAggregationName, bSuppressInvalidate);
@@ -2432,7 +2434,7 @@ sap.ui.define([
 
 		if (typeof (vObject) == "number") { // "vObject" is the index now
 			if (vObject < 0 || vObject >= aChildren.length) {
-				Log.warning("[FUTURE FATAL] ManagedObject.removeAggregation called with invalid index: " + sAggregationName + ", " + vObject);
+				future.warningThrows("ManagedObject.removeAggregation called with invalid index: " + sAggregationName + ", " + vObject);
 
 			} else {
 				oChild = aChildren[vObject];
@@ -2658,7 +2660,7 @@ sap.ui.define([
 	ManagedObject.prototype._removeChild = function(oChild, sAggregationName, bSuppressInvalidate) {
 		if (!sAggregationName) {
 			// an aggregation name has to be specified!
-			Log.error("[FUTURE FATAL] Cannot remove aggregated child without aggregation name.", null, this);
+			future.errorThrows("Cannot remove aggregated child without aggregation name.", null, this);
 		} else {
 			// set suppress invalidate flag
 			if (bSuppressInvalidate) {
@@ -3257,7 +3259,7 @@ sap.ui.define([
 	};
 
 	function logError(sFunctionName) {
-		Log.error("[FUTURE FATAL] Unexpected call of '" + sFunctionName + "'.");
+		future.errorThrows("Unexpected call of '" + sFunctionName + "'.");
 	}
 
 	/**
@@ -3720,7 +3722,7 @@ sap.ui.define([
 			throw new Error("Aggregation \"" + sName + "\" does not exist in " + this);
 		}
 		if (!oAggregationInfo.multiple) {
-			Log.error("[FUTURE FATAL] Binding of single aggregation \"" + sName + "\" of " + this + " is not supported!");
+			future.errorThrows("Binding of single aggregation \"" + sName + "\" of " + this + " is not supported!");
 		}
 
 		// Old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
@@ -3910,7 +3912,7 @@ sap.ui.define([
 	* @since 1.28
 	*/
 	ManagedObject.prototype.propagateMessages = function(sName, aMessages) {
-		Log.warning("[FUTURE FATAL] Message for " + this + ", Property " + sName);
+		future.warningThrows("Message for " + this + ", Property " + sName);
 	};
 
 	/**

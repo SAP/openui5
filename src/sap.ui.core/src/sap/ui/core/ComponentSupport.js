@@ -7,18 +7,19 @@ sap.ui.define([
 	'sap/ui/base/DataType',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/library',
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
 	"sap/base/strings/camelize"
-],
-	function(
-		DataType,
-		ComponentContainer,
-		library,
-		Log,
-		ObjectPath,
-		camelize
-	) {
+], function(
+	DataType,
+	ComponentContainer,
+	library,
+	future,
+	Log,
+	ObjectPath,
+	camelize
+) {
 	"use strict";
 
 	var ComponentLifecycle = library.ComponentLifecycle;
@@ -177,7 +178,7 @@ sap.ui.define([
 					var oProperty = ComponentContainerMetadata.getProperty(sKey);
 					var oEvent = !oProperty && ComponentContainerMetadata.getEvent(sKey);
 					if (!oProperty && !oEvent) {
-						Log.warning("[FUTURE FATAL] Property or event \"" + sKey + "\" will be ignored as it does not exist in sap.ui.core.ComponentContainer");
+						future.warningThrows("Property or event \"" + sKey + "\" will be ignored as it does not exist in sap.ui.core.ComponentContainer");
 						continue;
 					}
 					if (oProperty) {
@@ -226,7 +227,7 @@ sap.ui.define([
 		if (mSettings.manifest === undefined || mSettings.manifest === "true") {
 			mSettings.manifest = true;
 		} else if (mSettings.manifest === "false") {
-			Log.error("[FUTURE FATAL] Ignoring \"manifest=false\" for ComponentContainer of component \"" + mSettings.name + "\" as it is not supported by ComponentSupport. " +
+			future.errorThrows("Ignoring \"manifest=false\" for ComponentContainer of component \"" + mSettings.name + "\" as it is not supported by ComponentSupport. " +
 				"Forcing \"manifest=true\"", "", "sap/ui/core/ComponentSupport");
 			mSettings.manifest = true;
 		}

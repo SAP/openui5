@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/base/Log"], function(Log) {
+sap.ui.define(["sap/base/future"], function(future) {
 	"use strict";
 
 	/**
@@ -117,8 +117,8 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 				}
 				return oTarget._display(vData, oSequencePromise, oTargetCreateInfo);
 			} else {
-				var sErrorMessage = "[FUTURE FATAL] The target with the name \"" + sName + "\" does not exist!";
-				Log.error(sErrorMessage, this);
+				var sErrorMessage = "The target with the name \"" + sName + "\" does not exist!";
+				future.errorThrows(sErrorMessage, this);
 				return Promise.resolve({
 					name: sName,
 					error: sErrorMessage
