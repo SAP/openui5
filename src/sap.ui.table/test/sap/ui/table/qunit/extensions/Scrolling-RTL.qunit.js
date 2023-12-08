@@ -54,7 +54,7 @@ sap.ui.define([
 		var oHSbComputedStyle = window.getComputedStyle(oHSb);
 		var oHSbContentComputedStyle = window.getComputedStyle(oHSbContent);
 
-		assert.strictEqual(oHSbComputedStyle.marginLeft, "107px", "Left margin");
+		assert.strictEqual(oHSbComputedStyle.marginLeft, "91px", "Left margin");
 		assert.strictEqual(oHSbComputedStyle.marginRight, "48px", "Right margin");
 		assert.strictEqual(oHSbContentComputedStyle.width, "500px", "Scroll range");
 	});

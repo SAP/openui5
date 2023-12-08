@@ -14,6 +14,7 @@ sap.ui.define([
 				version: 4					// Whether Sinon should be loaded and if so, what version
 			},
 			ui5: {
+				theme: "sap_horizon",
 				language: "en-US",
 				rtl: false,					// Whether to run the tests in RTL mode
 				libs: ["sap.ui.table"],		// Libraries to load upfront in addition to the library which is tested (sap.ui.table), if null no libs are loaded
