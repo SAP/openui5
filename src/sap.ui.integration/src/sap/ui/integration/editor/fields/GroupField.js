@@ -198,8 +198,8 @@ sap.ui.define([
 			oControl.setBackgroundDesign("Transparent");
 			oControl.setHeaderBackgroundDesign("Transparent");
 			// oControl.setHeaderBackgroundDesign("Solid");
-			oControl.addStyleClass("sapUiIntegrationEditorSubGroup");
-			// oControl.addStyleClass("sapUiIntegrationEditorSubGroup").addStyleClass("cardEditorIconTabBarBG");
+			oControl.addStyleClass("sapUiIntegrationEditorSubPanel");
+			// oControl.addStyleClass("sapUiIntegrationEditorSubPanel").addStyleClass("cardEditorIconTabBarBG");
 			// handle messageStrip for tab filter
 			if (this.getMode() !== "translation") {
 				var oMessageStripOfTab = new MessageStrip({
@@ -216,7 +216,7 @@ sap.ui.define([
 				oControl._messageStrip = oMessageStripOfTab;
 			}
 			// oControl._cols = oConfig.cols || 2; //by default 2 cols
-			oControl._level = oConfig.level || 0; //by default 0 level
+			oIconTabFilter._level = oConfig.level || 0; //by default 0 level
 		}
 	};
 
