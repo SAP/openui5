@@ -2,10 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Lib",
 	"sap/ui/test/matchers/Matcher",
 	"sap/base/strings/capitalize"
-], function (Library, Matcher, capitalize) {
+], function (Matcher, capitalize) {
 	"use strict";
 
 	/**
@@ -120,7 +119,8 @@ sap.ui.define([
 			if (bUseLibraryBundle) {
 				var sLibraryName = oControl.getMetadata().getLibraryName();
 
-				oBundle = Library.getResourceBundleFor(sLibraryName);
+				oBundle = sap.ui.require("sap/ui/test/OpaPlugin")
+					.getLibraryResourceBundle(sLibraryName);
 			} else {
 				oBundle = oModel.getResourceBundle();
 

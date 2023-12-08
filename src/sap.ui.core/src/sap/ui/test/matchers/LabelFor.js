@@ -143,9 +143,11 @@ sap.ui.define([
 			}
 
 			var fnLabelType = this._getApplicationWindow().sap.ui.require("sap/m/Label");
-			var aLabelsInPage = this._getApplicationWindow().sap.ui.require("sap/ui/core/Element").registry.filter(function (oElement) {
-				return oElement instanceof fnLabelType;
-			});
+			var aLabelsInPage = this._getApplicationWindow().sap.ui.require("sap/ui/test/OpaPlugin")
+				.getElementRegistry()
+				.filter(function (oElement) {
+					return oElement instanceof fnLabelType;
+				});
 
 			oI18nMatcher.applySettings({
 				key: sKey,

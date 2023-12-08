@@ -7,10 +7,10 @@ sap.ui.define([
     "sap/ui/base/ManagedObject",
     "sap/ui/test/_OpaLogger",
     'sap/ui/test/_ControlFinder',
-    'sap/ui/core/Element',
+    'sap/ui/core/ElementRegistry',
     'sap/ui/core/mvc/View',
     'sap/ui/base/ManagedObjectMetadata'
-], function (extend, ManagedObject, _OpaLogger, _ControlFinder, UI5Element, View, ManagedObjectMetadata) {
+], function (extend, ManagedObject, _OpaLogger, _ControlFinder, UI5ElementRegistry, View, ManagedObjectMetadata) {
     "use strict";
 
     /**
@@ -136,7 +136,7 @@ sap.ui.define([
             var sViewName = oView.getViewName();
 
             if (ManagedObjectMetadata.isGeneratedId(sViewId)) {
-                var aViewsWithSameName = UI5Element.registry.filter(function (oElement) {
+                var aViewsWithSameName = UI5ElementRegistry.filter(function (oElement) {
                     return oElement instanceof View;
                 }).filter(function (oElement) {
                     return oElement.getViewName() === sViewName;

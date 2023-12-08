@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element",
+	"sap/ui/test/OpaPlugin",
 	"./WaiterBase"
-], function(Element, WaiterBase) {
+], function(OpaPlugin, WaiterBase) {
 	"use strict";
 
 	var NavigationContainerWaiter = WaiterBase.extend("sap.ui.test.autowaiter._navigationContainerWaiter", {
@@ -20,7 +20,7 @@ sap.ui.define([
 				return oControl instanceof fnNavContainer;
 			}
 
-			return Element.registry.filter(isNavContainer).some(function (oNavContainer) {
+			return OpaPlugin.getElementRegistry().filter(isNavContainer).some(function (oNavContainer) {
 				if (oNavContainer._bNavigating) {
 					this._oHasPendingLogger.debug("The NavContainer " + oNavContainer + " is currently navigating");
 				}
