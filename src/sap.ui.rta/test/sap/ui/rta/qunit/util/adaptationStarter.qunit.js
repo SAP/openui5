@@ -27,9 +27,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
-	var oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
-	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+	const sandbox = sinon.createSandbox();
+	const oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
+	const oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	function setIsKeyUser(bIsKeyUser) {
 		sandbox.stub(FeaturesAPI, "isKeyUser").resolves(bIsKeyUser);
@@ -147,29 +147,24 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("without optional parameters", function(assert) {
-			var oRuntimeAuthoring;
-			return adaptationStarter({
+		QUnit.test("without optional parameters", async function(assert) {
+			const oRuntimeAuthoring = await adaptationStarter({
 				rootControl: oAppComponent,
 				flexSettings: {
 					layer: "USER"
 				}
-			})
-			.then(function(oRta) {
-				oRuntimeAuthoring = oRta;
-				return oRta.stop(true, true);
-			})
-			.then(function() {
-				assert.strictEqual(oRuntimeAuthoring.isDestroyStarted(), true,
-					"the instance is getting destroyed via the default stop handler");
 			});
+			await oRuntimeAuthoring.stop(true, true);
+			assert.strictEqual(oRuntimeAuthoring.isDestroyStarted(), true,
+				"the instance is getting destroyed via the default stop handler");
 		});
 
 		QUnit.test("with optional parameters", function(assert) {
-			var oLoadPluginsStub = sandbox.stub().resolves();
-			var oOnStartStub = sandbox.stub();
-			var oOnFailedStub = sandbox.stub();
-			var oOnStopStub = sandbox.stub();
+			const oAttachEventSpy = sandbox.spy(RuntimeAuthoring.prototype, "attachEvent");
+			const oLoadPluginsStub = sandbox.stub().resolves();
+			const oOnStartStub = sandbox.stub();
+			const oOnFailedStub = sandbox.stub();
+			const oOnStopStub = sandbox.stub();
 
 			return adaptationStarter({
 				rootControl: oAppComponent,
@@ -177,13 +172,19 @@ sap.ui.define([
 					layer: "USER"
 				}
 			}, oLoadPluginsStub, oOnStartStub, oOnFailedStub, oOnStopStub)
-			.then(function(oRta) {
-				assert.strictEqual(oRta.mEventRegistry.start.pop().fFunction, oOnStartStub,
-					"then the passed on load handler is registered as event handler");
-				assert.strictEqual(oRta.mEventRegistry.failed.pop().fFunction, oOnFailedStub,
-					"then the passed on failed handler is registered as event handler");
-				assert.strictEqual(oRta.mEventRegistry.stop.pop().fFunction, oOnStopStub,
-					"then the passed on stop handler is registered as event handler");
+			.then(function() {
+				assert.ok(
+					oAttachEventSpy.calledWith("start", oOnStartStub),
+					"then the passed on start handler is registered as event handler"
+				);
+				assert.ok(
+					oAttachEventSpy.calledWith("failed", oOnFailedStub),
+					"then the passed on failed handler is registered as event handler"
+				);
+				assert.ok(
+					oAttachEventSpy.calledWith("stop", oOnStopStub),
+					"then the passed on stop handler is registered as event handler"
+				);
 			});
 		});
 

@@ -5,7 +5,6 @@
 // Provides class sap.ui.rta.RuntimeAuthoring.
 sap.ui.define([
 	"sap/base/strings/capitalize",
-	"sap/base/util/isPlainObject",
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
@@ -39,7 +38,6 @@ sap.ui.define([
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/command/LREPSerializer",
 	"sap/ui/rta/command/Stack",
-	"sap/ui/rta/service/index",
 	"sap/ui/rta/toolbar/Fiori",
 	"sap/ui/rta/toolbar/FioriLike",
 	"sap/ui/rta/toolbar/Personalization",
@@ -48,13 +46,12 @@ sap.ui.define([
 	"sap/ui/rta/util/PluginManager",
 	"sap/ui/rta/util/PopupManager",
 	"sap/ui/rta/util/ReloadManager",
-	"sap/ui/rta/util/ServiceEventBus",
+	"sap/ui/rta/util/ServiceManager",
 	"sap/ui/rta/util/validateFlexEnabled",
 	"sap/ui/rta/Utils",
 	"sap/ui/Device"
 ], function(
 	capitalize,
-	isPlainObject,
 	Log,
 	MessageBox,
 	MessageToast,
@@ -88,7 +85,6 @@ sap.ui.define([
 	BaseCommand,
 	LREPSerializer,
 	CommandStack,
-	ServicesIndex,
 	FioriToolbar,
 	FioriLikeToolbar,
 	PersonalizationToolbar,
@@ -97,7 +93,7 @@ sap.ui.define([
 	PluginManager,
 	PopupManager,
 	ReloadManager,
-	ServiceEventBus,
+	ServiceManager,
 	validateFlexEnabled,
 	Utils,
 	Device
@@ -108,9 +104,6 @@ sap.ui.define([
 	const STARTED = "STARTED";
 	const STOPPED = "STOPPED";
 	const FAILED = "FAILED";
-	const SERVICE_STARTING = "SERVICE_STARTING";
-	const SERVICE_STARTED = "SERVICE_STARTED";
-	const SERVICE_FAILED = "SERVICE_FAILED";
 
 	/**
 	 * Constructor for a new sap.ui.rta.RuntimeAuthoring class.
@@ -235,12 +228,12 @@ sap.ui.define([
 			ManagedObject.apply(this, aArgs);
 
 			this._dependents = {};
-			this._mServices = {};
 			this._mUShellServices = {};
 			this._pElementModified = Promise.resolve();
 
 			this.addDependent(new PluginManager(), "pluginManager");
 			this.addDependent(new PopupManager(), "popupManager");
+			this.addDependent(new ServiceManager(), "serviceManager");
 
 			if (this.getShowToolbars()) {
 				this.getPopupManager().attachOpen(onPopupOpen, this);
@@ -249,11 +242,11 @@ sap.ui.define([
 				// Change visualization can only be triggered from the toolbar
 				this.addDependent(new ChangeVisualization(), "changeVisualization");
 			}
-
+			this.pServices = Promise.resolve();
 			if (window.parent !== window) {
-				this.startService("receiver");
+				this.pServices = this.getService("receiver");
 			}
-			this.startService("supportTools");
+			this.pServices = this.pServices.then(this.getService.bind(this, "supportTools"));
 
 			this._loadUShellServicesPromise = FlexUtils.getUShellServices(["URLParsing", "AppLifeCycle", "CrossApplicationNavigation"])
 			.then(function(mUShellServices) {
@@ -488,6 +481,7 @@ sap.ui.define([
 			this.fireStart({
 				editablePluginsCount: this.getPluginManager().getEditableOverlaysCount()
 			});
+			await this.pServices;
 		} catch (vError) {
 			if (vError.message === "Reload triggered") {
 				// destroy rta when reload is triggered - otherwise the consumer needs to take care of this
@@ -722,10 +716,6 @@ sap.ui.define([
 			this.removeDependent(sDependentKey);
 		}.bind(this));
 
-		Object.keys(this._mServices).forEach(function(sServiceName) {
-			this.stopService(sServiceName);
-		}, this);
-
 		if (this._oDesignTime) {
 			this._oDesignTime.destroy();
 			this._oDesignTime = null;
@@ -746,10 +736,6 @@ sap.ui.define([
 		}
 
 		this.setCommandStack(null);
-
-		if (this._oServiceEventBus) {
-			this._oServiceEventBus.destroy();
-		}
 
 		if (Device.browser.name === "ff") {
 			jQuery(document).off("contextmenu", ffContextMenuHandler);
@@ -1725,195 +1711,31 @@ sap.ui.define([
 		this.setMode(oEvent.getParameter("item").getKey());
 	}
 
-	function resolveServiceLocation(sName) {
-		if (ServicesIndex.hasOwnProperty(sName)) {
-			return ServicesIndex[sName].replace(/\./g, "/");
-		}
-		return undefined;
-	}
-
-	/**
-	 * Starts a service
-	 * @param {string} sName - Registered service name
-	 * @returns {Promise} - Promise is resolved with service api or rejected in case of any error.
-	 */
-	RuntimeAuthoring.prototype.startService = function(sName) {
-		if (this._sStatus !== STARTED) {
-			return new Promise(function(fnResolve, fnReject) {
-				this.attachEventOnce("start", fnResolve);
-				this.attachEventOnce("failed", fnReject);
-			}.bind(this))
-			.then(
-				function() {
-					return this.startService(sName);
-				}.bind(this),
-				function() {
-					return Promise.reject(
-						DtUtil.createError(
-							"RuntimeAuthoring#startService",
-							`Can't start the service '${sName}' because RTA startup failed`,
-							"sap.ui.rta"
-						)
-					);
-				}
-			);
-		}
-
-		const sServiceLocation = resolveServiceLocation(sName);
-
-		if (!sServiceLocation) {
-			return Promise.reject(
-				DtUtil.createError(
-					"RuntimeAuthoring#startService",
-					`Unknown service. Can't find any registered service by name '${sName}'`,
-					"sap.ui.rta"
-				)
-			);
-		}
-
-		let mService = this._mServices[sName];
-		if (mService) {
-			switch (mService.status) {
-				case SERVICE_STARTED: {
-					return Promise.resolve(mService.exports);
-				}
-				case SERVICE_STARTING: {
-					return mService.initPromise;
-				}
-				case SERVICE_FAILED: {
-					return mService.initPromise;
-				}
-				default: {
-					return Promise.reject(
-						DtUtil.createError(
-							"RuntimeAuthoring#startService",
-							`Unknown service status. Service name = '${sName}'`,
-							"sap.ui.rta"
-						)
-					);
-				}
-			}
-		} else {
-			this._mServices[sName] = mService = {};
-			mService.status = SERVICE_STARTING;
-			mService.location = sServiceLocation;
-			mService.initPromise = new Promise(function(fnResolve, fnReject) {
-				sap.ui.require(
-					[sServiceLocation],
-					function(fnServiceFactory) {
-						mService.factory = fnServiceFactory;
-
-						this._oServiceEventBus ||= new ServiceEventBus();
-
-						DtUtil.wrapIntoPromise(fnServiceFactory)(
-							this,
-							this._oServiceEventBus.publish.bind(this._oServiceEventBus, sName)
-						)
-						.then(function(oService) {
-							if (this.bIsDestroyed) {
-								throw DtUtil.createError(
-									"RuntimeAuthoring#startService",
-									`RuntimeAuthoring instance is destroyed while initializing the service '${sName}'`,
-									"sap.ui.rta"
-								);
-							}
-							if (!isPlainObject(oService)) {
-								throw DtUtil.createError(
-									"RuntimeAuthoring#startService",
-									`Invalid service format. Service should return simple javascript object after initialization. Service name = '${sName}'`,
-									"sap.ui.rta"
-								);
-							}
-
-							mService.service = oService;
-							mService.exports = {};
-
-							// Expose events API if there is at least one event
-							if (Array.isArray(oService.events) && oService.events.length > 0) {
-								Object.assign(mService.exports, {
-									attachEvent: this._oServiceEventBus.subscribe.bind(this._oServiceEventBus, sName),
-									detachEvent: this._oServiceEventBus.unsubscribe.bind(this._oServiceEventBus, sName),
-									attachEventOnce: this._oServiceEventBus.subscribeOnce.bind(this._oServiceEventBus, sName)
-								});
-							}
-
-							// Expose methods/properties from exports object if any
-							const mExports = oService.exports || {};
-							Object.assign(
-								mService.exports,
-								Object.keys(mExports).reduce(function(mResult, sKey) {
-									const vValue = mExports[sKey];
-									mResult[sKey] = typeof vValue === "function"
-										? DtUtil.waitForSynced(this._oDesignTime, vValue)
-										: vValue;
-									return mResult;
-								}.bind(this), {})
-							);
-
-							mService.status = SERVICE_STARTED;
-							fnResolve(Object.freeze(mService.exports));
-						}.bind(this))
-						.catch(fnReject);
-					}.bind(this),
-					function(vError) {
-						mService.status = SERVICE_FAILED;
-						fnReject(
-							DtUtil.propagateError(
-								vError,
-								"RuntimeAuthoring#startService",
-								`Can't load service '${sName}' by its name: ${sServiceLocation}`,
-								"sap.ui.rta"
-							)
-						);
-					}
-				);
-			}.bind(this))
-			.catch(function(vError) {
-				mService.status = SERVICE_FAILED;
-				return Promise.reject(
-					DtUtil.propagateError(
-						vError,
-						"RuntimeAuthoring#startService",
-						`Error initializing service '${sName}'`,
-						"sap.ui.rta"
-					)
-				);
-			});
-
-			return mService.initPromise;
-		}
-	};
-
-	/**
-	 * Stops a service
-	 * @param {string} sName - Started service name
-	 */
-	RuntimeAuthoring.prototype.stopService = function(sName) {
-		const oService = this._mServices[sName];
-
-		if (oService) {
-			if (oService.status === SERVICE_STARTED) {
-				if (typeof oService.service.destroy === "function") {
-					oService.service.destroy();
-				}
-			}
-			delete this._mServices[sName];
-		} else {
-			throw DtUtil.createError(
-				"RuntimeAuthoring#stopService",
-				`Can't destroy service: unable to find service with name '${sName}'`,
-				"sap.ui.rta"
-			);
-		}
-	};
-
 	/**
 	 * Gets a service by name (and starts it if it's not running)
 	 * @param {string} sName - Registered service name
 	 * @returns {Promise} - Promise is resolved with service api or rejected in case of any error.
 	 */
 	RuntimeAuthoring.prototype.getService = function(sName) {
-		return this.startService(sName);
+		if (this._sStatus !== STARTED) {
+			return new Promise((fnResolve, fnReject) => {
+				this.attachEventOnce("start", fnResolve);
+				this.attachEventOnce("failed", fnReject);
+			})
+			.then(() => {
+				return this.getServiceManager().startService(sName, this);
+			})
+			.catch(() => {
+				throw Error(
+					DtUtil.createError(
+						"RuntimeAuthoring#getService",
+						`Can't start the service '${sName}' because RTA startup failed`,
+						"sap.ui.rta"
+					)
+				);
+			});
+		}
+		return this.getServiceManager().startService(sName, this);
 	};
 
 	return RuntimeAuthoring;

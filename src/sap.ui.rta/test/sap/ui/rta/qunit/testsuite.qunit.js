@@ -890,7 +890,7 @@ sap.ui.define([
 				},
 				"RuntimeAuthoring-3": {
 					coverage: {
-						only: ["sap/ui/rta/RuntimeAuthoring"]
+						only: ["sap/ui/rta/RuntimeAuthoring", "sap/ui/rta/util/ServiceManager"]
 					},
 					ui5: {
 						flexibilityServices: '[{"connector": "SessionStorageConnector"}]',
