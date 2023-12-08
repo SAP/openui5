@@ -1,5 +1,5 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:table="sap.ui.mdc.table">
-	<Table id="mdcTable" delegate="{name: 'delegates/TableDelegate'}">
+	<Table id="mdcTable" delegate="{name: 'delegates/TableDelegate', payload: {}}">
 		<columns>
 			<table:Column id="mdcTable--column0" header="column 0" propertyKey="column0">
 				<m:Text text="{column0}" id="mdcTable--text0"/>
