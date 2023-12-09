@@ -634,6 +634,15 @@
 		"translatable": true,
 		"required": true
 	},
+	"subGroup7": {
+		"type": "group",
+		"label": "Empty Sub Tab",
+		"level": "1",
+		"expanded": true,
+		"visualization": {
+			"type": "Tab"
+		}
+	},
 	"filterBackendInStringArray": {
 		"label": "Filter backend by input in MultiComboBox or MultiInput",
 		"type": "group",

@@ -1,5 +1,5 @@
 /*global QUnit, require */
-sap.ui.define(["sap/ui/core/Lib"], function(Lib) {
+sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 	"use strict";
 
 	function requireP(deps) {
@@ -56,7 +56,7 @@ sap.ui.define(["sap/ui/core/Lib"], function(Lib) {
 				})
 			).then(function() {
 				sap.ui.getCore().boot();
-				return Lib.load("sap.viz")
+				return Library.load("sap.viz")
 				.then(function() {
 					return new Promise(function(resolve, reject) {
 						require(["css"], function(css) {

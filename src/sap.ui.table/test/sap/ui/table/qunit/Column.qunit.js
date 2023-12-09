@@ -1,7 +1,6 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Element",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/utils/TableUtils",
@@ -14,14 +13,12 @@ sap.ui.define([
 	"sap/ui/unified/Menu",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
-	"sap/m/table/columnmenu/QuickSort",
-	"sap/m/table/columnmenu/QuickSortItem",
 	"sap/m/table/columnmenu/Item",
 	"sap/m/Button",
+	"sap/ui/core/Element",
 	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragDropInfo"
 ], function(
-	Element,
 	TableQUnitUtils,
 	qutils,
 	TableUtils,
@@ -34,10 +31,9 @@ sap.ui.define([
 	Menu,
 	ColumnMenu,
 	QuickAction,
-	QuickSort,
-	QuickSortItem,
 	Item,
 	Button,
+	Element,
 	oCore,
 	DragDropInfo
 ) {

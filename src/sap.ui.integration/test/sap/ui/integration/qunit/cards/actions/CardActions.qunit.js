@@ -19,7 +19,7 @@ sap.ui.define([
 ],
 	function(
 		SampleServices,
-		Lib,
+		Library,
 		library,
 		Card,
 		CardActions,
@@ -2073,7 +2073,7 @@ sap.ui.define([
 			Core.applyChanges();
 		});
 
-		return Lib.load("sap.suite.ui.commons").then(function () {
+		return Library.load("sap.suite.ui.commons").then(function () {
 			QUnit.module("Navigation Action - Timeline Content", {
 				beforeEach: function () {
 					this.oCard = new Card({

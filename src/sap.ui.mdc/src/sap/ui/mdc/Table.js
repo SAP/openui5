@@ -22,7 +22,6 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/MessageBox",
 	"sap/m/plugins/PluginBase",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/format/NumberFormat",
@@ -75,7 +74,6 @@ sap.ui.define([
 	ColumnMenu,
 	MessageBox,
 	PluginBase,
-	Core,
 	Element,
 	Library,
 	NumberFormat,
@@ -2432,7 +2430,7 @@ sap.ui.define([
 	 */
 	Table.prototype._loadExportLibrary = function() {
 		if (!this._oExportLibLoadPromise) {
-			this._oExportLibLoadPromise = Library.load("sap.ui.export");
+			this._oExportLibLoadPromise = Library.load({name: "sap.ui.export"});
 		}
 		return this._oExportLibLoadPromise;
 	};
@@ -3024,20 +3022,6 @@ sap.ui.define([
 		if (this._oExportButton) {
 			const sButtonType = MLibrary.ButtonType[ThemeParameters.get({ name: "_sap_ui_mdc_Table_ExportButtonType" })];
 			this._oExportButton.setType(sButtonType);
-		}
-	};
-
-	// Used temporarily in sap.ui.mdc.valuehelp.content.MDCTable
-	Table.prototype._enableV4LegacySelection = function() {
-		this._bV4LegacySelectionEnabled = true;
-
-		if (this._oTable && this._isOfType("Table", true)) {
-			const oV4SelectionPlugin = PluginBase.getPlugin(this._oTable, "sap.ui.table.plugins.ODataV4Selection");
-
-			if (oV4SelectionPlugin) {
-				oV4SelectionPlugin.destroy();
-				return this.getControlDelegate().initializeSelection(this);
-			}
 		}
 	};
 

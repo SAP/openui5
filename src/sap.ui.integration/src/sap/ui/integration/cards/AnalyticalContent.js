@@ -17,7 +17,7 @@ sap.ui.define([
 	BaseContent,
 	AnalyticalPlaceholder,
 	IllustratedMessageType,
-	Lib,
+	Library,
 	library,
 	BindingResolver,
 	Log,
@@ -129,7 +129,7 @@ sap.ui.define([
 	 */
 	AnalyticalContent.prototype.loadDependencies = function (oCardManifest) {
 		return new Promise(function (resolve, reject) {
-			Lib.load("sap.viz")
+			Library.load("sap.viz")
 				.then(function () {
 					sap.ui.require([
 						"sap/viz/ui5/controls/VizFrame",

@@ -22,6 +22,7 @@ sap.ui.define([
 	"sap/m/inputUtils/completeTextSelected",
 	"sap/ui/events/KeyCodes",
 	'sap/ui/core/InvisibleText',
+	"sap/ui/core/util/PasteHelper",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
 ],
@@ -43,7 +44,8 @@ function(
 	containsOrEquals,
 	completeTextSelected,
 	KeyCodes,
-	InvisibleText
+	InvisibleText,
+	PasteHelper
 ) {
 	"use strict";
 
@@ -792,7 +794,7 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype.onpaste = function (oEvent) {
-		var sOriginalText, i,aSeparatedText,
+		var sOriginalText, i,aSeparatedText, aSeparatedByRows,
 			aAddedTokens = [];
 
 		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
@@ -804,6 +806,7 @@ function(
 		}
 
 		aSeparatedText = sOriginalText.split(/\r\n|\r|\n|\t/g);
+		aSeparatedByRows = PasteHelper.getPastedDataAs2DArray(oEvent.originalEvent);
 
 		// if only one piece of text was pasted, we can assume that the user wants to alter it before it is converted into a token
 		// in this case we leave it as plain text input
@@ -813,7 +816,7 @@ function(
 
 		setTimeout(function () {
 			if (aSeparatedText) {
-				if (this.fireEvent("_validateOnPaste", {texts: aSeparatedText}, true)) {
+				if (this.fireEvent("_validateOnPaste", {texts: aSeparatedText, textRows: aSeparatedByRows}, true)) {
 					var lastInvalidText = "";
 					for (i = 0; i < aSeparatedText.length; i++) {
 						if (aSeparatedText[i]) { // pasting from excel can produce empty strings in the array, we don't have to handle empty strings

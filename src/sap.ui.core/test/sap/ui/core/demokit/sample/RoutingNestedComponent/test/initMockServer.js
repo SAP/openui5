@@ -1,7 +1,7 @@
 sap.ui.define([
 	"../localService/mockserver",
 	"sap/ui/core/Lib"
-], function(mockserver, Lib) {
+], function(mockserver, Library) {
 	"use strict";
 
 	var aMockservers = [];
@@ -18,7 +18,7 @@ sap.ui.define([
 				}, reject);
 			});
 		};
-		return Lib.load("sap.m").then(fnShowErrorMessage);
+		return Library.load("sap.m").then(fnShowErrorMessage);
 	}).finally(function () {
 		// initialize the embedded component on the HTML page
 		sap.ui.require(["sap/ui/core/ComponentSupport"]);

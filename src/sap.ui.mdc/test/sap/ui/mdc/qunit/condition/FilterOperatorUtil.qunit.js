@@ -6,7 +6,6 @@
 /*eslint no-warning-comments: 0 */
 
 sap.ui.define([
-	"sap/ui/core/Lib",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/condition/RangeOperator",
@@ -28,9 +27,8 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/m/library",
 	"sap/ui/mdc/enums/OperatorOverwrite",
-	"sap/ui/core/Core"
+	"sap/ui/core/Lib"
 ], function(
-	Library,
 	FilterOperatorUtil,
 	Operator,
 	RangeOperator,
@@ -52,7 +50,7 @@ sap.ui.define([
 	UI5Date,
 	mLibrary,
 	OperatorOverwrite,
-	Core
+	Library
 ) {
 	"use strict";
 

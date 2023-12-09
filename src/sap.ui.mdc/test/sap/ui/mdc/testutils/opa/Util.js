@@ -15,7 +15,7 @@ sap.ui.define([
 
 	// Util.getTextFromResourceBundle = function(sLibraryName, sTextKey) {
 	// 	var oCore = Opa5.getWindow().sap.ui.getCore();
-	// 	return oCore.getLibraryResourceBundle(sLibraryName).getText(sTextKey);
+	// 	return Library.getResourceBundleFor(sLibraryName).getText(sTextKey);
 	// };
 
 	Opa5.createPageObjects({

@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(Lib, Theming, Parameters, themeApplied) {
+], function(Library, Theming, Parameters, themeApplied) {
 	"use strict";
 	/* global QUnit */
 
@@ -38,8 +38,8 @@ sap.ui.define([
 			"Parameter from fallback theme should be available, yet."
 		);
 
-		return Lib.load("sap.ui.customthemefallback.testlib").then(function() {
-			return Lib.load("sap.ui.failingcssimport.testlib");
+		return Library.load("sap.ui.customthemefallback.testlib").then(function() {
+			return Library.load("sap.ui.failingcssimport.testlib");
 		})
 		// Wait until the theme has been applied to make sure the fallback was done
 		.then(themeApplied)

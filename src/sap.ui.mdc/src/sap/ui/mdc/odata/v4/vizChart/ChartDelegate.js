@@ -1120,7 +1120,7 @@ sap.ui.define([
 	ChartDelegate.getChartTypeInfo = function(oChart) {
 		const sType = oChart.getChartType(),
 			oMDCResourceBundle = Library.getResourceBundleFor("sap.ui.mdc"),
-			oChartResourceBundle = Core.getLibraryResourceBundle("sap.chart.messages");
+			oChartResourceBundle = Library.getResourceBundleFor("sap.chart.messages");
 
 		const mInfo = {
 			icon: ChartTypeButton.mMatchingIcon[sType],
@@ -1147,7 +1147,7 @@ sap.ui.define([
 
 		if (this._getChart(oChart)) {
 			const aAvailableChartTypes = this._getChart(oChart).getAvailableChartTypes().available;
-			const oChartResourceBundle = Core.getLibraryResourceBundle("sap.chart.messages");
+			const oChartResourceBundle = Library.getResourceBundleFor("sap.chart.messages");
 
 			for (let i = 0; i < aAvailableChartTypes.length; i++) {
 				const sType = aAvailableChartTypes[i].chart;
@@ -1757,7 +1757,7 @@ sap.ui.define([
 				resolve();
 			}
 
-			Library.load("sap.viz").then(() => {
+			Library.load({name: "sap.viz"}).then(() => {
 				sap.ui.require(aNotLoadedModulePaths, onModulesLoadedSuccess);
 			});
 
@@ -1852,7 +1852,7 @@ sap.ui.define([
 
 		if (this.getNoData()) {
 			if (mEventParams.getSource() && mEventParams.getSource().getCurrentContexts().length === 0) {
-				//var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+				//var MDCRb = Library.getResourceBundleFor("sap.ui.mdc");
 				//oNoDataStruct.setNoDataContent(new IllustratedMessage({title: this.getNoDataText(), description: MDCRb.getText("chart.NO_DATA_WITH_FILTERBAR"), illustrationType: mLib.IllustratedMessageType.BeforeSearch}));
 				oNoDataStruct.setShowNoDataStruct(true);
 			} else {

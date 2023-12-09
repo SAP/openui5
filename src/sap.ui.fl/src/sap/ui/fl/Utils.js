@@ -126,7 +126,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the Component that belongs to given control. If the control has no component,
+		 * Returns the Component that belongs to the passed control. If the control has no component,
 		 * it walks up the control tree in order to find a control having one.
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
@@ -212,7 +212,7 @@ sap.ui.define([
 
 		/**
 		 * Returns the parent view of the control. If there are nested views, only the one closest to the control will be returned.
-		 * If no view can be found, undefiend will be returned.
+		 * If no view can be found, undefined will be returned.
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
 		 * @returns {sap.ui.core.mvc.View} The view

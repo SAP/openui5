@@ -5,6 +5,7 @@
 // Provides control sap.ui.core.mvc.View.
 sap.ui.define([
 	"sap/base/assert",
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
@@ -19,6 +20,7 @@ sap.ui.define([
 	"./XMLProcessingMode"
 ], function(
 		assert,
+		future,
 		Log,
 		extend,
 		isEmptyObject,
@@ -559,7 +561,7 @@ sap.ui.define([
 							// only 'visible' property can be customized
 							for (var sProperty in oCustomSetting) {
 								if (sProperty !== "visible") {
-									Log.warning("Customizing: custom value for property '" + sProperty + "' of control '" + sId + "' in View '" + that.sViewName + "' ignored: only the 'visible' property can be customized.");
+									future.warningThrows("Customizing: custom value for property '" + sProperty + "' of control '" + sId + "' in View '" + that.sViewName + "' ignored: only the 'visible' property can be customized.");
 									delete oCustomSetting[sProperty];
 								}
 							}
@@ -904,7 +906,7 @@ sap.ui.define([
 		if (vPreprocessor) {
 			initGlobalPreprocessorsRegistry(sType, sViewType);
 			if (bOnDemand && onDemandPreprocessorExists(sViewType, sType)) {
-				Log.error("Registration for \"" + sType + "\" failed, only one on-demand-preprocessor allowed", this.getMetadata().getName());
+				future.errorThrows("Registration for \"" + sType + "\" failed, only one on-demand-preprocessor allowed", this.getMetadata().getName());
 				return;
 			}
 			View._mPreprocessors[sViewType][sType].push({
@@ -916,7 +918,7 @@ sap.ui.define([
 			Log.debug("Registered " + (bOnDemand ? "on-demand-" : "") + "preprocessor for \"" + sType + "\"" +
 			(bSyncSupport ? " with syncSupport" : ""), this.getMetadata().getName());
 		} else {
-			Log.error("Registration for \"" + sType + "\" failed, no preprocessor specified",  this.getMetadata().getName());
+			future.errorThrows("Registration for \"" + sType + "\" failed, no preprocessor specified",  this.getMetadata().getName());
 		}
 	};
 

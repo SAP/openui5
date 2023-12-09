@@ -3909,7 +3909,8 @@
               "enum": [
                 "Button",
                 "ToolbarSpacer",
-                "Link"
+                "Link",
+                "Label"
               ],
               "default": "Button"
             },

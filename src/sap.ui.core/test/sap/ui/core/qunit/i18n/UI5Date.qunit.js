@@ -1242,4 +1242,111 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oUI5Date.clone(), "~clone");
 	});
+
+	//*********************************************************************************************
+	function toLocalDateString(oDate) {
+		return oDate.getFullYear()
+			+ "-" + (oDate.getMonth() + 1).toString().padStart(2, "0")
+			+ "-" + oDate.getDate().toString().padStart(2, "0")
+			+ "T" + oDate.getHours().toString().padStart(2, "0")
+			+ ":" + oDate.getMinutes().toString().padStart(2, "0");
+	}
+
+[{ // America/Adak: UTC-10 (Standard), UTC-9 (DST); 02:00 am to 03:00 am resp. 02:00 am to 01:00 am
+	sTimezone: "America/Adak",
+	toDST: {aDate: [2024, 2, 10, 2], sResult: "2024-03-10T03:00"},
+	toStandard: {aDate: [2023, 10, 5, 2], sResult: "2023-11-05T02:00", sAandBTime: "2023-11-05T01:00"}
+}, { // America/Havana: UTC-5 (Standard), UTC-4 (DST); 12:00 am to 01:00 am resp. 01:00 am to 12:00 am
+	sTimezone: "America/Havana",
+	toDST: {aDate: [2024, 2, 10, 0], sResult: "2024-03-10T01:00"},
+	toStandard: {aDate: [2023, 10, 5, 1], sResult: "2023-11-05T01:00", sAandBTime: "2023-11-05T00:00"}
+}, { // BCP: 2370140369
+	// America/Santiago: UTC-4 (Standard), UTC-3 (DST); 12:00 am to 01:00 am resp. 12:00 am to 11:00 pm
+	sTimezone: "America/Santiago",
+	toDST: {aDate: [2023, 8, 3, 0], sResult: "2023-09-03T01:00"},
+	toStandard: {aDate: [2024, 3, 7], sResult: "2024-04-07T00:00", sAandBTime: "2024-04-06T23:00"}
+}, { // America/St_Johns: UTC-3:30 (Standard), UTC-2:30 (DST); 02:00 am to 03:00 am resp. 02:00 am to 01:00 am
+	sTimezone: "America/St_Johns",
+	toDST: {aDate: [2024, 2, 10, 2], sResult: "2024-03-10T03:00"},
+	toStandard: {aDate: [2023, 10, 5, 2], sResult: "2023-11-05T02:00", sAandBTime: "2023-11-05T01:00"}
+}, { // Pacific/Easter: UTC-6 (Standard), UTC-5 (DST); 10:00 pm to 11:00 pm resp. 10:00 pm to 09:00 pm
+	sTimezone: "Pacific/Easter",
+	toDST: {aDate: [2023, 8, 2, 22], sResult: "2023-09-02T23:00"},
+	toStandard: {aDate: [2024, 3, 6, 22], sResult: "2024-04-06T22:00", sAandBTime: "2024-04-06T21:00"}
+}, { // Atlantic/Azores: UTC-1 (Standard), UTC+0 (DST); 00:00 am to 01:00 am resp. 01:00 am to 12:00 am
+	sTimezone: "Atlantic/Azores",
+	toDST: {aDate: [2024, 2, 31, 0], sResult: "2024-03-31T01:00"},
+	toStandard: {aDate: [2023, 9, 29, 1], sResult: "2023-10-29T01:00", sAandBTime: "2023-10-29T00:00"}
+}, { // Antarctica/Troll: UTC+0 (Standard), UTC+2 (DST); 01:00 am to 03:00 am resp. 03:00 am to 01:00 am
+	sTimezone: "Antarctica/Troll",
+	toDST: {aDate: [2024, 2, 31, 1], sResult: "2024-03-31T03:00"},
+	toStandard: {
+		aDate: [2023, 9, 29, 3],
+		sResult: "2023-10-29T03:00",
+		sAandBTime: "2023-10-29T01:00",
+		iTimeshift: 7200000 // 2 hours timeshift!
+	}
+}, { // Africa/Casablanca: UTC+0 (Standard), UTC+1 (DST); 02:00 am to 03:00 am resp. 03:00 am to 02:00 am
+	sTimezone: "Africa/Casablanca",
+	toDST: {aDate: [2023, 3, 23, 2], sResult: "2023-04-23T03:00"},
+	toStandard: {aDate: [2024, 2, 10, 3], sResult: "2024-03-10T03:00", sAandBTime: "2024-03-10T02:00"}
+}, { // Europe/Dublin: UTC+0 (Standard), UTC+1 (DST); 01:00 am to 02:00 am resp. 02:00 am to 01:00 am
+	sTimezone: "Europe/Dublin",
+	toDST: {aDate: [2024, 2, 31, 1], sResult: "2024-03-31T02:00"},
+	toStandard: {aDate: [2023, 9, 29, 2], sResult: "2023-10-29T02:00", sAandBTime: "2023-10-29T01:00"}
+}, { // Africa/Cairo: UTC+2 (Standard), UTC+3 (DST); 12:00 am to 01:00 am resp. 12:00 am to 11:00 pm
+	sTimezone: "Africa/Cairo",
+	toDST: {aDate: [2024, 3, 26, 0], sResult: "2024-04-26T01:00"},
+	toStandard: {aDate: [2023, 9, 27, 0], sResult: "2023-10-27T00:00", sAandBTime: "2023-10-26T23:00"}
+}, { // Europe/Helsinki: UTC+2 (Standard), UTC+3 (DST); 03:00 am to 04:00 am resp. 04:00 am to 03:00 am
+	sTimezone: "Europe/Helsinki",
+	toDST: {aDate: [2024, 2, 31, 3], sResult: "2024-03-31T04:00"},
+	toStandard: {aDate: [2023, 9, 29, 4], sResult: "2023-10-29T04:00", sAandBTime: "2023-10-29T03:00"}
+}, { // Australia/Lord_Howe: UTC+10:30 (Standard), UTC+11 (DST); 02:00 am to 02:30 am resp. 02:00 am to 01:30 am
+	sTimezone: "Australia/Lord_Howe",
+	toDST: {aDate: [2023, 9, 1, 2], sResult: "2023-10-01T02:30"},
+	toStandard: {
+		aDate: [2024, 3, 7, 2],
+		sResult: "2024-04-07T02:00",
+		sAandBTime: "2024-04-07T01:30",
+		iTimeshift: 1800000 // 0.5 hours timeshift!
+	}
+}, { // Australia/Adelaide: UTC+9:30 (Standard), UTC+10:30 (DST); 02:00 am to 03:00 am resp. 03:00 am to 02:00 am
+	sTimezone: "Australia/Adelaide",
+	toDST: {aDate: [2023, 9, 1, 2], sResult: "2023-10-01T03:00"},
+	toStandard: {aDate: [2024, 3, 7, 3], sResult: "2024-04-07T03:00", sAandBTime: "2024-04-07T02:00"}
+}, { // Pacific/Auckland: UTC+12:00 (Standard), UTC+13:00 (DST); 02:00 am to 03:00 am resp. 03:00 am to 02:00 am
+	sTimezone: "Pacific/Auckland",
+	toDST: {aDate: [2023, 8, 24, 2], sResult: "2023-09-24T03:00"},
+	toStandard: {aDate: [2024, 3, 7, 3], sResult: "2024-04-07T03:00", sAandBTime: "2024-04-07T02:00"}
+}, { // Pacific/Chatham: UTC+12:45 (Standard), UTC+13:45 (DST); 02:45 am to 03:45 am resp. 03:45 am to 02:45 am
+	sTimezone: "Pacific/Chatham",
+	toDST: {aDate: [2023, 8, 24, 2, 45], sResult: "2023-09-24T03:45"},
+	toStandard: {aDate: [2024, 3, 7, 3, 45], sResult: "2024-04-07T03:45", sAandBTime: "2024-04-07T02:45"}
+}].forEach((oFixture) => {
+	const sTimezone = oFixture.sTimezone;
+	QUnit.test("Daylight saving time checks: " + sTimezone, function (assert) {
+		let oDate = new UI5Date(oFixture.toDST.aDate, sTimezone);
+		assert.strictEqual(toLocalDateString(oDate), oFixture.toDST.sResult, "to daylight saving time");
+
+		oDate = new UI5Date(oFixture.toStandard.aDate, sTimezone);
+		assert.strictEqual(toLocalDateString(oDate), oFixture.toStandard.sResult, "to standard time");
+
+		const sAandBTime = oFixture.toStandard.sAandBTime;
+		const iTimeshift = oFixture.toStandard.iTimeshift || 3600000;
+		const iBTimestamp = oDate.getTime() - iTimeshift;
+		// b-time in standard time zone
+		assert.strictEqual(toLocalDateString(new UI5Date([iBTimestamp], sTimezone)), sAandBTime, "b-time");
+		const iATimestamp = oDate.getTime() - (2 * iTimeshift);
+		// a-time in Daylight Saving time zone
+		assert.strictEqual(toLocalDateString(new UI5Date([iATimestamp], sTimezone)), sAandBTime, "a-time");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("Daylight saving time checks: special case for 'Pacific/Apia'", function (assert) {
+		// Independent State of Samoa changed time at the end of December 29, 2011
+		// It changed from UTC-11 (UTC-10 DST) to UTC+13 (UTC+14 DST until 2021 - currently always UTC+13)
+		assert.strictEqual(toLocalDateString(new UI5Date([2011, 11, 30, 0], "Pacific/Apia")), "2011-12-31T00:00");
+	});
 });

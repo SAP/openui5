@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/isPlainObject",
 	"sap/ui/mdc/enums/LinkType"
-], (Element, Lib, LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, LinkType) => {
+], (Element, Library, LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, LinkType) => {
 	"use strict";
 
 	/**
@@ -223,7 +223,7 @@ sap.ui.define([
 			ownNavigation: undefined,
 			availableActions: []
 		};
-		return Lib.load('sap.ui.fl').then(() => {
+		return Library.load({name: 'sap.ui.fl'}).then(() => {
 			return new Promise((resolve) => {
 				sap.ui.require([
 					'sap/ui/fl/Utils'

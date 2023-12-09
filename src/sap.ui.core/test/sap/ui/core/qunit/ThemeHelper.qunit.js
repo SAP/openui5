@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeHelper"
-], function(Lib, Theming, ThemeHelper) {
+], function(Library, Theming, ThemeHelper) {
 	"use strict";
 
 	QUnit.module("ThemeHelper");
@@ -12,7 +12,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oMetadata;
 
-		Lib.load("testlibs.themeParameters.lib12").then(function () {
+		Library.load("testlibs.themeParameters.lib12").then(function () {
 			var fnAssertApplied = function () {
 				oMetadata = ThemeHelper.getMetadata("sap-ui-theme-testlibs-themeParameters-lib12");
 				assert.deepEqual(oMetadata, {

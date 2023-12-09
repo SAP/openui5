@@ -591,14 +591,8 @@ sap.ui.define([
 	Column.prototype._sort = function(sSortOrder, bAdd) {
 		var oTable = this._getTable();
 
-		if (!oTable) {
+		if (!oTable || this.getSortProperty() === "") {
 			return;
-		}
-
-		if (sSortOrder === SortOrder.None) {
-			oTable._removeSortedColumn(this);
-		} else {
-			oTable.pushSortedColumn(this, bAdd);
 		}
 
 		var bExecuteDefault = oTable.fireSort({
@@ -609,6 +603,12 @@ sap.ui.define([
 
 		if (!bExecuteDefault) {
 			return;
+		}
+
+		if (sSortOrder === SortOrder.None) {
+			oTable._removeSortedColumn(this);
+		} else {
+			oTable.pushSortedColumn(this, bAdd);
 		}
 
 		this.setProperty("sortOrder", sSortOrder, true);

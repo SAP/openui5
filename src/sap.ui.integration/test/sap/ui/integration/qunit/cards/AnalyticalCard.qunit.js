@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/actions/CardActions",
 	"../services/SampleServices"
 ], function(
-	Lib,
+	Library,
 	AnalyticalContent,
 	NavigationAction,
 	Card,
@@ -972,7 +972,7 @@ sap.ui.define([
 
 
 
-	return Lib.load("sap.viz").then(function () {
+	return Library.load("sap.viz").then(function () {
 		QUnit.module("Chart creation", {
 			beforeEach: function () {
 				this.oCard = new Card({

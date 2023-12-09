@@ -199,6 +199,17 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Actions Labels',
+								key: 'actionsLabels',
+								experimental: true,
+								files: [{
+										url: '/samples/list/actionsLabels/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
 								title: 'Grouping',
 								key: 'grouping',
 								files: [{

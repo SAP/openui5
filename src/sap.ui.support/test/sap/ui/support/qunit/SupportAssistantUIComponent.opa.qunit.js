@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/qunit/qunit-junit",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function(Lib, qunitCss, qunit, qunitJunit, sinon, sinonQunit) {
+], function(Library, qunitCss, qunit, qunitJunit, sinon, sinonQunit) {
 	'use strict';
 
 	sap.ui.require(
@@ -28,7 +28,7 @@ sap.ui.define([
 				When.waitFor({
 					viewName: 'Main',
 					success: function () {
-						var bLoaded = Lib.all()["sap.ui.support"];
+						var bLoaded = Library.all()["sap.ui.support"];
 
 						Opa5.assert.ok(bLoaded, 'Support Assistant library loaded');
 					}

@@ -2,9 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/assert",
 	"sap/base/config",
 	"sap/base/Log"
 ], (
+	assert,
 	BaseConfig,
 	Log
 ) => {
@@ -20,7 +22,7 @@ sap.ui.define([
 		if (bFuture) {
 			throw new Error(sMessage);
 		}
-		Log[sLevel]("[FUTURE FATAL]: " + sMessage, ...args);
+		Log[sLevel]("[FUTURE FATAL] " + sMessage, ...args);
 	}
 	/**
 	 * Logs '[FUTUR FATAL]' marker in messages and throws error if
@@ -38,6 +40,13 @@ sap.ui.define([
 		},
 		warningThrows(...args) {
 			throws("warning", ...args);
+		},
+		assertThrows(bResult, vMessage) {
+			const sMessage = typeof vMessage === "function" ? vMessage() : vMessage;
+			if (!bResult && bFuture) {
+				throw new Error(vMessage);
+			}
+			assert(bResult, "[FUTURE FATAL] " + sMessage);
 		}
 	};
 	return future;

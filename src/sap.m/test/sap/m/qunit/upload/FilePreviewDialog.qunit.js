@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/upload/FilePreviewDialog",
 	"./UploadSetwithTableTestUtils",
 	"sap/ui/thirdparty/jquery"
-], function(UploadSetwithTable, Element, Lib, JSONModel, oCore, FilePreviewDialog, TestUtils, jQuery) {
+], function(UploadSetwithTable, Element, Library, JSONModel, oCore, FilePreviewDialog, TestUtils, jQuery) {
 	"use strict";
 
 
@@ -80,7 +80,7 @@ sap.ui.define([
 		oCore.applyChanges();
 	});
 
-	return Lib.load("sap.suite.ui.commons")
+	return Library.load("sap.suite.ui.commons")
 		.then(function (assert) {
 			QUnit.module("Supported media type", {
 				beforeEach: function () {

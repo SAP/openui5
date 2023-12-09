@@ -406,7 +406,7 @@ sap.ui.define([
 										} else {
 											oSubGroup = oGroupControl;
 											oSubGroup._subItems = oSubGroup._subItems || [];
-											oSubGroup.addStyleClass("sapUiIntegrationEditorSubGroup");
+											oSubGroup.addStyleClass("sapUiIntegrationEditorSubPanel");
 										}
 									} else {
 										if (oPanel) {
@@ -781,7 +781,7 @@ sap.ui.define([
 											}
 										} else {
 											oSubGroup = oGroupControl;
-											oSubGroup.addStyleClass("sapUiIntegrationEditorSubGroup");
+											oSubGroup.addStyleClass("sapUiIntegrationEditorSubPanel");
 										}
 									} else {
 										oSubGroup = null;
@@ -790,7 +790,7 @@ sap.ui.define([
 											oLanguagePanel.addContent(oPanel.getParent());
 										}
 										oPanel = oGroupControl;
-										oPanel.addStyleClass("sapUiIntegrationEditorSubGroup");
+										oPanel.addStyleClass("sapUiIntegrationEditorSubPanel");
 									}
 									if (i === oItems.length - 1) {
 										//add current col fields to panel, then empty the col fields list

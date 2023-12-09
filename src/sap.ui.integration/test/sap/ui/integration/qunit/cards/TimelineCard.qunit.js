@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/BaseListContent",
 	"sap/ui/integration/widgets/Card"
 ], function(
-	Lib,
+	Library,
 	TimelineContent,
 	Core,
 	BaseListContent,
@@ -17,7 +17,7 @@ sap.ui.define([
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
-	return Lib.load("sap.suite.ui.commons").then(function () {
+	return Library.load("sap.suite.ui.commons").then(function () {
 		QUnit.module("Timeline Card", {
 			beforeEach: function () {
 				this.oTimelineContent = new TimelineContent();

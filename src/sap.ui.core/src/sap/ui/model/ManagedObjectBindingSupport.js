@@ -12,6 +12,7 @@ sap.ui.define([
 	"./ParseException",
 	"./ValidateException",
 	"./Context",
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/base/Object",
@@ -26,12 +27,14 @@ sap.ui.define([
 	ParseException,
 	ValidateException,
 	Context,
+	future,
 	Log,
 	assert,
 	BaseObject,
 	ObjectPath,
 	SyncPromise,
-	ManagedObjectMetadata) {
+	ManagedObjectMetadata
+) {
 	"use strict";
 
 	/**
@@ -438,7 +441,7 @@ sap.ui.define([
 							oClone.destroy("KeepDom");
 							break;
 						default:
-							Log.error("Unknown diff type \"" + oDiff.type + "\"");
+							future.errorThrows("Unknown diff type \"" + oDiff.type + "\"");
 					}
 				}
 
@@ -665,7 +668,7 @@ sap.ui.define([
 						// 2. Global lookup
 						TypeClass = ObjectPath.get(sTypeName);
 						if (typeof TypeClass === "function" && !TypeClass._sapUiLazyLoader) {
-							Log.error("[FUTURE] The type class '" + sTypeName + "' is exported to the global namespace without being set as an export value of a UI5 module. " +
+							future.errorThrows("The type class '" + sTypeName + "' is exported to the global namespace without being set as an export value of a UI5 module. " +
 							"This scenario will not be supported in the future and a separate UI5 module needs to be created which exports this type class.");
 						} else {
 							// 3. requireSync fallback

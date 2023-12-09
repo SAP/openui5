@@ -43,6 +43,7 @@ sap.ui.define([
 	"sap/m/plugins/ColumnResizer",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/mdc/table/RowActionItem",
 	"sap/ui/mdc/table/RowSettings",
@@ -103,6 +104,7 @@ sap.ui.define([
 	ColumnResizer,
 	Message,
 	ODataModel,
+	Theming,
 	ThemeParameters,
 	RowActionItem,
 	RowSettings,
@@ -3831,10 +3833,13 @@ sap.ui.define([
 		this.oTable.setEnableAutoColumnWidth(true);
 		Core.applyChanges();
 
+		const measureText = function(sRefText) {
+			return oCanvasContext.measureText(sRefText).width / 16;
+		};
 		const check = function(sRefText, fOrigWidth, fRange) {
 			// length of 5 chars  ~ 3.159rem
 			// length of 10 chars ~ 6.318rem
-			const fRefTextWidth = oCanvasContext.measureText(sRefText).width / 16;
+			const fRefTextWidth = measureText(sRefText);
 			return Math.abs(fRefTextWidth - fOrigWidth) <= (fRange || 0.5);
 		};
 
@@ -4082,7 +4087,7 @@ sap.ui.define([
 			assert.equal(getInnerColumnWidth(aColumns[9]), 19 + fPadding + "rem", "String type without maxLength gets maxWidth");
 			assert.equal(getInnerColumnWidth(aColumns[10]), 19 + fPadding + "rem", "String type with big maxLength gets maxWidth");
 
-			assert.ok(check(aColumns[11].getHeader(), parseFloat(getInnerColumnWidth(aColumns[11])) - fPadding, 0), "The header is not truncated and the column width is as wide as the header");
+			assert.ok(measureText(aColumns[11].getHeader()) <= parseFloat(getInnerColumnWidth(aColumns[11])) - fPadding, "The header is not truncated and the column width is as wide as the header");
 
 			// 12th column. required "*" is added to column
 			assert.ok(check("Yes*", parseFloat(getInnerColumnWidth(aColumns[12])) - fPadding - 0.125 /* subtract padding from marker */), "Heaeder has correct width when using 'required' property");
@@ -4171,7 +4176,8 @@ sap.ui.define([
 		QUnit.config.testTimeout = 50000; //BCP: 2270148312
 		const done = assert.async();
 		//Default theme must not be first
-		const aThemes = ["sap_horizon", "sap_horizon_dark", "sap_horizon_hcb", "sap_horizon_hcw", "sap_fiori_3", "sap_belize"];
+		const aThemes = ["sap_horizon", "sap_horizon_dark", "sap_horizon_hcb", "sap_horizon_hcw", "sap_fiori_3"];
+
 		const fnGetExpectedTheme = function (sTheme) {
 			switch (sTheme) {
 				case "sap_horizon":
@@ -4186,28 +4192,28 @@ sap.ui.define([
 
 		assert.expect(aThemes.length);
 
-		this.oTable.destroy();
-		this.oTable = new Table({
-			enableExport: true
+		this.oTable.setEnableExport(true);
+		this.oTable.initialized().then(() => {
+
+			const fnThemeChanged = function (oEvent) {
+				const sTheme = oEvent.theme;
+				assert.deepEqual(this.oTable._oExportButton.getType(), fnGetExpectedTheme(sTheme), "Export button ButtonType equals to expected Theme styling, Theme: " + sTheme);
+				if (sTheme === aThemes.at(-1)){
+					Theming.detachApplied(fnThemeChanged);
+					QUnit.config.testTimeout = iTimeout;
+					done();
+				} else {
+					const iPosition = aThemes.indexOf(sTheme);
+					aThemes.splice(iPosition, 1);
+					Theming.setTheme(aThemes[0]);
+				}
+			}.bind(this);
+
+			Theming.attachApplied(fnThemeChanged);
+
+			Theming.setTheme(aThemes[0]);
+
 		});
-		this.oTable._createToolbar();
-
-		const fnThemeChanged = function (oEvent) {
-			const sTheme = oEvent.getParameter("theme");
-			assert.deepEqual(this.oTable._oExportButton.getType(), fnGetExpectedTheme(sTheme), "Export button ButtonType equals to expected Theme styling, Theme: " + sTheme);
-			if (sTheme === aThemes.at(-1)){
-				Core.detachThemeChanged(fnThemeChanged);
-				QUnit.config.testTimeout = iTimeout;
-				done();
-			} else {
-				const iPosition = aThemes.indexOf(sTheme);
-				Core.applyTheme(aThemes[iPosition + 1]);
-			}
-		}.bind(this);
-
-		Core.attachThemeChanged(fnThemeChanged);
-
-		Core.applyTheme(aThemes[0]);
 	});
 
 	QUnit.test("Export button state should be checked for bindingChange, if a row is added to the table", function(assert) {
@@ -4274,15 +4280,14 @@ sap.ui.define([
 
 	QUnit.test("_setSelectedContexts", function(assert) {
 		return this.oTable.initialized().then(() => {
-			this.oTable.setType(new ResponsiveTableType());
-			return this.oTable._fullyInitialized().then(() => {
-				const oDelegate = this.oTable.getControlDelegate();
-				sinon.spy(oDelegate, "setSelectedContexts");
-				const aContexts = [];
-				this.oTable._setSelectedContexts(aContexts);
-				assert.ok(oDelegate.setSelectedContexts.calledWith(this.oTable, aContexts), "Calls Delegate.setSelectedContexts with correct parameters");
-				oDelegate.setSelectedContexts.restore();
-			});
+			const oDelegate = this.oTable.getControlDelegate();
+			const aContexts = [];
+
+			sinon.stub(oDelegate, "setSelectedContexts");
+			this.oTable._setSelectedContexts(aContexts);
+			assert.ok(oDelegate.setSelectedContexts.calledOnceWithExactly(this.oTable, aContexts),
+				"Delegate.setSelectedContexts called once with the correct arguments");
+			oDelegate.setSelectedContexts.restore();
 		});
 	});
 

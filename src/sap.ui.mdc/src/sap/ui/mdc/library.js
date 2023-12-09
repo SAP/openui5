@@ -6,14 +6,10 @@
  * Initialization Code and shared classes of library sap.ui.mdc.
  */
 sap.ui.define([
- "sap/ui/core/Lib",
- // provides sap.ui.getCore()
- "sap/ui/core/Core",
- // library dependency
- "sap/ui/core/library",
- // library dependency
- "sap/m/library"
-], Library => {
+	"sap/ui/core/Lib",
+	"sap/ui/core/library", // library dependency
+	"sap/m/library" // library dependency
+], (Library) => {
  "use strict";
 
  /**

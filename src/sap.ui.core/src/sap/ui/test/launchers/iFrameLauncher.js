@@ -151,7 +151,6 @@ sap.ui.define([
 	}
 
 	function registerFrameResourcePaths () {
-		oFrameJQuery = oFrameWindow.jQuery;
 		//All Opa related resources in the iframe should be the same version
 		//that is running in the test and not the (evtl. not available) version of Opa of the running App.
 		registerAbsoluteResourcePathInIframe("sap/ui/test");
@@ -276,6 +275,7 @@ sap.ui.define([
 			"sap/ui/test/autowaiter/_autoWaiter",
 			"sap/ui/test/_OpaLogger",
 			"sap/ui/qunit/QUnitUtils",
+			"sap/ui/thirdparty/jquery",
 			"sap/ui/thirdparty/hasher",
 			"sap/ui/core/routing/History",
 			"sap/ui/core/routing/HashChanger"
@@ -285,6 +285,7 @@ sap.ui.define([
 			_autoWaiter,
 			_OpaLogger,
 			QUnitUtils,
+			frameJQuery,
 			hasher,
 			History,
 			HashChanger
@@ -293,6 +294,7 @@ sap.ui.define([
 			oFramePlugin = new OpaPlugin();
 			oAutoWaiter = _autoWaiter;
 			oFrameUtils = QUnitUtils;
+			oFrameJQuery = frameJQuery;
 			if (!bDisableHistoryOverride) {
 				modifyIFrameNavigation(hasher, History, HashChanger);
 			}

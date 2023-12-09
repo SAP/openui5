@@ -89,6 +89,11 @@
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>
 			</w:Card>
+			<w:Card baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{listContentManifests>/cardActionsLabels}" id="CardActionsLabel">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
 		</f:GridContainer>
 	</Page>
 </mvc:View>

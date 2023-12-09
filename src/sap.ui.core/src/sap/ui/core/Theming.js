@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/config",
 	"sap/base/Event",
 	"sap/base/Eventing",
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/base/util/deepEqual",
@@ -16,6 +17,7 @@ sap.ui.define([
 	BaseConfig,
 	BaseEvent,
 	Eventing,
+	future,
 	Log,
 	Localization,
 	deepEqual,
@@ -519,7 +521,7 @@ sap.ui.define([
 				sAllowedOrigin = bNoProtocol && !sAllowedOrigin.startsWith("//") ? "//" + sAllowedOrigin : sAllowedOrigin;
 				return sAllowedOrigin === "*" || sOrigin === new URL(sAllowedOrigin.trim(), globalThis.location.href).origin;
 			} catch (error) {
-				Log.error("sapAllowedThemeOrigin provides invalid theme origin: " + sAllowedOrigin);
+				future.errorThrows("sapAllowedThemeOrigin provides invalid theme origin: " + sAllowedOrigin);
 				return false;
 			}
 		});

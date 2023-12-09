@@ -9,8 +9,7 @@ sap.ui.define([
 	'sap/ui/model/type/Date', // to have it loaded
 	'sap/ui/model/type/String', // to have it loaded
 	'sap/ui/model/odata/v2/ODataModel',
-	'sap/ui/core/util/MockServer',
-	'sap/ui/core/Core'
+	'sap/ui/core/util/MockServer'
 ], function(
 	View,
 	ViewType,
@@ -18,8 +17,7 @@ sap.ui.define([
 	DateType,
 	StringType,
 	ODataModel,
-	MockServer,
-	oCore
+	MockServer
 ) {
 	"use strict";
 
@@ -32,8 +30,6 @@ sap.ui.define([
 
 		init: function() {
 			// initialization has to be done here because parent.init() calls createContent()
-			oCore.loadLibrary("sap.ui.mdc");
-
 			var sMockServerUrl = "/odata/";
 
 			var oMockServer = new MockServer({

@@ -56,6 +56,26 @@ sap.ui.define([
 				// matcher context === app context
 				return window;
 			}
+		},
+
+		_getApplicationWindowJQuery: function () {
+			var Opa5 = sap.ui.require("sap/ui/test/Opa5");
+			if (Opa5) {
+				// matcher context === test context, because Opa5 is loaded
+				return Opa5.getJQuery();
+			} else {
+				// matcher context === app context
+				return sap.ui.require("sap/ui/thirdparty/jquery");
+			}
+		},
+
+		_isInStaticArea: function(oDomElement) {
+			var oAppWindow = this._getApplicationWindow(),
+				oAppWindowJQuery = this._getApplicationWindowJQuery(),
+				oStaticArea = oAppWindow.sap.ui.require("sap/ui/test/OpaPlugin")
+					.getStaticAreaDomRef();
+
+			return oAppWindowJQuery.contains(oStaticArea, oDomElement);
 		}
 
 	});

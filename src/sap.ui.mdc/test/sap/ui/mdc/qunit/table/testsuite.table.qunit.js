@@ -13,6 +13,7 @@ sap.ui.define(function() {
 				version: 4 // Whether Sinon should be loaded and if so, which version
 			},
 			ui5: {
+				theme: "sap_horizon",
 				rtl: false, // Whether to run the tests in RTL mode
 				libs: [
 					"sap.ui.mdc"
@@ -78,7 +79,12 @@ sap.ui.define(function() {
 			},
 			"TableDelegate for ODataV4": {
 				group: "Delegates",
-				module: "test-resources/sap/ui/mdc/qunit/odata/v4/TableDelegate.qunit"
+				module: "test-resources/sap/ui/mdc/qunit/odata/v4/TableDelegate.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
 			},
 			"PropertyHelper": {
 				group: "Helper",

@@ -1796,7 +1796,7 @@ sap.ui.define([
 		FilterBarBase.prototype._loadFlex = function() {
 
 			return new Promise((fResolve) => {
-				Library.load('sap.ui.fl').then(() => {
+				Library.load({name: 'sap.ui.fl'}).then(() => {
 					sap.ui.require([
 						"sap/ui/fl/apply/api/ControlVariantApplyAPI"
 					], (ControlVariantApplyAPI) => {

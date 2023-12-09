@@ -8,6 +8,7 @@ sap.ui.define([
 	"./ViewType",
 	"./XMLViewRenderer",
 	"sap/base/config",
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/base/strings/hash",
@@ -30,6 +31,7 @@ sap.ui.define([
 		ViewType,
 		XMLViewRenderer,
 		BaseConfig,
+		future,
 		Log,
 		Localization,
 		hash,
@@ -458,11 +460,7 @@ sap.ui.define([
 						var vAdditionalData = mCacheInput.additionalData;
 						if (vAdditionalData && vAdditionalData.setAdditionalCacheData && vAdditionalData.getAdditionalCacheData) {
 							vAdditionalData.setAdditionalCacheData(mCacheOutput.additionalData);
-						} else {
-							// extend the additionalData which was passed into cache configuration dynamically
-							Log.error("Deprecated: Don't use an object reference for caching additional Data! Use a CacheDataProvider instead!");
-							merge(mCacheInput.additionalData, mCacheOutput.additionalData);
-						}
+						} else {}
 					}
 					return mCacheOutput;
 				}
@@ -763,7 +761,7 @@ sap.ui.define([
 			if (XMLView.PreprocessorType[sType]) {
 				View.registerPreprocessor(XMLView.PreprocessorType[sType], vPreprocessor, sOwnViewType, bSyncSupport, bOnDemand, mSettings);
 			} else {
-				Log.error("Preprocessor could not be registered due to unknown sType \"" + sType + "\"", this.getMetadata().getName());
+				future.errorThrows("Preprocessor could not be registered due to unknown sType \"" + sType + "\"", this.getMetadata().getName());
 			}
 		};
 

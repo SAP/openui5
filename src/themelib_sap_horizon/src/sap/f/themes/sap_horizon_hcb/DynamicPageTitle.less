@@ -56,6 +56,11 @@ html.sap-desktop .sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
 	padding: 0;
 }
 
+// General alignment styles for header text
+.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading {
+	align-self: center;
+}
+
 .sapFDynamicPageTitleMainNavigationArea > .sapMTBSeparator {
 	margin: 0 0.5rem;
 }
@@ -110,5 +115,11 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		& > .sapFDynamicPageTitle {
 			box-shadow: none;
 		}
+	}
+}
+
+.sapUiSizeCompact {
+	.sapFDynamicPageTitle .sapMTB {
+		height: 2.75rem;
 	}
 }

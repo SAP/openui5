@@ -1,15 +1,22 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/library",
 	"sap/m/MessageToast",
-	"sap/ui/core/Core"
-], function(Controller, Filter, FilterOperator, JSONModel, Condition, FieldEditMode, OperatorName, mobileLibrary, MessageToast, oCore) {
+	"sap/base/i18n/Formatting"
+], function(
+	Controller,
+	JSONModel,
+	Condition,
+	FieldEditMode,
+	OperatorName,
+	mobileLibrary,
+	MessageToast,
+	Formatting
+) {
 	"use strict";
 
 	var ButtonType = mobileLibrary.ButtonType;
@@ -17,8 +24,8 @@ sap.ui.define([
 	return Controller.extend("sap.ui.mdc.sample.field.Test", {
 
 		onInit: function(oEvent) {
-			var oFormatSettings = oCore.getConfiguration().getFormatSettings();
-			oFormatSettings.setUnitMappings({
+
+			Formatting.setUnitMappings({
 				"g": "mass-gram",
 				"kg": "mass-kilogram",
 				"mg": "mass-milligram",

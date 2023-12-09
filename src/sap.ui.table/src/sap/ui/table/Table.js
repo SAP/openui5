@@ -2320,11 +2320,7 @@ sap.ui.define([
 		}
 
 		if (!this._bReorderInProcess) {
-			var iIndexInSortedColumns = this._aSortedColumns.indexOf(oColumn);
-
-			if (iIndexInSortedColumns >= 0) {
-				this._aSortedColumns.splice(iIndexInSortedColumns, 1);
-			}
+			this._removeSortedColumn(oColumn);
 		}
 
 		onColumnsAggregationChange(this);

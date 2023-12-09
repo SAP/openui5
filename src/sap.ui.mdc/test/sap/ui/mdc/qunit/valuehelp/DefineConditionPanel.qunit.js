@@ -1155,7 +1155,6 @@ sap.ui.define([
 		const fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
 			const oGrid = Element.getElementById("DCP1--conditions");
-			// sap.ui.getCore().getMessageManager().registerObject(oGrid, true); // to activate message manager
 
 			let aContent = oGrid.getContent();
 			const oField = aContent[2];

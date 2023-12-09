@@ -3,17 +3,16 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarRenderer",
 	"sap/m/ToolbarSpacer",
 	"sap/m/ToolbarSeparator",
 	"sap/m/library",
-	"sap/ui/core/Element",
 	"sap/ui/mdc/enums/ActionToolbarActionAlignment",
 	"sap/ui/mdc/p13n/subcontroller/ActionToolbarController",
 	"sap/m/p13n/Engine"
-], (Core, OverflowToolbar, OverflowToolbarRenderer, ToolbarSpacer, ToolbarSeparator, mobileLibrary, Element, ActionToolbarActionAlignment, ActionToolbarController, Engine) => {
+], (Element, OverflowToolbar, OverflowToolbarRenderer, ToolbarSpacer, ToolbarSeparator, mobileLibrary, ActionToolbarActionAlignment, ActionToolbarController, Engine) => {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority

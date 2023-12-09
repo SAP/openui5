@@ -32,7 +32,7 @@
 }
 
 .sapUiIntegrationEditor .sapUiIntegrationEditorSubPanel .sapMPanelContent {
-	padding: 0.625rem 1rem 0rem 1rem;
+	padding: 0rem 1rem 0.625rem 1rem;
 }
 .sapUiIntegrationEditor .sapMPanel > .sapMPanelHdr, .sapUiIntegrationEditor .sapMPanelWrappingDiv, .sapUiIntegrationEditor .sapMPanelWrappingDivTb {
 	border: none;

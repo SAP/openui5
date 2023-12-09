@@ -432,7 +432,7 @@ sap.ui.define([
 		});
 
 
-		assert.ok(oLogSpy.withArgs("The 'viewName' option shouldn't be used in Route. please use 'view' instead").calledOnce, "The error log is done and the log message is correct");
+		assert.ok(oLogSpy.calledWith(sinon.match(/The 'viewName' option shouldn't be used in Route. please use 'view' instead/)), "The error log is done and the log message is correct");
 	});
 
 	QUnit.test("subroute handling", function(assert) {

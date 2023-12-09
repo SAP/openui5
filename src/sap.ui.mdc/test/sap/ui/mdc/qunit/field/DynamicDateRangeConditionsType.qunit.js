@@ -41,7 +41,6 @@ sap.ui.define([
 		) {
 	"use strict";
 
-	// var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 	let oDynamicDateRangeConditionsType;
 	let oType;
 

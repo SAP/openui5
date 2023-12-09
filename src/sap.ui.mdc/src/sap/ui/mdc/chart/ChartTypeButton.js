@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/IllustratedMessage",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel"
-], (OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, mobileLibrary, IllustratedMessage, Element, Filter, JSONModel) => {
+], (OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, mobileLibrary, IllustratedMessage, Element, Library, Filter, JSONModel) => {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -159,8 +160,8 @@ sap.ui.define([
 						InvisibleText = InvisibleTextLoaded;
 						Device = DeviceLoaded;
 						if (!oRb) {
-							sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc", true).then((oRbLoaded) => {
-								oRb = oRbLoaded;
+							Library.load({ name: "sap.ui.mdc" }).then(() => {
+								oRb = Library.getResourceBundleFor("sap.ui.mdc");
 								resolve(true);
 							});
 						} else {

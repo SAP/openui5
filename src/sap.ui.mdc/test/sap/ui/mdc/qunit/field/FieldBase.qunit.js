@@ -316,9 +316,9 @@ sap.ui.define([
 		beforeEach: function() {
 			FieldBaseDelegateODataDefaultTypes.enable();
 			oCM = new ConditionModel();
-			oCore.setModel(oCM, "cm");
 			oField = new FieldBase("F1", {
-				conditions: "{cm>/conditions/Name}"
+				conditions: "{cm>/conditions/Name}",
+				models: {cm: oCM}
 			});
 		},
 		afterEach: function() {
@@ -610,6 +610,7 @@ sap.ui.define([
 		oCM.addCondition("Name", oCondition);
 		oCondition = Condition.createCondition(OperatorName.EQ, ["B"], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
+		oCM.checkUpdate(true, false); // to update bindings
 		oField.placeAt("content");
 		oCore.applyChanges();
 
@@ -864,9 +865,9 @@ sap.ui.define([
 		beforeEach: function() {
 			FieldBaseDelegateODataDefaultTypes.enable();
 			oCM = new ConditionModel();
-			oCore.setModel(oCM, "cm");
 			oField = new FieldBase("F1", {
-				conditions: "{cm>/conditions/Name}"
+				conditions: "{cm>/conditions/Name}",
+				models: {cm: oCM}
 			});
 		},
 		afterEach: function() {
@@ -1073,18 +1074,18 @@ sap.ui.define([
 		beforeEach: function() {
 			FieldBaseDelegateODataDefaultTypes.enable();
 			oCM = new ConditionModel();
-			oCore.setModel(oCM, "cm");
 
-			oFieldEditMulti = new FieldBase("F1", { editMode: FieldEditMode.Editable, conditions: "{cm>/conditions/Name}" });
+			oFieldEditMulti = new FieldBase("F1", { editMode: FieldEditMode.Editable, conditions: "{cm>/conditions/Name}", models: {cm: oCM} });
 			oFieldEditSingle = new FieldBase("F2", {
 				editMode: FieldEditMode.Editable,
 				conditions: "{cm>/conditions/Name}",
 				maxConditions: 1,
-				delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {x: 1}} // to test V4 delegate
+				delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {x: 1}}, // to test V4 delegate
+				models: {cm: oCM}
 			});
 			sinon.stub(oFieldEditSingle, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
-			oFieldDisplay = new FieldBase("F3", { editMode: FieldEditMode.Display, conditions: "{cm>/conditions/Name}" });
-			oFieldSearch = new FieldBase("F4", { maxConditions: 1, conditions: "{cm>/conditions/$search}" });
+			oFieldDisplay = new FieldBase("F3", { editMode: FieldEditMode.Display, conditions: "{cm>/conditions/Name}", models: {cm: oCM} });
+			oFieldSearch = new FieldBase("F4", { maxConditions: 1, conditions: "{cm>/conditions/$search}", models: {cm: oCM} });
 			oFieldEditMulti.placeAt("content");
 			oFieldEditSingle.placeAt("content");
 			oFieldDisplay.placeAt("content");
@@ -1242,7 +1243,8 @@ sap.ui.define([
 			maxConditions: 1,
 			dataType: "sap.ui.model.odata.type.DateTime",
 			dataTypeConstraints: {displayFormat: "Date"},
-			dataTypeFormatOptions: {pattern: "dd/MM/yyyy"}
+			dataTypeFormatOptions: {pattern: "dd/MM/yyyy"},
+			models: {cm: oCM}
 		});
 		sinon.stub(oFieldEditSingle2, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oFieldEditSingle2.placeAt("content");
@@ -1256,7 +1258,8 @@ sap.ui.define([
 			maxConditions: 1,
 			dataType: "sap.ui.model.odata.type.DateTime",
 			dataTypeConstraints: {displayFormat: "Date"},
-			dataTypeFormatOptions: {pattern: "dd/MM/yyyy"}
+			dataTypeFormatOptions: {pattern: "dd/MM/yyyy"},
+			models: {cm: oCM}
 		});
 		sinon.stub(oFieldEditSingle3, "getSupportedOperators").callsFake(function() {return [OperatorName.BT];});
 		oFieldEditSingle3.placeAt("content");
@@ -1268,7 +1271,8 @@ sap.ui.define([
 			maxConditions: 1,
 			dataType: "sap.ui.model.odata.type.DateTime",
 			dataTypeConstraints: {displayFormat: "Date"},
-			dataTypeFormatOptions: {pattern: "dd.MM.yyyy"}
+			dataTypeFormatOptions: {pattern: "dd.MM.yyyy"},
+			models: {cm: oCM}
 		});
 		oFieldEditSingle4.placeAt("content");
 
@@ -1278,11 +1282,13 @@ sap.ui.define([
 			conditions: "{cm>/conditions/Name}",
 			maxConditions: -1,
 			dataType: "sap.ui.model.type.Date",
-			dataTypeFormatOptions: {style: "long"}
+			dataTypeFormatOptions: {style: "long"},
+			models: {cm: oCM}
 		});
 		sinon.stub(oFieldEditMulti2, "getSupportedOperators").callsFake(fnOnlyEQ); // fake only equals allowed
 		oFieldEditMulti2.placeAt("content");
 
+		oCM.checkUpdate(true, false); // to update bindings
 		oCore.applyChanges();
 
 		const fnDone = assert.async();
@@ -1876,9 +1882,9 @@ sap.ui.define([
 	QUnit.module("Eventing", {
 		beforeEach: function() {
 			oCM = new ConditionModel();
-			oCore.setModel(oCM, "cm");
 			oField = new FieldBase("F1", {
-				conditions: "{cm>/conditions/Name}"
+				conditions: "{cm>/conditions/Name}",
+				models: {cm: oCM}
 			});
 			//			oField.attachChange(_myChangeHandler);
 			oField.fireChangeEvent = _myFireChange;
@@ -2133,7 +2139,8 @@ sap.ui.define([
 		oField.destroy();
 		oField = new FieldBase("F1", {
 			dataTypeConstraints: {maximum: 10},
-			dataType: "sap.ui.model.type.Integer"
+			dataType: "sap.ui.model.type.Integer",
+			models: {cm: oCM}
 		}).placeAt("content");
 		oField.fireChangeEvent = _myFireChange;
 		oField.attachEvent("change", _myChangeHandler);
@@ -2914,14 +2921,14 @@ sap.ui.define([
 	QUnit.module("Clone", {
 		beforeEach: function() {
 			FieldBaseDelegateODataDefaultTypes.enable();
-			oField = new FieldBase("F1", { conditions: "{cm>/conditions/Name}" });
+			oCM = new ConditionModel();
+			oField = new FieldBase("F1", { conditions: "{cm>/conditions/Name}", models: {cm: oCM} });
 			//			oField.attachChange(_myChangeHandler);
 			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
-			oCM = new ConditionModel();
-			oCore.setModel(oCM, "cm");
 			const oCondition = Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.Validated);
 			oCM.addCondition("Name", oCondition);
+			oCM.checkUpdate(true, false); // to update bindings
 			oField.placeAt("content");
 			oCore.applyChanges();
 		},
@@ -3071,19 +3078,20 @@ sap.ui.define([
 			sinon.stub(oValueHelp, "isValidationSupported").returns(false);
 			sinon.stub(oValueHelp, "getIcon").returns("sap-icon://sap-ui5");
 
+			oCM = new ConditionModel();
 			oField = new FieldBase("F1", {
 				conditions: "{cm>/conditions/Name}",
 				valueHelp: oValueHelp,
 				//				change: _myChangeHandler,
-				liveChange: _myLiveChangeHandler
+				liveChange: _myLiveChangeHandler,
+				models: {cm: oCM}
 			});
 			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
-			oCM = new ConditionModel();
-			oCore.setModel(oCM, "cm");
 			const oCondition = Condition.createCondition(OperatorName.EQ, ["I2"]);
 			oCM.addCondition("Name", oCondition);
 
+			oCM.checkUpdate(true, false); // to update bindings
 			oField.placeAt("content");
 			oCore.applyChanges();
 		},
@@ -3673,6 +3681,7 @@ sap.ui.define([
 			sinon.spy(oValueHelp, "fireDisconnect");
 			sinon.spy(oValueHelp, "onControlChange");
 
+			oCM = new ConditionModel();
 			oField = new FieldBase("F1", {
 				conditions: "{cm>/conditions/Name}",
 				valueState: "{cm>/fieldPath/Name/valueState}",
@@ -3683,14 +3692,14 @@ sap.ui.define([
 				dataTypeConstraints: {search: '^$|^[A-Za-z0-5]+$'}, // to test validation error
 				//				change: _myChangeHandler,
 				liveChange: _myLiveChangeHandler,
-				submit: _mySubmitHandler
+				submit: _mySubmitHandler,
+				models: {cm: oCM}
 			});
 			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
-			oCM = new ConditionModel();
-			oCore.setModel(oCM, "cm");
 			const oCondition = Condition.createCondition(OperatorName.EQ, ["I2"], undefined, undefined, ConditionValidated.Validated); // use validated condition
 			oCM.addCondition("Name", oCondition);
+			oCM.checkUpdate(true, false); // to update bindings
 			Messaging.registerObject(oField, true); // to test valueState
 
 			oField.placeAt("content");
@@ -4488,14 +4497,14 @@ sap.ui.define([
 		const oCM2 = new ConditionModel();
 		let oCondition = Condition.createCondition(OperatorName.EQ, ["I3"]);
 		oCM2.addCondition("Name", oCondition);
-		oCore.setModel(oCM2, "cm2");
 
 		const oField2 = new FieldBase("F2", {
 			conditions: "{cm2>/conditions/Name}",
 			display: FieldDisplay.Description,
 			valueHelp: oValueHelp,
 			//			change: _myChangeHandler,
-			liveChange: _myLiveChangeHandler
+			liveChange: _myLiveChangeHandler,
+			models: {cm2: oCM2}
 		});
 		oField2.fireChangeEvent = _myFireChange;
 		oField2.attachEvent("change", _myChangeHandler);
@@ -5348,21 +5357,22 @@ sap.ui.define([
 			sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true)); // to simulate suggestion
 			sinon.stub(oValueHelp, "getIcon").returns("sap-icon://sap-ui5");
 
+			oCM = new ConditionModel();
 			oField = new FieldBase("F1", {
 				dataType: "sap.ui.model.type.Currency",
 				maxConditions: 1,
 				conditions: "{cm>/conditions/Price}",
 				valueHelp: oValueHelp,
-				liveChange: _myLiveChangeHandler
+				liveChange: _myLiveChangeHandler,
+				models: {cm: oCM}
 			});
 			sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
-			oCM = new ConditionModel();
-			oCore.setModel(oCM, "cm");
 			const oCondition = Condition.createCondition(OperatorName.EQ, [[123.45, "USD"]]);
 			oCM.addCondition("Price", oCondition);
 
+			oCM.checkUpdate(true, false); // to update bindings
 			oField.placeAt("content");
 			oCore.applyChanges();
 		},
@@ -5691,21 +5701,22 @@ sap.ui.define([
 			sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true)); // to simulate suggestion
 			sinon.stub(oValueHelp, "getIcon").returns("sap-icon://sap-ui5");
 
+			oCM = new ConditionModel();
 			oField = new FieldBase("F1", {
 				dataType: "sap.ui.model.type.Currency",
 				conditions: "{cm>/conditions/Price}",
 				valueHelp: oValueHelp,
-				liveChange: _myLiveChangeHandler
+				liveChange: _myLiveChangeHandler,
+				models: {cm: oCM}
 			});
 			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
-			oCM = new ConditionModel();
-			oCore.setModel(oCM, "cm");
 			let oCondition = Condition.createCondition(OperatorName.EQ, [[123.45, "USD"]]);
 			oCM.addCondition("Price", oCondition);
 			oCondition = Condition.createCondition(OperatorName.BT, [[100, "USD"], [200, "USD"]]);
 			oCM.addCondition("Price", oCondition);
 
+			oCM.checkUpdate(true, false); // to update bindings
 			oField.placeAt("content");
 			oCore.applyChanges();
 		},
@@ -5953,22 +5964,23 @@ sap.ui.define([
 			sinon.stub(oFieldInfo, "getContent").returns(Promise.resolve(Element.getElementById("L1")));
 			sinon.spy(oFieldInfo, "open");
 
+			oCM = new ConditionModel();
 			oField = new FieldBase("F1", {
 				conditions: "{cm>/conditions/Name}",
 				maxConditions: 1, // TODO: needed for Link?
 				editMode: FieldEditMode.Display,
 				fieldInfo: oFieldInfo,
 				//				change: _myChangeHandler,
-				liveChange: _myLiveChangeHandler
+				liveChange: _myLiveChangeHandler,
+				models: {cm: oCM}
 			});
 			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
 
-			oCM = new ConditionModel();
-			oCore.setModel(oCM, "cm");
 			const oCondition = Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.Validated);
 			oCM.addCondition("Name", oCondition);
 
+			oCM.checkUpdate(true, false); // to update bindings
 			oField.placeAt("content");
 			oCore.applyChanges();
 		},
@@ -6015,22 +6027,23 @@ sap.ui.define([
 			sinon.stub(oFieldInfo, "getContent").returns(Promise.resolve(Element.getElementById("L1")));
 			sinon.spy(oFieldInfo, "open");
 
+			oCM = new ConditionModel();
 			oField = new FieldBase("F1", {
 				conditions: "{cm>/conditions/Name}",
 				maxConditions: 1, // TODO: needed for Link?
 				editMode: FieldEditMode.Display,
 				fieldInfo: oFieldInfo,
 				//				change: _myChangeHandler,
-				liveChange: _myLiveChangeHandler
+				liveChange: _myLiveChangeHandler,
+				models: {cm: oCM}
 			});
 			oField.fireChangeEvent = _myFireChange;
 			oField.attachEvent("change", _myChangeHandler);
 
-			oCM = new ConditionModel();
-			oCore.setModel(oCM, "cm");
 			const oCondition = Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.Validated);
 			oCM.addCondition("Name", oCondition);
 
+			oCM.checkUpdate(true, false); // to update bindings
 			oField.placeAt("content");
 			oCore.applyChanges();
 		},

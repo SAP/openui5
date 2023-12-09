@@ -4,21 +4,20 @@
 
 // Provides control sap.ui.core.ComponentContainer.
 sap.ui.define([
+	'sap/base/future',
 	'sap/ui/base/ManagedObject',
 	'./Control',
 	'./Component',
 	'./library',
-	"./ComponentContainerRenderer",
-	"sap/base/Log"
-],
-	function(
-		ManagedObject,
-		Control,
-		Component,
-		library,
-		ComponentContainerRenderer,
-		Log
-	) {
+	"./ComponentContainerRenderer"
+], function(
+	future,
+	ManagedObject,
+	Control,
+	Component,
+	library,
+	ComponentContainerRenderer
+) {
 	"use strict";
 
 
@@ -402,7 +401,7 @@ sap.ui.define([
 			if (oOwnerComponent) {
 				mConfig = oOwnerComponent._enhanceWithUsageConfig(sUsageId, mConfig);
 			} else {
-				Log.error("ComponentContainer \"" + this.getId() + "\" does have a \"usage\", but no owner component!");
+				future.errorThrows("ComponentContainer \"" + this.getId() + "\" does have a \"usage\", but no owner component!");
 			}
 		}
 
@@ -453,7 +452,7 @@ sap.ui.define([
 					delete this._oComponentPromise;
 					// listeners can prevent the default log entry
 					if ( this.fireComponentFailed({ reason: oReason }) ) {
-						Log.error("Failed to load component for container " + this.getId(), oReason);
+						future.errorThrows("Failed to load component for container " + this.getId(), oReason);
 					}
 				}.bind(this));
 			} else if (oComponent) {

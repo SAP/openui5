@@ -2,13 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
 	"sap/ui/core/Placeholder",
 	"sap/ui/core/library"
-], function(Log, ManagedObjectMetadata, ComponentContainer, Element, Placeholder, coreLib) {
+], function(future, Log, ManagedObjectMetadata, ComponentContainer, Element, Placeholder, coreLib) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ComponentLifecycle
@@ -686,7 +687,7 @@ sap.ui.define([
 			}
 
 			if (sLogMessage) {
-				Log.error(sLogMessage, this);
+				future.errorThrows(sLogMessage, this);
 			}
 
 			return bIsValid || sLogMessage;

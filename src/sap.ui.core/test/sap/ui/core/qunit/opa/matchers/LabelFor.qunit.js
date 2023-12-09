@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/layout/library",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/m/Link",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/OpaPlugin"
 ], function (LabelFor, Input, Label, Button, ResourceModel, App, Page, layoutLibrary, SimpleForm, Link, nextUIUpdate) {
 	"use strict";
 

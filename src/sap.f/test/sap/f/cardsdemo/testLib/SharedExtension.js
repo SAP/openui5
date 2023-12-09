@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/integration/ActionDefinition",
 	"sap/base/Log",
 	"sap/ui/core/Core"
-], function(Lib, Extension, ActionDefinition, Log, Core) {
+], function(Library, Extension, ActionDefinition, Log, Core) {
 	"use strict";
 
 	// function that adjusts the data
@@ -50,7 +50,7 @@ sap.ui.define([
 				return Promise.resolve();
 			}
 
-			return Lib.load("sap.viz")
+			return Library.load("sap.viz")
 				.then(function () {
 					return new Promise(function (resolve) {
 						// registers custom viz formatter only for analytical cards

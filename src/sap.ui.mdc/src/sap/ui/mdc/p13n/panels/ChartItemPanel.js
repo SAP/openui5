@@ -7,12 +7,12 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Select",
 	"sap/m/Text",
-	"sap/ui/core/Element",
 	"sap/ui/core/Item",
 	"sap/m/Button",
 	'sap/m/Column',
 	"sap/m/Table",
 	"sap/ui/core/Lib",
+	"sap/ui/core/Element",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/VBox",
@@ -29,7 +29,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/mdc/enums/ChartItemRoleType",
 	"sap/ui/core/InvisibleMessage"
-], (BasePanel, Label, ColumnListItem, Select, Text, Element, Item, Button, Column, Table, Library, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, coreLibrary, KeyCode, ChartItemRoleType, InvisibleMessage) => {
+], (BasePanel, Label, ColumnListItem, Select, Text, Item, Button, Column, Table, Library, Element, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, coreLibrary, KeyCode, ChartItemRoleType, InvisibleMessage) => {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -37,7 +37,6 @@ sap.ui.define([
 
 	// shortcut for sap.m.FlexJustifyContent
 	const { FlexJustifyContent } = mLibrary;
-	const core = sap.ui.getCore();
 
 	/**
 	 * Constructor for ChartItemPanel

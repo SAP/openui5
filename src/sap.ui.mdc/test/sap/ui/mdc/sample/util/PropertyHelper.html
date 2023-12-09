@@ -41,6 +41,7 @@
 </style>
 <script>
 	sap.ui.require([
+		"sap/ui/core/Core",
 		"sap/base/Log",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/layout/cssgrid/CSSGrid",
@@ -54,7 +55,9 @@
 		"sap/m/Button",
 		"sap/m/CheckBox",
 		"sap/ui/model/type/String"
-	], function(Log,
+	], async function(
+	Core,
+	Log,
 	JSONModel,
 	CSSGrid,
 	CodeEditor,
@@ -68,7 +71,7 @@
 	CheckBox,
 	StringType
 	) {
-		sap.ui.getCore().attachInit(function() {
+		Core.ready(() => {
 			var aInitialPropertyInfos = [
 				{
 					name: "PropertyA",
@@ -323,7 +326,7 @@
 
 			update();
 		});
-});
+	});
 
 	function stringify(vValue) {
 		return JSON.stringify(vValue, null, 4)

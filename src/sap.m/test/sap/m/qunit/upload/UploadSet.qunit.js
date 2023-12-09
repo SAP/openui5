@@ -23,7 +23,7 @@ sap.ui.define([
 	"sap/m/IllustratedMessageType",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/base/Object"
-], function(Element, Lib, jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer, Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, nextUIUpdate, BaseObject) {
+], function(Element, Library1, jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer, Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, nextUIUpdate, BaseObject) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -2192,7 +2192,7 @@ sap.ui.define([
 		assert.ok(oFileUploaderChangeSpy.notCalled, "Directory uploads aborted with restrited file types");
 	});
 
-	return Lib.load("sap.suite.ui.commons")
+	return Library1.load("sap.suite.ui.commons")
 	.then(function() {
 		QUnit.module("Cloud File Picker", {
 			beforeEach: function () {

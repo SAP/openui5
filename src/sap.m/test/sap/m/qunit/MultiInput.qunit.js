@@ -2340,6 +2340,129 @@ sap.ui.define([
 			assert.equal(this.multiInput1.getTokens().length, 0, "no token should be created");
 	});
 
+	QUnit.test( "paste of 2 rows of excel data fires '_validateOnPaste' with proper event argument", function (assert) {
+        //arrange
+        var sPastedString = "value00\tvalue01\nvalue10\tvalue11";
+        var fnFireEventSpy = this.spy(this.multiInput1, "fireEvent");
+
+        //act
+        qutils.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
+            originalEvent: {
+                clipboardData: {
+                    getData: function () {
+                        return sPastedString;
+                    }
+                }
+            }
+        });
+
+		this.clock.tick();
+        Core.applyChanges();
+
+        //assert
+        assert.ok(
+            fnFireEventSpy.calledWith("_validateOnPaste"),
+            "Private event _validateOnPaste was fired"
+        );
+        assert.deepEqual(
+            fnFireEventSpy.firstCall.args[1].textRows,
+            [
+                ["value00", "value01"],
+                ["value10", "value11"]
+            ],
+            "_validateOnPaste should be called with argument 'textRows' that is an array of arrays"
+        );
+    });
+
+	QUnit.test( "paste of 1 row of excel data fires '_validateOnPaste' with proper event argument", function (assert) {
+        //arrange
+        var sPastedString = "value00\tvalue01";
+        var fnFireEventSpy = this.spy(this.multiInput1, "fireEvent");
+
+        //act
+        qutils.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
+            originalEvent: {
+                clipboardData: {
+                    getData: function () {
+                        return sPastedString;
+                    }
+                }
+            }
+        });
+
+		this.clock.tick();
+        Core.applyChanges();
+
+        //assert
+        assert.ok(
+            fnFireEventSpy.calledWith("_validateOnPaste"),
+            "Private event _validateOnPaste was fired"
+        );
+        assert.deepEqual(
+            fnFireEventSpy.firstCall.args[1].textRows,
+            [["value00", "value01"]],
+            "_validateOnPaste should be called with argument 'textRows' that is an array of arrays"
+        );
+    });
+
+	QUnit.test( "paste of 2 rows of excel data with empty first column fires '_validateOnPaste' with empty first elements", function (assert) {
+        //arrange
+        var sPastedString = "\tvalue01\r\n\tvalue11\r\n";
+        var fnFireEventSpy = this.spy(this.multiInput1, "fireEvent");
+
+        //act
+        qutils.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
+            originalEvent: {
+                clipboardData: {
+                    getData: function () {
+                        return sPastedString;
+                    }
+                }
+            }
+        });
+
+		this.clock.tick();
+        Core.applyChanges();
+
+        //assert
+        assert.strictEqual(
+            fnFireEventSpy.firstCall.args[1].textRows[0][0],
+            "",
+            "_validateOnPaste should be called with argument 'textRows' with empty value at position (0,0)"
+        );
+        assert.strictEqual(
+            fnFireEventSpy.firstCall.args[1].textRows[1][0],
+            "",
+            "_validateOnPaste should be called with argument 'textRows' with empty value at position (1,0)"
+        );
+    });
+
+	QUnit.test( "paste of 1 cell of excel data does not fire '_validateOnPaste'", function (assert) {
+        //arrange
+        var sPastedString = "value00";
+        var fnFireEventSpy = this.spy(this.multiInput1, "fireEvent");
+
+        //act
+        qutils.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
+            originalEvent: {
+                clipboardData: {
+                    getData: function () {
+                        return sPastedString;
+                    }
+                }
+            }
+        });
+
+		this.clock.tick();
+        Core.applyChanges();
+
+        //assert
+        assert.notOk(
+            fnFireEventSpy.calledWith("_validateOnPaste"),
+            "Private event _validateOnPaste was fired"
+        );
+    });
+
 	QUnit.test("token update event", function(assert) {
 		var iCount = 0,
 			done = assert.async(),

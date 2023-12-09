@@ -13,7 +13,7 @@ sap.ui.define([
 	BaseListContent,
 	TimelineContentRenderer,
 	TimelinePlaceholder,
-	Lib,
+	Library,
 	library,
 	Core,
 	BindingHelper
@@ -86,7 +86,7 @@ sap.ui.define([
 	 */
 	TimelineContent.prototype.loadDependencies = function (oCardManifest) {
 		return new Promise(function (resolve, reject) {
-			Lib.load("sap.suite.ui.commons")
+			Library.load("sap.suite.ui.commons")
 				.then(function () {
 					sap.ui.require([
 						"sap/suite/ui/commons/Timeline",

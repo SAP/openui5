@@ -1,7 +1,6 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"./QUnitUtils",
-	"sap/ui/core/Lib",
 	"sap/ui/mdc/TableDelegate",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
@@ -9,24 +8,24 @@ sap.ui.define([
 	"sap/ui/mdc/table/ResponsiveTableType",
 	"sap/ui/mdc/table/ResponsiveColumnSettings",
 	"sap/ui/mdc/table/Column",
-	"sap/m/Text",
-	"sap/m/plugins/PluginBase",
-	"sap/ui/core/Core",
-	"sap/ui/core/library",
-	"sap/ui/model/Filter",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/Sorter",
-	"sap/ui/model/Context",
-	"sap/base/util/deepEqual",
 	"sap/ui/mdc/enums/TableMultiSelectMode",
 	"sap/ui/mdc/enums/TableSelectionMode",
 	"sap/ui/mdc/enums/TableType",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
-	"sap/ui/mdc/util/FilterUtil"
+	"sap/ui/mdc/util/FilterUtil",
+	"sap/m/Text",
+	"sap/m/plugins/PluginBase",
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
+	"sap/ui/core/library",
+	"sap/ui/model/Filter",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/Context",
+	"sap/base/util/deepEqual"
 ], function(
 	TableQUnitUtils,
-	Library,
 	TableDelegate,
 	Table,
 	GridTableType,
@@ -34,21 +33,22 @@ sap.ui.define([
 	ResponsiveTableType,
 	ResponsiveColumnSettings,
 	Column,
+	MultiSelectMode,
+	SelectionMode,
+	TableType,
+	ConditionValidated,
+	OperatorName,
+	FilterUtil,
 	Text,
 	PluginBase,
 	Core,
+	Library,
 	coreLibrary,
 	Filter,
 	JSONModel,
 	Sorter,
 	Context,
-	deepEqual,
-	TableMultiSelectMode,
-	TableSelectionMode,
-	TableType,
-	ConditionValidated,
-	OperatorName,
-	FilterUtil
+	deepEqual
 ) {
 	"use strict";
 
@@ -59,242 +59,6 @@ sap.ui.define([
 		fnOriginalUpdateBindingInfo.apply(this, arguments);
 		oBindingInfo.path = oTable.getPayload() ? oTable.getPayload().collectionPath : "/foo";
 	};
-
-	function initTableForSelection (mSettings, fnBeforeInit) {
-		if (this.oTable) {
-			this.oTable.destroy();
-		}
-
-		this.oTable = new Table(Object.assign({
-			delegate: {
-				name: sDelegatePath,
-				payload: {
-					collectionPath: "/"
-				}
-			},
-			columns: [
-				new Column({
-					propertyKey: "Name",
-					header: new Text({
-						text: "Column A"
-					}),
-					template: new Text({
-						text: "{Name}"
-					})
-				})
-			],
-			models: new JSONModel([
-				{Name: "Hans"},
-				{Name: "Frans"},
-				{Name: "Susi"}
-			])
-		}, mSettings));
-
-		if (fnBeforeInit) {
-			fnBeforeInit(this.oTable);
-		}
-
-		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		return this.oTable.initialized();
-	}
-
-	QUnit.module("Initialization of selection", {
-		before: function() {
-			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
-				name: "Name",
-				path: "Name_Path",
-				label: "Name_Label",
-				dataType: "String"
-			}]);
-		},
-		afterEach: function() {
-			if (this.oTable) {
-				this.oTable.destroy();
-			}
-		},
-		after: function() {
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
-		},
-		initTable: initTableForSelection
-	});
-
-	QUnit.test("GridTableType", function(assert) {
-		let mSelectionChangeParameters;
-		const oSelectionChangeStub = sinon.stub();
-
-		oSelectionChangeStub.callsFake(function(oEvent) {
-			mSelectionChangeParameters = oEvent.getParameters();
-			delete mSelectionChangeParameters.id;
-		});
-
-		return this.initTable({
-			selectionMode: TableSelectionMode.Single,
-			selectionChange: oSelectionChangeStub,
-			type: new GridTableType({
-				selectionLimit: 1337,
-				showHeaderSelector: false
-			})
-		}, function(oTable) {
-			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
-		}).then(function(oTable) {
-			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
-
-			assert.ok(oPlugin, "Applied sap.ui.table.plugins.MultiSelectionPlugin");
-			assert.equal(oPlugin.getLimit(), 1337, "Selection limit");
-			assert.ok(oPlugin.getEnableNotification(), "Limit notification enabled");
-			assert.notOk(oPlugin.getShowHeaderSelector(), "Show header selector");
-			assert.equal(oPlugin.getSelectionMode(), "Single", "Selection mode");
-			assert.ok(oPlugin.getEnabled(), "Selection plugin enabled");
-			oPlugin.fireSelectionChange({selectAll: true});
-			assert.equal(oSelectionChangeStub.callCount, 1, "Selection change event of table called once if called once by the plugin");
-			assert.deepEqual(mSelectionChangeParameters, {selectAll: true}, "Selection change event parameters");
-
-			oTable.setSelectionMode(TableSelectionMode.None);
-			assert.notOk(oPlugin.getEnabled(), "Set selection mode to 'None': Selection plugin disabled");
-
-			oTable.setSelectionMode(TableSelectionMode.SingleMaster);
-			assert.equal(oPlugin.getSelectionMode(), "Single", "Set selection mode to 'SingleMaster': Selection mode of plugin set to 'Single'");
-
-			oTable.setSelectionMode(TableSelectionMode.Multi);
-			assert.equal(oPlugin.getSelectionMode(), "MultiToggle", "Set selection mode to 'Multi': Selection mode of plugin set to 'MultiToggle'");
-
-			oTable.getType().setSelectionLimit(123);
-			assert.equal(oPlugin.getLimit(), 123, "A 'selectionLimit' change correctly affects the plugin");
-
-			oTable.getType().setShowHeaderSelector(true);
-			assert.ok(oPlugin.getShowHeaderSelector(), "A 'showHeaderSelector' change correctly affects the plugin");
-
-			return new Promise(function(resolve) {
-				oTable._oTable.attachEventOnce("rowsUpdated", function() {
-					resolve(oTable);
-				});
-			});
-		}).then(function(oTable) {
-			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
-			return oPlugin.addSelectionInterval(1, 1).then(function() {
-				return oTable;
-			});
-		}).then(function(oTable) {
-			assert.deepEqual(oTable.getSelectedContexts(), [oTable._oTable.getRows()[1].getBindingContext()],
-				"#getSelectedContexts after initialization");
-		});
-	});
-
-	QUnit.test("TreeTableType", function(assert) {
-		let mSelectionChangeParameters;
-		const oSelectionChangeStub = sinon.stub();
-
-		oSelectionChangeStub.callsFake(function(oEvent) {
-			mSelectionChangeParameters = oEvent.getParameters();
-			delete mSelectionChangeParameters.id;
-		});
-
-		return this.initTable({
-			selectionMode: TableSelectionMode.Single,
-			selectionChange: oSelectionChangeStub,
-			type: new TreeTableType({
-				selectionLimit: 1337,
-				showHeaderSelector: false
-			})
-		}, function(oTable) {
-			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
-		}).then(function(oTable) {
-			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
-
-			assert.ok(oPlugin, "Applied sap.ui.table.plugins.MultiSelectionPlugin");
-			assert.equal(oPlugin.getLimit(), 1337, "Selection limit");
-			assert.ok(oPlugin.getEnableNotification(), "Limit notification enabled");
-			assert.notOk(oPlugin.getShowHeaderSelector(), "Show header selector");
-			assert.equal(oPlugin.getSelectionMode(), "Single", "Selection mode");
-			assert.ok(oPlugin.getEnabled(), "Selection plugin enabled");
-			oPlugin.fireSelectionChange({selectAll: true});
-			assert.equal(oSelectionChangeStub.callCount, 1, "Selection change event of table called once if called once by the plugin");
-			assert.deepEqual(mSelectionChangeParameters, {selectAll: true}, "Selection change event parameters");
-
-			oTable.setSelectionMode(TableSelectionMode.None);
-			assert.notOk(oPlugin.getEnabled(), "Set selection mode to 'None': Selection plugin disabled");
-
-			oTable.setSelectionMode(TableSelectionMode.SingleMaster);
-			assert.equal(oPlugin.getSelectionMode(), "Single", "Set selection mode to 'SingleMaster': Selection mode of plugin set to 'Single'");
-
-			oTable.setSelectionMode(TableSelectionMode.Multi);
-			assert.equal(oPlugin.getSelectionMode(), "MultiToggle", "Set selection mode to 'Multi': Selection mode of plugin set to 'MultiToggle'");
-
-			oTable.getType().setSelectionLimit(123);
-			assert.equal(oPlugin.getLimit(), 123, "A 'selectionLimit' change correctly affects the plugin");
-
-			oTable.getType().setShowHeaderSelector(true);
-			assert.ok(oPlugin.getShowHeaderSelector(), "A 'showHeaderSelector' change correctly affects the plugin");
-
-			return new Promise(function(resolve) {
-				oTable._oTable.attachEventOnce("rowsUpdated", function() {
-					resolve(oTable);
-				});
-			});
-		}).then(function(oTable) {
-			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
-			return oPlugin.addSelectionInterval(1, 1).then(function() {
-				return oTable;
-			});
-		}).then(function(oTable) {
-			assert.deepEqual(oTable.getSelectedContexts(), [oTable._oTable.getRows()[1].getBindingContext()],
-				"#getSelectedContexts after initialization");
-		});
-	});
-
-	QUnit.test("ResponsiveTableType", function(assert) {
-		let mSelectionChangeParameters;
-		const oSelectionChangeStub = sinon.stub();
-
-		oSelectionChangeStub.callsFake(function(oEvent) {
-			mSelectionChangeParameters = oEvent.getParameters();
-			delete mSelectionChangeParameters.id;
-		});
-
-		return this.initTable({
-			selectionMode: TableSelectionMode.Single,
-			multiSelectMode: TableMultiSelectMode.ClearAll,
-			selectionChange: oSelectionChangeStub,
-			type: new ResponsiveTableType()
-		}, function(oTable) {
-			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
-		}).then(function(oTable) {
-			const oInnerTable = oTable._oTable;
-
-			assert.equal(oInnerTable.getMode(), "SingleSelectLeft", "Selection mode");
-			assert.equal(oInnerTable.getMultiSelectMode(), "ClearAll", "Multi select mode");
-			oInnerTable.fireSelectionChange({selectAll: true});
-			assert.equal(oSelectionChangeStub.callCount, 1, "Selection change event of table called once if called once by the inner table");
-			assert.deepEqual(mSelectionChangeParameters, {selectAll: true}, "Selection change event parameters");
-
-			oTable.setSelectionMode(TableSelectionMode.None);
-			assert.equal(oInnerTable.getMode(), "None", "Set selection mode to 'None': Inner table selection mode set to 'None'");
-
-			oTable.setSelectionMode(TableSelectionMode.SingleMaster);
-			assert.equal(oInnerTable.getMode(), "SingleSelectMaster",
-				"Set selection mode to 'SingleMaster': Inner table selection mode set to 'SingleSelectMaster'");
-
-			oTable.setSelectionMode(TableSelectionMode.Multi);
-			assert.equal(oInnerTable.getMode(), "MultiSelect",
-				"Set selection mode to 'Multi': Inner table selection mode set to 'MultiSelect'");
-
-			oTable.setMultiSelectMode(TableMultiSelectMode.Default);
-			assert.equal(oInnerTable.getMultiSelectMode(), "SelectAll",
-				"Multi select mode set to 'Default': Inner table multi select mode set to 'SelectAll'");
-
-			return new Promise(function(resolve) {
-				oInnerTable.attachEventOnce("updateFinished", function() {
-					resolve(oTable);
-				});
-			});
-		}).then(function(oTable) {
-			oTable._oTable.getItems()[1].setSelected(true);
-			assert.deepEqual(oTable.getSelectedContexts(), [oTable._oTable.getItems()[1].getBindingContext()],
-				"#getSelectedContexts after initialization");
-		});
-	});
 
 	QUnit.module("API", {
 		before: function() {
@@ -504,43 +268,321 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("setSelectedContexts", function (assert) {
+	QUnit.module("Selection", {
+		before: function() {
+			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
+				name: "Name",
+				path: "Name_Path",
+				label: "Name_Label",
+				dataType: "String"
+			}]);
+		},
+		afterEach: function() {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+		},
+		after: function() {
+			TableQUnitUtils.restorePropertyInfos(Table.prototype);
+		},
+		initTable: function(mSettings, fnBeforeInit) {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
 
-		const initTable = () => {
-			return initTableForSelection.call(this, {
-				selectionMode: TableSelectionMode.Single,
-				type: new ResponsiveTableType()
-			}).then((oTable) => new Promise((resolve) => {
-				oTable.attachEventOnce("_bindingChange", function () {
+			this.oTable = new Table(Object.assign({
+				delegate: {
+					name: sDelegatePath,
+					payload: {
+						collectionPath: "/"
+					}
+				},
+				columns: [
+					new Column({
+						propertyKey: "Name",
+						header: new Text({
+							text: "Column A"
+						}),
+						template: new Text({
+							text: "{Name}"
+						})
+					})
+				],
+				models: new JSONModel([
+					{Name: "Hans"},
+					{Name: "Frans"},
+					{Name: "Susi"}
+				])
+			}, mSettings));
+
+			if (fnBeforeInit) {
+				fnBeforeInit(this.oTable);
+			}
+
+			this.oTable.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			return this.oTable.initialized();
+		}
+	});
+
+	QUnit.test("Initialization with GridTableType", function(assert) {
+		const oSelectionChangeStub = sinon.stub();
+
+		return this.initTable({
+			selectionMode: SelectionMode.Single,
+			selectionChange: oSelectionChangeStub,
+			type: new GridTableType({
+				selectionLimit: 1337,
+				showHeaderSelector: false
+			})
+		}, function(oTable) {
+			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
+		}).then(function(oTable) {
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
+
+			assert.ok(oPlugin, "Applied sap.ui.table.plugins.MultiSelectionPlugin");
+			assert.equal(oPlugin.getLimit(), 1337, "Selection limit");
+			assert.ok(oPlugin.getEnableNotification(), "Limit notification enabled");
+			assert.notOk(oPlugin.getShowHeaderSelector(), "Show header selector");
+			assert.equal(oPlugin.getSelectionMode(), "Single", "Selection mode");
+			assert.ok(oPlugin.getEnabled(), "Selection plugin enabled");
+			oPlugin.fireSelectionChange({selectAll: true});
+			assert.equal(oSelectionChangeStub.callCount, 1, "Selection change event of table called once if called once by the plugin");
+
+			oTable.setSelectionMode(SelectionMode.None);
+			assert.notOk(oPlugin.getEnabled(), "Set selection mode to 'None': Selection plugin disabled");
+
+			oTable.setSelectionMode(SelectionMode.SingleMaster);
+			assert.equal(oPlugin.getSelectionMode(), "Single", "Set selection mode to 'SingleMaster': Selection mode of plugin set to 'Single'");
+
+			oTable.setSelectionMode(SelectionMode.Multi);
+			assert.equal(oPlugin.getSelectionMode(), "MultiToggle", "Set selection mode to 'Multi': Selection mode of plugin set to 'MultiToggle'");
+
+			oTable.getType().setSelectionLimit(123);
+			assert.equal(oPlugin.getLimit(), 123, "A 'selectionLimit' change correctly affects the plugin");
+
+			oTable.getType().setShowHeaderSelector(true);
+			assert.ok(oPlugin.getShowHeaderSelector(), "A 'showHeaderSelector' change correctly affects the plugin");
+
+			return new Promise(function(resolve) {
+				oTable._oTable.attachEventOnce("rowsUpdated", function() {
 					resolve(oTable);
 				});
-			}));
+			});
+		}).then(function(oTable) {
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
+			return oPlugin.addSelectionInterval(1, 1).then(function() {
+				return oTable;
+			});
+		}).then(function(oTable) {
+			assert.deepEqual(oTable.getSelectedContexts(), [oTable._oTable.getRows()[1].getBindingContext()],
+				"#getSelectedContexts after initialization");
+		});
+	});
+
+	QUnit.test("Initialization with TreeTableType", function(assert) {
+		const oSelectionChangeStub = sinon.stub();
+
+		return this.initTable({
+			selectionMode: SelectionMode.Single,
+			selectionChange: oSelectionChangeStub,
+			type: new TreeTableType({
+				selectionLimit: 1337,
+				showHeaderSelector: false
+			})
+		}, function(oTable) {
+			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
+		}).then(function(oTable) {
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
+
+			assert.ok(oPlugin, "Applied sap.ui.table.plugins.MultiSelectionPlugin");
+			assert.equal(oPlugin.getLimit(), 1337, "Selection limit");
+			assert.ok(oPlugin.getEnableNotification(), "Limit notification enabled");
+			assert.notOk(oPlugin.getShowHeaderSelector(), "Show header selector");
+			assert.equal(oPlugin.getSelectionMode(), "Single", "Selection mode");
+			assert.ok(oPlugin.getEnabled(), "Selection plugin enabled");
+			oPlugin.fireSelectionChange({selectAll: true});
+			assert.equal(oSelectionChangeStub.callCount, 1, "Selection change event of table called once if called once by the plugin");
+
+			oTable.setSelectionMode(SelectionMode.None);
+			assert.notOk(oPlugin.getEnabled(), "Set selection mode to 'None': Selection plugin disabled");
+
+			oTable.setSelectionMode(SelectionMode.SingleMaster);
+			assert.equal(oPlugin.getSelectionMode(), "Single", "Set selection mode to 'SingleMaster': Selection mode of plugin set to 'Single'");
+
+			oTable.setSelectionMode(SelectionMode.Multi);
+			assert.equal(oPlugin.getSelectionMode(), "MultiToggle", "Set selection mode to 'Multi': Selection mode of plugin set to 'MultiToggle'");
+
+			oTable.getType().setSelectionLimit(123);
+			assert.equal(oPlugin.getLimit(), 123, "A 'selectionLimit' change correctly affects the plugin");
+
+			oTable.getType().setShowHeaderSelector(true);
+			assert.ok(oPlugin.getShowHeaderSelector(), "A 'showHeaderSelector' change correctly affects the plugin");
+
+			return new Promise(function(resolve) {
+				oTable._oTable.attachEventOnce("rowsUpdated", function() {
+					resolve(oTable);
+				});
+			});
+		}).then(function(oTable) {
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
+			return oPlugin.addSelectionInterval(1, 1).then(function() {
+				return oTable;
+			});
+		}).then(function(oTable) {
+			assert.deepEqual(oTable.getSelectedContexts(), [oTable._oTable.getRows()[1].getBindingContext()],
+				"#getSelectedContexts after initialization");
+		});
+	});
+
+	QUnit.test("Initialization with ResponsiveTableType", function(assert) {
+		const oSelectionChangeStub = sinon.stub();
+
+		return this.initTable({
+			selectionMode: SelectionMode.Single,
+			multiSelectMode: MultiSelectMode.ClearAll,
+			selectionChange: oSelectionChangeStub,
+			type: new ResponsiveTableType()
+		}, function(oTable) {
+			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
+		}).then(function(oTable) {
+			const oInnerTable = oTable._oTable;
+
+			assert.equal(oInnerTable.getMode(), "SingleSelectLeft", "Selection mode");
+			assert.equal(oInnerTable.getMultiSelectMode(), "ClearAll", "Multi select mode");
+			oInnerTable.fireSelectionChange({selectAll: true});
+			assert.equal(oSelectionChangeStub.callCount, 1, "Selection change event of table called once if called once by the inner table");
+
+			oTable.setSelectionMode(SelectionMode.None);
+			assert.equal(oInnerTable.getMode(), "None", "Set selection mode to 'None': Inner table selection mode set to 'None'");
+
+			oTable.setSelectionMode(SelectionMode.SingleMaster);
+			assert.equal(oInnerTable.getMode(), "SingleSelectMaster",
+				"Set selection mode to 'SingleMaster': Inner table selection mode set to 'SingleSelectMaster'");
+
+			oTable.setSelectionMode(SelectionMode.Multi);
+			assert.equal(oInnerTable.getMode(), "MultiSelect",
+				"Set selection mode to 'Multi': Inner table selection mode set to 'MultiSelect'");
+
+			oTable.setMultiSelectMode(MultiSelectMode.Default);
+			assert.equal(oInnerTable.getMultiSelectMode(), "SelectAll",
+				"Multi select mode set to 'Default': Inner table multi select mode set to 'SelectAll'");
+
+			return new Promise(function(resolve) {
+				oInnerTable.attachEventOnce("updateFinished", function() {
+					resolve(oTable);
+				});
+			});
+		}).then(function(oTable) {
+			oTable._oTable.getItems()[1].setSelected(true);
+			assert.deepEqual(oTable.getSelectedContexts(), [oTable._oTable.getItems()[1].getBindingContext()],
+				"#getSelectedContexts after initialization");
+		});
+	});
+
+	QUnit.test("setSelectedContexts/getSelectedContexts", async function(assert) {
+		const oSelectionChangeListener = sinon.spy();
+
+		const testMultiSelection = (oDelegate, aContexts, sTestTitle) => {
+			oSelectionChangeListener.resetHistory();
+			oDelegate.setSelectedContexts(this.oTable, aContexts.slice(1, 3));
+			assert.deepEqual(oDelegate.getSelectedContexts(this.oTable), aContexts.slice(1, 3), sTestTitle + " - Selected contexts");
+			assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
+
+			oSelectionChangeListener.resetHistory();
+			oDelegate.setSelectedContexts(this.oTable, aContexts.slice(2, 4));
+			assert.deepEqual(oDelegate.getSelectedContexts(this.oTable), aContexts.slice(2, 4), sTestTitle + " - Selected contexts");
+			assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
 		};
 
-		const testSelection = (oTable) => {
-			sinon.spy(TableDelegate, "setSelectedContexts");
-			assert.ok(!oTable.getSelectedContexts().length, "No contexts are selected");
-			const oRowBinding = oTable.getRowBinding();
-			const oNextSelectedContext = oRowBinding.getAllCurrentContexts ? oRowBinding.getAllCurrentContexts()[1] : oRowBinding.getContexts()[1];
-			assert.ok(oNextSelectedContext, "A context is available for selection");
-			const aNextSelectedContexts = [oNextSelectedContext];
-			oTable._setSelectedContexts(aNextSelectedContexts);
-			return new Promise((resolve) => { setTimeout(resolve, 0); }).then(() => {
-				assert.ok(TableDelegate.setSelectedContexts.calledWith(oTable, aNextSelectedContexts), "TableDelegate.setSelectedContexts was called with the expected args.");
-				assert.ok(oTable.getSelectedContexts().indexOf(oNextSelectedContext) >= 0, "getSelectedContexts() changed successfully.");
-				TableDelegate.setSelectedContexts.restore();
+		const testSingleSelection = (oDelegate, aContexts, sTestTitle) => {
+			oSelectionChangeListener.resetHistory();
+			assert.throws(
+				function() {
+					oDelegate.setSelectedContexts(this.oTable, aContexts.slice(1, 3));
+				},
+				new Error("Unsupported operation: Cannot select the given number of contexts in the current selection mode"),
+				sTestTitle + " - Throws an error when trying to select multiple contexts"
+			);
+			assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
+
+			oSelectionChangeListener.resetHistory();
+			oDelegate.setSelectedContexts(this.oTable, [aContexts[1]]);
+			assert.deepEqual(oDelegate.getSelectedContexts(this.oTable), [aContexts[1]], sTestTitle + " - Selected contexts");
+			assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
+
+			oSelectionChangeListener.resetHistory();
+			oDelegate.setSelectedContexts(this.oTable, [aContexts[2]]);
+			assert.deepEqual(oDelegate.getSelectedContexts(this.oTable), [aContexts[2]], sTestTitle + " - Selected contexts");
+			assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
+		};
+
+		const testDisabledSelection = (oDelegate, aContexts, sTestTitle) => {
+			oSelectionChangeListener.resetHistory();
+			assert.throws(
+				function() {
+					oDelegate.setSelectedContexts(this.oTable, [aContexts[1]]);
+				},
+				new Error("Unsupported operation: Cannot select the given number of contexts in the current selection mode"),
+				sTestTitle + " - Throws an error if selection is disabled"
+			);
+			assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
+		};
+
+		const testSelection = () => {
+			Object.values(SelectionMode).forEach((sSelectionMode) => {
+				const oDelegate = this.oTable.getControlDelegate();
+				const aContexts = this.oTable.getRowBinding().getContexts();
+				const sTestTitle = `type=${this.oTable.getType() || TableType.Table}; selectionMode=${sSelectionMode}`;
+
+				this.oTable.setSelectionMode(sSelectionMode);
+
+				if (this.oTable._isOfType(TableType.Table, true)) {
+					oSelectionChangeListener.resetHistory();
+					assert.throws(
+						function() {
+							oDelegate.setSelectedContexts(this.oTable, [aContexts[0]]);
+						},
+						new Error("Unsupported operation: Not supported for the current table type"),
+						sTestTitle + " - Throws an error"
+					);
+					assert.ok(oSelectionChangeListener.notCalled, "selectionChange event not fired");
+					return;
+				}
+
+				switch (sSelectionMode) {
+					case SelectionMode.Multi:
+						testMultiSelection(oDelegate, aContexts, sTestTitle);
+						break;
+					case SelectionMode.Single:
+					case SelectionMode.SingleMaster:
+						testSingleSelection(oDelegate, aContexts, sTestTitle);
+						break;
+					case SelectionMode.None:
+						testDisabledSelection(oDelegate, aContexts, sTestTitle);
+						break;
+					default:
+						throw new Error("Untested selection mode: " + sSelectionMode);
+				}
 			});
 		};
 
-		return [
-			(oTable) => testSelection(oTable),
-			(oTable) => {
-				sinon.stub(oTable, "_isOfType").returns(false);
-				assert.throws(() => oTable._setSelectedContexts([]), function (oError) {
-					return oError instanceof Error && oError.message === "Unsupported operation: TableDelegate does not support #setSelectedContexts for the given TableType";
-				}, "_setSelectedContexts throws expected error on unsupported table types.");
-				oTable._isOfType.restore();
-			}
-		].reduce((oAccumulator, fnCallback) => (oAccumulator.then(() => initTable().then(fnCallback))), Promise.resolve());
+		const nextBindingChange = () => {
+			return new Promise((resolve) => {
+				this.oTable.attachEventOnce("_bindingChange", resolve);
+			});
+		};
+
+		await this.initTable({
+			selectionChange: oSelectionChangeListener
+		});
+
+		for (const sTableType of Object.values(TableType)) {
+			this.oTable.setType(sTableType);
+			await this.oTable.initialized();
+			await nextBindingChange();
+			testSelection();
+		}
 	});
 });

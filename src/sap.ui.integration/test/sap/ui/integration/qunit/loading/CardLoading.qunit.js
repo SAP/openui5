@@ -18,7 +18,7 @@ sap.ui.define([
 ],
 	function(
 		Log,
-		Lib,
+		Library,
 		Card,
 		RequestDataProvider,
 		Core,
@@ -2407,7 +2407,7 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
-		var oPromiseVizModule =  Lib.load("sap.viz").then(function () {
+		var oPromiseVizModule =  Library.load("sap.viz").then(function () {
 			QUnit.module("Analytical Loading", {
 				beforeEach: function () {
 					this.oCard = new Card({
@@ -2454,7 +2454,7 @@ sap.ui.define([
 			});
 		});
 
-		var oPromiseSuiteUiCommonsModule = Lib.load("sap.suite.ui.commons").then(function () {
+		var oPromiseSuiteUiCommonsModule = Library.load("sap.suite.ui.commons").then(function () {
 			QUnit.module("Timeline Loading", {
 				beforeEach: function () {
 					this.oCard = new Card({

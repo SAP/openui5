@@ -5,10 +5,11 @@ sap.ui.define([
 	'sap/ui/base/EventProvider',
 	'./Target',
 	'./async/Targets',
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/util/deepExtend"
 ],
-	function(EventProvider, Target, asyncTargets, Log, deepExtend) {
+	function(EventProvider, Target, asyncTargets, future, Log, deepExtend) {
 		"use strict";
 
 		/**
@@ -259,7 +260,7 @@ sap.ui.define([
 					oTarget;
 
 				if (oOldTarget) {
-					Log.error("Target with name " + sName + " already exists", this);
+					future.errorThrows("Target with name " + sName + " already exists", this);
 				} else {
 					oTarget = this._createTarget(sName, oTargetOptions);
 					this._addParentTo(oTarget);
@@ -556,7 +557,7 @@ sap.ui.define([
 				oParentTarget = this._mTargets[sParent];
 
 				if (!oParentTarget) {
-					Log.error("The target '" + oTarget._oOptions._name + " has a parent '" + sParent + "' defined, but it was not found in the other targets", this);
+					future.errorThrows("The target '" + oTarget._oOptions._name + " has a parent '" + sParent + "' defined, but it was not found in the other targets", this);
 					return;
 				}
 
@@ -678,7 +679,7 @@ sap.ui.define([
 					oTitleTarget.attachTitleChanged({name:oTitleTarget._oOptions._name}, this._forwardTitleChanged, this);
 					this._oLastDisplayedTitleTarget = oTitleTarget;
 				} else if (sTitleTarget) {
-					Log.error("The target with the name \"" + sTitleTarget + "\" where the titleChanged event should be fired does not exist!", this);
+					future.errorThrows("The target with the name \"" + sTitleTarget + "\" where the titleChanged event should be fired does not exist!", this);
 				}
 			}
 

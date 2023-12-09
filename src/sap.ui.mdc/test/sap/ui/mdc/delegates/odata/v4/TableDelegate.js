@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/base/Log",
 	'sap/ui/mdc/odata/v4/TypeMap',
-	'../../util/PayloadSearchKeys',
-	'sap/ui/core/Core'
+	'../../util/PayloadSearchKeys'
 ], function(
 	TableDelegateUtils,
 	Element,
@@ -28,8 +27,7 @@ sap.ui.define([
 	Filter,
 	Log,
 	ODataV4TypeMap,
-	PayloadSearchKeys,
-	Core
+	PayloadSearchKeys
 ) {
 	"use strict";
 
