@@ -317,7 +317,7 @@ sap.ui.define([
 			 * @deprecated
 			 */
 			assert.ok(ObjectPath.get(sName), "namespace for " + sName + " should exist");
-			assert.ok(Library.all()[sName], "The library " + sName + "is initialized");
+			assert.ok(Library.all()[sName], "The library " + sName + " is initialized");
 		}
 
 		this.spy(Library.prototype, '_preload');
@@ -328,42 +328,42 @@ sap.ui.define([
 		this.spy(sap.ui, 'requireSync');
 
 		// make lib3 already loaded
-		sap.ui.predefine('testlibs/scenario1/lib3/library', ["sap/ui/core/Lib"], function(Library) {
+		sap.ui.predefine('testlibs/scenario2/lib3/library', ["sap/ui/core/Lib"], function(Library) {
 			return Library.init({
-				name: 'testlibs.scenario1.lib3',
+				name: 'testlibs.scenario2.lib3',
 				noLibraryCSS: true
 			});
 		});
 
 		var vResult = Library.load({
-			name: 'testlibs.scenario1.lib1'
+			name: 'testlibs.scenario2.lib1'
 		});
 
 		assert.ok(vResult instanceof Promise, "async call to 'preload' should return a promise");
 
 		return vResult.then(function(oLib1) {
-			checkLibInitialized('testlibs.scenario1.lib1');
+			checkLibInitialized('testlibs.scenario2.lib1');
 			sinon.assert.calledOn(Library.prototype._preload, oLib1, "Library.prototype.preload is called");
 			/**
 			 * @deprecated As of version 1.120
 			 */
-			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs/scenario1/lib1/library');
-			sinon.assert.calledWith(sap.ui.require, ['testlibs/scenario1/lib1/library']);
+			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs/scenario2/lib1/library');
+			sinon.assert.calledWith(sap.ui.require, ['testlibs/scenario2/lib1/library']);
 
 			// lib3 should not be preloaded as its library.js has been (pre)loaded before
-			checkLibInitialized('testlibs.scenario1.lib3');
-			var oLib3 = Library._get('testlibs.scenario1.lib3');
+			checkLibInitialized('testlibs.scenario2.lib3');
+			var oLib3 = Library._get('testlibs.scenario2.lib3');
 			assert.ok(oLib3, "Library instance is created");
 			sinon.assert.calledOn(Library.prototype._preload, oLib3, "Library.prototype.preload is called");
 
 			// lib4 and lib5 should have been preloaded
-			checkLibInitialized('testlibs.scenario1.lib4');
-			var oLib4 = Library._get('testlibs.scenario1.lib4');
+			checkLibInitialized('testlibs.scenario2.lib4');
+			var oLib4 = Library._get('testlibs.scenario2.lib4');
 			sinon.assert.calledOn(Library.prototype._preload, oLib4, "Library.prototype.preload is called");
 
 			// lib5 should load the json format as fallback
-			checkLibInitialized('testlibs.scenario1.lib5');
-			var oLib5 = Library._get('testlibs.scenario1.lib5');
+			checkLibInitialized('testlibs.scenario2.lib5');
+			var oLib5 = Library._get('testlibs.scenario2.lib5');
 			sinon.assert.calledOn(Library.prototype._preload, oLib5, "Library.prototype.preload is called");
 		});
 	});
