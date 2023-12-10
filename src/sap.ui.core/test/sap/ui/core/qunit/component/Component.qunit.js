@@ -1960,7 +1960,10 @@ sap.ui.define([
 		var fnCallbackSpy = this.spy(function() {});
 		var aFilteredComponents = [];
 
-		assert.ok(Component.hasOwnProperty("registry"), "Component has static method to access registry");
+		/**
+		 * @deprecated As of 1.120, Component.registry has been deprecated
+		 */
+		assert.ok(Component.hasOwnProperty("registry"), "Component has static property to access registry");
 		assert.equal(ComponentRegistry.size, 3, "Return number of registered component instances");
 		assert.deepEqual(Object.keys(ComponentRegistry.all()).sort(), ["A", "B", "C"], "Return all registered component instances");
 		assert.ok(ComponentRegistry.get("B") === oFooB, "Return reference of component B from registry by ID");
