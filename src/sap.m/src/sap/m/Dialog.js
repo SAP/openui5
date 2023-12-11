@@ -858,6 +858,10 @@ function(
 			$this.css(oStyles);
 			$this.css(this._calcMaxSizes());
 
+			if (Device.browser.msie) {
+				this.$("cont").css("maxHeight", this._calcMaxSizes().maxHeight);
+			}
+
 			if (!this._oManuallySetSize && !this._bDisableRepositioning) {
 				$this.css(this._calcPosition());
 			}
