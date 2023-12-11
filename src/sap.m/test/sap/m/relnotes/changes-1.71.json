@@ -3820,5 +3820,25 @@
         ]
       }
     ]
+  },
+  "1.71.61": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "1b3acacec79b70269e4554a6cbee675e97145c91",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Scroll is no longer jumping when content grows automatically",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000948762021"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400007731262023"
+          }
+        ]
+      }
+    ]
   }
 }
