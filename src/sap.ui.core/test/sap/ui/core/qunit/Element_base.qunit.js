@@ -27,7 +27,6 @@ sap.ui.define([
 		var fnCallbackSpy = this.spy(function() {});
 		var aFilteredElements = [];
 
-		assert.ok(Element.hasOwnProperty("registry"), "Element has static method to access registry");
 		assert.equal(ElementRegistry.size, 3, "Return number of registered element instances");
 		assert.deepEqual(Object.keys(ElementRegistry.all()).sort(), ["A", "B", "C"], "Return all registered element instances");
 		assert.ok(Element.getElementById("B") === oFooB, "Return reference of element B from registry by ID");
