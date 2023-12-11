@@ -29,13 +29,6 @@
 	padding-right: 0rem;
 }
 
-.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnReject.sapMBtnActive::after {
-	color: @sapUiButtonRejectSelectedTextColor;
-}
-
-.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnAttention.sapMBtnActive::after {
-	color: @sapUiButtonAttentionTextColor;
-}
 
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
 	font-size: 1rem;
@@ -77,6 +70,18 @@
 		top: 0;
 		left: 0;
 	}
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnReject.sapMBtnActive::after {
+	color: @sapUiButtonRejectSelectedTextColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnAttention.sapMBtnActive::after {
+	color: @sapUiButtonAttentionTextColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnAccept.sapMBtnActive::after {
+	color: @sapUiButtonAcceptSelectedTextColor;
 }
 
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnNegative.sapMBtnActive::after {
