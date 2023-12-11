@@ -7998,7 +7998,7 @@ sap.ui.define([
 			this.mock(oCache).expects("visitResponse")
 				.withExactArgs(sinon.match.same(oPostResult), sinon.match.same(mTypeForMetaPath),
 					"/TEAMS/TEAM_2_EMPLOYEES", sPathInCache + sTransientPredicate,
-					bKeepTransientPath);
+					bKeepTransientPath, undefined, true);
 			// bKeepTransientPath === undefined does not want to keep, but we simulate a lack of key
 			// predicate and are thus forced to keep
 			oHelperMock.expects("getPrivateAnnotation")
@@ -8426,7 +8426,7 @@ sap.ui.define([
 			.returns({});
 		oCacheMock.expects("visitResponse")
 			.withExactArgs(sinon.match.same(oPostResult), sinon.match.same(mTypeForMetaPath),
-				"/Employees", sTransientPredicate, true);
+				"/Employees", sTransientPredicate, true, undefined, true);
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
 				sinon.match.same(oCache.aElements[0]), sinon.match.same(oPostResult), undefined,
