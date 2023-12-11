@@ -142,8 +142,12 @@
 						<td><a href="../../index.html#/learn/actions" target="_parent">Actions[]</a></td>
 						<td></td>
 						<td>No</td>
-						<td>Actions that are triggered when the item is pressed.
+						<td>
+							Actions that are triggered when the item is pressed.
+							<br>
 							<b>Note:</b> This property is not available for "Label" and "ToolbarSpacer"!
+							<br>
+							<b>Note</b> If you use this to trigger a custom action which opens a popup (e.g. when using <code>showCard</code> in an extension) - you should also set the property <code>ariaHasPopup</code> to the correct value.
 						</td>
 						<td>1.35.0</td>
 						<td>1.93</td>
