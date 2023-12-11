@@ -588,5 +588,21 @@
         ]
       }
     ]
+  },
+  "1.84.41": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "a5ae4952eb9255c4db5560071a83a3fbb99e48a4",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Remove label in the year Button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180120741"
+          }
+        ]
+      }
+    ]
   }
 }

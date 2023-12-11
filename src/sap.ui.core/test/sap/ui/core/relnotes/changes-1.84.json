@@ -778,5 +778,32 @@
         ]
       }
     ]
+  },
+  "1.84.41": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "935830c7cbdab386ca74ff2971ae43a3cb72a467",
+        "type": "FIX",
+        "text": " mvc.Controller: enable Controller extensions which are subclasses of mvc.Controller",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009776652023"
+          }
+        ]
+      },
+      {
+        "id": "542d2aa4e43ab2055552da82a378bc3259e7ee5a",
+        "type": "FIX",
+        "text": " core/routing: find parent route from the router of the inheritance parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009859762023"
+          }
+        ]
+      }
+    ]
   }
 }
