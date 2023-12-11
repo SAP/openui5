@@ -183,7 +183,7 @@ sap.ui.define([
 			}
 		},
 		onmousedown: function(oEvent) {
-			if (oEvent.isMarked && oEvent.isMarked()) {
+			if (oEvent.isMarked?.() || oEvent.button != 0) {
 				return;
 			}
 
@@ -191,9 +191,9 @@ sap.ui.define([
 				this._startSelection(oEvent);
 			}
 
-			this._bMouseDown = true;
 			var oSelectableCell = this._getSelectableCell(oEvent.target);
 			if (oSelectableCell) {
+				this._bMouseDown = true;
 				this._mClickedCell = this.getConfig("getCellInfo", this.getControl(), oSelectableCell);
 			}
 		},
