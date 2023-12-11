@@ -9,7 +9,7 @@
 	height: var(--sapUiIntegrationEditorFormHeight, 350px);;
 	width: var(--sapUiIntegrationEditorFormWidth, 100%);
 	box-sizing: border-box;
-	margin:0 0.5rem;
+	/* margin:0 0.5rem;*/
 	overflow-y: auto;
 	overflow-x: hidden;
 	padding: 0;
@@ -20,8 +20,7 @@
 	min-height: 2.1rem;
 }
 .sapUiIntegrationEditor .sapMPanelContent {
-	padding-top: 0;
-	padding-bottom: 0.625rem;
+	padding: 0rem 1.7rem 0.625rem 1.7rem
 }
 .sapUiIntegrationEditor .sapUiIntegrationEditorTranslationPanel .sapMPanelContent {
 	padding: 0.625rem 1rem 1.375rem 0rem;
@@ -31,11 +30,14 @@
 	margin-top: 0.625rem;
 }
 
-.sapUiIntegrationEditor .sapUiIntegrationEditorSubPanel .sapMPanelContent {
-	padding: 0rem 1rem 0.625rem 1rem;
-}
 .sapUiIntegrationEditor .sapMPanel > .sapMPanelHdr, .sapUiIntegrationEditor .sapMPanelWrappingDiv, .sapUiIntegrationEditor .sapMPanelWrappingDivTb {
 	border: none;
+}
+.sapUiIntegrationEditor .sapMPanel .sapMPanelWrappingDiv .sapMPanelHdr, .sapUiIntegrationEditor .sapMPanel .sapMPanelWrappingDivTb .sapMIBar.sapMTB {
+    margin-left: 1.7rem;
+}
+.sapUiIntegrationEditor .sapMPanel .sapMPanelWrappingDiv .sapUiIcon {
+    margin-left: -0.3rem;
 }
 
 .sapUiIntegrationEditor.sapUiIntegrationEditorTranslation .sapUiIntegrationEditorForm{
@@ -44,7 +46,7 @@
 
 .sapUiIntegrationEditor .sapUiIntegrationEditorForm::-webkit-scrollbar {
 	width: 7px !important;
-	background-color: transparent !important	;
+	background-color: transparent !important;
 	transition: all 0.5s ease-in;
 }
 
