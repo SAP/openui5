@@ -24,6 +24,11 @@
 		"HK": "Hong Kong",
 		"MO": "Macau"
 	},
+	"cnr": {
+		"TW": "Tajvan",
+		"HK": "Hongkong",
+		"MO": "Makao"
+	},
 	"cs": {
 		"TW": "Tchaj-wan",
 		"HK": "Hongkong",
@@ -258,6 +263,11 @@
 		"TW": "Taivāna",
 		"HK": "Honkonga",
 		"MO": "Makao"
+	},
+	"mk": {
+		"TW": "Тајван",
+		"HK": "Хонгконг",
+		"MO": "Макао"
 	},
 	"ms": {
 		"TW": "Taiwan",
