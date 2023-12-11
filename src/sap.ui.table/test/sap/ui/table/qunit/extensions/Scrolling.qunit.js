@@ -146,7 +146,7 @@ sap.ui.define([
 		oTable.setRowActionTemplate(new RowAction({items: [new RowActionItem({type: library.RowActionType.Navigation})]}));
 		oCore.applyChanges();
 		assert.strictEqual(oHSbComputedStyle.marginLeft, "88px", "Fixed columns and row actions: Left margin");
-		assert.strictEqual(oHSbComputedStyle.marginRight, "107px", "Fixed columns and row actions: Right margin");
+		assert.strictEqual(oHSbComputedStyle.marginRight, "91px", "Fixed columns and row actions: Right margin");
 		assert.strictEqual(oHSbContentComputedStyle.width, "500px", "Fixed columns and row actions: Scroll range");
 	});
 

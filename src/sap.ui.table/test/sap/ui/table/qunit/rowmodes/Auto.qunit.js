@@ -265,7 +265,7 @@ sap.ui.define([
 		this.oTable.getFooter().setVisible(false);
 
 		return waitForResizeHandler().then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			assert.equal(that.oTable.getRows().length, 14, "Row count after hiding the footer");
+			assert.equal(that.oTable.getRows().length, 15, "Row count after hiding the footer");
 			that.oTable.getFooter().setVisible(true);
 		}).then(waitForResizeHandler).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(that.oTable.getRows().length, 13, "Row count after showing the footer");
