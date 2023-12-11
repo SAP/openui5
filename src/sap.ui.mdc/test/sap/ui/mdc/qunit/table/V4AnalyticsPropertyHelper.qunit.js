@@ -5,9 +5,10 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/mdc/table/V4AnalyticsPropertyHelper",
-	"sap/base/Log"
-], function(PropertyHelper, Log) {
+	"sap/ui/mdc/table/V4AnalyticsPropertyHelper"
+], function(
+	PropertyHelper
+) {
 	"use strict";
 
 	QUnit.module("Validation");
@@ -132,6 +133,7 @@ sap.ui.define([
 				groupable: false,
 				aggregatable: false,
 				key: false,
+				isKey: false,
 				maxConditions: -1,
 				path: "",
 				sortable: true,
@@ -173,6 +175,7 @@ sap.ui.define([
 				groupable: false,
 				aggregatable: false,
 				key: false,
+				isKey: false,
 				propertyInfos: ["prop"],
 				sortable: false,
 				visible: true,
@@ -256,7 +259,7 @@ sap.ui.define([
 				unit: "unit",
 				groupable: true,
 				aggregatable: true,
-				key: true,
+				isKey: true,
 				text: "propB",
 				extension: {
 					customAggregate: {
@@ -322,7 +325,7 @@ sap.ui.define([
 				}
 			},
 			groupable: true,
-			key: true,
+			isKey: true,
 			path: "propAPath",
 			text: "propB",
 			unit: "unit"
@@ -330,7 +333,7 @@ sap.ui.define([
 			name: "propB",
 			aggregatable: true,
 			groupable: false,
-			key: false,
+			isKey: false,
 			path: "",
 			text: "",
 			unit: ""
@@ -343,7 +346,7 @@ sap.ui.define([
 				}
 			},
 			groupable: true,
-			key: false,
+			isKey: false,
 			path: "",
 			text: "",
 			unit: ""
@@ -351,7 +354,7 @@ sap.ui.define([
 			name: "unit",
 			aggregatable: false,
 			groupable: false,
-			key: false,
+			isKey: false,
 			path: "",
 			text: "",
 			unit: ""

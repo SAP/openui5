@@ -8,9 +8,13 @@ sap.ui.define([
 	"sap/ui/mdc/table/PropertyHelper",
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/DefaultTypeMap",
-	"sap/base/Log",
 	"sap/ui/model/type/String" // in LegacyFree-UI5 used data types needs to be loaded.
-], function(PropertyHelper, Column, DefaultTypeMap, Log, StringType) {
+], function(
+	PropertyHelper,
+	Column,
+	DefaultTypeMap,
+	StringType
+) {
 	"use strict";
 
 	QUnit.module("Validation");
@@ -45,7 +49,7 @@ sap.ui.define([
 		},  "Error thrown");
 	});
 
-	QUnit.test("Complex property with attribute 'key'", function(assert) {
+	QUnit.test("Complex property with attribute 'isKey'", function(assert) {
 		assert.throws(function () {
 			new PropertyHelper([{
 				name: "prop",
@@ -55,7 +59,7 @@ sap.ui.define([
 				name: "complexProp",
 				label: "ComplexProperty",
 				propertyInfos: ["prop"],
-				key: true
+				isKey: true
 			}]).destroy();
 		}, function(oError) {
 			return oError instanceof Error;
@@ -113,6 +117,7 @@ sap.ui.define([
 				groupLabel: "",
 				groupable: false,
 				key: false,
+				isKey: false,
 				maxConditions: -1,
 				path: "",
 				sortable: true,
@@ -148,6 +153,7 @@ sap.ui.define([
 				groupLabel: "",
 				groupable: false,
 				key: false,
+				isKey: false,
 				propertyInfos: ["prop"],
 				sortable: false,
 				visible: true,
@@ -195,6 +201,24 @@ sap.ui.define([
 
 		assert.deepEqual(oPropertyHelper.getProperty("complexProp"), this.oComplexPropertyDefaults);
 		oPropertyHelper.destroy();
+	});
+
+	QUnit.test("Legacy attribute 'key'", function(assert) {
+		const oPropertyHelper = new PropertyHelper([{
+			name: "propA",
+			label: "Property A",
+			dataType: "String",
+			key: true
+		}, {
+			name: "propB",
+			label: "Property B",
+			dataType: "String",
+			key: true,
+			isKey: false
+		}]);
+
+		assert.strictEqual(oPropertyHelper.getProperty("propA").isKey, true, "isKey defaults to key");
+		assert.strictEqual(oPropertyHelper.getProperty("propB").isKey, false, "isKey wins over key");
 	});
 
 	QUnit.module("API", {

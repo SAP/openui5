@@ -280,7 +280,7 @@ sap.ui.define([
 
 			// Always use keys in the properties to be grouped
 			this._mGroup = this.getPropertyInfos().reduce(function(mGroup, oPropertyInfo) {
-				if (oPropertyInfo.key) {
+				if (oPropertyInfo.isKey) {
 					mGroup[oPropertyInfo.path] = {};
 					aAdditionalProperties = getAdditionalPropertyPaths(this, oPropertyInfo);
 					if (aAdditionalProperties) {
