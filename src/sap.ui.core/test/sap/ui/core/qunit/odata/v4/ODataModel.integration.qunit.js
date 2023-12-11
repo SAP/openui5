@@ -2031,7 +2031,42 @@ sap.ui.define([
 
 		/**
 		 * The following code (either {@link #createView} or anything before
-		 * {@link #waitForChanges}) is expected to report exactly the given messages. All expected
+		 * {@link #waitForChanges}) is expected to report at least the given message. All expected
+		 * messages should have a different message text.
+		 *
+		 * @param {object} oExpectedMessage The expected message with properties corresponding
+		 *   to the getters of sap.ui.core.message.Message: message and type are required; code,
+		 *   descriptionUrl, persistent (default false), target (default ""), technical (default
+		 *   false) are optional; technicalDetails is only compared if given
+		 * @param {boolean} [bHasMatcher] Whether the expected message has a Sinon.JS matcher
+		 * @returns {object} The test instance for chaining
+		 *
+		 * @see #expectMessages
+		 */
+		expectMessage : function (oExpectedMessage, bHasMatcher) {
+			const aTargets = oExpectedMessage.targets || [oExpectedMessage.target || ""];
+			const oClone = Object.assign({
+				code : undefined,
+				descriptionUrl : undefined,
+				persistent : false,
+				targets : aTargets,
+				technical : false
+			}, oExpectedMessage);
+
+			if (oExpectedMessage.target && oExpectedMessage.targets) {
+				throw new Error("Use either target or targets, not both!");
+			}
+			delete oClone.target;
+
+			this.aMessages.push(oClone);
+			this.aMessages.bHasMatcher ||= bHasMatcher;
+
+			return this;
+		},
+
+		/**
+		 * The following code (either {@link #createView} or anything before
+		 * {@link #waitForChanges}) is expected to report *exactly* the given messages. All expected
 		 * messages should have a different message text.
 		 *
 		 * @param {object[]} aExpectedMessages The expected messages with properties corresponding
@@ -2040,26 +2075,13 @@ sap.ui.define([
 		 *   false) are optional; technicalDetails is only compared if given
 		 * @param {boolean} [bHasMatcher] Whether the expected messages have a Sinon.JS matcher
 		 * @returns {object} The test instance for chaining
+		 *
+		 * @see #expectMessage
 		 */
 		expectMessages : function (aExpectedMessages, bHasMatcher) {
-			this.aMessages = aExpectedMessages.map(function (oMessage) {
-				var aTargets = oMessage.targets || [oMessage.target || ""],
-					oClone = Object.assign({
-						code : undefined,
-						descriptionUrl : undefined,
-						persistent : false,
-						targets : aTargets,
-						technical : false
-					}, oMessage);
-
-				if (oMessage.target && oMessage.targets) {
-					throw new Error("Use either target or targets, not both!");
-				}
-				delete oClone.target;
-
-				return oClone;
-			});
-			this.aMessages.bHasMatcher = bHasMatcher;
+			this.aMessages = [];
+			this.aMessages.bHasMatcher = false;
+			aExpectedMessages.forEach((oMessage) => this.expectMessage(oMessage, bHasMatcher));
 
 			return this;
 		},
@@ -8366,7 +8388,14 @@ sap.ui.define([
 	// check that no messages in the message model are touched.
 	//
 	// JIRA: CPOUI5ODATAV4-717
-	QUnit.test("requestFilterForMessages on a relative list binding", function (assert) {
+	//
+	// Optionally create a new item beforehand, with the POST response containing a (possibly empty)
+	// messages array. This must not confuse the following message handling.
+	// BCP: 2380140928
+[0, 1, 2].forEach((iCase) => { // 0: no POST // 1: POST w/o messages // 2: POST w/ messages
+	const sTitle = "requestFilterForMessages on a relative list binding #" + iCase;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding,
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -8423,12 +8452,46 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			oBinding = that.oView.byId("table").getBinding("items");
 
+			if (iCase > 0) {
+				that.expectChange("quantity", [,, "5.000"])
+					.expectRequest({
+						method : "POST",
+						url : "SalesOrderList('42')/SO_2_SOITEM",
+						payload : {Quantity : "5"}
+					}, {
+						ItemPosition : "0030",
+						Messages : iCase > 1 ? [{
+							message : "Well done!",
+							numericSeverity : 1,
+							target : "Quantity"
+						}] : [],
+						SalesOrderID : "42",
+						Quantity : "5"
+					});
+				if (iCase > 1) {
+					that.expectMessage({
+						message : "Well done!",
+						target : "/SalesOrderList('42')"
+							+ "/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0030')/Quantity",
+						type : "Success"
+					});
+				}
+
+				return Promise.all([
+					// code under test
+					oBinding.create({Quantity : "5"}, /*bSkipRefresh*/true, /*bAtEnd*/true)
+						.created(),
+					that.waitForChanges(assert, "create new item")
+				]);
+			}
+		}).then(function () {
 			// code under test
 			return oBinding.requestFilterForMessages();
 		}).then(function (oFilter) {
 			that.expectRequest("SalesOrderList('42')/SO_2_SOITEM"
 				+ "?$select=ItemPosition,Quantity,SalesOrderID"
 				+ "&$filter=SalesOrderID eq '42' and ItemPosition eq '0010'"
+				+ (iCase > 1 ? " or SalesOrderID eq '42' and ItemPosition eq '0030'" : "")
 				+ "&$skip=0&$top=100", {
 				value : [{
 					ItemPosition : "0010",
@@ -8443,6 +8506,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Request Late property with navigation properties in entity with key aliases
