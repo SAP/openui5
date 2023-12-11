@@ -19,6 +19,11 @@
         ]
       },
       {
+        "id": "3cd9ee98206bcd756faec4f59d2fbb361cb054eb",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat#parse: encounter unicode bidirectional characters"
+      },
+      {
         "id": "8ec0e35c75a003b23550b74acc0b075aadd8704b",
         "type": "FIX",
         "text": " sap.base.i18n.date.TimezoneUtils.calculateOffset: Fix Daylight Saving Time issues",

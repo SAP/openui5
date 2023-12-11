@@ -3,6 +3,17 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "c0635bbab1c372110aae49d0be530294af10f52a",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: shown correctly in sap.ui.table.Table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370075972"
+          }
+        ]
+      },
+      {
         "id": "90440b291dbfc2af3a2e4d878477d37cbf95980c",
         "type": "FIX",
         "text": " sap.m.TimePickerSliders: Replace innerHTML by textContent for better performance",
