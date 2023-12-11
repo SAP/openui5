@@ -2856,12 +2856,13 @@ sap.ui.define([
 	 * refer to a function in <code>mParameters.scope</code> in case of a relative name starting
 	 * with a dot, which is stripped before lookup; see the <code>&lt;template:alias></code>
 	 * instruction for XML Templating. In case of an absolute name, it is searched in
-	 * <code>mParameters.scope</code> first and then in the global namespace. The names
-	 * "requestCurrencyCodes" and "requestUnitsOfMeasure" default to {@link #requestCurrencyCodes}
-	 * and {@link #requestUnitsOfMeasure} resp. if not present in <code>mParameters.scope</code>.
-	 * This function is called with the current object (or primitive value) and additional details
-	 * and returns the result of this {@link #requestObject} call. The additional details are given
-	 * as an object with the following properties:
+	 * <code>mParameters.scope</code> first and then in the global namespace. (Using the global
+	 * namespace is @deprecated as of version 1.120.3). The names "requestCurrencyCodes" and
+	 * "requestUnitsOfMeasure" default to {@link #requestCurrencyCodes} and
+	 * {@link #requestUnitsOfMeasure} resp. if not present in <code>mParameters.scope</code>. This
+	 * function is called with the current object (or primitive value) and additional details and
+	 * returns the result of this {@link #requestObject} call. The additional details are given as
+	 * an object with the following properties:
 	 * <ul>
 	 *   <li> <code>{boolean} $$valueAsPromise</code> Whether the computed annotation may return a
 	 *     <code>Promise</code> resolving with its value (since 1.57.0)
@@ -2977,7 +2978,8 @@ sap.ui.define([
 	 * @param {object} [mParameters]
 	 *   Optional (binding) parameters; if they are given, <code>oContext</code> cannot be omitted
 	 * @param {object} [mParameters.scope]
-	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
+	 *   Scope for lookup of aliases for computed annotations (since 1.43.0). Since 1.120.3 looking
+	 *   up a computed annotation via its global name is deprecated; always use this scope instead.
 	 * @returns {Promise<any>}
 	 *   A promise which is resolved with the requested metadata value as soon as it is available;
 	 *   it is rejected if the requested metadata cannot be loaded
