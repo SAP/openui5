@@ -106,8 +106,7 @@ sap.ui.define([
 			+ '    </mvc:View>         '
 		}).then(async function (oView) {
 			oView.placeAt("qunit-fixture");
-			this.clock.runAll();
-			await nextUIUpdate();
+			await nextUIUpdate(this.clock);
 			return new Promise(function(resolve, reject) {
 				var oBtn1 = oView.byId("btnWithDeclarativeSemanticAnnotation"),
 					oBtn2 = oView.byId("btnWithProgramaticSemanticAnnotation"),
@@ -150,8 +149,7 @@ sap.ui.define([
 			}
 		});
 		oButton.placeAt("qunit-fixture");
-		this.clock.runAll();
-		await nextUIUpdate();
+		await nextUIUpdate(this.clock);
 
 		// Press button and check that a new interaction is created and that the interaction is also finalized after 300ms
 		var oPress = new Press();
@@ -169,8 +167,7 @@ sap.ui.define([
 		//Create and render button
 		var oButton = new Button(); // Button without press handler to simulate controls which should not result in interactions
 		oButton.placeAt("qunit-fixture");
-		this.clock.runAll();
-		await nextUIUpdate();
+		await nextUIUpdate(this.clock);
 
 		// Press button and check that browser events are triggered
 		var oPress = new Press();
