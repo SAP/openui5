@@ -197,6 +197,10 @@ sap.ui.define([
 		return sUri;
 	}
 
+	function createFieldLabelId(oParentControl, sEntityType, sBindingPath) {
+		return (`${oParentControl.getId()}_${sEntityType}_${sBindingPath}`).replace("/", "_");
+	}
+
 	function createAddViaDelegateCommand(mPropertyBag, oParentAggregationDTMetadata) {
 		var oSelectedElement = mPropertyBag.selectedElement;
 		var mParents = mPropertyBag.parents;
@@ -214,7 +218,7 @@ sap.ui.define([
 		var sServiceUri = getODataServiceUriFromManifest(oManifest);
 
 		return oPlugin.getCommandFactory().getCommandFor(mParents.parent, sCommandName, {
-			newControlId: Utils.createFieldLabelId(oParent, oSelectedElement.entityType, oSelectedElement.bindingPath),
+			newControlId: createFieldLabelId(oParent, oSelectedElement.entityType, oSelectedElement.bindingPath),
 			index: iIndex !== undefined ? iIndex : iAddTargetIndex,
 			bindingString: oSelectedElement.bindingPath,
 			entityType: oSelectedElement.entityType, // needed for custom field support tool

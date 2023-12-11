@@ -117,6 +117,31 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given some dom elements in and out of viewport...", {
+		beforeEach() {
+			this.oInsideDom = document.createElement("input");
+			document.getElementById("qunit-fixture").append(this.oInsideDom);
+			this.oOutsideDom = document.createElement("button");
+			document.getElementById("qunit-fixture").append(this.oOutsideDom);
+
+			this.oInsideDom.style.marginBottom = `${document.getElementById("qunit-fixture").clientHeight}px`;
+			this.oInsideDom.style.marginRight = `${document.getElementById("qunit-fixture").clientWidth}px`;
+			this.oInsideDom.style.marginTop = "10px";
+		},
+		afterEach() {
+			this.oInsideDom.remove();
+			this.oOutsideDom.remove();
+		}
+	}, function() {
+		QUnit.test("when isElementInViewport is called from inside viewport", function(assert) {
+			assert.ok(DOMUtil.isElementInViewport(this.oInsideDom), "then the function returns true");
+		});
+
+		QUnit.test("when isElementInViewport is called from outside viewport", function(assert) {
+			assert.notOk(DOMUtil.isElementInViewport(this.oOutsideDom), "then the function returns false");
+		});
+	});
+
 	/**
 	 * getZIndex
 	 */

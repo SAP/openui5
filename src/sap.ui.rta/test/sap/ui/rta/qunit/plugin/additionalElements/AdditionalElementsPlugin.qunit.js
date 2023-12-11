@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Input",
 	"sap/ui/core/CustomData",
+	"sap/ui/core/EventBus",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -40,6 +41,7 @@ sap.ui.define([
 	Button,
 	Input,
 	CustomData,
+	EventBus,
 	Library,
 	DesignTime,
 	OverlayRegistry,
@@ -1774,121 +1776,107 @@ sap.ui.define([
 			this.oPseudoPublicParent.destroy();
 		}
 	}, function() {
-		QUnit.test("when the service is not up to date and no addViaDelegate action is available", function(assert) {
-			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").rejects();
+		QUnit.test("when no addViaDelegate action is available", async function(assert) {
+			var oIsServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated");
 			var sAggregationName = "contentLeft";
-			return createOverlayWithAggregationActions.call(this, {
+			const oOverlay = await createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
 				}
-			}, ON_CHILD)
-			.then(function(oOverlay) {
-				return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
-			}.bind(this))
+			}, ON_CHILD);
+			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 
-			.then(function() {
-				assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
-				assert.ok(fnServiceUpToDateStub.notCalled, "up to date service is not called");
-				var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
-				assert.equal(oCustomFieldButton.getVisible(), false, "then the button to create custom fields is not shown");
-			}.bind(this));
+			assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
+			assert.ok(oIsServiceOutdatedStub.notCalled, "up to date service is not called");
+			var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
+			assert.equal(oCustomFieldButton.getVisible(), false, "then the button to create custom fields is not shown");
 		});
 
-		QUnit.test("when the service is up to date and addViaDelegate action is available but extensibility is not enabled in the system", function(assert) {
-			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
+		QUnit.test("when the service is up to date and addViaDelegate action is available but extensibility is not enabled in the system", async function(assert) {
+			var oIsServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(false);
 			var sAggregationName = "contentLeft";
 
-			return createOverlayWithAggregationActions.call(this, {
+			const oOverlay = await createOverlayWithAggregationActions.call(this, {
 				add: {
 					delegate: {
 						changeType: "addFields"
 					}
 				}
-			}, ON_CHILD)
-			.then(function(oOverlay) {
-				return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
-			}.bind(this))
+			}, ON_CHILD);
+			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 
-			.then(function() {
-				assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
-				assert.ok(
-					fnServiceUpToDateStub.getCall(0).args[0],
-					"addViaDelegate is dependent on up to date service, it should be called with a control"
-				);
-				var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
-				assert.equal(oCustomFieldButton.getVisible(), false, "the Button to create custom Fields is not shown");
-			}.bind(this));
+			assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
+			assert.strictEqual(oIsServiceOutdatedStub.callCount, 0, "the function is not called");
+			var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
+			assert.equal(oCustomFieldButton.getVisible(), false, "the Button to create custom Fields is not shown");
 		});
 
-		QUnit.test("when the service is up to date and addViaDelegate action is available and extensibility is enabled in the system", function(assert) {
-			sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
+		QUnit.test("when the service is up to date and addViaDelegate action is available and extensibility is enabled in the system", async function(assert) {
+			sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(false);
 			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
 			sandbox.stub(FieldExtensibility, "getExtensionData").resolves({foo: "bar"});
 			var sAggregationName = "contentLeft";
 
-			return createOverlayWithAggregationActions.call(this, {
+			const oOverlay = await createOverlayWithAggregationActions.call(this, {
 				add: {
 					delegate: {
 						changeType: "addFields"
 					}
 				}
-			}, ON_CHILD)
-			.then(function(oOverlay) {
-				return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
-			}.bind(this))
+			}, ON_CHILD);
+			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 
-			.then(function() {
-				assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
-				var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
-				assert.equal(oCustomFieldButton.getVisible(), true, "the Button to create custom Fields is shown");
-			}.bind(this));
+			assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
+			var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
+			assert.equal(oCustomFieldButton.getVisible(), true, "the Button to create custom Fields is shown");
 		});
 
-		QUnit.test("when the service is not up to date and addViaDelegate action is available", function(assert) {
-			sandbox.stub(RTAUtils, "isServiceUpToDate").rejects();
+		QUnit.test("when the service is not up to date and addViaDelegate action is available and extensibility is enabled in the system", async function(assert) {
+			const oSetServiceValidStub = sandbox.stub(FieldExtensibility, "setServiceValid");
+			const oEventBusPublishSpy = sandbox.spy(EventBus.getInstance(), "publish");
+			sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(true);
+			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
+			sandbox.stub(FieldExtensibility, "getExtensionData").resolves({foo: "bar"});
 			var sAggregationName = "contentLeft";
-			return createOverlayWithAggregationActions.call(this, {
+
+			const oOverlay = await createOverlayWithAggregationActions.call(this, {
 				add: {
 					delegate: {
 						changeType: "addFields"
 					}
-				},
-				reveal: {
-					changeType: "unhideControl"
 				}
-			}, ON_CHILD)
-			.then(function(oOverlay) {
-				return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
-			}.bind(this))
+			}, ON_CHILD);
+			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 
-			.catch(function() {
-				assert.ok(this.fnDialogOpen.notCalled, "then the dialog was not opened");
-			}.bind(this));
+			assert.strictEqual(oSetServiceValidStub.callCount, 1, "the service is set to valid");
+			assert.ok(
+				oEventBusPublishSpy.calledWith("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {}),
+				"the event is fired"
+			);
+			assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
+			var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
+			assert.equal(oCustomFieldButton.getVisible(), true, "the Button to create custom Fields is shown");
 		});
 
-		QUnit.test("when no addViaDelegate action is available", function(assert) {
+		QUnit.test("when no addViaDelegate action is available", async function(assert) {
 			var oGetExtensionDataStub = sandbox.stub(FieldExtensibility, "getExtensionData");
 			var sAggregationName = "contentLeft";
-			return createOverlayWithAggregationActions.call(this, {
+			const oOverlay = await createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
 				}
-			}, ON_CHILD)
-			.then(function(oOverlay) {
-				return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
-			}.bind(this))
+			}, ON_CHILD);
+			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 
-			.then(function() {
-				assert.ok(oGetExtensionDataStub.notCalled, "then custom field enabling should not be asked");
-				assert.equal(this.oDialog.getCustomFieldEnabled(), false, "then in the dialog custom field is disabled");
-			}.bind(this));
+			assert.ok(oGetExtensionDataStub.notCalled, "then custom field enabling should not be asked");
+			assert.equal(this.oDialog.getCustomFieldEnabled(), false, "then in the dialog custom field is disabled");
 		});
 
-		QUnit.test("when addViaDelegate action is available and simulating a click on open custom field", function(assert) {
+		QUnit.test("when addViaDelegate action is available and simulating a click on open custom field", async function(assert) {
 			var done = assert.async();
 			var sAggregationName = "contentLeft";
 
-			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
+			var oIsServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(false);
 			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
 			sandbox.stub(FieldExtensibility, "getExtensionData").resolves(this.STUB_EXTENSIBILITY_BUSINESS_CTXT);
 
@@ -1898,36 +1886,33 @@ sap.ui.define([
 				done();
 			}.bind(this));
 
-			createOverlayWithAggregationActions.call(this, {
+			const oOverlay = await createOverlayWithAggregationActions.call(this, {
 				add: {
 					delegate: {
 						changeType: "addFields"
 					}
 				}
-			}, ON_CHILD)
-			.then(function(oOverlay) {
-				return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
-			}.bind(this))
+			}, ON_CHILD);
+			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 
-			.then(function() {
-				assert.ok(
-					fnServiceUpToDateStub.getCall(0).args[0],
-					"addViaDelegate is dependent on up to date service, it should be called with a control"
-				);
-				var oBCContainer = Element.getElementById(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
-				assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
-				assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
-				assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
+			assert.ok(
+				oIsServiceOutdatedStub.getCall(0).args[0],
+				"addViaDelegate is dependent on up to date service, it should be called with a control"
+			);
+			var oBCContainer = Element.getElementById(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
+			assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
+			assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
+			assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
 
-				// Simulate custom field button pressed, should trigger openNewWindow
-				this.oDialog.fireOpenCustomField();
-			}.bind(this));
+			// Simulate custom field button pressed, should trigger openNewWindow
+			this.oDialog.fireOpenCustomField();
 		});
 
-		QUnit.test("when addViaDelegate action is available and showAvailableElements is called 3 times and simulating a click on open custom field the last time", function(assert) {
+		QUnit.test("when addViaDelegate action is available and showAvailableElements is called 3 times and simulating a click on open custom field the last time", async function(assert) {
 			var done = assert.async();
 
-			sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
+			sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(false);
+			const oSetServiceValidStub = sandbox.stub(FieldExtensibility, "setServiceValid");
 			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
 			sandbox.stub(FieldExtensibility, "getExtensionData").resolves(this.STUB_EXTENSIBILITY_BUSINESS_CTXT);
 			var showAvailableElementsSpy = sandbox.spy(this.oPlugin, "showAvailableElements");
@@ -1940,47 +1925,40 @@ sap.ui.define([
 				done();
 			}.bind(this));
 
-			createOverlayWithAggregationActions.call(this, {
+			const oOverlay = await createOverlayWithAggregationActions.call(this, {
 				add: {
 					delegate: {
 						changeType: "addFields"
 					}
 				}
-			}, ON_CHILD)
-			.then(function(oOverlay) {
-				return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay])
+			}, ON_CHILD);
+			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 
-				.then(function() {
-					assert.equal(
-						this.oDialog.getCustomFieldEnabled(),
-						true,
-						"then in the dialog custom field is enabled"
-					);
-					var oBCContainer = Element.getElementById(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
-					assert.equal(
-						oBCContainer.getVisible(),
-						true,
-						"then in the Business Context Container in the Dialog is visible"
-					);
-					assert.equal(
-						oBCContainer.getContent().length > 1,
-						true,
-						"then in the Business Context Container shows Business Contexts"
-					);
-					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
-				}.bind(this))
-				.then(function() {
-					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
-				}.bind(this))
-				.then(function() {
-					// Simulate custom field button pressed, should trigger openNewWindow
-					this.oDialog.fireOpenCustomField();
-				}.bind(this));
-			}.bind(this));
+			assert.strictEqual(oSetServiceValidStub.callCount, 0, "the service is valid already");
+			assert.equal(
+				this.oDialog.getCustomFieldEnabled(),
+				true,
+				"then in the dialog custom field is enabled"
+			);
+			var oBCContainer = Element.getElementById(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
+			assert.equal(
+				oBCContainer.getVisible(),
+				true,
+				"then in the Business Context Container in the Dialog is visible"
+			);
+			assert.equal(
+				oBCContainer.getContent().length > 1,
+				true,
+				"then in the Business Context Container shows Business Contexts"
+			);
+			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
+			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
+			// Simulate custom field button pressed, should trigger openNewWindow
+			this.oDialog.fireOpenCustomField();
 		});
 
-		QUnit.test("when getAllElements is called for sibling overlay,", function(assert) {
-			return createOverlayWithAggregationActions.call(this, {
+		QUnit.test("when getAllElements is called for sibling overlay,", async function(assert) {
+			const oOverlay = await createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
 				},
@@ -1989,17 +1967,13 @@ sap.ui.define([
 						changeType: "addFields"
 					}
 				}
-			}, ON_CHILD)
-			.then(function(oOverlay) {
-				return this.oPlugin.getAllElements(true, [oOverlay]);
-			}.bind(this))
-			.then(function(aAllElements) {
-				assert.equal(aAllElements.length, 0, "then no Elements are available");
-			});
+			}, ON_CHILD);
+			const aAllElements = await this.oPlugin.getAllElements(true, [oOverlay]);
+			assert.equal(aAllElements.length, 0, "then no Elements are available");
 		});
 
-		QUnit.test("when getAllElements is called for child overlay,", function(assert) {
-			return createOverlayWithAggregationActions.call(this, {
+		QUnit.test("when getAllElements is called for child overlay,", async function(assert) {
+			const oOverlay = await createOverlayWithAggregationActions.call(this, {
 				add: {
 					delegate: {
 						changeType: "addFields"
@@ -2008,18 +1982,14 @@ sap.ui.define([
 				reveal: {
 					changeType: "unhideControl"
 				}
-			}, ON_CHILD)
-			.then(function(oOverlay) {
-				return this.oPlugin.getAllElements(false, [oOverlay]);
-			}.bind(this))
-			.then(function(aAllElements) {
-				assert.equal(aAllElements[0].elements.length, 5, "then 5 Elements are available");
-			});
+			}, ON_CHILD);
+			const aAllElements = await this.oPlugin.getAllElements(false, [oOverlay]);
+			assert.equal(aAllElements[0].elements.length, 5, "then 5 Elements are available");
 		});
 
-		QUnit.test("when getMenuItems is called,", function(assert) {
-			var ogetAllElementsSpy = sandbox.spy(this.oPlugin, "getAllElements");
-			return createOverlayWithAggregationActions.call(this, {
+		QUnit.test("when getMenuItems is called,", async function(assert) {
+			var oGetAllElementsSpy = sandbox.spy(this.oPlugin, "getAllElements");
+			const oOverlay = await createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
 				},
@@ -2028,23 +1998,19 @@ sap.ui.define([
 						changeType: "addFields"
 					}
 				}
-			}, ON_CHILD)
-			.then(function(oOverlay) {
-				return this.oPlugin.getMenuItems([oOverlay]);
-			}.bind(this))
-			.then(function() {
-				assert.equal(
-					ogetAllElementsSpy.callCount,
-					2,
-					"then getAllElements Method for collecting Elements was called twice (for child & sibling)"
-				);
-			});
+			}, ON_CHILD);
+			await this.oPlugin.getMenuItems([oOverlay]);
+			assert.equal(
+				oGetAllElementsSpy.callCount,
+				2,
+				"then getAllElements Method for collecting Elements was called twice (for child & sibling)"
+			);
 		});
 
-		QUnit.test("when showAvailableElements is called,", function(assert) {
+		QUnit.test("when showAvailableElements is called,", async function(assert) {
 			var ogetAllElementsSpy = sandbox.spy(this.oPlugin, "getAllElements");
 			var sAggregationName = "contentLeft";
-			return createOverlayWithAggregationActions.call(this, {
+			const oOverlay = await createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
 				},
@@ -2053,21 +2019,17 @@ sap.ui.define([
 						changeType: "addFields"
 					}
 				}
-			}, ON_CHILD)
-			.then(function(oOverlay) {
-				return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
-			}.bind(this))
-			.then(function() {
-				assert.equal(ogetAllElementsSpy.callCount, 1, "then getAllElements Method for collecting Elements was called once");
-			});
+			}, ON_CHILD);
+			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
+			assert.equal(ogetAllElementsSpy.callCount, 1, "then getAllElements Method for collecting Elements was called once");
 		});
 
-		QUnit.test("when getMenuItems and showAvailableElements are called,", function(assert) {
+		QUnit.test("when getMenuItems and showAvailableElements are called,", async function(assert) {
 			// we stub "setCachedElements" which is only called when getAllElements is processed.
 			// "setCachedElements" is not called, when there are cached Elements available
 			const oSetCachedElements = sandbox.spy(this.oPlugin, "setCachedElements");
 			const sAggregationName = "contentLeft";
-			return createOverlayWithAggregationActions.call(this, {
+			const oOverlay = await createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
 				},
@@ -2076,20 +2038,11 @@ sap.ui.define([
 						changeType: "addFields"
 					}
 				}
-			}, ON_CHILD)
-			.then((oOverlay) => {
-				this._oOverlay = oOverlay;
-				return DtUtil.waitForSynced(this.oDesignTime)();
-			})
-			.then(() => {
-				return this.oPlugin.getMenuItems([this._oOverlay]);
-			})
-			.then(function() {
-				return this.oPlugin.showAvailableElements(false, sAggregationName, [this._oOverlay]);
-			}.bind(this))
-			.then(function() {
-				assert.equal(oSetCachedElements.callCount, 2, "then getAllElements Method has been processed only twice");
-			});
+			}, ON_CHILD);
+			await DtUtil.waitForSynced(this.oDesignTime)();
+			await this.oPlugin.getMenuItems([oOverlay]);
+			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
+			assert.equal(oSetCachedElements.callCount, 2, "then getAllElements Method has been processed only twice");
 		});
 
 		function requestAnimationFramePromise() {
@@ -2100,9 +2053,8 @@ sap.ui.define([
 			});
 		}
 
-		QUnit.test("when getMenuItems and _isEditableCheck is called in parallel,", function(assert) {
-			const fnDone = assert.async();
-			return createOverlayWithAggregationActions.call(this, {
+		QUnit.test("when getMenuItems and _isEditableCheck is called in parallel,", async function(assert) {
+			const oOverlay = await createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
 				},
@@ -2111,35 +2063,29 @@ sap.ui.define([
 						changeType: "addFields"
 					}
 				}
-			}, ON_SIBLING)
-			.then((oOverlay) => {
-				return DtUtil.waitForSynced(this.oDesignTime, function() {
-					return oOverlay;
-				})();
-			})
-			.then((oOverlay) => {
-				sandbox.stub(this.oPlugin, "getAllElements")
-				.callThrough()
-				.withArgs(false, [oOverlay])
-				.callsFake(() => {
-					this.oPlugin._isEditableCheck(oOverlay, true);
-					return requestAnimationFramePromise();
-				})
-				.withArgs(true, [oOverlay])
-				.callsFake(() => {
-					this.oPlugin._oCachedElements = {
-						asSibling: [{}, {}, {}]
-					};
-					return [{}, {}, {}];
-				});
+			}, ON_SIBLING);
+			await DtUtil.waitForSynced(this.oDesignTime, function() {
+				return oOverlay;
+			})();
 
-				this.oPlugin.getMenuItems([oOverlay])
-				.then((oMenuItem) => {
-					assert.ok(oMenuItem[0].enabled([oOverlay]),
-						"then the MenuItem creation is not blocked by the _isEditableCheck");
-					fnDone();
-				});
+			sandbox.stub(this.oPlugin, "getAllElements")
+			.callThrough()
+			.withArgs(false, [oOverlay])
+			.callsFake(() => {
+				this.oPlugin._isEditableCheck(oOverlay, true);
+				return requestAnimationFramePromise();
+			})
+			.withArgs(true, [oOverlay])
+			.callsFake(() => {
+				this.oPlugin._oCachedElements = {
+					asSibling: [{}, {}, {}]
+				};
+				return [{}, {}, {}];
 			});
+
+			const aMenuItems = await this.oPlugin.getMenuItems([oOverlay]);
+			assert.ok(aMenuItems[0].enabled([oOverlay]),
+				"then the MenuItem creation is not blocked by the _isEditableCheck");
 		});
 	});
 
@@ -2207,7 +2153,9 @@ sap.ui.define([
 		});
 
 		// attach a default model used for default delegate determination
-		this.oPseudoPublicParent.setModel(new SomeModel());
+		const oModel = new SomeModel();
+		oModel.sServiceUrl = "foo";
+		this.oPseudoPublicParent.setModel(oModel);
 
 		this.oPseudoPublicParent.placeAt("qunit-fixture");
 		await nextUIUpdate();
