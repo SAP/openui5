@@ -152,8 +152,6 @@ sap.ui.define([
 		});
 	}
 
-
-
 	function triggerDragEvent(sDragEventType, oControl) {
 		const oJQueryDragEvent = jQuery.Event(sDragEventType);
 		let oNativeDragEvent;
@@ -369,100 +367,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("rows binding - manually after table creation", function(assert) {
-		const oTable = this.oTable;
-
-		this.oTable.addColumn(new Column({
-			header: "Test",
-			template: new Text({
-				text: "Test"
-			})
-		}));
-		this.oTable.addColumn(new Column({
-			header: "Test3",
-			template: new Text({
-				text: "Test3"
-			})
-		}));
-		this.oTable.insertColumn(new Column({
-			header: "Test2",
-			template: new Text({
-				text: "Test2"
-			})
-		}), 1);
-		this.oTable.setAutoBindOnInit(false);
-
-		return this.oTable._fullyInitialized().then(function() {
-			const aMDCColumns = oTable.getColumns();
-			const aInnerColumns = oTable._oTable.getColumns();
-
-			oTable._rebind();
-
-			assert.equal(aMDCColumns.length, aInnerColumns.length);
-			assert.equal(aInnerColumns[0].getLabel().getText(), "Test");
-			assert.equal(aInnerColumns[1].getLabel().getText(), "Test2");
-			assert.equal(aInnerColumns[2].getLabel().getText(), "Test3");
-			assert.ok(oTable._oTable.isBound("rows"));
-			assert.equal(oTable._oTable.getBindingInfo("rows").path, "/testPath");
-		});
-	});
-
-	QUnit.test("rows binding if modifications are supported and autoBindOnInit=true", function(assert) {
-		const oTable = this.oTable;
-		const oRebindSpy = sinon.spy(oTable, "rebind");
-		const oWaitForChanges = new Deferred();
-		const oWaitForChangesStub = sinon.stub(oTable.getEngine(), "waitForChanges");
-		const oIsModificationSupportedStub = sinon.stub(oTable.getEngine(), "isModificationSupported");
-
-		oIsModificationSupportedStub.withArgs(oTable).returns(Promise.resolve(true));
-		oWaitForChangesStub.withArgs(oTable).returns(oWaitForChanges.promise);
-
-		return oTable._fullyInitialized().then(function() {
-			assert.ok(oRebindSpy.notCalled, "Table#rebind not called during initialization");
-			setTimeout(function() {
-				oWaitForChanges.resolve();
-			}, 100);
-		}).then(function() {
-			assert.ok(oRebindSpy.notCalled, "Table#rebind not called after initialization");
-			return oTable.propertiesFinalized();
-		}).then(function() {
-			assert.ok(oRebindSpy.notCalled, "Table#rebind not called after property finalization");
-			return oWaitForChanges.promise;
-		}).then(function() {
-			assert.equal(oRebindSpy.callCount, 1, "Table#rebind called once after changes have been applied");
-			return TableQUnitUtils.waitForBindingInfo(oTable);
-		}).then(function() {
-			assert.ok(oTable._oTable.isBound("rows"), "Table is bound");
-		}).finally(function() {
-			oWaitForChangesStub.restore();
-			oIsModificationSupportedStub.restore();
-		});
-	});
-
-	QUnit.test("rows binding if modifications are not supported and autoBindOnInit=true", function(assert) {
-		const oTable = this.oTable;
-		const oRebindSpy = sinon.spy(oTable, "rebind");
-		const oWaitForChanges = new Deferred();
-		const oIsModificationSupportedStub = sinon.stub(oTable.getEngine(), "isModificationSupported");
-
-		oIsModificationSupportedStub.withArgs(oTable).returns(Promise.resolve(false));
-		oWaitForChanges.resolve();
-
-		return oTable.initialized().then(function() {
-			assert.ok(oRebindSpy.notCalled, "Table#rebind not called during initialization");
-			return oTable.propertiesFinalized();
-		}).then(function() {
-			assert.ok(oRebindSpy.notCalled, "Table#rebind not called after property finalization");
-		}).then(function() {
-			return TableQUnitUtils.waitForBindingInfo(oTable);
-		}).then(function() {
-			assert.equal(oRebindSpy.callCount, 1, "Table#rebind called once after initialization");
-			assert.ok(oTable._oTable.isBound("rows"), "Table is bound");
-		}).finally(function() {
-			oIsModificationSupportedStub.restore();
-		});
-	});
-
 	QUnit.test("Destroy", function(assert) {
 		return this.oTable.initialized().then(function() {
 			const oToolbar = this.oTable._oToolbar;
@@ -626,122 +530,6 @@ sap.ui.define([
 			assert.equal("Test2", aInnerColumns[0].getHeader().getText());
 			assert.equal(aMDCColumns[2].getHeader(), aInnerColumns[2].getHeader().getText());
 			assert.equal("Test3", aInnerColumns[2].getHeader().getText());
-		}.bind(this));
-	});
-
-	QUnit.test("rows binding - binds the inner ResponsiveTable - manually", function(assert) {
-
-		this.oTable.destroy();
-		this.oTable = new Table({
-			type: "ResponsiveTable",
-			delegate: {
-				name: sDelegatePath,
-				payload: {
-					collectionPath: "/testPath"
-				}
-			}
-		});
-
-		// place the table at the dom
-		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		this.oTable.addColumn(new Column({
-			header: "Test",
-			template: new Text({
-				text: "Test"
-			})
-		}));
-		this.oTable.addColumn(new Column({
-			header: "Test3",
-			template: new Text({
-				text: "Test3"
-			})
-		}));
-		this.oTable.insertColumn(new Column({
-			header: "Test2",
-			template: new Text({
-				text: "Test2"
-			})
-		}), 1);
-		this.oTable.setAutoBindOnInit(false);
-
-		return this.oTable._fullyInitialized().then(function() {
-			const aMDCColumns = this.oTable.getColumns();
-			const aInnerColumns = this.oTable._oTable.getColumns();
-
-			this.oTable.rebind();
-
-			assert.equal(aMDCColumns.length, aInnerColumns.length);
-			assert.equal(aInnerColumns[0].getHeader().getText(), "Test");
-			assert.equal(aInnerColumns[1].getHeader().getText(), "Test2");
-			assert.equal(aInnerColumns[2].getHeader().getText(), "Test3");
-			assert.ok(this.oTable._oTable.isBound("items"));
-			assert.equal(this.oTable._oTable.getBindingInfo("items").path, "/testPath");
-		}.bind(this));
-	});
-
-	QUnit.test("rows binding - binds the inner ResponsiveTable - via metadataInfo, before table creation", function(assert) {
-		this.oTable.destroy();
-		this.oTable = new Table({
-			type: "ResponsiveTable",
-			delegate: {
-				name: sDelegatePath,
-				payload: {
-					collectionPath: "/testPath"
-				}
-			}
-		});
-
-		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			assert.ok(this.oTable._oTable.isBound("items"));
-			assert.strictEqual(this.oTable._oTable.getBindingInfo("items").path, "/testPath");
-		}.bind(this));
-	});
-
-	QUnit.test("bindRows manually (Responsive)", function(assert) {
-		this.oTable.destroy();
-		this.oTable = new Table({
-			type: "ResponsiveTable",
-			delegate: {
-				name: sDelegatePath,
-				payload: {
-					collectionPath: "/testPath"
-				}
-			}
-		});
-		this.oTable.addColumn(new Column({
-			header: "Test",
-			template: new Text({
-				text: "Test"
-			})
-		}));
-		this.oTable.addColumn(new Column({
-			header: "Test3",
-			template: new Text({
-				text: "Test3"
-			})
-		}));
-		this.oTable.insertColumn(new Column({
-			header: "Test2",
-			template: new Text({
-				text: "Test2"
-			})
-		}), 1);
-		this.oTable.setAutoBindOnInit(false);
-
-		return this.oTable._fullyInitialized().then(function() {
-			const aMDCColumns = this.oTable.getColumns();
-			const aInnerColumns = this.oTable._oTable.getColumns();
-
-			this.oTable.rebind();
-
-			assert.equal(aMDCColumns.length, aInnerColumns.length);
-			assert.equal(aInnerColumns[0].getHeader().getText(), "Test");
-			assert.equal(aInnerColumns[1].getHeader().getText(), "Test2");
-			assert.equal(aInnerColumns[2].getHeader().getText(), "Test3");
-			assert.ok(this.oTable._oTable.isBound("items"));
-			assert.equal(this.oTable._oTable.getBindingInfo("items").path, "/testPath");
 		}.bind(this));
 	});
 
@@ -4498,6 +4286,147 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		}.bind(this));
+	});
+
+	QUnit.module("Rows binding", {
+		afterEach: function() {
+			this.oTable?.destroy();
+		},
+		createTable: function(mSettings) {
+			this.oTable = new Table({
+				delegate: {
+					name: sDelegatePath,
+					payload: {
+						collectionPath: "/testPath"
+					}
+				},
+				columns: [
+					new Column({
+						header: "Test",
+						template: new Text({
+							text: "Test"
+						})
+					}),
+					new Column({
+						header: "Test2",
+						template: new Text({
+							text: "Test2"
+						})
+					})
+				],
+				...mSettings
+			});
+			this.oTable.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			return this.oTable;
+		}
+	});
+
+	QUnit.test("GridTable", async function(assert) {
+		this.createTable();
+
+		await this.oTable.initialized();
+		assert.ok(!this.oTable._oTable.isBound("rows"), "Table is not bound when the 'initialized' promise resolves");
+
+		sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo").callsFake(function(oTable, oBindingInfo) {
+			this.updateBindingInfo.wrappedMethod.apply(this, arguments);
+			oBindingInfo.template = new Text();
+		});
+
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+		assert.ok(this.oTable._oTable.isBound("rows"), "Table is bound after initialization");
+
+		const oBindingInfo = this.oTable._oTable.getBindingInfo("rows");
+		assert.strictEqual(oBindingInfo.path, "/testPath", "BindingInfo.path");
+		assert.ok(!("template" in oBindingInfo), "BindingInfo.template does not exist");
+
+		this.oTable.getControlDelegate().updateBindingInfo.restore();
+	});
+
+	QUnit.test("ResponsiveTable", async function(assert) {
+		this.createTable({
+			type: TableType.ResponsiveTable
+		});
+
+		await this.oTable.initialized();
+		assert.ok(!this.oTable._oTable.isBound("rows"), "Table is not bound when the 'initialized' promise resolves");
+
+		sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo").callsFake(function(oTable, oBindingInfo) {
+			this.updateBindingInfo.wrappedMethod.apply(this, arguments);
+			oBindingInfo.template = new Text();
+			oBindingInfo.templateShareable = false;
+		});
+
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+		assert.ok(this.oTable._oTable.isBound("items"), "Table is bound after initialization");
+
+		const oBindingInfo = this.oTable._oTable.getBindingInfo("items");
+		assert.strictEqual(oBindingInfo.path, "/testPath", "BindingInfo.path");
+		assert.ok(oBindingInfo.template, "BindingInfo.template");
+		assert.strictEqual(oBindingInfo.templateShareable, true, "BindingInfo.templateShareable");
+		assert.deepEqual(oBindingInfo.template.getCells().map((oCell) => oCell.getText()), [
+			"Test", "Test2"
+		], "Cells in the template");
+
+		this.oTable.getControlDelegate().updateBindingInfo.restore();
+	});
+
+	QUnit.test("autoBindOnInit=false", async function(assert) {
+		this.createTable({
+			autoBindOnInit: false
+		});
+
+		await this.oTable._fullyInitialized();
+		await wait(100);
+		assert.ok(!this.oTable.isTableBound(), "Table is not bound automatically");
+
+		this.oTable.rebind();
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+		assert.ok(this.oTable.isTableBound(), "Table is bound after calling Table#rebind");
+	});
+
+	QUnit.test("Modifications supported", async function(assert) {
+		this.createTable();
+
+		const oRebindSpy = sinon.spy(this.oTable, "rebind");
+		const oWaitForChanges = new Deferred();
+		const oWaitForChangesStub = sinon.stub(this.oTable.getEngine(), "waitForChanges");
+		const oIsModificationSupportedStub = sinon.stub(this.oTable.getEngine(), "isModificationSupported");
+
+		oIsModificationSupportedStub.withArgs(this.oTable).returns(Promise.resolve(true));
+		oWaitForChangesStub.withArgs(this.oTable).returns(oWaitForChanges.promise);
+
+		await this.oTable._fullyInitialized();
+		await wait(100);
+		assert.ok(oRebindSpy.notCalled, "Table#rebind not called after initialization");
+		oWaitForChanges.resolve();
+		await oWaitForChanges.promise;
+		assert.equal(oRebindSpy.callCount, 1, "Table#rebind called once after changes have been applied");
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+		assert.ok(this.oTable.isTableBound(), "Table is bound");
+
+		oWaitForChangesStub.restore();
+		oIsModificationSupportedStub.restore();
+	});
+
+	QUnit.test("Modifications not supported", async function(assert) {
+		this.createTable();
+
+		const oRebindSpy = sinon.spy(this.oTable, "rebind");
+		const oIsModificationSupported = new Deferred();
+		const oIsModificationSupportedStub = sinon.stub(this.oTable.getEngine(), "isModificationSupported");
+
+		oIsModificationSupportedStub.withArgs(this.oTable).returns(oIsModificationSupported.promise);
+
+		await this.oTable._fullyInitialized();
+		assert.ok(oRebindSpy.notCalled, "Table#rebind not called during initialization");
+		oIsModificationSupported.resolve(false);
+		await oIsModificationSupported.promise;
+		assert.equal(oRebindSpy.callCount, 1, "Table#rebind called once after initialization");
+		assert.ok(this.oTable.isTableBound(), "Table is bound");
+
+		oIsModificationSupportedStub.restore();
 	});
 
 	QUnit.module("Inbuilt filter initialization", {

@@ -1797,7 +1797,8 @@ sap.ui.define([
 			this._onAfterInitialization();
 
 			return Promise.all([
-				this.getPropertyInfo().length === 0 ? this.finalizePropertyHelper() : this.awaitPropertyHelper(), this.initialized() // Required for the CreationRow binding context handling.
+				this.getPropertyInfo().length === 0 ? this.finalizePropertyHelper() : this.awaitPropertyHelper(),
+				this.initialized() // Required for the CreationRow binding context handling.
 			]);
 		}).then(() => {
 			if (this.isDestroyed()) {
@@ -2788,6 +2789,7 @@ sap.ui.define([
 
 		if (this._oRowTemplate) {
 			oBindingInfo.template = this._oRowTemplate;
+			oBindingInfo.templateShareable = true;
 		} else {
 			delete oBindingInfo.template;
 		}
