@@ -7,7 +7,14 @@ sap.ui.define([
 	/*global QUnit */
 
 	var TestPlugin = PluginBase.extend("sap.m.plugins.test.Test");
-	var TestControl = Control.extend("sap.m.plugins.test.Control");
+	var DummyTablePlugin = Element.extend("sap.ui.table.plugins.PluginBase");
+	var TestControl = Control.extend("sap.m.plugins.test.Control", {
+		metadata: {
+			aggregations: {
+				content: {type : "sap.ui.core.Element", multiple : true, singularName : "content"}
+			}
+		}
+	});
 	var TestElement = Element.extend("sap.m.plugins.test.Element");
 
 	PluginBase.setControlConfig(TestControl, {
@@ -205,4 +212,39 @@ sap.ui.define([
 			done();
 		}.bind(this));
 	});
+
+	QUnit.module("Static getPlugin", {
+		beforeEach: function (assert) {
+			this.oControl = new TestControl();
+		},
+		afterEach: function () {
+			this.oControl.destroy();
+		}
+	});
+
+	QUnit.test("Parameters", function (assert) {
+		assert.ok(PluginBase.getPlugin() === undefined, "no parameters");
+		assert.ok(PluginBase.getPlugin(null, "sap.m.plugins.test.Test") === undefined, "no control");
+		assert.ok(PluginBase.getPlugin(this.oControl, {}) === undefined, "no correct plugin type");
+	});
+
+	QUnit.test("Find plugins in different aggregations", function (assert) {
+		var mPlugins = {
+			"sap.m.plugins.PluginBase": new TestPlugin(),
+			"sap.ui.table.plugins.PluginBase": new DummyTablePlugin()
+		};
+
+		for (var sType in mPlugins) {
+			this.oControl.addDependent(mPlugins[sType]);
+			assert.ok(PluginBase.getPlugin(this.oControl, sType) === mPlugins[sType], "Plugin of type " + sType + " found in dependents aggregation");
+			assert.ok(PluginBase.getPlugin(this.oControl, mPlugins[sType].getMetadata().getClass()) === mPlugins[sType], "Plugin of type " + sType + " Class found in dependents aggregation");
+			this.oControl.removeAllDependents();
+			this.oControl.addContent(mPlugins[sType]);
+			assert.ok(PluginBase.getPlugin(this.oControl, sType) === mPlugins[sType], "Plugin of type " + sType + " found in content aggregation");
+			assert.ok(PluginBase.getPlugin(this.oControl, mPlugins[sType].getMetadata().getClass()) === mPlugins[sType], "Plugin of type " + sType + " Class found in content aggregation");
+			this.oControl.removeAllContent();
+			mPlugins[sType].destroy();
+		}
+	});
+
 });

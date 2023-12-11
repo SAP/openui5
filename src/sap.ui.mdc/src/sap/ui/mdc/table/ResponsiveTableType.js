@@ -282,7 +282,7 @@ sap.ui.define([
 			return;
 		}
 
-		let oColumnResizer = ColumnResizer.getPlugin(oResponsiveTable);
+		let oColumnResizer = ColumnResizer.findOn(oResponsiveTable);
 
 		oResponsiveTable.setFixedLayout("Strict");
 
@@ -305,7 +305,7 @@ sap.ui.define([
 			return;
 		}
 
-		const oColumnResizer = ColumnResizer.getPlugin(oResponsiveTable);
+		const oColumnResizer = ColumnResizer.findOn(oResponsiveTable);
 
 		if (oColumnResizer) {
 			oColumnResizer.setEnabled(false);
@@ -328,7 +328,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.createColumnResizeMenuItem = function(oColumn, oColumnMenu) {
-		const oColumnResizer = ColumnResizer.getPlugin(this.getInnerTable());
+		const oColumnResizer = ColumnResizer.findOn(this.getInnerTable());
 
 		if (!oColumnResizer) {
 			return;

@@ -136,6 +136,10 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("findOn", function(assert) {
+		assert.ok(CellSelector.findOn(this.oTable) === this.oCellSelector, "Plugin found via CellSelector.findOn");
+	});
+
 	QUnit.test("Drag compatibility", function(assert) {
 		var done = assert.async();
 		this.oTable.addDependent(this.oCellSelector);

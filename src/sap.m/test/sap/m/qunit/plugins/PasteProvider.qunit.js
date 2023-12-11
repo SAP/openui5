@@ -190,4 +190,8 @@ sap.ui.define([
 		this.oOverflowButton.destroy();
 	});
 
+	QUnit.test("findOn", function(assert) {
+		assert.ok(PasteProvider.findOn(this.oButton) === this.oPlugin, "Plugin found via PasteProvider.findOn");
+	});
+
 });

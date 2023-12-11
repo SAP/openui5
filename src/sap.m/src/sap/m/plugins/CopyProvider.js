@@ -40,6 +40,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 	 * @public
 	 * @since 1.110
 	 * @alias sap.m.plugins.CopyProvider
+	 * @borrows sap.m.plugins.PluginBase.findOn as findOn
 	 */
 	const CopyProvider = PluginBase.extend("sap.m.plugins.CopyProvider", /** @lends sap.m.plugins.CopyProvider.prototype */ { metadata: {
 		library: "sap.m",
@@ -162,6 +163,8 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 		const sCellData = String(vCellData);
 		return /\n|\r|\t/.test(sCellData) ? '"' + sCellData.replaceAll('"', '""') + '"' : sCellData;
 	}
+
+	CopyProvider.findOn = PluginBase.findOn;
 
 	CopyProvider.prototype._shouldManageExtractData = function() {
 		const oControl = this.getControl();
