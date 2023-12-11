@@ -13,9 +13,9 @@ sap.ui.define([
 	MockServer,
 	Control,
 	Element,
-	ODataModel,
+	ODataModelV1,
 	jQuery,
-	v2ODataModel,
+	ODataModelV2,
 	Label,
 	createAndAppendDiv,
 	isEmptyObject
@@ -3382,7 +3382,10 @@ sap.ui.define([
 		oMockServer.destroy();
 	});
 
-	QUnit.test("$batch - 2 GET, and 1 ChangeSet with 4 operations (2 PUT, 1 DELETE and 1 POST)", function (assert) {
+	/**
+	 * @deprecated As of version 1.48, as ODataModel V1 has been deprecated
+	 */
+	QUnit.test("$batch - 2 GET, and 1 ChangeSet with 4 operations (2 PUT, 1 DELETE and 1 POST) (ODataModel V1)", function (assert) {
 		var sUri = "/mock/";
 		var oMockServer = new MockServer({
 			rootUri: sUri
@@ -3393,9 +3396,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = new ODataModel(sUri, true);
-		// 				var oModel = new v2ODataModel(sUri, true);
-
+		var oModel = new ODataModelV1(sUri, true);
 		oModel.setUseBatch(true);
 
 		var aBatchReadOperations = [];
@@ -3449,7 +3450,8 @@ sap.ui.define([
 		oMockServer.destroy();
 	});
 
-	QUnit.test("$batch Multiple ChangeSets", function (assert) {
+	QUnit.test("$batch - 2 GET, and 1 ChangeSet with 4 operations (2 PUT, 1 DELETE and 1 POST) (ODataModel V2)", function (assert) {
+		const done = assert.async();
 		var sUri = "/mock/";
 		var oMockServer = new MockServer({
 			rootUri: sUri
@@ -3460,7 +3462,103 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = new ODataModel(sUri, true);
+		var oModel = new ODataModelV2(sUri);
+
+		oModel.setUseBatch(true);
+		oModel.setDeferredGroups(["batch1"]);
+
+		oModel.read("/LeaveHeaderCollection?$top=1", { groupId: "batch1" });
+		oModel.read("/LeaveItemCollection?$top=2", { groupId: "batch1" });
+
+		oModel.update(
+			"/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')",
+			{
+				"type": "Vacation",
+				"employeeid": "Gal Roter",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1" }
+		);
+
+		oModel.update(
+			"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
+			"PUT",
+			{
+				"type": "Vacation",
+				"employeeid": "Gal Roter",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1" }
+		);
+
+		oModel.remove(
+			"/LeaveHeaderCollection(employeeid='JSMITH',type='Unpaid Leave')",
+			{ groupId: "batch1" }
+		);
+
+		oModel.create(
+			"/LeaveHeaderCollection",
+			{
+				"type": "Sick Leave",
+				"employeeid": "TRIEVISH",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1" }
+		);
+
+		var fnSuccess = function (oData, oResponse) {
+			assert.equal(oResponse.statusCode, 202, "batch completed");
+			assert.equal(oData.__batchResponses[0].__changeResponses[0].statusCode, 204, "oData put succeeded");
+			assert.equal(oData.__batchResponses[0].__changeResponses[1].statusCode, 204, "oData delete succeeded");
+			assert.equal(oData.__batchResponses[0].__changeResponses[2].statusCode, 201, "oData post succeeded");
+			assert.equal(oData.__batchResponses[1].statusCode, 200, "oData first read succeeded");
+			assert.equal(oData.__batchResponses[2].statusCode, 200, "oData second read succeeded");
+
+			fnCleanup();
+		};
+
+		var fnError = function (oError) {
+			assert.ok(false, "fnError - batch failed");
+
+			fnCleanup();
+		};
+
+		var fnCleanup = function() {
+			setTimeout(function() {
+				oModel.destroy();
+				oMockServer.destroy();
+				done();
+			}, 0);
+		};
+
+		oModel.submitChanges({
+			groupId: "batch1",
+			success: fnSuccess,
+			error: fnError
+		});
+	});
+
+	/**
+	 * @deprecated As of version 1.48, as ODataModel V1 has been deprecated
+	 */
+	QUnit.test("$batch Multiple ChangeSets (ODataModel V1)", function (assert) {
+		var sUri = "/mock/";
+		var oMockServer = new MockServer({
+			rootUri: sUri
+		});
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oModel = new ODataModelV1(sUri, true);
 		oModel.setUseBatch(true);
 
 		var aBatchReadOperations = [];
@@ -3518,7 +3616,8 @@ sap.ui.define([
 		oMockServer.destroy();
 	});
 
-	QUnit.test("$batch first changeset rollback (second changeset succeed)", function (assert) {
+	QUnit.test("$batch Multiple ChangeSets (ODataModel V2)", function (assert) {
+		const done = assert.async();
 		var sUri = "/mock/";
 		var oMockServer = new MockServer({
 			rootUri: sUri
@@ -3529,7 +3628,110 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = new ODataModel(sUri, true);
+		var oModel = new ODataModelV2(sUri);
+		oModel.setUseBatch(true);
+		oModel.setDeferredGroups(["batch1"]);
+
+		oModel.read("/LeaveHeaderCollection?$top=1", { groupId: "batch1" });
+
+		oModel.update(
+			"/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')",
+			{
+				"type": "Vacation",
+				"employeeid": "Gal Roter1",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1", changeSetId: "changeSet1" }
+		);
+
+		oModel.remove(
+			"/LeaveHeaderCollection(employeeid='JSMITH',type='Unpaid Leave')",
+			{ groupId: "batch1", changeSetId: "changeSet1" }
+		);
+
+		oModel.create(
+			"/LeaveHeaderCollection",
+			{
+				"type": "Sick Leave",
+				"employeeid": "LIDOR1",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1", changeSetId: "changeSet1" }
+		);
+
+		oModel.update(
+			"/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')",
+			{
+				"type": "Vacation",
+				"employeeid": "Gal Roter2",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1", changeSetId: "changeSet2" }
+		);
+
+		oModel.create(
+			"/LeaveHeaderCollection",
+			{
+				"type": "Sick Leave",
+				"employeeid": "LIDOR2",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1", changeSetId: "changeSet2" }
+		);
+
+		var fnSuccess = function (oData, oResponse) {
+			assert.equal(oResponse.statusCode, 202, "batch completed");
+			assert.equal(oData.__batchResponses[0].__changeResponses[0].statusCode, 204, "oData put succeeded");
+			assert.equal(oData.__batchResponses[0].__changeResponses[1].statusCode, 204, "oData delete succeeded");
+			assert.equal(oData.__batchResponses[0].__changeResponses[2].statusCode, 201, "oData post succeeded");
+			assert.equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
+			assert.equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 201, "oData second change set post succeeded");
+			assert.equal(oData.__batchResponses[2].statusCode, 200, "oData first read succeeded");
+			fnCleanup();
+		};
+
+		var fnError = function (oError) {
+			assert.ok(false, "fnError - batch failed");
+			fnCleanup();
+		};
+
+		var fnCleanup = function() {
+			setTimeout(function() {
+				oModel.destroy();
+				oMockServer.destroy();
+				done();
+			}, 0);
+		};
+
+		oModel.submitChanges({
+			success: fnSuccess,
+			error: fnError
+		});
+	});
+
+	/**
+	 * @deprecated As of version 1.48, as ODataModel V1 has been deprecated
+	 */
+	QUnit.test("$batch first changeset rollback (second changeset succeed) (ODataModel V1)", function (assert) {
+		var sUri = "/mock/";
+		var oMockServer = new MockServer({
+			rootUri: sUri
+		});
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oModel = new ODataModelV1(sUri, true);
 		oModel.setUseBatch(true);
 
 		var aBatchReadOperations = [];
@@ -3599,7 +3801,8 @@ sap.ui.define([
 		oMockServer.destroy();
 	});
 
-	QUnit.test("$batch second changeset rollback (first changeset succeed)", function (assert) {
+	QUnit.test("$batch first changeset rollback (second changeset succeed) (ODataModel V2)", function (assert) {
+		const done = assert.async();
 		var sUri = "/mock/";
 		var oMockServer = new MockServer({
 			rootUri: sUri
@@ -3610,7 +3813,125 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = new ODataModel(sUri, true);
+		var oModel = new ODataModelV2(sUri);
+		oModel.setUseBatch(true);
+		oModel.setDeferredGroups(["batch1"]);
+
+		oModel.read("/LeaveHeaderCollection?$top=1", { groupId: "batch1" });
+
+		oModel.update(
+			"/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')",
+			{
+				"type": "Vacation",
+				"employeeid": "Gal Roter",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1", changeSetId: "changeSet1" }
+		);
+
+		oModel.update(
+			"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
+			{
+				"type": "Vacation",
+				"employeeid": "David Freidlin",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1", changeSetId: "changeSet1" }
+		);
+
+		oModel.remove(
+			"/LeaveHeaderCollection(employeeid='dummy',type='Sick Leave')",
+			{ groupId: "batch1", changeSetId: "changeSet1" }
+		);
+
+		oModel.create(
+			"/LeaveHeaderCollection",
+			{
+				"type": "Sick Leave",
+				"employeeid": "TRIEVISH",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1", changeSetId: "changeSet1" }
+		);
+
+		oModel.update(
+			"/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')",
+			{
+				"type": "Vacation",
+				"employeeid": "Gal Roter2",
+				 "entitlement": "53 days",
+				 "availablebalance": "41 days",
+				 "pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1", changeSetId: "changeSet2" }
+		);
+
+		oModel.create(
+			"/LeaveHeaderCollection",
+			{ "type": "Sick Leave", "employeeid": "LIDOR2", "entitlement": "53 days", "availablebalance": "41 days", "pendingitems": "1 pending items" },
+			{ groupId: "batch1", changeSetId: "changeSet2" }
+		);
+
+		var fnSuccess = function (oData, oResponse) {
+			assert.equal(oResponse.statusCode, 202, "batch completed");
+			assert.equal(oData.__batchResponses[0].message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oData.__batchResponses[0].response.statusCode, 400, "StatusCode is propagated");
+			assert.equal(oData.__batchResponses[0].response.statusText, "Bad Request", "StatusText is propagated"); // TODO clarify: is reason phrase mandatory in batch response?
+			assert.equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
+			assert.equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 201, "oData post succeeded");
+			assert.equal(oData.__batchResponses[2].statusCode, 200, "oData  read succeeded");
+			// read to verify no changes made
+			var oGetResponse = syncAjax({
+				url: '/mock/LeaveHeaderCollection',
+				type: 'GET'
+			});
+			assert.ok(oGetResponse.success, "Mock server responded the GET request");
+			assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+			assert.equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
+
+			fnCleanup();
+		};
+
+		var fnError = function (oError) {
+			assert.ok(false, "fnError - batch failed");
+			fnCleanup();
+		};
+
+		var fnCleanup = function() {
+			setTimeout(function() {
+				oModel.destroy();
+				oMockServer.destroy();
+				done();
+			}, 0);
+		};
+
+		oModel.submitChanges({
+			success: fnSuccess,
+			error: fnError
+		});
+	});
+
+	/**
+	 * @deprecated As of version 1.48, as ODataModel V1 has been deprecated
+	 */
+	QUnit.test("$batch second changeset rollback (first changeset succeed) (ODataModel V1)", function (assert) {
+		var sUri = "/mock/";
+		var oMockServer = new MockServer({
+			rootUri: sUri
+		});
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oModel = new ODataModelV1(sUri, true);
 		oModel.setUseBatch(true);
 
 		var aBatchReadOperations = [];
@@ -3680,7 +4001,8 @@ sap.ui.define([
 		oMockServer.destroy();
 	});
 
-	QUnit.test("$batch GET in ChangeSet", function (assert) {
+	QUnit.test("$batch second changeset rollback (first changeset succeed) (ODataModel V2)", function (assert) {
+		const done = assert.async();
 		var sUri = "/mock/";
 		var oMockServer = new MockServer({
 			rootUri: sUri
@@ -3691,7 +4013,130 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = new ODataModel(sUri, true);
+		var oModel = new ODataModelV2(sUri);
+		oModel.setUseBatch(true);
+		oModel.setDeferredGroups(["batch1"]);
+
+		oModel.read("/LeaveHeaderCollection?$top=1", { groupId: "batch1" });
+
+		oModel.update(
+			"/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')",
+			{
+				"type": "Vacation",
+				"employeeid": "Gal Roter2",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1", changeSetId: "changeSet1" }
+		);
+
+		oModel.create("/LeaveHeaderCollection",
+			{
+				"type": "Sick Leave",
+				"employeeid": "LIDOR2",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1", changeSetId: "changeSet1" }
+		);
+
+		oModel.update(
+			"/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')",
+			{
+				"type": "Vacation",
+				"employeeid": "Gal Roter",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1", changeSetId: "changeSet2" }
+		);
+
+		oModel.update(
+			"/LeaveHeaderCollection(employeeid='JSMITH',type='Sick Leave')",
+			{
+				"type": "Vacation",
+				"employeeid": "David Freidlin",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1", changeSetId: "changeSet2" }
+		);
+
+		oModel.remove("/LeaveHeaderCollection(employeeid='dummy',type='Sick Leave')",
+			{ groupId: "batch1", changeSetId: "changeSet2" }
+		);
+
+		oModel.create("/LeaveHeaderCollection",
+			{
+				"type": "Sick Leave",
+				"employeeid": "TRIEVISH",
+				"entitlement": "53 days",
+				"availablebalance": "41 days",
+				"pendingitems": "1 pending items"
+			},
+			{ groupId: "batch1", changeSetId: "changeSet2" }
+		);
+
+		var fnSuccess = function (oData, oResponse) {
+			assert.equal(oResponse.statusCode, 202, "batch completed");
+			assert.equal(oData.__batchResponses[0].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
+			assert.equal(oData.__batchResponses[0].__changeResponses[1].statusCode, 201, "oData post succeeded");
+			assert.equal(oData.__batchResponses[1].message, "HTTP request failed", "HTTP request failed");
+			assert.equal(oData.__batchResponses[2].statusCode, 200, "oData  read succeeded");
+			// read to verify no changes made
+			var oGetResponse = syncAjax({
+				url: '/mock/LeaveHeaderCollection',
+				type: 'GET'
+			});
+			assert.ok(oGetResponse.success, "Mock server responded the GET request");
+			assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
+			assert.equal(oGetResponse.data.d.results[0].employeeid, "Gal Roter2", "no changes after rollback");
+
+			fnCleanup();
+		};
+
+		var fnError = function (oError) {
+			assert.ok(false, "fnError - batch failed");
+
+			fnCleanup();
+		};
+
+		var fnCleanup = function() {
+			setTimeout(function() {
+				oModel.destroy();
+				oMockServer.destroy();
+				done();
+			}, 0);
+		};
+
+		oModel.submitChanges({
+			success: fnSuccess,
+			error: fnError
+		});
+	});
+
+	/**
+	 * @deprecated As of version 1.48, as ODataModel V1 has been deprecated
+	 *
+	 * Note: there's no corresponding test provided for ODataModel V2, because embedding
+	 *       a GET request into a change set is against the ODATA spec.
+	 */
+	QUnit.test("$batch GET in ChangeSet (ODataModel V1)", function (assert) {
+		var sUri = "/mock/";
+		var oMockServer = new MockServer({
+			rootUri: sUri
+		});
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oModel = new ODataModelV1(sUri, true);
 		oModel.setUseBatch(true);
 
 		var aBatchFirstChangeOperations = [];
@@ -3727,7 +4172,10 @@ sap.ui.define([
 		oMockServer.destroy();
 	});
 
-	QUnit.test("$batch GET Operation not succeed", function (assert) {
+	/**
+	 * @deprecated As of version 1.48, as ODataModel V1 has been deprecated
+	 */
+	QUnit.test("$batch GET Operation not succeed (ODataModel V1)", function (assert) {
 		var sUri = "/mock/";
 		var oMockServer = new MockServer({
 			rootUri: sUri
@@ -3738,7 +4186,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = new ODataModel(sUri, true);
+		var oModel = new ODataModelV1(sUri, true);
 		oModel.setUseBatch(true);
 
 		var aBatchReadOperations = [];
@@ -3766,6 +4214,56 @@ sap.ui.define([
 		oModel.submitBatch(fnSuccess, fnError, false);
 
 		oMockServer.destroy();
+	});
+
+	QUnit.test("$batch GET Operation not succeed (ODataModel V2)", function (assert) {
+		const done = assert.async();
+		var sUri = "/mock/";
+		var oMockServer = new MockServer({
+			rootUri: sUri
+		});
+		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+		var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		assert.ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oModel = new ODataModelV2(sUri);
+		oModel.setUseBatch(true);
+		oModel.setDeferredGroups(["batch1"]);
+
+		oModel.read("/LeaveHeaderCollection", { urlParameters: { $top: "1" }, groupId: "batch1" });
+
+		//$to instead of $top - should return 400
+		oModel.read("/LeaveItemCollection", { urlParameters: { $to: "2" }, groupId: "batch1" });
+
+		var fnSuccess = function (oData, oResponse) {
+			assert.equal(oResponse.statusCode, 202, "batch completed");
+			assert.equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
+			assert.equal(oData.__batchResponses[1].response.statusCode, 400, "Second Read failed due to incorrect syntax");
+
+			fnCleanup();
+		};
+
+		var fnError = function (oError) {
+			assert.equal(oError.response.statusCode, 400,
+				"Get in Changeset - Respond 400 - The Data Services Request could not be understood due to malformed syntax");
+
+			fnCleanup();
+		};
+
+		var fnCleanup = function() {
+			setTimeout(function() {
+				oModel.destroy();
+				oMockServer.destroy();
+				done();
+			}, 0);
+		};
+
+		oModel.submitChanges({
+			success: fnSuccess,
+			error: fnError
+		});
 	});
 
 	QUnit.test("$batch GET Operation with dfferent status codes", function (assert) {
@@ -3826,7 +4324,7 @@ sap.ui.define([
 		oMockServer.setRequests(aRequests);
 		oMockServer.start();
 
-		var oModel = new v2ODataModel(sUri, true);
+		var oModel = new ODataModelV2(sUri);
 		oModel.setDeferredBatchGroups(["myId"]);
 
 		var fnReadResult = function (oResponse) {
@@ -3904,7 +4402,7 @@ sap.ui.define([
 		oMockServer.setRequests(aRequests);
 		oMockServer.start();
 
-		var oModel = new v2ODataModel(sUri, true);
+		var oModel = new ODataModelV2(sUri);
 		oModel.setDeferredBatchGroups(["myId"]);
 
 		oModel.read("/LeaveItemCollection", {
@@ -3928,7 +4426,7 @@ sap.ui.define([
 		oModel.submitChanges();
 	});
 
-	QUnit.test("test mock data in one file", function (assert) {
+	QUnit.test("test mock data in one file", async function (assert) {
 		assert.expect(10);
 		var done = assert.async();
 		var oMockServer = new MockServer({
@@ -3947,7 +4445,8 @@ sap.ui.define([
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right");
 
-		var oModel = initModel(sURI, true);
+		var oModel = await initModelV2(sURI);
+
 		var oBinding = oModel.bindList("/LeaveHeaderCollection");
 		var handler = function () { // delay the following test
 			assert.ok(oBinding.oEntityType, "entity type binding check");
@@ -3961,14 +4460,23 @@ sap.ui.define([
 			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
-			done(); // resume normal testing
+			fnCleanup(); // resume normal testing
 		};
 		oBinding.attachChange(handler);
+		oBinding.initialize();
 		oBinding.getContexts();
-		oMockServer.destroy();
+
+		var fnCleanup = function() {
+			setTimeout(function() {
+				oModel.destroy();
+				oMockServer.destroy();
+				done();
+			}, 0);
+		};
+
 	});
 
-	QUnit.test("test mock data generation", function (assert) {
+	QUnit.test("test mock data generation", async function (assert) {
 		assert.expect(10);
 		var done = assert.async();
 		var oMockServer = new MockServer({
@@ -3986,7 +4494,8 @@ sap.ui.define([
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right");
 
-		var oModel = initModel(sURI, true);
+		var oModel = await initModelV2(sURI);
+
 		var oBinding = oModel.bindList("/LeaveHeaderCollection");
 		var handler = function () { // delay the following test
 			assert.ok(oBinding.oEntityType, "entity type binding check");
@@ -4000,15 +4509,23 @@ sap.ui.define([
 			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
-			done(); // resume normal testing
+			fnCleanup(); // resume normal testing
 		};
 		oBinding.attachChange(handler);
+		oBinding.initialize();
 		oBinding.getContexts();
-		oMockServer.destroy();
+
+		var fnCleanup = function() {
+			setTimeout(function() {
+				oModel.destroy();
+				oMockServer.destroy();
+				done();
+			}, 0);
+		};
 	});
 
 
-	QUnit.test("test $metadata xml", function (assert) {
+	QUnit.test("test $metadata xml", async function (assert) {
 		assert.expect(10);
 
 		var done = assert.async();
@@ -4028,7 +4545,8 @@ sap.ui.define([
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right");
 
-		var oModel = initModel(sURI, true);
+		var oModel = await initModelV2(sURI);
+
 		var oBinding = oModel.bindList("/LeaveHeaderCollection");
 		var handler = function () { // delay the following test
 			assert.ok(oBinding.oEntityType, "entity type binding check");
@@ -4042,12 +4560,19 @@ sap.ui.define([
 			assert.equal(oPropMeta.type, "Edm.String", "entity type property check");
 
 			oBinding.detachChange(handler);
-			done(); // resume normal testing
+			fnCleanup(); // resume normal testing
 		};
 		oBinding.attachChange(handler);
+		oBinding.initialize();
 		oBinding.getContexts();
 
-		oMockServer.destroy();
+		var fnCleanup = function() {
+			setTimeout(function() {
+				oModel.destroy();
+				oMockServer.destroy();
+				done();
+			}, 0);
+		};
 	});
 
 	QUnit.test("test filter on complex type properties", function (assert) {
@@ -4096,7 +4621,7 @@ sap.ui.define([
 		oMockServer.destroy();
 	});
 
-	QUnit.test("test error messages on invalid operations", function (assert) {
+	QUnit.test("test error messages on invalid operations", async function (assert) {
 		sURI = "/myservice/";
 		var oMockServer = new MockServer({
 			rootUri: sURI
@@ -4106,189 +4631,175 @@ sap.ui.define([
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 
-		var oModel = initModel(sURI, true);
+		var oModel = await initModelV2(sURI);
+
+		function read(urlWithParams, expectedStatusCode, expectedError, assertionMsg) {
+			const [url, query] = urlWithParams.split("?");
+			if ( typeof expectedStatusCode === "string" ) {
+				assertionMsg = expectedError;
+				expectedError = expectedStatusCode;
+				expectedStatusCode = 400;
+			}
+			return new Promise(function(resolve, reject) {
+				oModel.read(url, {
+					urlParameters: Object.fromEntries(new URLSearchParams(query)),
+					success: function() {
+						reject(new Error("read operation succeeded unexpectedly"));
+					},
+					error: function(oResult) {
+						assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
+						assert.equal(oResult.statusCode, expectedStatusCode, "status code = " + expectedStatusCode);
+						const response = oResult.responseText ?? oResult.response?.body;
+						assert.equal(JSON.parse(response).error.message.value, expectedError, assertionMsg);
+						resolve();
+					}
+				});
+			});
+		}
 
 		//Query negative tests
-		oModel.read('LeaveHeaderCollection?$ski=5', null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, "'$ski' is not a valid system query option");
-		});
+		await read('/LeaveHeaderCollection?$ski=5',
+			"'$ski' is not a valid system query option"
+		);
 
-		oModel.read('LeaveHeaderCollection?$select=type, availablebalance,', null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "The URI is violating the construction rules defined in the Data Services specification [, at the end of string]");
-		});
+		await read('/LeaveHeaderCollection?$select=type, availablebalance,',
+			oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES,
+			"The URI is violating the construction rules defined in the Data Services specification [, at the end of string]"
+		);
 
-		oModel.read('LeaveHeaderCollection?$skip=5,', null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "skip invalid value [ends with ,]");
-		});
+		await read('/LeaveHeaderCollection?$skip=5,',
+			oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES,
+			"skip invalid value [ends with ,]"
+		);
 
 		//skip & top
-		oModel.read('LeaveHeaderCollection?$skip=1&$top=sdlfksdf', null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "top invalid value");
-		});
+		await read('/LeaveHeaderCollection?$skip=1&$top=sdlfksdf',
+			oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE,
+			"top invalid value"
+		);
 
-		oModel.read('LeaveHeaderCollection?$skip=1.5', null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "skip invalid value [not an integer]");
-		});
+		await read('/LeaveHeaderCollection?$skip=1.5',
+			oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE,
+			"skip invalid value [not an integer]"
+		);
 
-		oModel.read('LeaveHeaderCollection?$top=x', null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "top invalid value [not an integer]");
-		});
+		await read('/LeaveHeaderCollection?$top=x',
+			oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE,
+			"top invalid value [not an integer]"
+		);
 
 		//orderby
-		oModel.read("LeaveHeaderCollection?$orderby=entitlement descjkh", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Invalid sortorder 'descjkh' detected", "Invalid sortorder 'descjkh' detected");
-		});
-		oModel.read("LeaveHeaderCollection?$orderby=entitlementFood", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Property 'entitlementFood' not found", "Property 'entitlementFood' not found");
-		});
+		await read("/LeaveHeaderCollection?$orderby=entitlement descjkh",
+			"Invalid sortorder 'descjkh' detected",
+			"Invalid sortorder 'descjkh' detected"
+		);
+
+		await read("/LeaveHeaderCollection?$orderby=entitlementFood",
+			"Property 'entitlementFood' not found",
+			"Property 'entitlementFood' not found"
+		);
 
 		//filter
-		oModel.read("LeaveHeaderCollection?$filter=(((type eq 'Vacation' or type eq 'Sick Leave')", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Property '((type' not found", "Property '((type' not found");
-		});
-		oModel.read("LeaveHeaderCollection?$filter=type eq 'Vacation' or ", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_FILTER_QUERY_STATEMENT, "Invalid filter query statement");
-		});
-		oModel.read("LeaveItemCollection?$filter=itemid lfde 6", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_FILTER_QUERY_STATEMENT, "Invalid filter query statement ((filter option 'lfde' doesn't exist))");
-		});
-		oModel.read("LeaveItemCollection?$filter=itemidFood le 6", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Property 'itemidFood' not found", "Property 'itemidFood' not found");
-		});
+		await read("/LeaveHeaderCollection?$filter=(((type eq 'Vacation' or type eq 'Sick Leave')",
+			"Property '((type' not found",
+			"Property '((type' not found"
+		);
+
+		await read("/LeaveHeaderCollection?$filter=type eq 'Vacation' or ",
+			oMockServer._oErrorMessages.INVALID_FILTER_QUERY_STATEMENT,
+			"Invalid filter query statement"
+		);
+
+		await read("/LeaveItemCollection?$filter=itemid lfde 6",
+			oMockServer._oErrorMessages.INVALID_FILTER_QUERY_STATEMENT,
+			"Invalid filter query statement ((filter option 'lfde' doesn't exist))"
+		);
+
+		await read("/LeaveItemCollection?$filter=itemidFood le 6",
+			"Property 'itemidFood' not found",
+			"Property 'itemidFood' not found"
+		);
 
 		//select
-		oModel.read("LeaveHeaderCollection?$select=sdfsdf", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 404, "status code = 404");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'sdfsdf'", "Resource not found for the segment 'sdfsdf'");
-		});
+		await read("/LeaveHeaderCollection?$select=sdfsdf",
+			404,
+			"Resource not found for the segment 'sdfsdf'",
+			"Resource not found for the segment 'sdfsdf'"
+		);
 
 		//inlinecount
-		oModel.read("LeaveHeaderCollection?$inlinecount=sfg", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "InlineCount: " + oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE);
-		});
+		await read("/LeaveHeaderCollection?$inlinecount=sfg",
+			oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE,
+			"InlineCount: " + oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE
+		);
 
 		//format
-		oModel.read("LeaveHeaderCollection?$format=xml", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.UNSUPPORTED_FORMAT_VALUE, "Format: " + oMockServer._oErrorMessages.UNSUPPORTED_FORMAT_VALUE);
-		});
+		await read("/LeaveHeaderCollection?$format=xml",
+			oMockServer._oErrorMessages.UNSUPPORTED_FORMAT_VALUE,
+			"Format: " + oMockServer._oErrorMessages.UNSUPPORTED_FORMAT_VALUE
+		);
 
 		//Single entry negative tests
-		oModel.read("LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$select=type,", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "The URI is violating the construction rules defined in the Data Services specification [, at the end of string]");
-		});
+		await read("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$select=type,",
+			oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES,
+			"The URI is violating the construction rules defined in the Data Services specification [, at the end of string]"
+		);
 
-		oModel.read("LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$blabla=type", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, "'$blabla' is not a valid system query option", "'$blabla' is not a valid system query option (single)");
-		});
+		await read("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$blabla=type",
+			"'$blabla' is not a valid system query option",
+			"'$blabla' is not a valid system query option (single)"
+		);
 
-		oModel.read("LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$top=1", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, "'$top' is not a valid system query option", "'$top' is not a valid system query option (single)");
-		});
+		await read("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$top=1",
+			"'$top' is not a valid system query option",
+			"'$top' is not a valid system query option (single)"
+		);
 
 		//key
-		oModel.read("LeaveItemCollection(itemid='dummy', employeeid='JSMITH',type='Vacation')", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 404, "status code = 404");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.RESOURCE_NOT_FOUND, oMockServer._oErrorMessages.RESOURCE_NOT_FOUND);
-		});
+		await read("/LeaveItemCollection(itemid='dummy', employeeid='JSMITH',type='Vacation')",
+			404,
+			oMockServer._oErrorMessages.RESOURCE_NOT_FOUND,
+			oMockServer._oErrorMessages.RESOURCE_NOT_FOUND
+		);
 
-		oModel.read("LeaveItemCollection(dummy='1', employeeid='JSMITH',type='Vacation')", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Invalid key name in key predicate. Expected name is 'employeeid,itemid,type'", "Invalid key name in key predicate. Expected name is 'employeeid,itemid,type'");
-		});
-		oModel.read("LeaveItemCollection(employeeid='JSMITH',type='Vacation')", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_KEY_PREDICATE_QUANTITY, oMockServer._oErrorMessages.INVALID_KEY_PREDICATE_QUANTITY);
-		});
-		oModel.read("LeaveItemCollection(itemid='1, employeeid='JSMITH',type='Vacation')", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 400, "status code = 400");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Malformed URI literal syntax in key 'itemid'", "Malformed URI literal syntax in key 'itemid'");
-		});
+		await read("/LeaveItemCollection(dummy='1', employeeid='JSMITH',type='Vacation')",
+			"Invalid key name in key predicate. Expected name is 'employeeid,itemid,type'",
+			"Invalid key name in key predicate. Expected name is 'employeeid,itemid,type'"
+		);
+
+		await read("/LeaveItemCollection(employeeid='JSMITH',type='Vacation')",
+			oMockServer._oErrorMessages.INVALID_KEY_PREDICATE_QUANTITY,
+			oMockServer._oErrorMessages.INVALID_KEY_PREDICATE_QUANTITY
+		);
+
+		await read("/LeaveItemCollection(itemid='1, employeeid='JSMITH',type='Vacation')",
+			"Malformed URI literal syntax in key 'itemid'",
+			"Malformed URI literal syntax in key 'itemid'"
+		);
+
 		oMockServer.destroy();
 
 		//Expand
-		sURI = "/myservice/";
+		const sURI2 = "/myservice/";
 		var oMockServer = new MockServer({
-			rootUri: sURI
+			rootUri: sURI2
 		});
 		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
-		var oModel = initModel(sURI, true);
+		var oModel = await initModelV2(sURI2);
 
-		oModel.read("FlightCollection?$expand=FlightFood", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 404, "status code = 404");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'FlightFood'", "Resource not found for the segment 'FlightFood'");
-		});
+		await read("/FlightCollection?$expand=FlightFood",
+			404,
+			"Resource not found for the segment 'FlightFood'",
+			"Resource not found for the segment 'FlightFood'"
+		);
 
-		oModel.read("CarrierCollection('carrid 1')/carrierFlights?$expand=flightbooking1", null, null, false, function () {
-		}, function (oResult) {
-			assert.equal(oResult.message, "HTTP request failed", "HTTP request failed");
-			assert.equal(oResult.response.statusCode, 404, "status code = 404");
-			assert.equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'flightbooking1'", "Resource not found for the segment 'flightbooking1'");
-		});
+		await read("/CarrierCollection('carrid 1')/carrierFlights?$expand=flightbooking1",
+			404,
+			"Resource not found for the segment 'flightbooking1'",
+			"Resource not found for the segment 'flightbooking1'"
+		);
 		oMockServer.destroy();
 	});
 
@@ -4314,7 +4825,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("test ODataModel update", function (assert) {
+	QUnit.test("test ODataModel update", async function (assert) {
 
 
 		var done = assert.async();
@@ -4325,29 +4836,45 @@ sap.ui.define([
 		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
-		var oModel = initModel(sURI, true);
-		oModel.read('CarrierCollection', null, null, true, function (oData, oResponse) {
-			var oEntry = {};
-			oEntry.CARRNAME = "USD";
-			oModel.update("/CarrierCollection('carrid 1')", oEntry, null, function () {
-				var oResponse = syncAjax({
-					url: "/myservice/CarrierCollection('carrid 1')",
-					dataType: "json"
-				});
-				assert.equal(oResponse.data.d.CARRNAME, "USD");
-				assert.equal(oResponse.data.d.mimeType, "mimeType 1");
-				done();
-			}, function () {
-				done();
-				oMockServer.destroy();
-			}, true); // merge:true trigger a MERGE request instead of a PUT request to perform a differential update
+		var oModel = await initModelV2(sURI);
 
-		}, function () {
-			assert.ok(false, "Read failed");
+		oModel.read('/CarrierCollection', {
+			success: function (oData, oResponse) {
+				var oEntry = {};
+				oEntry.CARRNAME = "USD";
+				oModel.update("/CarrierCollection('carrid 1')", oEntry, {
+					success: function () {
+						var oResponse = syncAjax({
+							url: "/myservice/CarrierCollection('carrid 1')",
+							dataType: "json"
+						});
+						assert.equal(oResponse.data.d.CARRNAME, "USD");
+						assert.equal(oResponse.data.d.mimeType, "mimeType 1");
+						fnCleanup();
+					},
+					error: function () {
+						fnCleanup();
+					}
+				}); // merge:true trigger a MERGE request instead of a PUT request to perform a differential update
+			},
+			error: function () {
+				assert.ok(false, "Read failed");
+				fnCleanup();
+			}
 		});
 
+		var fnCleanup = function() {
+			setTimeout(function() {
+				oModel.destroy();
+				oMockServer.destroy();
+				done();
+			}, 0);
+		};
 	});
 
+	/**
+	 * @deprecated as of 1.48 as the functionality is not  provided by ODataModel V2
+	 */
 	QUnit.test("test oDataModel _loadData JSON", function (assert) {
 		var done = assert.async();
 		var oMockServer = new MockServer({
@@ -4359,7 +4886,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = initModel(sURI, true);
+		var oModel = new ODataModelV1(sURI, true);
 		oModel._loadData("LeaveHeaderCollection", null, function () {
 			assert.equal(oModel.getProperty("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/type"), "Vacation",
 				"absolute path without context");
@@ -4373,9 +4900,34 @@ sap.ui.define([
 					iKeys++;
 				});
 				assert.equal(iKeys, 3);
-				done(); // resume normal testing
+				fnCleanup(); // resume normal testing
 			});
 		});
+		var fnCleanup = function() {
+			setTimeout(function() {
+				oModel.destroy();
+				oMockServer.destroy();
+				done();
+			}, 0);
+		};
+	});
+
+	QUnit.module("Bindings", {
+		async beforeEach(assert) {
+			this.oMockServer = new MockServer({
+				rootUri: "/myservice/"
+			});
+			var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/metadata.xml";
+			var sMockdataBaseUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/leave-request/";
+			this.oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+			this.oMockServer.start();
+			assert.ok(this.oMockServer.isStarted(), "Mock server is started");
+			this.oModel = await initModelV2(sURI);
+		},
+		afterEach(assert) {
+			this.oModel.destroy();
+			this.oMockServer.destroy();
+		}
 	});
 
 	var oLabel = new Label("myLabel");
@@ -4384,34 +4936,38 @@ sap.ui.define([
 	QUnit.test("test getProperty on label", function (assert) {
 		var done = assert.async();
 		oLabel.setText("testText");
-		var oModel = initModel(sURI, true);
-		sap.ui.getCore().setModel(oModel);
-		oModel._loadData("LeaveItemCollection", null, function () {
-			assert.equal(oLabel.getText(), "testText", "old text value");
-			oLabel.bindProperty("text", "/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')/from");
-			assert.equal(oLabel.getText(), "2012-12-27", "text value from model");
-			oLabel.unbindProperty("text");
-			done();
+		oLabel.setModel(this.oModel);
+		this.oModel.read("/LeaveItemCollection", {
+			success: function () {
+				assert.equal(oLabel.getText(), "testText", "old text value");
+				oLabel.bindProperty("text", "/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')/from");
+				assert.equal(oLabel.getText(), "2012-12-27", "text value from model");
+				oLabel.unbindProperty("text");
+				done();
+			}
 		});
 	});
 
 	QUnit.test("test double load update", function (assert) {
 		var done = assert.async();
 		oLabel.setText("testText");
-		var oModel = initModel(sURI, true);
-		sap.ui.getCore().setModel(oModel);
-		oModel._loadData("LeaveItemCollection", null, function () {
-			assert.equal(oLabel.getText(), "testText", "old text value");
-			oLabel.bindProperty("text", "/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')/from");
-			assert.equal(oLabel.getText(), "2012-12-27", "new text value from model");
-			oLabel.unbindProperty("text");
-			oModel._loadData("LeaveHeaderCollection", null, function () {
-				assert.equal(oLabel.getText(), "", "default value");
-				oLabel.bindProperty("text", "/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/type");
-				assert.equal(oLabel.getText(), "Vacation", "2nd new text value from model");
+		oLabel.setModel(this.oModel);
+		this.oModel.read("/LeaveItemCollection", {
+			success: function() {
+				assert.equal(oLabel.getText(), "testText", "old text value");
+				oLabel.bindProperty("text", "/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')/from");
+				assert.equal(oLabel.getText(), "2012-12-27", "new text value from model");
 				oLabel.unbindProperty("text");
-				done();
-			});
+				this.oModel.read("/LeaveHeaderCollection", {
+					success: function() {
+						assert.equal(oLabel.getText(), "", "default value");
+						oLabel.bindProperty("text", "/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/type");
+						assert.equal(oLabel.getText(), "Vacation", "2nd new text value from model");
+						oLabel.unbindProperty("text");
+						done();
+					}
+				});
+			}.bind(this)
 		});
 	});
 
@@ -4421,8 +4977,7 @@ sap.ui.define([
 
 	QUnit.test("test model bindAggregation on List", function (assert) {
 		var done = assert.async();
-		var oModel = initModel(sURI, true);
-		sap.ui.getCore().setModel(oModel);
+		oList.setModel(this.oModel);
 		oListItem.bindProperty("text", "type");
 		var oBinding = oList.bindAggregation("items", "/LeaveHeaderCollection", oListItem).getBinding('items');
 
@@ -4438,22 +4993,25 @@ sap.ui.define([
 
 	QUnit.test("ListBinding getLength, getContexts", function (assert) {
 		var done = assert.async();
-		var oModel = initModel(sURI, true);
-		var oBinding = oModel.bindList("/LeaveItemCollection");
+		var oBinding = this.oModel.bindList("/LeaveItemCollection");
 
 		var handler = function () {
 			assert.equal(oBinding.getPath(), "/LeaveItemCollection", "ListBinding path");
-			assert.ok(oBinding.getModel() == oModel, "ListBinding model");
+			assert.ok(oBinding.getModel() == this.oModel, "ListBinding model");
 			assert.equal(oBinding.getLength(), 7, "length of items");
-			jQuery(oBinding.getContexts()).each(function (i, context) {
+			oBinding.getContexts().forEach(function (context, i) {
 				assert.equal(context.getObject().itemid, (i + 1) + "", "ListBinding context");
 			});
 			oBinding.detachChange(handler);
 			done(); // resume normal testing
-		};
+		}.bind(this);
 		oBinding.attachChange(handler);
+		oBinding.initialize();
 		oBinding.getContexts();
 	});
+
+
+	QUnit.module("");
 
 	QUnit.test("test stable Ids in GenerateMissingMockData", function (assert) {
 		var sMetadataUrl = "test-resources/sap/ui/core/qunit/mockserver/testdata/northwind/metadata.xml";
@@ -4504,7 +5062,9 @@ sap.ui.define([
 
 		var done = assert.async();
 		var oMockServer = new MockServer({
-			rootUri: "/myservice/"
+			// Note: to avoid conflicts with metadata already stored in the ODataModel's memory cache (mSharedData),
+			// this service uses a new fake URL which is unique within this test page
+			rootUri: "/mycustomerservice/"
 		});
 		var sMetadata = '<?xml version="1.0" encoding="utf-8"?>'
 			+ '<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">'
@@ -4533,10 +5093,10 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oModel = new v2ODataModel("/myservice", true);
+		var oModel = new ODataModelV2("/mycustomerservice");
 
 		oModel.getMetaModel().loaded().then(function () {
-			oModel.createEntry("CustomerSet", { properties: { ID: "0001", Name: "Gustav" } });
+			oModel.createEntry("/CustomerSet", { properties: { ID: "0001", Name: "Gustav" } });
 			assert.ok(oModel.hasPendingChanges(), "Pending changes have been created but not yet submitted");
 			oModel.submitChanges({
 				groupId: "changes",
@@ -4583,7 +5143,7 @@ sap.ui.define([
 		oMockServer.setRequests(aRequests);
 		oMockServer.start();
 
-		var oModel = new v2ODataModel(sUri, true);
+		var oModel = new ODataModelV2(sUri);
 		oModel.setDeferredBatchGroups(["myId"]);
 
 		oModel.update("/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')", {
@@ -4610,8 +5170,9 @@ sap.ui.define([
 		}).length;
 	}
 
-	function initModel(sURI, bJSON) {
-		var oModel = new ODataModel(sURI, bJSON);
+	async function initModelV2(sURI) {
+		var oModel = new ODataModelV2(sURI);
+		await oModel.metadataLoaded();
 		return oModel;
 	}
 
