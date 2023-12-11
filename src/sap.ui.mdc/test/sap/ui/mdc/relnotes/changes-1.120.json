@@ -110,5 +110,43 @@
         ]
       }
     ]
+  },
+  "1.120.2": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "f1f51be32ab671fda2117ff8721c35a26f8a6714",
+        "type": "FIX",
+        "text": " mTable: consider useFirstMatch on filtering existing items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500010450352023"
+          }
+        ]
+      },
+      {
+        "id": "fb431c411c462622d1c08dab16cf5aea2e4c1f3e",
+        "type": "FIX",
+        "text": " ValueHelp: first item shown as selected too when other item is selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127159"
+          }
+        ]
+      },
+      {
+        "id": "3fd2c8c98551a4c02a22ae1fd85da8a75cfaa823",
+        "type": "FIX",
+        "text": " Field: Currency/unit value do not overwrite initial parts with null",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380087372"
+          }
+        ]
+      }
+    ]
   }
 }

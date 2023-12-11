@@ -454,5 +454,106 @@
         ]
       }
     ]
+  },
+  "1.120.2": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "5c0e023c96730045c5df26ca0f56ea903cfd4123",
+        "type": "FIX",
+        "text": " sap.m.Input: Tabular suggestions are now always highlighted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370106962"
+          }
+        ]
+      },
+      {
+        "id": "85986aeadd63c59d53f390379fb1bd7cce5f496b",
+        "type": "FIX",
+        "text": " sap.m.Input: Reopen Suggestion Popover when new data is bound",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370107738"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400010475512023"
+          }
+        ]
+      },
+      {
+        "id": "b8a408159c510d76e368808b2828ca023b74c61d",
+        "type": "FIX",
+        "text": " m.SelectionController: fix for index of the move determination",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370150660"
+          }
+        ]
+      },
+      {
+        "id": "601723109a1a8ef9626c8d78ca9131b2e023b324",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: preserve H1, H2, H3, H4, H5 and H6 tags default 'display' CSS property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400010494822023"
+          }
+        ]
+      },
+      {
+        "id": "4414e7dad0a28b90b5243f1c1aef6fd68ca45642",
+        "type": "FIX",
+        "text": " Deprecate InputODataSuggestProvider in sap/m/library.js",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "e5f6d5a085d3a2e6c8aa44d0214a6241fa1c6632",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: add check if date is parsed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370139419"
+          }
+        ]
+      },
+      {
+        "id": "8d8c56c4944c6e333f60eac2421f04825502a9f0",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: adjust select all checkbox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370145377"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380124243"
+          }
+        ]
+      },
+      {
+        "id": "a611809ed43911972eefa558c888d7558ab5ced8",
+        "type": "FIX",
+        "text": " m.Table: Enter should fire selectionChange in SingleSelectMaster",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370133922"
+          }
+        ]
+      }
+    ]
   }
 }

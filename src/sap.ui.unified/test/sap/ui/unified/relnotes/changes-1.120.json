@@ -52,5 +52,36 @@
         ]
       }
     ]
+  },
+  "1.120.2": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "6843f1355d273754ea9921d7cd7e3395fa2c3ccd",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust week days announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011630"
+          },
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "f02d7b4cbbcc17136e60896ed63c1efd6d862de9",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: prevent unexpected error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370136956"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -88,5 +88,65 @@
         ]
       }
     ]
+  },
+  "1.120.2": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "2028ff68ae64a447f933a5851635d2b34716da0c",
+        "type": "FIX",
+        "text": " sap.m.ValueStateMessage: Warning icon name corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370137226"
+          }
+        ]
+      },
+      {
+        "id": "fafa539ecc34409df20dea83ff381a814d499787",
+        "type": "FIX",
+        "text": " sap.m.MenuButton:  added transparent background",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370147705"
+          }
+        ]
+      },
+      {
+        "id": "4d297fad22d016c46063319105799df4f4826cd0",
+        "type": "FIX",
+        "text": " CheckBox in Form: misaligned in horizon theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370151404"
+          }
+        ]
+      },
+      {
+        "id": "aa05adf3e3e909ed15410ff6390865f2653cc58c",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Button enhanced for all Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370142800"
+          }
+        ]
+      },
+      {
+        "id": "dafd96671f4e858eab8c940ec9f3e5cf19444e36",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Padding when there is no menu button fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370142845"
+          }
+        ]
+      }
+    ]
   }
 }

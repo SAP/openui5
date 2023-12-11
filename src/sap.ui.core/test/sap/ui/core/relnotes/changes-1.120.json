@@ -438,5 +438,230 @@
         ]
       }
     ]
+  },
+  "1.120.2": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "fa524006c44e83ff1f045be04a397c2382ebc896",
+        "type": "FIX",
+        "text": " Add 'FUTURE FATAL' Marker for error/warning logs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "b910288d2ef9b5a568ef6e02dd4f18c3d0c5ec3b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._CollectionCache#read: avoid endless busy indicator sometimes when scrolling up",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "c776473e21141e6449663689f0ea7744a406bd8c",
+        "type": "FIX",
+        "text": " CLDR: allow user input based on historical variants for month abbreviations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380137559"
+          }
+        ]
+      },
+      {
+        "id": "e1d0c83dc46fb8a43896d52dcd1374f0e1a5bdb9",
+        "type": "FIX",
+        "text": " core.Lib: Add debug log statement when registering enums",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "4f27ed11de744b0af2ab5c975441b04781573db9",
+        "type": "FIX",
+        "text": " Introduce sap/ui/core/ElementRegistry/ComponentRegistry/UIAreaRegistry",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "d5c21234e93bf8c49b160260924231a5c74936d4",
+        "type": "FIX",
+        "text": " core/qunit: Deprecate ControlRenderer test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "66cbd78ca43eec4347f71d2f2f7f4d838ab00d73",
+        "type": "FIX",
+        "text": " core/routing: find parent route from the router of the inheritance parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009859762023"
+          }
+        ]
+      },
+      {
+        "id": "8dc6069a1c360553ea78afc2590af8af3378e6c2",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: Reintroduce FUTURE-FATAL log for missing control classes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "7255d2ac1d4dbbf0211050fbc9033b986da90509",
+        "type": "FIX",
+        "text": " sap.ui.model.FilterProcessor.combineFilters: combine Filter.NONE with other filters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380132519"
+          }
+        ]
+      },
+      {
+        "id": "a93abb73f5b5a62a99073d2e40c42c43b72d4962",
+        "type": "FIX",
+        "text": " core/XMLTemplateProcessor: load class of nested view before instance creation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "a11ff7effe5c7953fb6129dd3cc66078d527a76e",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMessageParser#_createTarget: normalize also the full target",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370146338"
+          }
+        ]
+      },
+      {
+        "id": "1d01293c83c42f2ae2b9f4d837c8b872dff638d7",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.odata4analytics.FilterExpression#renderUI5FilterArray: fix sorting of filters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009851762023"
+          }
+        ]
+      },
+      {
+        "id": "59c08dae771b6a19f2961cebca8ba9d639475847",
+        "type": "FIX",
+        "text": " sap.ui.core.message.Message fix references to MessageType",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "86d9b992f1c93649c0e53b414114169061f19886",
+        "type": "FIX",
+        "text": " Deprecate sap.ui.core.Message/MessageType",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "59f0716e512e0a355df4a9305399cbab553a318f",
+        "type": "FIX",
+        "text": " Deprecate public registry of Component, Element and UIArea",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "3daff460c7f10d5aad3d077522ce58e8714062d3",
+        "type": "FIX",
+        "text": " Views: Cloning a View is deprecated in favor of the specific factory functions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "0c6f59fa5db2a9b981f049bd3b029b9d8f98c00f",
+        "type": "FIX",
+        "text": " Ensure correct 'resource-root' and 'theme-root' configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700065110512023"
+          }
+        ]
+      },
+      {
+        "id": "864aa716ad7cf92e208349b578f3a6ee65c3fd3d",
+        "type": "FIX",
+        "text": " sap.ui.test.action.EnterText: Revert restriction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370143073"
+          }
+        ]
+      },
+      {
+        "id": "0deed48088af2e884eb6bb2ab502298b76694890",
+        "type": "FIX",
+        "text": " Lib/ui5loader: Provide deprecation message for pseudo-modules",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370138723"
+          }
+        ]
+      },
+      {
+        "id": "3c7eea4b30f97ce1e1e1370926c5b64d18a32400",
+        "type": "FIX",
+        "text": " core/Shortcut: trigger \"blur\" within a timeout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007245922023"
+          }
+        ]
+      }
+    ]
   }
 }

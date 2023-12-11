@@ -101,5 +101,32 @@
         ]
       }
     ]
+  },
+  "1.120.2": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "651c780548893c4aeb2934d68baad67cf815fab8",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Fix failing OPA tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370146831"
+          }
+        ]
+      },
+      {
+        "id": "3c7eea4b30f97ce1e1e1370926c5b64d18a32400",
+        "type": "FIX",
+        "text": " core/Shortcut: trigger \"blur\" within a timeout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007245922023"
+          }
+        ]
+      }
+    ]
   }
 }

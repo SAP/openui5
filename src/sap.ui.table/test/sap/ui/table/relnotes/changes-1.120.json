@@ -39,5 +39,21 @@
         ]
       }
     ]
+  },
+  "1.120.2": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "05e44176edbbb9fc9dc747ce56e0ee4ea08e3c40",
+        "type": "FIX",
+        "text": " Column: Sort order if \"sorted\" and \"sortOrder\" are bound",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380140778"
+          }
+        ]
+      }
+    ]
   }
 }

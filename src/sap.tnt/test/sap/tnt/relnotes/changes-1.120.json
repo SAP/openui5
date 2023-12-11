@@ -19,5 +19,32 @@
         ]
       }
     ]
+  },
+  "1.120.2": {
+    "date": "December 2023",
+    "notes": [
+      {
+        "id": "90aa764cf5546dcc60996b4df795951ca8025ec9",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: Context menu now successfully opens on items with 'href' set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380136720"
+          }
+        ]
+      },
+      {
+        "id": "dafd96671f4e858eab8c940ec9f3e5cf19444e36",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Padding when there is no menu button fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370142845"
+          }
+        ]
+      }
+    ]
   }
 }
