@@ -18,10 +18,6 @@
 				Currently available in List card and card footer.
 			</p>
 
-			<div class="messageStripWarning">
-				Experimental feature. The API may change.
-			</div>
-
 			<h2 id="usage">Usage</h2>
 			<p>
 				Actions strip items can be static or dynamic based on the data.
@@ -66,14 +62,19 @@
 						<td><a href="#actionsStripItemBindingInfoProperties">ActionsStripItemBindingInfo</a></td>
 						<td></td>
 						<td>Yes</td>
-						<td>Binding info object used to bind data to items.</td>
+						<td>
+							Binding info object used to bind data to items.
+							<br>
+							<b>Note:</b> This property is experimental and may change!</td>
+						</td>
 						<td>1.61.0</td>
 						<td>1.121</td>
 					</tr>
 				</table>
 			</div>
 
-			<div id="actionsStripItemBindingInfoProperties" class="boldBlock">ActionsStripItemBindingInfo Properties</div>
+			<div id="actionsStripItemBindingInfoProperties" class="boldBlock">ActionsStripItemBindingInfo Properties (Experimental)</div>
+
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -226,7 +227,7 @@
 				</table>
 			</div>
 
-			<h2 id="parentModel">Parent Model</h2>
+			<h2 id="parentModel">Parent Model (Experimental)</h2>
 			<p>
 				When actions strip items are created via item template, you can bind them to the parent context using the model called "parent", like:
 				<code>"{parent>/parentProperty}"</code>
