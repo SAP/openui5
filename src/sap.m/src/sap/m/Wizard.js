@@ -278,6 +278,8 @@ sap.ui.define([
 			this.getSteps().forEach(function(oStep){
 				oStep.setProperty("_titleLevel", sStepTitleLevel);
 			});
+
+			this._getProgressNavigator()._setStepIds(this.getSteps());
 		};
 
 		Wizard.prototype.onAfterRendering = function () {

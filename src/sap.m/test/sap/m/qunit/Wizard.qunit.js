@@ -1350,4 +1350,100 @@ sap.ui.define([
 		oBtn.destroy();
 		oWizard.destroy();
 	});
+
+	QUnit.module("Progress Navigator", {
+		sWizardId: "wizard-nav-id",
+		beforeEach: function () {
+			this.oWizardStep0 = new WizardStep({
+				id: "Step1",
+				title: "Step 1"
+			});
+			this.oWizard = new Wizard(this.sWizardId, {
+				steps: [
+					this.oWizardStep0,
+					new WizardStep({
+						id: "Step2",
+						validated: true,
+						title: "Step 2"
+					}),
+					new WizardStep({
+						title: "Step 3"
+					})
+				]
+			});
+
+			this.oWizard.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			this.oResourceBundle = Library.getResourceBundleFor("sap.m");
+		},
+		afterEach: function () {
+			this.oWizard.destroy();
+			this.oWizard = null;
+			this.oResourceBundle = null;
+		}
+	});
+
+	QUnit.test("Progress navigator steps have properly formated ids", function(assert){
+		const oProgressNavigator = this.oWizard._getProgressNavigator();
+		const $aNavigatorSteps = oProgressNavigator.$().find("li");
+		const aWizardSteps = this.oWizard.getSteps();
+
+		assert.ok(jQuery($aNavigatorSteps[0]).attr("id").endsWith(aWizardSteps[0].getId()), "First navigator step id corresponds to the first wizard step id");
+		assert.ok(jQuery($aNavigatorSteps[1]).attr("id").endsWith(aWizardSteps[1].getId()), "Second navigator step id corresponds to the second wizard step id");
+		assert.ok(jQuery($aNavigatorSteps[2]).attr("id").endsWith(aWizardSteps[2].getId()), "Third navigator step id corresponds to the third wizard step id");
+
+		const sFirstId = oProgressNavigator.getId() + "-step-" + aWizardSteps[0].getId();
+		assert.strictEqual(jQuery($aNavigatorSteps[0]).attr("id"), sFirstId, "First navigator step id is as expected");
+
+		const sSecondId = oProgressNavigator.getId() + "-step-" + aWizardSteps[1].getId();
+		assert.strictEqual(jQuery($aNavigatorSteps[1]).attr("id"), sSecondId, "Second navigator step id is as expected");
+
+		const sThirdId = oProgressNavigator.getId() + "-step-" + aWizardSteps[2].getId();
+		assert.strictEqual(jQuery($aNavigatorSteps[2]).attr("id"), sThirdId, "Third navigator step id is as expected");
+	});
+
+	QUnit.test("New added wizard step without predefined id generates proper id for the progress navigator li item", function(assert){
+		assert.strictEqual(this.oWizard.getSteps().length, 3, "Wizard has 3 steps");
+
+		this.oWizard.addStep(new WizardStep());
+		Core.applyChanges();
+
+		assert.strictEqual(this.oWizard.getSteps().length, 4, "Wizard has 4 steps");
+		const oProgressNavigator = this.oWizard._getProgressNavigator();
+		const $aNavigatorSteps = oProgressNavigator.$().find("li");
+
+		const oLastWizardStep = this.oWizard.getSteps()[3];
+		const sLastStepId = oProgressNavigator.getId() + "-step-" + oLastWizardStep.getId();
+
+		assert.strictEqual(jQuery($aNavigatorSteps[3]).attr("id"), sLastStepId, "Newly added wizard step results in element in the navigator with proper id");
+	});
+
+	QUnit.test("New added wizard step with predefined id generates proper id for the progress navigator li item", function(assert){
+		assert.strictEqual(this.oWizard.getSteps().length, 3, "Wizard has 3 steps");
+
+		this.oWizard.addStep(new WizardStep("test"));
+		Core.applyChanges();
+
+		assert.strictEqual(this.oWizard.getSteps().length, 4, "Wizard has 4 steps");
+		const oProgressNavigator = this.oWizard._getProgressNavigator();
+		const $aNavigatorSteps = oProgressNavigator.$().find("li");
+
+		const sLastStepId = oProgressNavigator.getId() + "-step-test";
+
+		assert.strictEqual(jQuery($aNavigatorSteps[3]).attr("id"), sLastStepId, "Newly added wizard step results in element in the navigator with proper id");
+	});
+
+	QUnit.test("Removing wizard step does not break progress navigator IDs", function(assert){
+		this.stub(DesignTime, "isDesignModeEnabled").returns(true);
+
+		this.oWizard.removeStep(this.oWizardStep0);
+		Core.applyChanges();
+
+		const oProgressNavigator = this.oWizard._getProgressNavigator();
+		const $aNavigatorSteps = oProgressNavigator.$().find("li");
+		const sFirstStepId = oProgressNavigator.getId() + "-step-Step2";
+
+		assert.strictEqual(jQuery($aNavigatorSteps[0]).attr("id"), sFirstStepId, "First step in the navigator has proper id");
+	});
 });
