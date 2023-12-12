@@ -255,15 +255,29 @@ sap.ui.define([], function() {
 	 * @ui5-restricted sap.ui.core.format.DateFormat
 	 */
 	TimezoneUtil.calculateOffset = function(oDate, sTimezoneSource) {
-		var oFirstGuess = this.convertToTimezone(oDate, sTimezoneSource),
-			iInitialOffset = oDate.getTime() - oFirstGuess.getTime(),
-			// to get the correct summer/wintertime (daylight saving time) handling use the source
-			// date (apply the diff);
+		var oSecondGuess, oSecondGuessInTimezone, iSecondGuessInTimezoneTimestamp,
+			oDateInTimezone = TimezoneUtil.convertToTimezone(oDate, sTimezoneSource),
+			iGivenTimestamp = oDate.getTime(),
+			iInitialOffset = iGivenTimestamp - oDateInTimezone.getTime(),
 			// no need to use UI5Date.getInstance as only the UTC timestamp is used
-			oDateSource = new Date(oDate.getTime() + iInitialOffset),
-			oDateTarget = this.convertToTimezone(oDateSource, sTimezoneSource);
+			oFirstGuess = new Date(iGivenTimestamp + iInitialOffset),
+			oFirstGuessInTimezone = TimezoneUtil.convertToTimezone(oFirstGuess, sTimezoneSource),
+			iFirstGuessInTimezoneTimestamp = oFirstGuessInTimezone.getTime(),
+			iSecondOffset = oFirstGuess.getTime() - iFirstGuessInTimezoneTimestamp,
+			iTimezoneOffset = iSecondOffset;
 
-		return (oDateSource.getTime() - oDateTarget.getTime()) / 1000;
+		if (iInitialOffset !== iSecondOffset) {
+			oSecondGuess = new Date(iGivenTimestamp + iSecondOffset);
+			oSecondGuessInTimezone = TimezoneUtil.convertToTimezone(oSecondGuess, sTimezoneSource);
+			iSecondGuessInTimezoneTimestamp = oSecondGuessInTimezone.getTime();
+			// if time is different, the given date/time does not exist in the target time zone (switch to Daylight
+			// Saving Time) -> take the offset for the greater date
+			if (iSecondGuessInTimezoneTimestamp !== iGivenTimestamp
+					&& iFirstGuessInTimezoneTimestamp > iSecondGuessInTimezoneTimestamp) {
+				iTimezoneOffset = iInitialOffset;
+			}
+		}
+		return iTimezoneOffset / 1000;
 	};
 
 	/**
