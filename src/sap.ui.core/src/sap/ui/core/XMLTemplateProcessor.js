@@ -832,8 +832,12 @@ function(
 				}
 				return new Promise(function(resolve, reject) {
 					sap.ui.require([sResourceName], function(oClassObject) {
-						oClassObject = validateClass(oClassObject);
-						resolve(oClassObject);
+						try {
+							oClassObject = validateClass(oClassObject);
+							resolve(oClassObject);
+						} catch (e) {
+							reject(e);
+						}
 					}, reject);
 				});
 			}
