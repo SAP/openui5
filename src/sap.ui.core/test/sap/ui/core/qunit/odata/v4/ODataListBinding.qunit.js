@@ -11179,6 +11179,8 @@ child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 		this.oModel.bAutoExpandSelect = true;
 		this.mock(oContext).expects("getPath")
 			.withExactArgs().returns("/SalesOrderList($uid=1)");
+		this.mock(ODataListBinding).expects("isBelowAggregation")
+			.withExactArgs(sinon.match.same(oContext)).returns(false);
 		oExpectation = this.mock(oContext).expects("withCache")
 			.withExactArgs(sinon.match.func, "SO_2_SOITEM");
 
@@ -11227,6 +11229,24 @@ child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 			};
 
 		this.mock(oContext).expects("getPath").withExactArgs().returns("/SalesOrderList($uid=1)");
+
+		// code under test
+		assert.strictEqual(oBinding.prepareDeepCreate(oContext, "~mQueryOptions~"), true);
+
+		assert.strictEqual(oBinding.mCacheQueryOptions, "~mQueryOptions~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("prepareDeepCreate: below aggregation", function (assert) {
+		var oBinding = this.bindList("SO_2_SOITEM"),
+			oContext = {
+				getPath : mustBeMocked
+			};
+
+		this.oModel.bAutoExpandSelect = true;
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/SalesOrderList($uid=1)");
+		this.mock(ODataListBinding).expects("isBelowAggregation")
+			.withExactArgs(sinon.match.same(oContext)).returns(true);
 
 		// code under test
 		assert.strictEqual(oBinding.prepareDeepCreate(oContext, "~mQueryOptions~"), true);
@@ -11398,7 +11418,8 @@ child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 
 	//*********************************************************************************************
 	QUnit.test("checkDeepCreate", function (assert) {
-		var oBinding = this.bindList("SO_2_SOITEM");
+		var oBinding = this.bindList("SO_2_SOITEM"),
+			oListBindingMock = this.mock(ODataListBinding);
 
 		assert.throws(function () {
 			// code under test
@@ -11407,11 +11428,23 @@ child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 
 		this.oModel.bAutoExpandSelect = true;
 		oBinding.oContext = {isTransient : function () { return true; }};
+		oListBindingMock.expects("isBelowAggregation")
+			.withExactArgs(sinon.match.same(oBinding.oContext)).returns(false);
 
 		// code under test
 		oBinding.checkDeepCreate();
 
+		oListBindingMock.expects("isBelowAggregation")
+			.withExactArgs(sinon.match.same(oBinding.oContext)).returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.checkDeepCreate();
+		}, new Error("Deep create is not supported with data aggregation"));
+
 		oBinding.oContext = {isTransient : function () { return false; }};
+		oListBindingMock.expects("isBelowAggregation")
+			.withExactArgs(sinon.match.same(oBinding.oContext)).returns(false);
 
 		assert.throws(function () {
 			// code under test
@@ -11420,6 +11453,8 @@ child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 
 		oBinding = this.bindList("SO_2_SOITEM/SOITEM_2_SCHDL");
 		oBinding.oContext = {isTransient : function () { return true; }};
+		oListBindingMock.expects("isBelowAggregation")
+			.withExactArgs(sinon.match.same(oBinding.oContext)).returns(false);
 
 		assert.throws(function () {
 			// code under test
@@ -11520,6 +11555,28 @@ child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 
 		// code under test
 		oBinding.onKeepAliveChanged(oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isBelowAggregation", function (assert) {
+		assert.strictEqual(ODataListBinding.isBelowAggregation(), false);
+
+		assert.strictEqual(ODataListBinding.isBelowAggregation({/*base context*/}), false);
+
+		let oContext = {getBinding : mustBeMocked};
+		const oContextBinding = {};
+		this.mock(oContext).expects("getBinding").withExactArgs().returns(oContextBinding);
+		assert.strictEqual(ODataListBinding.isBelowAggregation(oContext), false);
+
+		oContext = {getBinding : mustBeMocked};
+		const oListBinding = {getAggregation : mustBeMocked};
+		const oListBindingMock = this.mock(oListBinding);
+		this.mock(oContext).expects("getBinding").twice().withExactArgs().returns(oListBinding);
+		oListBindingMock.expects("getAggregation").withExactArgs().returns(undefined);
+		assert.strictEqual(ODataListBinding.isBelowAggregation(oContext), false);
+
+		oListBindingMock.expects("getAggregation").withExactArgs().returns({});
+		assert.strictEqual(ODataListBinding.isBelowAggregation(oContext), true);
 	});
 });
 
