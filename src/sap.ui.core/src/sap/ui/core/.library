@@ -217,10 +217,11 @@
             <pattern>sap/ui/thirdparty/qunit-composite.css</pattern>
             <pattern>sap/ui/thirdparty/qunit-composite.js</pattern>
         </lib>
-        <lib name="qunit-reporter-junit" displayName="JUnit Reporter for QUnit" npmName="qunit-reporter-junit" version="1.1.1" hash="494d573d58adc6a5fbfc539210bd9656" homepage="https://github.com/JamesMGreene/qunit-reporter-junit" id="73554900106100005540">
+        <lib name="qunit-reporter-junit" displayName="JUnit Reporter for QUnit" npmName="qunit-reporter-junit" version="1.1.1" hash="a29d35686ac71f47aef08ad4422a87ff" homepage="https://github.com/JamesMGreene/qunit-reporter-junit" id="73554900106100005540">
             <license url="https://raw.githubusercontent.com/JamesMGreene/qunit-reporter-junit/master/LICENSE.txt" type="MIT" />
             <copyright>jQuery Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/qunit-reporter-junit.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="qunit-junit.js is overall written by SAP, but contains a modified copy of JUnit Reporter for QUnit (qunit-reporter-junit)">sap/ui/qunit/qunit-junit.js</pattern>
         </lib>
         <lib name="iscroll" displayName="cubiq.org - iScroll" npmName="n/a" version="4.2.5" hash="d65adf04b7325742c53082ee3e87d034" homepage="https://github.com/cubiq/iscroll" id="73554900106100001862">
             <license url="https://github.com/cubiq/iscroll/blob/master/LICENSE" type="MIT" />
