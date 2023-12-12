@@ -8592,7 +8592,7 @@ sap.ui.define([
 			this.mock(oCountChangeListener).expects("onChange");
 			this.mock(oCache).expects("visitResponse")
 				.withExactArgs(sinon.match.same(oPostResult), sinon.match.same(mTypeForMetaPath),
-					"/TEAMS/TEAM_2_EMPLOYEES", sPathInCache + sTransientPredicate);
+					"/TEAMS/TEAM_2_EMPLOYEES", sPathInCache + sTransientPredicate, undefined, true);
 			// simulate a lack of key predicate => the transient predicate is kept
 			oHelperMock.expects("getPrivateAnnotation")
 				.withExactArgs(sinon.match.same(oPostResult), "predicate")
@@ -9115,7 +9115,7 @@ sap.ui.define([
 			.returns({});
 		oCacheMock.expects("visitResponse")
 			.withExactArgs(sinon.match.same(oPostResult), sinon.match.same(mTypeForMetaPath),
-				"/Employees", sTransientPredicate);
+				"/Employees", sTransientPredicate, undefined, true);
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
 				sinon.match.same(oCache.aElements[0]), sinon.match.same(oPostResult), undefined,
