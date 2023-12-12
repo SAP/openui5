@@ -4,10 +4,10 @@ sap.ui.define([
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/table/DragDropConfig",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"./QUnitUtils"
-], function(Text, MDCTable, MDCColumn, DragDropConfig, JSONModel, Core, jQuery, MDCTableQUnitUtils) {
+], function(Text, MDCTable, MDCColumn, DragDropConfig, JSONModel, nextUIUpdate, jQuery, MDCTableQUnitUtils) {
 
 	"use strict";
 	/*global QUnit,sinon */
@@ -22,7 +22,7 @@ sap.ui.define([
 
 	const oJSONModel = new JSONModel(aData);
 
-	function createMDCTable(mSettings) {
+	async function createMDCTable(mSettings) {
 		mSettings = Object.assign({
 			type: "ResponsiveTable",
 			delegate: {
@@ -44,16 +44,16 @@ sap.ui.define([
 
 		const oTable = new MDCTable(mSettings);
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		return oTable;
 	}
 
 	QUnit.module("Basics", {
-		beforeEach: function() {
-			this.oTable = createMDCTable();
+		beforeEach: async function() {
+			this.oTable = await createMDCTable();
 			this.oDragDropConfig = new DragDropConfig();
 			this.oTable.addDragDropConfig(this.oDragDropConfig);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oTable.destroy(true);
@@ -63,11 +63,11 @@ sap.ui.define([
 	QUnit.test("Properties", function(assert) {
 		return this.oTable._fullyInitialized().then(() => {
 			return MDCTableQUnitUtils.waitForBinding(this.oTable);
-		}).then(() => {
+		}).then(async () => {
 			const oInnerTable = this.oTable._oTable;
 
 			this.oDragDropConfig.setDraggable(true);
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.ok(this.oDragDropConfig.getDraggable(), "Table is draggable");
 			assert.ok(this.oDragDropConfig._oDragInfo, "DragInfo object is created");
 			assert.ok(oInnerTable.indexOfDragDropConfig(this.oDragDropConfig._oDragInfo) > -1, "DragInfo object added to the inner Table");
@@ -102,19 +102,19 @@ sap.ui.define([
 			assert.equal(this.oDragDropConfig.getEnabled(), this.oDragDropConfig._oDropInfo.getEnabled(), "DropInfo is disabled");
 
 			this.oDragDropConfig.setEnabled(true);
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.ok(this.oDragDropConfig.getEnabled(), "DragDropConfig is enabled again");
 			assert.equal(this.oDragDropConfig.getEnabled(), this.oDragDropConfig._oDragInfo.getEnabled(), "DragInfo is enabled again");
 			assert.equal(this.oDragDropConfig.getEnabled(), this.oDragDropConfig._oDragInfo.getEnabled(), "DragInfo is enabled again");
 
 			this.oTable.removeDragDropConfig(this.oDragDropConfig);
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.notOk(this.oDragDropConfig._oDragInfo, "DragInfo object is removed");
 			assert.notOk(this.oDragDropConfig._oDropInfo, "DropInfo object is removed");
 			assert.notOk(oInnerTable.getItems()[0].getDomRef().draggable, "Table row is not draggable");
 
 			this.oTable.addDragDropConfig(this.oDragDropConfig);
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.ok(this.oDragDropConfig._oDragInfo, "DragInfo object is created again");
 			assert.ok(this.oDragDropConfig._oDropInfo, "DropInfo object is created again");
 			assert.ok(oInnerTable.getItems()[0].getDomRef().draggable, "Table row is draggable again");
@@ -184,7 +184,7 @@ sap.ui.define([
 
 		return this.oTable._fullyInitialized().then(() => {
 			return MDCTableQUnitUtils.waitForBinding(this.oTable);
-		}).then(() => {
+		}).then(async () => {
 			this.oDragDropConfig.attachDragOver((oEvent) => {
 				assert.equal(oEvent.getParameter("bindingContext"), this.oDroppedRow.getBindingContext(), "dragOver event bindingContext parameter is correct");
 				assert.equal(oEvent.getParameter("dragSource"), this.oDraggedRow.getBindingContext(), "dragOver event dragSource parameter is correct");
@@ -201,7 +201,7 @@ sap.ui.define([
 
 			this.oDragDropConfig.setDraggable(true);
 			this.oDragDropConfig.setDroppable(true);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			testEvents(this.oTable._oTable.getItems());
 

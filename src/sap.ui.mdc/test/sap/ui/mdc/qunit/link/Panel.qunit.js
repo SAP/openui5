@@ -4,10 +4,9 @@ sap.ui.define([
 	"sap/ui/layout/library",
 	"sap/ui/mdc/link/Panel",
 	"sap/ui/mdc/link/PanelItem",
-	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/core/Icon",
 	"sap/m/p13n/Engine",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Text",
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/link/LinkItem",
@@ -16,11 +15,8 @@ sap.ui.define([
 	"sap/ui/base/Event",
 	"sap/m/Link",
 	"sap/ui/core/Lib"
-], function(layoutLibrary, Panel, PanelItem, SimpleForm, Icon, Engine, oCore, Text, Link, LinkItem, JSONModel, jQuery, Event, MLink, Library) {
+], function(layoutLibrary, Panel, PanelItem, Icon, Engine, nextUIUpdate, Text, Link, LinkItem, JSONModel, jQuery, Event, MLink, Library) {
 	"use strict";
-
-	// shortcut for sap.ui.layout.form.SimpleFormLayout
-	const SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	QUnit.module("sap.ui.mdc.link.Panel: API", {
 		beforeEach: function() {
@@ -74,24 +70,24 @@ sap.ui.define([
 				iCount++;
 			}
 		});
-		assert.equal(iCount, iCountVisibleIcons);
+		assert.equal(iCount, iCountVisibleIcons, `Has ${iCountVisibleIcons} visible Icon${iCountVisibleIcons === 1 ? "" : "s"}`);
 	}
 	function fnHasVisibleMoreLinksButton(assert, oPanel, bVisible) {
-		assert.equal(oPanel.$().find("button:visible").length, bVisible ? 1 : 0);
+		assert.equal(oPanel.$().find("button:visible").length, bVisible ? 1 : 0, `Has ${!bVisible ? "in" : ""}visible "More Links" button.`);
 		// fnHasVisibleText(assert, oPanel, Library.getResourceBundleFor("sap.ui.mdc").getText("info.POPOVER_DEFINE_LINKS"), bVisible);
 	}
-	QUnit.test("no 'item'", function(assert) {
+	QUnit.test("no 'item'", async function(assert) {
 		this.oPanel = new Panel({
 			items: []
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 
 	});
-	QUnit.test("invalid 'item'", function(assert) {
+	QUnit.test("invalid 'item'", async function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -101,12 +97,12 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		fnHasVisibleText(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
-	QUnit.test("valid 'item'", function(assert) {
+	QUnit.test("valid 'item'", async function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -117,12 +113,12 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		fnHasVisibleLink(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
-	QUnit.test("valid main 'item'", function(assert) {
+	QUnit.test("valid main 'item'", async function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -133,12 +129,12 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		fnHasVisibleLink(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
-	QUnit.test("invalid main 'item'", function(assert) {
+	QUnit.test("invalid main 'item'", async function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -148,27 +144,22 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		fnHasVisibleText(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
-	QUnit.test("'additionalContent'", function(assert) {
+	QUnit.test("'additionalContent'", async function(assert) {
 		this.oPanel = new Panel({
-			additionalContent: new SimpleForm({
-				layout: SimpleFormLayout.ResponsiveGridLayout,
-				content: [
-					new Icon({
-						src: "sap-icon://person-placeholder"
-					})
-				]
+			additionalContent: new Icon({
+				src: "sap-icon://person-placeholder"
 			})
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
-		fnHasVisibleIcons(assert, this.oPanel, 0);
+		fnHasVisibleIcons(assert, this.oPanel, 1);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true); // nothing to be persisted
 	});
 
@@ -180,41 +171,41 @@ sap.ui.define([
 			this.oPanel.destroy();
 		}
 	});
-	QUnit.test("invalid visible 'item'", function(assert) {
+	QUnit.test("invalid visible 'item'", async function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
 					text: "A",
 					visible: true
-				// invalid item
+					// invalid item
 				})
 			]
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		fnHasVisibleText(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
-	QUnit.test("invalid invisible 'item'", function(assert) {
+	QUnit.test("invalid invisible 'item'", async function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
 					text: "A",
 					visible: false
-				// invalid item
+					// invalid item
 				})
 			]
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		fnHasVisibleText(assert, this.oPanel, "A", false, "Panel is not responsible for the visibility of items, it takes them as they are");
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
-	QUnit.test("valid visible 'item'", function(assert) {
+	QUnit.test("valid visible 'item'", async function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -226,12 +217,12 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		fnHasVisibleLink(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
-	QUnit.test("valid invisible 'item'", function(assert) {
+	QUnit.test("valid invisible 'item'", async function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -243,7 +234,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		fnHasVisibleText(assert, this.oPanel, "A", false);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
@@ -257,7 +248,7 @@ sap.ui.define([
 			this.oPanel.destroy();
 		}
 	});
-	QUnit.test("all items have not icon", function(assert) {
+	QUnit.test("all items have not icon", async function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -271,11 +262,11 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		fnHasVisibleIcons(assert, this.oPanel, 0);
 	});
-	QUnit.test("all items have icon", function(assert) {
+	QUnit.test("all items have icon", async function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -291,11 +282,11 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		fnHasVisibleIcons(assert, this.oPanel, 2);
 	});
-	QUnit.test("an item have not icon", function(assert) {
+	QUnit.test("an item have not icon", async function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -310,7 +301,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		fnHasVisibleIcons(assert, this.oPanel, 2);
 	});
@@ -324,7 +315,7 @@ sap.ui.define([
 			this.oPanel.destroy();
 		}
 	});
-	QUnit.test("test 01", function(assert) {
+	QUnit.test("test 01", async function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -343,14 +334,14 @@ sap.ui.define([
 			]
 		});
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert before act
 		assert.equal(this.oPanel.getDependents().length, 0);
 
 		// act
 		const done = assert.async();
-		Library.load({name: 'sap.ui.fl'}).then(function() {
+		Library.load({ name: 'sap.ui.fl' }).then(function() {
 			sap.ui.require([
 				"sap/ui/fl/apply/api/FlexRuntimeInfoAPI"
 			], function(FlexRuntimeInfoAPI) {
@@ -501,9 +492,9 @@ sap.ui.define([
 	};
 
 	[
-		{ctrlKey: true, metaKey: false},
-		{ctrlKey: false, metaKey: true},
-		{ctrlKey: true, metaKey: true}
+		{ ctrlKey: true, metaKey: false },
+		{ ctrlKey: false, metaKey: true },
+		{ ctrlKey: true, metaKey: true }
 	].forEach(function(oEventSettings) {
 		QUnit.test("Prevent navigation when ctrlKey" + (!oEventSettings.ctrlKey ? " not" : "") + " pressed and metaKey " + (!oEventSettings.metaKey ? " not" : "") + " pressed", function(assert) {
 			fnCheckLinkSelectionPanelNavigation.call(this, assert, oEventSettings);
@@ -559,9 +550,9 @@ sap.ui.define([
 	});
 
 	[
-		{ctrlKey: true, metaKey: false},
-		{ctrlKey: false, metaKey: true},
-		{ctrlKey: true, metaKey: true}
+		{ ctrlKey: true, metaKey: false },
+		{ ctrlKey: false, metaKey: true },
+		{ ctrlKey: true, metaKey: true }
 	].forEach(function(oEventSettings) {
 		QUnit.test("ctrlKey" + (!oEventSettings.ctrlKey ? " not" : "") + " pressed and metaKey " + (!oEventSettings.metaKey ? " not" : "") + " pressed", function(assert) {
 			const oPanel = new Panel({
@@ -604,7 +595,7 @@ sap.ui.define([
 	QUnit.test("with additionalContent", function(assert) {
 		const oText = new Text({ text: "Text" });
 		const oPanel = new Panel({
-			additionalContent: [ oText ]
+			additionalContent: [oText]
 		});
 
 		// Check if additionalContent got forwarded
@@ -620,30 +611,30 @@ sap.ui.define([
 		assert.equal(oPanel._getPersonalizationButton().getVisible(), false, "personalization buttons visibility set to false");
 	});
 
-	QUnit.test("check if seperator is visible", function (assert) {
+	QUnit.test("check if seperator is visible", async function(assert) {
 		const oPanelItem = new PanelItem({
 			text: "PanelItem",
 			href: "#PanelItem"
 		});
 		const oText = new Text({ text: "AdditionalContentText" });
 		const oPanel = new Panel({
-			items: [ oPanelItem ],
-			additionalContent: [ oText ]
+			items: [oPanelItem],
+			additionalContent: [oText]
 		});
 
 		oPanel.setModel(new JSONModel({
-			metadata: jQuery.extend(true, [], [ oPanelItem ])
+			metadata: jQuery.extend(true, [], [oPanelItem])
 		}), "$sapuimdcLink");
 
 		oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Check if seperator is visible
 		assert.ok(oPanel._getSeparator().getVisible(), "seperator is visible");
 	});
 
 	QUnit.module("ContentTitle", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oPanel = new Panel({});
 			this.oModel = new JSONModel({
 				metadata: jQuery.extend(true, [], [])
@@ -651,9 +642,9 @@ sap.ui.define([
 			this.oPanel.setModel(this.oModel, "$sapuimdcLink");
 
 			this.oPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oPanel.destroy();
 			this.oPanel = undefined;
 
@@ -678,21 +669,21 @@ sap.ui.define([
 		oPanel.addItem(oPanelItem);
 		oPanel.addItem(oPanelItem2);
 		const oModel = new JSONModel({
-			metadata: jQuery.extend(true, [], [ oPanelItem, oPanelItem2 ])
+			metadata: jQuery.extend(true, [], [oPanelItem, oPanelItem2])
 		});
 		oPanel.setModel(oModel, "$sapuimdcLink");
 	};
 
-	QUnit.test("with Links, without additional content", function(assert) {
+	QUnit.test("with Links, without additional content", async function(assert) {
 		fnAddItemsToPanel(this.oPanel);
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oPanel.getContentTitle().getId(), this.oPanel._getLinkControls()[0].getId(), "ContentTitle set to first link control");
 	});
 
-	QUnit.test("with Links and with additional content", function(assert) {
+	QUnit.test("with Links and with additional content", async function(assert) {
 		fnAddItemsToPanel(this.oPanel);
 
 		const oText = new Text({ text: "AdditionalContentText" });
@@ -701,19 +692,19 @@ sap.ui.define([
 		this.oPanel.addAdditionalContent(oText2);
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oPanel.getContentTitle().getId(), oText.getId(), "ContentTitle set to first additional content control");
 	});
 
-	QUnit.test("without Links, with additional content", function(assert) {
+	QUnit.test("without Links, with additional content", async function(assert) {
 		const oText = new Text({ text: "AdditionalContentText" });
 		const oText2 = new Text({ text: "Another Text" });
 		this.oPanel.addAdditionalContent(oText);
 		this.oPanel.addAdditionalContent(oText2);
 
 		this.oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oPanel.getContentTitle().getId(), oText.getId(), "ContentTitle set to first additional content control");
 	});

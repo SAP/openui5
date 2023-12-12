@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/mdc/Chart",
     "sap/ui/mdc/chart/Item",
 	"sap/ui/core/UIComponent",
@@ -13,7 +13,7 @@ sap.ui.define([
     "sap/ui/mdc/chart/ChartImplementationContainer"
 ],
 function(
-	Core,
+	nextUIUpdate,
 	Chart,
     Item,
 	UIComponent,
@@ -298,7 +298,7 @@ function(
 
 	QUnit.module("sap.ui.mdc.delegate.odata.v4.vizChart.ChartDelegate: State Handling", {
 
-		beforeEach: function() {
+		beforeEach: async function() {
 			const TestComponent = UIComponent.extend("test", {
 				metadata: {
 					manifest: {
@@ -325,7 +325,7 @@ function(
             this.oMDCChart = this.oUiComponent.getRootControl();
 
 			this.oUiComponentContainer.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 		},
 		afterEach: function() {
@@ -379,7 +379,7 @@ function(
 
     QUnit.module("sap.ui.mdc.delegate.odata.v4.vizChart.ChartDelegate: General Functions", {
 
-		beforeEach: function() {
+		beforeEach: async function() {
 			const TestComponent = UIComponent.extend("test", {
 				metadata: {
 					manifest: {
@@ -407,7 +407,7 @@ function(
             this.oMDCChart = this.oUiComponent.getRootControl();
 
 			this.oUiComponentContainer.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
             this.oInnerStructure = new VBox();
             this.oInnerChart = new SapChart();

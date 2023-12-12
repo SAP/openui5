@@ -1,7 +1,7 @@
 /* global QUnit, sinon*/
 sap.ui.define([
-	"sap/ui/core/Core", "sap/ui/mdc/Control", "test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "./TestChangeHandler", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/mdc/AggregationBaseDelegate", "sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
-], function(Core, MDCControl, createAppEnvironment, TestChangeHandler, JsControlTreeModifier, AggregationBaseDelegate, ControlPersonalizationWriteAPI) {
+	"sap/ui/qunit/utils/nextUIUpdate", "sap/ui/mdc/Control", "test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "./TestChangeHandler", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/mdc/AggregationBaseDelegate", "sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
+], function(nextUIUpdate, MDCControl, createAppEnvironment, TestChangeHandler, JsControlTreeModifier, AggregationBaseDelegate, ControlPersonalizationWriteAPI) {
 	"use strict";
 
 	/**
@@ -56,13 +56,13 @@ sap.ui.define([
 			);
 
 			//Create the app environment for flex related processing
-			return createAppEnvironment(sTestView, "ItemBaseFlexTest").then(function(mCreatedApp){
+			return createAppEnvironment(sTestView, "ItemBaseFlexTest").then(async function(mCreatedApp){
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");
 				this.oView.addContent(this.oFlexTestControl);
 
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				//add
 				this.oAddChangeHandler = TestChangeHandler.add.changeHandler;

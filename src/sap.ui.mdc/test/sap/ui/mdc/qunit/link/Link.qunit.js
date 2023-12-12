@@ -5,10 +5,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/mdc/Link",
 	"sap/m/MessageToast",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Text",
 	"sap/ui/mdc/enums/LinkType"
-], function(QUnit, LinkItem, Button, Link, MessageToast, oCore, Text, LinkType) {
+], function(QUnit, LinkItem, Button, Link, MessageToast, nextUIUpdate, Text, LinkType) {
 	"use strict";
 
 	const aAdditionaLinkItems = [
@@ -307,9 +307,9 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(async function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
@@ -331,9 +331,9 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(async function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
@@ -400,9 +400,9 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(async function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
@@ -424,9 +424,9 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(async function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
@@ -492,9 +492,9 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(async function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
@@ -516,9 +516,9 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(async function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
@@ -608,9 +608,9 @@ sap.ui.define([
 			done();
 		};
 
-		oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(async function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.ok(fnMessageToastSpy.notCalled);
 
 			window.addEventListener('hashchange', fnCheckURL);
@@ -785,7 +785,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("createPopover - without links, without additional content", function(assert) {
+	QUnit.test("createPopover - without links, without additional content", async function(assert) {
 		const done = assert.async();
 
 		const oLink = new Link();
@@ -793,7 +793,7 @@ sap.ui.define([
 			text: "Dummy Text"
 		});
 		oText.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oLink.open(oText).then((oPopover) => {
 			oPopover = oLink.getDependents().find((oDependent) => {
@@ -806,7 +806,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("createPopover - with links, without additional content", function(assert) {
+	QUnit.test("createPopover - with links, without additional content", async function(assert) {
 		const done = assert.async();
 		const sBaseUrl = window.location.href;
 
@@ -833,7 +833,7 @@ sap.ui.define([
 			text: "Dummy Text"
 		});
 		oText.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oLink.open(oText).then((oPopover) => {
 			oPopover = oLink.getDependents().find((oDependent) => {
@@ -846,7 +846,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("createPopover - with links and with additional content", function(assert) {
+	QUnit.test("createPopover - with links and with additional content", async function(assert) {
 		const done = assert.async();
 		const sBaseUrl = window.location.href;
 		const oAdditionalContentText = new Text({
@@ -877,7 +877,7 @@ sap.ui.define([
 			text: "Dummy Text"
 		});
 		oText.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oLink.open(oText).then((oPopover) => {
 			oPopover = oLink.getDependents().find((oDependent) => {
@@ -889,7 +889,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("createPopover - without links, with additional content", function(assert) {
+	QUnit.test("createPopover - without links, with additional content", async function(assert) {
 		const done = assert.async();
 		const oAdditionalContentText = new Text({
 			text: "Additional Content Text"
@@ -907,7 +907,7 @@ sap.ui.define([
 			text: "Dummy Text"
 		});
 		oText.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oLink.open(oText).then((oPopover) => {
 			oPopover = oLink.getDependents().find((oDependent) => {

@@ -1,14 +1,14 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/table/RowSettings",
 	"sap/ui/mdc/table/RowActionItem",
 	"sap/ui/mdc/enums/TableRowAction",
 	"sap/ui/model/type/Boolean"
-], function(Core, XMLView, JSONModel, RowSettings, RowActionItem, TableRowAction, Boolean) {
+], function(nextUIUpdate, XMLView, JSONModel, RowSettings, RowActionItem, TableRowAction, Boolean) {
 	'use strict';
 
 	function formatNavigated(sDescription) {
@@ -51,10 +51,10 @@ sap.ui.define([
 						+ ' \'collectionName\': \'items\' \} \}"><type><mdcTable:' + sType + '/></type>' + sSettings + '<columns><mdcTable:Column'
 						+ ' id="myTable--column0" header="column 0" propertyKey="column0"><m:Text text="{description}" id="myTable--text0"'
 						+ ' /></mdcTable:Column></columns></Table></mvc:View>'
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			oView.setModel(oModel);
 			oView.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 			return oView;
 		});
 	}
@@ -79,7 +79,7 @@ sap.ui.define([
 			return that.oTable.initialized();
 		}).then(function() {
 			return new Promise(function(resolve) {
-				that.oTable._oTable.attachEventOnce("rowsUpdated", function() {
+				that.oTable._oTable.attachEventOnce("rowsUpdated", async function() {
 					// Check default values for settings
 					assert.equal(that.oTable._oTable.getBinding("rows").getLength(), 2, "The table contains 2 rows");
 					assert.equal(that.oTable.getRowSettings(), null, "No row settings defined");
@@ -91,7 +91,7 @@ sap.ui.define([
 					oTableRowSettings.setNavigated(true);
 					oTableRowSettings.setHighlight("Error");
 					that.oTable.setRowSettings(oTableRowSettings);
-					Core.applyChanges();
+					await nextUIUpdate();
 
 					let oSettings = that.oTable._oTable.getRows()[0].getAggregation("_settings");
 					assert.equal(oSettings.getNavigated(), true, "Fixed value for navigated");
@@ -102,7 +102,7 @@ sap.ui.define([
 					oTableRowSettings.bindProperty("navigated", {path: 'description', type : 'sap.ui.model.type.Boolean', formatter: formatNavigated});
 					oTableRowSettings.bindProperty("highlight", {path: 'description', formatter: formatHighlight});
 					that.oTable.setRowSettings(oTableRowSettings);
-					Core.applyChanges();
+					await nextUIUpdate();
 
 					oSettings = that.oTable._oTable.getRows()[0].getAggregation("_settings");
 					assert.equal(oSettings.getNavigated(), true, "Calculated value for navigated 1");
@@ -128,7 +128,7 @@ sap.ui.define([
 			return that.oTable.initialized();
 		}).then(function() {
 			return new Promise(function(resolve) {
-				that.oTable._oTable.attachEventOnce("rowsUpdated", function() {
+				that.oTable._oTable.attachEventOnce("rowsUpdated", async function() {
 					// Check default values for settings
 					assert.equal(that.oTable._oTable.getBinding("rows").getLength(), 2, "The table contains 2 rows");
 					assert.ok(that.oTable.getRowSettings() != null, "Row settings defined");
@@ -143,7 +143,7 @@ sap.ui.define([
 					oTableRowSettings.bindProperty("navigated", {path: 'description', type : 'sap.ui.model.type.Boolean', formatter: formatNavigated});
 					oTableRowSettings.bindProperty("highlight", {path: 'description', formatter: formatHighlight});
 					that.oTable.setRowSettings(oTableRowSettings);
-					Core.applyChanges();
+					await nextUIUpdate();
 
 					oSettings = that.oTable._oTable.getRows()[0].getAggregation("_settings");
 					assert.equal(oSettings.getNavigated(), true, "Calculated value for navigated 1");
@@ -177,14 +177,14 @@ sap.ui.define([
 			that.oTable = that.oView.byId("myTable");
 
 			return that.oTable.initialized();
-		}).then(function() {
+		}).then(async function() {
 			// One RowActionItem
 			let oRowSettings = new RowSettings({
 				rowActions: [new RowActionItem({type: "Navigation"})]
 			});
 			oRowSettings.getRowActions()[0].attachEvent("press", testOnFirePress, this);
 			that.oTable.setRowSettings(oRowSettings);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.equal(that.oTable.getRowSettings().getRowActions().length, 1, "The row settings contain 1 row action");
 			let oRowActionItems = that.oTable._oTable.getRowActionTemplate().getItems();
@@ -197,7 +197,7 @@ sap.ui.define([
 			// No RowActions
 			oRowSettings = new RowSettings();
 			that.oTable.setRowSettings(oRowSettings);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.equal(that.oTable.getRowSettings().getRowActions().length, 0, "The row settings contain no row actions");
 			assert.notOk(that.oTable._oTable.getRowActionTemplate(), "The table has no row action template");
@@ -212,9 +212,10 @@ sap.ui.define([
 			oRowSettings.getRowActions()[0].attachEvent("press", testOnFirePress, this);
 			oRowSettings.getRowActions()[1].attachEvent("press", testOnFirePress, this);
 			that.oTable.setRowSettings(oRowSettings);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.equal(that.oTable.getRowSettings().getRowActions().length, 2, "The row settings contain 2 row action");
+			// eslint-disable-next-line require-atomic-updates
 			oRowActionItems = that.oTable._oTable.getRowActionTemplate().getItems();
 			assert.equal(oRowActionItems.length, 2, "The table has row action template with two row action items");
 			assert.equal(oRowActionItems[0].getType(), TableRowAction.Navigation, "Row action item is of type navigation");
@@ -229,8 +230,9 @@ sap.ui.define([
 			// Two RowActionItems with only one pressed
 			oRowSettings.getRowActions()[0].detachEvent("press", testOnFirePress, this);
 			that.oTable.setRowSettings(oRowSettings);
-			Core.applyChanges();
+			await nextUIUpdate();
 
+			// eslint-disable-next-line require-atomic-updates
 			oRowActionItems = that.oTable._oTable.getRowActionTemplate().getItems();
 			oRowActionItems[0].firePress({item: oRowActionItems[0], row: oTest});
 			oRowActionItems[1].firePress({item: oRowActionItems[1], row: oTest});
@@ -243,8 +245,9 @@ sap.ui.define([
 			});
 			oRowSettings.getRowActions()[0].attachEvent("press", testOnFirePress, this);
 			that.oTable.setRowSettings(oRowSettings);
-			Core.applyChanges();
+			await nextUIUpdate();
 
+			// eslint-disable-next-line require-atomic-updates
 			oRowActionItems = that.oTable._oTable.getRowActionTemplate().getItems();
 			that.oTable._oTable.getRowActionTemplate().setModel(oModel);
 			assert.equal(oRowActionItems[0].getType(), TableRowAction.Navigation, "Row action item is of type navigation");
@@ -271,7 +274,7 @@ sap.ui.define([
 				templateShareable: false
 			});
 			that.oTable.setRowSettings(oRowSettings);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			return new Promise(function(resolve) {
 				that.oTable._oTable.attachEventOnce("rowsUpdated", function() {
@@ -301,7 +304,7 @@ sap.ui.define([
 			that.oTable = that.oView.byId('myTable');
 
 			return that.oTable.initialized();
-		}).then(function() {
+		}).then(async function() {
 			// Check default values for settings
 			assert.equal(that.oTable._oTable.getItems().length, 2, "The table contains 2 rows");
 			assert.equal(that.oTable.getRowSettings(), null, "No row settings defined");
@@ -316,7 +319,7 @@ sap.ui.define([
 			oTableRowSettings.setNavigated(true);
 			oTableRowSettings.setHighlight("Error");
 			that.oTable.setRowSettings(oTableRowSettings);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			oItem = that.oTable._oTable.getItems()[0];
 			assert.equal(oItem.getNavigated(), true, "Fixed value for navigated");
@@ -327,7 +330,7 @@ sap.ui.define([
 			oTableRowSettings.bindProperty("navigated", {path: 'description', type : 'sap.ui.model.type.Boolean', formatter: formatNavigated});
 			oTableRowSettings.bindProperty("highlight", {path: 'description', formatter: formatHighlight});
 			that.oTable.setRowSettings(oTableRowSettings);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			oItem = that.oTable._oTable.getItems()[0];
 			assert.equal(oItem.getNavigated(), true, "Calculated value for navigated 1");
@@ -347,7 +350,7 @@ sap.ui.define([
 			that.oTable = that.oView.byId('myTable');
 
 			return that.oTable.initialized();
-		}).then(function() {
+		}).then(async function() {
 			// Check default values for settings
 			assert.equal(that.oTable._oTable.getItems().length, 2, "The table contains 2 rows");
 			assert.ok(that.oTable.getRowSettings() != null, "Row settings defined");
@@ -362,7 +365,7 @@ sap.ui.define([
 			oTableRowSettings.bindProperty("navigated", {path: 'description', type : 'sap.ui.model.type.Boolean', formatter: formatNavigated});
 			oTableRowSettings.bindProperty("highlight", {path: 'description', formatter: formatHighlight});
 			that.oTable.setRowSettings(oTableRowSettings);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			oItem = that.oTable._oTable.getItems()[0];
 			assert.equal(oItem.getNavigated(), true, "Calculated value for navigated 1");
@@ -389,7 +392,7 @@ sap.ui.define([
 			oFireRowPressSpy = sinon.spy(that.oTable, "fireRowPress");
 
 			return that.oTable.initialized();
-		}).then(function() {
+		}).then(async function() {
 			let oRowSettings = new RowSettings({
 				rowActions: [new RowActionItem({type: "Navigation"})]
 			});
@@ -397,7 +400,7 @@ sap.ui.define([
 
 			oRowSettings.getRowActions()[0].attachEvent("press", testOnFirePress);
 			that.oTable.setRowSettings(oRowSettings);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.equal(that.oTable.getRowSettings().getRowActions().length, 1, "The row settings contain 1 row action");
 			oItems = that.oTable._oTable.getItems();
@@ -409,7 +412,7 @@ sap.ui.define([
 
 			oRowSettings = new RowSettings();
 			that.oTable.setRowSettings(oRowSettings);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.equal(that.oTable.getRowSettings().getRowActions().length, 0, "The row settings contain none row action");
 			oItems = that.oTable._oTable.getItems();
@@ -434,7 +437,7 @@ sap.ui.define([
 				templateShareable: false
 			});
 			that.oTable.setRowSettings(oRowSettings);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			oFireRowPressSpy.restore();
 			oItems = that.oTable._oTable.getItems();

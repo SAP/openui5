@@ -6,10 +6,10 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/common/ChangeCategories",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/model/odata/type/Int32",
 	'sap/ui/model/odata/type/String'
-], function (createAppEnvironment, ChartFlexibility, ChangesWriteAPI, ChangeCategories, JsControlTreeModifier, FlexTestAPI, oCore, Int32Type, StringType) {
+], function (createAppEnvironment, ChartFlexibility, ChangesWriteAPI, ChangeCategories, JsControlTreeModifier, FlexTestAPI, nextUIUpdate, Int32Type, StringType) {
 	'use strict';
 
 	function clearChanges() {
@@ -56,7 +56,7 @@ sap.ui.define([
 				'\t\t\t\t</mdc:Chart>\n' +
 				'</mvc:View>';
 			return createAppEnvironment(sChartView, "Chart")
-			.then(function(mCreatedView){
+			.then(async function(mCreatedView){
 				this.oView = mCreatedView.view;
 				this.oUiComponent = mCreatedView.comp;
 				this.oUiComponentContainer = mCreatedView.container;
@@ -64,7 +64,7 @@ sap.ui.define([
 				this.oChart = this.oView.byId('IDChart');
 				this.oItem1 = this.oView.byId('item1');
 				this.oUiComponentContainer.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -154,7 +154,7 @@ sap.ui.define([
 				'\t\t\t\t</mdc:Chart>\n' +
 				'</mvc:View>';
 			return createAppEnvironment(sChartView, "Chart")
-			.then(function(mCreatedView){
+			.then(async function(mCreatedView){
 				this.oView = mCreatedView.view;
 				this.oUiComponent = mCreatedView.comp;
 				this.oUiComponentContainer = mCreatedView.container;
@@ -162,7 +162,7 @@ sap.ui.define([
 				this.oChart = this.oView.byId('IDChart');
 				this.oItem1 = this.oView.byId('item1');
 				this.oUiComponentContainer.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach: function () {
