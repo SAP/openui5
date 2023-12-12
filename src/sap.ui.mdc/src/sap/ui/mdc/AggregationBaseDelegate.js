@@ -26,6 +26,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * @since 1.82.0
 	 * @alias module:sap/ui/mdc/AggregationBaseDelegate
 	 * @extends module:sap/ui/mdc/BaseDelegate
+	 * @abstract
 	 */
 	const AggregationBaseDelegate = Object.assign({}, BaseDelegate);
 
@@ -48,7 +49,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * Consequently the parameter <code>mPropertyBag</code> is only passed during preprocessing. In runtime scenarios (such as opening a personalization dialog), this
 	 * method might be called without the parameter <code>mPropertyBag</code>.
 	 *
-	 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
+	 * @param {sap.ui.mdc.Control|Element} oControl Instance of an <code>sap.ui.mdc.Control</code>
 	 * @param {string} sPropertyName The name of the property info object/JSON
 	 * @param {Object} [mPropertyBag] Instance of property bag from SAPUI5 flexibility change API
 	 *
@@ -58,6 +59,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * has already been created, it is required to either return the existing instance or create a new instance.
 	 *
 	 * @public
+	 * @abstract
 	 */
 	AggregationBaseDelegate.addItem = function (oControl, sPropertyName, mPropertyBag) {
 		return Promise.resolve();
@@ -71,7 +73,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * Consequently the parameter <code>mPropertyBag</code> is only passed during preprocessing. In runtime scenarios (such as opening a personalization dialog), this
 	 * method might be called without the parameter <code>mPropertyBag</code>.
 	 *
-	 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
+	 * @param {sap.ui.mdc.Control|Element} oControl Instance of a <code>sap.ui.mdc.Control</code>
 	 * @param {sap.ui.core.Element} oItem The control instance that was removed
 	 * @param {Object} [mPropertyBag] Instance of property bag from SAPUI5 flexibility
 	 *
@@ -91,7 +93,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * @returns {Object} An object that must contain at least the <code>validation</code> attribute {@link sap.ui.core.MessageType MessageType}.
 	 * If <code>warning</code> or <code>error</code> state types have been provided, the <code>message</code> is shown in addition.
 	 *
-	 * @public
+	 * @private
 	 */
 	AggregationBaseDelegate.validateState = function(oControl, oState) {
 
@@ -107,10 +109,11 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	/**
 	 * Hook that will be executed when changes are done applying to controls during the XML flexibility change appliance process.
 	 *
-	 * @param {Object<sap.ui.mdc.Control>} oControl Instance of an MDC control
+	 * @param {Element} oControl XML node of a mdc control
 	 * @param {Object} mPropertyBag Property bag from SAPUI5 flexibility
 	 *
 	 * @public
+	 * @abstract
 	 */
 	AggregationBaseDelegate.onAfterXMLChangeProcessing = function(oControl, mPropertyBag) {
 		//Neccessary cleanups can be implemented here
@@ -122,7 +125,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * @param {sap.ui.mdc.Control} oControl Instance of a MDC control
 	 * @param {map} [mValidation] Object Describing the validation result
 	 *
-	 * @public
+	 * @abstract
+	 * @private
 	 */
 	AggregationBaseDelegate.determineValidationState = function(oControl) {
 		return oControl.checkValidationState ? oControl.checkValidationState() : -1;
@@ -131,10 +135,11 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	/**
 	 * Visualizes the validation state of an MDC control.
 	 *
-	 * @param {Object<sap.ui.mdc.Control>} oControl Instance of a MDC control
-	 * @returns {map} mValidation Describes the validation result.
+	 * @param {sap.ui.mdc.Control} oControl Instance of a MDC control
+	 * @returns {map} mValidation Describes the validation result
 	 *
-	 * @public
+	 * @abstract
+	 * @private
 	 */
 	AggregationBaseDelegate.visualizeValidationState = function(oControl, mValidation) {
 	};
