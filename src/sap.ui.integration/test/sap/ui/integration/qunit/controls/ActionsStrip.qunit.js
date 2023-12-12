@@ -82,9 +82,7 @@ sap.ui.define([
 			{ text: "Text1" },
 			{ text: "Text2", type: "Button" },
 			{ text: "Text3", type: "Button", icon: "sap-icon://email" },
-			{ text: "Text and tooltip", type: "Button", icon: "sap-icon://email", preferIcon: true },
-			{ text: "Tooltip and text", type: "Button", preferIcon: true },
-			{ text: "Text2", type: "Button" }
+			{ tooltip: "Text4", type: "Button", "icon": "sap-icon://email" }
 		], this.oCard);
 
 		const aItems = oActionsStrip._getToolbar().getContent();
@@ -92,11 +90,9 @@ sap.ui.define([
 		// Assert
 		assert.ok(aItems[1].isA("sap.m.Button"), "If no 'type' is specified, an sap.m.Button should be created");
 		assert.ok(aItems[2].isA("sap.m.Button"), "If 'type' is set to 'Button', an sap.m.Button should be created");
-		assert.ok(aItems[3].isA("sap.m.Button"), "If button has icon and preferIcon is set to false - a sap.m.Button is created");
-		assert.ok(aItems[4].isA("sap.m.OverflowToolbarButton"), "If button has icon and preferIcon is set to true - an sap.m.OverflowToolbarButton is created");
-
-		assert.strictEqual(aItems[4].getTooltip(), "Text and tooltip", "Button with icon only uses the text as tooltip if there is no tooltip");
-		assert.strictEqual(aItems[5].getText(), "Tooltip and text", "Button with icon only uses the tooltip as text if there is no text");
+		assert.ok(aItems[3].isA("sap.m.Button"), "If button has icon and text - a sap.m.Button is created");
+		assert.ok(aItems[4].isA("sap.m.OverflowToolbarButton"), "If button has icon and no text - a sap.m.OverflowToolbarButton is created");
+		assert.strictEqual(aItems[4].getText(), "Text4", "Button with icon without text uses the tooltip for text");
 
 		// Clean up
 		oActionsStrip.destroy();

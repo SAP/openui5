@@ -166,7 +166,7 @@
 				{
 					"buttonType": "Transparent",
 					"icon": "sap-icon://email",
-					"text": "Contact",
+					"tooltip": "Contact",
 					"actions": [
 						{
 							"type": "Navigation",
