@@ -2,8 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/p13n/SelectionPanel", "sap/ui/model/Sorter"
-], (SelectionPanel, Sorter) => {
+	"sap/m/p13n/SelectionPanel",
+	"sap/ui/model/Sorter",
+	"sap/m/MessageStrip",
+	"sap/ui/core/library"
+], (SelectionPanel, Sorter, MessageStrip, coreLibrary) => {
 	"use strict";
 
 	/**
@@ -94,6 +97,7 @@ sap.ui.define([
 			reason: "Move",
 			item: this._getModelEntry(this._oSelectedItem)
 		});
+		this._updateItemEnableState();
 	};
 
 	ActionToolbarPanel.prototype._onPressButtonMoveToTop = function() {
@@ -183,6 +187,75 @@ sap.ui.define([
 			oTableItem.focus();
 		}
 	};
+
+
+	ActionToolbarPanel.prototype._updateMessageStripForItemEnablement = function() {
+		const oListItems = this._getP13nModel().getProperty("/items");
+		const bSomeItemsDisabled = oListItems.find((oItem) => oItem.enabled == false);
+
+		if (!bSomeItemsDisabled) {
+			this.setMessageStrip(null);
+			return;
+		}
+
+		const oMessageStrip = new MessageStrip({
+			text: this._getResourceText("p13n.MESSAGE_DISABLED_ITEMS"),
+			type: coreLibrary.MessageType.Warning,
+			showIcon: true
+		});
+		this.setMessageStrip(oMessageStrip);
+	};
+
+
+	ActionToolbarPanel.prototype._updateItemEnableState = function() {
+		this._oListControl.getItems().forEach((oListItem) => {
+			if (!oListItem.isA("sap.m.ColumnListItem")) {
+				return;
+			}
+			this._updateCheckboxEnablement(oListItem);
+		});
+
+		this._updateMessageStripForItemEnablement();
+		this._updateClearAllButton();
+    };
+
+	ActionToolbarPanel.prototype._updateCheckboxEnablement = function(oColumnListItem) {
+		oColumnListItem.onsapspace = () => {};
+		oColumnListItem.removeStyleClass("sapMLIBActive");
+		const oMultiSelectControl = oColumnListItem.getMultiSelectControl(true);
+		oMultiSelectControl.bindProperty("enabled", {
+			path: `${this.P13N_MODEL}>enabled`,
+			formatter: function(oValue) {
+				return oValue ?? true;
+			}
+		});
+	};
+
+	ActionToolbarPanel.prototype._createInnerListControl = function() {
+		const oTable = SelectionPanel.prototype._createInnerListControl.apply(this, arguments);
+		return oTable;
+	};
+
+	ActionToolbarPanel.prototype.setP13nData = function(aP13nData) {
+		SelectionPanel.prototype.setP13nData.apply(this, arguments);
+		this._updateItemEnableState();
+		return this;
+	};
+
+	ActionToolbarPanel.prototype._filterList = function(bShowSelected, sSarch) {
+		SelectionPanel.prototype._filterList.apply(this, arguments);
+		this._updateItemEnableState();
+	};
+
+	ActionToolbarPanel.prototype._updateClearAllButton = function() {
+		const oP13nItems = this._getP13nModel().getProperty("/items");
+		const aDisabledItems = oP13nItems?.filter((oItem) => {
+			return oItem.enabled === false;
+		});
+
+		this._oListControl._getClearAllButton()?.setVisible(aDisabledItems.length === 0);
+	};
+
 
 	return ActionToolbarPanel;
 

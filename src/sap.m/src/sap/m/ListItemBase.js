@@ -423,11 +423,9 @@ function(
 
 		if (sType == ListItemType.Navigation) {
 			aOutput.push(oBundle.getText("LIST_ITEM_NAVIGATION"));
-		} else {
-			if (sType == ListItemType.Active || sType == ListItemType.DetailAndActive) {
+		} else if (sType == ListItemType.Active || sType == ListItemType.DetailAndActive) {
 				aOutput.push(oBundle.getText("LIST_ITEM_ACTIVE"));
 			}
-		}
 
 		var sGroupAnnouncement = this.getGroupAnnouncement() || "";
 		if (sGroupAnnouncement) {

@@ -6,6 +6,7 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcat="sap.ui.mdc.actiontoolbar"
 	xmlns:mdcc="sap.ui.mdc.chart"
+	xmlns:dt="sap.ui.dt"
 	xmlns:variants="sap.ui.fl.variants">
 	<App id="app">
 		<Page id="pageId">
@@ -25,28 +26,28 @@
 					</mdc:end>
 					<mdc:actions>
 						<mdcat:ActionToolbarAction id="standaloneAction1">
-							<Button text="Action 1" id="standaloneButton1" />
+							<Button text="Action 1" id="standaloneButton1" dt:designtime="not-adaptable"/>
 						</mdcat:ActionToolbarAction>
 						<mdcat:ActionToolbarAction id="standaloneAction2" layoutInformation="{
 								aggregationName: 'end',
 								alignment: 'End'
 							}">
-							<Button text="Action 2" id="standaloneButton2" />
+							<Button text="Action 2" id="standaloneButton2" dt:designtime="not-adaptable-visibility"/>
 						</mdcat:ActionToolbarAction>
 
 
-						<mdcat:ActionToolbarAction id="standaloneAction3" layoutInformation="{
+						<mdcat:ActionToolbarAction id="standaloneAction3" dt:designtime="not-adaptable-tree" layoutInformation="{
 							aggregationName: 'end',
 							alignment: 'End'
 						}">
-							<Button text="Action 3" id="standaloneButton3" />
+							<Button text="Action 3" id="standaloneButton3"/>
 						</mdcat:ActionToolbarAction>
 
 						<mdcat:ActionToolbarAction id="standaloneAction4">
 							<Button text="Action 4" id="standaloneButton4" />
 						</mdcat:ActionToolbarAction>
 						<mdcat:ActionToolbarAction id="standaloneAction5">
-							<Button text="Action 5" id="standaloneButton5" />
+							<Button text="Action 5" id="standaloneButton5" dt:designtime="not-adaptable-tree"/>
 						</mdcat:ActionToolbarAction>
 					</mdc:actions>
 				</mdc:ActionToolbar>
@@ -56,7 +57,7 @@
 						<variants:VariantManagement id="IDVariantManagementOfTable" for="dynamicPage"/>
 					</mdc:variant>
 					<mdc:actions>
-						<mdcat:ActionToolbarAction id="tableAction1">
+						<mdcat:ActionToolbarAction id="tableAction1" >
 							<Button text="Action 1" id="tableButton1" />
 						</mdcat:ActionToolbarAction>
 						<mdcat:ActionToolbarAction id="tableAction2" layoutInformation="{
@@ -67,7 +68,7 @@
 						</mdcat:ActionToolbarAction>
 
 
-						<mdcat:ActionToolbarAction id="tableAction3" layoutInformation="{
+						<mdcat:ActionToolbarAction id="tableAction3" dt:designtime="not-adaptable-tree" layoutInformation="{
 							aggregationName: 'end',
 							alignment: 'End'
 						}">
@@ -120,7 +121,7 @@
 						</mdcat:ActionToolbarAction>
 
 
-						<mdcat:ActionToolbarAction id="chartAction3" layoutInformation="{
+						<mdcat:ActionToolbarAction id="chartAction3" dt:designtime="not-adaptable-tree" layoutInformation="{
 							aggregationName: 'end',
 							alignment: 'End'
 						}">

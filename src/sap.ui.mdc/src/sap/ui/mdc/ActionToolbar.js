@@ -426,23 +426,43 @@ sap.ui.define([
 		};
 	};
 
-	ActionToolbar.prototype.initPropertyHelper = function() {
+	ActionToolbar.prototype.initPropertyHelper = async function() {
+		const aProperties = await Promise.all(this.getActions().map(async(oAction) => {
+			const oDesignTime = await oAction.getAction().getMetadata().loadDesignTime(oAction);
+			const bEnabled = this._getEnabledFromDesignTime(oDesignTime);
+
+			return {
+				name: oAction.getId(),
+				alignment: oAction.getLayoutInformation().alignment,
+				label: oAction.getLabel(),
+				visible: true,
+				enabled: bEnabled
+			};
+		}));
+
 		return Promise.resolve({
-			getProperties: function() {
-
-				const aItems = [];
-				this.getActions().forEach((oAction) => {
-					aItems.push({
-						name: oAction.getId(),
-						alignment: oAction.getLayoutInformation().alignment,
-						label: oAction.getLabel(),
-						visible: true
-					});
-				});
-
-				return aItems;
-			}.bind(this)
+			getProperties: () => aProperties
 		});
+	};
+
+	ActionToolbar.prototype._getEnabledFromDesignTime = function(oDesignTime) {
+		if (!oDesignTime || !("actions" in oDesignTime)) {
+			return true;
+		}
+
+		if (oDesignTime.actions === "not-adaptable") {
+			return false;
+		}
+
+		if (oDesignTime.actions.reveal === null) {
+			return false;
+		}
+
+		if (oDesignTime.actions.remove === null) {
+			return false;
+		}
+
+		return true;
 	};
 
 	AdaptationMixin.call(ActionToolbar.prototype);

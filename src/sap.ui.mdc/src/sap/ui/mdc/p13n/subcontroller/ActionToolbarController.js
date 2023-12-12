@@ -57,6 +57,7 @@ sap.ui.define([
 			mItem.visible = !!oExisting;
 			mItem.position = oExisting ? oExisting.position : -1;
 			mItem.alignment = oProperty.alignment;
+			mItem.enabled = !!oProperty.enabled;
 			return oProperty.visible;
 		});
 
