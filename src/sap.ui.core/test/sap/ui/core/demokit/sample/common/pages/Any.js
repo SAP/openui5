@@ -39,6 +39,7 @@ sap.ui.define([
 					aExpected.splice(i, 1);
 					return true;
 				}
+				return false;
 			});
 		}
 

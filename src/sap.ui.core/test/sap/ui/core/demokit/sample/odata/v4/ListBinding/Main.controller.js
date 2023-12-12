@@ -292,6 +292,7 @@ sap.ui.define([
 						oTable.setSelectedItem(oTable.getItems()[i]);
 						return true;
 					}
+					return false;
 				});
 			});
 
