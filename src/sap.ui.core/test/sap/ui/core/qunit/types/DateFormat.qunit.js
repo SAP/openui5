@@ -5175,7 +5175,7 @@ sap.ui.define([
 	//*****************************************************************************************************************
 [
 	{input: "a\u00a0b\u2009c\u202fd e", output: "a b c d e"}, // special spaces are replaced by \u0020
-	{input: "a\u200eb\u200fc\u202ad\u202be\u202cf", output: "abcdef"} // RTL characters are removed
+	{input: "a\u061c\u200eb\u200fc\u202ad\u202be\u202cf", output: "abcdef"} // RTL characters are removed
 ].forEach((oFixture, i) => {
 	QUnit.test(`DateFormat._normalize: ${i}`, function (assert) {
 		assert.strictEqual(DateFormat._normalize(oFixture.input), oFixture.output);
