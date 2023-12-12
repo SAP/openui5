@@ -236,7 +236,7 @@ sap.ui.define([
 
 		// TODO: find better way to disable the items
 		aItems.forEach(function (oItem) {
-			if (oItem.setEnabled && !oItem._bIsDisabled) {
+			if (oItem.setEnabled && !oItem._bIsDisabled && oItem.getEnabled()) {
 				oItem.setEnabled(false);
 				oItem._bIsDisabled = true;
 			}
@@ -251,7 +251,7 @@ sap.ui.define([
 		aItems.forEach((oItem) => {
 			if (oItem.setEnabled && oItem._bIsDisabled) {
 				mActionsConfig = oItem._mActionsConfig;
-				if (mActionsConfig.action) {
+				if (mActionsConfig?.action) {
 					mActionsConfig.enabledPropertyValue = true;
 					this.getCardActions()._setControlEnabledState(mActionsConfig);
 				} else {
