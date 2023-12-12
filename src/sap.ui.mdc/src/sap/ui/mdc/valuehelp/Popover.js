@@ -149,6 +149,8 @@ sap.ui.define([
 				this._oInvisibleText = new InvisibleText({ text: Library.getResourceBundleFor("sap.ui.mdc").getText("valuehelp.POPOVER_AVALIABLE_VALUES") }).toStatic();
 				oPopover.addAriaLabelledBy(this._oInvisibleText);
 
+				oPopover.setFollowOf(false);
+
 				if (oValueStateHeader) {
 					oValueStateHeader.setPopup(oPopover);
 				}
