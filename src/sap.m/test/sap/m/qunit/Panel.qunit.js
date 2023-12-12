@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/OverflowToolbar",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes"
 ], function(
 	Panel,
 	Text,
@@ -22,7 +24,9 @@ sap.ui.define([
 	Title,
 	OverflowToolbar,
 	oCore,
-	jQuery
+	jQuery,
+	qutils,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -270,12 +274,26 @@ sap.ui.define([
 		this.createPanel({ expanded: false });
 		this.oPanel.attachExpand(fnEventSpy);
 		this.oPanel.onsapspace({
-			target: this.oPanel._oExpandButton.getDomRef(),
-			preventDefault: function () {}
+			target: this.oPanel.getDomRef().querySelector(".sapMPanelWrappingDiv"),
+			preventDefault: function () {},
+			originalEvent: {
+				repeat: false
+			}
+		});
+
+		var fnTapSpy = this.spy(this.oPanel, "ontap");
+
+		this.oPanel.onsapspace({
+			target: this.oPanel.getDomRef().querySelector(".sapMPanelWrappingDiv"),
+			preventDefault: function () {},
+			originalEvent: {
+				repeat: true
+			}
 		});
 
 		assert.ok(bPassedArg, "Event should be triggered by an user interaction");
 		assert.ok(bExpand, "Event should be triggered by an user interaction");
+		assert.notOk(fnTapSpy.called, "The event action is not repeated");
 	});
 
 	QUnit.test("onsapenter()", function(assert) {
