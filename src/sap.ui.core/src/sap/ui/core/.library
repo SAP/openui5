@@ -325,7 +325,7 @@
             <copyright>2010-2012, The Dojo Foundation</copyright>
             <pattern>sap/ui/thirdparty/require.js</pattern>
         </lib>
-        <lib name="crossroadsjs" displayName="crossroads.js" npmName="crossroads" version="0.12.0" hash="7a65d229bbecf1e40455b3c1e88f0490" homepage="https://github.com/millermedeiros/crossroads.js" id="73554900106100005551">
+        <lib name="crossroadsjs" displayName="crossroads.js" npmName="crossroads" version="0.12.0" hash="d6e2c6bbbdbee19665b04802a3ea82f4" homepage="https://github.com/millermedeiros/crossroads.js" id="73554900106100005551">
             <license url="http://opensource.org/licenses/mit-license.php" type="MIT" />
             <copyright>Miller Medeiros</copyright>
             <pattern>sap/ui/thirdparty/crossroads.js</pattern>
