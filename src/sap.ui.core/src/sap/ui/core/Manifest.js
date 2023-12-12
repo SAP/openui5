@@ -368,11 +368,10 @@ sap.ui.define([
 			var oEntry = getObject(oManifest, sPath);
 
 			// top-level manifest section must be an object (e.g. sap.ui5)
-			if (sPath && sPath[0] !== "/" && !isPlainObject(oEntry)) {
+			if (sPath && sPath[0] !== "/" && oEntry !== undefined && !isPlainObject(oEntry)) {
 				future.warningThrows("Manifest entry with key '" + sPath + "' must be an object. Component: " + this.getComponentName());
 				return null;
 			}
-
 			return oEntry;
 		},
 

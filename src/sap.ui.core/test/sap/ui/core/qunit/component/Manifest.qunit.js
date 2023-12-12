@@ -79,12 +79,12 @@ sap.ui.define([
 		this.testGeneric(assert);
 
 		// General
-		assert.strictEqual(this.oManifest.getEntry(), null, "'getEntry' without a parameter should return undefined.");
-		assert.strictEqual(this.oManifest.getEntry(""), null, "'getEntry' with an empty string should return undefined.");
+		assert.strictEqual(this.oManifest.getEntry(), null, "'getEntry' without a parameter should return null.");
+		assert.strictEqual(this.oManifest.getEntry(""), null, "'getEntry' with an empty string should return null.");
 
 		// Legacy syntax
 		assert.deepEqual(this.oManifest.getEntry("sap.app"), this.oManifestJson["sap.app"], "'getEntry' with legacy syntax should return top-level entry.");
-		assert.strictEqual(this.oManifest.getEntry("baz.buz"), null, "'getEntry' with legacy syntax should return 'null' for not existing entries.");
+		assert.strictEqual(this.oManifest.getEntry("baz.buz"), undefined, "'getEntry' with legacy syntax should return 'null' for not existing entries.");
 		assert.strictEqual(this.oManifest.getEntry("foo"), null, "'getEntry' with legacy syntax should return 'null' for entries without a dot.");
 		assert.strictEqual(this.oManifest.getEntry("unit.test2"), null, "'getEntry' with legacy syntax should return 'null' for top-level entries that are not an object.");
 
