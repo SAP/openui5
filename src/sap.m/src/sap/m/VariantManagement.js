@@ -1215,6 +1215,13 @@ sap.ui.define([
 		});
 		this.oVariantList.setNoDataText(this._oRb.getText("VARIANT_MANAGEMENT_NODATA"));
 
+		this.oVariantListInvisibleText = new InvisibleText({
+			text: this._oRb.getText("VARIANT_MANAGEMENT_VIEW_LIST")
+		});
+
+		this.oVariantListInvisibleText.toStatic();
+		this.oVariantList.addAriaLabelledBy(this.oVariantListInvisibleText);
+
 		var oItemTemplate = new Item({
 			key: "{$mVariants>key}",
 			text: "{$mVariants>title}"
@@ -2915,6 +2922,10 @@ sap.ui.define([
 		if (this.oVariantInvisibleText && !this.oVariantInvisibleText._bIsBeingDestroyed) {
 			this.oVariantInvisibleText.destroy(true);
 			this.oVariantInvisibleText = undefined;
+		}
+		if (this.oVariantListInvisibleText && !this.oVariantListInvisibleText._bIsBeingDestroyed) {
+			this.oVariantListInvisibleText.destroy(true);
+			this.oVariantListInvisibleText = undefined;
 		}
 
 		if (this.oDefault && !this.oDefault._bIsBeingDestroyed) {

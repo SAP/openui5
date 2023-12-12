@@ -136,6 +136,10 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("findOn", function(assert) {
+		assert.ok(CellSelector.findOn(this.oTable) === this.oCellSelector, "Plugin found via CellSelector.findOn");
+	});
+
 	QUnit.test("Drag compatibility", function(assert) {
 		var done = assert.async();
 		this.oTable.addDependent(this.oCellSelector);
@@ -286,6 +290,29 @@ sap.ui.define([
 			assert.equal(oSelection.rows.length, 2, "Selection contains only 2 rows (Group Header with V2)");
 			assert.equal(oSelection.rows[0], oBinding.getContextByIndex(2), "Selection contains context of third row");
 			assert.equal(oSelection.rows[1], oBinding.getContextByIndex(3), "Selection contains context of fourth row");
+
+			done();
+		});
+	});
+
+	QUnit.test("Selection with mouse only with left-click", function(assert) {
+		this.oTable.addDependent(this.oCellSelector);
+		var done = assert.async();
+
+		this.oTable.attachEventOnce("rowsUpdated", () => {
+			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
+			qutils.triggerEvent("mousedown", oCell, { button: 0, ctrlKey: true }); // select first cell of first row with left-click/primary button
+			assert.ok(this.oCellSelector._bMouseDown, "Flag has been set");
+			qutils.triggerEvent("mouseup", oCell);
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
+
+			this.oCellSelector.removeSelection();
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), null, "Selection has been removed");
+
+			qutils.triggerEvent("mousedown", oCell, { button: 1, ctrlKey: true }); // try to select with something else than left-click/primary button
+			assert.notOk(this.oCellSelector._bMouseDown, "Flag has not been set");
+			qutils.triggerEvent("mouseup", oCell);
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), null, "Nothing has been selected");
 
 			done();
 		});

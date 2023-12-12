@@ -573,14 +573,16 @@ sap.ui.define([
 
 		function addUnlockTask() {
 			that.oModel.addPrerenderingTask(function () {
-				iCount -= 1;
-				if (iCount > 0) {
-					// Use a promise to get out of the prerendering loop
-					Promise.resolve().then(addUnlockTask);
-				} else if (that.oReadGroupLock === oGroupLock) {
-					// It is still the same, unused lock
-					Log.debug("Timeout: unlocked " + oGroupLock, null, sClassName);
-					that.removeReadGroupLock();
+				if (that.oReadGroupLock === oGroupLock) {
+					iCount -= 1;
+					if (iCount > 0) {
+						// Use a promise to get out of the prerendering loop
+						Promise.resolve().then(addUnlockTask);
+					} else {
+						// It is still the same, unused lock
+						Log.debug("Timeout: unlocked " + oGroupLock, null, sClassName);
+						that.removeReadGroupLock();
+					}
 				}
 			});
 		}

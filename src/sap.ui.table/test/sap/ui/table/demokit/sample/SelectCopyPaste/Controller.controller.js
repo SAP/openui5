@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageBox",
 	"sap/m/plugins/CellSelector",
-	"sap/m/plugins/CopyProvider"
-], function(Controller, MockServer, ODataModel, MessageToast, JSONModel, MessageBox, CellSelector, CopyProvider) {
+	"sap/m/plugins/CopyProvider",
+	"sap/ui/table/plugins/MultiSelectionPlugin"
+], function(Controller, MockServer, ODataModel, MessageToast, JSONModel, MessageBox, CellSelector, CopyProvider, MultiSelectionPlugin) {
 	"use strict";
 
 	const sServiceUrl = "http://my.test.service.com/";
@@ -73,7 +74,7 @@ sap.ui.define([
 
 		onSelectChange: function(oEvent) {
 			const aParams = oEvent.getParameters(), oTable = this.byId("table");
-			oTable.getPlugins()[0].setSelectionMode(aParams.selectedItem.getKey());
+			MultiSelectionPlugin.findOn(oTable).setSelectionMode(aParams.selectedItem.getKey());
 		},
 
 		onPaste: function(oEvent) {

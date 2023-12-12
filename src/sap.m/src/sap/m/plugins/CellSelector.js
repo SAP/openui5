@@ -49,6 +49,7 @@ sap.ui.define([
 	 * @experimental Since 1.119. This class is experimental. The API might be changed in the future.
 	 * @since 1.119
 	 * @alias sap.m.plugins.CellSelector
+	 * @borrows sap.m.plugins.PluginBase.findOn as findOn
 	 */
 	var CellSelector = PluginBase.extend("sap.m.plugins.CellSelector", /** @lends sap.m.plugins.CellSelector.prototype */  {
 		metadata: {
@@ -76,6 +77,8 @@ sap.ui.define([
 			events: {}
 		}
 	});
+
+	CellSelector.findOn = PluginBase.findOn;
 
 	/**
 	 * A selection object representing the selected cells.
@@ -183,7 +186,7 @@ sap.ui.define([
 			}
 		},
 		onmousedown: function(oEvent) {
-			if (oEvent.isMarked && oEvent.isMarked()) {
+			if (oEvent.isMarked?.() || oEvent.button != 0) {
 				return;
 			}
 
@@ -191,9 +194,9 @@ sap.ui.define([
 				this._startSelection(oEvent);
 			}
 
-			this._bMouseDown = true;
 			var oSelectableCell = this._getSelectableCell(oEvent.target);
 			if (oSelectableCell) {
+				this._bMouseDown = true;
 				this._mClickedCell = this.getConfig("getCellInfo", this.getControl(), oSelectableCell);
 			}
 		},

@@ -198,8 +198,6 @@ sap.ui.define([
 			oControl.setBackgroundDesign("Transparent");
 			oControl.setHeaderBackgroundDesign("Transparent");
 			// oControl.setHeaderBackgroundDesign("Solid");
-			oControl.addStyleClass("sapUiIntegrationEditorSubPanel");
-			// oControl.addStyleClass("sapUiIntegrationEditorSubPanel").addStyleClass("cardEditorIconTabBarBG");
 			// handle messageStrip for tab filter
 			if (this.getMode() !== "translation") {
 				var oMessageStripOfTab = new MessageStrip({

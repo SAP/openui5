@@ -632,6 +632,10 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("findOn", function(assert) {
+		assert.ok(ColumnResizer.findOn(this.oTable) === this.oColumnResizer, "Plugin found via ColumnResizer.findOn");
+	});
+
 	QUnit.test("startResizing", function(assert) {
 		var oColumnDomRef = this.oTable.getColumns()[1].getDomRef(),
 			fnDisplayHandle = sinon.spy(this.oColumnResizer, "_displayHandle");

@@ -46,7 +46,13 @@
 						<td><a href="../../../index.html#/learn/actions" target="_parent">Actions[]</a></td>
 						<td></td>
 						<td>No</td>
-						<td>Actions that are triggered when the content is pressed.</td>
+						<td>
+							Actions that are triggered when the content is pressed.
+							<br>
+							<b>Note:</b> This property must match completely the property <code>actions</code> on the card header, since only the card header action is assigned as the default card action when using keyboard.
+							<br>
+							<b>Note:</b> When this property is used to make the full content interactive, the content itself must not contain interactive elements. It is not recommended to nest interactive elements in this scenario.
+						</td>
 						<td>1.15.0</td>
 						<td>1.64</td>
 					</tr>

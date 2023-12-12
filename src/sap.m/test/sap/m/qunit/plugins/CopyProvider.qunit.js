@@ -324,6 +324,10 @@ sap.ui.define([
 		assert.equal((await navigator.clipboard.readText()).split("\n").length, this.oTable.getGrowingThreshold(), "Not all contexts, only growing contexts are copied");
 	});
 
+	QUnit.test("findOn", function(assert) {
+		assert.ok(CopyProvider.findOn(this.oTable) === this.oCopyProvider, "Plugin found via CopyProvider.findOn");
+	});
+
 	QUnit.test("No binding", async function(assert) {
 		var aClonedItems = this.oTable.getItems().map(function(oItem) {
 			return oItem.clone();
@@ -380,6 +384,10 @@ sap.ui.define([
 		this.oTable.selectAll();
 		ClipboardUtils.triggerCopy();
 		assert.equal((await navigator.clipboard.readText()).split("\n").length, aData.length, "All contexts are copied");
+	});
+
+	QUnit.test("findOn", function(assert) {
+		assert.ok(CopyProvider.findOn(this.oTable) === this.oCopyProvider, "Plugin found via CopyProvider.findOn");
 	});
 
 	QUnit.test("CellSelector", async function(assert) {
@@ -640,6 +648,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("MDCTableWithCopyProvider", TableModule(createMDCTableWithCopyProvider));
+
+	QUnit.test("findOn", function(assert) {
+		assert.ok(CopyProvider.findOn(this.oTable) === this.oCopyProvider, "Plugin found via CopyProvider.findOn");
+	});
 
 	QUnit.test("API", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {

@@ -133,6 +133,10 @@
 								<li>"Chart" - only pressing over the parts of the chart will trigger the defined actions</li>
 							</ul>
 							<b>Note:</b> This property is experimental and may change!
+							<br>
+							<b>Note:</b> When <code>actionableArea</code> has value <code>Full</code>, the property <code>actions</code> must match completely the property <code>actions</code> on the card header, since only the card header action is assigned as the default card action when using keyboard.
+							<br>
+							<b>Note:</b> When <code>actionableArea</code> has value <code>Full</code>, and the property <code>actions</code> is used to make the full content interactive, the content itself must not contain interactive elements. It is not recommended to nest interactive elements in this scenario.
 						</td>
 						<td>1.34.0</td>
 						<td>1.92</td>

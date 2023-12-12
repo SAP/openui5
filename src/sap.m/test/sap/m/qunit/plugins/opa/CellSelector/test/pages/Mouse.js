@@ -13,7 +13,7 @@ sap.ui.define([
 	}
 
 	function selectCell(oTarget) {
-		triggerMouseEvent(oTarget, "mousedown", { ctrlKey: true });
+		triggerMouseEvent(oTarget, "mousedown", { ctrlKey: true, button: 0 });
 		triggerMouseEvent(oTarget, "mouseup");
 	}
 
@@ -55,7 +55,7 @@ sap.ui.define([
 					Util.waitForTable.call(this, {
 						success: function(oTable) {
 							const oCellRef = Util.getCell(oTable, iRow, iCol);
-							triggerMouseEvent(oCellRef, "mousedown");
+							triggerMouseEvent(oCellRef, "mousedown", { button: 0 });
 						}
 					});
 				},

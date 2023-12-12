@@ -107,7 +107,7 @@ sap.ui.define([
 				 * and the spacing between the single controls might be wrong.
 				 * Also, controls that do not fit the mode might be rendered incorrectly.
 				 */
-				editable : {type : "boolean", group : "Misc", defaultValue : null},
+				editable : {type : "boolean", group : "Misc", defaultValue : false},
 
 				/**
 				 * The <code>FormLayout</code> that is used to render the <code>SimpleForm</code>.
@@ -252,7 +252,7 @@ sap.ui.define([
 				singleContainerFullSize : {type : "boolean", group : "Misc", defaultValue : true},
 
 				/**
-				 * Breakpoint between Medium size and Large size.
+				 * Breakpoint between large size and extra large size.
 				 *
 				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 				 * @since 1.34.0
@@ -260,7 +260,7 @@ sap.ui.define([
 				breakpointXL : {type : "int", group : "Misc", defaultValue : 1440},
 
 				/**
-				 * Breakpoint between Medium size and Large size.
+				 * Breakpoint between medium size and large size.
 				 *
 				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 				 * @since 1.16.3
@@ -268,7 +268,7 @@ sap.ui.define([
 				breakpointL : {type : "int", group : "Misc", defaultValue : 1024},
 
 				/**
-				 * Breakpoint between Small size and Medium size.
+				 * Breakpoint between small size and medium size.
 				 *
 				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 				 * @since 1.16.3

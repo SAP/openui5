@@ -115,7 +115,7 @@ sap.ui.define([
 			const oPropertyForPlugin = {
 				name: oProperty.name,
 				path: oProperty.path,
-				key: oProperty.key,
+				isKey: oProperty.isKey,
 				text: oProperty.text,
 				unit: oProperty.unit,
 				groupable: oProperty.extension.technicallyGroupable,

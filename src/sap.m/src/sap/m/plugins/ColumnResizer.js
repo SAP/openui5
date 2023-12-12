@@ -36,6 +36,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.91
 	 * @alias sap.m.plugins.ColumnResizer
+	 * @borrows sap.m.plugins.PluginBase.findOn as findOn
 	 */
 	var ColumnResizer = PluginBase.extend("sap.m.plugins.ColumnResizer", /** @lends sap.m.plugins.ColumnResizer.prototype */ { metadata: {
 		library: "sap.m",
@@ -71,7 +72,8 @@ sap.ui.define([
 	var sEndDirection = bRTL ? "left" : "right";
 	var iDirectionFactor = bRTL ? -1 : 1;
 
-	ColumnResizer.getPlugin = PluginBase.getPlugin;
+	//TBD Remove the ColumnResizer.getPlugin part when usages (SmartTable) are cleaned up and use findOn instead.
+	ColumnResizer.findOn = ColumnResizer.getPlugin = PluginBase.findOn;
 
 	ColumnResizer.prototype.init = function() {
 		this._iHoveredColumnIndex = -1;

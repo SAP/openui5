@@ -29,8 +29,9 @@ sap.ui.define([
 	 * @since 1.64
 	 * @experimental As of version 1.64
 	 * @alias sap.ui.table.plugins.SelectionPlugin
+	 * @borrows sap.ui.table.plugins.PluginBase.findOn as findOn
 	 */
-	var SelectionPlugin = Element.extend("sap.ui.table.plugins.SelectionPlugin", {metadata: {
+	var SelectionPlugin = PluginBase.extend("sap.ui.table.plugins.SelectionPlugin", {metadata: {
 		"abstract": true,
 		library: "sap.ui.table",
 		properties: {
@@ -50,12 +51,7 @@ sap.ui.define([
 		}
     }});
 
-	// PluginBase is currently private and can therefore not be extended by the SelectionPlugin class that is the type of a public aggregation.
-	for (var sProp in PluginBase.prototype) {
-		if (!SelectionPlugin.prototype.hasOwnProperty(sProp)) {
-			SelectionPlugin.prototype[sProp] = PluginBase.prototype[sProp];
-		}
-	}
+	SelectionPlugin.findOn = PluginBase.findOn;
 
 	SelectionPlugin.prototype.setParent = function(oParent) {
 		var oTable = this.getTable();

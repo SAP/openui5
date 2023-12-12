@@ -4,7 +4,11 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/plugins/V4Aggregation",
 	"sap/ui/table/utils/TableUtils"
-], function(TableQUnitUtils, V4Aggregation, TableUtils) {
+], function(
+	TableQUnitUtils,
+	V4Aggregation,
+	TableUtils
+) {
 	"use strict";
 
 	TableUtils.getResourceBundle();
@@ -16,11 +20,11 @@ sap.ui.define([
 			this.oPlugin.setPropertyInfos([{
 				name: "Property1",
 				path: "prop1",
-				key: true
+				isKey: true
 			}, {
 				name: "Property2",
 				path: "prop2",
-				key: true,
+				isKey: true,
 				groupable: true
 			}, {
 				name: "Property3",
@@ -628,6 +632,10 @@ sap.ui.define([
 				oSpy.resetHistory();
 			});
 		}
+	});
+
+	QUnit.test("findOn", function(assert) {
+		assert.ok(V4Aggregation.findOn(this.oTable) === this.oPlugin, "Plugin found on dependents aggregation via V4Aggregation.findOn");
 	});
 
 	QUnit.test("No column state", function(assert) {

@@ -296,6 +296,10 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("findOn", function(assert) {
+		assert.ok(DataStateIndicator.findOn(this.oList) === this.oPlugin, "Plugin found via DataStateIndicator.findOn");
+	});
+
 	QUnit.module("Enable Filtering", {
 		beforeEach: function() {
 			this.oModel = new JSONModel({ names: [{name: "A"}, {name: "B"}, {name: "C"}, {name: "D"}] });

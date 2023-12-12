@@ -2,11 +2,11 @@
 /* eslint-disable max-nested-callbacks */
 
 sap.ui.define([
+	"delegates/TableDelegate",
 	"rta/qunit/RtaQunitUtils",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
-	"delegates/TableDelegate",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -14,15 +14,15 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/MoveControls",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/api/LocalResetAPI",
+	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	TableDelegate,
 	RtaQunitUtils,
 	XMLView,
 	JsControlTreeModifier,
 	Element,
-	TableDelegate,
 	Applier,
 	Reverter,
 	FlexObjectFactory,
@@ -30,8 +30,8 @@ sap.ui.define([
 	MoveControls,
 	ChangeHandlerStorage,
 	Condenser,
-	Layer,
 	LocalResetAPI,
+	Layer,
 	sinon
 ) {
 	"use strict";
@@ -240,6 +240,8 @@ sap.ui.define([
 			.then(function(aRemainingChanges) {
 				assert.ok(aRemainingChanges.includes(oFailedChange), "then the failed change is not condensed");
 				assert.strictEqual(aRemainingChanges.length, 4, "then there is one more remaining change");
+				// for a proper revert the change has to be set to successfully applied again
+				oFailedChange.markSuccessful();
 			});
 		});
 
