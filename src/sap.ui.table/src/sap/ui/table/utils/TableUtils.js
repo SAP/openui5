@@ -611,7 +611,7 @@ sap.ui.define([
 
 			return new Promise(function(resolve) {
 				if (bExpectRowsUpdatedEvent) {
-					oTable.attachEventOnce("rowsUpdated", resolve);
+					oTable.attachEventOnce("_rowsUpdated", resolve);
 				} else {
 					resolve();
 				}

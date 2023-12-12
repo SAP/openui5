@@ -1931,7 +1931,7 @@ sap.ui.define([
 			}
 
 			if (this._setFirstVisibleRowIndex(iIndex)) {
-				this.attachEventOnce("rowsUpdated", function() {
+				this.attachEventOnce("_rowsUpdated", function() {
 					setFocus(this, iIndex, bFirstInteractiveElement);
 					return resolve();
 				});
