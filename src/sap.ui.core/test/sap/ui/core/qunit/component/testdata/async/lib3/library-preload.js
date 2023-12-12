@@ -1,12 +1,11 @@
-sap.ui.predefine("sap/test/lib3/library", ['sap/test/lib2/library'],
-function() {
+sap.ui.predefine("sap/test/lib3/library", ['sap/ui/core/Lib', 'sap/test/lib2/library'],
+function(Library) {
 "use strict";
 
-sap.ui.getCore().initLibrary({
+return Library.init({
 	name:"sap.test.lib3",
 	noLibraryCSS:true
 });
-
 });
 sap.ui.require.preload({
 	"version":"2.0",

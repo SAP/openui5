@@ -1,10 +1,11 @@
-/*global QUnit, sinon */
+ /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeManager",
 	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(Localization, Theming, ThemeManager, themeApplied) {
+], function(Localization, Library, Theming, ThemeManager, themeApplied) {
 	"use strict";
 
 
@@ -156,7 +157,7 @@ sap.ui.define([
 		Theming.setTheme("customTheme");
 
 		return themeApplied().then(function () {
-			return sap.ui.getCore().loadLibrary("testlibs.customCss.lib1", true).then(function () {
+			return Library.load("testlibs.customCss.lib1").then(function () {
 				return themeApplied().then(checkLoadedCss);
 			});
 		});
@@ -220,14 +221,17 @@ sap.ui.define([
 
 	QUnit.module("Library Loading");
 
-	QUnit.test("sap.ui.getCore().loadLibrary()", function(assert) {
-		sap.ui.getCore().loadLibrary("sap.ui.customthemefallback.testlib", {async: true});
+	QUnit.test("Library.load()", function(assert) {
+		Library.load("sap.ui.customthemefallback.testlib");
 
 		return themeApplied().then(function() {
 			assert.ok(true, "Applied event has been fired");
 		});
 	});
 
+	/**
+	 * @deprecated
+	 */
 	QUnit.test("sap.ui.getCore().loadLibraries()", function(assert) {
 		sap.ui.getCore().loadLibraries(["sap.ui.failingcssimport.testlib"], {
 			async: true
@@ -238,9 +242,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("require without loadLibrary/loadLibraries", function(assert) {
+	QUnit.test("require without Library.load/Core.loadLibraries", function(assert) {
 		// Fake direct require to a library.js module by just calling initLibrary
-		sap.ui.getCore().initLibrary({
+		Library.init({
 			name : "sap.ui.fake.testlib",
 			version: "1.0.0",
 			dependencies : ["sap.ui.core"],

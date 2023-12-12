@@ -29,7 +29,6 @@ sap.ui.define([
 				if (sCsp || (sCspReportOnly && sCspReportOnly.indexOf("report-uri") !== -1)) {
 					// Check for reported CSP violations
 					Core.ready().then(function() {
-						assert.ok(sap.ui.getCore().isInitialized(), "UI5 Core has been initialized");
 						assert.ok(window["ui5-core-csp-violations"].length === 0,
 							"Found " + window["ui5-core-csp-violations"].length + " CSP violation(s)"
 						);

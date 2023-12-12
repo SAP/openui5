@@ -569,7 +569,6 @@ function(
 			this.oMetadata._oDesignTime = this.vOldDesigntime;
 			this.oMetadata._oDesignTimePromise = null;
 			delete window.testlibs;
-			sap.ui.getCore().unregisterPlugin(this.TestCorePlugin);
 		}
 	}, function () {
 		QUnit.test("loadDesignTime - from core for custom data no preload", function(assert) {

@@ -1,12 +1,11 @@
-sap.ui.predefine("sap/test/lib4/library", [],
-	function() {
+sap.ui.predefine("sap/test/lib4/library", ['sap/ui/core/Lib'],
+	function(Library) {
 	"use strict";
 
-	sap.ui.getCore().initLibrary({
+	return Library.init({
 		name:"sap.test.lib4",
 		noLibraryCSS:true
 	});
-
 });
 sap.ui.require.preload({
 	"version":"2.0",
