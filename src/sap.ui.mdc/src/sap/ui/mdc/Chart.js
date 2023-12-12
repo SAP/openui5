@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-		"sap/ui/core/Core",
 		"sap/ui/core/Lib",
 		"sap/ui/mdc/Control",
 		"./ChartRenderer",
@@ -27,7 +26,6 @@ sap.ui.define([
 		"sap/ui/mdc/enums/ChartP13nMode"
 	],
 	(
-		Core,
 		Library,
 		Control,
 		ChartRenderer,

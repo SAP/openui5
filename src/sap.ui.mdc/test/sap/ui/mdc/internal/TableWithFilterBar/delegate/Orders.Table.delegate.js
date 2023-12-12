@@ -8,7 +8,6 @@ sap.ui.define([
 	'sap/ui/mdc/enums/OperatorName',
 	"sap/ui/mdc/util/FilterUtil",
 	"delegates/odata/v4/util/DelegateUtil",
-	"sap/ui/core/Core",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/type/Currency",
@@ -17,7 +16,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String",
 	"sap/m/Text",
 	"delegates/util/DelegateCache"
-], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, OperatorName, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, CurrencyType, DecimalType, Int32Type, StringType, Text, DelegateCache) {
+], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, OperatorName, FilterUtil, DelegateUtil, Filter, FilterOperator, CurrencyType, DecimalType, Int32Type, StringType, Text, DelegateCache) {
 	"use strict";
 	var OrdersTableDelegate = Object.assign({}, ODataTableDelegate);
 

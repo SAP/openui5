@@ -7,13 +7,12 @@ sap.ui.define([
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/util/FilterUtil",
 	"delegates/odata/v4/util/DelegateUtil",
-	"sap/ui/core/Core",
 	"sap/ui/model/Filter",
 	'sap/ui/model/FilterOperator',
 	"sap/ui/model/odata/type/Int32",
 	"sap/m/Text",
 	"delegates/util/DelegateCache"
-], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text, DelegateCache) {
+], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, FilterUtil, DelegateUtil, Filter, FilterOperator, Int32Type, Text, DelegateCache) {
 	"use strict";
 	var OrderItemssTableDelegate = Object.assign({}, ODataTableDelegate);
 

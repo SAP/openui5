@@ -12,10 +12,9 @@ sap.ui.define([
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/util/IdentifierUtil',
-	'sap/ui/model/ParseException',
-	'sap/ui/core/Core'
+	'sap/ui/model/ParseException'
 ], function(
-	BaseValueHelpDelegate, StateUtil, Condition, FilterOperatorUtil, ConditionValidated, OperatorName, IdentifierUtil, ParseException, Core
+	BaseValueHelpDelegate, StateUtil, Condition, FilterOperatorUtil, ConditionValidated, OperatorName, IdentifierUtil, ParseException
 ) {
 	"use strict";
 
