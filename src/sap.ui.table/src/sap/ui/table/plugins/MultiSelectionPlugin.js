@@ -47,7 +47,7 @@ sap.ui.define([
 	 * @since 1.64
 	 * @author SAP SE
 	 * @alias sap.ui.table.plugins.MultiSelectionPlugin
-	 * @borrows module:sap/ui/table/plugins/PluginBase.findOn as findOn
+	 * @borrows sap.ui.table.plugins.PluginBase.findOn as findOn
 	 */
 	var MultiSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.MultiSelectionPlugin", {metadata: {
 		library: "sap.ui.table",
