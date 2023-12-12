@@ -387,10 +387,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("Pressing any Keyboard-key on an Overlay and isActive is false", function(assert) {
-			// processing of the key-down event can be proofed by checking the calls of
-			// "getFocusedOverlay" function
+			// processing of the key-down event can be proofed by checking the calls of "getFocusedOverlay" function
 			this.oSelectionPlugin.setIsActive(false);
-			var oGetFocusedOverlayStub = sandbox.stub(Utils, "getFocusedOverlay");
+			var oGetFocusedOverlayStub = sandbox.stub(this.oSelectionPlugin, "_getFocusedOverlay");
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			oOverlay.focus();
 			this.oEvent.keyCode = KeyCodes.TAB;
@@ -451,7 +450,7 @@ sap.ui.define([
 			var oParentOverlay = Utils.getFocusableParentOverlay(oOverlay);
 			this.oEvent.keyCode = KeyCodes.ARROW_UP;
 			oOverlay.getDomRef().dispatchEvent(this.oEvent);
-			assert.ok(Utils.getFocusedOverlay() === oParentOverlay, "Parent Overlay is focused");
+			assert.ok(this.oSelectionPlugin._getFocusedOverlay() === oParentOverlay, "Parent Overlay is focused");
 		});
 
 		QUnit.test("Pressing DOWN-Arrow on an Overlay", function(assert) {
@@ -460,7 +459,7 @@ sap.ui.define([
 			var oFirstChildOverlay = Utils.getFirstFocusableDescendantOverlay(oOverlay);
 			this.oEvent.keyCode = KeyCodes.ARROW_DOWN;
 			oOverlay.getDomRef().dispatchEvent(this.oEvent);
-			assert.ok(Utils.getFocusedOverlay() === oFirstChildOverlay, "Child Overlay is focused");
+			assert.ok(this.oSelectionPlugin._getFocusedOverlay() === oFirstChildOverlay, "Child Overlay is focused");
 		});
 
 		QUnit.test("Pressing Left-arrow on an Overlay", function(assert) {
@@ -469,7 +468,7 @@ sap.ui.define([
 			var oPrevSiblingOverlay = Utils.getPreviousFocusableSiblingOverlay(oOverlay);
 			this.oEvent.keyCode = KeyCodes.ARROW_LEFT;
 			oOverlay.getDomRef().dispatchEvent(this.oEvent);
-			assert.ok(Utils.getFocusedOverlay() === oPrevSiblingOverlay, "Previous Sibling Overlay is focused");
+			assert.ok(this.oSelectionPlugin._getFocusedOverlay() === oPrevSiblingOverlay, "Previous Sibling Overlay is focused");
 		});
 
 		QUnit.test("Pressing Right-arrow on an Overlay", function(assert) {
@@ -478,7 +477,7 @@ sap.ui.define([
 			var oNextSiblingOverlay = Utils.getNextFocusableSiblingOverlay(oOverlay);
 			this.oEvent.keyCode = KeyCodes.ARROW_RIGHT;
 			oOverlay.getDomRef().dispatchEvent(this.oEvent);
-			assert.ok(Utils.getFocusedOverlay() === oNextSiblingOverlay, "Next Sibling Overlay is focused");
+			assert.ok(this.oSelectionPlugin._getFocusedOverlay() === oNextSiblingOverlay, "Next Sibling Overlay is focused");
 		});
 
 		QUnit.test("Invoking 'contextmenu' on an Overlay which is selectable", function(assert) {

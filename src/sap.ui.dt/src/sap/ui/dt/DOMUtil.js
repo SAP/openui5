@@ -46,6 +46,33 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns if the <code>oDomElement</code> is currently visible on the screen.
+	 *
+	 * @param {HTMLElement|jQuery} oDomElement Element to be evaluated
+	 * @returns{boolean} - Returns if <code>oDomElement</code> is currently visible on the screen.
+	 */
+	DOMUtil.isElementInViewport = function(oDomElement) {
+		oDomElement = oDomElement.jquery ? oDomElement.get(0) : oDomElement;
+
+		var mRect = oDomElement.getBoundingClientRect();
+
+		return (
+			mRect.top >= 0 &&
+			mRect.left >= 0 &&
+			mRect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+			mRect.right <= (window.innerWidth || document.documentElement.clientWidth)
+		);
+	};
+
+	DOMUtil.getSize = function(oDomRef) {
+		var oClientRec = oDomRef.getBoundingClientRect();
+		return {
+			width: oClientRec.width,
+			height: oClientRec.height
+		};
+	};
+
+	/**
 	 * Returns the parents for an element
 	 * Replaces the jQuery method parents
 	 * @param {HTMLElement} oElement - Element
@@ -60,14 +87,6 @@ sap.ui.define([
 			}
 		}
 		return aParents;
-	};
-
-	DOMUtil.getSize = function(oDomRef) {
-		var oClientRec = oDomRef.getBoundingClientRect();
-		return {
-			width: oClientRec.width,
-			height: oClientRec.height
-		};
 	};
 
 	/**
