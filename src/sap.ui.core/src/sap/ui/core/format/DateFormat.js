@@ -3492,7 +3492,7 @@ sap.ui.define([
 		return [oDate];
 	};
 
-	const rAllRTLCharacters = /[\u200e\u200f\u202a\u202b\u202c]/g;
+	const rAllRTLCharacters = /[\u061c\u200e\u200f\u202a\u202b\u202c]/g;
 	const rAllSpaces = /\s/g;
 
 	/**

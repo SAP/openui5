@@ -1493,7 +1493,8 @@ sap.ui.define([
 	{locale : "en", code : "EUR", result : "€42.00", context : "accounting"},
 	{locale : "en", code : "AED", result : "42.00\u00a0AED", context : "sap-accounting"},
 	{locale : "ar", code : "AED", result : "\u200f42.00\u00a0\u202aد.إ.\u200f\u202c", context : "sap-standard"},
-	{locale : "ar", code : "AED", result : "\u200f42.00\u00a0\u202bد.إ.\u200f\u200e\u202c", context : "standard"}
+	{locale : "ar", code : "AED", result : "\u200f42.00\u00a0\u202bد.إ.\u200f\u200e\u202c", context : "standard"},
+	{locale : "ar", code : "AED", result : "\u061c42.00\u202bد.إ.\u200f\u200e\u202c", context : "accounting"}
 ].forEach((oFixture) => {// JIRA: CPOUI5MODELS-1502
 	const sTitle = `Format and parse (RTL): ${oFixture.locale}, ${oFixture.code}, ${oFixture.context}`;
 	QUnit.test(sTitle, function (assert) {
