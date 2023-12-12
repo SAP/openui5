@@ -2014,11 +2014,15 @@ sap.ui.define([
 			"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath@@this.is.ignored@sapui.name"
 				: "Unsupported path after @@this.is.ignored",
 			// ...is not a function but... --------------------------------------------------------
+			/** @deprecated as of version 1.120 */
 			"/@@sap.ui.model.odata.v4.AnnotationHelper.invalid"
 				: "sap.ui.model.odata.v4.AnnotationHelper.invalid is not a function but: undefined",
+			/** @deprecated as of version 1.120 */
 			"/@@sap.ui.model.odata.v4.AnnotationHelper"
 				: "sap.ui.model.odata.v4.AnnotationHelper is not a function but: "
-					+ AnnotationHelper,
+				+ AnnotationHelper,
+			"/@@AH.invalid" : "AH.invalid is not a function but: undefined",
+			"/@@AH" : "AH is not a function but: " + AnnotationHelper,
 			"/@@requestCodeList" // requestCodeList is @private!
 				: "requestCodeList is not a function but: undefined",
 			"/@@.requestCurrencyCodes" // "." looks in given scope only!
@@ -2054,7 +2058,8 @@ sap.ui.define([
 					.withExactArgs(sWarning, sPath, sODataMetaModel);
 
 				// code under test
-				oSyncPromise = this.oMetaModel.fetchObject(sPath, null, {scope : {}});
+				oSyncPromise = this.oMetaModel.fetchObject(sPath, null,
+					{scope : {AH : AnnotationHelper}});
 
 				assert.strictEqual(oSyncPromise.isFulfilled(), true);
 				assert.strictEqual(oSyncPromise.getResult(), undefined);
@@ -2108,6 +2113,11 @@ sap.ui.define([
 		sPath : "/T€AMS/@UI.LineItem/0/Value/$Path/$",
 		sSchemaChildName : "tea_busi.TEAM" // "Team_Id" is not part of this
 	}].forEach(function (oFixture) {
+		[
+			/** @deprecated as of version 1.120 */
+			"@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple",
+			"@@AH.isMultiple"
+		].forEach((sFunction) => {
 		QUnit.test("fetchObject: " + oFixture.sPath + "@@...isMultiple", function (assert) {
 			var oContext,
 				oInput,
@@ -2125,8 +2135,8 @@ sap.ui.define([
 				})).returns(oResult);
 
 			// code under test
-			oSyncPromise = this.oMetaModel.fetchObject(oFixture.sPath
-				+ "@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple");
+			oSyncPromise = this.oMetaModel.fetchObject(oFixture.sPath + sFunction, undefined,
+				{scope : {AH : AnnotationHelper}});
 
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
 			assert.strictEqual(oSyncPromise.getResult(), oResult);
@@ -2135,6 +2145,7 @@ sap.ui.define([
 			assert.strictEqual(oContext.getModel(), this.oMetaModel);
 			assert.strictEqual(oContext.getPath(), oFixture.sPath);
 			assert.strictEqual(oContext.getObject(), oInput);
+		});
 		});
 	});
 
@@ -2173,19 +2184,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchObject: computed annotation returns promise", function (assert) {
-		var oResult = {};
+["foo.bar.AnnotationHelper", "AH"].forEach(function (sModulePath) {
+	const sTitle = "fetchObject: computed annotation returns promise, module path=" + sModulePath;
+	QUnit.test(sTitle, function (assert) {
+		var oResult = {},
+			oScope = {
+				foo : {bar : {AnnotationHelper : AnnotationHelper}},
+				AH : AnnotationHelper
+			};
 
 		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
 		this.mock(AnnotationHelper).expects("isMultiple").resolves(oResult);
 
 		// code under test
 		return this.oMetaModel.fetchObject("/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath"
-				+ "@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple")
+				+ "@@" + sModulePath + ".isMultiple", undefined, {scope : oScope})
 			.then(function (oResult0) {
 				assert.strictEqual(oResult0, oResult);
 			});
 	});
+});
 
 	//*********************************************************************************************
 	["@@computedAnnotation", "@@.computedAnnotation"].forEach(function (sSuffix) {
@@ -2273,7 +2291,7 @@ sap.ui.define([
 	[false, true].forEach(function (bWarn) {
 		QUnit.test("fetchObject: ...@@... throws, bWarn = " + bWarn, function (assert) {
 			var oError = new Error("This call failed intentionally"),
-				sPath = "/@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple",
+				sPath = "/@@AH.isMultiple",
 				oSyncPromise;
 
 			this.oMetaModelMock.expects("fetchEntityContainer")
@@ -2282,12 +2300,12 @@ sap.ui.define([
 				.throws(oError);
 			this.oLogMock.expects("isLoggable")
 				.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(bWarn);
-			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0).withExactArgs(
-				"Error calling sap.ui.model.odata.v4.AnnotationHelper.isMultiple: " + oError,
-				sPath, sODataMetaModel);
+			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+				.withExactArgs("Error calling AH.isMultiple: " + oError, sPath, sODataMetaModel);
 
 			// code under test
-			oSyncPromise = this.oMetaModel.fetchObject(sPath);
+			oSyncPromise = this.oMetaModel.fetchObject(sPath, undefined,
+				{scope : {AH : AnnotationHelper}});
 
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
 			assert.strictEqual(oSyncPromise.getResult(), undefined);
@@ -2315,8 +2333,8 @@ sap.ui.define([
 			})).callThrough(); // this is an integrative test
 
 		// code under test
-		oSyncPromise = this.oMetaModel.fetchObject(sPath
-			+ "@@sap.ui.model.odata.v4.AnnotationHelper.format");
+		oSyncPromise = this.oMetaModel.fetchObject(sPath + "@@AH.format", undefined,
+			{scope : {AH : AnnotationHelper}});
 
 		assert.strictEqual(oSyncPromise.isFulfilled(), true);
 		assert.strictEqual(oSyncPromise.getResult(), "{path:'Name'" // Note: "_it/" removed!
@@ -2346,8 +2364,8 @@ sap.ui.define([
 			})).callThrough(); // this is an integrative test
 
 		// code under test
-		oSyncPromise = this.oMetaModel.fetchObject(sPath
-			+ "@@sap.ui.model.odata.v4.AnnotationHelper.format");
+		oSyncPromise = this.oMetaModel.fetchObject(sPath + "@@AH.format", undefined,
+			{scope : {AH : AnnotationHelper}});
 
 		assert.strictEqual(oSyncPromise.isFulfilled(), true);
 		assert.strictEqual(oSyncPromise.getResult(), "{path:'parameter1'"
