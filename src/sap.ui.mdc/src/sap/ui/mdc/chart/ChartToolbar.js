@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-		"sap/ui/core/Core",
 		"sap/ui/core/Lib",
 		"sap/ui/mdc/ActionToolbar",
 		"sap/m/OverflowToolbarRenderer",
@@ -20,7 +19,6 @@ sap.ui.define([
 		"sap/ui/mdc/enums/ChartToolbarActionType"
 	],
 	(
-		Core,
 		Library,
 		ActionToolbar,
 		OverflowToolbarRenderer,

@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/test/Opa5', 'sap/ui/test/actions/Press', 'sap/ui/test/actions/EnterText', 'sap/ui/test/matchers/Properties', 'sap/ui/test/matchers/Ancestor', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Util', 'sap/ui/test/matchers/PropertyStrictEquals', "sap/ui/test/matchers/Descendant", "sap/ui/core/Core"
-], function(Opa5, Press, EnterText, Properties, Ancestor, TestUtil, PropertyStrictEquals, Descendant, oCore) {
+	'sap/ui/test/Opa5', 'sap/ui/test/actions/Press', 'sap/ui/test/actions/EnterText', 'sap/ui/test/matchers/Properties', 'sap/ui/test/matchers/Ancestor', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Util', 'sap/ui/test/matchers/PropertyStrictEquals', "sap/ui/test/matchers/Descendant"
+], function(Opa5, Press, EnterText, Properties, Ancestor, TestUtil, PropertyStrictEquals, Descendant) {
 	'use strict';
 
 	const Action = Opa5.extend("sap.ui.mdc.qunit.link.opa.test.Action", {
