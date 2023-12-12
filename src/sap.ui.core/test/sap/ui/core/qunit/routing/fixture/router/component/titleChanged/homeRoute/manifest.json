@@ -1,0 +1,37 @@
+{
+	"sap.app": {
+		"id": "qunit.router.component.titleChanged.homeRoute",
+		"title": "App Title in homeRoute Component",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "qunit.router.component.titleChanged.homeRoute.view.RootView",
+			"type": "XML"
+		},
+		"routing": {
+			"config": {
+				"controlAggregation": "content",
+				"controlId": "rootPanel",
+				"viewType": "XML",
+				"type": "View",
+				"path": "qunit.router.component.titleChanged.homeRoute.view",
+				"homeRoute": "home"
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "home",
+					"target": "home"
+				}
+			],
+			"targets": {
+				"home": {
+					"name": "MyView1"
+				}
+			}
+		}
+	}
+}
