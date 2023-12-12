@@ -89,7 +89,7 @@ sap.ui.define([
 
 	QUnit.test("and bundled separately...", function(assert) {
 		var success = Promise.resolve();
-		var loadLibs = this.stub(sap.ui.getCore(), "loadLibraries").returns(success);
+		var loadLibs = this.stub(Library, "_load").returns(success);
 		var loadPreload = this.stub(sap.ui.loader._, "loadJSResourceAsync").returns(success);
 
 		return Component.create({

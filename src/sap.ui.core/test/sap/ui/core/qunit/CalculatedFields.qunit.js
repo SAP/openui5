@@ -1,88 +1,73 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/type/Float",
-	"sap/ui/model/odata/type/TimeOfDay",
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/m/Label",
 	"sap/m/Input",
+	"sap/m/Label",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/type/TimeOfDay",
+	"sap/ui/model/type/Float",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/Column",
 	"sap/ui/table/Table"
 ], function(
-	JSONModel,
-	Float,
-	TimeOfDay,
-	nextUIUpdate,
-	Label,
 	Input,
+	Label,
+	JSONModel,
+	TimeOfDay,
+	Float,
+	nextUIUpdate,
 	Column,
 	Table
 ) {
 	"use strict";
 
-	//add divs for control tests
+	// create div for UIArea
 	var oText = document.createElement("div");
-	oText.setAttribute("id", "txt");
+	oText.setAttribute("id", "content");
 	document.body.appendChild(oText);
-	var oText2 = document.createElement("div");
-	oText2.setAttribute("id", "txt2");
-	document.body.appendChild(oText2);
-	var oTable = document.createElement("div");
-	oTable.setAttribute("id", "table");
-	document.body.appendChild(oTable);
 
-	var oModel;
-	var oModel2;
-	var testData;
-	var testData2;
-	var oTxt;
+	const testData = {
+		"teamMembers":[
+			{"firstName":"Andreas", "lastName":"Klark", "gender":"male"},
+			{"firstName":"Peter", "lastName":"Miller", "gender":"male"},
+			{"firstName":"Gina", "lastName":"Rush", "gender":"female"},
+			{"firstName":"Steave", "lastName":"Ander", "gender":"male"},
+			{"firstName":"Michael", "lastName":"Spring", "gender":"male"},
+			{"firstName":"Marc", "lastName":"Green", "gender":"male"},
+			{"firstName":"Frank", "lastName":"Wallace", "gender":"male"}
+		],
+		"values":
+			[
+			 {"value" : 3.55},
+			 {"value" : 5.322},
+			 {"value" : 222.322},
+			 {"value" : "13:47:26"}
+		]
+	};
+	const testData2 = {
+		"values": [
+			{"value" : 7.55},
+			{"value" : 555554.32241},
+			{"value" : 2.418}
+		]
+	};
+	const oModel = new JSONModel(testData);
+	const oModel2 = new JSONModel(testData2);
 
-	function setup(){
-		if (oTxt) {
-			oTxt.destroy();
+	QUnit.module("Default", {
+		beforeEach(assert) {
+			this.oTxt = new Input().placeAt("content");
+			this.oTxt.getUIArea().setModel(oModel);
+			this.oTxt.getUIArea().setModel(oModel2, "model2");
+		},
+		afterEach(assert) {
+			this.oTxt.getUIArea().setModel(undefined );
+			this.oTxt.getUIArea().setModel(undefined, "model2");
+			this.oTxt.destroy();
 		}
-
-		testData = {
-			"teamMembers":[
-				{"firstName":"Andreas", "lastName":"Klark", "gender":"male"},
-				{"firstName":"Peter", "lastName":"Miller", "gender":"male"},
-				{"firstName":"Gina", "lastName":"Rush", "gender":"female"},
-				{"firstName":"Steave", "lastName":"Ander", "gender":"male"},
-				{"firstName":"Michael", "lastName":"Spring", "gender":"male"},
-				{"firstName":"Marc", "lastName":"Green", "gender":"male"},
-				{"firstName":"Frank", "lastName":"Wallace", "gender":"male"}
-			],
-			"values":
-				[
-				 {"value" : 3.55},
-				 {"value" : 5.322},
-				 {"value" : 222.322},
-				 {"value" : "13:47:26"}
-			]
-		};
-
-		testData2 = {
-			"values": [
-				{"value" : 7.55},
-				{"value" : 555554.32241},
-				{"value" : 2.418}
-			]
-		};
-
-		oModel = new JSONModel();
-		oModel.setData(testData);
-		oModel2 = new JSONModel();
-		oModel2.setData(testData2);
-		sap.ui.getCore().setModel(oModel);
-		sap.ui.getCore().setModel(oModel2, "model2");
-
-		oTxt = new Input();
-		oTxt.placeAt("txt");
-	}
+	});
 
 	QUnit.test("Binding syntax tests", function(assert) {
-		setup();
-
+		const oTxt = this.oTxt;
 		oTxt.bindValue("/teamMembers/4/firstName");
 		assert.equal(oTxt.getValue(), "Michael", "normal syntax 1");
 		oTxt.unbindProperty("value");
@@ -111,9 +96,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Binding syntax constructor tests", function(assert) {
-		setup();
-
-		oTxt = new Input({
+		let oTxt = new Input({
 			value: {
 				parts: [
 					{path: "/teamMembers/6/firstName"},
@@ -122,7 +105,7 @@ sap.ui.define([
 			}
 		});
 
-		oTxt.placeAt("txt");
+		oTxt.placeAt("content");
 		assert.equal(oTxt.getValue(), "Frank Wallace", "calculated fields constructor syntax 1");
 
 		oTxt.destroy();
@@ -135,13 +118,13 @@ sap.ui.define([
 				]
 			}
 		});
-		oTxt.placeAt("txt");
+		oTxt.placeAt("content");
 		assert.equal(oTxt.getValue(), "Gina Andreas Rush", "calculated fields constructor syntax 2");
+		oTxt.destroy();
 	});
 
 	QUnit.test("Composite Binding tests", function(assert) {
-		setup();
-
+		const oTxt = this.oTxt;
 		oTxt.bindValue({
 			path: "/teamMembers/4/firstName",
 			parts: [
@@ -168,7 +151,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Calculated fields model tests wrong path", function(assert) {
-		setup();
+		const oTxt = this.oTxt;
 		oTxt.bindValue({
 			parts: [
 				{path: "/teamMembers/6/firstName"},
@@ -179,7 +162,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Calculated fields model custom formatter", function(assert) {
-		setup();
+		const oTxt = this.oTxt;
 		oTxt.bindValue({
 			parts: [
 				{path: "/teamMembers/6/firstName"},
@@ -196,7 +179,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Calculated fields model tests wrong path", function(assert) {
-		setup();
+		const oTxt = this.oTxt;
 		oTxt.bindValue({
 			parts: [
 				{path: "/teamMembers/6/firstName"},
@@ -207,7 +190,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Calculated fields multi model tests", function(assert) {
-		setup();
+		const oTxt = this.oTxt;
 		oTxt.bindValue({
 			parts: [
 				{path: "/values/1/value"},
@@ -223,7 +206,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Calculated fields multi model tests wrong path", function(assert) {
-		setup();
+		const oTxt = this.oTxt;
 		oTxt.bindValue({
 			parts: [
 				{path: "/values/1/value"},
@@ -240,7 +223,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Calculated fields with types and raw values", function(assert) {
-		setup();
+		const oTxt = this.oTxt;
 		oTxt.bindValue({
 			parts: [
 				{path: "/values/1/value", type: new Float()},
@@ -272,9 +255,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Calculated fields with types and native values", function(assert) {
-		setup();
 		assert.expect(2);
 
+		const oTxt = this.oTxt;
 		oTxt.bindValue({
 			parts: [
 				{path: "/values/3/value", type: new TimeOfDay()},
@@ -289,6 +272,9 @@ sap.ui.define([
 
 		oTxt.getValue();
 	});
+
+
+
 	QUnit.module("Table", {
 		beforeEach: function() {
 			this.clock = sinon.useFakeTimers();
@@ -299,8 +285,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Calculated fields with table", async function(assert) {
-		setup();
-		 var oTable = new Table({
+		var oTable = new Table({
 			columns: [
 				new Column({
 					label: new Label({ text: "name" }),
@@ -320,8 +305,9 @@ sap.ui.define([
 				]
 		});
 
+		oTable.setModel(oModel);
 		oTable.bindRows("/teamMembers");
-		oTable.placeAt("table");
+		oTable.placeAt("content");
 
 		await nextUIUpdate();
 		this.clock.tick(1000);
@@ -334,5 +320,8 @@ sap.ui.define([
 			}
 		});
 		assert.equal(counter, 7, "table entries");
+
+		oTable.destroy();
+		this.clock.tick();
 	});
 });

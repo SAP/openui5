@@ -20,43 +20,43 @@ sap.ui.define(function() {
 	});
 
 	QUnit.test("d3", function(assert){
-		return requireP(["sap/ui/thirdparty/d3"]).then(function(imports) {
-			assert.ok(imports[0] != null, "d3 exports something");
-			assert.ok(sap.ui.require("sap/ui/thirdparty/d3") === imports[0], "probing works for d3");
+		return requireP(["sap/ui/thirdparty/d3"]).then(function([d3]) {
+			assert.ok(d3 != null, "d3 exports something");
+			assert.ok(sap.ui.require("sap/ui/thirdparty/d3") === d3, "probing works for d3");
 		});
 	});
 
 	QUnit.test("hasher", function(assert){
-		return requireP(["sap/ui/thirdparty/hasher"]).then(function(imports) {
-			assert.ok(imports[0] != null, "hasher exports something");
-			assert.ok(sap.ui.require("sap/ui/thirdparty/hasher") === imports[0], "probing works for hasher");
+		return requireP(["sap/ui/thirdparty/hasher"]).then(function([hasher]) {
+			assert.ok(hasher != null, "hasher exports something");
+			assert.ok(sap.ui.require("sap/ui/thirdparty/hasher") === hasher, "probing works for hasher");
 		});
 	});
 
 	QUnit.test("sinon", function(assert){
-		return requireP(["sap/ui/thirdparty/sinon"]).then(function(imports) {
-			assert.ok(imports[0] != null, "sinon exports something");
-			assert.ok(sap.ui.require("sap/ui/thirdparty/sinon") === imports[0], "probing works for sinon");
+		return requireP(["sap/ui/thirdparty/sinon"]).then(function([sinon]) {
+			assert.ok(sinon != null, "sinon exports something");
+			assert.ok(sap.ui.require("sap/ui/thirdparty/sinon") === sinon, "probing works for sinon");
 		});
 	});
 
 	QUnit.test("datajs", function(assert){
-		return requireP(["sap/ui/thirdparty/datajs"]).then(function(imports) {
-			assert.ok(imports[0] != null, "datajs exports something");
-			assert.ok(sap.ui.require("sap/ui/thirdparty/datajs") === imports[0], "probing works for datajs");
+		return requireP(["sap/ui/thirdparty/datajs"]).then(function([datajs]) {
+			assert.ok(datajs != null, "datajs exports something");
+			assert.ok(sap.ui.require("sap/ui/thirdparty/datajs") === datajs, "probing works for datajs");
 		});
 	});
 
 	QUnit.test("Complex test: load sap.viz", function(assert) {
-		return requireP(["sap/ui/core/Core", "sap/ui/thirdparty/jquery"]).then(function(imports) {
+		return requireP(["sap/ui/core/Core", "sap/ui/core/Lib", "sap/ui/thirdparty/jquery"]).then(function([Core, Library, jQuery]) {
 			return Promise.resolve(
-				imports[1].ajax({
+				jQuery.ajax({
 					url: sap.ui.require.toUrl("sap/viz/library.js"),
 					method: "HEAD"
 				})
 			).then(function() {
-				sap.ui.getCore().boot();
-				return sap.ui.getCore().loadLibrary("sap.viz", { async: true })
+				Core.boot();
+				return Library.load("sap.viz")
 				.then(function() {
 					return new Promise(function(resolve, reject) {
 						require(["css"], function(css) {

@@ -233,8 +233,10 @@ sap.ui.define([
 	QUnit.module('default', {
 		before: function() {
 			// preload any used libraries / modules to avoid sync requests
-			return sap.ui.getCore().loadLibraries([
-					"sap.ui.layout", "sap.ui.unified", "sap.m"
+			return Promise.all([
+				Library.load("sap.ui.layout"),
+				Library.load("sap.ui.unified"),
+				Library.load("sap.m")
 			]).then(function() {
 				return new Promise(function(resolve, reject) {
 					sap.ui.require([

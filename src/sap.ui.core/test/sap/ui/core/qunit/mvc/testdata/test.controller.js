@@ -12,7 +12,7 @@ sap.ui.define([
 			if (this.getView().getViewData()) {
 				window.dataOnInit = this.getView().getViewData().test;
 			}
-			sap.ui.getCore().setModel(new JSONModel({
+			this.getView().setModel(new JSONModel({
 				"key": "value"
 			}));
 		},
