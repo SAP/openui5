@@ -193,7 +193,11 @@ sap.ui.define([
 		 * @private
 		 */
 		_addURLParameter(sParameter) {
-			return this._buildReturnedURL() + sParameter;
+			const oTextField = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+			const iCurrentSelectionStart = oTextField.getFocusDomRef().selectionStart;
+			const iCurrentSelectionEnd = oTextField.getFocusDomRef().selectionEnd;
+			const sCurrentUrl = this._buildReturnedURL();
+			return `${sCurrentUrl.substring(0, iCurrentSelectionStart)}${sParameter}${sCurrentUrl.substring(iCurrentSelectionEnd)}`;
 		},
 
 		/**
