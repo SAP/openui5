@@ -3123,7 +3123,8 @@ sap.ui.define([
 			var oEntry2 = oData.results[-aPreviousEntryServiceKey.length];
 			sPreviousEntryDimensionKeyString = "";
 			for (var j = 0; j < aAggregationLevel.length; j++) {
-				sPreviousEntryDimensionKeyString += oEntry2[aAggregationLevel[j]] + "|";
+				sPreviousEntryDimensionKeyString +=
+					AnalyticalBinding._getDimensionValue(oEntry2[aAggregationLevel[j]]) + "|";
 			}
 		}
 
@@ -3141,7 +3142,7 @@ sap.ui.define([
 				// perform check to detect multiple returned entries for a single group level instance; duplicates are detected by having the same dimension keys
 				sDimensionKeyString = "";
 				for (var g = 0; g < aAggregationLevel.length; g++) {
-					sDimensionKeyString += oEntry[aAggregationLevel[g]] + "|";
+					sDimensionKeyString += AnalyticalBinding._getDimensionValue(oEntry[aAggregationLevel[g]]) + "|";
 				}
 				if (sPreviousEntryDimensionKeyString == sDimensionKeyString) {
 					this._warnNoSortingOfGroups();
@@ -3174,17 +3175,8 @@ sap.ui.define([
 					if (sPreviousEntryDimensionKeyString == sDimensionKeyString) {
 						aMultiUnitEntry.push(oData.results[h]);
 					}
-					// determine all deviating unit properties
-					var aDeviatingUnitPropertyName = [];
-					for (var m = 0; m < aSelectedUnitPropertyName.length; m++) {
-						var sUnitPropertyName = aSelectedUnitPropertyName[m];
-						for (var o = 1; o < aMultiUnitEntry.length; o++) {
-							if (aMultiUnitEntry[o - 1][sUnitPropertyName] != aMultiUnitEntry[o][sUnitPropertyName]) {
-								aDeviatingUnitPropertyName.push(sUnitPropertyName);
-								break;
-							}
-						}
-					}
+					var aDeviatingUnitPropertyName = AnalyticalBinding._getDeviatingUnitPropertyNames(
+							aSelectedUnitPropertyName, aMultiUnitEntry);
 					// create a multi-unit repr. (includes a corresponding multi-unit entity)
 					var oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(sGroupId, oData.results[iFirstMatchingEntryIndex], aSelectedUnitPropertyName, aDeviatingUnitPropertyName, oRequestDetails.bIsFlatListRequest);
 					if (oMultiUnitRepresentative.aReloadMeasurePropertyName.length > 0) {
@@ -4318,7 +4310,8 @@ sap.ui.define([
 		 * You will need this description in order to understand this implementation.
 		 * The variable names are derived from the names used in the description, underscores in the names indicate indexed names.
 		 */
-		var aKI = this.mKeyIndex[oKeyIndexMapping.sGroupId], // is mKI in description
+		var aDeviatingUnitPropertyNames,
+			aKI = this.mKeyIndex[oKeyIndexMapping.sGroupId], // is mKI in description
 			aSK = this.mServiceKey[oKeyIndexMapping.sGroupId], // is mSK in description
 			aMUK = this.mMultiUnitKey[oKeyIndexMapping.sGroupId], // is mMUK in description
 			iDiscardedEntriesCount = 0,
@@ -4345,12 +4338,13 @@ sap.ui.define([
 		}
 		var oPreviousEntry = this.oModel.getObject("/" + sPreviousServiceKey);
 		var oNextEntry = this.oModel.getObject("/" + sNextServiceKey);
-
 		var sPreviousEntryDimensionKeyString = "",
 			sNextEntryDimensionKeyString = "";
 		for (var i = 0; i < aAggregationLevel.length; i++) {
-			sPreviousEntryDimensionKeyString += oPreviousEntry[aAggregationLevel[i]] + "|";
-			sNextEntryDimensionKeyString += oNextEntry[aAggregationLevel[i]] + "|";
+			sPreviousEntryDimensionKeyString += AnalyticalBinding._getDimensionValue(
+					oPreviousEntry[aAggregationLevel[i]]) + "|";
+			sNextEntryDimensionKeyString += AnalyticalBinding._getDimensionValue(
+					oNextEntry[aAggregationLevel[i]]) + "|";
 		}
 		bNeedMultiUnitKeyMerge = sPreviousEntryDimensionKeyString == sNextEntryDimensionKeyString;
 
@@ -4388,7 +4382,12 @@ sap.ui.define([
 
 				if (aKI[nPrimePrime_e] > 0) { // case I: (nPrimePrime_e) is not a multi-unit entry
 					// create a multi-unit entry for nPrimePrime_e
-					oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(oKeyIndexMapping.sGroupId, oPreviousEntry, aSelectedUnitPropertyName, undefined, bIsFlatListRequest);
+					// TODO integration test
+					aDeviatingUnitPropertyNames =
+						AnalyticalBinding._getDeviatingUnitPropertyNames(aSelectedUnitPropertyName,
+							[oPreviousEntry, oNextEntry]);
+					oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(oKeyIndexMapping.sGroupId,
+						oPreviousEntry, aSelectedUnitPropertyName, aDeviatingUnitPropertyNames, bIsFlatListRequest);
 					oMultiUnitEntryKey = this.oModel._getKey(oMultiUnitRepresentative.oEntry);
 					// make nPrimePrime_e a multi-unit entry
 					aKI[nPrimePrime_e] = -aKI[nPrimePrime_e];
@@ -4433,7 +4432,10 @@ sap.ui.define([
 						iDiscardedEntriesCount = 1;
 					} else { // case II: (nPrime_e - 1) is NOT a multi-unit entry
 						// create a multi-unit entry for n_e - 1
-						oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(oKeyIndexMapping.sGroupId, oPreviousEntry, aSelectedUnitPropertyName, undefined, bIsFlatListRequest);
+						aDeviatingUnitPropertyNames = AnalyticalBinding._getDeviatingUnitPropertyNames(
+							aSelectedUnitPropertyName, [oPreviousEntry, oNextEntry]);
+						oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(oKeyIndexMapping.sGroupId,
+							oPreviousEntry, aSelectedUnitPropertyName, aDeviatingUnitPropertyNames, bIsFlatListRequest);
 						oMultiUnitEntryKey = this.oModel._getKey(oMultiUnitRepresentative.oEntry);
 						if (!oMultiUnitRepresentative.bIsNewEntry) {
 							oLogger.fatal("assertion failed: multi-unit entry already existed before");
@@ -4513,7 +4515,7 @@ sap.ui.define([
 		var sMultiUnitEntryKey = "";
 
 		for (var l = 0; l < this.aAllDimensionSortedByName.length; l++) {
-			var sDimVal = oMultiUnitEntry[this.aAllDimensionSortedByName[l]];
+			var sDimVal = AnalyticalBinding._getDimensionValue(oMultiUnitEntry[this.aAllDimensionSortedByName[l]]);
 			// if the value is an empty string, it should be treated as such in the generated key
 			var sSaveDimVal = sDimVal === "" ? '""' : sDimVal;
 			sSaveDimVal = sSaveDimVal === undefined ? "" : sSaveDimVal;
@@ -4917,6 +4919,45 @@ sap.ui.define([
 		// property for the measure and not the measure itself has been added as column. In that
 		// case request the total for the corresponding measure.
 		return !!oAnalyticalInfo && oAnalyticalInfo.total == false;
+	};
+
+	/**
+	 * Returns a strigifyable value for the given value of a dimension property.
+	 *
+	 * @param {any} vValue The value of a dimension property
+	 * @returns {any}
+	 *   The stringifyable dimension value; if the given value is an "Edm.Time" object only the "ms" value is returned
+	 * @private
+	 */
+	AnalyticalBinding._getDimensionValue = function (vValue) {
+		if (vValue && vValue.__edmType === "Edm.Time") {
+			vValue = vValue.ms;
+		}
+
+		return vValue;
+	};
+
+	/**
+	 * Returns the unit property names for which a deviating unit value is found in the given multi unit entries.
+	 *
+	 * @param {string[]} aSelectedUnitPropertyNames The selected unit property names
+	 * @param {object[]} aMultiUnitEntries The entries for which a multi unit situation exists
+	 * @returns {string[]} An array containing the deviating unit property names
+	 * @private
+	 */
+	AnalyticalBinding._getDeviatingUnitPropertyNames = function (aSelectedUnitPropertyNames, aMultiUnitEntries) {
+		var aDeviatingUnitPropertyNames = [];
+
+		aSelectedUnitPropertyNames.forEach(function(sUnitPropertyName) {
+			for (var i = 1; i < aMultiUnitEntries.length; i += 1) {
+				if (aMultiUnitEntries[i - 1][sUnitPropertyName] != aMultiUnitEntries[i][sUnitPropertyName]) {
+					aDeviatingUnitPropertyNames.push(sUnitPropertyName);
+					break;
+				}
+			}
+		});
+
+		return aDeviatingUnitPropertyNames;
 	};
 
 	AnalyticalBinding.Logger = oLogger;
