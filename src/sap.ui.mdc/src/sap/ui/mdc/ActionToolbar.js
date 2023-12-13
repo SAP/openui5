@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/mdc/enums/ActionToolbarActionAlignment",
 	"sap/ui/mdc/p13n/subcontroller/ActionToolbarController",
-	"sap/m/p13n/Engine"
-], (Element, OverflowToolbar, OverflowToolbarRenderer, ToolbarSpacer, ToolbarSeparator, mobileLibrary, ActionToolbarActionAlignment, ActionToolbarController, Engine) => {
+	"sap/m/p13n/Engine",
+	"sap/ui/mdc/mixin/AdaptationMixin"
+], (Element, OverflowToolbar, OverflowToolbarRenderer, ToolbarSpacer, ToolbarSeparator, mobileLibrary, ActionToolbarActionAlignment, ActionToolbarController, Engine, AdaptationMixin) => {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -443,6 +444,8 @@ sap.ui.define([
 			}.bind(this)
 		});
 	};
+
+	AdaptationMixin.call(ActionToolbar.prototype);
 
 	return ActionToolbar;
 });
