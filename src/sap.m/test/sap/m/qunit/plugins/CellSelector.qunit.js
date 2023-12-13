@@ -159,6 +159,29 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Selection with mouse only with left-click", function(assert) {
+		this.oTable.addDependent(this.oCellSelector);
+		var done = assert.async();
+
+		this.oTable.attachEventOnce("rowsUpdated", () => {
+			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
+			qutils.triggerEvent("mousedown", oCell, { button: 0, ctrlKey: true }); // select first cell of first row with left-click/primary button
+			assert.ok(this.oCellSelector._bMouseDown, "Flag has been set");
+			qutils.triggerEvent("mouseup", oCell);
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
+
+			this.oCellSelector.removeSelection();
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), null, "Selection has been removed");
+
+			qutils.triggerEvent("mousedown", oCell, { button: 1, ctrlKey: true }); // try to select with something else than left-click/primary button
+			assert.notOk(this.oCellSelector._bMouseDown, "Flag has not been set");
+			qutils.triggerEvent("mouseup", oCell);
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), null, "Nothing has been selected");
+
+			done();
+		});
+	});
+
 	QUnit.module("Dialog Behavior", {
 		beforeEach: function() {
 			this.oMockServer = new MockServer({ rootUri : sServiceURI });
