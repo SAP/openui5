@@ -471,7 +471,7 @@ sap.ui.define([
 		assert.ok(this.oNumericContent.$().hasClass("WithoutMargin"), "'withoutMargin' CSS class expected.");
 		assert.ok(jQuery(this.oNumericContent.$().children()[0]).hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the inner div container.");
 		assert.ok(this.oNumericContent.$("value").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the parent value container.");
-		assert.strictEqual(this.oNumericContent.$("value").css("justify-content"), "flex-start", "'flex-start' CSS style expected within the parent value container.");
+		assert.strictEqual(this.oNumericContent.$("value").css("justify-content"), "center", "'center' CSS style expected within the parent value container.");
 		assert.ok(this.oNumericContent.$().find(".sapMNCIndScale").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the indicator and scale container.");
 	});
 
