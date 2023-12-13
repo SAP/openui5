@@ -13029,8 +13029,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Avoid duplicate call to computed annotation
-	QUnit.test("Avoid duplicate call to computed annotation", function (assert) {
+	// Scenario: Avoid duplicate call to computed annotation (via global path)
+	/** @deprecated as of version 1.120 */
+	QUnit.test("Avoid duplicate call to computed annotation, global path", function (assert) {
 		var oModel = this.createTeaBusiModel().getMetaModel(),
 			sView = '\
 <Text id="text"\
@@ -13040,6 +13041,22 @@ sap.ui.define([
 		this.expectChange("text", "foo");
 
 		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Computed annotation via ODMM#requestObject with scope
+	// JIRA: CPOUI5ODATAV4-2398
+	QUnit.test("Computed annotation via ODMM#requestObject with scope", async function (assert) {
+		const oModel = this.createTeaBusiModel().getMetaModel();
+
+		await this.createView(assert, "", oModel);
+
+		this.mock(AnnotationHelper).expects("getValueListType").returns("foo");
+
+		const sResult = await oModel.requestObject("/MANAGERS/TEAM_ID@@AH.getValueListType",
+			undefined, {scope : {AH : AnnotationHelper}}
+		);
+		assert.strictEqual(sResult, "foo");
 	});
 
 	//*********************************************************************************************
