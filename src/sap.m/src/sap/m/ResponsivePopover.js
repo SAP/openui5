@@ -143,9 +143,7 @@ sap.ui.define([
 
 				/**
 				 * Whether resize option is enabled.
-				 * @experimental since 1.36.4 Do not use directly on ResponsivePopover while in experimental mode!
 				 * @since 1.36.4
-				 * @private
 				 */
 				resizable: {type: "boolean", group: "Dimension", defaultValue: false},
 

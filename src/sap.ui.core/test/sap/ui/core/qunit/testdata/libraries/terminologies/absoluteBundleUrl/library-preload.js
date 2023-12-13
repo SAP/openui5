@@ -1,6 +1,6 @@
-sap.ui.predefine('testlibs/terminologies/absoluteBundleUrl/library',['sap/ui/core/Core'], function(Core) {
+sap.ui.predefine('testlibs/terminologies/absoluteBundleUrl/library',['sap/ui/core/Lib'], function(Library) {
 	"use strict";
-	return sap.ui.getCore().initLibrary({
+	return Library.init({
 		name: "testlibs.terminologies.absoluteBundleUrl",
 		dependencies: [
 			"sap.ui.core"

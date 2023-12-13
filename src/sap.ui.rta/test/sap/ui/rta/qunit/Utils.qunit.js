@@ -1,19 +1,16 @@
 /* global QUnit */
 
 sap.ui.define([
-	"qunit/RtaQunitUtils",
 	"sap/base/util/restricted/_omit",
 	"sap/m/Button",
 	"sap/m/InstanceManager",
 	"sap/m/Label",
 	"sap/m/MessageBox",
 	"sap/ui/core/Control",
-	"sap/ui/core/EventBus",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
-	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/util/BindingsExtractor",
@@ -23,22 +20,18 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/Element"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
-	RtaQunitUtils,
 	_omit,
 	Button,
 	InstanceManager,
 	Label,
 	MessageBox,
 	Control,
-	EventBus,
 	Lib,
 	DesignTime,
 	OverlayRegistry,
 	OverlayUtil,
-	FieldExtensibility,
 	Layer,
 	FlexUtils,
 	BindingsExtractor,
@@ -48,8 +41,7 @@ sap.ui.define([
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
-	nextUIUpdate,
-	Element
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -57,90 +49,6 @@ sap.ui.define([
 	var {ObjectPageSubSectionLayout} = uxapLibrary;
 
 	var sandbox = sinon.createSandbox();
-
-	QUnit.module("Given a test app...", {
-		before() {
-			this.oCompContPromise = RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture");
-			return this.oCompContPromise.then(async function() {
-				this.oView = Element.getElementById("Comp1---idMain1");
-				this.oView.getModel().refresh(true);
-				await nextUIUpdate();
-				return this.oView.getModel().getMetaModel().loaded();
-			}.bind(this));
-		},
-		after() {
-			this.oView.destroy();
-			this.oCompContPromise = undefined;
-		},
-		afterEach() {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("Given extensibility disabled in the system when isServiceUpToDate is called", function(assert) {
-			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(false);
-
-			var isServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated");
-			var oAnything = {};
-
-			return Utils.isServiceUpToDate(oAnything).then(function() {
-				assert.equal(isServiceOutdatedStub.callCount, 0, "then service is not asked to be invalid");
-			});
-		});
-
-		QUnit.test("Given extensibility enabled and an unbound control when isServiceUpToDate is called", function(assert) {
-			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
-			var isServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated");
-			var oUnboundControl = new Button({text: "unbound"});
-
-			return Utils.isServiceUpToDate(oUnboundControl).then(function() {
-				assert.equal(isServiceOutdatedStub.callCount, 0, "then service is not asked to be invalid");
-			});
-		});
-
-		QUnit.test("Given extensibility enabled and a bound control and a not outdated service when isServiceUpToDate is called", function(assert) {
-			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
-			var isServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(false);
-			var oSetServiceValidStub = sandbox.stub(FieldExtensibility, "setServiceValid");
-
-			var oBoundControl = Element.getElementById("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
-
-			return Utils.isServiceUpToDate(oBoundControl).then(function() {
-				assert.ok(true, "then the service is recognized as up to date");
-				assert.equal(isServiceOutdatedStub.callCount, 1, "then service is asked to be invalid");
-				assert.equal(oSetServiceValidStub.callCount, 0, "then service is not unneccessarily set to be valid");
-			});
-		});
-
-		QUnit.test("Given extensibility enabled and a bound control without serviceurl on model when 'isServiceUpToDate' is called", function(assert) {
-			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
-			var isServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(false);
-			var oBoundControl = Element.getElementById("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
-			var oBoundModel = oBoundControl.getModel();
-			var {sServiceUrl} = oBoundModel;
-			delete oBoundModel.sServiceUrl;
-			return Utils.isServiceUpToDate(oBoundControl).then(function() {
-				assert.ok(true, "then the service is recognized as up to date");
-				assert.equal(isServiceOutdatedStub.callCount, 0, "then service is asked to be invalid");
-				oBoundModel.sServiceUrl = sServiceUrl;
-			});
-		});
-
-		QUnit.test("Given extensibility enabled and a bound control and an outdated service when isServiceUpToDate is called", function(assert) {
-			assert.expect(2);
-			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
-			sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(true);
-			var oSetServiceValidStub = sandbox.stub(FieldExtensibility, "setServiceValid");
-
-			var oBoundControl = Element.getElementById("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
-
-			EventBus.getInstance().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
-				assert.ok(true, "then the UI refresh is requested");
-			});
-			return Utils.isServiceUpToDate(oBoundControl).then(function() {
-				assert.equal(oSetServiceValidStub.callCount, 1, "then service is set to be valid again");
-			});
-		});
-	});
 
 	// -------------------------- Tests that don't need the runtimeAuthoring page --------------------------
 	QUnit.module("Given that the ObjectPage with overlays is given...", {
@@ -356,31 +264,6 @@ sap.ui.define([
 			assert.equal(Utils.getPreviousFocusableSiblingOverlay(this.oButtonOverlay1).getId(), this.oButtonOverlay0.getId(), "the previous sibling gets selected in same aggregation with another parent");
 			assert.equal(Utils.getPreviousFocusableSiblingOverlay(this.oButtonOverlay3).getId(), this.oButtonOverlay2.getId(), "the next sibling gets selected in another aggregation with another parent");
 			assert.equal(Utils.getPreviousFocusableSiblingOverlay(this.oButtonOverlay0), undefined, "the first overlay has no previous sibling");
-		});
-	});
-
-	QUnit.module("Given some dom elements in and out of viewport...", {
-		beforeEach() {
-			this.oInsideDom = document.createElement("input");
-			document.getElementById("qunit-fixture").append(this.oInsideDom);
-			this.oOutsideDom = document.createElement("button");
-			document.getElementById("qunit-fixture").append(this.oOutsideDom);
-
-			this.oInsideDom.style.marginBottom = `${document.getElementById("qunit-fixture").clientHeight}px`;
-			this.oInsideDom.style.marginRight = `${document.getElementById("qunit-fixture").clientWidth}px`;
-			this.oInsideDom.style.marginTop = "10px";
-		},
-		afterEach() {
-			this.oInsideDom.remove();
-			this.oOutsideDom.remove();
-		}
-	}, function() {
-		QUnit.test("when isElementInViewport is called from inside viewport", function(assert) {
-			assert.ok(Utils.isElementInViewport(this.oInsideDom), "then the function returns true");
-		});
-
-		QUnit.test("when isElementInViewport is called from outside viewport", function(assert) {
-			assert.notOk(Utils.isElementInViewport(this.oOutsideDom), "then the function returns false");
 		});
 	});
 

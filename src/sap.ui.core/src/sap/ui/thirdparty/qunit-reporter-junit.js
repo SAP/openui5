@@ -16,6 +16,13 @@
 (function() {
 	'use strict';
 
+	// ##### BEGIN: MODIFIED BY SAP
+	// Prevent script from being executed twice (from sap/ui/thirdparty/qunit-reporter-junit.js + copy within sap/ui/qunit/qunit-junit.js)
+	if (QUnit.jUnitDone) {
+		return;
+	}
+	// ##### END: MODIFIED BY SAP
+
 	var currentRun, currentModule, currentTest, assertCount,
 			jUnitReportData, _executeRegisteredCallbacks,
 			// ##### BEGIN: MODIFIED BY SAP

@@ -150,6 +150,9 @@ function(
 		 * the input field, it must fit to the used time format and locale.
 		 *
 		 * Supported format options are pattern-based on Unicode LDML Date Format notation.
+		 * The format pattern symbols supported in TimePicker are as follows:
+		 * "h"/"H" (Hour), "m" (Minute), "s" (Second), and "a" (AM/PM).
+		 *
 		 * See {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
 		 *
 		 * A time format must be specified, otherwise the default "HH:mm:ss a" will be

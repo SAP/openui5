@@ -723,7 +723,6 @@ sap.ui.define([
 
 		const oValueHelp = _getValueHelp.call(this);
 		if (oValueHelp) {
-			oValueHelp.detachEvent("dataUpdate", _handleHelpDataUpdate, this);
 			if (this._bConnected) {
 				_disconnectValueHelp.call(this, oValueHelp); // remove event listeners
 				oValueHelp.connect(); // disconnect ValueHelp to remove callbacks
@@ -2450,7 +2449,7 @@ sap.ui.define([
 
 		const oValueHelp = _getValueHelp.call(this);
 		if (oValueHelp && this._bConnected) {
-			if (sap.ui.getCore().getCurrentFocusedControlId() === oSource.getId()) {
+			if (Element.getActiveElement() === oSource) {
 				oValueHelp.close(); // if focus is not in field, Field help closes automatically
 			}
 			this._sFilterValue = "";
@@ -2690,7 +2689,6 @@ sap.ui.define([
 			oValueHelp = Element.getElementById(sId);
 			if (oValueHelp) {
 				_disconnectValueHelp.call(this, oValueHelp);
-				oValueHelp.detachEvent("dataUpdate", _handleHelpDataUpdate, this);
 			}
 			this.resetProperty("_valueHelpEnabled");
 		} else if (sMutation === "insert") {
@@ -2716,7 +2714,6 @@ sap.ui.define([
 		if (sId && this.isPropertyInitial("_valueHelpEnabled")) {
 			const oValueHelp = Element.getElementById(sId);
 			if (oValueHelp) {
-				oValueHelp.attachEvent("dataUpdate", _handleHelpDataUpdate, this);
 				if (oValueHelp.getIcon()) { //if there is no icon, the value help is only used as typeahead
 					this.setProperty("_valueHelpEnabled", true, true);
 				}
@@ -3203,24 +3200,6 @@ sap.ui.define([
 			// fake valueHelp icon pressed
 			oContent.bValueHelpRequested = true; // to prevent change event
 			oContent.fireValueHelpRequest();
-		}
-
-	}
-
-	function _handleHelpDataUpdate(oEvent) {
-
-		const isEditing = this.getEditMode() === FieldEditMode.Editable && this.getCurrentContent().length > 0 &&
-			sap.ui.getCore().getCurrentFocusedControlId() === this.getCurrentContent()[0].getId();
-
-		//		// also in display mode to get right text
-		//		_handleConditionsChange.call(this, this.getConditions());
-		if (!isEditing && !this._bPendingConditionUpdate && this.getConditions().length > 0 &&
-			(this.getMaxConditions() !== 1 || (this.getDisplay() !== FieldDisplay.Value && !this.isInvalidInput())) &&
-			this._oManagedObjectModel) {
-			// update tokens in MultiValue
-			// update text/value only if no parse error, otherwise wrong value would be removed
-			// don't update if contidions are outdated (updated async in Field)
-			this._oManagedObjectModel.checkUpdate(true);
 		}
 
 	}

@@ -94,7 +94,7 @@ sap.ui.define([
 			var oEditableControlDomRef = oDesignTimeMetadata.getAssociatedDomRef(oElement, mPropertyBag.domRef);
 
 			// if the Control is currently not visible on the screen, we have to scroll it into view
-			if (!Utils.isElementInViewport(oEditableControlDomRef)) {
+			if (!DOMUtil.isElementInViewport(oEditableControlDomRef)) {
 				oEditableControlDomRef.get(0).scrollIntoView();
 			}
 

@@ -1,6 +1,6 @@
-sap.ui.predefine('testlibs/terminologies/simple/library',['sap/ui/core/Core'], function(Core) {
+sap.ui.predefine('testlibs/terminologies/simple/library',['sap/ui/core/Lib'], function(Library) {
 	"use strict";
-	return sap.ui.getCore().initLibrary({
+	return Library.init({
 		name: "testlibs.terminologies.simple",
 		dependencies: [
 			"sap.ui.core"

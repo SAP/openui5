@@ -5,8 +5,6 @@
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/m/MessageBox",
-	"sap/ui/core/Element",
-	"sap/ui/core/EventBus",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/DOMUtil",
@@ -14,7 +12,6 @@ sap.ui.define([
 	"sap/ui/dt/MetadataPropagationUtil",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
@@ -24,8 +21,6 @@ sap.ui.define([
 ], function(
 	_omit,
 	MessageBox,
-	Element,
-	EventBus,
 	Fragment,
 	Lib,
 	DOMUtil,
@@ -33,7 +28,6 @@ sap.ui.define([
 	MetadataPropagationUtil,
 	OverlayUtil,
 	Version,
-	FieldExtensibility,
 	Layer,
 	FlexLayerUtils,
 	FlexUtils,
@@ -83,30 +77,6 @@ sap.ui.define([
 		} else if (FlexLayerUtils.getLayerIndex(sLayer) > -1) {
 			Utils._sRtaStyleClassName = "sapUiRTABorder";
 		}
-	};
-
-	/**
-	 * Utility function to check if the OData service is updated in the meantime
-	 *
-	 * @param {sap.ui.core.Control} oControl - Control to be checked
-	 * @returns {Promise} resolves if service is up to date, rejects otherwise
-	 */
-	Utils.isServiceUpToDate = function(oControl) {
-		return FieldExtensibility.isExtensibilityEnabled(oControl).then(function(bEnabled) {
-			if (bEnabled) {
-				var oModel = oControl.getModel();
-				if (oModel && oModel.sServiceUrl) {
-					return FieldExtensibility.isServiceOutdated(oModel.sServiceUrl).then(function(bServiceOutdated) {
-						if (bServiceOutdated) {
-							FieldExtensibility.setServiceValid(oModel.sServiceUrl);
-							// needs FLP to trigger UI restart popup
-							EventBus.getInstance().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
-						}
-					});
-				}
-			}
-			return undefined;
-		});
 	};
 
 	/**
@@ -185,50 +155,6 @@ sap.ui.define([
 		// check the real DOM visibility should be preformed while oOverlay.isVisible() can be true, but if element
 		// has no geometry, overlay will not be visible in UI
 		return oOverlay.isSelectable() && DOMUtil.isVisible(oOverlay.getDomRef());
-	};
-
-	/**
-	 * Utility function for retrieving property values for a specified Element
-	 *
-	 * @param {sap.ui.core.Element} oElement - Any element
-	 * @param {string} sPropertyName - Name of the property
-	 * @returns {*} value of the property, could be any value
-	 */
-	Utils.getPropertyValue = function(oElement, sPropertyName) {
-		var oMetadata = oElement.getMetadata().getPropertyLikeSetting(sPropertyName);
-		var sPropertyGetter = oMetadata._sGetter;
-		return oElement[sPropertyGetter]();
-	};
-
-	/**
-	 * Returns overlay instance for an overlay's dom element
-	 *
-	 * @param {document.documentElement} oDomRef - DOM Element
-	 * @returns {sap.ui.dt.ElementOverlay} Overlay object
-	 * @private
-	 */
-	Utils.getOverlayInstanceForDom = function(oDomRef) {
-		var sId = oDomRef.getAttribute("id");
-		if (sId) {
-			return Element.getElementById(sId);
-		}
-		return undefined;
-	};
-
-	/**
-	 * Returns the focused overlay
-	 *
-	 * @returns {sap.ui.dt.ElementOverlay} Overlay object
-	 * @private
-	 */
-	Utils.getFocusedOverlay = function() {
-		if (document.activeElement) {
-			var oElement = Element.getElementById(document.activeElement.id);
-			if (oElement && oElement.isA("sap.ui.dt.ElementOverlay")) {
-				return oElement;
-			}
-		}
-		return undefined;
 	};
 
 	/**
@@ -364,42 +290,6 @@ sap.ui.define([
 		return iIndex;
 	};
 
-	/**
-	 * Creates a unique id for a new control based on its parent control, entityType and binding path.
-	 *
-	 * @param {*} oParentControl - Parent control.
-	 * @param {string} sEntityType - EntityType which is bound to the parent control
-	 * @param {string} sBindingPath - Binding path of the control for which a new Id should be created
-	 * @returns {string} New string Id
-	 * @private
-	 */
-	Utils.createFieldLabelId = function(oParentControl, sEntityType, sBindingPath) {
-		return (`${oParentControl.getId()}_${sEntityType}_${sBindingPath}`).replace("/", "_");
-	};
-
-	/**
-	 * Function to find the binding paths of a given UI5 Element
-	 *
-	 * @param {sap.ui.core.Element} oElement - Element for which the binding info should be found
-	 * @returns {object} valueProperty: the name of the property which is bound
-	 * @private
-	 */
-	Utils.getElementBindingPaths = function(oElement) {
-		var aPaths = {};
-		if (oElement.mBindingInfos) {
-			for (var oInfo in oElement.mBindingInfos) {
-				var sPath = oElement.mBindingInfos[oInfo].parts[0].path
-					? oElement.mBindingInfos[oInfo].parts[0].path
-					: "";
-				sPath = sPath.split("/")[sPath.split("/").length - 1];
-				aPaths[sPath] = {
-					valueProperty: oInfo
-				};
-			}
-		}
-		return aPaths;
-	};
-
 	Utils.isOriginalFioriToolbarAccessible = function() {
 		var oRenderer = Utils.getFiori2Renderer();
 		return oRenderer
@@ -444,25 +334,6 @@ sap.ui.define([
 				}
 			}
 		}
-	};
-
-	/**
-	 * Returns if the <code>oDomElement</code> is currently visible on the screen.
-	 *
-	 * @param {HTMLElement|jQuery} oDomElement Element to be evaluated
-	 * @returns{boolean} - Returns if <code>oDomElement</code> is currently visible on the screen.
-	 */
-	Utils.isElementInViewport = function(oDomElement) {
-		oDomElement = oDomElement.jquery ? oDomElement.get(0) : oDomElement;
-
-		var mRect = oDomElement.getBoundingClientRect();
-
-		return (
-			mRect.top >= 0 &&
-			mRect.left >= 0 &&
-			mRect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-			mRect.right <= (window.innerWidth || document.documentElement.clientWidth)
-		);
 	};
 
 	/**
@@ -555,21 +426,6 @@ sap.ui.define([
 			return fnCallback();
 		}
 		return undefined;
-	};
-
-	/**
-	 * Build hashmap from array of objects
-	 *
-	 * @param {object} aArray - Array
-	 * @param {string} sKeyFieldName - Field name to use as key
-	 * @param {string} sValueFieldName - Field name to use as value
-	 * @returns {object} Hashmap
-	 */
-	Utils.buildHashMapFromArray = function(aArray, sKeyFieldName, sValueFieldName) {
-		return aArray.reduce(function(mMap, oItem) {
-			mMap[oItem[sKeyFieldName]] = oItem[sValueFieldName];
-			return mMap;
-		}, {});
 	};
 
 	/**

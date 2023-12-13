@@ -323,6 +323,10 @@ sap.ui.define([
 			oEvent.preventDefault();
 		}
 
+		if (oEvent.originalEvent.repeat) {
+			return;
+		}
+
 		this.ontap(oEvent);
 	};
 

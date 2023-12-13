@@ -236,7 +236,7 @@ sap.ui.define([
 
 		// TODO: find better way to disable the items
 		aItems.forEach(function (oItem) {
-			if (oItem.setEnabled && !oItem._bIsDisabled) {
+			if (oItem.setEnabled && !oItem._bIsDisabled && oItem.getEnabled()) {
 				oItem.setEnabled(false);
 				oItem._bIsDisabled = true;
 			}
@@ -251,7 +251,7 @@ sap.ui.define([
 		aItems.forEach((oItem) => {
 			if (oItem.setEnabled && oItem._bIsDisabled) {
 				mActionsConfig = oItem._mActionsConfig;
-				if (mActionsConfig.action) {
+				if (mActionsConfig?.action) {
 					mActionsConfig.enabledPropertyValue = true;
 					this.getCardActions()._setControlEnabledState(mActionsConfig);
 				} else {
@@ -288,30 +288,24 @@ sap.ui.define([
 	ActionsStrip.prototype._createButton = function (mConfig) {
 		const vAriaHasPopup = mConfig.ariaHasPopup ?? this._getAriaHasPopup(mConfig);
 
-		let oButton;
-
-		if (mConfig.icon) {
-			oButton = new OverflowToolbarButton({
-				icon: mConfig.icon,
-				text: mConfig.text || mConfig.tooltip,
-				tooltip: mConfig.tooltip || mConfig.text,
-				type: mConfig.buttonType,
-				ariaHasPopup: vAriaHasPopup,
-				visible: mConfig.visible
-			});
-
-			return oButton;
-		}
-
-		oButton = new Button({
+		const mButtonSettings = {
+			icon: mConfig.icon,
 			text: mConfig.text,
 			tooltip: mConfig.tooltip,
 			type: mConfig.buttonType,
 			ariaHasPopup: vAriaHasPopup,
 			visible: mConfig.visible
-		});
+		};
 
-		return oButton;
+		if (mConfig.icon && !mConfig.text) {
+			// when we have no text, but we have icon, we want the behavior of OverflowToolbarButton
+			// @todo this will not work well if text is set to binding which later resolves to an empty string
+			mButtonSettings.text = mConfig.tooltip;
+
+			return new OverflowToolbarButton(mButtonSettings);
+		}
+
+		return new Button(mButtonSettings);
 	};
 
 	/**

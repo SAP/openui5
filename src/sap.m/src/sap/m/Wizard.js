@@ -639,7 +639,6 @@ sap.ui.define([
 		 * Dynamic step insertion is not yet supported.
 		 * @param {sap.m.WizardStep} oWizardStep The step to be inserted
 		 * @param {int} iIndex The index at which to insert
-		 * @experimental
 		 * @private
 		 */
 		Wizard.prototype.insertStep = function (oWizardStep, iIndex) {
@@ -653,7 +652,6 @@ sap.ui.define([
 		/**
 		 * Dynamic step removal is not yet supported.
 		 * @param {int|sap.ui.core.ID|sap.m.WizardStep} oWizardStep The step to be removed or its ID or index
-		 * @experimental
 		 * @private
 		 */
 		Wizard.prototype.removeStep = function (oWizardStep) {

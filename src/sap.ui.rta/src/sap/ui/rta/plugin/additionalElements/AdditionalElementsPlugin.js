@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/Log",
+	"sap/ui/core/EventBus",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/OverlayRegistry",
@@ -20,6 +21,7 @@ sap.ui.define([
 ], function(
 	each,
 	Log,
+	EventBus,
 	IconPool,
 	Lib,
 	OverlayRegistry,
@@ -45,23 +47,33 @@ sap.ui.define([
 		});
 	}
 
-	function handleExtensibility(oControl) {
-		return FieldExtensibility.onControlSelected(oControl)
-
-		.then(function() {
-			return Promise.all([
-				Utils.isServiceUpToDate(oControl),
-				FieldExtensibility.isExtensibilityEnabled(oControl)
-			]);
-		})
-
-		.then(function(aResult) {
-			var bExtensibilityEnabled = !!aResult[1];
-			if (bExtensibilityEnabled) {
-				return FieldExtensibility.getExtensionData(oControl);
+	/**
+	 * Utility function to check if the OData service is updated in the meantime
+	 *
+	 * @param {sap.ui.core.Control} oControl - Control to be checked
+	 * @returns {Promise} resolves if service is up to date, rejects otherwise
+	 */
+	async function isServiceUpToDate(oControl) {
+		const oModel = oControl.getModel();
+		if (oModel && oModel.sServiceUrl) {
+			const bServiceOutdated = await FieldExtensibility.isServiceOutdated(oModel.sServiceUrl);
+			if (bServiceOutdated) {
+				FieldExtensibility.setServiceValid(oModel.sServiceUrl);
+				// needs FLP to trigger UI restart popup
+				EventBus.getInstance().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
 			}
-			return undefined;
-		});
+		}
+	}
+
+	async function handleExtensibility(oControl) {
+		await FieldExtensibility.onControlSelected(oControl);
+		const bExtensibilityEnabled = await FieldExtensibility.isExtensibilityEnabled(oControl);
+
+		if (bExtensibilityEnabled) {
+			await isServiceUpToDate(oControl);
+			return FieldExtensibility.getExtensionData(oControl);
+		}
+		return undefined;
 	}
 
 	/**
@@ -351,45 +363,36 @@ sap.ui.define([
 			});
 		},
 
-		_isEditableCheck(oOverlay, bOverlayIsSibling) {
-			return Promise.resolve()
-			.then(function() {
-				var mParents = AdditionalElementsUtils.getParents(bOverlayIsSibling, oOverlay, this);
+		async _isEditableCheck(oOverlay, bOverlayIsSibling) {
+			var mParents = AdditionalElementsUtils.getParents(bOverlayIsSibling, oOverlay, this);
 
-				if (!mParents.relevantContainerOverlay) {
-					return false;
-				}
+			if (!mParents.relevantContainerOverlay) {
+				return false;
+			}
 
-				return ActionExtractor.getActions(bOverlayIsSibling, oOverlay, this, true, this.getDesignTime())
-				.then(async function(mActions) {
-					// Prevents clear cached elements during the getMenuItems promise is pending
-					await this._getMenuItemsPromise;
-					this.clearCachedElements();
-					return Utils.doIfAllControlsAreAvailable([oOverlay, mParents.parentOverlay], function() {
-						var bEditable = false;
-						// For the sibling case, check if anything is available for the same aggregation
-						if (bOverlayIsSibling) {
-							bEditable = isThereAnAggregationActionForSameAggregation(mActions, mParents);
-						} else {
-							bEditable = Object.keys(mActions).some(function(sAggregationName) {
-								if (mActions[sAggregationName].addViaDelegate) {
-									bEditable = this.checkAggregationsOnSelf(mParents.parentOverlay, "add", undefined, "delegate");
-								}
-								if (!bEditable && mActions[sAggregationName].reveal) {
-									return true;
-								}
-								return bEditable;
-							}.bind(this));
+			const mActions = await ActionExtractor.getActions(bOverlayIsSibling, oOverlay, this, true, this.getDesignTime());
+			// Prevents clear cached elements during the getMenuItems promise is pending
+			await this._getMenuItemsPromise;
+			this.clearCachedElements();
+			return Utils.doIfAllControlsAreAvailable([oOverlay, mParents.parentOverlay], function() {
+				var bEditable = false;
+				// For the sibling case, check if anything is available for the same aggregation
+				if (bOverlayIsSibling) {
+					bEditable = isThereAnAggregationActionForSameAggregation(mActions, mParents);
+				} else {
+					bEditable = Object.keys(mActions).some(function(sAggregationName) {
+						if (mActions[sAggregationName].addViaDelegate) {
+							bEditable = this.checkAggregationsOnSelf(mParents.parentOverlay, "add", undefined, "delegate");
+						}
+						if (!bEditable && mActions[sAggregationName].reveal) {
+							return true;
 						}
 						return bEditable;
 					}.bind(this));
-				}.bind(this))
-				.then(function(bEditable) {
-					bEditable &&=
-								this.hasStableId(oOverlay) // don't confuse the user/Web IDE by an editable overlay without stable ID
-								&& this.hasStableId(mParents.parentOverlay);
-					return bEditable;
-				}.bind(this));
+				}
+
+				bEditable &&= this.hasStableId(oOverlay) && this.hasStableId(mParents.parentOverlay);
+				return bEditable;
 			}.bind(this));
 		},
 

@@ -5,12 +5,10 @@
 // Provides object sap.ui.dt.OverlayUtil.
 sap.ui.define([
 	"sap/ui/core/UIArea",
-	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/OverlayRegistry"
 ], function(
 	UIArea,
-	DOMUtil,
 	ElementUtil,
 	OverlayRegistry
 ) {

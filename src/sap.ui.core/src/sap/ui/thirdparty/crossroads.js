@@ -700,6 +700,9 @@ var factory = function (signals) {
                 }
 
                 if (vParamValue != null) {
+                    if (match.indexOf('{') !== -1 && vParamValue === "") {
+                        throw new Error('The required segment "'+ match +'" cannot accept empty string as value.');
+                    }
                     if (typeof vParamValue === 'object') {
                         var queryParts = [];
                         for (var key in vParamValue) {

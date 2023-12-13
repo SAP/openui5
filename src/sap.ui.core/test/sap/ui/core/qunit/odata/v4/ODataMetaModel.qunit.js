@@ -1960,88 +1960,129 @@ sap.ui.define([
 	[false, true].forEach(function (bWarn) {
 		forEach({
 			"/$$Loop/" : "Invalid recursion at /$$Loop",
+
 			// Invalid segment (warning) ----------------------------------------------------------
 			"//$Foo" : "Invalid empty segment",
-			"/tea_busi./$Annotations" : "Invalid segment: $Annotations", // entrance forbidden!
+
+			// entrance forbidden!
+			"/tea_busi./$Annotations" : "Invalid segment: $Annotations",
+
 			// Unknown ... ------------------------------------------------------------------------
 			"/not.Found" : "Unknown qualified name not.Found",
-			"/Me/not.Found" : "Unknown qualified name not.Found", // no "at /.../undefined"!
+
+			// no "at /.../undefined"!
+			"/Me/not.Found" : "Unknown qualified name not.Found",
+
 			"/not.Found@missing" : "Unknown qualified name not.Found",
 			"/." : "Unknown child . of tea_busi.DefaultContainer",
 			"/Foo" : "Unknown child Foo of tea_busi.DefaultContainer",
+
 			"/$EntityContainer/$kind/" : "Unknown child EntityContainer"
 				+ " of tea_busi.DefaultContainer at /$EntityContainer/$kind",
+
 			"/name.space.VoidAction@Core.OperationAvailable/$Path/$" : "Unknown child $ReturnType"
 				+ " of name.space.VoidAction"
 				+ " at /name.space.VoidAction@Core.OperationAvailable/$Path",
+
 			// implicit $Action, $Function, $Type insertion
 			"/name.space.BadContainer/DanglingActionImport/" : "Unknown qualified name not.Found"
 				+ " at /name.space.BadContainer/DanglingActionImport/$Action",
+
 			"/name.space.BadContainer/DanglingFunctionImport/" :
 				"Unknown qualified name not.Found"
 				+ " at /name.space.BadContainer/DanglingFunctionImport/$Function",
+
 			"/name.space.Broken/" :
 				"Unknown qualified name not.Found at /name.space.Broken/$Type",
+
 			"/name.space.BrokenFunction/" : "Unknown qualified name not.Found"
 				+ " at /name.space.BrokenFunction/0/$ReturnType/$Type",
+
 			//TODO align with "/GetEmployeeMaxAge/" : "Edm.Int16"
 			"/GetEmployeeMaxAge/@sapui.name" : "Unknown qualified name Edm.Int16"
 				+ " at /tea_busi.FuGetEmployeeMaxAge/0/$ReturnType/$Type",
+
 			"/GetEmployeeMaxAge/value/@sapui.name" : "Unknown qualified name Edm.Int16"
 				+ " at /tea_busi.FuGetEmployeeMaxAge/0/$ReturnType/$Type",
+
 			// implicit scope lookup
 			"/name.space.Broken/$Type/" :
 				"Unknown qualified name not.Found at /name.space.Broken/$Type",
+
 			"/tea_busi.DefaultContainer/$kind/@sapui.name" : "Unknown child EntityContainer"
 				+ " of tea_busi.DefaultContainer at /tea_busi.DefaultContainer/$kind",
+
 			"/tea_busi.NewAction@Core.OperationAvailable/$PropertyPath/$" : "Unknown child n"
 				+ " of tea_busi.NewAction"
 				+ " at /tea_busi.NewAction@Core.OperationAvailable/$PropertyPath",
+
 			// Unsupported path before @sapui.name ------------------------------------------------
 			"/$EntityContainer@sapui.name" : "Unsupported path before @sapui.name",
+
 			"/tea_busi.FuGetEmployeeMaxAge/0@sapui.name" : "Unsupported path before @sapui.name",
 			"/tea_busi.TEAM/$Key/not.Found/@sapui.name" : "Unsupported path before @sapui.name",
 			"/GetEmployeeMaxAge/value@sapui.name" : "Unsupported path before @sapui.name",
 			"/$@sapui.name" : "Unsupported path before @sapui.name",
+
 			// Unsupported path after @sapui.name -------------------------------------------------
 			"/@sapui.name/foo" : "Unsupported path after @sapui.name",
+
 			"/$EntityContainer/T€AMS/@sapui.name/foo" : "Unsupported path after @sapui.name",
+
 			// Unsupported path after @@... -------------------------------------------------------
 			"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath@@this.is.ignored/foo"
 				: "Unsupported path after @@this.is.ignored",
+
 			"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath/@@this.is.ignored@foo"
 				: "Unsupported path after @@this.is.ignored",
+
 			"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath@@this.is.ignored@sapui.name"
 				: "Unsupported path after @@this.is.ignored",
-			// ...is not a function but... --------------------------------------------------------
-			"/@@sap.ui.model.odata.v4.AnnotationHelper.invalid"
-				: "sap.ui.model.odata.v4.AnnotationHelper.invalid is not a function but: undefined",
-			"/@@sap.ui.model.odata.v4.AnnotationHelper"
-				: "sap.ui.model.odata.v4.AnnotationHelper is not a function but: "
-					+ AnnotationHelper,
+
+			"/@@AH.invalid" : "AH.invalid is not a function but: undefined",
+			"/@@AH" : "AH is not a function but: " + AnnotationHelper,
+
 			"/@@requestCodeList" // requestCodeList is @private!
 				: "requestCodeList is not a function but: undefined",
+
 			"/@@.requestCurrencyCodes" // "." looks in given scope only!
 				: ".requestCurrencyCodes is not a function but: undefined",
+
 			"/@@.requestUnitsOfMeasure" // "." looks in given scope only!
 				: ".requestUnitsOfMeasure is not a function but: undefined",
+
 			// Unsupported overloads --------------------------------------------------------------
 			"/name.space.EmptyOverloads/" : "Expected a single overload, but found 0",
+
 			"/name.space.OverloadedAction/" : "Expected a single overload, but found 4",
 			"/name.space.OverloadedAction/_it" : "Expected a single overload, but found 4",
 			"/name.space.OverloadedFunction/" : "Expected a single overload, but found 2",
+
+			// wrong binding parameter
 			"/ServiceGroups/name.space.OverloadedAction/parameter1@Common.Label"
-				: "Expected a single overload, but found 0", // wrong binding parameter
+				: "Expected a single overload, but found 0",
+
+			// Collection(Worker) or Worker?
 			"/EMPLOYEES/tea_busi.NewAction/_it@Common.Label"
-				: "Expected a single overload, but found 2", // Collection(Worker) or Worker?
+				: "Expected a single overload, but found 2",
+
+			// wrong binding parameter
 			"/ServiceGroups/name.space.OverloadedAction@Core.OperationAvailable"
-				: "Expected a single overload, but found 0", // wrong binding parameter
+				: "Expected a single overload, but found 0",
+
+			// Collection(Worker) or Worker?
 			"/EMPLOYEES/tea_busi.NewAction@Common.Label"
-				: "Expected a single overload, but found 2", // Collection(Worker) or Worker?
+				: "Expected a single overload, but found 2",
+
 			// Unsupported path after $ -----------------------------------------------------------
-			"/T€AMS/@UI.LineItem/0/$/Value" : "Unsupported path after $", // in "JSON" mode
-			"/T€AMS/$/$Type" : "Unsupported path after $", // in OData mode
-			"/T€AMS/$/@@this.is.invalid" : "Unsupported path after $" // not a split segment
+			// in "JSON" mode
+			"/T€AMS/@UI.LineItem/0/$/Value" : "Unsupported path after $",
+
+			// in OData mode
+			"/T€AMS/$/$Type" : "Unsupported path after $",
+
+			// not a split segment
+			"/T€AMS/$/@@this.is.invalid" : "Unsupported path after $"
 		}, function (sPath, sWarning) {
 			QUnit.test("fetchObject fails: " + sPath + ", warn = " + bWarn, function (assert) {
 				var oSyncPromise;
@@ -2054,7 +2095,8 @@ sap.ui.define([
 					.withExactArgs(sWarning, sPath, sODataMetaModel);
 
 				// code under test
-				oSyncPromise = this.oMetaModel.fetchObject(sPath, null, {scope : {}});
+				oSyncPromise = this.oMetaModel.fetchObject(sPath, null,
+					{scope : {AH : AnnotationHelper}});
 
 				assert.strictEqual(oSyncPromise.isFulfilled(), true);
 				assert.strictEqual(oSyncPromise.getResult(), undefined);
@@ -2108,6 +2150,9 @@ sap.ui.define([
 		sPath : "/T€AMS/@UI.LineItem/0/Value/$Path/$",
 		sSchemaChildName : "tea_busi.TEAM" // "Team_Id" is not part of this
 	}].forEach(function (oFixture) {
+		[
+			"@@AH.isMultiple"
+		].forEach((sFunction) => {
 		QUnit.test("fetchObject: " + oFixture.sPath + "@@...isMultiple", function (assert) {
 			var oContext,
 				oInput,
@@ -2125,8 +2170,8 @@ sap.ui.define([
 				})).returns(oResult);
 
 			// code under test
-			oSyncPromise = this.oMetaModel.fetchObject(oFixture.sPath
-				+ "@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple");
+			oSyncPromise = this.oMetaModel.fetchObject(oFixture.sPath + sFunction, undefined,
+				{scope : {AH : AnnotationHelper}});
 
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
 			assert.strictEqual(oSyncPromise.getResult(), oResult);
@@ -2135,6 +2180,7 @@ sap.ui.define([
 			assert.strictEqual(oContext.getModel(), this.oMetaModel);
 			assert.strictEqual(oContext.getPath(), oFixture.sPath);
 			assert.strictEqual(oContext.getObject(), oInput);
+		});
 		});
 	});
 
@@ -2173,18 +2219,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchObject: computed annotation returns promise", function (assert) {
-		var oResult = {};
+	["foo.bar.AnnotationHelper", "AH"].forEach(function (sModulePath) {
+		const sTitle = "fetchObject: computed annotation returns promise, module path=" + sModulePath;
+		QUnit.test(sTitle, function (assert) {
+			var oResult = {},
+				oScope = {
+					foo : {bar : {AnnotationHelper : AnnotationHelper}},
+					AH : AnnotationHelper
+				};
 
-		this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
-		this.mock(AnnotationHelper).expects("isMultiple").resolves(oResult);
+			this.oMetaModelMock.expects("fetchEntityContainer").returns(SyncPromise.resolve(mScope));
+			this.mock(AnnotationHelper).expects("isMultiple").resolves(oResult);
 
-		// code under test
-		return this.oMetaModel.fetchObject("/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath"
-				+ "@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple")
-			.then(function (oResult0) {
-				assert.strictEqual(oResult0, oResult);
-			});
+			// code under test
+			return this.oMetaModel.fetchObject("/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath"
+					+ "@@" + sModulePath + ".isMultiple", undefined, {scope : oScope})
+				.then(function (oResult0) {
+					assert.strictEqual(oResult0, oResult);
+				});
+		});
 	});
 
 	//*********************************************************************************************
@@ -2273,7 +2326,7 @@ sap.ui.define([
 	[false, true].forEach(function (bWarn) {
 		QUnit.test("fetchObject: ...@@... throws, bWarn = " + bWarn, function (assert) {
 			var oError = new Error("This call failed intentionally"),
-				sPath = "/@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple",
+				sPath = "/@@AH.isMultiple",
 				oSyncPromise;
 
 			this.oMetaModelMock.expects("fetchEntityContainer")
@@ -2282,12 +2335,12 @@ sap.ui.define([
 				.throws(oError);
 			this.oLogMock.expects("isLoggable")
 				.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(bWarn);
-			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0).withExactArgs(
-				"Error calling sap.ui.model.odata.v4.AnnotationHelper.isMultiple: " + oError,
-				sPath, sODataMetaModel);
+			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+				.withExactArgs("Error calling AH.isMultiple: " + oError, sPath, sODataMetaModel);
 
 			// code under test
-			oSyncPromise = this.oMetaModel.fetchObject(sPath);
+			oSyncPromise = this.oMetaModel.fetchObject(sPath, undefined,
+				{scope : {AH : AnnotationHelper}});
 
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
 			assert.strictEqual(oSyncPromise.getResult(), undefined);
@@ -2315,8 +2368,8 @@ sap.ui.define([
 				})).callThrough(); // this is an integrative test
 
 			// code under test
-			oSyncPromise = this.oMetaModel.fetchObject(sPath
-				+ "@@sap.ui.model.odata.v4.AnnotationHelper.format");
+			oSyncPromise = this.oMetaModel.fetchObject(sPath + "@@AH.format", undefined,
+				{scope : {AH : AnnotationHelper}});
 
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
 			assert.strictEqual(oSyncPromise.getResult(), "{path:'Name'" // Note: "_it/" removed!
@@ -2346,8 +2399,8 @@ sap.ui.define([
 			})).callThrough(); // this is an integrative test
 
 		// code under test
-		oSyncPromise = this.oMetaModel.fetchObject(sPath
-			+ "@@sap.ui.model.odata.v4.AnnotationHelper.format");
+		oSyncPromise = this.oMetaModel.fetchObject(sPath + "@@AH.format", undefined,
+			{scope : {AH : AnnotationHelper}});
 
 		assert.strictEqual(oSyncPromise.isFulfilled(), true);
 		assert.strictEqual(oSyncPromise.getResult(), "{path:'parameter1'"

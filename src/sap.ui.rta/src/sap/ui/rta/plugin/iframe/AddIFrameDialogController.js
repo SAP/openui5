@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/rta/util/validateText",
-	"sap/ui/rta/Utils",
 	"sap/ui/fl/util/IFrame",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -24,7 +23,6 @@ sap.ui.define([
 	Lib,
 	coreLibrary,
 	validateText,
-	Utils,
 	IFrame,
 	Filter,
 	FilterOperator,
@@ -52,6 +50,13 @@ sap.ui.define([
 			};
 		}
 		return IFrame.isValidUrl(encodeURI(sUrl));
+	}
+
+	function buildHashMapFromArray(aArray, sKeyFieldName, sValueFieldName) {
+		return aArray.reduce(function(mMap, oItem) {
+			mMap[oItem[sKeyFieldName]] = oItem[sValueFieldName];
+			return mMap;
+		}, {});
 	}
 
 	return Controller.extend("sap.ui.rta.plugin.iframe.AddIFrameDialogController", {
@@ -227,7 +232,7 @@ sap.ui.define([
 		 */
 		_buildParameterHashMap(mParameters) {
 			if (mParameters && mParameters.parameters) {
-				return Utils.buildHashMapFromArray(mParameters.parameters, "key", "value");
+				return buildHashMapFromArray(mParameters.parameters, "key", "value");
 			}
 			return {};
 		},

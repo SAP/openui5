@@ -36,6 +36,16 @@ sap.ui.define([
 		assert.notOk(oActionsStrip, "ActionsStrip is not created.");
 	});
 
+	QUnit.test("No items defined with empty array", function (assert) {
+		// Arrange
+		const oActionsStrip = ActionsStrip.create([], this.oCard);
+
+		const aItems = oActionsStrip._getToolbar().getContent();
+
+		// Assert
+		assert.strictEqual(aItems.length, 0, "ActionsStrip toolbar has 0 items.");
+	});
+
 	QUnit.test("2 items defined", function (assert) {
 		// Arrange
 		var oActionsStrip = ActionsStrip.create([
@@ -68,14 +78,38 @@ sap.ui.define([
 
 	QUnit.test("type=Button", function (assert) {
 		// Arrange
-		var oActionsStrip = ActionsStrip.create([
+		const oActionsStrip = ActionsStrip.create([
 			{ text: "Text1" },
-			{ text: "Text2", type: "Button" }
+			{ text: "Text2", type: "Button" },
+			{ text: "Text3", type: "Button", icon: "sap-icon://email" },
+			{ tooltip: "Text4", type: "Button", "icon": "sap-icon://email" }
 		], this.oCard);
 
+		const aItems = oActionsStrip._getToolbar().getContent();
+
 		// Assert
-		assert.ok(oActionsStrip._getToolbar().getContent()[1].isA("sap.m.Button"), "If no 'type' is specified, an sap.m.Button should be created");
-		assert.ok(oActionsStrip._getToolbar().getContent()[2].isA("sap.m.Button"), "If 'type' is set to 'Button', an sap.m.Button should be created");
+		assert.ok(aItems[1].isA("sap.m.Button"), "If no 'type' is specified, an sap.m.Button should be created");
+		assert.ok(aItems[2].isA("sap.m.Button"), "If 'type' is set to 'Button', an sap.m.Button should be created");
+		assert.ok(aItems[3].isA("sap.m.Button"), "If button has icon and text - a sap.m.Button is created");
+		assert.ok(aItems[4].isA("sap.m.OverflowToolbarButton"), "If button has icon and no text - a sap.m.OverflowToolbarButton is created");
+		assert.strictEqual(aItems[4].getText(), "Text4", "Button with icon without text uses the tooltip for text");
+
+		// Clean up
+		oActionsStrip.destroy();
+	});
+
+	QUnit.test("type=Link", function (assert) {
+		// Arrange
+		const oActionsStrip = ActionsStrip.create([
+			{ text: "Text", type: "Link" },
+			{ text: "Text", type: "Link", "icon": "sap-icon://email" }
+		], this.oCard);
+
+		const aItems = oActionsStrip._getToolbar().getContent();
+
+		// Assert
+		assert.ok(aItems[1].isA("sap.ui.integration.controls.LinkWithIcon"), "If type is Link we create sap.ui.integration.controls.LinkWithIcon");
+		assert.strictEqual(aItems[2].getIcon(), "sap-icon://email", "Link with icon works correctly");
 
 		// Clean up
 		oActionsStrip.destroy();
@@ -112,13 +146,15 @@ sap.ui.define([
 
 	QUnit.test("type=Label", function (assert) {
 		// Arrange
-		var oActionsStrip = ActionsStrip.create([
+		const oActionsStrip = ActionsStrip.create([
 			{ text: "Text1", type: "Label"}
 		], this.oCard);
 
+		const aItems = oActionsStrip._getToolbar().getContent();
+
 		// Assert
-		assert.ok(oActionsStrip._getToolbar().getContent()[1].isA("sap.m.Label"), "If 'type' is set to 'Label', an sap.m.Label should be created");
-		assert.strictEqual(oActionsStrip._getToolbar().getContent()[1].getText(), "Text1", "The label text is correct");
+		assert.ok(aItems[1].isA("sap.m.Label"), "If 'type' is set to 'Label', an sap.m.Label should be created");
+		assert.strictEqual(aItems[1].getText(), "Text1", "The label text is correct");
 
 		// Clean up
 		oActionsStrip.destroy();
@@ -222,6 +258,109 @@ sap.ui.define([
 		afterEach: function () {
 			this.oCard.destroy();
 		}
+	});
+
+	QUnit.test("Buttons with disabled/enabled state", function (assert) {
+		// Arrange
+		const oActionsStrip = ActionsStrip.create([
+			{
+				text: "Button1",
+				actions: [{
+					type: "Custom"
+				}]
+			},
+			{
+				text: "Button2",
+				actions: [{
+					enabled: false,
+					type: "Custom"
+				}]
+			},
+			{
+				text: "Button3",
+				actions: [{
+					enabled: true,
+					type: "Custom"
+				}]
+			},
+			{
+				text: "Button4"
+			}
+		], this.oCard);
+
+		const aItems = oActionsStrip._getToolbar().getContent();
+
+		assert.ok(aItems[1].getEnabled(), "Item with action is enabled.");
+		assert.notOk(aItems[2].getEnabled(), "Item with action with enabled:false is disabled.");
+		assert.ok(aItems[3].getEnabled(), "Item with action with enabled:true is enabled.");
+		assert.ok(aItems[4].getEnabled(), "Item without action action is enabled.");
+
+		oActionsStrip.disableItems();
+
+		assert.notOk(aItems[1].getEnabled(), "Item with action is disabled after disableItems().");
+		assert.notOk(aItems[2].getEnabled(), "Item with action with enabled:false is disabled after disableItems().");
+		assert.notOk(aItems[3].getEnabled(), "Item with action with enabled:true is disabled after disableItems().");
+		assert.notOk(aItems[4].getEnabled(), "Item without action is disabled after disableItems().");
+
+		oActionsStrip.enableItems();
+
+		assert.ok(aItems[1].getEnabled(), "Item with action is enabled after enableItems().");
+		assert.notOk(aItems[2].getEnabled(), "Item with action with enabled:false is disabled after enableItems().");
+		assert.ok(aItems[3].getEnabled(), "Item with action with enabled:true is enabled after enableItems().");
+		assert.ok(aItems[4].getEnabled(), "Item without action is enabled after enableItems().");
+
+		// Clean up
+		oActionsStrip.destroy();
+	});
+
+	QUnit.test("ActionStrip with initial disabled buttons", function (assert) {
+		// Arrange
+		const oActionsStrip = ActionsStrip.create(
+			[
+				{
+					text: "Button1",
+					actions: [{
+						type: "Custom"
+					}]
+				},
+				{
+					text: "Button2",
+					actions: [{
+						enabled: false,
+						type: "Custom"
+					}]
+				},
+				{
+					text: "Button3",
+					actions: [{
+						enabled: true,
+						type: "Custom"
+					}]
+				},
+				{
+					text: "Button4"
+				}
+			],
+			this.oCard,
+			true
+		);
+
+		const aItems = oActionsStrip._getToolbar().getContent();
+
+		assert.notOk(aItems[1].getEnabled(), "Item with action is disabled initially.");
+		assert.notOk(aItems[2].getEnabled(), "Item with action with enabled:false is disabled initially.");
+		assert.notOk(aItems[3].getEnabled(), "Item with action with enabled:true is disabled initially.");
+		assert.ok(aItems[4].getEnabled(), "Item without action is still enabled initially.");
+
+		oActionsStrip.enableItems();
+
+		assert.ok(aItems[1].getEnabled(), "Item with action is enabled after enableItems().");
+		assert.notOk(aItems[2].getEnabled(), "Item with action with enabled:false is disabled after enableItems().");
+		assert.ok(aItems[3].getEnabled(), "Item with action with enabled:true is enabled after enableItems().");
+		assert.ok(aItems[4].getEnabled(), "Item without action is enabled after enableItems().");
+
+		// Clean up
+		oActionsStrip.destroy();
 	});
 
 	QUnit.test("Card action is fired when button is pressed", function (assert) {

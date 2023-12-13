@@ -109,6 +109,7 @@ Copyright: jQuery Foundation and other contributors
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit-reporter-junit.js
+	src/sap.ui.core/src/sap/ui/qunit/qunit-junit.js
 
 Component: cubiq.org - iScroll, version: 4.2.5
 Copyright: 2012 Matteo Spinelli

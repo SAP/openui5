@@ -1,7 +1,7 @@
 /* global */
 sap.ui.define([
-	"sap/m/App", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/core/mvc/View", "sap/ui/core/Core"
-], function (App, UIComponent, ComponentContainer, View, oCore) {
+	"sap/m/App", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/core/mvc/View"
+], function (App, UIComponent, ComponentContainer, View) {
 	"use strict";
 
 	const fnCreateEnvironment = function(sView, sModule) {

@@ -1947,8 +1947,8 @@ function(
 	 *
 	 * In the context of the MultiInput, this is the merged value of all the Tokens in the control.
 	 *
+	 * @returns {string} Formatted value with tokens texts.
 	 * @since 1.94
-	 * @experimental
 	 */
 	MultiInput.prototype.getFormFormattedValue = function () {
 		return this.getTokens()
@@ -1959,10 +1959,9 @@ function(
 	};
 
 	/**
-	 * The property which triggers form display invalidation when changed
-	 *
+	 * The property which triggers form display invalidation when changed.
+	 * @returns {string} name of the value holding property.
 	 * @since 1.94
-	 * @experimental
 	 */
 	MultiInput.prototype.getFormValueProperty = function () {
 		return "_semanticFormValue";

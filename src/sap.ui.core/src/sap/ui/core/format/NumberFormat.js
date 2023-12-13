@@ -46,7 +46,7 @@ sap.ui.define([
 	});
 
 	// https://www.unicode.org/reports/tr44/#Bidi_Class_Values (Explicit Formatting Types)
-	const rAllRTLCharacters = /[\u200e\u200f\u202a\u202b\u202c]/g;
+	const rAllRTLCharacters = /[\u061c\u200e\u200f\u202a\u202b\u202c]/g;
 	const rAllWhiteSpaces = /\s/g;
 	const rDigit = /\d/;
 	// Regex for checking if a number has leading zeros

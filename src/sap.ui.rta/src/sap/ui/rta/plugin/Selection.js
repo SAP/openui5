@@ -5,17 +5,16 @@
 sap.ui.define([
 	"sap/base/util/restricted/_intersection",
 	"sap/m/InstanceManager",
-	"sap/ui/dt/DOMUtil",
+	"sap/ui/core/Element",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/Utils"
-],
-function(
+], function(
 	_intersection,
 	InstanceManager,
-	DOMUtil,
+	Element,
 	OverlayRegistry,
 	OverlayUtil,
 	KeyCodes,
@@ -200,6 +199,22 @@ function(
 	};
 
 	/**
+	 * Returns the focused overlay
+	 *
+	 * @returns {sap.ui.dt.ElementOverlay} Overlay object
+	 * @private
+	 */
+	Selection.prototype._getFocusedOverlay = function() {
+		if (document.activeElement) {
+			var oElement = Element.getElementById(document.activeElement.id);
+			if (oElement && oElement.isA("sap.ui.dt.ElementOverlay")) {
+				return oElement;
+			}
+		}
+		return undefined;
+	};
+
+	/**
 	 * Handle keydown event
 	 *
 	 * @param {sap.ui.base.Event} oEvent - Event object
@@ -209,7 +224,7 @@ function(
 		if (!this.getIsActive()) {
 			return;
 		}
-		var oOverlay = Utils.getFocusedOverlay();
+		var oOverlay = this._getFocusedOverlay();
 		if (oEvent.keyCode === KeyCodes.ENTER) {
 			this._selectOverlay(oEvent);
 		} else if (oEvent.keyCode === KeyCodes.ARROW_UP && oEvent.shiftKey === false && oEvent.altKey === false) {

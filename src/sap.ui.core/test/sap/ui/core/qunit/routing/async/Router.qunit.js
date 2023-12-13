@@ -2246,6 +2246,25 @@ sap.ui.define([
 		oRouter.destroy();
 	});
 
+	QUnit.test("Interpolate mandatory parameter with empty string should throw meaningful error", function(assert) {
+		assert.expect(1);
+		var oRouter = fnCreateRouter([{
+			name: "route1",
+			pattern: "test/{p1}/{p2}"
+		}]);
+
+		try {
+			// Act
+			oRouter.getURL("route1", {
+				p1: 1,
+				p2: ""
+			});
+		} catch (error) {
+			assert.ok(error.message.match(/\{p2\}.+empty string/), "Error message contains meaningful information");
+			oRouter.destroy();
+		}
+	});
+
 	QUnit.module("Typed View", {
 		beforeEach: function() {
 			hasher.setHash("");
