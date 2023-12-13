@@ -2718,7 +2718,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_processGroupMembersQueryResponse: no refresh in multi-unit case if sorters"
 			+ " have *not* been applyed to groups", function (assert) {
-		var done = assert.async();
+		var done = assert.async(),
+			that = this;
 
 		setupAnalyticalBinding(2, {}, function (oBinding) {
 			var oBindingMock = sinon.mock(oBinding),
@@ -2758,6 +2759,23 @@ sap.ui.define([
 			oBindingMock.expects("_warnNoSortingOfGroups").withExactArgs(undefined);
 			// and once while processing the data
 			oBindingMock.expects("_warnNoSortingOfGroups").withExactArgs();
+			that.mock(AnalyticalBinding).expects("_getDeviatingUnitPropertyNames")
+				.withExactArgs(sinon.match.same(oRequestDetails.aSelectedUnitPropertyName), oData.results)
+				.returns("~aDeviatingUnitPropertyName");
+			oBindingMock.expects("_createMultiUnitRepresentativeEntry")
+				.withExactArgs(null, sinon.match.same(oData.results[0]),
+					sinon.match.same(oRequestDetails.aSelectedUnitPropertyName), "~aDeviatingUnitPropertyName",
+					undefined)
+				.returns({
+					oEntry: {
+						__metadata: {uri: ",,,,,,,,*,,,,,,-multiple-units-not-dereferencable|1"},
+						ActualCosts: null,
+						Currency: "*",
+						"^~volatile": true
+					},
+					bIsNewEntry: true,
+					aReloadMeasurePropertyName: []
+				});
 
 			// code under test
 			oBinding._processGroupMembersQueryResponse(oRequestDetails, oData);
@@ -2868,20 +2886,166 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_createMultiUnitRepresentativeEntry: URI encoded multi unit entry key parts",
-			function (assert) {
-		var done = assert.async();
+	QUnit.test("_processGroupMembersQueryResponse calls _getDimensionValue", function (assert) {
+		var done = assert.async(),
+			that = this;
 
 		setupAnalyticalBinding(2, {}, function (oBinding) {
-			var oExpectedMultiUnitEntry = {
+			var oAnalyticalBindingMock = that.mock(AnalyticalBinding),
+				bApplySortersToGroups = {/* true or false*/},
+				oBindingMock = that.mock(oBinding),
+				oData = {
+					"__count" : "1",
+					"results":[{
+						__metadata : {uri : "foo"},
+						CreationTime : {ms : 41635000, __edmType : "Edm.Time"}
+					}]
+				},
+				oEntityA = {CreationTime : {ms : 41634000, __edmType : "Edm.Time"}},
+				oModel = oBinding.getModel(),
+				oRequestDetails = {
+					aAggregationLevel : ["CreationTime"],
+					sGroupId : "/",
+					bIsFlatListRequest : true,
+					oKeyIndexMapping : {sGroupId : "/", iIndex : 0, iServiceKeyIndex : 0 },
+					iRequestType : iGroupMembersQueryType,
+					aSelectedUnitPropertyName : ["Currency"]
+				};
+
+			oBinding.bApplySortersToGroups = bApplySortersToGroups;
+			oBindingMock.expects("_canApplySortersToGroups").never();
+			oBindingMock.expects("refresh").withExactArgs().never();
+			oBindingMock.expects("_getServiceKeys").withExactArgs("/", -1).returns(["a"]);
+			that.mock(oModel).expects("getObject").withExactArgs("/a").returns(oEntityA);
+			oAnalyticalBindingMock.expects("_getDimensionValue")
+				.withExactArgs(sinon.match.same(oEntityA.CreationTime))
+				.returns("41634000");
+			oAnalyticalBindingMock.expects("_getDimensionValue")
+				.withExactArgs(sinon.match.same(oData.results[0].CreationTime))
+				.returns("41635000");
+
+			// code under test
+			oBinding._processGroupMembersQueryResponse(oRequestDetails, oData);
+
+			assert.strictEqual(oBinding.bApplySortersToGroups, bApplySortersToGroups);
+			assert.strictEqual(oBinding.iTotalSize, 1);
+
+			oBindingMock.verify();
+			oAnalyticalBindingMock.verify();
+			done();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_mergeLoadedKeyIndexWithSubsequentIndexes case 1-c-II", function (assert) {
+		var done = assert.async(),
+			that = this;
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var oAnalyticalBindingMock = that.mock(AnalyticalBinding),
+				oBindingMock = that.mock(oBinding),
+				oEntity0 = {CreationTime : {ms : 41634000, __edmType : "Edm.Time"}},
+				oEntity1 = {CreationTime : {ms : 41634000, __edmType : "Edm.Time"}},
+				oKeyIndexMapping = {sGroupId : "/", iIndex : 0, iServiceKeyIndex : 1},
+				oModel = oBinding.getModel(),
+				oModelMock = that.mock(oModel);
+
+			oBinding.mKeyIndex = {"/" : [0, 1, 2, 3]};
+			oBinding.mServiceKey = {"/" : ["item('0')", "item('1')", "item('2')", "item('3')"]};
+			oBinding.mMultiUnitKey = {"/" : [/*can be ignored*/]};
+
+			oModelMock.expects("getObject").withExactArgs("/item('0')").returns(oEntity0);
+			oModelMock.expects("getObject").withExactArgs("/item('1')").returns(oEntity1);
+			oAnalyticalBindingMock.expects("_getDimensionValue")
+				.withExactArgs(sinon.match.same(oEntity0.CreationTime))
+				.returns("41634000");
+			oAnalyticalBindingMock.expects("_getDimensionValue")
+				.withExactArgs(sinon.match.same(oEntity1.CreationTime))
+				.returns("41634000");
+			oAnalyticalBindingMock.expects("_getDeviatingUnitPropertyNames")
+				.withExactArgs("~aSelectedUnitPropertyName", [sinon.match.same(oEntity0), sinon.match.same(oEntity1)])
+				.returns("~aDeviatingUnitPropertyNames");
+			oBindingMock.expects("_createMultiUnitRepresentativeEntry")
+				.withExactArgs("/", sinon.match.same(oEntity0), "~aSelectedUnitPropertyName",
+					"~aDeviatingUnitPropertyNames", "~bIsFlatListRequest")
+				.returns({oEntry : "~entry", bIsNewEntry : true});
+
+			// code under test
+			assert.strictEqual(
+				oBinding._mergeLoadedKeyIndexWithSubsequentIndexes(oKeyIndexMapping,
+					/*aAggregationLevel*/["CreationTime"], "~aSelectedUnitPropertyName", "~bIsFlatListRequest"),
+				1, "one discarded entity");
+
+			oBindingMock.verify();
+			oAnalyticalBindingMock.verify();
+			done();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_mergeLoadedKeyIndexWithSubsequentIndexes case 1-b-I", function (assert) {
+		var done = assert.async(),
+			that = this;
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var oAnalyticalBindingMock = that.mock(AnalyticalBinding),
+				oBindingMock = that.mock(oBinding),
+				oEntity0 = {CreationTime : {ms : 41634000, __edmType : "Edm.Time"}},
+				oEntity1 = {CreationTime : {ms : 41634000, __edmType : "Edm.Time"}},
+				oKeyIndexMapping = {sGroupId : "/", iIndex : 0, iServiceKeyIndex : 2},
+				oModel = oBinding.getModel(),
+				oModelMock = that.mock(oModel);
+
+			oBinding.mKeyIndex = {"/" : [0, 1, 1, 3]};
+			oBinding.mServiceKey = {"/" : ["item('0')", "item('1')", "item('2')", "item('3')"]};
+			oBinding.mMultiUnitKey = {"/" : [/*can be ignored*/]};
+
+			oModelMock.expects("getObject").withExactArgs("/item('1')").returns(oEntity0);
+			oModelMock.expects("getObject").withExactArgs("/item('2')").returns(oEntity1);
+			oAnalyticalBindingMock.expects("_getDimensionValue")
+				.withExactArgs(sinon.match.same(oEntity0.CreationTime))
+				.returns("41634000");
+			oAnalyticalBindingMock.expects("_getDimensionValue")
+				.withExactArgs(sinon.match.same(oEntity1.CreationTime))
+				.returns("41634000");
+			oAnalyticalBindingMock.expects("_getDeviatingUnitPropertyNames")
+				.withExactArgs("~aSelectedUnitPropertyName", [sinon.match.same(oEntity0), sinon.match.same(oEntity1)])
+				.returns("~aDeviatingUnitPropertyNames");
+			oBindingMock.expects("_createMultiUnitRepresentativeEntry")
+				.withExactArgs("/", sinon.match.same(oEntity0), "~aSelectedUnitPropertyName",
+					"~aDeviatingUnitPropertyNames", "~bIsFlatListRequest")
+				.returns({oEntry : "~entry", bIsNewEntry : true});
+
+			// code under test
+			assert.strictEqual(
+				oBinding._mergeLoadedKeyIndexWithSubsequentIndexes(oKeyIndexMapping,
+					/*aAggregationLevel*/["CreationTime"], "~aSelectedUnitPropertyName", "~bIsFlatListRequest"),
+				1, "one discarded entity");
+
+			oBindingMock.verify();
+			oAnalyticalBindingMock.verify();
+			done();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_createMultiUnitRepresentativeEntry: URI encoded multi unit entry key parts,"
+			+ "handle 'Edm.Time' properties correctly", function (assert) {
+		var done = assert.async(),
+			that = this;
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var oAnalyticalBindingMock = that.mock(AnalyticalBinding),
+				oExpectedMultiUnitEntry = {
 					oEntry: {
 						"ActualCosts" : null,
 						"CostCenter" : "100/1000%2F",
+						"CreationTime" : {"__edmType": "Edm.Time", "ms": 60000},
 						"Currency" : "EUR",
 						"^~volatile" : true,
 						"__metadata" : {
 							"uri" :
-								",,,,,100%2F1000%252F,,EUR,,,,,,-multiple-units-not-dereferencable|"
+								",,,,,100%2F1000%252F,,~CreationTimeMS,EUR,,,,,,-multiple-units-not-dereferencable|"
 									+ oBinding._iId
 						}
 					},
@@ -2892,11 +3056,24 @@ sap.ui.define([
 				oReferenceEntry = {
 					ActualCosts : "1588416",
 					CostCenter : "100/1000%2F",
+					CreationTime : {ms : 60000, __edmType : "Edm.Time"},
 					Currency : "EUR",
 					__metadata : {
 						uri : "foo"
 					}
 				};
+
+			oAnalyticalBindingMock.expects("_getDimensionValue").withExactArgs(undefined)
+				// for "ControllingArea", "ControllingAreaNoText", "ControllingAreaNoTextEmptyLabel",
+				// "ControllingAreaNoTextNoLabel", "ControllingAreaWithTextEmptyLabel", "CostElement", "CurrencyType",
+				// "FiscalPeriod", "FiscalVariant", "FiscalYear", "ValueType"
+				.exactly(11).returns(undefined);
+			// "CostCenter"
+			oAnalyticalBindingMock.expects("_getDimensionValue").withExactArgs("100/1000%2F").returns("100/1000%2F");
+			oAnalyticalBindingMock.expects("_getDimensionValue")
+				.withExactArgs(/*deep copy*/oReferenceEntry.CreationTime)
+				.returns("~CreationTimeMS");
+			oAnalyticalBindingMock.expects("_getDimensionValue").withExactArgs("EUR").returns("EUR"); // "Currency"
 
 			// code under test
 			oMultiUnitEntry = oBinding._createMultiUnitRepresentativeEntry("/", oReferenceEntry,
@@ -3785,4 +3962,38 @@ sap.ui.define([
 	// number of entries for that group which causes in _processGroupMembersQueryResponse that the
 	// final length is not set for that group. So the watermark is set wrongly and data is requested
 	// twice.
+
+	//*********************************************************************************************
+	QUnit.test("_getDimensionValue", function (assert) {
+		// code under test
+		assert.strictEqual(AnalyticalBinding._getDimensionValue(undefined), undefined);
+
+		// code under test
+		assert.strictEqual(AnalyticalBinding._getDimensionValue(null), null);
+
+		// code under test
+		assert.strictEqual(AnalyticalBinding._getDimensionValue({ms: "~ms", __edmType: "Edm.Time"}), "~ms");
+
+		// code under test
+		assert.strictEqual(AnalyticalBinding._getDimensionValue("foo"), "foo");
+
+		var oDate = new Date(1395705600000);
+		// code under test
+		assert.strictEqual(AnalyticalBinding._getDimensionValue(oDate), oDate);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getDeviatingUnitPropertyNames", function (assert) {
+		var aSelectedUnitPropertyNames = ["~Property0", "~Property1", "~Property2"],
+			aMultiUnitEntries = [
+				{"~Property0": "~a0", "~Property1": "b", "~Property2": "~c0"},
+				{"~Property0": "~a0", "~Property1": "b", "~Property2": "~c0"},
+				{"~Property0": "~a1", "~Property1": "b", "~Property2": "~c1"}
+			];
+
+		// code under test
+		assert.deepEqual(
+			AnalyticalBinding._getDeviatingUnitPropertyNames(aSelectedUnitPropertyNames, aMultiUnitEntries),
+			["~Property0", "~Property2"]);
+	});
 });
