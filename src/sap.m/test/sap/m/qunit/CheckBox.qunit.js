@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Messaging",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/CheckBox",
 	"sap/ui/core/library",
 	"sap/m/Label",
@@ -18,6 +19,7 @@ sap.ui.define([
 	Messaging,
 	QUtils,
 	createAndAppendDiv,
+	nextUIUpdate,
 	CheckBox,
 	coreLibrary,
 	Label,
@@ -58,6 +60,7 @@ sap.ui.define([
 		var bEditable = true;
 		var bVisible = true;
 		var bSelected = false;
+		var bRequired = false;
 		var sName = "";
 		var sText = "";
 		var sTextDirection = TextDirection.Inherit;
@@ -76,6 +79,7 @@ sap.ui.define([
 		assert.strictEqual(oCheckBox.getEditable(), bEditable, "Property 'editable': Default value should be '" + bEditable + "'");
 		assert.strictEqual(oCheckBox.getVisible(), bVisible, "Property 'visible': Default value should be '" + bVisible + "'");
 		assert.strictEqual(oCheckBox.getSelected(), bSelected, "Property 'selected': Default value should be '" + bSelected + "'");
+		assert.strictEqual(oCheckBox.getRequired(), bRequired, "Property 'required': Default value should be '" + bRequired + "'");
 		assert.strictEqual(oCheckBox.getName(), sName, "Property 'name': Default value should be '" + sName + "'");
 		assert.strictEqual(oCheckBox.getText(), sText, "Property 'text': Default value should be '" + sText + "'");
 		assert.strictEqual(oCheckBox.getTextDirection(), sTextDirection, "Property 'textDirection': Default value should be '" + sTextDirection + "'");
@@ -337,6 +341,41 @@ sap.ui.define([
 		Core.applyChanges();
 		assert.notOk(oCheckBox.$("CbBg").hasClass("sapMCbMarkPartiallyChecked"), "Should not have sapMCbMarkPartiallyChecked class");
 		assert.equal(oCheckBox.getPartiallySelected(), false, "Should have partiallySelected property = false");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
+	/* ----------------------------------------------- */
+	/* Test: 'required'				   				   */
+	/* ----------------------------------------------- */
+
+	QUnit.test("'required' true/false", async function (assert) {
+
+		// system under test
+		var oCheckBox = new CheckBox({ required: true, text: "Label" }),
+			oCheckBoxLabel = oCheckBox._getLabel();
+
+		// arrange
+		oCheckBox.placeAt("content");
+		await nextUIUpdate();
+
+		// assertions
+		assert.strictEqual(oCheckBox.getRequired(), true, "Required property is set correctly");
+		assert.strictEqual(oCheckBoxLabel.getRequired(), true, "Required property is set correctly");
+
+		assert.strictEqual(oCheckBox.$().attr("aria-required"), "true", "Property 'aria-required' should be 'true'");
+		assert.ok(oCheckBoxLabel.$().hasClass("sapMLabelRequired"), "Label should have class 'sapMLabelRequired'");
+
+		oCheckBox.setRequired(false);
+		await nextUIUpdate();
+
+		// assertions
+		assert.strictEqual(oCheckBox.getRequired(), false, "Required property is set correctly");
+		assert.strictEqual(oCheckBoxLabel.getRequired(), false, "Required property is set correctly");
+
+		assert.strictEqual(oCheckBox.$().attr("aria-required"), undefined, "Property 'aria-required' should be undefined");
+		assert.ok(!oCheckBoxLabel.$().hasClass("sapMLabelRequired"), "Label should not have class 'sapMLabelRequired'");
 
 		// cleanup
 		oCheckBox.destroy();
