@@ -635,4 +635,15 @@ sap.ui.define([
 			oErrorLogSpy.restore();
 		});
 	});
+
+	QUnit.module("Handling of 'apiVersion: 2'");
+
+	QUnit.test("Unknown apiVersion is rejected", function (assert) {
+		assert.throws(() => {
+			Library.init({
+				name: "bad.apiversion.library",
+				apiVersion: 3
+			});
+		}, /The library 'bad\.apiversion\.library' has defined 'apiVersion: 3', which is an unsupported value/);
+	});
 });
