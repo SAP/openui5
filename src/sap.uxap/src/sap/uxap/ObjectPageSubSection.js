@@ -647,12 +647,19 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype._adaptDomHeight = function() {
-		var oDom = this.getDomRef();
+		var oDom = this.getDomRef(),
+			defaultSectionHeight = this._height,
+			bFitContainerClass = this.hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS);
+
 		if (!oDom) {
 			return;
 		}
-		if (this.hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS) && this._height) {
-			oDom.style.height = (oDom.scrollHeight > Math.ceil(parseFloat(this._height))) ? "" : this._height;
+
+		if (bFitContainerClass && defaultSectionHeight) {
+			var contentHeight = oDom.scrollHeight,
+				containerHeight = Math.ceil(parseFloat(defaultSectionHeight));
+
+			oDom.style.height = (contentHeight > containerHeight) ? "" : defaultSectionHeight;
 		}
 	};
 
