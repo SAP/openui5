@@ -185,6 +185,8 @@ sap.ui.define([
 			assert.strictEqual(oBinding.oCheckUpdateCallToken, undefined);
 			assert.strictEqual(oBinding.hasOwnProperty("bHasDeclaredType"), true);
 			assert.strictEqual(oBinding.bHasDeclaredType, undefined);
+			assert.strictEqual(oBinding.hasOwnProperty("mScope"), true);
+			assert.strictEqual(oBinding.mScope, undefined);
 			assert.strictEqual(oBinding.hasOwnProperty("vValue"), true);
 			assert.strictEqual(oBinding.vValue, undefined);
 			assert.ok(fnBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
@@ -219,16 +221,15 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("bindProperty with parameters", function (assert) {
 		var oBinding,
-			mClonedParameters = {custom : "foo"},
+			mClonedParameters = {custom : "foo", scope : "bar"},
 			oError = new Error("Unsupported ..."),
 			oModelMock = this.mock(this.oModel),
-			mParameters = {/*...*/},
-			mQueryOptions = {};
+			mParameters = {custom : "foo", scope : "bar"};
 
 		this.mock(_Helper).expects("clone").twice().withExactArgs(sinon.match.same(mParameters))
 			.returns(mClonedParameters);
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(mClonedParameters), false).returns(mQueryOptions);
+			.withExactArgs(sinon.match.same(mClonedParameters), false).returns("~mQueryOptions~");
 		this.mock(ODataPropertyBinding.prototype).expects("fetchCache").withExactArgs(null);
 
 		// code under test
@@ -236,14 +237,39 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.mParameters, undefined,
 			"do not propagate unchecked query options");
+		assert.strictEqual(oBinding.mQueryOptions, "~mQueryOptions~");
 
-		//error for invalid parameters
+		// error for invalid parameters
 		oModelMock.expects("buildQueryOptions").throws(oError);
 
 		// code under test
 		assert.throws(function () {
 			this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name", null, mParameters);
 		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("bindProperty with scope", function (assert) {
+		var oBinding,
+			mClonedParameters = {custom : "foo"},
+			oModelMock = this.mock(this.oModel),
+			mParameters = {custom : "foo", scope : {}};
+
+		this.mock(_Helper).expects("clone").withExactArgs({custom : "foo"})
+			.returns(mClonedParameters);
+		oModelMock.expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(mClonedParameters), false)
+			.returns("~mQueryOptions~");
+		this.mock(ODataPropertyBinding.prototype).expects("fetchCache").withExactArgs(null);
+
+		// code under test
+		oBinding = this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name", null, mParameters);
+
+		assert.strictEqual(oBinding.mParameters, undefined,
+			"do not propagate unchecked query options");
+		assert.strictEqual(oBinding.mScope, mParameters.scope);
+		assert.deepEqual(mParameters, {custom : "foo", scope : {}});
+		assert.strictEqual(oBinding.mQueryOptions, "~mQueryOptions~");
 	});
 
 	//*********************************************************************************************
@@ -641,7 +667,7 @@ sap.ui.define([
 					.withExactArgs("/EntitySet('foo')")
 					.returns(oMetaContext);
 				this.mock(this.oModel.getMetaModel()).expects("fetchObject")
-					.withExactArgs("@SAP_Common.Label", sinon.match.same(oMetaContext))
+					.withExactArgs("@SAP_Common.Label", sinon.match.same(oMetaContext), undefined)
 					.returns(SyncPromise.resolve(vValue));
 			} else {
 				this.mock(oContext).expects("fetchValue")
@@ -924,6 +950,11 @@ sap.ui.define([
 		contextPath : "/Irrelevant",
 		path : "/Artists('42')/Name##@SAP_Common.Label",
 		virtualContext : true
+	}, {
+		contextPath : "/Irrelevant",
+		path : "/Artists('42')/Name##@SAP_Common.Label",
+		scope : {},
+		virtualContext : true
 	}].forEach(function (oFixture, i) {
 		QUnit.test("checkUpdateInternal, meta path, resolved, " + i, function (assert) {
 			var oBinding,
@@ -942,7 +973,8 @@ sap.ui.define([
 			this.mock(_Cache).expects("createProperty").never();
 
 			// code under test
-			oBinding = this.oModel.bindProperty(oFixture.path, oContext);
+			oBinding = this.oModel.bindProperty(oFixture.path, oContext,
+				oFixture.scope ? {scope : oFixture.scope} : undefined);
 
 			this.mock(this.oModel.getMetaModel()).expects("getMetaContext")
 				.withExactArgs(oFixture.path.startsWith("##/")
@@ -953,7 +985,8 @@ sap.ui.define([
 				.withExactArgs(oFixture.path.startsWith("##/")
 					? "./@SAP_Common.Label"
 					: "@SAP_Common.Label",
-					sinon.match.same(oMetaContext))
+					sinon.match.same(oMetaContext),
+					oFixture.scope ? {scope : sinon.match.same(oFixture.scope)} : undefined)
 				.returns(SyncPromise.resolve(vValue));
 			if (oContext && !oFixture.baseContext) {
 				this.mock(oContext).expects("fetchValue").never();
@@ -1007,7 +1040,8 @@ sap.ui.define([
 			.withExactArgs("/Artists")
 			.returns(oMetaContext);
 		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
-			.withExactArgs("@Capabilities.InsertRestrictions", sinon.match.same(oMetaContext))
+			.withExactArgs("@Capabilities.InsertRestrictions", sinon.match.same(oMetaContext),
+				undefined)
 			.returns(SyncPromise.resolve(oValue));
 		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type").never();
 		this.mock(oBinding).expects("fireDataRequested").never();
