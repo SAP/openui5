@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/isEmptyObject",
+	"sap/base/util/merge",
 	"sap/base/Log",
 	"./ParameterMap",
 	"sap/ui/integration/util/CardMerger"
@@ -23,6 +24,7 @@ sap.ui.define([
 	each,
 	isPlainObject,
 	isEmptyObject,
+	merge,
 	Log,
 	ParameterMap,
 	CardMerger
@@ -121,10 +123,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * @returns {Object} A copy of the Manifest JSON.
+	 * @returns {object} A copy of the manifest JSON.
 	 */
 	Manifest.prototype.getJson = function () {
 		return this._unfreeze(this.oJson);
+	};
+
+	/**
+	 * @returns {object} JSON, from which any unprocessable parts have been erased.
+	 */
+	Manifest.prototype.getProcessableJson = function () {
+		const oValue = deepExtend({}, this._oManifest.getRawJson());
+
+		if (oValue["sap.card"]?.type === "AdaptiveCard") {
+			delete oValue["sap.card"].content;
+		}
+
+		return this._unfreeze(oValue);
 	};
 
 	/**
@@ -272,7 +287,7 @@ sap.ui.define([
 		// the manifest which should be processed
 		var bHasTranslatable = false;
 
-		CoreManifest.processObject(this._oManifest.getJson(), function (oObject, sKey, vValue) {
+		CoreManifest.processObject(this.getProcessableJson(), function (oObject, sKey, vValue) {
 			if (!bHasTranslatable && vValue.match(REGEXP_TRANSLATABLE)) {
 				bHasTranslatable = true;
 			}
@@ -301,12 +316,12 @@ sap.ui.define([
 	Manifest.prototype.processManifest = function () {
 		var iCurrentLevel = 0,
 			iMaxLevel = 15,
-			//Always need the unprocessed manifest
-			oUnprocessedJson = deepExtend({}, this._oManifest.getRawJson()),
+			oValue = this.getProcessableJson(),
 			oDataSources = this.get(APP_DATA_SOURCES);
 
-		process(oUnprocessedJson, this.oResourceBundle, iCurrentLevel, iMaxLevel, this._oCombinedParams, oDataSources, this._oCombinedFilters);
-		this.setJson(oUnprocessedJson);
+		process(oValue, this.oResourceBundle, iCurrentLevel, iMaxLevel, this._oCombinedParams, oDataSources, this._oCombinedFilters);
+
+		this.setJson(merge(this.getJson(), oValue));
 	};
 
 	/**
