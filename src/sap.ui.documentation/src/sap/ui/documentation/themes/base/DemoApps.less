@@ -1,0 +1,175 @@
+@demoAppsCardTextColor: #fff;
+
+@demoAppsMainHeaderCardBgColor: #07838F;
+@demoAppsMainHeaderCardBgColorDark: #223548;
+
+@demoAppsShowcaseCardHeaderBgColor: #14565b;
+@demoAppsTutorialCardHeaderBgColor: #07838e;
+@demoAppsRTACardHeaderBgColor: #5b738b;
+@demoAppsMiscCardHeaderBgColor: #223548;
+
+.sapUiDemokit {
+
+	.sapUiDemoKitDemoAppsPage {
+
+		// Utilities
+		.sapUiDemoKitDemoAppsLayoutPaddingBeginEnd {
+			padding: 0 2rem;
+		}
+
+		.sapUiDemoKitDemoAppsLayoutPaddingBottom {
+			padding-bottom: 3rem;
+		}
+
+		.sapUiDemoKitDemoAppsCardContentPadding {
+			padding: 1rem;
+		}
+
+		.sapFCard.sapUiDemoKitDemoAppsMainHeaderCard {
+			background: url("../../sdk/images/DemoApps_intro_card.svg") no-repeat center center,
+				linear-gradient(to right, @demoAppsMainHeaderCardBgColor, @demoAppsMainHeaderCardBgColorDark);
+			background-size: cover;
+			background-clip: content-box;
+
+			.sapFCardHeader {
+				background-color: unset;
+
+				.sapFCardHeaderText {
+
+					.sapFCardHeaderTextFirstLine,
+					.sapFCardHeaderTextSecondLine {
+						box-sizing: border-box;
+					}
+
+					.sapFCardHeaderTextFirstLine {
+						padding: .5rem 1rem 0 1rem;
+					}
+
+					.sapFCardHeaderTextSecondLine {
+						// Force the text content to go to the second line
+						max-width: 37.5rem; // 600px
+						padding: .5rem 1rem;
+					}
+
+					.sapFCardTitle,
+					.sapFCardSubtitle {
+						color: @demoAppsCardTextColor;
+					}
+
+					.sapFCardTitle {
+						font-size: @sapMFontLargeSize * 2;
+					}
+
+					.sapFCardSubtitle {
+						font-size: @sapMFontLargeSize;
+					}
+				}
+			}
+
+			.sapFCardContent {
+				padding: 1rem 2rem;
+			}
+		}
+
+		.sapFCard.sapUiDemoKitDemoAppsAsideCard {
+			.sapFCardHeader {
+				padding: 1.5rem;
+
+				.sapFCardHeaderText .sapFCardTitle {
+					font-size: @sapMFontHeader4Size;
+				}
+			}
+
+			.sapFCardContent {
+				padding-bottom: 0.5rem;
+
+				.sapUiDemoKitDemoAppsDownloadListContentPadding {
+					.sapMListItems .sapMLIB {
+						padding: 1.5rem;
+					}
+				}
+			}
+		}
+
+		.sapFCard.sapUiDemoKitDemoAppsCommonCard {
+			.sapFCardHeader {
+				.sapFCardHeaderText .sapMLnk.sapUiDemoKitDemoAppsCardHeaderLink {
+					font-size: @sapMFontLargeSize;
+					color: @demoAppsCardTextColor;
+					// Ensure the link is not stretched to the full width of its container
+					align-self: flex-start;
+
+					&:visited {
+						color: @demoAppsCardTextColor;
+					}
+				}
+
+				.sapFCardHeaderImage .sapFCardIcon.sapFAvatar .sapUiIcon {
+					color: @demoAppsCardTextColor;
+				}
+			}
+		}
+
+		.sapUiDemoKitDemoAppsCategoryShowcase .sapFCard {
+			.sapFCardHeader {
+				background-color: @demoAppsShowcaseCardHeaderBgColor;
+			}
+		}
+
+		.sapUiDemoKitDemoAppsCategoryTutorial .sapFCard {
+			.sapFCardHeader {
+				background-color: @demoAppsTutorialCardHeaderBgColor;
+			}
+		}
+
+		.sapUiDemoKitDemoAppsCategoryRTA .sapFCard {
+			.sapFCardHeader {
+				background-color: @demoAppsRTACardHeaderBgColor;
+			}
+		}
+
+		.sapUiDemoKitDemoAppsCategoryMisc .sapFCard {
+			.sapFCardHeader {
+				background-color: @demoAppsMiscCardHeaderBgColor;
+			}
+		}
+
+		// Align the font size of the download list items with the overall font size of the page
+		// Also changing the white space to normal allows the text to wrap
+		.sapUiDemoKitDemoAppsAsideContent .sapMILILabel {
+			font-size: @sapMFontLargeSize;
+			white-space: normal;
+		}
+
+		// Layout specific styles
+		.sapUiDemoKitDemoAppsAsideContent {
+			margin-top: 2.7rem; // 43px
+			margin-bottom: 0;
+
+			.sapUiDemoKitDemoAppsAsideContentMobile {
+				display: none;
+			}
+		}
+
+		@media screen and (max-width: 63.9375em) {
+			.sapUiDemoKitDemoAppsAsideContent {
+				order: -1;
+				margin-top: 0;
+				margin-bottom: 2rem;
+
+				.sapUiDemoKitDemoAppsAsideContentDesktop {
+					display: none;
+				}
+
+				.sapUiDemoKitDemoAppsAsideContentMobile {
+					display: initial;
+				}
+			}
+		}
+	}
+}
+
+// Content density specific styles
+.sapUiSizeCompact .sapUiDemokit .sapUiDemoKitDemoAppsPage .sapUiDemoKitDemoAppsAsideContent .sapMILILabel {
+	font-size: @sapMFontMediumSize;
+}

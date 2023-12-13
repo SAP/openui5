@@ -1,142 +1,192 @@
 <mvc:View
-		controllerName="sap.ui.documentation.sdk.controller.DemoApps"
-		xmlns="sap.m"
-		xmlns:core="sap.ui.core"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:l="sap.ui.layout">
-	<Page
-		id="demoAppsPage"
-		showSubHeader="false"
-		showFooter="false"
-		showHeader="false"
-		class="sapUiDemoApps">
-		<landmarkInfo>
-			<PageAccessibleLandmarkInfo
-				headerRole="Region"
-				headerLabel="Demo Apps"
-				contentRole="Main"
-				contentLabel="Demo Apps by Category"/>
-		</landmarkInfo>
-		<content>
-			<ScrollContainer vertical="true" width="100%" height="100%">
-				<Panel
-					id="rootPage"
-					accessibleRole="Region"
-					class="sapUiNoContentPadding">
-					<l:BlockLayout
-						id="headerLayout"
-						background="Light">
-						<l:BlockLayoutRow>
-							<l:BlockLayoutCell
-								class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
-								<Image
-									id="phoneImage"
-									src="./resources/sap/ui/documentation/sdk/images/DemoApps_S_cropped.jpg"
-									alt="{i18n>DEMO_APPS_IMAGE_PHONE}"
-									width="100%"
-									class="welcomeImage"
-									load=".handleLandingImageLoad"
-									visible="{device>/system/phone}"
-									densityAware="false"/>
-								<Image
-									id="desktopImage"
-									class="desktopImage welcomeImage"
-									src="./resources/sap/ui/documentation/sdk/images/DemoApps_M_and_L_cropped.jpg"
-									alt="{i18n>DEMO_APPS_IMAGE_DESKTOP}"
-									densityAware="false"
-									load=".handleLandingImageLoad"
-									visible="{=!${device>/system/phone}}"
-									width="100%"/>
-								<l:Grid
-									id="landingImageHeadline"
-									width="100%"
-									visible="false"
-									class="headerGrid"
-									hSpacing="0"
-									defaultSpan="L6 M6 S12">
-									<l:VerticalLayout width="100%" class="sapUiTinyMarginTop sapUiTinyMarginEnd">
-										<Text class="headerText" text="{i18n>DEMO_APPS_TEXT}" width="100%" textAlign="Left"/>
-										<l:HorizontalLayout>
-											<Button
-												class="actionButton headerButton"
-												id="download"
-												text="{i18n>DEMO_APPS_DOWNLOAD_BTN}"
-												type="Emphasized"
-												press=".onDownloadButtonPress">
-											</Button>
-											<Button
-												class="actionButton headerButton sapContrast sapContrastPlus sapUiSmallMarginBegin"
-												id="readMoreButton"
-												text="{i18n>DEMO_APPS_READ_MORE_BTN}"
-												press=".onReadMoreButtonPress">
-											</Button>
-										</l:HorizontalLayout>
-									</l:VerticalLayout>
-								</l:Grid>
-							</l:BlockLayoutCell>
-						</l:BlockLayoutRow>
-					</l:BlockLayout>
-				</Panel>
-				<l:VerticalLayout content="{/demoAppsByCategory}" width="100%">
-					<Panel
-						accessibleRole="Region"
-						backgroundDesign="Transparent"
-						class="sapUiNoContentPadding">
-						<headerToolbar>
-							<Toolbar class="headlineCell">
-								<Title
-									text="{
-										path: 'categoryId',
-										formatter: '.formatter.categoryName'
-									}"
-									level="H1"
-									titleStyle="H1"
-									class="sapUiMediumMarginTopBottom"/>
-							</Toolbar>
-						</headerToolbar>
-						<l:BlockLayout
-							content="{
-								 path: 'rows',
-								 templateShareable: false
-							}"
-							background="Light">
-							<l:BlockLayoutRow content="{
-								path: '',
-								factory: '.createDemoAppCellFactory'
-							}"/>
-						</l:BlockLayout>
-					</Panel>
-				</l:VerticalLayout>
+	controllerName="sap.ui.documentation.sdk.controller.DemoApps"
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:card="sap.f.cards"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:core="sap.ui.core"
+	xmlns:custom="sap.ui.documentation"
+	displayBlock="true"
+	height="100%">
 
-				<core:Fragment id="demoAppsFooter" visible="{/bFooterVisible}" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
+	<ScrollContainer
+		class="sapUiDemoKitDemoAppsPage"
+		id="sapUiDemoKitDemoAppsPage"
+		width="100%"
+		height="100%"
+		vertical="true"
+		horizontal="false">
 
-			</ScrollContainer>
-		</content>
-		<dependents>
-			<Dialog id="downloadDialog"
-				title="{i18n>DEMO_APPS_DOWNLOAD_DIALOG_TITLE}">
-				<subHeader>
-					<Toolbar>
-						<SearchField id="downloadDialogSearch" liveChange=".onSearch"/>
-					</Toolbar>
-				</subHeader>
-				<List items="{/demoApps}" id="downloadDialogList">
-					<InputListItem
-						visible="{= !!${config} }"
-						label="{name}">
-						<customData>
-							<core:CustomData key="config" value="{config}"/>
-						</customData>
-						<Button
-							text="{i18n>DEMO_APPS_DOWNLOAD_BTN}"
-							type="Emphasized"
-							press=".onDownloadPress"/>
-					</InputListItem>
-				</List>
-				<buttons>
-					<Button text="{i18n>DEMO_APPS_DOWNLOAD_DIALOG_CANCEL_BTN}" press=".onCloseDialog" />
-				</buttons>
-			</Dialog>
-		</dependents>
-	</Page>
+		<VBox class="sapUiMediumMargin sapUiLargeMarginBottom">
+			<f:Card class="sapUiDemoKitDemoAppsMainHeaderCard">
+				<f:header>
+					<card:Header
+						title="{i18n>DEMO_APPS_TITLE}"
+						subtitle="{= ${versionData>/isOpenUI5}
+							? ${i18n>DEMO_APPS_SUBTITLE} + ' OpenUI5.'
+							: ${i18n>DEMO_APPS_SUBTITLE} + ' SAPUI5.'}"
+						subtitleMaxLines="5" />
+				</f:header>
+				<f:content>
+					<Button text="{i18n>DEMO_APPS_READ_MORE_BTN}" press=".onReadMoreButtonPress" />
+				</f:content>
+			</f:Card>
+		</VBox>
+
+		<grid:CSSGrid class="sapUiDemoKitDemoAppsLayoutPaddingBeginEnd sapUiDemoKitDemoAppsLayoutPaddingBottom">
+			<!-- Page Content Ratio Config -->
+			<grid:customLayout>
+				<grid:GridResponsiveLayout>
+					<grid:layout>
+						<grid:GridSettings gridTemplateColumns="1fr" gridColumnGap="1rem" />
+					</grid:layout>
+					<grid:layoutL>
+						<grid:GridSettings gridTemplateColumns="2fr 1fr" gridColumnGap="1rem" />
+					</grid:layoutL>
+					<grid:layoutXL>
+						<grid:GridSettings gridTemplateColumns="3fr 1fr" gridColumnGap="1rem" />
+					</grid:layoutXL>
+				</grid:GridResponsiveLayout>
+			</grid:customLayout>
+
+			<grid:items>
+				<!-- #1 Page Main Content -->
+				<grid:CSSGrid id="sapUiDemoKitDemoAppsMainContent" class="sapUiDemoKitDemoAppsMainContent"
+					items="{/demoAppsByCategory}">
+					<grid:customLayout>
+						<grid:GridBasicLayout gridRowGap="3rem" />
+					</grid:customLayout>
+
+					<grid:CSSGrid>
+						<grid:customLayout>
+							<grid:GridBasicLayout gridRowGap="1rem" />
+						</grid:customLayout>
+
+						<grid:customData>
+							<core:CustomData
+								key="demo-apps-category"
+								value="{ path: 'categoryId', formatter: '.formatter.getDemoAppsCategoryClass' }"
+								writeToDom="true" />
+						</grid:customData>
+
+						<Title
+							class="sapUiDemoKitDemoAppsCategoryTitle"
+							text="{ path: 'categoryId', formatter: '.formatter.getDemoAppsCategoryTitle' }"
+							level="H3"
+							titleStyle="{= ${device>/system/phone} ? 'H4' : 'H3' }"
+							wrapping="true" />
+
+						<grid:CSSGrid items="{ path: 'rows', templateShareable: false }">
+							<grid:customLayout>
+								<grid:GridResponsiveLayout>
+									<grid:layoutS>
+										<grid:GridSettings
+											gridTemplateColumns="1fr"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layoutS>
+									<grid:layout>
+										<grid:GridSettings
+											gridTemplateColumns="repeat(2, 1fr)"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layout>
+									<grid:layoutXL>
+										<grid:GridSettings
+											gridTemplateColumns="repeat(3, 1fr)"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layoutXL>
+								</grid:GridResponsiveLayout>
+							</grid:customLayout>
+
+							<f:Card class="sapUiDemoKitDemoAppsCommonCard">
+								<f:header>
+									<custom:DemoAppsCardHeader href="{ref}" hrefText="{name}" iconSrc="{= 'sap-icon://' + ${icon} }" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitDemoAppsCardContentPadding" wrap="Wrap">
+										<Text class="sapUiSmallMarginBottom" text="{desc}" >
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+										<VBox
+											class="sapUiTinyMarginBottom"
+											items="{ path: 'links', templateShareable: false }"
+											visible="{= !!${links}.length }"
+											wrap="Wrap">
+											<Link
+												href="{ path: 'ref', formatter: '.formatter.crossLink' }"
+												target="_blank"
+												text="{name}"
+												wrapping="true" />
+										</VBox>
+										<HBox wrap="Wrap">
+											<Label
+												class="sapUiTinyMarginEnd"
+												design="Bold"
+												text="{i18n>DEMO_APPS_LIBRARY}"
+												wrapping="true" />
+											<Link
+												href="{ path: 'lib', formatter: '.formatter.libraryLink' }"
+												target="_blank"
+												text="{lib}"
+												enabled="{ path: 'lib', formatter: '.formatter.libraryLinkEnabled' }"
+												wrapping="true" />
+										</HBox>
+									</VBox>
+								</f:content>
+							</f:Card>
+						</grid:CSSGrid>
+					</grid:CSSGrid>
+
+				</grid:CSSGrid>
+				<!-- #1 Page Main Content End -->
+
+				<!-- #2 Page Aside Content -->
+				<grid:CSSGrid id="sapUiDemoKitDemoAppsAsideContent" class="sapUiDemoKitDemoAppsAsideContent">
+					<VBox class="sapUiDemoKitDemoAppsAsideContentDesktop">
+						<f:Card class="sapUiDemoKitDemoAppsAsideCard">
+							<f:header>
+								<card:Header title="{i18n>DEMO_APPS_DOWNLOAD_OVERVIEW}" />
+							</f:header>
+							<f:content>
+								<List class="sapUiDemoKitDemoAppsDownloadListContentPadding" items="{/demoApps}" showSeparators="None">
+									<InputListItem visible="{= !!${config} }" label="{name}">
+										<customData>
+											<core:CustomData key="config" value="{config}" />
+										</customData>
+										<Button class="sapUiDemoKitDemoAppsCardDownloadButton"
+											type="Transparent" icon="sap-icon://download" press=".onDownloadPress" />
+									</InputListItem>
+								</List>
+							</f:content>
+						</f:Card>
+					</VBox>
+
+					<VBox class="sapUiDemoKitDemoAppsAsideContentMobile" wrap="Wrap">
+						<Panel class="sapUiDemoKitDemoAppsAsidePanel" expandable="true" headerText="{i18n>DEMO_APPS_DOWNLOAD_OVERVIEW}">
+							<List items="{/demoApps}" showSeparators="None">
+								<InputListItem visible="{= !!${config} }" label="{name}">
+									<customData>
+										<core:CustomData key="config" value="{config}" />
+									</customData>
+									<Button class="sapUiDemoKitDemoAppsCardDownloadButton"
+										type="Transparent" icon="sap-icon://download" press=".onDownloadPress" />
+								</InputListItem>
+							</List>
+						</Panel>
+					</VBox>
+				</grid:CSSGrid>
+				<!-- #2 Page Aside Content End -->
+
+			</grid:items>
+
+		</grid:CSSGrid>
+
+		<core:Fragment fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
+	</ScrollContainer>
+
 </mvc:View>

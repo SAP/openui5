@@ -1,6 +1,6 @@
 sap.ui.define(function () {
-
 	"use strict";
+
 	return {
 		name: "Demo Apps and Tutorials in sap.ui.documentation",
 		defaults: {
