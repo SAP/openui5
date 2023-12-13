@@ -121,7 +121,7 @@
                         var oContainer = new ComponentContainer({component : oComponent, height: "100%"})
                                 .placeAt("content");
 
-                        var bOpenStandalone = new URLSearchParams(window.location.search).has("dk-sample-standalone");
+                        var bOpenStandalone = window.location.search.includes("dk-sample-standalone");
                         // if dk-sample-standalone is used,
                         // display message for samples with own index.html
                         if (bOpenStandalone && oConfig.sample && oConfig.sample.iframe) {
