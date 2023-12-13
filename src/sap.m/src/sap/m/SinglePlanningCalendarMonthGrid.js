@@ -1296,13 +1296,18 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._isNonWorkingDay = function(oCalendarDate) {
-			return this._getSpecialDates().filter(function(oDateRange) {
-				return oDateRange.getType() === unifiedLibrary.CalendarDayType.NonWorking;
-			}).map(function(oDateRange) {
-				return CalendarDate.fromLocalJSDate(oDateRange.getStartDate());
-			}).some(function(oDate) {
-				return oDate.isSame(oCalendarDate);
+			const aSpecialDates = this._getSpecialDates().filter((oDateRange) => {
+				return oDateRange.getStartDate() && CalendarDate.fromLocalJSDate(oDateRange.getStartDate()).isSame(oCalendarDate);
 			});
+			const sType = aSpecialDates.length > 0 && aSpecialDates[0].getType();
+			const sSecondaryType =  aSpecialDates.length > 0 && aSpecialDates[0].getSecondaryType();
+			const bNonWorkingWeekend = CalendarUtils._isWeekend(oCalendarDate, this._getCoreLocaleData())
+				&& sType !== unifiedLibrary.CalendarDayType.Working
+				&& sSecondaryType !== unifiedLibrary.CalendarDayType.Working;
+
+			return sType === unifiedLibrary.CalendarDayType.NonWorking
+				|| sSecondaryType === unifiedLibrary.CalendarDayType.NonWorking
+				|| bNonWorkingWeekend;
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype.getFocusDomRef = function() {

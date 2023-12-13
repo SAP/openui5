@@ -343,6 +343,7 @@ sap.ui.define([
 
 		delete oFreeTypes[CalendarDayType.None];
 		delete oFreeTypes[CalendarDayType.NonWorking];
+		delete oFreeTypes[CalendarDayType.Working];
 
 		//remove types that are used
 		for (i = 0; i < aItems.length; i++) {
