@@ -126,8 +126,8 @@
 															   columnTitles="Returns,Description"
 															   class="sapUiDocumentation2ColumnsEqualTable">
 												<custom:Row>
-													<m:Text text="{path: 'data>/returnValue/type', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}" wrapping="false"/>
-													<custom:JSDocText sanitizeContent="false" text="{path: 'data>/returnValue/description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+													<m:Text text="{path: 'data>/returnValue/type', formatter: '.formatter.escapeSettingsValue'}" wrapping="false"/>
+													<custom:JSDocText sanitizeContent="false" text="{path: 'data>/returnValue/description', formatter: '.formatter.escapeSettingsValue'}"/>
 												</custom:Row>
 											</custom:LightTable>
 										</template:if>
@@ -146,7 +146,7 @@
 										</template:if>
 										<template:if test="{data>/isFunction}">
 											<template:repeat list="{data>/examples}" var="example">
-												<custom:JSDocText sanitizeContent="false" text="{path: 'example>data', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+												<custom:JSDocText sanitizeContent="false" text="{path: 'example>data', formatter: '.formatter.escapeSettingsValue'}"/>
 											</template:repeat>
 										</template:if>
 									</layout:VerticalLayout>
@@ -169,7 +169,7 @@
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold sapUiDocumentationParamWrap" text="{name}" depth="{depth}" optional="{optional}" deprecated="{= ${deprecated} !== undefined }"/>
 												<layout:VerticalLayout content="{path: 'types', templateShareable: false}" width="100%">
-													<m:Link text="{path: 'value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"
+													<m:Link text="{path: 'value', formatter: '.formatter.escapeSettingsValue'}"
 															href="{href}"
 															enabled="{= !!${linkEnabled} }"/>
 												</layout:VerticalLayout>
@@ -193,7 +193,7 @@
 															enableFormattedText="true"
 															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
 													</m:MessageStrip>
-													<m:ObjectStatus text="Visibility: {parts : [{path : 'visibility'}, {path : 'allowedFor'}], formatter : 'sap.ui.documentation.sdk.model.formatter.formatVisibility'}"
+													<m:ObjectStatus text="Visibility: {parts : [{path : 'visibility'}, {path : 'allowedFor'}], formatter : '.formatter.formatVisibility'}"
 															state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
 													<m:ObjectStatus visible="{=${since} !== undefined}" text="Since: {since}" />
 													<m:FormattedText visible="{=${borrowedFrom} !== undefined}"
@@ -284,7 +284,7 @@
 												<layout:VerticalLayout width="100%">
 													<custom:JSDocText sanitizeContent="false" text="{description}"/>
 													<layout:HorizontalLayout width="100%">
-														<m:ObjectStatus text="Visibility: {parts : [{path : 'visibility'}, {path : 'allowedFor'}], formatter : 'sap.ui.documentation.sdk.model.formatter.formatVisibility'}"
+														<m:ObjectStatus text="Visibility: {parts : [{path : 'visibility'}, {path : 'allowedFor'}], formatter : '.formatter.formatVisibility'}"
 															state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
 														<core:Icon
 															src="sap-icon://sys-help-2"
@@ -295,7 +295,7 @@
 													</layout:HorizontalLayout>
 													<m:MessageStrip
 														visible="{=${deprecatedText} !== undefined}"
-														text="{path : 'deprecatedText', formatter: 'sap.ui.documentation.sdk.model.formatter.formatMessageStripLinks'}"
+														text="{path : 'deprecatedText', formatter: '.formatter.formatMessageStripLinks'}"
 														type="Error"
 														showIcon="true"
 														showCloseButton="false"
@@ -348,7 +348,7 @@
 													<custom:JSDocText sanitizeContent="false" text="{description}"/>
 													<m:MessageStrip
 															visible="{=${deprecatedText} !== undefined}"
-															text="{path : 'deprecatedText', formatter: 'sap.ui.documentation.sdk.model.formatter.formatMessageStripLinks'}"
+															text="{path : 'deprecatedText', formatter: '.formatter.formatMessageStripLinks'}"
 															type="Error"
 															showIcon="true"
 															showCloseButton="false"
@@ -457,7 +457,7 @@
 															<custom:ParamText text="{event>name}"
 																		href="api/{data>/name}#events/{event>name}"
 																		deprecated="{= ${event>deprecated} !== undefined }"/>
-															<custom:JSDocText sanitizeContent="false" text="{path: 'event>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+															<custom:JSDocText sanitizeContent="false" text="{path: 'event>description', formatter: '.formatter.escapeSettingsValue'}"/>
 														</custom:Row>
 													</template:repeat>
 												</custom:LightTable>
@@ -483,10 +483,10 @@
 										<custom:blocks>
 											<layout:VerticalLayout width="100%">
 
-												<custom:JSDocText sanitizeContent="false" text="{path: 'event>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+												<custom:JSDocText sanitizeContent="false" text="{path: 'event>description', formatter: '.formatter.escapeSettingsValue'}"/>
 
 												<layout:HorizontalLayout width="100%">
-													<m:ObjectStatus text="Visibility: {parts : [{path : 'event>visibility'}, {path : 'event>allowedFor'}], formatter : 'sap.ui.documentation.sdk.model.formatter.formatVisibility'}"
+													<m:ObjectStatus text="Visibility: {parts : [{path : 'event>visibility'}, {path : 'event>allowedFor'}], formatter : '.formatter.formatVisibility'}"
 													state="{= ${event>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
 													<core:Icon
 														src="sap-icon://sys-help-2"
@@ -497,7 +497,7 @@
 												</layout:HorizontalLayout>
 												<template:if test="{=${event>deprecated} !== undefined}">
 													<m:MessageStrip
-														text="{path : 'event>deprecatedText', formatter: 'sap.ui.documentation.sdk.model.formatter.formatMessageStripLinks'}"
+														text="{path : 'event>deprecatedText', formatter: '.formatter.formatMessageStripLinks'}"
 														type="Error"
 														showIcon="true"
 														showCloseButton="false"
@@ -523,10 +523,10 @@
 																		href="api/{parameter>type}"
 																		enabled="{= !!${parameter>linkEnabled} }"/>
 																<layout:VerticalLayout>
-																	<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																	<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: '.formatter.escapeSettingsValue'}"/>
 																	<m:MessageStrip
 																			visible="{=${parameter>deprecated} !== undefined}"
-																			text="{path : 'parameter>deprecatedText', formatter: 'sap.ui.documentation.sdk.model.formatter.formatMessageStripLinks'}"
+																			text="{path : 'parameter>deprecatedText', formatter: '.formatter.formatMessageStripLinks'}"
 																			type="Error"
 																			showIcon="true"
 																			showCloseButton="false"
@@ -564,7 +564,7 @@
 																		href="{method>href}"
 																		deprecated="{= ${method>deprecated} !== undefined }"
 																        experimental="{= ${method>experimental} !== undefined }"/>
-															<custom:JSDocText sanitizeContent="false" text="{path: 'method>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+															<custom:JSDocText sanitizeContent="false" text="{path: 'method>description', formatter: '.formatter.escapeSettingsValue'}"/>
 														</custom:Row>
 													</template:repeat>
 												</custom:LightTable>
@@ -593,17 +593,17 @@
 
 												<layout:VerticalLayout width="100%">
 
-													<custom:JSDocText sanitizeContent="false" text="{path: 'method>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+													<custom:JSDocText sanitizeContent="false" text="{path: 'method>description', formatter: '.formatter.escapeSettingsValue'}"/>
 
 													<layout:VerticalLayout visible="{= ${method>examples} !== undefined}" width="100%">
 														<template:repeat list="{method>examples}" var="example">
-															<custom:JSDocText sanitizeContent="false" text="{path: 'example>data', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+															<custom:JSDocText sanitizeContent="false" text="{path: 'example>data', formatter: '.formatter.escapeSettingsValue'}"/>
 														</template:repeat>
 													</layout:VerticalLayout>
 
 													<m:FlexBox class="sapUiTinyMarginBottom">
 														<layout:HorizontalLayout width="100%">
-														<m:ObjectStatus text="Visibility: {parts : [{path : 'method>visibility'}, {path : 'method>allowedFor'}], formatter : 'sap.ui.documentation.sdk.model.formatter.formatVisibility'}"
+														<m:ObjectStatus text="Visibility: {parts : [{path : 'method>visibility'}, {path : 'method>allowedFor'}], formatter : '.formatter.formatVisibility'}"
 														state="{= ${method>visibility} === 'public' ? 'Success' : 'Warning'}"/>
 														<core:Icon
 															src="sap-icon://sys-help-2"
@@ -616,7 +616,7 @@
 													</m:FlexBox>
 													<template:if test="{=${method>deprecatedText} !== undefined}">
 														<m:MessageStrip
-															text="{ path: 'method>deprecatedText', formatter: 'sap.ui.documentation.sdk.model.formatter.formatMessageStripLinks' }"
+															text="{ path: 'method>deprecatedText', formatter: '.formatter.formatMessageStripLinks' }"
 															type="Error"
 															showIcon="true"
 															showCloseButton="false"
@@ -635,7 +635,7 @@
 														</m:MessageStrip>
 													</template:if>
 
-													<custom:JSDocText text="{path: 'method>code', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}" />
+													<custom:JSDocText text="{path: 'method>code', formatter: '.formatter.escapeSettingsValue'}" />
 
 													<template:if test="{= !!${method>parameters} &amp;&amp; ${method>parameters}.length > 0}">
 														<custom:LightTable
@@ -649,18 +649,18 @@
 																		<template:repeat list="{parameter>types}" var="type">
 																			<template:if test="{= !!${type>linkEnabled} }">
 																				<template:then>
-																					<m:Link text="{path: 'type>value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"
+																					<m:Link text="{path: 'type>value', formatter: '.formatter.escapeSettingsValue'}"
 																							href="{type>href}"
 																							enabled="true"/>
 																				</template:then>
 																				<template:else>
-																					<m:Link text="{path: 'type>value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}" enabled="false"/>
+																					<m:Link text="{path: 'type>value', formatter: '.formatter.escapeSettingsValue'}" enabled="false"/>
 																				</template:else>
 																			</template:if>
 																		</template:repeat>
 																	</layout:VerticalLayout>
 																	<m:Text text="{parameter>defaultValue}" wrapping="false"/>
-																	<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																	<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: '.formatter.escapeSettingsValue'}"/>
 																</custom:Row>
 															</template:repeat>
 														</custom:LightTable>
@@ -673,12 +673,12 @@
 															<custom:Row>
 																<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
 																	<template:repeat list="{method>returnValue/types}" var="rtype">
-																		<m:Link text="{path: 'rtype>value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"
+																		<m:Link text="{path: 'rtype>value', formatter: '.formatter.escapeSettingsValue'}"
 																				href="{rtype>href}"
 																				enabled="{= !!${rtype>linkEnabled} }"/>
 																	</template:repeat>
 																</layout:VerticalLayout>
-																<custom:JSDocText sanitizeContent="false" text="{path: 'method>returnValue/description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																<custom:JSDocText sanitizeContent="false" text="{path: 'method>returnValue/description', formatter: '.formatter.escapeSettingsValue'}"/>
 															</custom:Row>
 														</custom:LightTable>
 													</template:if>
@@ -693,7 +693,7 @@
 																	<m:Link text="{throws>type}"
 																		href="api/{throws>type}"
 																		enabled="{= !!${throws>linkEnabled} }"/>
-																	<custom:JSDocText sanitizeContent="false" text="{path: 'throws>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																	<custom:JSDocText sanitizeContent="false" text="{path: 'throws>description', formatter: '.formatter.escapeSettingsValue'}"/>
 																</custom:Row>
 															</template:repeat>
 														</custom:LightTable>
@@ -747,7 +747,7 @@
 												<custom:Row>
 													<m:Link text="{= ${annotation>annotation} !== 'undefined' ? ${annotation>annotation} : '(' + ${annotation>namespaceText} + ')' }"
 															wrapping="false"/>
-													<custom:JSDocText sanitizeContent="false" text="{path: 'annotation>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+													<custom:JSDocText sanitizeContent="false" text="{path: 'annotation>description', formatter: '.formatter.escapeSettingsValue'}"/>
 												</custom:Row>
 											</template:repeat>
 										</custom:LightTable>
@@ -759,7 +759,7 @@
 										<custom:blocks>
 											<layout:VerticalLayout width="100%">
 
-												<custom:JSDocText sanitizeContent="false" text="{path: 'annotation>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+												<custom:JSDocText sanitizeContent="false" text="{path: 'annotation>description', formatter: '.formatter.escapeSettingsValue'}"/>
 
 												<custom:LightTable columnTitles="Namespace,Target Type,Applies To" columnCount="3">
 													<custom:Row>

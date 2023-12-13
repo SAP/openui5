@@ -4,12 +4,13 @@
 
 sap.ui.define([
 	"sap/ui/base/Object",
+	"sap/ui/base/ManagedObject",
 	"sap/base/util/merge",
 	"sap/ui/documentation/sdk/controller/util/JSDocUtil",
 	"sap/base/security/sanitizeHTML",
 	"sap/ui/documentation/sdk/controller/util/URLUtil",
 	"sap/base/strings/formatMessage"
-], function (BaseObject, merge, JSDocUtil, sanitizeHTML, URLUtil, formatMessage) {
+], function (BaseObject, ManagedObject, merge, JSDocUtil, sanitizeHTML, URLUtil, formatMessage) {
 	"use strict";
 
 	// regexp for an extra route parameter in the format: a single 'p' letter followed by a digit
@@ -347,7 +348,12 @@ sap.ui.define([
 			 */
 			getDemoAppsCategoryClass: function (sCategory) {
 				return "sapUiDemoKitDemoAppsCategory" + sCategory;
-			}
+			},
+
+			/*
+			 * make ManagedObject.escapeSettingsValue available via this formatter
+			 */
+			escapeSettingsValue: ManagedObject.escapeSettingsValue
 		};
 
 	return merge(oFormatter, oStaticAPI);
