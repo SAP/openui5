@@ -648,31 +648,23 @@ sap.ui.define([
 	};
 
 	Column.prototype.setSorted = function(bSorted) {
-		this.setProperty("sorted", bSorted, true);
-
 		if (bSorted && this.getSortOrder() === SortOrder.None && !this.isBound("sortOrder")) {
 			this.setSortOrder(SortOrder.Ascending); // "Ascending" was the default value of "sortOrder" before "sorted" was deprecated.
-			return this;
 		}
 
-		this._updateIcons();
-		return this;
+		return this.setProperty("sorted", bSorted);
 	};
 
-	Column.prototype.setSortOrder = function(sSortOrder) {
-		this.setProperty("sortOrder", sSortOrder, true);
-		this._updateIcons();
-		return this;
-	};
-
-	Column.prototype.setFiltered = function(bFlag) {
-		this.setProperty("filtered", bFlag, true);
-		this._updateIcons();
-		return this;
+	Column.prototype.setFilterValue = function(sValue) {
+		return this.setProperty("filterValue", sValue, true);
 	};
 
 	Column.prototype.setFilterOperator = function(sValue) {
 		return this.setProperty("filterOperator", sValue, true);
+	};
+
+	Column.prototype.setDefaultFilterOperator = function(sValue) {
+		return this.setProperty("defaultFilterOperator", sValue, true);
 	};
 
 	Column.prototype._openHeaderMenu = function(oDomRef) {
@@ -765,8 +757,8 @@ sap.ui.define([
 		}
 
 		/** @deprecated As of version 1.120 */
-		this.setProperty("sorted", sSortOrder !== SortOrder.None, true);
-		this.setProperty("sortOrder", sSortOrder, true);
+		this.setSorted(sSortOrder !== SortOrder.None);
+		this.setSortOrder(sSortOrder);
 		this._updateSorters();
 	};
 
@@ -781,9 +773,8 @@ sap.ui.define([
 			if (aSortedColumns.indexOf(aColumns[i]) < 0) {
 				// Column is not sorted anymore. Reset to default and remove sorter.
 				/** @deprecated As of version 1.120 */
-				aColumns[i].setProperty("sorted", false, true);
-				aColumns[i].setProperty("sortOrder", SortOrder.None, true);
-				aColumns[i]._updateIcons(true);
+				aColumns[i].resetProperty("sorted");
+				aColumns[i].resetProperty("sortOrder");
 				delete _private(aColumns[i]).oSorter;
 			}
 		}
@@ -793,13 +784,6 @@ sap.ui.define([
 			_private(this).oSorter = new Sorter(this.getSortProperty(), sSortOrder === SortOrder.Descending);
 		}
 
-		// Make sure sorted columns show the sort icon.
-		for (let i = 0, l = aSortedColumns.length; i < l; i++) {
-			aSortedColumns[i]._updateIcons(true);
-		}
-
-		oTable._resetColumnHeaderHeights();
-		oTable._updateRowHeights(oTable._collectRowHeights(true), true);
 		this._applySorters();
 	};
 
@@ -818,39 +802,6 @@ sap.ui.define([
 		});
 
 		oBinding.sort(aSorters);
-	};
-
-	Column.prototype._updateIcons = function(bSkipUpdateRowHeights) {
-		var oTable = this._getTable();
-		var bSorted = this.getSortOrder() !== SortOrder.None;
-		var bFiltered = this.getFiltered();
-
-		/** @deprecated As of version 1.120 */
-		if (!this.getSorted()) {
-			bSorted = false;
-		}
-
-		if (!oTable || !oTable.getDomRef()) {
-			return;
-		}
-
-		this.$()
-			.parents(".sapUiTableCHT")
-			.find('td[data-sap-ui-colindex="' + this.getIndex() + '"]:not([colspan]):not(.sapUiTableHidden):first')
-			.toggleClass("sapUiTableColFiltered", bFiltered)
-			.toggleClass("sapUiTableColSorted", bSorted)
-			.toggleClass("sapUiTableColSortedD", bSorted && this.getSortOrder() === SortOrder.Descending);
-
-		oTable._getAccExtension().updateAriaStateOfColumn(this);
-
-		if (!bSkipUpdateRowHeights) {
-			oTable._resetColumnHeaderHeights();
-			oTable._updateRowHeights(oTable._collectRowHeights(true), true);
-		}
-	};
-
-	Column.prototype._renderSortIcon = function() {
-		this._updateIcons();
 	};
 
 	Column.prototype._getFilterState = function() {
@@ -950,47 +901,47 @@ sap.ui.define([
 	Column.prototype.filter = function(sValue) {
 		var oTable = this._getTable();
 
-		if (oTable && oTable.isBound("rows")) {
-
-			// notify the event listeners
-			var bExecuteDefault = oTable.fireFilter({
-				column: this,
-				value: sValue
-			});
-
-			if (bExecuteDefault) {
-				this.setProperty("filtered", !!sValue, true);
-				this.setProperty("filterValue", sValue, true);
-
-				var aFilters = [];
-				var aCols = oTable.getColumns();
-				for (var i = 0, l = aCols.length; i < l; i++) {
-					var oCol = aCols[i],
-						oFilter,
-						sState;
-
-					try {
-						oFilter = oCol._getFilter();
-						sState = ValueState.None;
-					} catch (e) {
-						sState = ValueState.Error;
-					}
-					if (oFilter) {
-						aFilters.push(oFilter);
-					}
-
-					/**
-					* @deprecated As of Version 1.117
-					*/
-					TableUtils.Hook.call(this._getTable(), TableUtils.Hook.Keys.Column.SetFilterState, oCol, sState);
-				}
-				oTable.getBinding().filter(aFilters, FilterType.Control);
-
-				this._updateIcons();
-			}
+		if (!oTable?.getBinding() || this.getFilterProperty() === "") {
+			return;
 		}
 
-		return this;
+		var bExecuteDefault = oTable.fireFilter({
+			column: this,
+			value: sValue
+		});
+
+		if (!bExecuteDefault) {
+			return;
+		}
+
+		var aFilters = [];
+		var aCols = oTable.getColumns();
+
+		this.setFiltered(!!sValue);
+		this.setFilterValue(sValue);
+
+		for (var i = 0, l = aCols.length; i < l; i++) {
+			var oCol = aCols[i],
+				oFilter,
+				sState;
+
+			try {
+				oFilter = oCol._getFilter();
+				sState = ValueState.None;
+			} catch (e) {
+				sState = ValueState.Error;
+			}
+			if (oFilter) {
+				aFilters.push(oFilter);
+			}
+
+			/**
+			* @deprecated As of Version 1.117
+			*/
+			TableUtils.Hook.call(this._getTable(), TableUtils.Hook.Keys.Column.SetFilterState, oCol, sState);
+		}
+
+		oTable.getBinding().filter(aFilters, FilterType.Control);
 	};
 
 	Column.prototype._parseFilterValue = function(sValue) {
