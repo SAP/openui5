@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/P13nItem",
 	"sap/m/P13nSelectionItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -16,7 +16,7 @@ sap.ui.define([
 	P13nItem,
 	P13nSelectionItem,
 	JSONModel,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -65,7 +65,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[aItems]", function (assert) {
+	QUnit.test("[aItems]", async function (assert) {
 		// system under test
 		var oItemA, oItemB, oItemC;
 		var oSelectionPanel = new P13nSelectionPanel({
@@ -85,7 +85,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oSelectionPanel.getItems().length, 3);
@@ -105,7 +105,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[]; addItem", function (assert) {
+	QUnit.test("[]; addItem", async function (assert) {
 		// system under test
 		var oSelectionPanel = new P13nSelectionPanel();
 		var oItemA = new P13nItem({
@@ -124,7 +124,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oSelectionPanel.getItems().length, 3);
@@ -144,7 +144,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[aItems]; insertItem", function (assert) {
+	QUnit.test("[aItems]; insertItem", async function (assert) {
 		// system under test
 		var oItemA, oItemB = new P13nItem({
 			columnKey: "keyB",
@@ -167,7 +167,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oSelectionPanel.getItems().length, 3);
@@ -187,7 +187,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[aItems]; removeItem", function (assert) {
+	QUnit.test("[aItems]; removeItem", async function (assert) {
 		// system under test
 		var oItemA, oItemB, oItemC;
 		var oSelectionPanel = new P13nSelectionPanel({
@@ -210,7 +210,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oItem, oItemB);
@@ -229,7 +229,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[aItems]; removeItem dummy", function (assert) {
+	QUnit.test("[aItems]; removeItem dummy", async function (assert) {
 		// system under test
 		var oItemA, oItemB = new P13nItem({
 			columnKey: "keyB",
@@ -252,7 +252,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oItem, null);
@@ -271,7 +271,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[aItems]; removeAllItems", function (assert) {
+	QUnit.test("[aItems]; removeAllItems", async function (assert) {
 		// system under test
 		var oItemA, oItemB, oItemC;
 		var oSelectionPanel = new P13nSelectionPanel({
@@ -294,7 +294,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(aItems, [
@@ -309,7 +309,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[aItems]; destroyItems", function (assert) {
+	QUnit.test("[aItems]; destroyItems", async function (assert) {
 		// system under test
 		var oSelectionPanel = new P13nSelectionPanel({
 			items: [
@@ -331,7 +331,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oSelectionPanel.getItems().length, 0);
@@ -368,7 +368,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[aSelectionItems]", function (assert) {
+	QUnit.test("[aSelectionItems]", async function (assert) {
 		// system under test
 		var oSelectionItem;
 		var oSelectionPanel = new P13nSelectionPanel({
@@ -382,7 +382,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oSelectionPanel.getItems(), []);
@@ -393,7 +393,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[]; addSelectionItem", function (assert) {
+	QUnit.test("[]; addSelectionItem", async function (assert) {
 		// system under test
 		var oSelectionPanel = new P13nSelectionPanel();
 		var oSelectionItem = new P13nSelectionItem({
@@ -404,7 +404,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oSelectionPanel.getItems(), []);
@@ -415,7 +415,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[]; insertSelectionItem", function (assert) {
+	QUnit.test("[]; insertSelectionItem", async function (assert) {
 		// system under test
 		var oSelectionPanel = new P13nSelectionPanel();
 		var oSelectionItem = new P13nSelectionItem({
@@ -426,7 +426,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oSelectionPanel.getItems(), []);
@@ -437,7 +437,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[aSelectionItems]; removeSelectionItem", function (assert) {
+	QUnit.test("[aSelectionItems]; removeSelectionItem", async function (assert) {
 		// system under test
 		var oSelectionItemA;
 		var oSelectionPanel = new P13nSelectionPanel({
@@ -454,7 +454,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oSelectionItem, oSelectionItemA);
@@ -466,7 +466,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[aSelectionItems]; removeSelectionItem dummy", function (assert) {
+	QUnit.test("[aSelectionItems]; removeSelectionItem dummy", async function (assert) {
 		// system under test
 		var oSelectionItemA = new P13nSelectionItem({
 			columnKey: "keyA",
@@ -486,7 +486,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oSelectionItem, null);
@@ -498,7 +498,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[aSelectionItems]; removeAllSelectionItems", function (assert) {
+	QUnit.test("[aSelectionItems]; removeAllSelectionItems", async function (assert) {
 		// system under test
 		var oSelectionItemA;
 		var oSelectionPanel = new P13nSelectionPanel({
@@ -515,7 +515,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(aSelectionItems, [oSelectionItemA]);
@@ -527,7 +527,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[aSelectionItems]; destroySelectionItems", function (assert) {
+	QUnit.test("[aSelectionItems]; destroySelectionItems", async function (assert) {
 		// system under test
 		var oSelectionPanel = new P13nSelectionPanel({
 			selectionItems: [
@@ -543,7 +543,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oSelectionPanel.getItems(), []);
@@ -561,7 +561,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("[aItems], [aSelectionItems]", function (assert) {
+	QUnit.test("[aItems], [aSelectionItems]", async function (assert) {
 		// system under test
 		var oItemA, oItemB, oItemC, oSelectionItemC;
 		var oSelectionPanel = new P13nSelectionPanel({
@@ -587,7 +587,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		// The table items order is: C, B, A
@@ -606,7 +606,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[aSelectionItems], [aItems]", function (assert) {
+	QUnit.test("[aSelectionItems], [aItems]", async function (assert) {
 		// system under test
 		var oItemA, oItemB, oItemC, oSelectionItemC;
 		var oSelectionPanel = new P13nSelectionPanel({
@@ -632,7 +632,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		// The table items order is: C, B, A
@@ -651,7 +651,7 @@ sap.ui.define([
 		oSelectionPanel.destroy();
 	});
 
-	QUnit.test("[aItems], [aSelectionItems]; removeSelectionItem", function (assert) {
+	QUnit.test("[aItems], [aSelectionItems]; removeSelectionItem", async function (assert) {
 		// system under test
 		var oItemA, oItemB, oItemC;
 		var oSelectionItemC;
@@ -678,11 +678,11 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oSelectionPanel.removeSelectionItem(oSelectionItemC);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		// The table items order has been changed to: A, B, C
@@ -729,7 +729,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("â0 -> a0", function (assert) {
+	QUnit.test("â0 -> a0", async function (assert) {
 		this.oSelectionPanel.setModel(new JSONModel({
 			items: [{
 				columnKey: "keyA",
@@ -743,7 +743,7 @@ sap.ui.define([
 
 		// arrange
 		this.oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		var oCheckbox = this.oSelectionPanel._oTable.getItems()[0].$().find("input[type=checkbox]")[0];
@@ -757,7 +757,7 @@ sap.ui.define([
 		assert.strictEqual(this.oSelectionPanel.getSelectionItems()[0].getSelected(), false);
 	});
 
-	QUnit.test("a0 -> â0", function (assert) {
+	QUnit.test("a0 -> â0", async function (assert) {
 		this.oSelectionPanel.setModel(new JSONModel({
 			items: [{
 				columnKey: "keyA",
@@ -768,7 +768,7 @@ sap.ui.define([
 
 		// arrange
 		this.oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		var oCheckbox = this.oSelectionPanel._oTable.getItems()[0].$().find("input[type=checkbox]")[0];
@@ -816,7 +816,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("enter text", function (assert) {
+	QUnit.test("enter text", async function (assert) {
 		this.oSelectionPanel.setModel(new JSONModel({
 			items: [{
 				columnKey: "keyA",
@@ -840,14 +840,15 @@ sap.ui.define([
 
 		// arrange
 		this.oSelectionPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		this.oSelectionPanel._getSearchField().setValue("foo");
 		qutils.triggerTouchEvent("touchend", this.oSelectionPanel._getSearchField().$().find(".sapMSFS")[0], {
 			srcControl: this.oSelectionPanel._getSearchField()
 		});
-		this.clock.tick(500);
+
+	   await nextUIUpdate();
 
 		// assertions
 		assert.equal(this.oSelectionPanel.$().find("table").length, 1);
@@ -868,7 +869,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.m.P13nSelectionPanel: structure of getOkPayload and 'changeSelectionItems' event", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oSelectionPanel = new P13nSelectionPanel({
 				items: {
 					path: "/items",
@@ -908,7 +909,7 @@ sap.ui.define([
 
 			// arrange
 			this.oSelectionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 		},
 		afterEach: function () {

@@ -2,17 +2,17 @@
 sap.ui.define([
 	"sap/m/p13n/PersistenceProvider",
 	"sap/m/p13n/enums/PersistenceMode",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Control",
 	"sap/ui/core/StaticArea"
-], function (PersistenceProvider, mode, Core, Control, StaticArea) {
+], function (PersistenceProvider, mode, nextUIUpdate, Control, StaticArea) {
 	"use strict";
 
 	QUnit.module("PersistenceProvider tests (generic)", {
-		beforeEach: function(){
+		beforeEach: async function(){
 			this.oPP = new PersistenceProvider();
 			this.oPP.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function(){
 			this.oPP.destroy();

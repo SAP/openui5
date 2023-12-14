@@ -16,11 +16,11 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/p13n/enums/PersistenceMode",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/p13n/modules/xConfigAPI",
 	"sap/m/p13n/MetadataHelper",
 	"sap/ui/core/CustomData"
-], function (Control, Engine, Controller, FlexRuntimeInfoAPI, FlexModificationHandler, ModificationHandler, TestModificationHandler, BaseObject, VBox, HBox, PersistenceProvider, VariantManagement, BasePanel, coreLibrary, PersistenceMode, CoreControl, oCore, xConfigAPI, MetadataHelper, CustomData) {
+], function (Control, Engine, Controller, FlexRuntimeInfoAPI, FlexModificationHandler, ModificationHandler, TestModificationHandler, BaseObject, VBox, HBox, PersistenceProvider, VariantManagement, BasePanel, coreLibrary, PersistenceMode, CoreControl, nextUIUpdate, xConfigAPI, MetadataHelper, CustomData) {
 	"use strict";
 
 	QUnit.module("Modification Handler", {
@@ -49,7 +49,7 @@ sap.ui.define([
 
 	});*/
 
-    QUnit.test("Check FlexModificationHandler payload execution PP(1) VM(0) --> Global changes", function(assert){
+    QUnit.test("Check FlexModificationHandler payload execution PP(1) VM(0) --> Global changes", async function(assert){
 
 		/*
 		* This is done for testing purposes, as the persistence provider is created after the registry has been set.
@@ -65,7 +65,7 @@ sap.ui.define([
 
 		oPP.placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
 		oFMHStub.returns(Promise.resolve());
@@ -91,7 +91,7 @@ sap.ui.define([
 		oPP.destroy();
 	});
 
-	QUnit.test("Check FlexModificationHandler payload execution PP(1) VM(1) --> Explicit changes", function(assert){
+	QUnit.test("Check FlexModificationHandler payload execution PP(1) VM(1) --> Explicit changes", async function(assert){
 
 		/*
 		* This is done for testing purposes, as the persistence provider is created after the registry has been set.
@@ -111,7 +111,7 @@ sap.ui.define([
 		oPP.placeAt("qunit-fixture");
 		oVM.placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
 		oFMHStub.returns(Promise.resolve());
@@ -830,7 +830,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Check 'getRTASettingsActionHandler' - Promise reject when using VM + PP ", function(assert){
+	QUnit.test("Check 'getRTASettingsActionHandler' - Promise reject when using VM + PP ", async function(assert){
 
 		var done = assert.async();
 
@@ -840,7 +840,7 @@ sap.ui.define([
 
 		oPP.placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		Engine.getInstance().getRTASettingsActionHandler(this.oControl, {}, "Test").then(function(){
 			//Promise does not resolve
@@ -930,7 +930,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Check 'hasControlAncestorWithId'", function(assert){
+	QUnit.test("Check 'hasControlAncestorWithId'", async function(assert){
 
 		var oControl = new Control("MyTestControl");
 		var oVBox = new VBox("myVBox", {
@@ -945,7 +945,7 @@ sap.ui.define([
 		});
 
 		oVBox.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var bHasAncestor = Engine.getInstance().hasControlAncestorWithId("MyTestControl", "myVBox");
 
@@ -954,7 +954,7 @@ sap.ui.define([
 		oVBox.destroy();
 	});
 
-	QUnit.test("Check 'hasControlAncestorWithType'", function(assert){
+	QUnit.test("Check 'hasControlAncestorWithType'", async function(assert){
 
 		var oControl = new Control("MyTestControl2");
 		var oHBox = new HBox();
@@ -964,7 +964,7 @@ sap.ui.define([
 		};
 
 		oHBox.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var bHasAncestor = Engine.getInstance().hasForReference(oControl, "sap.m.HBox");
 

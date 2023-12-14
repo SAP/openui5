@@ -1135,7 +1135,7 @@ sap.ui.define([
 			P13nDimMeasurePanel: {
 				title: "Test Page for sap.m.P13nDimMeasurePanel",
 				sinon: {
-					useFakeTimers: true
+					useFakeTimers: false
 				}
 			},
 			P13nFilterPanel: {
@@ -1156,7 +1156,7 @@ sap.ui.define([
 			P13nSelectionPanel: {
 				title: "Test Page for sap.m.P13nSelectionPanel",
 				sinon: {
-					useFakeTimers: true
+					useFakeTimers: false
 				}
 			},
 			/**

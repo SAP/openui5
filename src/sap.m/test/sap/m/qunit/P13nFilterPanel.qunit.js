@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/P13nFilterItem",
 	"sap/m/library",
 	"sap/m/MessageStrip",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/util/deepExtend"
 ], function(
 	createAndAppendDiv,
@@ -19,7 +19,7 @@ sap.ui.define([
 	P13nFilterItem,
 	mobileLibrary,
 	MessageStrip,
-	oCore,
+	nextUIUpdate,
 	deepExtend
 ) {
 	"use strict";
@@ -96,7 +96,7 @@ sap.ui.define([
 		}));
 	};
 
-	QUnit.test("Default Values", function(assert) {
+	QUnit.test("Default Values", async function(assert) {
 
 		// system under test
 		var oP13nFilterPanel = new P13nFilterPanel({
@@ -107,7 +107,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		var nItems = "-1";
@@ -121,7 +121,7 @@ sap.ui.define([
 		oP13nFilterPanel.destroy();
 	});
 
-	QUnit.test("bind Items test", function(assert) {
+	QUnit.test("bind Items test", async function(assert) {
 
 		// system under test
 		var oP13nFilterPanel = new P13nFilterPanel();
@@ -130,7 +130,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		var nItems = 3;
@@ -140,7 +140,7 @@ sap.ui.define([
 		oP13nFilterPanel.destroy();
 	});
 
-	QUnit.test("bind FilterItems test", function(assert) {
+	QUnit.test("bind FilterItems test", async function(assert) {
 
 		// system under test
 		var oP13nFilterPanel = new P13nFilterPanel();
@@ -149,7 +149,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		var nItems = 3;
@@ -159,7 +159,7 @@ sap.ui.define([
 		oP13nFilterPanel.destroy();
 	});
 
-	QUnit.test("test operations", function(assert) {
+	QUnit.test("test operations", async function(assert) {
 
 		// system under test
 		var oP13nFilterPanel = new P13nFilterPanel();
@@ -174,7 +174,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		var nItems = 8;
@@ -186,7 +186,7 @@ sap.ui.define([
 		oP13nFilterPanel.destroy();
 	});
 
-	QUnit.test("test model update events", function(assert) {
+	QUnit.test("test model update events", async function(assert) {
 
 		var removeSpy = sinon.spy(function(oEvent) {
 			var params = oEvent.getParameters();
@@ -233,7 +233,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 
 		// Change item
@@ -266,7 +266,7 @@ sap.ui.define([
 		oP13nFilterPanel.destroy();
 	});
 
-	QUnit.test("bind named model", function(assert) {
+	QUnit.test("bind named model", async function(assert) {
 
 		// system under test
 		var oP13nFilterPanel = new P13nFilterPanel();
@@ -291,7 +291,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
@@ -301,7 +301,7 @@ sap.ui.define([
 		oP13nFilterPanel.destroy();
 	});
 
-	QUnit.test("create with aggregations", function(assert) {
+	QUnit.test("create with aggregations", async function(assert) {
 
 		// system under test
 		var oP13nFilterPanel = new P13nFilterPanel({
@@ -347,7 +347,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
@@ -357,14 +357,14 @@ sap.ui.define([
 		oP13nFilterPanel.destroy();
 	});
 
-	QUnit.test("create with addXXX", function(assert) {
+	QUnit.test("create with addXXX", async function(assert) {
 
 		// system under test
 		var oP13nFilterPanel = new P13nFilterPanel();
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oP13nFilterPanel.addItem(new P13nItem({
 			columnKey: "c0",
@@ -404,7 +404,7 @@ sap.ui.define([
 			value1: DateFormat.getDateInstance().format(new Date()),
 			value2: DateFormat.getDateInstance().format(new Date())
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// assertions
 		assert.strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
 		assert.strictEqual(oP13nFilterPanel.getFilterItems().length, 3, "length of getFilterItems should be 3'");

@@ -2,12 +2,12 @@
 sap.ui.define([
 	"sap/m/p13n/GroupPanel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core"
-], function (GroupPanel, JSONModel, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (GroupPanel, JSONModel, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("GroupPanel API tests", {
-		beforeEach: function(){
+		beforeEach: async function(){
 			this.oGroupPanel = new GroupPanel({
 				enableShowField: true
 			});
@@ -34,7 +34,7 @@ sap.ui.define([
 				}
 			]);
 			this.oGroupPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function(){
 			this.oGroupPanel.destroy();
