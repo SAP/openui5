@@ -19,8 +19,8 @@ sap.ui.define([
 	const _cache = new WeakMap(); // We do not want to share Maps with derived TypeMaps
 
 	/**
-	 * Configuration class for type-handling in MDC delegates.
-	 * Allows mapping of model-types to {@link sap.ui.mdc.enums.BaseType} and enables model-specific type configuration.
+	 * Configuration class for type handling in delegates.
+	 * Allows mapping of model types to {@link sap.ui.mdc.enums.BaseType} and enables model-specific type configuration.
 	 *
 	 * <b>Note:</b>
 	 * This utility is experimental and the API/behavior is not finalized. Hence, it should not be used for productive usage.
@@ -72,12 +72,12 @@ sap.ui.define([
 	/**
 	 * Sets a {@link sap.ui.mdc.enums.BaseType BaseType} and an optional model- or scenario-specific configuration method for a given {@link sap.ui.model.SimpleType} <code>ObjectPath</code> <code>string</code>.
 	 *
-	 * As default <code>string</code> is returned.
+	 * As default, <code>string</code> is returned.
 	 *
 	 * @final
 	 * @param {string} sType <code>Objectpath</code> <code>string</code> for {@link sap.ui.model.SimpleType}
 	 * @param {sap.ui.mdc.enums.BaseType|function} vBaseType {@link sap.ui.mdc.enums.BaseType BaseType} fitting the given <code>sType</code> parameter or method returning a {@link sap.ui.mdc.enums.BaseType BaseType} based on type configuration
-	 * @param {function} [fnOptions] Optional customizing method for format options and constraints. See {@link sap.ui.mdc.DefaultTypeMap} for examples.
+	 * @param {function} [fnOptions] Optional customizing method for format options and constraints. See {@link module:sap/ui/mdc/DefaultTypeMap} for examples.
 	 * @public
 	 */
 	TypeMap.set = function(sType, vBaseType, fnOptions) {
@@ -85,7 +85,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Allows alternative identifiers for types, such as "Boolean" for "{@link sap.ui.model.type.Boolean}".
+	 * Allows alternative identifiers for types, such as a Boolean for {@link sap.ui.model.type.Boolean}.
 	 *
 	 * @final
 	 * @param {string} sType <code>Objectpath</code> <code>string</code> for {@link sap.ui.model.SimpleType}
@@ -97,9 +97,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the <code>sap.ui.mdc.enums.BaseType</code> or a method to resolve the BaseType dynamically for the given type
+	 * Returns the <code>sap.ui.mdc.enums.BaseType</code> or a method to resolve the <code>BaseType</code> dynamically for the given type
 	 *
-	 * @param {string} sType Objectpath string for {@link sap.ui.model.SimpleType}
+	 * @param {string} sType <code>Objectpath</code> <code>string</code> for {@link sap.ui.model.SimpleType}
 	 * @returns {sap.ui.mdc.enums.BaseType|function} BaseType configured for the {@link sap.ui.model.SimpleType} or function to resolve BaseType based on configuration
 	 * @private
 	 */
@@ -111,7 +111,7 @@ sap.ui.define([
 	/**
 	 * Returns the optional customizing method configured for a {@link sap.ui.model.SimpleType}
 	 *
-	 * @param {string} sType Objectpath string for {@link sap.ui.model.SimpleType}
+	 * @param {string} sType <code>Objectpath</code> <code>string</code> for {@link sap.ui.model.SimpleType}
 	 * @returns {function} Method for model-specific type configuration. See <code>sap.ui.mdc.DefaultTypeMap</code> for examples.
 	 * @private
 	 */
@@ -123,8 +123,8 @@ sap.ui.define([
 	/**
 	 * Returns the ObjectPath string for a given type alias.
 	 *
-	 * @param {string} sAlias Identifier for a configured Type Alias
-	 * @returns {string} Objectpath string for {@link sap.ui.model.SimpleType}
+	 * @param {string} sAlias Identifier for a configured type alias
+	 * @returns {string} <code>Objectpath</code> <code>string</code> for {@link sap.ui.model.SimpleType}
 	 * @private
 	 */
 	TypeMap._getClass = function(sAlias) {
@@ -133,7 +133,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Exports the <code>TypeMap</code>'s current data.
+	 * Exports the current data of the <code>TypeMap</code>.
 	 *
 	 * @final
 	 * @returns {Array} <code>Array</code> created from this <code>TypeMap</code>'s internal <code>Map</code>
@@ -144,10 +144,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Imports a <code>TypeMap</code>'s data into another <code>TypeMap</code>.
+	 * Imports the data of a <code>TypeMap</code> into another <code>TypeMap</code>.
 	 *
 	 * @final
-	 * @param {module:sap/ui/mdc/util/TypeMap} oTypeMap <code>TypeMap</code> to import
+	 * @param {module:sap/ui/mdc/util/TypeMap} oTypeMap <code>TypeMap</code> that gets imported
 	 * @public
 	 */
 	TypeMap.import = function(oTypeMap) {
@@ -157,7 +157,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Prevents further manipulation of a <code>TypeMap</code>'s data
+	 * Prevents further modification of the data of a <code>TypeMap</code>.
 	 *
 	 * @final
 	 * @public
@@ -171,8 +171,8 @@ sap.ui.define([
 	// <!-- TypeUtil functionality -->
 
 	/**
-	 * To determine which internal controls to render, the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField},
-	 * or {@link sap.ui.mdc.FilterField FilterField} controls need to know if the type represents a <code>date</code>, a <code>number</code>, or another {@link sap.ui.mdc.enums.BaseType BaseType}.
+	 * To determine which internal controls to render, either the {@link sap.ui.mdc.Field Field}, the {@link sap.ui.mdc.MultiValueField MultiValueField},
+	 * or the {@link sap.ui.mdc.FilterField FilterField} control needs information about whether the type represents a <code>date</code>, a <code>number</code>, or another {@link sap.ui.mdc.enums.BaseType BaseType}.
 	 *
 	 * As default, <code>string</code> is returned.
 	 *
@@ -180,7 +180,7 @@ sap.ui.define([
 	 * @param {string} sType Given type string or {@link sap.ui.model.SimpleType}
 	 * @param {object} oFormatOptions Used format options
 	 * @param {object} oConstraints Used constraints
-	 * @returns {sap.ui.mdc.enums.BaseType} Corresponding {@link sap.ui.mdc.enums.BaseType BaseType}, e.g. <code>Date</code>, <code>DateTime</code> or <code>Time</code>
+	 * @returns {sap.ui.mdc.enums.BaseType} Corresponding {@link sap.ui.mdc.enums.BaseType BaseType}, for example, <code>Date</code>, <code>DateTime</code> or <code>Time</code>
 	 * @public
 	 */
 	TypeMap.getBaseType = function(sType, oFormatOptions, oConstraints) {
@@ -192,7 +192,7 @@ sap.ui.define([
 	 * Convenience method to retrieve the <code>BaseType</code> for a given {@link sap.ui.model.SimpleType SimpleType}.
 	 * @final
 	 * @param {sap.ui.model.SimpleType} oType Given type string or {@link sap.ui.model.SimpleType}
-	 * @returns {sap.ui.mdc.enums.BaseType} Corresponding {@link sap.ui.mdc.enums.BaseType BaseType}, e.g. <code>Date</code>, <code>DateTime</code> or <code>Time</code>
+	 * @returns {sap.ui.mdc.enums.BaseType} Corresponding {@link sap.ui.mdc.enums.BaseType BaseType}, for example, <code>Date</code>, <code>DateTime</code> or <code>Time</code>
 	 * @public
 	 */
 	TypeMap.getBaseTypeForType = function(oType) {
@@ -202,7 +202,7 @@ sap.ui.define([
 	/**
 	 * Gets the data type class name for a given name or alias.
 	 * @final
-	 * @param {string} sType Given model specific type
+	 * @param {string} sType Given model-specific type
 	 * @returns {string} Data type name
 	 * @public
 	 */
@@ -273,7 +273,7 @@ sap.ui.define([
 	 *
 	 * The value is not checked for validity. The used values must be compatible with the used basic type.
 	 *
-	 * <b>Note:</b> Number types are not converted, the number conversion is done by the SAPUI5 Flexibility handling.
+	 * <b>Note:</b> Number types are not converted, the number conversion is done by the SAPUI5 flexibility handling.
 	 * @final
 	 * @param {object} vValue Typed value
 	 * @param {string|sap.ui.model.SimpleType} vType Data type considered for conversion
@@ -316,7 +316,7 @@ sap.ui.define([
 	 *
 	 * The value is not checked for validity. The used values must be compatible with the used basic type.
 	 *
-	 * <b>Note:</b> Number types are not converted. The number conversion is done by the SAPUI5 Flexibility handling.
+	 * <b>Note:</b> Number types are not converted. The number conversion is done by the SAPUI5 flexibility handling.
 	 * @final
 	 * @param {string} vValue Externalized value
 	 * @param {string|sap.ui.model.SimpleType} vType Data type considered for conversion
