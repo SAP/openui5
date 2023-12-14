@@ -7,6 +7,7 @@ sap.ui.require([
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
@@ -14,7 +15,8 @@ sap.ui.require([
 	"sap/ui/core/sample/ViewTemplate/types/pages/Main",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils"
-], function (Log, Localization, Core, library, UI5Date, DateFormat, Any, Main, opaTest, TestUtils) {
+], function (Log, Localization, Core, Lib, library, UI5Date, DateFormat, Any, Main, opaTest,
+			 TestUtils) {
 	"use strict";
 
 	Core.ready().then(function () {
@@ -33,7 +35,7 @@ sap.ui.require([
 
 		//*****************************************************************************
 		opaTest("OData Types", function (Given, When, Then) {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+			var oBundle = Lib.getResourceBundleFor("sap.ui.core");
 
 			When.onAnyPage.applySupportAssistant();
 
