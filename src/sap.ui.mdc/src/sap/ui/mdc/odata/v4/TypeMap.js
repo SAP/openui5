@@ -8,9 +8,9 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class ODataV4-specific {@link sap.ui.mdc.util.TypeMap TypeMap} configuration.
+	 * @class ODataV4-specific {@link module:sap/ui/mdc/util/TypeMap TypeMap} configuration.
 	 *
-	 * <b>Note:</b> This {@link sap.ui.mdc.util.TypeMap TypeMap} implementation contains the following types including ODataV4-specific configuration:
+	 * <b>Note:</b> This {@link module:sap/ui/mdc/util/TypeMap TypeMap} implementation contains the following types including ODataV4-specific configuration:
 	 *
 	 * <ul>
 	 * <li>{@link sap.ui.model.type.Boolean} (alias <code>Boolean</code></code>)</li>
