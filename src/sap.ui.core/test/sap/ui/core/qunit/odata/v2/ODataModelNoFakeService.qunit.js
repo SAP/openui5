@@ -2905,10 +2905,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bExpandRequest, i) {
-	QUnit.test("_processRequestQueue: push expandRequest to queue, " + i, function (assert) {
+	var sTitle = "_processRequestQueue: push expandRequest to queue, " + i + ", consider change headers";
+
+	QUnit.test(sTitle, function (assert) {
 		var oRequest = {
 				data : "~data",
-				expandRequest : bExpandRequest ? "~expandRequest" : undefined
+				expandRequest : bExpandRequest ? "~expandRequest" : undefined,
+				headers : "~headers"
 			},
 			oChange = {
 				parts : [{
@@ -2938,6 +2941,7 @@ sap.ui.define([
 
 		this.mock(oModel).expects("_collectChangedEntities")
 			.withExactArgs(sinon.match.same(oRequestGroup), {}, {});
+		this.mock(_Helper).expects("extend").withExactArgs("~headers", "~changeHeaders");
 		this.mock(oModel).expects("getKey").withExactArgs("~data").returns("~key");
 		this.mock(oModel).expects("increaseLaundering").withExactArgs("/~key", "~data");
 		this.mock(oModel).expects("removeInternalMetadata").withExactArgs("~data");
@@ -2955,7 +2959,7 @@ sap.ui.define([
 
 		// code under test
 		ODataModel.prototype._processRequestQueue.call(oModel, mRequests, "~sGroupId", "~fnSuccess",
-			"~fnError");
+			"~fnError", "~changeHeaders");
 	});
 });
 
@@ -7019,7 +7023,7 @@ sap.ui.define([
 		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oMetadataPromise);
 
 		// code under test
-		ODataModel.prototype.submitChanges.call(oModel);
+		ODataModel.prototype.submitChangesWithChangeHeaders.call(oModel);
 
 		// async, after metadata loaded promise is resolved
 		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
@@ -7035,7 +7039,7 @@ sap.ui.define([
 				/*oRequestHandle*/sinon.match.object, oFixture.expectedRefreshAfterChange);
 		this.mock(oModel).expects("_processRequestQueue")
 			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), undefined, undefined,
-				undefined);
+				undefined, undefined);
 
 		return oMetadataPromise.then(function () {
 			assert.strictEqual(oRequest.key, "~sKey");
@@ -7095,7 +7099,7 @@ sap.ui.define([
 		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oMetadataPromise);
 
 		// code under test
-		ODataModel.prototype.submitChanges.call(oModel, /*mParameters*/undefined);
+		ODataModel.prototype.submitChangesWithChangeHeaders.call(oModel, /*mParameters*/undefined);
 
 		// async, after metadata loaded promise is resolved
 		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
@@ -7113,7 +7117,7 @@ sap.ui.define([
 				/*oRequestHandle*/sinon.match.object, "~bRefreshAfterChangeFromModel");
 		this.mock(oModel).expects("_processRequestQueue")
 			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), undefined,
-				sinon.match.func, undefined)
+				sinon.match.func, undefined, undefined)
 			.callsFake(function (mDeferredRequests, sGroupId, fnSuccess0, fnError) {
 				fnSuccess = fnSuccess0;
 			});
@@ -7182,7 +7186,7 @@ sap.ui.define([
 		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oMetadataPromise);
 
 		// code under test
-		ODataModel.prototype.submitChanges.call(oModel, mParameters);
+		ODataModel.prototype.submitChangesWithChangeHeaders.call(oModel, mParameters);
 
 		// async, after metadata loaded promise is resolved
 		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
@@ -7200,7 +7204,7 @@ sap.ui.define([
 				/*oRequestHandle*/sinon.match.object, "~bRefreshAfterChangeFromModel");
 		this.mock(oModel).expects("_processRequestQueue")
 			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), "~groupId",
-				sinon.match.func, undefined)
+				sinon.match.func, undefined, undefined)
 			.callsFake(function (mDeferredRequests, sGroupId, fnSuccess0, fnError) {
 				fnSuccess = fnSuccess0;
 			});
@@ -7239,7 +7243,7 @@ sap.ui.define([
 		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oMetadataPromise);
 
 		// code under test
-		ODataModel.prototype.submitChanges.call(oModel);
+		ODataModel.prototype.submitChangesWithChangeHeaders.call(oModel);
 
 		// async, after metadata loaded promise is resolved
 		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
@@ -7251,11 +7255,94 @@ sap.ui.define([
 				assert.deepEqual(mDeferredRequests, {});
 
 				return oModel.mDeferredRequests === mDeferredRequests;
-			}), undefined, undefined, undefined);
+			}), undefined, undefined, undefined, undefined);
 
 		return oMetadataPromise;
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("submitChanges: delegate to submitChangesWithHeaders", function (assert) {
+		var oModel = {
+				submitChangesWithChangeHeaders : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			mParameters = {
+				batchGroupId : "~batchGroupId",
+				changeHeaders : "~changeHeaders",  // only considered in direct call to submitChangesWithChangeHeaders
+				error : "~error",
+				groupId : "~groupId",
+				merge : "~merge",
+				success : "~success",
+				unknown : "~unknown"
+			},
+			mPassedParameters = {
+				batchGroupId : "~batchGroupId",
+				error : "~error",
+				groupId : "~groupId",
+				merge : "~merge",
+				success : "~success"
+			};
+
+		oModelMock.expects("submitChangesWithChangeHeaders").withExactArgs(undefined).returns("~requestHandle");
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.submitChanges.call(oModel), "~requestHandle");
+
+		oModelMock.expects("submitChangesWithChangeHeaders").withExactArgs(mPassedParameters).returns("~requestHandle");
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.submitChanges.call(oModel, mParameters), "~requestHandle");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitChangesWithHeaders: propagates change headers", function (assert) {
+		var mChangeHeaders = {header : "headerValue"},
+			oMetadataPromise = Promise.resolve(),
+			oModel = {
+				mChangedEntities : {},
+				mDeferredRequests : {},
+				oMetadata : {
+					loaded : function () {}
+				},
+				_isHeaderPrivate : function () {},
+				_processRequestQueue : function () {},
+				getBindings : function () {}
+			};
+
+		this.mock(oModel).expects("_isHeaderPrivate").withExactArgs("header").returns(false);
+		this.mock(oModel).expects("getBindings").withExactArgs().returns([]);
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oMetadataPromise);
+		this.mock(oModel).expects("_processRequestQueue")
+			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), undefined, undefined, undefined,
+				sinon.match.same(mChangeHeaders));
+
+		// code under test
+		ODataModel.prototype.submitChangesWithChangeHeaders.call(oModel, {changeHeaders : mChangeHeaders});
+
+		return oMetadataPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitChangesWithHeaders: disallow private headers as change headers", function (assert) {
+		var mChangeHeaders = {
+				notPrivate0 : "n0",
+				private0 : "p0",
+				notPrivate1 : "n1"
+			},
+			oModel = {
+				_isHeaderPrivate : function () {}
+			},
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("_isHeaderPrivate").withExactArgs("notPrivate0").returns(false);
+		oModelMock.expects("_isHeaderPrivate").withExactArgs("private0").returns(true);
+
+		// code under test
+		assert.throws(function () {
+			ODataModel.prototype.submitChangesWithChangeHeaders.call(oModel, {changeHeaders : mChangeHeaders});
+		}, new Error("Must not use private header: private0"));
+	});
 
 	//*********************************************************************************************
 	QUnit.test("setProperty: deferred request", function (assert) {
