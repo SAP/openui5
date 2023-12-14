@@ -138,7 +138,7 @@ sap.ui.define([
 		}).length > 1;
 	}
 
-	Dialog.prototype._handleContentSelectionChange = function(sNextId) {
+	Dialog.prototype._handleContentSelectionChange = function(sNextId, bCollectiveSearchChange) {
 		this.fireRequestDelegateContent({ container: this.getId(), contentId: sNextId });
 		return this.getRetrieveDelegateContentPromise().then(() => {
 			const sCurrentContentKey = this.getProperty("_selectedContentKey");
@@ -153,7 +153,7 @@ sap.ui.define([
 				oCurrentContent.onHide();
 				this.unbindContentFromContainer(oCurrentContent);
 			}
-			return this._renderSelectedContent(sNextId);
+			return this._renderSelectedContent(sNextId, undefined, bCollectiveSearchChange);
 		});
 	};
 
@@ -487,7 +487,7 @@ sap.ui.define([
 								template: oItemTemplate
 							},
 							select: function(oEvent) {
-								this._handleContentSelectionChange(oEvent.getParameter("key"));
+								this._handleContentSelectionChange(oEvent.getParameter("key"), true);
 							}.bind(this),
 							selectedItemKey: this.getSelectedContent().getId(),
 							maxWidth: Device.system.phone ? "5em" : "25rem"
@@ -783,7 +783,7 @@ sap.ui.define([
 		}
 	};
 
-	Dialog.prototype._renderSelectedContent = function(sNextContentId, fnBeforeShow) {
+	Dialog.prototype._renderSelectedContent = function(sNextContentId, fnBeforeShow, bCollectiveSearchChange) {
 		const oNextContent = this.getContent().find((oContent) => {
 			return oContent.getId() === sNextContentId;
 		});
@@ -828,6 +828,18 @@ sap.ui.define([
 
 			return this._retrievePromise("open").then(() => {
 				oNextContent.onShow(bInitial);
+
+				if (bCollectiveSearchChange) {
+					const oNextDisplayContent = oNextContent.getDisplayContent();
+					const oEventDelegate = {
+						onAfterRendering: () => {
+							this._oGroupSelect.focus();
+							oNextDisplayContent.removeEventDelegate(oEventDelegate);
+						}
+					};
+					oNextDisplayContent?.addEventDelegate(oEventDelegate);
+				}
+
 				return oNextContent;
 			});
 		});
