@@ -1,7 +1,11 @@
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/message/MessageMixin"
-], function (Log, MessageMixin) {
+	"sap/m/Input",
+	"sap/ui/core/Messaging",
+	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageMixin",
+	"sap/ui/model/json/JSONModel"
+], function (Log, Input, Messaging, Message, MessageMixin, JSONModel) {
 	/*global QUnit*/
 	"use strict";
 
@@ -58,5 +62,45 @@ sap.ui.define([
 		oControl.destroy("~any", "~parameters");
 
 		assert.ok(oExpectDestroy.calledAfter(oExpectRemoveControlId));
+	});
+
+	QUnit.test("MessageModel update must not refresh endless", function(assert) {
+		const done = assert.async(),
+			oInput1 = new Input({
+				value: "{/value}"
+			}),
+			oInput2 = new Input({
+				value: "{/value}"
+			}),
+			oModel = new JSONModel({value:"test"}),
+			oMessage1 = new Message({
+				message: "teste message1",
+				processor: oModel,
+				target: "/value"
+			});
+		let iChangeCount = 0;
+
+		oInput1.setModel(oModel);
+		oInput2.setModel(oModel);
+
+		Messaging.addMessages([oMessage1]);
+		const oMessageBinding = Messaging.getMessageModel().bindList("/");
+
+		function fnChange() {
+			assert.equal(oMessage1.getControlIds().length, 2, "Both control ids added to message");
+			iChangeCount++;
+			//enforce Message update
+			oInput1.setModel(null);
+			oInput1.setModel(oModel);
+			setTimeout(function() {
+				assert.equal(iChangeCount, 1, "Change event must only be called once");
+				oMessageBinding.detachChange(fnChange);
+				oInput1.destroy();
+				oInput2.destroy();
+				oModel.destroy();
+				done();
+			});
+		}
+		oMessageBinding.attachChange(fnChange);
 	});
 });
