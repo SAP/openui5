@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 	/**
@@ -107,6 +107,8 @@ sap.ui.define([], function() {
 		 */
 		Placeholder: "Placeholder"
 	};
+
+	DataType.registerEnum("sap.m.AvatarColor", AvatarColor);
 
 	return AvatarColor;
 });

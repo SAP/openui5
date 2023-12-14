@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 	/**
@@ -25,6 +25,8 @@ sap.ui.define([], function() {
 		 */
 		Contain: "Contain"
 	};
+
+	DataType.registerEnum("sap.m.AvatarImageFitType", AvatarImageFitType);
 
 	return AvatarImageFitType;
 });

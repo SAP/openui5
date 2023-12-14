@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([], function () {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 	/**
@@ -376,6 +376,8 @@ sap.ui.define([], function () {
 		UploadCollection: "sapIllus-UploadCollection"
 
 	};
+
+	DataType.registerEnum("sap.m.IllustratedMessageType", IllustratedMessageType);
 
 	return IllustratedMessageType;
 });

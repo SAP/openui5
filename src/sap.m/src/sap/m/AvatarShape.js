@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 	/**
@@ -26,6 +26,8 @@ sap.ui.define([], function() {
 		 */
 		Square: "Square"
 	};
+
+	DataType.registerEnum("sap.m.AvatarShape", AvatarShape);
 
 	return AvatarShape;
 });
