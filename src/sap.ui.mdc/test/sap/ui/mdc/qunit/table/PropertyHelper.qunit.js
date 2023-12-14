@@ -660,17 +660,17 @@ sap.ui.define([
 			label: "Complex Foo",
 			propertyInfos: ["foo"],
 			extension: {
-				allowedForComplex: "allowed"
+				allowedInComplex: "allowed"
 			}
 		}], null, {
-			allowedForComplex: {type: "string", forComplexProperty: {allowed: true}},
-			notAllowedForComplex: {type: "string"},
-			notAllowedForComplexWithValue: {type: "string", forComplexProperty: {valueIfNotAllowed: "not allowed"}}
+			allowedInComplex: {type: "string", inComplexProperty: {allowed: true}},
+			notAllowedInComplex: {type: "string"},
+			notAllowedInComplexWithValue: {type: "string", inComplexProperty: {valueIfNotAllowed: "not allowed"}}
 		});
 
 		assert.deepEqual(oPropertyHelper.getProperty("complexFoo").extension, {
-			allowedForComplex: "allowed",
-			notAllowedForComplexWithValue: "not allowed"
+			allowedInComplex: "allowed",
+			notAllowedInComplexWithValue: "not allowed"
 		});
 
 		oPropertyHelper.destroy();
@@ -685,11 +685,11 @@ sap.ui.define([
 				label: "Complex Foo",
 				propertyInfos: ["foo"],
 				extension: {
-					notAllowedForComplex: "allowed?"
+					notAllowedInComplex: "allowed?"
 				}
 			}], null, {
-				allowedForComplex: {type: "string", forComplexProperty: {allowed: true}},
-				notAllowedForComplex: {type: "string", forComplexProperty: {valueIfNotAllowed: "not allowed"}}
+				allowedInComplex: {type: "string", inComplexProperty: {allowed: true}},
+				notAllowedInComplex: {type: "string", inComplexProperty: {valueIfNotAllowed: "not allowed"}}
 			}).destroy();
         }, function(oError) {
             return oError instanceof Error;
