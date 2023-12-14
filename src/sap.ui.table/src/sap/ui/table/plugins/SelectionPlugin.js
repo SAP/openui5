@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @since 1.64
 	 * @experimental As of version 1.64
 	 * @alias sap.ui.table.plugins.SelectionPlugin
-	 * @borrows module:sap/ui/table/plugins/PluginBase.findOn as findOn
+	 * @borrows sap.ui.table.plugins.PluginBase.findOn as findOn
 	 */
 	var SelectionPlugin = PluginBase.extend("sap.ui.table.plugins.SelectionPlugin", {metadata: {
 		"abstract": true,
