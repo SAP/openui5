@@ -168,10 +168,11 @@ sap.ui.define([
 			assert.equal(this.oContentFactory.getContentType(sBaseType, iMaxConditions, true), DefaultContent, "DefaultContent returned.");
 
 			/* LinkContent */
+			const oLinkContent = LinkContent.extendBaseContent(DefaultContent); // Use extended DefaultContent
 			this.oField.setFieldInfo(new MdcLink({}));
 			assert.ok(this.oField.getFieldInfo(), "FieldInfo set.");
 			assert.equal(this.oContentFactory.getContentType(sBaseType, iMaxConditions, false), DefaultContent, "DefaultContent returned.");
-			assert.equal(this.oContentFactory.getContentType(sBaseType, iMaxConditions, true), LinkContent, "LinkContent returned.");
+			assert.deepEqual(this.oContentFactory.getContentType(sBaseType, iMaxConditions, true), oLinkContent, "LinkContent returned.");
 			this.oField.destroyAggregation("fieldInfo");
 			assert.notOk(this.oField.getFieldInfo(), "FieldInfo destroyed.");
 
@@ -358,7 +359,7 @@ sap.ui.define([
 				]
 			},
 			{
-				contentType: LinkContent,
+				contentType: LinkContent.extendBaseContent(DefaultContent), // Use extended DefaultContent
 				contentTypeName: "LinkContent",
 				expectedControls: [
 					[Link],
