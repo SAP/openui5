@@ -3,8 +3,8 @@ sap.ui.define(
 	[
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/Opa5",
-		"test-resources/sap/ui/rta/internal/integration/pages/Adaptation",
-		"test-resources/sap/ui/rta/internal/integration/pages/ChangeVisualization",
+		"test-resources/sap/ui/rta/integration/pages/Adaptation",
+		"test-resources/sap/ui/rta/integration/pages/ChangeVisualization",
 		"test-resources/sap/ui/fl/testutils/opa/TestLibrary"
 	],
 	(

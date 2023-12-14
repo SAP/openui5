@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
     "sap/ui/mdc/enums/ActionToolbarActionAlignment",
     "sap/ui/mdc/ActionToolbarTesting/pages/App",
-    "test-resources/sap/ui/rta/internal/integration/pages/Adaptation"
+    "test-resources/sap/ui/rta/integration/pages/Adaptation"
 ], function(
 	Opa5,
 	opaTest,
