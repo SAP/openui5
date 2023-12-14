@@ -27,6 +27,16 @@ sap.ui.define([
 							propertyPath: "subTitle",
 							operation: "UPSERT",
 							propertyValue: "{{new.subtitle}}"
+						},
+						{
+							propertyPath: "semanticObject",
+							operation: "UPSERT",
+							propertyValue: "newObject"
+						},
+						{
+							propertyPath: "action",
+							operation: "UPSERT",
+							propertyValue: "test"
 						}
 					]
 				}
@@ -96,7 +106,7 @@ sap.ui.define([
 					inboundId: "Risk-configure",
 					entityPropertyChange:
 						{
-							propertyPath: "semanticObject",
+							propertyPath: "shortTitle",
 							operation: "UPSERT",
 							propertyValue: "newObject"
 						}
@@ -188,6 +198,22 @@ sap.ui.define([
 						}
 				}
 			});
+
+			this.oChangeUnsupportedPattern = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
+				content: {
+					inboundId: "Risk-configure",
+					entityPropertyChange: [
+						{
+							propertyPath: "semanticObject",
+							operation: "UPSERT",
+							propertyValue: "newObject!?"
+						}
+					]
+				}
+			});
 		}
 	}, function() {
 		QUnit.test("when calling '_applyChange' with several changes in array", function(assert) {
@@ -208,6 +234,8 @@ sap.ui.define([
 			var oNewManifest = ChangeInbound.applyChange(oManifest, this.oChangeArray);
 			assert.equal(oNewManifest["sap.app"].crossNavigation.inbounds["Risk-configure"].title, "{{new.title}}", "inbound is updated correctly");
 			assert.equal(oNewManifest["sap.app"].crossNavigation.inbounds["Risk-configure"].subTitle, "{{new.subtitle}}", "inbound is updated correctly");
+			assert.equal(oNewManifest["sap.app"].crossNavigation.inbounds["Risk-configure"].semanticObject, "newObject", "inbound is updated correctly");
+			assert.equal(oNewManifest["sap.app"].crossNavigation.inbounds["Risk-configure"].action, "test", "inbound is updated correctly");
 		});
 
 		QUnit.test("when calling '_applyChange' with single change", function(assert) {
@@ -319,7 +347,7 @@ sap.ui.define([
 			};
 			assert.throws(function() {
 				ChangeInbound.applyChange(oManifest, this.oChangeUnsupportedChange);
-			}, Error("Changing semanticObject is not supported. The supported 'propertyPath' is: title|subTitle|icon|signature/parameters/*"), "throws an error");
+			}, Error("Changing shortTitle is not supported. The supported 'propertyPath' is: semanticObject|action|title|subTitle|icon|signature/parameters/*"), "throws an error");
 		});
 
 		QUnit.test("when calling '_applyChange' with unsupported change for gernic path", function(assert) {
@@ -349,7 +377,7 @@ sap.ui.define([
 			};
 			assert.throws(function() {
 				ChangeInbound.applyChange(oManifest, this.oChangeGenericPathUnsupportedChange);
-			}, Error("Changing signature/parameter/id is not supported. The supported 'propertyPath' is: title|subTitle|icon|signature/parameters/*"), "throws an error");
+			}, Error("Changing signature/parameter/id is not supported. The supported 'propertyPath' is: semanticObject|action|title|subTitle|icon|signature/parameters/*"), "throws an error");
 		});
 
 		QUnit.test("when calling '_applyChange' with an unsupported operation", function(assert) {
@@ -459,6 +487,25 @@ sap.ui.define([
 			assert.throws(function() {
 				ChangeInbound.applyChange(oManifest, this.oChangeNoValue);
 			}, Error("Path does not contain a value. 'UPDATE' operation is not appropriate."), "throws an error");
+		});
+		QUnit.test("when calling '_applyChange' with an unsupported pattern", function(assert) {
+			var oManifest = {
+				"sap.app": {
+					crossNavigation: {
+						inbounds: {
+							"Risk-configure": {
+								semanticObject: "Risk",
+								action: "configure",
+								title: "some",
+								subTitle: "some"
+							}
+						}
+					}
+				}
+			};
+			assert.throws(function() {
+				ChangeInbound.applyChange(oManifest, this.oChangeUnsupportedPattern);
+			}, Error("Not supported format for propertyPath semanticObject. The supported pattern is ^[\\w\\*]{0,30}$"), "throws an error");
 		});
 	});
 

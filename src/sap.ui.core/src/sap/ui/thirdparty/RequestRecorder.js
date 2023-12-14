@@ -71,7 +71,7 @@
 		 * @returns {number} Timestamp with milliseconds
 		 */
 		preciseDateNow: function() {
-			return window.performance.timing.navigationStart + window.performance.now();
+			return window.performance.timeOrigin + window.performance.now();
 		},
 
 		/**

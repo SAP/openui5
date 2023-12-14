@@ -7,11 +7,13 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/format/TimezoneUtil"
-], function(timezones, Log, Formatting, Localization, LoaderExtensions, CalendarType, Configuration, Locale, LocaleData, CalendarWeekNumbering, TimezoneUtil) {
+], function(timezones, Log, Formatting, Localization, LoaderExtensions, CalendarType, Configuration, Lib, Locale,
+		LocaleData, CalendarWeekNumbering, TimezoneUtil) {
 	"use strict";
 
 	QUnit.module("Locale Data Loading", {
@@ -1363,6 +1365,29 @@ sap.ui.define([
 			// code under test
 			assert.deepEqual(
 				LocaleData.prototype._getMonthsStandAloneWithAlternatives.call(oLocalData, sWidth, "~sCalendarType"),
+				"~result");
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		{aArguments: ["~anyNumber"], sKey: "date.week.calendarweek.wide", sNumber: "~anyNumber", sStyle: "wide"},
+		{aArguments: ["~anyNumber"], sKey: "date.week.calendarweek.narrow", sNumber: "~anyNumber", sStyle: "narrow"},
+		{aArguments: undefined, sKey: "date.week.calendarweek.wide", sNumber: "", sStyle: "wide"},
+		{aArguments: undefined, sKey: "date.week.calendarweek.narrow", sNumber: undefined, sStyle: "narrow"}
+	].forEach((oFixture, i) => {
+		QUnit.test("getCalendarWeek: #" + i, function (assert) {
+			const oLocaleData = {
+				oLocale: {
+					toString() { return "~locale"; }
+				}
+			};
+			const oBundle = {getText() {}};
+			this.mock(Lib).expects("getResourceBundleFor").withExactArgs("sap.ui.core", "~locale").returns(oBundle);
+			this.mock(oBundle).expects("getText").withExactArgs(oFixture.sKey, oFixture.aArguments).returns("~result");
+
+			// code under test
+			assert.strictEqual(LocaleData.prototype.getCalendarWeek.call(oLocaleData, oFixture.sStyle, oFixture.sNumber),
 				"~result");
 		});
 	});

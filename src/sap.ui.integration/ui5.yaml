@@ -70,6 +70,7 @@ builder:
                - sap/ui/integration/
                - "!sap/ui/integration/editor/"
                - "!sap/ui/integration/thirdparty/"
+               - "!sap/ui/fl/"
                - sap/m/
                - sap/f/
                - sap/ui/layout/
@@ -131,6 +132,7 @@ builder:
               - sap/ui/integration/
               - "!sap/ui/integration/editor/"
               - "!sap/ui/integration/thirdparty/"
+              - "!sap/ui/fl/"
               - sap/m/
               - sap/f/
               - sap/ui/layout/

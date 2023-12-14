@@ -472,17 +472,6 @@ sap.ui.define([
 
 
 				// create accessor to the Core API early so that initLibrary and others can use it
-				/**
-				 * Retrieve the {@link sap.ui.core.Core SAPUI5 Core} instance for the current window.
-				 * @returns {sap.ui.core.Core} the API of the current SAPUI5 Core instance.
-				 * @public
-				 * @function
-				 * @ui5-global-only
-				 */
-				sap.ui.getCore = function() {
-					return that.getInterface();
-				};
-
 				// sync point 1 synchronizes document ready and rest of UI5 boot
 				var oSyncPoint1 = new SyncPoint("UI5 Document Ready", function(iOpenTasks, iFailures) {
 					that.init();

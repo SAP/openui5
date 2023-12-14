@@ -533,6 +533,10 @@ sap.ui.define([
 	 * the sap.m.Table does not use <items>, because this is the default aggregation and may be
 	 * omitted. (This ensures that <ColumnListItem> is a direct child.)
 	 *
+	 * An XML string starting with a space allows additional attributes to the surrounding <View>
+	 * (like template:require or core:require). In this case the closing ">" for the <View> must
+	 * also be given.
+	 *
 	 * If the binding uses <ColumnListItem>, <columns> is not allowed. The columns are automatically
 	 * determined from the number of the elements in <ColumnListItem>.
 	 *
@@ -544,10 +548,11 @@ sap.ui.define([
 		var oDocument, oParseError;
 
 		oDocument = XMLHelper.parse(
-			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:plugins="sap.m.plugins"'
+			'<mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+			+ ' xmlns:plugins="sap.m.plugins"'
 			+ ' xmlns:t="sap.ui.table" xmlns:trm="sap.ui.table.rowmodes"'
 			+ ' xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
-			+ (sViewXML.startsWith(" template:require") ? "" : ">")
+			+ (sViewXML.startsWith(" ") ? "" : ">")
 			+ sViewXML
 			+ "</mvc:View>",
 			"application/xml"
@@ -13114,6 +13119,57 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Avoid duplicate call to computed annotation via core:require (simple binding
+	// syntax)
+	// JIRA: CPOUI5ODATAV4-2398
+	QUnit.test("Avoid duplicate call to computed annotation, core:require", function (assert) {
+		const oModel = this.createTeaBusiModel().getMetaModel();
+		const sView = ` core:require="{AH : 'sap/ui/model/odata/v4/AnnotationHelper'}">
+<Text id="text" text="{/MANAGERS/TEAM_ID@@AH.getValueListType}"/>`;
+
+		this.mock(AnnotationHelper).expects("getValueListType").returns("foo");
+		this.expectChange("text", "foo");
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Avoid duplicate call to computed annotation via model and core:require (complex
+	// binding syntax). Now ODataPropertyBinding must get the scope from core:require and transfer
+	// it to the meta model.
+	// JIRA: CPOUI5ODATAV4-2398
+	QUnit.test("Avoid duplicate call to computed annotation from model", function (assert) {
+		const sView = ` core:require="{AH : 'sap/ui/model/odata/v4/AnnotationHelper'}">
+<Text id="text" text="{path : '/MANAGERS(\\'1\\')TEAM_ID/Name##@@AH.getValueListType'}"/>`;
+
+		this.mock(AnnotationHelper).expects("getValueListType").returns("foo");
+		this.expectChange("text", "foo");
+
+		return this.createView(assert, sView);
+	});
+
+	//*********************************************************************************************
+	// Scenario: The same simple binding syntax with named model and a computed annotation is used
+	// twice in an expression binding with scope via core:require. It must be computed only once.
+	// JIRA: CPOUI5ODATAV4-2398
+	QUnit.test("Computed annotation in expression binding", async function (assert) {
+		const sView = ` core:require="{AH : 'sap/ui/model/odata/v4/AnnotationHelper'}">
+<Text id="text" text="{= \${meta>/MANAGERS/TEAM_ID@@AH.getValueListType}
+	+ \${meta>/MANAGERS/TEAM_ID@@AH.getValueListType} }"/>`;
+
+		this.expectChange("text");
+
+		await this.createView(assert, sView);
+
+		this.mock(AnnotationHelper).expects("getValueListType").returns("foo");
+		this.expectChange("text", "foofoo");
+
+		this.oView.setModel(this.oModel.getMetaModel(), "meta");
+
+		await this.waitForChanges(assert);
 	});
 
 	//*********************************************************************************************

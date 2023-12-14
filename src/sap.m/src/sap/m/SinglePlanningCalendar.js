@@ -282,6 +282,8 @@ function(
 				 * Special days in the header visualized as a date range with type.
 				 *
 				 * <b>Note:</b> If one day is assigned to more than one type, only the first type is used.
+				 * You can use only one of the following types for a given day: <code>NonWorkingDay</code>, <code>WorkingDay</code>, or <code>None</code>.
+				 * Assigning more than one of those types for the same day will lead to unpredictable results.
 				 * @since 1.66
 				 */
 				specialDates : {type : "sap.ui.unified.DateTypeRange",

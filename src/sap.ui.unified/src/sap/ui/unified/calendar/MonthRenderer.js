@@ -350,7 +350,7 @@ MonthRenderer.getDayHelper = function(oMonth, oDate){
 			iFirstDayOfWeek: oMonth._getFirstDayOfWeek(),
 			iWeekendStart: oLocaleData.getWeekendStart(),
 			iWeekendEnd: oLocaleData.getWeekendEnd(),
-			aNonWorkingDays: oMonth._getNonWorkingDays(),
+			aNonWorkingDays: oMonth._getNonWorkingDays() || [],
 			sToday: oLocaleData.getRelativeDay(0),
 			oToday: CalendarDate.fromLocalJSDate(UI5Date.getInstance(), oMonth.getPrimaryCalendarType()),
 			sId: oMonth.getId(),
@@ -400,8 +400,7 @@ MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWee
 		},
 		bBeforeFirstYear = oDay._bBeforeFirstYear,
 		sAriaType = "",
-		oLegend = oHelper.oLegend,
-		sNonWorkingDayText;
+		oLegend = oHelper.oLegend;
 
 	var sYyyymmdd = oMonth._oFormatYyyymmdd.format(oDay.toUTCJSDate(), true);
 	var iWeekDay = oDay.getDay();
@@ -409,8 +408,18 @@ MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWee
 	var aDayTypes = oMonth._getDateTypes(oDay);
 	var sSpecialDateTypeFilter = oHelper && oHelper.oLegend ? oHelper.oLegend._getSpecialDateTypeFilter() : '';
 	var bEnabled = oMonth._checkDateEnabled(oDay);
-	var i = 0;
 	var bShouldBeMarkedAsSpecialDate = oMonth._isSpecialDateMarkerEnabled(oDay);
+	const sFirstSpecialDateType = aDayTypes.length > 0 && aDayTypes[0].type;
+	const sSecondaryDateType = aDayTypes.length > 0 && aDayTypes[0].secondaryType;
+	const bIsWeekend = oHelper.aNonWorkingDays.length
+		? oHelper.aNonWorkingDays.some((iNonWorkingDay) => oDay.getDay() === iNonWorkingDay)
+		: CalendarUtils._isWeekend(oDay, oMonth._getLocaleData());
+	const bNonWorkingWeekend =  sFirstSpecialDateType !== CalendarDayType.Working
+		&& sSecondaryDateType !== CalendarDayType.Working
+		&& bIsWeekend;
+	const bNonWorking = sFirstSpecialDateType === CalendarDayType.NonWorking
+		|| sSecondaryDateType === CalendarDayType.NonWorking || bNonWorkingWeekend;
+
 	// Days before 0001.01.01 should be disabled.
 	if (bBeforeFirstYear) {
 		bEnabled = false;
@@ -459,15 +468,14 @@ MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWee
 		mAccProps["describedby"] = mAccProps["describedby"] + " " + oMonth.getId() + "-week-" + oMonth._calculateWeekNumber(oDay) + "-text";
 	}
 
+	if (bNonWorking) {
+		oRm.class("sapUiCalItemWeekEnd");
+		mAccProps["label"] += Library.getResourceBundleFor("sap.ui.unified").getText("LEGEND_NON_WORKING_DAY") + " ";
+	}
+
 	if (bShouldBeMarkedAsSpecialDate) {
 		aDayTypes.forEach(function(oDayType) {
 			if (oDayType.type !== CalendarDayType.None) {
-				if (oDayType.type === CalendarDayType.NonWorking) {
-					oRm.class("sapUiCalItemWeekEnd");
-					sNonWorkingDayText = this._addNonWorkingDayText(mAccProps);
-					return;
-				}
-
 				if (sSpecialDateTypeFilter === "" || sSpecialDateTypeFilter === CalendarDayType.None || sSpecialDateTypeFilter === oDayType.type) {
 					oRm.class("sapUiCalItem" + oDayType.type);
 					sAriaType = oDayType.type;
@@ -476,22 +484,8 @@ MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWee
 					}
 				}
 			}
-		}.bind(this));
+		});
 	}
-
-
-	if (!sNonWorkingDayText) { // if sNonWorkingDayText exists, it is already included above as specialDate of type NonWorking
-		if (oHelper.aNonWorkingDays) { // check if there are nonWorkingDays passed and add text to them
-			oHelper.aNonWorkingDays.forEach(function (iNonWorkingDay) {
-				if (oDay.getDay() === iNonWorkingDay) {
-					this._addNonWorkingDayText(mAccProps);
-				}
-			}.bind(this));
-		} else if (oDay.getDay() === oHelper.iWeekendStart || oDay.getDay() === oHelper.iWeekendEnd) { // otherwise add the text to the NonWorkigDays from the locale
-			this._addNonWorkingDayText(mAccProps);
-		}
-	}
-
 
 	//oMonth.getDate() is a public date object, so it is always considered local timezones.
 	if (((oMonth.getParent() && oMonth.getParent().getMetadata().getName() === "sap.ui.unified.CalendarOneMonthInterval")
@@ -503,18 +497,6 @@ MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWee
 	if (!bEnabled) {
 		oRm.class("sapUiCalItemDsbl"); // day disabled
 		mAccProps["disabled"] = true;
-	}
-
-	if (oHelper.aNonWorkingDays) {
-		for (i = 0; i < oHelper.aNonWorkingDays.length; i++) {
-			if (iWeekDay === oHelper.aNonWorkingDays[i]) {
-				oRm.class("sapUiCalItemWeekEnd");
-				break;
-			}
-		}
-	} else if ((iWeekDay >= oHelper.iWeekendStart && iWeekDay <= oHelper.iWeekendEnd) ||
-			( oHelper.iWeekendEnd < oHelper.iWeekendStart && ( iWeekDay >= oHelper.iWeekendStart || iWeekDay <= oHelper.iWeekendEnd))) {
-		oRm.class("sapUiCalItemWeekEnd");
 	}
 
 	oRm.attr("tabindex", "-1");
@@ -577,18 +559,6 @@ MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWee
 
 	oRm.close("div");
 
-};
-
-/**
- * Includes additional text to the DOM indicating that the day is non-working
- *
- * @param {Object} mAccProps The accessibility properties for the day to be rendered.
- * @returns {string} sText The text for the non-working day from the bundle
- */
-MonthRenderer._addNonWorkingDayText = function (mAccProps) {
-	var sText = Library.getResourceBundleFor("sap.ui.unified").getText("LEGEND_NON_WORKING_DAY") + " ";
-	mAccProps["label"] += sText;
-	return sText;
 };
 
 MonthRenderer._renderWeekNumber = function(oRm, oDay, oHelper, oMonth) {

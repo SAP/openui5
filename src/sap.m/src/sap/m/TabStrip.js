@@ -29,6 +29,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core",
 	"sap/ui/core/Configuration",
 	"sap/ui/base/Object",
 	// jQuery Plugin "scrollLeftRTL"
@@ -61,6 +62,7 @@ function(
 	Log,
 	jQuery,
 	KeyCodes,
+	Core,
 	Configuration,
 	BaseObject
 ) {
@@ -333,8 +335,8 @@ function(
 				this._adjustScrolling();
 
 				if (this.getSelectedItem()) {
-					if (!sap.ui.getCore().isThemeApplied()) {
-						sap.ui.getCore().attachThemeChanged(this._handleInititalScrollToItem, this);
+					if (!Core.isThemeApplied()) {
+						Core.attachThemeChanged(this._handleInititalScrollToItem, this);
 					} else {
 						this._handleInititalScrollToItem();
 					}
@@ -357,7 +359,7 @@ function(
 			if (oItem && oItem.$().length > 0) { // check if the item is already in the DOM
 				this._scrollIntoView(oItem, 500);
 			}
-			sap.ui.getCore().detachThemeChanged(this._handleInititalScrollToItem, this);
+			Core.detachThemeChanged(this._handleInititalScrollToItem, this);
 		};
 
 		/**

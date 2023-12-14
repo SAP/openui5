@@ -298,20 +298,42 @@ sap.ui.define([
 
 		QUnit.test("When URL parameters are added then the frame URL is built correctly", function(assert) {
 			this.oAddIFrameDialog.attachOpened(function() {
-				let sUrl = this.oAddIFrameDialog._oController._addURLParameter("firstParameter");
-				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
-				assert.strictEqual(sUrl.endsWith("firstParameter"), true, "Found firstParameter");
+				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+				oUrlTextArea.setValue("someUrl");
+				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
 
-				sUrl = this.oAddIFrameDialog._oController._addURLParameter("secondParameter");
+				const sUrl = this.oAddIFrameDialog._oController._addURLParameter("{firstParameter}");
 				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
-				assert.strictEqual(sUrl.endsWith("secondParameter"), true, "Found secondParameter");
-
-				sUrl = this.oAddIFrameDialog._oController._addURLParameter("secondParameter");
-				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
-				assert.strictEqual(sUrl.endsWith("secondParametersecondParameter"), true, "Found duplicate parameters");
+				assert.strictEqual(sUrl, "someUrl{firstParameter}", "Found firstParameter");
 
 				clickOnCancel();
 			}, this);
+			return this.oAddIFrameDialog.open(mParameters);
+		});
+
+		QUnit.test("When a parameter is added while there is a text selection in the edit field", function(assert) {
+			this.oAddIFrameDialog.attachOpened(() => {
+				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+				const oParameterList = Element.getElementById("sapUiRtaAddIFrameDialog_ParameterTable");
+				oUrlTextArea.setValue("thisIsSomeUrl");
+				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+
+				return new Promise((resolve) => {
+					// eslint-disable-next-line max-nested-callbacks
+					oParameterList.attachEventOnce("itemPress", () => {
+						assert.strictEqual(
+							this.oAddIFrameDialog._oController._oJSONModel.getData().frameUrl.value,
+							"thisIs{Guid}Url",
+							"then the parameter replaces the text selection"
+						);
+						clickOnCancel();
+						resolve();
+					});
+
+					oUrlTextArea.selectText(6, 10);
+					QUnitUtils.triggerEvent("tap", oParameterList.getItems()[0].getDomRef());
+				});
+			});
 			return this.oAddIFrameDialog.open(mParameters);
 		});
 
@@ -334,7 +356,13 @@ sap.ui.define([
 
 		QUnit.test("When Show Preview is clicked then preview URL is built correctly", function(assert) {
 			let sUrl;
-			this.oAddIFrameDialog.attachOpened(function() {
+			this.oAddIFrameDialog.attachOpened(async function() {
+				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+				oUrlTextArea.setValue("someUrl");
+				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+				this.oAddIFrameDialog._oController._oJSONModel.refresh();
+				await nextUIUpdate();
+
 				function checkParam(oParam) {
 					sUrl = this.oAddIFrameDialog._oController._addURLParameter(oParam.key);
 					this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
@@ -343,7 +371,11 @@ sap.ui.define([
 				sUrl = this.oAddIFrameDialog._oController._buildPreviewURL(
 					this.oAddIFrameDialog._oJSONModel.getProperty("/frameUrl/value")
 				);
-				assert.strictEqual(sUrl, "http://blabla.company.comguid13423412342314Germany2020JulyIce CreamLangnese BrandLangnese", "Preview URL is correct");
+				assert.strictEqual(
+					sUrl,
+					"someUrlguid13423412342314Germany2020JulyIce CreamLangnese BrandLangnese",
+					"Preview URL is correct"
+				);
 				clickOnCancel();
 			}, this);
 			return this.oAddIFrameDialog.open(mParameters);

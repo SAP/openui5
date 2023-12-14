@@ -377,6 +377,7 @@ sap.ui.define([
 	 * @param {boolean} bIgnore Ignores group headers from selection
 	 * @returns {sap.m.plugins.CellSelector.Selection} An object containing the selected cells separated into rows and columns
 	 * @private
+	 * @ui5-restricted sap.fe, sap.suite.ui.generic.template
 	 */
 	CellSelector.prototype.getSelection = function(bIgnore) {
 		var mSelectionRange = this.getSelectionRange();

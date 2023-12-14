@@ -135,16 +135,21 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   the given path
+	 * @param {object} [oEnv]
+	 *   the "environment"
 	 * @returns {object}
 	 *   a binding info object
 	 */
-	function makeSimpleBindingInfo(sPath) {
+	function makeSimpleBindingInfo(sPath, oEnv) {
 		var iPos = sPath.indexOf(">"),
 			oBindingInfo = { path : sPath };
 
 		if ( iPos > 0 ) {
 			oBindingInfo.model = sPath.slice(0,iPos);
 			oBindingInfo.path = sPath.slice(iPos + 1);
+		}
+		if (oEnv?.mLocals && oBindingInfo.path.includes("@@")) {
+			oBindingInfo.parameters = {scope : oEnv.mLocals};
 		}
 
 		return oBindingInfo;
@@ -361,6 +366,11 @@ sap.ui.define([
 			resolveRef(oBindingInfo,'formatter');
 			resolveRef(oBindingInfo,'factory'); // list binding
 			resolveRef(oBindingInfo,'groupHeaderFactory'); // list binding
+			if (oEnv.mLocals && oBindingInfo.path?.includes("@@")
+					&& oBindingInfo.parameters?.scope === undefined) {
+				oBindingInfo.parameters ??= {};
+				oBindingInfo.parameters.scope = oEnv.mLocals;
+			}
 		}
 
 		return oBindingInfo;
@@ -407,7 +417,7 @@ sap.ui.define([
 			throw new SyntaxError("no closing braces found in '" + sInput + "' after pos:" + iStart);
 		}
 		return {
-			result: makeSimpleBindingInfo(sInput.slice(iStart + 1, iEnd)),
+			result: makeSimpleBindingInfo(sInput.slice(iStart + 1, iEnd), oEnv),
 			at: iEnd + 1
 		};
 	}

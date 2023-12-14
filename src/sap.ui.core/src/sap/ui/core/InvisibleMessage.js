@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library", "sap/ui/base/ManagedObject", "sap/base/Log", "sap/ui/core/StaticArea"],
-	function (coreLibrary, ManagedObject, Log, StaticArea) {
+sap.ui.define(["./library", "./Core", "sap/ui/base/ManagedObject", "sap/base/Log", "sap/ui/core/StaticArea"],
+	function (coreLibrary, Core, ManagedObject, Log, StaticArea) {
 		"use strict";
 
 		var oInstance;
@@ -73,7 +73,7 @@ sap.ui.define(["./library", "sap/ui/base/ManagedObject", "sap/base/Log", "sap/ui
 
 			if (!oStatic) {
 				// Make sure StaticArea is rendered before manipulating the DOM.
-				sap.ui.getCore().ready(() => {
+				Core.ready(() => {
 					this._insertInstances();
 				});
 			} else {

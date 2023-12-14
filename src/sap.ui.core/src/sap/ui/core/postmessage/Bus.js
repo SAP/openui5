@@ -4,11 +4,13 @@
 
 sap.ui.define([
 	"sap/ui/core/EventBus",
+	"sap/ui/core/Lib",
 	"sap/base/util/isPlainObject",
 	"sap/base/Log"
 ],
 function (
 	EventBus,
+	Lib,
 	isPlainObject,
 	Log
 ) {
@@ -210,8 +212,8 @@ function (
 	 * @private
 	 */
 	PostMessageBus.prototype._getText = function (sKey, aParameters) {
-		return sap.ui.getCore().getLibraryResourceBundle(true)
-		.then(function(oLibraryResourceBundle) { return oLibraryResourceBundle.getText(sKey, aParameters); });
+		var oLibraryResourceBundle = Lib.getResourceBundleFor("sap.ui.core");
+		return Promise.resolve(oLibraryResourceBundle.getText(sKey, aParameters));
 	};
 
 	/**

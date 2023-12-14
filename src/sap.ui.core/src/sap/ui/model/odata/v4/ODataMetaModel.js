@@ -2957,10 +2957,12 @@ sap.ui.define([
 	 *   The context to be used as a starting point in case of a relative path
 	 * @param {object} [mParameters]
 	 *   Optional (binding) parameters; if they are given, <code>oContext</code> cannot be omitted
-	 * @param {object} [mParameters.scope]
-	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0); since 1.120.3
-	 *   looking up a computed annotation via its global name is deprecated; make sure to always use
-	 *   this scope
+	 * @param {Object<object|function>} [mParameters.scope]
+	 *   Scope for lookup of aliases for computed annotations (since 1.43.0) as a map from alias to
+	 *   a module (like <code>{AH : AnnotationHelper}</code>) or function (like
+	 *   <code>{format : AnnotationHelper.format}</code>); the alias must not contain a dot.
+	 *   Since 1.120.3 looking up a computed annotation via its global name is deprecated; always
+	 *   use this scope instead.
 	 * @returns {Promise<any>}
 	 *   A promise which is resolved with the requested metadata value as soon as it is available;
 	 *   it is rejected if the requested metadata cannot be loaded

@@ -101,8 +101,8 @@ sap.ui.define([
 		}];
 
 		assert.ok(oFormatSettings, "FormatSettings object is created");
-		Formatting.setLegacyDateCalendarCustomizing(aData);
-		assert.deepEqual(Formatting.getLegacyDateCalendarCustomizing(), aData, "The customizing data set can be retrieved");
+		Formatting.setCustomIslamicCalendarData(aData);
+		assert.deepEqual(Formatting.getCustomIslamicCalendarData(), aData, "The customizing data set can be retrieved");
 	});
 
 	QUnit.test("getter and setter for option 'calendar'", function(assert) {

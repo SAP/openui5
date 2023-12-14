@@ -268,8 +268,19 @@ sap.ui.define([
 			const oZoomInfo = this._getZoomEnablement(oChart);
 
 			if (oZoomInfo.enabled) {
+				const bInFocused = document.activeElement === this.oZoomInButton.getDomRef();
+				const bOutFocused = document.activeElement === this.oZoomOutButton.getDomRef();
+
 				this.oZoomInButton.setEnabled(oZoomInfo.enabledZoomIn);
 				this.oZoomOutButton.setEnabled(oZoomInfo.enabledZoomOut);
+
+				// toggle the focus between zoom buttons when the currecnt is disabled
+				if (!oZoomInfo.enabledZoomIn && bInFocused) {
+					this.oZoomOutButton.focus();
+				}
+				if (!oZoomInfo.enabledZoomOut && bOutFocused) {
+					this.oZoomInButton.focus();
+				}
 			} else {
 				this.oZoomInButton.setEnabled(false);
 				this.oZoomOutButton.setEnabled(false);

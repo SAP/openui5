@@ -414,15 +414,38 @@ sap.ui.define([
 
 	QUnit.test("Non working days helper method", function(assert) {
 		// Prepare
-		var oDate = UI5Date.getInstance(2018, 6, 2),
+		var oNonWorking = UI5Date.getInstance(2018, 6, 2),
+			oWeekend = UI5Date.getInstance(2018, 6, 7),
+			oWorkingWeekend = UI5Date.getInstance(2018, 6, 14),
 			oGrid = new SinglePlanningCalendarGrid({
 			specialDates: [
-				new DateTypeRange({ type: "NonWorking", startDate: oDate})
+				new DateTypeRange({ type: "NonWorking", startDate: oNonWorking }),
+				new DateTypeRange({ type: "Working", startDate: oWorkingWeekend })
 			]
 		});
 
 		// assert
-		assert.ok(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oDate)), "02.06.2018 is a non working day");
+		assert.ok(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oNonWorking)), "02.06.2018 is a non working day");
+		assert.ok(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oWeekend)), "07.06.2018 is a non working weekend day");
+		assert.notOk(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oWorkingWeekend)), "14.06.2018 is a non working weekend day");
+	});
+
+	QUnit.test("Non working days helper method - get first special date", function(assert) {
+		// Prepare
+		var oNonWorking = UI5Date.getInstance(2018, 6, 2),
+			oWorkingWeekend = UI5Date.getInstance(2018, 6, 1),
+			oGrid = new SinglePlanningCalendarGrid({
+			specialDates: [
+				new DateTypeRange({ type: "NonWorking", startDate: oNonWorking }),
+				new DateTypeRange({ type: "Working", startDate: oNonWorking }),
+				new DateTypeRange({ type: "Working", startDate: oWorkingWeekend }),
+				new DateTypeRange({ type: "NonWorking", startDate: oWorkingWeekend })
+			]
+		});
+
+		// assert
+		assert.ok(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oNonWorking)), "02.06.2018 is a non working day");
+		assert.notOk(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oWorkingWeekend)), "01.06.2018 is working day");
 	});
 
 	QUnit.test("CalendarAppointment's getDomRef() returns proper DOM element", function(assert) {

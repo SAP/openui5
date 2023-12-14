@@ -159,6 +159,27 @@ sap.ui.define([
 			Localization.setLanguage(sOldLanguage);
 		});
 
+		QUnit.test("Special dates are properly displayed", function(assert) {
+			// Prepare
+            this.oM.setDate(UI5Date.getInstance(2023, 7, 1));
+            oCore.applyChanges();
+			var oSpecialDateElement = this.oM.getDomRef().querySelector("#" + this.oM.getId() + "-20230806");
+
+			// Assert
+			assert.ok(oSpecialDateElement.classList.contains("sapUiCalItemWeekEnd"), "Date marked as non working day");
+
+			// Act
+			this.oM.addSpecialDate(new DateTypeRange({
+				type: CalendarDayType.Working,
+				startDate: UI5Date.getInstance(2023, 7, 6)
+			}));
+			oCore.applyChanges();
+
+			// Assert
+			oSpecialDateElement = this.oM.getDomRef().querySelector("#" + this.oM.getId() + "-20230806");
+			assert.notOk(oSpecialDateElement.classList.contains("sapUiCalItemWeekEnd"), "Date marked as working day");
+		});
+
 		QUnit.module("_getVisibleDays", {
 			beforeEach: function () {
 				this.oM = new Month();

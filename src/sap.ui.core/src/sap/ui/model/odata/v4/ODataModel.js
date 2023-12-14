@@ -1049,6 +1049,9 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.$$noPatch]
 	 *   Whether changing the value of this property binding is not causing a PATCH request; only
 	 *   the value <code>true</code> is allowed.
+	 * @param {any} [mParameters.scope]
+	 *   The scope for {@link sap.ui.model.odata.v4.ODataMetaModel#requestObject} if it is an
+	 *   object; a custom query option otherwise
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
 	 *   The property binding
 	 * @throws {Error}

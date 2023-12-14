@@ -79,6 +79,7 @@ sap.ui.define([
 	 * @param {array} aLibs an array of the currently loaded UI5 libraries
 	 * @param {object} oDocIndicies an object of the currently loaded UI5 library docu metadata
 	 * @private
+	 * @returns {object} a JSON model structure for both all demo apps in a flat list and demo apps by category
 	 */
 	function createModelData (aLibs, oDocIndicies) {
 		// generate the global model structure
@@ -165,30 +166,12 @@ sap.ui.define([
 
 	return {
 		/**
-		 * Fills a JSON model with the demo apps metadata of all available libraries
+		 * Returns a promise that resolves with the demo apps metadata
 		 * under path /demoApps the following properties can be found: lib, name, icon, desc, config, category, refs
-		 * @param {sap.ui.model.json.JSONModel} oModel the helper JSON model passed in as a reference
-		 * @public
+		 * under path /demoAppsByCategory the apps are structured by the entry "category" and grouped in batches
+		 *
+		 * @returns {Promise} a promise that resolves with the demo apps metadata
 		 */
-		fillJSONModel: function (oModel) {
-			return new Promise(function (resolve) {
-				function fnHandleLibInfoLoaded  (aLibs, oDocIndicies) {
-					oModel.setProperty("/bFooterVisible", true);
-					if (!aLibs) {
-						return;
-					}
-
-					// set model
-					var oModelData = oModel.getData();
-					oModel.setData(extend(oModelData, createModelData(aLibs, oDocIndicies)));
-					resolve(oModel);
-				}
-
-				// load and process all lib info
-				oModel.setProperty("/bFooterVisible", false);
-				library._loadAllLibInfo("", "_getDocuIndex", fnHandleLibInfoLoaded);
-			});
-		},
 		getDemoAppsData: function () {
 			return new Promise(function (resolve) {
 				library._loadAllLibInfo("", "_getDocuIndex", function (aLibs, oDocIndicies) {

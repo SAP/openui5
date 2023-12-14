@@ -35,7 +35,8 @@ sap.ui.define([
 				_underscore_ : "_"
 				//TODO "You can use ISO 8859-1 or Unicode letters such as å and ü in identifiers.
 				// You can also use the Unicode escape sequences as characters in identifiers."
-			}
+			},
+			"foo@@bar" : "baz"
 		}),
 		oScope = {
 			join : function () {
@@ -773,7 +774,8 @@ sap.ui.define([
 	QUnit.test("multiple references to the same binding", function (assert) {
 		function checkParts(sExpression, sExpectedResult, iExpectedParts) {
 			var sBinding = "{=" + sExpression + "}",
-				oBindingInfo = BindingParser.complexParser(sBinding, oScope, true);
+				oBindingInfo = BindingParser.complexParser(sBinding, oScope, true, false, false,
+					false, {/*mLocals*/});
 			assert.strictEqual(oBindingInfo.parts.length, iExpectedParts, sExpression);
 			check(assert, sBinding, sExpectedResult, oScope);
 		}
@@ -785,6 +787,7 @@ sap.ui.define([
 		checkParts("${/five} ? ${path: '/five', formatter: '.myFormatter'} : '7'", "~5~", 2);
 		checkParts("${path: '/five', formatter: '.myFormatter'} ? "
 				+ "${path: '/five', formatter: '.myFormatter'} : '7'", "~5~", 1);
+		checkParts("${foo@@bar} ? ${foo@@bar} : '42'", "baz", 1);
 
 		// if we do not ensure that both ${mail} become the same part, evaluation is performed on
 		// partly resolved parts when calling oInvisibleText.bindObject() after

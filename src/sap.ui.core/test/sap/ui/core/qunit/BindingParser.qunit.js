@@ -125,6 +125,27 @@ sap.ui.define([
 		assert.strictEqual(o.path, "path", "binding info should contain the expected pathg");
 	});
 
+	QUnit.test("Simple Binding, @@ and locals", function(assert) {
+		const mLocals = {};
+
+		assert.deepEqual(
+			parse("{model>path@@ext}"),
+			{model : "model", path : "path@@ext"}
+		);
+
+		assert.deepEqual(
+			parse("{model>path}", undefined, false, false, false, false, mLocals),
+			{model : "model", path : "path"}
+		);
+
+		const o = parse("{model>path@@ext}", undefined, false, false, false, false, mLocals);
+		assert.deepEqual(
+			o,
+			{model : "model", path : "path@@ext", parameters : {scope : mLocals}}
+		);
+		assert.strictEqual(o.parameters.scope, mLocals);
+	});
+
 	QUnit.test("Complex Binding (no quotes)", function(assert) {
 		var o = parse("{model: \"some\", path: \"path\"}");
 		assert.strictEqual(typeof o, "object", "parse should return an object");
@@ -144,6 +165,57 @@ sap.ui.define([
 		assert.strictEqual(typeof o, "object", "parse should return an object");
 		assert.strictEqual(o.model, "some", "binding info should contain the expected model name");
 		assert.strictEqual(o.path, "path", "binding info should contain the expected pathg");
+	});
+
+	QUnit.test("Complex Binding, @@ and locals", function(assert) {
+		const mLocals = {};
+
+		assert.deepEqual(
+			parse("{model : 'model', path : 'path@@ext'}"),
+			{model : "model", path : "path@@ext"},
+			"no locals"
+		);
+
+		assert.deepEqual(
+			parse("{model : 'model', path : 'path'}", undefined, false, false, false, false,
+				mLocals),
+			{model : "model", path : "path"},
+			"no '@@'"
+		);
+
+		assert.deepEqual(
+			parse("{model : 'model', path : 'path@@ext', parameters : {scope : false}}",
+				undefined, false, false, false, false, mLocals),
+			{model : "model", path : "path@@ext", parameters : {scope : false}},
+			"scope exists"
+		);
+
+		let o = parse("{model : 'model', path : 'path@@ext'}", undefined, false, false, false,
+			false, mLocals);
+		assert.deepEqual(
+			o,
+			{model : "model", path : "path@@ext", parameters : {scope : mLocals}},
+			"parameters must be created"
+		);
+		assert.strictEqual(o.parameters.scope, mLocals);
+
+		o = parse("{model : 'model', path : 'path@@ext', parameters : {foo : 'bar'}}",
+			undefined, false, false, false, false, mLocals);
+		assert.deepEqual(
+			o,
+			{model : "model", path : "path@@ext", parameters : {foo : "bar", scope : mLocals}},
+			"parameters exist"
+		);
+		assert.strictEqual(o.parameters.scope, mLocals);
+
+		o = parse("{parts : [{model : 'model', path : 'path@@ext'}]}", undefined, false, false,
+			false, false, mLocals);
+		assert.deepEqual(
+			o,
+			{parts : [{model : "model", path : "path@@ext", parameters : {scope : mLocals}}]},
+			"in parts (no path on top level)"
+		);
+		assert.strictEqual(o.parts[0].parameters.scope, mLocals);
 	});
 
 	QUnit.test("Single Binding with global formatter", function (assert) {
