@@ -9641,7 +9641,7 @@ sap.ui.define([
 				if (oFixture.predicates.length === 0) {
 					oListBindingMock.expects("getFilterForPredicate").never();
 				} else {
-					oFixture.predicates.map(function (sPredicate, i) {
+					oFixture.predicates.forEach(function (sPredicate, i) {
 						oListBindingMock.expects("getFilterForPredicate")
 							.withExactArgs(sPredicate, "~entity~type~",
 								sinon.match.same(that.oModel.oMetaModel), "~meta~path~")

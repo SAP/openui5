@@ -2086,7 +2086,7 @@ sap.ui.define([
 		expectMessages : function (aExpectedMessages, bHasMatcher) {
 			this.aMessages = [];
 			this.aMessages.bHasMatcher = false;
-			aExpectedMessages.forEach((oMessage) => this.expectMessage(oMessage, bHasMatcher));
+			aExpectedMessages.forEach((oMessage) => { this.expectMessage(oMessage, bHasMatcher); });
 
 			return this;
 		},
@@ -55745,7 +55745,7 @@ make root = ${bMakeRoot}`;
 			return Promise.all(
 				oItemsBinding.getCurrentContexts().map(function (oContext) {
 					// code under test
-					oContext.setProperty("Note", oContext.getProperty("Note").repeat(2));
+					return oContext.setProperty("Note", oContext.getProperty("Note").repeat(2));
 				})
 				.concat(that.waitForChanges(assert, "patch transient items"))
 			);
@@ -55815,7 +55815,7 @@ make root = ${bMakeRoot}`;
 				oModel.submitBatch("update"),
 				oCreatedOrderContext.created(),
 				oItemsBinding.getCurrentContexts().map(function (oContext) {
-					checkCanceled(assert, oContext.created());
+					return checkCanceled(assert, oContext.created());
 				}),
 				that.waitForChanges(assert, "submit POST")
 			].flat());

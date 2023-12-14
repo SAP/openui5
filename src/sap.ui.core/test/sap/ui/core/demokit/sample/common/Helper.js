@@ -486,7 +486,7 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 				},
 				beforeEach : fnBeforeEach,
 				afterEach : function () {
-					aCleanupTasks.forEach((fnTask) => fnTask());
+					aCleanupTasks.forEach((fnTask) => { fnTask(); });
 					aCleanupTasks.length = 0;
 					return fnAfterEach && fnAfterEach.apply(this, arguments);
 				}
