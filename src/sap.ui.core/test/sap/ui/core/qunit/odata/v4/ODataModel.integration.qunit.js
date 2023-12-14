@@ -41079,6 +41079,8 @@ make root = ${bMakeRoot}`;
 			delete that.oView;
 
 			fnRespond();
+
+			return resolveLater(); // avoid timing issues ("Assertion occurred after test finished")
 		});
 	});
 
