@@ -693,6 +693,7 @@ sap.ui.define([
 					useFakeTimers: true
 				},
 				ui5: {
+					theme: "sap_horizon",
 					language: "en-US",
 					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				}
@@ -2479,7 +2480,8 @@ sap.ui.define([
 			"table/Util": {
 				title: "Test Page for sap.m.table.Util",
 				ui5: {
-					language: "en-US"
+					language: "en-US",
+					theme: "sap_horizon"
 				}
 			}
 		}
