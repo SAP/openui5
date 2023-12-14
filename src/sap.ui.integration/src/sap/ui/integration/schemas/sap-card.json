@@ -196,7 +196,7 @@
       "additionalProperties": false,
       "properties": {
         "actionsStrip": {
-          "description": "[Experimental] Describes actions strip",
+          "description": "Describes actions strip",
           "oneOf": [
             {
               "type": "array",
@@ -852,7 +852,7 @@
           "$ref": "#/definitions/Microchart"
         },
         "actionsStrip": {
-          "description": "[Experimental] Describes actions strip",
+          "description": "Describes actions strip",
           "oneOf": [
             {
               "type": "array",
@@ -3880,6 +3880,7 @@
     },
     "actionsStripItemBindingInfo": {
       "type": "object",
+      "description": "[Experimental] Binding info for items of type actionsStripItem",
       "additionalProperties": false,
       "properties": {
         "template": {
@@ -3891,7 +3892,7 @@
       }
     },
     "actionsStripItem": {
-      "description": "[Experimental] Attributes of actions strip item",
+      "description": "Attributes of actions strip item",
       "type": "object",
       "additionalProperties": false,
       "properties": {

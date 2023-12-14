@@ -167,7 +167,6 @@ sap.ui.define([
 							{
 								title: 'Actions Strip',
 								key: 'actionsStrip',
-								experimental: true,
 								files: [
 									{
 										url: '/samples/list/actionsStrip/manifest.json',
@@ -1239,7 +1238,6 @@ sap.ui.define([
 				target: 'exploreSamples',
 				icon: 'sap-icon://SAP-icons-TNT/local-process-call',
 				hasExpander: false,
-				experimental: true,
 				subSamples: [
 					{
 						title: 'General Actions',
@@ -1258,6 +1256,7 @@ sap.ui.define([
 					{
 						title: 'Adaptive Card With Dialog',
 						key: 'cardWithDialog',
+						experimental: true,
 						settings: {
 							columns: 4
 						},
@@ -1281,25 +1280,6 @@ sap.ui.define([
 								url: '/samples/footer/cardWithDialog/images/DonnaMoore.png',
 								name: 'images/DonnaMoore.png',
 								key: 'images/DonnaMoore.png'
-							}
-						]
-					},
-					{
-						title: 'Hide Card',
-						key: 'hideCard',
-						settings: {
-							columns: 6
-						},
-						files: [
-							{
-								url: '/samples/footer/hideCard/manifest.json',
-								name: 'manifest.json',
-								key: 'manifest.json'
-							},
-							{
-								url: '/samples/footer/hideCard/HideCardExtension.js',
-								name: 'HideCardExtension.js',
-								key: 'HideCardExtension.js'
 							}
 						]
 					},
