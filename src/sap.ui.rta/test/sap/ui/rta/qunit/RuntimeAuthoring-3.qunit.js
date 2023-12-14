@@ -718,7 +718,7 @@ sap.ui.define([
 				assert.strictEqual(oDesignTimeAddRootElementSpy.callCount, 1, "the the DesignTime is going to start once");
 				assert.strictEqual(oSetAdaptationLayerSpy.callCount, 1, "the adaptation layer is set");
 				assert.strictEqual(oSetAdaptationLayerSpy.getCall(0).args[0], Layer.CUSTOMER, "the layer is passed");
-				assert.strictEqual(oSetAdaptationLayerSpy.getCall(0).args[1], oComp.getId(), "the root control is passed");
+				assert.strictEqual(oSetAdaptationLayerSpy.getCall(0).args[1], oComp, "the root control is passed");
 
 				return oRuntimeAuthoring.start();
 			})
