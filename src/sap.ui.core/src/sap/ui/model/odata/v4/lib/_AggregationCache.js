@@ -495,7 +495,7 @@ sap.ui.define([
 		const iLevel = oParentNode
 			? oParentNode["@$ui5.node.level"] + 1
 			: 1;
-		let oCache = iLevel > (this.oAggregation.expandTo || 1)
+		let oCache = iLevel > this.oAggregation.expandTo
 			? _Helper.getPrivateAnnotation(oParentNode, "cache")
 			: this.oFirstLevel;
 		if (!oCache) {

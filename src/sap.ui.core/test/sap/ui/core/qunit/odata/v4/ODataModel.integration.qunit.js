@@ -25257,10 +25257,12 @@ sap.ui.define([
 
 			// code under test
 			assert.deepEqual(oListBinding.getAggregation(), {
+				expandTo : 1,
 				hierarchyQualifier : sHierarchyQualifier
 			}, "JIRA: CPOUI5ODATAV4-1825");
 			// code under test
 			assert.deepEqual(oListBinding.getAggregation(/*bVerbose*/true), {
+				expandTo : 1,
 				hierarchyQualifier : sHierarchyQualifier,
 				$DistanceFromRoot : "_/DistanceFromRoot",
 				$DrillState : "_/DrillState",

@@ -4302,8 +4302,7 @@ make root = ${bMakeRoot}`;
 
 	//*********************************************************************************************
 [false, true].forEach(function (bHasGroupLevelCache) {
-	// Note: undefined is important to test defaulting!
-	[undefined, 1, 2, 25].forEach(function (iExpandTo) {
+	[1, 2, 25].forEach(function (iExpandTo) {
 		[undefined, true].forEach(function (bParentExpanded) {
 			[false, true].forEach(function (bCreateRoot) {
 				var sTitle = "create: already has group level cache: " + bHasGroupLevelCache

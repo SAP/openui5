@@ -3281,7 +3281,7 @@ sap.ui.define([
 				setIndices(iParentIndex + 1, iChildIndex);
 			} // else: iChildIndex === iParentIndex + 1 => nothing to do
 
-			if (!oChildContext.created() && !(oAggregation.expandTo > 1)) {
+			if (!oChildContext.created() && oAggregation.expandTo === 1) {
 				oChildContext.setCreatedPersisted();
 			}
 

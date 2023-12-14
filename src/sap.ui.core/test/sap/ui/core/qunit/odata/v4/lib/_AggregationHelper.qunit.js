@@ -1111,6 +1111,7 @@ sap.ui.define([
 			});
 
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
+		assert.strictEqual(oAggregation.expandTo, 1, "defaulting");
 		assert.strictEqual(oAggregation.$NodeProperty, "aNodeID");
 		assert.strictEqual(oAggregation.$ParentNavigationProperty, "aParentNavigation");
 		assert.notOk("$LimitedRank" in oAggregation, "unchanged");
@@ -1135,6 +1136,7 @@ sap.ui.define([
 					+ ",HierarchyQualifier='X',NodeProperty='???',Levels=1)"
 			});
 		assert.notOk("$LimitedRank" in oAggregation, "unchanged");
+		assert.strictEqual(oAggregation.expandTo, 1, "defaulting");
 	});
 
 	//*********************************************************************************************
@@ -1165,6 +1167,7 @@ sap.ui.define([
 
 		assert.notOk("$LimitedRank" in oAggregation, "unchanged");
 		assert.notOk("$NodeProperty" in oAggregation);
+		assert.strictEqual(oAggregation.expandTo, 1, "defaulting");
 		assert.deepEqual(mQueryOptions, {foo : "bar"});
 	});
 
@@ -1245,7 +1248,7 @@ sap.ui.define([
 			.withExactArgs("/meta/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#X")
 			.returns(SyncPromise.resolve(oRecursiveHierarchy));
 		oExpectedAggregation = Object.assign({
-			expandTo : iExpandTo,
+			expandTo : iExpandTo || 1,
 			hierarchyQualifier : "X",
 			$fetchMetadata : oAggregation.$fetchMetadata, // remember the mock(!)
 			$metaPath : "/meta",
