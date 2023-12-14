@@ -37,7 +37,7 @@ sap.ui.define([
 		if (iLines === 1) {
 			rm.class("sapUiIntLCIOneLine");
 
-			if (sIcon && !IconPool.isIconURI(sIcon)) {
+			if (sIcon && sIcon.trim() && !IconPool.isIconURI(sIcon)) {
 				rm.class("sapUiIntLCIThumbnail");
 			}
 		} else if (iLines === 2) {
