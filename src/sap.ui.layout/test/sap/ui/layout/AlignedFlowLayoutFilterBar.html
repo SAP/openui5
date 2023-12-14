@@ -11,8 +11,8 @@
 				data-sap-ui-theme="sap_horizon">
 		</script>
 		<script>
-			sap.ui.getCore().attachInit(function() {
 				sap.ui.require([
+					"sap/ui/core/Core",
 					"sap/m/App",
 					"sap/m/Button",
 					"sap/m/DatePicker",
@@ -23,8 +23,10 @@
 					"sap/m/ToggleButton",
 					"sap/ui/layout/AlignedFlowLayout",
 					"sap/ui/layout/VerticalLayout"
-				], function(App, Button, DatePicker, Label, Page, Select, Text, ToggleButton, AlignedFlowLayout, VerticalLayout) {
+				], async function(Core, App, Button, DatePicker, Label, Page, Select, Text, ToggleButton, AlignedFlowLayout, VerticalLayout) {
 					"use strict";
+
+					await Core.ready();
 
 					var oAlignedFlowLayout = new AlignedFlowLayout({
 						content: [
@@ -85,7 +87,6 @@
 						})
 					}).placeAt("content");
 				});
-			});
 		</script>
 		<style>
 			.sapUiVlt.sapUiCompFilterBarItem { /* TODO: only in filterbar usage */
