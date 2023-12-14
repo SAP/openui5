@@ -94,13 +94,21 @@ sap.ui.define([
 
 	function fetchProperties(oControl, mPropertyBag) {
 		const aProperties = [{
-				name: "Category"
+				name: "Category",
+				label: "",
+				dataType: "String"
 			}, {
-				name: "Name"
+				name: "Name",
+				label: "",
+				dataType: "String"
 			}, {
-				name: "ProductID"
+				name: "ProductID",
+				label: "",
+				dataType: "String"
 			}, {
-				name: "CurrencyCode"
+				name: "CurrencyCode",
+				label: "",
+				dataType: "String"
 			}];
 
 		if (mPropertyBag) {
@@ -685,6 +693,71 @@ sap.ui.define([
 		}.bind(this));
 
 	});
+
+	QUnit.module("Check change appliance at RT with additional handling", {
+		before: function() {
+			// Implement required Delgate APIs
+			this._fnFetchPropertiers = FilterBarDelegate.fetchProperties;
+			this._fnAddCondition = FilterBarDelegate.addCondition;
+			this._fnAddItem = FilterBarDelegate.addItem;
+			FilterBarDelegate.fetchProperties = fetchProperties;
+			FilterBarDelegate.addCondition = addCondition;
+			FilterBarDelegate.addItem = addItem;
+		},
+
+		beforeEach: function() {
+			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/category}" propertyKey="category" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/></mdc:filterItems></mdc:FilterBar></mvc:View>';
+			return createAppEnvironment(sFilterBarView, "FilterBar")
+			.then(function(mCreatedView){
+				this.oView = mCreatedView.view;
+				this.oUiComponentContainer = mCreatedView.container;
+				this.oFilterBar = this.oView.byId('myFilterBar');
+				this.oFilterItem = this.oView.byId('myFilterBar--field2');
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oUiComponentContainer.destroy();
+		},
+		after: function() {
+			FilterBarDelegate.fetchProperties = this._fnFetchPropertiers;
+			FilterBarDelegate.addCondition = this._fnAddCondition;
+			FilterBarDelegate.addItem = this._fnAddItem;
+			this._fnFetchPropertiers = null;
+			this._fnAddCondition = null;
+			this._fnAddItem = null;
+		}
+	});
+
+	QUnit.test("ensure that filtersChanged event is triggered before the save event", function(assert){
+		 const done = assert.async();
+
+		 let bFiltersChange = false;
+		 this.oFilterBar.attachFiltersChanged(function(oEvent) {
+			 bFiltersChange = true;
+		 });
+		 this.oFilterBar.attachSearch(function(oEvent) {
+			 assert.ok(bFiltersChange, "'filtersChange' event has to be triggered in advance");
+			 done();
+		 });
+
+		 const mDummyCondition = {
+			 "title": [
+				 {
+					 "operator": OperatorName.EQ,
+					 "values": [
+						 "SomeTestValue"
+					 ],
+					 "validated": "Validated"
+				 }
+			 ]
+		 };
+
+		 this.oFilterBar.setShowMessages(false);
+		 this.oFilterBar.initialized().then(function() {
+			 this.oFilterBar._addConditionChange(Promise.resolve(mDummyCondition));
+			 this.oFilterBar.onSearch();
+		 }.bind(this));
+	 });
 
 
 });
