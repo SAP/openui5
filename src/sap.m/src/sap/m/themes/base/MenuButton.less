@@ -35,6 +35,10 @@
 	color: @sapUiButtonIconColor;
 }
 
+.sapMMenuBtn.sapMMenuBtnRegular:hover .sapMBtnInner::after {
+	color: @sapUiButtonHoverTextColor;
+}
+
 .sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner {
 	background-image: none;
 	text-shadow: none;
@@ -66,6 +70,9 @@
 	text-shadow: @sapUiButtonEmphasizedTextShadow;
 }
 
+.sapMMenuBtn.sapMMenuBtnRegular:hover .sapMBtnInner.sapMBtnEmphasized::after {
+	color: @sapUiButtonEmphasizedHoverTextColor;
+}
 
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnEmphasized.sapMBtnActive::after {
 	text-shadow: none;
@@ -76,14 +83,26 @@
 	color: @sapUiButtonAcceptTextColor;
 }
 
+.sapMMenuBtn.sapMMenuBtnRegular:hover .sapMBtnInner.sapMBtnAccept::after {
+	color: @sapUiButtonAcceptHoverTextColor;
+}
+
 //type Attention
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnAttention::after {
 	color: @sapUiButtonAttentionTextColor;
 }
 
+.sapMMenuBtn.sapMMenuBtnRegular:hover .sapMBtnInner.sapMBtnAttention::after {
+	color: @sapUiButtonAttentionHoverTextColor;
+}
+
 //type Reject
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnReject::after {
 	color: @sapUiButtonRejectTextColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular:hover .sapMBtnInner.sapMBtnReject::after {
+	color: @sapUiButtonRejectHoverTextColor;
 }
 
 //type Default, Transparent(header)
@@ -144,14 +163,30 @@
 	color: @sapUiButtonCriticalTextColor;
 }
 
+.sapMMenuBtn.sapMMenuBtnRegular:hover .sapMBtnInner.sapMBtnCritical::after {
+	color: @sapUiButtonCriticalHoverTextColor;
+}
+
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnNegative::after {
 	color: @sapUiButtonNegativeTextColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular:hover .sapMBtnInner.sapMBtnNegative::after {
+	color: @sapUiButtonNegativeHoverTextColor;
 }
 
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnSuccess::after {
 	color: @sapUiButtonSuccessTextColor;
 }
 
+.sapMMenuBtn.sapMMenuBtnRegular:hover .sapMBtnInner.sapMBtnSuccess::after {
+	color: @sapUiButtonSuccessHoverTextColor;
+}
+
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnNeutral::after {
 	color: @sapUiButtonNeutralTextColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular:hover .sapMBtnInner.sapMBtnNeutral::after {
+	color: @sapUiButtonNeutralHoverTextColor;
 }
