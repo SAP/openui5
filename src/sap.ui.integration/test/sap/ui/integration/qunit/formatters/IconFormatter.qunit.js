@@ -44,6 +44,7 @@ function (
 		var aSamples = [
 				null,
 				"",
+				" ",
 				"./my/image.png",
 				"../my/image.png",
 				"http://my/image.png",
@@ -53,6 +54,7 @@ function (
 			aExpected = [
 				null,
 				"",
+				" ",
 				sap.ui.require.toUrl("test/app/id/./my/image.png"),
 				sap.ui.require.toUrl("test/app/id/../my/image.png"),
 				"http://my/image.png",

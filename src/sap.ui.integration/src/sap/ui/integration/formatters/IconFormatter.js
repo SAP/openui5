@@ -39,10 +39,10 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {string} sUrl The URL to format.
-	 * @returns {string|Promise} The formatted URL or a Promise which resolves with the formatted url.
+	 * @returns {string} The formatted URL.
 	 */
 	IconFormatter.prototype.formatSrc = function (sUrl) {
-		if (!sUrl) {
+		if (!sUrl || !sUrl.trim()) {
 			return sUrl;
 		}
 
