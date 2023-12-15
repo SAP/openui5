@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(() => {
+sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	"use strict";
 
 	/**
@@ -69,6 +69,11 @@ sap.ui.define(() => {
 		 */
 		EditForHelp: "EditForHelp"
 	};
+
+	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.enum.ContentMode", ContentMode);
 
 	return ContentMode;
 

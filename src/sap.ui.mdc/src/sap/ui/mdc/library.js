@@ -6,10 +6,11 @@
  * Initialization Code and shared classes of library sap.ui.mdc.
  */
 sap.ui.define([
+	"sap/ui/base/DataType",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library", // library dependency
 	"sap/m/library" // library dependency
-], (Library) => {
+], (DataType, Library) => {
 	"use strict";
 
 	/**
@@ -26,6 +27,7 @@ sap.ui.define([
 	 * @experimental As of version 1.54
 	 */
 	const thisLib = Library.init({
+		apiVersion: 2,
 		version: "${version}",
 		name: "sap.ui.mdc",
 		dependencies: ["sap.ui.core", "sap.m"],
@@ -842,6 +844,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.FilterBarP13nMode", thisLib.FilterBarP13nMode);
+
+	/**
 	 * Defines the type of table used in the MDC table.
 	 *
 	 * @enum {string}
@@ -871,6 +878,11 @@ sap.ui.define([
 		 */
 		ResponsiveTable: "ResponsiveTable"
 	};
+
+	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.TableType", thisLib.TableType);
 
 	/**
 	 * Defines the personalization mode of the table.
@@ -915,6 +927,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.TableP13nMode", thisLib.TableP13nMode);
+
+	/**
 	 * Defines the growing options of the responsive table.
 	 *
 	 * @enum {string}
@@ -944,6 +961,10 @@ sap.ui.define([
 		Scroll: "Scroll"
 	};
 
+	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.GrowingMode", thisLib.GrowingMode);
 
 	/**
 	 * Defines the row count mode of the GridTable.
@@ -968,6 +989,11 @@ sap.ui.define([
 		 */
 		Fixed: "Fixed"
 	};
+
+	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.RowCountMode", thisLib.RowCountMode);
 
 	/**
 	 * Defines the types of chart actions in the toolbar.<br>
@@ -1007,6 +1033,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.ChartToolbarActionType", thisLib.ChartToolbarActionType);
+
+	/**
 	 * Defines the personalization mode of the chart.
 	 *
 	 * @enum {string}
@@ -1043,6 +1074,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.ChartP13nMode", thisLib.ChartP13nMode);
+
+	/**
 	 * Defines the mode of the table.
 	 *
 	 * @enum {string}
@@ -1076,6 +1112,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.SelectionMode", thisLib.SelectionMode);
+
+	/**
 	 * Defines the actions that can be used in the table.
 	 *
 	 * @enum {string}
@@ -1092,6 +1133,11 @@ sap.ui.define([
 		 */
 		Navigation: "Navigation"
 	};
+
+	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.RowAction", thisLib.RowAction);
 
 	/**
 	 * Defines the filter expression types.
@@ -1120,6 +1166,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.FilterExpression", thisLib.FilterExpression);
+
+	/**
 	 * @enum {string}
 	 * @private
 	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.ChartItemType}
@@ -1136,6 +1187,11 @@ sap.ui.define([
 		 */
 		Measure: "Measure"
 	};
+
+	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.ChartItemType", thisLib.ChartItemType);
 
 	/**
 	 * @enum {string}
@@ -1186,6 +1242,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.ChartItemRoleType", thisLib.ChartItemRoleType);
+
+	/**
 	 * Enumeration of the <code>multiSelectMode</code> in <code>ListBase</code>.
 	 * @enum {string}
 	 * @private
@@ -1205,6 +1266,11 @@ sap.ui.define([
 		 */
 		ClearAll: "ClearAll"
 	};
+
+	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.MultiSelectMode", thisLib.MultiSelectMode);
 
 	/**
 	 * @typedef {object} sap.ui.mdc.TypeConfig

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(() => {
+sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	"use strict";
 
 	/**
@@ -25,6 +25,11 @@ sap.ui.define(() => {
 		 */
 		End: "End"
 	};
+
+	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.enum.ActionToolbarActionAlignment", ActionToolbarActionAlignment);
 
 	return ActionToolbarActionAlignment;
 
