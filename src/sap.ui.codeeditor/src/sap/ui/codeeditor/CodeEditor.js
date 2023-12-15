@@ -500,7 +500,17 @@ sap.ui.define([
 	};
 
 	CodeEditor.prototype.getFocusDomRef = function () {
-		return this.getDomRef().querySelector(".ace_scroller.ace_keyboard-focus");
+		const domRef = this.getDomRef();
+
+		if (!domRef) {
+			return null;
+		}
+
+		if (document.activeElement === domRef.querySelector(".ace_text-input")) {
+			return domRef.querySelector(".ace_text-input");
+		}
+
+		return domRef.querySelector(".ace_scroller.ace_keyboard-focus");
 	};
 
 	return CodeEditor;
