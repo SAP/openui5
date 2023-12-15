@@ -506,7 +506,7 @@ sap.ui.define([
 			});
 
 			aArray = aArray.filter(function (element) {
-				return element != null;
+				return element !== null;
 			});
 		}
 

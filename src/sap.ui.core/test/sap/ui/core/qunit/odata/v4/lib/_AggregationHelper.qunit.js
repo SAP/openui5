@@ -1048,7 +1048,7 @@ sap.ui.define([
 
 		this.mock(_AggregationHelper).expects("checkTypeof").never();
 		this.mock(_AggregationHelper).expects("buildApply4Hierarchy")
-			.withExactArgs(sinon.match.same(oAggregation), "~mQueryOptions~", iLevel == 0)
+			.withExactArgs(sinon.match.same(oAggregation), "~mQueryOptions~", iLevel === 0)
 			.returns("~result~");
 
 		assert.strictEqual(
