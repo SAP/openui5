@@ -30,6 +30,7 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @version ${version}
+	 * @since 1.121
 	 * @public
 	 * @alias sap.m.p13n.FilterController
 	 */
