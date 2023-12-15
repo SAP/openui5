@@ -905,29 +905,34 @@ sap.ui.define([
 	 * @param {number} iPrefetchLength
 	 *   The number of entries to prefetch before and after the given range; <code>Infinity</code>
 	 *   is supported
+	 * @param {function(object):boolean} [fnIsMissing]
+	 *   A function determining whether the given element is missing; if the function is not given,
+	 *   a test for <code>undefined</code> is used
 	 * @returns {object}
 	 *   An object with a member <code>start</code> for the start index for the next read and
 	 *   <code>length</code> for the number of entries to be read
 	 *
 	 * @private
 	 */
-	ODataUtils._getReadRange = function (aElements, iStart, iLength, iPrefetchLength) {
-		// Checks whether aElements contains at least one <code>undefined</code> entry within the
-		// given start (inclusive) and end (exclusive).
+	ODataUtils._getReadRange = function (aElements, iStart, iLength, iPrefetchLength, fnIsMissing) {
+		// Checks whether aElements contains at least one missing entry within the given start
+		// (inclusive) and end (exclusive).
 		function isDataMissing(iStart, iEnd) {
 			var i;
 			for (i = iStart; i < iEnd; i += 1) {
-				if (aElements[i] === undefined) {
+				if (fnIsMissing(aElements[i])) {
 					return true;
 				}
 			}
 			return false;
 		}
 
+		fnIsMissing ??= (oElement) => oElement === undefined;
+
 		if (isDataMissing(iStart + iLength, iStart + iLength + iPrefetchLength / 2)) {
 			iLength += iPrefetchLength;
 		}
-		if (isDataMissing(Math.max(iStart - iPrefetchLength / 2, 0), iStart)) {
+		if (isDataMissing(Math.max(Math.floor(iStart - iPrefetchLength / 2), 0), iStart)) {
 			iLength += iPrefetchLength;
 			iStart -= iPrefetchLength;
 			if (iStart < 0) {

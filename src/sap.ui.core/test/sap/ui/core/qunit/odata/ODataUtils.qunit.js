@@ -769,6 +769,14 @@ sap.ui.define([
 }, { // fetch all data with offset
 	range : [1, 0, Infinity],
 	expected : {start : 0, length : Infinity}
+}, { // odd prefetch length, nothing missing
+	current : [[25, 50]],
+	range : [29, 3, 5],
+	expected : {start : 29, length : 3}
+}, { // odd prefetch length, prefetch before
+	current : [[25, 50]],
+	range : [27, 3, 5],
+	expected : {start : 22, length : 8}
 }].forEach(function (oFixture) {
 	QUnit.test("_getReadRange: " + oFixture.range, function (assert) {
 		var aElements = [],
@@ -792,4 +800,17 @@ sap.ui.define([
 		assert.deepEqual(oResult, oFixture.expected);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_getReadRange with placeholder", function (assert) {
+		const oPlaceholder = {placeholder : true};
+		const aElements = [oPlaceholder, oPlaceholder, {}, {}, {}, oPlaceholder, oPlaceholder,
+			oPlaceholder, oPlaceholder];
+
+		assert.deepEqual(
+			// code under test
+			ODataUtils._getReadRange(aElements, 2, 3, 4, (oElement) => oElement.placeholder),
+			{start : 0, length : 9}
+		);
+	});
 });

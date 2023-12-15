@@ -26865,6 +26865,7 @@ sap.ui.define([
 	// BCP: 2370011296
 	//
 	// Use a filter with spaces (BCP: 2380032202).
+	// Check prefetch for expand (JIRA: CPOUI5ODATAV4-2432)
 	QUnit.test("Recursive Hierarchy: expand root, w/ filter, search & orderby", function (assert) {
 		var oModel = this.createTeaBusiModel123({autoExpandSelect : true, groupId : "$direct"}),
 			oTable,
@@ -26880,7 +26881,7 @@ sap.ui.define([
 			$count : true,\
 			$filter : \'Is_Manager\',\
 			$orderby : \'AGE desc\'\
-		}}">\
+		}}" threshold="4" visibleRowCount="2">\
 	<Text id="id" text="{ID}"/>\
 </t:Table>',
 			that = this;
@@ -26891,7 +26892,7 @@ sap.ui.define([
 				+ ",filter(AGE ge 0 and (Is_Manager))/search(covfefe),keep start)"
 				+ "/orderby(AGE desc)/com.sap.vocabularies.Hierarchy.v1.TopLevels("
 				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
-				+ ",Levels=1)&$select=DrillState,ID&$count=true&$skip=0&$top=110", {
+				+ ",Levels=1)&$select=DrillState,ID&$count=true&$skip=0&$top=6", {
 				"@odata.count" : "1",
 				value : [{
 					DrillState : "collapsed",
@@ -26933,12 +26934,12 @@ sap.ui.define([
 					+ ",filter(AGE ge 0 and (Is_Manager))/search(covfefe),keep start)"
 					+ "/descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
 					+ "/orderby(AGE desc)"
-					+ "&$select=DrillState,ID&$count=true&$skip=0&$top=110", {
-					"@odata.count" : "1",
-					value : [{
-						DrillState : "leaf",
-						ID : "1"
-					}]
+					+ "&$select=DrillState,ID&$count=true&$skip=0&$top=6", {
+					"@odata.count" : "2",
+					value : [
+						{DrillState : "leaf", ID : "1"},
+						{DrillState : "leaf", ID : "2"}
+					]
 				})
 				.expectChange("id", [, "1"]);
 
@@ -26946,6 +26947,12 @@ sap.ui.define([
 			oRoot.expand();
 
 			return that.waitForChanges(assert, "expand root");
+		}).then(function () {
+			that.expectChange("id", [, "1", "2"]);
+
+			oTable.setFirstVisibleRow(1);
+
+			return that.waitForChanges(assert, "scroll down");
 		});
 	});
 
@@ -32458,6 +32465,96 @@ make root = ${bMakeRoot}`;
 				[undefined, 2, "1", "Beta"]
 			]);
 		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Paging with prefetch (threshold is 5, intentionally odd). Set first visible row to
+	// 30. Then consequetively increase resp. decrease it by one and see that requests only occur
+	// after threshold/2 has been surmounted.
+	// JIRA: CPOUI5ODATAV4-2432
+[false, true].forEach(function (bAggregation) {
+	const sTitle = "CPOUI5ODATAV4-2432: " + (bAggregation ? "Recursive Hierarchy: " : "")
+		+ "Paging w/ Prefetch";
+	QUnit.test(sTitle, async function (assert) {
+		var oTable;
+
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sParameters = bAggregation
+			? "{$$aggregation : {hierarchyQualifier : 'OrgChart'}}"
+			: "{$count : true}";
+		const sBaseQuery = bAggregation
+			? "$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
+				+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+				+ ",NodeProperty='ID',Levels=1)&$select=DrillState,ID"
+			: "$count=true&$select=ID";
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES', parameters : ${sParameters}}"
+		threshold="5" visibleRowCount="3">
+	<Text id="id" text="{ID}"/>
+</t:Table>`;
+		let bCount = bAggregation;
+
+		/**
+		 * Expects request (if iSkip and iTop are given) and change events.
+		 *
+		 * @param {number} iRow - The first visible row
+		 * @param {number} [iSkip] - $skip for the request; no request if undefined
+		 * @param {number} [iTop] - $top for the request
+		 */
+		const expect = (iRow, iSkip, iTop) => {
+			if (iSkip !== undefined) {
+				const aElements = [];
+				for (let i = 0; i < iTop; i += 1) {
+					aElements.push({DrillState : "leaf", ID : `E${iSkip + i}`});
+				}
+
+				const sQuery = sBaseQuery + (bCount ? "&$count=true" : "");
+				bCount = false;
+				this.expectRequest(`EMPLOYEES?${sQuery}&$skip=${iSkip}&$top=${iTop}`, {
+					"@odata.count" : "1000",
+					value : aElements
+				});
+			}
+			for (let i = 0; i < 3; i += 1) {
+				this.expectChange("id", `E${iRow + i}`, iRow + i);
+			}
+		};
+
+		/**
+		 * Scrolls the table to the given row, expects request and change events and waits for them.
+		 *
+		 * @param {number} iRow - The new first visible row
+		 * @param {number} [iSkip] - $skip for the request; no request if undefined
+		 * @param {number} [iTop] - $top for the request
+		 */
+		const scroll = async (iRow, iSkip, iTop) => {
+			expect(iRow, iSkip, iTop);
+			oTable.setFirstVisibleRow(iRow);
+
+			await this.waitForChanges(assert, `scroll to ${iRow}`);
+		};
+
+		expect(0, 0, 8); // 3 visible, 5 after
+
+		await this.createView(assert, sView, oModel);
+
+		oTable = this.oView.byId("table");
+		await scroll(30, 25, 13); // 5 before, 3 visible, 5 after
+		// forward
+		await scroll(31);
+		await scroll(32);
+		await scroll(33, 38, 3); // 3 after (> threshold/2)
+		await scroll(34);
+		await scroll(35);
+		await scroll(36, 41, 3); // 3 after
+		// backward
+		await scroll(29);
+		await scroll(28);
+		await scroll(27, 22, 3); // 3 before
+		await scroll(26);
+		await scroll(25);
+		await scroll(24, 19, 3); // 3 before
 	});
 });
 
