@@ -41,6 +41,7 @@
 				"comma-style": ["error", "last"],
 				"computed-property-spacing": "error",
 				"eol-last": "error",
+				"eqeqeq": "error",
 				"implicit-arrow-linebreak": "error", // let's see...
 				"jsx-quotes": "error", // let's see...
 				"key-spacing": ["error", {"beforeColon": true}],
