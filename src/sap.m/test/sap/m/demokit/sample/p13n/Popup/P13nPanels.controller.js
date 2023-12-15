@@ -18,29 +18,65 @@ sap.ui.define([
 		},
 
 		_initialData: {
-			columns: [
-				{visible: true, name: "key1", label: "City"},
-				{visible: false, name: "key2", label: "Country"},
-				{visible: false, name: "key3", label: "Region"}
+			columns: [{
+					visible: true,
+					name: "key1",
+					label: "City"
+				},
+				{
+					visible: false,
+					name: "key2",
+					label: "Country"
+				},
+				{
+					visible: false,
+					name: "key3",
+					label: "Region"
+				}
 			],
-			sort: [
-				{sorted: true, name: "key1", label: "City", descending: true},
-				{sorted: false, name: "key2", label: "Country", descending: false},
-				{sorted: false, name: "key3", label: "Region", descending: false}
+			sort: [{
+					sorted: true,
+					name: "key1",
+					label: "City",
+					descending: true
+				},
+				{
+					sorted: false,
+					name: "key2",
+					label: "Country",
+					descending: false
+				},
+				{
+					sorted: false,
+					name: "key3",
+					label: "Region",
+					descending: false
+				}
 			],
-			group: [
-				{grouped: true, name: "key1", label: "City"},
-				{grouped: false, name: "key2", label: "Country"},
-				{grouped: false, name: "key3", label: "Region"}
+			group: [{
+					grouped: true,
+					name: "key1",
+					label: "City"
+				},
+				{
+					grouped: false,
+					name: "key2",
+					label: "Country"
+				},
+				{
+					grouped: false,
+					name: "key3",
+					label: "Region"
+				}
 			]
 		},
 
 		_setInitialData: function() {
-			var oView = this.getView();
+			const oView = this.getView();
 
-			var oSelectionPanel = oView.byId("columnsPanel");
-			var oSortPanel = oView.byId("sortPanel");
-			var oGroupPanel = oView.byId("groupPanel");
+			const oSelectionPanel = oView.byId("columnsPanel");
+			const oSortPanel = oView.byId("sortPanel");
+			const oGroupPanel = oView.byId("groupPanel");
 
 			oSelectionPanel.setP13nData(this._initialData.columns);
 			oSortPanel.setP13nData(this._initialData.sort);
@@ -48,8 +84,8 @@ sap.ui.define([
 		},
 
 		onContainerOpen: function(oEvt) {
-			var oView = this.getView();
-			var oPopup = oView.byId("p13nPopup");
+			const oView = this.getView();
+			const oPopup = oView.byId("p13nPopup");
 			if (!this._bIsOpen) {
 				this._setInitialData();
 				this._bIsOpen = true;
@@ -59,7 +95,7 @@ sap.ui.define([
 		},
 
 		onClose: function(oEvt) {
-			var sReason = oEvt.getParameter("reason");
+			const sReason = oEvt.getParameter("reason");
 			MessageToast.show("Dialog close reason: " + sReason);
 		},
 
@@ -74,11 +110,11 @@ sap.ui.define([
 				MessageToast.show("P13n panel change reason:" + oEvt.getParameter("reason"));
 			}
 
-			var oView = this.getView();
-			var oEditor = oView.byId("p13nEditor");
+			const oView = this.getView();
+			const oEditor = oView.byId("p13nEditor");
 
-			var oP13nState = {
-				columns:  oView.byId("columnsPanel").getP13nData(),
+			const oP13nState = {
+				columns: oView.byId("columnsPanel").getP13nData(),
 				sort: oView.byId("sortPanel").getP13nData(),
 				group: oView.byId("groupPanel").getP13nData()
 			};

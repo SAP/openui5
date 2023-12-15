@@ -15,9 +15,9 @@ sap.ui.define([
 		},
 
 		onContainerOpen: function() {
-			var oView = this.getView();
-			var bDialog = oView.byId("dialogChose").getSelectedButton().getText() == "Dialog";
-			var oPopup = bDialog ? oView.byId("d1") : oView.byId("p1");
+			const oView = this.getView();
+			const bDialog = oView.byId("dialogChose").getSelectedButton().getText() == "Dialog";
+			const oPopup = bDialog ? oView.byId("d1") : oView.byId("p1");
 
 			if (bDialog) {
 				oPopup.open();
@@ -31,14 +31,14 @@ sap.ui.define([
 		},
 
 		addCustomView: function(oEvt) {
-			var oP13nContainer, oCurrent = oEvt.getSource();
+			let oCurrent = oEvt.getSource();
 			while (!oCurrent.isA("sap.m.Dialog") && !oCurrent.isA("sap.m.ResponsivePopover")) {
 				oCurrent = oCurrent.getParent();
 			}
 
-			oP13nContainer = oCurrent.getContent()[0];
+			const oP13nContainer = oCurrent.getContent()[0];
 
-			var iLength = oP13nContainer.getViews().length;
+			const iLength = oP13nContainer.getViews().length;
 			oP13nContainer.addView(new AbstractContainerItem({
 				text: "View " + iLength,
 				key: "view" + iLength
@@ -46,7 +46,7 @@ sap.ui.define([
 		},
 
 		selectLayout: function(oEvt) {
-			var iBtn = oEvt.getParameter("selectedIndex");
+			const iBtn = oEvt.getParameter("selectedIndex");
 			oEvt.getSource().getModel().setProperty("/listLayout", iBtn === 0);
 		}
 	});

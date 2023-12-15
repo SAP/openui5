@@ -3,7 +3,7 @@ sap.ui.define([
 ], function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.p13n.EngineGridTableComponent", {
+	const Component = UIComponent.extend("sap.m.sample.p13n.EngineGridTableComponent", {
 
 		metadata: {
 			manifest: "json"

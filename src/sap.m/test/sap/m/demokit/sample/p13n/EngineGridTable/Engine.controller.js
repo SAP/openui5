@@ -15,17 +15,41 @@ sap.ui.define([
 	return Controller.extend("sap.m.sample.p13n.EngineGridTable.Page", {
 
 		onInit: function() {
-			var oData = {
-				items: [
-					{firstName: "Peter", lastName: "Mueller", size: "1.75", city: "Walldorf"},
-					{firstName: "Petra", lastName: "Maier", size: "1.85", city: "Walldorf"},
-					{firstName: "Thomas", lastName: "Smith", size: "1.95", city: "Walldorf"},
-					{firstName: "John", lastName: "Williams", size: "1.65", city: "Walldorf"},
-					{firstName: "Maria", lastName: "Jones", size: "1.55", city: "Walldorf"}
+			const oData = {
+				items: [{
+						firstName: "Peter",
+						lastName: "Mueller",
+						size: "1.75",
+						city: "Walldorf"
+					},
+					{
+						firstName: "Petra",
+						lastName: "Maier",
+						size: "1.85",
+						city: "Walldorf"
+					},
+					{
+						firstName: "Thomas",
+						lastName: "Smith",
+						size: "1.95",
+						city: "Walldorf"
+					},
+					{
+						firstName: "John",
+						lastName: "Williams",
+						size: "1.65",
+						city: "Walldorf"
+					},
+					{
+						firstName: "Maria",
+						lastName: "Jones",
+						size: "1.55",
+						city: "Walldorf"
+					}
 				]
 			};
 
-			var oModel = new JSONModel(oData);
+			const oModel = new JSONModel(oData);
 
 			this.getView().setModel(oModel);
 
@@ -33,13 +57,28 @@ sap.ui.define([
 		},
 
 		_registerForP13n: function() {
-			var oTable = this.byId("persoTable");
+			const oTable = this.byId("persoTable");
 
-			this.oMetadataHelper = new MetadataHelper([
-				{key: "firstName_col", label: "First Name", path: "firstName"},
-				{key: "lastName_col", label: "Last Name", path: "lastName"},
-				{key: "city_col", label: "City", path: "city"},
-				{key: "size_col", label: "Size", path: "size"}
+			this.oMetadataHelper = new MetadataHelper([{
+					key: "firstName_col",
+					label: "First Name",
+					path: "firstName"
+				},
+				{
+					key: "lastName_col",
+					label: "Last Name",
+					path: "lastName"
+				},
+				{
+					key: "city_col",
+					label: "City",
+					path: "city"
+				},
+				{
+					key: "size_col",
+					label: "Size",
+					path: "size"
+				}
 			]);
 
 			this._mIntialWidth = {
@@ -72,7 +111,7 @@ sap.ui.define([
 		},
 
 		openPersoDialog: function(oEvt) {
-			var oTable = this.byId("persoTable");
+			const oTable = this.byId("persoTable");
 
 			Engine.getInstance().show(oTable, ["Columns", "Sorter"], {
 				contentHeight: "35rem",
@@ -82,8 +121,8 @@ sap.ui.define([
 		},
 
 		onColumnHeaderItemPress: function(oEvt) {
-			var oTable = this.byId("persoTable");
-			var sPanel = oEvt.getSource().getIcon().indexOf("sort") >= 0 ? "Sorter" : "Columns";
+			const oTable = this.byId("persoTable");
+			const sPanel = oEvt.getSource().getIcon().indexOf("sort") >= 0 ? "Sorter" : "Columns";
 
 			Engine.getInstance().show(oTable, [sPanel], {
 				contentHeight: "35rem",
@@ -93,16 +132,16 @@ sap.ui.define([
 		},
 
 		onSort: function(oEvt) {
-			var oTable = this.byId("persoTable");
-			var sAffectedProperty = this._getKey(oEvt.getParameter("column"));
-			var sSortOrder = oEvt.getParameter("sortOrder");
+			const oTable = this.byId("persoTable");
+			const sAffectedProperty = this._getKey(oEvt.getParameter("column"));
+			const sSortOrder = oEvt.getParameter("sortOrder");
 
 			//Apply the state programatically on sorting through the column menu
 			//1) Retrieve the current personalization state
-			Engine.getInstance().retrieveState(oTable).then(function(oState){
+			Engine.getInstance().retrieveState(oTable).then(function(oState) {
 
 				//2) Modify the existing personalization state --> clear all sorters before
-				oState.Sorter.forEach(function(oSorter){
+				oState.Sorter.forEach(function(oSorter) {
 					oSorter.sorted = false;
 				});
 				oState.Sorter.push({
@@ -116,20 +155,24 @@ sap.ui.define([
 		},
 
 		onColumnMove: function(oEvt) {
-			var oTable = this.byId("persoTable");
-			var oAffectedColumn = oEvt.getParameter("column");
-			var iNewPos = oEvt.getParameter("newPos");
-			var sKey = this._getKey(oAffectedColumn);
+			const oTable = this.byId("persoTable");
+			const oAffectedColumn = oEvt.getParameter("column");
+			const iNewPos = oEvt.getParameter("newPos");
+			const sKey = this._getKey(oAffectedColumn);
 			oEvt.preventDefault();
 
-			Engine.getInstance().retrieveState(oTable).then(function(oState){
+			Engine.getInstance().retrieveState(oTable).then(function(oState) {
 
-				var oCol = oState.Columns.find(function(oColumn) {
+				const oCol = oState.Columns.find(function(oColumn) {
 					return oColumn.key === sKey;
-				}) || {key: sKey};
+				}) || {
+					key: sKey
+				};
 				oCol.position = iNewPos;
 
-				Engine.getInstance().applyState(oTable, {Columns: [oCol]});
+				Engine.getInstance().applyState(oTable, {
+					Columns: [oCol]
+				});
 			});
 		},
 
@@ -138,17 +181,17 @@ sap.ui.define([
 		},
 
 		handleStateChange: function(oEvt) {
-			var oTable = this.byId("persoTable");
-			var oState = oEvt.getParameter("state");
+			const oTable = this.byId("persoTable");
+			const oState = oEvt.getParameter("state");
 
 			if (!oState) {
 				return;
 			}
 
-			oTable.getColumns().forEach(function(oColumn){
+			oTable.getColumns().forEach(function(oColumn) {
 
-				var sKey = this._getKey(oColumn);
-				var sColumnWidth = oState.ColumnWidth[sKey];
+				const sKey = this._getKey(oColumn);
+				const sColumnWidth = oState.ColumnWidth[sKey];
 
 				oColumn.setWidth(sColumnWidth || this._mIntialWidth[sKey]);
 
@@ -156,17 +199,17 @@ sap.ui.define([
 				oColumn.setSortOrder(CoreLibrary.SortOrder.None);
 			}.bind(this));
 
-			oState.Columns.forEach(function(oProp, iIndex){
-				var oCol = this.byId(oProp.key);
+			oState.Columns.forEach(function(oProp, iIndex) {
+				const oCol = this.byId(oProp.key);
 				oCol.setVisible(true);
 
 				oTable.removeColumn(oCol);
 				oTable.insertColumn(oCol, iIndex);
 			}.bind(this));
 
-			var aSorter = [];
+			const aSorter = [];
 			oState.Sorter.forEach(function(oSorter) {
-				var oColumn = this.byId(oSorter.key);
+				const oColumn = this.byId(oSorter.key);
 				/** @deprecated As of version 1.120 */
 				oColumn.setSorted(true);
 				oColumn.setSortOrder(oSorter.descending ? CoreLibrary.SortOrder.Descending : CoreLibrary.SortOrder.Ascending);
@@ -176,11 +219,11 @@ sap.ui.define([
 		},
 
 		onColumnResize: function(oEvt) {
-			var oColumn = oEvt.getParameter("column");
-			var sWidth = oEvt.getParameter("width");
-			var oTable = this.byId("persoTable");
+			const oColumn = oEvt.getParameter("column");
+			const sWidth = oEvt.getParameter("width");
+			const oTable = this.byId("persoTable");
 
-			var oColumnState = {};
+			const oColumnState = {};
 			oColumnState[this._getKey(oColumn)] = sWidth;
 
 			Engine.getInstance().applyState(oTable, {
