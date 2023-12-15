@@ -19,13 +19,18 @@ sap.ui.define([
      * @public
      * @param {sinon.clock} [clock] A sinon clock. When using sinon faketimers the clock must be ticked to ensure async rendering.
      *  Async rendering is done with a setTimeout(0) so we tick a given clock by 1.
-     * @returns {Promise<undefined>} A promise resolving when the next UI update is finished
+     * @returns {Promise<undefined>} A promise resolving when the next UI update is finished or rejecting when the next update fails.
      */
     function nextUIUpdate(clock) {
-        return new Promise(function(resolve) {
-            function isUpdated() {
+        return new Promise(function(resolve, reject) {
+            function isUpdated(params) {
                 Rendering.detachUIUpdated(isUpdated);
-                resolve();
+                const error = params.getParameter("failed");
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve();
+                }
             }
 
             if (Rendering.isPending()) {
