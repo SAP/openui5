@@ -167,7 +167,9 @@
 				{
 					"buttonType": "Transparent",
 					"icon": "sap-icon://email",
-					"tooltip": "Contact",
+					"preferIcon": true,
+					"text": "Contact",
+					"tooltip": "Contact the person by sending an email",
 					"actions": [
 						{
 							"type": "Navigation",
@@ -179,8 +181,36 @@
 				},
 				{
 					"buttonType": "Transparent",
-					"icon": "sap-icon://world",
+					"icon": "sap-icon://share",
 					"text": "Share",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "/share"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"icon": "sap-icon://world",
+					"tooltip": "Share to the world",
+					"overflowPriority": "NeverOverflow",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "/share"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"icon": "sap-icon://world",
+					"tooltip": "Share to the world",
+					"overflowPriority": "AlwaysOverflow",
 					"actions": [
 						{
 							"type": "Navigation",

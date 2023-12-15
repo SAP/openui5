@@ -34,7 +34,6 @@
 				"position": "Sales Executive",
 				"phone": "+1 202 555 5555",
 				"email": "my@mymail.com",
-				"photo": "./DonnaMoore.png",
 				"agendaUrl": "/agenda",
 				"company": {
 					"name": "Robert Brown Entertainment",
@@ -48,7 +47,7 @@
 		},
 		"header": {
 			"icon": {
-				"src": ""
+				"src": "sap-icon://user"
 			},
 			"title": "Request from {firstName} {lastName}",
 			"subTitle": "{position}"
@@ -166,7 +165,9 @@
 				{
 					"buttonType": "Transparent",
 					"icon": "sap-icon://email",
-					"tooltip": "Contact",
+					"preferIcon": true,
+					"text": "Contact",
+					"tooltip": "Contact the person by sending an email",
 					"actions": [
 						{
 							"type": "Navigation",

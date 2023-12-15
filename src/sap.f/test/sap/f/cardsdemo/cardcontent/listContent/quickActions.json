@@ -94,9 +94,11 @@
 						]
 					},
 					{
-						"buttonType": "Reject",
-						"icon": "sap-icon://email",
-						"tooltip": "tooltip only",
+						"buttonType": "Accept",
+						"icon": "sap-icon://share",
+						"preferIcon": true,
+						"text": "Share",
+						"tooltip": "Share with your contacts",
 						"actions": [
 							{
 								"type": "Navigation",
@@ -169,22 +171,11 @@
 					]
 				},
 				{
-					"buttonType": "Reject",
-					"icon": "sap-icon://email",
-					"tooltip": "tooltip only",
-					"actions": [
-						{
-							"type": "Navigation",
-							"parameters": {
-								"url": "http://sap.com"
-							}
-						}
-					]
-				},
-				{
-					"buttonType": "Reject",
-					"icon": "sap-icon://email",
-					"text": "text only",
+					"buttonType": "Accept",
+					"icon": "sap-icon://share",
+					"preferIcon": true,
+					"text": "Share",
+					"tooltip": "Share with your contacts",
 					"actions": [
 						{
 							"type": "Navigation",

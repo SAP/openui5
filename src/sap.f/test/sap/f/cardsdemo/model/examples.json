@@ -147,7 +147,7 @@
 		"group": "Header and Footer"
 	},
 	{
-		"title": "Footer (experimental)",
+		"title": "Footer",
 		"description": "Having buttons with actions in a footer",
 		"route": "footer",
 		"group": "Header and Footer"
