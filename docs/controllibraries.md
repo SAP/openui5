@@ -15,7 +15,7 @@ Developing Content for UI5
     4.  [Right-to-Left Support](#right-to-left-support)
     5.  [Test Pages](#test-pages)
     6.  [QUnit Tests](#qunit-tests)
-    
+
 
 Control Libraries
 -----------------
@@ -82,15 +82,15 @@ This is one example file from an existing library:
   <vendor>SAP SE</vendor>
   <copyright>${copyright}</copyright>
   <version>${version}</version>
-  
+
   <documentation>Unified controls intended for both, mobile and desktop scenarios</documentation>
-  
+
   <dependencies>
 	<dependency>
 	  <libraryName>sap.ui.core</libraryName>
 	</dependency>
   </dependencies>
-  
+
   <appData>
 	<selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.unified" />
 	<!-- excludes for the JSCoverage -->
@@ -111,47 +111,50 @@ The `library.js` file is a central file for each control library that contains t
 
 The most important feature in this file from the perspective of a control developer is the list of controls maintained in the library declaration: all controls must be added there in order to make their constructors available immediately when the library is loaded (so applications only need to require the library, not each control).
 
-One example `library.js` file of a small control library, the `sap.ui.suite` library. It contains two controls (`sap.ui.suite.TaskCircle` and `sap.ui.suite.VerticalProgressIndicator`) and one enum (`sap.ui.suite.TaskCircleColor`). Also note the usage of JSDoc to create the API documentation:
+The example `library.js` file below of a small control library, the `my.sample.library` library, contains two controls (`my.sample.library.TaskCircle` and `my.sample.library.VerticalProgressIndicator`) and one enum (`my.sample.library.TaskCircleColor`). This enum is registered with the corresponding `sap.ui.base.DataType.registerEnum` API. Also note the usage of JSDoc to create the API documentation:
 ```js
 /*!
  * ${copyright}
  */
 
 /**
- * Initialization Code and shared classes of library sap.ui.suite.
+ * Initialization Code and shared classes of library my.sample.library.
  */
-sap.ui.define(['jquery.sap.global', 
-	'sap/ui/core/library'], // library dependency
-	function(jQuery) {
+sap.ui.define([
+	'sap/ui/base/DataType',
+	'sap/ui/core/Lib',
+	'sap/ui/core/library' // library dependency
+	], function(DataType, Library) {
 
 	"use strict";
 
 	/**
-	 * Suite controls library.
+	 * My sample controls library.
 	 *
 	 * @namespace
-	 * @alias sap.ui.suite
+	 * @alias my.sample.library
 	 * @author SAP SE
 	 * @version ${version}
 	 * @public
 	 */
-	
-	var thisLib = sap.ui.getCore().initLibrary({
-		name : "sap.ui.suite",
+
+	var thisLib = Library.init({
+		apiVersion: 2,
+		name : "my.sample.library",
 		version: "${version}",
 		dependencies : ["sap.ui.core"],
 		types: [
-			"sap.ui.suite.TaskCircleColor"
+			"my.sample.library.TaskCircleColor"
 		],
 		interfaces: [],
 		controls: [
-			"sap.ui.suite.TaskCircle",
-			"sap.ui.suite.VerticalProgressIndicator"
+			"my.sample.library.TaskCircle",
+			"my.sample.library.VerticalProgressIndicator"
 		],
 		elements: []
 	});
-	
-	
+
+
 	/**
 	 * Defined color values for the Task Circle Control
 	 *
@@ -160,32 +163,34 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 */
 	thisLib.TaskCircleColor = {
-	
+
 		/**
 		 * Red
 		 * @public
 		 */
 		Red : "Red",
-	
+
 		/**
 		 * Yellow
 		 * @public
 		 */
 		Yellow : "Yellow",
-	
+
 		/**
 		 * Green
 		 * @public
 		 */
 		Green : "Green",
-	
+
 		/**
 		 * Default value
 		 * @public
 		 */
 		Gray : "Gray"
-	
+
 	};
+
+	DataType.registerEnum("my.sample.library.TaskCircleColor", thisLib.TaskCircleColor);
 
 	return thisLib;
 
@@ -334,7 +339,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Constructor for a new ObjectNumber.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -347,38 +352,38 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @alias sap.m.ObjectNumber
 	 */
 	var ObjectNumber = Control.extend("sap.m.ObjectNumber", /** @lends sap.m.ObjectNumber.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
-	
+
 			/**
 			 * Number field of the object number
 			 */
 			number : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Number units qualifier
-			 * @deprecated Since version 1.16.1. 
-			 * 
+			 * @deprecated Since version 1.16.1.
+			 *
 			 * Replaced by unit property due to the number before unit is redundant.
 			 */
 			numberUnit : {type : "string", group : "Misc", defaultValue : null, deprecated: true},
-	
+
 			/**
 			 * Indicates if object number is visible. Invisible object number is not rendered.
 			 */
 			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * Indicates if the object number should appear emphasized
 			 */
 			emphasized : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * The object number's value state. Setting this state will cause the number to be rendered in state-specific colors (only blue-crystal theme).
 			 */
 			state : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None},
-	
+
 			/**
 			 * Number units qualifier. If numberUnit and unit are both set, the unit value is used.
 			 * @since 1.16.1
@@ -390,10 +395,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * String to prefix css class for number status to be used in
 	 * controler and renderer
-	 * @private 
+	 * @private
 	 */
 	ObjectNumber.prototype._sCSSPrefixObjNumberStatus = 'sapMObjectNumberStatus';
-	
+
 	/**
 	 * API method to set the object number's value state.
 	 *
@@ -403,13 +408,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	ObjectNumber.prototype.setState = function(sState) {
 		//remove the current value state css class
 		this.$().removeClass(this._sCSSPrefixObjNumberStatus + this.getState());
-	
+
 		//do suppress rerendering
 		this.setProperty("state", sState, true);
-	
+
 		//now set the new css state class
 		this.$().addClass(this._sCSSPrefixObjNumberStatus + this.getState());
-	
+
 		return this;
 	};
 
@@ -439,16 +444,16 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class NavContainer renderer. 
+	 * @class NavContainer renderer.
 	 * @static
 	 */
 	var NavContainerRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
@@ -457,39 +462,39 @@ sap.ui.define(['jquery.sap.global'],
 		if (!oControl.getVisible()) {
 			return;
 		}
-		
+
 		rm.write("<div");
 		rm.writeControlData(oControl);
-		
+
 		rm.addClass("sapMNav");
 		rm.addStyle("width", oControl.getWidth());
 		rm.addStyle("height", oControl.getHeight());
-	
+
 		if (this.renderAttributes) {
 			this.renderAttributes(rm, oControl); // may be used by inheriting renderers, but DO NOT write class or style attributes! Instead, call addClass/addStyle.
 		}
-		
+
 		rm.writeClasses();
 		rm.writeStyles();
-		
+
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
 			rm.writeAttributeEscaped("title", sTooltip);
 		}
 		rm.write(">"); // div element
-	
+
 		if (this.renderBeforeContent) {
 			this.renderBeforeContent(rm, oControl); // hook method; may be used by inheriting renderers
 		}
-		
+
 		var oContent = oControl.getCurrentPage();
 		if (oContent) {
 			rm.renderControl(oContent);
 		}
-	
+
 		rm.write("</div>");
 	};
-	
+
 
 	return NavContainerRenderer;
 
@@ -511,11 +516,11 @@ sap.ui.define(['jquery.sap.global', './ButtonRenderer', 'sap/ui/core/Renderer'],
 
 	ToggleButtonRenderer.renderButtonAttributes = function(rm, oToggleButton) {
 		var bPressed = oToggleButton.getPressed();
-	
+
 		if (bPressed) {
 			rm.addClass("sapMToggleBtnPressed");
 		}
-	
+
 		rm.writeAttribute('pressed', bPressed);
 	};
 
@@ -565,9 +570,9 @@ In the UI5 theming concept, RTL support is defined as follows:
   ``` css
         html[dir=rtl] .sapUiBtn {
            color: red; /* make button text red in RTL mode */
-        }   
+        }
   ```
-		
+
 However, this should only be required in rare cases, as the mentioned CSS mirroring algorithm covers most required RTL transformations. NOTE: this style is also mirrored in the actual RTL case, so you might need to write it mirrored.
 
 
