@@ -679,6 +679,7 @@ sap.ui.define([
 				containerHeight = Math.ceil(parseFloat(defaultSectionHeight));
 
 			oDom.style.height = (contentHeight > containerHeight) ? "" : defaultSectionHeight;
+			this._height = oDom.style.height;
 		}
 	};
 
