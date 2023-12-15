@@ -7,12 +7,14 @@
  */
 sap.ui.define([
 	"sap/ui/core/Lib",
+	"sap/ui/base/DataType",
 	"sap/ui/model/TreeAutoExpandMode", // TODO: Remove in UI5 2.0
 	// library dependencies
 	"sap/ui/core/library",
 	"sap/ui/unified/library"
 ], function(
 	Library,
+	DataType,
 	TreeAutoExpandMode // TODO: Remove in UI5 2.0
 ) {
 	"use strict";
@@ -29,6 +31,7 @@ sap.ui.define([
 	 */
 	var thisLib = Library.init({
 		name: "sap.ui.table",
+		apiVersion: 2,
 		version: "${version}",
 		dependencies: ["sap.ui.core", "sap.ui.unified"],
 		designtime: "sap/ui/table/designtime/library.designtime",
@@ -113,6 +116,8 @@ sap.ui.define([
 
 	};
 
+	DataType.registerEnum("sap.ui.table.NavigationMode", thisLib.NavigationMode);
+
 	/**
 	 * Row Action types.
 	 *
@@ -142,6 +147,8 @@ sap.ui.define([
 
 	};
 
+	DataType.registerEnum("sap.ui.table.RowActionType", thisLib.RowActionType);
+
 	/**
 	 * Selection behavior of the table
 	 *
@@ -170,6 +177,8 @@ sap.ui.define([
 		RowOnly: "RowOnly"
 
 	};
+
+	DataType.registerEnum("sap.ui.table.SelectionBehavior", thisLib.SelectionBehavior);
 
 	/**
 	 * Selection mode of the table
@@ -207,6 +216,8 @@ sap.ui.define([
 
 	};
 
+	DataType.registerEnum("sap.ui.table.SelectionMode", thisLib.SelectionMode);
+
 	/**
 	 * Sort order of a column
 	 *
@@ -230,6 +241,9 @@ sap.ui.define([
 		Descending: "Descending"
 
 	};
+
+	/** @deprecated As of version 1.120 */
+	DataType.registerEnum("sap.ui.table.SortOrder", thisLib.SortOrder);
 
 	/**
 	 * VisibleRowCountMode of the table
@@ -259,6 +273,8 @@ sap.ui.define([
 		Auto: "Auto"
 
 	};
+
+	DataType.registerEnum("sap.ui.table.VisibleRowCountMode", thisLib.VisibleRowCountMode);
 
 	/**
 	 * Shared DOM Reference IDs of the table.
@@ -355,6 +371,9 @@ sap.ui.define([
 		ServiceReset: "ServiceReset"
 	};
 
+	/** @deprecated As of version 1.115 */
+	DataType.registerEnum("sap.ui.table.ResetAllMode", thisLib.ResetAllMode);
+
 	/** @deprecated As of version 1.120 */
 	thisLib.ColumnHeader = thisLib.Column; // map the new Column to the old ColumnHeader
 
@@ -394,6 +413,8 @@ sap.ui.define([
 		 */
 		MultiToggle: "MultiToggle"
 	};
+
+	DataType.registerEnum("sap.ui.table.plugins.SelectionMode", thisLib.plugins.SelectionMode);
 
 	//factory for table to create labels and textviews to be overwritten by commons and mobile library
 	/**
