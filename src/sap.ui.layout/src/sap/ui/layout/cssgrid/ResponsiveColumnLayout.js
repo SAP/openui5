@@ -30,6 +30,17 @@ sap.ui.define([
 	 *
 	 * Grid row's height is dynamically determined by the height of the highest grid element on this row.
 	 *
+	 * The control provides the following breakpoints and layout sizes:
+	 * <ul>
+	 * <li> "S" - screen width: up to 599px.</li>
+	 * <li> "M" - screen width range: 600px - 1023px.</li>
+	 * <li> "ML" - screen width range: 1024px - 1279px.</li>
+	 * <li> "L" - screen width range: 1280px - 1439px.</li>
+	 * <li> "XL" - screen width range: 1440px - 1679px.</li>
+	 * <li> "XXL" - screen width range: 1680px - 1919px.</li>
+	 * <li> "XXXL" - screen width range: 1920px and bigger.</li>
+	 * </ul>
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
