@@ -5,8 +5,12 @@
 /**
  * Initialization Code and shared classes of library sap.tnt.
  */
-sap.ui.define(["sap/ui/core/library", "sap/m/library"],
-	function() {
+sap.ui.define([
+	"sap/ui/base/DataType",
+	"sap/ui/core/Lib",
+	"sap/ui/core/library",
+	"sap/m/library"],
+	function(DataType, Library) {
 	"use strict";
 
 	/**
@@ -19,7 +23,8 @@ sap.ui.define(["sap/ui/core/library", "sap/m/library"],
 	 * @since 1.36
 	 * @public
 	 */
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Library.init({
+		apiVersion: 2,
 		name : "sap.tnt",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m"],
@@ -70,6 +75,9 @@ sap.ui.define(["sap/ui/core/library", "sap/m/library"],
 		 */
 		Loose: "Loose"
 	};
+
+	// Register all above defined enums.
+	DataType.registerEnum("sap.tnt.RenderMode", thisLib.RenderMode);
 
 	/**
 	 * Interface for controls suitable for the <code>header</code> aggregation of {@link sap.tnt.ToolPage}.
