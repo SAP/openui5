@@ -6,15 +6,17 @@
  * Initialization Code and shared classes of library sap.ui.unified.
  */
 sap.ui.define([
- 'sap/ui/core/Core',
  'sap/ui/base/Object',
+ 'sap/ui/base/DataType',
+ 'sap/ui/core/Lib',
  "./ColorPickerDisplayMode",
  "./FileUploaderHttpRequestMethod",
  "sap/ui/core/RenderManager",
  'sap/ui/core/library'
 ], function(
- Core,
  BaseObject,
+ DataType,
+ Library,
  ColorPickerDisplayMode,
  FileUploaderHttpRequestMethod,
  RenderManager
@@ -32,8 +34,9 @@ sap.ui.define([
 	 * @since 1.28
 	 * @public
 	 */
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Library.init({
 		name : "sap.ui.unified",
+		apiVersion: 2,
 		version: "${version}",
 		dependencies : ["sap.ui.core"],
 		designtime: "sap/ui/unified/designtime/library.designtime",
@@ -261,6 +264,8 @@ sap.ui.define([
 
 	};
 
+	DataType.registerEnum("sap.ui.unified.CalendarDayType", thisLib.CalendarDayType);
+
 	/**
 	 * Standard day types visualized in a {@link sap.m.PlanningCalendarLegend}, which correspond to days in a {@link sap.ui.unified.Calendar}.
 	 * @enum {string}
@@ -292,6 +297,8 @@ sap.ui.define([
 		 */
 		Selected: "Selected"
 	};
+
+	DataType.registerEnum("sap.ui.unified.StandardCalendarLegendItem", thisLib.StandardCalendarLegendItem);
 
 	/**
 	 * Interval types in a <code>CalendarRow</code>.
@@ -340,6 +347,8 @@ sap.ui.define([
 
 	};
 
+	DataType.registerEnum("sap.ui.unified.CalendarIntervalType", thisLib.CalendarIntervalType);
+
 	/**
 	 * Types of a calendar appointment display mode
 	 *
@@ -376,6 +385,8 @@ sap.ui.define([
 
 	};
 
+	DataType.registerEnum("sap.ui.unified.CalendarAppointmentHeight", thisLib.CalendarAppointmentHeight);
+
 	/**
 	 * Types of a calendar appointment display mode
 	 *
@@ -401,6 +412,8 @@ sap.ui.define([
 
 	};
 
+	DataType.registerEnum("sap.ui.unified.CalendarAppointmentRoundWidth", thisLib.CalendarAppointmentRoundWidth);
+
 	/**
 	 * Types of display mode for overlapping appointments.
 	 *
@@ -423,6 +436,8 @@ sap.ui.define([
 		Expanded : "Expanded"
 
 	};
+
+	DataType.registerEnum("sap.ui.unified.GroupAppointmentsMode", thisLib.GroupAppointmentsMode);
 
 	// expose imported enum as property of library namespace, for documentation see FileUploaderHttpRequestMethod.js
 	thisLib.FileUploaderHttpRequestMethod = FileUploaderHttpRequestMethod;
@@ -449,6 +464,8 @@ sap.ui.define([
 		Filled : "Filled"
 
 	};
+
+	DataType.registerEnum("sap.ui.unified.CalendarAppointmentVisualization", thisLib.CalendarAppointmentVisualization);
 
 	/**
 	 * Predefined animations for the ContentSwitcher
@@ -505,6 +522,8 @@ sap.ui.define([
 
 	};
 
+	DataType.registerEnum("sap.ui.unified.ContentSwitcherAnimation", thisLib.ContentSwitcherAnimation);
+
 	/**
 	 * different styles for a ColorPicker.
 	 *
@@ -526,6 +545,8 @@ sap.ui.define([
 		HSL : "HSL"
 
 	};
+
+	DataType.registerEnum("sap.ui.unified.ColorPickerMode", thisLib.ColorPickerMode);
 
 	// expose imported enum as property of library namespace, for documentation see ColorPickerDisplayMode.js
 	thisLib.ColorPickerDisplayMode = ColorPickerDisplayMode;
