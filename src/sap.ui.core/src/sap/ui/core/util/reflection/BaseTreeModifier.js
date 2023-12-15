@@ -106,15 +106,15 @@ sap.ui.define([
 		/**
 		 * Function determining the control ID from the selector.
 		 *
-		 * @param {object} oSelector - Target of a flexiblity change
+		 * @param {object} oSelector - Target of a flexibility change
 		 * @param {string} oSelector.id - ID of the control targeted by the change
 		 * @param {boolean} oSelector.isLocalId - <code>true</code> if the ID within the selector is a local ID or a global ID
-		 * @param {sap.ui.core.UIComponent} oAppComponent - Application component
+		 * @param {sap.ui.core.UIComponent|string} vAppComponent - Application component instance or ID
 		 * @returns {string} ID of the control
 		 * @throws {Error} In case no control could be determined, an error is thrown
 		 * @protected
 		 */
-		getControlIdBySelector: function (oSelector, oAppComponent) {
+		getControlIdBySelector: function (oSelector, vAppComponent) {
 			if (!oSelector){
 				return undefined;
 			}
@@ -128,8 +128,12 @@ sap.ui.define([
 			var sControlId = oSelector.id;
 
 			if (oSelector.idIsLocal) {
-				if (oAppComponent) {
-					sControlId = oAppComponent.createId(sControlId);
+				if (vAppComponent) {
+					if (typeof vAppComponent === "string") {
+						sControlId = `${vAppComponent}---${sControlId}`;
+					} else {
+						sControlId = vAppComponent.createId(sControlId);
+					}
 				} else {
 					throw new Error("App Component instance needed to get a control's ID from selector");
 				}

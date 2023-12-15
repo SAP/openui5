@@ -43,7 +43,7 @@ sap.ui.define([
 			};
 			return FlexTestAPI.createVariantModel({
 				data: oData,
-				appComponent: this.oMockedAppComponent
+				appComponent: oMockedAppComponent
 			}).then(function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 				this.oVariantManagement = new VariantManagement("variantMgmtId1");

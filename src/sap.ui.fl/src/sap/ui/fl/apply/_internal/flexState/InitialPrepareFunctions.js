@@ -5,11 +5,13 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/Layer"
 ], function(
 	Lib,
 	ControlVariantUtils,
 	FlexObjectFactory,
+	DependencyHandler,
 	Layer
 ) {
 	"use strict";
@@ -86,10 +88,18 @@ sap.ui.define([
 		return oUpdate;
 	};
 
-	InitialPrepareFunctions.uiChanges = function() {
-		// For now this is handled by the ChangePersistence
-		// to improve performance until we can distinguish changes during
-		// the data selector invalidation
+	InitialPrepareFunctions.uiChanges = function(mPropertyBag) {
+		const oDependencyMap = DependencyHandler.createEmptyDependencyMap();
+		mPropertyBag.flexObjects.forEach((oFlexObject) => {
+			if (oFlexObject.isA("sap.ui.fl.apply._internal.flexObjects.UIChange") && !oFlexObject.getVariantReference()) {
+				DependencyHandler.addChangeAndUpdateDependencies(oFlexObject, mPropertyBag.componentId, oDependencyMap);
+			}
+		});
+		return {
+			runtimeOnlyData: {
+				liveDependencyMap: oDependencyMap
+			}
+		};
 	};
 
 	return InitialPrepareFunctions;

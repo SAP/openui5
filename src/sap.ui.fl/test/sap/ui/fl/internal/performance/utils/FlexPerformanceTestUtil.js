@@ -42,9 +42,10 @@ sap.ui.define([
 	var FlexPerformanceTestUtil = {};
 
 	function _areAllChangesApplied() {
+		// TODO: to be changed, flexReference should be known and not fetched from the ChangePersistenceFactory
 		var oInstanceCache = ChangePersistenceFactory._instanceCache;
 		var sComponent = Object.keys(oInstanceCache)[0];
-		var {aChanges} = oInstanceCache[sComponent]._mChanges;
+		var {aChanges} = oInstanceCache[sComponent].getDependencyMapForComponent();
 		return !aChanges.some(function(oChange) {
 			return !oChange.isSuccessfullyApplied();
 		});

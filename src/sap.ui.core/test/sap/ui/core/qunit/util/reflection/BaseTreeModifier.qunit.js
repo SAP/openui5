@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	BaseTreeModifier,
 	JsControlTreeModifier,
 	XmlTreeModifier,
@@ -509,6 +508,16 @@ function(
 			BaseTreeModifier.setPropertyBindingOrProperty(undefined, undefined, vBindingOrValue);
 			assert.equal(oPropertyBindingStub.callCount, 3, "the propertyBindingStub was called");
 			assert.equal(oPropertyStub.callCount, 3, "the propertyBindingStub was not called");
+		});
+
+		QUnit.test("when getControlIdBySelector is called with a string", function(assert) {
+			const sAppComponentId = "myAppComponentId";
+			const oSelector = {
+				idIsLocal: true,
+				id: "myLocalId"
+			};
+			const sId = BaseTreeModifier.getControlIdBySelector(oSelector, sAppComponentId);
+			assert.strictEqual(sId, `${sAppComponentId}---${oSelector.id}`, "the Id is correctly calculated");
 		});
 	});
 

@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/ExtensionPoint",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
 	"sap/ui/fl/apply/_internal/extensionPoint/Registry",
-	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
@@ -16,7 +16,7 @@ sap.ui.define([
 	ExtensionPoint,
 	ExtensionPointProcessor,
 	ExtensionPointRegistry,
-	ChangePersistenceFactory,
+	UIChangesState,
 	AddXMLAtExtensionPoint,
 	sinon,
 	FlQUnitUtils
@@ -152,7 +152,8 @@ sap.ui.define([
 		};
 
 		var checkChangesContent = function(sReference) {
-			var mChanges = ChangePersistenceFactory._instanceCache["sap.ui.fl.qunit.extensionPoint.testApp"]._mChangesEntries;
+			var {aChanges} = UIChangesState.getLiveDependencyMap("sap.ui.fl.qunit.extensionPoint.testApp");
+			const mChanges = aChanges.reduce((oAccumulator, oChange) => Object.assign(oAccumulator, {[oChange.getId()]: oChange}), {});
 			// Changes on async view carries no ep info
 			assert.equal(mChanges[`${sReference}_EP1_async_VENDOR_addXMLAtExtensionPoint`].getExtensionPointInfo(), null, "oChange1 carries no extension point info");
 			assert.equal(mChanges[`${sReference}_EP3_async_VENDOR_addXMLAtExtensionPoint`].getExtensionPointInfo(), null, "oChange3 carries no extension point info");
