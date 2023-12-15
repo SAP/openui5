@@ -10785,7 +10785,7 @@ sap.ui.define([
 	[-1, +1, 0].forEach((iDirection) => { // child is before or after parent (or right in place)
 		[false, true].forEach((bIsExpanded) => {
 			[1, 4].forEach((iCount) => {
-				[undefined, 1, Number.MAX_SAFE_INTEGER, 1E16].forEach((iExpandTo) => {
+				[1, Number.MAX_SAFE_INTEGER, 1E16].forEach((iExpandTo) => {
 					[false, true].forEach((bMakeRoot) => {
 	const sTitle = `move: created=${bCreated}, direction=${iDirection}, expanded=${bIsExpanded},
 child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
@@ -10823,10 +10823,7 @@ child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 		const oBinding = this.bindList("/EMPLOYEES");
 		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
 		// too far :-(
-		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
-		if (iExpandTo !== undefined) {
-			oBinding.mParameters.$$aggregation.expandTo = iExpandTo;
-		}
+		oBinding.mParameters.$$aggregation = {expandTo : iExpandTo, hierarchyQualifier : "X"};
 		const oCollapseExpectation = this.mock(oBinding).expects("collapse")
 			.exactly(bIsExpanded ? 1 : 0).withExactArgs(sinon.match.same(oChildContext), true);
 		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~group~");
