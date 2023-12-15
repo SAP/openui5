@@ -869,7 +869,7 @@ sap.ui.define([
 
 		// Button resets the focus manually to the button in Firefox
 		// but we need the focus to remain in the menu
-		if (Device.browser.firefox && this.isOpen()) {
+		if (Device.os.name == "mac" && Device.browser.firefox && this.isOpen()) {
 			var sControlId = oEvent.relatedControlId,
 				oRelatedControl = sControlId ? Element.getElementById(sControlId) : null,
 				bMenuItem = oRelatedControl && oRelatedControl instanceof MenuItemBase;

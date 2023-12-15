@@ -7,7 +7,7 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/link/opa/test/Action",
 	"test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion",
 	"test-resources/sap/ui/mdc/qunit/link/opa/pages/AppUnderTest",
-	"test-resources/sap/ui/rta/internal/integration/pages/Adaptation"
+	"test-resources/sap/ui/rta/integration/pages/Adaptation"
 ], function(Opa5, opaQunit, Arrangement, Action, Assertion) {
 	"use strict";
 

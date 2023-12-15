@@ -31,6 +31,7 @@ sap.ui.define([
 	"./plugins/SelectionModelSelection",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
+	"sap/ui/core/Core",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/library"
 ], function(
@@ -62,6 +63,7 @@ sap.ui.define([
 	SelectionModelSelectionPlugin,
 	jQuery,
 	Log,
+	Core,
 	Configuration,
 	CoreLibrary
 ) {
@@ -779,7 +781,7 @@ sap.ui.define([
 
 		this._nDevicePixelRatio = window.devicePixelRatio;
 
-		if (sap.ui.getCore().isThemeApplied()) {
+		if (Core.isThemeApplied()) {
 			TableUtils.readThemeParameters();
 		}
 
@@ -1241,7 +1243,7 @@ sap.ui.define([
 
 		var oDomRef = this.getDomRef();
 
-		if (this._bInvalid || !oDomRef || !sap.ui.getCore().isThemeApplied() || oDomRef.offsetWidth === 0) {
+		if (this._bInvalid || !oDomRef || !Core.isThemeApplied() || oDomRef.offsetWidth === 0) {
 			return;
 		}
 

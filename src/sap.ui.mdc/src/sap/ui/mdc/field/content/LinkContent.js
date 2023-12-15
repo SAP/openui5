@@ -2,25 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/field/content/DefaultContent", "sap/m/library"
-], (DefaultContent, mLibrary) => {
+	"sap/m/library"
+], (mLibrary) => {
 	"use strict";
 
 	const { EmptyIndicatorMode } = mLibrary;
+	const wmContentTypes = new WeakMap();
 
-	/**
-	 * Object-based definition of the link content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
-	 * This defines which controls to load and create for a given {@link sap.ui.mdc.enums.ContentMode}.
-	 * @namespace
-	 * @author SAP SE
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
-	 * @experimental As of version 1.87
-	 * @since 1.87
-	 * @alias sap.ui.mdc.field.content.LinkContent
-	 * @extends sap.ui.mdc.field.content.DefaultContent
-	 */
-	const LinkContent = Object.assign({}, DefaultContent, {
+	const oLinkFunctions = {
 		getDisplay: function() {
 			return ["sap/m/Link"];
 		},
@@ -61,9 +50,36 @@ sap.ui.define([
 			throw new Error("sap.ui.mdc.field.content.LinkContent - createDisplayMultiValue not defined!");
 		},
 		createDisplayMultiLine: function(oContentFactory, aControlClasses, sId) {
-			return LinkContent.createDisplay(oContentFactory, aControlClasses, sId);
+			return this.createDisplay(oContentFactory, aControlClasses, sId);
 		}
-	});
+	};
+
+	/**
+	 * Object-based definition of the link content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
+	 * This defines which controls to load and create for a given {@link sap.ui.mdc.enums.ContentMode}.
+	 * The <code>LinkContent</code> can extend any data-type based content.
+	 * @namespace
+	 * @author SAP SE
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @experimental As of version 1.87
+	 * @since 1.87
+	 * @alias sap.ui.mdc.field.content.LinkContent
+	 * @extends sap.ui.mdc.field.content.DefaultContent
+	 */
+	const LinkContent = {
+		extendBaseContent: function(oBaseContent) {
+			let oLinkContent = wmContentTypes.get(oBaseContent);
+
+			if (!oLinkContent) {
+				const oNewBaseContent = Object.assign({}, oBaseContent); // do not overwrite original content
+				oLinkContent = Object.assign(oNewBaseContent, oLinkFunctions);
+				wmContentTypes.set(oBaseContent, oLinkContent);
+			}
+
+			return oLinkContent;
+		}
+	};
 
 	return LinkContent;
 });

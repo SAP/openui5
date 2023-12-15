@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/Device",
 	"sap/ui/core/library",
-	"sap/ui/core/theming/Parameters",
+	"sap/ui/core/Theming",
 	"sap/m/library",
 	"sap/m/StandardListItem",
 	"sap/m/App",
@@ -39,7 +39,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/IllustratedMessage",
 	"sap/ui/core/InvisibleMessage"
-], function(Core, Element, Library, createAndAppendDiv, jQuery, qutils, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, ThemeParameters, library, StandardListItem, App, Page, ListBase, List, Toolbar, ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator, VerticalLayout, IllustratedMessage, InvisibleMessage) {
+], function(Core, Element, Library, createAndAppendDiv, jQuery, qutils, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, Theming, library, StandardListItem, App, Page, ListBase, List, Toolbar, ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator, VerticalLayout, IllustratedMessage, InvisibleMessage) {
 	"use strict";
 	jQuery("#qunit-fixture").attr("data-sap-ui-fastnavgroup", "true");
 
@@ -2536,39 +2536,65 @@ sap.ui.define([
 		oList.destroy();
 	});
 
-	QUnit.test("List theme parameters", function(assert){
-		var oListItem1 = new StandardListItem({
-				title: "oListItem1"
-			}),
-			oList = new List({
-				items: [oListItem1]
+	QUnit.module("Theming", {
+		beforeEach: function() {
+			this.oListItem = new StandardListItem({
+				title: "ListItem"
+			});
+			this.oList = new List({
+				items: [this.oListItem]
 			});
 
-		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+			this.oList.placeAt("qunit-fixture");
+			Core.applyChanges();
 
-		oListItem1.getDeleteControl(true);
-		var sDeleteIcon = oListItem1._oDeleteControl.getIcon();
-		assert.equal(sDeleteIcon, "sap-icon://sys-cancel", "Delete icon is correct");
+			this._iThreshold = QUnit.config.testTimeout;
+			QUnit.config.testTimeout = 120000; // 2 min timeout to prevent issues with the multiple theme changes
+		},
+		afterEach: function() {
+			this.oList.destroy();
 
-		var oThemeStub = this.stub(ThemeParameters, "get");
-		oThemeStub.withArgs({name: "_sap_m_ListItemBase_DeleteIcon"}).returns("decline");
-		var oEvent = new jQuery.Event();
-		oEvent.theme = "sap_fiori_3";
-		oListItem1.onThemeChanged(oEvent);
-		sDeleteIcon = oListItem1._oDeleteControl.getIcon();
-		assert.equal(sDeleteIcon, "sap-icon://decline", "Delete icon has been changed");
+			QUnit.config.testTimeout = this._iThreshold;
+		}
+	});
 
-		var oListItem2 = new StandardListItem({
-			title: "oListItem2"
-		});
-		oListItem2.getDeleteControl(true);
-		sDeleteIcon = oListItem2._oDeleteControl.getIcon();
-		assert.equal(sDeleteIcon, "sap-icon://decline", "Delete icon is correct for newly created items");
+	QUnit.test("Delete Icon", function(assert) {
+		const done = assert.async();
+		this.clock.restore();
 
-		oList.destroy();
-		// reset stub
-		oThemeStub.restore();
+		var aThemes = ["sap_fiori_3", "sap_horizon", "sap_horizon_dark", "sap_horizon_hcb", "sap_horizon_hcw"];
+
+		assert.expect(aThemes.length + 1);
+		assert.ok(this.oListItem.getDeleteControl(true), "Delete Control exists.");
+
+		var fnThemeChanged = (oEvent) => {
+			var sTheme = oEvent.theme;
+			var sExpectedIconType;
+
+			switch (sTheme) {
+				case "sap_horizon" :
+				case "sap_horizon_dark" :
+				case "sap_horizon_hcb" :
+				case "sap_horizon_hcw" :
+				case "sap_fiori_3" :
+					sExpectedIconType = "sap-icon://decline";
+					break;
+				default : sExpectedIconType = "sap-icon://sys-cancel";
+			}
+
+			assert.equal(this.oListItem.getDeleteControl(true).getIcon(), sExpectedIconType, "Delete icon is correct for Theme " + sTheme);
+
+			if (sTheme === aThemes.at(-1)) {
+				Theming.detachApplied(fnThemeChanged);
+				done();
+			} else {
+				const iPosition = aThemes.indexOf(sTheme);
+				aThemes.splice(iPosition, 1);
+				Theming.setTheme(aThemes[0]);
+			}
+		};
+
+		Theming.attachApplied(fnThemeChanged);
 	});
 
 	QUnit.module("Navigated indicator", {

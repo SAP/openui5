@@ -6,7 +6,7 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
 	'sap/ui/Device',
-	'test-resources/sap/ui/rta/internal/integration/pages/Adaptation',
+	'test-resources/sap/ui/rta/integration/pages/Adaptation',
 	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
 ], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device, TestLibrary) {
 	'use strict';

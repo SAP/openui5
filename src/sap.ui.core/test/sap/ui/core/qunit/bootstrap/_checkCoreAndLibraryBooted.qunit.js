@@ -8,12 +8,6 @@
 				assert.expect(5);
 				var aExpectedLibraries = ["sap.ui.core", "sap.m"];
 
-				/**
-				 * @deprecated As of version 1.120
-				 * check that SAPUI5 has been loaded
-				 */
-				assert.ok(sap.ui.getCore(), "sap.ui.getCore() returns a value");
-
 				await Core.ready();
 
 				var id = document.querySelector("html").getAttribute("data-sap-ui-browser");

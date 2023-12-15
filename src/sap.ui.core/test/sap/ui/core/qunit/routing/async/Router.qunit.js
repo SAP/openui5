@@ -1792,6 +1792,35 @@ sap.ui.define([
 			}.bind(this));
 	});
 
+	QUnit.module("TitleChanged with 'homeRoute'", {
+		beforeEach: function() {
+			hasher.setHash("");
+		}
+	});
+
+	QUnit.test("App title should be inserted into the title history", async function(assert) {
+		const oComponent = await Component.create({
+			name: "qunit.router.component.titleChanged.homeRoute",
+			manifest: true
+		});
+
+		const oRouter = oComponent.getRouter();
+		const oHomeRoute = oRouter.getRoute("home");
+		const oRouteMatchedSpy = this.spy(oHomeRoute, "_routeMatched");
+
+		oRouter.initialize();
+
+		assert.equal(oRouteMatchedSpy.callCount, 1, "home route is matched");
+
+		await oRouteMatchedSpy.getCall(0).returnValue;
+
+		const aTitleHistory = oRouter.getTitleHistory();
+		assert.equal(aTitleHistory.length, 1, "Title of home route is inserted to history by default");
+		assert.equal(aTitleHistory[0].title, "App Title in homeRoute Component", "Title of home route is fetched from manifest.json");
+
+		oComponent.destroy();
+	});
+
 	QUnit.module("targets", {
 		beforeEach: function () {
 			this.oShell = new ShellSubstitute();

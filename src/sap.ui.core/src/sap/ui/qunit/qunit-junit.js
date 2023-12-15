@@ -10,13 +10,6 @@
 		throw new Error("qunit-junit.js: QUnit is not loaded yet!");
 	}
 
-	/**
-	 * Any version < 2.0 activates legacy support.
-	 * Note that the strange negated condition properly handles NaN.
-	 * @deprecated support for legacy QUnit APIs has been abandoned
-	 */
-	var bLegacySupport = !(parseFloat(QUnit.version) >= 2.0);
-
 	// test-page url/name as module prefix
 	var sTestPageName = document.location.pathname.substr(1).replace(/\./g, "_").replace(/\//g, ".") + document.location.search.replace(/\./g, '_');
 
@@ -48,14 +41,6 @@
 		}
 	});
 
-	/**
-	 * @deprecated support for legacy QUnit APIs has been abandoned
-	 */
-	if ( bLegacySupport ) {
-		QUnit.equals = window.equals = window.equal;
-		QUnit.raises = window.raises = window["throws"];
-	}
-
 	// register QUnit event handler to manipulate module names for better reporting in Jenkins
 	// needs to happen before qunit-reporter-junit.js is executed in order to have an impact on the JUnit report
 	QUnit.moduleStart(function(oData) {
@@ -63,33 +48,7 @@
 	});
 	QUnit.testStart(function(oData) {
 		oData.module = sTestPageName + "." + formatModuleName(oData.module);
-		/**
-		 * @deprecated support for legacy QUnit APIs has been abandoned
-		 */
-		if ( bLegacySupport ) {
-			window.assert = QUnit.config.current.assert;
-		}
 	});
-	/**
-	 * @deprecated support for legacy QUnit APIs has been abandoned
-	 */
-	if ( bLegacySupport ) {
-		QUnit.testDone(function(assert) {
-			try {
-				delete window.assert;
-			} catch (ex) {
-				// report that the cleanup of the window.assert compatibility object
-				// failed because some script loaded via script tag defined an assert
-				// function which finally causes the "delete window.assert" to fail
-				if (!window._$cleanupFailed) {
-					QUnit.test("A script loaded via script tag defines a global assert function!", function(assert) {
-						assert.ok(QUnit.config.ignoreCleanupFailure, ex);
-					});
-					window._$cleanupFailed = true;
-				}
-			}
-		});
-	}
 
 	// execute qunit-reporter-junit script inline if not loaded already to avoid sync XHR / eval
 	if ( !QUnit.jUnitDone ) {

@@ -1359,6 +1359,11 @@ sap.ui.define([
 		// If a library states that it is using apiVersion 2, we expect types to be fully declared.
 		// In this case we don't need to create Proxies for the library namespace.
 		const apiVersion = mSettings.apiVersion ?? 1;
+
+		if (![1, 2].includes(apiVersion)) {
+			throw new TypeError(`The library '${mSettings.name}' has defined 'apiVersion: ${apiVersion}', which is an unsupported value. The supported values are: 1, 2 and undefined (defaults to 1).`);
+		}
+
 		if (apiVersion < 2) {
 			const oLibProxyHandler = createProxyForLibraryNamespace(mSettings.name, oLibNamespace);
 

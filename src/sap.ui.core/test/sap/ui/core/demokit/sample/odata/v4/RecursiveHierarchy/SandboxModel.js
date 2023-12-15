@@ -291,6 +291,7 @@ sap.ui.define([
 							oNode.LimitedRank = "" + i; // Edm.Int64
 							return true;
 						}
+						return false;
 					});
 				}
 				selectCountSkipTop(aRows, mQueryOptions, oResponse);
@@ -375,7 +376,7 @@ sap.ui.define([
 		function adjustDistanceFromRoot(oNode, iDiff) {
 			oNode.DistanceFromRoot += iDiff;
 			(mChildrenByParentId[oNode.ID] || [])
-				.forEach((oChild) => adjustDistanceFromRoot(oChild, iDiff));
+				.forEach((oChild) => { adjustDistanceFromRoot(oChild, iDiff); });
 		}
 
 		if (oRequest.requestHeaders.Prefer !== "return=minimal") {

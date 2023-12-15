@@ -168,6 +168,7 @@ sap.ui.define([
 	 */
 	ContentFactory.prototype.getContentMode = function(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators) {
 		let sContentMode = ContentMode.Edit;
+
 		if (sEditMode === FieldEditMode.Display) {
 			if (iMaxConditions !== 1) {
 				sContentMode = ContentMode.DisplayMultiValue;
@@ -186,6 +187,7 @@ sap.ui.define([
 			this._sOperator = aOperators[0];
 			sContentMode = ContentMode.EditOperator;
 		}
+
 		return sContentMode;
 	};
 
@@ -202,13 +204,16 @@ sap.ui.define([
 		const oField = this.getField();
 		let oContentType = mContentTypes[sBaseType] ? mContentTypes[sBaseType] : null;
 		if (!oContentType) {
-			if (oField.getFieldInfo() && bIsTriggerable) {
-				oContentType = mContentTypes.Link;
-			} else if (oField.isSearchField()) {
+			if (oField.isSearchField()) {
 				oContentType = mContentTypes.Search;
 			} else {
 				oContentType = mContentTypes.Default;
 			}
+		}
+
+		// For Link enhance BaseContentType
+		if (oField.getFieldInfo() && bIsTriggerable) {
+			oContentType = mContentTypes.Link.extendBaseContent(oContentType);
 		}
 		return oContentType;
 	};

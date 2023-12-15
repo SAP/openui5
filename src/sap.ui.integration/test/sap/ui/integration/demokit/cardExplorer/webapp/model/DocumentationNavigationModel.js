@@ -103,8 +103,7 @@ sap.ui.define([
 				title: 'Card Footer',
 				key: 'footer',
 				target: 'learnDetail',
-				icon: 'sap-icon://SAP-icons-TNT/local-process-call',
-				experimental: true
+				icon: 'sap-icon://SAP-icons-TNT/local-process-call'
 			},
 			{
 				title: 'Card Configuration',
@@ -179,8 +178,7 @@ sap.ui.define([
 					{
 						title: 'Actions Strip',
 						target: 'learnDetail',
-						key: 'actionsStrip',
-						experimental: true
+						key: 'actionsStrip'
 					},
 					{
 						title: 'Data',

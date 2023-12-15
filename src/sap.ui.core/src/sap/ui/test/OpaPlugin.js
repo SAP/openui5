@@ -711,7 +711,7 @@ sap.ui.define([
 				return oRendering.isPending();
 			}
 			var oCore = sap.ui.require("sap/ui/core/Core");
-			if (typeof oCore?.getUIDirty === "function") {
+			if (typeof undefined === "function") {
 				return Rendering.isPending();
 			}
 		};
@@ -769,7 +769,7 @@ sap.ui.define([
 				return oStaticArea.getDomRef();
 			}
 			var oCore = sap.ui.require("sap/ui/core/Core");
-			if (typeof oCore?.getStaticAreaRef === "function") {
+			if (typeof undefined === "function") {
 				return StaticArea.getDomRef();
 			}
 		};

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Messaging",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/mdc/field/FieldBase",
 	"sap/ui/mdc/ValueHelp",
 	"sap/ui/mdc/ValueHelpDelegate",
@@ -85,6 +86,7 @@ sap.ui.define([
 	Messaging,
 	jQuery,
 	qutils,
+	nextUIUpdate,
 	FieldBase,
 	ValueHelp,
 	ValueHelpDelegate,
@@ -385,10 +387,19 @@ sap.ui.define([
 		const aContent = oField.getAggregation("_content");
 		assert.notOk(aContent && aContent.length > 0, "Content not created sync");
 
+		const oDomRef = oField.getFocusDomRef();
+		assert.equal(oDomRef && oDomRef.id, "F1", "Field rendered without content -> Focus DomRef points to Field");
+		assert.equal(oDomRef && jQuery(oDomRef).attr("tabIndex"), "-1", "DomRef is focusable");
+
 		const fnDone = assert.async();
 		setTimeout(function() { // to wait async creation of inner control
-			defaultRendering(assert);
-			fnDone();
+			nextUIUpdate().then(() => {
+				defaultRendering(assert);
+
+				const oDomRef = oField.getDomRef();
+				assert.notOk(oDomRef && jQuery(oDomRef).attr("tabIndex"), "DomRef is not focusable");
+				fnDone();
+			});
 		}, 0);
 
 		oStub.restore();

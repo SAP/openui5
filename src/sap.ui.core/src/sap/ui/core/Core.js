@@ -1091,45 +1091,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Locks the Core. No browser events are dispatched to the controls.
-		 *
-		 * Lock should be called before and after the DOM is modified for rendering, roundtrips...
-		 * Exceptions might be the case for asynchronous UI behavior
-		 * @public
-		 * @deprecated since 1.118
-		 */
-		Core.prototype.lock = function () {
-			this.bLocked = true;
-			UIAreaRegistry.forEach((oUiArea) => {
-				oUiArea.lock();
-			});
-		};
-
-		/**
-		 * Unlocks the Core.
-		 *
-		 * Browser events are dispatched to the controls again after this method is called.
-		 * @public
-		 * @deprecated since 1.118
-		 */
-		Core.prototype.unlock = function () {
-			this.bLocked = false;
-			UIAreaRegistry.forEach((oUiArea) => {
-				oUiArea.unlock();
-			});
-		};
-
-		/**
-		 * Returns the locked state of the <code>sap.ui.core.Core</code>
-		 * @return {boolean} locked state
-		 * @public
-		 * @deprecated since 1.118
-		 */
-		Core.prototype.isLocked = function () {
-			return this.bLocked;
-		};
-
-		/**
 		 * Returns the Configuration of the Core.
 		 *
 		 * @return {sap.ui.core.Configuration} the Configuration of the current Core.
@@ -1441,20 +1402,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Includes a library theme into the current page (if a variant is specified it
-		 * will include the variant library theme)
-		 * @param {string} sLibName the name of the UI library
-		 * @param {string} [sVariant] the variant to include (optional)
-		 * @param {string} [sQuery] to be used only by the Core
-		 * @public
-		 * @deprecated since 1.119
-		 */
-		Core.prototype.includeLibraryTheme = function(sLibName, sVariant, sQuery) {
-			var oLib = Library._get(sLibName, true /* bCreate */);
-			oLib._includeTheme(sVariant, sQuery);
-		};
-
-		/**
 		 * Returns a map of library info objects for all currently loaded libraries,
 		 * keyed by their names.
 		 *
@@ -1568,34 +1515,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns <code>true</code> if there are any pending rendering tasks or when
-		 * such rendering tasks are currently being executed.
-		 *
-		 * @return {boolean} true if there are pending (or executing) rendering tasks.
-		 * @public
-		 * @deprecated since 1.118
-		 */
-		Core.prototype.getUIDirty = function() {
-			return Rendering.isPending();
-		};
-
-		/**
-		 * Triggers a realignment of controls
-		 *
-		 * This method should be called after changing the cozy/compact CSS class of a DOM element at runtime,
-		 *  for example at the <code>&lt;body&gt;</code> tag.
-		 *  Controls can listen to the themeChanged event to realign their appearance after changing the theme.
-		 *  Changing the cozy/compact CSS class should then also be handled as a theme change.
-		 *  In more simple scenarios where the cozy/compact CSS class is added to a DOM element which contains only a few controls
-		 *  it might not be necessary to trigger the realigment of all controls placed in the DOM,
-		 *  for example changing the cozy/compact CSS class at a single control
-		 * @public
-		 * @function
-		 * @deprecated since 1.119. Please use {@link module:sap/ui/core/Theming.notifyContentDensityChanged Theming.notifyContentDensityChanged} instead.
-		 */
-		Core.prototype.notifyContentDensityChanged = Theming.notifyContentDensityChanged;
-
-		/**
 		* Attaches event handler <code>fnFunction</code> to the {@link #event:ThemeChanged ThemeChanged} event
 		* of this <code>sap.ui.core.Core</code>.
 		*
@@ -1683,34 +1602,6 @@ sap.ui.define([
 			_oEventProvider.fireEvent(Core.M_EVENTS.LocalizationChanged, {changes : mChanges});
 		};
 
-		/**
-		 * Register a listener for the {@link sap.ui.core.Core#event:libraryChanged} event.
-		 *
-		 * @param {function} fnFunction Callback to be called when the <code>libraryChanged</code> event is fired
-		 * @param {object} [oListener] Optional context object to call the callback on
-		 *
-		 * @private
-		 * @ui5-restricted sap.ui.fl, sap.ui.support
-		 * @deprecated Since 1.119. Please use {@link sap.ui.core.Lib.attachLibraryChanged Lib.attachLibraryChanged} instead.
-		 */
-		Core.prototype.attachLibraryChanged = function(fnFunction, oListener) {
-			_oEventProvider.attachEvent(Core.M_EVENTS.LibraryChanged, fnFunction, oListener);
-		};
-
-		/**
-		 * Unregister a listener from the {@link sap.ui.core.Core#event:libraryChanged} event.
-		 *
-		 * @param {function} fnFunction function to unregister
-		 * @param {object} [oListener] context object given during registration
-		 *
-		 * @private
-		 * @ui5-restricted sap.ui.fl, sap.ui.support
-		 * @deprecated Since 1.119. Please use {@link sap.ui.core.Lib.detachLibraryChanged Lib.detachLibraryChanged} instead.
-		 */
-		Core.prototype.detachLibraryChanged = function(fnFunction, oListener) {
-			_oEventProvider.detachEvent(Core.M_EVENTS.LibraryChanged, fnFunction, oListener);
-		};
-
 		Library.attachLibraryChanged(function(oEvent) {
 			// notify registered Core listeners
 			_oEventProvider.fireEvent(Core.M_EVENTS.LibraryChanged, oEvent.getParameters());
@@ -1788,74 +1679,6 @@ sap.ui.define([
 			assert(sId == null || typeof sId === "string", "sId must be a string when defined");
 			assert(this.mObjects[sType] !== undefined, "sType must be a supported stereotype");
 			return sId == null ? undefined : this.mObjects[sType] && this.mObjects[sType][sId];
-		};
-
-		/**
-		 * Returns the static, hidden area DOM element belonging to this core instance.
-		 *
-		 * It can be used e.g. for hiding elements like Popups, Shadow, Blocklayer etc.
-		 *
-		 * If it is not yet available, a DIV is created and appended to the body.
-		 *
-		 * @return {Element} the static, hidden area DOM element belonging to this core instance.
-		 * @throws {Error} an Error if the document is not yet ready
-		 * @public
-		 * @deprecated since 1.119.0. Please use {@link module:sap/ui/core/StaticArea.getDomRef StaticArea.getDomRef} instead.
-		 */
-		Core.prototype.getStaticAreaRef = function() {
-			return StaticArea.getDomRef();
-		};
-
-		/**
-		 * Checks whether the given DOM element is the root of the static area.
-		 *
-		 * @param {Element} oDomRef DOM element to check
-		 * @returns {boolean} Whether the given DOM element is the root of the static area
-		 * @protected
-		 * @deprecated since 1.119.0. Please use {@link module:sap/ui/core/StaticArea.contains StaticArea.contains} instead.
-		 */
-		Core.prototype.isStaticAreaRef = function(oDomRef) {
-			return StaticArea.getDomRef() === oDomRef;
-		};
-
-		/**
-		 * Registers a listener for control events.
-		 *
-		 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
-		 * if specified, otherwise it will be bound to a dummy event provider object.
-		 *
-		 * @param {function} fnFunction Callback to be called for each control event
-		 * @param {object} [oListener] Optional context object to call the callback on
-		 * @public
-		 * @deprecated Since 1.119
-		 */
-		Core.prototype.attachControlEvent = function(fnFunction, oListener) {
-			_oEventProvider.attachEvent(Core.M_EVENTS.ControlEvent, fnFunction, oListener);
-		};
-
-		/**
-		 * Unregisters a listener for control events.
-		 *
-		 * The passed function and listener object must match the ones used for event registration.
-		 *
-		 * @param {function} fnFunction Function to unregister
-		 * @param {object} [oListener] Context object on which the given function had to be called
-		 * @public
-		 * @deprecated Since 1.119
-		 */
-		Core.prototype.detachControlEvent = function(fnFunction, oListener) {
-			_oEventProvider.detachEvent(Core.M_EVENTS.ControlEvent, fnFunction, oListener);
-		};
-
-		/**
-		 * Notifies the listeners that an event on a control occurs.
-		 *
-		 * @param {object} oParameters Parameters to pass along with the event, e.g. <code>{ browserEvent: jQuery.Event }</code>
-		 * @private
-		 * @deprecated Since 1.119
-		 */
-		Core.prototype.fireControlEvent = function(oParameters) {
-			_oEventProvider.fireEvent(Core.M_EVENTS.ControlEvent, oParameters);
 		};
 
 		/**
@@ -2040,22 +1863,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns a list of all controls with a field group ID.
-		 * See {@link sap.ui.core.Control#checkFieldGroupIds Control.prototype.checkFieldGroupIds} for a description of the
-		 * <code>vFieldGroupIds</code> parameter.
-		 *
-		 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
-		 * @return {sap.ui.core.Control[]} The list of controls with matching field group IDs
-		 * @public
-		 * @deprecated As of version 1.118, use {@link sap.ui.core.Control.getControlsByFieldGroupId Control.getControlsByFieldGroupId} instead.
-		 */
-		Core.prototype.byFieldGroupId = function(vFieldGroupIds) {
-			return ElementRegistry.filter(function(oElement) {
-				return oElement.isA("sap.ui.core.Control") && oElement.checkFieldGroupIds(vFieldGroupIds);
-			});
-		};
-
-		/**
 		 * Get the model with the given model name.
 		 *
 		 * The name can be omitted to reference the default model or it must be a non-empty string.
@@ -2071,16 +1878,6 @@ sap.ui.define([
 		Core.prototype.getModel = function(sName) {
 			assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
 			return this.oModels[sName];
-		};
-
-		/**
-		 * Check if a Model is set to the core
-		 * @return {boolean} true or false
-		 * @public
-		 * @deprecated since 1.118. Please use {@link sap.ui.base.ManagedObject#hasModel ManagedObject#hasModel} instead.
-		 */
-		Core.prototype.hasModel = function() {
-			return !isEmptyObject(this.oModels);
 		};
 
 		/**
@@ -2393,16 +2190,6 @@ sap.ui.define([
 		Core.prototype.fireValidationSuccess = function(oParameters) {
 			_oEventProvider.fireEvent(Core.M_EVENTS.ValidationSuccess, oParameters);
 			return this;
-		};
-
-		/**
-		 * Check if the script is running on mobile
-		 * @return {boolean} true or false
-		 * @deprecated As of version 1.118, use {@link sap.ui.Device.browser.mobile Device.browser.mobile} instead.
-		 * @public
-		 */
-		Core.prototype.isMobile = function() {
-			return Device.browser.mobile;
 		};
 
 		/**

@@ -1229,6 +1229,9 @@ sap.ui.define([
 			vSpacing: 0,
 			containerQuery: true
 		}).addStyleClass("sapUiMdcDefineConditionGrid");
+		oGrid.addDelegate({
+			onAfterRendering: _setFocusOnGrid
+		}, false, this);
 
 		_createRow.call(this, undefined, oGrid, 0, null, 0); // create dummy row
 
@@ -1332,11 +1335,30 @@ sap.ui.define([
 			iIndex++;
 		}
 
+		oPageCount.setText(_getPageText.call(this));
+		oButtonPrev.setEnabled(this._iStartIndex > 0);
+		oButtonNext.setEnabled(iRow >= iShownConditions); // there is at least one more row than conditions are shown
+		this.setProperty("_pagination", iDefineConditions >= iShownConditions);
+
+		this._bGridUpdated = true;
+	}
+
+	function _setFocusOnGrid() {
+		if (!this._bGridUpdated) {
+			return; // as re-rendering might be called because of invalidation in control tree
+		}
+
+		const oGrid = this.byId("conditions");
+		const aGridContent = oGrid.getContent();
+		let iIndex = 0;
+
+		// in onAfterRendering the focus can only be changed if the previous focused control is not longer rendered.
+		// If the previous focused control is still there RenderManager calls restoreFocus after onAfterRendering is performed.
+		// So if the focus should always jump from the add-button to the new line, this must be done in a timeout
 		if (this._bFocusLastCondition) {
 			// focus last condition operator field after it is rendered
 			iIndex = _getGridIndexOfLastRow.call(this, "-operator");
-			// setting the focus on a field only work with a Timeout
-			setTimeout(() => { aGridContent[iIndex].focus(); }, 0);
+			aGridContent[iIndex].focus();
 			this._bFocusLastCondition = false;
 		}
 		if (this._bFocusLastRemoveBtn) {
@@ -1346,10 +1368,7 @@ sap.ui.define([
 			this._bFocusLastRemoveBtn = false;
 		}
 
-		oPageCount.setText(_getPageText.call(this));
-		oButtonPrev.setEnabled(this._iStartIndex > 0);
-		oButtonNext.setEnabled(iRow >= iShownConditions); // there is at least one more row than conditions are shown
-		this.setProperty("_pagination", iDefineConditions >= iShownConditions);
+		this._bGridUpdated = false;
 	}
 
 	function _getGridIndexOfLastRowWithVisibleElement(aIdEndsWith) {

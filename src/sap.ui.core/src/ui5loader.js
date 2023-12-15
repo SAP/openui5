@@ -1914,7 +1914,6 @@
 		oModule.content = undefined;
 
 		function onSuccess(aModules) {
-
 			// avoid double execution of the module, e.g. when async/sync conflict occurred while waiting for dependencies
 			if ( shouldSkipExecution() ) {
 				return;
@@ -1923,17 +1922,6 @@
 			// factory
 			if ( bLoggable ) {
 				log.debug(sLogPrefix + "define('" + sResourceName + "'): dependencies resolved, calling factory " + typeof vFactory);
-			}
-
-			/**
-			 * @deprecated
-			 */
-			if ( bExport && syncCallBehavior !== 2 ) {
-				// ensure parent namespace
-				const aPackages = sResourceName.split('/');
-				if ( aPackages.length > 1 ) {
-					getGlobalObject(__global, aPackages, aPackages.length - 1, true);
-				}
 			}
 
 			if ( typeof vFactory === 'function' ) {
@@ -1961,25 +1949,7 @@
 				oModule.content = vFactory;
 			}
 
-			/**
-			 * HACK: global export
-			 * @deprecated
-			 */
-			if ( bExport && syncCallBehavior !== 2 ) {
-				if ( oModule.content == null ) {
-					log.error(`Module '${sResourceName}' returned no content, but should export to global?`);
-				} else {
-					if ( bLoggable ) {
-						log.debug(`exporting content of '${sResourceName}': as global object`);
-					}
-					// convert module name to UI5 module name syntax (might fail!)
-					const sModuleName = urnToUI5(sResourceName);
-					setGlobalProperty(sModuleName, oModule.content);
-				}
-			}
-
 			oModule.ready();
-
 		}
 
 		// Note: dependencies will be resolved and converted from RJS to URN inside requireAll
@@ -2517,68 +2487,67 @@
 	};
 
 	const privateAPI = {
-
 		// properties
 		get assert() {
 			return assert;
 		},
+
 		set assert(v) {
 			assert = v;
 		},
+
 		get logger() {
 			return log;
 		},
+
 		set logger(v) {
 			log = v;
 			aEarlyLogs.forEach(({level, message}) => log[level](message));
 		},
+
 		get measure() {
 			return measure;
 		},
+
 		set measure(v) {
 			measure = v;
 		},
-		/**
-		 * @deprecated As of version 1.119, sync loading is deprecated without replacement due to the deprecation of
-		 *   XMLHttpRequest in the web standard.
-		 */
-		get translate() {
-			return translate;
-		},
-		/**
-		 * @deprecated As of version 1.119, sync loading is deprecated without replacement due to the deprecation of
-		 *   XMLHttpRequest in the web standard.
-		 */
-		set translate(v) {
-			translate = v;
-		},
+
 		get callbackInMicroTask() {
 			return simulateAsyncCallback === executeInMicroTask;
 		},
+
 		set callbackInMicroTask(v) {
 			simulateAsyncCallback = v ? executeInMicroTask : executeInSeparateTask;
 		},
+
 		get maxTaskDuration() {
 			return iMaxTaskDuration;
 		},
+
 		set maxTaskDuration(v) {
 			updateMaxTaskDuration(v);
 		},
 
 		// methods
 		amdDefine,
+
 		amdRequire,
 		config: ui5Config,
+
 		declareModule(sResourceName, sDeprecationMessage) {
 			/* void */ declareModule(normalize(sResourceName), sDeprecationMessage);
 		},
+
 		defineModuleSync,
 		dump: dumpInternals,
 		getAllModules,
 		getModuleContent,
+
 		getModuleState(sResourceName) {
 			return mModules[sResourceName] ? mModules[sResourceName].state : INITIAL;
 		},
+
 		getResourcePath,
 		getSyncCallBehavior,
 		getUrlPrefixes,

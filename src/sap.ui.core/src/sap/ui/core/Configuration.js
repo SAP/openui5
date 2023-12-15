@@ -146,18 +146,6 @@ sap.ui.define([
 		getTheme : Theming.getTheme,
 
 		/**
-		 * Allows setting the theme name
-		 * @param {string} sTheme the theme name
-		 * @return {this} <code>this</code> to allow method chaining
-		 * @public
-		 * @deprecated Since 1.119. Please use {@link module:sap/ui/core/Theming.setTheme Theming.setTheme} instead.
-		 */
-		setTheme : function (sTheme) {
-			Theming.setTheme(sTheme);
-			return this;
-		},
-
-		/**
 		 * Returns a string that identifies the current language.
 		 *
 		 * The value returned by config method in most cases corresponds to the exact value that has been
@@ -293,69 +281,6 @@ sap.ui.define([
 		getSAPLogonLanguage : Localization.getSAPLogonLanguage,
 
 		/**
-		 * Retrieves the configured IANA timezone ID.
-		 *
-		 * @returns {string} The configured IANA timezone ID, e.g. "America/New_York"
-		 * @function
-		 * @public
-		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getTimezone Localization.getTimezone} instead.
-		 */
-		getTimezone : Localization.getTimezone,
-
-		/**
-		 * Sets the timezone such that all date and time based calculations use config timezone.
-		 *
-		 * <b>Important:</b> It is strongly recommended to only use config API at the earliest point
-		 * of time while initializing a UI5 app. A later adjustment of the time zone should be
-		 * avoided. It can lead to unexpected data inconsistencies in a running application,
-		 * because date objects could still be related to a previously configured time zone.
-		 * Instead, the app should be completely restarted with the new time zone.
-		 * For more information, see
-		 * {@link topic:6c9e61dc157a40c19460660ece8368bc Dates, Times, Timestamps, and Time Zones}.
-		 *
-		 * When the timezone has changed, the Core will fire its
-		 * {@link sap.ui.core.Core#event:localizationChanged localizationChanged} event.
-		 *
-		 * @param {string|null} [sTimezone] IANA timezone ID, e.g. "America/New_York". Use <code>null</code> to reset the timezone to the browser's local timezone.
-		 *   An invalid IANA timezone ID will fall back to the browser's timezone.
-		 * @function
-		 * @public
-		 * @return {this} <code>this</code> to allow method chaining
-		 * @since 1.99.0
-		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.setTimezone Localization.setTimezone} instead.
-		 */
-		setTimezone : function() {
-			Localization.setTimezone.apply(Localization, arguments);
-			return Configuration;
-		},
-
-		/**
-		 * Returns the calendar type which is being used in locale dependent functionality.
-		 *
-		 * When it's explicitly set by calling <code>setCalendar</code>, the set calendar type is returned.
-		 * Otherwise, the calendar type is determined by checking the format settings and current locale.
-		 *
-		 * @return {sap.ui.core.CalendarType} the current calendar type, e.g. <code>Gregorian</code>
-		 * @since 1.28.6
-		 * @function
-		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getCalendarType Formatting.getCalendarType} instead.
-		 */
-		getCalendarType: Formatting.getCalendarType,
-
-		/**
-		 * Returns the calendar week numbering algorithm used to determine the first day of the week
-		 * and the first calendar week of the year, see {@link sap.ui.core.date.CalendarWeekNumbering}.
-		 *
-		 * @returns {sap.ui.core.date.CalendarWeekNumbering} The calendar week numbering algorithm
-		 * @function
-		 * @public
-		 * @since 1.113.0
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getCalendarWeekNumbering Formatting.getCalendarWeekNumbering} instead.
-		 */
-		getCalendarWeekNumbering: Formatting.getCalendarWeekNumbering,
-
-		/**
 		 * Returns whether the page uses the RTL text direction.
 		 *
 		 * If no mode has been explicitly set (neither <code>true</code> nor <code>false</code>),
@@ -407,160 +332,8 @@ sap.ui.define([
 			return Locale._getCoreLocale(oLanguageTag);
 		},
 
-		/**
-		 * Sets the new calendar type to be used from now on in locale dependent functionality (for example,
-		 * formatting, translation texts, etc.).
-		 *
-		 * @param {sap.ui.core.CalendarType|null} sCalendarType the new calendar type. Set it with null to clear the calendar type
-		 *   and the calendar type is calculated based on the format settings and current locale.
-		 * @return {this} <code>this</code> to allow method chaining
-		 * @public
-		 * @since 1.28.6
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setCalendarType Formatting.setCalendarType} instead.
-		 */
-		setCalendarType : function(sCalendarType) {
-			Formatting.setCalendarType.apply(Formatting, arguments);
-			return this;
-		},
-
-		/**
-		 * Sets the calendar week numbering algorithm which is used to determine the first day of the week
-		 * and the first calendar week of the year, see {@link sap.ui.core.date.CalendarWeekNumbering}.
-		 *
-		 * @param {sap.ui.core.date.CalendarWeekNumbering} sCalendarWeekNumbering
-		 *   The calendar week numbering algorithm
-		 * @returns {this}
-		 *   <code>this</code> to allow method chaining
-		 * @throws {Error}
-		 *   If <code>sCalendarWeekNumbering</code> is not a valid calendar week numbering algorithm,
-		 *   defined in {@link sap.ui.core.date.CalendarWeekNumbering}
-		 *
-		 * @public
-		 * @since 1.113.0
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setCalendarWeekNumbering Formatting.setCalendarWeekNumbering} instead.
-		 */
-		setCalendarWeekNumbering: function(sCalendarWeekNumbering) {
-			Formatting.setCalendarWeekNumbering.apply(Formatting, arguments);
-			return this;
-		},
-
-		/**
-		 * Returns the format locale string with language and region code. Falls back to
-		 * language configuration, in case it has not been explicitly defined.
-		 *
-		 * @return {string} the format locale string with language and country code
-		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag} instead.
-		 */
-		getFormatLocale : function() {
-			return Formatting.getLanguageTag().toString();
-		},
-
-		/**
-		 * Sets a new format locale to be used from now on for retrieving locale
-		 * specific formatters. Modifying this setting does not have an impact on
-		 * the retrieval of translated texts!
-		 *
-		 * Can either be set to a concrete value (a BCP47 or Java locale compliant
-		 * language tag) or to <code>null</code>. When set to <code>null</code> (default
-		 * value) then locale specific formatters are retrieved for the current language.
-		 *
-		 * After changing the format locale, the framework tries to update localization
-		 * specific parts of the UI. See the documentation of {@link #.setLanguage} for
-		 * details and restrictions.
-		 *
-		 * <b>Note</b>: When a format locale is set, it has higher priority than a number,
-		 * date or time format defined with a call to <code>setLegacyNumberFormat</code>,
-		 * <code>setLegacyDateFormat</code> or <code>setLegacyTimeFormat</code>.
-		 *
-		 * <b>Note</b>: See documentation of {@link #.setLanguage} for restrictions.
-		 *
-		 * @param {string|null} sFormatLocale the new format locale as a BCP47 compliant language tag;
-		 *   case doesn't matter and underscores can be used instead of dashes to separate
-		 *   components (compatibility with Java Locale IDs)
-		 * @return {this} <code>this</code> to allow method chaining
-		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setLanguageTag Formatting.setLanguageTag} instead.
-		 * @throws {Error} When <code>sFormatLocale</code> is given, but is not a valid BCP47 language
-		 *   tag or Java locale identifier
-		 */
-		setFormatLocale : function(sFormatLocale) {
-			Formatting.setLanguageTag.apply(Formatting, arguments);
-			return this;
-		},
-
 		getLanguagesDeliveredWithCore : Localization.getLanguagesDeliveredWithCore,
 		getSupportedLanguages : Localization.getSupportedLanguages,
-
-		/**
-		 * Returns whether the accessibility mode is enabled or not.
-		 * @return {boolean} whether the accessibility mode is enabled or not
-		 * @public
-		 * @since 1.20
-		 * @function
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/ControlBehavior.isAccessibilityEnabled ControlBehavior.isAccessibilityEnabled} instead.
-		 */
-		getAccessibility : ControlBehavior.isAccessibilityEnabled,
-
-		/**
-		 * Returns whether the framework automatically adds
-		 * the ARIA role 'application' to the HTML body or not.
-		 * @return {boolean} Wether the ARIA role 'application' should be added to the HTML body or not
-		 * @since 1.27.0
-		 * @public
-		 * @deprecated As of Version 1.120
-		 */
-		getAutoAriaBodyRole : function () {
-			return BaseConfig.get({ name: "sapUiAutoAriaBodyRole", type: BaseConfig.Type.Boolean });
-		},
-
-		/**
-		 * Returns the current animation mode.
-		 *
-		 * @return {sap.ui.core.Configuration.AnimationMode} The current animationMode
-		 * @since 1.50.0
-		 * @function
-		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/ControlBehavior.getAnimationMode ControlBehavior.getAnimationMode} instead.
-		 */
-		getAnimationMode : ControlBehavior.getAnimationMode,
-
-		/**
-		 * Sets the current animation mode.
-		 *
-		 * Expects an animation mode as string and validates it. If a wrong animation mode was set, an error is
-		 * thrown. If the mode is valid it is set, then the attributes <code>data-sap-ui-animation</code> and
-		 * <code>data-sap-ui-animation-mode</code> of the HTML document root element are also updated.
-		 * If the <code>animationMode</code> is <code>Configuration.AnimationMode.none</code> the old
-		 * <code>animation</code> property is set to <code>false</code>, otherwise it is set to <code>true</code>.
-		 *
-		 * @param {sap.ui.core.Configuration.AnimationMode} sAnimationMode A valid animation mode
-		 * @throws {Error} If the provided <code>sAnimationMode</code> does not exist, an error is thrown
-		 * @since 1.50.0
-		 * @function
-		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/ControlBehavior.setAnimationMode ControlBehavior.setAnimationMode} instead.
-		 */
-		setAnimationMode : ControlBehavior.setAnimationMode,
-
-		/**
-		 * Returns whether the page runs in full debug mode.
-		 * @returns {boolean} Whether the page runs in full debug mode
-		 * @public
-		 * @function
-		 * @deprecated As of version 1.120
-		 */
-		getDebug : Supportability.isDebugModeEnabled,
-
-		/**
-		 * Returns whether there should be an exception on any duplicate element IDs.
-		 * @return {boolean} whether there should be an exception on any duplicate element IDs
-		 * @public
-		 * @deprecated As of Version 1.120
-		 */
-		getNoDuplicateIds : function () {
-			return BaseConfig.get({ name: "sapUiNoDuplicateIds", type: BaseConfig.Type.Boolean, defaultValue: true, external: true });
-		},
 
 		/**
 		 * Returns a configuration object that bundles the format settings of UI5.
@@ -572,20 +345,6 @@ sap.ui.define([
 		getFormatSettings : function() {
 			return oFormatSettings;
 		},
-
-		/**
-		 * Flag if statistics are requested.
-		 *
-		 * Flag set by TechnicalInfo Popup will also be checked.
-		 * So its active if set by URL parameter or manually via TechnicalInfo.
-		 *
-		 * @returns {boolean} Whether statistics are enabled
-		 * @public
-		 * @since 1.106.0
-		 * @function
-		 * @deprecated As of Version 1.120
-		 */
-		getStatisticsEnabled : Supportability.isStatisticsEnabled,
 
 		/**
 		 * Applies multiple changes to the configuration at once.
@@ -734,26 +493,6 @@ sap.ui.define([
 		constructor : function() {
 			BaseObject.call(this);
 			this.mSettings = {};
-		},
-
-		/**
-		 * Returns the locale to be used for formatting.
-		 *
-		 * If no such locale has been defined, this method falls back to the language,
-		 * see {@link sap.ui.core.Configuration.getLanguage Configuration.getLanguage()}.
-		 *
-		 * If any user preferences for date, time or number formatting have been set,
-		 * and if no format locale has been specified, then a special private use subtag
-		 * is added to the locale, indicating to the framework that these user preferences
-		 * should be applied.
-		 *
-		 * @return {sap.ui.core.Locale} the format locale
-		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag} instead.
-		 */
-		getFormatLocale : function() {
-			var oLocale = Formatting.getLanguageTag();
-			return Locale._getCoreLocale(oLocale);
 		},
 
 		_set: Formatting._set,

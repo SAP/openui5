@@ -1489,7 +1489,7 @@ sap.ui.define([
 
 		function getHomeEntry(oOwnerComponent, oHomeRoute) {
 			var sHomeRoutePattern = oHomeRoute.getPattern(),
-				sAppTitle = oOwnerComponent && oOwnerComponent.getManifestEntry("sap.app/title");
+				sAppTitle = oOwnerComponent && oOwnerComponent.getManifestEntry("/sap.app/title");
 
 			// check for placeholders - they are not allowed
 			if (sHomeRoutePattern === "" || (sHomeRoutePattern !== undefined && !/({.*})+/.test(sHomeRoutePattern))) {

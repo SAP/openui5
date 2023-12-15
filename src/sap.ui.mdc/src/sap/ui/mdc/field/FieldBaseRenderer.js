@@ -30,6 +30,10 @@ sap.ui.define([
 		oRm.openStart("div", oField);
 		oRm.class("sapUiMdcFieldBase");
 
+		if (aContent.length === 0 && sEditMode !== FieldEditMode.Display) {
+			oRm.attr("tabindex", "-1");
+		}
+
 		if (aContent.length > 1) {
 			oRm.class("sapUiMdcFieldBaseMoreFields");
 		}
