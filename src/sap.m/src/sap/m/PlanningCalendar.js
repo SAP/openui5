@@ -850,10 +850,15 @@ sap.ui.define([
 				}
 			},
 			onAfterRendering: function () {
-				this._rowHeaderPressEventMouse = oTable.$().find(".sapMPlanCalRowHead > div.sapMLIB").on("click", function (oEvent) {
-					var oRowHeader = Element.closestTo(oEvent.currentTarget),
-						oRow = getRow(oRowHeader.getParent()),
-						sRowHeaderId = oRowHeader.getId();
+				if (this.hasListeners("rowHeaderPress")) {
+					this._addRowHeaderDescription();
+				}
+
+				const oRowHeader = oTable.$().find(".sapMPlanCalRowHead");
+				this._rowHeaderPressEventMouse = oRowHeader.on("click", function (oEvent) {
+					const oRowListItem = Element.closestTo(oEvent.currentTarget),
+						oRow = getRow(oRowListItem),
+						sRowHeaderId = oRowListItem.getAggregation("cells")[0].getId();
 
 					/**
 					 * @deprecated As of version 1.119
@@ -861,7 +866,7 @@ sap.ui.define([
 					this.fireRowHeaderClick({headerId: sRowHeaderId, row: oRow});
 					this.fireRowHeaderPress({headerId: sRowHeaderId, row: oRow});
 				}.bind(this));
-				this._rowHeaderPressEventKeyboard = oTable.$().find(".sapMPlanCalRowHead").on("keydown", function (oEvent) {
+				this._rowHeaderPressEventKeyboard = oRowHeader.on("keydown", function (oEvent) {
 					if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 						var oRowListItem = Element.closestTo(oEvent.currentTarget),
 							oRow = getRow(oRowListItem),
@@ -977,6 +982,8 @@ sap.ui.define([
 					this[sControlRef]._setAriaRole("columnheader"); // set new aria role
 				}
 			}, this);
+		} else if (this.hasListeners("rowHeaderPress") && this.getDomRef()) {
+			this._addRowHeaderDescription();
 		}
 
 		return this;
@@ -1074,6 +1081,16 @@ sap.ui.define([
 		oRow.displayDate(this._dateNav.getCurrent());
 		this._updatePickerSelection();
 		this.fireStartDateChange();
+	};
+
+	PlanningCalendar.prototype._addRowHeaderDescription = function() {
+		const aPlanningCalendarRowListItems = this.getAggregation("table").getItems();
+		aPlanningCalendarRowListItems.forEach(function(oRowListItem) {
+			const oRowId = oRowListItem.getTimeline().getAssociation("row"),
+				oRow = Element.getElementById(oRowId),
+				sRowDesctiption = oRow.getRowHeaderDescription() || this._oRB.getText("PLANNING_CALENDAR_ROW_HEADER_DESCRIPTION");
+			oRowListItem.getDomRef().querySelector(".sapMPlanCalRowHead").setAttribute("aria-description", sRowDesctiption);
+		}, this);
 	};
 
 	/**

@@ -794,6 +794,7 @@ sap.ui.define([
 				title: "Max Mustermann",
 				text: "Musterteam",
 				tooltip: "Header tooltip",
+				rowHeaderDescription: "Has popup",
 				specialDates: [
 					new DateTypeRange({
 						startDate: UI5Date.getInstance(2015, 0, 7),
