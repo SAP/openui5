@@ -32,11 +32,7 @@ sap.ui.define([
 		 name: "sap.ui.core",
 		 version: "${version}",
 		 designtime: "sap/ui/core/designtime/library.designtime",
-		 // "apiVersion" is still WIP and in 1.120 restricted to the sap.ui.core library only!
-		 // TODO: Remove spread operator once UI5 Tooling can validate this new property
-		 ...{
-			"apiVersion": 2
-		 },
+		 apiVersion: 2,
 		 types: [
 
 			 // builtin types
