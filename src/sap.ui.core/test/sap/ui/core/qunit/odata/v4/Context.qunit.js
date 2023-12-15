@@ -4583,6 +4583,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getAndRemoveCollection: withCache fails", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+
+		this.mock(oContext).expects("withCache")
+			.withExactArgs(sinon.match.func, "relative/path", true)
+			.returns(SyncPromise.reject("~oError~"));
+
+		// code under test
+		assert.throws(function () {
+			oContext.getAndRemoveCollection("relative/path");
+		}, "~oError~");
+	});
+
+	//*********************************************************************************************
 [0, 1].forEach(function (iFailureIndex) {
 	QUnit.test("updateAfterCreate, fail=" + iFailureIndex, function () {
 		var oModel = {

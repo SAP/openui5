@@ -708,7 +708,7 @@ sap.ui.define([
 	Context.prototype.getAndRemoveCollection = function (sPath) {
 		return this.withCache(function (oCache, sCachePath) {
 			return oCache.getAndRemoveCollection(sCachePath);
-		}, sPath, true).getResult();
+		}, sPath, true).unwrap();
 	};
 
 	/**

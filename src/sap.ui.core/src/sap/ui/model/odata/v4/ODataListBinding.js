@@ -629,6 +629,9 @@ sap.ui.define([
 		if (!this.oModel.bAutoExpandSelect) {
 			throw new Error("Deep create is only supported with autoExpandSelect");
 		}
+		if (ODataListBinding.isBelowAggregation(this.oContext)) {
+			throw new Error("Deep create is not supported with data aggregation");
+		}
 		if (!this.oContext.isTransient()) {
 			throw new Error("Unexpected ODataContextBinding in deep create");
 		}
@@ -831,6 +834,7 @@ sap.ui.define([
 	 *           {@link sap.ui.model.odata.v4.ODataModel#constructor model} is not set,
 	 *         <li> or a context binding exists in the binding hierarchy between the binding and the
 	 *           parent list binding,
+	 *         <li> the parent list binding uses {@link #setAggregation data aggregation},
 	 *         <li> or its path contains more than a single navigation property (for example
 	 *           "BP_2_SO/SO_2_SOITEM"),
 	 *       </ul>
@@ -3378,7 +3382,7 @@ sap.ui.define([
 		// (in #adjustPredicate)
 		this.mCacheQueryOptions = mQueryOptions;
 
-		if (!this.oModel.bAutoExpandSelect) {
+		if (!this.oModel.bAutoExpandSelect || ODataListBinding.isBelowAggregation(oContext)) {
 			// No deep create possible, but it must not create its own cache. It remains empty and
 			// silent until the parent binding created the entity. Then it creates a cache (in
 			// #adjustPredicate) and requests from the back end.
@@ -4680,6 +4684,18 @@ sap.ui.define([
 		});
 
 		return aFilters.length === 1 ? aFilters[0] : new Filter({and : true, filters : aFilters});
+	};
+
+	/**
+	 * Returns whether this binding is below an ODLB with data aggregation.
+	 *
+	 * @param {sap.ui.model.Context} [oContext] - The context
+	 * @returns {boolean} Whether this binding is below an ODLB with data aggregation
+	 *
+	 * @private
+	 */
+	ODataListBinding.isBelowAggregation = function (oContext) {
+		return !!oContext?.getBinding?.().getAggregation?.();
 	};
 
 	/**

@@ -32691,6 +32691,86 @@ make root = ${bMakeRoot}`;
 });
 
 	//*********************************************************************************************
+	// Scenario: Create a node in a hierarchical list. Bind a sublist to the created node. See that
+	// a deep create is not possible. When the node has been persisted, see that the data for the
+	// sublist is fetched and creating an entity is possible.
+	// SNOW: DINC0005276
+	QUnit.test("Recursive Hierarchy: DINC0005276", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"});
+		const sView = `
+<Table id="employees" items="{path : '/EMPLOYEES',
+		parameters : {$$aggregation : {hierarchyQualifier : 'OrgChart'}}}">
+	<Text id="name" text="{Name}"/>
+</Table>
+<Table id="equipments" items="{EMPLOYEE_2_EQUIPMENTS}">
+    <Text id="category" text="{Category}"/>
+</Table>`;
+
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=1)"
+				+ "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=100", {
+				"@odata.count" : "0",
+				value : []
+			})
+			.expectChange("name", [])
+			.expectChange("category", []);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("name", ["foo"]);
+
+		// code under test
+		const oEmployeeContext = this.oView.byId("employees").getBinding("items")
+			.create({Name : "foo"}, true);
+
+		const oEquipmentsTable = this.oView.byId("equipments");
+		const oEquipmentsBinding = oEquipmentsTable.getBinding("items");
+
+		// code under test
+		oEquipmentsTable.setBindingContext(oEmployeeContext);
+
+		await this.waitForChanges(assert, "create Employee");
+
+		assert.throws(function () {
+			// code under test
+			oEquipmentsBinding.create();
+		}, new Error("Deep create is not supported with data aggregation"));
+
+		this.expectRequest({
+				method : "POST",
+				url : "EMPLOYEES",
+				payload : {Name : "foo"}
+			}, {ID : "42", Name : "foo"})
+			.expectRequest("EMPLOYEES('42')/EMPLOYEE_2_EQUIPMENTS?$select=Category,ID"
+				+ "&$skip=0&$top=100",
+				{value : [{Category : "C", ID : 23}]})
+			.expectChange("category", ["C"]);
+
+		await Promise.all([
+			oModel.submitBatch("update"),
+			oEmployeeContext.created(),
+			this.waitForChanges(assert, "submit")
+		]);
+
+		this.expectChange("category", ["D", "C"])
+			.expectRequest({
+				method : "POST",
+				url : "EMPLOYEES('42')/EMPLOYEE_2_EQUIPMENTS",
+				payload : {Category : "D"}
+			}, {Category : "D", ID : 24});
+
+		// code under test
+		const oEquipmentContext = oEquipmentsBinding.create({Category : "D"}, true);
+
+		await Promise.all([
+			oModel.submitBatch("update"),
+			oEquipmentContext.created(),
+			this.waitForChanges(assert, "create Equipment and submit")
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Application tries to overwrite client-side instance annotations.
 	// JIRA: CPOUI5UISERVICESV3-1220
 	QUnit.test("@$ui5.* is write-protected", function (assert) {
