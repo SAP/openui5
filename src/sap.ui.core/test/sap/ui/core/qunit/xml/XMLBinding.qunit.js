@@ -23,10 +23,8 @@ sap.ui.define([
 			this.bindings = [];
 			this.oModel = new XMLModel();
 			this.oModel.setXML(testData);
-			sap.ui.getCore().setModel(this.oModel);
 		},
 		afterEach: function() {
-			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
 		},
 		createPropertyBindings: function(sPath, sProperty, oContext){

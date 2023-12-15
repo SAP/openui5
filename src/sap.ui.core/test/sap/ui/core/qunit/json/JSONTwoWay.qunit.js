@@ -1,12 +1,12 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
+	"sap/m/Input",
 	"sap/ui/model/BindingMode",
-	"sap/m/Input"
+	"sap/ui/model/json/JSONModel"
 ], function(
-	JSONModel,
+	Input,
 	BindingMode,
-	Input
+	JSONModel
 ) {
 	"use strict";
 
@@ -33,7 +33,6 @@ sap.ui.define([
 			this.currentTestData = clone(constTestData);
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
-			sap.ui.getCore().setModel(this.oModel);
 		},
 		afterEach: function() {
 			if ( Array.isArray(this.aTextFields) ) {
@@ -43,15 +42,14 @@ sap.ui.define([
 				});
 				this.aTextFields = null;
 			}
-			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
 		},
 		createPropertyBindingsUI: function(sName, sProperty, sMode) {
 			// create bindings
-			this.aTextFields = constTestData.clients.map(function (entry, i) {
+			this.aTextFields = constTestData.clients.map((entry, i) => {
 				var oTextField = new Input();
+				oTextField.setModel(this.oModel);
 				oTextField.bindProperty(sName, "/clients/" + i + "/" + sProperty, null, sMode);
-				oTextField.placeAt("qunit-fixture");
 				return oTextField;
 			});
 
@@ -172,15 +170,15 @@ sap.ui.define([
 		oModel2.setData({
 			test : [
 				{enabled:true}
-		    ]
+			]
 		});
-		sap.ui.getCore().setModel(oModel2, "model2");
 
 		// create bindings
 		var oTextField = new Input();
+		oTextField.setModel(this.oModel);
+		oTextField.setModel(oModel2, "model2");
 		oTextField.bindProperty("value", "/clients/0/lastName");
 		oTextField.bindProperty("enabled", "model2>/test/0/enabled");
-		oTextField.placeAt("qunit-fixture");
 
 		var oValue = this.oModel.getProperty("/clients/0/lastName");
 		assert.equal(oValue, "Duck", "old value check");
@@ -209,14 +207,14 @@ sap.ui.define([
 				{enabled:true}
 			]
 		});
-		sap.ui.getCore().setModel(oModel2, "model2");
 		oModel2.setDefaultBindingMode(BindingMode.OneWay);
 
 		// create bindings
 		var oTextField = new Input();
+		oTextField.setModel(this.oModel);
+		oTextField.setModel(oModel2, "model2");
 		oTextField.bindProperty("value", "/clients/0/lastName");
 		oTextField.bindProperty("enabled", "model2>/test/0/enabled");
-		oTextField.placeAt("qunit-fixture");
 
 		var oValue = this.oModel.getProperty("/clients/0/lastName");
 		assert.equal(oValue, "Duck", "old value check");

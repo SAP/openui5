@@ -1,10 +1,10 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/model/xml/XMLModel",
+	"sap/m/Input",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/Input"
-], function(XMLModel, BindingMode, JSONModel, Input) {
+	"sap/ui/model/xml/XMLModel"
+], function(Input, BindingMode, JSONModel, XMLModel) {
 	"use strict";
 
 	var testData =
@@ -23,7 +23,6 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oModel = new XMLModel();
 			this.oModel.setXML(testData);
-			sap.ui.getCore().setModel(this.oModel);
 			this.aInputs = null;
 		},
 		afterEach: function() {
@@ -34,7 +33,6 @@ sap.ui.define([
 				});
 				this.aInputs = null;
 			}
-			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
 		},
 		createPropertyBindingsUI: function(sName, property, sMode) {
@@ -44,8 +42,8 @@ sap.ui.define([
 
 			for (i = 0; i < 7; i++){
 				oInput = new Input();
+				oInput.setModel(this.oModel);
 				oInput.bindProperty(sName, "/clients/member/" + i + "/" + property, null, sMode);
-				oInput.placeAt("qunit-fixture");
 				aInputs.push(oInput);
 			}
 
@@ -167,13 +165,13 @@ sap.ui.define([
 				{enabled:true}
 			]
 		});
-		sap.ui.getCore().setModel(oModel2, "model2");
 
 		// create bindings
 		var oInput = new Input();
+		oInput.setModel(this.oModel);
+		oInput.setModel(oModel2, "model2");
 		oInput.bindProperty("value", "/clients/member/0/@lastName");
 		oInput.bindProperty("enabled", "model2>/test/0/enabled");
-		oInput.placeAt("qunit-fixture");
 
 		var oValue = this.oModel.getProperty("/clients/member/0/@lastName");
 		assert.equal(oValue, "Duck", "old value check");
@@ -203,14 +201,14 @@ sap.ui.define([
 				{enabled:true}
 			]
 		});
-		sap.ui.getCore().setModel(oModel2, "model2");
 		oModel2.setDefaultBindingMode(BindingMode.OneWay);
 
 		// create bindings
 		var oInput = new Input();
+		oInput.setModel(this.oModel);
+		oInput.setModel(oModel2, "model2");
 		oInput.bindProperty("value", "/clients/member/0/@lastName");
 		oInput.bindProperty("enabled", "model2>/test/0/enabled");
-		oInput.placeAt("qunit-fixture");
 
 		var oValue = this.oModel.getProperty("/clients/member/0/@lastName");
 		assert.equal(oValue, "Duck", "old value check");

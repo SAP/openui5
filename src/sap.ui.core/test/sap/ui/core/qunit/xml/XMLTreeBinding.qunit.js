@@ -1,12 +1,12 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/model/xml/XMLModel",
-	"sap/ui/model/xml/XMLTreeBinding",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
-	"sap/ui/model/Sorter"
-], function(XMLModel, XMLTreeBinding, Filter, FilterOperator, FilterType, Sorter) {
+	"sap/ui/model/Sorter",
+	"sap/ui/model/xml/XMLModel",
+	"sap/ui/model/xml/XMLTreeBinding"
+], function(Filter, FilterOperator, FilterType, Sorter, XMLModel, XMLTreeBinding) {
 	"use strict";
 
 	var testData =
@@ -55,10 +55,8 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oModel = new XMLModel();
 			this.oModel.setXML(testData);
-			sap.ui.getCore().setModel(this.oModel);
 		},
 		afterEach: function() {
-			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
 		},
 		createTreeBinding: function(sPath, oContext, aFilters, mParameters, aSorters) {
