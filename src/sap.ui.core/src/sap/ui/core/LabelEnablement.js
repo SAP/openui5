@@ -128,6 +128,10 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 			return true;
 		}
 
+		if (oControl.isA("sap.ui.core.ILabelable")) {
+			return oControl.hasLabelableHTMLElement();
+		}
+
 		var sName = oControl.getMetadata().getName();
 		return NON_LABELABLE_CONTROLS.indexOf(sName) < 0;
 	}
@@ -308,7 +312,10 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 
 			Element = Element ? Element : sap.ui.require("sap/ui/core/Element");
 
-			if (oControl && oControl.getIdForLabel && oControl.getIdForLabel()) {
+			if (oControl &&
+				!oControl.isA("sap.ui.core.ILabelable") &&
+				oControl.getIdForLabel
+				&& oControl.getIdForLabel()) {
 				oLabelForControl = Element.getElementById(oControl.getIdForLabel());
 				if (oLabelForControl) {
 					oControl = oLabelForControl;
