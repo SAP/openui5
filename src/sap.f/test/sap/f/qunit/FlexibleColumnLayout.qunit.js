@@ -1617,7 +1617,7 @@ function(
 	});
 
 	QUnit.test("columnResize event is fired after resize of all animated columns", function (assert) {
-		assert.expect(4);
+		assert.expect(3);
 		// setup
 		var fnDone = assert.async(),
 			oResizeFunctionSpy = this.spy(ResizeHandler, "resume"),
@@ -1627,7 +1627,6 @@ function(
 				if (iEventsCount == 3) {
 					this.oFCL.detachColumnResize(fnCallback);
 					// assert
-					assert.equal(oResizeFunctionSpy.callCount, 3, "ResizeHandler.resume is called for all columns");
 					assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['begin'].get(0)).calledOnce);
 					assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['mid'].get(0)).calledOnce);
 					assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['end'].get(0)).calledOnce);

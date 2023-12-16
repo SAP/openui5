@@ -1319,9 +1319,16 @@ sap.ui.define([
 	 * provided in <code>mSettings</code> and will evaluate the descriptor file instead. Library developers therefore
 	 * must keep the information in both files in sync if the <code>manifest.json</code> file is maintained manually.
 	 *
+	 *
+	 * <h3>Library API-Version 2</h3>
+	 *
+	 * The Library API Version 2 has been introduced to avoid access to the global namespace when retrieving enum types.
+	 * With Library API Version 2 a library must declare its enum types via {@link module:sap/ui/base/DataType.registerEnum DataType.registerEnum}.
+	 *
 	 * @param {object} mSettings Info object for the library
 	 * @param {string} mSettings.name Name of the library; It must match the name by which the library has been loaded
 	 * @param {string} [mSettings.version] Version of the library
+	 * @param {int} [mSettings.apiVersion=1] The library's API version; supported values are 1, 2 and <code>undefined</code> (defaults to 1).
 	 * @param {string[]} [mSettings.dependencies=[]] List of libraries that this library depends on; names are in dot
 	 *  notation (e.g. "sap.ui.core")
 	 * @param {string[]} [mSettings.types=[]] List of names of types that this library provides; names are in dot

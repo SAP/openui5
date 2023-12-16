@@ -24,8 +24,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @ui5-restricted sap.m, sap.ui.mdc
+	 * @public
 	 *
 	 * @since 1.96
 	 * @alias sap.m.p13n.QueryPanel
@@ -34,6 +33,9 @@ sap.ui.define([
 		metadata: {
 			library: "sap.m",
 			properties: {
+				/**
+				 * The limit for the number of queries that can be created by the user. By default, no query limit is provided.
+				 */
 				queryLimit: {
 					type: "int",
 					defaultValue: -1 //unlimited queries
@@ -64,6 +66,13 @@ sap.ui.define([
 		this.addStyleClass("sapMP13nQueryPanel");
 	};
 
+	/**
+	 * Sets the personalization state of the panel instance.
+	 *
+	 * @public
+	 * @param {sap.m.p13n.Item[]} aP13nData An array containing the personalization state that is represented by the <code>QueryPanel</code>
+	 * @returns {this} The <code>QueryPanel</code> instance
+	 */
 	QueryPanel.prototype.setP13nData = function(aP13nData) {
 		BasePanel.prototype.setP13nData.apply(this, arguments);
 

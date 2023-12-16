@@ -205,7 +205,7 @@ sap.ui.define([
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for data aggregation; see
 		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}. The properties
-		 *   "aggregate", "group", and "groupLevels" are normalized if applicable!
+		 *   "aggregate", "group", "groupLevels", and "expandTo" are normalized if applicable!
 		* @param {string} [oAggregation.hierarchyQualifier]
 		*   If present, a recursive hierarchy w/o data aggregation is defined and
 		*   {@link _AggregationHelper.buildApply4Hierarchy} is invoked instead.
@@ -413,13 +413,19 @@ sap.ui.define([
 		 *
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for a recursive hierarchy; see
-		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
+		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}. The property
+		 *   "expandTo" is normalized if applicable!
 		 * @param {function} [oAggregation.$fetchMetadata]
 		 *   Function which fetches metadata for a given meta path - NOT always available!
 		 * @param {string} [oAggregation.$metaPath]
 		 *   Meta path as set by {@link #setPath}
 		 * @param {string} [oAggregation.$path]
 		 *   Data path as set by {@link #setPath}
+		 * @param {number} [oAggregation.expandTo=1]
+		 *   The number (as a positive integer) of different levels initially available
+		 * @param {string} [oAggregation.hierarchyQualifier]
+		 *   The qualifier for the pair of "Org.OData.Aggregation.V1.RecursiveHierarchy" and
+		 *   "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy" annotations
 		 * @param {string} [oAggregation.search]
 		 *   Like the value for a "$search" system query option (remember ODATA-1452); it is turned
 		 *   into the search expression parameter of an "ancestors()" transformation
@@ -520,13 +526,14 @@ sap.ui.define([
 					sApply += "orderby(" + mQueryOptions.$orderby + ")/";
 					delete mQueryOptions.$orderby;
 				}
+				oAggregation.expandTo ??= 1;
 				sApply += "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root"
 					+ (oAggregation.$path || "")
 					+ ",HierarchyQualifier='" + oAggregation.hierarchyQualifier
 					+ "',NodeProperty='" + sNodeProperty + "'"
 					+ (bAllLevels || oAggregation.expandTo >= Number.MAX_SAFE_INTEGER
 						? ")" // "all levels"
-						: ",Levels=" + (oAggregation.expandTo || 1) + ")");
+						: ",Levels=" + oAggregation.expandTo + ")");
 				if (bAllLevels) {
 					select("DistanceFromRoot");
 				} else if (oAggregation.expandTo > 1) {

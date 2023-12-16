@@ -376,7 +376,6 @@ sap.ui.define([
 		assert.ok(oCache instanceof _AggregationCache, "module value is c'tor function");
 		assert.ok(oCache instanceof _Cache, "_AggregationCache is a _Cache");
 		assert.strictEqual(oCache.addTransientCollection, null, "disinherit");
-		assert.strictEqual(oCache.getAndRemoveCollection, null, "disinherit");
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.sResourcePath, sResourcePath);
 		assert.strictEqual(oCache.mQueryOptions, mQueryOptions);
@@ -4302,8 +4301,7 @@ make root = ${bMakeRoot}`;
 
 	//*********************************************************************************************
 [false, true].forEach(function (bHasGroupLevelCache) {
-	// Note: undefined is important to test defaulting!
-	[undefined, 1, 2, 25].forEach(function (iExpandTo) {
+	[1, 2, 25].forEach(function (iExpandTo) {
 		[undefined, true].forEach(function (bParentExpanded) {
 			[false, true].forEach(function (bCreateRoot) {
 				var sTitle = "create: already has group level cache: " + bHasGroupLevelCache

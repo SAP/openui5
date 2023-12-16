@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/core/InvisibleText",
 	"./NavigationListItem",
+	"./NavigationListMenuItem",
 	"./NavigationListRenderer",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
@@ -33,6 +34,7 @@ sap.ui.define([
 	ItemNavigation,
 	InvisibleText,
 	NavigationListItem,
+	NavigationListMenuItem,
 	NavigationListRenderer,
 	Menu,
 	MenuItem,
@@ -322,6 +324,37 @@ sap.ui.define([
 			if (oMenuItem) {
 				this.fireItemSelected({ item: oMenuItem });
 			}
+		}.bind(oMenu);
+
+		oMenu._createVisualMenuItemFromItem = function(oItem) {
+			var sUfMenuItemId = this._generateUnifiedMenuItemId(oItem.getId()),
+				oUfMenuItem = Element.getElementById(sUfMenuItemId),
+				aCustomData = oItem.getCustomData(), i;
+
+			if (oUfMenuItem) {
+				return oUfMenuItem;
+			}
+
+			oUfMenuItem = new NavigationListMenuItem({
+				id: sUfMenuItemId,
+				icon: oItem.getIcon(),
+				text: oItem.getText(),
+				startsSection: oItem.getStartsSection(),
+				tooltip: oItem.getTooltip(),
+				visible: oItem.getVisible(),
+				enabled: oItem.getEnabled(),
+				isExternalLink: !!oItem._navItem.getHref() && oItem._navItem.getTarget() === "_blank"
+			});
+
+			for (i = 0; i < aCustomData.length; i++) {
+				oItem._addCustomData(oUfMenuItem, aCustomData[i]);
+			}
+
+			oItem.aDelegates.forEach(function(oDelegateObject) {
+				oUfMenuItem.addEventDelegate(oDelegateObject.oDelegate, oDelegateObject.vThis);
+			});
+
+			return oUfMenuItem;
 		}.bind(oMenu);
 
 		this.addDependent(oMenu);

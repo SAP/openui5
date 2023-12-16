@@ -342,7 +342,7 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 			});
 	});
 
-	QUnit.module("CardManifest - static methods");
+	QUnit.module("CardManifest - processing of placeholders");
 
 	QUnit.test("#_processPlaceholder", function (assert) {
 		// Arrange
@@ -374,6 +374,65 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 		assert.strictEqual(CardManifest._processPlaceholder("{{parameters.someKey}} {{parameters.someOtherKey.subvalue}} {{dataSources.invoiceRemote.uri}} {{dataSources.invoiceRemote.uri}}", mParameters, mDataSources),
 							"someValue Other value someUri someUri", "All matches should be replaced.");
 		assert.strictEqual(CardManifest._processPlaceholder("{{dataSources}} text", mParameters, mDataSources), "{{dataSources}} text", "Nothing should be replaced.");
+	});
+
+	QUnit.test("'dataSources' placeholder", function (assert) {
+		// Arrange
+		const oManifest = new CardManifest("sap.card", oManifestWithDataSources);
+
+		// Act
+		oManifest.processManifest();
+
+		// Assert
+		assert.strictEqual(oManifest.oJson["sap.card"].content.data.request.url, "someUri", "Placeholder with 'dataSources' should have been replaced correctly.");
+
+		// Clean up
+		oManifest.destroy();
+	});
+
+	QUnit.test("Content of Adaptive card", async function (assert) {
+		// Arrange
+		const oManifest = {
+			"sap.app": {
+				"id": "adaptivecard.embedded"
+			},
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"body": [
+						{
+							"type": "TextBlock",
+							"text": "{{DATE(2017-02-14T06:08:39Z,SHORT)}}"
+						}
+					]
+				}
+			}
+		};
+		const oCardManifest = new CardManifest("sap.card", oManifest, "someBaseUrl/");
+		const oResourceBundle = {
+			getText: function () {
+				throw "MUST NOT BE CALLED";
+			}
+		};
+
+		this.stub(Manifest.prototype, "_loadI18n").callsFake(function () {
+			assert.ok(false, "i18n bundle must NOT be loaded");
+			return Promise.resolve(oResourceBundle);
+		});
+
+		await oCardManifest.load();
+
+		// Act
+		oCardManifest.processManifest();
+
+		// Assert
+		assert.deepEqual(oManifest, oCardManifest.getJson());
+
+		// Clean up
+		oCardManifest.destroy();
 	});
 
 	QUnit.module("Manifest parameters", {
@@ -457,21 +516,4 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 		oProcessManifestSpy.restore();
 	});
 
-	QUnit.module("Manifest dataSources", {
-		beforeEach: function () {
-			this.oManifest = new CardManifest("sap.card", oManifestWithDataSources);
-		},
-		afterEach: function () {
-			this.oManifest.destroy();
-			this.oManifest = null;
-		}
-	});
-
-	QUnit.test("Process 'dataSources' placeholder", function (assert) {
-		// Act
-		this.oManifest.processManifest();
-
-		// Assert
-		assert.strictEqual(this.oManifest.oJson["sap.card"].content.data.request.url, "someUri", "Placeholder with 'dataSources' should have been replaced correctly.");
-	});
 });

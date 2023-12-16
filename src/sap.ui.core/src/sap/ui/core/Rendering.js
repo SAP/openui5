@@ -52,65 +52,70 @@ sap.ui.define([
 	let _bRendering = false;
 
 	const _renderPendingUIUpdates = (sCaller) => {
-		// start performance measurement
-		Measurement.start("renderPendingUIUpdates","Render pending UI updates in all UIAreas");
+		try {
+			// start performance measurement
+			Measurement.start("renderPendingUIUpdates","Render pending UI updates in all UIAreas");
 
-		oRenderLog.debug("Render pending UI updates: start (" + (sCaller || "by timer" ) + ")");
+			oRenderLog.debug("Render pending UI updates: start (" + (sCaller || "by timer" ) + ")");
 
-		let iLoopCount = 0;
+			let iLoopCount = 0;
 
-		const bLooped = MAX_RENDERING_ITERATIONS > 0;
+			const bLooped = MAX_RENDERING_ITERATIONS > 0;
 
-		_bRendering = true;
+			_bRendering = true;
 
-		do {
+			do {
 
-			if ( bLooped ) {
-				// try to detect long running ('endless') rendering loops
-				iLoopCount++;
-				// if we run another iteration despite the tracking mode, we complain ourselves
-				if ( iLoopCount > MAX_RENDERING_ITERATIONS ) {
-					_bRendering = false;
-					throw new Error("Rendering has been re-started too many times (" + iLoopCount + "). Add URL parameter sap-ui-xx-debugRendering=true for a detailed analysis.");
+				if ( bLooped ) {
+					// try to detect long running ('endless') rendering loops
+					iLoopCount++;
+					// if we run another iteration despite the tracking mode, we complain ourselves
+					if ( iLoopCount > MAX_RENDERING_ITERATIONS ) {
+						_bRendering = false;
+						throw new Error("Rendering has been re-started too many times (" + iLoopCount + "). Add URL parameter sap-ui-xx-debugRendering=true for a detailed analysis.");
+					}
+
+					if ( iLoopCount > 1 ) {
+						oRenderLog.debug("Render pending UI updates: iteration " + iLoopCount);
+					}
 				}
 
-				if ( iLoopCount > 1 ) {
-					oRenderLog.debug("Render pending UI updates: iteration " + iLoopCount);
+				// clear a pending timer so that the next call to re-render will create a new timer
+				if (_sRerenderTimer) {
+					if ( _sRerenderTimer !== Rendering ) { // 'this' is used as a marker for a delayed initial rendering, no timer to cleanup then
+						clearTimeout(_sRerenderTimer); // explicitly stop the timer, as this call might be a synchronous call (applyChanges) while still a timer is running
+					}
+					_sRerenderTimer = undefined;
+					if (aFnDone.length > 0) {
+						aFnDone.pop()();
+					}
 				}
-			}
 
-			// clear a pending timer so that the next call to re-render will create a new timer
-			if (_sRerenderTimer) {
-				if ( _sRerenderTimer !== Rendering ) { // 'this' is used as a marker for a delayed initial rendering, no timer to cleanup then
-					clearTimeout(_sRerenderTimer); // explicitly stop the timer, as this call might be a synchronous call (applyChanges) while still a timer is running
+				runPrerenderingTasks();
+
+				const mUIAreasSnapshot = mUIAreas;
+				mUIAreas = {};
+				for (const sId in mUIAreasSnapshot) {
+					mUIAreasSnapshot[sId].rerender();
 				}
-				_sRerenderTimer = undefined;
-				if (aFnDone.length > 0) {
-					aFnDone.pop()();
-				}
-			}
 
-			runPrerenderingTasks();
+			// eslint-disable-next-line no-unmodified-loop-condition
+			} while ( bLooped && _sRerenderTimer ); // iterate if there are new rendering tasks
 
-			const mUIAreasSnapshot = mUIAreas;
-			mUIAreas = {};
-			for (const sId in mUIAreasSnapshot) {
-				mUIAreasSnapshot[sId].rerender();
-			}
+			_bRendering = false;
 
-		// eslint-disable-next-line no-unmodified-loop-condition
-		} while ( bLooped && _sRerenderTimer ); // iterate if there are new rendering tasks
-
-		_bRendering = false;
-
-		// TODO: Provide information on what actually was re-rendered...
-		Rendering.fireUIUpdated();
+			// TODO: Provide information on what actually was re-rendered...
+			Rendering.fireUIUpdated();
 
 
-		oRenderLog.debug("Render pending UI updates: finished");
+			oRenderLog.debug("Render pending UI updates: finished");
 
-		// end performance measurement
-		Measurement.end("renderPendingUIUpdates");
+			// end performance measurement
+			Measurement.end("renderPendingUIUpdates");
+		} catch (e) {
+			Rendering.fireUIUpdated({failed: e});
+			throw e;
+		}
 	};
 
 	/**

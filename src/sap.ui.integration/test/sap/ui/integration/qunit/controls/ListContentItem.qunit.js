@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/ListContent",
 	"sap/ui/integration/controls/ListContentItem",
 	"sap/ui/integration/controls/Microchart",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/ObjectStatus"
 ], function(
 	Core,
@@ -15,6 +16,7 @@ sap.ui.define([
 	ListContent,
 	ListContentItem,
 	Microchart,
+	nextUIUpdate,
 	ObjectStatus
 ) {
 	"use strict";
@@ -125,6 +127,26 @@ sap.ui.define([
 		oLCI.destroy();
 	});
 
+	[
+		{ src: "https://sap.com/someIcon.jpg", isThumbnail: true },
+		{ src: "", isThumbnail: false },
+		{ src: " ", isThumbnail: false },
+		{ src: "sap-icon://error", isThumbnail: false }
+	].forEach(({src, isThumbnail}) => {
+		QUnit.test(`Thumbnail class for src '${src}'`, async function (assert) {
+			// arrange
+			const oLCI = new ListContentItem({ icon: src });
+			oLCI.placeAt(DOM_RENDER_LOCATION);
+			await nextUIUpdate();
+
+			// assert
+			assert.strictEqual(oLCI.getDomRef().classList.contains("sapUiIntLCIThumbnail"), isThumbnail);
+
+			// clean up
+			oLCI.destroy();
+		});
+	});
+
 	QUnit.test("Lines count for renderer - attributes", function (assert) {
 		// arrange
 		const oContent = new ListContent();
@@ -155,6 +177,9 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(ListContentItem.getLinesCount(oSample1, oContent), 5, "Lines count are as expected.");
+
+		// clean up
+		oContent.destroy();
 	});
 
 	QUnit.test("Lines count for renderer attributes 2", function (assert) {
@@ -191,6 +216,9 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(ListContentItem.getLinesCount(oSample2, oContent), 2, "Lines count are as expected.");
+
+		// clean up
+		oContent.destroy();
 	});
 
 	QUnit.test("Lines count for renderer - attributes 3", function (assert) {
@@ -213,6 +241,9 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(ListContentItem.getLinesCount(oSample1, oContent), 2, "Lines count are as expected.");
+
+		// clean up
+		oContent.destroy();
 	});
 
 	QUnit.module("Accessibility", {

@@ -118,7 +118,6 @@ sap.ui.define([
 	// make _AggregationCache a _Cache, but actively disinherit some critical methods
 	_AggregationCache.prototype = Object.create(_Cache.prototype);
 	_AggregationCache.prototype.addTransientCollection = null;
-	_AggregationCache.prototype.getAndRemoveCollection = null;
 
 	/**
 	 * Deletes a node on the server and in the cached data.
@@ -495,7 +494,7 @@ sap.ui.define([
 		const iLevel = oParentNode
 			? oParentNode["@$ui5.node.level"] + 1
 			: 1;
-		let oCache = iLevel > (this.oAggregation.expandTo || 1)
+		let oCache = iLevel > this.oAggregation.expandTo
 			? _Helper.getPrivateAnnotation(oParentNode, "cache")
 			: this.oFirstLevel;
 		if (!oCache) {

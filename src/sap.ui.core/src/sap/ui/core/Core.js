@@ -2204,22 +2204,6 @@ sap.ui.define([
 			return _oEventProvider;
 		};
 
-		/**
-		 * Adds a task that is guaranteed to run once, just before the next rendering. A rendering
-		 * request is not triggered.
-		 *
-		 * @param {function} fnPrerenderingTask
-		 *   A function that is called before the rendering
-		 * @param {boolean} [bFirst=false]
-		 *   Whether the task should become the first one, not the last one
-		 * @private
-		 * @deprecated since 1.118: Please use {@link sap.ui.core.Rendering.addPrerenderingTask Rendering.addPrerenderingTask} instead.
-		 * @ui5-restricted sap.ui.model.odata.v4
-		 */
-		Core.prototype.addPrerenderingTask = function (fnPrerenderingTask, bFirst) {
-			Rendering.addPrerenderingTask(fnPrerenderingTask, bFirst);
-		};
-
 		/** Returns a Promise that resolves if the Core is initialized.
 		 *
 		 * @param {function():void} [fnReady] If the Core is ready the function will be called immediately, otherwise when the ready Promise resolves.

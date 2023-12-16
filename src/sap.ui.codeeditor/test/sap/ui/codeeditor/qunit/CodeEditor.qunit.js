@@ -246,6 +246,31 @@ sap.ui.define([
 		assert.ok(document.getElementById(sIdForLabel), "Element that can be labeled should exist");
 	});
 
+	QUnit.test("focusDomRef", function (assert) {
+		// Assert
+		assert.ok(this.oCodeEditor.getFocusDomRef(),"Focus dom ref exists");
+		assert.strictEqual(this.oCodeEditor.getFocusDomRef(), this.oCodeEditor.getDomRef().querySelector(".ace_scroller.ace_keyboard-focus"), "Focus dom ref should be correct");
+
+		// Act
+		this.oCodeEditor.getFocusDomRef().focus();
+		document.activeElement.dispatchEvent(new KeyboardEvent("keyup", { keyCode: KeyCodes.ENTER }));
+
+		// Assert
+		assert.ok(this.oCodeEditor.getFocusDomRef(),"Focus dom ref exists");
+		assert.strictEqual(this.oCodeEditor.getFocusDomRef(), this.oCodeEditor.getDomRef().querySelector(".ace_text-input"), "Focus dom ref should be correct while typing");
+	});
+
+	QUnit.test("focusDomRef when editor is not rendered", function (assert) {
+		// Arrange
+		const editor = new CodeEditor();
+
+		// Assert
+		assert.strictEqual(editor.getFocusDomRef(), null, "Focus dom ref should be correct");
+
+		// Clean up
+		editor.destroy();
+	});
+
 	QUnit.module("Theming", {
 		beforeEach: async function () {
 			this.oCodeEditor = new CodeEditor();
