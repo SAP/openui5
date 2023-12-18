@@ -605,7 +605,7 @@ sap.ui.define([
 		DocumentationRouter.prototype.initialize = function () {
 			// hide DemoKit if sample should open standalone
 			this.getRoute("sample").attachPatternMatched(function () {
-				if (new URLSearchParams(window.location.search).has("dk-sample-standalone")) {
+				if (window.location.search.includes("dk-sample-standalone")) {
 					document.body.style.visibility = "hidden";
 				}
 			});
