@@ -96,10 +96,7 @@ sap.ui.define([
 				}
 			},
 			BusyDialog: {
-				title: "QUnit page for sap.m.BusyDialog",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "QUnit page for sap.m.BusyDialog"
 			},
 			BusyIndicator: {
 				title: "QUnit page for sap.m.BusyIndicator"

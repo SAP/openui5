@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/m/StandardListItemRenderer",
@@ -34,6 +35,7 @@ sap.ui.define([
 		GroupHeaderListItem,
 		JSONModel,
 		qutils,
+		nextUIUpdate,
 		KeyCodes,
 		Device,
 		StandardListItemRenderer,
@@ -1879,35 +1881,38 @@ sap.ui.define([
 
 	QUnit.module("Title Alignment");
 
-	QUnit.test("setTitleAlignment test", function (assert) {
-
-		var oDialog = new SelectDialog({
-				title: "Header"
-			}),
-			oCore = sap.ui.getCore(),
-			sAlignmentClass = "sapMBarTitleAlign",
-			setTitleAlignmentSpy = this.spy(oDialog, "setTitleAlignment"),
-			sInitialAlignment,
-			sAlignment;
+	QUnit.test("setTitleAlignment test", async function (assert) {
+		this.clock.restore();
+		const oDialog = new SelectDialog({
+			title: "Header"
+		});
+		const sAlignmentClass = "sapMBarTitleAlign";
+		const setTitleAlignmentSpy = this.spy(oDialog, "setTitleAlignment");
 
 		oDialog.open();
-		oCore.applyChanges();
-		sInitialAlignment = oDialog.getTitleAlignment();
+		await nextUIUpdate();
+
+		const sInitialAlignment = oDialog.getTitleAlignment();
 
 		// initial titleAlignment test depending on theme
 		assert.ok(oDialog._oDialog.getCustomHeader().hasStyleClass(sAlignmentClass + sInitialAlignment),
 					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
 
+		// ensure that setTitleAlignment won't be called again with the initial value and will always invalidate
+		const aRemainingTitleAlignments = Object.values(TitleAlignment).filter((sAlignment) => sAlignment !== sInitialAlignment);
+
 		// check if all types of alignment lead to apply the proper CSS class
-		for (sAlignment in TitleAlignment) {
+		await aRemainingTitleAlignments.reduce(async (pPrevAlignmentTest, sAlignment) => {
+			await pPrevAlignmentTest;
 			oDialog.setTitleAlignment(sAlignment);
-			oCore.applyChanges();
+			await nextUIUpdate();
+
 			assert.ok(oDialog._oDialog.getCustomHeader().hasStyleClass(sAlignmentClass + sAlignment),
-						"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
-		}
+							"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
+		}, Promise.resolve());
 
 		// check how many times setTitleAlignment method is called
-		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(TitleAlignment).length,
+		assert.strictEqual(setTitleAlignmentSpy.callCount, aRemainingTitleAlignments.length,
 			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
 
 		// cleanup
