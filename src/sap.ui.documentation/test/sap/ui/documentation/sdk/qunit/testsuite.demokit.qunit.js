@@ -16,7 +16,7 @@ sap.ui.define(function () {
 			// },
 			"OpaTestsIframe": {
 				group: "Demo Kit Opa Tests",
-				page: "test-resources/sap/ui/documentation/sdk/integration/opaTestsWithIframe.qunit.html"
+				page: "test-resources/sap/ui/documentation/sdk/integration/opaTestsWithIFrame.qunit.html"
 			}
 		}
 	};
