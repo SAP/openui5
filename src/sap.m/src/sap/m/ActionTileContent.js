@@ -36,8 +36,44 @@ sap.ui.define([
         metadata: {
             library: "sap.m",
             aggregations : {
-                attributes: { type: "sap.m.CustomAttribute", multiple: true, singularName: "attribute"}
-            }
+                attributes: { type: "sap.m.TileAttribute", multiple: true, singularName: "attribute"}
+            },
+			events: {
+				/**
+				 * The event is triggered when the user clicks on the link
+				 */
+				linkPress: {
+					allowPreventDefault : true,
+					parameters: {
+						/**
+						 * Indicates whether the CTRL key was pressed when the link was selected.
+						 * @since 1.121
+						 */
+						ctrlKey: { type: "boolean" },
+						/**
+						 * Indicates whether the "meta" key was pressed when the link was selected.
+						 *
+						 * On Macintosh keyboards, this is the command key (⌘).
+						 * On Windows keyboards, this is the windows key (⊞).
+						 *
+						 * @since 1.121
+						 */
+						metaKey: { type: "boolean" },
+                        /**
+						 * Returns the TileAttribute instance of the clicked link
+						 *
+						 * @since 1.121
+						 */
+						attribute: { type: "sap.m.TileAttribute" },
+                        /**
+						 *  Returns the link instance
+						 *
+						 * @since 1.121
+						 */
+						link: { type: "sap.m.link" }
+					}
+				}
+			}
         },
             renderer: {
                 apiVersion: 2,
@@ -47,6 +83,42 @@ sap.ui.define([
         }
     });
 
+    ActionTileContent.prototype.onAfterRendering = function() {
+        var aAttributes = this.getAttributes();
+		if (aAttributes.length > 0) {
+            this._addEventHandlersToAttributes(aAttributes);
+        }
+		TileContent.prototype.onAfterRendering.apply(this, arguments);
+	};
+
+    /**
+	 * Attaches the press event to the link inside the tileAttribute
+	 *
+	 * @param {object[]} aAttributes array containing all of the tileAttributes
+	 * @private
+	 */
+
+    ActionTileContent.prototype._addEventHandlersToAttributes = function(aAttributes) {
+		aAttributes.forEach(function(oAttribute){
+            var oLink = oAttribute.getContentConfig()?.getInnerControl();
+            if (oLink?.isA("sap.m.Link")) {
+                oLink.attachPress(function(oEvent){
+                    const {ctrlKey,metaKey} = oEvent.mParameters;
+                     const bPreventDefaultNotCalled = this.fireLinkPress(
+                        {ctrlKey,
+                        metaKey,
+                        attribute: oAttribute,
+                        link: oAttribute.getContentConfig()?.getInnerControl()
+                    });
+                    if (!bPreventDefaultNotCalled) {
+                        oEvent.preventDefault();
+                    }
+                    this._isLinkPressed = true;
+                }.bind(this));
+            }
+        }.bind(this));
+	};
+
     /**
     * Returns the text inside the control so that it can be used for setting the tooltip,aria-label
     * @private
@@ -55,15 +127,20 @@ sap.ui.define([
     ActionTileContent.prototype.getAltText = function() {
         var sAltText = "";
         var sPriorityText = this.getPriorityText();
-        var aCustomAttributes = this.getAggregation("attributes");
+        var aTileAttributes = this.getAggregation("attributes");
         if (this.getPriority() !== Priority.None && sPriorityText) {
             sAltText += (sPriorityText) + "\n";
         }
         // Returns the first four attributes to display in the tooltip,aria-label on the ActionTile
-        for (var iIndex = 0; iIndex < aCustomAttributes.length && iIndex < 4; iIndex++) {
-            sAltText += aCustomAttributes[iIndex].getLabel() + "\n" + aCustomAttributes[iIndex].getValue() + "\n";
+        var aText = [];
+        for (var iIndex = 0; iIndex < aTileAttributes.length && iIndex < 4; iIndex++) {
+            aText.push(aTileAttributes[iIndex].getLabel());
+            aText.push(aTileAttributes[iIndex].getContentConfig()?.getText());
         }
-        return sAltText.trim();
+        aText = aText.filter(function(sText){
+            return typeof sText === "string";
+        });
+        return sAltText + aText.join("\n");
     };
 
     return ActionTileContent;
