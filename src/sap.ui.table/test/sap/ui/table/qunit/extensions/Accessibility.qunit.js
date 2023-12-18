@@ -46,8 +46,7 @@ sap.ui.define([
 	"use strict";
 
 	var SelectionMode = Library.SelectionMode;
-
-	// mapping of global function calls
+	var SortOrder = coreLibrary.SortOrder;
 	var createTables = window.createTables;
 	var destroyTables = window.destroyTables;
 	var getCell = window.getCell;
@@ -134,7 +133,7 @@ sap.ui.define([
 			var oColumn = _oTable.getColumns()[1];
 			oColumn.setSortProperty("SomeSortProperty");
 			oColumn.setFilterProperty("SomeFilterProperty");
-			oColumn.setSortOrder("Ascending");
+			oColumn.setSortOrder(SortOrder.Ascending);
 			/** @deprecated As of version 1.120 */
 			oColumn.setSorted(true);
 			oColumn.setFiltered(true);
@@ -800,15 +799,94 @@ sap.ui.define([
 		assert.ok($Cell.attr("aria-labelledby").includes(sTableId + "-ariarequired"), "aria-required");
 	});
 
+	QUnit.test("aria-sort", async function(assert) {
+		var oFirstColumn = oTable.getColumns()[0];
+		var oSecondColumn = oTable.getColumns()[1];
+
+		assert.equal(oFirstColumn.getDomRef().getAttribute("aria-sort"), null, "First column");
+		assert.strictEqual(oSecondColumn.getDomRef().getAttribute("aria-sort"), "ascending", "Second column");
+
+		/** @deprecated As of version 1.120 */
+		oFirstColumn.setSorted(true);
+		oFirstColumn.setSortOrder(SortOrder.Ascending);
+		await new Promise((resolve) => {
+			oTable.attachEventOnce("rowsUpdated", resolve);
+		});
+
+		assert.equal(oFirstColumn.getDomRef().getAttribute("aria-sort"), null, "First column");
+		assert.strictEqual(oSecondColumn.getDomRef().getAttribute("aria-sort"), "ascending", "Second column");
+
+		oFirstColumn.setSortOrder(SortOrder.Descending);
+		oSecondColumn.setSortOrder(SortOrder.None);
+		await new Promise((resolve) => {
+			oTable.attachEventOnce("rowsUpdated", resolve);
+		});
+
+		assert.strictEqual(oFirstColumn.getDomRef().getAttribute("aria-sort"), "descending", "First column");
+		assert.strictEqual(oSecondColumn.getDomRef().getAttribute("aria-sort"), "none", "Second column");
+	});
+
+	QUnit.test("aria-sort with multi header", function(assert) {
+		const oColumn1 = new Column({
+			multiLabels: [
+				new TestControl({text: "Person"}),
+				new TestControl({text: "Name"}),
+				new TestControl({text: "First Name"})
+			],
+			headerSpan: [3, 2],
+			hAlign: "Center",
+			template: new TestControl(),
+			sortProperty: "sortProperty",
+			sortOrder: SortOrder.Ascending
+		});
+		const oColumn2 = new Column({
+			multiLabels: [
+				new TestControl(),
+				new TestControl(),
+				new TestControl({text: "Last Name"})
+			],
+			hAlign: "Center",
+			template: new TestControl(),
+			sortProperty: "sortProperty"
+		});
+		const oColumn3 = new Column({
+			multiLabels: [
+				new TestControl(),
+				new TestControl({text: "Age"})
+			],
+			hAlign: "Center",
+			template: new TestControl(),
+			sortProperty: "sortProperty",
+			sortOrder: SortOrder.Descending
+		});
+
+		oTable.destroyColumns();
+		oTable.addColumn(oColumn1);
+		oTable.addColumn(oColumn2);
+		oTable.addColumn(oColumn3);
+		/** @deprecated As of version 1.120 */
+		(function() {
+			oColumn1.setSorted(true);
+			oColumn3.setSorted(true);
+		})();
+		oCore.applyChanges();
+
+		// Check only visible cells. The others are not relevant since they can't be focused.
+		assert.notOk(document.getElementById(oColumn1.getId()).hasAttribute("aria-sort"), "1st row, 1st cell (span 3)");
+		assert.notOk(document.getElementById(oColumn1.getId() + "_1").hasAttribute("aria-sort"), "2nd row, 1st cell (span 2)");
+		assert.strictEqual(document.getElementById(oColumn3.getId() + "_1").getAttribute("aria-sort"), "descending", "2nd row, 2nd cell");
+		assert.strictEqual(document.getElementById(oColumn1.getId() + "_2").getAttribute("aria-sort"), "ascending", "3rd row, 1st cell");
+		assert.equal(document.getElementById(oColumn2.getId() + "_2").getAttribute("aria-sort"), null, "3rd row, 2nd cell");
+		assert.strictEqual(document.getElementById(oColumn3.getId() + "_2").getAttribute("aria-sort"), "descending", "3rd row, 3rd cell");
+	});
+
 	QUnit.test("Other ARIA Attributes of Column Header", function(assert) {
 		var $Elem = oTable.getColumns()[0].$();
 		assert.strictEqual($Elem.attr("role"), "columnheader", "role");
 		assert.ok(!$Elem.attr("aria-haspopup"), "aria-haspopup");
-		assert.ok(!$Elem.attr("aria-sort"), "aria-sort");
 		$Elem = oTable.getColumns()[1].$();
 		assert.strictEqual($Elem.attr("role"), "columnheader", "role");
 		assert.strictEqual($Elem.attr("aria-haspopup"), "menu", "aria-haspopup");
-		assert.strictEqual($Elem.attr("aria-sort"), "ascending", "aria-sort");
 	});
 
 	QUnit.module("Row Header", {

@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterType",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/type/Float",
 	"sap/m/Text",
@@ -76,6 +77,7 @@ sap.ui.define([
 	JSONModel,
 	Sorter,
 	Filter,
+	FilterType,
 	ChangeReason,
 	FloatType,
 	Text,
@@ -2041,6 +2043,10 @@ sap.ui.define([
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var pSequence = Promise.resolve();
 		var iPadding = 14;
+		var aRowDomRefs;
+		var iHeightWithoutIcons;
+		var iFixedPartHeight;
+		var iScrollablePartHeight;
 
 		oTable.removeAllColumns();
 		oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
@@ -2113,15 +2119,17 @@ sap.ui.define([
 				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(function() {
-			var aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
-			var iHeightWithoutIcons = aRowDomRefs[0].getBoundingClientRect().height;
-			var iFixedPartHeight;
-			var iScrollablePartHeight;
+			aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
+			iHeightWithoutIcons = aRowDomRefs[0].getBoundingClientRect().height;
 
 			/** @deprecated As of version 1.120 */
 			oTable.getColumns()[1].setSorted(true);
 			oTable.getColumns()[1].setSortOrder(SortOrder.Ascending);
 			oTable.getColumns()[1].setFiltered(true);
+			return new Promise((resolve) => {
+				oTable.attachEventOnce("rowsUpdated", resolve);
+			});
+		}).then(function() {
 			iFixedPartHeight = aRowDomRefs[0].getBoundingClientRect().height;
 			iScrollablePartHeight = aRowDomRefs[1].getBoundingClientRect().height;
 			assert.ok(iFixedPartHeight > iHeightWithoutIcons, "Height increased after adding icons");
@@ -2131,6 +2139,10 @@ sap.ui.define([
 			oTable.getColumns()[1].setSorted(false);
 			oTable.getColumns()[1].setSortOrder(SortOrder.None);
 			oTable.getColumns()[1].setFiltered(false);
+			return new Promise((resolve) => {
+				oTable.attachEventOnce("rowsUpdated", resolve);
+			});
+		}).then(function() {
 			iFixedPartHeight = aRowDomRefs[0].getBoundingClientRect().height;
 			iScrollablePartHeight = aRowDomRefs[1].getBoundingClientRect().height;
 			assert.strictEqual(iFixedPartHeight, iHeightWithoutIcons, "After removing the icons, the height is the same as before");
@@ -2446,25 +2458,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("#pushSortedColumn, #_removeSortedColumn, #getSortedColumns", function(assert) {
-		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[0], this.oTable.getColumns()[1]]);
-
-		this.oTable.pushSortedColumn(this.oTable.getColumns()[1]);
-		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[1]]);
-
-		this.oTable.pushSortedColumn(this.oTable.getColumns()[0], true);
-		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[1], this.oTable.getColumns()[0]]);
-
-		this.oTable.pushSortedColumn(this.oTable.getColumns()[0], true);
-		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[1], this.oTable.getColumns()[0]]);
-
-		this.oTable._removeSortedColumn(this.oTable.getColumns()[0]);
-		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[1]]);
-
-		this.oTable.pushSortedColumn(this.oTable.getColumns()[1]);
-		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[1]]);
-	});
-
 	QUnit.test("#sort, #getSortedColumns, and 'sort' event", function(assert) {
 		var aColumns = this.oTable.getColumns();
 		var aSortEventParameters = [];
@@ -2487,6 +2480,25 @@ sap.ui.define([
 			new Sorter("FirstName", true)
 		], "Binding sorters");
 
+		this.oTable.sort(aColumns[0], SortOrder.Descending, true);
+
+		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[0], aColumns[1]], "Sorted columns");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[0].getSorted(), "First column sorted");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[1].getSorted(), "Second column sorted");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Descending, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Descending, "Sort order of second column");
+		assert.deepEqual(this.oTable.getBinding().aSorters, [
+			new Sorter("LastName", true),
+			new Sorter("FirstName", true)
+		], "Binding sorters");
+		assert.deepEqual(aSortEventParameters, [{
+			column: aColumns[0],
+			sortOrder: SortOrder.Descending,
+			columnAdded: true
+		}], "Sort events");
+
 		aSortEventParameters = [];
 		this.oTable.sort(aColumns[0], SortOrder.None);
 
@@ -2505,7 +2517,7 @@ sap.ui.define([
 		}], "Sort events");
 
 		aSortEventParameters = [];
-		this.oTable.sort(aColumns[0], SortOrder.Ascending);
+		this.oTable.sort(aColumns[0]);
 
 		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[0]], "Sorted columns");
 		/** @deprecated As of version 1.120 */
@@ -2541,6 +2553,26 @@ sap.ui.define([
 			column: aColumns[0],
 			sortOrder: SortOrder.None,
 			columnAdded: false
+		}], "Sort events");
+
+		aSortEventParameters = [];
+		this.oTable.sort(aColumns[0], SortOrder.Descending, true);
+
+		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[1], aColumns[0]], "Sorted columns");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[0].getSorted(), "First column sorted");
+		/** @deprecated As of version 1.120 */
+		assert.ok(aColumns[1].getSorted(), "Second column sorted");
+		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Descending, "Sort order of first column");
+		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Ascending, "Sort order of second column");
+		assert.deepEqual(this.oTable.getBinding().aSorters, [
+			new Sorter("FirstName", false),
+			new Sorter("LastName", true)
+		], "Binding sorters");
+		assert.deepEqual(aSortEventParameters, [{
+			column: aColumns[0],
+			sortOrder: SortOrder.Descending,
+			columnAdded: true
 		}], "Sort events");
 
 		aSortEventParameters = [];
@@ -2588,6 +2620,7 @@ sap.ui.define([
 		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[0], aColumns[1]], "Sorted columns");
 		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Ascending, "Sort order of first column");
 		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Descending, "Sort order of second column");
+		assert.strictEqual(aColumns[2].getSortOrder(), SortOrder.None, "Sort order of third column");
 		assert.deepEqual(this.oTable.getBinding().aSorters, [
 			new Sorter("LastName", false),
 			new Sorter("FirstName", true)
@@ -2670,42 +2703,124 @@ sap.ui.define([
 		assert.equal(this.oTable.getBinding().aSorters, null, "Binding sorters");
 	});
 
-	QUnit.test("Sort Icon", async function(assert) {
+	QUnit.test("Sort icon", async function(assert) {
 		var aSortedColumns = this.oTable.getSortedColumns();
-		var oCell;
+		var oFirstColumnClassList = aSortedColumns[0].getDomRef().classList;
+		var oSecondColumnClassList = aSortedColumns[1].getDomRef().classList;
 
-		oCell = aSortedColumns[0].getDomRef();
-		assert.ok(oCell.classList.contains("sapUiTableColSorted"), "First column: Sort icon is visible");
-		assert.ok(!oCell.classList.contains("sapUiTableColSortedD"), "First column: Sort icon is ascending");
-
-		oCell = aSortedColumns[1].getDomRef();
-		assert.ok(oCell.classList.contains("sapUiTableColSorted"), "Second column: Sort icon is visible");
-		assert.ok(oCell.classList.contains("sapUiTableColSortedD"), "Second column: Sort icon is descending");
+		assert.ok(oFirstColumnClassList.contains("sapUiTableColSorted"), "First column: Sort icon visibility");
+		assert.ok(!oFirstColumnClassList.contains("sapUiTableColSortedD"), "First column: Sort icon is ascending");
+		assert.ok(oSecondColumnClassList.contains("sapUiTableColSorted"), "Second column: Sort icon visibility");
+		assert.ok(oSecondColumnClassList.contains("sapUiTableColSortedD"), "Second column: Sort icon is descending");
 
 		this.oTable.invalidate();
 		await this.oTable.qunit.whenRenderingFinished();
-
-		oCell = aSortedColumns[0].getDomRef();
-		assert.ok(oCell.classList.contains("sapUiTableColSorted"), "First column: Sort icon is still visible after rendering");
-		assert.ok(!oCell.classList.contains("sapUiTableColSortedD"), "First column: Sort icon is ascending");
-
-		oCell = aSortedColumns[1].getDomRef();
-		assert.ok(oCell.classList.contains("sapUiTableColSorted"), "Second column: Sort icon is still visible after rendering");
-		assert.ok(oCell.classList.contains("sapUiTableColSortedD"), "Second column: Sort icon is descending");
+		assert.ok(oFirstColumnClassList.contains("sapUiTableColSorted"), "First column: Sort icon visibility after rendering");
+		assert.ok(!oFirstColumnClassList.contains("sapUiTableColSortedD"), "First column: Sort icon is ascending");
+		assert.ok(oSecondColumnClassList.contains("sapUiTableColSorted"), "Second column: Sort icon visibility after rendering");
+		assert.ok(oSecondColumnClassList.contains("sapUiTableColSortedD"), "Second column: Sort icon is descending");
 
 		this.oTable.sort(this.oTable.getColumns()[0], SortOrder.Descending);
-
-		oCell = aSortedColumns[0].getDomRef();
-		assert.ok(oCell.classList.contains("sapUiTableColSorted"), "First column: Sort icon is visible after sort change");
-		assert.ok(oCell.classList.contains("sapUiTableColSortedD"), "First column: Sort icon is descending");
-
-		oCell = aSortedColumns[1].getDomRef();
-		assert.ok(!oCell.classList.contains("sapUiTableColSorted"), "Second column: Sort icon is not visible after sort change");
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.ok(oFirstColumnClassList.contains("sapUiTableColSorted"), "First column: Sort icon visibility after sort change");
+		assert.ok(oFirstColumnClassList.contains("sapUiTableColSortedD"), "First column: Sort icon is descending");
+		assert.notOk(oSecondColumnClassList.contains("sapUiTableColSorted"), "Second column: Sort icon visibility after sort change");
 
 		this.oTable.sort();
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.notOk(oFirstColumnClassList.contains("sapUiTableColSorted"), "First column: Sort icon visibility after removing sorting");
 
-		oCell = aSortedColumns[0].getDomRef();
-		assert.ok(!oCell.classList.contains("sapUiTableColSorted"), "First column: Sort icon is not visible after removing sorting");
+		this.oTable.attachSort((oEvent) => { oEvent.preventDefault(); });
+		this.oTable.sort(this.oTable.getColumns()[0], SortOrder.Descending);
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.notOk(oFirstColumnClassList.contains("sapUiTableColSorted"), "First column: Sort icon visibility when default was prevented");
+	});
+
+	QUnit.test("Sort icon changed with Column#setSortOrder", async function(assert) {
+		var oColumn = this.oTable.getColumns()[0];
+		var oClassList = oColumn.getDomRef().classList;
+
+		oColumn.setSortOrder(SortOrder.Ascending);
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.ok(oClassList.contains("sapUiTableColSorted"), "Icon visibility");
+		assert.ok(!oClassList.contains("sapUiTableColSortedD"), "Ascending");
+
+		oColumn.setSortOrder(SortOrder.None);
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.notOk(oClassList.contains("sapUiTableColSorted"), "Icon visibility");
+	});
+
+	QUnit.test("Sort icon with multi column header", async function(assert) {
+		const oColumn1 = new Column({
+			multiLabels: [
+				new TableQUnitUtils.TestControl({text: "Person"}),
+				new TableQUnitUtils.TestControl({text: "Name"}),
+				new TableQUnitUtils.TestControl({text: "First Name"})
+			],
+			headerSpan: [3, 2],
+			hAlign: "Center",
+			template: new TableQUnitUtils.TestControl(),
+			sortProperty: "sortProperty",
+			sortOrder: SortOrder.Ascending
+		});
+		const oColumn2 = new Column({
+			multiLabels: [
+				new TableQUnitUtils.TestControl(),
+				new TableQUnitUtils.TestControl(),
+				new TableQUnitUtils.TestControl({text: "Last Name"})
+			],
+			hAlign: "Center",
+			template: new TableQUnitUtils.TestControl(),
+			sortProperty: "sortProperty"
+		});
+		const oColumn3 = new Column({
+			multiLabels: [
+				new TableQUnitUtils.TestControl(),
+				new TableQUnitUtils.TestControl({text: "Age"})
+			],
+			hAlign: "Center",
+			template: new TableQUnitUtils.TestControl(),
+			sortProperty: "sortProperty",
+			sortOrder: SortOrder.Descending
+		});
+
+		this.oTable.destroyColumns();
+		this.oTable.addColumn(oColumn1);
+		this.oTable.addColumn(oColumn2);
+		this.oTable.addColumn(oColumn3);
+		/** @deprecated As of version 1.120 */
+		(function() {
+			oColumn1.setSorted(true);
+			oColumn3.setSorted(true);
+		})();
+
+		await this.oTable.qunit.whenRenderingFinished();
+
+		function assertCSSClasses(sElementId, sExpectedSortIcon, sTitle) {
+			const oElement = document.getElementById(sElementId);
+
+			switch (sExpectedSortIcon) {
+				case SortOrder.Ascending:
+					assert.ok(oElement.classList.contains("sapUiTableColSorted"), sTitle + "; Sort icon visibility");
+					assert.ok(!oElement.classList.contains("sapUiTableColSortedD"), sTitle + "; Sort icon is ascending");
+					break;
+				case SortOrder.Descending:
+					assert.ok(oElement.classList.contains("sapUiTableColSorted"), sTitle + "; Sort icon visibility");
+					assert.ok(oElement.classList.contains("sapUiTableColSortedD"), sTitle + "; Sort icon is ascending");
+					break;
+				default:
+					assert.notOk(oElement.classList.contains("sapUiTableColSorted"), sTitle + "; Sort icon visibility");
+					break;
+			}
+		}
+
+		// Check only visible cells.
+		assertCSSClasses(oColumn1.getId(), SortOrder.None, "1st row, 1st cell (span 3)");
+		assertCSSClasses(oColumn1.getId() + "_1", SortOrder.None, "2nd row, 1st cell (span 2)");
+		assertCSSClasses(oColumn3.getId() + "_1", SortOrder.Descending, "2nd row, 2nd cell");
+		assertCSSClasses(oColumn1.getId() + "_2", SortOrder.Ascending, "3rd row, 1st cell");
+		assertCSSClasses(oColumn2.getId() + "_2", SortOrder.None, "3rd row, 2nd cell");
+		assertCSSClasses(oColumn3.getId() + "_2", SortOrder.None, "3rd row, 3rd cell");
 	});
 
 	QUnit.test("Remove a sorted column", function(assert) {
@@ -2716,6 +2831,12 @@ sap.ui.define([
 		assert.ok(!aSortedColumns.includes(oRemovedColumn), "#getSortedColumns does not return the removed column");
 		assert.deepEqual(aSortedColumns, [this.oTable.getColumns()[0]], "Sorted columns");
 		assert.ok(oSortSpy.notCalled, "Binding#sort not called");
+
+		this.oTable.sort(this.oTable.getColumns()[0], SortOrder.Ascending, true);
+		assert.deepEqual(aSortedColumns, [this.oTable.getColumns()[0]], "Sorted columns");
+		assert.deepEqual(this.oTable.getBinding().aSorters, [
+			new Sorter("FirstName", false)
+		], "Binding sorters");
 	});
 
 	QUnit.test("Remove all columns", function(assert) {
@@ -2737,11 +2858,283 @@ sap.ui.define([
 	QUnit.test("Reorder a column", function(assert) {
 		var oSortSpy = sinon.spy(this.oTable.getBinding(), "sort");
 
-		this.oTable._bReorderInProcess = true;
-		this.oTable.insertColumn(this.oTable.removeColumn(this.oTable.getSortedColumns()[1]), 0);
-		this.oTable._bReorderInProcess = false;
+		TableUtils.Column.moveColumnTo(this.oTable.getSortedColumns()[1], 0);
 		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[1], this.oTable.getColumns()[0]], "#getSortedColumns");
 		assert.ok(oSortSpy.notCalled, "Binding#sort not called");
+
+		// Reordering columns should not change the order in which sorters are applied.
+		this.oTable.sort(this.oTable.getColumns()[0], SortOrder.Ascending, true);
+		assert.deepEqual(this.oTable.getSortedColumns(), [this.oTable.getColumns()[1], this.oTable.getColumns()[0]], "#getSortedColumns");
+		assert.deepEqual(this.oTable.getBinding().aSorters, [
+			new Sorter("LastName", false),
+			new Sorter("FirstName", false)
+		], "Binding sorters");
+	});
+
+	QUnit.module("Filtering", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
+				columns: [
+					TableQUnitUtils.createTextColumn({text: "LastName", bind: true}).setFilterProperty("LastName"),
+					TableQUnitUtils.createTextColumn({text: "FirstName", bind: true}).setFilterProperty("FirstName"),
+					TableQUnitUtils.createTextColumn({text: "City", bind: true})
+				],
+				models: TableQUnitUtils.createJSONModel(20)
+			});
+			this.oTable.filter(this.oTable.getColumns()[0], "Bob");
+
+			return this.oTable.qunit.whenRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		assertFilters: function(assert, aExpectations) {
+			assert.deepEqual(this.oTable.getBinding().getFilters(FilterType.Control).map((oFilter) => {
+				return {
+					path: oFilter.getPath(),
+					operator: oFilter.getOperator(),
+					value1: oFilter.getValue1(),
+					value2: oFilter.getValue2()
+				};
+			}), aExpectations, "Binding filters");
+		}
+	});
+
+	QUnit.test("#filter, and 'filter' event", function(assert) {
+		const aColumns = this.oTable.getColumns();
+		let aFilterEventParameters = [];
+
+		this.oTable.attachFilter((oEvent) => {
+			var mParameters = oEvent.getParameters();
+			delete mParameters.id;
+			aFilterEventParameters.push(mParameters);
+		});
+
+		assert.ok(aColumns[0].getFiltered(), "First column filtered");
+		assert.notOk(aColumns[1].getFiltered(), "Second column filtered");
+		assert.strictEqual(aColumns[0].getFilterValue(), "Bob", "Filter value of first column");
+		assert.strictEqual(aColumns[1].getFilterValue(), "", "Filer value of second column");
+		this.assertFilters(assert, [
+			{path: "LastName", operator: "Contains", value1: "Bob", value2: undefined}
+		], "Binding filters");
+
+		this.oTable.filter(aColumns[1], "Jane");
+
+		assert.ok(aColumns[0].getFiltered(), "First column filtered");
+		assert.ok(aColumns[1].getFiltered(), "Second column filtered");
+		assert.strictEqual(aColumns[0].getFilterValue(), "Bob", "Filter value of first column");
+		assert.strictEqual(aColumns[1].getFilterValue(), "Jane", "Filer value of second column");
+		this.assertFilters(assert, [
+			{path: "LastName", operator: "Contains", value1: "Bob", value2: undefined},
+			{path: "FirstName", operator: "Contains", value1: "Jane", value2: undefined}
+		], "Binding filters");
+		assert.deepEqual(aFilterEventParameters, [{
+			column: aColumns[1],
+			value: "Jane"
+		}], "Filter events");
+
+		aFilterEventParameters = [];
+		this.oTable.filter(aColumns[0]);
+
+		assert.notOk(aColumns[0].getFiltered(), "First column filtered");
+		assert.ok(aColumns[1].getFiltered(), "Second column filtered");
+		assert.strictEqual(aColumns[0].getFilterValue(), "", "Filter value of first column");
+		assert.strictEqual(aColumns[1].getFilterValue(), "Jane", "Filer value of second column");
+		this.assertFilters(assert, [
+			{path: "FirstName", operator: "Contains", value1: "Jane", value2: undefined}
+		], "Binding filters");
+		assert.deepEqual(aFilterEventParameters, [{
+			column: aColumns[0],
+			value: ""
+		}], "Filter events");
+	});
+
+	QUnit.test("Rebind", function(assert) {
+		var aColumns = this.oTable.getColumns();
+
+		this.oTable.bindRows({path: "/"}); // Unbind/Rebind neither removes nor reapplies the filtering.
+		assert.ok(aColumns[0].getFiltered(), "First column filtered");
+		assert.notOk(aColumns[1].getFiltered(), "Second column filtered");
+		assert.strictEqual(aColumns[0].getFilterValue(), "Bob", "Filter value of first column");
+		assert.strictEqual(aColumns[1].getFilterValue(), "", "Filer value of second column");
+		this.assertFilters(assert, [], "Binding filters");
+	});
+
+	QUnit.test("Custom filter handling", function(assert) {
+		var aColumns = this.oTable.getColumns();
+		var bAlwaysPreventDefault = false;
+
+		this.oTable.filter(aColumns[0]);
+		this.oTable.attachFilter((oEvent) => {
+			if (oEvent.getParameter("column").getFilterProperty() === "LastName" || bAlwaysPreventDefault) {
+				oEvent.preventDefault();
+			}
+		});
+		this.oTable.filter(this.oTable.getColumns()[0], "Bob");
+		this.oTable.filter(this.oTable.getColumns()[1], "Jane");
+
+		assert.notOk(aColumns[0].getFiltered(), "First column filtered");
+		assert.ok(aColumns[1].getFiltered(), "Second column filtered");
+		assert.strictEqual(aColumns[0].getFilterValue(), "", "Filter value of first column");
+		assert.strictEqual(aColumns[1].getFilterValue(), "Jane", "Filer value of second column");
+		this.assertFilters(assert, [
+			{path: "FirstName", operator: "Contains", value1: "Jane", value2: undefined}
+		], "Binding filters");
+
+		bAlwaysPreventDefault = true;
+		this.oTable.filter(this.oTable.getColumns()[1]);
+
+		assert.notOk(aColumns[0].getFiltered(), "First column filtered");
+		assert.ok(aColumns[1].getFiltered(), "Second column filtered");
+		assert.strictEqual(aColumns[0].getFilterValue(), "", "Filter value of first column");
+		assert.strictEqual(aColumns[1].getFilterValue(), "Jane", "Filer value of second column");
+		this.assertFilters(assert, [
+			{path: "FirstName", operator: "Contains", value1: "Jane", value2: undefined}
+		], "Binding filters");
+	});
+
+	QUnit.test("Filter icon", async function(assert) {
+		var aColumns = this.oTable.getColumns();
+		var oFirstColumnClassList = aColumns[0].getDomRef().classList;
+		var oSecondColumnClassList = aColumns[1].getDomRef().classList;
+
+		assert.ok(oFirstColumnClassList.contains("sapUiTableColFiltered"), "First column: Filter icon visibility");
+		assert.notOk(oSecondColumnClassList.contains("sapUiTableColFiltered"), "Second column: Filter icon visibility");
+
+		this.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+
+		assert.ok(oFirstColumnClassList.contains("sapUiTableColFiltered"), "First column: Filter icon visibility after rendering");
+		assert.notOk(oSecondColumnClassList.contains("sapUiTableColFiltered"), "Second column: Filter icon visibility after rendering");
+
+		this.oTable.filter(aColumns[1], "Jane");
+		await this.oTable.qunit.whenRenderingFinished();
+
+		assert.ok(oFirstColumnClassList.contains("sapUiTableColFiltered"), "First column: Filter icon visibility after filter change");
+		assert.ok(oSecondColumnClassList.contains("sapUiTableColFiltered"), "Second column: Filter icon visibility after filter change");
+
+		this.oTable.filter(aColumns[0]);
+		await this.oTable.qunit.whenRenderingFinished();
+
+		assert.notOk(oFirstColumnClassList.contains("sapUiTableColFiltered"), "First column: Filter icon visibility after filter change");
+		assert.ok(oSecondColumnClassList.contains("sapUiTableColFiltered"), "Second column: Filter icon visibility after filter change");
+
+		this.oTable.attachFilter((oEvent) => { oEvent.preventDefault(); });
+		this.oTable.filter(aColumns[0], "Bob");
+		await this.oTable.qunit.whenRenderingFinished();
+
+		assert.notOk(oFirstColumnClassList.contains("sapUiTableColFiltered"), "First column: Filter icon visibility when default was prevented");
+		assert.ok(oSecondColumnClassList.contains("sapUiTableColFiltered"), "Second column: Filter icon visibility when default was prevented");
+	});
+
+	QUnit.test("Filter icon changed with Column#setFiltered", async function(assert) {
+		var oColumn = this.oTable.getColumns()[1];
+		var oClassList = oColumn.getDomRef().classList;
+
+		this.oTable.getColumns()[1].setFiltered(true);
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.ok(oClassList.contains("sapUiTableColFiltered"), "Icon visibility");
+
+		this.oTable.getColumns()[1].setFiltered(false);
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.notOk(oClassList.contains("sapUiTableColFiltered"), "Icon visibility");
+	});
+
+	QUnit.test("Filter icon with multi column header", async function(assert) {
+		const oColumn1 = new Column({
+			multiLabels: [
+				new TableQUnitUtils.TestControl({text: "Person"}),
+				new TableQUnitUtils.TestControl({text: "Name"}),
+				new TableQUnitUtils.TestControl({text: "First Name"})
+			],
+			headerSpan: [3, 2],
+			hAlign: "Center",
+			template: new TableQUnitUtils.TestControl(),
+			filterProperty: "filterProperty",
+			filtered: true
+		});
+		const oColumn2 = new Column({
+			multiLabels: [
+				new TableQUnitUtils.TestControl(),
+				new TableQUnitUtils.TestControl(),
+				new TableQUnitUtils.TestControl({text: "Last Name"})
+			],
+			hAlign: "Center",
+			template: new TableQUnitUtils.TestControl(),
+			filterProperty: "filterProperty"
+		});
+		const oColumn3 = new Column({
+			multiLabels: [
+				new TableQUnitUtils.TestControl(),
+				new TableQUnitUtils.TestControl({text: "Age"})
+			],
+			hAlign: "Center",
+			template: new TableQUnitUtils.TestControl(),
+			filterProperty: "filterProperty",
+			filtered: true
+		});
+
+		this.oTable.destroyColumns();
+		this.oTable.addColumn(oColumn1);
+		this.oTable.addColumn(oColumn2);
+		this.oTable.addColumn(oColumn3);
+
+		await this.oTable.qunit.whenRenderingFinished();
+
+		function assertCSSClasses(sElementId, bExpectFilterIcon, sTitle) {
+			const oElement = document.getElementById(sElementId);
+			assert.equal(oElement.classList.contains("sapUiTableColFiltered"), bExpectFilterIcon, "Filter icon visibility");
+		}
+
+		// Check only visible cells.
+		assertCSSClasses(oColumn1.getId(), false, "1st row, 1st cell (span 3)");
+		assertCSSClasses(oColumn1.getId() + "_1", false, "2nd row, 1st cell (span 2)");
+		assertCSSClasses(oColumn3.getId() + "_1", true, "2nd row, 2nd cell");
+		assertCSSClasses(oColumn1.getId() + "_2", true, "3rd row, 1st cell");
+		assertCSSClasses(oColumn2.getId() + "_2", false, "3rd row, 2nd cell");
+		assertCSSClasses(oColumn3.getId() + "_2", false, "3rd row, 3rd cell");
+	});
+
+	QUnit.test("Remove a filtered column", function(assert) {
+		var oFilterSpy = sinon.spy(this.oTable.getBinding(), "filter");
+
+		this.oTable.removeColumn(this.oTable.getColumns()[0]);
+		assert.ok(oFilterSpy.notCalled, "Binding#filter not called");
+
+		this.oTable.filter(this.oTable.getColumns()[0], "Jane");
+		assert.ok(this.oTable.getColumns()[0].getFiltered(), "First column filtered");
+		assert.strictEqual(this.oTable.getColumns()[0].getFilterValue(), "Jane", "Filter value of first column");
+		this.assertFilters(assert, [
+			{path: "FirstName", operator: "Contains", value1: "Jane", value2: undefined}
+		], "Binding filters");
+	});
+
+	QUnit.test("Remove all columns", function(assert) {
+		var oFilterSpy = sinon.spy(this.oTable.getBinding(), "filter");
+
+		this.oTable.removeAllColumns();
+		assert.ok(oFilterSpy.notCalled, "Binding#filter not called");
+	});
+
+	QUnit.test("Destroy columns", function(assert) {
+		var oFilterSpy = sinon.spy(this.oTable.getBinding(), "filter");
+
+		this.oTable.destroyColumns();
+		assert.ok(oFilterSpy.notCalled, "Binding#filter not called");
+	});
+
+	QUnit.test("Reorder a column", function(assert) {
+		var oFilterSpy = sinon.spy(this.oTable.getBinding(), "filter");
+
+		TableUtils.Column.moveColumnTo(this.oTable.getColumns()[1], 0);
+		assert.ok(oFilterSpy.notCalled, "Binding#filter not called");
+
+		this.oTable.filter(this.oTable.getColumns()[0], "Jane");
+		this.assertFilters(assert, [
+			{path: "FirstName", operator: "Contains", value1: "Jane", value2: undefined},
+			{path: "LastName", operator: "Contains", value1: "Bob", value2: undefined}
+		], "Binding filters");
 	});
 
 	QUnit.module("Performance improvements", {
