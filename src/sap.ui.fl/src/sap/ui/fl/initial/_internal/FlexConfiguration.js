@@ -37,6 +37,9 @@ sap.ui.define([
 				name: "sapUiFlexibilityServices",
 				type: (vValue) => {
 					if (typeof vValue === "string") {
+						if (vValue === "") {
+							return [];
+						}
 						if (vValue[0] === "/") {
 							aDefaultValue[0].url = vValue;
 							vValue = aDefaultValue;
