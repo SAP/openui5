@@ -21,11 +21,8 @@ sap.ui.define([
 
 			// create ResourceModel
 			this.oModel = new ResourceModel({bundleName : "testdata.messages"});
-
-			sap.ui.getCore().setModel(this.oModel);
 		},
 		afterEach : function () {
-			sap.ui.getCore().setModel(null);
 		},
 		after : function () {
 			Localization.setLanguage(sDefaultLanguage);

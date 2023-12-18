@@ -1,18 +1,18 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/json/JSONTreeBinding",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
-	"sap/ui/model/Sorter"
+	"sap/ui/model/Sorter",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/json/JSONTreeBinding"
 ], function(
-	JSONModel,
-	JSONTreeBinding,
 	Filter,
 	FilterOperator,
 	FilterType,
-	Sorter
+	Sorter,
+	JSONModel,
+	JSONTreeBinding
 ) {
 	"use strict";
 
@@ -133,7 +133,6 @@ sap.ui.define([
 		};
 		oModel = new JSONModel();
 		oModel.setData(testData);
-		sap.ui.getCore().setModel(oModel);
 	}
 
 
@@ -170,7 +169,6 @@ sap.ui.define([
 
 		oModel = new JSONModel();
 		oModel.setData(oData);
-		sap.ui.getCore().setModel(oModel);
 	}
 
 

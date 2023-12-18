@@ -39,15 +39,14 @@ sap.ui.define([
 
 		oModel = new XMLModel();
 		oModel.setXML(aTestData);
-		sap.ui.getCore().setModel(oModel);
 
 		oModelChild = new XMLModel();
 		oModelChild.setXML(aTestDataChild);
 
 		oLayout = new VerticalLayout();
 		oLabel = new Label("myLabel");
+		oLabel.setModel(oModel);
 		oLabel.setText("testText");
-		oLabel.placeAt("qunit-fixture");
 	}
 
 	QUnit.module("sap.ui.model.xml.XMLModel", {
@@ -184,11 +183,11 @@ sap.ui.define([
 		assert.equal(oLabel.getText(), "hamster", "new text value from model");
 	});
 
-	QUnit.test("test model bindAggregation on Listbox", function(assert) {
+	QUnit.test("test model bindAggregation on List", function(assert) {
 		var oLB = new List("myLb"),
 			oItemTemplate = new StandardListItem();
 
-		oLB.placeAt("qunit-fixture");
+		oLB.setModel(oModel);
 		oItemTemplate.bindProperty("title", "@firstName").bindProperty("description", "@lastName");
 		oLB.bindAggregation("items", "/member", oItemTemplate);
 

@@ -2,8 +2,8 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/base/util/deepClone",
-	"sap/m/Label",
 	"sap/m/Input",
+	"sap/m/Label",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/BindingMode",
@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Float",
 	"sap/ui/model/type/Date"
-], function (Localization, deepClone, Label, Input, UI5Date, ChangeReason, BindingMode, FormatException,
+], function (Localization, deepClone, Input, Label, UI5Date, ChangeReason, BindingMode, FormatException,
 		ParseException, SimpleType, ValidateException, JSONModel, FloatType, DateType
 ) {
 	"use strict";
@@ -96,11 +96,9 @@ sap.ui.define([
 			this.currentTestData = deepClone(constTestData);
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
-			sap.ui.getCore().setModel(this.oModel);
 			Localization.setLanguage("en-US");
 		},
 		afterEach: function() {
-			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
 			Localization.setLanguage(sDefaultLanguage);
 		},
@@ -287,11 +285,9 @@ sap.ui.define([
 			this.currentTestData = deepClone(constTestData);
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
-			sap.ui.getCore().setModel(this.oModel);
 			Localization.setLanguage("en-US");
 		},
 		afterEach: function() {
-			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
 			Localization.setLanguage(sDefaultLanguage);
 		},
@@ -394,10 +390,8 @@ sap.ui.define([
 			this.currentTestData = deepClone(constTestData);
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
-			sap.ui.getCore().setModel(this.oModel);
 		},
 		afterEach: function() {
-			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
 		},
 		createPropertyBindings: function(path, property, context) {
@@ -414,7 +408,7 @@ sap.ui.define([
 		var oInput = new Input({
 			value: "{/name}"
 		});
-		oInput.placeAt("qunit-fixture");
+		oInput.setModel(this.oModel);
 		oInput.attachChange(function() {
 			assert.ok(false, "should not land here!");
 		});
@@ -444,7 +438,7 @@ sap.ui.define([
 		var oInput = new Input({
 			value: "{/name}"
 		});
-		oInput.placeAt("qunit-fixture");
+		oInput.setModel(this.oModel);
 		oInput.attachChange(this, function() {
 			assert.ok(false, "should not land here!");
 		});
@@ -475,7 +469,7 @@ sap.ui.define([
 		var oInput = new Input({
 			value: "{/name}"
 		});
-		oInput.placeAt("qunit-fixture");
+		oInput.setModel(this.oModel);
 		oInput.attachChange(this, function() {
 			assert.ok(false, "should not land here!");
 		});
@@ -514,7 +508,7 @@ sap.ui.define([
 		var oInput = new Input({
 			value: "{/name}"
 		});
-		oInput.placeAt("qunit-fixture");
+		oInput.setModel(this.oModel);
 		oInput.attachChange(this, function() {
 			assert.ok(false, "should not land here!");
 		});
@@ -550,10 +544,8 @@ sap.ui.define([
 			this.currentTestData = deepClone(constTestData);
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
-			sap.ui.getCore().setModel(this.oModel);
 		},
 		afterEach: function() {
-			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
 		},
 		createPropertyBindings: function(path, property, context) {
@@ -570,7 +562,7 @@ sap.ui.define([
 		var oInput = new Input({
 			value: "{/name}"
 		});
-		oInput.placeAt("qunit-fixture");
+		oInput.setModel(this.oModel);
 		this.oModel.attachPropertyChange(this, function(oEvent) {
 			var sPath = oEvent.getParameter('path');
 			var oContext = oEvent.getParameter('context');
@@ -596,7 +588,7 @@ sap.ui.define([
 		var oInput = new Input({
 			value: "{firstName}"
 		});
-		oInput.placeAt("qunit-fixture");
+		oInput.setModel(this.oModel);
 		this.oModel.attachPropertyChange(this, function(oEvent) {
 			var sPath = oEvent.getParameter('path');
 			var oContext = oEvent.getParameter('context');
@@ -624,7 +616,7 @@ sap.ui.define([
 			value: "{firstName}"
 		});
 		var iCount = 0;
-		oInput.placeAt("qunit-fixture");
+		oInput.setModel(this.oModel);
 		this.oModel.attachPropertyChange(this, function(oEvent) {
 			iCount++;
 			var sPath = oEvent.getParameter('path');

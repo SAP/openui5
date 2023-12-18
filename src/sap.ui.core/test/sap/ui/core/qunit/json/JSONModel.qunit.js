@@ -16,26 +16,14 @@ sap.ui.define([
 		oLayout,
 		oModel,
 		oModelChild,
-		oTarget1,
-		oTarget2,
 		aTestData,
 		aTestDataChild;
 
 	function cleanUp(){
-		document.body.removeChild(oTarget1);
-		document.body.removeChild(oTarget2);
 		oLabel.destroy();
 	}
 
 	function setup(){
-		// add divs for control tests
-		oTarget1 = document.createElement("div");
-		oTarget1.id = "target1";
-		document.body.appendChild(oTarget1);
-		oTarget2 = document.createElement("div");
-		oTarget2.id = "target2";
-		document.body.appendChild(oTarget2);
-
 		aTestData = {
 			teamMembers:[
 				{firstName:"Andreas", lastName:"Klark"},
@@ -69,13 +57,12 @@ sap.ui.define([
 
 		oModel = new JSONModel();
 		oModel.setData(aTestData);
-		sap.ui.getCore().setModel(oModel);
 		oModelChild = new JSONModel();
 		oModelChild.setData(aTestDataChild);
 		oLayout = new VerticalLayout();
 		oLabel = new Label("myLabel");
 		oLabel.setText("testText");
-		oLabel.placeAt("target1");
+		oLabel.setModel(oModel);
 	}
 
 	QUnit.module("sap.ui.model.json.JSONModel", {
@@ -340,11 +327,11 @@ sap.ui.define([
 		assert.equal(oLabel.getText(), "hamster", "new text value from model");
 	});
 
-	QUnit.test("test model bindAggregation on Listbox", function(assert) {
+	QUnit.test("test model bindAggregation on List", function(assert) {
 
 		var oLB = new List("myLb");
+		oLB.setModel(oModel);
 		var oItemTemplate = new ListItem();
-		oLB.placeAt("target2");
 
 		oItemTemplate.bindProperty("title", "firstName").bindProperty("description", "lastName");
 		oLB.bindAggregation("items", "/teamMembers", oItemTemplate);
@@ -946,8 +933,8 @@ sap.ui.define([
 			oContext = context;
 		});
 		var oLabel = new Label("myLabel2");
+		oLabel.setModel(oModel);
 		oLabel.setText("testText");
-		oLabel.placeAt("target1");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindElement("level1");
 		assert.equal(oLabel.getBindingContext().getPath(), "/additionalData/level1", "context should be considered for element binding");
@@ -966,8 +953,8 @@ sap.ui.define([
 			oContext = context;
 		});
 		var oLabel = new Label("myLabel2");
+		oLabel.setModel(oModel);
 		oLabel.setText("testText");
-		oLabel.placeAt("target1");
 		oLabel.bindElement("level1");
 		oLabel.setBindingContext(oContext);
 		assert.equal(oLabel.getBindingContext().getPath(), "/additionalData/level1", "context should be considered for element binding");
