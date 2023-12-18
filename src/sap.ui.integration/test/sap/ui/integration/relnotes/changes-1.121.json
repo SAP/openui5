@@ -3,6 +3,16 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "3f1f180bbb67d0ee1b59571809745ce847cc4f24",
+        "type": "FIX",
+        "text": " Integration Cards: Date/Time syntax in Adaptive cards is no longer processed as i18n placeholder"
+      },
+      {
+        "id": "d625dea226b020e84b15ed0050e1408e2a91b0a0",
+        "type": "FIX",
+        "text": " Integration Cards: List content item height is correct when there is icon with empty src"
+      },
+      {
         "id": "77eb03403d6fba886e78bde1bfc2127ca2ec8651",
         "type": "FEATURE",
         "text": " Integration Cards: Add experimental support for creating actions strip items with template"

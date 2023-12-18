@@ -3,6 +3,17 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "768abace079259cfd9c76a3ee5bb8da1f35b83ec",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Accept Button type button is displayed correctly in all themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "844e6f72ef88f89226efd860e016f9b199d41b56",
         "type": "FIX",
         "text": " sap.f.DynamicPageTitle: Corrects alignment issue",

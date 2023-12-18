@@ -3,6 +3,71 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "53ce0c1cc38a24ca782131b9c10de7ed47ca3468",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Arrow has hover state now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009692332023"
+          }
+        ]
+      },
+      {
+        "id": "f2d75e5949f1a4b3190895856417908213d78df6",
+        "type": "FIX",
+        "text": " p13n.QueryPanel: mark as public and correct item types in derivations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380143019"
+          }
+        ]
+      },
+      {
+        "id": "768abace079259cfd9c76a3ee5bb8da1f35b83ec",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Accept Button type button is displayed correctly in all themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "c4b8c01acc7b0959fe38c2198dd0f1a21031349b",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: adjust special dates display"
+      },
+      {
+        "id": "e82d03b25ecaf4ba4ed019ecbdd35d9aa5cb2efe",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Icon-only buttons are aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380138121"
+          }
+        ]
+      },
+      {
+        "id": "dceb1138c73e6a6bda9cf9907a3da155de6406ad",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: improve documentation"
+      },
+      {
+        "id": "5f2b9ed15d5be5c02c1770acc980debe9ce345d4",
+        "type": "FIX",
+        "text": " sap.m.Panel: Action is triggered once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380137210"
+          }
+        ]
+      },
+      {
         "id": "c0635bbab1c372110aae49d0be530294af10f52a",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: shown correctly in sap.ui.table.Table",

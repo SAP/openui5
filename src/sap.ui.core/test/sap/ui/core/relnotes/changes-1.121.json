@@ -3,6 +3,47 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "05562254388bd8ff27e65a96c95023aad50fd186",
+        "type": "FIX",
+        "text": " sap/ui/core/message/MessageMixin: Do not refresh MessageModel when control id already added to a Message",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370097718"
+          }
+        ]
+      },
+      {
+        "id": "79f99e54f8bbb1eb345e1b67cb86bce0775cc51d",
+        "type": "FEATURE",
+        "text": " OData V4 model: lookup of computed annotations in bindings via core:require"
+      },
+      {
+        "id": "8a2b7424aef1bf31a22d926dbbcd0e0a9945908b",
+        "type": "FIX",
+        "text": " core/Router: use correct path for getting title from manifest for home route"
+      },
+      {
+        "id": "3675eafdf4a3ecac13e169482b04cc984caf6828",
+        "type": "FIX",
+        "text": " Correct typos in Localization API documentation"
+      },
+      {
+        "id": "3a1efdd2bac35c1869d3cd834e822ca68ab43bb0",
+        "type": "FIX",
+        "text": " sap/base/util/now: Migrate performance.timing"
+      },
+      {
+        "id": "6234e1ee6b34031dc182b530ec53d10f0ce7c917",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat+DateFormat#parse: support also \\u061c as relevant RTL character"
+      },
+      {
+        "id": "b406c1792016bfac71393dbd1da7e3f5237072d0",
+        "type": "FIX",
+        "text": " thirdparth/crossroads: provide meaningful error message when mandatory parameter is set with empty string"
+      },
+      {
         "id": "c6175a00a6e95daf8c2e4c195a78f989530fc75b",
         "type": "FIX",
         "text": " sap.ui.model.odata.ODataMetaModel#_mergeMetadata: add unit annotations"
@@ -33,6 +74,11 @@
             "reference": "2370140369"
           }
         ]
+      },
+      {
+        "id": "2a2659add10f77e4d35cdf74c120bb6175e07875",
+        "type": "FIX",
+        "text": " sap/ui/qunit/qunit-junit: Remove sync XHR / eval"
       },
       {
         "id": "a3b041789cefcffa67c7122dda23cbf0bacd4454",

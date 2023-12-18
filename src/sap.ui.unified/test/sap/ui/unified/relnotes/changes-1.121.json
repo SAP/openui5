@@ -3,6 +3,30 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "7be449468648ed358da7ef4e8412e5215b031f95",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Special handling is restricted only for Firefox on Mac",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370151212"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370151188"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370151181"
+          }
+        ]
+      },
+      {
+        "id": "c4b8c01acc7b0959fe38c2198dd0f1a21031349b",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: adjust special dates display"
+      },
+      {
         "id": "4b565ec3ce0a3d86d8fefd910e23bde610d82eff",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: Improve week numbers calculation",
