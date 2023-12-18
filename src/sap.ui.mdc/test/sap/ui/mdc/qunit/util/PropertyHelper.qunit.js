@@ -28,7 +28,7 @@ sap.ui.define([
 					"default": {
 						value: {}
 					},
-					forComplexProperty: {allowed: true}
+					inComplexProperty: {allowed: true}
 				}
 			}, mAdditionalAttributes));
 		}
@@ -658,7 +658,7 @@ sap.ui.define([
 			}, {
 				name: "complexProperty",
 				label: "Complex property",
-				path: "complexPath", // not allowed for complex properties
+				path: "complexPath", // not allowed in complex properties
 				propertyInfos: ["prop"]
 			}]);
 		}, new Error("Invalid property definition: Complex property contains invalid attribute 'path'."
@@ -691,7 +691,7 @@ sap.ui.define([
 		);
 	});
 
-	QUnit.test("Complex property with nested attribute including attributes that are not allowed for complex properties", function(assert) {
+	QUnit.test("Complex property with nested attribute including attributes that are not allowed in complex properties", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
 				name: "propA",
@@ -712,12 +712,12 @@ sap.ui.define([
 						bar: {
 							type: {
 								propA: {type: "string"},
-								propB: {type: "int", forComplexProperty: {allowed: false}}
+								propB: {type: "int", inComplexProperty: {allowed: false}}
 							},
 							"default": {value: {}}
 						}
 					},
-					forComplexProperty: {
+					inComplexProperty: {
 						allowed: true
 					},
 					"default": {value: {}}
@@ -917,7 +917,7 @@ sap.ui.define([
 			additionalAttribute: {
 				type: "string",
 				"default": {value: "AttributeDefault"},
-				forComplexProperty: {
+				inComplexProperty: {
 					valueIfNotAllowed: "DefaultForComplex"
 				}
 			},
@@ -1163,10 +1163,10 @@ sap.ui.define([
 		}], null, {
 			foo: {
 				type: {
-					bar: {type: "PropertyReference[]", "default": {value: "attribute:propertyInfos"}, forComplexProperty: {allowed: true}},
-					baz: {type: "PropertyReference[]", forComplexProperty: {allowed: true}}
+					bar: {type: "PropertyReference[]", "default": {value: "attribute:propertyInfos"}, inComplexProperty: {allowed: true}},
+					baz: {type: "PropertyReference[]", inComplexProperty: {allowed: true}}
 				},
-				forComplexProperty: {allowed: true}
+				inComplexProperty: {allowed: true}
 			},
 			bar: {type: "PropertyReference", "default": {value: "attribute:baz"}},
 			baz: {type: "PropertyReference"}
@@ -1188,7 +1188,7 @@ sap.ui.define([
 			"Cached property reference of specified value");
 	});
 
-	QUnit.test("Propagation of 'allowed for complex property' to child attributes", function(assert){
+	QUnit.test("Propagation of 'allowed in complex property' to child attributes", function(assert){
 		const oPropertyHelper = new PropertyHelper([{
 			name: "prop",
 			label: "prop",
@@ -1203,12 +1203,12 @@ sap.ui.define([
 					bar: {
 						type: {
 							propA: {type: "string", "default": {value: "XYZ"}},
-							propB: {type: "int", "default": {value: 2}, forComplexProperty: {allowed: false}}
+							propB: {type: "int", "default": {value: 2}, inComplexProperty: {allowed: false}}
 						}
 					}
 				},
 				"default": {value: {bar: {}}},
-				forComplexProperty: {allowed: true}
+				inComplexProperty: {allowed: true}
 			}
 		});
 
@@ -1234,7 +1234,7 @@ sap.ui.define([
 		}]);
 	});
 
-	QUnit.test("Prevent propagation of 'allowed for complex property' to child attributes", function(assert){
+	QUnit.test("Prevent propagation of 'allowed in complex property' to child attributes", function(assert){
 		const oPropertyHelper = new PropertyHelper([{
 			name: "prop",
 			label: "prop",
@@ -1249,7 +1249,7 @@ sap.ui.define([
 					bar: {type: "string", "default": {value: "XYZ"}}
 				},
 				"default": {value: {}},
-				forComplexProperty: {allowed: true, propagateAllowance: false}
+				inComplexProperty: {allowed: true, propagateAllowance: false}
 			}
 		});
 
@@ -1320,7 +1320,7 @@ sap.ui.define([
 					lot: {type: "string", "default": {ignoreIfNull: true}}
 				},
 				"default": {value: {}},
-				forComplexProperty: {allowed: true}
+				inComplexProperty: {allowed: true}
 			}
 		});
 
@@ -1352,7 +1352,7 @@ sap.ui.define([
 					propA: "XYZ",
 					propB: null
 				},
-				lot: ""
+				lot: null
 			}
 		}, {
 			name: "propZ",
@@ -1379,7 +1379,7 @@ sap.ui.define([
 		}]);
 	});
 
-	QUnit.test("Not modifying original property infos", function(assert) {
+	QUnit.test("Don't modify original property infos", function(assert) {
 		const aPropertyInfos = [{
 			name: "prop",
 			label: "prop",
@@ -1480,6 +1480,53 @@ sap.ui.define([
 			label: "Complex property",
 			propertyInfos: ["prop"]
 		}], "Cloned property infos did not change");
+
+		oPropertyHelper.destroy();
+	});
+
+	QUnit.test("Modifying default values in #prepareProperty", function(assert) {
+		const MyPropertyHelper = PropertyHelper.extend("sap.ui.mdc.test.table.PropertyHelper", {
+			prepareProperty: function(oProperty) {
+				PropertyHelper.prototype.prepareProperty.apply(this, arguments);
+
+				if (oProperty.name === "propA") {
+					oProperty.myObject.myDefault = false;
+					oProperty.myObject.newEntry = true;
+					oProperty.myObjectArray[0].myDefault = false;
+					oProperty.myObjectArray.push({newEntry: true});
+					oProperty.myPropertyReferenceArray.push("propB");
+				}
+			}
+		});
+		const oPropertyHelper = new MyPropertyHelper([{
+			name: "propA",
+			label: "prop A",
+			dataType: "String"
+		}, {
+			name: "propB",
+			label: "prop B",
+			dataType: "String"
+		}], null, {
+			myObject: {type: "object", "default": {value: {myDefault: true}}},
+			myObjectArray: {type: "object[]", "default": {value: [{myDefault: true}]}},
+			myPropertyReferenceArray: {type: "PropertyReference[]"}
+		});
+
+		this.deepEqualProperties(assert, oPropertyHelper, [{
+			name: "propA",
+			label: "prop A",
+			dataType: "String",
+			myObject: {myDefault: false, newEntry: true},
+			myObjectArray: [{myDefault: false}, {newEntry: true}],
+			myPropertyReferenceArray: ["propB"]
+		}, {
+			name: "propB",
+			label: "prop B",
+			dataType: "String",
+			myObject: {myDefault: true},
+			myObjectArray: [{myDefault: true}],
+			myPropertyReferenceArray: []
+		}], "Modifying the default value in does not affect other properties with default values");
 
 		oPropertyHelper.destroy();
 	});
@@ -1865,6 +1912,14 @@ sap.ui.define([
 
 		this.oPropertyHelper.destroy();
 		assert.deepEqual(this.oPropertyHelper.getVisibleProperties(), [], "After destruction");
+	});
+
+	QUnit.test("_getAttributeMetadata", function(assert) {
+		const mOriginalMetadata = merge({}, this.oPropertyHelper._getAttributeMetadata());
+
+		this.oPropertyHelper._getAttributeMetadata().name.type = "YAY!";
+		assert.deepEqual(mOriginalMetadata, this.oPropertyHelper._getAttributeMetadata(),
+			"Manipulations of the returned metadata information do not affect the property helper");
 	});
 
 	QUnit.module("Property", {

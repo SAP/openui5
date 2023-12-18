@@ -48,13 +48,13 @@ sap.ui.define([
 				// Additional attributes
 				groupable: {
 					type: "boolean",
-					forComplexProperty: {
+					inComplexProperty: {
 						valueIfNotAllowed: false
 					}
 				},
 				key: {
 					type: "boolean",
-					forComplexProperty: {
+					inComplexProperty: {
 						valueIfNotAllowed: false
 					}
 				},
@@ -63,7 +63,7 @@ sap.ui.define([
 					"default": {
 						value: "attribute:key"
 					},
-					forComplexProperty: {
+					inComplexProperty: {
 						valueIfNotAllowed: false
 					}
 				},
@@ -79,7 +79,7 @@ sap.ui.define([
 						value: {},
 						ignoreIfNull: true
 					},
-					forComplexProperty: {
+					inComplexProperty: {
 						allowed: true
 					}
 				},
@@ -93,7 +93,7 @@ sap.ui.define([
 						value: {},
 						ignoreIfNull: true
 					},
-					forComplexProperty: {
+					inComplexProperty: {
 						allowed: true
 					}
 				},
@@ -156,7 +156,7 @@ sap.ui.define([
 					"default": {
 						value: {}
 					},
-					forComplexProperty: {
+					inComplexProperty: {
 						allowed: true
 					}
 				}
@@ -166,7 +166,7 @@ sap.ui.define([
 					"default": {
 						value: {}
 					},
-					forComplexProperty: {
+					inComplexProperty: {
 						allowed: true,
 						propagateAllowance: false
 					}
@@ -174,7 +174,7 @@ sap.ui.define([
 			} : {}, this._bEnableAggregatableAttribute ? {
 				aggregatable: {
 					type: "boolean",
-					forComplexProperty: {
+					inComplexProperty: {
 						valueIfNotAllowed: false
 					}
 				}
