@@ -2,9 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/base/i18n/date/TimezoneUtils"
-], function (Localization, TimezoneUtils) {
+], function (Log, Localization, TimezoneUtils) {
 	"use strict";
 
 	var aAllParts = ["year", "month", "day", "hour", "minute", "second", "fractionalSecond"],
@@ -16,6 +17,10 @@ sap.ui.define([
 		aWeekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
 		aMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
 		mWeekdayToDay = {Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6};
+	// Regular expression for local date string parts around the switch to Daylight Saving Time; the date part has to
+	// exist, time part parts may be optional; e.g. "2023-03-31T02:00" or "2023-3-31 2:00"
+	const rLocalDate =
+			/^(\d{1,4})-(\d{1,2})-(\d{1,2})(?:[T ](\d{1,2})(?::(\d{1,2})(?::(\d{1,2})(?:\.(\d{1,3}))?)?)?)?$/;
 
 	/**
 	 * Pads the start of the absolute given value with zeros up to the given length. If the given
@@ -77,11 +82,50 @@ sap.ui.define([
 		if (vDateParts.length > 1
 				|| vDateParts.length === 1 && typeof vDateParts[0] === "string"
 					&& !rIsUTCString.test(vDateParts[0])) {
-			this._setParts(aAllParts,
-				// JavaScript Date parsed the arguments already in local browser time zone
-				[oDateInstance.getFullYear(), oDateInstance.getMonth(), oDateInstance.getDate(),
+			// JavaScript Date parsed the arguments already in local browser time zone
+			const aLocalDateParts = [oDateInstance.getFullYear(), oDateInstance.getMonth(), oDateInstance.getDate(),
 				oDateInstance.getHours(), oDateInstance.getMinutes(), oDateInstance.getSeconds(),
-				oDateInstance.getMilliseconds()]);
+				oDateInstance.getMilliseconds()];
+			// If the given local timestamp does not exist in the current browser time zone (switch to Daylight Saving
+			// Time) the values in aLocalDateParts don't match the input and have to be corrected
+			const iLocalTimezoneOffset = oDateInstance.getTimezoneOffset();
+			// the maximum time shift is 2 hours, so check whether 2 hours ago is in another time zone
+			const iTimezoneOffset2hAgo = new Date(oDateInstance.getTime() - 7200000).getTimezoneOffset();
+			// only the switch to the Daylight Saving Time needs to be fixed (e.g. from GMT+1 with the offset -60 to
+			// GMT+2 with the offset -120, or from GMT-5 with the offset 300 to GMT-4 with the offset 240);
+			// in the other case aLocalDateParts contain already the expected date/time parts
+			if (iLocalTimezoneOffset < iTimezoneOffset2hAgo) {
+				// year, seconds and milliseconds don't change when switching to Daylight Saving Time; update the other
+				// parts
+				if (vDateParts.length > 1) {
+					// timestamp near switch to Daylight Saving Time -> take the original values for month, day, hours,
+					// minutes (other parts are not modified by Daylight Saving Time switch)
+					aLocalDateParts[1] = vDateParts[1] || 0;
+					aLocalDateParts[2] = vDateParts[2] !== undefined ? vDateParts[2] : 1;
+					aLocalDateParts[3] = vDateParts[3] !== undefined ? vDateParts[3] : 0;
+					aLocalDateParts[4] = vDateParts[4] !== undefined ? vDateParts[4] : 0;
+				} else { // vDateParts.length === 1
+					// string based local input near the switch to Daylight Saving Time can only be handled in the ISO
+					// format
+					const aDateParts = rLocalDate.exec(vDateParts[0]);
+					if (aDateParts) {
+						aLocalDateParts[1] = +aDateParts[2] - 1; // use + operator to get the value as used by Date
+						aLocalDateParts[2] = aDateParts[3];
+						aLocalDateParts[3] = aDateParts[4] !== undefined ? aDateParts[4] : 0;
+						aLocalDateParts[4] = aDateParts[5] !== undefined ? aDateParts[5] : 0;
+					} else {
+						// other string based local input near the switch to Daylight Saving Time cannot be handled
+						// without re-implementing parse logic of JavaScript Date -> recommend to use the constructor
+						// with more than 1 argument or to use the ISO format
+						Log.warning("UI5Date for '" + vDateParts[0] + "' cannot be ensured to be correct as it is near"
+							+ " the change from standard time to daylight saving time in the current browser locale;"
+							+ " use the constructor with more than 1 arguments or use the ISO format instead",
+							oDateInstance, "sap.ui.core.date.UI5Date");
+					}
+
+				}
+			}
+			this._setParts(aAllParts, aLocalDateParts);
 		}
 	}
 

@@ -10,6 +10,7 @@ sap.ui.define([
 ], function (Log, Localization, TimezoneUtils, deepClone, UI5Date) {
 	/*global QUnit, sinon*/
 	"use strict";
+	const aAllParts = ["year", "month", "day", "hour", "minute", "second", "fractionalSecond"];
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.date.UI5Date", {
@@ -876,8 +877,8 @@ sap.ui.define([
 	[2023, 0, 1, 3, 4],
 	[2023, 0, 1, 3, 4, 5],
 	[2023, 0, 1, 3, 4, 5, 6]
-].forEach(function (aTimestampParts) {
-	QUnit.test("UI5Date: timestamp parts are in local time zone", function (assert) {
+].forEach(function (aTimestampParts, i) {
+	QUnit.test("UI5Date: timestamp parts are in local time zone, #" + i, function (assert) {
 		var oExpectation, oUI5Date,
 			oJSDate = new Date(), // no need to use UI5Date.getInstance
 			oJSDateMock = this.mock(oJSDate);
@@ -892,13 +893,144 @@ sap.ui.define([
 		oJSDateMock.expects("getMinutes").withExactArgs().returns("~minutes");
 		oJSDateMock.expects("getSeconds").withExactArgs().returns("~seconds");
 		oJSDateMock.expects("getMilliseconds").withExactArgs().returns("~milliseconds");
+		oJSDateMock.expects("getTimezoneOffset").withExactArgs()
+			// simulate no daylight saving time shift
+			.returns(new Date(oJSDate - /*2 hours = max time shift*/7200000).getTimezoneOffset());
+		oJSDateMock.expects("getTime").withExactArgs().returns(oJSDate.valueOf());
 		oExpectation = this.mock(UI5Date.prototype).expects("_setParts")
-			.withExactArgs(["year", "month", "day", "hour", "minute", "second", "fractionalSecond"],
+			.withExactArgs(aAllParts,
 				["~fullYear", "~month", "~date", "~hours", "~minutes", "~seconds", "~milliseconds"])
 			.returns("~notRelevant");
 
 		// code under test
 		oUI5Date = new UI5Date(aTimestampParts, "Pacific/Honolulu");
+
+		assert.strictEqual(oExpectation.thisValues[0], oUI5Date);
+	});
+});
+
+	//*********************************************************************************************
+[{
+	aDateParts: [2023, 0],
+	aPartsToSet:["~fullYear", 0, 1, 0, 0, "~seconds", "~milliseconds"]
+}, {
+	aDateParts: [2023, "0", 1, "2", 3, "4", 5],
+	aPartsToSet:["~fullYear", "0", 1, "2", 3, "~seconds", "~milliseconds"]
+}, {
+	aDateParts: ["2023-02-03T04:05:06.789"],
+	aPartsToSet:["~fullYear", 1, "03", "04", "05", "~seconds", "~milliseconds"]
+}, {
+	aDateParts: ["2023-2-3 4:5:6.789"],
+	aPartsToSet:["~fullYear", 1, "3", "4", "5", "~seconds", "~milliseconds"]
+}, {
+	aDateParts: ["2023-02-03T04:05"],
+	aPartsToSet:["~fullYear", 1, "03", "04", "05", "~seconds", "~milliseconds"]
+}, {
+	aDateParts: ["2023-2-3 4:5"],
+	aPartsToSet:["~fullYear", 1, "3", "4", "5", "~seconds", "~milliseconds"]
+}, {
+	aDateParts: ["2023-2-3"],
+	aPartsToSet:["~fullYear", 1, "3", 0, 0, "~seconds", "~milliseconds"]
+}].forEach((oFixture, i) => {
+	const sTitle = "UI5Date: timestamp parts in local time zone; DST switch in local time zone to DST time -> fix it, #"
+		+ i;
+	QUnit.test(sTitle, function (assert) {
+		const oJSDate = new Date(); // no need to use UI5Date.getInstance
+		const oJSDateMock = this.mock(oJSDate);
+
+		this.mock(UI5Date).expects("_createDateInstance").withExactArgs(sinon.match.same(oFixture.aDateParts))
+			.returns(oJSDate);
+		oJSDateMock.expects("getFullYear").withExactArgs().returns("~fullYear");
+		oJSDateMock.expects("getMonth").withExactArgs().returns("~month");
+		oJSDateMock.expects("getDate").withExactArgs().returns("~date");
+		oJSDateMock.expects("getHours").withExactArgs().returns("~hours");
+		oJSDateMock.expects("getMinutes").withExactArgs().returns("~minutes");
+		oJSDateMock.expects("getSeconds").withExactArgs().returns("~seconds");
+		oJSDateMock.expects("getMilliseconds").withExactArgs().returns("~milliseconds");
+		oJSDateMock.expects("getTimezoneOffset").withExactArgs()
+			// simulate daylight saving time shift to daylight saving time -> time shift has to be fixed
+			.returns(new Date(oJSDate - /*2 hours = max time shift*/7200000).getTimezoneOffset() - 1);
+		oJSDateMock.expects("getTime").withExactArgs().returns(oJSDate.valueOf());
+		const oExpectation = this.mock(UI5Date.prototype).expects("_setParts")
+			.withExactArgs(aAllParts, oFixture.aPartsToSet)
+			.returns("~notRelevant");
+
+		// code under test
+		const oUI5Date = new UI5Date(oFixture.aDateParts, "Pacific/Honolulu");
+
+		assert.strictEqual(oExpectation.thisValues[0], oUI5Date);
+	});
+});
+
+	//*********************************************************************************************
+["Sun Mar 31 2024 03:00", "Sun Mar 31 2024 02:00", "2024/03/31 03:00", "2024/03/31 02:00"].forEach((sTimestamp) => {
+	const sTitle = "UI5Date: local time stamp as non-ISO string near switch to DST time may be wrong; " + sTimestamp;
+	QUnit.test(sTitle, function (assert) {
+		const aDateParts = [sTimestamp];
+		const oJSDate = new Date(); // no need to use UI5Date.getInstance
+		const oJSDateMock = this.mock(oJSDate);
+
+		this.mock(UI5Date).expects("_createDateInstance").withExactArgs(sinon.match.same(aDateParts)).returns(oJSDate);
+		oJSDateMock.expects("getFullYear").withExactArgs().returns("~fullYear");
+		oJSDateMock.expects("getMonth").withExactArgs().returns("~month");
+		oJSDateMock.expects("getDate").withExactArgs().returns("~date");
+		oJSDateMock.expects("getHours").withExactArgs().returns("~hours");
+		oJSDateMock.expects("getMinutes").withExactArgs().returns("~minutes");
+		oJSDateMock.expects("getSeconds").withExactArgs().returns("~seconds");
+		oJSDateMock.expects("getMilliseconds").withExactArgs().returns("~milliseconds");
+		oJSDateMock.expects("getTimezoneOffset").withExactArgs()
+			// simulate daylight saving time shift to daylight saving time -> time shift has to be fixed
+			.returns(new Date(oJSDate - /*2 hours = max time shift*/7200000).getTimezoneOffset() - 1);
+		oJSDateMock.expects("getTime").withExactArgs().returns(oJSDate.valueOf());
+		this.oLogMock.expects("warning")
+			.withExactArgs("UI5Date for '" + sTimestamp + "' cannot be ensured to be correct as it is near"
+				+ " the change from standard time to daylight saving time in the current browser locale;"
+				+ " use the constructor with more than 1 arguments or use the ISO format instead",
+				sinon.match.same(oJSDate), "sap.ui.core.date.UI5Date");
+		const oExpectation = this.mock(UI5Date.prototype).expects("_setParts")
+			.withExactArgs(aAllParts,
+				// parts cannot be updated; don't know how to parse the local date string
+				["~fullYear", "~month", "~date", "~hours", "~minutes", "~seconds", "~milliseconds"])
+			.returns("~notRelevant");
+
+		// code under test - other string based local input which cannot be parsed
+		const oUI5Date = new UI5Date(aDateParts, "Pacific/Honolulu");
+
+		assert.strictEqual(oExpectation.thisValues[0], oUI5Date);
+	});
+});
+
+	//*********************************************************************************************
+[
+	[2023, 0],
+	[2023, "0", 1, "2", 3, "4", 5]
+].forEach((aDateParts, i) => {
+	const sTitle = "UI5Date: timestamp parts in local time zone; DST switch in local time zone to Standard Time"
+		+ " -> no fix needed, #" + i;
+	QUnit.test(sTitle, function (assert) {
+		const oJSDate = new Date(); // no need to use UI5Date.getInstance
+		const oJSDateMock = this.mock(oJSDate);
+
+		this.mock(UI5Date).expects("_createDateInstance").withExactArgs(sinon.match.same(aDateParts))
+			.returns(oJSDate);
+		oJSDateMock.expects("getFullYear").withExactArgs().returns("~fullYear");
+		oJSDateMock.expects("getMonth").withExactArgs().returns("~month");
+		oJSDateMock.expects("getDate").withExactArgs().returns("~date");
+		oJSDateMock.expects("getHours").withExactArgs().returns("~hours");
+		oJSDateMock.expects("getMinutes").withExactArgs().returns("~minutes");
+		oJSDateMock.expects("getSeconds").withExactArgs().returns("~seconds");
+		oJSDateMock.expects("getMilliseconds").withExactArgs().returns("~milliseconds");
+		oJSDateMock.expects("getTimezoneOffset").withExactArgs()
+			// simulate daylight saving time shift to daylight saving time -> time shift has to be fixed
+			.returns(new Date(oJSDate - /*2 hours = max time shift*/7200000).getTimezoneOffset() + 1);
+		oJSDateMock.expects("getTime").withExactArgs().returns(oJSDate.valueOf());
+		const oExpectation = this.mock(UI5Date.prototype).expects("_setParts")
+			.withExactArgs(aAllParts,
+				["~fullYear", "~month", "~date", "~hours", "~minutes", "~seconds", "~milliseconds"])
+			.returns("~notRelevant");
+
+		// code under test
+		const oUI5Date = new UI5Date(aDateParts, "Pacific/Honolulu");
 
 		assert.strictEqual(oExpectation.thisValues[0], oUI5Date);
 	});
@@ -926,7 +1058,7 @@ sap.ui.define([
 		oJSDateMock.expects("getSeconds").withExactArgs().returns("~seconds");
 		oJSDateMock.expects("getMilliseconds").withExactArgs().returns("~milliseconds");
 		oExpectation = this.mock(UI5Date.prototype).expects("_setParts")
-			.withExactArgs(["year", "month", "day", "hour", "minute", "second", "fractionalSecond"],
+			.withExactArgs(aAllParts,
 				["~fullYear", "~month", "~date", "~hours", "~minutes", "~seconds", "~milliseconds"])
 			.returns("~notRelevant");
 
@@ -974,7 +1106,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("UI5Date: 1 numeric argument ", function (assert) {
+	QUnit.test("UI5Date: 1 numeric argument", function (assert) {
 		var aArguments = [2023], // interpreted as timestamp
 			oJSDate = new Date(), // no need to use UI5Date.getInstance
 			oJSDateMock = this.mock(oJSDate);
@@ -995,6 +1127,40 @@ sap.ui.define([
 		// eslint-disable-next-line no-new
 		new UI5Date(aArguments, "Pacific/Honolulu");
 	});
+
+	//*********************************************************************************************
+[	// test following fixtures with Europe/Berlin time zone
+	// to DST switch in Europe/Berlin 31.03.2024 02:00 GMT+1 -> 31.03.2024 03:00 GMT+2
+	{aDate: [2024, 2, 31, 1, 59], expectedDate: 31, expectedHours: 1, expectedMinutes: 59},
+	{aDate: [2024, 2, 31, 2], expectedDate: 31, expectedHours: 2, expectedMinutes: 0},
+	{aDate: [2024, 2, 31, 2, false], expectedDate: 31, expectedHours: 2, expectedMinutes: 0},
+	// 0 as date leads to the last day of the month before
+	{aDate: [2024, 3, 0, 2], expectedDate: 31, expectedHours: 2, expectedMinutes: 0},
+	{aDate: [2024, 2, 31, 2, 59], expectedDate: 31, expectedHours: 2, expectedMinutes: 59},
+	{aDate: [2024, 2, 31, 3], expectedDate: 31, expectedHours: 3, expectedMinutes: 0},
+	{aDate: ["2024", "2", "31", "2", "59"], expectedDate: 31, expectedHours: 2, expectedMinutes: 59},
+	{aDate: ["2024-03-31 01:59"], expectedDate: 31, expectedHours: 1, expectedMinutes: 59},
+	{aDate: ["2024-03-31T02:00"], expectedDate: 31, expectedHours: 2, expectedMinutes: 0},
+	{aDate: ["2024-03-31 02:59"], expectedDate: 31, expectedHours: 2, expectedMinutes: 59},
+	{aDate: ["2024-03-31T03:00"], expectedDate: 31, expectedHours: 3, expectedMinutes: 0},
+	// to Standard time switch in Europe/Berlin 29.10.2023 03:00 GMT+2 -> 29.10.2023 02:00 GMT+1
+	{aDate: [2023, 9, 29, 2], expectedDate: 29, expectedHours: 2, expectedMinutes: 0},
+	{aDate: [2023, 9, 29, 3], expectedDate: 29, expectedHours: 3, expectedMinutes: 0},
+	// test following fixtures with America/Santiago time zone
+	// to DST switch in America/Santiago 03.09.2023 00:00 GMT-4 -> 03.09.2023 01:00 GMT-3
+	{aDate: [2023, 8, 3], expectedDate: 3, expectedHours: 0, expectedMinutes: 0},
+	// to Standard time switch in America/Santiago 07.04.2024 00:00 GMT-3 -> 06.04.2024 23:00 GMT-2
+	{aDate: [2024, 3, 7], expectedDate: 7, expectedHours: 0, expectedMinutes: 0}
+].forEach((oFixture, i) => {
+	QUnit.test("UI5Date: no timeshift if timestamp doesn't exist in local time zone (DST), # " + i, function (assert) {
+		// code under test
+		const oResult = new UI5Date(oFixture.aDate, "Pacific/Kiritimati");
+
+		assert.strictEqual(oResult.getDate(), oFixture.expectedDate, "Date");
+		assert.strictEqual(oResult.getHours(), oFixture.expectedHours, "Hours");
+		assert.strictEqual(oResult.getMinutes(), oFixture.expectedMinutes, "Minutes");
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("UI5Date: timestamp parts contain invalid values", function (assert) {
