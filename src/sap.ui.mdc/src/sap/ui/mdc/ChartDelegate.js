@@ -14,12 +14,9 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @alias module:sap/ui/mdc/ChartDelegate
 	 * @extends module:sap/ui/mdc/AggregationBaseDelegate
-	 * @mixes sap.ui.mdc.mixin.delegate.FilterIntegrationDefault
+	 * @mixes module:sap/ui/mdc/mixin/delegate/FilterIntegrationDefault
 	 * @since 1.88
 	 * @public
-	 *
-	 *
-	 * @borrows sap.ui.mdc.mixin.delegate.FilterIntegrationDefault.getFilters as #getFilters
 	 *
 	 */
 	const ChartDelegate = Object.assign({}, AggregationBaseDelegate, FilterIntegrationDefault);
@@ -30,7 +27,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {sap.ui.model.Filter[]} Array of filters
-	 * @name sap.ui.mdc.ChartDelegate#getFilters
+	 * @function
+	 * @name module:sap/ui/mdc/ChartDelegate.getFilters
 	 * @since 1.121
 	 * @protected
 	 */
@@ -422,7 +420,7 @@ sap.ui.define([
 
 	/**
 	 * Updates the binding info with the relevant filters.<br>
-	 * By default, this method updates a given {@link sap.ui.base.ManagedObject.AggregationBindingInfo AggregationBindingInfo} with the return value from the delegate's own {@link sap.ui.mdc.ChartDelegate#getFilters getFilters}.
+	 * By default, this method updates a given {@link sap.ui.base.ManagedObject.AggregationBindingInfo AggregationBindingInfo} with the return value from the delegate's own {@link module:sap/ui/mdc/ChartDelegate.getFilters getFilters}.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo Binding info of the chart

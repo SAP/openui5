@@ -77,7 +77,7 @@ sap.ui.define([
 	 * @final
 	 * @param {string} sType <code>Objectpath</code> <code>string</code> for {@link sap.ui.model.SimpleType}
 	 * @param {sap.ui.mdc.enums.BaseType|function} vBaseType {@link sap.ui.mdc.enums.BaseType BaseType} fitting the given <code>sType</code> parameter or method returning a {@link sap.ui.mdc.enums.BaseType BaseType} based on type configuration
-	 * @param {function} [fnOptions] Optional customizing method for format options and constraints. See {@link module:sap/ui/mdc/DefaultTypeMap} for examples.
+	 * @param {function} [fnOptions] Optional customizing method for format options and constraints. See {@link module:sap/ui/mdc/DefaultTypeMap DefaultTypeMap} for examples.
 	 * @public
 	 */
 	TypeMap.set = function(sType, vBaseType, fnOptions) {

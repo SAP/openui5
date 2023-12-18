@@ -17,7 +17,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental As of version 1.79
 	 * @since 1.79.0
-	 * @deprecated since 1.115.0 - please see {@link module:sap/ui/mdc/BaseDelegate.getTypeMap}
+	 * @deprecated since 1.115.0 - please see {@link module:sap/ui/mdc/BaseDelegate.getTypeMap getTypeMap}
 	 * @alias sap.ui.mdc.odata.TypeUtil
 	 */
 	var TypeUtil = Object.assign({}, BaseTypeUtil, {
