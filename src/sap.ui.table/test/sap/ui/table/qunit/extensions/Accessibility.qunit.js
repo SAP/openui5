@@ -543,8 +543,8 @@ sap.ui.define([
 			assert.strictEqual(oRefs.row.attr("aria-level"), "1", "aria-level set on group row");
 			assert.strictEqual(oRefs.fixed.attr("aria-expanded"), "true", "aria-expanded set on group row (fixed)");
 			assert.strictEqual(oRefs.fixed.attr("aria-level"), "1", "aria-level set on group row (fixed)");
-			assert.strictEqual(oRefs.act.attr("aria-expanded"), "true", "aria-expanded set on row action");
-			assert.strictEqual(oRefs.act.attr("aria-level"), "1", "aria-level set on row action");
+			assert.notOk(oRefs.act.attr("aria-expanded"), "aria-expanded is not set on row action");
+			assert.notOk(oRefs.act.attr("aria-level"), "aria-level is not set on row action");
 
 			var $Cell;
 			var i;
@@ -593,7 +593,7 @@ sap.ui.define([
 
 			assert.strictEqual(oRefs.row.attr("aria-level"), "1", "aria-level set on sum row");
 			assert.strictEqual(oRefs.fixed.attr("aria-level"), "1", "aria-level set on sum row (fixed part)");
-			assert.strictEqual(oRefs.act.attr("aria-level"), "1", "aria-level set on sum row (action part)");
+			assert.notOk(oRefs.act.attr("aria-level"), "aria-level is not set on sum row (action part)");
 
 			var $Cell;
 			var i;
@@ -927,8 +927,8 @@ sap.ui.define([
 		fakeGroupRow(1).then(function(oRefs) {
 			var $Cell;
 
-			assert.strictEqual(oRefs.hdr.attr("aria-expanded"), "true", "aria-expanded set on group row header");
-			assert.strictEqual(oRefs.hdr.attr("aria-level"), "1", "aria-level set on group row header");
+			assert.notOk(oRefs.hdr.attr("aria-expanded"), "aria-expanded is not set on group row header");
+			assert.notOk(oRefs.hdr.attr("aria-level"), "aria-level is not set on group row header");
 			assert.strictEqual(oRefs.hdr.attr("aria-haspopup"), "menu", "aria-haspopup set on group row header");
 
 			$Cell = getRowHeader(1, false, assert);
@@ -989,7 +989,7 @@ sap.ui.define([
 
 		return fakeSumRow(1).then(function(oRefs) {
 			oRowDomRefs = oRefs;
-			assert.strictEqual(oRefs.hdr.attr("aria-level"), "1", "aria-level set on sum row header");
+			assert.notOk(oRefs.hdr.attr("aria-level"), "aria-level is not set on sum row header");
 
 			$Cell = getRowHeader(1, false, assert);
 			that.testAriaLabels($Cell, 1, assert, {sum: true});
@@ -1020,12 +1020,10 @@ sap.ui.define([
 		var $Elem;
 
 		$Elem = oTable.$("rowsel0");
-		assert.strictEqual($Elem.parent().attr("role"), "row", "parent role");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 
 		$Elem = oTable.$("rowsel1");
-		assert.strictEqual($Elem.parent().attr("role"), "row", "parent role");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 		oTable.rerender();
 
@@ -1324,12 +1322,10 @@ sap.ui.define([
 		var $Elem;
 
 		$Elem = oTable.$("rowact0");
-		assert.strictEqual($Elem.parent().attr("role"), "row", "parent role");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 
 		$Elem = oTable.$("rowact1");
-		assert.strictEqual($Elem.parent().attr("role"), "row", "parent role");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
@@ -1573,17 +1569,25 @@ sap.ui.define([
 	});
 
 	QUnit.test("ARIA Attributes of TR Elements", function(assert) {
+		initRowActions(oTable, 1, 1);
+		oCore.applyChanges();
+
+		var sTableId = oTable.getId();
 		var $Elem = getCell(0, 0, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
+		assert.strictEqual($Elem.attr("aria-owns"), undefined, "aria-owns");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 		$Elem = getCell(0, 1, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
+		assert.strictEqual($Elem.attr("aria-owns"), sTableId + "-rowsel0 " + sTableId + "-rows-row0-col0 " + sTableId + "-rowact0", "aria-owns");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 		$Elem = getCell(1, 0, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
+		assert.strictEqual($Elem.attr("aria-owns"), undefined, "aria-owns");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 		$Elem = getCell(1, 1, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
+		assert.strictEqual($Elem.attr("aria-owns"), sTableId + "-rowsel1 " + sTableId + "-rows-row1-col0 " + sTableId + "-rowact1", "aria-owns");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
@@ -1607,11 +1611,9 @@ sap.ui.define([
 				assert.strictEqual($Elem.attr("aria-rowindex"),
 					"" + (oTable.getFirstVisibleRow() + i + 2), "row " + i + ": aria-rowindex of the tr element");
 				$Elem = oTable.$("rowsel" + i).parent();
-				assert.strictEqual($Elem.attr("aria-rowindex"),
-					"" + (oTable.getFirstVisibleRow() + i + 2), "row " + i + ": aria-rowindex of the row header");
+				assert.notOk($Elem.attr("aria-rowindex"), "no aria-rowindex on the row header");
 				$Elem = oTable.$("rowact" + i).parent();
-				assert.strictEqual($Elem.attr("aria-rowindex"),
-					"" + (oTable.getFirstVisibleRow() + i + 2), "row " + i + ": aria-rowindex of the row action");
+				assert.notOk($Elem.attr("aria-rowindex"), "no aria-rowindex of the row action");
 			}
 			done();
 		}
@@ -1706,12 +1708,6 @@ sap.ui.define([
 				$Elem = getCell(i, 0, false, assert).parent();
 				assert.strictEqual($Elem.attr("aria-current"), (i === iCurrentRow ? "true" : undefined),
 					"row " + i + ": aria-current of the tr element");
-				$Elem = oTable.$("rowsel" + i).parent();
-				assert.strictEqual($Elem.attr("aria-current"), (i === iCurrentRow ? "true" : undefined),
-					"row " + i + ": aria-current of the row header");
-				$Elem = oTable.$("rowact" + i).parent();
-				assert.strictEqual($Elem.attr("aria-current"), (i === iCurrentRow ? "true" : undefined),
-					"row " + i + ": aria-current of the row action");
 			}
 		}
 

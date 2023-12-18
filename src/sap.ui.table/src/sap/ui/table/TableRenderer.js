@@ -680,13 +680,6 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		var bRowSelected = oTable._getSelectionPlugin().isIndexSelected(oRow.getIndex());
 
 		rm.openStart("div");
-		var oRowSettings = oRow.getAggregation("_settings");
-		var oParams = {
-			index: iRowIndex,
-			rowHidden: oRow.isEmpty(),
-			rowNavigated: oRowSettings ? oRowSettings.getNavigated() : false
-		};
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", oParams);
 		rm.attr("data-sap-ui-related", oRow.getId());
 		rm.attr("data-sap-ui-rowindex", iRowIndex);
 
@@ -716,7 +709,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 
 		rm.attr("tabindex", "-1");
 
-		oParams = {
+		var oParams = {
 			rowSelected: bRowSelected,
 			rowHidden: oRow.isEmpty()
 		};
@@ -1120,7 +1113,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		var oRowSettings = oRow.getAggregation("_settings");
 		var oParams = {
 			index: iRowIndex,
-			rowHidden: oRow.isEmpty(),
+			fixedCol: bFixedTable,
 			rowNavigated: oRowSettings ? oRowSettings.getNavigated() : false
 		};
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", oParams);

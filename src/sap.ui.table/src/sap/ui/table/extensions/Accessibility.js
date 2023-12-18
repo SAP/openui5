@@ -839,6 +839,21 @@ sap.ui.define([
 					if (mParams.rowNavigated) {
 						mAttributes["aria-current"] = true;
 					}
+
+					if (!mParams.fixedCol) {
+						mAttributes["aria-owns"] = [];
+						if (TableUtils.hasRowHeader(oTable)) {
+							mAttributes["aria-owns"].push(sTableId + "-rowsel" + mParams.index);
+						}
+						if (TableUtils.hasFixedColumns(oTable)) {
+							for (var j = 0; j < oTable.getComputedFixedColumnCount(); j++) {
+								mAttributes["aria-owns"].push(sTableId + "-rows-row" + mParams.index + "-col" + j);
+							}
+						}
+						if (TableUtils.hasRowActions(oTable)) {
+							mAttributes["aria-owns"].push(sTableId + "-rowact" + mParams.index);
+						}
+					}
 					break;
 
 				case AccExtension.ELEMENTTYPES.TREEICON: //The expand/collapse icon in the TreeTable
@@ -1100,11 +1115,12 @@ sap.ui.define([
 
 		var oTable = this.getTable();
 		var aRows = oTable.getRows();
-		var oRow, i;
+		var oRow, i, $Ref;
 
 		for (i = 0; i < aRows.length; i++) {
 			oRow = aRows[i];
-			oRow.getDomRefs(true).row.attr("aria-rowindex", ExtensionHelper.getRowIndex(oRow));
+			$Ref = oRow.getDomRefs(true);
+			$Ref.row.not($Ref.rowHeaderPart).not($Ref.rowActionPart).attr("aria-rowindex", ExtensionHelper.getRowIndex(oRow));
 		}
 	};
 
@@ -1269,7 +1285,7 @@ sap.ui.define([
 			var bIsSelected = oTable._getSelectionPlugin().isIndexSelected(oRow.getIndex());
 
 			if ($Ref.row) {
-				$Ref.row.add($Ref.row.children(".sapUiTableCell")).attr("aria-selected", bIsSelected ? "true" : "false");
+				$Ref.row.not($Ref.rowHeaderPart).not($Ref.rowActionPart).add($Ref.row.children(".sapUiTableCell")).attr("aria-selected", bIsSelected ? "true" : "false");
 			}
 
 			if (!bIsSelected) {
@@ -1307,7 +1323,7 @@ sap.ui.define([
 			});
 		}
 
-		oDomRefs.row.attr({
+		oDomRefs.row.not(oDomRefs.rowHeaderPart).not(oDomRefs.rowActionPart).attr({
 			"aria-expanded": oRow.isExpandable() ? oRow.isExpanded() + "" : null,
 			"aria-level": oRow.getLevel()
 		});
