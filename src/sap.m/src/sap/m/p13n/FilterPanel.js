@@ -43,7 +43,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @private
-	 * @since 1.120.2
+	 * @since 1.121
 	 * @alias sap.m.p13n.FilterPanel
 	 */
 	const FilterPanel = QueryPanel.extend("sap.m.p13n.FilterPanel", {
