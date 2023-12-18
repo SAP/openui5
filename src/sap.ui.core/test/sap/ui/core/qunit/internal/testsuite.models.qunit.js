@@ -83,6 +83,13 @@ sap.ui.define(function() {
 					language : "en-US"
 				}
 			},
+			FormatUtils : {
+				title : "sap.ui.core.format.FormatUtils",
+				module : ["test-resources/sap/ui/core/qunit/format/FormatUtils.qunit"],
+				ui5 : {
+					language : "en-US"
+				}
+			},
 			NumberFormat : {
 				// not in 1RingModels.qunit because test has to be refactored
 				title : "sap.ui.core.format.NumberFormat",
