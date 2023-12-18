@@ -497,9 +497,10 @@ sap.ui.define([
 	 * @since 1.121
 	 */
 	Util.isExportable = function(oBinding) {
-		return !Util.isEmpty(oBinding) && (!oBinding?.getDownloadUrl || oBinding.getDownloadUrl() !== null);
+		return !Util.isEmpty(oBinding)
+			&& (!oBinding?.getDownloadUrl
+				|| (oBinding.isResolved() && oBinding.getDownloadUrl() !== null));
 	};
 
 	return Util;
-
 });

@@ -325,9 +325,10 @@ sap.ui.define([
 
 	QUnit.test("isExportable", function(assert) {
 		const oJSONListBinding = sinon.createStubInstance(JSONListBinding);
-		const oODataListBinding = sinon.createStubInstance(ODataListBinding, {
-			getDownloadUrl: "http://some.fake.path/service"
-		});
+		const oODataListBinding = sinon.createStubInstance(ODataListBinding);
+
+		oODataListBinding.getDownloadUrl.returns("http://some.fake.path/service");
+		oODataListBinding.isResolved.returns(true);
 
 		/* Test before Util.isEmpty is stubbed */
 		assert.notOk(Util.isExportable(), "Returns false when binding is unavailable");
@@ -340,12 +341,23 @@ sap.ui.define([
 		assert.ok(Util.isExportable(oJSONListBinding), "Non-empty JSONListBinding results in true");
 		assert.ok(Util.isExportable(oODataListBinding), "Non-empty ODataListBinding with download Url results in true");
 
+		/* Check for unresolved binding */
+		oODataListBinding.isResolved.returns(false);
+		oODataListBinding.getDownloadUrl.reset();
+
+		assert.ok(Util.isExportable(oJSONListBinding), "isResolved has no impact on JSONListBinding");
+		assert.notOk(Util.isExportable(oODataListBinding), "Unresolved ODataListBinding returns false");
+		assert.ok(oODataListBinding.getDownloadUrl.notCalled, "getDownloadUrl was not called on unresolved binding");
+
 		/* Test getDownloadUrl -> null (Filter.None scenario) */
+		oODataListBinding.isResolved.returns(true);
 		oODataListBinding.getDownloadUrl.returns(null);
 
 		assert.notOk(Util.isExportable(oODataListBinding), "Download URL null results in not exportable");
+		assert.ok(oODataListBinding.getDownloadUrl.calledOnce, "getDownloadUrl was called on resolved binding");
 
 		/* Test empty binding scenario */
+		oODataListBinding.isResolved.reset();
 		Util.isEmpty.returns(true);
 
 		assert.notOk(Util.isExportable(oJSONListBinding), "Empty JSONListBinding results in false");
