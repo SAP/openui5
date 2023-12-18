@@ -1,6 +1,6 @@
-	/*!
- * ${copyright}
- */
+/*!
+* ${copyright}
+*/
 
 sap.ui.define([
 	'./SelectionController',
@@ -8,7 +8,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual'
-], function (BaseController, xConfigAPI, Log, merge, deepEqual) {
+], (BaseController, xConfigAPI, Log, merge, deepEqual) => {
 	"use strict";
 
 	/**
@@ -52,14 +52,14 @@ sap.ui.define([
 	 * @alias sap.m.p13n.FilterController
 	 */
 	const FilterController = BaseController.extend("sap.m.p13n.FilterController", {
-		constructor: function(mSettings) {
+		constructor: function (mSettings) {
 			BaseController.apply(this, arguments);
 			this._itemFactory = mSettings?.itemFactory;
 			this._bResetEnabled = true;
 		}
 	});
 
-	FilterController.prototype.getCurrentState = function(){
+	FilterController.prototype.getCurrentState = function () {
 		const oXConfig = xConfigAPI.readConfig(this.getAdaptationControl()) || {};
 		const aConditions = oXConfig.hasOwnProperty("properties") ? oXConfig.properties.filterConditions : [];
 
@@ -71,21 +71,21 @@ sap.ui.define([
 		}, {}) || {};
 	};
 
-	FilterController.prototype.getChangeOperations = function() {
+	FilterController.prototype.getChangeOperations = () => {
 		return {
 			add: "addCondition",
 			remove: "removeCondition"
 		};
 	};
 
-	FilterController.prototype._getPresenceAttribute = function(bexternalAppliance){
+	FilterController.prototype._getPresenceAttribute = (bexternalAppliance) => {
 		return "active";
 	};
 
 	FilterController.prototype.initAdaptationUI = function (oPropertyHelper, oWrapper) {
 
-		 return new Promise(function(resolve, reject){
-			sap.ui.require(["sap/m/p13n/FilterPanel", "sap/m/Input"], function(FilterPanel, Input){
+		return new Promise((resolve, reject) => {
+			sap.ui.require(["sap/m/p13n/FilterPanel", "sap/m/Input"], (FilterPanel, Input) => {
 
 				const oAdaptationData = this.mixInfoAndState(oPropertyHelper);
 
@@ -102,13 +102,13 @@ sap.ui.define([
 				this._oPanel = oFilterPanel;
 
 				resolve(oFilterPanel);
-			}.bind(this));
-		}.bind(this));
+			});
+		});
 
 	};
 
-	const _hasProperty = function(aPropertyInfo, sName) {
-		return aPropertyInfo.some(function(oProperty){
+	const _hasProperty = (aPropertyInfo, sName) => {
+		return aPropertyInfo.some((oProperty) => {
 			//First check unique name
 			let bValid = oProperty.key === sName || oProperty.name === sName || sName == "$search";
 
@@ -130,7 +130,7 @@ sap.ui.define([
 		return aConditions.indexOf(oExistingCondition);
 	};
 
-	FilterController.prototype._createConditionChange = function(sChangeType, oControl, sFieldPath, oCondition) {
+	FilterController.prototype._createConditionChange = function (sChangeType, oControl, sFieldPath, oCondition) {
 		delete oCondition.filtered; //Consider moving this to the delta calculation instead
 
 		const oConditionChange = {
@@ -144,7 +144,7 @@ sap.ui.define([
 		return oConditionChange;
 	};
 
-	FilterController.prototype._createConditionChangeContent = function(sFieldPath, oCondition) {
+	FilterController.prototype._createConditionChangeContent = (sFieldPath, oCondition) => {
 		return {
 			key: sFieldPath,
 			condition: oCondition
@@ -173,10 +173,10 @@ sap.ui.define([
 			return aChanges;
 		}
 
-		const fnRemoveSameConditions = function(aConditions, aShadowConditions){
+		const fnRemoveSameConditions = (aConditions, aShadowConditions) => {
 			let bRunAgain;
 
-			do  {
+			do {
 				bRunAgain = false;
 
 				for (let i = 0; i < aConditions.length; i++) {
@@ -195,8 +195,8 @@ sap.ui.define([
 						break;
 					}
 				}
-			}  while (bRunAgain);
-		}.bind(this);
+			} while (bRunAgain);
+		};
 
 		fnRemoveSameConditions(aConditions, aShadowConditions);
 
@@ -263,7 +263,7 @@ sap.ui.define([
 		return aConditionChanges;
 	};
 
-	FilterController.prototype.getDelta = function(mPropertyBag) {
+	FilterController.prototype.getDelta = function (mPropertyBag) {
 		const existingState = mPropertyBag.existingState;
 		let changedState = mPropertyBag.changedState;
 
@@ -274,7 +274,7 @@ sap.ui.define([
 		changedState = changedState.reduce((mConditions, oState) => {
 			const sKey = oState.key;
 			mConditions[sKey] = mConditions[sKey] || [];
-			oState.conditions.forEach(function(oConditionForKey){
+			oState.conditions.forEach((oConditionForKey) => {
 				if (oConditionForKey && oConditionForKey.values && oConditionForKey.values[0] !== undefined) {
 					mConditions[sKey].push(oConditionForKey);
 				}
@@ -282,15 +282,18 @@ sap.ui.define([
 			return mConditions;
 		}, {});
 
-		return this.getConditionDeltaChanges({...mPropertyBag, changedState});
+		return this.getConditionDeltaChanges({
+			...mPropertyBag,
+			changedState
+		});
 	};
 
 
-	FilterController.prototype._getChangeContent = function(oProperty, aDeltaAttributes) {
+	FilterController.prototype._getChangeContent = (oProperty, aDeltaAttributes) => {
 		const oChangeContent = {};
 
-		aDeltaAttributes.forEach(function(sAttribute) {
-			if (oProperty.hasOwnProperty(sAttribute)){
+		aDeltaAttributes.forEach((sAttribute) => {
+			if (oProperty.hasOwnProperty(sAttribute)) {
 				oChangeContent[sAttribute] = oProperty[sAttribute];
 			}
 		});
@@ -298,18 +301,21 @@ sap.ui.define([
 		return oChangeContent;
 	};
 
-	FilterController.prototype.mixInfoAndState = function(oPropertyHelper) {
+	FilterController.prototype.mixInfoAndState = function (oPropertyHelper) {
 
 		const mExistingFilters = this.getCurrentState() || {};
 
-		const oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+		const oP13nData = this.prepareAdaptationData(oPropertyHelper, (mItem, oProperty) => {
 
 			const aExistingFilters = mExistingFilters[mItem.name];
-			mItem.conditions = aExistingFilters || (this._itemFactory ? [] : [{operator: "Contains", values: []}]);
+			mItem.conditions = aExistingFilters || (this._itemFactory ? [] : [{
+				operator: "Contains",
+				values: []
+			}]);
 			mItem.active = aExistingFilters && aExistingFilters.length > 0;
 
 			return !(oProperty.filterable === false);
-		}.bind(this));
+		});
 
 		this.sortP13nData({
 			visible: "active",

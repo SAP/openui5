@@ -3,21 +3,21 @@
  */
 sap.ui.define([
 	"sap/ui/base/Object"
-], function(BaseObject) {
+], (BaseObject) => {
 	"use strict";
 
-	var oModificationHandler;
+	let oModificationHandler;
 
 	/**
 	 * @class This class offers modification capabilities without persistence.
-     * It should be used as the persistence layer in the {@link sap.m.p13n.Engine#register Engine#register} process.
+	 * It should be used as the persistence layer in the {@link sap.m.p13n.Engine#register Engine#register} process.
 	 *
 	 * @author SAP SE
 	 * @private
-     * @experimental Since 1.104.
+	 * @experimental Since 1.104.
 	 * @alias sap.m.p13n.modification.ModificationHandler
 	 */
-	var ModificationHandler = BaseObject.extend("sap.m.p13n.modification.ModificationHandler");
+	const ModificationHandler = BaseObject.extend("sap.m.p13n.modification.ModificationHandler");
 
 	/**
 	 * Should implement the appliance of changes
@@ -26,8 +26,8 @@ sap.ui.define([
 	 * @param {object} oModificationPayload An object providing a modification handler specific payload
 	 * @returns {Promise} Returns a <code>Promise</code> reflecting change processing
 	 */
-	ModificationHandler.prototype.processChanges = function(aChanges, oModificationPayload){
-		var aChangeAppliance = [];
+	ModificationHandler.prototype.processChanges = (aChanges, oModificationPayload) => {
+		const aChangeAppliance = [];
 		return Promise.all(aChangeAppliance);
 	};
 
@@ -42,7 +42,7 @@ sap.ui.define([
 	 * @returns {Promise} Returns a <code>Promise</code> reflecting change appliance
 
 	 */
-	ModificationHandler.prototype.waitForChanges = function(mPropertyBag, oModificationPayload) {
+	ModificationHandler.prototype.waitForChanges = (mPropertyBag, oModificationPayload) => {
 		return Promise.resolve();
 	};
 
@@ -56,7 +56,7 @@ sap.ui.define([
 	 * @param {object} oModificationPayload An object providing a modification handler specific payload
 	 * @returns {Promise} Returns a <code>Promise</code> reflecting the reset execution
 	 */
-	ModificationHandler.prototype.reset = function(mPropertyBag, oModificationPayload) {
+	ModificationHandler.prototype.reset = (mPropertyBag, oModificationPayload) => {
 		return Promise.resolve();
 	};
 
@@ -66,7 +66,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl The registered control instance
 	 * @returns {Promise} Returns a <code>Promise</code> to initialize necessary persistence dependencies
 	 */
-	ModificationHandler.prototype.initialize = function(oControl) {
+	ModificationHandler.prototype.initialize = (oControl) => {
 		return Promise.resolve();
 	};
 
@@ -77,9 +77,9 @@ sap.ui.define([
 	 * @param {object} mPropertyBag A propertybag containing modification specific configuration
 	 * @param {sap.ui.core.Element} mPropertyBag.selector The according element which should be checked
 	 * @param {object} oModificationPayload An object providing a modification handler specific payload
- 	 * @returns {Promise<boolean>} reflects the modification support state
+	 * @returns {Promise<boolean>} reflects the modification support state
 	 */
-	ModificationHandler.prototype.isModificationSupported = function(mPropertyBag, oModificationPayload){
+	ModificationHandler.prototype.isModificationSupported = (mPropertyBag, oModificationPayload) => {
 		return Promise.resolve(true);
 	};
 
@@ -90,12 +90,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl The initialized control instance
 	 * @returns {Promise} Returns a <code>Promise</code> after initialization
 	 */
-	ModificationHandler.prototype.initialize = function(oControl) {
+	ModificationHandler.prototype.initialize = (oControl) => {
 		return Promise.resolve();
 	};
 
-	ModificationHandler.getInstance = function() {
-		if (!oModificationHandler){
+	ModificationHandler.getInstance = () => {
+		if (!oModificationHandler) {
 			oModificationHandler = new ModificationHandler();
 		}
 		return oModificationHandler;

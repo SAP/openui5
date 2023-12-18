@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/base/Object"
-], function (BaseObject) {
+], (BaseObject) => {
 	"use strict";
 
 	/**
@@ -39,7 +39,7 @@ sap.ui.define([
 	 *      {key: city, label: City, path: modelPath/to/city}
 	 * ]
 	 */
-	var MetadataHelper = BaseObject.extend("sap.m.p13n.MetadataHelper", {
+	const MetadataHelper = BaseObject.extend("sap.m.p13n.MetadataHelper", {
 		constructor: function(aProperties) {
 			BaseObject.apply(this, arguments);
 			this._aProperties = aProperties;
