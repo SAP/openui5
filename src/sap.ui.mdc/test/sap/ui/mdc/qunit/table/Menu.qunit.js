@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"./QUnitUtils",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/mdc/Table",
@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/performance/trace/FESRHelper"
 ], function(
 	TableQUnitUtils,
-	Core,
+	nextUIUpdate,
 	Element,
 	Library,
 	Table,
@@ -63,9 +63,9 @@ sap.ui.define([
 				}
 			]);
 
-			return this.oTable.initialized().then(function() {
+			return this.oTable.initialized().then(async function() {
 				this.oTable.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -162,9 +162,9 @@ sap.ui.define([
 				groupable: true
 			}]);
 
-			return this.oTable.initialized().then(function() {
+			return this.oTable.initialized().then(async function() {
 				this.oTable.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -313,9 +313,9 @@ sap.ui.define([
 				}
 			]);
 
-			return this.oTable.initialized().then(function() {
+			return this.oTable.initialized().then(async function() {
 				this.oTable.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach: function() {

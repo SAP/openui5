@@ -1,14 +1,14 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-    "sap/ui/core/Core",
+    "sap/ui/qunit/utils/nextUIUpdate",
     "sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/mdc/chart/ChartImplementationContainer",
     "sap/ui/core/Control"
 ],
 function(
-    Core,
+    nextUIUpdate,
     UIComponent,
     ComponentContainer,
 	ChartImplementationContainer,
@@ -18,7 +18,7 @@ function(
 
 	QUnit.module("sap.ui.mdc.chart.ChartImplementationContainer: API", {
 
-		beforeEach: function() {
+		beforeEach: async function() {
 
             this.oContA = new Control("ControlA");
             this.oContB = new Control("ControlB");
@@ -47,7 +47,7 @@ function(
             this.oChartContainer = this.oUiComponent.getRootControl();
 
 			this.oUiComponentContainer.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
             this.oContA.destroy();

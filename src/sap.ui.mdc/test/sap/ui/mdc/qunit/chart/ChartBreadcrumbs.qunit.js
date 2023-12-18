@@ -1,14 +1,14 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
     "sap/ui/mdc/chart/DrillBreadcrumbs",
     "sap/ui/mdc/chart/Item"
 ],
 function(
-	Core,
+	nextUIUpdate,
 	UIComponent,
 	ComponentContainer,
     DrillBreadcrumbs,
@@ -18,7 +18,7 @@ function(
 
 	QUnit.module("sap.ui.mdc.DrillBreadcrumbs", {
 
-		beforeEach: function() {
+		beforeEach: async function() {
 			const TestComponent = UIComponent.extend("test", {
 				metadata: {
 					manifest: {
@@ -40,7 +40,7 @@ function(
             this.oMDCDrillBreadcrumbs = this.oUiComponent.getRootControl();
 
 			this.oUiComponentContainer.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oUiComponentContainer.destroy();

@@ -3,7 +3,7 @@
 sap.ui.define([
 	"./QUnitUtils",
 	"sap/ui/core/Lib",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/ResponsiveTableType",
@@ -16,7 +16,7 @@ sap.ui.define([
 ], function(
 	TableQUnitUtils,
 	Library,
-	Core,
+	nextUIUpdate,
 	Table,
 	GridTableType,
 	ResponsiveTableType,
@@ -36,7 +36,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.destroyTable();
 		},
-		createTable: function(mSettings) {
+		createTable: async function(mSettings) {
 			this.destroyTable();
 
 			const mDefaultSettings = {
@@ -44,7 +44,7 @@ sap.ui.define([
 			};
 			this.oTable = new Table(Object.assign(mDefaultSettings, mSettings));
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			return this.oTable;
 		},
@@ -55,8 +55,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("GridTableType - Item with all properties set", function(assert) {
-		this.createTable({
+	QUnit.test("GridTableType - Item with all properties set", async function(assert) {
+		await this.createTable({
 			rowSettings: new RowSettings({
 				rowActions: [
 					new RowActionItem({
@@ -86,8 +86,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("GridTableType - Item with Navigation type only", function(assert) {
-		this.createTable({
+	QUnit.test("GridTableType - Item with Navigation type only", async function(assert) {
+		await this.createTable({
 			rowSettings: new RowSettings({
 				rowActions: [
 					new RowActionItem({
@@ -114,8 +114,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("ResponsiveTableType - Item with Navigation type only", function(assert) {
-		this.createTable({
+	QUnit.test("ResponsiveTableType - Item with Navigation type only", async function(assert) {
+		await this.createTable({
 			delegate: {
 				name: sDelegatePath,
 				payload: {
@@ -151,7 +151,7 @@ sap.ui.define([
 				]
 			})
 		});
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		return TableQUnitUtils.waitForBinding(this.oTable).then(() => {
 			const oInnerTable = this.oTable._oTable;

@@ -2,7 +2,7 @@
 // These are some globals generated due to fl (signals, hasher) and m (hyphenation) libs.
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Text",
 	"sap/ui/core/Icon",
 	"./QUnitUtils",
@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/mdc/table/ResponsiveTableType",
 	"sap/ui/mdc/table/ResponsiveColumnSettings"
 ], function (
-	Core,
+	nextUIUpdate,
 	Text,
 	Icon,
 	TableQUnitUtils,
@@ -71,7 +71,7 @@ sap.ui.define([
 
 	QUnit.module("extendedSettings");
 
-	QUnit.test("Merge cell", function (assert) {
+	QUnit.test("Merge cell", async function (assert) {
 		const oModel = new JSONModel();
 		oModel.setData({
 			testPath: [{
@@ -136,7 +136,7 @@ sap.ui.define([
 
 		oTable.setModel(oModel);
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		return TableQUnitUtils.waitForBindingInfo(oTable).then(function () {
 			const aColumns = oTable._oTable.getColumns();

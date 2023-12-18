@@ -6,9 +6,9 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/test/actions/Press",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/library"
-], function(Library, ChartItemPanel, JSONModel, VBox, sinon, Press, oCore, coreLibrary) {
+], function(Library, ChartItemPanel, JSONModel, VBox, sinon, Press, nextUIUpdate, coreLibrary) {
 	"use strict";
 
 	const ValueState = coreLibrary.ValueState;
@@ -18,10 +18,9 @@ sap.ui.define([
 		allowedLayoutOptions: ["axis1", "category", "series"], templateConfig: [{kind: "Dimension"},{kind: "Measure"}]
 	};
 
-	oCore.applyChanges();
-
 	QUnit.module("ChartItemPanelNew Unit tests", {
-		beforeEach: function(){
+		beforeEach: async function(){
+			await nextUIUpdate();
 
 			const aItems = [
 				{

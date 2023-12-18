@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/link/LinkItem",
 	"sap/m/Button",
 	"sap/ui/mdc/Link",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/ui/mdc/enums/LinkType"
 ], function(
@@ -25,7 +25,7 @@ sap.ui.define([
 	LinkItem,
 	Button,
 	Link,
-	oCore,
+	nextUIUpdate,
 	Element,
 	LinkType) {
 	"use strict";
@@ -77,7 +77,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------------------------------------------------------
 
 	QUnit.module("sap.ui.mdc.field.FieldInfo: rendered as a text", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			startMockServer("test-resources/sap/ui/mdc/qunit/base/info/mockserver/metadata.xml", "test-resources/sap/ui/mdc/qunit/base/info/mockserver/", "/odataFake/");
 			this.oODataModel = new ODataModel("/odataFake/");
 
@@ -91,7 +91,7 @@ sap.ui.define([
 			});
 
 			this.oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			stopMockServer();
@@ -136,7 +136,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.mdc.field.FieldInfo: open direct navigation", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			startMockServer("test-resources/sap/ui/mdc/qunit/base/info/mockserver/metadata.xml", "test-resources/sap/ui/mdc/qunit/base/info/mockserver/", "/odataFake/");
 			this.oODataModel = new ODataModel("/odataFake/");
 
@@ -150,7 +150,7 @@ sap.ui.define([
 			});
 
 			this.oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			stopMockServer();
@@ -222,7 +222,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.mdc.field.FieldInfo: open empty popover", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			startMockServer("test-resources/sap/ui/mdc/qunit/base/info/mockserver/metadata.xml", "test-resources/sap/ui/mdc/qunit/base/info/mockserver/", "/odataFake/");
 			this.oODataModel = new ODataModel("/odataFake/");
 
@@ -236,7 +236,7 @@ sap.ui.define([
 			});
 
 			this.oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			stopMockServer();
@@ -282,7 +282,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.mdc.field.FieldInfo: open not empty popover", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			startMockServer("test-resources/sap/ui/mdc/qunit/base/info/mockserver/metadata.xml", "test-resources/sap/ui/mdc/qunit/base/info/mockserver/", "/odataFake/");
 			this.oODataModel = new ODataModel("/odataFake/");
 
@@ -296,7 +296,7 @@ sap.ui.define([
 			});
 
 			this.oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			stopMockServer();

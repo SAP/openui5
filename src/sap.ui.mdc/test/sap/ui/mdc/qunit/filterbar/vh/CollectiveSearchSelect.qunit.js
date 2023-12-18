@@ -4,13 +4,13 @@ sap.ui.define([
 	"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/VariantItem"
 ], function (
 	CollectiveSearchSelect,
 	createAndAppendDiv,
 	keyCodes,
-	oCore,
+	nextUIUpdate,
 	Item
 ) {
 	"use strict";
@@ -56,10 +56,10 @@ sap.ui.define([
 		assert.equal(this.oColSearch.getCurrentText(), "col Search 1", "long text of selected item should be correct");
 	});
 
-	QUnit.test("testing open popover and creation of list", function(assert) {
+	QUnit.test("testing open popover and creation of list", async function(assert) {
 		// arrange
 		this.oColSearch.placeAt("mdcColSearchcontent");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.oColSearch.setSelectedItemKey("cs2");
@@ -72,10 +72,10 @@ sap.ui.define([
 		assert.ok(this.oColSearch.oVariantList, "List should exist");
 	});
 
-	QUnit.test("testing subheader and search field visiblity", function(assert) {
+	QUnit.test("testing subheader and search field visiblity", async function(assert) {
 		// arrange
 		this.oColSearch.placeAt("mdcColSearchcontent");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.oColSearch.setSelectedItemKey("cs2");
@@ -93,10 +93,10 @@ sap.ui.define([
 		assert.ok(this.oColSearch.oVariantSelectionPage.getShowSubHeader(), "Subheader should be visible when more than 9 items exist");
 	});
 
-	QUnit.test("testing search field ", function(assert) {
+	QUnit.test("testing search field ", async function(assert) {
 		// arrange
 		this.oColSearch.placeAt("mdcColSearchcontent");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.oColSearch.setSelectedItemKey("cs2");
@@ -121,10 +121,10 @@ sap.ui.define([
 		assert.equal(this.oColSearch.oVariantList.getItems().length, 10, "all items should be avaiable/visible after search in the list");
 	});
 
-	QUnit.test("testing open popover via keyboard", function(assert) {
+	QUnit.test("testing open popover via keyboard", async function(assert) {
 		// arrange
 		this.oColSearch.placeAt("mdcColSearchcontent");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.oColSearch.setSelectedItemKey("cs2");
@@ -132,16 +132,16 @@ sap.ui.define([
 		this.oColSearch.addItem(new Item({key: "cs2", text: "col Search 2"}));
 
 		this.oColSearch.onkeyup({which : keyCodes.F4});
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(this.oColSearch.oVariantPopOver.isOpen() === true, "Popover should be open!");
 	});
 
-	QUnit.test("testing selection of item and event handling", function(assert) {
+	QUnit.test("testing selection of item and event handling", async function(assert) {
 		// arrange
 		this.oColSearch.placeAt("mdcColSearchcontent");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Prepare
 		this.oColSearch.setSelectedItemKey("cs2");
@@ -162,7 +162,7 @@ sap.ui.define([
 			item: new Item({key: "cs2", text: "col Search 2"})
 		};
 		this.oColSearch.oVariantList.fireItemPress(oFakeEvent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(!this.bEventHandled, "select event should not be triggered");
@@ -173,7 +173,7 @@ sap.ui.define([
 			item: new Item({key: "cs3", text: "col Search 3"})
 		};
 		this.oColSearch.oVariantList.fireItemPress(oFakeEvent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(this.bEventHandled, "select event should be triggered");

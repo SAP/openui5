@@ -74,7 +74,6 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/Japanese",
 	"./FieldBaseDelegateODataDefaultTypes"
@@ -149,7 +148,6 @@ sap.ui.define([
 	containsOrEquals,
 	Device,
 	KeyCodes,
-	oCore,
 	UI5Date,
 	Japanese,
 	FieldBaseDelegateODataDefaultTypes
@@ -287,7 +285,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("call of delegate functions", function(assert) {
+	QUnit.test("call of delegate functions", async function(assert) {
 		const oPayload = {x: 1};
 		const oDelegate = sap.ui.require("sap/ui/mdc/field/FieldBaseDelegate");
 
@@ -301,7 +299,7 @@ sap.ui.define([
 		}).placeAt("content");
 
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oDelegate.getTypeMap.calledWith(oField), "getTypeMap called");
 		assert.ok(oTypeUtil.getDataTypeInstance.calledWith("sap.ui.model.type.String"), "getDataTypeClass called");
@@ -364,23 +362,28 @@ sap.ui.define([
 
 	}
 
-	QUnit.test("default rendering", function(assert) {
+	QUnit.test("default rendering", async function(assert) {
 
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		defaultRendering(assert);
 
 	});
 
-	QUnit.test("default rendering, async loading of control", function(assert) {
+	QUnit.test("default rendering, async loading of control", async function(assert) {
 
 		const oStub = sinon.stub(sap.ui, "require");
 		oStub.withArgs("sap/ui/mdc/field/FieldMultiInput").onFirstCall().returns(undefined);
+		oStub.withArgs(["sap/ui/mdc/field/FieldMultiInput"]).onFirstCall().callsFake(function(vDependencies, fnCallback, fnErrCallback) {
+			setTimeout(function() {
+				oStub.wrappedMethod(vDependencies, fnCallback, fnErrCallback);
+			}, 0);
+		});
 		oStub.callThrough();
 
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
 		assert.notOk(aContent && aContent.length > 0, "Content not created sync");
@@ -391,31 +394,37 @@ sap.ui.define([
 
 		const fnDone = assert.async();
 		setTimeout(function() { // to wait async creation of inner control
-			nextUIUpdate().then(() => {
+			setTimeout(async function() { // to wait for invalidation
+				await nextUIUpdate;
 				defaultRendering(assert);
 
 				const oDomRef = oField.getDomRef();
 				assert.notOk(oDomRef && jQuery(oDomRef).attr("tabIndex"), "DomRef is not focusable");
 				fnDone();
-			});
-		}, 0);
+			}, 1);
+		}, 1);// to make sure to be executed after require-timeout
 
 		oStub.restore();
 
 	});
 
-	QUnit.test("default rendering, async loading of delegate", function(assert) {
+	QUnit.test("default rendering, async loading of delegate", async function(assert) {
 
 		oField.destroy();
 		const oStub = sinon.stub(sap.ui, "require");
 		oStub.withArgs("sap/ui/mdc/field/FieldBaseDelegate").onFirstCall().returns(undefined);
+		oStub.withArgs(["sap/ui/mdc/field/FieldBaseDelegate"]).onFirstCall().callsFake(function(vDependencies, fnCallback, fnErrCallback) {
+			setTimeout(function() {
+				oStub.wrappedMethod(vDependencies, fnCallback, fnErrCallback);
+			}, 2); // to execute after timeout in nextUIUpdate
+		});
 		oStub.callThrough();
 
 		oField = new FieldBase("F1", {
 			delegate: {name: "sap/ui/mdc/field/FieldBaseDelegate", payload: {x: 1}},
 			conditions: "{cm>/conditions/Name}"
 		}).placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
 		assert.notOk(aContent && aContent.length > 0, "Content not created sync");
@@ -426,19 +435,19 @@ sap.ui.define([
 		setTimeout(function() { // to wait async creation of inner control
 			defaultRendering(assert);
 			fnDone();
-		}, 0);
+		}, 3);
 
 		oStub.restore();
 
 	});
 
-	QUnit.test("FieldEditMode", function(assert) {
+	QUnit.test("FieldEditMode", async function(assert) {
 
 		assert.ok(oField.getEditable(), "getEditable");
 
 		oField.setEditMode(FieldEditMode.Display);
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		let aContent = oField.getAggregation("_content");
 		let oContent = aContent && aContent.length > 0 && aContent[0];
@@ -450,7 +459,7 @@ sap.ui.define([
 		// TODO: test for formatter
 
 		oField.setEditMode(FieldEditMode.ReadOnly);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		aContent = oField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
@@ -463,7 +472,7 @@ sap.ui.define([
 		assert.notOk(oField.getEditable(), "getEditable");
 
 		oField.setEditMode(FieldEditMode.Disabled);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		aContent = oField.getAggregation("_content");
 		assert.equal(oContent, aContent && aContent.length > 0 && aContent[0], "Contont control not changed");
@@ -472,15 +481,20 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("display mode rendering, async loading of control", function(assert) {
+	QUnit.test("display mode rendering, async loading of control", async function(assert) {
 
 		const oStub = sinon.stub(sap.ui, "require");
 		oStub.withArgs("sap/ui/mdc/field/TokenizerDisplay").onFirstCall().returns(undefined);
+		oStub.withArgs(["sap/ui/mdc/field/TokenizerDisplay"]).onFirstCall().callsFake(function(vDependencies, fnCallback, fnErrCallback) {
+			setTimeout(function() {
+				oStub.wrappedMethod(vDependencies, fnCallback, fnErrCallback);
+			}, 0);
+		});
 		oStub.callThrough();
 
 		oField.setEditMode(FieldEditMode.Display);
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		let aContent = oField.getAggregation("_content");
 		assert.notOk(aContent && aContent.length > 0, "Content not created sync");
@@ -498,7 +512,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("external control", function(assert) {
+	QUnit.test("external control", async function(assert) {
 
 		oField.setMaxConditions(1);
 		oField.setDataType("Edm.Float");
@@ -511,11 +525,11 @@ sap.ui.define([
 		const oCondition = Condition.createCondition(OperatorName.EQ, [70]);
 		oCM.addCondition("Name", oCondition);
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		sap.ui.require(["sap/ui/model/odata/type/Single"], function(aModules) { // as type-module is loaded by creating control, check after this is done
-			setTimeout(function() { // as the order of the CallBack function ist not clear and a Promise is used inside LoadModules called in ContentFactory
+			setTimeout(async function() { // as the order of the CallBack function ist not clear and a Promise is used inside LoadModules called in ContentFactory
 				assert.notOk(!!oField.getAggregation("_content"), "Field has no internal content");
 				assert.ok(oSlider.getDomRef(), "Slider rendered");
 				assert.equal(oSlider.getValue(), 70, "Value of Slider");
@@ -528,7 +542,7 @@ sap.ui.define([
 
 
 				oField.destroyContent();
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				let aContent = oField.getAggregation("_content");
 				const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -543,7 +557,7 @@ sap.ui.define([
 				oConditionsType._sId = "S1-Type"; // to identify instance
 				oSlider.bindProperty("value", { path: '$field>/conditions', type: oConditionsType});
 				oField.setContent(oSlider);
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				aContent = oField.getAggregation("_content", []);
 				assert.equal(aContent.length, 0, "Field has no internal content");
@@ -553,7 +567,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("external display control", function(assert) {
+	QUnit.test("external display control", async function(assert) {
 
 		oField.setMaxConditions(1);
 		oField.setDataType("Edm.Float");
@@ -565,11 +579,11 @@ sap.ui.define([
 		const oCondition = Condition.createCondition(OperatorName.EQ, [70]);
 		oCM.addCondition("Name", oCondition);
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		sap.ui.require(["sap/ui/model/odata/type/Single"], function(aModules) { // as type-module is loaded by creating control, check after this is done
-			setTimeout(function() { // as the order of the CallBack function ist not clear and a Promise is used inside LoadModules called in ContentFactory
+			setTimeout(async function() { // as the order of the CallBack function ist not clear and a Promise is used inside LoadModules called in ContentFactory
 				let aContent = oField.getAggregation("_content");
 				let oContent = aContent && aContent.length > 0 && aContent[0];
 				assert.ok(oContent, "Field has internal content");
@@ -582,7 +596,7 @@ sap.ui.define([
 				assert.ok(oField._oContentFactory._oConditionsType._bCreatedByField, "ConditionsType is created by Field");
 
 				oField.setEditMode(FieldEditMode.Display);
-				oCore.applyChanges();
+				await nextUIUpdate();
 				assert.notOk(!!oField.getAggregation("_content"), "Field has no internal content");
 				assert.ok(oProgressIndicator.getDomRef(), "ProgressIndicator is rendered");
 				assert.equal(oField._oContentFactory._oConditionsType, oConditionsType, "ConditionsType of ProgressIndicator used in Field");
@@ -592,7 +606,7 @@ sap.ui.define([
 				assert.equal(oProgressIndicator.getModel("$field"), oField._oManagedObjectModel, "ProgressIndicator has ManagedObjectModel of Field");
 
 				oField.destroyContentDisplay();
-				oCore.applyChanges();
+				await nextUIUpdate();
 				aContent = oField.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
 				assert.ok(oContent, "internal content exist");
@@ -605,7 +619,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("external edit control", function(assert) {
+	QUnit.test("external edit control", async function(assert) {
 
 		// event if SegmentedButton makes not much sense - just for test of list binding
 		const oItem = new SegmentedButtonItem("SBI");
@@ -621,7 +635,7 @@ sap.ui.define([
 		oCM.addCondition("Name", oCondition);
 		oCM.checkUpdate(true, false); // to update bindings
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		let aContent = oField.getAggregation("_content");
 		let oContent = aContent && aContent.length > 0 && aContent[0];
@@ -635,7 +649,7 @@ sap.ui.define([
 		assert.equal(oField._oContentFactory._oConditionType, oConditionType, "ConditionType of SegmentedButton used in Field");
 
 		oField.setEditMode(FieldEditMode.Display);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aContent = oField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "Field has internal content");
@@ -647,7 +661,7 @@ sap.ui.define([
 
 		oField.setEditMode(FieldEditMode.Edit);
 		oField.destroyContentEdit();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aContent = oField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "internal content exist");
@@ -655,24 +669,24 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getFocusDomRef", function(assert) {
+	QUnit.test("getFocusDomRef", async function(assert) {
 
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oField.getFocusDomRef().id, "F1-inner-inner", "FocusDomRef");
 
 	});
 
-	QUnit.test("Label association", function(assert) {
+	QUnit.test("Label association", async function(assert) {
 
 		const oLabel = new Label("L1", { text: "test", labelFor: oField }).placeAt("content");
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(jQuery("#L1").attr("for"), "F1-inner-inner", "Label points to DomRef of inner control");
 
 		oField.setEditMode(FieldEditMode.Display);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(jQuery("#L1").attr("for"), "F1-inner", "Label points to DomRef of inner control");
 		oLabel.destroy();
@@ -695,11 +709,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Label property & default help", function(assert) {
+	QUnit.test("Label property & default help", async function(assert) {
 
 		oField.setLabel("Test");
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		const oValueHelp = Element.getElementById(oField._sDefaultValueHelp);
 		oField.focus();
 
@@ -708,7 +722,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("enhanceAccessibilityState", function(assert) {
+	QUnit.test("enhanceAccessibilityState", async function(assert) {
 
 		oField.placeAt("content");
 		const oParent = oField.getParent();
@@ -721,7 +735,7 @@ sap.ui.define([
 			};
 		}
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(iCalled >= 1, "enhanceAccessibilityState called on Parent");
 		assert.equal(sId, "F1-inner", "enhanceAccessibilityState called for inner control");
@@ -729,23 +743,23 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getAccessibilityInfo", function(assert) {
+	QUnit.test("getAccessibilityInfo", async function(assert) {
 
 		assert.deepEqual(oField.getAccessibilityInfo(), {}, "empty accessibility info returned if no content");
 
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.deepEqual(oField.getAccessibilityInfo(), oContent.getAccessibilityInfo(), "accessibility info of content returned");
 
 	});
 
-	QUnit.test("Currency rendering", function(assert) {
+	QUnit.test("Currency rendering", async function(assert) {
 
 		oField.setDataType("sap.ui.model.type.Currency");
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		let aContent = oField.getAggregation("_content");
 		assert.ok(aContent.length > 0, "default content exist");
@@ -771,7 +785,7 @@ sap.ui.define([
 		// in display mode only one control
 		oContent1 = undefined; oContent2 = undefined;
 		oField.setEditMode(FieldEditMode.Display);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		aContent = oField.getAggregation("_content");
 		assert.ok(aContent.length > 0, "default content exist");
@@ -782,7 +796,7 @@ sap.ui.define([
 		// editable: again 2 Fields but currency readOnly
 		oContent1 = undefined; oContent2 = undefined;
 		oField.setEditMode(FieldEditMode.EditableReadOnly);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aContent = oField.getAggregation("_content");
 		assert.equal(aContent.length, 2, "2 content controls");
 		oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -797,7 +811,7 @@ sap.ui.define([
 		// if no unit should be displayed only one control should be rendered (original data type must be used, not changed by one with showMeagure=false)
 		oContent1 = undefined; oContent2 = undefined;
 		oField.setDataTypeFormatOptions({showMeasure: false});
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aContent = oField.getAggregation("_content");
 		assert.equal(aContent.length, 1, "1 content control");
 		oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -808,7 +822,7 @@ sap.ui.define([
 		oContent1 = undefined; oContent2 = undefined;
 		oField.setDataTypeFormatOptions({showMeasure: true});
 		oField.setEditMode(FieldEditMode.EditableDisplay);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aContent = oField.getAggregation("_content", []);
 		assert.equal(aContent.length, 1, "1 content control");
 		oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -817,13 +831,13 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Empty Indicator", function(assert) {
+	QUnit.test("Empty Indicator", async function(assert) {
 
 		// show empty indicator
 		oField.setShowEmptyIndicator(true);
 		oField.setEditMode(FieldEditMode.Display);
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// multi value
 		let aContent = oField.getAggregation("_content");
@@ -836,7 +850,7 @@ sap.ui.define([
 
 		// single value
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aContent = oField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		oContentDomRef = oContent && oContent.getDomRef();
@@ -849,7 +863,7 @@ sap.ui.define([
 		const oCondition = Condition.createItemCondition("", "");
 		oCM.addCondition("Name", oCondition);
 		oCM.checkUpdate(true, false); // update model syncronous
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oContentDomRef = oContent && oContent.getDomRef();
 		assert.ok(oContentDomRef, "content control rendered");
@@ -860,7 +874,7 @@ sap.ui.define([
 		oField.setEditMode(FieldEditMode.Editable);
 		oCM.removeAllConditions();
 		oCM.checkUpdate(true, false); // update model syncronous
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		const oDomRef = oField.getDomRef();
 		oContentDomRef = oContent && oContent.getDomRef();
@@ -889,12 +903,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getMaxConditionsForHelp", function(assert) {
+	QUnit.test("getMaxConditionsForHelp", async function(assert) {
 
 		assert.equal(oField.getMaxConditionsForHelp(), -1, "default");
 		oField.setDataType("sap.ui.model.type.Currency");
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oField.getMaxConditionsForHelp(), 1, "for Currency");
 
@@ -926,7 +940,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getFormatOptions", function(assert) {
+	QUnit.test("getFormatOptions", async function(assert) {
 
 		const oContext = new Context(); // just dummy context
 		oField.setBindingContext(oContext);
@@ -934,7 +948,7 @@ sap.ui.define([
 		oField.setDataType("sap.ui.model.type.String");
 		oField.setEditMode(FieldEditMode.Display);
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		let oFormatOptions = oField.getFormatOptions();
 		assert.ok(oFormatOptions, "FormatOptions returned");
 		assert.ok(oFormatOptions.valueType.isA("sap.ui.model.type.String"), "valueType");
@@ -957,7 +971,7 @@ sap.ui.define([
 		oField.setDataType("sap.ui.model.type.Currency");
 		oField.setEditMode(FieldEditMode.Editable);
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oFormatOptions = oField.getFormatOptions();
 		assert.ok(oFormatOptions, "FormatOptions returned");
 		assert.ok(oFormatOptions.valueType.isA("sap.ui.model.type.Currency"), "valueType");
@@ -1006,27 +1020,27 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getFormFormattedValue", function(assert) {
+	QUnit.test("getFormFormattedValue", async function(assert) {
 
 		const oCondition = Condition.createItemCondition("1", "Text");
 		oCM.addCondition("Name", oCondition);
 		oCM.checkUpdate(true, false); // update model syncronous
 		oField.setDisplay(FieldDisplay.Description);
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oField.getFormFormattedValue(), "Text", "Formatted Value");
 
 	});
 
-	QUnit.test("getFormFormattedValue with unit", function(assert) {
+	QUnit.test("getFormFormattedValue with unit", async function(assert) {
 
 		oField.setDataType("sap.ui.model.type.Currency");
 		const oCondition = Condition.createItemCondition([123.45, "USD"]);
 		oCM.addCondition("Name", oCondition);
 		oCM.checkUpdate(true, false); // update model syncronous
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const oType = new Currency();
 		sValue = oType.formatValue([123.45, "USD"], "string"); // because of special whitspaces and local dependend
@@ -1035,7 +1049,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getFormFormattedValue with date", function(assert) {
+	QUnit.test("getFormFormattedValue with date", async function(assert) {
 
 		oField.setDataType("sap.ui.model.type.Date");
 		oField.setDataTypeFormatOptions({pattern: "dd/MM/yyyy"});
@@ -1045,19 +1059,19 @@ sap.ui.define([
 		oCM.addCondition("Name", oCondition);
 		oCM.checkUpdate(true, false); // update model syncronous
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oField.getFormFormattedValue(), "18/12/2020", "Formatted Value");
 
 	});
 
-	QUnit.test("getFormFormattedValue with showEmptyIndicator", function(assert) {
+	QUnit.test("getFormFormattedValue with showEmptyIndicator", async function(assert) {
 
 		const oResourceBundle = Library.getResourceBundleFor("sap.m");
 		oField.setShowEmptyIndicator(true);
 		oField.setDisplay(FieldDisplay.Description);
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oField.getFormFormattedValue(), oResourceBundle.getText("EMPTY_INDICATOR"), "Formatted Value");
 
@@ -1080,7 +1094,7 @@ sap.ui.define([
 	let oFieldEditMulti, oFieldEditSingle, oFieldDisplay, oFieldSearch;
 
 	QUnit.module("conditions & properties", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			FieldBaseDelegateODataDefaultTypes.enable();
 			oCM = new ConditionModel();
 
@@ -1099,7 +1113,7 @@ sap.ui.define([
 			oFieldEditSingle.placeAt("content");
 			oFieldDisplay.placeAt("content");
 			oFieldSearch.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			FieldBaseDelegateODataDefaultTypes.disable();
@@ -1156,15 +1170,15 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("description", function(assert) {
+	QUnit.test("description", async function(assert) {
 
 		oFieldEditMulti.setDisplay(FieldDisplay.DescriptionValue);
 		const oCondition = Condition.createCondition(OperatorName.EQ, ["Test", "Hello"]);
 		oCM.addCondition("Name", oCondition);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
-		setTimeout(function() { // to update ConditionModel
+		setTimeout(async function() { // to update ConditionModel
 			let aContent = oFieldEditMulti.getAggregation("_content");
 			let oContent = aContent && aContent.length > 0 && aContent[0];
 			const aTokens = oContent.getTokens ? oContent.getTokens() : [];
@@ -1178,7 +1192,7 @@ sap.ui.define([
 			oFieldEditMulti.setDisplay(FieldDisplay.Description);
 			oFieldEditSingle.setDisplay(FieldDisplay.Description);
 			oFieldDisplay.setDisplay(FieldDisplay.DescriptionValue);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// TODO should token text also belong on the property???
 			aContent = oFieldEditSingle.getAggregation("_content");
@@ -1191,7 +1205,7 @@ sap.ui.define([
 			oFieldEditMulti.setDisplay(FieldDisplay.ValueDescription);
 			oFieldEditSingle.setDisplay(FieldDisplay.ValueDescription);
 			oFieldDisplay.setDisplay(FieldDisplay.ValueDescription);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			//			aContent = oFieldEditSingle.getAggregation("_content");
 			//			oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1204,14 +1218,14 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("multipleLines", function(assert) {
+	QUnit.test("multipleLines", async function(assert) {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
 		oFieldEditMulti.setMultipleLines(true);
 		oFieldEditSingle.setMultipleLines(true);
 		oFieldDisplay.setMultipleLines(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		setTimeout(function() { // to update ConditionModel
@@ -1233,7 +1247,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("dataType Date", function(assert) {
+	QUnit.test("dataType Date", async function(assert) {
 
 		let oCondition = Condition.createCondition(OperatorName.EQ, [new Date(2017, 8, 19)]);
 		oCM.addCondition("Name", oCondition);
@@ -1298,12 +1312,12 @@ sap.ui.define([
 		oFieldEditMulti2.placeAt("content");
 
 		oCM.checkUpdate(true, false); // to update bindings
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		sap.ui.require(["sap/ui/model/type/Date", "sap/ui/model/odata/type/DateTime"], function(aModules) { // as type-module is loaded by creating control, check after this is done
-			setTimeout(function() { // to update ConditionModel
-				oCore.applyChanges();
+			setTimeout(async function() { // to update ConditionModel
+				await nextUIUpdate();
 				let aContent = oFieldEditMulti.getAggregation("_content");
 				let oContent = aContent && aContent.length > 0 && aContent[0];
 				let oToken = oContent && oContent.getTokens()[0];
@@ -1333,7 +1347,7 @@ sap.ui.define([
 
 				// change pattern
 				oFieldEditSingle2.setDataTypeFormatOptions({pattern: "yyyy/MM/dd"});
-				oCore.applyChanges();
+				await nextUIUpdate();
 				aContent = oFieldEditSingle2.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
 				assert.ok(oContent instanceof DatePicker, "DatePicker rendered");
@@ -1342,7 +1356,7 @@ sap.ui.define([
 
 				// change edit mode
 				oFieldEditSingle2.setEditMode(FieldEditMode.Display);
-				oCore.applyChanges();
+				await nextUIUpdate();
 				aContent = oFieldEditSingle2.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
 				assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
@@ -1357,7 +1371,7 @@ sap.ui.define([
 				assert.notOk(oFieldEditSingle3._sDefaultValueHelp, "no Default Field help set");
 
 				oFieldEditSingle3.setEditMode(FieldEditMode.Display);
-				oCore.applyChanges();
+				await nextUIUpdate();
 				aContent = oFieldEditSingle3.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
 				assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
@@ -1375,7 +1389,7 @@ sap.ui.define([
 				assert.equal(jQuery(oContent.getFocusDomRef()).val(), "20.12.2018", "Value shown on DynamicDateRange control");
 
 				oFieldEditSingle4.setEditMode(FieldEditMode.Display);
-				oCore.applyChanges();
+				await nextUIUpdate();
 				aContent = oFieldEditSingle4.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
 				assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
@@ -1393,7 +1407,7 @@ sap.ui.define([
 				// Input with given help
 				oFieldEditSingle.setValueHelp("Test");
 				oFieldEditSingle.setProperty("_valueHelpEnabled", true, true); // fake existing ValueHelp
-				oCore.applyChanges();
+				await nextUIUpdate();
 				aContent = oFieldEditSingle.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
 				assert.ok(oContent instanceof FieldInput, "Input rendered");
@@ -1411,18 +1425,18 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("dataType sap.ui.model.type.Time", function(assert) {
+	QUnit.test("dataType sap.ui.model.type.Time", async function(assert) {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, [new Date(1970, 0, 1, 19, 0, 0)]);
 		oCM.addCondition("Name", oCondition);
 		oFieldEditSingle.setDataType("sap.ui.model.type.Time");
 		oFieldDisplay.setMaxConditions(1);
 		oFieldDisplay.setDataType("sap.ui.model.type.Time");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
-		setTimeout(function() { // to update ConditionModel
-			oCore.applyChanges();
+		setTimeout(async function() { // to update ConditionModel
+			await nextUIUpdate();
 			let aContent = oFieldEditSingle.getAggregation("_content");
 			let oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.ok(oContent instanceof TimePicker, "TimePicker rendered");
@@ -1439,7 +1453,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("dataType DateTimeOffset", function(assert) {
+	QUnit.test("dataType DateTimeOffset", async function(assert) {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, [new Date(2017, 10, 7, 13, 1, 24)]);
 		oCM.addCondition("Name", oCondition);
@@ -1447,12 +1461,12 @@ sap.ui.define([
 		oFieldEditSingle.setDataType("Edm.DateTimeOffset");
 		oFieldDisplay.setMaxConditions(1);
 		oFieldDisplay.setDataType("Edm.DateTimeOffset");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		sap.ui.require(["sap/ui/model/odata/type/DateTimeOffset"], function(aModules) { // as type-module is loaded by creating control, check after this is done
-			setTimeout(function() { // to update ConditionModel
-				oCore.applyChanges();
+			setTimeout(async function() { // to update ConditionModel
+				await nextUIUpdate();
 				let aContent = oFieldEditSingle.getAggregation("_content");
 				let oContent = aContent && aContent.length > 0 && aContent[0];
 				assert.ok(oContent instanceof DateTimePicker, "DateTimePicker rendered");
@@ -1470,7 +1484,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("dataType Boolean", function(assert) {
+	QUnit.test("dataType Boolean", async function(assert) {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, [true], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
@@ -1479,12 +1493,12 @@ sap.ui.define([
 		oFieldEditSingle.setLabel("Test");
 		oFieldDisplay.setMaxConditions(1);
 		oFieldDisplay.setDataType("Edm.Boolean");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		sap.ui.require(["sap/ui/model/odata/type/Boolean"], function(aModules) { // as type-module is loaded by creating control, check after this is done
-			setTimeout(function() { // to update ConditionModel
-				oCore.applyChanges();
+			setTimeout(async function() { // to update ConditionModel
+				await nextUIUpdate();
 				setTimeout(function() { // to load delegates in ValueHelp
 					let aContent = oFieldEditSingle.getAggregation("_content");
 					let oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1521,7 +1535,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("dataType Boolean, load BoolValueHelp async", function(assert) {
+	QUnit.test("dataType Boolean, load BoolValueHelp async", async function(assert) {
 
 		const oStub = sinon.stub(sap.ui, "require");
 		oStub.withArgs("sap/ui/mdc/valuehelp/content/Bool").onFirstCall().returns(undefined);
@@ -1533,15 +1547,15 @@ sap.ui.define([
 		oFieldEditSingle.setDataType("Edm.Boolean");
 		oFieldDisplay.setMaxConditions(1);
 		oFieldDisplay.setDataType("Edm.Boolean");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		let oValueHelp = Element.getElementById("BoolDefaultHelp");
 		assert.notOk(oValueHelp, "BoolValueHelp not created sync");
 
 		const fnDone = assert.async();
 		sap.ui.require(["sap/ui/model/odata/type/Boolean"], function(aModules) { // as type-module is loaded by creating control, check after this is done
-			setTimeout(function() { // to update ConditionModel and wait for async control creation
-				oCore.applyChanges();
+			setTimeout(async function() { // to update ConditionModel and wait for async control creation
+				await nextUIUpdate();
 				setTimeout(function() { // to load delegates in ValueHelp
 					let aContent = oFieldEditSingle.getAggregation("_content");
 					let oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1573,7 +1587,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("dataType sap.ui.model.type.Currency", function(assert) {
+	QUnit.test("dataType sap.ui.model.type.Currency", async function(assert) {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, [[123.45, "USD"]], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
@@ -1582,7 +1596,7 @@ sap.ui.define([
 		oFieldDisplay.setMaxConditions(1);
 		sinon.stub(oFieldDisplay, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oFieldDisplay.setDataType("sap.ui.model.type.Currency");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		let oType = new Currency({showMeasure: false});
@@ -1623,12 +1637,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("invalid dataType", function(assert) {
+	QUnit.test("invalid dataType", async function(assert) {
 
 		const oSpy = sinon.spy(oFieldEditSingle.getContentFactory(), "checkDataTypeChanged");
 
 		oFieldEditSingle.setDataType("Invalid");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oSpy.calledOnce, "checkDataTypeChanged called");
 		const oResult = oSpy.returnValues[0].unwrap(); // as SyncPromise is returned
 		assert.ok(oResult instanceof Promise, "Promise reurned");
@@ -1641,12 +1655,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("width", function(assert) {
+	QUnit.test("width", async function(assert) {
 
 		oFieldEditMulti.setWidth("100px");
 		oFieldEditSingle.setWidth("100px");
 		oFieldDisplay.setWidth("100px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(jQuery("#F1").width(), 100, "Width of Multi-Edit Field");
 		assert.equal(jQuery("#F2").width(), 100, "Width of Single-Edit Field");
@@ -1666,11 +1680,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("required", function(assert) {
+	QUnit.test("required", async function(assert) {
 
 		const oLabel = new Label("L1", { text: "test", labelFor: oFieldEditMulti }).placeAt("content");
 		oFieldEditMulti.setRequired(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oFieldEditMulti.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1679,17 +1693,17 @@ sap.ui.define([
 
 		sinon.spy(oLabel, "invalidate");
 		oFieldEditMulti.setEditMode(FieldEditMode.ReadOnly);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oLabel.invalidate.called, "Label invalidated"); // required for non-editable controls only removed in FormElement
 
 		oLabel.destroy();
 
 	});
 
-	QUnit.test("placeholder", function(assert) {
+	QUnit.test("placeholder", async function(assert) {
 
 		oFieldEditMulti.setPlaceholder("Test");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oFieldEditMulti.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1697,11 +1711,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("valueState", function(assert) {
+	QUnit.test("valueState", async function(assert) {
 
 		oFieldEditMulti.setValueState("Error");
 		oFieldEditMulti.setValueStateText("Test");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oFieldEditMulti.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1710,12 +1724,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("textAlign", function(assert) {
+	QUnit.test("textAlign", async function(assert) {
 
 		oFieldEditMulti.setTextAlign("End");
 		oFieldEditSingle.setTextAlign("End");
 		// oFieldDisplay.setTextAlign("End");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		let aContent = oFieldEditMulti.getAggregation("_content");
 		let oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1731,12 +1745,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("textDirection", function(assert) {
+	QUnit.test("textDirection", async function(assert) {
 
 		oFieldEditMulti.setTextDirection("RTL");
 		oFieldEditSingle.setTextDirection("RTL");
 		// oFieldDisplay.setTextDirection("RTL");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		let aContent = oFieldEditMulti.getAggregation("_content");
 		let oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1752,10 +1766,10 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("tooltip", function(assert) {
+	QUnit.test("tooltip", async function(assert) {
 
 		oFieldEditMulti.setTooltip("Test");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oFieldEditMulti.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1763,7 +1777,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("tooltip with external content", function(assert) {
+	QUnit.test("tooltip with external content", async function(assert) {
 
 		oFieldEditSingle.setTooltip("Test");
 		oFieldEditSingle.setDataType("Edm.Float");
@@ -1772,7 +1786,7 @@ sap.ui.define([
 		oConditionsType._sId = "S1-Type"; // to identify instance
 		oSlider.bindProperty("value", { path: '$field>/conditions', type: oConditionsType});
 		oFieldEditSingle.setContent(oSlider);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oSlider.getTooltip(), "Test", "Tooltip set on Slider control");
 
@@ -1780,13 +1794,13 @@ sap.ui.define([
 		oSlider = new Slider("S1", {tooltip: "MyTooltip"});
 		oSlider.bindProperty("value", { path: '$field>/conditions', type: oConditionsType});
 		oFieldEditSingle.setContent(oSlider);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oSlider.getTooltip(), "MyTooltip", "Tooltip not set on Slider control");
 
 	});
 
-	QUnit.test("ariaLabelledBy", function(assert) {
+	QUnit.test("ariaLabelledBy", async function(assert) {
 
 		/* MultiInput */
 		// initial empty
@@ -1810,7 +1824,7 @@ sap.ui.define([
 		// remove inner controls to test initial setting
 		oFieldEditMulti.destroyAggregation("_content");
 		oFieldEditMulti.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aContent = oFieldEditMulti.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getAriaLabelledBy().length, 1, "Inner control labelled");
@@ -1838,7 +1852,7 @@ sap.ui.define([
 		// remove inner controls to test initial setting
 		oFieldEditSingle.destroyAggregation("_content");
 		oFieldEditSingle.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aContent = oFieldEditSingle.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getAriaLabelledBy().length, 1, "Inner control labelled");
@@ -1854,7 +1868,7 @@ sap.ui.define([
 		let oButton = new Button("B1");
 		oButton.bindProperty("text", { path: '$field>/conditions', type: new ConditionsType() });
 		oFieldEditSingle.setContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oButton.getAriaLabelledBy().length, 1, "Inner control labelled");
 		assert.equal(oButton.getAriaLabelledBy()[0], "X2", "Inner control label id");
 		oFieldEditSingle.addAriaLabelledBy("X1");
@@ -1865,7 +1879,7 @@ sap.ui.define([
 		oButton = new Button("B1");
 		oButton.bindProperty("text", { path: '$field>/conditions', type: new ConditionsType() });
 		oFieldEditSingle.setContentEdit(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oButton.getAriaLabelledBy().length, 2, "Inner control labelled");
 		assert.equal(oButton.getAriaLabelledBy()[0], "X2", "Inner control label id");
 		assert.equal(oButton.getAriaLabelledBy()[1], "X1", "Inner control label id");
@@ -1878,7 +1892,7 @@ sap.ui.define([
 		oButton.bindProperty("text", { path: '$field>/conditions', type: new ConditionsType() });
 		oFieldEditSingle.setEditMode(FieldEditMode.Display);
 		oFieldEditSingle.setContentDisplay(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oButton.getAriaLabelledBy().length, 1, "Inner control labelled");
 		assert.equal(oButton.getAriaLabelledBy()[0], "X2", "Inner control label id");
 		oFieldEditSingle.addAriaLabelledBy("X1");
@@ -1889,7 +1903,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Eventing", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			oCM = new ConditionModel();
 			oField = new FieldBase("F1", {
 				conditions: "{cm>/conditions/Name}",
@@ -1906,7 +1920,7 @@ sap.ui.define([
 			oField.attachValidationSuccess(_myValidationSuccessHandler);
 			Messaging.registerObject(oField, true); // to test valueState
 			oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			oField.destroy();
@@ -1931,11 +1945,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("with multi value", function(assert) {
+	QUnit.test("with multi value", async function(assert) {
 
 		const fnDone = assert.async();
 		oField.setDisplay(FieldDisplay.DescriptionValue);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
@@ -2040,12 +2054,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with multi value and maxConditions", function(assert) {
+	QUnit.test("with multi value and maxConditions", async function(assert) {
 
 		oField.setMaxConditions(2);
 		const oCondition = Condition.createCondition(OperatorName.EQ, ["Test"]);
 		oCM.addCondition("Name", oCondition);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		setTimeout(function() { // to update ConditionModel
@@ -2094,11 +2108,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("wrong input on multi value", function(assert) {
+	QUnit.test("wrong input on multi value", async function(assert) {
 
 		oField.setDataTypeConstraints({maximum: 10});
 		oField.setDataType("sap.ui.model.type.Integer");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		let aContent = oField.getAggregation("_content");
@@ -2106,7 +2120,7 @@ sap.ui.define([
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("15");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
+		setTimeout(async function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(iParseError, 0, "ParseError event not fired");
 			assert.equal(iValidationError, 1, "ValidationError event fired once");
@@ -2125,9 +2139,10 @@ sap.ui.define([
 
 			// on switch to display mode error must be removed (as wrong input is not stored)
 			oField.setEditMode(FieldEditMode.Display);
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.equal(oField.getValueState(), "None", "ValueState on Field after switch to display mode"); // no check on inner control as it has no valueState property
 			aContent = oField.getAggregation("_content");
+			// eslint-disable-next-line require-atomic-updates
 			oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.equal(oContent.getTokens().length, 0, "No tokens in content control");
 
@@ -2143,7 +2158,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("wrong input on multi value without ConditionModel", function(assert) {
+	QUnit.test("wrong input on multi value without ConditionModel", async function(assert) {
 
 		oField.destroy();
 		oField = new FieldBase("F1", {
@@ -2157,7 +2172,7 @@ sap.ui.define([
 		oField.attachValidationError(_myValidationErrorHandler);
 		oField.attachValidationSuccess(_myValidationSuccessHandler);
 		Messaging.registerObject(oField, true); // to test valueState
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		const aContent = oField.getAggregation("_content");
@@ -2184,12 +2199,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("empty input on multi value with not nullable type", function(assert) {
+	QUnit.test("empty input on multi value with not nullable type", async function(assert) {
 
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake only equals allowed
 		oField.setDataTypeConstraints({nullable: false});
 		oField.setDataType("sap.ui.model.odata.type.String");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		const aContent = oField.getAggregation("_content");
@@ -2215,11 +2230,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with single value", function(assert) {
+	QUnit.test("with single value", async function(assert) {
 
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -2259,10 +2274,10 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with single value and free condtitions", function(assert) {
+	QUnit.test("with single value and free condtitions", async function(assert) {
 
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -2281,12 +2296,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with single value and dataType sap.ui.model.type.Currency", function(assert) {
+	QUnit.test("with single value and dataType sap.ui.model.type.Currency", async function(assert) {
 
 		oField.setDataType("sap.ui.model.type.Currency");
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
 		const oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -2311,10 +2326,10 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with multi value and dataType sap.ui.model.type.Currency", function(assert) {
+	QUnit.test("with multi value and dataType sap.ui.model.type.Currency", async function(assert) {
 
 		oField.setDataType("sap.ui.model.type.Currency");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
 		const oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -2379,13 +2394,13 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("wrong input on single value", function(assert) {
+	QUnit.test("wrong input on single value", async function(assert) {
 
 		oField.setDataTypeConstraints({maximum: 10});
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setDataType("sap.ui.model.type.Integer");
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		let aContent = oField.getAggregation("_content");
@@ -2393,7 +2408,7 @@ sap.ui.define([
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("15");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
+		setTimeout(async function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
 			assert.equal(sValue, "15", "change event value");
@@ -2411,9 +2426,10 @@ sap.ui.define([
 
 			// on switch to display mode error must be removed (as wrong input is not stored)
 			oField.setEditMode(FieldEditMode.Display);
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.equal(oField.getValueState(), "None", "ValueState after switch to display mode");
 			aContent = oField.getAggregation("_content");
+			// eslint-disable-next-line require-atomic-updates
 			oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.equal(oContent.getText(), "", "Text in content control");
 
@@ -2434,13 +2450,13 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("empty input on single value with not nullable type", function(assert) {
+	QUnit.test("empty input on single value with not nullable type", async function(assert) {
 
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake only equals allowed
 		oField.setDataTypeConstraints({nullable: false});
 		oField.setDataType("sap.ui.model.odata.type.String");
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		const aContent = oField.getAggregation("_content");
@@ -2474,11 +2490,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with SearchField", function(assert) {
+	QUnit.test("with SearchField", async function(assert) {
 
 		oField.setMaxConditions(1);
 		oField.bindProperty("conditions", {path: "cm>/conditions/$search"});
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -2529,7 +2545,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with external content single value", function(assert) {
+	QUnit.test("with external content single value", async function(assert) {
 
 		const fnDone = assert.async();
 		const oCondition = Condition.createCondition(OperatorName.EQ, [70]);
@@ -2539,10 +2555,10 @@ sap.ui.define([
 		const oSlider = new Slider("S1");
 		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType()});
 		oField.setContent(oSlider);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		sap.ui.require(["sap/ui/model/odata/type/Single"], function(aModules) { // as type-module is loaded by creating control, check after this is done
-			setTimeout(function() { // to update ConditionModel
+			setTimeout(async function() { // to update ConditionModel
 				assert.ok(!!oSlider.getDomRef(), "Slider is rendered");
 				if (oSlider.getDomRef()) {
 					oSlider.focus();
@@ -2567,7 +2583,7 @@ sap.ui.define([
 					oButton.bindProperty("text", { path: '$field>/conditions', type: new ConditionsType() });
 					oField.setContent(oButton);
 					oSlider.placeAt("content");
-					oCore.applyChanges();
+					await nextUIUpdate();
 					oSlider.focus();
 					qutils.triggerKeydown(oSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
 					assert.equal(iCount, 1, "change event of field not fired again");
@@ -2583,7 +2599,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with external content multi value", function(assert) {
+	QUnit.test("with external content multi value", async function(assert) {
 
 		const fnDone = assert.async();
 		const oToken = new Token("T1");
@@ -2597,7 +2613,7 @@ sap.ui.define([
 		oCondition = Condition.createCondition(OperatorName.EQ, ["B"], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		setTimeout(function() { // to update ConditionModel
 			assert.ok(oMultiInput.getDomRef(), "Tokenizer is rendered");
@@ -2629,12 +2645,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with type currency", function(assert) {
+	QUnit.test("with type currency", async function(assert) {
 
 		oField.setDataType("sap.ui.model.type.Currency");
 		const oCondition = Condition.createCondition(OperatorName.EQ, [[123.45, "USD"]], undefined, undefined, ConditionValidated.NotValidated, {payload: "X"});
 		oField.setConditions([oCondition]);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
 		const oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -2666,12 +2682,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("wrong input with type currency", function(assert) {
+	QUnit.test("wrong input with type currency", async function(assert) {
 
 		oField.setDataType("sap.ui.model.type.Currency");
 		const oCondition = Condition.createCondition(OperatorName.EQ, [[123.45, "USD"]], undefined, undefined, ConditionValidated.NotValidated, {payload: "X"});
 		oField.setConditions([oCondition]);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
 		const oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -2794,11 +2810,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("pasting multiple values", function(assert) {
+	QUnit.test("pasting multiple values", async function(assert) {
 
 		const fnDone = assert.async();
 		oField.setDisplay(FieldDisplay.DescriptionValue);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
@@ -2853,10 +2869,10 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("pasting single value", function(assert) {
+	QUnit.test("pasting single value", async function(assert) {
 
 		oField.setDisplay(FieldDisplay.DescriptionValue);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
@@ -2888,10 +2904,10 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("check for user interaction", function(assert) {
+	QUnit.test("check for user interaction", async function(assert) {
 
 		const oIcon = new Icon("I1", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -2928,7 +2944,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Clone", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			FieldBaseDelegateODataDefaultTypes.enable();
 			oCM = new ConditionModel();
 			oField = new FieldBase("F1", { conditions: "{cm>/conditions/Name}", models: {cm: oCM} });
@@ -2939,7 +2955,7 @@ sap.ui.define([
 			oCM.addCondition("Name", oCondition);
 			oCM.checkUpdate(true, false); // to update bindings
 			oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			FieldBaseDelegateODataDefaultTypes.disable();
@@ -2952,12 +2968,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("with internal content", function(assert) {
+	QUnit.test("with internal content", async function(assert) {
 
 		const oClone = oField.clone("myClone");
 		oClone.fireChangeEvent = _myFireChange;
 		oClone.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -2990,7 +3006,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with external content", function(assert) {
+	QUnit.test("with external content", async function(assert) {
 
 		oField.setMaxConditions(1);
 		oField.setDataType("Edm.Float");
@@ -3001,12 +3017,12 @@ sap.ui.define([
 		const oSlider = new Slider("S1");
 		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType() });
 		oField.setContent(oSlider);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const oClone = oField.clone("myClone");
 		oClone.fireChangeEvent = _myFireChange;
 		oClone.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oClone.getAggregation("_content"), "Clone has no internal content");
 		const oCloneSlider = oClone.getContent();
@@ -3031,7 +3047,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with external edit/display content", function(assert) {
+	QUnit.test("with external edit/display content", async function(assert) {
 
 		oField.setMaxConditions(1);
 		oField.setDataType("Edm.Float");
@@ -3045,12 +3061,12 @@ sap.ui.define([
 		const oSlider2 = new Slider("S2");
 		oSlider2.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType() });
 		oField.setContentDisplay(oSlider2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const oClone = oField.clone("myClone");
 		oClone.fireChangeEvent = _myFireChange;
 		oClone.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oClone.getAggregation("_content"), "Clone has no internal content");
 		const oCloneSlider1 = oClone.getContentEdit();
@@ -3082,7 +3098,7 @@ sap.ui.define([
 	// So use Stubs to simulate functions of ValueHelp
 
 	QUnit.module("ValueHelp without key", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			const oValueHelp = new ValueHelp("F1-H", {validateInput: false});
 			sinon.stub(oValueHelp, "isValidationSupported").returns(false);
 			sinon.stub(oValueHelp, "getIcon").returns("sap-icon://sap-ui5");
@@ -3102,7 +3118,7 @@ sap.ui.define([
 
 			oCM.checkUpdate(true, false); // to update bindings
 			oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			oField.destroy();
@@ -3123,7 +3139,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("value help enabled", function(assert) {
+	QUnit.test("value help enabled", async function(assert) {
 
 		const oDummyIcon = new Icon("I1", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content");
 
@@ -3131,7 +3147,7 @@ sap.ui.define([
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		sinon.spy(oValueHelp, "onControlChange");
 		sinon.spy(oValueHelp, "attachEvent");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		sinon.spy(oValueHelp, "connect");
 		sinon.spy(oValueHelp, "toggleOpen");
 
@@ -3211,14 +3227,14 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with single value field", function(assert) {
+	QUnit.test("with single value field", async function(assert) {
 
 		oField.setDisplay(FieldDisplay.DescriptionValue);
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		sinon.spy(oValueHelp, "toggleOpen");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oField.focus(); // as ValueHelp is connected with focus
 
@@ -3281,10 +3297,10 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("remove value help", function(assert) {
+	QUnit.test("remove value help", async function(assert) {
 
 		oField.setValueHelp();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -3349,7 +3365,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Skip opening ValueHelp with pending content on focus loss", function (assert) {
+	QUnit.test("Skip opening ValueHelp with pending content on focus loss", async function (assert) {
 
 		oField.setDisplay(FieldDisplay.DescriptionValue);
 
@@ -3368,7 +3384,7 @@ sap.ui.define([
 		sinon.stub(ValueHelpDelegate, "retrieveContent").returns(oPromise);
 		const oAlternateFocusTarget = new FieldBase("F4");
 		oAlternateFocusTarget.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oField.focus();
 
@@ -3378,12 +3394,12 @@ sap.ui.define([
 		oContent.fireLiveChange({ value: "I12" });
 
 		const fnDone = assert.async();
-		setTimeout(function() { // to wait for promises in ValueHelp and open Popover
+		setTimeout(async function() { // to wait for promises in ValueHelp and open Popover
 			const oPopover = oVHPopover.getAggregation("_container");
 			assert.notOk(oPopover.isOpen(), "Popover is not open");
 			oAlternateFocusTarget.focus();
 			fnResolve();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			setTimeout(function() { // to wait for promises in ValueHelp and open Popover
 				assert.notOk(oPopover.isOpen(), "Popover should not open due to focus loss");
 				assert.ok(oValueHelp.skipOpening.called, "Opening of ValueHelp skipped");
@@ -3451,8 +3467,8 @@ sap.ui.define([
 						oValueHelp.toggleOpen.resetHistory();
 
 						oField.setEditMode(FieldEditMode.Display);
-						setTimeout(function() { // to wait for promises taht changes inner controls
-							oCore.applyChanges();
+						setTimeout(async function() { // to wait for promises taht changes inner controls
+							await nextUIUpdate();
 							const oFocusDomRef = oField.getFocusDomRef();
 							jQuery(oFocusDomRef).attr("tabindex", 0); // to make it focusable
 							oField.focus();
@@ -3526,8 +3542,8 @@ sap.ui.define([
 
 		oField.setEditMode(FieldEditMode.Display);
 		const fnDone = assert.async();
-		setTimeout(function() { // to wait for promises taht changes inner controls
-			oCore.applyChanges();
+		setTimeout(async function() { // to wait for promises taht changes inner controls
+			await nextUIUpdate();
 			oField.focus();
 			oInnerField = oField.getAggregation("_content")[0];
 			qutils.triggerEvent("tap", oInnerField.getId());
@@ -3653,7 +3669,7 @@ sap.ui.define([
 	let vGetItemsForValue;
 	let bAsync = false;
 	QUnit.module("ValueHelp with key", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			const oValueHelp = new ValueHelp("F1-H", {validateInput: false});
 			sinon.stub(oValueHelp, "isValidationSupported").returns(true); // otherwise it will not be taken to determine key or description
 			sinon.stub(oValueHelp, "getIcon").returns("sap-icon://sap-ui5");
@@ -3712,7 +3728,7 @@ sap.ui.define([
 			Messaging.registerObject(oField, true); // to test valueState
 
 			oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			oField.destroy();
@@ -3738,7 +3754,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("value/key handling", function(assert) {
+	QUnit.test("value/key handling", async function(assert) {
 
 		const oIcon = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content"); // just dummy handler to make Icon focusable
 		oField.setMaxConditions(2);
@@ -3759,7 +3775,7 @@ sap.ui.define([
 		};
 		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 		oField.setDisplay(FieldDisplay.DescriptionValue);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oField.focus(); // as ValueHelp is connected with focus
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -3867,11 +3883,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("select on single field", function(assert) {
+	QUnit.test("select on single field", async function(assert) {
 
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -4139,15 +4155,15 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("navigation single Field in open ValueHelp", function(assert) {
+	QUnit.test("navigation single Field in open ValueHelp", async function(assert) {
 
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		sinon.stub(oValueHelp, "isOpen").returns(true);
 		sinon.stub(oValueHelp, "isNavigationEnabled").returns(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oField.focus(); // as ValueHelp is connected with focus
 		const aContent = oField.getAggregation("_content");
@@ -4192,11 +4208,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("navigation single Field in closed ValueHelp", function(assert) {
+	QUnit.test("navigation single Field in closed ValueHelp", async function(assert) {
 
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		const oVHContent = new Content("C1");
 		const oVHPopover = new Popover("P1", {content: oVHContent});
@@ -4204,7 +4220,7 @@ sap.ui.define([
 		sinon.stub(oVHContent, "isNavigationEnabled").returns(true);
 		sinon.stub(oVHPopover, "isOpen").returns(false);
 		sinon.stub(oVHPopover, "getUseAsValueHelp").returns(true); // simulate ComboBox case
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oField.focus(); // as ValueHelp is connected with focus
 
@@ -4228,7 +4244,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("filtering", function(assert) {
+	QUnit.test("filtering", async function(assert) {
 
 		oField.setDisplay(FieldDisplay.DescriptionValue);
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
@@ -4237,7 +4253,7 @@ sap.ui.define([
 		oValueHelp.setTypeahead(oVHPopover);
 		sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true));
 		oValueHelp.setConditions([Condition.createItemCondition("I1", "Item1")]); // should stay on multi-value-suggestion
-		oCore.applyChanges();
+		await nextUIUpdate();
 		sinon.spy(oValueHelp, "initBeforeOpen");
 
 
@@ -4294,7 +4310,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("filtering and switching to value help", function(assert) {
+	QUnit.test("filtering and switching to value help", async function(assert) {
 
 		oField.setDisplay(FieldDisplay.DescriptionValue);
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
@@ -4303,7 +4319,7 @@ sap.ui.define([
 		oValueHelp.setTypeahead(oVHPopover);
 		sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true));
 		oValueHelp.setConditions([Condition.createItemCondition("I1", "Item1")]); // should stay on multi-value-suggestion
-		oCore.applyChanges();
+		await nextUIUpdate();
 		sinon.spy(oValueHelp, "initBeforeOpen");
 
 		const fnDone = assert.async();
@@ -4431,11 +4447,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("invalid input on singleValue Field", function(assert) {
+	QUnit.test("invalid input on singleValue Field", async function(assert) {
 
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		oValueHelp.setValidateInput(true);
 
@@ -4499,7 +4515,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("one ValueHelp on 2 Fields", function(assert) {
+	QUnit.test("one ValueHelp on 2 Fields", async function(assert) {
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 
@@ -4518,7 +4534,7 @@ sap.ui.define([
 		oField2.fireChangeEvent = _myFireChange;
 		oField2.attachEvent("change", _myChangeHandler);
 		oField2.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oField.focus(); // as ValueHelp is connected with focus
 		const aContent = oField.getAggregation("_content");
@@ -4609,12 +4625,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("async parsing single value", function(assert) {
+	QUnit.test("async parsing single value", async function(assert) {
 
 		bAsync = true;
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		const fnDone = assert.async();
@@ -4647,12 +4663,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("async parsing single value and same result", function(assert) {
+	QUnit.test("async parsing single value and same result", async function(assert) {
 
 		bAsync = true;
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		const fnDone = assert.async();
@@ -4852,11 +4868,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("invalid input with async parsing on singleValue Field", function(assert) {
+	QUnit.test("invalid input with async parsing on singleValue Field", async function(assert) {
 
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		oValueHelp.setValidateInput(true);
 		const fnGetItemsForValue = function(oConfig) {
@@ -5007,7 +5023,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("aria attributes on multi Field", function(assert) {
+	QUnit.test("aria attributes on multi Field", async function(assert) {
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		const aContent = oField.getAggregation("_content");
@@ -5040,7 +5056,7 @@ sap.ui.define([
 		oVHIcon.firePress();
 		sinon.stub(oValueHelp, "isOpen").returns(true);
 		oValueHelp.fireOpened({itemId: "myItem"});
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal($FocusDomRef.attr("role"), "combobox", "Open: Role Combobox set");
 		assert.equal($FocusDomRef.attr("aria-roledescription"), "RoleDescription", "Open: Role Description set - from ValueHelp");
 		assert.equal($FocusDomRef.attr("aria-haspopup"), "listbox", "Open: aria-haspopup set");
@@ -5051,7 +5067,7 @@ sap.ui.define([
 
 		oValueHelp.close();
 		oValueHelp.fireClosed();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal($FocusDomRef.attr("aria-expanded"), "false", "Closed: aria-expanded set to false");
 		assert.notOk($FocusDomRef.attr("aria-controls"), "Closed: aria-controls not set");
@@ -5059,7 +5075,7 @@ sap.ui.define([
 		assert.notOk($FocusDomRef.attr("aria-describedby") && $FocusDomRef.attr("aria-describedby").search(sValueHelpEnabledID) >= 0, "ValueHelpEnabled text not set");
 
 		oValueHelp.fireNavigated({ condition: Condition.createItemCondition("I3", "Item 3"), itemId: "ItemId"});
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Navigation: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Navigation: aria-controls set");
 		assert.equal($FocusDomRef.attr("aria-activedescendant"), "ItemId", "Navigation: aria-activedescendant set");
@@ -5067,7 +5083,7 @@ sap.ui.define([
 		oValueHelp.close();
 
 		oField.setValueHelp();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk($FocusDomRef.attr("role"), "no Help: no Role set");
 		assert.equal($FocusDomRef.attr("aria-roledescription"), sText, "no Help: Role Description set to MultiInput default");
 		assert.notOk($FocusDomRef.attr("aria-haspopup"), "no Help: aria-haspopup not set");
@@ -5078,11 +5094,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("aria attributes on single Field", function(assert) {
+	QUnit.test("aria attributes on single Field", async function(assert) {
 
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -5111,7 +5127,7 @@ sap.ui.define([
 		oVHIcon.firePress();
 		sinon.stub(oValueHelp, "isOpen").returns(true);
 		oValueHelp.fireOpened({itemId: "myItem"});
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Open: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Open: aria-controls set");
 		assert.equal($FocusDomRef.attr("aria-activedescendant"), "myItem", "Open: aria-activedescendant set");
@@ -5119,7 +5135,7 @@ sap.ui.define([
 
 		oValueHelp.close();
 		oValueHelp.fireClosed();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal($FocusDomRef.attr("aria-expanded"), "false", "Closed: aria-expanded set to false");
 		assert.notOk($FocusDomRef.attr("aria-controls"), "Closed: aria-controls not set");
@@ -5128,7 +5144,7 @@ sap.ui.define([
 		assert.ok(oContent.hasStyleClass("sapMFocus"), "Focus outline restored");
 
 		oValueHelp.fireNavigated({ condition: Condition.createItemCondition("I3", "Item 3"), itemId: "ItemId"});
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Navigation: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Navigation: aria-controls set");
 		assert.equal($FocusDomRef.attr("aria-activedescendant"), "ItemId", "Navigation: aria-activedescendant set");
@@ -5136,7 +5152,7 @@ sap.ui.define([
 		oValueHelp.close();
 
 		oField.setValueHelp();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk($FocusDomRef.attr("role"), "no Help: no Role set");
 		assert.notOk($FocusDomRef.attr("aria-haspopup"), "no Help: aria-haspopup not set");
 		assert.equal($FocusDomRef.attr("autocomplete"), "off", "no Help: autocomplete set from Input");
@@ -5146,7 +5162,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("aria attributes on single Field with only typeahed", function(assert) {
+	QUnit.test("aria attributes on single Field with only typeahed", async function(assert) {
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		oValueHelp.getIcon.returns(null); // no icon
@@ -5162,7 +5178,7 @@ sap.ui.define([
 
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
 		const oVHIcon = oContent && oContent.getAggregation("_endIcon", [])[0];
@@ -5182,7 +5198,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("external control", function(assert) {
+	QUnit.test("external control", async function(assert) {
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		const oVHContent = new Content("C1");
@@ -5195,7 +5211,7 @@ sap.ui.define([
 
 		oField.setMaxConditions(1);
 		oField.setContent(oInput);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oField.focus(); // as ValueHelp is connected with focus
 
@@ -5245,7 +5261,7 @@ sap.ui.define([
 		oContent._$input.val("I");
 		oContent.fireLiveChange({ value: "I" });
 
-		setTimeout(function() { // to wait for Promises and opening
+		setTimeout(async function() { // to wait for Promises and opening
 			let oCondition = Condition.createItemCondition("I1", "Item1");
 			oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", caseSensitive: true});
 			assert.equal(oContent._$input.val(), "Item1", "Output text");
@@ -5256,14 +5272,15 @@ sap.ui.define([
 			assert.equal(oAriaAttributes.aria.activedescendant, "myItem", "Aria-activedescendant");
 
 			oField.setDisplay(FieldDisplay.Value); // destroys and creates new content
-			oCore.applyChanges();
+			await nextUIUpdate();
 			aContent = oField.getAggregation("_content");
+			// eslint-disable-next-line require-atomic-updates
 			oContent = aContent && aContent.length > 0 && aContent[0];
 			oContent.focus();
 			oContent._$input.val("i");
 			oContent.fireLiveChange({ value: "i" });
 
-			setTimeout(function() { // to wait for Promises and opening
+			setTimeout(async function() { // to wait for Promises and opening
 				oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "i", itemId: "myItem", caseSensitive: true});
 				assert.equal(oContent._$input.val(), "i", "Output text");
 				assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
@@ -5278,14 +5295,15 @@ sap.ui.define([
 				assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
 
 				oField.setDisplay(FieldDisplay.DescriptionValue); // destroys and creates new content
-				oCore.applyChanges();
+				await nextUIUpdate();
 				aContent = oField.getAggregation("_content");
+				// eslint-disable-next-line require-atomic-updates
 				oContent = aContent && aContent.length > 0 && aContent[0];
 				oContent.focus();
 				oContent._$input.val("I");
 				oContent.fireLiveChange({ value: "I" });
 
-				setTimeout(function() { // to wait for Promises and opening
+				setTimeout(async function() { // to wait for Promises and opening
 					oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", caseSensitive: false});
 					assert.equal(oContent._$input.val(), "Item1", "Output text");
 					assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
@@ -5300,8 +5318,9 @@ sap.ui.define([
 					assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
 
 					oField.setDisplay(FieldDisplay.ValueDescription); // destroys and creates new content
-					oCore.applyChanges();
+					await nextUIUpdate();
 					aContent = oField.getAggregation("_content");
+					// eslint-disable-next-line require-atomic-updates
 					oContent = aContent && aContent.length > 0 && aContent[0];
 					oContent.focus();
 					oContent._$input.val("I");
@@ -5351,7 +5370,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ValueHelp for currency", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			const oValueHelp = new ValueHelp("F1-H", {validateInput: true});
 			sinon.stub(oValueHelp, "isValidationSupported").returns(true); // otherwise it will not be taken to determine key or description
 			sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true)); // to simulate suggestion
@@ -5374,7 +5393,7 @@ sap.ui.define([
 
 			oCM.checkUpdate(true, false); // to update bindings
 			oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			oField.destroy();
@@ -5395,14 +5414,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Select currency", function(assert) {
+	QUnit.test("Select currency", async function(assert) {
 
 		const oIntType = new IntegerType();
 		const oStringType = new StringType();
 		oField._oContentFactory.setCompositeTypes([oIntType, oStringType]); // fake composite types
 
 		const oIcon = new Icon("I1", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
@@ -5468,10 +5487,10 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Select in currency stand-alone", function(assert) {
+	QUnit.test("Select in currency stand-alone", async function(assert) {
 
 		oField.setDataTypeFormatOptions({showNumber: false, showMeasure: true});
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const oIntType = new IntegerType();
 		const oStringType = new StringType();
@@ -5506,10 +5525,10 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Enter currency with async parsing", function(assert) {
+	QUnit.test("Enter currency with async parsing", async function(assert) {
 
 		const oIcon = new Icon("I1", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone = assert.async();
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
@@ -5660,7 +5679,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("filtering for currency", function(assert) {
+	QUnit.test("filtering for currency", async function(assert) {
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		const oVHContent = new Content("C1");
@@ -5668,7 +5687,7 @@ sap.ui.define([
 		sinon.stub(oVHPopover, "getUseAsValueHelp").returns(true); // simulate ComboBox case
 		oValueHelp.setTypeahead(oVHPopover);
 		oValueHelp.setConditions([Condition.createItemCondition("EUR", "EUR")]); // to test clearing on filtering
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
 		const oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -5695,7 +5714,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ValueHelp for currency with multi-value", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			const oValueHelp = new ValueHelp("F1-H", {validateInput: true});
 			sinon.stub(oValueHelp, "isValidationSupported").returns(true); // otherwise it will not be taken to determine key or description
 			sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true)); // to simulate suggestion
@@ -5718,7 +5737,7 @@ sap.ui.define([
 
 			oCM.checkUpdate(true, false); // to update bindings
 			oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			oField.destroy();
@@ -5861,7 +5880,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ValueHelp with \"\" as key", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			const oValueHelp = new ValueHelp("F1-H", {validateInput: true});
 			sinon.stub(oValueHelp, "isValidationSupported").returns(true); // otherwise it will not be taken to determine key or description
 			sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true)); // to simulate suggestion
@@ -5891,7 +5910,7 @@ sap.ui.define([
 			oField.attachEvent("change", _myChangeHandler);
 
 			oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			oField.destroy();
@@ -5955,7 +5974,7 @@ sap.ui.define([
 
 	// test FieldInfo only from API side, simulate behaviour
 	QUnit.module("FieldInfo not triggerable", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			const oFieldInfo = new FieldInfoBase("F1-I");
 			sinon.stub(oFieldInfo, "isTriggerable").returns(Promise.resolve(false));
 			sinon.stub(oFieldInfo, "getTriggerHref").returns(Promise.resolve("test.test"));
@@ -5982,7 +6001,7 @@ sap.ui.define([
 
 			oCM.checkUpdate(true, false); // to update bindings
 			oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			oField.destroy();
@@ -6018,7 +6037,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("FieldInfo triggerable", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			const oFieldInfo = new FieldInfoBase("F1-I");
 			sinon.stub(oFieldInfo, "isTriggerable").returns(Promise.resolve(true));
 			sinon.stub(oFieldInfo, "getTriggerHref").returns(Promise.resolve(undefined));
@@ -6045,7 +6064,7 @@ sap.ui.define([
 
 			oCM.checkUpdate(true, false); // to update bindings
 			oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			oField.destroy();
@@ -6085,13 +6104,13 @@ sap.ui.define([
 			oFieldInfo.getTriggerHref.returns(Promise.resolve("test.test"));
 			oFieldInfo.getDirectLinkHrefAndTarget.returns(Promise.resolve({href: "myHref", target: "myTarget"}));
 			oFieldInfo.fireDataUpdate();
-			setTimeout(function() { // to wait for promise
+			setTimeout(async function() { // to wait for promise
 				assert.equal(oContent.getHref && oContent.getHref(), "myHref", "Href used");
 				assert.equal(oContent.getTarget && oContent.getTarget(), "myTarget", "Target used");
 
 				oFieldInfo.isTriggerable.returns(Promise.resolve(false));
 				oFieldInfo.fireDataUpdate();
-				oCore.applyChanges();
+				await nextUIUpdate();
 				setTimeout(function() { // to wait for promise
 					assert.ok(oContent._bIsBeingDestroyed, "Link destroyed");
 					aContent = oField.getAggregation("_content");
@@ -6132,12 +6151,12 @@ sap.ui.define([
 	QUnit.test("Remove", function(assert) {
 
 		const fnDone = assert.async();
-		setTimeout(function() { // to wait for promise
+		setTimeout(async function() { // to wait for promise
 			let aContent = oField.getAggregation("_content");
 			let oContent = aContent && aContent.length > 0 && aContent[0];
 
 			oField.destroyFieldInfo();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.ok(oContent._bIsBeingDestroyed, "Link destroyed");
 			aContent = oField.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
@@ -6151,7 +6170,7 @@ sap.ui.define([
 	QUnit.test("Clone", function(assert) {
 
 		const fnDone = assert.async();
-		setTimeout(function() { // to wait for promise
+		setTimeout(async function() { // to wait for promise
 			// to add stubs on cloning
 			const oFieldInfo = oField.getFieldInfo();
 			oFieldInfo.clone = function(sIdSuffix, aLocalIds) {
@@ -6167,9 +6186,9 @@ sap.ui.define([
 
 			const oClone = oField.clone("myClone");
 			oClone.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
-			setTimeout(function() { // to wait for promise
+			setTimeout(async function() { // to wait for promise
 				let aContent = oField.getAggregation("_content");
 				let oContent = aContent && aContent.length > 0 && aContent[0];
 				let aCloneContent = oClone.getAggregation("_content");
@@ -6183,7 +6202,7 @@ sap.ui.define([
 
 				oCloneFieldInfo.isTriggerable.returns(Promise.resolve(false));
 				oCloneFieldInfo.fireDataUpdate();
-				oCore.applyChanges();
+				await nextUIUpdate();
 				setTimeout(function() { // to wait for promise
 					aContent = oField.getAggregation("_content");
 					oContent = aContent && aContent.length > 0 && aContent[0];
@@ -6210,7 +6229,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("FieldGroup handling", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			oField = new FieldBase("F1", {
 				fieldGroupIds: "MyFieldGroup",
 				validateFieldGroup: validateFieldGroup
@@ -6224,7 +6243,7 @@ sap.ui.define([
 			}).placeAt("content");
 
 			oIcon = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content"); // just dummy handler to make Icon focusable
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			oField.destroy();

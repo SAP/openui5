@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/odata/type/String",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 		ValueHelp,
 		ValueHelpDelegate,
@@ -29,7 +29,7 @@ sap.ui.define([
 		FormatException,
 		ParseException,
 		StringType,
-		oCore
+		nextUIUpdate
 	) {
 	"use strict";
 
@@ -91,13 +91,13 @@ sap.ui.define([
 	/* use dummy control to simulate Field */
 
 //	var oClock;
-	const _initFields = function() {
+	const _initFields = async function() {
 		oField = new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		oField2 = new Icon("I2", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 
 		oField.placeAt("content");
 		oField2.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oField.focus();
 //		oClock = sinon.useFakeTimers();
 	};
@@ -136,11 +136,11 @@ sap.ui.define([
 	};
 
 	QUnit.module("basic features", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			oValueHelp = new ValueHelp("F1-H", {
 				disconnect: _myDisconnectHandler
 			});
-			_initFields();
+			await _initFields();
 		},
 		afterEach: _teardown
 	});
@@ -232,7 +232,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("with Typeahed", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			oContainer = new Container("C1", {
 				title: "Test"
 			});
@@ -245,7 +245,7 @@ sap.ui.define([
 				select: _mySelectHandler,
 				closed: _myClosedHandler
 			});
-			_initFields();
+			await _initFields();
 		},
 		afterEach: _teardown
 	});
@@ -821,7 +821,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("with Dialog", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			oContainer = new Container("C1", {
 				title: "Test"
 			});
@@ -832,7 +832,7 @@ sap.ui.define([
 				select: _mySelectHandler,
 				closed: _myClosedHandler
 			});
-			_initFields();
+			await _initFields();
 		},
 		afterEach: _teardown
 	});

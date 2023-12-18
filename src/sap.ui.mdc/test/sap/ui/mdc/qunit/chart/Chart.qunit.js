@@ -1,7 +1,6 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/mdc/Chart",
 	"sap/ui/mdc/chart/Item",
 	"sap/ui/core/UIComponent",
@@ -14,10 +13,10 @@ sap.ui.define([
 	"sap/m/ToolbarSeparator",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/m/IllustratedMessage",
-	"sap/ui/mdc/chart/DrillBreadcrumbs"
+	"sap/ui/mdc/chart/DrillBreadcrumbs",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 	function (
-		Core,
 		Chart,
 		Item,
 		UIComponent,
@@ -30,7 +29,8 @@ sap.ui.define([
 		ToolbarSeparator,
 		VM,
 		IllustratedMessage,
-		Breadcrumbs
+		Breadcrumbs,
+		nextUIUpdate
 	) {
 		"use strict";
 
@@ -41,7 +41,7 @@ sap.ui.define([
 
 		QUnit.module("sap.ui.mdc.Chart: Simple Properties", {
 
-			beforeEach: function () {
+			beforeEach: async function () {
 				const TestComponent = UIComponent.extend("test", {
 					metadata: {
 						manifest: {
@@ -71,7 +71,7 @@ sap.ui.define([
 				this.oMDCChart = this.oUiComponent.getRootControl();
 
 				this.oUiComponentContainer.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oUiComponentContainer.destroy();
@@ -595,22 +595,25 @@ sap.ui.define([
 
 			this.oMDCChart._createContentfromPropertyInfos();
 
-			this.oMDCChart.innerChartBound().then(function () {
-				assert.ok(oCreateCrumbsSpy.calledOnce, "Function was called");
-				assert.ok(this.oMDCChart._oObserver, "Observer was created");
-				assert.ok(oPropagateSpy.calledOnce, "Function was called");
+			setTimeout(function() { //as order of promise execution is not stable
+				this.oMDCChart.innerChartBound().then(function () {
+					assert.ok(oCreateCrumbsSpy.calledOnce, "Function was called");
+					assert.ok(this.oMDCChart._oObserver, "Observer was created");
+					assert.ok(oPropagateSpy.calledOnce, "Function was called");
 
-				_getControlDelegateStub.restore();
-				done();
-			}.bind(this));
-
+					_getControlDelegateStub.restore();
+					done();
+				}.bind(this));
+			}.bind(this), 0);
 		});
 
 		QUnit.test("_createBreadcrumbs", function (assert) {
 			const oMockDelegate = { getDrillableItems: function () { return []; } };
 			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
 			// this.oMDCChart.getControlDelegate = function () { return oMockDelegate; };
-			this.oMDCChart.setAggregation("_breadcrumbs", null);
+			// this.oMDCChart.setAggregation("_breadcrumbs", null);
+			this.oMDCChart._oBreadcrumbs?.destroy();
+			this.oMDCChart._oBreadcrumbs = undefined;
 
 			this.oMDCChart._createBreadcrumbs();
 
@@ -771,12 +774,19 @@ sap.ui.define([
 
 		QUnit.test("_checkStyleClassesForDimensions with dimension after removal", function (assert) {
 			//Arrange
-			this.oMDCChart._oBreadcrumbs = new Breadcrumbs(this.oMDCChart.getId() + "--breadcrumbs");
+			if (!this.oMDCChart._oBreadcrumbs) {
+				this.oMDCChart._oBreadcrumbs = new Breadcrumbs(this.oMDCChart.getId() + "--breadcrumbs");
+			} else {
+				this.oMDCChart._oBreadcrumbs.setVisible(true);
+			}
 
 			this.oMDCChart.removeAllItems();
 			this.oMDCChart.addStyleClass("sapUiMDCChartGrid");
 			this.oMDCChart._checkStyleClassesForDimensions();
 			this.oMDCChart.addItem(new Item({ propertyKey: "Test1", type: "groupable" }));
+			if (!this.oMDCChart._oBreadcrumbs.getVisible()) { // as on insert item it is reset
+				this.oMDCChart._oBreadcrumbs.setVisible(true);
+			}
 
 			const addStyleClassSpy = sinon.spy(this.oMDCChart, "addStyleClass");
 			const removeStyleClassSpy = sinon.spy(this.oMDCChart, "removeStyleClass");
@@ -790,6 +800,7 @@ sap.ui.define([
 			assert.ok(this.oMDCChart.hasStyleClass("sapUiMDCChartGrid"), "Styleclass in DOM");
 			assert.ok(!this.oMDCChart.hasStyleClass("sapUiMDCChartGridNoBreadcrumbs"), "Styleclass not in DOM");
 
+			this.oMDCChart._oBreadcrumbs.destroy();
 			delete this.oMDCChart._oBreadcrumbs;
 		});
 
@@ -893,7 +904,7 @@ sap.ui.define([
 
 		QUnit.module("sap.ui.mdc.Chart: Toolbar Actions", {
 
-			beforeEach: function () {
+			beforeEach: async function () {
 				const TestComponent = UIComponent.extend("test", {
 					metadata: {
 						manifest: {
@@ -927,7 +938,7 @@ sap.ui.define([
 				this.oMDCChart = this.oUiComponent.getRootControl();
 
 				this.oUiComponentContainer.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oUiComponentContainer.destroy();

@@ -1,13 +1,13 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
     "sap/ui/mdc/util/InfoBar"
 ],
 function(
-	Core,
+	nextUIUpdate,
 	UIComponent,
 	ComponentContainer,
     InfoBar
@@ -16,7 +16,7 @@ function(
 
 	QUnit.module("sap.ui.mdc.util.InfoBar", {
 
-		beforeEach: function() {
+		beforeEach: async function() {
 			const TestComponent = UIComponent.extend("test", {
 				metadata: {
 					manifest: {
@@ -38,7 +38,7 @@ function(
             this.oMDCInfoBar = this.oUiComponent.getRootControl();
 
 			this.oUiComponentContainer.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oUiComponentContainer.destroy();

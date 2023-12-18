@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/mdc/Chart",
 	"sap/ui/mdc/chart/Item",
 	"sap/ui/core/UIComponent",
@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement"
 ],
 function(
-	Core,
+	nextUIUpdate,
 	Chart,
 	Item,
 	UIComponent,
@@ -28,7 +28,7 @@ function(
 
 	QUnit.module("sap.ui.mdc.chart.ChartToolbar: Simple Properties", {
 
-		beforeEach: function() {
+		beforeEach: async function() {
 			const TestComponent = UIComponent.extend("test", {
 				metadata: {
 					manifest: {
@@ -55,7 +55,7 @@ function(
             this.oMDCChart = this.oUiComponent.getRootControl();
 
 			this.oUiComponentContainer.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oUiComponentContainer.destroy();
@@ -231,7 +231,7 @@ function(
 
 	QUnit.module("sap.ui.mdc.chart.ChartToolbar: No Details button", {
 
-		beforeEach: function() {
+		beforeEach: async function() {
 			const TestComponent = UIComponent.extend("test", {
 				metadata: {
 					manifest: {
@@ -259,7 +259,7 @@ function(
             this.oMDCChart = this.oUiComponent.getRootControl();
 
 			this.oUiComponentContainer.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oUiComponentContainer.destroy();

@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/mdc/util/FilterUtil",
 	"sap/m/Text",
 	"sap/m/plugins/PluginBase",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/model/Filter",
@@ -41,7 +41,7 @@ sap.ui.define([
 	FilterUtil,
 	Text,
 	PluginBase,
-	Core,
+	nextUIUpdate,
 	Library,
 	coreLibrary,
 	Filter,
@@ -83,7 +83,7 @@ sap.ui.define([
 				dataType: "String"
 			}]);
 		},
-		beforeEach: function(assert) {
+		beforeEach: async function(assert) {
 			this.oTable = new Table({
 				delegate: {
 					name: sDelegatePath,
@@ -110,7 +110,7 @@ sap.ui.define([
 			});
 			this.oTable.placeAt("qunit-fixture");
 			this.oType = this.oTable.getType();
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			return this.oTable.initialized();
 		},
@@ -285,7 +285,7 @@ sap.ui.define([
 		after: function() {
 			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
-		initTable: function(mSettings, fnBeforeInit) {
+		initTable: async function(mSettings, fnBeforeInit) {
 			if (this.oTable) {
 				this.oTable.destroy();
 			}
@@ -320,7 +320,7 @@ sap.ui.define([
 			}
 
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			return this.oTable.initialized();
 		}
