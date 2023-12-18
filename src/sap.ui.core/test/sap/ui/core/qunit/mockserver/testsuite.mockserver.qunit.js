@@ -35,6 +35,10 @@ sap.ui.define([
 
 	Object.keys(oCommonTests).forEach(function (name) {
 		oTestSuite.tests[name + "1"] = merge({}, oCommonTests[name], {
+			qunit: {
+				version: 2,
+				reorder: false
+			},
 			sinon: {
 				version: 1
 			}
@@ -51,6 +55,10 @@ sap.ui.define([
 						"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
 					}
 				}
+			},
+			qunit: {
+				version: 2,
+				reorder: false
 			},
 			sinon: {
 				version: 4
