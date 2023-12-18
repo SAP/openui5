@@ -110,7 +110,7 @@ sap.ui.define([
 				throw new FormatException("No valid conditions provided");
 			}
 
-			const iMaxConditions = _getMaxConditions.call(this);
+			const iMaxConditions = this._getMaxConditions();
 			let vResult;
 
 			if (iMaxConditions !== 1) {
@@ -126,16 +126,17 @@ sap.ui.define([
 				}
 
 				const aValues = [];
-				const sBaseType = _getBaseType.call(this);
+				const oType = this._getValueType();
+				const sBaseType = this._getBaseType(oType);
 				let sOption = FilterOperatorUtil.getDynamicDateOptionForOperator(oOperator, mLibrary.StandardDynamicDateRangeKeys, sBaseType);
 
 				for (let i = 0; i < oOperator.valueTypes.length; i++) {
 					if (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== OperatorValueType.Static) {
 						if (sOption) { // only for standard operators  (dates are needed as local dates)
 							if (oOperator.valueTypes[i] === OperatorValueType.Self) {
-								aValues.push(DateUtil.typeToDate(oCondition.values[i], _getValueType.call(this), sBaseType));
+								aValues.push(DateUtil.typeToDate(oCondition.values[i], oType, sBaseType));
 							} else {
-								const sOperatorBaseType = _getBaseTypeForValueType.call(this, oOperator.valueTypes[i]);
+								const sOperatorBaseType = this._getBaseTypeForValueType(oOperator.valueTypes[i]);
 								if (sOperatorBaseType === BaseType.Date || sOperatorBaseType === BaseType.DateTime) {
 									aValues.push(DateUtil.typeToDate(oCondition.values[i], _getOperatorType.call(this, oOperator, i), sOperatorBaseType));
 								} else {
@@ -165,31 +166,32 @@ sap.ui.define([
 				return null;
 			}
 
-			if (_getMaxConditions.call(this) !== 1) {
+			if (this._getMaxConditions() !== 1) {
 				throw new ParseException("Only one condition supported for parsing");
 			}
 
-			const aOperators = _getOperators.call(this);
+			const aOperators = this._getOperators();
 			const aConditions = [];
 			if (oValue && oValue.operator) {
 				if (oValue.operator === "PARSEERROR") {
 					throw new ParseException(oValue.values[0]);
 				}
 
+				const oType = this._getValueType();
 				const sOption = oValue.operator; // sOperator is the Option name
-				const oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption(sOption, _getBaseType.call(this)); // search via name and alias
+				const oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption(sOption, this._getBaseType(oType)); // search via name and alias
 
 				if (oOperator) {
-					const sBaseType = _getBaseType.call(this);
+					const sBaseType = this._getBaseType(oType);
 					const aValues = [];
 
 					for (let i = 0; i < oOperator.valueTypes.length; i++) {
 						if (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== OperatorValueType.Static) {
 							if (mLibrary.StandardDynamicDateRangeKeys[sOption]) { // only for standard operators (dates are returned as local dates)
 								if (oOperator.valueTypes[i] === OperatorValueType.Self) {
-									aValues.push(DateUtil.dateToType(oValue.values[i], _getValueType.call(this), sBaseType));
+									aValues.push(DateUtil.dateToType(oValue.values[i], oType, sBaseType));
 								} else {
-									const sOperatorBaseType = oOperator.valueTypes[i] === OperatorValueType.Self ? sBaseType : _getBaseTypeForValueType.call(this, oOperator.valueTypes[i]);
+									const sOperatorBaseType = oOperator.valueTypes[i] === OperatorValueType.Self ? sBaseType : this._getBaseTypeForValueType(oOperator.valueTypes[i]);
 									if (sOperatorBaseType === BaseType.Date || sOperatorBaseType === BaseType.DateTime) {
 										aValues.push(DateUtil.dateToType(oValue.values[i], _getOperatorType.call(this, oOperator, i), sOperatorBaseType));
 									} else {
@@ -222,8 +224,8 @@ sap.ui.define([
 				throw new ConditionValidateException("No valid conditions provided", undefined, undefined, aConditions);
 			}
 
-			const oType = _getValueType.call(this);
-			const aOperators = _getOperators.call(this);
+			const oType = this._getValueType();
+			const aOperators = this._getOperators();
 
 			for (const oCondition of aConditions) {
 				if (typeof oCondition !== "object" || !oCondition.operator || !oCondition.values ||
@@ -249,66 +251,13 @@ sap.ui.define([
 			}
 		};
 
-		function _getMaxConditions() {
-
-			let iMaxConditions = 1;
-
-			if (this.oFormatOptions.hasOwnProperty("maxConditions")) {
-				iMaxConditions = this.oFormatOptions.maxConditions;
-			}
-
-			return iMaxConditions;
-
-		}
-
-		function _getValueType() {
-
-			const oType = this.oFormatOptions.valueType;
-			if (!oType) {
-				throw new Error("Type missing");
-			}
-
-			return oType;
-
-		}
-
-		function _getOperators() {
-
-			let aOperators = this.oFormatOptions.operators;
-			if (!aOperators || aOperators.length === 0) {
-				aOperators = FilterOperatorUtil.getOperatorsForType(_getBaseType.call(this));
-			}
-
-			return aOperators;
-
-		}
-
-		function _getBaseType() {
-
-			const oType = _getValueType.call(this);
-			const sType = oType.getMetadata().getName();
-			const oFormatOptions = oType.getFormatOptions();
-			const oConstraints = oType.getConstraints();
-
-			return _getBaseTypeForValueType.call(this, { name: sType, formatOptions: oFormatOptions, constraints: oConstraints });
-
-		}
-
-		function _getBaseTypeForValueType(oValueType) {
-
-			const oDelegate = this.oFormatOptions.delegate;
-			const oField = this.oFormatOptions.control;
-			const sBaseType = oDelegate ? oDelegate.getTypeMap(oField).getBaseType(oValueType.name, oValueType.formatOptions, oValueType.constraints) : BaseType.Date;
-
-			return sBaseType;
-
-		}
-
 		function _getOperatorType(oOperator, iIndex) {
 
 			return oOperator._createLocalType(oOperator.valueTypes[iIndex]);
 
 		}
+
+		DynamicDateRangeConditionsType.prototype._sDefaultBaseType = BaseType.Date;
 
 		return DynamicDateRangeConditionsType;
 

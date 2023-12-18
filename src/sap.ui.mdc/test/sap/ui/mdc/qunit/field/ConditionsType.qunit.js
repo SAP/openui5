@@ -355,28 +355,57 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: multiple values from Paste", function(assert) {
+	QUnit.test("Parsing: multiple values from Paste", async function(assert) {
 
 		let aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
 		oConditionsType.setFormatOptions({operators: [], maxConditions: -1, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
-		aConditions = oConditionsType.parseValue("I1\n!=I2\nI3	I5");
+		aConditions = await oConditionsType.parseValue("I1\n!=I2\nI3	I5");
 		assert.ok(aConditions, "Result returned");
 		assert.ok(Array.isArray(aConditions), "Arry returned");
 		assert.equal(aConditions.length, 4, "4 condition returned");
 		_checkCondition(assert, aConditions[0], OperatorName.EQ, ["X"], ConditionValidated.NotValidated);
 		_checkCondition(assert, aConditions[1], OperatorName.EQ, ["I1"], ConditionValidated.NotValidated);
-		_checkCondition(assert, aConditions[2], OperatorName.NE, ["I2"], ConditionValidated.NotValidated);
-		_checkCondition(assert, aConditions[3], OperatorName.BT, ["I3", "I5"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[2], OperatorName.EQ, ["!=I2"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[3], OperatorName.EQ, ["I3"], ConditionValidated.NotValidated);
 
 		// for multipleLines allow linebreaks
 		aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
 		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: -1, multipleLines: true, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
-		aConditions = oConditionsType.parseValue("I1\n!=I2\nI3	I5");
+		// eslint-disable-next-line require-atomic-updates
+		aConditions = await oConditionsType.parseValue("I1\n!=I2\nI3	I5");
 		assert.ok(aConditions, "Result returned");
 		assert.ok(Array.isArray(aConditions), "Arry returned");
 		assert.equal(aConditions.length, 2, "2 condition returned");
 		_checkCondition(assert, aConditions[0], OperatorName.EQ, ["X"], ConditionValidated.NotValidated);
 		_checkCondition(assert, aConditions[1], OperatorName.EQ, ["I1\n!=I2\nI3	I5"], ConditionValidated.NotValidated);
+
+		// for BT use two values
+		aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+		oConditionsType.setFormatOptions({operators: [OperatorName.BT], maxConditions: -1, multipleLines: false, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
+		// eslint-disable-next-line require-atomic-updates
+		aConditions = await oConditionsType.parseValue("I1	I2\nI3	I5");
+		assert.ok(aConditions, "Result returned");
+		assert.ok(Array.isArray(aConditions), "Arry returned");
+		assert.equal(aConditions.length, 3, "3 condition returned");
+		_checkCondition(assert, aConditions[0], OperatorName.EQ, ["X"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[1], OperatorName.BT, ["I1", "I2"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[2], OperatorName.BT, ["I3", "I5"], ConditionValidated.NotValidated);
+
+	});
+
+	QUnit.test("Parsing: multiple invalid values from Paste", async function(assert) {
+
+		oValueType = new IntegerType();
+		let aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType, maxConditions: -1, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
+
+		try {
+			aConditions = await oConditionsType.parseValue("1\nA\n3");
+		} catch (error) {
+			assert.ok(error, "exception fired");
+		}
+
+		oValueType.destroy();
 
 	});
 

@@ -2834,12 +2834,9 @@ sap.ui.define([
 		qutils.triggerEvent("paste", oContent.getFocusDomRef(), {clipboardData: oFakeClipboardData});
 
 		assert.equal(iCount, 1, "change event fired once");
-		assert.equal(iParseError, 0, "ParseError event not fired");
-		assert.equal(iValidationError, 0, "ValidationError event not fired");
-		assert.equal(iValidationSuccess, 1, "ValidationSuccess event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.equal(sValue, undefined, "change event value");
-		assert.ok(bValid, "change event valid");
+		assert.equal(bValid, undefined, "change event valid-state not known");
 		assert.ok(oPromise, "Promise returned");
 		assert.equal(iSubmitCount, 0, "submit event not fired");
 		oPromise.then(function(vResult) {
@@ -2861,7 +2858,12 @@ sap.ui.define([
 			assert.equal(oToken && oToken.getText(), "=BB", "Text on token set");
 			oToken = aTokens[2];
 			assert.equal(oToken && oToken.getText(), "=CC", "Text on token set");
-			fnDone();
+			setTimeout(function() { // as parsing is async (in PasteHandler) validation is called async too
+				assert.equal(iParseError, 0, "ParseError event not fired");
+				assert.equal(iValidationError, 0, "ValidationError event not fired");
+				assert.equal(iValidationSuccess, 1, "ValidationSuccess event fired once");
+				fnDone();
+			}, 0);
 		}).catch(function(oException) {
 			assert.notOk(true, "submit: Promise must not be rejected");
 			fnDone();
