@@ -128,7 +128,13 @@ sap.ui.define([
 				}
 			};
 
-			fnAdjustFilter(oBindingInfo.filters);
+			if (Array.isArray(oBindingInfo.filters)) {
+				for (let i = 0; i < oBindingInfo.filters.length; i++) {
+					fnAdjustFilter(oBindingInfo.filters[i]);
+				}
+			} else {
+				fnAdjustFilter(oBindingInfo.filters);
+			}
 		}
 
 	};
