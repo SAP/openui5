@@ -10,11 +10,12 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/Supportability',
+	'sap/ui/core/format/FormatUtils',
 	'sap/base/Log',
 	'sap/base/assert',
 	'sap/base/util/extend'
 ],
-	function(Formatting, Localization, BaseObject, Locale, LocaleData, Supportability, Log, assert, extend) {
+	function(Formatting, Localization, BaseObject, Locale, LocaleData, Supportability, FormatUtils, Log, assert, extend) {
 	"use strict";
 
 
@@ -45,8 +46,6 @@ sap.ui.define([
 		}
 	});
 
-	// https://www.unicode.org/reports/tr44/#Bidi_Class_Values (Explicit Formatting Types)
-	const rAllRTLCharacters = /[\u061c\u200e\u200f\u202a\u202b\u202c]/g;
 	const rAllWhiteSpaces = /\s/g;
 	const rDigit = /\d/;
 	// Regex for checking if a number has leading zeros
@@ -1763,7 +1762,7 @@ sap.ui.define([
 			return null;
 		}
 
-		sValue = sValue.replace(rAllRTLCharacters , "").trim();
+		sValue = FormatUtils.normalize(sValue).trim();
 
 		if (sValue === "") {
 			if (!oOptions.showNumber) {
@@ -2200,9 +2199,8 @@ sap.ui.define([
 				}
 
 				if (sCldrFormat) {
-					// Note: CLDR uses a non-breaking space in the format string
-					// remove right-to-left mark u+200f character
-					sCldrFormat = sCldrFormat.replace(/[\s\u00a0\u200F]/g, "");
+					// Note: CLDR uses a non-breaking space and right-to-left mark u+200f in the format string
+					sCldrFormat = FormatUtils.normalize(sCldrFormat, true);
 					//formatString may contain '.' (quoted to differentiate them decimal separator)
 					//which must be replaced with .
 					sCldrFormat = sCldrFormat.replace(/'.'/g, ".");
@@ -2219,8 +2217,6 @@ sap.ui.define([
 						if (iIndex >= 0) {
 							// parse the number part like every other number and then use the factor to get the real number
 							sNumber = sValue.replace(sUnit, "");
-							// remove right-to-left mark u+200f character
-							sNumber = sNumber.replace(/\u200F/g, "");
 							iFactor = iKey;
 							// spanish numbers e.g. for MRD in format for "one" is "00 MRD" therefore factor needs to be adjusted
 							// german numbers e.g. for Mrd. in format for "one" is "0 Mrd." therefore number does not need to be adjusted
@@ -2677,7 +2673,7 @@ sap.ui.define([
 				if (!sKey.startsWith("unitPattern")) {
 					continue;
 				}
-				sUnitPattern = mUnitPatterns[sUnitCode][sKey];
+				sUnitPattern = FormatUtils.normalize(mUnitPatterns[sUnitCode][sKey]);
 
 				// IMPORTANT:
 				// To increase performance we are using native string operations instead of regex,
@@ -2806,7 +2802,7 @@ sap.ui.define([
 			if (!sCurSymbol) {
 				continue;
 			}
-			sCurSymbol = sCurSymbol.replace(rAllWhiteSpaces, "\u0020").replace(rAllRTLCharacters , "");
+			sCurSymbol = FormatUtils.normalize(sCurSymbol);
 			if (sValue.indexOf(sCurSymbol) >= 0 && sSymbol.length <= sCurSymbol.length) {
 				sCode = sCurCode;
 				bDuplicate = false;
@@ -2866,7 +2862,7 @@ sap.ui.define([
 	 */
 	function parseNumberAndCurrency(oConfig) {
 		var aIsoMatches,
-			sValue = oConfig.value.replace(rAllWhiteSpaces, "\u0020");
+			sValue = oConfig.value;
 
 		// Search for known symbols (longest match)
 		// no distinction between default and custom currencies
