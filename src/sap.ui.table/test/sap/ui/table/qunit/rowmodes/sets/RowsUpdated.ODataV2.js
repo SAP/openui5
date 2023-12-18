@@ -1,10 +1,14 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
 	"sap/ui/table/utils/TableUtils",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/Filter",
 	"sap/ui/core/Core"
 ], function(
 	TableQUnitUtils,
 	TableUtils,
+	Sorter,
+	Filter,
 	Core
 ) {
 	"use strict";
@@ -113,7 +117,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sort", function(assert) {
+	QUnit.test("Sort with Table#sort", function(assert) {
 		this.createTable();
 
 		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(() => {
@@ -121,17 +125,43 @@ sap.ui.define([
 			this.oTable.sort(this.oTable.getColumns()[0], "Ascending");
 
 			return this.checkRowsUpdated(assert, [
+				TableUtils.RowsUpdateReason.Render
+			]);
+		});
+	});
+
+	QUnit.test("Sort with Binding#sort", function(assert) {
+		this.createTable();
+
+		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(() => {
+			this.resetRowsUpdatedSpy();
+			this.oTable.getBinding().sort(new Sorter(this.oTable.getColumns()[0].getSortProperty()));
+
+			return this.checkRowsUpdated(assert, [
 				TableUtils.RowsUpdateReason.Sort
 			]);
 		});
 	});
 
-	QUnit.test("Filter", function(assert) {
+	QUnit.test("Filter with Table#filter", function(assert) {
 		this.createTable();
 
 		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(() => {
 			this.resetRowsUpdatedSpy();
 			this.oTable.filter(this.oTable.getColumns()[0], "test");
+
+			return this.checkRowsUpdated(assert, [
+				TableUtils.RowsUpdateReason.Render
+			]);
+		});
+	});
+
+	QUnit.test("Filter with Binding#filter", function(assert) {
+		this.createTable();
+
+		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(() => {
+			this.resetRowsUpdatedSpy();
+			this.oTable.getBinding().filter(new Filter(this.oTable.getColumns()[0].getFilterProperty(), "Contains", "test"));
 
 			return this.checkRowsUpdated(assert, [
 				TableUtils.RowsUpdateReason.Filter
