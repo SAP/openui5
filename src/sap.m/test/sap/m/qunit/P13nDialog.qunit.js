@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/P13nColumnsPanel",
 	"sap/m/P13nItem",
 	"sap/m/P13nColumnsItem",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element"
 ], function(
 	Library,
@@ -31,7 +31,7 @@ sap.ui.define([
 	P13nColumnsPanel,
 	P13nItem,
 	P13nColumnsItem,
-	oCore,
+	nextUIUpdate,
 	Element
 ) {
 	"use strict";
@@ -383,7 +383,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Add two 'P13nColumnsPanel' to the same P13nDialog (both visible)", function (assert) {
+	QUnit.test("Add two 'P13nColumnsPanel' to the same P13nDialog (both visible)", async function (assert) {
 		this.oP13nDialog = new P13nDialog({
 			panels: [new P13nColumnsPanel(), new P13nColumnsPanel()]
 		});
@@ -391,7 +391,7 @@ sap.ui.define([
 		// arrange
 		this.oP13nDialog.placeAt("content");
 		this.oP13nDialog.open();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assertions
 		var done = assert.async();
@@ -411,7 +411,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Add two 'P13nColumnsPanel' to the same P13nDialog (only one visible)", function (assert) {
+	QUnit.test("Add two 'P13nColumnsPanel' to the same P13nDialog (only one visible)", async function (assert) {
 		this.oP13nDialog = new P13nDialog({
 			panels: [new P13nColumnsPanel(), new P13nColumnsPanel({visible:false})]
 		});
@@ -419,7 +419,7 @@ sap.ui.define([
 		// arrange
 		this.oP13nDialog.placeAt("content");
 		this.oP13nDialog.open();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assertions
 		var done = assert.async();
@@ -448,7 +448,7 @@ sap.ui.define([
 			this.oP13nDialog.destroy();
 		}
 	});
-	QUnit.test("from 'filter' to 'sort'", function (assert) {
+	QUnit.test("from 'filter' to 'sort'", async function (assert) {
 		this.oP13nDialog = new P13nDialog({
 			panels: [new P13nFilterPanel(), new P13nSortPanel()]
 		});
@@ -456,7 +456,7 @@ sap.ui.define([
 		// arrange
 		this.oP13nDialog.placeAt("content");
 		this.oP13nDialog.open();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var done = assert.async();
 		this.oP13nDialog._oNavigationControlsPromise.then(function () {
@@ -485,7 +485,7 @@ sap.ui.define([
 			this.oP13nDialog.destroy();
 		}
 	});
-	QUnit.test("test", function (assert) {
+	QUnit.test("test", async function (assert) {
 		var oP13nPanelF, oP13nPanelS, oP13nPanelD;
 
 		this.oP13nDialog = new P13nDialog({
@@ -506,7 +506,7 @@ sap.ui.define([
 		// arrange
 		this.oP13nDialog.placeAt("content");
 		this.oP13nDialog.open();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var done = assert.async();
 		this.oP13nDialog._oNavigationControlsPromise.then(function () {
@@ -523,13 +523,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Validation dialog", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			Device.system.phone = false;
 			this.oP13nDialog = new P13nDialog({
 				panels: [new P13nColumnsPanel(), new P13nGroupPanel()]
 			});
 			this.oP13nDialog.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oP13nDialog.destroy();
@@ -638,13 +638,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Stable IDs (Desktop)", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			Device.system.phone = false;
 			this.oP13nDialog = new P13nDialog("PD1", {
 				panels: [this.oPanel1 = new P13nFilterPanel("P1", {}), this.oPanel2 = new P13nSortPanel("P2", {})]
 			});
 			this.oP13nDialog.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oP13nDialog.destroy();
@@ -716,13 +716,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Stable IDs (Phone)", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			Device.system.phone = true;
 			this.oP13nDialog = new P13nDialog("PD1", {
 				panels: [this.oPanel1 = new P13nFilterPanel("P1", {}), this.oPanel2 = new P13nSortPanel("P2", {})]
 			});
 			this.oP13nDialog.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oP13nDialog.destroy();
@@ -830,13 +830,13 @@ sap.ui.define([
 			this.oP13nDialog.destroy();
 		}
 	});
-	QUnit.test("show dialog with one panel", function (assert) {
+	QUnit.test("show dialog with one panel", async function (assert) {
 		// Preconditions
 		assert.equal(Device.system.phone, false);
 		assert.equal(this.oP13nDialog.getPanels().length, 1);
 
 		this.oP13nDialog.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var done = assert.async();
 		this.oP13nDialog.attachAfterOpen(function () {
@@ -848,7 +848,7 @@ sap.ui.define([
 
 		this.oP13nDialog.open();
 	});
-	QUnit.test("show dialog after panel has been added", function (assert) {
+	QUnit.test("show dialog after panel has been added", async function (assert) {
 		// Preconditions
 		assert.equal(Device.system.phone, false);
 		assert.equal(this.oP13nDialog.getPanels().length, 1);
@@ -865,7 +865,7 @@ sap.ui.define([
 		}));
 
 		this.oP13nDialog.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var done = assert.async();
 		this.oP13nDialog.attachAfterOpen(function () {
@@ -905,13 +905,13 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("show dialog with one panel", function (assert) {
+	QUnit.test("show dialog with one panel", async function (assert) {
 		// Preconditions
 		assert.equal(Device.system.phone, true);
 		assert.equal(this.oP13nDialog.getPanels().length, 1);
 
 		this.oP13nDialog.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var done = assert.async();
 		this.oP13nDialog.attachAfterOpen(function () {
@@ -924,13 +924,13 @@ sap.ui.define([
 		this.oP13nDialog.open();
 	});
 
-	QUnit.test("check 'verticalScrolling' propagation from panel to Dialog (for phone)", function (assert) {
+	QUnit.test("check 'verticalScrolling' propagation from panel to Dialog (for phone)", async function (assert) {
 		// Preconditions
 		assert.equal(Device.system.phone, true);
 		assert.equal(this.oP13nDialog.getPanels().length, 1);
 
 		this.oP13nDialog.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var done = assert.async();
 		this.oP13nDialog.attachAfterOpen(function () {
@@ -943,7 +943,7 @@ sap.ui.define([
 		this.oP13nDialog.open();
 	});
 
-	QUnit.test("show dialog after panel has been added", function (assert) {
+	QUnit.test("show dialog after panel has been added", async function (assert) {
 		// Preconditions
 		assert.equal(Device.system.phone, true);
 		assert.equal(this.oP13nDialog.getPanels().length, 1);
@@ -960,7 +960,7 @@ sap.ui.define([
 		}));
 
 		this.oP13nDialog.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var done = assert.async();
 		this.oP13nDialog.attachAfterOpen(function () {
@@ -1004,13 +1004,13 @@ sap.ui.define([
 			this.oP13nDialog.destroy();
 		}
 	});
-	QUnit.test("show dialog with two panel", function (assert) {
+	QUnit.test("show dialog with two panel", async function (assert) {
 		// Preconditions
 		assert.equal(Device.system.phone, false);
 		assert.equal(this.oP13nDialog.getPanels().length, 2);
 
 		this.oP13nDialog.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var done = assert.async();
 		this.oP13nDialog.attachAfterOpen(function () {
@@ -1022,7 +1022,7 @@ sap.ui.define([
 
 		this.oP13nDialog.open();
 	});
-	QUnit.test("show dialog after one panel has been removed", function (assert) {
+	QUnit.test("show dialog after one panel has been removed", async function (assert) {
 		// Preconditions
 		assert.equal(Device.system.phone, false);
 		assert.equal(this.oP13nDialog.getPanels().length, 2);
@@ -1030,7 +1030,7 @@ sap.ui.define([
 		this.oP13nDialog.removePanel(this.oP13nDialog.getPanels()[1]);
 
 		this.oP13nDialog.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var done = assert.async();
 		this.oP13nDialog.attachAfterOpen(function () {

@@ -2,10 +2,10 @@
 sap.ui.define([
     "sap/ui/core/Element",
     "sap/m/p13n/FilterPanel",
-    "sap/ui/core/Core",
+    "sap/ui/qunit/utils/nextUIUpdate",
     "sap/m/VBox",
     "sap/m/Input"
-], function(Element, FilterPanel, oCore, VBox, Input) {
+], function(Element, FilterPanel, nextUIUpdate, VBox, Input) {
 	"use strict";
 
     const getTestData = function() {
@@ -29,7 +29,7 @@ sap.ui.define([
     };
 
 	QUnit.module("FilterPanel API tests", {
-		beforeEach: function(){
+		beforeEach: async function(){
             this.oFilterPanel = new FilterPanel({
                 itemFactory: function(oP13nItem) {
                     return new Input(oP13nItem.name, {
@@ -38,7 +38,7 @@ sap.ui.define([
                 }
             });
             this.oFilterPanel.placeAt("qunit-fixture");
-            oCore.applyChanges();
+            await nextUIUpdate();
 		},
 		afterEach: function(){
             this.oFilterPanel.destroy();

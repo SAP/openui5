@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/P13nItem",
 	"sap/m/P13nSortItem",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/util/deepExtend"
 ], function(
 	createAndAppendDiv,
@@ -13,7 +13,7 @@ sap.ui.define([
 	JSONModel,
 	P13nItem,
 	P13nSortItem,
-	oCore,
+	nextUIUpdate,
 	deepExtend
 ) {
 	"use strict";
@@ -71,7 +71,7 @@ sap.ui.define([
 		}));
 	};
 
-	QUnit.test("Default Values", function(assert) {
+	QUnit.test("Default Values", async function(assert) {
 
 		// system under test
 		var oP13nSortPanel = new P13nSortPanel({
@@ -80,7 +80,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nSortPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
@@ -89,7 +89,7 @@ sap.ui.define([
 		oP13nSortPanel.destroy();
 	});
 
-	QUnit.test("bind Items test", function(assert) {
+	QUnit.test("bind Items test", async function(assert) {
 
 		// system under test
 		var oP13nSortPanel = new P13nSortPanel();
@@ -98,7 +98,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3");
@@ -107,7 +107,7 @@ sap.ui.define([
 		oP13nSortPanel.destroy();
 	});
 
-	QUnit.test("bind SortItems test", function(assert) {
+	QUnit.test("bind SortItems test", async function(assert) {
 
 		// system under test
 		var oP13nSortPanel = new P13nSortPanel();
@@ -116,7 +116,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		var nItems = 2;
@@ -126,7 +126,7 @@ sap.ui.define([
 		oP13nSortPanel.destroy();
 	});
 
-	QUnit.test("test model update events", function(assert) {
+	QUnit.test("test model update events", async function(assert) {
 
 		// system under test
 		var oP13nSortPanel = new P13nSortPanel({
@@ -164,7 +164,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		// Remove item
@@ -188,7 +188,7 @@ sap.ui.define([
 		oP13nSortPanel.destroy();
 	});
 
-	QUnit.test("bind named model", function(assert) {
+	QUnit.test("bind named model", async function(assert) {
 
 		// system under test
 		var oP13nSortPanel = new P13nSortPanel();
@@ -208,7 +208,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
@@ -218,7 +218,7 @@ sap.ui.define([
 		oP13nSortPanel.destroy();
 	});
 
-	QUnit.test("create with aggregations", function(assert) {
+	QUnit.test("create with aggregations", async function(assert) {
 
 		// system under test
 		var oP13nSortPanel = new P13nSortPanel({
@@ -248,7 +248,7 @@ sap.ui.define([
 		});
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3'");
@@ -258,14 +258,14 @@ sap.ui.define([
 		oP13nSortPanel.destroy();
 	});
 
-	QUnit.test("create with addXXX", function(assert) {
+	QUnit.test("create with addXXX", async function(assert) {
 
 		// system under test
 		var oP13nSortPanel = new P13nSortPanel();
 
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oP13nSortPanel.addItem(new P13nItem({
 			columnKey: "c0",
@@ -290,7 +290,7 @@ sap.ui.define([
 			columnKey: "c0",
 			operation: "Descending"
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3'");
@@ -300,7 +300,7 @@ sap.ui.define([
 		oP13nSortPanel.destroy();
 	});
 
-	QUnit.test("'none'", function(assert) {
+	QUnit.test("'none'", async function(assert) {
 
 		// system under test
 		var oP13nSortPanel = new P13nSortPanel();
@@ -309,7 +309,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3");

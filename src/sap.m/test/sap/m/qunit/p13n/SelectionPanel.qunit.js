@@ -5,12 +5,12 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/sinon",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Input",
 	"sap/base/util/merge",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel"
-], function(SelectionPanel, VBox, Element, Library, sinon, oCore, Input, merge, mLibrary, JSONModel) {
+], function(SelectionPanel, VBox, Element, Library, sinon, nextUIUpdate, Input, merge, mLibrary, JSONModel) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
@@ -62,7 +62,7 @@ sap.ui.define([
 				}
 			];
 		},
-		beforeEach: function(){
+		beforeEach: async function(){
 
 			this.aVisible = ["key1", "key2", "key3"];
 
@@ -71,7 +71,7 @@ sap.ui.define([
 				return new VBox();
 			});
 			this.oSelectionPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function(){
 			this.sDefaultGroup = null;
@@ -247,9 +247,9 @@ sap.ui.define([
 
 		//Act
 		oClearAllButton.focus();
-		var oFocusedControl = oCore.getCurrentFocusedControlId();
+		var oFocusedControl = Element.getActiveElement().getId();
 		oClearAllButton.firePress();
-		var oNewFocusedControl = oCore.getCurrentFocusedControlId();
+		var oNewFocusedControl = Element.getActiveElement().getId();
 
 
 		//Assert

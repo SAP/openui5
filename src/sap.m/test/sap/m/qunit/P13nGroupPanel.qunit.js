@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/P13nGroupItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/P13nItem",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/util/deepExtend"
 ], function(
 	createAndAppendDiv,
@@ -13,7 +13,7 @@ sap.ui.define([
 	P13nGroupItem,
 	JSONModel,
 	P13nItem,
-	oCore,
+	nextUIUpdate,
 	deepExtend
 ) {
 	"use strict";
@@ -74,7 +74,7 @@ sap.ui.define([
 		}));
 	};
 
-	QUnit.test("Default Values", function(assert) {
+	QUnit.test("Default Values", async function(assert) {
 
 		// system under test
 		var oP13nGroupPanel = new P13nGroupPanel({
@@ -83,7 +83,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nGroupPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
@@ -98,7 +98,7 @@ sap.ui.define([
 		oP13nGroupPanel.destroy();
 	});
 
-	QUnit.test("Validation Tests", function(assert) {
+	QUnit.test("Validation Tests", async function(assert) {
 
 		// system under test
 		var oP13nGroupPanel = new P13nGroupPanel({
@@ -107,7 +107,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nGroupPanel.validateConditions(), true, "validateConditions should return true");
@@ -119,7 +119,7 @@ sap.ui.define([
 		oP13nGroupPanel.destroy();
 	});
 
-	QUnit.test("bind Items test", function(assert) {
+	QUnit.test("bind Items test", async function(assert) {
 
 		// system under test
 		var oP13nGroupPanel = new P13nGroupPanel();
@@ -128,7 +128,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3");
@@ -137,7 +137,7 @@ sap.ui.define([
 		oP13nGroupPanel.destroy();
 	});
 
-	QUnit.test("bind GroupItems test", function(assert) {
+	QUnit.test("bind GroupItems test", async function(assert) {
 
 		// system under test
 		var oP13nGroupPanel = new P13nGroupPanel();
@@ -146,7 +146,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		var nItems = 2;
@@ -156,7 +156,7 @@ sap.ui.define([
 		oP13nGroupPanel.destroy();
 	});
 
-	QUnit.test("Insert Remove GroupItems test", function(assert) {
+	QUnit.test("Insert Remove GroupItems test", async function(assert) {
 
 		// system under test
 		var oP13nGroupPanel = new P13nGroupPanel();
@@ -165,7 +165,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oP13nGroupPanel.insertGroupItem(new P13nGroupItem({
 			columnKey: "c1",
@@ -185,7 +185,7 @@ sap.ui.define([
 		oP13nGroupPanel.destroy();
 	});
 
-	QUnit.test("test model update events", function(assert) {
+	QUnit.test("test model update events", async function(assert) {
 
 		// system under test
 		var oP13nGroupPanel = new P13nGroupPanel({
@@ -224,7 +224,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		// Remove item
@@ -248,7 +248,7 @@ sap.ui.define([
 		oP13nGroupPanel.destroy();
 	});
 
-	QUnit.test("bind named model", function(assert) {
+	QUnit.test("bind named model", async function(assert) {
 
 		// system under test
 		var oP13nGroupPanel = new P13nGroupPanel();
@@ -270,7 +270,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
@@ -280,7 +280,7 @@ sap.ui.define([
 		oP13nGroupPanel.destroy();
 	});
 
-	QUnit.test("create with aggregations", function(assert) {
+	QUnit.test("create with aggregations", async function(assert) {
 
 		// system under test
 		var oP13nGroupPanel = new P13nGroupPanel({
@@ -312,7 +312,7 @@ sap.ui.define([
 		});
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
@@ -322,14 +322,14 @@ sap.ui.define([
 		oP13nGroupPanel.destroy();
 	});
 
-	QUnit.test("create with addXXX", function(assert) {
+	QUnit.test("create with addXXX", async function(assert) {
 
 		// system under test
 		var oP13nGroupPanel = new P13nGroupPanel();
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oP13nGroupPanel.addItem(new P13nItem({
 			columnKey: "c0",
@@ -356,7 +356,7 @@ sap.ui.define([
 			operation: "Descending",
 			showIfGrouped: false
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
@@ -366,7 +366,7 @@ sap.ui.define([
 		oP13nGroupPanel.destroy();
 	});
 
-	QUnit.test("'none'", function(assert) {
+	QUnit.test("'none'", async function(assert) {
 
 		// system under test
 		var oP13nGroupPanel = new P13nGroupPanel();
@@ -375,7 +375,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3");

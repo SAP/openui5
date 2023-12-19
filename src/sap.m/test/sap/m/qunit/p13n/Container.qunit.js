@@ -3,16 +3,16 @@ sap.ui.define([
 	"sap/m/p13n/Container",
 	"sap/m/p13n/AbstractContainerItem",
 	"sap/m/Button",
-	"sap/ui/core/Core"
-], function (P13nContainer, AbstractContainerItem, Button, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (P13nContainer, AbstractContainerItem, Button, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("P13nContainer API tests", {
-		beforeEach: function(){
+		beforeEach: async function(){
 			this.oP13nContainer = new P13nContainer();
 
 			this.oP13nContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function(){
 			this.oP13nContainer.destroy();

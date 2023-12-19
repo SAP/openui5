@@ -3,8 +3,8 @@ sap.ui.define([
 	"sap/m/p13n/AbstractContainer",
 	"sap/m/p13n/AbstractContainerItem",
 	"sap/m/Table",
-	"sap/ui/core/Core"
-], function(AbstractContainer, ContainerItem, Table, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(AbstractContainer, ContainerItem, Table, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Plain Container", {
@@ -21,7 +21,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Container with items", {
-		createContainer: function(sDefaultView) {
+		createContainer: async function(sDefaultView) {
 			this.oContainer = new AbstractContainer({
 				defaultView: sDefaultView,
 				views: [
@@ -41,7 +41,7 @@ sap.ui.define([
 			});
 
 			this.oContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		beforeEach: function() {
 

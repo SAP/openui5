@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/P13nItem",
 	"sap/m/P13nDimMeasureItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/util/deepExtend",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -20,7 +20,7 @@ sap.ui.define([
 	P13nItem,
 	P13nDimMeasureItem,
 	JSONModel,
-	oCore,
+	nextUIUpdate,
 	deepExtend,
 	jQuery
 ) {
@@ -66,7 +66,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems]", function(assert) {
+	QUnit.test("constructor - items: [aItems]", async function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -90,7 +90,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oDimMeasurePanel.getItems().length, 3);
@@ -110,7 +110,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - [], addItem", function(assert) {
+	QUnit.test("constructor - [], addItem", async function(assert) {
 
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel();
@@ -131,7 +131,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oDimMeasurePanel.getItems().length, 3);
@@ -151,7 +151,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems], insertItem", function(assert) {
+	QUnit.test("constructor - items: [aItems], insertItem", async function(assert) {
 
 		// system under test
 		var oItemA, oItemB = new P13nItem({
@@ -175,7 +175,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oDimMeasurePanel.getItems().length, 3);
@@ -195,7 +195,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems], removeItem", function(assert) {
+	QUnit.test("constructor - items: [aItems], removeItem", async function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -219,7 +219,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oItem, oItemB);
@@ -238,7 +238,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems], removeItem dummy", function(assert) {
+	QUnit.test("constructor - items: [aItems], removeItem dummy", async function(assert) {
 
 		// system under test
 		var oItemA, oItemB = new P13nItem({
@@ -262,7 +262,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oItem, null);
@@ -281,7 +281,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems], removeAllItems", function(assert) {
+	QUnit.test("constructor - items: [aItems], removeAllItems", async function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -305,7 +305,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(aItems, [
@@ -320,7 +320,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems], destroyItems", function(assert) {
+	QUnit.test("constructor - items: [aItems], destroyItems", async function(assert) {
 
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
@@ -343,7 +343,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oDimMeasurePanel.getItems().length, 0);
@@ -355,7 +355,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems], dimMeasureItems: [aDimMeasureItems]", function(assert) {
+	QUnit.test("constructor - items: [aItems], dimMeasureItems: [aDimMeasureItems]", async function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -383,7 +383,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		// The table items order has been changed to: C, A, B
@@ -402,7 +402,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - dimMeasureItems: [aDimMeasureItems], items: [aItems]", function(assert) {
+	QUnit.test("constructor - dimMeasureItems: [aDimMeasureItems], items: [aItems]", async function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -430,7 +430,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		// The table items order has been changed to: C, A, B
@@ -449,7 +449,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("constructor - items: [aItems], dimMeasureItems: [aDimMeasureItems]", function(assert) {
+	QUnit.test("constructor - items: [aItems], dimMeasureItems: [aDimMeasureItems]", async function(assert) {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
@@ -478,11 +478,11 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oDimMeasurePanel.removeDimMeasureItem(oDimMeasureItemC);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		// The table items order has been changed to: A, B, C
@@ -500,7 +500,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("getOkPayload: â0 -> a0", function(assert) {
+	QUnit.test("getOkPayload: â0 -> a0", async function(assert) {
 		// system under test
 		var oDimMeasureItemA;
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
@@ -526,14 +526,13 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
-		this.clock.tick(500);
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerTouchEvent("tap", oDimMeasurePanel._oTable.getItems()[0].$().find(".sapMCbMark")[0], {
 			srcControl: oDimMeasurePanel
 		});
-		this.clock.tick(500);
+		await nextUIUpdate();
 
 		oDimMeasurePanel.getOkPayload();
 
@@ -549,7 +548,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("getOkPayload: a0 -> â0", function(assert) {
+	QUnit.test("getOkPayload: a0 -> â0", async function(assert) {
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
 			items: [
@@ -571,14 +570,13 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
-		this.clock.tick(500);
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerTouchEvent("tap", oDimMeasurePanel._oTable.getItems()[0].$().find(".sapMCbMark")[0], {
 			srcControl: oDimMeasurePanel
 		});
-		this.clock.tick(500);
+		await nextUIUpdate();
 
 		oDimMeasurePanel.getOkPayload();
 
@@ -593,7 +591,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("getOkPayload: a0 -> a1", function(assert) {
+	QUnit.test("getOkPayload: a0 -> a1", async function(assert) {
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
 			items: [
@@ -623,12 +621,10 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
-		this.clock.tick(500);
+		await nextUIUpdate();
 
 		// act
 		oDimMeasurePanel.onPressButtonMoveDown();
-		this.clock.tick(500);
 
 		oDimMeasurePanel.getOkPayload();
 
@@ -639,7 +635,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("getOkPayload: a0 -> â1", function(assert) {
+	QUnit.test("getOkPayload: a0 -> â1", async function(assert) {
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
 			items: [
@@ -667,15 +663,13 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
-		this.clock.tick(500);
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerTouchEvent("tap", oDimMeasurePanel._oTable.getItems()[0].$().find(".sapMCbMark")[0], {
 			srcControl: oDimMeasurePanel
 		});
 		oDimMeasurePanel.onPressButtonMoveDown();
-		this.clock.tick(500);
 
 		oDimMeasurePanel.getOkPayload();
 
@@ -707,14 +701,13 @@ sap.ui.define([
 		//            oDimMeasurePanel.destroy();
 		//            oDimMeasurePanelT.placeAt("content");
 		//            sap.ui.getCore().applyChanges();
-		//            this.clock.tick(500);
 		//            // test end
 
 		// cleanup
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("getOkPayload: â0 -> â1", function(assert) {
+	QUnit.test("getOkPayload: â0 -> â1", async function(assert) {
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
 			items: [
@@ -748,12 +741,10 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
-		this.clock.tick(500);
+		await nextUIUpdate();
 
 		// act
 		oDimMeasurePanel.onPressButtonMoveDown();
-		this.clock.tick(500);
 
 		oDimMeasurePanel.getOkPayload();
 
@@ -770,7 +761,7 @@ sap.ui.define([
 		oDimMeasurePanel.destroy();
 	});
 
-	QUnit.test("getOkPayload: â0 -> a1", function(assert) {
+	QUnit.test("getOkPayload: â0 -> a1", async function(assert) {
 		// system under test
 		var oDimMeasurePanel = new P13nDimMeasurePanel({
 			items: [
@@ -804,15 +795,13 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		oCore.applyChanges();
-		this.clock.tick(500);
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerTouchEvent("tap", oDimMeasurePanel._oTable.getItems()[0].$().find(".sapMCbMark")[0], {
 			srcControl: oDimMeasurePanel
 		});
 		oDimMeasurePanel.onPressButtonMoveDown();
-		this.clock.tick(500);
 
 		// assertions
 		assert.strictEqual(oDimMeasurePanel.getDimMeasureItems().length, 2);
@@ -828,7 +817,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.m.P13nDimMeasurePanel: FIX", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oPanel = new P13nDimMeasurePanel({
 				items: {
 					path: "/items",
@@ -882,14 +871,14 @@ sap.ui.define([
 			this.oPanel.setModel(new JSONModel(deepExtend({}, this.oDataInitial)));
 
 			this.oPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oPanel.destroy();
 		}
 	});
 
-	QUnit.test("Reset after entered search text", function(assert) {
+	QUnit.test("Reset after entered search text", async function(assert) {
 		// arrange: deselect first item "A", move it down, enter search text and click 'search'
 		qutils.triggerTouchEvent("tap", this.oPanel._oTable.getItems()[0].$().find(".sapMCbMark")[0], {
 			srcControl: this.oPanel
@@ -899,7 +888,7 @@ sap.ui.define([
 		qutils.triggerTouchEvent("touchend", this.oPanel._getSearchField().$().find(".sapMSFS")[0], {
 			srcControl: this.oPanel._getSearchField()
 		});
-		this.clock.tick(500);
+		await nextUIUpdate();
 
 		// asserts before act
 		assert.equal(this.oPanel.$().find("table").length, 1);
@@ -920,7 +909,8 @@ sap.ui.define([
 
 		// act: Reset
 		this.oPanel.getModel().setProperty("/", this.oDataInitial);
-		this.clock.tick(500);
+		await nextUIUpdate();
+
 
 		// asserts after act
 		assert.equal(this.oPanel.$().find("table").length, 1);
@@ -940,7 +930,7 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr").find("span")[9].textContent, "B");
 	});
 
-	QUnit.test("Reset after 'Show Selected' clicked", function(assert) {
+	QUnit.test("Reset after 'Show Selected' clicked", async function(assert) {
 		// arrange: deselect first item "A", move it down and click 'Show Selected'
 		qutils.triggerTouchEvent("tap", this.oPanel._oTable.getItems()[0].$().find(".sapMCbMark")[0], {
 			srcControl: this.oPanel
@@ -952,7 +942,7 @@ sap.ui.define([
 		oButton.ontap.apply(oButton, [
 			oEvent
 		]);
-		this.clock.tick(500);
+		await nextUIUpdate();
 
 		// asserts before act
 		assert.equal(this.oPanel.$().find("table").length, 1);
@@ -971,7 +961,7 @@ sap.ui.define([
 
 		// act: Reset
 		this.oPanel.getModel().setProperty("/", this.oDataInitial);
-		this.clock.tick(500);
+		await nextUIUpdate();
 
 		// asserts after act
 		assert.equal(this.oPanel.$().find("table").length, 1);
@@ -992,7 +982,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.m.P13nDimMeasurePanel: FIX 0020751294 0000593415 2018", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oPanel = new P13nDimMeasurePanel({
 				items: {
 					path: "/items",
@@ -1039,7 +1029,7 @@ sap.ui.define([
 			this.oPanel.setModel(new JSONModel(deepExtend({}, this.oDataInitial)));
 
 			this.oPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oPanel.destroy();

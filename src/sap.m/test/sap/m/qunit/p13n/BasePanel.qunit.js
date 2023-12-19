@@ -5,15 +5,15 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/base/Event",
 	"sap/m/MessageStrip",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/VBox",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils"
-], function (BasePanel, StandardListItem, sinon, Event, MessageStrip, oCore, VBox, KeyCodes, qutils) {
+], function (BasePanel, StandardListItem, sinon, Event, MessageStrip, nextUIUpdate, VBox, KeyCodes, qutils) {
 	"use strict";
 
 	QUnit.module("BasePanel API tests", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBasePanel = new BasePanel();
 			this.oBasePanel.setP13nData([
 				{
@@ -43,7 +43,7 @@ sap.ui.define([
 				"Name", "Country", "Year"
 			]);
 			this.oBasePanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oBtnShowSelected = this.oBasePanel._oListControl.getHeaderToolbar().getContent()[6];
 		},
 		afterEach: function() {
@@ -262,7 +262,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("trigger button up/down/top/bottom via shortcuts", function(assert){
+	QUnit.test("trigger button up/down/top/bottom via shortcuts", async function(assert){
 		var oPanel = this.oBasePanel;
 		oPanel.setEnableReorder(true);
 
@@ -270,7 +270,7 @@ sap.ui.define([
 			listItem: oPanel._oListControl.getItems()[1]
 		});
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		qutils.triggerKeydown(oPanel._oListControl.getItems()[1].getDomRef(), KeyCodes.ARROW_DOWN, false, false, true);
 		assert.equal(oPanel.getP13nData()[2].name, "test2", "2. item is at position 3");
@@ -286,7 +286,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("BasePanel API change special reasoning", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBasePanel = new BasePanel();
 			this.oBasePanel.setP13nData([
 				{
@@ -316,7 +316,7 @@ sap.ui.define([
 				"Field"
 			]);
 			this.oBasePanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oBtnShowSelected = this.oBasePanel._oListControl.getHeaderToolbar().getContent()[6];
 		},
 		afterEach: function() {
@@ -324,7 +324,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("move bottom/top button visibility for small screens", function(assert){
+	QUnit.test("move bottom/top button visibility for small screens", async function(assert){
 		var done = assert.async();
 		var oPanel = new BasePanel();
 		var oVBox = new VBox({
@@ -335,14 +335,14 @@ sap.ui.define([
 		});
 
 		oVBox.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
-		setTimeout(function(){
+		setTimeout(async function(){
 			assert.notOk(oPanel._getMoveBottomButton().getVisible(), "Button is invisible on larger screens");
 			assert.notOk(oPanel._getMoveTopButton().getVisible(), "Button is invisible on larger screens");
 
 			oVBox.setWidth("420px");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			setTimeout(function(){
 				assert.ok(oPanel._getMoveBottomButton().getVisible(), "Button is invisible on small screens");
