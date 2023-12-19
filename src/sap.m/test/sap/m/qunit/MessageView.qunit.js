@@ -1246,14 +1246,54 @@ sap.ui.define([
 
 	QUnit.test("Auto navigate even with grouped item", function (assert) {
 		// Setup
-		var oSpy = this.spy(this.oMessageView, "_fnHandleForwardNavigation");
+		var oMessageView = new MessageView({
+			items: [
+				new MessageItem({
+					title: "Test",
+					description: "Test Description"
+				})
+			],
+			groupItems: true
+		});
+
+		var oSpy = this.spy(oMessageView, "_fnHandleForwardNavigation");
 
 		// Act
-		this.oMessageView.setGroupItems(true);
+		oMessageView.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.ok(oSpy.firstCall.args[0].isA("sap.m.MessageListItem"), "The Navigation happens against the correct element.");
+
+		oMessageView.destroy();
+	});
+
+	QUnit.test("Navigation should invalidate page content without navigation back and forward", function (assert) {
+		var oItem = new MessageItem({
+			title: "Test",
+			description: "Test Description"
+		});
+		var oMessageView = new MessageView({
+			items: [ oItem ]
+		});
+
+		var oSpy = this.spy(oMessageView, "_fnHandleForwardNavigation");
+
+		// Act
+		oMessageView.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMessageView._navContainer.getCurrentPage(), oMessageView._detailsPage, "Details page should be visible");
+		assert.strictEqual(oSpy.callCount, 1, "Navigation should be performed once");
+
+		oItem.setDescription("Test");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMessageView._detailsPage.getContent()[1].getText(), oItem.getDescription(), "Description should be changed");
+		assert.strictEqual(oMessageView._navContainer.getCurrentPage(), oMessageView._detailsPage, "Details page should be visible");
+		assert.strictEqual(oSpy.callCount, 1, "Navigation should be performed once");
+
+		oMessageView.destroy();
 	});
 
 	QUnit.module("Aggregation Binding", {
