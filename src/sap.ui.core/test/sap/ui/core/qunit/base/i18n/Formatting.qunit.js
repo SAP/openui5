@@ -45,7 +45,7 @@ sap.ui.define([
 		mConfigStubValues = {
 			"sapLanguage": "en"
 		};
-		assert.deepEqual(Formatting.getLanguageTag(), new LanguageTag("en"),
+		assert.deepEqual(Formatting.getLanguageTag(), new LanguageTag("en-x-sapufmt"),
 			"getLanguageTag should return new 'sap/base/i18n/LanguageTag' derived from Localization.getLanguageTag in case no LanguageTag is set");
 		BaseConfig._.invalidate();
 		mConfigStubValues = {
@@ -70,35 +70,27 @@ sap.ui.define([
 	});
 
 	QUnit.test("getABAPDateFormat", function(assert) {
-		assert.expect(2);
+		assert.expect(4);
 		assert.strictEqual(Formatting.getABAPDateFormat(), "2", "getABAPDateFormat should return '2' as provided by URL");
-		BaseConfig._.invalidate();
-		mConfigStubValues = {
-			"sapUiABAPDateFormat": "a"
-		};
-		assert.strictEqual(Formatting.getABAPDateFormat(), "A", "getABAPDateFormat should return expected value 'A'");
+		assert.strictEqual(Formatting.getDatePattern("short"), "MM/dd/yyyy", "getDatePattern('short') should return expected value 'MM/dd/yyyy'");
+		assert.strictEqual(Formatting.getDatePattern("medium"), "MM/dd/yyyy", "getDatePattern('medium') should return expected value 'MM/dd/yyyy'");
+		assert.strictEqual(Formatting.getCalendarType(), CalendarType.Gregorian, "getCalendarType should return expected value 'Gregorian' derived from ABAPDateFormat");
 	});
 
 	QUnit.test("getABAPTimeFormat", function(assert) {
-		assert.expect(2);
+		assert.expect(3);
 
 		assert.strictEqual(Formatting.getABAPTimeFormat(), "3", "getABAPTimeFormat should return '3' as provided by URL");
-		BaseConfig._.invalidate();
-		mConfigStubValues = {
-			"sapUiABAPTimeFormat": "0"
-		};
-		assert.strictEqual(Formatting.getABAPTimeFormat(), "0", "getABAPTimeFormat should return expected value '0'");
+		assert.strictEqual(Formatting.getTimePattern("short"), "KK:mm a", "getTimePattern('short') should return expected value 'KK:mm a'");
+		assert.strictEqual(Formatting.getTimePattern("medium"), "KK:mm:ss a", "getTimePattern('medium') should return expected value 'KK:mm:ss a'");
 	});
 
 	QUnit.test("getABAPNumberFormat", function(assert) {
-		assert.expect(2);
+		assert.expect(3);
 
 		assert.strictEqual(Formatting.getABAPNumberFormat(), "X", "getABAPNumberFormat should return 'Y' as provided by URL");
-		BaseConfig._.invalidate();
-		mConfigStubValues = {
-			"sapUiABAPNumberFormat": "y"
-		};
-		assert.strictEqual(Formatting.getABAPNumberFormat(), "Y", "getABAPNumberFormat should return expected value 'Y'");
+		assert.strictEqual(Formatting.getNumberSymbol("group"), ",", "getNumberSymbol('group') should return expected value ','");
+		assert.strictEqual(Formatting.getNumberSymbol("decimal"), ".", "getNumberSymbol('decimal') should return expected value '.'");
 	});
 
 	QUnit.test("getTrailingCurrencyCode", function(assert) {
@@ -129,7 +121,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getCalendarType", function(assert) {
-		assert.expect(5);
+		assert.expect(4);
 		oSinonSandbox.spy(Log, "warning");
 
 		assert.strictEqual(Formatting.getCalendarType(), CalendarType.Gregorian, "getCalendarType should return default 'Gregorian' in case no calendarType was provided");
@@ -146,11 +138,6 @@ sap.ui.define([
 		assert.ok(Log.warning.calledOnceWithExactly("Parameter 'calendarType' is set to invalidCalendarType which" +
 			" isn't a valid value and therefore ignored. The calendar type is determined from format setting and current locale"),
 			"Warning logged for invalid value of parameter 'calendarType'");
-		BaseConfig._.invalidate();
-		mConfigStubValues = {
-			"sapUiABAPDateFormat": "a"
-		};
-		assert.strictEqual(Formatting.getCalendarType(), CalendarType.Islamic, "getCalendarType should return expected value 'Islamic' derived from ABAPDateFormat");
 	});
 
 	QUnit.module("Formatting setter");
@@ -192,18 +179,18 @@ sap.ui.define([
 	QUnit.test("setABAPTimeFormat", function(assert) {
 		assert.expect(7);
 		function test(oEvent) {
-			assert.strictEqual(oEvent["timeFormats-medium"], "KK:mm:ss a", "timeFormat event parameter set correctly");
-			assert.strictEqual(oEvent["timeFormats-short"], "KK:mm a", "timeFormat event parameter set correctly");
-			assert.strictEqual(oEvent["ABAPTimeFormat"], "4", "timeFormat event parameter set correctly");
-			assert.deepEqual(oEvent["dayPeriods-format-abbreviated"], ["am", "pm"], "timeFormat event parameter set correctly");
-			assert.strictEqual(Formatting.getABAPTimeFormat(), "4", "getABAPTimeFormat should return expected value 'B'");
-			assert.strictEqual(Formatting.getTimePattern("short"), "KK:mm a", "getTimePattern('short') should return expected value 'KK:mm a'");
-			assert.strictEqual(Formatting.getTimePattern("medium"), "KK:mm:ss a", "getTimePattern('medium') should return expected value 'KK:mm:ss a'");
+			assert.strictEqual(oEvent["timeFormats-medium"], "HH:mm:ss", "timeFormat event parameter set correctly");
+			assert.strictEqual(oEvent["timeFormats-short"], "HH:mm", "timeFormat event parameter set correctly");
+			assert.strictEqual(oEvent["ABAPTimeFormat"], "0", "timeFormat event parameter set correctly");
+			assert.deepEqual(oEvent["dayPeriods-format-abbreviated"], null, "timeFormat event parameter set correctly");
+			assert.strictEqual(Formatting.getABAPTimeFormat(), "0", "getABAPTimeFormat should return expected value 'B'");
+			assert.strictEqual(Formatting.getTimePattern("short"), "HH:mm", "getTimePattern('short') should return expected value 'HH:mm'");
+			assert.strictEqual(Formatting.getTimePattern("medium"), "HH:mm:ss", "getTimePattern('medium') should return expected value 'HH:mm:ss'");
 		}
 		Formatting.attachChange(test);
-		Formatting.setABAPTimeFormat("4");
+		Formatting.setABAPTimeFormat("0");
 		// Setting same format again shouldn't trigger a change event
-		Formatting.setABAPTimeFormat("4");
+		Formatting.setABAPTimeFormat("0");
 		Formatting.detachChange(test);
 	});
 

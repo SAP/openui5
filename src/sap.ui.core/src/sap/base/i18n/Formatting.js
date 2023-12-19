@@ -33,6 +33,7 @@ sap.ui.define([
 	const mSettings = {};
 	let mChanges;
 	let aCustomIslamicCalendarData;
+	let bInitialized = false;
 
 	const M_ABAP_DATE_FORMAT_PATTERN = {
 		"" : {pattern: null},
@@ -743,7 +744,7 @@ sap.ui.define([
 			check(M_ABAP_DATE_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['1','2','3','4','5','6','7','8','9','A','B','C'] or empty");
 			const bFireEvent = !mChanges;
 			const sOldFormat = Formatting.getABAPDateFormat();
-			if (sOldFormat !== sFormatId) {
+			if (sOldFormat !== sFormatId || !bInitialized) {
 				mChanges ??= {};
 				oWritableConfig.set("sapUiABAPDateFormat", sFormatId);
 				mChanges.ABAPDateFormat = sFormatId;
@@ -803,7 +804,7 @@ sap.ui.define([
 			check(M_ABAP_TIME_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['0','1','2','3','4'] or empty");
 			const bFireEvent = !mChanges;
 			const sOldFormat = Formatting.getABAPTimeFormat();
-			if (sOldFormat !== sFormatId) {
+			if (sOldFormat !== sFormatId || !bInitialized) {
 				mChanges ??= {};
 				oWritableConfig.set("sapUiABAPTimeFormat", sFormatId);
 				mChanges.ABAPTimeFormat = sFormatId;
@@ -863,7 +864,7 @@ sap.ui.define([
 			check(M_ABAP_NUMBER_FORMAT_SYMBOLS.hasOwnProperty(sFormatId), "sFormatId must be one of [' ','X','Y'] or empty");
 			const bFireEvent = !mChanges;
 			const sOldFormat = Formatting.getABAPNumberFormat();
-			if (sOldFormat !== sFormatId) {
+			if (sOldFormat !== sFormatId || !bInitialized) {
 				mChanges ??= {};
 				oWritableConfig.set("sapUiABAPNumberFormat", sFormatId);
 				mChanges.ABAPNumberFormat = sFormatId;
@@ -1126,6 +1127,7 @@ sap.ui.define([
 		if (sABAPTimeFormat !== undefined) {
 			Formatting.setABAPTimeFormat(sABAPTimeFormat);
 		}
+		bInitialized = true;
 	}
 
 	init();
