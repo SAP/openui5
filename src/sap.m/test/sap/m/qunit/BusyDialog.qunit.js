@@ -635,43 +635,37 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test('Open and close before the framework core is initialized', function (assert) {
-
-		var fIsInitialized = Core.isInitialized;
-
-		Core.isInitialized = function () {
-			return false;
-		};
+	QUnit.test('Open and close document load event', function (assert) {
+		this.stub(document, "body").value(null);
 
 		var oBusyDialog = new BusyDialog();
 		oBusyDialog.open();
-		oBusyDialog.close();
 
-		Core.isInitialized = fIsInitialized;
+		assert.ok(oBusyDialog._iOpenTimer, "timeout is started");
+
+		oBusyDialog.close();
 
 		this.clock.tick(500);
 
 		// Assert
 		assert.notOk(oBusyDialog._oDialog.isOpen(), 'the dialog is closed.');
+		assert.notOk(oBusyDialog._iOpenTimer, "timeout is cleaned up");
 	});
 
 	QUnit.test('Open and destroy before the framework core is initialized', function (assert) {
-
-		var fIsInitialized = Core.isInitialized;
-
-		Core.isInitialized = function () {
-			return false;
-		};
+		this.stub(document, "body").value(null);
 
 		var oBusyDialog = new BusyDialog();
 		oBusyDialog.open();
-		oBusyDialog.destroy();
 
-		Core.isInitialized = fIsInitialized;
+		assert.ok(oBusyDialog._iOpenTimer, "timeout is started");
+
+		oBusyDialog.destroy();
 
 		this.clock.tick(500);
 
 		// Assert
 		assert.ok(true, 'no error is thrown');
+		assert.notOk(oBusyDialog._iOpenTimer, "timeout is cleaned up");
 	});
 });
