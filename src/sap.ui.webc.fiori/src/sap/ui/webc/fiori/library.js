@@ -8,10 +8,11 @@
 sap.ui.define([
 		"sap/ui/webc/common/library",
 		"sap/ui/core/Lib",
+		"sap/ui/base/DataType",
 		"./thirdparty/Assets",
 		"./library.config"
 	], // library dependency
-	function(commonLibrary, Library) {
+	function(commonLibrary, Library, DataType) {
 
 		"use strict";
 
@@ -28,6 +29,7 @@ sap.ui.define([
 		 */
 		var thisLib = Library.init({
 			name: "sap.ui.webc.fiori",
+			apiVersion: 2,
 			version: "${version}",
 			dependencies: ["sap.ui.core", "sap.ui.webc.common"],
 			noLibraryCSS: true,
@@ -1337,6 +1339,26 @@ Use to display both a list and a detail page when the user should focus on the l
 			 */
 			SingleStep: "SingleStep"
 		};
+
+		/*
+		 * Register Enums
+		 */
+		DataType.registerEnum("sap.ui.webc.fiori.BarDesign", thisLib.BarDesign);
+		DataType.registerEnum("sap.ui.webc.fiori.FCLLayout", thisLib.FCLLayout);
+		DataType.registerEnum("sap.ui.webc.fiori.IllustrationMessageSize", thisLib.IllustrationMessageSize);
+		DataType.registerEnum("sap.ui.webc.fiori.IllustrationMessageType", thisLib.IllustrationMessageType);
+		DataType.registerEnum("sap.ui.webc.fiori.MediaGalleryItemLayout", thisLib.MediaGalleryItemLayout);
+		DataType.registerEnum("sap.ui.webc.fiori.MediaGalleryLayout", thisLib.MediaGalleryLayout);
+		DataType.registerEnum("sap.ui.webc.fiori.MediaGalleryMenuHorizontalAlign", thisLib.MediaGalleryMenuHorizontalAlign);
+		DataType.registerEnum("sap.ui.webc.fiori.MediaGalleryMenuVerticalAlign", thisLib.MediaGalleryMenuVerticalAlign);
+		DataType.registerEnum("sap.ui.webc.fiori.PageBackgroundDesign", thisLib.PageBackgroundDesign);
+		DataType.registerEnum("sap.ui.webc.fiori.SideContentFallDown", thisLib.SideContentFallDown);
+		DataType.registerEnum("sap.ui.webc.fiori.SideContentPosition", thisLib.SideContentPosition);
+		DataType.registerEnum("sap.ui.webc.fiori.SideContentVisibility", thisLib.SideContentVisibility);
+		DataType.registerEnum("sap.ui.webc.fiori.TimelineLayout", thisLib.TimelineLayout);
+		DataType.registerEnum("sap.ui.webc.fiori.UploadState", thisLib.UploadState);
+		DataType.registerEnum("sap.ui.webc.fiori.ViewSettingsDialogMode", thisLib.ViewSettingsDialogMode);
+		DataType.registerEnum("sap.ui.webc.fiori.WizardContentLayout", thisLib.WizardContentLayout);
 
 		return thisLib;
 
