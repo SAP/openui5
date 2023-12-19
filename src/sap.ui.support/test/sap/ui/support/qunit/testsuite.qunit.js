@@ -79,6 +79,10 @@ sap.ui.define(function() {
 				title: "Integration Tests for SA",
 				module: "sap/ui/support/integration/SupportAssistant.opa.qunit"
 			},
+			"integration/SupportAssistantUIComponent.opa": {
+				title: "Integration Tests for SA",
+				module: "sap/ui/support/integration/SupportAssistantUIComponent.opa.qunit"
+			},
 			"integration/ui/BootingJourney": {
 				title: "Integration Tests for Support Assistant's Booting",
 				module: "sap/ui/support/integration/ui/journeys/BootingJourney"

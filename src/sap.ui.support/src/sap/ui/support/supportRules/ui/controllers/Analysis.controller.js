@@ -105,18 +105,7 @@ sap.ui.define([
 
 		onAfterRendering: function () {
 			if (!this.bInitFired) {
-				var fnThemeChangeHandler = function () {
-					CommunicationBus.publish(channelNames.ON_INIT_ANALYSIS_CTRL);
-					sap.ui.getCore().detachThemeChanged(fnThemeChangeHandler);
-				};
-
-				// If the theme is already applied themeChanged event won't be fired.
-				if (sap.ui.getCore().isThemeApplied()) {
-					CommunicationBus.publish(channelNames.ON_INIT_ANALYSIS_CTRL);
-				} else {
-					sap.ui.getCore().attachThemeChanged(fnThemeChangeHandler);
-				}
-
+				CommunicationBus.publish(channelNames.ON_INIT_ANALYSIS_CTRL);
 				this.bInitFired = true;
 			}
 		},
