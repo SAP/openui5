@@ -9,7 +9,7 @@
 				var aExpectedLibraries = ["sap.ui.core", "sap.m"];
 
 				/**
-				 * @deprecated As of version 1.120
+				 * @deprecated As of version 1.118
 				 * check that SAPUI5 has been loaded
 				 */
 				assert.ok(sap.ui.getCore(), "sap.ui.getCore() returns a value");

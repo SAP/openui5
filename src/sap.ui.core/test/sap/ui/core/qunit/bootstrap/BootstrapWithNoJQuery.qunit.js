@@ -1,8 +1,9 @@
-/*global QUnit, jQuery */
+/*global QUnit */
 (function() {
 	"use strict";
 
 	QUnit.test("After loading sap-ui-core-nojQuery.js ...", function(assert) {
+		const jQuery = globalThis.jQuery; // unavoidable global access
 		assert.strictEqual(typeof jQuery, "function", "...function jQuery should exist");
 		assert.strictEqual(typeof jQuery.prototype.position, "function", "...function jQuery.fn.position should exist"); // extended by jquery-ui-position.js
 		assert.strictEqual(typeof jQuery.ui.position, "object", "...object jQuery.ui.position should exist"); // added with jquery-ui-position.js
