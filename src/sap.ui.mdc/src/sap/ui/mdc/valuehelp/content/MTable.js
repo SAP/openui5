@@ -114,7 +114,7 @@ sap.ui.define([
 			const aItems = oTable.getItems();
 			const aConditions = this.getConditions();
 			const bHideSelection = this.isSingleSelect() && !FilterableListContent.prototype.isSingleSelect.apply(this); // if table is in single selection but Field allows multiple values, don't select items
-			const bUseFirstMatch = this.isTypeahead() && !!this.getFilterValue() && this._iNavigateIndex === -1 && !!this._oFirstItemResult.result && ((this.isSingleSelect() && aConditions.length === 0) || !this.isSingleSelect());
+			const bUseFirstMatch = this.getUseFirstMatch() && this.isTypeahead() && !!this.getFilterValue() && this._iNavigateIndex === -1 && !!this._oFirstItemResult.result && ((this.isSingleSelect() && aConditions.length === 0) || !this.isSingleSelect());
 			const oFirstItem = this._oFirstItemResult.result;
 
 			aItems.forEach((oItem) => {
