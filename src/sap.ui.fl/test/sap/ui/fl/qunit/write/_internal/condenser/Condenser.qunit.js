@@ -1090,14 +1090,7 @@ sap.ui.define([
 
 	QUnit.module("Given a mdc Table", {
 		async before() {
-			const oView = await XMLView.create({
-				viewName: "sap.ui.fl.testResources.condenser.MdcTable",
-				id: "view"
-			});
-			oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "mdcComponentId", undefined, oView);
-		},
-		beforeEach() {
-			this.aChanges = [];
+			// to avoid a timing issue this has to be stubbed before the Table is loaded
 			sandbox.stub(TableDelegate, "fetchProperties").resolves([
 				{
 					name: "column0",
@@ -1122,6 +1115,14 @@ sap.ui.define([
 				}
 			]);
 			sandbox.stub(TableDelegate, "updateBindingInfo");
+			const oView = await XMLView.create({
+				viewName: "sap.ui.fl.testResources.condenser.MdcTable",
+				id: "view"
+			});
+			oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "mdcComponentId", undefined, oView);
+		},
+		beforeEach() {
+			this.aChanges = [];
 		},
 		async afterEach(assert) {
 			await revertMultipleChanges(this.aChanges);
@@ -1133,11 +1134,11 @@ sap.ui.define([
 			assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column0", `${sValueMsg}column0`);
 			assert.strictEqual(aColumns[1].getId(), "view--mdcTable--column1", `${sValueMsg}column1`);
 			assert.strictEqual(aColumns[2].getId(), "view--mdcTable--column2", `${sValueMsg}column2`);
-			sandbox.restore();
 		},
 		after() {
 			oAppComponent._restoreGetAppComponentStub();
 			oAppComponent.destroy();
+			sandbox.restore();
 		}
 	}, function() {
 		// MDC Table move
