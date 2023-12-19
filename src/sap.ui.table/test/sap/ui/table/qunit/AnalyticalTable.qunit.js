@@ -1,8 +1,8 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
-	"sap/ui/core/Element",
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils",
@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/model/type/Float",
 	"sap/ui/table/Row",
 	"sap/ui/table/library",
-	"sap/ui/core/TooltipBase",
+	"sap/ui/core/Element",
 	"sap/ui/core/Core",
 	"sap/m/table/columnmenu/Menu",
 	// provides mock data
@@ -23,8 +23,8 @@ sap.ui.define([
 	// provides mock data
 	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts"
 ], function(
-	Element,
 	TableQUnitUtils,
+	nextUIUpdate,
 	AnalyticalTable,
 	FixedRowMode,
 	TableUtils,
@@ -37,7 +37,7 @@ sap.ui.define([
 	FloatType,
 	Row,
 	library,
-	TooltipBase,
+	Element,
 	Core,
 	ColumnMenu
 ) {
@@ -287,10 +287,10 @@ sap.ui.define([
 	//************** Test Code **************
 
 	QUnit.module("Properties & Functions", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 			this.oTable = createTable.call(this);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -645,23 +645,23 @@ sap.ui.define([
 	});
 
 	QUnit.module("GroupHeaderMenu", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 			this.oTable = createTable.call(this);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
 		}
 	});
 
-	QUnit.test("Mobile", function(assert) {
+	QUnit.test("Mobile", async function(assert) {
 		var done = assert.async();
 
 		var oShowGroupMenuButton = sinon.stub(TableUtils.Grouping, "showGroupMenuButton");
 		oShowGroupMenuButton.returns(true);
 		this.oTable.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		function doTest(oTable) {
 			oTable.$().find(".sapUiTableGroupMenuButton").trigger("tap");
@@ -1666,33 +1666,33 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Rerender while binding/unbinding", function(assert) {
+	QUnit.test("Rerender while binding/unbinding", async function(assert) {
 		var oBindingInfo = this.oTable.getBindingInfo("rows");
 		var that = this;
 
 		this.oTable.unbindRows();
 		this.oTable.invalidate();
-		Core.applyChanges();
-		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Unbind");
-			that.assertNoDataVisibilityChangeCount(assert, 1);
-			that.oTable.invalidate();
-			Core.applyChanges();
-		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Rerender");
-			that.assertNoDataVisibilityChangeCount(assert, 0);
-			that.oTable.bindRows(oBindingInfo);
-			that.oTable.invalidate();
-			Core.applyChanges();
-		}).then(this.oTable.qunit.whenBindingChange).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Bind");
-			that.assertNoDataVisibilityChangeCount(assert, 1);
-			that.oTable.invalidate();
-			Core.applyChanges();
-		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Rerender");
-			that.assertNoDataVisibilityChangeCount(assert, 0);
-		});
+		await this.oTable.qunit.whenBindingChange();
+		await this.oTable.qunit.whenRenderingFinished();
+		TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Unbind");
+		that.assertNoDataVisibilityChangeCount(assert, 1);
+
+		that.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+		TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Rerender");
+		that.assertNoDataVisibilityChangeCount(assert, 0);
+
+		that.oTable.bindRows(oBindingInfo);
+		that.oTable.invalidate();
+		await this.oTable.qunit.whenBindingChange();
+		await this.oTable.qunit.whenRenderingFinished();
+		TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Bind");
+		that.assertNoDataVisibilityChangeCount(assert, 1);
+
+		that.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+		TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Rerender");
+		that.assertNoDataVisibilityChangeCount(assert, 0);
 	});
 
 	QUnit.module("TreeBindingProxy", {

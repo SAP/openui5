@@ -1,19 +1,15 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Element",
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
 	"sap/ui/table/Table",
-	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/model/Filter",
-	"sap/ui/core/Core"
+	"sap/ui/core/Element"
 ], function(
-	Element,
 	TableQUnitUtils,
 	Table,
-	FixedRowMode,
 	Filter,
-	Core
+	Element
 ) {
 	"use strict";
 
@@ -813,32 +809,30 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Rerender while filtering", function(assert) {
+	QUnit.test("Rerender while filtering", async function(assert) {
 		var that = this;
 
 		this.oTable.getBinding().filter(new Filter({path: "Name", operator: "EQ", value1: "DoesNotExist"}));
 		this.oTable.invalidate();
-		Core.applyChanges();
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Filter");
-			that.assertNoDataVisibilityChangeCount(assert, 1);
-			that.oTable.invalidate();
-			Core.applyChanges();
-		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Rerender");
-			that.assertNoDataVisibilityChangeCount(assert, 0);
-			that.oTable.getBinding().filter();
-			that.oTable.invalidate();
-			Core.applyChanges();
-		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Remove Filter");
-			that.assertNoDataVisibilityChangeCount(assert, 1);
-			that.oTable.invalidate();
-			Core.applyChanges();
-		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Rerender");
-			that.assertNoDataVisibilityChangeCount(assert, 0);
-		});
+		await this.oTable.qunit.whenRenderingFinished();
+		TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Filter");
+		that.assertNoDataVisibilityChangeCount(assert, 1);
+
+		that.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+		TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Rerender");
+		that.assertNoDataVisibilityChangeCount(assert, 0);
+
+		that.oTable.getBinding().filter();
+		that.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+		TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Remove Filter");
+		that.assertNoDataVisibilityChangeCount(assert, 1);
+
+		that.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+		TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Rerender");
+		that.assertNoDataVisibilityChangeCount(assert, 0);
 	});
 
 	QUnit.test("Bind/Unbind", function(assert) {
@@ -856,32 +850,30 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Rerender while binding/unbinding", function(assert) {
+	QUnit.test("Rerender while binding/unbinding", async function(assert) {
 		var oBindingInfo = this.oTable.getBindingInfo("rows");
 		var that = this;
 
 		this.oTable.unbindRows();
 		this.oTable.invalidate();
-		Core.applyChanges();
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Unbind");
-			that.assertNoDataVisibilityChangeCount(assert, 1);
-			that.oTable.invalidate();
-			Core.applyChanges();
-		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Rerender");
-			that.assertNoDataVisibilityChangeCount(assert, 0);
-			that.oTable.bindRows(oBindingInfo);
-			that.oTable.invalidate();
-			Core.applyChanges();
-		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Bind");
-			that.assertNoDataVisibilityChangeCount(assert, 1);
-			that.oTable.invalidate();
-			Core.applyChanges();
-		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Rerender");
-			that.assertNoDataVisibilityChangeCount(assert, 0);
-		});
+		await this.oTable.qunit.whenRenderingFinished();
+		TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Unbind");
+		that.assertNoDataVisibilityChangeCount(assert, 1);
+
+		that.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+		TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Rerender");
+		that.assertNoDataVisibilityChangeCount(assert, 0);
+
+		that.oTable.bindRows(oBindingInfo);
+		that.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+		TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Bind");
+		that.assertNoDataVisibilityChangeCount(assert, 1);
+
+		that.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+		TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Rerender");
+		that.assertNoDataVisibilityChangeCount(assert, 0);
 	});
 });

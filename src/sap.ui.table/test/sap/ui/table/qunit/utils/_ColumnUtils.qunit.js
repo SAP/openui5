@@ -2,26 +2,27 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/core/Control",
-	"sap/ui/Device",
-	"sap/ui/core/Core"
-], function(TableQUnitUtils, TableUtils, Table, Column, Control, Device, oCore) {
+	"sap/ui/Device"
+], function(
+	TableQUnitUtils,
+	nextUIUpdate,
+	TableUtils,
+	Table,
+	Column,
+	Control,
+	Device
+) {
 	"use strict";
 
-	// mapping of global function calls
 	var createTables = window.createTables;
 	var destroyTables = window.destroyTables;
-
-	// Shortcuts
 	var ColumnUtils = TableUtils.Column;
 	var TestControl = TableQUnitUtils.TestControl;
-
-	//************************************************************************
-	// Test Code
-	//************************************************************************
 
 	QUnit.module("Misc", {
 		beforeEach: function() {
@@ -501,7 +502,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("isColumnMovable()", function(assert) {
+	QUnit.test("isColumnMovable()", async function(assert) {
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[0]), "Fixed Column");
 		assert.ok(ColumnUtils.isColumnMovable(oTable.getColumns()[1]), "Non-Fixed Column");
 		assert.ok(ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "Non-Fixed Column");
@@ -510,7 +511,7 @@ sap.ui.define([
 
 		oTable.setEnableColumnReordering(false);
 		oTreeTable.setEnableColumnReordering(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[0]), "ColumnReordering Disabled: Fixed Column");
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "ColumnReordering Disabled: Non-Fixed Column");
@@ -526,7 +527,7 @@ sap.ui.define([
 		oTable.setEnableColumnReordering(true);
 		oTreeTable.setEnableColumnReordering(true);
 		oTable.getColumns()[1].setHeaderSpan(2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[1]), "Spanning Column");
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "Spanned Column");
@@ -534,13 +535,13 @@ sap.ui.define([
 		oTable.getColumns()[1].setHeaderSpan([2, 1]);
 		oTable.getColumns()[1].addMultiLabel(new TestControl());
 		oTable.getColumns()[1].addMultiLabel(new TestControl());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[1]), "Spanning Column (Multi Header)");
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "Spanned Column (Multi Header)");
 	});
 
-	QUnit.test("isColumnMovableTo()", function(assert) {
+	QUnit.test("isColumnMovableTo()", async function(assert) {
 		var oColumn = oTable.getColumns()[2];
 		assert.ok(ColumnUtils.isColumnMovable(oColumn), "Ensure column is movable");
 
@@ -548,7 +549,7 @@ sap.ui.define([
 		var i;
 
 		oTable.setEnableColumnReordering(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
 			bExpect = false;
@@ -564,7 +565,7 @@ sap.ui.define([
 		}
 
 		oTable.setEnableColumnReordering(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
 			bExpect = true;
@@ -575,7 +576,7 @@ sap.ui.define([
 		}
 
 		oTable.getColumns()[3].setHeaderSpan(2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
 			bExpect = true;
@@ -588,7 +589,7 @@ sap.ui.define([
 		oTable.getColumns()[3].setHeaderSpan([2, 1]);
 		oTable.getColumns()[3].addMultiLabel(new TestControl());
 		oTable.getColumns()[3].addMultiLabel(new TestControl());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
 			bExpect = true;
@@ -601,7 +602,7 @@ sap.ui.define([
 		oTable.getColumns()[1].setHeaderSpan(2);
 		oTable.getColumns()[3].setHeaderSpan(1);
 		oTable.getColumns()[3].destroyMultiLabels();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oColumn = oTable.getColumns()[4];
 
@@ -614,7 +615,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("moveColumnTo() - Do a move", function(assert) {
+	QUnit.test("moveColumnTo() - Do a move", async function(assert) {
 		assert.expect(4);
 
 		var oColumn = oTable.getColumns()[2];
@@ -626,12 +627,12 @@ sap.ui.define([
 		});
 
 		ColumnUtils.moveColumnTo(oColumn, 4);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oTable.indexOfColumn(oColumn), 3, "Correct Index after move.");
 	});
 
-	QUnit.test("moveColumnTo() - Column not movable", function(assert) {
+	QUnit.test("moveColumnTo() - Column not movable", async function(assert) {
 		assert.expect(2);
 
 		var oColumn = oTable.getColumns()[0];
@@ -642,12 +643,12 @@ sap.ui.define([
 		});
 
 		ColumnUtils.moveColumnTo(oColumn, 4);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oTable.indexOfColumn(oColumn), 0, "Correct Index after move.");
 	});
 
-	QUnit.test("moveColumnTo() - Move to current position", function(assert) {
+	QUnit.test("moveColumnTo() - Move to current position", async function(assert) {
 		assert.expect(2);
 
 		var oColumn = oTable.getColumns()[4];
@@ -658,12 +659,12 @@ sap.ui.define([
 		});
 
 		ColumnUtils.moveColumnTo(oColumn, 4);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oTable.indexOfColumn(oColumn), 4, "Correct Index after move.");
 	});
 
-	QUnit.test("moveColumnTo() - Prevent movement", function(assert) {
+	QUnit.test("moveColumnTo() - Prevent movement", async function(assert) {
 		assert.expect(4);
 
 		var oColumn = oTable.getColumns()[2];
@@ -676,7 +677,7 @@ sap.ui.define([
 		});
 
 		ColumnUtils.moveColumnTo(oColumn, 4);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oTable.indexOfColumn(oColumn), 2, "Correct Index after move.");
 	});
@@ -699,7 +700,7 @@ sap.ui.define([
 		Device.system.desktop = bDesktop;
 	});
 
-	QUnit.test("resizeColumn", function(assert) {
+	QUnit.test("resizeColumn", async function(assert) {
 		oTable.setFixedColumnCount(0);
 		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_1_1"}));
 		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_2_1"}));
@@ -711,7 +712,7 @@ sap.ui.define([
 		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_2"}));
 		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_3"}));
 		oTable.getColumns()[0].setHeaderSpan([3, 2, 1]);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var aVisibleColumns = oTable._getVisibleColumns();
 
@@ -836,7 +837,7 @@ sap.ui.define([
 		assert.ok(oColumnResizeHandler.notCalled, "ColumnResize handler was not called");
 	});
 
-	QUnit.test("getColumnWidth", function(assert) {
+	QUnit.test("getColumnWidth", async function(assert) {
 		var aVisibleColumns = oTable._getVisibleColumns();
 		var iColumnWidth;
 
@@ -855,42 +856,42 @@ sap.ui.define([
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 2), i2emInPixel, "Returned 2em in pixels: " + i2emInPixel);
 
 		aVisibleColumns[3].setVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 3), 100, "Returned 100: Column is not visible and width set to 100px");
 
 		aVisibleColumns[3].setWidth("");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 3), 0, "Returned 0: Column is not visible and width is set to \"\"");
 
 		aVisibleColumns[3].setWidth("auto");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 3), 0, "Returned 0: Column is not visible and width is set to \"auto\"");
 
 		aVisibleColumns[3].setWidth("10%");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 3), 0, "Returned 0: Column is not visible and width is set to \"10%\"");
 
 		aVisibleColumns[4].setWidth("");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		iColumnWidth = aVisibleColumns[4].getDomRef().offsetWidth;
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 4), iColumnWidth,
 			"The width in pixels was correctly retrieved from the DOM in case the column width was set to \"\"");
 
 		aVisibleColumns[4].setWidth("auto");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		iColumnWidth = aVisibleColumns[4].getDomRef().offsetWidth;
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 4), iColumnWidth,
 			"The width in pixels was correctly retrieved from the DOM in case the column width was set to \"auto\"");
 
 		aVisibleColumns[4].setWidth("10%");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		iColumnWidth = aVisibleColumns[4].getDomRef().offsetWidth;
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 4), iColumnWidth,
 			"The width in pixels was correctly retrieved from the DOM in case of a column width specified in percentage");
 	});
 
 	QUnit.module("Fixed Columns", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			createTables();
 			oTable.setFixedColumnCount(0);
 			this.aColumns = oTable.getColumns();
@@ -899,7 +900,7 @@ sap.ui.define([
 				this.aColumns[i].setWidth("100px");
 			}
 			oTable.setWidth(((this.aColumns.length * 100) + 200) + "px");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.aColumns = null;
@@ -923,12 +924,12 @@ sap.ui.define([
 		oTable.addColumn(new Column({
 			label: "Label2",
 			headerSpan: [1, 1],
-			multiLabels: [new TableQUnitUtils.TestControl({text: "Column2Label1"}), new TableQUnitUtils.TestControl({text: "Column2Label2"})]
+			multiLabels: [new TestControl({text: "Column2Label1"}), new TestControl({text: "Column2Label2"})]
 		}));
 		oTable.addColumn(new Column({
 			label: "Label3",
 			headerSpan: [1, 1],
-			multiLabels: [new TableQUnitUtils.TestControl({text: "Column3Label1"}), new TableQUnitUtils.TestControl({text: "Column3Label2"})],
+			multiLabels: [new TestControl({text: "Column3Label1"}), new TestControl({text: "Column3Label2"})],
 			name: "Name"
 		}));
 
@@ -947,10 +948,10 @@ sap.ui.define([
 		assert.strictEqual(ColumnUtils.getColumnWidth(), null, "Returned null: No parameters passed");
 
 		var oLabelA = new TableQUnitUtils.HeightTestControl(),
-			oLabelB = new TableQUnitUtils.TestControl({text: "Column2Label1"}),
-			oLabelC = new TableQUnitUtils.TestControl({text: "Column2Label2"}),
-			oLabelD = new TableQUnitUtils.TestControl({text: "Column3Label1"}),
-			oLabelE = new TableQUnitUtils.TestControl({text: "Column3Label2"});
+			oLabelB = new TestControl({text: "Column2Label1"}),
+			oLabelC = new TestControl({text: "Column2Label2"}),
+			oLabelD = new TestControl({text: "Column3Label1"}),
+			oLabelE = new TestControl({text: "Column3Label2"});
 
 		oTable.removeAllColumns();
 		oTable.addColumn(new Column());

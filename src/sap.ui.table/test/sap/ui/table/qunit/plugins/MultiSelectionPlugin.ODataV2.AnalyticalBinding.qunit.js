@@ -6,17 +6,17 @@ sap.ui.define([
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/AnalyticalColumn",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/core/Core",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
-	"sap/ui/core/qunit/analytics/TBA_ServiceDocument", // provides mock data
-	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts" // provides mock data
+	// provides mock data
+	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
+	// provides mock data
+	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts"
 ], function(
 	TableQUnitUtils,
 	MultiSelectionPlugin,
 	AnalyticalTable,
 	AnalyticalColumn,
 	ODataModel,
-	Core,
 	o4aFakeService
 ) {
 	"use strict";
@@ -184,17 +184,15 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Select all", function(assert) {
+	QUnit.test("Select all", async function(assert) {
 		this.oMultiSelectionPlugin.setLimit(0);
-		Core.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
+		await this.oMultiSelectionPlugin.selectAll();
+		var oBinding = this.oTable.getBinding();
+		var aContexts = oBinding.getContexts(0, 200, 0);
 
-		return this.oMultiSelectionPlugin.selectAll().then(function() {
-			var oBinding = this.oTable.getBinding();
-			var aContexts = oBinding.getContexts(0, 200, 0);
-
-			assert.equal(aContexts.length, 200, "All binding contexts are available");
-			assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");
-		}.bind(this));
+		assert.equal(aContexts.length, 200, "All binding contexts are available");
+		assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");
 	});
 
 	QUnit.test("Select range", function(assert) {
@@ -230,15 +228,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Select all", function(assert) {
+	QUnit.test("Select all", async function(assert) {
 		this.oMultiSelectionPlugin.setLimit(0);
-		Core.applyChanges();
-
-		return this.oMultiSelectionPlugin.selectAll().then(function() {
-			var aContexts = this.oTable.getBinding().getContexts(0, 200, 0);
-
-			assert.equal(aContexts.length, 200, "All binding contexts are available");
-			assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");
-		}.bind(this));
+		await this.oTable.qunit.whenRenderingFinished();
+		await this.oMultiSelectionPlugin.selectAll();
+		var aContexts = this.oTable.getBinding().getContexts(0, 200, 0);
+		assert.equal(aContexts.length, 200, "All binding contexts are available");
+		assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");
 	});
 });

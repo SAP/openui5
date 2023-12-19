@@ -11,8 +11,8 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/core/Control",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
-	"sap/ui/dom/jquery/scrollLeftRTL" // provides jQuery.fn.scrollLeftRTL
+	// provides jQuery.fn.scrollLeftRTL
+	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function(
 	TableQUnitUtils,
 	RowAction,
@@ -23,8 +23,7 @@ sap.ui.define([
 	tableLibrary,
 	Column,
 	Control,
-	jQuery,
-	oCore
+	jQuery
 ) {
 	"use strict";
 
@@ -138,9 +137,7 @@ sap.ui.define([
 		}).then(function() {
 			oTable.getColumns()[1].setWidth("1000px");
 			oTable.getColumns()[3].setWidth("1000px");
-			oCore.applyChanges();
-			return oTable.qunit.whenRenderingFinished();
-		}).then(function() {
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			return test("Focus header cell in column 2 (scrollable column)", oTable.qunit.getColumnHeaderCell(1), 1250, false);
 		}).then(function() {
 			return test("Focus header cell in column 4 (scrollable column)", oTable.qunit.getColumnHeaderCell(3), 150, false);

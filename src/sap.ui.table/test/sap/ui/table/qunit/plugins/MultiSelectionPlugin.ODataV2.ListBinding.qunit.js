@@ -4,14 +4,12 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/test/TestUtils",
-	"sap/ui/core/Core"
+	"sap/ui/test/TestUtils"
 ], function(
 	TableQUnitUtils,
 	MultiSelectionPlugin,
 	ODataModel,
-	TestUtils,
-	Core
+	TestUtils
 ) {
 	"use strict";
 
@@ -117,13 +115,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Select all", function(assert) {
+	QUnit.test("Select all", async function(assert) {
 		this.oMultiSelectionPlugin.setLimit(0);
-		Core.applyChanges();
-
-		return this.oMultiSelectionPlugin.selectAll().then(function() {
-			assertAllContextsAvailable(assert, this.oTable);
-		}.bind(this));
+		await this.oTable.qunit.whenRenderingFinished();
+		await this.oMultiSelectionPlugin.selectAll();
+		assertAllContextsAvailable(assert, this.oTable);
 	});
 
 	QUnit.test("Select range", function(assert) {
@@ -145,13 +141,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Select all", function(assert) {
+	QUnit.test("Select all", async function(assert) {
 		this.oMultiSelectionPlugin.setLimit(0);
-		Core.applyChanges();
-
-		return this.oMultiSelectionPlugin.selectAll().then(function() {
-			assertAllContextsAvailable(assert, this.oTable);
-		}.bind(this));
+		await this.oTable.qunit.whenRenderingFinished();
+		await this.oMultiSelectionPlugin.selectAll();
+		assertAllContextsAvailable(assert, this.oTable);
 	});
 
 	QUnit.test("Select range", function(assert) {
@@ -176,14 +170,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Select all", function(assert) {
+	QUnit.test("Select all", async function(assert) {
 		this.oMultiSelectionPlugin.setLimit(0);
-		Core.applyChanges();
-
-		return this.oMultiSelectionPlugin.selectAll().then(function() {
-			assert.ok(this.oTable.getBinding().getAllCurrentContexts().length < iCount,
-				"Not all binding contexts are available, but at least the Promise resolved");
-		}.bind(this));
+		await this.oTable.qunit.whenRenderingFinished();
+		await this.oMultiSelectionPlugin.selectAll();
+		assert.ok(this.oTable.getBinding().getAllCurrentContexts().length < iCount,
+			"Not all binding contexts are available, but at least the Promise resolved");
 	});
 
 	QUnit.test("Select range", function(assert) {
@@ -214,13 +206,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Select all", function(assert) {
+	QUnit.test("Select all", async function(assert) {
 		this.oMultiSelectionPlugin.setLimit(0);
-		Core.applyChanges();
-
-		return this.oMultiSelectionPlugin.selectAll().then(function() {
-			assertAllContextsAvailable(assert, this.oTable);
-		}.bind(this));
+		await this.oTable.qunit.whenRenderingFinished();
+		await this.oMultiSelectionPlugin.selectAll();
+		assertAllContextsAvailable(assert, this.oTable);
 	});
 
 	QUnit.test("Select range", function(assert) {

@@ -5,15 +5,13 @@ sap.ui.define([
 	"sap/ui/table/rowmodes/Type",
 	"sap/ui/table/rowmodes/Fixed",
 	'sap/ui/Device',
-	"sap/ui/model/Filter",
-	"sap/ui/core/Core"
+	"sap/ui/model/Filter"
 ], function(
 	TableQUnitUtils,
 	RowModeType,
 	FixedRowMode,
 	Device,
-	Filter,
-	oCore
+	Filter
 ) {
 	"use strict";
 
@@ -83,37 +81,32 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Visibility, thumb height and position update", function(assert) {
-		var that = this;
-		var oTable = this.oTable;
-		var oScrollExtension = oTable._getScrollExtension();
+	QUnit.test("Visibility, thumb height and position update", async function(assert) {
+		var oScrollExtension = this.oTable._getScrollExtension();
 		var oVSb = oScrollExtension.getVerticalScrollbar();
 		var oVSbIOS = oVSb.nextSibling;
 		var oVSbThumb = oVSbIOS.firstChild;
-		var oScrollIOSExtension = oTable._getScrollIOSExtension();
+		var oScrollIOSExtension = this.oTable._getScrollIOSExtension();
 		var oTotalRowCountChangeSpy = sinon.spy(oScrollIOSExtension, "onTotalRowCountChanged");
 		var oUpdatePositionSpy = sinon.spy(oScrollIOSExtension, "updateVerticalScrollbarThumbPosition");
 
 		assert.ok(oVSbIOS.parentElement.classList.contains("sapUiTableHidden") && oVSbThumb.style.height === "0px",
 			"Table content fits height -> Vertical scrollbar is not visible");
 
-		oTable.getRowMode().setRowCount(3);
-		oCore.applyChanges();
+		this.oTable.getRowMode().setRowCount(3);
+		await this.oTable.qunit.whenRenderingFinished();
+		oVSbIOS = oVSb.nextSibling;
+		oVSbThumb = oVSbIOS.firstChild;
+		assert.ok(oUpdatePositionSpy.called, "updateVerticalScrollbarThumbPosition has been called");
+		assert.ok(!oVSbIOS.classList.contains("sapUiTableHidden") && oVSbThumb.style.height !== "0px",
+			"Table content does not fit height -> Vertical scrollbar is visible");
+		this.assertThumbHeight(assert);
 
-		return oTable.qunit.whenRenderingFinished().then(function() {
-			oVSbIOS = oVSb.nextSibling;
-			oVSbThumb = oVSbIOS.firstChild;
-			assert.ok(oUpdatePositionSpy.called, "updateVerticalScrollbarThumbPosition has been called");
-			assert.ok(!oVSbIOS.classList.contains("sapUiTableHidden") && oVSbThumb.style.height !== "0px",
-				"Table content does not fit height -> Vertical scrollbar is visible");
-			that.assertThumbHeight(assert);
-
-			oTable.getBinding().filter(new Filter("A", "EQ", "A1"));
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.ok(oTotalRowCountChangeSpy.calledOnce, "onTotalRowCountChanged hook has been called once");
-			assert.ok(oVSbIOS.parentElement.classList.contains("sapUiTableHidden") && oVSbThumb.style.height === "0px",
-				"Table content fits height -> Vertical scrollbar is not visible");
-		});
+		this.oTable.getBinding().filter(new Filter("A", "EQ", "A1"));
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.ok(oTotalRowCountChangeSpy.calledOnce, "onTotalRowCountChanged hook has been called once");
+		assert.ok(oVSbIOS.parentElement.classList.contains("sapUiTableHidden") && oVSbThumb.style.height === "0px",
+			"Table content fits height -> Vertical scrollbar is not visible");
 	});
 
 	QUnit.module("Scrolling", {
