@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/base/config",
 	"sap/base/Log",
 	"sap/base/i18n/LanguageTag",
-	"sap/base/i18n/Localization",
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/date/CalendarType",
 	"sap/base/i18n/date/CalendarWeekNumbering",
@@ -12,7 +11,6 @@ sap.ui.define([
 	BaseConfig,
 	Log,
 	LanguageTag,
-	Localization,
 	Formatting,
 	CalendarType,
 	CalendarWeekNumbering,
@@ -158,24 +156,21 @@ sap.ui.define([
 	});
 
 	QUnit.test("setLanguageTag", function(assert) {
-		assert.expect(8);
+		assert.expect(7);
 		let sExpectedLanguageTag;
-
-		assert.deepEqual(Localization.getLanguageTag(), Formatting.getLanguageTag(),
-			"Formatting and Localization should have identical LangaugeTag if not other LanguageTag was explicitly provided for Formatting.");
-
-		BaseConfig._.invalidate();
-		mConfigStubValues = { sapUiLanguage: "es" };
-		assert.deepEqual(Formatting.getLanguageTag(), new LanguageTag("es"),
-			"getLanguageTag should consider the changed Localization language but there is no change event because there was no 'real' change within Formatting.");
 
 		function formattingChanged(oEvent) {
 			assert.deepEqual(Formatting.getLanguageTag(), new LanguageTag(sExpectedLanguageTag),
 				"getLanguageTag should return new 'sap/base/i18n/LanguageTag' for LanguageTag " + sExpectedLanguageTag);
 			assert.strictEqual(oEvent.languageTag, sExpectedLanguageTag, "Change event should contain the correct language " + sExpectedLanguageTag);
 		}
-
 		Formatting.attachChange(formattingChanged);
+
+		BaseConfig._.invalidate();
+		mConfigStubValues = { sapUiLanguage: "es" };
+		assert.deepEqual(Formatting.getLanguageTag(), new LanguageTag("es-x-sapufmt"),
+			"getLanguageTag should consider the changed Localization language but there is no change event because there was no 'real' change within Formatting.");
+
 		sExpectedLanguageTag = "fr";
 		Formatting.setLanguageTag(sExpectedLanguageTag);
 		// Setting same locale again shouldn't trigger a change event
