@@ -48,6 +48,13 @@ sap.ui.define(function() {
 			"security/FrameOptions": {
 				title: "sap.ui.security.FrameOptions"
 			},
+			"security/Security": {
+				title: "sap/ui/security/Security",
+				coverage: {
+					instrumenter: "istanbul",
+					only: ["sap/ui/security/Security"]
+				}
+			},
 			/**
 			 * @deprecated since 1.58
 			 */

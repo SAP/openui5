@@ -1,4 +1,9 @@
 /*global QUnit, sinon */
+
+/**
+ * @fileoverview
+ * @deprecated
+ */
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/config",

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview
+ * @deprecated
+ */
 (function() {
 	"use strict";
 

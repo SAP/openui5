@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/base/config",
 	"sap/base/Log",
 	"sap/base/i18n/LanguageTag",
+	"sap/base/i18n/Localization",
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/date/CalendarType",
 	"sap/base/i18n/date/CalendarWeekNumbering",
@@ -11,6 +12,7 @@ sap.ui.define([
 	BaseConfig,
 	Log,
 	LanguageTag,
+	Localization,
 	Formatting,
 	CalendarType,
 	CalendarWeekNumbering,
@@ -28,6 +30,7 @@ sap.ui.define([
 
 	QUnit.module("Formatting getter", {
 		beforeEach: function() {
+			BaseConfig._.invalidate();
 			mConfigStubValues = {};
 			oSinonSandbox = sinon.createSandbox();
 			oURLConfigurationProviderStub = oSinonSandbox.stub(URLConfigurationProvider, "get").callsFake(function(sKey) {
@@ -140,27 +143,59 @@ sap.ui.define([
 			"Warning logged for invalid value of parameter 'calendarType'");
 	});
 
-	QUnit.module("Formatting setter");
+	QUnit.module("Formatting setter", {
+		beforeEach: function() {
+			BaseConfig._.invalidate();
+			mConfigStubValues = {};
+			oSinonSandbox = sinon.createSandbox();
+			oURLConfigurationProviderStub = oSinonSandbox.stub(URLConfigurationProvider, "get").callsFake(function(sKey) {
+				return mConfigStubValues.hasOwnProperty(sKey) ? mConfigStubValues[sKey] : oURLConfigurationProviderStub.wrappedMethod.call(this, sKey);
+			});
+		},
+		afterEach: function() {
+			oSinonSandbox.restore();
+		}
+	});
 
 	QUnit.test("setLanguageTag", function(assert) {
-		assert.expect(2);
+		assert.expect(8);
+		let sExpectedLanguageTag;
+
+		assert.deepEqual(Localization.getLanguageTag(), Formatting.getLanguageTag(),
+			"Formatting and Localization should have identical LangaugeTag if not other LanguageTag was explicitly provided for Formatting.");
+
+		BaseConfig._.invalidate();
+		mConfigStubValues = { sapUiLanguage: "es" };
+		assert.deepEqual(Formatting.getLanguageTag(), new LanguageTag("es"),
+			"getLanguageTag should consider the changed Localization language but there is no change event because there was no 'real' change within Formatting.");
 
 		function formattingChanged(oEvent) {
-			assert.deepEqual(Formatting.getLanguageTag(), new LanguageTag("fr"),
-				"getLanguageTag should return new 'sap/base/i18n/LanguageTag' for LanguageTag 'fr'");
-			assert.strictEqual(oEvent.languageTag, "fr", "Change event should contain the correct language 'fr'");
+			assert.deepEqual(Formatting.getLanguageTag(), new LanguageTag(sExpectedLanguageTag),
+				"getLanguageTag should return new 'sap/base/i18n/LanguageTag' for LanguageTag " + sExpectedLanguageTag);
+			assert.strictEqual(oEvent.languageTag, sExpectedLanguageTag, "Change event should contain the correct language " + sExpectedLanguageTag);
 		}
 
 		Formatting.attachChange(formattingChanged);
-		Formatting.setLanguageTag("fr");
+		sExpectedLanguageTag = "fr";
+		Formatting.setLanguageTag(sExpectedLanguageTag);
 		// Setting same locale again shouldn't trigger a change event
-		Formatting.setLanguageTag("fr");
+		Formatting.setLanguageTag(sExpectedLanguageTag);
+
+		sExpectedLanguageTag = "it";
+		Formatting.setLanguageTag(new LanguageTag(sExpectedLanguageTag));
+
+		assert.throws(() => {
+			Formatting.setLanguageTag('6N');
+		}, new TypeError("vLanguageTag must be a BCP47 language tag or Java Locale id or null"), "setting an invalid (non-BCP-47) format locale should cause an error");
+		assert.throws(() => {
+			Formatting.setLanguageTag(new Date());
+		}, new TypeError("vLanguageTag must be a BCP47 language tag or Java Locale id or null"), "setting a non-string value as format locale should cause an error");
 
 		Formatting.detachChange(formattingChanged);
 	});
 
 	QUnit.test("setABAPDateFormat", function(assert) {
-		assert.expect(6);
+		assert.expect(24);
 		function test(oEvent) {
 			assert.strictEqual(oEvent["dateFormats-medium"], "yyyy/MM/dd", "dateFormat event parameter set correctly");
 			assert.strictEqual(oEvent["dateFormats-short"], "yyyy/MM/dd", "dateFormat event parameter set correctly");
@@ -174,6 +209,72 @@ sap.ui.define([
 		// Setting same format again shouldn't trigger a change event
 		Formatting.setABAPDateFormat("b");
 		Formatting.detachChange(test);
+
+		BaseConfig._.invalidate();
+		mConfigStubValues = {
+			"sapUiLanguage": "ar_SA"
+		};
+
+		assert.equal(Formatting.getCalendarType(), CalendarType.Islamic, "The default calendar type for ar_SA is islamic");
+
+		Formatting.setABAPDateFormat("1");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The legacy date format '1' changes the calendar type to gregorian");
+
+		Formatting.setABAPDateFormat("2");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The legacy date format '2' changes the calendar type to gregorian");
+
+		Formatting.setABAPDateFormat("3");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The legacy date format '3' changes the calendar type to gregorian");
+
+		Formatting.setABAPDateFormat("4");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The legacy date format '4' changes the calendar type to gregorian");
+
+		Formatting.setABAPDateFormat("5");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The legacy date format '5' changes the calendar type to gregorian");
+
+		Formatting.setABAPDateFormat("6");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The legacy date format '6' changes the calendar type to gregorian");
+
+		Formatting.setABAPDateFormat(null);
+		assert.equal(Formatting.getCalendarType(), CalendarType.Islamic, "The default calendar type for ar_SA is islamic");
+
+		BaseConfig._.invalidate();
+		mConfigStubValues = {
+			"sapUiLanguage": "en_US"
+		};
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The default calendar type for en_US is gregorian");
+
+		Formatting.setABAPDateFormat("A");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+
+		Formatting.setCalendarType(CalendarType.Gregorian);
+		assert.equal(Formatting.getCalendarType(), CalendarType.Gregorian, "The calendar type is modified back to gregorian via calling setCalendarType");
+
+		Formatting.setCalendarType(null);
+		Formatting.setABAPDateFormat("B");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Islamic, "The legacy date format 'B' changes the calendar type to islamic");
+
+		Formatting.setABAPDateFormat("7");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Japanese, "The legacy date format '7' changes the calendar type to japanese");
+
+		Formatting.setABAPDateFormat("A");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+		Formatting.setABAPDateFormat("8");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Japanese, "The legacy date format '8' changes the calendar type to japanese");
+
+		Formatting.setABAPDateFormat("A");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+		Formatting.setABAPDateFormat("9");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Japanese, "The legacy date format '9' changes the calendar type to japanese");
+
+		Formatting.setABAPDateFormat("C");
+		assert.equal(Formatting.getCalendarType(), CalendarType.Persian, "The legacy date format 'C' changes the calendar type to persian");
+
+		// Reset
+		Formatting.setCalendarType(null);
+		// Set ABAPDateFormat to '2' because deleting writeable instance isn't possible
+		// and '2' reflects the initially provided URL parameter
+		Formatting.setABAPDateFormat("2");
 	});
 
 	QUnit.test("setABAPTimeFormat", function(assert) {
@@ -192,6 +293,10 @@ sap.ui.define([
 		// Setting same format again shouldn't trigger a change event
 		Formatting.setABAPTimeFormat("0");
 		Formatting.detachChange(test);
+
+		// Set ABAPTimeFormat to '3' because deleting writeable instance isn't possible
+		// and '3' reflects the initially provided URL parameter
+		Formatting.setABAPTimeFormat("3");
 	});
 
 	QUnit.test("setABAPNumberFormat", function(assert) {
@@ -209,6 +314,10 @@ sap.ui.define([
 		// Setting same type again shouldn't trigger a change event
 		Formatting.setABAPNumberFormat("y");
 		Formatting.detachChange(test);
+
+		// Set ABAPNumberFormat to 'X' because deleting writeable instance isn't possible
+		// and 'X' reflects the initially provided URL parameter
+		Formatting.setABAPNumberFormat("X");
 	});
 
 	QUnit.test("setTrailingCurrencyCode", function(assert) {
@@ -256,8 +365,11 @@ sap.ui.define([
 		// Setting same locale again shouldn't trigger a change event
 		Formatting.setCalendarType(CalendarType.Japanese);
 
-		sExpectedCalendarType = CalendarType.Islamic;
+		sExpectedCalendarType = CalendarType.Gregorian;
 		Formatting.setCalendarType("invalidCalendarType");
+
+		sExpectedCalendarType = CalendarType.Gregorian;
+		Formatting.setCalendarType(null);
 
 		Formatting.detachChange(formattingChanged);
 	});
@@ -279,5 +391,143 @@ sap.ui.define([
 
 		Formatting.setCustomIslamicCalendarData(aData);
 		assert.deepEqual(Formatting.getCustomIslamicCalendarData(), aData, "The customizing data set can be retrieved");
+	});
+
+	QUnit.test("getCustomUnits, setCustomUnits and addCustomUnits", (assert) => {
+		assert.expect(7);
+		assert.strictEqual(Formatting.getCustomUnits(), undefined, "By default there shouldn't be any customUnits");
+		let oExpectedCustomUnits;
+		let oExpectedCustomUnitsEvent;
+
+		function formattingChanged(oEvent) {
+			assert.deepEqual(Formatting.getCustomUnits(), oExpectedCustomUnits, "getCustomUnits should return expected value '" + JSON.stringify(oExpectedCustomUnits) + "'");
+			assert.deepEqual(oEvent.units, oExpectedCustomUnitsEvent, "Change event should contain the correct customUnits '" + JSON.stringify(oExpectedCustomUnits) + "'");
+		}
+		Formatting.attachChange(formattingChanged);
+
+		oExpectedCustomUnits = {
+			"BAG": {
+				"displayName": "Bag",
+				"unitPattern-count-one": "{0} bag",
+				"unitPattern-count-other": "{0} bags"
+			}
+		};
+		oExpectedCustomUnitsEvent = {
+			"short": oExpectedCustomUnits
+		};
+		Formatting.addCustomUnits(oExpectedCustomUnits);
+
+		oExpectedCustomUnits = {
+			"BOTTLE": {
+				"displayName": "Bottle",
+				"unitPattern-count-one": "{0} bottle",
+				"unitPattern-count-other": "{0} bottles"
+			}
+		};
+		oExpectedCustomUnitsEvent = {
+			"short": oExpectedCustomUnits
+		};
+		Formatting.setCustomUnits(oExpectedCustomUnits);
+
+		oExpectedCustomUnits = {
+			"BAG": {
+				"displayName": "Bag",
+				"unitPattern-count-one": "{0} bag",
+				"unitPattern-count-other": "{0} bags"
+			},
+			"BOTTLE": {
+				"displayName": "Bottle",
+				"unitPattern-count-one": "{0} bottle",
+				"unitPattern-count-other": "{0} bottles"
+			}
+		};
+		oExpectedCustomUnitsEvent = {
+			"short": oExpectedCustomUnits
+		};
+		Formatting.addCustomUnits({
+			"BAG": {
+				"displayName": "Bag",
+				"unitPattern-count-one": "{0} bag",
+				"unitPattern-count-other": "{0} bags"
+			}
+		});
+
+		Formatting.detachChange(formattingChanged);
+	});
+
+	QUnit.test("getUnitMappings, setUnitMappings and addUnitMappings", (assert) => {
+		assert.expect(7);
+		assert.strictEqual(Formatting.getUnitMappings(), undefined, "By default there shouldn't be any UnitMappings");
+		let oExpectedUnitMappings;
+
+		function formattingChanged(oEvent) {
+			assert.deepEqual(Formatting.getUnitMappings(), oExpectedUnitMappings, "getUnitMappings should return expected value '" + JSON.stringify(oExpectedUnitMappings) + "'");
+			assert.deepEqual(oEvent.unitMappings, oExpectedUnitMappings, "Change event should contain the correct unitMappings '" + JSON.stringify(oExpectedUnitMappings) + "'");
+		}
+		Formatting.attachChange(formattingChanged);
+
+		oExpectedUnitMappings = {
+			"kitties": "cats"
+		};
+		Formatting.addUnitMappings(oExpectedUnitMappings);
+
+		oExpectedUnitMappings = {
+			"doggies": "dogs"
+		};
+		Formatting.setUnitMappings(oExpectedUnitMappings);
+
+		oExpectedUnitMappings = {
+			"doggies": "dogs",
+			"kitties": "cats"
+		};
+		Formatting.addUnitMappings({
+			"kitties": "cats"
+		});
+
+		Formatting.detachChange(formattingChanged);
+	});
+
+	QUnit.test("getCustomCurrencies, setCustomCurrencies and addCustomCurrencies", (assert) => {
+		assert.expect(7);
+		assert.strictEqual(Formatting.getCustomCurrencies(), undefined, "By default there shouldn't be any customCurrencies");
+		let oExpectedCustomCurrencies;
+
+		function formattingChanged(oEvent) {
+			assert.deepEqual(Formatting.getCustomCurrencies(), oExpectedCustomCurrencies, "getCustomCurrencies should return expected value '" + JSON.stringify(oExpectedCustomCurrencies) + "'");
+			assert.deepEqual(oEvent.currency, oExpectedCustomCurrencies, "Change event should contain the correct customCurrencies '" + JSON.stringify(oExpectedCustomCurrencies) + "'");
+		}
+		Formatting.attachChange(formattingChanged);
+
+		oExpectedCustomCurrencies = {
+			"MyCoin": {
+				"symbol": "MC"
+			}
+		};
+		Formatting.addCustomCurrencies(oExpectedCustomCurrencies);
+
+		oExpectedCustomCurrencies = {
+			"BitCoin": {
+				"symbol": "BC",
+				"digits": 3
+			}
+		};
+		Formatting.setCustomCurrencies(oExpectedCustomCurrencies);
+
+		oExpectedCustomCurrencies = {
+			"MyCoin": {
+				"symbol": "MC"
+			},
+			"BitCoin": {
+				"symbol": "BC",
+				"digits": 3
+			}
+		};
+		Formatting.addCustomCurrencies({
+			"MyCoin": {
+				"symbol": "MC"
+			}
+		});
+
+		Formatting.detachChange(formattingChanged);
 	});
 });
