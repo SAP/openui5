@@ -6,12 +6,11 @@
  * Initialization Code and shared classes of library sap.uxap.
  */
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/ui/base/DataType",
 	"sap/ui/Device",
+	"sap/ui/base/DataType",
+	"sap/ui/base/Object",
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/base/Object",
 	// library dependency
 	"sap/ui/core/library",
 	// library dependency
@@ -20,7 +19,7 @@ sap.ui.define([
 	"sap/m/library",
 	// library dependency
 	"sap/ui/layout/library"
-], function(Core, DataType, Device, Library, jQuery, BaseObject) {
+], function(Device, DataType, BaseObject, Library, jQuery) {
 	"use strict";
 
 	/**
@@ -35,6 +34,7 @@ sap.ui.define([
 	 */
 	var thisLib = Library.init({
 		name: "sap.uxap",
+		apiVersion: 2,
 		dependencies: ["sap.ui.core", "sap.f", "sap.m", "sap.ui.layout"],
 		designtime: "sap/uxap/designtime/library.designtime",
 		types: [
@@ -147,6 +147,8 @@ sap.ui.define([
 		None: "None"
 	};
 
+	DataType.registerEnum("sap.uxap.BlockBaseFormAdjustment", thisLib.BlockBaseFormAdjustment);
+
 	/**
 	 * Used by the <code>sap.uxap.component.Component</code> how to initialize the <code>ObjectPageLayout</code> sections and subsections.
 	 *
@@ -169,6 +171,9 @@ sap.ui.define([
 		JsonModel: "JsonModel"
 
 	};
+
+	DataType.registerEnum("sap.uxap.ObjectPageConfigurationMode", thisLib.ObjectPageConfigurationMode);
+
 	/**
 	 * Used by the <code>ObjectPageHeader</code> control to define which design to use.
 	 *
@@ -192,6 +197,9 @@ sap.ui.define([
 		Dark: "Dark"
 
 	};
+
+	DataType.registerEnum("sap.uxap.ObjectPageHeaderDesign", thisLib.ObjectPageHeaderDesign);
+
 	/**
 	 * Used by the <code>ObjectPageHeader</code> control to define which shape to use for the image.
 	 *
@@ -214,6 +222,9 @@ sap.ui.define([
 		Square: "Square"
 
 	};
+
+	DataType.registerEnum("sap.uxap.ObjectPageHeaderPictureShape", thisLib.ObjectPageHeaderPictureShape);
+
 	/**
 	 * Used by the <code>ObjectPagSubSection</code> control to define which layout to apply.
 	 *
@@ -236,6 +247,9 @@ sap.ui.define([
 		TitleOnLeft: "TitleOnLeft"
 
 	};
+
+	DataType.registerEnum("sap.uxap.ObjectPageSubSectionLayout", thisLib.ObjectPageSubSectionLayout);
+
 	/**
 	 * Used by the <code>ObjectPageLayout</code> control to define which layout to use (either Collapsed or Expanded).
 	 *
@@ -258,6 +272,8 @@ sap.ui.define([
 		Expanded: "Expanded"
 
 	};
+
+	DataType.registerEnum("sap.uxap.ObjectPageSubSectionMode", thisLib.ObjectPageSubSectionMode);
 
 	/**
 	 * Used by the <code>ObjectSectionBase</code> control to define the importance of the content contained in it.
@@ -287,6 +303,8 @@ sap.ui.define([
 		 */
 		High: "High"
 	};
+
+	DataType.registerEnum("sap.uxap.Importance", thisLib.Importance);
 
 	/**
 	 *
