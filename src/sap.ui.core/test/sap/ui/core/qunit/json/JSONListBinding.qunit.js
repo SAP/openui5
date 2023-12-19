@@ -125,7 +125,6 @@ sap.ui.define([
 		};
 		oModel = new JSONModel();
 		oModel.setData(testData);
-		sap.ui.getCore().setModel(oModel);
 
 	}
 

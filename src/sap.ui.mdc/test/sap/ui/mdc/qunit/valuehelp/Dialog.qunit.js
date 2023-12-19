@@ -22,7 +22,7 @@ sap.ui.define([
 	"sap/base/strings/formatMessage",
 	"sap/base/util/merge",
 	"sap/m/library",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	ControlBehavior,
 	Library,
@@ -41,7 +41,7 @@ sap.ui.define([
 	formatMessage,
 	merge,
 	mLibrary,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -245,7 +245,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("assigned to ValueHelp", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			oType = new StringType();
 			oAdditionalType = new StringType();
 
@@ -277,7 +277,7 @@ sap.ui.define([
 				return oField;
 			};
 			oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: _teardown
 	});

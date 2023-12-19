@@ -7,10 +7,6 @@ sap.ui.define(function() {
 
 	QUnit.module("window.assert");
 
-	QUnit.test("set by qunit-junit (clean)", function(assert) {
-		assert.equal(typeof window.assert, "object", "window.assert is an object!");
-	});
-
 	QUnit.test("overridden by external script (jQuery.sap.require)", function(assert) {
 		var done = assert.async();
 		sap.ui.require(["testdata/core/QUnitExt"], function(){
@@ -40,9 +36,4 @@ sap.ui.define(function() {
 			});
 		});
 	});
-
-	QUnit.test("set by qunit-junit (polluted)", function(assert) {
-		assert.ok(typeof window.assert === "object", "window.assert is an object!");
-	});
-
 });

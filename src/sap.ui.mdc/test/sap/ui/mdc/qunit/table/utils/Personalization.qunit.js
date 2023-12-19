@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
 	"sap/m/Text",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/util/Deferred"
 ], function(
 	TableQUnitUtils,
@@ -17,7 +17,7 @@ sap.ui.define([
 	Table,
 	Column,
 	Text,
-	Core,
+	nextUIUpdate,
 	Deferred
 ) {
 	"use strict";
@@ -69,9 +69,9 @@ sap.ui.define([
 				return this.oTable.initialized();
 			}.bind(this));
 		},
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oUiComponentContainer.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			return this.oTable.getEngine().reset(this.oTable, this.oTable.getActiveP13nModes()).catch(function() {

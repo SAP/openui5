@@ -1,10 +1,10 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/Context"
+	"sap/ui/model/Context",
+	"sap/ui/model/json/JSONModel"
 ], function(
-	JSONModel,
-	Context
+	Context,
+	JSONModel
 ) {
 	"use strict";
 
@@ -24,10 +24,8 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oModel = new JSONModel();
 			this.oModel.setData(testData);
-			sap.ui.getCore().setModel(this.oModel);
 		},
 		afterEach: function() {
-			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
 		},
 		createPropertyBindings: function(sPath, sProperty, oContext) {

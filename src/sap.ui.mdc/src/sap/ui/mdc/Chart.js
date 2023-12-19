@@ -1438,6 +1438,7 @@ sap.ui.define([
 			Control.prototype.exit.apply(this, arguments);
 
 			this._oObserver?.destroy();
+			this._oBreadcrumbs = undefined;
 		};
 
 		/**

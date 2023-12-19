@@ -7,12 +7,12 @@ sap.ui.define([
 	"sap/ui/mdc/field/CustomFieldInfo",
 	"sap/ui/mdc/field/FieldInfoBase",
 	"sap/ui/core/Icon",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 		CustomFieldInfo,
 		FieldInfoBase,
 		Icon,
-		oCore
+		nextUIUpdate
 	) {
 	"use strict";
 
@@ -28,7 +28,7 @@ sap.ui.define([
 	/* use dummy control to simulate Field */
 
 	QUnit.module("FieldInfoBase", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			oField = new Icon("I1", {
 				src: "sap-icon://sap-ui5"
 			});
@@ -38,7 +38,7 @@ sap.ui.define([
 			});
 			sinon.stub(oFieldInfoBase, "checkDirectNavigation").returns(Promise.resolve(false));
 			oField.addDependent(oFieldInfoBase);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			oFieldInfoBase.destroy();
@@ -93,7 +93,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("open", function(assert) {
+	QUnit.test("open", async function(assert) {
 
 		const oContent = new Icon("I2", {
 			src: "sap-icon://sap-ui5"
@@ -102,7 +102,7 @@ sap.ui.define([
 		sinon.stub(oFieldInfoBase, "isTriggerable").returns(Promise.resolve(true));
 
 		const oPromise = oFieldInfoBase.open();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
 		const fnDone = assert.async();
@@ -145,7 +145,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("CustomFieldInfo", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			oField = new Icon("I1", {
 				src: "sap-icon://sap-ui5"
 			});
@@ -155,7 +155,7 @@ sap.ui.define([
 			});
 			sinon.stub(oFieldInfoBase, "checkDirectNavigation").returns(Promise.resolve(false));
 			oField.addDependent(oFieldInfoBase);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			oFieldInfoBase.destroy();
@@ -166,7 +166,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("without content", function(assert) {
+	QUnit.test("without content", async function(assert) {
 
 		const fnDone = assert.async();
 		oFieldInfoBase.isTriggerable().then(function(bTriggerable) {
@@ -179,7 +179,7 @@ sap.ui.define([
 			fnDone2();
 		});
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone3 = assert.async();
 		oFieldInfoBase.open().then(function() {
@@ -192,7 +192,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with content", function(assert) {
+	QUnit.test("with content", async function(assert) {
 		const oContent = new Icon("I2", {
 			src: "sap-icon://sap-ui5"
 		});
@@ -209,7 +209,7 @@ sap.ui.define([
 			assert.notOk(sHref, "getTriggerHref");
 			fnDone2();
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const fnDone3 = assert.async();
 		oFieldInfoBase.open().then(function() {

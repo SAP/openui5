@@ -5,8 +5,8 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/P13nBuilder",
 	"sap/m/VBox",
 	"sap/m/Input",
-	"sap/ui/core/Core"
-], function(Element, GroupView, P13nBuilder, VBox, Input, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Element, GroupView, P13nBuilder, VBox, Input, nextUIUpdate) {
 	"use strict";
 
 	const aVisible = ["key1", "key2", "key3"];
@@ -46,7 +46,7 @@ sap.ui.define([
 	];
 
 	QUnit.module("API Tests", {
-		beforeEach: function(){
+		beforeEach: async function(){
 			this.aMockInfo = aInfoData;
 			this.oGroupView = new GroupView();
 
@@ -64,7 +64,7 @@ sap.ui.define([
 			this.oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, fnEnhancer, true);
 
 			this.oGroupView.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function(){
 			this.sDefaultGroup = null;

@@ -33,7 +33,7 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/p13n/Engine",
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment"
 ], function(
@@ -64,7 +64,7 @@ sap.ui.define([
 	ScrollContainer,
 	KeyCodes,
 	coreLibrary,
-	oCore,
+	nextUIUpdate,
 	Engine,
 	createAppEnvironment
 ) {
@@ -1134,7 +1134,7 @@ sap.ui.define([
 
 	}
 
-	QUnit.test("navigate", function(assert) {
+	QUnit.test("navigate", async function(assert) {
 
 		bIsOpen = true; // test for open navigation (for closed is tested later)
 		const oScrollContainer = new ScrollContainer(); // to test scrolling
@@ -1143,7 +1143,7 @@ sap.ui.define([
 			return oScrollContainer.getUIArea();
 		};
 		oScrollContainer.placeAt("content"); // render ScrollContainer
-		oCore.applyChanges();
+		await nextUIUpdate();
 		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
 		sinon.spy(oTable, "scrollToIndex");
 
@@ -1188,7 +1188,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("navigate for multi-value", function(assert) {
+	QUnit.test("navigate for multi-value", async function(assert) {
 
 		const oScrollContainer = new ScrollContainer(); // to test scrolling
 		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
@@ -1196,7 +1196,7 @@ sap.ui.define([
 			return oScrollContainer.getUIArea();
 		};
 		oScrollContainer.placeAt("content"); // render ScrollContainer
-		oCore.applyChanges();
+		await nextUIUpdate();
 		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
 
 		oTable.setMode(ListMode.MultiSelect);
@@ -1332,7 +1332,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("navigate grouped table with async ListBinding (open)", function(assert) {
+	QUnit.test("navigate grouped table with async ListBinding (open)", async function(assert) {
 
 		oModel.setData({
 			items: [
@@ -1353,7 +1353,7 @@ sap.ui.define([
 			return oScrollContainer.getUIArea();
 		};
 		oScrollContainer.placeAt("content"); // render ScrollContainer
-		oCore.applyChanges();
+		await nextUIUpdate();
 		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
 		sinon.spy(oTable, "scrollToIndex");
 

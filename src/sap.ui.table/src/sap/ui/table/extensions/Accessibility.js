@@ -1198,34 +1198,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Is called by the column whenever the sort or filter state is changed and updates the corresponding ARIA attributes.
-	 *
-	 * @param {sap.ui.table.Column} oColumn Instance of the column.
-	 * @public
-	 */
-	AccExtension.prototype.updateAriaStateOfColumn = function(oColumn) {
-		if (!this._accMode) {
-			return;
-		}
-
-		var mAttributes = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.COLUMNHEADER, {
-			headerId: oColumn.getId(),
-			column: oColumn,
-			index: this.getTable().indexOfColumn(oColumn)
-		});
-
-		var aHeaders = ExtensionHelper.getRelevantColumnHeaders(this.getTable(), oColumn);
-		for (var i = 0; i < aHeaders.length; i++) {
-			var $Header = jQuery(document.getElementById(aHeaders[i]));
-			if (!$Header.attr("colspan")) {
-				$Header.attr({
-					"aria-sort": mAttributes["aria-sort"] || null
-				});
-			}
-		}
-	};
-
-	/**
 	 * Is called by the row whenever the selection state is changed and updates the corresponding ARIA attributes and tooltips.
 	 *
 	 * @param {sap.ui.table.Row} oRow Instance of the row.

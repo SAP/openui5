@@ -105,17 +105,11 @@ sap.ui.define([
 			 * @private
 			 */
 			_onSampleMatched: function (event) {
-				var bShouldRedirect = new URLSearchParams(window.location.search).has("dk-sample-standalone");
 
 				this._sId = event.getParameter("arguments").sampleId;
 				this._sEntityId = event.getParameter("arguments").entityId;
 
 				this.byId("page").setBusy(true);
-
-				// check whether to open sample standalone
-				if (bShouldRedirect) {
-					this._handleRedirect();
-				}
 
 				if (sampleForwardingConfig[this._sId]) {
 					return this.oRouter.navTo("sample", {
@@ -130,7 +124,9 @@ sap.ui.define([
 			},
 
 			_loadSample: function(oData) {
-				var oPage = this._getPage(),
+				var searchParams = window.location.search,
+					bShouldRedirect = searchParams.includes("dk-sample-standalone"),
+					oPage = this._getPage(),
 					oModelData = this.oModel.getData(),
 					oSample = oData.samples[this._sId],
 					oSampleContext;
@@ -149,6 +145,12 @@ sap.ui.define([
 				this._sLib = oSample.library;
 
 				oModelData.sEntityId = this.entityId;
+
+				// check whether to open sample standalone
+				if (bShouldRedirect) {
+					this._handleRedirect();
+				}
+
 
 				// If we are in a scenario without contexts - this is the case for tutorials
 				if (oSample.previousSampleId || oSample.nextSampleId) {

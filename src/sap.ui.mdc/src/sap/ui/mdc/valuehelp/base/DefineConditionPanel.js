@@ -424,7 +424,7 @@ sap.ui.define([
 		updateDefineConditions: function() {
 			const aConditions = _getDefineConditions.call(this);
 
-			_addStaticText.call(this, aConditions, true, false);
+			_addStaticText.call(this, aConditions, true, this._bUpdateType);
 
 			if (aConditions.length === 0) {
 				this.addDummyCondition();

@@ -544,20 +544,16 @@ sap.ui.define([
 		return bIsGroupableByMenu;
 	};
 
-	Column.prototype.setSortOrder = function(sSortOrder) {
-		this.setProperty("sortOrder", sSortOrder, true);
-		this._updateIcons();
-		return this;
-	};
-
-	Column.prototype.setFiltered = function(bFlag) {
-		this.setProperty("filtered", bFlag, true);
-		this._updateIcons();
-		return this;
+	Column.prototype.setFilterValue = function(sValue) {
+		return this.setProperty("filterValue", sValue, true);
 	};
 
 	Column.prototype.setFilterOperator = function(sValue) {
 		return this.setProperty("filterOperator", sValue, true);
+	};
+
+	Column.prototype.setDefaultFilterOperator = function(sValue) {
+		return this.setProperty("defaultFilterOperator", sValue, true);
 	};
 
 	Column.prototype._openHeaderMenu = function(oDomRef) {
@@ -611,7 +607,7 @@ sap.ui.define([
 			oTable.pushSortedColumn(this, bAdd);
 		}
 
-		this.setProperty("sortOrder", sSortOrder, true);
+		this.setSortOrder(sSortOrder);
 		this._updateSorters();
 	};
 
@@ -626,8 +622,7 @@ sap.ui.define([
 			if (aSortedColumns.indexOf(aColumns[i]) < 0) {
 				// Column is not sorted anymore. Reset to default and remove sorter.
 				/* -------------------------------------- */
-				aColumns[i].setProperty("sortOrder", SortOrder.None, true);
-				aColumns[i]._updateIcons(true);
+				aColumns[i].resetProperty("sortOrder");
 				delete _private(aColumns[i]).oSorter;
 			}
 		}
@@ -637,13 +632,6 @@ sap.ui.define([
 			_private(this).oSorter = new Sorter(this.getSortProperty(), sSortOrder === SortOrder.Descending);
 		}
 
-		// Make sure sorted columns show the sort icon.
-		for (let i = 0, l = aSortedColumns.length; i < l; i++) {
-			aSortedColumns[i]._updateIcons(true);
-		}
-
-		oTable._resetColumnHeaderHeights();
-		oTable._updateRowHeights(oTable._collectRowHeights(true), true);
 		this._applySorters();
 	};
 
@@ -662,34 +650,6 @@ sap.ui.define([
 		});
 
 		oBinding.sort(aSorters);
-	};
-
-	Column.prototype._updateIcons = function(bSkipUpdateRowHeights) {
-		var oTable = this._getTable();
-		var bSorted = this.getSortOrder() !== SortOrder.None;
-		var bFiltered = this.getFiltered();
-
-		if (!oTable || !oTable.getDomRef()) {
-			return;
-		}
-
-		this.$()
-			.parents(".sapUiTableCHT")
-			.find('td[data-sap-ui-colindex="' + this.getIndex() + '"]:not([colspan]):not(.sapUiTableHidden):first')
-			.toggleClass("sapUiTableColFiltered", bFiltered)
-			.toggleClass("sapUiTableColSorted", bSorted)
-			.toggleClass("sapUiTableColSortedD", bSorted && this.getSortOrder() === SortOrder.Descending);
-
-		oTable._getAccExtension().updateAriaStateOfColumn(this);
-
-		if (!bSkipUpdateRowHeights) {
-			oTable._resetColumnHeaderHeights();
-			oTable._updateRowHeights(oTable._collectRowHeights(true), true);
-		}
-	};
-
-	Column.prototype._renderSortIcon = function() {
-		this._updateIcons();
 	};
 
 	Column.prototype._getFilterState = function() {
@@ -789,42 +749,42 @@ sap.ui.define([
 	Column.prototype.filter = function(sValue) {
 		var oTable = this._getTable();
 
-		if (oTable && oTable.isBound("rows")) {
+		if (!oTable?.getBinding() || this.getFilterProperty() === "") {
+			return;
+		}
 
-			// notify the event listeners
-			var bExecuteDefault = oTable.fireFilter({
-				column: this,
-				value: sValue
-			});
+		var bExecuteDefault = oTable.fireFilter({
+			column: this,
+			value: sValue
+		});
 
-			if (bExecuteDefault) {
-				this.setProperty("filtered", !!sValue, true);
-				this.setProperty("filterValue", sValue, true);
+		if (!bExecuteDefault) {
+			return;
+		}
 
-				var aFilters = [];
-				var aCols = oTable.getColumns();
-				for (var i = 0, l = aCols.length; i < l; i++) {
-					var oCol = aCols[i],
-						oFilter,
-						sState;
+		var aFilters = [];
+		var aCols = oTable.getColumns();
 
-					try {
-						oFilter = oCol._getFilter();
-						sState = ValueState.None;
-					} catch (e) {
-						sState = ValueState.Error;
-					}
-					if (oFilter) {
-						aFilters.push(oFilter);
-					}
-				}
-				oTable.getBinding().filter(aFilters, FilterType.Control);
+		this.setFiltered(!!sValue);
+		this.setFilterValue(sValue);
 
-				this._updateIcons();
+		for (var i = 0, l = aCols.length; i < l; i++) {
+			var oCol = aCols[i],
+				oFilter,
+				sState;
+
+			try {
+				oFilter = oCol._getFilter();
+				sState = ValueState.None;
+			} catch (e) {
+				sState = ValueState.Error;
+			}
+			if (oFilter) {
+				aFilters.push(oFilter);
 			}
 		}
 
-		return this;
+		oTable.getBinding().filter(aFilters, FilterType.Control);
 	};
 
 	Column.prototype._parseFilterValue = function(sValue) {

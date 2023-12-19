@@ -23,7 +23,7 @@ sap.ui.define([
 	// make sure delegate is loaded (test delegate loading in FieldBase test)
 	"delegates/odata/v4/FieldBaseDelegate",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	// make sure types are loaded
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Integer",
@@ -46,7 +46,7 @@ sap.ui.define([
 	OperatorName,
 	FieldBaseDelegate,
 	KeyCodes,
-	oCore,
+	nextUIUpdate,
 	StringType,
 	IntegerType,
 	DateType,
@@ -92,10 +92,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("default rendering", function(assert) {
+	QUnit.test("default rendering", async function(assert) {
 
 		oFilterField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oFilterField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -132,14 +132,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Eventing", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			oFilterField = new FilterField("FF1", {
 				dataType: "sap.ui.model.type.Integer",
 				dataTypeConstraints: {maximum: 100},
 				change: _myChangeHandler,
 				liveChange: _myLiveChangeHandler
 			}).placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			oFilterField.destroy();
@@ -193,14 +193,14 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("clenaup wrong input for single value", function(assert) {
+	QUnit.test("clenaup wrong input for single value", async function(assert) {
 
 		const fnDone = assert.async();
 		Messaging.registerObject(oFilterField, true); // to test valueState
 		oFilterField.setDataType("sap.ui.model.type.Integer");
 		oFilterField.setMaxConditions(1);
 		oFilterField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oFilterField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -237,13 +237,13 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("clenaup wrong input for multi value", function(assert) {
+	QUnit.test("clenaup wrong input for multi value", async function(assert) {
 
 		const fnDone = assert.async();
 		Messaging.registerObject(oFilterField, true); // to test valueState
 		oFilterField.setDataType("sap.ui.model.type.Date");
 		oFilterField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oFilterField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -375,7 +375,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("value updates in searchfield scenario", function(assert) { // BCP: 2280085536
+	QUnit.test("value updates in searchfield scenario", async function(assert) { // BCP: 2280085536
 		oFilterField.destroy();
 		oFilterField = new FilterField("FF1", {
 			propertyKey: "$search",
@@ -386,7 +386,7 @@ sap.ui.define([
 		sinon.spy(oFilterField, "fireChange");
 
 		oFilterField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 
 		const aContent = oFilterField.getAggregation("_content");
@@ -410,7 +410,7 @@ sap.ui.define([
 		oFilterField.fireChange.restore();
 	});
 
-	QUnit.test("search event handling", function(assert) {
+	QUnit.test("search event handling", async function(assert) {
 		oFilterField.destroy();
 		oFilterField = new FilterField("FF1", {
 			propertyKey: "$search",
@@ -419,7 +419,7 @@ sap.ui.define([
 		});
 
 		oFilterField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		sinon.spy(oFilterField._oContentFactory, "getHandleEnter");
 
@@ -444,14 +444,14 @@ sap.ui.define([
 
 		// check update on PropertyKey change
 		oFilterField.setPropertyKey();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		aContent = oFilterField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
 
 		oFilterField.setPropertyKey("*key,description*");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		aContent = oFilterField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];

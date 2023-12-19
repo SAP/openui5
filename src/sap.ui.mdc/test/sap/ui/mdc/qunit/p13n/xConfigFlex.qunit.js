@@ -2,10 +2,10 @@
 sap.ui.define([
     "sap/ui/mdc/Control",
 	"sap/ui/mdc/flexibility/xConfigFlex",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
-], function (MDCControl, xConfigFlex, Core, createAppEnvironment, JsControlTreeModifier) {
+], function (MDCControl, xConfigFlex, nextUIUpdate, createAppEnvironment, JsControlTreeModifier) {
 	"use strict";
 
 	QUnit.module("xConfigFlex Error handling");
@@ -68,13 +68,13 @@ sap.ui.define([
 			const sTestView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc"></mvc:View>';
 
 			//Create the app environment for flex related processing
-			return createAppEnvironment(sTestView, "ItemBaseFlexTest").then(function(mCreatedApp){
+			return createAppEnvironment(sTestView, "ItemBaseFlexTest").then(async function(mCreatedApp){
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");
 				this.oView.addContent(this.oFlexTestControl);
 
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				this.oHandler = xConfigFlex.createSetChangeHandler({
 					aggregation: "items",

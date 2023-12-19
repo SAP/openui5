@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/ActionToolbar", "sap/m/Button", "sap/m/Title", "sap/m/Text", "sap/ui/mdc/actiontoolbar/ActionToolbarAction", "sap/ui/mdc/enums/ActionToolbarActionAlignment", "sap/ui/core/Core"
-], function(ActionToolbar, Button, Title, Text, ActionToolbarAction, ActionToolbarActionAlignment, oCore) {
+	"sap/ui/mdc/ActionToolbar", "sap/m/Button", "sap/m/Title", "sap/m/Text", "sap/ui/mdc/actiontoolbar/ActionToolbarAction", "sap/ui/mdc/enums/ActionToolbarActionAlignment", "sap/ui/qunit/utils/nextUIUpdate"
+], function(ActionToolbar, Button, Title, Text, ActionToolbarAction, ActionToolbarActionAlignment, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("sap.ui.mdc.ActionToolbar - General", {
@@ -153,7 +153,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.mdc.ActionToolbar - addAggregations", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oToolbarAddAggregations = new ActionToolbar({
 				width: "100%"
 			});
@@ -162,7 +162,7 @@ sap.ui.define([
 			this.oSpacer = this.oToolbarAddAggregations._oSpacer;
 			this.oEndActionsBeginSeparator = this.oToolbarAddAggregations._oEndActionsBeginSeparator;
 			this.oEndActionsEndSeparator = this.oToolbarAddAggregations._oEndActionsEndSeparator;
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			if (this.oToolbarAddAggregations) {
@@ -804,11 +804,11 @@ sap.ui.define([
 
 	QUnit.module("_endOrder Property");
 
-	QUnit.test("aggregation order", function(assert) {
+	QUnit.test("aggregation order", async function(assert) {
 		const sText = "ABCDEFGHI";
 		const aOrder = [...sText];
 
-		Array.from({ length: 10 }).forEach(() => {
+		for (let i = 0; i < 10; i++) {
 			const aRandomOrder1 = aOrder.slice().sort(() => Math.random() - 0.5);
 			const oToolbar = new ActionToolbar({
 				end: aRandomOrder1.map((sLetter) => new Button(sLetter, { text: sLetter }))
@@ -816,19 +816,19 @@ sap.ui.define([
 
 			oToolbar.setProperty("_endOrder", aOrder);
 			oToolbar.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.equal(oToolbar.getDomRef().textContent, sText, `End aggregation in the constructor: ${aRandomOrder1} => ${aOrder}`);
 			oToolbar.destroyEnd();
 
 			const aRandomOrder2 = aOrder.slice().sort(() => Math.random() - 0.5);
 			aRandomOrder2.forEach((sLetter) => oToolbar.insertEnd(new Button(sLetter, { text: sLetter }), 0));
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.equal(oToolbar.getDomRef().textContent, sText, `End aggregation filled by insertEnd: ${aRandomOrder2} => ${aOrder}`);
 			oToolbar.destroyEnd();
 
 			const aRandomOrder3 = aOrder.concat("X").sort(() => Math.random() - 0.5);
 			aRandomOrder3.forEach((sLetter) => oToolbar.addEnd(new Button(sLetter, { text: sLetter })));
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.equal(oToolbar.getDomRef().textContent, sText + "X", `Unknown button X is at the end: ${aRandomOrder3} => ${aOrder},X`);
 			oToolbar.destroyEnd();
 
@@ -836,16 +836,16 @@ sap.ui.define([
 			const sRemovedLetter = aRandomOrder4.pop();
 			const sNewText = sText.replace(sRemovedLetter, "");
 			aRandomOrder4.forEach((sLetter) => oToolbar.addEnd(new Button(sLetter, { text: sLetter })));
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.equal(oToolbar.getDomRef().textContent, sNewText, `Button ${sRemovedLetter} removed: ${aRandomOrder4} => ${sNewText}`);
 
 			const aRandomOrder5 = aRandomOrder4.slice().sort(() => Math.random() - 0.5);
 			const sRandomOrder5 = aRandomOrder5.join("");
 			oToolbar.setProperty("_endOrder", aRandomOrder5);
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.equal(oToolbar.getDomRef().textContent, sRandomOrder5, `_endOrder changed without aggregation change: ${aRandomOrder5}`);
 			oToolbar.destroy();
-		});
+		}
 	});
 
 	QUnit.module("sap.ui.mdc.ActionToolbar - _updateSeparators", {

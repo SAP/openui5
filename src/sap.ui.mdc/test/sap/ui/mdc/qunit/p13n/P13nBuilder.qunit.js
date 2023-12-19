@@ -6,10 +6,10 @@ sap.ui.define([
 	"sap/m/p13n/BasePanel",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Element",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/rta/Utils"
-], function(ElementRegistry, Library, P13nBuilder, BasePanel, JSONModel, Element, oCore, FieldExtensibility, Utils) {
+], function(ElementRegistry, Library, P13nBuilder, BasePanel, JSONModel, Element, nextUIUpdate, FieldExtensibility, Utils) {
 	"use strict";
 
 	const aVisible = ["key1", "key2", "key3"];
@@ -52,10 +52,10 @@ sap.ui.define([
 			mItem.visible = aVisible.indexOf(oProperty.name) > -1;
 			return true;
 		},
-		before: function(){
+		before: async function(){
 			this.sDefaultGroup = "BASIC";
 			this.aMockInfo = aInfoData;
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		after: function(){
 			this.sDefaultGroup = null;
@@ -216,7 +216,7 @@ sap.ui.define([
 				}
 			},
 			id: "myTestDialog"
-		}).then(function(oP13nDialog){
+		}).then(async function(oP13nDialog){
 			oDialog = oP13nDialog;
 			oDialog.placeAt("qunit-fixture");
 
@@ -229,7 +229,7 @@ sap.ui.define([
 
 			//3) confirm warning
 			oMessageBox.getButtons()[0].firePress();
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 		});
 

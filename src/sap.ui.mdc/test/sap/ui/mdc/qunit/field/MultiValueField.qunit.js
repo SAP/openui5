@@ -39,7 +39,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Element,
 	qutils,
@@ -75,7 +75,7 @@ sap.ui.define([
 	JSONModel,
 	DateTimeType,
 	KeyCodes,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -146,10 +146,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("default rendering", function(assert) {
+	QUnit.test("default rendering", async function(assert) {
 
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -159,11 +159,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("FieldEditMode", function(assert) {
+	QUnit.test("FieldEditMode", async function(assert) {
 
 		oField.setEditMode(FieldEditMode.Display);
 		oField.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		let aContent = oField.getAggregation("_content");
 		let oContent = aContent && aContent.length > 0 && aContent[0];
@@ -171,7 +171,7 @@ sap.ui.define([
 		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.TokenizerDisplay", "sap.ui.mdc.field.TokenizerDisplay is used");
 
 		oField.setEditMode(FieldEditMode.ReadOnly);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aContent = oField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "content exist");
@@ -228,7 +228,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Items", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			_initModel();
 			oFieldEdit = new MultiValueField("F1", {
 				editMode: FieldEditMode.Editable,
@@ -242,7 +242,7 @@ sap.ui.define([
 				}).setModel(oModel);
 			oFieldEdit.placeAt("content");
 			oFieldDisplay.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			oFieldEdit.destroy();
@@ -297,7 +297,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("user interaction", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			_initModel();
 			sinon.stub(MultiValueFieldDelegate, "updateItems").callsFake(function(oPayload, aConditions, oMultiValueField) {
 				const aItems = [];
@@ -320,7 +320,7 @@ sap.ui.define([
 //				liveChange: _myLiveChangeHandler,
 //				parseError: _myParseErrorHandler
 			}).setModel(oModel).placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			oField.focus(); // as ValueHelp is connected with focus
 		},
 		afterEach: function() {

@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/plugins/PluginBase",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/library",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/Sorter",
@@ -40,7 +40,7 @@ sap.ui.define([
 	Text,
 	PluginBase,
 	ControlPersonalizationWriteAPI,
-	Core,
+	nextUIUpdate,
 	coreLibrary,
 	ODataModel,
 	Sorter,
@@ -412,11 +412,11 @@ sap.ui.define([
 			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		createTestObjects: function() {
-			return createAppEnvironment(sTableView1, "Table").then(function(mCreatedApp) {
+			return createAppEnvironment(sTableView1, "Table").then(async function(mCreatedApp) {
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				this.oTable = this.oView.byId('myTable');
 
@@ -768,11 +768,11 @@ sap.ui.define([
 			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		createTestObjects: function() {
-			return createAppEnvironment(sTableView2, "Table").then(function(mCreatedApp) {
+			return createAppEnvironment(sTableView2, "Table").then(async function(mCreatedApp) {
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				this.oTable = this.oView.byId('myTable');
 
@@ -884,11 +884,11 @@ sap.ui.define([
 			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		createTestObjects: function() {
-			return createAppEnvironment(sTableView2, "Table").then(function(mCreatedApp) {
+			return createAppEnvironment(sTableView2, "Table").then(async function(mCreatedApp) {
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				this.oTable = this.oView.byId('myTable');
 
@@ -1686,7 +1686,7 @@ sap.ui.define([
 		after: function() {
 			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
-		initTable: function(mSettings, fnBeforeInit) {
+		initTable: async function(mSettings, fnBeforeInit) {
 			if (this.oTable) {
 				this.oTable.destroy();
 			}
@@ -1719,7 +1719,7 @@ sap.ui.define([
 			}
 
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			return this.oTable.initialized();
 		}

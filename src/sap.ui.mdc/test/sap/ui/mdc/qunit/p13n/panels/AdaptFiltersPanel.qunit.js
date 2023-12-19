@@ -11,8 +11,8 @@ sap.ui.define([
 	"sap/m/SegmentedButtonItem",
 	"sap/ui/mdc/util/PropertyHelper",
 	"sap/m/VBox",
-	"sap/ui/core/Core"
-], function(AdaptFiltersPanel, P13nBuilder, JSONModel, CustomListItem, Toolbar, Event, Text, List, SegmentedButtonItem, PropertyHelper, VBox, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(AdaptFiltersPanel, P13nBuilder, JSONModel, CustomListItem, Toolbar, Event, Text, List, SegmentedButtonItem, PropertyHelper, VBox, nextUIUpdate) {
 	"use strict";
 
 	const aVisible = ["key1", "key2", "key3"];
@@ -58,7 +58,7 @@ sap.ui.define([
 	];
 
 	QUnit.module("API Tests", {
-		beforeEach: function(){
+		beforeEach: async function(){
 			this.sDefaultGroup = "BASIC";
 			this.aMockInfo = aInfoData;
 			this.oAFPanel = new AdaptFiltersPanel({
@@ -90,7 +90,7 @@ sap.ui.define([
 			this.oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 
 			this.oAFPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function(){
 			this.sDefaultGroup = null;
@@ -668,7 +668,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("'AdaptFiltersPanel' instance with a custom model name",{
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oAFPanel = new AdaptFiltersPanel();
 
 			this.oAFPanel.P13N_MODEL = "$My_very_own_model";
@@ -693,7 +693,7 @@ sap.ui.define([
 			}, true);
 
 			this.oAFPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 		},
 		afterEach: function() {

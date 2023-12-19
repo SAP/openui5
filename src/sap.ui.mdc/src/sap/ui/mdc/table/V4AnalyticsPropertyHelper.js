@@ -37,7 +37,7 @@ sap.ui.define([
 					"default": {
 						value: "attribute:groupable"
 					},
-					forComplexProperty: {
+					inComplexProperty: {
 						valueIfNotAllowed: false
 					}
 				},
@@ -46,7 +46,7 @@ sap.ui.define([
 					"default": {
 						value: "attribute:aggregatable"
 					},
-					forComplexProperty: {
+					inComplexProperty: {
 						valueIfNotAllowed: false
 					}
 				},

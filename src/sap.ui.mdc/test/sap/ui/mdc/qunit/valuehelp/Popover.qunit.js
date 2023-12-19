@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Toolbar",
 	"sap/m/Input",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 		ValueHelpDelegate,
 		Popover,
@@ -27,7 +27,7 @@ sap.ui.define([
 		mLibrary,
 		Toolbar,
 		Input,
-		oCore
+		nextUIUpdate
 	) {
 	"use strict";
 
@@ -157,7 +157,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("assigned to ValueHelp", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			oValueHelpConfig = {maxConditions: 1};
 			oModel = new JSONModel({
 				_config: oValueHelpConfig,
@@ -178,7 +178,7 @@ sap.ui.define([
 				return oField;
 			};
 			oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: _teardown
 	});
@@ -615,7 +615,7 @@ sap.ui.define([
 
 
 	QUnit.module("popover valuehelp assigned to Input ", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			oValueHelpConfig = {maxConditions: 1};
 			oModel = new JSONModel({
 				_config: oValueHelpConfig,
@@ -634,7 +634,7 @@ sap.ui.define([
 
 			oField = new Input("I2");
 			oField.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 		},
 		afterEach: _teardown
