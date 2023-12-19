@@ -1104,13 +1104,15 @@ sap.ui.define([
 
 		navListDomRef.style.height = "100px";
 		this.navigationList._updateOverflowItems();
+		const allItems = navListDomRef.querySelectorAll("li").length;
+		const visibleItems = navListDomRef.querySelectorAll("li:not(.sapTntNLIHidden)").length;
+		const hiddenItems = navListDomRef.querySelectorAll("li.sapTntNLIHidden:not(.sapTntNLOverflow)").length;
 
 		overflowItemDomRef = navListDomRef.querySelector(".sapTntNLOverflow");
 
 		assert.ok(overflowItemDomRef, "Overflow item is created");
 		assert.notOk(overflowItemDomRef.classList.contains("sapTntNLIHidden"), "Overflow item is visible");
-
-		assert.strictEqual(navListDomRef.querySelectorAll(".sapTntNLIHidden:not(.sapTntNLOverflow)").length, 9, "9 items are hidden");
+		assert.strictEqual(hiddenItems, allItems - visibleItems, "9 items are hidden");
 
 		navListDomRef.style.height = "500px";
 		this.navigationList._updateOverflowItems();
@@ -1122,11 +1124,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selecting items", function (assert) {
-		var navListDomRef = this.navigationList.getDomRef(),
+		const navListDomRef = this.navigationList.getDomRef(),
 			items = this.navigationList.getItems();
+		let iInitialHeight = 50;
 
-		navListDomRef.style.height = "100px";
+		navListDomRef.style.height = `${iInitialHeight}px`;
 		this.navigationList._updateOverflowItems();
+
+		assert.ok(items[0].getDomRef().classList.contains("sapTntNLIHidden"), "item 0 is hidden");
+
+		while (items[0].getDomRef().classList.contains("sapTntNLIHidden")) {
+			iInitialHeight += 25;
+			navListDomRef.style.height = `${iInitialHeight}px`;
+			this.navigationList._updateOverflowItems();
+		}
 
 		assert.notOk(items[0].getDomRef().classList.contains("sapTntNLIHidden"), "item 0 is visible");
 		assert.ok(items[2].getDomRef().classList.contains("sapTntNLIHidden"), "item 2 is hidden");
@@ -1143,9 +1154,16 @@ sap.ui.define([
 			overflowItemDomRef = navListDomRef.querySelector(".sapTntNLOverflow"),
 			menu,
 			menuDomRef;
+		let iInitialHeight = 50;
 
-		navListDomRef.style.height = "100px"; // Only first item and the overflow are visible
+		// Only first item and the overflow are visible
+		navListDomRef.style.height = `${iInitialHeight}px`;
 		this.navigationList._updateOverflowItems();
+		while (items[0].getDomRef().classList.contains("sapTntNLIHidden")) {
+			iInitialHeight += 25;
+			navListDomRef.style.height = `${iInitialHeight}px`;
+			this.navigationList._updateOverflowItems();
+		}
 
 		QUnitUtils.triggerEvent("tap", overflowItemDomRef);
 
