@@ -19,11 +19,12 @@ sap.ui.define([
 	});
 
 	function throws(sLevel, sMessage, ...args) {
+		sMessage = "[FUTURE FATAL] " + sMessage;
 		if (bFuture) {
 			Log.fatal(sMessage, ...args);
 			throw new Error(sMessage);
 		}
-		Log[sLevel]("[FUTURE FATAL] " + sMessage, ...args);
+		Log[sLevel](sMessage, ...args);
 	}
 	/**
 	 * Logs '[FUTUR FATAL]' marker in messages and throws error if
