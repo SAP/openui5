@@ -117,7 +117,7 @@ sap.ui.define(
 		 * @param {Object} oTheoreticalState The theoretical state to be validated; see also {@link sap.ui.mdc.p13n.StateUtil StateUtil}
 		 * @param {string} [sKey] The name of the control to be validated
 		 *
-		 * @returns {object} The value returned by {@link sap.ui.mdc.AggregationBaseDelegate#validateState validateState}
+		 * @returns {object} The value returned by {@link module:sap/ui/mdc/AggregationBaseDelegate.validateState validateState}
 		 */
 		AdaptationMixin.validateState = function(oTheoreticalState, sKey) {
 			if (this.getControlDelegate().validateState instanceof Function) {

@@ -26,7 +26,7 @@ sap.ui.define([
 	 * @experimental
 	 * @since 1.74
 	 * @alias sap.ui.mdc.flp.FlpLinkDelegate
-	 * @deprecated since version 1.120 - please see {@link sap.ui.mdc.ushell.LinkDelegate}
+	 * @deprecated since version 1.120 - please see {@link module:sap/ui/mdc/ushell/LinkDelegate LinkDelegate}
 	 */
 	const FlpLinkDelegate = Object.assign({}, LinkDelegate);
 

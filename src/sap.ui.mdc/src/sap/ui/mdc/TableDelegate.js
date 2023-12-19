@@ -38,12 +38,9 @@ sap.ui.define([
 	 * @namespace
 	 * @alias module:sap/ui/mdc/TableDelegate
 	 * @extends module:sap/ui/mdc/AggregationBaseDelegate
-	 * @mixes sap.ui.mdc.mixin.delegate.FilterIntegrationDefault
+	 * @mixes module:sap/ui/mdc/mixin/delegate/FilterIntegrationDefault
 	 * @since 1.60
 	 * @public
-	 *
-	 *
-	 * @borrows sap.ui.mdc.mixin.delegate.FilterIntegrationDefault.getFilters as #getFilters
 	 *
 	 */
 	const TableDelegate = Object.assign({}, AggregationBaseDelegate, FilterIntegrationDefault);
@@ -54,7 +51,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @returns {sap.ui.model.Filter[]} Array of filters
-	 * @name sap.ui.mdc.TableDelegate#getFilters
+	 * @function
+	 * @name module:sap/ui/mdc/TableDelegate.getFilters
 	 * @protected
 	 */
 

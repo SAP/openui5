@@ -26,7 +26,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Mixin enhancing {@link sap.ui.mdc.Control Control's} {@link sap.ui.mdc.BaseDelegate delegates} with a {@link #getFilters  #getFilters} implementation combining filters created from the control itself as well as a configured external {@link sap.ui.mdc.IFilterSource IFilterSource};
+	 * Mixin enhancing {@link sap.ui.mdc.Control Control's} {@link module:sap/ui/mdc/BaseDelegate delegates} with a {@link #getFilters  #getFilters} implementation combining filters created from the control itself as well as a configured external {@link sap.ui.mdc.IFilterSource IFilterSource};
 	 *
 	 * @author SAP SE
 	 * @namespace

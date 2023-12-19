@@ -204,7 +204,7 @@ sap.ui.define([
 	/**
 	 * @typedef {sap.ui.mdc.table.PropertyInfo} sap.ui.mdc.odata.v4.TablePropertyInfo
 	 *
-	 * An object literal describing a data property in the context of a {@link sap.ui.mdc.Table} with {@link module:sap/ui/mdc/odata/v4/TableDelegate}.
+	 * An object literal describing a data property in the context of a {@link sap.ui.mdc.Table} with {@link module:sap/ui/mdc/odata/v4/TableDelegate sap/ui/mdc/odata/v4/TableDelegate}.
 	 *
 	 * When specifying the <code>PropertyInfo</code> objects in the {@link sap.ui.mdc.Table#getPropertyInfo propertyInfo} property, the following
 	 * attributes need to be specified:
