@@ -82,7 +82,10 @@ sap.ui.define([
 			{ text: "Text1" },
 			{ text: "Text2", type: "Button" },
 			{ text: "Text3", type: "Button", icon: "sap-icon://email" },
-			{ tooltip: "Text4", type: "Button", "icon": "sap-icon://email" }
+			{ text: "Text4", tooltip: "Text4 and long explanation", type: "Button", icon: "sap-icon://email", preferIcon: true },
+			{ text: "Text5", type: "Button", icon: "sap-icon://email", preferIcon: true },
+			{ tooltip: "Text6 and long explanation", type: "Button", icon: "sap-icon://email", preferIcon: true },
+			{ tooltip: "Text7", type: "Button", icon: "sap-icon://email" }
 		], this.oCard);
 
 		const aItems = oActionsStrip._getToolbar().getContent();
@@ -91,8 +94,16 @@ sap.ui.define([
 		assert.ok(aItems[1].isA("sap.m.Button"), "If no 'type' is specified, an sap.m.Button should be created");
 		assert.ok(aItems[2].isA("sap.m.Button"), "If 'type' is set to 'Button', an sap.m.Button should be created");
 		assert.ok(aItems[3].isA("sap.m.Button"), "If button has icon and text - a sap.m.Button is created");
-		assert.ok(aItems[4].isA("sap.m.OverflowToolbarButton"), "If button has icon and no text - a sap.m.OverflowToolbarButton is created");
-		assert.strictEqual(aItems[4].getText(), "Text4", "Button with icon without text uses the tooltip for text");
+
+		assert.ok(aItems[4].isA("sap.m.OverflowToolbarButton"), "If button has preferIcon=true - a sap.m.OverflowToolbarButton is created");
+		assert.strictEqual(aItems[4].getText(), "Text4", "Button with icon has the correct text");
+		assert.strictEqual(aItems[4].getTooltip(), "Text4 and long explanation", "Button with icon has the correct tooltip");
+
+		assert.strictEqual(aItems[5].getTooltip(), "Text5", "Button with icon uses the text as tooltip if tooltip is empty");
+		assert.strictEqual(aItems[6].getText(), "Text6 and long explanation", "Button with icon uses the tooltip as text if text is empty");
+
+		assert.ok(aItems[7].isA("sap.m.OverflowToolbarButton"), "If button has icon and no text - a sap.m.OverflowToolbarButton is created");
+		assert.strictEqual(aItems[7].getText(), "Text7", "If button has icon and no text - the tooltip is used for text");
 
 		// Clean up
 		oActionsStrip.destroy();

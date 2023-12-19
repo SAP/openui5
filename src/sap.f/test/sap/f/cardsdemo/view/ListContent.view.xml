@@ -44,6 +44,11 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
+			<w:Card id="card45" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/listContent/quickActions.json" action=".onAction">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="6" />
+				</w:layoutData>
+			</w:Card>
 			<w:Card id="card5" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{listContentManifests>/listAttributes}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />

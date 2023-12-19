@@ -297,10 +297,10 @@ sap.ui.define([
 			visible: mConfig.visible
 		};
 
-		if (mConfig.icon && !mConfig.text) {
-			// when we have no text, but we have icon, we want the behavior of OverflowToolbarButton
-			// @todo this will not work well if text is set to binding which later resolves to an empty string
-			mButtonSettings.text = mConfig.tooltip;
+		// @todo this will not work well if text is set to binding which later resolves to an empty string
+		if (mConfig.icon && (mConfig.preferIcon || !mConfig.text)) {
+			mButtonSettings.text = mConfig.text || mConfig.tooltip;
+			mButtonSettings.tooltip = mConfig.tooltip || mConfig.text;
 
 			return new OverflowToolbarButton(mButtonSettings);
 		}
