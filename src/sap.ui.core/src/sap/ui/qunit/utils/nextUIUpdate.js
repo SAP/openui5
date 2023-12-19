@@ -23,10 +23,12 @@ sap.ui.define([
      */
     function nextUIUpdate(clock) {
         return new Promise(function(resolve, reject) {
-            function isUpdated(params) {
+            function isUpdated(oEvent) {
                 Rendering.detachUIUpdated(isUpdated);
-                const error = params.getParameter("failed");
+                const error = oEvent.getParameter("failed");
                 if (error) {
+                    // prevent default: Rendering will not rethrow the error wich breaks a unit test even if the rejection is properly catched.
+                    oEvent.preventDefault();
                     reject(error);
                 } else {
                     resolve();

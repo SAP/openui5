@@ -113,8 +113,10 @@ sap.ui.define([
 			// end performance measurement
 			Measurement.end("renderPendingUIUpdates");
 		} catch (e) {
-			Rendering.fireUIUpdated({failed: e});
-			throw e;
+			const bExecuteDefault = Rendering.fireUIUpdated({failed: e});
+			if (bExecuteDefault) {
+				throw e;
+			}
 		}
 	};
 
@@ -233,7 +235,7 @@ sap.ui.define([
 		},
 
 		fireUIUpdated(mParameters) {
-			_oEventProvider.fireEvent("UIUpdated", mParameters);
+			return _oEventProvider.fireEvent("UIUpdated", mParameters, true);
 		},
 
 		/**
