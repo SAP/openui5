@@ -151,22 +151,33 @@ sap.ui.define([
 			assert.strictEqual(aMenuItems[4].id, "CTX_COMP_VARIANT_SWITCH", "Switch is fifth");
 		});
 
-		QUnit.test("Rename", function(assert) {
-			var sNewText = "myFancyText";
-			var pReturn = waitForCommandToBeCreated(this.oPlugin).then(function(oParameters) {
-				var oCommand = oParameters.command;
-				var mExpectedNewVariantProps = {};
-				mExpectedNewVariantProps[this.oVariantId] = {
-					name: sNewText
-				};
-				assert.deepEqual(oCommand.getNewVariantProperties(), mExpectedNewVariantProps, "the property newVariantProperties was set correctly");
-				assert.strictEqual(oCommand.getElement().getId(), "svm", "the SVM is passed as element key is set");
-			}.bind(this));
-
+		QUnit.test("Rename", async function(assert) {
+			const sNewText = "myFancyText";
 			var oMenuItem = getContextMenuEntryById.call(this, "CTX_COMP_VARIANT_RENAME");
 			oMenuItem.handler([this.oVariantManagementOverlay]);
 			setTextAndTriggerEnterOnEditableField(this.oPlugin, sNewText);
-			return pReturn;
+			const oParameters = await waitForCommandToBeCreated(this.oPlugin);
+			const oCommand = oParameters.command;
+			const mExpectedNewVariantProps = {};
+			mExpectedNewVariantProps[this.oVariantId] = {
+				name: sNewText
+			};
+			assert.deepEqual(
+				oCommand.getNewVariantProperties(),
+				mExpectedNewVariantProps,
+				"the property newVariantProperties was set correctly"
+			);
+			assert.strictEqual(oCommand.getElement().getId(), "svm", "the SVM is passed as element key is set");
+		});
+
+		QUnit.test("when isRenameAvailable is called with VariantManagement overlay", function(assert) {
+			const bVMAvailable = this.oPlugin.isRenameAvailable(this.oVariantManagementOverlay);
+			assert.ok(bVMAvailable, "then variant rename is available for VariantManagement control");
+		});
+
+		QUnit.test("when isRenameEnabled is called with VariantManagement overlay", function(assert) {
+			const bVMEnabled = this.oPlugin.isRenameEnabled([this.oVariantManagementOverlay]);
+			assert.ok(bVMEnabled, "then variant rename is enabled for VariantManagement control");
 		});
 
 		QUnit.test("Save with not modified variant", function(assert) {
