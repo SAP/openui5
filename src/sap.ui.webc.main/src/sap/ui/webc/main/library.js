@@ -8,10 +8,11 @@
 sap.ui.define([
 		"sap/ui/webc/common/library",
 		"sap/ui/core/Lib",
+		"sap/ui/base/DataType",
 		"./thirdparty/Assets",
 		"./library.config"
 	], // library dependency
-	function(commonLibrary, Library) {
+	function(commonLibrary, Library, DataType) {
 
 		"use strict";
 
@@ -28,6 +29,7 @@ sap.ui.define([
 		 */
 		var thisLib = Library.init({
 			name: "sap.ui.webc.main",
+			apiVersion: 2,
 			version: "${version}",
 			dependencies: ["sap.ui.core", "sap.ui.webc.common"],
 			noLibraryCSS: true,
@@ -2057,6 +2059,55 @@ sap.ui.define([
 			 */
 			Normal: "Normal"
 		};
+
+		/*
+		 * Register Enums
+		 */
+		DataType.registerEnum("sap.ui.webc.main.AvatarGroupType", thisLib.AvatarGroupType);
+		DataType.registerEnum("sap.ui.webc.main.AvatarColorScheme", thisLib.AvatarColorScheme);
+		DataType.registerEnum("sap.ui.webc.main.AvatarShape", thisLib.AvatarShape);
+		DataType.registerEnum("sap.ui.webc.main.AvatarSize", thisLib.AvatarSize);
+		DataType.registerEnum("sap.ui.webc.main.BackgroundDesign", thisLib.BackgroundDesign);
+		DataType.registerEnum("sap.ui.webc.main.BorderDesign", thisLib.BorderDesign);
+		DataType.registerEnum("sap.ui.webc.main.BreadcrumbsDesign", thisLib.BreadcrumbsDesign);
+		DataType.registerEnum("sap.ui.webc.main.BreadcrumbsSeparatorStyle", thisLib.BreadcrumbsSeparatorStyle);
+		DataType.registerEnum("sap.ui.webc.main.BusyIndicatorSize", thisLib.BusyIndicatorSize);
+		DataType.registerEnum("sap.ui.webc.main.ButtonDesign", thisLib.ButtonDesign);
+		DataType.registerEnum("sap.ui.webc.main.ButtonType", thisLib.ButtonType);
+		DataType.registerEnum("sap.ui.webc.main.CalendarSelectionMode", thisLib.CalendarSelectionMode);
+		DataType.registerEnum("sap.ui.webc.main.CarouselArrowsPlacement", thisLib.CarouselArrowsPlacement);
+		DataType.registerEnum("sap.ui.webc.main.CarouselPageIndicatorStyle", thisLib.CarouselPageIndicatorStyle);
+		DataType.registerEnum("sap.ui.webc.main.ComboBoxFilter", thisLib.ComboBoxFilter);
+		DataType.registerEnum("sap.ui.webc.main.HasPopup", thisLib.HasPopup);
+		DataType.registerEnum("sap.ui.webc.main.IconDesign", thisLib.IconDesign);
+		DataType.registerEnum("sap.ui.webc.main.InputType", thisLib.InputType);
+		DataType.registerEnum("sap.ui.webc.main.LinkDesign", thisLib.LinkDesign);
+		DataType.registerEnum("sap.ui.webc.main.ListGrowingMode", thisLib.ListGrowingMode);
+		DataType.registerEnum("sap.ui.webc.main.ListItemType", thisLib.ListItemType);
+		DataType.registerEnum("sap.ui.webc.main.ListMode", thisLib.ListMode);
+		DataType.registerEnum("sap.ui.webc.main.ListSeparators", thisLib.ListSeparators);
+		DataType.registerEnum("sap.ui.webc.main.MessageStripDesign", thisLib.MessageStripDesign);
+		DataType.registerEnum("sap.ui.webc.main.PanelAccessibleRole", thisLib.PanelAccessibleRole);
+		DataType.registerEnum("sap.ui.webc.main.PopoverHorizontalAlign", thisLib.PopoverHorizontalAlign);
+		DataType.registerEnum("sap.ui.webc.main.PopoverPlacementType", thisLib.PopoverPlacementType);
+		DataType.registerEnum("sap.ui.webc.main.PopoverVerticalAlign", thisLib.PopoverVerticalAlign);
+		DataType.registerEnum("sap.ui.webc.main.PopupAccessibleRole", thisLib.PopupAccessibleRole);
+		DataType.registerEnum("sap.ui.webc.main.Priority", thisLib.Priority);
+		DataType.registerEnum("sap.ui.webc.main.SegmentedButtonMode", thisLib.SegmentedButtonMode);
+		DataType.registerEnum("sap.ui.webc.main.SemanticColor", thisLib.SemanticColor);
+		DataType.registerEnum("sap.ui.webc.main.SwitchDesign", thisLib.SwitchDesign);
+		DataType.registerEnum("sap.ui.webc.main.TabContainerBackgroundDesign", thisLib.TabContainerBackgroundDesign);
+		DataType.registerEnum("sap.ui.webc.main.TabLayout", thisLib.TabLayout);
+		DataType.registerEnum("sap.ui.webc.main.TableColumnPopinDisplay", thisLib.TableColumnPopinDisplay);
+		DataType.registerEnum("sap.ui.webc.main.TableGrowingMode", thisLib.TableGrowingMode);
+		DataType.registerEnum("sap.ui.webc.main.TableMode", thisLib.TableMode);
+		DataType.registerEnum("sap.ui.webc.main.TableRowType", thisLib.TableRowType);
+		DataType.registerEnum("sap.ui.webc.main.TabsOverflowMode", thisLib.TabsOverflowMode);
+		DataType.registerEnum("sap.ui.webc.main.TitleLevel", thisLib.TitleLevel);
+		DataType.registerEnum("sap.ui.webc.main.ToastPlacement", thisLib.ToastPlacement);
+		DataType.registerEnum("sap.ui.webc.main.ToolbarAlign", thisLib.ToolbarAlign);
+		DataType.registerEnum("sap.ui.webc.main.ToolbarItemOverflowBehavior", thisLib.ToolbarItemOverflowBehavior);
+		DataType.registerEnum("sap.ui.webc.main.WrappingType", thisLib.WrappingType);
 
 		return thisLib;
 
