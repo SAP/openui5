@@ -493,7 +493,7 @@ sap.ui.define([
 		oOverflowTB.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		oOverflowTB.setWidth('10px'); // set small width that causes all content to move to the overflow
+		oOverflowTB.setWidth('20px'); // set small width that causes all content to move to the overflow
 		this.clock.tick(1000);
 
 		assert.strictEqual(oGroupedLabel.hasStyleClass("sapMLabelMediumMarginTop"), true, "grouped label is correctly marked in the overflow");
