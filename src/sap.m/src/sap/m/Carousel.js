@@ -6,10 +6,9 @@
 sap.ui.define([
 	"./library",
 	"sap/base/i18n/Localization",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
-	"sap/ui/core/Configuration",
+	"sap/ui/core/Theming",
 	"sap/ui/Device",
 	"sap/ui/core/Lib",
 	"sap/ui/core/ResizeHandler",
@@ -29,10 +28,9 @@ sap.ui.define([
 ], function(
 	library,
 	Localization,
-	Core,
 	Control,
 	Element,
-	Configuration,
+	Theming,
 	Device,
 	Library,
 	ResizeHandler,
@@ -334,6 +332,7 @@ sap.ui.define([
 		this._aAllActivePages = [];
 		this._aAllActivePagesIndexes = [];
 		this._bShouldFireEvent = true;
+		this._handleThemeAppliedBound = this._handleThemeApplied.bind(this);
 
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
@@ -364,9 +363,9 @@ sap.ui.define([
 		this._aAllActivePages = null;
 		this._aAllActivePagesIndexes = null;
 
-		if (this._bThemeChangedAttached) {
-			Core.detachThemeChanged(this._handleThemeChanged, this);
-			this._bThemeChangedAttached = false;
+		if (this._bThemeAppliedAttached) {
+			Theming.detachApplied(this._handleThemeAppliedBound);
+			this._bThemeAppliedAttached = false;
 		}
 	};
 
@@ -458,11 +457,9 @@ sap.ui.define([
 			this.setAssociation("activePage", this.getPages()[iActivePageIndex].getId(), true);
 		}
 
-		if (Core.isThemeApplied()) {
-			this._initialize();
-		} else if (!this._bThemeChangedAttached) {
-			this._bThemeChangedAttached = true;
-			Core.attachThemeChanged(this._handleThemeChanged, this);
+		if (!this._bThemeAppliedAttached) {
+			this._bThemeAppliedAttached = true;
+			Theming.attachApplied(this._handleThemeAppliedBound);
 		}
 
 		this._sResizeListenerId = ResizeHandler.register($innerDiv, this._resize.bind(this));
@@ -477,10 +474,10 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Carousel.prototype._handleThemeChanged = function () {
+	Carousel.prototype._handleThemeApplied = function () {
 		this._initialize();
-		Core.detachThemeChanged(this._handleThemeChanged, this);
-		this._bThemeChangedAttached = false;
+		Theming.detachApplied(this._handleThemeAppliedBound);
+		this._bThemeAppliedAttached = false;
 	};
 
 	/**
