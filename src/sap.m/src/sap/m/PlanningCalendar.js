@@ -3151,7 +3151,11 @@ sap.ui.define([
 	 */
 	PlanningCalendar.prototype._handleDateSelect = function(oEvent) {
 		var oStartDate,
-			oCurrentStartDate = this.getStartDate();
+			oCurrentStartDate = this.getStartDate(),
+			sViewKey = this.getViewKey(),
+			oCurrentView = this._getView(sViewKey),
+			sCurrentViewIntervalType = oCurrentView.getIntervalType(),
+			sControlRef;
 
 		if (this.isRelative()) {
 			oStartDate = UI5Date.getInstance(this.getMinDate().getTime());
@@ -3163,7 +3167,7 @@ sap.ui.define([
 		}
 
 		// Checking if the current view (custom or not) is of type Hour
-		if (this._getView(this.getViewKey()).getIntervalType() === CalendarIntervalType.Hour) {
+		if (sCurrentViewIntervalType === CalendarIntervalType.Hour) {
 			oStartDate.setHours(oCurrentStartDate.getHours());
 			oStartDate.setMinutes(oCurrentStartDate.getMinutes());
 			oStartDate.setSeconds(oCurrentStartDate.getSeconds());
@@ -3171,12 +3175,10 @@ sap.ui.define([
 
 		if (oCurrentStartDate.getTime() !== oStartDate.getTime()){
 			this._changeStartDate(oStartDate);
+			if (sCurrentViewIntervalType === CalendarIntervalType.Month) {
+				oStartDate = this.getStartDate();
+			}
 			this._dateNav.setCurrent(oStartDate);
-
-			var sViewKey = this.getViewKey(),
-				oCurrentView = this._getView(sViewKey),
-				sCurrentViewIntervalType = oCurrentView.getIntervalType(),
-				sControlRef;
 
 			if (sCurrentViewIntervalType === "Hour") {
 				sCurrentViewIntervalType = "Time";
