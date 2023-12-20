@@ -123,6 +123,19 @@ sap.ui.define([
 
 	};
 
+	DrillBreadcrumbs.prototype.onAfterRendering = function(oEvent) {
+		Breadcrumbs.prototype.onAfterRendering.apply(this, arguments);
+
+		if (this._bSetFocus) {
+			delete this._bSetFocus;
+			const oControl = this.getLinks()[0] || this;
+			// breadcrumb.focus() does not work. The control does not have a tabindex=0 or -1
+			// The ItemNavigation is setting the tabindex in the onAfterRendering. And it only works with an extra setTimeout (..., 200)
+			//setTimeout(() => { oControl.focus(); }, 200);
+			oControl.focus();
+		}
+	};
+
 	/**
 	 * Creates a breadcrumb with given settings
 	 * @param oChart the chart the breadcrumb is for
@@ -147,6 +160,8 @@ sap.ui.define([
 
 				//TODO: Why do we need this?
 				//this._oInnerChart.fireDeselectData();
+
+				this._bSetFocus = true;
 
 				const aFlexItemChanges = aDrilledItems.map((oDrillItem) => {
 					return {
