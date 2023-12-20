@@ -2,12 +2,12 @@
 sap.ui.define([
 	"sap/m/p13n/QueryPanel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core"
-], function (QueryPanel, JSONModel, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (QueryPanel, JSONModel, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("QueryPanel API tests", {
-		beforeEach: function(){
+		beforeEach: async function(){
 			this.oQueryPanel = new QueryPanel();
 			this.oQueryPanel.setP13nData([
 				{
@@ -28,7 +28,7 @@ sap.ui.define([
 				}
 			]);
 			this.oQueryPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function(){
 			this.oQueryPanel.destroy();

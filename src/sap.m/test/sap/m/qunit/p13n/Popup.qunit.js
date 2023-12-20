@@ -4,20 +4,20 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Element",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
-	"sap/m/p13n/SelectionPanel",
 	"sap/ui/core/ElementRegistry",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/m/p13n/SelectionPanel",
 	"sap/ui/model/json/JSONModel"
-], function(P13nPopup, Button, Element, Control, oCore, SelectionPanel, ElementRegistry, JSONModel) {
+], function(P13nPopup, Button, Element, Control, ElementRegistry, nextUIUpdate, SelectionPanel, JSONModel) {
 	"use strict";
 
 	QUnit.module("p13n.Popup API tests", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			var oPopup = new P13nPopup();
 			this.oPopup = oPopup;
 			this.oPopup.placeAt("qunit-fixture");
 			this.oSource = new Button();
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oPopup.destroy();
@@ -136,12 +136,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("p13n.Popup check events & parameters", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			var oPopup = new P13nPopup();
 			this.oPopup = oPopup;
 			this.oPopup.placeAt("qunit-fixture");
 			this.oSource = new Button();
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oPopup.destroy();
@@ -173,7 +173,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("p13n.Popup Reset tests", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			var oPopup = new P13nPopup({
 				reset: function() {
 					this.fnReset();
@@ -182,7 +182,7 @@ sap.ui.define([
 			this.oPopup = oPopup;
 			this.oPopup.placeAt("qunit-fixture");
 			this.oSource = new Button();
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oPopup.destroy();
@@ -197,7 +197,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Check the 'onReset' hook execution", function(assert){
+	QUnit.test("Check the 'onReset' hook execution", async function(assert){
 
 		var done = assert.async();
 
@@ -223,11 +223,11 @@ sap.ui.define([
 
 		//3) confirm warning
 		oMessageBox.getButtons()[0].firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 	});
 
-	QUnit.test("Check focus handling after reset", function(assert){
+	QUnit.test("Check focus handling after reset", async function(assert){
 
 		var done = assert.async();
 
@@ -251,7 +251,7 @@ sap.ui.define([
 
 		//3) confirm warning
 		oMessageBox.getButtons()[0].firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 	});
 
@@ -290,12 +290,12 @@ sap.ui.define([
 				}
 			});
 		},
-		beforeEach: function() {
+		beforeEach: async function() {
 			var oPopup = new P13nPopup();
 			this.oPopup = oPopup;
 			this.oPopup.placeAt("qunit-fixture");
 			this.oSource = new Button();
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oPopup.destroy();

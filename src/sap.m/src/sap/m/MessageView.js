@@ -408,16 +408,35 @@ sap.ui.define([
 
 		if (aListItems.length === 1 && aListItems[0].getType()  === ListType.Navigation) {
 
-			this._fnHandleForwardNavigation(aListItems[0], "show");
+			if (this._navContainer.getCurrentPage() !== this._detailsPage) {
+				this._fnHandleForwardNavigation(aListItems[0], "show");
 
-			// TODO: adopt this to NavContainer's public API once a parameter for back navigation transition name is available
-			this._navContainer._pageStack[this._navContainer._pageStack.length - 1].transition = "slide";
+				// TODO: adopt this to NavContainer's public API once a parameter for back navigation transition name is available
+				this._navContainer._pageStack[this._navContainer._pageStack.length - 1].transition = "slide";
+			} else {
+				// if the update is just on the item's props, do not navigate back and forward
+				this._updateDescriptionPage(aItems[0], aListItems[0]);
+			}
 		} else if (aListItems.length === 0) {
 			this._navContainer.backToTop();
 		}
 
 		// Bind automatically to the MessageModel if no items are bound
 		this._makeAutomaticBinding();
+	};
+
+	/**
+	 * Updates details page when a MessageItem gets updated.
+	 * @param {sap.m.MessageItem} oMessageItem Selected MessageItem.
+	 * @param {sap.m.MessageListItem} oListItem MessageListItem created from the MessageItem.
+	 * @private
+	 */
+	MessageView.prototype._updateDescriptionPage = function (oMessageItem, oListItem) {
+		this._clearDetailsPage();
+		this._setTitle(oMessageItem, oListItem);
+		this._setDescription(oMessageItem);
+		this._setIcon(oMessageItem, oListItem);
+		this._detailsPage.invalidate();
 	};
 
 	/**

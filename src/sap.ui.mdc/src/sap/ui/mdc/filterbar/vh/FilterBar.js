@@ -37,7 +37,7 @@ sap.ui.define(
 		 * The filters are arranged in a logical row that is divided depending on the space available and the width of the filters.
 		 * The Go button triggers the search event, and the Show Filters button shows the additional filter field.<br>
 		 * The <code>FilterBar</code> control creates and handles the filters based on the provided metadata information.
-		 * The metadata information is provided via the {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} implementation. This implementation has to be provided by the application.<br>
+		 * The metadata information is provided via the {@link module:sap/ui/mdc/FilterBarDelegate FilterBarDelegate} implementation. This implementation has to be provided by the application.<br>
 		 * <b>Note:</b> The <code>FilterBar</code> can only be used for a {@link sap.ui.mdc.valuehelp.Dialog Dialog} and not on its own.
 		 * @extends sap.ui.mdc.filterbar.FilterBarBase
 		 * @author SAP SE

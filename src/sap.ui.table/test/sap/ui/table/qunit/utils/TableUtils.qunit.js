@@ -956,7 +956,7 @@ sap.ui.define([
 			[oTable, "sap.ui.table.AnalyticalTable"],
 			[oTable, ["sap.ui.table.Table", "sap.ui.table.AnalyticalTable"]]
 		].forEach(function(aArguments) {
-			vBaseObjectReturn = BaseObject.isA.apply(BaseObject, aArguments);
+			vBaseObjectReturn = BaseObject.isObjectA.apply(BaseObject, aArguments);
 			assert.ok(oBaseObjectIsA.calledWith(aArguments[0], aArguments[1]),
 				"sap.ui.base.Object#isA was called with the same parameters as TableUtils#isA");
 			assert.strictEqual(vBaseObjectReturn, TableUtils.isA.apply(TableUtils, aArguments),

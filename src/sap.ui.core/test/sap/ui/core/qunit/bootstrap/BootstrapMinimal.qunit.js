@@ -12,7 +12,7 @@
 		var coreInitFired = false;
 		var done = assert.async();
 		sap.ui.require(['sap/ui/core/Core'], function(Core) {
-			// TODO clarify how to handle jQuery gloabls
+			const jQuery = globalThis.jQuery; // unavoidable global access
 			assert.strictEqual(typeof jQuery, "function", "...function jQuery should exist");
 			assert.strictEqual(typeof jQuery.prototype.position, "function", "...function jQuery.fn.position should exist");
 			assert.strictEqual(sap.ui.require('sap/ui/thirdparty/jquery'), jQuery,

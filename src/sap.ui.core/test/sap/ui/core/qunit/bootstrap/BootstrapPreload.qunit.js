@@ -6,14 +6,18 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.test("Check Existance of Core", function(assert) {
-		assert.expect(7);
+		assert.expect(8);
 
 		var aExpectedLibraries = ["sap.ui.core", "sap.m", "sap.ui.layout", "sap.ui.table"].sort();
 		var aLoadedLibraries = Object.keys(Lib.all());
 		var sExpectedLibrary, aDependendLibraries = [];
 
 		/* check that SAPUI5 has been loaded */
-		assert.ok(sap.ui.getCore(), "sap.ui.getCore() returns a value");
+		/* -------------------------------------- */
+		assert.ok(sap.ui.require("sap/ui/core/Core"), "Core module has been required");
+		let isReady = false;
+		sap.ui.require("sap/ui/core/Core").ready(() => { isReady = true; });
+		assert.ok(isReady, "Core is ready");
 
 		var id = document.querySelector("html").getAttribute("data-sap-ui-browser");
 		if ( Device.browser.name ) {

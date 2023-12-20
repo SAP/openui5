@@ -1218,7 +1218,7 @@ sap.ui.define([
 			P13nSelectionPanel: {
 				title: "Test Page for sap.m.P13nSelectionPanel",
 				sinon: {
-					useFakeTimers: true
+					useFakeTimers: false
 				}
 			},
 

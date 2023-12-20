@@ -39,6 +39,10 @@ sap.ui.define([
 		}
 	});
 
+	function isCompVariant(oElement) {
+		return oElement.getMetadata().getName() === "sap.ui.comp.smartvariants.SmartVariantManagement";
+	}
+
 	function createCommandAndFireEvent(oOverlay, aCommandNames, mProperties, oElement) {
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 		var oTargetElement = oElement || oOverlay.getElement();
@@ -86,6 +90,43 @@ sap.ui.define([
 	function renameVariant(aOverlays) {
 		this.startEdit(aOverlays[0]);
 	}
+
+	/**
+	 * @override
+	 */
+	CompVariant.prototype.setDesignTime = function(oDesignTime) {
+		RenameHandler._setDesignTime.call(this, oDesignTime);
+	};
+
+	/**
+	 * Checks if variant rename is available for the overlay.
+	 *
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay object
+	 * @return {boolean} <code>true</code> if available
+	 * @public
+	 */
+	CompVariant.prototype.isRenameAvailable = function(oElementOverlay) {
+		const oVariantManagementControl = oElementOverlay.getElement();
+		if (isCompVariant(oVariantManagementControl)) {
+			const aVariants = getAllVariants(oElementOverlay);
+			const oCurrentVariant = aVariants.find(function(oVariant) {
+				return oVariant.getVariantId() === oVariantManagementControl.getPresentVariantId();
+			});
+			const sLayer = this.getCommandFactory().getFlexSettings().layer;
+			return oCurrentVariant.isRenameEnabled(sLayer);
+		}
+		return false;
+	};
+
+	/**
+	 * Checks if variant rename is enabled for the overlays.
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
+	 * @return {boolean} <code>true</code> if available
+	 * @public
+	 */
+	CompVariant.prototype.isRenameEnabled = function(aElementOverlays) {
+		return this.isRenameAvailable(aElementOverlays[0]);
+	};
 
 	CompVariant.prototype.startEdit = function(oOverlay) {
 		var vDomRef = oOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;

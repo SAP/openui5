@@ -47,7 +47,7 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> By default, a type-ahead is only shown to provide suggestions when users enter input in a connected control.
 				 * This property enables scenarios where popovers need to be shown earlier (for example, recommendations or recently entered values).
-				 * See also {@link sap.ui.mdc.ValueHelpDelegate.showTypeahead showTypeahead}
+				 * See also {@link module:sap/ui/mdc/ValueHelpDelegate.showTypeahead showTypeahead}
 				 * @since 1.110.0
 				 */
 				opensOnClick: {
@@ -59,7 +59,7 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> By default, a type-ahead is only shown to provide suggestions when users enter input in a connected control.
 				 * This property enables scenarios where popovers need to be shown earlier (for example, recommendations or recently entered values).
-				 * See also {@link sap.ui.mdc.ValueHelpDelegate.showTypeahead showTypeahead}
+				 * See also {@link module:sap/ui/mdc/ValueHelpDelegate.showTypeahead showTypeahead}
 				 * @since 1.112.0
 				 */
 				opensOnFocus: {

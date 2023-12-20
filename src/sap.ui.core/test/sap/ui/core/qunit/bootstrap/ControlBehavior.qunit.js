@@ -71,12 +71,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Set animation mode to a valid value", function(assert) {
+		const changeHandler = function (oEvent) {
+			assert.strictEqual(oEvent.animationMode, AnimationMode.basic, "'change' event was executed with the correct event parameters.");
+		};
 		assert.equal(ControlBehavior.getAnimationMode(), AnimationMode.full, "Default animation mode is " + AnimationMode.full + ".");
 		assert.equal(getHtmlAttribute("data-sap-ui-animation-mode"), AnimationMode.full);
 
+		ControlBehavior.attachChange(changeHandler);
 		ControlBehavior.setAnimationMode(AnimationMode.basic);
 		assert.equal(ControlBehavior.getAnimationMode(), AnimationMode.basic, "Animation mode should switch to " + AnimationMode.basic + ".");
 		assert.equal(getHtmlAttribute("data-sap-ui-animation-mode"), AnimationMode.basic);
+		ControlBehavior.detachChange(changeHandler);
 	});
 
 	QUnit.test("Set animation mode to " + AnimationMode.none + " to turn animation off", function(assert) {

@@ -2,13 +2,13 @@
 sap.ui.define([
 	"sap/m/p13n/SortPanel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Item"
-], function (SortPanel, JSONModel, oCore, Item) {
+], function (SortPanel, JSONModel, nextUIUpdate, Item) {
 	"use strict";
 
 	QUnit.module("SortPanel API tests", {
-		beforeEach: function(){
+		beforeEach: async function(){
 			this.oSortPanel = new SortPanel();
 			this.oSortPanel.setP13nData([
 				{
@@ -33,7 +33,7 @@ sap.ui.define([
 				}
 			]);
 			this.oSortPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function(){
 			this.oSortPanel.destroy();

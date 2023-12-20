@@ -4,9 +4,9 @@ sap.ui.define([
 	"sap/m/p13n/FlexUtil",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
-], function (FlexModificationHandler, FlexUtil, FlexRuntimeInfoAPI, MDCControl, oCore, ControlPersonalizationWriteAPI) {
+], function (FlexModificationHandler, FlexUtil, FlexRuntimeInfoAPI, MDCControl, nextUIUpdate, ControlPersonalizationWriteAPI) {
 	"use strict";
 
 	QUnit.module("FlexModificationHandler API tests", {
@@ -86,7 +86,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Check FlexModificationHandler 'processChanges' execution for 'Auto' mode with VM reference", function(assert){
+	QUnit.test("Check FlexModificationHandler 'processChanges' execution for 'Auto' mode with VM reference", async function(assert){
 
 		var done = assert.async();
 
@@ -95,7 +95,7 @@ sap.ui.define([
 			hasVM: true
 		};
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oHandleChangesStub = sinon.spy(FlexUtil, "handleChanges");
 

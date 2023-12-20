@@ -52,7 +52,7 @@ sap.ui.define([
              * @param {Object} oChart Instance of the chart TODO: Which one? MDC or inner?
              * @since 1.88
              * @returns {Promise} Promise that resolves with an instance of a <code>sap.ui.mdc.FilterField</code>.
-             * For more information, see {@link sap.ui.mdc.AggregationBaseDelegate#addItem AggregationBaseDelegate}.
+             * For more information, see {@link module:sap/ui/mdc/AggregationBaseDelegate.addItem AggregationBaseDelegate}.
              */
             addItem: function (sPropertyName, oChart) {
                 return Promise.resolve(null);

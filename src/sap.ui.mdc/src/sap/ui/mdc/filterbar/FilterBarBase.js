@@ -122,7 +122,7 @@ sap.ui.define([
 					/**
 					 * Indicates whether possible errors during the search in a message box are displayed.
 					 * @since 1.74
-					 * Since version 1.111 replaced by the new validation handling of {@link sap.ui.mdc.FilterBarDelegate#determineValidationState determineValidationState} and {@link sap.ui.mdc.FilterBarDelegate#visualizeValidationState visualizeValidationState}.
+					 * Since version 1.111 replaced by the new validation handling of {@link module:sap/ui/mdc/FilterBarDelegate.determineValidationState determineValidationState} and {@link module:sap/ui/mdc/FilterBarDelegate.visualizeValidationState visualizeValidationState}.
 					 */
 					showMessages: {
 						type: "boolean",

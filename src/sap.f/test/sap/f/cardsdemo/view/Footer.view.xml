@@ -9,7 +9,7 @@
 		<subHeader>
 			<Toolbar>
 				<ToolbarSpacer />
-				<Title text="Footer (experimental)" />
+				<Title text="Footer" />
 				<ToolbarSpacer />
 			</Toolbar>
 		</subHeader>
@@ -18,7 +18,7 @@
 			<f:GridContainer>
 				<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/footer/card.json">
 					<w:layoutData>
-						<f:GridContainerItemLayoutData columns="6" />
+						<f:GridContainerItemLayoutData columns="7" />
 					</w:layoutData>
 				</w:Card>
 				<w:Card id="card2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/footer/cardHiddenFooter.json">

@@ -12,6 +12,9 @@ sap.ui.define(function() {
 			qunit: {
 				version: 2
 			},
+			coverage: {
+				instrumenter: "istanbul"
+			},
 			sinon: {
 				version: 4,
 				qunitBridge: true,
@@ -203,71 +206,9 @@ sap.ui.define(function() {
 
 			"ControlBehavior": {
 				title: "Test Page for ControlBehavior",
-				group: "Configuration"
-			},
-
-			"Configuration": {
-				autostart: false,
 				group: "Configuration",
-				page: "test-resources/sap/ui/core/qunit/bootstrap/Configuration.qunit.html",
-				qunit: {
-					reorder: false
-				}
-			},
-
-			"ConfigurationFlexibility_LibLoaded": {
-				autostart: false,
-				group: "Configuration",
-				qunit: {
-					reorder: false
-				},
-				ui5: {
-					"flexibilityservices": '[{"connector": "KeyUser", "url": "/some/url", "laverFilters": []}]'
-				}
-			},
-
-			"ConfigurationFlexibility_LoadLibUrl": {
-				autostart: false,
-				group: "Configuration",
-				page: "test-resources/sap/ui/core/qunit/bootstrap/ConfigurationFlexibility_LibLoaded.qunit.html?sapUiFlexibilityServices=" + encodeURI('[{"connector":"KeyUser","url": "/some/url","laverFilters":[]}]'),
-				qunit: {
-					reorder: false
-				}
-			},
-
-			"ConfigurationFlexibility_LoadLibUrl_SkipAutomatic": {
-				autostart: false,
-				group: "Configuration",
-				page: "test-resources/sap/ui/core/qunit/bootstrap/ConfigurationFlexibility_LibNotLoaded.qunit.html?sapUiXxSkipAutomaticFlLibLoading=true&sapUiFlexibilityServices=" + encodeURI('[{"connector":"KeyUser","url": "/some/url","laverFilters":[]}]'),
-				qunit: {
-					reorder: false
-				}
-			},
-
-			"ConfigurationFlexibility_DefaultDoesNotLoadLib": {
-				autostart: false,
-				group: "Configuration",
-				page: "test-resources/sap/ui/core/qunit/bootstrap/ConfigurationFlexibility_LibNotLoaded.qunit.html",
-				qunit: {
-					reorder: false
-				}
-			},
-
-			"ConfigurationFlexibility_LibConfigured": {
-				autostart: false,
-				group: "Configuration",
-				qunit: {
-					reorder: false
-				},
-				ui5: {
-					"libs": 'sap.ui.fl'
-				}
-			},
-
-			"Configuration_language_via_URL": {
-				group: "Configuration",
-				qunit: {
-					reorder: false
+				coverage: {
+					only: ["sap/ui/core/ControlBehavior"]
 				}
 			},
 

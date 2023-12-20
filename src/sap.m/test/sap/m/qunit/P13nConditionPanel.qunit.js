@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/model/type/Boolean",
 	"sap/ui/model/odata/type/Boolean",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	createAndAppendDiv,
 	P13nConditionPanel,
@@ -36,7 +36,7 @@ sap.ui.define([
 	DateTime,
 	BooleanType,
 	EdmBooleanType,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -96,7 +96,7 @@ sap.ui.define([
 		};
 
 
-		QUnit.test("Default Values", function(assert) {
+		QUnit.test("Default Values", async function(assert) {
 
 			var nItems = 0;
 
@@ -105,7 +105,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
@@ -116,7 +116,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("get/SetConditions test", function(assert) {
+		QUnit.test("get/SetConditions test", async function(assert) {
 
 			var oCondition0 = { "key": "i0", "text": "", "operation": P13nConditionOperation.Ascending, "keyField": "Date", "value1": "", "value2": ""};
 			var oCondition1 = { "key": "i1", "text": "", "operation": P13nConditionOperation.Ascending, "keyField": "CompanyCode", "value1": "", "value2": ""};
@@ -132,7 +132,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			var nItems = 2;
@@ -171,7 +171,7 @@ sap.ui.define([
 		});
 
 
-		QUnit.test("get/SetKeyFields test", function(assert) {
+		QUnit.test("get/SetKeyFields test", async function(assert) {
 
 			var oKeyField1 = {key: "", text: "(none)"};
 			var oKeyField2 = {key: "CompanyCode", text: "Code"};
@@ -191,7 +191,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			var nItems = 5;
@@ -216,7 +216,7 @@ sap.ui.define([
 		});
 
 
-		QUnit.test("get/SetOperations test", function(assert) {
+		QUnit.test("get/SetOperations test", async function(assert) {
 
 			var aOperations = [ P13nConditionOperation.BT,
 							   P13nConditionOperation.EQ,
@@ -237,7 +237,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			var nItems = 8;
@@ -261,7 +261,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("trigger add and remove test", function(assert) {
+		QUnit.test("trigger add and remove test", async function(assert) {
 
 			// system under test
 			var oP13nConditionPanel = new P13nConditionPanel({
@@ -272,7 +272,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			oP13nConditionPanel._handleRemoveCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
@@ -291,7 +291,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("_changeField does not remove condition if there is no event provided", function (assert) {
+		QUnit.test("_changeField does not remove condition if there is no event provided", async function (assert) {
 
 			// arrange
 			var oConditionGrid, oConditionsMap,
@@ -310,7 +310,7 @@ sap.ui.define([
 			fillConditionPanel(oP13nConditionPanel);
 			oP13nConditionPanel.setConditions([oCondition]);
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// act
 			oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
@@ -325,7 +325,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("change KeyField, Operation and Value test", function(assert) {
+		QUnit.test("change KeyField, Operation and Value test", async function(assert) {
 			// system under test
 			var oP13nConditionPanel = new P13nConditionPanel({
 				maxConditions: -1
@@ -335,7 +335,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[1];
@@ -365,14 +365,14 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("change KeyField from non upperCase field to upperCase field", function(assert) {
+		QUnit.test("change KeyField from non upperCase field to upperCase field", async function(assert) {
 			var oP13nConditionPanel = new P13nConditionPanel({});
 
 			fillConditionPanel(oP13nConditionPanel);
 
 			// Arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// Act
 			var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[1];
@@ -394,7 +394,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("test ContainerMode", function(assert) {
+		QUnit.test("test ContainerMode", async function(assert) {
 
 			// system under test
 			var oP13nConditionPanel = new P13nConditionPanel({
@@ -406,7 +406,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			oP13nConditionPanel._handleAddCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
@@ -418,7 +418,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("test AlwaysShowAddIcon", function(assert) {
+		QUnit.test("test AlwaysShowAddIcon", async function(assert) {
 
 			// system under test
 			var oP13nConditionPanel = new P13nConditionPanel({
@@ -430,7 +430,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(oP13nConditionPanel.getAlwaysShowAddIcon(), true, "AlwaysShowAddIcon must be true!");
@@ -439,7 +439,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("test layoutMode", function(assert){
+		QUnit.test("test layoutMode", async function(assert){
 
 			// system under test
 			var oP13nConditionPanel = new P13nConditionPanel({
@@ -451,7 +451,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(oP13nConditionPanel.getLayoutMode(), "Desktop", "LayoutMode must be Desktop!");
@@ -460,7 +460,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("new GroupCondition showIfGrouped must be true", function(assert) {
+		QUnit.test("new GroupCondition showIfGrouped must be true", async function(assert) {
 			var oCondition1 = { "key": "i1", "text": "", "operation": P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", "value1": "", "value2": "", showIfGrouped: true};
 			var oCondition2 = { "key": "i2", "text": "", "operation": P13nConditionOperation.GroupDescending, "keyField": "CompanyName", "value1": "", "value2": "", showIfGrouped: false};
 			var aConditions = [oCondition1, oCondition2];
@@ -476,7 +476,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			var nItems = 2;
@@ -516,7 +516,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		}); */
 
-		QUnit.test("testing maxLength of KeyField", function(assert) {
+		QUnit.test("testing maxLength of KeyField", async function(assert) {
 			// system under test
 			var oP13nConditionPanel = new P13nConditionPanel({
 				maxConditions: -1
@@ -526,7 +526,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[2];
 			//oConditionGrid.value1.onpaste();
@@ -538,7 +538,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("validate conditions", function(assert){
+		QUnit.test("validate conditions", async function(assert){
 			// system under test
 			var oP13nConditionPanel = new P13nConditionPanel({
 				maxConditions: -1
@@ -548,7 +548,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
 			// make the between condition invalid
@@ -572,7 +572,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("testing condition paginator", function(assert) {
+		QUnit.test("testing condition paginator", async function(assert) {
 			// system under test
 			var oP13nConditionPanel = new P13nConditionPanel({
 				maxConditions: -1
@@ -582,7 +582,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(!!oP13nConditionPanel._bPaginatorButtonsVisible, false, "Paginator buttons are not shown!");
@@ -602,7 +602,7 @@ sap.ui.define([
 			oP13nConditionPanel.setConditions(aConditions);
 
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(!!oP13nConditionPanel._bPaginatorButtonsVisible, true, "Paginator buttons are shown!");
@@ -611,7 +611,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("testing keyField types", function(assert) {
+		QUnit.test("testing keyField types", async function(assert) {
 			// system under test
 			var oP13nConditionPanel = new P13nConditionPanel({
 				maxConditions: -1
@@ -621,7 +621,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			var oCondition0 = { "key": "i0", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
@@ -634,7 +634,7 @@ sap.ui.define([
 			oP13nConditionPanel.setConditions([oCondition0, oCondition1, oCondition2, oCondition3, oCondition4, oCondition5, oCondition6]);
 
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
@@ -664,7 +664,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("testing Boolean type with default value", function(assert) {
+		QUnit.test("testing Boolean type with default value", async function(assert) {
 			// Arrange
 			var oConditionGrid,
 				oP13nConditionPanel = new P13nConditionPanel({
@@ -675,7 +675,7 @@ sap.ui.define([
 			fillConditionPanel(oP13nConditionPanel);
 
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// Act
 			oP13nConditionPanel.setConditions([oCondition]);
@@ -698,7 +698,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("testing keyField typeInstance", function(assert) {
+		QUnit.test("testing keyField typeInstance", async function(assert) {
 			// system under test
 			var oP13nConditionPanel = new P13nConditionPanel({
 				maxConditions: -1
@@ -735,7 +735,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			var oCondition0 = { "key": "i0", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
@@ -754,7 +754,7 @@ sap.ui.define([
 			oP13nConditionPanel.setConditions([oCondition0, oCondition1, oCondition2, oCondition3, oCondition4, oCondition5, oCondition6, oCondition7, oCondition8, oCondition9]);
 
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
@@ -790,7 +790,7 @@ sap.ui.define([
 
 
 			oP13nConditionPanel.setConditions([oCondition10, oCondition11]);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
 			assert.equal(oConditionGrid.value1.getSelectedIndex(), 2, "value1 of condition 0 must be true");
@@ -802,7 +802,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("testing empty operator", function(assert) {
+		QUnit.test("testing empty operator", async function(assert) {
 			// system under test
 			var oP13nConditionPanel = new P13nConditionPanel({
 				maxConditions: -1
@@ -821,7 +821,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			var oCondition0 = { "key": "i0", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
@@ -831,7 +831,7 @@ sap.ui.define([
 			oP13nConditionPanel.setConditions([oCondition0, oCondition1, oCondition2]);
 
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
@@ -849,7 +849,7 @@ sap.ui.define([
 		});
 
 
-		QUnit.test("testing suggest callback", function(assert) {
+		QUnit.test("testing suggest callback", async function(assert) {
 			// system under test
 			var oP13nConditionPanel = new P13nConditionPanel({
 				maxConditions: -1
@@ -862,14 +862,14 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			var oCondition0 = { "key": "i0", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
 			oP13nConditionPanel.setConditions([oCondition0]);
 
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(spy.called, true, "suggest callback called!");
@@ -878,7 +878,7 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
-		QUnit.test("testing remove all conditions when more than 20 filters are available", function (assert) {
+		QUnit.test("testing remove all conditions when more than 20 filters are available", async function (assert) {
 			// Arrange
 			var oP13nConditionPanel = new P13nConditionPanel(),
 			oCondition0 = { "key": "i0", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""},
@@ -903,7 +903,7 @@ sap.ui.define([
 				oCondition10, oCondition11, oCondition12, oCondition13, oCondition14, oCondition15, oCondition16]);
 
 			oP13nConditionPanel.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(oP13nConditionPanel.getConditions().length, 17, "Conditions are all set");

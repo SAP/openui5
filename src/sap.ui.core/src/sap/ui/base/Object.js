@@ -11,7 +11,7 @@
  */
 
 // Provides class sap.ui.base.Object
-sap.ui.define(['./Metadata', "sap/base/Log"], function(Metadata, Log) {
+sap.ui.define(['./Metadata', "sap/base/Log", "sap/ui/base/Object"], function(Metadata, Log, Object) {
 	"use strict";
 
 
@@ -100,7 +100,7 @@ sap.ui.define(['./Metadata', "sap/base/Log"], function(Metadata, Log) {
 	 * @static
 	 * @deprecated Since 1.120, please use {@link sap.ui.base.Object.isObjectA}.
 	 */
-	BaseObject.isA = function(oObject, vTypeName) {
+	Object.isObjectA = function(oObject, vTypeName) {
 		return oObject instanceof BaseObject && oObject.isA(vTypeName);
 	};
 
