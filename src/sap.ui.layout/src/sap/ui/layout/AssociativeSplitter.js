@@ -108,11 +108,11 @@ sap.ui.define([
 
 		iBar = parseInt(this._oLastDOMclicked.id.substr((sId + "-splitbar-").length));
 		oContentArea = this._getContentAreas()[iBar];
-		oContentArea._currentPosition = this.getCalculatedSizes()[iBar];
+		oContentArea._currentPosition = this._calculatedSizes[iBar];
 		oContentArea._lastPosition = oContentArea._lastPosition || oContentArea._currentPosition;
 
 		if (oContentArea._currentPosition === oContentArea._lastPosition) {
-			this._resizeContents(iBar, (this.getCalculatedSizes()[iBar]) * -1, true);
+			this._resizeContents(iBar, (this._calculatedSizes[iBar]) * -1, true);
 		} else {
 			this._resizeContents(iBar, oContentArea._lastPosition, true);
 			oContentArea._lastPosition = null;

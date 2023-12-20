@@ -136,6 +136,9 @@ sap.ui.define([
 	});
 
 	Splitter.prototype.init = function() {
+		/**
+		 * @deprecated As of version 1.21
+		 */
 		this._liveResize        = true;
 		this._keyboardEnabled   = true;
 		this._bHorizontal       = true;
@@ -153,7 +156,7 @@ sap.ui.define([
 		// We need the information whether auto resize is enabled to temporarily disable it
 		// during live resize and then set it back to the value before
 		this._autoResize = true;
-		this.enableAutoResize();
+		this._enableAutoResize();
 
 		// Bound versions for event handler registration
 		this._boundBarMoveEnd   = this._onBarMoveEnd.bind(this);
@@ -177,7 +180,7 @@ sap.ui.define([
 	};
 
 	Splitter.prototype.exit = function() {
-		this.disableAutoResize();
+		this._disableAutoResize();
 		delete this._resizeCallback;
 
 		delete this._boundBarMoveEnd;
@@ -255,6 +258,10 @@ sap.ui.define([
 	 * @deprecated As of version 1.21. This method is declared as protected in order to assess the need for this feature. It is declared as deprecated because the API might change in case the need for this is high enough to make it part of the official Splitter interface
 	 */
 	Splitter.prototype.enableAutoResize = function(bTemporarily) {
+		this._enableAutoResize(bTemporarily);
+	};
+
+	Splitter.prototype._enableAutoResize = function(bTemporarily) {
 		// Do not enable autoResize if it was deactivated temporarily and wasn't enabled before
 		if (bTemporarily && !this._autoResize) {
 			return;
@@ -281,6 +288,10 @@ sap.ui.define([
 	 * @deprecated As of version 1.21. This method is declared as protected in order to assess the need for this feature. It is declared as deprecated because the API might change in case the need for this is high enough to make it part of the official Splitter interface
 	 */
 	Splitter.prototype.disableAutoResize = function(bTemporarily) {
+		this._disableAutoResize(bTemporarily);
+	};
+
+	Splitter.prototype._disableAutoResize = function(bTemporarily) {
 		ResizeHandler.deregister(this._resizeHandlerId);
 
 		if (!bTemporarily) {
@@ -408,12 +419,12 @@ sap.ui.define([
 		var sId = this.getId();
 
 		// Disable auto resize during bar move
-		this.disableAutoResize(/* temporarily: */ true);
+		this._disableAutoResize(/* temporarily: */ true);
 
 		var iPos = oEvent[this._moveCord];
 		var iBar = parseInt(oBar.id.substr((sId + "-splitbar-").length));
 		var $bar = jQuery(oBar);
-		var mCalcSizes = this.getCalculatedSizes();
+		var mCalcSizes = this._calculatedSizes;
 		var iBarSize = this._bHorizontal ? $bar.outerWidth() : $bar.outerHeight();
 		var aContentAreas = this._getContentAreas();
 		var oLd1   = aContentAreas[iBar].getLayoutData();
@@ -505,21 +516,26 @@ sap.ui.define([
 		if (bInBounds) {
 			this._$SplitterOverlayBar.css(this._sizeDir, this._move.relStart + iDelta);
 
-			if (this._liveResize) {
-				var fMove = (this._move["start"] - oConfig[this._moveCord]);
-
-				//We should only switch direction of change in case it is left or right.
-				//Otherwise the vertical splitter is moved opposite to the mouse movement
-				if (this.getOrientation() == Orientation.Horizontal && this._bRtl) {
-					fMove = -fMove;
-				}
-
-				this._resizeContents(
-					/* left content number:    */ this._move["barNum"],
-					/* number of pixels:       */ -fMove,
-					/* also change layoutData: */ false
-				);
+			/**
+			 * @deprecated As of version 1.21
+			 */
+			if (!this._liveResize) {
+				return;
 			}
+
+			var fMove = (this._move["start"] - oConfig[this._moveCord]);
+
+			//We should only switch direction of change in case it is left or right.
+			//Otherwise the vertical splitter is moved opposite to the mouse movement
+			if (this.getOrientation() == Orientation.Horizontal && this._bRtl) {
+				fMove = -fMove;
+			}
+
+			this._resizeContents(
+				/* left content number:    */ this._move["barNum"],
+				/* number of pixels:       */ -fMove,
+				/* also change layoutData: */ false
+			);
 		}
 
 	};
@@ -566,7 +582,7 @@ sap.ui.define([
 		document.removeEventListener("touchmove", this._boundBarMove);
 
 		// Enable auto resize after bar move if it was enabled before
-		this.enableAutoResize(/* temporarily: */ true);
+		this._enableAutoResize(/* temporarily: */ true);
 		if (this._move.$bar){
 			this._move.$bar.trigger("focus");
 		}
@@ -743,9 +759,9 @@ sap.ui.define([
 		this._resizeBars(aContentAreas);
 
 		// Save calculated sizes to be able to tell whether a resize occurred
-		var oldCalculatedSizes = this.getCalculatedSizes();
+		var oldCalculatedSizes = this._calculatedSizes;
 		this._recalculateSizes();
-		var newCalculatedSizes = this.getCalculatedSizes();
+		var newCalculatedSizes = this._calculatedSizes;
 
 		var bSizesValid = false;
 		for (i = 0; i < newCalculatedSizes.length; ++i) {
@@ -1047,7 +1063,7 @@ sap.ui.define([
 		var iBigStep  = 999999;
 
 		var iBar = parseInt(oEvent.target.id.substr(sBarId.length));
-		var mCalcSizes = this.getCalculatedSizes();
+		var mCalcSizes = this._calculatedSizes;
 		// TODO: These two lines are incomprehensible magic - find better solution
 		this._move.c1Size = mCalcSizes[iBar];
 		this._move.c2Size = mCalcSizes[iBar + 1];
