@@ -1956,7 +1956,7 @@ function(
 
 	QUnit.test("Creating grid matrix when theme is not loaded", function (assert) {
 		// Arrange
-		this.stub(Core, "isThemeApplied").returns(false);
+		this.stub(this.oGrid, "_bThemeApplied").value(false);
 
 		// Assert
 		assert.strictEqual(this.oGrid.getNavigationMatrix(), null, "'null' is returned when theme is not yet loaded");

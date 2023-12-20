@@ -16,10 +16,10 @@ sap.ui.define([
 	'sap/ui/core/delegate/ItemNavigation',
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/InvisibleMessage",
+	"sap/ui/core/Theming",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery"
@@ -38,10 +38,10 @@ sap.ui.define([
 	ItemNavigation,
 	ManagedObjectObserver,
 	Control,
-	Core,
 	Element,
 	ResizeHandler,
 	InvisibleMessage,
+	Theming,
 	Device,
 	KeyCodes,
 	jQuery
@@ -649,6 +649,10 @@ sap.ui.define([
 		Device.resize.attachHandler(this._resizeDeviceHandler);
 
 		this._resizeItemHandler = this._resizeItem.bind(this);
+
+		this._bThemeApplied = false;
+		this._handleThemeAppliedBound = this._handleThemeApplied.bind(this);
+		Theming.attachApplied(this._handleThemeAppliedBound);
 	};
 
 	/**
@@ -774,6 +778,8 @@ sap.ui.define([
 			clearTimeout(this._checkColumnsTimeout);
 			this._checkColumnsTimeout = null;
 		}
+
+		Theming.detachApplied(this._handleThemeAppliedBound);
 	};
 
 	/**
@@ -1170,7 +1176,7 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	GridContainer.prototype.getNavigationMatrix = function () {
-		if (!Core.isThemeApplied()) {
+		if (!this._bThemeApplied) {
 			return null;
 		}
 
@@ -1186,6 +1192,11 @@ sap.ui.define([
 
 	GridContainer.prototype._isItemWrapper = function (oElement) {
 		return oElement.classList.contains("sapFGridContainerItemWrapper");
+	};
+
+	GridContainer.prototype._handleThemeApplied = function () {
+		this._bThemeApplied = true;
+		Theming.detachApplied(this._handleThemeAppliedBound);
 	};
 
 	return GridContainer;
