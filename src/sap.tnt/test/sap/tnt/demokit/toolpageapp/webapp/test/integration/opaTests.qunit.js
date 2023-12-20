@@ -2,12 +2,12 @@
 
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function() {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/ui/demo/toolpageapp/test/integration/AllJourneys"
+], async (Core) => {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/demo/toolpageapp/test/integration/AllJourneys"
-	], function() {
-		QUnit.start();
-	});
+	await Core.ready();
+	QUnit.start();
 });

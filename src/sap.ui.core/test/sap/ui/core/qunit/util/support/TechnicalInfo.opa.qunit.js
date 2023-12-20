@@ -1,7 +1,6 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/Device",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/actions/Press",
@@ -10,7 +9,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/I18NText",
 	"sap/ui/model/resource/ResourceModel"
-], function (Device, Opa5, opaTest, Press, EnterText, PropertyStrictEquals, Ancestor, I18NText, ResourceModel) {
+], function (Opa5, opaTest, Press, EnterText, PropertyStrictEquals, Ancestor, I18NText, ResourceModel) {
 	"use strict";
 
 	var sTestPageURL = sap.ui.require.toUrl("static/TechnicalInfoTestbench.html"),
@@ -26,82 +25,29 @@ sap.ui.define([
 				iPressCtrlAltShiftP: function () {
 					return this.waitFor({
 						actions: function () {
-							var oWindow = Opa5.getWindow(),
-								bOpened = false;
+							var oWindow = Opa5.getWindow();
 
-							try {
-								// trigger left ALT key (there is a separate check in Hotkeys.js for this)
-								var oEvent = new KeyboardEvent("keydown", {
-									bubbles: true,
-									cancelable: true,
-									keyCode: 18,
-									location: 1
-								});
-								oWindow.document.dispatchEvent(oEvent);
+							// trigger left ALT key (there is a separate check in Hotkeys.js for this)
+							oWindow.document.dispatchEvent(new KeyboardEvent("keydown", {
+								bubbles: true,
+								cancelable: true,
+								keyCode: 18,
+								location: 1
+							}));
 
-								// trigger CTRL+ALT+SHIFT+P
-								oEvent = new KeyboardEvent("keydown", {
-									bubbles: true,
-									cancelable: true,
-									keyCode: 80,
-									ctrlKey: true,
-									altKey: true,
-									shiftKey: true
-								});
-								oWindow.document.dispatchEvent(oEvent);
-							} catch (oException) {
-								// IE does not support this and will go here
-								bOpened = false;
-							}
-
-							// Fallback: Load TechnicalInfo dialog manually with some static mock data
-							// Chrome passes the above code but does not support creating custom keyCode Event
-							if (!bOpened || Device.browser.chrome) {
-								oWindow.sap.ui.require(['sap/ui/core/support/techinfo/TechnicalInfo'], function (TechnicalInfo) {
-									TechnicalInfo.open(function() {
-										return {
-											modules : {
-												"sap/ui/Device.js": {
-													"name": "sap/ui/Device.js",
-													"state": 4,
-													"group": null,
-													"data": null,
-													"loaded": null,
-													"content": {}
-												},
-												"sap/ui/core/Locale.js": {
-													"name": "sap/ui/core/Locale.js",
-													"state": 4,
-													"group": null,
-													"loaded": null,
-													"url": "../../../../../../../resources/sap/ui/core/Locale.js"
-												},
-												"sap/m/Button.js": {
-													"name": "sap/m/Button.js",
-													"state": 4,
-													"group": null,
-													"loaded": null,
-													"url":"../../../../../../../resources/sap/m/Button.js"
-												},
-												"sap/m/Text.js" : {
-													"name": "sap/m/Text.js",
-													"state": 4,
-													"group": null,
-													"loaded": null,
-													"url": "../../../../../../../resources/sap/m/Text.js"
-												}
-											}
-										};
-									});
-									// Workaround: load library resource bundles for core and m manually for voter
-									oWindow.sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
-									oWindow.sap.ui.getCore().getLibraryResourceBundle("sap.m");
-								});
-							}
+							// trigger CTRL+ALT+SHIFT+P
+							oWindow.document.dispatchEvent(new KeyboardEvent("keydown", {
+								bubbles: true,
+								cancelable: true,
+								keyCode: 80,
+								ctrlKey: true,
+								altKey: true,
+								shiftKey: true
+							}));
 						},
-						errorMessage: "Could not open Technical Information Dialog",
+						errorMessage: "Could not press Technical Information Dialog keyboard combination",
 						success: function () {
-							Opa5.assert.ok(true, "Opened the Technical Information Dialog");
+							Opa5.assert.ok(true, "Pressed the Technical Information Dialog keyboard combination");
 						}
 					});
 				}
