@@ -2,7 +2,6 @@
 sap.ui.define([
 	"sap/ui/codeeditor/CodeEditor",
 	"sap/m/Button",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/ui/events/KeyCodes",
@@ -10,7 +9,6 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(CodeEditor,
 			Button,
-			Core,
 			Library,
 			Theming,
 			KeyCodes,
@@ -284,31 +282,39 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial rendering", function (assert) {
-		var oThemeStub = this.stub(Theming, "getTheme").returns("sap_fiori_3");
+		this.stub(Theming, "getTheme").returns("sap_fiori_3");
 
 		var oCodeEditor = new CodeEditor();
 		assert.strictEqual(oCodeEditor._oEditor.getTheme(), "ace/theme/crimson_editor", "Initial theme is set correctly");
 
 		oCodeEditor.destroy();
-		oThemeStub.restore();
 	});
 
 	QUnit.test("Theme change", function (assert) {
-		var done = assert.async(2);
+		const done = assert.async(2);
+		const initialTheme = Theming.getTheme();
+		let callCount = 0;
+		const handleThemeApplied = (oEvent) => {
+			callCount++;
 
-		Core.attachThemeChanged(function () {
-			var sTheme = Core.getConfiguration().getTheme();
-			if (sTheme === "sap_fiori_3") {
+			if (oEvent.theme === "sap_fiori_3") {
 				assert.strictEqual(this.oCodeEditor._oEditor.getTheme(), "ace/theme/crimson_editor", "theme is correct");
-			} else if (sTheme === "sap_fiori_3_hcb") {
+			} else if (oEvent.theme === "sap_fiori_3_hcb") {
 				assert.strictEqual(this.oCodeEditor._oEditor.getTheme(), "ace/theme/chaos", "theme is correct");
 			}
 
-			Core.applyTheme("sap_fiori_3_hcb");
-			done();
-		}.bind(this));
+			Theming.setTheme("sap_fiori_3_hcb");
 
-		Core.applyTheme("sap_fiori_3");
+			if (callCount === 2) {
+				Theming.setTheme(initialTheme);
+				Theming.detachApplied(handleThemeApplied);
+			}
+
+			done();
+		};
+
+		Theming.setTheme("sap_fiori_3");
+		Theming.attachApplied(handleThemeApplied);
 	});
 
 	QUnit.module("Worker", {
