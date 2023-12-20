@@ -697,7 +697,7 @@ sap.ui.define([
 				.atLeast(0);
 			this.oLogMock.expects("error").never();
 
-			// Counter for batch requests
+			// Counter for ($direct or $batch) requests.
 			this.iBatchNo = 0;
 			// {map<string, string[]>}
 			// this.mChanges["id"] is a list of expected changes for the property "text" of the
@@ -1672,6 +1672,10 @@ sap.ui.define([
 					}
 				}
 
+				if (iBatchNo === undefined) {
+					that.iBatchNo += 1;
+				}
+
 				delete oActualRequest.headers["Accept"];
 				delete oActualRequest.headers["Accept-Language"];
 				delete oActualRequest.headers["Content-Type"];
@@ -1688,7 +1692,7 @@ sap.ui.define([
 						oActualRequest.groupId = sGroupId;
 					}
 					if ("batchNo" in oExpectedRequest) {
-						oActualRequest.batchNo = iBatchNo;
+						oActualRequest.batchNo = iBatchNo ?? -that.iBatchNo;
 					}
 					if ("changeSetNo" in oExpectedRequest) {
 						oActualRequest.changeSetNo = iChangeSetNo;
@@ -2123,7 +2127,8 @@ sap.ui.define([
 		 *   $batch:
 		 *   <ul>
 		 *      <li> groupId: the group ID by which the $batch was sent
-		 *      <li> batchNo: the number of the $batch within the test (starting with 1)
+		 *      <li> batchNo: the number of the ($direct or $batch) request within the test
+		 *        (starting with 1). Use a negative number to expect a $direct request.
 		 *      <li> changeSetNo: The number of the change set within $batch (starting with 1)
 		 *      <li> $ContentID: The content ID of the request within the change set
 		 *   </ul>
@@ -9509,7 +9514,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "BusinessPartnerList('4711')/BP_2_SO",
 					payload : {Note : "New 1"}
@@ -9518,7 +9523,7 @@ sap.ui.define([
 					SalesOrderID : "43"
 				})
 				.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "BusinessPartnerList('4711')/BP_2_SO",
 					payload : {Note : "New 2"}
@@ -9527,7 +9532,7 @@ sap.ui.define([
 					SalesOrderID : "44"
 				})
 				.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "BusinessPartnerList('4711')/BP_2_SO",
 					payload : {Note : "New 3"}
@@ -9986,7 +9991,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "New 1"}
@@ -9995,7 +10000,7 @@ sap.ui.define([
 					SalesOrderID : "44"
 				})
 				.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "New 2"}
@@ -10004,7 +10009,7 @@ sap.ui.define([
 					SalesOrderID : "45"
 				})
 				.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "New 3"}
@@ -10132,7 +10137,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "New 1"}
@@ -10141,7 +10146,7 @@ sap.ui.define([
 					SalesOrderID : "43"
 				})
 				.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "New 2"}
@@ -10953,7 +10958,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "New 1"}
@@ -10962,7 +10967,7 @@ sap.ui.define([
 					SalesOrderID : "43"
 				})
 				.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "New 2"}
@@ -10971,7 +10976,7 @@ sap.ui.define([
 					SalesOrderID : "44"
 				})
 				.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "New 3"}
@@ -11222,7 +11227,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "New 1"}
@@ -11231,7 +11236,7 @@ sap.ui.define([
 					SalesOrderID : "43"
 				})
 				.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "New 2"}
@@ -11240,7 +11245,7 @@ sap.ui.define([
 					SalesOrderID : "44"
 				})
 				.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "New 3"}
@@ -11329,7 +11334,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "BusinessPartnerList('4711')/BP_2_SO",
 					payload : {Note : "New 1"}
@@ -11431,7 +11436,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "New 1"}
@@ -11440,7 +11445,7 @@ sap.ui.define([
 					SalesOrderID : "43"
 				})
 				.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {Note : "New 2"}
@@ -25697,11 +25702,11 @@ sap.ui.define([
 				}, "after expand");
 
 			that.expectRequest({
-					batchNo : 9,
+					batchNo : 12,
 					url : "Artists/$count"
 				}, 3)
 				.expectRequest({
-					batchNo : 9,
+					batchNo : 12,
 					url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 						+ "HierarchyNodes=$root/Artists,HierarchyQualifier='" + sHierarchyQualifier
 						+ "',NodeProperty='_/NodeID')&$select=ArtistID,IsActiveEntity"
@@ -37460,14 +37465,14 @@ make root = ${bMakeRoot}`;
 
 			that.expectChange("netAmount", "-1.00")
 				.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "PATCH",
 					url : "SalesOrderList('42')?sap-client=123",
 					headers : {"If-Match" : "ETag0", Prefer : "return=minimal"},
 					payload : {NetAmount : "-1"}
 				}, createErrorInsideBatch({message : "Value -1 not allowed"}))
 				.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					url : "SalesOrderList('42')?sap-client=123&$select=GrossAmount"
 				}) // no response required since the PATCH fails
 				.expectMessages([{
@@ -37502,7 +37507,7 @@ make root = ${bMakeRoot}`;
 		}).then(function () {
 			that.expectChange("netAmount", "200.00")
 				.expectRequest({
-					batchNo : 2,
+					batchNo : 3,
 					method : "PATCH",
 					url : "SalesOrderList('42')?sap-client=123",
 					headers : {"If-Match" : "ETag0", Prefer : "return=minimal"},
@@ -37534,7 +37539,7 @@ make root = ${bMakeRoot}`;
 				});
 
 			that.expectRequest({
-					batchNo : 3,
+					batchNo : 4,
 					method : "PATCH",
 					url : "SalesOrderList('42')?sap-client=123",
 					headers : {
@@ -37554,7 +37559,7 @@ make root = ${bMakeRoot}`;
 					SalesOrderID : "42"
 				})
 				.expectRequest({
-					batchNo : 3,
+					batchNo : 4,
 					url : "SalesOrderList('42')?sap-client=123&$select=GrossAmount,NetAmount"
 				}, {
 					// "@odata.etag" : "ETag2",
@@ -37699,14 +37704,14 @@ make root = ${bMakeRoot}`;
 			that.oView.byId("name").getBinding("value").setValue("TAFKAP");
 
 			that.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					method : "PATCH",
 					url : "Artists(ArtistID='42',IsActiveEntity=true)",
 					headers : {"If-Match" : "ETag0"},
 					payload : {Name : "TAFKAP"}
 				}, {/* response does not matter here */})
 				.expectRequest({
-					batchNo : 1,
+					batchNo : 2,
 					url : "Artists(ArtistID='42',IsActiveEntity=true)"
 						+ "?$select=DraftAdministrativeData"
 						+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
@@ -39614,7 +39619,7 @@ make root = ${bMakeRoot}`;
 	}, function () { // ODataModel#submitBatch restarts all PATCHes
 		this.expectRequest({
 				$ContentID : "0.0",
-				batchNo : 2,
+				batchNo : 4,
 				changeSetNo : 1,
 				groupId : "$auto",
 				headers : {"If-Match" : "ETag4"},
@@ -39626,7 +39631,7 @@ make root = ${bMakeRoot}`;
 			}, {/* don't care */})
 			.expectRequest({
 				$ContentID : "1.0",
-				batchNo : 2,
+				batchNo : 4,
 				changeSetNo : 1,
 				groupId : "$auto",
 				headers : {"If-Match" : "ETag3"},
@@ -39638,7 +39643,7 @@ make root = ${bMakeRoot}`;
 			}, {/* don't care */})
 			.expectRequest({
 				$ContentID : undefined,
-				batchNo : 2,
+				batchNo : 4,
 				changeSetNo : 2, // new changeset via submitBatch("$auto")
 				groupId : "$auto",
 				method : "POST",
@@ -39681,7 +39686,7 @@ make root = ${bMakeRoot}`;
 	}, function (_assert, oForm0Binding) {
 		// Context#requestSideEffects restarts all PATCHes within the same $batch as the side effect
 		this.expectRequest({
-				batchNo : 2,
+				batchNo : 4,
 				headers : {"If-Match" : "ETag3"},
 				method : "PATCH",
 				payload : {
@@ -39690,7 +39695,7 @@ make root = ${bMakeRoot}`;
 				url : "EMPLOYEES('3')"
 			}, {/* don't care */})
 			.expectRequest({
-				batchNo : 2,
+				batchNo : 4,
 				headers : {"If-Match" : "ETag4"},
 				method : "PATCH",
 				payload : {
@@ -39699,7 +39704,7 @@ make root = ${bMakeRoot}`;
 				url : "EMPLOYEES('4')"
 			}, {/* don't care */})
 			.expectRequest({
-				batchNo : 2,
+				batchNo : 4,
 				url : "EMPLOYEES('3')?$select=STATUS"
 			}, {
 				STATUS : "Busy"
@@ -40004,7 +40009,7 @@ make root = ${bMakeRoot}`;
 			}
 
 			that.expectRequest({
-					batchNo : 2,
+					batchNo : 3,
 					method : "PATCH",
 					url : "EMPLOYEES('3')",
 					headers : {"If-Match" : "ETag0"},
@@ -40014,7 +40019,7 @@ make root = ${bMakeRoot}`;
 					}
 				}, {/* don't care */})
 				.expectRequest({
-					batchNo : 2,
+					batchNo : 3,
 					method : "POST",
 					headers : {"If-Match" : "ETag0"},
 					url : "EMPLOYEES('3')/" + sAction,
@@ -59376,6 +59381,130 @@ make root = ${bMakeRoot}`;
 		await Promise.all([oContext.created(), oSubmitPromise]);
 
 		assert.strictEqual(bSubmitBatchCompleted, true);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Execute actions and delete rows using group id "$single" and "$direct". Observe
+	// that each execute and delete request using "$single" is in its own batch request and does not
+	// get overtaken by the "$direct" request.
+	// JIRA: CPOUI5ODATAV4-2413
+	QUnit.test("Execute and delete immediately using groupId='$single'", async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<Table id="orders" items="{/SalesOrderList}">
+	<Text id="id" text="{SalesOrderID}"/>
+</Table>`;
+
+		this.expectRequest({
+				batchNo : 1,
+				groupId : "$auto",
+				url : "SalesOrderList?$select=SalesOrderID&$skip=0&$top=100"
+			}, {value : [
+				{SalesOrderID : "1"},
+				{SalesOrderID : "2"},
+				{SalesOrderID : "3"},
+				{SalesOrderID : "4"},
+				{SalesOrderID : "5"},
+				{SalesOrderID : "6"}
+			]})
+			.expectChange("id", ["1", "2", "3", "4", "5", "6"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm";
+		this.expectRequest({
+				batchNo : 2,
+				groupId : "$single",
+				method : "POST",
+				payload : {},
+				url : "SalesOrderList('1')/" + sAction
+			}).expectRequest({
+				method : "POST",
+				batchNo : 3,
+				groupId : "$single",
+				payload : {},
+				url : "SalesOrderList('2')/" + sAction
+			}).expectRequest({
+				batchNo : -4,
+				method : "POST",
+				payload : {},
+				url : "SalesOrderList('3')/" + sAction
+		});
+
+		const oListBinding = this.oView.byId("orders").getBinding("items");
+		const [oContext0, oContext1, oContext2] = oListBinding.getAllCurrentContexts();
+
+		const oContextBinding0 = oModel.bindContext(sAction + "(...)", oContext0);
+		const oContextBinding1 = oModel.bindContext(sAction + "(...)", oContext1);
+		const oContextBinding2 = oModel.bindContext(sAction + "(...)", oContext2);
+
+		const oRVCPromise0 = oContextBinding0.execute("$single");
+		const oRVCPromise1 = oContextBinding1.execute("$single");
+		const oRVCPromise2 = oContextBinding2.execute("$direct");
+
+		await Promise.all([
+			// code under test
+			oRVCPromise0,
+			oRVCPromise1,
+			oRVCPromise2,
+			this.waitForChanges(assert)
+		]);
+
+		this.expectRequest({
+				batchNo : 5,
+				groupId : "$single",
+				method : "DELETE",
+				url : "SalesOrderList('1')"
+			})
+			.expectRequest({
+				batchNo : 6,
+				groupId : "$single",
+				method : "DELETE",
+				url : "SalesOrderList('2')"
+			})
+			.expectRequest({
+				batchNo : -7,
+				method : "DELETE",
+				url : "SalesOrderList('3')"
+			})
+			.expectChange("id", ["4", "5", "6"]);
+
+		await Promise.all([
+			// code under test
+			oContext0.delete("$single"),
+			oContext1.delete("$single"),
+			oContext2.delete("$direct"),
+			this.waitForChanges(assert)
+		]);
+
+		this.expectRequest({
+				batchNo : 8,
+				groupId : "$single",
+				headers : {"If-Match" : "*"},
+				method : "DELETE",
+				url : "SalesOrderList('4')"
+			})
+			.expectRequest({
+				batchNo : 9,
+				groupId : "$single",
+				headers : {"If-Match" : "*"},
+				method : "DELETE",
+				url : "SalesOrderList('5')"
+			})
+			.expectRequest({
+				batchNo : -10,
+				headers : {"If-Match" : "*"},
+				method : "DELETE",
+				url : "SalesOrderList('6')"
+			});
+
+		await Promise.all([
+			// code under test
+			oModel.delete("/SalesOrderList('4')", "$single"),
+			oModel.delete("/SalesOrderList('5')", "$single"),
+			oModel.delete("/SalesOrderList('6')", "$direct"),
+			this.waitForChanges(assert)
+		]);
 	});
 
 	//*********************************************************************************************

@@ -4086,7 +4086,7 @@ sap.ui.define([
 		 * until this request has returned.
 		 */
 		function onSubmit() {
-			oRequestLock = that.oRequestor.lockGroup(oGroupLock.getGroupId(), that, true);
+			oRequestLock = that.oRequestor.lockGroup(sGroupId, that, true);
 		}
 
 		function post(oGroupLock0) {
@@ -4096,7 +4096,7 @@ sap.ui.define([
 			return SyncPromise.all([
 				that.oRequestor.request(sHttpMethod,
 					that.sResourcePath + that.sQueryString, oGroupLock0, mHeaders, oData,
-					oEntity && onSubmit),
+					oEntity && sGroupId !== "$single" && onSubmit),
 				that.fetchTypes()
 			]).then(function (aResult) {
 				that.buildOriginalResourcePath(aResult[0], aResult[1], fnGetOriginalResourcePath);
