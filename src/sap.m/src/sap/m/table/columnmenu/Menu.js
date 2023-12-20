@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
+	"sap/m/ScrollContainer",
 	"sap/m/library",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
@@ -31,6 +32,7 @@ sap.ui.define([
 	Button,
 	Toolbar,
 	ToolbarSpacer,
+	ScrollContainer,
 	library,
 	Device,
 	Control,
@@ -391,9 +393,11 @@ sap.ui.define([
 
 	Menu.prototype._addView = function (oMenuItem) {
 		var oItem = new AbstractContainerItem({
-			content: new AssociativeControl({
-				control: oMenuItem.getContent(),
-				height: true
+			content: new ScrollContainer({
+				content: new AssociativeControl({
+					control: oMenuItem.getContent(),
+					height: true
+				})
 			}),
 			key: oMenuItem.getId(),
 			text: oMenuItem.getLabel(),
