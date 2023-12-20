@@ -878,14 +878,12 @@ sap.ui.define([
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this.oVariantManagement.attachManage(function(oEvent) {
-				var aFavItems = [];
 				var oData = oEvent.getParameters();
 
 				var aDelItems = oData.deleted;
 				assert.ok(aDelItems);
-				assert.equal(aDelItems.length, 2);
+				assert.equal(aDelItems.length, 1);
 				assert.equal(aDelItems[0], "1");
-				assert.equal(aDelItems[1], "2");
 
 				var aRenamedItems = oData.renamed;
 				assert.ok(aRenamedItems);
@@ -916,7 +914,7 @@ sap.ui.define([
 			oItemDel.setTitle("New 1");
 
 			this._oVM._handleManageDeletePressed(oItemDel);
-			this._oVM._handleManageDeletePressed(this._oVM._getItemByKey("2"));
+			this._oVM._handleManageDeletePressed(this._oVM._getItemByKey("2")); // will not be deleted, because different layer
 
 			var oItemFav = this._oVM._getItemByKey("4");
 			assert.ok(oItemFav);
