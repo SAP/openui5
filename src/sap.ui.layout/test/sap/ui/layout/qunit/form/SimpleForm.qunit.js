@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 	function(
 		Element,
@@ -28,7 +28,7 @@ sap.ui.define([
 		Label,
 		Input,
 		jQuery,
-		oCore
+		nextUIUpdate
 	) {
 	"use strict";
 
@@ -54,7 +54,7 @@ sap.ui.define([
 		oFormLayout = oForm.getLayout();
 	}
 
-	function initTestWithContent(sLayout) {
+	async function initTestWithContent(sLayout) {
 		oSimpleForm = new SimpleForm("SF1", {
 			layout: sLayout,
 			editable: true,
@@ -72,25 +72,25 @@ sap.ui.define([
 					  new Input("I6")
 					  ]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oForm = oSimpleForm.getAggregation("form");
 		oFormLayout = oForm.getLayout();
 	}
 
-	function initTestWithContentRL() {
-		initTestWithContent("ResponsiveLayout");
+	async function initTestWithContentRL() {
+		await initTestWithContent("ResponsiveLayout");
 	}
 
-	function initTestWithContentRGL() {
-		initTestWithContent("ResponsiveGridLayout");
+	async function initTestWithContentRGL() {
+		await initTestWithContent("ResponsiveGridLayout");
 	}
 
-	function initTestWithContentGL() {
-		initTestWithContent("GridLayout");
+	async function initTestWithContentGL() {
+		await initTestWithContent("GridLayout");
 	}
 
-	function initTestWithContentCL() {
-		initTestWithContent("ColumnLayout");
+	async function initTestWithContentCL() {
+		await initTestWithContent("ColumnLayout");
 	}
 
 	function afterTest() {
@@ -114,16 +114,17 @@ sap.ui.define([
 		cleanupControls("TB3");
 	}
 
-	function asyncLayoutTest(assert, sLayout, fnTest) {
+	async function asyncLayoutTest(assert, sLayout, fnTest) {
 		if (oFormLayout) {
-			fnTest(assert, sLayout);
+			return await fnTest(assert, sLayout);
 		} else {
 			// wait until Layout is loaded
-			var fnDone = assert.async();
-			sap.ui.require([sLayout], function() {
-				oFormLayout = oForm.getLayout();
-				fnTest(assert, sLayout);
-				fnDone();
+			return new Promise((Resolve) => {
+				sap.ui.require([sLayout], async (aModules) => {
+					oFormLayout = oForm.getLayout();
+					await fnTest(assert, sLayout);
+					Resolve();
+				});
 			});
 		}
 	}
@@ -140,7 +141,7 @@ sap.ui.define([
 		assert.equal(oFormLayout.getId(), "SF1--Layout", "Stable ID of FormLayout");
 	}
 
-	QUnit.test("initial state", function(assert) {
+	QUnit.test("initial state", async function(assert) {
 		assert.ok(oSimpleForm, "SimpleForm is created");
 		assert.ok(oForm, "internal Form is created");
 		assert.equal(oForm.getId(), "SF1--Form", "Stable ID of Form");
@@ -152,24 +153,25 @@ sap.ui.define([
 		assert.equal(aFormContainers.length, 0, "Form has no FormContainers");
 
 		oSimpleForm.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
+		// eslint-disable-next-line require-atomic-updates
 		oFormLayout = oForm.getLayout();
 
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", usedLayout);
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", usedLayout);
 	});
 
-	QUnit.test("DefaultLayout explicit set", function(assert) {
+	QUnit.test("DefaultLayout explicit set", async function(assert) {
 		oSimpleForm.setLayout(oSimpleForm.getLayout());
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", usedLayout);
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", usedLayout);
 	});
 
-	QUnit.test("width", function(assert) {
+	QUnit.test("width", async function(assert) {
 		oSimpleForm.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(!/width:/.test(oSimpleForm.$().attr("style")), "SimpleForm2: no width set");
 
 		oSimpleForm.setWidth("100%");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(/width:/.test(oSimpleForm.$().attr("style")) && /100%/.test(oSimpleForm.$().attr("style")), "SimpleForm1: width set");
 	});
 
@@ -207,28 +209,28 @@ sap.ui.define([
 		assert.notOk(!!oForm.getToolbar(), "Form getToolbar");
 	});
 
-	QUnit.test("AriaLabelledBy", function(assert) {
+	QUnit.test("AriaLabelledBy", async function(assert) {
 		oSimpleForm.addAriaLabelledBy("XXX");
 		oSimpleForm.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oForm.getAriaLabelledBy(), "XXX", "Form getAriaLabelledBy");
 		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "XXX", "aria-labelledby");
 	});
 
-	QUnit.test("_suggestTitleId", function(assert) {
+	QUnit.test("_suggestTitleId", async function(assert) {
 		oSimpleForm._suggestTitleId("ID1");
 		oSimpleForm.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "ID1", "aria-labelledby points to TitleID");
 
 		var oTitle = new Title("T1", {text: "Test"});
 		oSimpleForm.setTitle(oTitle);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
 
 		oSimpleForm.addAriaLabelledBy("X");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "X T1", "aria-labelledby points to AriaLabel and Title");
 	});
 
@@ -1567,8 +1569,8 @@ sap.ui.define([
 		afterEach: afterTest
 	});
 
-	QUnit.test("used Layout", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", usedLayout);
+	QUnit.test("used Layout", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", usedLayout);
 	});
 
 	function defaultLayoutDataOnContent(assert) {
@@ -1620,15 +1622,15 @@ sap.ui.define([
 		assert.equal(oLayoutData.getWeight(), 1, "Field LayoutData weight");
 	}
 
-	QUnit.test("default LayoutData on content", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", defaultLayoutDataOnContent);
+	QUnit.test("default LayoutData on content", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", defaultLayoutDataOnContent);
 	});
 
-	function customLayoutDataOnContent(assert) {
+	async function customLayoutDataOnContent(assert) {
 		var oLayoutData = new ResponsiveFlowLayoutData("LD2", {linebreak: true, weight: 8});
 		var oField = Element.getElementById("I2");
 		oField.setLayoutData(oLayoutData);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oLabel = Element.getElementById("L1");
 		oLayoutData = oLabel.getLayoutData();
@@ -1649,7 +1651,7 @@ sap.ui.define([
 		oLayoutData = new ResponsiveFlowLayoutData("LD4", {weight: 3});
 		oField = Element.getElementById("I4");
 		oField.setLayoutData(oLayoutData);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
@@ -1671,7 +1673,7 @@ sap.ui.define([
 		oLayoutData = new ResponsiveFlowLayoutData("LD5", {linebreak: true, weight: 3});
 		oField = Element.getElementById("I5");
 		oField.setLayoutData(oLayoutData);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oField = Element.getElementById("I4");
 		oLayoutData = oField.getLayoutData();
@@ -1692,7 +1694,7 @@ sap.ui.define([
 		oLayoutData = new ResponsiveFlowLayoutData("LD3", {linebreak: true, weight: 8});
 		oField = Element.getElementById("I3");
 		oField.setLayoutData(oLayoutData);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
@@ -1704,7 +1706,7 @@ sap.ui.define([
 		oLayoutData = new ResponsiveFlowLayoutData("LD6", {linebreak: true, weight: 8});
 		oField.setLayoutData(oLayoutData);
 		oSimpleForm.addContent(oField);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
@@ -1712,8 +1714,8 @@ sap.ui.define([
 		assert.equal(oLayoutData.getWeight(), 8, "Field LayoutData weight");
 	}
 
-	QUnit.test("custom LayoutData on content", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", customLayoutDataOnContent);
+	QUnit.test("custom LayoutData on content", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", customLayoutDataOnContent);
 	});
 
 	function RlDefaultLayoutDataRemovedIfContentRemoved(assert){
@@ -1737,14 +1739,14 @@ sap.ui.define([
 		}
 	}
 
-	QUnit.test("default LayoutData removed if content removed", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlDefaultLayoutDataRemovedIfContentRemoved);
+	QUnit.test("default LayoutData removed if content removed", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlDefaultLayoutDataRemovedIfContentRemoved);
 	});
 
-	function RlDefaultLayoutDataOnFormContainer(assert) {
+	async function RlDefaultLayoutDataOnFormContainer(assert) {
 		var oTitle = new Title("T3", {text: "Test"});
 		oSimpleForm.addContent(oTitle);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var aFormContainers = oForm.getFormContainers();
 		var oLayoutData = aFormContainers[0].getLayoutData();
@@ -1764,8 +1766,8 @@ sap.ui.define([
 		assert.ok(oLayoutData.getLinebreak(), "LayoutData linebreak");
 	}
 
-	QUnit.test("default LayoutData on FormContainer", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlDefaultLayoutDataOnFormContainer);
+	QUnit.test("default LayoutData on FormContainer", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlDefaultLayoutDataOnFormContainer);
 	});
 
 	function RlDefaultLayoutDataOnFormElement(assert) {
@@ -1778,17 +1780,17 @@ sap.ui.define([
 		assert.notOk(oLayoutData.getMargin(), "LayoutData margin");
 	}
 
-	QUnit.test("default LayoutData on FormElement", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlDefaultLayoutDataOnFormElement);
+	QUnit.test("default LayoutData on FormElement", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlDefaultLayoutDataOnFormElement);
 	});
 
-	function RlMaxContainerCols(assert) {
+	async function RlMaxContainerCols(assert) {
 		assert.equal(oSimpleForm.getMaxContainerCols(), 2, "default value");
 
 		oSimpleForm.setMaxContainerCols(3);
 		var oTitle = new Title("T3", {text: "Test"});
 		oSimpleForm.addContent(oTitle);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var aFormContainers = oForm.getFormContainers();
 		var oLayoutData = aFormContainers[0].getLayoutData();
@@ -1799,7 +1801,7 @@ sap.ui.define([
 		assert.notOk(oLayoutData.getLinebreak(), "LayoutData linebreak");
 
 		oSimpleForm.setMaxContainerCols(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oLayoutData = aFormContainers[0].getLayoutData();
 		assert.notOk(oLayoutData.getLinebreak(), "LayoutData linebreak");
@@ -1809,15 +1811,15 @@ sap.ui.define([
 		assert.ok(oLayoutData.getLinebreak(), "LayoutData linebreak");
 	}
 
-	QUnit.test("maxContainerCols", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlMaxContainerCols);
+	QUnit.test("maxContainerCols", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlMaxContainerCols);
 	});
 
-	function RlMinWidth(assert) {
+	async function RlMinWidth(assert) {
 		assert.equal(oSimpleForm.getMinWidth(), -1, "default value");
 
 		oSimpleForm.setMinWidth(5000);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var aFormContainers = oForm.getFormContainers();
 		var oLayoutData = aFormContainers[0].getLayoutData();
@@ -1826,11 +1828,11 @@ sap.ui.define([
 		assert.ok(oLayoutData.getLinebreak(), "LayoutData linebreak");
 	}
 
-	QUnit.test("minWidth", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlMinWidth);
+	QUnit.test("minWidth", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlMinWidth);
 	});
 
-	function RlLabelMinWidth(assert) {
+	async function RlLabelMinWidth(assert) {
 		assert.equal(oSimpleForm.getLabelMinWidth(), 192, "default value");
 
 		var oLabel = Element.getElementById("L1");
@@ -1838,27 +1840,27 @@ sap.ui.define([
 		assert.equal(oLayoutData.getMinWidth(), 192, "Label LayoutData minWidth");
 
 		oSimpleForm.setLabelMinWidth(200);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oLayoutData.getMinWidth(), 200, "Label LayoutData minWidth");
 	}
 
-	QUnit.test("labelMinWidth", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlLabelMinWidth);
+	QUnit.test("labelMinWidth", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlLabelMinWidth);
 	});
 
-	function RlBackgroundDesign(assert) {
+	async function RlBackgroundDesign(assert) {
 		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Translucent, "default value");
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Translucent, "value on Layout");
 
 		oSimpleForm.setBackgroundDesign(library.BackgroundDesign.Transparent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on SimpleForm");
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on Layout");
 	}
 
-	QUnit.test("backgroundDesign", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlBackgroundDesign);
+	QUnit.test("backgroundDesign", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", RlBackgroundDesign);
 	});
 
 	/**
@@ -1873,8 +1875,8 @@ sap.ui.define([
 		assert.ok(oFormLayout.isA("sap.ui.layout.form.GridLayout"), "GridLayout used");
 	}
 
-	QUnit.test("used Layout", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlUsedLayout);
+	QUnit.test("used Layout", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlUsedLayout);
 	});
 
 	function GlNoDefaultLayoutData(assert) {
@@ -1892,8 +1894,8 @@ sap.ui.define([
 		assert.notOk(oLayoutData, "FormElement has no LayoutData");
 	}
 
-	QUnit.test("no default LayoutData", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlNoDefaultLayoutData);
+	QUnit.test("no default LayoutData", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlNoDefaultLayoutData);
 	});
 
 	function GlDefaultLayoutDataOnFormContauiner(assert) {
@@ -1908,15 +1910,15 @@ sap.ui.define([
 		assert.ok(oLayoutData.getHalfGrid(), "LayoutData halfGrid");
 	}
 
-	QUnit.test("default LayoutData on FormContauiner", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlDefaultLayoutDataOnFormContauiner);
+	QUnit.test("default LayoutData on FormContauiner", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlDefaultLayoutDataOnFormContauiner);
 	});
 
-	function GlMaxContainerCols(assert) {
+	async function GlMaxContainerCols(assert) {
 		oSimpleForm.setMaxContainerCols(1);
 		var oTitle = new Title("T3", {text: "Test"});
 		oSimpleForm.addContent(oTitle);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var aFormContainers = oForm.getFormContainers();
 		var oLayoutData = aFormContainers[0].getLayoutData();
@@ -1927,7 +1929,7 @@ sap.ui.define([
 		assert.notOk(oLayoutData.getHalfGrid(), "LayoutData halfGrid");
 
 		oSimpleForm.setMaxContainerCols(2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oLayoutData = aFormContainers[0].getLayoutData();
 		assert.ok(oLayoutData.getHalfGrid(), "LayoutData halfGrid");
@@ -1937,23 +1939,23 @@ sap.ui.define([
 		assert.notOk(oLayoutData.getHalfGrid(), "LayoutData halfGrid");
 	}
 
-	QUnit.test("maxContainerCols", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlMaxContainerCols);
+	QUnit.test("maxContainerCols", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlMaxContainerCols);
 	});
 
-	function GlBackgroundDesign(assert) {
+	async function GlBackgroundDesign(assert) {
 		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Translucent, "default value");
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Translucent, "value on Layout");
 
 		oSimpleForm.setBackgroundDesign(library.BackgroundDesign.Transparent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on SimpleForm");
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on Layout");
 	}
 
-	QUnit.test("backgroundDesign", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlBackgroundDesign);
+	QUnit.test("backgroundDesign", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/GridLayout", GlBackgroundDesign);
 	});
 
 	QUnit.module("ResponsiveGridLayout", {
@@ -1961,8 +1963,8 @@ sap.ui.define([
 		afterEach: afterTest
 	});
 
-	QUnit.test("used Layout", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", usedLayout);
+	QUnit.test("used Layout", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", usedLayout);
 	});
 
 	function RGlNoDefaultLayoutData(assert) {
@@ -1982,23 +1984,23 @@ sap.ui.define([
 		assert.notOk(oLayoutData, "FormElement has no LayoutData");
 	}
 
-	QUnit.test("no default LayoutData", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", RGlNoDefaultLayoutData);
+	QUnit.test("no default LayoutData", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", RGlNoDefaultLayoutData);
 	});
 
-	function RGlBackgroundDesign(assert) {
+	async function RGlBackgroundDesign(assert) {
 		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Translucent, "default value");
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Translucent, "value on Layout");
 
 		oSimpleForm.setBackgroundDesign(library.BackgroundDesign.Transparent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on SimpleForm");
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on Layout");
 	}
 
-	QUnit.test("backgroundDesign", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", RGlBackgroundDesign);
+	QUnit.test("backgroundDesign", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", RGlBackgroundDesign);
 	});
 
 	function RGlOtherPropertiesDefaults(assert) {
@@ -2036,11 +2038,11 @@ sap.ui.define([
 		assert.equal(oFormLayout.getBreakpointM(), 600, "BreakpointM: on Layout");
 	}
 
-	QUnit.test("other properties defaults", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", RGlOtherPropertiesDefaults);
+	QUnit.test("other properties defaults", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", RGlOtherPropertiesDefaults);
 	});
 
-	function RGlOtherPropertiesSet(assert) {
+	async function RGlOtherPropertiesSet(assert) {
 		oSimpleForm.setLabelSpanXL(6);
 		oSimpleForm.setLabelSpanL(5);
 		oSimpleForm.setLabelSpanM(4);
@@ -2057,7 +2059,7 @@ sap.ui.define([
 		oSimpleForm.setBreakpointXL(2000);
 		oSimpleForm.setBreakpointL(1000);
 		oSimpleForm.setBreakpointM(500);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oSimpleForm.getLabelSpanXL(), 6, "LabelSpanXL: on SimpleForm");
 		assert.equal(oFormLayout.getLabelSpanXL(), 6, "LabelSpanXL: on Layout");
@@ -2093,8 +2095,8 @@ sap.ui.define([
 		assert.equal(oFormLayout.getBreakpointM(), 500, "BreakpointM: on Layout");
 	}
 
-	QUnit.test("other properties set", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", RGlOtherPropertiesSet);
+	QUnit.test("other properties set", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", RGlOtherPropertiesSet);
 	});
 
 	QUnit.module("ColumnLayout", {
@@ -2102,8 +2104,8 @@ sap.ui.define([
 		afterEach: afterTest
 	});
 
-	QUnit.test("used Layout", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", usedLayout);
+	QUnit.test("used Layout", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", usedLayout);
 	});
 
 	function ClNoDefaultLayoutData(assert) {
@@ -2123,23 +2125,23 @@ sap.ui.define([
 		assert.notOk(oLayoutData, "FormElement has no LayoutData");
 	}
 
-	QUnit.test("no default LayoutData", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", ClNoDefaultLayoutData);
+	QUnit.test("no default LayoutData", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", ClNoDefaultLayoutData);
 	});
 
-	function ClBackgroundDesign(assert) {
+	async function ClBackgroundDesign(assert) {
 		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Translucent, "default value");
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Translucent, "value on Layout");
 
 		oSimpleForm.setBackgroundDesign(library.BackgroundDesign.Transparent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on SimpleForm");
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on Layout");
 	}
 
-	QUnit.test("backgroundDesign", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", ClBackgroundDesign);
+	QUnit.test("backgroundDesign", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", ClBackgroundDesign);
 	});
 
 	function ClOtherPropertiesDefaults(assert) {
@@ -2155,17 +2157,17 @@ sap.ui.define([
 		assert.equal(oFormLayout.getColumnsM(), 1, "ColumnsM: on Layout");
 	}
 
-	QUnit.test("other properties defaults", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", ClOtherPropertiesDefaults);
+	QUnit.test("other properties defaults", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", ClOtherPropertiesDefaults);
 	});
 
-	function ClOtherPropertiesSet(assert) {
+	async function ClOtherPropertiesSet(assert) {
 		oSimpleForm.setLabelSpanL(5);
 		oSimpleForm.setEmptySpanL(3);
 		oSimpleForm.setColumnsXL(4);
 		oSimpleForm.setColumnsL(3);
 		oSimpleForm.setColumnsM(2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oSimpleForm.getLabelSpanL(), 5, "LabelSpanL: on SimpleForm");
 		assert.equal(oFormLayout.getLabelCellsLarge(), 5, "LabelCellsLarge: on Layout");
@@ -2179,8 +2181,8 @@ sap.ui.define([
 		assert.equal(oFormLayout.getColumnsM(), 2, "ColumnsM: on Layout");
 	}
 
-	QUnit.test("other properties set", function(assert) {
-		asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", ClOtherPropertiesSet);
+	QUnit.test("other properties set", async function(assert) {
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", ClOtherPropertiesSet);
 	});
 
 	QUnit.module("other", {
@@ -2188,7 +2190,7 @@ sap.ui.define([
 		afterEach: afterTest
 	});
 
-	function changeLayout(assert, oOldLayout) {
+	async function changeLayout(assert, oOldLayout) {
 		assert.ok(oFormLayout.isA("sap.ui.layout.form.ColumnLayout"), "ColumnLayout used");
 		assert.ok(oOldLayout._bIsBeingDestroyed, "old layout destroyed");
 
@@ -2202,7 +2204,8 @@ sap.ui.define([
 
 		oOldLayout = oFormLayout;
 		oSimpleForm.setLayout("ResponsiveGridLayout");
-		oCore.applyChanges();
+		await nextUIUpdate();
+		// eslint-disable-next-line require-atomic-updates
 		oFormLayout = oForm.getLayout();
 
 		assert.ok(oFormLayout.isA("sap.ui.layout.form.ResponsiveGridLayout"), "ResponsiveGridLayout used");
@@ -2213,13 +2216,14 @@ sap.ui.define([
 		assert.notOk(!!oLayoutData, "FormContainer has no LayoutData");
 	}
 
-	QUnit.test("change Layout", function(assert) {
+	QUnit.test("change Layout", async function(assert) {
 		var oOldLayout;
 		var fnDone;
 		if (oFormLayout) {
 			oOldLayout = oFormLayout;
 			oSimpleForm.setLayout(library.form.SimpleFormLayout.ColumnLayout);
-			oCore.applyChanges();
+			await nextUIUpdate();
+			// eslint-disable-next-line require-atomic-updates
 			oFormLayout = oForm.getLayout();
 			if (oFormLayout) {
 				changeLayout(assert, oOldLayout);
@@ -2234,11 +2238,12 @@ sap.ui.define([
 		} else {
 			// wait until Layout is loaded
 			fnDone = assert.async();
-			sap.ui.require(["sap/ui/layout/form/ResponsiveGridLayout"], function() {
+			sap.ui.require(["sap/ui/layout/form/ResponsiveGridLayout"], async function() {
 				oFormLayout = oForm.getLayout();
 				oOldLayout = oFormLayout;
 				oSimpleForm.setLayout(library.form.SimpleFormLayout.ColumnLayout);
-				oCore.applyChanges();
+				await nextUIUpdate();
+				// eslint-disable-next-line require-atomic-updates
 				oFormLayout = oForm.getLayout();
 
 				if (oFormLayout) {
@@ -2288,10 +2293,10 @@ sap.ui.define([
 		assert.notOk(bFound, "Field is not assigned to SimpleForm");
 	});
 
-	function clone(assert) {
+	async function clone(assert) {
 		var oClone = oSimpleForm.clone("MyClone");
 		oClone.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var aContent = oClone.getContent();
 		var oCloneForm = oClone.getAggregation("form");
@@ -2340,7 +2345,7 @@ sap.ui.define([
 		oClone.destroy();
 	}
 
-	QUnit.test("clone", function(assert) {
+	QUnit.test("clone", async function(assert) {
 		oSimpleForm.setLayout("ColumnLayout");
 		var oToolbar = new Toolbar("TB1");
 		oSimpleForm.addContent(oToolbar);
@@ -2349,17 +2354,17 @@ sap.ui.define([
 		var oVD = new VariantLayoutData("VD1", {multipleLayoutData: [oGD]});
 		var oField = new Input("I7", {layoutData: oVD});
 		oSimpleForm.addContent(oField);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
-		asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", clone);
+		await asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", clone);
 	});
 
 	/**
 	 * @deprecated as of version 1.93 ResponsiveLayout is deprecated, so test should only be executed if still available
 	 */
-	QUnit.test("resize", function(assert) {
+	QUnit.test("resize", async function(assert) {
 		oSimpleForm.setLayout("ResponsiveLayout");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.spy(oSimpleForm, "_applyLinebreaks");
 
 		var fnDone = assert.async();

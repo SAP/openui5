@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/m/Link",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 	function(
 		jQuery,
@@ -37,7 +37,7 @@ sap.ui.define([
 		Label,
 		Text,
 		Link,
-		oCore
+		nextUIUpdate
 	) {
 	"use strict";
 
@@ -68,7 +68,7 @@ sap.ui.define([
 		oControl = undefined;
 	}
 
-	function initForm() {
+	async function initForm() {
 		oColumnLayout = new ColumnLayout("CL1");
 		oLabel1 = new Label("L1", {text: "Label 1"});
 		oField1 = new Text("T1", {text: "Text 1"});
@@ -86,7 +86,7 @@ sap.ui.define([
 			editable: false,
 			formContainers: aFormContainers
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 	}
 
 	function afterTest() {
@@ -112,7 +112,7 @@ sap.ui.define([
 		}
 	}
 
-	function addContainer(sID) {
+	async function addContainer(sID) {
 		var oLabel = new Label(sID + "L1", {text: "Label 1"});
 		var oField = new Text(sID + "T1", {text: "Text 1"});
 		var oFormElement = new FormElement(sID + "FE1",{
@@ -124,12 +124,12 @@ sap.ui.define([
 		});
 
 		oForm.addFormContainer(oFormContainer);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		return oFormContainer;
 	}
 
-	function addElement(oFormContainer, sID) {
+	async function addElement(oFormContainer, sID) {
 		var oLabel = new Label(sID + "L1", {text: "Label 1"});
 		var oField = new Text(sID + "T1", {text: "Text 1"});
 		var oFormElement = new FormElement(sID,{
@@ -138,7 +138,7 @@ sap.ui.define([
 		});
 
 		oFormContainer.addFormElement(oFormElement);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		return oFormElement;
 	}
@@ -202,14 +202,14 @@ sap.ui.define([
 		assert.equal(oColumnLayout.getEmptyCellsLarge(), 0, "emptyCellsLarge");
 	});
 
-	QUnit.test("Responsiveness (test case 1)", function(assert) {
+	QUnit.test("Responsiveness (test case 1)", async function(assert) {
 
 		// arrange
 		var done = assert.async();
 
 		// act
 		oForm.setWidth("500px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		window.requestAnimationFrame(function() {
@@ -224,14 +224,14 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Responsiveness (test case 2)", function(assert) {
+	QUnit.test("Responsiveness (test case 2)", async function(assert) {
 
 		// arrange
 		var done = assert.async();
 
 		// act
 		oForm.setWidth("1000px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		window.requestAnimationFrame(function() {
@@ -246,14 +246,14 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Responsiveness (test case 3)", function(assert) {
+	QUnit.test("Responsiveness (test case 3)", async function(assert) {
 
 		// arrange
 		var done = assert.async();
 
 		// act
 		oForm.setWidth("1300px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		window.requestAnimationFrame(function() {
@@ -268,14 +268,14 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Responsiveness (test case 4)", function(assert) {
+	QUnit.test("Responsiveness (test case 4)", async function(assert) {
 
 		// arrange
 		var done = assert.async();
 
 		// act
 		oForm.setWidth("1500px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		window.requestAnimationFrame(function() {
@@ -301,12 +301,12 @@ sap.ui.define([
 		assert.ok(oColumnLayout.onsapright.called, "sapleft called");
 	});
 
-	QUnit.test("invalid columns", function(assert) {
+	QUnit.test("invalid columns", async function(assert) {
 		var oException;
 
 		try {
 			oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(1);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		} catch (e) {
 			oException = e;
 		}
@@ -337,18 +337,18 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 2, true, false, 2, true, false);
 	});
 
-	QUnit.test("One container - set columns", function(assert) {
+	QUnit.test("One container - set columns", async function(assert) {
 		oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(4);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 2, true, false, 3, true, false, 4, true, false);
 	});
 
-	QUnit.test("Title", function(assert) {
+	QUnit.test("Title", async function(assert) {
 		var oTitle = new Title("Title1", {text: "Title"});
 		oFormContainer1.setTitle(oTitle);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Container = jQuery("#FC1");
 		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
@@ -356,12 +356,12 @@ sap.ui.define([
 		assert.equal($Container.children()[1].id, "FC1-content", "content node for Container rendered");
 	});
 
-	QUnit.test("Toolbar", function(assert) {
+	QUnit.test("Toolbar", async function(assert) {
 		var oTitle = new Title("Title1", {text: "Title"});
 		var oToolbar = new Toolbar("TB1");
 		oFormContainer1.setTitle(oTitle);
 		oFormContainer1.setToolbar(oToolbar);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Container = jQuery("#FC1");
 		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
@@ -369,7 +369,7 @@ sap.ui.define([
 		assert.equal($Container.children()[1].id, "FC1-content", "content node for Container rendered");
 	});
 
-	QUnit.test("Expand", function(assert) {
+	QUnit.test("Expand", async function(assert) {
 		var $Container = jQuery("#FC1");
 		assert.notOk($Container.hasClass("sapUiFormCLContainerColl"), "container not collapsed");
 
@@ -381,23 +381,23 @@ sap.ui.define([
 
 		oFormContainer1.setExpanded(false);
 		oFormContainer1.invalidate(); // to test in renderer
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$Container = jQuery("#FC1");
 		assert.ok($Container.hasClass("sapUiFormCLContainerColl"), "container collapsed");
 	});
 
-	QUnit.test("Tooltip", function(assert) {
+	QUnit.test("Tooltip", async function(assert) {
 		var $Container = jQuery("#FC1");
 		assert.notOk($Container.attr("title"), "container has no tooltip");
 
 		oFormContainer1.setTooltip("Test");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$Container = jQuery("#FC1");
 		assert.equal($Container.attr("title"), "Test", "container has tooltip");
 	});
 
-	QUnit.test("Two containers - default columns", function(assert) {
-		oFormContainer2 = addContainer("FC2");
+	QUnit.test("Two containers - default columns", async function(assert) {
+		oFormContainer2 = await addContainer("FC2");
 
 		var oDomRef = window.document.getElementById("FC1");
 		assert.ok(oDomRef, "Container1 rendered");
@@ -414,9 +414,9 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, false, 1, true, false, 1, true, false);
 	});
 
-	QUnit.test("Two containers - set columns", function(assert) {
+	QUnit.test("Two containers - set columns", async function(assert) {
 		oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(4);
-		oFormContainer2 = addContainer("FC2");
+		oFormContainer2 = await addContainer("FC2");
 
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLColumnsM2"), "M: Layout has 2 columns");
@@ -428,16 +428,16 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, true, false, 1, true, false, 2, true, false);
 
 		// make 2. continer larger zo see if it gets more columns in L
-		oFormElement2 = addElement(oFormContainer2, "FE2");
+		oFormElement2 = await addElement(oFormContainer2, "FE2");
 		$Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 2, true, false);
 		$Container = jQuery("#FC2");
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, true, false, 2, true, false, 2, true, false);
 	});
 
-	QUnit.test("Two container - first invisible", function(assert) {
+	QUnit.test("Two container - first invisible", async function(assert) {
 		oFormContainer1.setVisible(false);
-		oFormContainer2 = addContainer("FC2");
+		oFormContainer2 = await addContainer("FC2");
 
 		var oDomRef = window.document.getElementById("FC1");
 		assert.notOk(oDomRef, "Container1 not rendered");
@@ -448,9 +448,9 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 2, 1, true, false, 1, true, false, 2, true, false, 2, true, false);
 	});
 
-	QUnit.test("Three containers - default columns", function(assert) {
-		addContainer("FC2");
-		addContainer("FC3");
+	QUnit.test("Three containers - default columns", async function(assert) {
+		await addContainer("FC2");
+		await addContainer("FC3");
 
 		var oDomRef = window.document.getElementById("FC1");
 		assert.ok(oDomRef, "Container1 rendered");
@@ -469,10 +469,10 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 3, 1, false, false, 1, false, false, 1, false, true, 1, false, true);
 	});
 
-	QUnit.test("Three containers - set columns", function(assert) {
+	QUnit.test("Three containers - set columns", async function(assert) {
 		oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(4);
-		addContainer("FC2");
-		addContainer("FC3");
+		await addContainer("FC2");
+		await addContainer("FC3");
 
 		var $Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 2, true, false);
@@ -484,10 +484,10 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 3, 1, false, false, 1, false, true, 1, true, false, 1, true, false);
 	});
 
-	QUnit.test("Four containers - default columns", function(assert) {
-		addContainer("FC2");
-		addContainer("FC3");
-		addContainer("FC4");
+	QUnit.test("Four containers - default columns", async function(assert) {
+		await addContainer("FC2");
+		await addContainer("FC3");
+		await addContainer("FC4");
 
 		var oDomRef = window.document.getElementById("FC1");
 		assert.ok(oDomRef, "Container1 rendered");
@@ -511,11 +511,11 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 4, 1, false, false, 1, false, false, 1, false, false, 1, false, false);
 	});
 
-	QUnit.test("Four containers - set columns", function(assert) {
+	QUnit.test("Four containers - set columns", async function(assert) {
 		oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(4);
-		addContainer("FC2");
-		addContainer("FC3");
-		addContainer("FC4");
+		await addContainer("FC2");
+		await addContainer("FC3");
+		await addContainer("FC4");
 
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
@@ -532,11 +532,11 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Five containers - default columns", function(assert) {
-		addContainer("FC2");
-		addContainer("FC3");
-		addContainer("FC4");
-		addContainer("FC5");
+	QUnit.test("Five containers - default columns", async function(assert) {
+		await addContainer("FC2");
+		await addContainer("FC3");
+		await addContainer("FC4");
+		await addContainer("FC5");
 
 		var oDomRef = window.document.getElementById("FC1");
 		assert.ok(oDomRef, "Container1 rendered");
@@ -565,12 +565,12 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 5, 1, false, false, 1, false, false, 1, false, true, 1, false, true);
 	});
 
-	QUnit.test("Five containers - set columns", function(assert) {
+	QUnit.test("Five containers - set columns", async function(assert) {
 		oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(4);
-		addContainer("FC2");
-		addContainer("FC3");
-		addContainer("FC4");
-		addContainer("FC5");
+		await addContainer("FC2");
+		await addContainer("FC3");
+		await addContainer("FC4");
+		await addContainer("FC5");
 
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
@@ -589,12 +589,12 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 5, 1, false, false, 1, false, true, 1, false, false, 1, false, true);
 	});
 
-	QUnit.test("Five containers - set columns (XL 6 columns)", function(assert) {
+	QUnit.test("Five containers - set columns (XL 6 columns)", async function(assert) {
 		oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(6);
-		addContainer("FC2");
-		addContainer("FC3");
-		addContainer("FC4");
-		addContainer("FC5");
+		await addContainer("FC2");
+		await addContainer("FC3");
+		await addContainer("FC4");
+		await addContainer("FC5");
 
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
@@ -613,22 +613,22 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 5, 1, false, false, 1, false, true, 1, false, false, 1, true, false);
 	});
 
-	QUnit.test("ColumnContainerData - One container", function(assert) {
+	QUnit.test("ColumnContainerData - One container", async function(assert) {
 		var oLayoutData = new ColumnContainerData({columnsM: 1, columnsL: 1, columnsXL: 1});
 		oFormContainer1.setLayoutData(oLayoutData);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
 	});
 
-	QUnit.test("ColumnContainerData - two containers", function(assert) {
+	QUnit.test("ColumnContainerData - two containers", async function(assert) {
 		oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(4);
-		var oFormContainer2 = addContainer("FC2");
+		var oFormContainer2 = await addContainer("FC2");
 		var oLayoutData = new ColumnContainerData({columnsM: 2, columnsL: 2, columnsXL: 3});
 		oFormContainer2.setLayoutData(oLayoutData);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
@@ -636,7 +636,7 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 2, false, true, 2, true, false, 3, true, false);
 
 		oLayoutData.setColumnsM(1).setColumnsL(1).setColumnsXL(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 2, true, false, 3, true, false);
 		$Container = jQuery("#FC2");
@@ -645,7 +645,7 @@ sap.ui.define([
 		oFormContainer2.setLayoutData();
 		oLayoutData.setColumnsM(2).setColumnsL(3).setColumnsXL(4);
 		oFormContainer1.setLayoutData(oLayoutData);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 2, true, false, 3, true, false, 4, true, false);
 		$Container = jQuery("#FC2");
@@ -653,7 +653,7 @@ sap.ui.define([
 
 		oColumnLayout.setColumnsXL(6);
 		oLayoutData.setColumnsM(2).setColumnsL(3).setColumnsXL(6);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 2, true, false, 3, true, false, 6, true, false);
 		$Container = jQuery("#FC2");
@@ -661,13 +661,13 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("ColumnContainerData - invalid cells", function(assert) {
+	QUnit.test("ColumnContainerData - invalid cells", async function(assert) {
 		var oException;
 
 		try {
 			var oLayoutData = new ColumnContainerData({columnsM: 2, columnsL: 3, columnsXL: 4});
 			oFormContainer1.setLayoutData(oLayoutData);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		} catch (e) {
 			oException = e;
 		}
@@ -675,9 +675,9 @@ sap.ui.define([
 		assert.ok(oException, "exception fired");
 	});
 
-	QUnit.test("order of elements", function(assert) {
-		addElement(oFormContainer1, "FE2");
-		addElement(oFormContainer1, "FE3");
+	QUnit.test("order of elements", async function(assert) {
+		await addElement(oFormContainer1, "FE2");
+		await addElement(oFormContainer1, "FE3");
 
 		var $Content = jQuery("#FC1-content");
 		assert.equal($Content.children().length, 3, "Content has 3 children");
@@ -686,11 +686,11 @@ sap.ui.define([
 		assert.equal($Content.children()[2].id, "FE3", "FormElement3 is third child");
 	});
 
-	QUnit.test("invisible element", function(assert) {
-		var oFormElement2 = addElement(oFormContainer1, "FE2");
+	QUnit.test("invisible element", async function(assert) {
+		var oFormElement2 = await addElement(oFormContainer1, "FE2");
 		oFormElement2.setVisible(false);
-		addElement(oFormContainer1, "FE3");
-		addElement(oFormContainer1, "FE4");
+		await addElement(oFormContainer1, "FE3");
+		await addElement(oFormContainer1, "FE4");
 
 		var $Content = jQuery("#FC1-content");
 		assert.equal($Content.children().length, 3, "Content has 2 children");
@@ -718,18 +718,18 @@ sap.ui.define([
 		assert.ok(jQuery("#T1").attr("style").indexOf("100%") > 0, "Control width set to 100%");
 	});
 
-	QUnit.test("One field without label", function(assert) {
+	QUnit.test("One field without label", async function(assert) {
 		oFormElement1.destroyLabel();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
 		assert.equal(aChildren.length, 1, "Element has 1 child nodes");
 		checkElementClasses(assert, jQuery(aChildren[0]), 1, false, "T1", 12, false, 0, 12, false, 0);
 	});
 
-	QUnit.test("Label with two fields", function(assert) {
+	QUnit.test("Label with two fields", async function(assert) {
 		oFormElement1.addField(new Text("T2", {text: "Text2"}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -739,10 +739,10 @@ sap.ui.define([
 		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 6, false, 0, 4, false, 0);
 	});
 
-	QUnit.test("Label with three fields", function(assert) {
+	QUnit.test("Label with three fields", async function(assert) {
 		oFormElement1.addField(new Text("T2", {text: "Text2"}));
 		oFormElement1.addField(new Text("T3", {text: "Text3"}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -753,7 +753,7 @@ sap.ui.define([
 		checkElementClasses(assert, jQuery(aChildren[3]), 4, false, "T3", 4, false, 0, 2, false, 0);
 	});
 
-	QUnit.test("Label with 10 fields", function(assert) {
+	QUnit.test("Label with 10 fields", async function(assert) {
 		oFormElement1.addField(new Text("T2", {text: "Text2"}));
 		oFormElement1.addField(new Text("T3", {text: "Text3"}));
 		oFormElement1.addField(new Text("T4", {text: "Text4"}));
@@ -763,7 +763,7 @@ sap.ui.define([
 		oFormElement1.addField(new Text("T8", {text: "Text8"}));
 		oFormElement1.addField(new Text("T9", {text: "Text9"}));
 		oFormElement1.addField(new Text("T10", {text: "Text10"}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -781,7 +781,7 @@ sap.ui.define([
 		checkElementClasses(assert, jQuery(aChildren[10]), 11, false, "T10", 1, false, 0, 4, false, 0);
 	});
 
-	QUnit.test("Label with 15 fields", function(assert) {
+	QUnit.test("Label with 15 fields", async function(assert) {
 		oFormElement1.addField(new Text("T2", {text: "Text2"}));
 		oFormElement1.addField(new Text("T3", {text: "Text3"}));
 		oFormElement1.addField(new Text("T4", {text: "Text4"}));
@@ -796,7 +796,7 @@ sap.ui.define([
 		oFormElement1.addField(new Text("T13", {text: "Text13"}));
 		oFormElement1.addField(new Text("T14", {text: "Text14"}));
 		oFormElement1.addField(new Text("T15", {text: "Text15"}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -819,10 +819,10 @@ sap.ui.define([
 		checkElementClasses(assert, jQuery(aChildren[15]), 16, false, "T15", 4, false, 0, 1, false, 0);
 	});
 
-	QUnit.test("ColumnElementData on label", function(assert) {
+	QUnit.test("ColumnElementData on label", async function(assert) {
 		var oLayoutData = new ColumnElementData({cellsLarge: 12, cellsSmall: 5});
 		oLabel1.setLayoutData(oLayoutData);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -830,10 +830,10 @@ sap.ui.define([
 		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 7, false, 0, 12, false, 0);
 	});
 
-	QUnit.test("ColumnElementData on label with -1", function(assert) {
+	QUnit.test("ColumnElementData on label with -1", async function(assert) {
 		var oLayoutData = new ColumnElementData({cellsLarge: -1, cellsSmall: -1});
 		oLabel1.setLayoutData(oLayoutData);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -841,11 +841,11 @@ sap.ui.define([
 		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 12, false, 0, 8, false, 0);
 	});
 
-	QUnit.test("ColumnElementData on field", function(assert) {
+	QUnit.test("ColumnElementData on field", async function(assert) {
 		oFormElement1.addField(new Text("T2", {text: "Text2", layoutData: new ColumnElementData({cellsLarge: -1, cellsSmall: -1})}));
 		var oLayoutData = new ColumnElementData({cellsLarge: 1, cellsSmall: 1});
 		oField1.setLayoutData(oLayoutData);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -854,12 +854,12 @@ sap.ui.define([
 		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 11, false, 0, 7, false, 0);
 	});
 
-	QUnit.test("ColumnElementData on label and field", function(assert) {
+	QUnit.test("ColumnElementData on label and field", async function(assert) {
 		var oLayoutData = new ColumnElementData({cellsLarge: 3, cellsSmall: 3});
 		oLabel1.setLayoutData(oLayoutData);
 		oLayoutData = new ColumnElementData({cellsLarge: 5, cellsSmall: 5});
 		oField1.setLayoutData(oLayoutData);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -867,13 +867,13 @@ sap.ui.define([
 		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 5, false, 0, 5, false, 0);
 
 		oLayoutData.setCellsLarge(10).setCellsSmall(10);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$Element = jQuery("#FE1");
 		aChildren = $Element.children();
 		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 10, true, 0, 10, true, 0);
 	});
 
-	QUnit.test("ColumnElementData on label and fields", function(assert) {
+	QUnit.test("ColumnElementData on label and fields", async function(assert) {
 		oField2 = new Text("T2", {text: "Text2"});
 		oField3 = new Text("T3", {text: "Text3"});
 		oFormElement1.addField(oField2);
@@ -884,7 +884,7 @@ sap.ui.define([
 		oField1.setLayoutData(oLayoutData);
 		oLayoutData = new ColumnElementData({cellsLarge: 5, cellsSmall: 5});
 		oField3.setLayoutData(oLayoutData);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -896,7 +896,7 @@ sap.ui.define([
 		oLayoutData.setCellsLarge(10).setCellsSmall(5);
 		oLayoutData = oLabel1.getLayoutData();
 		oLayoutData.setCellsLarge(3).setCellsSmall(2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$Element = jQuery("#FE1");
 		aChildren = $Element.children();
 		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 11, false, 0, 8, false, 0);
@@ -904,12 +904,12 @@ sap.ui.define([
 		checkElementClasses(assert, jQuery(aChildren[3]), 4, false, "T3", 5, true, 2, 10, true, 0);
 	});
 
-	QUnit.test("Tooltip", function(assert) {
+	QUnit.test("Tooltip", async function(assert) {
 		var $Element = jQuery("#FE1");
 		assert.notOk($Element.attr("title"), "Element has no tooltip");
 
 		oFormElement1.setTooltip("Test");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$Element = jQuery("#FE1");
 		assert.equal($Element.attr("title"), "Test", "element has tooltip");
 	});
@@ -920,13 +920,13 @@ sap.ui.define([
 		assert.equal(oDom.id, "FE1", "FormElemnt Dom returened");
 	});
 
-	QUnit.test("invalid content", function(assert) {
+	QUnit.test("invalid content", async function(assert) {
 		var oToolbar = new Toolbar("TB1");
 		var oException;
 
 		try {
 			oFormElement1.addField(oToolbar);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		} catch (e) {
 			oException = e;
 		}
@@ -1012,7 +1012,7 @@ sap.ui.define([
 	Link.prototype.isA = myTypeCheck;
 
 	QUnit.module("semantic element rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			Link.prototype.getFormRenderAsControl = function() {return true;}; // TODO: remove after Link supports this
 			Link.prototype.getFormObservingProperties = function() {return ["text"];};
 			oColumnLayout = new ColumnLayout("CL1");
@@ -1033,7 +1033,7 @@ sap.ui.define([
 				editable: false,
 				formContainers: aFormContainers
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			delete Link.prototype.getFormRenderAsControl;

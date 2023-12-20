@@ -1,7 +1,7 @@
 /* global QUnit, ResizeObserver */
 sap.ui.define([
 	"sap/base/i18n/Localization",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Control",
 	"sap/ui/layout/AlignedFlowLayout",
 	"sap/ui/dom/units/Rem",
@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler"
 ], function(
 	Localization,
-	Core,
+	nextUIUpdate,
 	Control,
 	AlignedFlowLayout,
 	Rem,
@@ -113,7 +113,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("", {
-		beforeEach: function(assert) {
+		beforeEach: async function(assert) {
 
 			// act
 			this.oAlignedFlowLayout = new AlignedFlowLayout({
@@ -124,9 +124,9 @@ sap.ui.define([
 
 			// arrange
 			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function(assert) {
+		afterEach: async function(assert) {
 
 			// cleanup
 			if (this.oAlignedFlowLayout) {
@@ -134,7 +134,7 @@ sap.ui.define([
 				this.oAlignedFlowLayout = null;
 			}
 
-			Core.applyChanges();
+			await nextUIUpdate();
 			this.oContentDomRef.style.width = "";
 			this.oContentDomRef.style.height = "";
 			this.oContentDomRef = null;
@@ -158,7 +158,7 @@ sap.ui.define([
 		assert.strictEqual(oDomRef.childElementCount, 0, "it should not have child elements");
 	});
 
-	QUnit.test("it should render a flow layout container with one item", function(assert) {
+	QUnit.test("it should render a flow layout container with one item", async function(assert) {
 
 		// arrange
 		var oInput = new Input();
@@ -167,7 +167,7 @@ sap.ui.define([
 		this.oAlignedFlowLayout.addContent(oInput);
 
 		// arrange
-		Core.applyChanges();
+		await nextUIUpdate();
 		var CSS_CLASS = this.oAlignedFlowLayout.getRenderer().CSS_CLASS + "Item",
 			oItemDomRef = this.oAlignedFlowLayout.getDomRef().firstElementChild,
 			oStyles = getComputedStyle(oItemDomRef),
@@ -181,7 +181,7 @@ sap.ui.define([
 		assert.strictEqual(sItemMaxWidth, "480px", 'it should set the "max-width" CSS property to "480px"');
 	});
 
-	QUnit.test("the end item should not overflow its container", function(assert) {
+	QUnit.test("the end item should not overflow its container", async function(assert) {
 		var done = assert.async();
 
 		// arrange
@@ -192,7 +192,7 @@ sap.ui.define([
 
 		// arrange
 		this.oAlignedFlowLayout.addStyleClass("sapUiLargeMargin"); // add margin to detect overflow
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// wait some time until the browser layout is finished
 		window.requestAnimationFrame(function() {
@@ -210,7 +210,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("the end item should not overflow its container if its height is higher than the other items", function(assert) {
+	QUnit.test("the end item should not overflow its container if its height is higher than the other items", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -234,7 +234,7 @@ sap.ui.define([
 		this.oAlignedFlowLayout.addStyleClass("sapUiLargeMargin"); // add margin to detect overflow
 		this.oAlignedFlowLayout.setMinItemWidth("200px");
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// wait some time until the browser layout is finished
 		window.requestAnimationFrame(function() {
@@ -247,13 +247,13 @@ sap.ui.define([
 	});
 
 	// BCP: 1970272412
-	QUnit.test("it should align the end item correctly", function(assert) {
+	QUnit.test("it should align the end item correctly", async function(assert) {
 
 		// arrange
 		var oButton = new Button();
 		this.oAlignedFlowLayout.addEndContent(oButton);
 		this.oContentDomRef.style.width = "400px";
-		Core.applyChanges();
+		await nextUIUpdate();
 		var oItemDomRef = oButton.getDomRef().parentElement;
 
 		// assert
@@ -264,7 +264,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("it should set the maximum width of items", function(assert) {
+	QUnit.test("it should set the maximum width of items", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -280,7 +280,7 @@ sap.ui.define([
 
 		// act
 		this.oAlignedFlowLayout.setMaxItemWidth(iExpectedWidth + "px");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// wait some time until the browser layout is finished
 		window.requestAnimationFrame(function() {
@@ -292,7 +292,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("the maximum width win over the minimum width", function(assert) {
+	QUnit.test("the maximum width win over the minimum width", async function(assert) {
 
 		// system under test
 		var oInput1 = new Input();
@@ -308,14 +308,14 @@ sap.ui.define([
 		// act
 		this.oAlignedFlowLayout.setMaxItemWidth(iExpectedWidth + "px");
 		this.oAlignedFlowLayout.setMinItemWidth((iExpectedWidth + 10) + "px");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, iExpectedWidth);
 		assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, iExpectedWidth);
 	});
 
-	QUnit.test("getLastItemDomRef should return the last item DOM reference", function(assert) {
+	QUnit.test("getLastItemDomRef should return the last item DOM reference", async function(assert) {
 
 		// system under test
 		var oInput = new Input();
@@ -324,7 +324,7 @@ sap.ui.define([
 		this.oAlignedFlowLayout.addContent(oInput);
 
 		// arrange
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(this.oAlignedFlowLayout.getLastItemDomRef() === this.oAlignedFlowLayout.getContent()[0].getDomRef().parentElement);
@@ -336,7 +336,7 @@ sap.ui.define([
 		assert.ok(this.oAlignedFlowLayout.getLastItemDomRef() === null);
 	});
 
-	QUnit.test("getLastVisibleDomRef should return the last visible DOM reference", function(assert) {
+	QUnit.test("getLastVisibleDomRef should return the last visible DOM reference", async function(assert) {
 
 		// system under test
 		var oInput = new Input();
@@ -345,13 +345,13 @@ sap.ui.define([
 		this.oAlignedFlowLayout.addContent(oInput);
 
 		// arrange
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(this.oAlignedFlowLayout.getLastVisibleDomRef() === this.oAlignedFlowLayout.getLastItemDomRef());
 	});
 
-	QUnit.test("getLastVisibleDomRef should return the last visible DOM reference", function(assert) {
+	QUnit.test("getLastVisibleDomRef should return the last visible DOM reference", async function(assert) {
 
 		// system under test
 		var oInput = new Input();
@@ -362,7 +362,7 @@ sap.ui.define([
 		this.oAlignedFlowLayout.addEndContent(oButton);
 
 		// arrange
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(this.oAlignedFlowLayout.getLastVisibleDomRef() === this.oAlignedFlowLayout.getDomRef("endItem"));
@@ -374,7 +374,7 @@ sap.ui.define([
 		assert.ok(this.oAlignedFlowLayout.getLastVisibleDomRef() === null);
 	});
 
-	QUnit.test("it should not raise an exception when the content is destroyed", function(assert) {
+	QUnit.test("it should not raise an exception when the content is destroyed", async function(assert) {
 
 		// system under test
 		var oButton = new Button();
@@ -384,13 +384,13 @@ sap.ui.define([
 
 		// act
 		this.oAlignedFlowLayout.destroyContent();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oAlignedFlowLayout.getContent().length, 0);
 	});
 
-	QUnit.test("it should not set maximum width to the end item", function(assert) {
+	QUnit.test("it should not set maximum width to the end item", async function(assert) {
 
 		// system under test
 		var oButton = new Button({
@@ -401,7 +401,7 @@ sap.ui.define([
 		this.oAlignedFlowLayout.addEndContent(oButton);
 
 		// arrange
-		Core.applyChanges();
+		await nextUIUpdate();
 		var oEndItem = oButton.getDomRef().parentElement;
 		var sMaxItemWidth = "60rem";
 
@@ -411,7 +411,7 @@ sap.ui.define([
 	});
 
 	// BCP: 1880394379
-	QUnit.test("it should not raise an exception", function(assert) {
+	QUnit.test("it should not raise an exception", async function(assert) {
 
 		// system under test
 		var oInput = new Input();
@@ -424,7 +424,7 @@ sap.ui.define([
 
 		// act
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(true);
@@ -433,14 +433,14 @@ sap.ui.define([
 	if (typeof ResizeObserver === "function") {
 
 		QUnit.test("it should invoke the .disconnect() method of the resize observer object " +
-					"when the control is destroyed", function(assert) {
+					"when the control is destroyed", async function(assert) {
 
 			// system under test
 			var oAlignedFlowLayout = new AlignedFlowLayout();
 
 			// arrange
 			oAlignedFlowLayout.placeAt(CONTENT_ID);
-			Core.applyChanges();
+			await nextUIUpdate();
 			var oDisconnectSpy = this.spy(oAlignedFlowLayout.oResizeObserver, "disconnect");
 
 			// act + cleanup
@@ -476,7 +476,7 @@ sap.ui.define([
 			oAlignedFlowLayout.placeAt(CONTENT_ID);
 
 			// enforces a sync rendering of the AlignedFlowLayout control
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var spy = this.spy;
 
@@ -547,7 +547,7 @@ sap.ui.define([
 			oAlignedFlowLayout.placeAt(CONTENT_ID);
 
 			// enforces a sync rendering of the AlignedFlowLayout control
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			var spy = this.spy;
 
@@ -623,22 +623,22 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("checkItemsWrapping should return false when no child controls are rendered (test case 1)", function(assert) {
+	QUnit.test("checkItemsWrapping should return false when no child controls are rendered (test case 1)", async function(assert) {
 
 		// arrange
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
 	});
 
-	QUnit.test("checkItemsWrapping should return false when no child controls are rendered (test case 2)", function(assert) {
+	QUnit.test("checkItemsWrapping should return false when no child controls are rendered (test case 2)", async function(assert) {
 		var done = assert.async();
 
 		// arrange
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// wait some time until the browser layout is finished
 		window.requestAnimationFrame(function() {
@@ -655,7 +655,7 @@ sap.ui.define([
 		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
 	});
 
-	QUnit.test("it should not wrap the items onto multiple lines", function(assert) {
+	QUnit.test("it should not wrap the items onto multiple lines", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -666,7 +666,7 @@ sap.ui.define([
 
 		// arrange
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// wait some time until the browser layout is finished
 		window.requestAnimationFrame(function() {
@@ -677,7 +677,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("it should not wrap the items onto multiple lines", function(assert) {
+	QUnit.test("it should not wrap the items onto multiple lines", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -700,7 +700,7 @@ sap.ui.define([
 		this.oContentDomRef.style.width = "1024px";
 		this.oAlignedFlowLayout.setMinItemWidth("200px");
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// wait some time until the browser layout is finished
 		window.requestAnimationFrame(function() {
@@ -712,7 +712,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("it should not wrap the items onto multiple lines", function(assert) {
+	QUnit.test("it should not wrap the items onto multiple lines", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -736,7 +736,7 @@ sap.ui.define([
 		this.oContentDomRef.style.width = "1024px";
 		this.oAlignedFlowLayout.setMinItemWidth("200px");
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// wait some time until the browser layout is finished
 		window.requestAnimationFrame(function() {
@@ -748,7 +748,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("it should not wrap the items onto multiple lines", function(assert) {
+	QUnit.test("it should not wrap the items onto multiple lines", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -763,7 +763,7 @@ sap.ui.define([
 		this.oContentDomRef.style.width = "200px";
 		this.oAlignedFlowLayout.setMinItemWidth("100px");
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// wait some time until the browser layout is finished
 		window.requestAnimationFrame(function() {
@@ -774,7 +774,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("it should not wrap the items onto multiple lines and arrange the items evenly across the available horizontal space", function(assert) {
+	QUnit.test("it should not wrap the items onto multiple lines and arrange the items evenly across the available horizontal space", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -795,7 +795,7 @@ sap.ui.define([
 		this.oAlignedFlowLayout.addContent(oInput4);
 		this.oAlignedFlowLayout.addEndContent(oButton);
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.oContentDomRef.style.width = "1024px";
 
 		// wait some time until the browser layout finished
@@ -818,7 +818,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("the end item should not overlap the items on the first line if its height is higher than the other items", function(assert) {
+	QUnit.test("the end item should not overlap the items on the first line if its height is higher than the other items", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -849,7 +849,7 @@ sap.ui.define([
 		this.oContentDomRef.style.width = "600px";
 		this.oAlignedFlowLayout.setMinItemWidth("200px");
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// wait some time until the browser layout is finished
 		window.requestAnimationFrame(function() {
@@ -862,7 +862,7 @@ sap.ui.define([
 	});
 
 	// BCP: 1980003456
-	QUnit.test("the end item should not overlap other items (first line mode)", function(assert) {
+	QUnit.test("the end item should not overlap other items (first line mode)", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -893,7 +893,7 @@ sap.ui.define([
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
 
 		// enforces a sync rendering of the AlignedFlowLayout control
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// After the AlignedFlowLayout control is initially rendered, make it visible,
 		// by making its parent DOM element visible.
@@ -929,7 +929,7 @@ sap.ui.define([
 	});
 
 	// BCP: 1970364898
-	QUnit.test("the end item should not overlap other items (first line mode)", function(assert) {
+	QUnit.test("the end item should not overlap other items (first line mode)", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -973,7 +973,7 @@ sap.ui.define([
 		oAlignedFlowLayout.placeAt(CONTENT_ID);
 
 		// enforces a sync rendering of the AlignedFlowLayout control
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Attach an event listener to the central core interval timeout timer to wait
 		// for the first resize event after the layout is made visible.
@@ -1020,7 +1020,7 @@ sap.ui.define([
 
 	// BCP: 2080119767
 	QUnit.test("the item in the end content area should not overlap other items when its size changes" +
-				" after the initial rendering", function(assert) {
+				" after the initial rendering", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -1062,14 +1062,14 @@ sap.ui.define([
 		oAlignedFlowLayout.placeAt(CONTENT_ID);
 
 		// enforces a sync rendering of the AlignedFlowLayout control
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// increase the width of the the item in the end content area
 		oAdaptFiltersButton.setText("Adapt Filters (1)");
 		oAdaptFiltersButton.setWidth("200px");
 
 		// enforces a sync rendering of the AlignedFlowLayout control
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// wait some time until the browser layout finished
 		setTimeout(fnAfterReflow.bind(this), 200);
@@ -1088,7 +1088,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("the end item should not overlap other items (multiple lines mode)", function(assert) {
+	QUnit.test("the end item should not overlap other items (multiple lines mode)", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -1137,7 +1137,7 @@ sap.ui.define([
 		oAlignedFlowLayout.placeAt(CONTENT_ID);
 
 		// enforces a sync rendering of the AlignedFlowLayout control
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Attach an event listener to the central core interval timeout timer to wait
 		// for the first resize event after the layout is made visible.
@@ -1197,7 +1197,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("the end item should not overlap other items (multiple lines mode)", function(assert) {
+	QUnit.test("the end item should not overlap other items (multiple lines mode)", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -1246,7 +1246,7 @@ sap.ui.define([
 		oAlignedFlowLayout.placeAt(CONTENT_ID);
 
 		// enforces a sync rendering of the AlignedFlowLayout control
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Attach an event listener to the central core interval timeout timer to wait
 		// for the first resize event after the layout is made visible.
@@ -1294,7 +1294,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("it should adapt the position of the absolute-positioned end item when a standard CSS padding class is added", function(assert) {
+	QUnit.test("it should adapt the position of the absolute-positioned end item when a standard CSS padding class is added", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -1310,7 +1310,7 @@ sap.ui.define([
 		this.oAlignedFlowLayout.addEndContent(oButton);
 		this.oAlignedFlowLayout.addStyleClass("sapUiAFLayoutWithPadding"); // add a padding of 30px
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// wait some time until the browser layout is finished
 		window.requestAnimationFrame(function() {
@@ -1328,7 +1328,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("it should wrap the items onto multiple lines", function(assert) {
+	QUnit.test("it should wrap the items onto multiple lines", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -1343,7 +1343,7 @@ sap.ui.define([
 		this.oContentDomRef.style.width = "199px";
 		this.oAlignedFlowLayout.setMinItemWidth("100px");
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// wait some time until the browser layout is finished
 		window.requestAnimationFrame(function() {
@@ -1354,7 +1354,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("it should wrap the items onto multiple lines", function(assert) {
+	QUnit.test("it should wrap the items onto multiple lines", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -1377,7 +1377,7 @@ sap.ui.define([
 		this.oContentDomRef.style.width = "800px";
 		this.oAlignedFlowLayout.setMinItemWidth("200px");
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 		var oItemDomRef1 = oInput1.getDomRef().parentElement,
 			oItemDomRef2 = oInput2.getDomRef().parentElement,
 			oItemDomRef3 = oInput3.getDomRef().parentElement,
@@ -1399,7 +1399,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("it should wrap the items onto multiple lines and the end item should not overlap other items", function(assert) {
+	QUnit.test("it should wrap the items onto multiple lines and the end item should not overlap other items", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -1421,7 +1421,7 @@ sap.ui.define([
 		this.oAlignedFlowLayout.addContent(oInput4);
 		this.oAlignedFlowLayout.addEndContent(oButton);
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 		var iLayoutWidth = 300;
 		this.oContentDomRef.style.width = iLayoutWidth + "px";
 
@@ -1442,7 +1442,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("it should arrange child controls evenly across the available horizontal space without exceeding its maximum width", function(assert) {
+	QUnit.test("it should arrange child controls evenly across the available horizontal space without exceeding its maximum width", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -1454,7 +1454,7 @@ sap.ui.define([
 		// arrange
 		this.oContentDomRef.style.width = "1024px";
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// wait some time until the browser layout is finished
 		window.requestAnimationFrame(function() {
@@ -1465,7 +1465,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("it should arrange child controls evenly across the available horizontal space without exceeding its maximum width", function(assert) {
+	QUnit.test("it should arrange child controls evenly across the available horizontal space without exceeding its maximum width", async function(assert) {
 		var done = assert.async();
 
 		// system under test
@@ -1479,7 +1479,7 @@ sap.ui.define([
 		// arrange
 		this.oContentDomRef.style.width = "1024px";
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// wait some time until the browser layout is finished
 		window.requestAnimationFrame(function() {
@@ -1535,7 +1535,7 @@ sap.ui.define([
 		return ((sValue ? parseInt(sValue) : 0) + 1) + "px";
 	};
 
-	QUnit.test("considers margin usage for layoutItems and endItem", function(assert) {
+	QUnit.test("considers margin usage for layoutItems and endItem", async function(assert) {
 
 		this.oContentDomRef.style.display = "";
 		this.oContentDomRef.style.width = "600px";
@@ -1555,7 +1555,7 @@ sap.ui.define([
 		this.oAlignedFlowLayout.setMaxItemWidth(200 + "px");
 
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var aMarginConfigurations = [
 			[12, 0],
@@ -1591,7 +1591,7 @@ sap.ui.define([
 
 
 	QUnit.module("suspend", {
-		beforeEach: function(assert) {
+		beforeEach: async function(assert) {
 
 			// arrange
 			this.oAlignedFlowLayout = new AlignedFlowLayout({
@@ -1608,9 +1608,9 @@ sap.ui.define([
 
 			this.oContentDomRef = document.getElementById(CONTENT_ID);
 			this.oAlignedFlowLayout.placeAt(CONTENT_ID);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function(assert) {
+		afterEach: async function(assert) {
 
 			// cleanup
 			if (this.oAlignedFlowLayout) {
@@ -1620,7 +1620,7 @@ sap.ui.define([
 
 			this.oContentDomRef.style.width = "";
 			this.oContentDomRef = null;
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 

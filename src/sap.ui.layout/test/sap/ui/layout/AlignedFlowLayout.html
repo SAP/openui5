@@ -11,8 +11,8 @@
 				data-sap-ui-theme="sap_horizon">
 		</script>
 		<script>
-		sap.ui.getCore().attachInit(function() {
 			sap.ui.require([
+				"sap/ui/core/Core",
 				"sap/m/App",
 				"sap/m/Page",
 				"sap/ui/layout/AlignedFlowLayout",
@@ -22,7 +22,8 @@
 				"sap/m/Text",
 				"sap/m/Label",
 				"sap/m/Slider"
-			], function(
+			], async function(
+				Core,
 				App,
 				Page,
 				AlignedFlowLayout,
@@ -34,6 +35,8 @@
 				Slider
 			) {
 				"use strict";
+
+				await Core.ready();
 
 				var oAlignedFlowLayout1 = new AlignedFlowLayout({
 					content: [
@@ -209,7 +212,6 @@
 					})
 				}).placeAt("content");
 			});
-		});
 		</script>
 	</head>
 	<body id="content" class="sapUiBody">

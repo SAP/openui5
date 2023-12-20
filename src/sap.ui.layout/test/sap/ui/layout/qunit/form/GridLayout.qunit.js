@@ -22,7 +22,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/m/TextArea",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 	function(
 		Element,
@@ -43,7 +43,7 @@ sap.ui.define([
 		Label,
 		Input,
 		TextArea,
-		oCore
+		nextUIUpdate
 	) {
 	"use strict";
 
@@ -76,7 +76,7 @@ sap.ui.define([
 		oControl = undefined;
 	}
 
-	function initForm(bOneContainer) {
+	async function initForm(bOneContainer) {
 		oGridLayout = new GridLayout("GL1");
 		oLabel1 = new Label("L1", {text: "Label 1"});
 		oLabel2 = new Label("L2", {text: "Label 2"});
@@ -124,15 +124,15 @@ sap.ui.define([
 			editable: true,
 			formContainers: aFormContainers
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 	}
 
-	function initTestOneContainer() {
-		initForm(true);
+	async function initTestOneContainer() {
+		await initForm(true);
 	}
 
-	function initTestTwoContainers() {
-		initForm(false);
+	async function initTestTwoContainers() {
+		await initForm(false);
 	}
 
 	function afterTest(bOneContainer) {
@@ -216,46 +216,46 @@ sap.ui.define([
 		assert.ok(countCells("F1", 16), "All rows of Form1 have max. 16 cells");
 	});
 
-	QUnit.test("BackgroundDesign", function(assert) {
+	QUnit.test("BackgroundDesign", async function(assert) {
 		assert.ok(jQuery("#GL1").hasClass("sapUiFormBackgrTranslucent"), "translucent design per default");
 
 		oGridLayout.setBackgroundDesign(library.BackgroundDesign.Solid);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(jQuery("#GL1").hasClass("sapUiFormBackgrSolid"), "solid design");
 	});
 
-	QUnit.test("Form Title", function(assert) {
+	QUnit.test("Form Title", async function(assert) {
 		assert.ok(jQuery("#T1").is("h4"), "Title is rendered as H4 as default");
 		assert.ok(jQuery("#T1").parent().is("th"), "Title is in <TH>");
 		assert.equal(jQuery("#T1").attr("title"), "Title tooltip", "Title tooltip");
 		assert.equal(jQuery("#T1").parent().attr("colspan"), "16", "Title is stretched over full width");
 
 		oForm.destroyTitle();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(jQuery("#F1").find("th")[0], "no title rendered");
 
 		var oTitle1 = new Title("T1",{text: "Form Title", level: coreLibrary.TitleLevel.H1});
 		oForm.setTitle(oTitle1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(jQuery("#T1").is("h1"), "Title is rendered as H1");
 	});
 
-	QUnit.test("Form Toolbar", function(assert) {
+	QUnit.test("Form Toolbar", async function(assert) {
 		var oToolbar = new Toolbar("TB1");
 		oForm.setToolbar(oToolbar);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(window.document.getElementById("T1"), "Title is not rendered");
 		assert.ok(window.document.getElementById("TB1"), "Toolbar is rendered");
 		assert.ok(jQuery("#TB1").parent().is("th"), "Toolbar is in <TH>");
 	});
 
-	QUnit.test("FormContainer Title", function(assert) {
+	QUnit.test("FormContainer Title", async function(assert) {
 		assert.notOk(jQuery("#F1").find("h5")[0], "no H5 rendered");
 
 		var oTitle2 = new Title("T2",{text: "Title"});
 		oFormContainer1.setTitle(oTitle2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(window.document.getElementById("T2"), "Title is rendered");
 		assert.ok(jQuery("#T2").is("h5"), "Title is rendered as H5");
@@ -263,10 +263,10 @@ sap.ui.define([
 		assert.ok(jQuery("#T2").parent().hasClass("sapUiFormContainerTitle"), "Title class rendered");
 	});
 
-	QUnit.test("FormContainer Toolbar", function(assert) {
+	QUnit.test("FormContainer Toolbar", async function(assert) {
 		var oToolbar = new Toolbar("TB1");
 		oFormContainer1.setToolbar(oToolbar);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(window.document.getElementById("TB1"), "Toolbar is rendered");
 		assert.ok(jQuery("#TB1").parent().is("td"), "Toolbar is in <TD>");
@@ -296,9 +296,9 @@ sap.ui.define([
 		assert.ok(!jQuery("#I3").parent().attr("rowspan"), "Field3 no rowspan");
 	});
 
-	QUnit.test("singleColumn", function(assert) {
+	QUnit.test("singleColumn", async function(assert) {
 		oGridLayout.setSingleColumn(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(countCells("F1", 8), "All rows of Form1 have max. 8 cells");
 		assert.equal(jQuery("#L1").parent().attr("colspan"), "3", "Label1 rendered using 3 grid cells");
 		assert.equal(jQuery("#I1").parent().attr("colspan"), "5", "Field1 rendered using 5 grid cells");
@@ -306,21 +306,21 @@ sap.ui.define([
 		assert.equal(jQuery("#I3").parent().attr("colspan"), "3", "Field3 rendered using 3 grid cells");
 	});
 
-	QUnit.test("FormElement visibility", function(assert) {
+	QUnit.test("FormElement visibility", async function(assert) {
 		oFormElement1.setVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(window.document.getElementById("FE1"), "invisible FormElement is not rendered");
 		assert.notOk(window.document.getElementById("L1"), "Label1 is not rendered");
 		assert.notOk(window.document.getElementById("I1"), "Field1 is not rendered");
 
 		oFormElement1.setVisible(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(window.document.getElementById("FE1"), "FormElement is rendered");
 		assert.ok(window.document.getElementById("L1"), "Label1 is rendered");
 		assert.ok(window.document.getElementById("I1"), "Field1 is rendered");
 	});
 
-	QUnit.test("too much fields", function(assert) {
+	QUnit.test("too much fields", async function(assert) {
 		oField4 = new Input("I4");
 		oField5 = new Input("I5");
 		oField6 = new Input("I6");
@@ -347,7 +347,7 @@ sap.ui.define([
 		oFormElement2.addField(oField14);
 		oFormElement2.addField(oField15);
 		oFormElement2.addField(oField16);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var bOK = true;
 		var i = 0;
@@ -367,61 +367,61 @@ sap.ui.define([
 		assert.ok(findLogEntry('Element "FE2" - Too much fields for one row!',1),"Error entry in log found for Element2");
 	});
 
-	QUnit.test("GridElementData hCells", function(assert) {
+	QUnit.test("GridElementData hCells", async function(assert) {
 		var oGED1 = new GridElementData("GE1", {hCells: "3"});
 		oField2.setLayoutData(oGED1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#I2").parent().attr("colspan"), "3", "Field2 rendered using 3 grid cells");
 		assert.equal(jQuery("#I3").parent().attr("colspan"), "10", "Field3 rendered using 10 grid cells");
 
 		oGED1.setHCells("1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(jQuery("#I2").parent().attr("colspan"), "Field2 rendered no colspan");
 		assert.equal(jQuery("#I3").parent().attr("colspan"), "12", "Field3 rendered using 12 grid cells");
 
 		oGED1.setHCells("2");
 		var oGED2 = new GridElementData("GE2", {hCells: "2"});
 		oField3.setLayoutData(oGED2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#I2").parent().attr("colspan"), "2", "Field2 rendered using 2 grid cells");
 		assert.equal(jQuery("#I3").parent().attr("colspan"), "2", "Field3 rendered using 2 grid cells");
 		assert.ok((jQuery("#I3").parent().next().is("td") && jQuery("#I3").parent().next().attr("colspan") == "9" && jQuery("#I3").parent().next().children().length == 0), "empty dummy cell rendered");
 
 		oGED1.setHCells("10");
 		oGED2.setHCells("10");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#I2").parent().attr("colspan"), "10", "Field2 rendered using 10 grid cells");
 		assert.notOk(window.document.getElementById("I3"), "Field3 is not rendered");
 		assert.ok(findLogEntry('Element "FE2" - Too much fields for one row!',1),"Error entry in log found for Element2");
 
 		var oGED3 = new GridElementData("GE3", {hCells: "full"});
 		oField1.setLayoutData(oGED3);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#L1").parent().attr("colspan"), "16", "Label1 rendered using 16 grid cells");
 		assert.equal(jQuery("#I1").parent().attr("colspan"), "16", "Field1 rendered using 16 grid cells");
 
 		var oGED4 = new GridElementData("GE4", {hCells: "5"});
 		oLabel1.setLayoutData(oGED4);
 		oGED3.setHCells("auto");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#L1").parent().attr("colspan"), "5", "Label1 rendered using 5 grid cells");
 		assert.equal(jQuery("#I1").parent().attr("colspan"), "11", "Field1 rendered using 11 grid cells");
 	});
 
-	QUnit.test("GridElementData vCells", function(assert) {
+	QUnit.test("GridElementData vCells", async function(assert) {
 		var oGED1 = new GridElementData("GE1", {vCells: 2});
 		oField1.setLayoutData(oGED1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#I1").parent().attr("rowspan"), "2", "Field1 rendered using 2 grid rows");
 		assert.equal(jQuery("#I1").parent().attr("colspan"), "13", "Field3 rendered using 13 grid cells");
 
 		// full size field no rows
 		oGED1.setHCells("full");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(!jQuery("#I1").parent().attr("rowspan"), "Field1 no rowspan");
 
 		oGED1.setHCells("3");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#I2").parent().attr("colspan"), "5", "Field2 rendered using 5 grid cells");
 		assert.equal(jQuery("#I3").parent().attr("colspan"), "5", "Field3 rendered using 5 grid cells");
 
@@ -452,7 +452,7 @@ sap.ui.define([
 		oFormContainer1.addFormElement(oFormElement4);
 		oFormContainer1.addFormElement(oFormElement5);
 		oFormContainer1.addFormElement(oFormElement6);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(jQuery("#TA1").parent().attr("rowspan"), "3", "Element3: Field1 (with vCells=3) rendered with rowspan 3");
 		assert.equal(jQuery("#TA1").parent().attr("colspan"), "5", "Element3: Field1 rendered over 5 grid cells");
@@ -473,7 +473,7 @@ sap.ui.define([
 
 		var oGED2 = Element.getElementById("TA6").getLayoutData();
 		oGED2.setHCells("full");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(window.document.getElementById("TA6"), "Field is not rendered");
 		assert.ok(findLogEntry('Element "FE5" - Too much fields for one row!',1),"Error entry in log found for Element6");
 	});
@@ -509,10 +509,10 @@ sap.ui.define([
 		assert.equal(jQuery("#T2").parent().prev().prev().children().length, 0, "title row for Container1 is empty");
 	});
 
-	QUnit.test("FormContainer Toolbar", function(assert) {
+	QUnit.test("FormContainer Toolbar", async function(assert) {
 		var oToolbar = new Toolbar("TB1");
 		oFormContainer2.setToolbar(oToolbar);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(window.document.getElementById("T2"), "Title is not rendered");
 		assert.ok(window.document.getElementById("TB1"), "Toolbar is rendered");
@@ -547,40 +547,40 @@ sap.ui.define([
 		assert.equal(jQuery("#I7").parent().attr("colspan"), "4", "Field3 rendered using 4 grid cells");
 	});
 
-	QUnit.test("FormContainer visibility", function(assert) {
+	QUnit.test("FormContainer visibility", async function(assert) {
 		oFormContainer2.setVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(window.document.getElementById("T2"), "Title is not rendered");
 		assert.notOk(window.document.getElementById("I4"), "Field4 is not rendered");
 
 		oFormContainer2.setVisible(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(window.document.getElementById("T2"), "Title is rendered");
 		assert.ok(window.document.getElementById("I4"), "Field4 is rendered");
 	});
 
-	QUnit.test("FormElement visibility", function(assert) {
+	QUnit.test("FormElement visibility", async function(assert) {
 		oFormElement1.setVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(window.document.getElementById("L1"), "Label1 is not rendered");
 		assert.notOk(window.document.getElementById("I1"), "Field1 is not rendered");
 		assert.equal(jQuery("#I4").parent().prev().prev().children().length, 0, "empty row left of Field4");
 
 		oFormElement3.setVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(window.document.getElementById("I4"), "Field4 is not rendered");
 		assert.ok(jQuery(jQuery("#I2").parent().parent().prev().children()[0]).hasClass("sapUiGridHeader"), "no empty row");
 
 		oFormElement1.setVisible(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(window.document.getElementById("L1"), "Label1 is rendered");
 		assert.ok(window.document.getElementById("I1"), "Field1 is rendered");
 	});
 
-	QUnit.test("GridContainerData", function(assert) {
+	QUnit.test("GridContainerData", async function(assert) {
 		var oGCD = oFormContainer1.getLayoutData();
 		oGCD.setHalfGrid(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(jQuery("#L1").parent().attr("colspan"), "3", "Label1 rendered using 3 grid cells");
 		assert.equal(jQuery("#I1").parent().attr("colspan"), "14", "Field1 rendered using 14 grid cells");
@@ -598,13 +598,13 @@ sap.ui.define([
 
 		var oToolbar = new Toolbar("TB1");
 		oFormContainer1.setToolbar(oToolbar);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#TB1").parent().attr("colspan"), "17", "Toolbar rendered using 17 grid cells");
 		assert.ok(jQuery("#TB1").parent().hasClass("sapUiFormContainerToolbar"), "Toolbar class rendered");
 		assert.notOk(jQuery("#TB1").parent().hasClass("sapUiFormContainerTitle"), "Title class not rendered");
 
 		oFormContainer2.destroyLayoutData();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#L1").parent().attr("colspan"), "3", "Label1 rendered using 3 grid cells");
 		assert.equal(jQuery("#I1").parent().attr("colspan"), "13", "Field1 rendered using 13 grid cells");
 		assert.equal(jQuery("#L2").parent().attr("colspan"), "3", "Label2 rendered using 3 grid cells");
@@ -617,7 +617,7 @@ sap.ui.define([
 		assert.ok(countCells("F1",16), "All rows of Form1 have max. 16 cells");
 
 		oGCD.setHalfGrid(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#TB1").parent().attr("colspan"), "8", "Toolbar rendered using 8 grid cells");
 		assert.ok(jQuery("#TB1").parent().hasClass("sapUiFormContainerToolbar"), "Toolbar class rendered");
 		assert.notOk(jQuery("#TB1").parent().hasClass("sapUiFormContainerTitle"), "Title class not rendered");
@@ -634,26 +634,26 @@ sap.ui.define([
 		assert.equal(jQuery("#T2").parent().attr("colspan"), "17", "Title rendered using 17 grid cells");
 	});
 
-	QUnit.test("GridElementData hCells", function(assert) {
+	QUnit.test("GridElementData hCells", async function(assert) {
 		var oGED1 = new GridElementData("GE1", {hCells: "full"});
 		oField1.setLayoutData(oGED1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#L1").parent().attr("colspan"), "8", "Label1 rendered using 8 grid cells");
 		assert.equal(jQuery("#I1").parent().attr("colspan"), "8", "Field1 rendered using 8 grid cells");
 
 		var oGCD = oFormContainer1.getLayoutData();
 		oGCD.setHalfGrid(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#L1").parent().attr("colspan"), "17", "Label1 rendered using 17 grid cells");
 		assert.equal(jQuery("#I1").parent().attr("colspan"), "17", "Field1 rendered using 17 grid cells");
 
 		oGED1.setHCells("2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#I1").parent().attr("colspan"), "2", "Field1 rendered using 2 grid cells");
 		assert.ok((jQuery("#I1").parent().next().is("td") && jQuery("#I1").parent().next().attr("colspan") == "12" && jQuery("#I1").parent().next().children().length == 0), "empty dummy cell rendered");
 	});
 
-	QUnit.test("GridElementData vCells", function(assert) {
+	QUnit.test("GridElementData vCells", async function(assert) {
 		var oFormElement5 = new FormElement("FE5",{
 			label: new Label("L3", {text:"Label"}),
 			fields: [new Input("I8")]
@@ -700,7 +700,7 @@ sap.ui.define([
 		oFormContainer2.addFormElement(oFormElement12);
 		oFormContainer2.addFormElement(oFormElement13);
 		oFormContainer2.addFormElement(oFormElement14);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(jQuery("#TA3").parent().attr("rowspan"), "2", "Container2: Field1 (with vCells=2, hCells=full) rendered with rowspan 2");
 		assert.equal(jQuery("#TA3").parent().prev().prev().children().first().attr("id"), "I9", "Container1: Field2 rendered beside full size field");
@@ -715,7 +715,7 @@ sap.ui.define([
 
 		var oGCD = oFormContainer1.getLayoutData();
 		oGCD.setHalfGrid(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#TA1").parent().attr("rowspan"), "2", "Container1: Field4 (with vCells=2, hCells=5) rendered with rowspan 2");
 		assert.equal(jQuery("#TA2").parent().attr("rowspan"), "2", "Container1: Field5 (with vCells=2, hCells=2) rendered with rowspan 2");
 		assert.ok((jQuery("#TA2").parent().parent().next().children().first().is("td") && jQuery("#TA2").parent().parent().next().children().first().attr("colspan") == "3" && jQuery("#TA2").parent().parent().next().children().first().children().length == 0), "empty dummy row with label cell rendered");
@@ -723,7 +723,7 @@ sap.ui.define([
 		assert.equal(jQuery("#TA2").parent().parent().next().next().children().first().next().children().first().attr("id"), "I12", "Container1 -Element7: rendered in new line");
 	});
 
-	QUnit.test("stand alone Half size containe", function(assert) {
+	QUnit.test("stand alone Half size containe", async function(assert) {
 		var oFormContainer3 = new FormContainer("FC3",{
 			formElements: [
 							new FormElement("FE5",{
@@ -734,7 +734,7 @@ sap.ui.define([
 			layoutData: new GridContainerData({halfGrid: true})
 		});
 		oForm.addFormContainer(oFormContainer3);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(jQuery("#L3").parent().parent().prev().children().first().hasClass("sapUiGridHeader"), "Container3 no header rendered");
 		assert.equal(jQuery("#TA1").parent().attr("colspan"), "2", "Container3: Field1 (with hCells=2) rendered over 2 grid cells");
@@ -787,20 +787,20 @@ sap.ui.define([
 		assert.equal(jQuery("#I3-inner").is(":focus"), true, "Shift+Tab: Container1, Field 3 - Selected");
 	});
 
-	QUnit.test("Container expander", function(assert) {
+	QUnit.test("Container expander", async function(assert) {
 		var oFormElement5 = new FormElement("FE5",{
 			label: new Label("L3",{text:"Label"}),
 			fields: [new Input("I8")]
 		});
 		oFormContainer2.addFormElement(oFormElement5);
 		oFormContainer2.setExpanded(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(window.document.getElementById("I4"), "Container2 content area is not visible if not expanded");
 		assert.ok((jQuery("#I3").parent().next().next().is("td") && jQuery("#I3").parent().next().next().attr("colspan") == "8" && jQuery("#I3").parent().next().next().children().length == 0), "Container2 - empty dummy cell rendered");
 		assert.notOk((jQuery("#L2").parent().parent().next().children().first().is("td") && jQuery("#L2").parent().parent().next().children().first().attr("colspan") == "8" && jQuery("#L2").parent().parent().next().children().first().children().length == 0), "Container1 - NO empty dummy cell rendered");
 
 		oFormContainer2.setExpanded(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(window.document.getElementById("I4"), "Container2 content area is visible if expanded");
 		assert.ok((jQuery("#L2").parent().parent().next().children().first().is("td") && jQuery("#L2").parent().parent().next().children().first().attr("colspan") == "8" && jQuery("#L2").parent().parent().next().children().first().children().length == 0), "Container1 - empty dummy cell rendered");
 	});
