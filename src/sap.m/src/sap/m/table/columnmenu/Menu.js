@@ -153,15 +153,6 @@ sap.ui.define([
 		}, this);
 	};
 
-	Menu.prototype.applySettings = function (mSettings) {
-		// Only works in JS views, but that's fine. This is only convenience for controls.
-		if (mSettings) {
-			this._addAllToPrivateAggregation(mSettings, "_quickActions");
-			this._addAllToPrivateAggregation(mSettings, "_items");
-		}
-		Control.prototype.applySettings.apply(this, arguments);
-	};
-
 	/**
 	 * Opens the popover at the specified target.
 	 *
@@ -272,15 +263,6 @@ sap.ui.define([
 			delete this._oIsOpenBy;
 		}
 		ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
-	};
-
-	Menu.prototype._addAllToPrivateAggregation = function (mSettings, sAggregationName) {
-		if (mSettings[sAggregationName]) {
-			mSettings[sAggregationName].forEach(function (oItem) {
-				this.addAggregation(sAggregationName, oItem);
-			}.bind(this));
-			delete mSettings[sAggregationName];
-		}
 	};
 
 	Menu.prototype._initPopover = function () {
