@@ -980,7 +980,7 @@ sap.ui.define([
 	/**
 	 * Plugin owner methods for plugins applied to MDCTable.
 	 */
-	["CopyProvider", "CellSelector", "DataStateIndicator"].forEach((sPlugin) => {
+	["CopyProvider", "CellSelector", "DataStateIndicator", "ContextMenuSetting"].forEach((sPlugin) => {
 		Table.prototype[`get${sPlugin}PluginOwner`] = function() {
 			return this._oTable || this._oFullInitialize?.promise;
 		};

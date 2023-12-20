@@ -2401,6 +2401,15 @@ sap.ui.define([
 					only: ["sap/m/plugins/CopyProvider"]
 				}
 			},
+			"plugins/ContextMenuSetting": {
+				title: "Test Page for sap.m.plugins.ContextMenuSetting",
+				ui5: {
+					libs: ["sap.m", "sap.ui.table", "sap.ui.unified", "sap.ui.mdc"]
+				},
+				coverage: {
+					only: ["sap/m/plugins/ContextMenuSetting"]
+				}
+			},
 			"plugins/PasteProvider": {
 				title: "Test Page for sap.m.plugins.PasteProvider",
 				ui5: {
