@@ -6,6 +6,17 @@ sap.ui.define([
 ], function (BaseController, GroupPanel, xConfigAPI) {
 	"use strict";
 
+	/**
+	 * Personalization <code>GroupState</code> object type. This object describes the state processed by this controller when accessing it through the {@link sap.m.p13n.Engine Engine}.
+	 *
+	 * @public
+	 * @typedef {object} sap.m.p13n.GroupState
+	 * @property {string} key The key for the group state
+	 * @property {boolean} [grouped] Defines whether the item is grouped (if a group state is provided, it's grouped automatically)
+	 * @property {int} [index] Describes the index of the grouping
+	 *
+	 */
+
 	 /**
 	 * Constructor for a new <code>GroupController</code>.
 	 *
