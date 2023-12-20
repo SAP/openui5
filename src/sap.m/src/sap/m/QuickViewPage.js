@@ -208,9 +208,10 @@ sap.ui.define([
 	 */
 
 	QuickViewPage.prototype.init =  function() {
-		if (this._initCrossAppNavigationService) {
-			this._initCrossAppNavigationService();
-		}
+		/**
+	 	 * @deprecated As of version 1.111.
+		 */
+		this._initCrossAppNavigationService();
 	};
 
 	/**
@@ -462,16 +463,22 @@ sap.ui.define([
 				href: sTitleUrl,
 				target: "_blank"
 			});
-		} else if (this.getCrossAppNavCallback && this.getCrossAppNavCallback() && sTitle) {
-			oTitle = new Link({
-				text: sTitle
-			});
-			oTitle.attachPress(this._crossApplicationNavigation.bind(this));
 		} else if (sTitle) {
 			oTitle = new Title({
 				text: sTitle,
 				level: CoreTitleLevel.H3
 			});
+
+			/**
+			 * @deprecated As of version 1.111.
+			 */
+			if (this.getCrossAppNavCallback()) {
+				oTitle.destroy();
+				oTitle = new Link({
+					text: sTitle
+				});
+				oTitle.attachPress(this._crossApplicationNavigation.bind(this));
+			}
 		}
 
 		this.setPageTitleControl(oTitle);
@@ -592,7 +599,10 @@ sap.ui.define([
 	 * @private
 	 */
 	QuickViewPage.prototype._crossApplicationNavigation = function () {
-		if (this.getCrossAppNavCallback && this.getCrossAppNavCallback() && this.oCrossAppNavigator) {
+		/**
+		 * @deprecated As of version 1.111.
+		 */
+		if (this.getCrossAppNavCallback() && this.oCrossAppNavigator) {
 			var targetConfigCallback = this.getCrossAppNavCallback();
 			if (typeof targetConfigCallback == "function") {
 				var targetConfig = targetConfigCallback();
@@ -608,7 +618,11 @@ sap.ui.define([
 
 				URLHelper.redirect(href);
 			}
-		} else if (this.getTitleUrl()) {
+
+			return;
+		}
+
+		if (this.getTitleUrl()) {
 			URLHelper.redirect(this.getTitleUrl(), true);
 		}
 	};
