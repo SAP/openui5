@@ -14,7 +14,32 @@ describe("sap.ui.integration.ListCardVisualTests", function () {
 
 		aCardIds.forEach(function (sId) {
 			if (sId === "CardActionsLabel") {
-				element(by.id("__toolbar18-__clone7-overflowButton")).click();
+				 element(by.control({
+					controlType: "sap.ui.core.Icon",
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "ListContent",
+					properties: {
+						src: {
+							regex: {
+								source: "overflow"
+							}
+						}
+					},
+					ancestor: {
+						controlType: "sap.ui.integration.controls.ListContentItem",
+						viewNamespace: "sap.f.cardsdemo.view.",
+						viewName: "ListContent",
+						bindingPath: {
+							path: "/3"
+						},
+						ancestor: {
+							controlType: "sap.ui.integration.widgets.Card",
+							viewNamespace: "sap.f.cardsdemo.view.",
+							viewName: "ListContent",
+							id: sId
+						}
+					}
+				})).click();
 			}
 			utils.takePictureOfElement({
 				control: {
@@ -32,7 +57,32 @@ describe("sap.ui.integration.ListCardVisualTests", function () {
 
 		aCardIds.forEach(function (sId) {
 			if (sId === "CardActionsLabel") {
-				element(by.id("__toolbar18-__clone7-overflowButton")).click();
+				 element(by.control({
+					controlType: "sap.ui.core.Icon",
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "ListContent",
+					properties: {
+						src: {
+							regex: {
+								source: "overflow"
+							}
+						}
+					},
+					ancestor: {
+						controlType: "sap.ui.integration.controls.ListContentItem",
+						viewNamespace: "sap.f.cardsdemo.view.",
+						viewName: "ListContent",
+						bindingPath: {
+							path: "/3"
+						},
+						ancestor: {
+							controlType: "sap.ui.integration.widgets.Card",
+							viewNamespace: "sap.f.cardsdemo.view.",
+							viewName: "ListContent",
+							id: sId
+						}
+					}
+				})).click();
 			}
 			utils.takePictureOfElement({
 				control: {

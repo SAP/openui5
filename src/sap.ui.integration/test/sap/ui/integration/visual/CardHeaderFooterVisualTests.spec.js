@@ -101,9 +101,9 @@ describe("sap.ui.integration.CardHeaderFooterVisualTests", function () {
 	});
 
 	it("Card Actions Label", function () {
-		utils.navigateTo("Footer (experimental)");
+		utils.navigateTo("Footer");
 
-		var oCard = {id: "card3"};
+		var oCard = {id: "card1"};
 
 		var oElement = {
 			control: {
@@ -114,7 +114,21 @@ describe("sap.ui.integration.CardHeaderFooterVisualTests", function () {
 			}
 		};
 
-		element(by.id("__toolbar6-overflowButton")).click();
+		element(by.control({
+			controlType: "sap.ui.core.Icon",
+			viewNamespace: "sap.f.cardsdemo.view.",
+			viewName: "Footer",
+			properties: {
+				src: {
+					regex: {
+						source: "overflow"
+					}
+				}
+			},
+			ancestor: {
+				id: "cardsplayground---footer--card3"
+			}
+		})).click();
 
 		utils.takePictureOfElement(oElement, "10_Card_Actions_Label" + oCard.id);
 
