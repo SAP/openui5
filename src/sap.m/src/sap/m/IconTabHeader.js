@@ -7,7 +7,6 @@
 sap.ui.define([
 	'./library',
 	"sap/base/i18n/Localization",
-	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	"sap/ui/core/Element",
 	'sap/ui/core/EnabledPropagator',
@@ -15,6 +14,7 @@ sap.ui.define([
 	'sap/ui/core/delegate/ItemNavigation',
 	"sap/ui/core/InvisibleText",
 	'sap/ui/core/ResizeHandler',
+	"sap/ui/core/Theming",
 	'sap/ui/Device',
 	'sap/m/Button',
 	'sap/m/IconTabFilter',
@@ -28,7 +28,6 @@ sap.ui.define([
 ], function(
 	library,
 	Localization,
-	Core,
 	Control,
 	Element,
 	EnabledPropagator,
@@ -36,6 +35,7 @@ sap.ui.define([
 	ItemNavigation,
 	InvisibleText,
 	ResizeHandler,
+	Theming,
 	Device,
 	Button,
 	IconTabFilter,
@@ -285,6 +285,8 @@ sap.ui.define([
 		this._aTabKeys = [];
 		this._oAriaHeadText = null;
 		this._bIsRendered = false;
+		this._bThemeApplied = false;
+		this._handleThemeAppliedBound = this._handleThemeApplied.bind(this);
 	};
 
 	IconTabHeader.prototype.exit = function () {
@@ -346,10 +348,10 @@ sap.ui.define([
 			this.oSelectedItem._hideBadge();
 		}
 
-		if (Core.isThemeApplied()) {
+		if (this._bThemeApplied) {
 			this._setItemsForStrip();
 		} else {
-			Core.attachThemeChanged(this._handleThemeLoad, this);
+			Theming.attachApplied(this._handleThemeAppliedBound);
 		}
 
 		this._initItemNavigation();
@@ -752,9 +754,10 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	IconTabHeader.prototype._handleThemeLoad = function () {
-		setTimeout(this._setItemsForStrip.bind(this), 350);
-		Core.detachThemeChanged(this._handleThemeLoad, this);
+	IconTabHeader.prototype._handleThemeApplied = function () {
+		this._bThemeApplied = true;
+		this._setItemsForStrip(this);
+		Theming.detachApplied(this._handleThemeAppliedBound);
 	};
 
 	/*
@@ -994,7 +997,7 @@ sap.ui.define([
 	IconTabHeader.prototype._setItemsForStrip = function () {
 		var aTabFilters = this.getVisibleTabFilters();
 
-		if (!Core.isThemeApplied() || !aTabFilters.length) {
+		if (!this._bThemeApplied || !aTabFilters.length) {
 			return;
 		}
 
