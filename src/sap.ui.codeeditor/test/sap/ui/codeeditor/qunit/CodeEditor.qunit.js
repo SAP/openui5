@@ -306,8 +306,8 @@ sap.ui.define([
 			Theming.setTheme("sap_fiori_3_hcb");
 
 			if (callCount === 2) {
-				Theming.setTheme(initialTheme);
 				Theming.detachApplied(handleThemeApplied);
+				Theming.setTheme(initialTheme);
 			}
 
 			done();
