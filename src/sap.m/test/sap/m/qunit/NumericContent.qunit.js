@@ -14,8 +14,9 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/m/library",
 	"sap/ui/util/Mobile",
-	"sap/ui/core/Core"
-], function(Localization, Library, jQuery, GenericTile, NumericContent, Table, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, Mobile, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/QUnitUtils"
+], function(Localization, Library, jQuery, GenericTile, NumericContent, Table, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, Mobile, oCore, qutils) {
 	"use strict";
 
 	var oResourceBundle = Library.getResourceBundleFor("sap.m");
@@ -49,6 +50,14 @@ sap.ui.define([
 		this.oNumericContent.setValue("12");
 		oCore.applyChanges();
 		fnAssertNumericContentHasRendered(assert);
+	});
+	QUnit.test("Fire Event Not triggered when pressing enter key", function(assert) {
+		this.oNumericContent.setValue("12");
+		oCore.applyChanges();
+		var oSpy = this.spy(this.oNumericContent, "firePress");
+		qutils.triggerKeyup("numeric-cnt", jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeyEvent("keypress", "numeric-cnt", jQuery.sap.KeyCodes.ENTER);
+		assert.ok(oSpy.notCalled, "The firePress function has been called only once when the enter key is press");
 	});
 
 	QUnit.test("Numeric Content rendered with correct value and scale when formatterValue is set to true.", function (assert) {
