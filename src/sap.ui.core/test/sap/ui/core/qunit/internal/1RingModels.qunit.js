@@ -46,6 +46,7 @@ sap.ui.require([
 		// ***************************************************************************************
 		// sap.ui.core.format.* - tests are contained in testsuite.types.qunit.js
 		// ***************************************************************************************
+		"sap/ui/core/qunit/format/FormatUtils.qunit",
 		//TODO: get test running in 1RingModels.qunit; tests don't run independently - refactoring
 		// needed, currently they depend on the language en_US
 		// "sap/ui/core/qunit/types/DateFormat.qunit",
