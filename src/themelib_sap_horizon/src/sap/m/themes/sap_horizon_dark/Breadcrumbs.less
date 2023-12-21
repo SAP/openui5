@@ -7,52 +7,90 @@
 	.sapMBreadcrumbsCurrentLocation {
 		&:focus {
 			outline: none;
-			box-shadow: 0px 0px 0px 0.125rem @sapUiContentFocusColor;
+			box-shadow: 0 0 0 0.125rem @sapUiContentFocusColor;
 			border-radius: 0.25rem;
 		}
 	}
-	.sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState), .sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState) {
+
+	.sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState),
+	.sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState) {
 		outline-offset: 0;
 	}
 
-	.sapMSltIcon:before,
-	.sapMSltIcon:after {
-		font-size: @sapMFontMediumSize;
-		color: @sapUiLink;
-		padding-bottom: 0.0625rem;
-		speak: none;
-	}
+	.sapMBreadcrumbsItem.sapMBreadcrumbsSelectItem {
+		&>.sapMSlt.sapMSltWithIcon.sapMSltIconOnly.sapMSltWithArrow.sapMSltHoverable {
+			box-shadow: none;
 
-	.sapMSltIcon:before {
-		font-family: @sapUiFontLightFamily;
-		content: "••• ";
-		vertical-align: bottom;
-	}
-
-	.sapMSltIcon:after {
-		font-family: @sapUiContentIconFontFamily;
-		content: "\e1ef";
-	}
-
-	.sapMBreadcrumbsItem.sapMBreadcrumbsSelectItem >
-	.sapMSlt.sapMSltIconOnly.sapMSltWithIcon.sapMSltHoverable.sapMSltWithArrow {
-		background: transparent;
-		border: none;
-
-		&.sapMSltFocused,
-		&:hover {
+			// Default styles
 			.sapMSltIcon {
+				display: flex;
+				align-items: center;
+				gap: 0.2rem;
+
+				&::before,
+				&::after {
+					border-bottom: none;
+				}
+
+				&::before {
+					content: "••• ";
+					font-family: @sapUiFontLightFamily;
+				}
+
+				&::after {
+					content: "\e1ef";
+					font-family: @sapUiContentIconFontFamily;
+					font-size: @sapMFontMediumSize;
+					color: @sapUiLink;
+					speak: none;
+				}
+			}
+
+			// Custom underline element
+			// In order to prevent issues with centering the content
+			&::after {
+				content: '';
+				display: block;
+				position: relative;
+				width: 90%;
+				height: 0.0625rem;
+				margin: -0.12rem auto 0 0.15rem;
+				background-color: transparent;
+			}
+
+			// States
+			&:hover,
+			&.sapMSltFocused {
 				background-color: @sapUiContentFocusColor;
-				border-bottom: @sapUiContentFocusColor 0.0625rem solid;
+
+				&::after {
+					background-color: @sapUiContentContrastFocusColor;
+				}
+
+				.sapMSltIcon::before,
+				.sapMSltIcon::after {
+					color: @sapUiContentContrastFocusColor;
+					border-bottom: none;
+				}
+
+				&:active {
+					background-color: transparent;
+
+					&::after {
+						background-color: transparent;
+					}
+
+					.sapMSltIcon::before,
+					.sapMSltIcon::after {
+						color: @sapUiLink;
+					}
+				}
 			}
 
-			.sapMSltIcon:before {
-				border-bottom: none;
-			}
-
-			.sapMSltIcon:before,
-			.sapMSltIcon:after {
-				color: @sapUiButtonHoverBackground;
+			&:hover.sapMSltFocused:not(:active) {
+				&::after {
+					background-color: @sapUiContentFocusColor;
+				}
 			}
 		}
 	}

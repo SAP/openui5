@@ -5,9 +5,12 @@
 
 .sapMBreadcrumbs {
 
-	.sapMSltIconOnly.sapMSltHoverable:hover, .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled),
-	.sapMSltPressed:not(.sapMSltDisabled), .sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:hover,
-	.sapMSlt, .sapMSlt.sapMSltIconOnly.sapMSltHoverable:hover {
+	.sapMSltIconOnly.sapMSltHoverable:hover,
+	.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled),
+	.sapMSltPressed:not(.sapMSltDisabled),
+	.sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:hover,
+	.sapMSlt,
+	.sapMSlt.sapMSltIconOnly.sapMSltHoverable:hover {
 		background: transparent;
 		border: none;
 	}
@@ -17,36 +20,43 @@
 		outline-offset: -0.125rem;
 	}
 
-	.sapMSltIcon:before,
-	.sapMSltIcon:after {
-		font-size: @sapMFontMediumSize;
-		color: @sapUiWhite;
-		padding-bottom: 0.0625rem;
-		speak: none;
-	}
-
-	.sapMSltIcon:before {
-		font-family: @sapUiFontLightFamily;
-		content: "••• ";
-		vertical-align: bottom;
-	}
-
-	.sapMSltIcon:after {
-		font-family: @sapUiContentIconFontFamily;
-		content: "\e1ef";
-	}
-
-	.sapMBreadcrumbsItem.sapMBreadcrumbsSelectItem >
-	.sapMSlt.sapMSltIconOnly.sapMSltWithIcon.sapMSltHoverable.sapMSltWithArrow {
+	.sapMBreadcrumbsItem.sapMBreadcrumbsSelectItem>.sapMSlt.sapMSltIconOnly.sapMSltWithIcon.sapMSltHoverable.sapMSltWithArrow {
 		background: transparent;
 		border: none;
+
+		// Default styles
+		.sapMSltIcon {
+			display: flex;
+			align-items: center;
+			gap: 0.2rem;
+
+			margin-top: 0.1rem;
+
+			&::before,
+			&::after {
+				border-bottom: none;
+			}
+
+			&::before {
+				content: "••• ";
+				font-family: @sapUiFontLightFamily;
+			}
+
+			&::after {
+				content: "\e1ef";
+				font-family: @sapUiContentIconFontFamily;
+				font-size: @sapMFontMediumSize;
+				color: @sapUiLink;
+				speak: none;
+			}
+		}
 
 		&.sapMSltFocused,
 		&:hover {
 			outline: 0.125rem dotted @sapUiHcStandardForeground;
 			outline-offset: -0.125rem;
 
-			.sapMSltIcon:before {
+			.sapMSltIcon::before {
 				border-bottom: none;
 			}
 		}
