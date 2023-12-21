@@ -61,11 +61,11 @@ sap.ui.define([
 			regExp: /^GET \/MyService(WithPaging)?\/Products\?(\$count=true&)?\$skip=(\d+)\&\$top=(\d+)$/,
 			response: {
 				buildResponse: function(aMatches, oResponse) {
-					var iPageSize = aMatches[1] ? 50 : 0;
-					var bWithCount = !!aMatches[2];
-					var iSkip = parseInt(aMatches[3]);
-					var iTop = parseInt(aMatches[4]);
-					var mResponse = createResponse(iSkip, iTop, iPageSize);
+					const iPageSize = aMatches[1] ? 50 : 0;
+					const bWithCount = !!aMatches[2];
+					const iSkip = parseInt(aMatches[3]);
+					const iTop = parseInt(aMatches[4]);
+					const mResponse = createResponse(iSkip, iTop, iPageSize);
 
 					if (bWithCount) {
 						mResponse.message["@odata.count"] = iCount;

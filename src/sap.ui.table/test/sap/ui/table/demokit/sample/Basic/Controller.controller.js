@@ -13,24 +13,24 @@ sap.ui.define([
 
 		onInit: function() {
 			// set explored app's demo model on this sample
-			var oJSONModel = this.initSampleDataModel();
+			const oJSONModel = this.initSampleDataModel();
 			this.getView().setModel(oJSONModel);
 		},
 
 		initSampleDataModel: function() {
-			var oModel = new JSONModel();
+			const oModel = new JSONModel();
 
-			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
+			const oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
 			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
 				success: function(oData) {
-					var aTemp1 = [];
-					var aTemp2 = [];
-					var aSuppliersData = [];
-					var aCategoryData = [];
-					for (var i = 0; i < oData.ProductCollection.length; i++) {
-						var oProduct = oData.ProductCollection[i];
+					const aTemp1 = [];
+					const aTemp2 = [];
+					const aSuppliersData = [];
+					const aCategoryData = [];
+					for (let i = 0; i < oData.ProductCollection.length; i++) {
+						const oProduct = oData.ProductCollection[i];
 						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
@@ -59,14 +59,14 @@ sap.ui.define([
 		},
 
 		updateMultipleSelection: function(oEvent) {
-			var oMultiInput = oEvent.getSource(),
-				sTokensPath = oMultiInput.getBinding("tokens").getContext().getPath() + "/" + oMultiInput.getBindingPath("tokens"),
-				aRemovedTokensKeys = oEvent.getParameter("removedTokens").map(function(oToken) {
-					return oToken.getKey();
-				}),
-				aCurrentTokensData = oMultiInput.getTokens().map(function(oToken) {
-					return {"Key": oToken.getKey(), "Name": oToken.getText()};
-				});
+			const oMultiInput = oEvent.getSource();
+			const sTokensPath = oMultiInput.getBinding("tokens").getContext().getPath() + "/" + oMultiInput.getBindingPath("tokens");
+			const aRemovedTokensKeys = oEvent.getParameter("removedTokens").map(function(oToken) {
+				return oToken.getKey();
+			});
+			let aCurrentTokensData = oMultiInput.getTokens().map(function(oToken) {
+				return {"Key": oToken.getKey(), "Name": oToken.getText()};
+			});
 
 			aCurrentTokensData = aCurrentTokensData.filter(function(oToken) {
 				return aRemovedTokensKeys.indexOf(oToken.Key) === -1;
@@ -88,7 +88,7 @@ sap.ui.define([
 		},
 
 		onPaste: function(oEvent) {
-			var aData = oEvent.getParameter("data");
+			const aData = oEvent.getParameter("data");
 			MessageToast.show("Pasted Data: " + aData);
 		}
 

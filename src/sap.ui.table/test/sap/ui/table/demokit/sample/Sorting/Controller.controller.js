@@ -11,41 +11,41 @@ sap.ui.define([
 ], function(Log, Controller, Sorter, JSONModel, DateFormat, ToolbarSpacer, CoreLibrary, jQuery, UI5Date) {
 	"use strict";
 
-	var SortOrder = CoreLibrary.SortOrder;
+	const SortOrder = CoreLibrary.SortOrder;
 
 	return Controller.extend("sap.ui.table.sample.Sorting.Controller", {
 
 		onInit: function() {
 			// set explored app's demo model on this sample
-			var oJSONModel = this.initSampleDataModel();
-			var oView = this.getView();
+			const oJSONModel = this.initSampleDataModel();
+			const oView = this.getView();
 			oView.setModel(oJSONModel);
 
 			//Initial sorting
-			var oProductNameColumn = oView.byId("name");
+			const oProductNameColumn = oView.byId("name");
 			oView.byId("table").sort(oProductNameColumn, SortOrder.Ascending);
 
 			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
-				var oTb = oView.byId("infobar");
+				const oTb = oView.byId("infobar");
 				oTb.addContent(new ToolbarSpacer());
 				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Sorting"));
 			}, function(oError) { /*ignore*/ });
 		},
 
 		initSampleDataModel: function() {
-			var oModel = new JSONModel();
+			const oModel = new JSONModel();
 
-			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
+			const oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
 			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
 				success: function(oData) {
-					var aTemp1 = [];
-					var aTemp2 = [];
-					var aSuppliersData = [];
-					var aCategoryData = [];
-					for (var i = 0; i < oData.ProductCollection.length; i++) {
-						var oProduct = oData.ProductCollection[i];
+					const aTemp1 = [];
+					const aTemp2 = [];
+					const aSuppliersData = [];
+					const aCategoryData = [];
+					for (let i = 0; i < oData.ProductCollection.length; i++) {
+						const oProduct = oData.ProductCollection[i];
 						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
@@ -74,30 +74,30 @@ sap.ui.define([
 		},
 
 		clearAllSortings: function(oEvent) {
-			var oTable = this.byId("table");
+			const oTable = this.byId("table");
 			oTable.getBinding().sort(null);
 			this._resetSortingState();
 		},
 
 		sortCategories: function(oEvent) {
-			var oView = this.getView();
-			var oTable = oView.byId("table");
-			var oCategoriesColumn = oView.byId("categories");
+			const oView = this.getView();
+			const oTable = oView.byId("table");
+			const oCategoriesColumn = oView.byId("categories");
 
 			oTable.sort(oCategoriesColumn, this._bSortColumnDescending ? SortOrder.Descending : SortOrder.Ascending, /*extend existing sorting*/true);
 			this._bSortColumnDescending = !this._bSortColumnDescending;
 		},
 
 		sortCategoriesAndName: function(oEvent) {
-			var oView = this.getView();
-			var oTable = oView.byId("table");
+			const oView = this.getView();
+			const oTable = oView.byId("table");
 			oTable.sort(oView.byId("categories"), SortOrder.Ascending, false);
 			oTable.sort(oView.byId("name"), SortOrder.Ascending, true);
 		},
 
 		sortDeliveryDate: function(oEvent) {
-			var oCurrentColumn = oEvent.getParameter("column");
-			var oDeliveryDateColumn = this.byId("deliverydate");
+			const oCurrentColumn = oEvent.getParameter("column");
+			const oDeliveryDateColumn = this.byId("deliverydate");
 			if (oCurrentColumn != oDeliveryDateColumn) {
 				oDeliveryDateColumn.setSortOrder(SortOrder.None); //No multi-column sorting
 				return;
@@ -105,13 +105,13 @@ sap.ui.define([
 
 			oEvent.preventDefault();
 
-			var sOrder = oEvent.getParameter("sortOrder");
-			var oDateFormat = DateFormat.getDateInstance({pattern: "dd/MM/yyyy"});
+			const sOrder = oEvent.getParameter("sortOrder");
+			const oDateFormat = DateFormat.getDateInstance({pattern: "dd/MM/yyyy"});
 
 			this._resetSortingState(); //No multi-column sorting
 			oDeliveryDateColumn.setSortOrder(sOrder);
 
-			var oSorter = new Sorter(oDeliveryDateColumn.getSortProperty(), sOrder === SortOrder.Descending);
+			const oSorter = new Sorter(oDeliveryDateColumn.getSortProperty(), sOrder === SortOrder.Descending);
 			//The date data in the JSON model is string based. For a proper sorting the compare function needs to be customized.
 			oSorter.fnCompare = function(a, b) {
 				if (b == null) {
@@ -121,8 +121,8 @@ sap.ui.define([
 					return 1;
 				}
 
-				var aa = oDateFormat.parse(a).getTime();
-				var bb = oDateFormat.parse(b).getTime();
+				const aa = oDateFormat.parse(a).getTime();
+				const bb = oDateFormat.parse(b).getTime();
 
 				if (aa < bb) {
 					return -1;
@@ -137,9 +137,9 @@ sap.ui.define([
 		},
 
 		_resetSortingState: function() {
-			var oTable = this.byId("table");
-			var aColumns = oTable.getColumns();
-			for (var i = 0; i < aColumns.length; i++) {
+			const oTable = this.byId("table");
+			const aColumns = oTable.getColumns();
+			for (let i = 0; i < aColumns.length; i++) {
 				aColumns[i].setSortOrder(SortOrder.None);
 			}
 		}

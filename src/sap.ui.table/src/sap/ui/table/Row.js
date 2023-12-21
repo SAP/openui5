@@ -8,7 +8,7 @@ sap.ui.define([
 ], function(Element, TableUtils, jQuery) {
 	"use strict";
 
-	var RowType = Object.freeze({
+	const RowType = Object.freeze({
 		Standard: "Standard",
 		Summary: "Summary",
 		GroupHeader: "GroupHeader"
@@ -24,13 +24,13 @@ sap.ui.define([
 	 * @private
 	 */
 	function RowState() {
-		var oContext = null;
-		var sType = RowType.Standard;
-		var bContentHidden = false;
-		var sTitle = "";
-		var bExpanded = false;
-		var bExpandable = false;
-		var iLevel = 0;
+		let oContext = null;
+		let sType = RowType.Standard;
+		let bContentHidden = false;
+		let sTitle = "";
+		let bExpanded = false;
+		let bExpandable = false;
+		let iLevel = 0;
 
 		Object.defineProperties(this, {
 			/** @type sap.ui.model.Context */
@@ -108,7 +108,7 @@ sap.ui.define([
 		});
 	}
 
-	var StateMap = new window.WeakMap();
+	const StateMap = new window.WeakMap();
 
 	/**
 	 * Gets the status information for a row.
@@ -139,7 +139,7 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.table.Row
 	 */
-	var Row = Element.extend("sap.ui.table.Row", /** @lends sap.ui.table.Row.prototype */ {metadata: {
+	const Row = Element.extend("sap.ui.table.Row", /** @lends sap.ui.table.Row.prototype */ {metadata: {
 		library: "sap.ui.table",
 		defaultAggregation: "cells",
 		aggregations: {
@@ -170,12 +170,12 @@ sap.ui.define([
 	};
 
 	Row.prototype.getFocusInfo = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		return oTable ? oTable.getFocusInfo() : Element.prototype.getFocusInfo.apply(this, arguments);
 	};
 
 	Row.prototype.applyFocusInfo = function(mFocusInfo) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		if (oTable) {
 			oTable.applyFocusInfo(mFocusInfo);
 		} else {
@@ -194,7 +194,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Row.prototype._setFocus = function(bFirstInteractiveElement) {
-		var oFirstInteractiveElement = TableUtils.getFirstInteractiveElement(this);
+		const oFirstInteractiveElement = TableUtils.getFirstInteractiveElement(this);
 
 		if (bFirstInteractiveElement === true && oFirstInteractiveElement) {
 			oFirstInteractiveElement.focus();
@@ -233,15 +233,15 @@ sap.ui.define([
 	 * @public
 	 */
 	Row.prototype.getIndex = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (!oTable) {
 			return -1;
 		}
 
 		// get the index of the row in the aggregation
-		var iRowIndex = oTable.indexOfRow(this);
-		var mRowCount = oTable._getRowCounts();
+		const iRowIndex = oTable.indexOfRow(this);
+		const mRowCount = oTable._getRowCounts();
 
 		// check for fixed rows. In this case the index of the context is the same like the index of the row in the aggregation
 		if (mRowCount.fixedTop > 0 && iRowIndex < mRowCount.fixedTop) {
@@ -250,7 +250,7 @@ sap.ui.define([
 
 		// check for fixed bottom rows
 		if (mRowCount.fixedBottom > 0 && iRowIndex >= mRowCount.count - mRowCount.fixedBottom) {
-			var iTotalRowCount = oTable._getTotalRowCount();
+			const iTotalRowCount = oTable._getTotalRowCount();
 			if (iTotalRowCount >= mRowCount.count) {
 				return iTotalRowCount - (mRowCount.count - iRowIndex);
 			} else {
@@ -279,19 +279,19 @@ sap.ui.define([
 		bJQuery = bJQuery === true;
 		bCollection = bCollection === true;
 
-		var sKey = bJQuery ? "jQuery" : "dom";
-		var mDomRefs = this._mDomRefs;
+		const sKey = bJQuery ? "jQuery" : "dom";
+		const mDomRefs = this._mDomRefs;
 
 		if (!mDomRefs[sKey]) {
-			var oTable = this.getTable();
-			var fnGetElement = function(sId) {
-				var oElement = document.getElementById(sId);
+			const oTable = this.getTable();
+			const fnGetElement = function(sId) {
+				const oElement = document.getElementById(sId);
 				if (oElement) {
 					return bJQuery ? jQuery(oElement) : oElement;
 				}
 				return null;
 			};
-			var fnGetParent = function(vElement) {
+			const fnGetParent = function(vElement) {
 				if (vElement) {
 					return bJQuery ? vElement.parent() : vElement.parentNode;
 				}
@@ -301,7 +301,7 @@ sap.ui.define([
 			mDomRefs[sKey] = {};
 
 			if (oTable) {
-				var iRowIndex = oTable.indexOfRow(this);
+				const iRowIndex = oTable.indexOfRow(this);
 				mDomRefs[sKey].rowSelector = fnGetElement(oTable.getId() + "-rowsel" + iRowIndex);
 				mDomRefs[sKey].rowAction = fnGetElement(oTable.getId() + "-rowact" + iRowIndex);
 			}
@@ -328,7 +328,7 @@ sap.ui.define([
 			}
 		}
 
-		var mKeyDomRefs = mDomRefs[sKey];
+		const mKeyDomRefs = mDomRefs[sKey];
 		if (bCollection) {
 			return Object.keys(mKeyDomRefs).map(function(sKey) {
 				return sKey === "row" ? null : mKeyDomRefs[sKey];
@@ -344,17 +344,17 @@ sap.ui.define([
 	 * @private
 	 */
 	Row.prototype._updateSelection = function() {
-		var oTable = this.getTable();
-		var bIsSelected = oTable._getSelectionPlugin().isSelected(this);
+		const oTable = this.getTable();
+		const bIsSelected = oTable._getSelectionPlugin().isSelected(this);
 
 		this._setSelected(bIsSelected);
 		oTable._getAccExtension().updateSelectionStateOfRow(this);
 	};
 
 	Row.prototype.setRowBindingContext = function(oContext, oTable) {
-		var oBindingInfo = oTable.getBindingInfo("rows");
-		var sModelName = oBindingInfo ? oBindingInfo.model : undefined;
-		var oState = state(this);
+		const oBindingInfo = oTable.getBindingInfo("rows");
+		const sModelName = oBindingInfo ? oBindingInfo.model : undefined;
+		const oState = state(this);
 
 		oState.reset();
 		oState.context = oContext;
@@ -379,13 +379,13 @@ sap.ui.define([
 
 	/** @deprecated As of version 1.64 */
 	Row.prototype._updateTableCells = function(oTable) {
-		var aCells = this.getCells(),
-			iAbsoluteRowIndex = this.getIndex(),
-			bHasTableCellUpdate = !!oTable._updateTableCell,
-			oCell, $Td, bHasCellUpdate,
-			oBindingContext = this.getRowBindingContext();
+		const aCells = this.getCells();
+		const iAbsoluteRowIndex = this.getIndex();
+		const bHasTableCellUpdate = !!oTable._updateTableCell;
+		let oCell; let $Td; let bHasCellUpdate;
+		const oBindingContext = this.getRowBindingContext();
 
-		for (var i = 0; i < aCells.length; i++) {
+		for (let i = 0; i < aCells.length; i++) {
 			oCell = aCells[i];
 			bHasCellUpdate = !!oCell._updateTableCell;
 			$Td = bHasCellUpdate || bHasTableCellUpdate ? oCell.$().closest("td") : null;
@@ -530,30 +530,30 @@ sap.ui.define([
 	 * @private
 	 */
 	Row.prototype.getDragGhost = function() {
-		var oTable = this.getTable();
-		var oTableElement = oTable.getDomRef();
-		var mRowAreas = this.getDomRefs();
-		var oGhostElement;
-		var oGhostAreaElement;
-		var oRowElementClone;
-		var iSelectedRowCount = oTable._getSelectionPlugin().getSelectedCount();
+		const oTable = this.getTable();
+		const oTableElement = oTable.getDomRef();
+		const mRowAreas = this.getDomRefs();
+		const oGhostElement = oTableElement.cloneNode();
+		let oGhostAreaElement;
+		let oRowElementClone;
+		const iSelectedRowCount = oTable._getSelectionPlugin().getSelectedCount();
 
 		function removeForbiddenAttributes(oElement) {
 			oElement.removeAttribute("id");
 			oElement.removeAttribute("data-sap-ui");
 			oElement.removeAttribute("data-sap-ui-related");
 
-			var iChildCount = oElement.children.length;
-			for (var i = 0; i < iChildCount; i++) {
+			const iChildCount = oElement.children.length;
+			for (let i = 0; i < iChildCount; i++) {
 				removeForbiddenAttributes(oElement.children[i]);
 			}
 		}
 
 		function cloneTableAndRow(oTableElement, oRowElement) {
-			var oTableClone = oTableElement.cloneNode();
-			var oTableHeadClone = oTableElement.querySelector("thead").cloneNode(true);
-			var oTableBodyClone = oTableElement.querySelector("tbody").cloneNode();
-			var oRowClone = oRowElement.cloneNode(true);
+			const oTableClone = oTableElement.cloneNode();
+			const oTableHeadClone = oTableElement.querySelector("thead").cloneNode(true);
+			const oTableBodyClone = oTableElement.querySelector("tbody").cloneNode();
+			const oRowClone = oRowElement.cloneNode(true);
 
 			oTableBodyClone.appendChild(oRowClone);
 			oTableClone.appendChild(oTableHeadClone);
@@ -562,7 +562,6 @@ sap.ui.define([
 			return oTableClone;
 		}
 
-		oGhostElement = oTableElement.cloneNode();
 		oGhostElement.classList.add("sapUiTableRowGhost");
 		oGhostElement.classList.remove("sapUiTableVScr");
 		oGhostElement.classList.remove("sapUiTableHScr");
@@ -585,7 +584,7 @@ sap.ui.define([
 		}
 
 		if (mRowAreas.rowScrollPart) {
-			var oScrollableColumnsContainer = oTable.getDomRef("sapUiTableCtrlScr");
+			const oScrollableColumnsContainer = oTable.getDomRef("sapUiTableCtrlScr");
 
 			oGhostAreaElement = oScrollableColumnsContainer.cloneNode();
 			oRowElementClone = cloneTableAndRow(oTable.getDomRef("table"), mRowAreas.rowScrollPart);
@@ -617,7 +616,7 @@ sap.ui.define([
 			oGhostAreaElement = document.createElement("div");
 			oGhostAreaElement.classList.add("sapUiTableRowGhostCount");
 
-			var oCountElement = document.createElement("div");
+			const oCountElement = document.createElement("div");
 			oCountElement.textContent = iSelectedRowCount;
 
 			oGhostAreaElement.appendChild(oCountElement);
@@ -636,7 +635,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Row.prototype._setSelected = function(bSelected) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (bSelected) {
 			this.addStyleClass("sapUiTableRowSel");
@@ -658,7 +657,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Row.prototype._setHovered = function(bHovered) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (bHovered) {
 			this.addStyleClass("sapUiTableRowHvr");
@@ -694,7 +693,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Row.prototype.getTable = function() {
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 		return TableUtils.isA(oParent, "sap.ui.table.Table") ? oParent : null;
 	};
 

@@ -23,15 +23,15 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var TestControl = TableQUnitUtils.TestControl;
+	const TestControl = TableQUnitUtils.TestControl;
 
-	var aData = [];
-	for (var i = 0; i < 10; i++) {
+	const aData = [];
+	for (let i = 0; i < 10; i++) {
 		aData.push({text: "" + i});
 	}
 
-	var oTable;
-	var oModel = new JSONModel();
+	let oTable;
+	const oModel = new JSONModel();
 	oModel.setData({modelData: aData});
 
 	function createTable() {
@@ -151,8 +151,8 @@ sap.ui.define([
 	});
 
 	function checkSpan(iCol, iRow, assert, span) {
-		var oColumn = oTable.getColumns()[iCol];
-		var colSpan = parseInt(oTable.$().find("td[data-sap-ui-colindex=\"" + oColumn.getIndex() + "\"]")[iRow].getAttribute("colspan") || 1);
+		const oColumn = oTable.getColumns()[iCol];
+		const colSpan = parseInt(oTable.$().find("td[data-sap-ui-colindex=\"" + oColumn.getIndex() + "\"]")[iRow].getAttribute("colspan") || 1);
 		span = span || TableUtils.Column.getHeaderSpan(oColumn, iRow);
 		assert.strictEqual(colSpan, span, "Col:" + iCol + ", Row: " + iRow + " - Header has correct span");
 	}
@@ -167,13 +167,13 @@ sap.ui.define([
 
 	QUnit.module("Hidden columns with span", {
 		beforeEach: async function() {
-			var aCols = oTable.getColumns();
+			const aCols = oTable.getColumns();
 			aCols[2].setVisible(false);
 			aCols[4].setVisible(false);
 			await nextUIUpdate();
 		},
 		afterEach: async function() {
-			var aCols = oTable.getColumns();
+			const aCols = oTable.getColumns();
 			aCols[2].setVisible(true);
 			aCols[4].setVisible(true);
 			await nextUIUpdate();

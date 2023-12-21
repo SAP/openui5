@@ -21,14 +21,14 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var INVALIDATE_MENU = ["sortProperty", "filterProperty", "showSortMenuEntry", "showFilterMenuEntry"];
-	var SET_FILTER_VALUE = ["filterValue"];
-	var INVALIDATE_ALL_MENUS = ["enableCustomFilter", "enableGrouping", "enableColumnFreeze", "showColumnVisibilityMenu"];
+	const INVALIDATE_MENU = ["sortProperty", "filterProperty", "showSortMenuEntry", "showFilterMenuEntry"];
+	const SET_FILTER_VALUE = ["filterValue"];
+	const INVALIDATE_ALL_MENUS = ["enableCustomFilter", "enableGrouping", "enableColumnFreeze", "showColumnVisibilityMenu"];
 
 	/**
 	 * @deprecated As of Version 1.117
 	 */
-	var LegacyColumnMenuAdapter = ColumnHeaderMenuAdapter.extend("sap.ui.table.menus.LegacyColumnMenuAdapter", {
+	const LegacyColumnMenuAdapter = ColumnHeaderMenuAdapter.extend("sap.ui.table.menus.LegacyColumnMenuAdapter", {
 		constructor: function() {
 			ColumnHeaderMenuAdapter.apply(this, arguments);
 
@@ -47,16 +47,16 @@ sap.ui.define([
 	});
 
 	LegacyColumnMenuAdapter.prototype.injectMenuItems = function(oMenu, oColumn) {
-		var oTable = oColumn._getTable();
-		var oCell = oColumn.getDomRef();
-		var bCellHasMenuButton = oCell.querySelector(".sapUiTableColDropDown") !== null;
+		const oTable = oColumn._getTable();
+		const oCell = oColumn.getDomRef();
+		const bCellHasMenuButton = oCell.querySelector(".sapUiTableColDropDown") !== null;
 
 		if (!Device.system.desktop && !bCellHasMenuButton) {
 			return this._applyColumnHeaderCellMenu(oColumn);
 		}
 
 		this._removeColumnHeaderCellMenu(oTable);
-		var bExecuteDefault = oTable.fireColumnSelect({
+		const bExecuteDefault = oTable.fireColumnSelect({
 			column: oColumn
 		});
 
@@ -71,28 +71,28 @@ sap.ui.define([
 	 * @private
 	 */
 	LegacyColumnMenuAdapter.prototype._invalidateMenu = function(oColumn) {
-		var oMenu = oColumn.getMenu();
+		const oMenu = oColumn.getMenu();
 		if (TableUtils.isA(oMenu, "sap.ui.table.ColumnMenu")) {
 			oMenu._invalidate();
 		}
 	};
 
 	LegacyColumnMenuAdapter.prototype._invalidateAllMenus = function(oTable) {
-		var aCols = oTable.getColumns();
-		for (var i = 0, l = aCols.length; i < l; i++) {
+		const aCols = oTable.getColumns();
+		for (let i = 0, l = aCols.length; i < l; i++) {
 			this._invalidateMenu(aCols[i]);
 		}
 	};
 
 	LegacyColumnMenuAdapter.prototype._setFilterValue = function(oColumn, sValue) {
-		var oMenu = oColumn.getMenu();
+		const oMenu = oColumn.getMenu();
 		if (TableUtils.isA(oMenu, "sap.ui.table.ColumnMenu")) {
 			oMenu._setFilterValue(sValue);
 		}
 	};
 
 	LegacyColumnMenuAdapter.prototype._setFilterState = function(oColumn, sState) {
-		var oMenu = oColumn.getMenu();
+		const oMenu = oColumn.getMenu();
 		if (TableUtils.isA(oMenu, "sap.ui.table.ColumnMenu")) {
 			oMenu._setFilterState(sState);
 		}
@@ -112,11 +112,11 @@ sap.ui.define([
 	 * @private
 	 */
 	LegacyColumnMenuAdapter.prototype._applyColumnHeaderCellMenu = function(oColumn) {
-		var oTable = oColumn._getTable();
-		var oCell = oColumn.getDomRef();
-		var sColspan = oCell.getAttribute("colspan");
-		var oCellInner = oCell.querySelector(".sapUiTableCellInner");
-		var bCellMenuAlreadyExists = oCell.querySelector(".sapUiTableCellTouchMenu") !== null;
+		const oTable = oColumn._getTable();
+		const oCell = oColumn.getDomRef();
+		const sColspan = oCell.getAttribute("colspan");
+		const oCellInner = oCell.querySelector(".sapUiTableCellInner");
+		const bCellMenuAlreadyExists = oCell.querySelector(".sapUiTableCellTouchMenu") !== null;
 
 		if (sColspan && sColspan !== "1" // headers with span do not have connection to a column, do not open the context menu
 			|| bCellMenuAlreadyExists
@@ -124,22 +124,20 @@ sap.ui.define([
 			return false;
 		}
 
-		var oColumnTouchMenu = document.createElement("div");
+		const oColumnTouchMenu = document.createElement("div");
 
 		this._removeColumnHeaderCellMenu(oTable); // First remove any existing column header cell menu of another column.
 		oCellInner.style.display = "none";
 
 		if (oColumn._menuHasItems()) {
-			var oColumnContextMenuButton;
-			oColumnContextMenuButton = document.createElement("div");
+			const oColumnContextMenuButton = document.createElement("div");
 			oColumnContextMenuButton.classList.add("sapUiTableColDropDown");
 			oColumnContextMenuButton.textContent = "";
 			oColumnTouchMenu.appendChild(oColumnContextMenuButton);
 		}
 
 		if (oColumn.getResizable()) {
-			var oColumnResizerButton;
-			oColumnResizerButton = document.createElement("div");
+			const oColumnResizerButton = document.createElement("div");
 			oColumnResizerButton.classList.add("sapUiTableColResizer");
 			oColumnResizerButton.textContent = "";
 			oColumnTouchMenu.appendChild(oColumnResizerButton);
@@ -148,7 +146,7 @@ sap.ui.define([
 		oColumnTouchMenu.classList.add("sapUiTableCellTouchMenu");
 		oCell.appendChild(oColumnTouchMenu);
 
-		var onFocusOut = function() {
+		const onFocusOut = function() {
 			this._removeColumnHeaderCellMenu(oTable);
 			oCell.removeEventListener("focusout", onFocusOut);
 		}.bind(this);
@@ -166,7 +164,7 @@ sap.ui.define([
 	 * @private
 	 */
 	LegacyColumnMenuAdapter.prototype._removeColumnHeaderCellMenu = function(oTable) {
-		var $ColumnCellMenu = oTable && oTable.$().find(".sapUiTableCHT .sapUiTableCellTouchMenu");
+		const $ColumnCellMenu = oTable && oTable.$().find(".sapUiTableCHT .sapUiTableCellTouchMenu");
 		if ($ColumnCellMenu.length) {
 			$ColumnCellMenu.parent().find(".sapUiTableCellInner").show();
 			$ColumnCellMenu.remove();
@@ -182,19 +180,19 @@ sap.ui.define([
 	 * @private
 	 */
 	LegacyColumnMenuAdapter.prototype._openColumnContextMenu = function(oColumn) {
-		var oTable = oColumn._getTable();
-		var oDomRef = oColumn._cellPressed;
-		var aColumns = oTable.getColumns();
+		const oTable = oColumn._getTable();
+		const oDomRef = oColumn._cellPressed;
+		const aColumns = oTable.getColumns();
 
 		// Close all menus.
-		for (var i = 0; i < aColumns.length; i++) {
+		for (let i = 0; i < aColumns.length; i++) {
 			// If column menus of other columns are open, close them.
 			if (aColumns[i] !== oColumn) {
 				this._closeColumnContextMenu(aColumns[i]);
 			}
 		}
 
-		var sColspan = oDomRef.getAttribute("colspan");
+		const sColspan = oDomRef.getAttribute("colspan");
 		if (sColspan && sColspan !== "1") {
 			return false; // headers with span do not have connection to a column, do not open the context menu
 		}
@@ -210,18 +208,18 @@ sap.ui.define([
 	 * @private
 	 */
 	LegacyColumnMenuAdapter.prototype._openMenu = function(oColumn, oDomRef) {
-		var oMenu = this._getMenu(oColumn);
+		const oMenu = this._getMenu(oColumn);
 
 		if (!oColumn._menuHasItems()) {
 			return false;
 		}
 
-		var bExecuteDefault = oColumn.fireColumnMenuOpen({
+		const bExecuteDefault = oColumn.fireColumnMenuOpen({
 			menu: oMenu
 		});
 
 		if (bExecuteDefault) {
-			var eDock = Popup.Dock;
+			const eDock = Popup.Dock;
 			oMenu.open(null, oDomRef, eDock.BeginTop, eDock.BeginBottom, oDomRef);
 			return true;
 		} else {
@@ -236,19 +234,19 @@ sap.ui.define([
 	 * @private
 	 */
 	LegacyColumnMenuAdapter.prototype._closeColumnContextMenu = function(oColumn) {
-		var oMenu = oColumn.getMenu();
+		const oMenu = oColumn.getMenu();
 		if (oMenu) {
 			oMenu.close();
 		}
 	};
 
 	LegacyColumnMenuAdapter.prototype._getMenu = function(oColumn) {
-		var oMenu = oColumn.getMenu();
+		let oMenu = oColumn.getMenu();
 		if (!oMenu) {
 			oMenu = this._createMenu(oColumn);
 			oColumn.setAggregation("menu", oMenu, true);
 
-			var arr = INVALIDATE_MENU.concat(SET_FILTER_VALUE).concat(INVALIDATE_ALL_MENUS);
+			const arr = INVALIDATE_MENU.concat(SET_FILTER_VALUE).concat(INVALIDATE_ALL_MENUS);
 			this._oLegacyMenuObserver.observe(oColumn, {
 				properties: arr
 			});
@@ -263,7 +261,7 @@ sap.ui.define([
 	 * @returns {sap.ui.table.ColumnMenu} The created column menu.
 	 */
 	LegacyColumnMenuAdapter.prototype._createMenu = function(oColumn) {
-		var ColumnMenuClass = oColumn.isA("sap.ui.table.AnalyticalColumn") ? AnalyticalColumnMenu : ColumnMenu;
+		const ColumnMenuClass = oColumn.isA("sap.ui.table.AnalyticalColumn") ? AnalyticalColumnMenu : ColumnMenu;
 		return new ColumnMenuClass(oColumn.getId() + "-menu", {ariaLabelledBy: oColumn});
 	};
 

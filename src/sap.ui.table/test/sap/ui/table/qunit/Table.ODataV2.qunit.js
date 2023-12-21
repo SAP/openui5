@@ -38,7 +38,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("#_getTotalRowCount", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		assert.strictEqual(oTable._getTotalRowCount(), 16, "Binding#getLength defines the total row count in the table");
 
@@ -68,7 +68,7 @@ sap.ui.define([
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.strictEqual(oTable._getTotalRowCount(), 5, "After refresh, still the \"length\" parameter is returned");
 
-			var oModel = oTable.getModel();
+			const oModel = oTable.getModel();
 			oTable.setModel(null);
 			assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding the total row count is 0, regardless of the binding info");
 
@@ -106,8 +106,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialization", function(assert) {
-		var oTable = TableQUnitUtils.createTable();
-		var oGetContextsSpy = this.oGetContextsSpy;
+		const oTable = TableQUnitUtils.createTable();
+		const oGetContextsSpy = this.oGetContextsSpy;
 
 		// refreshRows, render, updateRows
 		return oTable.qunit.whenRenderingFinished().then(function() {
@@ -118,11 +118,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialization; With fixed rows", function(assert) {
-		var oTable = TableQUnitUtils.createTable({
+		const oTable = TableQUnitUtils.createTable({
 			fixedRowCount: 1,
 			fixedBottomRowCount: 1
 		});
-		var oGetContextsSpy = this.oGetContextsSpy;
+		const oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.equal(oGetContextsSpy.callCount, 4, "Call count of method to get contexts");
@@ -140,14 +140,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialization; With fixed rows, firstVisibleRow = 1, threshold = 1", function(assert) {
-		var oTable = TableQUnitUtils.createTable({
+		const oTable = TableQUnitUtils.createTable({
 			visibleRowCount: 5,
 			fixedRowCount: 1,
 			fixedBottomRowCount: 1,
 			firstVisibleRow: 1,
 			threshold: 1
 		});
-		var oGetContextsSpy = this.oGetContextsSpy;
+		const oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.equal(oGetContextsSpy.callCount, 6, "Call count of method to get contexts");
@@ -172,8 +172,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Refresh", function(assert) {
-		var oTable = TableQUnitUtils.createTable();
-		var oGetContextsSpy = this.oGetContextsSpy;
+		const oTable = TableQUnitUtils.createTable();
+		const oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oGetContextsSpy.resetHistory();
@@ -186,11 +186,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Refresh; With fixed rows", function(assert) {
-		var oTable = TableQUnitUtils.createTable({
+		const oTable = TableQUnitUtils.createTable({
 			fixedRowCount: 1,
 			fixedBottomRowCount: 1
 		});
-		var oGetContextsSpy = this.oGetContextsSpy;
+		const oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oGetContextsSpy.resetHistory();
@@ -205,14 +205,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Refresh; With fixed rows, firstVisibleRow = 1, threshold = 1", function(assert) {
-		var oTable = TableQUnitUtils.createTable({
+		const oTable = TableQUnitUtils.createTable({
 			visibleRowCount: 5,
 			fixedRowCount: 1,
 			fixedBottomRowCount: 1,
 			firstVisibleRow: 1,
 			threshold: 1
 		});
-		var oGetContextsSpy = this.oGetContextsSpy;
+		const oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oGetContextsSpy.resetHistory();
@@ -248,8 +248,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sort", function(assert) {
-		var oTable = TableQUnitUtils.createTable();
-		var oGetContextsSpy = this.oGetContextsSpy;
+		const oTable = TableQUnitUtils.createTable();
+		const oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oGetContextsSpy.resetHistory();
@@ -262,11 +262,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sort; With fixed rows", function(assert) {
-		var oTable = TableQUnitUtils.createTable({
+		const oTable = TableQUnitUtils.createTable({
 			fixedRowCount: 1,
 			fixedBottomRowCount: 1
 		});
-		var oGetContextsSpy = this.oGetContextsSpy;
+		const oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oGetContextsSpy.resetHistory();
@@ -287,14 +287,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sort; With fixed rows, firstVisibleRow = 1, threshold = 1", function(assert) {
-		var oTable = TableQUnitUtils.createTable({
+		const oTable = TableQUnitUtils.createTable({
 			visibleRowCount: 5,
 			fixedRowCount: 1,
 			fixedBottomRowCount: 1,
 			firstVisibleRow: 1,
 			threshold: 1
 		});
-		var oGetContextsSpy = this.oGetContextsSpy;
+		const oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oGetContextsSpy.resetHistory();
@@ -337,7 +337,7 @@ sap.ui.define([
 			TableQUnitUtils.setDefaultSettings();
 		},
 		assertState: function(assert, sMessage, mExpectation) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 
 			assert.deepEqual({
 				pendingRequests: oTable._hasPendingRequests(),
@@ -350,8 +350,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial request; Automatic BusyIndicator disabled", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		assert.expect(4);
 
@@ -381,8 +381,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial request; Automatic BusyIndicator enabled", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		assert.expect(5);
 
@@ -413,8 +413,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll after 'dataReceived'", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		assert.expect(6);
 
@@ -445,9 +445,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Refresh the binding after 'dataReceived'", function(assert) {
-		var done = assert.async();
-		var that = this;
-		var bRefreshed = false;
+		const done = assert.async();
+		const that = this;
+		let bRefreshed = false;
 
 		assert.expect(6);
 
@@ -481,9 +481,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rebind after 'dataRequested'", function(assert) {
-		var done = assert.async();
-		var that = this;
-		var bRebound = false;
+		const done = assert.async();
+		const that = this;
+		let bRebound = false;
 
 		assert.expect(5);
 
@@ -517,8 +517,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Unbind after 'dataRequested'", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		assert.expect(3);
 
@@ -550,8 +550,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Enable automatic BusyIndicator after 'dataRequested'", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		assert.expect(5);
 
@@ -584,8 +584,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Disable automatic BusyIndicator after 'dataRequested'", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		assert.expect(5);
 
@@ -619,9 +619,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll after state changed to not busy", function(assert) {
-		var done = assert.async();
-		var that = this;
-		var bScrolled = false;
+		const done = assert.async();
+		const that = this;
+		let bScrolled = false;
 
 		assert.expect(8);
 
@@ -657,9 +657,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Multiple parallel requests", function(assert) {
-		var done = assert.async();
-		var that = this;
-		var bSimulatingParallelRequests = false;
+		const done = assert.async();
+		const that = this;
+		let bSimulatingParallelRequests = false;
 
 		assert.expect(10);
 
@@ -680,7 +680,7 @@ sap.ui.define([
 						that.assertState(assert, "On 'dataRequested'", {pendingRequests: true, busy: true});
 
 						if (!bSimulatingParallelRequests) {
-							var oBinding = that.getTable().getBinding();
+							const oBinding = that.getTable().getBinding();
 
 							bSimulatingParallelRequests = true;
 							oBinding.fireDataRequested();
@@ -725,9 +725,9 @@ sap.ui.define([
 
 			return this.oTable.qunit.whenRenderingFinished().then(function() {
 				this.oObserver = new MutationObserver(function(aRecords) {
-					var oRecord = aRecords[0];
-					var bNoDataWasVisible = oRecord.oldValue.includes("sapUiTableEmpty");
-					var bNoDataIsVisible = oRecord.target.classList.contains("sapUiTableEmpty");
+					const oRecord = aRecords[0];
+					const bNoDataWasVisible = oRecord.oldValue.includes("sapUiTableEmpty");
+					const bNoDataIsVisible = oRecord.target.classList.contains("sapUiTableEmpty");
 
 					if (bNoDataWasVisible !== bNoDataIsVisible) {
 						this.iNoDataVisibilityChanges++;
@@ -758,7 +758,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("After rendering with data", function(assert) {
-		var pDone;
+		let pDone;
 
 		this.oTable.destroy();
 		this.oTable = TableQUnitUtils.createTable(function(oTable) {
@@ -776,7 +776,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("After rendering without data", function(assert) {
-		var pDone;
+		let pDone;
 
 		this.oTable.destroy();
 		this.oTable = TableQUnitUtils.createTable({
@@ -796,7 +796,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Filter", function(assert) {
-		var that = this;
+		const that = this;
 
 		this.oTable.getBinding().filter(new Filter({path: "Name", operator: "EQ", value1: "DoesNotExist"}));
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
@@ -810,7 +810,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rerender while filtering", async function(assert) {
-		var that = this;
+		const that = this;
 
 		this.oTable.getBinding().filter(new Filter({path: "Name", operator: "EQ", value1: "DoesNotExist"}));
 		this.oTable.invalidate();
@@ -836,8 +836,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Bind/Unbind", function(assert) {
-		var oBindingInfo = this.oTable.getBindingInfo("rows");
-		var that = this;
+		const oBindingInfo = this.oTable.getBindingInfo("rows");
+		const that = this;
 
 		this.oTable.unbindRows();
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
@@ -851,8 +851,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rerender while binding/unbinding", async function(assert) {
-		var oBindingInfo = this.oTable.getBindingInfo("rows");
-		var that = this;
+		const oBindingInfo = this.oTable.getBindingInfo("rows");
+		const that = this;
 
 		this.oTable.unbindRows();
 		this.oTable.invalidate();

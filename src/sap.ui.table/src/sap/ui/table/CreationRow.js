@@ -37,7 +37,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc
 	 * @alias sap.ui.table.CreationRow
 	 */
-	var CreationRow = Control.extend("sap.ui.table.CreationRow", /** @lends sap.ui.table.CreationRow.prototype */ {
+	const CreationRow = Control.extend("sap.ui.table.CreationRow", /** @lends sap.ui.table.CreationRow.prototype */ {
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
@@ -84,8 +84,8 @@ sap.ui.define([
 	};
 
 	CreationRow.prototype.setVisible = function(bVisible) {
-		var bVisibleBefore = this.getVisible();
-		var oTable = this.getTable();
+		const bVisibleBefore = this.getVisible();
+		const oTable = this.getTable();
 
 		this.setProperty("visible", bVisible);
 
@@ -113,7 +113,7 @@ sap.ui.define([
 	 * @public
 	 */
 	CreationRow.prototype.resetFocus = function() {
-		var oInteractiveElement = TableUtils.getFirstInteractiveElement(this);
+		const oInteractiveElement = TableUtils.getFirstInteractiveElement(this);
 
 		if (oInteractiveElement) {
 			oInteractiveElement.focus();
@@ -131,7 +131,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	CreationRow.prototype.getFocusDomRef = function() {
-		var oInteractiveElement = TableUtils.getFirstInteractiveElement(this);
+		const oInteractiveElement = TableUtils.getFirstInteractiveElement(this);
 
 		if (oInteractiveElement) {
 			return oInteractiveElement;
@@ -147,7 +147,7 @@ sap.ui.define([
 	 * @private
 	 */
 	CreationRow.prototype._fireApply = function() {
-		var bFocusSet = false;
+		let bFocusSet = false;
 
 		if (this.fireApply()) {
 			bFocusSet = this.resetFocus();
@@ -162,7 +162,7 @@ sap.ui.define([
 	 * asynchronously.
 	 */
 	function setEventMarkedAndFireApplyAsync(oCreationRow, oEvent) {
-		var oFocusedElement = document.activeElement;
+		const oFocusedElement = document.activeElement;
 
 		oCreationRow.getTable().getDomRef("focusDummy").focus();
 		oEvent.setMarked();
@@ -227,10 +227,10 @@ sap.ui.define([
 	 * @private
 	 */
 	CreationRow.prototype._getToolbar = function() {
-		var oToolbar = this.getToolbar();
+		let oToolbar = this.getToolbar();
 
 		if (!oToolbar) {
-			var oDefaultToolbar = this.getAggregation("_defaultToolbar");
+			let oDefaultToolbar = this.getAggregation("_defaultToolbar");
 
 			if (!oDefaultToolbar) {
 				oDefaultToolbar = createDefaultToolbar(this);
@@ -256,8 +256,7 @@ sap.ui.define([
 	 * @private
 	 */
 	CreationRow.prototype._updateDefaultToolbar = function() {
-		var oDefaultToolbar = this.getAggregation("_defaultToolbar");
-		var oApplyButton;
+		const oDefaultToolbar = this.getAggregation("_defaultToolbar");
 
 		if (this.getToolbar()) {
 			// No need to update the default toolbar if a custom toolbar is used.
@@ -271,7 +270,8 @@ sap.ui.define([
 			return;
 		}
 
-		oApplyButton = oDefaultToolbar.getContent()[1];
+		const oApplyButton = oDefaultToolbar.getContent()[1];
+
 		oApplyButton.setEnabled(this.getApplyEnabled());
 		oDefaultToolbar.data("sap-ui-table-invalid", null);
 	};
@@ -284,8 +284,8 @@ sap.ui.define([
 	 * @private
 	 */
 	CreationRow.prototype._getCell = function(iColumnIndex) {
-		var aCells = this.getCells();
-		var oCell = aCells.filter(function(oCell) {
+		const aCells = this.getCells();
+		const oCell = aCells.filter(function(oCell) {
 			return Column.ofCell(oCell).getIndex() === iColumnIndex;
 		})[0];
 
@@ -304,9 +304,9 @@ sap.ui.define([
 	 * @private
 	 */
 	CreationRow.prototype._getCellDomRef = function(iColumnIndex) {
-		var oCell = this._getCell(iColumnIndex);
-		var oCellContent = oCell ? oCell.getDomRef() : null;
-		var $Cell = TableUtils.getCell(this.getTable(), oCellContent, true);
+		const oCell = this._getCell(iColumnIndex);
+		const oCellContent = oCell ? oCell.getDomRef() : null;
+		const $Cell = TableUtils.getCell(this.getTable(), oCellContent, true);
 
 		if (!$Cell) {
 			return null;
@@ -324,8 +324,8 @@ sap.ui.define([
 	 * @private
 	 */
 	CreationRow.prototype._focusCell = function(iColumnIndex) {
-		var oCellDomRef = this._getCellDomRef(iColumnIndex);
-		var $InteractiveElements = TableUtils.getInteractiveElements(oCellDomRef);
+		const oCellDomRef = this._getCellDomRef(iColumnIndex);
+		const $InteractiveElements = TableUtils.getInteractiveElements(oCellDomRef);
 
 		if ($InteractiveElements) {
 			$InteractiveElements[0].focus();
@@ -346,17 +346,17 @@ sap.ui.define([
 	 * @private
 	 */
 	CreationRow.prototype._takeOverKeyboardHandling = function(oEvent) {
-		var oTable = this.getTable();
-		var oTableDomRef = oTable ? oTable.getDomRef() : null;
+		const oTable = this.getTable();
+		const oTableDomRef = oTable ? oTable.getDomRef() : null;
 
 		if (!oTableDomRef || !oTableDomRef.contains(document.activeElement)) {
 			// Keyboard handling will not be taken over if the table is not rendered or the focus is not inside the table.
 			return false;
 		}
 
-		var oCell = TableUtils.getCell(this.getTable(), document.activeElement);
-		var oCellInfo = TableUtils.getCellInfo(oCell);
-		var bFocusSet = false;
+		const oCell = TableUtils.getCell(this.getTable(), document.activeElement);
+		const oCellInfo = TableUtils.getCellInfo(oCell);
+		let bFocusSet = false;
 
 		if (oCellInfo.columnIndex != null && oCellInfo.columnIndex >= 0) {
 			// If the currently focused element is a table cell with a column index information, the keyboard handling will only be taken over if the
@@ -379,18 +379,18 @@ sap.ui.define([
 	 * @private
 	 */
 	CreationRow.prototype._update = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (!oTable) {
 			this.removeAllCells();
 			return;
 		}
 
-		var aColumns = oTable.getColumns();
+		const aColumns = oTable.getColumns();
 
 		this.removeAllCells();
 
-		for (var i = 0, l = aColumns.length; i < l; i++) {
+		for (let i = 0, l = aColumns.length; i < l; i++) {
 			if (aColumns[i].getVisible()) {
 				this.addCell(aColumns[i].getTemplateClone(i, "Creation"));
 			}
@@ -404,7 +404,7 @@ sap.ui.define([
 	 * @private
 	 */
 	CreationRow.prototype.getTable = function() {
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 		return TableUtils.isA(oParent, "sap.ui.table.Table") ? oParent : null;
 	};
 

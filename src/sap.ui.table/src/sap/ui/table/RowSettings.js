@@ -8,9 +8,8 @@ sap.ui.define([
 ], function(Element, TableUtils, DataType, library, coreLibrary) {
 	"use strict";
 
-	// shortcuts
-	var MessageType = coreLibrary.MessageType;
-	var IndicationColor = coreLibrary.IndicationColor;
+	const MessageType = coreLibrary.MessageType;
+	const IndicationColor = coreLibrary.IndicationColor;
 
 	/**
 	 * Constructor for new RowSettings.
@@ -29,7 +28,7 @@ sap.ui.define([
 	 * @since 1.48.0
 	 * @alias sap.ui.table.RowSettings
 	 */
-	var RowSettings = Element.extend("sap.ui.table.RowSettings", /** @lends sap.ui.table.RowSettings.prototype */ {
+	const RowSettings = Element.extend("sap.ui.table.RowSettings", /** @lends sap.ui.table.RowSettings.prototype */ {
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
@@ -85,26 +84,20 @@ sap.ui.define([
 	};
 
 	RowSettings.prototype.setHighlight = function(sHighlight) {
-		var oRow;
-		var oHighlightElement;
+		const oRow = this._getRow();
+		const oHighlightElement = oRow?.getDomRef("highlight");
 
 		this.setProperty("highlight", sHighlight, true);
 
-		oRow = this._getRow();
-		if (!oRow) {
-			return this;
-		}
-
-		oHighlightElement = oRow.getDomRef("highlight");
 		if (!oHighlightElement) {
 			return this;
 		}
 
 		// Remove the currently set highlight class.
-		for (var sMessageType in MessageType) {
+		for (const sMessageType in MessageType) {
 			oHighlightElement.classList.remove("sapUiTableRowHighlight" + sMessageType);
 		}
-		for (var sIndicationColor in IndicationColor) {
+		for (const sIndicationColor in IndicationColor) {
 			oHighlightElement.classList.remove("sapUiTableRowHighlight" + sIndicationColor);
 		}
 
@@ -112,8 +105,8 @@ sap.ui.define([
 		oHighlightElement.classList.add(this._getHighlightCSSClassName());
 
 		// Update the accessibility information.
-		var oTable = oRow.getParent();
-		var oAccessibilityExtension = oTable ? oTable._getAccExtension() : null;
+		const oTable = oRow.getParent();
+		const oAccessibilityExtension = oTable ? oTable._getAccExtension() : null;
 
 		if (oAccessibilityExtension) {
 			oAccessibilityExtension.updateAriaStateOfRowHighlight(this);
@@ -123,17 +116,11 @@ sap.ui.define([
 	};
 
 	RowSettings.prototype.setNavigated = function(bNavigated) {
-		var oRow;
-		var oNavigatedElement;
+		const oRow = this._getRow();
+		const oNavigatedElement = oRow?.getDomRef("navIndicator");
 
 		this.setProperty("navigated", bNavigated, true);
 
-		oRow = this._getRow();
-		if (!oRow) {
-			return this;
-		}
-
-		oNavigatedElement = oRow.getDomRef("navIndicator");
 		if (!oNavigatedElement) {
 			return this;
 		}
@@ -145,8 +132,8 @@ sap.ui.define([
 		}
 
 		// Update the accessibility information.
-		var oTable = oRow.getParent();
-		var oAccessibilityExtension = oTable ? oTable._getAccExtension() : null;
+		const oTable = oRow.getParent();
+		const oAccessibilityExtension = oTable ? oTable._getAccExtension() : null;
 
 		if (oAccessibilityExtension) {
 			oAccessibilityExtension._updateAriaStateOfNavigatedRow(this);
@@ -156,9 +143,9 @@ sap.ui.define([
 	};
 
 	RowSettings.prototype.setHighlightText = function(sHighlightText) {
-		var oRow = this._getRow();
-		var oTable = oRow ? oRow.getParent() : null;
-		var oAccessibilityExtension = oTable ? oTable._getAccExtension() : null;
+		const oRow = this._getRow();
+		const oTable = oRow ? oRow.getParent() : null;
+		const oAccessibilityExtension = oTable ? oTable._getAccExtension() : null;
 
 		this.setProperty("highlightText", sHighlightText, true);
 
@@ -176,7 +163,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowSettings.prototype._getHighlightCSSClassName = function() {
-		var sHighlight = this.getHighlight();
+		let sHighlight = this.getHighlight();
 
 		if (sHighlight == null) {
 			sHighlight = MessageType.None;
@@ -192,13 +179,13 @@ sap.ui.define([
 	 * @private
 	 */
 	RowSettings.prototype._getHighlightText = function() {
-		var sHighlight = this.getHighlight();
+		const sHighlight = this.getHighlight();
 
 		if (sHighlight === MessageType.None) {
 			return "";
 		}
 
-		var sHighlightText = this.getHighlightText();
+		let sHighlightText = this.getHighlightText();
 
 		if (sHighlight in MessageType && sHighlightText === "") {
 			// TBL_ROW_STATE_INFORMATION, TBL_ROW_STATE_ERROR, TBL_ROW_STATE_WARNING, TBL_ROW_STATE_SUCCESS
@@ -215,7 +202,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowSettings.prototype._getRow = function() {
-		var oRow = this.getParent();
+		const oRow = this.getParent();
 
 		if (TableUtils.isA(oRow, "sap.ui.table.Row")) {
 			return oRow;

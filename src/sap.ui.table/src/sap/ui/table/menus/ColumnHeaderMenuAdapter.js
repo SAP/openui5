@@ -15,8 +15,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oAdapterRegistry = new window.Map();
-	var mAdapterMapping = {
+	const oAdapterRegistry = new window.Map();
+	const mAdapterMapping = {
 		/**
 		* @deprecated As of Version 1.117
 		*/
@@ -37,7 +37,7 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.table.menus.ColumnHeaderMenuAdapter
 	 */
-	var ColumnHeaderMenuAdapter = BaseObject.extend("sap.ui.table.menus.ColumnHeaderMenuAdapter", /** @lends sap.ui.table.menus.ColumnHeaderMenuAdapter.prototype */ {
+	const ColumnHeaderMenuAdapter = BaseObject.extend("sap.ui.table.menus.ColumnHeaderMenuAdapter", /** @lends sap.ui.table.menus.ColumnHeaderMenuAdapter.prototype */ {
 		constructor: function() {
 			BaseObject.apply(this, arguments);
 
@@ -63,9 +63,9 @@ sap.ui.define([
 	 * @returns {Promise} A promise that resolves once the adapter is activated and the menu items are modified
 	 */
 	ColumnHeaderMenuAdapter.activateFor = function(oColumn) {
-		var oColumnHeaderMenu = oColumn.getHeaderMenuInstance();
-		var sAdapterName = getAdapterName(oColumnHeaderMenu);
-		var mRegistryData;
+		const oColumnHeaderMenu = oColumn.getHeaderMenuInstance();
+		const sAdapterName = getAdapterName(oColumnHeaderMenu);
+		let mRegistryData;
 
 		if (!sAdapterName || !oColumn._getTable()) {
 			return Promise.resolve();
@@ -186,7 +186,7 @@ sap.ui.define([
 	}
 
 	function getAdapterName(oColumnHeaderMenu) {
-		for (var sMenuType in mAdapterMapping) {
+		for (const sMenuType in mAdapterMapping) {
 			if (TableUtils.isA(oColumnHeaderMenu, sMenuType)) {
 				return mAdapterMapping[sMenuType];
 			}
@@ -196,7 +196,7 @@ sap.ui.define([
 	}
 
 	function unlink(oColumn, sAdapterName) {
-		var mRegistryData;
+		let mRegistryData;
 
 		if (sAdapterName) {
 			mRegistryData = oAdapterRegistry.get(sAdapterName);

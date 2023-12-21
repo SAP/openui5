@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @experimental
 	 * @alias sap.ui.table.rowmodes.Variable
 	 */
-	var VariableRowMode = RowMode.extend("sap.ui.table.rowmodes.Variable", {
+	const VariableRowMode = RowMode.extend("sap.ui.table.rowmodes.Variable", {
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
@@ -41,8 +41,8 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	VariableRowMode.prototype.getComputedRowCounts = function() {
-		var iTotalRowCount = this.getTotalRowCountOfTable();
-		var iRowCount = this.getHideEmptyRows() ? Math.min(this.getRowCount(), iTotalRowCount) : this.getRowCount();
+		const iTotalRowCount = this.getTotalRowCountOfTable();
+		const iRowCount = this.getHideEmptyRows() ? Math.min(this.getRowCount(), iTotalRowCount) : this.getRowCount();
 
 		return {
 			count: iRowCount,

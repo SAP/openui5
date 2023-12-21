@@ -18,8 +18,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var SelectionMode = library.plugins.SelectionMode;
-	var TableSelectionMode = library.SelectionMode;
+	const SelectionMode = library.plugins.SelectionMode;
+	const TableSelectionMode = library.SelectionMode;
 
 	/**
 	 * Constructs an instance of sap.ui.table.plugins.ODataV4Selection.
@@ -34,7 +34,7 @@ sap.ui.define([
 	 * @private
 	 * @borrows sap.ui.table.plugins.PluginBase.findOn as findOn
 	 */
-	var ODataV4Selection = SelectionPlugin.extend("sap.ui.table.plugins.ODataV4Selection", {
+	const ODataV4Selection = SelectionPlugin.extend("sap.ui.table.plugins.ODataV4Selection", {
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
@@ -89,7 +89,7 @@ sap.ui.define([
 	ODataV4Selection.prototype.init = function() {
 		SelectionPlugin.prototype.init.apply(this, arguments);
 
-		var oIcon = new Icon({src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), useIconTooltip: false});
+		const oIcon = new Icon({src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), useIconTooltip: false});
 		oIcon.addStyleClass("sapUiTableSelectClear");
 		this.setAggregation("icon", oIcon, true);
 
@@ -109,7 +109,7 @@ sap.ui.define([
 	};
 
 	ODataV4Selection.prototype.setSelected = function(oRow, bSelected, mConfig) {
-		var oContext = oRow.getRowBindingContext();
+		const oContext = oRow.getRowBindingContext();
 
 		if (!oContext || !isContextSelectable(oContext)) {
 			return;
@@ -139,9 +139,9 @@ sap.ui.define([
 			return;
 		}
 
-		var iIndexFrom = oPlugin._oRangeSelectionStartContext.getIndex();
-		var oContext = oRow.getRowBindingContext();
-		var iIndexTo = oContext ? oContext.getIndex() : -1;
+		let iIndexFrom = oPlugin._oRangeSelectionStartContext.getIndex();
+		const oContext = oRow.getRowBindingContext();
+		const iIndexTo = oContext ? oContext.getIndex() : -1;
 
 		// The start index is already selected in case of range selection, so the range needs to start from the next index.
 		if (iIndexFrom !== iIndexTo) {
@@ -152,7 +152,7 @@ sap.ui.define([
 	}
 
 	ODataV4Selection.prototype.isSelected = function(oRow) {
-		var oContext = oRow.getRowBindingContext();
+		const oContext = oRow.getRowBindingContext();
 		return oContext ? oContext.isSelected() : false;
 	};
 
@@ -187,7 +187,7 @@ sap.ui.define([
 			oPlugin.clearSelection();
 			return false;
 		} else if (oPlugin._isLimitDisabled()) {
-			var oBinding = oPlugin.getTableBinding();
+			const oBinding = oPlugin.getTableBinding();
 			if (oBinding && oBinding.getLength()) {
 				select(oPlugin, 0, oBinding.getLength() - 1);
 				return true;
@@ -203,7 +203,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether all rows are selected.
 	 */
 	function areAllRowsSelected(oPlugin) {
-		var oBinding = oPlugin.getTableBinding();
+		const oBinding = oPlugin.getTableBinding();
 
 		// isLengthFinal is checked in case the count is not requested. Even though it is documented that the count is required if the limit is
 		// disabled (SelectAll enabled), it could still happen.
@@ -211,10 +211,10 @@ sap.ui.define([
 			return false;
 		}
 
-		var iNumberOfSelectableContexts = oBinding.getAllCurrentContexts().filter(function(oContext) {
+		const iNumberOfSelectableContexts = oBinding.getAllCurrentContexts().filter(function(oContext) {
 			return isContextSelectable(oContext);
 		}).length;
-		var iNumberOfSelectedContexts = oPlugin.getSelectedContexts().filter(function(oContext) {
+		const iNumberOfSelectedContexts = oPlugin.getSelectedContexts().filter(function(oContext) {
 			return isContextSelectable(oContext);
 		}).length;
 
@@ -222,7 +222,7 @@ sap.ui.define([
 	}
 
 	ODataV4Selection.prototype.onHeaderSelectorPress = function() {
-		var mRenderConfig = this.getRenderConfig();
+		const mRenderConfig = this.getRenderConfig();
 
 		if (!mRenderConfig.headerSelector.visible || !mRenderConfig.headerSelector.enabled) {
 			return;
@@ -247,7 +247,7 @@ sap.ui.define([
 	};
 
 	ODataV4Selection.prototype.setSelectionMode = function(sSelectionMode) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		this.setProperty("selectionMode", sSelectionMode, true);
 		this._oRangeSelectionStartContext = null;
@@ -294,11 +294,11 @@ sap.ui.define([
 	 * @param {int} iIndexTo The end index of the range selection.
 	 */
 	function select(oPlugin, iIndexFrom, iIndexTo) {
-		var oTable = oPlugin.getTable();
-		var iLimit = oPlugin.getLimit();
-		var bUpwardSelection = iIndexTo < iIndexFrom; // Indicates whether the selection is made from bottom to top.
-		var iGetContextsStartIndex = bUpwardSelection ? iIndexTo : iIndexFrom;
-		var iGetContextsLength = Math.abs(iIndexTo - iIndexFrom) + 1;
+		const oTable = oPlugin.getTable();
+		const iLimit = oPlugin.getLimit();
+		const bUpwardSelection = iIndexTo < iIndexFrom; // Indicates whether the selection is made from bottom to top.
+		let iGetContextsStartIndex = bUpwardSelection ? iIndexTo : iIndexFrom;
+		let iGetContextsLength = Math.abs(iIndexTo - iIndexFrom) + 1;
 
 		if (!oPlugin._isLimitDisabled()) {
 			oPlugin._bLimitReached = iGetContextsLength > iLimit;
@@ -317,7 +317,7 @@ sap.ui.define([
 			}
 		}
 
-		var bSelectionChange = false;
+		let bSelectionChange = false;
 		TableUtils.loadContexts(oPlugin.getTableBinding(), iGetContextsStartIndex, iGetContextsLength).then(function(aContexts) {
 			aContexts.forEach(function(oContext) {
 				if (!isContextSelectable(oContext) || oContext.isSelected()) {
@@ -347,12 +347,12 @@ sap.ui.define([
 	}
 
 	function isContextSelectable(oContext) {
-		var bIsTree = "hierarchyQualifier" in (oContext.getBinding().getAggregation() || {});
+		const bIsTree = "hierarchyQualifier" in (oContext.getBinding().getAggregation() || {});
 		return bIsTree || (oContext.getProperty("@$ui5.node.isExpanded") === undefined && !oContext.getProperty("@$ui5.node.isTotal"));
 	}
 
 	ODataV4Selection.prototype.clearSelection = function() {
-		var bContextDeselected = false;
+		let bContextDeselected = false;
 
 		this.getSelectedContexts().forEach(function(oContext) {
 			if (!bContextDeselected && oContext.isSelected()) {
@@ -368,7 +368,7 @@ sap.ui.define([
 	};
 
 	ODataV4Selection.prototype.getSelectedContexts = function() {
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 
 		return oBinding ? oBinding.getAllCurrentContexts().filter(function(oContext) {
 			return oContext.isSelected();

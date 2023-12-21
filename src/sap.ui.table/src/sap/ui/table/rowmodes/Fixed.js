@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 */
-	var FixedRowMode = RowMode.extend("sap.ui.table.rowmodes.Fixed", /** @lends sap.ui.table.rowmodes.Fixed.prototype */ {
+	const FixedRowMode = RowMode.extend("sap.ui.table.rowmodes.Fixed", /** @lends sap.ui.table.rowmodes.Fixed.prototype */ {
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
@@ -73,7 +73,7 @@ sap.ui.define([
 		}
 	});
 
-	var TableDelegate = {};
+	const TableDelegate = {};
 
 	FixedRowMode.prototype.attachEvents = function() {
 		RowMode.prototype.attachEvents.apply(this, arguments);
@@ -100,7 +100,7 @@ sap.ui.define([
 		 * @deprecated As of version 1.119
 		 */
 		if (this.bLegacy) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			return oTable ? oTable.getVisibleRowCount() : 0;
 		}
 
@@ -112,7 +112,7 @@ sap.ui.define([
 		 * @deprecated As of version 1.119
 		 */
 		if (this.bLegacy) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			return oTable ? oTable.getFixedRowCount() : 0;
 		}
 
@@ -124,7 +124,7 @@ sap.ui.define([
 		 * @deprecated As of version 1.119
 		 */
 		if (this.bLegacy) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			return oTable ? oTable.getFixedBottomRowCount() : 0;
 		}
 
@@ -136,7 +136,7 @@ sap.ui.define([
 		 * @deprecated As of Version 1.119
 		 */
 		if (this.bLegacy) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			return oTable ? oTable.getRowHeight() : 0;
 		}
 
@@ -165,7 +165,7 @@ sap.ui.define([
 
 	FixedRowMode.prototype.updateTable = function() {
 		if (this.getHideEmptyRows() && this.getComputedRowCounts().count === 0) {
-			var iRowCount = this.getRowCount();
+			const iRowCount = this.getRowCount();
 
 			if (iRowCount > 0) {
 				this.getRowContexts(iRowCount);
@@ -176,9 +176,9 @@ sap.ui.define([
 	};
 
 	FixedRowMode.prototype.getComputedRowCounts = function() {
-		var iRowCount = this.getRowCount();
-		var iFixedTopRowCount = this.getFixedTopRowCount();
-		var iFixedBottomRowCount = this.getFixedBottomRowCount();
+		let iRowCount = this.getRowCount();
+		const iFixedTopRowCount = this.getFixedTopRowCount();
+		const iFixedBottomRowCount = this.getFixedBottomRowCount();
 
 		if (this.getHideEmptyRows()) {
 			iRowCount = Math.min(iRowCount, this.getTotalRowCountOfTable());
@@ -198,7 +198,7 @@ sap.ui.define([
 			return undefined;
 		}
 
-		var iRowCountDelta = Math.max(0, this.getRowCount() - this.getComputedRowCounts().count);
+		const iRowCountDelta = Math.max(0, this.getRowCount() - this.getComputedRowCounts().count);
 
 		return {
 			height: iRowCountDelta * this.getBaseRowHeightOfTable() + "px"
@@ -206,7 +206,7 @@ sap.ui.define([
 	};
 
 	FixedRowMode.prototype.getRowContainerStyles = function() {
-		var sHeight = this.getComputedRowCounts().count * this.getBaseRowHeightOfTable() + "px";
+		const sHeight = this.getComputedRowCounts().count * this.getBaseRowHeightOfTable() + "px";
 
 		/**
 		 * @deprecated As of version 1.119
@@ -219,7 +219,7 @@ sap.ui.define([
 	};
 
 	FixedRowMode.prototype.renderRowStyles = function(oRM) {
-		var iRowContentHeight = this.getRowContentHeight();
+		const iRowContentHeight = this.getRowContentHeight();
 
 		if (iRowContentHeight > 0) {
 			oRM.style("height", this.getBaseRowHeightOfTable() + "px");
@@ -227,7 +227,7 @@ sap.ui.define([
 	};
 
 	FixedRowMode.prototype.renderCellContentStyles = function(oRM) {
-		var iRowContentHeight = this.getRowContentHeight();
+		let iRowContentHeight = this.getRowContentHeight();
 
 		/**
 		 * @deprecated As of version 1.119
@@ -256,7 +256,7 @@ sap.ui.define([
 	 */
 	FixedRowMode.prototype._onTableRefreshRows = function() {
 		// The computed row count cannot be used here, because the table's total row count (binding length) is not known yet.
-		var iRowCount = this.getRowCount();
+		let iRowCount = this.getRowCount();
 
 		if (iRowCount > 0) {
 			if (TableUtils.isVariableRowHeightEnabled(this.getTable())) {
@@ -272,8 +272,8 @@ sap.ui.define([
 	 * @this sap.ui.table.rowmodes.Fixed
 	 */
 	TableDelegate.onAfterRendering = function(oEvent) {
-		var oTable = this.getTable();
-		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
+		const oTable = this.getTable();
+		const bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
 		if (!bRenderedRows && oTable.getRows().length > 0) {
 			this.fireRowsUpdated(TableUtils.RowsUpdateReason.Render);

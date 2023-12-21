@@ -6,13 +6,13 @@ sap.ui.define([
 ], function(Controller, JSONModel, MessageToast, Toolbar) {
 	"use strict";
 
-	var TABLESETTINGS = window.TABLESETTINGS;
+	const TABLESETTINGS = window.TABLESETTINGS;
 
 	return Controller.extend("sap.ui.table.mvc.DragAndDrop", {
 		onInit: function() {
-			var oTable = this.byId("table");
-			var oTreeTable = this.byId("treetable");
-			var oModel = new JSONModel();
+			const oTable = this.byId("table");
+			const oTreeTable = this.byId("treetable");
+			const oModel = new JSONModel();
 
 			oModel.setData({
 				listData: TABLESETTINGS.listTestData,
@@ -38,10 +38,10 @@ sap.ui.define([
 		},
 
 		tableDragStart: function(oEvent) {
-			var oRow = oEvent.getParameter("target");
-			var oRowContext = oRow.getBindingContext();
-			var oModelProperty = oRowContext.getModel().getProperty(oRowContext.getPath());
-			var sStatus = oModelProperty && oModelProperty.objStatusState != null ? oModelProperty.objStatusState : "";
+			const oRow = oEvent.getParameter("target");
+			const oRowContext = oRow.getBindingContext();
+			const oModelProperty = oRowContext.getModel().getProperty(oRowContext.getPath());
+			const sStatus = oModelProperty && oModelProperty.objStatusState != null ? oModelProperty.objStatusState : "";
 
 			if (sStatus !== "Success") {
 				oEvent.preventDefault();
@@ -51,10 +51,10 @@ sap.ui.define([
 		},
 
 		tableReorderDragEnter: function(oEvent) {
-			var oRow = oEvent.getParameter("target");
-			var oRowContext = oRow.getBindingContext();
-			var oModelProperty = oRowContext.getModel().getProperty(oRowContext.getPath());
-			var sStatus = oModelProperty && oModelProperty.objStatusState != null ? oModelProperty.objStatusState : "";
+			const oRow = oEvent.getParameter("target");
+			const oRowContext = oRow.getBindingContext();
+			const oModelProperty = oRowContext.getModel().getProperty(oRowContext.getPath());
+			const sStatus = oModelProperty && oModelProperty.objStatusState != null ? oModelProperty.objStatusState : "";
 
 			if (sStatus !== "Success") {
 				oEvent.preventDefault();

@@ -25,18 +25,18 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oModel = window.oModel;
-	var aFields = window.aFields;
-	var createTables = window.createTables;
-	var destroyTables = window.destroyTables;
-	var getCell = window.getCell;
-	var getColumnHeader = window.getColumnHeader;
-	var getRowHeader = window.getRowHeader;
-	var getRowAction = window.getRowAction;
-	var iNumberOfRows = window.iNumberOfRows;
-	var initRowActions = window.initRowActions;
-	var checkFocus = window.checkFocus;
-	var fakeSumRow = window.fakeSumRow;
+	const oModel = window.oModel;
+	const aFields = window.aFields;
+	const createTables = window.createTables;
+	const destroyTables = window.destroyTables;
+	const getCell = window.getCell;
+	const getColumnHeader = window.getColumnHeader;
+	const getRowHeader = window.getRowHeader;
+	const getRowAction = window.getRowAction;
+	const iNumberOfRows = window.iNumberOfRows;
+	const initRowActions = window.initRowActions;
+	const checkFocus = window.checkFocus;
+	const fakeSumRow = window.fakeSumRow;
 
 	function createPointerEvent(sEventType) {
 		return new window.PointerEvent(sEventType, {
@@ -55,12 +55,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialization", function(assert) {
-		var oExtension = this.oTable._getPointerExtension();
-		var iDelegateCount = 0;
+		const oExtension = this.oTable._getPointerExtension();
+		let iDelegateCount = 0;
 
 		assert.ok(oExtension, "Extension available in table");
 
-		for (var i = 0; i < this.oTable.aDelegates.length; i++) {
+		for (let i = 0; i < this.oTable.aDelegates.length; i++) {
 			if (this.oTable.aDelegates[i].oDelegate === oExtension._delegate) {
 				iDelegateCount++;
 			}
@@ -70,7 +70,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Destruction", function(assert) {
-		var oExtension = this.oTable._getPointerExtension();
+		const oExtension = this.oTable._getPointerExtension();
 
 		this.oTable.destroy();
 		assert.ok(!oExtension.getTable(), "Reference to table removed");
@@ -84,12 +84,12 @@ sap.ui.define([
 			createTables();
 
 			// Ensure that the last column is "streched" and the others have their defined size
-			var oLastColumn = oTable.getColumns()[oTable.getColumns().length - 1];
+			const oLastColumn = oTable.getColumns()[oTable.getColumns().length - 1];
 			oLastColumn.setWidth(null);
 
 			// Ensure bigger cell content for the column with index 1
-			var aRows = oModel.getData().rows;
-			for (var i = 0; i < aRows.length; i++) {
+			const aRows = oModel.getData().rows;
+			for (let i = 0; i < aRows.length; i++) {
 				aRows[i][aFields[1]] = "AAAAAAAAAAAAAAAAAAAAAAAAA" + i;
 			}
 			oModel.refresh(true);
@@ -119,15 +119,15 @@ sap.ui.define([
 		});
 
 		if (assert) {
-			var iDistance = oTable.getDomRef("rsz").getBoundingClientRect().left - oColumn.getDomRef().getBoundingClientRect().right;
-			var bCorrect = Math.abs(iDistance) < 5;
+			const iDistance = oTable.getDomRef("rsz").getBoundingClientRect().left - oColumn.getDomRef().getBoundingClientRect().right;
+			const bCorrect = Math.abs(iDistance) < 5;
 			assert.ok(bExpect && bCorrect || !bExpect && !bCorrect, "Position of Resizer");
 			assert.equal(oTable._iLastHoveredVisibleColumnIndex, iIndex, "Index of last hovered resizable table");
 		}
 	}
 
 	QUnit.test("Moving Resizer", function(assert) {
-		var aVisibleColumns = oTable._getVisibleColumns();
+		const aVisibleColumns = oTable._getVisibleColumns();
 		moveResizer(aVisibleColumns[0], assert, true, 0);
 		moveResizer(aVisibleColumns[1], assert, false, 0);
 		assert.ok(Math.abs(oTable.getDomRef("rsz").getBoundingClientRect().left - aVisibleColumns[0].getDomRef().getBoundingClientRect().right) < 5,
@@ -137,7 +137,7 @@ sap.ui.define([
 
 	QUnit.test("Moving Resizer with padding on the root element", function(assert) {
 		oTable.getDomRef().style.padding = "1rem";
-		var aVisibleColumns = oTable._getVisibleColumns();
+		const aVisibleColumns = oTable._getVisibleColumns();
 		moveResizer(aVisibleColumns[0], assert, true, 0);
 		moveResizer(aVisibleColumns[1], assert, false, 0);
 		assert.ok(Math.abs(oTable.getDomRef("rsz").getBoundingClientRect().left - aVisibleColumns[0].getDomRef().getBoundingClientRect().right) < 5,
@@ -149,7 +149,7 @@ sap.ui.define([
 		Device.system.desktop = true;
 
 		function triggerDoubleClick(bExpect, iIndex) {
-			var oResizer = oTable.getDomRef("rsz");
+			const oResizer = oTable.getDomRef("rsz");
 
 			// Move resizer to correct column
 			moveResizer(oColumn, assert, bExpect, iIndex);
@@ -171,8 +171,8 @@ sap.ui.define([
 			});
 		}
 
-		var oColumn = this.oColumn;
-		var iWidth = oColumn.$().width();
+		const oColumn = this.oColumn;
+		let iWidth = oColumn.$().width();
 
 		assert.ok(Math.abs(iWidth - 100) < 10, "check column width before resize: " + iWidth);
 
@@ -203,9 +203,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Automatic Column Resize via API", function(assert) {
-		var done = assert.async();
-		var oColumn = this.oColumn;
-		var iWidth = oColumn.$().width();
+		const done = assert.async();
+		const oColumn = this.oColumn;
+		let iWidth = oColumn.$().width();
 
 		assert.ok(Math.abs(iWidth - 100) < 10, "check column width before resize: " + iWidth);
 		oTable.autoResizeColumn(1);
@@ -236,14 +236,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Resize via Drag&Drop", async function(assert) {
-		var oColumn = this.oColumn;
-		var $Resizer = oTable.$("rsz");
+		const oColumn = this.oColumn;
+		let $Resizer = oTable.$("rsz");
 
 		// resizer should be way out of screen when the table gets rendered
-		var nLeft = oTable.$("rsz").position().left;
+		const nLeft = oTable.$("rsz").position().left;
 		assert.equal(nLeft, "-5", "Resizer is at the correct initial position");
 
-		var iWidth = oColumn.$().width();
+		const iWidth = oColumn.$().width();
 		assert.ok(Math.abs(iWidth - 100) < 10, "check column width before resize: " + iWidth);
 
 		// Resizer moved to the correct position when column is resizable
@@ -260,8 +260,8 @@ sap.ui.define([
 		}).then(function() {
 			// drag resizer to resize column
 			$Resizer = oTable.$("rsz");
-			var iResizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
-			var iResizeHandlerLeft = $Resizer.offset().left;
+			const iResizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
+			const iResizeHandlerLeft = $Resizer.offset().left;
 
 			qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);
 			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 90, iResizeHandlerTop, 0);
@@ -272,7 +272,7 @@ sap.ui.define([
 				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(function() {
-			var iNewWidth = oColumn.getDomRef().offsetWidth;
+			const iNewWidth = oColumn.getDomRef().offsetWidth;
 			assert.ok(Math.abs(iNewWidth - iWidth - 90 - 40) < 5, "check column width after resize: " + iNewWidth);
 		});
 	});
@@ -281,23 +281,23 @@ sap.ui.define([
 	 * @deprecated As of version 1.117
 	 */
 	QUnit.test("Resize via Resize Button", function(assert) {
-		var done = assert.async();
-		var oColumn = this.oColumn;
-		var oColumnDomRef = oColumn.getDomRef();
-		var iWidthBeforeResize;
+		const done = assert.async();
+		const oColumn = this.oColumn;
+		const oColumnDomRef = oColumn.getDomRef();
+		let iWidthBeforeResize;
 
 		function resize() {
-			var $Resizer = oTable.$("rsz");
-			var $Column = oColumn.$();
+			const $Resizer = oTable.$("rsz");
+			const $Column = oColumn.$();
 
 			iWidthBeforeResize = oColumnDomRef.offsetWidth;
 			oColumn._openHeaderMenu(oColumnDomRef);
 			return TableQUnitUtils.wait(0).then(function() {
-				var $ResizeButton = $Column.find(".sapUiTableColResizer");
-				var $ResizeButtonOffset = $ResizeButton.offset();
-				var oResizeButton = $ResizeButton[0];
-				var iResizeHandlerTop = Math.floor($ResizeButtonOffset.top + (oResizeButton.offsetHeight / 2));
-				var iResizeButtonLeft = Math.floor($ResizeButtonOffset.left + (oResizeButton.offsetWidth / 2));
+				const $ResizeButton = $Column.find(".sapUiTableColResizer");
+				const $ResizeButtonOffset = $ResizeButton.offset();
+				const oResizeButton = $ResizeButton[0];
+				const iResizeHandlerTop = Math.floor($ResizeButtonOffset.top + (oResizeButton.offsetHeight / 2));
+				const iResizeButtonLeft = Math.floor($ResizeButtonOffset.left + (oResizeButton.offsetWidth / 2));
 
 				qutils.triggerMouseEvent($ResizeButton, "mousedown", 1, 1, iResizeButtonLeft, iResizeHandlerTop, 0);
 				qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeButtonLeft + 90, iResizeHandlerTop, 0);
@@ -317,7 +317,7 @@ sap.ui.define([
 			oCore.applyChanges();
 
 			resize().then(function() {
-				var iExpectedWidth = iWidthBeforeResize + 110;
+				const iExpectedWidth = iWidthBeforeResize + 110;
 				assert.ok(Math.abs(oColumn.getDomRef().offsetWidth - iExpectedWidth) < 5,
 					"The column was resized to the correct width: " + iExpectedWidth);
 			}).then(function() {
@@ -328,7 +328,7 @@ sap.ui.define([
 					oTable.attachEventOnce("rowsUpdated", resolve);
 				});
 			}).then(resize).then(function() {
-				var iExpectedWidth = iWidthBeforeResize + 110;
+				const iExpectedWidth = iWidthBeforeResize + 110;
 				assert.ok(Math.abs(oColumn.getDomRef().offsetWidth - iExpectedWidth) < 5,
 					"With invisible columns - The column was resized to the correct width: " + iExpectedWidth);
 
@@ -342,7 +342,7 @@ sap.ui.define([
 
 	QUnit.test("Skip trigger resize when resizing already started", function(assert) {
 		oTable._getPointerExtension()._debug();
-		var ColumnResizeHelper = oTable._getPointerExtension()._ColumnResizeHelper;
+		const ColumnResizeHelper = oTable._getPointerExtension()._ColumnResizeHelper;
 		oTable._bIsColumnResizerMoving = true;
 		assert.ok(!oTable.$().hasClass("sapUiTableResizing"), "Before Trigger");
 		ColumnResizeHelper.initColumnResizing(oTable);
@@ -376,15 +376,15 @@ sap.ui.define([
 	 * @deprecated As of version 1.117
 	 */
 	QUnit.test("Column header", function(assert) {
-		var done = assert.async();
-		var oElem = getColumnHeader(0, true);
-		var oColumn = oTable.getColumns()[0];
-		var oContextMenuEvent = this.spy(this.oPointerExtension._delegate, "oncontextmenu");
-		var oContextMenuEventArgument;
-		var bFirstItemHovered;
+		const done = assert.async();
+		let oElem = getColumnHeader(0, true);
+		let oColumn = oTable.getColumns()[0];
+		const oContextMenuEvent = this.spy(this.oPointerExtension._delegate, "oncontextmenu");
+		let oContextMenuEventArgument;
+		let bFirstItemHovered;
 
 		oColumn.attachEventOnce("columnMenuOpen", function() {
-			var oColumnMenu = oColumn.getMenu();
+			let oColumnMenu = oColumn.getMenu();
 			oColumnMenu.close();
 
 			// Open the menu with the left mouse button.
@@ -473,12 +473,12 @@ sap.ui.define([
 	 */
 	QUnit.test("Column header if first row is a summary", function(assert) {
 		return fakeSumRow(0, oTable).then(function() {
-			var done = assert.async();
-			var oElem = getColumnHeader(0, true);
-			var oColumn = oTable.getColumns()[0];
+			const done = assert.async();
+			const oElem = getColumnHeader(0, true);
+			const oColumn = oTable.getColumns()[0];
 
 			oColumn.attachEventOnce("columnMenuOpen", function() {
-				var oColumnMenu = oColumn.getMenu();
+				const oColumnMenu = oColumn.getMenu();
 				oColumnMenu.close();
 
 				this.triggerMouseDownEvent(oElem, 0);
@@ -493,11 +493,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Data cell", function(assert) {
-		var oElem = getCell(0, 0);
-		var oColumn = oTable.getColumns()[0];
-		var oContextMenuEvent = this.spy(this.oPointerExtension._delegate, "oncontextmenu");
-		var oContextMenuEventArgument;
-		var bFirstItemHovered;
+		const oElem = getCell(0, 0);
+		const oColumn = oTable.getColumns()[0];
+		const oContextMenuEvent = this.spy(this.oPointerExtension._delegate, "oncontextmenu");
+		let oContextMenuEventArgument;
 
 		// Try to open the menu with the left mouse button.
 		this.triggerMouseDownEvent(oElem, 0);
@@ -528,7 +527,7 @@ sap.ui.define([
 		this.triggerMouseDownEvent(oElem, 2);
 		jQuery(oElem).trigger("contextmenu");
 		assert.ok(oTable._oCellContextMenu.isOpen(), "Menu is opened");
-		bFirstItemHovered = oTable._oCellContextMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
+		const bFirstItemHovered = oTable._oCellContextMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
 		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
 		oContextMenuEvent.resetHistory();
@@ -544,10 +543,10 @@ sap.ui.define([
 
 		// If an interactive/clickable element inside a data cell was clicked, open the default context menu instead of the column or cell context
 		// menu.
-		var aKnownClickableControls = this.oPointerExtension._KNOWNCLICKABLECONTROLS;
-		var $CellContent = oTable.getRows()[0].getCells()[0].$();
+		const aKnownClickableControls = this.oPointerExtension._KNOWNCLICKABLECONTROLS;
+		const $CellContent = oTable.getRows()[0].getCells()[0].$();
 
-		for (var i = 0; i < aKnownClickableControls.length; i++) {
+		for (let i = 0; i < aKnownClickableControls.length; i++) {
 			$CellContent.toggleClass(aKnownClickableControls[i], true);
 			this.triggerMouseDownEvent($CellContent, 2);
 			jQuery($CellContent).trigger("contextmenu");
@@ -572,11 +571,11 @@ sap.ui.define([
 	 * @deprecated As of version 1.117
 	 */
 	QUnit.test("Column header", function(assert) {
-		var done = assert.async();
-		var oColumn = oTable._getVisibleColumns()[3];
-		var bColumnReorderingTriggered = false;
-		var oPointerExtension = oTable._getPointerExtension();
-		var oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
+		const done = assert.async();
+		const oColumn = oTable._getVisibleColumns()[3];
+		let bColumnReorderingTriggered = false;
+		const oPointerExtension = oTable._getPointerExtension();
+		const oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
 
 		oColumn.setSortProperty('dummy');
 
@@ -610,7 +609,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scrollbar", function(assert) {
-		var oEvent = jQuery.Event({type: "mousedown"});
+		let oEvent = jQuery.Event({type: "mousedown"});
 		oEvent.target = oTable._getScrollExtension().getHorizontalScrollbar();
 		oEvent.button = 0;
 		jQuery(oEvent.target).trigger(oEvent);
@@ -632,8 +631,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Tree Icon", function(assert) {
-		var done = assert.async();
-		var oExtension = oTreeTable._getPointerExtension();
+		const done = assert.async();
+		const oExtension = oTreeTable._getPointerExtension();
 		oExtension._debug();
 
 		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
@@ -643,7 +642,7 @@ sap.ui.define([
 			assert.ok(false, "_doSelect was not called");
 		};
 
-		var fnHandler = function() {
+		const fnHandler = function() {
 			oCore.applyChanges();
 			assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows + 1, "Row count after expand");
 			assert.ok(oTreeTable.getBinding().isExpanded(0), "Expanded");
@@ -653,13 +652,13 @@ sap.ui.define([
 		};
 
 		oTreeTable.attachEventOnce("rowsUpdated", fnHandler);
-		var oTreeIcon = oTreeTable.getRows()[0].getDomRef("col0").querySelector(".sapUiTableTreeIcon");
+		const oTreeIcon = oTreeTable.getRows()[0].getDomRef("col0").querySelector(".sapUiTableTreeIcon");
 		qutils.triggerMouseEvent(oTreeIcon, "tap");
 	});
 
 	QUnit.test("Group Header", async function(assert) {
-		var done = assert.async();
-		var oExtension = oTreeTable._getPointerExtension();
+		const done = assert.async();
+		const oExtension = oTreeTable._getPointerExtension();
 		oExtension._debug();
 
 		oTreeTable.setUseGroupMode(true);
@@ -672,7 +671,7 @@ sap.ui.define([
 		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
 		assert.ok(!oTreeTable.getBinding().isExpanded(0), "!Expanded");
 
-		var fnHandler = function() {
+		const fnHandler = function() {
 			oCore.applyChanges();
 			assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows + 1, "Row count after expand");
 			assert.ok(oTreeTable.getBinding().isExpanded(0), "Expanded");
@@ -682,15 +681,15 @@ sap.ui.define([
 		};
 
 		oTreeTable.attachEventOnce("rowsUpdated", fnHandler);
-		var oGroupHeader = oTreeTable.getRows()[0].getDomRef("groupHeader");
+		const oGroupHeader = oTreeTable.getRows()[0].getDomRef("groupHeader");
 		qutils.triggerMouseEvent(oGroupHeader, "tap");
 	});
 
 	QUnit.test("Analytical Table Sum", function(assert) {
-		var oExtension = oTreeTable._getPointerExtension();
+		const oExtension = oTreeTable._getPointerExtension();
 		oExtension._debug();
 
-		var bSelected = false;
+		let bSelected = false;
 		oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
 		oExtension._ExtensionHelper._handleClickSelection = function() {
 			bSelected = true;
@@ -706,17 +705,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Mobile Group Menu Button", function(assert) {
-		var oExtension = oTreeTable._getPointerExtension();
+		const oExtension = oTreeTable._getPointerExtension();
 		oExtension._debug();
 
-		var bSelected = false;
+		let bSelected = false;
 		oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
 		oExtension._ExtensionHelper._handleClickSelection = function() {
 			bSelected = true;
 		};
 
-		var oOpenContextMenu = this.spy(TableUtils.Menu, "openContextMenu");
-		var $FakeButton = TableUtils.getRowColCell(oTreeTable, 0, 0).cell.$();
+		const oOpenContextMenu = this.spy(TableUtils.Menu, "openContextMenu");
+		const $FakeButton = TableUtils.getRowColCell(oTreeTable, 0, 0).cell.$();
 
 		$FakeButton.addClass("sapUiTableGroupMenuButton");
 		qutils.triggerMouseEvent($FakeButton, "tap");
@@ -730,16 +729,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Cell + Cell Click Event", function(assert) {
-		var oExtension = oTreeTable._getPointerExtension();
+		let oExtension = oTreeTable._getPointerExtension();
 		oExtension._debug();
 
-		var iSelectCount = 0;
+		let iSelectCount = 0;
 		oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
 		oExtension._ExtensionHelper._handleClickSelection = function() {
 			iSelectCount++;
 		};
 
-		var fnClickHandler, bClickHandlerCalled;
+		let fnClickHandler; let bClickHandlerCalled;
 
 		function initCellClickHandler(fnHandler) {
 			if (fnClickHandler) {
@@ -753,7 +752,7 @@ sap.ui.define([
 			}
 		}
 
-		var oRowColCell = TableUtils.getRowColCell(oTreeTable, 1, 2);
+		const oRowColCell = TableUtils.getRowColCell(oTreeTable, 1, 2);
 		initCellClickHandler(function(oEvent) {
 			bClickHandlerCalled = true;
 			assert.ok(oEvent.getParameter("cellControl") === oRowColCell.cell, "Cell Click Event: Parameter cellControl");
@@ -765,7 +764,7 @@ sap.ui.define([
 			assert.ok(oEvent.getParameter("rowBindingContext") === oRowColCell.row.getBindingContext(),
 				"Cell Click Event: Parameter rowBindingContext");
 		});
-		var $Cell = oRowColCell.cell.$();
+		let $Cell = oRowColCell.cell.$();
 		qutils.triggerMouseEvent($Cell, "tap"); // Should increase the counter
 		assert.equal(iSelectCount, 1, iSelectCount + " selections performed");
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
@@ -787,7 +786,7 @@ sap.ui.define([
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 
 		bClickHandlerCalled = false;
-		var oEvent = jQuery.Event({type: "tap"});
+		const oEvent = jQuery.Event({type: "tap"});
 		oEvent.setMarked();
 		$Cell.trigger(oEvent);
 		assert.equal(iSelectCount, 2, iSelectCount + " selections performed");
@@ -803,12 +802,12 @@ sap.ui.define([
 
 		// Prevent Click on interactive controls
 
-		var oExtension = oTable._getPointerExtension();
+		oExtension = oTable._getPointerExtension();
 		oExtension._debug();
-		var aKnownClickableControls = oExtension._KNOWNCLICKABLECONTROLS;
+		const aKnownClickableControls = oExtension._KNOWNCLICKABLECONTROLS;
 
 		$Cell = oRowColCell.cell.$();
-		for (var i = 0; i < aKnownClickableControls.length; i++) {
+		for (let i = 0; i < aKnownClickableControls.length; i++) {
 			$Cell.toggleClass(aKnownClickableControls[i], true);
 			qutils.triggerMouseEvent($Cell, "tap");
 			assert.equal(iSelectCount, 3, iSelectCount + " selections performed");
@@ -818,8 +817,8 @@ sap.ui.define([
 
 		oRowColCell.cell.getEnabled = function() { return false; };
 		$Cell = oRowColCell.cell.$();
-		var iStartCount = iSelectCount;
-		for (var i = 0; i < aKnownClickableControls.length; i++) {
+		const iStartCount = iSelectCount;
+		for (let i = 0; i < aKnownClickableControls.length; i++) {
 			$Cell.toggleClass(aKnownClickableControls[i], true);
 			qutils.triggerMouseEvent($Cell, "tap");
 			assert.equal(iSelectCount, iStartCount + i + 1, iSelectCount + " selections performed");
@@ -981,10 +980,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Single Selection", function(assert) {
-		var oTable = this.oTable;
-		var oSelectionPlugin = oTable.getDependents()[0];
-		var oSpyIsSelected = this.spy(oSelectionPlugin, "isSelected");
-		var oSpySetSelected = this.spy(oSelectionPlugin, "setSelected");
+		const oTable = this.oTable;
+		const oSelectionPlugin = oTable.getDependents()[0];
+		const oSpyIsSelected = this.spy(oSelectionPlugin, "isSelected");
+		const oSpySetSelected = this.spy(oSelectionPlugin, "setSelected");
 
 		function testSelection(oRow, oTarget) {
 			qutils.triggerMouseEvent(oTarget, "tap");
@@ -1013,9 +1012,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Range Selection", function(assert) {
-		var oTable = this.oTable, bSelected;
-		var oSelectionPlugin = oTable.getDependents()[0];
-		var oSpySetSelected = this.spy(oSelectionPlugin, "setSelected");
+		const oTable = this.oTable;
+let bSelected;
+		const oSelectionPlugin = oTable.getDependents()[0];
+		const oSpySetSelected = this.spy(oSelectionPlugin, "setSelected");
 
 		function testSelectRow(oRow, oTarget) {
 			qutils.triggerEvent("tap", oTarget);
@@ -1056,9 +1056,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("SelectAll/DeselectAll", function(assert) {
-		var oTable = this.oTable;
-		var oSelectionPlugin = oTable._getSelectionPlugin();
-		var oSpyHeaderSelectorPress = this.spy(oSelectionPlugin, "onHeaderSelectorPress");
+		const oTable = this.oTable;
+		const oSelectionPlugin = oTable._getSelectionPlugin();
+		const oSpyHeaderSelectorPress = this.spy(oSelectionPlugin, "onHeaderSelectorPress");
 
 		qutils.triggerMouseEvent(oTable.qunit.getSelectAllCell(), "tap");
 		assert.ok(oSpyHeaderSelectorPress.calledOnce, "onHeaderSelectorPress is called once");
@@ -1075,12 +1075,12 @@ sap.ui.define([
 	});
 
 	function computeSettingsForReordering(oTable, iIndex, bIncreaseIndex) {
-		var oSettings = {
+		const oSettings = {
 			column: oTable._getVisibleColumns()[iIndex],
 			relatedColumn: oTable._getVisibleColumns()[bIncreaseIndex ? iIndex + 1 : iIndex - 1]
 		};
 
-		var initialXPos = 2; //Move mouse 2px from left onto the column
+		const initialXPos = 2; //Move mouse 2px from left onto the column
 
 		oSettings.top = Math.floor(oSettings.column.getDomRef().getBoundingClientRect().top);
 		oSettings.left = Math.floor(oSettings.column.getDomRef().getBoundingClientRect().left) + initialXPos;
@@ -1090,10 +1090,10 @@ sap.ui.define([
 	}
 
 	QUnit.test("Reordering via Drag&Drop - increase Index", function(assert) {
-		var done = assert.async();
-		var oSettings = computeSettingsForReordering(oTable, 2, true);
-		var oColumn = oSettings.column;
-		var iLeft = oSettings.left + oSettings.breakeven;
+		const done = assert.async();
+		const oSettings = computeSettingsForReordering(oTable, 2, true);
+		const oColumn = oSettings.column;
+		const iLeft = oSettings.left + oSettings.breakeven;
 
 		assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
 
@@ -1124,10 +1124,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Reordering via Drag&Drop - decrease Index", function(assert) {
-		var done = assert.async();
-		var oSettings = computeSettingsForReordering(oTable, 2, false);
-		var oColumn = oSettings.column;
-		var iLeft = oSettings.left - oSettings.breakeven;
+		const done = assert.async();
+		const oSettings = computeSettingsForReordering(oTable, 2, false);
+		const oColumn = oSettings.column;
+		const iLeft = oSettings.left - oSettings.breakeven;
 
 		assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
 
@@ -1158,13 +1158,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("No Reordering of fixed columns (within fixed)", async function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		oTable.setFixedColumnCount(4);
 		await nextUIUpdate();
 
-		var oSettings = computeSettingsForReordering(oTable, 2, true);
-		var oColumn = oSettings.column;
-		var iLeft = oSettings.left + oSettings.breakeven;
+		const oSettings = computeSettingsForReordering(oTable, 2, true);
+		const oColumn = oSettings.column;
+		const iLeft = oSettings.left + oSettings.breakeven;
 
 		assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
 
@@ -1182,13 +1182,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("No Reordering of fixed columns (fixed to not fixed)", async function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		oTable.setFixedColumnCount(3);
 		await nextUIUpdate();
 
-		var oSettings = computeSettingsForReordering(oTable, 2, true);
-		var oColumn = oSettings.column;
-		var iLeft = oSettings.left + oSettings.breakeven;
+		const oSettings = computeSettingsForReordering(oTable, 2, true);
+		const oColumn = oSettings.column;
+		const iLeft = oSettings.left + oSettings.breakeven;
 
 		assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
 
@@ -1206,13 +1206,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("No Reordering of fixed columns (not fixed to fixed)", async function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		oTable.setFixedColumnCount(2);
 		await nextUIUpdate();
 
-		var oSettings = computeSettingsForReordering(oTable, 2, false);
-		var oColumn = oSettings.column;
-		var iLeft = oSettings.left - oSettings.breakeven;
+		const oSettings = computeSettingsForReordering(oTable, 2, false);
+		const oColumn = oSettings.column;
+		const iLeft = oSettings.left - oSettings.breakeven;
 
 		assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
 
@@ -1230,13 +1230,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeTable - No Reordering via Drag&Drop of first column - increase index", async function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		oTreeTable.setFixedColumnCount(0);
 		await nextUIUpdate();
 
-		var oSettings = computeSettingsForReordering(oTreeTable, 0, true);
-		var oColumn = oSettings.column;
-		var iLeft = oSettings.left + oSettings.breakeven;
+		const oSettings = computeSettingsForReordering(oTreeTable, 0, true);
+		const oColumn = oSettings.column;
+		const iLeft = oSettings.left + oSettings.breakeven;
 
 		assert.equal(oTreeTable.indexOfColumn(oColumn), 0, "Initial index of column");
 
@@ -1266,13 +1266,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeTable - No Reordering via Drag&Drop of first column - decrease index", async function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		oTreeTable.setFixedColumnCount(0);
 		await nextUIUpdate();
 
-		var oSettings = computeSettingsForReordering(oTreeTable, 1, false);
-		var oColumn = oSettings.column;
-		var iLeft = oSettings.left - oSettings.breakeven;
+		const oSettings = computeSettingsForReordering(oTreeTable, 1, false);
+		const oColumn = oSettings.column;
+		const iLeft = oSettings.left - oSettings.breakeven;
 
 		assert.equal(oTreeTable.indexOfColumn(oColumn), 1, "Initial index of column");
 
@@ -1398,7 +1398,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_debug()", function(assert) {
-		var oExtension = oTable._getPointerExtension();
+		const oExtension = oTable._getPointerExtension();
 		assert.ok(!oExtension._ExtensionHelper, "_ExtensionHelper: No debug mode");
 		assert.ok(!oExtension._ColumnResizeHelper, "_ColumnResizeHelper: No debug mode");
 		assert.ok(!oExtension._ReorderHelper, "_ReorderHelper: No debug mode");
@@ -1417,13 +1417,12 @@ sap.ui.define([
 
 	QUnit.test("_getEventPosition()", function(assert) {
 		oTable._getPointerExtension()._debug();
-		var oExtensionHelper = oTable._getPointerExtension()._ExtensionHelper;
-
-		var oEvent,
-			oPos,
-			x = 15,
-			y = 20,
-			oCoord = {pageX: x, pageY: y};
+		const oExtensionHelper = oTable._getPointerExtension()._ExtensionHelper;
+		let oEvent;
+		let oPos;
+		const x = 15;
+		const y = 20;
+		const oCoord = {pageX: x, pageY: y};
 
 		oEvent = jQuery.extend({originalEvent: {}}, oCoord);
 

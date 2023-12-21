@@ -32,8 +32,8 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.mvc.Performance", {
 		onInit: function() {
-			var oSettings = localStorage.getItem("settings");
-			var oView = this.getView();
+			let oSettings = localStorage.getItem("settings");
+			const oView = this.getView();
 
 			try {
 				oSettings = JSON.parse(oSettings);
@@ -77,8 +77,8 @@ sap.ui.define([
 		},
 
 		onSettingsPress: function(oEvent) {
-			var oView = this.getView(),
-				oSource = oEvent.getSource();
+			const oView = this.getView();
+			const oSource = oEvent.getSource();
 
 			if (!this.oSettingsPopover) {
 				this.oSettingsPopover = Fragment.load({
@@ -154,7 +154,7 @@ sap.ui.define([
 		},
 
 		runTest: function() {
-			var aSequence = this.getView().getModel("settings").getProperty("/testSequence");
+			const aSequence = this.getView().getModel("settings").getProperty("/testSequence");
 
 			this.destroyTable();
 			this.clearTestResult();
@@ -162,15 +162,15 @@ sap.ui.define([
 			this.createMark("TestStart");
 			this.createTable(); // Any test sequence has to start with the creation of the table.
 
-			for (var i = 0; i < aSequence.length; i++) {
+			for (let i = 0; i < aSequence.length; i++) {
 				this[aSequence[i]]();
 			}
 		},
 
 		prepareTest: function() {
-			var oView = this.getView();
-			var oSettingsModel = oView.getModel("settings");
-			var oModel;
+			const oView = this.getView();
+			const oSettingsModel = oView.getModel("settings");
+			let oModel;
 
 			if (oSettingsModel.getProperty("/jsonModel")) {
 				oModel = new JSONModel();
@@ -183,8 +183,8 @@ sap.ui.define([
 		},
 
 		createTable: function() {
-			var oSettingsModel = this.getView().getModel("settings");
-			var oSettings = oSettingsModel.getData();
+			const oSettingsModel = this.getView().getModel("settings");
+			const oSettings = oSettingsModel.getData();
 
 			this.createMark("CreateTableStart");
 			this.oTable = new Table({
@@ -225,7 +225,7 @@ sap.ui.define([
 		},
 
 		bindTable: function() {
-			var sMeasureName = "Table#bindRows";
+			let sMeasureName = "Table#bindRows";
 
 			if (this.oTable.isBound("rows")) {
 				sMeasureName += " (rebind)";
@@ -263,8 +263,8 @@ sap.ui.define([
 		},
 
 		createTestResult: function() {
-			var aPerformanceEntries = performance.getEntriesByType("measure");
-			var oResultContainer = document.getElementById("results");
+			const aPerformanceEntries = performance.getEntriesByType("measure");
+			const oResultContainer = document.getElementById("results");
 
 			aPerformanceEntries.forEach(function(oPerformanceEntry) {
 				oResultContainer.innerHTML += "<p>" + oPerformanceEntry.name + " - " + oPerformanceEntry.duration + "</p>";
@@ -294,18 +294,18 @@ sap.ui.define([
 			wrap(oObject, sFunctionName, function() {
 				this.createMark(sFunctionName + "Start");
 			}.bind(this), function() {
-				var sObjectName = oObject.getMetadata().getName().substring(oObject.getMetadata().getName().lastIndexOf(".") + 1);
+				const sObjectName = oObject.getMetadata().getName().substring(oObject.getMetadata().getName().lastIndexOf(".") + 1);
 				this.createMeasure(sObjectName + "#" + sFunctionName, sFunctionName + "Start");
 			}.bind(this));
 		},
 
 		createColumns: function(iColumns) {
-			var aColumns = [];
+			const aColumns = [];
 
 			this.createMark("CreateColumnsStart");
 
-			for (var i = 0; i < iColumns; i++) {
-				var oColumn = new Column({
+			for (let i = 0; i < iColumns; i++) {
+				const oColumn = new Column({
 					label: new Label({text: "m.Text"}),
 					template: new Text({text: "{c" + i + "}"})
 				});
@@ -318,10 +318,10 @@ sap.ui.define([
 		},
 
 		getTestData: function(iRows, iColumns) {
-			var oDataColumns = {};
-			var aDataRows = [];
-			var i;
-			var j;
+			let oDataColumns = {};
+			const aDataRows = [];
+			let i;
+			let j;
 
 			for (i = 0; i < iRows; i++) {
 				oDataColumns = {};
@@ -344,7 +344,7 @@ sap.ui.define([
 	 * @param {Function} [fnAfter] This function is called after the wrapped function is executed.
 	 */
 	function wrap(oObject, sFunctionName, fnBefore, fnAfter) {
-		var fnOriginalFunction = oObject[sFunctionName];
+		const fnOriginalFunction = oObject[sFunctionName];
 
 		oObject[sFunctionName] = function() {
 			if (fnBefore) {

@@ -25,9 +25,9 @@ sap.ui.define([
 ], function(Element, Messaging, Controller, MessageToast, JSONModel, Dialog, Text, Label, TextArea, Button, MessagePopover, MessageItem, MockServer, Filter, TreeTable, Column, ODataModel, HTML, Measurement, uid, encodeXML, syncStyleClass, Fragment) {
 	"use strict";
 
-	var oTable;
+	let oTable;
 
-	var oMessageTemplate = new MessageItem({
+	const oMessageTemplate = new MessageItem({
 		type: '{type}',
 		title: '{message}',
 		description: '{code}',
@@ -35,7 +35,7 @@ sap.ui.define([
 		counter: '{counter}'
 	});
 
-	var oMessagePopover = new MessagePopover({
+	const oMessagePopover = new MessagePopover({
 		items: {
 			path: '/',
 			template: oMessageTemplate
@@ -46,11 +46,11 @@ sap.ui.define([
 
 		onInit: function() {
 			this._oMessageManager = Messaging;
-			var oMessageModel = this._oMessageManager.getMessageModel();
+			const oMessageModel = this._oMessageManager.getMessageModel();
 
 			oMessagePopover.setModel(oMessageModel);
 
-			var oFormData = {
+			const oFormData = {
 				serviceURL: "odataFake",
 				collection: "/orgHierarchy",
 				entityType: "orgHierarchyType",
@@ -83,7 +83,7 @@ sap.ui.define([
 				updateRowHeader: 0,
 				syncColumnHeaders: 0
 			};
-			var oModel = new JSONModel(oFormData);
+			const oModel = new JSONModel(oFormData);
 			this.getView().setModel(oModel);
 
 			this.aRenderResults = [];
@@ -94,10 +94,10 @@ sap.ui.define([
 		 * Rebinds/Creates the TreeTable
 		 */
 		onCreateTableClick: function(oEvent, oTreeState) {
-			var oView = this.getView(),
-			oViewModel = oView.getModel();
+			const oView = this.getView();
+			const oViewModel = oView.getModel();
 
-			var sServiceUrl = oViewModel.getProperty("/serviceURL");
+			let sServiceUrl = oViewModel.getProperty("/serviceURL");
 			sServiceUrl = "../../../../../proxy/" + sServiceUrl.replace("://", "/");
 
 			// auto expand mock service
@@ -127,8 +127,8 @@ sap.ui.define([
 					 * Clean-Up Hierarchy Annotation Mockdata/Metadata
 					 * This is necessary because, the V1 ODataTreeBinding implements routines not conform to the Hierarchy Annotation Spec.
 					 */
-					var aAnnotationsMockdata = this.oMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
-					for (var i = 0; i < aAnnotationsMockdata.length; i++) {
+					const aAnnotationsMockdata = this.oMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
+					for (let i = 0; i < aAnnotationsMockdata.length; i++) {
 						//convert string based level properties (NUMC fields) to real numbers
 						aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal);
 					}
@@ -137,44 +137,44 @@ sap.ui.define([
 				}
 			}
 
-			var sCollection = oViewModel.getProperty("/collection");
-			var sEntityType = oViewModel.getProperty("/entityType");
-			var sSelectProperties = oViewModel.getProperty("/selectProperties");
-			var sCountMode = oViewModel.getProperty("/countMode");
-			var sOperationMode = oViewModel.getProperty("/operationMode");
+			const sCollection = oViewModel.getProperty("/collection");
+			const sEntityType = oViewModel.getProperty("/entityType");
+			const sSelectProperties = oViewModel.getProperty("/selectProperties");
+			const sCountMode = oViewModel.getProperty("/countMode");
+			const sOperationMode = oViewModel.getProperty("/operationMode");
 
 			// threshold for OperationMode.Auto
-			var iBindingThreshold = parseInt(oView.byId("bindingThreshold").getValue());
+			const iBindingThreshold = parseInt(oView.byId("bindingThreshold").getValue());
 
 			// table threshold
-			var iTableThreshold = parseInt(oView.byId("tableThreshold").getValue());
+			const iTableThreshold = parseInt(oView.byId("tableThreshold").getValue());
 
 			// the root level of the tree
-			var iRootLevel = parseInt(oViewModel.getProperty("/rootLevel"));
+			const iRootLevel = parseInt(oViewModel.getProperty("/rootLevel"));
 
 			// initial # of expanded levels
-			var iInitialLevel = parseInt(oViewModel.getProperty("/initialLevel"));
+			const iInitialLevel = parseInt(oViewModel.getProperty("/initialLevel"));
 
 			// application filter values
-			var sFilterProperty = oViewModel.getProperty("/filterProperty");
-			var sFilterOperator = oViewModel.getProperty("/filterOperator");
-			var sFilterValue = oViewModel.getProperty("/filterValue");
-			var oApplicationFilter = sFilterProperty && sFilterOperator && sFilterValue ? new Filter(sFilterProperty, sFilterOperator, sFilterValue) : [];
+			const sFilterProperty = oViewModel.getProperty("/filterProperty");
+			const sFilterOperator = oViewModel.getProperty("/filterOperator");
+			const sFilterValue = oViewModel.getProperty("/filterValue");
+			const oApplicationFilter = sFilterProperty && sFilterOperator && sFilterValue ? new Filter(sFilterProperty, sFilterOperator, sFilterValue) : [];
 
 			// hierarchy properties
-			var bUseLocalMetadata = oView.byId("useLocalMetadata").getSelected();
-			var sHierarchyLevelFor = oView.byId("hierarchyLevelFor").getValue();
-			var sHierarchyParentNodeFor = oView.byId("hierarchyParentNodeFor").getValue();
-			var sHierarchyNodeFor = oView.byId("hierarchyNodeFor").getValue();
-			var sHierarchyDrillStateFor = oView.byId("hierarchyDrillStateFor").getValue();
-			var sHierarchyDescendantCountFor = oView.byId("hierarchyDescendantCountFor").getValue();
+			const bUseLocalMetadata = oView.byId("useLocalMetadata").getSelected();
+			const sHierarchyLevelFor = oView.byId("hierarchyLevelFor").getValue();
+			const sHierarchyParentNodeFor = oView.byId("hierarchyParentNodeFor").getValue();
+			const sHierarchyNodeFor = oView.byId("hierarchyNodeFor").getValue();
+			const sHierarchyDrillStateFor = oView.byId("hierarchyDrillStateFor").getValue();
+			const sHierarchyDescendantCountFor = oView.byId("hierarchyDescendantCountFor").getValue();
 
-			var bRestoreTreeStateAfterChange = oView.byId("restoreTreeStateAfterChange").getSelected();
+			const bRestoreTreeStateAfterChange = oView.byId("restoreTreeStateAfterChange").getSelected();
 
 			/**
 			 * Clear the Table and rebind it
 			 */
-			var oTableContainer = oView.byId("tableContainerPanel");
+			const oTableContainer = oView.byId("tableContainerPanel");
 
 			window.oTable = oTableContainer.getContent()[0];
 
@@ -194,7 +194,7 @@ sap.ui.define([
 			this.attachPerformanceTools(oTable);
 
 			// recreate the columns
-			var aProperties = sSelectProperties.split(",");
+			const aProperties = sSelectProperties.split(",");
 			aProperties.forEach(function(sProperty) {
 				oTable.addColumn(new Column({
 					label: new Label({text: sProperty}),
@@ -217,7 +217,7 @@ sap.ui.define([
 			});
 
 			this.oODataModel.attachMessageChange(function(oEvent) {
-				var counter = oEvent.getParameter("newMessages").length;
+				const counter = oEvent.getParameter("newMessages").length;
 				if (counter > 0) {
 					this.byId("btn_messagePopover").setText(counter);
 				}
@@ -265,8 +265,8 @@ sap.ui.define([
 			this._sTreeChangeGroup = this._sTreeChangeGroup || ("sapTreeHM-" + uid());
 
 			// make sure we have a change group
-			var mChangeGroups = this.oODataModel.getChangeGroups();
-			var oEntityType = {name: sEntityType || "orgHierarchyType"};
+			const mChangeGroups = this.oODataModel.getChangeGroups();
+			const oEntityType = {name: sEntityType || "orgHierarchyType"};
 
 			// if there is no change group for the entity type yet, create one
 			if (!mChangeGroups[oEntityType.name]) {
@@ -305,18 +305,18 @@ sap.ui.define([
 				}
 			}, false);
 
-			var that = this;
-			var fnRowsUpdated = function() {
-				var oViewModel = that.getView().getModel();
+			const that = this;
+			const fnRowsUpdated = function() {
+				const oViewModel = that.getView().getModel();
 				oTable.detachRowsUpdated(fnRowsUpdated);
 
-				var iOverall = Math.round(Measurement.end("createTable").duration * 1) / 1;
-				var iRendering = Math.round(Measurement.getMeasurement("rendering").duration * 1) / 1;
-				var iBeforeRendering = Math.round(Measurement.getMeasurement("onBeforeRendering").duration * 100) / 100;
-				var iAfterRendering = Math.round(Measurement.getMeasurement("onAfterRendering").duration * 1) / 1;
+				const iOverall = Math.round(Measurement.end("createTable").duration * 1) / 1;
+				const iRendering = Math.round(Measurement.getMeasurement("rendering").duration * 1) / 1;
+				const iBeforeRendering = Math.round(Measurement.getMeasurement("onBeforeRendering").duration * 100) / 100;
+				const iAfterRendering = Math.round(Measurement.getMeasurement("onAfterRendering").duration * 1) / 1;
 
-				var iTableCreate = Math.round((iOverall - iRendering) * 1) / 1;
-				var iFactor = Math.round(iAfterRendering / iRendering * 100);
+				const iTableCreate = Math.round((iOverall - iRendering) * 1) / 1;
+				const iFactor = Math.round(iAfterRendering / iRendering * 100);
 
 				oViewModel.setProperty("/overall", iOverall);
 				oViewModel.setProperty("/onBeforeRendering", iBeforeRendering);
@@ -325,7 +325,7 @@ sap.ui.define([
 				oViewModel.setProperty("/tableCreate", iTableCreate);
 				oViewModel.setProperty("/factor", iFactor);
 
-				var oRenderResult = {
+				const oRenderResult = {
 						overall: iOverall,
 						onBeforeRendering: iBeforeRendering,
 						rendering: iRendering,
@@ -344,8 +344,8 @@ sap.ui.define([
 		 * Measure Tools
 		 */
 		attachMeasurementTools: function() {
-			var oViewModel = this.getView().getModel();
-			var aJSMeasure = Measurement.filterMeasurements(function(oMeasurement) {
+			const oViewModel = this.getView().getModel();
+			const aJSMeasure = Measurement.filterMeasurements(function(oMeasurement) {
 				return oMeasurement.categories.indexOf("JS") > -1 ? oMeasurement : null;
 			});
 
@@ -357,17 +357,17 @@ sap.ui.define([
 				}
 			}
 			//set test result
-			var iCreateRows = Math.round(getValue("duration", aJSMeasure[0]) * 1) / 1;
-			var iUpdateTableContent = Math.round(getValue("duration", aJSMeasure[1]) * 1) / 1;
-			var iUpdateRowHeader = Math.round(getValue("duration", aJSMeasure[2]) * 1) / 1;
-			var iSyncColumnHeaders = Math.round(getValue("duration", aJSMeasure[3]) * 1) / 1;
+			const iCreateRows = Math.round(getValue("duration", aJSMeasure[0]) * 1) / 1;
+			const iUpdateTableContent = Math.round(getValue("duration", aJSMeasure[1]) * 1) / 1;
+			const iUpdateRowHeader = Math.round(getValue("duration", aJSMeasure[2]) * 1) / 1;
+			const iSyncColumnHeaders = Math.round(getValue("duration", aJSMeasure[3]) * 1) / 1;
 
 			oViewModel.setProperty("/createRows", iCreateRows);
 			oViewModel.setProperty("/updateTableContent", iUpdateTableContent);
 			oViewModel.setProperty("/updateRowHeader", iUpdateRowHeader);
 			oViewModel.setProperty("/syncColumnHeaders", iSyncColumnHeaders);
 
-			var oFunctionResult = {
+			const oFunctionResult = {
 				createRows: iCreateRows,
 				updateTableContent: iUpdateTableContent,
 				updateRowHeader: iUpdateRowHeader,
@@ -395,24 +395,24 @@ sap.ui.define([
 		 * Create new node
 		 */
 		onCreate: function() {
-			var oTable = this.byId("tableOData");
-			var iSelectedIndex = oTable.getSelectedIndex();
-			var oViewModel = this.getView().getModel();
+			const oTable = this.byId("tableOData");
+			const iSelectedIndex = oTable.getSelectedIndex();
+			const oViewModel = this.getView().getModel();
 
 			if (iSelectedIndex == -1) {
 				MessageToast.show("Select a parent node first.");
 				return;
 			}
 
-			var oDialog = new Dialog({
+			const oDialog = new Dialog({
 				title: 'Confirm',
 				type: 'Message',
 				content: [
 					new Text({text: 'Please enter the key of a business entity (the value for the hierarchy-node-external-key-for annotated property value):'}),
 					new TextArea('businessEntityValueTextArea', {
 						liveChange: function(oEvent) {
-							var sText = oEvent.getParameter('value');
-							var oParent = oEvent.getSource().getParent();
+							const sText = oEvent.getParameter('value');
+							const oParent = oEvent.getSource().getParent();
 							oParent.getBeginButton().setEnabled(sText.length > 0);
 						},
 						width: '100%',
@@ -424,13 +424,13 @@ sap.ui.define([
 					text: 'OK',
 					enabled: false,
 					press: function() {
-						var sBusinessEntityKey = Element.getElementById('businessEntityValueTextArea').getValue();
+						const sBusinessEntityKey = Element.getElementById('businessEntityValueTextArea').getValue();
 
 						// create entry
-						var oBinding = oTable.getBinding();
-						var oTableModel = oTable.getModel("odata");
-						var oContext = oBinding.createEntry();
-						var sHierarchyExternalKeyFor = oViewModel.getProperty("/hierarchyExternalKeyFor");
+						const oBinding = oTable.getBinding();
+						const oTableModel = oTable.getModel("odata");
+						const oContext = oBinding.createEntry();
+						const sHierarchyExternalKeyFor = oViewModel.getProperty("/hierarchyExternalKeyFor");
 
 						if (sHierarchyExternalKeyFor) {
 							// IMPORTANT: This is hard-coded for demo-purposes.
@@ -468,17 +468,17 @@ sap.ui.define([
 		 * Cut out logic
 		 */
 		onCut: function() {
-			var iSelectedIndex = oTable.getSelectedIndex();
-			var oBinding = oTable.getBinding();
-			var oModel = oBinding.getModel();
+			const iSelectedIndex = oTable.getSelectedIndex();
+			const oBinding = oTable.getBinding();
+			const oModel = oBinding.getModel();
 
 			// keep track of the removed handle
-			var oTreeHandle = oBinding.removeContext(oTable.getContextByIndex(iSelectedIndex));
+			const oTreeHandle = oBinding.removeContext(oTable.getContextByIndex(iSelectedIndex));
 			this.getView().getModel().setProperty("/pendingChanges", true);
 			this._oLastTreeHandle = oTreeHandle;
 
 			// only for demo: get the odata-key
-			var sKey = oModel.getKey(oTreeHandle);
+			const sKey = oModel.getKey(oTreeHandle);
 			this._mTreeHandles = this._mTreeHandles || {};
 			this._mTreeHandles[sKey] = oTreeHandle;
 
@@ -493,8 +493,8 @@ sap.ui.define([
 		 * Paste logic
 		 */
 		onPaste: function() {
-			var oTable = this.byId("tableOData");
-			var iSelectedIndex = oTable.getSelectedIndex();
+			const oTable = this.byId("tableOData");
+			const iSelectedIndex = oTable.getSelectedIndex();
 			if (this._oClipboardModel && iSelectedIndex != -1) {
 				this.openClipboard();
 			} else {
@@ -506,7 +506,7 @@ sap.ui.define([
 		 * Shows an error dialog with the given error message.
 		 */
 		showErrorDialogue: function(sErrorCode, sErrorText) {
-			var oDialog = new Dialog({
+			const oDialog = new Dialog({
 				title: 'Request Failed with Error: ' + sErrorCode,
 				contentWidth: "600px",
 				contentHeight: "300px",
@@ -534,7 +534,7 @@ sap.ui.define([
 		 */
 		onSave: function() {
 			MessageToast.show("Submitting changes...");
-			var oBinding = oTable.getBinding();
+			const oBinding = oTable.getBinding();
 
 			oTable.setBusyIndicatorDelay(1);
 			oTable.setEnableBusyIndicator(true);
@@ -563,7 +563,7 @@ sap.ui.define([
 		 */
 		onRefreshAndRestore: function() {
 			MessageToast.show("Refreshing and restoring...");
-			var oBinding = oTable.getBinding();
+			const oBinding = oTable.getBinding();
 
 			oTable.setBusyIndicatorDelay(1);
 			oTable.setEnableBusyIndicator(true);
@@ -590,9 +590,9 @@ sap.ui.define([
 		 * Expand selected node to level four
 		 */
 		onExpandNodeToLevel4: function() {
-			var oBinding = oTable.getBinding();
+			const oBinding = oTable.getBinding();
 
-			var iSelectedIndex = oTable.getSelectedIndex();
+			const iSelectedIndex = oTable.getSelectedIndex();
 			MessageToast.show("Expanding node with index " + iSelectedIndex + " to level 4...");
 			oBinding.expandNodeToLevel(iSelectedIndex, 4).then(function() {
 				MessageToast.show("Expanded node with index " + iSelectedIndex + " to level 4.");
@@ -630,18 +630,18 @@ sap.ui.define([
 		 * Paste Action after closing the clipboard
 		 */
 		closeClipboard: function(oEvent) {
-			var aContexts = oEvent.getParameter("selectedContexts");
+			const aContexts = oEvent.getParameter("selectedContexts");
 
 			if (aContexts.length >= 0) {
-				var oCtx = aContexts[0];
-				var sKey = oCtx.getProperty("key");
-				var oTreeHandle = this._mTreeHandles[sKey];
+				const oCtx = aContexts[0];
+				const sKey = oCtx.getProperty("key");
+				const oTreeHandle = this._mTreeHandles[sKey];
 
 				// insert in currently selected index
-				var iSelectedIndex = oTable.getSelectedIndex();
+				const iSelectedIndex = oTable.getSelectedIndex();
 				if (iSelectedIndex != -1 && oTreeHandle) {
-					var oBinding = oTable.getBinding();
-					var oNewParentContext = oTable.getContextByIndex(iSelectedIndex);
+					const oBinding = oTable.getBinding();
+					const oNewParentContext = oTable.getContextByIndex(iSelectedIndex);
 					if (oNewParentContext) {
 						oBinding.addContexts(oNewParentContext, oTreeHandle);
 						this.getView().getModel().setProperty("/pendingChanges", true);
@@ -662,7 +662,7 @@ sap.ui.define([
 		 * Handler for saving the tree state.
 		 */
 		onSaveTreeState: function() {
-			var b = oTable.getBinding();
+			const b = oTable.getBinding();
 			this._oTreeState = b.getCurrentTreeState();
 		},
 
@@ -674,11 +674,11 @@ sap.ui.define([
 		},
 
 		onDragStart: function(oEvent) {
-			var oDragSession = oEvent.getParameter("dragSession");
-			var oDraggedRow = oEvent.getParameter("target");
-			var iDraggedRowIndex = oDraggedRow.getIndex();
-			var aSelectedIndices = oTable.getSelectedIndices();
-			var aDraggedRowContexts = [];
+			const oDragSession = oEvent.getParameter("dragSession");
+			const oDraggedRow = oEvent.getParameter("target");
+			const iDraggedRowIndex = oDraggedRow.getIndex();
+			const aSelectedIndices = oTable.getSelectedIndices();
+			const aDraggedRowContexts = [];
 
 			if (aSelectedIndices.length > 0) {
 				// If rows are selected, do not allow to start dragging from a row which is not selected.
@@ -699,16 +699,16 @@ sap.ui.define([
 		},
 
 		onDrop: function(oEvent) {
-			var oDragSession = oEvent.getParameter("dragSession");
-			var oDroppedRow = oEvent.getParameter("droppedControl");
-			var aDraggedRowContexts = oDragSession.getComplexData("hierarchymaintenance").draggedRowContexts;
+			const oDragSession = oEvent.getParameter("dragSession");
+			const oDroppedRow = oEvent.getParameter("droppedControl");
+			const aDraggedRowContexts = oDragSession.getComplexData("hierarchymaintenance").draggedRowContexts;
 
 			if (aDraggedRowContexts.length > 0) {
-				var oBinding = oTable.getBinding();
-				var oNewParentContext = oTable.getContextByIndex(oDroppedRow.getIndex());
+				const oBinding = oTable.getBinding();
+				const oNewParentContext = oTable.getContextByIndex(oDroppedRow.getIndex());
 
 				if (oNewParentContext != null) {
-					for (var i = 0; i < aDraggedRowContexts.length; i++) {
+					for (let i = 0; i < aDraggedRowContexts.length; i++) {
 						oBinding.removeContext(aDraggedRowContexts[i]);
 					}
 					oBinding.addContexts(oNewParentContext, aDraggedRowContexts);
@@ -721,31 +721,30 @@ sap.ui.define([
 		 * Performance Measure download
 		 */
 		onDownload: function() {
-			var overallAve = 0,
-			onBeforeRenderingAve = 0,
-			renderingAve = 0,
-			onAfterRenderingAve = 0,
-			tableCreateAve = 0,
-			factorAve = 0,
-			createRowsAve = 0,
-			updateTableContentAve = 0,
-			updateRowHeaderAve = 0,
-			syncColumnHeadersAve = 0,
-			overallSum = 0,
-			onBeforeRenderingSum = 0,
-			renderingSum = 0,
-			onAfterRenderingSum = 0,
-			tableCreateSum = 0,
-			factorSum = 0,
-			createRowsSum = 0,
-			updateTableContentSum = 0,
-			updateRowHeaderSum = 0,
-			syncColumnHeadersSum = 0,
-			iRun = this.aRenderResults.length;
+			let overallAve = 0;
+			let onBeforeRenderingAve = 0;
+			let renderingAve = 0;
+			let onAfterRenderingAve = 0;
+			let tableCreateAve = 0;
+			let factorAve = 0;
+			let createRowsAve = 0;
+			let updateTableContentAve = 0;
+			let updateRowHeaderAve = 0;
+			let syncColumnHeadersAve = 0;
+			let overallSum = 0;
+			let onBeforeRenderingSum = 0;
+			let renderingSum = 0;
+			let onAfterRenderingSum = 0;
+			let tableCreateSum = 0;
+			let factorSum = 0;
+			let createRowsSum = 0;
+			let updateTableContentSum = 0;
+			let updateRowHeaderSum = 0;
+			let syncColumnHeadersSum = 0;
+			const iRun = this.aRenderResults.length;
+			let sCSV = "Run;Overall;Before Rendering;Rendering;After Rendering;Table Create;Factor of After Rendering in Rendering;Table._createRows;Table._updateTableContent;Table._syncColumnHeaders;Table._updateRowHeader\n";
 
-			var sCSV = "Run;Overall;Before Rendering;Rendering;After Rendering;Table Create;Factor of After Rendering in Rendering;Table._createRows;Table._updateTableContent;Table._syncColumnHeaders;Table._updateRowHeader\n";
-
-			for (var i = 0; i < iRun; i++) {
+			for (let i = 0; i < iRun; i++) {
 				sCSV += (i + 1) + ";"
 						+ this.aRenderResults[i].overall + ";"
 						+ this.aRenderResults[i].onBeforeRendering + ";"
@@ -795,13 +794,13 @@ sap.ui.define([
 					updateRowHeaderAve + ";" +
 					syncColumnHeadersAve + "\n";
 
-			var sFileName = "TreeTableODataV2PerformanceTestResults.csv";
-			var oBlob = new Blob([sCSV], {type: 'application/csv;charset=utf-8'});
+			const sFileName = "TreeTableODataV2PerformanceTestResults.csv";
+			const oBlob = new Blob([sCSV], {type: 'application/csv;charset=utf-8'});
 
 			if (navigator.appVersion.toString().indexOf('.NET') > 0) {
 				window.navigator.msSaveBlob(oBlob, sFileName);
 			} else {
-				var oLink = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+				const oLink = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
 				oLink.href = URL.createObjectURL(oBlob);
 				oLink.download = sFileName;
 				oLink.click();

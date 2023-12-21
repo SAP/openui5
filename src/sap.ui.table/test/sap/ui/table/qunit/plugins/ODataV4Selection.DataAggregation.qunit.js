@@ -87,8 +87,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			this.triggerRowSelectorClick(oTable, 0, false);

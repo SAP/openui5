@@ -63,10 +63,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
-		var fnFireSelectionChangeSpy = sinon.spy(oODataV4Selection, "fireSelectionChange");
-		var oRow, aSelectedContexts;
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
+		const fnFireSelectionChangeSpy = sinon.spy(oODataV4Selection, "fireSelectionChange");
+		let oRow; let aSelectedContexts;
 
 		aSelectedContexts = oODataV4Selection.getSelectedContexts();
 		assert.strictEqual(aSelectedContexts.length, 0, 'Count of selected contexts is 0');
@@ -116,8 +116,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("SelectAll", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
 		oTable.getRows()[1].collapse();
 		oODataV4Selection.setLimit(0);
 		oODataV4Selection.onHeaderSelectorPress();

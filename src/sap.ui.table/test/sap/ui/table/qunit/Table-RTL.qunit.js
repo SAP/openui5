@@ -109,28 +109,28 @@ sap.ui.define([
 			expanded: true
 		}],
 		assertRowIndentation: function(assert, aIndentations) {
-			var aRows = this.oTable.getRows();
+			const aRows = this.oTable.getRows();
 
 			function getCSSPixelSize(iPixel) {
 				return iPixel === 0 ? "" : iPixel + "px";
 			}
 
-			for (var i = 0; i < aRows.length; i++) {
-				var oRow = aRows[i];
-				var mRowDomRefs = oRow.getDomRefs();
-				var oRowHeader = mRowDomRefs.rowHeaderPart;
-				var oFirstCellContentInRow = mRowDomRefs.rowScrollPart.querySelector("td.sapUiTableCellFirst > .sapUiTableCellInner");
-				var sMessagePrefix = "Indentation; " + oRow.getTitle() + "; Level " + oRow.getLevel() + "; Index " + oRow.getIndex() + ": ";
+			for (let i = 0; i < aRows.length; i++) {
+				const oRow = aRows[i];
+				const mRowDomRefs = oRow.getDomRefs();
+				const oRowHeader = mRowDomRefs.rowHeaderPart;
+				const oFirstCellContentInRow = mRowDomRefs.rowScrollPart.querySelector("td.sapUiTableCellFirst > .sapUiTableCellInner");
+				const sMessagePrefix = "Indentation; " + oRow.getTitle() + "; Level " + oRow.getLevel() + "; Index " + oRow.getIndex() + ": ";
 
 				if (TableUtils.Grouping.isInGroupMode(this.oTable)) {
-					var oGroupShield = oRowHeader.querySelector(".sapUiTableGroupShield");
+					const oGroupShield = oRowHeader.querySelector(".sapUiTableGroupShield");
 
 					assert.equal(oRowHeader.style["right"], getCSSPixelSize(aIndentations[i]), sMessagePrefix + "Row header");
 					assert.equal(oGroupShield.style["marginRight"], getCSSPixelSize(-aIndentations[i]), sMessagePrefix + "Group shield");
 					assert.equal(oFirstCellContentInRow.style["paddingRight"], getCSSPixelSize(aIndentations[i] > 0 ? aIndentations[i] + 8 : 0),
 						sMessagePrefix + "Content of first cell");
 				} else if (TableUtils.Grouping.isInTreeMode(this.oTable)) {
-					var oTreeIcon = mRowDomRefs.rowScrollPart.querySelector(".sapUiTableTreeIcon");
+					const oTreeIcon = mRowDomRefs.rowScrollPart.querySelector(".sapUiTableTreeIcon");
 
 					assert.equal(oTreeIcon.style["marginRight"], getCSSPixelSize(aIndentations[i]), sMessagePrefix + "Tree icon");
 				} else {

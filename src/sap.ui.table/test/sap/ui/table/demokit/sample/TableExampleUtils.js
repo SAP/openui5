@@ -10,7 +10,7 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 	"use strict";
 
 	function showInfo(aItems, oBy) {
-		var oPopover = new Popover({
+		const oPopover = new Popover({
 			showHeader: false,
 			placement: "Auto",
 			afterClose: function() {
@@ -37,7 +37,7 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 		oPopover.openBy(oBy, true);
 	}
 
-	var Utils = {};
+	const Utils = {};
 
 	Utils.showInfo = function(aItems, oBy) {
 		if (typeof (aItems) == "string") {

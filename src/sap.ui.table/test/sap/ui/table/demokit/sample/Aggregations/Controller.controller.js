@@ -14,10 +14,10 @@ sap.ui.define([
 	return Controller.extend("sap.ui.table.sample.Aggregations.Controller", {
 
 		onInit: function() {
-			var oView = this.getView();
+			const oView = this.getView();
 
 			// set explored app's demo model on this sample
-			var oJSONModel = this.initSampleDataModel();
+			const oJSONModel = this.initSampleDataModel();
 			oView.setModel(oJSONModel);
 
 			oView.setModel(new JSONModel({
@@ -28,26 +28,26 @@ sap.ui.define([
 			this._oFacetFilter = null;
 
 			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
-				var oTb = oView.byId("infobar");
+				const oTb = oView.byId("infobar");
 				oTb.addContent(new ToolbarSpacer());
 				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/Aggregations"));
 			}, function(oError) { /*ignore*/ });
 		},
 
 		initSampleDataModel: function() {
-			var oModel = new JSONModel();
+			const oModel = new JSONModel();
 
-			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
+			const oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
 			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
 				success: function(oData) {
-					var aTemp1 = [];
-					var aTemp2 = [];
-					var aSuppliersData = [];
-					var aCategoryData = [];
-					for (var i = 0; i < oData.ProductCollection.length; i++) {
-						var oProduct = oData.ProductCollection[i];
+					const aTemp1 = [];
+					const aTemp2 = [];
+					const aSuppliersData = [];
+					const aCategoryData = [];
+					for (let i = 0; i < oData.ProductCollection.length; i++) {
+						const oProduct = oData.ProductCollection[i];
 						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
@@ -76,7 +76,7 @@ sap.ui.define([
 		},
 
 		_filter: function() {
-			var oFilter = null;
+			let oFilter = null;
 
 			if (this._oTxtFilter && this._oFacetFilter) {
 				oFilter = new Filter([this._oTxtFilter, this._oFacetFilter], true);
@@ -90,7 +90,7 @@ sap.ui.define([
 		},
 
 		handleTxtFilter: function(oEvent) {
-			var sQuery = oEvent ? oEvent.getParameter("query") : null;
+			const sQuery = oEvent ? oEvent.getParameter("query") : null;
 			this._oTxtFilter = null;
 
 			if (sQuery) {
@@ -114,14 +114,14 @@ sap.ui.define([
 		},
 
 		_getFacetFilterLists: function() {
-			var oFacetFilter = this.byId("facetFilter");
+			const oFacetFilter = this.byId("facetFilter");
 			return oFacetFilter.getLists();
 		},
 
 		handleFacetFilterReset: function(oEvent) {
-			var aFacetFilterLists = this._getFacetFilterLists();
+			const aFacetFilterLists = this._getFacetFilterLists();
 
-			for (var i = 0; i < aFacetFilterLists.length; i++) {
+			for (let i = 0; i < aFacetFilterLists.length; i++) {
 				aFacetFilterLists[i].setSelectedKeys();
 			}
 			this._oFacetFilter = null;
@@ -132,7 +132,7 @@ sap.ui.define([
 		},
 
 		handleListClose: function(oEvent) {
-			var aFacetFilterLists = this._getFacetFilterLists().filter(function(oList) {
+			const aFacetFilterLists = this._getFacetFilterLists().filter(function(oList) {
 				return oList.getActive() && oList.getSelectedItems().length;
 			});
 

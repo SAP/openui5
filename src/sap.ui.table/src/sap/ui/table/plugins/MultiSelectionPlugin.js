@@ -21,7 +21,7 @@ sap.ui.define([
 
 	"use strict";
 
-	var SelectionMode = library.SelectionMode;
+	const SelectionMode = library.SelectionMode;
 
 	/**
 	 * Constructs an instance of sap.ui.table.plugins.MultiSelectionPlugin
@@ -49,7 +49,7 @@ sap.ui.define([
 	 * @alias sap.ui.table.plugins.MultiSelectionPlugin
 	 * @borrows sap.ui.table.plugins.PluginBase.findOn as findOn
 	 */
-	var MultiSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.MultiSelectionPlugin", {metadata: {
+	const MultiSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.MultiSelectionPlugin", {metadata: {
 		library: "sap.ui.table",
 		properties: {
 			/**
@@ -118,7 +118,7 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.init = function() {
 		SelectionPlugin.prototype.init.apply(this, arguments);
 
-		var oIcon = new Icon({src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), useIconTooltip: false});
+		const oIcon = new Icon({src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), useIconTooltip: false});
 		oIcon.addStyleClass("sapUiTableSelectClear");
 		this.setAggregation("icon", oIcon, true);
 
@@ -157,7 +157,7 @@ sap.ui.define([
 		}
 
 		if (mConfig && mConfig.range) {
-			var iLastSelectedIndex = this.getSelectedIndex();
+			const iLastSelectedIndex = this.getSelectedIndex();
 
 			if (iLastSelectedIndex >= 0) {
 				this.addSelectionInterval(iLastSelectedIndex, oRow.getIndex());
@@ -190,7 +190,7 @@ sap.ui.define([
 	};
 
 	MultiSelectionPlugin.prototype.onHeaderSelectorPress = function() {
-		var mRenderConfig = this.getRenderConfig();
+		const mRenderConfig = this.getRenderConfig();
 
 		if (!mRenderConfig.headerSelector.visible || !mRenderConfig.headerSelector.enabled) {
 			return;
@@ -231,7 +231,7 @@ sap.ui.define([
 	}
 
 	MultiSelectionPlugin.prototype.setSelectionMode = function(sSelectionMode) {
-		var oTable = this.getParent();
+		const oTable = this.getParent();
 
 		if (oTable) {
 			oTable.setProperty("selectionMode", sSelectionMode, true);
@@ -294,7 +294,7 @@ sap.ui.define([
 			return Promise.reject(new Error("Not possible if the limit is enabled"));
 		}
 
-		var iSelectableCount = this.getSelectableCount();
+		const iSelectableCount = this.getSelectableCount();
 
 		if (iSelectableCount === 0) {
 			return Promise.reject(new Error("Nothing to select"));
@@ -314,7 +314,7 @@ sap.ui.define([
 	 * loaded. The Promise is rejected if the index is out of range.
 	 */
 	function prepareSelection(oPlugin, iIndexFrom, iIndexTo, bAddSelection) {
-		var iHighestSelectableIndex = oPlugin._getHighestSelectableIndex();
+		const iHighestSelectableIndex = oPlugin._getHighestSelectableIndex();
 
 		if (iIndexFrom < 0 && iIndexTo < 0 || iIndexFrom > iHighestSelectableIndex && iIndexTo > iHighestSelectableIndex) {
 			// Selection is not possible if the index range it completely out of the selectable range.
@@ -325,10 +325,10 @@ sap.ui.define([
 		iIndexFrom = Math.min(Math.max(0, iIndexFrom), iHighestSelectableIndex);
 		iIndexTo = Math.min(Math.max(0, iIndexTo), iHighestSelectableIndex);
 
-		var iLimit = oPlugin.getLimit();
-		var bReverse = iIndexTo < iIndexFrom; // Indicates whether the selection is made from bottom to top.
-		var iGetContextsStartIndex = bReverse ? iIndexTo : iIndexFrom;
-		var iGetContextsLength;
+		const iLimit = oPlugin.getLimit();
+		const bReverse = iIndexTo < iIndexFrom; // Indicates whether the selection is made from bottom to top.
+		let iGetContextsStartIndex = bReverse ? iIndexTo : iIndexFrom;
+		let iGetContextsLength;
 
 		// If the start index is already selected, the range starts from the next index.
 		if (bAddSelection && oPlugin.isIndexSelected(iIndexFrom)) {
@@ -380,8 +380,8 @@ sap.ui.define([
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo, oEventPayload) {
-		var oTable = this.getTable();
-		var sSelectionMode = this.getSelectionMode();
+		const oTable = this.getTable();
+		const sSelectionMode = this.getSelectionMode();
 
 		if (sSelectionMode === SelectionMode.None) {
 			return Promise.reject(new Error("SelectionMode is '" + SelectionMode.None + "'"));
@@ -439,8 +439,8 @@ sap.ui.define([
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo, oEventPayload) {
-		var oTable = this.getTable();
-		var sSelectionMode = this.getSelectionMode();
+		const oTable = this.getTable();
+		const sSelectionMode = this.getSelectionMode();
 
 		if (sSelectionMode === SelectionMode.None) {
 			return Promise.reject(new Error("SelectionMode is '" + SelectionMode.None + "'"));
@@ -583,7 +583,7 @@ sap.ui.define([
 	 * @private
 	 */
 	MultiSelectionPlugin.prototype._onSelectionChange = function(oEvent) {
-		var aRowIndices = oEvent.getParameter("rowIndices");
+		const aRowIndices = oEvent.getParameter("rowIndices");
 
 		this.fireSelectionChange({
 			rowIndices: aRowIndices,

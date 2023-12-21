@@ -12,7 +12,7 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	 * @since 1.119
 	 * @public
 	 */
-	var Type = {
+	const Type = {
 		/**
 		 * Equivalent to the default configuration of {@link module:sap/ui/table/rowmodes/Fixed}
 		 *

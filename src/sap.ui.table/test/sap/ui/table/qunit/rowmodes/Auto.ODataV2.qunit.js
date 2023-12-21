@@ -22,8 +22,8 @@ sap.ui.define([
 		rows: {path: "/Products"}
 	});
 
-	var iDeviceHeight = 550;
-	var iComputedRequestLength = 22; // Based on the device height.
+	const iDeviceHeight = 550;
+	const iComputedRequestLength = 22; // Based on the device height.
 
 	QUnit.module("Get contexts", {
 		before: function() {
@@ -133,7 +133,7 @@ sap.ui.define([
 
 		// refreshRows, auto rerender, updateRows
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			var iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
+			const iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
 
 			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
 			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
@@ -149,7 +149,7 @@ sap.ui.define([
 
 		// refreshRows, auto rerender, updateRows
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			var iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
+			const iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
 
 			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
 			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
@@ -167,7 +167,7 @@ sap.ui.define([
 
 		// refreshRows, auto rerender, updateRows
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			var iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
+			const iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
 
 			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
 			// Threshold is 5, because of the value of the "minRowCount" property.
@@ -185,7 +185,7 @@ sap.ui.define([
 
 		// refreshRows, auto rerender, updateRows
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			var iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
+			const iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
 
 			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
 			// Threshold is 5, because of the value of the "minRowCount" property.
@@ -210,7 +210,7 @@ sap.ui.define([
 
 		// refreshRows, auto rerender, updateRows
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			var mRowCounts = this.oTable.getRowMode().getComputedRowCounts();
+			const mRowCounts = this.oTable.getRowMode().getComputedRowCounts();
 
 			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
 			// Threshold is 5, because of the value of the "minRowCount" property.
@@ -236,7 +236,7 @@ sap.ui.define([
 
 		// refreshRows, auto rerender, updateRows
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			var iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
+			const iComputedRowCount = this.oTable.getRowMode().getComputedRowCounts().count;
 
 			assert.equal(this.oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
 			// Threshold is 30, because of the value of the "minRowCount" property.
@@ -306,7 +306,7 @@ sap.ui.define([
 			this.oGetContextsSpy.resetHistory();
 			this.oTable.getBinding().refresh();
 		}).then(this.oTable.qunit.whenRenderingFinished).then(() => {
-			var mRowCounts = this.oTable.getRowMode().getComputedRowCounts();
+			const mRowCounts = this.oTable.getRowMode().getComputedRowCounts();
 			assert.equal(this.oGetContextsSpy.callCount, 2, "Call count of method to get contexts"); // refreshRows, updateRows
 			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(0), 0, iComputedRequestLength - 1, mRowCounts.scrollable);
 			sinon.assert.calledWithExactly(this.oGetContextsSpy.getCall(1), 0, mRowCounts.scrollable + 1, mRowCounts.scrollable);
@@ -346,7 +346,7 @@ sap.ui.define([
 	// To add a test case where the table does not need to adjust the row count to the avialable space after rendering.
 	function testWithStableRowCount(fnTest) {
 		return fnTest().then(() => {
-			var oRowMode = TableQUnitUtils.getDefaultSettings().rowMode;
+			const oRowMode = TableQUnitUtils.getDefaultSettings().rowMode;
 
 			oRowMode.minRowCount = 10;
 			oRowMode.maxRowCount = 10;

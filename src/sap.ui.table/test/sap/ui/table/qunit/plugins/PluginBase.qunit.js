@@ -9,8 +9,8 @@ sap.ui.define([
 	"use strict";
 	/*global QUnit */
 
-	var TestPlugin = PluginBase.extend("sap.ui.table.plugins.test.Plugin");
-	var TestSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.test.SelectionPlugin");
+	const TestPlugin = PluginBase.extend("sap.ui.table.plugins.test.Plugin");
+	const TestSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.test.SelectionPlugin");
 
 	QUnit.module("Activation & Deactivation", {
 		beforeEach: function() {
@@ -27,12 +27,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Init", function(assert) {
-		var oPluginPrototypeMock = this.mock(TestPlugin.prototype);
+		const oPluginPrototypeMock = this.mock(TestPlugin.prototype);
 
 		oPluginPrototypeMock.expects("onActivate").never();
 		oPluginPrototypeMock.expects("onDeactivate").never();
 
-		var oPlugin = new TestPlugin();
+		const oPlugin = new TestPlugin();
 
 		assert.notOk(this.oPlugin.isActive(), "Not active");
 
@@ -40,7 +40,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Not applicable", function(assert) {
-		var oNotATable = new (Control.extend("sap.ui.table.plugins.test.Control"))();
+		const oNotATable = new (Control.extend("sap.ui.table.plugins.test.Control"))();
 
 		assert.throws(
 			function() {
@@ -77,8 +77,8 @@ sap.ui.define([
 	QUnit.test("Add to the same table again", function(assert) {
 		this.oTable.addDependent(this.oPlugin);
 
-		var oOnDeactivate = this.oPluginMock.expects("onDeactivate").once().withExactArgs(this.oTable);
-		var oOnActivate = this.oPluginMock.expects("onActivate").once().withExactArgs(this.oTable);
+		const oOnDeactivate = this.oPluginMock.expects("onDeactivate").once().withExactArgs(this.oTable);
+		const oOnActivate = this.oPluginMock.expects("onActivate").once().withExactArgs(this.oTable);
 
 		this.oTable.insertDependent(this.oPlugin, 0);
 
@@ -87,12 +87,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Move to another table", function(assert) {
-		var oOtherTable = new Table();
+		const oOtherTable = new Table();
 
 		this.oTable.addDependent(this.oPlugin);
 
-		var oOnDeactivate = this.oPluginMock.expects("onDeactivate").once().withExactArgs(this.oTable);
-		var oOnActivate = this.oPluginMock.expects("onActivate").once().withExactArgs(oOtherTable);
+		const oOnDeactivate = this.oPluginMock.expects("onDeactivate").once().withExactArgs(this.oTable);
+		const oOnActivate = this.oPluginMock.expects("onActivate").once().withExactArgs(oOtherTable);
 
 		oOtherTable.addDependent(this.oPlugin);
 
@@ -162,7 +162,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Set constraints", function(assert) {
-		var oTableInvalidate = this.spy(this.oTable, "invalidate");
+		const oTableInvalidate = this.spy(this.oTable, "invalidate");
 
 		this.oPlugin.setRowCountConstraints({fixedTop: true, fixedBottom: true});
 		assert.deepEqual(this.oTable.getRowMode().getRowCountConstraints(), {fixedTop: true, fixedBottom: true}, "RowMode#getRowCountConstraints");

@@ -61,7 +61,7 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.table.menus.MobileColumnHeaderMenuAdapter
 	 */
-	var MobileColumnHeaderMenuAdapter = ColumnHeaderMenuAdapter.extend("sap.ui.table.menus.MobileColumnHeaderMenuAdapter", /** @lends sap.ui.table.menus.MobileColumnHeaderMenuAdapter.prototype */ {});
+	const MobileColumnHeaderMenuAdapter = ColumnHeaderMenuAdapter.extend("sap.ui.table.menus.MobileColumnHeaderMenuAdapter", /** @lends sap.ui.table.menus.MobileColumnHeaderMenuAdapter.prototype */ {});
 
 	/**
 	 * Injects entries to the column menu needed to utilize built-in column features.
@@ -125,7 +125,7 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._prepareQuickActions = function(oColumn) {
-		var oTable = oColumn._getTable();
+		const oTable = oColumn._getTable();
 
 		this._prepareQuickSort(oColumn);
 
@@ -152,7 +152,7 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._prepareItems = function(oColumn) {
-		var oTable = oColumn._getTable();
+		const oTable = oColumn._getTable();
 
 		if (oTable.getEnableCustomFilter()) {
 			this._prepareCustomFilterItem(oColumn);
@@ -203,14 +203,14 @@ sap.ui.define([
 		return new QuickSort({
 			items: new QuickSortItem(),
 			change: [function(oEvent) {
-				var sSortOrder = oEvent.getParameter("item").getSortOrder();
+				const sSortOrder = oEvent.getParameter("item").getSortOrder();
 				this._oColumn._sort(sSortOrder, false);
 			}, this]
 		});
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._updateQuickSort = function(oColumn) {
-		var oItem = this._oQuickSort.getItems()[0];
+		const oItem = this._oQuickSort.getItems()[0];
 
 		oItem.setLabel(TableUtils.Column.getHeaderText(oColumn));
 		oItem.setSortOrder(oColumn.getSortOrder());
@@ -234,7 +234,7 @@ sap.ui.define([
 			content: new Input({
 				submit: [function(oEvent) {
 					this._oColumn.setFilterValue(oEvent.getSource().getValue());
-					var sState = this._oColumn._getFilterState();
+					const sState = this._oColumn._getFilterState();
 
 					if (sState === CoreLibrary.ValueState.None) {
 						this._oColumn.filter(oEvent.getSource().getValue());
@@ -249,8 +249,8 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._updateQuickFilter = function(oColumn) {
-		var oSapMResourceBundle = Library.getResourceBundleFor("sap.m");
-		var oFilterField = this._oQuickFilter.getContent()[0];
+		const oSapMResourceBundle = Library.getResourceBundleFor("sap.m");
+		const oFilterField = this._oQuickFilter.getContent()[0];
 
 		this._oQuickFilter.setLabel(oSapMResourceBundle.getText("table.COLUMNMENU_QUICK_FILTER", [TableUtils.Column.getHeaderText(oColumn)]));
 		oFilterField.setValue(oColumn.getFilterValue());
@@ -273,13 +273,13 @@ sap.ui.define([
 		return new QuickGroup({
 			items: new QuickGroupItem(),
 			change: [function(oEvent) {
-				var bGrouped = oEvent.getParameter("item").getGrouped();
-				var oColumn = this._oColumn;
-				var oTable = oColumn._getTable();
+				const bGrouped = oEvent.getParameter("item").getGrouped();
+				const oColumn = this._oColumn;
+				const oTable = oColumn._getTable();
 
 				this._oMenu.attachEventOnce("afterClose", function() {
 					if (bGrouped && (!oColumn.getShowIfGrouped || !oColumn.getShowIfGrouped())) {
-						var oDomRef;
+						let oDomRef;
 
 						if (TableUtils.isNoDataVisible(oTable)) {
 							oDomRef = oTable.getDomRef("noDataCnt");
@@ -299,7 +299,7 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._updateQuickGroup = function(oColumn) {
-		var oItem = this._oQuickGroup.getItems()[0];
+		const oItem = this._oQuickGroup.getItems()[0];
 
 		oItem.setLabel(TableUtils.Column.getHeaderText(oColumn));
 		oItem.setGrouped(oColumn.getGrouped());
@@ -327,7 +327,7 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._updateQuickTotal = function(oColumn) {
-		var oItem = this._oQuickTotal.getItems()[0];
+		const oItem = this._oQuickTotal.getItems()[0];
 
 		oItem.setLabel(TableUtils.Column.getHeaderText(oColumn));
 		oItem.setTotaled(oColumn.getSummed());
@@ -349,13 +349,13 @@ sap.ui.define([
 		return new QuickAction({
 			content: new Button({
 				press: [function(oEvent) {
-					var oTable = this._oColumn._getTable();
-					var bExecuteDefault = oTable.fireColumnFreeze({
+					const oTable = this._oColumn._getTable();
+					const bExecuteDefault = oTable.fireColumnFreeze({
 						column: this._oColumn
 					});
 
 					if (bExecuteDefault) {
-						var bIsLastFixedColumn = oEvent.getSource().getText() === TableUtils.getResourceText("TBL_UNFREEZE");
+						const bIsLastFixedColumn = oEvent.getSource().getText() === TableUtils.getResourceText("TBL_UNFREEZE");
 
 						if (bIsLastFixedColumn) {
 							oTable.setFixedColumnCount(0);
@@ -371,8 +371,8 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._updateQuickFreeze = function(oColumn) {
-		var bIsLastFixedColumn = oColumn.getIndex() + TableUtils.Column.getHeaderSpan(oColumn) === oColumn._getTable().getComputedFixedColumnCount();
-		var sResourceTextKey = bIsLastFixedColumn ? "TBL_UNFREEZE" : "TBL_FREEZE";
+		const bIsLastFixedColumn = oColumn.getIndex() + TableUtils.Column.getHeaderSpan(oColumn) === oColumn._getTable().getComputedFixedColumnCount();
+		const sResourceTextKey = bIsLastFixedColumn ? "TBL_UNFREEZE" : "TBL_FREEZE";
 
 		this._oQuickFreeze.getContent()[0].setText(TableUtils.getResourceText(sResourceTextKey));
 	};
@@ -389,7 +389,7 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._createQuickResize = function(oColumn) {
-		var oSapMResourceBundle = Library.getResourceBundleFor("sap.m");
+		const oSapMResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		return new QuickAction({
 			content: new Button({
@@ -403,14 +403,14 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._startColumnResize = function(oColumn) {
-		var oTable = oColumn._getTable();
+		const oTable = oColumn._getTable();
 		oTable.$().toggleClass("sapUiTableResizing", true);
 		oTable._$colResize = oTable.$("rsz");
 		oTable._$colResize.toggleClass("sapUiTableColRszActive", true);
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._removeHeaderCellColumnResizer = function(oTable) {
-		var $ColumnCellMenu = oTable && oTable.$().find(".sapUiTableCHT .sapUiTableCellTouchMenu");
+		const $ColumnCellMenu = oTable && oTable.$().find(".sapUiTableCHT .sapUiTableCellTouchMenu");
 		if ($ColumnCellMenu.length) {
 			$ColumnCellMenu.parent().find(".sapUiTableCellInner").show();
 			$ColumnCellMenu.remove();

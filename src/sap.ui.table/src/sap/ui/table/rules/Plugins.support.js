@@ -8,13 +8,13 @@ sap.ui.define([
 ], function(SupportHelper, SupportLibrary, PluginBase) {
 	"use strict";
 
-	var Categories = SupportLibrary.Categories;
-	var Severity = SupportLibrary.Severity;
+	const Categories = SupportLibrary.Categories;
+	const Severity = SupportLibrary.Severity;
 
 	/**
 	 * Checks the number and type of plugins which are applied to the table.
 	 */
-	var oSelectionPlugins = SupportHelper.normalizeRule({
+	const oSelectionPlugins = SupportHelper.normalizeRule({
 		id: "Plugins",
 		minversion: "1.64",
 		categories: [Categories.Usage],
@@ -22,11 +22,11 @@ sap.ui.define([
 		description: "Only one selection plugin should be applied to avoid potential conflicts.",
 		resolution: "Only apply a single selection plugin.",
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
+			const aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
 
-			for (var i = 0; i < aTables.length; i++) {
-				var oTable = aTables[i];
-				var aSelectionPlugins = oTable.getDependents().filter((oPlugin) => oPlugin.isA("sap.ui.table.plugins.SelectionPlugin"));
+			for (let i = 0; i < aTables.length; i++) {
+				const oTable = aTables[i];
+				const aSelectionPlugins = oTable.getDependents().filter((oPlugin) => oPlugin.isA("sap.ui.table.plugins.SelectionPlugin"));
 
 				/**
 				 * @deprecated As of version 1.120

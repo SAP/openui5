@@ -7,9 +7,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var TableQUnitUtilsODataV2 = Object.assign({}, TableQUnitUtils);
-	var sServiceURI = "/service/";
-	var fnODataModelGetSharedData = ODataModel._getSharedData;
+	const TableQUnitUtilsODataV2 = Object.assign({}, TableQUnitUtils);
+	const sServiceURI = "/service/";
+	const fnODataModelGetSharedData = ODataModel._getSharedData;
 
 	/**
 	 * Creates an ODataModel.
@@ -23,7 +23,7 @@ sap.ui.define([
 			TableQUnitUtilsODataV2.disableMetadataCache();
 		}
 
-		var oDataModel = new ODataModel(sURL == null ? sServiceURI : sURL, {
+		const oDataModel = new ODataModel(sURL == null ? sServiceURI : sURL, {
 			json: true
 		});
 
@@ -60,11 +60,11 @@ sap.ui.define([
 			autoRespondAfter: iResponseTime == null ? 10 : iResponseTime
 		});
 
-		var oMockServer = new MockServer({
+		const oMockServer = new MockServer({
 			rootUri: sServiceURI
 		});
 
-		var sURLPrefix = sap.ui.require.toUrl("sap/ui/table/qunit");
+		const sURLPrefix = sap.ui.require.toUrl("sap/ui/table/qunit");
 		oMockServer.simulate(sURLPrefix + "/mockdata/metadata.xml", sURLPrefix + "/mockdata/");
 		oMockServer.start();
 

@@ -22,7 +22,7 @@ sap.ui.define([
 	 * Checks all cases where the AnalyticalColumn should be rendered based on the visibility, the grouping and the template.
 	 */
 	QUnit.test("shouldRender", function(assert) {
-		var that = this;
+		const that = this;
 
 		function test(bShouldRender, bVisible, bGrouped, vTemplate) {
 			that._oColumn.setVisible(bVisible);

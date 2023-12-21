@@ -14,7 +14,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var _private = TableUtils.createWeakMapFacade();
+	const _private = TableUtils.createWeakMapFacade();
 
 	/**
 	 * Constructor for a new <code>Auto</code> row mode.
@@ -38,7 +38,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 */
-	var AutoRowMode = RowMode.extend("sap.ui.table.rowmodes.Auto", /** @lends sap.ui.table.rowmodes.Auto.prototype */ {
+	const AutoRowMode = RowMode.extend("sap.ui.table.rowmodes.Auto", /** @lends sap.ui.table.rowmodes.Auto.prototype */ {
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
@@ -88,20 +88,19 @@ sap.ui.define([
 		}
 	});
 
-	var TableDelegate = {};
+	const TableDelegate = {};
 
 	// TODO: This function can be removed and replaced with #getBaseRowHeightOfTable once the table is changed to a div-based layout.
 	function getRowHeight(oRowMode) {
-		var oTable = oRowMode.getTable();
-		var oRowContainer = oTable ? oTable.getDomRef("tableCCnt") : null;
+		const oTable = oRowMode.getTable();
+		const oRowContainer = oTable ? oTable.getDomRef("tableCCnt") : null;
 
 		if (oRowContainer && Device.browser.chrome && window.devicePixelRatio !== 1) {
 			// Because of a bug in the zoom algorithm of Chrome, the actual height of a DOM element can be different
 			// to what is set in inline styles or CSS. Therefore, we need to get the height of a row from the DOM.
-			var oTableElement = document.createElement("table");
-			var oRowElement = oTableElement.insertRow();
-			var iRowContentHeight = oRowMode.getRowContentHeight();
-			var nRowHeight;
+			const oTableElement = document.createElement("table");
+			const oRowElement = oTableElement.insertRow();
+			const iRowContentHeight = oRowMode.getRowContentHeight();
 
 			oTableElement.classList.add("sapUiTableCtrl");
 			oRowElement.classList.add("sapUiTableTr");
@@ -111,7 +110,7 @@ sap.ui.define([
 			}
 
 			oRowContainer.appendChild(oTableElement);
-			nRowHeight = oRowElement.getBoundingClientRect().height;
+			const nRowHeight = oRowElement.getBoundingClientRect().height;
 			oRowContainer.removeChild(oTableElement);
 
 			return nRowHeight;
@@ -181,7 +180,7 @@ sap.ui.define([
 		 * @deprecated As of version 1.119
 		 */
 		if (this.bLegacy) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			return oTable ? oTable.getFixedRowCount() : 0;
 		}
 
@@ -193,7 +192,7 @@ sap.ui.define([
 		 * @deprecated As of version 1.119
 		 */
 		if (this.bLegacy) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			return oTable ? oTable.getFixedBottomRowCount() : 0;
 		}
 
@@ -205,7 +204,7 @@ sap.ui.define([
 		 * @deprecated As of version 1.119
 		 */
 		if (this.bLegacy) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			return oTable ? oTable.getMinAutoRowCount() : 0;
 		}
 
@@ -217,7 +216,7 @@ sap.ui.define([
 		 * @deprecated As of version 1.119
 		 */
 		if (this.bLegacy) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			return oTable ? oTable.getRowHeight() : 0;
 		}
 
@@ -247,8 +246,8 @@ sap.ui.define([
 	 * @private
 	 */
 	AutoRowMode.prototype._getMinRowCount = function() {
-		var iMinRowCount = this.getMinRowCount();
-		var iMaxRowCount = this.getMaxRowCount();
+		const iMinRowCount = this.getMinRowCount();
+		const iMaxRowCount = this.getMaxRowCount();
 
 		if (iMaxRowCount >= 0) {
 			return Math.min(iMinRowCount, iMaxRowCount);
@@ -258,14 +257,14 @@ sap.ui.define([
 	};
 
 	AutoRowMode.prototype.getMinRequestLength = function() {
-		var oTable = this.getTable();
-		var iRequestLength = this.getConfiguredRowCount();
+		const oTable = this.getTable();
+		let iRequestLength = this.getConfiguredRowCount();
 
 		if (isRowCountInitial(this) || (oTable && !oTable._bContextsAvailable)) {
 			// Due to the dynamic nature of this mode, the requests during initialization of the table's rows or rows binding should consider the
 			// screen height to avoid multiple requests in case the height available for the table increases. This can happen, for example, during
 			// the startup phase of an application.
-			var iEstimatedMaxRowCount = Math.ceil(Device.resize.height / TableUtils.DefaultRowHeight.sapUiSizeCondensed);
+			const iEstimatedMaxRowCount = Math.ceil(Device.resize.height / TableUtils.DefaultRowHeight.sapUiSizeCondensed);
 			iRequestLength = Math.max(iRequestLength, iEstimatedMaxRowCount);
 		}
 
@@ -274,7 +273,7 @@ sap.ui.define([
 
 	AutoRowMode.prototype.updateTable = function() {
 		if (this.getHideEmptyRows() && this.getComputedRowCounts().count === 0) {
-			var iConfiguredRowCount = this.getConfiguredRowCount();
+			const iConfiguredRowCount = this.getConfiguredRowCount();
 
 			if (iConfiguredRowCount > 0) {
 				this.getRowContexts(iConfiguredRowCount);
@@ -295,9 +294,9 @@ sap.ui.define([
 			};
 		}
 
-		var iRowCount = this.getConfiguredRowCount();
-		var iFixedTopRowCount = this.getFixedTopRowCount();
-		var iFixedBottomRowCount = this.getFixedBottomRowCount();
+		let iRowCount = this.getConfiguredRowCount();
+		const iFixedTopRowCount = this.getFixedTopRowCount();
+		const iFixedBottomRowCount = this.getFixedBottomRowCount();
 
 		if (this.getHideEmptyRows()) {
 			iRowCount = Math.min(iRowCount, this.getTotalRowCountOfTable());
@@ -307,12 +306,12 @@ sap.ui.define([
 	};
 
 	AutoRowMode.prototype.getTableStyles = function() {
-		var sHeight = "0px"; // The table's DOM parent needs to be able to shrink.
+		let sHeight = "0px"; // The table's DOM parent needs to be able to shrink.
 
 		if (isRowCountInitial(this)) {
 			sHeight = "auto";
 		} else {
-			var iRowCount = this.getConfiguredRowCount();
+			const iRowCount = this.getConfiguredRowCount();
 
 			if (iRowCount === 0 || iRowCount === this._getMinRowCount()) {
 				sHeight = "auto";
@@ -329,7 +328,7 @@ sap.ui.define([
 			return undefined;
 		}
 
-		var iRowCountDelta;
+		let iRowCountDelta;
 
 		if (isRowCountInitial(this)) {
 			iRowCountDelta = this._getMinRowCount();
@@ -349,7 +348,7 @@ sap.ui.define([
 	};
 
 	AutoRowMode.prototype.renderRowStyles = function(oRM) {
-		var iRowContentHeight = this.getRowContentHeight();
+		const iRowContentHeight = this.getRowContentHeight();
 
 		if (iRowContentHeight > 0) {
 			oRM.style("height", this.getBaseRowHeightOfTable() + "px");
@@ -357,7 +356,7 @@ sap.ui.define([
 	};
 
 	AutoRowMode.prototype.renderCellContentStyles = function(oRM) {
-		var iRowContentHeight = this.getRowContentHeight();
+		let iRowContentHeight = this.getRowContentHeight();
 
 		/**
 		 * @deprecated As of version 1.119
@@ -389,7 +388,7 @@ sap.ui.define([
 	 */
 	AutoRowMode.prototype._onTableRefreshRows = function() {
 		// The computed row count cannot be used here, because the table's total row count (binding length) is not known yet.
-		var iConfiguredRowCount = this.getConfiguredRowCount();
+		const iConfiguredRowCount = this.getConfiguredRowCount();
 
 		if (iConfiguredRowCount > 0) {
 			if (!isRowCountInitial(this)) {
@@ -406,8 +405,8 @@ sap.ui.define([
 	 * @private
 	 */
 	AutoRowMode.prototype.getConfiguredRowCount = function() {
-		var iRowCount = Math.max(0, this.getMinRowCount(), _private(this).rowCount);
-		var iMaxRowCount = this.getMaxRowCount();
+		let iRowCount = Math.max(0, this.getMinRowCount(), _private(this).rowCount);
+		const iMaxRowCount = this.getMaxRowCount();
 
 		if (iMaxRowCount >= 0) {
 			iRowCount = Math.min(iRowCount, iMaxRowCount);
@@ -445,7 +444,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AutoRowMode.prototype.registerResizeHandler = function(bOnTableParent) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (oTable) {
 			TableUtils.registerResizeHandler(oTable, "AutoRowMode", this.onResize.bind(this), null, bOnTableParent === true);
@@ -460,7 +459,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AutoRowMode.prototype.deregisterResizeHandler = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (oTable) {
 			TableUtils.deregisterResizeHandler(oTable, ["AutoRowMode, AutoRowMode-BeforeTable, AutoRowMode-AfterTable"]);
@@ -474,8 +473,8 @@ sap.ui.define([
 	 * @private
 	 */
 	AutoRowMode.prototype.onResize = function(oEvent) {
-		var iOldHeight = oEvent.oldSize.height;
-		var iNewHeight = oEvent.size.height;
+		const iOldHeight = oEvent.oldSize.height;
+		const iNewHeight = oEvent.size.height;
 
 		if (iOldHeight !== iNewHeight) {
 			signalStartTableUpdate(this);
@@ -512,8 +511,8 @@ sap.ui.define([
 	AutoRowMode.prototype.adjustRowCountToAvailableSpace = function(sReason, bStartAutomaticAdjustment) {
 		bStartAutomaticAdjustment = bStartAutomaticAdjustment === true;
 
-		var oTable = this.getTable();
-		var oTableDomRef = oTable ? oTable.getDomRef() : null;
+		const oTable = this.getTable();
+		const oTableDomRef = oTable ? oTable.getDomRef() : null;
 
 		if (!oTable || oTable._bInvalid || !oTableDomRef || !TableUtils.isThemeApplied()) {
 			signalEndTableUpdate(this);
@@ -533,14 +532,13 @@ sap.ui.define([
 			return;
 		}
 
-		var iNewHeight = this.determineAvailableSpace();
-		var oOldRowCount = this.getConfiguredRowCount();
-		var iNewRowCount = Math.floor(iNewHeight / getRowHeight(this));
-		var iOldComputedRowCount = this.getComputedRowCounts().count;
-		var iNewComputedRowCount;
+		const iNewHeight = this.determineAvailableSpace();
+		const oOldRowCount = this.getConfiguredRowCount();
+		const iNewRowCount = Math.floor(iNewHeight / getRowHeight(this));
+		const iOldComputedRowCount = this.getComputedRowCounts().count;
 
 		_private(this).rowCount = iNewRowCount;
-		iNewComputedRowCount = this.getComputedRowCounts().count;
+		const iNewComputedRowCount = this.getComputedRowCounts().count;
 
 		/**
 		 * @deprecated As of version 1.119
@@ -580,22 +578,22 @@ sap.ui.define([
 	 * @private
 	 */
 	AutoRowMode.prototype.determineAvailableSpace = function() {
-		var oTable = this.getTable();
-		var oTableDomRef = oTable ? oTable.getDomRef() : null;
-		var oRowContainer = oTable ? oTable.getDomRef("tableCCnt") : null;
-		var oPlaceholder = oTable ? oTable.getDomRef("placeholder-bottom") : null;
+		const oTable = this.getTable();
+		const oTableDomRef = oTable ? oTable.getDomRef() : null;
+		const oRowContainer = oTable ? oTable.getDomRef("tableCCnt") : null;
+		const oPlaceholder = oTable ? oTable.getDomRef("placeholder-bottom") : null;
 
 		if (!oTableDomRef || !oRowContainer || !oTableDomRef.parentNode) {
 			return 0;
 		}
 
-		var iUsedHeight = 0;
-		var iRowContainerHeight = oRowContainer.clientHeight;
-		var iPlaceholderHeight = oPlaceholder ? oPlaceholder.clientHeight : 0;
+		let iUsedHeight = 0;
+		const iRowContainerHeight = oRowContainer.clientHeight;
+		const iPlaceholderHeight = oPlaceholder ? oPlaceholder.clientHeight : 0;
 
 		if (_private(this).bTableIsFlexItem) {
-			var aChildNodes = oTableDomRef.childNodes;
-			for (var i = 0; i < aChildNodes.length; i++) {
+			const aChildNodes = oTableDomRef.childNodes;
+			for (let i = 0; i < aChildNodes.length; i++) {
 				iUsedHeight += aChildNodes[i].offsetHeight;
 			}
 			iUsedHeight -= iRowContainerHeight - iPlaceholderHeight;
@@ -604,9 +602,9 @@ sap.ui.define([
 		}
 
 		// For simplicity always add the default height of the horizontal scrollbar to the used height, even if it will not be visible.
-		var oScrollExtension = oTable._getScrollExtension();
+		const oScrollExtension = oTable._getScrollExtension();
 		if (!oScrollExtension.isHorizontalScrollbarVisible()) {
-			var mDefaultScrollbarHeight = {};
+			const mDefaultScrollbarHeight = {};
 			mDefaultScrollbarHeight[Device.browser.BROWSER.CHROME] = 16;
 			mDefaultScrollbarHeight[Device.browser.BROWSER.FIREFOX] = 16;
 			mDefaultScrollbarHeight[Device.browser.BROWSER.SAFARI] = 16;
@@ -614,9 +612,9 @@ sap.ui.define([
 			iUsedHeight += mDefaultScrollbarHeight[Device.browser.name];
 		}
 
-		var oReferenceElement = _private(this).bTableIsFlexItem ? oTableDomRef : oTableDomRef.parentNode;
-		var iNewAvailableSpace = Math.max(0, Math.floor(jQuery(oReferenceElement).height() - iUsedHeight));
-		var iAvailableSpaceDifference = Math.abs(iNewAvailableSpace - _private(this).iLastAvailableSpace);
+		const oReferenceElement = _private(this).bTableIsFlexItem ? oTableDomRef : oTableDomRef.parentNode;
+		const iNewAvailableSpace = Math.max(0, Math.floor(jQuery(oReferenceElement).height() - iUsedHeight));
+		const iAvailableSpaceDifference = Math.abs(iNewAvailableSpace - _private(this).iLastAvailableSpace);
 
 		if (iAvailableSpaceDifference >= 5) {
 			_private(this).iLastAvailableSpace = iNewAvailableSpace;
@@ -629,7 +627,7 @@ sap.ui.define([
 	 * @this sap.ui.table.rowmodes.Auto
 	 */
 	TableDelegate.onBeforeRendering = function(oEvent) {
-		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
+		const bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
 		if (!bRenderedRows) {
 			this.stopAutoRowMode();
@@ -640,7 +638,7 @@ sap.ui.define([
 	 * @this sap.ui.table.rowmodes.Auto
 	 */
 	TableDelegate.onAfterRendering = function(oEvent) {
-		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
+		const bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
 		if (!bRenderedRows) {
 			this.startAutoRowMode();
@@ -653,7 +651,7 @@ sap.ui.define([
 	}
 
 	function signalEndTableUpdate(oRowMode) {
-		for (var i = 0; i < _private(oRowMode).iPendingStartTableUpdateSignals; i++) {
+		for (let i = 0; i < _private(oRowMode).iPendingStartTableUpdateSignals; i++) {
 			TableUtils.Hook.call(oRowMode.getTable(), TableUtils.Hook.Keys.Signal, "EndTableUpdate");
 		}
 		_private(oRowMode).iPendingStartTableUpdateSignals = 0;

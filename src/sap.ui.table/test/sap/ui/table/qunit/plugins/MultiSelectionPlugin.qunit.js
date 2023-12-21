@@ -25,19 +25,19 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sServiceURI = "/service/";
-	var SelectionMode = library.SelectionMode;
+	const sServiceURI = "/service/";
+	const SelectionMode = library.SelectionMode;
 
 	function startMockServer() {
 		MockServer.config({
 			autoRespond: true
 		});
 
-		var oMockServer = new MockServer({
+		const oMockServer = new MockServer({
 			rootUri: sServiceURI
 		});
 
-		var sURLPrefix = sap.ui.require.toUrl("sap/ui/table/qunit");
+		const sURLPrefix = sap.ui.require.toUrl("sap/ui/table/qunit");
 		oMockServer.simulate(sURLPrefix + "/mockdata/metadata.xml", sURLPrefix + "/mockdata/");
 		oMockServer.start();
 		return oMockServer;
@@ -54,8 +54,8 @@ sap.ui.define([
 			this.oTable.destroy();
 		},
 		assertRenderConfig: function(assert, mActualConfig, mExpectedConfig, sTitle) {
-			var oActualIcon;
-			var sExpectedIconUri;
+			let oActualIcon;
+			let sExpectedIconUri;
 
 			if (mActualConfig.headerSelector) {
 				oActualIcon = mActualConfig.headerSelector.icon ? mActualConfig.headerSelector.icon : undefined;
@@ -82,14 +82,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialization", function(assert) {
-		var oMultiSelectionPlugin = new MultiSelectionPlugin();
+		const oMultiSelectionPlugin = new MultiSelectionPlugin();
 		assert.strictEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The MultiSelectionPlugin has no internal default selection plugin");
 		assert.notEqual(oMultiSelectionPlugin.getAggregation("icon"), null, "The MultiSelectionPlugin has an icon");
 
 	});
 
 	QUnit.test("Add to and remove from table", function(assert) {
-		var oMultiSelectionPlugin = new MultiSelectionPlugin();
+		const oMultiSelectionPlugin = new MultiSelectionPlugin();
 
 		this.oTable.addDependent(oMultiSelectionPlugin);
 		assert.notEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The MultiSelectionPlugin has an internal default selection plugin");
@@ -101,11 +101,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Destruction", function(assert) {
-		var oMultiSelectionPlugin = new MultiSelectionPlugin();
+		const oMultiSelectionPlugin = new MultiSelectionPlugin();
 
 		this.oTable.addDependent(oMultiSelectionPlugin);
 
-		var oInternalPluginDestroySpy = sinon.spy(oMultiSelectionPlugin.oInnerSelectionPlugin, "destroy");
+		const oInternalPluginDestroySpy = sinon.spy(oMultiSelectionPlugin.oInnerSelectionPlugin, "destroy");
 
 		oMultiSelectionPlugin.destroy();
 		assert.ok(oInternalPluginDestroySpy.calledOnce, "The internal default selection plugin was destroyed");
@@ -117,8 +117,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("#getRenderConfig", function(assert) {
-		var oMultiSelectionPlugin = new MultiSelectionPlugin();
-		var that = this;
+		const oMultiSelectionPlugin = new MultiSelectionPlugin();
+		const that = this;
 
 		this.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
 			headerSelector: {
@@ -233,8 +233,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("#setSelected", function(assert) {
-		var oMultiSelectionPlugin = new MultiSelectionPlugin();
-		var that = this;
+		const oMultiSelectionPlugin = new MultiSelectionPlugin();
+		const that = this;
 
 		function waitForSelectionChange() {
 			return new Promise(function(resolve) {
@@ -272,7 +272,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("findOn", function(assert) {
-		var oMultiSelectionPlugin = new MultiSelectionPlugin();
+		const oMultiSelectionPlugin = new MultiSelectionPlugin();
 		this.oTable.addDependent(oMultiSelectionPlugin);
 
 		assert.ok(SelectionPlugin.findOn(this.oTable) === oMultiSelectionPlugin, "Plugin found on dependents aggregation via SelectionPlugin.findOn");
@@ -304,9 +304,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Enable/Disable", function(assert) {
-		var oTable = this.oTable;
-		var $SelectAll = oTable.$("selall");
-		var oSelectionPlugin = oTable._getSelectionPlugin();
+		const oTable = this.oTable;
+		const $SelectAll = oTable.$("selall");
+		const oSelectionPlugin = oTable._getSelectionPlugin();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.ok($SelectAll.attr("aria-disabled"), "Before bindRows: aria-disabled is set to true");
@@ -338,7 +338,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Event parameters of internal default selection plugin", function(assert) {
-		var oMultiSelectionPlugin = new MultiSelectionPlugin();
+		const oMultiSelectionPlugin = new MultiSelectionPlugin();
 
 		this.oTable.destroy();
 		this.oTable = TableQUnitUtils.createTable({
@@ -392,10 +392,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Display and accessibility", function(assert) {
-		var done = assert.async();
-		var that = this;
-		var $SelectAll = this.oTable.$("selall");
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const done = assert.async();
+		const that = this;
+		const $SelectAll = this.oTable.$("selall");
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
 
 		assert.ok(oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"), "MultiSelectionPlugin is initialised");
 		assert.strictEqual($SelectAll.find(".sapUiTableSelectAllCheckBox").length, 0, "no Select All checkbox");
@@ -414,7 +414,7 @@ sap.ui.define([
 			assert.notOk($SelectAll.hasClass("sapUiTableSelAllDisabled"), "Deselect All is enabled");
 			that.oTable.setEnableSelectAll(true);
 
-			var oSetPropertySpy = sinon.spy(oSelectionPlugin, "setProperty");
+			const oSetPropertySpy = sinon.spy(oSelectionPlugin, "setProperty");
 			oSelectionPlugin.setLimit(5);
 			oCore.applyChanges();
 			assert.ok(oSetPropertySpy.calledOnceWithExactly("limit", 5, true), "setProperty called once with the correct parameters");
@@ -450,10 +450,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection using addSelectionInterval: Selection not possible", function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
-		var oSelectionChangeSpy = sinon.spy();
-		var iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
+		const oSelectionChangeSpy = sinon.spy();
+		const iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
 
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
 
@@ -507,10 +507,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection using addSelectionInterval: Number of items in range below limit", function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
-		var oSelectionChangeSpy = sinon.spy();
-		var iSelectableCount = oSelectionPlugin.getSelectableCount();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
+		const oSelectionChangeSpy = sinon.spy();
+		const iSelectableCount = oSelectionPlugin.getSelectableCount();
 
 		oSelectionPlugin.setLimit(5);
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
@@ -576,8 +576,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Reverse selection using addSelectionInterval: Number of items in range below limit", function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
 
 		oSelectionPlugin.setLimit(5);
 
@@ -610,12 +610,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection using addSelectionInterval: Number of items in range above limit", async function(assert) {
-		var oTable = this.oTable;
-		var oSelectionPlugin = oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(oTable.getBinding(), "getContexts");
-		var oSelectionChangeSpy = sinon.spy();
-		var oFirstVisibleRowChangedSpy = sinon.spy();
-		var oRowsUpdatedSpy = sinon.spy();
+		const oTable = this.oTable;
+		const oSelectionPlugin = oTable._getSelectionPlugin();
+		const fnGetContexts = sinon.spy(oTable.getBinding(), "getContexts");
+		const oSelectionChangeSpy = sinon.spy();
+		const oFirstVisibleRowChangedSpy = sinon.spy();
+		const oRowsUpdatedSpy = sinon.spy();
 
 		oTable.getRowMode().setRowCount(3);
 		oSelectionPlugin.setLimit(5);
@@ -681,8 +681,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Reverse selection using addSelectionInterval: Number of items in range above limit", function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
 
 		oSelectionPlugin.setLimit(5);
 
@@ -701,10 +701,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection using setSelectionInterval: Selection not possible", function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
-		var oSelectionChangeSpy = sinon.spy();
-		var iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
+		const oSelectionChangeSpy = sinon.spy();
+		const iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
 
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
 
@@ -758,10 +758,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection using setSelectionInterval", function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
-		var oSelectionChangeSpy = sinon.spy();
-		var iSelectableCount = oSelectionPlugin.getSelectableCount();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
+		const oSelectionChangeSpy = sinon.spy();
+		const iSelectableCount = oSelectionPlugin.getSelectableCount();
 
 		oSelectionPlugin.setLimit(5);
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
@@ -839,10 +839,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection using setSelectedIndex: Selection not possible", function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
-		var oSelectionChangeSpy = sinon.spy();
-		var iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
+		const oSelectionChangeSpy = sinon.spy();
+		const iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
 
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
 
@@ -896,9 +896,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection using setSelectedIndex", function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
-		var oSelectionChangeSpy = sinon.spy();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
+		const oSelectionChangeSpy = sinon.spy();
 
 		oSelectionPlugin.setLimit(5);
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
@@ -933,16 +933,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("selectionChange event: custom payload", function(assert) {
-		var oTable = this.oTable;
-		var oSelectionPlugin = oTable._getSelectionPlugin();
+		const oTable = this.oTable;
+		const oSelectionPlugin = oTable._getSelectionPlugin();
 
 		oSelectionPlugin.setLimit(0);
 
 		return oSelectionPlugin.setSelectionInterval(0, 1).then(function() {
-			var aPromises = [];
+			const aPromises = [];
 
 			oSelectionPlugin.attachSelectionChange(function(oEvent) {
-				var oCustomPayload = oEvent.getParameter("customPayload");
+				const oCustomPayload = oEvent.getParameter("customPayload");
 				assert.step(oCustomPayload ? oCustomPayload.d : "" + oCustomPayload);
 			});
 
@@ -969,8 +969,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Mouse interaction", function(assert) {
-		var oTable = this.oTable;
-		var oSelectionPlugin = oTable._getSelectionPlugin();
+		const oTable = this.oTable;
+		const oSelectionPlugin = oTable._getSelectionPlugin();
 
 		function doSelection(fnSelect) {
 			return Promise.race([
@@ -1031,8 +1031,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Keyboard interaction", function(assert) {
-		var oTable = this.oTable;
-		var oSelectionPlugin = oTable._getSelectionPlugin();
+		const oTable = this.oTable;
+		const oSelectionPlugin = oTable._getSelectionPlugin();
 
 		function doSelection(fnSelect) {
 			return Promise.race([
@@ -1100,9 +1100,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection using SelectAll: Selection not possible", function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
-		var oSelectionChangeSpy = sinon.spy();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
+		const oSelectionChangeSpy = sinon.spy();
 
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
 		sinon.stub(oSelectionPlugin, "getSelectableCount").returns(0);
@@ -1146,11 +1146,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Select All", async function(assert) {
-		var oTable = this.oTable;
-		var oSelectionPlugin = oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(oTable.getBinding(), "getContexts");
-		var oSelectionChangeSpy = sinon.spy();
-		var iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
+		const oTable = this.oTable;
+		const oSelectionPlugin = oTable._getSelectionPlugin();
+		const fnGetContexts = sinon.spy(oTable.getBinding(), "getContexts");
+		const oSelectionChangeSpy = sinon.spy();
+		const iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
 
 		assert.equal(oSelectionPlugin.getRenderConfig().headerSelector.type, "clear", "The headerSelector type is clear");
 
@@ -1172,7 +1172,7 @@ sap.ui.define([
 			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 
 		}).then(function() {
-			var oSelectionSpy = sinon.spy(oSelectionPlugin, "addSelectionInterval");
+			const oSelectionSpy = sinon.spy(oSelectionPlugin, "addSelectionInterval");
 
 			sinon.stub(oSelectionPlugin, "_getHighestSelectableIndex").returns(15);
 			sinon.stub(oSelectionPlugin, "getSelectableCount").returns(10);
@@ -1191,10 +1191,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll position", async function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var oSelectionSpy = sinon.spy(oSelectionPlugin, "addSelectionInterval");
-		var $Cell;
-		var that = this;
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const oSelectionSpy = sinon.spy(oSelectionPlugin, "addSelectionInterval");
+		let $Cell;
+		const that = this;
 
 		this.oTable.getRowMode().setRowCount(3);
 		oSelectionPlugin.setLimit(5);
@@ -1222,7 +1222,7 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				that.oTable.getRowMode().setRowCount(10);
-				var oScrollSpy = sinon.spy(that.oTable, "setFirstVisibleRow");
+				const oScrollSpy = sinon.spy(that.oTable, "setFirstVisibleRow");
 				oSelectionPlugin.setSelectionInterval(5, 10);
 				setTimeout(function() {
 					assert.ok(oScrollSpy.notCalled, "The table is not scrolled because the last selected row is already visible");
@@ -1233,10 +1233,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll position (reverse range selection)", async function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var oSelectionSpy = sinon.spy(oSelectionPlugin, "addSelectionInterval");
-		var $Cell;
-		var that = this;
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const oSelectionSpy = sinon.spy(oSelectionPlugin, "addSelectionInterval");
+		let $Cell;
+		const that = this;
 
 		this.oTable.getRowMode().setRowCount(3);
 		oSelectionPlugin.setLimit(5);
@@ -1249,7 +1249,7 @@ sap.ui.define([
 				});
 
 				that.oTable.setFirstVisibleRow(7);
-				var $Cell = that.oTable.$("rowsel2");
+				const $Cell = that.oTable.$("rowsel2");
 				qutils.triggerEvent("tap", $Cell);
 			}, 100);
 		}).then(function() {
@@ -1266,7 +1266,7 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				that.oTable.getRowMode().setRowCount(10);
-				var oScrollSpy = sinon.spy(that.oTable, "setFirstVisibleRow");
+				const oScrollSpy = sinon.spy(that.oTable, "setFirstVisibleRow");
 				oSelectionPlugin.setSelectionInterval(10, 5);
 				setTimeout(function() {
 					assert.ok(oScrollSpy.notCalled, "The table is not scrolled because the last selected row is already visible");
@@ -1277,14 +1277,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection (selectionMode = Single)", async function(assert) {
-		var done = assert.async();
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const done = assert.async();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
 
 		oSelectionPlugin.setSelectionMode(SelectionMode.Single);
 		await this.oTable.qunit.whenRenderingFinished();
 
-		var oCell = this.oTable.getDomRef("selall");
-		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
+		const oCell = this.oTable.getDomRef("selall");
+		const fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
 
 		assert.ok(!oCell.hasAttribute("role"), "DeselectAll role is not set");
 		assert.ok(!oCell.hasAttribute("title"), "DeselectAll title is not set");
@@ -1312,13 +1312,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection (selectionMode = None)", async function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
 
 		oSelectionPlugin.setSelectionMode(SelectionMode.None);
 		await this.oTable.qunit.whenRenderingFinished();
 
-		var oCell = this.oTable.getDomRef("selall");
-		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
+		const oCell = this.oTable.getDomRef("selall");
+		const fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
 
 		assert.ok(!oCell.hasAttribute("role"), "DeselectAll role is not set");
 		assert.ok(!oCell.hasAttribute("title"), "DeselectAll title is not set");
@@ -1342,11 +1342,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Limit notification", function(assert) {
-		var iLimit = 5;
-		var oTable = this.oTable;
-		var oSelectionPlugin = this.oTable._oSelectionPlugin;
-		var oPopoverOpenBySpy;
-		var oPopoverCloseSpy;
+		const iLimit = 5;
+		const oTable = this.oTable;
+		const oSelectionPlugin = this.oTable._oSelectionPlugin;
+		let oPopoverOpenBySpy;
+		let oPopoverCloseSpy;
 
 		function resetSpies() {
 			oPopoverOpenBySpy.resetHistory();
@@ -1410,7 +1410,7 @@ sap.ui.define([
 		const oEvent = {
 			setMarked: function() {}
 		};
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
 		const oClearSelectionSpy = sinon.spy(oSelectionPlugin, "clearSelection");
 		const oSelectAllSpy = sinon.spy(oSelectionPlugin, "selectAll");
 		const oSetMarkedSpy = sinon.spy(oEvent, "setMarked");

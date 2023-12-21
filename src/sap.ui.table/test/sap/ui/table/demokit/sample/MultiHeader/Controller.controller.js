@@ -6,8 +6,8 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.MultiHeader.Controller", {
 		onInit: function() {
-			var oModel = new JSONModel();
-			var oData = {
+			const oModel = new JSONModel();
+			const oData = {
 				modelData: [
 					{supplier: "Titanium", street: "401 23rd St", city: "Port Angeles", phone: "5682-121-828", openOrders: 10},
 					{supplier: "Technocom", street: "51 39th St", city: "Smallfield", phone: "2212-853-789", openOrders: 0},
@@ -16,7 +16,7 @@ sap.ui.define([
 					{supplier: "Very Best Screens", street: "123 72nd St", city: "McLean", phone: "5412-543-765", openOrders: 6}
 				]
 			};
-			var oView = this.getView();
+			const oView = this.getView();
 
 			oModel.setData(oData);
 			oView.setModel(oModel);

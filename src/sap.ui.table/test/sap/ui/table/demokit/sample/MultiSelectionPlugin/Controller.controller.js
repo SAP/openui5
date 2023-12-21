@@ -9,9 +9,9 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.ui.table.SelectionMode
-	var SelectionMode = library.SelectionMode;
+	const SelectionMode = library.SelectionMode;
 
-	var sServiceUrl = "http://my.test.service.com/";
+	const sServiceUrl = "http://my.test.service.com/";
 
 	return Controller.extend("sap.ui.table.sample.MultiSelectionPlugin.Controller", {
 
@@ -22,7 +22,7 @@ sap.ui.define([
 
 			MockServer.config({autoRespondAfter: 2000});
 
-			var sSamplePath = sap.ui.require.toUrl("sap/ui/table/sample/");
+			const sSamplePath = sap.ui.require.toUrl("sap/ui/table/sample/");
 			this.oMockServer.simulate(sSamplePath + "MultiSelectionPlugin/metadata.xml", {
 				sMockdataBaseUrl: sSamplePath + "OData",
 				bGenerateMissingMockData: true
@@ -30,14 +30,14 @@ sap.ui.define([
 
 			this.oMockServer.start();
 
-			var aSelectionModes = [];
+			const aSelectionModes = [];
 			Object.keys(SelectionMode).forEach(function(k) {
 				if (k != SelectionMode.Multi) {
 					aSelectionModes.push({key: k, text: SelectionMode[k]});
 				}
 			});
 
-			var oView = this.getView();
+			const oView = this.getView();
 			oView.setModel(new ODataModel(sServiceUrl));
 			oView.setModel(new JSONModel({
 				limit: 20,
@@ -48,10 +48,10 @@ sap.ui.define([
 		},
 
 		onSelectionChange: function(oEvent) {
-			var oPlugin = oEvent.getSource();
-			var bLimitReached = oEvent.getParameters().limitReached;
-			var iIndices = oPlugin.getSelectedIndices();
-			var sMessage = "";
+			const oPlugin = oEvent.getSource();
+			const bLimitReached = oEvent.getParameters().limitReached;
+			const iIndices = oPlugin.getSelectedIndices();
+			let sMessage = "";
 
 			if (iIndices.length > 0) {
 				sMessage = iIndices.length + " row(s) selected.";
@@ -66,14 +66,14 @@ sap.ui.define([
 		},
 
 		onLimitChange: function(oEvent) {
-			var oInput = oEvent.getSource();
-			var iLimit = parseInt(oInput.getValue());
-			var sMessage = "";
+			const oInput = oEvent.getSource();
+			const iLimit = parseInt(oInput.getValue());
+			let sMessage = "";
 
 			if (isNaN(iLimit) || iLimit < 0) {
-				var oTable = this.byId("table");
-				var oPlugin = oTable.getDependents()[0];
-				var iCurrentLimit = oPlugin.getLimit();
+				const oTable = this.byId("table");
+				const oPlugin = oTable.getDependents()[0];
+				const iCurrentLimit = oPlugin.getLimit();
 
 				oInput.setValue(iCurrentLimit);
 				sMessage = "The Limit accepts positive integer values. To disable it set its value to 0. \nCurrent limit is " + iCurrentLimit;
@@ -87,7 +87,7 @@ sap.ui.define([
 		},
 
 		onExit: function() {
-			var oModel = this.getView().getModel();
+			const oModel = this.getView().getModel();
 			this.getView().setModel();
 			oModel.destroy();
 

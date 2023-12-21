@@ -44,7 +44,7 @@ sap.ui.define([
 	QUnit.module("Basics");
 
 	QUnit.test("Initialize skip propagation", function(assert) {
-		var oColumn = new Column();
+		const oColumn = new Column();
 
 		assert.deepEqual(oColumn.mSkipPropagation, {
 			template: true,
@@ -64,13 +64,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("shouldRender", function(assert) {
-		var that = this;
+		const that = this;
 
 		function test(bShouldRender, bVisible, vTemplate) {
 			that._oColumn.setVisible(bVisible);
 			that._oColumn.setTemplate(vTemplate);
 
-			var sMessage = "Returned " + bShouldRender + ": " + (bVisible ? "Visible" : "Not visible") + ", " + (vTemplate != null ? ",has template" : "has no template");
+			const sMessage = "Returned " + bShouldRender + ": " + (bVisible ? "Visible" : "Not visible") + ", " + (vTemplate != null ? ",has template" : "has no template");
 			assert.strictEqual(that._oColumn.shouldRender(), bShouldRender, sMessage);
 		}
 
@@ -84,7 +84,7 @@ sap.ui.define([
 	 * @deprecated As of Version 1.119
 	 */
 	QUnit.test("shouldRender with grouping", function(assert) {
-		var that = this;
+		const that = this;
 
 		function test(bShouldRender, bVisible, bGrouped, vTemplate) {
 			that._oColumn.setVisible(bVisible);
@@ -93,7 +93,7 @@ sap.ui.define([
 			}
 			that._oColumn.setTemplate(vTemplate);
 
-			var sMessage = "Returned " + bShouldRender + ": " + (bVisible ? "Visible" : "Not visible") + ", " + (bGrouped ? "grouped" : "not grouped") + ", " + (vTemplate != null ? ",has template" : "has no template");
+			const sMessage = "Returned " + bShouldRender + ": " + (bVisible ? "Visible" : "Not visible") + ", " + (bGrouped ? "grouped" : "not grouped") + ", " + (vTemplate != null ? ",has template" : "has no template");
 			assert.strictEqual(that._oColumn.shouldRender(), bShouldRender, sMessage);
 		}
 
@@ -108,20 +108,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("#isDragAllowed", async function(assert) {
-		var oColumn = new Column({
+		const oColumn = new Column({
 			label: new TableQUnitUtils.TestControl({text: "col2header"})
-		}),
-		dragDropInfo = new DragDropInfo({
+		});
+		const dragDropInfo = new DragDropInfo({
 			sourceAggregation: "columns",
 			targetAggregation: "columns",
 			dropPosition: "Between",
 			enabled: true
-		}),
-		oTable = new Table({
+		});
+		const oTable = new Table({
 			columns: oColumn,
 			dragDropConfig: [dragDropInfo]
-		}),
-		oStubIsColumnMovable = sinon.stub(TableUtils.Column, "isColumnMovable");
+		});
+		const oStubIsColumnMovable = sinon.stub(TableUtils.Column, "isColumnMovable");
 
 		oTable.placeAt("qunit-fixture");
 		await nextUIUpdate();
@@ -175,7 +175,7 @@ sap.ui.define([
 			summary: {group: true, total: true}
 		}, "Shorthand notation");
 
-		var mCellContentVisibilitySettings = {
+		const mCellContentVisibilitySettings = {
 			standard: false,
 			groupHeader: {nonExpandable: false, expanded: false, collapsed: false},
 			summary: false
@@ -230,7 +230,7 @@ sap.ui.define([
 			});
 		}.bind(this), new Error("Invalid value for 'groupHeader'"), "Settings contain invalid value for boolean|object setting");
 
-		var oInvalidate = this.spy(this._oColumn, "invalidate");
+		const oInvalidate = this.spy(this._oColumn, "invalidate");
 		this._oColumn._setCellContentVisibilitySettings({standard: false});
 		this._oColumn._setCellContentVisibilitySettings();
 		assert.ok(oInvalidate.notCalled, "Column is not invalidated");
@@ -262,9 +262,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Label", function(assert) {
-		var oDefaultLabel;
-		var oCustomLabel;
-		var oOldCustomLabel;
+		let oDefaultLabel;
+		let oCustomLabel;
 
 		assert.equal(this._oColumn.getLabel(), null, "The column has no label defined");
 
@@ -284,7 +283,7 @@ sap.ui.define([
 		assert.strictEqual(oCustomLabel.getText(), "labelinstance", "Text of the custom label");
 		assert.ok(oDefaultLabel.isDestroyed(), "Default label destroyed");
 
-		oOldCustomLabel = oCustomLabel;
+		const oOldCustomLabel = oCustomLabel;
 		oCustomLabel = new TableQUnitUtils.TestControl({text: "newlabelinstance"});
 
 		oCustomLabel.setIsInColumnHeaderContext = function(bIsInColumnHeaderContext) {
@@ -314,9 +313,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Template", function(assert) {
-		var oDefaultTemplate;
-		var oCustomTemplate;
-		var oOldCustomTemplate;
+		let oDefaultTemplate;
+		let oCustomTemplate;
 
 		assert.equal(this._oColumn.getTemplate(), null, "The column has no template defined");
 
@@ -336,7 +334,7 @@ sap.ui.define([
 		assert.strictEqual(oCustomTemplate.getBindingPath("text"), "anotherbindingpath", "Binding path of the custom template");
 		assert.ok(oDefaultTemplate.isDestroyed(), "Default template destroyed");
 
-		oOldCustomTemplate = oCustomTemplate;
+		const oOldCustomTemplate = oCustomTemplate;
 		oCustomTemplate = new TableQUnitUtils.TestControl({text: "{yetanotherbindingpath}"});
 		this._oColumn.setTemplate(oCustomTemplate);
 		assert.equal(this._oColumn.getTemplate(), oCustomTemplate, "Set control: New custom template added to the aggregation");
@@ -494,7 +492,7 @@ sap.ui.define([
 	 */
 	QUnit.module("Column Menu", {
 		beforeEach: function() {
-			var oModel = new JSONModel();
+			const oModel = new JSONModel();
 			oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
 			this._oTable = new Table();
 			this._oTable.bindRows("/");
@@ -531,26 +529,28 @@ sap.ui.define([
 	 * @deprecated As of version 1.117
 	 */
 	QUnit.test("Filter on Column with ColumnMenu and UnifiedMenu", function(assert) {
-		var that = this, done = assert.async(), oCellDomRef = this._oColumnWithColumnMenu.getDomRef();
+		const that = this;
+const done = assert.async();
+const oCellDomRef = this._oColumnWithColumnMenu.getDomRef();
 
 		this._oColumnWithColumnMenu.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oColumnMenu = that._oColumnWithColumnMenu.getMenu();
-				var oSpyColumnMenu = that.spy(oColumnMenu, "_setFilterValue");
+				const oColumnMenu = that._oColumnWithColumnMenu.getMenu();
+				const oSpyColumnMenu = that.spy(oColumnMenu, "_setFilterValue");
 				that._oColumnWithColumnMenu.filter("filterValue");
 				that._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
 
-				var oFilterField = Element.getElementById(oColumnMenu.getId() + "-filter");
+				const oFilterField = Element.getElementById(oColumnMenu.getId() + "-filter");
 				assert.equal(oFilterField.getValue(), "filterValue", "Filter value set on ColumnMenu");
 				assert.ok(oSpyColumnMenu.called, "_setFilterValue called on ColumnMenu");
 
-				var oUnifiedMenu = that._oColumnWithUnifiedMenu.getMenu();
+				const oUnifiedMenu = that._oColumnWithUnifiedMenu.getMenu();
 				// implement a dummy function to allow usage of sinon.spy
 				oUnifiedMenu._setFilterValue = function() {};
-				var oSpyUnifiedMenu = that.spy(oUnifiedMenu, "_setFilterValue");
+				const oSpyUnifiedMenu = that.spy(oUnifiedMenu, "_setFilterValue");
 
 				// if filter is called on a column, the filter state of the other columns must be updated as well
-				var oSpyColumnMenuFilterState = that.spy(oColumnMenu, "_setFilterState");
+				const oSpyColumnMenuFilterState = that.spy(oColumnMenu, "_setFilterState");
 				that._oColumnWithUnifiedMenu.filter("filterValue");
 				assert.ok(!oSpyUnifiedMenu.called, "_setFilterValue not called on UnifiedMenu");
 				assert.ok(oSpyColumnMenuFilterState.calledOnce, "_setFilterState called on ColumnMenu");
@@ -565,19 +565,19 @@ sap.ui.define([
 	 * @deprecated As of version 1.110
 	 */
 	QUnit.test("Set Grouping", function(assert) {
-		var done = assert.async();
-		var oTable = this._oTable;
-		var oColumn = this._oColumnWithColumnMenu;
-		var oCellDomRef = oColumn.getDomRef();
+		const done = assert.async();
+		const oTable = this._oTable;
+		const oColumn = this._oColumnWithColumnMenu;
+		const oCellDomRef = oColumn.getDomRef();
 		oTable.setGroupBy = function() {};
-		var oSetGroupSpy = sinon.spy(oTable, "setGroupBy");
+		const oSetGroupSpy = sinon.spy(oTable, "setGroupBy");
 
 		oTable.setEnableGrouping(true);
 		oColumn.setSortProperty("myProp");
 
 		oColumn.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oGroupMenuItem = oColumn.getMenu().getItems()[3];
+				const oGroupMenuItem = oColumn.getMenu().getItems()[3];
 				assert.strictEqual(oGroupMenuItem.getText(), TableUtils.getResourceBundle().getText("TBL_GROUP"), "The group menu item exists");
 				oGroupMenuItem.fireSelect();
 				assert.ok(oSetGroupSpy.calledOnce, "setGroupBy is called");
@@ -607,11 +607,13 @@ sap.ui.define([
 	 * @deprecated As of version 1.117
 	 */
 	QUnit.test("Localization and Invalidation", function(assert) {
-		var done = assert.async(), that = this, oCellDomRef = this._oColumnWithColumnMenu.getDomRef();
+		const done = assert.async();
+const that = this;
+const oCellDomRef = this._oColumnWithColumnMenu.getDomRef();
 
 		this._oColumnWithColumnMenu.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oColumnMenu = that._oColumnWithColumnMenu.getMenu();
+				const oColumnMenu = that._oColumnWithColumnMenu.getMenu();
 				assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
 				that._oTable._invalidateColumnMenus();
 				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
@@ -655,8 +657,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property changes", function(assert) {
-		var oInvalidateRowsAggregationSpy = sinon.spy(this.oTable, "invalidateRowsAggregation");
-		var oCreationRowUpdateSpy = sinon.spy(this.oCreationRow, "_update");
+		const oInvalidateRowsAggregationSpy = sinon.spy(this.oTable, "invalidateRowsAggregation");
+		const oCreationRowUpdateSpy = sinon.spy(this.oCreationRow, "_update");
 
 		this.oColumn.setVisible(false);
 		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 1,
@@ -678,8 +680,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Template changes", function(assert) {
-		var oInvalidateRowsAggregationSpy = sinon.spy(this.oTable, "invalidateRowsAggregation");
-		var oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+		const oInvalidateRowsAggregationSpy = sinon.spy(this.oTable, "invalidateRowsAggregation");
+		const oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
 
 		this.oColumn.setTemplate(new TableQUnitUtils.TestControl());
 		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 1,
@@ -725,8 +727,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("CreationTemplate changes", function(assert) {
-		var oCreationRowUpdateSpy = sinon.spy(this.oCreationRow, "_update");
-		var oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+		const oCreationRowUpdateSpy = sinon.spy(this.oCreationRow, "_update");
+		const oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
 
 		this.oColumn.setCreationTemplate(new TableQUnitUtils.TestControl());
 		assert.strictEqual(oCreationRowUpdateSpy.callCount, 1,
@@ -808,14 +810,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getFreeTemplateClone: No free standard template clone available", function(assert) {
-		for (var sTemplateType in this.oColumn._mTemplateClones) {
+		for (const sTemplateType in this.oColumn._mTemplateClones) {
 			this.oColumn._mTemplateClones[sTemplateType] = [
 				null,
 				this.oCloneWithParent,
 				this.oDestroyedClone
 			];
 
-			var oFreeTemplateClone = this.oColumn._getFreeTemplateClone(sTemplateType);
+			const oFreeTemplateClone = this.oColumn._getFreeTemplateClone(sTemplateType);
 
 			assert.strictEqual(oFreeTemplateClone, null, sTemplateType + " type: Returned null");
 			assert.deepEqual(this.oColumn._mTemplateClones[sTemplateType], [this.oCloneWithParent],
@@ -826,7 +828,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getFreeTemplateClone: Free template clones available", function(assert) {
-		for (var sTemplateType in this.oColumn._mTemplateClones) {
+		for (const sTemplateType in this.oColumn._mTemplateClones) {
 			this.oColumn._mTemplateClones[sTemplateType] = [
 				null,
 				this.oCloneWithParent,
@@ -835,7 +837,7 @@ sap.ui.define([
 				this.oCloneWithoutParentB
 			];
 
-			var oFreeTemplateClone = this.oColumn._getFreeTemplateClone(sTemplateType);
+			const oFreeTemplateClone = this.oColumn._getFreeTemplateClone(sTemplateType);
 
 			assert.strictEqual(oFreeTemplateClone, this.oCloneWithoutParentA, sTemplateType + " type: Returned the first free template clone");
 			assert.deepEqual(this.oColumn._mTemplateClones[sTemplateType], [
@@ -849,8 +851,8 @@ sap.ui.define([
 	QUnit.test("getTemplateClone: No parameters passed", function(assert) {
 		this.oColumn.setTemplate(new TableQUnitUtils.TestControl());
 
-		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
-		var oTemplateClone = this.oColumn.getTemplateClone();
+		const oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
+		const oTemplateClone = this.oColumn.getTemplateClone();
 
 		assert.ok(oGetFreeTemplateCloneSpy.notCalled, "Column#_getFreeTemplateClone was not called");
 		assert.strictEqual(this.getTemplateCloneCount(), 0, "No template clones exist");
@@ -860,8 +862,8 @@ sap.ui.define([
 	QUnit.test("getTemplateClone: No type information passed", function(assert) {
 		this.oColumn.setTemplate(new TableQUnitUtils.TestControl({text: "Standard"}));
 
-		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
-		var oTemplateClone = this.oColumn.getTemplateClone(0);
+		const oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
+		const oTemplateClone = this.oColumn.getTemplateClone(0);
 
 		assert.ok(oGetFreeTemplateCloneSpy.calledWithExactly("Standard"), "Column#_getFreeTemplateClone was called with templateType=Standard");
 		assert.strictEqual(this.getTemplateCloneCount(), 1, "1 template clone exists");
@@ -872,21 +874,21 @@ sap.ui.define([
 
 	QUnit.test("getTemplateClone: Wrong type information passed", function(assert) {
 		this.oColumn.setTemplate(new TableQUnitUtils.TestControl());
-		var oTemplateClone = this.oColumn.getTemplateClone(0, "not a template type");
+		const oTemplateClone = this.oColumn.getTemplateClone(0, "not a template type");
 		assert.strictEqual(this.getTemplateCloneCount(), 0, "No template clone exists");
 		assert.strictEqual(oTemplateClone, null, "Returned null");
 	});
 
 	QUnit.test("getTemplateClone: No index passed", function(assert) {
-		for (var j = 0; j < this.aTemplateTypes.length; j++) {
+		for (let j = 0; j < this.aTemplateTypes.length; j++) {
 			this.setTemplate(this.aTemplateTypes[j], new TableQUnitUtils.TestControl());
 		}
 
-		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
+		const oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
 
-		for (var i = 0; i < this.aTemplateTypes.length; i++) {
-			var sTemplateType = this.aTemplateTypes[i];
-			var oTemplateClone = this.oColumn.getTemplateClone(null, sTemplateType);
+		for (let i = 0; i < this.aTemplateTypes.length; i++) {
+			const sTemplateType = this.aTemplateTypes[i];
+			const oTemplateClone = this.oColumn.getTemplateClone(null, sTemplateType);
 
 			assert.strictEqual(oTemplateClone, null, sTemplateType + " type: Returned null");
 		}
@@ -896,11 +898,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("getTemplateClone: No template is defined", function(assert) {
-		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
+		const oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
 
-		for (var i = 0; i < this.aTemplateTypes.length; i++) {
-			var sTemplateType = this.aTemplateTypes[i];
-			var oTemplateClone = this.oColumn.getTemplateClone(0, sTemplateType);
+		for (let i = 0; i < this.aTemplateTypes.length; i++) {
+			const sTemplateType = this.aTemplateTypes[i];
+			const oTemplateClone = this.oColumn.getTemplateClone(0, sTemplateType);
 
 			assert.strictEqual(oTemplateClone, null, sTemplateType + " type: Returned null");
 			assert.ok(oGetFreeTemplateCloneSpy.notCalled, sTemplateType + " type: Column#_getFreeTemplateClone was not called");
@@ -912,24 +914,24 @@ sap.ui.define([
 	});
 
 	QUnit.test("getTemplateClone: No template clones exist -> Create a new template clone", function(assert) {
-		var mTemplateCloneFunctionSpies = {};
-		var sTemplateType;
+		const mTemplateCloneFunctionSpies = {};
+		let sTemplateType;
 
-		for (var j = 0; j < this.aTemplateTypes.length; j++) {
+		for (let j = 0; j < this.aTemplateTypes.length; j++) {
 			sTemplateType = this.aTemplateTypes[j];
 
-			var oTemplate = new TableQUnitUtils.TestControl({text: sTemplateType});
+			const oTemplate = new TableQUnitUtils.TestControl({text: sTemplateType});
 
 			this.setTemplate(sTemplateType, oTemplate);
 			mTemplateCloneFunctionSpies[sTemplateType] = sinon.spy(oTemplate, "clone");
 		}
 
-		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
+		const oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
 
-		for (var i = 0; i < this.aTemplateTypes.length; i++) {
+		for (let i = 0; i < this.aTemplateTypes.length; i++) {
 			sTemplateType = this.aTemplateTypes[i];
 
-			var oTemplateClone = this.oColumn.getTemplateClone(5, sTemplateType);
+			const oTemplateClone = this.oColumn.getTemplateClone(5, sTemplateType);
 
 			assert.ok(oTemplateClone === this.oColumn._mTemplateClones[sTemplateType][0],
 				sTemplateType + " type: Returned the created template clone");
@@ -952,25 +954,25 @@ sap.ui.define([
 	});
 
 	QUnit.test("getTemplateClone: Only used template clones exist -> Create a new template clone", function(assert) {
-		var mTemplateCloneFunctionSpies = {};
-		var sTemplateType;
+		const mTemplateCloneFunctionSpies = {};
+		let sTemplateType;
 
-		for (var j = 0; j < this.aTemplateTypes.length; j++) {
+		for (let j = 0; j < this.aTemplateTypes.length; j++) {
 			sTemplateType = this.aTemplateTypes[j];
 
-			var oTemplate = new TableQUnitUtils.TestControl({text: sTemplateType});
+			const oTemplate = new TableQUnitUtils.TestControl({text: sTemplateType});
 
 			this.setTemplate(sTemplateType, oTemplate);
 			sinon.stub(this.oColumn.getTemplateClone(0, sTemplateType), "getParent").returns("i have a parent");
 			mTemplateCloneFunctionSpies[sTemplateType] = sinon.spy(oTemplate, "clone");
 		}
 
-		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
+		const oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
 
-		for (var i = 0; i < this.aTemplateTypes.length; i++) {
+		for (let i = 0; i < this.aTemplateTypes.length; i++) {
 			sTemplateType = this.aTemplateTypes[i];
 
-			var oTemplateClone = this.oColumn.getTemplateClone(5, sTemplateType);
+			const oTemplateClone = this.oColumn.getTemplateClone(5, sTemplateType);
 
 			assert.ok(oTemplateClone === this.oColumn._mTemplateClones[sTemplateType][1],
 				sTemplateType + " type: Returned the created template clone");
@@ -994,13 +996,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("getTemplateClone: Reuse a free template clone", function(assert) {
-		var mTemplateCloneFunctionSpies = {};
-		var sTemplateType;
-		var oTemplateClone;
-		var mFreeTemplateClones = {};
+		const mTemplateCloneFunctionSpies = {};
+		let sTemplateType;
+		let oTemplateClone;
+		const mFreeTemplateClones = {};
 
-		for (var j = 0; j < this.aTemplateTypes.length; j++) {
-			var oTemplate = new TableQUnitUtils.TestControl();
+		for (let j = 0; j < this.aTemplateTypes.length; j++) {
+			const oTemplate = new TableQUnitUtils.TestControl();
 
 			sTemplateType = this.aTemplateTypes[j];
 			this.setTemplate(sTemplateType, oTemplate);
@@ -1013,9 +1015,9 @@ sap.ui.define([
 			mFreeTemplateClones[sTemplateType] = oTemplateClone;
 		}
 
-		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
+		const oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
 
-		for (var i = 0; i < this.aTemplateTypes.length; i++) {
+		for (let i = 0; i < this.aTemplateTypes.length; i++) {
 			sTemplateType = this.aTemplateTypes[i];
 
 			oTemplateClone = this.oColumn.getTemplateClone(5, sTemplateType);
@@ -1040,12 +1042,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("_destroyTemplateClones", function(assert) {
-		var mCloneSpies = {};
-		var sTemplateType;
-		var that = this;
+		let mCloneSpies = {};
+		let sTemplateType;
+		const that = this;
 
 		function createCloneAndDestroySpy(sTemplateType, bHasParent, bDestroyed) {
-			var oClone = that.createTemplateCloneDummy(bHasParent, bDestroyed);
+			const oClone = that.createTemplateCloneDummy(bHasParent, bDestroyed);
 
 			if (mCloneSpies[sTemplateType] == null) {
 				mCloneSpies[sTemplateType] = [];
@@ -1057,7 +1059,7 @@ sap.ui.define([
 		}
 
 		function createTemplateClones() {
-			for (var j = 0; j < that.aTemplateTypes.length; j++) {
+			for (let j = 0; j < that.aTemplateTypes.length; j++) {
 				sTemplateType = that.aTemplateTypes[j];
 
 				that.oColumn._mTemplateClones[sTemplateType] = [
@@ -1074,7 +1076,7 @@ sap.ui.define([
 		createTemplateClones();
 		this.oColumn._destroyTemplateClones();
 
-		for (var i = 0; i < this.aTemplateTypes.length; i++) {
+		for (let i = 0; i < this.aTemplateTypes.length; i++) {
 			sTemplateType = this.aTemplateTypes[i];
 
 			assert.ok(
@@ -1092,7 +1094,7 @@ sap.ui.define([
 		mCloneSpies = {};
 		createTemplateClones();
 
-		for (var j = 0; j < this.aTemplateTypes.length; j++) {
+		for (let j = 0; j < this.aTemplateTypes.length; j++) {
 			sTemplateType = this.aTemplateTypes[j];
 
 			this.oColumn._destroyTemplateClones(sTemplateType);
@@ -1112,10 +1114,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Setting a template", function(assert) {
-		var oDestroyTemplateClonesSpy = sinon.spy(this.oColumn, "_destroyTemplateClones");
+		const oDestroyTemplateClonesSpy = sinon.spy(this.oColumn, "_destroyTemplateClones");
 
-		for (var i = 0; i < this.aTemplateTypes.length; i++) {
-			var sTemplateType = this.aTemplateTypes[i];
+		for (let i = 0; i < this.aTemplateTypes.length; i++) {
+			const sTemplateType = this.aTemplateTypes[i];
 
 			this.setTemplate(sTemplateType, new TableQUnitUtils.TestControl());
 			assert.ok(oDestroyTemplateClonesSpy.calledOnce,
@@ -1128,8 +1130,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Destruction of a template", function(assert) {
-		var sTemplateType;
-		var i;
+		let sTemplateType;
+		let i;
 
 		// Column#destroy*Template
 
@@ -1137,7 +1139,7 @@ sap.ui.define([
 			this.setTemplate(this.aTemplateTypes[i], new TableQUnitUtils.TestControl());
 		}
 
-		var oDestroyTemplateClonesSpy = sinon.spy(this.oColumn, "_destroyTemplateClones");
+		const oDestroyTemplateClonesSpy = sinon.spy(this.oColumn, "_destroyTemplateClones");
 
 		for (i = 0; i < this.aTemplateTypes.length; i++) {
 			sTemplateType = this.aTemplateTypes[i];
@@ -1181,8 +1183,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Destruction of the column", function(assert) {
-		var oDestroyTemplateClonesSpy = sinon.spy(this.oColumn, "_destroyTemplateClones");
-		var oUnlinkSpy = sinon.spy(ColumnHeaderMenuAdapter, "unlink");
+		const oDestroyTemplateClonesSpy = sinon.spy(this.oColumn, "_destroyTemplateClones");
+		const oUnlinkSpy = sinon.spy(ColumnHeaderMenuAdapter, "unlink");
 
 		this.oColumn.destroy();
 
@@ -1197,7 +1199,7 @@ sap.ui.define([
 	 */
 	QUnit.module("Column Visibility Submenu", {
 		beforeEach: function() {
-			var oModel = new JSONModel();
+			const oModel = new JSONModel();
 			oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
 			this._oTable = new Table();
 			this._oTable.bindRows("/");
@@ -1228,17 +1230,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("Visibility Submenu number of items", function(assert) {
-		var that = this, done = assert.async(), oCellDomRef = that._oColumn1.getDomRef();
+		const that = this;
+const done = assert.async();
+const oCellDomRef = that._oColumn1.getDomRef();
 
 		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oColumnMenuBefore = that._oColumn1.getMenu();
-				var oVisibilitySubmenu = oColumnMenuBefore.getItems()[0].getSubmenu();
+				let oColumnMenuBefore = that._oColumn1.getMenu();
+				let oVisibilitySubmenu = oColumnMenuBefore.getItems()[0].getSubmenu();
 				assert.strictEqual(oVisibilitySubmenu.getItems().length, 2, "The visibility submenu has 2 items");
 
 				that._oTable.removeColumn(that._oColumn2);
 				that._oColumn1._openHeaderMenu(oCellDomRef);
-				var oColumnMenuAfter = that._oColumn1.getMenu();
+				let oColumnMenuAfter = that._oColumn1.getMenu();
 				oVisibilitySubmenu = oColumnMenuAfter.getItems()[0].getSubmenu();
 				assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
 				assert.strictEqual(oVisibilitySubmenu.getItems().length, 1, "The visibility submenu has 1 items");
@@ -1258,7 +1262,7 @@ sap.ui.define([
 				assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
 				assert.strictEqual(oVisibilitySubmenu.getItems().length, 3, "The visibility submenu has 3 items");
 
-				var spy = that.spy(that._oColumn3, "exit");
+				const spy = that.spy(that._oColumn3, "exit");
 				that._oColumn3.destroy();
 				assert.ok(spy.calledOnce, "The exit function was called");
 				done();
@@ -1269,12 +1273,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Set Visibility", function(assert) {
-		var that = this, done = assert.async(), oCell1DomRef = this._oColumn1.getDomRef(), oCell2DomRef = this._oColumn2.getDomRef();
+		const that = this;
+const done = assert.async();
+const oCell1DomRef = this._oColumn1.getDomRef();
+const oCell2DomRef = this._oColumn2.getDomRef();
 
 		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oColumnMenuBefore = that._oColumn1.getMenu();
-				var oVisibilitySubmenuBefore = oColumnMenuBefore.getItems()[0].getSubmenu();
+				const oColumnMenuBefore = that._oColumn1.getMenu();
+				const oVisibilitySubmenuBefore = oColumnMenuBefore.getItems()[0].getSubmenu();
 				assert.strictEqual(oVisibilitySubmenuBefore.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
 				assert.strictEqual(oVisibilitySubmenuBefore.getItems()[1].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
 
@@ -1283,8 +1290,8 @@ sap.ui.define([
 				oVisibilitySubmenuBefore.getItems()[1].fireSelect();
 				assert.equal(document.activeElement, that._oColumn1.getDomRef(), "Focus moves to the other column header");
 				that._oColumn1._openHeaderMenu(oCell1DomRef);
-				var oColumnMenuAfter = that._oColumn1.getMenu();
-				var oVisibilitySubmenuAfter = oColumnMenuAfter.getItems()[0].getSubmenu();
+				const oColumnMenuAfter = that._oColumn1.getMenu();
+				const oVisibilitySubmenuAfter = oColumnMenuAfter.getItems()[0].getSubmenu();
 				assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
 				assert.strictEqual(oVisibilitySubmenuBefore, oVisibilitySubmenuAfter, "The column visibility submenu is not being recreated");
 
@@ -1298,21 +1305,31 @@ sap.ui.define([
 	});
 
 	QUnit.test("Reorder Columns", function(assert) {
-		var that = this, done = assert.async(), oCellDomRef = this._oColumn1.getDomRef();
+		const that = this;
+		const done = assert.async();
+		const oCellDomRef = this._oColumn1.getDomRef();
 
 		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oColumnMenu = that._oColumn1.getMenu();
-				var oVisibilitySubmenu = oColumnMenu.getItems()[0].getSubmenu();
-				assert.strictEqual(oVisibilitySubmenu.getItems()[0].getProperty("text"), "col1header", "The columns are initially in the correct order");
-				assert.strictEqual(oVisibilitySubmenu.getItems()[1].getProperty("text"), "col2header", "The columns are initially in the correct order");
+				let oColumnMenu = that._oColumn1.getMenu();
+				let oVisibilitySubmenu = oColumnMenu.getItems()[0].getSubmenu();
+
+				assert.strictEqual(oVisibilitySubmenu.getItems()[0].getProperty("text"), "col1header",
+					"The columns are initially in the correct order");
+				assert.strictEqual(oVisibilitySubmenu.getItems()[1].getProperty("text"), "col2header",
+					"The columns are initially in the correct order");
+
 				that._oTable.removeColumn(that._oColumn1);
 				that._oTable.insertColumn(that._oColumn1, 1);
 				that._oColumn1._openHeaderMenu(oCellDomRef);
-				var oColumnMenu = that._oColumn1.getMenu();
-				var oVisibilitySubmenu = oColumnMenu.getItems()[0].getSubmenu();
-				assert.strictEqual(oVisibilitySubmenu.getItems()[0].getProperty("text"), "col2header", "The columns are in the correct order after reordering");
-				assert.strictEqual(oVisibilitySubmenu.getItems()[1].getProperty("text"), "col1header", "The columns are in the correct order after reordering");
+				oColumnMenu = that._oColumn1.getMenu();
+				oVisibilitySubmenu = oColumnMenu.getItems()[0].getSubmenu();
+
+				assert.strictEqual(oVisibilitySubmenu.getItems()[0].getProperty("text"), "col2header",
+					"The columns are in the correct order after reordering");
+				assert.strictEqual(oVisibilitySubmenu.getItems()[1].getProperty("text"), "col1header",
+					"The columns are in the correct order after reordering");
+
 				done();
 			});
 		});
@@ -1321,8 +1338,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Multiple tables", function(assert) {
-		var done = assert.async(), that = this;
-		var oModel = new JSONModel();
+		const done = assert.async();
+		const that = this;
+		const oModel = new JSONModel();
 		oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
 		this._oTable2 = new Table();
 		this._oTable2.bindRows("/");
@@ -1355,14 +1373,14 @@ sap.ui.define([
 
 		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oColumnMenuTable1 = that._oColumn1.getMenu();
-				var oVisibilitySubmenuTable1 = oColumnMenuTable1.getItems()[0].getSubmenu();
+				const oColumnMenuTable1 = that._oColumn1.getMenu();
+				const oVisibilitySubmenuTable1 = oColumnMenuTable1.getItems()[0].getSubmenu();
 				assert.strictEqual(oVisibilitySubmenuTable1.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
 				assert.strictEqual(oVisibilitySubmenuTable1.getItems()[1].getIcon(), "", "The visibility submenu item is not checked");
 
 				that._oColumn21._openHeaderMenu(that._oColumn21.getDomRef());
-				var oColumnMenuTable2 = that._oColumn21.getMenu();
-				var oVisibilitySubmenuTable2 = oColumnMenuTable2.getItems()[0].getSubmenu();
+				const oColumnMenuTable2 = that._oColumn21.getMenu();
+				const oVisibilitySubmenuTable2 = oColumnMenuTable2.getItems()[0].getSubmenu();
 				assert.strictEqual(oVisibilitySubmenuTable2.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
 				assert.strictEqual(oVisibilitySubmenuTable2.getItems()[1].getIcon(), "sap-icon://accept", "The visibility submenu item is checked. Changing the column visibility in the first table hasn't affected the column visibility in the second table");
 
@@ -1416,7 +1434,7 @@ sap.ui.define([
 			this.oTable.destroy();
 		},
 		openColumnMenu: function(iColumnIndex) {
-			var oElement = this.oTable.qunit.getColumnHeaderCell(iColumnIndex);
+			const oElement = this.oTable.qunit.getColumnHeaderCell(iColumnIndex);
 			oElement.focus();
 			qutils.triggerMouseEvent(oElement, "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(oElement, "click");
@@ -1424,11 +1442,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("_openHeaderMenu", function(assert) {
-		var done = assert.async();
-		var oColumn = this.oColumn1;
-		var oActivateSpy = sinon.spy(ColumnHeaderMenuAdapter, "activateFor");
-		var oUnlinkSpy = sinon.spy(ColumnHeaderMenuAdapter, "unlink");
-		var oHeaderMenu = oColumn.getHeaderMenuInstance();
+		const done = assert.async();
+		const oColumn = this.oColumn1;
+		const oActivateSpy = sinon.spy(ColumnHeaderMenuAdapter, "activateFor");
+		const oUnlinkSpy = sinon.spy(ColumnHeaderMenuAdapter, "unlink");
+		const oHeaderMenu = oColumn.getHeaderMenuInstance();
 
 		oHeaderMenu.attachBeforeOpen(function() {
 			setTimeout(function() {
@@ -1449,10 +1467,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("_isHeaderMenuOpen", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		assert.expect(3);
-		var oColumn = this.oColumn1;
-		var oHeaderMenu = oColumn.getHeaderMenuInstance();
+		const oColumn = this.oColumn1;
+		const oHeaderMenu = oColumn.getHeaderMenuInstance();
 
 		oHeaderMenu.attachBeforeOpen(function() {
 			setTimeout(function() {
@@ -1476,8 +1494,8 @@ sap.ui.define([
 	QUnit.test("_setGrouped", function(assert) {
 		this.oTable.setEnableGrouping(true);
 
-		var oColumn = this.oColumn1;
-		var oSetGroupedSpy = sinon.spy(this.oTable, "setGroupBy");
+		const oColumn = this.oColumn1;
+		const oSetGroupedSpy = sinon.spy(this.oTable, "setGroupBy");
 
 		oColumn._setGrouped(true);
 		assert.ok(oSetGroupedSpy.calledOnce, "setGroupBy is called");
@@ -1489,7 +1507,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getFilterState", function(assert) {
-		var oColumn1 = this.oColumn1;
+		const oColumn1 = this.oColumn1;
 		oColumn1.setFilterValue("A");
 
 		assert.equal(oColumn1._getFilterState(), "None", "FilterState None");
@@ -1498,7 +1516,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("setFilterType", function(assert) {
-		var oColumn1 = this.oColumn1;
+		const oColumn1 = this.oColumn1;
 
 		let vType = new IntegerType();
 		oColumn1.setFilterType(vType);

@@ -14,8 +14,8 @@ sap.ui.define([
 
 		onInit: function() {
 			// set explored app's demo model on this sample
-			var oJSONModel = this.initSampleDataModel();
-			var oView = this.getView();
+			const oJSONModel = this.initSampleDataModel();
+			const oView = this.getView();
 			oView.setModel(oJSONModel);
 
 			oView.setModel(new JSONModel({}), "ui");
@@ -24,26 +24,26 @@ sap.ui.define([
 			this._messageBuffer = [];
 
 			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
-				var oTb = oView.byId("infobar");
+				const oTb = oView.byId("infobar");
 				oTb.addContent(new ToolbarSpacer());
 				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/ColumnResizing"));
 			}, function(oError) { /*ignore*/ });
 		},
 
 		initSampleDataModel: function() {
-			var oModel = new JSONModel();
+			const oModel = new JSONModel();
 
-			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
+			const oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
 			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
 				success: function(oData) {
-					var aTemp1 = [];
-					var aTemp2 = [];
-					var aSuppliersData = [];
-					var aCategoryData = [];
-					for (var i = 0; i < oData.ProductCollection.length; i++) {
-						var oProduct = oData.ProductCollection[i];
+					const aTemp1 = [];
+					const aTemp2 = [];
+					const aSuppliersData = [];
+					const aCategoryData = [];
+					for (let i = 0; i < oData.ProductCollection.length; i++) {
+						const oProduct = oData.ProductCollection[i];
 						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
@@ -72,8 +72,8 @@ sap.ui.define([
 		},
 
 		onColumnWidthsChange: function(oEvent) {
-			var sColumnWidthMode = oEvent ? oEvent.getParameter("item").getKey() : "Static";
-			var oWidthData;
+			const sColumnWidthMode = oEvent ? oEvent.getParameter("item").getKey() : "Static";
+			let oWidthData;
 
 			if (sColumnWidthMode == "Flexible") {
 				oWidthData = {
@@ -97,7 +97,7 @@ sap.ui.define([
 		},
 
 		onColumnResize: function(oEvent) {
-			var oColumn = oEvent.getParameter("column");
+			const oColumn = oEvent.getParameter("column");
 
 			if (this.byId("deliverydate") == oColumn) {
 				oEvent.preventDefault();

@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @since 0.8
 	 * @public
 	 */
-	var thisLib = Library.init({
+	const thisLib = Library.init({
 		name: "sap.ui.table",
 		apiVersion: 2,
 		version: "${version}",

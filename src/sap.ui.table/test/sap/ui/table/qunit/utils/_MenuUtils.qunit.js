@@ -129,7 +129,7 @@ sap.ui.define([
 			this.oTable.getContextMenu().openAsContextMenu.resetHistory();
 		},
 		test: function(assert, mSettings) {
-			var oEvent = createFakeEventObject(mSettings.element);
+			const oEvent = createFakeEventObject(mSettings.element);
 
 			TableUtils.Menu.openContextMenu(this.oTable, oEvent);
 
@@ -243,7 +243,7 @@ sap.ui.define([
 	QUnit.test("Elements that do not support a custom context menu", function(assert) {
 		const oOpenMenuHook = sinon.stub();
 		const test = (oElement, sElementName, bDefaultMenuExists = false) => {
-			var oEvent = createFakeEventObject(oElement);
+			const oEvent = createFakeEventObject(oElement);
 
 			TableUtils.Menu.cleanupDefaultContentCellContextMenu(this.oTable); // Delete the default context menu to be table to test the creation.
 			TableUtils.Menu.openContextMenu(this.oTable, oEvent);
@@ -584,7 +584,7 @@ sap.ui.define([
 	 */
 	QUnit.module("Context Menus - cellContextmenu (legacy)", {
 		before: function() {
-			var oCellContextMenuEventInfo = {
+			const oCellContextMenuEventInfo = {
 				name: "CellContextMenu",
 				lastCallParameters: null,
 				handler: sinon.spy(function(oEvent) {
@@ -619,10 +619,10 @@ sap.ui.define([
 	 * @deprecated As of version 1.54
 	 */
 	QUnit.test("openContextMenu - Header cells", function(assert) {
-		var oColumnA = oTable.getColumns()[0];
-		var oColumnB = oTable.getColumns()[1];
-		var bOriginalDeviceSystemDesktop = Device.system.desktop;
-		var oEvent;
+		const oColumnA = oTable.getColumns()[0];
+		const oColumnB = oTable.getColumns()[1];
+		const bOriginalDeviceSystemDesktop = Device.system.desktop;
+		let oEvent;
 
 		Device.system.desktop = true;
 		oColumnA.setFilterProperty("A");
@@ -682,15 +682,15 @@ sap.ui.define([
 	 * @deprecated As of version 1.54
 	 */
 	QUnit.test("openContextMenu - Content cells", function(assert) {
-		var oDomRef;
-		var aColumns = oTable.getColumns();
-		var aRows = oTable.getRows();
-		var oColumnA = aColumns[0];
-		var oCellA = aRows[0].getCells()[0];
-		var oColumnB = aColumns[1];
-		var oCellB = aRows[0].getCells()[1];
-		var oCustomContextMenu = new TestContextMenu();
-		var oEvent;
+		let oDomRef;
+		const aColumns = oTable.getColumns();
+		const aRows = oTable.getRows();
+		const oColumnA = aColumns[0];
+		const oCellA = aRows[0].getCells()[0];
+		const oColumnB = aColumns[1];
+		const oCellB = aRows[0].getCells()[1];
+		const oCustomContextMenu = new TestContextMenu();
+		let oEvent;
 
 		oDomRef = oCellA.getDomRef();
 		oEvent = createFakeEventObject(oDomRef);

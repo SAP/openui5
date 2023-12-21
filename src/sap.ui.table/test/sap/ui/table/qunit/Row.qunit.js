@@ -15,8 +15,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var initRowActions = window.initRowActions;
-	var TestControl = TableQUnitUtils.TestControl;
+	const initRowActions = window.initRowActions;
+	const TestControl = TableQUnitUtils.TestControl;
 
 	QUnit.module("Cells", {
 		beforeEach: function() {
@@ -37,10 +37,10 @@ sap.ui.define([
 			return this.oTable.qunit.whenRenderingFinished();
 		},
 		assertCells: function(assert) {
-			var aActualCells = this.oTable.getRows()[0].getCells().map(function(oCell) {
+			const aActualCells = this.oTable.getRows()[0].getCells().map(function(oCell) {
 				return oCell.getText();
 			});
-			var aExpectedCells = Array.prototype.slice.call(arguments, 1);
+			const aExpectedCells = Array.prototype.slice.call(arguments, 1);
 
 			assert.deepEqual(aActualCells, aExpectedCells, "The row has the correct cells");
 		},
@@ -143,28 +143,28 @@ sap.ui.define([
 			this.oTable.destroy();
 		},
 		assertRowStyleHovered: function(assert, oRow) {
-			var mDomRefs = oRow.getDomRefs(false);
+			const mDomRefs = oRow.getDomRefs(false);
 			assert.ok(mDomRefs.rowHeaderPart.classList.contains("sapUiTableRowHvr"), "Selector part is styled as hovered");
 			assert.ok(mDomRefs.rowFixedPart.classList.contains("sapUiTableRowHvr"), "Fixed part is styled as hovered");
 			assert.ok(mDomRefs.rowScrollPart.classList.contains("sapUiTableRowHvr"), "Scrollable part is styled as hovered");
 			assert.ok(mDomRefs.rowActionPart.classList.contains("sapUiTableRowHvr"), "Action part is styled as hovered");
 		},
 		assertRowStyleUnhovered: function(assert, oRow) {
-			var mDomRefs = oRow.getDomRefs(false);
+			const mDomRefs = oRow.getDomRefs(false);
 			assert.ok(!mDomRefs.rowHeaderPart.classList.contains("sapUiTableRowHvr"), "Selector part is styled as unhovered");
 			assert.ok(!mDomRefs.rowFixedPart.classList.contains("sapUiTableRowHvr"), "Fixed part is styled as unhovered");
 			assert.ok(!mDomRefs.rowScrollPart.classList.contains("sapUiTableRowHvr"), "Scrollable part is styled as unhovered");
 			assert.ok(!mDomRefs.rowActionPart.classList.contains("sapUiTableRowHvr"), "Action part is styled as unhovered");
 		},
 		assertRowStyleSelected: function(assert, oRow) {
-			var mDomRefs = oRow.getDomRefs(false);
+			const mDomRefs = oRow.getDomRefs(false);
 			assert.ok(mDomRefs.rowHeaderPart.classList.contains("sapUiTableRowSel"), "Selector part is styled as selected");
 			assert.ok(mDomRefs.rowFixedPart.classList.contains("sapUiTableRowSel"), "Fixed part is styled as selected");
 			assert.ok(mDomRefs.rowScrollPart.classList.contains("sapUiTableRowSel"), "Scrollable part is styled as selected");
 			assert.ok(mDomRefs.rowActionPart.classList.contains("sapUiTableRowSel"), "Action part is styled as selected");
 		},
 		assertRowStyleUnselected: function(assert, oRow) {
-			var mDomRefs = oRow.getDomRefs(false);
+			const mDomRefs = oRow.getDomRefs(false);
 			assert.ok(!mDomRefs.rowHeaderPart.classList.contains("sapUiTableRowSel"), "Selector part is styled as unselected");
 			assert.ok(!mDomRefs.rowFixedPart.classList.contains("sapUiTableRowSel"), "Fixed part is styled as unselected");
 			assert.ok(!mDomRefs.rowScrollPart.classList.contains("sapUiTableRowSel"), "Scrollable part is styled as unselected");
@@ -173,7 +173,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_setHovered", function(assert) {
-		var oRow = this.oTable.getRows()[0];
+		const oRow = this.oTable.getRows()[0];
 
 		this.assertRowStyleUnhovered(assert, oRow);
 		oRow._setHovered(true);
@@ -187,7 +187,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_setSelected", function(assert) {
-		var oRow = this.oTable.getRows()[0];
+		const oRow = this.oTable.getRows()[0];
 
 		this.assertRowStyleUnselected(assert, oRow);
 		oRow._setSelected(true);
@@ -204,8 +204,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("_setFocus", function(assert) {
-		var oRow = this.oTable.getRows()[0];
-		var $SelectAll = this.oTable.$("selall");
+		const oRow = this.oTable.getRows()[0];
+		const $SelectAll = this.oTable.$("selall");
 
 		oRow._setFocus();
 		assert.deepEqual(document.activeElement, oRow.getDomRef("col0"),
@@ -244,7 +244,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Expand", function(assert) {
-		var oExpandSpy = sinon.spy();
+		const oExpandSpy = sinon.spy();
 
 		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Row.Expand, oExpandSpy);
 
@@ -276,7 +276,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Collapse", function(assert) {
-		var oCollapseSpy = sinon.spy();
+		const oCollapseSpy = sinon.spy();
 
 		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Row.Collapse, oCollapseSpy);
 

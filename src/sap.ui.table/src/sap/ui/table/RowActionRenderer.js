@@ -11,7 +11,7 @@ sap.ui.define([],
 	 * RowAction renderer.
 	 * @namespace
 	 */
-	var RowActionRenderer = {
+	const RowActionRenderer = {
 		apiVersion: 2
 	};
 
@@ -33,14 +33,14 @@ sap.ui.define([],
 			rm.class("sapUiTableActionHidden");
 		}
 
-		var sTooltip = oAction.getTooltip_AsString();
+		const sTooltip = oAction.getTooltip_AsString();
 		if (sTooltip) {
 			rm.attr("title", sTooltip);
 		}
 
 		rm.openEnd();
 
-		var aIcons = oAction.getAggregation("_icons");
+		const aIcons = oAction.getAggregation("_icons");
 		rm.renderControl(aIcons[0]);
 		rm.renderControl(aIcons[1]);
 

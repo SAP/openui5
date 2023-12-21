@@ -17,7 +17,7 @@ sap.ui.define([], function() {
 	 * @alias sap.ui.table.utils._BindingUtils
 	 * @private
 	 */
-	var BindingUtils = {
+	const BindingUtils = {
 		TableUtils: null, // Avoid cyclic dependency. Will be filled by TableUtils.
 
 		/**
@@ -27,11 +27,11 @@ sap.ui.define([], function() {
 		 * @returns {Promise} A promise on the metadata loaded state.
 		 */
 		metadataLoaded: function(oTable) {
-			var oBinding = oTable.getBinding();
-			var oModel = oBinding ? oBinding.getModel() : null;
-			var fResolvePromise = null;
-			var fRejectPromise = null;
-			var pMetadataLoaded = new Promise(function(resolve, reject) {
+			const oBinding = oTable.getBinding();
+			const oModel = oBinding ? oBinding.getModel() : null;
+			let fResolvePromise = null;
+			let fRejectPromise = null;
+			const pMetadataLoaded = new Promise(function(resolve, reject) {
 				fResolvePromise = resolve;
 				fRejectPromise = reject;
 			});

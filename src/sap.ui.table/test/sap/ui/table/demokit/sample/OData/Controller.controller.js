@@ -8,7 +8,7 @@ sap.ui.define([
 ], function(Controller, MockServer, ODataModel, JSONModel, OperationMode, ToolbarSpacer) {
 	"use strict";
 
-	var sServiceUrl = "http://my.test.service.com/";
+	const sServiceUrl = "http://my.test.service.com/";
 
 	return Controller.extend("sap.ui.table.sample.OData.Controller", {
 
@@ -19,7 +19,7 @@ sap.ui.define([
 
 			MockServer.config({autoRespondAfter: 2000});
 
-			var sMockDataPath = sap.ui.require.toUrl("sap/ui/table/sample/OData");
+			const sMockDataPath = sap.ui.require.toUrl("sap/ui/table/sample/OData");
 			this.oMockServer.simulate(sMockDataPath + "/metadata.xml", {
 				sMockdataBaseUrl: sMockDataPath,
 				bGenerateMissingMockData: true
@@ -27,23 +27,23 @@ sap.ui.define([
 
 			this.oMockServer.start();
 
-			var oView = this.getView();
+			const oView = this.getView();
 			this.oBusyIndicator = this.getTable().getNoData();
 			oView.setModel(new ODataModel(sServiceUrl));
 
 			this.initBindingEventHandler();
 
-			var oUiData = {
+			const oUiData = {
 				operationModes: [],
 				selectedOperationMode: OperationMode.Server
 			};
-			for (var mode in OperationMode) {
+			for (const mode in OperationMode) {
 				oUiData.operationModes.push({name: OperationMode[mode]});
 			}
 			oView.setModel(new JSONModel(oUiData), "ui");
 
 			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
-				var oTb = oView.byId("infobar");
+				const oTb = oView.byId("infobar");
 				oTb.addContent(new ToolbarSpacer());
 				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/OData"));
 			}, function(oError) { /*ignore*/ });
@@ -53,7 +53,7 @@ sap.ui.define([
 			this.oBusyIndicator.destroy();
 			this.oBusyIndicator = null;
 
-			var oModel = this.getView().getModel();
+			const oModel = this.getView().getModel();
 			this.getView().setModel();
 			oModel.destroy();
 
@@ -87,9 +87,9 @@ sap.ui.define([
 		},
 
 		initBindingEventHandler: function() {
-			var oBusyIndicator = this.oBusyIndicator;
-			var oTable = this.getTable();
-			var oBinding = oTable.getBinding();
+			const oBusyIndicator = this.oBusyIndicator;
+			const oTable = this.getTable();
+			const oBinding = oTable.getBinding();
 
 			oBinding.attachDataRequested(function() {
 				oTable.setNoData(oBusyIndicator);

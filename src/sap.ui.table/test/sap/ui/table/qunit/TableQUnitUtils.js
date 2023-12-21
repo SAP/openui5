@@ -43,22 +43,22 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var TableQUnitUtils = {}; // TBD: Move global functions to this object
-	var aData = [];
-	var oDataTemplate = {};
-	var mDefaultSettings = {};
-	var iNumberOfDataRows = 8;
-	var iTouchPositionX;
-	var iTouchPositionY;
-	var oTouchTargetElement;
+	const TableQUnitUtils = {}; // TBD: Move global functions to this object
+	const aData = [];
+	const oDataTemplate = {};
+	let mDefaultSettings = {};
+	const iNumberOfDataRows = 8;
+	let iTouchPositionX;
+	let iTouchPositionY;
+	let oTouchTargetElement;
 
-	var TestSelectionPlugin = SelectionPlugin.extend("sap.ui.table.test.TestSelectionPlugin", {
+	const TestSelectionPlugin = SelectionPlugin.extend("sap.ui.table.test.TestSelectionPlugin", {
 		init: function() {
 			this.aSelectedRows = [];
 		},
 
 		setSelected: function(oRow, bSelected, mConfig) {
-			var iIndex;
+			let iIndex;
 			if (bSelected) {
 				iIndex = this.aSelectedRows.indexOf(oRow.getIndex());
 				if (iIndex === -1) {
@@ -80,7 +80,7 @@ sap.ui.define([
 
 	});
 
-	var TestControl = Control.extend("sap.ui.table.test.TestControl", {
+	const TestControl = Control.extend("sap.ui.table.test.TestControl", {
 		metadata: {
 			properties: {
 				"text": {type: "string", defaultValue: ""},
@@ -112,7 +112,7 @@ sap.ui.define([
 		}
 	});
 
-	var TestInputControl = Control.extend("sap.ui.table.test.TestInputControl", {
+	const TestInputControl = Control.extend("sap.ui.table.test.TestInputControl", {
 		metadata: {
 			properties: {
 				"text": {type: "string", defaultValue: ""},
@@ -142,7 +142,7 @@ sap.ui.define([
 		}
 	});
 
-	var HeightTestControl = Control.extend("sap.ui.table.test.HeightTestControl", {
+	const HeightTestControl = Control.extend("sap.ui.table.test.HeightTestControl", {
 		metadata: {
 			properties: {
 				height: {type: "sap.ui.core.CSSSize", defaultValue: "1px"}
@@ -163,7 +163,7 @@ sap.ui.define([
 	});
 
 	// This plugin helps to add hooks to the table, including the ones that are called during initialization of the table.
-	var HelperPlugin = PluginBase.extend("sap.ui.table.test.HelperPlugin", {
+	const HelperPlugin = PluginBase.extend("sap.ui.table.test.HelperPlugin", {
 		metadata: {
 			events: {
 				renderingTriggered: {}
@@ -184,8 +184,8 @@ sap.ui.define([
 	HelperPlugin.prototype.onActivate = function(oTable) {
 		TableUtils.Hook.install(oTable, this.hooks, this);
 
-		var wrapForRenderingDetection = function(oObject, sFunctionName) {
-			var fnOriginalFunction = oObject[sFunctionName];
+		const wrapForRenderingDetection = function(oObject, sFunctionName) {
+			const fnOriginalFunction = oObject[sFunctionName];
 			oObject[sFunctionName] = function() {
 				if (sFunctionName !== "rerenderControl" || arguments[0] === oTable) {
 					this.fireRenderingTriggered();
@@ -251,7 +251,7 @@ sap.ui.define([
 	};
 
 	function TimeoutError(iMilliseconds) {
-		var oError = new Error("Timed out" + (typeof iMilliseconds === "number" ? " after " + iMilliseconds + "ms" : ""));
+		const oError = new Error("Timed out" + (typeof iMilliseconds === "number" ? " after " + iMilliseconds + "ms" : ""));
 
 		oError.name = "TimeoutError";
 		oError.milliseconds = iMilliseconds;
@@ -279,13 +279,13 @@ sap.ui.define([
 			throw new Error("Invalid arguments");
 		}
 
-		var iTimeoutId;
-		var pTimeout = new Promise(function(resolve, reject) {
+		let iTimeoutId;
+		const pTimeout = new Promise(function(resolve, reject) {
 			iTimeoutId = setTimeout(function() {
 				reject(new TimeoutError(iTimeout));
 			}, iTimeout);
 		});
-		var pAction = new Promise(function() {
+		const pAction = new Promise(function() {
 			fnExecutor.apply(this, Array.prototype.slice.call(arguments));
 		});
 
@@ -297,20 +297,20 @@ sap.ui.define([
 	}
 
 	function deepCloneSettings(mSettings) {
-		var oClone = merge({}, mSettings);
+		const oClone = merge({}, mSettings);
 
 		// Clone all instances of type sap.ui.base.ManagedObject.
-		for (var sProperty in oClone) {
+		for (const sProperty in oClone) {
 			if (!oClone.hasOwnProperty(sProperty)) {
 				continue;
 			}
 
-			var vValue = oClone[sProperty];
+			const vValue = oClone[sProperty];
 
 			if (TableUtils.isA(vValue, "sap.ui.base.ManagedObject")) {
 				oClone[sProperty] = vValue.clone();
 			} else if (Array.isArray(vValue)) {
-				for (var i = 0; i < vValue.length; i++) {
+				for (let i = 0; i < vValue.length; i++) {
 					if (TableUtils.isA(vValue[i], "sap.ui.base.ManagedObject")) {
 						vValue[i] = vValue[i].clone();
 					}
@@ -346,7 +346,7 @@ sap.ui.define([
 		});
 
 		// TODO: Remove this once CreationRow is removed.
-		var fnApplySettings = TableClass.prototype.applySettings;
+		const fnApplySettings = TableClass.prototype.applySettings;
 		TableClass.prototype.applySettings = function(mSettings) {
 			if (mSettings && "creationRow" in mSettings) {
 				this.setCreationRow(mSettings.creationRow);
@@ -357,7 +357,7 @@ sap.ui.define([
 	});
 
 	function createTableSettings(TableClass, mSettings) {
-		var aAllSettingKeys = Object.keys(TableClass.getMetadata().getAllSettings());
+		let aAllSettingKeys = Object.keys(TableClass.getMetadata().getAllSettings());
 
 		aAllSettingKeys = aAllSettingKeys.concat(["creationRow"]); // TODO: Remove this once CreationRow is removed.
 
@@ -370,9 +370,9 @@ sap.ui.define([
 	}
 
 	function setExperimentalSettings(oTable, mSettings) {
-		var aExperimentalProperties = ["_bVariableRowHeightEnabled", "_bLargeDataScrolling"];
+		const aExperimentalProperties = ["_bVariableRowHeightEnabled", "_bLargeDataScrolling"];
 
-		for (var sKey in mSettings) {
+		for (const sKey in mSettings) {
 			if (aExperimentalProperties.indexOf(sKey) >= 0) {
 				oTable[sKey] = mSettings[sKey];
 			}
@@ -435,7 +435,7 @@ sap.ui.define([
 				oTable.qunit["fnResolveRenderingFinishedWrapper" + sID].disable();
 			}
 
-			var bWrapperDisabled = false;
+			let bWrapperDisabled = false;
 			oTable.qunit["fnResolveRenderingFinishedWrapper" + sID] = function(mParameters) {
 				if (!bWrapperDisabled) {
 					oTable.qunit["fnResolveRenderingFinished" + sID](mParameters);
@@ -504,7 +504,7 @@ sap.ui.define([
 		 * @returns {Promise} A promise.
 		 */
 		oTable.qunit.whenBindingRefresh = function() {
-			var oBinding = oTable.getBinding();
+			const oBinding = oTable.getBinding();
 
 			if (!oBinding) {
 				return Promise.resolve();
@@ -521,7 +521,7 @@ sap.ui.define([
 		 * @returns {Promise} A promise.
 		 */
 		oTable.qunit.whenBindingChange = function() {
-			var oBinding = oTable.getBinding();
+			const oBinding = oTable.getBinding();
 
 			if (!oBinding) {
 				return Promise.resolve();
@@ -539,7 +539,7 @@ sap.ui.define([
 		 */
 		oTable.qunit.whenVSbScrolled = function() {
 			return new Promise(function(resolve) {
-				var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+				const oVSb = oTable._getScrollExtension().getVerticalScrollbar();
 				TableQUnitUtils.addEventListenerOnce(oVSb, "scroll", resolve);
 			});
 		};
@@ -551,7 +551,7 @@ sap.ui.define([
 		 */
 		oTable.qunit.whenHSbScrolled = function() {
 			return new Promise(function(resolve) {
-				var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
+				const oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
 				TableQUnitUtils.addEventListenerOnce(oHSb, "scroll", resolve);
 			});
 		};
@@ -574,8 +574,8 @@ sap.ui.define([
 		 * @returns {Promise} A promise.
 		 */
 		oTable.qunit.scrollVSbTo = function(iScrollPosition) {
-			var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
-			var iOldScrollTop = oVSb.scrollTop;
+			const oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+			const iOldScrollTop = oVSb.scrollTop;
 
 			oVSb.scrollTop = iScrollPosition;
 
@@ -605,7 +605,7 @@ sap.ui.define([
 		 * @returns {Promise} A promise.
 		 */
 		oTable.qunit.scrollVSbBy = function(iDistance) {
-			var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+			const oVSb = oTable._getScrollExtension().getVerticalScrollbar();
 			return oTable.qunit.scrollVSbTo(oVSb.scrollTop + iDistance);
 		};
 
@@ -628,10 +628,10 @@ sap.ui.define([
 		 * @returns {Promise} A promise.
 		 */
 		oTable.qunit.scrollHSbTo = function(iScrollPosition) {
-			var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
-			var $HSb = jQuery(oHSb);
-			var bRTL = Localization.getRTL();
-			var iOldScrollLeft = bRTL ? $HSb.scrollLeftRTL() : oHSb.scrollLeft;
+			const oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
+			const $HSb = jQuery(oHSb);
+			const bRTL = Localization.getRTL();
+			const iOldScrollLeft = bRTL ? $HSb.scrollLeftRTL() : oHSb.scrollLeft;
 
 			if (bRTL) {
 				$HSb.scrollLeftRTL(iScrollPosition);
@@ -665,7 +665,7 @@ sap.ui.define([
 		 * @returns {Promise} A promise.
 		 */
 		oTable.qunit.scrollHSbBy = function(iDistance) {
-			var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
+			const oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
 			return oTable.qunit.scrollHSbTo(oHSb.scrollLeft + iDistance);
 		};
 
@@ -690,15 +690,15 @@ sap.ui.define([
 		 * @returns {Promise} A promise.
 		 */
 		oTable.qunit.resize = function(mSizes) {
-			var oDomRef = oTable.getDomRef();
-			var oContainerElement = oDomRef ? oDomRef.parentNode : null;
+			const oDomRef = oTable.getDomRef();
+			const oContainerElement = oDomRef ? oDomRef.parentNode : null;
 
 			if (!oContainerElement) {
 				return Promise.resolve();
 			}
 
-			var sOldHeight = oContainerElement.style.height;
-			var sOldWidth = oContainerElement.style.width;
+			const sOldHeight = oContainerElement.style.height;
+			const sOldWidth = oContainerElement.style.width;
 
 			if (oTable.qunit.sContainerOriginalHeight == null) {
 				oTable.qunit.sContainerOriginalHeight = sOldHeight;
@@ -758,7 +758,7 @@ sap.ui.define([
 		 * @returns {Promise} A Promise that resolves after the focus events are fired and processed.
 		 */
 		oTable.qunit.focus = function(oElement) {
-			var oEventListener;
+			let oEventListener;
 
 			return new ExpiringPromise(0, function(resolve) {
 				oEventListener = TableQUnitUtils.addEventListenerOnce(oElement, "focusin", function() {
@@ -864,7 +864,7 @@ sap.ui.define([
 		 * @see TableQUnitUtils.createTextColumn
 		 */
 		oTable.qunit.addTextColumn = function(mConfig) {
-			var oColumn = TableQUnitUtils.createTextColumn(mConfig);
+			const oColumn = TableQUnitUtils.createTextColumn(mConfig);
 			oTable.addColumn(oColumn);
 			return oColumn;
 		};
@@ -883,7 +883,7 @@ sap.ui.define([
 		 * @see TableQUnitUtils.createInteractiveTextColumn
 		 */
 		oTable.qunit.addInteractiveTextColumn = function(mConfig) {
-			var oColumn = TableQUnitUtils.createInteractiveTextColumn(mConfig);
+			const oColumn = TableQUnitUtils.createInteractiveTextColumn(mConfig);
 			oTable.addColumn(oColumn);
 			return oColumn;
 		};
@@ -905,7 +905,7 @@ sap.ui.define([
 		 * @see TableQUnitUtils.createInputColumn
 		 */
 		oTable.qunit.addInputColumn = function(mConfig) {
-			var oColumn = TableQUnitUtils.createInputColumn(mConfig);
+			const oColumn = TableQUnitUtils.createInputColumn(mConfig);
 			oTable.addColumn(oColumn);
 			return oColumn;
 		};
@@ -956,7 +956,7 @@ sap.ui.define([
 		mSettings = Object.assign({}, deepCloneSettings(this.getDefaultSettings()), mSettings);
 		TableClass = TableClass == null ? Table : TableClass;
 
-		var oHelperPlugin = new HelperPlugin();
+		const oHelperPlugin = new HelperPlugin();
 
 		if ("dependents" in mSettings) {
 			mSettings.dependents.push(oHelperPlugin);
@@ -964,7 +964,7 @@ sap.ui.define([
 			mSettings.dependents = [oHelperPlugin];
 		}
 
-		var oTable = new TableClass(createTableSettings(TableClass, mSettings));
+		const oTable = new TableClass(createTableSettings(TableClass, mSettings));
 
 		Object.defineProperty(oTable, "qunit", {
 			value: {}
@@ -978,7 +978,7 @@ sap.ui.define([
 			fnBeforePlaceAt(oTable, mSettings);
 		}
 
-		var sContainerId;
+		let sContainerId;
 		if (typeof mSettings.placeAt === "string") {
 			sContainerId = mSettings.placeAt;
 		} else if (mSettings.placeAt !== false) {
@@ -1007,10 +1007,10 @@ sap.ui.define([
 			return;
 		}
 
-		for (var i = aData.length; i < iLength; i++) {
-			var oNewEntry = Object.assign({children: [{}]}, oDataTemplate);
+		for (let i = aData.length; i < iLength; i++) {
+			const oNewEntry = Object.assign({children: [{}]}, oDataTemplate);
 
-			for (var sKey in oNewEntry) {
+			for (const sKey in oNewEntry) {
 				if (sKey === "children") {
 					continue;
 				}
@@ -1029,7 +1029,7 @@ sap.ui.define([
 
 		oDataTemplate[sProperty] = sProperty;
 
-		for (var i = 0; i < aData.length; i++) {
+		for (let i = 0; i < aData.length; i++) {
 			aData[i][sProperty] = sProperty + "_" + i;
 			aData[i].children[0][sProperty] = aData[i][sProperty] + "_child_0";
 		}
@@ -1053,7 +1053,7 @@ sap.ui.define([
 	TableQUnitUtils.createTextColumn = function(mConfig) {
 		mConfig = typeof mConfig === "string" ? {text: mConfig} : Object.assign({}, mConfig);
 
-		var oColumn = new Column(mConfig.id, {
+		const oColumn = new Column(mConfig.id, {
 			label: new TestControl({
 				text: mConfig.label,
 				focusable: mConfig.interactiveLabel === true,
@@ -1114,7 +1114,7 @@ sap.ui.define([
 	TableQUnitUtils.createInputColumn = function(mConfig) {
 		mConfig = typeof mConfig === "string" ? {text: mConfig} : Object.assign({}, mConfig);
 
-		var oColumn = new Column(mConfig.id, {
+		const oColumn = new Column(mConfig.id, {
 			label: new TestControl({
 				text: mConfig.label,
 				focusable: mConfig.interactiveLabel === true,
@@ -1145,7 +1145,7 @@ sap.ui.define([
 	 * @return {{remove: Function}} An object providing methods, for example to remove the delegate before it is called.
 	 */
 	TableQUnitUtils.addDelegateOnce = function(oElement, sEventName, fnHandler, bCallBefore) {
-		var oDelegate = {};
+		const oDelegate = {};
 
 		oDelegate[sEventName] = function() {
 			this.removeDelegate(oDelegate);
@@ -1192,7 +1192,7 @@ sap.ui.define([
 	 * @return {{remove: Function}} An object providing methods, for example to remove the wrapper before it is called.
 	 */
 	TableQUnitUtils.wrapOnce = function(oObject, sFunctionName, fnBefore, fnAfter) {
-		var fnOriginalFunction = oObject[sFunctionName];
+		const fnOriginalFunction = oObject[sFunctionName];
 
 		oObject[sFunctionName] = function() {
 			oObject[sFunctionName] = fnOriginalFunction;
@@ -1222,7 +1222,7 @@ sap.ui.define([
 	 * @returns {Promise} A promise.
 	 */
 	TableQUnitUtils.wait = function(iMilliseconds) {
-		var bUseRequestAnimationFrame = iMilliseconds == null;
+		const bUseRequestAnimationFrame = iMilliseconds == null;
 
 		return new Promise(function(resolve) {
 			if (bUseRequestAnimationFrame) {
@@ -1277,7 +1277,7 @@ sap.ui.define([
 	 * @param {string} [sTitle] Title of the test that prefixes all test messages.
 	 */
 	TableQUnitUtils.assertNoDataVisible = function(assert, oTable, bVisible, sTitle) {
-		var sTestTitle = sTitle == null ? "" : sTitle + ": ";
+		const sTestTitle = sTitle == null ? "" : sTitle + ": ";
 
 		assert.strictEqual(oTable.getDomRef().classList.contains("sapUiTableEmpty"), bVisible, sTestTitle + "NoData visibility");
 
@@ -1298,12 +1298,12 @@ sap.ui.define([
 	 * @param {int} iFixedBottom The number of fixed bottom rows.
 	 */
 	TableQUnitUtils.assertRenderedRows = function(assert, oTable, iFixedTop, iScrollable, iFixedBottom) {
-		var oFixedTopRowContainer = oTable.getDomRef("table-fixrow");
-		var oScrollableRowContainer = oTable.getDomRef("table");
-		var oFixedBottomRowContainer = oTable.getDomRef("table-fixrow-bottom");
-		var iFixedTopRowCount = oFixedTopRowContainer ? oFixedTopRowContainer.querySelectorAll(".sapUiTableRow").length : 0;
-		var iScrollableTopRowCount = oScrollableRowContainer ? oScrollableRowContainer.querySelectorAll(".sapUiTableRow").length : 0;
-		var iFixedBottomRowCount = oFixedBottomRowContainer ? oFixedBottomRowContainer.querySelectorAll(".sapUiTableRow").length : 0;
+		const oFixedTopRowContainer = oTable.getDomRef("table-fixrow");
+		const oScrollableRowContainer = oTable.getDomRef("table");
+		const oFixedBottomRowContainer = oTable.getDomRef("table-fixrow-bottom");
+		const iFixedTopRowCount = oFixedTopRowContainer ? oFixedTopRowContainer.querySelectorAll(".sapUiTableRow").length : 0;
+		const iScrollableTopRowCount = oScrollableRowContainer ? oScrollableRowContainer.querySelectorAll(".sapUiTableRow").length : 0;
+		const iFixedBottomRowCount = oFixedBottomRowContainer ? oFixedBottomRowContainer.querySelectorAll(".sapUiTableRow").length : 0;
 
 		assert.strictEqual(iFixedTopRowCount, iFixedTop, "Fixed top row count");
 		assert.strictEqual(iScrollableTopRowCount, iScrollable, "Scrollable row count");
@@ -1321,10 +1321,10 @@ sap.ui.define([
 	 * @param {number} mTestSettings.expectedHeight Expected row height.
 	 */
 	TableQUnitUtils.assertRowHeights = function(assert, oTable, mTestSettings) {
-		var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
+		const sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
 		mTestSettings.title += " (Density=\"" + sDensity + "\")";
 
-		var aRowDomRefs = oTable.getRows()[0].getDomRefs();
+		const aRowDomRefs = oTable.getRows()[0].getDomRefs();
 		assert.strictEqual(aRowDomRefs.rowSelector.getBoundingClientRect().height, mTestSettings.expectedHeight,
 			mTestSettings.title + ": Selector height is ok");
 		assert.strictEqual(aRowDomRefs.rowFixedPart.getBoundingClientRect().height, mTestSettings.expectedHeight,
@@ -1346,11 +1346,11 @@ sap.ui.define([
 	 * @param {number} mTestSettings.expectedHeight Expected column header height.
 	 */
 	TableQUnitUtils.assertColumnHeaderHeights = function(assert, oTable, mTestSettings) {
-		var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
+		const sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
 		mTestSettings.title += " (Density=\"" + sDensity + "\")";
 
-		var aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
-		var oColumnHeaderCnt = oTable.getDomRef().querySelector(".sapUiTableColHdrCnt");
+		const aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
+		const oColumnHeaderCnt = oTable.getDomRef().querySelector(".sapUiTableColHdrCnt");
 
 		assert.strictEqual(aRowDomRefs[0].getBoundingClientRect().height, mTestSettings.expectedHeight,
 			mTestSettings.title + ": Fixed part height is ok");
@@ -1369,14 +1369,12 @@ sap.ui.define([
 	 * @returns {HTMLElement} The focused element.
 	 */
 	TableQUnitUtils.setFocusOutsideOfTable = function(assert, sId) {
-		var oOuterElement;
-
 		if (typeof assert === "string") {
 			sId = assert;
 		}
 
 		sId = sId || "outerelement";
-		oOuterElement = document.getElementById(sId);
+		const oOuterElement = document.getElementById(sId);
 		oOuterElement.focus();
 
 		if (oOuterElement.closest(".sapUiTable")) {
@@ -1409,7 +1407,7 @@ sap.ui.define([
 		bBindText = bBindText !== false;
 		bInteractiveLabel = bInteractiveLabel === true;
 
-		var oTemplate;
+		let oTemplate;
 
 		if (bInputElement) {
 			oTemplate = new TestInputControl({
@@ -1427,7 +1425,7 @@ sap.ui.define([
 			});
 		}
 
-		var oColumn = new Column({
+		const oColumn = new Column({
 			label: new TestControl({
 				text: sTitle,
 				focusable: bInteractiveLabel,
@@ -1438,7 +1436,7 @@ sap.ui.define([
 		});
 		oTable.addColumn(oColumn);
 
-		for (var i = 0; i < iNumberOfDataRows; i++) {
+		for (let i = 0; i < iNumberOfDataRows; i++) {
 			oTable.getModel().getData().rows[i][sText] = sText + (i + 1);
 		}
 
@@ -1472,7 +1470,7 @@ sap.ui.define([
 
 	TableQUnitUtils.createTouchObject = function(mParams) {
 		if (Device.browser.firefox || Device.browser.safari) {
-			var oTarget = mParams.target;
+			const oTarget = mParams.target;
 
 			delete mParams.target;
 
@@ -1491,7 +1489,7 @@ sap.ui.define([
 		iTouchPositionX = iPageX || 0;
 		iTouchPositionY = iPageY || 0;
 
-		var oTouchEvent = this.createTouchEvent("touchstart", {
+		const oTouchEvent = this.createTouchEvent("touchstart", {
 			touches: [
 				this.createTouchObject({
 					target: oTouchTargetElement,
@@ -1511,7 +1509,7 @@ sap.ui.define([
 		iTouchPositionX -= iScrollDeltaX || 0;
 		iTouchPositionY -= iScrollDeltaY || 0;
 
-		var oTouchEvent = this.createTouchEvent("touchmove", {
+		const oTouchEvent = this.createTouchEvent("touchmove", {
 			touches: [
 				this.createTouchObject({
 					target: oTouchTargetElement,
@@ -1528,7 +1526,7 @@ sap.ui.define([
 	};
 
 	TableQUnitUtils.endTouchScrolling = function() {
-		var oTouchEvent = this.createTouchEvent("touchend", {
+		const oTouchEvent = this.createTouchEvent("touchend", {
 			changedTouches: [
 				this.createTouchObject({
 					target: oTouchTargetElement,
@@ -1635,16 +1633,16 @@ sap.ui.define([
 	 * Legacy utils                    *
 	 ***********************************/
 
-	var oTable, oTreeTable;
-	var oModel = new JSONModel();
-	var aFields = ["A", "B", "C", "D", "E"];
+	let oTable; let oTreeTable;
+	const oModel = new JSONModel();
+	const aFields = ["A", "B", "C", "D", "E"];
 
 	window.oModel = oModel;
 	window.aFields = aFields;
 	window.iNumberOfRows = iNumberOfDataRows;
 
 	window.createTables = function(bSkipPlaceAt, bFocusableCellTemplates, iCustomNumberOfRows) {
-		var iCount = iCustomNumberOfRows ? iCustomNumberOfRows : iNumberOfDataRows;
+		const iCount = iCustomNumberOfRows ? iCustomNumberOfRows : iNumberOfDataRows;
 
 		oTable = new Table({
 			rows: "{/rows}",
@@ -1677,13 +1675,13 @@ sap.ui.define([
 		});
 		window.oTreeTable = oTreeTable;
 
-		var oData = {rows: [], tree: {rows: []}};
-		var oRow;
-		var oTree;
-		for (var i = 0; i < iCount; i++) {
+		const oData = {rows: [], tree: {rows: []}};
+		let oRow;
+		let oTree;
+		for (let i = 0; i < iCount; i++) {
 			oRow = {};
 			oTree = {rows: [{}]};
-			for (var j = 0; j < aFields.length; j++) {
+			for (let j = 0; j < aFields.length; j++) {
 				oRow[aFields[j]] = aFields[j] + (i + 1);
 				oTree[aFields[j]] = aFields[j] + (i + 1);
 				oTree.rows[0][aFields[j]] = aFields[j] + "SUB" + (i + 1);
@@ -1739,7 +1737,7 @@ sap.ui.define([
 			oTableInstance = oTable;
 		}
 
-		var oCell = oTableInstance.getDomRef("rows-row" + iRow + "-col" + iCol);
+		const oCell = oTableInstance.getDomRef("rows-row" + iRow + "-col" + iCol);
 		if (bFocus) {
 			oCell.focus();
 		}
@@ -1758,7 +1756,7 @@ sap.ui.define([
 			oTableInstance = oTable;
 		}
 
-		var oCell = oTableInstance._getVisibleColumns()[iCol].getDomRef();
+		const oCell = oTableInstance._getVisibleColumns()[iCol].getDomRef();
 		if (bFocus) {
 			oCell.focus();
 		}
@@ -1777,7 +1775,7 @@ sap.ui.define([
 			oTableInstance = oTable;
 		}
 
-		var oCell = oTableInstance.getDomRef("rowsel" + iRow);
+		const oCell = oTableInstance.getDomRef("rowsel" + iRow);
 		if (bFocus) {
 			oCell.focus();
 		}
@@ -1796,7 +1794,7 @@ sap.ui.define([
 			oTableInstance = oTable;
 		}
 
-		var oCell = oTableInstance.getDomRef("rowact" + iRow);
+		const oCell = oTableInstance.getDomRef("rowact" + iRow);
 		if (bFocus) {
 			oCell.focus();
 		}
@@ -1815,7 +1813,7 @@ sap.ui.define([
 			oTableInstance = oTable;
 		}
 
-		var oCell = oTableInstance.getDomRef("selall");
+		const oCell = oTableInstance.getDomRef("selall");
 		if (bFocus) {
 			oCell.focus();
 		}
@@ -1836,8 +1834,8 @@ sap.ui.define([
 	 * @returns {jQuery} A jQuery object containing the active element.
 	 */
 	window.checkFocus = function(oElement, assert) {
-		var $ActiveElement = jQuery(document.activeElement);
-		var $Element = jQuery(oElement);
+		const $ActiveElement = jQuery(document.activeElement);
+		const $Element = jQuery(oElement);
 
 		assert.deepEqual(document.activeElement, $Element[0], "Focus is on: " + $ActiveElement.attr("id") + ", should be on: " + $Element.attr("id"));
 
@@ -1858,7 +1856,7 @@ sap.ui.define([
 			oTableInstance = oTable;
 		}
 
-		var oRow = oTableInstance.getRows()[iRow];
+		const oRow = oTableInstance.getRows()[iRow];
 
 		TableUtils.Grouping.setToDefaultGroupMode(oTableInstance);
 		oRow.getType = function() { return oRow.Type.GroupHeader; };
@@ -1881,7 +1879,7 @@ sap.ui.define([
 			oTableInstance = oTable;
 		}
 
-		var oRow = oTableInstance.getRows()[iRow];
+		const oRow = oTableInstance.getRows()[iRow];
 
 		oRow.getType = function() { return oRow.Type.Summary; };
 		oRow.getLevel = function() { return 1; };
@@ -1897,10 +1895,10 @@ sap.ui.define([
 
 	window.initRowActions = function(oTable, iCount, iNumberOfActions) {
 		oTable.setRowActionCount(iCount);
-		var oRowAction = new RowAction();
-		var aActions = [{type: "Navigation"}, {type: "Delete"}, {icon: "sap-icon://search", text: "Inspect"}];
-		for (var i = 0; i < Math.min(iNumberOfActions, 3); i++) {
-			var oItem = new RowActionItem({
+		const oRowAction = new RowAction();
+		const aActions = [{type: "Navigation"}, {type: "Delete"}, {icon: "sap-icon://search", text: "Inspect"}];
+		for (let i = 0; i < Math.min(iNumberOfActions, 3); i++) {
+			const oItem = new RowActionItem({
 				icon: aActions[i].icon,
 				text: aActions[i].text,
 				type: aActions[i].type || "Custom"
@@ -1912,7 +1910,7 @@ sap.ui.define([
 	};
 
 	window.removeRowActions = function(oTable) {
-		var oCurrentTemplate = oTable.getRowActionTemplate();
+		const oCurrentTemplate = oTable.getRowActionTemplate();
 		if (oCurrentTemplate) {
 			oCurrentTemplate.destroy();
 		}

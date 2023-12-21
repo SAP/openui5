@@ -37,15 +37,15 @@ sap.ui.define([
 			"Before initialization, the table is not enriched with the synchronization extension");
 
 		return this.oTable._enableSynchronization().then((oSyncInterface) => {
-			var oExtension = this.oTable._getSyncExtension();
-			var iDelegateCount = 0;
+			const oExtension = this.oTable._getSyncExtension();
+			let iDelegateCount = 0;
 
 			assert.ok(oExtension, "Extension available in table");
 			assert.ok(oSyncInterface != null && oExtension.getInterface() === oSyncInterface,
 				"Promise resolved with the synchronization extension interface");
 			assert.notStrictEqual(oSyncInterface, oExtension, "The interface is not the extension itself");
 
-			for (var i = 0; i < this.oTable.aDelegates.length; i++) {
+			for (let i = 0; i < this.oTable.aDelegates.length; i++) {
 				if (this.oTable.aDelegates[i].oDelegate === oExtension._delegate) {
 					iDelegateCount++;
 				}
@@ -57,7 +57,7 @@ sap.ui.define([
 
 	QUnit.test("Destruction", function(assert) {
 		return this.oTable._enableSynchronization().then(() => {
-			var oExtension = this.oTable._getSyncExtension();
+			const oExtension = this.oTable._getSyncExtension();
 
 			this.oTable.destroy();
 			assert.ok(!oExtension.getTable(), "Reference to table removed");
@@ -83,8 +83,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("No sync when initializing synchronization", function(assert) {
-		var oTable = this.oTable;
-		var oSyncInterface;
+		const oTable = this.oTable;
+		let oSyncInterface;
 
 		return oTable._enableSynchronization().then(function(_oSyncInterface) {
 			oSyncInterface = _oSyncInterface;
@@ -151,8 +151,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sync row selection", function(assert) {
-		var oTable = this.oTable;
-		var oSyncInterface;
+		const oTable = this.oTable;
+		let oSyncInterface;
 
 		return oTable._enableSynchronization().then(function(_oSyncInterface) {
 			oSyncInterface = _oSyncInterface;
@@ -245,7 +245,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sync row hover", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		return oTable._enableSynchronization().then(function(oSyncInterface) {
 			oSyncInterface.rowHover = sinon.spy();
@@ -335,7 +335,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sync row selection", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		return oTable._enableSynchronization().then(function(oSyncInterface) {
 			oTable.setFirstVisibleRow(1);
@@ -356,7 +356,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sync row hover", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		function isRowHovered(iIndex) {
 			return oTable.getRows()[iIndex].getDomRef().classList.contains("sapUiTableRowHvr");
@@ -382,14 +382,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Register vertical scrolling", function(assert) {
-		var oTable = this.oTable;
-		var oSynchronizationInterface;
-		var Div1 = document.createElement("div");
-		var Div2 = document.createElement("div");
-		var Div3 = document.createElement("div");
-		var iBaseRowHeight = oTable._getBaseRowHeight();
-		var bOriginalPointerSupport = Device.support.pointer;
-		var bOriginalTouchSupport = Device.support.touch;
+		const oTable = this.oTable;
+		let oSynchronizationInterface;
+		const Div1 = document.createElement("div");
+		const Div2 = document.createElement("div");
+		const Div3 = document.createElement("div");
+		const iBaseRowHeight = oTable._getBaseRowHeight();
+		const bOriginalPointerSupport = Device.support.pointer;
+		const bOriginalTouchSupport = Device.support.touch;
 
 		Device.support.pointer = false;
 		Device.support.touch = true;
@@ -455,8 +455,8 @@ sap.ui.define([
 
 		function assertScrollPositions(iVerticalScrollPosition) {
 			return function() {
-				var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
-				var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
+				const oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+				const oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
 
 				assert.strictEqual(oVSb.scrollTop, iVerticalScrollPosition, "The vertical scroll position is correct");
 				assert.strictEqual(oHSb.scrollLeft, 0, "The horizontal scroll position is correct");
@@ -464,8 +464,8 @@ sap.ui.define([
 		}
 
 		function resetScrollPositions() {
-			var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
-			var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
+			const oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+			const oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
 
 			oVSb.scrollTop = 0;
 			oHSb.scrollLeft = 0;
@@ -518,13 +518,13 @@ sap.ui.define([
 	});
 
 	QUnit.skip("Place vertical scrollbar at", function(assert) {
-		var oTable = this.oTable;
-		var Div = document.createElement("div");
-		var oInternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
-		var sInternalVSbId = oInternalVSb.getAttribute("id");
-		var oExternalVSbContainer;
-		var oTableInvalidate = sinon.spy(oTable, "invalidate");
-		var oSyncInterface;
+		const oTable = this.oTable;
+		const Div = document.createElement("div");
+		const oInternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
+		const sInternalVSbId = oInternalVSb.getAttribute("id");
+		let oExternalVSbContainer;
+		const oTableInvalidate = sinon.spy(oTable, "invalidate");
+		let oSyncInterface;
 
 		Div.appendChild(document.createElement("div"));
 		Div.appendChild(document.createElement("div"));
@@ -542,9 +542,9 @@ sap.ui.define([
 			oTableInvalidate.resetHistory();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
-			var sExternalVSbId = oExternalVSb.getAttribute("id");
-			var oDomRef = oTable.getDomRef();
+			const oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
+			const sExternalVSbId = oExternalVSb.getAttribute("id");
+			const oDomRef = oTable.getDomRef();
 
 			assert.notEqual(oExternalVSb, oInternalVSb, "The new external and the old internal scrollbars are different elements");
 			assert.strictEqual(sExternalVSbId, sInternalVSbId, "The external scrollbar has the same id as the old internal scrollbar");
@@ -560,7 +560,7 @@ sap.ui.define([
 			Div.firstChild.remove();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
+			const oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
 			oSyncInterface.placeVerticalScrollbarAt(Div);
 
 			assert.ok(oTableInvalidate.notCalled, "Insert existing scrollbar back into DOM: The table was not invalidated");
@@ -568,7 +568,7 @@ sap.ui.define([
 			assert.ok(Div.contains(oExternalVSb), "Insert existing scrollbar back into DOM: External scrollbar is placed in the correct container");
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
+			const oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
 
 			// Scroll the external scrollbar.
 			oExternalVSb.scrollTop = oTable._getBaseRowHeight() * 2;
@@ -576,7 +576,7 @@ sap.ui.define([
 		}).then(oTable.qunit.whenNextRowsUpdated).then(function() {
 			assert.strictEqual(oTable.getFirstVisibleRow(), 2, "Scrolling the external scrollbar correctly changes the table's first visible row");
 
-			var oOldExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
+			const oOldExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
 			Div.firstChild.remove();
 			oSyncInterface.placeVerticalScrollbarAt(Div);
 
@@ -584,7 +584,7 @@ sap.ui.define([
 			assert.ok(Div.contains(oOldExternalVSb), "The new external and the old external scrollbars are the same elements");
 
 		}).then(TableQUnitUtils.$wait(100)).then(function() {
-			var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+			const oVSb = oTable._getScrollExtension().getVerticalScrollbar();
 			assert.strictEqual(oVSb.scrollTop, oTable._getBaseRowHeight() * 2, "The scrollbar has the correct scroll position");
 
 			Div.remove();
@@ -592,18 +592,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("Render horizontal scrollbar", function(assert) {
-		var oTable = this.oTable;
-		var Div = document.createElement("div");
+		const oTable = this.oTable;
+		const Div = document.createElement("div");
 
 		Div.style.width = "0px";
 		document.getElementById("qunit-fixture").appendChild(Div);
 
 		return oTable._enableSynchronization().then(function(oSyncInterface) {
-			var oRenderManager = new RenderManager().getInterface();
+			const oRenderManager = new RenderManager().getInterface();
 			oSyncInterface.renderHorizontalScrollbar(oRenderManager, "hsbid", 100);
 			oRenderManager.flush(Div);
 
-			var oHSb = Div.firstElementChild;
+			const oHSb = Div.firstElementChild;
 			assert.strictEqual(Div.childElementCount, 1, "One element was rendered");
 			assert.strictEqual(oHSb.getAttribute("id"), "hsbid", "The rendered element has the correct id");
 			assert.strictEqual(oHSb.scrollWidth - oHSb.clientWidth, 100, "The rendered element has the correct scroll range");

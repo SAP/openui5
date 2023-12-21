@@ -13,7 +13,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var RowModeSubclass = RowMode.extend("sap.ui.table.test.RowModeSubClass", {
+	const RowModeSubclass = RowMode.extend("sap.ui.table.test.RowModeSubClass", {
 		getMinRequestLength: function() {
 			return 0;
 		},
@@ -53,8 +53,8 @@ sap.ui.define([
 	QUnit.module("Inheriting from RowMode");
 
 	QUnit.test("Abstract methods", function(assert) {
-		var InvalidSubclass = RowMode.extend("sap.ui.table.test.RowModeInvalidSubClass");
-		var oMode = new InvalidSubclass();
+		const InvalidSubclass = RowMode.extend("sap.ui.table.test.RowModeInvalidSubClass");
+		const oMode = new InvalidSubclass();
 
 		assert.throws(oMode.getMinRequestLength, "#getMinRequestLength throws an error if not implemented in subclass");
 		assert.throws(oMode.getComputedRowCounts, "#getComputedRowCounts throws an error if not implemented in subclass");
@@ -74,7 +74,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("computeStandardizedRowCounts", function(assert) {
-		var aTestParameters = [
+		const aTestParameters = [
 			{input: [-1, -1, -1], output: {count: 0, scrollable: 0, fixedTop: 0, fixedBottom: 0}},
 			{input: [-1, 10, 10], output: {count: 0, scrollable: 0, fixedTop: 0, fixedBottom: 0}},
 			{input: [5, 10, 10], output: {count: 5, scrollable: 1, fixedTop: 3, fixedBottom: 1}},
@@ -104,10 +104,10 @@ sap.ui.define([
 			{input: [2, 0, 0], output: {count: 2, scrollable: 1, fixedTop: 1, fixedBottom: 0}, constraints: {fixedTop: true, fixedBottom: true}},
 			{input: [3, 0, 0], output: {count: 3, scrollable: 1, fixedTop: 1, fixedBottom: 1}, constraints: {fixedTop: true, fixedBottom: true}}
 		];
-		var oGetRowCountConstraints = this.stub(this.oRowMode, "getRowCountConstraints");
+		const oGetRowCountConstraints = this.stub(this.oRowMode, "getRowCountConstraints");
 
-		for (var i = 0; i < aTestParameters.length; i++) {
-			var mTestParameter = aTestParameters[i];
+		for (let i = 0; i < aTestParameters.length; i++) {
+			const mTestParameter = aTestParameters[i];
 			oGetRowCountConstraints.returns(mTestParameter.constraints || {});
 			assert.deepEqual(this.oRowMode.computeStandardizedRowCounts.apply(this.oRowMode, mTestParameter.input), mTestParameter.output,
 				"(count: " + mTestParameter.input[0]

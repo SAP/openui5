@@ -24,11 +24,11 @@ sap.ui.define([
 ], function(deepExtend, Button, CheckBox, ComboBox, DatePicker, Input, Label, Link, MultiComboBox, ObjectStatus, Select, Text, Toolbar, Icon, Item, coreLibrary, JSONModel, Column, tableLibrary, Table, Currency, UI5Date) {
 	"use strict";
 
-	var HorizontalAlign = coreLibrary.HorizontalAlign;
-	var SelectionMode = tableLibrary.SelectionMode;
+	const HorizontalAlign = coreLibrary.HorizontalAlign;
+	const SelectionMode = tableLibrary.SelectionMode;
 
 	// TABLE TEST DATA
-	var aData = [
+	let aData = [
 		{lastName: "Dente", name: "Alfred", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
 		{lastName: "Friese", name: "Andrew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", objStatusText: "Name partly OK Text", objStatusTitle: "Name partly OK Title", objStatusState: "Warning"},
 		{lastName: "Mann", name: "Sarah", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "images/Person.png", gender: "female", rating: 3, money: 1345.212, birthday: "1987-04-01", currency: "EUR", objStatusText: "Name not OK Text", objStatusTitle: "Name not OK Title", objStatusState: "Error"},
@@ -52,18 +52,18 @@ sap.ui.define([
 	];
 
 	// enhance test data
-	var aOrgData = deepExtend([], aData);
-	for (var i = 0; i < 9; i++) {
+	const aOrgData = deepExtend([], aData);
+	for (let i = 0; i < 9; i++) {
 		aData = aData.concat(deepExtend([], aOrgData));
 	}
 
-	for (var i = 0, l = aData.length; i < l; i++) {
+	for (let i = 0, l = aData.length; i < l; i++) {
 		aData[i].lastName += " - " + (i + 1);
 		aData[i].birthdayDate = UI5Date.getInstance(aData[i].birthday);
 	}
 
 	// create table with supported sap.m controls
-	var oTable = new Table();
+	const oTable = new Table();
 
 	oTable.setTitle("Tango");
 	oTable.setFooter("Sierra");
@@ -79,7 +79,7 @@ sap.ui.define([
 	]}));
 
 	// create columns
-	var oControl, oColumn;
+	let oControl; let oColumn;
 	// sap.m.Text
 	oControl = new Text({text: "{lastName}"});
 	oColumn = new Column({label: new Label({text: "Alfa"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName", width: "120px"});
@@ -164,13 +164,13 @@ sap.ui.define([
 	oTable.addColumn(oColumn);
 
 	// set Model and bind Table
-	var oModel = new JSONModel();
+	const oModel = new JSONModel();
 	oModel.setData({modelData: aData});
 	oTable.setModel(oModel);
 	oTable.bindRows("/modelData");
 
 	oTable.placeAt("content");
 
-	var oButtonAfterTable = new Button({text: "Just a Button after the Table"});
+	const oButtonAfterTable = new Button({text: "Just a Button after the Table"});
 	oButtonAfterTable.placeAt("content");
 });

@@ -13,24 +13,24 @@ sap.ui.define([
 
 		onInit: function() {
 			// set explored app's demo model on this sample
-			var oJSONModel = this.initSampleDataModel();
+			const oJSONModel = this.initSampleDataModel();
 			this.getView().setModel(oJSONModel);
 		},
 
 		initSampleDataModel: function() {
-			var oModel = new JSONModel();
+			const oModel = new JSONModel();
 
-			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
+			const oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
 			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
 				success: function(oData) {
-					var aTemp1 = [];
-					var aTemp2 = [];
-					var aSuppliersData = [];
-					var aCategoryData = [];
-					for (var i = 0; i < oData.ProductCollection.length; i++) {
-						var oProduct = oData.ProductCollection[i];
+					const aTemp1 = [];
+					const aTemp2 = [];
+					const aSuppliersData = [];
+					const aCategoryData = [];
+					for (let i = 0; i < oData.ProductCollection.length; i++) {
+						const oProduct = oData.ProductCollection[i];
 						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
@@ -71,16 +71,16 @@ sap.ui.define([
 		},
 
 		buttonPress: function(oEvent) {
-			var oView = this.getView(),
-				oTable = oView.byId("table1"),
-				sColumnCount = oView.byId("inputColumn").getValue() || 0,
-				sRowCount = oView.byId("inputRow").getValue() || 0,
-				sBottomRowCount = oView.byId("inputBottomRow").getValue() || 0,
-				iColumnCount = parseInt(sColumnCount),
-				iRowCount = parseInt(sRowCount),
-				iBottomRowCount = parseInt(sBottomRowCount),
-				iTotalColumnCount = oTable.getColumns().length,
-				iTotalRowCount = oTable.getRows().length;
+			const oView = this.getView();
+			const oTable = oView.byId("table1");
+			const sColumnCount = oView.byId("inputColumn").getValue() || 0;
+			const sRowCount = oView.byId("inputRow").getValue() || 0;
+			const sBottomRowCount = oView.byId("inputBottomRow").getValue() || 0;
+			let iColumnCount = parseInt(sColumnCount);
+			let iRowCount = parseInt(sRowCount);
+			let iBottomRowCount = parseInt(sBottomRowCount);
+			const iTotalColumnCount = oTable.getColumns().length;
+			const iTotalRowCount = oTable.getRows().length;
 
 			// Fixed column count exceeds the total column count
 			if (iColumnCount > iTotalColumnCount) {

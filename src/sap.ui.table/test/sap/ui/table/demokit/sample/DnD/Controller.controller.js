@@ -11,14 +11,14 @@ sap.ui.define([
 	return Controller.extend("sap.ui.table.sample.DnD.Controller", {
 
 		onInit: function() {
-			var oView = this.getView();
+			const oView = this.getView();
 
 			// set explored app's demo model on this sample
 			this.oProductsModel = this.initSampleProductsModel();
 			oView.setModel(this.oProductsModel);
 
 			sap.ui.require(["sap/ui/table/sample/TableExampleUtils"], function(TableExampleUtils) {
-				var oTb = oView.byId("infobar");
+				const oTb = oView.byId("infobar");
 				oTb.addContent(new ToolbarSpacer());
 				oTb.addContent(TableExampleUtils.createInfoButton("sap/ui/table/sample/DnD"));
 			}, function(oError) { /*ignore*/ });
@@ -46,7 +46,7 @@ sap.ui.define([
 		},
 
 		initSampleProductsModel: function() {
-			var oData;
+			let oData;
 			jQuery.ajax({
 				async: false,
 				url: sap.ui.require.toUrl("sap/ui/demo/mock/products.json"),
@@ -61,21 +61,21 @@ sap.ui.define([
 				oProduct.Rank = this.config.initialRank;
 			}, this);
 
-			var oModel = new JSONModel();
+			const oModel = new JSONModel();
 			oModel.setData(oData);
 			return oModel;
 		},
 
 		getSelectedRowContext: function(sTableId, fnCallback) {
-			var oTable = this.byId(sTableId);
-			var iSelectedIndex = oTable.getSelectedIndex();
+			const oTable = this.byId(sTableId);
+			const iSelectedIndex = oTable.getSelectedIndex();
 
 			if (iSelectedIndex === -1) {
 				MessageToast.show("Please select a row!");
 				return;
 			}
 
-			var oSelectedContext = oTable.getContextByIndex(iSelectedIndex);
+			const oSelectedContext = oTable.getContextByIndex(iSelectedIndex);
 			if (oSelectedContext && fnCallback) {
 				fnCallback.call(this, oSelectedContext, iSelectedIndex, oTable);
 			}
@@ -84,16 +84,16 @@ sap.ui.define([
 		},
 
 		onDragStart: function(oEvent) {
-			var oDraggedRow = oEvent.getParameter("target");
-			var oDragSession = oEvent.getParameter("dragSession");
+			const oDraggedRow = oEvent.getParameter("target");
+			const oDragSession = oEvent.getParameter("dragSession");
 
 			// keep the dragged row context for the drop action
 			oDragSession.setComplexData("draggedRowContext", oDraggedRow.getBindingContext());
 		},
 
 		onDropTable1: function(oEvent) {
-			var oDragSession = oEvent.getParameter("dragSession");
-			var oDraggedRowContext = oDragSession.getComplexData("draggedRowContext");
+			const oDragSession = oEvent.getParameter("dragSession");
+			const oDraggedRowContext = oDragSession.getComplexData("draggedRowContext");
 			if (!oDraggedRowContext) {
 				return;
 			}
@@ -110,7 +110,7 @@ sap.ui.define([
 				this.oProductsModel.refresh(true);
 
 				// select the previous row when there is no row to select
-				var oNextContext = oTable2.getContextByIndex(iSelectedRowIndex + 1);
+				const oNextContext = oTable2.getContextByIndex(iSelectedRowIndex + 1);
 				if (!oNextContext) {
 					oTable2.setSelectedIndex(iSelectedRowIndex - 1);
 				}
@@ -118,27 +118,27 @@ sap.ui.define([
 		},
 
 		onDropTable2: function(oEvent) {
-			var oDragSession = oEvent.getParameter("dragSession");
-			var oDraggedRowContext = oDragSession.getComplexData("draggedRowContext");
+			const oDragSession = oEvent.getParameter("dragSession");
+			const oDraggedRowContext = oDragSession.getComplexData("draggedRowContext");
 			if (!oDraggedRowContext) {
 				return;
 			}
 
-			var oConfig = this.config;
-			var iNewRank = oConfig.defaultRank;
-			var oDroppedRow = oEvent.getParameter("droppedControl");
+			const oConfig = this.config;
+			let iNewRank = oConfig.defaultRank;
+			const oDroppedRow = oEvent.getParameter("droppedControl");
 
 			if (oDroppedRow && oDroppedRow instanceof TableRow) {
 				// get the dropped row data
-				var sDropPosition = oEvent.getParameter("dropPosition");
-				var oDroppedRowContext = oDroppedRow.getBindingContext();
-				var iDroppedRowRank = oDroppedRowContext.getProperty("Rank");
-				var iDroppedRowIndex = oDroppedRow.getIndex();
-				var oDroppedTable = oDroppedRow.getParent();
+				const sDropPosition = oEvent.getParameter("dropPosition");
+				const oDroppedRowContext = oDroppedRow.getBindingContext();
+				const iDroppedRowRank = oDroppedRowContext.getProperty("Rank");
+				const iDroppedRowIndex = oDroppedRow.getIndex();
+				const oDroppedTable = oDroppedRow.getParent();
 
 				// find the new index of the dragged row depending on the drop position
-				var iNewRowIndex = iDroppedRowIndex + (sDropPosition === "After" ? 1 : -1);
-				var oNewRowContext = oDroppedTable.getContextByIndex(iNewRowIndex);
+				const iNewRowIndex = iDroppedRowIndex + (sDropPosition === "After" ? 1 : -1);
+				const oNewRowContext = oDroppedTable.getContextByIndex(iNewRowIndex);
 				if (!oNewRowContext) {
 					// dropped before the first row or after the last row
 					iNewRank = oConfig.rankAlgorithm[sDropPosition](iDroppedRowRank);
@@ -155,11 +155,11 @@ sap.ui.define([
 
 		moveToTable2: function() {
 			this.getSelectedRowContext("table1", function(oSelectedRowContext) {
-				var oTable2 = this.byId("table2");
-				var oFirstRowContext = oTable2.getContextByIndex(0);
+				const oTable2 = this.byId("table2");
+				const oFirstRowContext = oTable2.getContextByIndex(0);
 
 				// insert always as a first row
-				var iNewRank = this.config.defaultRank;
+				let iNewRank = this.config.defaultRank;
 				if (oFirstRowContext) {
 					iNewRank = this.config.rankAlgorithm.Before(oFirstRowContext.getProperty("Rank"));
 				}
@@ -174,15 +174,15 @@ sap.ui.define([
 
 		moveSelectedRow: function(sDirection) {
 			this.getSelectedRowContext("table2", function(oSelectedRowContext, iSelectedRowIndex, oTable2) {
-				var iSiblingRowIndex = iSelectedRowIndex + (sDirection === "Up" ? -1 : 1);
-				var oSiblingRowContext = oTable2.getContextByIndex(iSiblingRowIndex);
+				const iSiblingRowIndex = iSelectedRowIndex + (sDirection === "Up" ? -1 : 1);
+				const oSiblingRowContext = oTable2.getContextByIndex(iSiblingRowIndex);
 				if (!oSiblingRowContext) {
 					return;
 				}
 
 				// swap the selected and the siblings rank
-				var iSiblingRowRank = oSiblingRowContext.getProperty("Rank");
-				var iSelectedRowRank = oSelectedRowContext.getProperty("Rank");
+				const iSiblingRowRank = oSiblingRowContext.getProperty("Rank");
+				const iSelectedRowRank = oSelectedRowContext.getProperty("Rank");
 				this.oProductsModel.setProperty("Rank", iSiblingRowRank, oSelectedRowContext);
 				this.oProductsModel.setProperty("Rank", iSelectedRowRank, oSiblingRowContext);
 				this.oProductsModel.refresh(true);
