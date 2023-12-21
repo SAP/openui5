@@ -10,7 +10,7 @@
 		rows="{path : '/EMPLOYEES',
 			parameters : {$count : false, $orderby : 'AGE', $$patchWithoutSideEffects : true},
 			suspended : true}"
-		selectionMode="None" threshold="0">
+		selectionMode="None" threshold="5">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="Organizational Chart"/>
@@ -101,7 +101,7 @@
 		rows="{path : '/EMPLOYEES',
 			parameters : {$count : false, $orderby : 'AGE', $$patchWithoutSideEffects : true},
 			suspended : true}"
-		selectionMode="None" threshold="0">
+		selectionMode="None" threshold="5">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="treeTitle" level="H1" text="Organizational Chart - TreeTable"/>
