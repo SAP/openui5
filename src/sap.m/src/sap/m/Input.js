@@ -223,7 +223,10 @@ function(
 
 				/**
 				 * If set to true, direct text input is disabled and the control will trigger the event "valueHelpRequest" for all user interactions. The properties "showValueHelp", "editable", and "enabled" must be set to true, otherwise the property will have no effect.
-				 * In this scenario, the <code>showItems</code> API will not work.
+				 * In this scenario, the <code>showItems</code> API will not work.<br><br>
+				 * <strong>Note:</strong> The property is deprecated, as it creates unnecessary usability and accessibility restrictions. The decision to deprecate it is based on the fact that it serves no purpose to have an input field where the user cannot type.
+				 * This property restricts even the paste functionality, which can be useful, e.g. the needed info is already in the clipboard.
+				 * If the user's input needs to match specific predefined values, the application should validate the input against the set of values and provide feedback to the user or use other mechanism for selection, where freestyle input is not allowed by design (Select, SelectDialog, etc).
 				 * @since 1.21.0
 				 * @deprecated As of version 1.119 The property valueHelpOnly should not be used anymore
 				 */
@@ -315,7 +318,7 @@ function(
 				 * <code>minScreenWidth</code> properties of the <code>sap.m.Column</code> control by itself.
 				 * @since 1.89
 				 */
-				 enableTableAutoPopinMode: {type: "boolean", group: "Behavior", defaultValue: false},
+				enableTableAutoPopinMode: {type: "boolean", group: "Behavior", defaultValue: false},
 
 				/**
 				 * Specifies whether autocomplete is enabled.
