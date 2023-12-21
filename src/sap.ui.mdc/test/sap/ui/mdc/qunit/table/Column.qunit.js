@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/Core", "sap/ui/mdc/Table", "sap/ui/mdc/table/Column", "sap/m/Text", "sap/ui/core/TooltipBase"
-], function(Core, Table, Column, Text, TooltipBase) {
+	"sap/ui/mdc/Table", "sap/ui/mdc/table/Column", "sap/m/Text", "sap/ui/core/TooltipBase"
+], function(Table, Column, Text, TooltipBase) {
 	"use strict";
 
 	QUnit.module("sap.ui.mdc.table.Column", {
