@@ -103,7 +103,10 @@ sap.ui.define([
 	 */
 	ControlVariantSaveAs.prototype.execute = function() {
 		var sSourceVariantReference = this.getSourceVariantReference();
-		this._aControlChanges = this.oModel.getVariant(sSourceVariantReference, this.sVariantManagementReference).controlChanges;
+		// once a change is saved to a variant it will automatically be restored by the VariantModel
+		this._aControlChangesWithoutVariant = this.oModel.getVariant(sSourceVariantReference, this.sVariantManagementReference)
+		.controlChanges
+		.filter((oFlexObject) => !oFlexObject.getSavedToVariant());
 		var mParams = this.getNewVariantParameters();
 		mParams.layer = this.sLayer;
 		mParams.newVariantReference = this.sNewVariantReference;
@@ -146,7 +149,8 @@ sap.ui.define([
 
 			return this.oModel.removeVariant(mPropertyBag, true)
 			.then(function() {
-				return this.oModel.addAndApplyChangesOnVariant(this._aControlChanges);
+				const aRelevantChanges = this._aControlChangesWithoutVariant;
+				return this.oModel.addAndApplyChangesOnVariant(aRelevantChanges);
 			}.bind(this))
 			.then(function() {
 				this._aPreparedChanges = null;
