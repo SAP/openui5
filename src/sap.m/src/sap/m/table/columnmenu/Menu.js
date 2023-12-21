@@ -375,11 +375,9 @@ sap.ui.define([
 
 	Menu.prototype._addView = function (oMenuItem) {
 		var oItem = new AbstractContainerItem({
-			content: new ScrollContainer({
-				content: new AssociativeControl({
-					control: oMenuItem.getContent(),
-					height: true
-				})
+			content: new AssociativeControl({
+				control: oMenuItem.getContent(),
+				height: true
 			}),
 			key: oMenuItem.getId(),
 			text: oMenuItem.getLabel(),
@@ -388,6 +386,9 @@ sap.ui.define([
 
 		this._oItemsContainer.addView(oItem);
 		this._setItemVisibility(oMenuItem, oMenuItem.getVisible());
+		oMenuItem.getScrollDelegate = function() {
+			return oItem.getParent().getLayout().getScrollDelegate();
+		};
 	};
 
 	Menu.prototype._createItemsContainer = function () {

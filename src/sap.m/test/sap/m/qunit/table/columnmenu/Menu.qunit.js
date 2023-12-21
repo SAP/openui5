@@ -289,6 +289,22 @@ sap.ui.define([
 		assert.equal(aCalls[0].target, sId);
 	});
 
+	QUnit.test("ScrollDelegate", function(assert) {
+		this.createMenu(false, true, false, true);
+		this.oColumnMenu.openBy(this.oButton);
+		oCore.applyChanges();
+
+		var sId = this.oColumnMenu.getAggregation("_items")[0].getId();
+		this.oColumnMenu._oItemsContainer.switchView(sId);
+		this.clock.tick(500);
+
+		var oScrollDelegate = library.getScrollDelegate(this.oColumnMenu._getAllEffectiveItems()[0].getContent());
+		assert.ok(oScrollDelegate, "ScrollDelegate is set");
+		var oControl = oScrollDelegate._oControl;
+		assert.ok(oControl.isA("sap.m.Page"), "the control is of class sap.m.Page");
+		assert.ok(oControl.getParent().isA("sap.m.p13n.AbstractContainer"), "the parent control is of class sap.m.p13n.AbstractContainer");
+	});
+
 	QUnit.test("Check focus when control specific items are given", function (assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
