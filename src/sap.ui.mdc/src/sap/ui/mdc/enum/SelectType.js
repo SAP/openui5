@@ -3,7 +3,7 @@
  */
 
 // Provides enumeration sap.ui.mdc.enum.SelectType
-sap.ui.define(() => {
+sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	"use strict";
 
 
@@ -39,6 +39,11 @@ sap.ui.define(() => {
 		 */
 		Remove: "Remove"
 	};
+
+	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.enum.SelectType", SelectType);
 
 	return SelectType;
 

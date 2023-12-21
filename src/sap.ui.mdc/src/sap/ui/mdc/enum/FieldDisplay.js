@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(() => {
+sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	"use strict";
 
 	/**
@@ -43,6 +43,11 @@ sap.ui.define(() => {
 		 */
 		DescriptionValue: "DescriptionValue"
 	};
+
+	/**
+	 * @deprecated As of version 1.121
+	 */
+	DataType.registerEnum("sap.ui.mdc.enum.FieldDisplay", FieldDisplay);
 
 	return FieldDisplay;
 
