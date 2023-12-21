@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/includeStylesheet",
 	"require",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Element,
 	createAndAppendDiv,
@@ -34,7 +34,7 @@ sap.ui.define([
 	jQuery,
 	includeStylesheet,
 	require,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -142,7 +142,7 @@ sap.ui.define([
 		assert.equal($p3c.width(), jQuery(window).width(), "Page 3 content width should cover the whole screen");
 	});
 
-	QUnit.test("render once only", function(assert) { // regression test for issue 1570014242
+	QUnit.test("render once only", async function(assert) { // regression test for issue 1570014242
 		var iRenderCounter = 0;
 		var oDelegate = {
 			onAfterRendering : function() {
@@ -155,17 +155,17 @@ sap.ui.define([
 		assert.equal(iRenderCounter, 0, "Page should not be rendered directly after instantiation");
 
 		oRenderOncePage.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(iRenderCounter, 1, "Page should be rendered only once");
 
 		oRenderOncePage.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(iRenderCounter, 2, "Page should be rendered twice after another forced rerendering");
 
 		oRenderOncePage.destroy();
 	});
 
-	QUnit.test("render once only with combinatorics", function(assert) { // regression test for issue 1570014242
+	QUnit.test("render once only with combinatorics", async function(assert) { // regression test for issue 1570014242
 		// the mechanism that avoids double rendering is different depending on whether there is a title/navbutton or not, hence this test
 		var iRenderCounter = 0;
 		var oDelegate = {
@@ -179,17 +179,17 @@ sap.ui.define([
 		assert.equal(iRenderCounter, 0, "Page should not be rendered directly after instantiation");
 
 		oRenderOncePage.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(iRenderCounter, 1, "Page should be rendered only once");
 
 		oRenderOncePage.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(iRenderCounter, 2, "Page should be rendered twice after another forced rerendering");
 
 		oRenderOncePage.destroy();
 	});
 
-	QUnit.test("Page with footer and unescaped id", function (assert) {
+	QUnit.test("Page with footer and unescaped id", async function (assert) {
 		var oPage = new Page("my.Page", {
 			footer: new Bar({
 				contentMiddle: [
@@ -200,7 +200,7 @@ sap.ui.define([
 				content: "<div id='p4content'>another test content</div>"
 			})
 		}).placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oPageContentRef = oPage.getDomRef("cont");
 		var hasScroll = oPageContentRef.getBoundingClientRect().height < oPageContentRef.scrollHeight;
@@ -215,7 +215,7 @@ sap.ui.define([
 
 	QUnit.module("Properties Check");
 
-	QUnit.test("Title escaping", function(assert) {
+	QUnit.test("Title escaping", async function(assert) {
 		//Setup
 		var oModel = new JSONModel({"test": "{hello}"});
 		var oPage = new Page({
@@ -223,8 +223,7 @@ sap.ui.define([
 		});
 		oPage.setModel(oModel);
 		oPage.placeAt('content');
-		oCore.applyChanges();
-
+		await nextUIUpdate();
 		// Assert
 		assert.equal(oPage.getTitle(), oPage.$("title-inner").text(), "Title should be escaped properly when using curly braces.");
 
@@ -233,23 +232,23 @@ sap.ui.define([
 		oModel.destroy();
 	});
 
-	QUnit.test("showSubHeader", function(assert) {
+	QUnit.test("showSubHeader", async function(assert) {
 		var oSubHeader = Element.getElementById("mySubHeader");
 		assert.ok(oSubHeader.$().length, "subHeader should be rendered");
 
 
 		oPage.setShowSubHeader(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(document.getElementById("mySubHeader"), undefined, "subHeader should not be rendered when 'showSubHeader' is false");
 		assert.equal(jQuery("#myFirstPage-cont").css("top"), "48px", "top of Page content with subHeader not shown should be 48px (3rem)");
 
 		oPage.setShowSubHeader(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(document.getElementById("mySubHeader"), "subHeader should be rendered");
 		assert.equal(jQuery("#myFirstPage-cont").css("top"), "96px", "top of Page content with subHeader shown should be 96px (6rem)");
 	});
 
-	QUnit.test("showFooter when floatingFooter=true and showFooter=false initially", function(assert) {
+	QUnit.test("showFooter when floatingFooter=true and showFooter=false initially", async function(assert) {
 		var oPage = new Page({
 			id: "idPage",
 			floatingFooter: true,
@@ -258,8 +257,7 @@ sap.ui.define([
 		});
 
 		oPage.placeAt("content");
-
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(!!document.getElementById("myFooter"), true, "footer should be rendered");
 		assert.equal(oPage.getFooter().$().parent().hasClass("sapUiHidden"), true, "footer is hidden");
@@ -267,7 +265,7 @@ sap.ui.define([
 		oPage.destroy();
 	});
 
-	QUnit.test("Page properly applies classNames to the footer", function (assert) {
+	QUnit.test("Page properly applies classNames to the footer", async function (assert) {
 		var oPage = new Page({
 			id: "idPage",
 			floatingFooter: true,
@@ -277,7 +275,7 @@ sap.ui.define([
 		done = assert.async();
 
 		oPage.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $footer = oPage.$().find(".sapMPageFooter").last();
 
@@ -285,7 +283,6 @@ sap.ui.define([
 
 		//Act
 		oPage.setShowFooter(false);
-		oCore.applyChanges();
 
 		setTimeout(function() {
 			//Assert
@@ -297,7 +294,7 @@ sap.ui.define([
 		}, Page.FOOTER_ANIMATION_DURATION + 50);
 	});
 
-	QUnit.test("showFooter toggling with floatingFooter disabled", function (assert) {
+	QUnit.test("showFooter toggling with floatingFooter disabled", async function (assert) {
 		// Setup
 		var oBar = new Bar({
 				contentRight: new Button({text: "Hello World"})
@@ -306,7 +303,8 @@ sap.ui.define([
 				showFooter: false,
 				footer: oBar
 			}).placeAt("content");
-		oCore.applyChanges();
+
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oBar.$().parent().hasClass("sapUiHidden"), "Footer is there, but is hidden.");
@@ -315,7 +313,7 @@ sap.ui.define([
 
 		// Act
 		oPage.setShowFooter(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(!oBar.$().parent().hasClass("sapUiHidden"), "Footer is visible.");
@@ -324,7 +322,7 @@ sap.ui.define([
 
 		// Act
 		oPage.setShowFooter(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oBar.$().parent().hasClass("sapUiHidden"), "Footer is there, but is hidden.");
@@ -334,7 +332,7 @@ sap.ui.define([
 		// Act
 		oPage.setShowFooter(true);
 		oPage.setFooter(null);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal(oPage.$().hasClass("sapMPageWithFooter"), false,
@@ -347,20 +345,20 @@ sap.ui.define([
 		oPage = null;
 	});
 
-	QUnit.test("contentOnlyBusy property", function (assert) {
+	QUnit.test("contentOnlyBusy property", async function (assert) {
 		// Setup
 		var oBusyIndicator, oBusyIndicatorInner,
-				clock = sinon.useFakeTimers(),
-				oPage = new Page("myPage");
+			clock = sinon.useFakeTimers(),
+			oPage = new Page("myPage");
 
 		oPage.placeAt("content");
-		oCore.applyChanges();
+
+		await nextUIUpdate(clock);
 
 		// Act
 		oPage.setBusy(true);
-		oCore.applyChanges();
 		clock.tick(1000);
-
+		nextUIUpdate(clock);
 		oBusyIndicator = [].filter.call(oPage.getDomRef().childNodes, function (oChild) {
 			return oChild.id.indexOf("busyIndicator") > -1;
 		})[0];
@@ -370,14 +368,14 @@ sap.ui.define([
 
 		// Setup & Act
 		oPage.setBusy(false);
-		oCore.applyChanges();
 		clock.tick(1000);
 
+		nextUIUpdate(clock);
 		oPage.setContentOnlyBusy(true);
 		oPage.setBusy(true);
-		oCore.applyChanges();
 		clock.tick(1000);
 
+		nextUIUpdate(clock);
 		oBusyIndicator = [].filter.call(oPage.getDomRef().childNodes, function (oChild) {
 			return oChild.id.indexOf("busyIndicator") > -1;
 		})[0];
@@ -391,35 +389,36 @@ sap.ui.define([
 		assert.ok(oBusyIndicatorInner, "Busy indicator is inside Page's content.");
 
 		oPage.destroy();
+		await nextUIUpdate(clock);
 		clock.restore();
 	});
 
 	/**
 	 * @deprecated Since version 1.20
 	 */
-	QUnit.test("setNavButtonType should propagate to internal button", function (assert) {
+	QUnit.test("setNavButtonType should propagate to internal button", async function (assert) {
 		var oPage = new Page();
 
 		oPage.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oPage._navBtn, "Button should not be initialized");
 
 		oPage.setShowNavButton(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oPage._navBtn, "Button should be initialized");
 		assert.strictEqual(oPage.getNavButtonType(), oPage._navBtn.getType(), "Default button type 'Back' should be propagated");
 
 		oPage.setShowNavButton(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oPage._navBtn.getDomRef(), "Button should not be rendered");
 
 		oPage.setShowNavButton(true);
 		oPage.setNavButtonType("Up");
 		oPage.setNavButtonText("Up");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oPage.getNavButtonType(), oPage._navBtn.getType(), "Type 'Up' should be set to the nav button");
 		assert.strictEqual(oPage._navBtn.getType(), "Up", "Up should be propagated to nav button of the page");
@@ -464,7 +463,7 @@ sap.ui.define([
 			assert.equal(getScrollPos("mySecondPage"), -100, "Page 2 should be scrolled to position 100");
 		});
 
-		QUnit.test("ScrollToElement", function(assert) {
+		QUnit.test("ScrollToElement", async function(assert) {
 
 			var oPage4 = new Page("myFourthPage",{
 				content:[
@@ -478,7 +477,7 @@ sap.ui.define([
 				]
 			});
 			oPage4.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			oPage4.scrollToElement(this.oTestButton);
 
@@ -489,7 +488,7 @@ sap.ui.define([
 			oPage4.destroy();
 		});
 
-		QUnit.test("ScrollToElement Parameters forwarding", function(assert) {
+		QUnit.test("ScrollToElement Parameters forwarding", async function(assert) {
 			var oButton = new Button(),
 				oPage5 = new Page("myPage",{
 					content:[
@@ -498,7 +497,7 @@ sap.ui.define([
 				});
 
 			oPage5.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oScrollEnablement = oPage5.getScrollDelegate(),
 				oSpy = sinon.spy(oScrollEnablement, "scrollToElement");
@@ -511,14 +510,14 @@ sap.ui.define([
 			oPage5.destroy();
 		});
 
-		QUnit.test("Restoring scrolling state after rendering", function(assert) {
+		QUnit.test("Restoring scrolling state after rendering", async function(assert) {
 			assert.expect(1); // event should not be fired after rerendering
 			oPage2.invalidate();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.equal(getScrollPos("mySecondPage"), -100, "Page 2 should be scrolled to position 100");
 		});
 
-		QUnit.test("Container Padding Classes", function(assert) {
+		QUnit.test("Container Padding Classes", async function(assert) {
 			// System under Test + Act
 			/* eslint-disable no-nested-ternary */
 			var oContainer = new Page(), sContentSelector = "section", sResponsiveSize = (Device.resize.width <= 599 ? "0px"
@@ -527,7 +526,7 @@ sap.ui.define([
 
 			// Act
 			oContainer.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			oContainer.addStyleClass("sapUiNoContentPadding");
 			$containerContent = oContainer.$().find(sContentSelector);
 
@@ -636,19 +635,18 @@ sap.ui.define([
 
 	QUnit.module("Title Alignment");
 
-	QUnit.test("setTitleAlignment test", function (assert) {
+	QUnit.test("setTitleAlignment test", async function (assert) {
 
 		var oPage = new Page({
 				title: "Header"
 			}),
-			oCore = sap.ui.getCore(),
 			sAlignmentClass = "sapMBarTitleAlign",
 			setTitleAlignmentSpy = this.spy(oPage, "setTitleAlignment"),
 			sInitialAlignment,
 			sAlignment;
 
 		oPage.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		sInitialAlignment = oPage.getTitleAlignment();
 
 		// initial titleAlignment test depending on theme
@@ -658,7 +656,7 @@ sap.ui.define([
 		// check if all types of alignment lead to apply the proper CSS class
 		for (sAlignment in TitleAlignment) {
 			oPage.setTitleAlignment(sAlignment);
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.ok(oPage._getAnyHeader().hasStyleClass(sAlignmentClass + sAlignment),
 						"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
 		}
@@ -672,7 +670,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Accessibility", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oPage = new Page({
 				backgroundDesign: "Standard",
 				title : "Accessibility Test",
@@ -682,7 +680,7 @@ sap.ui.define([
 				footer: new Bar({ contentRight: [new Button({ text: "Button" })] })
 			});
 			this.oPage.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oPage.destroy();
@@ -722,8 +720,6 @@ sap.ui.define([
 			oSetting[sPropertyName] = sLandmark;
 
 			oPage.setLandmarkInfo(new PageAccessibleLandmarkInfo(oSetting));
-
-			oCore.applyChanges();
 
 			assert.ok(oPage[sTagGeter](), sExtectedTag);
 		}

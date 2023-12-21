@@ -5,8 +5,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/App",
 	"sap/m/Bar",
-	"sap/ui/core/Core"
-], function(Element, createAndAppendDiv, Page, App, Bar, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Element, createAndAppendDiv, Page, App, Bar, nextUIUpdate) {
 	"use strict";
 
 	createAndAppendDiv("page-content");
@@ -34,7 +34,7 @@ sap.ui.define([
 
 	QUnit.module("API");
 
-	QUnit.test("default values", function(assert) {
+	QUnit.test("default values", async function(assert) {
 
 		// system under test
 		var oPage = new Page();
@@ -43,7 +43,7 @@ sap.ui.define([
 		var oApp = new App("myApp");
 		oApp.placeAt("page-content");
 		oApp.addPage(oPage);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		cacheAndInitializeDomRefs(oPage.getId());
 
 		// assertions
@@ -60,7 +60,7 @@ sap.ui.define([
 	/**
 	 * @deprecated Since version 1.20
 	 */
-	QUnit.test("default values (deprecated properties)", function(assert) {
+	QUnit.test("default values (deprecated properties)", async function(assert) {
 
 		// system under test
 		var oPage = new Page();
@@ -69,7 +69,7 @@ sap.ui.define([
 		var oApp = new App("myApp");
 		oApp.placeAt("page-content");
 		oApp.addPage(oPage);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		cacheAndInitializeDomRefs(oPage.getId());
 
 		// assertions
@@ -88,7 +88,7 @@ sap.ui.define([
 	QUnit.module("HTML");
 
 	var fnRendererTestCase = function(mOptions) {
-		QUnit.test("rendering", function(assert) {
+		QUnit.test("rendering", async function(assert) {
 
 			// system under test
 			var oPage = mOptions.page;
@@ -104,7 +104,7 @@ sap.ui.define([
 
 			oApp.placeAt("page-content");
 			oApp.addPage(oPage);
-			oCore.applyChanges();
+			await nextUIUpdate();
 			cacheAndInitializeDomRefs(oPage.getId());
 
 			// assertions

@@ -5,14 +5,14 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Bar",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	createAndAppendDiv,
 	Button,
 	Page,
 	Bar,
 	jQuery,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 	createAndAppendDiv("content");
@@ -31,7 +31,8 @@ sap.ui.define([
 		oTestPage.destroy();
 	});
 
-	QUnit.test("Correct style classes are applied", function (assert) {
+	QUnit.test("Correct style classes are applied", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oTestPage = new Page("testPage", {
 			title: "Page Control",
@@ -45,20 +46,18 @@ sap.ui.define([
 					})]
 		}).placeAt("content");
 
-		this.clock = sinon.useFakeTimers();
-
 		//Act
 		oTestPage.addStyleClass("sapUiResponsivePadding--header");
 		oTestPage.addStyleClass("sapUiResponsivePadding--subHeader");
 		oTestPage.addStyleClass("sapUiResponsivePadding--content");
 		oTestPage.addStyleClass("sapUiResponsivePadding--footer");
 
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		var $page = jQuery("#testPage");
 		$page.css("width", "300px");
 		this.clock.tick(300);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 
 		var $pageHeader = oTestPage.$().find("#testPage-intHeader"),
@@ -80,7 +79,7 @@ sap.ui.define([
 		//Act
 		$page.css("width", "700px");
 		this.clock.tick(300);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		bIsHeaderResponsive = $pageHeader.hasClass("sapUi-Std-PaddingM");
 		bIsSubHeaderResponsive = $pageSubHeader.hasClass("sapUi-Std-PaddingM");
@@ -95,7 +94,7 @@ sap.ui.define([
 
 		//Act
 		$page.css("width", "1300px");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(300);
 
 		bIsHeaderResponsive = $pageHeader.hasClass("sapUi-Std-PaddingL");
@@ -112,7 +111,7 @@ sap.ui.define([
 		//Act
 		$page.css("width", "1700px");
 		this.clock.tick(300);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		bIsHeaderResponsive = $pageHeader.hasClass("sapUi-Std-PaddingXL");
 		bIsSubHeaderResponsive = $pageSubHeader.hasClass("sapUi-Std-PaddingXL");
@@ -126,5 +125,7 @@ sap.ui.define([
 		assert.ok(bIsFooterResponsive, "The sapUi-Std-PaddingXL class is applied to the footer");
 
 		oTestPage.destroy();
+		await nextUIUpdate(this.clock);
+		this.clock.restore();
 	});
 });
