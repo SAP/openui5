@@ -479,6 +479,7 @@ sap.ui.define([
 	 * @version ${version}
 	 */
 	var thisLib = Lib.init({
+		apiVersion: 2,
 		name: "sap.ui.fl",
 		version: "${version}",
 		controls: [
