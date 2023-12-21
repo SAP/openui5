@@ -7,6 +7,7 @@
 	<script src="shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m, sap.ui.layout"
+			data-sap-ui-theme="sap_horizon"
 			src="../../../resources/sap-ui-core.js"
 			data-sap-ui-compatVersion="1.16">
 	</script>
@@ -81,7 +82,22 @@
 				type: "Error",
 				title: "Error Message 3",
 				description: "Third Error message description"
-			}]
+			}],
+			messages2: [
+				{
+					type: 'Error',
+					title: 'Product SZ_FT01 already assigned to distribution center 1015',
+					description: '',
+					subtitle: 'Example of subtitle',
+					counter: 1
+				}, {
+					type: 'Error',
+					title: 'Product AG_CZ_1 already assigned to distribution center 1015',
+					description: '',
+					subtitle: 'Example of subtitle',
+					counter: 1
+				}
+			]
 		};
 
 		var oModel = new sap.ui.model.json.JSONModel();
@@ -115,6 +131,13 @@
 					});
 
 				}, 1000 + 4000 * Math.random());
+			}
+		});
+
+		var oMessageViewDialog2 = new sap.m.MessageView("mMViewDialog", {
+			items: {
+				path: "/messages2",
+				template: oMessageTemplate
 			}
 		});
 
@@ -227,6 +250,22 @@
 			verticalScrolling: false
 		});
 
+		var oDialog2 = new sap.m.Dialog({
+			type: "Message",
+			content: oMessageViewDialog2,
+			showHeader: true,
+			beginButton: new sap.m.Button("dialogCloseButton2", {
+				press: function () {
+					oDialog2.close();
+				},
+				text: "Close"
+			}),
+			horizontalScrolling: false,
+			contentHeight: "440px",
+			contentWidth: "440px",
+			verticalScrolling: false
+		}).addStyleClass("sapUiNoContentPadding");
+
 		var page1 = new sap.m.Page("page1", {
 			content: [
 				new sap.m.Button('mView-in-dialog-btn', {
@@ -263,9 +302,14 @@
 					press: function () {
 						oMessageViewWithHeader.destroyHeaderButton();
 					}
-				})
+				}),
 
-
+				new sap.m.Button('mView-in-dialog-btn-3', {
+					text: "MV in Dialog with truncatable items",
+					press: function () {
+						oDialog2.open();
+					}
+				}),
 			]
 		});
 

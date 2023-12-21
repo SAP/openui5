@@ -33,8 +33,8 @@ describe('sap.m.MessageView', function() {
 				element(by.id("compactMode")).click();
 				expect(takeScreenshot(element(by.id("mMView2")))).toLookAs("mMView2-" + sMessageType + "-compact");
 
-			//turn compact mode off
-			element(by.id("compactMode")).click();
+				//turn compact mode off
+				element(by.id("compactMode")).click();
 			}
 		});
 	});
@@ -113,6 +113,12 @@ describe('sap.m.MessageView', function() {
 			element(by.id("mMView5-back")).click();
 			expect(takeScreenshot()).toLookAs("mv-in-dialog-w-no-details-hdr-initpage");
 			element(by.id("dialogWOneHeader-close-btn")).click();
+		});
+
+		it("should open MessageView in compact mode in Dialog with truncatable items", function () {
+			element(by.id("mView-in-dialog-btn-3")).click();
+			expect(takeScreenshot()).toLookAs("mv-in-dialog-truncated-items");
+			element(by.id('dialogCloseButton2')).click();
 		});
 
 		it("should open MessageView with one type of message", function () {
