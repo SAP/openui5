@@ -977,8 +977,9 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bBlocked The new blocked state to be set
 	 * @returns {this} <code>this</code> to allow method chaining
+	 *
 	 * @private
-	 * @ui5-restricted sap.ui.core, sap.m, sap.viz
+	 * @ui5-restricted sap.ui.core, sap.m, sap.viz, sap.ui.rta, sap.ui.table
 	 * @deprecated since version 1.69, the blocked property is deprecated.
 	 * There is no accessibility support for this property.
 	 * Blocked controls should not be used inside Controls, which rely on keyboard navigation, e.g. List controls.
@@ -1038,6 +1039,19 @@ sap.ui.define([
 		}
 
 		return this;
+	};
+
+	/**
+	 * Gets current value of property blocked.
+	 * @returns {boolean} Whether the control is currently in blocked state. Default is 'false'.
+	 * @public
+	 *
+	 * @deprecated since version 1.69, the blocked property is deprecated.
+	 * There is no accessibility support for this property.
+	 * Blocked controls should not be used inside Controls, which rely on keyboard navigation, e.g. List controls.
+	 */
+	Control.prototype.getBlocked = function() {
+		return this.getProperty("blocked");
 	};
 
 	/**
