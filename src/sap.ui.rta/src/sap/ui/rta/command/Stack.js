@@ -51,6 +51,20 @@ sap.ui.define([
 		}
 	}
 
+	// If changes are discarded (e.g. after a variant switch), the corresponding commands are not relevant for save
+	function handleDiscardedChanges(aDiscardedChanges, bSaveRelevant) {
+		const aAllExecutedCommands = this.getAllExecutedCommands();
+		aDiscardedChanges.forEach((oChange) => {
+			aAllExecutedCommands.some((oExecutedCommand) => {
+				if (oExecutedCommand.getPreparedChange?.().getId() === oChange.getId()) {
+					oExecutedCommand.setRelevantForSave(bSaveRelevant);
+					return true;
+				}
+				return false;
+			});
+		});
+	}
+
 	/**
 	 * Basic implementation for the command stack pattern.
 	 *
@@ -234,6 +248,10 @@ sap.ui.define([
 
 				.then(function() {
 					this._toBeExecuted--;
+					const aDiscardedChanges = oCommand.getDiscardedChanges?.();
+					if (aDiscardedChanges) {
+						handleDiscardedChanges.call(this, aDiscardedChanges, false);
+					}
 					this.fireCommandExecuted(mParam);
 					this.fireModified();
 				}.bind(this))
@@ -262,6 +280,7 @@ sap.ui.define([
 			this._bUndoneCommands = true;
 			this._toBeExecuted++;
 			var oCommand = this._getCommandToBeExecuted();
+			const aDiscardedChanges = oCommand.getDiscardedChanges?.();
 			if (oCommand) {
 				var mParam = {
 					command: oCommand,
@@ -272,6 +291,9 @@ sap.ui.define([
 				.then(this._waitForCommandExecutionHandler.bind(this, mParam))
 
 				.then(function() {
+					if (aDiscardedChanges) {
+						handleDiscardedChanges.call(this, aDiscardedChanges, true);
+					}
 					this.fireCommandExecuted(mParam);
 					this.fireModified();
 				}.bind(this));

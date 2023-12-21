@@ -64,7 +64,11 @@ sap.ui.define([
 				return oSwitchCommand.undo();
 			})
 			.then(function() {
-				assert.equal(this.oUpdateCurrentVariantStub.callCount, 2, "then updateCurrentVariant after undo command is called once again");
+				assert.equal(
+					this.oUpdateCurrentVariantStub.callCount,
+					2,
+					"then updateCurrentVariant after undo command is called once again"
+				);
 				assert.deepEqual(this.oUpdateCurrentVariantStub.getCall(1).args[0], {
 					variantManagementReference: this.sVariantManagementReference,
 					newVariantReference: oSwitchCommandData.sourceVariantReference,
@@ -109,7 +113,11 @@ sap.ui.define([
 				return oSwitchCommand.execute();
 			})
 			.then(function() {
-				assert.deepEqual(oSwitchCommand._aSourceVariantDirtyChanges, aDirtyChanges, "then the dirty changes are retrieved correctly");
+				assert.deepEqual(
+					oSwitchCommand.getDiscardedChanges(),
+					aDirtyChanges,
+					"then the dirty changes are retrieved correctly"
+				);
 				assert.equal(this.oUpdateCurrentVariantStub.callCount, 1, "then updateCurrentVariant after execute command is called once");
 				assert.deepEqual(this.oUpdateCurrentVariantStub.getCall(0).args[0], {
 					variantManagementReference: this.sVariantManagementReference,
@@ -122,14 +130,21 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.deepEqual(oAddAndApplyChangesStub.getCall(0).args[0], aDirtyChanges, "then the changes are applied again");
-				assert.deepEqual(oSwitchCommand._aSourceVariantDirtyChanges, null, "then the dirty changes are cleared on the command");
-				assert.equal(this.oUpdateCurrentVariantStub.callCount, 2, "then updateCurrentVariant after undo command is called once again");
+				assert.deepEqual(oSwitchCommand.getDiscardedChanges(), [], "then the dirty changes are cleared on the command");
+				assert.equal(
+					this.oUpdateCurrentVariantStub.callCount,
+					2,
+					"then updateCurrentVariant after undo command is called once again"
+				);
 				assert.deepEqual(this.oUpdateCurrentVariantStub.getCall(1).args[0], {
 					variantManagementReference: this.sVariantManagementReference,
 					newVariantReference: oSwitchCommandData.sourceVariantReference,
 					appComponent: this.oMockedAppComponent
 				}, "then updateCurrentVariant after undo command is called with the correct parameters");
-				assert.ok(this.oUpdateCurrentVariantStub.calledBefore(oAddAndApplyChangesStub), "then the variant is updated before the dirty changes are applied");
+				assert.ok(
+					this.oUpdateCurrentVariantStub.calledBefore(oAddAndApplyChangesStub),
+					"then the variant is updated before the dirty changes are applied"
+				);
 			}.bind(this));
 		});
 
