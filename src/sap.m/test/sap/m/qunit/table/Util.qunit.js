@@ -367,6 +367,7 @@ sap.ui.define([
 		oODataListBinding.getDownloadUrl.returns("http://some.fake.path/service");
 
 		assert.notOk(Util.isExportable(oODataListBinding), "Empty ODataListBinding with download Url results in false");
+		assert.ok(oODataListBinding.isResolved.notCalled, "Function isResolved is not called for empty binding");
 
 		Util.isEmpty.restore();
 	});

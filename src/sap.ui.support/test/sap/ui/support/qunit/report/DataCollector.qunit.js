@@ -61,7 +61,7 @@ sap.ui.define([
 			var oComponent1 = new DataCollectorTestComponent();
 			var oComponent2 = new DataCollectorTestComponent();
 
-			ComponentRegistry = [
+			Component.registry = [
 				oComponent1,
 				oComponent2
 			];
@@ -81,7 +81,7 @@ sap.ui.define([
 			);
 
 			// Clean up
-			ComponentRegistry = ComponentRegistryInitial;
+			Component.registry = ComponentRegistryInitial;
 			oComponent1.destroy();
 			oComponent2.destroy();
 		});
@@ -111,7 +111,7 @@ sap.ui.define([
 			var oComponent1 = new DataCollectorTestComponent1();
 			var oComponent2 = new DataCollectorTestComponent2();
 
-			ComponentRegistry = [
+			Component.registry = [
 				oComponent1,
 				oComponent2
 			];
@@ -132,7 +132,7 @@ sap.ui.define([
 			);
 
 			// Clean up
-			ComponentRegistry = ComponentRegistryInitial;
+			Component.registry = ComponentRegistryInitial;
 			oComponent1.destroy();
 			oComponent2.destroy();
 		});

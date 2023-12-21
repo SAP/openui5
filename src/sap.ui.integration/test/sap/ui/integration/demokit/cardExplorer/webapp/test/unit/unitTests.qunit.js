@@ -1,12 +1,12 @@
 /* global QUnit */
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function () {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/ui/demo/cardExplorer/test/unit/AllTests"
+], async (Core) => {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/demo/cardExplorer/test/unit/AllTests"
-	], function () {
-		QUnit.start();
-	});
+	await Core.ready();
+	QUnit.start();
 });

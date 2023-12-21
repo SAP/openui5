@@ -105,11 +105,11 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	const { ToolbarDesign } = MLibrary;
-	const { ToolbarStyle } = MLibrary;
-	const { IllustratedMessageType } = MLibrary;
-	const { TitleLevel } = coreLibrary;
-	const { SortOrder } = coreLibrary;
+	const {ToolbarDesign} = MLibrary;
+	const {ToolbarStyle} = MLibrary;
+	const {IllustratedMessageType} = MLibrary;
+	const {TitleLevel} = coreLibrary;
+	const {SortOrder} = coreLibrary;
 	const internalMap = new window.WeakMap();
 	const internal = function(oTable) {
 		if (!internalMap.has(oTable)) {
@@ -678,7 +678,7 @@ sap.ui.define([
 				 * <b>Note:</b> Each time the properties of the settings are changed, they have to be applied again via <code>setRowSettings</code>
 				 * for the changes to take effect.
 				 */
-				rowSettings: { type: "sap.ui.mdc.table.RowSettings", multiple: false },
+				rowSettings: {type: "sap.ui.mdc.table.RowSettings", multiple: false},
 
 				/**
 				 * <code>DataStateIndicator</code> plugin that can be used to show binding-related messages.
@@ -702,7 +702,7 @@ sap.ui.define([
 				 * fitting {@link sap.m.IllustratedMessage.IllustratedMessageType illustration}.
 				 * @since 1.106
 				 */
-				noData: { type: "sap.ui.core.Control", multiple: false, altTypes: ["string"] },
+				noData: {type: "sap.ui.core.Control", multiple: false, altTypes: ["string"]},
 
 				/**
 				 * Defines an aggregation for the <code>CopyProvider</code> plugin that provides copy to clipboard capabilities for the selected rows of the table and creates a Copy button for the toolbar of the table.
@@ -723,7 +723,7 @@ sap.ui.define([
 				 *
 				 * @since 1.118
 				 */
-				contextMenu: { type: "sap.ui.core.IContextMenu", multiple: false },
+				contextMenu: {type: "sap.ui.core.IContextMenu", multiple: false},
 
 				/**
 				 * Defines an aggregation for the <code>CellSelector</code> plugin that provides cell selection capabilities to the table.
@@ -842,7 +842,7 @@ sap.ui.define([
 						 * The column used for the context menu
 						 * <b>Note:</b> The column parameter can be empty when opened in a popin area for responsiveTable type.
 						 */
-						column: { type: "sap.ui.mdc.table.Column" }
+						column: {type: "sap.ui.mdc.table.Column"}
 					}
 				}
 			}
@@ -944,7 +944,7 @@ sap.ui.define([
 		// (incorrect) default type instance can be avoided.
 		// The delegate must be part of the early settings, because it can only be applied once (see sap.ui.mdc.mixin.DelegateMixin).
 		if (mSettings && "type" in mSettings) {
-			const mEarlySettings = { type: mSettings.type };
+			const mEarlySettings = {type: mSettings.type};
 
 			if ("delegate" in mSettings) {
 				mEarlySettings.delegate = mSettings.delegate;
@@ -984,7 +984,7 @@ sap.ui.define([
 	/**
 	 * Plugin owner methods for plugins applied to MDCTable.
 	 */
-	["CopyProvider", "CellSelector", "DataStateIndicator"].forEach((sPlugin) => {
+	["CopyProvider", "CellSelector", "DataStateIndicator", "ContextMenuSetting"].forEach((sPlugin) => {
 		Table.prototype[`get${sPlugin}PluginOwner`] = function() {
 			return this._oTable || this._oFullInitialize?.promise;
 		};
@@ -1399,12 +1399,12 @@ sap.ui.define([
 		}
 
 		const mRegistryOptions = {
-			Column: new ColumnController({ control: this, stableKeys: aStableKeys }),
-			Sort: new SortController({ control: this }),
-			Group: new GroupController({ control: this }),
-			Filter: new FilterController({ control: this }),
-			Aggregate: new AggregateController({ control: this }),
-			ColumnWidth: new ColumnWidthController({ control: this, exposeXConfig: true })
+			Column: new ColumnController({control: this, stableKeys: aStableKeys}),
+			Sort: new SortController({control: this}),
+			Group: new GroupController({control: this}),
+			Filter: new FilterController({control: this}),
+			Aggregate: new AggregateController({control: this}),
+			ColumnWidth: new ColumnWidthController({control: this, exposeXConfig: true})
 		};
 
 		this.getActiveP13nModes().forEach((sMode) => {
@@ -1567,7 +1567,7 @@ sap.ui.define([
 	}
 
 	function getFilterInfoBar(oTable) {
-		const { oFilterInfoBar } = internal(oTable);
+		const {oFilterInfoBar} = internal(oTable);
 
 		if (oFilterInfoBar?.isDestroyStarted()) {
 			return null;
@@ -1757,7 +1757,7 @@ sap.ui.define([
 	Table.prototype._createInitPromises = function() {
 		this._oTableReady = new Deferred();
 		this._oFullInitialize = new Deferred();
-		this._oFullInitialize.promise.catch(() => {}); // Avoid uncaught error
+		this._oFullInitialize.promise.catch(() => { }); // Avoid uncaught error
 		this._bFullyInitialized = false;
 	};
 
@@ -2152,7 +2152,7 @@ sap.ui.define([
 
 	Table.prototype._getCopyButton = function() {
 		if (window.isSecureContext) {
-			return this.getCopyProvider()?.getCopyButton({ id: this.getId() + "-copy" });
+			return this.getCopyProvider()?.getCopyButton({id: this.getId() + "-copy"});
 		}
 	};
 
@@ -2490,13 +2490,13 @@ sap.ui.define([
 		}
 
 		if (!this._oColumnHeaderMenu) {
-			this._oQuickActionContainer = new QuickActionContainer({ table: this });
-			this._oItemContainer = new ItemContainer({ table: this });
+			this._oQuickActionContainer = new QuickActionContainer({table: this});
+			this._oItemContainer = new ItemContainer({table: this});
 			this._oColumnHeaderMenu = new ColumnMenu({
-				id: this.getId() + "-columnHeaderMenu",
-				_quickActions: [this._oQuickActionContainer],
-				_items: [this._oItemContainer]
+				id: this.getId() + "-columnHeaderMenu"
 			});
+			this._oColumnHeaderMenu.addAggregation("_quickActions", this._oQuickActionContainer);
+			this._oColumnHeaderMenu.addAggregation("_items", this._oItemContainer);
 			this.addDependent(this._oColumnHeaderMenu);
 
 			FESRHelper.setSemanticStepname(this._oColumnHeaderMenu, "beforeOpen", "mdc:tbl:p13n:col");
@@ -2804,7 +2804,7 @@ sap.ui.define([
 
 		this._oTable.setShowOverlay(false);
 		this._updateColumnsBeforeBinding();
-		this.getControlDelegate().updateBinding(this, oBindingInfo, this._bForceRebind ? null : this.getRowBinding(), { forceRefresh: bForceRefresh });
+		this.getControlDelegate().updateBinding(this, oBindingInfo, this._bForceRebind ? null : this.getRowBinding(), {forceRefresh: bForceRefresh});
 		this._updateInnerTableNoData();
 		this._bForceRebind = false;
 	};
@@ -3022,7 +3022,7 @@ sap.ui.define([
 	 */
 	Table.prototype.onThemeChanged = function() {
 		if (this._oExportButton) {
-			const sButtonType = MLibrary.ButtonType[ThemeParameters.get({ name: "_sap_ui_mdc_Table_ExportButtonType" })];
+			const sButtonType = MLibrary.ButtonType[ThemeParameters.get({name: "_sap_ui_mdc_Table_ExportButtonType"})];
 			this._oExportButton.setType(sButtonType);
 		}
 	};

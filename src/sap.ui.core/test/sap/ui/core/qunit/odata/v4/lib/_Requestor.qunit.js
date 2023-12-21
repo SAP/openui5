@@ -902,6 +902,7 @@ sap.ui.define([
 			this.mock(oRequestor).expects("doConvertResponse")
 				.withExactArgs(sinon.match.same(oResponse.body), "meta/path")
 				.returns(oConvertedResponse);
+			this.mock(oRequestor).expects("submitBatch").never();
 
 			// code under test
 			oPromise = oRequestor.request("METHOD", "Employees?custom=value", oGroupLock, {
@@ -1338,6 +1339,46 @@ sap.ui.define([
 		return oRequestor.request("GET", "EntitySet('42')?foo=bar", this.createGroupLock("$direct"),
 			undefined, undefined, undefined, undefined, "/EntitySet", undefined, false,
 			mQueryOptions);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("request(...): $single", function () {
+		var mQueryOptions = {$select : ["foo"]},
+			oRequestor = _Requestor.create("/", oModelInterface);
+
+		this.mock(oRequestor).expects("submitBatch").withExactArgs("$single").callsFake(() => {
+			TestUtils.deepContains(oRequestor.mBatchQueue, {
+				$single : [
+					[],
+					{
+						method : "GET",
+						url : "EntitySet",
+						$queryOptions : mQueryOptions
+					}
+				]
+			});
+		});
+
+		oRequestor.request("GET", "EntitySet", this.createGroupLock("$single"),
+			undefined, undefined, undefined, undefined, undefined, undefined, false, mQueryOptions);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("request(...): throw error if $single queue not empty", function (assert) {
+		var mQueryOptions = {$select : ["foo"]},
+			oRequestor = _Requestor.create("/", oModelInterface);
+
+		oRequestor.mBatchQueue["$single"] = [];
+
+		this.mock(oRequestor).expects("getOrCreateBatchQueue").never();
+		this.mock(oRequestor).expects("submitBatch").never();
+
+		assert.throws(function () {
+			// code under test
+			oRequestor.request("GET", "EntitySet", this.createGroupLock("$single"),
+				undefined, undefined, undefined, undefined, undefined, undefined, false,
+				mQueryOptions);
+		}, new Error("Cannot add new request to already existing $single queue"));
 	});
 
 	//*********************************************************************************************

@@ -2192,11 +2192,12 @@ sap.ui.define([
 		_Helper.checkGroupId("$auto.foo");
 		_Helper.checkGroupId("$auto.1");
 		_Helper.checkGroupId("$direct");
+		_Helper.checkGroupId("$single", undefined, /*bAllowSingle*/true);
 		_Helper.checkGroupId(undefined);
 		_Helper.checkGroupId("myGroup", true);
 
 		// invalid group IDs
-		["", "$invalid", 42, null].forEach(function (vGroupId) {
+		["", "$invalid", "$single", 42, null].forEach(function (vGroupId) {
 			assert.throws(function () {
 				_Helper.checkGroupId(vGroupId);
 			}, new Error("Invalid group ID: " + vGroupId));
@@ -2211,7 +2212,7 @@ sap.ui.define([
 
 		// invalid group with custom message
 		assert.throws(function () {
-			_Helper.checkGroupId("$invalid", false, "Custom error message: ");
+			_Helper.checkGroupId("$invalid", false, false, "Custom error message: ");
 		}, new Error("Custom error message: $invalid"));
 	});
 

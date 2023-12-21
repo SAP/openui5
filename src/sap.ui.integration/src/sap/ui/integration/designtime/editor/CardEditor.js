@@ -158,12 +158,18 @@ sap.ui.define([
 				vCardIdOrSettings.dataMode = CardDataMode.Active;
 			}
 			this._oEditorCard = new Card(vCardIdOrSettings);
-			this._oEditorCard.onBeforeRendering();
+			this._oEditorCard.attachEventOnce("_contentReady", function () {
+				var oCardContent = this._oEditorCard.getCardContent();
+				if (oCardContent) {
+					oCardContent.onBeforeRendering();
+				}
+			}.bind(this));
 			this._oEditorCard.attachEventOnce("_dataReady", function () {
 				// copy models from Card to editor
 				this.propagateModels(this._oEditorCard, this, ["i18n", "context", "contextflat"]);
 				this.setJson(vCardIdOrSettings, bSuppressRerendering);
 			}.bind(this));
+			this._oEditorCard.onBeforeRendering();
 		}
 	};
 

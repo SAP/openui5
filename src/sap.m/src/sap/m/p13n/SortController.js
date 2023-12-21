@@ -7,6 +7,18 @@ sap.ui.define([
 ], function (BaseController, SortPanel, xConfigAPI) {
 	"use strict";
 
+	/**
+	 * Personalization <code>SortState</code> object type. This object describes the state processed by this controller when accessing it through the {@link sap.m.p13n.Engine Engine}.
+	 *
+	 * @public
+	 * @typedef {object} sap.m.p13n.SortState
+	 * @property {string} key The key for the sort state
+	 * @property {boolean} [sorted] Defines whether the item is sorted (if a sort state is provided, it's sorted automatically)
+	 * @property {boolean} [descending] Defines whether the sorting is processed in a descending order (<code>false</code> is the default)
+	 * @property {int} [index] Describes the index of the sorter
+	 *
+	 */
+
 	 /**
 	 * Constructor for a new <code>SortController</code>.
 	 *

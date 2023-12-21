@@ -593,10 +593,12 @@ sap.ui.define([
 		 */
 		function getOriginalResourcePath(oResponseEntity) {
 			if (that.isReturnValueLikeBindingParameter(oOperationMetadata)) {
-				if (that.hasReturnValueContext()) {
-					return that.getReturnValueContextPath(oResponseEntity);
+				const sRVCPath = that.getReturnValueContextPath(oResponseEntity);
+				if (sRVCPath) {
+					return sRVCPath;
 				}
-				if (_Helper.getPrivateAnnotation(vEntity, "predicate")
+				if (that.oOperation.bAdditionalQueryOptionsForRVC === false
+						&& _Helper.getPrivateAnnotation(vEntity, "predicate")
 						=== _Helper.getPrivateAnnotation(oResponseEntity, "predicate")) {
 					// return value is *same* as binding parameter: attach messages to the latter
 					return sOriginalResourcePath.slice(0, sOriginalResourcePath.lastIndexOf("/"));
@@ -870,8 +872,10 @@ sap.ui.define([
 	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor} and
 	 *   {@link #getGroupId}. To use the update group ID, see {@link #getUpdateGroupId}, it needs to
 	 *   be specified explicitly.
-	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
-	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct', '$single', or
+	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}. If
+	 *   '$single' is used, the request will be sent as fast as '$direct', but wrapped in a batch
+	 *   request like '$auto' (since 1.121.0).
 	 * @param {boolean} [bIgnoreETag]
 	 *   Whether the entity's ETag should be actively ignored (If-Match:*); supported for bound
 	 *   actions only, since 1.90.0. Ignored if there is no ETag (since 1.93.0).
@@ -958,7 +962,10 @@ sap.ui.define([
 	 *     <li> <code>bReplaceWithRVC</code> is given, but this operation binding is not relative to
 	 *       a row context of a list binding which uses the <code>$$ownRequest</code> parameter (see
 	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}) and no data aggregation (see
-	 *       {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}).
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}),
+	 *     <li> group ID '$single' is given and there is already another request with the same group
+	 *       ID enqueued.
+	 *   </ul>
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -968,7 +975,7 @@ sap.ui.define([
 		var sResolvedPath = this.getResolvedPath();
 
 		this.checkSuspended();
-		_Helper.checkGroupId(sGroupId);
+		_Helper.checkGroupId(sGroupId, false, true);
 		if (!this.oOperation) {
 			throw new Error("The binding must be deferred: " + this.sPath);
 		}
@@ -1265,13 +1272,14 @@ sap.ui.define([
 	 *
 	 * @param {object} oResponseEntity
 	 *   The result of the executed operation
-	 * @returns {string} The path for the return value context.
+	 * @returns {string|undefined} The path for the return value context or <code>undefined</code>
+	 *   if it is not possible to create one
 	 *
 	 * @private
 	 */
 	ODataContextBinding.prototype.getReturnValueContextPath = function (oResponseEntity) {
-		if (this.oOperation.bAdditionalQueryOptionsForRVC === undefined) {
-			throw new Error("Unexpected Value for bAdditionalQueryOptionsForRVC: undefined");
+		if (!this.hasReturnValueContext()) {
+			return undefined;
 		}
 		const sBindingParameterPath = this.oContext.getPath().slice(1);
 		const sPredicate = _Helper.getPrivateAnnotation(oResponseEntity, "predicate");
@@ -1283,10 +1291,14 @@ sap.ui.define([
 		const aMetaPathSegments = _Helper.getMetaPath(sBindingParameterPath).split("/");
 		const sPartner = this.oModel.getMetaModel()
 			.getObject("/" + aMetaPathSegments[0] + "/" + aMetaPathSegments[1] + "/$Partner");
+		const oPartner = oResponseEntity[sPartner];
 		const sPartnerPredicate
-			= this.oModel.getKeyPredicate("/" + aMetaPathSegments[0], oResponseEntity[sPartner]);
+			= oPartner && this.oModel.getKeyPredicate("/" + aMetaPathSegments[0], oPartner);
 
-		return sBindingParameterPath.split("/").map(function (sSegment, i) {
+		if (!(sPartnerPredicate && sPredicate)) {
+			return undefined;
+		}
+		return sBindingParameterPath.split("/").map((sSegment, i) => {
 			return sSegment.slice(0, sSegment.lastIndexOf("("))
 				+ (i ? sPredicate : sPartnerPredicate);
 		}).join("/");
@@ -1326,9 +1338,8 @@ sap.ui.define([
 					// the context (we already read its predicate)
 					this.oContext.patch(oResponseEntity);
 				}
-				if (this.hasReturnValueContext()) {
-					// determine the new path
-					sNewPath = this.getReturnValueContextPath(oResponseEntity);
+				sNewPath = this.getReturnValueContextPath(oResponseEntity);
+				if (sNewPath) {
 					if (bReplaceWithRVC) {
 						// replace is only possible if the path does not contain any navigation
 						// property or the key predicate of the first segment has not changed!

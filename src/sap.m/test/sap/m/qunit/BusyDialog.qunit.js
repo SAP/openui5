@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/BusyDialog",
 	"sap/m/library",
 	"sap/ui/thirdparty/jquery",
@@ -15,6 +16,7 @@ sap.ui.define([
 ], function(
 	qutils,
 	createAndAppendDiv,
+	nextUIUpdate,
 	BusyDialog,
 	mobileLibrary,
 	jQuery,
@@ -35,8 +37,6 @@ sap.ui.define([
 	// =========================================================================================================
 	// Testing a Default Busy Dialog - initialised with no properties/options
 	// =========================================================================================================
-
-
 
 	QUnit.module('Creating Default BusyDialog.', {
 		beforeEach: function () {
@@ -153,6 +153,7 @@ sap.ui.define([
 
 	QUnit.module('Creating Default BusyDialog.', {
 		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
 			this.oBusyDialog = new BusyDialog();
 			this.sId = '#' + this.oBusyDialog.sId;
 			this.oBusyDialog.open();
@@ -160,6 +161,7 @@ sap.ui.define([
 			this.oBusyIndicator = this.oBusyDialog._busyIndicator;
 		},
 		afterEach: function () {
+			this.clock.restore();
 			this.oBusyDialog.close();
 			this.oBusyDialog.destroy();
 			this.oBusyDialog = null;
@@ -485,12 +487,11 @@ sap.ui.define([
 
 	QUnit.module('Aria', {
 		beforeEach: function () {
-			this.oBusyDialog = new BusyDialog('busyAria', {
-			});
-
+			this.clock = sinon.useFakeTimers();
+			this.oBusyDialog = new BusyDialog('busyAria');
 		},
 		afterEach: function () {
-			this.oBusyDialog.close();
+			this.clock.restore();
 			this.oBusyDialog.destroy();
 			this.oBusyDialog = null;
 		}
@@ -518,9 +519,7 @@ sap.ui.define([
 
 	QUnit.module('Style Class Methods', {
 		beforeEach: function () {
-			this.oBusyDialog = new BusyDialog({
-			});
-
+			this.oBusyDialog = new BusyDialog();
 		},
 		afterEach: function () {
 			this.oBusyDialog.close();
@@ -590,80 +589,83 @@ sap.ui.define([
 
 	QUnit.module("Title Alignment");
 
-	QUnit.test("setTitleAlignment test", function (assert) {
-
-		var oDialog = new BusyDialog({
-				title: "Header"
-			}),
-			oCore = sap.ui.getCore(),
-			sAlignmentClass = "sapMBarTitleAlign",
-			setTitleAlignmentSpy = this.spy(oDialog, "setTitleAlignment"),
-			sInitialAlignment,
-			sAlignment;
+	QUnit.test("setTitleAlignment test", async function (assert) {
+		const oDialog = new BusyDialog({
+			title: "Header"
+		});
+		const setTitleAlignmentSpy = this.spy(oDialog, "setTitleAlignment");
+		const sAlignmentClass = "sapMBarTitleAlign";
 
 		oDialog.open();
-		oCore.applyChanges();
-		sInitialAlignment = oDialog.getTitleAlignment();
+		await nextUIUpdate();
+
+		const sInitialAlignment = oDialog.getTitleAlignment();
 
 		// initial titleAlignment test depending on theme
 		assert.ok(oDialog._oDialog._header.hasStyleClass(sAlignmentClass + sInitialAlignment),
 					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
 
+		// ensure that setTitleAlignment won't be called again with the initial value and will always invalidate
+		const aRemainingTitleAlignments = Object.values(TitleAlignment).filter((sAlignment) => sAlignment !== sInitialAlignment);
+
 		// check if all types of alignment lead to apply the proper CSS class
-		for (sAlignment in TitleAlignment) {
+		await aRemainingTitleAlignments.reduce(async (pPrevAlignmentTest, sAlignment) => {
+			await pPrevAlignmentTest;
 			oDialog.setTitleAlignment(sAlignment);
-			oCore.applyChanges();
+			await nextUIUpdate();
+
 			assert.ok(oDialog._oDialog._header.hasStyleClass(sAlignmentClass + sAlignment),
-						"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
-		}
+							"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
+		}, Promise.resolve());
 
 		// check how many times setTitleAlignment method is called
-		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(TitleAlignment).length,
+		assert.strictEqual(setTitleAlignmentSpy.callCount, aRemainingTitleAlignments.length,
 			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
 
 		// cleanup
 		oDialog.destroy();
 	});
 
-	QUnit.module("Special cases");
+	QUnit.module("Special cases", {
+		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function () {
+			this.clock.restore();
+		}
+	});
 
-	QUnit.test('Open and close before the framework core is initialized', function (assert) {
-
-		var fIsInitialized = Core.isInitialized;
-
-		Core.isInitialized = function () {
-			return false;
-		};
+	QUnit.test('Open and close document load event', function (assert) {
+		this.stub(document, "body").value(null);
 
 		var oBusyDialog = new BusyDialog();
 		oBusyDialog.open();
-		oBusyDialog.close();
 
-		Core.isInitialized = fIsInitialized;
+		assert.ok(oBusyDialog._iOpenTimer, "timeout is started");
+
+		oBusyDialog.close();
 
 		this.clock.tick(500);
 
 		// Assert
 		assert.notOk(oBusyDialog._oDialog.isOpen(), 'the dialog is closed.');
+		assert.notOk(oBusyDialog._iOpenTimer, "timeout is cleaned up");
 	});
 
 	QUnit.test('Open and destroy before the framework core is initialized', function (assert) {
-
-		var fIsInitialized = Core.isInitialized;
-
-		Core.isInitialized = function () {
-			return false;
-		};
+		this.stub(document, "body").value(null);
 
 		var oBusyDialog = new BusyDialog();
 		oBusyDialog.open();
-		oBusyDialog.destroy();
 
-		Core.isInitialized = fIsInitialized;
+		assert.ok(oBusyDialog._iOpenTimer, "timeout is started");
+
+		oBusyDialog.destroy();
 
 		this.clock.tick(500);
 
 		// Assert
 		assert.ok(true, 'no error is thrown');
+		assert.notOk(oBusyDialog._iOpenTimer, "timeout is cleaned up");
 	});
 });

@@ -13,23 +13,8 @@
 				data-sap-ui-frameOptions='deny'>
 		</script>
 		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="./opaTestsWithIFrame.js"></script>
 
-		<script>
-			// we want to be able to load our tests asynchronously - pause QUnit until we loaded everything
-			QUnit.config.autostart = false;
-
-			sap.ui.getCore().attachInit(function () {
-				"use strict";
-				sap.ui.require([
-					"sap/ui/documentation/sdk/test/configureOpa",
-					"sap/ui/documentation/sdk/test/AllJourneys",
-					"sap/ui/documentation/sdk/test/DownloadJourney"
-				], function () {
-					// configuration has been applied and the tests in the journeys have been loaded - start QUnit
-					QUnit.start();
-				});
-			});
-		</script>
 	</head>
 	<body>
 		<div id="qunit"></div>

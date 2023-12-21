@@ -235,7 +235,7 @@
 								delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover title="Author ID">
-										<mdcvc:MTable id="FH1-Popover-MTable_defcond" keyPath="ID" descriptionPath="name"  useAsValueHelp="false" >
+										<mdcvc:MTable id="FH1-Popover-MTable_defcond" keyPath="ID" descriptionPath="name" useFirstMatch="false" useAsValueHelp="false" >
 											<Table id="mTable1_defcond" items='{path : "/Authors", length: 10}' width="50rem" mode="SingleSelectMaster">
 												<columns>
 													<Column width="5rem">

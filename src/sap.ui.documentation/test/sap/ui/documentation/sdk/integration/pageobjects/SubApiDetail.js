@@ -91,50 +91,6 @@ sap.ui.define([
 					});
 				},
 
-				iShouldSeeTheElementDetailsInHeaderContent: function () {
-					return this.waitFor({
-						id: "apiDetailObjectPage",
-						success: function(oOp) {
-							var oHeaderContent =  oOp.getHeaderContent()[0];
-								if (oHeaderContent) {
-									this.waitFor({
-										controlType: "sap.ui.layout.VerticalLayout",
-										matchers: new Ancestor(oOp),
-										success: function(aLayouts) {
-
-										this.waitFor({
-											controlType: "sap.m.Label",
-											matchers: new Ancestor(aLayouts[0]),
-											success: function(aLabels) {
-												Opa5.assert.strictEqual(aLabels.length, 3, "There are three labels in the first column");
-											}
-										});
-										this.waitFor({
-											controlType: "sap.m.ObjectAttribute",
-											matchers: new Ancestor(aLayouts[1]),
-											success: function(aObjectAttributes) {
-												Opa5.assert.strictEqual(aObjectAttributes.length, 3, "There are two ObjectAttributes in the second column");
-											}
-										});
-										this.waitFor({
-											controlType: "sap.m.ObjectAttribute",
-											matchers: new Ancestor(aLayouts[2]),
-											success: function(aObjectAttributes) {
-												Opa5.assert.strictEqual(aObjectAttributes.length, 1, "There is two ObjectAttributes in the third column");
-											}
-										});
-
-									},
-									errorMessage: "sap.ui.layout.VerticalLayout  not found."
-								});
-							}
-							//Opa5.assert.ok(aContent.length === 1, "There is only one Header content");
-							Opa5.assert.ok(true, "sap.uxap.ObjectPageHeaderContent found");
-						},
-						errorMessage: "sap.uxap.ObjectPageHeaderContent  not found."
-					});
-				},
-
 				iShouldSeeTheseSections: function () {
 					var aExpectedSections = Array.from(arguments);
 					return this.waitFor({

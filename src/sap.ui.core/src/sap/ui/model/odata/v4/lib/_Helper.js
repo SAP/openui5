@@ -406,6 +406,8 @@ sap.ui.define([
 		 *   The group ID
 		 * @param {boolean} [bApplicationGroup]
 		 *   Whether only an application group ID is considered valid
+		 * @param {boolean} [bAllowSingle]
+		 *   Whether "$single" is allowed as a group ID
 		 * @param {string} [sErrorMessage]
 		 *   The error message to be used if group ID is not valid; the group ID will be appended
 		 * @throws {Error}
@@ -413,10 +415,11 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		checkGroupId : function (sGroupId, bApplicationGroup, sErrorMessage) {
+		checkGroupId : function (sGroupId, bApplicationGroup, bAllowSingle, sErrorMessage) {
 			if (!bApplicationGroup && sGroupId === undefined
 					|| typeof sGroupId === "string"
-						&& (bApplicationGroup ? rApplicationGroupID : rGroupID).test(sGroupId)) {
+						&& (bApplicationGroup ? rApplicationGroupID : rGroupID).test(sGroupId)
+					|| bAllowSingle && sGroupId === "$single") {
 				return;
 			}
 			throw new Error((sErrorMessage || "Invalid group ID: ") + sGroupId);

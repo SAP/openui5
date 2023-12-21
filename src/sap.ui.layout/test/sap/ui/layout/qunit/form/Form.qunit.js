@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 	function(
 		Element,
@@ -44,19 +44,19 @@ sap.ui.define([
 		mTitle,
 		Label,
 		Input,
-		oCore
+		nextUIUpdate
 	) {
 	"use strict";
 
 	var oForm;
 	var oFormLayout;
 
-	function initTest() {
+	async function initTest() {
 		oFormLayout = new FormLayout("FL1");
 		oForm = new Form("F1", {
 			layout: oFormLayout
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 	}
 
 	function afterTest() {
@@ -84,26 +84,26 @@ sap.ui.define([
 		assert.equal(jQuery("#F1").attr("role"), "form", "role \"form\" set");
 	});
 
-	QUnit.test("Width", function(assert) {
+	QUnit.test("Width", async function(assert) {
 		oForm.setWidth("300px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(jQuery("#F1").width(), 300, "Form rendered width 300px");
 	});
 
-	QUnit.test("Tooltip", function(assert) {
+	QUnit.test("Tooltip", async function(assert) {
 		assert.notOk(jQuery("#F1").attr("title"), "no tooltip rendered per default");
 
 		oForm.setTooltip("Test");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#F1").attr("title"), "Test", "tooltip rendered");
 	});
 
 	/* eslint-disable no-console */
-	QUnit.test("Title as string", function(assert) {
+	QUnit.test("Title as string", async function(assert) {
 		this.spy(console, "assert");
 		oForm.setTitle("Test");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oForm.getTitle(), "Test", "Title set");
 		assert.ok(window.document.getElementById("F1--title"), "Title rendered");
 		assert.equal(jQuery("#F1--title").text(), "Test", "Title rendered");
@@ -114,17 +114,17 @@ sap.ui.define([
 		assert.ok(console.assert.neverCalledWith(sinon.match.falsy), "no assertion should have failed");
 
 		oForm.destroyTitle();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oForm.getTitle(), "no Title set");
 		assert.notOk(window.document.getElementById("F1--title"), "no Title rendered");
 		assert.notOk(jQuery("#F1").attr("aria-labelledby"), "no aria-labelledby");
 	});
 
-	QUnit.test("Title as object", function(assert) {
+	QUnit.test("Title as object", async function(assert) {
 		this.spy(console, "assert"); // eslint-disable-line no-console
 		var oTitle = new Title("T1", {text: "Test"});
 		oForm.setTitle(oTitle);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oForm.getTitle(), oTitle, "Title set");
 		assert.ok(window.document.getElementById("T1"), "Title rendered");
@@ -140,7 +140,7 @@ sap.ui.define([
 		oTitle.setTooltip("Test");
 		oTitle.setEmphasized(true);
 		oTitle.setLevel(coreLibrary.TitleLevel.H1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#T1").attr("title"), "Test", "Title: tooltip rendered");
 		assert.ok(jQuery("#T1").is("h1"), "Title is rendered as H1");
 		assert.ok(jQuery("#T1").hasClass("sapUiFormTitleEmph"), "Title rendered as emphasized");
@@ -149,17 +149,17 @@ sap.ui.define([
 		assert.equal(jQuery("#T1-ico").attr("src"), "../../images/controls/sap.ui.layout.form.Form.gif", "Image URL");
 
 		oForm.destroyTitle();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oForm.getTitle(), "no Title set");
 		assert.notOk(window.document.getElementById("T1"), "no Title rendered");
 		assert.notOk(jQuery("#F1").attr("aria-labelledby"), "no aria-labelledby");
 	});
 	/* eslint-enable no-console */
 
-	QUnit.test("Toolbar", function(assert) {
+	QUnit.test("Toolbar", async function(assert) {
 		var oToolbar = new Toolbar("TB1");
 		oForm.setToolbar(oToolbar);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oForm.getToolbar(), oToolbar, "Toolbar set");
 		assert.equal(oToolbar.getActiveDesign(), mLibrary.ToolbarDesign.Transparent, "Toolbar Auto-design set");
@@ -168,28 +168,28 @@ sap.ui.define([
 		assert.equal(jQuery("#F1").attr("aria-labelledby"), "TB1", "aria-labelledby points to Toolbar");
 
 		oForm.destroyToolbar();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oForm.getToolbar(), "no Toolbar set");
 		assert.notOk(window.document.getElementById("TB1"), "no Toolbar rendered");
 		assert.notOk(jQuery("#F1").attr("aria-labelledby"), "no aria-labelledby");
 
 		oToolbar = new Toolbar("TB1", {content: [new mTitle("T1", {text: "Test"})]});
 		oForm.setToolbar(oToolbar);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#F1").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
 	});
 
-	QUnit.test("Title and Toolbar", function(assert) {
+	QUnit.test("Title and Toolbar", async function(assert) {
 		oForm.setTitle("Test");
 		var oToolbar = new Toolbar("TB1");
 		oForm.setToolbar(oToolbar);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(window.document.getElementById("TB1"), "Toolbar rendered");
 		assert.notOk(window.document.getElementById("F1--title"), "no Title rendered");
 	});
 
-	QUnit.test("Title with async Theme-Parameter loading", function(assert) {
+	QUnit.test("Title with async Theme-Parameter loading", async function(assert) {
 		var fnCallback;
 		this.stub(Parameters, "get").callsFake(function(vName, oElement) {
 			if (vName instanceof Object && !Array.isArray(vName) && Array.isArray(vName.name) && vName.name[0] === 'sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize') {
@@ -201,7 +201,7 @@ sap.ui.define([
 		});
 
 		oForm.setTitle("Test");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(window.document.getElementById("F1--title"), "Title rendered");
 		assert.equal(jQuery("#F1--title").text(), "Test", "Title rendered");
 		assert.ok(jQuery("#F1--title").is("h4"), "Title is rendered as H4 as default");
@@ -211,35 +211,35 @@ sap.ui.define([
 			"sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormSubTitleSize": "H2"
 		});
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(window.document.getElementById("F1--title"), "Title rendered");
 		assert.equal(jQuery("#F1--title").text(), "Test", "Title rendered");
 		assert.ok(jQuery("#F1--title").is("h1"), "Title is rendered as H1");
 	});
 
-	QUnit.test("ariaLabelledBy", function(assert) {
+	QUnit.test("ariaLabelledBy", async function(assert) {
 		oForm.addAriaLabelledBy("X");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#F1").attr("aria-labelledby"), "X", "aria-labelledby points to AriaLabel");
 
 		var oTitle = new Title("T1", {text: "Test"});
 		oForm.setTitle(oTitle);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#F1").attr("aria-labelledby"), "X T1", "aria-labelledby points to Title and AriaLabel");
 	});
 
-	QUnit.test("_suggestTitleId", function(assert) {
+	QUnit.test("_suggestTitleId", async function(assert) {
 		oForm._suggestTitleId("ID1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#F1").attr("aria-labelledby"), "ID1", "aria-labelledby points to TitleID");
 
 		var oTitle = new Title("T1", {text: "Test"});
 		oForm.setTitle(oTitle);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#F1").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
 
 		oForm.addAriaLabelledBy("X");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#F1").attr("aria-labelledby"), "X T1", "aria-labelledby points to AriaLabel and Title");
 	});
 
@@ -248,7 +248,7 @@ sap.ui.define([
 		afterEach: afterTest
 	});
 
-	QUnit.test("addFormContainer", function(assert) {
+	QUnit.test("addFormContainer", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormContainer2 = new FormContainer("FC2");
 		this.spy(oFormContainer1, "_setEditable");
@@ -256,7 +256,7 @@ sap.ui.define([
 
 		oForm.addFormContainer(oFormContainer1);
 		oForm.addFormContainer(oFormContainer2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var aFormContainers = oForm.getFormContainers();
 
 		assert.ok(oFormContainer1._setEditable.calledWith(false), "_setEditable on FormContainer1");
@@ -269,7 +269,7 @@ sap.ui.define([
 		assert.ok(window.document.getElementById("FC2"), "Container2 is rendered");
 	});
 
-	QUnit.test("insertFormContainer", function(assert) {
+	QUnit.test("insertFormContainer", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormContainer2 = new FormContainer("FC2");
 		this.spy(oFormContainer1, "_setEditable");
@@ -277,7 +277,7 @@ sap.ui.define([
 
 		oForm.insertFormContainer(oFormContainer1, 0);
 		oForm.insertFormContainer(oFormContainer2, 0);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var aFormContainers = oForm.getFormContainers();
 
 		assert.ok(oFormContainer1._setEditable.calledWith(false), "_setEditable on FormContainer1");
@@ -290,13 +290,13 @@ sap.ui.define([
 		assert.ok(window.document.getElementById("FC2"), "Container2 is rendered");
 	});
 
-	QUnit.test("removeFormContainer", function(assert) {
+	QUnit.test("removeFormContainer", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormContainer2 = new FormContainer("FC2");
 		oForm.addFormContainer(oFormContainer1);
 		oForm.addFormContainer(oFormContainer2);
 		var oRemoved = oForm.removeFormContainer(oFormContainer1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var aFormContainers = oForm.getFormContainers();
 
 		assert.equal(oRemoved, oFormContainer1, "FormContainer1 removed");
@@ -307,13 +307,13 @@ sap.ui.define([
 		oFormContainer1.destroy();
 	});
 
-	QUnit.test("removeAllFormContainers", function(assert) {
+	QUnit.test("removeAllFormContainers", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormContainer2 = new FormContainer("FC2");
 		oForm.addFormContainer(oFormContainer1);
 		oForm.addFormContainer(oFormContainer2);
 		var aRemoved = oForm.removeAllFormContainers();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var aFormContainers = oForm.getFormContainers();
 
 		assert.equal(aRemoved.length, 2, "2 FormContainers removed");
@@ -324,13 +324,13 @@ sap.ui.define([
 		oFormContainer2.destroy();
 	});
 
-	QUnit.test("destroyFormContainers", function(assert) {
+	QUnit.test("destroyFormContainers", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormContainer2 = new FormContainer("FC2");
 		oForm.addFormContainer(oFormContainer1);
 		oForm.addFormContainer(oFormContainer2);
 		oForm.destroyFormContainers();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var aFormContainers = oForm.getFormContainers();
 
 		assert.equal(aFormContainers.length, 0, "no FormContainers assigned");
@@ -340,40 +340,40 @@ sap.ui.define([
 		assert.notOk(Element.getElementById("FC2"), "FormContainer2 destroyed");
 	});
 
-	QUnit.test("visibility", function(assert) {
+	QUnit.test("visibility", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1", {visible: false});
 		var oFormContainer2 = new FormContainer("FC2");
 		oForm.addFormContainer(oFormContainer1);
 		oForm.addFormContainer(oFormContainer2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oForm.getVisibleFormContainers().length, 1, "getVisibleFormContainers returns only one container");
 		assert.notOk(window.document.getElementById("FC1"), "Container1 is not rendered");
 		assert.ok(window.document.getElementById("FC2"), "Container2 is rendered");
 
 		oFormContainer1.setVisible(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oForm.getVisibleFormContainers().length, 2, "getVisibleFormContainers returns two containers");
 		assert.ok(window.document.getElementById("FC1"), "Container1 is rendered");
 	});
 
 	// just check rendering, because API is tested in FormContainer qUnit test
-	QUnit.test("Tooltip", function(assert) {
+	QUnit.test("Tooltip", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		oForm.addFormContainer(oFormContainer1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(jQuery("#FC1").attr("title"), "no tooltip rendered per default");
 
 		oFormContainer1.setTooltip("Test");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#FC1").attr("title"), "Test", "tooltip rendered");
 	});
 
-	QUnit.test("Title  as string", function(assert) {
+	QUnit.test("Title  as string", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		oFormContainer1.setTitle("Test");
 		oForm.addFormContainer(oFormContainer1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(window.document.getElementById("FC1--title"), "Title rendered");
 		assert.equal(jQuery("#FC1--title").text(), "Test", "Title rendered");
 		assert.ok(jQuery("#FC1--title").is("h5"), "Title is rendered as H5 as default");
@@ -382,18 +382,18 @@ sap.ui.define([
 		assert.equal(jQuery("#FC1").attr("aria-labelledby"), "FC1--title", "aria-labelledby points to Title");
 
 		oFormContainer1.destroyTitle();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(window.document.getElementById("FC1--title"), "no Title rendered");
 		assert.notOk(jQuery("#FC1").attr("role"), "role \"form\" not set");
 		assert.notOk(jQuery("#FC1").attr("aria-labelledby"), "no aria-labelledby");
 	});
 
-	QUnit.test("Title  as object", function(assert) {
+	QUnit.test("Title  as object", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oTitle = new Title("T1", {text: "Test"});
 		oFormContainer1.setTitle(oTitle);
 		oForm.addFormContainer(oFormContainer1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(window.document.getElementById("T1"), "Title rendered");
 		assert.equal(jQuery("#T1").text(), "Test", "Title rendered");
@@ -408,7 +408,7 @@ sap.ui.define([
 		oTitle.setTooltip("Test");
 		oTitle.setEmphasized(true);
 		oTitle.setLevel(coreLibrary.TitleLevel.H1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#T1").attr("title"), "Test", "Title: tooltip rendered");
 		assert.ok(jQuery("#T1").is("h1"), "Title is rendered as H1");
 		assert.ok(jQuery("#T1").hasClass("sapUiFormTitleEmph"), "Title rendered as emphasized");
@@ -416,18 +416,18 @@ sap.ui.define([
 		assert.ok(jQuery("#T1-ico").is("span"), "Icon is rendered as span");
 
 		oFormContainer1.destroyTitle();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(window.document.getElementById("T1"), "no Title rendered");
 		assert.notOk(jQuery("#FC1").attr("role"), "role \"form\" not set");
 		assert.notOk(jQuery("#FC1").attr("aria-labelledby"), "no aria-labelledby");
 	});
 
-	QUnit.test("Toolbar", function(assert) {
+	QUnit.test("Toolbar", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oToolbar = new Toolbar("TB1");
 		oFormContainer1.setToolbar(oToolbar);
 		oForm.addFormContainer(oFormContainer1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oToolbar.getActiveDesign(), mLibrary.ToolbarDesign.Transparent, "Toolbar Auto-design set");
 		assert.equal(oToolbar.getDesign(), mLibrary.ToolbarDesign.Auto, "Toolbar design not changed");
@@ -435,29 +435,29 @@ sap.ui.define([
 		assert.equal(jQuery("#FC1").attr("aria-labelledby"), "TB1", "aria-labelledby points to Toolbar");
 
 		oFormContainer1.destroyToolbar();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(window.document.getElementById("TB1"), "no Toolbar rendered");
 		assert.notOk(jQuery("#FC1").attr("aria-labelledby"), "no aria-labelledby");
 
 		oToolbar = new Toolbar("TB1", {content: [new mTitle("T1", {text: "Test"})]});
 		oFormContainer1.setToolbar(oToolbar);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#FC1").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
 	});
 
-	QUnit.test("Title and Toolbar", function(assert) {
+	QUnit.test("Title and Toolbar", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		oFormContainer1.setTitle("Test");
 		var oToolbar = new Toolbar("TB1");
 		oFormContainer1.setToolbar(oToolbar);
 		oForm.addFormContainer(oFormContainer1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(window.document.getElementById("TB1"), "Toolbar rendered");
 		assert.notOk(window.document.getElementById("F1--title"), "no Title rendered");
 	});
 
-	QUnit.test("Title with async Theme-Parameter loading", function(assert) {
+	QUnit.test("Title with async Theme-Parameter loading", async function(assert) {
 		var fnCallback;
 		this.stub(Parameters, "get").callsFake(function(vName, oElement) {
 			if (vName instanceof Object && !Array.isArray(vName) && Array.isArray(vName.name) && vName.name[0] === 'sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize') {
@@ -471,7 +471,7 @@ sap.ui.define([
 		var oFormContainer1 = new FormContainer("FC1");
 		oFormContainer1.setTitle("Test");
 		oForm.addFormContainer(oFormContainer1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(window.document.getElementById("FC1--title"), "Title rendered");
 		assert.equal(jQuery("#FC1--title").text(), "Test", "Title rendered");
 		assert.ok(jQuery("#FC1--title").is("h5"), "Title is rendered as H5 as default");
@@ -481,34 +481,34 @@ sap.ui.define([
 			"sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormSubTitleSize": "H2"
 		});
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(window.document.getElementById("FC1--title"), "Title rendered");
 		assert.equal(jQuery("#FC1--title").text(), "Test", "Title rendered");
 		assert.ok(jQuery("#FC1--title").is("h2"), "Title is rendered as H2");
 	});
 
-	QUnit.test("ariaLabelledBy", function(assert) {
+	QUnit.test("ariaLabelledBy", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		oFormContainer1.addAriaLabelledBy("X");
 		oForm.addFormContainer(oFormContainer1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#FC1").attr("aria-labelledby"), "X", "aria-labelledby points to property");
 
 		var oTitle = new Title("T1", {text: "Test"});
 		oFormContainer1.setTitle(oTitle);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#FC1").attr("aria-labelledby"), "X T1", "aria-labelledby points to Title and property");
 	});
 
-	QUnit.test("Expander", function(assert) {
+	QUnit.test("Expander", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1", {title: "Test"});
 		oForm.addFormContainer(oFormContainer1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(window.document.getElementById("FC1--Exp"), "no Expander rendered");
 
 		oFormContainer1.setExpandable(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(window.document.getElementById("FC1--Exp"), "Expander rendered");
 		assert.ok(window.document.getElementById("FC1-content"), "Container content area is rendered");
 		assert.ok(jQuery("#FC1-content").is(":visible"), "Container content area is visible");
@@ -518,19 +518,19 @@ sap.ui.define([
 
 		// test not expanded in FormRenderer
 		oForm.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(jQuery("#FC1-content").is(":visible"), "Container content area is not visible");
 	});
 
-	QUnit.test("getRenderedDomRef", function(assert) {
+	QUnit.test("getRenderedDomRef", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		oForm.addFormContainer(oFormContainer1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oFormContainer1.getRenderedDomRef().id, "FC1", "getRenderedDomRef returns DOM");
 
 		oForm.setLayout();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oFormContainer1.getRenderedDomRef(), "getRenderedDomRef return nothing if no Layout");
 
 		oForm.setLayout(oFormLayout);
@@ -543,7 +543,7 @@ sap.ui.define([
 	});
 
 	// for FormElements and Fields just test rendering as API is tested in other qUnit tests
-	QUnit.test("Rendering", function(assert) {
+	QUnit.test("Rendering", async function(assert) {
 		this.spy(oFormLayout, "contentOnAfterRendering");
 
 		var oFormContainer1 = new FormContainer("FC1");
@@ -565,7 +565,7 @@ sap.ui.define([
 		oFormContainer1.addFormElement(oFormElement2);
 		oFormContainer1.insertFormElement(oFormElement3, 0);
 		oForm.addFormContainer(oFormContainer1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(window.document.getElementById("FE1"), "FormElement1 is rendered");
 		assert.ok(oFormElement1.getLabelControl().getDomRef(), "FormElement1 label is rendered");
@@ -583,7 +583,7 @@ sap.ui.define([
 		assert.equal(oFormLayout.contentOnAfterRendering.callCount, 4, "contentOnAfterRendering called on Layout");
 	});
 
-	QUnit.test("visibility", function(assert) {
+	QUnit.test("visibility", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormElement1 = new FormElement("FE1", {visible: false});
 		oFormElement1.setLabel("Test1");
@@ -591,20 +591,20 @@ sap.ui.define([
 		oFormElement1.addField(oField1);
 		oFormContainer1.addFormElement(oFormElement1);
 		oForm.addFormContainer(oFormContainer1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(window.document.getElementById("FE1"), "FormElement1 is not rendered");
 		assert.notOk(oFormElement1.getLabelControl().getDomRef(), "FormElement1 label is not rendered");
 		assert.notOk(window.document.getElementById("I1"), "FormElement1 field is not rendered");
 
 		oFormElement1.setVisible(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(window.document.getElementById("FE1"), "FormElement1 is rendered");
 		assert.ok(oFormElement1.getLabelControl().getDomRef(), "FormElement1 label is rendered");
 		assert.ok(window.document.getElementById("I1"), "FormElement1 field is rendered");
 	});
 
-	QUnit.test("getRenderedDomRef", function(assert) {
+	QUnit.test("getRenderedDomRef", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormElement1 = new FormElement("FE1");
 		oFormElement1.setLabel("Test1");
@@ -612,12 +612,12 @@ sap.ui.define([
 		oFormElement1.addField(oField1);
 		oFormContainer1.addFormElement(oFormElement1);
 		oForm.addFormContainer(oFormContainer1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oFormElement1.getRenderedDomRef().id, "FE1", "getRenderedDomRef returns DOM");
 
 		oForm.setLayout();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oFormElement1.getRenderedDomRef(), "getRenderedDomRef return nothing if no Layout");
 
 		oForm.setLayout(oFormLayout);
@@ -629,12 +629,12 @@ sap.ui.define([
 		afterEach: afterTest
 	});
 
-	QUnit.test("Editable", function(assert) {
+	QUnit.test("Editable", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormContainer2 = new FormContainer("FC2");
 		oForm.addFormContainer(oFormContainer1);
 		oForm.addFormContainer(oFormContainer2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oForm.getEditable(), "editable not set per default");
 		assert.notOk(jQuery("#F1").hasClass("sapUiFormEdit"), "Form not editable rendered");
@@ -644,7 +644,7 @@ sap.ui.define([
 		this.spy(oFormContainer2, "_setEditable");
 
 		oForm.setEditable(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(jQuery("#F1").hasClass("sapUiFormEdit"), "Form editable rendered");
 		assert.notOk(jQuery("#F1").attr("aria-readonly"), "aria-readonly not set");
 		assert.ok(oFormContainer1._setEditable.calledWith(true), "_setEditable on FormContainer1");
@@ -652,17 +652,17 @@ sap.ui.define([
 
 		// test if editable rendered by renderer
 		oForm.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(jQuery("#F1").hasClass("sapUiFormEdit"), "Form editable rendered");
 		assert.notOk(jQuery("#F1").attr("aria-readonly"), "aria-readonly not set");
 
 		oForm.setEditable(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(jQuery("#F1").hasClass("sapUiFormEdit"), "Form not editable rendered");
 		assert.ok(jQuery("#F1").attr("aria-readonly"), "aria-readonly set");
 	});
 
-	QUnit.test("onLayoutDataChange", function(assert) {
+	QUnit.test("onLayoutDataChange", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormElement1 = new FormElement("FE1");
 		oFormElement1.setLabel("Test1");
@@ -671,7 +671,7 @@ sap.ui.define([
 		oFormElement1.addField(oField1);
 		oFormContainer1.addFormElement(oFormElement1);
 		oForm.addFormContainer(oFormContainer1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.spy(oForm, "onLayoutDataChange");
 		oGD.setSpan("XL12 L12 M12 S12");
@@ -683,16 +683,16 @@ sap.ui.define([
 		afterEach: afterTest
 	});
 
-	QUnit.test("backgroundDesign", function(assert) {
+	QUnit.test("backgroundDesign", async function(assert) {
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Translucent, "Background design default");
 		assert.ok(jQuery("#FL1").hasClass("sapUiFormBackgrTranslucent"), "translucent design per default rendered");
 
 		oFormLayout.setBackgroundDesign(library.BackgroundDesign.Solid);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(jQuery("#FL1").hasClass("sapUiFormBackgrSolid"), "solid design rendered");
 
 		oFormLayout.setBackgroundDesign(library.BackgroundDesign.Transparent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(jQuery("#FL1").hasClass("sapUiFormBackgrSolid"), "solid design not rendered");
 		assert.notOk(jQuery("#FL1").hasClass("sapUiFormBackgrTranslucent"), "translucent design not rendered");
 	});
@@ -719,11 +719,11 @@ sap.ui.define([
 		oField.destroy();
 	});
 
-	QUnit.test("Keyboard: Expander", function(assert) {
+	QUnit.test("Keyboard: Expander", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1", {title: "Test"});
 		oForm.addFormContainer(oFormContainer1);
 		oFormContainer1.setExpandable(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		qutils.triggerKeydown(jQuery("#FC1--Exp").get(0), KeyCodes.NUMPAD_MINUS, false, false, false);
 		assert.notOk(jQuery("#FC1-content").is(":visible"), "Container content area is not visible");
@@ -732,7 +732,7 @@ sap.ui.define([
 		assert.ok(jQuery("#FC1-content").is(":visible"), "Container content area is visible");
 	});
 
-	QUnit.test("Keyboard: F6", function(assert) {
+	QUnit.test("Keyboard: F6", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oFormElement1 = new FormElement("FE1");
 		oFormElement1.setLabel("Test1");
@@ -763,7 +763,7 @@ sap.ui.define([
 		oUiArea.insertContent(oFieldBefore, 0);
 		var oFieldAfter = new Input("I-A");
 		oUiArea.addContent(oFieldAfter);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		jQuery("#I-B").trigger("focus");
 		qutils.triggerKeydown(jQuery("#I-B").get(0), KeyCodes.F6, false, false, false);

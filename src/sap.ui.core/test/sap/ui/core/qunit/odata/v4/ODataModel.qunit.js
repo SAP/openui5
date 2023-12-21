@@ -307,6 +307,10 @@ sap.ui.define([
 		assert.throws(function () {
 			oModel = this.createModel("", {updateGroupId : "$foo"});
 		}, new Error("Invalid update group ID: $foo"));
+
+		assert.throws(function () {
+			oModel = this.createModel("", {updateGroupId : "$single"});
+		}, new Error("Invalid update group ID: $single"));
 	});
 
 	//*********************************************************************************************
@@ -335,6 +339,7 @@ sap.ui.define([
 		assert.strictEqual(oModel.getGroupProperty("$auto", "submit"), SubmitMode.Auto);
 		assert.strictEqual(oModel.getGroupProperty("$auto.foo", "submit"), SubmitMode.Auto);
 		assert.strictEqual(oModel.getGroupProperty("$direct", "submit"), SubmitMode.Direct);
+		assert.strictEqual(oModel.getGroupProperty("$single", "submit"), "Single");
 		assert.strictEqual(oModel.getGroupProperty("myAPIGroup", "submit"), SubmitMode.API);
 		assert.strictEqual(oModel.getGroupProperty("myAutoGroup", "submit"), SubmitMode.Auto);
 		assert.strictEqual(oModel.getGroupProperty("myDirectGroup", "submit"), SubmitMode.Direct);
@@ -3247,7 +3252,7 @@ sap.ui.define([
 				this.mock(oContext).expects("fetchValue").withExactArgs("@odata.etag", null, true)
 					.returns(SyncPromise.resolve(Promise.resolve("ETag")));
 			}
-			this.mock(_Helper).expects("checkGroupId").withExactArgs(sGroupId);
+			this.mock(_Helper).expects("checkGroupId").withExactArgs(sGroupId, false, true);
 			this.mock(oModel).expects("getUpdateGroupId").exactly(sGroupId ? 0 : 1)
 				.withExactArgs().returns("group");
 			this.mock(oModel).expects("isApiGroup").withExactArgs("group").returns(false);

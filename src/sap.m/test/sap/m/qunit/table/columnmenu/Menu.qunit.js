@@ -70,10 +70,11 @@ sap.ui.define([
 
 			this.oColumnMenu = new Menu({
 				quickActions: aQuickActions,
-				items: aItems,
-				_quickActions: aPQuickActions,
-				_items: aPItems
+				items: aItems
 			});
+
+			aPQuickActions.forEach((oQuickAction) => this.oColumnMenu.addAggregation("_quickActions", oQuickAction));
+			aPItems.forEach((oItem) => this.oColumnMenu.addAggregation("_items", oItem));
 		},
 		beforeEach: function () {
 			this.oButton = new Button();
@@ -130,9 +131,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oColumnMenu = new Menu({
 				quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
-				items: [new Item({label: sText, content: new Button({text: sText})})],
-				_quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
-				_items: [new Item({label: sText, content: new Button({text: sText})})]
+				items: [new Item({label: sText, content: new Button({text: sText})})]
 			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
@@ -158,20 +157,21 @@ sap.ui.define([
 
 	QUnit.module("Rendering", {
 		createMenu: function (bQuickActions, bItems, bPQuickActions, bPItems) {
-			var aQuickActions = [new QuickAction({label: sText, content: new Button({text: sText})})];
-			var aPQuickActions = [new QuickAction({label: sText, content: new Button({text: sText})})];
-			var aItems = [
+			var aQuickActions = bQuickActions ? [new QuickAction({label: sText, content: new Button({text: sText})})] : [];
+			var aPQuickActions = bPQuickActions ? [new QuickAction({label: sText, content: new Button({text: sText})})] : [];
+			var aItems = bItems ? [
 				new ActionItem({label: sText, press: function() {}}),
 				new Item({label: sText, content: new Button({text: sText})})
-			];
-			var aPItems = [new Item({label: sText, content: new Button({text: sText})})];
+			] : [];
+			var aPItems = bPItems ? [new Item({label: sText, content: new Button({text: sText})})] : [];
 
 			this.oColumnMenu = new Menu({
-				quickActions: bQuickActions ? aQuickActions : undefined,
-				items: bItems ? aItems : undefined,
-				_quickActions: bPQuickActions ? aPQuickActions : null,
-				_items: bPItems ? aPItems : null
+				quickActions: aQuickActions,
+				items: aItems
 			});
+
+			aPQuickActions.forEach((oQuickAction) => this.oColumnMenu.addAggregation("_quickActions", oQuickAction));
+			aPItems.forEach((oItem) => this.oColumnMenu.addAggregation("_items", oItem));
 		},
 		beforeEach: function () {
 			this.oButton = new Button();
@@ -514,17 +514,19 @@ sap.ui.define([
 					new QuickAction({label: "Custom group action", content: new Button(), category: Category.Group}),
 					new QuickAction({label: "Custom filter action", content: new Button(), category: Category.Filter})
 				]})
-			],
-			_quickActions: [
-				new QuickAction({label: "Control generic action", content: new Button()}),
-				new QuickAction({label: "Control group action", content: new Button(), category: Category.Group}),
-				new QuickAction({label: "Control filter action", content: new Button(), category: Category.Filter}),
-				new QuickActionContainer({quickActions: [
-					new QuickAction({label: "Control aggregate action", content: new Button(), category: Category.Aggregate}),
-					new QuickAction({label: "Control sort action", content: new Button(), category: Category.Sort})
-				]})
 			]
 		});
+
+		[
+			new QuickAction({label: "Control generic action", content: new Button()}),
+			new QuickAction({label: "Control group action", content: new Button(), category: Category.Group}),
+			new QuickAction({label: "Control filter action", content: new Button(), category: Category.Filter}),
+			new QuickActionContainer({quickActions: [
+				new QuickAction({label: "Control aggregate action", content: new Button(), category: Category.Aggregate}),
+				new QuickAction({label: "Control sort action", content: new Button(), category: Category.Sort})
+			]})
+		].forEach((oQuickAction) => oMenu.addAggregation("_quickActions", oQuickAction));
+
 		var aLabelsInExpectedOrder = [
 			"Control sort action",
 			"Custom sort action",
@@ -682,9 +684,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oColumnMenu = new Menu({
 				quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
-				items: [new Item({label: sText, content: new Button({text: sText})})],
-				_quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
-				_items: [new Item({label: sText, content: new Button({text: sText})})]
+				items: [new Item({label: sText, content: new Button({text: sText})})]
 			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
@@ -744,17 +744,19 @@ sap.ui.define([
 						visible: false
 					})
 				],
-				items: [new Item({label: sText, content: new Button({text: sText})})],
-				_quickActions: [
-					new QuickAction({label: sText, content: [new Button({text: sText + "1"}), new Button({text: sText + "2"})]}),
-					new QuickAction({label: sText, content: [
-						new Button({text: sText + "1"}),
-						new Button({text: sText + "2"}),
-						new Button({text: sText + "3"})
-					]})
-				],
-				_items: [new Item({label: sText, content: new Button({text: sText})})]
+				items: [new Item({label: sText, content: new Button({text: sText})})]
 			});
+
+			[
+				new QuickAction({label: sText, content: [new Button({text: sText + "1"}), new Button({text: sText + "2"})]}),
+				new QuickAction({label: sText, content: [
+					new Button({text: sText + "1"}),
+					new Button({text: sText + "2"}),
+					new Button({text: sText + "3"})
+				]})
+			].forEach((oQuickAction) => this.oColumnMenu.addAggregation("_quickActions", oQuickAction));
+			this.oColumnMenu.addAggregation("_items", new Item({label: sText, content: new Button({text: sText})}));
+
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
 			oCore.applyChanges();

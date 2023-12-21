@@ -61,7 +61,8 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/Menu",
-	"sap/m/MenuItem"
+	"sap/m/MenuItem",
+	"sap/m/plugins/ContextMenuSetting"
 ], function(
 	TableQUnitUtils,
 	Element,
@@ -121,7 +122,8 @@ sap.ui.define([
 	ConditionValidated,
 	OperatorName,
 	Menu,
-	MenuItem
+	MenuItem,
+	ContextMenuSetting
 ) {
 	"use strict";
 
@@ -4196,6 +4198,12 @@ sap.ui.define([
 				jQuery(oCell).trigger("contextmenu");
 			}.bind(this));
 		}.bind(this));
+	});
+
+	QUnit.test("ContextMenuSetting plugin owner", function(assert) {
+		return this.oTable.initialized(this.oTable).then(() => {
+			assert.equal(this.oTable.getContextMenuSettingPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for ContextMenuSetting");
+		});
 	});
 
 	QUnit.test("Context Menu For ResponsiveTable type", function(assert) {

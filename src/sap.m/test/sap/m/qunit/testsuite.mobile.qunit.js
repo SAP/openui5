@@ -98,10 +98,7 @@ sap.ui.define([
 			},
 
 			BusyDialog: {
-				title: "QUnit page for sap.m.BusyDialog",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "QUnit page for sap.m.BusyDialog"
 			},
 
 			BusyIndicator: {
@@ -2528,6 +2525,16 @@ sap.ui.define([
 				},
 				coverage: {
 					only: ["sap/m/plugins/CopyProvider"]
+				}
+			},
+
+			"plugins/ContextMenuSetting": {
+				title: "Test Page for sap.m.plugins.ContextMenuSetting",
+				ui5: {
+					libs: ["sap.m", "sap.ui.table", "sap.ui.unified", "sap.ui.mdc"]
+				},
+				coverage: {
+					only: ["sap/m/plugins/ContextMenuSetting"]
 				}
 			},
 

@@ -51,15 +51,14 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
-				 * A factory function that will be called whenever the user selects a new entry from the <code>ComboBox</code>.
-				 * The factory must return a single control instance of an input based control to provide custom filter capabilities.
+				 * A factory function that is called whenever the user selects a new entry from the <code>ComboBox</code>.
+				 * The factory must return a single control instance of an input-based control to provide custom filter capabilities.
 				 * This control is then going to be added in the grid layout provided by the <code>QueryPanel</code>.
-				 * Whenever the <code>FilterPanel#setP13nData</code> method will be called, the <code>active</code> can be used to update the
+				 * Whenever the <code>FilterPanel#setP13nData</code> method is called, <code>active</code> can be used to update the
 				 * current set of active factory controls.
 				 *
-				 * <b>Note:</b>: The Panel will not handle the lifecylce of the provided factory control instance, in case the row is going to be
-				 * removed, the according consumer needs to decide about destroying or keeping the control instance. In addition, the <code>getIdForLabel</code>
-				 * method can be used to return a focusable children control to provide the <code>labelFor</code> reference.
+				 * <b>Note:</b>: The panel does not handle the lifecylce of the provided factory control instance, if the row is removed. The consumer needs to decide about destroying or keeping the control instance.
+				 * In addition, the <code>getIdForLabel</code> method can be used to return a focusable child control to provide the <code>labelFor</code> reference.
 				 */
 				itemFactory: {
 					type: "function"
@@ -72,7 +71,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * P13n <code>FilterItem</code> object type.
+	 * Personalization <code>FilterItem</code> object type.
 	 *
 	 * @static
 	 * @constant
@@ -80,15 +79,16 @@ sap.ui.define([
 	 * @property {string} name The unique key of the item
 	 * @property {string} label The label describing the personalization item
 	 * @property {boolean} active Defines whether there is a visible grid shown in the panel for this key, also triggers the call of the <code>#itemFactory</code> function
+	 * @property {object[]} [conditions] The conditions that are optionally used for persisted when using the <code>FilterPanel</code> within a <code>FilterController</code>
 	 *
 	 * @private
 	 */
 
 	/**
 	 * Sets the personalization state of the panel instance.
+	 *
 	 * @name sap.m.p13n.FilterPanel.prototype.setP13nData
 	 * @function
-	 *
 	 * @param {sap.m.p13n.FilterItem[]} aP13nData An array containing the personalization state
 	 * @returns {this} The FilterPanel instance
 	 */

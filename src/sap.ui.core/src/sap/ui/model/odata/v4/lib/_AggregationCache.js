@@ -11,9 +11,10 @@ sap.ui.define([
 	"./_Helper",
 	"./_MinMaxHelper",
 	"sap/base/Log",
-	"sap/ui/base/SyncPromise"
+	"sap/ui/base/SyncPromise",
+	"sap/ui/model/odata/ODataUtils"
 ], function (_AggregationHelper, _Cache, _ConcatHelper, _GroupLock, _Helper, _MinMaxHelper, Log,
-		SyncPromise) {
+		SyncPromise, ODataUtils) {
 	"use strict";
 
 	//*********************************************************************************************
@@ -1245,7 +1246,7 @@ sap.ui.define([
 			bHasGrandTotalAtTop = this.oGrandTotalPromise
 				&& this.oAggregation.grandTotalAtBottomOnly !== true,
 			aReadPromises = [],
-			i, n,
+			i,
 			that = this;
 
 		/*
@@ -1286,7 +1287,12 @@ sap.ui.define([
 				this.readFirst(iFirstLevelIndex, iFirstLevelLength, iPrefetchLength,
 					oGroupLock, fnDataRequested));
 		} else {
-			for (i = iIndex, n = Math.min(iIndex + iLength, this.aElements.length); i < n; i += 1) {
+			const oReadRange = ODataUtils._getReadRange(this.aElements, iIndex, iLength,
+				iPrefetchLength,
+				// _getReadRange happily reads beyond aElements, so oElement may be undefined
+				(oElement) => !oElement || _Helper.hasPrivateAnnotation(oElement, "placeholder"));
+			const n = Math.min(oReadRange.start + oReadRange.length, this.aElements.length);
+			for (i = oReadRange.start; i < n; i += 1) {
 				oElement = this.aElements[i];
 				oCurrentParent = _Helper.hasPrivateAnnotation(oElement, "placeholder")
 					? _Helper.getPrivateAnnotation(oElement, "parent")

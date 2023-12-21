@@ -42,7 +42,6 @@ sap.ui.define([
 		Given.onTheApiMasterPage.iSearchFor("sap.ui.base.o");
 		When.onTheApiMasterPage.iSelectATreeNode("Object");
 		Then.onTheSubApiDetailPage.iShouldSeeTheCorrectTitleAndSubtitle("abstract class sap.ui.base.Object", "").
-		and.iShouldSeeTheElementDetailsInHeaderContent().
 		and.iShouldSeeTheseSections("Overview", "Constructor", "Methods").
 		and.iShouldSeeTheCorrectSectionSelected("Overview");
 	});

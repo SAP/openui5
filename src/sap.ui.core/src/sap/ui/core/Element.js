@@ -1867,7 +1867,7 @@ sap.ui.define([
 		 * @borrows module:sap/ui/core/ElementRegistry.forEach as forEach
 		 * @borrows module:sap/ui/core/ElementRegistry.filter as filter
 		 */
-		ElementRegistry = ElementRegistry;
+		Element.registry = ElementRegistry;
 
 		Theming.attachApplied(function(oEvent) {
 			// notify all elements/controls via a pseudo browser event

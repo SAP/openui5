@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
+	"sap/m/ScrollContainer",
 	"sap/m/library",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
@@ -31,6 +32,7 @@ sap.ui.define([
 	Button,
 	Toolbar,
 	ToolbarSpacer,
+	ScrollContainer,
 	library,
 	Device,
 	Control,
@@ -151,15 +153,6 @@ sap.ui.define([
 		}, this);
 	};
 
-	Menu.prototype.applySettings = function (mSettings) {
-		// Only works in JS views, but that's fine. This is only convenience for controls.
-		if (mSettings) {
-			this._addAllToPrivateAggregation(mSettings, "_quickActions");
-			this._addAllToPrivateAggregation(mSettings, "_items");
-		}
-		Control.prototype.applySettings.apply(this, arguments);
-	};
-
 	/**
 	 * Opens the popover at the specified target.
 	 *
@@ -272,15 +265,6 @@ sap.ui.define([
 		ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
 	};
 
-	Menu.prototype._addAllToPrivateAggregation = function (mSettings, sAggregationName) {
-		if (mSettings[sAggregationName]) {
-			mSettings[sAggregationName].forEach(function (oItem) {
-				this.addAggregation(sAggregationName, oItem);
-			}.bind(this));
-			delete mSettings[sAggregationName];
-		}
-	};
-
 	Menu.prototype._initPopover = function () {
 		if (this._oPopover) {
 			return;
@@ -391,9 +375,11 @@ sap.ui.define([
 
 	Menu.prototype._addView = function (oMenuItem) {
 		var oItem = new AbstractContainerItem({
-			content: new AssociativeControl({
-				control: oMenuItem.getContent(),
-				height: true
+			content: new ScrollContainer({
+				content: new AssociativeControl({
+					control: oMenuItem.getContent(),
+					height: true
+				})
 			}),
 			key: oMenuItem.getId(),
 			text: oMenuItem.getLabel(),

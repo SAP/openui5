@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/Device",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
@@ -38,6 +39,7 @@ sap.ui.define([
 	Library,
 	qutils,
 	createAndAppendDiv,
+	nextUIUpdate,
 	Device,
 	Core,
 	Element,
@@ -965,7 +967,6 @@ sap.ui.define([
 		assert.ok(oDialog.getDomRef(), "Dialog is rendered");
 		assert.equal(oDialog.getBeginButton(), oBBtn, "Getter of beginButton should return the button itself");
 		assert.equal(oDialog.getEndButton(), oEBtn, "Getter of endButton should return the button itself");
-		assert.equal(oBBtn.$().width(), oEBtn.$().width(), "BeginButton and EndButton are with equal width");
 
 		// add button to "buttons" aggregation while begin/endButton are set
 		aButtons.forEach(function (oButton) {
@@ -2750,7 +2751,7 @@ sap.ui.define([
 	QUnit.test("When the content of the dialog is changed and scrollbar is not needed the 'sapMDialogVerticalScrollIncluded' class should be removed (all browsers except Chrome) BCP: 2270156416", function(assert) {
 		var done = assert.async();
 
-		this.oDialog.attachAfterOpen(function () {
+		this.oDialog.attachAfterOpen(async function () {
 			if (!Device.browser.chrome) {
 				assert.ok(this.oDialog.$().hasClass("sapMDialogVerticalScrollIncluded"),  "Initially the class is added");
 			}
@@ -2758,7 +2759,7 @@ sap.ui.define([
 			// remove the list and add new one with only one item (no need of vertical scrollbar)
 			this.oDialog.destroyContent();
 			this.oDialog.addContent(new List({ items: [new StandardListItem({title: "Item 1"})]}));
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			// assert
 			assert.notOk(this.oDialog.$().hasClass("sapMDialogVerticalScrollIncluded"),  "Class is successfully removed");
@@ -2931,36 +2932,39 @@ sap.ui.define([
 
 	QUnit.module("Title Alignment");
 
-	QUnit.test("setTitleAlignment test", function (assert) {
-
-		var oDialog = new Dialog({
-				title: "Header",
-				buttons: [ new Button() ]
-			}),
-			oCore = sap.ui.getCore(),
-			sAlignmentClass = "sapMBarTitleAlign",
-			setTitleAlignmentSpy = this.spy(oDialog, "setTitleAlignment"),
-			sInitialAlignment,
-			sAlignment;
+	QUnit.test("setTitleAlignment test", async function (assert) {
+		this.clock.restore();
+		const oDialog = new Dialog({
+			title: "Header",
+			buttons: [ new Button() ]
+		});
+		const sAlignmentClass = "sapMBarTitleAlign";
+		const setTitleAlignmentSpy = this.spy(oDialog, "setTitleAlignment");
 
 		oDialog.open();
-		oCore.applyChanges();
-		sInitialAlignment = oDialog.getTitleAlignment();
+		await nextUIUpdate();
+
+		const sInitialAlignment = oDialog.getTitleAlignment();
 
 		// initial titleAlignment test depending on theme
 		assert.ok(oDialog._header.hasStyleClass(sAlignmentClass + sInitialAlignment),
 					"The default titleAlignment is '" + sInitialAlignment + "', there is class '" + sAlignmentClass + sInitialAlignment + "' applied to the Header");
 
+		// ensure that setTitleAlignment won't be called again with the initial value and will always invalidate
+		const aRemainingTitleAlignments = Object.values(TitleAlignment).filter((sAlignment) => sAlignment !== sInitialAlignment);
+
 		// check if all types of alignment lead to apply the proper CSS class
-		for (sAlignment in TitleAlignment) {
+		await aRemainingTitleAlignments.reduce(async (pPrevAlignmentTest, sAlignment) => {
+			await pPrevAlignmentTest;
 			oDialog.setTitleAlignment(sAlignment);
-			oCore.applyChanges();
+			await nextUIUpdate();
+
 			assert.ok(oDialog._header.hasStyleClass(sAlignmentClass + sAlignment),
-						"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
-		}
+							"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
+		}, Promise.resolve());
 
 		// check how many times setTitleAlignment method is called
-		assert.strictEqual(setTitleAlignmentSpy.callCount, Object.keys(TitleAlignment).length,
+		assert.strictEqual(setTitleAlignmentSpy.callCount, aRemainingTitleAlignments.length,
 			"'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
 
 		// cleanup

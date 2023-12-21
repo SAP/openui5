@@ -17,6 +17,17 @@ sap.ui.define([
 	"use strict";
 
 	/**
+	 * Personalization <code>SelectionState</code> object type. This object describes the state processed by this controller when accessing it through the {@link sap.m.p13n.Engine Engine}.
+	 *
+	 * @public
+	 * @typedef {object} sap.m.p13n.SelectionState
+	 * @property {string} key The key for the group state
+	 * @property {boolean} [visible] Defines whether the item is selected (if a selection state is provided, it's selected automatically)
+	 * @property {int} [index] Describes the index of the selection item
+	 *
+	 */
+
+	/**
 	 * Constructor for a new <code>SelectionController</code>.
 	 *
 	 * @param {object} mSettings Initial settings for the new controller

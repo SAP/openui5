@@ -187,6 +187,7 @@ sap.ui.define([
 		  "sap.m.WrappingType",
 		  "sap.m.WizardRenderMode",
 		  "sap.m.plugins.CopyPreference",
+		  "sap.m.plugins.ContextMenuScope",
 		  "sap.m.semantic.SemanticRuleSetType",
 		  "sap.m.table.columnmenu.Category",
 		  "sap.m.upload.UploaderHttpRequestMethod",
@@ -4957,6 +4958,28 @@ sap.ui.define([
 		  * @public
 		  */
 		 Cells: "Cells"
+	 };
+
+	 /**
+	  * Defines the states of list items when the context menu is opened.
+	  *
+	  * @enum {string}
+	  * @public
+	  * @since 1.121
+	  */
+	 thisLib.plugins.ContextMenuScope = {
+
+		 /**
+		  * The scope is set to the default value where the focus is unaffected by the opening of the context menu.
+		  * @public
+		  */
+		 Default: "Default",
+
+		 /**
+		  * The focus will be on the clicked item and also on other selected items, if the clicked item is selected.
+		  * @public
+		  */
+		 Selection: "Selection"
 	 };
 
 	 //Internal: test the whole page with compact design
