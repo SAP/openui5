@@ -3,7 +3,8 @@
 
 sap.ui.define([
 	"test-resources/sap/ui/core/qunit/odata/data/ODataMessagesFakeService",
-	"sap/base/Log",
+	"sap/ui/core/library",
+	"sap/ui/core/Messaging",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/ODataMetadata",
 	"sap/ui/model/odata/ODataMessageParser",
@@ -11,40 +12,15 @@ sap.ui.define([
 	"sap/ui/model/type/String",
 	"sap/m/Input",
 	"sap/m/Button",
-	"sap/ui/layout/VerticalLayout",
-	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/core/library",
-	"sap/ui/core/Messaging"
-], function(
-	fakeService,
-	Log,
-	ODataModel,
-	ODataMetadata,
-	ODataMessageParser,
-	BindingMode,
-	StringType,
-	Input,
-	Button,
-	VerticalLayout,
-	HorizontalLayout,
-	library,
-	Messaging
-) {
+	"sap/ui/layout/VerticalLayout"
+], function(fakeService, library, Messaging, ODataModel, ODataMetadata, ODataMessageParser, BindingMode, StringType,
+			Input, Button, VerticalLayout) {
 	"use strict";
 
 	// shortcut for sap.ui.core.MessageType
 	var MessageType = library.MessageType;
-
-	//add divs for control tests
-	var oContent = document.createElement("div");
-	oContent.id = "content";
-	document.body.appendChild(oContent);
-
 	var oInput = new Input({value:"{json>/Products(1)/ProductName}"});
-	oInput.placeAt("content");
-
 	var oInput2 = new Input({value:"{xml>/Products(1)/ProductName}"});
-	oInput2.placeAt("content");
 
 	var sServiceURI = "fakeservice://testdata/odata/northwind/";
 	// var sServiceURI = "/testsuite/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/";
@@ -74,18 +50,14 @@ sap.ui.define([
 		}
 	});
 
-	var oMainLayout = new HorizontalLayout({
-		content: [ oJsonLayout, oXmlLayout ]
-	});
-	oMainLayout.placeAt("content");
-
 	QUnit.module("MessageParser");
 
 	QUnit.test("JSON format", function(assert) {
 		var done = assert.async();
 		mModelOptions.json = true;
 		oModelJson = new ODataModel(sServiceURI, mModelOptions);
-		sap.ui.getCore().setModel(oModelJson, "json");
+		oJsonLayout.setModel(oModelJson, "json");
+		oInput.setModel(oModelJson, "json");
 
 		var oMessageModel = Messaging.getMessageModel();
 
@@ -115,7 +87,8 @@ sap.ui.define([
 		var done = assert.async();
 		mModelOptions.json = false;
 		oModelXml = new ODataModel(sServiceURI, mModelOptions);
-		sap.ui.getCore().setModel(oModelXml, "xml");
+		oXmlLayout.setModel(oModelXml, "xml");
+		oInput2.setModel(oModelXml, "xml");
 		var oMessageModel = Messaging.getMessageModel();
 
 		assert.ok(oInput2.getValueState() === "None", "ValueState has not been set");
@@ -1227,9 +1200,8 @@ sap.ui.define([
 		};
 
 		var oModel = new ODataModel(sServiceURI, mModelOptions);
-		sap.ui.getCore().setModel(oModel);
+		oInput3.setModel(oModel);
 
-		oInput3.placeAt("content");
 		Messaging.removeAllMessages();
 		Messaging.registerObject(oInput3, true);
 
@@ -1283,7 +1255,8 @@ sap.ui.define([
 		});
 	};
 
-	QUnit.test("Delete control messages when the binding is destroyed and on rebinding",  fnTestRemoveMessagesWithBinding);
+	QUnit.test("Delete control messages when the binding is destroyed and on rebinding",
+		fnTestRemoveMessagesWithBinding);
 
 
 	var fnTestTransientMessages = function(assert) {
@@ -1292,8 +1265,6 @@ sap.ui.define([
 		assert.expect(19);
 
 		var oModel = new ODataModel(sServiceURI, Object.assign({}, mModelOptions, { json: true }));
-		sap.ui.getCore().setModel(oModel);
-
 		var read = function(sPath) {
 			return new Promise(function(resolve) {
 				oModel.read(sPath, { success: resolve });
@@ -1343,8 +1314,6 @@ sap.ui.define([
 		assert.expect(35);
 
 		var oModel = new ODataModel(sServiceURI, Object.assign({}, mModelOptions, { json: true }));
-		sap.ui.getCore().setModel(oModel);
-
 		var read = function(sPath) {
 			return new Promise(function(resolve) {
 				oModel.read(sPath, { success: resolve });
@@ -1436,8 +1405,6 @@ sap.ui.define([
 		assert.expect(7);
 
 		var oModel = new ODataModel(sServiceURI, Object.assign({}, mModelOptions, { json: true }));
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindProperty("/Products(ContextId='CLF(12)SEMANTIC_OBJ(7)Product(10)OBJECT_KEY(11)ZTEST_GD_02(9)DRAFT_KEY(36)005056ba-1dcb-1ee7-8ec6-ae98ab359923')/ProductName");
 		oModel.addBinding(oBinding);
 		var read = function(sPath) {
@@ -1475,7 +1442,6 @@ sap.ui.define([
 		assert.expect(8);
 
 		var oModel = new ODataModel(sServiceURI, Object.assign({}, mModelOptions, { json: true }));
-		sap.ui.getCore().setModel(oModel);
 		var oBinding = oModel.bindProperty("Supplier/Name");
 		oModel.addBinding(oBinding);
 		var oContext = oModel.getContext("/Products(1)");

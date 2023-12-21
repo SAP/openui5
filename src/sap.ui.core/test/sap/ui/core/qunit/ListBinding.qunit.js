@@ -1,29 +1,14 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/Element",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/Sorter"
-], function(
-	Element,
-	Control,
-	ChangeReason,
-	FilterType,
-	ListBinding,
-	JSONModel,
-	JSONListBinding,
-	Sorter
-) {
+], function(Control, Element, ChangeReason, FilterType, ListBinding, JSONModel, Sorter) {
 	"use strict";
-
-	//add divs for control tests
-	var oContent = document.createElement("div");
-	oContent.setAttribute("id", "content");
-	document.body.appendChild(oContent);
 
 	var oModel, oNamedModel;
 	var testData;
@@ -39,32 +24,12 @@ sap.ui.define([
 	});
 
 	var MyList = Control.extend("MyList", {
-
 		// the control API:
 		metadata : {
 			aggregations : {
 				"items" : {type: "MyListItem", multiple: true}
 			}
-		},
-
-		// the part creating the HTML:
-		renderer : {
-			apiVersion: 2,
-			render: function(oRm, oControl) {
-				oRm.openStart("ul", oControl).openEnd();
-					oControl.getItems().forEach(function(oItem) {
-						oRm.openStart("li");
-						if (oItem.getTooltip_AsString()) {
-							oRm.attr("title", oItem.getTooltip_AsString());
-						}
-						oRm.openEnd();
-						oRm.text(oItem.getText());
-						oRm.close("li");
-					});
-				oRm.close("ul");
-			}
 		}
-
 	});
 
 	function setup(){
@@ -81,14 +46,13 @@ sap.ui.define([
 		};
 		oModel = new JSONModel();
 		oModel.setData(testData);
-		sap.ui.getCore().setModel(oModel);
 
 		oNamedModel = new JSONModel();
 		oNamedModel.setData(testData);
-		sap.ui.getCore().setModel(oNamedModel,"NamedModel");
 
 		control = new MyList();
-		control.placeAt("content");
+		control.setModel(oModel);
+		control.setModel(oNamedModel, "NamedModel");
 	}
 
 	QUnit.module("sap.ui.model.ListBinding: Integrative Tests", {
@@ -217,7 +181,7 @@ sap.ui.define([
 				template: new MyListItem({text:"{lastName}"})
 			}
 		});
-		control.placeAt("content");
+		control.setModel(oModel);
 
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
@@ -237,7 +201,7 @@ sap.ui.define([
 				}
 			}
 		});
-		control.placeAt("content");
+		control.setModel(oModel);
 
 		var items = control.getAggregation("items");
 		assert.equal(items.length, testData.teamMembers.length, "number of list items");
