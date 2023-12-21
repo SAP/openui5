@@ -37,7 +37,7 @@ sap.ui.define([
 
             if (Rendering.isPending()) {
                 Rendering.attachUIUpdated(isUpdated);
-                clock?.tick?.(1);
+                clock?.tick?.();
             } else {
                 resolve();
             }
