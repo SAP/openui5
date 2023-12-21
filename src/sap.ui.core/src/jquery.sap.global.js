@@ -1227,8 +1227,8 @@ sap.ui.define([
 	 * @deprecated since 1.58 use native function <code>performance.getEntriesByType("resource")</code> instead
 	 */
 	jQuery.sap.measure.getRequestTimings = function() {
-		if (window.performance.getEntriesByType) {
-			return window.performance.getEntriesByType("resource");
+		if (performance.getEntriesByType) {
+			return performance.getEntriesByType("resource");
 		}
 		return [];
 	};
@@ -1242,8 +1242,8 @@ sap.ui.define([
 	 * @deprecated since 1.58 use native function <code>performance.clearResourceTimings()</code> where available
 	 */
 	jQuery.sap.measure.clearRequestTimings = function() {
-		if (window.performance.clearResourceTimings) {
-			window.performance.clearResourceTimings();
+		if (performance.clearResourceTimings) {
+			performance.clearResourceTimings();
 		}
 	};
 
@@ -1258,8 +1258,8 @@ sap.ui.define([
 	 * @deprecated since 1.58 use native function <code>performance.setResourceTimingBufferSize(iSize)</code> where available
 	 */
 	jQuery.sap.measure.setRequestBufferSize = function(iSize) {
-		if (window.performance.setResourceTimingBufferSize) {
-			window.performance.setResourceTimingBufferSize(iSize);
+		if (performance.setResourceTimingBufferSize) {
+			performance.setResourceTimingBufferSize(iSize);
 		}
 	};
 

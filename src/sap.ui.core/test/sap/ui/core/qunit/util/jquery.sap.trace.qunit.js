@@ -118,7 +118,7 @@ sap.ui.define([
 	QUnit.module("FESR Header", {
 		beforeEach: function() {
 			this.spy = sinon.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
-			this.stub = sinon.stub(window.performance, "getEntriesByType").returns([]);
+			this.stub = sinon.stub(performance, "getEntriesByType").returns([]);
 			this.start = function(aRequests) {
 				return new Promise(function (resolve) {
 					var iEndtimeOfLastRequest = 0;

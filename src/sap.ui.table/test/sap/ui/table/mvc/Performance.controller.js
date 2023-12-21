@@ -263,7 +263,7 @@ sap.ui.define([
 		},
 
 		createTestResult: function() {
-			var aPerformanceEntries = window.performance.getEntriesByType("measure");
+			var aPerformanceEntries = performance.getEntriesByType("measure");
 			var oResultContainer = document.getElementById("results");
 
 			aPerformanceEntries.forEach(function(oPerformanceEntry) {
@@ -272,21 +272,21 @@ sap.ui.define([
 		},
 
 		clearTestResult: function() {
-			window.performance.clearMarks();
-			window.performance.clearMeasures();
+			performance.clearMarks();
+			performance.clearMeasures();
 			document.getElementById("results").innerHTML = "";
 		},
 
 		createMark: function(sName) {
-			if (window.performance.getEntriesByName(sName, "mark").length === 0) {
-				window.performance.mark(sName);
+			if (performance.getEntriesByName(sName, "mark").length === 0) {
+				performance.mark(sName);
 			}
 		},
 
 		createMeasure: function(sMeasureName, sStartMark, bKeepMark) {
-			window.performance.measure(sMeasureName, sStartMark);
+			performance.measure(sMeasureName, sStartMark);
 			if (bKeepMark !== true) {
-				window.performance.clearMarks(sStartMark);
+				performance.clearMarks(sStartMark);
 			}
 		},
 

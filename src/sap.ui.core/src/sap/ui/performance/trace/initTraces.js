@@ -37,7 +37,7 @@ sap.ui.define([
 			sUrl = ["true", "false", "x", "X", undefined].indexOf(sFesr) === -1 ? sFesr : undefined;
 		}
 
-		if (typeof window.performance.getEntriesByType === "function") {
+		if (typeof performance.getEntriesByType === "function") {
 			FESR.setActive(bActive, sUrl);
 		} else {
 			Log.debug("FESR is not supported in clients without support of window.Performance extensions.");

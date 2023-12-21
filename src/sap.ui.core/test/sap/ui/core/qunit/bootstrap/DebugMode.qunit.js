@@ -35,9 +35,9 @@ sap.ui.require(["sap/base/util/fetch"], function (fetch) {
 		var off = 'skip';
 		if ( bDebugModules
 			 && !bInstrumentedCode
-			 && window.performance
-			 && typeof window.performance.getEntriesByType === 'function'
-			 && window.performance.getEntriesByType('resource').length > 0 ) {
+			 && performance
+			 && typeof performance.getEntriesByType === 'function'
+			 && performance.getEntriesByType('resource').length > 0 ) {
 			precondition = 'test';
 			if ( window['sap-ui-debug'] === true ) {
 				full = 'test';
@@ -59,7 +59,7 @@ sap.ui.require(["sap/base/util/fetch"], function (fetch) {
 		 * Checks whether the recorded resource requests contain a request for the given resource
 		 */
 		function hasRequest(vExpectedResource) {
-			var aResources = window.performance.getEntriesByType("resource");
+			var aResources = performance.getEntriesByType("resource");
 			var i = 0;
 			while ( i < aResources.length ) {
 				var oResource = aResources[i];
@@ -81,7 +81,7 @@ sap.ui.require(["sap/base/util/fetch"], function (fetch) {
 		 * in exactly the given order.
 		 */
 		function hasRequestSequence(aExpectedResources) {
-			var aResources = window.performance.getEntriesByType("resource");
+			var aResources = performance.getEntriesByType("resource");
 			var aResourcesToCheck = aExpectedResources.slice();
 			var i = 0;
 			while ( i < aResources.length && aResourcesToCheck.length > 0 ) {
@@ -106,9 +106,9 @@ sap.ui.require(["sap/base/util/fetch"], function (fetch) {
 
 		QUnit[precondition]("Productive Sources and Performance Web API", function(assert) {
 			assert.equal(bDebugModules, true, "existance of sap/ui/core/Core-dbg.js resource indicates productive + debug sources");
-			assert.ok(window.performance, "Performance API should be available");
-			assert.equal(typeof window.performance.getEntriesByType, 'function', "performance.getEntriesByType method is needed");
-			assert.notEqual(window.performance.getEntriesByType('resource').length, 0, "performance.getEntriesByType() should return non-empty array");
+			assert.ok(performance, "Performance API should be available");
+			assert.equal(typeof performance.getEntriesByType, 'function', "performance.getEntriesByType method is needed");
+			assert.notEqual(performance.getEntriesByType('resource').length, 0, "performance.getEntriesByType() should return non-empty array");
 		});
 
 		// ---- full debug mode -------------------------------------------

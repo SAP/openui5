@@ -56,8 +56,8 @@ sap.ui.define([
 		var sDurationText = `${sMassiveLabel} = ${window.wpp.customMetrics[sMassiveLabel]} ms`;
 		Log.info(sDurationText);
 		_addLabel(oLayout, sControlId, sDurationText);
-		window.performance.clearMarks();
-		window.performance.clearMeasures();
+		performance.clearMarks();
+		performance.clearMeasures();
 	}
 
 	function _addLabel(oLayout, sControlId, sText) {
@@ -205,13 +205,13 @@ sap.ui.define([
 
 	FlexPerformanceTestUtil.stopMeasurement = function(sMeasure) {
 		sMeasure ||= sMassiveLabel;
-		window.performance.measure(sMeasure, `${sMeasure}.start`);
-		window.wpp.customMetrics[sMeasure] = window.performance.getEntriesByName(sMeasure)[0].duration;
+		performance.measure(sMeasure, `${sMeasure}.start`);
+		window.wpp.customMetrics[sMeasure] = performance.getEntriesByName(sMeasure)[0].duration;
 	};
 
 	FlexPerformanceTestUtil.startMeasurement = function(sMeasure) {
 		sMeasure ||= sMassiveLabel;
-		window.performance.mark(`${sMeasure}.start`);
+		performance.mark(`${sMeasure}.start`);
 	};
 
 	FlexPerformanceTestUtil.startMeasurementForXmlPreprocessing = function() {

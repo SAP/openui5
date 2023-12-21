@@ -1,8 +1,8 @@
 (function() {
 	"use strict";
 	// increase performance buffer size
-	if ( window.performance && window.performance.setResourceTimingBufferSize ) {
-		window.performance.setResourceTimingBufferSize(500);
+	if ( performance && performance.setResourceTimingBufferSize ) {
+		performance.setResourceTimingBufferSize(500);
 	}
 	// add debug mode to title
 	var mMatch = /(?:^|\?|&)sap-ui-debug=([^&]*)(?:&|$)/.exec(location.search),

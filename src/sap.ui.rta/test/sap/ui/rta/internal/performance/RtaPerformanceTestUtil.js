@@ -25,15 +25,15 @@ sap.ui.define([
 			}
 
 			// will result in custom timer in webPageTest
-			window.performance.mark("rta.start.starts");
+			performance.mark("rta.start.starts");
 
 			return oRuntimeAuthoring.start()
 			.then(function() {
 				var sMeasureName = "RTA start function called";
 				// will result in custom timer in webPageTest
-				window.performance.mark("rta.start.ends");
-				window.performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
-				window.wpp.customMetrics.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
+				performance.mark("rta.start.ends");
+				performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
+				window.wpp.customMetrics.startTime = performance.getEntriesByName(sMeasureName)[0].duration;
 				Log.info(sMeasureName, `${window.wpp.customMetrics.startTime}ms`);
 				// visual change at the end
 				var oOverlay = OverlayRegistry.getOverlay(oHorizontalLayout);
@@ -51,15 +51,15 @@ sap.ui.define([
 			oRuntimeAuthoring.setPlugins(mPlugins);
 
 			// will result in custom timer in webPageTest
-			window.performance.mark("rta.start.starts");
+			performance.mark("rta.start.starts");
 
 			return oRuntimeAuthoring.start()
 			.then(function() {
 				var sMeasureName = "RTA start function called";
 				// will result in custom timer in webPageTest
-				window.performance.mark("rta.start.ends");
-				window.performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
-				window.wpp.customMetrics.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
+				performance.mark("rta.start.ends");
+				performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
+				window.wpp.customMetrics.startTime = performance.getEntriesByName(sMeasureName)[0].duration;
 				Log.info(sMeasureName, `${window.wpp.customMetrics.startTime}ms`);
 				// visual change at the end
 				var oOverlay = OverlayRegistry.getOverlay(oRootControl);
@@ -70,10 +70,10 @@ sap.ui.define([
 		startRtaConstructorOnly(oHorizontalLayout) {
 			var iRtaStartCounter = 1000;
 			var sMeasureName = `RTA init function called ${iRtaStartCounter} times`;
-			window.performance.clearMeasures();
+			performance.clearMeasures();
 
 			// will result in custom timer in webPageTest
-			window.performance.mark("rta.init.starts");
+			performance.mark("rta.init.starts");
 
 			for (var i = 0; i < iRtaStartCounter; i++) {
 				/* eslint no-new: 0 */
@@ -83,9 +83,9 @@ sap.ui.define([
 			}
 
 			// will result in custom timer in webPageTest
-			window.performance.mark("rta.init.ends");
-			window.performance.measure(sMeasureName, "rta.init.starts", "rta.init.ends");
-			window.wpp.customMetrics.creationTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
+			performance.mark("rta.init.ends");
+			performance.measure(sMeasureName, "rta.init.starts", "rta.init.ends");
+			window.wpp.customMetrics.creationTime = performance.getEntriesByName(sMeasureName)[0].duration;
 			Log.info(sMeasureName, `${window.wpp.customMetrics.creationTime}ms`);
 		}
 	};
