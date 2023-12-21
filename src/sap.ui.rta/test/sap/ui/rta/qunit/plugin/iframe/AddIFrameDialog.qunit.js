@@ -1,32 +1,42 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
 	"sap/base/util/isEmptyObject",
-	"sap/ui/core/library",
-	"sap/ui/core/Lib",
-	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/qunit/QUnitUtils",
+	"sap/m/Button",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
+	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/fl/Utils",
+	"sap/ui/model/Context",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
+	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	AddIFrameDialog,
 	isEmptyObject,
-	coreLibrary,
-	Lib,
-	AddIFrameDialogController,
-	nextUIUpdate,
-	QUnitUtils,
+	Button,
 	Element,
+	Lib,
+	coreLibrary,
 	KeyCodes,
-	JSONModel
+	FlUtils,
+	Context,
+	JSONModel,
+	QUnitUtils,
+	nextUIUpdate,
+	AddIFrameDialog,
+	AddIFrameDialogController,
+	sinon
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
 	const { ValueState } = coreLibrary;
+
+	const sandbox = sinon.createSandbox();
 
 	const oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 	const aTextInputFields = ["frameUrl"];
@@ -51,38 +61,20 @@ sap.ui.define([
 		unit: "rem",
 		descriptionText: oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_REM")
 	}];
-	const mParameters = {
-		frameUrl: "http://blabla.company.com",
-		parameters: [{
-			label: "Guid",
-			key: "{Guid}",
-			value: "guid13423412342314"
-		}, {
-			label: "Region",
-			key: "{Region}",
-			value: "Germany"
-		}, {
-			label: "Year",
-			key: "{Year}",
-			value: "2020"
-		}, {
-			label: "Month",
-			key: "{Month}",
-			value: "July"
-		}, {
-			label: "Product Category",
-			key: "{Product_Category}",
-			value: "Ice Cream"
-		}, {
-			label: "Campaign Name",
-			key: "{Campaign_Name}",
-			value: "Langnese Brand"
-		}, {
-			label: "Brand Name",
-			key: "{Brand_Name}",
-			value: "Langnese"
-		}]
+
+	const oDefaultModelData = {
+		Guid: "guid13423412342314",
+		Region: "Germany",
+		Year: 2020,
+		Month: "July",
+		ProductCategory: "Ice Cream",
+		CampaignName: "Langnese Brand",
+		BrandName: "Langnese"
 	};
+	const oDefaultModel = new JSONModel(oDefaultModelData);
+	const oReferenceControl = new Button();
+	oReferenceControl.setModel(oDefaultModel);
+	oReferenceControl.setBindingContext(new Context(oDefaultModel, "/"));
 
 	const aImportTestData = [{
 		input: {
@@ -191,8 +183,18 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that a AddIFrameDialog is available...", {
+		async before() {
+			const mParameters = await AddIFrameDialog.buildUrlBuilderParametersFor(oReferenceControl);
+			this.oDialogSettings = {
+				parameters: mParameters,
+				asContainer: true
+			};
+		},
 		beforeEach() {
 			this.oAddIFrameDialog = new AddIFrameDialog();
+		},
+		afterEach() {
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("When AddIFrameDialog gets initialized and open is called,", function(assert) {
@@ -204,9 +206,17 @@ sap.ui.define([
 					"then the correct title is set"
 				);
 				assert.strictEqual(this.oAddIFrameDialog._oDialog.getButtons().length, 2, "then 2 buttons are added");
+				// eslint-disable-next-line max-nested-callbacks
+				this.oDialogSettings.parameters.forEach((oParam) => {
+					assert.strictEqual(
+						oParam.value,
+						oDefaultModelData[oParam.label],
+						`Found ${oParam.key}`
+					);
+				});
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open();
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
 		QUnit.test("When AddIFrameDialog gets initialized and open is called in Update Mode,", function(assert) {
@@ -219,7 +229,7 @@ sap.ui.define([
 				);
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open({updateMode: true});
+			return this.oAddIFrameDialog.open({ updateMode: true }, oReferenceControl);
 		});
 
 		QUnit.test("When AddIFrameDialog is opened then there should be no error value state", function(assert) {
@@ -228,19 +238,7 @@ sap.ui.define([
 				assert.strictEqual(this.oController._areAllValueStateNones(), true, "Value states are correct");
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open();
-		});
-
-		QUnit.test("When the dialog is opened then hash map is built correctly", function(assert) {
-			this.oAddIFrameDialog.attachOpened(function() {
-				const mHashmap = AddIFrameDialogController.prototype._buildParameterHashMap(mParameters);
-				function checkParam(oParam) {
-					assert.strictEqual(oParam.value, mHashmap[oParam.key], `Found ${oParam.key}`);
-				}
-				mParameters.parameters.forEach(checkParam);
-				clickOnCancel();
-			}, this);
-			return this.oAddIFrameDialog.open();
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
 		QUnit.test("When there is an error value state in AddIFrameDialog then it can be detected", function(assert) {
@@ -254,7 +252,7 @@ sap.ui.define([
 				aTextInputFields.concat(aNumericInputFields).forEach(checkField.bind(this));
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open();
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
 		QUnit.test("When AddIFrameDialog is opened then text input fields should be empty", function(assert) {
@@ -264,7 +262,7 @@ sap.ui.define([
 				assert.strictEqual(oData.title.value, "Embedded Content", "then the default title is set");
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open();
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
 		QUnit.test("When there is no empty text input field then it can be detected", function(assert) {
@@ -281,19 +279,17 @@ sap.ui.define([
 				assert.strictEqual(this.oController._areAllTextFieldsValid(), true, "No more empty text input field");
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open();
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
 		QUnit.test("When parameters are passed to the dialog then they should be imported correctly", function(assert) {
 			this.oAddIFrameDialog.attachOpened(function() {
-				const oData = this.oAddIFrameDialog._oJSONModel.getData();
-				function checkFields(sFieldName) {
-					assert.strictEqual(oData[sFieldName].value, mParameters[sFieldName], `${sFieldName} is imported correctly`);
-				}
-				Object.keys(mParameters).forEach(checkFields);
+				const oData = this.oAddIFrameDialog._oJSONModel.getData().parameters.value;
+				const mParameters = this.oDialogSettings.parameters;
+				assert.deepEqual(oData, mParameters, "then all fields are imported");
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open(mParameters);
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
 		QUnit.test("When URL parameters are added then the frame URL is built correctly", function(assert) {
@@ -308,7 +304,7 @@ sap.ui.define([
 
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open(mParameters);
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
 		QUnit.test("When a parameter is added while there is a text selection in the edit field", function(assert) {
@@ -334,12 +330,12 @@ sap.ui.define([
 					QUnitUtils.triggerEvent("tap", oParameterList.getItems()[0].getDomRef());
 				});
 			});
-			return this.oAddIFrameDialog.open(mParameters);
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
 		QUnit.test("When URL parameter values contain characters that need to be encoded", function(assert) {
 			this.oAddIFrameDialog.attachOpened(function() {
-				const sUrl = "https://example.com/{Product_Category}";
+				const sUrl = "https://example.com/{ProductCategory}";
 				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
 				this.oAddIFrameDialog._oController.onShowPreview();
 				const oIFrame = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewFrame");
@@ -351,7 +347,7 @@ sap.ui.define([
 				clickOnCancel();
 			}, this);
 
-			return this.oAddIFrameDialog.open(mParameters);
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
 		QUnit.test("When Show Preview is clicked then preview URL is built correctly", function(assert) {
@@ -367,7 +363,7 @@ sap.ui.define([
 					sUrl = this.oAddIFrameDialog._oController._addURLParameter(oParam.key);
 					this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
 				}
-				mParameters.parameters.forEach(checkParam.bind(this));
+				this.oDialogSettings.parameters.forEach(checkParam.bind(this));
 				sUrl = this.oAddIFrameDialog._oController._buildPreviewURL(
 					this.oAddIFrameDialog._oJSONModel.getProperty("/frameUrl/value")
 				);
@@ -378,16 +374,15 @@ sap.ui.define([
 				);
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open(mParameters);
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
-		QUnit.test("When Cancel button is clicked then the promise should return no setting", function(assert) {
+		QUnit.test("When Cancel button is clicked then the promise should return no setting", async function(assert) {
 			this.oAddIFrameDialog.attachOpened(function() {
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open().then(function(mSettings) {
-				assert.strictEqual(mSettings, undefined, "The promise returns no setting");
-			});
+			const oResponse = await this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
+			assert.strictEqual(oResponse, undefined, "The promise returns no setting");
 		});
 
 		QUnit.test("The Save-Button is only enabled when URL is entered", function(assert) {
@@ -410,7 +405,7 @@ sap.ui.define([
 				);
 				clickOnCancel();
 			}, this);
-			return this.oAddIFrameDialog.open();
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
 		QUnit.test("when an url is entered", function(assert) {
@@ -432,7 +427,7 @@ sap.ui.define([
 				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled after refreshing the preview");
 				clickOnCancel();
 			});
-			return this.oAddIFrameDialog.open();
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
 		QUnit.test("when an url is entered and the useLegacyNavigation switch is toggled", function(assert) {
@@ -451,10 +446,10 @@ sap.ui.define([
 				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled after refreshing the preview");
 				clickOnCancel();
 			});
-			return this.oAddIFrameDialog.open();
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
-		QUnit.test("when a forbidden url is entered", function(assert) {
+		QUnit.test("when a forbidden url is entered", async function(assert) {
 			this.oAddIFrameDialog.attachOpened(async function() {
 				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 				// eslint-disable-next-line no-script-url
@@ -476,13 +471,11 @@ sap.ui.define([
 				);
 				clickOnCancel();
 			}.bind(this));
-			return this.oAddIFrameDialog.open(mTestURLBuilderData)
-			.then(function(oResponse) {
-				assert.strictEqual(oResponse, undefined, "then the dialog can only be closed via cancel");
-			});
+			const oResponse = await this.oAddIFrameDialog.open(mTestURLBuilderData, oReferenceControl);
+			assert.strictEqual(oResponse, undefined, "then the dialog can only be closed via cancel");
 		});
 
-		QUnit.test("when an empty string is entered as url", function(assert) {
+		QUnit.test("when an empty string is entered as url", async function(assert) {
 			this.oAddIFrameDialog.attachOpened(async function() {
 				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 				// Set a valure beforehand to ensure that the empty string is really refused as input
@@ -506,17 +499,15 @@ sap.ui.define([
 				);
 				clickOnCancel();
 			}.bind(this));
-			return this.oAddIFrameDialog.open(mTestURLBuilderData)
-			.then(function(oResponse) {
-				assert.strictEqual(oResponse, undefined, "then the dialog can only be closed via cancel");
-			});
+			const oResponse = await this.oAddIFrameDialog.open(mTestURLBuilderData, oReferenceControl);
+			assert.strictEqual(oResponse, undefined, "then the dialog can only be closed via cancel");
 		});
 
 		QUnit.test("when a url with bindings is entered", function(assert) {
 			this.oAddIFrameDialog.attachOpened(async function() {
 				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 				const oPreviewButton = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewButton");
-				oUrlTextArea.setValue("https://example.com/{productCategory}");
+				oUrlTextArea.setValue("https://example.com/{ProductCategory}");
 				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
 				await nextUIUpdate();
 
@@ -526,29 +517,77 @@ sap.ui.define([
 				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled after refreshing the preview");
 				clickOnCancel();
 			}.bind(this));
-			return this.oAddIFrameDialog.open(mTestURLBuilderData);
+			return this.oAddIFrameDialog.open(mTestURLBuilderData, oReferenceControl);
 		});
 
-		QUnit.test("When OK button is clicked then the promise should return settings", function(assert) {
+		QUnit.test("when a url with a user model binding is entered", function(assert) {
+			sandbox.stub(FlUtils, "getUshellContainer").returns({});
+			sandbox.stub(FlUtils, "getUShellService").resolves({
+				getUser: () => ({
+					getEmail: () => "testuser@example.com",
+					getFullName: () => "Test User",
+					getFirstName: () => "Test",
+					getLastName: () => "User"
+				})
+			});
+			this.oAddIFrameDialog.attachOpened(async function() {
+				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+				const oPreviewLink = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLink");
+				oUrlTextArea.setValue("{$user>/fullName}");
+				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+				await nextUIUpdate();
+
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.strictEqual(
+					oPreviewLink.getText(),
+					"Test User",
+					"then it is properly resolved"
+				);
+				clickOnCancel();
+			}.bind(this));
+			return this.oAddIFrameDialog.open(mTestURLBuilderData, oReferenceControl);
+		});
+
+		QUnit.test("when a url with an expression binding is entered", function(assert) {
+			this.oAddIFrameDialog.attachOpened(async function() {
+				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+				const oPreviewLink = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLink");
+				oUrlTextArea.setValue("{= ${ProductCategory}}");
+				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+				await nextUIUpdate();
+
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.strictEqual(
+					oPreviewLink.getText(),
+					"Ice Cream",
+					"then it is properly resolved"
+				);
+				clickOnCancel();
+			}.bind(this));
+			return this.oAddIFrameDialog.open(mTestURLBuilderData, oReferenceControl);
+		});
+
+		QUnit.test("When OK button is clicked then the promise should return settings", async function(assert) {
 			this.oAddIFrameDialog.attachOpened(function() {
 				aTextInputFields.forEach(function(sFieldName) {
 					this.oAddIFrameDialog._oJSONModel.getData()[sFieldName].value = "Text entered";
 				}, this);
 				clickOnSave();
 			}, this);
-			return this.oAddIFrameDialog.open({
-				frameUrl: "test_url"
-			}).then(function(mSettings) {
-				assert.strictEqual(isEmptyObject(mSettings), false, "Non empty settings returned");
-				assert.strictEqual(
-					mSettings.frameHeightUnit,
-					"vh",
-					"then vh is selected as the default frame height unit"
-				);
-			});
+			const oResponse = await this.oAddIFrameDialog.open(
+				{
+					frameUrl: "test_url"
+				},
+				oReferenceControl
+			);
+			assert.strictEqual(
+				oResponse.frameHeightUnit,
+				"vh",
+				"then vh is selected as the default frame height unit"
+			);
 		});
 
-		QUnit.test("When OK button is clicked then the returned settings should be correct", function(assert) {
+		QUnit.test("When OK button is clicked then the returned settings should be correct", async function(assert) {
 			this.oAddIFrameDialog.attachOpened(function() {
 				const oData = this.oAddIFrameDialog._oJSONModel.getData();
 				oData.frameUrl.value = "https://www.sap.com/\tindex.html\r\n";
@@ -560,14 +599,17 @@ sap.ui.define([
 				updateSaveButtonEnablement(!!oData.frameUrl.value);
 				clickOnSave();
 			}, this);
-			return this.oAddIFrameDialog.open().then(function(mSettings) {
-				assert.strictEqual(mSettings.frameUrl, "https://www.sap.com/index.html", "Setting for frameUrl is correct");
-				aNumericInputFields.forEach(function(sFieldName) {
-					assert.strictEqual(mSettings[sFieldName], 100, `Setting for ${sFieldName} is correct`);
-				});
-				assert.strictEqual(mSettings.frameWidthUnit, "rem", "Setting for frameWidthUnit is correct");
-				assert.strictEqual(mSettings.frameHeightUnit, "vh", "Setting for frameHeightUnit is correct");
+			const oResponse = await this.oAddIFrameDialog.open(
+				this.oDialogSettings,
+				oReferenceControl
+			);
+
+			assert.strictEqual(oResponse.frameUrl, "https://www.sap.com/index.html", "Setting for frameUrl is correct");
+			aNumericInputFields.forEach(function(sFieldName) {
+				assert.strictEqual(oResponse[sFieldName], 100, `Setting for ${sFieldName} is correct`);
 			});
+			assert.strictEqual(oResponse.frameWidthUnit, "rem", "Setting for frameWidthUnit is correct");
+			assert.strictEqual(oResponse.frameHeightUnit, "vh", "Setting for frameHeightUnit is correct");
 		});
 
 		aImportTestData.forEach(function(mData, iIndex) {
@@ -584,11 +626,11 @@ sap.ui.define([
 					Object.keys(mData.expectedResults).forEach(checkField);
 					clickOnCancel();
 				}, this);
-				return this.oAddIFrameDialog.open(mData.input);
-			}, this);
+				return this.oAddIFrameDialog.open(mData.input, oReferenceControl);
+			});
 		});
 
-		QUnit.test("When existing settings contain % values for the section height", function(assert) {
+		QUnit.test("When existing settings contain % values for the section height", async function(assert) {
 			this.oAddIFrameDialog.attachOpened(async function() {
 				const oHeightValueArea = Element.getElementById("sapUiRtaAddIFrameDialog_HeightInput");
 				oHeightValueArea.setValue("50");
@@ -596,24 +638,24 @@ sap.ui.define([
 				await nextUIUpdate();
 				clickOnSave();
 			}, this);
-			return this.oAddIFrameDialog.open({
+			const oResponse = await this.oAddIFrameDialog.open({
 				asContainer: true,
 				frameWidth: "16px",
 				frameHeight: "100%",
 				frameUrl: "some_url"
-			}).then(function(oSettings) {
-				assert.strictEqual(
-					oSettings.frameHeight,
-					50,
-					"then the frame height value is modified"
-				);
-				assert.strictEqual(
-					oSettings.frameHeightUnit,
-					"%",
-					"then the frame height unit isn't touched if it wasn't modified"
-				);
-			});
-		}, this);
+			}, oReferenceControl);
+
+			assert.strictEqual(
+				oResponse.frameHeight,
+				50,
+				"then the frame height value is modified"
+			);
+			assert.strictEqual(
+				oResponse.frameHeightUnit,
+				"%",
+				"then the frame height unit isn't touched if it wasn't modified"
+			);
+		});
 	});
 
 	QUnit.done(function() {
