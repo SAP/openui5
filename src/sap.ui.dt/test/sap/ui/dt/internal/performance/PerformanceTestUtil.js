@@ -106,7 +106,7 @@ sap.ui.define([
 			// Create DesignTime in other tick
 			return new Promise(function(resolve) {
 				// will result in custom timer in webPageTest
-				window.performance.mark("dt.starts");
+				performance.mark("dt.starts");
 
 				var MOVABLE_TYPES = ["sap.ui.layout.VerticalLayout", "sap.m.Button", "sap.m.Label", "sap.m.DatePicker", "sap.m.Slider", "sap.m.RatingIndicator"];
 
@@ -119,7 +119,7 @@ sap.ui.define([
 					movableTypes: MOVABLE_TYPES
 				});
 				var oContextMenuPlugin = new ContextMenu();
-				window.performance.mark("dt.plugins.created");
+				performance.mark("dt.plugins.created");
 
 				var oDesignTime = new DesignTime({
 					plugins: [
@@ -132,9 +132,9 @@ sap.ui.define([
 				});
 				oDesignTime.attachEventOnce("synced", function() {
 					// will result in custom timer in webPageTest
-					window.performance.mark("dt.synced");
-					window.performance.measure("Create DesignTime and Overlays", "dt.starts", "dt.synced");
-					window.wpp.customMetrics.creationTime = window.performance.getEntriesByName("Create DesignTime and Overlays")[0].duration;
+					performance.mark("dt.synced");
+					performance.measure("Create DesignTime and Overlays", "dt.starts", "dt.synced");
+					window.wpp.customMetrics.creationTime = performance.getEntriesByName("Create DesignTime and Overlays")[0].duration;
 					Log.info("Create DesignTime and Overlays", `${window.wpp.customMetrics.creationTime}ms`);
 					// visual change at the end
 					var oOverlay = OverlayRegistry.getOverlay(sSelectedOverlayId || "Control2");

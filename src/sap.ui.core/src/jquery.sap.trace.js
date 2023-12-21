@@ -20,7 +20,7 @@ function(jQuery, Passport, Interaction, FESR, Log, BaseConfig/* ,Global */) {
 
 	function logSupportWarning() {
 		// in case we do not have this API measurement is superfluous due to insufficient performance data
-		if (!(window.performance && window.performance.getEntries)) {
+		if (!(performance && performance.getEntries)) {
 			Log.warning("Interaction tracking is not supported on browsers with insufficient performance API");
 		}
 	}

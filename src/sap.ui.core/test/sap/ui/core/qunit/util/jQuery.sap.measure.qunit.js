@@ -10,7 +10,7 @@ sap.ui.define([
 ], function(jQuery, Device, UIComponent, Button, createAndAppendDiv, Interaction) {
 	"use strict";
 
-	// window.performance is hijacked by sinon's fakeTimers (https://github.com/sinonjs/fake-timers/issues/374)
+	// performance is hijacked by sinon's fakeTimers (https://github.com/sinonjs/fake-timers/issues/374)
 	// and might be out of sync with the latest specs and APIs. Therefore, mock them further,
 	// so they won't affect tests.
 	//
@@ -474,7 +474,7 @@ sap.ui.define([
 
 	QUnit.test("filterInteractionMeasurements", function(assert) {
 		this.clock = mockPerformanceObject();
-		window.performance.getEntriesByType = function() { return []; };
+		performance.getEntriesByType = function() { return []; };
 
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		addFakeProcessingTime.apply(this);
@@ -539,7 +539,7 @@ sap.ui.define([
 	});
 
 	// do not test safari as it does not seem to work in testing environments
-	var bStablePerformanceAPI = window.performance && window.performance.getEntries && !Device.browser.safari;
+	var bStablePerformanceAPI = performance && performance.getEntries && !Device.browser.safari;
 
 	QUnit.test("Performance API depending measures", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);

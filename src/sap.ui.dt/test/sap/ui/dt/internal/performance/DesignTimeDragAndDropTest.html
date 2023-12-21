@@ -95,7 +95,7 @@
 					OverlayRegistry,
 					BaseLog
 				) {
-					window.performance.mark("drag.starts");
+					performance.mark("drag.starts");
 					//get overlays
 					var oLayout1Overlay = OverlayRegistry.getOverlay("Layout1");
 					var oControlInLayout1Overlay = OverlayRegistry.getOverlay("Control1");
@@ -164,9 +164,9 @@
 						oLayout1Overlay.$().trigger("dragend");
 					}).then(function(){
 						//measure time
-						window.performance.mark("drag.ends");
-						window.performance.measure("DragAndDrop", "drag.starts", "drag.ends");
-						window.wpp.customMetrics.dragDropTime = window.performance.getEntriesByName("DragAndDrop")[0].duration;
+						performance.mark("drag.ends");
+						performance.measure("DragAndDrop", "drag.starts", "drag.ends");
+						window.wpp.customMetrics.dragDropTime = performance.getEntriesByName("DragAndDrop")[0].duration;
 						BaseLog.info("Drag and Drop took ", window.wpp.customMetrics.dragDropTime + "ms");
 
 						//mark something as done

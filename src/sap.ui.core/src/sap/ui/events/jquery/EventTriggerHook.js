@@ -24,7 +24,7 @@ sap.ui.define([
 		var bIsLoggable = Log.isLoggable(Log.Level.DEBUG),
 			mEventInfo = mTriggerEventInfo[oEvent.type],
 			fnOriginalTriggerHook = mEventInfo.originalTriggerHook,
-			t0 = window.performance.now(),
+			t0 = performance.now(),
 			t1, sId, oDomInfo;
 
 		if (!oEvent.isPropagationStopped() && !oEvent.isSimulated) {
@@ -34,7 +34,7 @@ sap.ui.define([
 					oEvent.preventDefault();
 					oEvent.stopImmediatePropagation();
 					if (bIsLoggable) {
-						t1 = window.performance.now();
+						t1 = performance.now();
 						Log.debug("Perf: jQuery trigger suppression event handler " + oEvent.type + " took " + (t1 - t0) + " milliseconds.");
 					}
 					return false; //prevent further jQuery processing.

@@ -273,7 +273,7 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/performance/trace/Passport', 'sap/base/L
 					return tstmp;
 				};
 				//check if browser supports PerformanceTiming
-				if (window.performance && performance.timeOrigin) {
+				if (performance && performance.timeOrigin) {
 					// handle browser dependencies in (hires) time stamps
 					if (Device.browser.chrome && Device.browser.version >= 49) {
 						getTstmp = function(tstmp) {
@@ -352,7 +352,7 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/performance/trace/Passport', 'sap/base/L
 
 						//add tracing attributes
 						this.xidx = idx;
-						if (window.performance && performance.timeOrigin && performance.now !== undefined) {
+						if (performance && performance.timeOrigin && performance.now !== undefined) {
 							this.xstartTimestamp = performance.timeOrigin + performance.now();
 						} else {
 							this.xstartTimestamp = Date.now();
