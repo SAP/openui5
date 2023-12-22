@@ -105,6 +105,25 @@ sap.ui.define([
 				creation: "",
 				originalLanguage: "EN"
 			};
+			this.oDescrChangeSpecificData3 = {
+				changeType: "appdescr_app_changeInbound",
+				content: {
+					inboundId: "contactCreate",
+					entityPropertyChange: {
+						propertyPath: "semanticObject",
+						operation: "UPSERT",
+						propertyValue: "changeMerger"
+					}
+				},
+				fileName: "id_1584608199136_1961_appdescr_app_changeInbound",
+				fileType: "change",
+				moduleName: "",
+				reference: "reference.app",
+				namespace: "apps/reference.app/changes/",
+				projectId: "reference.app",
+				creation: "",
+				originalLanguage: "EN"
+			};
 		},
 		afterEach() {
 			sandbox.restore();
@@ -616,6 +635,54 @@ sap.ui.define([
 			.then(function() {
 				assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
 				assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "DELETE"), "then the parameters are correct");
+			});
+		});
+
+		QUnit.test("when createDescriptorChangeString is called for changeType appdescr_app_setTitle", function(assert) {
+			var sExpected = '{"changeType":"appdescr_app_setTitle","content":{},"texts":{"reference.app_sap.app.title":{' +
+					'"type":"XTIT","maxLength":20,"comment":"example","value":{"":"Title example default text",' +
+					'"en":"Title example text in en","de":"Titel Beispieltext in de","en_US":"Title example text in en_US"}}}}';
+
+			return SmartBusinessWriteAPI.createDescriptorChangeString({
+				changeSpecificData: this.oDescrChangeSpecificData2,
+				appId: "reference.app"
+			})
+			.then(function(sChange) {
+				assert.equal(sChange, sExpected, "then the DescriptorChange will be returned as string");
+			});
+		});
+
+		QUnit.test("when createDescriptorChangeString is called for changeType appdescr_ovp_addNewCard", function(assert) {
+			var sExpected = '{"changeType":"appdescr_ovp_addNewCard","content":{"card":{"customer.acard":{"model":"customer.boring_model"' +
+					',"template":"sap.ovp.cards.list",' +
+					'"settings":{"category":"{{reference.app_sap.app.ovp.cards.customer.acard.category}}",' +
+					'"title":"{{reference.app_sap.app.ovp.cards.customer.acard.title}}","description":"extended",' +
+					'"entitySet":"Zme_Overdue","sortBy":"OverdueTime","sortOrder":"desc","listType":"extended"}}}},"texts":{' +
+					'"reference.app_sap.app.ovp.cards.customer.acard.category":{"type":"XTIT","maxLength":20,"comment":"example",' +
+					'"value":{"":"Category example default text","en":"Category example text in en","de":"Kategorie Beispieltext in de",' +
+					'"en_US":"Category example text in en_US"}},"reference.app_sap.app.ovp.cards.customer.acard.title":{' +
+					'"type":"XTIT","maxLength":20,"comment":"example","value":{"":"Title example default text",' +
+					'"en":"Title example text in en","de":"Titel Beispieltext in de","en_US":"Title example text in en_US"}}}}';
+
+			return SmartBusinessWriteAPI.createDescriptorChangeString({
+				changeSpecificData: this.oDescrChangeSpecificData1,
+				appId: "reference.app"
+			})
+			.then(function(sChange) {
+				assert.equal(sChange, sExpected, "then the DescriptorChange will be returned as string");
+			});
+		});
+
+		QUnit.test("when createDescriptorChangeString is called for changeType appdescr_app_changeInbound with no texts property", function(assert) {
+			var sExpected = '{"changeType":"appdescr_app_changeInbound","content":{"inboundId":"contactCreate",' +
+					'"entityPropertyChange":{"propertyPath":"semanticObject","operation":"UPSERT","propertyValue":"changeMerger"}}}';
+
+			return SmartBusinessWriteAPI.createDescriptorChangeString({
+				changeSpecificData: this.oDescrChangeSpecificData3,
+				appId: "reference.app"
+			})
+			.then(function(sChange) {
+				assert.equal(sChange, sExpected, "then the DescriptorChange will be returned as string without property texts");
 			});
 		});
 	});

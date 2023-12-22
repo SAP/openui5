@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/SaveAs",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/write/api/PersistenceWriteAPI"
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/base/util/restricted/_pick"
 ], function(
 	ManifestUtils,
 	Settings,
@@ -17,7 +18,8 @@ sap.ui.define([
 	LrepConnector,
 	SaveAs,
 	ChangesWriteAPI,
-	PersistenceWriteAPI
+	PersistenceWriteAPI,
+	_pick
 ) {
 	"use strict";
 
@@ -223,6 +225,27 @@ sap.ui.define([
 				appId: mPropertyBag.appId
 			};
 			return PersistenceWriteAPI.add(mPropertyBag);
+		},
+
+		/**
+		 * Creates a descriptor inline change as string.
+		 * This string can be collected and later passed to the ABAP API /ui5/cl_app_variant_api
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {string} mPropertyBag.appId - Reference app ID or an app variant ID
+		 * @param {object} mPropertyBag.changeSpecificData - Property bag holding the change information
+		 * The property <code>mPropertyBag.changeSpecificData.packageName</code> is set to <code>$TMP</code> and internally since flex changes are always local when they are created.
+		 *
+		 * @returns {Promise<string>} Promise resolves with a string of simplified DescriptorInlineChange
+		 * @private
+		 * @ui5-restricted
+		 */
+		createDescriptorChangeString(mPropertyBag) {
+			return this.createDescriptorInlineChanges(mPropertyBag)
+			.then(function(oChange) {
+				var oSimpleChange = _pick(oChange.getJson(), ["changeType", "content", "texts"]);
+				return Promise.resolve(JSON.stringify(oSimpleChange));
+			});
 		}
 	};
 
