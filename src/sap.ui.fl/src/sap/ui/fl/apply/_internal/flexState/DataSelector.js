@@ -266,10 +266,6 @@ sap.ui.define([
 			vParameterValue
 		);
 		this._setParameterizedCachedResult(mParameters, vNewResult);
-		// FIXME: Might lead to infinite loop if update always invalidates
-		// this.getUpdateListeners().forEach(function(fnUpdateFunction) {
-		// 	fnUpdateFunction();
-		// });
 		return vNewResult;
 	};
 
