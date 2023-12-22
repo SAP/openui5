@@ -29,7 +29,6 @@ sap.ui.define([
 	CardActions
 ) {
 	"use strict";
-	/* global Map */
 
 	var ButtonType = mLibrary.ButtonType;
 
@@ -155,6 +154,9 @@ sap.ui.define([
 			aActions = aActions.concat(oHost.getActions() || []);
 		}
 
+		/**
+		 * @deprecated As of version 1.85
+		 */
 		if (oExtension) {
 			aActions = aActions.concat(oExtension.getActions() || []);
 		}
