@@ -203,6 +203,10 @@ sap.ui.define([
 		this.bRenderingPhase = false;
 	};
 
+	Breadcrumbs.prototype.focus = function () {
+		setTimeout(() => { Control.prototype.focus.apply(this, arguments); } , 0);
+	};
+
 	Breadcrumbs.prototype._setMinWidth = function () {
 		var oCurrentLocation = this._getCurrentLocation(),
 			iWidth,
