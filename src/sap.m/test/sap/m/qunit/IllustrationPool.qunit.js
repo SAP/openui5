@@ -98,24 +98,6 @@ function (
 		assert.strictEqual(fnRequireSvgSpy.callCount, 0, "no svg is required if the asset is already required once");
 	});
 
-	QUnit.test("valid asset ID with prefix", function (assert) {
-		// Arrange
-		var fnRequireSvgSpy = this.spy(IllustrationPool, "_requireSVG"),
-			sValidSet = SAP_ILLUSTRATION_SET_NAME,
-			sValidAsset = sValidSet + "-Spot-FaceId",
-			sValidPrefix = "v5/";
-
-		// Act
-		IllustrationPool.loadAsset(sValidAsset, undefined, sValidPrefix);
-
-		// Assert
-		assert.expect(2);
-
-		assert.ok(fnRequireSvgSpy.calledOnce, "asset is properly required once");
-		assert.ok(fnRequireSvgSpy.calledWithExactly(sValidSet, sValidAsset, undefined, sValidPrefix),
-			"asset is required with the correct via the _requireSVG method with the correct arguments");
-	});
-
 	QUnit.module("registerIllustrationSet");
 
 	QUnit.test("trying to register a set which is already registered or being registered", function (assert) {
@@ -241,6 +223,24 @@ function (
 			// End
 			done();
 		});
+	});
+
+	QUnit.test("valid asset ID with prefix", function (assert) {
+		// Arrange
+		var fnRequireSvgSpy = this.spy(IllustrationPool, "_requireSVG"),
+			sValidSet = SAP_ILLUSTRATION_SET_NAME,
+			sValidAsset = sValidSet + "-Spot-FaceId",
+			sValidPrefix = "v5/";
+
+		// Act
+		IllustrationPool.loadAsset(sValidAsset, undefined, sValidPrefix);
+
+		// Assert
+		assert.expect(2);
+
+		assert.ok(fnRequireSvgSpy.calledOnce, "asset is properly required once");
+		assert.ok(fnRequireSvgSpy.calledWithExactly(sValidSet, sValidAsset, undefined, sValidPrefix),
+			"asset is required with the correct via the _requireSVG method with the correct arguments");
 	});
 
 	QUnit.test("valid patterns path", function (assert) {
