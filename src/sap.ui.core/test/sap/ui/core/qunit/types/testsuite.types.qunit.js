@@ -46,6 +46,13 @@ sap.ui.define(function () {
 				},
 				title: "QUnit Page for sap/ui/model/type/DateInterval"
 			},
+			FormatUtils : {
+				coverage : {
+					only : "sap/ui/core/format/FormatUtils"
+				},
+				module : "./../format/FormatUtils.qunit",
+				title : "QUnit Page for sap/ui/core/format/FormatUtils"
+			},
 			ListFormat: {
 				coverage : {
 					only : "sap/ui/core/format/ListFormat"

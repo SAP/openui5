@@ -101,13 +101,23 @@ sap.ui.define([
 				})
 			];
 			this.oHandleSaveStub.resolves(aChanges);
-			sandbox.stub(this.oModel, "getVariant").returns({
-				controlChanges: [RtaQunitUtils.createUIChange({
+			const aExistingChanges = [
+				RtaQunitUtils.createUIChange({
 					fileName: "change0",
 					reference: "Dummy",
 					variantReference: "variantMgmtId1",
 					fileType: "change"
-				})]
+				}),
+				RtaQunitUtils.createUIChange({
+					fileName: "change3",
+					reference: "Dummy",
+					variantReference: "variantMgmtId1",
+					fileType: "change"
+				})
+			];
+			aExistingChanges[0].setSavedToVariant(true);
+			sandbox.stub(this.oModel, "getVariant").returns({
+				controlChanges: aExistingChanges
 			});
 			var oRemoveStub = sandbox.stub(this.oModel, "removeVariant").resolves();
 			var oApplyChangeStub = sandbox.stub(this.oModel, "addAndApplyChangesOnVariant");
@@ -162,6 +172,8 @@ sap.ui.define([
 				assert.deepEqual(oRemoveStub.firstCall.args[0], mExpectedProperties, "the correct properties were passed-1");
 				assert.deepEqual(oRemoveStub.firstCall.args[1], true, "the correct properties were passed-2");
 				assert.strictEqual(oApplyChangeStub.callCount, 1, "one change was applied again");
+				assert.strictEqual(oApplyChangeStub.lastCall.args[0].length, 1, "only one change get added");
+				assert.strictEqual(oApplyChangeStub.lastCall.args[0][0].getId(), "change3", "the correct change got added");
 			});
 		});
 

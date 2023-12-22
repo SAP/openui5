@@ -19,9 +19,11 @@ sap.ui.define([
 	"sap/ui/core/date/CalendarUtils",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/date/UniversalDate"
-], function(Log, Formatting, Localization, TimezoneUtils, formatMessage, deepEqual, extend, CalendarType, Library,
-		Locale, LocaleData, Supportability, CalendarUtils, CalendarWeekNumbering, UI5Date, UniversalDate) {
+	"sap/ui/core/date/UniversalDate",
+	"sap/ui/core/format/FormatUtils"
+], function(Log, Formatting, Localization, TimezoneUtils, formatMessage, deepEqual, extend, CalendarType,
+		Library, Locale, LocaleData, Supportability, CalendarUtils, CalendarWeekNumbering, UI5Date,
+		UniversalDate, FormatUtils) {
 	"use strict";
 
 	/**
@@ -1068,7 +1070,7 @@ sap.ui.define([
 				// If the current letter in the pattern is " ", sValue is allowed to have no match, exact match
 				// or multiple " ". This makes the parsing more tolerant. Special spaces or RTL characters have
 				// to be normalized before comparison.
-				const sPartValue = DateFormat._normalize(oPart.value);
+				const sPartValue = FormatUtils.normalize(oPart.value);
 				for (; iPatternIndex < sPartValue.length; iPatternIndex++) {
 					sChar = sPartValue.charAt(iPatternIndex);
 
@@ -1738,7 +1740,7 @@ sap.ui.define([
 
 				for (i = 0; i < aDayPeriodsVariants.length; i += 1) {
 					aVariants = aDayPeriodsVariants[i].map((sDayPeriod) => {
-						return DateFormat._normalize(sDayPeriod);
+						return FormatUtils.normalize(sDayPeriod);
 					});
 					if (bAMPMAlternativeCase) {
 						// check normalized match for alternative case of am/pm
@@ -2868,7 +2870,7 @@ sap.ui.define([
 		sValue = sValue == null ? "" : String(sValue).trim();
 		// normalize input by removing all RTL special characters and replacing all special spaces
 		// by a standard space (\u0020)
-		sValue = DateFormat._normalize(sValue);
+		sValue = FormatUtils.normalize(sValue);
 
 		var oDateValue;
 		var sCalendarType = this.oFormatOptions.calendarType;
@@ -3472,20 +3474,6 @@ sap.ui.define([
 		}
 
 		return [oDate];
-	};
-
-	const rAllRTLCharacters = /[\u061c\u200e\u200f\u202a\u202b\u202c]/g;
-	const rAllSpaces = /\s/g;
-
-	/**
-	 * Normalizes the given string by removing RTL characters and replacing special space characters
-	 * by the standard ASCII space (\u0020).
-	 *
-	 * @param {string} sValue The value to be normalized
-	 * @return {string} The normalized value
-	 */
-	DateFormat._normalize = function (sValue) {
-		return sValue.replace(rAllRTLCharacters, "").replace(rAllSpaces, " ");
 	};
 
 	return DateFormat;

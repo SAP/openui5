@@ -26,6 +26,7 @@ sap.ui.define([
 	 */
 	var thisLib = Lib.init({
 		name: "sap.ui.rta",
+		apiVersion: 2,
 		version: "${version}",
 		dependencies: ["sap.ui.core", "sap.m", "sap.ui.fl", "sap.ui.dt"],
 		types: [],

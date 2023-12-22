@@ -38,6 +38,12 @@ sap.ui.define([
 				},
 				discardVariantContent: {
 					type: "boolean"
+				},
+				/**
+				 * Discarded changes when user switches from a dirty variant choosing "discard"
+				 */
+				discardedChanges: {
+					type: "array"
 				}
 			},
 			associations: {},
@@ -53,7 +59,7 @@ sap.ui.define([
 	function discardVariantContent(sVReference) {
 		return this.oModel.eraseDirtyChangesOnVariant(this.sVariantManagementReference, sVReference)
 		.then(function(aDirtyChanges) {
-			this._aSourceVariantDirtyChanges = aDirtyChanges;
+			this.setDiscardedChanges(aDirtyChanges);
 		}.bind(this));
 	}
 
@@ -99,9 +105,9 @@ sap.ui.define([
 		.then(function() {
 			// When discarding, dirty changes on source variant need to be applied AFTER the switch
 			if (this.getDiscardVariantContent()) {
-				return this.oModel.addAndApplyChangesOnVariant(this._aSourceVariantDirtyChanges)
+				return this.oModel.addAndApplyChangesOnVariant(this.getDiscardedChanges())
 				.then(function() {
-					this._aSourceVariantDirtyChanges = null;
+					this.setDiscardedChanges([]);
 					this.oModel.checkUpdate(true);
 				}.bind(this));
 			}

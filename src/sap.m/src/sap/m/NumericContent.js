@@ -449,7 +449,6 @@ sap.ui.define([
 	 */
 	NumericContent.prototype.onkeyup = function (oEvent) {
 		if (oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.SPACE) {
-			this.firePress();
 			oEvent.preventDefault();
 		}
 	};
@@ -460,7 +459,8 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	NumericContent.prototype.onkeydown = function (oEvent) {
-		if (oEvent.which === KeyCodes.SPACE) {
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
+			this.firePress();
 			oEvent.preventDefault();
 		}
 	};

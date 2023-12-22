@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/mdc/odata/v4/TypeMap",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/p13n/modules/StateHandlerRegistry",
-	"sap/ui/core/Core",
 	"sap/base/util/merge",
 	"sap/ui/model/odata/type/String", // to have types loaded, needed for legacy-free UI5
 	"sap/ui/model/odata/type/Boolean",
@@ -40,7 +39,6 @@ sap.ui.define([
 	ODataV4TypeMap,
 	OperatorName,
 	StateHandlerRegistry,
-	oCore,
 	merge,
 	StringType,
 	BooleanType,

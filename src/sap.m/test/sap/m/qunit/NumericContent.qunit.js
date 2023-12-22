@@ -15,11 +15,13 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/util/Mobile",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Toolbar",
 	"sap/m/Label",
 	"sap/m/ToolbarSpacer",
-	"sap/m/Button"
-], function(Localization, Library, jQuery, GenericTile, NumericContent, Table, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, Mobile, oCore, Toolbar, Label, ToolbarSpacer, Button) {
+	"sap/m/Button",
+	"sap/ui/events/KeyCodes"
+], function(Localization, Library, jQuery, GenericTile, NumericContent, Table, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, Mobile, oCore, qutils, Toolbar, Label, ToolbarSpacer, Button, KeyCodes) {
 	"use strict";
 
 	var oResourceBundle = Library.getResourceBundleFor("sap.m");
@@ -53,6 +55,14 @@ sap.ui.define([
 		this.oNumericContent.setValue("12");
 		oCore.applyChanges();
 		fnAssertNumericContentHasRendered(assert);
+	});
+	QUnit.test("Fire Event Not triggered when pressing enter key", function(assert) {
+		this.oNumericContent.setValue("12");
+		oCore.applyChanges();
+		var oSpy = this.spy(this.oNumericContent, "firePress");
+		qutils.triggerKeyup("numeric-cnt", KeyCodes.ENTER);
+		qutils.triggerKeyEvent("keypress", "numeric-cnt", KeyCodes.ENTER);
+		assert.ok(oSpy.notCalled, "The firePress function has been called only once when the enter key is press");
 	});
 
 	QUnit.test("Numeric Content rendered with correct value and scale when formatterValue is set to true.", function (assert) {

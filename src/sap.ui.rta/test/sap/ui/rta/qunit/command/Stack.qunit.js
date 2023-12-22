@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/command/CompositeCommand",
 	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/command/ControlVariantSwitch",
 	"sap/ui/rta/command/LREPSerializer",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/thirdparty/sinon-4",
@@ -22,6 +23,7 @@ sap.ui.define([
 	BaseCommand,
 	CompositeCommand,
 	CommandFactory,
+	ControlVariantSwitchCommand,
 	CommandSerializer,
 	CommandStack,
 	sinon,
@@ -35,12 +37,11 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
+	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata...", {
 		beforeEach() {
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
-			// Create command stack with some commands
 			this.oCommandStack = new CommandStack();
 			this.oInput1 = new Input({id: "input1"});
 			this.oInput2 = new Input({id: "input2"});
@@ -79,7 +80,11 @@ sap.ui.define([
 			var iCounter = 0;
 			var aInputs = [this.oInput1, this.oInput2];
 			this.oCommandStack.attachCommandExecuted(function(oEvent) {
-				assert.deepEqual(oEvent.getParameter("command").getElement(), aInputs[iCounter], "then both commands get executed in the correct order");
+				assert.deepEqual(
+					oEvent.getParameter("command").getElement(),
+					aInputs[iCounter],
+					"then both commands get executed in the correct order"
+				);
 				iCounter++;
 
 				if (iCounter === 2) {
@@ -109,7 +114,11 @@ sap.ui.define([
 			var fnDone = assert.async();
 			var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			sandbox.stub(MessageBox, "error").callsFake(function(sMessage, mOptions) {
-				assert.strictEqual(sMessage, oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", ["My Error"]), "then the message text is correct");
+				assert.strictEqual(
+					sMessage,
+					oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", ["My Error"]),
+					"then the message text is correct"
+				);
 				assert.deepEqual(mOptions, {title: oRtaResourceBundle.getText("HEADER_ERROR")}, "then the message title is correct");
 				fnDone();
 			});
@@ -179,8 +188,14 @@ sap.ui.define([
 				return this.oCommandStack.pushAndExecute(oCommand);
 			}.bind(this))
 			.then(function() {
-				assert.ok(oCommandExecutionHandlerStub.calledBefore(oFireExecutedStub), "the executed event waits for the command execution handler");
-				assert.ok(oCommandExecutionHandlerStub.calledBefore(oFireModifiedStub), "the modified event waits for the command execution handler");
+				assert.ok(
+					oCommandExecutionHandlerStub.calledBefore(oFireExecutedStub),
+					"the executed event waits for the command execution handler"
+				);
+				assert.ok(
+					oCommandExecutionHandlerStub.calledBefore(oFireModifiedStub),
+					"the modified event waits for the command execution handler"
+				);
 				assert.strictEqual(oFireModifiedStub.callCount, 1, "the modified event was fired once");
 				assert.strictEqual(oFireExecutedStub.callCount, 1, "the executed event was fired once");
 			})
@@ -188,11 +203,104 @@ sap.ui.define([
 				return this.oCommandStack.undo();
 			}.bind(this))
 			.then(function() {
-				assert.ok(oCommandExecutionHandlerStub.calledBefore(oFireExecutedStub), "the executed event waits for the command execution handler");
-				assert.ok(oCommandExecutionHandlerStub.calledBefore(oFireModifiedStub), "the modified event waits for the command execution handler");
+				assert.ok(
+					oCommandExecutionHandlerStub.calledBefore(oFireExecutedStub),
+					"the executed event waits for the command execution handler"
+				);
+				assert.ok(
+					oCommandExecutionHandlerStub.calledBefore(oFireModifiedStub),
+					"the modified event waits for the command execution handler"
+				);
 				assert.strictEqual(oFireModifiedStub.callCount, 2, "the modified event was fired once again");
 				assert.strictEqual(oFireExecutedStub.callCount, 2, "the executed event was fired once again");
 			});
+		});
+
+		QUnit.test("stack with a 'remove' command and its change gets discarded by another command", async function(assert) {
+			const oDummyChange = {
+				getId: () => {
+					return "dummyChangeId";
+				}
+			};
+			const oCommand = await CommandFactory.getCommandFor(this.oInput1, "Remove", {
+				removedElement: this.oInput1
+			}, this.oInputDesignTimeMetadata);
+			sandbox.stub(oCommand, "execute").resolves();
+			sandbox.stub(oCommand, "getPreparedChange").returns(oDummyChange);
+			await this.oCommandStack.pushAndExecute(oCommand);
+			const oDiscardingCommand = new ControlVariantSwitchCommand();
+			sandbox.stub(oDiscardingCommand, "getDiscardedChanges").returns([oDummyChange]);
+			sandbox.stub(oDiscardingCommand, "execute").resolves();
+			sandbox.stub(oDiscardingCommand, "undo").resolves();
+			await this.oCommandStack.pushAndExecute(oDiscardingCommand);
+			assert.strictEqual(this.oCommandStack.canSave(), false, "then 'save' is disabled because the remove command was discarded");
+			await this.oCommandStack.undo();
+			assert.strictEqual(this.oCommandStack.canSave(), true, "then after undo the 'save' is enabled");
+			await this.oCommandStack.redo();
+			assert.strictEqual(this.oCommandStack.canSave(), false, "then after redo the 'save' is disabled again");
+		});
+
+		QUnit.test("stack with with a 'remove' command with a change that gets discarded and one that doesn't", async function(assert) {
+			const oDummyChange = {
+				getId: () => {
+					return "dummyChangeId";
+				}
+			};
+			const oDiscardedChange = {
+				getId: () => {
+					return "discardedChangeId";
+				}
+			};
+			const oCommand = await CommandFactory.getCommandFor(this.oInput1, "Remove", {
+				removedElement: this.oInput1
+			}, this.oInputDesignTimeMetadata);
+			sandbox.stub(oCommand, "execute").resolves();
+			sandbox.stub(oCommand, "getPreparedChange").returns(oDummyChange);
+			await this.oCommandStack.pushAndExecute(oCommand);
+			const oCommandToBeDiscarded = await CommandFactory.getCommandFor(this.oInput1, "Remove", {
+				removedElement: this.oInput1
+			}, this.oInputDesignTimeMetadata);
+			sandbox.stub(oCommandToBeDiscarded, "execute").resolves();
+			sandbox.stub(oCommandToBeDiscarded, "getPreparedChange").returns(oDiscardedChange);
+			await this.oCommandStack.pushAndExecute(oCommandToBeDiscarded);
+			const oDiscardingCommand = new ControlVariantSwitchCommand();
+			sandbox.stub(oDiscardingCommand, "getDiscardedChanges").returns([oDiscardedChange]);
+			sandbox.stub(oDiscardingCommand, "execute").resolves();
+			sandbox.stub(oDiscardingCommand, "undo").resolves();
+			await this.oCommandStack.pushAndExecute(oDiscardingCommand);
+			assert.strictEqual(this.oCommandStack.canSave(), true, "then 'save' is enabled because only one command was discarded");
+			await this.oCommandStack.undo();
+			assert.strictEqual(this.oCommandStack.canSave(), true, "then after undo the 'save' is still enabled");
+			await this.oCommandStack.redo();
+			assert.strictEqual(this.oCommandStack.canSave(), true, "then after redo the 'save' is still enabled");
+		});
+
+		QUnit.test("stack with a 'remove' command and a posterior 'discarding' command does not affect its change", async function(assert) {
+			const oDummyChange = {
+				getId: () => {
+					return "dummyChangeId";
+				}
+			};
+			const oCommand = await CommandFactory.getCommandFor(this.oInput1, "Remove", {
+				removedElement: this.oInput1
+			}, this.oInputDesignTimeMetadata);
+			sandbox.stub(oCommand, "execute").resolves();
+			sandbox.stub(oCommand, "getPreparedChange").returns(oDummyChange);
+			await this.oCommandStack.pushAndExecute(oCommand);
+			const oDiscardingCommand = new ControlVariantSwitchCommand();
+			sandbox.stub(oDiscardingCommand, "getDiscardedChanges").returns([]);
+			sandbox.stub(oDiscardingCommand, "execute").resolves();
+			sandbox.stub(oDiscardingCommand, "undo").resolves();
+			await this.oCommandStack.pushAndExecute(oDiscardingCommand);
+			assert.strictEqual(
+				this.oCommandStack.canSave(),
+				true,
+				"then 'save' is enabled because the change from the 'remove' command was not discarded"
+			);
+			await this.oCommandStack.undo();
+			assert.strictEqual(this.oCommandStack.canSave(), true, "then after undo the 'save' is still enabled");
+			await this.oCommandStack.redo();
+			assert.strictEqual(this.oCommandStack.canSave(), true, "then after redo the 'save' is still enabled");
 		});
 	});
 
@@ -279,12 +387,16 @@ sap.ui.define([
 
 		QUnit.test("when calling function 'initializeWithChanges' with the array containing changes from a composite command...", function(assert) {
 			var aCompositeChanges = [
-				RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite11), RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite12),
-				RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite21), RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite22)
+				RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite11),
+				RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite12),
+				RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite21),
+				RtaQunitUtils.createUIChange(this.oChangeDefinitionForComposite22)
 			];
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aCompositeChanges);
 
-			return CommandStack.initializeWithChanges(this.oControl, ["fileName11", "fileName12", "fileName21", "fileName22"]).then(function(oStack) {
+			return CommandStack.initializeWithChanges(
+				this.oControl, ["fileName11", "fileName12", "fileName21", "fileName22"]
+			).then(function(oStack) {
 				var aCommands = oStack.getCommands();
 				var aSubCommands1 = oStack.getSubCommands(aCommands[0]);
 				var aSubCommands2 = oStack.getSubCommands(aCommands[1]);
@@ -292,10 +404,25 @@ sap.ui.define([
 				assert.equal(aCommands.length, 2, "the CommandStack contains two commands");
 				assert.equal(aSubCommands1.length, 2, "the first command contains two sub-commands");
 				assert.equal(aSubCommands2.length, 2, "the second command contains two sub-commands");
-				assert.equal(aSubCommands1[0]._oPreparedChange, aCompositeChanges[2], "the first sub-command of the first composite command contains the last change");
-				assert.equal(aSubCommands1[1]._oPreparedChange, aCompositeChanges[3], "the second sub-command of the first composite command contains the last change");
-				assert.equal(aSubCommands2[0]._oPreparedChange, aCompositeChanges[0], "the first sub-command of the second composite command contains the last change");
-				assert.equal(aSubCommands2[1]._oPreparedChange, aCompositeChanges[1], "the second sub-command of the second composite command contains the last change");
+				assert.equal(
+					aSubCommands1[0]._oPreparedChange,
+					aCompositeChanges[2],
+					"the first sub-command of the first composite command contains the last change"
+				);
+				assert.equal(
+					aSubCommands1[1]._oPreparedChange,
+					aCompositeChanges[3],
+					"the second sub-command of the first composite command contains the last change"
+				);
+				assert.equal(
+					aSubCommands2[0]._oPreparedChange, aCompositeChanges[0],
+					"the first sub-command of the second composite command contains the last change"
+				);
+				assert.equal(
+					aSubCommands2[1]._oPreparedChange,
+					aCompositeChanges[1],
+					"the second sub-command of the second composite command contains the last change"
+				);
 			});
 		});
 
@@ -409,7 +536,11 @@ sap.ui.define([
 
 			this.oCommandStack.compositeLastTwoCommands();
 			var oCompositeCommand = this.oCommandStack.top();
-			assert.deepEqual(oCompositeCommand.getCommands(), [oBaseCommand1, oBaseCommand2], "then the composite command was created correctly");
+			assert.deepEqual(
+				oCompositeCommand.getCommands(),
+				[oBaseCommand1, oBaseCommand2],
+				"then the composite command was created correctly"
+			);
 			assert.deepEqual(this.oCommandStack.getCommands().length, 1, "then the stack has only one command");
 		});
 	});

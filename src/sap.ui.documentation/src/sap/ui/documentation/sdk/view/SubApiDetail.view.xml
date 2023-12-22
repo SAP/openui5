@@ -7,7 +7,8 @@
 		xmlns:layout="sap.ui.layout"
 		xmlns:custom="sap.ui.documentation"
 		xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
-		xmlns:html="http://www.w3.org/1999/xhtml">
+		xmlns:html="http://www.w3.org/1999/xhtml"
+		template:require="{formatter: 'sap/ui/documentation/sdk/model/formatter'}">
 
 	<m:Page
 			id="apiDetailPage"
@@ -126,8 +127,8 @@
 															   columnTitles="Returns,Description"
 															   class="sapUiDocumentation2ColumnsEqualTable">
 												<custom:Row>
-													<m:Text text="{path: 'data>/returnValue/type', formatter: '.formatter.escapeSettingsValue'}" wrapping="false"/>
-													<custom:JSDocText sanitizeContent="false" text="{path: 'data>/returnValue/description', formatter: '.formatter.escapeSettingsValue'}"/>
+													<m:Text text="{path: 'data>/returnValue/type', formatter: 'formatter.escapeSettingsValue'}" wrapping="false"/>
+													<custom:JSDocText sanitizeContent="false" text="{path: 'data>/returnValue/description', formatter: 'formatter.escapeSettingsValue'}"/>
 												</custom:Row>
 											</custom:LightTable>
 										</template:if>

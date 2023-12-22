@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/base/util/extend",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/format/FormatUtils",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/UniversalDate",
@@ -19,7 +20,8 @@ sap.ui.define([
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/Persian"
-], function(Log, Formatting, Localization, extend, DateFormat, Locale, LocaleData, UniversalDate, UI5Date, library, Configuration, Supportability, CalendarWeekNumbering, TestUtils) {
+], function(Log, Formatting, Localization, extend, DateFormat, FormatUtils, Locale, LocaleData,
+		UniversalDate, UI5Date, library, Configuration, Supportability, CalendarWeekNumbering, TestUtils) {
 	"use strict";
 	/* eslint-disable max-nested-callbacks */
 	/*global QUnit, sinon */
@@ -5173,20 +5175,10 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************************************
-[
-	{input: "a\u00a0b\u2009c\u202fd e", output: "a b c d e"}, // special spaces are replaced by \u0020
-	{input: "a\u061c\u200eb\u200fc\u202ad\u202be\u202cf", output: "abcdef"} // RTL characters are removed
-].forEach((oFixture, i) => {
-	QUnit.test(`DateFormat._normalize: ${i}`, function (assert) {
-		assert.strictEqual(DateFormat._normalize(oFixture.input), oFixture.output);
-	});
-});
-
-	//*****************************************************************************************************************
 	QUnit.test("DateFormat#oSymbols[''].parse: normalizes part value", function (assert) {
 		const oPart = {value: "~partValue"};
 
-		this.mock(DateFormat).expects("_normalize").withExactArgs("~partValue").returns("~sNormalized");
+		this.mock(FormatUtils).expects("normalize").withExactArgs("~partValue").returns("~sNormalized");
 
 		// code under test
 		assert.deepEqual(DateFormat.prototype.oSymbols[""].parse("~sNormalizedValue", oPart),
@@ -5201,10 +5193,10 @@ sap.ui.define([
 			aDayPeriodsNarrow: ["~narrow0", "~narrow1"],
 			oLocaleData: {sCLDRLocaleId: "en-US"}
 		};
-		const oDateFormatMock = this.mock(DateFormat);
-		oDateFormatMock.expects("_normalize").withExactArgs("~wide0").returns("~sNormalizedWide0");
-		oDateFormatMock.expects("_normalize").withExactArgs("~abbrev0").returns("~sNormalizedAbbrev0");
-		oDateFormatMock.expects("_normalize").withExactArgs("~abbrev1").returns("~sDayPeriod");
+		const oDateFormatMock = this.mock(FormatUtils);
+		oDateFormatMock.expects("normalize").withExactArgs("~wide0").returns("~sNormalizedWide0");
+		oDateFormatMock.expects("normalize").withExactArgs("~abbrev0").returns("~sNormalizedAbbrev0");
+		oDateFormatMock.expects("normalize").withExactArgs("~abbrev1").returns("~sDayPeriod");
 
 		// code under test
 		assert.deepEqual(
@@ -5218,7 +5210,7 @@ sap.ui.define([
 			oFormatOptions: {},
 			parseRelative() {}
 		};
-		this.mock(DateFormat).expects("_normalize").withExactArgs("~value").returns("~normalizedValue");
+		this.mock(FormatUtils).expects("normalize").withExactArgs("~value").returns("~normalizedValue");
 		this.mock(Localization).expects("getTimezone").exactly(3).withExactArgs().returns("~timezone");
 		this.mock(oFormat).expects("parseRelative").withExactArgs("~normalizedValue", undefined)
 			.returns("~dateObject");
