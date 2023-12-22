@@ -1591,6 +1591,20 @@ sap.ui.define([
 		assert.ok(this.oMessagePopover._oMessageView.getItems()[0].getCustomData()[0].getValue(), "The data was passed correctly");
 	});
 
+	QUnit.test("Any custom data from the MessagePopover should be passed to the ResponsivePopover", function (assert) {
+		//Act
+		this.oMessagePopover.addCustomData(new CustomData({key: "test", value: "value", writeToDom: true}));
+		Core.applyChanges();
+
+		//Open the MessagePopover
+		this.oMessagePopover.openBy(this.oButton);
+		this.clock.tick(500);
+
+		//Assert
+		assert.strictEqual(this.oMessagePopover.getDomRef().getAttribute("data-test"), "value", "The message popover dom has a data attribute added.");
+		assert.strictEqual(this.oMessagePopover._oPopover.getCustomData().length, 1, "The custom data was cloned into the message popover's popover.");
+	});
+
 	QUnit.test("On mobile the dialog should be closed after clicking on the active title", function (assert) {
 		this.stub(Device, "system").value({
 			desktop: false,
