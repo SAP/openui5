@@ -44712,6 +44712,8 @@ make root = ${bMakeRoot}`;
 	// added to the queue and ODataModel#hasPendingChanges and ODataListBinding#hasPendingChanges
 	// work as expected.
 	// JIRA: CPOUI5UISERVICESV3-1994
+	//
+	// hasPendingChanges(true) must not be affected (SNOW: DINC0025951)
 	QUnit.test("create an entity and immediately reset changes (no UI) V3-1994", function (assert) {
 		var // use autoExpandSelect so that the cache is created asynchronously
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
@@ -44723,6 +44725,7 @@ make root = ${bMakeRoot}`;
 
 			assert.ok(oModel.hasPendingChanges());
 			assert.ok(oListBindingWithoutUI.hasPendingChanges());
+			assert.notOk(oListBindingWithoutUI.hasPendingChanges(true), "SNOW: DINC0025951");
 			assert.strictEqual(oListBindingWithoutUI.getLength(), 1 + 10/*length is not final*/);
 
 			return oListBindingWithoutUI.resetChanges().then(function () {
