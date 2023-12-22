@@ -207,8 +207,8 @@ sap.ui.define([
 					assert.equal(aDefaultAggregationElements.length, 2);
 					assert.equal(aDefaultAggregationElements[0].localName, "Label");
 					assert.equal(aDefaultAggregationElements[0].namespaceURI, "sap.m");
-					assert.equal(aDefaultAggregationElements[0].localName, "Label");
-					assert.equal(aDefaultAggregationElements[0].namespaceURI, "sap.m");
+					assert.equal(aDefaultAggregationElements[1].localName, "Label");
+					assert.equal(aDefaultAggregationElements[1].namespaceURI, "sap.m");
 				});
 		});
 
@@ -483,6 +483,24 @@ sap.ui.define([
 					assert.equal(oHBox.childNodes[0].localName, "tooltip");
 					assert.equal(oHBox.childNodes[0].namespaceURI, "sap.m");
 				});
+		});
+
+		[0, 1].forEach(function(iIndex) {
+			QUnit.test(`replaceAllAggregation ${iIndex}`, async function(assert) {
+				const oVBox = XmlTreeModifier._children(this.oXmlView)[iIndex];
+				const oNewItem1 = await XmlTreeModifier.createControl("sap.m.Text", this.oComponent, this.oXmlView2);
+				const oNewItem2 = await XmlTreeModifier.createControl("sap.m.Text", this.oComponent, this.oXmlView2);
+				const oNewItem3 = await XmlTreeModifier.createControl("sap.m.Text", this.oComponent, this.oXmlView2);
+				await XmlTreeModifier.replaceAllAggregation(oVBox, "items", [oNewItem1, oNewItem2, oNewItem3]);
+				const oNewAggregation = await XmlTreeModifier.getAggregation(oVBox, "items");
+				assert.strictEqual(oNewAggregation.length, 3, "three items are in the aggregation");
+				assert.strictEqual(oNewAggregation[0].localName, "Text");
+				assert.strictEqual(oNewAggregation[0].namespaceURI, "sap.m");
+				assert.strictEqual(oNewAggregation[1].localName, "Text");
+				assert.strictEqual(oNewAggregation[1].namespaceURI, "sap.m");
+				assert.strictEqual(oNewAggregation[2].localName, "Text");
+				assert.strictEqual(oNewAggregation[2].namespaceURI, "sap.m");
+			});
 		});
 
 		QUnit.test("getVisible", function (assert) {
