@@ -97,26 +97,6 @@ sap.ui.define([
 		return oAddRemoveChange;
 	};
 
-	GroupController.prototype._createMoveChange = function(sId, sPropertykey, iNewIndex, sMoveOperation, oControl, bPersistId){
-		var oMoveChange =  {
-			selectorElement: oControl,
-			changeSpecificData: {
-				changeType: sMoveOperation,
-				content: {
-					id: sId,
-					key: sPropertykey,
-					index: iNewIndex
-				}
-			}
-		};
-
-		if (!bPersistId) {
-			delete oMoveChange.changeSpecificData.content.id;
-		}
-
-		return oMoveChange;
-	};
-
 	GroupController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
 		var aItemState = this.getCurrentState();
