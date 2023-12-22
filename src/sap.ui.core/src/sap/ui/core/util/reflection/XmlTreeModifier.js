@@ -474,6 +474,23 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
+		replaceAllAggregation: function(oControl, sAggregationName, aNewControls) {
+			return XmlTreeModifier._findAggregationNode(oControl, sAggregationName)
+			.then(function(oAggregationNode) {
+				return XmlTreeModifier._getControlsInAggregation(oControl, oAggregationNode).then(function(aChildControls) {
+					aChildControls.forEach(function(oChildControl) {
+						oAggregationNode.removeChild(oChildControl);
+					});
+					aNewControls.forEach(function (oObject) {
+						oAggregationNode.appendChild(oObject);
+					});
+				});
+			});
+		},
+
+		/**
+		 * @inheritDoc
+		 */
 		removeAllAggregation: function (oControl, sName) {
 			return XmlTreeModifier._findAggregationNode(oControl, sName)
 				.then(function (oAggregationNode) {

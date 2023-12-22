@@ -218,6 +218,28 @@ function(
 			});
 		});
 
+		QUnit.test("replaceAllAggregation", function(assert) {
+			var oHBox = this.oXmlView.byId("hbox1");
+			var aNewControls = [
+				new Button("button4"),
+				new Button("button5"),
+				new Button("button6")
+			];
+			var aOldControls = oHBox.getItems();
+			return JsControlTreeModifier.replaceAllAggregation(oHBox, "items", aNewControls)
+			.then(function() {
+				var aItems = oHBox.getItems();
+				assert.strictEqual(aItems.length, 3, "the aggregation has 3 items");
+				assert.strictEqual(aItems[0].getId(), "button4", "the items are the new ones");
+				assert.strictEqual(aItems[1].getId(), "button5", "the items are the new ones");
+				assert.strictEqual(aItems[2].getId(), "button6", "the items are the new ones");
+
+				aOldControls.forEach(function (oControl) {
+					oControl.destroy();
+				});
+			});
+		});
+
 		QUnit.test("createAndAddCustomData adds Custom Data properly", function(assert) {
 			var oCreateStub = sandbox.stub(JsControlTreeModifier, "createControl").resolves("foo");
 			var oSetPropertyStub = sandbox.stub(JsControlTreeModifier, "setProperty");
