@@ -125,6 +125,7 @@ function(
 		this._aStepOptionalIndication = [];
 		this._oResourceBundle = Library.getResourceBundleFor("sap.m");
 		this._oActionSheet = new ActionSheet();
+		this._aStepIds = [];
 		this._createStepNavigation();
 	};
 
@@ -213,6 +214,7 @@ function(
 		this._iCurrentStep = null;
 		this._iActiveStep = null;
 		this._aCachedSteps = null;
+		this._aStepIds = null;
 
 		this._aStepOptionalIndication = null;
 	};
@@ -729,6 +731,16 @@ function(
 						.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.STEP);
 
 		return parseInt($iStepNumber);
+	};
+
+	WizardProgressNavigator.prototype._setStepIds = function (aSteps) {
+		if (!aSteps.length) {
+			return;
+		}
+
+		this._aStepIds = aSteps.map(function (oStep) {
+			return oStep.getId();
+		});
 	};
 
 	return WizardProgressNavigator;
