@@ -1196,7 +1196,6 @@ function(
 		Dialog.prototype._setDimensions = function () {
 			var $this = this.$(),
 				bStretch = this.getStretch(),
-				bStretchOnPhone = this.getStretchOnPhone() && Device.system.phone,
 				bMessageType = this.getType() === DialogType.Message,
 				oStyles = {};
 
@@ -1221,7 +1220,14 @@ function(
 				oStyles.height = undefined;
 			}
 
-			if ((bStretch && !bMessageType) || (bStretchOnPhone)) {
+			if (bStretch && !bMessageType) {
+				this.$().addClass('sapMDialogStretched');
+			}
+
+			/**
+			 * @deprecated As of version 1.11.2
+			 */
+			if (this.getStretchOnPhone() && Device.system.phone) {
 				this.$().addClass('sapMDialogStretched');
 			}
 

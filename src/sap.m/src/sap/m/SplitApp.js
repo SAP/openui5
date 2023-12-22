@@ -165,6 +165,7 @@ sap.ui.define([
 	/**
 	 * Fires the orientationChange event after SplitApp has reacted to the browser orientationChange event.
 	 *
+	 * @deprecated As of version 1.87
 	 * @private
 	 */
 	SplitApp.prototype._onOrientationChange = function(){
