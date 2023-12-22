@@ -8,7 +8,7 @@ sap.ui.define([
 	"./library",
 	"sap/m/ListBase",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/core/Core",
+	"sap/ui/core/Theming",
 	"sap/ui/Device",
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
 	"sap/ui/layout/cssgrid/GridLayoutBase"
@@ -20,7 +20,7 @@ sap.ui.define([
 	library,
 	ListBase,
 	ManagedObjectObserver,
-	Core,
+	Theming,
 	Device,
 	GridLayoutDelegate,
 	GridLayoutBase
@@ -163,6 +163,10 @@ sap.ui.define([
 
 		this._oGridObserver = new ManagedObjectObserver(GridList.prototype._onGridChange.bind(this));
 		this._oGridObserver.observe(this, { aggregations: ["items"] });
+
+		this._bThemeApplied = false;
+		this._handleThemeAppliedBound = this._handleThemeApplied.bind(this);
+		Theming.attachApplied(this._handleThemeAppliedBound);
 	};
 
 	GridList.prototype.exit = function () {
@@ -172,6 +176,8 @@ sap.ui.define([
 			this._oGridObserver.disconnect();
 			this._oGridObserver = null;
 		}
+
+		Theming.detachApplied(this._handleThemeAppliedBound);
 
 		ListBase.prototype.exit.apply(this, arguments);
 	};
@@ -245,7 +251,7 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	GridList.prototype.getNavigationMatrix = function () {
-		if (!Core.isThemeApplied()) {
+		if (!this._bThemeApplied) {
 			return null;
 		}
 
@@ -371,6 +377,11 @@ sap.ui.define([
 	 */
 	GridList.prototype.onLayoutDataChange = function (oEvent) {
 		GridLayoutBase.setItemStyles(oEvent.srcControl);
+	};
+
+	GridList.prototype._handleThemeApplied = function () {
+		this._bThemeApplied = true;
+		Theming.detachApplied(this._handleThemeAppliedBound);
 	};
 
 	return GridList;
