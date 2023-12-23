@@ -73,7 +73,7 @@ sap.ui.define([
 				keyCode: KeyCodes.ARROW_LEFT
 			});
 
-		this.stub(Core, "isThemeApplied").returns(false);
+		this.stub(oGrid, "_bThemeApplied").value(false);
 
 		$itemWrapper.trigger(oFakeEvent);
 

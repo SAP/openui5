@@ -4,12 +4,10 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Descendant",
 	"sap/ui/test/actions/EnterText",
-	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/core/date/Gregorian" // indirect dependency, used by DateFormat for western locales
-], function(Opa5, Press, PropertyStrictEquals, Descendant, EnterText, DateFormat, UI5Date, jQuery, sinon) {
+	"sap/ui/thirdparty/sinon"
+], function(Opa5, Press, PropertyStrictEquals, Descendant, EnterText, UI5Date, jQuery, sinon) {
 	"use strict";
 
 	var sViewName = "Analysis",
@@ -108,20 +106,7 @@ sap.ui.define([
 
 				iOpenImportDialog: function() {
 					return this.iOpenPresetsPopover()
-						.and.waitFor({
-							check: function () {
-								var oDialog = Opa5.getWindow().sap.ui.getCore().byId("presetImport--importDialog");
-								if (oDialog && oDialog.isOpen()) {
-									oDialog.close();
-									return false;
-								} else {
-									return true;
-								}
-							},
-							success: function () {
-								this.iPressImport();
-							}
-						});
+						.and.iPressImport();
 				},
 
 				iReopenImportDialog: function() {

@@ -9061,6 +9061,7 @@ sap.ui.define([
 
 		// code under test
 		assert.ok(oBinding.hasPendingChangesForPath());
+		assert.notOk(oBinding.hasPendingChangesForPath("", true));
 	});
 
 	//*********************************************************************************************

@@ -113,6 +113,12 @@
 	.sapMMsgViewHiddenContainer {
 		display: none;
 	}
+
+	// remove the truncation behavior, when a list item does not need it
+	// (if it needs to have a truncation we change the item type to navigation)
+	.sapMMsgViewItem:not(.sapMLIBTypeNavigation) .sapMSLITitleOnly {
+		text-overflow: clip;
+	}
 }
 
 .sapMMsgViewDescIcon {

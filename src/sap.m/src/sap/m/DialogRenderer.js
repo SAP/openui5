@@ -50,7 +50,6 @@ sap.ui.define([
 			oEndButton = oDialog.getEndButton(),
 			sState = oDialog.getState(),
 			bStretch = oDialog.getStretch(),
-			bStretchOnPhone = false,
 			oValueStateText = oDialog.getAggregation("_valueState"),
 			oFooter = oDialog.getFooter();
 
@@ -77,7 +76,7 @@ sap.ui.define([
 			oRM.class("sapMDialogTouched");
 		}
 
-		if (bStretch || bStretchOnPhone) {
+		if (bStretch) {
 			oRM.class("sapMDialogStretched");
 		}
 

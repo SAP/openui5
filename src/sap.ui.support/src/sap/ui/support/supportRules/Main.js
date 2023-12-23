@@ -122,12 +122,7 @@ sap.ui.define([
 		}
 
 		this._aSupportModeConfig = aSupportModeConfig;
-
-		if (Core.isInitialized()) {
-			this._initPlugin();
-		} else {
-			Core.ready(this._initPlugin.bind(this));
-		}
+		Core.ready(this._initPlugin.bind(this));
 	};
 
 	Main.prototype._initPlugin = function () {

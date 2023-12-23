@@ -2959,11 +2959,11 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesForPath
 	 */
-	ODataListBinding.prototype.hasPendingChangesForPath = function (_sPath) {
+	ODataListBinding.prototype.hasPendingChangesForPath = function (_sPath, bIgnoreKeptAlive) {
 		if (this.oCache === undefined) {
 			// as long as cache is not yet known there can be only changes caused by created
 			// entities; sPath does not matter
-			return this.iActiveContexts > 0;
+			return !bIgnoreKeptAlive && this.iActiveContexts > 0;
 		}
 		return asODataParentBinding.prototype.hasPendingChangesForPath.apply(this, arguments);
 	};

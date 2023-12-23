@@ -1762,10 +1762,6 @@ function(
 					this._removeMasterButton(_currentPage);
 				}
 			}
-			// execute the code after SplitContainer has changed itself due to orientation change event
-			if (this._onOrientationChange) {
-				this._onOrientationChange();
-			}
 		}
 	};
 

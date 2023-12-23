@@ -66,7 +66,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.skip("when an update listener is registered", function(assert) {
+		QUnit.test("when an update listener is registered", function(assert) {
 			var oUpdateStubInitial = sandbox.stub();
 			var oUpdatedStubAdded = sandbox.stub();
 			var oDataSelector = new DataSelector({
@@ -74,16 +74,17 @@ sap.ui.define([
 				updateListeners: [oUpdateStubInitial]
 			});
 			oDataSelector.get();
-			assert.ok(
-				oUpdateStubInitial.calledOnce,
-				"then the listener is called when a new value is calculated"
+			assert.strictEqual(
+				oUpdateStubInitial.callCount,
+				0,
+				"then the listener is not called when a new value is calculated"
 			);
 			oDataSelector.addUpdateListener(oUpdatedStubAdded);
 			oDataSelector.checkUpdate();
 			assert.strictEqual(
 				oUpdateStubInitial.callCount,
-				2,
-				"then the listener is called again after an invalidation"
+				1,
+				"then the listener is first called after an invalidation"
 			);
 			assert.ok(
 				oUpdatedStubAdded.calledOnce,

@@ -110,7 +110,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when context menu is opened (via keyboard) for a sap.ui.comp.smartform.GroupElement", function(assert) {
-			assert.expect(8);
+			assert.expect(7);
 			const done = assert.async();
 			const oGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
 			oGroupElementOverlay.focus();
@@ -133,8 +133,6 @@ sap.ui.define([
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a label");
 					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING",
 						"add field entry is visible");
-					assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), true,
-						"add field entry is enabled, because there are fields available");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "we can remove field");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "we can cut field");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "we can paste field");

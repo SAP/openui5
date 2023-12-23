@@ -125,8 +125,9 @@ sap.ui.define([
 			role: "listitem",
 			label: sValueText
 		};
+		const sStepId = oControl.getId() + "-step-" + oControl._aStepIds[iStepNumber - 1];
 
-		oRm.openStart("li")
+		oRm.openStart("li", sStepId )
 			.class(CLASSES.STEP)
 			.attr(ATTRIBUTES.STEP, iStepNumber)
 			.attr("tabindex", "-1")

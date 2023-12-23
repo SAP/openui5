@@ -782,6 +782,60 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		},
 		aProperties = oHelpers.generateProperties(aPropertyTypes, aScreenTypes);
 
+
+	QUnit.module("ObjectPageSubSection - FitContainer Height Adaptation", {
+		beforeEach: function () {
+			this.oObjectPage = new ObjectPageLayout({
+				sections: [new ObjectPageSection({
+					subSections: [new ObjectPageSubSectionClass({
+						blocks: [new Panel({ height: "100%" })]
+					})]
+				})]
+			});
+
+			this.oObjectPage.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("height of single subSection with sapUxAPObjectPageSubSectionFitContainer adjusts with headerTitle adjusments", function (assert) {
+		var oPage = this.oObjectPage,
+			oSection = this.oObjectPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			oBlock = oSubSection.getBlocks()[0],
+			done = assert.async();
+
+		assert.expect(2);
+
+		//act
+		oBlock.setHeight("845px");
+		oPage.setHeaderTitle(new ObjectPageDynamicHeaderTitle({
+			heading: new Title({ text: "Title" })
+		}));
+		Core.applyChanges();
+		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+
+		//setup
+		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			//check
+			var sHeight = oSubSection._height;
+			assert.strictEqual(sHeight, "", "Height is auto when content is bigger than SubSection's height");
+
+			//act
+			oPage.destroyHeaderTitle();
+
+			oPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+				var sNewHeight = oSubSection._height;
+				assert.ok(sHeight !== sNewHeight, "Fixed height is changed when headerTitle is added/removed");
+
+				done();
+			});
+		}, this);
+	});
+
 	QUnit.module("Object Page SubSection - blocks aggregation");
 
 	QUnit.test("Generates correct layout Configuration", function (assert) {
@@ -1604,41 +1658,6 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 			}
 			assert.strictEqual(isPageScrollable(), false, "no scrolling when single subsection fits container");
 			done();
-		}, this);
-	});
-
-	QUnit.test("height of single subSection with sapUxAPObjectPageSubSectionFitContainer adjusts with headerTitle adjusments", function (assert) {
-		var oPage = this.oObjectPage,
-			oSection = this.oObjectPage.getSections()[0],
-			oSubSection = oSection.getSubSections()[0],
-			oBlock = oSubSection.getBlocks()[0],
-			done = assert.async();
-
-		assert.expect(2);
-
-		//act
-		oBlock.setHeight("845px");
-		oPage.setHeaderTitle(new ObjectPageDynamicHeaderTitle({
-			heading: new Title({ text: "Title" })
-		}));
-		Core.applyChanges();
-		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
-
-		//setup
-		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-			//check
-			var sHeight = oSubSection._height;
-			assert.strictEqual(sHeight, "", "Height is auto when content is bigger than SubSection's height");
-
-			//act
-			oPage.destroyHeaderTitle();
-
-			oPage.attachEventOnce("onAfterRenderingDOMReady", function () {
-				var sNewHeight = oSubSection._height;
-				assert.ok(sHeight !== sNewHeight, "Fixed height is changed when headerTitle is added/removed");
-
-				done();
-			});
 		}, this);
 	});
 

@@ -1152,6 +1152,26 @@ sap.ui.define([
 				}
 			},
 
+			"p13n.SortController": {
+				title: "Test Page for sap.m.p13n.SortController",
+				module: "test-resources/sap/m/qunit/p13n/SortController.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+
+			"p13n.GroupController": {
+				title: "Test Page for sap.m.p13n.GroupController",
+				module: "test-resources/sap/m/qunit/p13n/GroupController.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+
 			"p13n.SelectionPanel": {
 				title: "Test Page for sap.m.p13n.SelectionPanel",
 				module: "test-resources/sap/m/qunit/p13n/SelectionPanel.qunit",

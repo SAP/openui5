@@ -994,6 +994,7 @@ sap.ui.define([
 			FlexState.updateStorageResponse(this._mComponent.name, aChangesToRevert.map((oFlexObject) => {
 				return {flexObject: oFlexObject.convertToFileContent(), type: "delete"};
 			}));
+			FlexState.rebuildFilteredResponse(this._mComponent.name);
 			return aChangesToRevert;
 		}
 		return [];
