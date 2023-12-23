@@ -52,6 +52,10 @@ sap.ui.define(['sap/ui/core/library', './library', 'sap/ui/core/Core'],
 				sTextDir = bPageRTL ? TextDirection.RTL : TextDirection.LTR;
 			}
 
+			if (sTooltip) {
+				oRm.attr("title", sTooltip);
+			}
+
 			oRm.class("sapMObjStatus");
 			oRm.class("sapMObjStatus" + sState);
 			if (bInverted) {
@@ -142,14 +146,6 @@ sap.ui.define(['sap/ui/core/library', './library', 'sap/ui/core/Core'],
 			}
 
 			if (oObjStatus._isActive()) {
-				oRm.close("span");
-			}
-
-			if (sTooltip) {
-				oRm.openStart("span", oObjStatus.getId() + "-tooltip");
-				oRm.class("sapUiPseudoInvisibleText");
-				oRm.openEnd();
-				oRm.text(sTooltip);
 				oRm.close("span");
 			}
 
