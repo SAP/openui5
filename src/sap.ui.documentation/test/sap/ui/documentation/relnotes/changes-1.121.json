@@ -3,6 +3,33 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "f674b19c692347e04bc1d804b2e6edc9f21d5464",
+        "type": "FIX",
+        "text": " Demo Kit: Opa tests typo fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "b0378ae76924cba29107fa2c940bce53add391bd",
+        "type": "FIX",
+        "text": " Demo Kit: Redirect for standalone apps fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "4702ac287a51f12764dce84edd49ef6b5cbf7449",
+        "type": "FIX",
+        "text": " Demo Kit: Align DemoApps category header"
+      },
+      {
         "id": "07ce8256d4d4dd9d854e552b2eefc8c73cbf1c73",
         "type": "FIX",
         "text": " Rename sap/ui/core/Component.get to sap/ui/core/Component.getComponentById"

@@ -3,6 +3,17 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "0148f3d7cbfe362c6df946bb3e98ae525a729681",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Item title truncates only if needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380140409"
+          }
+        ]
+      },
+      {
         "id": "53ce0c1cc38a24ca782131b9c10de7ed47ca3468",
         "type": "FIX",
         "text": " sap.m.MenuButton: Arrow has hover state now",
@@ -75,6 +86,17 @@
           {
             "type": "BCP",
             "reference": "2370075972"
+          }
+        ]
+      },
+      {
+        "id": "5df5ba3466419fabea37aaa2c6f4b0bb3a640afe",
+        "type": "FIX",
+        "text": " sap.m.MessageView: prevent navigation back and forward on details page update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370129779"
           }
         ]
       },

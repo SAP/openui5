@@ -3,6 +3,11 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "a66695f0d12aa6f511918909bc9a0f83377b241a",
+        "type": "FIX",
+        "text": " Integration Cards: Fixed failing visual tests"
+      },
+      {
         "id": "3f1f180bbb67d0ee1b59571809745ce847cc4f24",
         "type": "FIX",
         "text": " Integration Cards: Date/Time syntax in Adaptive cards is no longer processed as i18n placeholder"

@@ -3,6 +3,22 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "a6bbb20b9afb06888e7c517bbdea0345a9de1844",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: redesign dual-type calendar"
+      },
+      {
+        "id": "a737945c940dfd28f93ea0f4facec905834aad6b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fix visual issues with special days",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "768abace079259cfd9c76a3ee5bb8da1f35b83ec",
         "type": "FIX",
         "text": " sap.m.MenuButton: Accept Button type button is displayed correctly in all themes",

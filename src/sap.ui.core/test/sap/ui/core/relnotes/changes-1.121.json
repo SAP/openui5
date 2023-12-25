@@ -3,6 +3,27 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "56ac9c875048c053b273a2e48213e438362d46e8",
+        "type": "FIX",
+        "text": " sap/base/i18n/Formatting: Fix QUnit tests"
+      },
+      {
+        "id": "b5c3d4b8dd35b6d6bbec1f5fd89ed39f6012e02d",
+        "type": "FIX",
+        "text": " sap/base/i18n/Formatting: Ensure setting inital settings"
+      },
+      {
+        "id": "d7acbfd2ce2f9f037c9f19589461adeffdd41ab2",
+        "type": "FIX",
+        "text": " sap.ui.core.date.UI5Date: No timeshift if given time does not exist in browser time zone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370140369"
+          }
+        ]
+      },
+      {
         "id": "05562254388bd8ff27e65a96c95023aad50fd186",
         "type": "FIX",
         "text": " sap/ui/core/message/MessageMixin: Do not refresh MessageModel when control id already added to a Message",

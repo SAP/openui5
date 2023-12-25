@@ -3,6 +3,11 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "f16f2e1529e8b4940d2068d2b7d2c3e74977b5cb",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Relocate volatile unit test"
+      },
+      {
         "id": "0c93e626305d58f91bafa8953acca6dd13bac7d4",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: Fix non-expanding Table",

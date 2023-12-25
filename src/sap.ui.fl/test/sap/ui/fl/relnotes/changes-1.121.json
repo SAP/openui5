@@ -3,6 +3,11 @@
     "date": "December 2023",
     "notes": [
       {
+        "id": "c24a6477bb01552228055d9bc02e097ebcce8acb",
+        "type": "FIX",
+        "text": " sap.ui.fl: resetChanges issue fixed"
+      },
+      {
         "id": "07ce8256d4d4dd9d854e552b2eefc8c73cbf1c73",
         "type": "FIX",
         "text": " Rename sap/ui/core/Component.get to sap/ui/core/Component.getComponentById"
