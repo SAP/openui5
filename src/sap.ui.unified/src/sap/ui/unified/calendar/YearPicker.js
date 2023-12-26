@@ -789,9 +789,8 @@ sap.ui.define([
 
 	function _initItemNavigation(){
 
-		var oFocusedDate = this.getDate()
-			? CalendarDate.fromLocalJSDate(this.getDate(), this._getPrimaryCalendarType())
-			: this._getDate(),
+		var oFocusedDate = this.getProperty("_middleDate")
+		|| (this.getDate() ? CalendarDate.fromLocalJSDate(this.getDate(), this._getPrimaryCalendarType()) : this._getDate()),
 			oRootDomRef = this.getDomRef(),
 			aDomRefs = this.$().find(".sapUiCalItem"),
 			iIndex, sYyyymmdd, oCurrentDate, i;
