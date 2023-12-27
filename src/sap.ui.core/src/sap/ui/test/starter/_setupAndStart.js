@@ -466,6 +466,8 @@ sap.ui.define([
 
 	}
 
+	utils.registerResourceRoots();
+
 	var oParams = new URLSearchParams(window.location.search),
 		sSuiteName = utils.getAttribute('data-sap-ui-testsuite') || oParams.get("testsuite"),
 		sTestName = utils.getAttribute('data-sap-ui-test') || oParams.get("test");
