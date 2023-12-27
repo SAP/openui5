@@ -728,13 +728,15 @@ sap.ui.define([
 		// Once the ChangePersistence is no longer used
 		// make sure to remove the safeguard
 		if (_mInstances[sReference]) {
-			var aFlexObjects = _mInstances[sReference].runtimePersistence.flexObjects;
-			var iIndex = aFlexObjects.indexOf(oFlexObject);
-			aFlexObjects.splice(iIndex, 1);
-			oFlexObjectsDataSelector.checkUpdate(
-				{ reference: sReference },
-				[{ type: "removeFlexObject", updatedObject: oFlexObject }]
-			);
+			const aFlexObjects = _mInstances[sReference].runtimePersistence.flexObjects;
+			const iIndex = aFlexObjects.indexOf(oFlexObject);
+			if (iIndex >= 0) {
+				aFlexObjects.splice(iIndex, 1);
+				oFlexObjectsDataSelector.checkUpdate(
+					{ reference: sReference },
+					[{ type: "removeFlexObject", updatedObject: oFlexObject }]
+				);
+			}
 		}
 	};
 
@@ -744,17 +746,23 @@ sap.ui.define([
 		// Once the ChangePersistence is no longer used
 		// make sure to remove the safeguard
 		if (_mInstances[sReference] && aFlexObjects.length > 0) {
-			var aCurrentFlexObjects = _mInstances[sReference].runtimePersistence.flexObjects;
+			let bFlexObjectRemoved = false;
+			const aCurrentFlexObjects = _mInstances[sReference].runtimePersistence.flexObjects;
 			aFlexObjects.forEach(function(oFlexObject) {
-				var iIndex = aCurrentFlexObjects.indexOf(oFlexObject);
-				aCurrentFlexObjects.splice(iIndex, 1);
+				const iIndex = aCurrentFlexObjects.indexOf(oFlexObject);
+				if (iIndex >= 0) {
+					bFlexObjectRemoved = true;
+					aCurrentFlexObjects.splice(iIndex, 1);
+				}
 			});
-			oFlexObjectsDataSelector.checkUpdate(
-				{ reference: sReference },
-				aFlexObjects.map(function(oFlexObject) {
-					return { type: "addFlexObject", updatedObject: oFlexObject };
-				})
-			);
+			if (bFlexObjectRemoved) {
+				oFlexObjectsDataSelector.checkUpdate(
+					{ reference: sReference },
+					aFlexObjects.map(function(oFlexObject) {
+						return { type: "removeFlexObject", updatedObject: oFlexObject };
+					})
+				);
+			}
 		}
 	};
 
