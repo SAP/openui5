@@ -493,6 +493,20 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
+		replaceAllAggregation: async function(oControl, sAggregationName, aNewControls) {
+			const oAggregationNode = await XmlTreeModifier._findAggregationNode(oControl, sAggregationName);
+			const aChildControls = await XmlTreeModifier._getControlsInAggregation(oControl, oAggregationNode);
+			aChildControls.forEach(function(oChildControl) {
+				oAggregationNode.removeChild(oChildControl);
+			});
+			aNewControls.forEach((oObject) => {
+				oAggregationNode.appendChild(oObject);
+			});
+		},
+
+		/**
+		 * @inheritDoc
+		 */
 		removeAllAggregation: function (oControl, sName) {
 			return XmlTreeModifier._findAggregationNode(oControl, sName)
 				.then(function (oAggregationNode) {
