@@ -52,19 +52,11 @@ sap.ui.define([
 		return IFrame.isValidUrl(encodeURI(sUrl));
 	}
 
-	function buildHashMapFromArray(aArray, sKeyFieldName, sValueFieldName) {
-		return aArray.reduce(function(mMap, oItem) {
-			mMap[oItem[sKeyFieldName]] = oItem[sValueFieldName];
-			return mMap;
-		}, {});
-	}
-
 	return Controller.extend("sap.ui.rta.plugin.iframe.AddIFrameDialogController", {
 		// eslint-disable-next-line object-shorthand
 		constructor: function(oJSONModel, mSettings) {
 			this._oJSONModel = oJSONModel;
 			this._importSettings(mSettings);
-			this._mParameterHashMap = this._buildParameterHashMap(mSettings);
 		},
 
 		/**
@@ -91,7 +83,7 @@ sap.ui.define([
 		 * Event handler for save button
 		 */
 		onSavePress() {
-			var sUrl = this._buildPreviewURL(this._buildReturnedURL());
+			const sUrl = this._buildPreviewURL();
 			if (isValidUrl(sUrl).result && this._areAllTextFieldsValid() && this._areAllValueStateNones()) {
 				this._close(this._buildReturnedSettings());
 			} else {
@@ -105,7 +97,7 @@ sap.ui.define([
 		 */
 		onShowPreview() {
 			const sReturnedURL = this._buildReturnedURL();
-			const sURL = this._buildPreviewURL(sReturnedURL);
+			const sURL = this._buildPreviewURL();
 			if (!isValidUrl(sURL).result) {
 				return;
 			}
@@ -126,7 +118,7 @@ sap.ui.define([
 					"/previewUseLegacyNavigation/value",
 					this._oJSONModel.getProperty("/useLegacyNavigation/value")
 				);
-				oIFrame.setUrl(sURL);
+				oIFrame.applySettings({ url: sURL });
 			} catch (oError) {
 				Log.error("Error previewing the URL: ", oError);
 			}
@@ -137,7 +129,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - Event
 		 */
 		onParameterPress(oEvent) {
-			var sKey = oEvent.getSource().getBindingContext().getObject().key;
+			const sKey = oEvent.getSource().getBindingContext("dialogInfo").getObject().key;
 			this._oJSONModel.setProperty("/frameUrl/value", this._addURLParameter(sKey));
 			this.onUrlChange();
 		},
@@ -174,15 +166,20 @@ sap.ui.define([
 
 		/**
 		 * Build preview URL
-		 *
-		 * @param {string} sEditURL - URL with parameters in braces
-		 * @returns {string} URL with parameters and values
+		 * @returns {string} URL with resolved bindings
 		 * @private
 		 */
-		_buildPreviewURL(sEditURL) {
-			return sEditURL.replace(/{(.*?)}/g, function(sMatch) {
-				return this._mParameterHashMap[sMatch];
-			}.bind(this));
+		_buildPreviewURL() {
+			const sUrl = this._buildReturnedURL();
+			const oResolver = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLinkResolver");
+			try {
+				oResolver.applySettings({
+					text: sUrl
+				});
+			} catch (err) {
+				return undefined;
+			}
+			return oResolver.getText();
 		},
 
 		/**
@@ -211,7 +208,7 @@ sap.ui.define([
 		},
 
 		onUrlChange() {
-			var sUrl = this._buildPreviewURL(this._buildReturnedURL());
+			const sUrl = this._buildPreviewURL();
 			const { result: bResult, error: sError } = isValidUrl(sUrl);
 			if (bResult) {
 				this._oJSONModel.setProperty("/frameUrlError/value", "");
@@ -225,20 +222,6 @@ sap.ui.define([
 				const sErrorText = _oTextResources.getText(sErrorKey);
 				this._oJSONModel.setProperty("/frameUrlError/value", sErrorText);
 			}
-		},
-
-		/**
-		 * Build hashmap for parameters
-		 *
-		 * @param {object} mParameters - URL parameters
-		 * @returns {object} Parameter hashmap
-		 * @private
-		 */
-		_buildParameterHashMap(mParameters) {
-			if (mParameters && mParameters.parameters) {
-				return buildHashMapFromArray(mParameters.parameters, "key", "value");
-			}
-			return {};
 		},
 
 		/**
@@ -382,6 +365,7 @@ sap.ui.define([
 					oElement.focus();
 					return true;
 				}
+				return false;
 			}, this);
 		}
 	});

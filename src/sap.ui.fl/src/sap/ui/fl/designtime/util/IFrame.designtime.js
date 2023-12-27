@@ -38,7 +38,7 @@ sap.ui.define([
 				useLegacyNavigation: oInitialSettings.useLegacyNavigation,
 				updateMode: true
 			};
-			return oAddIFrameDialog.open(mDialogSettings);
+			return oAddIFrameDialog.open(mDialogSettings, oIFrame);
 		})
 		.then(function(mSettings) {
 			if (!mSettings) {
