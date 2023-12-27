@@ -98,9 +98,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets a target ManagedObject to observe
+	 * Sets a target ManagedObject to observe.
 	 *
-	 * @param {string|sap.ui.base.ManagedObject} vTarget id or managed object to set
+	 * @param {sap.ui.core.ID|sap.ui.base.ManagedObject} vTarget ID or managed object to set
 	 * @return {sap.ui.dt.ManagedObjectObserver} returns this
 	 */
 	ManagedObjectObserver.prototype.setTarget = function(vTarget) {

@@ -386,7 +386,7 @@ sap.ui.define([
 	 * <b>Note:</b> it will be good to have dedicated Ids of the action items that will be selected programatically,
 	 * otherwise the Ids of the action items wouldn't be stable.
 	 *
-	 * @param {sap.f.SidePanelItem|string} vItem an action item or Id of the action item to select
+	 * @param {sap.f.SidePanelItem|sap.ui.core.ID} vItem an action item or Id of the action item to select
 	 * @returns {this} this for method chaining
 	 */
 	SidePanel.prototype.setSelectedItem = function(vItem) {

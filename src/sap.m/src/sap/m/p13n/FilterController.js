@@ -15,9 +15,7 @@ sap.ui.define([
 	 * Personalization <code>FilterState</code> object type. This object describes the state processed by this controller when accessing it through the {@link sap.m.p13n.Engine Engine}.
 	 *
 	 * @public
-	 * @typedef {object} sap.m.p13n.FilterState
-	 * @property {{string, sap.m.p13n.FilterStateItem[]}} filterState The filter state items for a provided key
-	 *
+	 * @typedef {Object<string, sap.m.p13n.FilterStateItem[]>} sap.m.p13n.FilterState
 	 */
 
 	/**
@@ -121,9 +119,15 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Searches for `oCondition` in `aConditions` and returns its index (or -1 if not found).
+	 * @param {sap.m.p13n.FilterStateItem} oCondition
+	 * @param {sap.m.p13n.FilterStateItem[]} aConditions
+	 * @returns {int} Index of `oCondition` in `aConditions`
+	 */
 	FilterController.prototype._indexOfCondition = function(oCondition, aConditions) {
-		const oExisitingCondition = aConditions.find((oExisitingCondition) => oExisitingCondition.operator == oCondition.operator && oExisitingCondition.values[0] == oCondition.values[0]);
-		return aConditions.indexOf(oExisitingCondition);
+		const oExistingCondition = aConditions.find((oExistingCondition) => oExistingCondition.operator == oCondition.operator && oExistingCondition.values[0] == oCondition.values[0]);
+		return aConditions.indexOf(oExistingCondition);
 	};
 
 	FilterController.prototype._createConditionChange = function(sChangeType, oControl, sFieldPath, oCondition) {
@@ -150,10 +154,10 @@ sap.ui.define([
 	/**
 	* Generates a set of changes based on the given conditions
 	*
-	* @param {array} sFieldPath The relevant fieldPath
-	* @param {array} aConditions The conditions after they have been changed
-	* @param {function} aOrigShadowConditions The conditions before they have been changed
-	* @param {object} oControl Control instance which is being used to generate the changes
+	* @param {string} sFieldPath The relevant fieldPath
+	* @param {sap.m.p13n.FilterStateItem[]} aConditions The conditions after they have been changed
+	* @param {sap.m.p13n.FilterStateItem[]} aOrigShadowConditions The conditions before they have been changed
+	* @param {sap.ui.core.Control} oControl Control instance which is being used to generate the changes
 	* @param {boolean} [bAbsoluteAppliance] Indicates whether the appliance should also implicitly remove entries in case they are not provided in the new state
 	*
 	* @returns {array} Array containing the delta based created changes
@@ -224,12 +228,12 @@ sap.ui.define([
 	* Generates a set of changes based on the given arrays for a specified control
 	*
 	* @param {object} mDeltaInfo Map containing the necessary information to calculate the diff as change objects
-	* @param {array} mDeltaInfo.existingState An array describing the control state before a adaptation
-	* @param {array} mDeltaInfo.changedState An array describing the control state after a certain adaptation
-	* @param {object} mDeltaInfo.control Control instance which is being used to generate the changes
+	* @param {sap.m.p13n.FilterState} mDeltaInfo.existingState An array describing the control state before a adaptation
+	* @param {sap.m.p13n.FilterState} mDeltaInfo.changedState An array describing the control state after a certain adaptation
+	* @param {sap.ui.core.Control} mDeltaInfo.control Control instance which is being used to generate the changes
+	* @param {boolean} [mDeltaInfo.applyAbsolute=true] Indicates whether the appliance should also implicitly remove entries in case they are not provided in the new state
 	* @param {object} mDeltaInfo.changeOperations Map containing the changeOperations for the given Control instance
 	* @param {string} mDeltaInfo.changeOperations.add Name of the control specific 'add' changehandler
-	* @param {boolean} mDeltaInfo.applyAbsolute Indicates whether the appliance should also implicitly remove entries in case they are not provided in the new state
 	* @param {string} mDeltaInfo.changeOperations.remove Name of the control specific 'remove' changehandler
 	* @param {string} [mDeltaInfo.changeOperations.move] Name of the control specific 'move' changehandler
 	* @param {string} [mDeltaInfo.generator] Name of the change generator (E.g. the namespace of the UI creating the change object)

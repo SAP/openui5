@@ -491,7 +491,7 @@ sap.ui.define([
 	/**
 	 * Sets the association for selectedItem. Set <code>null</code> to deselect.
 	 * @public
-	 * @param {string|sap.tnt.NavigationListItem} oItem The control to be set as selected
+	 * @param {sap.ui.core.ID|sap.tnt.NavigationListItem} oItem The control to be set as selected
 	 * @return {sap.tnt.NavigationList|null} The <code>selectedItem</code> association
 	 */
 	NavigationList.prototype.setSelectedItem = function (oItem) {
