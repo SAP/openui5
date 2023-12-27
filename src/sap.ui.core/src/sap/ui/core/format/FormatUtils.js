@@ -19,14 +19,15 @@ sap.ui.define([], function() {
 	const rAllSpaces = /\s/g;
 
 	/**
-	 * Normalizes the given string by removing RTL characters and replacing special space characters
-	 * by the standard ASCII space (\u0020).
+	 * Normalizes the given string by removing RTL characters and either by replacing special space
+	 * characters by the standard ASCII space (\u0020) or removing all spaces.
 	 *
 	 * @param {string} sValue The value to be normalized
-	 * @return {string} The normalized value
+	 * @param {boolean} [bRemoveSpaces=false] Whether all spaces are removed
+	 * @returns {string} The normalized value
 	 */
-	FormatUtils.normalize = function (sValue) {
-		return sValue.replace(rAllRTLCharacters, "").replace(rAllSpaces, " ");
+	FormatUtils.normalize = function (sValue, bRemoveSpaces) {
+		return sValue.replace(rAllRTLCharacters, "").replace(rAllSpaces, bRemoveSpaces ? "" : " ");
 	};
 
 	return FormatUtils;

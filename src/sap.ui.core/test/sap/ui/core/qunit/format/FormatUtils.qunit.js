@@ -27,7 +27,10 @@ sap.ui.define([
 	output : "abcdef"
 }].forEach((oFixture) => {
 	QUnit.test(`normalize: ${oFixture.output}`, function (assert) {
+		// code under test
 		assert.strictEqual(FormatUtils.normalize(oFixture.input), oFixture.output);
+		// code under test (remove whitespaces)
+		assert.strictEqual(FormatUtils.normalize(oFixture.input, true), oFixture.output.replaceAll(" ", ""));
 	});
 });
 });
