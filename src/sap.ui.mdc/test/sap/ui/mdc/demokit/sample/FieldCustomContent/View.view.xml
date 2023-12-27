@@ -1,0 +1,74 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mdc="sap.ui.mdc"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:form="sap.ui.layout.form"
+		controllerName="sap.ui.mdc.demokit.sample.FieldCustomContent.Controller">
+
+	<form:SimpleForm layout="ColumnLayout" editable="{path: 'view>/editMode'}">
+		<form:toolbar>
+			<OverflowToolbar>
+				<Title text="Fields"/>
+				<ToolbarSpacer/>
+				<ToggleButton text="Edit" type="Emphasized" pressed="{path: 'view>/editMode'}"/>
+			</OverflowToolbar>
+		</form:toolbar>
+
+		<Label text="MaskedInput in edit mode"/>
+		<mdc:Field id="F-Mask" 
+			value="{path: 'data>/ISBN', type: 'sap.ui.model.type.String'}"
+			editMode="{= ${view>/editMode} ? 'Editable' : 'Display'}"
+			showEmptyIndicator="true">
+			<mdc:contentEdit>
+				<MaskInput 
+					id="F-Mask-Input"
+					value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"
+					mask="999-99-999-9999-9"
+					placeholderSymbol="_"
+					placeholder="Enter thirteen-digit number"
+					showClearIcon="true"
+					width="100%"/>
+			</mdc:contentEdit>
+		</mdc:Field>
+
+		<Label text="Slider in edit mode"/>
+		<mdc:Field id="F-Slider" 
+			value="{path: 'data>/integer', type: 'sap.ui.model.type.Integer'}"
+			editMode="{= ${view>/editMode} ? 'Editable' : 'Display'}"
+			showEmptyIndicator="true">
+			<mdc:contentEdit>
+				<Slider value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"/>
+			</mdc:contentEdit>
+		</mdc:Field>
+
+		<Label text="ObjectStatus in display mode"/>
+		<mdc:Field id="F-Object" 
+			value="{path: 'data>/string', type: 'sap.ui.model.type.String'}"
+			editMode="{= ${view>/editMode} ? 'Editable' : 'Display'}"
+			showEmptyIndicator="true">
+			<mdc:contentDisplay>
+				<ObjectStatus 
+					id="F-Object-Display"
+					text="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"
+					state="Information"
+					inverted="true"
+					width="100%"/>
+			</mdc:contentDisplay>
+		</mdc:Field>
+
+		<Label text="CheckBox in edit and display mode"/>
+		<mdc:Field id="F-Check" 
+			value="{path: 'data>/boolean', type: 'sap.ui.model.type.Boolean'}"
+			editMode="{= ${view>/editMode} ? 'Editable' : 'Display'}"
+			showEmptyIndicator="true">
+			<mdc:content>
+				<CheckBox 
+					id="F-Check-Control"
+					selected="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"
+					displayOnly="{= !${view>/editMode}}"
+					width="100%"/>
+			</mdc:content>
+		</mdc:Field>
+	</form:SimpleForm>
+</mvc:View>
