@@ -725,9 +725,6 @@ function(
 		/**
 		 * Returns an InvisibleText control for the ARIA labelled-by attribute of the header toolbar of the page.
 		 *
-		 * @memberof Page.prototype
-		 * @function
-		 * @name _getHeaderToolbarAriaLabelledBy
 		 * @param {string} sId - The ID of header toolbar aggregation.
 		 * @returns {sap.ui.core.InvisibleText} The InvisibleText control for the header toolbar ARIA labelled-by attribute.
 		 *
@@ -745,9 +742,6 @@ function(
 		/**
 		 * Returns an InvisibleText control for the ARIA labelled-by attribute of the footer toolbar of the page.
 		 *
-		 * @memberof Page.prototype
-		 * @function
-		 * @name _getFooterToolbarAriaLabelledBy
 		 * @param {string} sId - The ID of the page.
 		 * @returns {sap.ui.core.InvisibleText} The InvisibleText control for the footer toolbar ARIA labelled-by attribute.
 		 *

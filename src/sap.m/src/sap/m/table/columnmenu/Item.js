@@ -86,7 +86,7 @@ sap.ui.define([
 		}
 	});
 
-	/**
+	/*
 	 * @override
 	 */
 	Item.prototype.setShowResetButton = function (bShowResetButton) {
@@ -97,7 +97,7 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
+	/*
 	 * @override
 	 */
 	Item.prototype.setResetButtonEnabled = function (bResetButtonEnabled) {
@@ -108,7 +108,7 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
+	/*
 	 * @override
 	 */
 	Item.prototype.setShowConfirmButton = function (bShowConfirmButton) {
@@ -119,7 +119,7 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
+	/*
 	 * @override
 	 */
 	Item.prototype.setShowCancelButton = function (bShowCancelButton) {

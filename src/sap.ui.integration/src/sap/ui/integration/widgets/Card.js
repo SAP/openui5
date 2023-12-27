@@ -813,7 +813,7 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
+	/*
 	 * @override
 	 */
 	Card.prototype.setParameters = function (vValue) {

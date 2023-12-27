@@ -91,12 +91,6 @@ sap.ui.define([
 	 */
 
 	/**
-	 * @namespace
-	 * @name sap.m.p13n.MetadataHelper
-	 * @public
-	 */
-
-	/**
 	 *
 	 * The central registration for personalization functionality.
 	 * The registration is a precondition for using <code>Engine</code> functionality for a control instance.

@@ -690,7 +690,7 @@ sap.ui.define([
 	/**
 	 * Removes an item from the aggregation named <code>items</code>.
 	 *
-	 * @param {int | string | sap.ui.core.Control} vItem The item to remove or its index or ID.
+	 * @param {int | sap.ui.core.ID | sap.ui.core.Control} vItem The item to remove or its index or ID.
 	 * @returns {sap.ui.core.Control|null} The removed item or <code>null</code>.
 	 * @public
 	 */

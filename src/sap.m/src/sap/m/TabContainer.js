@@ -401,7 +401,7 @@ sap.ui.define([
 		/**
 		 * Removes an item from the aggregation named <code>items</code>.
 		 *
-		 * @param {int | string | sap.m.TabContainerItem} vItem The item to remove or its index or ID
+		 * @param {int | sap.ui.core.ID | sap.m.TabContainerItem} vItem The item to remove or its index or ID
 		 * @returns {sap.m.TabContainerItem|null} The removed item or <code>null</code>
 		 * @public
 		 */

@@ -810,7 +810,7 @@ function(
 	/**
 	 * Setter for association <code>selectedButton</code>.
 	 *
-	 * @param {string | sap.m.Button | null | undefined} vButton New value for association <code>setSelectedButton</code>
+	 * @param {sap.ui.core.ID | sap.m.Button | null | undefined} vButton New value for association <code>setSelectedButton</code>
 	 *    An sap.m.Button instance which becomes the new target of this <code>selectedButton</code> association.
 	 *    Alternatively, the ID of an sap.m.Button instance may be given as a string.
 	 *    If the value of null, undefined, or an empty string is provided the first item will be selected.
@@ -838,7 +838,7 @@ function(
 	/**
 	 * Setter for association <code>selectedItem</code>.
 	 *
-	 * @param {string | sap.m.SegmentedButtonItem | null | undefined} vItem New value for association <code>setSelectedItem</code>
+	 * @param {sap.ui.core.ID | sap.m.SegmentedButtonItem | null | undefined} vItem New value for association <code>setSelectedItem</code>
 	 *    An sap.m.SegmentedButtonItem instance which becomes the new target of this <code>selectedItem</code> association.
 	 *    Alternatively, the ID of an <code>sap.m.SegmentedButtonItem</code> instance may be given as a string.
 	 *    If the value of null, undefined, or an empty string is provided, the first item will be selected.

@@ -116,7 +116,7 @@ sap.ui.define(['./Select', "sap/ui/core/Element", 'sap/ui/core/InvisibleText', '
 		/**
 		 * Removes the given button from the <code>ActionSelect</code> content.
 		 *
-		 * @param {int | string | sap.m.Button} vButton The button to remove or its index or ID.
+		 * @param {int | sap.ui.core.ID | sap.m.Button} vButton The button to remove or its index or ID.
 		 * @returns {string|null} The ID of the removed button or <code>null</code>.
 		 * @public
 		 */

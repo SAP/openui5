@@ -165,7 +165,7 @@ sap.ui.define([
 		/**
 		* Sets the <code>selectedItem</code> association.
 		*
-		* @param {string | sap.f.ProductSwitchItem | null} vItem New value for the <code>selectedItem</code> association.
+		* @param {sap.ui.core.ID | sap.f.ProductSwitchItem | null} vItem New value for the <code>selectedItem</code> association.
 		* If an ID of a <code>sap.f.ProductSwitchItem</code> instance is given, the item with this ID becomes the <code>selectedItem</code> association.
 		* Alternatively, a <code>sap.f.ProductSwitchItem</code> instance may be given or <code>null</code> to clear the selection.
 		*

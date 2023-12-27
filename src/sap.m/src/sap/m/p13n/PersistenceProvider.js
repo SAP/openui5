@@ -62,6 +62,8 @@ sap.ui.define([
 	/**
 	 * Set the mode for the <code>PersistenceProvider</code>.
 	 *
+	 * @param {sap.m.p13n.enums.PersistenceMode} sValue
+	 * @returns {this}
 	 * @override
 	 * @private
 	 * @ui5-restricted sap.fe

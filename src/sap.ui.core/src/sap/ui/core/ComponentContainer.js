@@ -328,7 +328,7 @@ sap.ui.define([
 	 * to the component will be set and the models will be propagated if defined.
 	 * If the <code>usage</code> property is set the ComponentLifecycle is processed like a "Container" lifecycle.
 	 *
-	 * @param {string|sap.ui.core.UIComponent} vComponent ID of an element which becomes the new target of this component association. Alternatively, an element instance may be given.
+	 * @param {sap.ui.core.ID|sap.ui.core.UIComponent} vComponent ID of an element which becomes the new target of this component association. Alternatively, an element instance may be given.
 	 * @return {this} the reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */

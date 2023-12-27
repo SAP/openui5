@@ -684,7 +684,7 @@ sap.ui.define([
 		 * This function needs to be overridden to prevent any rendering while some
 		 * content is still being added.
 		 *
-		 * @param {int|string|sap.ui.core.Control} oContent The content that should be removed from the layout
+		 * @param {int|sap.ui.core.ID|sap.ui.core.Control} oContent The content that should be removed from the layout
 		 * @public
 		 */
 		ResponsiveFlowLayout.prototype.removeContent = function(oContent) {
