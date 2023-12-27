@@ -272,6 +272,19 @@ sap.ui.define([
 
 	}
 
+	function registerResourceRoots(oScriptTag) {
+		const sResourceRoots = getAttribute("data-sap-ui-resource-roots");
+		if (!sResourceRoots) {
+			return;
+		}
+		const oResourceRoots = JSON.parse(sResourceRoots);
+		const paths = {};
+		for (const n in oResourceRoots) {
+			paths[n.replace(/\./g, "/")] = oResourceRoots[n] || ".";
+		}
+		sap.ui.loader.config({ paths });
+	}
+
 	sap.ui.loader.config({
 		paths: {
 			'test-resources': sap.ui.require.toUrl("") + "/../test-resources/"
@@ -285,7 +298,8 @@ sap.ui.define([
 		getAttribute: getAttribute,
 		getDefaultSuiteName: getDefaultSuiteName,
 		getSuiteConfig: getSuiteConfig,
-		whenDOMReady: whenDOMReady
+		whenDOMReady: whenDOMReady,
+		registerResourceRoots: registerResourceRoots
 	};
 
 });
