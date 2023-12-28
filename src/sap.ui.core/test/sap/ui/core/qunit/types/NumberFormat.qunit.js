@@ -2,13 +2,14 @@
 sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
+	"sap/ui/core/format/FormatUtils",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/base/Log",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Supportability"
-], function(Formatting, Localization, NumberFormat, Locale, LocaleData, Log, Configuration, Supportability) {
+], function(Formatting, Localization, FormatUtils, NumberFormat, Locale, LocaleData, Log, Configuration, Supportability) {
 	"use strict";
 
 	/*eslint no-floating-decimal:0 */
@@ -1858,6 +1859,40 @@ sap.ui.define([
 		// ambiguous matches resulting of case-insensitivity are not parseable
 		assert.deepEqual(oFormat.parse("c"), null);
 		assert.deepEqual(oFormat.parse("C"), null);
+	});
+
+	//*********************************************************************************************
+	// JIRA: CPOUI5MODELS-1515
+	// normalisation of whitespaces and RTL codes in value and unit pattern
+	QUnit.test("#parse: unit pattern containing RTL characters", function (assert) {
+		const sRTLCodes = "\u061c\u200e\u200f\u202a\u202b\u202c";
+		const sWhiteSpaces = "\u00a0\u2009\u202f ";
+		const sPattern = "{0}" + sWhiteSpaces + " لتر/١٠٠ كم" + sRTLCodes;
+		const oFormat = NumberFormat.getUnitInstance({
+			showNumber : true,
+			customUnits : { // use customUnits, so far in CLDR no unit pattern with RTL codes exists
+				myUnit : {
+					"unitPattern-count-other" : sPattern
+				}
+			}
+		}, new Locale("ar"));
+
+		const sValue = oFormat.format(42, "myUnit");
+		assert.deepEqual(sValue, "42" + sWhiteSpaces + " لتر/١٠٠ كم" + sRTLCodes);
+
+		const oFormatUtilsMock = this.mock(FormatUtils);
+		oFormatUtilsMock.expects("normalize") // #parse
+			.withExactArgs(sValue)
+			.callThrough();
+		oFormatUtilsMock.expects("normalize") // parseNumberAndUnit
+			.withExactArgs(sPattern)
+			.callThrough();
+		oFormatUtilsMock.expects("normalize") // getNumberFromShortened
+			.withExactArgs(sinon.match.string, true)
+			.atLeast(1).callThrough();
+
+		// code under test
+		assert.deepEqual(oFormat.parse(sValue), [42, "myUnit"]);
 	});
 
 	//*********************************************************************************************

@@ -198,7 +198,7 @@ sap.ui.define([
 	/**
 	 * Sets the association for <code>selectedItem</code>.
 	 * @public
-	 * @param {string|sap.tnt.NavigationListItem} vSelectedItem The control to be set as selected
+	 * @param {sap.ui.core.ID|sap.tnt.NavigationListItem} vSelectedItem The control to be set as selected
 	 * @return {sap.tnt.SideNavigation|null} The <code>selectedItem</code> association
 	 */
 	SideNavigation.prototype.setSelectedItem = function (vSelectedItem) {

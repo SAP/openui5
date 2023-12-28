@@ -703,7 +703,7 @@ function(
 
 	/**
 	 * Removes the selected dates of the grid.
-	 * @returns {object} An array of the removed DateRange objects
+	 * @returns {sap.ui.unified.DateRange[]} An array of the removed DateRange objects
 	 * @public
 	 */
 	SinglePlanningCalendar.prototype.removeAllSelectedDates = function () {
@@ -712,7 +712,7 @@ function(
 
 	/**
 	 * Gets the selected dates of the grid.
-	 * @returns {object} An array of DateRange objects
+	 * @returns {sap.ui.unified.DateRange[]} An array of DateRange objects
 	 * @public
 	 */
 	SinglePlanningCalendar.prototype.getSelectedDates = function () {
@@ -721,7 +721,7 @@ function(
 
 	/**
 	 * Adds a selected date to the grid.
-	 * @param {object} oSelectedDate A DateRange object
+	 * @param {sap.ui.unified.DateRange} oSelectedDate A DateRange object
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */

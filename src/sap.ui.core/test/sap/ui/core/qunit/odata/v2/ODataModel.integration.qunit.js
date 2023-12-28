@@ -11343,6 +11343,112 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 
+	//*********************************************************************************************
+	// Scenario: All contexts created by ODataTreeBinding consider the deep path of the tree binding that the OData
+	// messages can be properly assigned.
+	// JIRA: CPOUI5MODELS-1529, SNOW: CS20230006644418
+	QUnit.test("ODataTreeBinding: Message handling", function (assert) {
+		const oModel = createSpecialCasesModel();
+		const oResponseMessage = this.createResponseMessage("to_C_RSHMaintSchedSmltdOrdAndOp('id-0')/MaintenanceOrder",
+			"~errorMessage");
+		const sView = '\
+<VBox binding="{/DummySet(\'42\')}">\
+<t:TreeTable id="table"\
+		rows="{\
+			parameters: {\
+				countMode : \'Request\',\
+				numberOfExpandedLevels: 2,\
+				transitionMessagesOnly: true,\
+				treeAnnotationProperties: {\
+					hierarchyDrillStateFor: \'OrderOperationIsExpanded\',\
+					hierarchyLevelFor: \'OrderOperationRowLevel\',\
+					hierarchyNodeFor: \'OrderOperationRowID\',\
+					hierarchyParentNodeFor: \'OrderOperationParentRowID\'\
+				}\
+			},\
+			path: \'to_C_RSHMaintSchedSmltdOrdAndOp\'\
+		}"\
+		threshold="0"\
+		visibleRowCount="2">\
+	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
+</t:TreeTable>\
+</VBox>';
+
+		this.expectHeadRequest()
+			.expectRequest("DummySet('42')", {
+				__metadata: {uri: "/DummySet('42')"},
+				DummyID: "42"
+			}, {"sap-message" : getMessageHeader(oResponseMessage)})
+			// triggered by ODataTreeBinding#_getCountForNodeId
+			.expectRequest("DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp/$count?$filter=OrderOperationRowLevel eq 0",
+				"273")
+			.expectRequest({ // triggered by ODataTreeBinding#_loadSubNodes
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp?"
+						+ "$filter=OrderOperationRowLevel eq 0&$skip=0&$top=2"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0')"},
+						MaintenanceOrder: "0",
+						OrderOperationIsExpanded: "collapsed",
+						OrderOperationRowID: "id-0",
+						OrderOperationRowLevel: 0
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-1')"},
+						MaintenanceOrder: "1",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationRowID: "id-1",
+						OrderOperationRowLevel: 0
+					}]
+				})
+			// triggered by ODataTreeBinding#_getCountForNodeId
+			.expectRequest(
+				"DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp/$count?$filter=OrderOperationParentRowID eq 'id-0'",
+				"2")
+			.expectRequest({ // triggered by ODataTreeBinding#_loadSubNodes
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp?"
+						+ "$filter=OrderOperationParentRowID eq 'id-0'&$skip=0&$top=2"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0.0')"},
+						MaintenanceOrder: "0.0",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "id-0",
+						OrderOperationRowID: "id-0.0",
+						OrderOperationRowLevel: 1
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0.1')"},
+						MaintenanceOrder: "0.1",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "id-0",
+						OrderOperationRowID: "id-0.1",
+						OrderOperationRowLevel: 1
+					}]
+				})
+			.expectMessages([{
+				code : oResponseMessage.code,
+				fullTarget : "/DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp('id-0')/MaintenanceOrder",
+				message : oResponseMessage.message,
+				persistent : false,
+				target : "/C_RSHMaintSchedSmltdOrdAndOp('id-0')/MaintenanceOrder",
+				type : mSeverityMap[oResponseMessage.severity]
+			}]);
+
+		return this.createView(assert, sView, oModel).then(() => {
+			const oTable = this.oView.byId("table");
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["0"], ["0.0"]]);
+
+			let aMessages = oTable.getBindingContext().getMessages();
+			assert.strictEqual(aMessages.length, 1);
+			assert.strictEqual(aMessages[0].code, oResponseMessage.code);
+			aMessages = oTable.getRows()[0].getBindingContext().getMessages(); // binding context of first row
+			assert.strictEqual(aMessages.length, 1);
+			assert.strictEqual(aMessages[0].code, oResponseMessage.code);
+		});
+	});
+
 	[{
 		sConstraints : "",
 		sMessageText : "EnterInt",

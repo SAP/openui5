@@ -26,7 +26,11 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		}
+		},
+		"supportedThemes": [
+			"sap_fiori_3",
+			"sap_horizon"
+		]
 	},
 	"sap.ui5": {
 		"_version": "1.7.0",
@@ -40,8 +44,8 @@
 		"dependencies": {
 			"minUI5Version": "1.70",
 			"libs": {
-				"sap.ui.core": {
-					"minVersion": "1.58.0",
+				"sap.ui.core" : {
+					"minVersion" : "1.58.0",
 					"lazy": true
 				},
 				"sap.m": {

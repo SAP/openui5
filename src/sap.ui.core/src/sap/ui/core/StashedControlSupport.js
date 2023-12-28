@@ -10,7 +10,7 @@ sap.ui.define(["sap/base/assert", "sap/ui/core/Element"],
 		/**
 		 * @class Mixin for Controls which enables stashing of controls declaratively in XMLViews
 		 *
-		 * NOTE: stashingh of <code>sap.ui.core.Fragments</code> and <code>sap.ui.core.mvc.View</code> is not supported!
+		 * NOTE: stashing of <code>sap.ui.core.Fragments</code> and <code>sap.ui.core.mvc.View</code> is not supported!
 		 *
 		 * <code>stashed</code> Controls are created as placeholder control without any content and bindings
 		 * and added to the Control tree. That means it is available with <code>Element.getElementById</code>
@@ -40,7 +40,7 @@ sap.ui.define(["sap/base/assert", "sap/ui/core/Element"],
 		StashedControlSupport.mixInto = function(fnClass) {
 			assert(!fnClass.prototype.unstash, "StashedControlSupport: fnClass already has method 'unstash', sideeffects possible", fnClass.getMetadata().getName());
 			if (fnClass.getMetadata().isA("sap.ui.core.Fragment") || fnClass.getMetadata().isA("sap.ui.core.mvc.View")) {
-				throw new Error("Stashing is not supported for sap.ui.coreFragment or sap.ui.core.mvc.View");
+				throw new Error("Stashing is not supported for sap.ui.core.Fragment or sap.ui.core.mvc.View");
 			}
 			mixInto(fnClass);
 		};

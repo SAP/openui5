@@ -917,22 +917,28 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_getContextsForNodeId: node ID available", function (assert) {
 		var oModel = {
-				getContext : function () {},
-				getServiceMetadata : function () {}
+				getContext() {},
+				getServiceMetadata() {},
+				resolveDeep() {}
 			},
 			oBinding = {
 				_mLoadedSections : {},
 				_iPageSize : 50,
 				bClientOperation : true,
+				oContext : "~oContext",
 				oFinalLengths : {},
-				oKeys : {"~sNodeId" : ["~sKey0", undefined]},
+				oKeys : {"~sNodeId" : ["~sKey(id='0')", undefined]},
 				oLengths : {"~sNodeId" : 2},
 				oModel : oModel,
-				sOperationMode : OperationMode.Default
+				sOperationMode : OperationMode.Default,
+				sPath : "~sPath"
 			};
 
 		this.mock(oModel).expects("getServiceMetadata").withExactArgs().returns({/*not relevant*/});
-		this.mock(oModel).expects("getContext").withExactArgs("/~sKey0").returns("~V2Context");
+		// SNOW: CS20230006644418
+		this.mock(oModel).expects("resolveDeep").withExactArgs("~sPath", "~oContext").returns("~sDeepPath");
+		this.mock(oModel).expects("getContext").withExactArgs("/~sKey(id='0')", "~sDeepPath(id='0')")
+			.returns("~V2Context");
 
 		// code under test
 		assert.deepEqual(

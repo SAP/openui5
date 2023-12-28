@@ -285,7 +285,10 @@ sap.ui.define([
 					if (oData) {
 						// we expect only one root node
 						var oEntry = oData;
-						var sKey =  that.oModel._getKey(oEntry);
+						var sKey = that.oModel._getKey(oEntry);
+						// _loadSingleRootNodeByNavigationProperties is only used if there are no tree
+						// annotations so "navigation"-mode is used which is is deprecated since 1.44 (see
+						// mParameters.navigation), so deep path isn't needed
 						var oNewContext = that.oModel.getContext('/' + sKey);
 
 						that.oRootContext = oNewContext;
@@ -613,7 +616,9 @@ sap.ui.define([
 				// collect requested contexts if loaded
 				if (i >= iStartIndex && i < iStartIndex + iLength) {
 					if (sKey) {
-						aContexts.push(this.oModel.getContext('/' + sKey));
+						const sDeepPath = this.oModel.resolveDeep(this.sPath, this.oContext)
+							+ sKey.slice(sKey.indexOf("("));
+						aContexts.push(this.oModel.getContext('/' + sKey, sDeepPath));
 					} else {
 						aContexts.push(undefined);
 					}
@@ -679,8 +684,9 @@ sap.ui.define([
 
 					if (sNodeId) {
 						sFilterParams = sFilterParams ? "%20and%20" + sFilterParams : "";
-
-						//retrieve the correct context for the sNodeId (it's an OData-Key) and resolve the correct hierarchy node property as a filter value
+						// Retrieve the correct context for sNodeId (it's an OData-Key) and resolve the correct
+						// hierarchy node property as a filter value;
+						// aMissingSections are only requested for known contexts, so deep path isn't needed
 						var oNodeContext = this.oModel.getContext("/" + sNodeId);
 						var sNodeIdForFilter = oNodeContext.getProperty(this.oTreeProperties["hierarchy-node-for"]);
 
@@ -870,14 +876,14 @@ sap.ui.define([
 		var sFilterParams = this.getFilterParams() || "";
 		var sNodeFilter = "";
 		if (this.bHasTreeAnnotations) {
-			//resolve OData-Key to hierarchy node property value for filtering
-			var oNodeContext = this.oModel.getContext("/" + sNodeId);
-			var sHierarchyNodeId = oNodeContext.getProperty(this.oTreeProperties["hierarchy-node-for"]);
-
 			sAbsolutePath = this.getResolvedPath();
 			// only filter for the parent node if the given node is not the root (null)
 			// if root and we $count the collection
 			if (sNodeId != null) {
+				// If node ID is given the count is requested for a missing section whose context is already available,
+				// so deep path isn't needed
+				const oNodeContext = this.oModel.getContext("/" + sNodeId);
+				const sHierarchyNodeId = oNodeContext.getProperty(this.oTreeProperties["hierarchy-node-for"]);
 				sNodeFilter = this._getNodeFilterParams({id: sHierarchyNodeId});
 			} else {
 				sNodeFilter = this._getLevelFilterParams("EQ", this.getRootLevel());
@@ -1692,6 +1698,7 @@ sap.ui.define([
 		// checks if a single key matches the filters
 		var fnFilterKey = function (sKey) {
 			var aFiltered = FilterProcessor.apply([sKey], oCombinedFilter, function(vRef, sPath) {
+				// Only used in client mode, so deep path isn't needed
 				var oContext = that.oModel.getContext('/' + vRef);
 				return that.oModel.getProperty(sPath, oContext);
 			}, that.mNormalizeCache);
@@ -1850,6 +1857,7 @@ sap.ui.define([
 
 		// retrieves the sort value
 		var fnGetValue = function(sKey, sPath) {
+			// Only used in client mode, so deep path isn't needed
 			oContext = that.oModel.getContext('/' + sKey);
 			return that.oModel.getProperty(sPath, oContext);
 		};

@@ -166,24 +166,26 @@ sap.ui.define([
 	/**
 	 * Open the Add IFrame Dialog
 	 *
-	 * @param {object|undefined} mSettings - existing IFrame settings
-	 * @returns {Promise} promise resolving to IFrame settings
+	 * @param {object|undefined} mSettings - Existing IFrame settings
+	 * @param {sap.ui.core.Control} oReferenceControl - Control to take the default model from
+	 * @returns {Promise} Promise resolving to IFrame settings
 	 * @public
 	 */
-	AddIFrameDialog.prototype.open = function(mSettings) {
+	AddIFrameDialog.prototype.open = function(mSettings, oReferenceControl) {
 		return new Promise(function(resolve) {
 			this._fnResolve = resolve;
-			this._createDialog(mSettings);
+			this._createDialog(mSettings, oReferenceControl);
 		}.bind(this));
 	};
 
 	/**
 	 * Create the Add IFrame Dialog
 	 *
-	 * @param {object|undefined} mSettings - existing IFrame settings
+	 * @param {object|undefined} mSettings - Existing IFrame settings
+	 * @param {sap.ui.core.Control} oReferenceControl - Control to take the default model from
 	 * @private
 	 */
-	AddIFrameDialog.prototype._createDialog = function(mSettings) {
+	AddIFrameDialog.prototype._createDialog = function(mSettings, oReferenceControl) {
 		this._oJSONModel = createJSONModel(
 			!!mSettings?.updateMode,
 			!!mSettings?.asContainer,
@@ -198,7 +200,9 @@ sap.ui.define([
 		}).then(function(oAddIFrameDialog) {
 			this._oDialog = oAddIFrameDialog;
 			this._oDialog.addStyleClass(RtaUtils.getRtaStyleClassName());
-			this._oDialog.setModel(this._oJSONModel);
+			this._oDialog.setModel(this._oJSONModel, "dialogInfo");
+			this._oDialog.setModel(oReferenceControl.getModel());
+			this._oDialog.setBindingContext(oReferenceControl.getBindingContext());
 			this._openDialog();
 		}.bind(this)).catch(function(oError) {
 			Log.error("Error loading fragment sap.ui.rta.plugin.iframe.AddIFrameDialog: ", oError);
@@ -213,6 +217,9 @@ sap.ui.define([
 	AddIFrameDialog.prototype._openDialog = function() {
 		this._oDialog.attachAfterOpen(function() {
 			this._disablePanelExpand();
+			const oIframe = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewFrame");
+			const oUserModel = oIframe.getModel("$user");
+			this._oDialog.setModel(oUserModel, "$user");
 			this.fireOpened();
 		}.bind(this));
 

@@ -396,6 +396,17 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
+		replaceAllAggregation: async function(oControl, sAggregationName, aNewControls) {
+			const oAggregation = await this.findAggregation(oControl, sAggregationName);
+			oControl[oAggregation._sRemoveAllMutator]();
+			aNewControls.forEach((oNewControl, iIndex) => {
+				oControl[oAggregation._sInsertMutator](oNewControl, iIndex);
+			});
+		},
+
+		/**
+		 * @inheritDoc
+		 */
 		removeAllAggregation: function (oControl, sName) {
 			//special handling without invalidation for customData
 			if (sName === "customData") {

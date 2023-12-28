@@ -125,14 +125,6 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 		return this._oSplitter.getLayoutData();
 	};
 
-	/**
-	 * Pane insertion
-	 *
-	 * @public
-	 * @param oObject
-	 * @param iIndex
-	 * @returns {sap.ui.base.ManagedObject}
-	 */
 	PaneContainer.prototype.insertPane = function (oObject, iIndex) {
 		var vResult =  this.insertAggregation("panes", oObject, iIndex),
 			oEventDelegate = {
@@ -152,13 +144,6 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 		return vResult;
 	};
 
-	/**
-	 * Pane removal
-	 *
-	 * @public
-	 * @param oObject
-	 * @returns {sap.ui.base.ManagedObject}
-	 */
 	PaneContainer.prototype.removePane = function (oObject) {
 		var vResult =  this.removeAggregation("panes", oObject),
 			oEventDelegate = {

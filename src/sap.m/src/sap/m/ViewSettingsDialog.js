@@ -1194,7 +1194,7 @@ function(
 	 *
 	 * @override
 	 * @public
-	 * @param {sap.m.ViewSettingsItem|string} vItemOrKey The selected item, the item's string key
+	 * @param {sap.m.ViewSettingsItem|sap.ui.core.ID|string} vItemOrKey The selected item, the item's string key
 	 * or the item id
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 */
@@ -1239,7 +1239,7 @@ function(
 	 *
 	 * @override
 	 * @public
-	 * @param {sap.m.ViewSettingsItem|string} vItemOrKey The selected item, the item's string key
+	 * @param {sap.m.ViewSettingsItem|sap.ui.core.ID|string} vItemOrKey The selected item, the item's string key
 	 * or the item id
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 */
@@ -1288,7 +1288,7 @@ function(
 	 *
 	 * @override
 	 * @public
-	 * @param {sap.m.ViewSettingsItem|string|null} vItemOrKey The selected item or the item's key string
+	 * @param {sap.m.ViewSettingsItem|sap.ui.core.ID|string|null} vItemOrKey The selected item or the item's key string
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 */
 	ViewSettingsDialog.prototype.setSelectedPresetFilterItem = function(vItemOrKey) {
@@ -2751,7 +2751,7 @@ function(
 	 *
 	 * @override
 	 * @public
-	 * @param { int| sap.m.ViewSettingsFilterItem | string } vFilterItem The filter item's index, or the item itself, or its id
+	 * @param { int| sap.m.ViewSettingsFilterItem | sap.ui.core.ID } vFilterItem The filter item's index, or the item itself, or its ID
 	 * @returns {sap.m.ViewSettingsFilterItem|null} The removed item or <code>null</code>
 	 */
 	ViewSettingsDialog.prototype.removeFilterItem = function (vFilterItem) {

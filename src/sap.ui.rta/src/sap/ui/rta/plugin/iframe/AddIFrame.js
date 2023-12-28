@@ -83,7 +83,7 @@ sap.ui.define([
 				parameters: mURLParameters,
 				asContainer: bAsContainer
 			};
-			return oAddIFrameDialog.open(mAddIFrameDialogSettings);
+			return oAddIFrameDialog.open(mAddIFrameDialogSettings, oParent);
 		})
 		.then(function(mSettings) {
 			if (!mSettings) {
