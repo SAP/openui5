@@ -317,7 +317,8 @@ sap.ui.define([
 	 */
 	function getLanguageFromPattern(sPatternName) {
 		if (typeof sPatternName === "string") {
-			return sPatternName.substring(0, 2); // get the main language code only
+			const aParts = sPatternName.split(/[-_]/);
+			return aParts[0];
 		} else {
 			return null;
 		}
