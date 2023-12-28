@@ -808,7 +808,8 @@ function(
 		};
 
 		["invalidate", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass", "getBusyIndicatorDelay",
-			"setBusyIndicatorDelay", "getVisible", "setVisible", "getBusy", "setBusy"].forEach(function(sName){
+			"setBusyIndicatorDelay", "getVisible", "setVisible", "getBusy", "setBusy", "addCustomData", "getCustomData",
+			"destroyCustomData", "indexOfCustomData", "insertCustomData", "removeAllCustomData", "removeCustomData"].forEach(function(sName){
 			MessagePopover.prototype[sName] = function() {
 				if (this._oPopover && this._oPopover[sName]) {
 					var oPopover = this._oPopover;
