@@ -1,0 +1,33 @@
+{
+    "items": [],
+    "dates": [],
+    "countries": [
+        {"key": "AT", "name": "Austria"},
+        {"key": "BE", "name": "Belgium"},
+        {"key": "BG", "name": "Bulgaria"},
+        {"key": "HR", "name": "Croatia"},
+        {"key": "CY", "name": "Cyprus"},
+        {"key": "CZ", "name": "Czechia"},
+        {"key": "DK", "name": "Denmark"},
+        {"key": "EE", "name": "Estonia"},
+        {"key": "FI", "name": "Finland"},
+        {"key": "FR", "name": "France"},
+        {"key": "DE", "name": "Germany"},
+        {"key": "GR", "name": "Greece"},
+        {"key": "HU", "name": "Hungary"},
+        {"key": "IE", "name": "Ireland"},
+        {"key": "IT", "name": "Italy"},
+        {"key": "LV", "name": "Latvia"},
+        {"key": "LT", "name": "Lithuania"},
+        {"key": "LU", "name": "Luxembourg"},
+        {"key": "MT", "name": "Malta"},
+        {"key": "NL", "name": "Netherlands"},
+        {"key": "PL", "name": "Poland"},
+        {"key": "PT", "name": "Portugal"},
+        {"key": "RO", "name": "Romania"},
+        {"key": "SK", "name": "Slovakia"},
+        {"key": "SI", "name": "Slovenia"},
+        {"key": "ES", "name": "Spain"},
+        {"key": "SE", "name": "Sweden"}
+    ]
+}

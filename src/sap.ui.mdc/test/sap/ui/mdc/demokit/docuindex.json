@@ -68,7 +68,8 @@
 					"sap.ui.mdc.demokit.sample.TableFilterBarJson",
 					"sap.ui.mdc.demokit.sample.FieldValueHelpJson",
 					"sap.ui.mdc.demokit.sample.FieldCustomContent",
-					"sap.ui.mdc.demokit.sample.FieldTypes"
+					"sap.ui.mdc.demokit.sample.FieldTypes",
+					"sap.ui.mdc.demokit.sample.MultiValueField"
 				]
 			}
 		],
@@ -177,6 +178,11 @@
 				"id": "sap.ui.mdc.demokit.sample.FieldTypes",
 				"name": "Fields for different data types",
 				"description": "Fields with different data types rendering different input controls."
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.MultiValueField",
+				"name": "MultiValueField",
+				"description": "A MultiValueField updating it's JSON-Model"
 			}
 
 		]
