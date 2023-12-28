@@ -5,15 +5,16 @@
 (function() {
     "use strict";
 
+    // we want to be able to load our tests asynchronously - pause QUnit until we loaded everything
+    QUnit.config.autostart = false;
+
     sap.ui.require(["sap/ui/core/Core"], function(Core) {
 
         window['sap-ui-documentation-static'] = true;
         //We preset the path to api-index.json file to be the local mock folder
         window['sap-ui-documentation-config'] = {
-            apiInfoRootURL: '/test-resources/sap/ui/documentation/sdk/integration/mock/docs/api/api-index.json'
+            apiInfoRootURL: 'test-resources/sap/ui/documentation/sdk/integration/mock/docs/api/api-index.json'
         };
-        // we want to be able to load our tests asynchronously - pause QUnit until we loaded everything
-        QUnit.config.autostart = false;
         Core.attachInit(function () {
 
             sap.ui.require([
