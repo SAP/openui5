@@ -669,7 +669,8 @@ sap.ui.define([
 
 				var oNode = this._aNodes[iIndex] = this._aNodes[iIndex] || {
 					key: sKey,
-					context: this.oModel.getContext("/" + sKey),
+					context: this.oModel.getContext("/" + sKey,
+						this.oModel.resolveDeep(this.sPath, this.oContext) + sKey.slice(sKey.indexOf("("))),
 					magnitude: iMagnitude,
 					level: oEntry[this.oTreeProperties["hierarchy-level-for"]],
 					originalLevel: oEntry[this.oTreeProperties["hierarchy-level-for"]],
@@ -982,7 +983,8 @@ sap.ui.define([
 		}
 		var oNode = oParentNode.children[iPositionInParent] = oParentNode.children[iPositionInParent] || {
 			key: sKey,
-			context: this.oModel.getContext("/" + sKey),
+			context: this.oModel.getContext("/" + sKey,
+				this.oModel.resolveDeep(this.sPath, this.oContext) + sKey.slice(sKey.indexOf("("))),
 			//sub-child nodes have a magnitude of 0 at their first loading time
 			magnitude: 0,
 			//level is either given by the back-end or simply 1 level deeper than the parent

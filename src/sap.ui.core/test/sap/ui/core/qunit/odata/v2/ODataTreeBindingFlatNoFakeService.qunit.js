@@ -1062,18 +1062,20 @@ sap.ui.define([
 
 	//*********************************************************************************************
 ["leaf", "collapsed"].forEach(function (sDrillState) {
-	var sTitle = "_addServerIndexNodes: node has initiallyIsLeaf (drill state = " + sDrillState
-			+ ")";
+	var sTitle = "_addServerIndexNodes: node has initiallyIsLeaf (drill state = " + sDrillState + ")";
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
 				_iLowestServerLevel : null,
 				_aNodes : [],
 				_mSelected : {},
+				oContext : "~oContext",
 				oModel : {
-					getContext : function () {},
-					getKey : function () {}
+					getContext() {},
+					getKey() {},
+					resolveDeep() {}
 				},
+				sPath : "~sPath",
 				oTreeProperties : {
 					"hierarchy-drill-state-for" : "drillStateFor",
 					"hierarchy-level-for" : "levelFor",
@@ -1095,7 +1097,7 @@ sap.ui.define([
 				initiallyCollapsed : false,
 				initiallyIsLeaf : false,
 				isDeepOne : false,
-				key : "~key",
+				key : "~key('42')",
 				level : "~level",
 				magnitude : "~magnitude",
 				nodeState : {
@@ -1118,10 +1120,11 @@ sap.ui.define([
 			oExpectedNode.nodeState.collapsed = true;
 		}
 
-		this.mock(oBinding.oModel).expects("getKey")
-			.withExactArgs(sinon.match.same(oData.results[0]))
-			.returns("~key");
-		this.mock(oBinding.oModel).expects("getContext").withExactArgs("/~key").returns("~context");
+		this.mock(oBinding.oModel).expects("getKey").withExactArgs(sinon.match.same(oData.results[0]))
+			.returns("~key('42')");
+		this.mock(oBinding.oModel).expects("resolveDeep").withExactArgs("~sPath", "~oContext").returns("~deepPath");
+		this.mock(oBinding.oModel).expects("getContext").withExactArgs("/~key('42')", "~deepPath('42')")
+			.returns("~context");
 
 		// code under test
 		ODataTreeBindingFlat.prototype._addServerIndexNodes.call(oBinding, oData, 0);
@@ -1139,10 +1142,13 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
 				_mSelected : {},
+				oContext : "~oContext",
 				oModel : {
-					getContext : function () {},
-					getKey : function () {}
+					getContext() {},
+					getKey() {},
+					resolveDeep() {}
 				},
+				sPath : "~sPath",
 				oTreeProperties : {
 					"hierarchy-drill-state-for" : "drillStateFor"
 				}
@@ -1161,7 +1167,7 @@ sap.ui.define([
 				initiallyCollapsed : false,
 				initiallyIsLeaf : false,
 				isDeepOne : true,
-				key : "~key",
+				key : "~key('42')",
 				level : 4,
 				magnitude : 0,
 				nodeState : {
@@ -1185,14 +1191,13 @@ sap.ui.define([
 			oExpectedNode.nodeState.collapsed = true;
 		}
 
-		this.mock(oBinding.oModel).expects("getKey")
-			.withExactArgs(sinon.match.same(oEntry))
-			.returns("~key");
-		this.mock(oBinding.oModel).expects("getContext").withExactArgs("/~key").returns("~context");
+		this.mock(oBinding.oModel).expects("getKey").withExactArgs(sinon.match.same(oEntry)).returns("~key('42')");
+		this.mock(oBinding.oModel).expects("resolveDeep").withExactArgs("~sPath", "~oContext").returns("~deepPath");
+		this.mock(oBinding.oModel).expects("getContext").withExactArgs("/~key('42')", "~deepPath('42')")
+			.returns("~context");
 
 		// code under test
-		oResult = ODataTreeBindingFlat.prototype._createChildNode.call(oBinding, oEntry, oParent,
-			42);
+		oResult = ODataTreeBindingFlat.prototype._createChildNode.call(oBinding, oEntry, oParent, 42);
 
 		assert.deepEqual(oResult, oExpectedNode);
 		assert.strictEqual(oResult, oParent.children[42]);
