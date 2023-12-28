@@ -77,15 +77,16 @@ sap.ui.define([
 	 * @public
 	 */
 	Settings.prototype.isEnabled = function(aElementOverlays) {
-		var oElementOverlay = aElementOverlays[0];
-		var oAction = this.getAction(oElementOverlay);
+		const oElementOverlay = aElementOverlays[0];
+		const oResponsibleElementOverlay = this.getResponsibleElementOverlay(oElementOverlay);
+		const oAction = this.getAction(oResponsibleElementOverlay);
 		if (!oAction) {
 			return false;
 		}
 
 		if (typeof oAction.isEnabled !== "undefined") {
 			if (typeof oAction.isEnabled === "function") {
-				return oAction.isEnabled(oElementOverlay.getElement());
+				return oAction.isEnabled(oResponsibleElementOverlay.getElement());
 			}
 			return oAction.isEnabled;
 		}
@@ -246,32 +247,33 @@ sap.ui.define([
 	 * @return {object[]} array of the items with required data
 	 */
 	Settings.prototype.getMenuItems = function(aElementOverlays) {
-		var oElementOverlay = aElementOverlays[0];
-		var vSettingsActions = this.getAction(oElementOverlay);
+		const oElementOverlay = aElementOverlays[0];
+		const oResponsibleElementOverlay = this.getResponsibleElementOverlay(oElementOverlay);
+		let vSettingsActions = this.getAction(oResponsibleElementOverlay);
 
-		var aMenuItems = [];
+		const aMenuItems = [];
 		if (vSettingsActions) {
-			var iRank = 110;
+			const iRank = 110;
 
 			if (vSettingsActions.handler) {
 				vSettingsActions = {
 					settings: vSettingsActions
 				};
 			}
-			var aSettingsActions = Object.keys(vSettingsActions);
+			const aSettingsActions = Object.keys(vSettingsActions);
 			aSettingsActions.forEach(function(sSettingsAction, iIndex, aActions) {
-				var oSettingsAction = vSettingsActions[sSettingsAction];
+				const oSettingsAction = vSettingsActions[sSettingsAction];
 				if (
 					oSettingsAction.handler
-					&& this._checkRelevantContainerStableID(oSettingsAction, oElementOverlay)
-					&& this.isAvailable([oElementOverlay])
+					&& this._checkRelevantContainerStableID(oSettingsAction, oResponsibleElementOverlay)
+					&& this.isAvailable([oResponsibleElementOverlay])
 				) {
-					var bSingleAction = aActions.length === 1;
+					const bSingleAction = aActions.length === 1;
 
 					aMenuItems.push({
 						id: bSingleAction ? sPluginId : sPluginId + iIndex,
 						rank: bSingleAction ? iRank : iRank + iIndex,
-						text: this.getActionText(oElementOverlay, oSettingsAction, sPluginId),
+						text: this.getActionText(oResponsibleElementOverlay, oSettingsAction, sPluginId),
 						icon: getActionIcon(oSettingsAction),
 						enabled: (
 							typeof oSettingsAction.isEnabled === "function"
@@ -279,7 +281,7 @@ sap.ui.define([
 								return oSettingsAction.isEnabled(aElementOverlays[0].getElement());
 							}
 							|| oSettingsAction.isEnabled
-							|| this.isEnabled([oElementOverlay])
+							|| this.isEnabled([oResponsibleElementOverlay])
 						),
 						handler: function(fnHandler, aElementOverlays, mPropertyBag) {
 							mPropertyBag ||= {};
