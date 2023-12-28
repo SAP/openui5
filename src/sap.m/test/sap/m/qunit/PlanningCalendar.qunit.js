@@ -3308,7 +3308,7 @@ sap.ui.define([
 
 		// act
 		this.sut._handleDateSelect({
-			getSource: function(x) {
+			getSource: function() {
 				return	{
 					getStartDate: function () {
 						return oTestDate;
@@ -3329,7 +3329,7 @@ sap.ui.define([
 
 		//act
 		this.sut._handleDateSelect({
-			getSource: function(x) {
+			getSource: function() {
 				return	{
 					getStartDate: function () {
 						return oTestDate;
@@ -3342,7 +3342,7 @@ sap.ui.define([
 
 		//act
 		this.sut._handleDateSelect({
-			getSource: function(x) {
+			getSource: function() {
 				return	{
 					getStartDate: function () {
 						return UI5Date.getInstance(Date.UTC(2015, 0, 8));
