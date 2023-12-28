@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/base/Log',
-	'sap/ui/core/Element'
+	'sap/ui/core/Element',
+	'sap/ui/Device'
 ], (
 	Library,
 	FilterableListContent,
@@ -31,7 +32,8 @@ sap.ui.define([
 	merge,
 	ValueHelpSelectionType,
 	Log,
-	Element
+	Element,
+	Device
 ) => {
 	"use strict";
 
@@ -152,7 +154,7 @@ sap.ui.define([
 				const bBindingSuspended = oListBinding && oListBinding.isSuspended();
 				const bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
 
-				if ((bBindingSuspended || bBindingWillBeSuspended) && !this.isTypeahead()) { // in dialog case do not resume suspended table on opening
+				if ((bBindingSuspended || bBindingWillBeSuspended) && (!this.isTypeahead() || Device.system.phone)) { // in dialog or phone case do not resume suspended table on opening
 					return undefined;
 				}
 				return this.applyFilters();
@@ -834,7 +836,7 @@ sap.ui.define([
 							const oBindingInfo = this.getListBindingInfo();
 							const bDialogExist = this.getParent().hasDialog();
 
-							if (bDialogExist && oBindingInfo && oBindingInfo.length) {
+							if (bDialogExist && oBindingInfo && oBindingInfo.length && !Device.system.phone) {
 								return loadModules(["sap/m/Button", "sap/m/Toolbar", "sap/m/ToolbarSpacer"]).then((aModules) => {
 									const Button = aModules[0];
 									const Toolbar = aModules[1];
