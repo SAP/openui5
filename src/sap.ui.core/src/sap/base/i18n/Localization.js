@@ -40,6 +40,7 @@ sap.ui.define([
 		"ZH" : "zh-Hans",
 		"ZF" : "zh-Hant",
 		"SH" : "sr-Latn",
+		"CT" : "cnr",
 		"6N" : "en-GB",
 		"1P" : "pt-PT",
 		"1X" : "es-MX",

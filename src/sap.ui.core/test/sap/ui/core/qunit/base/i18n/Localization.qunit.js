@@ -46,7 +46,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getLanguageTag, getLanguage and getSAPLogonLanguage", function(assert) {
-		assert.expect(91);
+		assert.expect(109);
 		function fnAssert(mTestOptions) {
 			BaseConfig._.invalidate();
 			var sSAPLogonLanguage = mTestOptions.SAPLogonLanguage || mTestOptions.language.toUpperCase();
@@ -184,6 +184,30 @@ sap.ui.define([
 			language: "sr-Latn-cc-eeeee-f-gg-X-h",
 			languageTag: "sh-CC-eeeee-f-gg-X-h",
 			SAPLogonLanguage: "SH"
+		});
+
+		mURLConfigStubValues = {
+			"sapLanguage": "CT"
+		};
+		fnAssert({
+			language: "cnr",
+			SAPLogonLanguage: "CT"
+		});
+
+		mURLConfigStubValues = {
+			"sapLocale": "cnr-ME"
+		};
+		fnAssert({
+			language: "cnr-ME",
+			SAPLogonLanguage: "CT"
+		});
+
+		mURLConfigStubValues = {
+			"sapLocale": "cnr"
+		};
+		fnAssert({
+			language: "cnr",
+			SAPLogonLanguage: "CT"
 		});
 
 		BaseConfig._.invalidate();
