@@ -2625,7 +2625,9 @@ function(
 				}
 				oDelegate = {
 					ontap: function () {
-						that.focus();
+						if (window.getSelection().type !== "Range") {
+							that.focus();
+						}
 					}
 				};
 				that._referencingLabelsHandlers.push({
