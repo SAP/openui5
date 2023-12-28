@@ -1982,9 +1982,9 @@ function(
 	 */
 	ViewSettingsDialog.prototype._getDetailTitleLabel = function() {
 		if (this._detailTitleLabel === undefined) {
-			this._detailTitleLabel = new Title(this.getId() + "-detailtitle",
-				{
-					text : this._rb.getText("VIEWSETTINGS_TITLE_FILTERBY")
+			this._detailTitleLabel = new Title(this.getId() + "-detailtitle", {
+					text : this._rb.getText("VIEWSETTINGS_TITLE_FILTERBY"),
+					level: TitleLevel.H1
 				}).addStyleClass("sapMVSDTitle");
 		}
 		return this._detailTitleLabel;
