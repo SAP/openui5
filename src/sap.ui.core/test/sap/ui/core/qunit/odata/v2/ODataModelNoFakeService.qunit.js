@@ -3222,7 +3222,7 @@ sap.ui.define([
 		]).forEach(function (fnTestEventHandlers, i) {
 			[true, false].forEach(function (bFromODLBcreate) {
 				[undefined, "~bInactive"].forEach(function (bInactive) {
-		var sTitle = "createEntry: called "
+		var sTitle = "createEntry: called with initial properties and considering referential constraints "
 			+ (bFromODLBcreate ? "from ODataListBinding#create" : "directly")
 			+ "; expand = " + sExpand + ", "
 			+ (bWithCallbackHandlers ? "with" : "without") + " callback handlers, inactive = "
@@ -3273,6 +3273,7 @@ sap.ui.define([
 				_pushToRequestQueue : function () {},
 				_resolveGroup : function () {},
 				getContext : function () {},
+				getForeignKeysFromReferentialConstraints() {},
 				resolveDeep : function () {}
 			},
 			oMetadataMock = this.mock(oModel.oMetadata),
@@ -3306,6 +3307,9 @@ sap.ui.define([
 		oMetadataMock.expects("_getEntityTypeByPath")
 			.withExactArgs("/~sNormalizedPath")
 			.returns(oEntityMetadata);
+		oModelMock.expects("getForeignKeysFromReferentialConstraints")
+			.withExactArgs("/~sNormalizedPath")
+			.returns({Foo : "Baz", Qux: 42});
 		oMetadataMock.expects("_getEntitySetByType")
 			.withExactArgs(sinon.match.same(oEntityMetadata))
 			.returns({name : "~entitySetName"});
@@ -3332,7 +3336,9 @@ sap.ui.define([
 						deepPath : "~sDeepPath('" + sUid + "')",
 						type : "~entityType",
 						uri : "~sServiceUrl/~entitySetName('" + sUid + "')"
-					}
+					},
+					Foo : "Bar",
+					Qux : 42
 				};
 				assert.deepEqual(oEntity0, oEntity);
 				assert.deepEqual(mHeaders,
@@ -3412,7 +3418,7 @@ sap.ui.define([
 			groupId : "~groupId",
 			headers : mHeadersInput,
 			inactive : bInactive,
-			properties : {},
+			properties : {Foo : "Bar"},
 			refreshAfterChange : "~refreshAfterChange",
 			success : bWithCallbackHandlers ? oEventHandlers.fnSuccess : undefined,
 			urlParameters : "~urlParameters"
@@ -3522,6 +3528,7 @@ sap.ui.define([
 				_pushToRequestQueue : function () {},
 				_resolveGroup : function () {},
 				getContext : function () {},
+				getForeignKeysFromReferentialConstraints() {},
 				resolveDeep : function () {}
 			},
 			oRequest = {};
@@ -3553,6 +3560,9 @@ sap.ui.define([
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
 			.withExactArgs("/~sNormalizedPath")
 			.returns(oEntityMetadata);
+		this.mock(oModel).expects("getForeignKeysFromReferentialConstraints")
+			.withExactArgs("/~sNormalizedPath")
+			.returns({});
 		this.mock(oModel.oMetadata).expects("_getEntitySetByType")
 			.withExactArgs(sinon.match.same(oEntityMetadata))
 			.returns({name : "~entitySetName"});
@@ -3633,6 +3643,7 @@ sap.ui.define([
 				_pushToRequestQueue: function () {},
 				_resolveGroup: function () {},
 				getContext: function () {},
+				getForeignKeysFromReferentialConstraints() {},
 				resolveDeep: function () {}
 			},
 			oModelMock = this.mock(oModel),
@@ -3652,6 +3663,7 @@ sap.ui.define([
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
 			.withExactArgs("/~sNormalizedPath")
 			.returns(oEntityMetadata);
+		oModelMock.expects("getForeignKeysFromReferentialConstraints").withExactArgs("/~sNormalizedPath").returns({});
 		this.mock(oModel.oMetadata).expects("_getEntitySetByType")
 			.withExactArgs(sinon.match.same(oEntityMetadata))
 			.returns({name: "~entitySetName"});
@@ -3747,6 +3759,7 @@ sap.ui.define([
 				_isCanonicalRequestNeeded : function () {},
 				_normalizePath : function () {},
 				getContext : function () {},
+				// getForeignKeysFromReferentialConstraints() {}, // never called in deep create scenarios
 				resolveDeep : function () {}
 			},
 			oMetadataMock = this.mock(oModel.oMetadata);
@@ -3859,6 +3872,7 @@ sap.ui.define([
 				_processRequestQueueAsync : function () {},
 				_resolveGroup : function () {},
 				getContext : function () {},
+				getForeignKeysFromReferentialConstraints() {},
 				resetChanges : function () {},
 				resolveDeep : function () {}
 			},
@@ -3885,6 +3899,9 @@ sap.ui.define([
 		oMetadataMock.expects("_getEntityTypeByPath")
 			.withExactArgs("/~sNormalizedPath")
 			.returns(oEntityMetadata);
+		this.mock(oModel).expects("getForeignKeysFromReferentialConstraints")
+			.withExactArgs("/~sNormalizedPath")
+			.returns({});
 		oMetadataMock.expects("_getEntitySetByType")
 			.withExactArgs(sinon.match.same(oEntityMetadata))
 			.returns({name : "~entitySetName"});
@@ -8814,6 +8831,56 @@ sap.ui.define([
 	});
 });
 
+	//*********************************************************************************************
+	QUnit.test("getForeignKeysFromReferentialConstraints: no navigation property", function (assert) {
+		const oMetadata = {_splitByLastNavigationProperty() {}};
+		const oModel = {oMetadata: oMetadata};
+		this.mock(oMetadata).expects("_splitByLastNavigationProperty")
+			.withExactArgs("~sNormalizedPath")
+			.returns({lastNavigationProperty: ""});
+
+		// code under test
+		assert.deepEqual(
+			ODataModel.prototype.getForeignKeysFromReferentialConstraints.call(oModel, "~sNormalizedPath"),
+			{});
+	});
+
+	//*********************************************************************************************
+[
+	{oData: undefined, oResult: {}},
+	{oData: {a: 42, c: "foo", y: 13, z: "bar"}, oResult: {x: 42, z: "foo"}}
+].forEach((oFixture, i) => {
+	QUnit.test("getForeignKeysFromReferentialConstraints: with navigation property, #" + i, function (assert) {
+		const oMetadata = {
+			_getEntityTypeByName() {},
+			_getReferentialConstraintsMapping() {},
+			_splitByLastNavigationProperty() {}
+		};
+		const oModel = {
+			oMetadata: oMetadata,
+			_getObject() {}
+		};
+		this.mock(oMetadata).expects("_splitByLastNavigationProperty")
+			.withExactArgs("~sNormalizedPath")
+			.returns({
+				lastNavigationProperty: "/~lastNavigationProperty",
+				pathBeforeLastNavigationProperty: "~pathBeforeLastNavigationProperty"
+			});
+		this.mock(oMetadata).expects("_getEntityTypeByName")
+			.withExactArgs("~pathBeforeLastNavigationProperty")
+			.returns("~oSourceEntityType");
+		this.mock(oMetadata).expects("_getReferentialConstraintsMapping")
+			.withExactArgs("~oSourceEntityType", "~lastNavigationProperty")
+			.returns({a: "x", b: "y", c: "z"});
+		this.mock(oModel).expects("_getObject").withExactArgs("~pathBeforeLastNavigationProperty")
+			.returns(oFixture.oData);
+
+		// code under test
+		assert.deepEqual(
+			ODataModel.prototype.getForeignKeysFromReferentialConstraints.call(oModel, "~sNormalizedPath"),
+			oFixture.oResult);
+	});
+});
 	/** @deprecated As of version 1.32.0 */
 	//*********************************************************************************************
 	QUnit.test("setDeferredBatchGroups", function (assert) {
@@ -8824,7 +8891,6 @@ sap.ui.define([
 		// code under test
 		ODataModel.prototype.setDeferredBatchGroups.call(oModel, "~mParameters");
 	});
-
 	/** @deprecated As of version 1.32.0 */
 	//*********************************************************************************************
 	QUnit.test("setChangeBatchGroups", function (assert) {

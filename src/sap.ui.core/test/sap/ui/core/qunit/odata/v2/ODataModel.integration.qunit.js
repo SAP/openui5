@@ -5903,7 +5903,8 @@ usePreliminaryContext : false}}">\
 					data : {
 						__metadata : {
 							type : "GWSAMPLE_BASIC.SalesOrderLineItem"
-						}
+						},
+						SalesOrderID : "1"
 					},
 					method : "POST",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
@@ -6141,7 +6142,8 @@ usePreliminaryContext : false}}">\
 						__metadata : {
 							type : "GWSAMPLE_BASIC.SalesOrderLineItem"
 						},
-						Note : "foo"
+						Note : "foo",
+						SalesOrderID : "1"
 					},
 					method : "POST",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
@@ -15987,6 +15989,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerID : "42",
 						Note : "Sales Order New 1"
 					},
 					headers : {"sap-messages": "transientOnly"},
@@ -15995,6 +15998,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					data : {
 						__metadata : {uri : "SalesOrderSet('2')"},
+						CustomerID : "42",
 						Note : "Sales Order New 1",
 						SalesOrderID : "2"
 					},
@@ -16192,6 +16196,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerID : "42",
 						Note : "Sales Order New 1"
 					},
 					method : "POST",
@@ -16199,6 +16204,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					data : {
 						__metadata : {uri : "SalesOrderSet('2')"},
+						CustomerID : "42",
 						Note : "Sales Order New 1",
 						SalesOrderID : "2"
 					},
@@ -16261,6 +16267,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerID : "42",
 						Note : "Sales Order New 2"
 					},
 					method : "POST",
@@ -16268,6 +16275,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					data : {
 						__metadata : {uri : "SalesOrderSet('3')"},
+						CustomerID : "42",
 						Note : "Sales Order New 2",
 						SalesOrderID : "3"
 					},
@@ -16277,6 +16285,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerID : "42",
 						Note : "Foo - New 3"
 					},
 					method : "POST",
@@ -16284,6 +16293,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					data : {
 						__metadata : {uri : "SalesOrderSet('4')"},
+						CustomerID : "42",
 						Note : "Foo - New 3",
 						SalesOrderID : "4"
 					},
@@ -16548,6 +16558,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerID : "42",
 						Note : "Sales Order New 1"
 					},
 					method : "POST",
@@ -16555,6 +16566,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					data : {
 						__metadata : {uri : "SalesOrderSet('2')"},
+						CustomerID : "42",
 						Note : "Sales Order New 1",
 						SalesOrderID : "2"
 					},
@@ -16684,6 +16696,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerID: "42",
 						Note : "Sales Order New 1"
 					},
 					headers : {
@@ -16694,6 +16707,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					data : {
 						__metadata : {uri : "SalesOrderSet('2')"},
+						CustomerID: "42",
 						Note : "Sales Order New 1",
 						SalesOrderID : "2"
 					},
@@ -16800,6 +16814,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerID : "42",
 						Note : "Sales Order New 1"
 					},
 					method : "POST",
@@ -16807,6 +16822,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					data : {
 						__metadata : {uri : "SalesOrderSet('2')"},
+						CustomerID : "42",
 						Note : "Sales Order New 1",
 						SalesOrderID : "2"
 					},
@@ -16881,6 +16897,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerID : "42",
 						Note : "Sales Order New 1"
 					},
 					method : "POST",
@@ -16888,6 +16905,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					data : {
 						__metadata : {uri : "SalesOrderSet('2')"},
+						CustomerID : "42",
 						SalesOrderID : "2",
 						Note : "Sales Order New 1"
 					},
@@ -16986,6 +17004,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerID : "42",
 						Note : "Sales Order New 1"
 					},
 					method : "POST",
@@ -16993,6 +17012,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					data : {
 						__metadata : {uri : "SalesOrderSet('42')"},
+						CustomerID : "42",
 						SalesOrderID : "42",
 						Note : "Sales Order New 1"
 					},
@@ -17088,6 +17108,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerID : "42",
 						Note : "Sales Order New 1"
 					},
 					method : "POST",
@@ -17095,6 +17116,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					data : {
 						__metadata : {uri : "SalesOrderSet('42')"},
+						CustomerID : "42",
 						SalesOrderID : "42",
 						Note : "Sales Order New 1"
 					},
@@ -17198,6 +17220,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerID : "42",
 						Note : "Sales Order New 1"
 					},
 					method : "POST",
@@ -17205,6 +17228,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					data : {
 						__metadata : {uri : "SalesOrderSet('2')"},
+						CustomerID : "42",
 						SalesOrderID : "2",
 						Note : "Sales Order New 1"
 					},
@@ -17317,6 +17341,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerID : "42",
 						Note : "Sales Order New: created persisted"
 					},
 					method : "POST",
@@ -17324,6 +17349,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					data : {
 						__metadata : {uri : "SalesOrderSet('2')"},
+						CustomerID : "42",
 						SalesOrderID : "2",
 						Note : "Sales Order New: created persisted"
 					},
@@ -18042,6 +18068,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						CustomerID : "42",
 						Note : "transient"
 					},
 					method : "POST",
@@ -18049,6 +18076,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					data : {
 						__metadata : {uri : "SalesOrderSet('3')"},
+						CustomerID : "42",
 						SalesOrderID : "3",
 						Note : "persisted"
 					},
@@ -20446,7 +20474,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrderLineItem"},
-						Note : "Note 2"
+						Note : "Note 2",
+						SalesOrderID : "42"
 					},
 					method : "POST",
 					requestUri : "SalesOrderSet('42')/ToLineItems"
@@ -20584,7 +20613,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					created : true,
 					data : {
 						__metadata : {type : "GWSAMPLE_BASIC.SalesOrderLineItem"},
-						Note : "Note 2"
+						Note : "Note 2",
+						SalesOrderID : "42"
 					},
 					method : "POST",
 					requestUri : "SalesOrderSet('42')/ToLineItems"
@@ -21467,7 +21497,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					created: true,
 					data: {
-						__metadata: {type: "GWSAMPLE_BASIC.SalesOrderLineItem"}
+						__metadata: {type: "GWSAMPLE_BASIC.SalesOrderLineItem"},
+						SalesOrderID: "1"
 					},
 					headers: {"Content-ID": "~key~", "sap-messages": "transientOnly"},
 					method: "POST",

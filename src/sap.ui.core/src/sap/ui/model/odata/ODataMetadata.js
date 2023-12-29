@@ -1223,6 +1223,36 @@ sap.ui.define([
 		return oPropertyMetadata;
 	};
 
+	/**
+	 * Gets a map of property names defined by referential constraints. Maps a key property name of the given entity to
+	 * the corresponding property name of the entity referenced by the given navigation property.
+	 *
+	 * @param {object} oSourceEntityType
+	 *   The entity type, for example the metadata object for "GWSAMPLE_BASIC.BusinessPartner"
+	 * @param {string} sNavigationProperty
+	 *   The navigation property name, for example "ToProducts"
+	 * @returns {Object<string, string>}
+	 *   Maps a key property name of the given entity to the foreign key property name of the entity referenced by the
+	 *   given navigation property based on the association's referential constraints; returns an empty object if no
+	 *   mapping is defined; for example <code>{"BusinessPartnerID" : "SupplierID"}</code>
+	 * @private
+	 */
+	ODataMetadata.prototype._getReferentialConstraintsMapping = function (oSourceEntityType, sNavigationProperty) {
+		const oNavigationPropertyInfo = oSourceEntityType.navigationProperty
+			.find((oNavigationProperty) => oNavigationProperty.name === sNavigationProperty);
+		const oAssociationInfo = this._splitName(oNavigationPropertyInfo.relationship);
+		const oAssociation = this._getObjectMetadata("association", oAssociationInfo.name, oAssociationInfo.namespace);
+		if (oNavigationPropertyInfo.fromRole === oAssociation.referentialConstraint?.principal.role) {
+			const aSourceProperties = oAssociation.referentialConstraint.principal.propertyRef;
+			const aTargetProperties = oAssociation.referentialConstraint.dependent.propertyRef;
+			return aSourceProperties.reduce((mSource2TargetProperty, oSourceProperty, iSourceIndex) => {
+				mSource2TargetProperty[oSourceProperty.name] = aTargetProperties[iSourceIndex].name;
+				return mSource2TargetProperty;
+			}, {});
+		}
+		return {};
+	};
+
 	ODataMetadata.prototype.destroy = function() {
 		delete this.oMetadata;
 		var that = this;
