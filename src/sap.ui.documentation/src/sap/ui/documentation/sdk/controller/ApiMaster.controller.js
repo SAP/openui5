@@ -52,6 +52,8 @@ sap.ui.define([
 
 				// By default we don't show deprecated symbols in the tree
 				this._bIncludeDeprecated = false;
+				// By default we don't show experimental symbols in the tree
+				this._bIncludeExperimental = false;
 
 				// Cache references
 				this._oTree = this.byId("tree");
@@ -104,19 +106,22 @@ sap.ui.define([
 						name : "experimental",
 						displayName : "Experimental APIs",
 						bAllContentDeprecated: false,
-						visibility: "public"
+						visibility: "public",
+						isPreserved: true
 					}, {
 						isSelected: false,
 						name : "deprecated",
 						displayName : "Deprecated APIs",
 						bAllContentDeprecated: false,
-						visibility: "public"
+						visibility: "public",
+						isPreserved: true
 					}, {
 						isSelected: false,
 						name : "since",
 						displayName : "Index by Version",
 						bAllContentDeprecated: false,
-						visibility: "public"
+						visibility: "public",
+						isPreserved: true
 					});
 				}
 
@@ -220,6 +225,24 @@ sap.ui.define([
 					}));
 				}
 
+				if (!this._bIncludeExperimental) {
+					aFilters.push(new Filter({
+						filters: [
+							new Filter({
+								path: "isPreserved",
+								operator: FilterOperator.EQ,
+								value1: true
+							}),
+							new Filter({
+								path: "experimental",
+								operator: FilterOperator.EQ,
+								value1: false
+							})
+						],
+						and: false
+					}));
+				}
+
 				if (this._sFilter) {
 					aFilters.push(new Filter({
 						and: false,
@@ -253,8 +276,17 @@ sap.ui.define([
 			 * @param {object} oEvent from the checkbox
 			 */
 			onIncludeDeprecatedItemsChange: function (oEvent) {
-				this._bIncludeDeprecated = oEvent.getParameter("selected"); // Update include deprecated flag
-				this.buildAndApplyFilters(); // Update tree
+				this._bIncludeDeprecated = oEvent.getParameter("selected");
+				this.buildAndApplyFilters();
+			},
+
+			/**
+			 * Handler for the Checkbox
+			 * @param {object} oEvent from the checkbox
+			 */
+			onIncludeExperimentalItemsChange: function (oEvent) {
+				this._bIncludeExperimental = oEvent.getParameter("selected");
+				this.buildAndApplyFilters();
 			}
 		});
 	}

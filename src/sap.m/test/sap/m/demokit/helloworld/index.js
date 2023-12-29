@@ -39,4 +39,4 @@ sap.ui.getCore().attachInit(function () {
 		// place the app into the HTML document
 		app.placeAt("content");
 	});
-});
+})/*Not inside AMD call*/;

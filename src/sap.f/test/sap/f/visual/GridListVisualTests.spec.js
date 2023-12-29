@@ -12,7 +12,7 @@ describe("sap.f.GridListVisualTests", function () {
 	function goToIconTabFilter (sId) {
 		return browser.executeScript(function (sId) {
 			var Core = sap.ui.getCore();
-			Core.byId('__component0---app--itb').setSelectedKey(sId);
+			Core.byId('__component0---app--itb')/*Not inside AMD call*/.setSelectedKey(sId);
 			Core.applyChanges();
 		}, sId);
 	}

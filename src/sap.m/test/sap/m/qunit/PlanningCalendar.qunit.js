@@ -3281,6 +3281,29 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
+	QUnit.test("'_handleDateSelect()' with min/max dates", function (assert) {
+		//prepare
+		var oTestDate = UI5Date.getInstance(2015, 0, 1, 0, 0, 0),
+			oMinDate = UI5Date.getInstance(2015, 1, 1, 0, 0, 0);
+
+		this.sut.setViewKey(CalendarIntervalType.Month);
+		this.sut.setMinDate(oMinDate);
+
+		// act
+		this.sut._handleDateSelect({
+			getSource: function() {
+				return	{
+					getStartDate: function () {
+						return oTestDate;
+					}
+				};
+			}
+		});
+
+		// assert
+		assert.strictEqual(this.sut._oMonthsRow.getStartDate().getTime(), oMinDate.getTime(), "Month selection focused on min date, not first day of year");
+	});
+
 	QUnit.test("'_handleDateSelect()' sets a date to the row only if the selected date is new", function (assert) {
 		//prepare
 		var _rowSetDateSpy = this.spy(this.sut._oWeeksRow, 'displayDate');
@@ -3289,7 +3312,7 @@ sap.ui.define([
 
 		//act
 		this.sut._handleDateSelect({
-			getSource: function(x) {
+			getSource: function() {
 				return	{
 					getStartDate: function () {
 						return oTestDate;
@@ -3302,7 +3325,7 @@ sap.ui.define([
 
 		//act
 		this.sut._handleDateSelect({
-			getSource: function(x) {
+			getSource: function() {
 				return	{
 					getStartDate: function () {
 						return UI5Date.getInstance(Date.UTC(2015, 0, 8));

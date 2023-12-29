@@ -925,7 +925,7 @@ sap.ui.define([
 			if (this._oPreviousFocus) {
 				oActiveElement = document.activeElement || {};
 				// if the current focused control/element is the same as the focused control/element before popover is open, no need to restore focus.
-				bSameFocusElement = (this._oPreviousFocus.sFocusId === sap.ui.getCore().getCurrentFocusedControlId()) ||
+				bSameFocusElement = (this._oPreviousFocus.sFocusId === Element.getActiveElement()?.getId()) ||
 					(this._oPreviousFocus.sFocusId === oActiveElement.id);
 
 				// restore previous focus, if the current control isn't the same control as

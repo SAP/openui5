@@ -238,8 +238,8 @@ sap.ui.define([
 			);
 			assert.strictEqual(
 				this.oCheckUpdateSelectorStub.callCount,
-				1,
-				"then the selector is called only once more during the removal"
+				0,
+				"then the selector is never updated since nothing was removed"
 			);
 		});
 
@@ -275,6 +275,52 @@ sap.ui.define([
 				this.oCheckUpdateSelectorStub.callCount,
 				2,
 				"then the selector is called only once more during the removal"
+			);
+		});
+
+		QUnit.test("When trying to remove a non-existing FlexObject", async function(assert) {
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			});
+			FlexState.addDirtyFlexObject(sReference, { test: "someDummyFlexObject" });
+			this.oCheckUpdateSelectorStub.reset();
+
+			FlexState.removeDirtyFlexObject(sReference, { test: "someOtherDummyFlexObject" });
+			assert.strictEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
+				1,
+				"then the other flex object is not removed from the selector"
+			);
+			assert.strictEqual(
+				this.oCheckUpdateSelectorStub.callCount,
+				0,
+				"then the selector is not updated since nothing was removed"
+			);
+		});
+
+		QUnit.test("When trying to remove multiple non-existing FlexObjects", async function(assert) {
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			});
+			const aDummyFlexObjects = [
+				{ test: "test" },
+				{ test2: "test2" }
+			];
+			FlexState.addDirtyFlexObjects(sReference, aDummyFlexObjects);
+			this.oCheckUpdateSelectorStub.reset();
+
+			FlexState.removeDirtyFlexObjects(sReference, [{ test: "someOtherFlexObject" }]);
+			assert.strictEqual(
+				FlexState.getFlexObjectsDataSelector().get({reference: sReference}).length,
+				2,
+				"then the other flex objects are not removed from the selector"
+			);
+			assert.strictEqual(
+				this.oCheckUpdateSelectorStub.callCount,
+				0,
+				"then the selector is not updated since nothing was removed"
 			);
 		});
 

@@ -29,7 +29,7 @@
 		preloadModules(oData);
 
 		oCore = sap.ui.getCore();
-		sIFrameTheme = oCore.getConfiguration().getTheme();
+		sIFrameTheme = oCore.getConfiguration().getTheme()/*Not inside AMD call*/;
 		sDemoKitTheme = oData.activeTheme;
 
 		if (sIFrameTheme !== sDemoKitTheme) {

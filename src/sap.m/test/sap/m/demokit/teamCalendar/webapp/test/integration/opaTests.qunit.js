@@ -14,4 +14,4 @@ sap.ui.getCore().attachInit(function() {
 	], function() {
 		QUnit.start();
 	});
-});
+})/*Not inside AMD call*/;

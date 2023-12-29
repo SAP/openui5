@@ -36,6 +36,6 @@
 				oCard1.setManifest(JSON.parse(oData.listCardManifest));
 				oCard2.setManifest(JSON.parse(oData.objectCardManifest));
 			}
-		});
+		})/*Not inside AMD call*/;
 	});
 })();

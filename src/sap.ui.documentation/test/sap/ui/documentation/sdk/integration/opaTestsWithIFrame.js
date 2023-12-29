@@ -14,7 +14,7 @@
         };
         // we want to be able to load our tests asynchronously - pause QUnit until we loaded everything
         QUnit.config.autostart = false;
-        Core.attachInit(function () {
+        Core.ready(function () {
 
             sap.ui.require([
                 "sap/ui/documentation/sdk/test/configureOpa",

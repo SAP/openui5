@@ -112,4 +112,4 @@ sap.ui.getCore().attachInit(function () {
 
 	});
 
-});
+})/*Not inside AMD call*/;

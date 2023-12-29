@@ -5,7 +5,7 @@ describe("sap.m.Label", function() {
 
 	function changeLanguage(sLang) {
 		return browser.executeScript(function(sLang) {
-			var oSelect = sap.ui.getCore().byId('localeSelect');
+			var oSelect = sap.ui.getCore().byId('localeSelect')/*Not inside AMD call*/;
 				oSelect.setSelectedKey(sLang);
 
 			var oSelectedItem = oSelect.getSelectedItem();

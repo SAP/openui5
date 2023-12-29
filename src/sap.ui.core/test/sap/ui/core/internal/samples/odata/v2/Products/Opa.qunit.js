@@ -5,22 +5,22 @@
 QUnit.config.autostart = false;
 
 sap.ui.require([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Core",
 	"sap/ui/core/internal/samples/odata/v2/Products/pages/Main",
 	"sap/ui/test/opaQunit",
-	"sap/ui/test/TestUtils",
-	"sap/ui/core/Configuration"
-], function(Core, Main, opaTest, TestUtils, Configuration) {
+	"sap/ui/test/TestUtils"
+], function(Localization, Core, Main, opaTest, TestUtils) {
 	"use strict";
 	Core.ready().then(function () {
-		var sDefaultLanguage = Configuration.getLanguage();
+		var sDefaultLanguage = Localization.getLanguage();
 
 		QUnit.module("sap.ui.core.internal.samples.odata.v2.Products", {
 			before : function () {
-				Configuration.setLanguage("en-US");
+				Localization.setLanguage("en-US");
 			},
 			after : function () {
-				Configuration.setLanguage(sDefaultLanguage);
+				Localization.setLanguage(sDefaultLanguage);
 			}
 		});
 

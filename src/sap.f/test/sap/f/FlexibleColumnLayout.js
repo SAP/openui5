@@ -48,4 +48,4 @@ sap.ui.getCore().attachInit(function() {
 		oFCL.placeAt("content");
 
 	});
-});
+})/*Not inside AMD call*/;

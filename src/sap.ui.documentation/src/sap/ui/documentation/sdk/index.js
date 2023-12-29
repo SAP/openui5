@@ -28,12 +28,15 @@
             type: "LOAD"
         });
             sap.ui.require([
-				"sap/ui/core/Core",
+                "sap/base/i18n/Localization",
+                "sap/ui/core/Core",
                 "sap/ui/core/ComponentContainer",
                 "sap/ui/core/Component",
+                "sap/ui/core/Lib",
+                "sap/ui/core/Theming",
                 "sap/ui/documentation/library",
                 "sap/base/Log"
-            ], function (Core, ComponentContainer, Component, library, Log) {
+            ], function(Localization, Core, ComponentContainer, Component, Library, Theming, library, Log) {
                 var setDensityClass = function(sDensityClass) {
                     var sBodyDensityClass = Array.prototype.find.call(document.body.classList, function(el){
                         return el.includes("sapUiSize");
@@ -79,8 +82,8 @@
                 // the fl lib has to be loaded before the Component gets created
                 Promise.all([
                     loadInfo(),
-                    Core.loadLibrary("sap.ui.fl", {async: true}),
-                    Core.loadLibrary("sap.ui.rta", {async: true})
+                    Library.load("sap.ui.fl"),
+                    Library.load("sap.ui.rta")
                 ]).then(function(){
 
                     Log.info("Samples paths added successfully");
@@ -157,13 +160,13 @@
                                     type: "SETTINGS",
                                     data: {
                                         "density": document.body.classList[1],
-                                        "theme": Core.getConfiguration().getTheme(),
-                                        "RTL": Core.getConfiguration().getRTL()
+                                        "theme": Theming.getTheme(),
+                                        "RTL": Localization.getRTL()
                                     }
                                 });
                                 } else if (eMessage.data.reason === "set") {
                                     setDensityClass(eMessage.data.data.density);
-                                    Core.getConfiguration().setRTL(eMessage.data.data.RTL);
+                                    Localization.setRTL(eMessage.data.data.RTL);
                                     Core.applyTheme(eMessage.data.data.theme);
                                 }
                             }

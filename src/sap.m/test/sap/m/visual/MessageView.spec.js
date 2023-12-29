@@ -8,9 +8,9 @@ describe('sap.m.MessageView', function() {
 
 	it('should load test page', function () {
 		browser.executeScript(function () {
-			app = sap.ui.getCore().byId("split-app");
-			compactBtn = sap.ui.getCore().byId("compactMode");
-			overflowBtn = sap.ui.getCore().byId("overflow-tb")._getOverflowButton();
+			app = sap.ui.getCore().byId("split-app")/*Not inside AMD call*/;
+			compactBtn = sap.ui.getCore().byId("compactMode")/*Not inside AMD call*/;
+			overflowBtn = sap.ui.getCore().byId("overflow-tb")/*Not inside AMD call*/._getOverflowButton();
 		});
 		browser.executeScript(function () {
 			return sap.ui.Device.system.phone;

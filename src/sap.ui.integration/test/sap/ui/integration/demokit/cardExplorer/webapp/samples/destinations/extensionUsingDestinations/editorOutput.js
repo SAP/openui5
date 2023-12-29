@@ -34,6 +34,6 @@
 				oCard1 = oView.byId("card1");
 				oCard1.setManifest(JSON.parse(oData.manifest));
 			}
-		});
+		})/*Not inside AMD call*/;
 	});
 })();

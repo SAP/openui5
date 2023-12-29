@@ -42,4 +42,4 @@ sap.ui.getCore().attachInit(function () {
 			oView.placeAt("content");
 		});
 	});
-});
+})/*Not inside AMD call*/;

@@ -20,4 +20,4 @@ sap.ui.getCore().attachInit(function () {
 			appWidthLimited: false //false
 		}).placeAt('content');
 	});
-});
+})/*Not inside AMD call*/;

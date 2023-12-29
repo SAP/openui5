@@ -13,4 +13,4 @@ sap.ui.getCore().attachInit(() => {
 		mockserver.init();
 		QUnit.start();
 	});
-});
+})/*Not inside AMD call*/;

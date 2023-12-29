@@ -17,6 +17,7 @@ sap.ui.define([
 			properties: {
 				title : {type : "string", defaultValue : ""},
 				deprecated: {type : "boolean", defaultValue : false},
+				experimental: {type : "boolean", defaultValue : false},
 				target: {type: "string", defaultValue: ""},
 				encodeTarget: {type: "boolean", defaultValue: false},
 				section: {type: "string", defaultValue: "#"},
