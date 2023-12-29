@@ -1450,7 +1450,7 @@ function(
 
 		bFocusInPopup && this.setSelectionUpdatedFromList(true);
 
-		if (this.getShowSuggestion() && this._bDoTypeAhead && bPopupOpened) {
+		if (this.getShowSuggestion() && this._bDoTypeAhead && bPopupOpened && !this.isComposingCharacter()) {
 			oSuggestionsPopover = this._getSuggestionsPopover();
 			oSelectedItem = oSuggestionsPopover.getItemsContainer().getSelectedItem();
 			oFocusedItem = oSuggestionsPopover.getFocusedListItem();

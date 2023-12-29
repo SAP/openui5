@@ -1052,7 +1052,7 @@ function(
 			}
 		}
 
-		if (bValidateFreeText) {
+		if (bValidateFreeText && !this.isComposingCharacter()) {
 			this._validateCurrentText();
 		}
 

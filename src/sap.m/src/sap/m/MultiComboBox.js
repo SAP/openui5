@@ -690,7 +690,7 @@ function(
 		// validate if an item is already selected
 		this._showAlreadySelectedVisualEffect();
 
-		if (this.getValue()) {
+		if (this.getValue() && !this.isComposingCharacter()) {
 			this._selectItemByKey(oEvent);
 		}
 
