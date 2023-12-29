@@ -18670,6 +18670,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
 						ErhaOrderItemName : "bar: renamed"
 					},
+					deepPath : "/ErhaOrder('1')/to_Item(ErhaOrder='1',ErhaOrderItem='200')",
 					key : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')",
 					method : "MERGE",
 					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"
@@ -18824,6 +18825,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
 						ErhaOrderItemName : "bar: renamed"
 					},
+					deepPath : "/ErhaOrder('1')/to_Item(ErhaOrder='1',ErhaOrderItem='200')",
 					key : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')",
 					method : "MERGE",
 					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"
@@ -18998,6 +19000,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
 						ErhaOrderItemName : "bar: renamed"
 					},
+					deepPath : "/ErhaOrder('1')/to_Item(ErhaOrder='1',ErhaOrderItem='200')",
 					key : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')",
 					method : "MERGE",
 					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"
@@ -19156,6 +19159,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
 						ErhaOrderItemName : "bar: renamed"
 					},
+					deepPath : "/ErhaOrder('1')/to_Item(ErhaOrder='1',ErhaOrderItem='200')",
 					key : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')",
 					method : "MERGE",
 					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"
@@ -19298,6 +19302,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"},
 						HierarchyParentNode : "100"
 					},
+					deepPath : "/ErhaOrder('1')/to_Item(ErhaOrder='1',ErhaOrderItem='300')",
 					key : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')",
 					method : "MERGE",
 					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"
@@ -19343,6 +19348,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
 						ErhaOrderItemName : "bar: renamed"
 					},
+					deepPath : "/ErhaOrder('1')/to_Item(ErhaOrder='1',ErhaOrderItem='200')",
 					key : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')",
 					method : "MERGE",
 					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"
@@ -19954,23 +19960,33 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 	//*********************************************************************************************
 	// Scenario: All read requests of the ODataTreeBindingFlat, consider "transitionMessagesOnly" parameter.
-	// JIRA: CPOUI5MODELS-1437
-	QUnit.test("ODataTreeBindingFlat: transitionMessagesOnly", function (assert) {
+	// Contexts are created with deep path information that messages can be assigned properly to the rows.
+	// JIRA: CPOUI5MODELS-1437, CPOUI5MODELS-1453
+	QUnit.test("ODataTreeBindingFlat: transitionMessagesOnly and messages", function (assert) {
 		const oModel = createHierarchyMaintenanceModel();
+		const oMessageItem0 = this.createResponseMessage("to_Item(ErhaOrder='1',ErhaOrderItem='0')/ErhaOrderItem");
+		const oMessageItem100 = this.createResponseMessage("to_Item(ErhaOrder='1',ErhaOrderItem='1.0.0')"
+			+ "/ErhaOrderItem");
 		let oTable;
 		const sView = '\
+<VBox binding="{/ErhaOrder(\'1\')}">\
 <t:TreeTable id="table"\
 		rows="{\
 			parameters: {countMode: \'Inline\', numberOfExpandedLevels: 1, transitionMessagesOnly: true},\
-			path: \'/ErhaOrder(\\\'1\\\')/to_Item\'\
+			path: \'to_Item\'\
 		}"\
 		visibleRowCount="4">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
-</t:TreeTable>';
+</t:TreeTable>\
+</VBox>';
 
 		this.expectHeadRequest()
+			.expectRequest("ErhaOrder('1')", {
+				__metadata: {uri: "/ErhaOrder('1')"},
+				ErhaOrder: "1"
+			}, {"sap-message" : getMessageHeader([oMessageItem0, oMessageItem100])})
 			.expectRequest({ // triggered by ODataTreeBindingFlat#_requestServerIndexNodes
-				batchNo: 1,
+				batchNo: 2,
 				headers: {"sap-messages": "transientOnly"},
 				requestUri: "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
 					+ "&$filter=HierarchyDistanceFromRoot le 1"
@@ -20025,7 +20041,22 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					HierarchyPreorderRank: 3,
 					HierarchySiblingRank: 1
 				}]
-			});
+			})
+			.expectMessages([{
+				code : oMessageItem0.code,
+				fullTarget : "/ErhaOrder(\'1\')/to_Item(ErhaOrder='1',ErhaOrderItem='0')/ErhaOrderItem",
+				message : oMessageItem0.message,
+				persistent : false,
+				target : "/ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='0')/ErhaOrderItem",
+				type : mSeverityMap[oMessageItem0.severity]
+			}, {
+				code : oMessageItem100.code,
+				fullTarget : "/ErhaOrder(\'1\')/to_Item(ErhaOrder='1',ErhaOrderItem='1.0.0')/ErhaOrderItem",
+				message : oMessageItem100.message,
+				persistent : false,
+				target : "/ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1.0.0')/ErhaOrderItem",
+				type : mSeverityMap[oMessageItem100.severity]
+			}]);
 
 		return this.createView(assert, sView, oModel).then(() => {
 			oTable = this.oView.byId("table");
@@ -20033,8 +20064,19 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// don't use expectValue to avoid timing issues causing flaky tests
 			assert.deepEqual(getTableContent(oTable), [["0"], ["1"], ["1.0"], ["1.1"]]);
 
+			let aMessages = oTable.getBindingContext().getMessages();
+			assert.strictEqual(aMessages.length, 2);
+			assert.strictEqual(aMessages[0].code, oMessageItem0.code);
+			assert.strictEqual(aMessages[1].code, oMessageItem100.code);
+			// one message for ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='0')
+			aMessages = oTable.getRows()[0].getBindingContext().getMessages();
+			assert.strictEqual(aMessages.length, 1);
+			assert.strictEqual(aMessages[0].code, oMessageItem0.code);
+			// no messages for ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1')
+			assert.deepEqual(oTable.getRows()[1].getBindingContext().getMessages(), []);
+
 			this.expectRequest({ // triggered by ODataTreeBindingFlat#_requestChildren
-					batchNo: 2,
+					batchNo: 3,
 					headers: {"sap-messages": "transientOnly"},
 					requestUri: "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
 						+ "&$filter=HierarchyParentNode eq '1.0'"
@@ -20061,6 +20103,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return this.waitForChanges(assert, "expand node '1.0'");
 		}).then(() => {
 			assert.deepEqual(getTableContent(oTable), [["0"], ["1"], ["1.0"], ["1.0.0"]]);
+			// one message for ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1.0.0')
+			const aMessages = oTable.getRows()[3].getBindingContext().getMessages();
+			assert.strictEqual(aMessages.length, 1);
+			assert.strictEqual(aMessages[0].code, oMessageItem100.code);
 
 			// code under test
 			oTable.collapse(1);
@@ -20070,7 +20116,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.deepEqual(getTableContent(oTable), [["0"], ["1"], [""], [""]]);
 
 			this.expectRequest({ // triggered by ODataTreeBindingFlat#_requestSubTree
-				batchNo: 3,
+				batchNo: 4,
 				headers: {"sap-messages": "transientOnly"},
 				requestUri: "ErhaOrder('1')/to_Item?$filter=HierarchyNode eq '1' and HierarchyDistanceFromRoot le 2"
 			}, {
