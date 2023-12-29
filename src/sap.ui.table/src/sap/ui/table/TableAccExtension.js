@@ -259,9 +259,9 @@ sap.ui.define([
 				bIsColChanged = oExtension._iLastColumnNumber != iColumnNumber;
 				bIsInitial = !oExtension._iLastRowNumber && !oExtension._iLastColumnNumber;
 
-				oTable.$("rownumberofrows").text(bIsRowChanged ? TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [iRowNumber, iRowCount]) : " ");
-				oTable.$("colnumberofcols").text(bIsColChanged ? TableUtils.getResourceText("TBL_COL_COLCOUNT", [iColumnNumber, iColCount]) : " ");
-				oTable.$("ariacount").text(bIsInitial ? TableUtils.getResourceText("TBL_DATA_ROWS_COLS", [iRowCount, iColCount]) : " ");
+				oTable.$("rownumberofrows").text(bIsRowChanged ? TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [iRowNumber, iRowCount]) : ".");
+				oTable.$("colnumberofcols").text(bIsColChanged ? TableUtils.getResourceText("TBL_COL_COLCOUNT", [iColumnNumber, iColCount]) : ".");
+				oTable.$("ariacount").text(bIsInitial ? TableUtils.getResourceText("TBL_DATA_ROWS_COLS", [iRowCount, iColCount]) : ".");
 
 				oExtension._iLastRowNumber = iRowNumber;
 				oExtension._iLastColumnNumber = iColumnNumber;
@@ -307,7 +307,7 @@ sap.ui.define([
 		performCellModifications: function(oExtension, $Cell, aDefaultLabels, aDefaultDescriptions, aLabels, aDescriptions, sText, fAdapt) {
 			ExtensionHelper.storeDefaultsBeforeCellModifications(oExtension, $Cell, aDefaultLabels, aDefaultDescriptions);
 			var oCountChangeInfo = ExtensionHelper.updateRowColCount(oExtension);
-			oExtension.getTable().$("cellacc").text(sText || " "); //set the custom text to the prepared hidden element
+			oExtension.getTable().$("cellacc").text(sText || "."); //set the custom text to the prepared hidden element
 
 			if (fAdapt) { //Allow to adapt the labels / descriptions based on the changed row / column count
 				fAdapt(aLabels, aDescriptions, oCountChangeInfo.rowChange, oCountChangeInfo.colChange, oCountChangeInfo.initial);
@@ -402,7 +402,7 @@ sap.ui.define([
 				}
 			}
 
-			var sText = oInfo ? oInfo.description : " ";
+			var sText = oInfo ? oInfo.description : ".";
 			if (bIsTreeColumnCell && !bHidden) {
 				var oAttributes = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.TREEICON, {row: oTableInstances.row});
 				if (oAttributes && oAttributes["aria-label"]) {

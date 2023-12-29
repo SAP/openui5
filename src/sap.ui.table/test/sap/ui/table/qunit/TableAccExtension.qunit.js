@@ -198,15 +198,15 @@ sap.ui.define([
 
 		var sText = jQuery.sap.byId(oTable.getId() + "-rownumberofrows").text().trim();
 		if (bFirstTime || bRowChange) {
-			assert.ok(sText.length > 0, "Number of rows are set on row change: " + sText);
+			assert.ok(sText.length > 0 && sText !== ".", "Number of rows are set on row change: " + sText);
 		} else {
-			assert.ok(sText.length == 0, "Number of rows are not set when row not changed: " + sText);
+			assert.ok(sText === ".", "Number of rows are not set when row not changed: " + sText);
 		}
 		sText = jQuery.sap.byId(oTable.getId() + "-colnumberofcols").text().trim();
 		if (bFirstTime || bColChange) {
-			assert.ok(sText.length > 0, "Number of columns are set on column change: " + sText);
+			assert.ok(sText.length > 0 && sText !== ".", "Number of columns are set on column change: " + sText);
 		} else {
-			assert.ok(sText.length == 0, "Number of columns are not set when column not changed: " + sText);
+			assert.ok(sText === ".", "Number of columns are not set when column not changed: " + sText);
 		}
 	}
 
@@ -258,7 +258,7 @@ sap.ui.define([
 			aExpected.push("CHILD1 CHILD2");
 		}
 
-		var sExpected = aExpected.length ? aExpected.join(" ") : "";
+		var sExpected = aExpected.length ? aExpected.join(" ") : ".";
 		assert.strictEqual(sText, sExpected, "ACC Info description of cell [" + iRow + ", " + iCol + "]");
 	}
 
@@ -609,9 +609,9 @@ sap.ui.define([
 		if (bFocus) {
 			var sText = jQuery.sap.byId(oTable.getId() + "-colnumberofcols").text().trim();
 			if (bFirstTime || bColChange) {
-				assert.ok(sText.length > 0, "Number of columns are set on column change: " + sText);
+				assert.ok(sText.length > 0 && sText !== ".", "Number of columns are set on column change: " + sText);
 			} else {
-				assert.ok(sText.length == 0, "Number of columns are not set when column not changed: " + sText);
+				assert.ok(sText === ".", "Number of columns are not set when column not changed: " + sText);
 			}
 		}
 	}
@@ -902,9 +902,9 @@ sap.ui.define([
 		if (bFocus) {
 			var sText = jQuery.sap.byId(oTable.getId() + "-rownumberofrows").text().trim();
 			if (bFirstTime || bRowChange) {
-				assert.ok(sText.length > 0, "Number of rows are set on row change: " + sText);
+				assert.ok(sText.length > 0 && sText !== ".", "Number of rows are set on row change: " + sText);
 			} else {
-				assert.ok(sText.length == 0, "Number of rows are not set when row not changed: " + sText);
+				assert.ok(sText === ".", "Number of rows are not set when row not changed: " + sText);
 			}
 		}
 	}
@@ -1300,7 +1300,7 @@ sap.ui.define([
 				"The highlight text element " + (bTextExists ? "exists in the DOM" : "does not exist in the DOM"));
 
 			if (oHighlightTextElement != null) {
-				assert.strictEqual(oHighlightTextElement.innerHTML, sText || "-", "The highlight text is correct: \"" + sText + "\"");
+				assert.strictEqual(oHighlightTextElement.innerHTML, sText || ".", "The highlight text is correct: \"" + sText + "\"");
 			}
 		}
 
