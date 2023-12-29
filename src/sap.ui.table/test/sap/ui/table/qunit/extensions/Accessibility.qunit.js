@@ -214,15 +214,15 @@ sap.ui.define([
 
 		var sText = jQuery.sap.byId(oTable.getId() + "-rownumberofrows").text().trim();
 		if (bFirstTime || bRowChange) {
-			assert.ok(sText.length > 0, "Number of rows are set on row change: " + sText);
+			assert.ok(sText.length > 0 && sText !== ".", "Number of rows are set on row change: " + sText);
 		} else {
-			assert.ok(sText.length == 0, "Number of rows are not set when row not changed: " + sText);
+			assert.ok(sText === ".", "Number of rows are not set when row not changed: " + sText);
 		}
 		sText = jQuery.sap.byId(oTable.getId() + "-colnumberofcols").text().trim();
 		if (bFirstTime || bColChange) {
-			assert.ok(sText.length > 0, "Number of columns are set on column change: " + sText);
+			assert.ok(sText.length > 0 && sText !== ".", "Number of columns are set on column change: " + sText);
 		} else {
-			assert.ok(sText.length == 0, "Number of columns are not set when column not changed: " + sText);
+			assert.ok(sText === ".", "Number of columns are not set when column not changed: " + sText);
 		}
 	}
 
@@ -274,7 +274,7 @@ sap.ui.define([
 			aExpected.push("CHILD1 CHILD2");
 		}
 
-		var sExpected = aExpected.length ? aExpected.join(" ") : "";
+		var sExpected = aExpected.length ? aExpected.join(" ") : ".";
 		assert.strictEqual(sText, sExpected, "ACC Info description of cell [" + iRow + ", " + iCol + "]");
 	}
 
@@ -610,9 +610,9 @@ sap.ui.define([
 		if (bFocus) {
 			var sText = jQuery.sap.byId(oTable.getId() + "-colnumberofcols").text().trim();
 			if (bFirstTime || bColChange) {
-				assert.ok(sText.length > 0, "Number of columns are set on column change: " + sText);
+				assert.ok(sText.length > 0 && sText !== ".", "Number of columns are set on column change: " + sText);
 			} else {
-				assert.ok(sText.length == 0, "Number of columns are not set when column not changed: " + sText);
+				assert.ok(sText === ".", "Number of columns are not set when column not changed: " + sText);
 			}
 		}
 	}
@@ -903,7 +903,7 @@ sap.ui.define([
 			assert.ok(!$Cell[0].hasAttribute("title"), "The row header has no title because SelectionMode is \"None\"");
 			assert.ok(!$Ref.rowScrollPart[0].hasAttribute("title"), "The scrollable part of the row has no title because SelectionMode is \"None\"");
 			assert.ok(!$Ref.rowActionPart[0].hasAttribute("title"), "The action part of the row has no title because SelectionMode is \"None\"");
-			assert.ok($RowSelectorTextRef.empty(), "The row header doesn't have row selector text because SelectionMode is \"None\"");
+			assert.equal($RowSelectorTextRef.text(), ".", "The row header doesn't have row selector text because SelectionMode is \"None\"");
 		} else {
 			var sTitle = bSelected ? TableUtils.getResourceText("TBL_ROW_DESELECT") : TableUtils.getResourceText("TBL_ROW_SELECT");
 			var sRowSelectorText = bSelected ? TableUtils.getResourceText("TBL_ROW_DESELECT_KEY") :
@@ -1077,9 +1077,9 @@ sap.ui.define([
 			if (bFocus) {
 				var sText = jQuery.sap.byId(oTable.getId() + "-rownumberofrows").text().trim();
 				if (bFirstTime || bRowChange) {
-					assert.ok(sText.length > 0, "Number of rows are set on row change: " + sText);
+					assert.ok(sText.length > 0 && sText !== ".", "Number of rows are set on row change: " + sText);
 				} else {
-					assert.ok(sText.length == 0, "Number of rows are not set when row not changed: " + sText);
+					assert.ok(sText === ".", "Number of rows are not set when row not changed: " + sText);
 				}
 			}
 		}
@@ -1504,14 +1504,14 @@ sap.ui.define([
 			"Data cell in row 1 column 1: colnumberofcols");
 
 		getCell(1, 1, true);
-		assert.equal(oAriaCount.textContent.trim(), "", "Data cell in row 2 column 2: ariacount");
+		assert.equal(oAriaCount.textContent.trim(), ".", "Data cell in row 2 column 2: ariacount");
 		assert.equal(oNumberOfRows.textContent, TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [2, 8]),
 			"Data cell in row 2 column 2: rownumberofrows");
 		assert.equal(oNumberOfColumns.textContent, TableUtils.getResourceText("TBL_COL_COLCOUNT", [2, 5]),
 			"Data cell in row 2 column 2: colnumberofcols");
 
 		getColumnHeader(0, true);
-		assert.equal(oAriaCount.textContent.trim(), "", "1st Column header cell: ariacount");
+		assert.equal(oAriaCount.textContent.trim(), ".", "1st Column header cell: ariacount");
 		assert.equal(oNumberOfColumns.textContent, TableUtils.getResourceText("TBL_COL_COLCOUNT", [1, 5]),
 			"1st Column header cell: colnumberofcols");
 
@@ -1521,10 +1521,10 @@ sap.ui.define([
 		oTable.rerender();
 
 		getCell(0, 0, true);
-		assert.equal(oAriaCount.textContent.trim(), "", "Data cell in row 1 column 1: ariacount");
+		assert.equal(oAriaCount.textContent.trim(), ".", "Data cell in row 1 column 1: ariacount");
 		assert.equal(oNumberOfRows.textContent, TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [1, 1]),
 			"Data cell in row 1 column 1: rownumberofrows");
-		assert.equal(oNumberOfColumns.textContent.trim(), "", "Data cell in row 1 column 1: colnumberofcols");
+		assert.equal(oNumberOfColumns.textContent.trim(), ".", "Data cell in row 1 column 1: colnumberofcols");
 	});
 
 	QUnit.test("ARIA colindices", function(assert) {
@@ -1743,7 +1743,7 @@ sap.ui.define([
 				"The highlight text element " + (bTextExists ? "exists in the DOM" : "does not exist in the DOM"));
 
 			if (oHighlightTextElement != null) {
-				assert.strictEqual(oHighlightTextElement.innerHTML, sText || "-", "The highlight text is correct: \"" + sText + "\"");
+				assert.strictEqual(oHighlightTextElement.innerHTML, sText || ".", "The highlight text is correct: \"" + sText + "\"");
 			}
 		}
 
