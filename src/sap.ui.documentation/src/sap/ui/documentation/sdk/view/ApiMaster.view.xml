@@ -18,8 +18,8 @@
 		<customHeader>
 			<Toolbar height="100%" width="100%">
 				<SearchField id="searchField" placeholder="{i18n>API_MASTER_PLACEHOLDER}" liveChange="onTreeFilter" />
-				<Button icon="sap-icon://expand-all" press="onTreeExpandAll" tooltip="{i18n>API_MASTER_EXPAND_BTN_TOOLTIP}" />
-				<Button icon="sap-icon://collapse-all" press="onTreeCollapseAll" tooltip="{i18n>API_MASTER_COLLAPSE_BTN_TOOLTIP}" />
+				<Button id="expandAllButton" icon="sap-icon://expand-all" press="onTreeExpandAll" tooltip="{i18n>API_MASTER_EXPAND_BTN_TOOLTIP}" />
+				<Button id="collapseAllButton" icon="sap-icon://collapse-all" press="onTreeCollapseAll" tooltip="{i18n>API_MASTER_COLLAPSE_BTN_TOOLTIP}" />
 			</Toolbar>
 		</customHeader>
 
