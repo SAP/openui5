@@ -15,8 +15,8 @@
 		<!-- Header -->
 		<customHeader>
 			<Toolbar width="100%">
-				<SearchField id="searchField" placeholder="{i18n>CONTROLS_MASTER_FILTER_PLACERHOLDER}" liveChange="handleListFilter" />
-				<Button id="listFilterSettings" icon="sap-icon://filter" press="handleListSettings" tooltip="{i18n>CONTROLS_MASTER_FILTER_BTN_TOOLTIP}" />
+				<SearchField id="searchField" placeholder="{i18n>CONTROLS_MASTER_FILTER_PLACERHOLDER}" liveChange="handleListFilter" class="sapUiDocumentationFilterField" />
+				<Button id="listFilterSettings" icon="sap-icon://filter" press="handleListSettings" tooltip="{i18n>CONTROLS_MASTER_FILTER_BTN_TOOLTIP}"/>
 			</Toolbar>
 		</customHeader>
 

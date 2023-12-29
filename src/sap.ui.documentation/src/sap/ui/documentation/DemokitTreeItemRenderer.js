@@ -35,16 +35,7 @@ function(TreeItemBaseRenderer, Core, Renderer) {
 	};
 
 	DemokitTreeItemRender.renderLIContent = function (oRm, oControl) {
-		function renderSpanWithText(oRm, textKey) {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.documentation"),
-				sText = oResourceBundle.getText(textKey);
-
-			oRm.openStart('span')
-				.class("sapDemokitTreeItemLabel")
-				.openEnd()
-				.text(sText)
-				.close('span');
-		}
+		var oResourceBundle;
 
 		this.renderEntityType(oRm, oControl);
 
@@ -62,11 +53,13 @@ function(TreeItemBaseRenderer, Core, Renderer) {
 		oRm.close('a');
 
 		if (oControl.getDeprecated()) {
-			renderSpanWithText(oRm, "API_MASTER_DEPRECATED");
-		}
+			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.documentation");
 
-		if (oControl.getExperimental()) {
-			renderSpanWithText(oRm, "API_MASTER_EXPERIMENTAL");
+			oRm.openStart('span')
+				.class("sapDemokitTreeItemLabel")
+				.openEnd()
+				.text(oResourceBundle.getText("API_MASTER_DEPRECATED"))
+				.close('span');
 		}
 	};
 
