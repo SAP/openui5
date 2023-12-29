@@ -11424,18 +11424,19 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	//*********************************************************************************************
 	// Scenario: All contexts created by ODataTreeBinding consider the deep path of the tree binding that the OData
 	// messages can be properly assigned.
-	// JIRA: CPOUI5MODELS-1529, SNOW: CS20230006644418
+	// JIRA: CPOUI5MODELS-1529, SNOW: CS20230006644418, CPOUI5MODELS-1531
 	QUnit.test("ODataTreeBinding: Message handling", function (assert) {
+		let oTable;
 		const oModel = createSpecialCasesModel();
-		const oResponseMessage = this.createResponseMessage("to_C_RSHMaintSchedSmltdOrdAndOp('id-0')/MaintenanceOrder",
-			"~errorMessage");
+		const oMessage0 = this.createResponseMessage("to_C_RSHMaintSchedSmltdOrdAndOp('id-0')/MaintenanceOrder");
+		const oMessage000 = this.createResponseMessage("to_C_RSHMaintSchedSmltdOrdAndOp('id-0.0.0')/MaintenanceOrder");
 		const sView = '\
 <VBox binding="{/DummySet(\'42\')}">\
 <t:TreeTable id="table"\
 		rows="{\
 			parameters: {\
 				countMode : \'Request\',\
-				numberOfExpandedLevels: 2,\
+				numberOfExpandedLevels: 1,\
 				transitionMessagesOnly: true,\
 				treeAnnotationProperties: {\
 					hierarchyDrillStateFor: \'OrderOperationIsExpanded\',\
@@ -11456,7 +11457,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest("DummySet('42')", {
 				__metadata: {uri: "/DummySet('42')"},
 				DummyID: "42"
-			}, {"sap-message" : getMessageHeader(oResponseMessage)})
+			}, {"sap-message" : getMessageHeader([oMessage0, oMessage000])})
 			// triggered by ODataTreeBinding#_getCountForNodeId
 			.expectRequest("DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp/$count?$filter=OrderOperationRowLevel eq 0",
 				"273")
@@ -11491,7 +11492,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					results: [{
 						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0.0')"},
 						MaintenanceOrder: "0.0",
-						OrderOperationIsExpanded: "leaf",
+						OrderOperationIsExpanded: "collapsed",
 						OrderOperationParentRowID: "id-0",
 						OrderOperationRowID: "id-0.0",
 						OrderOperationRowLevel: 1
@@ -11505,25 +11506,85 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					}]
 				})
 			.expectMessages([{
-				code : oResponseMessage.code,
+				code : oMessage0.code,
 				fullTarget : "/DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp('id-0')/MaintenanceOrder",
-				message : oResponseMessage.message,
+				message : oMessage0.message,
 				persistent : false,
 				target : "/C_RSHMaintSchedSmltdOrdAndOp('id-0')/MaintenanceOrder",
-				type : mSeverityMap[oResponseMessage.severity]
+				type : mSeverityMap[oMessage0.severity]
+			}, {
+				code : oMessage000.code,
+				fullTarget : "/DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp('id-0.0.0')/MaintenanceOrder",
+				message : oMessage000.message,
+				persistent : false,
+				target : "/C_RSHMaintSchedSmltdOrdAndOp('id-0.0.0')/MaintenanceOrder",
+				type : mSeverityMap[oMessage000.severity]
 			}]);
 
 		return this.createView(assert, sView, oModel).then(() => {
-			const oTable = this.oView.byId("table");
+			oTable = this.oView.byId("table");
 			// don't use expectValue to avoid timing issues causing flaky tests
 			assert.deepEqual(getTableContent(oTable), [["0"], ["0.0"]]);
 
 			let aMessages = oTable.getBindingContext().getMessages();
+			assert.strictEqual(aMessages.length, 2);
+			assert.strictEqual(aMessages[0].code, oMessage0.code);
+			assert.strictEqual(aMessages[1].code, oMessage000.code);
+			aMessages = oTable.getRows()[0].getBindingContext().getMessages(); // messages for id-0
 			assert.strictEqual(aMessages.length, 1);
-			assert.strictEqual(aMessages[0].code, oResponseMessage.code);
-			aMessages = oTable.getRows()[0].getBindingContext().getMessages(); // binding context of first row
+			assert.strictEqual(aMessages[0].code, oMessage0.code);
+
+			this.expectRequest({
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp?"
+						+ "$filter=OrderOperationRowID eq 'id-0.0' and OrderOperationRowLevel le 3"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0.0')"},
+						MaintenanceOrder: "0.0",
+						OrderOperationIsExpanded: "expanded",
+						OrderOperationParentRowID: "id-0",
+						OrderOperationRowID: "id-0.0",
+						OrderOperationRowLevel: 1
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0.0.0')"},
+						MaintenanceOrder: "0.0.0",
+						OrderOperationIsExpanded: "expanded",
+						OrderOperationParentRowID: "id-0.0",
+						OrderOperationRowID: "id-0.0.0",
+						OrderOperationRowLevel: 2
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0.0.0.0')"},
+						MaintenanceOrder: "0.0.0.0",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "id-0.0.0",
+						OrderOperationRowID: "id-0.0.0.0",
+						OrderOperationRowLevel: 3
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0.0.1')"},
+						MaintenanceOrder: "0.0.1",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "id-0.0",
+						OrderOperationRowID: "id-0.0.1",
+						OrderOperationRowLevel: 2
+					}]
+				});
+
+			return Promise.all([
+				// code under test - context creation via ODataTreeBindingAdapter#expandNodeToLevel
+				oTable.getBinding("rows").expandNodeToLevel(1, 3),
+				this.waitForChanges(assert)
+			]);
+		}).then(() => {
+			// scroll to id-0-0-0
+			oTable.setFirstVisibleRow(2);
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["0.0.0"], ["0.0.0.0"]]);
+			const aMessages = oTable.getRows()[0].getBindingContext().getMessages(); // messages for id-0-0-0
 			assert.strictEqual(aMessages.length, 1);
-			assert.strictEqual(aMessages[0].code, oResponseMessage.code);
+			assert.strictEqual(aMessages[0].code, oMessage000.code);
 		});
 	});
 

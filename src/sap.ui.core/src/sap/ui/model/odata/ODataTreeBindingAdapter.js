@@ -263,6 +263,7 @@ sap.ui.define(['sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/mode
 			}
 
 			sKey = this.oModel._getKey(oEntry);
+			// deep path not needed here, it gets updated in ODataTreeBinding#_getContextsForNodeId
 			oContext = this.oModel.getContext("/" + sKey);
 
 			sParentGroupID = mParentGroupIDs[sParentNodeID];
