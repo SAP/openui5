@@ -57,8 +57,6 @@ sap.ui.define([
 		return undefined;
 	}
 
-	let _isUshellContainerInitialized = false;
-
 	/**
 	 * Provides utility functions for the SAPUI5 flexibility library
 	 *
@@ -337,16 +335,7 @@ sap.ui.define([
 		 */
 		getUshellContainer() {
 			const oContainer = sap.ui.require("sap/ushell/Container");
-			// Workaround to verify whether container is bootstrapped or not before FLP offer better solution
-			if (oContainer && !_isUshellContainerInitialized) {
-				try {
-					oContainer.getLogonSystem();
-					_isUshellContainerInitialized = true;
-				} catch (oError) {
-					return undefined;
-				}
-			}
-			return oContainer;
+			return oContainer?.isInitialized() ? oContainer : undefined;
 		},
 
 		createDefaultFileName(sNameAddition) {

@@ -806,8 +806,8 @@ sap.ui.define([
 				{
 					name: "sap/ushell/Container",
 					stub: {
-						getLogonSystem() {
-							throw new Error("Container is not initialized!");
+						isInitialized() {
+							return false;
 						}
 					}
 				}
@@ -819,8 +819,8 @@ sap.ui.define([
 				{
 					name: "sap/ushell/Container",
 					stub: {
-						getLogonSystem() {
-							return {};
+						isInitialized() {
+							return true;
 						}
 					}
 				}
