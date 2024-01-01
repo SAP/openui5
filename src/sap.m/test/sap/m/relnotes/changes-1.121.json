@@ -1,7 +1,45 @@
 {
   "1.121.0": {
-    "date": "December 2023",
+    "date": "January 2024",
     "notes": [
+      {
+        "id": "dfbf95cbdcc26ea4b59b047c33e09f848ea034d9",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Propagate custom data to popover"
+      },
+      {
+        "id": "2432140a388455a9a368c709f1b8639d0eee137c",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: adjust tooltip announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "d91e1cb19e0ff6457e25e60a6fbd55c3769d1d01",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: adjust dialog heading level",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "2375725b20b2ab3bc34f0f96fe298f8329abf88d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: handle date selection with min date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370095753"
+          }
+        ]
+      },
       {
         "id": "0148f3d7cbfe362c6df946bb3e98ae525a729681",
         "type": "FIX",

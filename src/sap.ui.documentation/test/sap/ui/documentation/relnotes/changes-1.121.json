@@ -1,7 +1,12 @@
 {
   "1.121.0": {
-    "date": "December 2023",
+    "date": "January 2024",
     "notes": [
+      {
+        "id": "e1c5e067926f2ae898a8f196dec133150696b278",
+        "type": "FEATURE",
+        "text": " Demo Kit: Added Experimental API Filter"
+      },
       {
         "id": "f674b19c692347e04bc1d804b2e6edc9f21d5464",
         "type": "FIX",

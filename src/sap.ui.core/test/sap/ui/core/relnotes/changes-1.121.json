@@ -1,7 +1,17 @@
 {
   "1.121.0": {
-    "date": "December 2023",
+    "date": "January 2024",
     "notes": [
+      {
+        "id": "bbc1726c431b8ffeb7adc67179255f882d3ee6e1",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataTreeBinding: consider deep path for context"
+      },
+      {
+        "id": "551a4c26244524798905cec7b8644c6f16b6dea8",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat#parse: support all WhiteSpace and RTL codes in pattern for NumberFormat UnitType instances"
+      },
       {
         "id": "56ac9c875048c053b273a2e48213e438362d46e8",
         "type": "FIX",

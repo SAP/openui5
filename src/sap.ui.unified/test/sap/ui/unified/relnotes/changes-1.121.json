@@ -1,7 +1,29 @@
 {
   "1.121.0": {
-    "date": "December 2023",
+    "date": "January 2024",
     "notes": [
+      {
+        "id": "209fe3e2f5a70bcc4a41fe9a350b287446b031fd",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adding padding when two calendars are next to each other",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "1c29c4235c2197b132f1a4a05c2a1f2e8e86fc37",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust year picker focued index",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
       {
         "id": "7be449468648ed358da7ef4e8412e5215b031f95",
         "type": "FIX",
