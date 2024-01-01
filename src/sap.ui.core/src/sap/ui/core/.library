@@ -217,7 +217,7 @@
             <pattern>sap/ui/thirdparty/qunit-composite.css</pattern>
             <pattern>sap/ui/thirdparty/qunit-composite.js</pattern>
         </lib>
-        <lib name="qunit-reporter-junit" displayName="JUnit Reporter for QUnit" npmName="qunit-reporter-junit" version="1.1.1" hash="a29d35686ac71f47aef08ad4422a87ff" homepage="https://github.com/JamesMGreene/qunit-reporter-junit" id="73554900106100005540">
+        <lib name="qunit-reporter-junit" displayName="JUnit Reporter for QUnit" npmName="qunit-reporter-junit" version="1.1.1" hash="28e7f283bcba22f4959b9d2e91be6e7e" homepage="https://github.com/JamesMGreene/qunit-reporter-junit" id="73554900106100005540">
             <license url="https://raw.githubusercontent.com/JamesMGreene/qunit-reporter-junit/master/LICENSE.txt" type="MIT" />
             <copyright>jQuery Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/qunit-reporter-junit.js</pattern>

@@ -20,7 +20,7 @@ sap.ui.define([
 
 	var mUtils = {
 		getPlugin: function (window) {
-			return new window.sap.ui.test.OpaPlugin("sap.ui.test.Opa5");
+			return new (window.sap.ui.require("sap/ui/test/OpaPlugin"))("sap.ui.test.Opa5");
 		},
 		getJQuery: function (window) {
 			return window.jQuery;
@@ -29,10 +29,10 @@ sap.ui.define([
 			return window;
 		},
 		getUtils: function (window) {
-			return window.sap.ui.qunit.QUnitUtils;
+			return window.sap.ui.require("sap/ui/qunit/QUnitUtils");
 		},
 		getHashChanger: function (window) {
-			return window.sap.ui.core.routing.HashChanger.getInstance();
+			return window.sap.ui.require("sap/ui/core/routing/HashChanger").getInstance();
 		}
 	};
 

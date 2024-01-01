@@ -298,7 +298,7 @@ sap.ui.define([
 			success: function () {
 				// mind the fixture page's resourceRoots when setting URLs
 				// laod the module and check its state in the same waitFor, otherwise it might be awaited and loaded before expected
-				oModel = new (Opa5.getWindow().sap.ui.model.resource.ResourceModel)({
+				oModel = new (Opa5.getWindow().sap.ui.require("sap/ui/model/resource/ResourceModel"))({
 					bundleUrl: "./" + BUNDLE_FILE,
 					async: true
 				});

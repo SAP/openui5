@@ -226,7 +226,6 @@ sap.ui.define([
 			var oJSONModel = new JSONModel({
 				items: [{id: 1, name: "Item 11"}, {id: 2, name: "Item 22"}]
 			});
-			sap.ui.getCore().setModel(oJSONModel);
 			this.oList = new List("myList");
 			this.oList.bindItems({
 				path : "/items",
@@ -237,9 +236,14 @@ sap.ui.define([
 			this.oSearchField = new SearchField("myId");
 			this.oSearchField.placeAt("qunit-fixture");
 			this.oList.placeAt("qunit-fixture");
+
+			this.oUIArea = this.oList.getUIArea();
+			this.oUIArea.setModel(oJSONModel);
+
 			return nextUIUpdate();
 		},
 		afterEach: function () {
+			this.oUIArea.setModel();
 			this.oSearchField.destroy();
 			this.oList.destroy();
 		}

@@ -36,8 +36,6 @@ sap.ui.define([
 		this.beforeEach = function () {
 			var oModel = new JSONModel(mPropertyData);
 			var oNamedModel = new JSONModel(mPropertyData);
-			sap.ui.getCore().setModel(oModel);
-			sap.ui.getCore().setModel(oNamedModel, "myModel");
 
 			this.oPropertyText = new Text({text: "{/propertyText}"});
 			this.oNamedModelPropertyText = new Text({text: "{myModel>/propertyText}"});
@@ -55,12 +53,17 @@ sap.ui.define([
 			this.oCompositePropertyText.placeAt("qunit-fixture");
 			this.oNamedCompositePropertyText.placeAt("qunit-fixture");
 			this.oStaticPropertyText.placeAt("qunit-fixture");
+
+			this.oUIArea = this.oPropertyText.getUIArea();
+			this.oUIArea.setModel(oModel);
+			this.oUIArea.setModel(oNamedModel, "myModel");
+
 			return nextUIUpdate();
 		};
 
 		this.afterEach = function () {
-			sap.ui.getCore().setModel();
-			sap.ui.getCore().setModel(null, "myModel");
+			this.oUIArea.setModel();
+			this.oUIArea.setModel(undefined, "myModel");
 			this.oPropertyText.destroy();
 			this.oNamedModelPropertyText.destroy();
 			this.oCompositePropertyText.destroy();
@@ -75,8 +78,6 @@ sap.ui.define([
 		this.beforeEach = function () {
 			var oModel = new JSONModel(mPropertyData);
 			var oNamedModel = new JSONModel(mPropertyData);
-			sap.ui.getCore().setModel(oModel);
-			sap.ui.getCore().setModel(oNamedModel, "myModel");
 
 			this.oInput = new Input();
 			this.oInput.bindObject({path: "/compositeProperty"});
@@ -94,12 +95,17 @@ sap.ui.define([
 			this.oInput.placeAt("qunit-fixture");
 			this.oNamedInput.placeAt("qunit-fixture");
 			this.oVerticalLayout.placeAt("qunit-fixture");
+
+			this.oUIArea = this.oInput.getUIArea();
+			this.oUIArea.setModel(oModel);
+			this.oUIArea.setModel(oNamedModel, "myModel");
+
 			return nextUIUpdate();
 		};
 
 		this.afterEach = function () {
-			sap.ui.getCore().setModel();
-			sap.ui.getCore().setModel(null, "myModel");
+			this.oUIArea.setModel();
+			this.oUIArea.setModel(undefined, "myModel");
 			this.oInput.destroy();
 			this.oNamedInput.destroy();
 			this.oVerticalLayout.destroy();
@@ -116,8 +122,6 @@ sap.ui.define([
 		this.beforeEach = function () {
 			var oJSONModel = new JSONModel(mAggregationData);
 			var oNamedModel = new JSONModel(mPropertyData);
-			sap.ui.getCore().setModel(oJSONModel);
-			sap.ui.getCore().setModel(oNamedModel, "myModel");
 
 			this.aLists = [];
 			this.aNamedLists = [];
@@ -137,12 +141,16 @@ sap.ui.define([
 				});
 			});
 
+			this.oUIArea = this.aLists[0].getUIArea();
+			this.oUIArea.setModel(oJSONModel);
+			this.oUIArea.setModel(oNamedModel, "myModel");
+
 			return nextUIUpdate();
 		};
 
 		this.afterEach = function () {
-			sap.ui.getCore().setModel();
-			sap.ui.getCore().setModel(null, "myModel");
+			this.oUIArea.setModel();
+			this.oUIArea.setModel(undefined, "myModel");
 			this.aLists.forEach(function (oList) {
 				oList.destroy();
 			});
