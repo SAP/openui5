@@ -8,7 +8,7 @@ sap.ui.define([
 ], function(Controller, MockServer, ODataModel, JSONModel, OperationMode, TableExampleUtils) {
 	"use strict";
 
-	var sServiceUrl = "http://my.test.service.com/";
+	var sServiceUrl = "/odataFake/";
 
 	return Controller.extend("sap.ui.table.sample.OData.Controller", {
 
