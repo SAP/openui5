@@ -229,6 +229,18 @@ sap.ui.define([
 			assert.deepEqual(e.getParameter("data"), e.getSource().getSelectionData(), "data parameter is same as the #getSelectionData API");
 			assert.deepEqual(e.getParameter("data"), [].concat([Object.values(aData[1])], [Object.values(aData[3])]), "data parameter is valid");
 		});
+
+		const oSelectionStub = sinon.stub(window, "getSelection").callsFake(function() {
+			return {
+				toString() { return "SomeSelectionText"; },
+				containsNode() { return true; }
+			};
+		});
+
+		ClipboardUtils.triggerCopy();
+		assert.equal(await navigator.clipboard.readText(), "DummyClipboardText", "Text selection did not allow copy to clipboard");
+		oSelectionStub.restore();
+
 		ClipboardUtils.triggerCopy();
 		assert.equal(await navigator.clipboard.readText(), "1\tname1\tcolor1\n3\tname3\tcolor3", "Selection is copied via keyboard event to the clipboard");
 

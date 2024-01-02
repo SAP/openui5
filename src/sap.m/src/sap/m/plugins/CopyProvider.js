@@ -448,6 +448,11 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 			return;
 		}
 
+		const oSelection = window.getSelection();
+		if (oSelection.toString() && oSelection.containsNode(oEvent.target, true)) {
+			return;
+		}
+
 		oEvent.setMarked();
 		oEvent.preventDefault();
 		this.copySelectionData(true);
