@@ -30,5 +30,21 @@
         ]
       }
     ]
+  },
+  "1.120.3": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "37ee4cc5737adebd462e9f0814fae9c12a752269",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Prevent layout flickering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009009652023"
+          }
+        ]
+      }
+    ]
   }
 }

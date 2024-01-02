@@ -663,5 +663,26 @@
         ]
       }
     ]
+  },
+  "1.120.3": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "f4688297e2b2df8f83eb5c8c533d3ac72d9e0cda",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataTreeBinding: consider deep path for context"
+      },
+      {
+        "id": "f8667e5865f4f831d6019ce3be63818a29c36f49",
+        "type": "FIX",
+        "text": " sap.base.i18n.date.TimezoneUtils.calculateOffset: Fix Daylight Saving Time issues",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370140369"
+          }
+        ]
+      }
+    ]
   }
 }

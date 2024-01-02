@@ -148,5 +148,21 @@
         ]
       }
     ]
+  },
+  "1.120.3": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "7894634be1d2f976f3d53171a6cbd39ff10af3c7",
+        "type": "FIX",
+        "text": " mdc.FilterBar: ensure the correct event sequence",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380133966"
+          }
+        ]
+      }
+    ]
   }
 }

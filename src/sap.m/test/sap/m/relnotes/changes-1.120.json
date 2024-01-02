@@ -555,5 +555,21 @@
         ]
       }
     ]
+  },
+  "1.120.3": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "a4cb6696b9cc83d6ada53c9939fcfa78a2faadcb",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Restored arrow navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370146290"
+          }
+        ]
+      }
+    ]
   }
 }
