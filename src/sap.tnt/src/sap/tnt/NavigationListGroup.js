@@ -62,7 +62,14 @@ sap.ui.define([
 		}
 
 		if (!oNavigationList.getExpanded()) {
-			aItems.forEach((oItem) => oItem.render(oRM, oNavigationList));
+
+			aItems.forEach((oItem) => {
+				if (!bEnabled) {
+					oItem.setEnabled(false);
+				}
+				oItem.render(oRM, oNavigationList);
+			});
+
 			this._renderSeparator(oRM);
 			return;
 		}
@@ -114,7 +121,9 @@ sap.ui.define([
 
 		oRM.openEnd();
 
-		aItems.forEach((oItem) => oItem.render(oRM, oNavigationList));
+		aItems.forEach((oItem) => {
+			oItem.render(oRM, oNavigationList);
+		});
 
 		oRM.close("ul")
 			.close("li");
