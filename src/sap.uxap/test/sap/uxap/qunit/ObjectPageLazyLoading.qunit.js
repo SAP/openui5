@@ -2,10 +2,12 @@
 sap.ui.define(["sap/ui/thirdparty/jquery",
                "sap/ui/core/Core",
                "sap/ui/model/json/JSONModel",
+			   "sap/m/Button",
+			   "sap/m/Title",
 			   "sap/uxap/ObjectPageDynamicHeaderTitle",
                "sap/uxap/ObjectPageLayout",
                "sap/ui/core/mvc/XMLView"],
-function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayout, XMLView) {
+function (jQuery, Core, JSONModel, Button, Title, ObjectPageDynamicHeaderTitle, ObjectPageLayout, XMLView) {
 	"use strict";
 
 	// utility function that will be used in these tests
@@ -110,6 +112,43 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 			assert.strictEqual(oLastSubSection.getBlocks()[0]._bConnected, false, "block data outside viewport not loaded");
 			done();
 		}, iLoadingDelay);
+	});
+
+	/**
+	 * @deprecated Since version 1.120
+	 */
+	QUnit.test("does not load more than needed subsections", function (assert) {
+			var oObjectPageLayout = this.oComponentContainer
+				.getObjectPageLayoutInstance();
+
+			var oData = oConfigModel.getData();
+			_loadBlocksData(oData);
+
+			oConfigModel.setData(oData);
+			oObjectPageLayout.setHeaderTitle(new ObjectPageDynamicHeaderTitle({
+				heading: new Title({
+					text: "Title of ObjectPageLayout"
+				})
+			}));
+			oObjectPageLayout.addHeaderContent(new Button({
+				text: "Hello"
+			}));
+			Core.applyChanges();
+
+			var done = assert.async();
+			assert.expect(3);
+
+			setTimeout(function() {
+				var oFirstSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
+				assert.strictEqual(oFirstSubSection.getBlocks()[0]._bConnected, true, "block data loaded successfully");
+
+				var oSecondSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
+				assert.strictEqual(oSecondSubSection.getBlocks()[0]._bConnected, true, "block data loaded successfully");
+
+				var oOutOfViewPortSubSection = oObjectPageLayout.getSections()[3].getSubSections()[1];
+				assert.strictEqual(oOutOfViewPortSubSection.getBlocks()[0]._bConnected, false, "block data outside viewport not loaded");
+				done();
+			}, iLoadingDelay);
 	});
 
 	/**
