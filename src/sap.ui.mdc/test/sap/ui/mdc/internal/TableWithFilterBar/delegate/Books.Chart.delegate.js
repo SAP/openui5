@@ -177,6 +177,11 @@ sap.ui.define([
 						oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] = true;
 					}
 
+					const mConstraints = {};
+					if (oObj.$Precision > 0) {
+						mConstraints.precision = oObj.$Precision;
+					}
+
 					//TODO: Check what we want to do with properties neither aggregatable nor groupable
 					//Right now: skip them, since we can't create a chart from it
 					if (!oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"] && !oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"]) {
@@ -195,18 +200,27 @@ sap.ui.define([
 							sTextProperty = null; //Expand is not supported
 						}
 
+						let sSortKey = sKey;
+						if (oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement"]?.$EnumMember === "com.sap.vocabularies.UI.v1.TextArrangementType/TextOnly" && sTextProperty) {
+							sSortKey = sTextProperty;
+						}
+
 						aProperties.push({
 							name: sKey,
 							path: sKey,
 							label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
 							sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
+							sortKey: sSortKey,
 							filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
 							groupable: true,
 							aggregatable: false,
 							maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo[sKey]?.allowedExpressions) ? -1 : 1,
+							// visible: sKey !== "modifiedAt", via visible a dimension can be removed from the settings dialog.
+							constraints: mConstraints,
 							dataType: oObj.$Type,
 							role: ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
-							textProperty:  sTextProperty
+							textProperty: sTextProperty,
+							textFormatter: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement"]
 						});
 
 					}
@@ -260,6 +274,26 @@ sap.ui.define([
 		}
 
 	};
+
+    SampleChartDelegate.formatText = function(vValue, sDesc) {
+		const sValue = this.typeConfig?.typeInstance?.formatValue(vValue, "string") || vValue;
+
+        if (sDesc) {
+            const oTextArrangementAnnotation = this.textFormatter;
+            if (
+                !oTextArrangementAnnotation ||
+                oTextArrangementAnnotation.$EnumMember === "com.sap.vocabularies.UI.v1.TextArrangementType/TextFirst"
+            ) {
+                return `${sDesc} (${sValue})`;
+            } else if (oTextArrangementAnnotation.$EnumMember === "com.sap.vocabularies.UI.v1.TextArrangementType/TextLast") {
+                return `${sValue} (${sDesc})`;
+            } else if (oTextArrangementAnnotation.$EnumMember === "com.sap.vocabularies.UI.v1.TextArrangementType/TextOnly") {
+                return sDesc;
+            }
+        }
+        return sDesc ? sDesc : sValue;
+    };
+
 
 	return SampleChartDelegate;
 }, /* bExport= */ true);

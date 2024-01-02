@@ -1424,26 +1424,24 @@ sap.ui.define([
 		this._getChart(oChart).addDimension(oDimension);
 	};
 
-	/**
-	 * @private
-	 */
-	ChartDelegate.innerDimensionFactory = function(oChart, oItem, oPropertyInfo) {
-		const oDimension = new Dimension({
-			name: this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart),
-			role: oItem.getRole() ? oItem.getRole() : "category",
-			label: oItem.getLabel()
-		});
+    /**
+     * @private
+     */
+    ChartDelegate.innerDimensionFactory = function (oChart, oItem, oPropertyInfo) {
+        const oDimension = new Dimension({
+            name: this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart),
+            role: oItem.getRole() || "category",
+            label: oItem.getLabel(),
+            textFormatter: this.formatText.bind(oPropertyInfo)
+        });
 
 		if (oPropertyInfo.textProperty) {
 			oDimension.setTextProperty(oPropertyInfo.textProperty);
 			oDimension.setDisplayText(true);
 		}
 
-		if (oPropertyInfo.textFormatter) {
-			oDimension.setTextFormatter(this.formatText.bind(oPropertyInfo));
-		}
-		return oDimension;
-	};
+        return oDimension;
+    };
 
 	/**
 	 * @private
@@ -1479,15 +1477,15 @@ sap.ui.define([
 
 	/**
 	 * Gets the aggreagted name for given propertyInfo.
-	 * @param {object} oPoperty PropertyInfo object
+	 * @param {object} oProperty PropertyInfo object
 	 * @returns {string} Name for inner chart
 	 *
 	 * @experimental
 	 * @private
 	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 */
-	ChartDelegate._getAggregatedMeasureNameForProperty = function(oPoperty) {
-		return oPoperty.aggregationMethod + oPoperty.name;
+	ChartDelegate._getAggregatedMeasureNameForProperty = function(oProperty) {
+		return oProperty.aggregationMethod + oProperty.name;
 	};
 
 	/**
@@ -1771,20 +1769,20 @@ sap.ui.define([
 		return PropertyHelper;
 	};
 
-	/**
-	 * This allows formatting for axis labels of the inner sap.chart.Chart.
-	 * Note: As the inner chart has no association to the propertyInfo, <code>this</code> will be bound to the propertyInfo object when calling this method.
-	 * @param {string} sKey Key of the dimension
-	 * @param {string} sDesc Description provided by the metadata
-	 * @returns {string} Label which should be shown on the chart axis
-	 *
-	 * @experimental
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 */
-	ChartDelegate.formatText = function(sKey, sDesc) {
-		return sKey;
-	};
+    /**
+     * This allows formatting for axis labels of the inner sap.chart.Chart.
+     * Note: As the inner chart has no association to the propertyInfo, <code>this</code> will be bound to the propertyInfo object when calling this method.
+     * @param {string} sKey Key value of the dimension
+     * @param {string} sDesc Description provided by the metadata
+     * @returns {string} Label which should be shown on the chart axis
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.fe, sap.ui.mdc
+     */
+    ChartDelegate.formatText = function(sKey, sDesc) {
+        return sKey;
+    };
 
 	/**
 	 * Defines a <code>noDataText</code> text for the inner chart.
