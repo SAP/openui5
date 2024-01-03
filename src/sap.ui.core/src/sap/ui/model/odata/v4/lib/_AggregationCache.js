@@ -1289,8 +1289,19 @@ sap.ui.define([
 		} else {
 			const oReadRange = ODataUtils._getReadRange(this.aElements, iIndex, iLength,
 				iPrefetchLength,
-				// _getReadRange happily reads beyond aElements, so oElement may be undefined
-				(oElement) => !oElement || _Helper.hasPrivateAnnotation(oElement, "placeholder"));
+				(oElement) => {
+					switch (_Helper.getPrivateAnnotation(oElement, "placeholder")) {
+						case true: // an initial placeholder; must have a rank
+							return _Helper.getPrivateAnnotation(oElement, "parent")
+								.isMissing(_Helper.getPrivateAnnotation(oElement, "rank"));
+						case 1: // converted back to a placeholder; must have a predicate
+							return !(this.aElements.$byPredicate[
+									_Helper.getPrivateAnnotation(oElement, "predicate")
+								] instanceof SyncPromise);
+						default: // no placeholder
+							return false;
+					}
+				});
 			const n = Math.min(oReadRange.start + oReadRange.length, this.aElements.length);
 			for (i = oReadRange.start; i < n; i += 1) {
 				oElement = this.aElements[i];
@@ -1405,7 +1416,8 @@ sap.ui.define([
 			fnDataRequested) {
 		var that = this;
 
-		return this.oFirstLevel.read(iStart, iLength, iPrefetchLength, oGroupLock, fnDataRequested)
+		return this.oFirstLevel.read(iStart, iLength + iPrefetchLength, 0, oGroupLock,
+				fnDataRequested)
 			.then(function (oResult) {
 				// Note: this code must be idempotent, it might well run twice!
 				var oGrandTotal,
