@@ -548,6 +548,9 @@ sap.ui.define(function() {
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit"
 			},
+			/**
+			 * @deprecated
+			 */
 			"ThemeVersion-off-sync": {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - off - sync",

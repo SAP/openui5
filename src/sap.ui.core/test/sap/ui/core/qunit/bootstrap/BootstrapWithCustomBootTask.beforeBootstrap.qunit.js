@@ -4,7 +4,7 @@
 
 	window.testresults = {
 		bHookCalled : false,
-		bSapUiCoreExists : false,
+		bSapUiCoreLoaded : false,
 		bApplyThemeExists : false,
 		bThemeBeforeAsExpected : false,
 		bThemeAfterAsExpected : false,
@@ -22,8 +22,8 @@
 			"sap/ui/core/Theming"
 		], function(Theming) {
 			testresults.bHookCalled = true;
-			testresults.bSapUiCoreExists = typeof sap.ui.getCore === "function";
-			if ( testresults.bSapUiCoreExists ) {
+			testresults.bSapUiCoreLoaded = !!sap.ui.require("sap/ui/core/Core");
+			if ( testresults.bSapUiCoreLoaded ) {
 				testresults.sThemeBefore = Theming.getTheme();
 				testresults.oLinksBefore = document.querySelectorAll('head > link[id^="sap-ui-theme-"]');
 				try {
