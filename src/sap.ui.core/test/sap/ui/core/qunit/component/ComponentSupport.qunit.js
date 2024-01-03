@@ -1,15 +1,17 @@
 sap.ui.define([
 	'sap/base/Log',
 	'sap/base/strings/hyphenate',
+	'sap/base/util/Deferred',
+	'sap/base/util/ObjectPath',
 	'sap/ui/core/UIComponent',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/ComponentSupport',
 	"sap/ui/core/Element",
 	'sap/ui/core/library'
-], function(Log, hyphenate, UIComponent, ComponentContainer, ComponentSupport, Element, library) {
+], function(Log, hyphenate, Deferred, ObjectPath, UIComponent, ComponentContainer, ComponentSupport, Element, library) {
 
 	"use strict";
-	/*global QUnit, sinon, Promise*/
+	/*global QUnit, sinon*/
 
 	var ComponentLifecycle = library.ComponentLifecycle;
 
@@ -28,6 +30,11 @@ sap.ui.define([
 	var oContentElement = createComponentDIV("content");
 	document.body.appendChild(oContentElement);
 
+	/**
+	 * @deprecated As of 1.120, the support for events is deprecated as it relies on global names
+	 */
+	ObjectPath.set("myAppController.onComponentCreated", function() {});
+
 	// settings
 	var mSettings = {
 		"div1": {
@@ -36,7 +43,10 @@ sap.ui.define([
 			settings: {
 				id: "component1"
 			},
-			componentCreated: "componentCreated"
+			/**
+			 * @deprecated As of 1.120, the support for events is deprecated as it relies on global names
+			 */
+			componentCreated: "myAppController.onComponentCreated"
 		},
 		"div2": {
 			id: "container2",
@@ -44,7 +54,10 @@ sap.ui.define([
 			settings: {
 				id: "component2"
 			},
-			componentCreated: "componentCreated",
+			/**
+			 * @deprecated As of 1.120, the support for events is deprecated as it relies on global names
+			 */
+			componentCreated: "myAppController.onComponentCreated",
 			async: false
 		},
 		"div3": {
@@ -53,7 +66,10 @@ sap.ui.define([
 			settings: {
 				id: "component3"
 			},
-			componentCreated: "componentCreated",
+			/**
+			 * @deprecated As of 1.120, the support for events is deprecated as it relies on global names
+			 */
+			componentCreated: "myAppController.onComponentCreated",
 			manifest: "true"
 		},
 		"div4": {
@@ -62,7 +78,10 @@ sap.ui.define([
 			settings: {
 				id: "component4"
 			},
-			componentCreated: "componentCreated",
+			/**
+			 * @deprecated As of 1.120, the support for events is deprecated as it relies on global names
+			 */
+			componentCreated: "myAppController.onComponentCreated",
 			manifest: "false"
 		}
 	};
@@ -81,26 +100,6 @@ sap.ui.define([
 		oContentElement.appendChild(createComponentDIV(sId, mContainer));
 	});
 
-	// Promise which resolves once the component instances are created
-	function runComponentSupport() {
-		return new Promise(function(resolve, reject) {
-
-			// create a global function to count the component instances
-			var iComponentCount = 0;
-			window.componentCreated = function() {
-				iComponentCount++;
-				// start the test once both component instances are created
-				if (iComponentCount == 4) {
-					resolve();
-				}
-			};
-
-			// execute the ComponentSupport
-			ComponentSupport.run();
-
-		});
-	}
-
 
 	QUnit.module("Component Support");
 
@@ -115,9 +114,20 @@ sap.ui.define([
 			var mExpectedSettings = mSettings[oElement.id];
 
 			// check the parser
-			window.componentCreated = function() {};
 			var mComponentSettings = ComponentSupport._parse(oElement);
-			mComponentSettings.componentCreated = "componentCreated"; // reset function for comparision!
+			/**
+			 * @deprecated As of 1.120, the support for events is deprecated as it relies on global names
+			 * Check event handler separately. Parser returns resolved function, whereas the expected settings
+			 * contain a global name /(string) only
+			 */
+			if ( mExpectedSettings.componentCreated ) {
+				assert.strictEqual(
+					mComponentSettings.componentCreated,
+					ObjectPath.get(mExpectedSettings.componentCreated),
+					"Event handler parsed correctly for component " + oElement.id + "!");
+				delete mComponentSettings.componentCreated;
+				delete mExpectedSettings.componentCreated;
+			}
 			assert.deepEqual(mComponentSettings, mExpectedSettings, "Component settings parsed correctly for component " + oElement.id + "!");
 
 			// check the default settings
@@ -131,18 +141,21 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parser with unknown property/event", function(assert) {
+	QUnit.test("Parser with unknown setting", function(assert) {
 
 		this.spy(Log, "warning");
 		var oElement = document.createElement("div");
-		oElement.setAttribute("data-unkown", "foo");
+		oElement.setAttribute("data-unknown", "foo");
 		ComponentSupport._parse(oElement);
 		assert.ok(
-			Log.warning.calledWithMatch("Property or event \"unkown\" will be ignored as it does not exist in sap.ui.core.ComponentContainer"),
+			Log.warning.calledWithMatch("Property or event \"unknown\" will be ignored as it does not exist in sap.ui.core.ComponentContainer"),
 			"should log a warning with the expected message");
 
 	});
 
+	/**
+	 * @deprecated As of 1.120, the support for events is deprecated as it relies on global names
+	 */
 	QUnit.test("Parser with invalid event callback", function(assert) {
 
 		var oElement = document.createElement("div");
@@ -155,9 +168,7 @@ sap.ui.define([
 
 	QUnit.test("ComponentContainer Factory", function(assert) {
 
-		var oComponentContainerApplySettingsSpy = this.spy(ComponentContainer.prototype, "applySettings");
-
-		var aComponentElements = document.querySelectorAll("[data-sap-ui-component]");
+		const aComponentElements = document.querySelectorAll("[data-sap-ui-component]");
 
 		assert.equal(aComponentElements.length, 4, "There should be four declarative elements");
 		assert.ok(aComponentElements[0].hasAttribute("data-sap-ui-component"), "First element should have the indicator attribute");
@@ -165,10 +176,25 @@ sap.ui.define([
 		assert.ok(aComponentElements[2].hasAttribute("data-sap-ui-component"), "Third element should have the indicator attribute");
 		assert.ok(aComponentElements[3].hasAttribute("data-sap-ui-component"), "Fourth element should have the indicator attribute");
 
-		var pComponentSupport = runComponentSupport();
+		const deferred = new Deferred();
+		let iComponentCount = 0;
+		this.stub(ComponentContainer.prototype, "applySettings").callsFake(function(mSettings) {
+			// inject `componentCreated` event handler and wait for component creation
+			mSettings.componentCreated = function() {
+				iComponentCount++;
+				// continue the test once all component instances have been created
+				if (iComponentCount == 4) {
+					deferred.resolve();
+				}
+			};
+			return ComponentContainer.prototype.applySettings.wrappedMethod.apply(this, arguments);
+		});
+
+		// execute the ComponentSupport
+		ComponentSupport.run();
 
 		// Four ComponentContainers should have been created
-		sinon.assert.callCount(oComponentContainerApplySettingsSpy, 4);
+		sinon.assert.callCount(ComponentContainer.prototype.applySettings, 4);
 
 		assert.notOk(aComponentElements[0].hasAttribute("data-sap-ui-component"), "First element should not have the indicator attribute anymore");
 		assert.ok(aComponentElements[0].parentNode, "First element should still be part of the DOM");
@@ -185,9 +211,9 @@ sap.ui.define([
 		ComponentSupport.run();
 
 		// Still, only four ComponentContainers should have been created
-		sinon.assert.callCount(oComponentContainerApplySettingsSpy, 4);
+		sinon.assert.callCount(ComponentContainer.prototype.applySettings, 4);
 
-		return pComponentSupport.then(function() {
+		return deferred.promise.then(function() {
 
 			assert.ok(document.getElementById("div1"), "Placeholder DIV for first Component found!");
 			assert.ok(document.getElementById("div2"), "Placeholder DIV for second Component found!");
@@ -229,7 +255,7 @@ sap.ui.define([
 			ComponentSupport.run();
 
 			// Still, only four ComponentContainers should have been created
-			sinon.assert.callCount(oComponentContainerApplySettingsSpy, 4);
+			sinon.assert.callCount(ComponentContainer.prototype.applySettings, 4);
 
 		});
 
