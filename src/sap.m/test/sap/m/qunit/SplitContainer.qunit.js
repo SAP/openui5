@@ -374,6 +374,9 @@ sap.ui.define([
 		oSplitContainer.showMaster();
 	});
 
+	/**
+	 * @deprecated As of version 1.87
+	 */
 	QUnit.test("sap.ui.Device.resize event should be reacted also on phone", function(assert) {
 		var oPortrait = {
 				landscape: false,
