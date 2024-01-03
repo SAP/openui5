@@ -141,7 +141,6 @@ sap.ui.define([
 				iScrollTop,
 				iScrollPageBottom,
 				iPageHeight,
-				bShouldStick = this._iPreviousScrollTop >= (oHeightParams.iHeaderContentHeight), // iHeaderContentHeight
 				oSubSectionsToLoad = {},
 				oSubSectionsInView = {},
 				iTimeDifference,
@@ -154,9 +153,9 @@ sap.ui.define([
 
 			//calculate the limit of visible sections to be lazy loaded
 			iPageHeight = (
-				oHeightParams.iScreenHeight                                            /* the total screen height */
-				- (bShouldStick ? oHeightParams.iAnchorBarHeight : 0)              /* minus the part taken by the anchor bar (when sticky)*/
-				- (bShouldStick ? oHeightParams.iHeaderTitleHeightStickied : 0)    /* minus the part taken by the header title (mandatory) */
+				oHeightParams.iScreenHeight                    /* the total screen height */
+				- oHeightParams.iAnchorBarHeight              /* minus the part taken by the anchor bar */
+				- oHeightParams.iHeaderTitleHeightStickied    /* minus the part taken by the header title (mandatory) */
 			);
 			iScrollTop = oHeightParams.iScrollTop;
 
