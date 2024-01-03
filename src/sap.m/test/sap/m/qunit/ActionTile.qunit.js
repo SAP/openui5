@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/m/ActionTile",
 	"sap/m/ActionTileContent",
-	"sap/m/CustomAttribute",
+	"sap/m/TileAttribute",
 	"sap/m/TileContent",
 	"sap/m/library",
 	"sap/m/FormattedText",
@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/model/json/JSONModel"
-], function(ActionTile,ActionTileContent,CustomAttribute,TileContent,library,FormattedText,Button,oCore,Library,KeyCodes,jQuery,JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/m/ContentConfig"
+], function(ActionTile,ActionTileContent,TileAttribute,TileContent,library,FormattedText,Button,oCore,Library,KeyCodes,jQuery,JSONModel,ContentConfig) {
 	"use strict";
 
 	// shortcut for sap.m.FrameType
@@ -23,6 +24,9 @@ sap.ui.define([
 
 	//shortcut for sap.m.Priority
 	var Priority = library.Priority;
+
+	//shortcut for sap.m.ContentConfigType
+	var ContentConfigType = library.ContentConfigType;
 
 	QUnit.module("Default Properties", {
 		beforeEach: function() {
@@ -46,23 +50,33 @@ sap.ui.define([
 				attributes: [
 					{
 						label: "Agreement Type:",
-						value: "SA with release doc(LPA)"
+						type: ContentConfigType.Text,
+						text:"SAP",
+						href:"https://www.sap.com/"
 					},
 					{
 						label: "Supplier",
-						value: "Domestic US Supplier 1"
+						type: ContentConfigType.Link,
+						text:"SAP",
+						href:"https://www.sap.com/"
 					},
 					{
 						label: "Target Net Value:",
-						value: "1.500,00 EUR"
+						type: ContentConfigType.Link,
+						text:"SAP",
+						href:"https://www.sap.com/"
 					},
 					{
 						label: "Attribute four",
-						value: "Value four"
+						type: ContentConfigType.Link,
+						text:"SAP",
+						href:"https://www.sap.com/"
 					},
 					{
 						label: "Attribute five",
-						value: "Value five"
+						type: ContentConfigType.Link,
+						text:"SAP",
+						href:"https://www.sap.com/"
 					}
 				]
 			});
@@ -73,9 +87,13 @@ sap.ui.define([
 				priorityText: "Very High",
 				attributes: {
 					path: "/attributes",
-					template: new CustomAttribute({
+					template: new TileAttribute({
 						label: "{label}",
-						value: "{value}"
+						contentConfig: new ContentConfig({
+							type:"{type}",
+							text:"{text}",
+							href:"{href}"
+						})
 					})
 				}
 				}),
@@ -158,11 +176,14 @@ sap.ui.define([
 			attributes: [
 				{
 					label: "Agreement Type:",
-					value: "SA with release doc(LPA)"
+					type: ContentConfigType.Text,
+					text:"SAP"
 				},
 				{
 					label: "Supplier",
-					value: "Domestic US Supplier 1"
+					type: ContentConfigType.Link,
+					text:"SAP",
+					href:"https://www.sap.com/"
 				}
 			]
 		});

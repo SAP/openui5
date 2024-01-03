@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library"],
-	function(library) {
+sap.ui.define(["./library","sap/m/Link"],
+	function(library,Link) {
 	"use strict";
 
 	/**
@@ -50,7 +50,7 @@ sap.ui.define(["./library"],
 	};
 
 	/**
-	 * Renders the CustomAttributes inside the ActionTileContent
+	 * Renders the TileAttributess inside the ActionTileContent
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.ActionTileContent} oControl The control that is rendered
 	 * @private
@@ -59,46 +59,9 @@ sap.ui.define(["./library"],
 		oRm.openStart("div",oControl.getId() + "-contentContainer");
 		oRm.class("sapMContainer");
 		oRm.openEnd();
-		oControl.getAttributes().forEach(function(oAttribute,iIndex) {
-			this._renderAttribute(oRm,oControl,oAttribute,iIndex);
-		}.bind(this));
-		oRm.close("div");
-	};
-
-	/**
-	 * Renders the individual attribute inside the CustomAttribute
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.ActionTileContent} oControl The control that is rendered
-	 * @param {sap.m.ActionTileContent} oAttribute It represents a custom attribute
-	 * @param {sap.m.ActionTileContent} iIndex It represents the index of the individual attribute
-	 * @private
-	 */
-	ActionTileContentRenderer._renderAttribute = function(oRm, oControl,oAttribute,iIndex) {
-		oRm.openStart("div",oControl.getId() + "-wrapper-" + iIndex);
-		oRm.class("sapMElementWrapper");
-		oRm.openEnd();
-		this._renderElement(oRm,oControl,oAttribute,iIndex,true);
-		this._renderElement(oRm,oControl,oAttribute,iIndex,false);
-		oRm.close("div");
-	};
-
-	/**
-	 * Renders label and value properties inside the CustomAttribute
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.ActionTileContent} oControl The control that is rendered
-	 * @param {sap.m.ActionTileContent} oAttribute It represents a custom attribute
-	 * @param {sap.m.ActionTileContent} iIndex It represents the index of the individual attribute
-	 * @param {sap.m.ActionTileContent} bLabel If true, it renders a label, otherwise it renders a value
-	 * @private
-	 */
-	ActionTileContentRenderer._renderElement = function(oRm, oControl,oAttribute,iIndex,bLabel) {
-		var sClassName = (bLabel) ? "sapMATCLabel" : "sapMATCValue",
-			sId = (bLabel) ? "-label" : "-value",
-			sText = (bLabel) ? oAttribute.getLabel() : oAttribute.getValue();
-		oRm.openStart("div", oControl.getId() + "-" + iIndex + sId);
-		oRm.class(sClassName);
-		oRm.openEnd();
-		oRm.text(sText);
+		oControl.getAttributes().forEach(function(oAttribute) {
+			oRm.renderControl(oAttribute);
+		});
 		oRm.close("div");
 	};
 	return ActionTileContentRenderer;

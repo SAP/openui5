@@ -208,6 +208,15 @@ sap.ui.define([
 					language: "en"
 				}
 			},
+			ContentConfig: {
+				title: "QUnit Test Page for sap.m.ContentConfig",
+				coverage: {
+					only: "//sap\/m\/ContentConfig.*/"
+				},
+				ui5: {
+					language: "en"
+				}
+			},
 			/**
 			 * @deprecated As of version 1.50
 			 */

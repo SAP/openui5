@@ -176,6 +176,7 @@ sap.ui.define([
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
 			"sap.m.TabsOverflowMode",
+			"sap.m.ContentConfigType",
 			"sap.m.TileSizeBehavior",
 			"sap.m.TimePickerMaskMode",
 			"sap.m.TitleAlignment",
@@ -235,7 +236,7 @@ sap.ui.define([
 			"sap.m.ComboBox",
 			"sap.m.ComboBoxTextField",
 			"sap.m.ComboBoxBase",
-			"sap.m.CustomAttribute",
+			"sap.m.TileAttribute",
 			"sap.m.CustomListItem",
 			"sap.m.CustomTile",
 			"sap.m.CustomTreeItem",
@@ -420,6 +421,7 @@ sap.ui.define([
 			"sap.m.ColumnPopoverCustomItem",
 			"sap.m.ColumnPopoverItem",
 			"sap.m.ColumnPopoverSortItem",
+			"sap.m.ContentConfig",
 			"sap.m.DynamicDateOption",
 			"sap.m.DynamicDateValueHelpUIType",
 			"sap.m.FlexItemData",
@@ -2043,6 +2045,26 @@ sap.ui.define([
 		 * @public
 		 */
 		StartAndEnd: "StartAndEnd"
+	};
+
+	/**
+	 * Defines the rendering type of the TileAttribute
+	 *
+	 * @enum {string}
+	 * @since 1.121
+	 * @private
+	 */
+	thisLib.ContentConfigType = {
+		/**
+		 * Renders a text inside the TileAttribute
+		 * @private
+		 */
+		Text: "Text",
+		/**
+		 * Renders a link inside the TileAttribute
+		 * @private
+		 */
+		Link: "Link"
 	};
 
 	/**
