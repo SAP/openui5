@@ -893,10 +893,10 @@ sap.ui.define([
 
 	/**
 	 * Calculates the index range to be read for the given start, length and prefetch length.
-	 * Checks if <code>aElements</code> entries are available for half the prefetch length left and
-	 * right to it. If not, the full prefetch length is added to this side.
+	 * Checks if <code>aElements</code> entries are available for at least half the prefetch length
+	 * left and right to it. If not, the full prefetch length is added to this side.
 	 *
-	 * @param {object[]} aElements
+	 * @param {any[]} aElements
 	 *   The array of available elements
 	 * @param {number} iStart
 	 *   The start index for the data request
@@ -905,9 +905,8 @@ sap.ui.define([
 	 * @param {number} iPrefetchLength
 	 *   The number of entries to prefetch before and after the given range; <code>Infinity</code>
 	 *   is supported
-	 * @param {function(object):boolean} [fnIsMissing]
-	 *   A function determining whether the given element is missing; if the function is not given,
-	 *   a test for <code>undefined</code> is used
+	 * @param {function(any):boolean} [fnIsMissing]
+	 *   A function determining whether the given element is missing although it is not <code>undefined</code>
 	 * @returns {object}
 	 *   An object with a member <code>start</code> for the start index for the next read and
 	 *   <code>length</code> for the number of entries to be read
@@ -920,19 +919,21 @@ sap.ui.define([
 		function isDataMissing(iStart, iEnd) {
 			var i;
 			for (i = iStart; i < iEnd; i += 1) {
-				if (fnIsMissing(aElements[i])) {
+				if (aElements[i] === undefined || fnIsMissing?.(aElements[i])) {
 					return true;
 				}
 			}
 			return false;
 		}
 
-		fnIsMissing ??= (oElement) => oElement === undefined;
-
-		if (isDataMissing(iStart + iLength, iStart + iLength + iPrefetchLength / 2)) {
+		// Make sure that "half the prefetch length" is an integer. Round it up so that at least the
+		// half is checked on both sides. (With a prefetch of 5 for example, 3 elements are checked
+		// both to the left and to the right.)
+		const iHalfPrefetchLength = Math.ceil(iPrefetchLength / 2);
+		if (isDataMissing(iStart + iLength, iStart + iLength + iHalfPrefetchLength)) {
 			iLength += iPrefetchLength;
 		}
-		if (isDataMissing(Math.max(Math.floor(iStart - iPrefetchLength / 2), 0), iStart)) {
+		if (isDataMissing(Math.max(iStart - iHalfPrefetchLength, 0), iStart)) {
 			iLength += iPrefetchLength;
 			iStart -= iPrefetchLength;
 			if (iStart < 0) {

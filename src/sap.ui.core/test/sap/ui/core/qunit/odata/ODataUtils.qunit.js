@@ -804,11 +804,19 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_getReadRange with placeholder", function (assert) {
 		const oPlaceholder = {placeholder : true};
-		const aElements = [oPlaceholder, oPlaceholder, {}, {}, {}, oPlaceholder, oPlaceholder,
-			oPlaceholder, oPlaceholder];
+		let aElements = [oPlaceholder, oPlaceholder, {}, {}, {}, oPlaceholder, oPlaceholder,
+			oPlaceholder];
 
 		assert.deepEqual(
 			// code under test
+			ODataUtils._getReadRange(aElements, 2, 3, 4, (oElement) => oElement.placeholder),
+			{start : 0, length : 9}
+		);
+
+		aElements = [oPlaceholder, oPlaceholder, {}, {}, {}];
+
+		assert.deepEqual(
+			// code under test - do not call callback with undefined
 			ODataUtils._getReadRange(aElements, 2, 3, 4, (oElement) => oElement.placeholder),
 			{start : 0, length : 9}
 		);
