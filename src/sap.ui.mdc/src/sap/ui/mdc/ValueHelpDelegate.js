@@ -83,7 +83,7 @@ sap.ui.define([
 			return false;
 		} else if (oContent.isA("sap.ui.mdc.valuehelp.base.ListContent")) { // All List-like contents should have some data to show
 			const oListBinding = oContent.getListBinding();
-			const iLength = oListBinding && oListBinding.getAllCurrentContexts().length;
+			const iLength = oListBinding && oListBinding.getCurrentContexts().length;
 			return iLength > 0;
 		}
 		return true; // All other content should be shown by default
