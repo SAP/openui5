@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/Device",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -10,9 +11,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
-	"sap/m/Panel",
-	"sap/m/TextRenderer"
+	"sap/m/Panel"
 ], function(
+	Device,
 	Library,
 	Theming,
 	createAndAppendDiv,
@@ -23,8 +24,7 @@ sap.ui.define([
 	jQuery,
 	Core,
 	XMLView,
-	Panel,
-	TextRenderer
+	Panel
 ) {
 	"use strict";
 
@@ -61,7 +61,31 @@ sap.ui.define([
 	createAndAppendDiv("content93");
 
 	function countLines(oControl) {
-		return Math.round(oControl.$().height() / oControl.getLineHeight());
+		let fLineHeight;
+		const oDomRef = oControl.getDomRef();
+		const oStyle = window.getComputedStyle(oDomRef);
+		const sLineHeight = oStyle.lineHeight;
+		const normalLineHeight = 1.2;
+
+		// calculate line-height in px
+		if (/px$/i.test(sLineHeight)) {
+			// we can rely on calculated px line-height value
+			fLineHeight = parseFloat(sLineHeight);
+		} else if (/^normal$/i.test(sLineHeight)) {
+			// use default value to calculate normal line-height
+			fLineHeight = parseFloat(oStyle.fontSize) * normalLineHeight;
+		} else {
+			// calculate line-height with using font-size and line-height
+			fLineHeight = parseFloat(oStyle.fontSize) * parseFloat(sLineHeight);
+		}
+
+		// on rasterizing the font, sub pixel line-heights are converted to integer
+		// for most of the font rendering engine but this is not the case for firefox
+		if (!Device.browser.firefox) {
+			fLineHeight = Math.floor(fLineHeight);
+		}
+
+		return Math.round(oControl.$().height() / fLineHeight);
 	}
 
 	// add text instances
@@ -286,21 +310,21 @@ sap.ui.define([
 		assert.notEqual(oDom.innerHTML, "", "When property wrappingType is 'Hyphenated' some text is rendered"); // this is the only possible check. Provided hypens (dashes) will be additionally checked by Visual test
 	});
 
-	if (t5.canUseNativeLineClamp()) {
-		QUnit.test("native max lines", function(assert) {
-			assert.strictEqual(t5.$("inner").hasClass("sapMTextLineClamp"), true, "Text has correct class for native MaxLine");
-			assert.equal(t5.$("inner").css("-webkit-line-clamp"), t5.getMaxLines(), "Text has correct line clamp value in CSS");
-			assert.strictEqual(t5.hasOwnProperty("_sResizeListenerId"), false, "Text does not have resize handler");
-		});
-	}
+	QUnit.test("native max lines", function(assert) {
+		assert.strictEqual(t5.$("inner").hasClass("sapMTextLineClamp"), true, "Text has correct class for native MaxLine");
+		assert.equal(t5.$("inner").css("-webkit-line-clamp"), t5.getMaxLines(), "Text has correct line clamp value in CSS");
+		assert.strictEqual(t5.hasOwnProperty("_sResizeListenerId"), false, "Text does not have resize handler");
+	});
 
+	/**
+	 * @deprecated As of version 1.121
+	 */
 	QUnit.test("non-native max lines", function(assert) {
 		var done = assert.async();
-		t5.canUseNativeLineClamp = function() {
-			return false;
-		};
+
 		t5.addEventDelegate({
 			onAfterRendering : function() {
+				t5.clampHeight();
 				t5.clampText();
 			}
 		}, t5);
@@ -425,61 +449,6 @@ sap.ui.define([
 		assert.strictEqual(oInfo.enabled, undefined, "Enabled");
 		assert.strictEqual(oInfo.editable, undefined, "Editable");
 		oControl.destroy();
-	});
-
-	QUnit.test("max lines with isThemeApplied true in RTL", function (assert){
-
-		this.stub(sap.ui.getCore(), "isThemeApplied").returns(true);
-
-		var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
-		var textWithMaxLines = new Text("textML-RTL", {
-			width: "300px",
-			text: lorem,
-			textDirection: "RTL",
-			maxLines: 2
-		});
-		this.stub(textWithMaxLines,"canUseNativeLineClamp").returns(false);
-		this.spy(textWithMaxLines, "clampHeight");
-		textWithMaxLines.placeAt("content91");
-		Core.applyChanges();
-
-		assert.ok(textWithMaxLines.clampHeight.calledOnce, "clampHeight was called ones");
-
-	});
-
-	QUnit.test("max lines with isThemeApplied false", function(assert) {
-		function themeChanged() {
-			return new Promise(function(resolve) {
-				function onChanged() {
-					Core.detachThemeChanged(onChanged);
-					resolve();
-				}
-				Core.attachThemeChanged(onChanged);
-			});
-		}
-
-		var done = assert.async();
-		var sCurrentTheme = Theming.getTheme();
-		var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
-		this.stub(sap.ui.getCore(), "isThemeApplied").returns(false);
-
-		var textWithMaxLines = new Text("textML", {
-			width: "300px",
-			text: lorem,
-			maxLines: 2
-		});
-		this.stub(textWithMaxLines,"canUseNativeLineClamp").returns(false);
-
-		this.spy(textWithMaxLines, "_handleThemeLoad");
-		textWithMaxLines.placeAt("content92");
-
-		themeChanged().then(function () {
-			assert.ok(textWithMaxLines._handleThemeLoad.calledOnce, "_handleThemeLoad was called ones");
-			Core.applyTheme(sCurrentTheme);
-			done();
-		});
-		Core.applyChanges();
-		Core.applyTheme(sCurrentTheme == "sap_belize" ? "sap_fiori_3" : "sap_belize");
 	});
 
 	QUnit.module("EmptyIndicator", {
