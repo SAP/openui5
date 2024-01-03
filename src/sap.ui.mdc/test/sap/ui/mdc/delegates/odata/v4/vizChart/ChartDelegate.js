@@ -126,7 +126,6 @@ sap.ui.define([
 							role: ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
 							criticality: null ,//To be implemented by FE
 							textProperty: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"] ? oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"].$Path  : null //To be implemented by FE
-							//textFormatter: string-> can be used to provide a custom formatter for the textProperty
 						});
 
 					}
