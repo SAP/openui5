@@ -4776,38 +4776,6 @@ sap.ui.define([
 			}});
 		});
 	});
-	/*test("test ODataModel destroy cancel load data", function() {
-		var oModel = initModel(sURI, true, "Categories");
-		//var oModel = new sap.ui.model.odata.ODataModel(sURI, { json: true, loadMetadataAsync: false });
-		oModel.setDefaultCountMode("None");
-		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" }).initialize();
-		var handler1 = function() { // delay the following test
-			assert.ok(false, "Data should not be loaded");
-			oBinding.detachChange(handler1);
-			done();
-		};
-		oBinding.attachRefresh(function() {oBinding.getContexts();});
-		oBinding.attachChange(handler1);
-		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
-		// spy on odata request function
-		var spy = this.spy(OData, "request");
-		oBinding.getContexts();
-
-		oModel.destroy();
-		assert.ok(oModel.bDestroyed, "Model should be destroyed");
-
-		assert.equal(spy.callCount, 0, "number of requests");
-		assert.ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
-
-		// fire new request
-		oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" }).initialize();
-		oBinding.getContexts();
-		assert.equal(spy.callCount, 1, "number of requests");
-		assert.ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
-
-		oBinding.detachChange(handler1);
-
-	});*/
 
 	QUnit.module("ODataModel.read", {
 		beforeEach: function() {
@@ -4818,18 +4786,6 @@ sap.ui.define([
 			delete this.oModel;
 		}
 	});
-
-	/*QUnit.test("old syntax", function(assert) {
-	/*	var done = assert.async();
-		this.oModel.read("/Categories", {json:true, success: function(oData, oResponse) {
-			assert.ok(true, "success handler called");
-			assert.equal(oResponse.requestUri, sURI + "Categories", "request uri does not have parameters");
-			done();
-		}, error: function() {
-			assert.ok(false, "error handler shouldn't be called");
-			done();
-		}});
-	});*/
 
 	QUnit.test("ODataModel.resolve: Don't resolve canonical with FunctionImports", function (assert) {
 		var done = assert.async();
