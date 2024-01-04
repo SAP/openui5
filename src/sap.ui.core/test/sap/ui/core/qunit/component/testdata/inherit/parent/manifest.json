@@ -6,7 +6,9 @@
 		"id": "sap.ui.test.inherit.parent",
 		"applicationVersion": {
 			"version": "1.0.0"
-		}
+		},
+		"title": "{{title}}",
+		"description": "{{description}}"
 	},
 
 	"sap.ui5": {
