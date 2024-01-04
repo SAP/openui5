@@ -17351,10 +17351,7 @@ sap.ui.define([
 					oTable = that.oView.byId("table"),
 					oTableBinding;
 
-				// 3 suspended ODLBs are destroyed before resume, so to say
-				that.expectCanceledError("Cache discarded as a new cache has been created")
-					.expectCanceledError("Cache discarded as a new cache has been created")
-					.expectCanceledError("Cache discarded as a new cache has been created");
+				that.expectCanceledError("Cache discarded as a new cache has been created");
 
 				// Note: each of these is causing a "rebind"
 				sId0 = that.addToTable(oTable, "Name", assert);
@@ -17485,10 +17482,7 @@ sap.ui.define([
 					oTable = that.oView.byId("table"),
 					oTableBinding;
 
-				// 3 suspended ODLBs are destroyed before resume, so to say
-				that.expectCanceledError("Cache discarded as a new cache has been created")
-					.expectCanceledError("Cache discarded as a new cache has been created")
-					.expectCanceledError("Cache discarded as a new cache has been created");
+				that.expectCanceledError("Cache discarded as a new cache has been created");
 
 				// Note: each of these is causing a "rebind"
 				sId0 = that.addToTable(oTable, "Name", assert);
@@ -44739,6 +44733,64 @@ make root = ${bMakeRoot}`;
 				]);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	// In a binding with a transient context call hasPendingChanges and resetChanges in between a
+	// sort and a filter. See that the transient context is removed.
+	// Due to the sort before, resetChanges has to wait for the new cache. But the subsequent filter
+	// starts building a new cache, so that the fetchCache for the sort becomes obsolete (which
+	// caused resetChanges to fail).
+	//
+	// SNOW: DINC0025951 (hasPendingChanges)
+	// SNOW: DINC0027242 (resetChanges)
+	QUnit.test("DINC0027242", async function (assert) {
+		const oModel = this.createSalesOrdersModel(
+			{autoExpandSelect : true, updateGroupId : "noSubmit"});
+		const sView = `
+<Table id="table" items="{/SalesOrderList}">
+	<Text id="id" text="{SalesOrderID}"/>
+</Table>
+`;
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100",
+				{value : [{SalesOrderID : "1"}]})
+			.expectChange("id", ["1"]);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("id", ["new", "1"]);
+
+		const oBinding = this.oView.byId("table").getBinding("items");
+		const oCreatedContext = oBinding.create({SalesOrderID : "new"});
+
+		await this.waitForChanges(assert, "create");
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$orderby=SalesOrderID"
+				+ "&$filter=SalesOrderID gt '0'&$skip=0&$top=99",
+				{value : [{SalesOrderID : "1"}]})
+			.expectChange("id", ["1"])
+			// trying to fill the gap after deleting the transient context
+			.expectRequest("SalesOrderList?$select=SalesOrderID&$orderby=SalesOrderID"
+				+ "&$filter=SalesOrderID gt '0'&$skip=99&$top=1",
+				{value : []});
+
+		// code under test
+		oBinding.sort(new Sorter("SalesOrderID"));
+		assert.ok(oBinding.hasPendingChanges());
+		assert.notOk(oBinding.hasPendingChanges(true), "SNOW: DINC0025951");
+		const oResetChangesPromise = oBinding.resetChanges();
+		oBinding.filter(new Filter("SalesOrderID", FilterOperator.GT, "0"));
+
+		await Promise.all([
+			oResetChangesPromise,
+			checkCanceled(assert, oCreatedContext.created()),
+			this.waitForChanges(assert, "sort, resetChanges, filter")
+		]);
+
+		assert.deepEqual(
+			oBinding.getAllCurrentContexts().map(getPath),
+			["/SalesOrderList('1')"]
+		);
 	});
 
 	//*********************************************************************************************

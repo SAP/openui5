@@ -1391,14 +1391,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchCache: later calls to fetchCache exist => discard cache", function (assert) {
+[false, true].forEach(function (bSameCache) {
+	const sTitle = "fetchCache: later calls to fetchCache exist, same cache=" + bSameCache;
+	QUnit.test(sTitle, function (assert) {
 		var oOldCache = {},
 			oBinding = new ODataBinding({
 				oCache : oOldCache,
 				oCachePromise : SyncPromise.resolve(oOldCache),
 				doCreateCache : function () {},
 				oFetchCacheCallToken : {
-					oOldCache : "~n/a~"
+					oOldCache : bSameCache ? oOldCache : "~n/a~"
 				},
 				oModel : {
 					getReporter : function () {},
@@ -1420,7 +1422,7 @@ sap.ui.define([
 				getPath : function () { return "/deep/path"; }
 			},
 			oModelMock = this.mock(oBinding.oModel),
-			oNewCache = {},
+			oNewCache = bSameCache ? oOldCache : {},
 			mLocalQueryOptions = {},
 			oPromise,
 			fnReporter = sinon.spy();
@@ -1463,9 +1465,11 @@ sap.ui.define([
 		oBinding.fetchCache(oContext1, undefined, undefined, "~sGroupId~");
 
 		return SyncPromise.all([
-			oPromise.then(function () {
-				assert.ok(false, "Expected a rejected cache-promise");
+			oPromise.then(function (oCache0) {
+				assert.ok(bSameCache);
+				assert.strictEqual(oCache0, oOldCache);
 			}, function (oError) {
+				assert.notOk(bSameCache);
 				assert.strictEqual(oError.message,
 					"Cache discarded as a new cache has been created");
 				assert.strictEqual(oError.canceled, true);
@@ -1475,9 +1479,14 @@ sap.ui.define([
 			})
 		]).then(function () {
 			assert.strictEqual(oBinding.sReducedPath, "/reduced/path/2");
-			sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.instanceOf(Error));
+			if (bSameCache) {
+				sinon.assert.callCount(fnReporter, 0);
+			} else {
+				sinon.assert.calledOnceWithExactly(fnReporter, sinon.match.instanceOf(Error));
+			}
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("fetchCache: fetchResourcePath fails", function (assert) {
