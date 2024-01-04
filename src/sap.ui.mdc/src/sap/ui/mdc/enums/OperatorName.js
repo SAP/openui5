@@ -17,7 +17,7 @@ sap.ui.define(() => {
 		/**
 		 * "equal to" operator
 		 *
-		 * Depending on the used <code>DisplayFormat</code>, the key, the description, or both are used as output of formatting during parsing.
+		 * Depending on the used <code>DisplayFormat</code>, the key, the description, or both are used as output of formatting and during parsing.
 		 *
 		 * The operator is available for all data types.
 		 *

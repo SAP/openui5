@@ -74,7 +74,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.Content} oContent <code>ValueHelp</code> Content requesting conditions configuration
-	 * @returns {Promise|boolean} Boolean or <code>Promise</code> that resolves into a <code>boolean</code> indicating the desired behavior
+	 * @returns {Promise<boolean>|boolean} Boolean or <code>Promise</code> that resolves into a <code>boolean</code> indicating the desired behavior
 	 * @since 1.110.0
 	 * @public
 	 */
@@ -349,17 +349,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
-	 * @param {object} [oConfig] Configuration
-	 * @param {any} oConfig.value Value as entered by user
-	 * @param {any} [oConfig.parsedValue] Value parsed by type to fit the data type of the key
-	 * @param {object} [oConfig.context] Contextual information provided by condition payload or <code>inParameters</code>/<code>outParameters</code>. This is only filled if the description needs to be determined for an existing condition.
-	 * @param {object} [oConfig.context.inParameter] In parameters of the current condition (<code>inParameter</code> are not used any longer, but it might be filled in older conditions stored in variants.)
-	 * @param {object} [oConfig.context.ouParameter] Out parameters of the current condition (<code>outParameter</code> are not used any longer, but it might be filled in older conditions stored in variants.)
-	 * @param {object} [oConfig.context.payload] Payload of the current condition
-	 * @param {sap.ui.core.Control} oConfig.control Instance of the calling control
-	 * @param {sap.ui.model.Context} [oConfig.bindingContext] <code>BindingContext</code> of the checked field. Inside a table, the <code>ValueHelp</code> element might be connected to a different row.
-	 * @param {boolean} oConfig.checkKey If set, the value help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
-	 * @param {boolean} oConfig.checkDescription If set, the value help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
+	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} [oConfig] Configuration
 	 * @returns {Promise<sap.ui.mdc.util.FilterConditionMap>|sap.ui.mdc.util.FilterConditionMap} Returns a map-like object containing conditions suitable for <code>Filter</code> creation
 	 * @public
 	 * @since 1.106.0

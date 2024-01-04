@@ -2,10 +2,6 @@
  * ${copyright}
  */
 
-// ---------------------------------------------------------------------------------------
-// Helper class used to execute model specific logic in FieldBase
-// ---------------------------------------------------------------------------------------
-
 sap.ui.define([
 	'sap/ui/mdc/field/FieldBaseDelegate'
 ], (
@@ -14,12 +10,14 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class Delegate class for <code>sap.ui.mdc.MultiValueField</code>.<br>
+	 * Delegate for {@link sap.ui.mdc.MultiValueField MultiValueField}.
 	 *
+	 * @namespace
 	 * @author SAP SE
 	 * @public
 	 * @since 1.93.0
-	 * @alias sap.ui.mdc.field.MultiValueFieldDelegate
+	 * @extends module:sap/ui/mdc/field/FieldBaseDelegate
+	 * @alias module:sap/ui/mdc/field/MultiValueFieldDelegate
 	 */
 	const MultiValueFieldDelegate = Object.assign({}, FieldBaseDelegate);
 
