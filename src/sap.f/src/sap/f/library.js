@@ -186,13 +186,17 @@ sap.ui.define(["sap/ui/base/DataType",
 	/**
 	 * Layouts, representing the number of columns to be displayed and their relative widths for a {@link sap.f.FlexibleColumnLayout} control.
 	 *
-	 * Each layout has a predefined ratio for the three columns, depending on device size. Based on the device and layout, some columns are hidden.
+	 * Each layout has a default predefined ratio for the three columns, depending on device size. Based on the device and layout, some columns are hidden.
 	 * For more information, refer to the ratios (in %) for each value, listed below: (dash "-" means non-accessible columns).
 	 *
-	 * <b>Note:</b> Please note that on a phone device, due to the limited screen size, only one column can be displayed at a time.
+	 * <b>Notes:</b>
+	 * <ul>
+	 * <li>The user is allowed to customize the default ratio by dragging the column separators to resize the columns. The user preferences are then internally saved (in browser localStorage) and automatically re-applied whenever the user re-visits the same layout. </li>
+	 * <li>Please note that on a phone device, due to the limited screen size, only one column can be displayed at a time.
 	 * For all two-column layouts, this column is the <code>Mid</code> column, and for all three-column layouts - the <code>End</code> column,
 	 * even though the respective column may be hidden on desktop and tablet for that particular layout. Therefore some of the names
-	 * (such as <code>ThreeColumnsMidExpandedEndHidden</code> for example) are representative of the desktop scenario only.
+	 * (such as <code>ThreeColumnsMidExpandedEndHidden</code> for example) are representative of the desktop scenario only. </li>
+	 * </ul>
 	 *
 	 * For more information, see {@link topic:3b9f760da5b64adf8db7f95247879086 Types of Layout} in the documentation.
 	 *
@@ -216,9 +220,9 @@ sap.ui.define(["sap/ui/base/DataType",
 		OneColumn: "OneColumn",
 
 		/**
-		 * Desktop: 67/33/-  Begin (expanded) and Mid columns are displayed
+		 * Desktop: default ratio is 67/33/-  Begin (expanded) and Mid columns are displayed
 		 *
-		 * Tablet:  67/33/-  Begin (expanded) and Mid columns are displayed
+		 * Tablet:  default ratio is 67/33/-  Begin (expanded) and Mid columns are displayed
 		 *
 		 * Phone:   -/100/-  only the Mid column is displayed
 		 *
@@ -229,9 +233,9 @@ sap.ui.define(["sap/ui/base/DataType",
 		TwoColumnsBeginExpanded: "TwoColumnsBeginExpanded",
 
 		/**
-		 * Desktop: 33/67/-  Begin and Mid (expanded) columns are displayed
+		 * Desktop: default ratio is 33/67/-  Begin and Mid (expanded) columns are displayed
 		 *
-		 * Tablet:  33/67/-  Begin and Mid (expanded) columns are displayed
+		 * Tablet:  default ratio is 33/67/-  Begin and Mid (expanded) columns are displayed
 		 *
 		 * Phone:   -/100/-  only the Mid column is displayed
 		 *
@@ -255,9 +259,9 @@ sap.ui.define(["sap/ui/base/DataType",
 		MidColumnFullScreen: "MidColumnFullScreen",
 
 		/**
-		 * Desktop: 25/50/25 Begin, Mid (expanded) and End columns are displayed
+		 * Desktop: default ratio is 25/50/25 Begin, Mid (expanded) and End columns are displayed
 		 *
-		 * Tablet:  0/67/33  Mid (expanded) and End columns are displayed, Begin is accessible by a layout arrow
+		 * Tablet:  default ratio is 0/67/33  Mid (expanded) and End columns are displayed, Begin is accessible by dragging its adjacent column separator to expand the column.
 		 *
 		 * Phone:   -/-/100  only the End column is displayed
 		 *
@@ -268,9 +272,9 @@ sap.ui.define(["sap/ui/base/DataType",
 		ThreeColumnsMidExpanded: "ThreeColumnsMidExpanded",
 
 		/**
-		 * Desktop: 25/25/50 Begin, Mid and End (expanded) columns are displayed
+		 * Desktop: default ratio is 25/25/50 Begin, Mid and End (expanded) columns are displayed
 		 *
-		 * Tablet:  0/33/67  Mid and End (expanded) columns are displayed, Begin is accessible by layout arrows
+		 * Tablet:  default ratio is 0/33/67  Mid and End (expanded) columns are displayed, Begin is accessible by dragging the column separator to expand the column
 		 *
 		 * Phone:   -/-/100  (only the End column is displayed)
 		 *
@@ -281,28 +285,28 @@ sap.ui.define(["sap/ui/base/DataType",
 		ThreeColumnsEndExpanded: "ThreeColumnsEndExpanded",
 
 		/**
-		 * Desktop: 33/67/0  Begin and Mid (expanded) columns are displayed, End is accessible by a layout arrow
+		 * Desktop: default ratio is 33/67/0  Begin and Mid (expanded) columns are displayed, End is accessible by dragging the column-separator to expand the column.
 		 *
-		 * Tablet:  33/67/0  Begin and Mid (expanded) columns are displayed, End is accessible by a layout arrow
+		 * Tablet:  default ratio is 33/67/0  Begin and Mid (expanded) columns are displayed, End is accessible by dragging the column-separator to expand the column.
 		 *
 		 * Phone:   -/-/100  only the End column is displayed
 		 *
 		 * Use to display the master and detail pages when the user should focus on the detail.
-		 * The detail-detail is still loaded and easily accessible with a layout arrow.
+		 * The detail-detail is still loaded and easily accessible upon dragging the column-separator to expand the column.
 		 *
 		 * @public
 		 */
 		ThreeColumnsMidExpandedEndHidden: "ThreeColumnsMidExpandedEndHidden",
 
 		/**
-		 * Desktop: 67/33/0  Begin (expanded) and Mid columns are displayed, End is accessible by layout arrows
+		 * Desktop: default ratio is 67/33/0  Begin (expanded) and Mid columns are displayed, End is accessible by dragging the column separators
 		 *
-		 * Tablet:  67/33/0  Begin (expanded) and Mid columns are displayed, End is accessible by layout arrows
+		 * Tablet:  default ratio is 67/33/0  Begin (expanded) and Mid columns are displayed, End is accessible by dragging the column separators
 		 *
 		 * Phone:   -/-/100  only the End column is displayed
 		 *
 		 * Use to display the master and detail pages when the user should focus on the master.
-		 * The detail-detail is still loaded and easily accessible with layout arrows.
+		 * The detail-detail is still loaded and easily accessible by dragging the column separators.
 		 *
 		 * @public
 		 */
