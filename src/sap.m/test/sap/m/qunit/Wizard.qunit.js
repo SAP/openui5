@@ -9,9 +9,13 @@ sap.ui.define([
 	"sap/ui/base/ObjectPool",
 	"sap/m/library",
 	"sap/ui/core/Lib",
+	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery"
-], function(Log, DesignTime, Core, Wizard, WizardStep, Button, ObjectPool, library, Library, jQuery) {
+], function(Log, DesignTime, Core, Wizard, WizardStep, Button, ObjectPool, library, Library, coreLibrary, jQuery) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	// shortcut for sap.m.PageBackgroundDesign
 	var PageBackgroundDesign = library.PageBackgroundDesign;
@@ -93,7 +97,7 @@ sap.ui.define([
 		assert.strictEqual(this.oWizard.getStepTitleLevel(), "H3", "default steps title level is correct");
 
 		//act
-		this.oWizard.setStepTitleLevel(sap.ui.core.TitleLevel.H5);
+		this.oWizard.setStepTitleLevel(TitleLevel.H5);
 		Core.applyChanges();
 
 		//assert

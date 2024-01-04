@@ -43,6 +43,8 @@ sap.ui.define([
 ], function(Table, ToolbarSpacer, UploadSetwithTableRenderer, Library1, FileUploader, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetwithTableItem, deepEqual, Log, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core, VariantManagement, PersManager, ColumnsMediator, SortMediator, GroupMediator, FilterMediator, View, Element, MenuButton, MenuItem, Menu) {
 	"use strict";
 
+	var MenuButtonMode = Library.MenuButtonMode;
+
 	/**
 	 * Constructor for a new UploadSetwithTable.
 	 *
@@ -1385,7 +1387,7 @@ sap.ui.define([
 	UploadSetwithTable.prototype._getCloudFilePickerMenu = function () {
 		this._oMenuButton = new MenuButton({
 			text: this._oRb.getText("UPLOAD_SET_DEFAULT_LFP_BUTTON_TEXT"),
-			buttonMode: sap.m.MenuButtonMode.Split,
+			buttonMode: MenuButtonMode.Split,
 			menu: this._getMenuButtonItems(),
 			defaultAction: this.fileSelectionHandler.bind(this)
 		});

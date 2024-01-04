@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/library",
 	"sap/m/Text",
+	"sap/ui/core/CustomData",
 	"sap/ui/core/library",
 	"sap/ui/core/Item",
 	"./GraphUtil",
@@ -19,7 +20,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter"
-], function(Element, Controller, JSONModel, UploadSetwithTable, UploadSetwithTableItem, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, coreLibrary, CoreItem, graphUtil, deepExtend, Filter, FilterOperator, Sorter) {
+], function(Element, Controller, JSONModel, UploadSetwithTable, UploadSetwithTableItem, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, CustomData, coreLibrary, CoreItem, graphUtil, deepExtend, Filter, FilterOperator, Sorter) {
 	"use strict";
 
 	return Controller.extend("sap.m.uploadSetTableDemo.Page", {
@@ -420,7 +421,7 @@ sap.ui.define([
 						oPopover.setModel(oModel);
 						oPopover.open();
 						oPopover.addCustomData(oCustomData);
-						var oDialogTable = sap.ui.core.Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
+						var oDialogTable = Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
 						this.sortTable(oDialogTable);
 
 
@@ -429,7 +430,7 @@ sap.ui.define([
 				this._oRevisionDialog.setModel(oModel);
 				this._oRevisionDialog.open();
 				this._oRevisionDialog.add(oCustomData);
-				var oDialogTable = sap.ui.core.Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
+				var oDialogTable = Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
 				this.sortTable(oDialogTable);
 			}
 		},
@@ -449,7 +450,7 @@ sap.ui.define([
 			if (sPath.split("/")[2]) {
 				var index = sPath.split("/")[2];
 				var data = oModel.getProperty("/items");
-				var oDialogTable = sap.ui.core.Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
+				var oDialogTable = Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
 				data[index] = oDialogTable.getSelectedItem().getBindingContext().getObject();
 				oModel.refresh(true);
 			}
@@ -458,7 +459,7 @@ sap.ui.define([
 
 		},
 		onAddVersion: function(){
-			var oDialogTable = sap.ui.core.Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
+			var oDialogTable = Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
 			var oSelectedItem = oDialogTable.getSelectedItem();
 			if (oSelectedItem){
 				var oData = deepExtend({},oSelectedItem.getBindingContext().getObject());
@@ -538,7 +539,7 @@ sap.ui.define([
 				aJsonData[0].isSelected = true;
 				aJsonData[0].creationTimeStamp = Date.now();
 				delete this._oRevisedVersions[aJsonData[0].id];
-				var oCustomData = new sap.ui.core.CustomData({
+				var oCustomData = new CustomData({
 					key: "itemId",
 					value: aJsonData[0].id
 				});
@@ -804,7 +805,7 @@ sap.ui.define([
 				aFilter.push(new Filter("revision", FilterOperator.Contains, sQuery));
 			}
 			// filter binding
-			var oTable = sap.ui.core.Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
+			var oTable = Fragment.byId(this.getView().getId() + "-revision", "RevisionTable");
 			var oBinding = oTable.getBinding("items");
 			oBinding.filter(aFilter);
 		},

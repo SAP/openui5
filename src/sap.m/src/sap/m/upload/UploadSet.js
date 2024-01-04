@@ -38,6 +38,7 @@ sap.ui.define([
 	"use strict";
 
 	var UploadType = MobileLibrary.UploadType;
+	var MenuButtonMode = MobileLibrary.MenuButtonMode;
 
 	/**
 	 * Constructor for a new UploadSet.
@@ -2041,7 +2042,7 @@ sap.ui.define([
 		if (this.getCloudFilePickerEnabled()) {
 			this._oMenuButton = new MenuButton({
 				text: this._oRb.getText("UPLOAD_SET_DEFAULT_LFP_BUTTON_TEXT"),
-				buttonMode: sap.m.MenuButtonMode.Split,
+				buttonMode: MenuButtonMode.Split,
 				menu: this._getMenuButtonItems(),
 				defaultAction: this._openFileUploaderPicker.bind(this)
 			});

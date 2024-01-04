@@ -4149,7 +4149,7 @@ sap.ui.define([
 
 	QUnit.test("Token should be truncated on re-rerender", function (assert) {
 		this.oMultiInput.destroyTokens();
-		this.oMultiInput.addToken(new sap.m.Token({
+		this.oMultiInput.addToken(new Token({
 			text: "Extra long token, Extra long token, Extra long token, Extra long token"
 		}));
 

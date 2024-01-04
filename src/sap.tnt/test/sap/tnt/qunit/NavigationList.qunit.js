@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	'sap/m/Text',
 	'sap/m/App',
+	'sap/m/Dialog',
 	'sap/m/Page',
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem',
@@ -29,6 +30,7 @@ sap.ui.define([
 	jQuery,
 	Text,
 	App,
+	Dialog,
 	Page,
 	NavigationList,
 	NavigationListItem,
@@ -492,7 +494,7 @@ sap.ui.define([
 		this.clock.tick(500);
 		assert.strictEqual(document.activeElement.textContent, "Root 1", "The first item is focused");
 
-		var oDialog = new sap.m.Dialog();
+		var oDialog = new Dialog();
 		oFirstItem.attachSelect(function(){oDialog.open();});
 		oFirstItem.fireSelect();
 		Core.applyChanges();

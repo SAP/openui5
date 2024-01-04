@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/Device",
 	"sap/m/ResponsivePopover",
+	"sap/m/Text",
 	"sap/m/Toolbar",
 	"sap/m/NavContainer",
 	"sap/m/Page",
@@ -23,6 +24,7 @@ sap.ui.define([
 	mobileLibrary,
 	Device,
 	ResponsivePopover,
+	Text,
 	Toolbar,
 	NavContainer,
 	Page,
@@ -417,9 +419,9 @@ sap.ui.define([
 
 	QUnit.test("Should proxy dependents aggregation correctly", function (assert) {
 		// Arrange
-		var oResponsivePopover = new sap.m.ResponsivePopover("popover", {
-			content: [new sap.m.Text({text: "Hello"})],
-			dependents: [new sap.m.Text("worldText", {text: "World!"})]
+		var oResponsivePopover = new ResponsivePopover("popover", {
+			content: [new Text({text: "Hello"})],
+			dependents: [new Text("worldText", {text: "World!"})]
 		});
 
 		// Act

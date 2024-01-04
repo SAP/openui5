@@ -5734,19 +5734,19 @@ sap.ui.define([
 			]
 		};
 		var oModel = new JSONModel();
-		var oInputWithTabularSuggestions = new sap.m.Input({
+		var oInputWithTabularSuggestions = new Input({
 			showSuggestion: true,
 			suggestionRows: {
 				path: "/items",
-				template: new sap.m.ColumnListItem({
+				template: new ColumnListItem({
 					cells: [
-						new sap.m.Text({text:"{value}"})
+						new Text({text:"{value}"})
 					]
 				})
 			},
 			suggestionColumns: [
-				new sap.m.Column({
-					header: new sap.m.Label({text: "Text"})
+				new Column({
+					header: new Label({text: "Text"})
 				})
 			],
 			suggest: function (oEvent) {

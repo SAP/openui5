@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/f/library",
 	"./DynamicPageUtil",
 	"sap/ui/core/Core",
+	"sap/m/Button",
 	"sap/m/Link",
 	"sap/m/Title",
 	"sap/m/Text",
@@ -21,6 +22,7 @@ function (
 	fioriLibrary,
 	DynamicPageUtil,
 	Core,
+	Button,
 	Link,
 	Title,
 	Text,
@@ -598,7 +600,7 @@ function (
 		// Arrange
 		var oDynamicPage = oFactory.getDynamicPage(),
 			oDynamicPageTitle = oDynamicPage.getTitle(),
-			oBtn = new sap.m.Button({
+			oBtn = new Button({
 				text: "snapped content"
 			});
 
@@ -625,7 +627,7 @@ function (
 		// Arrange
 		var oDynamicPage = oFactory.getDynamicPage(),
 			oDynamicPageTitle = oDynamicPage.getTitle(),
-			oBtn = new sap.m.Button({
+			oBtn = new Button({
 				text: "expanded content"
 			});
 
