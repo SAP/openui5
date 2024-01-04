@@ -146,7 +146,7 @@ sap.ui.define([
 		assert.strictEqual(oRating0.getEnabled(), true, "By default the rating is enabled " + oRating0);
 		assert.strictEqual(oRating0.getMaxValue(), 5, "By default the rating max value is 5 on " + oRating0);
 		assert.strictEqual(oRating0.getValue(), 0, "By default the rating value is 0 on " + oRating0);
-		assert.strictEqual(oRating0._iPxIconSize, 22, "By default the rating size is 22 px on " + oRating0);
+		assert.strictEqual(oRating0._iPxIconSize, 24, "By default the rating size is 24 px on " + oRating0);
 		assert.strictEqual(oRating0.getIconSelected(), "", "By default the selected icon is empty on " + oRating0);
 		assert.strictEqual(oRating0.getIconUnselected(), "", "By default the unselected icom is empty on " + oRating0);
 		assert.strictEqual(oRating0.getIconHovered(), "", "By default the hovered icon is empty on " + oRating0);

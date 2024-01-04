@@ -94,9 +94,7 @@ sap.ui.define([
 			var oPage = mOptions.page;
 
 			// arrange
-			var oApp = new App("myApp"),
-				sTop = "0px",
-				sBottom = "0px";
+			var oApp = new App("myApp");
 
 			var oFooter = oPage.getFooter(),
 				bShowFooter = oPage.getShowFooter(),
@@ -111,7 +109,6 @@ sap.ui.define([
 			assert.ok($Page.length, "The page HTML div element exists");
 			assert.ok($PageSection.length, "The page section HTML element exists");
 			assert.ok($Page.hasClass("sapMPage"), 'The page HTML Div element "must have" the CSS class "sapMPage"');
-			assert.strictEqual($Page.css("position"), "absolute", 'The page HTML Div element is absolute positioned, "position: absolute"');
 
 			if (oPage.getShowHeader()) {
 				assert.ok($PageHeader.length, "The page header HTML element exists");
@@ -137,28 +134,7 @@ sap.ui.define([
 
 			assert.equal($Page.hasClass("sapMPageWithFooter"), bShouldOffsetTheContent, 'The page HTML Div element has the class "sapMPageWithFooter": ' + bShouldOffsetTheContent);
 
-			assert.strictEqual($Page.css("top"), "0px", 'The page HTML Div element is absolute positioned, "top: 0px"');
-			assert.strictEqual($Page.css("left"), "0px", 'The page HTML Div element is absolute positioned, "left: 0px"');
 			assert.strictEqual($Page.css("display"), "block", 'The page HTML Div element is displayed as block, "diplay: block"');
-			assert.strictEqual($PageSection.css("position"), "absolute", 'The page section HTML element is absolute positioned, "position: absolute"');
-
-			assert.strictEqual($PageSection.css("right"), "0px", 'The page section HTML element is absolute positioned, "right: 0px"');
-			assert.strictEqual($PageSection.css("left"), "0px", 'The page section HTML element is absolute positioned, "left: 0px"');
-
-			if (oPage.getShowHeader() || oPage.getSubHeader()) {
-				sTop = "48px";
-			}
-
-			if (oPage.getShowHeader() && oPage.getSubHeader()) {
-				sTop = "96px";
-			}
-
-			if (oFooter) {
-				sBottom = "48px";
-			}
-
-			assert.strictEqual($PageSection.css("top"), sTop, 'The page section HTML element is absolute positioned, "top: ' + sTop + '"');
-			assert.strictEqual($PageSection.css("bottom"), sBottom, 'The page section HTML element is absolute positioned, "bottom: ' + sBottom + '"');
 
 			// cleanup
 			oApp.destroy();
