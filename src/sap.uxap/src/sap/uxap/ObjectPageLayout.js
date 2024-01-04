@@ -557,6 +557,8 @@ sap.ui.define([
 		TITLE_VISUAL_INDICATOR_PRESS: "_titleVisualIndicatorPress"
 	};
 
+	ObjectPageLayout.MEDIA_RANGESET_NAME = "ObjectPageRangeSet";
+
 	ObjectPageLayout.BREAK_POINTS = {
 		DESKTOP: 1439,
 		TABLET: 1024,
@@ -703,6 +705,9 @@ sap.ui.define([
 
 		this._initializeScroller();
 		this._attachSnapListeners();
+		this._initRangeSet();
+		this._attachMediaContainerWidthChange(this._onMediaRangeChange,
+			this, ObjectPageLayout.MEDIA_RANGESET_NAME);
 	};
 
 	/**
@@ -3232,16 +3237,26 @@ sap.ui.define([
 		this._requestAdjustLayout();
 	};
 
-	ObjectPageLayout.prototype._applyContextualSettings = function (oContextualSettings) {
-		var iCurrentWidth = oContextualSettings.contextualWidth;
+	/**
+	 * Initializes the specific Device.media range set for <code>ObjectPageLayout</code>.
+	 */
+	ObjectPageLayout.prototype._initRangeSet = function () {
+		if (!Device.media.hasRangeSet(ObjectPageLayout.MEDIA_RANGESET_NAME)) {
+			Device.media.initRangeSet(ObjectPageLayout.MEDIA_RANGESET_NAME,
+				[ObjectPageLayout.BREAK_POINTS.PHONE,
+				ObjectPageLayout.BREAK_POINTS.TABLET,
+				ObjectPageLayout.BREAK_POINTS.DESKTOP], "px", ["phone", "tablet", "desktop"]);
+		}
+	};
+
+	ObjectPageLayout.prototype._onMediaRangeChange = function () {
+		var iCurrentWidth = this._getMediaContainerWidth();
 
 		if (this._hasDynamicTitle()) {
 			this._updateMedia(iCurrentWidth, ObjectPageLayout.DYNAMIC_HEADERS_MEDIA); // Update media classes when ObjectPageDynamicHeaderTitle is used.
 		}
 
 		this._updateMedia(iCurrentWidth, ObjectPageLayout.MEDIA);
-
-		return ManagedObject.prototype._applyContextualSettings.call(this, oContextualSettings);
 	};
 
 	/**

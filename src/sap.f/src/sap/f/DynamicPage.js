@@ -350,6 +350,8 @@ sap.ui.define([
 
 	DynamicPage.HEADER_MAX_ALLOWED_NON_SROLLABLE_ON_MOBILE = 0.3;
 
+	DynamicPage.MEDIA_RANGESET_NAME = "DynamicPageRangeSet";
+
 	DynamicPage.BREAK_POINTS = {
 		DESKTOP: 1439,
 		TABLET: 1024,
@@ -422,6 +424,9 @@ sap.ui.define([
 			}};
 
 		this._setAriaRoleDescription(Library.getResourceBundleFor("sap.f").getText(DynamicPage.ARIA_ROLE_DESCRIPTION));
+		this._initRangeSet();
+		this._attachMediaContainerWidthChange(this._onMediaRangeChange,
+			this, DynamicPage.MEDIA_RANGESET_NAME);
 	};
 
 	DynamicPage.prototype.onBeforeRendering = function () {
@@ -1409,12 +1414,21 @@ sap.ui.define([
 		this._updateTitleARIAState(bExpanded);
 	};
 
-	DynamicPage.prototype._applyContextualSettings = function (oContextualSettings) {
-		var iCurrentWidth = oContextualSettings.contextualWidth;
+	/**
+	 * Initializes the specific Device.media range set for <code>DynamicPage</code>.
+	 */
+	DynamicPage.prototype._initRangeSet = function () {
+		if (!Device.media.hasRangeSet(DynamicPage.MEDIA_RANGESET_NAME)) {
+			Device.media.initRangeSet(DynamicPage.MEDIA_RANGESET_NAME,
+				[DynamicPage.BREAK_POINTS.PHONE,
+				DynamicPage.BREAK_POINTS.TABLET,
+				DynamicPage.BREAK_POINTS.DESKTOP], "px", ["phone", "tablet", "desktop"]);
+		}
+	};
 
+	DynamicPage.prototype._onMediaRangeChange = function () {
+		var iCurrentWidth = this._getMediaContainerWidth();
 		this._updateMedia(iCurrentWidth);
-
-		return ManagedObject.prototype._applyContextualSettings.call(this, oContextualSettings);
 	};
 
 	/**

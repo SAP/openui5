@@ -1683,11 +1683,11 @@ sap.ui.define([
 
 		if (bResizeWithPinning || bIsResizeEnd) {
 			// call the dedicated function in order to resize with reveal/conceal effect
+			// or update CSS classes on resizeEnd
 			this._resizeColumns({
 				columnWidths: oNewColumnWidths,
 				layout: sLayout,
 				previousLayout: sPreviousLayout,
-				updateContextualSettings: bIsResizeEnd,
 				updateMediaCSSClases: bIsResizeEnd,
 				updateDetailedActiveClasses: bIsResizeEnd,
 				restoreFocusOnBackNavigation: false
@@ -1698,6 +1698,9 @@ sap.ui.define([
 			// take the space that remains after sizing its sibling columns)
 			this._$columns.begin.css("width", this._oDragInfo.columnWidths.begin + "px");
 			this._$columns.end.css("width", this._oDragInfo.columnWidths.end + "px");
+			aResizedColumns.forEach(function(sColumn) {
+				this._updateColumnContextualSettings(sColumn, this._oDragInfo.columnWidths[sColumn]);
+			}, this);
 		}
 
 		if (bLayoutChange) {
