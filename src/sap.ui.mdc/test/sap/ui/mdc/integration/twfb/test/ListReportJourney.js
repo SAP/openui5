@@ -51,7 +51,7 @@ sap.ui.define([
 		Then.onPage.iShouldSeeGivenColumnsWithHeader([
 			"Title",
 			"Description",
-			"Author ID",
+			"Author ID + Text",
 			"Price",
 			"Stock",
 			"Genre",

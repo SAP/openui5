@@ -28,10 +28,13 @@ sap.ui.define([
 		{p13nItem: "Breakout Year", selected: false},
 		{p13nItem: "Changed On", selected: false},
 		{p13nItem: "City of Origin", selected: false},
+		{p13nItem: "City of Origin + Text", selected: false},
 		{p13nItem: "Country", selected: false},
+		{p13nItem: "Country + Text", selected: false},
 		{p13nItem: "Created (Complex)", selected: false},
 		{p13nItem: "Created By", selected: false},
-		{p13nItem: "regionOfOrigin_code", selected: false}
+		{p13nItem: "regionOfOrigin_code", selected: false},
+		{p13nItem: "regionOfOrigin_code + Text", selected: false}
 	];
 
 	let aSortItems = [
@@ -200,10 +203,13 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("Breakout Year", 5, false);
 		Then.iShouldSeeP13nItem("Changed On", 6, false);
 		Then.iShouldSeeP13nItem("City of Origin", 7, false);
-		Then.iShouldSeeP13nItem("Country", 8, false);
-		Then.iShouldSeeP13nItem("Created (Complex)", 9, false);
-		Then.iShouldSeeP13nItem("Created By", 10, false);
-		Then.iShouldSeeP13nItem("regionOfOrigin_code", 11, false);
+		Then.iShouldSeeP13nItem("City of Origin + Text", 8, false);
+		Then.iShouldSeeP13nItem("Country", 9, false);
+		Then.iShouldSeeP13nItem("Country + Text", 10, false);
+		Then.iShouldSeeP13nItem("Created (Complex)", 11, false);
+		Then.iShouldSeeP13nItem("Created By", 12, false);
+		Then.iShouldSeeP13nItem("regionOfOrigin_code", 13, false);
+		Then.iShouldSeeP13nItem("regionOfOrigin_code + Text", 14, false);
 
 		When.iPressDialogOk();
 
@@ -458,9 +464,12 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("Breakout Year", 5, true);
 		Then.iShouldSeeP13nItem("Changed On", 6, false);
 		Then.iShouldSeeP13nItem("City of Origin", 7, true);
-		Then.iShouldSeeP13nItem("Country", 8, false);
-		Then.iShouldSeeP13nItem("Created (Complex)", 9, false);
-		Then.iShouldSeeP13nItem("Created By", 10, false);
-		Then.iShouldSeeP13nItem("regionOfOrigin_code", 11, false);
+		Then.iShouldSeeP13nItem("City of Origin + Text", 8, false);
+		Then.iShouldSeeP13nItem("Country", 9, false);
+		Then.iShouldSeeP13nItem("Country + Text", 10, false);
+		Then.iShouldSeeP13nItem("Created (Complex)", 11, false);
+		Then.iShouldSeeP13nItem("Created By", 12, false);
+		Then.iShouldSeeP13nItem("regionOfOrigin_code", 13, false);
+		Then.iShouldSeeP13nItem("regionOfOrigin_code + Text", 14, false);
 	}
 });

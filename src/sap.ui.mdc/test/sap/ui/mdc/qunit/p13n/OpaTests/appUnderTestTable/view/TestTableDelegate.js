@@ -9,10 +9,14 @@ sap.ui.define([
 		return TableDelegate.fetchProperties(oTable).then(function(aProperties) {
 
 			aProperties.forEach(function(oProperty){
-				oProperty.groupable = true;
+				if (!oProperty.name.endsWith("_ComplexWithText") && !oProperty.name.endsWith("_ComplexWithUnit")) {
+					oProperty.groupable = true;
+				}
 
 				if (oProperty.name == "cityOfOrigin_city"){
 					oProperty.label = "City of Origin";
+				} else if (oProperty.name == "cityOfOrigin_city_ComplexWithText"){
+					oProperty.label = "City of Origin + Text";
 				}
 			});
 

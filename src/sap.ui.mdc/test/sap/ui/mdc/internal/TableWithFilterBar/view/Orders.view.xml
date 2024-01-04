@@ -257,7 +257,6 @@
 						p13nMode="Sort,Column,Filter"
 						delegate='\{"name": "sap/ui/v4demo/delegate/Orders.Table.delegate", "payload": \{ "collectionName": "Orders" \} \}'
 						showRowCount="true"
-						rowPress="onRowPress"
 						threshold="50"
 						width="100%"
 						enableAutoColumnWidth="true"
@@ -265,7 +264,7 @@
 					<mdc:rowSettings>
 						<mdc:table.RowSettings >
 							<mdc:rowActions >
-								<mdc:table.RowActionItem type="Navigation"/>
+								<mdc:table.RowActionItem type="Navigation" press="onRowPress"/>
 							</mdc:rowActions >
 						</mdc:table.RowSettings>
 					</mdc:rowSettings>

@@ -12,6 +12,7 @@
 	xmlns:ui="sap.ui"
 	xmlns:variants="sap.ui.fl.variants"
 	xmlns="sap.m"
+	xmlns:plugins="sap.m.plugins"
 	xmlns:types="sap.ui.v4demo.types"
 	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
 	xmlns:mdcv="sap.ui.mdc.valuehelp"
@@ -327,6 +328,12 @@
 												<mdc:type>
 													<mdc:table.GridTableType rowCountMode="Auto"/>
 												</mdc:type>
+												<mdc:cellSelector>
+													<plugins:CellSelector/>
+												</mdc:cellSelector>
+												<mdc:copyProvider>
+													<plugins:CopyProvider/>
+												</mdc:copyProvider>
 											</mdc:Table>
 										</mdcvc:MDCTable>
 										<!-- <mdcvc:Conditions label="Languages" valueHelp="FHLanguage_DEFCOND"/> -->
@@ -502,6 +509,12 @@
 												<mdc:type>
 													<mdc:table.GridTableType rowCountMode="Auto"/>
 												</mdc:type>
+												<mdc:cellSelector>
+													<plugins:CellSelector/>
+												</mdc:cellSelector>
+												<mdc:copyProvider>
+													<plugins:CopyProvider/>
+												</mdc:copyProvider>
 											</mdc:Table>
 										</mdcvc:MDCTable>
 										<mdcvc:Conditions label="Sub Genre"/>
@@ -625,6 +638,12 @@
 												<mdc:type>
 													<mdc:table.GridTableType rowCountMode="Auto"/>
 												</mdc:type>
+												<mdc:cellSelector>
+													<plugins:CellSelector/>
+												</mdc:cellSelector>
+												<mdc:copyProvider>
+													<plugins:CopyProvider/>
+												</mdc:copyProvider>
 											</mdc:Table>
 										</mdcvc:MDCTable>
 										<mdcvc:Conditions label="Detail Genre"/>
@@ -846,7 +865,7 @@
 						</mdc:items>
 					</mdc:Chart>
 
-					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter', 'Group']}" delegate='\{"name": "sap/ui/v4demo/delegate/Books.Table.delegate", "payload": \{"collectionName": "Books"\}\}' showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" enableAutoColumnWidth="true">
+					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter', 'Group']}" delegate='\{"name": "sap/ui/v4demo/delegate/Books.Table.delegate", "payload": \{"collectionName": "Books"\}\}' showRowCount="true" threshold="50" width="100%" enableAutoColumnWidth="true">
 						<!-- <mdc:variant>
 							<variants:VariantManagement id="IDVariantManagementOfLocalTable" for="booksTable"/>
 						</mdc:variant> -->
@@ -873,8 +892,8 @@
 							<mdc:table.Column id="id3" header="Description" propertyKey="descr">
 								<mdc:Field id="F_descr" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'descr', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" multipleLines="true" editMode="Display" width="100%"/>
 							</mdc:table.Column>
-							<mdc:table.Column id="id1" header="Author ID" propertyKey="author_ID">
-								<mdc:Field id="F_author_ID" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'author_ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" display="DescriptionValue" additionalValue="{author/name}"  editMode="Display" multipleLines="true" width="100%">
+							<mdc:table.Column id="id1" header="Author ID + Text" propertyKey="author_ID_ComplexWithText">
+								<mdc:Field id="F_author_ID_ComplexWithText" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'author_ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" display="DescriptionValue" additionalValue="{path: 'author/name', type: 'sap.ui.model.odata.type.String'}"  editMode="Display" multipleLines="true" width="100%">
 									<mdc:fieldInfo>
 										<mdc:Link delegate='\{"name": "sap/ui/v4demo/delegate/Books.Link.delegate"\}'></mdc:Link>
 									</mdc:fieldInfo>
@@ -905,13 +924,19 @@
 						<mdc:rowSettings>
 							<mdc:table.RowSettings >
 								<mdc:rowActions >
-									<mdc:table.RowActionItem type="Navigation"/>
+									<mdc:table.RowActionItem type="Navigation" press="onRowPress"/>
 								</mdc:rowActions >
 							</mdc:table.RowSettings>
 						</mdc:rowSettings>
 						<mdc:type>
 							<mdc:table.ResponsiveTableType growingMode="Scroll" />
 						</mdc:type>
+						<mdc:copyProvider>
+							<plugins:CopyProvider/>
+						</mdc:copyProvider>
+						<mdc:cellSelector>
+							<plugins:CellSelector/>
+						</mdc:cellSelector>
 						<mdc:dependents>
 							<mdc:ValueHelp id="FHSubGenreSingle"
 								delegate='\{"name": "sap/ui/v4demo/delegate/FieldInOutValueHelp.delegate", "payload": \{
@@ -1101,6 +1126,12 @@
 									<mdc:type>
 										<mdc:table.GridTableType rowCountMode="Auto"/>
 									</mdc:type>
+									<mdc:copyProvider>
+										<plugins:CopyProvider/>
+									</mdc:copyProvider>
+									<mdc:cellSelector>
+										<plugins:CellSelector/>
+									</mdc:cellSelector>
 								</mdc:Table>
 							</mdcvc:MDCTable>
 							<mdcvc:Conditions label="Genre"/>

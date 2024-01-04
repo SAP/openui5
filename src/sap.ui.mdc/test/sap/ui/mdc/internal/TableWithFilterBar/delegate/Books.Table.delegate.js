@@ -72,7 +72,7 @@ sap.ui.define([
 
 			DelegateCache.add(oTable, {
 				"descr": {multipleLines: true},
-				"author_ID": {multipleLines: true, display: FieldDisplay.DescriptionValue, additionalValue: "{author/name}"},
+				"author_ID_ComplexWithText": {multipleLines: true, display: FieldDisplay.DescriptionValue},
 				"classification_code": {display: FieldDisplay.Description, additionalValue: "{classification/title}"},
 				"detailgenre_code": {display: FieldDisplay.Description, additionalValue: "{detailgenre/title}"},
 				"language_code": {display: FieldDisplay.Description, additionalValue: "{language/name}", valueHelp: "FHLanguage"},
@@ -114,12 +114,42 @@ sap.ui.define([
 			});
 		}
 
+		let oValueBindingInfo;
+		let oAdditionalValueBindingInfo;
+		let sDisplay = FieldDisplay.Value;
+
+		if (oProperty.name.endsWith("_ComplexWithText")) {
+			// get single properties
+			const aProperties = oProperty.getSimpleProperties();
+			const oKeyProperty = aProperties[0];
+			const oDescriptionProperty = aProperties[1];
+
+			if (oKeyProperty) {
+				oValueBindingInfo = {path: oKeyProperty.path || oKeyProperty.name, type: oKeyProperty.typeConfig.typeInstance};
+			}
+			if (oDescriptionProperty) {
+				oAdditionalValueBindingInfo = {path: oDescriptionProperty.path || oDescriptionProperty.name, type: oDescriptionProperty.typeConfig.typeInstance};
+			}
+
+			if (oProperty.exportSettings.template === "{0} ({1})") {
+				sDisplay = FieldDisplay.ValueDescription;
+			} else if (oProperty.exportSettings.template === "{1} ({0})") {
+				sDisplay = FieldDisplay.DescriptionValue;
+			} else if (oProperty.exportSettings.template === "{1}") {
+				sDisplay = FieldDisplay.Description;
+			}
+		} else {
+			oValueBindingInfo = {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance};
+		}
+
 		var oCtrlProperties = DelegateCache.merge({
 			id: getFullId(oTable, "F_" + oProperty.name),
-			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
+			value: oValueBindingInfo,
+			additionalValue: oAdditionalValueBindingInfo,
 			editMode: FieldEditMode.Display,
 			width:"100%",
 			multipleLines: false, // set always to have property not initial
+			display: sDisplay,
 			delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}
 		}, DelegateCache.get(oTable, oProperty.name, "$Columns"));
 
@@ -144,10 +174,10 @@ sap.ui.define([
 						}
 					}
 				});
-		} else if (oProperty.name === "author_ID") {
+		} else if (oProperty.name === "author_ID_ComplexWithText") {
 			oCtrlProperties.fieldInfo = new Link({
-					delegate: { name: "sap/ui/v4demo/delegate/Books.Link.delegate" }
-				});
+				delegate: { name: "sap/ui/v4demo/delegate/Books.Link.delegate" }
+			});
 		}
 
 		return new Field(oCtrlProperties);
