@@ -35,6 +35,10 @@ sap.ui.define([
 		return this.getAdaptationControl().getItems().concat(this.getAdaptationControl());
 	};
 
+	LinkPanelController.prototype.getSelectorsForHasChanges = function() {
+		return this.getAdaptationControl().getItems();
+	};
+
 	LinkPanelController.prototype.initAdaptationUI = function(oPropertyHelper) {
 		const oSelectionPanel = new SelectionPanel({
 			title: oResourceBundle.getText("info.SELECTION_DIALOG_ALIGNEDTITLE"),

@@ -144,7 +144,7 @@ sap.ui.define([
 	 */
 	Engine.prototype.register = function(oControl, oConfig) {
 
-		if (!oConfig.hasOwnProperty("controller") /* || Object.keys(oConfig.controller).length < 1*/ ) {
+		if (!oConfig.hasOwnProperty("controller") /* || Object.keys(oConfig.controller).length < 1*/) {
 			throw new Error("Please provide at least a configuration 'controller' containing a map of key-value pairs (key + Controller class) in order to register adaptation.");
 		}
 
@@ -227,7 +227,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.m.p13n.Popup>} Promise resolving in the <code>sap.m.p13n.Popup</code> instance
 	 */
 	Engine.prototype.show = function(oControl, vPanelKeys, mSettings) {
-		return this.hasChanges(oControl)
+		return this.hasChanges(oControl, vPanelKeys)
 			.catch((oError) => {
 				return false;
 			})
@@ -276,14 +276,29 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} A Promise that resolves if the given control instance has applied changes
 	 */
 	Engine.prototype.hasChanges = function(control, key) {
-		const changeOperations = this.getController(control, key)?.getChangeOperations();
+		const oChangeOperations = this.getController(control, key)?.getChangeOperations();
 		let changeTypes;
-		if (changeOperations) {
-			changeTypes = Object.values(changeOperations);
+		if (oChangeOperations) {
+			changeTypes = [];
+			Object.values(oChangeOperations).forEach((vChangeOperation) => {
+				if (Array.isArray(vChangeOperation)) {
+					changeTypes = changeTypes.concat(vChangeOperation);
+				} else {
+					changeTypes.push(vChangeOperation);
+				}
+			});
 		}
+		let selectors = [];
+		if (this.getController(control, key)?.getSelectorsForHasChanges) {
+			selectors = selectors.concat(this.getController(control, key).getSelectorsForHasChanges());
+		} else {
+			selectors.push(control);
+		}
+
 		const oModificationSetting = this._determineModification(control);
 		return this.getModificationHandler(control).hasChanges({
 			selector: control,
+			selectors,
 			changeTypes
 		}, oModificationSetting?.payload).then((enableReset) => {
 			return enableReset;
@@ -545,8 +560,8 @@ sap.ui.define([
 
 		const fDeltaHandling = () => {
 			return this.initAdaptation(oControl, sKey).then(() => {
-					return vNewState;
-				})
+				return vNewState;
+			})
 				.then((aNewState) => {
 
 					const oController = this.getController(oControl, sKey);
@@ -1337,12 +1352,12 @@ sap.ui.define([
 			const vP13nData = oController.getP13nData();
 			if (vP13nData) {
 				const p = this.createChanges({
-						control: oControl,
-						key: sControllerKey,
-						state: vP13nData,
-						suppressAppliance: true,
-						applyAbsolute: true
-					})
+					control: oControl,
+					key: sControllerKey,
+					state: vP13nData,
+					suppressAppliance: true,
+					applyAbsolute: true
+				})
 					.then((aItemChanges) => {
 
 						return oController.getBeforeApply().then((aChanges) => {
@@ -1426,6 +1441,5 @@ sap.ui.define([
 		this.uimanager.destroy();
 		this.uimanager = null;
 	};
-
 	return Engine;
 });
