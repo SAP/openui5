@@ -1892,6 +1892,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Hook for controls that extend the sap.ui.unified.CalendarRow control.
+	 * Checks whether an interval representing a day as part of a row will be displayed as non working.
+	 * @private
+	 * @param {int} iInterval The interval number representing a day as part of a row.
+	 * @param {array} aNonWorkingItems The interval number representing a day as part of a row.
+	 * @param {int} iStartOffset The interval index based on the start date of the view.
+	 * @param {int} iNonWorkingMax The non working maximal index based on the view.
+	 * @returns {boolean}
+	 */
+	CalendarRow.prototype._isNonWorkingInterval = function (iInterval, aNonWorkingItems, iStartOffset, iNonWorkingMax) {
+		return aNonWorkingItems.includes((iInterval + iStartOffset) % iNonWorkingMax);
+	};
+
+	/**
 	* Handles the situation when more than one appointment are selected and they must be deselected
 	* when a single one is selected afterwards
 	* @private

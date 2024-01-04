@@ -18,6 +18,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	// shortcut for sap.ui.unified.CalendarDayType
+	var CalendarDayType = unifiedLibrary.CalendarDayType;
 
 	/**
 	 * Constructor for a new <code>PlanningCalendarRow</code>.
@@ -202,11 +204,13 @@ sap.ui.define([
 			intervalHeaders : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "intervalHeader"},
 
 			/**
-			 * Holds the special dates in the context of a row. A single date or a date range can be set.
+			 * Holds the special dates in the context of a row. A single <code>sap.ui.unified.DateTypeRange</code> instance can be set.
 			 *
-			 * <b>Note</b> Only date or date ranges of type <code>sap.ui.unified.CalendarDayType.NonWorking</code> will
-			 * be visualized in the <code>PlanningCalendarRow</code>. If the aggregation is set as another type,
-			 * the date or date range will be ignored and will not be displayed in the control.
+			 * <b>Note</b> Only <code>sap.ui.unified.DateTypeRange</code> isntances configured with <code>sap.ui.unified.CalendarDayType.NonWorking</code>
+			 * or <code>sap.ui.unified.CalendarDayType.Working</code> type will be visualized in the row.
+			 * In all other cases the <code>sap.ui.unified.DateTypeRange</code> instances will be ignored and will not be displayed in the control.
+			 * Assigning more than one of these values in combination for the same date will lead to unpredictable results.
+			 *
 			 * @since 1.56
 			 */
 			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
@@ -372,11 +376,14 @@ sap.ui.define([
 	PlanningCalendarRow.prototype._getSpecialDates = function(){
 		var specialDates = this.getSpecialDates();
 		for (var i = 0; i < specialDates.length; i++) {
-			var bNeedsSecondTypeAdding = specialDates[i].getSecondaryType() === unifiedLibrary.CalendarDayType.NonWorking
-					&& specialDates[i].getType() !== unifiedLibrary.CalendarDayType.NonWorking;
+			var bNeedsSecondTypeAdding = (specialDates[i].getSecondaryType() === CalendarDayType.NonWorking
+					&& specialDates[i].getType() !== CalendarDayType.NonWorking)
+					|| (specialDates[i].getSecondaryType() === CalendarDayType.Working
+					&& specialDates[i].getType() !== CalendarDayType.Working);
+
 			if (bNeedsSecondTypeAdding) {
 				var newSpecialDate = new DateTypeRange();
-				newSpecialDate.setType(unifiedLibrary.CalendarDayType.NonWorking);
+				newSpecialDate.setType(specialDates[i].getSecondaryType());
 				newSpecialDate.setStartDate(specialDates[i].getStartDate());
 				if (specialDates[i].getEndDate()) {
 					newSpecialDate.setEndDate(specialDates[i].getEndDate());
