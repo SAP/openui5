@@ -67,9 +67,6 @@ sap.ui.define([
 				textFormatter : {
 					type: "object"
 				},
-				sortKey : {
-					type: "string"
-				},
 				// this is not a public property
 				availableRoles: {
 					type: "object"

@@ -479,8 +479,6 @@ sap.ui.define([
 		 * 	The text property used for the dimension
 		 * @property {object} [textFormatter]
 		 * 	The text formatter object which can be used to format the textProperty
-		 * @property {string} [sortKey]
-		 *	The technical path for a sorting data source property
 		 * @public
 		 */
 
