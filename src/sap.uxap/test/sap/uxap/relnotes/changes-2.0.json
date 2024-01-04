@@ -1,0 +1,47 @@
+{
+  "2.0.0": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "bbcab271384300856f17e5fe2583e627f36e5d26",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/197/"
+      },
+      {
+        "id": "ef1d9478dac723398e96b2cfcf210181f4cb6ebd",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/194/"
+      },
+      {
+        "id": "b69a6b2f8276a44b5c2b55626be46f4553236b65",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/193/"
+      },
+      {
+        "id": "5fe5b16858c2894a90a83b737cff2007dd9ab2cd",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/192/"
+      },
+      {
+        "id": "5246f6b5ff85a6d771992dfbd304943812a50aff",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/188/"
+      },
+      {
+        "id": "aabe3489f27aeb059c98104985cb2c85e8b1ba0d",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
+        "id": "9658ade2bf1c727f0527190dadf0ba095e9aed71",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
+        "id": "9f647bc3a906dc9f0c769f8201f300d081860929",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: introduce beforeNavigation event"
+      }
+    ]
+  }
+}

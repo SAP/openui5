@@ -1,0 +1,180 @@
+{
+  "2.0.0": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "bbcab271384300856f17e5fe2583e627f36e5d26",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/197/"
+      },
+      {
+        "id": "46f2f506b49d902567df6200deac74b02c87e52d",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/195/"
+      },
+      {
+        "id": "ef1d9478dac723398e96b2cfcf210181f4cb6ebd",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/194/"
+      },
+      {
+        "id": "b69a6b2f8276a44b5c2b55626be46f4553236b65",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/193/"
+      },
+      {
+        "id": "5fe5b16858c2894a90a83b737cff2007dd9ab2cd",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/192/"
+      },
+      {
+        "id": "9e86839d201385356c3c6a311e253460d3fbf82f",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: register events once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370078629"
+          }
+        ]
+      },
+      {
+        "id": "34da7add092e917a243bedd5b169eac96c8dd1f0",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Remove horizontal scrollbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011657"
+          }
+        ]
+      },
+      {
+        "id": "c381b090a5392ed4676971f90e7044f2b1ca0a14",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: enable drop over the browse button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006011772023"
+          }
+        ]
+      },
+      {
+        "id": "ea13864b7b1e79c5d258a9c192c4b4bcd581fb25",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: getVisibleIntervalsCount now returns the correct value ignoring daylight saving",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380087494"
+          }
+        ]
+      },
+      {
+        "id": "437897ee52b0dce55c4fdf739657b9860e1629eb",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarTimeInterval: add accessibility information",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011587"
+          }
+        ]
+      },
+      {
+        "id": "ffb904eea7b87083d6a8ec7a177336196755a754",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarLegend: Nest list items in list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011635"
+          }
+        ]
+      },
+      {
+        "id": "55a6b4f80fb46557c26ac6f3b637ba1eddbe64d1",
+        "type": "FIX",
+        "text": " sap.ui.unified.MenuTextFieldItem: Add aria role to input",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011636"
+          }
+        ]
+      },
+      {
+        "id": "348bf3ca0508b8769d127429cb09e80bdc0b4e2b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: skip invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005658702023"
+          }
+        ]
+      },
+      {
+        "id": "2f7941f7d2d7f76fcd066f1a45b6a4e7da5f9d60",
+        "type": "FIX",
+        "text": " sap.ui.unified.MenuItem: Improve accessibility attributes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011608"
+          }
+        ]
+      },
+      {
+        "id": "f0b62785e122bde5cacf7f17379cbb73222b695f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Improve announcement order",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011549"
+          }
+        ]
+      },
+      {
+        "id": "0b43c3d62ce28570f0a016b646b90b3300034636",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: make disabled text field items focusable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280110553"
+          }
+        ]
+      },
+      {
+        "id": "f61d6be991486ca8837947333f67e6285b2c95e8",
+        "type": "FIX",
+        "text": " sap.ui.unified.MonthsRowRenderer: Remove duplicate ACC info",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011601"
+          }
+        ]
+      },
+      {
+        "id": "d69c8ae156eaf2dca2baaed721eb7a8ae5cd3400",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: add isOpen() function"
+      },
+      {
+        "id": "19a481d8e2b26eb217be5aeb5389d32b984b9ce6",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Currency: add sample without decimals",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380053743"
+          }
+        ]
+      }
+    ]
+  }
+}

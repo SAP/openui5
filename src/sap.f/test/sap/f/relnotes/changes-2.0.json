@@ -1,0 +1,160 @@
+{
+  "2.0.0": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "bbcab271384300856f17e5fe2583e627f36e5d26",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/197/"
+      },
+      {
+        "id": "ad4c48fe25c8a458e240a234c78c07df07a1301d",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/196/"
+      },
+      {
+        "id": "46f2f506b49d902567df6200deac74b02c87e52d",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/195/"
+      },
+      {
+        "id": "ef1d9478dac723398e96b2cfcf210181f4cb6ebd",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/194/"
+      },
+      {
+        "id": "b69a6b2f8276a44b5c2b55626be46f4553236b65",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/193/"
+      },
+      {
+        "id": "5fe5b16858c2894a90a83b737cff2007dd9ab2cd",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/192/"
+      },
+      {
+        "id": "4a01106ed2476031677c01b275efaa8967c6798c",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/191/"
+      },
+      {
+        "id": "1f3f36959deeaa5b8a8bc9d61464a308ab381a94",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/190/"
+      },
+      {
+        "id": "cad8afb081f83579296457ea7010ec8314ecbcb6",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/189/"
+      },
+      {
+        "id": "5246f6b5ff85a6d771992dfbd304943812a50aff",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/188/"
+      },
+      {
+        "id": "37b916b47c16d6983b17a162daa3bc2209838ad0",
+        "type": "FIX",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/187/"
+      },
+      {
+        "id": "aabe3489f27aeb059c98104985cb2c85e8b1ba0d",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
+        "id": "9658ade2bf1c727f0527190dadf0ba095e9aed71",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
+        "id": "bb79937653ee953740bd8da4c2fc47a6299797b2",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: Adjust splitter bar themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370073881"
+          }
+        ]
+      },
+      {
+        "id": "20188caa08955460b5ca7cd25063cee15f38c488",
+        "type": "FIX",
+        "text": " Integration Cards: Placeholders of List and Table cards no longer reserve space for group headers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122439"
+          }
+        ]
+      },
+      {
+        "id": "e82406ae06f4d925fe303f11e9b578ee17336dd1",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Aria-labelledby fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006038202023"
+          }
+        ]
+      },
+      {
+        "id": "846c123ab91a4c25f42fe9c5f3089edc80cfbb96",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: render resize handler",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380112686"
+          }
+        ]
+      },
+      {
+        "id": "aa64ad3ec1180095b3187b96541c379f0bd22d9e",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: adjust expand/collapse button tooltip",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370073642"
+          }
+        ]
+      },
+      {
+        "id": "4f2d8328d42ad53f0fe0c643e16aae3aee2646d7",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Visibility fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003724452023"
+          }
+        ]
+      },
+      {
+        "id": "d10751f3eecb30e46eac12a3f0f5e7a796b5ebbb",
+        "type": "FIX",
+        "text": " sap.f.GridContainer,GridList: Keyboard navigation is now correct for RTL languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380075806"
+          }
+        ]
+      },
+      {
+        "id": "d4b200103c7d144de0370deeee3e99a296518fe4",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: apply focus properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370073641"
+          }
+        ]
+      }
+    ]
+  }
+}

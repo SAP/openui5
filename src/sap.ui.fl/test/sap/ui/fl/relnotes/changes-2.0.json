@@ -1,0 +1,48 @@
+{
+  "2.0.0": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "46f2f506b49d902567df6200deac74b02c87e52d",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/195/"
+      },
+      {
+        "id": "ef1d9478dac723398e96b2cfcf210181f4cb6ebd",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/194/"
+      },
+      {
+        "id": "b69a6b2f8276a44b5c2b55626be46f4553236b65",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/193/"
+      },
+      {
+        "id": "4a01106ed2476031677c01b275efaa8967c6798c",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/191/"
+      },
+      {
+        "id": "5246f6b5ff85a6d771992dfbd304943812a50aff",
+        "type": "FEATURE",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/188/"
+      },
+      {
+        "id": "37b916b47c16d6983b17a162daa3bc2209838ad0",
+        "type": "FIX",
+        "text": " Transformation job: https://ui5infra.only.sap/job/legacy-free-transformer-test-pipelines/187/"
+      },
+      {
+        "id": "880635a56db8daf72d1791e40a86859dc3202765",
+        "type": "FIX",
+        "text": " sap.ui.fl - Add adaptation id to setDefault method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380100319"
+          }
+        ]
+      }
+    ]
+  }
+}
