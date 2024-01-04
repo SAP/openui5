@@ -1,11 +1,11 @@
 // /**
 // * Copyright (c) 2012-2023 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
 // * Theming Engine 1.23061.0
-// * data:{"sModified":"2023-09-11T07:13:37Z"}
+// * data:{"sModified":"2023-12-13T07:44:04Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_horizon_dark/base.less (Version 11.6.8) *******************/
+/******************* FILE /Base/baseLib/sap_horizon_dark/base.less (Version 11.10.0) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -63,6 +63,7 @@
 // [Category "Resource"]
 // [Type "color"]
 @sapShell_BackgroundPatternColor: transparent;
+@sapField_HorizonNGEnabled: 0;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -1262,7 +1263,7 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
-@sapButton_Selected_Background: @sapContent_Selected_Background;
+@sapButton_Selected_Background: darken(@sapSelectedColor, 52);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -1683,7 +1684,6 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapButton_TokenBorderColor: @sapButton_BorderColor;
-@sapField_HorizonNGEnabled: 0;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
