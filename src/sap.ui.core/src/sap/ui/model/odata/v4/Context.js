@@ -1090,7 +1090,9 @@ sap.ui.define([
 			|| !mParameters.$$sharedRequest
 			&& this.isSelected() && this !== this.oBinding.getHeaderContext()
 			&& !(this.oBinding.isRelative() && !mParameters.$$ownRequest)
-			&& !_Helper.isDataAggregation(mParameters);
+			&& !_Helper.isDataAggregation(mParameters)
+			// check for key predicate in the last path segment
+			&& this.sPath.indexOf("(", this.sPath.lastIndexOf("/")) > 0;
 	};
 
 	/**
