@@ -487,7 +487,8 @@ sap.ui.define([
 				content: [
 					this._getIcon(),
 					this._getDynamicContent()
-				]
+				],
+				selected: this.getSelected() // mapping UploadSetItem's property selected to customList item selected.
 			});
 			this._oListItem.addStyleClass("sapMUCItem");
 			this._oListItem.setTooltip(this.getTooltip_Text());

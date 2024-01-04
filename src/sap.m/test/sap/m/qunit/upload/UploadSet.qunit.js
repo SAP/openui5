@@ -31,14 +31,16 @@ sap.ui.define([
 		return {
 			items: [
 				{
-					fileName: "Alice.mp4"
+					fileName: "Alice.mp4",
+					selected: true
 				},
 				{
 					fileName: "Brenda.mp4",
 					enabledRemove: false,
 					enabledEdit: false,
 					visibleRemove: false,
-					visibleEdit: false
+					visibleEdit: false,
+					selected: true
 				}
 			]
 		};
@@ -1274,12 +1276,37 @@ sap.ui.define([
 		for (var i = 0; i < aAllItems.length; i++) {
 			aAllItems[i].setSelected(true);
 		}
+		//Assert
+		assert.equal(this.oUploadSet.getSelectedItems().length, 2, "2 items are selected");
+
+		// Act
 		for (var i = 0; i < aAllItems.length; i++) {
 			aAllItems[i].setSelected(false);
 		}
 
 		//Assert
 		assert.equal(this.oUploadSet.getSelectedItems().length, 0, "0 items are selected");
+	});
+
+	QUnit.test("Test for binding Selected property on each UploadSetItem", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadSet.getItems();
+		this.oUploadSet.setMode(ListMode.MultiSelect);
+
+		//Assert
+		assert.equal(this.oUploadSet.getSelectedItems().length, 0, "no items are selected");
+
+		// Binding selected attribute to validate if items are selected
+
+		//Act
+		aAllItems.forEach(function (oItem) {
+			oItem.bindProperty("selected", {
+					path: "selected"
+			});
+        });
+
+		//Assert to validate if bound property "selected" is propogated to list selection.
+		assert.equal(this.oUploadSet.getSelectedItems().length, 2, "2 items are selected with property selected bound to each UploadSetItem");
 	});
 
 	QUnit.module("Grouping tests", {
