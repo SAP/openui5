@@ -108,3 +108,19 @@
 .sapMPIValueMin >.sapMPIBar {
 	border: none;
 }
+
+.sapMPI {
+	height: 1rem;
+	min-width: 4rem;
+
+	&:not(.sapMPIDisplayOnly) {
+		margin: 0.5rem 0;
+	}
+}
+
+.sap-phone,
+.sap-tablet:not(.sap-combi) {
+	.sapMPI:not(.sapMPIDisplayOnly) {
+		margin: 0.875rem 0;
+	}
+}
