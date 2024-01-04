@@ -113,7 +113,7 @@ sap.ui.define([
 			}
 
 			const oPropertyForPlugin = {
-				name: oProperty.name,
+				key: oProperty.key,
 				path: oProperty.path,
 				isKey: oProperty.isKey,
 				text: oProperty.text,

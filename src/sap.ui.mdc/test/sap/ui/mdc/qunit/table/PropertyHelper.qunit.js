@@ -22,7 +22,7 @@ sap.ui.define([
 	QUnit.test("Simple property with attribute 'aggregatable'", function(assert) {
 		assert.throws(function () {
 			new PropertyHelper([{
-				name: "prop",
+				key: "prop",
 				label: "Property",
 				dataType: "String",
 				aggregatable: true
@@ -35,11 +35,11 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'groupable'", function(assert) {
 		assert.throws(function () {
 			new PropertyHelper([{
-				name: "prop",
+				key: "prop",
 				label: "Property",
 				dataType: "String"
 			}, {
-				name: "complexProp",
+				key: "complexProp",
 				label: "ComplexProperty",
 				propertyInfos: ["prop"],
 				groupable: true
@@ -52,11 +52,11 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'isKey'", function(assert) {
 		assert.throws(function () {
 			new PropertyHelper([{
-				name: "prop",
+				key: "prop",
 				label: "Property",
 				dataType: "String"
 			}, {
-				name: "complexProp",
+				key: "complexProp",
 				label: "ComplexProperty",
 				propertyInfos: ["prop"],
 				isKey: true
@@ -69,11 +69,11 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'unit'", function(assert) {
 		assert.throws(function () {
 			new PropertyHelper([{
-				name: "prop",
+				key: "prop",
 				label: "Property",
 				dataType: "String"
 			}, {
-				name: "complexProp",
+				key: "complexProp",
 				label: "ComplexProperty",
 				propertyInfos: ["prop"],
 				unit: "prop"
@@ -86,11 +86,11 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'text'", function(assert) {
 		assert.throws(function () {
             new PropertyHelper([{
-				name: "prop",
+				key: "prop",
 				label: "Property",
 				dataType: "String"
 			}, {
-				name: "complexProp",
+				key: "complexProp",
 				label: "ComplexProperty",
 				propertyInfos: ["prop"],
 				text: "prop"
@@ -103,7 +103,8 @@ sap.ui.define([
 	QUnit.module("Defaults", {
 		beforeEach: function() {
 			this.oSimplePropertyDefaults = {
-				name: "prop",
+				key: "prop",
+				name: "prop", //legacy
 				label: "Property",
 				dataType: "String",
 				tooltip: "",
@@ -116,7 +117,6 @@ sap.ui.define([
 				group: "",
 				groupLabel: "",
 				groupable: false,
-				key: false,
 				isKey: false,
 				maxConditions: -1,
 				path: "",
@@ -141,7 +141,8 @@ sap.ui.define([
 			};
 
 			this.oComplexPropertyDefaults = {
-				name: "complexProp",
+				key: "complexProp",
+				name: "complexProp", //legacy
 				label: "Complex Property",
 				tooltip: "",
 				exportSettings: {},
@@ -152,7 +153,6 @@ sap.ui.define([
 				group: "",
 				groupLabel: "",
 				groupable: false,
-				key: false,
 				isKey: false,
 				propertyInfos: ["prop"],
 				sortable: false,
@@ -179,7 +179,7 @@ sap.ui.define([
 
 	QUnit.test("Simple property", function(assert) {
 		const oPropertyHelper = new PropertyHelper([{
-			name: "prop",
+			key: "prop",
 			label: "Property",
 			dataType: "String"
 		}]);
@@ -190,35 +190,17 @@ sap.ui.define([
 
 	QUnit.test("Complex property", function(assert) {
 		const oPropertyHelper = new PropertyHelper([{
-			name: "prop",
+			key: "prop",
 			label: "Property",
 			dataType: "String"
 		}, {
-			name: "complexProp",
+			key: "complexProp",
 			label: "Complex Property",
 			propertyInfos: ["prop"]
 		}]);
 
 		assert.deepEqual(oPropertyHelper.getProperty("complexProp"), this.oComplexPropertyDefaults);
 		oPropertyHelper.destroy();
-	});
-
-	QUnit.test("Legacy attribute 'key'", function(assert) {
-		const oPropertyHelper = new PropertyHelper([{
-			name: "propA",
-			label: "Property A",
-			dataType: "String",
-			key: true
-		}, {
-			name: "propB",
-			label: "Property B",
-			dataType: "String",
-			key: true,
-			isKey: false
-		}]);
-
-		assert.strictEqual(oPropertyHelper.getProperty("propA").isKey, true, "isKey defaults to key");
-		assert.strictEqual(oPropertyHelper.getProperty("propB").isKey, false, "isKey wins over key");
 	});
 
 	QUnit.module("API", {
@@ -234,7 +216,7 @@ sap.ui.define([
 			});
 
 			this.oPropertyHelper = new PropertyHelper([{
-				name: "propA",
+				key: "propA",
 				label: "Property A",
 				dataType: "String",
 				visible: false,
@@ -245,7 +227,7 @@ sap.ui.define([
 					type: "Number"
 				}
 			}, {
-				name: "propB",
+				key: "propB",
 				path: "propBPath",
 				label: "Property B",
 				dataType: "String",
@@ -254,14 +236,14 @@ sap.ui.define([
 				groupable: true,
 				groupLabel: "Group Label"
 			}, {
-				name: "propC",
+				key: "propC",
 				path: "propCPath",
 				label: "Property C",
 				dataType: "String",
 				exportSettings: null,
 				clipboardSettings: null
 			}, {
-				name: "complexPropA",
+				key: "complexPropA",
 				label: "Complex Property A",
 				propertyInfos: ["propA", "propB"],
 				exportSettings: {
@@ -273,7 +255,7 @@ sap.ui.define([
 				},
 				visible: false
 			}, {
-				name: "complexPropB",
+				key: "complexPropB",
 				label: "Complex Property B",
 				propertyInfos: ["propB"],
 				exportSettings: {
@@ -282,7 +264,7 @@ sap.ui.define([
 					textAlign: "End"
 				}
 			}, {
-				name: "price",
+				key: "price",
 				path: "price",
 				label: "Price",
 				dataType: "String",
@@ -293,12 +275,12 @@ sap.ui.define([
 					textAlign: "End"
 				}
 			}, {
-				name: "currencyCode",
+				key: "currencyCode",
 				label: "Currency",
 				dataType: "String",
 				path: "currency"
 			}, {
-				name: "noDataColumn1",
+				key: "noDataColumn1",
 				label: "NoDataColumn1",
 				dataType: "String",
 				sortable: false,
@@ -307,13 +289,13 @@ sap.ui.define([
 					width: 5
 				}
 			}, {
-				name: "noDataColumn2",
+				key: "noDataColumn2",
 				label: "NoDataColumn2",
 				dataType: "String",
 				sortable: false,
 				filterable: false
 			}, {
-				name: "complexPropC",
+				key: "complexPropC",
 				label: "Complex Property C",
 				propertyInfos: ["noDataColumn1", "noDataColumn2"],
 				exportSettings: {
@@ -321,7 +303,7 @@ sap.ui.define([
 					label: "Complex export label C"
 				}
 			}, {
-				name: "complexPropD",
+				key: "complexPropD",
 				label: "Complex Property D",
 				propertyInfos: ["propA", "propB", "propC"]
 			}]);
@@ -537,32 +519,32 @@ sap.ui.define([
 	QUnit.module("Property", {
 		beforeEach: function() {
 			this.oPropertyHelper = new PropertyHelper([{
-				name: "prop",
+				key: "prop",
 				label: "Property",
 				dataType: "String",
 				groupable: true
 			}, {
-				name: "prop2",
+				key: "prop2",
 				label: "Property 2",
 				dataType: "String",
 				sortable: false,
 				filterable: false,
 				visible: false
 			}, {
-				name: "complexProp",
+				key: "complexProp",
 				label: "Complex property",
 				propertyInfos: ["prop"]
 			}, {
-				name: "complexProp2",
+				key: "complexProp2",
 				label: "Complex property 2",
 				propertyInfos: ["prop2"]
 			}, {
-				name: "complexProp3",
+				key: "complexProp3",
 				label: "Complex property 3",
 				propertyInfos: ["prop"],
 				visible: false
 			}, {
-				name: "complexProp4",
+				key: "complexProp4",
 				label: "Complex property 4",
 				propertyInfos: ["prop2"],
 				visible: false
@@ -594,7 +576,7 @@ sap.ui.define([
 	QUnit.test("Property with extension when no extension attributes are defined", function(assert) {
 		assert.throws(function () {
             new PropertyHelper([{
-				name: "foo",
+				key: "foo",
 				label: "bar",
 				dataType: "String",
 				extension: {}
@@ -606,7 +588,7 @@ sap.ui.define([
 
 	QUnit.test("Set 'extension' attribute", function(assert) {
 		const oPropertyHelper = new PropertyHelper([{
-			name: "foo",
+			key: "foo",
 			label: "bar",
 			dataType: "String",
 			extension: {
@@ -625,7 +607,7 @@ sap.ui.define([
 
 	QUnit.test("'extension' attribute has default value", function(assert) {
 		const oPropertyHelper = new PropertyHelper([{
-			name: "foo",
+			key: "foo",
 			label: "bar",
 			dataType: "String"
 		}], null, {
@@ -641,7 +623,7 @@ sap.ui.define([
 
 	QUnit.test("Attributes cannot be mandatory", function(assert) {
 		new PropertyHelper([{
-			name: "foo",
+			key: "foo",
 			label: "bar",
 			dataType: "String"
 		}], null, {
@@ -652,11 +634,11 @@ sap.ui.define([
 
 	QUnit.test("Complex property", function(assert) {
 		const oPropertyHelper = new PropertyHelper([{
-			name: "foo",
+			key: "foo",
 			label: "bar",
 			dataType: "String"
 		}, {
-			name: "complexFoo",
+			key: "complexFoo",
 			label: "Complex Foo",
 			propertyInfos: ["foo"],
 			extension: {
@@ -677,11 +659,11 @@ sap.ui.define([
 
 		assert.throws(function () {
 			new PropertyHelper([{
-				name: "foo",
+				key: "foo",
 				label: "bar",
 				dataType: "String"
 			}, {
-				name: "complexFoo",
+				key: "complexFoo",
 				label: "Complex Foo",
 				propertyInfos: ["foo"],
 				extension: {
@@ -709,13 +691,13 @@ sap.ui.define([
 			});
 
 			this.oPropertyHelper = new PropertyHelper([{
-				name: "prop",
+				key: "prop",
 				label: "Property",
 				dataType: "String",
 				formatOptions: {something: 5},
 				constraints: {maxLength: 10}
 			}, {
-				name: "complexProp",
+				key: "complexProp",
 				label: "Complex property",
 				propertyInfos: ["prop"]
 			}]);
