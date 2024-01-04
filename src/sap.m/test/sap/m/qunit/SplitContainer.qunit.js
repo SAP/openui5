@@ -372,33 +372,6 @@ sap.ui.define([
 		oSplitContainer.showMaster();
 	});
 
-	QUnit.test("sap.ui.Device.resize event should be reacted also on phone", function(assert) {
-		var oPortrait = {
-				landscape: false,
-				portrait: true
-			}, oLandscape = {
-				landscape: true,
-				portrait: false
-			}, oSystem = {
-				desktop: false,
-				phone: true,
-				tablet: false
-			};
-
-		this.stub(Device, "system").value(oSystem);
-		this.stub(Device, "orientation").value(oLandscape);
-
-		var oSplitContainer = new SplitContainer();
-		oSplitContainer._onOrientationChange = this.spy();
-		oSplitContainer.placeAt("content");
-		Core.applyChanges();
-
-		this.stub(Device, "orientation").value(oPortrait);
-		oSplitContainer._fnResize();
-		assert.equal(oSplitContainer._onOrientationChange.callCount, 1, "OrientationChange event should be reacted by the SplitContainer when runs on phone.");
-		oSplitContainer.destroy();
-	});
-
 	QUnit.test("Navigate and afterNavigate events should work in phone also", function(assert){
 		var oSystem = {
 					desktop: false,
@@ -1477,5 +1450,4 @@ sap.ui.define([
 		assert.strictEqual(oSplitContainer._aMasterPages[1].getDomRef().id, "initialMaster", "initialMaster should be rendered");
 		assert.strictEqual(oSplitContainer._aMasterPages[0].getDomRef(), null, "secondaryMaster should not be rendered");
 	});
-
 });

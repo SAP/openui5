@@ -224,6 +224,16 @@ sap.ui.define([
 				}
 			},
 
+			ContentConfig: {
+				title: "QUnit Test Page for sap.m.ContentConfig",
+				coverage: {
+					only: "//sap\/m\/ContentConfig.*/"
+				},
+				ui5: {
+					language: "en"
+				}
+			},
+
 			CustomTreeItem: {
 				title: "QUnit Page for sap.m.CustomTreeItem",
 				coverage: {

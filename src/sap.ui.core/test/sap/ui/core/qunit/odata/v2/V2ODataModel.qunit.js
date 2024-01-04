@@ -31,10 +31,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.MessageType
 	var MessageType = library.MessageType;
-
-	//add divs for control tests
-	createAndAppendDiv("target1");
-
 	var sServiceUri = "/SalesOrderSrv/";
 	var sDataRootPath =  "test-resources/sap/ui/core/qunit/testdata/SalesOrder/";
 	var oModel, spy;
@@ -606,7 +602,6 @@ sap.ui.define([
 		var oTxt = new Input({
 			value : "{Category}"
 		});
-		oTxt.placeAt("target1");
 		oTxt.setModel(oModel);
 		oTxt.bindObject("/VH_CategorySet('Headsets')");
 
@@ -627,7 +622,6 @@ sap.ui.define([
 		var oTxt = new Input({
 			value : "{Category}"
 		});
-		oTxt.placeAt("target1");
 		oTxt.setModel(oModel);
 
 		oModel.read("/VH_CategorySet", {
@@ -658,38 +652,14 @@ sap.ui.define([
 		});
 	});
 
-	var initTable = function(mEntities) {
-		var oTable = new Table();
-		for (var i = 0; i < mEntities.categories.properties.length; i++) {
-			oTable.addColumn(new Column().setLabel(
-					new Label({
-						text : mEntities.categories.properties[i]
-					})).setTemplate(
-					new Input().bindProperty("value",
-							mEntities.categories.properties[i]))
-					.setFilterProperty(mEntities.categories.properties[i]));
-		}
-		return oTable;
-	};
-
 	QUnit.test("test oDataModel listbinding with table", function(assert) {
 		var done = assert.async();
 		var iCount = 0;
-
-		var mEntities = {
-			categories : {
-				collection : "/VH_CategorySet",
-				properties : [ "Category" ]
-			}
-		};
-		var oTable = initTable(mEntities);
-
-		oTable.placeAt("target1");
-
+		var oTable = new Table();
 		oTable.setModel(oModel);
 
 		oTable.bindRows({
-			path : mEntities.categories.collection
+			path : "/VH_CategorySet"
 		});
 
 		var fnCheck = function() {
@@ -717,26 +687,19 @@ sap.ui.define([
 		var done = assert.async();
 		var iCallCount = 0;
 		var bRead1 = false;
-		var mEntities = {
-			categories : {
-				collection : "/VH_CategorySet",
-				properties : [ "Category" ]
-			}
-		};
-		var oTable = initTable(mEntities);
-		oTable.placeAt("target1");
+		var oTable = new Table();
 		await nextUIUpdate();
 		oTable.setModel(oModel);
 		oTable.bindRows({
-			path : mEntities.categories.collection
+			path : "/VH_CategorySet"
 		});
 		oModel.read("/VH_CategorySet", {
-			success : function(oData, oResponse) {
+			success : function() {
 				assert.ok(true, "request succeeded");
 				bRead1 = true;
 				iCallCount++;
 			},
-			error : function(oError) {
+			error : function() {
 				assert.ok(false, "request failed");
 			}
 		});
@@ -761,29 +724,21 @@ sap.ui.define([
 		var done = assert.async();
 		var iCallCount = 0;
 		var bRead1 = false;
-		var mEntities = {
-			categories : {
-				collection : "/VH_CategorySet",
-				properties : [ "Category" ]
-			}
-		};
-		var oTable = initTable(mEntities);
-		oTable.placeAt("target1");
-
+		var oTable = new Table();
 		oTable.setModel(oModel);
 
 		oTable.bindRows({
-			path : mEntities.categories.collection,
+			path : "/VH_CategorySet",
 			batchGroupId : "myId1"
 		});
 		oModel.read("/ProductSet", {
 			batchGroupId : "myId2",
-			success : function(oData, oResponse) {
+			success : function() {
 				bRead1 = true;
 				assert.ok(true, "request succeeded");
 				iCallCount++;
 			},
-			error : function(oError) {
+			error : function() {
 				assert.ok(false, "request failed");
 			}
 		});
@@ -807,28 +762,21 @@ sap.ui.define([
 		var done = assert.async();
 		var iCallCount = 0;
 		var bRead1 = false;
-		var mEntities = {
-			categories : {
-				collection : "/VH_CategorySet",
-				properties : [ "Category" ]
-			}
-		};
-		var oTable = initTable(mEntities);
-		oTable.placeAt("target1");
+		var oTable = new Table();
 		oModel.setDeferredGroups([ "myId1", "myId2" ]);
 		oTable.setModel(oModel);
 		oTable.bindRows({
-			path : mEntities.categories.collection,
+			path : "/VH_CategorySet",
 			batchGroupId : "myId1"
 		});
 		oModel.read("/ProductSet", {
 			batchGroupId : "myId2",
-			success : function(oData, oResponse) {
+			success : function() {
 				bRead1 = true;
 				assert.ok(true, "request succeeded");
 				iCallCount++;
 			},
-			error : function(oError) {
+			error : function() {
 				assert.ok(false, "request failed");
 			}
 		});
@@ -1277,18 +1225,10 @@ sap.ui.define([
 			"*" : {groupId : "myId"}
 		});
 
-		var mEntities = {
-			categories: {
-				collection: "/ProductSet",
-				properties: ["Name"]
-			}
-		};
-		var oTable = initTable(mEntities);
-		oTable.placeAt("target1");
-
+		var oTable = new Table();
 		oTable.setModel(oModel);
 		bMetadataLoaded = true;
-		oTable.bindRows({path:mEntities.categories.collection});
+		oTable.bindRows({path: "/ProductSet"});
 
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
@@ -1320,18 +1260,10 @@ sap.ui.define([
 				single: true
 			}
 		});
-		var mEntities = {
-			categories: {
-				collection: "/ProductSet",
-				properties: ["Name"]
-			}
-		};
-		var oTable = initTable(mEntities);
-		oTable.placeAt("target1");
-
+		var oTable = new Table();
 		oTable.setModel(oModel);
 		bMetadataLoaded = true;
-		oTable.bindRows({path:mEntities.categories.collection});
+		oTable.bindRows({path: "/ProductSet"});
 
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
@@ -1366,18 +1298,10 @@ sap.ui.define([
 				single: true
 			}
 		});
-		var mEntities = {
-			categories: {
-				collection: "/ProductSet",
-				properties: ["Name"]
-			}
-		};
-		var oTable = initTable(mEntities);
-		oTable.placeAt("target1");
-
+		var oTable = new Table();
 		oTable.setModel(oModel);
 		bMetadataLoaded = true;
-		oTable.bindRows({path:mEntities.categories.collection});
+		oTable.bindRows({path: "/ProductSet"});
 
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
@@ -1422,20 +1346,12 @@ sap.ui.define([
 				single: false
 			}
 		});
-		var mEntities = {
-			categories: {
-				collection: "/ProductSet",
-				properties: ["Name"]
-			}
-		};
-		var oTable = initTable(mEntities);
-		oTable.placeAt("target1");
-
+		var oTable = new Table();
 		oTable.setModel(oModel);
 		bMetadataLoaded = true;
-		oTable.bindRows({path:mEntities.categories.collection});
+		oTable.bindRows({path: "/ProductSet"});
 
-		oModel.attachBatchRequestCompleted(this, function(test) {
+		oModel.attachBatchRequestCompleted(this, function() {
 			iCount++;
 
 			if (iCount === 1 && bMetadataLoaded){ // bind rows should have been loaded
@@ -1909,18 +1825,10 @@ sap.ui.define([
 		var bMetadataLoaded = false;
 		oModel.setDefaultBindingMode("TwoWay");
 
-		var mEntities = {
-			categories: {
-				collection: "/ProductSet",
-				properties: ["Name"]
-			}
-		};
-		var oTable = initTable(mEntities);
-		oTable.placeAt("target1");
-
+		var oTable = new Table();
 		oTable.setModel(oModel);
 		bMetadataLoaded = true;
-		oTable.bindRows({path:mEntities.categories.collection});
+		oTable.bindRows({path: "/ProductSet"});
 
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
@@ -4792,7 +4700,11 @@ sap.ui.define([
 			batchGroupId: "myId1"
 		});
 		oModel.attachRequestSent(this, function(oEvent) {
-			var oRequest = oSpy.args[iCount1][0];
+			// For GET /ProductSet('AD-1000') there are 2 "requestSent" events but only one request on the wire as
+			// expected.
+			// TODO: Why there are 2 "requestSent" events for GET /ProductSet('AD-1000') but only one
+			// "requestCompleted" event?
+			var oRequest = oSpy.args[iCount1]?.[0];
 			iCount1++;
 			if (iCount1 == 1) {
 				assert.ok(oEvent.getParameter('url').indexOf("HT-1000") !== -1, "Param check: url should be non batch");
@@ -4827,6 +4739,11 @@ sap.ui.define([
 				assert.ok(oRequest.requestUri.indexOf("/ProductSet('AD-1000')") !== -1, "request URL - ok");
 				assert.equal(typeof (oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId4 = oEvent.getParameter('ID');
+			}
+			if (iCount1 == 5) {
+				assert.ok(oEvent.getParameter('url').indexOf("AD-1000") !== -1, "Param check: url should be non batch");
+				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				assert.strictEqual(oRequest, undefined); // no request on the wire
 			}
 		});
 
@@ -5757,17 +5674,7 @@ sap.ui.define([
 		var done = assert.async();
 		var iChange = 0,
 			iReceived = 0;
-
-		var mEntities = {
-			categories: {
-				collection: "/VH_CategorySet",
-				properties: ["Category"]
-			}
-		};
-		var oTable = initTable(mEntities);
-
-		oTable.placeAt("target1");
-
+		var oTable = new Table();
 		oTable.setModel(oModel);
 
 		var fnChange = function(oEvent) {
@@ -5781,7 +5688,7 @@ sap.ui.define([
 			}
 		};
 
-		oTable.bindRows({path:mEntities.categories.collection, events:{change: fnChange, dataReceived: fnDataReceived}});
+		oTable.bindRows({path: "/VH_CategorySet", events:{change: fnChange, dataReceived: fnDataReceived}});
 		var fnCheck = function() {
 			assert.ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 			oTable.destroy();
@@ -5795,17 +5702,7 @@ sap.ui.define([
 		var iCount = 0,
 			iChange = 0,
 			iReceived = 0;
-
-		var mEntities = {
-			categories: {
-				collection: "/VH_CategorySet",
-				properties: ["Category"]
-			}
-		};
-		var oTable = initTable(mEntities);
-
-		oTable.placeAt("target1");
-
+		var oTable = new Table();
 		oTable.setModel(oModel);
 
 		var fnChange = function(oEvent) {
@@ -5820,7 +5717,7 @@ sap.ui.define([
 			}
 		};
 
-		oTable.bindRows({path:mEntities.categories.collection, events:{change: fnChange, dataReceived: fnDataReceived}});
+		oTable.bindRows({path: "/VH_CategorySet", events:{change: fnChange, dataReceived: fnDataReceived}});
 		var fnCheck = function() {
 			iCount++;
 			if (iCount <= 2) {
@@ -6403,19 +6300,11 @@ sap.ui.define([
 
 		});
 
-		var mEntities = {
-			categories: {
-				collection: "/ProductSet",
-				properties: ["Name"]
-			}
-		};
-		var oTable = initTable(mEntities);
-		oTable.placeAt("target1");
-
+		var oTable = new Table();
 		oTable.setModel(oModel);
 
 		oModel.metadataLoaded().then(function() {
-			oTable.bindRows({path:mEntities.categories.collection});
+			oTable.bindRows({path: "/ProductSet"});
 			oModel.attachRequestCompleted(this, function(test) {
 				iCount++;
 
@@ -6446,19 +6335,11 @@ sap.ui.define([
 				single: true
 			}
 		});
-		var mEntities = {
-			categories: {
-				collection: "/ProductSet",
-				properties: ["Name"]
-			}
-		};
-		var oTable = initTable(mEntities);
-		oTable.placeAt("target1");
-
+		var oTable = new Table();
 		oTable.setModel(oModel);
 
 		oModel.metadataLoaded().then(function() {
-			oTable.bindRows({path:mEntities.categories.collection});
+			oTable.bindRows({path: "/ProductSet"});
 
 			var fnHandler = function(test) {
 				iCount++;
@@ -6496,19 +6377,11 @@ sap.ui.define([
 				single: true
 			}
 		});
-		var mEntities = {
-			categories: {
-				collection: "/ProductSet",
-				properties: ["Name"]
-			}
-		};
-		var oTable = initTable(mEntities);
-		oTable.placeAt("target1");
-
+		var oTable = new Table();
 		oTable.setModel(oModel);
 
 		oModel.metadataLoaded().then(function() {
-			oTable.bindRows({path:mEntities.categories.collection});
+			oTable.bindRows({path: "/ProductSet"});
 
 			var fnHandler = function(test) {
 				iCount++;
@@ -6527,7 +6400,7 @@ sap.ui.define([
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "NewValue2", "Two Way check");
 
 					assert.ok(!oModel.hasPendingChanges(), "Pending changes test");
-					oModel.detachRequestCompleted(this, fnHandler);
+					oModel.detachRequestCompleted(fnHandler, this);
 					oTable.destroy();
 					done();
 				}
@@ -6550,18 +6423,10 @@ sap.ui.define([
 				single: false
 			}
 		});
-		var mEntities = {
-			categories: {
-				collection: "/ProductSet",
-				properties: ["Name"]
-			}
-		};
-		var oTable = initTable(mEntities);
-		oTable.placeAt("target1");
-
+		var oTable = new Table();
 		oTable.setModel(oModel);
 		oModel.metadataLoaded().then(function() {
-			oTable.bindRows({path:mEntities.categories.collection});
+			oTable.bindRows({path: "/ProductSet"});
 
 			var fnHandler = function(test) {
 				iCount++;
@@ -6580,7 +6445,7 @@ sap.ui.define([
 					assert.equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "NewValue2", "Two Way check");
 
 					assert.ok(!oModel.hasPendingChanges(), "Pending changes test");
-					oModel.detachRequestCompleted(this, fnHandler);
+					oModel.detachRequestCompleted(fnHandler, this);
 					oTable.destroy();
 					done();
 				}
@@ -6594,7 +6459,6 @@ sap.ui.define([
 		var iCount = 0;
 		var oTxt = new Input();
 		oTxt.bindValue({path: "Category", mode: 'OneTime'});
-		oTxt.placeAt("target1");
 		oModel.setUseBatch(true);
 		oTxt.setModel(oModel);
 
@@ -6914,7 +6778,6 @@ sap.ui.define([
 		var done = assert.async();
 		assert.expect(3);
 
-		sap.ui.getCore().setModel(oModel);
 		oModel.metadataLoaded().then(function() {
 			function fnSuccess() {
 				var oPanel =  new Panel({
@@ -6930,9 +6793,9 @@ sap.ui.define([
 								new Column({label: new Label({text: "ProductID"}), template: new Label({text: "{ProductID}"})})
 							]
 						})
-					]
-				}).placeAt("qunit-fixture");
-
+					],
+					models: oModel
+				}).placeAt("qunit-fixture"); // table needs to be rendered so that RowsUpdated event is fired
 				oPanel.getContent()[0].attachRowsUpdated(fnReload);
 
 				var oPanel2 =  new Panel({
@@ -6941,8 +6804,9 @@ sap.ui.define([
 						new Input({
 							value: "{ProductID}"
 						})
-					]
-				}).placeAt("qunit-fixture");
+					],
+					models: oModel
+				});
 
 				function fnReload() {
 					oPanel.getContent()[0].detachRowsUpdated(fnReload);

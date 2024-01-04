@@ -455,6 +455,10 @@ sap.ui.define([
 		 * <ul>
 		 *   <li><code>name</code></li>
 		 *   <li><code>label</code></li>
+		 *   <li><code>groupable</code></li>
+		 *   <li><code>aggregatable</code></li>
+		 *   <li><code>role</code></li>
+		 *   <li><code>dataType</code></li>
 		 * </ul>
 		 *
 		 * @typedef {sap.ui.mdc.util.PropertyInfo} sap.ui.mdc.chart.PropertyInfo
@@ -473,7 +477,10 @@ sap.ui.define([
 		 *  Implementation-specific object containing information about the criticality
 		 * @property {string} [textProperty]
 		 * 	The text property used for the dimension
-		 *
+		 * @property {object} [textFormatter]
+		 * 	The text formatter object which can be used to format the textProperty
+		 * @property {string} [sortKey]
+		 *	The technical path for a sorting data source property
 		 * @public
 		 */
 

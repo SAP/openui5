@@ -10,7 +10,7 @@ sap.ui.require([
 	"sap/ui/core/internal/samples/odata/v2/Products/pages/Main",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils"
-], function(Localization, Core, Main, opaTest, TestUtils) {
+], function (Localization, Core, Main, opaTest, TestUtils) {
 	"use strict";
 	Core.ready().then(function () {
 		var sDefaultLanguage = Localization.getLanguage();

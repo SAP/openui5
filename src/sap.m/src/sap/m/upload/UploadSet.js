@@ -86,17 +86,20 @@ sap.ui.define([
 				mediaTypes: {type: "string[]", defaultValue: null},
 				/**
 				 * Defines custom text for the 'No data' text label.
+				 * @deprecated Since version 1.121. Use illustratedMessage instead.
 				 */
-				noDataText: {type: "string", defaultValue: null},
+				noDataText: { type: "string", defaultValue: null, deprecated: true },
 				/**
 				 * Defines custom text for the 'No data' description label.
+				 * @deprecated Since version 1.121. Use illustratedMessage instead.
 				 */
-				noDataDescription: {type: "string", defaultValue: null},
+				noDataDescription: { type: "string", defaultValue: null, deprecated: true },
 				/**
 				 * Determines which illustration type is displayed when the control holds no data.
+				 * @deprecated Since version 1.121. Use illustratedMessage instead.
 				 * @since 1.117
 				 */
-				noDataIllustrationType: {type: "sap.m.IllustratedMessageType", group: "Appearance", defaultValue: IllustratedMessageType.NoData},
+				noDataIllustrationType: { type: "sap.m.IllustratedMessageType", group: "Appearance", defaultValue: IllustratedMessageType.NoData, deprecated: true },
 				/**
 				 * Defines custom text for the drag and drop text label.
 				 */
@@ -201,9 +204,9 @@ sap.ui.define([
 				uploader: {type: "sap.m.upload.Uploader", multiple: false},
 				/**
 			 	 * An illustrated message is displayed when no data is loaded or provided
-				 * @private
+				 * @since 1.121
 				 */
-				 _illustratedMessage: { type: "sap.m.IllustratedMessage", multiple: false, visibility: "hidden" }
+				illustratedMessage: { type: "sap.m.IllustratedMessage", multiple: false }
 			},
 			events: {
 				/**
@@ -514,6 +517,7 @@ sap.ui.define([
 		this._mListItemIdToItemMap = {};
 		this._oUploadButton = null;
 		this._oDragIndicator = false;
+		this._initialIllustrationClone = true;
 
 		// Drag&drop
 		this._$Body = null;
@@ -526,15 +530,17 @@ sap.ui.define([
 		//Setting invisible text
 		this._oInvisibleText = new InvisibleText();
 		this._oInvisibleText.toStatic();
-		var oIllustratedMessage = new IllustratedMessage({
-				illustrationType: this.getNoDataIllustrationType(),
+		this._oIllustratedMessage = this.getAggregation("illustratedMessage");
+		if (!this._oIllustratedMessage) {
+			this._oIllustratedMessage = new IllustratedMessage({
+				illustrationType: IllustratedMessageType.NoData,
 				illustrationSize: IllustratedMessageSize.Auto,
-				title: this.getNoDataText(),
-				description: this.getNoDataDescription()
+				title: this._oRb.getText("UPLOAD_SET_NO_DATA_TEXT"),
+				description: this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION")
 			});
-
-		this.setAggregation("_illustratedMessage", oIllustratedMessage);
-		oIllustratedMessage.addIllustrationAriaLabelledBy(this._oInvisibleText.getId());
+		}
+		this._oIllustratedMessage.addIllustrationAriaLabelledBy(this._oInvisibleText.getId());
+		this.setAggregation("illustratedMessage", this._oIllustratedMessage);
 		this._oInvisibleText.setText(this._oRb.getText("UPLOAD_SET_ILLUSTRATED_MESSAGE"));
 		this._cloudFilePickerControl = null;
 		this._oListEventDelegate = null;
@@ -558,6 +564,14 @@ sap.ui.define([
 			this._oUploader.destroy();
 			this._oUploader = null;
 		}
+		if (this._oIllustratedMessage) {
+			this._oIllustratedMessage.destroy();
+			this._oIllustratedMessage = null;
+		}
+		if (this._oIllustratedMessageClone) {
+			this._oIllustratedMessageClone.destroy();
+			this._oIllustratedMessageClone = null;
+		}
 	};
 
 	/* ===================== */
@@ -572,6 +586,10 @@ sap.ui.define([
 		this._aGroupHeadersAdded = [];
 		this._clearGroupHeaders();
 		this._fillListWithUploadSetItems(this.getItems());
+		if (this._initialIllustrationClone) {
+			this._oIllustratedMessageClone = this.getAggregation("illustratedMessage").clone();
+			this._initialIllustrationClone = false;
+		}
 	};
 
 	UploadSet.prototype.onAfterRendering = function () {
@@ -747,7 +765,7 @@ sap.ui.define([
 	// Functions returns sNoDataText which is combination of Title and Description from the IllustratedMessage
 	UploadSet.prototype._setListNoDataText = function (sText, bIsDescription) {
 		var sNoDataText = "";
-		var oIllustratedMessage = this.getAggregation("_illustratedMessage");
+		var oIllustratedMessage = this.getAggregation("illustratedMessage");
 		if (!sText) {
 			sNoDataText = oIllustratedMessage.getTitle() + " " + oIllustratedMessage.getDescription();
 		} else if (sText) {
@@ -983,7 +1001,7 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype._getIllustratedMessage = function () {
-		var oAggregation = this.getAggregation("_illustratedMessage");
+		var oAggregation = this.getAggregation("illustratedMessage");
 		// Invoke rendering of illustrated message only when the list is empty else no scope of illustrated message.
 		if (oAggregation && this._oList && this._oList.getItems && !this._oList.getItems().length) {
 			if (this._getDragIndicator()) {
@@ -992,10 +1010,23 @@ sap.ui.define([
 				oAggregation.setDescription(this.getDragDropDescription());
 				oAggregation.removeAllAdditionalContent();
 			} else {
-				oAggregation.setIllustrationType(this.getNoDataIllustrationType());
-				oAggregation.setTitle(this.getNoDataText());
-				oAggregation.setDescription(this.getNoDataDescription());
-				oAggregation.addAdditionalContent(this.getUploadButtonForIllustratedMessage());
+				oAggregation.setIllustrationType(this._oIllustratedMessageClone.getIllustrationType());
+				if (this._oIllustratedMessageClone.getTitle()) {
+					oAggregation.setTitle(this._oIllustratedMessageClone.getTitle());
+				} else {
+					oAggregation.setTitle(this._oRb.getText("UPLOAD_SET_NO_DATA_TEXT"));
+				}
+				if (this._oIllustratedMessageClone.getDescription()) {
+					oAggregation.setDescription(this._oIllustratedMessageClone.getDescription());
+				} else {
+					oAggregation.setDescription(this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION"));
+				}
+				if (this._oIllustratedMessageClone.getAdditionalContent().length) {
+					oAggregation.removeAllAdditionalContent();
+					oAggregation.addAdditionalContent(new Button(this._oIllustratedMessageClone.getAdditionalContent()[0].mProperties));
+				} else {
+					oAggregation.addAdditionalContent(this.getUploadButtonForIllustratedMessage());
+				}
 			}
 		}
 		return oAggregation;
@@ -1003,7 +1034,7 @@ sap.ui.define([
 
 	UploadSet.prototype.getUploadButtonForIllustratedMessage = function () {
 		if (!this._oUploadButton) {
-			var oAccIds = this.getAggregation("_illustratedMessage").getAccessibilityReferences();
+			var oAccIds = this.getAggregation("illustratedMessage").getAccessibilityReferences();
 			var sTitleId = oAccIds.title;
 			var sDescriptionId = oAccIds.description;
 			this._oUploadButton = new Button({

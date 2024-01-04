@@ -262,6 +262,7 @@ ODataTreeBindingAdapter.prototype._expandSubTree = function(oParentNode, aData) 
 		}
 
 		sKey = this.oModel._getKey(oEntry);
+		// deep path not needed here, it gets updated in ODataTreeBinding#_getContextsForNodeId
 		oContext = this.oModel.getContext("/" + sKey);
 
 		sParentGroupID = mParentGroupIDs[sParentNodeID];

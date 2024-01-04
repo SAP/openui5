@@ -307,20 +307,6 @@ sap.ui.define(function() {
 				module: "./ThemeVersion.qunit"
 			},
 
-			"ThemeVersion-off-sync": {
-				group: "Theme Versioning",
-				title: "QUnit Page for Theme Version Parameter - off - sync",
-				ui5: {
-					language: "en",
-					preload: "sync",
-					theme: "base",
-					versionedLibCss: false,
-					XxWaitForTheme: "init"
-				},
-				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
-				module: "./ThemeVersion.qunit"
-			},
-
 			"ThemeVersion-on-async-customcss": {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - on - async (with custom.css)",

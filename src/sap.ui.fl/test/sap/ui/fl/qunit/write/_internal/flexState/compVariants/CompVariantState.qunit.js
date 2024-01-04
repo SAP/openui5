@@ -1284,6 +1284,47 @@ sap.ui.define([
 				assert.strictEqual(oVariant.getContexts().role[0], "someRole", "the variant has the correct contexts");
 			}.bind(this));
 		});
+
+		QUnit.test("Given discardVariantContent is called when variant changes were made", function(assert) {
+			sandbox.stub(Storage, "write").resolves();
+			var oVariant = CompVariantState.addVariant(this.newVariantData);
+			var sNewVariantId = oVariant.getVariantId();
+			sandbox.stub(Versions, "hasVersionsModel").returns(true);
+			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+				draftFilenames: []
+			}));
+			return CompVariantState.persist({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			}).then(function() {
+				assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data is present");
+				assert.strictEqual(oVariant.getState(), States.LifecycleState.PERSISTED, "the variant has the correct state");
+				assert.strictEqual(oVariant.getFavorite(), true, "the favorite flag was set correctly");
+				assert.ok(true, "STEP: <<update>>, DISCARD");
+				CompVariantState.updateVariant({
+					id: sNewVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey,
+					layer: Layer.CUSTOMER,
+					name: "myNewName",
+					action: CompVariantState.updateActionType.UPDATE
+				});
+
+				assert.strictEqual(oVariant.getRevertData().length, 1, "1 revert data entry is present");
+				assert.strictEqual(oVariant.getState(), States.LifecycleState.PERSISTED, "the variant has the correct state");
+				assert.deepEqual(oVariant.getName(), "myNewName", "and the name is updated");
+				var oCompVariantStateUpdateVariantStub = sandbox.stub(CompVariantState, "updateVariant");
+				assert.ok(true, "STEP: update, <<DISCARD>>");
+				CompVariantState.discardVariantContent({
+					id: sNewVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey
+				});
+				assert.equal(oCompVariantStateUpdateVariantStub.callCount, 1, "updateVariant is called");
+				assert.equal(oCompVariantStateUpdateVariantStub.getCalls()[0].args[0].layer, Layer.CUSTOMER, "layer is set in updateVariant call");
+				assert.strictEqual(oVariant.getRevertData().length, 1, "1 revert data entry is present");
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("revert", {

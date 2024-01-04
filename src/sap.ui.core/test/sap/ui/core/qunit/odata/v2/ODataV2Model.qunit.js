@@ -48,21 +48,12 @@ sap.ui.define([
 			</List>\
 		</mvc:View>';
 
-	//add divs for control tests
-	var oTarget1 = document.createElement("div");
-	oTarget1.id = "target1";
-	document.body.appendChild(oTarget1);
-	var oTarget2 = document.createElement("div");
-	oTarget2.id = "target2";
-	document.body.appendChild(oTarget2);
-
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
 	sURI = "/proxy/http/" + sURI.replace("http://","");
 
 	var oLabel = new Label("myLabel");
 	var oPanel = new Panel();
 	oPanel.addContent(oLabel);
-	oPanel.placeAt("target1");
 
 	var oPanel2 = new Panel();
 	var oTable = new Table({ // create Table UI
@@ -75,7 +66,6 @@ sap.ui.define([
 	});
 	oTable.bindRows("Products");
 	oPanel2.addContent(oTable);
-	oPanel2.placeAt("target2");
 
 	/**
 	 * Removes all shared Metadata
@@ -307,8 +297,6 @@ sap.ui.define([
 	QUnit.test("test bindList", function(assert) {
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindList("/Categories").initialize();
 		var handler = function() { // delay the following test
 			assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "CategoryName available");
@@ -327,8 +315,6 @@ sap.ui.define([
 	QUnit.test("test bindList inlinecount", function(assert) {
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "Inline" }).initialize();
 		var handler = function() { // delay the following test
 			assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "CategoryName available");
@@ -347,8 +333,6 @@ sap.ui.define([
 	QUnit.test("test bindList no count", function(assert) {
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None" }).initialize();
 		var handler = function() { // delay the following test
 			assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "CategoryName available");
@@ -367,8 +351,6 @@ sap.ui.define([
 	QUnit.test("test select", function(assert) {
 		var done = assert.async();
 		var oModel = initModel(sURI);
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" }).initialize();
 		var handler = function() { // delay the following test
 			assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
@@ -387,8 +369,6 @@ sap.ui.define([
 	QUnit.test("test select with create binding context", function(assert) {
 		var done = assert.async();
 		var oModel = initModel(sURI);
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" }).initialize();
 		var handler1 = function() { // delay the following test
 			assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
@@ -416,8 +396,6 @@ sap.ui.define([
 	QUnit.test("test select with create binding context select", function(assert) {
 		var done = assert.async();
 		var oModel = initModel(sURI);
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" }).initialize();
 		var handler1 = function() { // delay the following test
 			assert.equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
@@ -446,8 +424,6 @@ sap.ui.define([
 	QUnit.test("test create binding context with optional parameters", function(assert) {
 		var done = assert.async();
 		var oModel = initModel(sURI);
-		sap.ui.getCore().setModel(oModel);
-
 		oModel.metadataLoaded().then(function() {
 			// old behavior with passing null context
 			oModel.createBindingContext("/Categories(1)", null, {select : "CategoryID" }, function(oContext) {
@@ -491,8 +467,6 @@ sap.ui.define([
 	QUnit.test("test expand", function(assert) {
 		var done = assert.async();
 		var oModel = initModel(sURI);
-		sap.ui.getCore().setModel(oModel);
-
 		var oFilter = new Filter("ProductName", "EQ", "Chai");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {expand : "Category" }).initialize();
 		var handler1 = function() { // delay the following test
@@ -511,8 +485,6 @@ sap.ui.define([
 		var done = assert.async();
 
 		var oModel = initModel(sURI);
-		sap.ui.getCore().setModel(oModel);
-
 		var oFilter = new Filter("ProductName", "EQ", "Chang");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter]).initialize();
 		var handler1 = function() { // delay the following test
@@ -538,8 +510,6 @@ sap.ui.define([
 		var done = assert.async();
 
 		var oModel = initModel(sURI);
-		sap.ui.getCore().setModel(oModel);
-
 		var oFilter = new Filter("ProductName", "EQ", "Chang");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {select : "Category,ProductName", expand : "Category" }).initialize();
 		var handler1 = function() { // delay the following test
@@ -569,8 +539,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI);
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oFilter = new Filter("ProductName", "EQ", "Chang");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {select : "Category/CategoryName,ProductName", expand : "Category" }).initialize();
 		var handler1 = function() { // delay the following test
@@ -604,8 +572,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI);
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oFilter = new Filter("ProductName", "EQ", "Chang");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {select : "Category/CategoryName,ProductName", expand : "Category" }).initialize();
 		var handler1 = function() { // delay the following test
@@ -641,8 +607,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {});
 		oBinding.attachChange(function(oContext) {
 			assert.equal(spy.callCount, 1, "get request should be send");
@@ -675,8 +639,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {select: "ProductName"});
 		oBinding.attachChange(function(oContext) {
 			assert.equal(spy.callCount, 1, "get request should be send");
@@ -709,8 +671,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {expand: "Category"});
 		oBinding.attachChange(function(oContext) {
 			assert.equal(spy.callCount, 1, "get request should be send");
@@ -743,8 +703,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
 		oBinding.attachChange(function(oContext) {
 			assert.equal(spy.callCount, 1, "get request should be send");
@@ -777,8 +735,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
 		oBinding.attachChange(function(oContext) {
 			assert.equal(spy.callCount, 1, "get request should be send");
@@ -811,8 +767,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(4)", null, {expand: "Category"});
 		oBinding.attachChange(function(oContext) {
 			assert.equal(spy.callCount, 1, "get request should be send");
@@ -842,8 +796,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {expand: "Supplier"});
 		oBinding.attachChange(function(oContext) {
 			assert.equal(spy.callCount, 1, "get request should be send");
@@ -882,8 +834,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {expand: "Supplier/Products"});
 		oBinding.attachChange(function(oContext) {
 			assert.equal(spy.callCount, 1, "get request should be send");
@@ -922,8 +872,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {expand: "Category"});
 		oBinding.attachChange(function(oContext) {
 			assert.equal(spy.callCount, 1, "get request should be send");
@@ -958,8 +906,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {expand: "Category"});
 		oBinding.attachChange(function(oContext) {
 			assert.equal(spy.callCount, 1, "get request should be send");
@@ -994,8 +940,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {expand: "Category"});
 		oBinding.attachChange(function(oContext) {
 			assert.equal(spy.callCount, 1, "get request should be send");
@@ -1031,8 +975,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {expand: "Category"});
 		oBinding.attachChange(function(oContext) {
 			var oProduct = oModel.getProperty("/Products(3)"),
@@ -1084,8 +1026,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {});
 		oBinding.attachChange(function(oContext) {
 			var oEntry = oModel.getProperty("/Products(3)");
@@ -1114,8 +1054,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {});
 		oBinding.attachChange(function(oContext) {
 			var oEntry = oModel.getProperty("/Products(3)");
@@ -1139,7 +1077,7 @@ sap.ui.define([
 		var done = assert.async();
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oLabel.setModel(oModel);
 		oModel.read("/Categories", {success: function() {
 			assert.equal(oLabel.getText(),"testText", "old text value");
 			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
@@ -1152,8 +1090,6 @@ sap.ui.define([
 	QUnit.test("test getProperty with expand and bIncludeExpandEntries true and false", function(assert) {
 		var done = assert.async();
 		var oModel = initModel(sURI);
-		sap.ui.getCore().setModel(oModel);
-
 		var oFilter = new Filter("ProductName", "EQ", "Chai");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {expand : "Category" }).initialize();
 		var handler1 = function() { // delay the following test
@@ -1175,9 +1111,6 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
-
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {});
 		oBinding.attachChange(function(oContext) {
 			assert.ok(oModel.oData["Products(3)"] !== oModel.getObject("/Products(3)"), "test object copy via getObject");
@@ -1197,9 +1130,6 @@ sap.ui.define([
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
 		oModel.getMetaModel();
-
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {});
 		oBinding.attachChange(function(oContext) {
 
@@ -1213,8 +1143,6 @@ sap.ui.define([
 	QUnit.test("test getObject with/without select/expand", function(assert) {
 		var done = assert.async();
 		var oModel = initModel(sURI);
-		sap.ui.getCore().setModel(oModel);
-
 		var oFilter = new Filter("ProductName", "EQ", "Chai");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {expand : "Category" }).initialize();
 		var handler1 = function() { // delay the following test
@@ -1249,9 +1177,6 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
-
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
 		oBinding.attachChange(function(oContext) {
 			assert.ok(oModel.oData["Products(3)"] !== oModel.getObject("/Products(3)"), "test object copy via getObject");
@@ -1279,8 +1204,6 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: false});
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Categories(7)", null, {expand: "Products"});
 		oBinding.attachChange(function(oContext) {
 			assert.ok(oModel.oData["Categories(7)"] !== oModel.getObject("/Categories(7)"), "test object copy via getObject");
@@ -1314,8 +1237,6 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: true});
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Suppliers(7)", null, {select: "*,Products/*,Products/Supplier/*,Products/Category/CategoryID,Products/Category/CategoryName",
 			expand: "Products,Products/Supplier,Products/Category"});
 		oBinding.attachChange(function(oContext) {
@@ -1384,8 +1305,6 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 		var oModel = initModel(sURI, {json: true});
-		sap.ui.getCore().setModel(oModel);
-
 		var oBinding = oModel.bindContext("/Suppliers(7)", null, {
 			expand: "Products,Products/Supplier,Products/Category"});
 		oBinding.attachChange(function(oContext) {
@@ -1692,7 +1611,7 @@ sap.ui.define([
 		var done = assert.async();
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oLabel.setModel(oModel);
 		oModel.read("/Categories", {success: function() {
 			assert.equal(oLabel.getText(),"testText", "old text value");
 			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
@@ -1712,7 +1631,7 @@ sap.ui.define([
 		var done = assert.async();
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oLabel.setModel(oModel);
 		oModel.read("/Categories", {success: function() {
 			assert.equal(oLabel.getText(),"testText", "old text value");
 			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
@@ -1729,7 +1648,7 @@ sap.ui.define([
 		var done = assert.async();
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+
 		oModel.read("/Categories", {success: function() {
 			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
 			oModel.createBindingContext("/Categories(2)", null, function(oContext) {
@@ -1749,7 +1668,7 @@ sap.ui.define([
 		var done = assert.async();
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, {metadataUrlParams: {"broken":true}, json:true});
-		sap.ui.getCore().setModel(oModel);
+
 		oModel
 			.attachMetadataLoaded(function() {
 				assert.ok(false, "As service is broken, this should not happen!");
@@ -1767,9 +1686,10 @@ sap.ui.define([
 		assert.expect(1);
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oPanel.setModel(oModel);
 		oPanel.addContent(oLabel);
 		oPanel.bindElement("/Products(3)");
+		oLabel.setModel(oModel);
 		oLabel.bindElement({path:"", parameters: {expand:"Category"}});
 		var fnHandler = function() {
 			assert.ok(!oModel.oData["Products(3)"][''], "no empty property created");
@@ -1782,12 +1702,11 @@ sap.ui.define([
 		oLabel.getElementBinding().attachDataReceived(fnHandler);
 	});
 
-
 	QUnit.test("test bindElement", function(assert) {
 		assert.expect(2);
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oLabel.setModel(oModel);
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("/Categories(2)");
@@ -1806,7 +1725,7 @@ sap.ui.define([
 		assert.expect(2);
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oLabel.setModel(oModel);
 		var oTestContext = oModel.getContext("/Products(2)");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("Category");
@@ -1825,7 +1744,7 @@ sap.ui.define([
 		assert.expect(5);
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oLabel.setModel(oModel);
 		var oTestContext = oModel.getContext("/Products(2)");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("Category");
@@ -1852,7 +1771,7 @@ sap.ui.define([
 		assert.expect(2);
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oLabel.setModel(oModel);
 		oModel.metadataLoaded().then(function() {
 			oLabel.bindElement("Category");
 			var oTestContext = oModel.getContext("/Products(2)");
@@ -1873,7 +1792,7 @@ sap.ui.define([
 		assert.expect(2);
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oLabel.setModel(oModel);
 		oLabel.bindElement("/Categories(2)");
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
@@ -1892,7 +1811,7 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oLabel.setModel(oModel);
 		var oTestContext = oModel.getContext("/Products(2)");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("Category");
@@ -1920,7 +1839,7 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oLabel.setModel(oModel);
 		var oTestContext = oModel.getContext("/Products(2)");
 		oPanel.setBindingContext(oTestContext);
 		oLabel.bindElement("Category");
@@ -1948,7 +1867,7 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oLabel.setModel(oModel);
 		oModel.read("/Categories(2)");
 		oModel.read("/Categories(7)");
 		oModel.metadataLoaded().then(function() {
@@ -2028,13 +1947,14 @@ sap.ui.define([
 		cleanSharedData();
 		var oODataModel = initModel(sURI, {json:false});
 		var oJSONModel = new JSONModel();
-		sap.ui.getCore().setModel(oODataModel);
+		oPanel.setModel(oODataModel);
 		var oTestContextOData = oODataModel.getContext("/Products(2)");
 		var oTestContextJSON = oJSONModel.getContext("/");
 		oPanel.setBindingContext(oTestContextJSON);
 		assert.ok(!oPanel.getBindingContext(), "Model is type OData, Context is type JSON so no context should be returned");
 		oPanel.setBindingContext(oTestContextOData);
 		assert.ok(oPanel.getBindingContext(), "Context and model are the same type. Context returned");
+		oLabel.setModel(oODataModel);
 		oLabel.bindElement("Category");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
@@ -2051,7 +1971,7 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oLabel.setModel(oModel);
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("/Categories(2)");
@@ -2074,7 +1994,7 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 		var oModel = initModel(sURI, false, "Categories");
-		sap.ui.getCore().setModel(oModel);
+		oLabel.setModel(oModel);
 		var oTestContext = oModel.getContext("/Test");
 		oLabel.setBindingContext(oTestContext);
 		oLabel.bindElement("/Employees(2)/Employee1");
@@ -2097,7 +2017,7 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oPanel2.setModel(oModel);
 		oPanel2.bindElement("/Categories(7)");
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 
@@ -2129,9 +2049,10 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oPanel.setModel(oModel);
 		oPanel.bindElement("/Products(2)");
 		oPanel.addContent(oPanel2);
+		oPanel2.setModel(oModel);
 		oPanel2.bindElement("Category");
 
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
@@ -2168,7 +2089,7 @@ sap.ui.define([
 		var oModel = initModel(sURI, {json:false});
 		oModel.setUseBatch(true);
 		oModel.setDeferredGroups(["test"]);
-		sap.ui.getCore().setModel(oModel);
+		oLabel.setModel(oModel);
 		oLabel.bindElement("/Categories(2)", {groupId:"test"});
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
@@ -2190,12 +2111,11 @@ sap.ui.define([
 
 	var oLB = new List("myLb");
 	var oItemTemplate = new ListItem();
-	oLB.placeAt("target2");
 
 	QUnit.test("test model bindAggregation on Listbox", function(assert) {
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oLB.setModel(oModel);
 		oItemTemplate.bindProperty("value", "CategoryName").bindProperty("label", "Description");
 		var oBinding = oLB.bindAggregation("items", "/Categories", oItemTemplate).getBinding('items');
 
@@ -2215,7 +2135,7 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
-		sap.ui.getCore().setModel(oModel);
+		oLB.setModel(oModel);
 		oItemTemplate.bindProperty("value", "CategoryName").bindProperty("label", "Description");
 		var oBinding = oLB.bindAggregation("items", "/Categories", oItemTemplate).getBinding('items');
 
@@ -2294,7 +2214,6 @@ sap.ui.define([
 			value: "{/Categories(2)/CategoryName}"
 		});
 		oInput.setModel(oModel);
-		oInput.placeAt("target1");
 		oInput.attachChange(this, function() {
 			assert.ok(false, "should not land here!");
 		});
@@ -2332,7 +2251,6 @@ sap.ui.define([
 			value: "{/Categories(2)/CategoryName}"
 		});
 		oInput.setModel(oModel);
-		oInput.placeAt("target1");
 		oInput.attachChange(this, function() {
 			assert.ok(false, "should not land here!");
 		});
@@ -2370,7 +2288,6 @@ sap.ui.define([
 			value: "{/Categories(2)/CategoryName}"
 		});
 		oInput.setModel(oModel);
-		oInput.placeAt("target1");
 		oInput.attachChange(this, function() {
 			assert.ok(false, "should not land here!");
 		});
@@ -2418,7 +2335,6 @@ sap.ui.define([
 			value: "{/Categories(2)/CategoryName}"
 		});
 		oInput.setModel(oModel);
-		oInput.placeAt("target1");
 		oInput.attachChange(this, function() {
 			assert.ok(false, "should not land here!");
 		});
@@ -2466,7 +2382,6 @@ sap.ui.define([
 				oModel = initModel(sURI, {json:false});
 
 			oView.setModel(oModel);
-			oView.placeAt("target1");
 			oBinding = oView.byId('myList').getBinding('items');
 			handler1 = function () {
 				var oItem = oView.byId('myList').getItems()[0],
@@ -2497,7 +2412,6 @@ sap.ui.define([
 			value: "{/Categories(2)/CategoryName}"
 		});
 		oInput.setModel(oModel);
-		oInput.placeAt("target1");
 
 		oModel.attachRequestCompleted(this, function() {
 			oModel.attachPropertyChange(this, function(oEvent) {
@@ -2530,7 +2444,6 @@ sap.ui.define([
 			value: "{CategoryName}"
 		});
 		oInput.setModel(oModel);
-		oInput.placeAt("target1");
 
 		oModel.attachRequestCompleted(this, function() {
 			oModel.attachPropertyChange(this, function(oEvent) {
@@ -2564,7 +2477,6 @@ sap.ui.define([
 			value: "{/Categories(2)/CategoryName}"
 		});
 		oInput.setModel(oModel);
-		oInput.placeAt("target1");
 		var iCount = 0;
 		oModel.attachRequestCompleted(this, function() {
 			oModel.attachPropertyChange(this, function(oEvent) {
@@ -4715,8 +4627,6 @@ sap.ui.define([
 		oModel.attachMetadataLoaded(this, function(oEvent) {
 			assert.ok(false, "Metadata should not be loaded");
 		});
-		sap.ui.getCore().setModel(oModel);
-
 		oModel.destroy();
 		assert.ok(oModel.bDestroyed, "Model should be destroyed");
 
@@ -4866,40 +4776,6 @@ sap.ui.define([
 			}});
 		});
 	});
-	/*test("test ODataModel destroy cancel load data", function() {
-		var oModel = initModel(sURI, true, "Categories");
-		//var oModel = new sap.ui.model.odata.ODataModel(sURI, { json: true, loadMetadataAsync: false });
-		oModel.setDefaultCountMode("None");
-		sap.ui.getCore().setModel(oModel);
-
-		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" }).initialize();
-		var handler1 = function() { // delay the following test
-			assert.ok(false, "Data should not be loaded");
-			oBinding.detachChange(handler1);
-			done();
-		};
-		oBinding.attachRefresh(function() {oBinding.getContexts();});
-		oBinding.attachChange(handler1);
-		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
-		// spy on odata request function
-		var spy = this.spy(OData, "request");
-		oBinding.getContexts();
-
-		oModel.destroy();
-		assert.ok(oModel.bDestroyed, "Model should be destroyed");
-
-		assert.equal(spy.callCount, 0, "number of requests");
-		assert.ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
-
-		// fire new request
-		oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" }).initialize();
-		oBinding.getContexts();
-		assert.equal(spy.callCount, 1, "number of requests");
-		assert.ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
-
-		oBinding.detachChange(handler1);
-
-	});*/
 
 	QUnit.module("ODataModel.read", {
 		beforeEach: function() {
@@ -4910,18 +4786,6 @@ sap.ui.define([
 			delete this.oModel;
 		}
 	});
-
-	/*QUnit.test("old syntax", function(assert) {
-	/*	var done = assert.async();
-		this.oModel.read("/Categories", {json:true, success: function(oData, oResponse) {
-			assert.ok(true, "success handler called");
-			assert.equal(oResponse.requestUri, sURI + "Categories", "request uri does not have parameters");
-			done();
-		}, error: function() {
-			assert.ok(false, "error handler shouldn't be called");
-			done();
-		}});
-	});*/
 
 	QUnit.test("ODataModel.resolve: Don't resolve canonical with FunctionImports", function (assert) {
 		var done = assert.async();

@@ -633,6 +633,7 @@ sap.ui.define([
 		if (aVariantRevertData.length !== 0) {
 			// Look at revert data backward, to find the content of last save action
 			var bIsVariantSaved = aVariantRevertData.slice().reverse().some(function(oRevertData) {
+				mPropertyBag.layer = oRevertData.getChange()?.getLayer();
 				if (oRevertData.getContent().previousAction === CompVariantState.updateActionType.SAVE) {
 					mPropertyBag.content = oRevertData.getContent().previousContent;
 					mPropertyBag.action = CompVariantState.updateActionType.DISCARD;

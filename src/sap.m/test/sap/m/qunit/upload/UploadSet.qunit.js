@@ -22,8 +22,9 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/m/IllustratedMessage",
 	"sap/ui/base/Object"
-], function(Element, Library1, jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer, Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, nextUIUpdate, BaseObject) {
+], function(Element, Library1, jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer, Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, nextUIUpdate, IllustratedMessage, BaseObject) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -570,7 +571,7 @@ sap.ui.define([
 		assert.equal(oIllustratedMessage.getDescription(), sNoDataDescription, "default discription is rendered in Upload set");
 	});
 
-	QUnit.test("No data type illustrated message rendering", function(assert) {
+	QUnit.test("No data type illustrated message rendering if not set via aggregation", function (assert) {
 		//Arrange
 		this.oUploadSet.unbindAggregation("items");
 		var oIllustratedMessage = this.oUploadSet._getIllustratedMessage();
@@ -581,7 +582,24 @@ sap.ui.define([
 		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), this.oUploadSet._oInvisibleText.getId(), "AriaLabelledBy is set correctly.");
 	});
 
-	QUnit.test("Get ariaDescribedBy values and validate them with illustration message text and descriptions", function(assert) {
+	QUnit.test("No data type illustrated message rendering if set via aggregation", function (assert) {
+		var oIllustratedMessage = new IllustratedMessage({
+			illustrationType: "sapIllus-NoActivities"
+		});
+		this.oUploadSet.setAggregation("illustratedMessage", oIllustratedMessage);
+		this.oUploadSet.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		//Arrange
+		this.oUploadSet.unbindAggregation("items");
+		//Assert
+		var oIllustratedAggregation = this.oUploadSet.getAggregation("illustratedMessage");
+
+		assert.equal(oIllustratedAggregation.getIllustrationType(), "sapIllus-NoActivities", "illustrated message Aggregation rendered correctly");
+		oIllustratedMessage.destroy();
+	});
+
+	QUnit.test("Get ariaDescribedBy values and validate them with illustration message text and descriptions", function (assert) {
 		//Arrange
 		this.oUploadSet.unbindAggregation("items");
 		var oIllustratedMessage = this.oUploadSet._getIllustratedMessage();
@@ -590,47 +608,9 @@ sap.ui.define([
 		//Assert
 		var oTextAndDescriptionIds = oIllustratedMessage.getAccessibilityReferences();
 		var aAriaDescribedById = this.oUploadSet._oUploadButton.getAriaDescribedBy();
-		assert.equal(Object.keys(oTextAndDescriptionIds).length,2,"Length of the ariadescribedby array is two");
-		assert.equal(aAriaDescribedById[0],oTextAndDescriptionIds.title,"Title id is included in aria-describedBy");
-		assert.equal(aAriaDescribedById[1],oTextAndDescriptionIds.description,"Description id is included in aria-describedBy");
-	});
-
-	QUnit.test("No data rendering - with user specified no data illustration type", function(assert) {
-		//Arrange
-		this.oUploadSet.setProperty("noDataIllustrationType", IllustratedMessageType.SuccessBalloon);
-		this.oUploadSet.unbindAggregation("items");
-		var oIllustratedMessage = this.oUploadSet._getIllustratedMessage();
-
-		oCore.applyChanges();
-		//Assert
-		assert.equal(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.SuccessBalloon, "The custom illustrated message type is rendred");
-		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), this.oUploadSet._oInvisibleText.getId(), "AriaLabelledBy is set correctly.");
-	});
-
-	QUnit.test("No data rendering - with user specified no data text", function(assert) {
-		//Arrange
-		this.oUploadSet.setNoDataText("myNoDataText");
-		this.oUploadSet.unbindAggregation("items");
-		var oIllustratedMessage = this.oUploadSet._getIllustratedMessage();
-
-		oCore.applyChanges();
-		//Assert
-		assert.equal(oIllustratedMessage.getTitle(), "myNoDataText", "The no data text set by user is rendered");
-		assert.equal(this.oUploadSet._oList.getNoDataText(), "myNoDataText" + " " + this.oUploadSet.getNoDataDescription(), "Nodata Text is set in the List");
-		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), this.oUploadSet._oInvisibleText.getId(), "AriaLabelledBy is set correctly.");
-	});
-
-	QUnit.test("No data rendering - with user specified no data description", function(assert) {
-		//Arrange
-		this.oUploadSet.setNoDataDescription("myNoDataDescription");
-		this.oUploadSet.unbindAggregation("items");
-		var oIllustratedMessage = this.oUploadSet._getIllustratedMessage();
-
-		oCore.applyChanges();
-		//Assert
-		assert.equal(oIllustratedMessage.getDescription(), "myNoDataDescription", "The no data description set by user is rendered");
-		assert.equal(this.oUploadSet._oList.getNoDataText(), this.oUploadSet.getNoDataText() + " " + "myNoDataDescription", "Nodata Text is set in the List");
-		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), this.oUploadSet._oInvisibleText.getId(), "AriaLabelledBy is set correctly.");
+		assert.equal(Object.keys(oTextAndDescriptionIds).length, 2, "Length of the ariadescribedby array is two");
+		assert.equal(aAriaDescribedById[0], oTextAndDescriptionIds.title, "Title id is included in aria-describedBy");
+		assert.equal(aAriaDescribedById[1], oTextAndDescriptionIds.description, "Description id is included in aria-describedBy");
 	});
 
 	QUnit.test("Test httpRequestMethod property with XMLHttpRequest", function (assert) {

@@ -1714,7 +1714,16 @@ sap.ui.define([
 		var oLinkTileContent = this.getLinkTileContents().find(function(oLinkTileContent){
 			return oLinkTileContent._getLink().getDomRef().id === sEventId;
 		});
-		return !!oLinkTileContent;
+
+		//The below piece of code is written for the scenario if the link inside the TileAttribute has been clicked
+		var bIsLinkClicked = false;
+		this.getTileContent().forEach(function(oActionTileContent){
+			if (oActionTileContent._isLinkPressed) {
+				bIsLinkClicked = true;
+				oActionTileContent._isLinkPressed = false;
+			}
+		});
+		return !!oLinkTileContent || bIsLinkClicked;
 	};
 
 	/**
