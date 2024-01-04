@@ -4463,7 +4463,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("isEffectivelyKeptAlive: $$ownRequest", function (assert) {
+[
+	"/TEAMS('1')/TEAM_2_EMPLOYEES('2')",
+	"/TEAMS/0/TEAM_2_EMPLOYEES('2')"
+].forEach(function (sContextPath) {
+	const sTitle = "isEffectivelyKeptAlive: $$ownRequest, context path: " + sContextPath;
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
 				checkKeepAlive : function () {},
 				getHeaderContext : function () {},
@@ -4471,7 +4476,7 @@ sap.ui.define([
 				isRelative : function () { return true; },
 				mParameters : {$$ownRequest : true}
 			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/TEAMS('1')/TEAM_2_EMPLOYEES('2')");
+			oContext = Context.create({/*oModel*/}, oBinding, sContextPath);
 
 		oContext.setSelected(true);
 		this.mock(_Helper).expects("isDataAggregation")
@@ -4480,6 +4485,7 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oContext.isEffectivelyKeptAlive(), true);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("isEffectivelyKeptAlive: data aggregation", function (assert) {
@@ -4494,6 +4500,24 @@ sap.ui.define([
 		oContext.setSelected(true);
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(true);
+
+		// code under test
+		assert.strictEqual(oContext.isEffectivelyKeptAlive(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isEffectivelyKeptAlive: no key predicate", function (assert) {
+		const oBinding = {
+			getHeaderContext : function () {},
+			onKeepAliveChanged : function () {},
+			isRelative : function () { return false; },
+			mParameters : {}
+		};
+		const oContext = Context.create({/*oModel*/}, oBinding, "/SalesOrderList('0')/Messages/0");
+
+		oContext.setSelected(true);
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 
 		// code under test
 		assert.strictEqual(oContext.isEffectivelyKeptAlive(), false);
