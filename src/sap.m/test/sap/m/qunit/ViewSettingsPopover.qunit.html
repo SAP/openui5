@@ -163,7 +163,6 @@
 
 			//Act
 			this.sut.toggle(this.oOpeningButton);
-			this.clock.tick(1000);
 
 			//Assert
 			strictEqual(this.sut.isOpen(), true, 'Popup is open');
