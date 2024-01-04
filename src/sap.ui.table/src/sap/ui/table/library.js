@@ -36,12 +36,14 @@ sap.ui.define([
 		dependencies: ["sap.ui.core", "sap.ui.unified"],
 		designtime: "sap/ui/table/designtime/library.designtime",
 		types: [
+			/** @deprecated As of version 1.38 */
 			"sap.ui.table.NavigationMode",
 			"sap.ui.table.RowActionType",
 			"sap.ui.table.SelectionBehavior",
 			"sap.ui.table.SelectionMode",
 			/** @deprecated As of version 1.120 */
 			"sap.ui.table.SortOrder",
+			/** @deprecated As of version 1.119 */
 			"sap.ui.table.VisibleRowCountMode",
 			/** @deprecated As of version 1.120 */
 			"sap.ui.table.TreeAutoExpandMode", /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
@@ -94,6 +96,7 @@ sap.ui.define([
 	 *
 	 * @version ${version}
 	 * @enum {string}
+	 * @deprecated As of version 1.38
 	 * @public
 	 */
 	thisLib.NavigationMode = {
@@ -116,6 +119,7 @@ sap.ui.define([
 
 	};
 
+	/** @deprecated As of version 1.38 */
 	DataType.registerEnum("sap.ui.table.NavigationMode", thisLib.NavigationMode);
 
 	/**
@@ -250,6 +254,7 @@ sap.ui.define([
 	 *
 	 * @version ${version}
 	 * @enum {string}
+	 * @deprecated As of version 1.119
 	 * @public
 	 */
 	thisLib.VisibleRowCountMode = {
@@ -274,6 +279,7 @@ sap.ui.define([
 
 	};
 
+	/** @deprecated As of version 1.119 */
 	DataType.registerEnum("sap.ui.table.VisibleRowCountMode", thisLib.VisibleRowCountMode);
 
 	/**

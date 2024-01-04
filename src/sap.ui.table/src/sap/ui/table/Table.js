@@ -70,11 +70,9 @@ sap.ui.define([
 	"use strict";
 
 	var GroupEventType = library.GroupEventType;
-	var NavigationMode = library.NavigationMode;
 	var SelectionMode = library.SelectionMode;
 	var SelectionBehavior = library.SelectionBehavior;
 	var SortOrder = CoreLibrary.SortOrder;
-	var VisibleRowCountMode = library.VisibleRowCountMode;
 	var Hook = TableUtils.Hook.Keys.Table;
 	var _private = TableUtils.createWeakMapFacade();
 
@@ -215,7 +213,7 @@ sap.ui.define([
 			 *
 			 * @deprecated As of version 1.38
 			 */
-			navigationMode: {type: "sap.ui.table.NavigationMode", group: "Behavior", defaultValue: NavigationMode.Scrollbar, deprecated: true},
+			navigationMode: {type: "sap.ui.table.NavigationMode", group: "Behavior", defaultValue: "Scrollbar", deprecated: true},
 
 			/**
 			 * Defines how many additional (not yet visible) data records from the back-end system are pre-fetched to enable smooth scrolling.
@@ -288,7 +286,7 @@ sap.ui.define([
 			 * @since 1.9.2
 			 * @deprecated As of version 1.119, use the <code>rowMode</code> aggregation instead.
 			 */
-			visibleRowCountMode: {type: "sap.ui.table.VisibleRowCountMode", group: "Appearance", defaultValue: VisibleRowCountMode.Fixed, deprecated: true},
+			visibleRowCountMode: {type: "sap.ui.table.VisibleRowCountMode", group: "Appearance", defaultValue: "Fixed", deprecated: true},
 
 			/**
 			 * This property is used to set the minimum count of visible rows when the property visibleRowCountMode is set to Auto or Interactive.
@@ -2289,7 +2287,7 @@ sap.ui.define([
 
 	Table.prototype.setVisibleRowCount = function(iVisibleRowCount) {
 		var sVisibleRowCountMode = this.getVisibleRowCountMode();
-		if (sVisibleRowCountMode == VisibleRowCountMode.Auto) {
+		if (sVisibleRowCountMode == "Auto") {
 			Log.error("VisibleRowCount will be ignored since VisibleRowCountMode is set to Auto", this);
 			return this;
 		}
@@ -2355,7 +2353,7 @@ sap.ui.define([
 	};
 
 	Table.prototype.setNavigationMode = function() {
-		this.setProperty("navigationMode", NavigationMode.Scrollbar, true);
+		this.setProperty("navigationMode", "Scrollbar", true);
 		Log.error("The navigationMode property is deprecated and must not be used anymore. Your setting was defaulted to 'Scrollbar'", this);
 		return this;
 	};
