@@ -61,6 +61,7 @@ module.exports = [
 	"ObjectListItem.spec.js",
 	"ObjectMarker.spec.js",
 	"ObjectStatus.spec.js",
+	"ObjectStatusInvertedVisual.spec.js",
 	"OverflowToolbar.spec.js",
 	"OverflowToolbarInRTE.spec.js",
 	"Page.spec.js",
