@@ -30,8 +30,8 @@ sap.ui.define([
 	"sap/m/InputBase",
 	'sap/ui/core/ValueStateSupport',
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	// provides jQuery.fn.getSelectedText
 	"sap/ui/dom/jquery/getSelectedText",
 	// provides jQuery.fn.cursorPos
@@ -67,8 +67,8 @@ sap.ui.define([
 	InputBase,
 	ValueStateSupport,
 	coreLibrary,
-	oCore,
-	jQuery
+	jQuery,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -119,8 +119,19 @@ sap.ui.define([
 		return oMockServer;
 	};
 
+	const fnUpdateMockServerResponseTime = (oMockServer, iMiliseconds) => {
+		oMockServer._oServer.autoRespondAfter = iMiliseconds;
+	};
 
-	QUnit.test("default values", function (assert) {
+	const fnRunAllTimersAndRestore = (oClock) => {
+		if (!oClock) {
+			return;
+		}
+		oClock.runAll();
+		oClock.restore();
+	};
+
+	QUnit.test("default values", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -146,7 +157,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oComboBox.getName(), "", 'Default name is ""');
@@ -171,7 +182,7 @@ sap.ui.define([
 	QUnit.module("setValue()");
 
 	// BCP 0020751295 0000447582 2016
-	QUnit.test("it should update the value after a new binding context is set", function (assert) {
+	QUnit.test("it should update the value after a new binding context is set", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -218,14 +229,14 @@ sap.ui.define([
 		oComboBox.setModel(oModel);
 		oComboBox.setBindingContext(oModel.getContext("/rebum"));
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oComboBox.getValue(), "ipsum");
 
 		// act
 		oComboBox.setBindingContext(oModel.getContext("/sanctus"));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oComboBox.getValue(), "dolor");
@@ -235,13 +246,13 @@ sap.ui.define([
 		oModel.destroy();
 	});
 
-	QUnit.test("setting the value should update the effectiveShowClearIcon property", function (assert) {
+	QUnit.test("setting the value should update the effectiveShowClearIcon property", async function (assert) {
 		// system under test
 		var oComboBox = new ComboBox();
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oComboBox.setValue("test");
@@ -330,7 +341,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedItem()", function (assert) {
+	QUnit.test("getSelectedItem()", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -362,7 +373,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -375,7 +386,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedItem()", function (assert) {
+	QUnit.test("getSelectedItem()", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -403,7 +414,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -434,7 +445,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedItem()", function (assert) {
+	QUnit.test("getSelectedItem()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -460,7 +471,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -473,7 +484,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedItem()", function (assert) {
+	QUnit.test("getSelectedItem()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -499,7 +510,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -514,7 +525,7 @@ sap.ui.define([
 
 	QUnit.module("getSelectedItemId()");
 
-	QUnit.test("getSelectedItemId()", function (assert) {
+	QUnit.test("getSelectedItemId()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -540,7 +551,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -553,7 +564,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedItemId()", function (assert) {
+	QUnit.test("getSelectedItemId()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -579,7 +590,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -592,7 +603,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedItemId()", function (assert) {
+	QUnit.test("getSelectedItemId()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -606,7 +617,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -619,7 +630,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedItemId()", function (assert) {
+	QUnit.test("getSelectedItemId()", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -652,7 +663,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -665,7 +676,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedItemId()", function (assert) {
+	QUnit.test("getSelectedItemId()", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -698,7 +709,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -711,7 +722,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedItemId()", function (assert) {
+	QUnit.test("getSelectedItemId()",async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -739,7 +750,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -770,7 +781,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedItemId()", function (assert) {
+	QUnit.test("getSelectedItemId()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -796,7 +807,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -809,7 +820,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedItemId()", function (assert) {
+	QUnit.test("getSelectedItemId()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -835,7 +846,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -848,7 +859,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedItemId()", function (assert) {
+	QUnit.test("getSelectedItemId()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -874,7 +885,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -887,7 +898,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedItemId()", function (assert) {
+	QUnit.test("getSelectedItemId()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -913,7 +924,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -963,7 +974,7 @@ sap.ui.define([
 
 	QUnit.module("getSelectedKey()");
 
-	QUnit.test("getSelectedKey()", function (assert) {
+	QUnit.test("getSelectedKey()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -989,7 +1000,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1002,7 +1013,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedKey()", function (assert) {
+	QUnit.test("getSelectedKey()",async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -1016,7 +1027,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1029,7 +1040,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedKey()", function (assert) {
+	QUnit.test("getSelectedKey()", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -1062,7 +1073,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -1075,7 +1086,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedKey()", function (assert) {
+	QUnit.test("getSelectedKey()", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -1108,7 +1119,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -1121,7 +1132,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedKey()", function (assert) {
+	QUnit.test("getSelectedKey()", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -1149,7 +1160,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -1162,7 +1173,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedKey()", function (assert) {
+	QUnit.test("getSelectedKey()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -1171,7 +1182,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1184,7 +1195,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedKey()", function (assert) {
+	QUnit.test("getSelectedKey()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -1210,7 +1221,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1223,7 +1234,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedKey()", function (assert) {
+	QUnit.test("getSelectedKey()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -1249,7 +1260,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1262,7 +1273,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedKey()", function (assert) {
+	QUnit.test("getSelectedKey()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -1288,7 +1299,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1301,7 +1312,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getSelectedKey()", function (assert) {
+	QUnit.test("getSelectedKey()", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -1329,7 +1340,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -1343,7 +1354,7 @@ sap.ui.define([
 	});
 
 	// BCP 1570460580
-	QUnit.test("it should synchronize property changes of items to the combo box control", function (assert) {
+	QUnit.test("it should synchronize property changes of items to the combo box control", async function (assert) {
 
 		// system under test
 		var oItem;
@@ -1358,12 +1369,12 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oItem.setKey("GER");
 		oItem.setText("Germany");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "GER");
@@ -1376,8 +1387,9 @@ sap.ui.define([
 
 	QUnit.module("Cancel selection");
 
-	QUnit.test("it should cancel the selection after closing the dialog with close button", function (assert) {
-		this.stub(Device, "system", {
+	QUnit.test("it should cancel the selection after closing the dialog with close button", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -1398,11 +1410,12 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
+
 		oComboBox.setSelectedItem(oItem1);
 		this.clock.tick(500);
 
-		// act
+		//act
 		oComboBox.open();
 		this.clock.tick(500);
 
@@ -1417,17 +1430,18 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.module("addItem");
 
-	QUnit.test("addItem()", function (assert) {
+	QUnit.test("addItem()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox();
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// arrange
 		var fnAddItemSpy = this.spy(oComboBox, "addItem");
@@ -1438,7 +1452,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.addItem(oItem);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getFirstItem() === oItem);
@@ -1450,7 +1464,7 @@ sap.ui.define([
 	});
 
 	// unit test for CSN 0120031469 0000547938 2014
-	QUnit.test("addItem()", function (assert) {
+	QUnit.test("addItem()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -1464,7 +1478,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1479,13 +1493,13 @@ sap.ui.define([
 
 	QUnit.module("insertItem");
 
-	QUnit.test("insertItem()", function (assert) {
+	QUnit.test("insertItem()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox();
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// arrange
 		var fnInsertItem = this.spy(oComboBox, "insertItem");
@@ -1496,7 +1510,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.insertItem(oItem, 0);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getFirstItem() === oItem);
@@ -1515,8 +1529,8 @@ sap.ui.define([
 
 	QUnit.module("cursorPos()");
 
-	QUnit.test("Check the position of the cursor after an item is pressed", function (assert) {
-
+	QUnit.test("Check the position of the cursor after an item is pressed", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -1529,7 +1543,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -1543,6 +1557,7 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.module("setSelectedItem()");
@@ -1647,7 +1662,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("setSelectedItem()", function (assert) {
+	QUnit.test("setSelectedItem()", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -1673,7 +1688,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oComboBox.setSelectedItem(oComboBox.getLastItem());
@@ -1690,7 +1705,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("setSelectedItem()", function (assert) {
+	QUnit.test("setSelectedItem()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -1716,7 +1731,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oComboBox.setSelectedItem(null);
@@ -1733,8 +1748,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("setSelectedItem() set the selected item when the picker popup is open", function (assert) {
-
+	QUnit.test("setSelectedItem() set the selected item when the picker popup is open", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -1759,7 +1774,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -1767,7 +1782,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.setSelectedItem(null);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1779,6 +1794,7 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.module("setSelectedItemId()");
@@ -1829,7 +1845,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("setSelectedItemId()", function (assert) {
+	QUnit.test("setSelectedItemId()", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -1855,7 +1871,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oComboBox.setSelectedItemId("item-id");
@@ -1872,7 +1888,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("setSelectedItemId()", function (assert) {
+	QUnit.test("setSelectedItemId()", async function (assert) {
 
 		//system under test
 		var oComboBox = new ComboBox({
@@ -1898,7 +1914,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oComboBox.setSelectedItemId("");
@@ -1915,8 +1931,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("setSelectedItemId() set the selected item when the ComboBox's picker pop-up is open", function (assert) {
-
+	QUnit.test("setSelectedItemId() set the selected item when the ComboBox's picker pop-up is open", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -1941,7 +1957,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -1949,7 +1965,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.setSelectedItemId("");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1961,9 +1977,10 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("setSelectedItemId() should set the value even if the corresponding item doesn't exist", function (assert) {
+	QUnit.test("setSelectedItemId() should set the value even if the corresponding item doesn't exist", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -1972,7 +1989,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1985,7 +2002,7 @@ sap.ui.define([
 
 	QUnit.module("setSelectedKey()");
 
-	QUnit.test("setSelectedKey() first rendering", function (assert) {
+	QUnit.test("setSelectedKey() first rendering", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -2014,7 +2031,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -2066,7 +2083,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("setSelectedKey() after the initial rendering", function (assert) {
+	QUnit.test("setSelectedKey() after the initial rendering", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -2092,7 +2109,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var fnSetPropertySpy = this.spy(oComboBox, "setProperty"),
 			fnSetAssociationSpy = this.spy(oComboBox, "setAssociation"),
@@ -2120,7 +2137,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("setSelectedKey()", function (assert) {
+	QUnit.test("setSelectedKey()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -2146,7 +2163,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oComboBox.setSelectedKey("");
@@ -2163,8 +2180,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("setSelectedKey() set the selected item when the picker popup is open test case 1", function (assert) {
-
+	QUnit.test("setSelectedKey() set the selected item when the picker popup is open test case 1", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -2189,7 +2206,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -2197,7 +2214,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.setSelectedKey("");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -2209,10 +2226,11 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("aria-activedescendant should not be set if item is not focused on open - e.g if the arrow icon is clicked", function (assert) {
-
+	QUnit.test("aria-activedescendant should not be set if item is not focused on open - e.g if the arrow icon is clicked", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -2224,11 +2242,11 @@ sap.ui.define([
 
 			selectedKey: "GER"
 		});
-		this.stub(oComboBox, "getSelectedItem", function() { return false; });
+		this.stub(oComboBox, "getSelectedItem").callsFake(function() { return false; });
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oComboBox.open();
 		this.clock.tick();
@@ -2238,9 +2256,11 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-		QUnit.test("aria-activedescendant attribute should not be set if an item is selected but the picker is not opened", function (assert) {
+	QUnit.test("aria-activedescendant attribute should not be set if an item is selected but the picker is not opened", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oComboBox = new ComboBox({
 			items: [
 				new Item("focusedItem", {
@@ -2252,13 +2272,13 @@ sap.ui.define([
 
 		// Arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oComboBox.focus();
 		this.clock.tick();
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		this.clock.tick(300);
 
@@ -2267,9 +2287,10 @@ sap.ui.define([
 
 		// Cleanup
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("aria-activedescendant attribute should be set if an item is selected snd then the picker is opened", function (assert) {
+	QUnit.test("aria-activedescendant attribute should be set if an item is selected snd then the picker is opened", async function (assert) {
 		var oExpectedItem;
 		var oComboBox = new ComboBox({
 			items: [
@@ -2290,14 +2311,14 @@ sap.ui.define([
 
 		// Arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oComboBox.focus();
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
 
@@ -2310,7 +2331,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("setSelectedKey() on unbindObject call", function (assert) {
+	QUnit.test("setSelectedKey() on unbindObject call", async function (assert) {
 		var oComboBox = new ComboBox({
 			selectedKey: "{value}",
 			value: "{value}"
@@ -2329,7 +2350,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oComboBox.unbindObject();
 		assert.strictEqual(oComboBox.getModel().oData.context[0].value, "1", "unbindObject doesn't overwrite model");
@@ -2337,7 +2358,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("setSelectedKey() on unbindObject call when value is not bound", function (assert) {
+	QUnit.test("setSelectedKey() on unbindObject call when value is not bound", async function (assert) {
 		var oComboBox = new ComboBox({
 			selectedKey: "{value}",
 			items: {
@@ -2362,7 +2383,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oComboBox.getValue(), "1", "the value is set properly");
 		oComboBox.unbindObject();
@@ -2375,14 +2396,14 @@ sap.ui.define([
 
 	QUnit.module("setMaxWidth()");
 
-	QUnit.test("setMaxWidth()", function (assert) {
+	QUnit.test("setMaxWidth()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox();
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oComboBox.getDomRef().style.maxWidth, "100%");
@@ -2391,7 +2412,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("setMaxWidth()", function (assert) {
+	QUnit.test("setMaxWidth()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -2400,7 +2421,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oComboBox.getDomRef().style.maxWidth, "50%");
@@ -2409,18 +2430,18 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("setMaxWidth()", function (assert) {
+	QUnit.test("setMaxWidth()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox();
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oComboBox.setMaxWidth("40%");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oComboBox.getDomRef().style.maxWidth, "40%");
@@ -2431,7 +2452,7 @@ sap.ui.define([
 
 	QUnit.module("removeItem()");
 
-	QUnit.test("removeItem() it should remove the selected item and change the selection (test case 1)", function (assert) {
+	QUnit.test("removeItem() it should remove the selected item and change the selection (test case 1)", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -2506,7 +2527,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 
 		var oSelectedItem = oComboBox.getItemByKey("8");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oEvent = new jQuery.Event("input", {
 			target: oComboBox.getFocusDomRef(),
@@ -2519,7 +2540,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.removeItem(8);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(fnDestroyItems.callCount, 1, "sap.m.List.prototype.destroyItems() method was called");
@@ -2535,7 +2556,7 @@ sap.ui.define([
 		oModel.destroy();
 	});
 
-	QUnit.test("removeItem() it should remove the selected item and change the selection (test case 2)", function (assert) {
+	QUnit.test("removeItem() it should remove the selected item and change the selection (test case 2)", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -2591,11 +2612,11 @@ sap.ui.define([
 		oComboBox.setModel(oModel);
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oComboBox.removeItem(0);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -2609,7 +2630,7 @@ sap.ui.define([
 		oModel.destroy();
 	});
 
-	QUnit.test("removeItem() it should remove the selected item and change the selection (test case 3)", function (assert) {
+	QUnit.test("removeItem() it should remove the selected item and change the selection (test case 3)", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -2624,11 +2645,11 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oComboBox.removeItem(0);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -2645,7 +2666,7 @@ sap.ui.define([
 
 	QUnit.module("removeAllItems()");
 
-	QUnit.test("removeAllItems()", function (assert) {
+	QUnit.test("removeAllItems()", async function (assert) {
 
 		// system under test
 		var aItems = [
@@ -2671,13 +2692,13 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var fnRemoveAllItemsSpy = this.spy(oComboBox, "removeAllItems");
 		// var fnListRemoveAllItemsSpy = this.spy(oComboBox._getList(), "removeAllItems");
 
 		// act
 		var oRemovedItems = oComboBox.removeAllItems();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		// assert.strictEqual(fnListRemoveAllItemsSpy.callCount, 1, "sap.m.List.prototype.removeAllItems() method was called");
@@ -2698,8 +2719,8 @@ sap.ui.define([
 
 	QUnit.module("destroyItems()");
 
-	QUnit.test("destroyItems()", function (assert) {
-
+	QUnit.test("destroyItems()", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var aItems = [
 			new Item({
@@ -2725,7 +2746,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(1000); // wait 1s after the open animation is completed
@@ -2733,7 +2754,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.destroyItems();
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.ok(fnDestroyItemsSpy.returned(oComboBox), "sap.m.ComboBox.prototype.destroyItems() method returns the ComboBox instance");
@@ -2746,12 +2767,19 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.module("open()");
+	QUnit.module("open()", {
+		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("open()", function (assert) {
-
+	QUnit.test("open()", async function (assert) {
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -2774,7 +2802,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		document.documentElement.style.overflow = "hidden"; // hide scrollbar during test
 
 		// act
@@ -2803,8 +2831,7 @@ sap.ui.define([
 		document.documentElement.style.overflow = ""; // restore scrollbar after test
 	});
 
-	QUnit.test("open() check whether the active state persist after re-rendering", function (assert) {
-
+	QUnit.test("open() check whether the active state persist after re-rendering", async function (assert) {
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -2827,7 +2854,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -2835,7 +2862,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.ok(oComboBox.hasStyleClass(InputBase.ICON_PRESSED_CSS_CLASS), "The correct CSS class was added to the control.");
@@ -2844,9 +2871,9 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("open() the picker popup (dropdown list) should automatically size itself to fit its content", function (assert) {
+	QUnit.test("open() the picker popup (dropdown list) should automatically size itself to fit its content", async function (assert) {
 
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: true,
 			phone: false,
 			tablet: false
@@ -2864,7 +2891,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		oComboBox.syncPickerContent();
@@ -2878,9 +2905,9 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should propagate the entered value to the picker text field", function (assert) {
+	QUnit.test("it should propagate the entered value to the picker text field", async function (assert) {
 
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -2891,7 +2918,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		var sExpectedValue = "lorem ipsum";
 		var oTarget = oComboBox.getFocusDomRef();
@@ -2911,9 +2938,9 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should show the label text as picker header title", function (assert) {
+	QUnit.test("it should show the label text as picker header title", async function (assert) {
 
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -2930,7 +2957,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -2946,9 +2973,9 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.test("it should update the header title if the label reference is destroyed", function (assert) {
+	QUnit.test("it should update the header title if the label reference is destroyed", async function (assert) {
 
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -2966,7 +2993,8 @@ sap.ui.define([
 		// arrange
 		oComboBox.placeAt("content");
 		oLabel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
+
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
@@ -2976,7 +3004,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.open();
-		this.clock.tick(1000); // tick the clock ahead 1 second, after the close animation is completed
+		this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
 
 		// assert
 		assert.strictEqual(oPicker.getShowHeader(), true);
@@ -2987,10 +3015,9 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.test("it should close the picker when the ENTER key is pressed", function (assert) {
-
+	QUnit.test("it should close the picker when the ENTER key is pressed", async function (assert) {
 		// system under test
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -2998,21 +3025,21 @@ sap.ui.define([
 
 		// arrange
 		var aItems = [
-				new Item({
-					key: "0",
-					text: "Item 0"
-				}),
+			new Item({
+				key: "0",
+				text: "Item 0"
+			}),
 
-				new Item({
-					key: "1",
-					text: "Item 1"
-				}),
+			new Item({
+				key: "1",
+				text: "Item 1"
+			}),
 
-				new Item({
-					key: "2",
-					text: "Item 2"
-				})
-			],
+			new Item({
+				key: "2",
+				text: "Item 2"
+			})
+		],
 			oPickerTextField,
 			oPickerTextFieldDomRef,
 			fnChangeSpy,
@@ -3021,7 +3048,7 @@ sap.ui.define([
 			});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		oComboBox.focus();
@@ -3039,6 +3066,7 @@ sap.ui.define([
 		qutils.triggerEvent("input", oPickerTextFieldDomRef);
 		this.clock.tick(300);
 		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
+
 		this.clock.tick(300);
 
 		// assert
@@ -3051,8 +3079,8 @@ sap.ui.define([
 		fnChangeSpy.restore();
 	});
 
-	QUnit.test("Trigger close only once onItemPress", function (assert) {
-		this.stub(Device, "system", {
+	QUnit.test("Trigger close only once onItemPress", async function (assert) {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: false,
 			tablet: true
@@ -3060,28 +3088,27 @@ sap.ui.define([
 
 		// system under test
 		var oComboBox = new ComboBox({
-				items: [
-					new Item({
-						key: "0",
-						text: "item 0"
-					}),
-					new Item({
-						key: "1",
-						text: "item 1"
-					})
-				]
-			}),
-			oCloseSpy = this.spy(oComboBox, "close");
+			items: [
+				new Item({
+					key: "0",
+					text: "item 0"
+				}),
+				new Item({
+					key: "1",
+					text: "item 1"
+				})
+			]
+		}),
+			 oCloseSpy = this.spy(oComboBox, "close");
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
-
+		await nextUIUpdate(this.clock);
 		// act
 		oComboBox.open();
 		this.clock.tick(1000);
 
 		oComboBox._getList().getItems()[1].$().trigger("tap");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(1000);
 
 		// Assert
@@ -3186,7 +3213,7 @@ sap.ui.define([
 
 	QUnit.module("getItemAt()");
 
-	QUnit.test("getItemAt()", function (assert) {
+	QUnit.test("getItemAt()", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -3215,15 +3242,15 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		var oItem1 = oComboBox.getItemAt(2);
 		var oItem2 = oComboBox.getItemAt(6);
 
 		// assert
-		assert.ok(oItem1 === oExpectedItem);
-		assert.ok(oItem2 === null);
+		assert.strictEqual(oItem1, oExpectedItem, "Second item is as expected");
+		assert.strictEqual(oItem2, null, "Sixth item does not exist");
 
 		// cleanup
 		oComboBox.destroy();
@@ -3231,7 +3258,7 @@ sap.ui.define([
 
 	QUnit.module("getFirstItem()");
 
-	QUnit.test("getFirstItem()", function (assert) {
+	QUnit.test("getFirstItem()", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -3258,32 +3285,32 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		var oItem = oComboBox.getFirstItem();
 
 		// assert
-		assert.ok(oItem === oExpectedItem);
+		assert.strictEqual(oItem, oExpectedItem, "Fisrt item is as expected");
 
 		// cleanup
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getFirstItem()", function (assert) {
+	QUnit.test("getFirstItem() for ComboBox with 0 items", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox();
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		var oItem = oComboBox.getFirstItem();
 
 		// assert
-		assert.ok(oItem === null);
+		assert.strictEqual(oItem, null, "First item should not exist");
 
 		// cleanup
 		oComboBox.destroy();
@@ -3291,7 +3318,7 @@ sap.ui.define([
 
 	QUnit.module("getLastItem()");
 
-	QUnit.test("getLastItem()", function (assert) {
+	QUnit.test("getLastItem()", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -3318,26 +3345,26 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		var oItem = oComboBox.getLastItem();
 
 		// assert
-		assert.ok(oItem === oExpectedItem);
+		assert.strictEqual(oItem, oExpectedItem, "Last item is as expected");
 
 		// cleanup
 		oComboBox.destroy();
 	});
 
-	QUnit.test("getLastItem()", function (assert) {
+	QUnit.test("getLastItem()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox();
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		var oItem = oComboBox.getLastItem();
@@ -3351,7 +3378,7 @@ sap.ui.define([
 
 	QUnit.module("getItemByKey()");
 
-	QUnit.test("getItemByKey()", function (assert) {
+	QUnit.test("getItemByKey()", async function (assert) {
 
 		// system under test
 		var oExpectedItem1;
@@ -3380,7 +3407,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		var oItem1 = oComboBox.getItemByKey("0"),
@@ -3452,7 +3479,7 @@ sap.ui.define([
 	QUnit.test("it should not throw errors when methods are called after the control is destroyed", function (assert) {
 
 		// arrange
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -3470,14 +3497,14 @@ sap.ui.define([
 
 	QUnit.module("setValue()");
 
-	QUnit.test("setValue()", function (assert) {
+	QUnit.test("setValue()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox();
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var fnSetValueSpy = this.spy(oComboBox, "setValue");
 
 		// act
@@ -3495,7 +3522,8 @@ sap.ui.define([
 
 	QUnit.module("setValueState()");
 
-	QUnit.test("value state and value state message", function (assert) {
+	QUnit.test("value state and value state message", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oErrorComboBox = new ComboBox("errorcombobox", {
 			valueState: "Error",
 			valueStateText: "Error Message",
@@ -3517,11 +3545,12 @@ sap.ui.define([
 
 		// arrange
 		oErrorComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		oErrorComboBox.focus();
 		this.clock.tick(500);
+
 		assert.ok(document.getElementById("errorcombobox-message"), "error message popup is open when focusin");
 
 		qutils.triggerKeydown(oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
@@ -3534,15 +3563,17 @@ sap.ui.define([
 
 		// cleanup
 		oErrorComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("valueState Message popup should be opened on tap", function(assert) {
+	QUnit.test("valueState Message popup should be opened on tap", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oComboBox = new ComboBox("vsm-combo", {
 			valueState: ValueState.Information
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oComboBox.ontap();
 		this.clock.tick(300);
@@ -3550,10 +3581,11 @@ sap.ui.define([
 		assert.ok(document.getElementById(oComboBox.getValueStateMessageId()), "ValueState Message is shown on tap");
 
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("valueStateText forwarding", function (assert) {
-		this.stub(Device, "system", {
+	QUnit.test("valueStateText forwarding", async function (assert) {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -3567,7 +3599,7 @@ sap.ui.define([
 		var sValueStateText = "Error message. Extra long text used as an error message. Extra long text used as an error message - 2. Extra long text used as an error message - 3.";
 		oComboBox.placeAt("content");
 		oComboBox.syncPickerContent();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oComboBox._oSuggestionPopover._getValueStateHeader().getText(), sText,
 			"The text is forwarded correctly.");
@@ -3576,7 +3608,7 @@ sap.ui.define([
 		oComboBox.setValueStateText("");
 		oComboBox.setValueState("Error");
 		oComboBox.open();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox._oSuggestionPopover._getValueStateHeader().getText(), ValueStateSupport.getAdditionalText(oComboBox),
@@ -3584,7 +3616,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.setValueStateText(sValueStateText);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox._oSuggestionPopover._getValueStateHeader().getText(), sValueStateText, "The text is set correctly when is set from the user.");
@@ -3595,18 +3627,18 @@ sap.ui.define([
 
 
 	// BCP 1570763824
-	QUnit.test("it should add the corresponding CSS classes", function (assert) {
+	QUnit.test("it should add the corresponding CSS classes", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox();
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oComboBox.setValueState(ValueState.Error);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox.$("content").hasClass("sapMInputBaseContentWrapperState"));
@@ -3616,7 +3648,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should render the picker value state message", function (assert) {
+	QUnit.test("it should render the picker value state message", async function (assert) {
 
 		// System under test
 		var oErrorComboBox = new ComboBox({
@@ -3640,7 +3672,7 @@ sap.ui.define([
 		// Arrange
 		oErrorComboBox.syncPickerContent();
 		oErrorComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 
 		// Assert
@@ -3651,7 +3683,7 @@ sap.ui.define([
 		oErrorComboBox.destroy();
 	});
 
-	QUnit.test("it should set custom text for valueState", function (assert) {
+	QUnit.test("it should set custom text for valueState", async function (assert) {
 
 		// System under test
 		var oErrorComboBox = new ComboBox({
@@ -3668,7 +3700,7 @@ sap.ui.define([
 		// Arrange
 		oErrorComboBox.syncPickerContent();
 		oErrorComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oErrorComboBox._getSuggestionsPopover().getPopover().getCustomHeader().getText(), "custom", "text should be custom");
@@ -3680,7 +3712,7 @@ sap.ui.define([
 
 	QUnit.module("destroy()");
 
-	QUnit.test("destroy()", function (assert) {
+	QUnit.test("destroy()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -3703,11 +3735,11 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oComboBox.destroy();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oComboBox.getItems().length, 0);
@@ -3719,8 +3751,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("calling destroy() when the picker popup is open", function (assert) {
-
+	QUnit.test("calling destroy() when the picker popup is open", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -3743,7 +3775,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -3751,7 +3783,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.destroy();
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(oComboBox.getItems().length, 0);
@@ -3759,11 +3791,13 @@ sap.ui.define([
 		assert.ok(oComboBox.getPicker() === null);
 		assert.ok(oComboBox._getList() === null);
 		assert.ok(oComboBox.getAggregation("picker") === null);
+
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.module("addAggregation() + getAggregation()");
 
-	QUnit.test("addAggregation() + getAggregation()", function (assert) {
+	QUnit.test("addAggregation() + getAggregation()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox();
@@ -3774,7 +3808,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var fnAddAggregationSpy = this.spy(oComboBox, "addAggregation");
 		var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
 
@@ -3790,7 +3824,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("addAggregation()", function (assert) {
+	QUnit.test("addAggregation()", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox();
@@ -3801,7 +3835,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var fnAddAggregationSpy = this.spy(oComboBox, "addAggregation");
 		var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
 
@@ -3887,7 +3921,7 @@ sap.ui.define([
 	// Do not clear the selection when items are destroyed.
 	// When using Two-Way Data Binding and the binding are refreshed,
 	// the items will be destroyed and the aggregation items is filled again.
-	QUnit.test("updateAggregation() do not clear the selection when items are destroyed", function (assert) {
+	QUnit.test("updateAggregation() do not clear the selection when items are destroyed", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -3924,7 +3958,7 @@ sap.ui.define([
 		oModel.setData(mData);
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oComboBox.updateAggregation("items");
@@ -3935,11 +3969,11 @@ sap.ui.define([
 		// cleanup
 		oComboBox.destroy();
 		oModel.destroy();
-		oCore.applyChanges();
+		await nextUIUpdate();
 	});
 
 	// BCP 1570460580
-	QUnit.test("it should not override the selection when binding context is changed", function (assert) {
+	QUnit.test("it should not override the selection when binding context is changed", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -4002,11 +4036,11 @@ sap.ui.define([
 		oComboBox.setModel(oModel);
 		oComboBox.setBindingContext(oModel.getContext("/1"));
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oComboBox.setBindingContext(oModel.getContext("/0"));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "DZ");
@@ -4077,7 +4111,7 @@ sap.ui.define([
 
 	QUnit.module("findAggregatedObjects()");
 
-	QUnit.test("findAggregatedObjects()", function (assert) {
+	QUnit.test("findAggregatedObjects()", async function (assert) {
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -4090,7 +4124,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.open();
 		var fnFindAggregatedObjectsSpy = this.spy(oComboBox, "findAggregatedObjects");
 
@@ -4456,7 +4490,7 @@ sap.ui.define([
 	QUnit.module("setEditable()");
 
 	// BSP 1570011983
-	QUnit.test("it should set the display of the combobox arrow button to none", function (assert) {
+	QUnit.test("it should set the display of the combobox arrow button to none", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -4465,7 +4499,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(getComputedStyle(oComboBox.getDomRef("arrow")).getPropertyValue("opacity"), "0");
@@ -4477,7 +4511,7 @@ sap.ui.define([
 	QUnit.module("disabled");
 
 	// BSP 1670516606
-	QUnit.test("it should show the default mouse pointer when disabled", function (assert) {
+	QUnit.test("it should show the default mouse pointer when disabled", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBoxTextField({
@@ -4486,7 +4520,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(getComputedStyle(oComboBox.getDomRef("arrow")).getPropertyValue("cursor"), "default");
@@ -4497,7 +4531,7 @@ sap.ui.define([
 
 	QUnit.module("loadItems");
 
-	QUnit.test("it should fire the loadItems event", function (assert) {
+	QUnit.test("it should fire the loadItems event", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -4511,7 +4545,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnLoadItemsSpy = this.spy(oComboBox, "fireLoadItems");
 
@@ -4526,7 +4560,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should not fire the loadItems event", function (assert) {
+	QUnit.test("it should not fire the loadItems event", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -4535,7 +4569,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnLoadItemsSpy = this.spy(oComboBox, "fireLoadItems");
 
@@ -4552,7 +4586,7 @@ sap.ui.define([
 
 	QUnit.module("rendering");
 
-	QUnit.test("rendering", function (assert) {
+	QUnit.test("rendering", async function (assert) {
 
 		// system under test
 		var oComboBox1 = new ComboBox({
@@ -4734,7 +4768,7 @@ sap.ui.define([
 		oComboBox6.placeAt("content");
 		oComboBox7.placeAt("content");
 		oComboBox8.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		aComboBox.forEach(function (oComboBox) {
@@ -4773,7 +4807,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("the arrow button should not be visible", function (assert) {
+	QUnit.test("the arrow button should not be visible", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -4782,7 +4816,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oComboBox.getArrowIcon().getVisible(), false, "Icons visibility is false");
@@ -4791,7 +4825,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("tap control is not editable", function (assert) {
+	QUnit.test("tap control is not editable", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -4816,7 +4850,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		qutils.triggerTouchEvent("touchstart", oComboBox.getOpenArea(), {
 			touches: {
@@ -4868,8 +4902,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should update update the value of the input field when the selected item is pressed", function (assert) {
-
+	QUnit.test("it should update update the value of the input field when the selected item is pressed", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem;
 		var oComboBox = new ComboBox({
@@ -4884,7 +4918,8 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
+
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // wait 1s after the open animation is completed
@@ -4916,9 +4951,10 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("list items title property should be updated after binding", function (assert) {
+	QUnit.test("list items title property should be updated after binding", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -4933,7 +4969,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oComboBox._getList().getItems()[0].getTitle(), "", "List item title is not updated");
@@ -4946,7 +4982,7 @@ sap.ui.define([
 
 		oComboBox.setModel(oModel);
 		oComboBox.syncPickerContent(); // Simulate before open of the popover
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oComboBox._getList().getItems()[0].getTitle(), "Item 1", "List item title is updated");
@@ -4955,7 +4991,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Clear icon is rendered.", function (assert) {
+	QUnit.test("Clear icon is rendered.", async function (assert) {
 		var oComboBox = new ComboBox({
 			showClearIcon: true
 		});
@@ -4964,7 +5000,7 @@ sap.ui.define([
 
 		// Arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		aEndIcons = oComboBox.getAggregation("_endIcon");
 
@@ -4978,10 +5014,16 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("onsapshow");
+	QUnit.module("onsapshow", {
+		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("onsapshow F4 - open the picker pop-up", function (assert) {
-
+	QUnit.test("onsapshow F4 - open the picker pop-up", async function (assert) {
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -4999,7 +5041,8 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
+
 		oComboBox.focus();
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
@@ -5023,8 +5066,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapshow F4 - open the picker pop-up and remove the focus from the input", function (assert) {
-
+	QUnit.test("onsapshow F4 - open the picker pop-up and remove the focus from the input", async function (assert) {
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -5057,7 +5099,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.placeAt("content");
 		oComboBox2.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -5069,7 +5111,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		oComboBox2.focus();
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.notOk(oComboBox.getDomRef().classList.contains("sapMFocus"), "The input field should not have visual focus.");
@@ -5079,8 +5121,7 @@ sap.ui.define([
 		oComboBox2.destroy();
 	});
 
-	QUnit.test("onsapshow F4 - when F4 or Alt + DOWN keys are pressed and the control's field is not editable, the picker pop-up should not open", function (assert) {
-
+	QUnit.test("onsapshow F4 - when F4 or Alt + DOWN keys are pressed and the control's field is not editable, the picker pop-up should not open", async function (assert) {
 		// system under test
 		var oComboBox = new ComboBox({
 			editable: false,
@@ -5099,14 +5140,14 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		this.clock.tick(1000);
 
 		// assert
-		this.clock.tick(1000);
 		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.CLOSED, "Control's picker pop-up is closed");
 		assert.strictEqual(oComboBox.isOpen(), false, "Control picker pop-up is closed");
 		assert.strictEqual(oComboBox.getValue(), "", "There is no selected value when the field is not editable");
@@ -5115,8 +5156,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapshow Alt + DOWN - open the picker pop-up", function (assert) {
-
+	QUnit.test("onsapshow Alt + DOWN - open the picker pop-up", async function (assert) {
 		// system under test
 		var oExpectedItem;
 		var oComboBox = new ComboBox({
@@ -5135,13 +5175,13 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// arrange
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
@@ -5158,8 +5198,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapshow F4 - when F4 or Alt + DOWN keys are pressed and the control's field is not editable, the picker pop-up should not open", function (assert) {
-
+	QUnit.test("onsapshow F4 - when F4 or Alt + DOWN keys are pressed and the control's field is not editable, the picker pop-up should not open", async function (assert) {
 		// system under test
 		var oComboBox = new ComboBox({
 			editable: false,
@@ -5178,14 +5217,14 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		this.clock.tick(1000);
 
 		// assert
-		this.clock.tick(1000);
 		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.CLOSED, "Control's picker pop-up is closed");
 		assert.strictEqual(oComboBox.isOpen(), false, "Control picker pop-up is closed");
 
@@ -5193,8 +5232,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapshow F4 - close control's picker pop-up", function (assert) {
-
+	QUnit.test("onsapshow F4 - close control's picker pop-up", async function (assert) {
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -5212,7 +5250,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
@@ -5233,8 +5271,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapshow Alt + DOWN or F4 - clear the filter", function (assert) {
-
+	QUnit.test("onsapshow Alt + DOWN or F4 - clear the filter", async function (assert) {
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -5258,10 +5295,12 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
+
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
+
 		oComboBox.getFocusDomRef().value = "A";
 		qutils.triggerEvent("input", oComboBox.getFocusDomRef());
 
@@ -5276,7 +5315,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapshow Alt + DOWN - close control's picker pop-up", function (assert) {
+	QUnit.test("onsapshow Alt + DOWN - close control's picker pop-up", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -5295,7 +5334,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
@@ -5316,7 +5355,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should open the dropdown list and preselect first item if there is such", function (assert) {
+	QUnit.test("it should open the dropdown list and preselect first item if there is such", async function (assert) {
 		// arrange
 		var oItem = new Item({
 				text: "Example"
@@ -5334,7 +5373,7 @@ sap.ui.define([
 			oSelectTextSpy = this.spy(oComboBox, "selectText");
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		oComboBox.onsapshow(oFakeEvent);
@@ -5354,9 +5393,16 @@ sap.ui.define([
 		oSelectTextSpy.restore();
 	});
 
-	QUnit.module("onsaphide");
+	QUnit.module("onsaphide", {
+		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("onsaphide Alt + UP - open control's picker pop-up", function (assert) {
+	QUnit.test("onsaphide Alt + UP - open control's picker pop-up", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -5375,7 +5421,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		var fnHideSpy = this.spy(oComboBox, "onsaphide");
 
@@ -5393,7 +5439,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsaphide Alt + UP - keys are pressed and the control's field is not editable, the picker pop-up should not open", function (assert) {
+	QUnit.test("onsaphide Alt + UP - keys are pressed and the control's field is not editable, the picker pop-up should not open", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -5414,14 +5460,14 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP, false, true, false);
+		this.clock.tick(1000);
 
 		// assert
-		this.clock.tick(1000);
 		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.CLOSED, "Control's picker pop-up is closed");
 		assert.strictEqual(oComboBox.isOpen(), false, "Control picker pop-up is closed");
 
@@ -5429,7 +5475,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsaphide Alt + UP - close control's picker pop-up", function (assert) {
+	QUnit.test("onsaphide Alt + UP - close control's picker pop-up", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -5448,7 +5494,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		var fnHideSpy = this.spy(oComboBox, "onsaphide");
 
@@ -5465,10 +5511,17 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("onsapescape");
+	QUnit.module("onsapescape", {
+		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("onsapescape - close the picker popup", function (assert) {
-
+	QUnit.test("onsapescape - close the picker popup", async function (assert) {
+		this.clock.restore();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -5486,7 +5539,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnEscapeSpy = this.spy(oComboBox, "onsapescape");
 		var fnCloseSpy = this.spy(oComboBox, "close");
@@ -5502,7 +5555,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapescape - close the picker popup", function (assert) {
+	QUnit.test("onsapescape - close the picker popup", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -5524,10 +5577,9 @@ sap.ui.define([
 				})
 			]
 		});
-
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5549,7 +5601,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapescape - when escape is pressed and the controls's field is not editable, the picker pop-up should not close", function (assert) {
+	QUnit.test("onsapescape - when escape is pressed and the controls's field is not editable, the picker pop-up should not close", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -5569,7 +5621,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5585,9 +5637,16 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("onsapenter");
+	QUnit.module("onsapenter", {
+		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("onsapenter - close control's picker pop-up", function (assert) {
+	QUnit.test("onsapenter - close control's picker pop-up", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -5601,7 +5660,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5623,7 +5682,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapenter - close control's picker pop-up and clear the filter", function (assert) {
+	QUnit.test("onsapenter - close control's picker pop-up and clear the filter", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -5648,7 +5707,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.getFocusDomRef().value = "A";
 		qutils.triggerEvent("input", oComboBox.getFocusDomRef());
@@ -5656,7 +5715,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ENTER);
-		this.clock.tick(1000);	// wait 1s after the close animation is completed
+		this.clock.tick(1000); // wait 1s after the close animation is completed
 
 		// assert
 		assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 4, "The filter is cleared");
@@ -5665,7 +5724,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapenter - when enter key is pressed and the control's field is not editable, the control's picker pop-up should not close", function (assert) {
+	QUnit.test("onsapenter - when enter key is pressed and the control's field is not editable, the control's picker pop-up should not close", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -5680,7 +5739,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5696,7 +5755,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapenter", function (assert) {
+	QUnit.test("onsapenter", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -5713,7 +5772,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5732,7 +5791,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapenter", function (assert) {
+	QUnit.test("onsapenter", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -5746,7 +5805,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5762,7 +5821,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapenter", function (assert) {
+	QUnit.test("onsapenter", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -5780,7 +5839,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 
@@ -5796,9 +5855,16 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("onsapdown");
+	QUnit.module("onsapdown", {
+		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("onsapdown", function (assert) {
+	QUnit.test("onsapdown", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -5825,7 +5891,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var fnKeyDownSpy = this.spy(oComboBox, "onsapdown");
@@ -5846,8 +5912,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapdown - when keyboard DOWN key is pressed and the control is not editable, the value should not change", function (assert) {
-
+	QUnit.test("onsapdown - when keyboard DOWN key is pressed and the control is not editable, the value should not change", async function (assert) {
+		this.clock.restore();
 		// system under test
 		var oComboBox = new ComboBox({
 			editable: false,
@@ -5861,7 +5927,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -5878,8 +5944,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapdown", function (assert) {
-
+	QUnit.test("onsapdown", async function (assert) {
+		this.clock.restore();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -5905,7 +5971,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnKeyDownSpy = this.stub(oComboBox, "onsapdown");
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
@@ -5925,7 +5991,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapdown", function (assert) {
+	QUnit.test("onsapdown", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -5952,9 +6018,10 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
+
 		var fnKeyDownSpy = this.spy(oComboBox, "onsapdown");
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -5973,7 +6040,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapdown changing the value in attachSelectionChange event handler", function (assert) {
+	QUnit.test("onsapdown changing the value in attachSelectionChange event handler", async function (assert) {
 
 		// system under test
 		var sExpectedValue = "GER Germany";
@@ -5988,9 +6055,10 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
+
 		oComboBox.attachSelectionChange(function (oControlEvent) {
 			this.setValue(sExpectedValue);
 		}, oComboBox);
@@ -6008,7 +6076,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapdown the typed value should not get selected (test case 1)", function (assert) {
+	QUnit.test("onsapdown the typed value should not get selected (test case 1)", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -6033,10 +6101,10 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
-
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
+
 		qutils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
 			which: KeyCodes.A
 		});
@@ -6046,7 +6114,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().value, "Algeria");
@@ -6056,7 +6124,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapdown the typed value should not get selected (test case 2)", function (assert) {
+	QUnit.test("onsapdown the typed value should not get selected (test case 2)", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -6081,9 +6149,10 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
+
 		qutils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
 			which: KeyCodes.A
 		});
@@ -6103,7 +6172,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test('onsapdown the attribute "aria-activedescendant" is set', function (assert) {
+	QUnit.test('onsapdown the attribute "aria-activedescendant" is set', async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -6117,15 +6186,16 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // wait after the open animation is completed
+
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -6136,7 +6206,7 @@ sap.ui.define([
 
 	QUnit.module("onsapup");
 
-	QUnit.test("onsapup", function (assert) {
+	QUnit.test("onsapup", async function (assert) {
 
 		// system under test
 		var oItem;
@@ -6165,7 +6235,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnKeyUpSpy = this.spy(oComboBox, "onsapup");
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
@@ -6185,7 +6255,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapup - when keyboard UP key is pressed and the control is not editable, the value should not change", function (assert) {
+	QUnit.test("onsapup - when keyboard UP key is pressed and the control is not editable, the value should not change", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -6208,7 +6278,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -6225,7 +6295,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapup", function (assert) {
+	QUnit.test("onsapup", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -6252,7 +6322,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnKeyUpSpy = this.spy(oComboBox, "onsapup");
 
@@ -6270,7 +6340,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapup", function (assert) {
+	QUnit.test("onsapup", async function (assert) {
 
 		// system under test
 		var oExpectedItem;
@@ -6299,7 +6369,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnKeyUpSpy = this.stub(oComboBox, "onsapup");
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
@@ -6319,8 +6389,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapup changing the value in attachSelectionChange event handler", function (assert) {
-
+	QUnit.test("onsapup changing the value in attachSelectionChange event handler", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sExpectedValue = "GER Germany";
 		var oComboBox = new ComboBox({
@@ -6341,7 +6411,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -6359,10 +6429,11 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("onsapup the typed value should not gets selected (test case 1)", function (assert) {
-
+	QUnit.test("onsapup the typed value should not gets selected (test case 1)", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -6387,7 +6458,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		qutils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
@@ -6407,10 +6478,11 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("onsapup the typed value should not get selected (test case 2)", function (assert) {
-
+	QUnit.test("onsapup the typed value should not get selected (test case 2)", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -6435,7 +6507,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		qutils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
@@ -6457,10 +6529,11 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test('onsapup the attribute "aria-activedescendant" is set', function (assert) {
-
+	QUnit.test('onsapup the attribute "aria-activedescendant" is set', async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oExpectedItem;
 		var oComboBox = new ComboBox({
@@ -6479,7 +6552,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.open();
@@ -6488,18 +6561,24 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
 
 		// cleanup
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.module("onsaphome");
+	QUnit.module("onsaphome", {
+		afterEach: function() {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("onsaphome", function (assert) {
+	QUnit.test("onsaphome", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 
 		// system under test
 		var oExpectedItem;
@@ -6539,7 +6618,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var fnKeyHomeSpy = this.spy(oComboBox, "onsaphome");
@@ -6561,8 +6640,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsaphome - when Home key is pressed and the control's field is not editable, the value should not change", function (assert) {
-
+	QUnit.test("onsaphome - when Home key is pressed and the control's field is not editable, the value should not change", async function (assert) {
 		// system under test
 		var oComboBox = new ComboBox({
 			editable: false,
@@ -6575,7 +6653,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -6592,8 +6670,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsaphome", function (assert) {
-
+	QUnit.test("onsaphome", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oExpectedItem;
 		var oItem;
@@ -6631,7 +6709,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var fnKeyHomeSpy = this.spy(oComboBox, "onsaphome");
@@ -6653,8 +6731,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsaphome changing the value in attachSelectionChange event handler", function (assert) {
-
+	QUnit.test("onsaphome changing the value in attachSelectionChange event handler", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sExpectedValue = "0 item 0 is selected";
 		var oItem;
@@ -6691,9 +6769,10 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
+
 		oComboBox.attachSelectionChange(function (oControlEvent) {
 			this.setValue(sExpectedValue);
 		}, oComboBox);
@@ -6712,8 +6791,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsaphome the attribute aria-activedescendant is set", function (assert) {
-
+	QUnit.test("onsaphome the attribute aria-activedescendant is set", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oExpectedItem;
 		var oComboBox = new ComboBox({
@@ -6746,7 +6825,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
@@ -6756,7 +6835,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick(0);
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -6765,10 +6844,14 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("onsapend");
+	QUnit.module("onsapend", {
+		afterEach: function() {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("onsapend", function (assert) {
-
+	QUnit.test("onsapend", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oExpectedItem;
 		var oComboBox = new ComboBox({
@@ -6803,9 +6886,10 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0); // tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
+
 		var fnKeyEndSpy = this.spy(oComboBox, "onsapend");
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -6825,8 +6909,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapend changing the value in attachSelectionChange event handler", function (assert) {
-
+	QUnit.test("onsapend changing the value in attachSelectionChange event handler", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sExpectedValue = "4 item 4 is selected";
 		var oComboBox = new ComboBox({
@@ -6860,7 +6944,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -6881,7 +6965,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapend - when end key is pressed and the control's field is not editable, the value should not change", function (assert) {
+	QUnit.test("onsapend - when end key is pressed and the control's field is not editable, the value should not change", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -6906,7 +6990,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 		oComboBox.focus();
 
@@ -6923,8 +7007,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapend the attribute aria-activedescendant is set", function (assert) {
-
+	QUnit.test("onsapend the attribute aria-activedescendant is set", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oExpectedItem;
 		var oComboBox = new ComboBox({
@@ -6948,7 +7032,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);	// wait after the open animation is completed
@@ -6956,7 +7040,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -6965,19 +7049,24 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("onsappagedown");
+	QUnit.module("onsappagedown", {
+		afterEach: function() {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
 	var pageDownTestCase = function (sTestName, mOptions) {
-		QUnit.test("onsappagedown", function (assert) {
-
+		QUnit.test("onsappagedown", async function (assert) {
+			this.clock = sinon.useFakeTimers();
 			// system under test
 			var oComboBox = mOptions.control;
 
 			// arrange
 			oComboBox.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 			oComboBox.focus();
 			this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
+
 			var fnPageDownSpy = this.spy(oComboBox, "onsappagedown");
 			var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -7124,8 +7213,8 @@ sap.ui.define([
 		});
 	}());
 
-	QUnit.test("onsappagedown changing the value in attachSelectionChange event handler", function (assert) {
-
+	QUnit.test("onsappagedown changing the value in attachSelectionChange event handler", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sExpectedValue = "BH Bahrain is selected";
 		var oComboBox = new ComboBox({
@@ -7159,9 +7248,10 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
+
 		oComboBox.attachSelectionChange(function (oControlEvent) {
 			this.setValue(sExpectedValue);
 		}, oComboBox);
@@ -7180,7 +7270,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsappagedown when page down key is pressed and the control's field is not editable, the value should not change", function (assert) {
+	QUnit.test("onsappagedown when page down key is pressed and the control's field is not editable, the value should not change", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -7215,7 +7305,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 		oComboBox.focus();
 
@@ -7232,8 +7322,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsappagedown the attribute aria-activedescendant is set", function (assert) {
-
+	QUnit.test("onsappagedown the attribute aria-activedescendant is set", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oExpectedItem;
 		var oComboBox = new ComboBox({
@@ -7267,15 +7357,16 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);	// wait after the open animation is completed
+
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -7284,17 +7375,22 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("onsappageup");
+	QUnit.module("onsappageup", {
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
 	var pageUpTestCase = function (sTestName, mOptions) {
-		QUnit.test("onsappageup", function (assert) {
+		QUnit.test("onsappageup", async function (assert) {
+			this.clock = sinon.useFakeTimers();
 
 			// system under test
 			var oComboBox = mOptions.control;
 
 			// arrange
 			oComboBox.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 			oComboBox.focus();
 			this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 			var fnPageUpSpy = this.spy(oComboBox, "onsappageup");
@@ -7445,8 +7541,8 @@ sap.ui.define([
 		});
 	}());
 
-	QUnit.test("onsappageup changing the value in attachSelectionChange event handler", function (assert) {
-
+	QUnit.test("onsappageup changing the value in attachSelectionChange event handler", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sExpectedValue = "DZ Algeria is selected";
 		var oComboBox = new ComboBox({
@@ -7482,7 +7578,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -7502,7 +7598,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsappageup - when page up key is pressed and the control's field is not editable, the value should not change", function (assert) {
+	QUnit.test("onsappageup - when page up key is pressed and the control's field is not editable, the value should not change", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -7537,7 +7633,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 		oComboBox.focus();
 
@@ -7554,8 +7650,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsappageup the attribute aria-activedescendant is set", function (assert) {
-
+	QUnit.test("onsappageup the attribute aria-activedescendant is set", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oExpectedItem;
 		var oComboBox = new ComboBox({
@@ -7591,15 +7687,16 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);	// wait 1s after the open animation is completed
+
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -7608,9 +7705,14 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("oninput");
+	QUnit.module("oninput", {
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("oninput the ComboBox's picker pop-up should open", function (assert) {
+	QUnit.test("oninput the ComboBox's picker pop-up should open", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -7631,7 +7733,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		var fnOpenSpy = this.spy(oComboBox, "open");
@@ -7652,8 +7754,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("oninput close the picker popup if there are not suggestions", function (assert) {
-
+	QUnit.test("oninput close the picker popup if there are not suggestions", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -7663,10 +7765,9 @@ sap.ui.define([
 				})
 			]
 		});
-
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -7678,6 +7779,7 @@ sap.ui.define([
 		// act
 		oComboBox.getFocusDomRef().value = "v";
 		qutils.triggerEvent("input", oComboBox.getFocusDomRef());
+		this.clock.tick(1000);
 
 		// assert
 		assert.strictEqual(fnOpenSpy.callCount, 0, "open() method was not called");
@@ -7690,7 +7792,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("oninput reset the selection when the value of the ComboBox's input field is empty", function (assert) {
+	QUnit.test("oninput reset the selection when the value of the ComboBox's input field is empty", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -7706,7 +7808,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var oEvent = new jQuery.Event("input", {
 			target: oComboBox.getFocusDomRef()
@@ -7727,7 +7829,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("oninput clear the selection and the filter if not match is found", function (assert) {
+	QUnit.test("oninput clear the selection and the filter if not match is found", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -7742,7 +7844,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 
 		// act
@@ -7758,7 +7860,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("oninput search in both columns if 'filterSecondaryValues' is true", function (assert) {
+	QUnit.test("oninput search in both columns if 'filterSecondaryValues' is true", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -7789,7 +7891,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 
 		// act
@@ -7805,7 +7907,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("oninput the value should be propperly displayed when search in both columns is activated test case 1", function (assert) {
+	QUnit.test("oninput the value should be propperly displayed when search in both columns is activated test case 1", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -7836,7 +7938,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 
 		// act
@@ -7852,7 +7954,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("oninput the value should be propperly displayed when search in both columns is activated test case 2", function (assert) {
+	QUnit.test("oninput the value should be propperly displayed when search in both columns is activated test case 2", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -7883,7 +7985,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 
 		// act
@@ -7900,7 +8002,7 @@ sap.ui.define([
 	});
 
 	// BCP 1580015527
-	QUnit.test("it should not open the picker pop-up", function (assert) {
+	QUnit.test("it should not open the picker pop-up", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -7914,7 +8016,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var fnOpenSpy = this.spy(ComboBox.prototype, "open");
 		oComboBox.focus();
 
@@ -7929,7 +8031,7 @@ sap.ui.define([
 	});
 
 	// BCP 1670033530
-	QUnit.test("it should not select the disabled item while typing in the text field", function (assert) {
+	QUnit.test("it should not select the disabled item while typing in the text field", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -7943,7 +8045,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var oTarget = oComboBox.getFocusDomRef();
 		oTarget.value = "l";
@@ -7960,9 +8062,9 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should filter the list on phones", function (assert) {
-
-		this.stub(Device, "system", {
+	QUnit.test("it should filter the list on phones", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -7983,7 +8085,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
@@ -8011,14 +8113,15 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Typeahead should be disabled on adroid devices", function (assert) {
-		this.stub(Device, "system", {
+	QUnit.test("Typeahead should be disabled on adroid devices", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
 		});
 
-		this.stub(Device, "os", {
+		this.stub(Device, "os").value({
 			android: true
 		});
 
@@ -8033,7 +8136,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -8047,6 +8150,7 @@ sap.ui.define([
 
 		oComboBox.open();
 		this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
+
 		var oPickerTextField = oComboBox.getPickerTextField();
 		oPickerTextField.focus();
 		var oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
@@ -8063,8 +8167,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should close the dropdown list when the text field is empty and it was opened by typing text", function (assert) {
-
+	QUnit.test("it should close the dropdown list when the text field is empty and it was opened by typing text", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -8085,7 +8189,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -8105,8 +8209,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should not close the dropdown list when the text field is empty and it was opened by keyboard or by pressing the button", function (assert) {
-
+	QUnit.test("it should not close the dropdown list when the text field is empty and it was opened by keyboard or by pressing the button", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -8127,7 +8231,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -8146,8 +8250,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should not close the dropdown during typing if it was opened by keyboard", function (assert) {
-
+	QUnit.test("it should not close the dropdown during typing if it was opened by keyboard", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -8159,11 +8263,12 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);	// open the dropdown list
+
 		this.clock.tick(1000);	// wait 1s after the open animation is completed
 
 		// act
@@ -8179,8 +8284,8 @@ sap.ui.define([
 	});
 
 	// BCP 1680329042
-	QUnit.test("it should clear the selection when the backspace/delete keyboard key is pressed and the remaining text doesn't match any items", function (assert) {
-
+	QUnit.test("it should clear the selection when the backspace/delete keyboard key is pressed and the remaining text doesn't match any items", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem = new Item({
 				text: "lorem ipsum"
@@ -8192,7 +8297,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		var oFocusDomRef = oComboBox.getFocusDomRef();
 
@@ -8201,7 +8306,7 @@ sap.ui.define([
 		qutils.triggerEvent("input", oFocusDomRef, {value: "lo"});
 
 		// wait for the word completion feature
-		this.clock.tick(0);
+		this.clock.tick(1000);
 
 		// Assert
 		assert.ok(oSelectionChangeSpy.calledOnce, "selectionChange fired");
@@ -8211,6 +8316,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oFocusDomRef, KeyCodes.BACKSPACE);
 		oFocusDomRef.value = "lo";
 		qutils.triggerEvent("input", oFocusDomRef, {value: "lo"});
+		this.clock.tick(1000);
 
 		// assert
 		assert.ok(oSelectionChangeSpy.calledTwice, "selectionChange fired again");
@@ -8220,6 +8326,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oFocusDomRef, KeyCodes.BACKSPACE);
 		oFocusDomRef.value = "";
 		qutils.triggerEvent("input", oFocusDomRef, {value: ""});
+		this.clock.tick(1000);
 
 		// assert
 		assert.ok(!oSelectionChangeSpy.calledThrice, "selectionChange did not fire anymore");
@@ -8229,9 +8336,9 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should filter with empty value when input is deleted on mobile device", function (assert) {
-
-		this.stub(Device, "system", {
+	QUnit.test("it should filter with empty value when input is deleted on mobile device", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -8250,7 +8357,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oComboBox.focus();
 		oComboBox.open();
@@ -8290,11 +8397,15 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("onfocusin");
+	QUnit.module("onfocusin", {
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("onfocusin", function (assert) {
+	QUnit.test("onfocusin", async function (assert) {
 
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: true,
 			phone: false,
 			tablet: false
@@ -8305,7 +8416,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerEvent("focusin", oComboBox.getOpenArea(), {
@@ -8319,9 +8430,10 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onfocusin select the text", function (assert) {
+	QUnit.test("onfocusin select the text", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: true,
 			phone: false,
 			tablet: false
@@ -8334,7 +8446,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		oComboBox.focus();
@@ -8350,9 +8462,9 @@ sap.ui.define([
 	});
 
 	// BCP 1570441294
-	QUnit.test("onfocusin it should correctly restore the selection of the text after re-rendering", function (assert) {
-
-		this.stub(Device, "system", {
+	QUnit.test("onfocusin it should correctly restore the selection of the text after re-rendering", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		this.stub(Device, "system").value({
 			desktop: true,
 			phone: false,
 			tablet: false
@@ -8369,7 +8481,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		qutils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
 			which: KeyCodes.L
@@ -8396,8 +8508,7 @@ sap.ui.define([
 
 	QUnit.module("onBeforeOpen");
 
-	QUnit.test("onBeforeOpen", function (assert) {
-
+	QUnit.test("onBeforeOpen", async function (assert) {
 		// system under test
 		var fnOnBeforeOpenSpy = this.spy(ComboBox.prototype, "onBeforeOpen");
 		var oComboBox = new ComboBox({
@@ -8406,7 +8517,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 
 		// act
@@ -8419,9 +8530,14 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("onAfterOpen");
+	QUnit.module("onAfterOpen", {
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("onAfterOpen test case 1", function (assert) {
+	QUnit.test("onAfterOpen test case 1", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 
 		// system under test
 		var fnOnAfterOpenSpy = this.spy(ComboBox.prototype, "onAfterOpen");
@@ -8436,7 +8552,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -8452,7 +8568,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onAfterOpen test case 2", function (assert) {
+	QUnit.test("onAfterOpen test case 2", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -8467,7 +8583,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 
 		// act
@@ -8480,8 +8596,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onAfterOpen test case 3 - selected item position (sap.m.inputsUtils.scrollToItem)", function (assert) {
-
+	QUnit.test("onAfterOpen test case 3 - selected item position (sap.m.inputsUtils.scrollToItem)", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oComboBox = new ComboBox({
 			items: [
 				new Item({
@@ -8670,7 +8786,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -8680,11 +8796,10 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
-
 	});
 
-	QUnit.test("onAfterOpen should select the value text in the input field", function (assert) {
-
+	QUnit.test("onAfterOpen should select the value text in the input field", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -8699,7 +8814,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -8715,10 +8830,14 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("onAfterClose");
+	QUnit.module("onAfterClose", {
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("onAfterClose", function (assert) {
-
+	QUnit.test("onAfterClose", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var fnOnAfterCloseSpy = this.spy(ComboBox.prototype, "onAfterClose");
 		var oComboBox = new ComboBox({
@@ -8732,7 +8851,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 
@@ -8752,10 +8871,10 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should set the focus to the body after fired onAfterClose event", function (assert) {
-
+	QUnit.test("it should set the focus to the body after fired onAfterClose event", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -8772,7 +8891,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.open();
 
 		// act
@@ -8788,15 +8907,15 @@ sap.ui.define([
 
 	QUnit.module("onBeforeClose");
 
-	QUnit.test("onBeforeClose", function (assert) {
-
+	QUnit.test("onBeforeClose", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var fnOnBeforeCloseSpy = this.spy(ComboBox.prototype, "onBeforeClose");
 		var oComboBox = new ComboBox();
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -8810,11 +8929,16 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.module("change");
+	QUnit.module("change", {
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("Should trigger change event only once", function (assert) {
+	QUnit.test("Should trigger change event only once", async function (assert) {
 		// system under test
 		var oComboBox = new ComboBox({
 				items: [
@@ -8831,7 +8955,7 @@ sap.ui.define([
 			},
 			fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oComboBox.syncPickerContent();
@@ -8845,8 +8969,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onChange is fired after the value changes by pressing arrow down key when the control loses the focus", function (assert) {
-
+	QUnit.test("onChange is fired after the value changes by pressing arrow down key when the control loses the focus", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sExpectedValue = "Algeria";
 		var oComboBox = new ComboBox({
@@ -8860,7 +8984,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -8878,7 +9002,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onChange is fired after the value changes by pressing arrow down key and enter", function (assert) {
+	QUnit.test("onChange is fired after the value changes by pressing arrow down key and enter", async function (assert) {
 
 		// system under test
 		var sExpectedValue = "Algeria";
@@ -8893,7 +9017,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -8910,8 +9034,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onChange is fired after the value changes by pressing arrow up key when the control loses the focus", function (assert) {
-
+	QUnit.test("onChange is fired after the value changes by pressing arrow up key when the control loses the focus", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sExpectedValue = "Algeria";
 		var oComboBox = new ComboBox({
@@ -8930,7 +9054,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -8948,7 +9072,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onChange is fired after the value changes by pressing arrow up key and enter", function (assert) {
+	QUnit.test("onChange is fired after the value changes by pressing arrow up key and enter", async function (assert) {
 
 		// system under test
 		var sExpectedValue = "Algeria";
@@ -8968,7 +9092,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -8985,8 +9109,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onChange is fired after the value changes by pressing Home key when the control loses the focus", function (assert) {
-
+	QUnit.test("onChange is fired after the value changes by pressing Home key when the control loses the focus", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sExpectedValue = "Algeria";
 		var oComboBox = new ComboBox({
@@ -9005,7 +9129,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9023,7 +9147,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onChange is fired after the value changes by pressing Home key and enter", function (assert) {
+	QUnit.test("onChange is fired after the value changes by pressing Home key and enter", async function (assert) {
 
 		// system under test
 		var sExpectedValue = "Algeria";
@@ -9043,7 +9167,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9060,7 +9184,45 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onChange is fired after the value changes by pressing End key when the control loses the focus", function (assert) {
+	QUnit.test("onChange is fired after the value changes by pressing End key when the control loses the focus", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		// system under test
+		var sExpectedValue = "Germany";
+		var oComboBox = new ComboBox({
+			items: [
+				new Item({
+					key: "DZ",
+					text: "Algeria"
+				}),
+				new Item({
+					key: "GER",
+					text: "Germany"
+				})
+			],
+			selectedKey: "DZ"
+		});
+
+		// arrange
+		oComboBox.placeAt("content");
+		await nextUIUpdate(this.clock);
+		oComboBox.focus();
+		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
+
+		// act
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
+		oComboBox.getFocusDomRef().blur();
+		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
+
+		// assert
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
+		assert.strictEqual(oComboBox.getValue(), sExpectedValue);
+		assert.strictEqual(oComboBox.getProperty("value"), sExpectedValue);
+
+		// cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("onChange is fired after the value changes by pressing End key and enter", async function (assert) {
 
 		// system under test
 		var sExpectedValue = "Germany";
@@ -9080,45 +9242,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
-		oComboBox.focus();
-		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
-
-		// act
-		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
-		oComboBox.getFocusDomRef().blur();
-		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
-
-		// assert
-		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
-		assert.strictEqual(oComboBox.getValue(), sExpectedValue);
-		assert.strictEqual(oComboBox.getProperty("value"), sExpectedValue);
-
-		// cleanup
-		oComboBox.destroy();
-	});
-
-	QUnit.test("onChange is fired after the value changes by pressing End key and enter", function (assert) {
-
-		// system under test
-		var sExpectedValue = "Germany";
-		var oComboBox = new ComboBox({
-			items: [
-				new Item({
-					key: "DZ",
-					text: "Algeria"
-				}),
-				new Item({
-					key: "GER",
-					text: "Germany"
-				})
-			],
-			selectedKey: "DZ"
-		});
-
-		// arrange
-		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9135,7 +9259,49 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onChange is fired after the value changes by pressing pagedown key when the control loses the focus", function (assert) {
+	QUnit.test("onChange is fired after the value changes by pressing pagedown key when the control loses the focus", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		// system under test
+		var sExpectedValue = "Cuba";
+		var oComboBox = new ComboBox({
+			items: [
+				new Item({
+					key: "DZ",
+					text: "Algeria"
+				}),
+				new Item({
+					key: "GER",
+					text: "Germany"
+				}),
+				new Item({
+					key: "CU",
+					text: "Cuba"
+				})
+			],
+			selectedKey: "DZ"
+		});
+
+		// arrange
+		oComboBox.placeAt("content");
+		await nextUIUpdate(this.clock);
+		oComboBox.focus();
+		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
+
+		// act
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
+		oComboBox.getFocusDomRef().blur();
+		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
+
+		// assert
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
+		assert.strictEqual(oComboBox.getValue(), sExpectedValue);
+		assert.strictEqual(oComboBox.getProperty("value"), sExpectedValue);
+
+		// cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("onChange is fired after the value changes by pressing pagedown key and enter", async function (assert) {
 
 		// system under test
 		var sExpectedValue = "Cuba";
@@ -9159,49 +9325,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
-		oComboBox.focus();
-		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
-
-		// act
-		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
-		oComboBox.getFocusDomRef().blur();
-		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
-
-		// assert
-		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
-		assert.strictEqual(oComboBox.getValue(), sExpectedValue);
-		assert.strictEqual(oComboBox.getProperty("value"), sExpectedValue);
-
-		// cleanup
-		oComboBox.destroy();
-	});
-
-	QUnit.test("onChange is fired after the value changes by pressing pagedown key and enter", function (assert) {
-
-		// system under test
-		var sExpectedValue = "Cuba";
-		var oComboBox = new ComboBox({
-			items: [
-				new Item({
-					key: "DZ",
-					text: "Algeria"
-				}),
-				new Item({
-					key: "GER",
-					text: "Germany"
-				}),
-				new Item({
-					key: "CU",
-					text: "Cuba"
-				})
-			],
-			selectedKey: "DZ"
-		});
-
-		// arrange
-		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9218,8 +9342,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onChange is fired after the value changes by pressing pageup key when the control loses the focus", function (assert) {
-
+	QUnit.test("onChange is fired after the value changes by pressing pageup key when the control loses the focus", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sExpectedValue = "Algeria";
 		var oComboBox = new ComboBox({
@@ -9242,7 +9366,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9260,7 +9384,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onChange is fired after the value changes by pressing pageup key and enter", function (assert) {
+	QUnit.test("onChange is fired after the value changes by pressing pageup key and enter", async function (assert) {
 
 		// system under test
 		var sExpectedValue = "Algeria";
@@ -9284,7 +9408,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9302,14 +9426,14 @@ sap.ui.define([
 	});
 
 	// unit test for CSN 0120061532 0001168439 2014
-	QUnit.test("onChange is not fired when no changes are made", function (assert) {
-
+	QUnit.test("onChange is not fired when no changes are made", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox();
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 		oComboBox.updateDomValue("Germany");
@@ -9328,14 +9452,14 @@ sap.ui.define([
 	});
 
 	// BCP 1570522570
-	QUnit.test("it should not fire the change event when the arrow button is pressed", function (assert) {
+	QUnit.test("it should not fire the change event when the arrow button is pressed", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox();
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 		oComboBox.updateDomValue("lorem ipsum");
@@ -9349,9 +9473,9 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should change the value and fire the change event", function (assert) {
-
-		this.stub(Device, "system", {
+	QUnit.test("it should change the value and fire the change event", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -9362,7 +9486,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -9386,9 +9510,9 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should fire the change event after the dialog is closed", function (assert) {
-
-		this.stub(Device, "system", {
+	QUnit.test("it should fire the change event after the dialog is closed", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -9399,7 +9523,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
@@ -9422,9 +9546,9 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should fire the change event when the ENTER key is pressed", function (assert) {
-
-		this.stub(Device, "system", {
+	QUnit.test("it should fire the change event when the ENTER key is pressed", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -9435,7 +9559,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 
@@ -9463,9 +9587,10 @@ sap.ui.define([
 	});
 
 	// BCP 1680061025
-	QUnit.test("it should fire the change event after the selection is updated on mobile devices", function (assert) {
+	QUnit.test("it should fire the change event after the selection is updated on mobile devices", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var done = assert.async();
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -9494,10 +9619,9 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
-
 		// tick the clock ahead 1 second, after the open animation is completed
 		this.clock.tick(1000);
 
@@ -9530,14 +9654,13 @@ sap.ui.define([
 				length: 0
 			}
 		});
-
 		// tick the clock ahead 1 second, after the close animation is completed
 		this.clock.tick(1000);
 	});
 
-	QUnit.test("it should close the dialog when the close button is pressed", function (assert) {
-
-		this.stub(Device, "system", {
+	QUnit.test("it should close the dialog when the close button is pressed", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -9548,7 +9671,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.open();
 		var oParams = {
 			touches: {
@@ -9586,8 +9709,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onChange it should update the value of the comboBox as expected when search in both columns is enabled test case 1", function (assert) {
-
+	QUnit.test("onChange it should update the value of the comboBox as expected when search in both columns is enabled test case 1", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sExpectedValue = "Denmark";
 		var oComboBox = new ComboBox({
@@ -9618,7 +9741,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -9635,8 +9758,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onChange it should update the value of the comboBox as expected when search in both columns is enabled test case 2", function (assert) {
-
+	QUnit.test("onChange it should update the value of the comboBox as expected when search in both columns is enabled test case 2", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sExpectedValue = "Algeria";
 		var oComboBox = new ComboBox({
@@ -9667,7 +9790,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -9685,8 +9808,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onChange should leave the Input value as is if no match is found", function (assert) {
-
+	QUnit.test("onChange should leave the Input value as is if no match is found", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sExpectedValue = "Default";
 		var oComboBox = new ComboBox({
@@ -9702,7 +9825,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -9719,8 +9842,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test('onSelectionChange should pass in the "itemPressed" parameter to the change event handle', function (assert) {
-
+	QUnit.test('onSelectionChange should pass in the "itemPressed" parameter to the change event handle', async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem;
 		var oComboBox = new ComboBox({
@@ -9733,7 +9856,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(0);
@@ -9754,9 +9877,16 @@ sap.ui.define([
 		oControlEvent.destroy();
 	});
 
-	QUnit.module("onItemPress");
+	QUnit.module("onItemPress", {
+		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("onItemPress should fire change when the first filtered item is clicked.", function (assert) {
+	QUnit.test("onItemPress should fire change when the first filtered item is clicked.", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -9777,7 +9907,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		oComboBox.focus();
@@ -9785,6 +9915,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 		oComboBox.getFocusDomRef().value = "A";
 		qutils.triggerEvent("input", oComboBox.getFocusDomRef());
+		this.clock.tick(1000);
 
 		var oListItem = ListHelpers.getListItem(oComboBox.getItems()[0]);
 		oComboBox._getList().fireItemPress({listItem: oListItem});
@@ -9796,9 +9927,9 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onItemPress should fire change when the first filtered item is clicked - mobile", function (assert) {
+	QUnit.test("onItemPress should fire change when the first filtered item is clicked - mobile", async function (assert) {
 		// system under test
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -9822,7 +9953,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		oComboBox.focus();
@@ -9848,7 +9979,7 @@ sap.ui.define([
 
 	QUnit.test("it should propagate some property changes to the picker text field", function (assert) {
 
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -9884,7 +10015,7 @@ sap.ui.define([
 
 	QUnit.test("it should propagate some property changes to the picker text field", function (assert) {
 
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -9931,7 +10062,7 @@ sap.ui.define([
 	/* others                         */
 	/* ------------------------------ */
 
-	QUnit.test("restore items visibility after rendering", function (assert) {
+	QUnit.test("restore items visibility after rendering", async function (assert) {
 
 		// system under test
 		var oItem;
@@ -9946,12 +10077,12 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oItem.bVisible = false;
 		oComboBox.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oItem.bVisible, false);
@@ -9994,22 +10125,22 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Role combobox should be on the wrapper div of the input", function (assert) {
+	QUnit.test("Role combobox should be on the wrapper div of the input", async function (assert) {
 		var oComboBox = new ComboBox();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("role"), "combobox", "should be combobox");
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("type"), "text", "should be text");
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Arrow down button should be a span with a role button", function (assert) {
+	QUnit.test("Arrow down button should be a span with a role button", async function (assert) {
 		var oComboBox = new ComboBox(),
 			oArrowSpan;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oArrowSpan = oComboBox.getDomRef("arrow");
 
 		assert.strictEqual(oArrowSpan.tagName.toLowerCase(), "span", "tag should be span");
@@ -10017,19 +10148,19 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("aria-controls attribute should be set when the picker is open for the first time", function (assert) {
+	QUnit.test("aria-controls attribute should be set when the picker is open for the first time", async function (assert) {
 		//arrange
 		var oComboBox = new ComboBox();
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oComboBox.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should not be set before picker creation');
 
 		//act
 		oComboBox.open();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-controls"), oComboBox.getPicker().getId(), 'The "aria-controls" should be');
@@ -10038,7 +10169,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("It should add a hidden text to the Picker ", function (assert) {
+	QUnit.test("It should add a hidden text to the Picker ", async function (assert) {
 		var oItem = new Item({
 			key: "li",
 			text: "lorem ipsum"
@@ -10049,14 +10180,14 @@ sap.ui.define([
 		}), oResourceBundle = Library.getResourceBundleFor("sap.m").getText("COMBOBOX_AVAILABLE_OPTIONS");
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(Element.getElementById(oComboBox.getPickerInvisibleTextId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
 
 		oComboBox.destroy();
 	});
 
-	QUnit.test("ariaLabelledBy attribute of the combobox must be set to the according label id", function (assert) {
+	QUnit.test("ariaLabelledBy attribute of the combobox must be set to the according label id", async function (assert) {
 		var oLabel = new Label({
 			id: "country",
 			text: "Country",
@@ -10068,7 +10199,7 @@ sap.ui.define([
 
 		oLabel.placeAt("content");
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var sAriaLabelledBy = oComboBox.getDomRef("arrow").getAttribute("aria-labelledby").split(" ");
 		assert.ok(sAriaLabelledBy.indexOf(oLabel.getId()) > -1, "ComboBox aria-labelledby attribute is set to label id");
 
@@ -10076,7 +10207,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Check list 'role' attributes", function(assert) {
+	QUnit.test("Check list 'role' attributes", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
@@ -10096,7 +10228,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		oComboBox.open();
@@ -10110,16 +10242,17 @@ sap.ui.define([
 		assert.strictEqual(oList.getItems()[1].$().attr("role"), "option", "role='option' applied to the items");
 
 		// Cleanup
-		this.clock.restore();
+		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("aria-hidden attribute of the ComboBox dropdown icon must be set to true", function (assert) {
+	QUnit.test("aria-hidden attribute of the ComboBox dropdown icon must be set to true", async function (assert) {
 		var oComboBox = new ComboBox({
 			id: "simple-cbox"
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var bAriaHidden = oComboBox.getDomRef().querySelector(".sapMInputBaseIconContainer").getAttribute("aria-hidden");
 
@@ -10128,9 +10261,13 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("Integration");
+	QUnit.module("Integration", {
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("Propagate Items to the list", function (assert) {
+	QUnit.test("Propagate Items to the list", async function (assert) {
 		// Setup
 		var vTemp,
 			aItems = [
@@ -10150,7 +10287,7 @@ sap.ui.define([
 				]
 			});
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(!oComboBox._getList(), "No list available on init (lazy loading)");
@@ -10158,7 +10295,7 @@ sap.ui.define([
 
 		// Act (init the SuggestionPopover with the List)
 		oComboBox.syncPickerContent();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length - 2, oComboBox._getList().getVisibleItems().length, "On init the List item should be the same as the enabled core items");
@@ -10166,12 +10303,12 @@ sap.ui.define([
 		// Act
 		oComboBox.open();
 		assert.strictEqual(oComboBox.getVisibleItems().length, oComboBox._getList().getVisibleItems().length, "ComboBox should not display disabled items as a suggestions");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		vTemp = oComboBox.removeAllItems();
 		oComboBox.syncPickerContent();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10181,7 +10318,7 @@ sap.ui.define([
 		// Act
 		vTemp = aItems.pop();
 		oComboBox.addItem(vTemp);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10189,7 +10326,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.removeItem(vTemp);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10199,7 +10336,7 @@ sap.ui.define([
 		oComboBox.insertItem(aItems[0]);
 		oComboBox.insertItem(aItems[1]);
 		oComboBox.insertItem(aItems[2], 1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10208,7 +10345,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.destroyItems();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10216,7 +10353,7 @@ sap.ui.define([
 
 		oComboBox.destroy();
 		oComboBox = null;
-		oCore.applyChanges();
+		await nextUIUpdate();
 	});
 
 	QUnit.test("Object cloning", function (assert) {
@@ -10256,7 +10393,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Clone combobox with preselected item", function (assert) {
+	QUnit.test("Clone combobox with preselected item", async function (assert) {
 		var oItem = new Item({
 			text: "Dryanovo",
 			key: "1"
@@ -10267,11 +10404,11 @@ sap.ui.define([
 			selectedItem: oItem
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oClone = oCB.clone();
 		oClone.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oClone.getValue(), "Dryanovo", "Value should be kept");
 		assert.strictEqual(oClone.getSelectedItem().getText(), "Dryanovo", "Selected item should be cloned");
@@ -10280,7 +10417,8 @@ sap.ui.define([
 		oCB.destroy();
 	});
 
-	QUnit.test("Keep selected value on parent re-render", function (assert) {
+	QUnit.test("Keep selected value on parent re-render", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oComboBox = new ComboBox({
 			items: [
 				new Item({key: "A", text: "Amount"}),
@@ -10303,7 +10441,7 @@ sap.ui.define([
 			content: [oComboBox]
 		}).placeAt('content');
 
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		var oListItem = ListHelpers.getListItem(oComboBox.getItems()[1]);
 		oComboBox._getList().fireItemPress({listItem: oListItem});
@@ -10314,12 +10452,14 @@ sap.ui.define([
 		assert.strictEqual(oComboBox.getValue(), oComboBox.getItems()[1].getText(), "ComboBox value to be the same as the selected element");
 
 		oForm.destroy();
+		oComboBox.destroy();
 		oForm = null;
 		oComboBox = null;
 	});
 
-	QUnit.test("Keep the focus on the input", function (assert) {
-		this.stub(Device, "system", {
+	QUnit.test("Keep the focus on the input", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: false,
 			tablet: true,
@@ -10336,7 +10476,7 @@ sap.ui.define([
 			oCB.addItem(oItem);
 		}
 		oCB.placeAt('content');
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oCB.focus();
 
@@ -10351,7 +10491,8 @@ sap.ui.define([
 		oCB.destroy();
 	});
 
-	QUnit.test("Changing models should not resets the selection if item is not there", function (assert) {
+	QUnit.test("Changing models should not resets the selection if item is not there", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		//Setup
 		var oData = {list: [{id: "1", text: "1"}]},
 			oModel = new JSONModel(oData),
@@ -10365,7 +10506,7 @@ sap.ui.define([
 
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(100);
 
 		//Assert
@@ -10374,7 +10515,7 @@ sap.ui.define([
 
 		//Act
 		oComboBox.setSelectedKey("1");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(100);
 
 		//Assert
@@ -10383,7 +10524,7 @@ sap.ui.define([
 
 		//Act
 		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}]);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(100);
 
 		//Assert
@@ -10394,7 +10535,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Changing models keeps the value", function (assert) {
+	QUnit.test("Changing models keeps the value", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		//Setup
 		var oData = {list: [{id: "1", text: "1"}, {id: "2", text: "2"}]},
 			oModel = new JSONModel(oData),
@@ -10409,7 +10551,7 @@ sap.ui.define([
 		//Act
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(100);
 
 		//Assert
@@ -10420,7 +10562,7 @@ sap.ui.define([
 
 		//Act
 		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "33", text: "33"}]);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(100);
 
 		//Assert
@@ -10432,7 +10574,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Changing models keeps the selection if item is there", function (assert) {
+	QUnit.test("Changing models keeps the selection if item is there", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		//Setup
 		var oData = {list: [{id: "1", text: "1"}, {id: "2", text: "2"}]},
 			oModel = new JSONModel(oData),
@@ -10448,7 +10591,7 @@ sap.ui.define([
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
 		oComboBox.setSelectedKey("2");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(100);
 
 		//Assert
@@ -10457,7 +10600,7 @@ sap.ui.define([
 
 		//Act
 		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "33", text: "33"}]);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(100);
 
 		//Assert
@@ -10468,7 +10611,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Changing models reflects on bound selectedKey property", function (assert) {
+	QUnit.test("Changing models reflects on bound selectedKey property", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		//Setup
 		var oData = {
 				list: [{id: "1", text: "1"}, {id: "2", text: "2"}],
@@ -10487,7 +10631,7 @@ sap.ui.define([
 		//Act
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(100);
 
 		//Assert
@@ -10498,7 +10642,7 @@ sap.ui.define([
 		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "3", text: "3"}]);
 		oComboBox.getModel().setProperty("/selectedKey", "3");
 
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(100);
 
 		//Assert
@@ -10508,7 +10652,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Matching item should be selected when deleting input with backspace", function (assert) {
+	QUnit.test("Matching item should be selected when deleting input with backspace", async function (assert) {
 		// setup
 		var oItem = new Item({
 			text: "Test",
@@ -10518,7 +10662,7 @@ sap.ui.define([
 			value: "Testt",
 			items: [oItem]
 		}).placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.BACKSPACE);
@@ -10536,10 +10680,14 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("Tablet focus handling");
+	QUnit.module("Tablet focus handling", {
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("it should not set the focus to the input", function (assert) {
-		this.stub(Device, "system", {
+	QUnit.test("it should not set the focus to the input", async function (assert) {
+		this.stub(Device, "system").value({
 			desktop: false,
 			tablet: true,
 			phone: false
@@ -10550,7 +10698,7 @@ sap.ui.define([
 			oFocusinStub = this.stub(oComboBox, "focus");
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFakeEvent = {target: oComboBox.getDomRef("arrow")};
 
@@ -10561,8 +10709,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should has initial focus set to the input", function (assert) {
-		this.stub(Device, "system", {
+	QUnit.test("it should has initial focus set to the input", async function (assert) {
+		this.stub(Device, "system").value({
 			desktop: false,
 			tablet: true,
 			phone: false
@@ -10572,15 +10720,15 @@ sap.ui.define([
 		oComboBox.syncPickerContent();
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oComboBox.getPicker().getInitialFocus(), oComboBox.getId());
 
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should initially focus the picker", function (assert) {
-		this.stub(Device, "system", {
+	QUnit.test("it should initially focus the picker", async function (assert) {
+		this.stub(Device, "system").value({
 			desktop: false,
 			tablet: true,
 			phone: false
@@ -10591,7 +10739,7 @@ sap.ui.define([
 
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFakeEvent = {
 			target: oComboBox.getFocusDomRef(),
@@ -10607,8 +10755,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("The picker should open when icon is pressed", function (assert) {
-		this.stub(Device, "system", {
+	QUnit.test("The picker should open when icon is pressed", async function (assert) {
+		this.stub(Device, "system").value({
 			desktop: false,
 			tablet: true,
 			phone: false
@@ -10625,7 +10773,7 @@ sap.ui.define([
 			]
 		});
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oComboBox._handlePopupOpenAndItemsLoad(false);
 
@@ -10635,7 +10783,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("one visual focus should be shown in the control", function (assert) {
+	QUnit.test("one visual focus should be shown in the control", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oList,
 			oComboBox = new ComboBox({
 				items: [
@@ -10647,12 +10796,12 @@ sap.ui.define([
 
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		oComboBox.getFocusDomRef().value = "A";
 		qutils.triggerEvent("input", oComboBox.getFocusDomRef());
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		oList = oComboBox._getList();
@@ -10663,7 +10812,7 @@ sap.ui.define([
 		// act
 		oComboBox.getFocusDomRef().value = "AC";
 		qutils.triggerEvent("input", oComboBox.getFocusDomRef());
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.ok(oComboBox.$().hasClass("sapMFocus"), "The input field should have visual focus.");
@@ -10674,7 +10823,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("one visual focus should be shown in the control after selection", function (assert) {
+	QUnit.test("one visual focus should be shown in the control after selection", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oList,
 			oComboBox = new ComboBox({
 				items: [
@@ -10688,7 +10838,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		oList = oComboBox._getList();
 
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		oComboBox.focus();
@@ -10714,8 +10864,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("one visual focus should be shown in the control when an item is selected", function (assert) {
-
+	QUnit.test("one visual focus should be shown in the control when an item is selected", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oList,
 			oItem1 = new Item({
@@ -10734,7 +10884,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		oList = oComboBox._getList();
 
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oComboBox.setSelectedItem(oItem1);
 		this.clock.tick(500);
@@ -10761,7 +10911,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Disabled ComboBox should not have focus", function (assert) {
+	QUnit.test("Disabled ComboBox should not have focus", async function (assert) {
 
 		// system under test
 		var oComboBox = new ComboBox({
@@ -10770,7 +10920,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerEvent("focusin", oComboBox.getOpenArea(), {
@@ -10785,10 +10935,14 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("highlighting");
+	QUnit.module("highlighting", {
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("highlightList doesn't throw an error when showSecondaryValues=true and sap.ui.core.Item is set", function (assert) {
-
+	QUnit.test("highlightList doesn't throw an error when showSecondaryValues=true and sap.ui.core.Item is set", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var fnOnAfterOpenSpy = this.spy(ComboBox.prototype, "onAfterOpen");
 		var oComboBox = new ComboBox({
@@ -10803,7 +10957,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -10817,8 +10971,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("highlightList doesn't throw an error when combobox's value contains special characters", function (assert) {
-
+	QUnit.test("highlightList doesn't throw an error when combobox's value contains special characters", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var fnOnAfterOpenSpy = this.spy(ComboBox.prototype, "onAfterOpen");
 		var oComboBox = new ComboBox({
@@ -10834,7 +10988,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.highlightList("(T");
 
 		// act
@@ -10848,7 +11002,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("highlighting first letter of a word should be applied", function (assert) {
+	QUnit.test("highlighting first letter of a word should be applied", async function (assert) {
 		var oComboBox = new ComboBox({
 			items: [
 				new Item({ text: "Bulgaria" })
@@ -10856,13 +11010,13 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oFocusDomRef = oComboBox.getFocusDomRef();
 
 		oFocusDomRef.value = "b";
 		qutils.triggerEvent("input", oFocusDomRef);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var highlightedPart = oComboBox._getList().getItems()[0].getDomRef().querySelector(".sapMInputHighlight");
 
@@ -10872,7 +11026,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("setFilter", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oComboBox = new ComboBox({
 				items: [
 					new ListItem({
@@ -10896,7 +11050,7 @@ sap.ui.define([
 
 			this.oComboBox.syncPickerContent();
 			this.oComboBox.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oComboBox.destroy();
@@ -10950,9 +11104,9 @@ sap.ui.define([
 		assert.strictEqual(aFilteredItems.length, 0, "Zero items should be filtered");
 	});
 
-	QUnit.test("Setting a valid filter should apply on items and their text", function (assert) {
+	QUnit.test("Setting a valid filter should apply on items and their text", async function (assert) {
 		this.oComboBox.setFilterSecondaryValues(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		var aFilteredItems = this.oComboBox.filterItems("B").items;
@@ -11021,7 +11175,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Input Text Selecting without data binding", {
-		beforeEach: function () {
+		beforeEach: async function () {
+			this.clock = sinon.useFakeTimers();
 			this.comboBox = new ComboBox({
 				items: [
 					new Item({
@@ -11050,17 +11205,19 @@ sap.ui.define([
 				}
 			}).placeAt("content");
 
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
 		afterEach: function () {
 			this.comboBox.destroy();
 			this.comboBox = null;
+			fnRunAllTimersAndRestore(this.clock);
 		}
 	});
 
 	QUnit.test('Selection when typing and focus in', function (assert) {
 		// Act
 		this.comboBox._$input.trigger("focus").val("a").trigger("input");
+		this.clock.tick(100);
 		var selectedText = this.comboBox._$input.getSelectedText();
 
 		// Assert
@@ -11068,6 +11225,7 @@ sap.ui.define([
 
 		// Act
 		this.comboBox._$input.trigger("focus").val("aa").trigger("input");
+		this.clock.tick(100);
 		selectedText = this.comboBox._$input.getSelectedText();
 
 		// Assert
@@ -11075,6 +11233,7 @@ sap.ui.define([
 
 		// Act
 		this.comboBox._$input.trigger("focus").val("aaaa").trigger("input");
+		this.clock.tick(100);
 		selectedText = this.comboBox._$input.getSelectedText();
 
 		// Assert
@@ -11097,7 +11256,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Selection when typing non ASCII characters", {
-		beforeEach: function () {
+		beforeEach: async function () {
+			this.clock = sinon.useFakeTimers();
 			var oSpecialCharsModel = new JSONModel({
 				"special": [
 					{"text": "product", "key": "productId"},
@@ -11119,31 +11279,31 @@ sap.ui.define([
 
 			this.comboBox.setModel(oSpecialCharsModel);
 
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
 		afterEach: function () {
 			this.comboBox.destroy();
 			this.comboBox = null;
+			fnRunAllTimersAndRestore(this.clock);
 		}
 	});
 
-	QUnit.test('Input text selection "without" re-rendering on selection change', function (assert) {
-
+	QUnit.test('Input text selection "without" re-rendering on selection change', async function (assert) {
 		this.comboBox._$input.trigger("focus").val("n").trigger("input");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		var selectedText = this.comboBox._$input.getSelectedText();
 		assert.equal(selectedText, "äme", "Selected text is correct");
 	});
 
-	QUnit.test('Input text selection "with" re-rendering on selection change', function (assert) {
+	QUnit.test('Input text selection "with" re-rendering on selection change', async function (assert) {
 		this.comboBox.attachEvent('selectionChange', function () {
 			this.comboBox.invalidate();
 		}.bind(this));
 
 		this.comboBox._$input.trigger("focus").val("n").trigger("input");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		var selectedText = this.comboBox._$input.getSelectedText();
@@ -11151,7 +11311,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Composition characters handling", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.comboBox = new ComboBox({
 				items: [
 					new Item({
@@ -11169,11 +11329,12 @@ sap.ui.define([
 				]
 			}).placeAt("content");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.comboBox.destroy();
 			this.comboBox = null;
+			fnRunAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -11191,6 +11352,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Composititon events", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oFakeEvent = {
 				isMarked: function () {
 				},
@@ -11299,7 +11461,7 @@ sap.ui.define([
 		assert.strictEqual(oListItem.getTitle(), "Group header text", "The title of the GroupHeaderListItem was set correctly.");
 	});
 
-	QUnit.test("forwards custom data to StandardListItem.", function (assert) {
+	QUnit.test("forwards custom data to StandardListItem.", async function (assert) {
 		//default scenario using strings
 		var oItem = new Item({
 			text: "text",
@@ -11337,7 +11499,7 @@ sap.ui.define([
 			}
 		}).setModel(oModel);
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oItem1 = oComboBox.getItems()[0],
 			oListItem1 = oComboBox._mapItemToListItem(oItem1);
@@ -11360,7 +11522,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Direct property forwarding", function (assert) {
+	QUnit.test("Direct property forwarding", async function (assert) {
 		// system under test
 		var oItem = new Item({
 				text: "Item Title",
@@ -11370,13 +11532,13 @@ sap.ui.define([
 
 		this.oComboBox.addItem(oItem);
 		oListItem = this.oComboBox._mapItemToListItem(oItem);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oItem.setText("New Item Title");
 		oItem.setTooltip("New Tooltip Text");
 		oItem.setEnabled(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oListItem.getTitle(), "New Item Title", "The list item title is updated.");
@@ -11384,7 +11546,7 @@ sap.ui.define([
 		assert.notOk(oListItem.getVisible(), "The list item is not visible.");
 	});
 
-	QUnit.test("Additional text forwarding", function (assert) {
+	QUnit.test("Additional text forwarding", async function (assert) {
 		// system under test
 		var oItem = new ListItem({
 			text: "Item Title"
@@ -11393,17 +11555,18 @@ sap.ui.define([
 		this.oComboBox.addItem(oItem);
 		this.oComboBox.setShowSecondaryValues(true);
 		oListItem = this.oComboBox._mapItemToListItem(oItem);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oItem.setAdditionalText("New additional text");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oListItem.getInfo(), "New additional text", "The list item info is updated.");
 	});
 
-	QUnit.test("Item should be marked as selectable after changing of enabled property", function (assert) {
+	QUnit.test("Item should be marked as selectable after changing of enabled property", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oItem = new Item({
 			text: "Item 2",
 			enabled: false
@@ -11425,7 +11588,7 @@ sap.ui.define([
 		}.bind(this);
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		openComboBox();
@@ -11440,13 +11603,14 @@ sap.ui.define([
 		assert.strictEqual(getVisibleListItems(), 1, "One item should be visible");
 
 		oItem.setEnabled(true);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.close();
 
 		openComboBox();
 		assert.strictEqual(getVisibleListItems(), 2, "Two items should be visible");
 
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.module("addItemGroup", {
@@ -11486,7 +11650,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Group headers and separators", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			// system under test
 			this.oComboBox = new ComboBox({
 				items: [
@@ -11522,11 +11686,12 @@ sap.ui.define([
 			};
 
 			this.oComboBox.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			// clean
 			this.oComboBox.destroy();
+			fnRunAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -11540,6 +11705,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Group header's labelledBy text and aria-activedescendant reference", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oGroupHeaderListItem, oInvisibleText,
 			oFocusDomRef = this.oComboBox.getFocusDomRef(),
 			oSeparatorItem = this.oComboBox._getList().getItems()[0],
@@ -11580,6 +11746,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("onsapdown when picker closed should select first non separator item", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		assert.expect(3);
 		var oExpectedItem = this.oComboBox.getItems()[1],
 			sExpectedValue = "item11";
@@ -11596,6 +11763,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("onsapdown when picker opened should move visual focus to the first selectable item (not to the group header)", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		assert.expect(6);
 		var oGroupHeaderItem, aItems, oSelectedItem;
 
@@ -11606,13 +11774,11 @@ sap.ui.define([
 		// act
 		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick(500);
-
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
 
 		aItems = this.oComboBox._getList().getItems();
 		oGroupHeaderItem = aItems[0];
 		oSelectedItem = aItems[1];
-
 
 		assert.notOk(oGroupHeaderItem.hasStyleClass("sapMLIBFocused"), "Visual focus moved to the group header item.");
 		assert.ok(oSelectedItem.hasStyleClass("sapMLIBFocused"), "Visual focus moved to the first item.");
@@ -11624,6 +11790,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("onsapdown twice when picker opened should move visual focus to the first item", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oExpectedItem = this.oComboBox.getItems()[1],
 			sExpectedValue = "item11",
 			oExpectedListItem, oGroupHeaderListItem;
@@ -11650,6 +11817,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("onsapdown when key already selected and picker is opened should move visual focus to the next item", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		assert.expect(8);
 		var oExpectedItem = this.oComboBox.getItems()[5],
 			oInitiallySelectedItem = this.oComboBox.getItems()[4],
@@ -11682,6 +11850,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("onsapup when key already selected and picker is opened should move visual focus to the previous item", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		assert.expect(8);
 		var oExpectedItem = this.oComboBox.getItems()[4],
 			oInitiallySelectedItem = this.oComboBox.getItems()[5],
@@ -11714,6 +11883,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("onsapup when key already selected and picker is closed should move visual focus to the previous item and skip group items", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		assert.expect(4);
 		var oExpectedItem = this.oComboBox.getItems()[2],
 			oInitiallySelectedItem = this.oComboBox.getItems()[4],
@@ -11735,6 +11905,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("when focusing group header item with some input in the text field the input should stay", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oExpectedItem = this.oComboBox.getItems()[0],
 			oExpectedListItem = ListHelpers.getListItem(oExpectedItem),
 			oFakeEvent = {
@@ -11764,6 +11935,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("when moving through group header, the user input should stay and be autocompleted", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oExpectedItem = this.oComboBox.getItems()[1],
 			oExpectedListItem,
 			oFakeEvent = {
@@ -11799,6 +11971,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("No double focus when last item before close was group header", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oExpectedItem = this.oComboBox.getItems()[1],
 			oExpectedSeparatorItem = this.oComboBox.getItems()[0],
 			oFocusDomRef = this.oComboBox.getFocusDomRef(),
@@ -11834,7 +12007,7 @@ sap.ui.define([
 		assert.ok(!oExpectedListGroupHeader.hasStyleClass("sapMLIBFocused"), "The group header does not have visual focus");
 	});
 
-	QUnit.test("Grouping with models", function (assert) {
+	QUnit.test("Grouping with models", async function (assert) {
 		// Setup
 		var oData = {
 				data: [
@@ -11857,7 +12030,7 @@ sap.ui.define([
 					template: new Item({key: "{key}", text: "{text}"})
 				}
 			}).setModel(new JSONModel(oData)).placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oComboBox.getItems().length > 4, "There should be more items as there's a separator item for each group");
@@ -11867,9 +12040,16 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("Group header press");
+	QUnit.module("Group header press" ,{
+		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function () {
+			fnRunAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("group header item press should not close the popover", function (assert) {
+	QUnit.test("group header item press should not close the popover", async function (assert) {
 		assert.expect(4);
 		// System under test
 		var oComboBox = new ComboBox({
@@ -11880,7 +12060,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// arrange
 		oComboBox.focus();
@@ -11901,10 +12081,10 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("group header item press should not close the dialog on mobile", function (assert) {
+	QUnit.test("group header item press should not close the dialog on mobile", async function (assert) {
 		assert.expect(4);
 		// System under test
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -11917,7 +12097,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// arrange
 		oComboBox.focus();
@@ -11938,7 +12118,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("showItems functionality", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			var aData = [
 					{
 						name: "A Item 1", key: "a-item-1", group: "A"
@@ -11961,16 +12141,17 @@ sap.ui.define([
 				}
 			}).setModel(oModel).placeAt("content");
 
-			oCore.applyChanges();
-
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCombobox.destroy();
 			this.oCombobox = null;
+			fnRunAllTimersAndRestore(this.clock);
 		}
 	});
 
-	QUnit.test("Should filter internal list properly", function (assert) {
+	QUnit.test("Should filter internal list properly", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Setup
 		var oEvent = {
 				target: {value: "A Item"},
@@ -11990,7 +12171,7 @@ sap.ui.define([
 		this.oCombobox.oninput(oEvent);
 		this.oCombobox.invalidate();
 		this.clock.tick(500);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "There should be 5 items in the list...");
@@ -12001,7 +12182,7 @@ sap.ui.define([
 		this.oCombobox.oninput(oEvent);
 		this.oCombobox.invalidate();
 		this.clock.tick(500);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(fnFilterVisibleItems(this.oCombobox._getList().getItems()).length, 5, "All items should be visible");
@@ -12032,7 +12213,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCombobox.fnFilter, fnFilter, "Custom filter function has been restored");
 	});
 
-	QUnit.test("Should show all the items", function (assert) {
+	QUnit.test("Should show all the items", async function (assert) {
 		// Setup
 		var fnGetVisisbleItems = function (aItems) {
 			return aItems.filter(function (oItem) {
@@ -12042,14 +12223,14 @@ sap.ui.define([
 
 		// Act
 		this.oCombobox.showItems();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
 		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._getList().getItems()).length, 5, "Shows all items");
 	});
 
-	QUnit.test("Should filter the items", function (assert) {
+	QUnit.test("Should filter the items", async function (assert) {
 		// Setup
 		var fnGetVisisbleItems = function (aItems) {
 			return aItems.filter(function (oItem) {
@@ -12061,16 +12242,17 @@ sap.ui.define([
 		this.oCombobox.showItems(function (sValue, oItem) {
 			return oItem.getText() === "A Item 1";
 		});
-		oCore.applyChanges();
+
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
 		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._getList().getItems()).length, 1, "Only the matching items are visible");
 	});
 
-	QUnit.test("Destroy & reinit on mobile", function (assert) {
+	QUnit.test("Destroy & reinit on mobile", async function (assert) {
 		// Setup
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -12078,12 +12260,12 @@ sap.ui.define([
 
 		// arrange
 		var oComboBox = new ComboBox("test-combobox").placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oComboBox.destroy();
 		oComboBox = new ComboBox("test-combobox").placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(true, "If there's no exception so far, everything is ok");
@@ -12129,10 +12311,11 @@ sap.ui.define([
 
 	QUnit.test("Should call toggleStyleClass after showItems is called and oninput is triggered.", function (assert) {
 		// Setup
+		this.clock = sinon.useFakeTimers();
 		var oSpy = this.spy(this.oCombobox, "toggleStyleClass"),
 			oFakeEvent = {
-				isMarked: function () {return false;},
-				setMarked: function () {},
+				isMarked: function () { return false; },
+				setMarked: function () { },
 				target: {
 					value: "A Item"
 				},
@@ -12150,6 +12333,7 @@ sap.ui.define([
 
 		// Act
 		this.oCombobox.oninput(oFakeEvent); // Fake input
+		this.clock.tick(1000);
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "The toggleStyleClass method was called once:");
@@ -12159,7 +12343,7 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
-	QUnit.test("Should show all items when drop down arrow is pressed after showing filtered list.", function (assert) {
+	QUnit.test("Should show all items when drop down arrow is pressed after showing filtered list.", async function (assert) {
 		// Setup
 		var fnGetVisisbleItems = function (aItems) {
 			return aItems.filter(function (oItem) {
@@ -12171,7 +12355,7 @@ sap.ui.define([
 		this.oCombobox.showItems(function (sValue, oItem) {
 			return oItem.getText() === "A Item 1";
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
@@ -12179,29 +12363,29 @@ sap.ui.define([
 
 		// Act
 		this.oCombobox._handlePopupOpenAndItemsLoad(true); // Icon press
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
 		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._getList().getItems()).length, 5, "All items are visible");
 	});
 
-	QUnit.test("Should not open the Popover in case of 0 items.", function (assert) {
+	QUnit.test("Should not open the Popover in case of 0 items.", async function (assert) {
 		// Act
 		this.oCombobox.showItems(function () {
 			return false;
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oCombobox.isOpen(), false, "The Popover should not be displayed.");
 	});
 
-	QUnit.test("Should display the empty item.", function (assert) {
+	QUnit.test("Should display the empty item.", async function (assert) {
 		var аListItems, oEmptyItem, iItemIdx;
 
 		// Act
 		this.oCombobox.addItem(new Item({text: "", key: "emptyItem"}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.oCombobox.open();
 
@@ -12215,13 +12399,13 @@ sap.ui.define([
 
 	QUnit.module("List configuration");
 
-	QUnit.test("List css classes", function (assert) {
+	QUnit.test("List css classes", async function (assert) {
 		// setup
 		var oComboBox = new ComboBox().placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oComboBox.open();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oComboBox._getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "List"),
@@ -12235,7 +12419,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("setFormattedValueStateText()", {
-		beforeEach: function () {
+		beforeEach: async function () {
+			this.clock = sinon.useFakeTimers();
 			this.oFormattedValueStateText = new FormattedText({
 				htmlText: "Value state message containing a %%0",
 				controls: new Link({
@@ -12264,18 +12449,20 @@ sap.ui.define([
 			});
 
 			this.oErrorComboBox.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
 		afterEach: function () {
 			this.oErrorComboBox.destroy();
 			this.oErrorComboBox = null;
 			this.oFormattedValueStateText = null;
+			fnRunAllTimersAndRestore(this.clock);
 		}
 	});
 
 	QUnit.test("Value state message and value state header with sap.m.FormattedText", function (assert) {
 		// Arrange
 		var oFormattedValueStateText;
+
 
 		// Act
 		qutils.triggerEvent("focusin", this.oErrorComboBox.getDomRef("inner"));
@@ -12331,23 +12518,22 @@ sap.ui.define([
 		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), ListHelpers.getListItem(this.oErrorComboBox.getItems()[0]).getId(), "Aria attribute of input is the ID of selected item");
 	});
 
-	QUnit.test("Arrow down when the visible focus is on the input should move it to the Value State Header", function (assert) {
+	QUnit.test("Arrow down when the visible focus is on the input should move it to the Value State Header", async function (assert) {
 		// Act
 		this.oErrorComboBox.open();
 		this.clock.tick(500);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
-
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(this.oErrorComboBox.getPicker().getCustomHeader().$().hasClass("sapMPseudoFocus"), "The visual pseudo focus is on the first item");
 		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), this.oErrorComboBox.getPicker().getCustomHeader().getFormattedText().getId(), "Aria attribute of input is the ID of the formatted value state text");
 	});
 
-	QUnit.test("Tapping on the input shoould apply the visual focus", function (assert) {
+	QUnit.test("Tapping on the input shoould apply the visual focus", async function (assert) {
 		// Arrange
 		var oComboBox = new ComboBox({
 			items: [
@@ -12369,7 +12555,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		var oFakeEvent = {
 			getEnabled: function () { return true; },
@@ -12379,7 +12565,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.focus();
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick();
@@ -12406,7 +12592,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Tapping on the disabled input shoould not apply the visual focus", function (assert) {
+	QUnit.test("Tapping on the disabled input shoould not apply the visual focus", async function (assert) {
 		// Arrange
 		var oComboBox = new ComboBox({
 			enabled: false,
@@ -12429,7 +12615,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oComboBox.ontap();
@@ -12442,7 +12628,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Setting new value state formatted text aggregation should be update also the value state header", function (assert) {
+	QUnit.test("Setting new value state formatted text aggregation should be update also the value state header", async function (assert) {
 		// Arrange
 		var	oSuggPopoverHeaderValueState,
 			oFormattedValueStateText;
@@ -12470,7 +12656,7 @@ sap.ui.define([
 		});
 
 		this.oErrorComboBox.setFormattedValueStateText(oFormattedValueStateText);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		this.oErrorComboBox.open();
 		this.clock.tick();
@@ -12480,13 +12666,13 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oSuggPopoverHeaderValueState, "Another value state message containing multiple links", "New FormattedText value state message is correcrtly set in the popover's value state header");
 	});
-	QUnit.test("Change to the formatted text InputBase aggregation should be forwarded to the value state header", function (assert) {
+	QUnit.test("Change to the formatted text InputBase aggregation should be forwarded to the value state header", async function (assert) {
 		// Arrange
 		var	oSuggPopoverHeaderValueState;
 
 		// Act
 		this.oErrorComboBox._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		this.oErrorComboBox.open();
 		this.clock.tick();
@@ -12497,7 +12683,7 @@ sap.ui.define([
 		assert.strictEqual(oSuggPopoverHeaderValueState, "New value state message containing a link", "The FormattedText aggregation is correctly forwarded to the popover's value state header");
 	});
 
-	QUnit.test("Change to the formatted text InputBase aggregation should should also be reflected in the value state header while it is open", function (assert) {
+	QUnit.test("Change to the formatted text InputBase aggregation should should also be reflected in the value state header while it is open", async function (assert) {
 		// Arrange
 		var oSuggPopoverHeaderValueState;
 		var oRenderedValueStateMessage;
@@ -12505,10 +12691,10 @@ sap.ui.define([
 		// Act
 		this.oErrorComboBox.focus();
 		this.oErrorComboBox.open();
-		this.clock.tick();
+		this.clock.tick(1000);
 
 		this.oErrorComboBox._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oSuggPopoverHeaderValueState = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader().getFormattedText().getDomRef().textContent;
 
 		// Assert
@@ -12516,7 +12702,7 @@ sap.ui.define([
 
 		// Act
 		this.oErrorComboBox.close();
-		this.clock.tick();
+		this.clock.tick(1000);
 
 		// Get the actual rendered value state text from the popup content DOM
 		oRenderedValueStateMessage = document.getElementById(this.oErrorComboBox.getValueStateMessageId()).textContent;
@@ -12580,6 +12766,7 @@ sap.ui.define([
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.TAB);
 		this.clock.tick();
 
+
 		oValueStateHeader = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader();
 
 		// Assert
@@ -12624,7 +12811,7 @@ sap.ui.define([
 
 		// Act
 		this.oErrorComboBox._$input.trigger("focus").val("@").trigger("input");
-		this.clock.tick();
+		this.clock.tick(500);
 
 		oValueStateFormattedText = this.oErrorComboBox.getFormattedValueStateText().getHtmlText();
 
@@ -12647,14 +12834,14 @@ sap.ui.define([
 
 		// Act
 		this.oErrorComboBox._$input.trigger("focus").val("Ger").trigger("input");
-		this.clock.tick();
+		this.clock.tick(500);
 
 		// Assert
 		assert.strictEqual(this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getSelectedItem().getTitle(), "Germany", "Suggestion item has been matched");
 
 		// Add one more character that will make the input value with no matching suggestion item
 		this.oErrorComboBox.handleInputValidation(oEventMock, false);
-		this.clock.tick();
+		this.clock.tick(500);
 
 		oValueStateFormattedText = this.oErrorComboBox.getFormattedValueStateText().getHtmlText();
 
@@ -12663,7 +12850,7 @@ sap.ui.define([
 		assert.strictEqual(document.querySelector("#" + this.oErrorComboBox.getValueStateMessageId() + " div").textContent, "Value state message containing a link", "The correct value state message is rendered and dispaleyd in the popup");
 	});
 
-	QUnit.test("Tapping on the input while valeu state header is focused shoould apply the visual focus on the input and remove it from the header", function (assert) {
+	QUnit.test("Tapping on the input while valeu state header is focused shoould apply the visual focus on the input and remove it from the header", async function (assert) {
 		var oFakeEvent = {
 			getEnabled: function () { return true; },
 			isMarked: function () {},
@@ -12677,7 +12864,7 @@ sap.ui.define([
 
 		// Act
 		this.oErrorComboBox.focus();
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick();
@@ -12700,6 +12887,7 @@ sap.ui.define([
 		assert.strictEqual(jQuery(this.oErrorComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is removed when the input field is on focus');
 	});
 
+
 	QUnit.module("selectedKey vs. value behavior", {
 		beforeEach: function () {
 			this.oData = {
@@ -12719,7 +12907,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Setters: selectedKey + matching item should overwrite the value", function (assert) {
+	QUnit.test("Setters: selectedKey + matching item should overwrite the value", async function (assert) {
 		// Setup
 		var oComboBox = new ComboBox({
 			value: "Zzzzzz",
@@ -12731,7 +12919,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -12741,7 +12929,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Setters: selectedKey + matching item should overwrite the value (changed setters order)", function (assert) {
+	QUnit.test("Setters: selectedKey + matching item should overwrite the value (changed setters order)", async function (assert) {
 		// Setup
 		var oComboBox = new ComboBox({
 			selectedKey: "2",
@@ -12753,7 +12941,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -12763,7 +12951,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Bindings: selectedKey + matching item should overwrite the value", function (assert) {
+	QUnit.test("Bindings: selectedKey + matching item should overwrite the value", async function (assert) {
 		// Setup
 		var oComboBox = new ComboBox({
 			value: "{/value}",
@@ -12775,7 +12963,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -12785,7 +12973,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Bindings: selectedKey + matching item should overwrite the value (changed binding order)", function (assert) {
+	QUnit.test("Bindings: selectedKey + matching item should overwrite the value (changed binding order)", async function (assert) {
 		// Setup
 		var oComboBox = new ComboBox({
 			selectedKey: "{/selectedKey}",
@@ -12797,7 +12985,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -12807,7 +12995,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Bindings: Value + No selectedKey: should leave the value as it is", function (assert) {
+	QUnit.test("Bindings: Value + No selectedKey: should leave the value as it is", async function (assert) {
 		// Setup
 		var oComboBox = new ComboBox({
 			value: "{/value}",
@@ -12818,7 +13006,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "", "selectedKey should remain");
@@ -12828,7 +13016,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Bindings: selectedKey + No Value: should set the value to the matching item", function (assert) {
+	QUnit.test("Bindings: selectedKey + No Value: should set the value to the matching item", async function (assert) {
 		// Setup
 		var oComboBox = new ComboBox({
 			selectedKey: "{/selectedKey}",
@@ -12839,7 +13027,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -12849,7 +13037,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Mixed: Binding: selectedKey, Setter: Value: should set the value of the matching item", function (assert) {
+	QUnit.test("Mixed: Binding: selectedKey, Setter: Value: should set the value of the matching item", async function (assert) {
 		// Setup
 		var oComboBox = new ComboBox({
 			value: "Zzzzzz",
@@ -12861,7 +13049,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -12871,7 +13059,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Mixed: Setter: selectedKey, Binding: Value: should set the value of the matching item", function (assert) {
+	QUnit.test("Mixed: Setter: selectedKey, Binding: Value: should set the value of the matching item", async function (assert) {
 		// Setup
 		var oComboBox = new ComboBox({
 			value: "{/value}",
@@ -12883,7 +13071,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -12893,7 +13081,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("User Interaction: Sets value over selectedKey", function (assert) {
+	QUnit.test("User Interaction: Sets value over selectedKey", async function (assert) {
 		// Setup
 		var oComboBox = new ComboBox({
 			selectedKey: "2",
@@ -12904,12 +13092,12 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oComboBox.focus();
 		qutils.triggerCharacterInput(oComboBox._$input, "T", "This is a user input");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 
 		// Assert
@@ -12920,7 +13108,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("User Interaction: Sets value over selectedKey (binding)", function (assert) {
+	QUnit.test("User Interaction: Sets value over selectedKey (binding)", async function (assert) {
 		// Setup
 		var oComboBox = new ComboBox({
 				selectedKey: "{/selectedKey}",
@@ -12931,12 +13119,12 @@ sap.ui.define([
 			})
 				.setModel(this.oModel)
 				.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oComboBox.focus();
 		qutils.triggerCharacterInput(oComboBox._$input, "T", "This is a user input");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 
 		// Assert
@@ -12947,7 +13135,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("User Interaction: Binding update should overwrite user value (binding: async)", function (assert) {
+	QUnit.test("User Interaction: Binding update should overwrite user value (binding: async)", async function (assert) {
 		// Setup
 		var oModel = new JSONModel(),
 			oComboBox = new ComboBox({
@@ -12959,16 +13147,16 @@ sap.ui.define([
 			})
 				.setModel(oModel)
 				.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oComboBox.focus();
 		qutils.triggerCharacterInput(oComboBox._$input, "T", "This is a user input");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oModel.setData(this.oData);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 
 		// Assert
@@ -12981,7 +13169,7 @@ sap.ui.define([
 
 	QUnit.module("RTL Support");
 
-	QUnit.test("If the sap.ui.core.Item's text direction is set explicitly it should be mapped to the StandardListItem", function (assert) {
+	QUnit.test("If the sap.ui.core.Item's text direction is set explicitly it should be mapped to the StandardListItem", async function (assert) {
 		// Arrange
 		var oComboBox = new ComboBox({
 			items: [
@@ -13000,7 +13188,7 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oComboBox.open();
@@ -13014,7 +13202,7 @@ sap.ui.define([
 
 	QUnit.module("Handling curly braces");
 
-	QUnit.test("Braces in binded text and key properties do not cause error", function(assert) {
+	QUnit.test("Braces in binded text and key properties do not cause error", async function(assert) {
 		// Arrange
 		var oSorter = new Sorter("head", false, true);
 		var oModel = new JSONModel({
@@ -13048,11 +13236,11 @@ sap.ui.define([
 
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oComboBox.showItems();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems()[0].getText(), "{ ttt", "Braces are correctly escaped in the separator item.");
@@ -13069,7 +13257,7 @@ sap.ui.define([
 
 	QUnit.module("ClearIcon");
 
-	QUnit.test("onkeyup setting the effectiveShowClearIcon property - no value", function(assert) {
+	QUnit.test("onkeyup setting the effectiveShowClearIcon property - no value", async function(assert) {
 		// Arrange
 		var oComboBox = new ComboBox({
 			showClearIcon: true
@@ -13077,13 +13265,13 @@ sap.ui.define([
 		var oSpy;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oSpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.onkeyup();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSpy.called, true, "setProperty was called");
@@ -13094,7 +13282,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onkeyup setting the effectiveShowClearIcon property - with value", function(assert) {
+	QUnit.test("onkeyup setting the effectiveShowClearIcon property - with value", async function(assert) {
 		// Arrange
 		var oComboBox = new ComboBox({
 			showClearIcon: true,
@@ -13103,13 +13291,13 @@ sap.ui.define([
 		var oSpy;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oSpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.onkeyup();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSpy.called, true, "setProperty was called");
@@ -13120,7 +13308,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onkeyup setting the effectiveShowClearIcon property - not editable", function(assert) {
+	QUnit.test("onkeyup setting the effectiveShowClearIcon property - not editable", async function(assert) {
 		// Arrange
 		var oComboBox = new ComboBox({
 			showClearIcon: true,
@@ -13129,13 +13317,13 @@ sap.ui.define([
 		var oSpy;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oSpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.onkeyup();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSpy.called, false, "setProperty was not called");
@@ -13145,7 +13333,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("'setShowClearIcon(false)' should hide the icon even if there is value", function(assert) {
+	QUnit.test("'setShowClearIcon(false)' should hide the icon even if there is value", async function(assert) {
 		// Arrange
 		var oComboBox = new ComboBox({
 			showClearIcon: true,
@@ -13154,13 +13342,13 @@ sap.ui.define([
 		var oSpy;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oSpy = this.spy(oComboBox._oClearIcon, "setVisible");
 
 		// Act
 		oComboBox.setShowClearIcon(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "setVisible was called exactly 1 time");
@@ -13171,7 +13359,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("'handleClearIconPress' should call clearSelection and setProperty", function(assert) {
+	QUnit.test("'handleClearIconPress' should call clearSelection and setProperty", async function(assert) {
 		// Arrange
 		var oComboBox = new ComboBox({
 			showClearIcon: true,
@@ -13180,14 +13368,14 @@ sap.ui.define([
 		var oClearSelectionSpy, oSetPropertySpy;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oClearSelectionSpy = this.spy(oComboBox, "clearSelection");
 		oSetPropertySpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.handleClearIconPress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oClearSelectionSpy.called, true, "clearSelection was called");
@@ -13199,8 +13387,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("'handleClearIconPress' should fire selectionChange and change event when changing the selected item", function(assert) {
-
+	QUnit.test("'handleClearIconPress' should fire selectionChange and change event when changing the selected item", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oItem1 = new Item({
 			text: "Lorem ipsum dolor sit amet, duo ut soleat insolens, commodo vidisse intellegam ne usu"
@@ -13217,17 +13405,17 @@ sap.ui.define([
 		oSelectionChangeEventSpy, oChangeEventSpy;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oComboBox.setSelectedItem(oItem1);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oSelectionChangeEventSpy = this.spy(oComboBox, "fireSelectionChange");
 		oChangeEventSpy = this.spy(oComboBox, "fireChange");
 
 		oComboBox.handleClearIconPress();
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSelectionChangeEventSpy.callCount, 1, "selectionChange event is triggered");
@@ -13239,10 +13427,10 @@ sap.ui.define([
 
 		oComboBox.setValue("test");
 		oComboBox.focus();
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oComboBox.handleClearIconPress();
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSelectionChangeEventSpy.callCount, 1, "selectionChange event is not triggered when there is no selected item");
@@ -13252,9 +13440,10 @@ sap.ui.define([
 		oSelectionChangeEventSpy.restore();
 		oSelectionChangeEventSpy.restore();
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("'handleClearIconPress' should not do anything when control is disabled", function(assert) {
+	QUnit.test("'handleClearIconPress' should not do anything when control is disabled", async function(assert) {
 		// Arrange
 		var oComboBox = new ComboBox({
 			showClearIcon: true,
@@ -13264,14 +13453,14 @@ sap.ui.define([
 		var oClearSelectionSpy, oSetPropertySpy;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oClearSelectionSpy = this.spy(oComboBox, "clearSelection");
 		oSetPropertySpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.handleClearIconPress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oClearSelectionSpy.called, false, "clearSelection was called");
@@ -13280,13 +13469,13 @@ sap.ui.define([
 		// Arrange
 		oComboBox.setEnabled(true);
 		oComboBox.setEditable(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oClearSelectionSpy.reset();
 		oSetPropertySpy.reset();
 
 		// Act
 		oComboBox.handleClearIconPress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oClearSelectionSpy.called, false, "clearSelection was called");
@@ -13298,7 +13487,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Clear icon should clear the filter and close the suggestions dropdown when open while entering value", function(assert) {
+	QUnit.test("Clear icon should clear the filter and close the suggestions dropdown when open while entering value", async function(assert) {
 		// Arrange
 		var oComboBox = new ComboBox({
 			showClearIcon: true,
@@ -13322,7 +13511,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oComboBox.focus();
@@ -13336,7 +13525,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.handleClearIconPress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notOk(oComboBox.isOpen(), "ComboBox is closed");
@@ -13346,7 +13535,8 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Clear icon should clear the filter but not close the suggestions dropdown when open explicitly", function(assert) {
+	QUnit.test("Clear icon should clear the filter but not close the suggestions dropdown when open explicitly", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oComboBox = new ComboBox({
 			showClearIcon: true,
@@ -13370,14 +13560,15 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oComboBox.focus();
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+
 		oComboBox.getFocusDomRef().value = "A";
 		qutils.triggerEvent("input", oComboBox.getFocusDomRef());
-
+		this.clock.tick(1000);
 
 		// Assert
 		assert.ok(oComboBox.isOpen(), "ComboBox is open");
@@ -13385,7 +13576,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.handleClearIconPress();
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(oComboBox.isOpen(), "ComboBox remains open");
@@ -13393,12 +13584,14 @@ sap.ui.define([
 
 		// Clean
 		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.module("List item styles");
 
-	QUnit.test(".sapMLIBFocused should not be applied on second typein", function (assert) {
+	QUnit.test(".sapMLIBFocused should not be applied on second typein", async function (assert) {
 		// Arrange
+		this.clock = sinon.useFakeTimers();
 		var oComboBox = new ComboBox({
 			items: [
 				new SeparatorItem({text: "Group1"}),
@@ -13410,7 +13603,7 @@ sap.ui.define([
 			]
 		});
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		var oFirstMatchingItem;
 
@@ -13430,6 +13623,9 @@ sap.ui.define([
 		// Assert
 		oFirstMatchingItem = oComboBox._getList().getItems()[1];
 		assert.notOk(oFirstMatchingItem.hasStyleClass("sapMLIBFocused"), "First matching item should not include .sapMLIBFocused on second typein");
+
+		oComboBox.destroy();
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.module("Asynchronous oData binding handling", {
@@ -13440,10 +13636,17 @@ sap.ui.define([
 		after: function() {
 			this.oMockServer.stop();
 			this.oMockServer.destroy();
+		},
+		afterEach: function () {
+			if (this.oComboBox) {
+				this.oComboBox.destroy();
+			}
+			fnRunAllTimersAndRestore(this.clock);
 		}
 	});
 
 	QUnit.test("it should correctly set the selection if the items aggregation is bounded to an OData model", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var done = assert.async();
 
 		// system under test
@@ -13451,20 +13654,19 @@ sap.ui.define([
 		// arrange
 		var sUri = "/service/";
 		var iAutoRespondAfter = 10;
-		var oModel = new ODataModel(sUri, true);
+		const oModel = new ODataModel(sUri, true);
 
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
 		this.clock.tick(iAutoRespondAfter + 1);
 
-		var oComboBox = new ComboBox({
+		const oComboBox = new ComboBox({
 			items: {
 				path: "/Products",
 				events: {
-					dataReceived: function() {
+					dataReceived: async function() {
 						oComboBox.placeAt("content");
-						oCore.applyChanges();
-
+						await nextUIUpdate();
 						assert.strictEqual(oComboBox.getSelectedItem().getText(), "Monitor Locking Cable");
 
 						oComboBox.destroy();
@@ -13484,12 +13686,14 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "id_5");
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("onsapshow Alt + DOWN - open the control's picker pop-up and select the text", function (assert) {
+	QUnit.test("onsapshow Alt + DOWN - open the control's picker pop-up and select the text", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 
 		// system under test
-		var oComboBox = new ComboBox({
+		const oComboBox = new ComboBox({
 			items: [
 				new Item({
 					key: "GER",
@@ -13502,7 +13706,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event
@@ -13524,12 +13728,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("it should open the dropdown list, show the busy indicator and load the items asynchronous when Alt + Down keys are pressed", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var done = assert.async();
 		var sUri = "/service/";
 		var iAutoRespondAfter = 10;
-		var oModel = new ODataModel(sUri);
+		const oModel = new ODataModel(sUri);
 
-		var oComboBox = new ComboBox({
+		const oComboBox = new ComboBox({
 			items: {
 				path: "/Products",
 				template: new Item({
@@ -13539,29 +13744,29 @@ sap.ui.define([
 				events: {
 					dataRequested: function() {
 						oComboBox.placeAt("content");
-						oCore.applyChanges();
+						nextUIUpdate().then(() => {
+							oComboBox.focus();
 
-						oComboBox.focus();
+							// act
+							qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 
-						// act
-						qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
-
-						// assert
-						assert.ok(oComboBox.isOpen(), "the dropdown list is open");
-						assert.strictEqual(oComboBox._getList().getBusy(), true, "the loading indicator in the dropdown list is shown");
-						assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-busy"), "true");
+							// assert
+							assert.ok(oComboBox.isOpen(), "the dropdown list is open");
+							assert.strictEqual(oComboBox._getList().getBusy(), true, "the loading indicator in the dropdown list is shown");
+							assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-busy"), "true");
+						});
 					},
 					dataReceived: function() {
-						oCore.applyChanges();
+						nextUIUpdate().then(() => {
+							assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
+							assert.strictEqual(oComboBox._getList().getBusy(), false, "the loading indicator in the dropdown list is not shown");
+							assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-busy"), undefined);
 
-						assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
-						assert.strictEqual(oComboBox._getList().getBusy(), false, "the loading indicator in the dropdown list is not shown");
-						assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-busy"), undefined);
+							oComboBox.destroy();
+							oModel.destroy();
 
-						oComboBox.destroy();
-						oModel.destroy();
-
-						done();
+							done();
+						});
 					}
 				}
 			},
@@ -13572,16 +13777,25 @@ sap.ui.define([
 
 		oComboBox.setModel(oModel);
 		this.clock.tick(iAutoRespondAfter + 1);
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("it should show busy indicator in the text field if the items are not loaded after a 300ms delay", function (assert) {
+	QUnit.test("it should show busy indicator in the text field if the items are not loaded after a 300ms delay", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		var done = assert.async();
 		var sUri = "/service/";
 		var iAutoRespondAfter = 400;
-		var oModel = new ODataModel(sUri, true);
+		const oModel = new ODataModel(sUri, true);
 		var that = this;
-		var oComboBox = new ComboBox({
+
+		var iOriginalAutoResponseTime = this.oMockServer._oServer.autoRespondAfter;
+
+		// For this test increase the server response time to 400ms in order to simulate bigger delay in data loading.
+		// Thus after 300ms the loading indicator of the items will be active and itmes will not be loaded yet
+		fnUpdateMockServerResponseTime(this.oMockServer, iAutoRespondAfter);
+
+		const oComboBox = new ComboBox({
 			items: {
 				path: "/Products",
 				template: new Item({
@@ -13589,17 +13803,20 @@ sap.ui.define([
 					text: "{Name}"
 				}),
 				events: {
-					dataRequested: function() {
-						oCore.applyChanges();
+					dataRequested: function () {
 						that.clock.tick(300);
 						assert.strictEqual(oComboBox.getBusy(), true);
+						// Restore original clock after ticking the fake timers otherwise firing of dataReceived event will not happen.
+						// If clock is not restored, the test execution hangs with fake timers, causing timeout.
+						fnRunAllTimersAndRestore(that.clock);
 					},
-					dataReceived: function() {
-						oCore.applyChanges();
+					dataReceived: function () {
 						assert.strictEqual(oComboBox.getBusy(), false);
 
 						oComboBox.destroy();
 						oModel.destroy();
+						// Restore mock server autoResponse time to initial value of 10ms
+						fnUpdateMockServerResponseTime(that.oMockServer, iOriginalAutoResponseTime);
 
 						done();
 					}
@@ -13611,23 +13828,24 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
-		this.clock.tick(iAutoRespondAfter);
+		this.clock.tick(iAutoRespondAfter + 1);
 	});
 
-	QUnit.test("it should load the items asynchronous when the Down arrow key is pressed and afterwards process the even", function (assert) {
+	QUnit.test("it should load the items asynchronous when the Down arrow key is pressed and afterwards process the even", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		var done = assert.async();
 		var sUri = "/service/";
 		var iAutoRespondAfter = 10;
-		var oModel = new ODataModel(sUri, true);
+		const oModel = new ODataModel(sUri, true);
 
-		var oComboBox = new ComboBox({
+		const oComboBox = new ComboBox({
 			items: {
 				path: "/Products",
 				template: new Item({
@@ -13635,9 +13853,7 @@ sap.ui.define([
 					text: "{Name}"
 				}),
 				events: {
-					dataReceived: function() {
-						oCore.applyChanges();
-
+					dataReceived: function () {
 						// assert
 						assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
 						assert.strictEqual(oComboBox.getValue(), "Psimax");
@@ -13662,7 +13878,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -13672,16 +13888,18 @@ sap.ui.define([
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
 		this.clock.tick(iAutoRespondAfter + 1);
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("it should load the items asynchronous when the Home key is pressed select the first selectable item", function (assert) {
+	QUnit.test("it should load the items asynchronous when the Home key is pressed select the first selectable item", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		var done = assert.async();
 		var sUri = "/service/";
 		var iAutoRespondAfter = 10;
-		var oModel = new ODataModel(sUri);
+		const oModel = new ODataModel(sUri);
 
-		var oComboBox = new ComboBox({
+		const oComboBox = new ComboBox({
 			items: {
 				path: "/Products",
 				template: new Item({
@@ -13690,8 +13908,6 @@ sap.ui.define([
 				}),
 				events: {
 					dataReceived: function() {
-						oCore.applyChanges();
-
 						// assert
 						assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
 						assert.strictEqual(oComboBox.getValue(), "Gladiator MX");
@@ -13703,6 +13919,9 @@ sap.ui.define([
 						assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_1");
 						assert.strictEqual(oComboBox.getSelectedKey(), "id_1");
 
+						oComboBox.destroy();
+						oModel.destroy();
+
 						done();
 					}
 				}
@@ -13713,7 +13932,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -13721,16 +13940,18 @@ sap.ui.define([
 
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
-		this.clock.tick(iAutoRespondAfter);
+		this.clock.tick(iAutoRespondAfter + 1);
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("it should load the items asynchronous when the End key is pressed and afterwards process the event", function (assert) {
+	QUnit.test("it should load the items asynchronous when the End key is pressed and afterwards process the event", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var done = assert.async();
 		var sUri = "/service/";
 		var iAutoRespondAfter = 10;
-		var oModel = new ODataModel(sUri);
+		const oModel = new ODataModel(sUri);
 
-		var oComboBox = new ComboBox({
+		const oComboBox = new ComboBox({
 			items: {
 				path: "/Products",
 				template: new Item({
@@ -13749,6 +13970,9 @@ sap.ui.define([
 						assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_16");
 						assert.strictEqual(oComboBox.getSelectedKey(), "id_16");
 
+						oComboBox.destroy();
+						oModel.destroy();
+
 						done();
 					}
 				}
@@ -13759,7 +13983,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -13768,15 +13992,17 @@ sap.ui.define([
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
 		this.clock.tick(iAutoRespondAfter + 1);
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("it should load the items asynchronous when the Page Down key is pressed and afterwards process the even", function (assert) {
+	QUnit.test("it should load the items asynchronous when the Page Down key is pressed and afterwards process the even", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var done = assert.async();
 		var sUri = "/service/";
 		var iAutoRespondAfter = 10;
-		var oModel = new ODataModel(sUri);
+		const oModel = new ODataModel(sUri);
 
-		var oComboBox = new ComboBox({
+		const oComboBox = new ComboBox({
 			items: {
 				path: "/Products",
 				template: new Item({
@@ -13796,6 +14022,9 @@ sap.ui.define([
 						assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_10");
 						assert.strictEqual(oComboBox.getSelectedKey(), "id_10");
 
+						oComboBox.destroy();
+						oModel.destroy();
+
 						done();
 					}
 				}
@@ -13806,7 +14035,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -13815,15 +14044,18 @@ sap.ui.define([
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
 		this.clock.tick(iAutoRespondAfter + 1);
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("it should load the items asynchronous when the Page Up key is pressed and afterwards process the even", function (assert) {
+	QUnit.test("it should load the items asynchronous when the Page Up key is pressed and afterwards process the even", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+
 		var done = assert.async();
 		var sUri = "/service/";
 		var iAutoRespondAfter = 10;
-		var oModel = new ODataModel(sUri);
+		const oModel = new ODataModel(sUri);
 
-		var oComboBox = new ComboBox({
+		const oComboBox = new ComboBox({
 			items: {
 				path: "/Products",
 				template: new Item({
@@ -13841,6 +14073,9 @@ sap.ui.define([
 						assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_1");
 						assert.strictEqual(oComboBox.getSelectedKey(), "id_1");
 
+						oComboBox.destroy();
+						oModel.destroy();
+
 						done();
 					}
 				}
@@ -13851,7 +14086,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 
 		// act
@@ -13860,15 +14095,17 @@ sap.ui.define([
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
 		this.clock.tick(iAutoRespondAfter + 1);
+		fnRunAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("it should load the items asynchronous and perform autocomplete", function (assert) {
+	QUnit.test("it should load the items asynchronous and perform autocomplete", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var done = assert.async();
 		var sUri = "/service/";
 		var iAutoRespondAfter = 10;
-		var oModel = new ODataModel(sUri);
+		const oModel = new ODataModel(sUri);
 
-		var oComboBox = new ComboBox({
+		this.oComboBox = new ComboBox({
 			items: {
 				path: "/Products",
 				template: new Item({
@@ -13877,51 +14114,55 @@ sap.ui.define([
 				}),
 				events: {
 					dataReceived: function() {
-						assert.strictEqual(oComboBox.getValue(), "Flat S", "the value is correct");
+						assert.strictEqual(this.oComboBox.getValue(), "Flat S", "the value is correct");
 
 						if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
-							assert.strictEqual(oComboBox.getSelectedText(), "at S", "the word completion is correct");
+							assert.strictEqual(this.oComboBox.getSelectedText(), "at S", "the word completion is correct");
 						}
 
-						assert.strictEqual(oComboBox.getSelectedItem().getText(), "Flat S");
-						assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_11");
-						assert.strictEqual(oComboBox.getSelectedKey(), "id_11");
-						assert.strictEqual(oComboBox.getItems().length, 16, "the items are loaded");
-						assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 3, "the suggestion list is filtered");
-						assert.ok(oComboBox.isOpen());
+						assert.strictEqual(this.oComboBox.getSelectedItem().getText(), "Flat S");
+						assert.strictEqual(this.oComboBox.getSelectedItem().getKey(), "id_11");
+						assert.strictEqual(this.oComboBox.getSelectedKey(), "id_11");
+						assert.strictEqual(this.oComboBox.getItems().length, 16, "the items are loaded");
+						assert.strictEqual(ListHelpers.getVisibleItems(this.oComboBox.getItems()).length, 3, "the suggestion list is filtered");
+						assert.ok(this.oComboBox.isOpen());
 
 						done();
-					}
+					}.bind(this)
 				}
 			},
 			loadItems: function() {
-				oComboBox.setModel(oModel);
-			}
+				this.oComboBox.setModel(oModel);
+			}.bind(this)
 		});
 
-		oComboBox.placeAt("content");
-		oCore.applyChanges();
-		oComboBox.focus();
-		var oTarget = oComboBox.getFocusDomRef();
+		this.oComboBox.placeAt("content");
+		await nextUIUpdate(this.clock);
+		this.oComboBox.focus();
+		var oTarget = this.oComboBox.getFocusDomRef();
 
 		// fake user interaction, (the keydown and input events)
 		oTarget.value = "F";
 		qutils.triggerKeydown(oTarget, KeyCodes.F);
 		qutils.triggerEvent("input", oTarget);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oTarget.value = "Fl";
 		qutils.triggerKeydown(oTarget, KeyCodes.L);
 		qutils.triggerEvent("input", oTarget);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
 		this.clock.tick(iAutoRespondAfter + 2);
+
+		this.clock.runToLast();
+		this.clock.restore(); // Restore the normal timers because "dataReceived" function will timeout otherwise
 	});
 
 	QUnit.module("General Interaction", {
-		beforeEach: function () {
+		beforeEach: async function () {
+			this.clock = sinon.useFakeTimers();
 			this.oComboBox = new ComboBox({
 				value: "1000",
 				items: [
@@ -13929,14 +14170,15 @@ sap.ui.define([
 					new Item({text: "100"})
 				]
 			}).placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
 		afterEach: function () {
 			this.oComboBox.destroy();
+			fnRunAllTimersAndRestore(this.clock);
 		}
 	});
 
-	QUnit.test("it should select item on backspace when having exact match", function (assert) {
+	QUnit.test("it should select item on backspace when having exact match", async function (assert) {
 		// Arrange
 		const oComboBox = this.oComboBox;
 		const oItem = oComboBox.getItems()[0];
@@ -13944,7 +14186,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.setSelectedItem(oItem);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oComboBox.focus();
 		qutils.triggerKeydown(oFocusDomRef, KeyCodes.BACKSPACE);
 		oFocusDomRef.value = "100";

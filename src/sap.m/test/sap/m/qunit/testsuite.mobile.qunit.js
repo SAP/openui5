@@ -186,13 +186,17 @@ sap.ui.define([
 			},
 			ComboBox: {
 				title: "Test Page for sap.m.ComboBox",
+				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					}
+				},
 				ui5: {
 					libs: "sap.m, sap.ui.layout",
 					language: "en"
-				},
-				sinon: {
-					version: 1, // test hangs with sinon 4
-					useFakeTimers: true
 				}
 			},
 			"opa/combobox/LoadItemsOPA": {

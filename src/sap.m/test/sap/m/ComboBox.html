@@ -20,8 +20,8 @@
 			}
 		</style>
 		<script>
-		sap.ui.getCore().attachInit(function () {
-			sap.ui.require([
+		sap.ui.require([
+				"sap/ui/core/Core",
 				"sap/ui/model/json/JSONModel",
 				"sap/ui/core/Item",
 				"sap/ui/core/SeparatorItem",
@@ -34,7 +34,10 @@
 				"sap/m/Link",
 				"sap/m/Text",
 				"sap/ui/core/library"
-			], function (JSONModel, Item, SeparatorItem, ListItem, HTML, HorizontalLayout, ComboBox, Label, FormattedText, Link, Text, coreLibrary){
+			], async function ( Core, JSONModel, Item, SeparatorItem, ListItem, HTML, HorizontalLayout, ComboBox, Label, FormattedText, Link, Text, coreLibrary){
+
+				await Core.ready();
+
 				var TextDirection = coreLibrary.TextDirection;
 				var oModel = new JSONModel();
 				var mData = {
@@ -485,7 +488,6 @@
 				};
 
 				oModel.setData(mData);
-				sap.ui.getCore().setModel(oModel);
 
 				var oItemTemplate = new ListItem({
 					key: "{key}",
@@ -1015,10 +1017,11 @@
 					initialPage: "page"
 				});
 
+				oApp.setModel(oModel);
+
 				oApp.addPage(oPage);
 				oApp.placeAt("body");
 			});
-		});
 	</script>
 	</head>
 	<body id="body" class="sapUiBody">
