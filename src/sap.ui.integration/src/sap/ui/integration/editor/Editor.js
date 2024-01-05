@@ -2494,10 +2494,7 @@ sap.ui.define([
 	 */
 	 Editor.prototype._addMetadataModel = function (oConfig, oField) {
 		if (oConfig.values && oConfig.values.metadata) {
-			var oRequestDefaultParameters = {
-				"synchronizationMode": "None"
-			};
-			oRequestDefaultParameters = merge(oRequestDefaultParameters, oConfig.values.metadata.request);
+			var oRequestDefaultParameters = merge({}, oConfig.values.metadata.request);
 
 			var oRequest = {
 				url: oRequestDefaultParameters.serviceUrl

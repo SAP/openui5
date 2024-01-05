@@ -86,7 +86,6 @@ sap.ui.define([
 				// create an ODataModel from URL
 				var oModel = new ODataModel({
 					serviceUrl: "https://services.odata.org/TripPinRESTierService/(S(id))/",
-					synchronizationMode: "None",
 					operationMode: "Server"
 				});
 				oModel.setSizeLimit(10);

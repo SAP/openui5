@@ -138,8 +138,7 @@ sap.ui.define([
 			oTable = new Table();
 
 		oModel = new ODataV4Model({
-			serviceUrl : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
-			synchronizationMode : "None"
+			serviceUrl : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"
 		});
 
 		oTable.setModel(oModel);
@@ -227,8 +226,7 @@ sap.ui.define([
 
 		oModel = new ODataV4Model({
 			autoExpandSelect : true,
-			serviceUrl : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
-			synchronizationMode : "None"
+			serviceUrl : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"
 		});
 
 		oTable.setModel(oModel);
@@ -298,8 +296,7 @@ sap.ui.define([
 			oVBox = new VBox();
 
 		oModel = new ODataV4Model({
-			serviceUrl : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
-			synchronizationMode : "None"
+			serviceUrl : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"
 		});
 
 		oVBox.setModel(oModel);
