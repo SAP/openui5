@@ -673,12 +673,6 @@ sap.ui.define([
 	GenericTile.prototype.onAfterRendering = function () {
 		this._setupResizeClassHandler();
 
-		// attaches handler this._updateAriaAndTitle to the event mouseenter and removes attributes ARIA-label and title of all content elements
-		this.$().on("mouseenter", this._updateAriaAndTitle.bind(this));
-
-		// attaches handler this._removeTooltipFromControl to the event mouseleave and removes control's own tooltips (Truncated header text and MicroChart tooltip).
-		this.$().on("mouseleave", this._removeTooltipFromControl.bind(this));
-
 		var sMode = this.getMode();
 		var bScreenLarge = this._isScreenLarge();
 		this._sGenericTileResizeListenerId = ResizeHandler.register(this, this._handleResizeOnTile.bind(this));
@@ -826,6 +820,14 @@ sap.ui.define([
 			if (this.getMode() === GenericTileMode.LineMode) {
 				this.removeStyleClass("sapMGTLineModePress");
 			}
+		}
+		if (this.getDomRef()) {
+			// removes event listener handler this._updateAriaAndTitle and this._removeTooltipFromControl to the event mouseenter and mouseleave
+			this.getDomRef().removeEventListener("mouseenter",this._updateAriaAndTitle.bind(this));
+			this.getDomRef().removeEventListener("mouseleave",this._removeTooltipFromControl.bind(this));
+			// attaches event listener handler this._updateAriaAndTitle and this._removeTooltipFromControl to the event mouseenter and mouseleave
+			this.getDomRef().addEventListener("mouseenter",this._updateAriaAndTitle.bind(this));
+			this.getDomRef().addEventListener("mouseleave",this._removeTooltipFromControl.bind(this));
 		}
 	};
 
