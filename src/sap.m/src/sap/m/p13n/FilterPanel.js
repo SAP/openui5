@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/ComboBox",
 	"sap/ui/core/library",
 	"sap/m/library",
-	"sap/m/Label"
+	"sap/m/Label",
+	"sap/ui/core/Lib"
 ], (
 	QueryPanel,
 	VBox,
@@ -20,7 +21,8 @@ sap.ui.define([
 	ComboBox,
 	coreLibrary,
 	mLibrary,
-	Label
+	Label,
+	Library
 ) => {
 	"use strict";
 
@@ -71,6 +73,14 @@ sap.ui.define([
 				 */
 				itemFactory: {
 					type: "function"
+				},
+				/**
+				 * A short text describing the panel.
+				 * <b>Note:</b> This text will only be displayed if the panel is being used in a <code>sap.m.p13n.Popup</code>.
+				 */
+				title: {
+					type: "string",
+					defaultValue: Library.getResourceBundleFor("sap.m").getText("p13n.DEFAULT_TITLE_FILTER")
 				}
 			}
 		},
