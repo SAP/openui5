@@ -277,7 +277,6 @@ sap.ui.define([
 			]
 		});
 		this.oControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
 
 		var sTextInControl = "T";
 

@@ -99,14 +99,14 @@ sap.ui.define([
 					id: "buttonOutsideOfTheApp",
 					success: function () {
 						var oIFrameWindow = Opa5.getWindow();
-						oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.test.autowaiter._timeoutWaiter, "hasPending").returns(false);
-						oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.test.autowaiter._XHRWaiter, "hasPending").returns(false);
-						oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.test.autowaiter._promiseWaiter, "hasPending").returns(false);
+						oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.require("sap/ui/test/autowaiter/_timeoutWaiter"), "hasPending").returns(false);
+						oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.require("sap/ui/test/autowaiter/_XHRWaiter"), "hasPending").returns(false);
+						oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.require("sap/ui/test/autowaiter/_promiseWaiter"), "hasPending").returns(false);
 
-						Opa5.assert.ok(!oIFrameWindow.sap.ui.test.autowaiter._autoWaiter.hasToWait(), "Navigation not started");
+						Opa5.assert.ok(!oIFrameWindow.sap.ui.require("sap/ui/test/autowaiter/_autoWaiter").hasToWait(), "Navigation not started");
 
 						oApp.to(oApp.getPages()[1].getId());
-						Opa5.assert.ok(oIFrameWindow.sap.ui.test.autowaiter._autoWaiter.hasToWait(), "autoWaiter detected the navigation");
+						Opa5.assert.ok(oIFrameWindow.sap.ui.require("sap/ui/test/autowaiter/_autoWaiter").hasToWait(), "autoWaiter detected the navigation");
 					}
 				});
 			}
