@@ -100,8 +100,18 @@
 				}
 			},
 			"header": {
-				"title": "List Card with Products",
-				"subTitle": "Products and Prices"
+				"title": "{parameters>/title/value}",
+				"subTitle": "{parameters>/subTitle/value}"
+			},
+			"configuration": {
+				"parameters": {
+					"title": {
+						"value": "List Card with Products"
+					},
+					"subTitle": {
+						"value": "Products and Prices"
+					}
+				}
 			},
 			"content": {
 				"data": {

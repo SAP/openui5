@@ -1,0 +1,27 @@
+{
+	"title": "Top 5 Products Sales",
+	"subTitle": "By Average Price",
+	"numericIndicator": {
+		"iconSrc": "sap-icon://line-charts",
+		"number": "1762",
+		"unit": "EUR"
+	},
+	"kpiInfos": {
+		"kpi": {
+			"number": "200",
+			"unit": "K",
+			"trend": "Up",
+			"state": "Critical",
+			"target": {
+				"number": 250,
+				"unit": "K"
+			},
+			"deviation": {
+				"number": 25
+			},
+			"details": "Q1, 2019",
+			"appShortcut": "App Shortcut",
+			"systemInfo": "System Info"
+		}
+	}
+}
