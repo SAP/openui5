@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
 	"sap/ui/table/Row",
@@ -9,7 +10,17 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/Device",
 	"sap/ui/core/Core"
-], function(qutils, RowAction, RowActionItem, Row, Table, TableUtils, Device, oCore) {
+], function(
+	qutils,
+	nextUIUpdate,
+	RowAction,
+	RowActionItem,
+	Row,
+	Table,
+	TableUtils,
+	Device,
+	oCore
+) {
 	"use strict";
 
 	QUnit.module("API", {
@@ -121,10 +132,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oRowAction = new RowAction();
 			this.oRowAction.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oRowAction.destroy();
@@ -210,9 +221,9 @@ sap.ui.define([
 		}, [], []);
 	});
 
-	QUnit.test("setVisible", function(assert) {
+	QUnit.test("setVisible", async function(assert) {
 		this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://search", text: "A"}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		checkRendering(this, assert, function() {
 			this.oRowAction.setVisible(false);
@@ -224,9 +235,9 @@ sap.ui.define([
 		assert.ok(!this.oRowAction.getDomRef().classList.contains("sapUiTableActionHidden"), "RowAction visible");
 	});
 
-	QUnit.test("setTooltip", function(assert) {
+	QUnit.test("setTooltip", async function(assert) {
 		this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://search", text: "A"}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		checkRendering(this, assert, function() {
 			this.oRowAction.setTooltip("Some Tooltip");
@@ -238,18 +249,18 @@ sap.ui.define([
 		assert.ok(!this.oRowAction.getDomRef().getAttribute("title"), "Tooltip is not set");
 	});
 
-	QUnit.test("Item.setIcon", function(assert) {
+	QUnit.test("Item.setIcon", async function(assert) {
 		this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://search", text: "A"}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		checkRendering(this, assert, function() {
 			this.oRowAction.getItems()[0].setIcon("sap-icon://delete");
 		}, ["sap-icon://delete"], ["A"]);
 	});
 
-	QUnit.test("Item.setText / Item.setTooltip", function(assert) {
+	QUnit.test("Item.setText / Item.setTooltip", async function(assert) {
 		this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://search", text: "A"}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		checkRendering(this, assert, function() {
 			this.oRowAction.getItems()[0].setText("Some Text");
@@ -262,14 +273,14 @@ sap.ui.define([
 		}, ["sap-icon://search"], ["Some Text"]);
 	});
 
-	QUnit.test("Item.setVisible", function(assert) {
+	QUnit.test("Item.setVisible", async function(assert) {
 		this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://search", text: "A"}));
 		this.oRowAction.addItem(new RowActionItem({
 			icon: "sap-icon://delete",
 			tooltip: "B",
 			text: "Wrong"
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		checkRendering(this, assert, function() {
 			this.oRowAction.getItems()[0].setVisible(false);
@@ -297,12 +308,12 @@ sap.ui.define([
 		}, ["sap-icon://account"], [TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_DELETE")]);
 	});
 
-	QUnit.test("Non-fixed column layout", function(assert) {
+	QUnit.test("Non-fixed column layout", async function(assert) {
 		this.oRowAction._bFixedLayout = false;
 		this.oRowAction.addItem(new RowActionItem({type: "Delete", text: "A"}));
 		this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://search", text: "B"}));
 		this.oRowAction.getItems()[0].setVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!this.oRowAction.getDomRef().children[0].classList.contains("sapUiTableActionHidden"), "Icon 1 visible");
 		assert.ok(this.oRowAction.getDomRef().children[1].classList.contains("sapUiTableActionHidden"), "Icon 2 hidden");
@@ -311,7 +322,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Behavior", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oRowAction = new RowAction();
 			this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://search", text: "A"}));
 			this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://delete", tooltip: "B"}));
@@ -319,7 +330,7 @@ sap.ui.define([
 			sinon.stub(this.oRowAction, "getRow").returns(this.oRow);
 			this.aInnerIcons = this.oRowAction.getAggregation("_icons");
 			this.oRowAction.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oRow.destroy();
@@ -349,7 +360,7 @@ sap.ui.define([
 		assert.equal(oEventParams.item, this.oRowAction.getItems()[1], "Event Parameter 'item'");
 	});
 
-	QUnit.test("Press on second item (non-fixed column layout)", function(assert) {
+	QUnit.test("Press on second item (non-fixed column layout)", async function(assert) {
 		var oEventParams = null;
 
 		this.oRowAction._bFixedLayout = false;
@@ -357,7 +368,7 @@ sap.ui.define([
 			oEventParams = oEvent.getParameters();
 		});
 		this.oRowAction.getItems()[0].setVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.aInnerIcons[0].firePress();
 
@@ -366,11 +377,11 @@ sap.ui.define([
 		assert.equal(oEventParams.item, this.oRowAction.getItems()[1], "Event Parameter 'item'");
 	});
 
-	QUnit.test("Press on menu item (click / tab)", function(assert) {
+	QUnit.test("Press on menu item (click / tab)", async function(assert) {
 		var oEventParams = null;
 
 		this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://account", tooltip: "C"}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!this.oRowAction.getAggregation("_menu"), "No Menu initialized yet");
 
@@ -392,11 +403,11 @@ sap.ui.define([
 		assert.equal(oEventParams.item, this.oRowAction.getItems()[1], "Event Parameter 'item'");
 	});
 
-	QUnit.test("Press on menu item (enter)", function(assert) {
+	QUnit.test("Press on menu item (enter)", async function(assert) {
 		var oEventParams = null;
 
 		this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://account", tooltip: "C"}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!this.oRowAction.getAggregation("_menu"), "No Menu initialized yet");
 
@@ -418,13 +429,13 @@ sap.ui.define([
 		assert.equal(oEventParams.item, this.oRowAction.getItems()[1], "Event Parameter 'item'");
 	});
 
-	QUnit.test("Press on menu item with count 1", function(assert) {
+	QUnit.test("Press on menu item with count 1", async function(assert) {
 		var oEventParams = null;
 
 		this.stub(this.oRowAction, "_getSize").returns(1);
 
 		this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://account", tooltip: "C"}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!this.oRowAction.getAggregation("_menu"), "No Menu initialized yet");
 
@@ -447,12 +458,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("ACC", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oRowAction = new RowAction();
 			this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://search", text: "A"}));
 			this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://delete", tooltip: "B"}));
 			this.oRowAction.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oRowAction.destroy();
@@ -497,7 +508,7 @@ sap.ui.define([
 			"ACCInfo.description: 0 Items");
 	});
 
-	QUnit.test("Icon label", function(assert) {
+	QUnit.test("Icon label", async function(assert) {
 		var oRow = new Row();
 		var oTable = new Table("table", {
 			rowActionCount: 1
@@ -507,7 +518,7 @@ sap.ui.define([
 		oTable.addDependent(oRow);
 		this.stub(this.oRowAction, "getRow").returns(oRow);
 		this.oRowAction.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		for (var i = 0; i < aIcons.length; i++) {
 			assert.equal(aIcons[i].getAriaLabelledBy().length, 1, "Number of Labels correct for item " + i);
@@ -515,7 +526,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Menu icon", function(assert) {
+	QUnit.test("Menu icon", async function(assert) {
 		var aIcons = this.oRowAction.getAggregation("_icons");
 
 		for (var i = 0; i < aIcons.length; i++) {
@@ -523,14 +534,14 @@ sap.ui.define([
 		}
 
 		this.oRowAction.addItem(new RowActionItem({type: "Delete"}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!aIcons[0].getDomRef().getAttribute("aria-haspopup"), "No aria-haspopup on icon 0");
 		assert.equal(aIcons[1].getDomRef().getAttribute("aria-haspopup"), "menu", "aria-haspopup on icon 1");
 
 		this.stub(this.oRowAction, "_getSize").returns(1);
 		this.oRowAction.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(aIcons[0].getDomRef().getAttribute("aria-haspopup"), "menu", "aria-haspopup on icon 0");
 	});
 });

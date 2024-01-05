@@ -2,14 +2,12 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/Sorter",
-	"sap/ui/model/Filter",
-	"sap/ui/core/Core"
+	"sap/ui/model/Filter"
 ], function(
 	TableQUnitUtils,
 	TableUtils,
 	Sorter,
-	Filter,
-	Core
+	Filter
 ) {
 	"use strict";
 
@@ -92,11 +90,11 @@ sap.ui.define([
 	QUnit.test("Re-render and refresh", function(assert) {
 		this.createTable();
 
-		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(() => {
+		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(async() => {
 			this.resetRowsUpdatedSpy();
 			this.oTable.invalidate();
 			this.oTable.getBinding().refresh(true);
-			Core.applyChanges();
+			await this.oTable.qunit.whenRenderingFinished();
 
 			return this.checkRowsUpdated(assert, [
 				TableUtils.RowsUpdateReason.Render

@@ -1,8 +1,8 @@
 /*global QUnit, sinon, oTable, oTreeTable */
 
 sap.ui.define([
-	"sap/base/i18n/Localization",
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
@@ -15,13 +15,14 @@ sap.ui.define([
 	"sap/ui/table/RowSettings",
 	"sap/ui/base/Object",
 	"sap/base/i18n/ResourceBundle",
+	"sap/base/i18n/Localization",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	// provides jQuery custom selectors ":sapTabbable", ":sapFocusable"
 	"sap/ui/dom/jquery/Selectors"
 ], function(
-	Localization,
 	TableQUnitUtils,
+	nextUIUpdate,
 	TableUtils,
 	Table,
 	Column,
@@ -34,15 +35,13 @@ sap.ui.define([
 	RowSettings,
 	BaseObject,
 	ResourceBundle,
+	Localization,
 	jQuery,
 	oCore
 ) {
 	"use strict";
 
-	// Shortcuts
 	var SelectionMode = TableLibrary.SelectionMode;
-
-	// mapping of global function calls
 	var createTables = window.createTables;
 	var destroyTables = window.destroyTables;
 	var getCell = window.getCell;
@@ -52,7 +51,6 @@ sap.ui.define([
 	var getSelectAll = window.getSelectAll;
 	var iNumberOfRows = window.iNumberOfRows;
 	var initRowActions = window.initRowActions;
-
 	var TestControl = TableQUnitUtils.TestControl;
 	var TestInputControl = TableQUnitUtils.TestInputControl;
 
@@ -180,7 +178,7 @@ sap.ui.define([
 		assert.ok(!TableUtils.isVariableRowHeightEnabled(oTable), "VariableRowHeight is disabled when fixed bottom rows are available.");
 	});
 
-	QUnit.test("getCellInfo", function(assert) {
+	QUnit.test("getCellInfo", async function(assert) {
 		initRowActions(oTable, 1, 1);
 		oTable.getColumns()[1].setVisible(false);
 		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_1_1"}));
@@ -188,7 +186,7 @@ sap.ui.define([
 		oTable.getColumns()[2].setHeaderSpan(2);
 		oTable.getColumns()[0].setCreationTemplate(new TestInputControl());
 		oTable.setCreationRow(new CreationRow());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		/* Data Cells */
 
@@ -342,16 +340,16 @@ sap.ui.define([
 		assert.deepEqual(oInfo, oDefaultInfo, "Passed a dom element which is no table cell -> Returned the info object with default values");
 	});
 
-	QUnit.test("hasRowHeader", function(assert) {
+	QUnit.test("hasRowHeader", async function(assert) {
 		assert.ok(TableUtils.hasRowHeader(oTable), "Table has row header in selectionMode 'MultiToggle'");
 
 		oTable.setSelectionMode(SelectionMode.None);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(!TableUtils.hasRowHeader(oTable), "Table has row header in selectionMode 'None'");
 
 		oTable.setSelectionMode(SelectionMode.MultiToggle);
 		oTable.setSelectionBehavior(TableLibrary.SelectionBehavior.RowOnly);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(!TableUtils.hasRowHeader(oTable), "Table has row header in selectionBehavior 'RowOnly'");
 	});
 
@@ -442,28 +440,28 @@ sap.ui.define([
 		assert.ok(TableUtils.hasRowNavigationIndicators(oTable), "Row navigated is bound: Returned true");
 	});
 
-	QUnit.test("getVisibleColumnCount", function(assert) {
+	QUnit.test("getVisibleColumnCount", async function(assert) {
 		assert.equal(TableUtils.getVisibleColumnCount(oTable), oTable.columnCount, "All columns visible");
 
 		oTable.getColumns()[1].setVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(TableUtils.getVisibleColumnCount(oTable), oTable.columnCount - 1, "1 column hidden");
 	});
 
-	QUnit.test("getHeaderRowCount", function(assert) {
+	QUnit.test("getHeaderRowCount", async function(assert) {
 		assert.equal(TableUtils.getHeaderRowCount(oTable), 1, "Initial Number of header rows");
 		oTable.setColumnHeaderVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(TableUtils.getHeaderRowCount(oTable), 0, "Headers hidden");
 		oTable.setColumnHeaderVisible(true);
 		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
 		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
 		oTable.getColumns()[1].setHeaderSpan([2, 1]);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(TableUtils.getHeaderRowCount(oTable), 2, "Multiline Headers");
 		oTable.setColumnHeaderVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(TableUtils.getHeaderRowCount(oTable), 0, "Multiline Headers hidden");
 	});
 
@@ -506,7 +504,7 @@ sap.ui.define([
 			"Number of visible and data rows (#data = #visiblerows)");
 	});
 
-	QUnit.test("toggleRowSelection", function(assert) {
+	QUnit.test("toggleRowSelection", async function(assert) {
 		var iCallbackIndex = -1;
 		var fnSelectionCallback = function(oRow) {
 			iCallbackIndex = oRow.getIndex();
@@ -551,7 +549,7 @@ sap.ui.define([
 
 		// If row selection is not allowed on data cells the selection state should not change.
 		oTable.setSelectionBehavior(TableLibrary.SelectionBehavior.RowSelector);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oElem = getCell(0, 0);
 		TableUtils.toggleRowSelection(oTable, oElem); // Toggle
@@ -585,9 +583,9 @@ sap.ui.define([
 		testLocal(oTable.getRows()[2]);
 	});
 
-	QUnit.test("getRowColCell", function(assert) {
+	QUnit.test("getRowColCell", async function(assert) {
 		oTable.getColumns()[2].setVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oInfo = TableUtils.getRowColCell(oTable, 0, 0, false);
 		assert.strictEqual(oInfo.row, oTable.getRows()[0], "Row 1");
@@ -975,7 +973,7 @@ sap.ui.define([
 		assert.strictEqual(TableUtils.hasData(oTable), false, "Table has no data");
 	});
 
-	QUnit.test("isBusyIndicatorVisible", function(assert) {
+	QUnit.test("isBusyIndicatorVisible", async function(assert) {
 		oTable.setBusyIndicatorDelay(0);
 
 		assert.ok(!TableUtils.isBusyIndicatorVisible(), "Invalid parameter passed: Returned false");
@@ -983,27 +981,26 @@ sap.ui.define([
 		assert.ok(!TableUtils.isBusyIndicatorVisible(oTable), "The busy indicator is not visible: Returned false");
 
 		oTable.setBusy(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(TableUtils.isBusyIndicatorVisible(oTable),
 			"The tables busy indicator is visible: Returned true");
 
 		oTable.getRows()[0].getCells()[0].setBusyIndicatorDelay(0);
 		oTable.getRows()[0].getCells()[0].setBusy(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(TableUtils.isBusyIndicatorVisible(oTable),
 			"The tables busy indicator is visible, and a cells busy indicator is visible: Returned true");
 
 		oTable.setBusy(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(!TableUtils.isBusyIndicatorVisible(oTable),
 			"The tables busy indicator is not visible, but a cells busy indicator is visible: Returned false");
 	});
 
 	QUnit.test("isA", function(assert) {
-		var oBaseObjectIsA = this.spy(BaseObject, "isA");
-		var vBaseObjectReturn;
+		var oBaseObjectIsA = this.spy(BaseObject, "isObjectA");
 
-		// TableUtils#isA is just a wrapper for sap.ui.base.Object#isA. Therefore, we only check whether TableUtils#isA correctly calls the base
+		// TableUtils.isA is just a wrapper for sap.ui.base.Object.isA. Therefore, we only check whether TableUtils.isA correctly calls the base
 		// method and returns the same value.
 
 		[
@@ -1013,17 +1010,19 @@ sap.ui.define([
 			[oTable, "sap.ui.table.AnalyticalTable"],
 			[oTable, ["sap.ui.table.Table", "sap.ui.table.AnalyticalTable"]]
 		].forEach(function(aArguments) {
-			vBaseObjectReturn = BaseObject.isA.apply(BaseObject, aArguments);
-			assert.ok(oBaseObjectIsA.calledWith(aArguments[0], aArguments[1]),
-				"sap.ui.base.Object#isA was called with the same parameters as TableUtils#isA");
-			assert.strictEqual(vBaseObjectReturn, TableUtils.isA.apply(TableUtils, aArguments),
-				"TableUtils#isA returns the same as sap.ui.base.Object#isA");
+			const vBaseObjectReturnValue = BaseObject.isObjectA(aArguments[0], aArguments[1]);
+
+			oBaseObjectIsA.resetHistory();
+			assert.strictEqual(vBaseObjectReturnValue, TableUtils.isA(aArguments[0], aArguments[1]),
+				"TableUtils.isA returns the same as sap.ui.base.Object.isObjectA");
+			assert.ok(oBaseObjectIsA.calledOnceWithExactly(aArguments[0], aArguments[1]),
+				"sap.ui.base.Object.isObjectA was called once with the same parameters as TableUtils.isA");
 		});
 
 		oBaseObjectIsA.restore();
 	});
 
-	QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
+	QUnit.test("isFirstScrollableRow / isLastScrollableRow", async function(assert) {
 		var iVisibleRowCount = 6;
 		var iFixedTop = 2;
 		var iFixedBottom = 2;
@@ -1033,7 +1032,7 @@ sap.ui.define([
 			fixedTopRowCount: iFixedTop,
 			fixedBottomRowCount: iFixedBottom
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		for (var j = 0; j < 2; j++) {
 			for (var i = 0; i < iVisibleRowCount; i++) {
@@ -1045,12 +1044,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getCell", function(assert) {
+	QUnit.test("getCell", async function(assert) {
 		oTable.setRowActionCount(2);
 		oTable.setRowActionTemplate(new RowAction());
 		oTable.getColumns()[0].setCreationTemplate(new TestInputControl());
 		oTable.setCreationRow(new CreationRow());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(TableUtils.getCell(), null, "Returned null: Invalid input");
 		assert.strictEqual(TableUtils.getCell(oTable), null, "Returned null: Invalid input");
@@ -1592,40 +1591,40 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getContentDensity", function(assert) {
+	QUnit.test("getContentDensity", async function(assert) {
 		var oSecondLevel = new this.TableUtilsDummyControl({content: [this.oTable]});
 		var oFirstLevel = new this.TableUtilsDummyControl({content: [oSecondLevel]});
 		var $Body = jQuery(document.body);
 		$Body.toggleClass("sapUiSizeCozy", false);
 
 		oFirstLevel.placeAt("__table-outer", 0);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(TableUtils.getContentDensity(this.oTable), undefined, "No content density set to far");
 
 		$Body.toggleClass("sapUiSizeCozy", true);
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCozy", "sapUiSizeCozy at Body");
 
 		oFirstLevel.addStyleClass("sapUiSizeCompact");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCompact", "sapUiSizeCompact at FirstLevel");
 
 		oSecondLevel.addStyleClass("sapUiSizeCondensed");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed", "sapUiSizeCondensed at SecondLevel");
 
 		oSecondLevel.addStyleClass("sapUiSizeCozy");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed",
 			"sapUiSizeCozy and sapUiSizeCondensed at SecondLevel -> sapUiSizeCondensed");
 
 		oSecondLevel.addStyleClass("sapUiSizeCompact");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed",
 			"sapUiSizeCozy, sapUiSizeCompact and sapUiSizeCondensed at SecondLevel -> sapUiSizeCondensed");
 
 		oSecondLevel.removeStyleClass("sapUiSizeCompact");
 		this.oTable.addStyleClass("sapUiSizeCompact");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCompact", "sapUiSizeCompact at Table");
 
 		oSecondLevel.addStyleClass("sapUiSizeCompact");
@@ -1672,29 +1671,29 @@ sap.ui.define([
 		$Body.toggleClass("sapUiSizeCozy", true);
 	});
 
-	QUnit.test("getContentDensity table in UI Area", function(assert) {
+	QUnit.test("getContentDensity table in UI Area", async function(assert) {
 		this.oTable.placeAt("__table-outer", 0);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $Body = jQuery(document.body);
 		$Body.toggleClass("sapUiSizeCozy", false);
 
 		assert.strictEqual(TableUtils.getContentDensity(this.oTable), undefined, "No content density set to far");
 
 		this.oTable.addStyleClass("sapUiSizeCozy");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCozy", "sapUiSizeCozy at table");
 
 		$Body.toggleClass("sapUiSizeCozy", true);
 	});
 
 	QUnit.module("Cell Content", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			createTables();
 			TableQUnitUtils.addColumn(oTable, "Not Focusable & Not Tabbable", "NoFocusNoTab");
 			TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "FocusTab", true, null, true);
 			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "NoTab", true, null, false);
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			destroyTables();

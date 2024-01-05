@@ -365,6 +365,7 @@ sap.ui.define([
 
 		this.setBindingContext(oState.context, sModelName);
 		this.getDomRefs(true).row.toggleClass("sapUiTableRowHidden", this.isContentHidden());
+		/** @deprecated As of version 1.64 */
 		this._updateTableCells(oTable);
 	};
 
@@ -376,6 +377,7 @@ sap.ui.define([
 		return Element.prototype.setBindingContext.call(this, oContext || null, sModelName);
 	};
 
+	/** @deprecated As of version 1.64 */
 	Row.prototype._updateTableCells = function(oTable) {
 		var aCells = this.getCells(),
 			iAbsoluteRowIndex = this.getIndex(),

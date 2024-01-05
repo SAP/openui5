@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Column",
 	"sap/ui/table/Table",
@@ -21,6 +22,7 @@ sap.ui.define([
 ], function(
 	TableQUnitUtils,
 	qutils,
+	nextUIUpdate,
 	TableUtils,
 	Column,
 	Table,
@@ -105,7 +107,7 @@ sap.ui.define([
 		test(false, false, true, null);
 	});
 
-	QUnit.test("#isDragAllowed", function(assert) {
+	QUnit.test("#isDragAllowed", async function(assert) {
 		var oColumn = new Column({
 			label: new TableQUnitUtils.TestControl({text: "col2header"})
 		}),
@@ -122,7 +124,7 @@ sap.ui.define([
 		oStubIsColumnMovable = sinon.stub(TableUtils.Column, "isColumnMovable");
 
 		oTable.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oStubIsColumnMovable.returns(true);
 		assert.ok(oColumn.isDragAllowed(dragDropInfo), "Dragging column is allowed");
@@ -636,7 +638,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Changes that affect rows", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oColumn = new Column();
 			this.oTable = new Table({
 				columns: [this.oColumn]
@@ -645,7 +647,7 @@ sap.ui.define([
 			this.oTable.setCreationRow(this.oCreationRow);
 
 			this.oTable.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oColumn.destroy();

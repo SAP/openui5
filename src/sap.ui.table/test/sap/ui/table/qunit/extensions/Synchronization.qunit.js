@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
-	"sap/ui/Device",
-	"sap/ui/core/Core"
+	"sap/ui/Device"
 ], function(
 	RenderManager,
 	TableQUnitUtils,
@@ -18,8 +17,7 @@ sap.ui.define([
 	FixedRowMode,
 	TableUtils,
 	library,
-	Device,
-	oCore
+	Device
 ) {
 	"use strict";
 
@@ -106,58 +104,50 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sync row count", function(assert) {
-		var oTable = this.oTable;
-		var oSyncInterface;
+	QUnit.test("Sync row count", async function(assert) {
+		const oSyncInterface = await this.oTable._enableSynchronization();
 
-		return oTable._enableSynchronization().then(function(_oSyncInterface) {
-			oSyncInterface = _oSyncInterface;
-			oSyncInterface.rowCount = sinon.spy();
+		oSyncInterface.rowCount = sinon.spy();
 
-			oTable.getRowMode().setRowCount(4);
-			oCore.applyChanges();
-			assert.ok(oSyncInterface.rowCount.calledWithExactly(4), "Row count changed: The correct row count was synced");
-			assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "The row count was synced once");
-			oSyncInterface.rowCount.resetHistory();
+		this.oTable.getRowMode().setRowCount(4);
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.ok(oSyncInterface.rowCount.calledWithExactly(4), "Row count changed: The correct row count was synced");
+		assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "The row count was synced once");
+		oSyncInterface.rowCount.resetHistory();
 
-			oTable.getRowMode().setRowCount(4);
-			oCore.applyChanges();
-			assert.ok(oSyncInterface.rowCount.notCalled, "Row count not changed (but setter called): The row count was not synced");
-			oSyncInterface.rowCount.resetHistory();
+		this.oTable.getRowMode().setRowCount(4);
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.ok(oSyncInterface.rowCount.notCalled, "Row count not changed (but setter called): The row count was not synced");
+		oSyncInterface.rowCount.resetHistory();
 
-			oTable.setRowMode(RowModeType.Auto);
-			oCore.applyChanges();
+		this.oTable.setRowMode(RowModeType.Auto);
+		await this.oTable.qunit.whenRenderingFinished();
 
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.ok(oSyncInterface.rowCount.calledWithExactly(0),
-				"Switched to row mode Auto: A count of 0 was synced");
-			assert.ok(oSyncInterface.rowCount.calledWithExactly(oTable.getRows().length),
-				"Switched to row mode Auto: The correct row count was synced");
-			assert.strictEqual(oSyncInterface.rowCount.callCount, 2, "The row count was synced 2 times");
-			oSyncInterface.rowCount.resetHistory();
+		assert.ok(oSyncInterface.rowCount.calledWithExactly(0), "Switched to row mode Auto: A count of 0 was synced");
+		assert.ok(oSyncInterface.rowCount.calledWithExactly(this.oTable.getRows().length),
+			"Switched to row mode Auto: The correct row count was synced");
+		assert.strictEqual(oSyncInterface.rowCount.callCount, 2, "The row count was synced 2 times");
+		oSyncInterface.rowCount.resetHistory();
 
-			oTable._bVariableRowHeightEnabled = true;
-			oTable.invalidate();
-			oCore.applyChanges();
+		this.oTable._bVariableRowHeightEnabled = true;
+		this.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
 
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.ok(oSyncInterface.rowCount.calledWithExactly(oTable.getRows().length),
-				"Variable row heights enabled: The correct row count was synced");
-			assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "The row count was synced once");
-			oSyncInterface.rowCount.resetHistory();
+		assert.ok(oSyncInterface.rowCount.calledWithExactly(this.oTable.getRows().length),
+			"Variable row heights enabled: The correct row count was synced");
+		assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "The row count was synced once");
+		oSyncInterface.rowCount.resetHistory();
 
-		}).then(function() {
-			oTable.unbindRows();
-			assert.ok(oSyncInterface.rowCount.getCall(0).calledWithExactly(0), "Unbind rows: The correct row count was synced");
-			assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "Unbind rows: The row count was synced once");
-			oSyncInterface.rowCount.resetHistory();
+		this.oTable.unbindRows();
+		assert.ok(oSyncInterface.rowCount.getCall(0).calledWithExactly(0), "Unbind rows: The correct row count was synced");
+		assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "Unbind rows: The row count was synced once");
+		oSyncInterface.rowCount.resetHistory();
 
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			oTable.bindRows({path: "/"});
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.ok(oSyncInterface.rowCount.calledWithExactly(oTable.getRows().length), "Bind rows: The correct row count was synced");
-			assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "The row count was synced once");
-		});
+		await this.oTable.qunit.whenRenderingFinished();
+		this.oTable.bindRows({path: "/"});
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.ok(oSyncInterface.rowCount.calledWithExactly(this.oTable.getRows().length), "Bind rows: The correct row count was synced");
+		assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "The row count was synced once");
 	});
 
 	QUnit.test("Sync row selection", function(assert) {
@@ -274,81 +264,59 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sync row heights", function(assert) {
-		var oTable = this.oTable;
-		var oSyncInterface;
+	QUnit.test("Sync row heights", async function(assert) {
+		const oSyncInterface = await this.oTable._enableSynchronization();
+		const iRowHeight = TableUtils.DefaultRowHeight.sapUiSizeCozy;
 
-		return oTable._enableSynchronization().then(function(_oSyncInterface) {
-			oSyncInterface = _oSyncInterface;
-			oSyncInterface.rowHeights = sinon.spy();
+		oSyncInterface.rowHeights = sinon.spy();
 
-			oTable.invalidate();
-			oCore.applyChanges();
+		this.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
 
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			var iHeight = TableUtils.DefaultRowHeight.sapUiSizeCozy;
-			if (oSyncInterface.rowHeights.callCount === 2) {
-				assert.ok(true, "The row heights were synced 2 times");
-				assert.ok(oSyncInterface.rowHeights.getCall(0).calledWithExactly([iHeight, iHeight, iHeight]),
-					"The row heights were correctly synced");
-				assert.ok(oSyncInterface.rowHeights.getCall(1).calledWithExactly([iHeight, iHeight, iHeight]),
-					"The row heights were correctly synced");
-			} else {
-				assert.ok(false, "The row heights should have been synced 2 times");
-			}
-		});
+		assert.equal(oSyncInterface.rowHeights.callCount, 2, "The row heights were synced 2 times");
+		assert.ok(oSyncInterface.rowHeights.getCall(0).calledWithExactly([iRowHeight, iRowHeight, iRowHeight]),
+			"The row heights were correctly synced");
+		assert.ok(oSyncInterface.rowHeights.getCall(1).calledWithExactly([iRowHeight, iRowHeight, iRowHeight]),
+			"The row heights were correctly synced");
 	});
 
-	QUnit.test("Sync inner vertical scroll position", function(assert) {
-		var oTable = this.oTable;
-		var oSyncInterface;
+	QUnit.test("Sync inner vertical scroll position", async function(assert) {
+		const oSyncInterface = await this.oTable._enableSynchronization();
 
-		return oTable._enableSynchronization().then(function(_oSyncInterface) {
-			oSyncInterface = _oSyncInterface;
-			oSyncInterface.innerVerticalScrollPosition = sinon.spy();
+		oSyncInterface.innerVerticalScrollPosition = sinon.spy();
 
-			oTable._bVariableRowHeightEnabled = true;
-			oTable.invalidate();
-			oCore.applyChanges();
+		this.oTable._bVariableRowHeightEnabled = true;
+		this.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.ok(oSyncInterface.innerVerticalScrollPosition.calledWithExactly(0),
+			"After rendering: The inner vertical scroll position was correctly synced");
+		assert.strictEqual(oSyncInterface.innerVerticalScrollPosition.callCount, 1,
+			"After rendering: The inner vertical scroll position was synced once");
+		oSyncInterface.innerVerticalScrollPosition.resetHistory();
 
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.ok(oSyncInterface.innerVerticalScrollPosition.calledWithExactly(0),
-				"After rendering: The inner vertical scroll position was correctly synced");
-			assert.strictEqual(oSyncInterface.innerVerticalScrollPosition.callCount, 1,
-				"After rendering: The inner vertical scroll position was synced once");
-			oSyncInterface.innerVerticalScrollPosition.resetHistory();
-
-			return Promise.all([
-				oTable.qunit.scrollVSbTo(23),
-				oTable.qunit.whenViewportScrolled()
-			]);
-		}).then(function() {
-			assert.ok(oSyncInterface.innerVerticalScrollPosition.calledWithExactly(23),
-				"After scrolling: The inner vertical scroll position was correctly synced");
-			assert.strictEqual(oSyncInterface.innerVerticalScrollPosition.callCount, 1,
-				"After scrolling: The inner vertical scroll position was synced once");
-		});
+		await Promise.all([
+			this.oTable.qunit.scrollVSbTo(23),
+			this.oTable.qunit.whenViewportScrolled()
+		]);
+		assert.ok(oSyncInterface.innerVerticalScrollPosition.calledWithExactly(23),
+			"After scrolling: The inner vertical scroll position was correctly synced");
+		assert.strictEqual(oSyncInterface.innerVerticalScrollPosition.callCount, 1,
+			"After scrolling: The inner vertical scroll position was synced once");
 	});
 
-	QUnit.test("Sync layout", function(assert) {
-		var oTable = this.oTable;
-		var oSyncInterface;
+	QUnit.test("Sync layout", async function(assert) {
+		const oSyncInterface = await this.oTable._enableSynchronization();
 
-		return oTable._enableSynchronization().then(function(_oSyncInterface) {
-			oSyncInterface = _oSyncInterface;
-			oSyncInterface.layout = sinon.spy();
+		oSyncInterface.layout = sinon.spy();
 
-			oTable.invalidate();
-			oCore.applyChanges();
-
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.ok(oSyncInterface.layout.calledWithExactly({
-				top: oTable.getDomRef("sapUiTableCnt").offsetTop,
-				headerHeight: oTable.getDomRef().querySelector(".sapUiTableColHdrCnt").getBoundingClientRect().height,
-				contentHeight: oTable.getDomRef("tableCCnt").getBoundingClientRect().height
-			}), "The layout information was correctly synced");
-			assert.strictEqual(oSyncInterface.layout.callCount, 1, "The layout information was synced once");
-		});
+		this.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.ok(oSyncInterface.layout.calledWithExactly({
+			top: this.oTable.getDomRef("sapUiTableCnt").offsetTop,
+			headerHeight: this.oTable.getDomRef().querySelector(".sapUiTableColHdrCnt").getBoundingClientRect().height,
+			contentHeight: this.oTable.getDomRef("tableCCnt").getBoundingClientRect().height
+		}), "The layout information was correctly synced");
+		assert.strictEqual(oSyncInterface.layout.callCount, 1, "The layout information was synced once");
 	});
 
 	QUnit.module("Synchronization methods", {
@@ -573,8 +541,6 @@ sap.ui.define([
 			assert.strictEqual(Div.childElementCount, 1, "The container contains only one element");
 			oTableInvalidate.resetHistory();
 
-			oCore.applyChanges();
-
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
 			var sExternalVSbId = oExternalVSb.getAttribute("id");
@@ -592,8 +558,6 @@ sap.ui.define([
 			oTable.invalidate();
 			oTableInvalidate.resetHistory();
 			Div.firstChild.remove();
-
-			oCore.applyChanges();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();

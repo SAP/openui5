@@ -3,23 +3,23 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/Device",
 	"sap/ui/table/extensions/Pointer",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/core/Core"
 ], function(
 	TableQUnitUtils,
 	qutils,
+	nextUIUpdate,
 	Device,
 	PointerExtension,
 	TableUtils,
 	tableLibrary,
 	jQuery,
-	oCore,
-	nextUIUpdate
+	oCore
 ) {
 	"use strict";
 
@@ -76,7 +76,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Column Resizing", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.bOriginalSystemDesktop = Device.system.desktop;
 
 			createTables();
@@ -95,7 +95,7 @@ sap.ui.define([
 			this.oColumn = oTable.getColumns()[1];
 			this.oColumn.setResizable(false);
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// Extend auto resize logic to know about the test control
 			PointerExtension._fnCheckTextBasedControl = function(oControl) {
@@ -174,17 +174,17 @@ sap.ui.define([
 
 		assert.ok(Math.abs(iWidth - 100) < 10, "check column width before resize: " + iWidth);
 
-		return triggerDoubleClick(false, 0).then(function() {
+		return triggerDoubleClick(false, 0).then(async function() {
 			assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
 			oColumn.setAutoResizable(true);
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.ok(oColumn.getAutoResizable(), "Column is autoresizable");
 			assert.ok(!oColumn.getResizable(), "Column is not yet resizable");
 			return triggerDoubleClick(false, 0);
-		}).then(function() {
+		}).then(async function() {
 			assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
 			oColumn.setResizable(true);
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.ok(oColumn.getAutoResizable(), "Column is autoresizable");
 			assert.ok(oColumn.getResizable(), "Column is resizable");
 			Device.system.desktop = false;
@@ -208,18 +208,18 @@ sap.ui.define([
 		assert.ok(Math.abs(iWidth - 100) < 10, "check column width before resize: " + iWidth);
 		oTable.autoResizeColumn(1);
 
-		setTimeout(function() {
+		setTimeout(async function() {
 			assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
 			oColumn.setAutoResizable(true);
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.ok(oColumn.getAutoResizable(), "Column is autoresizable");
 			assert.ok(!oColumn.getResizable(), "Column is not yet resizable");
 			oTable.autoResizeColumn(1);
 
-			setTimeout(function() {
+			setTimeout(async function() {
 				assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
 				oColumn.setResizable(true);
-				oCore.applyChanges();
+				await nextUIUpdate();
 				assert.ok(oColumn.getAutoResizable(), "Column is autoresizable");
 				assert.ok(oColumn.getResizable(), "Column is resizable");
 				oTable.autoResizeColumn(1);
@@ -233,7 +233,7 @@ sap.ui.define([
 		}, 50);
 	});
 
-	QUnit.test("Resize via Drag&Drop", function(assert) {
+	QUnit.test("Resize via Drag&Drop", async function(assert) {
 		var oColumn = this.oColumn;
 		var $Resizer = oTable.$("rsz");
 
@@ -247,10 +247,10 @@ sap.ui.define([
 		// Resizer moved to the correct position when column is resizable
 		moveResizer(oColumn, assert, false, 0);
 		oColumn.setAutoResizable(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		moveResizer(oColumn, assert, false, 0);
 		oColumn.setResizable(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		moveResizer(oColumn, assert, true, 1);
 
 		return new Promise(function(resolve) {
@@ -655,13 +655,13 @@ sap.ui.define([
 		qutils.triggerMouseEvent(oTreeIcon, "tap");
 	});
 
-	QUnit.test("Group Header", function(assert) {
+	QUnit.test("Group Header", async function(assert) {
 		var done = assert.async();
 		var oExtension = oTreeTable._getPointerExtension();
 		oExtension._debug();
 
 		oTreeTable.setUseGroupMode(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
 		oExtension._ExtensionHelper._handleClickSelection = function() {
 			assert.ok(false, "_doSelect was not called");
@@ -829,12 +829,12 @@ sap.ui.define([
 		oExtension._ExtensionHelper.__handleClickSelection = null;
 	});
 
-	QUnit.test("Single Selection", function(assert) {
+	QUnit.test("Single Selection", async function(assert) {
 		oTable.clearSelection();
 		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
 		oTable.setSelectionMode(tableLibrary.SelectionMode.Single);
 		initRowActions(oTable, 2, 2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!oTable.isIndexSelected(0), "First row is not selected");
 
@@ -867,17 +867,17 @@ sap.ui.define([
 			"Ctrl+Click on data cell in first row with legacy multi selection enabled -> First row selected");
 	});
 
-	QUnit.test("MultiToggle Selection - Range", function(assert) {
+	QUnit.test("MultiToggle Selection - Range", async function(assert) {
 		oTable.clearSelection();
 		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
 		initRowActions(oTable, 2, 2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		qutils.triggerMouseEvent(getCell(0, 0), "tap");
 		assert.ok(oTable.isIndexSelected(0), "Click on first row -> Row selected");
 
 		oTable.setFirstVisibleRow(3); // Scroll down 3 rows
-		oCore.applyChanges();
+		await nextUIUpdate();
 		qutils.triggerEvent("tap", getCell(2, 0), {shiftKey: true});
 		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5], "Range selection with Shift + Click selected the correct rows");
 		assert.strictEqual(window.getSelection().toString(), "", "Range selection with Shift + Click did not select text");
@@ -910,11 +910,11 @@ sap.ui.define([
 			"Range selection with Shift + Click did not select text");
 	});
 
-	QUnit.test("MultiToggle Selection - Toggle", function(assert) {
+	QUnit.test("MultiToggle Selection - Toggle", async function(assert) {
 		oTable.clearSelection();
 		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.Row);
 		initRowActions(oTable, 2, 2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		qutils.triggerMouseEvent(getCell(0, 0), "tap");
 		assert.deepEqual(oTable.getSelectedIndices(), [0], "Click on unselected row with index 0");
@@ -993,18 +993,18 @@ sap.ui.define([
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 30, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
-			setTimeout(function() {
-				oCore.applyChanges();
+			setTimeout(async function() {
+				await nextUIUpdate();
 				assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed because not dragged enough");
 
 				qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
-				setTimeout(function() {
+				setTimeout(async function() {
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
 					assert.equal(oTable.indexOfColumn(oColumn), 3, "Index of column changed");
 
-					oCore.applyChanges();
+					await nextUIUpdate();
 					assert.strictEqual(document.activeElement, oColumn.getDomRef(), "Focused element");
 					assert.strictEqual(oTable._getKeyboardExtension()._itemNavigation.getFocusedDomRef(), oColumn.getDomRef(),
 						"Focused element in item navigation");
@@ -1027,18 +1027,18 @@ sap.ui.define([
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 30, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
-			setTimeout(function() {
-				oCore.applyChanges();
+			setTimeout(async function() {
+				await nextUIUpdate();
 				assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed because not dragged enough");
 
 				qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
-				setTimeout(function() {
+				setTimeout(async function() {
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
 					assert.equal(oTable.indexOfColumn(oColumn), 1, "Index of column changed");
 
-					oCore.applyChanges();
+					await nextUIUpdate();
 					assert.strictEqual(document.activeElement, oColumn.getDomRef(), "Focused element");
 					assert.strictEqual(oTable._getKeyboardExtension()._itemNavigation.getFocusedDomRef(), oColumn.getDomRef(),
 						"Focused element in item navigation");
@@ -1048,10 +1048,10 @@ sap.ui.define([
 		}, 250);
 	});
 
-	QUnit.test("No Reordering of fixed columns (within fixed)", function(assert) {
+	QUnit.test("No Reordering of fixed columns (within fixed)", async function(assert) {
 		var done = assert.async();
 		oTable.setFixedColumnCount(4);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oSettings = computeSettingsForReordering(oTable, 2, true);
 		var oColumn = oSettings.column;
@@ -1072,10 +1072,10 @@ sap.ui.define([
 		}, 250);
 	});
 
-	QUnit.test("No Reordering of fixed columns (fixed to not fixed)", function(assert) {
+	QUnit.test("No Reordering of fixed columns (fixed to not fixed)", async function(assert) {
 		var done = assert.async();
 		oTable.setFixedColumnCount(3);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oSettings = computeSettingsForReordering(oTable, 2, true);
 		var oColumn = oSettings.column;
@@ -1096,10 +1096,10 @@ sap.ui.define([
 		}, 250);
 	});
 
-	QUnit.test("No Reordering of fixed columns (not fixed to fixed)", function(assert) {
+	QUnit.test("No Reordering of fixed columns (not fixed to fixed)", async function(assert) {
 		var done = assert.async();
 		oTable.setFixedColumnCount(2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oSettings = computeSettingsForReordering(oTable, 2, false);
 		var oColumn = oSettings.column;
@@ -1120,10 +1120,10 @@ sap.ui.define([
 		}, 250);
 	});
 
-	QUnit.test("TreeTable - No Reordering via Drag&Drop of first column - increase index", function(assert) {
+	QUnit.test("TreeTable - No Reordering via Drag&Drop of first column - increase index", async function(assert) {
 		var done = assert.async();
 		oTreeTable.setFixedColumnCount(0);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oSettings = computeSettingsForReordering(oTreeTable, 0, true);
 		var oColumn = oSettings.column;
@@ -1136,8 +1136,8 @@ sap.ui.define([
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 30, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
-			setTimeout(function() {
-				oCore.applyChanges();
+			setTimeout(async function() {
+				await nextUIUpdate();
 				assert.equal(oTreeTable.indexOfColumn(oColumn), 0, "Index of column not changed because not dragged enough");
 
 				qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
@@ -1145,8 +1145,8 @@ sap.ui.define([
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 30, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
-					setTimeout(function() {
-						oCore.applyChanges();
+					setTimeout(async function() {
+						await nextUIUpdate();
 						assert.equal(oTreeTable.indexOfColumn(oColumn), 0, "Index of column not changed");
 						done();
 					}, 100);
@@ -1156,10 +1156,10 @@ sap.ui.define([
 		}, 250);
 	});
 
-	QUnit.test("TreeTable - No Reordering via Drag&Drop of first column - decrease index", function(assert) {
+	QUnit.test("TreeTable - No Reordering via Drag&Drop of first column - decrease index", async function(assert) {
 		var done = assert.async();
 		oTreeTable.setFixedColumnCount(0);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oSettings = computeSettingsForReordering(oTreeTable, 1, false);
 		var oColumn = oSettings.column;
@@ -1172,8 +1172,8 @@ sap.ui.define([
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 30, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
-			setTimeout(function() {
-				oCore.applyChanges();
+			setTimeout(async function() {
+				await nextUIUpdate();
 				assert.equal(oTreeTable.indexOfColumn(oColumn), 1, "Index of column not changed");
 				done();
 			}, 100);

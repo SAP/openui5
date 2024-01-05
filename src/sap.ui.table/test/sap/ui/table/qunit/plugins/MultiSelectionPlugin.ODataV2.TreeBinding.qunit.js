@@ -4,14 +4,12 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/table/TreeTable",
-	"sap/ui/core/util/MockServer",
-	"sap/ui/core/Core"
+	"sap/ui/core/util/MockServer"
 ], function(
 	TableQUnitUtils,
 	MultiSelectionPlugin,
 	TreeTable,
-	MockServer,
-	Core
+	MockServer
 ) {
 	"use strict";
 
@@ -63,18 +61,16 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Select all", function(assert) {
+	QUnit.test("Select all", async function(assert) {
 		this.oMultiSelectionPlugin.setLimit(0);
-		Core.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
+		await this.oMultiSelectionPlugin.selectAll();
+		var oBinding = this.oTable.getBinding();
+		var iBindingLength = oBinding.getLength();
+		var aContexts = oBinding.getContexts(0, iBindingLength, 0);
 
-		return this.oMultiSelectionPlugin.selectAll().then(function() {
-			var oBinding = this.oTable.getBinding();
-			var iBindingLength = oBinding.getLength();
-			var aContexts = oBinding.getContexts(0, iBindingLength, 0);
-
-			assert.equal(aContexts.length, iBindingLength, "All binding contexts are available");
-			assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");
-		}.bind(this));
+		assert.equal(aContexts.length, iBindingLength, "All binding contexts are available");
+		assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");
 	});
 
 	QUnit.test("Select range", function(assert) {
