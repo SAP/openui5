@@ -4,40 +4,42 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/rta/util/changeVisualization/ChangeCategories",
-	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/UIComponent",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/DesignTimeStatus",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/ChangePersistence",
-	"sap/ui/model/Model",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
+	"sap/ui/model/Model",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/util/changeVisualization/ChangeCategories",
+	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/api/FlexTestAPI",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils",
 	"sap/ui/fl/library" // we have to ensure to load fl, so that change handler gets registered
 ], function(
-	UIComponent,
-	ComponentContainer,
 	XMLView,
-	CommandFactory,
-	ChangeCategories,
-	ChangeVisualization,
+	ComponentContainer,
+	UIComponent,
 	DesignTime,
 	DesignTimeStatus,
 	OverlayRegistry,
-	ChangePersistence,
-	Model,
 	Settings,
 	PersistenceWriteAPI,
 	Layer,
+	Model,
+	CommandFactory,
+	ChangeCategories,
+	ChangeVisualization,
 	nextUIUpdate,
-	sinon
+	sinon,
+	FlexTestAPI,
+	FlQUnitUtils
 ) {
 	"use strict";
 
@@ -98,7 +100,7 @@ sap.ui.define([
 				viewContent: mOptions.xmlView
 			};
 		}
-		var sandbox = sinon.createSandbox();
+		const sandbox = sinon.createSandbox();
 
 		mOptions.before ||= function() {};
 		mOptions.after ||= function() {};
@@ -115,7 +117,7 @@ sap.ui.define([
 				assert.ok(mOptions.xmlView,
 					"then you provide an XML view to test on: See the.xmlView parameter.");
 
-				var oXmlView = new DOMParser().parseFromString(mOptions.xmlView.viewContent, "application/xml").documentElement;
+				const oXmlView = new DOMParser().parseFromString(mOptions.xmlView.viewContent, "application/xml").documentElement;
 				assert.ok(oXmlView.tagName.match("View$"), "then you use the sap.ui.core.mvc View tag as the first tag in your view");
 
 				assert.ok(mOptions.action, "then you provide an action: See the action parameter.");
@@ -125,10 +127,10 @@ sap.ui.define([
 			});
 		});
 
-		var UI_COMPONENT_NAME = "sap.ui.rta.control.enabling.comp";
-		var SYNC = false;
-		var ASYNC = true;
-		var Comp = UIComponent.extend(UI_COMPONENT_NAME, {
+		const UI_COMPONENT_NAME = "sap.ui.rta.control.enabling.comp";
+		const SYNC = false;
+		const ASYNC = true;
+		const Comp = UIComponent.extend(UI_COMPONENT_NAME, {
 			metadata: {
 				interfaces: ["sap.ui.core.IAsyncContentCreation"],
 				manifest: {
@@ -139,7 +141,7 @@ sap.ui.define([
 				}
 			},
 			createContent() {
-				var mViewSettings = Object.assign({}, mOptions.xmlView);
+				const mViewSettings = Object.assign({}, mOptions.xmlView);
 				mViewSettings.id = this.createId("view");
 
 				if (mViewSettings.async === undefined) {
@@ -182,11 +184,11 @@ sap.ui.define([
 		}
 
 		function buildAndExecuteCommands(assert) {
-			var aActions = [].concat(
+			const aActions = [].concat(
 				mOptions.previousActions || [],
 				mOptions.action
 			);
-			var aCommands = [];
+			const aCommands = [];
 
 			return aActions.reduce(function(oLastPromise, oAction) {
 				return oLastPromise
@@ -254,7 +256,7 @@ sap.ui.define([
 			oAggregationDesignTimeMetadata
 		) {
 			if (Array.isArray(oAction.name)) {
-				var oAddAction = oElementDesignTimeMetadata.getAction(
+				const oAddAction = oElementDesignTimeMetadata.getAction(
 					oAction.name[0],
 					oControl,
 					oAction.name[1]
@@ -274,31 +276,19 @@ sap.ui.define([
 			}
 		}
 
-		function buildCommand(assert, oAction) {
-			var oTargetControl;
-			var oControlWithDesigntimeActionDefinition;
-			var mParameter;
-			var oElementDesignTimeMetadata;
-			var oAggregationDesignTimeMetadata;
-			var sCommandName = oAction.name;
-			var oMovedElement;
-			return Promise.resolve()
-			.then(getControlFromActionMap.bind(this, oAction))
+		async function buildCommand(assert, oAction) {
+			try {
+				let sCommandName = oAction.name;
+				let oAggregationDesignTimeMetadata;
+				let oMovedElement;
+				let oTargetControl = await getControlFromActionMap.call(this, oAction);
+				const mParameter = getParameterMap.call(this, oAction.parameter);
+				const oControlWithDesigntimeActionDefinition = await getDesigntimeActionControl.call(this, oAction);
 
-			.then(function(oRetrievedControl) {
-				oTargetControl = oRetrievedControl;
-				mParameter = getParameterMap.call(this, oAction.parameter);
-				return getDesigntimeActionControl.call(this, oAction);
-			}.bind(this))
+				await startDesigntime.call(this);
 
-			.then(function(oRetrievedControl) {
-				oControlWithDesigntimeActionDefinition = oRetrievedControl;
-				return startDesigntime.call(this);
-			}.bind(this))
-
-			// gather data for the designtime check and the command factory
-			.then(function() {
-				var oControlOverlay = OverlayRegistry.getOverlay(oControlWithDesigntimeActionDefinition || oTargetControl);
+				// gather data for the designtime check and the command factory
+				let oControlOverlay = OverlayRegistry.getOverlay(oControlWithDesigntimeActionDefinition || oTargetControl);
 				if (!oControlOverlay) {
 					throw new Error(
 						`The provided control ${oTargetControl.getId()}does not have any overlay existing during test execution. `
@@ -308,9 +298,8 @@ sap.ui.define([
 						+ `the designtime metadata definition for this check.`
 					);
 				}
-				oElementDesignTimeMetadata = oControlOverlay.getDesignTimeMetadata();
-				var oResponsibleElement = oElementDesignTimeMetadata.getResponsibleElement(oTargetControl);
-				var oAggregationOverlay;
+				let oElementDesignTimeMetadata = oControlOverlay.getDesignTimeMetadata();
+				const oResponsibleElement = oElementDesignTimeMetadata.getResponsibleElement(oTargetControl);
 				if (mOptions.label) {
 					assert.strictEqual(
 						oElementDesignTimeMetadata.getLabel(oTargetControl),
@@ -320,26 +309,26 @@ sap.ui.define([
 				}
 				if (oAction.name === "move") {
 					oMovedElement = mParameter.movedElements[0].element || mParameter.movedElements[0].id;
-					var oElementOverlay = OverlayRegistry.getOverlay(oMovedElement);
-					var oRelevantContainer = oElementOverlay.getRelevantContainer();
+					const oElementOverlay = OverlayRegistry.getOverlay(oMovedElement);
+					const oRelevantContainer = oElementOverlay.getRelevantContainer();
 					oTargetControl = oRelevantContainer;
 					oElementDesignTimeMetadata = oElementOverlay.getParentAggregationOverlay().getDesignTimeMetadata();
 				} else if (Array.isArray(oAction.name)) {
-					var aAddActions = oElementDesignTimeMetadata.getActionDataFromAggregations(
+					const aAddActions = oElementDesignTimeMetadata.getActionDataFromAggregations(
 						oAction.name[0],
 						oTargetControl,
 						undefined,
 						oAction.name[1]
 					);
-					oAggregationOverlay = oControlOverlay.getAggregationOverlay(aAddActions[0].aggregation);
+					const oAggregationOverlay = oControlOverlay.getAggregationOverlay(aAddActions[0].aggregation);
 					oElementDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();
 					sCommandName = "addDelegateProperty";
 				} else if (oAction.name === "createContainer" || oAction.name === "addIFrame") {
-					var aCreateContainerActions = oElementDesignTimeMetadata.getActionDataFromAggregations(
+					const aCreateContainerActions = oElementDesignTimeMetadata.getActionDataFromAggregations(
 						oAction.name,
 						oControlWithDesigntimeActionDefinition || oTargetControl
 					);
-					oAggregationOverlay = oControlOverlay.getAggregationOverlay(aCreateContainerActions[0].aggregation);
+					const oAggregationOverlay = oControlOverlay.getAggregationOverlay(aCreateContainerActions[0].aggregation);
 					oAggregationDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();
 				} else if (oResponsibleElement) {
 					if (oAction.name === "reveal") {
@@ -347,7 +336,7 @@ sap.ui.define([
 						oControlOverlay = OverlayRegistry.getOverlay(oAction.revealedElement(this.oView));
 						oElementDesignTimeMetadata = oControlOverlay.getDesignTimeMetadata();
 						if (oAction.label) {
-							var oRevealAction = oElementDesignTimeMetadata.getAction("reveal");
+							const oRevealAction = oElementDesignTimeMetadata.getAction("reveal");
 							assert.strictEqual(oRevealAction.getLabel(oTargetControl), oAction.label,
 								"then the control label is correct");
 						}
@@ -358,13 +347,10 @@ sap.ui.define([
 						oTargetControl.getMetadata().loadDesignTime(oTargetControl);
 					}
 				}
-			}.bind(this))
 
-			.then(function() {
 				// additional check if the required action definition exists
 				// into the responsible control designtime metadata
-				return checkDesigntimeMetadata.call(
-					this,
+				checkDesigntimeMetadata(
 					assert,
 					oAction,
 					oTargetControl,
@@ -372,34 +358,28 @@ sap.ui.define([
 					oElementDesignTimeMetadata,
 					oAggregationDesignTimeMetadata
 				);
-			}.bind(this))
 
-			.then(function() {
-				var oCommandFactory = new CommandFactory({
+				const oCommandFactory = new CommandFactory({
 					flexSettings: {
 						layer: mOptions.layer || Layer.CUSTOMER
 					}
 				});
-				return oCommandFactory.getCommandFor(
+				const oCommand = await oCommandFactory.getCommandFor(
 					oTargetControl,
 					sCommandName,
 					mParameter,
 					oElementDesignTimeMetadata
 				);
-			})
 
-			.then(function(oCommand) {
 				assert.ok(
 					oCommand,
 					`then the registration for action to change type, the registration for change and ` +
 					`control type to change handler is available and ${mOptions.action.name} is a valid action`
 				);
 				return oCommand;
-			})
-
-			.catch(function(oMessage) {
+			} catch (oMessage) {
 				throw new Error(oMessage);
-			});
+			}
 		}
 
 		function executeCommands(aCommands) {
@@ -410,7 +390,7 @@ sap.ui.define([
 		}
 
 		function undoCommands(aCommands) {
-			var aUndoCommands = aCommands.slice().reverse();
+			const aUndoCommands = aCommands.slice().reverse();
 			return aUndoCommands.reduce(function(oLastPromise, oCommand) {
 				return oLastPromise
 				.then(oCommand.undo.bind(oCommand));
@@ -418,13 +398,13 @@ sap.ui.define([
 		}
 
 		function destroyCommands(aCommands) {
-			aCommands.forEach(function(oCommand) {
+			aCommands.forEach((oCommand) => {
 				oCommand.destroy();
 			});
 		}
 
-		function condenseCommands(oView, aCommands, assert) {
-			var oReturn = {
+		async function condenseCommands(oView, aCommands, assert) {
+			const oReturn = {
 				remainingCommands: [],
 				deletedCommands: []
 			};
@@ -435,96 +415,85 @@ sap.ui.define([
 				return Promise.resolve(oReturn);
 			}
 
-			var aChanges = aCommands.map(function(oCommand) {
-				return oCommand.getPreparedChange();
-			});
-			return PersistenceWriteAPI._condense({
+			const aChanges = aCommands.map((oCommand) => oCommand.getPreparedChange());
+			const aCondensedChanges = await PersistenceWriteAPI._condense({
 				selector: oView,
 				changes: aChanges
-			}).then(function(aCondensedChanges) {
-				if (mOptions.changesAfterCondensing !== undefined) {
-					assert.equal(
-						aCondensedChanges.length,
-						mOptions.changesAfterCondensing,
-						"after condensing the amount of changes is correct"
-					);
-				}
-				var aChangeIds = aCondensedChanges.map(function(oChange) {return oChange.getId();});
-				aCommands.forEach(function(oCommand) {
-					if (aChangeIds.indexOf(oCommand.getPreparedChange().getId()) > -1) {
-						oReturn.remainingCommands.push(oCommand);
-					} else {
-						oReturn.deletedCommands.push(oCommand);
-					}
-				});
-				return oReturn;
 			});
+			if (mOptions.changesAfterCondensing !== undefined) {
+				assert.equal(
+					aCondensedChanges.length,
+					mOptions.changesAfterCondensing,
+					"after condensing the amount of changes is correct"
+				);
+			}
+			const aChangeIds = aCondensedChanges.map((oChange) => oChange.getId());
+			aCommands.forEach((oCommand) => {
+				if (aChangeIds.indexOf(oCommand.getPreparedChange().getId()) > -1) {
+					oReturn.remainingCommands.push(oCommand);
+				} else {
+					oReturn.deletedCommands.push(oCommand);
+				}
+			});
+			return oReturn;
 		}
 
-		function checkChangeVisualization(oView, aCommands, assert) {
+		async function checkChangeVisualization(oView, aCommands, assert) {
 			if (!mOptions.changeVisualization) {
-				return Promise.resolve();
+				return;
 			}
 
-			var oChangeVisualizationInput;
+			let oChangeVisualizationInput;
 			if (typeof mOptions.changeVisualization === "function") {
 				oChangeVisualizationInput = mOptions.changeVisualization(oView);
 			} else {
 				oChangeVisualizationInput = mOptions.changeVisualization;
 			}
 
-			var oChangeVisualization = new ChangeVisualization({
+			const oChangeVisualization = new ChangeVisualization({
 				rootControlId: oView.getId(),
 				isActive: true
 			});
 
 			sandbox.stub(oChangeVisualization, "_updateChangeIndicators");
-			var aChanges = aCommands.map(function(oCommand) {
-				return oCommand.getPreparedChange();
-			});
+			const aChanges = aCommands.map((oCommand) => oCommand.getPreparedChange());
 			sandbox.stub(oChangeVisualization, "_collectChanges").resolves(aChanges);
 
-			return oChangeVisualization._updateChangeRegistry()
-			.then(function() {
-				return oChangeVisualization._selectChangeCategory(ChangeCategories.ALL);
-			})
-			.then(function() {
-				var oChangeIndicatorRegistry = oChangeVisualization._oChangeIndicatorRegistry;
-				var oData = oChangeIndicatorRegistry.getSelectorsWithRegisteredChanges();
-				var sDisplayElementId = oChangeVisualizationInput.displayElementId;
-				var sSelector = sDisplayElementId ? oView.createId(sDisplayElementId) : oView.getId();
-				assert.ok(oData[sSelector] && oData[sSelector].length, "there is a change indicator at the correct element");
-				var oRegisteredChange = oChangeIndicatorRegistry.getAllRegisteredChanges()[0];
-				var mVisualizationInfo = oChangeVisualizationInput.info;
+			await oChangeVisualization._updateChangeRegistry();
+			await oChangeVisualization._selectChangeCategory(ChangeCategories.ALL);
+			const oChangeIndicatorRegistry = oChangeVisualization._oChangeIndicatorRegistry;
+			const oData = oChangeIndicatorRegistry.getSelectorsWithRegisteredChanges();
+			const sDisplayElementId = oChangeVisualizationInput.displayElementId;
+			const sSelector = sDisplayElementId ? oView.createId(sDisplayElementId) : oView.getId();
+			assert.ok(oData[sSelector] && oData[sSelector].length, "there is a change indicator at the correct element");
+			const oRegisteredChange = oChangeIndicatorRegistry.getAllRegisteredChanges()[0];
+			const mVisualizationInfo = oChangeVisualizationInput.info;
 
-				function mapIds(aIds) {
-					return aIds.map(function(sId) {
-						return oView.createId(sId);
-					});
-				}
+			function mapIds(aIds) {
+				return aIds.map((sId) => oView.createId(sId));
+			}
 
-				if (mVisualizationInfo) {
-					if (mVisualizationInfo.affectedControls) {
-						var aAffectedControlIds = mapIds(mVisualizationInfo.affectedControls);
-						assert.deepEqual(aAffectedControlIds, oRegisteredChange.visualizationInfo.affectedElementIds,
-							"then the affected control ids are correct");
-					}
-					if (mVisualizationInfo.dependentControls) {
-						var aDependentControlIds = mapIds(mVisualizationInfo.dependentControls);
-						assert.deepEqual(aDependentControlIds, oRegisteredChange.visualizationInfo.dependentElementIds,
-							"then the dependent control ids are correct");
-					}
-					if (mVisualizationInfo.displayControls) {
-						var aDisplayControlIds = mapIds(mVisualizationInfo.displayControls);
-						assert.deepEqual(aDisplayControlIds, oRegisteredChange.visualizationInfo.displayElementIds,
-							"then the display control ids are correct");
-					}
-					if (mVisualizationInfo.descriptionPayload) {
-						assert.deepEqual(mVisualizationInfo.descriptionPayload, oRegisteredChange.visualizationInfo.descriptionPayload,
-							"then the descriptionPayload is correct");
-					}
+			if (mVisualizationInfo) {
+				if (mVisualizationInfo.affectedControls) {
+					const aAffectedControlIds = mapIds(mVisualizationInfo.affectedControls);
+					assert.deepEqual(aAffectedControlIds, oRegisteredChange.visualizationInfo.affectedElementIds,
+						"then the affected control ids are correct");
 				}
-			});
+				if (mVisualizationInfo.dependentControls) {
+					const aDependentControlIds = mapIds(mVisualizationInfo.dependentControls);
+					assert.deepEqual(aDependentControlIds, oRegisteredChange.visualizationInfo.dependentElementIds,
+						"then the dependent control ids are correct");
+				}
+				if (mVisualizationInfo.displayControls) {
+					const aDisplayControlIds = mapIds(mVisualizationInfo.displayControls);
+					assert.deepEqual(aDisplayControlIds, oRegisteredChange.visualizationInfo.displayElementIds,
+						"then the display control ids are correct");
+				}
+				if (mVisualizationInfo.descriptionPayload) {
+					assert.deepEqual(mVisualizationInfo.descriptionPayload, oRegisteredChange.visualizationInfo.descriptionPayload,
+						"then the descriptionPayload is correct");
+				}
+			}
 		}
 
 		/**
@@ -536,9 +505,9 @@ sap.ui.define([
 		 * @return {Promise} resolves when cleanup after undo is done
 		 */
 		function cleanUpAfterUndo(aCommands) {
-			var aPromises = [];
+			const aPromises = [];
 			aCommands.forEach(function(oCommand) {
-				var oChange = oCommand.getPreparedChange();
+				const oChange = oCommand.getPreparedChange();
 				if (oCommand.getAppComponent) {
 					aPromises.push(PersistenceWriteAPI.remove({change: oChange, selector: oCommand.getAppComponent()}));
 				}
@@ -546,38 +515,38 @@ sap.ui.define([
 			return Promise.all(aPromises);
 		}
 
-		function applyChangeOnXML(assert) {
-			// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
-			var aChanges = [];
-			sandbox.stub(ChangePersistence.prototype, "getChangesForView").resolves(aChanges);
-
-			return createViewInComponent.call(this, SYNC)
-			.then(buildCommandsAndApplyChangesOnXML.bind(this, assert, aChanges));
+		async function applyChangeOnXML(assert) {
+			await createViewInComponent.call(this, SYNC);
+			await buildCommandsAndApplyChangesOnXML.call(this, assert);
 		}
 
-		function buildCommandsAndApplyChangesOnXML(assert, aChanges) {
-			var aActions = [].concat(
+		function buildCommandsAndApplyChangesOnXML(assert) {
+			const aActions = [].concat(
 				mOptions.previousActions || [],
 				mOptions.action
 			);
-			var aCommands = [];
+			const aCommands = [];
+			let oAppComponent;
 
 			return aActions.reduce(function(oLastPromise, oAction) {
 				return oLastPromise
 				.then(buildCommand.bind(this, assert, oAction))
 				.then(function(oCommand) {
 					aCommands.push(oCommand);
-					aChanges.push(oCommand.getPreparedChange());
+					oAppComponent = oCommand.getAppComponent();
 
 					// Destroy and recreate component and view to get the changes applied
 					// Wait for each change to be applied individually to allow dependencies
 					// between changes of different actions
 					this.oUiComponentContainer.destroy();
+					PersistenceWriteAPI.add({change: oCommand.getPreparedChange(), selector: oAppComponent});
 					return createViewInComponent.call(this, ASYNC);
 				}.bind(this));
 			}.bind(this), Promise.resolve())
 			.then(function() {
 				this.aCommands = aCommands;
+				const aChanges = aCommands.map((oCommand) => oCommand.getPreparedChange());
+				return PersistenceWriteAPI.remove({flexObjects: aChanges, selector: oAppComponent});
 			}.bind(this));
 		}
 
@@ -591,73 +560,45 @@ sap.ui.define([
 				after(assert) {
 					return mOptions.after.call(this.hookContext, assert);
 				},
-				beforeEach() {
+				async beforeEach() {
+					await FlQUnitUtils.initializeFlexStateWithData(sandbox, UI_COMPONENT_NAME, {changes: []});
 					sandbox.stub(Settings, "getInstance").resolves({_oSettings: {}});
 				},
 				afterEach() {
 					this.oUiComponentContainer.destroy();
 					this.oDesignTime.destroy();
 					destroyCommands(this.aCommands);
+					FlexTestAPI.reset();
 					sandbox.restore();
 				}
 			}, function() {
-				QUnit.test("When applying the change directly on the XMLView", function(assert) {
-					return applyChangeOnXML.call(this, assert)
-
-					.then(function() {
-						return checkChangeVisualization(this.oView, this.aCommands, assert);
-					}.bind(this))
-
-					.then(function() {
-						// Verify that UI change has been applied on XML view
-						return mOptions.afterAction(this.oUiComponent, this.oView, assert);
-					}.bind(this));
+				QUnit.test("When applying the change directly on the XMLView", async function(assert) {
+					await applyChangeOnXML.call(this, assert);
+					await checkChangeVisualization(this.oView, this.aCommands, assert);
+					// Verify that UI change has been applied on XML view
+					await mOptions.afterAction(this.oUiComponent, this.oView, assert);
 				});
 
-				QUnit.test("When executing on XML and reverting the change in JS (e.g. variant switch)", function(assert) {
-					return applyChangeOnXML.call(this, assert)
-
-					.then(function() {
-						return undoCommands(this.aCommands);
-					}.bind(this))
-
-					.then(function() {
-						return cleanUpAfterUndo(this.aCommands);
-					}.bind(this))
-
-					.then(async function() {
-						await nextUIUpdate();
-						mOptions.afterUndo(this.oUiComponent, this.oView, assert);
-					}.bind(this));
+				QUnit.test("When executing on XML and reverting the change in JS (e.g. variant switch)", async function(assert) {
+					await applyChangeOnXML.call(this, assert);
+					await undoCommands(this.aCommands);
+					await cleanUpAfterUndo(this.aCommands);
+					await nextUIUpdate();
+					await mOptions.afterUndo(this.oUiComponent, this.oView, assert);
 				});
 
-				QUnit.test("When executing on XML, reverting the change in JS (e.g. variant switch) and applying again", function(assert) {
-					return applyChangeOnXML.call(this, assert)
+				QUnit.test("When executing on XML, reverting the change in JS (e.g. variant switch) and applying again", async function(assert) {
+					await applyChangeOnXML.call(this, assert);
+					// condensing has to be done before the changes are reverted
+					const mCommands = await condenseCommands(this.oView, this.aCommands, assert);
+					this.aRemainingCommands = mCommands.remainingCommands;
 
-					.then(function() {
-						// condensing has to be done before the changes are reverted
-						return condenseCommands(this.oView, this.aCommands, assert);
-					}.bind(this))
-
-					.then(function(mCommands) {
-						this.aRemainingCommands = mCommands.remainingCommands;
-
-						return undoCommands(this.aCommands);
-					}.bind(this))
-
-					.then(function() {
-						return cleanUpAfterUndo(this.aCommands);
-					}.bind(this))
-
-					.then(function() {
-						// this should have the same effect as executing all the commands
-						return executeCommands(this.aRemainingCommands);
-					}.bind(this))
-
-					.then(async function() {
-						await nextUIUpdate();
-						mOptions.afterRedo(this.oUiComponent, this.oView, assert);
-					}.bind(this));
+					await undoCommands(this.aCommands);
+					await cleanUpAfterUndo(this.aCommands);
+					// this should have the same effect as executing all the commands
+					await executeCommands(this.aRemainingCommands);
+					await nextUIUpdate();
+					await mOptions.afterRedo(this.oUiComponent, this.oView, assert);
 				});
 			});
 		}
@@ -679,9 +620,8 @@ sap.ui.define([
 			after(assert) {
 				return mOptions.after.call(this.hookContext, assert);
 			},
-			beforeEach(assert) {
-				// no LREP response needed
-				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve([]));
+			async beforeEach(assert) {
+				await FlQUnitUtils.initializeFlexStateWithData(sandbox, UI_COMPONENT_NAME, {changes: []});
 				sandbox.stub(Settings, "getInstance").returns(Promise.resolve({_oSettings: {}}));
 
 				return createViewInComponent.call(this, SYNC)
@@ -694,58 +634,40 @@ sap.ui.define([
 				this.oDesignTime.destroy();
 				this.oUiComponentContainer.destroy();
 				destroyCommands(this.aCommands);
+				FlexTestAPI.reset();
 				sandbox.restore();
 			}
 		}, function() {
-			QUnit.test("When executing the underlying command on the control at runtime", function(assert) {
-				return waitForDtSync(this.oDesignTime)
-
-				.then(function() {
-					return checkChangeVisualization(this.oView, this.aCommands, assert);
-				}.bind(this))
-
-				.then(async function() {
-					await nextUIUpdate();
-					return mOptions.afterAction(this.oUiComponent, this.oView, assert);
-				}.bind(this));
+			QUnit.test("When executing the underlying command on the control at runtime", async function(assert) {
+				await waitForDtSync(this.oDesignTime);
+				await checkChangeVisualization(this.oView, this.aCommands, assert);
+				await nextUIUpdate();
+				await mOptions.afterAction(this.oUiComponent, this.oView, assert);
 			});
 
-			QUnit.test("When executing and undoing the command", function(assert) {
-				return waitForDtSync(this.oDesignTime)
-
-				.then(undoCommands.bind(null, this.aCommands))
-
-				.then(cleanUpAfterUndo.bind(null, this.aCommands))
-
-				.then(async function() {
-					await nextUIUpdate();
-					return mOptions.afterUndo(this.oUiComponent, this.oView, assert);
-				}.bind(this));
+			QUnit.test("When executing and undoing the command", async function(assert) {
+				await waitForDtSync(this.oDesignTime);
+				await undoCommands(this.aCommands);
+				await cleanUpAfterUndo(this.aCommands);
+				await nextUIUpdate();
+				await mOptions.afterUndo(this.oUiComponent, this.oView, assert);
 			});
 
-			QUnit.test("When executing, undoing and redoing the command", function(assert) {
-				return waitForDtSync(this.oDesignTime)
+			QUnit.test("When executing, undoing and redoing the command", async function(assert) {
+				await waitForDtSync(this.oDesignTime);
 
 				// condensing has to be done before the changes are reverted
-				.then(condenseCommands.bind(this, this.oView, this.aCommands, assert))
+				const mCommands = await condenseCommands(this.oView, this.aCommands, assert);
+				this.aRemainingCommands = mCommands.remainingCommands;
 
-				.then(function(mCommands) {
-					this.aRemainingCommands = mCommands.remainingCommands;
+				await undoCommands(this.aCommands);
+				await cleanUpAfterUndo(this.aCommands);
 
-					return undoCommands(this.aCommands);
-				}.bind(this))
+				// this should have the same effect as executing all the commands
+				await executeCommands(this.aRemainingCommands);
 
-				.then(cleanUpAfterUndo.bind(null, this.aCommands))
-
-				.then(function() {
-					// this should have the same effect as executing all the commands
-					return executeCommands(this.aRemainingCommands);
-				}.bind(this))
-
-				.then(async function() {
-					await nextUIUpdate();
-					return mOptions.afterRedo(this.oUiComponent, this.oView, assert);
-				}.bind(this));
+				await nextUIUpdate();
+				await mOptions.afterRedo(this.oUiComponent, this.oView, assert);
 			});
 		});
 	}
