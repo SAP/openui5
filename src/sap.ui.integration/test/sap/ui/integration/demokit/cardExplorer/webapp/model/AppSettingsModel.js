@@ -1,9 +1,8 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Theming",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core"
-], function(Localization, Theming, JSONModel, Core) {
+	"sap/ui/model/json/JSONModel"
+], function(Localization, Theming, JSONModel) {
 	"use strict";
 
 	//key for local storage
@@ -115,7 +114,7 @@ sap.ui.define([
 	oJSONModel.applyValues = function () {
 		//apply theme
 		var sTheme = this.getProperty("/theme");
-		Core.applyTheme(sTheme);
+		Theming.setTheme(sTheme);
 		//apply content density
 		var oBody = document.body;
 		oBody.classList.remove("sapUiSizeCompact");

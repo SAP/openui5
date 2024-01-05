@@ -2852,7 +2852,8 @@ sap.ui.define([
 							{
 								url: '/samples/design/manifest.json',
 								name: 'manifest.json',
-								key: 'manifest.json'
+								key: 'manifest.json',
+								isApplicationManifest: true
 							},
 							{
 								url: '/samples/design/Design.view.xml',
@@ -2871,8 +2872,8 @@ sap.ui.define([
 							},
 							{
 								url: '/samples/design/listCardManifest.json',
-								name: 'listManifest.json',
-								key: 'listManifest.json'
+								name: 'listCardManifest.json',
+								key: 'listCardManifest.json'
 							},
 							{
 								url: '/samples/design/Component.js',
