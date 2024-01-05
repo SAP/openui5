@@ -1457,7 +1457,7 @@ sap.ui.define([
 					"item": {
 						"title": "{Revenue}"
 					},
-					"maxItems": 5,
+					"maxItems": 2,
 					"minItems": 1
 				}
 			}
@@ -2024,7 +2024,7 @@ sap.ui.define([
 				assert.strictEqual(oLoadingPlaceholder.getMinItems(), 1, "The placeholder minItems is 1 initially");
 
 				oCard.attachEventOnce("_ready", function () {
-					assert.strictEqual(oLoadingPlaceholder.getMinItems(), 5, "The placeholder minItems are 5 initially");
+					assert.strictEqual(oLoadingPlaceholder.getMinItems(), 2, "The placeholder minItems are 5 initially");
 					done();
 				});
 
