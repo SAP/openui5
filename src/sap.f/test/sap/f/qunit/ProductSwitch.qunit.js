@@ -1,6 +1,6 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchItem", "sap/ui/core/Lib"],
-	function(Core, ProductSwitch, ProductSwitchItem, Library) {
+sap.ui.define(["sap/f/ProductSwitch", "sap/f/ProductSwitchItem", "sap/ui/core/Lib", "sap/ui/qunit/utils/nextUIUpdate"],
+	function(ProductSwitch, ProductSwitchItem, Library, nextUIUpdate) {
 		"use strict";
 
 		var TESTS_DOM_CONTAINER = "qunit-fixture",
@@ -27,10 +27,10 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchIt
 			};
 
 		QUnit.module("ProductSwitch - API ", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oProductSwitch = oUtil.getProductSwitch();
 				this.oProductSwitch.placeAt(TESTS_DOM_CONTAINER);
-				Core.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oProductSwitch.destroy();
@@ -42,33 +42,33 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchIt
 			assert.ok(this.oProductSwitch, "The ProductSwitch is instantiated successfully");
 		});
 
-		QUnit.test("items aggregation", function (assert) {
+		QUnit.test("items aggregation", async function (assert) {
 			assert.ok(this.oProductSwitch._getGridContainer(), "Internal aggregation for forwarding is instatiated.");
 			assert.strictEqual(this.oProductSwitch.getItems().length, this.oProductSwitch._getGridContainer().getItems().length, "Items are succcessfully forwarded");
 
 			this.oProductSwitch.addItem(oUtil.getProductSwitchItem());
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitch.getItems().length, this.oProductSwitch._getGridContainer().getItems().length, "Items are succcessfully forwarded");
 		});
 
-		QUnit.test("items aggregation forwarding - insertItem", function (assert) {
+		QUnit.test("items aggregation forwarding - insertItem", async function (assert) {
 			var oItem = oUtil.getProductSwitchItem();
 
 			this.oProductSwitch.insertItem(oItem, 0);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.equal(this.oProductSwitch._getGridContainer().getItems()[0], oItem, "insertItem is forwarded successfully");
 			assert.equal(this.oProductSwitch.getItems()[0], oItem, "insertItem is executed successfully");
 		});
 
-		QUnit.test("items aggregation forwarding - removeItem", function (assert) {
+		QUnit.test("items aggregation forwarding - removeItem", async function (assert) {
 			var oItem;
 
 			oUtil.getProductSwitchItems(5).forEach(function(oCreatedItem) {
 				this.oProductSwitch.addItem(oCreatedItem);
 			}, this);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			oItem  = this.oProductSwitch.getItems()[0];
 
@@ -76,19 +76,19 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchIt
 			assert.ok(this.oProductSwitch.getItems().indexOf(oItem) !== -1, "item is in the items aggregation");
 
 			this.oProductSwitch.removeItem(oItem);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.ok(this.oProductSwitch._getGridContainer().getItems().indexOf(oItem) === -1, "Change in the aggregation was forwarded correctly");
 			assert.ok(this.oProductSwitch.getItems().indexOf(oItem) === -1, "Item was successfully removed");
 		});
 
-		QUnit.test("items aggregation forwarding - removeAllItems", function (assert) {
+		QUnit.test("items aggregation forwarding - removeAllItems", async function (assert) {
 			var aItems = oUtil.getProductSwitchItems(5);
 
 			aItems.forEach(function(oCreatedItem) {
 				this.oProductSwitch.addItem(oCreatedItem);
 			}, this);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			aItems.forEach(function(oItem) {
 				assert.ok(this.oProductSwitch._getGridContainer().getItems().indexOf(oItem) !== -1, "Item is in the forwarded items aggregation");
@@ -96,7 +96,7 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchIt
 			}, this);
 
 			this.oProductSwitch.removeAllItems();
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			aItems.forEach(function(oItem) {
 				assert.ok(this.oProductSwitch._getGridContainer().getItems().indexOf(oItem) === -1, "Change in the aggregation was forwarded correctly");
@@ -104,13 +104,13 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchIt
 			}, this);
 		});
 
-		QUnit.test("items aggregation forwarding - destroyAllItems", function (assert) {
+		QUnit.test("items aggregation forwarding - destroyAllItems", async function (assert) {
 			var aItems = oUtil.getProductSwitchItems(5);
 
 			aItems.forEach(function(oCreatedItem) {
 				this.oProductSwitch.addItem(oCreatedItem);
 			}, this);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			aItems.forEach(function(oItem) {
 				assert.ok(this.oProductSwitch._getGridContainer().getItems().indexOf(oItem) !== -1, "Item is in the forwarded items aggregation");
@@ -118,7 +118,7 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchIt
 			}, this);
 
 			this.oProductSwitch.destroyItems();
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			aItems.forEach(function(oItem) {
 				assert.ok(this.oProductSwitch._getGridContainer().getItems().indexOf(oItem) === -1, "Change in the aggregation was forwarded correctly");
@@ -127,10 +127,10 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchIt
 		});
 
 		QUnit.module("ProductSwitch - private methods ", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oProductSwitch = oUtil.getProductSwitch();
 				this.oProductSwitch.placeAt(TESTS_DOM_CONTAINER);
-				Core.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oProductSwitch.destroy();
@@ -138,32 +138,32 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchIt
 			}
 		});
 
-		QUnit.test("Layout update after items count change", function (assert) {
+		QUnit.test("Layout update after items count change", async function (assert) {
 			var oItem = oUtil.getProductSwitchItem();
 
 			oUtil.getProductSwitchItems(6).forEach(function(oCreatedItem) {
 				this.oProductSwitch.addItem(oCreatedItem);
 			}, this);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitch._getGridContainer().getLayout().getColumns(), 3, "Layout columns are updated");
 
 			this.oProductSwitch.addItem(oItem);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitch._getGridContainer().getLayout().getColumns(), 4, "Layout columns are updated");
 
 			this.oProductSwitch.removeItem(oItem);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(this.oProductSwitch._getGridContainer().getLayout().getColumns(), 3, "Layout columns are updated");
 		});
 
 		QUnit.module("ProductSwitch - Accessibility", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oProductSwitch = oUtil.getProductSwitch(5);
 				this.oProductSwitch.placeAt(TESTS_DOM_CONTAINER);
-				Core.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oProductSwitch.destroy();
@@ -179,7 +179,7 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchIt
 			assert.equal($ProductSwitch.attr("aria-label"), oRb.getText("PRODUCTSWITCH_CONTAINER_LABEL"), "Container aria-label is set correctly");
 		});
 
-		QUnit.test("Setsize and Posinset values", function (assert) {
+		QUnit.test("Setsize and Posinset values", async function (assert) {
 			var aItems = this.oProductSwitch.getItems(),
 				iItemCount = aItems.length,
 				oItem = aItems[3],
@@ -193,7 +193,7 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchIt
 			assert.equal($Item.attr("aria-checked"), "true", "aria-checked is correctly set");
 
 			this.oProductSwitch.invalidate();
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.equal($Item.attr("aria-checked"), "true", "aria-checked is still correctly set");
 		});

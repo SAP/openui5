@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/core/Core",
 	"sap/f/DynamicPageAccessibleLandmarkInfo",
 	"sap/f/library",
 	"sap/f/semantic/DiscussInJamAction",
@@ -16,7 +15,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/VBox",
 	"sap/ui/Device",
-	"sap/f/semantic/SemanticPage"
+	"sap/f/semantic/SemanticPage",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	SemanticUtil,
@@ -24,7 +24,6 @@ function(
 	Library,
 	$,
 	ResourceModel,
-	Core,
 	DynamicPageAccessibleLandmarkInfo,
 	fioriLibrary,
 	DiscussInJamAction,
@@ -35,7 +34,8 @@ function(
 	Text,
 	VBox,
 	Device,
-	SemanticPage
+	SemanticPage,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -53,9 +53,9 @@ function(
 
 	/* --------------------------- SemanticPage API -------------------------------------- */
 	QUnit.module("SemanticPage - API ", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oSemanticPage = oFactory.getSemanticPage();
-			oUtil.renderObject(this.oSemanticPage);
+			await oUtil.renderObject(this.oSemanticPage);
 		},
 		afterEach: function () {
 			this.oSemanticPage.destroy();
@@ -211,7 +211,7 @@ function(
 	/**
 	 * @deprecated as of version 1.58
 	 */
-	QUnit.test("test SemanticPage titlePrimaryArea setter and getter", function (assert) {
+	QUnit.test("test SemanticPage titlePrimaryArea setter and getter", async function (assert) {
 		var sBeginArea = DynamicPageTitleArea.Begin,
 			sMiddleArea = DynamicPageTitleArea.Middle;
 
@@ -234,7 +234,7 @@ function(
 		//Create a <code>SemanticPage</code> with <code>titlePrimaryArea</code> set to
 		//<code>sap.f.DynamicPageTitleArea.Middle</code> in the constructor
 		this.oSemanticPage2 = oFactory.getSemanticPage({titlePrimaryArea : sMiddleArea});
-		oUtil.renderObject(this.oSemanticPage2);
+		await oUtil.renderObject(this.oSemanticPage2);
 
 		// Assert default
 		assert.strictEqual(this.oSemanticPage2.getTitlePrimaryArea(), sMiddleArea,
@@ -812,7 +812,7 @@ function(
 	// This test is needed to ensure that the buttons added to customShareActions can be bound
 	// the same way as other buttons
 	// Due to the buttons being shown in the static UI area there might be issues with bindings
-	QUnit.test("test SemanticPage customShareActions content bindings", function (assert) {
+	QUnit.test("test SemanticPage customShareActions content bindings", async function (assert) {
 		var sButtonText = "Action 1";
 		var aTexts = [];
 		aTexts["action1"] = sButtonText;
@@ -837,12 +837,12 @@ function(
 
 		this.oSemanticPage.addCustomShareAction(oCustomShareButton);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oCustomShareButton.getText(), sButtonText, "Expected text from binding in button is there");
 	});
 
-	QUnit.test("test SemanticPage customShareActions *delayed* content bindings", function (assert) {
+	QUnit.test("test SemanticPage customShareActions *delayed* content bindings", async function (assert) {
 		var sButtonText = "Action 1";
 		var aTexts = [];
 		aTexts["action1"] = sButtonText;
@@ -867,7 +867,7 @@ function(
 
 		this.oSemanticPage.setModel(i18n, "i18n");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oCustomShareButton.getText(), sButtonText, "Expected text from binding in button is there");
 	});
@@ -988,7 +988,7 @@ function(
 		assert.ok(oSaveAsTileAction.bIsDestroyed, "oSaveAsTileAction button has been destroyed.");
 	});
 
-	QUnit.test("SemanticPage landmark info is set correctly", function (assert) {
+	QUnit.test("SemanticPage landmark info is set correctly", async function (assert) {
 		var oLandmarkInfo = new DynamicPageAccessibleLandmarkInfo({
 			rootRole: "Region",
 			rootLabel: "Root",
@@ -1001,7 +1001,7 @@ function(
 		});
 
 		this.oSemanticPage.setLandmarkInfo(oLandmarkInfo);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oSemanticPage.$("page").attr("role"), "region", "Root role is set correctly.");
 		assert.strictEqual(this.oSemanticPage.$("page").attr("aria-label"), "Root", "Root label is set correctly.");
@@ -1014,7 +1014,7 @@ function(
 	});
 
 
-	QUnit.test("test SemanticPage snapping and expanding of header", function (assert) {
+	QUnit.test("test SemanticPage snapping and expanding of header", async function (assert) {
 		//Arrange
 		var oSnappedTitle = oFactory.getTitle(),
 			oExpandedTitle = oFactory.getDynamicPageTitle(),
@@ -1030,7 +1030,7 @@ function(
 			// width: "1000px",
 			items: [new Text({text: "ELEMENTE DEFINITORII Aspecte generale Magazinul online www"})]
 		}));
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 			oPage.getScrollDelegate().scrollTo(0, 2000);
@@ -1055,9 +1055,9 @@ function(
 
 	/* --------------------------- SemanticPage Rendering ---------------------------------- */
 	QUnit.module("SemanticPage - Rendering", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oSemanticPage = oFactory.getSemanticPage();
-			oUtil.renderObject(this.oSemanticPage);
+			await oUtil.renderObject(this.oSemanticPage);
 			this.$semanicPage = this.oSemanticPage.$();
 		},
 		afterEach: function () {
@@ -1160,7 +1160,7 @@ function(
 			sSemanticAddType + " should not be preprocessed");
 	});
 
-	QUnit.test("test if a Share menu button is hidden when there are no visible actions in it", function (assert) {
+	QUnit.test("test if a Share menu button is hidden when there are no visible actions in it", async function (assert) {
 		// Arrange
 		var oPrintAction = new PrintAction({visible: false}),
 			oDiscussInJamAction = new DiscussInJamAction({visible: false}),
@@ -1171,7 +1171,7 @@ function(
 			shareInJamAction: new ShareInJamAction({visible: false}),
 			printAction: oPrintAction
 		});
-		oUtil.renderObject(this.oSemanticPage);
+		await oUtil.renderObject(this.oSemanticPage);
 		oShareMenuButton = this.oSemanticPage._getShareMenu()._getShareMenuButton();
 
 		// Assert
@@ -1188,13 +1188,13 @@ function(
 		this.oSemanticPage.destroy();
 	});
 
-	QUnit.test("test if a Share menu button is hidden when there are no actions in it", function (assert) {
+	QUnit.test("test if a Share menu button is hidden when there are no actions in it", async function (assert) {
 		// Arrange
 		var done = assert.async(),
 			oShareMenuButton;
 
 		this.oSemanticPage = oFactory.getSemanticPage();
-		oUtil.renderObject(this.oSemanticPage);
+		await oUtil.renderObject(this.oSemanticPage);
 		oShareMenuButton = this.oSemanticPage._getShareMenu()._getShareMenuButton();
 
 		// Assert
@@ -1214,7 +1214,7 @@ function(
 		}.bind(this)});
 	});
 
-	QUnit.test("test if a single default Share menu action is displayed in Title Toolbar", function (assert) {
+	QUnit.test("test if a single default Share menu action is displayed in Title Toolbar", async function (assert) {
 		// Arrange
 		var oPrintAction = new PrintAction(),
 			oDiscussInJamAction = new DiscussInJamAction({visible: false}),
@@ -1226,7 +1226,7 @@ function(
 			discussInJamAction: oDiscussInJamAction,
 			printAction: oPrintAction
 		});
-		oUtil.renderObject(this.oSemanticPage);
+		await oUtil.renderObject(this.oSemanticPage);
 		oSemanticTitle = this.oSemanticPage._getSemanticTitle();
 		oTitleContainer = oSemanticTitle._getContainer();
 		oToolbar = oTitleContainer._getActionsToolbar();
@@ -1245,7 +1245,7 @@ function(
 		this.oSemanticPage.destroy();
 	});
 
-	QUnit.test("test if a single custom Share menu action is displayed in Title Toolbar", function (assert) {
+	QUnit.test("test if a single custom Share menu action is displayed in Title Toolbar", async function (assert) {
 		// Arrange
 		var oCustomShareButton = new Button(),
 			oPrintAction = new PrintAction({visible: false}),
@@ -1258,7 +1258,7 @@ function(
 			printAction: oPrintAction
 		});
 
-		oUtil.renderObject(this.oSemanticPage);
+		await oUtil.renderObject(this.oSemanticPage);
 		oSemanticTitle = this.oSemanticPage._getSemanticTitle();
 		oTitleContainer = oSemanticTitle._getContainer();
 		oToolbar = oTitleContainer._getActionsToolbar();
@@ -1280,7 +1280,7 @@ function(
 	/* --------------------------- Accessibility -------------------------------------- */
 	QUnit.module("Accessibility");
 
-	QUnit.test("ARIA attributes", function(assert) {
+	QUnit.test("ARIA attributes", async function(assert) {
 		// Arrange
 		var oSemanticPage = oFactory.getSemanticPage(),
 			oDynamicPage = oSemanticPage._getPage(),
@@ -1288,7 +1288,7 @@ function(
 				.getText(oSemanticPage.constructor.ARIA_ROLE_DESCRIPTION);
 
 		// Act
-		oUtil.renderObject(oSemanticPage);
+		await oUtil.renderObject(oSemanticPage);
 
 		// Assert
 		assert.strictEqual(oDynamicPage.$().attr('aria-roledescription'), sExpectedRoleDescription, "aria-roledescription is set");
@@ -1297,7 +1297,7 @@ function(
 		oSemanticPage.destroy();
 	});
 
-	QUnit.test("AriaLabelledBy attribute on actions toolbar is set correctly", function(assert) {
+	QUnit.test("AriaLabelledBy attribute on actions toolbar is set correctly", async function(assert) {
 		// Arrange
 		var oSemanticPage = oFactory.getSemanticPage(),
 			oSemanticTitle = oSemanticPage._getSemanticTitle(),
@@ -1305,7 +1305,7 @@ function(
 			oActionsToolbar = oTitleContainer._getActionsToolbar();
 
 		// Act
-		oUtil.renderObject(oSemanticPage);
+		await oUtil.renderObject(oSemanticPage);
 
 		// Assert
 		var $InvisibleTextDomRef = $('#' + oActionsToolbar.getId() + "-InvisibleText");
@@ -1316,7 +1316,7 @@ function(
 		oSemanticPage.destroy();
 	});
 
-	QUnit.test("AriaLabelledBy attribute on navigation actions toolbar is set correctly", function(assert) {
+	QUnit.test("AriaLabelledBy attribute on navigation actions toolbar is set correctly", async function(assert) {
 		// Arrange
 		var oSemanticPage = oFactory.getSemanticPage(),
 			oSemanticTitle = oSemanticPage._getSemanticTitle(),
@@ -1324,7 +1324,7 @@ function(
 			oNavigationActionsToolbar = oTitleContainer._getNavigationActionsToolbar();
 
 		// Act
-		oUtil.renderObject(oSemanticPage);
+		await oUtil.renderObject(oSemanticPage);
 
 		// Assert
 		var $InvisibleTextDomRef = $('#' + oNavigationActionsToolbar.getId() + "-InvisibleText");
@@ -1335,12 +1335,12 @@ function(
 		oSemanticPage.destroy();
 	});
 
-	QUnit.test("AriaLabelledBy attribute on footer actions toolbar is set correctly", function(assert) {
+	QUnit.test("AriaLabelledBy attribute on footer actions toolbar is set correctly", async function(assert) {
 		// Arrange
 		var oSemanticPage = oFactory.getSemanticPage(),
 			oFooterToolbar = oSemanticPage._getFooter();
 		// Act
-		oUtil.renderObject(oSemanticPage);
+		await oUtil.renderObject(oSemanticPage);
 
 		// Assert
 		var $InvisibleTextDomRef = $('#' + oFooterToolbar.getId() + "-FooterActions-InvisibleText");
@@ -1351,13 +1351,13 @@ function(
 		oSemanticPage.destroy();
 	});
 
-	QUnit.test("Share menu action button has correct tooltip", function(assert) {
+	QUnit.test("Share menu action button has correct tooltip", async function(assert) {
 		// Arrange
 		var oSemanticPage = oFactory.getSemanticPage(),
 			oShareMenuButton = oSemanticPage._getShareMenu()._getShareMenuButton();
 
 		// Act
-		oUtil.renderObject(oSemanticPage);
+		await oUtil.renderObject(oSemanticPage);
 
 		// Assert
 		assert.strictEqual(oShareMenuButton._getTooltip(), "Share", "Share menu button has correct tooltip");
@@ -1366,7 +1366,7 @@ function(
 		oSemanticPage.destroy();
 	});
 
-	QUnit.test("Ctrl+Shift+S to open share action sheet", function(assert) {
+	QUnit.test("Ctrl+Shift+S to open share action sheet", async function(assert) {
 		var done = assert.async(),
 			oSemanticPageTitle,
 			oActionSheet,
@@ -1374,7 +1374,7 @@ function(
 
 		// Arrange
 		this.oSemanticPage = oFactory.getSemanticPage();
-		oUtil.renderObject(this.oSemanticPage);
+		await oUtil.renderObject(this.oSemanticPage);
 		oSemanticPageTitle = this.oSemanticPage._getTitle();
 		oActionSheet = this.oSemanticPage._getActionSheet();
 

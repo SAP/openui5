@@ -3,17 +3,17 @@
 sap.ui.define([
 	"sap/f/delegate/GridContainerItemNavigation",
 	"sap/f/GridContainer",
-	"sap/ui/core/Core",
 	"sap/m/GenericTile",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Button"
 ],
 function (
 	GridContainerItemNavigation,
 	GridContainer,
-	Core,
 	GenericTile,
 	QUnitUtils,
+	nextUIUpdate,
 	Button
 ) {
 	"use strict";
@@ -21,7 +21,7 @@ function (
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	QUnit.module("Focus handling", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oGrid = new GridContainer({
 				items: [
 					new GenericTile({ header: "Tile 1" }),
@@ -29,14 +29,14 @@ function (
 				]
 			});
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
 		}
 	});
 
-	QUnit.test("Item should not be explicitly focused while dragged", function (assert) {
+	QUnit.test("Item should not be explicitly focused while dragged", async function (assert) {
 		// Arrange
 		var oGrid = this.oGrid,
 			oButton = new Button({}),
@@ -45,7 +45,7 @@ function (
 			oItemWrapperFocusSpy;
 
 		oButton.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oItemWrapper = oItem.getDomRef().parentElement;
 		oItemWrapperFocusSpy = this.spy(oItemWrapper, "focus");

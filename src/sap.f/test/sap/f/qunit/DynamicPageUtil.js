@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/m/Breadcrumbs",
 	"sap/m/Link",
 	"sap/m/GenericTag",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 	function(
 		Library,
@@ -40,7 +41,8 @@ sap.ui.define([
 		Breadcrumbs,
 		Link,
 		GenericTag,
-		Device
+		Device,
+		nextUIUpdate
 	) {
 	"use strict";
 
@@ -370,7 +372,7 @@ sap.ui.define([
 	oUtil = {
 		renderObject: function (oObject) {
 			oObject.placeAt(TESTS_DOM_CONTAINER);
-			Core.applyChanges();
+			nextUIUpdate.runSync(); // TODO adapt callers
 			return oObject;
 		},
 		exists: function (vObject) {

@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/f/SidePanel",
 	"sap/f/SidePanelItem",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Library,
@@ -27,7 +27,7 @@ sap.ui.define([
 	SidePanel,
 	SidePanelItem,
 	KeyCodes,
-	oCore,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -134,11 +134,11 @@ sap.ui.define([
 	// Tests
 
 	QUnit.module("Public API", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oSP = new SidePanel();
 			addItems(this.oSP, 3);
 			this.oSP.placeAt("test-parent");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oSPDomRef = this.oSP.getDomRef();
 		},
 		afterEach : function() {
@@ -146,13 +146,13 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("actionBarExpanded", function (assert) {
+	QUnit.test("actionBarExpanded", async function (assert) {
 		var iSideBarWidth = this.oSPDomRef.querySelector(".sapFSPSide").clientWidth,
 			iSidePanelWidth;
 
 		// setup
 		this.oSP.setSidePanelWidth("320px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		iSidePanelWidth = parseInt(this.oSP.getSidePanelWidth());
 
@@ -162,7 +162,7 @@ sap.ui.define([
 
 		// act
 		this.oSP.setActionBarExpanded(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPActionBar").clientWidth, iSidePanelWidth, "Action bar is expanded");
@@ -170,18 +170,18 @@ sap.ui.define([
 
 		// act
 		this.oSP.setActionBarExpanded(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPActionBar").clientWidth, iSideBarWidth, "Action bar is not expanded");
 		assert.notOk(this.oSP.getDomRef().classList.contains("sapFSPActionBarExpanded"), "CSS class for action bar expansion is not added");
 	});
 
-	QUnit.test("sidePanelWidth", function (assert) {
+	QUnit.test("sidePanelWidth", async function (assert) {
 		// act
 		this.oSP.setSidePanelWidth("400px");
 		this.oSP.setActionBarExpanded(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPActionBar").clientWidth, 320, "The width of expanded action bar is not affected when side content is not expanded");
@@ -189,21 +189,21 @@ sap.ui.define([
 		// act
 		this.oSP.setActionBarExpanded(false);
 		this.oSP.setSelectedItem(this.oSP.getItems()[0]);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPSideInner").clientWidth, 400, "The width of expanded side content is proper");
 
 		// act
 		this.oSP.setActionBarExpanded(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPActionBar").clientWidth, 400, "The width of expanded action bar equal to side panel width when this width is less than 560px");
 
 		// act
 		this.oSP.setSidePanelWidth("600px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		// TODO: It can be retrieved once the mentioned resizing behavior gets fixed
@@ -211,7 +211,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("setSelectedItem", function (assert) {
+	QUnit.test("setSelectedItem", async function (assert) {
 		var	oSelectedItem = this.oSP.getItems()[1], // action item with index '1' will be selected later
 			oDisabledItem = this.oSP.getItems()[2],
 			sSideContentHeaderId = this.oSP.getId() + "-header";
@@ -223,7 +223,7 @@ sap.ui.define([
 
 		// act - select action item
 		this.oSP.setSelectedItem(oSelectedItem.getId());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oSP.getSelectedItem(), oSelectedItem.getId(), "Proper action item is selected");
@@ -233,7 +233,7 @@ sap.ui.define([
 
 		// act - deselect action item
 		this.oSP.setSelectedItem();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(this.oSP.getSelectedItem(), "There is no selected action item");
@@ -242,7 +242,7 @@ sap.ui.define([
 
 		// act - try to select disabled action item
 		this.oSP.setSelectedItem(oDisabledItem.getId());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(this.oSP.getSelectedItem(), "The disabled action item is not selected, there is no selected item");
@@ -272,24 +272,24 @@ sap.ui.define([
 		assert.strictEqual(oSelectedItem, oEnabledItem.getId(), "The disabled action item is not selected; The previously selected item remains selected");
 	});
 
-	QUnit.test("ariaLabel", function (assert) {
+	QUnit.test("ariaLabel", async function (assert) {
 		// Act
 		this.oSP.setAriaLabel("My Side Panel");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPSide").getAttribute("aria-label"), "My Side Panel", "Side panel aria-label is properly set");
 	});
 
 	QUnit.module("Event", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oSP = new SidePanel();
 			this.mEventParameters = [];
 			this.bPreventExpand = false;
 			this.bPreventCollapse = false;
 			addItems(this.oSP, 3);
 			this.oSP.placeAt("test-parent");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oSPDomRef = this.oSP.getDomRef();
 			this.oSP.attachToggle(function(oEvent) {
 				var mParameters = oEvent.getParameters(),
@@ -315,12 +315,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("toggle event firing without preventing", function (assert) {
+	QUnit.test("toggle event firing without preventing", async function (assert) {
 		var	oSelectedItem = this.oSP.getItems()[1]; // action item with index '1' will be selected later
 
 		// act - select action item
 		this.oSP.setSelectedItem(oSelectedItem.getId());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oSP.getSelectedItem(), oSelectedItem.getId(), "Proper action item is selected");
@@ -328,20 +328,20 @@ sap.ui.define([
 
 		// act - deselect action item
 		this.oSP.setSelectedItem();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(this.oSP.getSelectedItem(), "There is no action item selected");
 		assert.notOk(this.oSP._getSideContentExpanded(), "The side content is collapsed");
 	});
 
-	QUnit.test("toggle event firing with preventing", function (assert) {
+	QUnit.test("toggle event firing with preventing", async function (assert) {
 		var	oSelectedItem = this.oSP.getItems()[1]; // action item with index '1' will be selected later
 
 		// act - select action item and prevent the event
 		this.bPreventExpand = true;
 		this.oSP.setSelectedItem(oSelectedItem.getId());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oSP.getSelectedItem(), oSelectedItem.getId(), "Proper action item is selected");
@@ -350,12 +350,12 @@ sap.ui.define([
 		// act - select the same action item now without preventing the event
 		this.oSP.setSelectedItem();
 		this.oSP.setSelectedItem(oSelectedItem.getId());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act - deselect action item and prevent the event
 		this.bPreventCollapse = true;
 		this.oSP.setSelectedItem();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oSP.getSelectedItem(), oSelectedItem.getId(), "Selected action item is not deselected because of prevention");
@@ -363,10 +363,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oSP = new SidePanel();
 			this.oSP.placeAt("test-parent");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oSP.destroy();
@@ -380,7 +380,7 @@ sap.ui.define([
 		assert.notOk(oSPDomRef.querySelector(".sapFSPSide"), "There is no side panel rendered");
 	});
 
-	QUnit.test("Side panel when there is one action icon added", function (assert) {
+	QUnit.test("Side panel when there is one action icon added", async function (assert) {
 		var oSPDomRef = this.oSP.getDomRef(),
 			oExpandCollapseButton = this.oSP.getAggregation("_arrowButton"),
 			sSideContentHeaderId = this.oSP.getId() + "-header",
@@ -388,7 +388,7 @@ sap.ui.define([
 			oSelectedItem;
 
 		addItems(this.oSP, 1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oSelectedItem = this.oSP.getItems()[0]; // first/only action item
 
@@ -397,7 +397,7 @@ sap.ui.define([
 
 		// Act
 		oExpandCollapseButton.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCloseButton = this.oSP.getAggregation("_closeButton");
 
 		// Assert
@@ -408,7 +408,7 @@ sap.ui.define([
 		assert.strictEqual(oCloseButton.getIcon(), "sap-icon://navigation-right-arrow", "Close button have the same icon as Expand/Collapse button should have");
 	});
 
-	QUnit.test("Side panel when there are many action icons added", function (assert) {
+	QUnit.test("Side panel when there are many action icons added", async function (assert) {
 		var iVisibleItems = 0,
 			oOverflowItemDomRef,
 			oOverflowMenu,
@@ -416,7 +416,7 @@ sap.ui.define([
 			iOverflowMenuItems;
 
 		addItems(this.oSP);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oSPDomRef = this.oSP.getDomRef();
 		oOverflowMenu = this.oSP.getAggregation("_overflowMenu");
 		oOverflowItemDomRef = this.oSP.getAggregation("_overflowItem").getDomRef();
@@ -424,7 +424,7 @@ sap.ui.define([
 		// Act - open overflow menu
 		oOverflowMenu.openBy(oOverflowItemDomRef);
 		oOverflowMenu.close();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Get overflow menu items
 		iOverflowMenuItems = oOverflowMenu.getItems().length;
@@ -442,7 +442,7 @@ sap.ui.define([
 		assert.strictEqual(window.getComputedStyle(oOverflowItemDomRef)["visibility"], "visible", "Overflow item is visible");
 	});
 
-	QUnit.test("Resize bar when side panel is resizable", function (assert) {
+	QUnit.test("Resize bar when side panel is resizable", async function (assert) {
 
 		// Act
 		addItems(this.oSP);
@@ -453,13 +453,13 @@ sap.ui.define([
 
 		// Act
 		this.oSP.setSidePanelResizable(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(this.oSP.getDomRef().querySelector(".sapFSPSplitterBar"), "There is resize bar when the side panel is resizable");
 	});
 
-	QUnit.test("Side content and action bar", function (assert) {
+	QUnit.test("Side content and action bar", async function (assert) {
 		var done = assert.async(),
 			oSPDomRef = this.oSP.getDomRef();
 
@@ -468,7 +468,7 @@ sap.ui.define([
 		// Act
 		this.oSP.setSidePanelWidth("560px");
 		this.oSP.setActionBarExpanded(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(parseInt(window.getComputedStyle(oSPDomRef.querySelector(".sapFSPActionBar")).width), 320, "Action bar has width 320px when the side content is not expanded");
@@ -476,7 +476,7 @@ sap.ui.define([
 		// Act
 		this.oSP.setSelectedItem(this.oSP.getItems()[0]);
 		this.oSP.setActionBarExpanded(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notOk(oSPDomRef.querySelector(".sapFSPSide").classList.contains("sapFSPSplitView"), "There is no class added for side content and action bar split view");
@@ -484,7 +484,7 @@ sap.ui.define([
 
 		// Act
 		this.oSP.setSidePanelWidth("561px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		setTimeout(function(){
@@ -495,30 +495,30 @@ sap.ui.define([
 		}.bind(this), 0);
 	});
 
-	QUnit.test("Context menu", function (assert) {
+	QUnit.test("Context menu", async function (assert) {
 		var oResizeBar;
 
 		addItems(this.oSP);
 		this.oSP.setSidePanelResizable(true);
 		this.oSP.setSelectedItem(this.oSP.getItems()[0]);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oResizeBar = this.oSP.getDomRef().querySelector(".sapFSPSplitterBar");
 		oResizeBar.focus();
 
 		// Act (Shift + F10)
 		qutils.triggerKeydown(oResizeBar, KeyCodes.F10, true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(document.querySelector(".sapMMenu"), "Context menu is opened after pressing Shift + F10");
 	});
 
 	QUnit.module("Resizing", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oSP = new SidePanel();
 			addItems(this.oSP, 3);
 			this.oSP.placeAt("test-parent");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oSPDomRef = this.oSP.getDomRef();
 		},
 		afterEach : function() {
@@ -526,7 +526,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Keyboard interactions", function (assert) {
+	QUnit.test("Keyboard interactions", async function (assert) {
 		var oResizeBar,
 			oSidePanel = this.oSPDomRef.querySelector(".sapFSPSide"),
 			iMinWidth = 200,
@@ -540,7 +540,7 @@ sap.ui.define([
 		this.oSP.setSidePanelWidth(iWidth + "px");
 		this.oSP.setSidePanelResizable(true);
 		this.oSP.setSelectedItem(this.oSP.getItems()[0]);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oResizeBar = this.oSPDomRef.querySelector(".sapFSPSplitterBar");
 		oResizeBar.focus();
@@ -613,23 +613,23 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Resize handler rendering", function(assert) {
+	QUnit.test("Resize handler rendering", async function(assert) {
 		// Prepare
 		var oResizableSpy = this.spy(this.oSP, "_isResizable");
 		this.oSP.setSidePanelResizable(true);
 		this.oSP.setActionBarExpanded(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oResizableSpy.calledOnce, "Resize handler is redered");
 	});
 
 	QUnit.module("Accessibility", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oSP = new SidePanel();
 			addItems(this.oSP);
 			this.oSP.placeAt("test-parent");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oSPDomRef = this.oSP.getDomRef();
 		},
 		afterEach : function() {
@@ -637,20 +637,20 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("F6 Fast navigation groups", function (assert) {
+	QUnit.test("F6 Fast navigation groups", async function (assert) {
 		// Assert
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPMain").getAttribute("data-sap-ui-fastnavgroup"), "true", "Main content is included in fast navigation");
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPSide").getAttribute("data-sap-ui-fastnavgroup"), "true", "Side panel is included in fast navigation");
 
 		// Act - open side content
 		this.oSP.setSelectedItem(this.oSP.getItems()[1].getId());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPSideContent").getAttribute("data-sap-ui-fastnavgroup"), "true", "Side content is included in fast navigation");
 	});
 
-	QUnit.test("Role attributes", function (assert) {
+	QUnit.test("Role attributes", async function (assert) {
 		var oOverflowItemDomRef = this.oSP.getAggregation("_overflowItem").getDomRef();
 
 		// Assert
@@ -662,13 +662,13 @@ sap.ui.define([
 
 		// Act - open side content
 		this.oSP.setSelectedItem(this.oSP.getItems()[1].getId());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPSideContent").getAttribute("role"), "region", "Side content has proper role");
 	});
 
-	QUnit.test("ARIA attributes", function (assert) {
+	QUnit.test("ARIA attributes", async function (assert) {
 		var oResourceBundle = Library.getResourceBundleFor("sap.f"),
 			oOverflowItemDomRef = this.oSP.getAggregation("_overflowItem").getDomRef(),
 			aItems = this.oSP.getItems(),
@@ -683,7 +683,7 @@ sap.ui.define([
 
 		// Act - expand action bar
 		this.oSP.setActionBarExpanded(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oExpandCollapse.getAttribute("aria-label"), sTooltip, "Expand/Collapse button has proper aria-label when the action bar is expanded");
@@ -691,7 +691,7 @@ sap.ui.define([
 
 		// Act - open side content
 		this.oSP.setSelectedItem(aItems[1].getId());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPSide").getAttribute("aria-label"), oResourceBundle.getText("SIDEPANEL_DEFAULT_ARIA_LABEL"), "Side panel has default aria-label");
@@ -701,7 +701,7 @@ sap.ui.define([
 
 		// Act - make side panel resizable
 		this.oSP.setSidePanelResizable(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oResizeBar = this.oSPDomRef.querySelector(".sapFSPSplitterBar");
 
 		// Assert
@@ -713,19 +713,19 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Action items title attributes", function (assert) {
+	QUnit.test("Action items title attributes", async function (assert) {
 		// Assert
 		assert.strictEqual(this.oSPDomRef.querySelectorAll(".sapFSPItem")[0].getAttribute("title"), this.oSP.getItems()[0].getText(), "When action bar is not expanded, action items should have title");
 
 		// Act - expand action bar
 		this.oSP.setActionBarExpanded(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notOk(this.oSPDomRef.querySelectorAll(".sapFSPItem")[0].getAttribute("title"), "When action bar is expanded, action items shouldn't have title");
 	});
 
-	QUnit.test("Action items icon tooltip", function (assert) {
+	QUnit.test("Action items icon tooltip", async function (assert) {
 		var oFirstItemDomRef = this.oSPDomRef.querySelectorAll(".sapFSPItem")[0];
 		// Assert
 		assert.notOk(oFirstItemDomRef.querySelector(".sapUiIcon").getAttribute("aria-label"), "First action item icon doesn't have aria-label attribute");
@@ -733,7 +733,7 @@ sap.ui.define([
 
 		// Act - set icon that have own tooltip to the first action item, and set different text to the item
 		this.oSP.getItems()[0].setIcon("sap-icon://add-filter").setText("filter");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oFirstItemDomRef = this.oSPDomRef.querySelectorAll(".sapFSPItem")[0];
 
 		// Assert
@@ -750,7 +750,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Calculating and storing default side panel width", function (assert) {
+	QUnit.test("Calculating and storing default side panel width", async function (assert) {
 		// act
 		addItems(this.oSP, 3);
 		this.oSP.setSidePanelWidth("50%");
@@ -760,19 +760,19 @@ sap.ui.define([
 
 		// act
 		this.oSP.placeAt("test-parent");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(this.oSP._sSidePanelWidth, "After the rendering of the control, the width can be calculated and stored properly");
 
 	});
 
-	QUnit.test("actionBarExpanded in Side panel when there is one action icon added", function (assert) {
+	QUnit.test("actionBarExpanded in Side panel when there is one action icon added", async function (assert) {
 		// act
 		addItems(this.oSP, 1);
 		this.oSP.setActionBarExpanded(true);
 		this.oSP.placeAt("test-parent");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(this.oSP._getSideContentExpanded(), "Expanded: side content is expanded");
@@ -780,7 +780,7 @@ sap.ui.define([
 
 		// act
 		this.oSP.setActionBarExpanded(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(this.oSP._getSideContentExpanded(), "Collapsed: side content is expanded");
