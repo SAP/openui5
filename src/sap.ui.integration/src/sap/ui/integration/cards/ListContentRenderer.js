@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"./BaseContentRenderer",
-	"../controls/ListContentItem"
+	"../controls/ListContentItem",
+	"../controls/ActionsStrip"
 ], function (
 	BaseContentRenderer,
-	ListContentItem
+	ListContentItem,
+	ActionsStrip
 ) {
 	"use strict";
 
@@ -71,7 +73,7 @@ sap.ui.define([
 			fVerticalPadding = 2;
 		}
 
-		if (oTemplate.actionsStrip) {
+		if (oTemplate.actionsStrip && ActionsStrip.hasVisibleTemplateItems(oTemplate.actionsStrip,oContent)) {
 			fItemHeight += bIsCompact ? 2 : 2.75; // actions strip height in "rem"
 			fVerticalPadding += 0.5;
 
