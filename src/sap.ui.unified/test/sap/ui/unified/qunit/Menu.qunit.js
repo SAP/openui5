@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
 	"sap/ui/unified/MenuItemBase",
@@ -12,12 +13,11 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Popup",
-	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
-], function(Localization, Element, qutils, Menu, MenuItem, MenuItemBase, MenuTextFieldItem, Button, Device, KeyCodes, Popup, Core, jQuery, Control) {
+], function(Localization, Element, qutils, nextUIUpdate, Menu, MenuItem, MenuItemBase, MenuTextFieldItem, Button, Device, KeyCodes, Popup, jQuery, Control) {
 	"use strict";
 
 	var Dock = Popup.Dock;
@@ -1294,7 +1294,7 @@ sap.ui.define([
 		assert.ok(bSpyDestroyHandler.calledOnce, " resize handler should be called only once");
 	});
 
-	QUnit.test("setRootMenuTopStyle", function(assert) {
+	QUnit.test("setRootMenuTopStyle", async function(assert) {
 		var oSubMenu = new Menu();
 		var oMenu = new Menu({
 			items: [new MenuItem({submenu: oSubMenu})]
@@ -1303,11 +1303,11 @@ sap.ui.define([
 		assert.ok(oSubMenu.getRootMenu() === oMenu, "Menu is the root");
 		oSubMenu.setRootMenuTopStyle(true);
 		assert.ok(oMenu.bUseTopStyle, "Top Style active");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oMenu.$().hasClass("sapUiMnuTop"), "Top Style CSS class set");
 		oMenu.setRootMenuTopStyle(false);
 		assert.ok(!oMenu.bUseTopStyle, "Top Style inactive");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(!oMenu.$().hasClass("sapUiMnuTop"), "Top Style CSS class not set");
 		oMenu.destroy();
 	});

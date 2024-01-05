@@ -1,7 +1,8 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
-	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/SinglePlanningCalendar",
 	"sap/m/SinglePlanningCalendarGrid",
@@ -19,13 +20,13 @@ sap.ui.define([
 	'sap/ui/events/KeyCodes',
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateRange"
 ], function(
+	Localization,
 	Element,
-	qutils,
+	nextUIUpdate,
 	jQuery,
 	SinglePlanningCalendar,
 	SinglePlanningCalendarGrid,
@@ -43,7 +44,6 @@ sap.ui.define([
 	KeyCodes,
 	JSONModel,
 	Log,
-	oCore,
 	createAndAppendDiv,
 	UI5Date,
 	DateRange
@@ -165,7 +165,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("selectedView: Simulate PRESS on segmented button of a view", function(assert) {
+	QUnit.test("selectedView: Simulate PRESS on segmented button of a view", async function(assert) {
 		var	oSPC = new SinglePlanningCalendar({
 				views: [
 					new SinglePlanningCalendarDayView({
@@ -184,18 +184,18 @@ sap.ui.define([
 			sDayViewId = oSPC.getViews()[0].getId();
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oMonthViewSegmentedButtonItem.oButton.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(oSPC.getSelectedView(), sMonthViewId, "The proper View Id is stored in selectedView association");
 
 		// Act
 		oDayViewSegmentedButtonItem.oButton.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(oSPC.getSelectedView(), sDayViewId, "The proper View Id is stored in selectedView association");
@@ -374,7 +374,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("firstDayOfWeek", function(assert) {
+	QUnit.test("firstDayOfWeek", async function(assert) {
 		var oSPC = new SinglePlanningCalendar({
 				startDate: UI5Date.getInstance(2015, 0, 1, 8),
 				views: [
@@ -401,7 +401,7 @@ sap.ui.define([
 
 		// Prepare
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
 		oPicker = Element.getElementById(sCurrentPickerId);
@@ -417,7 +417,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setSelectedView("WorkWeekView");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
 		oPicker = Element.getElementById(sCurrentPickerId);
@@ -432,7 +432,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setSelectedView("MonthView");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
 		oPicker = Element.getElementById(sCurrentPickerId);
@@ -444,7 +444,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setSelectedView("WeekView");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
 		oPicker = Element.getElementById(sCurrentPickerId);
@@ -459,7 +459,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setFirstDayOfWeek(-1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		aDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
 		$Date = aDays[0];
@@ -484,7 +484,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("CalendarWeekNumbering - correct week day", function(assert) {
+	QUnit.test("CalendarWeekNumbering - correct week day", async function(assert) {
 		var sInitialWeekNumbering = "ISO_8601";
 		var sViewKey = "WeekView";
 		var oSPC = new SinglePlanningCalendar({
@@ -507,7 +507,7 @@ sap.ui.define([
 		// Act
 		oSPC.setSelectedView(sViewKey);
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oRow = oSPC.getAggregation("_grid").getAggregation("_columnHeaders"),
 			aHeaderDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
@@ -520,7 +520,7 @@ sap.ui.define([
 		// Act
 		sInitialWeekNumbering = "MiddleEastern";
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aHeaderDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
 
 		// Assert
@@ -531,7 +531,7 @@ sap.ui.define([
 		// Act
 		sInitialWeekNumbering = "WesternTraditional";
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aHeaderDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
 
 		// Assert
@@ -544,7 +544,7 @@ sap.ui.define([
 		sViewKey = "MonthView";
 		oSPC.setSelectedView(sViewKey);
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aHeaderDays = oSPC.getDomRef().querySelectorAll(".sapUiCalWH");
 
 		// Assert
@@ -553,7 +553,7 @@ sap.ui.define([
 		// Act
 		sInitialWeekNumbering = "MiddleEastern";
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aHeaderDays = oSPC.getDomRef().querySelectorAll(".sapUiCalWH");
 
 		// Assert
@@ -563,7 +563,7 @@ sap.ui.define([
 		// Act
 		sInitialWeekNumbering = "WesternTraditional";
 		oSPC.setCalendarWeekNumbering(sInitialWeekNumbering);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aHeaderDays = oSPC.getDomRef().querySelectorAll(".sapUiCalWH");
 
 		// Assert
@@ -575,7 +575,7 @@ sap.ui.define([
 
 	QUnit.module("Multi dates selection");
 
-	QUnit.test("Multi dates selection - add/remove/get selectedDates", function(assert) {
+	QUnit.test("Multi dates selection - add/remove/get selectedDates", async function(assert) {
 		var sViewKey = "WeekView";
 		var oSPC = new SinglePlanningCalendar({
 				startDate: UI5Date.getInstance(2015, 0, 1, 8),
@@ -601,7 +601,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setSelectedView(sViewKey);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.strictEqual(oSPC.getSelectedDates().length, 3, "the selected dates are correctly added");
@@ -610,7 +610,7 @@ sap.ui.define([
 		// Act
 		sViewKey = "MonthView";
 		oSPC.setSelectedView(sViewKey);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.strictEqual(oSPC.getAggregation("_mvgrid").getSelectedDates().length, 3, "the selected dates are correctly added in the selected view");
@@ -625,14 +625,14 @@ sap.ui.define([
 		// Act
 		sViewKey = "WeekView";
 		oSPC.setSelectedView(sViewKey);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.strictEqual(oSPC.getAggregation("_grid").getSelectedDates().length, 4, "the selected dates are correctly added in the selected view");
 
 		// Act
 		oSPC.removeAllSelectedDates();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.strictEqual(oSPC.getSelectedDates().length, 0, "the selected dates are correctly removed");
@@ -755,7 +755,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("appointmentSelect: deselect all appointments in month-based view", function (assert) {
+	QUnit.test("appointmentSelect: deselect all appointments in month-based view", async function (assert) {
 		var oSPC = new SinglePlanningCalendar({
 				views: new SinglePlanningCalendarMonthView({
 					key: "MonthView",
@@ -783,7 +783,7 @@ sap.ui.define([
 			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//act
 		oSPC.getAggregation("_mvgrid")._fireSelectionEvent(oFakeEvent);
@@ -823,7 +823,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("viewChange", function (assert) {
+	QUnit.test("viewChange", async function (assert) {
 		var oSPC = new SinglePlanningCalendar({
 				startDate: UI5Date.getInstance(2021, 1, 1),
 				views: [
@@ -845,11 +845,11 @@ sap.ui.define([
 			sOpenPickerButtonText = oSPC._getHeader()._oPickerBtn.getText();
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act - simulate press on a Month View SegmentedButton
 		oMonthViewSegmentedButtonItem.oButton.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//assert - selected view must be Month View, and event must be called once
 		assert.equal(oSPC.getSelectedView(), sMonthViewId, "The proper View Id is stored in selectedView association");
 		assert.strictEqual(sOpenPickerButtonText, "February 1, 2021", "The text must be visible and with correct value February 1, 2021");
@@ -857,7 +857,7 @@ sap.ui.define([
 
 		// Act - simulate press on a Day View SegmentedButton
 		oDayViewSegmentedButtonItem.oButton.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert - selected view must be Day View, and event must be called once
 		assert.equal(oSPC.getSelectedView(), sDayViewId, "The proper View Id is stored in selectedView association");
@@ -872,7 +872,7 @@ sap.ui.define([
 	QUnit.test("startDateChange: on next button press", function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			oSPCHeader = oSPC._getHeader(),
-			iScrollDays = oCore.byId(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
+			iScrollDays = Element.getElementById(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
 			oInitialStartDate = oSPC.getStartDate(),
 			fnFireStartDateChange = this.spy(oSPC, "fireStartDateChange");
 
@@ -893,7 +893,7 @@ sap.ui.define([
 	QUnit.test("startDateChange: on previous button press", function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			oSPCHeader = oSPC._getHeader(),
-			iScrollDays = oCore.byId(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
+			iScrollDays = Element.getElementById(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
 			oInitialStartDate = oSPC.getStartDate(),
 			fnFireStartDateChange = this.spy(oSPC, "fireStartDateChange");
 
@@ -1033,7 +1033,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("cellPress: in month-based view", function (assert) {
+	QUnit.test("cellPress: in month-based view", async function (assert) {
 		// prepare
 		var oSPC = new SinglePlanningCalendar({
 				startDate: UI5Date.getInstance(2018, 7, 2),
@@ -1045,7 +1045,7 @@ sap.ui.define([
 			oGrid = oSPC.getAggregation("_mvgrid"),
 			oFakeEvent,
 			fnFireGridCellFocusSpy = this.spy(oSPC, "fireEvent");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFakeEvent = { target: oGrid.$().find('.sapMSPCMonthDay')[3], srcControl: oGrid };
 
@@ -1218,12 +1218,12 @@ sap.ui.define([
 
 	QUnit.module("Rendering");
 
-	QUnit.test("Class for hidden actionsToolbar", function (assert) {
+	QUnit.test("Class for hidden actionsToolbar", async function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			$oSPCRef;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$oSPCRef = oSPC.$();
 
 		assert.ok($oSPCRef.hasClass("sapMSinglePCActionsHidden"), "Class for hidden actions is applied when they are empty");
@@ -1231,12 +1231,12 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Class for non-hidden actionsToolbar", function (assert) {
+	QUnit.test("Class for non-hidden actionsToolbar", async function (assert) {
 		var oSPC = new SinglePlanningCalendar({ title: "Something" }),
 			$oSPCRef;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$oSPCRef = oSPC.$();
 
 		assert.notOk($oSPCRef.hasClass("sapMSinglePCActionsHidden"),
@@ -1245,13 +1245,13 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Initial classes for stickyMode: None (Default)", function (assert) {
+	QUnit.test("Initial classes for stickyMode: None (Default)", async function (assert) {
 		// Prepare
 		var oSPC = new SinglePlanningCalendar(),
 			$oSPCRef;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$oSPCRef = oSPC.$();
 
 		// Assert
@@ -1262,13 +1262,13 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Initial classes for stickyMode: All", function (assert) {
+	QUnit.test("Initial classes for stickyMode: All", async function (assert) {
 		// Prepare
 		var oSPC = new SinglePlanningCalendar({ stickyMode: "All" }),
 			$oSPCRef;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$oSPCRef = oSPC.$();
 
 		// Assert
@@ -1279,13 +1279,13 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Initial classes for stickyMode: NavBarAndColHeaders", function (assert) {
+	QUnit.test("Initial classes for stickyMode: NavBarAndColHeaders", async function (assert) {
 		// Prepare
 		var oSPC = new SinglePlanningCalendar({ stickyMode: "NavBarAndColHeaders" }),
 			$oSPCRef;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$oSPCRef = oSPC.$();
 
 		// Assert
@@ -1296,17 +1296,17 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Classes application when stickyMode is changed runtime", function (assert) {
+	QUnit.test("Classes application when stickyMode is changed runtime", async function (assert) {
 		// Prepare
 		var oSPC = new SinglePlanningCalendar(),
 			$oSPCRef;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oSPC.setStickyMode("All");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$oSPCRef = oSPC.$();
 
 		// Assert
@@ -1315,7 +1315,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setStickyMode("NavBarAndColHeaders");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$oSPCRef = oSPC.$();
 
 		// Assert
@@ -1324,7 +1324,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setStickyMode("None");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$oSPCRef = oSPC.$();
 
 		// Assert
@@ -1335,13 +1335,13 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Pointer events are disabled for the now marker", function (assert) {
+	QUnit.test("Pointer events are disabled for the now marker", async function (assert) {
 		// Prepare
 		var oSPC = new SinglePlanningCalendar(),
 			oNowMarker;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oNowMarker = oSPC.getDomRef().querySelector(".sapMSinglePCNowMarker");
 
@@ -1711,7 +1711,7 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("tabindex", function (assert) {
+	QUnit.test("tabindex", async function (assert) {
 		// Prepare
 		var oCalendarStartDate = UI5Date.getInstance(2018, 11, 24),
 			oAppointment = new CalendarAppointment({
@@ -1733,7 +1733,7 @@ sap.ui.define([
 			});
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oAppointment.$().attr("tabindex"), "0", "Appointments are tabbable");
@@ -1743,7 +1743,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("start/end date + legend information", function (assert) {
+	QUnit.test("start/end date + legend information", async function (assert) {
 		// Prepare
 		var oCalendarStartDate = UI5Date.getInstance(2018, 11, 24),
 			oStartDate = UI5Date.getInstance(2018, 11, 24, 15, 30, 0),
@@ -1785,7 +1785,7 @@ sap.ui.define([
 							oSPCGrid._oFormatStartEndInfoAria.format(oEndDate) + "; ";
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sAnnouncement + oLegendItem.getText(),
@@ -1796,7 +1796,7 @@ sap.ui.define([
 
 		// Act
 		oLegend.destroy();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sAnnouncement + oAppointment.getType(),
@@ -1806,7 +1806,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Root element ARIA", function (assert) {
+	QUnit.test("Root element ARIA", async function (assert) {
 		// Prepare
 		var oSPC = new SinglePlanningCalendar(),
 			sHeaderId = oSPC._getHeader()._getOrCreateTitleControl().getId(),
@@ -1815,7 +1815,7 @@ sap.ui.define([
 			aAriaLabelledBy;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		$oSPCRef = oSPC.$();
 		aAriaLabelledBy = $oSPCRef.attr("aria-labelledby");
@@ -1831,7 +1831,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Toolbars ARIA", function (assert) {
+	QUnit.test("Toolbars ARIA", async function (assert) {
 		// Prepare
 		var oSPC = new SinglePlanningCalendar({
 				title: "A random title"		// Actions toolbar will be hidden without it
@@ -1843,7 +1843,7 @@ sap.ui.define([
 			sNavigationToolbarLabelId = InvisibleText.getStaticId("sap.m", "SPC_NAVIGATION_TOOLBAR");
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oActionsToolbar.getAriaLabelledBy().indexOf(sActionsToolbarLabelId) > -1,
@@ -1855,7 +1855,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Navigation buttons ARIA", function (assert) {
+	QUnit.test("Navigation buttons ARIA", async function (assert) {
 		// Prepare
 		var oCore = sap.ui.getCore(),
 			oSPC = new SinglePlanningCalendar(),
@@ -1867,7 +1867,7 @@ sap.ui.define([
 			sPickerButtonLabelId = InvisibleText.getStaticId("sap.m", "PCH_SELECT_RANGE");
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oPreviousButton.getTooltip(), oSPC._oRB.getText("PCH_NAVIGATE_BACKWARDS"),
@@ -1886,14 +1886,14 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Column headers area ARIA", function (assert) {
+	QUnit.test("Column headers area ARIA", async function (assert) {
 		// Prepare
 		var oSPC = new SinglePlanningCalendar(),
 			sColumnHeadersAreaLabelId = InvisibleText.getStaticId("sap.m", "PLANNINGCALENDAR_DAYS"),
 			$oColumnHeadersAreaRef;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		$oColumnHeadersAreaRef = oSPC.$().find(".sapMSinglePCColumnHeader");
 
@@ -1906,13 +1906,13 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Blockers area ARIA", function (assert) {
+	QUnit.test("Blockers area ARIA", async function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			sBlockersAreaLabelId = InvisibleText.getStaticId("sap.m", "SPC_BLOCKERS"),
 			$oBlockersAreaRef;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		$oBlockersAreaRef = oSPC.$().find(".sapMSinglePCBlockers");
 
@@ -1925,13 +1925,13 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Blocker cells' wrapper ARIA", function (assert) {
+	QUnit.test("Blocker cells' wrapper ARIA", async function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			$oBlockersColumnsWrapper,
 			$oBlockersColumnsWrapperParent;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		$oBlockersColumnsWrapper = oSPC.$().find(".sapMSinglePCBlockersColumns");
 		$oBlockersColumnsWrapperParent = $oBlockersColumnsWrapper.parent();
@@ -1944,13 +1944,13 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Blocker cells ARIA", function (assert) {
+	QUnit.test("Blocker cells ARIA", async function (assert) {
 		// TODO: Add tests for the cell's content after ACC refactoring
 		var oSPC = new SinglePlanningCalendar(),
 			oBlockerCells;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oBlockerCells = oSPC.$().find(".sapMSinglePCBlockersColumn");
 
@@ -1963,12 +1963,12 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Appointments cells' wrapper ARIA", function (assert) {
+	QUnit.test("Appointments cells' wrapper ARIA", async function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			$oAppointmentsCellsWrapper;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		$oAppointmentsCellsWrapper = oSPC.$().find(".sapMSinglePCColumn");
 
@@ -1979,13 +1979,13 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Appointments cells ARIA", function (assert) {
+	QUnit.test("Appointments cells ARIA", async function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			$oAppointmentsCells,
 			$oAppointmentsCellsWrapper;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		$oAppointmentsCellsWrapper = oSPC.$().find(".sapMSinglePCColumn");
 		$oAppointmentsCells = $oAppointmentsCellsWrapper.find(".sapMSinglePCRow");
@@ -1999,13 +1999,13 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Appointments area ARIA", function (assert) {
+	QUnit.test("Appointments area ARIA", async function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			sAppointmentsAreaLabelId = InvisibleText.getStaticId("sap.m", "SPC_APPOINTMENTS"),
 			$oAppointmentsAreaRef;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		$oAppointmentsAreaRef = oSPC.$().find(".sapMSinglePCColumns");
 
@@ -2018,7 +2018,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Appointment ARIA", function (assert) {
+	QUnit.test("Appointment ARIA", async function (assert) {
 		// Prepare
 		var oCalendarStartDate = UI5Date.getInstance(2018, 11, 24),
 			oAppointment = new CalendarAppointment({
@@ -2043,7 +2043,7 @@ sap.ui.define([
 			sHiddenSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		$oAppointmentRef = oAppointment.$();
 		$oAppointmentsWrapperRef = oSPC.$().find(".sapMSinglePCAppointments");
@@ -2057,7 +2057,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.getAggregation("_grid")._toggleAppointmentSelection(oAppointment, true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok($oAppointmentRef.attr("aria-labelledby").indexOf(sHiddenSelectedTextId) > -1, "Selected appointments have a hidden \"Selected\" text in aria-labelledby");
@@ -2066,7 +2066,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Blocker ARIA", function (assert) {
+	QUnit.test("Blocker ARIA", async function (assert) {
 		// Prepare
 		var oCalendarStartDate = UI5Date.getInstance(2018, 11, 24),
 			oAppointment = new CalendarAppointment({
@@ -2090,7 +2090,7 @@ sap.ui.define([
 			sHiddenSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		$oBlockerRef = oBlocker.$();
 
@@ -2102,7 +2102,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.getAggregation("_grid")._toggleAppointmentSelection(oBlocker, true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok($oBlockerRef.attr("aria-labelledby").indexOf(sHiddenSelectedTextId) > -1, "Selected blocker have a hidden \"Selected\" text in aria-labelledby");
@@ -2160,9 +2160,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Visibility of actions toolbar", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oSPC = new SinglePlanningCalendar().placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSPC.destroy();
@@ -2174,39 +2174,39 @@ sap.ui.define([
 		assert.equal(this.oSPC._getHeader()._getActionsToolbar().getProperty("visible"), false, "the actions toolbar is not visible");
 	});
 
-	QUnit.test("The actions toolbar is visible when only title is set", function (assert) {
+	QUnit.test("The actions toolbar is visible when only title is set", async function (assert) {
 		// Arrange
 		this.oSPC.setTitle("SPC title");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.equal(this.oSPC._getHeader()._getActionsToolbar().getProperty("visible"), true, "the actions toolbar is visible");
 	});
 
-	QUnit.test("The actions toolbar is visible when actions are set", function (assert) {
+	QUnit.test("The actions toolbar is visible when actions are set", async function (assert) {
 		// Arrange
 		this.oSPC.addAction(new Button({
 			text: "SPC button"
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.equal(this.oSPC._getHeader()._getActionsToolbar().getProperty("visible"), true, "the actions toolbar is visible");
 	});
 
-	QUnit.test("The actions toolbar is not visible when only one view is set", function (assert) {
+	QUnit.test("The actions toolbar is not visible when only one view is set", async function (assert) {
 		// Arrange
 		this.oSPC.addView(new SinglePlanningCalendarDayView({
 			key: "DayView",
 			title: "Day View"
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.equal(this.oSPC._getHeader()._getActionsToolbar().getProperty("visible"), false, "the actions toolbar is not visible");
 	});
 
-	QUnit.test("The actions toolbar is visible when more than one view is set", function (assert) {
+	QUnit.test("The actions toolbar is visible when more than one view is set", async function (assert) {
 		// Arrange
 		this.oSPC.addView(new SinglePlanningCalendarDayView({
 			key: "DayView",
@@ -2216,19 +2216,19 @@ sap.ui.define([
 			key: "WeekView",
 			title: "Week View"
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.equal(this.oSPC._getHeader()._getActionsToolbar().getProperty("visible"), true, "the actions toolbar is visible");
 	});
 
 	QUnit.module("Resize Appointments", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oSPCGrid = new SinglePlanningCalendarGrid({
 				startDate: UI5Date.getInstance(2017, 10, 13, 0, 0, 0)
 			});
 			this.oSPCGrid.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oSPCGrid.destroy();
@@ -2271,7 +2271,7 @@ sap.ui.define([
 		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2017, 10, 13, 2, 30, 0), "End date hour is correct");
 	});
 
-	QUnit.test("_calcResizeNewHoursAppPos: Calculate new size of the appointment when 'startHour' and 'endHour' are set", function(assert) {
+	QUnit.test("_calcResizeNewHoursAppPos: Calculate new size of the appointment when 'startHour' and 'endHour' are set", async function(assert) {
 		// prepare
 		var	oAppStartDate = UI5Date.getInstance(2020, 4, 26, 8, 0, 0),
 			oAppEndDate = UI5Date.getInstance(2020, 4, 26, 9, 0, 0),
@@ -2281,7 +2281,7 @@ sap.ui.define([
 		this.oSPCGrid.setStartHour(8);
 		this.oSPCGrid.setEndHour(16);
 		this.oSPCGrid.setStartDate(UI5Date.getInstance(2020, 4, 26, 0, 0, 0));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act - resize appointment's end to 10:00
 		newAppPos = this.oSPCGrid._calcResizeNewHoursAppPos(oAppStartDate, oAppEndDate, 3, true);
@@ -2291,7 +2291,7 @@ sap.ui.define([
 		assert.deepEqual(newAppPos.endDate, UI5Date.getInstance(2020, 4, 26, 10, 0, 0), "End date hour is correct");
 	});
 
-	QUnit.test("check appointment parts after appointment resize in more than 1 day", function(assert) {
+	QUnit.test("check appointment parts after appointment resize in more than 1 day", async function(assert) {
 		// prepare
 		var	sAppointmentId = "MyAppointment",
 			oAppointment = new CalendarAppointment(sAppointmentId, { // appointment is placed in one day
@@ -2311,7 +2311,7 @@ sap.ui.define([
 			oSelector;
 
 		oSPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		oSelector = document.querySelectorAll('div[id^="' + sAppointmentId + '-"]');
@@ -2321,7 +2321,7 @@ sap.ui.define([
 
 		// act - resize appointment to continue in two days
 		oAppointment.setEndDate(UI5Date.getInstance(2018, 6, 10, 10, 0, 0));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		oSelector = document.querySelectorAll('div[id^="' + sAppointmentId + '-"]');
@@ -2383,7 +2383,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Behaviour in different timezone configurations", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			var oAppointment = new CalendarAppointment({
 				title: "Appointment",
 				text: "new appointment",
@@ -2404,24 +2404,24 @@ sap.ui.define([
 					oAppointment
 				]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSPC.destroy();
 		}
 	});
 
-	QUnit.test("Check the view start hour", function(assert) {
+	QUnit.test("Check the view start hour", async function(assert) {
 		assert.strictEqual(this.oSPC.getAggregation("_grid")._getVisibleStartHour(), 0, "The daily view has a consistent start hour");
 
-		var sPrevTimezone = oCore.getConfiguration().getTimezone();
+		var sPrevTimezone = Localization.getTimezone();
 
-		oCore.getConfiguration().setTimezone("Asia/Tokyo");
-		oCore.applyChanges();
+		Localization.setTimezone("Asia/Tokyo");
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oSPC.getAggregation("_grid")._getVisibleStartHour(), 0, "The daily view has a consistent start hour");
 
-		oCore.getConfiguration().setTimezone(sPrevTimezone);
+		Localization.setTimezone(sPrevTimezone);
 	});
 
 	QUnit.test("Check the appointments start and end dates", function(assert) {
@@ -2442,7 +2442,7 @@ sap.ui.define([
 			timezone configuration. Therefore disabling the following asserts until #setTimezone functionality is restored.
 
 		oCore.getConfiguration().setTimezone("Asia/Tokyo");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oTokyoStartDate = UI5Date.getInstance(2022, 11, 24, 14, 30 + iTokyoOffsetMinutes, 0);
 		var oTokyoEndDate = UI5Date.getInstance(2022, 11, 24, 15, 30 + iTokyoOffsetMinutes, 0);

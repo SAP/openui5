@@ -1,8 +1,8 @@
 sap.ui.define([
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/core/Element',
-		'sap/m/MessageToast'
-	], function(Controller, Element, MessageToast) {
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/core/ElementRegistry',
+	'sap/m/MessageToast'
+], function(Controller, ElementRegistry, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.SegmentedButton.Page", {
@@ -10,7 +10,7 @@ sap.ui.define([
 		onSelectionChange: function (oEvent) {
 			var oSegmentedButton = this.byId('SB1'),
 				oSelectedItemId = oSegmentedButton.getSelectedItem(),
-				oSelectedItem = Element.registry.get(oSelectedItemId),
+				oSelectedItem = ElementRegistry.get(oSelectedItemId),
 				oTextControl = this.byId('selectedItemPreview');
 
 			//the selected item could be found via the "item" parameter of "selectionChange" event

@@ -1,15 +1,15 @@
 sap.ui.define([
 	'sap/m/ObjectIdentifier',
 	'sap/ui/core/mvc/Controller',
+	'sap/ui/core/ElementRegistry',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
 	'sap/ui/model/FilterType',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/FacetFilterItem',
 	'sap/m/MessageToast',
-	"sap/ui/core/Component",
-	"sap/ui/core/Element"
-], function(ObjectIdentifier, Controller, Filter, FilterOperator, FilterType, JSONModel, FacetFilterItem, MessageToast, Component, Element) {
+	'sap/ui/core/Component'
+], function(ObjectIdentifier, Controller, ElementRegistry, Filter, FilterOperator, FilterType, JSONModel, FacetFilterItem, MessageToast, Component) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.FacetFilterCustomFilters.FacetFilter", {
@@ -51,7 +51,7 @@ sap.ui.define([
 		},
 
 		handleFacetFilterReset: function(oEvent) {
-			var oFacetFilter = Element.registry.get(oEvent.getParameter("id")),
+			var oFacetFilter = ElementRegistry.get(oEvent.getParameter("id")),
 				aFacetFilterLists = oFacetFilter.getLists(),
 				oFilter = new Filter("text", FilterOperator.Contains, "");
 

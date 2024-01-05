@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/ElementRegistry",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/TabStrip",
@@ -9,10 +10,10 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
-	"sap/ui/core/Element",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
+	ElementRegistry,
 	qutils,
 	createAndAppendDiv,
 	TabStrip,
@@ -22,9 +23,8 @@ sap.ui.define([
 	Select,
 	jQuery,
 	Device,
-	Element,
 	KeyCodes,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -38,7 +38,7 @@ sap.ui.define([
 
 
 	QUnit.module("API", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.sut = new TabStrip({
 				items: [
 					new TabStripItem({
@@ -53,10 +53,11 @@ sap.ui.define([
 				]
 			});
 			this.sut.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.sut.destroy();
+			await nextUIUpdate(this.clock);
 		}
 	});
 
@@ -93,7 +94,7 @@ sap.ui.define([
 		oTS.destroy();
 	});
 
-	QUnit.test("setSelectedItem on mobile", function (assert) {
+	QUnit.test("setSelectedItem on mobile", async function (assert) {
 		// prepare
 		var oItem2 = new TabStripItem({
 				text: "Tab 2"
@@ -113,7 +114,7 @@ sap.ui.define([
 
 		preparePhonePlatform(this);
 		oTS.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		oTS.setSelectedItem(oItem2);
@@ -226,7 +227,7 @@ sap.ui.define([
 				"Add aggregation adds successfuly");
 	});
 
-	QUnit.test("Render all tabs", function (assert) {
+	QUnit.test("Render all tabs", async function (assert) {
 		//arrange
 		this.sut.addItem(new TabStripItem({
 			text: "Button tab 1"
@@ -238,7 +239,7 @@ sap.ui.define([
 			text: "Button tab 3",
 			modified:true
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		assert.strictEqual(this.sut.$().find(".sapMTSTabs").children().length, 6, "All tabs are rendered");
 
 		assert.ok(!this.sut.getAggregation("_leftArrowButton"), "Left button aggregation is not created");
@@ -266,7 +267,7 @@ sap.ui.define([
 				"The correspondent CSS class for the item change state is available ");
 	});
 
-	QUnit.test("Add modified symbol class and attributes", function(assert){
+	QUnit.test("Add modified symbol class and attributes", async function(assert){
 		//arrange
 		var $modifiedTabSymbol;
 		this.sut.addItem(new TabStripItem({
@@ -279,7 +280,7 @@ sap.ui.define([
 			text: "Button tab 3",
 			modified:true
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		$modifiedTabSymbol = this.sut.getItems()[5].$().find(".sapMTabStripItemModifiedSymbol");
 
@@ -297,7 +298,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Selection prevented", function (assert) {
+	QUnit.test("Selection prevented", async function (assert) {
 		var oTabStrip = new TabStrip({
 			selectedItem: 0,
 			itemSelect: function (oEvent) {
@@ -314,7 +315,7 @@ sap.ui.define([
 		});
 
 		oTabStrip.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		var oItem = oTabStrip.getItems()[1];
 
@@ -380,7 +381,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("TabStripSelectList rendering", function (assert) {
+	QUnit.test("TabStripSelectList rendering", async function (assert) {
 		var oItem = new TabStripItem("tab1", {text: "Tab 1"}),
 			oTabStrip = new TabStrip(),
 			oTabStripSelect = oTabStrip._createSelect([oItem]),
@@ -389,7 +390,7 @@ sap.ui.define([
 		oCSList.addItem(oItem);
 
 		oCSList.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		oItem.$().trigger("focus");
@@ -421,7 +422,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Keyboard Handling", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.items = [
 				new TabStripItem({
 					text: "Tab 1"
@@ -447,10 +448,11 @@ sap.ui.define([
 				})
 			});
 			this.sut.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.sut.destroy();
+			await nextUIUpdate(this.clock);
 		}
 	});
 
@@ -553,7 +555,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Scrolling", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.sut = new TabStrip({
 				items: [
 					new TabStripItem({
@@ -568,12 +570,13 @@ sap.ui.define([
 				]
 			});
 			this.sut.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.resetAllTabs();
 			this.sut.destroy();
 			this.sut = null;
+			await nextUIUpdate(this.clock);
 		},
 		addTabs: function (iNumberOfTabs) {
 			for (var iIndex = 1; iIndex <= iNumberOfTabs; iIndex++) {
@@ -589,24 +592,24 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Is scrolling needed", function (assert) {
+	QUnit.test("Is scrolling needed", async function (assert) {
 		//assert
 		assert.ok(!this.sut._checkScrolling(), "Scrolling is not needed when tabs don't overflow (" + this.sut.getItems().length + ") tabs");
 
 		//arrange
 		this.addTabs(15);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		assert.ok(this.sut._checkScrolling(), "Scrolling is needed when tabs overflow (" + this.sut.getItems().length + ") tabs");
 	});
 
-	QUnit.test("Overflow Buttons", function (assert) {
+	QUnit.test("Overflow Buttons", async function (assert) {
 		//arrange
 		var iTestCurrentScrollLeft = this._iCurrentScrollLeft;
 		var fnUpdateTestScrollValue = function () {
 			iTestCurrentScrollLeft = this.sut._iCurrentScrollLeft;
 		}.bind(this);
 		this.addTabs(15);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		fnUpdateTestScrollValue();
 		//assert
 		assert.strictEqual(iTestCurrentScrollLeft, 0, "The initial ScrollLeft value is as expected");
@@ -651,7 +654,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ARIA", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			var _aItems = this._aItems = [
 				new TabStripItem({
 					text: "Tab 1"
@@ -668,10 +671,11 @@ sap.ui.define([
 				items: _aItems
 			});
 			this.sut.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.sut.destroy();
+			await nextUIUpdate(this.clock);
 		}
 	});
 
@@ -732,7 +736,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("TabStripItem has correct aria-labelledby", function (assert) {
+	QUnit.test("TabStripItem has correct aria-labelledby", async function (assert) {
 		this.sut.addItem(new TabStripItem({
 			icon: "sap-icon://notes",
 			text: "dummy text",
@@ -741,7 +745,7 @@ sap.ui.define([
 		this.sut.addItem(new TabStripItem({
 			icon: "sap-icon://notes"
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		var aTabs = this.sut.getItems();
 
@@ -753,15 +757,16 @@ sap.ui.define([
 		beforeEach: function() {
 			preparePhonePlatform(this);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.oTS.destroy();
 			this.oTS = null;
 
 			jQuery('body').removeClass('sap-phone');
+			await nextUIUpdate(this.clock);
 		}
 	});
 
-	QUnit.test("Rendering", function (assert) {
+	QUnit.test("Rendering", async function (assert) {
 		// preapre
 		this.oTS = new TabStrip({
 			hasSelect: true,
@@ -772,7 +777,7 @@ sap.ui.define([
 		});
 
 		this.oTS.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		// assert
@@ -782,7 +787,7 @@ sap.ui.define([
 		assert.strictEqual(jQuery(this.oTS.$()).find('.sapMSltLabel').length, 1, 'Label is rendered');
 	});
 
-	QUnit.test("Rendering: only the selected tab is rendered", function (assert) {
+	QUnit.test("Rendering: only the selected tab is rendered", async function (assert) {
 		// prepare
 		this.oTS = new TabStrip({
 			items: [
@@ -792,18 +797,18 @@ sap.ui.define([
 		});
 
 		this.oTS.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		// assert
-		assert.equal(Element.registry.get("tabOne").id, this.oTS.getSelectedItem(), "Selected item is renndered");
-		assert.equal(Element.registry.get("tabTwo").id, undefined, "Second tab is not rendered");
+		assert.equal(ElementRegistry.get("tabOne").id, this.oTS.getSelectedItem(), "Selected item is renndered");
+		assert.equal(ElementRegistry.get("tabTwo").id, undefined, "Second tab is not rendered");
 
 		//clean
 		jQuery('body').removeClass('sap-phone');
 	});
 
-	QUnit.test("Rendering: sapUiSelectable", function (assert) {
+	QUnit.test("Rendering: sapUiSelectable", async function (assert) {
 		// prepare
 		this.oTS = new TabStrip({
 			items: [
@@ -813,7 +818,7 @@ sap.ui.define([
 		});
 
 		this.oTS.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		// assert
@@ -849,36 +854,37 @@ sap.ui.define([
 			];
 			this.selectedItemIndex = this.items.indexOf(this.selectedItem);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.sut.destroy();
+			await nextUIUpdate(this.clock);
 		}
 	});
 
-	QUnit.test("Initial selection if no selected item is passed", function (assert) {
+	QUnit.test("Initial selection if no selected item is passed", async function (assert) {
 		//arrange
 		this.sut = new TabStrip({
 			items: this.items
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//assert
 		assert.strictEqual(this.sut.$("tabs").children("." + TabStripItem.CSS_CLASS_SELECTED).length, 0, "The initial selection is not applied");
 		assert.strictEqual(this.sut.getSelectedItem(), null, "Correct value of selectedItem association");
 	});
 
-	QUnit.test("Initial selection if selected item is applied", function (assert) {
+	QUnit.test("Initial selection if selected item is applied", async function (assert) {
 		//arrange
 		this.sut = new TabStrip({
 			selectedItem: this.selectedItem,
 			items: this.items
 		});
 		this.sut.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		//assert
 		assert.strictEqual(this.sut.getSelectedItem(), this.sut.getItems()[this.selectedItemIndex].getId(), "Correct selectedItem aggregation value");
 		assert.ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass(TabStripItem.CSS_CLASS_SELECTED), "The initial selection is applied correctly");
 	});
 
-	QUnit.test("Initial scrolling to selected item", function (assert) {
+	QUnit.test("Initial scrolling to selected item", async function (assert) {
 		//arrange
 		this.sut = new TabStrip({
 			selectedItem: this.selectedItem,
@@ -887,13 +893,13 @@ sap.ui.define([
 		var fnScrollingSpy = this.spy(this.sut, "_handleInititalScrollToItem");
 
 		this.sut.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//assert
 		assert.equal(fnScrollingSpy.callCount, 1, "_handleInititalScrollToItem function is called");
 	});
 
-	QUnit.test("Initial scrolling when selected item is null", function (assert) {
+	QUnit.test("Initial scrolling when selected item is null", async function (assert) {
 		//arrange
 		this.sut = new TabStrip({
 			items: this.items
@@ -901,14 +907,14 @@ sap.ui.define([
 		var fnScrollingSpy = sinon.spy(this.sut, "_scrollIntoView");
 
 		this.sut.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//assert
 		assert.equal(this.sut.getSelectedItem(), null, "selected item is null");
 		assert.equal(fnScrollingSpy.callCount, 0, "_scrollIntoView function is not called");
 	});
 
-	QUnit.test("No Overflow Buttons on phone", function (assert) {
+	QUnit.test("No Overflow Buttons on phone", async function (assert) {
 		//arrange
 		preparePhonePlatform(this);
 
@@ -922,7 +928,7 @@ sap.ui.define([
 		var fnScrollingSpy = this.spy(this.sut, "_adjustScrolling");
 
 		this.sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.equal(fnScrollingSpy.callCount, 0, "scrolling calcualtion is not utilized on phone");
@@ -937,7 +943,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Tablet platform tests", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oOriginalSysInfo = this.getSystemInfo();
 			this.prepareSystem();
 			this.oTS = new TabStrip({
@@ -949,12 +955,13 @@ sap.ui.define([
 				]
 			});
 			this.oTS.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.restoreSystemValues();
 			this.oTS.destroy();
 			this.oTS = null;
+			await nextUIUpdate(this.clock);
 		},
 		getSystemInfo: function () {
 			return {

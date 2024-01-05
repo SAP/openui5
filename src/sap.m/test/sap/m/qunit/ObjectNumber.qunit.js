@@ -5,14 +5,14 @@ sap.ui.define([
 	"sap/m/ObjectNumber",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
 	"sap/ui/Device",
 	"sap/base/util/Version",
 	"sap/m/Label",
 	"sap/m/Panel",
 	"sap/m/Text",
-	"sap/m/library"
-], function(Library, createAndAppendDiv, ObjectNumber, jQuery, coreLibrary, Core, Device, Version, Label, Panel, Text, mobileLibrary) {
+	"sap/m/library",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Library, createAndAppendDiv, ObjectNumber, jQuery, coreLibrary, Device, Version, Label, Panel, Text, mobileLibrary, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -33,7 +33,7 @@ sap.ui.define([
 	createAndAppendDiv("content");
 
 
-	QUnit.test("Should render ObjectNumber with unit", function(assert) {
+	QUnit.test("Should render ObjectNumber with unit", async function(assert) {
 		//Arrange
 		var sNumber = "5",
 			sUnit = "Euro",
@@ -44,7 +44,7 @@ sap.ui.define([
 
 		//Act
 		sut.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be rendered");
@@ -61,7 +61,7 @@ sap.ui.define([
 	/**
 	 * @deprecated as of version 1.16.1, <code>numberUnit</code> has been replaced by <code>unit</code> property
 	 */
-	QUnit.test("Should render NumberUnit", function(assert) {
+	QUnit.test("Should render NumberUnit", async function(assert) {
 		//Arrange
 		var sNumber = "5",
 			sNumberUnit = "Euro",
@@ -72,7 +72,7 @@ sap.ui.define([
 
 		//Act
 		sut.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be rendered");
@@ -89,7 +89,7 @@ sap.ui.define([
 	/**
 	 * @deprecated as of version 1.16.1, <code>numberUnit</code> has been replaced by <code>unit</code> property
 	 */
-	QUnit.test("Should render unit instead of numberUnit", function(assert) {
+	QUnit.test("Should render unit instead of numberUnit", async function(assert) {
 		//Arrange
 		var sUnit = "Dollar",
 			sNumber = "19",
@@ -101,7 +101,7 @@ sap.ui.define([
 
 		//Act
 		sut.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be there");
@@ -111,20 +111,20 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Should not render unit element when Unit is empty", function(assert) {
+	QUnit.test("Should not render unit element when Unit is empty", async function(assert) {
 		// Arrange
 		var oObjectNumber = new ObjectNumber("onUnit", {
 			number: 256
 		});
 
 		oObjectNumber.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(jQuery("#onUnit").find(".sapMObjectNumberUnit").length, 0, "No unit span is rendered when the Unit is null.");
 
 		oObjectNumber.setUnit("");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(jQuery("#onUnit").find(".sapMObjectNumberUnit").length, 0, "No unit span is rendered when the Unit is empty string.");
@@ -133,7 +133,7 @@ sap.ui.define([
 		oObjectNumber.destroy();
 	});
 
-	QUnit.test("Non-emphasized ObjectNumber", function(assert) {
+	QUnit.test("Non-emphasized ObjectNumber", async function(assert) {
 		//Arrange
 		var sNumber = "5",
 			sUnit = "Euro",
@@ -145,7 +145,7 @@ sap.ui.define([
 
 		//Act
 		sut.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		var $ontxt = jQuery("#on2").find(".sapMObjectNumberText");
@@ -159,7 +159,7 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("ValueState of ObjectNumber", function(assert) {
+	QUnit.test("ValueState of ObjectNumber", async function(assert) {
 		//Arrange
 		var sNumber = "5",
 			sUnit = "Euro",
@@ -170,7 +170,7 @@ sap.ui.define([
 
 		//Act
 		sut.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		var $ontxt = jQuery("#on3");
@@ -185,7 +185,7 @@ sap.ui.define([
 
 		for (var i = 0; i < aValueStates.length; i++) {
 			sut.setState(aValueStates[i]);
-			Core.applyChanges();
+			await nextUIUpdate();
 			var sStatusClass = "sapMObjectNumberStatus" + aValueStates[i];
 			var $ontxt = jQuery("#on3");
 			assert.ok($ontxt.hasClass(sStatusClass), "Object Number should be assigned css class '" + sStatusClass + "'" );
@@ -200,7 +200,7 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("RTL ObjectNumber", function(assert) {
+	QUnit.test("RTL ObjectNumber", async function(assert) {
 		//Arrange
 		var on4 = new ObjectNumber("on4", {
 			number: "1.50",
@@ -238,7 +238,7 @@ sap.ui.define([
 		on6.placeAt("content");
 		on7.placeAt("content");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		var $onnum = jQuery("#on4").find(".sapMObjectNumberText");
@@ -273,7 +273,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Screen reader support", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oON = new ObjectNumber("ON", {
 				number: 256,
 				unit: "EUR",
@@ -284,7 +284,7 @@ sap.ui.define([
 			this.oONRoleDescriptionId = "ON-roledescription";
 
 			this.oON.placeAt("content");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oON.destroy();
@@ -308,7 +308,7 @@ sap.ui.define([
 			"Control's name is added in aria-roledescription");
 	});
 
-	QUnit.test("Active ObjectNumber", function (assert) {
+	QUnit.test("Active ObjectNumber", async function (assert) {
 		var oLabel = new Label("label", {
 				text: "Label",
 				labelFor: "ON"
@@ -318,7 +318,7 @@ sap.ui.define([
 		this.oON.setActive(true);
 
 		oLabel.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oControlRef = this.oON.getDomRef();
 		assert.strictEqual(oControlRef.getAttribute("role"), "button", "ObjectNumber indicates it's active state");
@@ -327,12 +327,12 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.test("ObjectNumber with state (different than 'None')", function (assert) {
+	QUnit.test("ObjectNumber with state (different than 'None')", async function (assert) {
 		var sErrorText = Library.getResourceBundleFor("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
 			oStateElement;
 
 		this.oON.setState(ValueState.Error);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oStateElement = document.getElementById(this.oONStateId);
 		assert.ok(oStateElement, "A SPAN with the state is created");
@@ -341,12 +341,12 @@ sap.ui.define([
 		assert.strictEqual(oStateElement.innerHTML, sErrorText, "Control has mapped the correct state text");
 	});
 
-	QUnit.test("ObjectNumber's Emphasized information", function (assert) {
+	QUnit.test("ObjectNumber's Emphasized information", async function (assert) {
 		var sEmphasizedText = Library.getResourceBundleFor("sap.m").getText("OBJECTNUMBER_EMPHASIZED"),
 			oEmphasizedInfoElement;
 
 		this.oON.setEmphasized(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oEmphasizedInfoElement = document.getElementById(this.oONEmphasizedInfoId);
 		assert.ok(oEmphasizedInfoElement, "A SPAN with the emphasized information is created");
@@ -354,19 +354,19 @@ sap.ui.define([
 		assert.strictEqual(oEmphasizedInfoElement.innerHTML, sEmphasizedText, "Control has mapped the correct text for emphasizing");
 
 		this.oON.setNumber(undefined);
-		Core.applyChanges();
+		await nextUIUpdate();
 		oEmphasizedInfoElement = document.getElementById(this.oONEmphasizedInfoId);
 
 		assert.notOk(oEmphasizedInfoElement, "Text element for emphasized information is not present");
 
 	});
 
-	QUnit.test("ObjectNumber with ariaDescribedBy association", function (assert) {
+	QUnit.test("ObjectNumber with ariaDescribedBy association", async function (assert) {
 		var oDescription = new Text({ text: "Description" }),
 			sAriaDescribedByReferences;
 
 		this.oON.addAriaDescribedBy(oDescription);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		sAriaDescribedByReferences = this.oON.getDomRef().getAttribute("aria-describedby");
 		assert.strictEqual(sAriaDescribedByReferences, oDescription.getId(), "Description's ID is placed in aria-describedby");
@@ -388,7 +388,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("EmptyIndicator", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oObjectNumber = new ObjectNumber({
 				emptyIndicatorMode: EmptyIndicatorMode.On
 			});
@@ -412,7 +412,7 @@ sap.ui.define([
 			this.oObjectNumber.placeAt("content");
 			this.oPanel.placeAt("content");
 			this.oPanel1.placeAt("content");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oObjectNumber.destroy();
@@ -430,19 +430,19 @@ sap.ui.define([
 		assert.strictEqual(oSpan.lastElementChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
 	});
 
-	QUnit.test("Indicator should not be rendered when text is not empty", function(assert) {
+	QUnit.test("Indicator should not be rendered when text is not empty", async function(assert) {
 		//Arrange
 		this.oObjectNumber.setNumber(12);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(this.oObjectNumber.getDomRef().childNodes[0].textContent, "12", "Empty indicator is not rendered");
 	});
 
-	QUnit.test("Indicator should not be rendered when property is set to off", function(assert) {
+	QUnit.test("Indicator should not be rendered when property is set to off", async function(assert) {
 		//Arrange
 		this.oObjectNumber.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(this.oObjectNumber.getDomRef().childNodes[0].textContent, "", "Empty indicator is not rendered");
@@ -456,20 +456,20 @@ sap.ui.define([
 		assert.strictEqual(oSpan.lastElementChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
 	});
 
-	QUnit.test("Indicator should not be rendered when text is available", function(assert) {
+	QUnit.test("Indicator should not be rendered when text is available", async function(assert) {
 		//Arrange
 		this.oObjectNumberEmptyAuto.setNumber(12);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(this.oObjectNumberEmptyAuto.getDomRef().childNodes[0].textContent, "12", "Empty indicator is not rendered");
 	});
 
-	QUnit.test("Indicator should not be rendered when property is set to off and there is a number", function(assert) {
+	QUnit.test("Indicator should not be rendered when property is set to off and there is a number", async function(assert) {
 		//Arrange
 		this.oObjectNumber.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
 		this.oObjectNumber.setNumber(12);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(this.oObjectNumber.getDomRef().childNodes[0].textContent, "12", "Empty indicator is not rendered");

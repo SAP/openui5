@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/LanguageTag",
 	"sap/base/i18n/Localization",
+    "sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/calendar/CalendarUtils",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/UniversalDate",
@@ -14,9 +15,8 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/core/Locale",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date"
-], function(Formatting, LanguageTag, Localization, CalendarUtils, LocaleData, UniversalDate, Islamic, Persian, Japanese, Buddhist, CalendarDate, Locale, CalendarType, oCore, UI5Date) {
+], function(Formatting, LanguageTag, Localization, nextUIUpdate, CalendarUtils, LocaleData, UniversalDate, Islamic, Persian, Japanese, Buddhist, CalendarDate, Locale, CalendarType, UI5Date) {
 	"use strict";
 
 	QUnit.module("getFirstDateOfWeek/Month for week Sunday-Saturday (en_US locale)", {
@@ -155,10 +155,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("en-US locale", function (assert) {
+	QUnit.test("en-US locale", async function (assert) {
 		//prepare
 		Formatting.setLanguageTag('en-US');
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//act
 		this._oBigYears["en-US"].forEach(function (iYear) {
 			this._fnBigYearTest(iYear, assert);
@@ -168,10 +168,10 @@ sap.ui.define([
 		}, this);
 	});
 
-	QUnit.test("en-GB locale", function (assert) {
+	QUnit.test("en-GB locale", async function (assert) {
 		//prepare
 		Formatting.setLanguageTag('en-GB');
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//act
 		this._oBigYears["en-GB"].forEach(function (iYear) {
 			this._fnBigYearTest(iYear, assert);

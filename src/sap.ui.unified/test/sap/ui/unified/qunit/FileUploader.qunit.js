@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/FileUploader",
 	"sap/ui/unified/library",
 	"sap/ui/core/StaticArea",
@@ -11,9 +12,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
-], function(Library, qutils, FileUploader, unifiedLibrary, StaticArea, TooltipBase, InvisibleText, Label, Text, Device, oCore, jQuery) {
+], function(Library, qutils, nextUIUpdate, FileUploader, unifiedLibrary, StaticArea, TooltipBase, InvisibleText, Label, Text, Device, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.unified.FileUploaderHttpRequestMethod
@@ -74,7 +74,7 @@ sap.ui.define([
 	 */
 	QUnit.module("public interface");
 
-	QUnit.test("Test enabled property - setter/getter", function (assert) {
+	QUnit.test("Test enabled property - setter/getter", async function (assert) {
 		var oFileUploader = createFileUploader(),
 				$fileUploader,
 				sDisabledClassName = "sapUiFupDisabled",
@@ -85,7 +85,7 @@ sap.ui.define([
 
 		//Set up
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$fileUploader = oFileUploader.$();
 
 		// assert default
@@ -95,7 +95,7 @@ sap.ui.define([
 
 		// act
 		oFileUploader.setEnabled(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		fnTestDisabledClass($fileUploader, true);
@@ -106,7 +106,7 @@ sap.ui.define([
 
 		// act
 		oFileUploader.setEnabled(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// assert
 		fnTestDisabledClass($fileUploader, false);
 
@@ -114,13 +114,13 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Destroy: cleans the file uploader input filed from static area", function(assert) {
+	QUnit.test("Destroy: cleans the file uploader input filed from static area", async function(assert) {
 		// prepare
 		var oFileUploader = new FileUploader(),
 			oStaticArea = StaticArea.getDomRef();
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		// Trigger invalidation by using a setter,
@@ -129,7 +129,7 @@ sap.ui.define([
 		// hook won't be executed and file uploader input
 		// field will be left in static area
 		oFileUploader.setVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oStaticArea.querySelector("[type='file']"), "File uploader input field exits in the static area");
@@ -145,7 +145,7 @@ sap.ui.define([
 		assert.notOk(oFileUploader.FUDataEl, "File input data element reference is null");
 	});
 
-	QUnit.test("Test buttonOnly property - setter/getter", function (assert) {
+	QUnit.test("Test buttonOnly property - setter/getter", async function (assert) {
 		var oFileUploader = createFileUploader({
 				buttonOnly: true
 			}),
@@ -158,7 +158,7 @@ sap.ui.define([
 
 		//Set up
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$fileUploader = oFileUploader.$();
 
 		// assert default
@@ -166,7 +166,7 @@ sap.ui.define([
 
 		// act
 		oFileUploader.setButtonOnly(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$fileUploader = oFileUploader.$();
 		// assert
 		fnTestButtonOnlyClass($fileUploader, false);
@@ -283,13 +283,13 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Test mimeType property - setter", function (assert) {
+	QUnit.test("Test mimeType property - setter", async function (assert) {
 		//prepare
 		var done = assert.async(),
 			oFileUploader = new FileUploader();
 
 		oFileUploader.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oAfterRenderingDelegate = {
 			onAfterRendering: function() {
@@ -309,14 +309,14 @@ sap.ui.define([
 		oFileUploader.setMimeType(["audio"]);
 	});
 
-	QUnit.test("Test multiple property - setter", function (assert) {
+	QUnit.test("Test multiple property - setter", async function (assert) {
 		//prepare
 		var done = assert.async(),
 			oFileUploader = new FileUploader(),
 			oInput;
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oAfterRenderingDelegate = {
 			onAfterRendering: function() {
@@ -338,14 +338,14 @@ sap.ui.define([
 		oFileUploader.setMultiple(true);
 	});
 
-	QUnit.test("Test directory property - setter", function (assert) {
+	QUnit.test("Test directory property - setter", async function (assert) {
 		//prepare
 		var done = assert.async(),
 			oFileUploader = new FileUploader(),
 			oInput;
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oAfterRenderingDelegate = {
 			onAfterRendering: function() {
@@ -368,7 +368,7 @@ sap.ui.define([
 		oFileUploader.setDirectory(true);
 	});
 
-	QUnit.test("Setters used on after rendering, don't create additional input field type file", function (assert) {
+	QUnit.test("Setters used on after rendering, don't create additional input field type file", async function (assert) {
 		//prepare
 		var done = assert.async(),
 			oFileUploader = new FileUploader({
@@ -392,17 +392,17 @@ sap.ui.define([
 
 		oFileUploader.addDelegate(oAfterRenderingDelegate);
 		oFileUploader.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("Test httpRequestMethod property with native form submit", function (assert) {
+	QUnit.test("Test httpRequestMethod property with native form submit", async function (assert) {
 		//Setup
 		var oFileUploader = new FileUploader();
 
 		//Act
 		oFileUploader.setHttpRequestMethod(FileUploaderHttpRequestMethod.Put);
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(
@@ -415,7 +415,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Test httpRequestMethod property with XMLHttpRequest", function (assert) {
+	QUnit.test("Test httpRequestMethod property with XMLHttpRequest", async function (assert) {
 		//Setup
 		var oFileUploader = createFileUploader(),
 			aFiles = {
@@ -430,7 +430,7 @@ sap.ui.define([
 
 		oFileUploader.setHttpRequestMethod(FileUploaderHttpRequestMethod.Put);
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		oFileUploader._sendFilesWithXHR(aFiles);
@@ -445,7 +445,7 @@ sap.ui.define([
 
 	//BCP: 1970125350
 	//https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#accept
-	QUnit.test("input has the correct accept attribute", function(assert) {
+	QUnit.test("input has the correct accept attribute", async function(assert) {
 		//Setup
 		var oFileUploader = createFileUploader({
 			mimeType: ["image/png", "image/jpeg"],
@@ -453,7 +453,7 @@ sap.ui.define([
 		});
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oFileUploader.$().find("input[type='file']").attr("accept"),
 			".txt,.pdf,image/png,image/jpeg",
@@ -464,7 +464,7 @@ sap.ui.define([
 	});
 
 	//BCP: 2070139852
-	QUnit.test("input has the correct accept attribute", function(assert) {
+	QUnit.test("input has the correct accept attribute", async function(assert) {
 		//Setup
 		var oFileUploader = createFileUploader({
 			fileType: ["XML"],
@@ -472,14 +472,14 @@ sap.ui.define([
 		});
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oFileUploader.$().find("input[type='file']").attr("accept"),
 			".XML",
 			"accept attribute is correct initially");
 
 		oFileUploader.setFileType(["JSON"]);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oFileUploader.$().find("input[type='file']").attr("accept"),
 			".JSON",
@@ -488,20 +488,20 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Test valueStateText property - setter/getter", function (assert) {
+	QUnit.test("Test valueStateText property - setter/getter", async function (assert) {
 		var oFileUploader = createFileUploader(),
 			VALUE_STATE_TEXT = "Test";
 
 		//Set up
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert default
 		assert.equal(oFileUploader.getValueStateText(), "", "setValueStateText() --> getValueStateText() should return an empty string by default");
 
 		// act
 		oFileUploader.setValueStateText(VALUE_STATE_TEXT);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(oFileUploader.getValueStateText(), VALUE_STATE_TEXT, "setValueStateText() --> getValueStateText() should return '" + VALUE_STATE_TEXT + "'");
@@ -511,7 +511,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Test setTooltip", function (assert) {
+	QUnit.test("Test setTooltip", async function (assert) {
 		//Set up
 		var sTooltip = "this is \"the\" file uploader";
 		var oFileUploader = createFileUploader({
@@ -520,11 +520,11 @@ sap.ui.define([
 
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oFileUploader.setTooltip(sTooltip);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), sTooltip, "FileUploader tooltip is correct");
@@ -533,7 +533,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Test setTooltip with none-string tooltip", function (assert) {
+	QUnit.test("Test setTooltip with none-string tooltip", async function (assert) {
 		// Set up
 		var oTooltip = new TooltipBase({text: "test"});
 		var oFileUploader = createFileUploader({
@@ -542,7 +542,7 @@ sap.ui.define([
 
 		// act
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert (only tooltip type of string are added via the 'title' attribute)
 		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), oFileUploader._getNoFileChosenText(), "The title attribute is set to default 'no file chosen' value");
@@ -552,7 +552,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Test associated label interaction", function (assert) {
+	QUnit.test("Test associated label interaction", async function (assert) {
 		//Set up
 		var oFileUploader = createFileUploader({}),
 			oSpy,
@@ -564,7 +564,7 @@ sap.ui.define([
 		};
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//act
 		FUEl = oFileUploader.getDomRef("fu");
@@ -578,7 +578,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Externally referenced label interaction", function(assert) {
+	QUnit.test("Externally referenced label interaction", async function(assert) {
 		// prepare
 		var oFileUploader = new FileUploader("uploader"),
 			oLabel = new Label({labelFor: "uploader", text: "label"}),
@@ -587,7 +587,7 @@ sap.ui.define([
 
 		oLabel.placeAt("qunit-fixture");
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oBrowseClickSpy = this.spy(oFileUploader.getDomRef("fu"), "click");
 
@@ -602,11 +602,11 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("dependency of submit and rendering", function (assert) {
+	QUnit.test("dependency of submit and rendering", async function (assert) {
 		// arrange
 		var oFileUploader = new FileUploader().placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oFileUploader.upload();
@@ -625,12 +625,12 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("'uploadStart' event is fired with native form submit", function (assert) {
+	QUnit.test("'uploadStart' event is fired with native form submit", async function (assert) {
 		// arrange
 		var oFileUploader = new FileUploader({ uploadUrl: "test" }).placeAt("qunit-fixture"),
 			oFireUploadStartSpy = this.spy(oFileUploader, "fireUploadStart");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oFileUploader.upload();
@@ -643,7 +643,7 @@ sap.ui.define([
 		oFireUploadStartSpy.restore();
 	});
 
-	QUnit.test("'fireBeforeOpen', 'fileAfterClose' are properly called", function (assert) {
+	QUnit.test("'fireBeforeOpen', 'fileAfterClose' are properly called", async function (assert) {
 		// arrange
 		var oFileUploader = new FileUploader().placeAt("content"),
 			oFireBeforeDialogOpenSpy = this.spy(oFileUploader, "fireBeforeDialogOpen"),
@@ -651,7 +651,7 @@ sap.ui.define([
 			oInputElement = document.createElement("input"),
 			oFakeEvent = {};
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oInputElement.setAttribute("type", "file");
 		oFakeEvent.target = oInputElement;
 
@@ -671,16 +671,16 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Test valueState property - setter", function (assert) {
+	QUnit.test("Test valueState property - setter", async function (assert) {
 		//prepare
 		var oFileUploader = new FileUploader();
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oAfterRenderingHookSpy = this.spy(oFileUploader, "onAfterRendering");
 
 		// act
 		oFileUploader.setValueState("Error");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oAfterRenderingHookSpy.calledOnce, "ValueState stter causes invalidation");
@@ -690,16 +690,16 @@ sap.ui.define([
 		oAfterRenderingHookSpy.restore();
 	});
 
-	QUnit.test("Test valueStateText property - setter", function (assert) {
+	QUnit.test("Test valueStateText property - setter", async function (assert) {
 		//prepare
 		var oFileUploader = new FileUploader();
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oAfterRenderingHookSpy = this.spy(oFileUploader, "onAfterRendering");
 
 		// act
 		oFileUploader.setValueStateText("Error text");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oAfterRenderingHookSpy.calledOnce, "ValueStateText stter causes invalidation");
@@ -710,7 +710,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("'title' attribute of the internal <input type='file'>");
-	QUnit.test("Test 'title' attribute in different scenarios", function (assert){
+	QUnit.test("Test 'title' attribute in different scenarios", async function (assert){
 		var oFileUploader = new FileUploader(),
 			sDefaultTitle = oFileUploader._getNoFileChosenText(),
 			sFileName = "test.txt",
@@ -718,7 +718,7 @@ sap.ui.define([
 
 		// act
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert (default 'no file chosen' text must be added as 'title' attribute if there is no file chosen and no tooltip set)
 		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), sDefaultTitle, "The title attribute is set to default 'no file chosen' value");
@@ -744,7 +744,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("dependency of submit and rendering", function (assert) {
+	QUnit.test("dependency of submit and rendering", async function (assert) {
 		// arrange
 		var done = assert.async(),
 			oFileUploader = new FileUploader(),
@@ -765,11 +765,11 @@ sap.ui.define([
 
 		oFileUploader.addDelegate(oAfterRenderingDelegate);
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 	});
 
 	QUnit.module("File validation");
-	QUnit.test("Test file type validation - handlechange()", function (assert){
+	QUnit.test("Test file type validation - handlechange()", async function (assert){
 		//setup
 		var oFileUploader = createFileUploader({
 				fileType: ["bmp", "png", "jpg"]
@@ -807,7 +807,7 @@ sap.ui.define([
 
 		//explicit place the FileUploader somewhere, otherwise there are some internal objects missing!
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 
 		//attach the events which will be fired
@@ -855,7 +855,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Unknown mime types doesn't block file from uploading", function (assert) {
+	QUnit.test("Unknown mime types doesn't block file from uploading", async function (assert) {
 		// prepare
 		var oFileUploader = new FileUploader({
 				uploadUrl: "/upload",
@@ -878,7 +878,7 @@ sap.ui.define([
 			oFileAllowedSpy = this.spy(oFileUploader, "fireFileAllowed");
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oFileUploader.handlechange(fakeEvent);
@@ -890,7 +890,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Testing the filename lenth validation handling - handlechange()", function (assert) {
+	QUnit.test("Testing the filename lenth validation handling - handlechange()", async function (assert) {
 		//setup
 		var oFileUploader = createFileUploader({
 				maximumFilenameLength: 10,
@@ -918,7 +918,7 @@ sap.ui.define([
 
 		//explicit place the FileUploader somewhere, otherwise there are some internal objects missing!
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFileUploader.attachEvent("filenameLengthExceed", fnFilenameLengthExceedHandler);
 
@@ -930,7 +930,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Testing the clearing of the input fields - clear()", function (assert) {
+	QUnit.test("Testing the clearing of the input fields - clear()", async function (assert) {
 		//setup
 		var oFileUploader = createFileUploader(),
 			oSpy = this.spy(oFileUploader, "setValue"),
@@ -938,7 +938,7 @@ sap.ui.define([
 
 		//explicit place the FileUploader somewhere, otherwise there are some internal objects missing!
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFileUploader.setValue("Testfilename.txt");
 		assert.equal(oFileUploader.getValue(), "Testfilename.txt", "Check if filename is set correctly");
@@ -957,7 +957,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Empty file event is fired", function (assert){
+	QUnit.test("Empty file event is fired", async function (assert){
 		var oFileUploader = createFileUploader(),
 			fnFireFileEmpty = this.spy( oFileUploader, "fireFileEmpty"),
 			oTestEvent = {
@@ -975,7 +975,7 @@ sap.ui.define([
 		};
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFileUploader.handlechange(oTestEvent);
 		assert.equal(fnFireFileEmpty.calledOnce, true, "Event on empty file upload is fired.");
@@ -988,7 +988,7 @@ sap.ui.define([
 	 * Test private functions
 	 */
 	QUnit.module("private functions");
-	QUnit.test("Testing sending passed files with XHR", function (assert) {
+	QUnit.test("Testing sending passed files with XHR", async function (assert) {
 		var oFileUploader = createFileUploader(),
 			bIsExecutedInFireFox = Device.browser.firefox,
 			aFiles = {
@@ -1007,7 +1007,7 @@ sap.ui.define([
 			oSpy = this.spy(window.XMLHttpRequest.prototype, "send");
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFileUploader._sendFilesWithXHR(aFiles);
 
@@ -1018,7 +1018,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("BCP: 1770523801 - FormData.append called with third argument fails under Safari browser if passed file " +
-			"is not a Blob", function (assert) {
+			"is not a Blob", async function (assert) {
 		// Arrange
 		var oFileUploader = createFileUploader(),
 			sExpectedFileName = "FileUploader.qunit.html",
@@ -1051,7 +1051,7 @@ sap.ui.define([
 		};
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act - send files to make sure _appendFileToFormData method is used
 		oFileUploader._sendFilesWithXHR(aFiles);
@@ -1127,13 +1127,13 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Change event listener is reattached to the rerendered inner input field", function(assert) {
+	QUnit.test("Change event listener is reattached to the rerendered inner input field", async function(assert) {
 		// prepare
 		var oFileUploader = new FileUploader(),
 			oChangeHandlerSpy = this.spy(oFileUploader, "handlechange"),
 			oCacheDOMEls;
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCacheDOMEls = this.spy(oFileUploader, "_cacheDOMEls");
 
 		// act
@@ -1148,14 +1148,52 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	testInputRerender("setEnabled", false);
-	testInputRerender("setPlaceholder", "placeholder");
+	QUnit.test("setEnabled will call _resizeDomElements after input is re-rendered", async function (assert) {
+		// setup
+		var oFileUploader = createFileUploader();
+		oFileUploader.placeAt("qunit-fixture");
+		await nextUIUpdate(this.clock);
 
-	QUnit.test("Drop file over the browse button", function(assert) {
+		// act
+		var oResizeDomElementsSpy = this.spy(oFileUploader, "_resizeDomElements");
+		oFileUploader["setEnabled"](false);
+		await nextUIUpdate(this.clock);
+
+		// assert
+		assert.equal(oResizeDomElementsSpy.callCount, 2, "_resizeDomElements should be called once when input is re-rendered");
+
+		// cleanup
+		oResizeDomElementsSpy.restore();
+		oFileUploader.destroy();
+		await nextUIUpdate(this.clock);
+	});
+
+	QUnit.test("setPlaceholder will call _resizeDomElements after input is re-rendered", async function (assert) {
+		// setup
+		var oFileUploader = createFileUploader();
+		oFileUploader.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// act
+		var oResizeDomElementsSpy = this.spy(oFileUploader, "_resizeDomElements");
+		oFileUploader["setPlaceholder"]("placeholder");
+		await nextUIUpdate();
+
+		// assert
+		assert.equal(oResizeDomElementsSpy.callCount, 2, "_resizeDomElements should be called once when input is re-rendered");
+
+		// cleanup
+		oResizeDomElementsSpy.restore();
+		oFileUploader.destroy();
+		await nextUIUpdate();
+	});
+
+
+	QUnit.test("Drop file over the browse button", async function(assert) {
 		// prepare
 		var oFileUploader = new FileUploader();
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oEventParams = {
 			originalEvent: {
@@ -1184,11 +1222,11 @@ sap.ui.define([
 		oPreventDefaultSpy.restore();
 	});
 
-	QUnit.test("Input type file element has the proper events registered", function(assert) {
+	QUnit.test("Input type file element has the proper events registered", async function(assert) {
 		// prepare
 		var oFileUploader = new FileUploader();
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oEvents = jQuery._data(oFileUploader.oBrowse.getDomRef(), "events");
 		// assert
 		assert.ok(oEvents.mouseover, "mouseover registed");
@@ -1207,12 +1245,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("BlindLayer", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oFileUploader = createFileUploader();
 
 			//explicit place the FileUploader somewhere, otherwise there are some internal objects missing!
 			this.oFileUploader.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 
 		afterEach: function() {
@@ -1261,7 +1299,7 @@ sap.ui.define([
 
 	QUnit.module("Keyboard handling");
 
-	QUnit.test("ESCAPE key propagation", function (assert) {
+	QUnit.test("ESCAPE key propagation", async function (assert) {
 		var oFileUploader = createFileUploader(),
 			oMockEscapePress = {
 				keyCode: 27,
@@ -1271,7 +1309,7 @@ sap.ui.define([
 			stopPropagationSpy = this.spy(oMockEscapePress, "stopPropagation");
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFileUploader.onkeydown(oMockEscapePress);
 
@@ -1280,7 +1318,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Browse logic is fired correctly", function (assert) {
+	QUnit.test("Browse logic is fired correctly", async function (assert) {
 		// Prepare
 		var oFileUploader = createFileUploader().placeAt("qunit-fixture"),
 			oFakeEvent = {
@@ -1290,7 +1328,7 @@ sap.ui.define([
 			},
 			oClickSpy;
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oClickSpy = this.spy(oFileUploader.oFileUpload, "click");
 
 		// Act
@@ -1314,11 +1352,11 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("prototype.openFilePicker", function(assert) {
+	QUnit.test("prototype.openFilePicker", async function(assert) {
 		// Prepare
 		var oFU = new FileUploader();
 		oFU.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oElementClickSpy = this.spy(oFU.getInputReference(), "click");
 
 		// Act
@@ -1331,11 +1369,11 @@ sap.ui.define([
 		oFU.destroy();
 	});
 
-	QUnit.test("prototype.getInputReference", function(assert) {
+	QUnit.test("prototype.getInputReference", async function(assert) {
 		// Prepare
 		var oFU = new FileUploader();
 		oFU.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		// Assert
@@ -1345,31 +1383,9 @@ sap.ui.define([
 		oFU.destroy();
 	});
 
-	function testInputRerender(sMethodName, vValue) {
-		QUnit.test(sMethodName + " will call _resizeDomElements after input is re-rendered", function (assert) {
-			// setup
-			var oCore = sap.ui.getCore(),
-					oFileUploader = createFileUploader();
-			oFileUploader.placeAt("qunit-fixture");
-			oCore.applyChanges();
-
-			// act
-			var oResizeDomElementsSpy = this.spy(oFileUploader, "_resizeDomElements");
-			oFileUploader[sMethodName](vValue);
-			oCore.applyChanges();
-
-			// assert
-			assert.equal(oResizeDomElementsSpy.callCount, 1, "_resizeDomElements should be called once when input is re-rendered");
-
-			// cleanup
-			oResizeDomElementsSpy.restore();
-			oFileUploader.destroy();
-		});
-	}
-
 	QUnit.module("Accessibility");
 
-	QUnit.test("AriaLabelledBy", function(assert) {
+	QUnit.test("AriaLabelledBy", async function(assert) {
 		// setup
 		var oFileUploader = new FileUploader("fu"),
 			oLabel = new Label({
@@ -1384,7 +1400,7 @@ sap.ui.define([
 			];
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		aLabelledBy.forEach(function(oLabel) {
@@ -1465,7 +1481,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Label is redirected to internal button", function (assert) {
+	QUnit.test("Label is redirected to internal button", async function (assert) {
 		// setup
 		var sInternalButtonAriaLabelledby,
 			oLabel = new Label("newLabel", {
@@ -1477,7 +1493,7 @@ sap.ui.define([
 		// act
 		oLabel.placeAt("qunit-fixture");
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		sInternalButtonAriaLabelledby = oFileUploader.oBrowse.$().attr("aria-labelledby");
 
@@ -1489,7 +1505,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Label added dynamicaly", function (assert) {
+	QUnit.test("Label added dynamicaly", async function (assert) {
 		// setup
 		var oNewLabel,
 			sInternalButtonAriaLabelledby,
@@ -1502,12 +1518,12 @@ sap.ui.define([
 		// act
 		oLabel.placeAt("qunit-fixture");
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oNewLabel = new Label("newLabel", { labelFor: "fu" });
 
 		oNewLabel.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		sInternalButtonAriaLabelledby = oFileUploader.oBrowse.$().attr("aria-labelledby");
 
@@ -1521,19 +1537,19 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Browse button tooltip", function(assert) {
+	QUnit.test("Browse button tooltip", async function(assert) {
 		var oFileUploader = new FileUploader({
 			buttonText: "Something"
 		});
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oFileUploader.oBrowse.getTooltip(), "It shouldn't have one while FileUploader has text");
 
 		oFileUploader.setIconOnly(true);
 		oFileUploader.setIcon("sap-icon://add");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oFileUploader.oBrowse.getTooltip(), oFileUploader.getBrowseText(),
 				"Once FileUploader becomes icon-only, then it should contain just the 'Browse...' text");
@@ -1541,13 +1557,13 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Description for default FileUploader", function (assert) {
+	QUnit.test("Description for default FileUploader", async function (assert) {
 		// Setup
 		var oFileUploader = new FileUploader("fu"),
 			oRB = Library.getResourceBundleFor("sap.ui.unified");
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var $description = oFileUploader.$().find("#fu-AccDescr");
@@ -1557,7 +1573,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Description for FileUploader with tooltip and placeholder", function (assert) {
+	QUnit.test("Description for FileUploader with tooltip and placeholder", async function (assert) {
 		// Setup
 		var oFileUploader = new FileUploader("fu", {
 				tooltip: "the-tooltip",
@@ -1566,7 +1582,7 @@ sap.ui.define([
 			oRB = Library.getResourceBundleFor("sap.ui.unified");
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var sDescriptionText = oFileUploader.$().find("#fu-AccDescr").text();
@@ -1578,7 +1594,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Description for FileUploader after tooltip update", function (assert) {
+	QUnit.test("Description for FileUploader after tooltip update", async function (assert) {
 		// Setup
 		var sInitialTooltip = "initial-tooltip",
 			sUpdatedTooltip = "updated-tooltip",
@@ -1588,11 +1604,11 @@ sap.ui.define([
 			sAccDescription;
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oFileUploader.setTooltip(sUpdatedTooltip);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		sAccDescription = document.getElementById("fu-AccDescr").innerHTML;
@@ -1603,7 +1619,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Description for FileUploader after placeholder update", function (assert) {
+	QUnit.test("Description for FileUploader after placeholder update", async function (assert) {
 		// Setup
 		var sInitialPlaceholder = "initial-placeholder",
 			sUpdatedPlaceholder = "updated-placeholder",
@@ -1613,11 +1629,11 @@ sap.ui.define([
 			sAccDescription;
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oFileUploader.setPlaceholder(sUpdatedPlaceholder);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		sAccDescription = document.getElementById("fu-AccDescr").innerHTML;
@@ -1628,7 +1644,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Description for required FileUploader", function (assert) {
+	QUnit.test("Description for required FileUploader", async function (assert) {
 		// Setup
 		var oLabel = new Label({ text: "Label", labelFor: "fu", required: true }),
 			oFileUploader = new FileUploader("fu"),
@@ -1636,7 +1652,7 @@ sap.ui.define([
 
 		oLabel.placeAt("qunit-fixture");
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var $description = oFileUploader.$().find("#fu-AccDescr");
@@ -1647,13 +1663,13 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Internal hidden label for the Input", function (assert) {
+	QUnit.test("Internal hidden label for the Input", async function (assert) {
 		var oFileUploader = new FileUploader(),
 			sExpectedLabelId = InvisibleText.getStaticId("sap.ui.unified", "FILEUPLOAD_FILENAME"),
 			aInputLabels;
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		aInputLabels = oFileUploader.oFilePath.getAriaLabelledBy();
 		assert.strictEqual(aInputLabels[0], sExpectedLabelId, "A hidden label is added to FileUploader's input");
@@ -1661,7 +1677,7 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Click focuses the fileuploader button", function (assert) {
+	QUnit.test("Click focuses the fileuploader button", async function (assert) {
 		//Arrange
 		this.stub(Device, "browser").value({"safari": true});
 		var oFileUploader = new FileUploader("fu"),
@@ -1669,7 +1685,7 @@ sap.ui.define([
 			oFakeEvent = {};
 
 		oFileUploader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oFakeEvent.target = oFileUploader.getDomRef();
 
 		//Act

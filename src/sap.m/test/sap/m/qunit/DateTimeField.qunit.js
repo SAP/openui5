@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define(
-	["sap/m/DateTimeField", "sap/ui/core/Core"],
-	function(DateTimeField, oCore) {
+	["sap/m/DateTimeField", "sap/ui/qunit/utils/nextUIUpdate"],
+	function(DateTimeField, nextUIUpdate) {
 		"use strict";
 
 		QUnit.module("Public API", function () {
@@ -41,16 +41,16 @@ sap.ui.define(
 		});
 
 		QUnit.module("Private API", function () {
-			QUnit.test("Given DateTimeField, when I call setPlaceholder", function (assert) {
+			QUnit.test("Given DateTimeField, when I call setPlaceholder", async function (assert) {
 				// Prepare
 				var oSut = new DateTimeField({displayFormat: "medium"});
 
 				oSut.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				// Act
 				oSut.setPlaceholder("placeholder1");
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				// Assert
 				assert.equal(oSut.$().find("input").attr("placeholder"), "placeholder1",

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
+    "sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/m/Popover",
@@ -16,8 +17,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/ListItemBase",
 	"sap/ui/events/jquery/EventSimulation",
-	"sap/ui/base/EventProvider",
-	"sap/ui/core/Core"
+	"sap/ui/base/EventProvider"
 ], function(
 	Element,
 	qutils,
@@ -27,6 +27,7 @@ sap.ui.define([
 	Filter,
 	mobileLibrary,
 	JSONModel,
+    nextUIUpdate,
 	jQuery,
 	Device,
 	Popover,
@@ -35,8 +36,7 @@ sap.ui.define([
 	Page,
 	ListItemBase,
 	EventSimulation,
-	EventProvider,
-	oCore
+	EventProvider
 ) {
 	"use strict";
 
@@ -65,7 +65,7 @@ sap.ui.define([
 
 	QUnit.module("");
 
-	QUnit.test("All lists are available to the FacetFilter control when 'reset' event handler is called", function(assert) {
+	QUnit.test("All lists are available to the FacetFilter control when 'reset' event handler is called", async function(assert) {
 		// prepare
 		var done = assert.async(),
 			oFFL = new FacetFilterList(),
@@ -79,7 +79,7 @@ sap.ui.define([
 
 		this.stub(Device.support, "touch").value(true);
 		oFF.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function() {
@@ -107,7 +107,7 @@ sap.ui.define([
 
 	QUnit.module("Control Design");
 
-	QUnit.test("Aggregations", function(assert) {
+	QUnit.test("Aggregations", async function(assert) {
 
 		// The aggregations below are created programmatically by FacetFilter when it is initialized, so make sure they are created.
 		var oFF = new FacetFilter("someid");
@@ -115,7 +115,7 @@ sap.ui.define([
 		oFF.addList(new FacetFilterList("list1"));
 		oFF.addList(new FacetFilterList("list2"));
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oFF.getLists().length, 2, "There should be two lists in the 'lists' aggregation");
 		assert.ok(oFF.getAggregation("addFacetButton"), "Add facet button aggregation should be created");
@@ -130,13 +130,13 @@ sap.ui.define([
 		oFF.addList(new FacetFilterList("list1"));
 		oFF.addList(new FacetFilterList("list2"));
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		destroyFF(oFF);
 	});
 
 
-	QUnit.test("Aggreations: list's items can be bound to a model with an arbitrary size limit", function(assert) {
+	QUnit.test("Aggreations: list's items can be bound to a model with an arbitrary size limit", async function(assert) {
 		//prepare
 		var oFF = new FacetFilter({type: FacetFilterType.Light}),
 				oModel = new JSONModel(),
@@ -154,7 +154,7 @@ sap.ui.define([
 		oFF.setModel(oModel);
 
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//act
 		oDialog = oFF._getFacetDialog();
@@ -253,7 +253,7 @@ sap.ui.define([
 		oFF.destroy();
 	});
 
-	QUnit.test("FacetFilter._openPopover", function(assert) {
+	QUnit.test("FacetFilter._openPopover", async function(assert) {
 		var done = assert.async();
 
 		var oFF = new FacetFilter();
@@ -263,7 +263,7 @@ sap.ui.define([
 
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function() {
@@ -282,14 +282,14 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("FacetFilter._closePopover", function(assert) {
+	QUnit.test("FacetFilter._closePopover", async function(assert) {
 		var done = assert.async();
 
 		var oFF = new FacetFilter();
 		var oFFL = new FacetFilterList({items: [new FacetFilterItem({text: "Val"})]});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function() {
@@ -307,7 +307,7 @@ sap.ui.define([
 		openPopover(oFF, 0);
 	});
 
-	QUnit.test("FacetFilter._moveListToDisplayContainer, _restoreListFromDisplayContainer", function(assert) {
+	QUnit.test("FacetFilter._moveListToDisplayContainer, _restoreListFromDisplayContainer", async function(assert) {
 
 		var oFF = new FacetFilter();
 		var oFFL1 = new FacetFilterList();
@@ -317,7 +317,7 @@ sap.ui.define([
 		oFF.addList(oFFL2);
 		oFF.addList(oFFL3);
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oFF.indexOfAggregation("lists", oFFL1), 0, "List 1 should be at index 0");
 		assert.equal(oFF.indexOfAggregation("lists", oFFL2), 1, "List 2 should be at index 1");
@@ -384,7 +384,7 @@ sap.ui.define([
 		oFF.destroy();
 	});
 
-	QUnit.test("FacetFilter._closeDialog", function(assert) {
+	QUnit.test("FacetFilter._closeDialog", async function(assert) {
 		var done = assert.async();
 
 		var oListCloseEvent = null;
@@ -394,7 +394,7 @@ sap.ui.define([
 		oFFL.addItem(oFFI);
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFFL.attachListClose(function(oEvent) {
 			oListCloseEvent = oEvent;
@@ -419,7 +419,7 @@ sap.ui.define([
 		oFF._navToFilterItemsPage(oNavContainer.getPages()[0].getContent()[0].getItems()[0]);
 	});
 
-	QUnit.test("FacetFilter._createFacetList", function(assert) {
+	QUnit.test("FacetFilter._createFacetList", async function(assert) {
 
 		var sFacet1 = "Facet1", sFacet2 = "Facet2", iFacet1AllCount = 4, iFacet2AllCount = 7;
 		var oFF = new FacetFilter();
@@ -428,12 +428,12 @@ sap.ui.define([
 		oFF.addList(oFFL1);
 		oFF.addList(oFFL2);
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oList = oFF._createFacetList();
 		assert.ok(oList, "List should not be null");
 		oList.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 
 		assert.equal(oList.getMode(), ListMode.None, "The facet list mode should be None");
@@ -562,7 +562,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("FacetFilter._navToFilterItemsPage", function(assert) {
+	QUnit.test("FacetFilter._navToFilterItemsPage", async function(assert) {
 		var done = assert.async();
 
 		var sList1Title = "List1", sList2Title = "List2", sItem1 = "List1 Val1", sItem2 = "List2 Val1";
@@ -575,7 +575,7 @@ sap.ui.define([
 			lists: [oFFL1, oFFL2]
 		});
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFF.openFilterDialog();
 
@@ -611,7 +611,7 @@ sap.ui.define([
 		oFF._navToFilterItemsPage(oFacetListItem1);
 	});
 
-	QUnit.test("FacetFilter._navToFilterItemsPage in SingleSelectMaster mode of FacetFilterList", function(assert) {
+	QUnit.test("FacetFilter._navToFilterItemsPage in SingleSelectMaster mode of FacetFilterList", async function(assert) {
 		var done = assert.async();
 
 		var sList1Title = "List1", sList2Title = "List2", sItem1 = "List1 Val1", sItem2 = "List2 Val1";
@@ -626,7 +626,7 @@ sap.ui.define([
 			lists: [oFFL1, oFFL2]
 		});
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFF.openFilterDialog();
 
@@ -649,7 +649,7 @@ sap.ui.define([
 		oFF._navToFilterItemsPage(oFacetListItem1);
 	});
 
-	QUnit.test("FacetFilter._navToFilterItemsPage after search", function(assert) {
+	QUnit.test("FacetFilter._navToFilterItemsPage after search", async function(assert) {
 		var done = assert.async();
 
 		var sList1Title = "List1", sList2Title = "List2", sItem1 = "List1 Val1", sItem2 = "List2 Val1";
@@ -662,7 +662,7 @@ sap.ui.define([
 			lists: [oFFL1, oFFL2]
 		});
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFF.openFilterDialog();
 
@@ -694,7 +694,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("FacetFilter._navFromFilterItemsPage", function(assert) {
+	QUnit.test("FacetFilter._navFromFilterItemsPage", async function(assert) {
 		var done = assert.async();
 
 		var iAllCount = 54;
@@ -703,7 +703,7 @@ sap.ui.define([
 		oFFL.addItem(new FacetFilterItem({text: "Val1"}));
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFF.openFilterDialog();
 
@@ -828,14 +828,14 @@ sap.ui.define([
 		oFF.destroy();
 	});
 
-	QUnit.test("FacetFilter._getButtonForList", function(assert) {
+	QUnit.test("FacetFilter._getButtonForList", async function(assert) {
 
 		var sListTitle = "List";
 		var oFF = new FacetFilter();
 		var oFFL = new FacetFilterList({title: sListTitle});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		oCore.applyChanges(); //_getButtonForList is implicitly called upon rendering
+		await nextUIUpdate(); //_getButtonForList is implicitly called upon rendering
 
 		var oButton = oFF.getAggregation("buttons")[0];
 		assert.strictEqual(oFF._getButtonForList(oFFL), oButton, "There should be only one button instance created per list");
@@ -845,7 +845,7 @@ sap.ui.define([
 		destroyFF(oFF);
 	});
 
-	QUnit.test("FacetFilter._getFacetRemoveIcon", function(assert) {
+	QUnit.test("FacetFilter._getFacetRemoveIcon", async function(assert) {
 
 		var oFF = new FacetFilter({
 			showPersonalization: true
@@ -853,7 +853,7 @@ sap.ui.define([
 		var oFFL = new FacetFilterList({title: "List"});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		oCore.applyChanges(); //_getFacetRemoveIcon is implicitly called upon rendering
+		await nextUIUpdate(); //_getFacetRemoveIcon is implicitly called upon rendering
 
 		var oIcon = oFF.getAggregation("removeFacetIcons")[0];
 		assert.strictEqual(oFF._getFacetRemoveIcon(oFFL), oIcon, "There should be only one icon instance created per list");
@@ -861,7 +861,7 @@ sap.ui.define([
 		destroyFF(oFF);
 	});
 
-	QUnit.test("FacetFilter._displayRemoveIcon", function(assert) {
+	QUnit.test("FacetFilter._displayRemoveIcon", async function(assert) {
 		var done = assert.async();
 
 		var oFF = new FacetFilter({
@@ -870,7 +870,7 @@ sap.ui.define([
 		var oFFL = new FacetFilterList({title: "List"});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oPopover = oFF._getPopover();
 
@@ -886,7 +886,7 @@ sap.ui.define([
 		openPopover(oFF, 0);
 	});
 
-	QUnit.test("FacetFilter._displayRemoveIcon should be visible until the user releases the mouse (touchend)", function(assert) {
+	QUnit.test("FacetFilter._displayRemoveIcon should be visible until the user releases the mouse (touchend)", async function(assert) {
 		var done = assert.async();
 
 		var oFF = new FacetFilter({
@@ -895,7 +895,7 @@ sap.ui.define([
 		var oFFL = new FacetFilterList({title: "List"});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oPopover = oFF._getPopover();
 
@@ -925,7 +925,7 @@ sap.ui.define([
 		openPopover(oFF, 0);
 	});
 
-	QUnit.test("FacetFilter RemoveIcon should be displayed", function(assert) {
+	QUnit.test("FacetFilter RemoveIcon should be displayed", async function(assert) {
 	  var done = assert.async();
 		   var oFF = new FacetFilter({
 		   showPersonalization: true
@@ -933,7 +933,7 @@ sap.ui.define([
 		   var oFFL = new FacetFilterList({title: "List", showRemoveFacetIcon:true});
 		   oFF.addList(oFFL);
 		   oFF.placeAt("content");
-		   oCore.applyChanges();
+		   await nextUIUpdate();
 		   var oPopover = oFF._getPopover();
 		   oPopover.attachEventOnce("afterOpen", function(oEvent) {
 			   assert.ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLVisibleRemoveIcon"), "The remove icon should  be displayed.");
@@ -943,7 +943,7 @@ sap.ui.define([
 		   openPopover(oFF, 0);
 	});
 
-	QUnit.test("FacetFilter RemoveIcon should not be displayed", function(assert) {
+	QUnit.test("FacetFilter RemoveIcon should not be displayed", async function(assert) {
 		var done = assert.async();
 		 var oFF = new FacetFilter({
 		 showPersonalization: true
@@ -951,7 +951,7 @@ sap.ui.define([
 		 var oFFL = new FacetFilterList({title: "List", showRemoveFacetIcon:false});
 		 oFF.addList(oFFL);
 		 oFF.placeAt("content");
-		 oCore.applyChanges();
+		 await nextUIUpdate();
 		 var oPopover = oFF._getPopover();
 		 oPopover.attachEventOnce("afterOpen", function(oEvent) {
 			 assert.ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should not be displayed.");
@@ -1096,7 +1096,7 @@ sap.ui.define([
 		destroyFF(oFF);
 	});
 
-	QUnit.test("FacetFilter._setButtonText", function(assert) {
+	QUnit.test("FacetFilter._setButtonText", async function(assert) {
 		var sItemText1 = "Val1", sItemText2 = "Val2", sItemText3 = "Val3";
 		var oFF = new FacetFilter();
 		var oFFL = new FacetFilterList({
@@ -1108,7 +1108,7 @@ sap.ui.define([
 		oFFL.addItem(new FacetFilterItem({text: sItemText3}));
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oButton = oFF._getButtonForList(oFFL);
 		oFFL.getItems()[0].setSelected(true);
@@ -1149,7 +1149,7 @@ sap.ui.define([
 		oFFL.destroy();
 	});
 
-	QUnit.test("FacetFilterList._updateActiveState for initially non-active lists", function(assert) {
+	QUnit.test("FacetFilterList._updateActiveState for initially non-active lists", async function(assert) {
 		var done = assert.async();
 
 		var oFF = new FacetFilter();
@@ -1182,7 +1182,7 @@ sap.ui.define([
 		oFF.addList(oFFL3);
 
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oDialog = oFF._getFacetDialog();
 		oDialog.attachEventOnce("afterOpen", function(oEvent) {
@@ -1263,7 +1263,7 @@ sap.ui.define([
 		oFF.openFilterDialog();
 	});
 
-	QUnit.test("FacetFilterList._updateActiveState for initially active lists", function(assert) {
+	QUnit.test("FacetFilterList._updateActiveState for initially active lists", async function(assert) {
 		var done = assert.async();
 		//prepare
 		var oFF = new FacetFilter(),
@@ -1274,7 +1274,7 @@ sap.ui.define([
 		oFF.addList(oFFL1);
 
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oDialog = oFF._getFacetDialog();
 		oDialog.attachEventOnce("afterOpen", function(oEvent) {
@@ -1590,7 +1590,7 @@ sap.ui.define([
 		oList.destroy();
 	});
 
-	QUnit.test("FacetFilter.prototype._openPopover - default filtering prevented", function(assert) {
+	QUnit.test("FacetFilter.prototype._openPopover - default filtering prevented", async function(assert) {
 		// arrange
 		var done = assert.async(),
 			oFacetFilter = new FacetFilter({
@@ -1613,7 +1613,7 @@ sap.ui.define([
 		});
 
 		oFacetFilter.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oTargetList._handleSearchEvent(oFakeEvent);
@@ -1631,7 +1631,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("FacetFilter allCheckboxBar - visibility ajdustment", function(assert) {
+	QUnit.test("FacetFilter allCheckboxBar - visibility ajdustment", async function(assert) {
 		// arrange
 		var done = assert.async(),
 			oFacetFilter = new FacetFilter({
@@ -1654,7 +1654,7 @@ sap.ui.define([
 
 		oFacetFilter.setModel(oModel);
 		oFacetFilter.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oTargetList.attachEventOnce("search", function(oEvent) {
 			var sSearchString = oEvent.getParameters()["term"];
@@ -1704,7 +1704,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("FacetFilter allCheckboxBar - visibility after binding update", function(assert) {
+	QUnit.test("FacetFilter allCheckboxBar - visibility after binding update", async function(assert) {
 		// arrange
 		var done = assert.async(),
 			oFacetFilter = new FacetFilter({
@@ -1727,7 +1727,7 @@ sap.ui.define([
 
 		oFacetFilter.setModel(oModel);
 		oFacetFilter.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oTargetList.attachEventOnce("search", function(oEvent) {
 			var sSearchString = oEvent.getParameters()["term"];
@@ -1802,7 +1802,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("FacetFilterList._updateSelectAllCheckBox", function(assert) {
+	QUnit.test("FacetFilterList._updateSelectAllCheckBox", async function(assert) {
 		var done = assert.async();
 
 			var aValues = [{key : 'k1',text : "a"}, {key : 'k2',text : "ba"}, {key : 'k3',text : "c"}],
@@ -1822,7 +1822,7 @@ sap.ui.define([
 			var oFF = new FacetFilter();
 			oFF.addList(oFFL);
 			oFF.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oPopover = oFF._getPopover();
 			oPopover.attachEventOnce("afterOpen", function(oEvent) {
@@ -1999,11 +1999,11 @@ sap.ui.define([
 		oFacetFilter.destroy();
 	});
 
-	QUnit.test("alt/meta key + right/left or + home/end is not handled", function (assert) {
+	QUnit.test("alt/meta key + right/left or + home/end is not handled", async function (assert) {
 		// Prepare
 		var oFF = new FacetFilter();
 		oFF.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oFF._startItemNavigation();
@@ -2083,7 +2083,7 @@ sap.ui.define([
 		destroyFF(oFF);
 	});
 
-	QUnit.test("FacetFilter.removeList, removeAggregation", function(assert) {
+	QUnit.test("FacetFilter.removeList, removeAggregation", async function(assert) {
 
 		var oFF = new FacetFilter({
 			showPersonalization : true
@@ -2092,7 +2092,7 @@ sap.ui.define([
 		oFF.addList(new FacetFilterList());
 		oFF.addList(new FacetFilterList());
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var fnGetButtonRefs = function() {
 			var aButtonRefs = [];
@@ -2145,7 +2145,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("FacetFilterList.removeSelections model inherited from core, binding in listOpen", function(assert) {
+	QUnit.test("FacetFilterList.removeSelections model inherited from core, binding in listOpen", async function(assert) {
 
 		var aItemsData = [{key: "1", text: "Val1"},{key: "2", text: "Val2"},{key: "3", text: "Val3"}];
 		var oModel = new JSONModel({
@@ -2172,13 +2172,13 @@ sap.ui.define([
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
 		oFF.setModel(oModel);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFFL.setSelectedKeys({"1": "Val1", "2": "Val2"});
 		oFFL.fireListOpen();
 	});
 
-	QUnit.test("FacetFilterList.removeSelections model set directly on list (not inherited)", function(assert) {
+	QUnit.test("FacetFilterList.removeSelections model set directly on list (not inherited)", async function(assert) {
 
 		var aItemsData = [{key: "1", text: "Val1"},{key: "2", text: "Val2"},{key: "3", text: "Val3"}];
 
@@ -2198,7 +2198,7 @@ sap.ui.define([
 		oFF.addList(oFFL1);
 
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFFL1.setSelectedKeys({"1": "Val1", "2": "Val2"});
 
@@ -2224,7 +2224,7 @@ sap.ui.define([
 		oFFL.destroy();
 	});
 
-	QUnit.test("FacetFilterList.getSelectedItems", function(assert) {
+	QUnit.test("FacetFilterList.getSelectedItems", async function(assert) {
 
 		var aItemsData = [{key: "1", text: "Val1"},{key: "2", text: "Val2"},{key: "3", text: "Val3"}];
 
@@ -2248,7 +2248,7 @@ sap.ui.define([
 		oFF.addList(oFFL);
 
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var aSelectedItems = oFFL.getSelectedItems();
 		assert.equal(aSelectedItems.length, 0, "Empty array should be returned when nothing is selected");
@@ -2265,7 +2265,7 @@ sap.ui.define([
 		destroyFF(oFF);
 	});
 
-	QUnit.test("FacetFilterList.getSelectedItem", function(assert) {
+	QUnit.test("FacetFilterList.getSelectedItem", async function(assert) {
 
 		var aItemsData = [{key: "1", text: "Val1"},{key: "2", text: "Val2"},{key: "3", text: "Val3"}];
 
@@ -2289,7 +2289,7 @@ sap.ui.define([
 		oFF.addList(oFFL);
 
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oFFL.getSelectedItem(), null, "No item should be selected");
 
@@ -2404,7 +2404,7 @@ sap.ui.define([
 		assert.equal(oFacetFilterList._getSearchValue(), sPredefinedSearchValue, "sets the correct _searchValue");
 	});
 
-	QUnit.test("_searchValue is reset before popover opens", function(assert) {
+	QUnit.test("_searchValue is reset before popover opens", async function(assert) {
 		var done = assert.async();
 		var oFacetFilter = new FacetFilter(),
 			oFacetFilterList = new FacetFilterList({
@@ -2426,7 +2426,7 @@ sap.ui.define([
 		oFacetFilter.addList(oFacetFilterList);
 
 		oFacetFilter.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oResetSearchSpy = sinon.spy(oFacetFilterList, "_setSearchValue");
 
@@ -2480,7 +2480,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Events", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			//Arrange
 			this.oFacetFilter = new FacetFilter({
 				lists: [
@@ -2527,7 +2527,7 @@ sap.ui.define([
 				]
 			});
 			this.oFacetFilter.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oFacetFilter.destroy();
@@ -2566,7 +2566,7 @@ sap.ui.define([
 		fnSetSearchValueSpy.restore();
 	});
 
-	QUnit.test("FacetFilterList.listOpen", function(assert) {
+	QUnit.test("FacetFilterList.listOpen", async function(assert) {
 		var done = assert.async();
 		var oFF = new FacetFilter();
 		var oFFL = new FacetFilterList({
@@ -2579,7 +2579,7 @@ sap.ui.define([
 		});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function(oEvent) {
@@ -2590,7 +2590,7 @@ sap.ui.define([
 		openPopover(oFF, 0);
 	});
 
-	QUnit.test("FacetFilterList.listOpen prevented", function(assert) {
+	QUnit.test("FacetFilterList.listOpen prevented", async function(assert) {
 		var done = assert.async();
 		var oFF = new FacetFilter();
 		var oFFL = new FacetFilterList({
@@ -2604,7 +2604,7 @@ sap.ui.define([
 		oFFL._setSearchValue("search_value");
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function(oEvent) {
@@ -2621,7 +2621,7 @@ sap.ui.define([
 		openPopover(oFF, 0);
 	});
 
-	QUnit.test("FacetFilterList.listClose - none selected", function(assert) {
+	QUnit.test("FacetFilterList.listClose - none selected", async function(assert) {
 		var done = assert.async();
 
 		var oFF = new FacetFilter();
@@ -2650,7 +2650,7 @@ sap.ui.define([
 		}));
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function() {
@@ -2660,7 +2660,7 @@ sap.ui.define([
 		openPopover(oFF, 0);
 	});
 
-	QUnit.test("FacetFilterList.listClose - some selected", function(assert) {
+	QUnit.test("FacetFilterList.listClose - some selected", async function(assert) {
 		var done = assert.async();
 
 		var oFF = new FacetFilter();
@@ -2702,7 +2702,7 @@ sap.ui.define([
 		}));
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function() {
@@ -2712,7 +2712,7 @@ sap.ui.define([
 		openPopover(oFF, 0);
 	});
 
-	QUnit.test("FacetFilterList.listClose - all selected", function(assert) {
+	QUnit.test("FacetFilterList.listClose - all selected", async function(assert) {
 		var done = assert.async();
 
 		var oFF = new FacetFilter();
@@ -2749,7 +2749,7 @@ sap.ui.define([
 		}));
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function() {
@@ -2825,13 +2825,13 @@ sap.ui.define([
 		openPopover(oFF, 0);
 	}
 
-	QUnit.test("FacetFilter.reset (no summary bar)", function(assert) {
+	QUnit.test("FacetFilter.reset (no summary bar)", async function(assert) {
 		var done = assert.async();
 
 		var oFF = new FacetFilter();
 
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFF.attachEventOnce("reset", function(oEvent) {
 			assert.ok(oEvent, "Filter reset event triggered");
@@ -2843,7 +2843,7 @@ sap.ui.define([
 		oResetButton.firePress();
 	});
 
-	QUnit.test("FacetFilter.reset (summary bar)", function(assert) {
+	QUnit.test("FacetFilter.reset (summary bar)", async function(assert) {
 		var done = assert.async();
 
 		var oFF = new FacetFilter({
@@ -2851,7 +2851,7 @@ sap.ui.define([
 		});
 
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFF.attachEventOnce("reset", function(oEvent) {
 			assert.ok(oEvent, "Filter reset event triggered");
@@ -2864,7 +2864,7 @@ sap.ui.define([
 		oResetButton.firePress();
 	});
 
-	QUnit.test("FacetFilter click another button when popover is opened", function(assert) {
+	QUnit.test("FacetFilter click another button when popover is opened", async function(assert) {
 		var done = assert.async();
 		var oFFL1ListCloseEvent = null, oFFL2ListOpenEvent = null;
 		var oFF = new FacetFilter();
@@ -2878,7 +2878,7 @@ sap.ui.define([
 		oFF.addList(oFFL2);
 
 		oFF.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oPopover = oFF._getPopover();
 		// click another button after the first popover is opened
@@ -2921,7 +2921,7 @@ sap.ui.define([
 		openPopover(oFF, 0);
 	});
 
-	QUnit.test("Reset button & dialog with list items filtering sync", function (assert) {
+	QUnit.test("Reset button & dialog with list items filtering sync", async function (assert) {
 		var oFF = oSCHelper.createFFWithModel();
 		var oFFL = oFF.getLists()[0];
 		var oResetButton = oFF._createResetButton();
@@ -2932,7 +2932,7 @@ sap.ui.define([
 
 		oFFL._searchValue = "5";
 		oFFL._applySearch();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oFFL.getItems().length !== iInitialItems, "Items are being filtered");
 
 		oResetButton.firePress();
@@ -2941,7 +2941,7 @@ sap.ui.define([
 		destroyFF(oFF);
 	});
 
-	QUnit.test("FacetFilter CONFIRM event - popover close", function (assert) {
+	QUnit.test("FacetFilter CONFIRM event - popover close", async function (assert) {
 		//Arrange
 		var fnConfirmSpy = sinon.spy(),
 			fnListOpenSpy = sinon.spy(),
@@ -2959,16 +2959,16 @@ sap.ui.define([
 		});
 
 		this.oFacetFilter._openPopover(oPopover, oButtonOpener);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oFacetFilter._handlePopoverAfterClose(oTargetList);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.strictEqual(fnListOpenSpy.callCount, 1, "ListOpen is called once");
 		assert.strictEqual(fnListCloseSpy.callCount, 1, "ListClose is called once");
 		assert.strictEqual(fnConfirmSpy.callCount, 1, "Confirm event was fired");
 	});
 
-	QUnit.test("FacetFilter CONFIRM event - popover close (with OK button)", function (assert) {
+	QUnit.test("FacetFilter CONFIRM event - popover close (with OK button)", async function (assert) {
 		var done = assert.async();
 		//Arrange
 		var fnConfirmSpy = sinon.spy(),
@@ -2991,10 +2991,10 @@ sap.ui.define([
 		});
 
 		this.oFacetFilter._openPopover(oPopover, oButtonOpener);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(fnListOpenSpy.callCount, 1, "ListOpen is called once");
 		oPopoverOKButton.firePress({});
-		oCore.applyChanges();
+		await nextUIUpdate();
 		setTimeout(function() {
 			//Assert
 			assert.strictEqual(fnListCloseSpy.callCount, 1, "ListClose is called once");
@@ -3003,7 +3003,7 @@ sap.ui.define([
 		},500);
 	});
 
-	QUnit.test("FacetFilter OK event - dialog close", function (assert) {
+	QUnit.test("FacetFilter OK event - dialog close", async function (assert) {
 		//Arrange
 		var fnConfirmSpy = sinon.spy(),
 				fnListOpenSpy = sinon.spy(),
@@ -3020,22 +3020,22 @@ sap.ui.define([
 		});
 
 		this.oFacetFilter.openFilterDialog();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oDialogOkButton.firePress({});
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.strictEqual(fnConfirmSpy.callCount, 1, "Confirm event was fired");
 	});
 
 	// BCP: 2170308086
-	QUnit.test("scroll when an arrow is clicked", function(assert) {
+	QUnit.test("scroll when an arrow is clicked", async function(assert) {
 		// arrange
 		var oFF = new FacetFilter({
 			lists: oSCHelper.createLists(20)
 		}).placeAt("content"),
 			oScrollSpy = this.spy(oFF, "_scroll");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oEvent = {
 			target: document.querySelector("#" + oFF.getId() + "-arrowScrollRight .sapUiIconTitle"),
 			preventDefault: function() { }

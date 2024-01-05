@@ -2,21 +2,21 @@
 
 sap.ui.define([
 	"sap/ui/core/Lib",
+    "sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/calendar/YearPicker",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date"
-], function(Library, YearPicker, DateRange, CalendarDate, Device, jQuery, oCore, UI5Date) {
+], function(Library, nextUIUpdate, YearPicker, DateRange, CalendarDate, Device, jQuery, UI5Date) {
 	"use strict";
 
 		QUnit.module("API ", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oYP = new YearPicker();
 				this.oYP.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oYP.destroy();
@@ -39,7 +39,7 @@ sap.ui.define([
 		/**
  		 * @deprecated As of version 1.34
 		 */
-		QUnit.test("setYear", function(assert) {
+		QUnit.test("setYear", async function(assert) {
 			// Prepare
 			var oGridItemRefs = this.oYP._oItemNavigation.getItemDomRefs(),
 				iFocusedIndex;
@@ -47,7 +47,7 @@ sap.ui.define([
 			// Act
 			this.oYP.setYear(2017);
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 			iFocusedIndex = this.oYP._oItemNavigation.getFocusedIndex();
 
 			// Assert
@@ -123,18 +123,18 @@ sap.ui.define([
 			assert.notOk(aSelectedDates[0].getEndDate(), "sap.m.DateRange has no endDate set");
 		});
 
-		QUnit.test("_selectYear", function(assert) {
+		QUnit.test("_selectYear", async function(assert) {
 			// arrange
 			var oSelectedDates = this.YP._getSelectedDates(),
 				aRefs;
 
 			this.YP.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			aRefs = this.YP.$().find(".sapUiCalItem");
 
 			// act
 			this.YP._selectYear(12);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assert
 			assert.strictEqual(oSelectedDates[0].getStartDate().getFullYear(), 2000, "2000 is selected start year");
@@ -263,14 +263,14 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("_markInterval", function(assert) {
+		QUnit.test("_markInterval", async function(assert) {
 			// arrange
 			var oJan_01_2000 = UI5Date.getInstance(2000, 0, 1),
 				oJan_01_2003 = UI5Date.getInstance(2003, 0, 1),
 				aRefs;
 
 			this.YP.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			aRefs = this.YP.$().find(".sapUiCalItem");
 
 
@@ -285,7 +285,7 @@ sap.ui.define([
 			assert.ok(aRefs.eq(12).hasClass("sapUiCalItemSelBetween"), "is marked correctly with between class");
 		});
 
-		QUnit.test("_markInterval", function (assert) {
+		QUnit.test("_markInterval", async function (assert) {
 			// Prepare
 			var aItemsMarkedAsBetween,
 				oBeforeStartDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2016, 0, 1)),
@@ -299,7 +299,7 @@ sap.ui.define([
 			this.YP._oMaxDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2022, 11, 31));
 
 			this.YP.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// Act
 			this.YP._markInterval(oIntervalStartDate, oIntervalEndDate);
@@ -327,10 +327,10 @@ sap.ui.define([
 		});
 
 		QUnit.module("Accessibility", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oYP = new YearPicker();
 				this.oYP.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oYP.destroy();
@@ -347,10 +347,10 @@ sap.ui.define([
 		});
 
 		QUnit.module("Corner cases", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oYP = new YearPicker();
 				this.oYP.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oYP.destroy();
@@ -358,22 +358,22 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Year is set to 0001", function(assert) {
+		QUnit.test("Year is set to 0001", async function(assert) {
 			// Act
 			this.oYP.getDate().setFullYear(1);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.ok(true, "Error is not thrown trying to format date with negative year value");
 		});
 
-		QUnit.test("Year is set to 9999", function(assert) {
+		QUnit.test("Year is set to 9999", async function(assert) {
 			// Arrange
 			var oMaxYear;
 
 			// Act
 			this.oYP.getDate().setFullYear(9999);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oYP._updatePage(true, 0, true);
 			oMaxYear = this.oYP._oMaxDate.toLocalJSDate().getFullYear();

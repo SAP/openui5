@@ -4,6 +4,7 @@
 
 // Provides control sap.m.SinglePlanningCalendarMonthGrid.
 sap.ui.define([
+	'sap/base/i18n/Formatting',
 	'sap/ui/core/Element',
 	'sap/ui/core/Control',
 	'sap/ui/core/format/DateFormat',
@@ -26,13 +27,12 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/InvisibleMessage',
 	'sap/ui/core/library',
-	"sap/ui/core/date/CalendarWeekNumbering",
-	"sap/ui/core/date/CalendarUtils",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/unified/DateRange"
+	'sap/ui/core/date/CalendarUtils',
+	'sap/ui/core/date/UI5Date',
+	'sap/ui/unified/DateRange'
 	],
 	function (
+		Formatting,
 		Element,
 		Control,
 		DateFormat,
@@ -55,9 +55,7 @@ sap.ui.define([
 		jQuery,
 		InvisibleMessage,
 		coreLibrary,
-		CalendarWeekNumbering,
 		CalendarDateUtils,
-		Configuration,
 		UI5Date,
 		DateRange
 	) {
@@ -581,7 +579,7 @@ sap.ui.define([
 
 			} else if (this._bCurrentWeekSelection && SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode()){
 				var iStartDate = oStartDate.getDate(),
-					oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(Configuration.getFormatSettings().getFormatLocale().toString())),
+				oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(new Locale(Formatting.getLanguageTag()).toString())),
 					iAPIFirstDayOfWeek = this.getFirstDayOfWeek(),
 					iFirstDayOfWeek,
 					iWeekStartDate;
@@ -782,7 +780,7 @@ sap.ui.define([
 			var aDays = this._getVisibleDays(this.getStartDate()),
 				iColumns = this._getColumns(),
 				aResult = [],
-				sLocale = Core.getConfiguration().getFormatLocale().toString();
+				sLocale = new Locale(Formatting.getLanguageTag()).toString();
 
 			for (var i = 0; i < this._getRows(); i++) {
 				var oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: "Gregorian", calendarWeekNumbering: this.getCalendarWeekNumbering()}, new Locale(sLocale));
@@ -840,7 +838,7 @@ sap.ui.define([
 			if (this.getFirstDayOfWeek() < 0 || this.getFirstDayOfWeek() > 6) {
 				oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(
 					this.getCalendarWeekNumbering(),
-					new Locale(Configuration.getFormatSettings().getFormatLocale().toString())
+					new Locale(new Locale(Formatting.getLanguageTag()).toString())
 				);
 
 				if (oWeekConfigurationValues) {

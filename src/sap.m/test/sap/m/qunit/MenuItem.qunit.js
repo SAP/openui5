@@ -2,20 +2,20 @@
 sap.ui.define([
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/ui/core/Core",
 	"sap/m/Label",
-	"sap/ui/core/Element"
+	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Menu,
 	MenuItem,
-	Core,
 	Label,
-	Element
+	Element,
+	nextUIUpdate
 ) {
 	"use strict";
 
 	QUnit.module('MenuItem(inside Menu)', {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.sut = new MenuItem({
 				text: "mi",
 				items: [
@@ -31,7 +31,7 @@ sap.ui.define([
 			this.sutRootMenu = new Menu({items: this.sut});
 			this.oLabel = new Label(); //.openBy needs a reference
 			this.sutRootMenu.openBy(this.oLabel);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function () {
 			this.sutRootMenu.close();

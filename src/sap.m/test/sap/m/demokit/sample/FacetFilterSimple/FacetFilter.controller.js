@@ -1,12 +1,12 @@
 sap.ui.define([
 		'sap/m/ObjectIdentifier',
 		'sap/ui/core/mvc/Controller',
+		'sap/ui/core/ElementRegistry',
 		'sap/ui/model/Filter',
 		'sap/ui/model/json/JSONModel',
 		'sap/m/MessageToast',
-		"sap/ui/core/Component",
-		"sap/ui/core/Element"
-	], function(ObjectIdentifier, Controller, Filter, JSONModel, MessageToast, Component, Element) {
+		'sap/ui/core/Component'
+	], function(ObjectIdentifier, Controller, ElementRegistry, Filter, JSONModel, MessageToast, Component) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.FacetFilterSimple.FacetFilter", {
@@ -48,7 +48,7 @@ sap.ui.define([
 		},
 
 		handleFacetFilterReset: function(oEvent) {
-			var oFacetFilter = Element.registry.get(oEvent.getParameter("id")),
+			var oFacetFilter = ElementRegistry.get(oEvent.getParameter("id")),
 				aFacetFilterLists = oFacetFilter.getLists();
 
 			for (var i = 0; i < aFacetFilterLists.length; i++) {
