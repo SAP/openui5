@@ -2,11 +2,12 @@
 sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/ui/core/CalendarType",
-	'sap/ui/model/odata/ODataUtils',
-	'sap/ui/model/Filter',
-	'sap/ui/model/odata/Filter',
-	'sap/ui/model/FilterOperator'
-], function(Formatting, CalendarType, ODataUtils, Filter, ODataFilter, FilterOperator) {
+	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/_Helper",
+	"sap/ui/model/Filter",
+	"sap/ui/model/odata/Filter",
+	"sap/ui/model/FilterOperator"
+], function(Formatting, CalendarType, ODataUtils, _Helper, Filter, ODataFilter, FilterOperator) {
 
 	"use strict";
 
@@ -814,5 +815,130 @@ sap.ui.define([
 			ODataUtils._getReadRange(aElements, 2, 3, 4, (oElement) => oElement.placeholder),
 			{start : 0, length : 9}
 		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_createFilterParams propagates fractional seconds", function (assert) {
+		const oFilter = {
+			bCaseSensitive : "~bCaseSensitive",
+			sFractionalSeconds1 : "~sFractionalSeconds1",
+			sFractionalSeconds2 : "~sFractionalSeconds2",
+			sOperator : "~sOperator",
+			sPath : "~sPath",
+			oValue1 : "~oValue1",
+			oValue2 : "~oValue2"
+		};
+
+		this.mock(ODataUtils).expects("_createFilterSegment")
+			.withExactArgs("~sPath", "~oMetadata", "~oEntityType", "~sOperator","~oValue1", "~oValue2",
+				"~bCaseSensitive", "~sFractionalSeconds1", "~sFractionalSeconds2")
+			.returns("foo");
+
+		// code under test
+		assert.strictEqual(ODataUtils._createFilterParams(oFilter, "~oMetadata", "~oEntityType"), "foo");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_resolveMultiFilter propagates fractional seconds", function (assert) {
+		const oFilter0 = {
+			bCaseSensitive : "~bCaseSensitive.0",
+			sFractionalSeconds1 : "~sFractionalSeconds1.0",
+			sFractionalSeconds2 : "~sFractionalSeconds2.0",
+			sOperator : "~sOperator.0",
+			sPath : "~sPath.0",
+			oValue1 : "~oValue1.0",
+			oValue2 : "~oValue2.0"
+		};
+		const oFilter1 = {
+			bCaseSensitive : "~bCaseSensitive.1",
+			sFractionalSeconds1 : "~sFractionalSeconds1.1",
+			sFractionalSeconds2 : "~sFractionalSeconds2.1",
+			sOperator : "~sOperator.1",
+			sPath : "~sPath.1",
+			oValue1 : "~oValue1.1",
+			oValue2 : "~oValue2.1"
+		};
+		const oODataUtilsMock = this.mock(ODataUtils);
+		oODataUtilsMock.expects("_createFilterSegment")
+			.withExactArgs("~sPath.0", "~oMetadata", "~oEntityType", "~sOperator.0","~oValue1.0", "~oValue2.0",
+				"~bCaseSensitive.0", "~sFractionalSeconds1.0", "~sFractionalSeconds2.0")
+			.returns("foo");
+		oODataUtilsMock.expects("_createFilterSegment")
+			.withExactArgs("~sPath.1", "~oMetadata", "~oEntityType", "~sOperator.1","~oValue1.1", "~oValue2.1",
+				"~bCaseSensitive.1", "~sFractionalSeconds1.1", "~sFractionalSeconds2.1")
+			.returns("bar");
+
+		// code under test
+		const sFilter = ODataUtils._resolveMultiFilter({aFilters : [oFilter0, oFilter1]}, "~oMetadata", "~oEntityType");
+
+		assert.strictEqual(sFilter, "(foo%20or%20bar)");
+	});
+
+
+	//*********************************************************************************************
+[{
+	operator : FilterOperator.BT,
+	result : "(~sPath%20ge%20~encoded1%20and%20~sPath%20le%20~encoded2)",
+	value2 : "~oValue2"
+}, {
+	operator : FilterOperator.LE,
+	result : "~sPath%20le%20~encoded1",
+	value2 : null
+}].forEach((oFixture) => {
+	QUnit.test("_createFilterSegment propagates fractional seconds, " + oFixture.operator, function (assert) {
+		const oMetadata = {
+			_getPropertyMetadata() {}
+		};
+		this.mock(oMetadata).expects("_getPropertyMetadata")
+			.withExactArgs("~oEntityType", "~sPath")
+			.returns({type : "~type"});
+		const oODataUtilsMock = this.mock(ODataUtils);
+		oODataUtilsMock.expects("_formatValue")
+			.withExactArgs("~oValue1", "~type", "~bCaseSensitive", "~sFractionalSeconds1")
+			.returns("~formatted1");
+		const iValue2Calls = oFixture.value2 === null ? 0 : 1;
+		oODataUtilsMock.expects("_formatValue")
+			.withExactArgs(oFixture.value2, "~type", "~bCaseSensitive", "~sFractionalSeconds2")
+			.exactly(iValue2Calls)
+			.returns("~formatted2");
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("encodeURL").withExactArgs("~formatted1").returns("~encoded1");
+		oHelperMock.expects("encodeURL").withExactArgs("~formatted2").exactly(iValue2Calls).returns("~encoded2");
+
+		// code under test
+		const sFilterSegment = ODataUtils._createFilterSegment("~sPath", oMetadata, "~oEntityType", oFixture.operator,
+			"~oValue1", oFixture.value2, "~bCaseSensitive", "~sFractionalSeconds1", "~sFractionalSeconds2");
+
+		assert.strictEqual(sFilterSegment, oFixture.result);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("formatValue delegates to _formatValue", function (assert) {
+		this.mock(ODataUtils).expects("_formatValue")
+			.withExactArgs("~vValue", "~sType", "~bCaseSensitive")
+			.returns("~formatted");
+
+		// code under test
+		assert.strictEqual(ODataUtils.formatValue("~vValue", "~sType", "~bCaseSensitive"), "~formatted");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_formatValue considers fractional seconds", function (assert) {
+		const sDate000 = "2024-01-10T16:27:42Z";
+		const sDate237 = "2024-01-10T16:27:42.237Z";
+		[
+			{t: "Edm.DateTime", v: sDate000, r: "datetime'2024-01-10T16:27:42.000789'"},
+			{t: "Edm.DateTime", v: new Date(sDate000), r: "datetime'2024-01-10T16:27:42.000789'"},
+			{t: "Edm.DateTime", v: sDate237, r: "datetime'2024-01-10T16:27:42.237789'"},
+			{t: "Edm.DateTime", v: new Date(sDate237), r: "datetime'2024-01-10T16:27:42.237789'"},
+			{t: "Edm.DateTimeOffset", v: sDate000, r: "datetimeoffset'2024-01-10T16:27:42.000789Z'"},
+			{t: "Edm.DateTimeOffset", v: new Date(sDate000), r: "datetimeoffset'2024-01-10T16:27:42.000789Z'"},
+			{t: "Edm.DateTimeOffset", v: sDate237, r: "datetimeoffset'2024-01-10T16:27:42.237789Z'"},
+			{t: "Edm.DateTimeOffset", v: new Date(sDate237), r: "datetimeoffset'2024-01-10T16:27:42.237789Z'"}
+		].forEach((oFixture) => {
+			// code under test
+			assert.strictEqual(ODataUtils._formatValue(oFixture.v, oFixture.t, true, "789"), oFixture.r);
+		});
 	});
 });

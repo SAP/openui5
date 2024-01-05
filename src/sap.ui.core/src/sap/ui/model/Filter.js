@@ -255,6 +255,8 @@ sap.ui.define([
 			} else {
 				Log.error("Wrong parameters defined for filter.");
 			}
+			this.sFractionalSeconds1 = undefined;
+			this.sFractionalSeconds2 = undefined;
 		}
 	});
 
@@ -302,6 +304,34 @@ sap.ui.define([
 	function isFilter(v) {
 		return v instanceof Filter;
 	}
+
+	/**
+	 * Set fractional seconds to be appended to the filter's first value in case it is a JavaScript <code>Date</code>
+	 * instance. Note that the model resp. list binding where the filter is used need to support filtering with the
+	 * resulting precision.
+	 *
+	 * @param {string} [sFractionalSeconds] The additional fractional seconds
+	 *
+	 * @ui5-restricted sap.ui.comp.smartfilterbar
+	 * @private
+	 */
+	Filter.prototype.appendFractionalSeconds1 = function (sFractionalSeconds) {
+		this.sFractionalSeconds1 = sFractionalSeconds;
+	};
+
+	/**
+	 * Set fractional seconds to be appended to the filter's second value in case it is a <code>Date</code>
+	 * instance. Note that the model resp. list binding where the filter is used need to support filtering with the
+	 * resulting precision.
+	 *
+	 * @param {string} [sFractionalSeconds] The additional fractional seconds
+	 *
+	 * @ui5-restricted sap.ui.comp.smartfilterbar
+	 * @private
+	 */
+	Filter.prototype.appendFractionalSeconds2 = function (sFractionalSeconds) {
+		this.sFractionalSeconds2 = sFractionalSeconds;
+	};
 
 	var Type = {
 		Logical: "Logical",

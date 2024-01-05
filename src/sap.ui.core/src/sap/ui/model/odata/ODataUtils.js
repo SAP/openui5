@@ -18,9 +18,10 @@ sap.ui.define([
 	"sap/base/util/each",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/_Helper",
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/Sorter"
-], function(assert, Log, encodeURL, each, CalendarType, DateFormat, FilterProcessor, Sorter) {
+], function(assert, Log, encodeURL, each, CalendarType, DateFormat, _Helper, FilterProcessor, Sorter) {
 	"use strict";
 
 	let oDateTimeFormat, oDateTimeFormatMs, oDateTimeOffsetFormat, oDateTimeOffsetFormatMs, oTimeFormat;
@@ -28,6 +29,7 @@ sap.ui.define([
 	// URL might be encoded, "(" becomes %28
 	const rSegmentAfterCatalogService = /\/(Annotations|ServiceNames|ServiceCollection)(\(|%28)/;
 	const rTrailingDecimal = /\.$/;
+	const rTrailingSingleQuote = /'$/;
 	const rTrailingZeroes = /0+$/;
 
 	function setDateTimeFormatter () {
@@ -147,7 +149,9 @@ sap.ui.define([
 			if (oFilter.aFilters) {
 				return createMulti(oFilter, bOmitBrackets);
 			}
-			return that._createFilterSegment(oFilter.sPath, oMetadata, oEntityType, oFilter.sOperator, oFilter.oValue1, oFilter.oValue2, oFilter.bCaseSensitive);
+			return that._createFilterSegment(oFilter.sPath, oMetadata, oEntityType, oFilter.sOperator,
+				oFilter.oValue1, oFilter.oValue2, oFilter.bCaseSensitive, oFilter.sFractionalSeconds1,
+				oFilter.sFractionalSeconds2);
 		}
 
 		function createMulti(oMultiFilter, bOmitBrackets) {
@@ -406,7 +410,9 @@ sap.ui.define([
 				if (oFilter._bMultiFilter) {
 					sFilterParam += that._resolveMultiFilter(oFilter, oMetadata, oEntityType);
 				} else if (oFilter.sPath) {
-					sFilterParam += that._createFilterSegment(oFilter.sPath, oMetadata, oEntityType, oFilter.sOperator, oFilter.oValue1, oFilter.oValue2, "", oFilter.bCaseSensitive);
+					sFilterParam += that._createFilterSegment(oFilter.sPath, oMetadata, oEntityType, oFilter.sOperator,
+						oFilter.oValue1, oFilter.oValue2, oFilter.bCaseSensitive, oFilter.sFractionalSeconds1,
+						oFilter.sFractionalSeconds2);
 				}
 				if (i < (aFilters.length - 1)) {
 					if (oMultiFilter.bAnd) {
@@ -432,11 +438,14 @@ sap.ui.define([
 	 * @param {object} oValue1 The first value
 	 * @param {object} oValue2 The second value
 	 * @param {boolean} [bCaseSensitive=true] Whether the case should be considered
+	 * @param {string} [sFractionalSeconds1] The fractional seconds to be appended to the filter's first value
+	 * @param {string} [sFractionalSeconds2] The fractional seconds to be appended to the filter's second value
 	 * @returns {string} The encoded string representation of the given filter
 	 *
 	 * @private
 	 */
-	ODataUtils._createFilterSegment = function(sPath, oMetadata, oEntityType, sOperator, oValue1, oValue2, bCaseSensitive) {
+	ODataUtils._createFilterSegment = function(sPath, oMetadata, oEntityType, sOperator, oValue1, oValue2,
+			bCaseSensitive, sFractionalSeconds1, sFractionalSeconds2) {
 
 		var oPropertyMetadata, sType;
 
@@ -451,17 +460,17 @@ sap.ui.define([
 		}
 
 		if (sType) {
-			oValue1 = this.formatValue(oValue1, sType, bCaseSensitive);
-			oValue2 = (oValue2 != null) ? this.formatValue(oValue2, sType, bCaseSensitive) : null;
+			oValue1 = this._formatValue(oValue1, sType, bCaseSensitive, sFractionalSeconds1);
+			oValue2 = (oValue2 != null) ? this._formatValue(oValue2, sType, bCaseSensitive, sFractionalSeconds2) : null;
 		} else {
 			assert(null, "Type for filter property could not be found in metadata!");
 		}
 
 		if (oValue1) {
-			oValue1 = encodeURL(String(oValue1));
+			oValue1 = _Helper.encodeURL(String(oValue1));
 		}
 		if (oValue2) {
-			oValue2 = encodeURL(String(oValue2));
+			oValue2 = _Helper.encodeURL(String(oValue2));
 		}
 
 		if (!bCaseSensitive && sType === "Edm.String") {
@@ -510,6 +519,22 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataUtils.formatValue = function(vValue, sType, bCaseSensitive) {
+		return ODataUtils._formatValue(vValue, sType, bCaseSensitive);
+	};
+
+	/**
+	 * Like {@link #formatValue}, but allows for providing fractional seconds for Date values and if the given type
+	 * is "Edm.DateTime" or "Edm.DateTimeOffset".
+	 *
+	 * @param {any} vValue The value to format
+	 * @param {string} sType The EDM type (e.g. Edm.Decimal)
+	 * @param {boolean} bCaseSensitive Whether strings gets compared case sensitive or not
+	 * @param {string} [sFractionalSeconds] The fractional seconds to be appended to the given value in case it is a
+	 *   <code>Date<code>
+	 * @return {string} The formatted value
+	 * @private
+	 */
+	ODataUtils._formatValue = function(vValue, sType, bCaseSensitive, sFractionalSeconds) {
 		var oDate, sValue;
 
 		if (bCaseSensitive === undefined) {
@@ -543,8 +568,14 @@ sap.ui.define([
 				oDate = vValue instanceof Date ? vValue : new Date(vValue);
 				if (oDate.getMilliseconds() > 0) {
 					sValue = oDateTimeFormatMs.format(oDate, true);
+					if (sFractionalSeconds) {
+						sValue = sValue.replace(rTrailingSingleQuote, sFractionalSeconds + "'");
+					}
 				} else {
 					sValue = oDateTimeFormat.format(oDate, true);
+					if (sFractionalSeconds) {
+						sValue = sValue.replace(rTrailingSingleQuote, ".000" + sFractionalSeconds + "'");
+					}
 				}
 				break;
 			case "Edm.DateTimeOffset":
@@ -552,8 +583,14 @@ sap.ui.define([
 				oDate = vValue instanceof Date ? vValue : new Date(vValue);
 				if (oDate.getMilliseconds() > 0) {
 					sValue = oDateTimeOffsetFormatMs.format(oDate, true);
+					if (sFractionalSeconds) {
+						sValue = sValue.replace("Z'", sFractionalSeconds + "Z'");
+					}
 				} else {
 					sValue = oDateTimeOffsetFormat.format(oDate, true);
+					if (sFractionalSeconds) {
+						sValue = sValue.replace("Z'", ".000" + sFractionalSeconds + "Z'");
+					}
 				}
 				break;
 			case "Edm.Guid":
