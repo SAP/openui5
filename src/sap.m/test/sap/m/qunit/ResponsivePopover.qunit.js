@@ -8,13 +8,13 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/Device",
 	"sap/m/ResponsivePopover",
+	"sap/m/Text",
 	"sap/m/Toolbar",
 	"sap/m/NavContainer",
 	"sap/m/Page",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery",
-	"sap/m/Text"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	JSONModel,
 	StandardListItem,
@@ -24,13 +24,13 @@ sap.ui.define([
 	mobileLibrary,
 	Device,
 	ResponsivePopover,
+	Text,
 	Toolbar,
 	NavContainer,
 	Page,
 	InvisibleText,
 	oCore,
-	jQuery,
-	Text
+	jQuery
 ) {
 	"use strict";
 

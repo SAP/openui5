@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/mdc/enums/BaseType', 'sap/ui/mdc/DefaultTypeMap', "sap/ba
   *
   * All delegate implementations for MDC controls must be derived directly or indirectly from this entity.
   * Applications should implement {@link module:sap/ui/mdc/BaseDelegate.getTypeMap getTypeMap} to provide type mappings based on their model usage.
-  * Please also see the following extensible presets: {@link sap.ui.mdc.DefaultTypeMap}, {@link sap.ui.mdc.odata.TypeMap}, {@link sap.ui.mdc.odata.v4.TypeMap}
+  * Please also see the following extensible presets: {@link module:sap/ui/mdc/DefaultTypeMap sap.ui.mdc.DefaultTypeMap}, {@link module:sap/ui/mdc/odata/TypeMap sap.ui.mdc.odata.TypeMap}, {@link module:sap/ui/mdc/odata/v4/TypeMap sap.ui.mdc.odata.v4.TypeMap}
   *
   * @namespace
   * @alias module:sap/ui/mdc/BaseDelegate

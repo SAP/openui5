@@ -1,11 +1,11 @@
 // /**
 // * Copyright (c) 2012-2023 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
 // * Theming Engine 1.23061.0
-// * data:{"sModified":"2023-09-11T07:13:37Z"}
+// * data:{"sModified":"2023-12-13T07:44:04Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_horizon_hcw/base.less (Version 11.6.8) *******************/
+/******************* FILE /Base/baseLib/sap_horizon_hcw/base.less (Version 11.10.0) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -1682,7 +1682,7 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
-@sapButton_Handle_Negative_TextColor: contrast(@sapButton_Handle_Negative_Background, @sapNegativeElementColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Handle_Negative_TextColor: contrast(@sapButton_Handle_Negative_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -1722,7 +1722,7 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
-@sapButton_Handle_Positive_TextColor: contrast(@sapButton_Handle_Positive_Background, @sapPositiveTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Handle_Positive_TextColor: contrast(@sapButton_Handle_Positive_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -3053,65 +3053,65 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapChart_Sequence_Neutral: @sapChart_Neutral;
-// @sapFontUrl_SAP-icons_ttf: url(./../sap_horizon/fonts/SAP-icons.ttf);
-// @sapFontUrl_SAP-icons_woff: url(./../sap_horizon/fonts/SAP-icons.woff);
-// @sapFontUrl_SAP-icons_woff2: url(./../sap_horizon/fonts/SAP-icons.woff2);
-// @sapFontUrl_SAP-icons-TNT_ttf: url(./../sap_horizon/fonts/SAP-icons-TNT.ttf);
-// @sapFontUrl_SAP-icons-TNT_woff: url(./../sap_horizon/fonts/SAP-icons-TNT.woff);
-// @sapFontUrl_SAP-icons-TNT_woff2: url(./../sap_horizon/fonts/SAP-icons-TNT.woff2);
-// @sapFontUrl_SAP-icons-Business-Suite_ttf: url(./../sap_horizon/fonts/BusinessSuiteInAppSymbols.ttf);
-// @sapFontUrl_SAP-icons-Business-Suite_woff: url(./../sap_horizon/fonts/BusinessSuiteInAppSymbols.woff);
-// @sapFontUrl_SAP-icons-Business-Suite_woff2: url(./../sap_horizon/fonts/BusinessSuiteInAppSymbols.woff2);
-// @sapFontUrl_72_Regular_woff2: url(./../baseTheme/fonts/72-Regular.woff2);
-// @sapFontUrl_72_Regular_woff: url(./../baseTheme/fonts/72-Regular.woff);
-// @sapFontUrl_72_Regular_full_woff2: url(./../baseTheme/fonts/72-Regular-full.woff2);
-// @sapFontUrl_72_Regular_full_woff: url(./../baseTheme/fonts/72-Regular-full.woff);
-// @sapFontUrl_72_Bold_woff2: url(./../baseTheme/fonts/72-Bold.woff2);
-// @sapFontUrl_72_Bold_woff: url(./../baseTheme/fonts/72-Bold.woff);
-// @sapFontUrl_72_Bold_full_woff2: url(./../baseTheme/fonts/72-Bold-full.woff2);
-// @sapFontUrl_72_Bold_full_woff: url(./../baseTheme/fonts/72-Bold-full.woff);
-// @sapFontUrl_72_Semibold_woff2: url(./../baseTheme/fonts/72-Semibold.woff2);
-// @sapFontUrl_72_Semibold_woff: url(./../baseTheme/fonts/72-Semibold.woff);
-// @sapFontUrl_72_Semibold_full_woff2: url(./../baseTheme/fonts/72-Semibold-full.woff2);
-// @sapFontUrl_72_Semibold_full_woff: url(./../baseTheme/fonts/72-Semibold-full.woff);
-// @sapFontUrl_72_SemiboldDuplex_woff2: url(./../baseTheme/fonts/72-SemiboldDuplex.woff2);
-// @sapFontUrl_72_SemiboldDuplex_woff: url(./../baseTheme/fonts/72-SemiboldDuplex.woff);
-// @sapFontUrl_72_SemiboldDuplex_full_woff2: url(./../baseTheme/fonts/72-SemiboldDuplex-full.woff2);
-// @sapFontUrl_72_SemiboldDuplex_full_woff: url(./../baseTheme/fonts/72-SemiboldDuplex-full.woff);
-// @sapFontUrl_72_Light_woff2: url(./../baseTheme/fonts/72-Light.woff2);
-// @sapFontUrl_72_Light_woff: url(./../baseTheme/fonts/72-Light.woff);
-// @sapFontUrl_72_Light_full_woff2: url(./../baseTheme/fonts/72-Light-full.woff2);
-// @sapFontUrl_72_Light_full_woff: url(./../baseTheme/fonts/72-Light-full.woff);
-// @sapFontUrl_72_Black_woff2: url(./../baseTheme/fonts/72-Black.woff2);
-// @sapFontUrl_72_Black_woff: url(./../baseTheme/fonts/72-Black.woff);
-// @sapFontUrl_72_Black_full_woff2: url(./../baseTheme/fonts/72-Black-full.woff2);
-// @sapFontUrl_72_Black_full_woff: url(./../baseTheme/fonts/72-Black-full.woff);
-// @sapFontUrl_72_BoldItalic_woff2: url(./../baseTheme/fonts/72-BoldItalic.woff2);
-// @sapFontUrl_72_BoldItalic_woff: url(./../baseTheme/fonts/72-BoldItalic.woff);
-// @sapFontUrl_72_BoldItalic_full_woff2: url(./../baseTheme/fonts/72-BoldItalic-full.woff2);
-// @sapFontUrl_72_BoldItalic_full_woff: url(./../baseTheme/fonts/72-BoldItalic-full.woff);
-// @sapFontUrl_72_Condensed_woff2: url(./../baseTheme/fonts/72-Condensed.woff2);
-// @sapFontUrl_72_Condensed_woff: url(./../baseTheme/fonts/72-Condensed.woff);
-// @sapFontUrl_72_Condensed_full_woff2: url(./../baseTheme/fonts/72-Condensed-full.woff2);
-// @sapFontUrl_72_Condensed_full_woff: url(./../baseTheme/fonts/72-Condensed-full.woff);
-// @sapFontUrl_72_CondensedBold_woff2: url(./../baseTheme/fonts/72-CondensedBold.woff2);
-// @sapFontUrl_72_CondensedBold_woff: url(./../baseTheme/fonts/72-CondensedBold.woff);
-// @sapFontUrl_72_CondensedBold_full_woff2: url(./../baseTheme/fonts/72-CondensedBold-full.woff2);
-// @sapFontUrl_72_CondensedBold_full_woff: url(./../baseTheme/fonts/72-CondensedBold-full.woff);
-// @sapFontUrl_72_Italic_woff2: url(./../baseTheme/fonts/72-Italic.woff2);
-// @sapFontUrl_72_Italic_woff: url(./../baseTheme/fonts/72-Italic.woff);
-// @sapFontUrl_72_Italic_full_woff2: url(./../baseTheme/fonts/72-Italic-full.woff2);
-// @sapFontUrl_72_Italic_full_woff: url(./../baseTheme/fonts/72-Italic-full.woff);
-// @sapFontUrl_72Mono_Regular_woff2: url(./../baseTheme/fonts/72Mono-Regular.woff2);
-// @sapFontUrl_72Mono_Regular_woff: url(./../baseTheme/fonts/72Mono-Regular.woff);
-// @sapFontUrl_72Mono_Regular_full_woff2: url(./../baseTheme/fonts/72Mono-Regular-full.woff2);
-// @sapFontUrl_72Mono_Regular_full_woff: url(./../baseTheme/fonts/72Mono-Regular-full.woff);
-// @sapFontUrl_72Mono_Bold_woff2: url(./../baseTheme/fonts/72Mono-Bold.woff2);
-// @sapFontUrl_72Mono_Bold_woff: url(./../baseTheme/fonts/72Mono-Bold.woff);
-// @sapFontUrl_72Mono_Bold_full_woff2: url(./../baseTheme/fonts/72Mono-Bold-full.woff2);
-// @sapFontUrl_72Mono_Bold_full_woff: url(./../baseTheme/fonts/72Mono-Bold-full.woff);
-// @sapSvgLib_SAP-icons: none;
-// @sapSvgLib_SAPGUI-icons: url(./../sap_horizon/svg/libs/SAPGUI-icons.svg);
-// @sapSvgLib_SAPWeb-icons: url(./../sap_horizon/svg/libs/SAPWeb-icons.svg);
+@sapFontUrl_SAP-icons_ttf: url(./../sap_horizon/fonts/SAP-icons.ttf);
+@sapFontUrl_SAP-icons_woff: url(./../sap_horizon/fonts/SAP-icons.woff);
+@sapFontUrl_SAP-icons_woff2: url(./../sap_horizon/fonts/SAP-icons.woff2);
+@sapFontUrl_SAP-icons-TNT_ttf: url(./../sap_horizon/fonts/SAP-icons-TNT.ttf);
+@sapFontUrl_SAP-icons-TNT_woff: url(./../sap_horizon/fonts/SAP-icons-TNT.woff);
+@sapFontUrl_SAP-icons-TNT_woff2: url(./../sap_horizon/fonts/SAP-icons-TNT.woff2);
+@sapFontUrl_SAP-icons-Business-Suite_ttf: url(./../sap_horizon/fonts/BusinessSuiteInAppSymbols.ttf);
+@sapFontUrl_SAP-icons-Business-Suite_woff: url(./../sap_horizon/fonts/BusinessSuiteInAppSymbols.woff);
+@sapFontUrl_SAP-icons-Business-Suite_woff2: url(./../sap_horizon/fonts/BusinessSuiteInAppSymbols.woff2);
+@sapFontUrl_72_Regular_woff2: url(./../baseTheme/fonts/72-Regular.woff2);
+@sapFontUrl_72_Regular_woff: url(./../baseTheme/fonts/72-Regular.woff);
+@sapFontUrl_72_Regular_full_woff2: url(./../baseTheme/fonts/72-Regular-full.woff2);
+@sapFontUrl_72_Regular_full_woff: url(./../baseTheme/fonts/72-Regular-full.woff);
+@sapFontUrl_72_Bold_woff2: url(./../baseTheme/fonts/72-Bold.woff2);
+@sapFontUrl_72_Bold_woff: url(./../baseTheme/fonts/72-Bold.woff);
+@sapFontUrl_72_Bold_full_woff2: url(./../baseTheme/fonts/72-Bold-full.woff2);
+@sapFontUrl_72_Bold_full_woff: url(./../baseTheme/fonts/72-Bold-full.woff);
+@sapFontUrl_72_Semibold_woff2: url(./../baseTheme/fonts/72-Semibold.woff2);
+@sapFontUrl_72_Semibold_woff: url(./../baseTheme/fonts/72-Semibold.woff);
+@sapFontUrl_72_Semibold_full_woff2: url(./../baseTheme/fonts/72-Semibold-full.woff2);
+@sapFontUrl_72_Semibold_full_woff: url(./../baseTheme/fonts/72-Semibold-full.woff);
+@sapFontUrl_72_SemiboldDuplex_woff2: url(./../baseTheme/fonts/72-SemiboldDuplex.woff2);
+@sapFontUrl_72_SemiboldDuplex_woff: url(./../baseTheme/fonts/72-SemiboldDuplex.woff);
+@sapFontUrl_72_SemiboldDuplex_full_woff2: url(./../baseTheme/fonts/72-SemiboldDuplex-full.woff2);
+@sapFontUrl_72_SemiboldDuplex_full_woff: url(./../baseTheme/fonts/72-SemiboldDuplex-full.woff);
+@sapFontUrl_72_Light_woff2: url(./../baseTheme/fonts/72-Light.woff2);
+@sapFontUrl_72_Light_woff: url(./../baseTheme/fonts/72-Light.woff);
+@sapFontUrl_72_Light_full_woff2: url(./../baseTheme/fonts/72-Light-full.woff2);
+@sapFontUrl_72_Light_full_woff: url(./../baseTheme/fonts/72-Light-full.woff);
+@sapFontUrl_72_Black_woff2: url(./../baseTheme/fonts/72-Black.woff2);
+@sapFontUrl_72_Black_woff: url(./../baseTheme/fonts/72-Black.woff);
+@sapFontUrl_72_Black_full_woff2: url(./../baseTheme/fonts/72-Black-full.woff2);
+@sapFontUrl_72_Black_full_woff: url(./../baseTheme/fonts/72-Black-full.woff);
+@sapFontUrl_72_BoldItalic_woff2: url(./../baseTheme/fonts/72-BoldItalic.woff2);
+@sapFontUrl_72_BoldItalic_woff: url(./../baseTheme/fonts/72-BoldItalic.woff);
+@sapFontUrl_72_BoldItalic_full_woff2: url(./../baseTheme/fonts/72-BoldItalic-full.woff2);
+@sapFontUrl_72_BoldItalic_full_woff: url(./../baseTheme/fonts/72-BoldItalic-full.woff);
+@sapFontUrl_72_Condensed_woff2: url(./../baseTheme/fonts/72-Condensed.woff2);
+@sapFontUrl_72_Condensed_woff: url(./../baseTheme/fonts/72-Condensed.woff);
+@sapFontUrl_72_Condensed_full_woff2: url(./../baseTheme/fonts/72-Condensed-full.woff2);
+@sapFontUrl_72_Condensed_full_woff: url(./../baseTheme/fonts/72-Condensed-full.woff);
+@sapFontUrl_72_CondensedBold_woff2: url(./../baseTheme/fonts/72-CondensedBold.woff2);
+@sapFontUrl_72_CondensedBold_woff: url(./../baseTheme/fonts/72-CondensedBold.woff);
+@sapFontUrl_72_CondensedBold_full_woff2: url(./../baseTheme/fonts/72-CondensedBold-full.woff2);
+@sapFontUrl_72_CondensedBold_full_woff: url(./../baseTheme/fonts/72-CondensedBold-full.woff);
+@sapFontUrl_72_Italic_woff2: url(./../baseTheme/fonts/72-Italic.woff2);
+@sapFontUrl_72_Italic_woff: url(./../baseTheme/fonts/72-Italic.woff);
+@sapFontUrl_72_Italic_full_woff2: url(./../baseTheme/fonts/72-Italic-full.woff2);
+@sapFontUrl_72_Italic_full_woff: url(./../baseTheme/fonts/72-Italic-full.woff);
+@sapFontUrl_72Mono_Regular_woff2: url(./../baseTheme/fonts/72Mono-Regular.woff2);
+@sapFontUrl_72Mono_Regular_woff: url(./../baseTheme/fonts/72Mono-Regular.woff);
+@sapFontUrl_72Mono_Regular_full_woff2: url(./../baseTheme/fonts/72Mono-Regular-full.woff2);
+@sapFontUrl_72Mono_Regular_full_woff: url(./../baseTheme/fonts/72Mono-Regular-full.woff);
+@sapFontUrl_72Mono_Bold_woff2: url(./../baseTheme/fonts/72Mono-Bold.woff2);
+@sapFontUrl_72Mono_Bold_woff: url(./../baseTheme/fonts/72Mono-Bold.woff);
+@sapFontUrl_72Mono_Bold_full_woff2: url(./../baseTheme/fonts/72Mono-Bold-full.woff2);
+@sapFontUrl_72Mono_Bold_full_woff: url(./../baseTheme/fonts/72Mono-Bold-full.woff);
+@sapSvgLib_SAP-icons: none;
+@sapSvgLib_SAPGUI-icons: url(./../sap_horizon/svg/libs/SAPGUI-icons.svg);
+@sapSvgLib_SAPWeb-icons: url(./../sap_horizon/svg/libs/SAPWeb-icons.svg);
 @sapBackgroundColorDefault: @sapBackgroundColor;
 @sapList_HighlightColor: @sapHighlightColor;

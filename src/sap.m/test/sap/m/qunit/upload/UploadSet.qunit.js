@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/Label",
 	"sap/m/ListItemBaseRenderer",
+	"sap/m/MenuButton",
 	"sap/m/Dialog",
 	"sap/ui/Device",
 	"sap/m/MessageBox",
@@ -22,9 +23,8 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/m/IllustratedMessage",
-	"sap/ui/base/Object"
-], function(Element, Library1, jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer, Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, nextUIUpdate, IllustratedMessage, BaseObject) {
+	"sap/m/IllustratedMessage"
+], function(Element, Library1, jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer, MenuButton, Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, nextUIUpdate, IllustratedMessage) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -2216,7 +2216,7 @@ sap.ui.define([
             this.oUploadSet.setCloudFilePickerEnabled(true);
 
             // assert
-            assert.equal(BaseObject.isA(this.oUploadSet._getCloudFilePicker(), "sap.m.MenuButton"), true, "Cloud File Picker Menu Button enabled with CloudFilePicker property enabled");
+            assert.equal(this.oUploadSet._getCloudFilePicker() instanceof MenuButton, true, "Cloud File Picker Menu Button enabled with CloudFilePicker property enabled");
             assert.ok(this.oUploadSet._getCloudFilePicker().getMenu().getItems().length === 2, "Cloud File Picker Menu Button created with 2 menu items (local and cloud)");
         });
 

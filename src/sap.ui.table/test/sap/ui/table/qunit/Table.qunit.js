@@ -99,8 +99,6 @@ sap.ui.define([
 
 	var SortOrder = CoreLibrary.SortOrder;
 	var SelectionMode = library.SelectionMode;
-	var VisibleRowCountMode = library.VisibleRowCountMode;
-	var NavigationMode = library.NavigationMode;
 	var SharedDomRef = library.SharedDomRef;
 	var ToolbarDesign = MLibrary.ToolbarDesign;
 	var ToolbarStyle = MLibrary.ToolbarStyle;
@@ -880,35 +878,6 @@ sap.ui.define([
 		oTable.insertColumn(oColA, 1);
 		aColumns = oTable.getColumns();
 		assert.deepEqual(aColumns[1], oColA, "The column was inserted at the correct position by index");
-	});
-
-	QUnit.module("Column filtering", {
-		beforeEach: function() {
-			createTable({
-				rowMode: new FixedRowMode({
-					rowCount: 5
-				})
-			}, function(oTable) {
-				var oControl = new Text({text: "lastName"});
-				oTable.addColumn(new Column({
-					label: new Label({text: "Last Name"}),
-					template: oControl,
-					sortProperty: "lastName",
-					filterProperty: "lastName",
-					filterValue: "Dente",
-					filtered: true
-				}));
-			});
-		},
-		afterEach: function() {
-			destroyTable();
-		}
-	});
-
-	QUnit.test("After initialization", function(assert) {
-		assert.equal(NavigationMode.Scrollbar, NavigationMode.Scrollbar, "NavigationMode defaulted to Scrollbar");
-		assert.equal(NavigationMode.Scrollbar, NavigationMode.Scrollbar,
-			"NavigationMode defaulted to Scrollbar after explicitly setting it to Paginator");
 	});
 
 	QUnit.module("Fixed columns", {

@@ -12,12 +12,12 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	'sap/m/Text',
 	'sap/m/App',
+	'sap/m/Dialog',
 	'sap/m/Page',
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem',
 	'sap/tnt/NavigationListGroup',
-	'sap/ui/qunit/utils/waitForThemeApplied',
-	"sap/m/Dialog"
+	'sap/ui/qunit/utils/waitForThemeApplied'
 ], function(
 	Log,
 	Core,
@@ -30,12 +30,12 @@ sap.ui.define([
 	jQuery,
 	Text,
 	App,
+	Dialog,
 	Page,
 	NavigationList,
 	NavigationListItem,
 	NavigationListGroup,
-	waitForThemeApplied,
-	Dialog
+	waitForThemeApplied
 ) {
 	'use strict';
 

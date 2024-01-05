@@ -8,9 +8,9 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class OData-specific {@link sap.ui.mdc.util.TypeMap TypeMap} configuration.
+	 * @class OData-specific {@link module:sap/ui/mdc/util/TypeMap TypeMap} configuration.
 	 *
-	 * <b>Note:</b> This {@link sap.ui.mdc.util.TypeMap TypeMap} implementation contains the following types:
+	 * <b>Note:</b> This <code>TypeMap</code> implementation contains the following types:
 	 *
 	 * <ul>
 	 * <li>{@link sap.ui.model.type.Boolean} (alias <code>Boolean</code>)</li>

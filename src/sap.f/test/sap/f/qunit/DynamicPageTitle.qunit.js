@@ -7,14 +7,14 @@ sap.ui.define([
 	"sap/f/library",
 	"./DynamicPageUtil",
 	"sap/ui/core/Core",
+	"sap/m/Button",
 	"sap/m/Link",
 	"sap/m/Title",
 	"sap/m/Text",
 	"sap/m/ObjectNumber",
-	"sap/m/OverflowToolbarLayoutData",
-	"sap/m/Button"
+	"sap/m/OverflowToolbarLayoutData"
 ],
-function(
+function (
 	$,
 	Device,
 	DynamicPage,
@@ -22,12 +22,12 @@ function(
 	fioriLibrary,
 	DynamicPageUtil,
 	Core,
+	Button,
 	Link,
 	Title,
 	Text,
 	ObjectNumber,
-	OverflowToolbarLayoutData,
-	Button
+	OverflowToolbarLayoutData
 ) {
 	"use strict";
 

@@ -43,7 +43,6 @@ sap.ui.define([
 ], function(Table, ToolbarSpacer, UploadSetwithTableRenderer, Library1, FileUploader, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetwithTableItem, deepEqual, Log, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core, VariantManagement, PersManager, ColumnsMediator, SortMediator, GroupMediator, FilterMediator, View, Element, MenuButton, MenuItem, Menu) {
 	"use strict";
 
-	// shortcut for sap.m.MenuButtonMode
 	var MenuButtonMode = Library.MenuButtonMode;
 
 	/**
@@ -396,7 +395,7 @@ sap.ui.define([
 	/* Lifecycle handling */
 	/* ================== */
 
-	UploadSetwithTable.prototype.init = function () {
+    UploadSetwithTable.prototype.init = function () {
 		Table.prototype.init.call(this);
 		this._setDragDropConfig();
 		this._filesTobeUploaded = [];
@@ -448,7 +447,7 @@ sap.ui.define([
 	/* Overridden API methods */
 	/* ====================== */
 
-	UploadSetwithTable.prototype.getHeaderToolbar = function () {
+    UploadSetwithTable.prototype.getHeaderToolbar = function () {
 		if (!this._oToolbar) {
 			this._oToolbar = this.getAggregation("headerToolbar");
 
@@ -713,7 +712,7 @@ sap.ui.define([
 	 * @return {sap.ui.unified.FileUploader} Instance of the default <code>sap.ui.unified.FileUploader</code>.
 	 * @public
 	 */
-	UploadSetwithTable.prototype.getDefaultFileUploader = function () {
+    UploadSetwithTable.prototype.getDefaultFileUploader = function () {
 		var sTooltip = "Upload";
 		if (!this._oFileUploader) {
 			this._oFileUploader = new FileUploader(this.getId() + "-uploader", {
@@ -879,7 +878,7 @@ sap.ui.define([
 		return -1;
 	};
 
-	UploadSetwithTable.prototype._onFileUploaderChange = function (oEvent) {
+    UploadSetwithTable.prototype._onFileUploaderChange = function (oEvent) {
         var oFiles = oEvent.getParameter("files");
 
 		if (oFiles && oFiles.length) {
@@ -957,7 +956,7 @@ sap.ui.define([
 		this._uploadItemIfGoodToGo(oItem);
 	};
 
-	UploadSetwithTable.prototype._fireFileTypeMismatch = function (oItem) {
+    UploadSetwithTable.prototype._fireFileTypeMismatch = function (oItem) {
         var aMediaTypes = this.getMediaTypes();
 		var aFileTypes = this.getFileTypes();
 
@@ -986,13 +985,13 @@ sap.ui.define([
 		}
     };
 
-	UploadSetwithTable.prototype._fireFilenameLengthExceed = function (oItem) {
+    UploadSetwithTable.prototype._fireFilenameLengthExceed = function (oItem) {
 		var oTargetItem = new UploadSetwithTableItem();
 		oTargetItem.setFileName(oItem.getParameter('fileName'));
         this.fireFileNameLengthExceeded({item: oTargetItem});
     };
 
-	UploadSetwithTable.prototype._fireFileSizeExceed = function (oItem) {
+    UploadSetwithTable.prototype._fireFileSizeExceed = function (oItem) {
 		var oTargetItem = new UploadSetwithTableItem();
 		oTargetItem.setFileName(oItem.getParameter('fileName'));
         this.fireFileSizeExceeded({item: oTargetItem});
@@ -1601,5 +1600,5 @@ sap.ui.define([
 		});
 	};
 
-	return UploadSetwithTable;
+    return UploadSetwithTable;
 });

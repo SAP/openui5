@@ -200,17 +200,17 @@ sap.ui.define([
 							sTextProperty = null; //Expand is not supported
 						}
 
-						let sSortKey = sKey;
-						if (oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement"]?.$EnumMember === "com.sap.vocabularies.UI.v1.TextArrangementType/TextOnly" && sTextProperty) {
-							sSortKey = sTextProperty;
-						}
+						// let sSortKey = sKey;
+						// if (oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement"]?.$EnumMember === "com.sap.vocabularies.UI.v1.TextArrangementType/TextOnly" && sTextProperty) {
+						// 	sSortKey = sTextProperty;
+						// }
 
 						aProperties.push({
 							name: sKey,
 							path: sKey,
 							label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
 							sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
-							sortKey: sSortKey,
+							// sortKey: sSortKey,
 							filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
 							groupable: true,
 							aggregatable: false,

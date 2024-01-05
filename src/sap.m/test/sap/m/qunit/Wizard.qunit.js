@@ -9,9 +9,9 @@ sap.ui.define([
 	"sap/ui/base/ObjectPool",
 	"sap/m/library",
 	"sap/ui/core/Lib",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/library"
-], function(Log, DesignTime, Core, Wizard, WizardStep, Button, ObjectPool, library, Library, jQuery, coreLibrary) {
+	"sap/ui/core/library",
+	"sap/ui/thirdparty/jquery"
+], function(Log, DesignTime, Core, Wizard, WizardStep, Button, ObjectPool, library, Library, coreLibrary, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel

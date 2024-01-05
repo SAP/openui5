@@ -36,11 +36,9 @@ sap.ui.define([
 	 dependencies: ["sap.ui.core", "sap.ui.unified"],
 	 designtime: "sap/ui/table/designtime/library.designtime",
 	 types: [
-	  "sap.ui.table.NavigationMode",
 	  "sap.ui.table.RowActionType",
 	  "sap.ui.table.SelectionBehavior",
 	  "sap.ui.table.SelectionMode",
-	  "sap.ui.table.VisibleRowCountMode",
 	  /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
 	  "sap.ui.table.plugins.SelectionMode"
 	 ],
@@ -83,23 +81,6 @@ sap.ui.define([
 		 }
 	 }
  });
-
- /**
-  * Navigation mode of the table
-  *
-  * @version ${version}
-  * @enum {string}
-  * @public
-  */
- thisLib.NavigationMode = {
-  /**
-   * Uses the scrollbar control.
-   * @public
-   */
-  Scrollbar: "Scrollbar"
- };
-
- DataType.registerEnum("sap.ui.table.NavigationMode", thisLib.NavigationMode);
 
  /**
   * Row Action types.
@@ -191,37 +172,6 @@ sap.ui.define([
  };
 
  DataType.registerEnum("sap.ui.table.SelectionMode", thisLib.SelectionMode);
-
- /**
-  * VisibleRowCountMode of the table
-  *
-  * @version ${version}
-  * @enum {string}
-  * @public
-  */
- thisLib.VisibleRowCountMode = {
-
-	 /**
-	  * The table always has as many rows as defined in the <code>visibleRowCount</code> property.
-	  * @public
-	  */
-	 Fixed: "Fixed",
-
-	 /**
-	  * The user can change the <code>visibleRowCount</code> by dragging a resizer.
-	  * @public
-	  */
-	 Interactive: "Interactive",
-
-	 /**
-	  * The table automatically fills the height of the surrounding container.
-	  * @public
-	  */
-	 Auto: "Auto"
-
- };
-
- DataType.registerEnum("sap.ui.table.VisibleRowCountMode", thisLib.VisibleRowCountMode);
 
  /**
   * Shared DOM Reference IDs of the table.

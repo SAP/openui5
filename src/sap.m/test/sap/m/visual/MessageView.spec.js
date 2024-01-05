@@ -143,7 +143,7 @@ describe('sap.m.MessageView', function() {
 			expect(takeScreenshot(element(by.id("mPop-messagePopover-popover")))).toLookAs("message-view-collapsed-filtering");
 			element(by.id("mPop-messageView-error")).click();
 			expect(takeScreenshot(element(by.id("mPop-messagePopover-popover")))).toLookAs("message-view-expanded-filtering");
-			element(by.id("__button12")).click();
+			element(by.id("__button13")).click();
 		});
 
 

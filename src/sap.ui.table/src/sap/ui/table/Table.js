@@ -70,11 +70,9 @@ sap.ui.define([
 	"use strict";
 
 	var GroupEventType = library.GroupEventType;
-	var NavigationMode = library.NavigationMode;
 	var SelectionMode = library.SelectionMode;
 	var SelectionBehavior = library.SelectionBehavior;
 	var SortOrder = CoreLibrary.SortOrder;
-	var VisibleRowCountMode = library.VisibleRowCountMode;
 	var Hook = TableUtils.Hook.Keys.Table;
 	var _private = TableUtils.createWeakMapFacade();
 

@@ -1197,6 +1197,22 @@ function(
 		ControlBehavior.setAnimationMode(sOriginalAnimationMode);
 	});
 
+	QUnit.test("Contextual settings are always updated during live column resize", function (assert) {
+		var sLayoutBeforeDrag = this.oFCL.getLayout(),
+			oSpyUpdateContextualSettings = this.spy(this.oFCL, "_updateColumnContextualSettings"),
+			oSeparator = this.oFCL._oColumnSeparators.begin[0],
+			iStartX = oSeparator.getBoundingClientRect().x,
+			iEndX = iStartX + 1; // resize 1px only to remain within the same layout
+
+		// Act: mock life-resize by 1px within the same layout
+		this.oFCL._onColumnSeparatorMoveStart({pageX: iStartX}, oSeparator);
+		this.oFCL._onColumnSeparatorMove({pageX: iEndX});
+
+		// Assert
+		assert.strictEqual(this.oFCL.getLayout(), sLayoutBeforeDrag, "layout is unchanged");
+		assert.strictEqual(oSpyUpdateContextualSettings.callCount, 2, "contextual settings are updated for visible columns");
+	});
+
 	QUnit.test("Contextual settings are updated after column resize without layout update", function (assert) {
 		var sLayoutBeforeDrag = this.oFCL.getLayout(),
 			oSpyUpdateContextualSettings = this.spy(this.oFCL, "_updateColumnContextualSettings");
@@ -1206,7 +1222,7 @@ function(
 
 		// Assert
 		assert.strictEqual(this.oFCL.getLayout(), sLayoutBeforeDrag, "layout is unchanged");
-		assert.strictEqual(oSpyUpdateContextualSettings.callCount, 2, "contextual settings are updated for visible columns");
+		assert.strictEqual(oSpyUpdateContextualSettings.callCount, 4, "contextual settings are updated for visible columns");
 	});
 
 	QUnit.test("Contextual settings are updated after column resize with layout update", function (assert) {
@@ -1221,7 +1237,7 @@ function(
 		assert.notEqual(this.oFCL.getLayout(), sLayoutBeforeDrag, "layout is not changed");
 		this.oFCL._attachAfterAllColumnsResizedOnce(function() {
 			setTimeout(function() { // wait for FCL promise to complete
-				assert.strictEqual(oSpyUpdateContextualSettings.callCount, 2, "contextual settings are updated for visible columns");
+				assert.strictEqual(oSpyUpdateContextualSettings.callCount, 4, "contextual settings are updated for visible columns");
 				fnDone();
 			}, 0);
 		});
