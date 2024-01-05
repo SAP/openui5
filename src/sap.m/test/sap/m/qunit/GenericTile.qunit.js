@@ -63,6 +63,14 @@ sap.ui.define([
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
+	function createMouseEnterEvent() {
+		return new Event("mouseenter");
+	}
+
+	function createMouseLeaveEvent() {
+		return new Event("mouseleave");
+	}
+
 	QUnit.module("Control initialization core and theme checks", {
 		beforeEach: function() {
 			this.fnSpyReady = this.spy(Core, "ready");
@@ -2201,7 +2209,8 @@ sap.ui.define([
 	QUnit.test("GenericTile tooltip provided by the control enhanced by additionalTooltip property", function(assert) {
 		//Arrange
 		this.oGenericTile.setAdditionalTooltip("System U1Y");
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 		var sAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\nSystem U1Y\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION");
 		var sTooltip = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\nSystem U1Y";
 
@@ -2214,8 +2223,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("GenericTile tooltip provided by the control", function(assert) {
-		//Arrange
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 		var sAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION");
 		var sTooltip = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
 
@@ -2231,7 +2240,8 @@ sap.ui.define([
 		//Arrange
 		this.oGenericTile.setTooltip("tooltip");
 		oCore.applyChanges();
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 		//Act
 		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");
@@ -2263,7 +2273,8 @@ sap.ui.define([
 		this.oGenericTile.setSubheader("A long long subheader text");
 		this.oGenericTile.setTooltip("tooltip");
 		oCore.applyChanges();
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 		//Act
 		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		//Assert
@@ -2274,7 +2285,8 @@ sap.ui.define([
 		//Arrange
 		this.oGenericTile.setTooltip(" ");
 		oCore.applyChanges();
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 		var sExpectedAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION");
 		//Act
 		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
@@ -2290,7 +2302,8 @@ sap.ui.define([
 		this.oGenericTile.setSubheader("A long long subheader text");
 		this.oGenericTile.setTooltip(" ");
 		oCore.applyChanges();
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 		//Act
 		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		//Assert
@@ -2302,7 +2315,8 @@ sap.ui.define([
 		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
 		this.oGenericTile.setSubheader("A long long subheader text");
 		oCore.applyChanges();
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 		//Act
 		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		//Assert
@@ -2311,11 +2325,12 @@ sap.ui.define([
 
 	QUnit.test("Tooltip is removed when mouse leaves the GenericTile", function(assert) {
 		//Arrange
-		var $Tile = this.oGenericTile.$();
 		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
 		oCore.applyChanges();
-		$Tile.trigger("mouseenter");
-		$Tile.trigger("mouseleave");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseLeaveEvent());
 		//Act
 		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		//Assert
@@ -2371,8 +2386,8 @@ sap.ui.define([
 		//Arrange
 		var sAriaLabel = "header\nsubheader\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_LINE_SIZE");
 
-		//Act
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 
 		//Assert
 		assert.equal(this.oGenericTile.$().attr("title"), "header\nsubheader", "GenericTile tooltip");
@@ -2383,8 +2398,8 @@ sap.ui.define([
 		//Arrange
 		var sAriaLabel = "header\nsubheader\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_LINE_SIZE");
 
-		//Act
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 
 		//Assert
 		assert.equal(this.oGenericTile.$().attr("title"), "header\nsubheader", "In LineMode only Header-SubHeader considered and TileContent omitted from tooltip");
@@ -2396,8 +2411,8 @@ sap.ui.define([
 		this.oGenericTile.setTooltip("tooltip");
 		oCore.applyChanges();
 
-		//Act
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 
 		//Assert
 		assert.equal(this.oGenericTile.$().attr("title"), "tooltip", "Explicit tooltip of GenericTile is consistent");
@@ -2411,8 +2426,8 @@ sap.ui.define([
 		this.oGenericTile.setTooltip("tooltip");
 		oCore.applyChanges();
 
-		//Act
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 
 		//Assert
 		assert.equal(this.oGenericTile.$().attr("title"), "tooltip", "User tooltip overwrites the header and subheader texts");
@@ -2425,8 +2440,8 @@ sap.ui.define([
 		this.oGenericTile.setTooltip(" ");
 		oCore.applyChanges();
 
-		//Act
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 
 		//Assert
 		assert.equal(this.oGenericTile.$().attr("title"), null, "GenericTile rendered without tooltip");
@@ -2441,8 +2456,8 @@ sap.ui.define([
 		this.oGenericTile.setTooltip(" ");
 		oCore.applyChanges();
 
-		//Act
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 
 		//Assert
 		assert.equal(this.oGenericTile.$().attr("title"), null, "GenericTile rendered without tooltip");
@@ -2451,12 +2466,12 @@ sap.ui.define([
 
 	QUnit.test("Truncated header text tooltip is removed when mouse leaves the GenericTile", function(assert) {
 		//Arrange
-		var $Tile = this.oGenericTile.$();
 		this.oGenericTile.setHeader("A long long long long long long long long long long");
 
-		//Act
-		$Tile.trigger("mouseenter");
-		$Tile.trigger("mouseleave");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseLeaveEvent());
 		oCore.applyChanges();
 
 		//Assert
@@ -2504,8 +2519,8 @@ sap.ui.define([
 		this.oGenericTile.setSubheader("A long long subheader text");
 		oCore.applyChanges();
 
-		//Act
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 
 		//Assert
 		assert.equal(this.oGenericTile.$().attr("title"), "header\nA long long subheader text", "Tooltip both Shot Header and Long SubHeader");
@@ -2517,8 +2532,8 @@ sap.ui.define([
 		this.oGenericTile._oTitle.invalidate(); // needs to invalidate since the sap.m.Text doesn't invalidate (on purpose)
 		oCore.applyChanges();
 
-		//Act
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 
 		//Assert
 		assert.equal(this.oGenericTile.$().attr("title"), "A long long long long long long long long long long header text\nsubheader", "Tooltip both Long Header and short SubHeader");
@@ -2530,8 +2545,8 @@ sap.ui.define([
 		this.oGenericTile.setSubheader("A long long subheader text");
 		oCore.applyChanges();
 
-		//Act
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 
 		//Assert
 		assert.equal(this.oGenericTile.$().attr("title"), "A long long long long long long long long long long header text\nA long long subheader text", "Truncated texts for header and for subheader have tooltips");
@@ -2539,12 +2554,12 @@ sap.ui.define([
 
 	QUnit.test("Truncated header text tooltip is removed when mouse leaves the GenericTile", function(assert) {
 		//Arrange
-		var $Tile = this.oGenericTile.$();
 		this.oGenericTile.setHeader("A long long long long long long long long long long");
 
-		//Act
-		$Tile.trigger("mouseenter");
-		$Tile.trigger("mouseleave");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseLeaveEvent());
 		oCore.applyChanges();
 
 		//Assert
@@ -2556,8 +2571,8 @@ sap.ui.define([
 		this.oGenericTile.getTileContent()[0].setFooter("Tile Footer");
 		this.oGenericTile.getTileContent()[0].setUnit("Tile Unit");
 
-		//Act
-		this.oGenericTile.$().trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 
 		//Assert
 		assert.equal(this.oGenericTile.$().attr("title"), "header\nsubheader", "In LineMode only Header-SubHeader considered and TileContent omitted from tooltip");
@@ -2604,9 +2619,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("TileContent content doesn't contain attributes ARIA-label and title", function(assert) {
-		//Arrange
-		jQuery("#tile-cont-1").trigger("mouseenter");
-		jQuery("#tile-cont-2").trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 		//Act
 		var sAriaLabelOfContent1 = jQuery("#tile-cont-1").attr("aria-label");
 		var sTitleOfTileContent1 = jQuery("#tile-cont-1").attr("title");
@@ -2620,9 +2634,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("NumericContent doesn't contain attributes ARIA-label and title", function(assert) {
-		//Arrange
-		jQuery("#numeric-content").trigger("mouseover");
-		//Act
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 		var sAriaLabelOfNumericContent = jQuery("#numeric-content").attr("aria-label");
 		var sTitleOfNumericContent = jQuery("#numeric-content").attr("title");
 		//Assert
@@ -2661,7 +2674,8 @@ sap.ui.define([
 
 		//Arrange
 		this.oGenericTile.getTileContent()[0].getContent().setValue("999");
-		$Tile.trigger("mouseenter");
+		// Trigger the mouseenter event on the element
+		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
 		//Act
 		var sAriaLabelOfNumericContent = jQuery("#numeric-content").attr("aria-label");
 		var sTitleOfNumericContent = jQuery("#numeric-content").attr("title");
