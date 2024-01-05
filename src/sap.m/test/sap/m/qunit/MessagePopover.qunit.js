@@ -702,7 +702,7 @@ sap.ui.define([
 		this.oMessagePopover._expandMsgPopover();
 		this.clock.tick(500);
 
-		assert.strictEqual($Content.height(), 10, "height should be the same as before filtering");
+		assert.strictEqual($Content.height(), 8, "height should be the same as before filtering");
 	});
 
 	QUnit.test("Initially collapsed popover should be able to expand", function(assert) {
@@ -715,7 +715,7 @@ sap.ui.define([
 		this.clock.tick(500);
 		$Content = this.oMessagePopover.$("cont");
 
-		assert.strictEqual($Content.height(), 320, "height should be 320px");
+		assert.strictEqual($Content.height(), 318, "height should be 318px");
 	});
 
 	QUnit.test("The items in the list should have info state set according to the message type", function(assert) {

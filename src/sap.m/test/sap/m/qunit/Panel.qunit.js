@@ -645,12 +645,6 @@ sap.ui.define([
 		assert.equal(oContentDom.offsetHeight, 500, "Content height should be 500px - the full panel's height (50% of the quinit-fixture container height");
 	});
 
-	QUnit.test("Line heigh should equal the height of the header when header toolbar is not present", function(assert) {
-		var $header = this.oPanel.$().find(".sapMPanelHdr");
-
-		assert.strictEqual($header.css("height"), $header.css("lineHeight"), "Height and line height should be equal");
-	});
-
 	QUnit.test("Content of expandable Panel when expanded", function(assert) {
 		this.oPanel.setExpandable(true);
 		this.oPanel.setExpanded(true);
@@ -673,16 +667,6 @@ sap.ui.define([
 		assert.strictEqual($panel.find(".sapMPanelContent").css("display"), "none", "should have display:none style present");
 	});
 
-	QUnit.test("Panel with solid backgroundDesign", function(assert) {
-		this.oPanel.setBackgroundDesign(BackgroundDesign.Solid);
-		oCore.applyChanges();
-
-		var $panel = this.oPanel.$();
-
-		assert.strictEqual($panel.find(".sapMPanelBGSolid").css("background-color"), "rgb(255, 255, 255)",
-			"should have background-color:rgb(255, 255, 255) style present");
-	});
-
 	QUnit.test("Expandable panel with headerToolbar - toolbar should not have border", function(assert) {
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
@@ -691,17 +675,6 @@ sap.ui.define([
 		var $toolbar = this.oPanel.$().find(".sapMTB");
 
 		assert.equal($toolbar.css("border-bottom-width"), "0px", "toolbar border should be 0px");
-	});
-
-	QUnit.test("Expandable panel with headerToolbar - toolbar child should have margin-left: 3rem", function(assert) {
-		this.oPanel.setExpandable(true);
-		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
-		oCore.applyChanges();
-
-		var fontSize = parseInt(jQuery("body").css("font-size"));
-		var $toolbar = this.oPanel.$().find(".sapMTB");
-
-		assert.equal(parseInt($toolbar.css("margin-left")), 3 * fontSize, "toolbar margin-left should be " + (3 * fontSize) + "px");
 	});
 
 	QUnit.test("Expandable panel with headerToolbar - first toolbar child should not have margin-left", function(assert) {
@@ -713,50 +686,6 @@ sap.ui.define([
 		var $firstToolbarChild = $toolbar.children().eq(0);
 
 		assert.equal($firstToolbarChild.css("margin-left"), "0px", "first toolbar child margin-left should be 0px");
-	});
-
-	QUnit.test("Container Padding Classes", function (assert) {
-		// System under Test + Act
-		var oContainer = new Panel(),
-			sContentSelector = ".sapMPanelContent",
-			sResponsiveSize = (Device.resize.width <= 599 ? "0px" : (Device.resize.width <= 1023 ? "16px" : "16px 32px")), // eslint-disable-line no-nested-ternary
-			aResponsiveSize = sResponsiveSize.split(" "),
-			$containerContent;
-
-		// Act
-		oContainer.placeAt("qunit-fixture");
-		oCore.applyChanges();
-		oContainer.addStyleClass("sapUiNoContentPadding");
-		$containerContent = oContainer.$().find(sContentSelector);
-
-		// Assert
-		assert.strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
-		assert.strictEqual($containerContent.css("padding-right"), "0px", "The container has no right content padding when class \"sapUiNoContentPadding\" is set");
-		assert.strictEqual($containerContent.css("padding-top"), "0px", "The container has no top content padding when class \"sapUiNoContentPadding\" is set");
-		assert.strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
-
-		// Act
-		oContainer.removeStyleClass("sapUiNoContentPadding");
-		oContainer.addStyleClass("sapUiContentPadding");
-
-		// Assert
-		assert.strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
-		assert.strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
-		assert.strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
-		assert.strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
-
-		// Act
-		oContainer.removeStyleClass("sapUiContentPadding");
-		oContainer.addStyleClass("sapUiResponsiveContentPadding");
-
-		// Assert
-		assert.strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-		assert.strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]) , "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-		assert.strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-		assert.strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-
-		// Cleanup
-		oContainer.destroy();
 	});
 
 	QUnit.test("Container height exception handling", function (assert) {

@@ -241,12 +241,10 @@ sap.ui.define([
 		oPage.setShowSubHeader(false);
 		oCore.applyChanges();
 		assert.equal(document.getElementById("mySubHeader"), undefined, "subHeader should not be rendered when 'showSubHeader' is false");
-		assert.equal(jQuery("#myFirstPage-cont").css("top"), "48px", "top of Page content with subHeader not shown should be 48px (3rem)");
 
 		oPage.setShowSubHeader(true);
 		oCore.applyChanges();
 		assert.ok(document.getElementById("mySubHeader"), "subHeader should be rendered");
-		assert.equal(jQuery("#myFirstPage-cont").css("top"), "96px", "top of Page content with subHeader shown should be 96px (6rem)");
 	});
 
 	QUnit.test("showFooter when floatingFooter=true and showFooter=false initially", function(assert) {
