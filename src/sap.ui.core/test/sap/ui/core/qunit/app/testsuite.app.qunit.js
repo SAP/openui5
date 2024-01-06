@@ -50,6 +50,33 @@ sap.ui.define(function () {
 				module: "./ThemeClassParameters.qunit"
 			},
 
+			"ThemeClassParameters(sap_horizon_dark)": {
+				title: "Tests for sap/ui/core/theming/Parameters (sap_horizon_dark): Theme-Dependent CSS Classes",
+				ui5: {
+					theme: "sap_horizon_dark",
+					"xx-waitForTheme": "init"
+				},
+				module: "./ThemeClassParameters.qunit"
+			},
+
+			"ThemeClassParameters(sap_horizon_hcb)": {
+				title: "Tests for sap/ui/core/theming/Parameters (sap_horizon_hcb): Theme-Dependent CSS Classes",
+				ui5: {
+					theme: "sap_horizon_hcb",
+					"xx-waitForTheme": "init"
+				},
+				module: "./ThemeClassParameters.qunit"
+			},
+
+			"ThemeClassParameters(sap_horizon_hcw)": {
+				title: "Tests for sap/ui/core/theming/Parameters (sap_horizon_hcw): Theme-Dependent CSS Classes",
+				ui5: {
+					theme: "sap_horizon_hcw",
+					"xx-waitForTheme": "init"
+				},
+				module: "./ThemeClassParameters.qunit"
+			},
+
 			"ThemeClassParameters(sap_fiori_3)": {
 				title: "Tests for sap/ui/core/theming/Parameters (sap_fiori_3): Theme-Dependent CSS Classes",
 				ui5: {

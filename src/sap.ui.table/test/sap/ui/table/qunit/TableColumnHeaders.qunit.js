@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Column",
 	"sap/ui/model/json/JSONModel",
@@ -9,7 +10,17 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/core/library",
 	"sap/ui/core/Core"
-], function(TableQUnitUtils, TableUtils, Column, JSONModel, Table, tableLibrary, coreLibrary, oCore) {
+], function(
+	TableQUnitUtils,
+	nextUIUpdate,
+	TableUtils,
+	Column,
+	JSONModel,
+	Table,
+	tableLibrary,
+	coreLibrary,
+	oCore
+) {
 	"use strict";
 
 	var TestControl = TableQUnitUtils.TestControl;
@@ -150,17 +161,17 @@ sap.ui.define([
 	});
 
 	QUnit.module("Hidden columns with span", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			var aCols = oTable.getColumns();
 			aCols[2].setVisible(false);
 			aCols[4].setVisible(false);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			var aCols = oTable.getColumns();
 			aCols[2].setVisible(true);
 			aCols[4].setVisible(true);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
@@ -172,9 +183,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Fixed columns", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			oTable.setFixedColumnCount(1);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 		}
@@ -184,9 +195,9 @@ sap.ui.define([
 		assert.strictEqual(oTable.getComputedFixedColumnCount(), 3, "Multi headers influence fixed column count");
 	});
 
-	QUnit.test("Fixed column count with multiheaders and hidden columns", function(assert) {
+	QUnit.test("Fixed column count with multiheaders and hidden columns", async function(assert) {
 		oTable.getColumns()[1].setVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(oTable.getComputedFixedColumnCount(), 3, "Hidden columns do not influence fixed column count");
 	});
 });

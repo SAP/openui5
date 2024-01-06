@@ -5,16 +5,16 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/library",
 	"sap/m/library",
-	"sap/ui/core/Core",
-	"sap/ui/qunit/utils/createAndAppendDiv"
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function (
 	GridListItem,
 	Text,
 	coreLibrary,
 	mobileLibrary,
-	Core,
-	createAndAppendDiv
+	createAndAppendDiv,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -28,14 +28,14 @@ function (
 	createAndAppendDiv(DOM_RENDER_LOCATION);
 
 	QUnit.module("Rendering", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oGridListItem = new GridListItem({
 				content: [
 					new Text({ text: "This is the content"})
 				]
 			});
 			this.oGridListItem.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oGridListItem.destroy();
@@ -49,21 +49,21 @@ function (
 		assert.strictEqual(this.oGridListItem.$().find(".sapMLIBContent").length, 1, "The content should be rendered.");
 	});
 
-	QUnit.test("Highlight", function (assert) {
+	QUnit.test("Highlight", async function (assert) {
 
 		this.oGridListItem.setHighlight(MessageType.Success);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.oGridListItem.$().find(".sapMLIBHighlight").length, 1, "Should render the 'highlight' state.");
 
 		this.oGridListItem.setHighlight(MessageType.None);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.oGridListItem.$().find(".sapMLIBHighlight").length, 0, "Should NOT render any state if not needed.");
 	});
 
-	QUnit.test("Mode", function (assert) {
+	QUnit.test("Mode", async function (assert) {
 		// Arrange
 		this.oGridListItem.setType(ListType.Navigation);
-		Core.applyChanges();
+		await nextUIUpdate();
 		var $headerToolbar = this.oGridListItem.$("gridListItemToolbar");
 		var oTypeControlDomRef = this.oGridListItem.getTypeControl().getDomRef();
 
@@ -73,14 +73,14 @@ function (
 	});
 
 	QUnit.module("API", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oGridListItem = new GridListItem({
 				content: [
 					new Text({ text: "This is the content"})
 				]
 			});
 			this.oGridListItem.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oGridListItem.destroy();

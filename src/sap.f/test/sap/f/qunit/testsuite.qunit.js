@@ -152,10 +152,7 @@ sap.ui.define(function () {
 				},
 				module: [
 					'./delegate/GridContainerItemNavigation.qunit'
-				],
-				sinon: {
-					useFakeTimers: true
-				}
+				]
 			},
 
 			"GridItemNavigation": {

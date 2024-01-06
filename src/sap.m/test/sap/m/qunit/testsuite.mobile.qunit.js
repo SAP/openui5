@@ -123,7 +123,6 @@ sap.ui.define([
 				page: "test-resources/sap/m/qunit/CSSClassesFromParameters.qunit.html",
 				title: "QUnit Page for Theme-dependent CSS Classes",
 				ui5: {
-					theme: "sap_horizon"
 				}
 			},
 
@@ -854,6 +853,9 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.MessagePopover",
 				sinon: {
 					useFakeTimers: true
+				},
+				ui5: {
+					theme: "sap_horizon"
 				}
 			},
 
@@ -876,6 +878,9 @@ sap.ui.define([
 				title: "QUnit tests: sap.m.MultiComboBox",
 				sinon: {
 					useFakeTimers: true
+				},
+				ui5: {
+					theme: "sap_horizon"
 				}
 			},
 
@@ -894,6 +899,9 @@ sap.ui.define([
 				sinon: {
 					version: 1, // test has issues with sinon-4 fake timer
 					useFakeTimers: true
+				},
+				ui5: {
+					theme: "sap_horizon"
 				}
 			},
 
@@ -1400,7 +1408,10 @@ sap.ui.define([
 			},
 
 			RatingIndicator: {
-				title: "Test Page for sap.m.RatingIndicator"
+				title: "Test Page for sap.m.RatingIndicator",
+				ui5: {
+					theme: "sap_horizon"
+				}
 			},
 
 			ResponsiveMarginCssClasses: {

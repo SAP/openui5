@@ -9,12 +9,12 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Button",
 	"sap/m/Text",
-	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/date/UI5Date"
 ],
@@ -27,12 +27,12 @@ function (
 	mLibrary,
 	Button,
 	Text,
-	Core,
 	jQuery,
 	Control,
 	DateFormat,
 	UniversalDate,
 	QUnitUtils,
+	nextUIUpdate,
 	KeyCodes,
 	UI5Date
 ) {
@@ -41,6 +41,18 @@ function (
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 	var AvatarColor = mLibrary.AvatarColor;
 	var ValueColor = mLibrary.ValueColor;
+
+	/**
+	 * In each test using fake timers, it might happen that a rendering task is queued by
+	 * creating a fake timer. Without an appropriate clock.tick call, this timer might not execute
+	 * and a later nextUIUpdate with real timers would wait endlessly.
+	 * To prevent this, after each test another rendering cycle is executed which will clear any
+	 * pending fake timer. The rendering itself should not be needed by the tests, if they are properly
+	 * isolated.
+	 */
+	async function afterEach() {
+		await nextUIUpdate(this.clock);
+	}
 
 	function createCard(HeaderType) {
 		var oCard = new Card("somecard", {
@@ -51,17 +63,19 @@ function (
 
 		// Act
 		oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 
 		return oCard;
 	}
 
-	QUnit.module("Init");
+	QUnit.module("Init", {
+		afterEach
+	});
 
-	QUnit.test("Initialization", function (assert) {
+	QUnit.test("Initialization", async function (assert) {
 
 		// Arrange
 		var oCard = createCard(CardHeader);
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(oCard.getDomRef(), "The card is rendered");
@@ -72,14 +86,16 @@ function (
 		oCard.destroy();
 	});
 
-	QUnit.module("Headers");
+	QUnit.module("Headers", {
+		afterEach
+	});
 
-	QUnit.test("NumericHeader renderer", function (assert) {
+	QUnit.test("NumericHeader renderer", async function (assert) {
 		// Arrange
 		var oHeader = new CardNumericHeader({ title: "Title", number: "{Number}" });
 		// Act
 		oHeader.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oHeader.$().find(".sapFCardNumericIndicators").length, 1, "NumericIndicators are rendered.");
@@ -87,7 +103,7 @@ function (
 		oHeader.destroy();
 	});
 
-	QUnit.test("Numeric Header indicator truncation", function (assert) {
+	QUnit.test("Numeric Header indicator truncation", async function (assert) {
 
 		// Arrange
 		var sSampleNumber = "1234567812345678",
@@ -97,7 +113,7 @@ function (
 
 		// Act
 		oHeader.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 
@@ -107,7 +123,7 @@ function (
 		oHeader.destroy();
 	});
 
-	QUnit.test("Numeric Header unitOfMeasurement truncation", function (assert) {
+	QUnit.test("Numeric Header unitOfMeasurement truncation", async function (assert) {
 
 		// Arrange
 		var oHeader = new CardNumericHeader({
@@ -121,13 +137,13 @@ function (
 			iWidth;
 
 		oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		iWidth = oHeader.$("unitOfMeasurement").width();
 
 		// Act - set long subtitle so that there is no place for unitOfMeasurement
 		oHeader.setSubtitle("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean a libero nec risus egestas lacinia nec ac metus.");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(400);
 
 		// Assert
@@ -137,7 +153,7 @@ function (
 		oCard.destroy();
 	});
 
-	QUnit.test("Default Header avatar default color", function (assert) {
+	QUnit.test("Default Header avatar default color", async function (assert) {
 		// Arrange
 		var oHeader = new CardHeader({
 				iconSrc: "sap-icon://accept"
@@ -145,7 +161,7 @@ function (
 
 		// Act
 		oHeader.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 
@@ -155,7 +171,7 @@ function (
 		oHeader.destroy();
 	});
 
-	QUnit.test("Header and NumericHeader dataTimestamp", function (assert) {
+	QUnit.test("Header and NumericHeader dataTimestamp", async function (assert) {
 		// Arrange
 		var oNow = UI5Date.getInstance(),
 			oNowUniversalDate = new UniversalDate(oNow),
@@ -172,7 +188,7 @@ function (
 		// Act
 		oHeader.placeAt(DOM_RENDER_LOCATION);
 		oNumericHeader.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oHeader.getAggregation("_dataTimestamp").getText(), sTextNow, "DataTimestamp for 'now' is correct for Header");
@@ -200,7 +216,7 @@ function (
 		oNumericHeader.destroy();
 	});
 
-	QUnit.test("Side Indicator \"state\" property ", function (assert) {
+	QUnit.test("Side Indicator \"state\" property ", async function (assert) {
 		// Arrange
 		var oHeader = new CardNumericHeader({
 			sideIndicators: new CardNumericSideIndicator({
@@ -211,7 +227,7 @@ function (
 
 		// Act
 		oHeader.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 
@@ -222,7 +238,7 @@ function (
 		oHeader.destroy();
 	});
 
-	QUnit.test("Numeric Header's \"sideIndicatorsAlignment\" property ", function (assert) {
+	QUnit.test("Numeric Header's \"sideIndicatorsAlignment\" property ", async function (assert) {
 		// Arrange
 		var oHeader = new CardNumericHeader({
 			sideIndicatorsAlignment: "End",
@@ -232,7 +248,7 @@ function (
 
 		// Act
 		oHeader.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(oNumericIndicators.getDomRef().classList.contains("sapFCardNumericIndicatorsSideAlignEnd"), "Numeric header has the right class for alignment applied");
@@ -241,10 +257,11 @@ function (
 		// Clean up
 		oHeader.destroy();
 	});
-	QUnit.test("Card has correct class when header is not visible", function (assert) {
+
+	QUnit.test("Card has correct class when header is not visible", async function (assert) {
 		// Arrange
 		var oCard = createCard(CardHeader);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oCard.getCardHeader().getVisible(), true, "Card's header is visible");
@@ -259,10 +276,10 @@ function (
 		assert.strictEqual(oCard.getDomRef().classList.contains("sapFCardNoHeader"), true, "Card has class sapFCardNoHeader");
 
 		oCard.destroy();
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("Default Header with iconVisibility false", function (assert) {
+	QUnit.test("Default Header with iconVisibility false", async function (assert) {
 		// Arrange
 		var oHeader = new CardHeader({
 			iconSrc: "sap-icon://accept",
@@ -271,7 +288,7 @@ function (
 
 		// Act
 		oHeader.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(!!oHeader.$().find(".sapFCardHeaderImage").length, false, "Icon is not visible");
@@ -280,9 +297,11 @@ function (
 		oHeader.destroy();
 	});
 
-	QUnit.module("Headers press event");
+	QUnit.module("Headers press event", {
+		afterEach
+	});
 
-	QUnit.test("Press is fired on sapselect for numeric header", function (assert) {
+	QUnit.test("Press is fired on sapselect for numeric header", async function (assert) {
 		// Arrange
 		var oHeader = new CardNumericHeader({ title: "Title" }),
 			oCard = new Card({
@@ -294,7 +313,7 @@ function (
 
 		// Act
 		oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		oHeader.onsapselect(new jQuery.Event("sapselect"));
 
 		// Assert
@@ -304,7 +323,7 @@ function (
 		oCard.destroy();
 	});
 
-	QUnit.test("Press event is NOT fired when Enter or Space is pressed on the toolbar", function (assert) {
+	QUnit.test("Press event is NOT fired when Enter or Space is pressed on the toolbar", async function (assert) {
 		// Arrange
 		var oToolbar = new Button(),
 			oHeader = new CardNumericHeader({
@@ -318,7 +337,7 @@ function (
 
 		oHeader.attachPress(fnPressHandler);
 		oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		QUnitUtils.triggerKeydown(oToolbar.getDomRef(), KeyCodes.ENTER);
@@ -331,7 +350,7 @@ function (
 		oCard.destroy();
 	});
 
-	QUnit.test("Press is NOT fired when the toolbar is tapped", function (assert) {
+	QUnit.test("Press is NOT fired when the toolbar is tapped", async function (assert) {
 		// Arrange
 		var oToolbar = new Button(),
 			oHeader = new CardNumericHeader({
@@ -345,7 +364,7 @@ function (
 
 		oHeader.attachPress(fnPressHandler);
 		oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		QUnitUtils.triggerEvent("tap", oToolbar.getDomRef());
@@ -357,26 +376,29 @@ function (
 		oCard.destroy();
 	});
 
-	QUnit.module("Accessibility");
+	QUnit.module("Accessibility", {
+		afterEach
+	});
 
-	QUnit.test("Empty card", function (assert) {
+	QUnit.test("Empty card", async function (assert) {
 
 		// Arrange
 		var oCard = new Card();
 
 		// Act
 		oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.ok(oCard.getDomRef().getAttribute("aria-labelledby"), "aria-labelledby is set");
 
 		oCard.destroy();
 	});
 
-	QUnit.test("Header", function (assert) {
+	QUnit.test("Header", async function (assert) {
 
 		// Arrange
 		var oCard = createCard(CardHeader);
+		await nextUIUpdate(this.clock);
 
 		var oTitleDomRef = oCard.getDomRef().querySelector(".sapFCardTitle");
 		assert.strictEqual(oTitleDomRef.getAttribute("role"), "heading", "Card title's role is correct.");
@@ -389,7 +411,7 @@ function (
 		oCard.getHeader().attachPress(function () { });
 		oCard.invalidate();
 
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		$header = oCard.getHeader().$();
 		assert.strictEqual(oCard.getFocusDomRef().getAttribute("role"), "button" , "Header role is correct.");
@@ -398,10 +420,11 @@ function (
 		oCard.destroy();
 	});
 
-	QUnit.test("Numeric Header", function (assert) {
+	QUnit.test("Numeric Header", async function (assert) {
 
 		// Arrange
 		var oCard = createCard(CardNumericHeader);
+		await nextUIUpdate(this.clock);
 
 		var oTitleDomRef = oCard.getDomRef().querySelector(".sapFCardTitle");
 		assert.strictEqual(oTitleDomRef.getAttribute("role"), "heading", "Card title's role is correct.");
@@ -414,7 +437,7 @@ function (
 		oCard.getHeader().attachPress(function () { });
 		oCard.invalidate();
 
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		$header = oCard.getHeader().$();
 		assert.strictEqual(oCard.getFocusDomRef().getAttribute("role"), "button" , "Header role is correct.");
@@ -423,7 +446,7 @@ function (
 		oCard.destroy();
 	});
 
-	QUnit.test("Numeric Header with number set a bit later", function (assert) {
+	QUnit.test("Numeric Header with number set a bit later", async function (assert) {
 
 		// Arrange
 		var oCard = createCard(CardNumericHeader);
@@ -432,14 +455,14 @@ function (
 			number: "5",
 			state: "Error"
 		}));
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.equal(oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf("mainIndicator"), -1, "'aria-labelledby' does not contain main indicator id");
 
 		// Act
 		oCard.getCardHeader().setNumber("22");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf("mainIndicator") > -1, "'aria-labelledby' contains main indicator id");
@@ -461,7 +484,8 @@ function (
 					}
 				}
 			});
-		}
+		},
+		afterEach
 	});
 
 	QUnit.test("Card with custom header", function (assert) {
@@ -472,7 +496,7 @@ function (
 
 		try {
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync(); // TODO rendering async here might not allow to catch errors
 			assert.ok(true, "Card with custom header is successfully rendered");
 
 		} catch (e) {
@@ -482,15 +506,17 @@ function (
 		oCard.destroy();
 	});
 
-	QUnit.module("Badge");
+	QUnit.module("Badge", {
+		afterEach
+	});
 
-	QUnit.test("Rendering", function (assert) {
+	QUnit.test("Rendering", async function (assert) {
 
 		// Arrange
 		var oCard = createCard(CardHeader);
 
 		oCard.addCustomData(new BadgeCustomData({value: "New"}));
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		var $badgeIndicator = oCard.$().find(".sapMBadgeIndicator");
 
@@ -502,13 +528,13 @@ function (
 		oCard.destroy();
 	});
 
-	QUnit.test("Auto hide", function (assert) {
+	QUnit.test("Auto hide", async function (assert) {
 
 		// Arrange
 		var oCard = createCard(CardHeader);
 
 		oCard.addCustomData(new BadgeCustomData({value: "New"}));
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oCard.focus();
 
@@ -524,7 +550,7 @@ function (
 		assert.ok(oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) === -1, "aria-labelledby does not contain the badge indicator id");
 
 		oCard.addCustomData(new BadgeCustomData({value: "New"}));
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		$badgeIndicator = oCard.$().find(".sapMBadgeIndicator");
 

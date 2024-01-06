@@ -4,15 +4,15 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/f/AvatarGroup",
 	"sap/f/AvatarGroupItem",
-	"sap/ui/core/Core",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function (
 	Page,
 	AvatarGroup,
 	AvatarGroupItem,
-	Core,
-	KeyCodes
+	KeyCodes,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -45,7 +45,7 @@ function (
 
 	QUnit.module("Basic Rendering");
 
-	QUnit.test("Rendering", function (assert) {
+	QUnit.test("Rendering", async function (assert) {
 
 		// Arrange
 		var oAvatarGroup = new AvatarGroup({}),
@@ -53,7 +53,7 @@ function (
 
 		// Act
 		oAvatarGroup.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 		$oDomRef = oAvatarGroup.$();
 
 		// Assert
@@ -68,7 +68,7 @@ function (
 
 		// Act
 		oAvatarGroup.setGroupType("Individual");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok($oDomRef.hasClass("sapFAvatarGroupIndividual"),
@@ -83,12 +83,12 @@ function (
 		afterEach: teardownFunction
 	});
 
-	QUnit.test("AvatarGroup with avatarDisplaySize set to 'XS' then to 'L'", function (assert) {
+	QUnit.test("AvatarGroup with avatarDisplaySize set to 'XS' then to 'L'", async function (assert) {
 		// Arrange
 		var $oDomRef;
 		this.oAvatarGroup.setAvatarDisplaySize("XS");
 		this.oAvatarGroup.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		$oDomRef = this.oAvatarGroup.$();
@@ -100,7 +100,7 @@ function (
 
 		// Act
 		this.oAvatarGroup.setAvatarDisplaySize("L");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notOk($oDomRef.hasClass("sapFAvatarGroupXS"),
@@ -114,12 +114,12 @@ function (
 		});
 	});
 
-	QUnit.test("AvatarGroup with avatarDisplaySize set to 'Custom'", function (assert) {
+	QUnit.test("AvatarGroup with avatarDisplaySize set to 'Custom'", async function (assert) {
 		// Arrange
 		var $oDomRef;
 		this.oAvatarGroup.setAvatarDisplaySize("Custom");
 		this.oAvatarGroup.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		$oDomRef = this.oAvatarGroup.$();
@@ -134,7 +134,7 @@ function (
 		// Act
 		this.oAvatarGroup.setAvatarCustomDisplaySize("4rem");
 		this.oAvatarGroup.setAvatarCustomFontSize("1.5rem");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(this.oAvatarGroup.getAvatarCustomDisplaySize(), "4rem", "The AvatarGroup has 'avatarCustomDisplaySize' property changed to 4rem");
@@ -146,7 +146,7 @@ function (
 		});
 	});
 
-	QUnit.test("Avatar theme changing logic", function (assert) {
+	QUnit.test("Avatar theme changing logic", async function (assert) {
 		// Arrange
 		var oSpy = this.spy(this.oAvatarGroup, "_onResize");
 
@@ -158,7 +158,7 @@ function (
 
 		// Act
 		this.oAvatarGroup.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 		oSpy.resetHistory();
 		this.oAvatarGroup.onThemeChanged({ theme: "mock" });
 
@@ -186,7 +186,7 @@ function (
 		}
 	});
 
-	QUnit.test("AvatarGroupItems groupType", function (assert) {
+	QUnit.test("AvatarGroupItems groupType", async function (assert) {
 		// Arrange
 		var aItems = this.oAvatarGroup.getItems(),
 			oItem;
@@ -199,7 +199,7 @@ function (
 
 		// Act
 		this.oAvatarGroup.setGroupType("Individual");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		for (var i = 1; i <= aItems.length; i++) {
@@ -301,14 +301,14 @@ function (
 			"When button has at most two digits, substract one Avatar");
 	});
 
-	QUnit.test("_getAvatarWidth", function (assert) {
+	QUnit.test("_getAvatarWidth", async function (assert) {
 		// Assert
 		assert.strictEqual(this.oAvatarGroup._getAvatarWidth("M"), 4,
 			"Avatar width in Group mode is calculated correctly");
 
 		// Act
 		this.oAvatarGroup.setGroupType("Individual");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oAvatarGroup._getAvatarWidth("M"), 4,
@@ -362,10 +362,10 @@ function (
 		}
 	});
 
-	QUnit.test("_onResize showing the ShowMoreButton", function (assert) {
+	QUnit.test("_onResize showing the ShowMoreButton", async function (assert) {
 		// Arrange
 		this.oAvatarGroup.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.stub(this.oAvatarGroup, "_getWidth").returns(120);
 
 		// Act
@@ -377,10 +377,10 @@ function (
 		assert.strictEqual(this.oAvatarGroup._oShowMoreButton.getText(), "+3", "Text of show more button should be '+3'");
 	});
 
-	QUnit.test("_onResize not showing the ShowMoreButton", function (assert) {
+	QUnit.test("_onResize not showing the ShowMoreButton", async function (assert) {
 		// Arrange
 		this.oAvatarGroup.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.stub(this.oAvatarGroup, "_getWidth").returns(1000);
 
 		// Act
@@ -392,14 +392,14 @@ function (
 		assert.strictEqual(this.oAvatarGroup._oShowMoreButton.getText(), "", "Show more button should not have text");
 	});
 
-	QUnit.test("_onResize does not invalidates infinitely when control is not visible", function (assert) {
+	QUnit.test("_onResize does not invalidates infinitely when control is not visible", async function (assert) {
 		// Arrange
 		var oSpy;
 		this.oPage = new Page({
 			content: [ this.oAvatarGroup ]
 		});
 		this.oPage.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oSpy = this.spy(this.oAvatarGroup, "invalidate");
 
@@ -415,12 +415,12 @@ function (
 		this.oPage.destroy();
 	});
 
-	QUnit.test("non-interactive AvatarGroup - using _interactive property", function (assert) {
+	QUnit.test("non-interactive AvatarGroup - using _interactive property", async function (assert) {
 		//Arrange
 		this.oAvatarGroup.placeAt(DOM_RENDER_LOCATION);
 		this.oAvatarGroup._setInteractive(false);
 		var oFirePressSpy = this.spy(this.oAvatarGroup, "firePress");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.oAvatarGroup.ontap();

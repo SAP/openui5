@@ -2,13 +2,21 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/extensions/ExtensionBase",
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/AnalyticalTable",
-	"sap/ui/base/Object",
-	"sap/ui/core/Core"
-], function(TableQUnitUtils, ExtensionBase, Table, TreeTable, AnalyticalTable, BaseObject, oCore) {
+	"sap/ui/base/Object"
+], function(
+	TableQUnitUtils,
+	nextUIUpdate,
+	ExtensionBase,
+	Table,
+	TreeTable,
+	AnalyticalTable,
+	BaseObject
+) {
 	"use strict";
 
 	//************************************************************************
@@ -137,7 +145,7 @@ sap.ui.define([
 		assert.ok(oExtension.getInterface() === oExtension, "getInterface");
 	});
 
-	QUnit.test("Eventing", function(assert) {
+	QUnit.test("Eventing", async function(assert) {
 		assert.expect(10);
 
 		var iCounter = 0;
@@ -160,7 +168,7 @@ sap.ui.define([
 		};
 
 		oStandardTable.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(iCount == 0, "Balanced calls of attach and detach"); // beforeRendering calls _detachEvents, afterRendering _attachEvents
 		assert.ok(iCounter == 2, "Attach and detach called");
 

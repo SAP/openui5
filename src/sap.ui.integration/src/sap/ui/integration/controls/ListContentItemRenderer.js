@@ -32,7 +32,8 @@ sap.ui.define([
 		rm.class("sapUiIntLCI");
 
 		var iLines = oLI.getLinesCount(),
-			sIcon = oLI.getIcon();
+			sIcon = oLI.getIcon(),
+			vActionsStrip = oLI.getActionsStrip();
 
 		if (iLines === 1) {
 			rm.class("sapUiIntLCIOneLine");
@@ -46,7 +47,7 @@ sap.ui.define([
 			rm.class("sapUiIntLCIMultipleLines");
 		}
 
-		if (oLI.getActionsStrip()) {
+		if (vActionsStrip && vActionsStrip.hasVisibleItems()) {
 			rm.class("sapUiIntLCIWithActionsStrip");
 		}
 	};
@@ -90,7 +91,7 @@ sap.ui.define([
 		rm.close("div");
 		rm.close("div");
 
-		if (oActionsStrip) {
+		if (oActionsStrip && oActionsStrip.hasVisibleItems()) {
 			rm.renderControl(oActionsStrip);
 		}
 

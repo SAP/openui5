@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/table/plugins/SelectionPlugin",
-	"sap/ui/table/Table",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
@@ -16,7 +15,6 @@ sap.ui.define([
 	TableQUnitUtils,
 	MultiSelectionPlugin,
 	SelectionPlugin,
-	Table,
 	FixedRowMode,
 	TableUtils,
 	library,
@@ -605,7 +603,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Selection using addSelectionInterval: Number of items in range above limit", function(assert) {
+	QUnit.test("Selection using addSelectionInterval: Number of items in range above limit", async function(assert) {
 		var oTable = this.oTable;
 		var oSelectionPlugin = oTable._getSelectionPlugin();
 		var fnGetContexts = sinon.spy(oTable.getBinding(), "getContexts");
@@ -615,7 +613,7 @@ sap.ui.define([
 
 		oTable.getRowMode().setRowCount(3);
 		oSelectionPlugin.setLimit(5);
-		oCore.applyChanges();
+		await oTable.qunit.whenRenderingFinished();
 
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
 		oTable.attachFirstVisibleRowChanged(oFirstVisibleRowChangedSpy);
@@ -1141,7 +1139,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Select All", function(assert) {
+	QUnit.test("Select All", async function(assert) {
 		var oTable = this.oTable;
 		var oSelectionPlugin = oTable._getSelectionPlugin();
 		var fnGetContexts = sinon.spy(oTable.getBinding(), "getContexts");
@@ -1152,7 +1150,7 @@ sap.ui.define([
 
 		oSelectionPlugin.setLimit(0);
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
-		oCore.applyChanges();
+		await oTable.qunit.whenRenderingFinished();
 
 		assert.equal(oSelectionPlugin.getRenderConfig().headerSelector.type, "toggle", "The headerSelector type is toggle");
 
@@ -1186,7 +1184,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll position", function(assert) {
+	QUnit.test("Scroll position", async function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 		var oSelectionSpy = sinon.spy(oSelectionPlugin, "addSelectionInterval");
 		var $Cell;
@@ -1194,7 +1192,7 @@ sap.ui.define([
 
 		this.oTable.getRowMode().setRowCount(3);
 		oSelectionPlugin.setLimit(5);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		return new Promise(function(resolve) {
 			setTimeout(function() {
@@ -1228,7 +1226,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Scroll position (reverse range selection)", function(assert) {
+	QUnit.test("Scroll position (reverse range selection)", async function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 		var oSelectionSpy = sinon.spy(oSelectionPlugin, "addSelectionInterval");
 		var $Cell;
@@ -1236,7 +1234,7 @@ sap.ui.define([
 
 		this.oTable.getRowMode().setRowCount(3);
 		oSelectionPlugin.setLimit(5);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		return new Promise(function(resolve) {
 			setTimeout(function() {
@@ -1272,12 +1270,12 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Selection (selectionMode = Single)", function(assert) {
+	QUnit.test("Selection (selectionMode = Single)", async function(assert) {
 		var done = assert.async();
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 
 		oSelectionPlugin.setSelectionMode(SelectionMode.Single);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		var oCell = this.oTable.getDomRef("selall");
 		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
@@ -1307,11 +1305,11 @@ sap.ui.define([
 		oSelectionPlugin.addSelectionInterval(0, 9);
 	});
 
-	QUnit.test("Selection (selectionMode = None)", function(assert) {
+	QUnit.test("Selection (selectionMode = None)", async function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 
 		oSelectionPlugin.setSelectionMode(SelectionMode.None);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		var oCell = this.oTable.getDomRef("selall");
 		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
@@ -1401,7 +1399,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("#onKeyboardShortcut - Event Marking", function(assert) {
+	QUnit.test("#onKeyboardShortcut - Event Marking", async function(assert) {
 		const sEventMarker = "sapUiTableClearAll";
 		const oEvent = {
 			setMarked: function() {}
@@ -1413,7 +1411,7 @@ sap.ui.define([
 		const done = assert.async();
 
 		oSelectionPlugin.setLimit(0);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		oSelectionPlugin.attachEventOnce("selectionChange", () => {
 			assert.ok(oSelectAllSpy.calledOnce, "select all called");

@@ -6,9 +6,15 @@
 (function() {
 	"use strict";
 
-	/**
-	 * Listens for message with the src of the live-edited sample to be applied
-	 */
+	let Component;
+	let Core;
+
+	sap.ui.require(["sap/ui/core/Core", "sap/ui/core/Component"], (_Core, _Component) => {
+		Core = _Core;
+		Component = _Component;
+	});
+
+	// Listens for message with the src of the live-edited sample to be applied
 	window.addEventListener("message", function(oEvent) {
 		// We must verify that the origin of the sender of the message matches our
 		// expectations. In this case, we're only planning on accepting messages
@@ -20,21 +26,20 @@
 			return;
 		}
 
-		var oData = oEvent.data;
+		const oData = oEvent.data;
 
 		if (!oData || !oData.manifest) {
 			return;
 		}
 
-		sap.ui.getCore().attachInit(function () {
-			var oComponent = null;
+		Core?.ready(() => {
+			const oComponent = Component.getComponentById("container-hostAndExtensionActions");
 
 			if (oComponent) {
-				var oView = oComponent.getRootControl(),
-					oCard1 = oView.byId("card1");
-
+				const oView = oComponent.getRootControl(),
+				oCard1 = oView.byId("card1");
 				oCard1.setManifest(JSON.parse(oData.manifest));
 			}
-		})/*Not inside AMD call*/;
+		});
 	});
 })();

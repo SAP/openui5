@@ -2,12 +2,14 @@
 sap.ui.define([
 	"./DynamicPageUtil",
 	"sap/ui/core/Core",
-	"sap/ui/core/Theming"
+	"sap/ui/core/Theming",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	DynamicPageUtil,
 	Core,
-	Theming
+	Theming,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -40,18 +42,18 @@ function(
 		assert.strictEqual(sHeaderDefaultAggregation, "content", "The default aggregation is 'content'");
 	});
 
-	QUnit.test("DynamicPage Header pinnable and not pinnable", function (assert) {
+	QUnit.test("DynamicPage Header pinnable and not pinnable", async function (assert) {
 		var oHeader = this.oDynamicPage.getHeader(),
 				oPinButton = oHeader.getAggregation("_pinButton");
 
 		oHeader.setPinnable(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!oPinButton.$()[0],
 				"The DynamicPage Header Pin Button not rendered");
 
 		oHeader.setPinnable(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oPinButton.$()[0],
 				"The DynamicPage Header Pin Button rendered");
@@ -154,7 +156,7 @@ function(
 		assert.strictEqual(oDynamicPage.$().hasClass("sapFDynamicPageHeaderPinned"), false, "DynamicPage header should be unpinned.");
 	});
 
-	QUnit.test("DynamicPage toggle header indicators visibility", function (assert) {
+	QUnit.test("DynamicPage toggle header indicators visibility", async function (assert) {
 		var oDynamicPageTitle = this.oDynamicPage.getTitle(),
 				oDynamicPageHeader = this.oDynamicPage.getHeader(),
 				oCollapseButton = oDynamicPageHeader.getAggregation("_collapseButton"),
@@ -185,7 +187,7 @@ function(
 		// Act: re-render the Title and Header
 		oDynamicPageTitle.invalidate();
 		oDynamicPageHeader.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		$oCollapseButton = oCollapseButton.$();
 		$oExpandButton = oExpandButton.$();
 
@@ -237,7 +239,7 @@ function(
 		assert.ok(!oCollapseButton.hasStyleClass("sapUiHidden"), "Collapse button doesn`t have unrendered 'sapUiHidden' class");
 	});
 
-	QUnit.test("DynamicPage Header - backgroundDesign", function(assert) {
+	QUnit.test("DynamicPage Header - backgroundDesign", async function(assert) {
 		var oDynamicPageHeader = this.oDynamicPage.getHeader(),
 				$oDomRef = oDynamicPageHeader.$();
 
@@ -246,7 +248,7 @@ function(
 
 		// act
 		oDynamicPageHeader.setBackgroundDesign("Solid");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok($oDomRef.hasClass("sapFDynamicPageHeaderSolid"), "Should have sapFDynamicPageHeaderSolid class");
@@ -254,7 +256,7 @@ function(
 
 		// act
 		oDynamicPageHeader.setBackgroundDesign("Transparent");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapFDynamicPageHeaderSolid"), "Should not have sapFDynamicPageHeaderSolid class");
@@ -263,7 +265,7 @@ function(
 
 		// act
 		oDynamicPageHeader.setBackgroundDesign("Translucent");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapFDynamicPageHeaderTransparent"), "Should not have sapFDynamicPageHeaderTransparent class");

@@ -1,15 +1,15 @@
 /*global QUnit*/
 sap.ui.define([
-	"sap/ui/core/Core",
 	"./DynamicPageUtil",
 	"sap/f/DynamicPage",
-	"sap/ui/core/Element"
+	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 	function(
-		Core,
 		DynamicPageUtil,
 		DynamicPage,
-		Element
+		Element,
+		nextUIUpdate
 	) {
 		"use strict";
 
@@ -165,7 +165,7 @@ sap.ui.define([
 
 		QUnit.module("Association value");
 
-		QUnit.test("change the value", function (assert) {
+		QUnit.test("change the value", async function (assert) {
 			var oDynamicPage = oLibraryFactory.getDynamicPageWithStickySubheader(false /*preserveHeaderStateOnScroll*/, true  /*has header*/, true /*header visible*/, true /*has title*/),
 				sWrongStickySubheaderSource = "sWrongStickySubheaderSource",
 				sStickyContentProviderId;
@@ -178,17 +178,17 @@ sap.ui.define([
 			assert.equal(oDynamicPage.getStickySubheaderProvider(), sStickyContentProviderId,  "Sticky subheader provider is the control in content aggregation");
 
 			oDynamicPage.setStickySubheaderProvider(null);
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.equal(oDynamicPage._oStickySubheader, null,  "There was not setted sticky subheader");
 			assert.equal(oDynamicPage.getStickySubheaderProvider(), null,  "Sticky content is in sticky area");
 
 			oDynamicPage.setStickySubheaderProvider(sWrongStickySubheaderSource);
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.equal(oDynamicPage._oStickySubheader, null,  "There was not setted sticky subheader");
 			assert.equal(oDynamicPage.getStickySubheaderProvider(), sWrongStickySubheaderSource,  "Sticky content is in sticky area");
 
 			oDynamicPage.setStickySubheaderProvider(sStickyContentProviderId);
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.notEqual(oDynamicPage._oStickySubheader, null,  "There was setted sticky subheader");
 			assert.equal(oDynamicPage.getStickySubheaderProvider(), sStickyContentProviderId,  "Sticky content is in sticky area");
 
@@ -333,7 +333,7 @@ sap.ui.define([
 
 		QUnit.module("DynamicPage sticky content position while scrolling and rerendering iconTabBar");
 
-		QUnit.test("DynamicPage which has header and title", function (assert) {
+		QUnit.test("DynamicPage which has header and title", async function (assert) {
 			var oDynamicPage = oLibraryFactory.getDynamicPageWithStickySubheader(false /*preserveHeaderStateOnScroll*/, true  /*has header*/, true /*header visible*/, true /*has title*/),
 				oIconTabBar = oDynamicPage.getContent();
 
@@ -349,7 +349,7 @@ sap.ui.define([
 
 			//Act: rerender
 			oIconTabBar.invalidate();
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Check
 			assert.ok(oIconTabBar._getStickySubheaderSticked(), "Sticky content is still in sticky area");

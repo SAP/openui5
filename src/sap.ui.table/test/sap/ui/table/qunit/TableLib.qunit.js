@@ -1,6 +1,6 @@
 /*global QUnit */
 
-sap.ui.define(["sap/ui/core/Core", "sap/ui/core/Lib"], function(oCore, Library) {
+sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 	"use strict";
 
 	QUnit.module("Library", {});

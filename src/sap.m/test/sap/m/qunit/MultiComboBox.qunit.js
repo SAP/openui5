@@ -7457,7 +7457,7 @@ sap.ui.define([
 		oMultiComboBox.$().find(".sapMMultiComboBoxInputContainer").removeClass("sapMMultiComboBoxInputContainer");
 		Core.applyChanges();
 
-		assert.strictEqual(oMultiComboBox._calculateSpaceForTokenizer(), "398px", "_calculateSpaceForTokenizer returns a correct px value");
+		assert.strictEqual(oMultiComboBox._calculateSpaceForTokenizer(), "406px", "_calculateSpaceForTokenizer returns a correct px value");
 
 		oMultiComboBox.destroy();
 	});

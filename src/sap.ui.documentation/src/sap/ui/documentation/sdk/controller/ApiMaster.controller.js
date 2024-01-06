@@ -52,6 +52,8 @@ sap.ui.define([
 
 				// By default we don't show deprecated symbols in the tree
 				this._bIncludeDeprecated = false;
+				// By default we don't show experimental symbols in the tree
+				this._bIncludeExperimental = false;
 
 				// Cache references
 				this._oTree = this.byId("tree");
@@ -103,20 +105,20 @@ sap.ui.define([
 						isSelected: false,
 						name : "experimental",
 						displayName : "Experimental APIs",
-						bAllContentDeprecated: false,
-						visibility: "public"
+						visibility: "public",
+						preserveInTreeList: true
 					}, {
 						isSelected: false,
 						name : "deprecated",
 						displayName : "Deprecated APIs",
-						bAllContentDeprecated: false,
-						visibility: "public"
+						visibility: "public",
+						preserveInTreeList: true
 					}, {
 						isSelected: false,
 						name : "since",
 						displayName : "Index by Version",
-						bAllContentDeprecated: false,
-						visibility: "public"
+						visibility: "public",
+						preserveInTreeList: true
 					});
 				}
 
@@ -214,37 +216,36 @@ sap.ui.define([
 
 				if (!this._bIncludeDeprecated) {
 					aFilters.push(new Filter({
-						path: "bAllContentDeprecated",
-						operator: FilterOperator.EQ,
-						value1: false
+						filters: [
+							new Filter({ path: "preserveInTreeList", operator: FilterOperator.EQ, value1: true }),
+							new Filter({ path: "bAllContentDeprecated", operator: FilterOperator.EQ, value1: false })
+						],
+						and: false
+					}));
+				}
+
+				if (!this._bIncludeExperimental) {
+					aFilters.push(new Filter({
+						filters: [
+							new Filter({ path: "preserveInTreeList", operator: FilterOperator.EQ, value1: true }),
+							new Filter({path: "experimental", operator: FilterOperator.EQ, value1: false })
+						],
+						and: false
 					}));
 				}
 
 				if (this._sFilter) {
 					aFilters.push(new Filter({
-						and: false,
 						filters: [
-							new Filter({
-								path: "name",
-								operator: FilterOperator.Contains,
-								value1: this._sFilter
-							}),
-							new Filter({
-								path: "name",
-								operator: FilterOperator.Contains,
-								value1: this._sFilter.replace(/\s/g, '')
-							})
-						]
+							new Filter({ path: "name", operator: FilterOperator.Contains, value1: this._sFilter }),
+							new Filter({ path: "name", operator: FilterOperator.Contains, value1: this._sFilter.replace(/\s/g, '') })
+						],
+						and: false
 					}));
 				}
 
-				this._oTree.getBinding("items").filter(new Filter({
-					and: true,
-					filters: aFilters
-				}));
-
-				// Should the tree items be expanded or collapsed - in this case we take into account only the
-				// filter string
+				this._oTree.getBinding("items").filter(new Filter({ and: true, filters: aFilters }));
+				// Should the tree items be expanded or collapsed - in this case we take into account only the filter string
 				return !!this._sFilter;
 			},
 
@@ -253,8 +254,17 @@ sap.ui.define([
 			 * @param {object} oEvent from the checkbox
 			 */
 			onIncludeDeprecatedItemsChange: function (oEvent) {
-				this._bIncludeDeprecated = oEvent.getParameter("selected"); // Update include deprecated flag
-				this.buildAndApplyFilters(); // Update tree
+				this._bIncludeDeprecated = oEvent.getParameter("selected");
+				this.buildAndApplyFilters();
+			},
+
+			/**
+			 * Handler for the Checkbox
+			 * @param {object} oEvent from the checkbox
+			 */
+			onIncludeExperimentalItemsChange: function (oEvent) {
+				this._bIncludeExperimental = oEvent.getParameter("selected");
+				this.buildAndApplyFilters();
 			}
 		});
 	}

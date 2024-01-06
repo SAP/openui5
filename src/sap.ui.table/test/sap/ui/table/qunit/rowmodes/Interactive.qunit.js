@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/table/RowAction",
 	"sap/ui/table/rowmodes/Interactive",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -23,7 +22,6 @@ sap.ui.define([
 	RowAction,
 	InteractiveRowMode,
 	TableUtils,
-	Core,
 	qutils,
 	jQuery
 ) {
@@ -111,7 +109,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("D&D Resizer", function(assert) {
+	QUnit.test("D&D Resizer", async function(assert) {
 		const fnTestAdaptations = (bDuringResize) => {
 			assert.equal(this.oTable.getDomRef("rzoverlay") != null, bDuringResize,
 				"The handle to resize overlay is" + (bDuringResize ? "" : " not") + " visible");
@@ -149,7 +147,7 @@ sap.ui.define([
 		qutils.triggerMouseEvent($Table, "mouseup", 0, 0, 10, iY + 10, 0);
 		// resized table by 110px, in cozy mode this allows 2 rows to be added
 		assert.equal(this.oTable._getRowCounts().count, 12, "Visible rows after resize");
-		Core.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 		assert.ok(iInitialHeight < this.oTable.$().height(), "Height of the table increased");
 		fnTestAdaptations(false);
 	});

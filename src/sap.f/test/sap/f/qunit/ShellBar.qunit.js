@@ -10,13 +10,13 @@ sap.ui.define([
 	"sap/m/OverflowToolbarButton",
 	"sap/m/Avatar",
 	"sap/m/Menu",
-	"sap/ui/core/Core",
 	"sap/base/Log",
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MenuItem",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	SearchManager,
@@ -28,13 +28,13 @@ function(
 	OverflowToolbarButton,
 	Avatar,
 	Menu,
-	Core,
 	Log,
 	Library,
 	jQuery,
 	JSONModel,
 	MenuItem,
-	coreLibrary
+	coreLibrary,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -361,10 +361,10 @@ function(
 		}
 	});
 
-	QUnit.test("Defaults", function (assert) {
+	QUnit.test("Defaults", async function (assert) {
 		// Act
 		this.oSB.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(this.oSB.getDomRef(), "Control is rendered");
@@ -474,7 +474,7 @@ function(
 			"Property '_bOTBUpdateNeeded' set to false after method called");
 	});
 
-	QUnit.test("_assignControls - Full ShellBar", function (assert) {
+	QUnit.test("_assignControls - Full ShellBar", async function (assert) {
 		// Arrange
 		var oOTB = this.oSB._oOverflowToolbar,
 			oAdditionalButton1 = new OverflowToolbarButton(),
@@ -501,7 +501,7 @@ function(
 		// Act
 
 		this.oSB.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Arrange
 		aContent = oOTB.getContent();
@@ -546,14 +546,14 @@ function(
 		}
 	});
 
-	QUnit.test("ResponsiveHandler _handleResize on size changed", function (assert) {
+	QUnit.test("ResponsiveHandler _handleResize on size changed", async function (assert) {
 
 		// Arrange
 		var oControl = this.oSB,
 			oStub;
 
 		oControl.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 		oStub = this.stub(oControl._oResponsiveHandler, "_handleResize").callsFake(function() {
 			//Assert
 			assert.ok(true, "Responsivehandler delegated event called");
@@ -574,7 +574,7 @@ function(
 		assert.strictEqual(oHandleResizeSpy.callCount, 1, "_handleResize is called when the theme is applied and the values are cought");
 	});
 
-	QUnit.test("ResponsiveHandler phone/regular transformation test", function (assert) {
+	QUnit.test("ResponsiveHandler phone/regular transformation test", async function (assert) {
 
 		// Arrange
 		var oControl = this.oSB;
@@ -583,7 +583,7 @@ function(
 		oControl.setShowMenuButton(true);
 
 		oControl.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		document.getElementById(DOM_RENDER_LOCATION).style.width = 320 + "px";
@@ -625,7 +625,7 @@ function(
 
 	// Accessibility related tests
 	QUnit.module("Accessibility", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oSB = new ShellBar({
 				title: "Application title",
 				secondTitle: "Short description",
@@ -640,7 +640,7 @@ function(
 			this.oSB.setProfile(new Avatar({initials: "UI"}));
 			this.oRb = Library.getResourceBundleFor("sap.f");
 			this.oSB.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSB.destroy();
@@ -648,7 +648,7 @@ function(
 		}
 	});
 
-	QUnit.test("Hidden title behavior", function (assert) {
+	QUnit.test("Hidden title behavior", async function (assert) {
 		var sHiddenTitleId = '#' + this.oSB.getId() + '-titleHidden',
 			$oHiddenTitle = jQuery(sHiddenTitleId),
 			sTitle = this.oSB.getTitle(),
@@ -659,7 +659,7 @@ function(
 
 		// Act
 		this.oSB.setShowMenuButton(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 		$oHiddenTitle = jQuery(sHiddenTitleId);
 
 		// Assert
@@ -671,7 +671,7 @@ function(
 
 		// Act
 		this.oSB.setTitle(sNewTitle);
-		Core.applyChanges();
+		await nextUIUpdate();
 		$oHiddenTitle = jQuery(sHiddenTitleId);
 
 		//Assert
@@ -826,7 +826,7 @@ function(
 	});
 
 	QUnit.module("Managed Search", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			var oSearchManager = new SearchManager();
 
 			oSearchManager._oSearch.setIsOpen(true);
@@ -850,7 +850,7 @@ function(
 
 
 			this.oSB.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSB.destroy();
@@ -883,7 +883,7 @@ function(
 			"Full width search class list was added to Shell Bar.");
 	});
 
-	QUnit.test("LayoutData of Search", function (assert) {
+	QUnit.test("LayoutData of Search", async function (assert) {
 		// Arrange
 		var oSB = this.oSB,
 		oSearchManager = this.oSB.getSearchManager(),
@@ -914,7 +914,7 @@ function(
 		// Act
 		oSearchManager._oSearch.setIsOpen(false);
 		this.oSB._oResponsiveHandler._transformToPhoneState();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		setTimeout(function () {
 			oSearchManager._oSearch.addEventDelegate(oSearchEventDelegate);
@@ -923,7 +923,7 @@ function(
 		}.bind(this), 1000);
 	});
 
-	QUnit.test("Mobile requirements with both configuration - with or without menu button", function (assert) {
+	QUnit.test("Mobile requirements with both configuration - with or without menu button", async function (assert) {
 
 		// Act
 		this.oSB.setMenu(new Menu({items:[new MenuItem()]}));
@@ -938,7 +938,7 @@ function(
 			"bar hides all the content on left on mobile with menu button");
 		// Act
 		this.oSB.setShowMenuButton(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oSB._oMegaMenu.$().css("visibility"), "hidden", true, "Search " +
@@ -947,7 +947,7 @@ function(
 	});
 
 	QUnit.module("Events", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oSB = new ShellBar({
 				title: "Application title",
 				secondTitle: "Short description",
@@ -961,7 +961,7 @@ function(
 				profile: new Avatar({initials: "UI"})
 			});
 			this.oSB.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSB.destroy();
@@ -1187,7 +1187,7 @@ function(
 	});
 
 	QUnit.module("AdditionalDataSupport", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oSB = new ShellBar({
 				additionalContent: [
 					new OverflowToolbarButton({
@@ -1202,7 +1202,7 @@ function(
 				]
 			});
 			this.oSB.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSB.destroy();
@@ -1298,7 +1298,7 @@ function(
 	});
 
 	QUnit.module("Binding", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			var oModel = new JSONModel({
 				initials: "KS"
 			});
@@ -1306,20 +1306,20 @@ function(
 			this.oSB = new ShellBar();
 			this.oSB.setModel(oModel);
 			this.oSB.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSB.destroy();
 		}
 	});
 
-	QUnit.test("Profile aggregation", function (assert) {
+	QUnit.test("Profile aggregation", async function (assert) {
 		var oAvatar = new Avatar({
 			initials: '{/initials}'
 		});
 
 		this.oSB.setProfile(oAvatar);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(this.oSB.getProfile().getInitials(), "KS", "Initials are set correctly");

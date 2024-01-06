@@ -1,20 +1,28 @@
-/*global QUnit, sinon, oTable, oTreeTable */
+/*global QUnit, sinon, oTable */
 
 sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/Device",
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/Row",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/core/Core",
-	"sap/ui/table/qunit/TableQUnitUtils" // implicitly used via globals (e.g. createTables)
-], function(TableUtils, Device, Table, TreeTable, AnalyticalTable, Row, oCore) {
+	"sap/ui/Device"
+], function(
+	TableQUnitUtils,
+	TableUtils,
+	Table,
+	TreeTable,
+	AnalyticalTable,
+	Row,
+	FixedRowMode,
+	oCore,
+	Device
+) {
 	"use strict";
 
-	// mapping of global function calls
-	var oModel = window.oModel;
-	var aFields = window.aFields;
 	var createTables = window.createTables;
 	var destroyTables = window.destroyTables;
 	var getCell = window.getCell;
@@ -26,18 +34,9 @@ sap.ui.define([
 	var initRowActions = window.initRowActions;
 	var fakeSumRow = window.fakeSumRow;
 	var fakeGroupRow = window.fakeGroupRow;
-
-	// Shortcuts
 	var Grouping = TableUtils.Grouping;
 
-	QUnit.module("Misc", {
-		beforeEach: function() {
-			createTables();
-		},
-		afterEach: function() {
-			destroyTables();
-		}
-	});
+	QUnit.module("Misc");
 
 	QUnit.test("Connection to TableUtils", function(assert) {
 		assert.ok(!!TableUtils.Grouping, "Grouping namespace available");
@@ -95,14 +94,14 @@ sap.ui.define([
 
 	QUnit.module("Hierarchy modes", {
 		beforeEach: function() {
-			createTables();
+			this.oTable = TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
-			destroyTables();
+			this.oTable.destroy();
 		},
 		assertMode: function(assert, sExpectedMode, sMessage) {
 			sMessage = "Table is in mode '" + sExpectedMode + "'" + (sMessage ? " - " + sMessage : "");
-			assert.strictEqual(TableUtils.Grouping.getHierarchyMode(oTable), sExpectedMode, sMessage);
+			assert.strictEqual(TableUtils.Grouping.getHierarchyMode(this.oTable), sExpectedMode, sMessage);
 		},
 		assertAccessors: function(assert, bFlat, bGroup, bTree) {
 			var sModeCSSClass = null;
@@ -113,10 +112,10 @@ sap.ui.define([
 				sModeCSSClass = "sapUiTableTreeMode";
 			}
 
-			assert.strictEqual(Grouping.isInFlatMode(oTable), bFlat, "#isInFlatMode");
-			assert.strictEqual(Grouping.isInGroupMode(oTable), bGroup, "#isInGroupMode");
-			assert.strictEqual(Grouping.isInTreeMode(oTable), bTree, "#isInTreeMode");
-			assert.strictEqual(Grouping.getModeCssClass(oTable), sModeCSSClass, "#getModeCssClass");
+			assert.strictEqual(Grouping.isInFlatMode(this.oTable), bFlat, "#isInFlatMode");
+			assert.strictEqual(Grouping.isInGroupMode(this.oTable), bGroup, "#isInGroupMode");
+			assert.strictEqual(Grouping.isInTreeMode(this.oTable), bTree, "#isInTreeMode");
+			assert.strictEqual(Grouping.getModeCssClass(this.oTable), sModeCSSClass, "#getModeCssClass");
 		},
 		assertAccessorsForFlatMode: function(assert) {
 			this.assertAccessors(assert, true, false, false);
@@ -135,86 +134,87 @@ sap.ui.define([
 	});
 
 	QUnit.test("Set to default flat mode", function(assert) {
-		Grouping.setToDefaultGroupMode(oTable);
-		Grouping.setToDefaultFlatMode(oTable);
+		Grouping.setToDefaultGroupMode(this.oTable);
+		Grouping.setToDefaultFlatMode(this.oTable);
 		this.assertMode(assert, Grouping.HierarchyMode.Flat);
 		this.assertAccessorsForFlatMode(assert);
 	});
 
 	QUnit.test("Set to default group mode", function(assert) {
-		Grouping.setToDefaultGroupMode(oTable);
+		Grouping.setToDefaultGroupMode(this.oTable);
 		this.assertMode(assert, Grouping.HierarchyMode.Group);
 		this.assertAccessorsForGroupMode(assert);
 	});
 
 	QUnit.test("Set to default tree mode", function(assert) {
-		Grouping.setToDefaultTreeMode(oTable);
+		Grouping.setToDefaultTreeMode(this.oTable);
 		this.assertMode(assert, Grouping.HierarchyMode.Tree);
 		this.assertAccessorsForTreeMode(assert);
 	});
 
 	QUnit.test("Set mode to '" + Grouping.HierarchyMode.Flat + "'", function(assert) {
-		Grouping.setHierarchyMode(oTable, Grouping.HierarchyMode.Group);
-		Grouping.setHierarchyMode(oTable, Grouping.HierarchyMode.Flat);
+		Grouping.setHierarchyMode(this.oTable, Grouping.HierarchyMode.Group);
+		Grouping.setHierarchyMode(this.oTable, Grouping.HierarchyMode.Flat);
 		this.assertMode(assert, Grouping.HierarchyMode.Flat);
 		this.assertAccessorsForFlatMode(assert);
 	});
 
 	QUnit.test("Set mode to '" + Grouping.HierarchyMode.Group + "'", function(assert) {
-		Grouping.setHierarchyMode(oTable, Grouping.HierarchyMode.Group);
+		Grouping.setHierarchyMode(this.oTable, Grouping.HierarchyMode.Group);
 		this.assertMode(assert, Grouping.HierarchyMode.Group);
 		this.assertAccessorsForGroupMode(assert);
 	});
 
 	QUnit.test("Set mode to '" + Grouping.HierarchyMode.Tree + "'", function(assert) {
-		Grouping.setHierarchyMode(oTable, Grouping.HierarchyMode.Tree);
+		Grouping.setHierarchyMode(this.oTable, Grouping.HierarchyMode.Tree);
 		this.assertMode(assert, Grouping.HierarchyMode.Tree);
 		this.assertAccessorsForTreeMode(assert);
 	});
 
 	QUnit.test("Set mode to '" + Grouping.HierarchyMode.GroupedTree + "'", function(assert) {
-		Grouping.setHierarchyMode(oTable, Grouping.HierarchyMode.GroupedTree);
+		Grouping.setHierarchyMode(this.oTable, Grouping.HierarchyMode.GroupedTree);
 		this.assertMode(assert, Grouping.HierarchyMode.GroupedTree);
 		this.assertAccessorsForGroupMode(assert);
 	});
 
 	QUnit.test("Set invalid mode'", function(assert) {
-		Grouping.setHierarchyMode(oTable, "I_do_not_exist");
+		Grouping.setHierarchyMode(this.oTable, "I_do_not_exist");
 		this.assertMode(assert, Grouping.HierarchyMode.Flat, "Set to invalid string");
 		this.assertAccessorsForFlatMode(assert);
 
-		Grouping.setHierarchyMode(oTable);
+		Grouping.setHierarchyMode(this.oTable);
 		this.assertMode(assert, Grouping.HierarchyMode.Flat, "Set to 'undefined'");
 		this.assertAccessorsForFlatMode(assert);
 	});
 
 	QUnit.test("Table invalidation", function(assert) {
-		var oInvalidate = this.spy(oTable, "invalidate");
+		var oInvalidate = this.spy(this.oTable, "invalidate");
 		var sCurrentMode = "default flat";
 		var mGroupModeSetter = {};
+		var HierarchyMode = Grouping.HierarchyMode;
 
-		mGroupModeSetter["default flat"] = Grouping.setToDefaultFlatMode.bind(Grouping, oTable);
-		mGroupModeSetter["default group"] = Grouping.setToDefaultGroupMode.bind(Grouping, oTable);
-		mGroupModeSetter["default tree"] = Grouping.setToDefaultTreeMode.bind(Grouping, oTable);
-		mGroupModeSetter[Grouping.HierarchyMode.Flat] = Grouping.setHierarchyMode.bind(Grouping, oTable, Grouping.HierarchyMode.Flat);
-		mGroupModeSetter[Grouping.HierarchyMode.Group] = Grouping.setHierarchyMode.bind(Grouping, oTable, Grouping.HierarchyMode.Group);
-		mGroupModeSetter[Grouping.HierarchyMode.Tree] = Grouping.setHierarchyMode.bind(Grouping, oTable, Grouping.HierarchyMode.Tree);
-		mGroupModeSetter[Grouping.HierarchyMode.GroupedTree] = Grouping.setHierarchyMode.bind(Grouping, oTable, Grouping.HierarchyMode.GroupedTree);
+		mGroupModeSetter["default flat"] = Grouping.setToDefaultFlatMode.bind(Grouping, this.oTable);
+		mGroupModeSetter["default group"] = Grouping.setToDefaultGroupMode.bind(Grouping, this.oTable);
+		mGroupModeSetter["default tree"] = Grouping.setToDefaultTreeMode.bind(Grouping, this.oTable);
+		mGroupModeSetter[HierarchyMode.Flat] = Grouping.setHierarchyMode.bind(Grouping, this.oTable, HierarchyMode.Flat);
+		mGroupModeSetter[HierarchyMode.Group] = Grouping.setHierarchyMode.bind(Grouping, this.oTable, HierarchyMode.Group);
+		mGroupModeSetter[HierarchyMode.Tree] = Grouping.setHierarchyMode.bind(Grouping, this.oTable, HierarchyMode.Tree);
+		mGroupModeSetter[HierarchyMode.GroupedTree] = Grouping.setHierarchyMode.bind(Grouping, this.oTable, HierarchyMode.GroupedTree);
 
 		[
 			{newMode: "default flat", expectInvalidation: false},
-			{newMode: Grouping.HierarchyMode.Flat, expectInvalidation: false},
+			{newMode: HierarchyMode.Flat, expectInvalidation: false},
 			{newMode: "default group", expectInvalidation: true},
 			{newMode: "default group", expectInvalidation: false},
-			{newMode: Grouping.HierarchyMode.Group, expectInvalidation: false},
+			{newMode: HierarchyMode.Group, expectInvalidation: false},
 			{newMode: "default tree", expectInvalidation: true},
 			{newMode: "default tree", expectInvalidation: false},
-			{newMode: Grouping.HierarchyMode.Tree, expectInvalidation: false},
-			{newMode: Grouping.HierarchyMode.Flat, expectInvalidation: true},
-			{newMode: Grouping.HierarchyMode.Group, expectInvalidation: true},
-			{newMode: Grouping.HierarchyMode.GroupedTree, expectInvalidation: true},
-			{newMode: Grouping.HierarchyMode.Tree, expectInvalidation: true},
-			{newMode: Grouping.HierarchyMode.GroupedTree, expectInvalidation: true}
+			{newMode: HierarchyMode.Tree, expectInvalidation: false},
+			{newMode: HierarchyMode.Flat, expectInvalidation: true},
+			{newMode: HierarchyMode.Group, expectInvalidation: true},
+			{newMode: HierarchyMode.GroupedTree, expectInvalidation: true},
+			{newMode: HierarchyMode.Tree, expectInvalidation: true},
+			{newMode: HierarchyMode.GroupedTree, expectInvalidation: true}
 		].forEach(function(mTestSettings) {
 			mGroupModeSetter[mTestSettings.newMode]();
 			assert.equal(oInvalidate.callCount, mTestSettings.expectInvalidation ? 1 : 0,
@@ -225,13 +225,19 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
-			createTables();
-			oTreeTable.getRowMode().setRowCount(12);
-			oCore.applyChanges();
+		beforeEach: async function() {
+			this.oTreeTable = TableQUnitUtils.createTable(TreeTable, {
+				rowMode: new FixedRowMode({
+					rowCount: 12
+				}),
+				rows: "{/}",
+				columns: TableQUnitUtils.createTextColumn(),
+				models: TableQUnitUtils.createJSONModel(11)
+			});
+			await this.oTreeTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
-			destroyTables();
+			this.oTreeTable.destroy();
 		}
 	});
 
@@ -292,155 +298,154 @@ sap.ui.define([
 	});
 
 	QUnit.test("Tree Mode", function(assert) {
-		var done = assert.async();
-		var bSecondPass = false;
+		for (const oRow of this.oTreeTable.getRows()) {
+			const oTreeIcon = oRow.getDomRef("col0").querySelector(".sapUiTableTreeIcon");
+			let sClass = "sapUiTableTreeIconNodeClosed";
 
-		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
-		assert.ok(!oTreeTable.getBinding().isExpanded(0), "!Expanded");
-
-		var fnHandler = function() {
-			var iCount = iNumberOfRows + 1;
-
-			if (bSecondPass) {
-				iCount++;
-				assert.ok(oTreeTable.getBinding().isExpanded(0), "Expanded");
-				assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows + 1, "Row count after expand");
+			if (oRow.getIndex() === 11) {
+				sClass = "sapUiTableTreeIconLeaf";
 			}
 
-			for (var i = 0; i < iCount; i++) {
-				var oRow = oTreeTable.getRows()[i];
-				var oTreeIcon = oRow.getDomRef("col0").querySelector(".sapUiTableTreeIcon");
-				assert.ok(oTreeIcon != null, "Tree Icon Available in first column - row " + (i + 1));
-				var sClass = "sapUiTableTreeIconNodeClosed";
-				if (bSecondPass) {
-					if (i === 0) {
-						sClass = "sapUiTableTreeIconNodeOpen";
-					} else if (i === 1) {
-						sClass = "sapUiTableTreeIconLeaf";
-					} else if (i === iCount - 1) {
-						sClass = "sapUiTableTreeIconLeaf";
-					}
-				} else if (i === iCount - 1) {
-					sClass = "sapUiTableTreeIconLeaf";
-				}
-				assert.ok(oTreeIcon.classList.contains(sClass), "Icon has correct expand state: " + sClass);
-			}
-
-			if (bSecondPass) {
-				oTreeTable.setShowNoData(false);
-				oTreeTable.unbindRows();
-				oCore.applyChanges();
-
-				for (var i = 0; i < 12; i++) {
-					var oRow = oTreeTable.getRows()[i];
-					var oTreeIcon = oRow.getDomRef("col0").querySelector(".sapUiTableTreeIcon");
-					assert.ok(!oTreeIcon.classList.contains("sapUiTableTreeIconNodeOpen"),
-						"No state class on icon after unbind: sapUiTableTreeIconNodeOpen");
-					assert.ok(!oTreeIcon.classList.contains("sapUiTableTreeIconLeaf"),
-						"No state class on icon after unbind: sapUiTableTreeIconLeaf");
-					assert.ok(!oTreeIcon.classList.contains("sapUiTableTreeIconNodeClosed"),
-						"No state class on icon after unbind: sapUiTableTreeIconNodeClosed");
-				}
-
-				done();
-			}
-		};
-
-		fnHandler();
-
-		bSecondPass = true;
-		oTreeTable.attachEventOnce("rowsUpdated", fnHandler);
-		oTreeTable.getRows()[0].expand();
+			assert.ok(oTreeIcon != null, "Tree Icon Available in first column - " + oRow);
+			assert.ok(oTreeIcon.classList.contains(sClass), "Icon has correct expand state: " + sClass);
+		}
 	});
 
-	QUnit.test("Group Mode", function(assert) {
-		var done = assert.async();
-		var bSecondPass = false;
+	QUnit.test("Tree Mode; After expand", async function(assert) {
+		this.oTreeTable.getRows()[0].expand();
+		await this.oTreeTable.qunit.whenRenderingFinished();
 
-		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
-		assert.ok(!oTreeTable.getBinding().isExpanded(0), "!Expanded");
+		for (const oRow of this.oTreeTable.getRows()) {
+			const oTreeIcon = oRow.getDomRef("col0").querySelector(".sapUiTableTreeIcon");
+			const iRowIndex = oRow.getIndex();
+			let sClass = "sapUiTableTreeIconNodeClosed";
 
-		var fnHandler = function() {
-			var iCount = iNumberOfRows + 1;
-
-			if (bSecondPass) {
-				iCount++;
-				assert.ok(oTreeTable.getBinding().isExpanded(0), "Expanded");
-				assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows + 1, "Row count after expand");
+			if (iRowIndex === 0) {
+				sClass = "sapUiTableTreeIconNodeOpen";
+			} else if (iRowIndex === 1) {
+				sClass = "sapUiTableTreeIconLeaf";
 			}
 
-			for (var i = 0; i < iCount; i++) {
-				var oRow = oTreeTable.getRows()[i];
-				var $Row = oRow.$();
-				var oRowHeader = oTreeTable.getDomRef("rowsel" + i).parentElement;
-				var oGroupHeader = oRow.getDomRef("groupHeader");
-				var bExpectGroupHeaderClass = true;
-				var bExpectExpanded = false;
-				if (bSecondPass && i === 1) {
-					bExpectGroupHeaderClass = false;
-				} else if (bSecondPass && i === 0) {
-					bExpectExpanded = true;
-				} else if (i === iCount - 1) {
-					bExpectGroupHeaderClass = false;
-				}
-				assert.ok($Row.hasClass("sapUiTableGroupHeaderRow") && bExpectGroupHeaderClass || !$Row.hasClass("sapUiTableGroupHeaderRow")
-						  && !bExpectGroupHeaderClass, "Row " + (i + 1) + " is Group Header");
-				assert.ok(oRowHeader.classList.contains("sapUiTableGroupHeaderRow") && bExpectGroupHeaderClass
-						  || !oRowHeader.classList.contains("sapUiTableGroupHeaderRow") && !bExpectGroupHeaderClass,
-					"Row Header " + (i + 1) + " is Group Header");
-				if (bExpectExpanded) {
-					assert.ok(oGroupHeader.classList.contains("sapUiTableGroupIconOpen"), "Header has correct expand state");
-				} else if (bExpectGroupHeaderClass) {
-					assert.ok(oGroupHeader.classList.contains("sapUiTableGroupIconClosed"), "Header has correct expand state");
-				} else {
-					assert.ok(!oGroupHeader.classList.contains("sapUiTableGroupIconClosed")
-							  && !oGroupHeader.classList.contains("sapUiTableGroupIconOpen"),
-						"Header has correct expand state");
-				}
-			}
-
-			if (bSecondPass) {
-				oTreeTable.setShowNoData(false);
-				oTreeTable.unbindRows();
-				oCore.applyChanges();
-
-				for (var i = 0; i < 12; i++) {
-					var $Row = oTreeTable.getRows()[i].$();
-					assert.ok(!$Row.hasClass("sapUiTableGroupHeaderRow"), "No group headers any more after unbind");
-				}
-
-				done();
-			}
-		};
-
-		oTreeTable.setUseGroupMode(true);
-		oCore.applyChanges();
-
-		fnHandler();
-
-		bSecondPass = true;
-		oTreeTable.attachEventOnce("rowsUpdated", fnHandler);
-		oTreeTable.getRows()[0].expand();
+			assert.ok(oTreeIcon != null, "Tree Icon Available in first column - " + oRow);
+			assert.ok(oTreeIcon.classList.contains(sClass), "Icon has correct expand state: " + sClass);
+		}
 	});
 
-	QUnit.test("GroupMenuButton", function(assert) {
-		var i;
+	QUnit.test("Tree Mode; After unbind with showNoData=false", async function(assert) {
+		this.oTreeTable.setShowNoData(false);
+		this.oTreeTable.unbindRows();
+		await this.oTreeTable.qunit.whenRenderingFinished();
+
+		for (const oRow of this.oTreeTable.getRows()) {
+			const oTreeIcon = oRow.getDomRef("col0").querySelector(".sapUiTableTreeIcon");
+
+			assert.ok(!oTreeIcon.classList.contains("sapUiTableTreeIconNodeOpen"),
+				"No state class on icon after unbind: sapUiTableTreeIconNodeOpen");
+			assert.ok(!oTreeIcon.classList.contains("sapUiTableTreeIconLeaf"),
+				"No state class on icon after unbind: sapUiTableTreeIconLeaf");
+			assert.ok(!oTreeIcon.classList.contains("sapUiTableTreeIconNodeClosed"),
+				"No state class on icon after unbind: sapUiTableTreeIconNodeClosed");
+		}
+	});
+
+	QUnit.test("Group Mode", async function(assert) {
+		this.oTreeTable.setUseGroupMode(true);
+		await this.oTreeTable.qunit.whenRenderingFinished();
+
+		for (const oRow of this.oTreeTable.getRows()) {
+			const iRowIndex = oRow.getIndex();
+			const oRowElement = oRow.getDomRef();
+			const oRowHeader = this.oTreeTable.qunit.getRowHeaderCell(iRowIndex).parentElement;
+			const oGroupHeader = oRow.getDomRef("groupHeader");
+			let bExpectGroupHeaderClass = true;
+
+			if (iRowIndex === 11) {
+				bExpectGroupHeaderClass = false;
+			}
+
+			assert.ok(oRowElement.classList.contains("sapUiTableGroupHeaderRow") && bExpectGroupHeaderClass
+				|| !oRowElement.classList.contains("sapUiTableGroupHeaderRow") && !bExpectGroupHeaderClass,
+				"Row " + oRow + " is Group Header");
+			assert.ok(oRowHeader.classList.contains("sapUiTableGroupHeaderRow") && bExpectGroupHeaderClass
+				|| !oRowHeader.classList.contains("sapUiTableGroupHeaderRow") && !bExpectGroupHeaderClass,
+				"Row Header " + oRow + " is Group Header");
+
+			if (bExpectGroupHeaderClass) {
+				assert.ok(oGroupHeader.classList.contains("sapUiTableGroupIconClosed"), "Header has correct expand state");
+			} else {
+				assert.ok(!oGroupHeader.classList.contains("sapUiTableGroupIconClosed")
+					&& !oGroupHeader.classList.contains("sapUiTableGroupIconOpen"),
+					"Header has correct expand state");
+			}
+		}
+	});
+
+	QUnit.test("Group Mode; After expand", async function(assert) {
+		this.oTreeTable.setUseGroupMode(true);
+		this.oTreeTable.getRows()[0].expand();
+		await this.oTreeTable.qunit.whenRenderingFinished();
+
+		for (const oRow of this.oTreeTable.getRows()) {
+			const iRowIndex = oRow.getIndex();
+			const oRowElement = oRow.getDomRef();
+			const oRowHeader = this.oTreeTable.qunit.getRowHeaderCell(iRowIndex).parentElement;
+			const oGroupHeader = oRow.getDomRef("groupHeader");
+			let bExpectGroupHeaderClass = true;
+			let bExpectExpanded = false;
+
+			if (iRowIndex === 1) {
+				bExpectGroupHeaderClass = false;
+			} else if (iRowIndex === 0) {
+				bExpectExpanded = true;
+			}
+
+			assert.ok(oRowElement.classList.contains("sapUiTableGroupHeaderRow") && bExpectGroupHeaderClass
+				|| !oRowElement.classList.contains("sapUiTableGroupHeaderRow") && !bExpectGroupHeaderClass,
+				"Row " + oRow + " is Group Header");
+			assert.ok(oRowHeader.classList.contains("sapUiTableGroupHeaderRow") && bExpectGroupHeaderClass
+				|| !oRowHeader.classList.contains("sapUiTableGroupHeaderRow") && !bExpectGroupHeaderClass,
+				"Row Header " + oRow + " is Group Header");
+
+			if (bExpectExpanded) {
+				assert.ok(oGroupHeader.classList.contains("sapUiTableGroupIconOpen"), "Header has correct expand state");
+			} else if (bExpectGroupHeaderClass) {
+				assert.ok(oGroupHeader.classList.contains("sapUiTableGroupIconClosed"), "Header has correct expand state");
+			} else {
+				assert.ok(!oGroupHeader.classList.contains("sapUiTableGroupIconClosed")
+					&& !oGroupHeader.classList.contains("sapUiTableGroupIconOpen"),
+					"Header has correct expand state");
+			}
+		}
+	});
+
+	QUnit.test("Group Mode; After unbind with showNoData=false", async function(assert) {
+		this.oTreeTable.setUseGroupMode(true);
+		this.oTreeTable.setShowNoData(false);
+		this.oTreeTable.unbindRows();
+		await this.oTreeTable.qunit.whenRenderingFinished();
+
+		assert.notOk(this.oTreeTable.getRows().some((oRow) => oRow.getDomRef().classList.contains("sapUiTableGroupHeaderRow")),
+			"Group headers after unbind");
+	});
+
+	QUnit.test("GroupMenuButton", async function(assert) {
 		var oGroupMenuButton;
-		oTreeTable.setUseGroupMode(true);
-		oCore.applyChanges();
 
-		for (i = 0; i < 12; i++) {
-			oGroupMenuButton = oTreeTable.getDomRef("rowsel" + i).querySelector(".sapUiTableGroupMenuButton");
-			assert.ok(oGroupMenuButton == null, "Row Header " + i + " has no GroupMenuButton");
+		this.oTreeTable.setUseGroupMode(true);
+		await this.oTreeTable.qunit.whenRenderingFinished();
+
+		for (const oRow of this.oTreeTable.getRows()) {
+			oGroupMenuButton = this.oTreeTable.qunit.getRowHeaderCell(oRow.getIndex()).querySelector(".sapUiTableGroupMenuButton");
+			assert.ok(oGroupMenuButton == null, "Row Header " + oRow + " has no GroupMenuButton");
 		}
 
 		sinon.stub(TableUtils.Grouping, "showGroupMenuButton").returns(true);
-		oTreeTable.invalidate();
-		oCore.applyChanges();
+		this.oTreeTable.invalidate();
+		await this.oTreeTable.qunit.whenRenderingFinished();
 
-		for (i = 0; i < 12; i++) {
-			oGroupMenuButton = oTreeTable.getDomRef("rowsel" + i).querySelector(".sapUiTableGroupMenuButton");
-			assert.ok(oGroupMenuButton != null, "Row Header " + i + " has GroupMenuButton");
+		for (const oRow of this.oTreeTable.getRows()) {
+			oGroupMenuButton = this.oTreeTable.qunit.getRowHeaderCell(oRow.getIndex()).querySelector(".sapUiTableGroupMenuButton");
+			assert.ok(oGroupMenuButton != null, "Row Header " + oRow + " has GroupMenuButton");
 		}
 
 		TableUtils.Grouping.showGroupMenuButton.restore();

@@ -36,8 +36,7 @@ sap.ui.define(function() {
 					}
 				},
 				ui5: {
-					libs: "sap.ui.core,sap.ui.testlib,sap.ui.layout",
-					theme: "sap_horizon"
+					libs: "sap.ui.core,sap.ui.testlib,sap.ui.layout"
 				},
 				qunit: {
 					reorder: false

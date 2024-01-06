@@ -329,7 +329,6 @@ sap.ui.define([
 		return this.checkRowsUpdated(assert, []).then(() => {
 			this.resetRowsUpdatedSpy();
 			this.oTable.invalidate();
-			Core.applyChanges();
 			return this.checkRowsUpdated(assert, []);
 		}).then(() => {
 			this.resetRowsUpdatedSpy();
@@ -399,7 +398,6 @@ sap.ui.define([
 		return fnOriginalTest().then(() => {
 			this.resetRowsUpdatedSpy();
 			this.oTable.getRowMode().setRowContentHeight(this.oTable._getDefaultRowHeight() + 20); // The table will show less rows.
-			Core.applyChanges();
 			return this.checkRowsUpdated(assert, []);
 		});
 	}
@@ -410,7 +408,6 @@ sap.ui.define([
 			return TableQUnitUtils.hideTestContainer();
 		}).then(() => {
 			this.oTable.getRowMode().setRowContentHeight(this.oTable._getDefaultRowHeight() + 20); // The table will show less rows.
-			Core.applyChanges();
 			return this.checkRowsUpdated(assert, []);
 		}).then(() => {
 			this.resetRowsUpdatedSpy();
@@ -424,7 +421,6 @@ sap.ui.define([
 		return fnOriginalTest().then(() => {
 			this.resetRowsUpdatedSpy();
 			this.oTable.getRowMode().setRowContentHeight(this.oTable._getDefaultRowHeight() + 20); // The table will show less rows.
-			Core.applyChanges();
 			return this.checkRowsUpdated(assert, [
 				TableUtils.RowsUpdateReason.Render
 			]);
@@ -438,7 +434,6 @@ sap.ui.define([
 			return TableQUnitUtils.hideTestContainer();
 		}).then(() => {
 			this.oTable.invalidate();
-			Core.applyChanges();
 			return this.checkRowsUpdated(assert, []);
 		}).then(() => {
 			this.resetRowsUpdatedSpy();
@@ -456,7 +451,6 @@ sap.ui.define([
 			return TableQUnitUtils.hideTestContainer();
 		}).then(() => {
 			this.oTable.getRowMode().setRowContentHeight(this.oTable._getDefaultRowHeight() + 20); // The table will show less rows.
-			Core.applyChanges();
 			return this.checkRowsUpdated(assert, []);
 		}).then(() => {
 			this.resetRowsUpdatedSpy();

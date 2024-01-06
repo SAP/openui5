@@ -46,7 +46,7 @@ sap.ui.define([
 	});
 
 	opaTest("Should wait for lazy stubs", function () {
-		var fnVisibleStub = sinon.stub(Opa5.getWindow().sap.ui.test.matchers.Visible.prototype, "isMatching");
+		var fnVisibleStub = sinon.stub(Opa5.getWindow().sap.ui.require("sap/ui/test/matchers/Visible").prototype, "isMatching");
 		fnVisibleStub.returns(true);
 
 		this.oOpa5.waitFor({

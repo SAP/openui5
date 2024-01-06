@@ -1273,10 +1273,6 @@ sap.ui.define([
 			aActions = aActions.concat(oHost.getActions() || []);
 		}
 
-		if (oExtension) {
-			aActions = aActions.concat([]);
-		}
-
 		if (deepEqual(aActions, this._getActionsToolbar()._aActions)) {
 			return;
 		}

@@ -28,7 +28,10 @@ sap.ui.define([
 
 		THEMES : {
 			"base": "Base",
-			"sap_horizon": "Horizon",
+			"sap_horizon": "Morning Horizon",
+			"sap_horizon_dark": "Evening Horizon",
+			"sap_horizon_hcb": "High Contrast Black Horizon",
+			"sap_horizon_hcw": "High Contrast White Horizon",
 			"sap_fiori_3": "Quartz Light",
 			"sap_fiori_3_dark": "Quartz Dark",
 			"sap_fiori_3_hcb": "Quartz High Contrast Black",
@@ -37,34 +40,10 @@ sap.ui.define([
 
 		// the themes supported by each library
 		LIBRARY_THEMES: {
-			"sap.ui.composite" : {
-				"default" : "sap_horizon",
-				"supports" : [
-					"sap_horizon","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw"
-				]
-			},
-			"sap.ui.dev" : {
-				"default" : "sap_horizon",
-				"supports" : [
-					"sap_horizon","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw"
-				]
-			},
-			"sap.ui.richtexteditor" : {
-				"default" : "sap_horizon",
-				"supports" : [
-					"sap_horizon","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw"
-				]
-			},
-			"sap.ui.suite" : {
-				"default" : "sap_horizon",
-				"supports" : [
-					"sap_horizon","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw"
-				]
-			},
 			"all" : {
-				"default" : "sap_fiori_3",
+				"default" : "sap_horizon",
 				"supports" : [
-					"sap_horizon","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw"
+					"sap_horizon","sap_horizon_dark","sap_horizon_hcb","sap_horizon_hcw","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw"
 				]
 			}
 		},

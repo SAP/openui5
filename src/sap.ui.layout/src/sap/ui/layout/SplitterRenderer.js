@@ -69,7 +69,7 @@ sap.ui.define([
 			sSizeType = bHorizontal ? "width" : "height",
 			aContentAreas = oSplitter._getContentAreas(),
 			iLen = aContentAreas.length,
-			aCalculatedSizes = oSplitter.getCalculatedSizes();
+			aCalculatedSizes = oSplitter._calculatedSizes;
 
 		aContentAreas.forEach(function (oContentArea, i) {
 			var oLayoutData = oContentArea.getLayoutData(),

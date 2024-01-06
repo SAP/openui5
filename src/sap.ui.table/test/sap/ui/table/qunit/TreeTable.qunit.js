@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
 	"sap/ui/table/rowmodes/Fixed",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ], function(
 	TableQUnitUtils,
+	nextUIUpdate,
 	TreeTable,
 	Column,
 	FixedRowMode,
@@ -264,7 +266,7 @@ sap.ui.define([
 		assert.ok(oDataReceivedSpy.calledOnce, "The original dataReceived event listener was called once");
 	});
 
-	QUnit.test("Hierarchy modes", function(assert) {
+	QUnit.test("Hierarchy modes", async function(assert) {
 		function assertMode(oTable, sExpectedMode, sMessage) {
 			sMessage = "Table is in mode '" + sExpectedMode + "'" + (sMessage ? " - " + sMessage : "");
 			assert.strictEqual(TableUtils.Grouping.getHierarchyMode(oTable), sExpectedMode, sMessage);
@@ -273,11 +275,11 @@ sap.ui.define([
 		assertMode(this.table, TableUtils.Grouping.HierarchyMode.Tree, "Initial");
 
 		this.table.setUseFlatMode(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assertMode(this.table, TableUtils.Grouping.HierarchyMode.Flat, "Enabled flat mode");
 
 		this.table.setUseGroupMode(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assertMode(this.table, TableUtils.Grouping.HierarchyMode.GroupedTree, "Enabled group mode when flat mode is enabled");
 
 		this.table.setUseGroupMode(false);

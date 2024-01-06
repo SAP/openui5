@@ -365,7 +365,6 @@ sap.ui.define([
 
 		this.setBindingContext(oState.context, sModelName);
 		this.getDomRefs(true).row.toggleClass("sapUiTableRowHidden", this.isContentHidden());
-		this._updateTableCells(oTable);
 	};
 
 	Row.prototype.getRowBindingContext = function() {
@@ -374,27 +373,6 @@ sap.ui.define([
 
 	Row.prototype.setBindingContext = function(oContext, sModelName) {
 		return Element.prototype.setBindingContext.call(this, oContext || null, sModelName);
-	};
-
-	Row.prototype._updateTableCells = function(oTable) {
-		var aCells = this.getCells(),
-			iAbsoluteRowIndex = this.getIndex(),
-			bHasTableCellUpdate = !!oTable._updateTableCell,
-			oCell, $Td, bHasCellUpdate,
-			oBindingContext = this.getRowBindingContext();
-
-		for (var i = 0; i < aCells.length; i++) {
-			oCell = aCells[i];
-			bHasCellUpdate = !!oCell._updateTableCell;
-			$Td = bHasCellUpdate || bHasTableCellUpdate ? oCell.$().closest("td") : null;
-
-			if (bHasCellUpdate) {
-				oCell._updateTableCell(oCell, oBindingContext, $Td, iAbsoluteRowIndex);
-			}
-			if (bHasTableCellUpdate) {
-				oTable._updateTableCell(oCell, oBindingContext, $Td, iAbsoluteRowIndex);
-			}
-		}
 	};
 
 	/**

@@ -102,7 +102,7 @@ sap.ui.define([
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("300px");
 		var oDelegate = {
 			onAfterRendering: function () {
-				var aSizes = oSplitter.getCalculatedSizes();
+				var aSizes = oSplitter._calculatedSizes;
 
 				assert.ok(aSizes[0] === 100, "Content size #1 is correct.");
 				assert.ok(aSizes[1] === 200, "Content size #2 is correct.");
@@ -126,7 +126,7 @@ sap.ui.define([
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("300px");
 		var oDelegate = {
 			onAfterRendering: function () {
-				var aSizes = oSplitter.getCalculatedSizes();
+				var aSizes = oSplitter._calculatedSizes;
 
 				assert.ok(aSizes[0] === 100, "Content size #1 is correct.");
 				assert.ok(aSizes[1] === 200, "Content size #2 is correct.");
@@ -166,7 +166,7 @@ sap.ui.define([
 		// Act
 		oBtn1.getLayoutData().setSize("30rem");
 		oSplitter.triggerResize(true);
-		var aSizes = oSplitter.getCalculatedSizes();
+		var aSizes = oSplitter._calculatedSizes;
 
 		// Assert
 		assert.equal(aSizes.length, 2, "Should have two sizes");
@@ -253,7 +253,7 @@ sap.ui.define([
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("auto");
 		var oDelegate = {
 			onAfterRendering: function () {
-				var aSizes = oSplitter.getCalculatedSizes();
+				var aSizes = oSplitter._calculatedSizes;
 
 				// Sizes should be about the same (rounding errors should be within 2px)
 				assert.ok(aSizes[0] >= aSizes[1] - 2 && aSizes[0] <= aSizes[1] + 2, "Content size #1 is correct.");
@@ -277,7 +277,7 @@ sap.ui.define([
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("auto");
 		var oDelegate = {
 			onAfterRendering: function () {
-				var aSizes = oSplitter.getCalculatedSizes();
+				var aSizes = oSplitter._calculatedSizes;
 				// Sizes should be about the same (rounding errors should be within 1px)
 				assert.ok(aSizes[0] >= aSizes[1] - 2 && aSizes[0] <= aSizes[1] + 2, "Content size #1 is correct.");
 				assert.ok(aSizes[1] >= aSizes[2] - 2 && aSizes[1] <= aSizes[2] + 2, "Content size #2 is correct.");
@@ -324,7 +324,7 @@ sap.ui.define([
 
 		// Assert
 		var iExpectedSize = 25 * this.oSplitter._calcAvailableContentSize() / 100;
-		assert.strictEqual(this.oSplitter.getCalculatedSizes()[0], iExpectedSize, "Content area size should be exactly 25% of the available width (bars excluded)");
+		assert.strictEqual(this.oSplitter._calculatedSizes[0], iExpectedSize, "Content area size should be exactly 25% of the available width (bars excluded)");
 
 		// Act
 		this.oContainer.setWidth("1000px");
@@ -332,7 +332,7 @@ sap.ui.define([
 
 		// Assert
 		iExpectedSize = 25 * this.oSplitter._calcAvailableContentSize() / 100;
-		assert.strictEqual( this.oSplitter.getCalculatedSizes()[0], iExpectedSize, "Content area size should be exactly 25% of the available width (bars excluded)");
+		assert.strictEqual( this.oSplitter._calculatedSizes[0], iExpectedSize, "Content area size should be exactly 25% of the available width (bars excluded)");
 	});
 
 	QUnit.test("Single area with 100% size", function (assert) {
@@ -364,7 +364,7 @@ sap.ui.define([
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("10px");
 		var oDelegate = {
 			onAfterRendering: function () {
-				var aSizes = oSplitter.getCalculatedSizes();
+				var aSizes = oSplitter._calculatedSizes;
 
 				// Fixed sizes should be exact
 				assert.ok(aSizes[0] === 10, "Content size #1 is correct.");
@@ -393,7 +393,7 @@ sap.ui.define([
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("10px");
 		var oDelegate = {
 			onAfterRendering: function () {
-				var aSizes = oSplitter.getCalculatedSizes();
+				var aSizes = oSplitter._calculatedSizes;
 
 				// Fixed sizes should be exact
 				assert.ok(aSizes[0] === 10, "Content size #1 is correct.");
@@ -447,7 +447,7 @@ sap.ui.define([
 		this.oContainer.setWidth("500px");
 		oCore.applyChanges();
 
-		aCalculatedSizes = this.oSplitter.getCalculatedSizes();
+		aCalculatedSizes = this.oSplitter._calculatedSizes;
 		iFirstContentAreaWidth = aCalculatedSizes[0];
 		iSecondContentAreaWidth = aCalculatedSizes[1];
 
@@ -489,7 +489,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		aSizes = this.oSplitter.getCalculatedSizes();
+		aSizes = this.oSplitter._calculatedSizes;
 		assert.ok(aSizes[0] >= 200, "Content area should NOT get lower width than its 'minSize'.");
 		assert.ok(aSizes[1] >= 30, "Content area should NOT get lower width than its 'minSize'.");
 	});

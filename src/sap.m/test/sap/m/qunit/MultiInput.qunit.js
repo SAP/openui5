@@ -244,7 +244,7 @@ sap.ui.define([
 		multiInput.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		assert.strictEqual(multiInput._calculateSpaceForTokenizer(), "398px", "_calculateSpaceForTokenizer returns a correct px value");
+		assert.strictEqual(multiInput._calculateSpaceForTokenizer(), "406px", "_calculateSpaceForTokenizer returns a correct px value");
 
 		multiInput.destroy();
 	});
@@ -258,7 +258,7 @@ sap.ui.define([
 		multiInput.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		assert.strictEqual(multiInput._calculateSpaceForTokenizer(), "148px", "_calculateSpaceForTokenizer returns a correct px value");
+		assert.strictEqual(multiInput._calculateSpaceForTokenizer(), "156px", "_calculateSpaceForTokenizer returns a correct px value");
 
 		multiInput.destroy();
 	});

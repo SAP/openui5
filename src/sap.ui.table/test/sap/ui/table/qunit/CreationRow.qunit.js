@@ -2,22 +2,22 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/CreationRow",
 	"sap/ui/table/Column",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/m/Toolbar",
-	"sap/ui/core/Core"
+	"sap/m/Toolbar"
 ], function(
 	TableQUnitUtils,
+	nextUIUpdate,
 	CreationRow,
 	Column,
 	FixedRowMode,
 	qutils,
 	KeyCodes,
-	Toolbar,
-	oCore
+	Toolbar
 ) {
 	"use strict";
 
@@ -51,7 +51,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("#resetFocus", function(assert) {
+	QUnit.test("#resetFocus", async function(assert) {
 		var oCreationRow = this.oTable.getCreationRow();
 
 		this.oTable.qunit.getDataCell(0, 0).focus();
@@ -64,7 +64,7 @@ sap.ui.define([
 		assert.strictEqual(oInput.selectionEnd, 5, "The selection ends as index 5");
 
 		this.oTable.getColumns()[1].destroy();
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.qunit.getDataCell(0, 0).focus();
 
 		assert.strictEqual(oCreationRow.resetFocus(), false, "Returned false, because no element was focused");
@@ -98,7 +98,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("#_fireApply", function(assert) {
+	QUnit.test("#_fireApply", async function(assert) {
 		var oCreationRow = this.oTable.getCreationRow();
 		var oApplySpy = sinon.spy();
 		var oResetFocusSpy = sinon.spy(oCreationRow, "resetFocus");
@@ -124,7 +124,7 @@ sap.ui.define([
 		oApplySpy.resetHistory();
 		oResetFocusSpy.resetHistory();
 		this.oTable.getColumns()[1].destroy();
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		assert.strictEqual(oCreationRow._fireApply(), false, "Returned false, because no element was focused");
 		assert.ok(oApplySpy.calledOnce, "The CreationRow's \"apply\" event was called once");
@@ -142,66 +142,66 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("If child of a table", function(assert) {
+	QUnit.test("If child of a table", async function(assert) {
 		this.oTable.setCreationRow(this.oCreationRow);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		assert.notEqual(this.oCreationRow.getDomRef(), null, "The creation row is rendered");
 	});
 
-	QUnit.test("If not child of a table", function(assert) {
+	QUnit.test("If not child of a table", async function(assert) {
 		this.oCreationRow.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		assert.equal(this.oCreationRow.getDomRef(), null, "The creation row did not render anything");
 	});
 
-	QUnit.test("Toolbar", function(assert) {
+	QUnit.test("Toolbar", async function(assert) {
 		this.oTable.setCreationRow(this.oCreationRow);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		var oDefaultToolbar = this.oCreationRow.getAggregation("_defaultToolbar");
 
 		assert.notEqual(oDefaultToolbar.getDomRef(), null, "No custom toolbar is set: The default toolbar is rendered");
 
 		this.oCreationRow.setToolbar(new Toolbar());
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		assert.notEqual(this.oCreationRow.getToolbar().getDomRef(), null, "Custom toolbar is set: The custom toolbar is rendered");
 		assert.equal(oDefaultToolbar.getDomRef(), null, "Custom toolbar is set: The default toolbar is not rendered");
 
 		this.oCreationRow.destroyToolbar();
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		assert.notEqual(oDefaultToolbar.getDomRef(), null, "No custom toolbar is set: The default toolbar is rendered");
 	});
 
-	QUnit.test("Horizontal scrollbar position in the DOM", function(assert) {
+	QUnit.test("Horizontal scrollbar position in the DOM", async function(assert) {
 		var sBusySection = "sapUiTableGridCnt";
 
 		this.oTable.setCreationRow(this.oCreationRow);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 		assert.notOk(this.oTable.getDomRef(sBusySection).contains(this.oTable._getScrollExtension().getHorizontalScrollbar()),
 			"After rendering the table with a visible creation row,"
 			+ " the horizontal scrollbar is rendered outside the element that is covered by the busy indicator.");
 
 		this.oCreationRow.setVisible(false);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 		assert.ok(this.oTable.getDomRef(sBusySection).contains(this.oTable._getScrollExtension().getHorizontalScrollbar()),
 			"After making the creation row invisible,"
 			+ " the horizontal scrollbar is rendered inside the element that is covered by the busy indicator.");
 
 		this.oCreationRow.setVisible(true);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 		assert.notOk(this.oTable.getDomRef(sBusySection).contains(this.oTable._getScrollExtension().getHorizontalScrollbar()),
 			"After making the creation row visible,"
 			+ " the horizontal scrollbar is rendered outside the element that is covered by the busy indicator.");
 
 		this.oTable.setCreationRow();
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oCreationRow.setVisible(false);
 		this.oTable.setCreationRow(this.oCreationRow);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		assert.ok(this.oTable.getDomRef(sBusySection).contains(this.oTable._getScrollExtension().getHorizontalScrollbar()),
 			"After rendering the table with an invisible creation row,"
@@ -544,50 +544,50 @@ sap.ui.define([
 		assert.ok(this.oCreationRow.getAggregation("_defaultToolbar") == null, "No default toolbar exists");
 	});
 
-	QUnit.test("Create if no custom toolbar is provided", function(assert) {
+	QUnit.test("Create if no custom toolbar is provided", async function(assert) {
 		this.oCreationRow.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oCreationRow.getToolbar() === null, "No custom toolbar is set");
 		assert.ok(this.oCreationRow.getAggregation("_defaultToolbar") == null,
 			"No default toolbar exists if rendered while not a child of the table");
 
 		this.oTable.setCreationRow(this.oCreationRow);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		assert.ok(this.oCreationRow.getToolbar() === null, "No custom toolbar is set");
 		assert.ok(this.oCreationRow.getAggregation("_defaultToolbar") != null,
 			"The default toolbar is created if rendered as a child of a table");
 	});
 
-	QUnit.test("Do not create if a custom toolbar is provided", function(assert) {
+	QUnit.test("Do not create if a custom toolbar is provided", async function(assert) {
 		var oToolbar = new Toolbar();
 		this.oCreationRow.setToolbar(oToolbar);
 		this.oTable.setCreationRow(this.oCreationRow);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		assert.ok(this.oCreationRow.getToolbar() === oToolbar, "A custom toolbar is set");
 		assert.ok(this.oCreationRow.getAggregation("_defaultToolbar") == null, "The default toolbar is not created");
 	});
 
-	QUnit.test("Do not recreate", function(assert) {
+	QUnit.test("Do not recreate", async function(assert) {
 		this.oCreationRow.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oDefaultToolbar = this.oCreationRow.getAggregation("_defaultToolbar");
 
 		this.oCreationRow.setToolbar(new Toolbar());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.oCreationRow.destroyToolbar();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oDefaultToolbar, this.oCreationRow.getAggregation("_defaultToolbar"), "The default toolbar is reused");
 	});
 
-	QUnit.test("Destroy when the CreationRow is destroyed", function(assert) {
+	QUnit.test("Destroy when the CreationRow is destroyed", async function(assert) {
 		this.oTable.setCreationRow(this.oCreationRow);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		var oToolbarDestroySpy = sinon.spy(this.oCreationRow.getAggregation("_defaultToolbar"), "destroy");
 
@@ -596,9 +596,9 @@ sap.ui.define([
 		assert.strictEqual(this.oCreationRow.getAggregation("_defaultToolbar"), null, "The \"_defaultToolbar\" aggregation is empty");
 	});
 
-	QUnit.test("Content", function(assert) {
+	QUnit.test("Content", async function(assert) {
 		this.oTable.setCreationRow(this.oCreationRow);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		var oApplyButton = this.oCreationRow.getAggregation("_defaultToolbar").getContent().slice(-1)[0];
 		var oApplySpy = sinon.spy(this.oCreationRow, "_fireApply");
@@ -614,14 +614,14 @@ sap.ui.define([
 			applyEnabled: false
 		});
 		this.oTable.setCreationRow(this.oCreationRow);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		assert.strictEqual(oApplyButton.getEnabled(), true, "The button is disabled");
 	});
 
-	QUnit.test("Update content", function(assert) {
+	QUnit.test("Update content", async function(assert) {
 		this.oTable.setCreationRow(this.oCreationRow);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		var oApplyButton = this.oCreationRow.getAggregation("_defaultToolbar").getContent().slice(-1)[0];
 		var oApplyButtonAfterRendering = sinon.spy();
@@ -633,24 +633,24 @@ sap.ui.define([
 		this.oCreationRow.setApplyEnabled(false);
 		assert.strictEqual(oApplyButton.getEnabled(), false, "The button is disabled after setting \"applyEnabled\" of the CreationRow to \"false\"");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oApplyButtonAfterRendering.calledOnce, "The button was re-rendered");
 		oApplyButtonAfterRendering.resetHistory();
 
 		this.oCreationRow.setApplyEnabled(true);
 		assert.strictEqual(oApplyButton.getEnabled(), true, "The button is enabled after setting \"applyEnabled\" of the CreationRow to \"true\"");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oApplyButtonAfterRendering.calledOnce, "The button was re-rendered");
 
 		this.oCreationRow.setToolbar(new Toolbar());
 		this.oCreationRow.setApplyEnabled(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(oApplyButton.getEnabled(), true,
 			"The button is still enabled after setting \"applyEnabled\" of the CreationRow to \"false\", if there is a custom toolbar");
 
 		this.oCreationRow.destroyToolbar();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(oApplyButton.getEnabled(), false, "The button is updated after removing the custom toolbar, and is disabled");
 	});
 });

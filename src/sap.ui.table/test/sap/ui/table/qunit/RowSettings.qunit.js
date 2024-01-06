@@ -2,15 +2,17 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/RowSettings",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/library",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/Core",
-    "sap/ui/table/RowAction",
-    "sap/ui/table/RowActionItem"
+	"sap/ui/table/RowAction",
+	"sap/ui/table/RowActionItem"
 ], function(
 	TableQUnitUtils,
+	nextUIUpdate,
 	RowSettings,
 	TableUtils,
 	CoreLibrary,
@@ -236,25 +238,25 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Rendering - Settings not configured", function(assert) {
+	QUnit.test("Rendering - Settings not configured", async function(assert) {
 		oTable.setRowSettingsTemplate(null);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.assertRendering(assert, false);
 	});
 
-	QUnit.test("Rendering - Highlights not configured", function(assert) {
+	QUnit.test("Rendering - Highlights not configured", async function(assert) {
 		oTable.setRowSettingsTemplate(new RowSettings({
 			highlight: null
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.assertRendering(assert, false);
 
 		oTable.setRowSettingsTemplate(new RowSettings({
 			highlight: MessageType.None
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.assertRendering(assert, false);
 	});
@@ -286,7 +288,7 @@ sap.ui.define([
 		oBody.classList.add("sapUiSizeCozy");
 	});
 
-	QUnit.test("setHighlight", function(assert) {
+	QUnit.test("setHighlight", async function(assert) {
 		var oOnAfterRenderingEventListener = this.spy();
 
 		this.assertColor(assert, 0, this.getColorRgb("sapUiSuccessBorder"));
@@ -294,21 +296,21 @@ sap.ui.define([
 
 		oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
 		oTable.getRows()[0].getAggregation("_settings").setHighlight(MessageType.Error);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oOnAfterRenderingEventListener.notCalled, "The table did not re-render after changing a highlight");
 		this.assertColor(assert, 0, this.getColorRgb("sapUiErrorBorder"));
 		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_ERROR"));
 	});
 
-	QUnit.test("setHighlightText", function(assert) {
+	QUnit.test("setHighlightText", async function(assert) {
 		var oOnAfterRenderingEventListener = this.spy();
 
 		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_SUCCESS"));
 
 		oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
 		oTable.getRows()[0].getAggregation("_settings").setHighlightText("testitext");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oOnAfterRenderingEventListener.notCalled, "The table did not re-render after changing a highlight text");
 		this.assertText(assert, 0, "testitext");
@@ -405,7 +407,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigated indicators", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			createTables(false, false, 3);
 
 			oTable.getRowMode().setRowCount(3);
@@ -435,7 +437,7 @@ sap.ui.define([
 				}
 			}));
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			destroyTables();
@@ -464,25 +466,25 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Rendering - Settings not configured", function(assert) {
+	QUnit.test("Rendering - Settings not configured", async function(assert) {
 		oTable.setRowSettingsTemplate(null);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.assertNavIndicatorRendering(assert, true, false);
 	});
 
-	QUnit.test("Rendering - Navigated not configured", function(assert) {
+	QUnit.test("Rendering - Navigated not configured", async function(assert) {
 		oTable.setRowSettingsTemplate(new RowSettings({
 			navigated: null
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.assertNavIndicatorRendering(assert, true, false);
 
 		oTable.setRowSettingsTemplate(new RowSettings({
 			navigated: false
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.assertNavIndicatorRendering(assert, true, false);
 	});

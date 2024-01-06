@@ -34,7 +34,16 @@ sap.ui.define(['sap/m/TreeItemBaseRenderer','sap/ui/core/Core', 'sap/ui/core/Ren
 	};
 
 	DemokitTreeItemRender.renderLIContent = function (oRm, oControl) {
-		var oResourceBundle;
+		var renderSpanWithText = function (oRm, textKey) {
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.documentation"),
+				sText = oResourceBundle.getText(textKey);
+
+			oRm.openStart('span')
+				.class("sapDemokitTreeItemLabel")
+				.openEnd()
+				.text(sText)
+				.close('span');
+		};
 
 		this.renderEntityType(oRm, oControl);
 
@@ -42,23 +51,21 @@ sap.ui.define(['sap/m/TreeItemBaseRenderer','sap/ui/core/Core', 'sap/ui/core/Ren
 			.attr("href", oControl.getHref())
 			.openEnd();
 
-			oRm.openStart('span')
-				.class("sapDemokitTreeItemTitle")
-				.class("sapUiTinyMarginEnd")
-				.openEnd()
-				.text(oControl.getTitle())
-				.close('span');
+		oRm.openStart('span')
+			.class("sapDemokitTreeItemTitle")
+			.class("sapUiTinyMarginEnd")
+			.openEnd()
+			.text(oControl.getTitle())
+			.close('span');
 
 		oRm.close('a');
 
 		if (oControl.getDeprecated()) {
-			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.documentation");
+			renderSpanWithText(oRm, "API_MASTER_DEPRECATED");
+		}
 
-			oRm.openStart('span')
-				.class("sapDemokitTreeItemLabel")
-				.openEnd()
-				.text(oResourceBundle.getText("API_MASTER_DEPRECATED"))
-				.close('span');
+		if (oControl.getExperimental()) {
+			renderSpanWithText(oRm, "API_MASTER_EXPERIMENTAL");
 		}
 	};
 

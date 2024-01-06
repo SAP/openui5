@@ -19,7 +19,6 @@ sap.ui.define([
 					{id: "2", title: "SameTitle"}
 				]
 			});
-			sap.ui.getCore().setModel(oJSONModel);
 
 			this.oList = new List();
 			this.oList.bindItems({
@@ -37,10 +36,14 @@ sap.ui.define([
 			this.oText.placeAt("qunit-fixture");
 			this.oTextNoSelector1.placeAt("qunit-fixture");
 			this.oTextNoSelector2.placeAt("qunit-fixture");
+
+			this.oUIArea = this.oList.getUIArea();
+			this.oUIArea.setModel(oJSONModel);
+
 			return nextUIUpdate();
 		},
 		afterEach: function () {
-			sap.ui.getCore().setModel();
+			this.oUIArea.setModel();
 			this.oList.destroy();
 			this.oText.destroy();
 			this.oTextNoSelector1.destroy();

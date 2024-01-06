@@ -4,9 +4,13 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/rowmodes/RowMode",
 	"sap/ui/table/Table",
-	"sap/ui/table/utils/TableUtils",
-	"sap/ui/core/Core"
-], function(TableQUnitUtils, RowMode, Table, TableUtils, Core) {
+	"sap/ui/table/utils/TableUtils"
+], function(
+	TableQUnitUtils,
+	RowMode,
+	Table,
+	TableUtils
+) {
 	"use strict";
 
 	var RowModeSubclass = RowMode.extend("sap.ui.table.test.RowModeSubClass", {
@@ -168,44 +172,44 @@ sap.ui.define([
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
 	});
 
-	QUnit.test("Enable when it is disabled in the table", function(assert) {
+	QUnit.test("Enable when it is disabled in the table", async function(assert) {
 		this.oTable.setShowNoData(false);
 		this.oTable.unbindRows();
 		this.oTable.getRowMode().enableNoData();
-		Core.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
 	});
 
-	QUnit.test("Enable with data", function(assert) {
+	QUnit.test("Enable with data", async function(assert) {
 		this.oTable.getRowMode().enableNoData();
-		Core.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
 	});
 
-	QUnit.test("Disable/Enable without data", function(assert) {
+	QUnit.test("Disable/Enable without data", async function(assert) {
 		this.oTable.unbindRows();
 		this.oTable.getRowMode().disableNoData();
-		Core.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Disable");
 
 		this.oTable.getRowMode().disableNoData();
-		Core.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Disable again");
 
 		this.oTable.getRowMode().enableNoData();
-		Core.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Enable");
 
 		this.oTable.getRowMode().enableNoData();
-		Core.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Enable again");
 	});
 
-	QUnit.test("No columns", function(assert) {
+	QUnit.test("No columns", async function(assert) {
 		this.oTable.removeAllColumns();
 		this.oTable.setShowNoData(false);
 		this.oTable.getRowMode().disableNoData();
-		Core.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Disable");
 	});
 });

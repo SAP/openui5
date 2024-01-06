@@ -174,7 +174,7 @@ document.body.appendChild(card);
 					<b>When using UI5</b>
 					<pre class="lang-js">
 // Make card inactive for 10 seconds
-var oCard = sap.ui.getCore().byId("myCard");
+var oCard = Element.getElementById("myCard");
 oCard.setDataMode("Inactive");
 setTimeout(function () {
 	oCard.setDataMode("Active");

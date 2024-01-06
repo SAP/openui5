@@ -1,26 +1,26 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/f/SearchManager",
 	"sap/m/SuggestionItem",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
-	function (Core, SearchManager, SuggestionItem, KeyCodes, qutils) {
+	function (SearchManager, SuggestionItem, KeyCodes, qutils, nextUIUpdate) {
 		"use strict";
 
 		var TESTS_DOM_CONTAINER = "qunit-fixture",
-			fnRenderObject = function (oObject) {
+			fnRenderObject = async function (oObject) {
 				oObject.placeAt(TESTS_DOM_CONTAINER);
-				Core.applyChanges();
+				await nextUIUpdate();
 				return oObject;
 			};
 
 		/* --------------------------- SearchManager API -------------------------------------- */
 		QUnit.module("SearchManager - API ", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oSearchManager = new SearchManager();
-				fnRenderObject(this.oSearchManager._oSearch);
+				await fnRenderObject(this.oSearchManager._oSearch);
 			},
 			afterEach: function () {
 				this.oSearchManager.destroy();
@@ -34,67 +34,67 @@ sap.ui.define([
 				"SearchManager instantiated successfully.");
 		});
 
-		QUnit.test("property - value", function (assert) {
+		QUnit.test("property - value", async function (assert) {
 			var sNewValue = "New value for test";
 
 			// Act
 			this.oSearchManager.setValue(sNewValue);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(this.oSearchManager.getValue(), sNewValue, "Value is set correctly");
 			assert.strictEqual(this.oSearchManager._getSearchField().getValue(), sNewValue, "Value is set correctly");
 		});
 
-		QUnit.test("property - placeholder", function (assert) {
+		QUnit.test("property - placeholder", async function (assert) {
 			var sNewPlaceholder = "New placeholder for test";
 
 			// Act
 			this.oSearchManager.setPlaceholder(sNewPlaceholder);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(this.oSearchManager.getPlaceholder(), sNewPlaceholder, "Placeholder is set correctly");
 			assert.strictEqual(this.oSearchManager._getSearchField().getPlaceholder(), sNewPlaceholder, "Placeholder is set correctly");
 		});
 
-		QUnit.test("property - maxLength", function (assert) {
+		QUnit.test("property - maxLength", async function (assert) {
 			var iMaxLength = 5;
 
 			// Act
 			this.oSearchManager.setMaxLength(iMaxLength);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(this.oSearchManager.getMaxLength(), iMaxLength, "MaxLength is set correctly");
 			assert.strictEqual(this.oSearchManager._getSearchField().getMaxLength(), iMaxLength, "MaxLength is set correctly");
 		});
 
-		QUnit.test("property - enabled", function (assert) {
+		QUnit.test("property - enabled", async function (assert) {
 			var bEnabled = false;
 
 			// Act
 			this.oSearchManager.setEnabled(bEnabled);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(this.oSearchManager.getEnabled(), bEnabled, "MaxLength is set correctly");
 			assert.strictEqual(this.oSearchManager._getSearchField().getEnabled(), bEnabled, "MaxLength is set correctly");
 		});
 
-		QUnit.test("property - enableSuggestions", function (assert) {
+		QUnit.test("property - enableSuggestions", async function (assert) {
 			var bEnableSuggestions = true;
 
 			// Act
 			this.oSearchManager.setEnableSuggestions(bEnableSuggestions);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(this.oSearchManager.getEnableSuggestions(), bEnableSuggestions, "EnableSuggestions is set correctly");
 			assert.strictEqual(this.oSearchManager._getSearchField().getEnableSuggestions(), bEnableSuggestions, "EnableSuggestions is set correctly");
 		});
 
-		QUnit.test("aggregation - suggestionItems", function (assert) {
+		QUnit.test("aggregation - suggestionItems", async function (assert) {
 			var aSuggestionItems = [
 				new SuggestionItem({
 					text: "Test item 1"
@@ -116,7 +116,7 @@ sap.ui.define([
 			aSuggestionItems.forEach(function (oSuggestionItem) {
 				this.oSearchManager.insertSuggestionItem(oSuggestionItem);
 			}, this);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(this.oSearchManager.getSuggestionItems().length, aSuggestionItems.length, "SuggestionItems are forwarded correctly");
@@ -125,7 +125,7 @@ sap.ui.define([
 			// Act
 			this.oSearchManager.removeSuggestionItem(aSuggestionItems[0]);
 			aSuggestionItems.shift();
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(this.oSearchManager.getSuggestionItems().length, aSuggestionItems.length, "SuggestionItems are forwarded correctly");
@@ -133,14 +133,14 @@ sap.ui.define([
 
 			// Act
 			this.oSearchManager.getSuggestionItems()[0].setText(sNewValue);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(this.oSearchManager.getSuggestionItems()[0].getText(), sNewValue, "SuggestionItems are forwarded correctly");
 			assert.strictEqual(this.oSearchManager._getSearchField().getSuggestionItems()[0].getText(), sNewValue, "SuggestionItems are forwarded correctly");
 		});
 
-		QUnit.test("event - search event", function (assert) {
+		QUnit.test("event - search event", async function (assert) {
 			var sEventDispatchedId,
 				oFakeObject = {
 					fnFakeFucntion: function (oEvent) {
@@ -152,14 +152,14 @@ sap.ui.define([
 			// Act
 			this.oSearchManager.attachSearch(oFakeObject.fnFakeFucntion);
 			this.oSearchManager._getSearchField().fireSearch();
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(this.oSearchManager.getId(), sEventDispatchedId, "Event is dispatched correctly");
 			assert.ok(oSpy.calledOnce, "Event is fired");
 		});
 
-		QUnit.test("event - live change event", function (assert) {
+		QUnit.test("event - live change event", async function (assert) {
 			var sEventDispatchedId,
 				oFakeObject = {
 					fnFakeFucntion: function (oEvent) {
@@ -171,14 +171,14 @@ sap.ui.define([
 			// Act
 			this.oSearchManager.attachLiveChange(oFakeObject.fnFakeFucntion);
 			this.oSearchManager._getSearchField().fireLiveChange();
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(this.oSearchManager.getId(), sEventDispatchedId, "Event is dispatched correctly");
 			assert.ok(oSpy.calledOnce, "Event is fired");
 		});
 
-		QUnit.test("event - suggest event", function (assert) {
+		QUnit.test("event - suggest event", async function (assert) {
 			var sEventDispatchedId,
 				oFakeObject = {
 					fnFakeFucntion: function (oEvent) {
@@ -190,17 +190,17 @@ sap.ui.define([
 			// Act
 			this.oSearchManager.attachSuggest(oFakeObject.fnFakeFucntion);
 			this.oSearchManager._getSearchField().fireSuggest();
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(this.oSearchManager.getId(), sEventDispatchedId, "Event is dispatched correctly");
 			assert.ok(oSpy.calledOnce, "Event is fired");
 		});
 
-		QUnit.test("keyboard handling - escape", function (assert) {
+		QUnit.test("keyboard handling - escape", async function (assert) {
 			// Act
 			this.oSearchManager._oSearch.setIsOpen(true);
-			Core.applyChanges();
+			await nextUIUpdate();
 			qutils.triggerKeyup(this.oSearchManager._oSearch, KeyCodes.ESCAPE);
 
 			// Assert
@@ -208,9 +208,9 @@ sap.ui.define([
 		});
 
 		QUnit.module("SearchManager - Rendering ", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oSearchManager = new SearchManager();
-				fnRenderObject(this.oSearchManager._oSearch);
+				await fnRenderObject(this.oSearchManager._oSearch);
 			},
 			afterEach: function () {
 				this.oSearchManager.destroy();
@@ -223,20 +223,20 @@ sap.ui.define([
 			assert.strictEqual(this.oSearchManager._oSearch.$()[0].childElementCount, 1, "Search button was rendered.");
 		});
 
-		QUnit.test("Open search rendering", function (assert) {
+		QUnit.test("Open search rendering", async function (assert) {
 			// Act
 			this.oSearchManager._oSearch.setIsOpen(true);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(this.oSearchManager._oSearch.$().find(".sapFShellBarSearchWrap")[0].childElementCount, 3, "Search field and search button were rendered.");
 		});
 
-		QUnit.test("Open search rendering in phone mode", function (assert) {
+		QUnit.test("Open search rendering in phone mode", async function (assert) {
 			// Act
 			this.oSearchManager._oSearch.setIsOpen(true);
 			this.oSearchManager._oSearch.setPhoneMode(true);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(this.oSearchManager._oSearch.$().find(".sapFShellBarSearchWrap")[0].childElementCount, 3,

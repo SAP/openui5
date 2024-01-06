@@ -124,8 +124,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 
 			"Theming_default_and_fallback": {
 				title: "sap.ui.core.Theming - defaulting and fallbacks",
-				ui5: {
-					theme: "sap_horizon" // Note: deprecated and deleted theme: used for fallback test!
+				ui5: {// Note: deprecated and deleted theme: used for fallback test!
 				},
 				qunit: {
 					reorder: false
@@ -134,8 +133,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 
 			"Theming_default_and_fallback_wo_ThemeManager": {
 				title: "sap.ui.core.Theming - defaulting and fallbacks",
-				ui5: {
-					theme: "sap_horizon" // Note: deprecated and deleted theme: used for fallback test!
+				ui5: {// Note: deprecated and deleted theme: used for fallback test!
 				},
 				testConfig: {
 					themeManagerNotActive: true

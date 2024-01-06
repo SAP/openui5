@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
@@ -11,10 +12,21 @@ sap.ui.define([
 	"sap/ui/table/extensions/Keyboard",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
-	"sap/ui/qunit/utils/nextUIUpdate"
-], function(TableQUnitUtils, TableUtils, qutils, Table, CreationRow, containsOrEquals, ExtensionBase, KeyboardExtension, JSONModel,
-	jQuery, oCore, nextUIUpdate) {
+	"sap/ui/core/Core"
+], function(
+	TableQUnitUtils,
+	nextUIUpdate,
+	TableUtils,
+	qutils,
+	Table,
+	CreationRow,
+	containsOrEquals,
+	ExtensionBase,
+	KeyboardExtension,
+	JSONModel,
+	jQuery,
+	oCore
+) {
 	"use strict";
 
 	var createTables = window.createTables;
@@ -305,11 +317,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Focus handling", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			createTables();
 
 			oTable.addColumn(TableQUnitUtils.createInputColumn({text: "test3"}));
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.addCreationRow = function(oTable) {
 				oTable.addColumn(TableQUnitUtils.createTextColumn({text: "test"}).setCreationTemplate(
@@ -478,7 +490,7 @@ sap.ui.define([
 
 	QUnit.test("Focus restoration and item navigation reinitialization", async function(assert) {
 		initRowActions(oTable, 1, 1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oKeyboardExtension = oTable._getKeyboardExtension();
 		var aTestElementIds = [
@@ -531,7 +543,7 @@ sap.ui.define([
 		oInvalidateItemNavigationSpy = sinon.spy(oKeyboardExtension, "invalidateItemNavigation");
 		oOnFocusInSpy.resetHistory();
 		oTable.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oInitItemNavigationSpy.notCalled,
 			"Re-rendered when focus was on an element outside the table: The item navigation was not reinitialized");

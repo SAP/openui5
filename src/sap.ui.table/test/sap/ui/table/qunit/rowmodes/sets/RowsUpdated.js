@@ -2,14 +2,12 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/Sorter",
-	"sap/ui/model/Filter",
-	"sap/ui/core/Core"
+	"sap/ui/model/Filter"
 ], function(
 	TableQUnitUtils,
 	TableUtils,
 	Sorter,
-	Filter,
-	Core
+	Filter
 ) {
 	"use strict";
 
@@ -102,66 +100,52 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Re-render without binding", function(assert) {
+	QUnit.test("Re-render without binding", async function(assert) {
 		this.createTable({rows: ""});
-
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			this.resetRowsUpdatedSpy();
-			this.oTable.invalidate();
-			Core.applyChanges();
-			return this.checkRowsUpdated(assert, []);
-		});
+		await this.oTable.qunit.whenRenderingFinished();
+		this.resetRowsUpdatedSpy();
+		this.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+		await this.checkRowsUpdated(assert, []);
 	});
 
-	QUnit.test("Re-render without binding in invisible container", function(assert) {
+	QUnit.test("Re-render without binding in invisible container", async function(assert) {
 		this.createTable({rows: ""});
-
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			this.resetRowsUpdatedSpy();
-			return TableQUnitUtils.hideTestContainer();
-		}).then(() => {
-			this.oTable.invalidate();
-			Core.applyChanges();
-			return this.checkRowsUpdated(assert, []);
-		}).then(() => {
-			this.resetRowsUpdatedSpy();
-			return TableQUnitUtils.showTestContainer();
-		}).then(() => {
-			return this.checkRowsUpdated(assert, []);
-		});
+		await this.oTable.qunit.whenRenderingFinished();
+		this.resetRowsUpdatedSpy();
+		await TableQUnitUtils.hideTestContainer();
+		this.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+		await this.checkRowsUpdated(assert, []);
+		this.resetRowsUpdatedSpy();
+		await TableQUnitUtils.showTestContainer();
+		await this.checkRowsUpdated(assert, []);
 	});
 
-	QUnit.test("Re-render with binding", function(assert) {
+	QUnit.test("Re-render with binding", async function(assert) {
 		this.createTable();
-
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			this.resetRowsUpdatedSpy();
-			this.oTable.invalidate();
-			Core.applyChanges();
-			return this.checkRowsUpdated(assert, [
-				TableUtils.RowsUpdateReason.Render
-			]);
-		});
+		await this.oTable.qunit.whenRenderingFinished();
+		this.resetRowsUpdatedSpy();
+		this.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+		await this.checkRowsUpdated(assert, [
+			TableUtils.RowsUpdateReason.Render
+		]);
 	});
 
-	QUnit.test("Re-render with binding in invisible container", function(assert) {
+	QUnit.test("Re-render with binding in invisible container", async function(assert) {
 		this.createTable();
-
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			this.resetRowsUpdatedSpy();
-			return TableQUnitUtils.hideTestContainer();
-		}).then(() => {
-			this.oTable.invalidate();
-			Core.applyChanges();
-			return this.checkRowsUpdated(assert, [
-				TableUtils.RowsUpdateReason.Render
-			]);
-		}).then(() => {
-			this.resetRowsUpdatedSpy();
-			return TableQUnitUtils.showTestContainer();
-		}).then(() => {
-			return this.checkRowsUpdated(assert, []);
-		});
+		await this.oTable.qunit.whenRenderingFinished();
+		this.resetRowsUpdatedSpy();
+		await TableQUnitUtils.hideTestContainer();
+		this.oTable.invalidate();
+		await this.oTable.qunit.whenRenderingFinished();
+		await this.checkRowsUpdated(assert, [
+			TableUtils.RowsUpdateReason.Render
+		]);
+		this.resetRowsUpdatedSpy();
+		await TableQUnitUtils.showTestContainer();
+		await this.checkRowsUpdated(assert, []);
 	});
 
 	QUnit.test("Sort with Table#sort", function(assert) {
