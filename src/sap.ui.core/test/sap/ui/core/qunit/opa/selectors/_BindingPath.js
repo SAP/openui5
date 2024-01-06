@@ -79,13 +79,13 @@ sap.ui.define([
 			var oResourceModel = new ResourceModel({
 				bundleUrl: "test-resources/sap/ui/core/qunit/opa/selectors/i18n.properties"
 			});
-			sap.ui.getCore().setModel(oResourceModel, "i18n");
 			this.oPropertyText = new Text({text: "{i18n>propertyText}"});
 			this.oPropertyText.placeAt("qunit-fixture");
+			this.oPropertyText.getUIArea().setModel(oResourceModel, "i18n");
 			return nextUIUpdate();
 		},
 		afterEach: function () {
-			sap.ui.getCore().setModel();
+			this.oPropertyText.getUIArea().setModel(undefined, "i18n");
 			this.oPropertyText.destroy();
 		}
 	});

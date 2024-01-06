@@ -295,7 +295,7 @@ sap.ui.define([
 			id: "myButton",
 			actions: function () {
 				var oIFrameWindow = Opa5.getWindow();
-				iFrameXHRWaiter = oIFrameWindow.sap.ui.test.autowaiter._XHRWaiter;
+				iFrameXHRWaiter = oIFrameWindow.sap.ui.require("sap/ui/test/autowaiter/_XHRWaiter");
 				Opa5.assert.ok(!iFrameXHRWaiter.hasPending(), "There are no open XHRs initially");
 
 				oFakeIFrameXHR = oIFrameWindow.sinon.useFakeXMLHttpRequest();
