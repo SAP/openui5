@@ -185,7 +185,6 @@ sap.ui.define([
 					{id: "2", title: "SameTitle"}
 				]
 			});
-			sap.ui.getCore().setModel(oJSONModel);
 			this.oList = new List();
 			this.oList.bindItems({
 				path: "/items",
@@ -200,13 +199,14 @@ sap.ui.define([
 					]
 				})
 			});
-
 			this.oList.placeAt("qunit-fixture");
+			this.oList.getUIArea().setModel(oJSONModel);
+
 			return nextUIUpdate();
 		},
 		afterEach: function () {
 			_ControlSelectorGenerator.resetParams();
-			sap.ui.getCore().setModel();
+			this.oList.getUIArea().setModel();
 			this.oList.destroy();
 		}
 	});
