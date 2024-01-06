@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Utils",
-	"sap/ui/rta/util/adaptationStarter",
 	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/rta/util/adaptationStarter",
+	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
@@ -20,8 +21,9 @@ sap.ui.define([
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	FlexUtils,
-	adaptationStarter,
 	RuntimeAuthoring,
+	adaptationStarter,
+	ReloadManager,
 	sinon,
 	RtaQunitUtils
 ) {
@@ -335,7 +337,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("When RuntimeAuthoring.start rejects with a reload", function(assert) {
-			this.oRtaStartStub.returns(Promise.reject("Reload triggered"));
+			sandbox.stub(ReloadManager, "handleReloadOnStart").returns(true);
+			this.oRtaStartStub.restore();
 			return adaptationStarter({
 				rootControl: oAppComponent,
 				flexSettings: {
@@ -346,8 +349,15 @@ sap.ui.define([
 				assert.ok(false, "should not go here");
 			})
 			.catch(function(oError) {
-				assert.strictEqual(this.oLogStub.callCount, 0, "no error was logged");
-				assert.strictEqual(oError, "Reload triggered", "then promise was rejected with an error string");
+				assert.notOk(
+					this.oLogStub.getCalls().some((oCall) => oCall.args.includes("Reload triggered")),
+					"no reload error was logged"
+				);
+				assert.strictEqual(
+					oError.message,
+					"Reload triggered",
+					"then the async function throws with an error"
+				);
 			}.bind(this));
 		});
 	});
