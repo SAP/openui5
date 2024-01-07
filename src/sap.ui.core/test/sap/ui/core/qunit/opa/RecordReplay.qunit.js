@@ -41,7 +41,6 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oView.destroy();
-			sap.ui.getCore().setModel();
 		}
 	});
 

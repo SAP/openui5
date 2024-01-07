@@ -196,7 +196,7 @@ sap.ui.require([
 		oOpa.waitFor({
 			success: function () {
 				// prevent timeout detection from interfering (IE11 testrunner)
-				var oIFrameTimeoutWaiter = Opa5.getWindow().sap.ui.test.autowaiter._timeoutWaiter;
+				var oIFrameTimeoutWaiter = Opa5.getWindow().sap.ui.require("sap/ui/test/autowaiter/_timeoutWaiter");
 				oTimeoutWaiterStub = sinon.stub(oIFrameTimeoutWaiter, "hasPending");
 				oTimeoutWaiterStub.returns(false);
 			}

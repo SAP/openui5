@@ -14,7 +14,6 @@ sap.ui.define([
 			var oJSONModel = new JSONModel({
 				items: [{id: "1", name: "Item 11"}, {id: "2", name: "Item 22"}]
 			});
-			sap.ui.getCore().setModel(oJSONModel);
 			this.oSelect = new Select("mySelect");
 			this.oSelect.bindItems({
 				path: "/items",
@@ -24,10 +23,12 @@ sap.ui.define([
 				})
 			});
 			this.oSelect.placeAt("qunit-fixture");
+			this.oSelect.getUIArea().setModel(oJSONModel);
+
 			return nextUIUpdate();
 		},
 		afterEach: function () {
-			sap.ui.getCore().setModel();
+			this.oSelect.getUIArea().setModel();
 			this.oSelect.destroy();
 		}
 	});

@@ -104,9 +104,10 @@ sap.ui.define([
 				var oWindow = Opa5.getWindow();
 
 				// Act
-				var oNewHashChanger = new oWindow.sap.ui.core.routing.HashChanger();
+				var IFrameHashChanger = oWindow.sap.ui.require("sap/ui/core/routing/HashChanger");
+				var oNewHashChanger = new IFrameHashChanger();
 				var fnSetHash = oNewHashChanger.setHash;
-				oWindow.sap.ui.core.routing.HashChanger.replaceHashChanger(oNewHashChanger);
+				IFrameHashChanger.replaceHashChanger(oNewHashChanger);
 
 				// Assert
 				assert.notStrictEqual(oNewHashChanger.setHash, fnSetHash, "did modify the hashchanger");
