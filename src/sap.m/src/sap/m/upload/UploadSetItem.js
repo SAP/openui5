@@ -201,7 +201,6 @@ sap.ui.define([
 				oItem._renderAttributes(oRm);
 				oItem._renderStatuses(oRm);
 				oRm.close("div");
-				oItem._renderStateAndProgress(oRm);
 				oItem._renderButtons(oRm);
 			}
 		}
@@ -528,7 +527,8 @@ sap.ui.define([
 			this._oListItem = new CustomListItem(this.getId() + "-listItem", {
 				content: [
 					this._getIcon(),
-					this._getDynamicContent()
+					this._getDynamicContent(),
+					this._getProgressBox()
 				]
 			});
 			this._oListItem.addStyleClass("sapMUCItem");
@@ -909,7 +909,7 @@ sap.ui.define([
 		if (!this._oStateLabel) {
 			this._oStateLabel = new Label({
 				id: this.getId() + "-stateLabel",
-				text: "Pending", // TODO: All states and localization
+				text: "Uploading", // TODO: All states and localization
 				visible: this.getUploadState() !== UploadState.Complete
 			});
 		}
@@ -1008,7 +1008,7 @@ sap.ui.define([
 
 		// Render div container only if there is at least one button
 		if (aButtonsToRender.length > 0) {
-			oRm.openStart("div").class("sapMUCButtonContainer").openEnd();
+			oRm.openStart("div").class("sapMUSButtonContainer").openEnd();
 			aButtonsToRender.forEach(function (oBtn, iIndex) {
 				if (iIndex < (aButtonsToRender.length)) {
 					oBtn.addStyleClass("sapMUCFirstButton");
@@ -1137,7 +1137,30 @@ sap.ui.define([
 			this._oFileNameLink.destroy();
 			this._oFileNameLink = null;
 		}
-		this._oDynamicContent = null;
+		if (this._oProgressBox) {
+			this._oProgressBox.destroy();
+			this.removeDependent(this._oProgressBox);
+			this._oProgressBox = null;
+		}
+		if (this._oProgressIndicator) {
+			this._oProgressIndicator.destroy();
+			this.removeDependent(this._oProgressIndicator);
+			this._oProgressIndicator = null;
+		}
+		if (this._oStateLabel) {
+			this._oStateLabel.destroy();
+			this.removeDependent(this._oStateLabel);
+			this._oStateLabel = null;
+		}
+		if (this._oProgressLabel) {
+			this._oProgressLabel.destroy();
+			this.removeDependent(this._oProgressLabel);
+			this._oProgressLabel = null;
+		}
+		if (this._oDynamicContent) {
+			this._oDynamicContent.destroy();
+			this._oDynamicContent = null;
+		}
 	};
 
 	return UploadSetItem;
