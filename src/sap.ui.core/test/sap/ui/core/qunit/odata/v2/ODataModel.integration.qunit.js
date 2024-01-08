@@ -22096,4 +22096,114 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return this.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Custom headers are applied to *all* change requests when the $batch containing them is sent on
+	// ODataModel#submitChangesWithChangeHeaders.
+	// SNOW: CS20230004859105
+	QUnit.test("ODataModel#submitChangesWithChangeHeaders: Custom headers for change requests", function (assert) {
+		var oModel = createSalesOrdersModel({
+				defaultBindingMode : BindingMode.TwoWay,
+				refreshAfterChange : false // suppress GETs on collection after POST to reduce test complexity
+			}),
+			mModelHeaders = {
+				"my-custom0" : "~custom0Global",
+				"my-custom1" : "~custom1Global",
+				"my-custom2" : "~custom2Global"
+			},
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="2">\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest(mModelHeaders)
+			.expectRequest({
+				headers : mModelHeaders,
+				requestUri : "SalesOrderSet?$skip=0&$top=102"
+			}, {
+				results : [{
+					__metadata : { uri : "/SalesOrderSet('1')" },
+					SalesOrderID : "1",
+					Note : "foo"
+				}, {
+					__metadata : { uri : "/SalesOrderSet('2')" },
+					SalesOrderID : "2",
+					Note : "bar"
+				}]
+			})
+			.expectValue("id", ["1", "2"])
+			.expectValue("note", ["foo", "bar"]);
+
+		oModel.setHeaders(mModelHeaders); // set global custom headers
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					data : {
+						__metadata : { "uri": "/SalesOrderSet('1')" },
+						Note : "baz"
+					},
+					headers : {
+						"my-custom0" : "~custom0Global",
+						"my-custom1" : "~custom1Global",
+						"my-custom2" : "~custom2Change",
+						"my-custom-change" : "~customChange"
+					},
+					key : "SalesOrderSet('1')",
+					method : "MERGE",
+					requestUri : "SalesOrderSet('1')"
+				}, NO_CONTENT)
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : { type : "GWSAMPLE_BASIC.SalesOrder" }
+					},
+					headers : {
+						"my-create" : "~create",
+						"my-custom0" : "~custom0Create",
+						"my-custom1" : "~custom1Global",
+						"my-custom2" : "~custom2Change",
+						"my-custom-change" : "~customChange"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : { uri : "SalesOrderSet('3')" },
+						SalesOrderID : "3"
+					},
+					statusCode : 201
+				})
+				.expectRequest({
+					headers : {
+						"my-remove" : "~remove",
+						"my-custom0" : "~custom0Remove",
+						"my-custom1" : "~custom1Global",
+						"my-custom2" : "~custom2Change",
+						"my-custom-change" : "~customChange"
+					},
+					method : "DELETE",
+					requestUri : "SalesOrderSet('2')"
+				}, NO_CONTENT)
+				.expectValue("id", "", 1)
+				.expectValue("note", ["baz", ""]);
+
+			// code under test: update (via two-way binding), createEntry, remove apply headers from
+			//   global model headers, headers from API calls and submitChangesWithChangeHeaders in expected prio
+			that.oView.byId("table").getRows()[0].getCells()[1].setValue("baz");
+			oModel.createEntry("/SalesOrderSet", {
+				properties : {},
+				headers : {"my-create" : "~create", "my-custom0" : "~custom0Create"}
+			});
+			oModel.remove("/SalesOrderSet('2')", {
+				groupId : "changes", // use same batch group as update and create
+				headers : {"my-remove" : "~remove", "my-custom0" : "~custom0Remove"}
+			});
+			oModel.submitChangesWithChangeHeaders(
+				{changeHeaders : {"my-custom-change" : "~customChange", "my-custom2" : "~custom2Change"}}
+			);
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
