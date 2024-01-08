@@ -1,6 +1,5 @@
 /*global QUnit */
 sap.ui.define([
-	'sap/ui/core/Core',
 	'sap/ui/Device',
 	"sap/ui/core/Element",
 	'sap/ui/model/json/JSONModel',
@@ -18,9 +17,9 @@ sap.ui.define([
 	'sap/tnt/SideNavigation',
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem',
+	'sap/ui/qunit/utils/nextUIUpdate',
 	'sap/ui/qunit/utils/waitForThemeApplied'
-], function(
-	Core,
+], function (
 	Device,
 	Element,
 	JSONModel,
@@ -38,6 +37,7 @@ sap.ui.define([
 	SideNavigation,
 	NavigationList,
 	NavigationListItem,
+	nextUIUpdate,
 	waitForThemeApplied
 ) {
 	'use strict';
@@ -50,6 +50,20 @@ sap.ui.define([
 
 	// shortcut for sap.m.PageBackgroundDesign
 	var PageBackgroundDesign = mobileLibrary.PageBackgroundDesign;
+
+	/**
+	 * In some tests that are using fake timers, it might happen that a rendering task is queued by
+	 * creating a fake timer. Without an appropriate clock.tick call, this timer might not execute
+	 * and a later nextUIUpdate with real timers would wait endlessly.
+	 * To prevent this, after each such test a sync rendering is executed which will clear any pending
+	 * fake timer. The rendering itself should not be needed by the tests, if they are properly
+	 * isolated.
+	 *
+	 * This function is used as an indicator for such cases. It's just a wrapper around nextUIUpdate.
+	 */
+	function clearPendingUIUpdates(clock) {
+		return nextUIUpdate(clock);
+	}
 
 	// create and add app
 	var oApp = new App("myApp", {initialPage: "toolPage"});
@@ -509,11 +523,11 @@ sap.ui.define([
 	}
 
 	QUnit.module("API and Rendering", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.toolPage = getToolPage();
 			oPage.addContent(this.toolPage);
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in beforeEach
 		},
 		afterEach: function () {
 			this.toolPage.destroy();
@@ -537,58 +551,60 @@ sap.ui.define([
 		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 1, "header is rendered");
 	});
 
-	QUnit.test("header and subheader", function (assert) {
+	QUnit.test("header and subheader", async function (assert) {
 		this.toolPage.setSubHeader(new ToolHeader());
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 2, "header and subheader are rendered");
 	});
 
-	QUnit.test("set subheader visibility to true|false", function (assert) {
+	QUnit.test("set subheader visibility to true|false", async function (assert) {
 		var oToolHeader = new ToolHeader();
 
 		this.toolPage.setSubHeader(oToolHeader);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 2, "header and subheader are rendered");
 		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeaderWrapper.sapTntToolPageHeaderWithSubHeaderWrapper").length, 1, "wrapper has an extra css class");
 
 		oToolHeader.setVisible(false);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 1, "subheader is not rendered");
 		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeaderWrapper.sapTntToolPageHeaderWithSubHeaderWrapper").length, 0, "wrapper does not have an extra css class");
 
 		oToolHeader.setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeader").length, 2, "header and subheader are rendered");
 		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageHeaderWrapper.sapTntToolPageHeaderWithSubHeaderWrapper").length, 1, "wrapper has an extra css class");
 	});
 
-	QUnit.test("set side navigation visibility to true|false", function (assert) {
+	QUnit.test("set side navigation visibility to true|false", async function (assert) {
 		var oSideNavigation = this.toolPage.getSideContent();
 
 		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageAsideContent").length, 1, "sapTntToolPageAsideContent is rendered");
 
 		oSideNavigation.setVisible(false);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageAsideContent").length, 0, "sapTntToolPageAsideContent is not rendered");
 
 		oSideNavigation.setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		assert.strictEqual(this.toolPage.$().find(".sapTntToolPageAsideContent").length, 1, "sapTntToolPageAsideContent is rendered");
 	});
 
-	QUnit.test("toggleSideContentMode", function (assert) {
+	QUnit.test("toggleSideContentMode", async function (assert) {
 		assert.strictEqual(this.toolPage.getSideExpanded(), true, "ToolPage should be expanded");
 
 		this.toolPage.toggleSideContentMode();
 
 		assert.strictEqual(this.toolPage.getSideExpanded(), false, "ToolPage should be collapsed");
+
+		await clearPendingUIUpdates(this.clock);
 	});
 
-	QUnit.test("setSideExpanded", function (assert) {
+	QUnit.test("setSideExpanded", async function (assert) {
 		this.toolPage.setSideExpanded(true);
 
 		assert.equal(this.toolPage.$('aside').parent().hasClass('sapTntToolPageAsideCollapsed'), false, "ToolPage should not be collapsed");
@@ -596,7 +612,7 @@ sap.ui.define([
 
 		this.toolPage.setSideExpanded(false);
 
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.equal(this.toolPage.$('aside').parent().hasClass('sapTntToolPageAsideCollapsed'), true, "ToolPage should be collapsed");
 		assert.strictEqual(this.toolPage.getSideExpanded(), false, "ToolPage should be collapsed");
@@ -620,39 +636,39 @@ sap.ui.define([
 		this.toolPage._updateLastMediaQuery.restore();
 	});
 
-	QUnit.test("#setContentBackgroundDesign() to 'Solid'", function (assert) {
+	QUnit.test("#setContentBackgroundDesign() to 'Solid'", async function (assert) {
 		// Act
 		this.toolPage.setContentBackgroundDesign(PageBackgroundDesign.Solid);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(this.toolPage.$("main").hasClass("sapTntToolPageMainBackground-Solid"), "Correct class for Solid Background should be set");
 	});
 
-	QUnit.test("#setContentBackgroundDesign() to 'Transparent'", function (assert) {
+	QUnit.test("#setContentBackgroundDesign() to 'Transparent'", async function (assert) {
 		// Act
 		this.toolPage.setContentBackgroundDesign(PageBackgroundDesign.Transparent);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(this.toolPage.$("main").hasClass("sapTntToolPageMainBackground-Transparent"), "Correct class for Transparent Background should be set");
 	});
 
-	QUnit.test("#setContentBackgroundDesign() to 'List'", function (assert) {
+	QUnit.test("#setContentBackgroundDesign() to 'List'", async function (assert) {
 		// Act
 		this.toolPage.setContentBackgroundDesign(PageBackgroundDesign.List);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(this.toolPage.$("main").hasClass("sapTntToolPageMainBackground-List"), "Correct class for List Background should be set");
 	});
 
 	QUnit.module("Media handling", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.toolPage = getToolPage();
 			oPage.addContent(this.toolPage);
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in beforeEach
 		},
 		afterEach: function () {
 			this.toolPage.destroy();
@@ -660,7 +676,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Media Query Handler - Tablet", function (assert) {
+	QUnit.test("Media Query Handler - Tablet", async function (assert) {
 		// Arrange
 		var oDeviceStub = this.stub(Device, "system",  {
 			tablet: true
@@ -672,6 +688,7 @@ sap.ui.define([
 		assert.strictEqual(this.toolPage.getSideExpanded(), false, "ToolPage should be collapsed in Tablet mode");
 
 		oDeviceStub.restore();
+		await clearPendingUIUpdates(this.clock);
 	});
 
 	QUnit.test("Media Query Handler - Phone", function (assert) {
