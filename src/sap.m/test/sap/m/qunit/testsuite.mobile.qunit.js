@@ -1261,10 +1261,7 @@ sap.ui.define([
 				}
 			},
 			Popover: {
-				title: "QUnit Page for sap.m.Popover",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "QUnit Page for sap.m.Popover"
 			},
 			ProgressIndicator: {
 				title: "QUnit ProgressIndicator",
