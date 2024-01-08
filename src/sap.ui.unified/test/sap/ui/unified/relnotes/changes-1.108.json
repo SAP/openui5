@@ -248,5 +248,25 @@
         ]
       }
     ]
+  },
+  "1.108.24": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "b87e8f1b710ebfdcc85a933a38c244050a4a186b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust week days announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011630"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500008479592023"
+          }
+        ]
+      }
+    ]
   }
 }

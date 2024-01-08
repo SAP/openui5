@@ -535,5 +535,21 @@
         ]
       }
     ]
+  },
+  "1.108.24": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "81c74c2ee3db92e36ef734850c24134652f35962",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._CollectionCache#read: avoid endless busy indicator sometimes when scrolling up",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

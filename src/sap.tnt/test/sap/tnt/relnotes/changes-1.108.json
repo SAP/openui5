@@ -95,5 +95,21 @@
         ]
       }
     ]
+  },
+  "1.108.24": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "1bb6269eb34c3dfa77fd0527d76b73dfa73bb351",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: Context menu now successfully opens on items with 'href' set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380136720"
+          }
+        ]
+      }
+    ]
   }
 }

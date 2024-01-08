@@ -1507,5 +1507,21 @@
         ]
       }
     ]
+  },
+  "1.108.24": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "5226da541b9a2e11604605545474ad841385c62a",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Arrow has hover state now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009692332023"
+          }
+        ]
+      }
+    ]
   }
 }
