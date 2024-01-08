@@ -798,9 +798,6 @@ sap.ui.define([
 			},
 			MessagePopover: {
 				title: "QUnit Page for sap.m.MessagePopover",
-				sinon: {
-					useFakeTimers: true
-				},
 				ui5: {
 					theme: "sap_horizon"
 				}

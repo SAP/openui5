@@ -34,8 +34,6 @@
 				return generate([], from);
 			};
 
-			var core = sap.ui.getCore();
-
 			var mockMarkupDescription = "<h2>Heading h2</h2><script>alert('this JS will be sanitized')<\/script>" +
 					"<p>Paragraph. At vero eos et accusamus et iusto odio dignissimos ducimus qui ...</p>" +
 					"<ul>" +
@@ -198,7 +196,6 @@
 				initiallyExpanded: true
 			});
 
-
 			var oMessagePopoverCollapsed = new sap.m.MessagePopover("mPopoverCollapsed", {
 				items: {
 					path: "/messages",
@@ -226,7 +223,6 @@
 				initiallyExpanded: false
 			});
 
-			core.setModel(oModel);
 			oMessagePopover.setModel(oModel);
 			oMessagePopoverWithGrouping.setModel(oModel);
 			oMessagePopoverCollapsed.setModel(oModel);
@@ -318,13 +314,13 @@
 						layoutData: new sap.ui.core.LayoutData({span: "S2 M2 L2"}),
 						press: function () {
 							var message = new sap.m.MessageItem({
-								type: core.byId("msg-type-select").getSelectedKey(),
-								title: core.byId("msg-title-input").getValue(),
-								description: core.byId("msg-description-input").getValue()
+								type: sap.ui.core.Element.getElementById("msg-type-select").getSelectedKey(),
+								title: sap.ui.core.Element.getElementById("msg-title-input").getValue(),
+								description: sap.ui.core.Element.getElementById("msg-description-input").getValue()
 							});
 
-							var position = core.byId("msg-position-select").getSelectedKey();
-							var oModelTemp = core.getModel().getData();
+							var position = sap.ui.core.Element.getElementById("msg-position-select").getSelectedKey();
+							var oModelTemp = oMessagePopover.getModel().getData();
 							var oObjectMessage = {
 								type: message.getType(),
 								title: message.getTitle() || 'Empty',
@@ -342,12 +338,10 @@
 							oModelTemp.count += 1;
 
 							oModel.setData(oModelTemp);
-							oMessagePopover.setModel(oModel);
-							oMessagePopoverCollapsed.setModel(oModel);
-							core.byId("msg-model-input").setValue(JSON.stringify(core.getModel().getData(), null, 4));
+							sap.ui.core.Element.getElementById("msg-model-input").setValue(JSON.stringify(oMessagePopover.getModel().getData(), null, 4));
 
-							updateSelect(core.byId("msg-position-select"));
-							updateSelect(core.byId("msg-position-remove-select"));
+							updateSelect(sap.ui.core.Element.getElementById("msg-position-select"));
+							updateSelect(sap.ui.core.Element.getElementById("msg-position-remove-select"));
 						}
 					}),
 					new sap.m.Label(),
@@ -361,17 +355,17 @@
 						type: "Reject",
 						width: "230px",
 						press: function () {
-							var position = core.byId("msg-position-remove-select").getSelectedKey();
+							var position = sap.ui.core.Element.getElementById("msg-position-remove-select").getSelectedKey();
 							//oMessagePopover.removeAggregation("items", +position);
-							var oModelTemp = core.getModel().getData();
+							var oModelTemp = oMessagePopover.getModel().getData();
 							oModelTemp.messages.splice(position, 1);
 							oModelTemp.count -= 1;
 
 							oModel.setData(oModelTemp);
-							core.setModel(oModel);
-							core.byId("msg-model-input").setValue(JSON.stringify(core.getModel().getData(), null, 4));
-							updateSelect(core.byId("msg-position-select"));
-							updateSelect(core.byId("msg-position-remove-select"));
+
+							sap.ui.core.Element.getElementById("msg-model-input").setValue(JSON.stringify(oMessagePopover.getModel().getData(), null, 4));
+							updateSelect(sap.ui.core.Element.getElementById("msg-position-select"));
+							updateSelect(sap.ui.core.Element.getElementById("msg-position-remove-select"));
 						}
 					}),
 					new sap.m.Button({
@@ -382,10 +376,9 @@
 							//oMessagePopover.destroyAggregation("items",function(){});
 							oModel.setData({count: 0, messages: []});
 
-							core.setModel(oModel);
-							core.byId("msg-model-input").setValue("");
-							updateSelect(core.byId("msg-position-select"));
-							updateSelect(core.byId("msg-position-remove-select"));
+							sap.ui.core.Element.getElementById("msg-model-input").setValue("");
+							updateSelect(sap.ui.core.Element.getElementById("msg-position-select"));
+							updateSelect(sap.ui.core.Element.getElementById("msg-position-remove-select"));
 						}
 					})
 				]
@@ -428,6 +421,7 @@
 			});
 
 			var app = new sap.m.App("myApp", {initialPage: oPage});
+			app.setModel(oModel);
 
 			app.addPage(oPage).placeAt("content");
 		</script>

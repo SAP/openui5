@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/m/MessageItem",
 	"sap/ui/Device",
 	"sap/ui/core/CustomData",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Element,
@@ -33,7 +33,7 @@ sap.ui.define([
 	MessageItem,
 	Device,
 	CustomData,
-	Core,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -51,11 +51,24 @@ sap.ui.define([
 	var VerticalPlacementType = mobileLibrary.VerticalPlacementType;
 
 
+	function runAllTimersAndRestore(oClock, bRunToLast = false) {
+		if (!oClock) {
+			return;
+		}
+
+		if (bRunToLast) {
+			oClock.runToLast();
+		} else {
+			oClock.runAll();
+		}
+
+		oClock.restore();
+	}
 
 	QUnit.module("Public API", {
 		sCustomId: "custom-msg-popover-id",
 		oSpies: {},
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oSpies.beforeOpen = sinon.spy();
 			this.oSpies.afterOpen = sinon.spy();
 			this.oSpies.beforeClose = sinon.spy();
@@ -122,7 +135,7 @@ sap.ui.define([
 
 			this.oButton.addDependent(this.oMessagePopover);
 			this.oButton.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			sinon.stub(ObjectPool.prototype, "returnObject").callsFake(function(){});
 		},
@@ -151,10 +164,12 @@ sap.ui.define([
 			this.oButton = null;
 			this.oMockupData = null;
 			this.oMessageTemplate.destroy();
+
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
-	QUnit.test("HeaderButton aggregation binding", function (assert) {
+	QUnit.test("HeaderButton aggregation binding", async function (assert) {
 
 		var oMessagePopover = new MessagePopover({
 			models: new JSONModel({
@@ -166,7 +181,7 @@ sap.ui.define([
 			})
 		}).placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(Element.getElementById("idHeaderButton").getIcon(), "sap-icon://delete", "The header button is bound correctly");
 
@@ -177,6 +192,7 @@ sap.ui.define([
 	QUnit.test("setDescription() property", function (assert) {
 		// A total of 8 assertions are expected
 		assert.expect(8);
+		this.clock = sinon.useFakeTimers();
 
 		var doneLongtextLoaded = assert.async(),
 			doneUrlValidated = [assert.async(), assert.async()],
@@ -254,13 +270,13 @@ sap.ui.define([
 		assert.strictEqual(iInterListItemCounter, iMPItemCounter, "Internal listItem's counter should be the same as MessageItems's counter");
 	});
 
-	QUnit.test("No Navigation arrow should be shown if there is no description", function (assert) {
+	QUnit.test("No Navigation arrow should be shown if there is no description", async function (assert) {
 		var oStandardListItem;
 		this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 		this.oMessagePopover.openBy(this.oButton);
 
 		this.oMessagePopover.getItems()[1].setMarkupDescription(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oStandardListItem = this.oMessagePopover._oMessageView._oLists.all.getItems()[1];
 
@@ -268,6 +284,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Busy indicator should be shown", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var done = assert.async(),
 				that = this;
 
@@ -300,6 +317,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("setVisible should hide and show the MessagePopover", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oMessagePopover.openBy(this.oButton);
 		var oDomRef = this.oMessagePopover.getDomRef();
 
@@ -367,6 +385,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("isOpen() should return correct boolean value", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
 		assert.strictEqual(this.oMessagePopover.isOpen(), true, "message popover should be open");
@@ -386,15 +405,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("openBy() should open the popover with arrow", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
 		assert.equal(this.oMessagePopover.$("arrow").length, 1, "message popover should has arrow");
 	});
 
-	QUnit.test("openBy() called from sap.m.Toolbar button should open the popover without arrow", function (assert) {
+	QUnit.test("openBy() called from sap.m.Toolbar button should open the popover without arrow", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oToolbar = new Toolbar({ content: this.oButton });
 		oToolbar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
@@ -418,6 +439,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("afterOpen callback should be called with correct argument and this binding", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
 
@@ -433,6 +455,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("beforeClose callback should be called with correct argument and this binding", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
 		this.oMessagePopover.close();
@@ -449,6 +472,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("afterClose callback should be called with correct argument and this binding", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
 		this.oMessagePopover.close();
@@ -466,6 +490,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("AfterOpen should always load control's overview screen", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		assert.expect(2);
 		var done = assert.async(),
 			that = this,
@@ -481,6 +506,8 @@ sap.ui.define([
 			that.clock.tick(500);
 
 			assert.ok(that.oMessagePopover._oMessageView._isListPage());
+
+			runAllTimersAndRestore(that.clock, true);
 			done();
 	});
 
@@ -595,6 +622,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_restoreFocus", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var restoreFocusSpy = sinon.spy(this.oMessagePopover._oMessageView, "_restoreFocus");
 		this.oMessagePopover.openBy(this.oButton);
 
@@ -606,6 +634,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_restoreFocus should not be called", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var restoreFocusSpy = sinon.spy(this.oMessagePopover._oMessageView, "_restoreFocus");
 		this.oMessagePopover.setInitiallyExpanded(false);
 		this.oMessagePopover.openBy(this.oButton);
@@ -619,6 +648,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("When initialized without items template should automatically perform binding to the Message Model", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oModel = new JSONModel({
 			form: {
 				name: "Form Name"
@@ -643,7 +673,8 @@ sap.ui.define([
 		Messaging.removeAllMessages();
 	});
 
-	QUnit.test("When all messages from model are removed, MessageView / Popover should return to home page", function (assert) {
+	QUnit.test("When all messages from model are removed, MessageView / Popover should return to home page", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oMessagePopover = new MessagePopover();
 		var fnAddMessage = function() {
 			Messaging.addMessages(
@@ -664,11 +695,11 @@ sap.ui.define([
 				oMessagePopover.openBy(oEvent.oSource);
 			}
 		}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		fnClearMessages();
 		oBtn.firePress();
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		// store pages
@@ -676,24 +707,25 @@ sap.ui.define([
 		assert.strictEqual(oMessagePopover._oMessageView._listPage, oMessagePopoverCurrentPage, "List Page should be visible");
 
 		fnAddMessage();
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// store pages
 		oMessagePopoverCurrentPage = oMessagePopover._oMessageView._navContainer.getCurrentPage();
 		assert.strictEqual(oMessagePopover._oMessageView._detailsPage, oMessagePopoverCurrentPage, "Details Page should be visible");
 
 		fnClearMessages();
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// store pages
 		oMessagePopoverCurrentPage = oMessagePopover._oMessageView._navContainer.getCurrentPage();
 		assert.strictEqual(oMessagePopover._oMessageView._listPage, oMessagePopoverCurrentPage, "List Page should be visible");
-
+		runAllTimersAndRestore(this.clock, true);
 		oBtn.destroy();
 		oMessagePopover.destroy();
 	});
 
 	QUnit.test("Filtering after resize should not reset the height of the Popover", function(assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
 		var $Content = this.oMessagePopover.$("cont");
@@ -705,10 +737,11 @@ sap.ui.define([
 		assert.strictEqual($Content.height(), 8, "height should be the same as before filtering");
 	});
 
-	QUnit.test("Initially collapsed popover should be able to expand", function(assert) {
+	QUnit.test("Initially collapsed popover should be able to expand", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var $Content;
 		this.oMessagePopover.setInitiallyExpanded(false);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
 		this.oMessagePopover._expandMsgPopover();
@@ -719,6 +752,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("The items in the list should have info state set according to the message type", function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var aItems;
 
 		this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
@@ -733,6 +767,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Active Items: MessageView should forward the event to the MPO", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
@@ -745,7 +780,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("HTML representation", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oMessagePopover = new MessagePopover();
 
 			this.oButton = new Button({
@@ -753,7 +788,7 @@ sap.ui.define([
 			});
 
 			this.oButton.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oMessagePopover.destroy();
@@ -761,10 +796,12 @@ sap.ui.define([
 
 			this.oMessagePopover = null;
 			this.oButton = null;
+
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
-	QUnit.test("MessagePopover's filter should not be displayed if there is only one type of messages", function(assert){
+	QUnit.test("MessagePopover's filter should not be displayed if there is only one type of messages", async function(assert){
 
 		var oItem = new MessageItem({title: "MessageItem", type: "Error"}),
 			oItem2 = new MessageItem({title: "MessageItem", type: "Error"});
@@ -773,12 +810,12 @@ sap.ui.define([
 		this.oMessagePopover.insertItem(oItem2);
 
 		this.oMessagePopover.openBy(this.oButton);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oMessagePopover._oMessageView._oSegmentedButton.getVisible(), false, "no header buttons should be rendered");
 	});
 
-	QUnit.test("MessagePopover's filter should be displayed if there are more that one type of messages", function(assert){
+	QUnit.test("MessagePopover's filter should be displayed if there are more that one type of messages", async function(assert){
 
 		var oItem = new MessageItem({title: "MessageItem", type: "Error"}),
 			oItem2 = new MessageItem({title: "MessageItem", type: "Warning"});
@@ -787,7 +824,7 @@ sap.ui.define([
 		this.oMessagePopover.insertItem(oItem2);
 
 		this.oMessagePopover.openBy(this.oButton);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oMessagePopover._oMessageView._oSegmentedButton.getVisible(), true, "header buttons should be rendered");
 	});
@@ -808,10 +845,10 @@ sap.ui.define([
 			"sapMMsgPopover-init class should present on the HTML element");
 	});
 
-	QUnit.test("sapMMsgPopover-init class should be present after shrinking the MessagePopover", function (assert) {
+	QUnit.test("sapMMsgPopover-init class should be present after shrinking the MessagePopover", async function (assert) {
 		this.oMessagePopover.openBy(this.oButton);
 		this.oMessagePopover._collapseMsgPopover();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oDomRef = this.oMessagePopover.getDomRef();
 
@@ -819,7 +856,9 @@ sap.ui.define([
 			"sapMMsgPopover-init class should present on the HTML element");
 	});
 
-	QUnit.test("MessageItem's with truncated title", function (assert) {
+	QUnit.test("MessageItem's with truncated title", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+
 		var sLongTitle = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod" +
 				"tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam," +
 				"quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo" +
@@ -835,7 +874,7 @@ sap.ui.define([
 			title: "dummy item"
 		}));
 
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
@@ -853,7 +892,8 @@ sap.ui.define([
 		assert.ok(sActualAriaLabelledBy.indexOf(sInvisibleHeadingLabelId) !== -1, "should have a reference to the hidden text with heading messages description");
 	});
 
-	QUnit.test("MessagePopover's behavior in different screens on Desktop", function (assert) {
+	QUnit.test("MessagePopover's behavior in different screens on Desktop", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		//System under test
 		this.stub(Device, "system").value({desktop: true});
 
@@ -866,8 +906,7 @@ sap.ui.define([
 				})
 			]
 		});
-		Core.applyChanges();
-
+		await nextUIUpdate(this.clock);
 
 		// Act
 		// Open the popover normally
@@ -876,7 +915,7 @@ sap.ui.define([
 
 		// Emulate a small screen size on desktop
 		oMessagePopover._oPopover.setContentHeight("0px");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Close the popover
 		oMessagePopover.close();
@@ -897,7 +936,7 @@ sap.ui.define([
 	QUnit.module("Public API for async handlers", {
 		sCustomId: "custom-msg-popover-id",
 		oSpies : {},
-		beforeEach: function () {
+		beforeEach: async function () {
 			var that = this;
 
 			that.promiseDescription = new Promise(function(resolve) {
@@ -982,7 +1021,7 @@ sap.ui.define([
 			});
 
 			this.oButton.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			sinon.stub(ObjectPool.prototype, "returnObject").callsFake(function(){});
 		},
@@ -1011,16 +1050,23 @@ sap.ui.define([
 			this.oButton = null;
 			this.oMockupData = null;
 			this.oMessageTemplate.destroy();
+
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
 	QUnit.test("Async description handler", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var done = assert.async();
 
 		this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 
+		const that = this;
 		this.promiseDescription.then(function () {
 			assert.ok(true, "Default async description handler has been executed");
+
+			runAllTimersAndRestore(that.clock, true);
+
 			done();
 		});
 
@@ -1031,12 +1077,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Async URL handler", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var done = assert.async();
 
 		this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 
+		const that = this;
+
 		this.promiseURL.then(function () {
 			assert.ok(true, "Default async URL handler has been executed");
+			runAllTimersAndRestore(that.clock, true);
 			done();
 		});
 
@@ -1047,6 +1097,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("MessageItems type Navigation", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var aItems;
 
 		this.oMockupData.messages.forEach(function (message) {
@@ -1067,6 +1118,7 @@ sap.ui.define([
 
 	QUnit.test("MessageItems type Navigation", function (assert) {
 		var aItems;
+		this.clock = sinon.useFakeTimers();
 
 		this.oMockupData.messages.forEach(function (message) {
 			message["description"] = "";
@@ -1088,7 +1140,7 @@ sap.ui.define([
 
 	QUnit.module("Aggregation headerButton");
 
-	QUnit.test("custom button aggregation", function (assert) {
+	QUnit.test("custom button aggregation", async function (assert) {
 		var customButton = new Button({
 			text: "custom btn"
 		});
@@ -1100,7 +1152,7 @@ sap.ui.define([
 		});
 
 		oButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oMessagePopover.openBy(oButton);
 
@@ -1114,7 +1166,7 @@ sap.ui.define([
 
 	QUnit.module("Internal ResponsivePopover");
 
-	QUnit.test("openBy method should not call setShowArrow on phone", function (assert) {
+	QUnit.test("openBy method should not call setShowArrow on phone", async function (assert) {
 		this.stub(Device, "system").value({
 			desktop: false,
 			tablet: false,
@@ -1130,7 +1182,7 @@ sap.ui.define([
 		var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
 
 		oButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oMessagePopover.openBy(oButton);
 
@@ -1141,7 +1193,7 @@ sap.ui.define([
 		spySetShowArrow.restore();
 	});
 
-	QUnit.test("openBy method should call setShowArrow on desktop", function (assert) {
+	QUnit.test("openBy method should call setShowArrow on desktop", async function (assert) {
 		this.stub(Device, "system").value({
 			desktop: true,
 			tablet: false,
@@ -1157,7 +1209,7 @@ sap.ui.define([
 		var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
 
 		oButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oMessagePopover.openBy(oButton);
 
@@ -1169,7 +1221,7 @@ sap.ui.define([
 		spySetShowArrow.restore();
 	});
 
-	QUnit.test("openBy method should call setShowArrow on desktop", function (assert) {
+	QUnit.test("openBy method should call setShowArrow on desktop", async function (assert) {
 		this.stub(Device, "system").value({
 			desktop: true,
 			tablet: false,
@@ -1188,7 +1240,7 @@ sap.ui.define([
 		var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
 
 		oToolbar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oMessagePopover.openBy(oButton);
 
@@ -1201,7 +1253,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Binding", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oButton2 = new Button({text: "Press me"});
 
 			var oMessageTemplate = new MessageItem({
@@ -1224,7 +1276,7 @@ sap.ui.define([
 			}]));
 
 			this.oButton2.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oMessagepopover2.destroy();
@@ -1232,10 +1284,13 @@ sap.ui.define([
 
 			this.oButton2.destroy();
 			this.oButton2 = null;
+
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
 	QUnit.test("Updating item's binding should update its property", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oMessagepopover2.openBy(this.oButton2);
 		this.clock.tick(500);
 
@@ -1253,7 +1308,8 @@ sap.ui.define([
 		assert.strictEqual(this.oMessagepopover2._oMessageView._oSegmentedButton.getVisible(), true, "Segmented button is not needed but must be shown because message popover is set initiallyExpanded=false");
 	});
 
-	QUnit.test("Adding item to MessagePopover", function (assert) {
+	QUnit.test("Adding item to MessagePopover", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oMessagePopover = new MessagePopover(),
 			oMessageItem = new MessageItem({ title: "Test" }),
 			oButton = new Button();
@@ -1261,7 +1317,7 @@ sap.ui.define([
 		oMessagePopover.addItem(oMessageItem);
 
 		oButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oMessagePopover.openBy(oButton);
 		this.clock.tick(500);
@@ -1271,7 +1327,8 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Removing all items", function (assert) {
+	QUnit.test("Removing all items", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var tempObject = {
 			"message": "test"
 		};
@@ -1280,10 +1337,10 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		this.oMessagepopover2.getModel().setData(null);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		this.oMessagepopover2.getModel().setData([tempObject]);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.ok(this.oMessagepopover2.getItems().length);
 
@@ -1298,7 +1355,8 @@ sap.ui.define([
 		assert.ok(oSetModelStub.called, "setModel of the MessageView should be called");
 	});
 
-	QUnit.test("Prevent auto binding to the sap.ui.getCore().getMessageManager() when there's a model", function (assert) {
+	QUnit.test("Prevent auto binding to the Messaging when there's a model", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Setup
 		var oMessagePopover = new MessagePopover({
 				items: {
@@ -1314,7 +1372,7 @@ sap.ui.define([
 		oMessagePopover.setModel(new JSONModel());
 		oButton.addDependent(oMessagePopover);
 		oButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		var oMessage = new Message({
@@ -1327,30 +1385,32 @@ sap.ui.define([
 			validation: false
 		});
 		Messaging.addMessages(oMessage);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oMessagePopover.openBy(oButton);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		//Assert
 		assert.strictEqual(oMessagePopover._oMessageView.getItems().length, 0, "If the MessagePopover is bound to a model, the MessageView should not bind to the MessageManager");
 
 		//Cleanup
+
 		oMessage.destroy();
 		oMessagePopover.destroy();
 		oButton.destroy();
 		Messaging.removeAllMessages();
 	});
 
-	QUnit.test("Auto bind to the sap.ui.getCore().getMessageManager() when there are items or binding", function (assert) {
+	QUnit.test("Auto bind to the Messaging when there are items or binding", async function (assert) {
 		// Setup
+		this.clock = sinon.useFakeTimers();
 		var oMessagePopover = new MessagePopover(),
 			oButton = new Button();
 
 		oButton.addDependent(oMessagePopover);
 		oButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		var oMessage = new Message({
@@ -1363,10 +1423,10 @@ sap.ui.define([
 			validation: false
 		});
 		Messaging.addMessages(oMessage);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oMessagePopover.openBy(oButton);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		//Assert
@@ -1380,7 +1440,8 @@ sap.ui.define([
 		Messaging.removeAllMessages();
 	});
 
-	QUnit.test("Update binding of single item should change its properties (integration test)", function (assert) {
+	QUnit.test("Update binding of single item should change its properties (integration test)", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oMessageTemplate = new MessageItem({
 			type: '{messageSummary>type}',
 			title: '{messageSummary>message}'
@@ -1396,13 +1457,6 @@ sap.ui.define([
 		var oButton = new Button();
 		var sWarningText = "[WARNING] Veniam esse veniam nisi irure et labore eu consectetur dolor.";
 
-		var oChangeToWarningBtn = new Button({
-			press: function () {
-				_setMessageModel(sWarningText, "Warning");
-				Core.applyChanges();
-			}
-		}).placeAt("qunit-fixture");
-
 		var _setMessageModel = function(sText, sType) {
 			var oMessage = new Message({
 				message: sText,
@@ -1416,23 +1470,31 @@ sap.ui.define([
 			oMessagePopover.navigateBack();
 		};
 
+		const that = this;
+		var oChangeToWarningBtn = new Button({
+			press: async function () {
+				_setMessageModel(sWarningText, "Warning");
+				await nextUIUpdate(that.clock);
+			}
+		}).placeAt("qunit-fixture");
+
 		oMessagePopover.setModel(new JSONModel([]), "messageSummary");
 		_setMessageModel("[ERROR] Veniam esse veniam nisi irure et labore eu consectetur dolor.", "Error");
 
 		oButton.addDependent(oMessagePopover);
 		oButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 
 		oMessagePopover.openBy(oButton);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
-		oChangeToWarningBtn.firePress();
+		await oChangeToWarningBtn.firePress();
 
 		assert.strictEqual(oMessagePopover._oMessageView._oMessageIcon.getSrc(), IconPool.getIconURI("alert"), "Icon should be warning");
 		assert.strictEqual(oMessagePopover._oMessageView._detailsPage.getContent()[0].getText(), sWarningText, "Text should be warning");
-
+		runAllTimersAndRestore(this.clock, true);
 		oButton.destroy();
 		oMessagePopover.destroy();
 		oChangeToWarningBtn.destroy();
@@ -1486,14 +1548,16 @@ sap.ui.define([
 			this.oMessagePopover = null;
 
 			this.oModel = null;
+
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
-	QUnit.test("Model set via addDependent method", function (assert) {
+	QUnit.test("Model set via addDependent method", async function (assert) {
 		//System under test
 		this.oButton.addDependent(this.oMessagePopover);
 		this.oButton.setModel(this.oModel);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		var aMVItems = this.oMessagePopover._oMessageView.getItems();
@@ -1501,11 +1565,12 @@ sap.ui.define([
 		assert.strictEqual(aMVItems.length, 3, "Items are forwarded to the MessageView items aggregation");
 	});
 
-	QUnit.test("Model set via addDependent method - after the MessagePopover is opened", function (assert) {
+	QUnit.test("Model set via addDependent method - after the MessagePopover is opened", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		//System under test
 		this.oButton.addDependent(this.oMessagePopover);
 		this.oButton.setModel(this.oModel);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Act
 		//Open the MessagePopover
@@ -1520,10 +1585,10 @@ sap.ui.define([
 		assert.strictEqual(aMVItems.length, aMPItems.length, "The items in the MessageView are the same number as in the MessagePopover");
 	});
 
-	QUnit.test("Model set directly on the MessagePopover and items are forwarded to the MessageView", function (assert) {
+	QUnit.test("Model set directly on the MessagePopover and items are forwarded to the MessageView", async function (assert) {
 		//System under test
 		this.oMessagePopover.setModel(this.oModel);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		var aMVItems = this.oMessagePopover._oMessageView.getItems();
@@ -1531,10 +1596,11 @@ sap.ui.define([
 		assert.strictEqual(aMVItems.length, 3, "The items array is empty");
 	});
 
-	QUnit.test("After the MessagePopover is opened - there are items in the MessageView", function (assert) {
+	QUnit.test("After the MessagePopover is opened - there are items in the MessageView", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		//System under test
 		this.oMessagePopover.setModel(this.oModel);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Act
 		//Open the MessagePopover
@@ -1550,10 +1616,11 @@ sap.ui.define([
 		assert.strictEqual(aMVItems.length, aMPItems.length, "The items in the MessageView are the same number as in the MessagePopover");
 	});
 
-	QUnit.test("Changing property in any MessagePopover item should update the items in the MessageView", function (assert) {
+	QUnit.test("Changing property in any MessagePopover item should update the items in the MessageView", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		//System under test
 		this.oMessagePopover.setModel(this.oModel);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Act
 		//Open the MessagePopover
@@ -1563,7 +1630,7 @@ sap.ui.define([
 		var oItem = this.oMessagePopover.getItems()[0];
 		var spyInvalidate = sinon.spy(this.oMessagePopover, "invalidate");
 		oItem.setTitle("Test");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Assert
 		assert.strictEqual(this.oMessagePopover.getItems()[0].getTitle() , "Test", "The title of the first item of the MessagePopover is changed");
@@ -1573,10 +1640,11 @@ sap.ui.define([
 		spyInvalidate.restore();
 	});
 
-	QUnit.test("Any custom data from the items of the MessagePopover should be cloned in the MessageView's items", function (assert) {
+	QUnit.test("Any custom data from the items of the MessagePopover should be cloned in the MessageView's items", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		//System under test
 		this.oMessagePopover.setModel(this.oModel);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Act
 		this.oMessagePopover.getItems()[0].addCustomData(new CustomData({key : "test", value : true}));
@@ -1591,10 +1659,11 @@ sap.ui.define([
 		assert.ok(this.oMessagePopover._oMessageView.getItems()[0].getCustomData()[0].getValue(), "The data was passed correctly");
 	});
 
-	QUnit.test("Any custom data from the MessagePopover should be passed to the ResponsivePopover", function (assert) {
+	QUnit.test("Any custom data from the MessagePopover should be passed to the ResponsivePopover", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		//Act
 		this.oMessagePopover.addCustomData(new CustomData({key: "test", value: "value", writeToDom: true}));
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Open the MessagePopover
 		this.oMessagePopover.openBy(this.oButton);
@@ -1605,7 +1674,8 @@ sap.ui.define([
 		assert.strictEqual(this.oMessagePopover._oPopover.getCustomData().length, 1, "The custom data was cloned into the message popover's popover.");
 	});
 
-	QUnit.test("On mobile the dialog should be closed after clicking on the active title", function (assert) {
+	QUnit.test("On mobile the dialog should be closed after clicking on the active title", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		this.stub(Device, "system").value({
 			desktop: false,
 			tablet: false,
@@ -1622,7 +1692,7 @@ sap.ui.define([
 			]
 		});
 		var oCloseStub = this.stub(oMessagePopover, "close");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
@@ -1637,10 +1707,11 @@ sap.ui.define([
 		oMessagePopover.destroy();
 	});
 
-	QUnit.test("MessagePopover opened by a button, should be auto closed in case the DOM of this button is removed", function(assert){
+	QUnit.test("MessagePopover opened by a button, should be auto closed in case the DOM of this button is removed", async function(assert){
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		this.oButton.addDependent(this.oMessagePopover);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
@@ -1657,11 +1728,12 @@ sap.ui.define([
 		assert.ok(true, "No exception has been thrown");
 	});
 
-	QUnit.test("MessagePopover's navigateBack should serve as proxy to the MessageView", function (assert) {
+	QUnit.test("MessagePopover's navigateBack should serve as proxy to the MessageView", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		//Arrange
 		var oNavigateBackSpy = sinon.spy(this.oMessagePopover._oMessageView, "navigateBack");
 
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Act
 		this.oMessagePopover.navigateBack();
@@ -1692,11 +1764,11 @@ sap.ui.define([
 	//================================================================================
 
 	QUnit.module("Accessibility", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMessagePopover = new MessagePopover();
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oMessagePopover.close();
