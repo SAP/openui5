@@ -103,7 +103,7 @@ describe("sap.ui.integration.CardHeaderFooterVisualTests", function () {
 	it("Card Actions Label", function () {
 		utils.navigateTo("Footer");
 
-		var oCard = {id: "card1"};
+		var oCard = {id: "card3"};
 
 		var oElement = {
 			control: {
