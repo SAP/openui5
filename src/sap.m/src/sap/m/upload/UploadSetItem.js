@@ -19,10 +19,11 @@ sap.ui.define([
 	"sap/m/ProgressIndicator",
 	"sap/m/VBox",
 	"sap/m/HBox",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Lib",
+	"sap/ui/core/Core"
 ], function (Log, CoreLibrary, Element, Icon, IconPool, HTML,
 			 MobileLibrary, Button, CustomListItem, Image, Input,
-			 Label, Link, ProgressIndicator, VBox, HBox, CoreLib) {
+			 Label, Link, ProgressIndicator, VBox, HBox, CoreLib, Core) {
 	"use strict";
 
 	var UploadType = MobileLibrary.UploadType;
@@ -175,14 +176,15 @@ sap.ui.define([
 	var DynamicItemContent = HTML.extend("sap.m.upload.DynamicItemContent", {
 		metadata: {
 			library: "sap.m",
-			properties: {
+			associations: {
 				item: {type: "sap.m.upload.UploadSetItem"}
 			}
 		},
 		renderer: {
 			apiVersion: 2,
 			render: function (oRm, oControl) {
-				var oItem = oControl.getItem();
+				var sItemId = oControl.getAssociation("item");
+				var oItem = Core.byId(sItemId);
 				oRm.openStart("div");
 				oRm.class("sapMUCTextContainer");
 				if (this._bInEditMode) {
