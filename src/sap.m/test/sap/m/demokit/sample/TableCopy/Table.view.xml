@@ -1,0 +1,64 @@
+<mvc:View
+	controllerName="sap.m.sample.TableCopy.Table"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:plugins="sap.m.plugins"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+	<Table id="idProductsTable"
+		growing="true"
+		mode="MultiSelect"
+		items="{
+			path: '/ProductCollection',
+			sorter: {
+				path: 'Name'
+			}
+		}">
+		<headerToolbar>
+			<OverflowToolbar id="toolbar">
+				<Title text="Products" level="H2"/>
+				<ToolbarSpacer />
+				<CheckBox text="Visible" selected="true" select=".onVisibleChange"/>
+				<CheckBox text="Enabled" selected="true" select=".onEnabledChange"/>
+				<CheckBox text="Sparse" select=".onSparseChange"/>
+			</OverflowToolbar>
+		</headerToolbar>
+		<columns>
+			<Column width="16em" app:bindings="ProductId,Name" app:template="\{1}\n\{0}" >
+				<Text text="Product" />
+			</Column>
+			<Column minScreenWidth="Desktop" demandPopin="true" app:bindings="SupplierName">
+				<Text text="Supplier" />
+			</Column>
+			<Column minScreenWidth="Desktop" demandPopin="true" hAlign="End" app:bindings="Quantity,UoM" app:template="\{0} \{1}">
+				<Text text="Quantity" />
+			</Column>
+			<Column width="10em" hAlign="End" app:bindings="Price,CurrencyCode" app:template="\{0} \{1}">
+				<Text text="Price" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem vAlign="Middle">
+				<cells>
+					<ObjectIdentifier
+						title="{Name}"
+						text="{ProductId}"/>
+					<Text
+						text="{SupplierName}" />
+					<Text
+						text="{Quantity} {UoM}" />
+					<ObjectNumber
+							number="{
+								parts:[{path:'Price'},{path:'CurrencyCode'}],
+								type: 'sap.ui.model.type.Currency',
+								formatOptions: {showMeasure: false}
+							}"
+							unit="{CurrencyCode}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+		<dependents>
+			<plugins:CopyProvider id="copyProvider" extractData=".extractData" />
+		</dependents>
+	</Table>
+</mvc:View>
