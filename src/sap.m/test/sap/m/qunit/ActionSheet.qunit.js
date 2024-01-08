@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/Device",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	library,
 	App,
@@ -26,7 +26,7 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	Device,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -285,7 +285,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("If first button is invinsible, focus goes to the second one", function (assert) {
+	QUnit.test("If first button is invinsible, focus goes to the second one", async function (assert) {
 		var done = assert.async();
 		var oButton = new Button({
 			text: "Open ActionSheet",
@@ -306,7 +306,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -319,7 +319,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test("setTitle property test", function (assert) {
+	QUnit.test("setTitle property test", async function (assert) {
 		// Arrange
 		var oClock = sinon.useFakeTimers(),
 			oSystem = {
@@ -343,7 +343,7 @@ sap.ui.define([
 		}), oSpy;
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate(oClock);
 		oButton.firePress();
 		oClock.tick(300);
 
@@ -378,11 +378,14 @@ sap.ui.define([
 		oButton.destroy();
 		oClock.restore();
 		oActionSheet.destroy();
+
+		oClock.runAll();
+		oClock.restore();
 	});
 
 	QUnit.module("keyboard handling");
 
-	QUnit.test('PageUp keyboard handling', function (assert) {
+	QUnit.test('PageUp keyboard handling', async function (assert) {
 		var done = assert.async();
 		assert.expect(2);
 		var oButton = new Button({
@@ -431,7 +434,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -455,7 +458,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test('PageDown keyboard handling mobile phone', function (assert) {
+	QUnit.test('PageDown keyboard handling mobile phone', async function (assert) {
 		var done = assert.async();
 
 		var oSystem = {
@@ -511,7 +514,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -531,7 +534,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test('PageDown keyboard handling desktop', function (assert) {
+	QUnit.test('PageDown keyboard handling desktop', async function (assert) {
 		var done = assert.async();
 		var oSystem = {
 			desktop: true,
@@ -585,7 +588,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -607,7 +610,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test('Alt+Left/Right keyboard handling', function (assert) {
+	QUnit.test('Alt+Left/Right keyboard handling', async function (assert) {
 		var done = assert.async();
 		var oSystem = {
 			desktop: true,
@@ -660,7 +663,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -684,7 +687,7 @@ sap.ui.define([
 
 	QUnit.module("Screen reader");
 
-	QUnit.test("Role presentation should be present", function (assert) {
+	QUnit.test("Role presentation should be present", async function (assert) {
 		var done = assert.async(),
 			oButton = new Button({
 				text: "Open ActionSheet",
@@ -704,7 +707,7 @@ sap.ui.define([
 			oActionSheetContentDivRole;
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -718,7 +721,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Popup should have ariaLabelledBy that points to the sPopupHiddenLabelId", function (assert) {
+	QUnit.test("Popup should have ariaLabelledBy that points to the sPopupHiddenLabelId", async function (assert) {
 		var done = assert.async(),
 			oButton = new Button({
 				text: "Open ActionSheet",
@@ -739,7 +742,7 @@ sap.ui.define([
 			sActualText;
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oButton.firePress();
 
 		sActualText = Element.getElementById(oActionSheet.getPopupHiddenLabelId()).getText();
@@ -754,7 +757,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test('Dialog without a title on mobile phone should have ariaLabeleedBy pointing to the sPopupHiddenLabelId', function (assert) {
+	QUnit.test('Dialog without a title on mobile phone should have ariaLabeleedBy pointing to the sPopupHiddenLabelId', async function (assert) {
 		var done = assert.async(),
 			oSystem = {
 				desktop: false,
@@ -785,7 +788,7 @@ sap.ui.define([
 
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oButton.firePress();
 
 		sActualText = Element.getElementById(oActionSheet.getPopupHiddenLabelId()).getText();
@@ -800,7 +803,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test('Button should have ariaDescribedBy that points to hidden text', function (assert) {
+	QUnit.test('Button should have ariaDescribedBy that points to hidden text', async function (assert) {
 		var done = assert.async();
 		var oButton = new Button({
 			text: "Open ActionSheet",
@@ -821,7 +824,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -848,7 +851,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test('Removing a button and adding it again should not add wrong descriptions', function (assert) {
+	QUnit.test('Removing a button and adding it again should not add wrong descriptions', async function (assert) {
 		var done = assert.async();
 		var oButton = new Button({
 			text: "Open ActionSheet",
@@ -872,7 +875,7 @@ sap.ui.define([
 		oActionSheet.addButton(button1);
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -895,7 +898,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test('Inserting button should not mismatch Aria descriptions', function (assert) {
+	QUnit.test('Inserting button should not mismatch Aria descriptions', async function (assert) {
 		//Setup
 		var done = assert.async();
 		var oButton = new Button({
@@ -919,7 +922,7 @@ sap.ui.define([
 		oActionSheet.insertButton(oASButton2, 1);
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -938,7 +941,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test('Invisible buttons should not be counted', function (assert) {
+	QUnit.test('Invisible buttons should not be counted', async function (assert) {
 		var done = assert.async();
 		var oButton = new Button({
 			text: "Open ActionSheet",
@@ -959,7 +962,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -976,7 +979,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test('ActionSheet\'s ariaRoleApplication property should be set to true', function (assert) {
+	QUnit.test('ActionSheet\'s ariaRoleApplication property should be set to true', async function (assert) {
 		var oActionSheet = new ActionSheet();
 		var oButton = new Button({
 			text: "Open ActionSheet",
@@ -986,7 +989,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oButton.firePress();
 
 		assert.strictEqual(oActionSheet._parent.getProperty('ariaRoleApplication'), true, "ariaRoleApplication of the ActionSheet is set to true.");
@@ -1058,7 +1061,7 @@ sap.ui.define([
 
 	QUnit.module("AfterClose event");
 
-	QUnit.test('Origin should be null when closing the ActionSheet without pressing a selected item', function (assert) {
+	QUnit.test('Origin should be null when closing the ActionSheet without pressing a selected item', async function (assert) {
 		//Arrange
 		var done = assert.async();
 		var oClock = sinon.useFakeTimers();
@@ -1090,14 +1093,16 @@ sap.ui.define([
 
 		//Act
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate(oClock);
 		oButton.firePress();
 		oActionSheet.close();
 		oClock.tick(300);
 		oClock.tick(1); // also process nested setTimeout(0) calls
+		oClock.runAll();
+		oClock.restore();
 	});
 
-	QUnit.test('Origin should provide the type of the selected action', function (assert) {
+	QUnit.test('Origin should provide the type of the selected action', async function (assert) {
 		//Arrange
 		var done = assert.async();
 		var oClock = sinon.useFakeTimers();
@@ -1129,15 +1134,17 @@ sap.ui.define([
 
 		//Act
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate(oClock);
 		oButton.firePress();
 		oActionSheet.onmousedown({ srcControl: oButton1 });
 		oButton1.firePress();
 		oClock.tick(300);
 		oClock.tick(1); // also process nested setTimeout(0) calls
+		oClock.runAll();
+		oClock.restore();
 	});
 
-	QUnit.test('Origin should provide the type of the cancel button', function (assert) {
+	QUnit.test('Origin should provide the type of the cancel button', async function (assert) {
 		//Arrange
 		var done = assert.async();
 		var oClock = sinon.useFakeTimers();
@@ -1180,12 +1187,14 @@ sap.ui.define([
 
 		//Act
 		page.addContent(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate(oClock);
 		oButton.firePress();
 		oActionSheet.onmousedown({ srcControl: oCancelButton });
 		oCancelButton.firePress();
 		oClock.tick(300);
 		oClock.tick(1); // also process nested setTimeout(0) calls
+		oClock.runAll();
+		oClock.restore();
 	});
 
 	QUnit.done(function () {
