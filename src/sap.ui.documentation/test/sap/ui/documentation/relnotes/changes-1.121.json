@@ -3,6 +3,11 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "d435955b5e41f97ce08598ed7c133cbf9420715d",
+        "type": "FEATURE",
+        "text": " Demo Kit: Added Experimental API Filter"
+      },
+      {
         "id": "e1c5e067926f2ae898a8f196dec133150696b278",
         "type": "FEATURE",
         "text": " Demo Kit: Added Experimental API Filter"

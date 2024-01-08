@@ -19,6 +19,11 @@
         ]
       },
       {
+        "id": "e280fdac4e9314b6a64c1c9bd1f5b6bec5ac8ee3",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Aligning Table's title with OPL's SubSection title"
+      },
+      {
         "id": "768abace079259cfd9c76a3ee5bb8da1f35b83ec",
         "type": "FIX",
         "text": " sap.m.MenuButton: Accept Button type button is displayed correctly in all themes",

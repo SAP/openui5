@@ -3,6 +3,11 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "c2d44b4cf177a43616638e931d4b4ab23a2a4ce0",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation:  selecting disabled elements from overflow is not allowed"
+      },
+      {
         "id": "d7c28bd254c3cf42c75f9a745ec16f433a5f149f",
         "type": "FIX",
         "text": " sap.tnt.ToolHeader: Padding when there is no menu button fixed",

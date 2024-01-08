@@ -3,6 +3,11 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "3fb6cba47c0c8a20af00c29874fd1201239d7104",
+        "type": "FEATURE",
+        "text": "ActionTile: We now ensure that the links are rendered correctly within a To-Dos card"
+      },
+      {
         "id": "dfbf95cbdcc26ea4b59b047c33e09f848ea034d9",
         "type": "FIX",
         "text": " sap.m.MessagePopover: Propagate custom data to popover"
