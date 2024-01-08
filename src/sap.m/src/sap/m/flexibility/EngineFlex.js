@@ -36,10 +36,16 @@ sap.ui.define([
         removeSort: xConfigHandler.createHandler({
 			property: "sortConditions"
 		}),
+        moveSort: xConfigHandler.createHandler({
+			property: "sortConditions"
+		}),
 		addGroup: xConfigHandler.createHandler({
 			property: "groupConditions"
 		}),
         removeGroup: xConfigHandler.createHandler({
+			property: "groupConditions"
+		}),
+		moveGroup: xConfigHandler.createHandler({
 			property: "groupConditions"
 		}),
 		setColumnWidth: xConfigHandler.createHandler({
