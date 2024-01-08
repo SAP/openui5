@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/apply/_internal/flexObjects/Variant",
@@ -9,6 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	merge,
+	Lib,
 	FlexObjectFactory,
 	FlexObject,
 	Variant,
@@ -61,6 +63,31 @@ sap.ui.define([
 				oBaseVariant.getName(),
 				"variant-name-in-texts",
 				"then the variant name from texts parameter is used as name"
+			);
+		});
+
+		QUnit.test("when new variant is initialized", function(assert) {
+			this.mFileContent = {
+				layer: "USER",
+				support: {
+					user: "A"
+				}
+			};
+			var oBaseVariant = FlexObjectFactory.createFromFileContent(this.mFileContent, Variant);
+			assert.strictEqual(oBaseVariant.getAuthor(), "A", "then the variant author name is from support user"
+			);
+		});
+
+		QUnit.test("after variant author has been set", function(assert) {
+			this.mFileContent = {
+				layer: "USER",
+				support: {
+					user: "A"
+				}
+			};
+			var oBaseVariant = FlexObjectFactory.createFromFileContent(this.mFileContent, Variant);
+			oBaseVariant.setAuthor("new name");
+			assert.strictEqual(oBaseVariant.getAuthor(), "new name", "then the variant author name is updated"
 			);
 		});
 	});

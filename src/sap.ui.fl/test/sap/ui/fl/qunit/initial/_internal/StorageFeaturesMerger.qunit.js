@@ -33,6 +33,7 @@ sap.ui.define([
 				isLocalResetEnabled: false,
 				versioning: {},
 				isZeroDowntimeUpgradeRunning: false,
+				isVariantAuthorNameAvailable: false,
 				system: "",
 				client: ""
 			};
@@ -46,7 +47,7 @@ sap.ui.define([
 		QUnit.test("mergeResults with different responses", function(assert) {
 			var oResponse1 = {
 				layers: [],
-				features: {isProductiveSystem: false}
+				features: {isProductiveSystem: false, isVariantAuthorNameAvailable: true}
 			};
 			var oResponse2 = {
 				layers: [],
@@ -67,6 +68,7 @@ sap.ui.define([
 			assert.equal(oResult.isProductiveSystem, false, "isProductiveSystem is false");
 			assert.equal(oResult.isKeyUserTranslationEnabled, true, "isKeyUserTranslationEnabled is true");
 			assert.equal(oResult.isContextSharingEnabled, true, "isContextSharingEnabled is true");
+			assert.equal(oResult.isVariantAuthorNameAvailable, true, "isVariantAuthorNameAvailable is true");
 		});
 
 		QUnit.test("mergeResults handles the versioning flags", function(assert) {

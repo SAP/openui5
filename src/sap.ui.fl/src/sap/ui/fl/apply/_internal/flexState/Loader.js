@@ -150,6 +150,16 @@ sap.ui.define([
 			.then(filterInvalidFileNames.bind())
 			.then(migrateSelectorFlags.bind(undefined, isMigrationNeeded(mPropertyBag.manifest)))
 			.then(formatFlexData);
+		},
+
+		/**
+		 * Load the names of variants' authors for a given application.
+		 *
+		 * @param {string} sReference - Flex reference of application
+		 * @returns {Promise<object>} Resolving with a list of maps between user's ID and name
+		 */
+		loadVariantsAuthors(sReference) {
+			return ApplyStorage.loadVariantsAuthors(sReference);
 		}
 	};
 });

@@ -15,11 +15,14 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ROUTES = {
+	const ROUTES = {
 		DATA: "/flex/data/",
 		MODULES: "/flex/modules/",
-		SETTINGS: "/flex/settings"
+		SETTINGS: "/flex/settings",
+		VARIANTS_AUTHORS: "/variants/authors/"
 	};
+
+	let _mFlexDataParameters = {};
 
 	/**
 	 * Connector for requesting data from an LRep based back end.
@@ -131,6 +134,9 @@ sap.ui.define([
 				mParameters.upToLayerType = mPropertyBag.preview.maxLayer;
 			}
 
+			// Store parameters for possible subsequence GET variants' authors names request
+			_mFlexDataParameters = mParameters;
+
 			var sDataUrl = Utils.getUrl(ROUTES.DATA, mPropertyBag, mParameters);
 			return Utils.sendRequest(sDataUrl, "GET", {
 				initialConnector: this,
@@ -160,6 +166,21 @@ sap.ui.define([
 					return oResponse;
 				});
 			}.bind(this));
+		},
+
+		/**
+		 * Get full names of variants' authors.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {string} mPropertyBag.url Configured URL for the connector
+		 * @param {string} mPropertyBag.reference Flexibility reference
+		 * @returns {Promise<object>} Promise resolves with an object containing maps of variants' IDs and their names
+		 */
+		loadVariantsAuthors(mPropertyBag) {
+			const sVariantsAuthorsUrl = Utils.getUrl(ROUTES.VARIANTS_AUTHORS, mPropertyBag, _mFlexDataParameters);
+			return Utils.sendRequest(sVariantsAuthorsUrl, "GET", {initialConnector: this}).then(function(oResult) {
+				return oResult.response;
+			});
 		}
 	};
 });

@@ -28,6 +28,7 @@ sap.ui.define([
 				isContextSharingEnabled: false,
 				isContextBasedAdaptationEnabled: false,
 				isCondensingEnabled: false,
+				isVariantAuthorNameAvailable: false,
 				features: {
 					addField: [Layer.CUSTOMER, Layer.VENDOR],
 					changeTypeOnlyForUser: [Layer.USER],
@@ -81,6 +82,12 @@ sap.ui.define([
 			assert.equal(this.cut._oSettings.isCondensingEnabled, false);
 			var bIsCondensingEnabled = this.cut.isCondensingEnabled();
 			assert.equal(bIsCondensingEnabled, false);
+		});
+
+		QUnit.test("isVariantAuthorNameAvailable", function(assert) {
+			assert.equal(this.cut._oSettings.isVariantAuthorNameAvailable, false);
+			var bIsVariantAuthorNameAvailable = this.cut.isVariantAuthorNameAvailable();
+			assert.equal(bIsVariantAuthorNameAvailable, false);
 		});
 
 		QUnit.test("isModelS", function(assert) {

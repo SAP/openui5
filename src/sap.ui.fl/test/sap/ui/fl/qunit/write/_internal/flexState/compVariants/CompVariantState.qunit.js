@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -26,6 +27,7 @@ sap.ui.define([
 ], function(
 	Control,
 	Element,
+	Lib,
 	UIComponent,
 	CompVariant,
 	FlexObjectFactory,
@@ -231,6 +233,7 @@ sap.ui.define([
 			assert.strictEqual(mCompVariantsMapForPersistencyKey.variants.length, 1, "then one entity was stored");
 
 			assert.strictEqual(oAddedObject.getName(), "newVariant", "the variant name is set correctly");
+			assert.equal(oAddedObject.getAuthor(), Lib.getResourceBundleFor("sap.ui.fl").getText("VARIANT_SELF_OWNER_NAME"), "the variant author is set correctly");
 			assert.strictEqual(mCompVariantsMapForPersistencyKey.variants[0], oAddedObject, "which is the returned entity");
 		});
 

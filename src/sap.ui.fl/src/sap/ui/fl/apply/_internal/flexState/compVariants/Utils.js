@@ -9,7 +9,7 @@ sap.ui.define([], function() {
 
 	Utils.getPersistencyKey = (oControl) => {
 		if (oControl) {
-			var oVMControl = oControl.getVariantManagement && oControl.getVariantManagement() || oControl;
+			var oVMControl = oControl.getVariantManagement?.() || oControl;
 			if (oVMControl.getPersonalizableControlPersistencyKey) {
 				return oVMControl.getPersonalizableControlPersistencyKey();
 			}

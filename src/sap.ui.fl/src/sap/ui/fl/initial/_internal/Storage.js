@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/base/util/restricted/_merge",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/_internal/storageResultDisassemble",
 	"sap/ui/fl/initial/_internal/StorageFeaturesMerger",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/Layer"
 ], function(
+	_merge,
 	FlexInfoSession,
 	storageResultDisassemble,
 	StorageFeaturesMerger,
@@ -136,6 +138,23 @@ sap.ui.define([
 		return Promise.all(aConnectorPromises);
 	}
 
+	async function loadVariantsAuthorsFromConnectors(sReference, aConnectors) {
+		const aResponses = await Promise.all(aConnectors.map(function(oConnectorConfig) {
+			const oConnectorSpecificPropertyBag = Object.assign({reference: sReference}, {
+				url: oConnectorConfig.url
+			});
+			return oConnectorConfig.loadConnectorModule.loadVariantsAuthors(oConnectorSpecificPropertyBag)
+			.then((oResponse) => oResponse || {})
+			.catch(StorageUtils.logAndResolveDefault.bind(
+				undefined,
+				{},
+				oConnectorConfig,
+				"loadVariantsAuthors"
+			));
+		}));
+		return _merge({}, ...aResponses);
+	}
+
 	var Storage = {};
 
 	/**
@@ -187,6 +206,20 @@ sap.ui.define([
 		return StorageUtils.getLoadConnectors()
 		.then(_loadFlexDataFromConnectors.bind(this, mPropertyBag))
 		.then(_flattenAndMergeResultPromise);
+	};
+
+	/**
+	 * Load the names of variants' authors for a given application.
+	 *
+	 * @param {string} sReference - Flex reference of application
+	 * @returns {Promise<object>} Resolving with a list of maps between variant ID and author name
+	 */
+	Storage.loadVariantsAuthors = function(sReference) {
+		if (!sReference) {
+			return Promise.reject("No reference was provided");
+		}
+		return StorageUtils.getLoadConnectors()
+		.then(loadVariantsAuthorsFromConnectors.bind(this, sReference));
 	};
 
 	return Storage;
