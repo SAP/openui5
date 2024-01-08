@@ -126,9 +126,12 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Element"], function(Log, Element) {
 
 			var oViewOptions = {
 				name : sViewName,
-				type : oOptions.viewType,
 				id : oOptions.viewId
 			};
+
+			if (!sViewName.startsWith("module:")) {
+				oViewOptions.type = oOptions.viewType;
+			}
 
 			oView = this._oCache._get(oViewOptions, "View",
 				// Hook in the route for deprecated global view id, it has to be supported to stay compatible
