@@ -146,7 +146,7 @@ sap.ui.define([
 		})
 		.catch(function(vError) {
 			if (
-				vError !== "Reload triggered"
+				vError.message !== "Reload triggered"
 				&& !(FlexUtils.getUshellContainer() && vError.reason === "flexEnabled") // FLP Plugin already handles this error
 			) {
 				var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
