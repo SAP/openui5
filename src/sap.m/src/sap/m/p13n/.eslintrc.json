@@ -1,0 +1,19 @@
+{
+	"overrides": [
+		{
+			"rules": {
+                "no-var": "error",
+				"prefer-const": "error",
+				"function-call-argument-newline": ["warn", "consistent"],
+				"object-property-newline": ["warn", { "allowAllPropertiesOnSameLine": true }],
+				"array-element-newline": ["warn", "consistent"],
+				"prefer-arrow-callback": "warn",
+				"prefer-destructuring": "warn",
+				"prefer-spread": "warn"
+			},
+			"files": [
+				"**/*.js"
+			]
+		}
+	]
+}

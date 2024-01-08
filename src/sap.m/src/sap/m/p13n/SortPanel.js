@@ -9,7 +9,15 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/layout/Grid",
 	"sap/ui/layout/GridData"
-], function(QueryPanel, Text, SegmentedButton, SegmentedButtonItem, Library, Grid, GridData) {
+], (
+	QueryPanel,
+	Text,
+	SegmentedButton,
+	SegmentedButtonItem,
+	Library,
+	Grid,
+	GridData
+) => {
 	"use strict";
 
 	/**
@@ -32,14 +40,14 @@ sap.ui.define([
 	 * @alias sap.m.p13n.SortPanel
 	 */
 
-	var SortPanel = QueryPanel.extend("sap.m.p13n.SortPanel", {
+	const SortPanel = QueryPanel.extend("sap.m.p13n.SortPanel", {
 		metadata: {
 			properties: {
 				/**
 				 * A short text describing the panel.
 				 * <b>Note:</b> This text will only be displayed if the panel is being used in a <code>sap.m.p13n.Popup</code>.
 				 */
-				 title: {
+				title: {
 					type: "string",
 					defaultValue: Library.getResourceBundleFor("sap.m").getText("p13n.DEFAULT_TITLE_SORT")
 				}
@@ -80,16 +88,16 @@ sap.ui.define([
 	 *
 	 */
 
-	SortPanel.prototype._createRemoveButton = function () {
-		var oRemoveBtn = QueryPanel.prototype._createRemoveButton.apply(this, arguments);
+	SortPanel.prototype._createRemoveButton = function() {
+		const oRemoveBtn = QueryPanel.prototype._createRemoveButton.apply(this, arguments);
 		oRemoveBtn.setLayoutData(new GridData({
-			span: "XL3 L3 M3 S4"//on "S" the Asc/Desc text is invisible, we need to increase the size the
+			span: "XL3 L3 M3 S4" //on "S" the Asc/Desc text is invisible, we need to increase the size the
 		}));
 		return oRemoveBtn;
 	};
 
-	SortPanel.prototype._createOrderSwitch = function (sKey, bDesc) {
-		var oSortOrderSwitch = new SegmentedButton({
+	SortPanel.prototype._createOrderSwitch = function(sKey, bDesc) {
+		const oSortOrderSwitch = new SegmentedButton({
 			enabled: sKey ? true : false,
 			layoutData: new GridData({
 				span: "XL2 L2 M2 S3" //on "S" the Asc/Desc text is invisible, we need to increase the size then
@@ -104,15 +112,15 @@ sap.ui.define([
 					icon: "sap-icon://sort-descending"
 				})
 			],
-			selectionChange: function (oEvt) {
-				var oItem = oEvt.getParameter("item");
-				var sSortOrder = oItem.getKey();
-				var oText = oEvt.getSource().getParent().getContent()[2];
+			selectionChange: (oEvt) => {
+				const oItem = oEvt.getParameter("item");
+				const sSortOrder = oItem.getKey();
+				const oText = oEvt.getSource().getParent().getContent()[2];
 				oText.setText(this._getSortOrderText(sSortOrder === "desc"));
-				var sKey = oEvt.oSource.getParent().getContent()[0].getSelectedItem().getKey();
+				const sKey = oEvt.oSource.getParent().getContent()[0].getSelectedItem().getKey();
 
 				this._changeOrder(sKey, sSortOrder == "desc");
-			}.bind(this)
+			}
 		});
 
 		oSortOrderSwitch.setSelectedItem(bDesc ? oSortOrderSwitch.getItems()[1] : oSortOrderSwitch.getItems()[0]);
@@ -120,7 +128,7 @@ sap.ui.define([
 		return oSortOrderSwitch;
 	};
 
-	SortPanel.prototype._createSortOrderText = function (sKey, bDesc) {
+	SortPanel.prototype._createSortOrderText = function(sKey, bDesc) {
 		return new Text({
 			layoutData: new GridData({
 				span: "XL3 L3 M3 S3",
@@ -132,9 +140,9 @@ sap.ui.define([
 
 	SortPanel.prototype._createQueryRowGrid = function(oItem) {
 		//Enhance row with sort specific controls (Segmented Button + sort order text)
-		var oSelect = this._createKeySelect(oItem.name);
-		var oSortOrderSwitch = this._createOrderSwitch(oItem.name, oItem.descending);
-		var oSortOrderText = this._createSortOrderText(oItem.name, oItem.descending);
+		const oSelect = this._createKeySelect(oItem.name);
+		const oSortOrderSwitch = this._createOrderSwitch(oItem.name, oItem.descending);
+		const oSortOrderText = this._createSortOrderText(oItem.name, oItem.descending);
 
 		return new Grid({
 			containerQuery: true,
@@ -147,15 +155,15 @@ sap.ui.define([
 		}).addStyleClass("sapUiTinyMargin");
 	};
 
-	SortPanel.prototype._getPlaceholderText = function () {
+	SortPanel.prototype._getPlaceholderText = function() {
 		return this._getResourceText("p13n.SORT_PLACEHOLDER");
 	};
 
-	SortPanel.prototype._getRemoveButtonTooltipText = function () {
+	SortPanel.prototype._getRemoveButtonTooltipText = function() {
 		return this._getResourceText("p13n.SORT_REMOVEICONTOOLTIP");
 	};
 
-	SortPanel.prototype._getRemoveButtonAnnouncementText = function () {
+	SortPanel.prototype._getRemoveButtonAnnouncementText = function() {
 		return this._getResourceText("p13n.SORT_REMOVEICONANNOUNCE");
 	};
 
@@ -163,13 +171,13 @@ sap.ui.define([
 		QueryPanel.prototype._selectKey.apply(this, arguments);
 
 		//Enable SegmentedButton
-		var oListItem = oComboBox.getParent().getParent();
-		var sNewKey = oComboBox.getSelectedKey();
-		var aContent = oListItem.getContent()[0].getContent();
+		const oListItem = oComboBox.getParent().getParent();
+		const sNewKey = oComboBox.getSelectedKey();
+		const aContent = oListItem.getContent()[0].getContent();
 		aContent[1].setEnabled(!!sNewKey);
 
 		//keep existing 'sortorder' selection
-		var bDescending = aContent[1].getSelectedKey() === "desc";
+		const bDescending = aContent[1].getSelectedKey() === "desc";
 		this._changeOrder(sNewKey, bDescending);
 	};
 
@@ -177,8 +185,8 @@ sap.ui.define([
 		return bDesc ? this._getResourceText("p13n.SORT_DESCENDING") : this._getResourceText("p13n.SORT_ASCENDING");
 	};
 
-	SortPanel.prototype._changeOrder = function (sKey, bDesc) {
-		var aItems = this._getP13nModel().getProperty("/items").filter(function (oItem) {
+	SortPanel.prototype._changeOrder = function(sKey, bDesc) {
+		const aItems = this._getP13nModel().getProperty("/items").filter((oItem) => {
 			return oItem.name === sKey;
 		});
 

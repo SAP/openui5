@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
-], function(merge, JsControlTreeModifier) {
+], (merge, JsControlTreeModifier) => {
 	"use strict";
 
 	/**
@@ -12,7 +12,7 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.m.p13n.modules.xConfigAPI
 	 */
-	var xConfigAPI = {};
+	const xConfigAPI = {};
 
 	/**
 	 * Enhances the xConfig object for a given mdc control instance.
@@ -29,41 +29,41 @@ sap.ui.define([
 	 *
 	 * @returns {Promise<object>} Promise resolving to the adapted xConfig object
 	 */
-	xConfigAPI.enhanceConfig = function(oControl, oModificationPayload) {
-		var mPropertyBag = oModificationPayload.propertyBag;
-		var oModifier = mPropertyBag ? mPropertyBag.modifier : JsControlTreeModifier;
-		var oControlMetadata;
-		var oXConfig;
+	xConfigAPI.enhanceConfig = (oControl, oModificationPayload) => {
+		const mPropertyBag = oModificationPayload.propertyBag;
+		const oModifier = mPropertyBag ? mPropertyBag.modifier : JsControlTreeModifier;
+		let oControlMetadata;
+		let oXConfig;
 
 		return oModifier.getControlMetadata(oControl)
-			.then(function(oRetrievedControlMetadata) {
+			.then((oRetrievedControlMetadata) => {
 				oControlMetadata = oRetrievedControlMetadata;
 				oModificationPayload.controlMetadata = oControlMetadata;
 				return oModifier.getAggregation(oControl, "customData");
 			})
-			.then(function(aCustomData) {
+			.then((aCustomData) => {
 
-				return Promise.all(aCustomData.map(function(oCustomData){
+				return Promise.all(aCustomData.map((oCustomData) => {
 					return oModifier.getProperty(oCustomData, "key");
-				})).then(function(aCustomDataKeys){
-					return aCustomData.reduce(function(oResult, mCustomData, iIndex){
+				})).then((aCustomDataKeys) => {
+					return aCustomData.reduce((oResult, mCustomData, iIndex) => {
 						return aCustomDataKeys[iIndex] === "xConfig" ? mCustomData : oResult;
 					}, undefined);
 				});
 			})
-			.then(function(oRetrievedXConfig) {
+			.then((oRetrievedXConfig) => {
 				oXConfig = oRetrievedXConfig;
 				if (oXConfig) {
 					return oModifier.getProperty(oXConfig, "value")
-					.then(function(sConfig){
-						return merge({}, JSON.parse(sConfig.replace(/\\/g, '')));
-					});
+						.then((sConfig) => {
+							return merge({}, JSON.parse(sConfig.replace(/\\/g, '')));
+						});
 				}
 				return {};
 			})
-			.then(function(oExistingConfig) {
+			.then((oExistingConfig) => {
 
-				var oConfig;
+				let oConfig;
 				if (oModificationPayload.controlMeta && oModificationPayload.controlMeta.aggregation) {
 					oConfig = xConfigAPI.createAggregationConfig(oControl, oModificationPayload, oExistingConfig);
 				} else {
@@ -74,21 +74,21 @@ sap.ui.define([
 					oConfig.modified = true;
 				}
 
-				var oAppComponent = mPropertyBag ? mPropertyBag.appComponent : undefined;
+				const oAppComponent = mPropertyBag ? mPropertyBag.appComponent : undefined;
 
-				var pDelete = Promise.resolve();
+				let pDelete = Promise.resolve();
 				if (oXConfig && oControl.isA) {
 					pDelete = oModifier.removeAggregation(oControl, "customData", oXConfig)
-					.then(function(){
-						return oModifier.destroy(oXConfig);
-					});
+						.then(() => {
+							return oModifier.destroy(oXConfig);
+						});
 				}
 
-				return pDelete.then(function(){
+				return pDelete.then(() => {
 					return oModifier.createAndAddCustomData(oControl, "xConfig", JSON.stringify(oConfig), oAppComponent)
-					.then(function(){
-						return merge({}, oConfig);
-					});
+						.then(() => {
+							return merge({}, oConfig);
+						});
 				});
 			});
 	};
@@ -102,25 +102,24 @@ sap.ui.define([
 	 *
 	 * @returns {Promise<object>|object} A promise resolving to the adapted xConfig object or the object directly
 	 */
-	xConfigAPI.readConfig = function(oControl, oModificationPayload) {
-		var oConfig, oAggregationConfig;
+	xConfigAPI.readConfig = (oControl, oModificationPayload) => {
 
 		if (oModificationPayload) {
-			var oModifier = oModificationPayload.propertyBag ? oModificationPayload.propertyBag.modifier : JsControlTreeModifier;
+			const oModifier = oModificationPayload.propertyBag ? oModificationPayload.propertyBag.modifier : JsControlTreeModifier;
 			return oModifier.getAggregation(oControl, "customData")
-				.then(function(aCustomData) {
-					return Promise.all(aCustomData.map(function(oCustomData){
+				.then((aCustomData) => {
+					return Promise.all(aCustomData.map((oCustomData) => {
 						return oModifier.getProperty(oCustomData, "key");
-					})).then(function(aCustomDataKeys){
-						return aCustomData.reduce(function(oResult, mCustomData, iIndex){
+					})).then((aCustomDataKeys) => {
+						return aCustomData.reduce((oResult, mCustomData, iIndex) => {
 							return aCustomDataKeys[iIndex] === "xConfig" ? mCustomData : oResult;
 						}, undefined);
 					});
 				})
-				.then(function(oAggregationConfig) {
+				.then((oAggregationConfig) => {
 					if (oAggregationConfig) {
 						return oModifier.getProperty(oAggregationConfig, "value")
-							.then(function(sValue) {
+							.then((sValue) => {
 								return merge({}, JSON.parse(sValue.replace(/\\/g, '')));
 							});
 					}
@@ -130,12 +129,12 @@ sap.ui.define([
 
 		// These functions are used instead of the modifier to avoid that the
 		// entire call stack is changed to async when it's not needed
-		var fnGetAggregationSync = function(oParent, sAggregationName) {
-			var fnFindAggregation = function(oControl, sAggregationName) {
+		const fnGetAggregationSync = (oParent, sAggregationName) => {
+			const fnFindAggregation = (oControl, sAggregationName) => {
 				if (oControl) {
 					if (oControl.getMetadata) {
-						var oMetadata = oControl.getMetadata();
-						var oAggregations = oMetadata.getAllAggregations();
+						const oMetadata = oControl.getMetadata();
+						const oAggregations = oMetadata.getAllAggregations();
 						if (oAggregations) {
 							return oAggregations[sAggregationName];
 						}
@@ -144,26 +143,26 @@ sap.ui.define([
 				return undefined;
 			};
 
-			var oAggregation = fnFindAggregation(oParent, sAggregationName);
+			const oAggregation = fnFindAggregation(oParent, sAggregationName);
 			if (oAggregation) {
 				return oParent[oAggregation._sGetter]();
 			}
 			return undefined;
 		};
 
-		var fnGetPropertySync = function(oControl, sPropertyName) {
-			var oMetadata = oControl.getMetadata().getPropertyLikeSetting(sPropertyName);
+		const fnGetPropertySync = (oControl, sPropertyName) => {
+			const oMetadata = oControl.getMetadata().getPropertyLikeSetting(sPropertyName);
 			if (oMetadata) {
-				var sPropertyGetter = oMetadata._sGetter;
+				const sPropertyGetter = oMetadata._sGetter;
 				return oControl[sPropertyGetter]();
 			}
 			return undefined;
 		};
 
-		oAggregationConfig = fnGetAggregationSync(oControl, "customData").find(function(oCustomData){
+		const oAggregationConfig = fnGetAggregationSync(oControl, "customData").find((oCustomData) => {
 			return fnGetPropertySync(oCustomData, "key") == "xConfig";
 		});
-		oConfig = oAggregationConfig ? merge({}, JSON.parse(fnGetPropertySync(oAggregationConfig, "value").replace(/\\/g, ''))) : null;
+		const oConfig = oAggregationConfig ? merge({}, JSON.parse(fnGetPropertySync(oAggregationConfig, "value").replace(/\\/g, ''))) : null;
 		return oConfig;
 	};
 
@@ -181,18 +180,18 @@ sap.ui.define([
 	 *
 	 * @returns {object} The adapted xConfig object
 	 */
-	xConfigAPI.createAggregationConfig = function(oControl, oModificationPayload, oExistingConfig) {
+	xConfigAPI.createAggregationConfig = (oControl, oModificationPayload, oExistingConfig) => {
 
-		var sPropertyInfoKey = oModificationPayload.key || oModificationPayload.name;
-		var mControlMeta = oModificationPayload.controlMeta;
+		const sPropertyInfoKey = oModificationPayload.key || oModificationPayload.name;
+		const mControlMeta = oModificationPayload.controlMeta;
 
-		var sAffectedProperty = oModificationPayload.property;
+		const sAffectedProperty = oModificationPayload.property;
 
-		var vValue = oModificationPayload.value;
-		var oControlMetadata = oModificationPayload.controlMetadata || oControl.getMetadata();
-		var sAffectedAggregation = mControlMeta.aggregation;
-		var sAggregationName = sAffectedAggregation ? sAffectedAggregation : oControlMetadata.getDefaultAggregation().name;
-		var oConfig = oExistingConfig || {};
+		const vValue = oModificationPayload.value;
+		const oControlMetadata = oModificationPayload.controlMetadata || oControl.getMetadata();
+		const sAffectedAggregation = mControlMeta.aggregation;
+		const sAggregationName = sAffectedAggregation ? sAffectedAggregation : oControlMetadata.getDefaultAggregation().name;
+		const oConfig = oExistingConfig || {};
 
 		if (!oConfig.hasOwnProperty("aggregations")) {
 			oConfig.aggregations = {};
@@ -212,17 +211,19 @@ sap.ui.define([
 
 		if (vValue !== null || (vValue && vValue.hasOwnProperty("value") && vValue.value !== null)) {
 
+			const currentState = oModificationPayload.currentState;
+
 			switch (oModificationPayload.operation) {
 				case "move":
 					Object.entries(oConfig.aggregations[sAggregationName]).forEach((aEntry) => {
 						if (
 							aEntry[0] !== sPropertyInfoKey &&
 							aEntry[1].position !== undefined
-						){
-							var newIndex = vValue.index;
-							var currentState = oModificationPayload.currentState;
-							var currentItemState = currentState?.find((item) => item.key == sPropertyInfoKey);
-							var currentItemIndex = currentState?.indexOf(currentItemState);
+						) {
+							const newIndex = vValue.index;
+							const currentState = oModificationPayload.currentState;
+							const currentItemState = currentState?.find((item) => item.key == sPropertyInfoKey);
+							const currentItemIndex = currentState?.indexOf(currentItemState);
 
 							//In case of move changes, we also need to ensure that existing xConfig position changes
 							//are adapted accordingly to avoid index mismatches
@@ -248,7 +249,6 @@ sap.ui.define([
 				case "remove":
 				case "add":
 				default:
-					var currentState = oModificationPayload.currentState;
 
 					//Adjust index after a remove happened for instance
 					if (currentState && currentState instanceof Array) {
@@ -301,14 +301,14 @@ sap.ui.define([
 	 *
 	 * @returns {object} The adapted xConfig object
 	 */
-	xConfigAPI.createPropertyConfig = function(oControl, oModificationPayload, oExistingConfig) {
+	xConfigAPI.createPropertyConfig = (oControl, oModificationPayload, oExistingConfig) => {
 
 		//var sDataKey = oModificationPayload.key;
 
-		var vValue = oModificationPayload.value;
+		const vValue = oModificationPayload.value;
 		//var oControlMetadata = oModificationPayload.controlMetadata || oControl.getMetadata();
-		var sAffectedProperty = oModificationPayload.property;
-		var oConfig = oExistingConfig || {};
+		const sAffectedProperty = oModificationPayload.property;
+		const oConfig = oExistingConfig || {};
 
 		if (!oConfig.properties) {
 			oConfig.properties = {};
@@ -318,9 +318,9 @@ sap.ui.define([
 			oConfig.properties[sAffectedProperty] = [];
 		}
 
-		var sOperation = oModificationPayload.operation;
+		const sOperation = oModificationPayload.operation;
 
-		var oItem = oConfig.properties[sAffectedProperty].find(function(oEntry){
+		const oItem = oConfig.properties[sAffectedProperty].find((oEntry) => {
 			return oEntry.key === oModificationPayload.key;
 		});
 

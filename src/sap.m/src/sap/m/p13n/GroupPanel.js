@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/CheckBox",
 	"sap/ui/core/Lib",
 	"sap/ui/layout/Grid"
-], function(QueryPanel, HBox, CheckBox, Library, Grid) {
+], (QueryPanel, HBox, CheckBox, Library, Grid) => {
 	"use strict";
 
 	/**
@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.m.p13n.GroupPanel
 	 */
-	var GroupPanel = QueryPanel.extend("sap.m.p13n.GroupPanel", {
+	const GroupPanel = QueryPanel.extend("sap.m.p13n.GroupPanel", {
 		metadata: {
 			library: "sap.m",
 			properties: {
@@ -82,10 +82,10 @@ sap.ui.define([
 	 */
 
 	GroupPanel.prototype._createQueryRowGrid = function(oItem) {
-		var sKey = oItem.name;
-		var oSelect = this._createKeySelect(sKey);
+		const sKey = oItem.name;
+		const oSelect = this._createKeySelect(sKey);
 
-		var oGrid = new Grid({
+		const oGrid = new Grid({
 			containerQuery: true,
 			defaultSpan: this.getEnableShowField() ? "XL4 L4 M4 S4" : "XL6 L6 M6 S6",
 			content: [
@@ -93,8 +93,8 @@ sap.ui.define([
 			]
 		}).addStyleClass("sapUiTinyMargin");
 
-		if (this.getEnableShowField()){
-			var oCheckBox = this._createCheckBox(oItem);
+		if (this.getEnableShowField()) {
+			const oCheckBox = this._createCheckBox(oItem);
 			oGrid.addContent(oCheckBox);
 		}
 
@@ -102,16 +102,16 @@ sap.ui.define([
 	};
 
 	GroupPanel.prototype._createCheckBox = function(oItem) {
-		var sKey = oItem.name;
-		var oCheckBox = new HBox({
+		const sKey = oItem.name;
+		const oCheckBox = new HBox({
 			alignItems: "Center",
 			items: [
 				new CheckBox({
 					enabled: sKey ? true : false,
 					selected: oItem.hasOwnProperty("showIfGrouped") ? oItem.showIfGrouped : true,
-					select: function(oEvt) {
-						var oPanel = oEvt.getSource().getParent().getParent().getParent().getParent().getParent().getParent();
-						var sKey = oEvt.oSource.getParent().getParent().getContent()[0].getSelectedItem().getKey();
+					select: (oEvt) => {
+						const oPanel = oEvt.getSource().getParent().getParent().getParent().getParent().getParent().getParent();
+						const sKey = oEvt.oSource.getParent().getParent().getContent()[0].getSelectedItem().getKey();
 						this._changeShowIfGrouped(sKey, oEvt.getParameter("selected"));
 						oPanel.fireChange({
 							reason: "change",
@@ -121,7 +121,7 @@ sap.ui.define([
 								showIfGrouped: oEvt.getParameter("selected")
 							}
 						});
-					}.bind(this),
+					},
 					text: this._getResourceText("p13n.GROUP_CHECKBOX")
 				})
 			]
@@ -130,8 +130,8 @@ sap.ui.define([
 		return oCheckBox;
 	};
 
-	GroupPanel.prototype._changeShowIfGrouped = function (sKey, bShow) {
-		var aItems = this._getP13nModel().getProperty("/items").filter(function (oItem) {
+	GroupPanel.prototype._changeShowIfGrouped = function(sKey, bShow) {
+		const aItems = this._getP13nModel().getProperty("/items").filter((oItem) => {
 			return oItem.name === sKey;
 		});
 
@@ -143,15 +143,15 @@ sap.ui.define([
 		});
 	};
 
-	GroupPanel.prototype._getPlaceholderText = function () {
+	GroupPanel.prototype._getPlaceholderText = function() {
 		return this._getResourceText("p13n.GROUP_PLACEHOLDER");
 	};
 
-	GroupPanel.prototype._getRemoveButtonTooltipText = function () {
+	GroupPanel.prototype._getRemoveButtonTooltipText = function() {
 		return this._getResourceText("p13n.GROUP_REMOVEICONTOOLTIP");
 	};
 
-	GroupPanel.prototype._getRemoveButtonAnnouncementText = function () {
+	GroupPanel.prototype._getRemoveButtonAnnouncementText = function() {
 		return this._getResourceText("p13n.GROUP_REMOVEICONANNOUNCE");
 	};
 
@@ -160,9 +160,9 @@ sap.ui.define([
 		QueryPanel.prototype._selectKey.apply(this, arguments);
 
 		//Enable CheckBox
-		var oListItem = oComboBox.getParent().getParent();
-		var sNewKey = oComboBox.getSelectedKey();
-		var aContent = oListItem.getContent()[0].getContent();
+		const oListItem = oComboBox.getParent().getParent();
+		const sNewKey = oComboBox.getSelectedKey();
+		const aContent = oListItem.getContent()[0].getContent();
 
 		aContent[1].getItems()[0].setEnabled(!!sNewKey);
 	};

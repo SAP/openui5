@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/Page"
-], function (Control, Page) {
+], (Control, Page) => {
 	"use strict";
 
 	/**
@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
-	var AbstractContainer = Control.extend("sap.m.p13n.AbstractContainer", {
+	const AbstractContainer = Control.extend("sap.m.p13n.AbstractContainer", {
 		metadata: {
 			library: "sap.m",
 			defaultAggregation: "views",
@@ -106,11 +106,15 @@ sap.ui.define([
 						/**
 						 * This parameter is the current view.
 						 */
-						 source: {type: "string"},
-						 /**
-						  * This parameter is the target view.
-						  */
-						 target: {type: "string"}
+						source: {
+							type: "string"
+						},
+						/**
+						 * This parameter is the target view.
+						 */
+						target: {
+							type: "string"
+						}
 					}
 				},
 				/**
@@ -122,11 +126,15 @@ sap.ui.define([
 						/**
 						 * This parameter is the current view.
 						 */
-						source: {type: "string"},
+						source: {
+							type: "string"
+						},
 						/**
 						 * This parameter is the target view.
 						 */
-						target: {type: "string"}
+						target: {
+							type: "string"
+						}
 					}
 				}
 			}
@@ -168,11 +176,11 @@ sap.ui.define([
 	 *
 	 * @returns {this} The <code>AbstractContainer<code> instance
 	 */
-	AbstractContainer.prototype.removeView = function(vContainerItem, bSuppress){
-		var oContainerItem = typeof vContainerItem == "string" ? this.getView(vContainerItem) : vContainerItem;
-		oContainerItem = this.removeAggregation("views", oContainerItem , bSuppress);
+	AbstractContainer.prototype.removeView = function(vContainerItem, bSuppress) {
+		let oContainerItem = typeof vContainerItem == "string" ? this.getView(vContainerItem) : vContainerItem;
+		oContainerItem = this.removeAggregation("views", oContainerItem, bSuppress);
 		//In case the currently selected view has been removed, switch the view
-		if (oContainerItem && oContainerItem.getKey() === this.getCurrentViewKey()){
+		if (oContainerItem && oContainerItem.getKey() === this.getCurrentViewKey()) {
 			this.switchView();
 		}
 		return this;
@@ -186,7 +194,7 @@ sap.ui.define([
 	 * @returns {this} The <code>AbstractContainer<code> instance
 	 */
 	AbstractContainer.prototype.addView = function(vContainerItem) {
-		if (vContainerItem && vContainerItem.getContent() && !vContainerItem.getContent().hasStyleClass("sapUiMAbstractContainerContent")){
+		if (vContainerItem && vContainerItem.getContent() && !vContainerItem.getContent().hasStyleClass("sapUiMAbstractContainerContent")) {
 			vContainerItem.getContent().addStyleClass("sapUiMAbstractContainerContent");
 		}
 		this.addAggregation("views", vContainerItem);
@@ -218,21 +226,24 @@ sap.ui.define([
 	 * @param {string} sKey The key of the ContainerItem whose content is made visible next
 	 */
 	AbstractContainer.prototype.switchView = function(sKey) {
-		var oNewView = this.getView(sKey);
+		let oNewView = this.getView(sKey);
+		const sCurrentViewKey = this.getCurrentViewKey();
 		if (!oNewView) {
-			oNewView = this.getViews()[0];
+			[oNewView] = this.getViews();
 			if (!oNewView) {
 				return;
 			}
 		}
 
-		if (!this.fireBeforeViewSwitch({source: sCurrentViewKey, target: sKey})) {
+		if (!this.fireBeforeViewSwitch({
+				source: sCurrentViewKey,
+				target: sKey
+			})) {
 			this._bPrevented = true;
 			return; // view switch event was prevented by event handler.
 		}
 
 		this._bPrevented = false;
-		var sCurrentViewKey = this.getCurrentViewKey();
 
 		this._sCurrentView = oNewView.getKey();
 
@@ -241,10 +252,13 @@ sap.ui.define([
 
 		if (sCurrentViewKey !== sKey) {
 			this.oAfterRenderingDelegate = {
-				onAfterRendering: function () {
+				onAfterRendering: () => {
 					this.removeEventDelegate(this.oAfterRenderingDelegate);
-					this.fireAfterViewSwitch({source: sCurrentViewKey, target: sKey});
-				}.bind(this)
+					this.fireAfterViewSwitch({
+						source: sCurrentViewKey,
+						target: sKey
+					});
+				}
 			};
 			this.addEventDelegate(this.oAfterRenderingDelegate, this);
 		}
@@ -253,12 +267,12 @@ sap.ui.define([
 	/**
 	 * This method can be used to retrieve the current view by using the related <code>ContainerItem</code> key.
 	 *
-  	 * @param {string|sap.ui.core.Control} vView The key or the content of the ContainerItem which is retrieved
+	 * @param {string|sap.ui.core.Control} vView The key or the content of the ContainerItem which is retrieved
 	 *
 	 * @returns {sap.m.p13n.AbstractContainerItem} The matching ContainerItem
 	 */
-	 AbstractContainer.prototype.getView = function(vView) {
-		return this.getViews().find(function(oView){
+	AbstractContainer.prototype.getView = function(vView) {
+		return this.getViews().find((oView) => {
 			if (oView.getKey() === vView || oView.getContent() === vView) {
 				return oView;
 			}
@@ -271,7 +285,7 @@ sap.ui.define([
 	 * @returns {object} The current view aggregation as map
 	 */
 	AbstractContainer.prototype.getViewMap = function() {
-		return this.getViews().map(function(o){
+		return this.getViews().map((o) => {
 			return {
 				key: o.getKey(),
 				content: o.getContent()
