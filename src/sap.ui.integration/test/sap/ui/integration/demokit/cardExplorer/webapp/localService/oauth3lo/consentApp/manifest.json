@@ -1,0 +1,20 @@
+{
+	"sap.app": {
+		"id": "sap.ui.integration.localServices.oath3lo.consentApp",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.integration.localServices.oath3lo.consentApp.View",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		}
+	}
+}

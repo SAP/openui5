@@ -219,6 +219,12 @@ sap.ui.define([
 						experimental: true
 					},
 					{
+						title: 'OAuth 3LO',
+						target: 'learnDetail',
+						key: 'oauth3lo',
+						experimental: true
+					},
+					{
 						title: 'Pagination',
 						target: 'learnDetail',
 						key: 'pagination',

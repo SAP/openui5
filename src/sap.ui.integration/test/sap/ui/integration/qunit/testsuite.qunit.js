@@ -402,6 +402,23 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			"util/OAuth3LOHelper": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/OAuth3LOHelper"
+					]
+				},
+				sinon: {
+					useFakeTimers: true
+				}
+			},
+			"extensions/OAuth3LO": {
+				coverage: {
+					only: [
+						"sap/ui/integration/extensions/OAuth3LO"
+					]
+				}
+			},
 			"designtime/baseEditor/integration/ReadyHandling": {
 				group: "Base DesignTime Editor",
 				coverage: {

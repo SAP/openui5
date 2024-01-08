@@ -282,4 +282,67 @@ sap.ui.define([
 			});
 		});
 	});
+
+	QUnit.module("Utils.polling()", {
+		beforeEach: function () {
+			// don't use fake timers for this module
+			this.clock.restore();
+		}
+	});
+
+	QUnit.test("Callback executes until done", function (assert) {
+		// Arrange
+		const done = assert.async();
+		assert.expect(1);
+
+		const fnCallback = this.spy(() => {
+			if (fnCallback.callCount === 1) {
+				return false;
+			}
+
+			// Assert
+			assert.ok(true, "The polling function was called two times.");
+			done();
+			return true;
+		});
+
+		// Act
+		Utils.polling(fnCallback, 10, 30);
+	});
+
+	QUnit.test("Callback executes until maximum", function (assert) {
+		// Arrange
+		const done = assert.async();
+		assert.expect(1);
+
+		const fnCallback = this.spy(() => {
+			if (fnCallback.callCount === 3) {
+				// Assert
+				assert.ok(true, "The polling function was called three times.");
+				done();
+			}
+
+			return false;
+		});
+
+		// Act
+		Utils.polling(fnCallback, 10, 30);
+	});
+
+	QUnit.test("Calling the stop method", function (assert) {
+		// Arrange
+		const done = assert.async();
+		assert.expect(1);
+
+		const fnCallback = this.spy(() => {
+			// Assert
+			assert.ok(true, "The polling function was called once and polling stopped.");
+			done();
+		});
+
+		// Act
+		const oPolling = Utils.polling(fnCallback, 10, 30);
+
+		oPolling.stop();
+	});
 });

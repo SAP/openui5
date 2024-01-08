@@ -57,6 +57,13 @@ sap.ui.define([
 				key: 'destinations'
 			},
 			{
+				title: 'OAuth 3LO',
+				icon: 'sap-icon://validate',
+				target: 'integrate',
+				key: 'oauth3lo',
+				experimental: true
+			},
+			{
 				title: 'Host Actions',
 				icon: 'sap-icon://overflow',
 				target: 'integrate',

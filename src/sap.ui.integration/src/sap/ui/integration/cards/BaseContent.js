@@ -412,7 +412,8 @@ sap.ui.define([
 				illustrationSize: oBlockingMessage.getIllustrationSize(),
 				title: oBlockingMessage.getTitle(),
 				description: oBlockingMessage.getDescription(),
-				httpResponse: oBlockingMessage.getHttpResponse()
+				httpResponse: oBlockingMessage.getHttpResponse(),
+				additionalContent: oBlockingMessage.getAdditionalContent()
 			};
 		}
 

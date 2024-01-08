@@ -319,5 +319,43 @@ sap.ui.define([
 		return oBindingInfo;
 	};
 
+	/**
+	 * Starts a polling which executes the <code>fnRequest</code> function with a given interval.
+	 * It will stop if the <code>fnRequest</code> returns <code>true</code> or the maximum time is reached.
+	 * @public
+	 * @param {function} fnRequest The function to repeat with each polling. This function can return <code>true</code> if the polling is done and must be stopped.
+	 * @param {int} iInterval The time between each execution of the <code>fnRequest</code> in milliseconds.
+	 * @param {int} iMaximum The maximum time to poll in milliseconds.
+	 * @returns {object} An object with a stop function to stop the polling.
+	 */
+	Utils.polling = function (fnRequest, iInterval = 3000, iMaximum = 600000) {
+		let iTotal = 0;
+		let iTimeoutHandle;
+		let bStopped = false;
+		const fnPoll = async () => {
+			if (iMaximum && iTotal >= iMaximum) {
+				return;
+			}
+
+			const bDone = await fnRequest();
+
+			if (bDone || bStopped) {
+				return;
+			}
+
+			iTotal += iInterval;
+			iTimeoutHandle = setTimeout(fnPoll, iInterval);
+		};
+
+		fnPoll();
+
+		return {
+			stop: () => {
+				clearTimeout(iTimeoutHandle);
+				bStopped = true;
+			}
+		};
+	};
+
 	return Utils;
 });

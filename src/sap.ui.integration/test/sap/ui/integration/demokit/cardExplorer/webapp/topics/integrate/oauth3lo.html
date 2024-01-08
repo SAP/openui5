@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Integrate Destinations</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="destinations">Integrate OAuth 3LO Flow</h1>
+			<h2 id="overview">
+				Overview
+			</h2>
+
+			<p>
+				Cards can use OAuth 3LO (Three Legged OAuth) to access data from a third-party provider on user’s behalf.
+				<br>
+				A proxy, which is part of the host application, is expected to handle the OAuth 3LO flow.
+			</p>
+			<p>
+				There are three stages in this process:
+				<br>
+				<ol>
+					<li>If the user has not authorized the access to the third-party resource, the server must return an HTTP response with status code <code>502</code> and header <code>sap-3lo-flow</code>.</li>
+					<li>When the user starts the authorization process, the card will start polling for the same request. The server must respond with the same HTTP response with status <code>502</code> and <code>sap-3lo-flow</code> header until the user grants access or the maximum polling time is reached.</li>
+					<li>After the user has authorized the access, the server must return the requested data. The polling will stop.</li>
+				</ol>
+			</p>
+
+			<h2 id="httpHeader">
+				HTTP Header sap-3lo-flow
+			</h2>
+
+			<p>
+				The HTTP header <code>sap-3lo-flow</code> must contain a Base64 encoded stringified JSON object (e.g. <code>btoa(JSON.stringify(oHeader))</code>).
+				<br>
+				It must contain the following properties:
+			</p>
+			<pre class="lang-js">
+{
+	"status": "ok",
+	"popupWindow": {
+		"height": "500",
+		"width": "600"
+	},
+	"consent": {
+		"id": "an-example-consent-id",
+		"url": "https://some-example-url/authorize",
+	},
+	"polling": {
+		"frequency": 3000,
+		"maximum": 600000
+	},
+	"buttonText": "Authorize and Connect",
+	"title": "Authorization Required",
+	"description": "This application requires access to data from a third-party provider."
+}</pre>
+
+			<a class="try-button" href="../../index.html#/explore/data/oauth3lo" target="_parent">Try it Out</a>
+		</div>
+	</div>
+
+</body>
+
+</html>

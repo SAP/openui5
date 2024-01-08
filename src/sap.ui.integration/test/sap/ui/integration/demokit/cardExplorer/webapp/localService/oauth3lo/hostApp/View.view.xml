@@ -1,0 +1,17 @@
+<mvc:View controllerName="sap.ui.integration.localServices.oath3lo.hostApp.Controller"
+	displayBlock="true"
+	height="100%"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc">
+	<App>
+		<Page class="sapUiContentPadding" showHeader="false">
+			<VBox class="sapUiSmallMargin">
+				<Title text="Consent was given" />
+				<Text text="This is the landing page after consent was given." />
+			</VBox>
+		</Page>
+	</App>
+</mvc:View>
