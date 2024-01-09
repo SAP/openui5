@@ -58,7 +58,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 			 * </li>
 			 * </ul>
 			 *
-			 * <b>Note:<b> The <code>CopyProvider</code> uses the <code>text/html<code> MIME type to display the merged cell data shown in a UI5 table as a single cell in the clipboard. This allows users
+			 * <b>Note:</b> The <code>CopyProvider</code> uses the <code>text/html</code> MIME type to display the merged cell data shown in a UI5 table as a single cell in the clipboard. This allows users
 			 * in applications supporting <code>text/html</code> MIME type, such as <code>Spreadsheet</code>, to preserve the cell data format that appears in a UI5 table.
 			 * The <code>CopyProvider</code> also uses the <code>text/plain</code> MIME type to display the merged cell data shown in a UI5 table as separate clipboard cells. This allows users
 			 * to edit plain data with applications like <code>SpreadSheet</code>, then copy and paste the data back into a UI5 table, preserving data integrity without in-cell formatting.<br>
@@ -66,10 +66,10 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 			 * the data format copied from a UI5 table is preserved with the default paste operation. Users wanting to make edits can access the individual and unformatted cell data in the clipboard,
 			 * which is stored in the text/plain MIME type, by selecting the "Paste Special" option and then choosing "Unicode Text" in spreadsheet applications.<br>
 			 *
-			 * <b>Note:<b> Using <code>text/html</code> MIME type as a clipboard item might not be supported on all platforms. In such cases, the <code>CopyProvider</code> writes only <code>text/plain</code> data
+			 * <b>Note:</b> Using <code>text/html</code> MIME type as a clipboard item might not be supported on all platforms. In such cases, the <code>CopyProvider</code> writes only <code>text/plain</code> data
 			 * to the clipboard. Refer to the <code>bIncludeHtmlMimeType</code> parameter and do not return the object type if this value is <code>false</code>.<br>
 			 *
-			 * <b>Note:<b> Even if the user is on a platform supporting <code>text/html</code> MIME type as a clipboard item, currently, any HTML tags are not allowed; all data is encoded.
+			 * <b>Note:</b> Even if the user is on a platform supporting <code>text/html</code> MIME type as a clipboard item, currently, any HTML tags are not allowed; all data is encoded.
 			 *
 			 * @callback sap.m.plugins.CopyProvider.extractDataHandler
 			 * @param {sap.ui.model.Context|sap.m.ColumnListItem} oContextOrRow The binding context of the selected row or the row instance if there is no binding
