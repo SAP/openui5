@@ -345,8 +345,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("locale sr -> sh", function(assert) {
-		var sExpectedLocale = "sh";
+	QUnit.test("locale sr -> sr", function(assert) {
+		// Note: This test previously ensured a mapping from sr to sh.
+		// The mapping has been removed as support for sr (e.g. sr-Cyrl-RS) was added.
+
+		var sExpectedLocale = "sr";
 		var sLocale = "sr";
 
 		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
@@ -357,10 +360,10 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("locale sr -> (supportedLocales: ['sh'])", function(assert) {
+	QUnit.test("locale sr -> (supportedLocales: ['sr'])", function(assert) {
 		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 		var sLocale = "sr";
-		var aSupportedLocales = ["sh"];
+		var aSupportedLocales = ["sr"];
 
 		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() { //sh
 			assert.equal(oStub.callCount, 1);
@@ -434,6 +437,28 @@ sap.ui.define([
 		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		return ResourceBundle.create({url: 'my.properties', locale: "sr-Latn", async: true, supportedLocales: ["sh"]}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+		});
+	});
+
+	QUnit.test("locale sr-Cyrl-RS -> sr_RS", function(assert) {
+		var sExpectedLocale = "sr_RS";
+
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: "sr-Cyrl-RS", async: true}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+		});
+	});
+
+	QUnit.test("locale sr-Cyrl-RS -> sr (supportedLocales: ['sr'])", function(assert) {
+		var sExpectedLocale = "sr";
+
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: "sr-Cyrl-RS", async: true, supportedLocales: ["sr"]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
 		});
@@ -1234,6 +1259,28 @@ sap.ui.define([
 			},
 			returnNullIfMissing: true,
 			url: "my.hdbtextbundle?sap-language=3Q"
+		}], "Properties.create should be called with expected arguments");
+	});
+
+	QUnit.test("create with locale sr_Latn", async function(assert) {
+		this.stub(Properties, "create").resolves(createFakeProperties({number: "47"}));
+
+		const oResourceBundle = await ResourceBundle.create({
+			async: true,
+			url: "my.hdbtextbundle",
+			locale: "sr_Latn"
+		});
+
+		assert.ok(oResourceBundle instanceof ResourceBundle);
+
+		assert.equal(Properties.create.callCount, 1, "Properties.create should be called once");
+		assert.deepEqual(Properties.create.getCall(0).args, [{
+			async: true,
+			headers: {
+				"Accept-Language": "sh"
+			},
+			returnNullIfMissing: true,
+			url: "my.hdbtextbundle"
 		}], "Properties.create should be called with expected arguments");
 	});
 
