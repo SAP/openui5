@@ -11,6 +11,7 @@ sap.ui.define([
 	"delegates/odata/v4/util/DelegateUtil",
 	"sap/ui/mdc/util/FilterUtil",
 	"sap/ui/unified/Currency",
+	"sap/m/Text",
 	"sap/ui/model/Filter",
 	"sap/base/Log",
 	'sap/ui/mdc/odata/v4/TypeMap',
@@ -24,6 +25,7 @@ sap.ui.define([
 	DelegateUtil,
 	FilterUtil,
 	Currency,
+	Text,
 	Filter,
 	Log,
 	ODataV4TypeMap,
@@ -38,8 +40,9 @@ sap.ui.define([
 
 	TestTableDelegate.addItem = function(oTable, sPropertyName, mPropertyBag) {
 		return TableDelegateUtils.createColumn(oTable, sPropertyName, function(oTable, oProperty) {
+			let aProperties;
 			if (oProperty.name.endsWith("_ComplexWithUnit")) {
-				var aProperties = oProperty.getSimpleProperties();
+				aProperties = oProperty.getSimpleProperties();
 
 				return new Currency({
 					useSymbol: false,
@@ -49,6 +52,24 @@ sap.ui.define([
 					currency: {
 						path: aProperties[1].path
 					}
+				});
+			} else 	if (oProperty.name.endsWith("_ComplexWithText")) {
+				aProperties = oProperty.getSimpleProperties();
+				const sTemplate = oProperty.exportSettings.template;
+				return new Text({
+					text: {
+						parts: [
+							{path: aProperties[0].path},
+							{path: aProperties[1].path}
+						],
+						formatter: function(sValue, sTextValue) {
+							return sTemplate.replace(/\{0\}/g, sValue).replace(/\{1\}/g, sTextValue);
+						}
+					}
+				});
+			} else 	if (oProperty.text) { // just show value, as value & text is shown is special column
+				return new Text({
+					text: {path: oProperty.path}
 				});
 			}
 		}).then(function(oColumn) {
@@ -166,9 +187,9 @@ sap.ui.define([
 					var oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
 					var vUnitAnnotation = oPropertyAnnotations["@Org.OData.Measures.V1.ISOCurrency"] || oPropertyAnnotations["@Org.OData.Measures.V1.Unit"];
 					var oUnitAnnotation = !vUnitAnnotation || typeof vUnitAnnotation === "string" ? undefined : vUnitAnnotation;
-					var bUnitIsFromNavigationProperty = oUnitAnnotation != null && oUnitAnnotation.$Path.includes("/")[0];
+					var bUnitIsFromNavigationProperty = oUnitAnnotation != null && oUnitAnnotation.$Path.includes("/");
 					var oTextAnnotation = oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"];
-					var bTextIsFromNavigationProperty = oTextAnnotation != null && oTextAnnotation.$Path.includes("/")[0];
+					var bTextIsFromNavigationProperty = oTextAnnotation != null && oTextAnnotation.$Path.includes("/");
 					var bIsUpperCase = !!oPropertyAnnotations["@com.sap.vocabularies.Common.v1.IsUpperCase"];
 					var mConstraints = {
 						isDigitSequence: !!oPropertyAnnotations["@com.sap.vocabularies.Common.v1.IsDigitSequence"]
@@ -245,13 +266,37 @@ sap.ui.define([
 					}
 
 					if (oPropertyInfo.text) {
+						const oTextArrangementAnnotation = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement");
+						let sTemplate = "{0} ({1})";
+						if (oTextArrangementAnnotation) {
+							if (oTextArrangementAnnotation.$EnumMember === "com.sap.vocabularies.UI.v1.TextArrangementType/TextOnly") {
+								sTemplate = "{1}";
+							} else if (oTextArrangementAnnotation.$EnumMember === "com.sap.vocabularies.UI.v1.TextArrangementType/TextLast") {
+								sTemplate = "{0} ({1})";
+							} else {
+								sTemplate = "{1} ({0})";
+							}
+						}
+
 						aProperties.push({
-							name: sKey + "_" + oPropertyInfo.text + "_ComplexWithText",
+							name: sKey /*+ "_" + oPropertyInfo.text*/ + "_ComplexWithText",
 							label: oPropertyInfo.label + " + Text",
 							propertyInfos: [sKey, oPropertyInfo.text],
 							exportSettings: {
-								template: "{0} ({1})"
+								template: sTemplate
 							}
+						});
+						aProperties.push({ // dummy property for navigation
+							name: oPropertyInfo.text,
+							path: oPropertyInfo.text,
+							label: oPropertyInfo.text,
+							sortable: false,
+							filterable: false,
+							dataType: "Edm.String",
+							visible: false,
+							maxConditions: 1,
+							groupable: false,
+							caseSensitive : false
 						});
 					}
 				}

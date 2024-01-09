@@ -32,12 +32,20 @@ sap.ui.define([
 					// oProperty.dataType = new Int32Type({groupingEnabled: false}, {nullable: false});
 					oProperty.formatOptions = {groupingEnabled: false};
 					oProperty.constraints.nullable = false;
+				} else if (oProperty.name === "countryOfOrigin/name") {
+					oProperty.path = "countryOfOrigin/descr";
 				} else if (oProperty.name === "countryOfOrigin_code") {
-					oProperty.visualSettings = {widthCalculation: {minWidth: 15}}; // as the Name is shown
+					oProperty.visible = false;
 				} else if (oProperty.name === "regionOfOrigin_code") {
-					oProperty.visualSettings = {widthCalculation: {minWidth: 15}}; // as the Name is shown
+					oProperty.visible = false;
 				} else if (oProperty.name === "cityOfOrigin_city") {
-					oProperty.visualSettings = {widthCalculation: {minWidth: 15}}; // as the Name is shown
+					oProperty.visible = false;
+				} else if (oProperty.name === "countryOfOrigin_code_ComplexWithText") {
+					oProperty.label = oProperty.label.split(" + ")[0];
+				} else if (oProperty.name === "regionOfOrigin_code_ComplexWithText") {
+					oProperty.label = oProperty.label.split(" + ")[0];
+				} else if (oProperty.name === "cityOfOrigin_city_ComplexWithText") {
+					oProperty.label = oProperty.label.split(" + ")[0];
 				} else if (oProperty.name === "createdAt") {
 					oProperty.maxConditions = 1;
 				}
@@ -52,9 +60,9 @@ sap.ui.define([
 
 			DelegateCache.add(oTable, oFilterSettings, "$Filters");
 			DelegateCache.add(oTable, {
-				"countryOfOrigin_code": {display: FieldDisplay.Description, additionalValue: "{countryOfOrigin/descr}"},
-				"regionOfOrigin_code": {display: FieldDisplay.Description, additionalValue: "{regionOfOrigin/text}"},
-				"cityOfOrigin_city": {display: FieldDisplay.Description, additionalValue: "{cityOfOrigin/text}"}
+				"countryOfOrigin_code_ComplexWithText": {display: FieldDisplay.Description},
+				"regionOfOrigin_code_ComplexWithText": {display: FieldDisplay.Description},
+				"cityOfOrigin_city_ComplexWithText": {display: FieldDisplay.Description}
 			}, "$Columns");
 
 			return aProperties;
@@ -83,13 +91,42 @@ sap.ui.define([
 
 	AuthorsTableDelegate._createColumnTemplate = function (oTable, oProperty) {
 
+		let oValueBindingInfo;
+		let oAdditionalValueBindingInfo;
+		let sDisplay = FieldDisplay.Value;
+
+		if (oProperty.name.endsWith("_ComplexWithText")) {
+			// get single properties
+			const aProperties = oProperty.getSimpleProperties();
+			const oKeyProperty = aProperties[0];
+			const oDescriptionProperty = aProperties[1];
+
+			if (oKeyProperty) {
+				oValueBindingInfo = {path: oKeyProperty.path || oKeyProperty.name, type: oKeyProperty.typeConfig.typeInstance};
+			}
+			if (oDescriptionProperty) {
+				oAdditionalValueBindingInfo = {path: oDescriptionProperty.path || oDescriptionProperty.name, type: oDescriptionProperty.typeConfig.typeInstance};
+			}
+
+			if (oProperty.exportSettings.template === "{0} ({1})") {
+				sDisplay = FieldDisplay.ValueDescription;
+			} else if (oProperty.exportSettings.template === "{1} ({0})") {
+				sDisplay = FieldDisplay.DescriptionValue;
+			} else if (oProperty.exportSettings.template === "{1}") {
+				sDisplay = FieldDisplay.Description;
+			}
+		} else {
+			oValueBindingInfo = {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance};
+		}
 
 		var oCtrlProperties = DelegateCache.merge({
 			id: "F_" + oProperty.name,
-			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
+			value: oValueBindingInfo,
+			additionalValue: oAdditionalValueBindingInfo,
 			editMode: FieldEditMode.Display,
 			width:"100%",
 			multipleLines: false, // set always to have property not initial,
+			display: sDisplay,
 			delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}
 		}, DelegateCache.get(oTable, oProperty.name, "$Columns"));
 

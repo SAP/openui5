@@ -13,7 +13,9 @@
 	xmlns:mdcat="sap.ui.mdc.actiontoolbar"
 	xmlns:ui="sap.ui"
 	xmlns:variants="sap.ui.fl.variants"
-	xmlns="sap.m" controllerName="sap.ui.v4demo.controller.Authors">
+	xmlns="sap.m"
+	xmlns:plugins="sap.m.plugins"
+	controllerName="sap.ui.v4demo.controller.Authors">
 	<f2:DynamicPage id="dynamicPageAuthors">
 		<f2:title>
 			<f2:DynamicPageTitle>
@@ -361,7 +363,6 @@
 						p13nMode="Sort,Column,Filter"
 						delegate='\{"name": "sap/ui/v4demo/delegate/Authors.Table.delegate", "payload": \{"collectionName": "Authors"\}\}'
 						showRowCount="true"
-						rowPress="onRowPress"
 						threshold="50"
 						width="100%"
 						enableAutoColumnWidth="true"
@@ -369,7 +370,7 @@
 					<mdc:rowSettings>
 						<mdc:table.RowSettings >
 							<mdc:rowActions >
-								<mdc:table.RowActionItem type="Navigation"/>
+								<mdc:table.RowActionItem type="Navigation" press="onRowPress"/>
 							</mdc:rowActions >
 						</mdc:table.RowSettings>
 					</mdc:rowSettings>
@@ -388,23 +389,30 @@
 						<mdc:table.Column id="cDoD" header="Date of death" propertyKey="dateOfDeath">
 							<mdc:Field id="F_dateOfDeath" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'dateOfDeath', type: 'sap.ui.model.odata.type.Date'}" editMode="Display" multipleLines="false" width="100%"/>
 						</mdc:table.Column>
-						<mdc:table.Column id="cCoO" header="Country of origin" propertyKey="countryOfOrigin_code">
+						<mdc:table.Column id="cCoO" header="Country of origin" propertyKey="countryOfOrigin_code_ComplexWithText">
 							<mdc:Field id="F_countryOfOrigin_code" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'countryOfOrigin_code', type: 'sap.ui.model.odata.type.String', formatOptions: {maxLength: 3}}" additionalValue="{countryOfOrigin/descr}" editMode="Display" multipleLines="false" width="100%" display="Description" />
 						</mdc:table.Column>
-						<mdc:table.Column id="cRoO" header="Region of origin" propertyKey="regionOfOrigin_code">
+						<mdc:table.Column id="cRoO" header="Region of origin" propertyKey="regionOfOrigin_code_ComplexWithText">
 							<mdc:Field id="F_regionOfOrigin_code" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'regionOfOrigin_code', type: 'sap.ui.model.odata.type.String', formatOptions: {maxLength: 3}}" additionalValue="{regionOfOrigin/text}" editMode="Display" multipleLines="false" width="100%" display="Description" />
 						</mdc:table.Column>
-						<mdc:table.Column id="cCioO" header="City of origin" propertyKey="cityOfOrigin_city">
+						<mdc:table.Column id="cCioO" header="City of origin" propertyKey="cityOfOrigin_city_ComplexWithText">
 							<mdc:Field id="F_cityOfOrigin_city" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'cityOfOrigin_city', type: 'sap.ui.model.odata.type.String', formatOptions: {maxLength: 3}}" additionalValue="{cityOfOrigin/text}" editMode="Display" multipleLines="false" width="100%" display="Description" />
 						</mdc:table.Column>
 
 					</mdc:columns>
 					<mdc:type>
-						<mdc:table.ResponsiveTableType growingMode="Scroll" />
+						<!-- <mdc:table.ResponsiveTableType growingMode="Scroll" /> -->
+						<mdc:table.GridTableType rowCountMode="Auto"/>
 					</mdc:type>
-					<mdc:creationRow>
+					<mdc:cellSelector>
+						<plugins:CellSelector/>
+					</mdc:cellSelector>
+					<mdc:copyProvider>
+						<plugins:CopyProvider/>
+					</mdc:copyProvider>
+					<!--<mdc:creationRow>
 						<mdc:table.CreationRow visible="true" apply="sap.m.MessageToast.show('Apply fired')" />
-					</mdc:creationRow>
+					</mdc:creationRow>-->
 				</mdc:Table>
 
 		</f2:content>
