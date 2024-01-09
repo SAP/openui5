@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/integration/model/ObservableModel",
 	"sap/m/List",
 	"sap/ui/integration/controls/ListContentItem",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 	SampleServices,
 	BaseListContent,
@@ -15,7 +15,7 @@ sap.ui.define([
 	ObservableModel,
 	List,
 	ListContentItem,
-	Core
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -154,10 +154,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("sliceData", function (assert) {
+	QUnit.test("sliceData", async function (assert) {
 		assert.strictEqual(this.oBLC.getInnerList().getItems().length, 2, "items length is correct");
 		this.oBLC.sliceData(1, 2);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.oBLC.getInnerList().getItems().length, 1, "items length is correct");
 	});
 });

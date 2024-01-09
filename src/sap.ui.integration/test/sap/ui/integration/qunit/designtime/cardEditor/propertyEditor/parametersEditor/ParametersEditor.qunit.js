@@ -5,13 +5,13 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/base/util/restricted/_debounce",
 	"qunit/designtime/EditorQunitUtils",
-	"sap/ui/core/Core"
-], function (
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(
 	BaseEditor,
 	QUnitUtils,
 	_debounce,
 	EditorQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -72,9 +72,9 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleParams").then(function (aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleParams").then(async function(aPropertyEditor) {
 				this.oEditor = aPropertyEditor[0];
-				oCore.applyChanges();
+				await nextUIUpdate();
 				var oEditorContent = getParameterEditorContent(this.oEditor);
 				this.oAddButton = oEditorContent.addButton;
 				this.aItems = oEditorContent.items;

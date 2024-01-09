@@ -4,17 +4,15 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date"
-
-
-], function (
+], function(
 	BaseEditor,
 	EditorQunitUtils,
 	DateFormat,
+	nextUIUpdate,
 	sinon,
-	oCore,
 	UI5Date
 ) {
 	"use strict";
@@ -47,9 +45,9 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleDateTime").then(function (aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleDateTime").then(async function (aPropertyEditor) {
 				this.oDateTimeEditor = aPropertyEditor[0];
-				oCore.applyChanges();
+				await nextUIUpdate();
 				this.oDateTimeEditorElement = this.oDateTimeEditor.getContent();
 			}.bind(this));
 		},

@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Library,
 	Card,
@@ -17,7 +18,8 @@ sap.ui.define([
 	Core,
 	KeyCodes,
 	QUnitUtils,
-	UI5Date
+	UI5Date,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -109,12 +111,12 @@ sap.ui.define([
 			this.oCard.getModel("filters").setProperty("/shipper/value", "43");
 			Core.applyChanges();
 
-			setTimeout(function () {
+			setTimeout(async function () {
 				assert.ok(this.oCard.getCardContent().getAggregation("_blockingMessage").getDomRef(), "an empty list is displayed");
 
 				// Act
 				this.oCard.getModel("filters").setProperty("/shipper/value", "3");
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				setTimeout(function () {
 					assert.ok(this.oCard.getCardContent().getAggregation("_content").getDomRef(), "list content is displayed");
@@ -137,12 +139,12 @@ sap.ui.define([
 			this.oCard.getModel("filters").setProperty("/shipper/value", "43");
 			Core.applyChanges();
 
-			setTimeout(function () {
+			setTimeout(async function () {
 				assert.ok(this.oCard.getCardContent().getAggregation("_blockingMessage").getDomRef(), "an empty list is displayed");
 
 				// Act
 				this.oCard.getModel("filters").setProperty("/shipper/value", "3");
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				setTimeout(function () {
 					assert.ok(this.oCard.getCardContent().getAggregation("_content").getDomRef(), "list content is displayed");
@@ -444,7 +446,6 @@ sap.ui.define([
 		afterEach: function () {
 			this.oCard.destroy();
 			this.oCard = null;
-			Core.applyChanges();
 		}
 	});
 

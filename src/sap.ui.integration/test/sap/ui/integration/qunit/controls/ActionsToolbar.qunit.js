@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/integration/ActionDefinition",
 	"sap/ui/integration/Host",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Core,
 	Library,
 	ActionDefinition,
 	Host,
 	Card,
-	QUnitUtils
+	QUnitUtils,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -78,7 +80,7 @@ sap.ui.define([
 		this.oCard.attachEvent("_ready", function () {
 			this.oCard.destroyActionDefinitions();
 
-			setTimeout(function () {
+			setTimeout(async function () {
 				var oHeader = this.oCard.getCardHeader();
 				// Assert
 				assert.notOk(oHeader.getToolbar().getVisible(), "Actions toolbar should not be visible");
@@ -89,7 +91,7 @@ sap.ui.define([
 					text: "Text",
 					icon: "sap-icon://learning-assistant"
 				}));
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				// Assert
 				assert.ok(oHeader.getToolbar().getVisible(), "There is actions toolbar");
@@ -118,10 +120,10 @@ sap.ui.define([
 			});
 
 		this.oCard.attachEvent("_ready", function () {
-			setTimeout(function () {
+			setTimeout(async function () {
 				// Act
 				this.oCard.removeActionDefinition(oAI);
-				Core.applyChanges();
+				await nextUIUpdate();
 				var oHeader = this.oCard.getCardHeader();
 
 				// Assert
@@ -147,10 +149,10 @@ sap.ui.define([
 			});
 
 		this.oCard.attachEvent("_ready", function () {
-			setTimeout(function () {
+			setTimeout(async function () {
 				// Act
 				this.oCard.destroyActionDefinitions();
-				Core.applyChanges();
+				await nextUIUpdate();
 				var oToolbar = this.oCard.getCardHeader().getToolbar();
 
 				// Assert
@@ -207,10 +209,10 @@ sap.ui.define([
 			});
 
 		this.oCard.attachEvent("_ready", function () {
-			setTimeout(function () {
+			setTimeout(async function () {
 				// Act
 				oAI.setVisible(false);
-				Core.applyChanges();
+				await nextUIUpdate();
 				var oToolbar = this.oCard.getCardHeader().getToolbar();
 
 				// Assert
@@ -314,10 +316,10 @@ sap.ui.define([
 			});
 
 		this.oCard.attachEventOnce("_ready", function () {
-			setTimeout(function () {
+			setTimeout(async function () {
 				// Act
 				oAI.setEnabled(false);
-				Core.applyChanges();
+				await nextUIUpdate();
 				var aButtons = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet").getButtons();
 
 				// Assert
@@ -534,10 +536,10 @@ sap.ui.define([
 			});
 
 		this.oCard.attachEvent("_ready", function () {
-			setTimeout(function () {
+			setTimeout(async function () {
 				// Act
 				this.oCard.addActionDefinition(oAI);
-				Core.applyChanges();
+				await nextUIUpdate();
 				var aButtons = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet").getButtons();
 
 				// Assert
@@ -591,7 +593,6 @@ sap.ui.define([
 		}));
 
 		oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 
 		oCard.attachEventOnce("_ready", function () {
 			// Assert

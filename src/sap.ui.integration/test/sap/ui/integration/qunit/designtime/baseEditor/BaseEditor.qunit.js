@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_merge",
 	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function (
@@ -14,6 +15,7 @@ sap.ui.define([
 	_merge,
 	PropertyEditor,
 	StringEditor,
+	nextUIUpdate,
 	sinon,
 	oCore
 ) {
@@ -959,8 +961,8 @@ sap.ui.define([
 
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.ready().then(function () {
-				oCore.applyChanges();
+			return this.oBaseEditor.ready().then(async function () {
+				await nextUIUpdate();
 
 				var oProp1Editor = this.oBaseEditor.getPropertyEditorsByNameSync("prop1")[0];
 				oProp1Editor.setValue("New prop1 value");
@@ -986,7 +988,7 @@ sap.ui.define([
 				propertyEditors: {
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
-			}).then(function() {
+			}).then(async function() {
 				oStringEditor = new PropertyEditor({
 					config: {
 						path: "/fooPath/foo1",
@@ -995,7 +997,7 @@ sap.ui.define([
 				});
 
 				this.oBaseEditor.addContent(oStringEditor);
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				return this.oBaseEditor.ready();
 			}.bind(this)).then(function() {
@@ -1033,7 +1035,7 @@ sap.ui.define([
 				propertyEditors: {
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
-			}).then(function() {
+			}).then(async function() {
 				oStringEditor = new PropertyEditor({
 					config: {
 						path: "/fooPath/foo1",
@@ -1042,7 +1044,7 @@ sap.ui.define([
 				});
 
 				this.oBaseEditor.addContent(oStringEditor);
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				// Changing the path to a relative path should deregister the editor
 				oStringEditor.setConfig({
@@ -1079,7 +1081,7 @@ sap.ui.define([
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
 				}
-			}).then(function() {
+			}).then(async function() {
 				// Creation will be artifically delayed by oStringEditorStub
 				var oStringEditor = new PropertyEditor({
 					config: {
@@ -1096,7 +1098,7 @@ sap.ui.define([
 					}
 				});
 				this.oBaseEditor.addContent(oNumberEditor);
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				oNumberEditor.ready().then(function () {
 					assert.strictEqual(oReadySpy.callCount, 0, "Then the BaseEditor doesn't fire ready before its initialization isn't finished");

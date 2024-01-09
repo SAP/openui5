@@ -1,12 +1,13 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/integration/cards/TimelineContent",
 	"sap/ui/core/Core",
 	"sap/ui/integration/cards/BaseListContent",
 	"sap/ui/integration/widgets/Card"
-
 ], function (
+	Library,
 	TimelineContent,
 	Core,
 	BaseListContent,
@@ -16,7 +17,7 @@ sap.ui.define([
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
-	return Core.loadLibrary("sap.suite.ui.commons", { async: true }).then(function () {
+	return Library.load("sap.suite.ui.commons").then(function () {
 		QUnit.module("Timeline Card", {
 			beforeEach: function () {
 				this.oTimelineContent = new TimelineContent();
@@ -130,7 +131,6 @@ sap.ui.define([
 			});
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.module("Data and items length", {
@@ -142,7 +142,6 @@ sap.ui.define([
 				});
 
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				Core.applyChanges();
 			},
 			afterEach: function () {
 				this.oCard.destroy();

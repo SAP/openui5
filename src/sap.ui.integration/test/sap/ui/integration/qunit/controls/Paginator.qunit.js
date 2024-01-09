@@ -1,13 +1,13 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
-	"sap/ui/integration/controls/Paginator"
+	"sap/ui/integration/controls/Paginator",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
-	Core,
 	Library,
-	Paginator
+	Paginator,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -15,13 +15,13 @@ sap.ui.define([
 	var oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 	QUnit.module("API and Rendering", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oPaginator = new Paginator({
 				pageNumber: 1,
 				pageCount: 4
 			});
 			this.oPaginator.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oPaginator.destroy();
@@ -35,9 +35,9 @@ sap.ui.define([
 		assert.strictEqual(this.oPaginator._getNavigationArrow("next").getTooltip(), oResourceBundle.getText("PAGINGBUTTON_NEXT"), "tooltip text is correct");
 	});
 
-	QUnit.test("pageCount <= 1", function (assert) {
+	QUnit.test("pageCount <= 1", async function (assert) {
 		this.oPaginator.setPageCount(1);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(this.oPaginator.$().length, "not rendered");
 	});
 
@@ -58,9 +58,9 @@ sap.ui.define([
 		assert.ok(this.oPaginator.$().find(".sapMCrslBulleted span")[1].classList.contains("sapMCrslActive"), "active dot is correct");
 	});
 
-	QUnit.test("pageCount > 5", function (assert) {
+	QUnit.test("pageCount > 5", async function (assert) {
 		this.oPaginator.setPageCount(10);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(this.oPaginator.$().find(".sapMCrslBulleted span").length, "dots are not rendered");
 
 		var $numericIndicator = this.oPaginator.$().find(".sapMCrslNumeric span");
@@ -69,26 +69,26 @@ sap.ui.define([
 	});
 
 	QUnit.module("Interaction", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oPaginator = new Paginator({
 				pageNumber: 1,
 				pageCount: 5
 			});
 			this.oPaginator.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oPaginator.destroy();
 		}
 	});
 
-	QUnit.test("navigate next", function (assert) {
+	QUnit.test("navigate next", async function (assert) {
 		// act - press right arrow
 		this.oPaginator.$().find(".sapMCrslNext .sapUiIcon").trigger("click");
 		assert.strictEqual(this.oPaginator.getPageNumber(), 2, "page number is correct");
 
 		this.oPaginator.setPageNumber(4);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		this.oPaginator.$().find(".sapMCrslNext .sapUiIcon").trigger("click");
 		assert.strictEqual(this.oPaginator.getPageNumber(), 4, "page number stays the same");

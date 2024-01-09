@@ -3,12 +3,12 @@
 sap.ui.define([
 	"sap/ui/integration/cards/AdaptiveContent",
 	"sap/ui/integration/cards/adaptivecards/elements/UI5InputNumber",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function (
 	AdaptiveContent,
 	UI5InputNumber,
-	Core
+	nextUIUpdate
 ) {
 	"use strict";
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -54,10 +54,10 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 			var oNumberInput = document.querySelector("#WithValue ui5-step-input");
 			var oLabel = document.querySelector("#WithValue ui5-label");
 			var oNumInputWithoutValue = document.querySelector("#ValueNotSpecified ui5-step-input");

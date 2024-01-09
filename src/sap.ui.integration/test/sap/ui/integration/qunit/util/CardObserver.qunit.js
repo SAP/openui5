@@ -1,16 +1,18 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-		"sap/ui/integration/library",
-		"sap/ui/integration/widgets/Card",
-		"sap/ui/integration/util/CardObserver",
-		"sap/ui/core/Core"
-	],
-	function (
+	"sap/ui/integration/library",
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/util/CardObserver",
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
+],
+	function(
 		library,
 		Card,
 		CardObserver,
-		Core
+		Core,
+		nextUIUpdate
 	) {
 		"use strict";
 
@@ -58,10 +60,10 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Changing card DOM ref", function (assert) {
+		QUnit.test("Changing card DOM ref", async function (assert) {
 			// Act - create card DOM ref
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			var oObservedDomRef = this.oCard._oCardObserver._oObservedDomRef;
@@ -72,7 +74,7 @@ sap.ui.define([
 
 			// Act - change card DOM ref
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			var oNewObserverDomRef = this.oCard._oCardObserver._oObservedDomRef;
@@ -101,7 +103,11 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("CardObserver will be initialized", function (assert) {
+		QUnit.test("CardObserver will be initialized", async function (assert) {
+			this.oCardAuto.placeAt(DOM_RENDER_LOCATION);
+			await nextUIUpdate();
+			this.oObserveSpy.reset();
+
 			var done = assert.async();
 			var oUnobserveSpy;
 
@@ -116,10 +122,8 @@ sap.ui.define([
 				done();
 			}.bind(this));
 
-			this.oCardAuto.setManifest(oManifest_ListCard);
-			this.oCardAuto.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 			oUnobserveSpy = sinon.spy(this.oCardAuto._oCardObserver._oObserver, "unobserve");
+			this.oCardAuto.setManifest(oManifest_ListCard);
 		});
 
 		QUnit.test("Manifest should be set when card is in viewport", function (assert) {

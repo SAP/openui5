@@ -3,12 +3,12 @@
 sap.ui.define([
 	"sap/ui/integration/cards/AdaptiveContent",
 	"sap/ui/integration/cards/adaptivecards/elements/UI5InputChoiceSet",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function (
 	AdaptiveContent,
 	UI5InputChoiceSet,
-	Core
+	nextUIUpdate
 ) {
 	"use strict";
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -120,10 +120,10 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 			var oSelect = document.querySelector("#CompactSelectValWithValue ui5-select"),
 				oLabel = document.querySelector("#CompactSelectValWithValue ui5-label"),
 				aOptions = oSelect.children,
@@ -156,10 +156,10 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 			var oRBContainer = document.querySelector("#SingleSelectVal .sapFCardAdaptiveContentChoiceSetWrapper"),
 				oLabel = document.querySelector("#SingleSelectVal ui5-label"),
 				aRadioButtons = oRBContainer.children,
@@ -195,10 +195,10 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 			var oCBContainer = document.querySelector("#MultiSelectVal .sapFCardAdaptiveContentChoiceSetWrapper"),
 				oLabel = document.querySelector("#MultiSelectVal ui5-label"),
 				aCheckBoxs = oCBContainer.children,

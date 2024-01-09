@@ -5,13 +5,13 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 	ResourceBundle,
 	ResourceModel,
 	EditorQunitUtils,
 	BaseEditor,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -50,9 +50,9 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleString").then(function (aPropertyEditors) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleString").then(async function (aPropertyEditors) {
 				this.oStringEditor = aPropertyEditors[0];
-				oCore.applyChanges();
+				await nextUIUpdate();
 				this.oStringEditorElement = this.oStringEditor.getContent();
 			}.bind(this));
 		},
@@ -157,9 +157,9 @@ sap.ui.define([
 			});
 			this.oBaseEditor.setConfig(mConfig);
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleString").then(function (aPropertyEditors) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleString").then(async function (aPropertyEditors) {
 				var oStringEditor = aPropertyEditors[0];
-				oCore.applyChanges();
+				await nextUIUpdate();
 				var oStringEditorElement = oStringEditor.getContent();
 
 				EditorQunitUtils.setInputValue(oStringEditorElement, "{validBindingString}");

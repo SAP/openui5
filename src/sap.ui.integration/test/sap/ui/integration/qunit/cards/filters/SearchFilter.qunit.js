@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Element,
 	SearchFilter,
 	Card,
 	Core,
 	KeyCodes,
-	QUnitUtils
+	QUnitUtils,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -273,11 +275,11 @@ sap.ui.define([
 		assert.strictEqual(this.oSF._getSearchField().getValue(), "Some city", "Initial value should be set on the search field");
 	});
 
-	QUnit.test("Value is updated when new value is entered", function (assert) {
+	QUnit.test("Value is updated when new value is entered", async function (assert) {
 		// Arrange
 		this.oSF.setConfig({});
 		this.oSF.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 		var oOldValue = this.oSF.getValue();
 
 		// Act
@@ -289,12 +291,12 @@ sap.ui.define([
 		assert.strictEqual(this.oSF.getValue().value, "some new value", "Value should be changed after new value is entered");
 	});
 
-	QUnit.test("Model value is reset when the reset button is pressed", function (assert) {
+	QUnit.test("Model value is reset when the reset button is pressed", async function (assert) {
 		this.oSF.setConfig({
 			value: "Some city"
 		});
 		this.oSF.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		QUnitUtils.triggerTouchEvent("touchend", this.oSF._getSearchField().getDomRef("reset"));

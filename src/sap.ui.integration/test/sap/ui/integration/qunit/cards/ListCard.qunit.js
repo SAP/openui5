@@ -25,7 +25,7 @@ sap.ui.define([
 
 	const DOM_RENDER_LOCATION = "qunit-fixture";
 	const AvatarColor = mLibrary.AvatarColor;
-	const pIfMicrochartsAvailable = Core.loadLibrary("sap.suite.ui.microchart", { async: true });
+	const pIfMicrochartsAvailable = Library.load("sap.suite.ui.microchart");
 
 	function testWithMicrochart(assert, oCard, oManifest, fnTest) {
 		const done = assert.async();
@@ -741,7 +741,6 @@ sap.ui.define([
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -1470,7 +1469,6 @@ sap.ui.define([
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -1631,7 +1629,6 @@ sap.ui.define([
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -1792,7 +1789,6 @@ sap.ui.define([
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -2001,7 +1997,6 @@ sap.ui.define([
 				height: "600px"
 			});
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();

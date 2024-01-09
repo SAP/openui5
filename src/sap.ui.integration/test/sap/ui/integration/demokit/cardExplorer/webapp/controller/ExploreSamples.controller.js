@@ -8,10 +8,10 @@ sap.ui.define([
 	"../localService/MockServerManager",
 	"sap/m/MessageToast",
 	"sap/f/GridContainerItemLayoutData",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Item",
+	"sap/ui/core/Lib",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
@@ -39,10 +39,10 @@ sap.ui.define([
 	MockServerManager,
 	MessageToast,
 	GridContainerItemLayoutData,
-	Core,
 	Element,
 	Fragment,
 	Item,
+	Library,
 	JSONModel,
 	BindingMode,
 	Device,
@@ -1041,7 +1041,7 @@ sap.ui.define([
 
 		_initCardSample: function (oSample) {
 			if (!this._pInitCardSample) {
-				this._pInitCardSample = Core.loadLibrary("sap.ui.integration", { async: true })
+				this._pInitCardSample = Library.load("sap.ui.integration")
 					.then(function () {
 						return Promise.all([
 							Fragment.load({

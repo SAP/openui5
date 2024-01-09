@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/integration/widgets/Card"
-], function (
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(
 	Core,
-	Card
+	Card,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -108,8 +110,8 @@ sap.ui.define([
 			Promise.all([
 				new Promise((resolve) => { oSnackCard.attachEventOnce("_ready", resolve); }),
 				new Promise((resolve) => { oDialog.attachAfterOpen(resolve); })
-			]).then(() => {
-				Core.applyChanges();
+			]).then(async () => {
+				await nextUIUpdate();
 
 				//Assert
 				assert.strictEqual(oSnackCard.getCombinedParameters().test, this.oCard.getCombinedParameters().test, "Parameters are transferred between cards");

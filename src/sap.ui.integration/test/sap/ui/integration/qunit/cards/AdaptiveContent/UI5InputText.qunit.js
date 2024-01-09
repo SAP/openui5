@@ -3,12 +3,12 @@
 sap.ui.define([
 	"sap/ui/integration/cards/AdaptiveContent",
 	"sap/ui/integration/cards/adaptivecards/elements/UI5InputText",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function (
 	AdaptiveContent,
 	UI5InputText,
-	Core
+	nextUIUpdate
 ) {
 	"use strict";
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -77,10 +77,10 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 			var oTextInput = document.querySelector("#TextInput ui5-input");
 			var oLabel = document.querySelector("#TextInput ui5-label");
 			var oValueStateMessage = document.querySelector("#TextInput div[slot]");
@@ -110,10 +110,10 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 			var oTextArea = document.querySelector("#TextArea ui5-textarea");
 
 			//Assert
@@ -134,10 +134,10 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 			var oTelInput = document.querySelector("#TelVal ui5-input");
 
 			//Assert
@@ -157,10 +157,10 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 			var oUrlInput = document.querySelector("#UrlVal ui5-input");
 
 			//Assert
@@ -180,10 +180,10 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 			var oUrlInput = document.querySelector("#EmailVal ui5-input");
 
 			//Assert

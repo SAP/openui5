@@ -7,17 +7,17 @@ sap.ui.define([
 	"qunit/designtime/EditorQunitUtils",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
-], function (
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/thirdparty/sinon-4"
+], function(
 	IconEditor,
 	BaseEditor,
 	QUnitUtils,
 	EditorQunitUtils,
 	ResourceBundle,
 	ResourceModel,
-	sinon,
-	oCore
+	nextUIUpdate,
+	sinon
 ) {
 	"use strict";
 
@@ -57,13 +57,13 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("icon").then(function(aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("icon").then(async function(aPropertyEditor) {
 				this.oIconEditor = aPropertyEditor[0].getAggregation("propertyEditor");
 				this.oIconEditorTypeSelect = this.oIconEditor.getContent().getItems()[0].getContent()[0];
 				this.oIconEditorInput = this.oIconEditor.getContent().getItems()[1].getContent()[0];
 				this.oIconEditorSettingsButton = this.oIconEditor.getContent().getItems()[2];
 				this.oIconModel = this.oIconEditor.getModel("icon");
-				oCore.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -124,9 +124,9 @@ sap.ui.define([
 
 		QUnit.test("When the Settings Dialog is opened", function (assert) {
 			var fnDone = assert.async();
-			this.oIconEditor.ready().then(function () {
+			this.oIconEditor.ready().then(async function() {
 				this.oIconEditorSettingsButton.firePress();
-				oCore.applyChanges();
+				await nextUIUpdate();
 				this.oIconEditor._handleSettings.returnValues[0].then(function (oDialog) {
 					assert.ok(oDialog && oDialog.getDomRef() instanceof HTMLElement, "Then the settings dialog is rendered correctly (1/3)");
 					assert.ok(oDialog && oDialog.getDomRef() && oDialog.getDomRef().offsetHeight > 0, "Then the settings dialog is rendered correctly (2/3)");
@@ -138,9 +138,9 @@ sap.ui.define([
 
 		QUnit.test("When the Settings Dialog is opened for the type 'icon'", function (assert) {
 			var fnDone = assert.async();
-			this.oIconEditor.ready().then(function () {
+			this.oIconEditor.ready().then(async function() {
 				this.oIconEditorSettingsButton.firePress();
-				oCore.applyChanges();
+				await nextUIUpdate();
 				this.oIconEditor._handleSettings.returnValues[0].then(function (oDialog) {
 					var nVisible = 0;
 					var aItems = oDialog.getContent()[0].getItems()[0].getContent();
@@ -160,9 +160,9 @@ sap.ui.define([
 			this.oIconEditor.ready().then(function () {
 				var oBox = this.oIconEditorTypeSelect.getAggregation("propertyEditor").getContent();
 				EditorQunitUtils.selectComboBoxValue(oBox, "text");
-				this.oIconEditor.ready().then(function(){
+				this.oIconEditor.ready().then(async function() {
 					this.oIconEditorSettingsButton.firePress();
-					oCore.applyChanges();
+					await nextUIUpdate();
 					this.oIconEditor._handleSettings.returnValues[0].then(function (oDialog) {
 						var nVisible = 0;
 						var aItems = oDialog.getContent()[0].getItems()[0].getContent();
@@ -190,8 +190,8 @@ sap.ui.define([
 			this.oIconEditor.ready().then(function () {
 				var oBox = this.oIconEditorTypeSelect.getAggregation("propertyEditor").getContent();
 				EditorQunitUtils.selectComboBoxValue(oBox, "text");
-				this.oIconEditor.ready().then(function(){
-					oCore.applyChanges();
+				this.oIconEditor.ready().then(async function() {
+					await nextUIUpdate();
 					var oInput = this.oIconEditor.getContent().getItems()[1].getContent()[0].getAggregation("propertyEditor").getContent();
 					var sValueBefore = this.oIconEditor.getContent().getItems()[1].getContent()[0].getAggregation("propertyEditor").getValue();
 					assert.equal(sValueBefore, "", "The value before changing is correct");
@@ -207,8 +207,8 @@ sap.ui.define([
 			this.oIconEditor.ready().then(function () {
 				var oBox = this.oIconEditorTypeSelect.getAggregation("propertyEditor").getContent();
 				EditorQunitUtils.selectComboBoxValue(oBox, "text");
-				this.oIconEditor.ready().then(function(){
-					oCore.applyChanges();
+				this.oIconEditor.ready().then(async function() {
+					await nextUIUpdate();
 					var oInput = this.oIconEditor.getContent().getItems()[1].getContent()[0].getAggregation("propertyEditor").getContent();
 					var sValueBefore = this.oIconEditor.getContent().getItems()[1].getContent()[0].getAggregation("propertyEditor").getValue();
 					assert.equal(sValueBefore, "", "The value before changing is correct");
@@ -222,26 +222,26 @@ sap.ui.define([
 
 		QUnit.test("When the Settings Dialog is opened", function (assert) {
 			var fnDone = assert.async();
-			this.oIconEditor.ready().then(function () {
+			this.oIconEditor.ready().then(async function() {
 				assert.equal(this.oIconEditor.getValue().src, "sap-icon://target-group", "Then the src-value of the icon is correct before opening");
 				var oOldValue = this.oIconEditor.getValue();
 				this.oIconEditorSettingsButton.firePress();
-				oCore.applyChanges();
-				this.oIconEditor._handleSettings.returnValues[0].then(function (oDialog) {
+				await nextUIUpdate();
+				this.oIconEditor._handleSettings.returnValues[0].then(async function(oDialog) {
 					var oInput = oDialog.getContent()[0].getItems()[0].getContent()[3];
 					var oCancelButton = oDialog.getEndButton();
 					EditorQunitUtils.setInputValueAndConfirm(oInput, "Alt-Text");
 					oCancelButton.firePress();
-					oCore.applyChanges();
+					await nextUIUpdate();
 					assert.equal(this.oIconEditor.getValue(), oOldValue, "The Value does not change on closing with 'cancel'");
 					this.oIconEditorSettingsButton.firePress();
-					oCore.applyChanges();
-					this.oIconEditor._handleSettings.returnValues[0].then(function (oNewDialog) {
+					await nextUIUpdate();
+					this.oIconEditor._handleSettings.returnValues[0].then(async function(oNewDialog) {
 						var oInput = oNewDialog.getContent()[0].getItems()[0].getContent()[3];
 						var oSaveButton = oDialog.getBeginButton();
 						EditorQunitUtils.setInputValueAndConfirm(oInput, "Alt-Text");
 						oSaveButton.firePress();
-						oCore.applyChanges();
+						await nextUIUpdate();
 						assert.equal(this.oIconEditor.getValue().alt, "Alt-Text", "The Value is set on closing with 'save'");
 						fnDone();
 					}.bind(this));
@@ -273,7 +273,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("When an icon editor of type picture is created", function (assert) {
+		QUnit.test("When an icon editor of type picture is created", async function(assert) {
 			var fnDone = assert.async();
 			var mJsonPicture = {
 				content: {src:"http://www.sap.com/picture.jpg"}
@@ -283,7 +283,7 @@ sap.ui.define([
 				json: mJsonPicture
 			});
 			this.oBaseEditor2.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oBaseEditor2.getPropertyEditorsByName("icon").then(function(aPropertyEditor) {
 				this.oIconEditor2 = aPropertyEditor[0].getAggregation("propertyEditor");
 				this.oIconModel2 = this.oIconEditor2.getModel("icon");
@@ -295,7 +295,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("When an icon editor of type text is created", function (assert) {
+		QUnit.test("When an icon editor of type text is created", async function(assert) {
 			var fnDone = assert.async();
 			var mJsonText = {
 				content: {text:"Some Text"}
@@ -305,7 +305,7 @@ sap.ui.define([
 				json: mJsonText
 			});
 			this.oBaseEditor2.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oBaseEditor2.getPropertyEditorsByName("icon").then(function(aPropertyEditor) {
 				this.oIconEditor2 = aPropertyEditor[0].getAggregation("propertyEditor");
 				this.oIconModel2 = this.oIconEditor2.getModel("icon");
@@ -317,7 +317,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("When an icon editor with no content is created", function (assert) {
+		QUnit.test("When an icon editor with no content is created", async function(assert) {
 			var fnDone = assert.async();
 			var mJsonEmpty = {};
 			this.oBaseEditor3 = new BaseEditor({
@@ -325,7 +325,7 @@ sap.ui.define([
 				json: mJsonEmpty
 			});
 			this.oBaseEditor3.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oBaseEditor3.getPropertyEditorsByName("icon").then(function(aPropertyEditor) {
 				this.oIconEditor3 = aPropertyEditor[0].getAggregation("propertyEditor");
 				this.oIconModel3 = this.oIconEditor3.getModel("icon");

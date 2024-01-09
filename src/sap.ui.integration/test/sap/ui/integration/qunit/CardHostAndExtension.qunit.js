@@ -123,7 +123,6 @@ function (
 		}.bind(this));
 
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 	QUnit.module("Actions sequence extension prevents default", {
@@ -177,7 +176,6 @@ function (
 		}.bind(this));
 
 		this.oCardHostPreventDefault.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 	QUnit.module("Actions sequence host prevents default", {
@@ -232,7 +230,6 @@ function (
 		}.bind(this));
 
 		this.oCardHostPreventDefault.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 	QUnit.module("Actions sequence card prevents default", {
@@ -287,7 +284,6 @@ function (
 		}.bind(this));
 
 		this.oCardPreventDefault.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 	QUnit.module("CardMenuAction properties", {
@@ -527,7 +523,7 @@ function (
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
-	QUnit.test("Action property 'parameters'", function(assert) {
+	QUnit.test("Action property 'parameters'", function (assert) {
 		// Arrange
 		var done = assert.async(),
 			oWindowOpenStub = sinon.stub(window, 'open');
@@ -567,7 +563,6 @@ function (
 		}.bind(this));
 
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 	QUnit.module("Actions for card with no header", {
@@ -668,7 +663,7 @@ function (
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
-	QUnit.test("Actions toolbar button has aria-haspopup=menu", function(assert) {
+	QUnit.test("Actions toolbar button has aria-haspopup=menu", function (assert) {
 		// Arrange
 		var done = assert.async();
 
@@ -690,6 +685,5 @@ function (
 		}.bind(this));
 
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 });

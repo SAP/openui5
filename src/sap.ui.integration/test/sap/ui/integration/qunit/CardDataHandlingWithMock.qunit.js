@@ -141,7 +141,6 @@ function (
 		// Act
 		oCard.setManifest(oManifest_BatchError);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 });

@@ -1,12 +1,12 @@
 /* global QUnit */
 
 sap.ui.define([
-		"sap/ui/integration/widgets/Card",
-		"sap/ui/core/Core",
-		"sap/base/Log",
-		'sap/ui/integration/Host'
-	],
-	function (
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/core/Core",
+	"sap/base/Log",
+	'sap/ui/integration/Host'
+],
+	function(
 		Card,
 		Core,
 		Log,
@@ -443,7 +443,6 @@ sap.ui.define([
 
 			// Act
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.module("No Host", {
@@ -510,7 +509,6 @@ sap.ui.define([
 
 			// Act
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Resolves default url without host", function (assert) {
@@ -527,7 +525,6 @@ sap.ui.define([
 
 			// Act
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Missing default url and name", function (assert) {
@@ -544,7 +541,6 @@ sap.ui.define([
 
 			// Act
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 	}
 );

@@ -34,7 +34,7 @@ function switchTheme(oSelect) {
 
 function switchLanguage(oSelect) {
 	this._sLanguage = oSelect.options[oSelect.selectedIndex].value;
-	sap.ui.getCore().getConfiguration().setLanguage(this._sLanguage);
+	sap.ui.getCore().getConfiguration().setLanguage(this._sLanguage)/*Not inside AMD call*/;
 	updateAllLayerEditor();
 	loadAllChanges();
 }
@@ -123,15 +123,15 @@ function loadAllChanges() {
 }
 
 function loadLanguages() {
-	sap.ui.require(['sap/base/util/LoaderExtensions', "sap/ui/core/Core"],
-	function (LoaderExtensions, Core) {
+	sap.ui.require(["sap/base/i18n/Localization", 'sap/base/util/LoaderExtensions', "sap/ui/core/Core"],
+	function (Localization, LoaderExtensions, Core) {
 		//load the language list
 		var aLanguageList = LoaderExtensions.loadResource("sap/ui/integration/editor/languages.json", {
 			dataType: "json",
 			failOnError: false,
 			async: false
 		});
-		var sCurrentLanguage =  Core.getConfiguration().getLanguage().replaceAll('_', '-');
+		var sCurrentLanguage =  Localization.getLanguage().replaceAll('_', '-');
 		var oLanguageSelect = document.getElementById("languageSelect");
 		if (!oLanguageSelect) return;
 		for (var sLanguage in aLanguageList) {

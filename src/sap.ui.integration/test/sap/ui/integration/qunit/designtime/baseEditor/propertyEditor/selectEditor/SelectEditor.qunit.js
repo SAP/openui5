@@ -3,11 +3,11 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"qunit/designtime/EditorQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 	BaseEditor,
 	EditorQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -58,9 +58,9 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(function (aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(async function (aPropertyEditor) {
 				this.oSelectEditor = aPropertyEditor[0];
-				oCore.applyChanges();
+				await nextUIUpdate();
 				this.oSelectEditorElement = this.oSelectEditor.getContent();
 			}.bind(this));
 		},
@@ -170,9 +170,9 @@ sap.ui.define([
 			});
 			this.oBaseEditor.setConfig(mConfig);
 
-			this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(function (aPropertyEditor) {
+			this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(async function (aPropertyEditor) {
 				var oSelectEditor = aPropertyEditor[0];
-				oCore.applyChanges();
+				await nextUIUpdate();
 				var oSelectEditorElement = oSelectEditor.getContent();
 
 				oSelectEditor.attachValueChange(function (oEvent) {
@@ -190,9 +190,9 @@ sap.ui.define([
 			});
 			this.oBaseEditor.setConfig(mConfig);
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(function (aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(async function (aPropertyEditor) {
 				var oSelectEditor = aPropertyEditor[0];
-				oCore.applyChanges();
+				await nextUIUpdate();
 				var oSelectEditorElement = oSelectEditor.getContent();
 
 				EditorQunitUtils.setInputValueAndConfirm(oSelectEditorElement, "{validBindingString}");
