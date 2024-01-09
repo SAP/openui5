@@ -526,6 +526,7 @@ sap.ui.define([
 		const oSelectors = this._oChangeIndicatorRegistry.getSelectorsWithRegisteredChanges();
 		const oIndicators = {};
 		this._mDisplayElementsKeyMap = {};
+		const oConnectedElements = this._oDesignTime && this._oDesignTime.getSelectionManager().getConnectedElements();
 		Object.keys(oSelectors).forEach(function(sSelectorId) {
 			const aChangesOnIndicator = oSelectors[sSelectorId];
 			const aRelevantChanges = this._filterRelevantChanges(oSelectors[sSelectorId]);
@@ -544,8 +545,9 @@ sap.ui.define([
 
 			const oChangeIndicator = this._oChangeIndicatorRegistry.getChangeIndicator(sSelectorId);
 			const sOverlayId = oOverlay.getId();
+			const oConnectedElement = oConnectedElements && oConnectedElements[oOverlay.getAssociation("element")];
 			if (!oChangeIndicator) {
-				this._createChangeIndicator(oOverlay, sSelectorId);
+				this._createChangeIndicator(oOverlay, sSelectorId, oConnectedElement);
 				// Assumption: all changes on an indicator affect the same elements
 				const sDisplayElementsKey = aChangesOnIndicator[0].displayElementsKey;
 				// This map is built to collect indicators with the same display elements (e.g. OP Section & AnchorBar)
@@ -561,8 +563,6 @@ sap.ui.define([
 			return undefined;
 		}.bind(this));
 
-		this._registerIndicatorBrowserEvents();
-
 		if (
 			!deepEqual(
 				oIndicators,
@@ -573,46 +573,6 @@ sap.ui.define([
 				content: oIndicators
 			});
 		}
-	};
-
-	// Multiple indicators can refer to the same control (e.g. OP Section + AnchorBar),
-	// so when one of them is hovered/focused the other must also react to show the connection between them
-	ChangeVisualization.prototype._registerIndicatorBrowserEvents = function() {
-		Object.keys(this._mDisplayElementsKeyMap).forEach(function(sDisplayElementsKey) {
-			const aIndicators = this._mDisplayElementsKeyMap[sDisplayElementsKey].map(function(sSelectorId) {
-				return this._oChangeIndicatorRegistry.getChangeIndicator(sSelectorId);
-			}.bind(this));
-
-			function onIndicatorInteraction(bActivate, oEvent) {
-				aIndicators.forEach(function(oIndicator) {
-					if (oIndicator.getVisible()) {
-						oIndicator.onIndicatorBrowserInteraction(bActivate, oEvent);
-					}
-				});
-			}
-
-			// When the detail popover is opened all connected overlays should be selected
-			function onDetailPopoverOpened(oEvent) {
-				aIndicators.forEach(function(oIndicator) {
-					if (oIndicator.getVisible()) {
-						oIndicator.onDetailPopoverOpened(oEvent);
-					}
-				});
-			}
-
-			aIndicators.forEach(function(oIndicator) {
-				oIndicator.attachBrowserEvent("mouseover", onIndicatorInteraction.bind(this, true));
-				oIndicator.attachBrowserEvent("focusin", onIndicatorInteraction.bind(this, true));
-				oIndicator.attachBrowserEvent("mouseout", onIndicatorInteraction.bind(this, false));
-				oIndicator.attachBrowserEvent("focusout", onIndicatorInteraction.bind(this, false));
-				oIndicator.attachDetailPopoverOpened(onDetailPopoverOpened.bind(this));
-
-				const oOverlay = Element.getElementById(oIndicator.getOverlayId());
-				// De-selection of connected overlays must happen when the hover/focus leaves the overlay
-				oOverlay.attachBrowserEvent("mouseout", onIndicatorInteraction.bind(this, false));
-				oOverlay.attachBrowserEvent("focusout", onIndicatorInteraction.bind(this, false));
-			});
-		}.bind(this));
 	};
 
 	ChangeVisualization.prototype._filterRelevantChanges = function(aChangeVizInfo) {
@@ -638,7 +598,7 @@ sap.ui.define([
 		});
 	};
 
-	ChangeVisualization.prototype._createChangeIndicator = function(oOverlay, sSelectorId) {
+	ChangeVisualization.prototype._createChangeIndicator = function(oOverlay, sSelectorId, oConnectedElementId) {
 		const oChangeIndicator = new ChangeIndicator({
 			changes: "{changes}",
 			posX: "{posX}",
@@ -646,7 +606,8 @@ sap.ui.define([
 			visible: "{= ${/active} && (${changes} || []).length > 0}",
 			overlayId: oOverlay.getId(),
 			selectorId: sSelectorId,
-			selectChange: this.selectChange.bind(this)
+			selectChange: this.selectChange.bind(this),
+			connectedElementId: oConnectedElementId
 		});
 		oChangeIndicator.setModel(this._oChangeVisualizationModel);
 		oChangeIndicator.bindElement(`/content/${sSelectorId}`);

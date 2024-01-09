@@ -1270,9 +1270,31 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when a change indicator with a related indicator (two display controls for the same change) is hovered/focused", function(assert) {
-			var aDisplayControls = ["Comp1---idMain1--rb1", "Comp1---idMain1--bar"];
-			var oChangeHandler = {
+		QUnit.test("when a change indicator with a related indicator (two display controls for the same change) is hovered/focused", async function(assert) {
+			function checkOnClasses(oHoveredOverlay, oRelatedIndicatorOverlay) {
+				assert.ok(
+					oHoveredOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
+					"then the overlay has the correct style class"
+				);
+				assert.ok(
+					oRelatedIndicatorOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
+					"then the related overlay has the correct style class"
+				);
+			}
+
+			function checkOffClasses(oHoveredOverlay, oRelatedIndicatorOverlay) {
+				assert.notOk(
+					oHoveredOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
+					"then the style class was removed"
+				);
+				assert.notOk(
+					oRelatedIndicatorOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
+					"then the style class was removed from the related overlay"
+				);
+			}
+
+			const aDisplayControls = ["Comp1---idMain1--rb1", "Comp1---idMain1--bar"];
+			const oChangeHandler = {
 				getChangeVisualizationInfo() {
 					return {
 						displayControls: aDisplayControls,
@@ -1283,54 +1305,41 @@ sap.ui.define([
 			prepareChanges([
 				createMockChange("testRename", "rename", "Comp1---idMain1--rb1")
 			], undefined, oChangeHandler);
-			return startRta.call(this)
-			.then(startVisualization.bind(this, this.oRta))
-			.then(function() {
-				var aChangeIndicators = collectIndicatorReferences();
-				var oHoveredIndicator = aChangeIndicators[0];
-				var oRelatedIndicator = aChangeIndicators[1];
-				var oHoveredIndicatorElement = oHoveredIndicator.getDomRef();
-				var oHoveredOverlay = Element.getElementById(oHoveredIndicator.getOverlayId());
-				var oRelatedIndicatorOverlay = Element.getElementById(oRelatedIndicator.getOverlayId());
 
-				function checkOnClasses() {
-					assert.ok(
-						oHoveredOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
-						"then the overlay has the correct style class"
-					);
-					assert.ok(
-						oRelatedIndicatorOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
-						"then the related overlay has the correct style class"
-					);
-				}
+			await startRta.call(this);
 
-				function checkOffClasses() {
-					assert.notOk(
-						oHoveredOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
-						"then the style class was removed"
-					);
-					assert.notOk(
-						oRelatedIndicatorOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered"),
-						"then the style class was removed from the related overlay"
-					);
-				}
+			this.oRta._oDesignTime.getSelectionManager().setConnectedElements({
+				"Comp1---idMain1--rb1": "Comp1---idMain1--bar",
+				"Comp1---idMain1--bar": "Comp1---idMain1--rb1"
+			});
+			await startVisualization(this.oRta);
 
-				oHoveredIndicatorElement.addEventListener("mouseover", checkOnClasses.bind(this));
-				oHoveredIndicatorElement.dispatchEvent(new MouseEvent("mouseover"));
+			const aChangeIndicators = collectIndicatorReferences();
+			const oHoveredIndicator = aChangeIndicators[0];
+			const oRelatedIndicator = aChangeIndicators[1];
+			const oHoveredIndicatorElement = oHoveredIndicator.getDomRef();
+			const oHoveredOverlay = Element.getElementById(oHoveredIndicator.getOverlayId());
+			const oRelatedIndicatorOverlay = Element.getElementById(oRelatedIndicator.getOverlayId());
 
-				oHoveredIndicatorElement.addEventListener("mouseout", checkOffClasses.bind(this));
-				oHoveredIndicatorElement.dispatchEvent(new MouseEvent("mouseout"));
+			oHoveredIndicatorElement.addEventListener("mouseover", () => checkOnClasses(oHoveredOverlay, oRelatedIndicatorOverlay));
+			oHoveredIndicatorElement.dispatchEvent(new MouseEvent("mouseover"));
 
-				oHoveredIndicatorElement.addEventListener("focusin", checkOnClasses.bind(this));
-				oHoveredIndicatorElement.dispatchEvent(new Event("focusin"));
+			oHoveredIndicatorElement.addEventListener("mouseout", () => checkOffClasses(oHoveredOverlay, oRelatedIndicatorOverlay));
+			oHoveredIndicatorElement.dispatchEvent(new MouseEvent("mouseout"));
 
-				oHoveredIndicatorElement.addEventListener("focusout", checkOffClasses.bind(this));
-				oHoveredIndicatorElement.dispatchEvent(new Event("focusout"));
+			oHoveredIndicatorElement.addEventListener("focusin", () => checkOnClasses(oHoveredOverlay, oRelatedIndicatorOverlay));
+			oHoveredIndicatorElement.dispatchEvent(new Event("focusin"));
 
-				// When the detail popover opens, all connected overlays must be highlighted
-				oHoveredIndicator.fireDetailPopoverOpened();
-				checkOnClasses();
-			}.bind(this));
+			oHoveredIndicatorElement.addEventListener("focusout", () => checkOffClasses(oHoveredOverlay, oRelatedIndicatorOverlay));
+			oHoveredIndicatorElement.dispatchEvent(new Event("focusout"));
+
+			// When the detail popover opens, the connected overlays must be highlighted
+			const oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+			this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
+			await oOpenPopoverPromise;
+
+			await nextUIUpdate();
+			checkOnClasses(oHoveredOverlay, oRelatedIndicatorOverlay);
 		});
 	});
 
