@@ -70,7 +70,7 @@ sap.ui.define([
 			selectedKey: selectedKey,
 			expanded: !collapsed,
 			items: [
-				new NavigationListItem({
+				new NavigationListItem("groupItem1", {
 					text: 'Root 1',
 					key: 'rootChild1',
 					icon: 'sap-icon://employee',
@@ -250,6 +250,8 @@ sap.ui.define([
 					text: "Root 5 - group with items",
 					items: [
 						new NavigationListItem({
+							href: '#/rootChild1',
+							target: '_blank',
 							text: 'Child 1'
 						}),
 						new NavigationListItem({
@@ -1099,6 +1101,16 @@ sap.ui.define([
 		assert.strictEqual(window.location.href, sCurrHref, "Default action when clicking on anchor tag is prevented.");
 	});
 
+	QUnit.test("External link icon", function (assert) {
+		// Arrange
+		var sExternalLinkWithTarget = Element.getElementById("groupItem1").getDomRef().querySelector("a").children[2].classList.contains("sapTntNLIExternalLinkIcon"),
+			sExternalLinkWithoutTarget = Element.getElementById("groupItem3").getDomRef().querySelector("a").children[2].classList.contains("sapTntNLIExternalLinkIcon");
+
+		// Assert
+		assert.ok(sExternalLinkWithTarget, "External link icon is rendered when href is set and 'targe=_blank'");
+		assert.notOk(sExternalLinkWithoutTarget, "External link icon is rendered when href is set but target is not '_blank'.");
+	});
+
 	QUnit.module("Overflow behavior", {
 		beforeEach: async function () {
 			this.navigationList = getNavigationList(undefined, true);
@@ -1188,6 +1200,12 @@ sap.ui.define([
 		QUnitUtils.triggerEvent("tap", overflowItemDomRef);
 
 		menuDomRef = document.querySelector(".sapUiMnu");
+
+		var bIsExternalLinkRendered = menuDomRef.children[0].children[4].classList.contains("sapUiMnuItmExternalLink");
+
+		// Assert
+		assert.ok(bIsExternalLinkRendered, "External link icon is rendered in the overflow");
+
 		menu = Element.closestTo(menuDomRef);
 
 		const aExpectedMenuItems = items.reduce((aResult, oItem) => {

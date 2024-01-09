@@ -124,7 +124,8 @@
 		font-size: @_sap_tnt_NavigationList_IconFontSize;
 	}
 
-	.sapTntNLIExpandIcon {
+	.sapTntNLIExpandIcon,
+	.sapTntNLIExternalLinkIcon {
 		color: @_sap_tnt_NavigationList_ExpandIconColor;
 	}
 
@@ -260,7 +261,8 @@
 	}
 }
 
-.sapTntNL .sapTntNLIExpandIcon {
+.sapTntNL .sapTntNLIExpandIcon,
+.sapTntNLIExternalLinkIcon {
 	min-width: 2rem;
 	font-size: 0.875rem;
 
@@ -295,6 +297,11 @@
 		display: none;
 	}
 
+	.sapTntNLIExternalLinkIcon,
+	.sapTntNLIExpandIcon {
+		display: none;
+	}
+
 	.sapTntNLI:not(.sapTntNLIDisabled):not(.sapTntNLIActive):not(.sapTntNLINoHoverEffect) {
 		[tabindex]:hover,
 		[tabindex]:focus {
@@ -303,6 +310,10 @@
 			z-index: @_sap_tnt_NavigationList_Collapsed_HoverOrFocusItemZIndex;
 
 			.sapTntNLIText {
+				display: @_sap_tnt_NavigationList_Collapsed_HoverOrFocusTextDisplay;
+			}
+			.sapTntNLIExternalLinkIcon,
+			.sapTntNLIExpandIcon {
 				display: @_sap_tnt_NavigationList_Collapsed_HoverOrFocusTextDisplay;
 			}
 		}
@@ -430,7 +441,7 @@
 		&:hover,
 		&:active {
 			padding-inline-end: 0rem;
-	
+
 			.sapTntNLGroupIcon {
 				display: block;
 			}
@@ -460,10 +471,6 @@
 .sapTntNL:not(.sapTntNLNoIcons) {
 	span.sapTntNLIIcon {
 		min-width: @_sap_tnt_NavigationList_GroupIconWidth;
-	}
-
-	.sapTntNLISecondLevel .sapMText {
-		padding-left: @_sap_tnt_NavigationList_GroupIconWidth;
 	}
 }
 
@@ -546,6 +553,9 @@
 
 		&.sapUiMnuItmSubMnuOpen,
 		&.sapUiMnuItmSubMnuOpen.sapUiMnuItmHov {
+			border-bottom: none;
+			background-color: @sapUiListHoverBackground;
+
 			&::before {
 				position: absolute;
 				content: "";
@@ -594,6 +604,38 @@
 	}
 }
 
+.sapTntNLMenu.sapUiMnu.sapUiSubmenu {
+	.sapUiMnuLst {
+		.sapUiMnuItm {
+			.sapUiMnuItmIco {
+				position: relative !important;
+				width: auto;
+				padding-inline: 0 0.5rem;
+				.sapUiIcon {
+					color: @_sap_tnt_NavigationList_IconColor;
+					display: block;
+					width: 1rem;
+					height: 1rem;
+				}
+			}
+			.sapTntNLIExtLinkOverflowIcon {
+				color: @_sap_tnt_NavigationList_ExpandIconColor;
+				padding-left: 0.5rem;
+				font-size: 0.875rem;
+				pointer-events: all;
+				outline: none;
+				-webkit-user-select: none;  /* Chrome all / Safari all */
+				-moz-user-select: none;     /* Firefox all */
+				user-select: none;
+			}
+		}
+	}
+}
+
+.sapTntNLPopup .sapTntNLISecondLevel .sapMText{
+	padding-left: 0;
+}
+
 /* Compact size */
 .sapUiSizeCompact {
 
@@ -629,6 +671,10 @@
 	.sapTntNLPopup span.sapTntNLIIcon {
 		width: 0.5rem;
 		min-width: 0.5rem;
+	}
+
+	.sapTntNLPopup .sapTntNLISecondLevel .sapMText{
+		padding-left: 0;
 	}
 
 	// NavigationList with icons

@@ -14,6 +14,7 @@ sap.ui.define([
 
 	const EXPAND_ICON_SRC = "sap-icon://navigation-right-arrow";
 	const COLLAPSE_ICON_SRC = "sap-icon://navigation-down-arrow";
+	const EXTERNAL_LINK_ICON = "sap-icon://arrow-right";
 
 	/**
 	 * Constructor for a new <code>NavigationListItemBase</code>.
@@ -58,7 +59,17 @@ sap.ui.define([
 
 			},
 			aggregations: {
-				_expandIconControl: { type: "sap.ui.core.Icon", multiple: false, visibility: "hidden" }
+				/**
+				 * The icon for the expanded items.
+				 * @since 1.121
+				 */
+				_expandIconControl: { type: "sap.ui.core.Icon", multiple: false, visibility: "hidden" },
+
+				/**
+				 * The icon for external links.
+				 * @since 1.121
+				 */
+				_externalLinkIconControl: { type: "sap.ui.core.Icon", multiple: false, visibility: "hidden" }
 			}
 		}
 	});
@@ -184,6 +195,24 @@ sap.ui.define([
 			this.setAggregation("_expandIconControl", oIcon, true);
 		}
 
+		return oIcon;
+	};
+
+	/**
+	 * Returns the <code>sap.ui.core.Icon</code> control used to display the external link icon.
+	 *
+	 * @returns {sap.ui.core.Icon} Icon control instance
+	 * @private
+	 */
+	NavigationListItemBase.prototype._getExternalIcon = function () {
+		var oIcon = this.getAggregation("_externalLinkIconControl");
+
+		if (!oIcon) {
+			oIcon = new Icon({
+				src: EXTERNAL_LINK_ICON
+			}).addStyleClass(`sapTntNLIExternalLinkIcon`);
+			this.setAggregation("_externalLinkIconControl", oIcon);
+		}
 		return oIcon;
 	};
 
