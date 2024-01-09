@@ -189,7 +189,7 @@ sap.ui.define([
 		});
 		this.oToDo.setModel(oNewModel);
 		oCore.applyChanges();
-		this.oToDo.$().trigger("mouseenter");
+		this.oToDo.getDomRef().dispatchEvent(new Event("mouseenter"));
 		//Act
 		var sToolTip = this.oToDo.getDomRef().getAttribute("title");
 		var sAriaLabel = this.oToDo.getDomRef().getAttribute("aria-label");
