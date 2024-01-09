@@ -26,12 +26,12 @@ sap.ui.define(function() {
 			/**
 			 * @deprecated As of version 1.120
 			 *
-			 * DebugMode.qunit.html is still an HTML page of its own as the debug mode code
+			 * DebugModeSync.qunit.html is still an HTML page of its own as the debug mode code
 			 * wouldn't recognize the bootstrap script in the (dynamically enriched) Test.qunit.html
 			 */
 			"DebugMode (off, sync)": {
 				group: "DebugMode",
-				page: "test-resources/sap/ui/core/qunit/bootstrap/DebugMode.qunit.html?sap-ui-debug=false",
+				page: "test-resources/sap/ui/core/qunit/bootstrap/DebugModeSync.qunit.html?sap-ui-debug=false",
 				title: "Test Page for Debug Mode ({{mode}}, sync)",
 				ui5: {
 					libs: "sap.m"
@@ -45,7 +45,7 @@ sap.ui.define(function() {
 			 */
 			"DebugMode (partial, sync)": {
 				group: "DebugMode",
-				page: "test-resources/sap/ui/core/qunit/bootstrap/DebugMode.qunit.html?sap-ui-debug=sap%2Fm%2FListBase,fixture%2Fdebug-mode%2F",
+				page: "test-resources/sap/ui/core/qunit/bootstrap/DebugModeSync.qunit.html?sap-ui-debug=sap%2Fm%2FListBase,fixture%2Fdebug-mode%2F",
 				title: "Test Page for Debug Mode ({{mode}}, sync)",
 				ui5: {
 					libs: "sap.m"
@@ -59,7 +59,7 @@ sap.ui.define(function() {
 			 */
 			"DebugMode (full, sync)": {
 				group: "DebugMode",
-				page: "test-resources/sap/ui/core/qunit/bootstrap/DebugMode.qunit.html?sap-ui-debug=true",
+				page: "test-resources/sap/ui/core/qunit/bootstrap/DebugModeSync.qunit.html?sap-ui-debug=true",
 				title: "Test Page for Debug Mode ({{mode}}, sync)",
 				ui5: {
 					libs: "sap.m"
