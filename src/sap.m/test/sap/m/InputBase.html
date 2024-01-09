@@ -53,7 +53,6 @@
 
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData(oProperties);
-	sap.ui.getCore().setModel(oModel);
 
 	var oInput = new sap.m.InputBase("input-base1", {
 		value: "{/value}",
@@ -159,7 +158,7 @@
 				value: "{/formattedText}",
 				valueLiveUpdate: false,
 				change: function() {
-					var oInput = sap.ui.getCore().byId("input-base1");
+					var oInput = sap.ui.core.Element.getElementById("input-base1");
 
 					if (this.getValue()) {
 						var oFormattedText = new sap.m.FormattedText({htmlText: this.getValue() });
@@ -176,7 +175,7 @@
 				value: "{/formattedValueStateTextLink}",
 				valueLiveUpdate: false,
 				change: function() {
-					var oInput = sap.ui.getCore().byId("input-base1");
+					var oInput = sap.ui.core.Element.getElementById("input-base1");
 
 					if (oInput.getFormattedValueStateText()) {
 						if (this.getValue()) {
@@ -244,6 +243,7 @@
 		content: [oReferenceForm, oConfigForm]
 	});
 
+	oApp.setModel(oModel);
 	oApp.addPage(oPage).placeAt("body");
 </script>
 </head>

@@ -237,7 +237,6 @@
 			Value : "Value",
 			Price : "Price"
 		});
-		sap.ui.getCore().setModel(oI18nModel, "i18n");
 
 		var oTableItemTemplate = new sap.m.ColumnListItem({
 			type : "Active",
@@ -1212,6 +1211,8 @@
 		page4.addContent(new sap.m.Label({text: "JSON Model binding"}));
 		page4.addContent(p4i1);
 		page4.addContent(b4i);
+
+		app.setModel(oI18nModel, "i18n");
 		app.addPage(page1).addPage(page2).addPage(page3).addPage(page4);
 		app.placeAt("body");
 </script>
