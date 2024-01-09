@@ -1934,7 +1934,7 @@ sap.ui.define([
 				contextualWidth: "Auto",
 				fixedLayout: false,
 				growing: true,
-				keyboardMode: ListKeyboardMode.Edit,
+				keyboardMode: ListKeyboardMode.Navigation,
 				columns: [
 					new Column({
 						header: new InvisibleText({
