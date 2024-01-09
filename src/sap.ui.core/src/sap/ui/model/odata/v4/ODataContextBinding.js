@@ -962,9 +962,7 @@ sap.ui.define([
 	 *     <li> <code>bReplaceWithRVC</code> is given, but this operation binding is not relative to
 	 *       a row context of a list binding which uses the <code>$$ownRequest</code> parameter (see
 	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}) and no data aggregation (see
-	 *       {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}),
-	 *     <li> group ID '$single' is given and there is already another request with the same group
-	 *       ID enqueued.
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}).
 	 *   </ul>
 	 *
 	 * @public
