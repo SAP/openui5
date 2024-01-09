@@ -1585,6 +1585,7 @@ sap.ui.define([
 	 * @property {string} title Title
 	 * @property {string} [description] Description
 	 * @property {Response} [httpResponse] Response object in case of a network error
+	 * @property {array} [additionalContent] A list of buttons placed below the description as additional content. Experimental since 1.121
 	 * @public
 	 * @experimental As of version 1.114
 	 */

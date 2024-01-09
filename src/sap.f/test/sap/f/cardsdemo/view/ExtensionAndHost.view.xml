@@ -57,6 +57,15 @@
 					</w:layoutData>
 				</w:Card>
 			</f:GridContainer>
+
+			<Title text="Blocking Message" class="sapUiSmallMargin"/>
+			<f:GridContainer >
+				<w:Card id="card6" dataMode="Active" manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/cardWithExtensionAndBlockingMessage/manifest.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4"/>
+					</w:layoutData>
+				</w:Card>
+			</f:GridContainer>
 		</VBox>
 	</Page>
 

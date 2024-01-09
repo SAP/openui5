@@ -1,0 +1,48 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.data.list.card",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"extension": "./SampleExtension",
+		"header": {
+			"title": "Products",
+			"subTitle": "In Stock Information",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
+					"method": "GET",
+					"parameters": {
+						"$format": "json"
+					}
+				},
+				"path": "/value"
+			},
+			"item": {
+				"title": "{ProductName}",
+				"description": "{UnitsInStock} units in stock",
+				"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+			},
+			"maxItems": 5
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Show Blocking Message",
+					"actions": [
+						{
+							"type": "Custom"
+						}
+					]
+				}
+			]
+		}
+	}
+}

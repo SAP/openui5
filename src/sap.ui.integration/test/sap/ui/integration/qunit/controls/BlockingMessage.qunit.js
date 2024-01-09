@@ -217,4 +217,46 @@ sap.ui.define([
 			done();
 		});
 	});
+
+	QUnit.test("Create custom message with buttons", function (assert) {
+		// Act
+		const oMessage = BlockingMessage.create({
+				title: "Test title",
+				illustrationType: IllustratedMessageType.SimpleBalloon,
+				additionalContent: [
+					{
+						text: "Button 1",
+						press: () => {
+							assert.ok(true, "Button 1 is pressed");
+						}
+					},
+					{
+						text: "Button 2",
+						press: () => {
+							assert.ok(true, "Button 2 is pressed");
+						}
+					}
+				]
+			}, this.oCard);
+
+		assert.expect(8);
+
+		oMessage.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(oMessage.isA("sap.ui.integration.controls.BlockingMessage"), "BlockingMessage is created");
+
+		const oIllustratedMessage = oMessage.getAggregation("_illustratedMessage");
+		const aButtons = oIllustratedMessage.getAdditionalContent();
+
+		assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.SimpleBalloon, "Illustration is correct");
+		assert.strictEqual(oIllustratedMessage.getTitle(), "Test title", "Title is correct");
+		assert.strictEqual(aButtons.length, 2, "Buttons are correctly created");
+		assert.strictEqual(aButtons[0].getText(), "Button 1", "Button 1 text is correct");
+		assert.strictEqual(aButtons[1].getText(), "Button 2", "Button 2 text is correct");
+
+		aButtons[0].firePress();
+		aButtons[1].firePress();
+	});
 });
