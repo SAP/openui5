@@ -7,8 +7,9 @@
  */
 sap.ui.define([
 	'sap/ui/base/DataType',
+	'sap/ui/core/Lib',
 	'sap/ui/core/library'], // library dependency
-	function(DataType, library) {
+	function(DataType, Library, library) {
 
 	"use strict";
 
@@ -22,7 +23,8 @@ sap.ui.define([
 	 * @since 1.15
 	 * @public
 	 */
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Library.init({
+		apiVersion: 2,
 		name : "sap.ui.layout",
 		version: "${version}",
 		dependencies: ["sap.ui.core"],
@@ -932,6 +934,21 @@ sap.ui.define([
 		},
 		DataType.getType("string")
 	);
+
+	/**
+	 * Register the above listed enum types.
+	 */
+	DataType.registerEnum("sap.ui.layout.BackgroundDesign", thisLib.BackgroundDesign);
+	DataType.registerEnum("sap.ui.layout.BlockBackgroundType", thisLib.BlockBackgroundType);
+	DataType.registerEnum("sap.ui.layout.BlockLayoutCellColorSet", thisLib.BlockLayoutCellColorSet);
+	DataType.registerEnum("sap.ui.layout.BlockLayoutCellColorShade", thisLib.BlockLayoutCellColorShade);
+	DataType.registerEnum("sap.ui.layout.BlockRowColorSets", thisLib.BlockRowColorSets);
+	DataType.registerEnum("sap.ui.layout.GridPosition", thisLib.GridPosition);
+	DataType.registerEnum("sap.ui.layout.SideContentFallDown", thisLib.SideContentFallDown);
+	DataType.registerEnum("sap.ui.layout.SideContentPosition", thisLib.SideContentPosition);
+	DataType.registerEnum("sap.ui.layout.SideContentVisibility", thisLib.SideContentVisibility);
+	DataType.registerEnum("sap.ui.layout.form.SimpleFormLayout", thisLib.form.SimpleFormLayout);
+	DataType.registerEnum("sap.ui.layout.cssgrid.CSSGridAutoFlow", thisLib.cssgrid.CSSGridAutoFlow);
 
 	return thisLib;
 
