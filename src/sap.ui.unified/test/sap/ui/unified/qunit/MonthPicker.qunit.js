@@ -3,23 +3,23 @@
 
 sap.ui.define([
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/calendar/MonthPicker",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date"
-], function(Library, MonthPicker, DateRange, CalendarDate, Device, KeyCodes, jQuery, oCore, UI5Date) {
+], function(Library, nextUIUpdate, MonthPicker, DateRange, CalendarDate, Device, KeyCodes, jQuery, UI5Date) {
 	"use strict";
 	(function () {
 
 		QUnit.module("Corner cases", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oMP = new MonthPicker();
 				this.oMP.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oMP.destroy();
@@ -168,18 +168,18 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("setMonth", function(assert) {
+		QUnit.test("setMonth", async function(assert) {
 			// Prepare
 			var oGridItemRefs,
 				iFocusedIndex;
 
 			this.MP.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			oGridItemRefs = this.MP._oItemNavigation.getItemDomRefs();
 
 			// Act
 			this.MP.setMonth(5);
-			oCore.applyChanges();
+			await nextUIUpdate();
 			iFocusedIndex = this.MP._oItemNavigation.getFocusedIndex();
 
 			// Assert
@@ -264,7 +264,7 @@ sap.ui.define([
 			assert.equal(this.MP._iYear, 2019, "Year is correctly set to the MonthPicker instance");
 		});
 
-		QUnit.test("_selectMonth", function(assert) {
+		QUnit.test("_selectMonth", async function(assert) {
 			// arrange
 			var oFakeMousedownEvent = {
 					button: false,
@@ -289,20 +289,20 @@ sap.ui.define([
 				aRefs;
 
 			this.MP.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			aRefs = this.MP.$().find(".sapUiCalItem");
 
 			// act
 			this.MP._selectMonth(0);
 			this.MP._handleMousedown(oFakeMousedownEvent, 6);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assert
 			assert.strictEqual(oSelectedDates[0].getStartDate().getMonth(), 6, "July is selected start month");
 
 			// act
 			this.MP.onmouseup(oFakeMouseupEvent);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assert
 			assert.strictEqual(oSelectedDates[0].getEndDate().getMonth(), 8, "September is selected end month");
@@ -455,7 +455,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("_markInterval", function(assert) {
+		QUnit.test("_markInterval", async function(assert) {
 			// arrange
 			var sCurrentYear = UI5Date.getInstance().getFullYear(),
 				oSep_01_2019 = UI5Date.getInstance(sCurrentYear, 8, 1),
@@ -463,7 +463,7 @@ sap.ui.define([
 				aRefs;
 
 			this.MP.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			aRefs = this.MP.$().find(".sapUiCalItem");
 
 
@@ -478,7 +478,7 @@ sap.ui.define([
 			assert.ok(aRefs.eq(10).hasClass("sapUiCalItemSelBetween"), "is marked correctly with between class");
 		});
 
-		QUnit.test("_markInterval", function (assert) {
+		QUnit.test("_markInterval", async function (assert) {
 			// Prepare
 			var aItemsMarkedAsBetween,
 				oBeforeStartDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2022, 1, 1)),
@@ -491,7 +491,7 @@ sap.ui.define([
 			this.MP._setYear(2022);
 
 			this.MP.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			// Act
 			this.MP._markInterval(oIntervalStartDate, oIntervalEndDate);
 
@@ -518,10 +518,10 @@ sap.ui.define([
 		});
 
 		QUnit.module("Accessibility", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oMP = new MonthPicker();
 				this.oMP.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oMP.destroy();
@@ -538,10 +538,10 @@ sap.ui.define([
 		});
 
 		QUnit.module("Interaction", {
-			beforeEach: function() {
+			beforeEach: async function() {
 				this.MP = new MonthPicker();
 				this.MP.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function() {
 				this.MP.destroy();

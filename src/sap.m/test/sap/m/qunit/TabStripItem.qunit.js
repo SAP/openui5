@@ -4,8 +4,8 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/TabStrip",
 	"sap/m/TabStripItem",
-	"sap/ui/core/Core"
-], function(qutils, createAndAppendDiv, TabStrip, TabStripItem, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(qutils, createAndAppendDiv, TabStrip, TabStripItem, nextUIUpdate) {
 	"use strict";
 
 	// prepare DOM
@@ -13,7 +13,7 @@ sap.ui.define([
 
 
 	QUnit.module("events", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.sut = new TabStrip({
 				items: [
 					new TabStripItem({ key: 'a', text: 'a'})
@@ -21,7 +21,7 @@ sap.ui.define([
 			});
 			this.sut.setHasSelect(true);
 			this.sut.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.sut.destroy();

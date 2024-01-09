@@ -1,16 +1,16 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/ColorPickerPopover",
 	"sap/ui/unified/library",
 	"sap/m/ResponsivePopover",
-	"sap/m/Button",
-	"sap/ui/core/Core"
+	"sap/m/Button"
 ], function(
+	nextUIUpdate,
 	ColorPickerPopover,
 	unifiedLibrary,
 	ResponsivePopover,
-	Button,
-	oCore
+	Button
 ) {
 	"use strict";
 
@@ -237,13 +237,13 @@ sap.ui.define([
 
 	QUnit.module("ColorPickerPopover - ARIA");
 
-	QUnit.test("Popover has certain aria attributes", function (assert) {
+	QUnit.test("Popover has certain aria attributes", async function (assert) {
 		// Prepare
 		var oCPP = new ColorPickerPopover(),
 			oOpener = new Button();
 
 		oOpener.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oCPP.openBy(oOpener);

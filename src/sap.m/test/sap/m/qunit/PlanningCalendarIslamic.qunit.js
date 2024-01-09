@@ -7,9 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/calendar/CalendarDate",
-	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/CalendarLegendRenderer",
 	"sap/m/PlanningCalendarLegend",
@@ -21,22 +19,16 @@ sap.ui.define([
 	"sap/m/SearchField",
 	"sap/m/Button",
 	"sap/m/library",
-	"sap/m/ObjectListItem",
 	"sap/m/PlanningCalendarRow",
 	"sap/m/PlanningCalendar",
-	"sap/m/Text",
 	"sap/ui/Device",
 	"sap/m/PlanningCalendarView",
 	"sap/ui/unified/calendar/OneMonthDatesRow",
-	"sap/ui/unified/calendar/DatesRow",
 	"sap/ui/core/library",
-	"sap/ui/core/Control",
-	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/InvisibleText",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/core/Locale",
 	"sap/ui/core/date/UI5Date",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	// load all required calendars in advance
 	"sap/ui/core/date/Islamic"
 ], function(
@@ -47,9 +39,7 @@ sap.ui.define([
 	Library,
 	qutils,
 	createAndAppendDiv,
-	JSONModel,
 	CalendarDate,
-	DateRange,
 	DateTypeRange,
 	CalendarLegendRenderer,
 	PlanningCalendarLegend,
@@ -61,22 +51,16 @@ sap.ui.define([
 	SearchField,
 	Button,
 	mobileLibrary,
-	ObjectListItem,
 	PlanningCalendarRow,
 	PlanningCalendar,
-	Text,
 	Device,
 	PlanningCalendarView,
 	OneMonthDatesRow,
-	DatesRow,
 	coreLibrary,
-	Control,
-	XMLView,
-	InvisibleText,
 	KeyCodes,
-	Core,
 	Locale,
-	UI5Date
+	UI5Date,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -253,10 +237,10 @@ sap.ui.define([
 		oViewSwitch.fireChange({ selectedItem: aItemsToSelect[0] });
 	};
 
-	var _clickTodayButton = function(oPC) {
+	var _clickTodayButton = async function(oPC, clock) {
 		var sTodayButtonId = _getTodayButton.call(this, oPC).getId();
 		qutils.triggerEvent("tap", sTodayButtonId);
-		Core.applyChanges();
+		await nextUIUpdate(clock);
 	};
 
 	var _getTodayButton = function(oPC) {
@@ -306,27 +290,27 @@ sap.ui.define([
 		}
 	};
 
-	var _navBackward = function(oPC) {
+	var _navBackward = async function(oPC) {
 		var sIdBackButton = oPC.getId() + "-Header-NavToolbar-PrevBtn";
 		qutils.triggerEvent("tap", sIdBackButton);
-		Core.applyChanges();
+		await nextUIUpdate();
 	};
 
-	var _navForward = function(oPC) {
+	var _navForward = async function(oPC) {
 		var  sIdForwardButton = oPC.getId() + "-Header-NavToolbar-NextBtn";
 		qutils.triggerEvent("tap", sIdForwardButton);
-		Core.applyChanges();
+		await nextUIUpdate();
 	};
 
-	var _navFocusNext = function(oTarget) {
+	var _navFocusNext = async function(oTarget) {
 		qutils.triggerKeydown(oTarget.id, "ARROW_RIGHT");
-		Core.applyChanges();
+		await nextUIUpdate();
 		return this.oPC2Interval._oItemNavigation.getFocusedDomRef();
 	};
 
-	var _navFocusPrev = function(oTarget) {
+	var _navFocusPrev = async function(oTarget) {
 		qutils.triggerKeydown(oTarget.id, "ARROW_LEFT");
-		Core.applyChanges();
+		await nextUIUpdate();
 		return this.oPC2Interval._oItemNavigation.getFocusedDomRef();
 	};
 
@@ -479,7 +463,7 @@ sap.ui.define([
 	oPC1.placeAt("bigUiArea");
 
 	QUnit.module("OneMonth view", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			var oSearchField = new SearchField(),
 				oButton = new Button();
 			this.o14Sep2016MidOfMonth = UI5Date.getInstance(2016, 8, 14);
@@ -487,7 +471,7 @@ sap.ui.define([
 			this.oPC = createPlanningCalendar("oneMonthPlanningCalendar", oSearchField, oButton, this.o14Sep2016MidOfMonth,
 				CalendarIntervalType.OneMonth);
 			this.oPC.placeAt("bigUiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 			this.oPCInterval = this.oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
 		},
 
@@ -532,14 +516,9 @@ sap.ui.define([
 			return document.getElementById(sIntervalId);
 		},
 
-		_clickInterval: function(oRow, iInterval) {
+		_clickInterval: async function(oRow, iInterval) {
 			jQuery(this._getIntervalDom(oRow, iInterval)).trigger('tap');
-			Core.applyChanges();
-		},
-
-		_clickAppointment: function(oAppointment) {
-			oAppointment.$().trigger('tap');
-			Core.applyChanges();
+			await nextUIUpdate();
 		}
 	});
 
@@ -578,7 +557,7 @@ sap.ui.define([
 		this._assertIntervalHasClass(31, this.oPC, 'sapUiCalItemOtherMonth'); //check that Oct 1 is disabled
 	});
 
-	QUnit.test('intervalSelect fires correctly', function(assert) {
+	QUnit.test('intervalSelect fires correctly', async function(assert) {
 		var oRow = this._getFirstRow(this.oPC);
 		var eventParams = {};
 
@@ -590,7 +569,7 @@ sap.ui.define([
 		});
 
 		//act
-		this._clickInterval(oRow, 31); //click first row of next month's first day
+		await this._clickInterval(oRow, 31); //click first row of next month's first day
 
 		//assert
 		assert.equal(eventParams.startDate.getMonth(), 9, 'start date is Dhul-Hijjah');
@@ -604,40 +583,40 @@ sap.ui.define([
 			"intervalSelect was not fired on the calendar because the click was on the next month's first days and this serves as navigation, not selection");
 	});
 
-	QUnit.test('last days intervals navigate to the next month', function(assert) {
+	QUnit.test('last days intervals navigate to the next month', async function(assert) {
 		//act
-		this._clickInterval(this._getFirstRow(this.oPC), 31); //click first row of next month's first day - 1 Oct 2016
+		await this._clickInterval(this._getFirstRow(this.oPC), 31); //click first row of next month's first day - 1 Oct 2016
 
 		//assert
 		assert.equal(this.oPC.getStartDate().getMonth(), 8, 'month changed to Dhul-Hijjah');
 	});
 
-	QUnit.test('navigate backward with the arrows', function(assert) {
+	QUnit.test('navigate backward with the arrows', async function(assert) {
 		//act
-		_navBackward.call(this, this.oPC);
+		await _navBackward.call(this, this.oPC);
 
 		//assert
 		assert.equal(this.oPC.getStartDate().getMonth(), 7, 'month changed to Shawwal');
 		assert.equal(this.oPC.getStartDate().getDate(), 5, 'start date is 1st');
 	});
 
-	QUnit.test('navigate forward with the arrows', function(assert) {
+	QUnit.test('navigate forward with the arrows', async function(assert) {
 		//act
-		_navForward.call(this, this.oPC);
+		await _navForward.call(this, this.oPC);
 
 		//assert
 		assert.equal(this.oPC.getStartDate().getMonth(), 9, 'month changed to Dhul-Hijjah');
 		assert.equal(this.oPC.getStartDate().getDate(), 3, 'start date is 1st');
 	});
 
-	QUnit.test('clicking today navigates to todays month', function(assert) {
+	QUnit.test('clicking today navigates to todays month', async function(assert) {
 		var oFakeNow = UI5Date.getInstance(2016, 8, 10),
 			clock = sinon.useFakeTimers(oFakeNow.getTime());
 
 		this.oPC.setStartDate(UI5Date.getInstance(2016, 5, 1));
 
 		//act
-		_clickTodayButton.call(this, this.oPC);
+		await _clickTodayButton.call(this, this.oPC, clock);
 
 		//assert
 		assert.equal(this.oPC.getStartDate().getFullYear(), oFakeNow.getFullYear(), 'year is correct');
@@ -679,12 +658,12 @@ sap.ui.define([
 		assert.equal(this.oPC.getStartDate().getMonth(), 8, 'month is the same');
 	});
 
-	QUnit.test("Has sticky header on big size", function (assert) {
+	QUnit.test("Has sticky header on big size", async function (assert) {
 
 		//act
 		_switchToView.call(this, CalendarIntervalType.Month, this.oPC);
 		this.oPC.setStickyHeader(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(this.oPC.getAggregation("table").getSticky().length, 2, "sticky property should be set on the info bar and on the toolbar inside Table");
@@ -729,7 +708,7 @@ sap.ui.define([
 			jQuery("html").addClass("sapUiMedia-Std-Desktop sapUiMedia-StdExt-Desktop");
 			jQuery("html").removeClass("sapUiMedia-Std-Phone sapUiMedia-StdExt-Phone");
 		},
-		_createCalendar: function (oStartDate) {
+		_createCalendar: async function (oStartDate) {
 			this._iRenderingCount = 0;
 			this._oPC = createPlanningCalendar("_oPC", new SearchField(), new Button(), (oStartDate || this.o14Sep2016MidOfMonth), CalendarIntervalType.OneMonth);
 			this._oPC.addEventDelegate({
@@ -737,7 +716,7 @@ sap.ui.define([
 			}, this);
 			this._oPC.placeAt("smallUiArea");
 			this._oPCOneMonthsRow = this._oPC.getAggregation('table').getAggregation('infoToolbar').getContent()[1];
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		_destroyCalendar: function () {
 			if (this._oPC) {
@@ -747,20 +726,20 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("'setViewKeys()' setter calls 'OneMonthsRow._setDisplayMode()' with correct 'iSize' parameter", function (assert) {
+	QUnit.test("'setViewKeys()' setter calls 'OneMonthsRow._setDisplayMode()' with correct 'iSize' parameter", async function (assert) {
 		//arrange
 		var oSetDisplayModeSpy = this.spy(OneMonthDatesRow.prototype, "setMode"),
 			iPhoneSize = 0;
 
-		this._createCalendar();
+		await this._createCalendar();
 		//assert
 		assert.strictEqual(oSetDisplayModeSpy.callCount, 2, "'setMode()' is called correct number of times"); //viewKey setter + resizeHandler
 		assert.strictEqual(oSetDisplayModeSpy.getCall(0).args[0], iPhoneSize, "The correct mode value is set");
 	});
 
-	QUnit.test("planning calendar start date is auto switched to 1st day of the month", function (assert) {
+	QUnit.test("planning calendar start date is auto switched to 1st day of the month", async function (assert) {
 		//arrange
-		this._createCalendar(this.o14Sep2016MidOfMonth);
+		await this._createCalendar(this.o14Sep2016MidOfMonth);
 
 		//assert
 		assert.strictEqual(this._oPC.getStartDate().getTime(), UI5Date.getInstance(2016, 8, 4).getTime(), "The correct date is auto adjusted for the first day of month");
@@ -791,7 +770,7 @@ sap.ui.define([
 				appointmentItems:  createLegendItems(1, 10, "Type Private Appointment")
 			});
 
-			this._testAriaAppointmentsAndSpecialDatesIfLegendIsDestroyed = function(sIntervalType, fnExtendSut, oPCStartDate) {
+			this._testAriaAppointmentsAndSpecialDatesIfLegendIsDestroyed = async function(sIntervalType, fnExtendSut, oPCStartDate) {
 				//Prepare
 				var sMessagePrefix = "After legend is destroyed",
 					aAppointments = _createAppointmentsOfTypes(1, 20, UI5Date.getInstance(2015, 0, 4, 19)),
@@ -814,11 +793,11 @@ sap.ui.define([
 					fnExtendSut(oSut);
 				}
 				oSut.placeAt("bigUiArea");
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				//Act
 				this.oLegendWithItemsTypes01UpToTypes10.destroy();
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				//Assert
 				//Appointments
@@ -832,7 +811,7 @@ sap.ui.define([
 				this.destroySut(oSut);
 			};
 
-			this._testAriaAppointmentsAndSpecialDates = function(sIntervalType, fnExtendSut, oPCStartDate) {
+			this._testAriaAppointmentsAndSpecialDates = async function(sIntervalType, fnExtendSut, oPCStartDate) {
 				//Prepare
 				var sMessagePrefix = "Initial legend is available",
 					aAppointments = _createAppointmentsOfTypes(1, 20, UI5Date.getInstance(2015, 0, 4, 19)),
@@ -861,7 +840,7 @@ sap.ui.define([
 
 				//Act
 				oSut.placeAt("bigUiArea");
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				//Assert
 				//Appointments
@@ -900,14 +879,14 @@ sap.ui.define([
 
 			this.assertSpecialDatesConnectedToLegendHaveLegendTextAsAriaLabel = function(oSpecialDatesWithLegend, oSutPC, sMsgPref) {
 				var oFormat = oSutPC.getViewKey() === CalendarIntervalType.Hour ? oFormatYyyyMMddHHmm : oFormatYyyyMMdd;
-				oSpecialDatesWithLegend.forEach(function (oSpecialDate) {
+				oSpecialDatesWithLegend.forEach(async function (oSpecialDate) {
 					var sSpecialDate = oFormat.format(oSpecialDate.getStartDate()),
 						sSpecialDateSelector = "#" + oSutPC.getId() + "-" + _getIntervalId(oSutPC) + "-" + sSpecialDate,
 						$specialDate,
 						sAriaLabel;
 
 					if (!jQuery(sSpecialDateSelector).length) {
-						_navForward(oSutPC); // the special date might be on the next page
+						await _navForward(oSutPC); // the special date might be on the next page
 					}
 					$specialDate = jQuery(sSpecialDateSelector);
 					assert.ok($specialDate.length, sMsgPref + ": Special Date " + sSpecialDate + " should be available in the DOM");
@@ -922,14 +901,14 @@ sap.ui.define([
 
 			this.assertSpecialDatesWithoutConnectedLegendHaveDefaultAriaDescribedBy = function(aSpecialDatesWithoutLegend, oSutPC, sMsgPref) {
 				var oFormat = oSutPC.getViewKey() === CalendarIntervalType.Hour ? oFormatYyyyMMddHHmm : oFormatYyyyMMdd;
-				aSpecialDatesWithoutLegend.forEach(function (oSpecialDate, iIndex) {
+				aSpecialDatesWithoutLegend.forEach(async function (oSpecialDate, iIndex) {
 					var sSpecialDate = oFormat.format(oSpecialDate.getStartDate()),
 						sSpecialDateSelector = "#" + oSutPC.getId() + "-" + _getIntervalId(oSutPC) + "-" + sSpecialDate,
 						$specialDate,
 						sAriaDescribedBy;
 
 					if (!jQuery(sSpecialDateSelector).length) {
-						_navForward(oSutPC); // the special date might be on the next page
+						await _navForward(oSutPC); // the special date might be on the next page
 					}
 					$specialDate = jQuery(sSpecialDateSelector);
 					assert.ok($specialDate.length, sMsgPref + ": Special Date " + sSpecialDate + " should be available in the DOM");
@@ -978,7 +957,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Week day and date aria", function(assert) {
+	QUnit.test("Week day and date aria", async function(assert) {
 		//Prepare
 		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), UI5Date.getInstance(2015, 0, 1)),
 			oFormatDate = DateFormat.getInstance({style: "long", calendarType: "Islamic"}),
@@ -991,7 +970,7 @@ sap.ui.define([
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Day);
 		oSut.placeAt("bigUiArea");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(jQuery("#" + oSut.getId() + "-DatesRow-20150102").attr("aria-label"), sExpectedAria,
@@ -1002,7 +981,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Interaction", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			var oSearchField = new SearchField(),
 				oButton = new Button();
 			this.o1Sep2016MidOfWeek = UI5Date.getInstance(2016, 8, 1, 1);
@@ -1011,7 +990,7 @@ sap.ui.define([
 			this.oPC2 = createPlanningCalendar("startDateAtTheMiddleOfTheWeek", oSearchField, oButton, this.o1Sep2016MidOfWeek,
 				CalendarIntervalType.Week);
 			this.oPC2.placeAt("bigUiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 			this.oPC2Interval = this.oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
 		},
 		afterEach: function() {
@@ -1084,7 +1063,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("keyboard navigation", function(assert) {
+	QUnit.test("keyboard navigation", async function(assert) {
 		// test here only interaction between rows, other things are tested on CalendarRow
 		var fnDone = assert.async();
 
@@ -1094,14 +1073,14 @@ sap.ui.define([
 		assert.equal(document.activeElement.id, "PC1-R2A1", "Appointment1 focused");
 
 		qutils.triggerKeydown("PC1-R2A1", "HOME");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		setTimeout(function(){
+		setTimeout(async function(){
 			assert.equal(document.activeElement.id, "PC1-R1A2", "Appointment2 focused");
 			qutils.triggerKeydown("PC1-R1A1", "ARROW_DOWN");
 			assert.equal(document.activeElement.id, "PC1-R2A1", "Appointment1 focused");
 			qutils.triggerKeydown("PC1-R1A1", "ARROW_UP");
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.equal(document.activeElement.id, "PC1-R1A2", "Appointment2 focused");
 			fnDone();
 		}, 0);
@@ -1109,33 +1088,33 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("keyboard navigation HOME & END for 1 Month view", function(assert) {
+	QUnit.test("keyboard navigation HOME & END for 1 Month view", async function(assert) {
 		_switchToView(CalendarIntervalType.OneMonth, this.oPC2);
 		this.oPC2.setStartDate(this.o1Sep2016MidOfWeek);
 		this.oPC2.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		var sMonthIdPrefix = this.oPC2.getId() + "-OneMonthsRow-";
 
 		jQuery("#" +  sMonthIdPrefix + "20160901").trigger("focus");
 		assert.equal(document.activeElement.id, sMonthIdPrefix + "20160901", "28th of Dhu'l-Q focused");
 
 		qutils.triggerKeydown(sMonthIdPrefix + "20160901", "END");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(document.activeElement.id,  sMonthIdPrefix + "20160930", "27th of Dhu'l-Q focused");
 
 		qutils.triggerKeydown(sMonthIdPrefix + "20160930", "HOME");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(document.activeElement.id, sMonthIdPrefix + "20160901", "27th of Dhu'l-Q focused focused");
 
 		jQuery("#" +  sMonthIdPrefix + "20160910").trigger("focus");
 		assert.equal(document.activeElement.id, sMonthIdPrefix + "20160901", "7th of Dhu'l-H focused");
 
 		qutils.triggerKeydown(sMonthIdPrefix + "20160901", "END");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(document.activeElement.id,  sMonthIdPrefix + "20160930", "27th of Dhu'l-H focused");
 	});
 
-	QUnit.test("When start date is defined the planning calendar should shift to the first day of the week that includes the start date ", function(assert) {
+	QUnit.test("When start date is defined the planning calendar should shift to the first day of the week that includes the start date ", async function(assert) {
 		//assert initial state
 		this._assertDatesAreVisible.call(this, [
 				UI5Date.getInstance(2016, 7, 29),
@@ -1148,7 +1127,7 @@ sap.ui.define([
 			this.oPC2, "Initially set start date");
 		//act
 		this.oPC2.setStartDate(this.o10Sep2016);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		this._assertDatesAreVisible.call(this, [
@@ -1162,9 +1141,9 @@ sap.ui.define([
 			this.oPC2, "StartDate modified afterwards");
 	});
 
-	QUnit.test("Navigation backward via back button", function(assert) {
+	QUnit.test("Navigation backward via back button", async function(assert) {
 		//act
-		_navBackward.call(this, this.oPC2);//one week before week 29th of August 2016 - 4th of September, 2016
+		await _navBackward.call(this, this.oPC2);//one week before week 29th of August 2016 - 4th of September, 2016
 
 		//assert
 		this._assertDatesAreVisible.call(this, [
@@ -1178,7 +1157,7 @@ sap.ui.define([
 			this.oPC2, "Initially navigating back once");
 
 		//act
-		_navBackward.call(this, this.oPC2);//two weeks before
+		await _navBackward.call(this, this.oPC2);//two weeks before
 
 		//assert
 		this._assertDatesAreVisible.call(this, [
@@ -1225,14 +1204,14 @@ sap.ui.define([
 		assert.ok(1, "Error is not thrown.");
 	});
 
-	QUnit.test("previous button when minDate >= current view start date initially", function(assert) {
+	QUnit.test("previous button when minDate >= current view start date initially", async function(assert) {
 		// arange
 		var oPC = new PlanningCalendar({
 			viewKey: "One Month",
 			startDate: UI5Date.getInstance(2019, 11, 6),
 			minDate: UI5Date.getInstance(2019, 11, 1)
 		}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(
@@ -1244,7 +1223,7 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
-	QUnit.test("today press disables previous button if necessary", function(assert) {
+	QUnit.test("today press disables previous button if necessary", async function(assert) {
 		// arrange
 		var oFakeNow = UI5Date.getInstance(2019, 11, 22),
 			clock = sinon.useFakeTimers(oFakeNow.getTime()),
@@ -1253,11 +1232,11 @@ sap.ui.define([
 				startDate: UI5Date.getInstance(2020, 0, 6),
 				minDate: UI5Date.getInstance(2019, 11, 1)
 			}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate(clock);
 
 		// act
 		oPC._getHeader()._oTodayBtn.firePress();
-		Core.applyChanges();
+		await nextUIUpdate(clock);
 
 		// assert
 		assert.strictEqual(
@@ -1270,18 +1249,18 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
-	QUnit.test("previous button when navigated to a view where minDate = start date without the hours", function(assert) {
+	QUnit.test("previous button when navigated to a view where minDate = start date without the hours", async function(assert) {
 		// arrange
 		var oPC = new PlanningCalendar({
 				viewKey: "One Month",
 				startDate: UI5Date.getInstance(2020, 0, 6, 8, 0, 0),
 				minDate: UI5Date.getInstance(2019, 11, 1, 0, 0, 0)
 			}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oPC._getHeader()._oPrevBtn.firePress();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(
@@ -1293,69 +1272,58 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
-	QUnit.test("Navigation backward via keyboard left arrow (outside the current visible area)", function(assert) {
+	QUnit.test("Navigation backward via keyboard left arrow (outside the current visible area)", async function(assert) {
 		var aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem"),
-			oNextTarget = aDays[0],
-			oSelf = this,
-			fnDone = assert.async();
+			oNextTarget = aDays[0];
 		//Focus 29th of Aug (week 29 Aug - 4 Sep), 2016 and move left via keyboard 4 times, expect 22 -28 Aug 2016
 		//act
 		aDays[0].focus();
-		Core.applyChanges();
-		setTimeout(function() {
-			oNextTarget = _navFocusPrev.call(oSelf, oNextTarget);
-			_assertFocus.call(oSelf, oNextTarget);
-			setTimeout(function () {
-				oNextTarget = _navFocusPrev.call(oSelf, oNextTarget);
-				_assertFocus.call(oSelf, oNextTarget);
-				setTimeout(function () {
-					oNextTarget = _navFocusPrev.call(oSelf, oNextTarget);
-					_assertFocus.call(oSelf, oNextTarget);
-					setTimeout(function () {
-						oNextTarget = _navFocusPrev.call(oSelf, oNextTarget);
-						_assertFocus.call(oSelf, oNextTarget);
-						setTimeout(function () {
-							this._assertDatesAreVisible.call(oSelf, [
-								UI5Date.getInstance(2016, 7, 22),
-								UI5Date.getInstance(2016, 7, 23),
-								UI5Date.getInstance(2016, 7, 24),
-								UI5Date.getInstance(2016, 7, 25),
-								UI5Date.getInstance(2016, 7, 26),
-								UI5Date.getInstance(2016, 7, 27),
-								UI5Date.getInstance(2016, 7, 28)
-							], oSelf.oPC2, "Navigated to the correct viewport");
-							fnDone();
-						}.bind(this), 0);
-					}.bind(this), 0);
-				}.bind(this), 0);
-			}.bind(this), 0);
-		}.bind(this), 0);
+		await nextUIUpdate();
+
+		oNextTarget = await _navFocusPrev.call(this, oNextTarget);
+		_assertFocus.call(this, oNextTarget);
+
+		oNextTarget = await _navFocusPrev.call(this, oNextTarget);
+		_assertFocus.call(this, oNextTarget);
+
+		oNextTarget = await _navFocusPrev.call(this, oNextTarget);
+		_assertFocus.call(this, oNextTarget);
+
+		oNextTarget = await _navFocusPrev.call(this, oNextTarget);
+		_assertFocus.call(this, oNextTarget);
+
+		this._assertDatesAreVisible.call(this, [
+			UI5Date.getInstance(2016, 7, 22),
+			UI5Date.getInstance(2016, 7, 23),
+			UI5Date.getInstance(2016, 7, 24),
+			UI5Date.getInstance(2016, 7, 25),
+			UI5Date.getInstance(2016, 7, 26),
+			UI5Date.getInstance(2016, 7, 27),
+			UI5Date.getInstance(2016, 7, 28)
+		], this.oPC2, "Navigated to the correct viewport");
 	});
 
-	QUnit.test("Navigation backward via keyboard left arrow (outside the current visible area) at the border of the DST (Nov->Oct)", function(assert) {
+	QUnit.test("Navigation backward via keyboard left arrow (outside the current visible area) at the border of the DST (Nov->Oct)", async function(assert) {
 		//prepare
 		var oOriginalFormatLocale = new Locale(Formatting.getLanguageTag()),
 			sOriginalFormatLocale = oOriginalFormatLocale.getLanguage() + "_" +  oOriginalFormatLocale.getRegion(),
 			aDays,
-			oNextTarget,
-			oSelf = this,
-			fnDone = assert.async();
+			oNextTarget;
 
 		Formatting.setLanguageTag("en-GB");
 		this.oPC2.setStartDate(UI5Date.getInstance("2014", "10", "5", "08", "00"));
 		this.oPC2.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");
 		oNextTarget = aDays[0];
 
 		//Act - focus 2nd of Nov (week 02 Nov - 8 Nov), 2014 and move left via keyboard once, expect 26 Oct - 1 Nov 2014
 		oNextTarget.focus();
-		Core.applyChanges();
-		setTimeout(function() {
-			oNextTarget = _navFocusPrev.call(oSelf, oNextTarget);
-			_assertFocus.call(oSelf, oNextTarget);
-			this._assertDatesAreVisible.call(oSelf, [
+		await nextUIUpdate();
+		oNextTarget = await _navFocusPrev.call(this, oNextTarget);
+		_assertFocus.call(this, oNextTarget);
+		this._assertDatesAreVisible.call(this, [
 				UI5Date.getInstance(2014, 9, 27),
 				UI5Date.getInstance(2014, 9, 28),
 				UI5Date.getInstance(2014, 9, 29),
@@ -1363,15 +1331,13 @@ sap.ui.define([
 				UI5Date.getInstance(2014, 9, 31),
 				UI5Date.getInstance(2014, 10, 1),
 				UI5Date.getInstance(2014, 10, 2)
-			], oSelf.oPC2, "Navigated to the correct viewport");
-			Formatting.setLanguageTag(sOriginalFormatLocale);
-			fnDone();
-		}.bind(this), 0);
+		], this.oPC2, "Navigated to the correct viewport");
+		Formatting.setLanguageTag(sOriginalFormatLocale);
 	});
 
-	QUnit.test("Navigation forward via forward button", function(assert) {
+	QUnit.test("Navigation forward via forward button", async function(assert) {
 		//act
-		_navForward.call(this, this.oPC2);//one week after week 29th of August 2016 - 4th of September, 2016
+		await _navForward.call(this, this.oPC2);//one week after week 29th of August 2016 - 4th of September, 2016
 
 		//assert
 		this._assertDatesAreVisible.call(this, [
@@ -1385,7 +1351,7 @@ sap.ui.define([
 			this.oPC2, "Navigating forward once");
 
 		//act
-		_navForward.call(this, this.oPC2);//two weeks after
+		await _navForward.call(this, this.oPC2);//two weeks after
 
 		//assert
 		this._assertDatesAreVisible.call(this, [
@@ -1399,47 +1365,39 @@ sap.ui.define([
 			this.oPC2, "Navigating forward twice");
 	});
 
-	QUnit.test("Navigation forward via keyboard right (outside the current visible area)", function(assert) {
+	QUnit.test("Navigation forward via keyboard right (outside the current visible area)", async function(assert) {
 		var aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem"),
-			oNextTarget = aDays[aDays.length - 1],
-			oSelf = this,
-			fnDone = assert.async();
+			oNextTarget = aDays[aDays.length - 1];
 		//Focus 4th of Sep, 2016 (week 29 Aug-4 Sep) and move right via keyboard 4 times, expect 5 -11 Sep 2016
 		//act
 		aDays[aDays.length - 1].focus();
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		setTimeout(function() {
-			oNextTarget = _navFocusNext.call(oSelf, oNextTarget);
-			_assertFocus.call(oSelf, oNextTarget);
-			setTimeout(function () {
-				oNextTarget = _navFocusNext.call(oSelf, oNextTarget);
-				_assertFocus.call(oSelf, oNextTarget);
-				setTimeout(function () {
-					oNextTarget = _navFocusNext.call(oSelf, oNextTarget);
-					_assertFocus.call(oSelf, oNextTarget);
-					setTimeout(function () {
-						oNextTarget = _navFocusNext.call(oSelf, oNextTarget);
-						_assertFocus.call(oSelf, oNextTarget);
-						setTimeout(function () {
-							this._assertDatesAreVisible.call(oSelf, [
-								UI5Date.getInstance(2016, 8, 5),
-								UI5Date.getInstance(2016, 8, 6),
-								UI5Date.getInstance(2016, 8, 7),
-								UI5Date.getInstance(2016, 8, 8),
-								UI5Date.getInstance(2016, 8, 9),
-								UI5Date.getInstance(2016, 8, 10),
-								UI5Date.getInstance(2016, 8, 11)
-							], oSelf.oPC2, "Navigated to the correct viewport");
-							fnDone();
-						}.bind(this), 0);
-					}.bind(this), 0);
-				}.bind(this), 0);
-			}.bind(this), 0);
-		}.bind(this), 0);
+		oNextTarget = await _navFocusNext.call(this, oNextTarget);
+		_assertFocus.call(this, oNextTarget);
+
+		oNextTarget = await _navFocusNext.call(this, oNextTarget);
+		_assertFocus.call(this, oNextTarget);
+
+		oNextTarget = await _navFocusNext.call(this, oNextTarget);
+		_assertFocus.call(this, oNextTarget);
+
+		oNextTarget = await _navFocusNext.call(this, oNextTarget);
+		_assertFocus.call(this, oNextTarget);
+
+		this._assertDatesAreVisible.call(this, [
+			UI5Date.getInstance(2016, 8, 5),
+			UI5Date.getInstance(2016, 8, 6),
+			UI5Date.getInstance(2016, 8, 7),
+			UI5Date.getInstance(2016, 8, 8),
+			UI5Date.getInstance(2016, 8, 9),
+			UI5Date.getInstance(2016, 8, 10),
+			UI5Date.getInstance(2016, 8, 11)
+		], this.oPC2, "Navigated to the correct viewport");
+
 	});
 
-	QUnit.test("Navigation forward via keyboard right (outside the current visible area) when in days view", function(assert) {
+	QUnit.test("Navigation forward via keyboard right (outside the current visible area) when in days view", async function(assert) {
 		//Arrange
 		this.oPC2.setViewKey(CalendarIntervalType.Day);
 
@@ -1449,7 +1407,7 @@ sap.ui.define([
 
 		//Act
 		oComparisonDate.setDate(oComparisonDate.getDate() + 1);
-		Core.applyChanges();
+		await nextUIUpdate();
 		oLastDay = UI5Date.getInstance(2016, 8, 12);
 		this.oPC2.shiftToDate(oLastDay, false);
 
@@ -1487,7 +1445,7 @@ sap.ui.define([
 		assert.deepEqual(this.oPC2.getStartDate(), oComparisonDate2, "Navigation via keyboard stops on max date");
 	});
 
-	QUnit.test("Navigation forward in week view where next week starts at 1st January (locale en_US)", function(assert) {
+	QUnit.test("Navigation forward in week view where next week starts at 1st January (locale en_US)", async function(assert) {
 		var oSelf = this,
 			fnDone = assert.async(),
 			sOriginalFormatLocale = Formatting.getLanguageTag().toString();
@@ -1497,11 +1455,11 @@ sap.ui.define([
 		this.oStub3 = this.stub(Localization, "getLanguageTag").callsFake(function () {
 			return new LanguageTag("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 		});
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.oPC2.setStartDate(UI5Date.getInstance(2017, 0, 1));
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.oPC2.setViewKey(CalendarIntervalType.Week);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		setTimeout(function() {
 			//assert
@@ -1521,14 +1479,14 @@ sap.ui.define([
 		}.bind(this), 0);
 	});
 
-	QUnit.test("Navigation backward and forward", function(assert) {
+	QUnit.test("Navigation backward and forward", async function(assert) {
 		var i;
 		//act
 		for (i = 0; i < 10; i++) {
-			_navForward.call(this, this.oPC2);
+			await _navForward.call(this, this.oPC2);
 		}
 		for (i = 0; i < 9; i++) {
-			_navBackward.call(this, this.oPC2);
+			await _navBackward.call(this, this.oPC2);
 		}
 		//Expected is one week after the initial - Sep 5th, 2016 - Sep 11th, 2016
 
@@ -1544,7 +1502,7 @@ sap.ui.define([
 			this.oPC2, "Navigating forward once");
 	});
 
-	QUnit.test("Selecting the visible dates from the previous/next month in the calendar picker - in Hours view", function (assert) {
+	QUnit.test("Selecting the visible dates from the previous/next month in the calendar picker - in Hours view", async function (assert) {
 		// Prepare
 		var oApp2ndSept2016 = new CalendarAppointment("app2ndSept2016", {
 				startDate: UI5Date.getInstance(2016, 8, 2, 6),
@@ -1558,17 +1516,17 @@ sap.ui.define([
 
 		// Act
 		_switchToView(CalendarIntervalType.Hour, this.oPC2);
-		Core.applyChanges();
+		await nextUIUpdate();
 		qutils.triggerEvent("tap", "startDateAtTheMiddleOfTheWeek-Header-NavToolbar-PickerBtn");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var $Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160902");
 		$Day.trigger("focus");
 
-		setTimeout(function(){
+		setTimeout(async function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160902");
 			qutils.triggerKeydown($Day.get(0), KeyCodes.ENTER, false, false, false);
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.ok($Day.hasClass("sapUiCalItemSel"), "Day marked as selected");
 
 			this.oPC2Interval = oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
@@ -1585,7 +1543,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Selecting the visible dates from the previous/next month in the calendar picker - in Days view", function (assert) {
+	QUnit.test("Selecting the visible dates from the previous/next month in the calendar picker - in Days view", async function (assert) {
 		// Prepare
 		var oApp30Aug2016 = new CalendarAppointment("app30Aug2016", {
 				startDate: UI5Date.getInstance(2016, 7, 30, 6),
@@ -1599,19 +1557,19 @@ sap.ui.define([
 
 		// Act
 		_switchToView(CalendarIntervalType.Day, this.oPC2);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		qutils.triggerEvent("tap", "startDateAtTheMiddleOfTheWeek-Header-NavToolbar-PickerBtn");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var $Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160830");
 
 		$Day.trigger("focus");
 
-		setTimeout(function(){
+		setTimeout(async function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160830");
 			qutils.triggerKeydown($Day.get(0), KeyCodes.ENTER, false, false, false);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oPC2Interval = oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
 			aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");
@@ -1627,7 +1585,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Selecting the visible dates from the previous/next month in the calendar picker - in Weeks view", function (assert) {
+	QUnit.test("Selecting the visible dates from the previous/next month in the calendar picker - in Weeks view", async function (assert) {
 		// Prepare
 		var oApp30Aug2016 = new CalendarAppointment("app30Aug2016", {
 				startDate: UI5Date.getInstance(2016, 7, 30, 6),
@@ -1641,7 +1599,7 @@ sap.ui.define([
 
 		// Act
 		_switchToView(CalendarIntervalType.Week, this.oPC2);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		qutils.triggerEvent("tap", "startDateAtTheMiddleOfTheWeek-WeeksRow--Head-next");
 		qutils.triggerEvent("tap", "startDateAtTheMiddleOfTheWeek-WeeksRow--Head-B1");
@@ -1678,17 +1636,17 @@ sap.ui.define([
 		assert.equal(_getTodayButton.call(this, this.oPC2).getEnabled(), false, "Today button should not be enabled  as current day IS visible");
 	});
 
-	QUnit.test("Clicking 'Today' button navigates to the week of the current day", function (assert) {
+	QUnit.test("Clicking 'Today' button navigates to the week of the current day", async function (assert) {
 		//prepare
 		var oFakeNow = this.o10Sep2016,
 			clock = sinon.useFakeTimers(oFakeNow.getTime());
 
 		this.oPC2.invalidate(); //start date is 1st of September 2016
-		Core.applyChanges();
+		await nextUIUpdate(clock);
 
 		assert.equal(_getTodayButton.call(this, this.oPC2).getEnabled(), true, "Today button should be enabled as current day IS NOT visible");
 		//act
-		_clickTodayButton.call(this, this.oPC2);
+		await _clickTodayButton.call(this, this.oPC2, clock);
 		assert.equal(_getTodayButton.call(this, this.oPC2).getEnabled(), false, "Today button should not be enabled as current day IS visible");
 
 		this._assertDatesAreVisible.call(this, [
@@ -1708,7 +1666,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Clicking 'Today' button in week view then changing back to hours shows the hours unchanged", function (assert) {
+	QUnit.test("Clicking 'Today' button in week view then changing back to hours shows the hours unchanged", async function (assert) {
 		//act
 		var oFakeNow = UI5Date.getInstance(2016, 8, 1, 3),
 			clock = sinon.useFakeTimers(oFakeNow.getTime()),
@@ -1718,7 +1676,7 @@ sap.ui.define([
 		clock.tick(10); //start date is 10st of September 2016 09:00
 
 		//act
-		_clickTodayButton.call(this, this.oPC2);
+		await _clickTodayButton.call(this, this.oPC2, clock);
 		clock.tick(10);
 
 		_switchToView.call(this, CalendarIntervalType.Hour, this.oPC2);
@@ -1759,16 +1717,16 @@ sap.ui.define([
 		clock.restore();
 	});
 
-	QUnit.test("'Today' button visibility works only with week view", function (assert) {
+	QUnit.test("'Today' button visibility works only with week view", async function (assert) {
 		//prepare
 		var oFakeNow = this.o10Sep2016,
 			clock = sinon.useFakeTimers(oFakeNow.getTime());
 
 		this.oPC2.invalidate(); //start date is 1st of September 2016
-		Core.applyChanges();
+		await nextUIUpdate(clock);
 
 		//act
-		_clickTodayButton.call(this, this.oPC2);
+		await _clickTodayButton.call(this, this.oPC2, clock);
 		clock.tick(10);
 		_switchToView.call(this, CalendarIntervalType.Hour, this.oPC2);
 		clock.tick(10);
@@ -1787,12 +1745,12 @@ sap.ui.define([
 		clock.restore();
 	});
 
-	QUnit.test("If view changed from Week->Hours, we see hours for first day of the previously shown week", function (assert) {
+	QUnit.test("If view changed from Week->Hours, we see hours for first day of the previously shown week", async function (assert) {
 		var iInterval;
 		//startDate 1st of september 2016(Thursday)->show hours for the 1st day of week 29 Aug 2016 (Monday)
 		//prepare
 		_switchToView.call(this, CalendarIntervalType.Hour, this.oPC2);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		iInterval = jQuery("#" + this.oPC2.getId()).outerWidth() < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1] ? 6 : 12;
 
@@ -1826,17 +1784,17 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Week view - click on different dates keeps the focus and week", function(assert) {
+	QUnit.test("Week view - click on different dates keeps the focus and week", async function(assert) {
 		//Prepare
 		var aWeekDays = this.oPC2Interval.$("days").children();
 
 		//Act
 		aWeekDays.eq(1).trigger("focus");
-		Core.applyChanges();
+		await nextUIUpdate();
 		aWeekDays.eq(2).trigger("focus");
-		Core.applyChanges();
+		await nextUIUpdate();
 		aWeekDays.eq(3).trigger("focus");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//assert initial state
 		this._assertDatesAreVisible.call(this, [
@@ -1889,7 +1847,7 @@ sap.ui.define([
 		assert.strictEqual(this.oPC2.getStartDate().getHours(), 1, "The Hours are not changed to 00, but instead the original hours are preserved in OneMonth view");
 	});
 
-	QUnit.test("setStartDate should not preserve the hours when navigation occurs in custom views of type hour", function (assert) {
+	QUnit.test("setStartDate should not preserve the hours when navigation occurs in custom views of type hour", async function (assert) {
 		// Prepare
 		var oEvent = {
 			oSource: {
@@ -1909,7 +1867,7 @@ sap.ui.define([
 			})
 		);
 		this.oPC2.setViewKey("hour");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.oPC2._handleStartDateChange(oEvent);
@@ -1919,7 +1877,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("setStartDate should preserve the hours when navigation occurs in custom views of type hour", function (assert) {
+	QUnit.test("setStartDate should preserve the hours when navigation occurs in custom views of type hour", async function (assert) {
 		// Prepare
 		var oEvent = {
 			oSource: {
@@ -1939,7 +1897,7 @@ sap.ui.define([
 			})
 		);
 		this.oPC2.setViewKey("day");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.oPC2._handleStartDateChange(oEvent);
@@ -1948,14 +1906,14 @@ sap.ui.define([
 		assert.strictEqual(this.oPC2.getStartDate().getHours(), 1, "The Hours are not changed to 00, but instead the original hours are preserved in Day view");
 	});
 
-	QUnit.test('Clicking today is updating calendars start date and Navigations current date', function(assert) {
+	QUnit.test('Clicking today is updating calendars start date and Navigations current date', async function(assert) {
 		var oToday = UI5Date.getInstance();
 		this.oPC2.setViewKey(CalendarIntervalType.Hour);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//act
-		_navBackward.call(this, this.oPC2);
-		_clickTodayButton.call(this, this.oPC2);
+		await _navBackward.call(this, this.oPC2);
+		await _clickTodayButton.call(this, this.oPC2, this.clock);
 
 		//assert
 		assert.equal(this.oPC2._dateNav._current.getFullYear(), oToday.getFullYear(), 'year is correct');
@@ -1965,7 +1923,7 @@ sap.ui.define([
 		this.oPC2.setViewKey(CalendarIntervalType.Week);
 	});
 
-	QUnit.test("Selection is correct after resizing", function(assert) {
+	QUnit.test("Selection is correct after resizing", async function(assert) {
 		// Prepare
 		var oSelectedDate = UI5Date.getInstance(2019, 11, 3);
 
@@ -1976,7 +1934,7 @@ sap.ui.define([
 
 		// Act
 		this.oPC2.setWidth("200px");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal(this.oPC2._oOneMonthsRow.getSelectedDates()[0].getStartDate().getTime(), oSelectedDate.getTime(),

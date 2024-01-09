@@ -3,33 +3,33 @@
  */
 
 sap.ui.define([
+	'sap/base/i18n/Formatting',
+	'sap/base/i18n/Localization',
+	'sap/ui/core/Element',
+	'sap/ui/core/Theming',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/Month',
 	'sap/ui/core/IconPool',// side effect: required when calling RenderManager#icon
 	'./PlanningCalendarLegend',
 	'sap/ui/core/InvisibleText',
-	'sap/ui/core/Core',
 	'sap/ui/unified/library',
-	"sap/ui/core/date/CalendarUtils",
-	'sap/ui/core/Locale',
-	"sap/ui/core/Configuration",
-	"sap/ui/core/date/UI5Date"
-	],
+	'sap/ui/core/date/UI5Date'
+],
 	function(
+		Formatting,
+		Localization,
+		Element,
+		Theming,
 		CalendarDate,
 		CalendarUtils,
 		Month,
 		_IconPool,
 		PlanningCalendarLegend,
 		InvisibleText,
-		Core,
 		unifiedLibrary,
-		CalendarDateUtils,
-		Locale,
-		Configuration,
 		UI5Date
-		) {
+	) {
 		"use strict";
 
 		// shortcut for sap.ui.unified.CalendarDayType
@@ -176,7 +176,7 @@ sap.ui.define([
 				if (aDayTypes && aDayTypes[0]) {
 					oType = aDayTypes[0];
 					oRm.class("sapUiCalendarSpecialDay" + oType.type);
-					sLegendItemType = PlanningCalendarLegend.findLegendItemForItem(Core.byId(oControl._sLegendId), oType);
+					sLegendItemType = PlanningCalendarLegend.findLegendItemForItem(Element.getElementById(oControl._sLegendId), oType);
 				}
 			}
 
@@ -284,8 +284,8 @@ sap.ui.define([
 					selected: null
 				},
 				iRight = iColumns - iColumn - iWidth,
-				bIsRTL = Core.getConfiguration().getRTL(),
-				sThemeName = Core.getConfiguration().getTheme(),
+				bIsRTL = Localization.getRTL(),
+				sThemeName = Theming.getTheme(),
 				iAppStartDateIndex = oControl._findStartDateIndex(aCells, app, oControl._iStartDayOffset),
 				bFirstRenderedDayIsAfterStart = app._nextDay > iAppStartDateIndex,
 				oNextDate = aCells[app._nextDay],
@@ -376,7 +376,7 @@ sap.ui.define([
 				oRm.class("sapUiCalendarApp" + sType);
 			}
 			if (sColor) {
-				if (Core.getConfiguration().getRTL()) {
+				if (Localization.getRTL()) {
 					oRm.style("border-right-color", sColor);
 				} else {
 					oRm.style("border-left-color", sColor);
@@ -458,7 +458,7 @@ sap.ui.define([
 			var iFirstDayOfWeek = oControl._getFirstDayOfWeek(),
 				sId = oControl.getId(),
 				sDayId,
-				sCalendarType = Core.getConfiguration().getCalendarType(),
+				sCalendarType = Formatting.getCalendarType(),
 				aWeekDays = oLocaleData.getDaysStandAlone("abbreviated", sCalendarType),
 				aWeekDaysWide = oLocaleData.getDaysStandAlone("wide", sCalendarType),
 				oStartDate = UI5Date.getInstance(oControl.getStartDate()),

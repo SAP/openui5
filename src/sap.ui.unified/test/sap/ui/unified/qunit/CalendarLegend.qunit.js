@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/unified/CalendarLegend",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/CalendarLegendRenderer",
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/library",
@@ -12,11 +13,9 @@ sap.ui.define([
 	"sap/ui/unified/DateTypeRange",
 	"sap/base/Log",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/events/KeyCodes",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(Element, CalendarLegend, CalendarLegendRenderer, CalendarLegendItem, unifiedLibrary, DateRange, JSONModel, Calendar, DateTypeRange, Log, DateFormat, KeyCodes, XMLView, jQuery, oCore) {
+	"sap/ui/thirdparty/jquery"
+], function(Element, CalendarLegend, nextUIUpdate, CalendarLegendRenderer, CalendarLegendItem, unifiedLibrary, DateRange, JSONModel, Calendar, DateTypeRange, Log, DateFormat, XMLView, jQuery) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
@@ -170,9 +169,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oLegend = new CalendarLegend("Leg", {}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oLegend.destroy();
@@ -185,7 +184,7 @@ sap.ui.define([
 		assert.equal(aLegendItems.length, 4, "4 categories rendered");
 	});
 
-	QUnit.test("Custom categories", function (assert) {
+	QUnit.test("Custom categories", async function (assert) {
 
 		var oLeg2 = new CalendarLegend("Leg2", {
 			items: [new CalendarLegendItem("L2-I0", {text: "Type10", type: CalendarDayType.Type10, tooltip: "Type 10"}),
@@ -196,7 +195,7 @@ sap.ui.define([
 				new CalendarLegendItem("L2-I5", {text: "no type 2", tooltip: "no type 2"})
 			]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var aLegendItems = this.oLegend.$().find(".sapUiUnifiedLegendItems").children();
 		assert.equal(aLegendItems.length, 4, "4 categories rendered");
@@ -211,7 +210,7 @@ sap.ui.define([
 			text: "Placeholder " + (i + 1)
 		}));
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		aLegendItems = this.oLegend.$().find(".sapUiUnifiedLegendItems").children();
 		assert.equal(aLegendItems.length, 14, "14 categories rendered");
@@ -239,7 +238,7 @@ sap.ui.define([
 		assert.equal(oExtractedRGB[3], oExpectedRGB.B, sLabel + " (BLUE)");
 	}
 
-	QUnit.test("Custom colors", function (assert) {
+	QUnit.test("Custom colors", async function (assert) {
 
 		this.oLegend.addItem(new CalendarLegendItem("L1-I0", {
 			text: "custom color 1",
@@ -249,7 +248,7 @@ sap.ui.define([
 			text: "custom color 2",
 			tooltip: "custom color 2", color: "#FF0000"
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oCustomColorIfL4I6 = _getCssColorProperty(jQuery("#L1-I0 .sapUiUnifiedLegendSquareColor"), "background-color");
 		var oCustomColorIfL4I7 = _getCssColorProperty(jQuery("#L1-I1 .sapUiUnifiedLegendSquareColor"), "background-color");
@@ -261,14 +260,14 @@ sap.ui.define([
 		_checkColor(oCustomColorIfL4I7, {R: 255, G: 0, B: 0}, "Legend1: custom color 2 item has the right color", assert);
 	});
 
-	QUnit.test("Combination with Calendar", function (assert) {
+	QUnit.test("Combination with Calendar", async function (assert) {
 		var specialDates = oCal.getSpecialDates();
 		for (var i = 0; i < specialDates.length; i++) {
 			this.oLegend.addItem(new CalendarLegendItem({
 				text: specialDates[i].getTooltip()
 			}));
 		}
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $Leg = this.oLegend.$().find(".sapUiUnifiedLegendItems").children();
 
@@ -379,7 +378,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calendar Legend Navigation", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			var aLegendTypes = [],
 				aSpecialDay,
 				sType,
@@ -431,7 +430,7 @@ sap.ui.define([
 
 			this.oCalendar.placeAt("qunit-fixture");
 			this.oLegend.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 		},
 		afterEach: function () {
@@ -459,7 +458,7 @@ sap.ui.define([
 		assert.equal(document.activeElement.id, aLegendItems[0].getId(), "the first calendar legend item is focused");
 	});
 
-	QUnit.test("Filtering special dates in calendar", function (assert) {
+	QUnit.test("Filtering special dates in calendar", async function (assert) {
 		var aLegendItems = this.oLegend.getItems(),
 			aStandardItems = this.oLegend.getAggregation("_standardItems"),
 			aMonths = this.oCalendar.getAggregation("month");
@@ -475,7 +474,7 @@ sap.ui.define([
 
 		// Act (focus first standard calendar legend item)
 		aStandardItems[0].focus();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert (no filtered special day types)
 		assert.strictEqual(document.activeElement.id, aStandardItems[0].getId(), "the first standard legend item is focused");
@@ -488,7 +487,7 @@ sap.ui.define([
 
 		// Act (focus first calendar legend item)
 		aLegendItems[0].focus();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert (filter first special day type)
 		assert.strictEqual(document.activeElement.id, aLegendItems[0].getId(), "the first calendar legend item is focused");
@@ -501,7 +500,7 @@ sap.ui.define([
 
 		// Act (focus the calendar)
 		this.oCalendar.focus();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert (again no filtered special day types)
 		assert.notOk(document.activeElement.classList.contains(".sapUiUnifiedLegendItem"), "there are no calendar legend items focused");

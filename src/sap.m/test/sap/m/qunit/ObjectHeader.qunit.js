@@ -2,7 +2,6 @@
 sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/IconPool",
 	"sap/m/ObjectAttribute",
 	"sap/m/ObjectStatus",
@@ -10,16 +9,15 @@ sap.ui.define([
 	"sap/m/ProgressIndicator",
 	"sap/m/ObjectHeader",
 	"sap/m/library",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ObjectNumber",
 	"sap/m/ObjectMarker",
 	"sap/m/Label",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/events/KeyCodes"
 ], function(
 	Element,
 	qutils,
-	createAndAppendDiv,
 	IconPool,
 	ObjectAttribute,
 	ObjectStatus,
@@ -27,12 +25,12 @@ sap.ui.define([
 	ProgressIndicator,
 	ObjectHeader,
 	mobileLibrary,
+	nextUIUpdate,
 	jQuery,
 	ObjectNumber,
 	ObjectMarker,
 	Label,
-	KeyCodes,
-	oCore
+	KeyCodes
 ) {
 	"use strict";
 
@@ -56,7 +54,7 @@ sap.ui.define([
 
 
 	QUnit.module("Rendering All Fields", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.sID = "oOHBasic";
 			this.oOH = new ObjectHeader(this.sID, {
 				intro : "On behalf of John Smith",
@@ -69,7 +67,7 @@ sap.ui.define([
 				tooltip : "Test tooltip for the header",
 				backgroundDesign : BackgroundDesign.Solid
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oOH.destroy();
@@ -101,7 +99,7 @@ sap.ui.define([
 		assert.ok(this.oOH.$("number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
 	});
 
-	QUnit.test("AttributesRendered", function(assert) {
+	QUnit.test("AttributesRendered", async function(assert) {
 		// Arrange
 		var oOA1 = new ObjectAttribute("oa1", {
 				text : "Contract #D1234567890"
@@ -115,26 +113,26 @@ sap.ui.define([
 		this.oOH.addAttribute(oOA1);
 		this.oOH.addAttribute(oOA2);
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notEqual(document.getElementById("oa1"), null, "Object attribute #1 should be rendered.");
 		assert.notEqual(document.getElementById("oa2"), null, "Object attribute #2 should be rendered.");
 	});
 
-	QUnit.test("Attribute rerendered after being empty", function(assert) {
+	QUnit.test("Attribute rerendered after being empty", async function(assert) {
 		var oOA = new ObjectAttribute({text: "Test"});
 		var oOHEmpty = new ObjectHeader({attributes: [oOA]});
 
 		oOHEmpty.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oOHEmpty.invalidate();
 		oOA.setText("");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oOA.setText("rerendered");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oOA.$("text")[0].textContent, "rerendered", "Attribute is rendered inside ObjectHeader");
@@ -143,7 +141,7 @@ sap.ui.define([
 		oOHEmpty.destroy();
 	});
 
-	QUnit.test("StatusesRendered", function(assert) {
+	QUnit.test("StatusesRendered", async function(assert) {
 		// Arrange
 		var oOS1 = new ObjectStatus("os1", {
 				text : "Statuses 1",
@@ -162,7 +160,7 @@ sap.ui.define([
 		this.oOH.addStatus(oOS2);
 		this.oOH.addStatus(oOA);
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notEqual(document.getElementById("os1"), null, "Object statuses #1 should be rendered.");
@@ -173,7 +171,7 @@ sap.ui.define([
 	/**
 	 * @deprecated as of version 1.16, replaced by <code>statuses</code> aggregation
 	 */
-	QUnit.test("InfoRendered", function(assert) {
+	QUnit.test("InfoRendered", async function(assert) {
 		var oFirstStatus = new ObjectStatus("os1", {
 			text : "Ñgçy Positive Text Ñgçy",
 			state : ValueState.Success
@@ -185,7 +183,7 @@ sap.ui.define([
 
 		this.oOH.setFirstStatus(oFirstStatus);
 		this.oOH.setSecondStatus(oSecondStatus);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notEqual(document.getElementById("os1"), null, "First status should be rendered.");
 		assert.notEqual(document.getElementById("os2"), null, "Second status info should be rendered.");
@@ -194,7 +192,7 @@ sap.ui.define([
 	/**
 	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
 	 */
-	QUnit.test("FavoriteRendered", function(assert) {
+	QUnit.test("FavoriteRendered", async function(assert) {
 		// Assert - No Favourite Markers rentered
 		assert.equal(document.getElementById(this.sID + "-favorite"), null, "Favorite marker should not be rendered.");
 
@@ -203,7 +201,7 @@ sap.ui.define([
 		this.oOH.setShowMarkers(true);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert - Favourite is marked
 		assert.notEqual(document.getElementById(this.sID + "-favorite"), null, "Favorite marker should be rendered.");
@@ -213,7 +211,7 @@ sap.ui.define([
 	/**
 	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
 	 */
-	QUnit.test("FlagRendered", function(assert) {
+	QUnit.test("FlagRendered", async function(assert) {
 		// Assert - No Favourite Markers rentered
 		assert.equal(document.getElementById(this.sID  + "-flag"), null, "Flag marker should not be rendered.");
 
@@ -222,7 +220,7 @@ sap.ui.define([
 		this.oOH.setShowMarkers(true);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert - Favourite is marked
 		assert.notEqual(document.getElementById(this.sID  + "-flag"), null, "Flag marker should be rendered.");
@@ -232,7 +230,7 @@ sap.ui.define([
 	/**
 	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
 	 */
-	QUnit.test("FlagWithAttrubuteRendered", function(assert) {
+	QUnit.test("FlagWithAttrubuteRendered", async function(assert) {
 
 		// Assert - No Favourite Markers rentered
 		assert.equal(document.getElementById(this.sID  + "-flag"), null, "Flag marker should not be rendered.");
@@ -246,14 +244,14 @@ sap.ui.define([
 		this.oOH.setShowMarkers(true);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notEqual(jQuery("#" + this.sID  + "-flag"), null, "Flag marker should be rendered.");
 		assert.ok(jQuery("#" + this.sID  + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
 	});
 
-	QUnit.test("Flag Rendering Position", function(assert) {
+	QUnit.test("Flag Rendering Position", async function(assert) {
 		// Arrange - Mark Flagged and add Attribute
 		var oAttr = new ObjectAttribute(this.sID + "-attr1", {
 				text : "Attribute number 1"
@@ -266,7 +264,7 @@ sap.ui.define([
 		this.oOH.addMarker(oFlagMarker);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(Math.abs(jQuery("#" + this.sID + "-attr1")[0].offsetTop - jQuery("#" + this.sID + "-flag")[0].offsetTop) <= 2,
 		"Attribute and flag should be rendered on the same row");
@@ -275,7 +273,7 @@ sap.ui.define([
 	/**
 	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
 	 */
-	QUnit.test("Flag Rendering Position with deprecated functions", function(assert) {
+	QUnit.test("Flag Rendering Position with deprecated functions", async function(assert) {
 		// Arrange - Mark Flagged and add Attribute
 		var oAttr = new ObjectAttribute(this.sID + "-attr1", {
 				text : "Attribute number 1"
@@ -286,13 +284,13 @@ sap.ui.define([
 		this.oOH.setShowMarkers(true);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(Math.abs(jQuery("#" + this.sID + "-attr1")[0].offsetTop - jQuery("#" + this.sID + "-flag")[0].offsetTop) <= 2,
 		"Attribute and flag should be rendered on the same row");
 	});
 
-	QUnit.test("ProgressIndicatorRendered", function(assert) {
+	QUnit.test("ProgressIndicatorRendered", async function(assert) {
 		// Arrange
 		var oProgIndicator = new ProgressIndicator(this.sID + "-pi", {
 			visible : true,
@@ -308,7 +306,7 @@ sap.ui.define([
 		this.oOH.addStatus(oProgIndicator);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notEqual(document.getElementById(this.sID + "-pi"), null, "Progress Indicator should be rendered.");
@@ -322,7 +320,7 @@ sap.ui.define([
 		assert.ok(this.oOH.$("number").hasClass("sapMObjectNumberStatusSuccess"), "Number color uses value state success color.");
 	});
 
-	QUnit.test("Placeholders for invisible attributes", function(assert) {
+	QUnit.test("Placeholders for invisible attributes", async function(assert) {
 		// Arrange
 		var oOA = new ObjectAttribute("invisibleAttr", {
 				text : "Invisible attribute",
@@ -332,13 +330,13 @@ sap.ui.define([
 		this.oOH.addAttribute(oOA);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(jQuery('#' + this.sID + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 0, "The attribute row should not be rendered");
 	});
 
-	QUnit.test("Placeholders for invisible status", function(assert) {
+	QUnit.test("Placeholders for invisible status", async function(assert) {
 		// Arrange
 		var oOS = new ProgressIndicator({
 				percentValue : 99,
@@ -349,14 +347,14 @@ sap.ui.define([
 		this.oOH.addStatus(oOS);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(jQuery('#' + this.sID + ' > .sapMOHBottomRow > .sapMOHAttrRow > .sapMOHStatusFixedWidth').length === 0, "The status should not be rendered");
 
 	});
 
-	QUnit.test("Placeholders for invisible attribute with visible status", function(assert) {
+	QUnit.test("Placeholders for invisible attribute with visible status", async function(assert) {
 		// Arrange
 		var oOS = new ObjectStatus({
 				text : "Visible status",
@@ -377,13 +375,13 @@ sap.ui.define([
 		this.oOH.addAttribute(oOA2);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(jQuery('#' + this.sID + ' > .sapMOH .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible attribute should not cause new row.");
 	});
 
-	QUnit.test("Placeholders for invisible status with visible attribute", function(assert) {
+	QUnit.test("Placeholders for invisible status with visible attribute", async function(assert) {
 		// Arrange
 		var oPI = new ProgressIndicator({
 				displayValue : '30%',
@@ -407,7 +405,7 @@ sap.ui.define([
 		this.oOH.addAttribute(oOA);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(jQuery('#' + this.sID + ' > .sapMOH .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible status should not cause new row.");
@@ -416,7 +414,7 @@ sap.ui.define([
 	/******************************************************************/
 
 	QUnit.module("Rendering condensed Object Header", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.sID = "oOHCondensed";
 			this.oOH = new ObjectHeader(this.sID, {
 				title : "Condensed Object header with attribute, number and number unit",
@@ -430,7 +428,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oOH.destroy();
@@ -461,10 +459,10 @@ sap.ui.define([
 		assert.ok(bBackgroundTransparent, "Background color is transparent");
 	});
 
-	QUnit.test("Background is solid", function(assert) {
+	QUnit.test("Background is solid", async function(assert) {
 
 		this.oOH.setBackgroundDesign(BackgroundDesign.Solid);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(jQuery("#" + this.sID + " > .sapMOHBgSolid").length, 1, "Solid background style should be set.");
 	});
@@ -472,21 +470,21 @@ sap.ui.define([
 	/******************************************************************/
 
 	QUnit.module("Internal API", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.sID = "oOHSimple";
 			this.oOH = new ObjectHeader(this.sID, {
 				title : "Simple ObjectHeader",
 				backgroundDesign : BackgroundDesign.Transparent
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oOH.destroy();
 		}
 	});
 
-	QUnit.test("Attribute and Flag API", function(assert) {
+	QUnit.test("Attribute and Flag API", async function(assert) {
 		// Arrange
 		var oOA = new ObjectAttribute({
 				text : "A regular attribute"
@@ -499,7 +497,7 @@ sap.ui.define([
 		this.oOH.addMarker(oFlagMarker);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(this.oOH._hasBottomContent(), "Object header has bottom content");
@@ -510,18 +508,18 @@ sap.ui.define([
 	/**
 	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
 	 */
-	QUnit.test("Deprecated Flag API", function(assert) {
+	QUnit.test("Deprecated Flag API", async function(assert) {
 		// Arrange
 		this.oOH.setMarkFlagged(true);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(this.oOH.getMarkFlagged(), "Object header has flag marker");
 	});
 
-	QUnit.test("With empty status", function(assert) {
+	QUnit.test("With empty status", async function(assert) {
 
 		var emptyStatus = new ObjectStatus("ose1", {
 				text : "\n  \n  \t",
@@ -530,7 +528,7 @@ sap.ui.define([
 
 		this.oOH.addStatus(emptyStatus);
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(this.oOH._hasStatus(), "Object header has no rendered statuses");
 
@@ -539,7 +537,7 @@ sap.ui.define([
 	/**
 	 *  @deprecated as of version 1.16, replaced by <code>statuses</code> aggregation.
 	 */
-	QUnit.test("With empty first & second statuses", function(assert) {
+	QUnit.test("With empty first & second statuses", async function(assert) {
 
 		var firstStatus = new ObjectStatus("ose3", {
 				text : "\n  \n  \t",
@@ -553,12 +551,12 @@ sap.ui.define([
 		this.oOH.setFirstStatus(firstStatus);
 		this.oOH.setSecondStatus(secondStatus);
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(this.oOH._hasStatus(), "Object header has no rendered statuses");
 	});
 
-	QUnit.test("With empty attribute", function(assert) {
+	QUnit.test("With empty attribute", async function(assert) {
 
 		var emptyAttr1 = new ObjectAttribute("oae1", {
 				text : "\n  \n  \t"
@@ -570,13 +568,13 @@ sap.ui.define([
 		this.oOH.addAttribute(emptyAttr1);
 		this.oOH.addAttribute(emptyAttr2);
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(this.oOH._hasAttributes(), "Object header has no rendered attributes");
 
 	});
 
-	QUnit.test("With empty attributes and statuses", function(assert) {
+	QUnit.test("With empty attributes and statuses", async function(assert) {
 
 		var emptyAttr1 = new ObjectAttribute("oae1", {
 				text : "\n  \n  \t"
@@ -598,7 +596,7 @@ sap.ui.define([
 		this.oOH.addStatus(emptyStatus1);
 		this.oOH.addStatus(emptyStatus2);
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(this.oOH._hasStatus(), "Object header has no rendered statuses");
 		assert.notOk(this.oOH._hasAttributes(), "Object header has no rendered attributes");
@@ -613,7 +611,7 @@ sap.ui.define([
 		assert.notOk(this.oOH.getMarkFavorite(), "Object header has no markFavorite marker");
 	});
 
-	QUnit.test("With a non-empty ObjectStatus", function(assert) {
+	QUnit.test("With a non-empty ObjectStatus", async function(assert) {
 
 		var emptyStatus = new ObjectStatus("ose8", {
 				text : "\n  \n  \t",
@@ -627,12 +625,12 @@ sap.ui.define([
 		this.oOH.addStatus(emptyStatus);
 		this.oOH.addStatus(regularStatus);
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oOH._hasStatus(), "Object header has rendered statuses");
 	});
 
-	QUnit.test("With a ProgressIndicator", function(assert) {
+	QUnit.test("With a ProgressIndicator", async function(assert) {
 
 		var progressIndicator = new ProgressIndicator({
 				percentValue : 99,
@@ -641,7 +639,7 @@ sap.ui.define([
 
 		this.oOH.addStatus(progressIndicator);
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oOH._hasStatus(), "Object header has rendered statuses if only ProgressIndicator is present");
 	});
@@ -654,12 +652,12 @@ sap.ui.define([
 		assert.ok($objectHeader.hasClass("sapMOHTitleDivFull"), "title occupies the whole available space");
 	});
 
-	QUnit.test("Title gets all length when no number in Condensed OH", function(assert) {
+	QUnit.test("Title gets all length when no number in Condensed OH", async function(assert) {
 		// Arrange
 		this.oOH.setCondensed(true);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $objectHeader = this.oOH.$("titlediv");
 
 		// Assert
@@ -669,7 +667,7 @@ sap.ui.define([
 	/**
 	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
 	 */
-	QUnit.test("Flag marker set and unset", function(assert) {
+	QUnit.test("Flag marker set and unset", async function(assert) {
 		// Assert - by default flag marker unset
 		assert.notOk(jQuery("#" + this.sID + " .sapUiIcon").length, "No markers should be rendered");
 
@@ -678,7 +676,7 @@ sap.ui.define([
 		this.oOH.setShowMarkers(true);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal(jQuery("#" + this.sID + " .sapUiIcon").length, 1, "Only one marker should be rendered");
@@ -689,7 +687,7 @@ sap.ui.define([
 		this.oOH.setShowMarkers(false);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notOk(jQuery("#" + this.sID + " .sapUiIcon").length, "Flag marker is no longer renfered");
@@ -698,7 +696,7 @@ sap.ui.define([
 	/**
 	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
 	 */
-	QUnit.test("Favorite marker set and unset", function(assert) {
+	QUnit.test("Favorite marker set and unset", async function(assert) {
 		// Assert - by default flag marker unset
 		assert.notOk(jQuery("#" + this.sID + " .sapUiIcon").length, "No markers should be rendered");
 
@@ -707,7 +705,7 @@ sap.ui.define([
 		this.oOH.setShowMarkers(true);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal(jQuery("#" + this.sID + " .sapUiIcon").length, 1, "Only one marker should be rendered");
@@ -718,7 +716,7 @@ sap.ui.define([
 		this.oOH.setShowMarkers(false);
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notOk(jQuery("#" + this.sID + " .sapUiIcon").length, "Favorite marker is no longer renfered");
@@ -727,7 +725,7 @@ sap.ui.define([
 	/**
 	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation.
 	 */
-	QUnit.test("Attribute without support marker", function(assert) {
+	QUnit.test("Attribute without support marker", async function(assert) {
 		// Arrange
 		var oBasicAttr = new ObjectAttribute( "basicAttr", {
 			text : "This is the only attribute in the object header"
@@ -736,7 +734,7 @@ sap.ui.define([
 		this.oOH.setMarkFavorite(true);
 		this.oOH.setShowMarkers(false);
 		this.oOH.addAttribute(oBasicAttr);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(jQuery("#" + this.sID + " .sapUiIcon").length, 0, "No markers should be rendered");
 		assert.notEqual(document.getElementById("basicAttr"), null, "Attribute should be rendered.");
@@ -745,7 +743,7 @@ sap.ui.define([
 	/******************************************************************/
 
 	QUnit.module("Events", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.sID = "oOHEvents";
 			this.oOH = new ObjectHeader(this.sID, {
 				intro : "On behalf of John Smith",
@@ -759,7 +757,7 @@ sap.ui.define([
 				iconPress : eventHandler
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oOH.destroy();
@@ -808,7 +806,7 @@ sap.ui.define([
 		domRef = null;
 	});
 
-	QUnit.test("TestIconTap", function(assert) {
+	QUnit.test("TestIconTap", async function(assert) {
 		this.oOH._oImageControl.firePress();
 
 		// Assert - OH with active icon should be clickable
@@ -821,7 +819,7 @@ sap.ui.define([
 			iconPress : eventHandler
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oOHIconNotActive._oImageControl.firePress();
 
 		// Assert - OH with no active icon should not be clickable
@@ -848,14 +846,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("TestTitleSelectorTap", function(assert) {
+	QUnit.test("TestTitleSelectorTap", async function(assert) {
 		var oOH2 = new ObjectHeader("oOH2", {
 			title : "Im a title.",
 			showTitleSelector : true,
 			titleSelectorPress : eventHandler
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oFakeEvent = {
 			target: oOH2.getDomRef().querySelector(".sapUiIconTitle")
@@ -868,7 +866,7 @@ sap.ui.define([
 		oOH2.destroy();
 	});
 
-	QUnit.test("TestTitleSelector pressing SPACE", function(assert) {
+	QUnit.test("TestTitleSelector pressing SPACE", async function(assert) {
 		//Arrange
 		var oSpy = this.spy();
 		var oArrowOH = new ObjectHeader("arrowOH", {
@@ -879,7 +877,7 @@ sap.ui.define([
 
 		// System under test
 		oArrowOH.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oArrow = jQuery("#arrowOH-titleArrow")[0];
 		oArrow.focus(); // set focus on the arrow
@@ -892,7 +890,7 @@ sap.ui.define([
 		oArrowOH.destroy();
 	});
 
-	QUnit.test("TestTitleSelector pressing ENTER", function(assert) {
+	QUnit.test("TestTitleSelector pressing ENTER", async function(assert) {
 		//Arrange
 		var oSpy = this.spy();
 		var oArrowOH = new ObjectHeader("arrowOH", {
@@ -903,7 +901,7 @@ sap.ui.define([
 
 		// System under test
 		oArrowOH.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oArrow = jQuery("#arrowOH-titleArrow")[0];
 		oArrow.focus(); // set focus on the arrow
@@ -919,7 +917,7 @@ sap.ui.define([
 	/******************************************************************/
 
 	QUnit.module("TitleArrow", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.sID = "titleArrowOH";
 			this.oOH = new ObjectHeader(this.sID, {
 				title : "Title Arrow reset to false and should not be displayed.",
@@ -929,7 +927,7 @@ sap.ui.define([
 				titleSelectorPress : eventHandler
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oOH.destroy();
@@ -952,26 +950,26 @@ sap.ui.define([
 
 	QUnit.module("OH Screen Reader support");
 
-	QUnit.test("OH has aria-labelledby", function(assert){
+	QUnit.test("OH has aria-labelledby", async function(assert){
 		var sID = "oOHBasic",
 			oObjectHeader = new ObjectHeader(sID, {
 				title : "Test Title."
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery("#" + sID + ">.sapMOH").attr("aria-labelledby"), "OH has attribute aria-labelledby");
 
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("OH has attribute role=region", function(assert){
+	QUnit.test("OH has attribute role=region", async function(assert){
 		var sID = "oOHBasic",
 			oObjectHeader = new ObjectHeader(sID, {
 				title : "Test Title."
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery("#" + sID + ">.sapMOH").attr("role"), "OH has attribute role");
 		assert.equal(jQuery("#" + sID + ">.sapMOH").attr("role"), "region", "role is region");
@@ -979,28 +977,28 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("OH Condensed has aria-labelledby", function(assert){
+	QUnit.test("OH Condensed has aria-labelledby", async function(assert){
 		var sID = "oOHCondensed",
 			oObjectHeader = new ObjectHeader(sID, {
 				title : "Test Title.",
 				condensed : true
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery("#" + sID + ">.sapMOH").attr("aria-labelledby"), "OH condensed has attribute aria-labelledby");
 
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("OH Condensed has attribute role=region", function(assert){
+	QUnit.test("OH Condensed has attribute role=region", async function(assert){
 		var sID = "oOHCondensed",
 			oObjectHeader = new ObjectHeader(sID, {
 				title : "Test Title.",
 				condensed : true
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery("#" + sID + ">.sapMOH").attr("role"), "OH condensed has attribute role");
 		assert.equal(jQuery("#" + sID + ">.sapMOH").attr("role"), "region", "role is region");
@@ -1008,20 +1006,20 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Active title has aria attributes", function(assert){
+	QUnit.test("Active title has aria attributes", async function(assert){
 		var sID = "oOHBasic",
 			oObjectHeader = new ObjectHeader(sID, {
 				title : "Test Title.",
 				titleActive : true
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#" + sID + "-title").attr("role"), "link", "OH has role=link");
 
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Active icon has aria attributes", function(assert){
+	QUnit.test("Active icon has aria attributes", async function(assert){
 		var sID = "oOHBasic",
 			oObjectHeader = new ObjectHeader(sID, {
 				title : "Test Title.",
@@ -1029,13 +1027,13 @@ sap.ui.define([
 				iconActive : true
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery(".sapMOHIcon.sapMPointer .sapUiIcon.sapUiIconPointer").attr("role"), "button", "OH has role=button");
 
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title has level H1", function(assert){
+	QUnit.test("Title has level H1", async function(assert){
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 				title: "Test title level"
@@ -1043,7 +1041,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var $sTitle = oObjectHeader.$("title");
@@ -1053,7 +1051,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title has level H3", function(assert){
+	QUnit.test("Title has level H3", async function(assert){
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 				title: "Test title level",
@@ -1062,7 +1060,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var $sTitle = oObjectHeader.$("title");
@@ -1072,7 +1070,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title level is set correctly", function(assert){
+	QUnit.test("Title level is set correctly", async function(assert){
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 				title: "Test title level"
@@ -1080,10 +1078,10 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oObjectHeader.setTitleLevel("H4");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var $sTitle = oObjectHeader.$("title");
@@ -1093,7 +1091,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("When set to Auto title has level H1", function(assert){
+	QUnit.test("When set to Auto title has level H1", async function(assert){
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 				title: "Test title level",
@@ -1102,7 +1100,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var $sTitle = oObjectHeader.$("title");
@@ -1157,21 +1155,21 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("aria-labelledby contains title reference", function(assert){
+	QUnit.test("aria-labelledby contains title reference", async function(assert){
 		// Arrange
 		var sId = "OHID",
 			oObjectHeader = new ObjectHeader(sId, {
 				numberUnit: "Views",
 				number: "454"
 			}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notOk(jQuery("#" + sId + ">.sapMOH").attr("aria-labelledby"), "There is no reference when there is no title");
 
 		// Arrange
 		oObjectHeader.setTitle("Test title level");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(jQuery("#" + sId + ">.sapMOH").attr("aria-labelledby"), "OHID-titleText-inner", "There is a reference, when there is a title");
@@ -1180,13 +1178,13 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Presence of ariaLabelledBy references", function (assert) {
+	QUnit.test("Presence of ariaLabelledBy references", async function (assert) {
 		var oLabel = new Label("label", { text: "Label" }),
 			oOH = new ObjectHeader("objectHeader", { title: "Title", titleActive: true, ariaLabelledBy: "label" });
 
 		oLabel.placeAt("qunit-fixture");
 		oOH.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(jQuery("#objectHeader>.sapMOH").attr("aria-labelledby").includes("label"), true,
 				"Reference added via ariaLabelledBy has been added in aria-labelledby");
@@ -1199,7 +1197,7 @@ sap.ui.define([
 
 	QUnit.module("Exiting");
 
-	QUnit.test("TestIconExit", function(assert) {
+	QUnit.test("TestIconExit", async function(assert) {
 		var iconOH = new ObjectHeader("iconOH", {
 			icon : IconPool.getIconURI("pdf-attachment"),
 			intro : "On behalf of John Smith",
@@ -1216,7 +1214,7 @@ sap.ui.define([
 			]
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $sImg = iconOH.$("img");
 		assert.ok(!(iconOH === null), "iconOH is not null");
@@ -1229,7 +1227,7 @@ sap.ui.define([
 		assert.notOk(Element.getElementById("iconOH-favorite"), "Favorite icon is not found in UI5 Core");
 	});
 
-	QUnit.test("TestImageExit", function(assert) {
+	QUnit.test("TestImageExit", async function(assert) {
 		var imageOH = new ObjectHeader("imageOH", {
 			icon : "../images/action.png",
 			iconTooltip: "test tooltip",
@@ -1239,7 +1237,7 @@ sap.ui.define([
 			numberUnit : "EUR"
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $sImg = imageOH.$("img");
 		assert.ok(!(imageOH === null), "imageOH is not null");
@@ -1249,7 +1247,7 @@ sap.ui.define([
 		assert.notOk(Element.getElementById("imageOH"), "Image is removed from UI5 Core");
 	});
 
-	QUnit.test("Title selector icon size", function(assert) {
+	QUnit.test("Title selector icon size", async function(assert) {
 		// arrange
 		var oObjectHeader = new ObjectHeader({
 			showTitleSelector: true,
@@ -1257,14 +1255,14 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 
 		// system under test
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert: default in constructor
 		assert.strictEqual(oObjectHeader._oTitleArrowIcon.getSize(), "1.375rem", "for a standard object header the icon size is 1.375rem");
 
 		// assert: setter false
 		oObjectHeader.setCondensed(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(oObjectHeader._oTitleArrowIcon.getSize(), "1.375rem", "for a standard object header the icon size is 1.375rem again");
 
 		// cleanup
@@ -1275,7 +1273,7 @@ sap.ui.define([
 
 	QUnit.module("AdditionalNumbers aggregations rendering");
 
-	QUnit.test("additionalNumbers should be rendered", function (assert) {
+	QUnit.test("additionalNumbers should be rendered", async function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "test additional numbers",
@@ -1289,7 +1287,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
@@ -1299,7 +1297,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("additionalNumbers shouldn't be rendered if no aggregation is set", function (assert) {
+	QUnit.test("additionalNumbers shouldn't be rendered if no aggregation is set", async function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "Test numbers",
@@ -1309,7 +1307,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
@@ -1319,7 +1317,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("additionalNumbers shouldn't be rendered if the condensed property is set to true", function (assert) {
+	QUnit.test("additionalNumbers shouldn't be rendered if the condensed property is set to true", async function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "test additional numbers",
@@ -1334,7 +1332,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
@@ -1344,7 +1342,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("additionalNumbers shouldn't be rendered if the responsive property is set to true", function (assert) {
+	QUnit.test("additionalNumbers shouldn't be rendered if the responsive property is set to true", async function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "test additional numbers",
@@ -1359,7 +1357,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
@@ -1369,7 +1367,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("additionalNumber should be rendered after insertAdditionalNumber", function (assert) {
+	QUnit.test("additionalNumber should be rendered after insertAdditionalNumber", async function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "Test numbers"
@@ -1382,14 +1380,14 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
 		assert.ok(oAdditionalNum.length, "One additional number is rendered.");
 	});
 
-	QUnit.test("additionalNumber should be removed: removeAdditionalNumber", function (assert) {
+	QUnit.test("additionalNumber should be removed: removeAdditionalNumber", async function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "Test numbers"
@@ -1402,21 +1400,21 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
 		assert.ok((oAdditionalNum.length == 1), "One additional number is rendered.");
 
 		oObjectHeader.removeAdditionalNumber(oNum);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
 		assert.ok(!oAdditionalNum.length, "The additional number is removed.");
 	});
 
-	QUnit.test("additionalNumber should be removed: removeAllAdditionalNumbers", function (assert) {
+	QUnit.test("additionalNumber should be removed: removeAllAdditionalNumbers", async function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "test additional numbers",
@@ -1434,21 +1432,21 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
 		assert.ok((oAdditionalNum.length == 2), "Two additional numbers are rendered.");
 
 		oObjectHeader.removeAllAdditionalNumbers();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
 		assert.ok(!oAdditionalNum.length, "All additional numbers are removed.");
 	});
 
-	QUnit.test("removeAllAdditionalNumbers when no additional numbers at all", function (assert) {
+	QUnit.test("removeAllAdditionalNumbers when no additional numbers at all", async function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "Test numbers"
@@ -1456,17 +1454,17 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oObjectHeader.removeAllAdditionalNumbers();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
 		assert.ok(!oAdditionalNum.length, "No error is raised when executing removeAllAttributes");
 	});
 
-	QUnit.test("AdditionalNumbers should be destroyed: destroyAdditionalNumbers", function (assert) {
+	QUnit.test("AdditionalNumbers should be destroyed: destroyAdditionalNumbers", async function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "test additional numbers",
@@ -1484,21 +1482,21 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
 		assert.ok((oAdditionalNum.length == 2), "Two additional numbers are rendered.");
 
 		oObjectHeader.destroyAdditionalNumbers();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
 		assert.ok(!oAdditionalNum.length, "All additional numbers are destroyed.");
 	});
 
-	QUnit.test("Separator should be rendered when there is one additionalNumber", function (assert) {
+	QUnit.test("Separator should be rendered when there is one additionalNumber", async function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "test additional numbers",
@@ -1512,7 +1510,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var oSeparator = oObjectHeader.$().find(".additionalOHNumberSeparatorDiv");
@@ -1522,7 +1520,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Separator shouldn't be rendered when there is more than one additionalNumber", function (assert) {
+	QUnit.test("Separator shouldn't be rendered when there is more than one additionalNumber", async function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "test additional numbers",
@@ -1540,7 +1538,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var oSeparator = oObjectHeader.$().find(".additionalOHNumberSeparatorDiv");
@@ -1554,7 +1552,7 @@ sap.ui.define([
 
 	QUnit.module("Contrast container in Belize");
 
-	QUnit.test("Contrast container should be set when Background is not transparent", function (assert) {
+	QUnit.test("Contrast container should be set when Background is not transparent", async function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			id: "contrastId",
@@ -1564,7 +1562,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(jQuery("#" + "contrastId >").hasClass("sapContrastPlus"), "Contrast container class is rendered");
@@ -1573,7 +1571,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Contrast container should not be set when Background transparent", function (assert) {
+	QUnit.test("Contrast container should not be set when Background transparent", async function (assert) {
 		// Arrange
 		// Create non responsive ObjectHeader which has Transparent background by default
 		var oObjectHeader = new ObjectHeader({
@@ -1583,7 +1581,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(!jQuery("#" + "contrastId >").hasClass("sapContrastPlus"), "Contrast container class is not rendered since the background is Transparent");
@@ -1592,7 +1590,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Contrast container should be set when Background is changed from transparent to solid", function (assert) {
+	QUnit.test("Contrast container should be set when Background is changed from transparent to solid", async function (assert) {
 		// Arrange
 		// Create non responsive ObjectHeader which has Transparent background by default
 		var oObjectHeader = new ObjectHeader({
@@ -1602,13 +1600,13 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(!jQuery("#" + "contrastId >").hasClass("sapContrastPlus"), "Contrast container class is not rendered since the background is Transparent");
 
 		oObjectHeader.setBackgroundDesign(BackgroundDesign.Solid);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(jQuery("#" + "contrastId >").hasClass("sapContrastPlus"), "Contrast container class is rendered when the background is Solid");
@@ -1619,7 +1617,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering Markers aggregation");
 
-	QUnit.test("Render Draft and Unsaved", function(assert) {
+	QUnit.test("Render Draft and Unsaved", async function(assert) {
 		var oObjectHeader = new ObjectHeader({
 			id: "markersOH",
 			title : "Markers agregation",
@@ -1633,7 +1631,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(document.getElementById("draft"), "marker draft should be rendered.");
 		assert.ok(document.getElementById("unsaved"), "marker unsaved should be rendered.");
@@ -1641,7 +1639,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Test _hasMarkers function", function(assert) {
+	QUnit.test("Test _hasMarkers function", async function(assert) {
 
 		var oObjectHeader = new ObjectHeader({
 			title : "Markers agregation",
@@ -1653,7 +1651,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with markers aggregation and showMarkers property set to false");
 
@@ -1666,7 +1664,7 @@ sap.ui.define([
 	/**
 	 * @deprecated as of version 1.42, replaced by <code>markers</code> aggregation
 	 */
-	QUnit.test("Test _hasMarkers function with deprecated functions", function(assert) {
+	QUnit.test("Test _hasMarkers function with deprecated functions", async function(assert) {
 		var oObjectHeader = new ObjectHeader({
 			title : "Markers agregation",
 			markers: [
@@ -1677,7 +1675,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with markers aggregation and showMarkers property set to false");
 

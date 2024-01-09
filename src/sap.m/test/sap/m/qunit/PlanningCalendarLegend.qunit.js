@@ -3,9 +3,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/PlanningCalendarLegend",
-	"sap/ui/unified/CalendarLegendItem",
-	"sap/ui/core/Core"
-], function(XMLView, JSONModel, PlanningCalendarLegend, CalendarLegendItem, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/unified/CalendarLegendItem"
+], function(XMLView, JSONModel, PlanningCalendarLegend, nextUIUpdate, CalendarLegendItem) {
 	"use strict";
 
 	var sPclNoDB =
@@ -145,13 +145,13 @@ sap.ui.define([
 		//Act
 		return XMLView.create({
 			definition: sPclDB
-		}).then(function(myView) {
+		}).then(async function(myView) {
 			myView.setModel(oModel);
 
 			var oPCLegend = myView.byId("PlanningCalendarLegend");
 
 			myView.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			//Assert
 			assert.deepEqual(oPCLegend.getStandardItems(), ["WorkingDay", "NonWorkingDay"], "Should return the same items");
@@ -168,13 +168,13 @@ sap.ui.define([
 		//Act
 		return XMLView.create({
 			definition: sPclNoDB
-		}).then(function(myView) {
+		}).then( async function(myView) {
 
 			var oPCLegend = myView.byId("PlanningCalendarLegend");
 
 			//Act
 			oPCLegend.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			//Assert --section header
 			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 2, "Two header sections should be rendered");
@@ -190,13 +190,13 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("when no appointmenetItems is set, the Appointments section should not appear", function (assert) {
+	QUnit.test("when no appointmenetItems is set, the Appointments section should not appear", async function (assert) {
 		//Prepare
 		var oPCLegend = new PlanningCalendarLegend();
 
 		//Act
 		oPCLegend.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 1, "One header sections should rendered");
@@ -210,13 +210,13 @@ sap.ui.define([
 		//Act
 		return XMLView.create({
 			definition: sPclNoDB
-		}).then(function(myView) {
+		}).then(async function(myView) {
 
 			var oPCLegend = myView.byId("PlanningCalendarLegend");
 
 			//Act
 			oPCLegend.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			//Assert --section header
 			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 2, "Two header sections should be rendered");
@@ -230,14 +230,14 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("itemsHeader and appointmentItemsHeader", function (assert) {
+	QUnit.test("itemsHeader and appointmentItemsHeader", async function (assert) {
 		// arrange
 		var oPCLegend = new PlanningCalendarLegend({
 			items: [new CalendarLegendItem({ text: "abc", type: "Type01" })],
 			appointmentItems: [new CalendarLegendItem({ text: "def", type: "Type02" })]
 		});
 		oPCLegend.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader")[0].innerText, "Calendar", "there is a default items header");
@@ -246,7 +246,7 @@ sap.ui.define([
 		// act
 		oPCLegend.setItemsHeader("");
 		oPCLegend.setAppointmentItemsHeader("");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 0, "the items and appointment items headers can be empty");
@@ -254,7 +254,7 @@ sap.ui.define([
 		// act
 		oPCLegend.setItemsHeader("A");
 		oPCLegend.setAppointmentItemsHeader("B");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader")[0].innerText, "A", "the items header is correct");

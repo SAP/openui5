@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/test/TestUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/calendar/CalendarDate",
@@ -23,7 +24,6 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/dom/jquery/cursorPos"
@@ -35,6 +35,7 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	DateFormat,
+	nextUIUpdate,
 	TestUtils,
 	JSONModel,
 	CalendarDate,
@@ -51,7 +52,6 @@ sap.ui.define([
 	deepEqual,
 	Log,
 	jQuery,
-	oCore,
 	Element,
 	UI5Date
 ) {
@@ -135,14 +135,14 @@ sap.ui.define([
 		assert.equal(oDRS3.getSecondDateValue().getTime(), dateTo2.getTime(), "DRS3: SecondDateValue set");
 	});
 
-	QUnit.test("interval selection is correctly set to the YearPicker", function(assert) {
+	QUnit.test("interval selection is correctly set to the YearPicker", async function(assert) {
 		// Prepare
 		var oDRS = new DateRangeSelection({
 				displayFormat: "yyyy"
 			}).placeAt("qunit-fixture"),
 			oYearPicker;
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oDRS.toggleOpen();
@@ -170,7 +170,7 @@ sap.ui.define([
 		assert.equal(jQuery("#DRS3").find("input").val(), "April 1, 2014 - April 3, 2014", "DRS3: defined output format used");
 	});
 
-	QUnit.test("Ok button gets enabled after a range is selected", function(assert) {
+	QUnit.test("Ok button gets enabled after a range is selected", async function(assert) {
 		// Prepare
 		var oDPS = new DateRangeSelection({
 				showFooter: true
@@ -179,7 +179,7 @@ sap.ui.define([
 			oCalendar;
 
 		oDPS.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oDPS.toggleOpen();
@@ -227,7 +227,7 @@ sap.ui.define([
 		oDPS.destroy();
 	});
 
-	QUnit.test("Current year is focused when there are no selected years", function(assert) {
+	QUnit.test("Current year is focused when there are no selected years", async function(assert) {
 		// Prepare
 		var oDRS = new DateRangeSelection({
 				displayFormat: "yyyy"
@@ -236,11 +236,11 @@ sap.ui.define([
 			oYearPicker;
 
 		oDRS.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oDRS.toggleOpen();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oYearPicker = oDRS._getCalendar()._getYearPicker();
 
 		// Assert
@@ -252,12 +252,12 @@ sap.ui.define([
 
 	QUnit.module("interaction");
 
-	QUnit.test("min/max", function(assert) {
+	QUnit.test("min/max", async function(assert) {
 		var oNewMinDate = UI5Date.getInstance(2014,0,1);
 		var oNewMaxDate = UI5Date.getInstance(2014,11,31);
 		oDRS2.setMinDate(oNewMinDate);
 		oDRS2.setMaxDate(oNewMaxDate);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		bChange = false;
 		bValid = true;
@@ -293,7 +293,7 @@ sap.ui.define([
 
 		oDRS2.setMinDate();
 		oDRS2.setMaxDate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 	});
 
@@ -313,14 +313,14 @@ sap.ui.define([
 		oDRS.destroy();
 	});
 
-	QUnit.test("interval selection is correctly set to the MonthPicker", function(assert) {
+	QUnit.test("interval selection is correctly set to the MonthPicker", async function(assert) {
 		// Prepare
 		var oDRS = new DateRangeSelection({
 				displayFormat: "yyyy-MM"
 			}).placeAt("qunit-fixture"),
 			oMonthPicker;
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oDRS.toggleOpen();
@@ -333,7 +333,7 @@ sap.ui.define([
 		oDRS.destroy();
 	});
 
-	QUnit.test("opening picker when current values are outside min/max range", function(assert) {
+	QUnit.test("opening picker when current values are outside min/max range", async function(assert) {
 		//Prepare
 		var oMaxDate = UI5Date.getInstance(2014,0,1),
 			oDRS = new DateRangeSelection({
@@ -343,7 +343,7 @@ sap.ui.define([
 		oDRS.setDateValue(UI5Date.getInstance(2001, 0, 1));
 		oDRS.setSecondDateValue(UI5Date.getInstance(2001, 0, 10));
 		oDRS.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act - user opens the picker when current input value is outside min/max range
 		oDRS.focus();
@@ -367,17 +367,17 @@ sap.ui.define([
 		oDRS.destroy();
 	});
 
-	QUnit.test("Choosing a range in month with 4 weeks is possible", function(assert) {
+	QUnit.test("Choosing a range in month with 4 weeks is possible", async function(assert) {
 		//Prepare
 		var oDRS = new DateRangeSelection({
 			dateValue: UI5Date.getInstance(2021, 1, 1)
 		}).placeAt("qunit-fixture");
 		Localization.setLanguage("en-GB"); // ensure that there are 4 weeks
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		qutils.triggerEvent("click", oDRS.getId() + "-icon");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		try {
 			oDRS._getCalendar().getAggregation("month")[0]._selectDay(CalendarDate.fromLocalJSDate(UI5Date.getInstance(2021, 1, 10)));
@@ -392,7 +392,7 @@ sap.ui.define([
 		Localization.setLanguage("en-US");
 	});
 
-	QUnit.test("focused element after picker close", function(assert) {
+	QUnit.test("focused element after picker close", async function(assert) {
 		var bOrigTouch = Device.support.touch,
 			bOrigDesktop = Device.system.desktop;
 
@@ -400,7 +400,7 @@ sap.ui.define([
 		Device.support.touch = false;
 		Device.system.desktop = true;
 		qutils.triggerEvent("click", "DRS2-icon");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		jQuery("#DRS2-cal--Month0-20140406").trigger("focus");
 		qutils.triggerKeydown("DRS2-cal--Month0-20140406", KeyCodes.ENTER, false, false, false);
 		jQuery("#DRS2-cal--Month0-20140409").trigger("focus");
@@ -412,7 +412,9 @@ sap.ui.define([
 		assert.equal(document.activeElement.id, "DRS2-inner", "Focus is on the input field after cancel");
 
 		// On a touch device
+		// eslint-disable-next-line require-atomic-updates
 		Device.support.touch = true;
+		// eslint-disable-next-line require-atomic-updates
 		Device.system.desktop = false;
 		qutils.triggerEvent("click", "DRS2-icon");
 		jQuery("#DRS2-cal--Month0-20140406").trigger("focus");
@@ -425,7 +427,9 @@ sap.ui.define([
 		Element.closestTo("#DRS2-cal").fireCancel();
 		assert.notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after cancel");
 
+		// eslint-disable-next-line require-atomic-updates
 		Device.system.desktop = bOrigDesktop;
+		// eslint-disable-next-line require-atomic-updates
 		Device.support.touch = bOrigTouch;
 	});
 
@@ -543,7 +547,7 @@ sap.ui.define([
 		oDateRangeSelection.destroy();
 	});
 
-	QUnit.test("weekNumberSelect applies new selection", function(assert) {
+	QUnit.test("weekNumberSelect applies new selection", async function(assert) {
 		// Arrange
 		var oDateRangeSelection = new DateRangeSelection({
 				dateValue: UI5Date.getInstance(2014,1,2),
@@ -551,7 +555,7 @@ sap.ui.define([
 			}).placeAt("qunit-fixture"),
 			oStartDate = UI5Date.getInstance(2014, 1, 16),
 			oEndDate = UI5Date.getInstance(2014, 1, 22);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oDateRangeSelection.toggleOpen();
@@ -562,7 +566,7 @@ sap.ui.define([
 				endDate: oEndDate
 			})
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal(oDateRangeSelection.getDateValue().getTime(), oStartDate.getTime(), "dateValue is at the beginning of the week");
@@ -573,7 +577,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Keyboard Interaction", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oDRS = new DateRangeSelection("DRS4", {
 				delimiter : "@",
 				displayFormat: "yyyy/MM/dd",
@@ -591,7 +595,7 @@ sap.ui.define([
 			this.fnFireChangeEventSpy = sinon.spy(this.oDRS, "fireChangeEvent");
 
 			this.oDRS.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oDRS.destroy();
@@ -612,7 +616,7 @@ sap.ui.define([
 		assert.ok(oSpyLogError.notCalled, "Error is not logged");
 	});
 
-	QUnit.test("Change date with keyboard when 'value' binding with type is used", function(assert) {
+	QUnit.test("Change date with keyboard when 'value' binding with type is used", async function(assert) {
 		// prepare
 		var oTestStartDate = UI5Date.getInstance(2022, 10, 10, 10, 15, 10),
 			oTestEndDate = UI5Date.getInstance(2022, 10, 15, 10, 15, 10),
@@ -641,7 +645,7 @@ sap.ui.define([
 			};
 		oDRS.setModel(oModel);
 		oDRS.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oDRS._$input.cursorPos(15);
 
 		// act
@@ -980,12 +984,12 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("aria-roledescription", function (assert) {
+	QUnit.test("aria-roledescription", async function (assert) {
 		var oDRS = new DateRangeSelection(),
 			sRoledescription = Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT");
 
 		oDRS.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oDRS._$input.attr("aria-roledescription"), sRoledescription, "Input's DateRange type is indicated in aria-roledescription");
 
@@ -1038,7 +1042,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("binding type DateInterval", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.model = new JSONModel({
 				"ShipName": "Titanic",
 				"OrderDate": UI5Date.getInstance(2017,5,28),
@@ -1054,7 +1058,7 @@ sap.ui.define([
 			this.sut = new DateRangeSelection();
 			this.sut.setModel(this.model);
 			this.sut.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.sut.destroy();
@@ -1231,14 +1235,14 @@ sap.ui.define([
 		}).then(function(view) {
 			view.setModel(oModelV2).placeAt("qunit-fixture");
 
-			oModelV2.attachRequestCompleted(function () {
+			oModelV2.attachRequestCompleted(async function () {
 				var oDRS = view.byId('drs_odata'),
 					oCalendar,
 					oDateInterval;
 
 				//Act
 				oDRS.$().find(".sapUiIcon").trigger("click"); //to open the calendar popoup
-				oCore.applyChanges();
+				await nextUIUpdate();
 				//Simulate the user has selected 10 - 20 Dec 2017.
 				oCalendar = oDRS._oPopup.getContent()[1];
 				var $EventTarget1 = oCalendar.$().find("[data-sap-day='20171210']"),
@@ -1273,7 +1277,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Binded value is not accepted if it's not from the correct type", function(assert) {
+	QUnit.test("Binded value is not accepted if it's not from the correct type", async function(assert) {
 		//prepare
 		var oModel = new JSONModel([
 			{ value: "02.02.2019-03.03.2019" }
@@ -1286,7 +1290,7 @@ sap.ui.define([
 			}).placeAt('qunit-fixture');
 
 		oDSR4.setModel(oModel);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//act
 		var aDates = oDSR4._parseValue("123");
@@ -1299,7 +1303,7 @@ sap.ui.define([
 		oDSR4.destroy();
 	});
 
-	QUnit.test("Binded value is not parsed when its value is empty string", function(assert) {
+	QUnit.test("Binded value is not parsed when its value is empty string", async function(assert) {
 		var oModel = new JSONModel([
 				{ value: "02.02.2019-03.03.2019" }
 			]),
@@ -1314,7 +1318,7 @@ sap.ui.define([
 			}).placeAt('qunit-fixture');
 
 		oDSR4.setModel(oModel);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//act
 		oDSR4._getInputValue();
@@ -1326,7 +1330,7 @@ sap.ui.define([
 		oDSR4.destroy();
 	});
 
-	QUnit.test("value binding with timestamps", function(assert) {
+	QUnit.test("value binding with timestamps", async function(assert) {
 		var oTestStartDate = UI5Date.getInstance(2022, 10, 10),
 			oTestEndDate = UI5Date.getInstance(2022,10, 15 );
 
@@ -1355,7 +1359,7 @@ sap.ui.define([
 
 		oDRS.setModel(oModel);
 		oDRS.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oNormalizeResult = oDRS._normalizeDateValue(oModel.getData().start);
 		aParseResult = oDRS._parseValue(sDateRange);
@@ -1372,7 +1376,7 @@ sap.ui.define([
 		oDRS.destroy();
 	});
 
-	QUnit.test("value binding with strings", function(assert) {
+	QUnit.test("value binding with strings", async function(assert) {
 
 		var oModel = new JSONModel({
 				start: '2022-11-11',
@@ -1396,7 +1400,7 @@ sap.ui.define([
 
 		oDRS.setModel(oModel);
 		oDRS.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oSpy = this.spy(oDRS, "_normalizeDateValue");
@@ -1413,7 +1417,7 @@ sap.ui.define([
 
 	QUnit.module("API");
 
-	QUnit.test("setMinDate when dateValue & secondDateValue do not match the new min date", function (assert) {
+	QUnit.test("setMinDate when dateValue & secondDateValue do not match the new min date", async function (assert) {
 		var oDateValue = UI5Date.getInstance(2017, 0, 1),
 			oNewMinDate = UI5Date.getInstance(2018, 0, 1),
 			oSut = new DateRangeSelection({
@@ -1432,11 +1436,11 @@ sap.ui.define([
 			oSpyLogError = this.spy(Log, "error");
 
 		oSut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		oSut.setMinDate(oNewMinDate);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(oSpySetProperty.withArgs("dateValue").callCount, 0, ".. should not update the property <dateValue>");
@@ -1452,7 +1456,7 @@ sap.ui.define([
 		oSut.destroy();
 	});
 
-	QUnit.test("setMaxDate when dateValue & secondDateValue do not match the new max date", function (assert) {
+	QUnit.test("setMaxDate when dateValue & secondDateValue do not match the new max date", async function (assert) {
 		var oDateValue = UI5Date.getInstance(2017, 0, 1),
 			oNewMaxDate = UI5Date.getInstance(2016, 0, 1),
 			oSut = new DateRangeSelection({
@@ -1473,11 +1477,11 @@ sap.ui.define([
 			oSpyLogError = this.spy(Log, "error");
 
 		oSut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		oSut.setMaxDate(oNewMaxDate);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(oSpySetProperty.withArgs("dateValue").callCount, 0, ".. should not update the property <dateValue>");
@@ -1496,7 +1500,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("minDate and value in databinding scenario where the order of setters is not known",
-			function (assert) {
+			async function (assert) {
 				/**
 				 * value in second model is intentionally 20170120-20170130, in order to examine the scenario, where value
 				 * setter is called before the minDate setter and a potentially valid value is not yet considered such,
@@ -1538,7 +1542,7 @@ sap.ui.define([
 				oDP2.setModel(oModelInvalid);
 				oDP1.placeAt("qunit-fixture");
 				oDP2.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				//Pre-Assert
 				assert.equal(oDP1.getValue().toString(), "20170101 - 20170120",
@@ -1572,7 +1576,7 @@ sap.ui.define([
 				//Act - set a valid model
 				oDP1.setModel(oModelValid);
 				oDP2.setModel(oModelValid);
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				//Assert
 				assert.equal(oDP1.getValue().toString(), "20170120 - 20170130", "A valid DP1 property <value> should be always set");
@@ -1597,7 +1601,7 @@ sap.ui.define([
 			}
 	);
 
-	QUnit.test("setValue,dateValue,secondDateValue to undefined", function(assert) {
+	QUnit.test("setValue,dateValue,secondDateValue to undefined", async function(assert) {
 		var oDP1 = new DateRangeSelection({
 					value: "20170101-20170120",
 					displayFormat: "yyyyMMdd"
@@ -1609,13 +1613,13 @@ sap.ui.define([
 
 		oDP1.placeAt("qunit-fixture");
 		oDP2.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		oDP1.setDateValue();
 		oDP1.setSecondDateValue();
 		oDP2.setValue();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oDP1.getDateValue(), null, "Property <dateValue> should be null as it was just set to undefined");
@@ -1649,14 +1653,14 @@ sap.ui.define([
 		oGetFocusDomRefStub.restore();
 	});
 
-	QUnit.test("Overwriting the user input with model updates will be prevented", function (assert) {
+	QUnit.test("Overwriting the user input with model updates will be prevented", async function (assert) {
 		// Prepare
 		var oDDR = new DateRangeSelection(),
 			oHandleInputValueConcurrencySpy = this.spy(oDDR, "handleInputValueConcurrency");
 
 		oDDR._setPreferUserInteraction(true);
 		oDDR.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oDDR.setValue("test value");
@@ -1670,7 +1674,7 @@ sap.ui.define([
 
 	QUnit.module("Misc");
 
-	QUnit.test("Date with seconds set to the last second of the maxDate is displayed", function(assert) {
+	QUnit.test("Date with seconds set to the last second of the maxDate is displayed", async function(assert) {
 		var oDateRangeSelector = new DateRangeSelection({
 			displayFormat: "yyyy-MM-dd",
 			minDate: UI5Date.getInstance(2017, 0, 1, 0, 0, 0, 0),
@@ -1679,7 +1683,7 @@ sap.ui.define([
 			secondDateValue: UI5Date.getInstance(2017, 11, 31, 23, 59, 59, 100)
 		});
 		oDateRangeSelector.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oDateRangeSelector.getValue(), "2017-01-01 - 2017-12-31", "Date range is set correctly");
 
@@ -1730,13 +1734,13 @@ sap.ui.define([
 		oDateRangeSelector = null;
 	});
 
-	QUnit.test("_inPreferredUserInteraction", function (assert) {
+	QUnit.test("_inPreferredUserInteraction", async function (assert) {
 		// Prepare
 		var oDRS = new DateRangeSelection(),
 			oInPreferredUserInteractionSpy = this.spy(oDRS, "_inPreferredUserInteraction");
 
 		oDRS.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oInPreferredUserInteractionSpy.calledOnce, "Preferred interaction is handled during rendering");
@@ -1745,7 +1749,7 @@ sap.ui.define([
 		oDRS.destroy();
 	});
 
-	QUnit.test("CustomMonthPicker sets MonthPicker year", function (assert) {
+	QUnit.test("CustomMonthPicker sets MonthPicker year", async function (assert) {
 		// Prepare
 		var oDRS = new DateRangeSelection("MMyyyy", {
 				displayFormat: "MM/yyyy",
@@ -1755,11 +1759,11 @@ sap.ui.define([
 			oMP;
 
 		oDRS.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oDRS.focus();
 		qutils.triggerEvent("click", oDRS.getId() + "-icon"); // open the picker and initialize the calendar
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oMP = oDRS._getCalendar()._getMonthPicker();
 
 		// Assert

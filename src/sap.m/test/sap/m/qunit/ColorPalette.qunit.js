@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/ColorPalettePopover",
 	"sap/ui/core/Lib",
 	"sap/ui/unified/ColorPickerDisplayMode",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Dialog",
 	"sap/m/ResponsivePopover",
 	"sap/ui/Device",
@@ -12,7 +13,6 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Button,
@@ -20,6 +20,7 @@ sap.ui.define([
 	ColorPalettePopover,
 	Library,
 	ColorPickerDisplayMode,
+	nextUIUpdate,
 	Dialog,
 	ResponsivePopover,
 	Device,
@@ -27,7 +28,6 @@ sap.ui.define([
 	coreLibrary,
 	Control,
 	KeyCodes,
-	oCore,
 	jQuery
 ) {
 	"use strict";
@@ -469,14 +469,14 @@ sap.ui.define([
 			oCP.destroy();
 		});
 
-		QUnit.test("_focusFirstElement when 'Default Color' button is available", function (assert) {
+		QUnit.test("_focusFirstElement when 'Default Color' button is available", async function (assert) {
 			// Prepare
 			var oCP = new ColorPalette({}),
 				oSpyFocusDefaultButton;
 
 			oCP._setShowDefaultColorButton(true);
 			oCP.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			oSpyFocusDefaultButton = this.spy(oCP._getDefaultColorButton().getDomRef(), "focus");
 
 			// Act
@@ -490,14 +490,14 @@ sap.ui.define([
 			oCP.destroy();
 		});
 
-		QUnit.test("_focusFirstElement when 'Default Color' button is not available", function (assert) {
+		QUnit.test("_focusFirstElement when 'Default Color' button is not available", async function (assert) {
 			// Prepare
 			var oCP = new ColorPalette({}),
 				oSpyFocusFirstSwatch;
 
 			oCP._setShowDefaultColorButton(false);
 			oCP.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			oSpyFocusFirstSwatch = this.spy(oCP._getAllPaletteColorSwatches()[0], "focus");
 
 			// Act
@@ -1588,7 +1588,7 @@ sap.ui.define([
 
 	QUnit.module("ColorPalette - ARIA", function() {
 		// The ARIA tests are the only ones, that checks something at the DOM. DOM rendering is supposed to be tested via OPA.
-		QUnit.test("ARIA attributes and tooltips are rendered", function (assert) {
+		QUnit.test("ARIA attributes and tooltips are rendered", async function (assert) {
 			// Prepare
 			var oCP = new ColorPalette({
 					colors: [
@@ -1606,7 +1606,7 @@ sap.ui.define([
 
 			// Act
 			oCP.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			// swatch container
@@ -2050,13 +2050,13 @@ sap.ui.define([
 
 		QUnit.module("ColorPalettePopover - ARIA", function() {
 			// The ARIA tests are the only ones, that checks something at the DOM. DOM rendering is supposed to be tested via OPA.
-			QUnit.test("Popover has certain aria attributes", function (assert) {
+			QUnit.test("Popover has certain aria attributes", async function (assert) {
 				// Prepare
 				var oCPP = new ColorPalettePopover(),
 					oOpener = new Button();
 
 				oOpener.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				// Act
 				oCPP.openBy(oOpener);

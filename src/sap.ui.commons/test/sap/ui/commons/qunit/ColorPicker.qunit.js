@@ -1,17 +1,17 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/unified/ColorPicker",
 	"sap/ui/commons/ColorPicker",
-	"sap/ui/unified/library",
 	"sap/ui/unified/ColorPickerHelper"
 ], function(
 	qutils,
+	nextUIUpdate,
 	createAndAppendDiv,
 	UnifiedColorPicker,
 	ColorPicker,
-	unifiedLibrary,
 	ColorPickerHelper
 ) {
 	"use strict";
@@ -285,9 +285,9 @@ sap.ui.define([
 	});
 
 	//Testcase 13: Set new color string (RGB-value)
-	QUnit.test("New color string 'rgb(249,238,227)' [Control 3]: ", function(assert) {
+	QUnit.test("New color string 'rgb(249,238,227)' [Control 3]: ", async function(assert) {
 		oColorPicker3.setColorString("rgb(249,238,227)");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.expect(3);
 		assert.equal(oColorPicker3.oRedField.getValue(), "249" , "RED set from color string to 249: ");
 		assert.equal(oColorPicker3.oGreenField.getValue(), "238" , "GREEN set from color string to 238: ");
@@ -301,8 +301,8 @@ sap.ui.define([
 	QUnit.module("Results");
 
 	//Testcase 14: Results of named parameter
-	QUnit.test("Result of Input Parameter 'lime' [Control 2]: ", function(assert) {
-		sap.ui.getCore().applyChanges();
+	QUnit.test("Result of Input Parameter 'lime' [Control 2]: ", async function(assert) {
+		await nextUIUpdate();
 		colors2 = getColors(oColorPicker2);
 
 		assert.expect(7);
