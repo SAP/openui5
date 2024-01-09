@@ -90,12 +90,12 @@ sap.ui.define([
 				 * Object related to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
 				 * The object has the following properties:
 				 * <ul>
-				 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module</li>
+				 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module. The used delegate module must inherit from {@link module:sap/ui/mdc/ValueHelpDelegate ValueHelpDelegate}</li>
 				 * 	<li><code>payload</code> (optional) defines application-specific information that can be used in the given delegate</li>
 				 * </ul>
 				 * <i>Sample delegate object:</i>
 				 * <pre><code>{
-				 * 	name: "sap/ui/mdc/BaseDelegate",
+				 * 	name: "sap/ui/mdc/ValueHelpDelegate",
 				 * 	payload: {}
 				 * }</code></pre>
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
@@ -289,7 +289,7 @@ sap.ui.define([
 						itemId: { type: "string" },
 						/**
 						 * If <code>true</code> the filtering was executed case sensitive
-						 * since 1.121.0
+						 * @since 1.121.0
 						 */
 						caseSensitive: { type: "boolean" }
 					}
@@ -783,6 +783,18 @@ sap.ui.define([
 
 		return false;
 	};
+
+	/**
+	 * Configuration object type for normalized definition of a <code>ValueHelpItem</code>.
+	 *
+	 * @static
+	 * @constant
+	 * @typedef {object} sap.ui.mdc.valuehelp.ValueHelpItem
+	 * @property {any} key Key
+	 * @property {any} [description] Description
+	 * @property {object} [payload] Payload of the condition. Set by application. Data needs to be stringified. (as stored and loaded in variants)
+	 * @public
+	 */
 
 	/**
 	 * Configuration object type to determine a <code>ValueHelpItem</code> for a given value.

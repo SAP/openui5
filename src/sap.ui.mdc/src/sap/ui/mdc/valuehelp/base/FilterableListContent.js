@@ -660,7 +660,7 @@ sap.ui.define([
 	 * Gets the conditions that are selectable from list content.
 	 *
 	 * These are validated conditions as other conditions are shown in the {@link sap.ui.mdc.valuehelp.content.Conditions Conditions}.
-	 * @returns {sap.ui.base.ManagedObject.AggregationBindingInfo} ListBindingInfo
+	 * @returns {sap.ui.mdc.condition.ConditionObject[]} Conditions
 	 * @protected
 	 */
 	FilterableListContent.prototype.getSelectableConditions = function() {

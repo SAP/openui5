@@ -302,12 +302,12 @@ sap.ui.define([
 				 * Object related to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
 				 * The object has the following properties:
 				 * <ul>
-				 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module</li>
+				 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module. The used delegate module must inherit from {@link module:sap/ui/mdc/field/FieldBaseDelegate FieldBaseDelegate}</li>
 				 * 	<li><code>payload</code> (optional) defines application-specific information that can be used in the given delegate</li>
 				 * </ul>
 				 * <i>Sample delegate object:</i>
 				 * <pre><code>{
-				 * 	name: "sap/ui/mdc/BaseDelegate",
+				 * 	name: "sap/ui/mdc/field/FieldBaseDelegate",
 				 * 	payload: {}
 				 * }</code></pre>
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
@@ -667,6 +667,7 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the <code>ContentFactory</code> used to manage the internal content control.
 	 * @protected
 	 * @returns {sap.ui.mdc.field.content.ContentFactory} oContentFactory the ContentFactory of the Field
 	 */

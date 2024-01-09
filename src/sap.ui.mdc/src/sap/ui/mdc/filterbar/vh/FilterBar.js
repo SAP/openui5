@@ -188,7 +188,8 @@ sap.ui.define(
 		 *
 		 * @param {sap.ui.mdc.filterbar.vh.CollectiveSearchSelect} oCollectiveSearch Instance of the {@link sap.ui.mdc.filterbar.vh.CollectiveSearchSelect CollectiveSearchSelect} control
 		 * @returns {this} Reference to <code>this</code> to allow method chaining
-		 * @protected
+		 * @private
+		 * @ui5-restricted sap.ui.mdc.valuehelp.content.FilterableListContent
 		 */
 		FilterBar.prototype.setCollectiveSearch = function(oCollectiveSearch) {
 			if (this._oCollectiveSearch) {
@@ -210,7 +211,8 @@ sap.ui.define(
 		 * <b>Note:</b> This must only be used by the corresponding value help, not from outside.
 		 *
 		 * @returns {sap.ui.mdc.filterbar.vh.CollectiveSearchSelect} Instance of the {@link sap.ui.mdc.filterbar.vh.CollectiveSearchSelect CollectiveSearchSelect} control
-		 * @protected
+		 * @private
+		 * @ui5-restricted sap.ui.mdc.valuehelp.content.FilterableListContent
 		 */
 		FilterBar.prototype.getCollectiveSearch = function() {
 			return this._oCollectiveSearch;
@@ -222,7 +224,8 @@ sap.ui.define(
 		 * <b>Note:</b> This must only be used by the corresponding value help, not from outside.
 		 *
 		 * @returns {this} Reference to <code>this</code> to allow method chaining
-		 * @protected
+		 * @private
+		 * @ui5-restricted sap.ui.mdc.valuehelp.content.FilterableListContent
 		 */
 		FilterBar.prototype.destroyCollectiveSearch = function() {
 			if (this._oCollectiveSearch && this._oFilterBarLayout) {
