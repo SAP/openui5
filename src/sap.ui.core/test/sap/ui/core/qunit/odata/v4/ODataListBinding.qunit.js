@@ -4808,7 +4808,8 @@ sap.ui.define([
 		// code under test - call fnErrorCallback
 		oCreateInCacheExpectation.args[0][6](oError);
 
-		oSetSelectedExpectation = this.mock(oContext0).expects("setSelected").withExactArgs(false);
+		oSetSelectedExpectation = this.mock(oContext0).expects("doSetSelected")
+			.withExactArgs(false);
 		oRemoveCreatedExpectation = oBindingMock.expects("removeCreated")
 			.withExactArgs(sinon.match.same(oContext0));
 
@@ -5880,7 +5881,7 @@ sap.ui.define([
 		oContext.created().catch(function (oError) {
 			assert.ok(oError.canceled, "create promise rejected with 'canceled'");
 		});
-		this.mock(oContext).expects("setSelected").withExactArgs(false);
+		this.mock(oContext).expects("doSetSelected").withExactArgs(false);
 		this.mock(oBinding).expects("removeCreated").withExactArgs(sinon.match.same(oContext))
 			.callThrough();
 		oBindingMock.expects("deleteFromCache").callsFake(function () {

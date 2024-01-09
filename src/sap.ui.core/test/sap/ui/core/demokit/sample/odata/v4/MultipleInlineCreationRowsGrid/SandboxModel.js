@@ -28,6 +28,14 @@ sap.ui.define([
 			quantity : null,
 			_Product_ID : 10
 		},
+		oProduct20Refresh = {
+			ID : 20,
+			amount : "200",
+			name : "Product 2",
+			HasActiveEntity : false,
+			HasDraftEntity : false,
+			IsActiveEntity : false
+		},
 		oProduct100 = {
 			ID : 100,
 			amount : null,
@@ -61,6 +69,9 @@ sap.ui.define([
 				},
 				"Products?$count=true&$filter=IsActiveEntity%20eq%20false%20or%20SiblingEntity/IsActiveEntity%20eq%20null&$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,name&$skip=0&$top=18" : {
 					source : "Products.json"
+				},
+				"Products?$filter=ID%20eq%2020%20and%20IsActiveEntity%20eq%20false&$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,name" : {
+					message : {value : [oProduct20Refresh]}
 				},
 				"Products(ID=10,IsActiveEntity=false)/_Parts?$count=true&$select=ID,description,quantity&$skip=0&$top=118" : [{
 					ifMatch : function () {
