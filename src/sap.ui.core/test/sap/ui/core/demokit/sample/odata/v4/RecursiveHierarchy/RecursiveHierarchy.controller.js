@@ -63,6 +63,7 @@ sap.ui.define([
 			const sVisibleRowCount = TestUtils.retrieveData( // controlled by OPA
 					"sap.ui.core.sample.odata.v4.RecursiveHierarchy.visibleRowCount")
 				|| oUriParameters.get("visibleRowCount");
+			const sThreshold = oUriParameters.get("threshold");
 
 			const oTable = this.byId("table");
 			if (sTreeTable === "Y") {
@@ -71,6 +72,9 @@ sap.ui.define([
 			} else {
 				if (sVisibleRowCount) {
 					oTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
+				}
+				if (sThreshold) {
+					oTable.setThreshold(parseInt(sThreshold));
 				}
 				const oRowsBinding = oTable.getBinding("rows");
 				oRowsBinding.setAggregation(this._oAggregation);
@@ -92,6 +96,9 @@ sap.ui.define([
 				oTreeTable._oProxy._bEnableV4 = true;
 				if (sVisibleRowCount) {
 					oTreeTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
+				}
+				if (sThreshold) {
+					oTable.setThreshold(parseInt(sThreshold));
 				}
 				const oTreeRowsBinding = oTreeTable.getBinding("rows");
 				oTreeRowsBinding.setAggregation(this._oAggregation);

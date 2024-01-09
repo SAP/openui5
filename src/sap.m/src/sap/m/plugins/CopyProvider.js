@@ -47,11 +47,35 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 		properties: {
 			/**
 			 * Callback function to extract the cell data that is copied to the clipboard.
+			 * <ul>
+			 * <li>If an array is returned, then each array value will be copied as a separate cell into the clipboard.</li>
+			 * <li>If <code>undefined</code> or <code>null</code> is returned, then the cell will be excluded from copying.</li>
+			 * <li>If an object is returned, then it must have the following properties:
+			 * <ul>
+			 *     <li><code>text</code>: (mandatory) The cell data to be copied to the clipboard as <code>text/plain</code> MIME type.</li>
+			 *     <li><code>html</code>: (optional) The cell data to be copied to the clipboard as <code>text/html</code> MIME type.</li>
+			 * </ul>
+			 * </li>
+			 * </ul>
+			 *
+			 * <b>Note:<b> The <code>CopyProvider</code> uses the <code>text/html<code> MIME type to display the merged cell data shown in a UI5 table as a single cell in the clipboard. This allows users
+			 * in applications supporting <code>text/html</code> MIME type, such as <code>Spreadsheet</code>, to preserve the cell data format that appears in a UI5 table.
+			 * The <code>CopyProvider</code> also uses the <code>text/plain</code> MIME type to display the merged cell data shown in a UI5 table as separate clipboard cells. This allows users
+			 * to edit plain data with applications like <code>SpreadSheet</code>, then copy and paste the data back into a UI5 table, preserving data integrity without in-cell formatting.<br>
+			 * Spreadsheet-like applications supporting <code>text/html</code> MIME type typically prioritize <code>text/html</code> clipboard data during paste. This means that
+			 * the data format copied from a UI5 table is preserved with the default paste operation. Users wanting to make edits can access the individual and unformatted cell data in the clipboard,
+			 * which is stored in the text/plain MIME type, by selecting the "Paste Special" option and then choosing "Unicode Text" in spreadsheet applications.<br>
+			 *
+			 * <b>Note:<b> Using <code>text/html</code> MIME type as a clipboard item might not be supported on all platforms. In such cases, the <code>CopyProvider</code> writes only <code>text/plain</code> data
+			 * to the clipboard. Refer to the <code>bIncludeHtmlMimeType</code> parameter and do not return the object type if this value is <code>false</code>.<br>
+			 *
+			 * <b>Note:<b> Even if the user is on a platform supporting <code>text/html</code> MIME type as a clipboard item, currently, any HTML tags are not allowed; all data is encoded.
 			 *
 			 * @callback sap.m.plugins.CopyProvider.extractDataHandler
 			 * @param {sap.ui.model.Context|sap.m.ColumnListItem} oContextOrRow The binding context of the selected row or the row instance if there is no binding
 			 * @param {sap.m.Column|sap.ui.table.Column|sap.ui.mdc.table.Column} oColumn The related column instance of selected cells
-			 * @returns {*|Array.<*>|undefined|null} The cell data to be copied or array of cell data to be split into different cells in the clipboard. <code>undefined</code> or <code>null</code> to exclude the cell from copying.
+			 * @param {boolean} bIncludeHtmlMimeType Indicates whether writing <code>text/html</code> MIME type to the clipboard is supported
+			 * @returns {*|{text: *, html: *}|Array.<*>|undefined|null} The cell data to be copied to the clipboard
 			 * @public
 			 */
 			/**
@@ -259,10 +283,11 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 	 * if the {@link sap.m.plugins.CellSelector CellSelector} plugin is also enabled for the table.
 	 * <b>Note: </b> The returned array might be a sparse array if the {@link #getCopySparse copySparse} property is <code>true</code>.
 	 *
-	 * @returns {Array.<Array.<*>>} Two-dimensional extracted data from the selection.
+	 * @param {boolean} bIncludeHtmlMimeType Determines whether the selection data to be returned includes <code>text/html</code> MIME type values, if the platform supports <code>text/html</code> MIME type as a clipboard item
+	 * @returns {Array.<Array.<*>>|{text: Array.<Array.<*>>, html: Array.<Array.<*>>}} Two-dimensional data extracted from the selection, or an object with <code>text</code> and <code>html</code> keys, each with two-dimensional data extracted from the selection if <code>bIncludeHtmlMimeType</code> parameter is <code>true</code> and the platform supports <code>text/html</code> MIME type as a clipboard item.
 	 * @public
 	 */
-	CopyProvider.prototype.getSelectionData = function(_bIncludeHtmlMimeType = false) {
+	CopyProvider.prototype.getSelectionData = function(bIncludeHtmlMimeType = false) {
 		const oControl = this.getControl();
 		const fnExtractData = this.getExtractData();
 		if (!oControl || !fnExtractData) {
@@ -308,8 +333,8 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 		const aTextSelectionData = [];
 		let bHtmlMimeTypeProvided = false;
 
-		if (_bIncludeHtmlMimeType && !isHtmlMimeTypeAllowed()) {
-			_bIncludeHtmlMimeType = false;
+		if (bIncludeHtmlMimeType && !isHtmlMimeTypeAllowed()) {
+			bIncludeHtmlMimeType = false;
 		}
 
 		for (let iContextIndex = 0; iContextIndex < aAllSelectedRowContexts.length; iContextIndex++) {
@@ -331,12 +356,12 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 				const bContextFromSelectedRows = (oRowContext == aSelectedRowContexts[iContextIndex]);
 				aSelectableColumns.forEach((oColumn, iColumnIndex) => {
 					if (bContextFromSelectedRows || (iColumnIndex >= mCellSelectionRange?.from.colIndex && iColumnIndex <= mCellSelectionRange?.to.colIndex)) {
-						const vCellData = fnExtractData(oRowContext, oColumn, _bIncludeHtmlMimeType);
+						const vCellData = fnExtractData(oRowContext, oColumn, bIncludeHtmlMimeType);
 						if (!isCellDataCopyable(vCellData)) {
 							return;
 						}
 
-						if (_bIncludeHtmlMimeType && vCellData.hasOwnProperty("html")) {
+						if (bIncludeHtmlMimeType && vCellData.hasOwnProperty("html")) {
 							bHtmlMimeTypeProvided = true;
 							pushCellDataTo(vCellData.html, aHtmlRowData);
 						}
@@ -470,7 +495,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 		this._oCopyButton?.setVisible(this._getEffectiveVisible());
 	};
 
-	CopyProvider.prototype._extractData = function(oRowContext, oColumn, _bIncludeHtmlMimeType) {
+	CopyProvider.prototype._extractData = function(oRowContext, oColumn, bIncludeHtmlMimeType) {
 		if (!this._mColumnClipboardSettings) {
 			this._mColumnClipboardSettings = new WeakMap();
 		}
@@ -502,7 +527,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 			aPropertyValues[0] = fnUnitFormatter(aPropertyValues[0], aPropertyValues[1]);
 		}
 
-		if (!_bIncludeHtmlMimeType) {
+		if (!bIncludeHtmlMimeType) {
 			return aPropertyValues;
 		}
 

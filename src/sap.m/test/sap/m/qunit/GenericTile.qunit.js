@@ -5206,6 +5206,11 @@ sap.ui.define([
 		assert.notOk(this.oGenericTile.$("action-more").hasClass("sapMGTVisible"),"The Action More button should not be visible");
 	});
 
+	QUnit.test("Adding aria-label to the more button",function(assert){
+		var sText = this.oGenericTile._oMoreIcon.getDomRef().getAttribute("aria-label");
+		assert.equal(sText,this.oGenericTile.getHeader() + " " + this.oGenericTile.getSubheader() + " " + this.oGenericTile._oRb.getText("GENERICTILE_MORE_ACTIONBUTTON_TEXT"),"Aria label has been set as expected for the more button");
+	});
+
 	QUnit.module("Getting focus on IconMode tiles", {
 		beforeEach: function() {
 			this.oGenericTile = new GenericTile("tile",{

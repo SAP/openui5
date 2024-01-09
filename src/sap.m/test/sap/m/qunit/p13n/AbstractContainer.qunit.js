@@ -51,8 +51,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Instantiate Container with views", function(assert) {
-		this.createContainer();
+	QUnit.test("Instantiate Container with views", async function(assert) {
+		await this.createContainer();
 		assert.ok(this.oContainer);
 		assert.equal(this.oContainer.getCurrentViewKey(), "view1", "Correvt view set");
 	});

@@ -14,17 +14,30 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/StandardListItem",
 	"sap/ui/core/library"
-], function (AbstractContainer, Bar, Button, Title, List, IconTabBar, IconTabFilter, ContainerItem, Device, mLibrary, StandardListItem, coreLibrary) {
+], (
+	AbstractContainer,
+	Bar,
+	Button,
+	Title,
+	List,
+	IconTabBar,
+	IconTabFilter,
+	ContainerItem,
+	Device,
+	mLibrary,
+	StandardListItem,
+	coreLibrary
+) => {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
-	var ButtonType = mLibrary.ButtonType;
+	const ButtonType = mLibrary.ButtonType;
 
 	// shortcut for sap.m.ListType
-	var ListItemType = mLibrary.ListType;
+	const ListItemType = mLibrary.ListType;
 
 	// shortcut for sap.ui.core.TitleLevel
-	var TitleLevel = coreLibrary.TitleLevel;
+	const TitleLevel = coreLibrary.TitleLevel;
 
 	/**
 	 * Constructor for a new <code>Container</code>.
@@ -48,7 +61,7 @@ sap.ui.define([
 	 * @since 1.96
 	 * @alias sap.m.p13n.Container
 	 */
-	var Container = AbstractContainer.extend("sap.m.p13n.Container", {
+	const Container = AbstractContainer.extend("sap.m.p13n.Container", {
 		metadata: {
 			library: "sap.m",
 			properties: {
@@ -59,13 +72,13 @@ sap.ui.define([
 			}
 		},
 		renderer: {
-		  apiVersion: 2
+			apiVersion: 2
 		}
 	});
 
 	Container.prototype.DEFAULT_KEY = "$default";
 
-	Container.prototype.init = function () {
+	Container.prototype.init = function() {
 		AbstractContainer.prototype.init.apply(this, arguments);
 		this.addStyleClass("sapMP13nContainer");
 		this.setListLayout(Device.system.phone);
@@ -77,15 +90,15 @@ sap.ui.define([
 	 * @param {boolean} bListLayout Defines which layout mode is used
 	 * @returns {sap.m.p13n.Container} The <code>Container</code> instance
 	 */
-	Container.prototype.setListLayout = function (bListLayout) {
+	Container.prototype.setListLayout = function(bListLayout) {
 		this.setProperty("listLayout", bListLayout);
 
 		//clear existing navigation items
 		this._getTabBar().removeAllItems();
 		this._getNavigationList().removeAllItems();
-		var oBackButton;
-		var oHeaderText;
-		var oHeaderContent;
+		let oBackButton;
+		let oHeaderText;
+		let oHeaderContent;
 
 		//update navigator control
 		if (bListLayout) {
@@ -96,7 +109,7 @@ sap.ui.define([
 			oHeaderText = this._getHeaderText();
 		} else {
 			this._getTabBar().setVisible(true);
-			var aViews = this.getViews();
+			const aViews = this.getViews();
 			if (aViews.length > 1) {
 				//0 is $default, use index 1 as the first "custom" added view
 				this.switchView(aViews[1].getKey());
@@ -104,9 +117,9 @@ sap.ui.define([
 			oHeaderContent = this._getTabBar();
 		}
 
-		var oHeader = this.getHeader();
+		const oHeader = this.getHeader();
 		if (!oHeader) {
-			var oBar = new Bar({
+			const oBar = new Bar({
 				contentLeft: oHeaderContent ? oHeaderContent : [oBackButton, oHeaderText]
 			});
 			this.setHeader(oBar);
@@ -121,9 +134,9 @@ sap.ui.define([
 		}
 
 		//recreate the navigation items
-		this.getViews().forEach(function (oView) {
+		this.getViews().forEach((oView) => {
 			this._addToNavigator(oView);
-		}.bind(this));
+		});
 
 		return this;
 	};
@@ -131,7 +144,7 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	Container.prototype.switchView = function (sKey) {
+	Container.prototype.switchView = function(sKey) {
 		AbstractContainer.prototype.switchView.apply(this, arguments);
 		if (this._bPrevented) {
 			return;
@@ -147,16 +160,16 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	Container.prototype.addView = function (vContainerItem) {
+	Container.prototype.addView = function(vContainerItem) {
 		this._addToNavigator(typeof vContainerItem == "string" ? this.getView(vContainerItem) : vContainerItem);
 		AbstractContainer.prototype.addView.apply(this, arguments);
 		return this;
 	};
 
 	/**
-	* @override
-	*/
-	Container.prototype.removeView = function (vContainerItem) {
+	 * @override
+	 */
+	Container.prototype.removeView = function(vContainerItem) {
 		this._removeFromNavigator(typeof vContainerItem == "string" ? this.getView(vContainerItem) : vContainerItem);
 		AbstractContainer.prototype.removeView.apply(this, arguments);
 		return this;
@@ -168,13 +181,13 @@ sap.ui.define([
 	 *
 	 * @returns {sap.m.p13n.Container} The Container instance
 	 */
-	Container.prototype.addSeparator = function () {
+	Container.prototype.addSeparator = function() {
 		if (!this.getProperty("listLayout")) {
 			return;
 		}
 
-		var oItems = this._getNavigationList().getItems();
-		var oLastItem = oItems[oItems.length - 1];
+		const oItems = this._getNavigationList().getItems();
+		const oLastItem = oItems[oItems.length - 1];
 		oLastItem.addStyleClass("sapMMenuDivider");
 
 		return this;
@@ -186,37 +199,37 @@ sap.ui.define([
 	 * @returns {sap.m.Page} The layout object
 	 * @ui5-restricted sap.m.table.columnmenu.Menu
 	 */
-	Container.prototype.getLayout = function () {
+	Container.prototype.getLayout = function() {
 		return this.oLayout;
 	};
 
-	Container.prototype._getTabBar = function () {
+	Container.prototype._getTabBar = function() {
 		if (!this._oTabBar) {
 			this._oTabBar = new IconTabBar({
 				headerBackgroundDesign: "Transparent",
 				applyContentPadding: false,
 				expandable: false,
-				select: function (oEvt) {
+				select: (oEvt) => {
 					this.switchView(oEvt.getParameter("key"));
-				}.bind(this)
+				}
 			});
 			this.addDependent(this._oTabBar);
 		}
 		return this._oTabBar;
 	};
 
-	Container.prototype._getNavigationList = function () {
+	Container.prototype._getNavigationList = function() {
 		if (!this._oNavigationList) {
 			this._oNavigationList = new List({
-				itemPress: function (oEvt) {
-					var oItem = oEvt.getParameter("listItem");
+				itemPress: (oEvt) => {
+					const oItem = oEvt.getParameter("listItem");
 					this.switchView(oItem._key);
-				}.bind(this)
+				}
 			}).addStyleClass("p13nContainerDefaultList");
 			this.addDependent(this._oNavigationList);
 		}
 		if (!this.getView(this.DEFAULT_KEY)) {
-			var oListContainer = new ContainerItem({
+			const oListContainer = new ContainerItem({
 				key: this.DEFAULT_KEY,
 				content: this._oNavigationList
 			});
@@ -226,30 +239,34 @@ sap.ui.define([
 		return this._oNavigationList;
 	};
 
-	Container.prototype._getNavBackBtn = function () {
+	Container.prototype._getNavBackBtn = function() {
 		if (!this._oNavBackBtn) {
 			this._oNavBackBtn = new Button({
 				type: ButtonType.Back,
-				press: function (oEvt) {
+				press: (oEvt) => {
 					this.switchView(this.DEFAULT_KEY);
-				}.bind(this)
+				}
 			});
 			this.addDependent(this._oNavBackBtn);
 		}
 		return this._oNavBackBtn;
 	};
 
-	Container.prototype._getHeaderText = function () {
+	Container.prototype._getHeaderText = function() {
 		if (!this._oHeaderText) {
-			this._oHeaderText = new Title({ level: Device.system.phone ? TitleLevel.H2 : TitleLevel.H1});
+			this._oHeaderText = new Title({
+				level: Device.system.phone ? TitleLevel.H2 : TitleLevel.H1
+			});
 			this.addDependent(this._oHeaderText);
 		}
 		return this._oHeaderText;
 	};
 
-	Container.prototype._addToNavigator = function (oContainerItem) {
-
-		var sKey = oContainerItem.getKey(), oContainerItemTextBindingInfo = oContainerItem.getBindingInfo("text"), vText = oContainerItem.getText(), sIcon = oContainerItem.getIcon();
+	Container.prototype._addToNavigator = function(oContainerItem) {
+		const sKey = oContainerItem.getKey();
+		const oContainerItemTextBindingInfo = oContainerItem.getBindingInfo("text");
+		let vText = oContainerItem.getText();
+		const sIcon = oContainerItem.getIcon();
 
 		//In case the text of the Abstract container item is bound, the binding should be forwarded instead of the value
 		if (oContainerItemTextBindingInfo && oContainerItemTextBindingInfo.parts) {
@@ -264,7 +281,7 @@ sap.ui.define([
 
 		if (this.getListLayout()) {
 			this.getView(this.DEFAULT_KEY);
-			var oItem =  new StandardListItem({
+			const oItem = new StandardListItem({
 				type: ListItemType.Navigation,
 				icon: sIcon,
 				title: vText
@@ -279,28 +296,28 @@ sap.ui.define([
 		}
 	};
 
-	Container.prototype._removeFromNavigator = function (oContainerItem) {
+	Container.prototype._removeFromNavigator = function(oContainerItem) {
 
-		var sKey = oContainerItem.getKey();
+		const sKey = oContainerItem.getKey();
 
 		if (sKey == this.DEFAULT_KEY) {
 			return;
 		}
 
 		if (this.getListLayout()) {
-			var oItem = this._getNavigationList().getItems().find(function(oListItem){
+			const oItem = this._getNavigationList().getItems().find((oListItem) => {
 				return oListItem._key === sKey;
 			});
 			this._getNavigationList().removeItem(oItem);
 		} else {
-			var oTab = this._getTabBar().getItems().find(function(oTab){
+			const oTab = this._getTabBar().getItems().find((oTab) => {
 				return oTab.getKey() === sKey;
 			});
 			this._getTabBar().removeItem(oTab);
 		}
 	};
 
-	Container.prototype.exit = function () {
+	Container.prototype.exit = function() {
 		AbstractContainer.prototype.exit.apply(this, arguments);
 		if (this._oTabBar) {
 			this._oTabBar.destroy();

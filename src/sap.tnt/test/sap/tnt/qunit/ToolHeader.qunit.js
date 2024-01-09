@@ -10,8 +10,8 @@ sap.ui.define([
 	'sap/m/ToolbarSpacer',
 	'sap/tnt/ToolHeader',
 	'sap/tnt/ToolHeaderUtilitySeparator',
-	'sap/ui/qunit/utils/waitForThemeApplied',
-	"sap/ui/core/Core"
+	'sap/ui/qunit/utils/nextUIUpdate',
+	'sap/ui/qunit/utils/waitForThemeApplied'
 ], function(
 	Element,
 	jQuery,
@@ -23,8 +23,8 @@ sap.ui.define([
 	ToolbarSpacer,
 	ToolHeader,
 	ToolHeaderUtilitySeparator,
-	waitForThemeApplied,
-	oCore
+	nextUIUpdate,
+	waitForThemeApplied
 ) {
 	'use strict';
 
@@ -37,6 +37,20 @@ sap.ui.define([
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	jQuery("#" + DOM_RENDER_LOCATION).width('300px');
+
+	/**
+	 * In some tests that are using fake timers, it might happen that a rendering task is queued by
+	 * creating a fake timer. Without an appropriate clock.tick call, this timer might not execute
+	 * and a later nextUIUpdate with real timers would wait endlessly.
+	 * To prevent this, after each such test a sync rendering is executed which will clear any pending
+	 * fake timer. The rendering itself should not be needed by the tests, if they are properly
+	 * isolated.
+	 *
+	 * This function is used as an indicator for such cases. It's just a wrapper around nextUIUpdate.
+	 */
+	function clearPendingUIUpdates(clock) {
+		return nextUIUpdate(clock);
+	}
 
 	function getToolHeader() {
 		return new ToolHeader({
@@ -195,7 +209,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("API and Rendering", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oApp = new App("myApp", { initialPage: "toolHeaderPage" });
 			this.oPage = new Page("toolHeaderPage", { title: "Tool Header" });
 			this.oApp.placeAt(DOM_RENDER_LOCATION);
@@ -203,7 +217,7 @@ sap.ui.define([
 
 			this.toolHeader = getToolHeader();
 			this.oPage.addContent(this.toolHeader);
-			oCore.applyChanges();
+			await nextUIUpdate(); // no fake timer active in beforeEach
 		},
 		afterEach: function () {
 			this.oApp.destroy();
@@ -233,16 +247,18 @@ sap.ui.define([
 		assert.ok(overflowButtonClone.length > 0, "Overflow button clone is rendered");
 	});
 
-	QUnit.test("overflow popover", function (assert) {
+	QUnit.test("overflow popover", async function (assert) {
 		assert.ok(jQuery('.sapMOTAPopover').length == 0, "Popover is not rendered");
 
 		var overflowButton = this.toolHeader.$('overflowButton');
 		overflowButton.trigger('tap');
 
 		assert.ok(jQuery('.sapMOTAPopover').length > 0, "Popover is rendered");
+
+		await clearPendingUIUpdates(this.clock);
 	});
 
-	QUnit.test("ToolHeader sapMBarChildFirstChild class", function (assert) {
+	QUnit.test("ToolHeader sapMBarChildFirstChild class", async function (assert) {
 		var oFirstControl = this.toolHeader.getContent()[0],
 			oSecondControl = this.toolHeader.getContent()[1];
 
@@ -252,7 +268,7 @@ sap.ui.define([
 
 		//Act
 		oFirstControl.setVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Assert
 		assert.notOk(oFirstControl.hasStyleClass("sapMBarChildFirstChild"), "First child does not have 'sapMBarChildFirstChild' class");

@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	'sap/base/Log',
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
@@ -17,10 +16,10 @@ sap.ui.define([
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem',
 	'sap/tnt/NavigationListGroup',
+	'sap/ui/qunit/utils/nextUIUpdate',
 	'sap/ui/qunit/utils/waitForThemeApplied'
 ], function(
 	Log,
-	Core,
 	Element,
 	Library,
 	coreLibrary,
@@ -35,6 +34,7 @@ sap.ui.define([
 	NavigationList,
 	NavigationListItem,
 	NavigationListGroup,
+	nextUIUpdate,
 	waitForThemeApplied
 ) {
 	'use strict';
@@ -50,6 +50,20 @@ sap.ui.define([
 		title: "Navigation List"
 	});
 	oApp.addPage(oPage);
+
+	/**
+	 * In some tests that are using fake timers, it might happen that a rendering task is queued by
+	 * creating a fake timer. Without an appropriate clock.tick call, this timer might not execute
+	 * and a later nextUIUpdate with real timers would wait endlessly.
+	 * To prevent this, after each such test a sync rendering is executed which will clear any pending
+	 * fake timer. The rendering itself should not be needed by the tests, if they are properly
+	 * isolated.
+	 *
+	 * This function is used as an indicator for such cases. It's just a wrapper around nextUIUpdate.
+	 */
+	function clearPendingUIUpdates(clock) {
+		return nextUIUpdate(clock);
+	}
 
 	function getNavigationList(selectedKey, collapsed) {
 		return new NavigationList({
@@ -251,17 +265,16 @@ sap.ui.define([
 	}
 
 	QUnit.module("API and Rendering", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.navigationList = getNavigationList();
 			oPage.addContent(this.navigationList);
-
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in beforeEach
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in afterEach
 		}
 	});
 
@@ -293,25 +306,25 @@ sap.ui.define([
 		assert.strictEqual(computedStyle.pointerEvents, "none", "pointer events are disabled");
 	});
 
-	QUnit.test("list.setExpanded(false)", function (assert) {
+	QUnit.test("list.setExpanded(false)", async function (assert) {
 		assert.notOk(this.navigationList.$().hasClass('sapTntNLCollapsed'), "expanded mode is ok");
 
 		this.navigationList.setExpanded(false);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.ok(this.navigationList.$().hasClass('sapTntNLCollapsed'), "collapsed mode is ok");
 	});
 
-	QUnit.test("rootItem.setExpanded(false)", function (assert) {
+	QUnit.test("rootItem.setExpanded(false)", async function (assert) {
 		assert.notOk(this.navigationList.getItems()[2].getDomRef().querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), "sapTntNLIItemsContainerHidden class is not set");
 
 		this.navigationList.getItems()[2].setExpanded(false);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.ok(this.navigationList.getItems()[2].getDomRef().querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), "sapTntNLIItemsContainerHidden class is set");
 	});
 
-	QUnit.test("Tooltips when expanded", function (assert) {
+	QUnit.test("Tooltips when expanded", async function (assert) {
 		// Arrange
 		var oNestedItem = new NavigationListItem({
 				text: "nestedItem",
@@ -330,7 +343,7 @@ sap.ui.define([
 				]
 			});
 		oNL.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oItem.getDomRef("a").title, oItem.getTooltip());
@@ -338,9 +351,10 @@ sap.ui.define([
 
 		// Clean up
 		oNL.destroy();
+		await clearPendingUIUpdates(this.clock);
 	});
 
-	QUnit.test("Tooltips when collapsed", function (assert) {
+	QUnit.test("Tooltips when collapsed", async function (assert) {
 		// Arrange
 		var oNestedItem = new NavigationListItem({
 				text: "nestedItem",
@@ -360,7 +374,7 @@ sap.ui.define([
 				]
 			});
 		oNL.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oItem.$().trigger("tap");
@@ -373,6 +387,7 @@ sap.ui.define([
 
 		// Clean up
 		oNL.destroy();
+		await clearPendingUIUpdates(this.clock);
 	});
 
 	QUnit.test("Selection Indicator", function (assert) {
@@ -389,7 +404,7 @@ sap.ui.define([
 			deferred.resolve();
 		}
 
-		return deferred.then(function () {
+		return deferred.then(async () => {
 			// Arrange
 			var oItem = new NavigationListItem({
 					text: "item"
@@ -400,14 +415,14 @@ sap.ui.define([
 					]
 				});
 			oNL.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate(this.clock);
 
 			// Assert
 			assert.strictEqual(getComputedStyle(oItem.getDomRef().querySelector(".sapTntNLISelectionIndicator")).display, "none", "Selection indicator shouldn't be displayed on non-selected item");
 
 			// Act
 			oItem.$().trigger("tap");
-			Core.applyChanges();
+			await nextUIUpdate(this.clock);
 
 			// Assert
 			assert.strictEqual(getComputedStyle(oItem.getDomRef().querySelector(".sapTntNLISelectionIndicator")).display, sExpectedDisplay, "Selection indicator should be displayed on selected item based on the theme");
@@ -419,7 +434,7 @@ sap.ui.define([
 
 	QUnit.module("Lifecycle");
 
-	QUnit.test("Popover is destroyed when NavigationList is destroyed", function (assert) {
+	QUnit.test("Popover is destroyed when NavigationList is destroyed", async function (assert) {
 		// Arrange
 		var oItem = new NavigationListItem({
 				text: "item",
@@ -437,7 +452,7 @@ sap.ui.define([
 				]
 			});
 		oNL.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oItem.$().trigger("tap");
@@ -449,20 +464,21 @@ sap.ui.define([
 
 		// Clean up
 		oSpy.restore();
+		await clearPendingUIUpdates(this.clock);
 	});
 
 	QUnit.module("Tab navigation and ARIA settings", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.navigationList = getNavigationList('rootChild1');
 			oPage.addContent(this.navigationList);
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in beforeEach
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in afterEach
 		}
 	});
 
@@ -488,7 +504,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test('Focus', function (assert) {
+	QUnit.test('Focus', async function (assert) {
 		var oFirstItem = this.navigationList.getItems()[0];
 		oFirstItem.getDomRef("a").focus();
 		this.clock.tick(500);
@@ -497,17 +513,17 @@ sap.ui.define([
 		var oDialog = new Dialog();
 		oFirstItem.attachSelect(function(){oDialog.open();});
 		oFirstItem.fireSelect();
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 		assert.ok(document.activeElement.classList.contains("sapMDialog"), "The dialog is focused");
 
 		oDialog.close();
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 		assert.strictEqual(document.activeElement.textContent, "Root 1", "The first item is focused again");
 	});
 
-	QUnit.test('ARIA attributes', function (assert) {
+	QUnit.test('ARIA attributes', async function (assert) {
 
 		var sExpectedAriaRoleDescription = Library.getResourceBundleFor("sap.tnt")
 			.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM");
@@ -545,18 +561,18 @@ sap.ui.define([
 
 		this.stub(NavigationListItem.prototype, "_openUrl", function () { });
 		QUnitUtils.triggerEvent("tap", newSelectedItem.getDomRef());
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		assert.strictEqual(newSelectedItem.getDomRef("a").getAttribute("aria-current"), "page", "aria-current is added on newly selected item");
 		assert.strictEqual(oldSelectedItem.getDomRef("a").getAttribute("aria-current"), null, "aria-current is removed from the previously selected item");
 
 		QUnitUtils.triggerEvent("tap", oldSelectedItem.getDomRef());
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		this.navigationList.getItems()[0].setExpanded(false);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		const oNavigationListGroup = this.navigationList.getItems()[5];
 		assert.strictEqual(oNavigationListGroup.getDomRef("subtree").getAttribute("aria-label"), oNavigationListGroup.getText(), "Group's inner subtree has label containing the text of the group");
@@ -568,7 +584,7 @@ sap.ui.define([
 		assert.strictEqual(currentItemNoChildren.hasAttribute("aria-expanded"), false, jQuery(currentItemNoChildren).text() + " has no ARIA attribute expanded.");
 
 		this.navigationList.setExpanded(false);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		var currentItemCollapsed = this.navigationList.getDomRef().querySelectorAll(".sapTntNLIFirstLevel")[2];
 		assert.strictEqual(currentItemCollapsed.querySelector("a").hasAttribute("aria-expanded"), false, "Root 2 has no ARIA attribute expanded when NavigationList is collapsed.");
@@ -580,12 +596,12 @@ sap.ui.define([
 
 		//aria-haspopup
 		this.navigationList.setExpanded(true);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(currentItem.hasAttribute("aria-haspopup"), false, "no aria-haspopup attribute when NavigationList is expanded");
 
 		this.navigationList.setExpanded(false);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		assert.strictEqual(currentItem.getAttribute("aria-haspopup"), "tree", "aria-haspopup is of type tree when NavigationList is collapsed");
 
 		//aria-roledescription
@@ -593,17 +609,17 @@ sap.ui.define([
 	});
 
 	QUnit.module("ARIA", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.navigationList = getNavigationList();
 			oPage.addContent(this.navigationList);
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in beforeEach
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in afterEach
 		}
 	});
 
@@ -623,7 +639,7 @@ sap.ui.define([
 		spy.restore();
 	});
 
-	QUnit.test('Anchors inside NavigationListItems should have correct roles and aria-role', function (assert) {
+	QUnit.test('Anchors inside NavigationListItems should have correct roles and aria-role', async function (assert) {
 		var groupItem = this.navigationList.getItems()[0];
 
 		var groupItemAnchorElement = groupItem.getDomRef().getElementsByTagName("a")[0];
@@ -633,7 +649,7 @@ sap.ui.define([
 		assert.equal(secondLevelItemAnchorElement.getAttribute("role"), 'treeitem', "The anchor is with correct role");
 
 		this.navigationList.setExpanded(false);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		groupItem = this.navigationList.getItems()[0];
 		groupItemAnchorElement = groupItem.getDomRef().getElementsByTagName("a")[0];
@@ -641,16 +657,16 @@ sap.ui.define([
 	});
 
 	QUnit.module('SelectedItem association', {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.navigationList = getNavigationList();
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in beforeEach
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in afterEach
 		}
 	});
 
@@ -751,14 +767,14 @@ sap.ui.define([
 		Log.warning.restore();
 	});
 
-	QUnit.test('Calling setSelectedItem before the NavigationList is rendered', function (assert) {
+	QUnit.test('Calling setSelectedItem before the NavigationList is rendered', async function (assert) {
 		// arrange
 		const navigationList = new NavigationList({
 			expanded: false
 		});
 
 		navigationList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		const item = new NavigationListItem({ key: "itemKey" });
 		const parentItem = new NavigationListItem({
@@ -773,7 +789,7 @@ sap.ui.define([
 		assert.ok(true, "There is no error");
 
 		// act
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(navigationList.getSelectedItem() , item, "selectedItem is successfully set");
@@ -781,6 +797,7 @@ sap.ui.define([
 
 		// clean up
 		navigationList.destroy();
+		await clearPendingUIUpdates(this.clock);
 	});
 
 	QUnit.module('selectedKey property', {
@@ -792,32 +809,32 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test('api', function (assert) {
+	QUnit.test('api', async function (assert) {
 
 		this.navigationList = getNavigationList('child1');
 		oPage.addContent(this.navigationList);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(this.navigationList._selectedItem.getText(), 'Child 1', 'initial selection is correct');
 
 		this.navigationList.setSelectedKey('child3');
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(this.navigationList._selectedItem.getText(), 'Child 3', 'selection is correct');
 
 		this.navigationList.setSelectedKey('');
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.notOk(this.navigationList._selectedItem,'selection is removed');
 	});
 
-	QUnit.test('interaction', function (assert) {
+	QUnit.test('interaction', async function (assert) {
 		this.navigationList = getNavigationList();
 
 		var oStub = sinon.stub(NavigationListItem.prototype, "_openUrl", function () { });
 
 		oPage.addContent(this.navigationList);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.notOk(this.navigationList._selectedItem, 'no initial selection');
 
@@ -831,21 +848,21 @@ sap.ui.define([
 	});
 
 	QUnit.module("Interaction", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.navigationList = getNavigationList();
 			oPage.addContent(this.navigationList);
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in beforeEach
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in afterEach
 		}
 	});
 
-	QUnit.test("click group expander", function (assert) {
+	QUnit.test("click group expander", async function (assert) {
 		// arrange
 		this.clock.restore(); // use real timeouts for this test
 		const done = assert.async();
@@ -861,7 +878,7 @@ sap.ui.define([
 		// act
 		$expanderIcon.trigger("tap");
 
-		Core.applyChanges();
+		await nextUIUpdate(); // no fake timer active
 
 		setTimeout(function () {
 			// assert
@@ -873,7 +890,7 @@ sap.ui.define([
 		}.bind(this), 1000);
 	});
 
-	QUnit.test("Expand/collapse with keyboard", function (assert) {
+	QUnit.test("Expand/collapse with keyboard", async function (assert) {
 		// Arrange
 		var oItem = Element.getElementById("groupItem3"),
 			$item = oItem.$(),
@@ -883,7 +900,7 @@ sap.ui.define([
 
 		// Act collapse
 		QUnitUtils.triggerKeydown($item, KeyCodes.ARROW_LEFT);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		// Assert collapsed
@@ -893,7 +910,7 @@ sap.ui.define([
 
 		// Act expand
 		QUnitUtils.triggerKeydown($item, KeyCodes.ARROW_RIGHT);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		// Assert expanded
@@ -901,7 +918,7 @@ sap.ui.define([
 		assert.ok($focusableElement.is(":focus"), "The item is still focused");
 	});
 
-	QUnit.test("Expand/collapse with mouse", function (assert) {
+	QUnit.test("Expand/collapse with mouse", async function (assert) {
 		// Arrange
 		var oItem = Element.getElementById("groupItem3"),
 			$item = oItem.$(),
@@ -912,7 +929,7 @@ sap.ui.define([
 
 		// Act collapse
 		QUnitUtils.triggerEvent("tap", $icon);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		// Assert collapsed
@@ -920,7 +937,7 @@ sap.ui.define([
 
 		// Act expand
 		QUnitUtils.triggerEvent("tap", $icon);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		// Assert expanded
@@ -928,7 +945,7 @@ sap.ui.define([
 
 		// Act collapse
 		QUnitUtils.triggerEvent("tap", $iconTitle);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		// Assert collapsed
@@ -937,7 +954,7 @@ sap.ui.define([
 
 		// Act expand
 		QUnitUtils.triggerEvent("tap", $iconTitle);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		// Assert expanded
@@ -947,7 +964,7 @@ sap.ui.define([
 		// assert.ok(oItem.getExpanded(), "The group is expanded");
 
 		// QUnitUtils.triggerEvent("tap", $groupTitle);
-		// Core.applyChanges();
+		// await nextUIUpdate(this.clock);
 		// this.clock.tick(500);
 
 		// // Assert expanded
@@ -955,7 +972,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("select group", function (assert) {
+	QUnit.test("select group", async function (assert) {
 
 		var bPassedArg,
 			fnEventSpy = sinon.spy(function (oEvent) {
@@ -971,7 +988,7 @@ sap.ui.define([
 		var $group = jQuery(oTargetItem.querySelector("a"));
 		$group.trigger("tap");
 
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// wait 500ms
 		this.clock.tick(500);
@@ -986,7 +1003,7 @@ sap.ui.define([
 		oStub.restore();
 	});
 
-	QUnit.test("select group item", function (assert) {
+	QUnit.test("select group item", async function (assert) {
 
 		var bPassedArg,
 			fnEventSpy = sinon.spy(function (oEvent) {
@@ -1002,7 +1019,7 @@ sap.ui.define([
 
 		$groupItem.trigger('tap');
 
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// wait 500ms
 		this.clock.tick(500);
@@ -1017,19 +1034,20 @@ sap.ui.define([
 		oStub.restore();
 	});
 
-	QUnit.test("popup list", function (assert) {
+	QUnit.test("popup list", async function (assert) {
 		assert.notOk(jQuery(".sapTntNLPopup").length, "popup list is not shown");
 		assert.ok(!this.navigationList._oPopover, "should have no popover reference");
 
 		var oStub = sinon.stub(NavigationListItem.prototype, "_openUrl", function () { });
 
 		this.navigationList.setExpanded(false);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		var $item = jQuery(".sapTntNL .sapTntNLIFirstLevel a").first();
 		$item.trigger("tap");
 
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
+
 		// wait 500ms
 		this.clock.tick(500);
 
@@ -1056,7 +1074,7 @@ sap.ui.define([
 
 		$groupItem.trigger("tap");
 
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// wait 500ms
 		this.clock.tick(500);
@@ -1082,17 +1100,17 @@ sap.ui.define([
 	});
 
 	QUnit.module("Overflow behavior", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.navigationList = getNavigationList(undefined, true);
 			oPage.addContent(this.navigationList);
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in beforeEach
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in afterEach
 		}
 	});
 
@@ -1150,7 +1168,7 @@ sap.ui.define([
 		assert.notOk(items[2].getDomRef().classList.contains("sapTntNLIHidden"), "item 2 is visible");
 	});
 
-	QUnit.test("Overflow menu", function (assert) {
+	QUnit.test("Overflow menu", async function (assert) {
 		var navListDomRef = this.navigationList.getDomRef(),
 			items = this.navigationList.getItems(),
 			overflowItemDomRef = navListDomRef.querySelector(".sapTntNLOverflow"),
@@ -1189,7 +1207,7 @@ sap.ui.define([
 
 		QUnitUtils.triggerEvent("click", document.querySelector(".sapUiMnuItm:nth-child(2)"));
 
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		assert.notOk(document.querySelector(".sapUiMnu"), "overflow menu is destroyed");
@@ -1223,24 +1241,24 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation List Group", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.navigationList = getNavigationList();
 			oPage.addContent(this.navigationList);
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in beforeEach
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
 
-			Core.applyChanges();
+			await nextUIUpdate(); // no fake timer active in afterEach
 		}
 	});
 
-	QUnit.test("On Collapsed NL, only the group children are visible", function (assert) {
+	QUnit.test("On Collapsed NL, only the group children are visible", async function (assert) {
 		// arrange
 		this.navigationList.setExpanded(false);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		const oNavigationListGroup = this.navigationList.getItems()[5],
 			aExpectedVisibleItems = oNavigationListGroup.getItems().map((oItem) => oItem.getDomRef()),
@@ -1250,9 +1268,9 @@ sap.ui.define([
 		assert.strictEqual(aExpectedVisibleItems.every((oItem) => oNavListDomRef.contains(oItem)), true, "the children of the group are still rendered");
 	});
 
-	QUnit.test("On Expanded NL, the group title is also visible", function (assert) {
+	QUnit.test("On Expanded NL, the group title is also visible", async function (assert) {
 		this.navigationList.setExpanded(true);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		const oNavigationListGroup = this.navigationList.getItems()[5],
 			aExpectedVisibleItems = oNavigationListGroup.getItems().map((oItem) => oItem.getDomRef()),
@@ -1262,7 +1280,7 @@ sap.ui.define([
 		assert.strictEqual(aExpectedVisibleItems.every((oItem) => oNavListDomRef.contains(oItem)), true, "the children of the group are still rendered");
 	});
 
-	QUnit.test("Groups can be collapsed and expanded to show/hide children", function (assert) {
+	QUnit.test("Groups can be collapsed and expanded to show/hide children", async function (assert) {
 		// arrange
 		this.clock.restore(); // use real timeouts for this test
 		const done = assert.async();
@@ -1274,20 +1292,21 @@ sap.ui.define([
 		assert.strictEqual(oDomRef.querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), false, "the children are visible");
 		QUnitUtils.triggerEvent("tap", oDomRef.querySelector(".sapTntNLI"));
 
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
-		setTimeout(() => {
+		setTimeout(async () => {
 			assert.strictEqual(oNavigationListGroup.getExpanded(), false, "expanded is set to false");
 			assert.strictEqual(oDomRef.querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), true, "the children are not visible");
 
+			await nextUIUpdate(this.clock);
 			done();
 		}, 500);
 
 	});
 
-	QUnit.test("When a group is in the Overflow, its children are directly placed in the overflow", function (assert) {
+	QUnit.test("When a group is in the Overflow, its children are directly placed in the overflow", async function (assert) {
 		this.navigationList.setExpanded(false);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		const oNavListDomRef = this.navigationList.getDomRef(),
 			oNavigationListGroup = this.navigationList.getItems()[5],

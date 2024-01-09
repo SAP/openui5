@@ -8594,6 +8594,168 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: Grouping by a property of type "Edm.Time" is possible with the AnalyticalBinding.
+	// The AnalyticalBinding has to ensure that the generated IDs e.g. multi-unit ID, group ID are
+	// different for different "Edm.Time" values. "Edm.Time" objects are the only ones that do not
+	// provide a useful toString representation.
+	// SNOW: CS20230006325114
+	[{
+		sTitle: "no multi-unit case ([a, b, c,| d, e,| f, g, h, i, j])",
+		aLengths: [551, 551, 551],
+		aKeyIndexForRoot: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+		aMultiUnitIndices: [],
+		aMultiUnitKeysForRoot: undefined,
+		aSkip: [5, 3],
+		aTop: [5, 2],
+		aVisibleRow: [7, 2],
+		bWithWarning: false
+	}, {
+		sTitle: "multi-unit at the end of the gap ([a, a, b,| c, d, d, e, f,| f, g, h, ...]); case c) II",
+		aKeyIndexForRoot: ["ZERO", 2, 3, -4, 6, -7, 9, 10, 11, 12, 13, 14, 15],
+		aLengths: [550, 550, 548],
+		aMultiUnitIndices: [[0, 1], [4,5], [7, 8]],
+		aMultiUnitKeysForRoot: [
+			",,,0,*,,,-multiple-units-not-dereferencable",
+			undefined,
+			undefined,
+			",,,4,*,,,-multiple-units-not-dereferencable",
+			undefined,
+			",,,7,*,,,-multiple-units-not-dereferencable"
+		],
+		aSkip: [8, 3],
+		aTop: [8, 5],
+		aVisibleRow: [9, 2],
+		bWithWarning: true
+	}, {
+		sTitle: "multi-unit in block one and at the beginning and the end of last block"
+			+ " ([a, a, b,| b, c, d, e, e,| e, g, h, ...])",
+		aKeyIndexForRoot: ["ZERO", -2, 4, 5, -6, 9, 10, 11, 12, 13, 14, 15],
+		aLengths: [550, 550, 547],
+		aMultiUnitIndices: [[0, 1], [2, 3], [6, 8]],
+		aMultiUnitKeysForRoot: [
+			",,,0,*,,,-multiple-units-not-dereferencable",
+			",,,2,*,,,-multiple-units-not-dereferencable",
+			undefined,
+			undefined,
+			",,,6,*,,,-multiple-units-not-dereferencable"
+		],
+		aSkip: [8, 3],
+		aTop: [8, 5],
+		aVisibleRow: [9, 2],
+		bWithWarning: true
+	}].forEach(function (oFixture) {
+		QUnit.test("AnalyticalBinding: grouping by property of type Edm.Time, " + oFixture.sTitle, function (assert) {
+			var oBinding, oTable,
+				oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS", {
+					tokenHandling : false
+				}),
+				sView = '\
+<t:AnalyticalTable id="table" rows="{path : \'/Items\', parameters : {useBatchRequests : true}}"\
+		threshold="2" visibleRowCount="2">\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CreationTime">\
+		<Label text="CreationTime"/>\
+		<t:template><Text wrapping="false" text="{CreationTime}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text wrapping="false" text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
+</t:AnalyticalTable>',
+				that = this;
+
+			var aItems = [];
+			for (var i = 0; i < 50; i += 1) {
+				aItems.push({
+					__metadata : {uri : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items(" + i + ")"},
+					CreationTime : {ms: i, __edmType: 'Edm.Time'},
+					AmountInCompanyCodeCurrency : String(i),
+					Currency : "USD"
+				});
+			}
+			// create multi-unit situations by reusing the dimension value of the grouped column (CreationTime) of the first
+			// item of the range for all others in the range; a multi-unit situation requires also a different dimension
+			// value of the measure's dimension, so use different the Currency values.
+			oFixture.aMultiUnitIndices.forEach(function (aMultiUnitRange) {
+				var iFrom = aMultiUnitRange[0],
+					iTo = aMultiUnitRange[1];
+
+				for (var i = iFrom + 1; i <= iTo; i += 1) {
+					aItems[i].CreationTime = aItems[iFrom].CreationTime;
+					aItems[i].Currency = aItems[iFrom].Currency + i;
+				}
+			});
+
+			this.oLogMock.expects("warning")
+				.withExactArgs("Detected a multi-unit case, so sorting is only possible on leaves", "/Items",
+					"sap.ui.model.analytics.AnalyticalBinding", undefined)
+				.exactly(oFixture.bWithWarning ? 1 : 0);
+
+			this.expectRequest({
+					encodeRequestUri : false,
+					requestUri : "Items" // Grand Total Request
+						+ "?$select=AmountInCompanyCodeCurrency,Currency&$top=100"
+						+ "&$inlinecount=allpages"
+				}, {
+					__count : "1",
+					results : [{
+						__metadata : {uri : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('grandTotal')"},
+						AmountInCompanyCodeCurrency : "42.00",
+						Currency : "USD"
+					}]
+				})
+				.expectRequest({
+					encodeRequestUri : false,
+					requestUri : "Items" // Data and Count Request
+						+ "?$select=CreationTime,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CreationTime%20asc&$top=3&$inlinecount=allpages"
+				}, {
+					__count : "550",
+					results : aItems.slice(0, 3)
+				});
+
+			function readBlock(i) {
+				assert.strictEqual(oBinding.getLength(), oFixture.aLengths[i]);
+
+				var iSkip = oFixture.aSkip[i];
+				var iTop = oFixture.aTop[i];
+				that.expectRequest({
+						encodeRequestUri : false,
+						requestUri : "Items"
+							+ "?$select=CreationTime,AmountInCompanyCodeCurrency,"
+							+ "Currency&$orderby=CreationTime%20asc&$skip=" + iSkip + "&$top=" + iTop
+					}, {
+						results : aItems.slice(iSkip, iSkip + iTop)
+					});
+
+				// code under test
+				oTable.setFirstVisibleRow(oFixture.aVisibleRow[i]);
+
+				return that.waitForChanges(assert);
+			}
+
+			return this.createView(assert, sView, oModel).then(function () {
+				oTable = that.oView.byId("table");
+				oBinding = oTable.getBinding("rows");
+
+				return readBlock(0);
+			}).then(function () {
+				return readBlock(1);
+			}).then(function () {
+				assert.strictEqual(oBinding.getLength(), oFixture.aLengths[2]);
+				var aMultiUnitKeysForRoot = oBinding.mMultiUnitKey["/"];
+				// strip trailing |<number> to before comparing; number is a global counter of multi-unit situations
+				if (aMultiUnitKeysForRoot) {
+					aMultiUnitKeysForRoot = aMultiUnitKeysForRoot.map(function (sKey) {
+						return sKey.split("|")[0];
+					});
+				}
+				assert.deepEqual(aMultiUnitKeysForRoot, oFixture.aMultiUnitKeysForRoot);
+				assert.deepEqual(oBinding.mKeyIndex["/"], oFixture.aKeyIndexForRoot);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: A user scrolls in an AnalyticalTable. Further data needs to be requested. The first
 	// entry of a response for a level request belongs to a different node than the watermark node.
 	// The response has to be inserted at the right position, no empty rows for missing data are
@@ -21628,6 +21790,116 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			);
 
 			return this.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Custom headers are applied to *all* change requests when the $batch containing them is sent on
+	// ODataModel#submitChangesWithChangeHeaders.
+	// SNOW: CS20230004859105
+	QUnit.test("ODataModel#submitChangesWithChangeHeaders: Custom headers for change requests", function (assert) {
+		var oModel = createSalesOrdersModel({
+				defaultBindingMode : BindingMode.TwoWay,
+				refreshAfterChange : false // suppress GETs on collection after POST to reduce test complexity
+			}),
+			mModelHeaders = {
+				"my-custom0" : "~custom0Global",
+				"my-custom1" : "~custom1Global",
+				"my-custom2" : "~custom2Global"
+			},
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="2">\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest(mModelHeaders)
+			.expectRequest({
+				headers : mModelHeaders,
+				requestUri : "SalesOrderSet?$skip=0&$top=102"
+			}, {
+				results : [{
+					__metadata : { uri : "/SalesOrderSet('1')" },
+					SalesOrderID : "1",
+					Note : "foo"
+				}, {
+					__metadata : { uri : "/SalesOrderSet('2')" },
+					SalesOrderID : "2",
+					Note : "bar"
+				}]
+			})
+			.expectValue("id", ["1", "2"])
+			.expectValue("note", ["foo", "bar"]);
+
+		oModel.setHeaders(mModelHeaders); // set global custom headers
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					data : {
+						__metadata : { "uri": "/SalesOrderSet('1')" },
+						Note : "baz"
+					},
+					headers : {
+						"my-custom0" : "~custom0Global",
+						"my-custom1" : "~custom1Global",
+						"my-custom2" : "~custom2Change",
+						"my-custom-change" : "~customChange"
+					},
+					key : "SalesOrderSet('1')",
+					method : "MERGE",
+					requestUri : "SalesOrderSet('1')"
+				}, NO_CONTENT)
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : { type : "GWSAMPLE_BASIC.SalesOrder" }
+					},
+					headers : {
+						"my-create" : "~create",
+						"my-custom0" : "~custom0Create",
+						"my-custom1" : "~custom1Global",
+						"my-custom2" : "~custom2Change",
+						"my-custom-change" : "~customChange"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : { uri : "SalesOrderSet('3')" },
+						SalesOrderID : "3"
+					},
+					statusCode : 201
+				})
+				.expectRequest({
+					headers : {
+						"my-remove" : "~remove",
+						"my-custom0" : "~custom0Remove",
+						"my-custom1" : "~custom1Global",
+						"my-custom2" : "~custom2Change",
+						"my-custom-change" : "~customChange"
+					},
+					method : "DELETE",
+					requestUri : "SalesOrderSet('2')"
+				}, NO_CONTENT)
+				.expectValue("id", "", 1)
+				.expectValue("note", ["baz", ""]);
+
+			// code under test: update (via two-way binding), createEntry, remove apply headers from
+			//   global model headers, headers from API calls and submitChangesWithChangeHeaders in expected prio
+			that.oView.byId("table").getRows()[0].getCells()[1].setValue("baz");
+			oModel.createEntry("/SalesOrderSet", {
+				properties : {},
+				headers : {"my-create" : "~create", "my-custom0" : "~custom0Create"}
+			});
+			oModel.remove("/SalesOrderSet('2')", {
+				groupId : "changes", // use same batch group as update and create
+				headers : {"my-remove" : "~remove", "my-custom0" : "~custom0Remove"}
+			});
+			oModel.submitChangesWithChangeHeaders(
+				{changeHeaders : {"my-custom-change" : "~customChange", "my-custom2" : "~custom2Change"}}
+			);
+
+			return that.waitForChanges(assert);
 		});
 	});
 });

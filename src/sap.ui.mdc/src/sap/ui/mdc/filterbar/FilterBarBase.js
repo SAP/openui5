@@ -860,7 +860,7 @@ sap.ui.define([
 		/**
 		 * Triggers the search.
 		 * @public
-		 * @returns {Promise} If the {@link sap.ui.mdc.FilterBarBase#setSuspendSelection suspendSelection} property is set to <code>true</code>, the method will be immediately resolved, otherwise it returns the result of the {@link sap.ui.mdc.FilterBarBase#validate} call.
+		 * @returns {Promise} If the {@link sap.ui.mdc.filterbar.FilterBarBase#setSuspendSelection suspendSelection} property is set to <code>true</code>, the method will be immediately resolved, otherwise it returns the result of the {@link sap.ui.mdc.filterbar.FilterBarBase#validate} call.
 		 */
 		FilterBarBase.prototype.triggerSearch = function() {
 			if (this.getSuspendSelection()) {

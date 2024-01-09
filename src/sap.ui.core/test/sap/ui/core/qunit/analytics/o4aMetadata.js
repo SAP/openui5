@@ -84,6 +84,8 @@ sap.ui.define([
 		"					sap:text=\"ControllingAreaText2\" />\n" +
 		"				<Property Name=\"ControllingAreaText2\" Type=\"Edm.String\"\n" +
 		"					MaxLength=\"40\" sap:label=\"Controlling Area2\" sap:attribute-for=\"ControllingAreaWithTextEmptyLabel\" />\n" +
+		"				<!-- property of type Edm.Time for grouping SNOW: CS20230006325114 -->\n" +
+		"				<Property Name=\"CreationTime\" Type=\"Edm.Time\" sap:label=\"Created At\" sap:aggregation-role=\"dimension\" />\n" +
 		"				<!-- Ordinary properties -->\n" +
 		"				<Property Name=\"Property0\" Type=\"Edm.String\" />\n" +
 		"				<Property Name=\"Property1\" Type=\"Edm.String\" />\n" +
