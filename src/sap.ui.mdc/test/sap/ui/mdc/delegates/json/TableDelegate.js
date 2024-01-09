@@ -12,7 +12,6 @@ sap.ui.define([
 ) {
 	"use strict";
 	var TestTableDelegate = Object.assign({}, TableDelegate);
-	TestTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	function setSelectedGridTableConditions (oTable, aContexts) {
 		var oMultiSelectionPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");

@@ -249,7 +249,6 @@ sap.ui.define([
 
 	SampleChartDelegate.getFilterDelegate = function() {
 		return {
-			apiVersion: 2,//CLEANUP_DELEGATE
 			addItem: BooksFBDelegate.addItem.bind(BooksFBDelegate),
 			addCondition: function(sPropertyName, oChart, mPropertyBag) {
 				return BooksFBDelegate.addCondition(sPropertyName, oChart, mPropertyBag);
