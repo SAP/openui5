@@ -77,12 +77,13 @@ describe("sap.ui.integration.CardHeaderFooterVisualTests", function () {
 		utils.navigateBack();
 	});
 
-	it("Hidden Footer", function () {
-		utils.navigateTo("Footer (experimental)");
+	it("Footer", function () {
+		utils.navigateTo("Footer");
 
 		var aCards = [
 			{ id: "card1" },
-			{ id: "card2" }
+			{ id: "card2" },
+			{ id: "card3" }
 		];
 
 		aCards.forEach(function (oCard) {
@@ -95,7 +96,7 @@ describe("sap.ui.integration.CardHeaderFooterVisualTests", function () {
 				}
 			};
 
-			utils.takePictureOfElement(oElement, "10_HiddenFooter_" + oCard.id);
+			utils.takePictureOfElement(oElement, "10_Footer_" + oCard.id);
 		});
 		utils.navigateBack();
 	});
