@@ -56,8 +56,7 @@ sap.ui.define([
 					DeliveryDate : this.createDeliveryDate(),
 					GrossAmount : null,
 					Quantity : null,
-					QuantityUnit : null,
-					SalesOrderID : oItemsBinding.getContext().getProperty("SalesOrderID")
+					QuantityUnit : null
 				}, /*bAtEnd*/ true, {inactive : true});
 		},
 
@@ -158,8 +157,7 @@ sap.ui.define([
 				Note : "Created by OData V2 Sales Orders App",
 				ProductID : "HT-1000",
 				Quantity : "1",
-				QuantityUnit : "EA",
-				SalesOrderID : bDeepCreate ? undefined : oBindingContext.getProperty("SalesOrderID")
+				QuantityUnit : "EA"
 			}, /*bAtEnd*/true, mParameters);
 
 			oCreatedContext.created().then(function () {
