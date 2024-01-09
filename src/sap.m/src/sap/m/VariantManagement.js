@@ -1994,8 +1994,7 @@ sap.ui.define([
 				enabled: true,
 				type: ButtonType.Emphasized,
 				press: function() {
-					this._handleManageSavePressed();
-					if (this.oManagementDialog) {
+					if (this._handleManageSavePressed() && this.oManagementDialog) {
 						this.oManagementDialog.close();
 					}
 				}.bind(this)
@@ -2550,7 +2549,7 @@ sap.ui.define([
 
 	VariantManagement.prototype._handleManageSavePressed = function() {
 		if (this._anyInErrorState(this.oManagementTable)) {
-			return;
+			return false;
 		}
 
 		if (this._getDeletedItems().length > 0) {
@@ -2583,6 +2582,8 @@ sap.ui.define([
 		if (this.oManagementDialog) {
 			this._resumeManagementTableBinding();
 		}
+
+		return true;
 	};
 
 	VariantManagement.prototype._resumeManagementTableBinding = function() {
@@ -2624,9 +2625,11 @@ sap.ui.define([
 
 		if (oManagementTable) {
 			oManagementTable.getItems().some(function(oItem) {
-				oInput = oItem.getCells()[VariantManagement.COLUMN_NAME_IDX];
-				if (oInput && oInput.getValueState && (oInput.getValueState() === ValueState.Error)) {
-					bInError = true;
+				if (oItem.getVisible()) {
+					oInput = oItem.getCells()[VariantManagement.COLUMN_NAME_IDX];
+					if (oInput && oInput.getValueState && (oInput.getValueState() === ValueState.Error)) {
+						bInError = true;
+					}
 				}
 				return bInError;
 			});
