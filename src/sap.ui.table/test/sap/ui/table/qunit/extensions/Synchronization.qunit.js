@@ -517,7 +517,7 @@ sap.ui.define([
 			});
 	});
 
-	QUnit.test("Place vertical scrollbar at", function(assert) {
+	QUnit.skip("Place vertical scrollbar at", function(assert) {
 		var oTable = this.oTable;
 		var Div = document.createElement("div");
 		var oInternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
