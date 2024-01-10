@@ -142,6 +142,20 @@ sap.ui.define([
 				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 				/**
+				 * Sets the <code>required</code> state of the <code>CheckBox</code>.
+				 *
+				 * <b>Note:</b> Use this property only when a single relationship between this field and a Label cannot be established.
+				 * For example, with the assistance of the <code>labelFor</code> property of <code>sap.m.Label</code>.
+				 *
+				 * <b>Note:</b> This property won't work as expected without setting a value to the <code>text</code> property of the <code>CheckBox</code>.
+ 				 * The <code>text</code> property acts as a label for the <code>CheckBox</code> and is crucial for assistive technologies,
+ 				 * like screen readers, to provide a meaningful context.
+				 *
+				 * @since 1.121
+				 */
+				required: {type: "boolean", group: "Misc", defaultValue: false},
+
+				/**
 				 * The 'name' property to be used in the HTML code, for example for HTML forms that send data to the server via submit.
 				 */
 				name : {type : "string", group : "Misc", defaultValue : null},
@@ -476,7 +490,7 @@ sap.ui.define([
 	/**
 	 * Lazy loads the CheckBox`s label
 	 *
-	 * @return {sap.m.Label}
+	 * @return {sap.m.Label} The label control
 	 * @private
 	 */
 	CheckBox.prototype._getLabel = function() {
@@ -580,7 +594,8 @@ sap.ui.define([
 			description: (sText ? sText + " " : "") + this.getFormattedState(),
 			focusable: this.getEnabled() && !this.getDisplayOnly(),
 			enabled: this.getEnabled(),
-			editable: this.getEditable()
+			editable: this.getEditable(),
+			required: this._isRequired()
 		};
 	};
 
@@ -597,11 +612,24 @@ sap.ui.define([
 		return true;
 	};
 
-	/*
+	/**
 	 * Checkbox without label must not be stretched in Form.
+	 * @returns {boolean} If the width of the control should not be adjusted
 	 */
 	CheckBox.prototype.getFormDoNotAdjustWidth = function() {
 		return this.getText() ? false : true;
+	};
+
+	/**
+	 * Determines if the CheckBox is required.
+	 * A CheckBox is considered required if it has been explicitly set as required,
+	 * or if it is required by LabelEnablement.
+	 *
+	 * @returns {boolean} True if the CheckBox is required, false otherwise.
+	 * @private
+	 */
+	CheckBox.prototype._isRequired = function () {
+		return this.getRequired() || LabelEnablement.isRequired(this);
 	};
 
 	return CheckBox;
