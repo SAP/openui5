@@ -301,6 +301,7 @@ sap.ui.define([
 		}
 		this._mLengthsCache = {};
 		this._fireChange({reason: "filter"});
+		/** @deprecated As of version 1.11.0 */
 		this._fireFilter({filters: aFilters});
 
 		return this;
