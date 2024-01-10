@@ -412,4 +412,66 @@ sap.ui.define([
 			return pResult;
 		};
 	});
+
+	QUnit.module("ILabelable interface", {
+		beforeEach : function () {
+			var CustomControlClass = Control.extend("CustomControlClass", {
+				metadata: {
+					interfaces : [
+						"sap.ui.core.ILabelable"
+					],
+					properties: {
+						isInput: {
+							type: "boolean",
+							defaultValue: false
+						}
+					}
+				},
+				renderer: {
+					apiVersion: 2,
+					render: function (oRm, oControl) {
+						if (oControl.getIsInput()) {
+							oRm.voidStart("input", oControl)
+								.voidEnd();
+						} else {
+							oRm.openStart("span", oControl)
+								.openEnd()
+								.text("Some text")
+								.close("span");
+						}
+					}
+				},
+				hasLabelableHTMLElement: function () {
+					return this.getIsInput();
+				}
+			});
+
+			this.oLabel = new Label({
+				text: "Label",
+				labelFor: "id1"
+			}).placeAt("content");
+
+			this.oControl = new CustomControlClass("id1", {
+				isInput: true
+			}).placeAt("content");
+
+			return nextUIUpdate();
+		},
+		afterEach : function () {
+			this.oLabel.destroy();
+			this.oControl.destroy();
+		}
+	});
+
+	QUnit.test("label is rendered correctly", async function(assert) {
+		assert.strictEqual(this.oLabel.getDomRef().tagName, "LABEL", "Label is rendered with 'label' tag.");
+		assert.ok(this.oLabel.getDomRef().getAttribute("for"), "'for' attribute is set");
+
+		this.oControl.setIsInput(false);
+		this.oLabel.invalidate();
+		await nextUIUpdate();
+
+		assert.strictEqual(this.oLabel.getDomRef().tagName, "SPAN", "Label is rendered with 'span' tag.");
+		assert.notOk(this.oLabel.getDomRef().getAttribute("for"), "'for' attribute is not set");
+	});
 });
