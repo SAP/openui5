@@ -5,19 +5,11 @@ sap.ui.define([
 
 	return Controller.extend("sap.tnt.sample.ToolHeaderIconTabHeader.C", {
 
-		onHomePress: function () {
-			var oIconTabHeader = this.byId('iconTabHeader');
+		onHomePress: function (event) {
+			var id = event.oSource.getParent().getDomRef().getElementsByClassName("sapMITH")[0].id,
+				oIconTabHeader = this.byId(id);
+
 			oIconTabHeader.setSelectedKey('invalidKey');
-
-			var oLabel = this.byId('labelId');
-			oLabel.setText('Home Screen');
-		},
-
-		onSelectTab: function (event) {
-			var oLabel = this.byId('labelId');
-			var oTab = event.getParameter('item');
-
-			oLabel.setText(oTab.getText());
 		}
 
 	});

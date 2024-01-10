@@ -347,6 +347,50 @@ sap.ui.define([
 		oITH.destroy();
 	});
 
+	QUnit.test("interactionMode", function (assert) {
+		var oITH = createHeaderWithItemsSubItems(1, 0),
+			oFirstTab = oITH.getItems()[0];
+
+		oITH.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		assert.strictEqual(oFirstTab.getInteractionMode(), "Auto", "'interactionMode' property is with correct default value");
+		assert.notOk(oFirstTab.getDomRef().classList.contains("sapMITHUnselectable"), "Tab is rendered with two click areas");
+
+		oFirstTab.setInteractionMode("SelectLeavesOnly");
+		Core.applyChanges();
+		assert.ok(oITH.getItems()[0].getDomRef().classList.contains("sapMITHUnselectable"), "Tab is rendered with one click area");
+
+		oFirstTab.setInteractionMode("Select");
+		Core.applyChanges();
+		assert.notOk(oITH.getItems()[0].getDomRef().classList.contains("sapMITHUnselectable"), "Tab is rendered with two click areas");
+
+		// Clean-up
+		oITH.destroy();
+	});
+
+	QUnit.test("interactionMode - no subitems", function (assert) {
+		var oITH = createHeaderWithItems(1, false),
+			oFirstTab = oITH.getItems()[0];
+
+		oITH.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		assert.ok(oITH._isSelectable(oFirstTab), "Tab is selectable");
+
+		oFirstTab.setInteractionMode("SelectLeavesOnly");
+		Core.applyChanges();
+		assert.ok(oITH._isSelectable(oFirstTab), "Tab is selectable");
+
+		oFirstTab.setInteractionMode("Select");
+		Core.applyChanges();
+		assert.ok(oITH._isSelectable(oFirstTab), "Tab is selectable");
+
+		// Clean-up
+		oITH.destroy();
+	});
+
+
 	QUnit.module("Badges - simple tabs", {
 		beforeEach: function () {
 			this.oITH = new IconTabHeader({

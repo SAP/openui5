@@ -282,7 +282,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (this._oIconTabHeader._isUnselectable(oTappedItem)) {
+		if (!this._oIconTabHeader._isSelectable(oTappedItem)) {
 			return;
 		}
 

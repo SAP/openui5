@@ -57,6 +57,9 @@ sap.ui.define([
 	// shortcut for sap.m.IconTabFilterDesign
 	var IconTabFilterDesign = library.IconTabFilterDesign;
 
+	// shortcut for sap.m.IconTabFilterDesign
+	var IconTabFilterInteractionMode = library.IconTabFilterInteractionMode;
+
 	// shortcut for sap.m.BadgeStyle
 	var BadgeStyle = library.BadgeStyle;
 
@@ -158,7 +161,14 @@ sap.ui.define([
 			/**
 			 * Specifies whether the icon and the texts are placed vertically or horizontally.
 			 */
-			design : {type : "sap.m.IconTabFilterDesign", group : "Appearance", defaultValue : IconTabFilterDesign.Vertical}
+			design : {type : "sap.m.IconTabFilterDesign", group : "Appearance", defaultValue : IconTabFilterDesign.Vertical},
+
+			/**
+			 * Specifies the interaction mode.
+			 * @experimental Since 1.121.
+			 * Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+			 */
+			interactionMode : {type : "sap.m.IconTabFilterInteractionMode", group : "Behavior", defaultValue : IconTabFilterInteractionMode.Auto}
 		},
 		defaultAggregation : "content",
 		aggregations : {
@@ -436,7 +446,7 @@ sap.ui.define([
 			bInLine = oIconTabHeader._bInLine || oIconTabHeader.isInlineMode(),
 			bShowAll = this.getShowAll(),
 			sTextDir = this.getTextDirection(),
-			bIsUnselectable = oIconTabHeader._isUnselectable(this);
+			bIsSelectable = oIconTabHeader._isSelectable(this);
 
 		if (this._isOverflow()) {
 			mAriaParams.role = "button";
@@ -503,7 +513,7 @@ sap.ui.define([
 			oRM.class("sapMITBFilter" + sIconColor);
 		}
 
-		if (bIsUnselectable) {
+		if (!bIsSelectable) {
 			oRM.class("sapMITHUnselectable");
 		}
 
@@ -525,7 +535,7 @@ sap.ui.define([
 			oRM.attr("title", sTooltip);
 		}
 
-		if (this._isOverflow() || bIsUnselectable) {
+		if (this._isOverflow() || !bIsSelectable) {
 			oRM.attr("aria-haspopup", "menu");
 		}
 
@@ -615,7 +625,7 @@ sap.ui.define([
 				.text(oIconTabHeader._getDisplayText(this))
 				.close("span");
 
-			if (this._isOverflow() || this.getItems().length && bIsUnselectable) {
+			if (this._isOverflow() || this.getItems().length && !bIsSelectable) {
 				oRM.openStart("span", this.getId() + "-expandButton").class("sapMITHShowSubItemsIcon").openEnd();
 				oRM.icon(IconPool.getIconURI("slim-arrow-down"), null, {
 					"title": null,
@@ -634,7 +644,7 @@ sap.ui.define([
 		oRM.openStart("div").class("sapMITBContentArrow").openEnd().close("div");
 		oRM.close("div");
 
-		if (this.getItems().length && !bIsUnselectable) {
+		if (this.getItems().length && bIsSelectable) {
 
 			oRM.openStart("span").class("sapMITBFilterExpandBtnSeparator")
 				.accessibilityState({ role: "separator" })
@@ -696,7 +706,7 @@ sap.ui.define([
 			oRM.attr("title", sTooltip);
 		}
 
-		if (oIconTabHeader._isUnselectable(this)) {
+		if (!oIconTabHeader._isSelectable(this)) {
 			oRM.class("sapMITHUnselectable");
 		}
 
@@ -849,7 +859,7 @@ sap.ui.define([
 
 	/**
 	 * Sets the appropriate drag and drop event delegate
-	 * based on whether or not the IconTabFilter is unselectable.
+	 * based on whether or not the IconTabFilter is selectable.
 	 *
 	 * @private
 	 */
@@ -878,7 +888,7 @@ sap.ui.define([
 	/**
 	 * Returns the expand button for this instance.
 	 * This button is conditionally shown in the DOM
-	 * based on whether or not the IconTabFilter is unselectable.
+	 * based on whether or not the IconTabFilter is selectable.
 	 * @private
 	 */
 	IconTabFilter.prototype._getExpandButton = function () {

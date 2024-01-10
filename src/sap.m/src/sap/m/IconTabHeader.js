@@ -64,6 +64,8 @@ sap.ui.define([
 	// shortcut for sap.m.TabsOverflowMode
 	var TabsOverflowMode = library.TabsOverflowMode;
 
+	var IconTabFilterInteractionMode = library.IconTabFilterInteractionMode;
+
 	/**
 	 * Constructor for a new IconTabHeader.
 	 *
@@ -554,7 +556,7 @@ sap.ui.define([
 			return this;
 		}
 
-		if (this._isUnselectable(oItem)) {
+		if (!this._isSelectable(oItem)) {
 			return this;
 		}
 
@@ -1340,7 +1342,7 @@ sap.ui.define([
 					oControl = Element.getElementById(sControlId);
 					if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
 
-						if (this._isUnselectable(oControl)) {
+						if (!this._isSelectable(oControl)) {
 							if (oControl.getItems().length || oControl._isOverflow()) {
 								oControl._expandButtonPress();
 							}
@@ -1357,7 +1359,7 @@ sap.ui.define([
 				} else if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
 					// select item if it is an iconTab but not a separator
 
-					if (this._isUnselectable(oControl)) {
+					if (!this._isSelectable(oControl)) {
 						if (oControl.getItems().length || oControl._isOverflow()) {
 							oControl._expandButtonPress();
 						}
@@ -1375,7 +1377,7 @@ sap.ui.define([
 				//no target id, so we have to check if showAll is set or it's a text only item, because clicking on the number then also leads to selecting the item
 				if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
 
-					if (this._isUnselectable(oControl)) {
+					if (!this._isSelectable(oControl)) {
 						if (oControl.getItems().length || oControl._isOverflow()) {
 							oControl._expandButtonPress();
 						}
@@ -1409,19 +1411,37 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if a IconTabFilter is unable to be selected.
-	 * This instance of the IconTabHeader must be within an IconTabBar and the IconTabBar must have no content aggregation set.
-	 * The passed IconTabFilter instance must not be nested, has to have its items aggregation set and not have content aggregation set.
+	 * Checks if an IconTabFilter is selectable.
+	 * The automatic logic for not selectable (only one click area of the filter) is based on
+	 * when the instance of the IconTabHeader is placed within an IconTabBar and
+	 * the IconTabBar hasn't any content aggregation set.
+	 * The passed IconTabFilter instance isn't nested,
+	 * and has its items aggregation set, but doesn't have any content aggregation set.
 	 * @private
 	 * @param {sap.m.IconTabFilter} oIconTabFilter The instance to check
 	 * @returns {boolean}
 	 */
-	IconTabHeader.prototype._isUnselectable = function (oIconTabFilter) {
-		var oFilter = oIconTabFilter._getRealTab();
+	IconTabHeader.prototype._isSelectable = function (oIconTabFilter) {
+		var oFilter = oIconTabFilter._getRealTab(),
+		sFilterInteractionMode = oFilter.getInteractionMode();
 
-		return !oFilter.getEnabled() || (this._isInsideIconTabBar() && !this.getParent().getContent().length &&
-			oFilter._getNestedLevel() === 1 && oFilter.getItems().length && !oFilter.getContent().length) ||
-			oFilter._isOverflow();
+		if (!oFilter.getEnabled()) {
+			return false;
+		}
+
+		// If an item doesn't have children or it is an overflow, it is selectable
+		if (!oFilter.getItems().length || oFilter._isOverflow()) {
+			return true;
+		}
+
+		if (sFilterInteractionMode === IconTabFilterInteractionMode.Auto) {
+			return !this._isInsideIconTabBar() ||
+				oFilter._getNestedLevel() !== 1 ||
+				this.getParent().getContent().length ||
+				oFilter.getContent().length;
+		}
+
+		return sFilterInteractionMode === IconTabFilterInteractionMode.Select;
 	};
 
 	/**
@@ -1520,8 +1540,8 @@ sap.ui.define([
 			return;
 		}
 
-		// if candidate selected item is unselectable, instead select its first available child item that has content
-		if (this._isUnselectable(this.oSelectedItem)) {
+		// if candidate selected item is not selectable, instead select its first available child item that has content
+		if (!this._isSelectable(this.oSelectedItem)) {
 			this.setSelectedItem(this.oSelectedItem._getFirstAvailableSubFilter(), true);
 			return;
 		}
