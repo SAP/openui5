@@ -90,10 +90,6 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-
-	/**
-	 * @deprecated As of 1.69
-	 */
 	QUnit.module("Toggle setBlocked and setBusy", {
 		beforeEach : function(assert) {
 
