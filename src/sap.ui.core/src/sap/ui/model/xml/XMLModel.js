@@ -304,7 +304,11 @@ sap.ui.define([
 		if (!oRootNode) {
 			return null;
 		}
-		var oNode = this.isLegacySyntax() ? [oRootNode] : [];
+		let oNode = [];
+		/** @deprecated As of version 1.88.0 */
+		if (this.isLegacySyntax()) {
+			oNode = [oRootNode];
+		}
 		if (oContext instanceof Context) {
 			oNode = this._getObject(oContext.getPath());
 		} else if (oContext) {
@@ -462,7 +466,11 @@ sap.ui.define([
 			if (oContext) {
 				sResolvedPath = oContext.getPath() + "/" + sPath;
 			} else {
-				sResolvedPath = this.isLegacySyntax() ? "/" + sPath : undefined;
+				sResolvedPath = undefined;
+				/** @deprecated As of version 1.88.0 */
+				if (this.isLegacySyntax()) {
+					sResolvedPath = "/" + sPath;
+				}
 			}
 		}
 		return sResolvedPath;

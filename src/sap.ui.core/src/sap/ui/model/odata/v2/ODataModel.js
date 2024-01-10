@@ -3151,9 +3151,13 @@ sap.ui.define([
 			bUseUndefinedIfUnresolved) {
 		var oChangedNode, oCodeListPromise, sCodeListTerm, sDataPath, sKey, oMetaContext,
 			oMetaModel, sMetaPath, oOrigNode, sResolvedPath, iSeparator,
-			vUnresolvedDefault = bUseUndefinedIfUnresolved ? undefined : null,
-			oNode = this.isLegacySyntax() ? this.oData : vUnresolvedDefault;
+			vUnresolvedDefault = bUseUndefinedIfUnresolved ? undefined : null;
+		let oNode = vUnresolvedDefault;
 
+		/** @deprecated As of version 1.88.0 */
+		if (this.isLegacySyntax()) {
+			oNode = this.oData;
+		}
 		sResolvedPath = this.resolve(sPath, oContext, this.bCanonicalRequests);
 		if (!sResolvedPath && this.bCanonicalRequests) {
 			sResolvedPath = this.resolve(sPath, oContext);

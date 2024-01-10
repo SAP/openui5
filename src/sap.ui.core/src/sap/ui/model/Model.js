@@ -783,7 +783,11 @@ sap.ui.define([
 				sContextPath = oContext.getPath();
 				sResolvedPath = sContextPath + (sContextPath.endsWith("/") ? "" : "/") + sPath;
 			} else {
-				sResolvedPath = this.isLegacySyntax() ? "/" + sPath : undefined;
+				sResolvedPath = undefined;
+				/** @deprecated As of version 1.88.0 */
+				if (this.isLegacySyntax()) {
+					sResolvedPath = "/" + sPath;
+				}
 			}
 		}
 		if (!sPath && oContext) {
