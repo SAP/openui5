@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/m/StandardDynamicDateOption",
 	"sap/m/DynamicDateValueHelpUIType",
 	"sap/ui/core/Lib",
-	"sap/ui/core/Locale",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/DateRange",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/format/DateFormat",
 	"sap/m/Button",
@@ -26,9 +25,8 @@ sap.ui.define([
 	StandardDynamicDateOption,
 	DynamicDateValueHelpUIType,
 	Library,
-	Locale,
+	nextUIUpdate,
 	DateRange,
-	oCore,
 	Element,
 	DateFormat,
 	Button,
@@ -53,11 +51,11 @@ sap.ui.define([
 		};
 
 	QUnit.module("initialization", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.ddr = new DynamicDateRange();
 			this.ddr.setStandardOptions([]);
 			this.ddr.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.ddr.destroy();
@@ -123,10 +121,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("basic functionality", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.ddr = new DynamicDateRange();
 			this.ddr.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.ddr.destroy();
@@ -217,7 +215,7 @@ sap.ui.define([
 		assert.strictEqual(this.ddr._oInput.getTooltip(), sTooltip, "The tooltip is set to the inner input field");
 	});
 
-	QUnit.test("Date ranges are handled properly", function(assert) {
+	QUnit.test("Date ranges are handled properly", async function(assert) {
 		// arrange
 		var oDDR = new DynamicDateRange(),
 			oFakeEvent = {
@@ -252,7 +250,7 @@ sap.ui.define([
 		this.stub(oDDR, "_getDatesLabel").returns({
 			setText: function() {}
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oDDR.open();
 		oDDR._updateDatesLabel();
@@ -262,10 +260,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("CustomDynamicDateOption", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.ddr = new DynamicDateRange();
 			this.ddr.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.ddr.destroy();
@@ -528,7 +526,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("StandardDynamicDateOption last/next x", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.ddr = new DynamicDateRange();
 			this.ddr.setStandardOptions([]);
 
@@ -539,7 +537,7 @@ sap.ui.define([
 
 			this.ddr.placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.ddr.destroy();
@@ -812,13 +810,13 @@ sap.ui.define([
 		assert.equal(this.ddr._oInput.getValue().indexOf("Tomorrow"), -1, "the formatted value is correct");
 	});
 
-	QUnit.test("Last/Next 1 days values when tomorrow and yesterday are included", function(assert) {
+	QUnit.test("Last/Next 1 days values when tomorrow and yesterday are included", async function(assert) {
 		// arrange
 		this.ddr.setStandardOptions(["LASTDAYS", "NEXTDAYS", "TOMORROW", "YESTERDAY"]);
 
 		// act
 		this.ddr.setValue({ operator: "LASTDAYS", values:[1] });
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.deepEqual(this.ddr.getValue(), { operator: "YESTERDAY", values: [] }, "the value is correctly substituted");
@@ -856,12 +854,12 @@ sap.ui.define([
 		assert.equal(this.ddr._oInput.getValue().indexOf("Today"), 0, "the formatted value is correct");
 	});
 
-	QUnit.test("DynamicDateRange - Last/Next options", function(assert) {
+	QUnit.test("DynamicDateRange - Last/Next options", async function(assert) {
 		// arrange
 		var oCurrentDate = UI5Date.getInstance('2023-01-08T00:13:37'),
 		oClock = sinon.useFakeTimers(oCurrentDate.getTime());
 
-		oCore.applyChanges();
+		await nextUIUpdate(oClock);
 		var oDDR = new DynamicDateRange({id: "myDDRLast"});
 		var oLastMinutesOption;
 		var oLastHoursOption;
@@ -870,14 +868,14 @@ sap.ui.define([
 
 		//act
 		oDDR.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(oClock);
 		oDDR.setStandardOptions([]);
 		oDDR.addStandardOption("LASTMINUTES");
 		oDDR.open();
 		oLastMinutesOption = Element.getElementById('myDDRLast-option-LASTMINUTES');
 
 		oLastMinutesOption.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate(oClock);
 
 		oPages = oDDR._oNavContainer.getPages()[1];
 		sLabelText = oPages
@@ -893,7 +891,7 @@ sap.ui.define([
 		oDDR.open();
 		oLastHoursOption = Element.getElementById('myDDRLast-option-LASTHOURS');
 		oLastHoursOption.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate(oClock);
 
 		sLabelText = oDDR._oNavContainer.getPages()[1]
 			.getAggregation('footer')
@@ -905,6 +903,7 @@ sap.ui.define([
 
 		//cleanup
 		oDDR.destroy();
+		await nextUIUpdate(oClock);
 		oClock.restore();
 	});
 
@@ -959,7 +958,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("StandardDynamicDateOption DateTime (single)", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.ddr = new DynamicDateRange();
 			this.ddr.setStandardOptions([]);
 
@@ -967,7 +966,7 @@ sap.ui.define([
 
 			this.ddr.placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.ddr.destroy();
@@ -1090,7 +1089,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("StandardDynamicDateOption DateTimeRange", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.ddr = new DynamicDateRange();
 			this.ddr.setStandardOptions([]);
 
@@ -1098,7 +1097,7 @@ sap.ui.define([
 
 			this.ddr.placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.ddr.destroy();
@@ -1211,7 +1210,7 @@ sap.ui.define([
 		assert.ok(aValueHelpUITypes1[0].isDestroyed(), "the UI types are destroyed with the option");
 	});
 
-	QUnit.test("labels are redirected to the inner input", function(assert) {
+	QUnit.test("labels are redirected to the inner input", async function(assert) {
 		// Prepare
 		var oDynamicDateRange = new DynamicDateRange(),
 			oLabel = new Label({
@@ -1223,7 +1222,7 @@ sap.ui.define([
 
 		oLabel.placeAt("qunit-fixture");
 		oDynamicDateRange.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oDynamicDateRangeInput = oDynamicDateRange.getDomRef().querySelector("input");
 
@@ -1251,7 +1250,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("StandardDynamicDateOption first day of week / this week", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.ddr = new DynamicDateRange();
 			this.ddr.setStandardOptions([]);
 
@@ -1260,39 +1259,39 @@ sap.ui.define([
 
 			this.ddr.placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.ddr.destroy();
 		}
 	});
 
-	QUnit.test("Week options respect calendarWeekNumbering", function(assert) {
+	QUnit.test("Week options respect calendarWeekNumbering", async function(assert) {
 		var sOriginalLocale = Formatting.getLanguageTag().toString();
 
 		// test with "en" locale
-		testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.Default, 0);
-		testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.ISO_8601, 1);
-		testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.WesternTraditional, 0);
-		testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.MiddleEastern, 6);
+		await testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.Default, 0);
+		await testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.ISO_8601, 1);
+		await testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.WesternTraditional, 0);
+		await testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.MiddleEastern, 6);
 
 		// test with "en_GB" locale
-		testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.Default, 1);
-		testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.ISO_8601, 1);
-		testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.WesternTraditional, 0);
-		testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.MiddleEastern, 6);
+		await testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.Default, 1);
+		await testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.ISO_8601, 1);
+		await testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.WesternTraditional, 0);
+		await testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.MiddleEastern, 6);
 
 		// test with "bg" locale
-		testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.Default, 1);
-		testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.ISO_8601, 1);
-		testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.WesternTraditional, 0);
-		testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.MiddleEastern, 6);
+		await testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.Default, 1);
+		await testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.ISO_8601, 1);
+		await testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.WesternTraditional, 0);
+		await testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.MiddleEastern, 6);
 
 		// restore original locale
 		Formatting.setLanguageTag(sOriginalLocale);
 
 		// Tests the DDR control 'First Day Of Week' and 'This Week' options return values first day of week by setting specific locale and calendarWeekNumbering
-		function testFirstDayOfWeek(oDDR, sLocale, sCalendarWeekNumbering, iFirstDayOfWeek) {
+		async function testFirstDayOfWeek(oDDR, sLocale, sCalendarWeekNumbering, iFirstDayOfWeek) {
 			var oFirstDayOfWeek,
 				oThisWeek,
 				aDates;
@@ -1301,13 +1300,13 @@ sap.ui.define([
 			Formatting.setLanguageTag(sLocale);
 			oDDR.setCalendarWeekNumbering(sCalendarWeekNumbering);
 			oDDR.open();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			oFirstDayOfWeek = Element.getElementById(oDDR.getId() + '-option-FIRSTDAYWEEK');
 			oThisWeek = Element.getElementById(oDDR.getId() + '-option-THISWEEK');
 
 			// act
 			oFirstDayOfWeek.firePress();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			aDates = oDDR.toDates(oDDR.getValue());
 
 			// assert
@@ -1315,7 +1314,7 @@ sap.ui.define([
 
 			// act
 			oThisWeek.firePress();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			aDates = oDDR.toDates(oDDR.getValue());
 
 			// assert
@@ -1324,47 +1323,47 @@ sap.ui.define([
 	});
 
 	QUnit.module("Clear Icon", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oDDR = new DynamicDateRange({});
 			this.oDDR.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oDDR.destroy();
 		}
 	});
 
-	QUnit.test("showClearIcon property is propagated to the inner Input", function (assert){
+	QUnit.test("showClearIcon property is propagated to the inner Input", async function (assert){
 		// Assert
 		assert.equal(this.oDDR.getShowClearIcon(), this.oDDR._oInput.getShowClearIcon(), "showClearIcon property is in sync initially");
 
 		// Act
 		this.oDDR.setShowClearIcon(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal(this.oDDR.getShowClearIcon(), this.oDDR._oInput.getShowClearIcon(), "showClearIcon property is properly propagated");
 
 		// Act
 		this.oDDR.setShowClearIcon(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal(this.oDDR.getShowClearIcon(), this.oDDR._oInput.getShowClearIcon(), "showClearIcon property is properly propagated");
 	});
 
 	QUnit.module("Misc", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.ddr = new DynamicDateRange();
 			this.ddr.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.ddr.destroy();
 		}
 	});
 
-	QUnit.test("calendarWeekNumbering affects days of week", function(assert) {
+	QUnit.test("calendarWeekNumbering affects days of week", async function(assert) {
 		var oDRS = new DynamicDateRange({
 				id: 'myDDR',
 				value: {operator: 'DATE', values: [UI5Date.getInstance('2023-01-09T18:00:00')]},
@@ -1373,15 +1372,15 @@ sap.ui.define([
 			sCalendarId;
 
 			oDRS.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			oDRS.open();
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oDateOptionDomRef = Element.getElementById('myDDR-option-DATE');
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			oDateOptionDomRef.firePress();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
 			var oMonthDomRef = Element.getElementById(sCalendarId).getAggregation("month")[0].getDomRef();
 			var aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
@@ -1391,9 +1390,9 @@ sap.ui.define([
 			assert.strictEqual(aWeekHeaders[0].textContent, "Sat", "Saturday is the first weekday for MiddleEastern");
 
 			oDRS.setCalendarWeekNumbering('ISO_8601');
-			oCore.applyChanges();
+			await nextUIUpdate();
 			oDateOptionDomRef.firePress();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
 			oMonthDomRef = Element.getElementById(sCalendarId).getAggregation("month")[0].getDomRef();
 			aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
@@ -1401,9 +1400,9 @@ sap.ui.define([
 			assert.equal(aWeekHeaders[0].textContent, "Mon", "Monday is the first weekday for ISO_8601");
 
 			oDRS.setCalendarWeekNumbering('WesternTraditional');
-			oCore.applyChanges();
+			await nextUIUpdate();
 			oDateOptionDomRef.firePress();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
 			oMonthDomRef = Element.getElementById(sCalendarId).getAggregation("month")[0].getDomRef();
 			aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
@@ -1465,7 +1464,7 @@ sap.ui.define([
 		Localization.setLanguage(sLanguage);
 	});
 
-	QUnit.test("Open DynamicDateRange from Button", function(assert) {
+	QUnit.test("Open DynamicDateRange from Button", async function(assert) {
 		// Prepare
 		var oDDR = new DynamicDateRange("HDDR", {
 				hideInput: true
@@ -1477,11 +1476,11 @@ sap.ui.define([
 				}
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oButton.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oDDR._oPopup, oDDR.getId() + ": popup object exists");
@@ -1774,7 +1773,7 @@ sap.ui.define([
 		testDate(assert, aDateRange[1], 2, "NEXTDAYS", 2023, 0, 7, 23,59,59,999);
 	});
 
-	QUnit.test("ValueHelp responsive popover cancels bubbling of internal validation errors", function(assert) {
+	QUnit.test("ValueHelp responsive popover cancels bubbling of internal validation errors", async function(assert) {
 		var validationErrorHandler = {
 				handler: function(){}
 			},
@@ -1788,7 +1787,7 @@ sap.ui.define([
 		this.ddr.attachValidationError(validationErrorHandler.handler);
 		this.ddr.setStandardOptions(["LASTDAYS"]);
 		this.ddr.open();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oPopup = this.ddr._oPopup;
 
 		oPopup.attachAfterClose(function() {
@@ -1800,23 +1799,23 @@ sap.ui.define([
 		// open LASTDAYS option
 		oLastMinutes =  Element.getElementById(this.ddr.getId() + '-option-LASTDAYS');
 		oLastMinutes.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// simulate entering of 0
 		oInnerInput = Element.getElementById(document.querySelector(".sapMStepInput").id);
 		oInnerInput.setValue(0);
 		oInnerInput._verifyValue();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// close the DDR option
 		this.ddr._oPopup.close();
 	});
 
 	QUnit.module("Groups", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.ddr = new DynamicDateRange();
 			this.ddr.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.ddr.destroy();

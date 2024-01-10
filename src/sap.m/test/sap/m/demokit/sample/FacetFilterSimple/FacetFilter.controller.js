@@ -1,13 +1,12 @@
 sap.ui.define([
-	'sap/m/ObjectIdentifier',
-	"sap/ui/core/ElementRegistry",
-	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/Filter',
-	'sap/ui/model/json/JSONModel',
-	'sap/m/MessageToast',
-	"sap/ui/core/Component",
-	"sap/ui/core/Element"
-], function(ObjectIdentifier, ElementRegistry, Controller, Filter, JSONModel, MessageToast, Component, Element) {
+		'sap/m/ObjectIdentifier',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/core/ElementRegistry',
+		'sap/ui/model/Filter',
+		'sap/ui/model/json/JSONModel',
+		'sap/m/MessageToast',
+		'sap/ui/core/Component'
+	], function(ObjectIdentifier, Controller, ElementRegistry, Filter, JSONModel, MessageToast, Component) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.FacetFilterSimple.FacetFilter", {

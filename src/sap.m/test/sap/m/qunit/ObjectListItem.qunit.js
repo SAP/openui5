@@ -1,7 +1,6 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/core/Element",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/List",
 	"sap/m/ObjectAttribute",
@@ -10,12 +9,11 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/m/ObjectMarker",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/library",
-	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/core/Core"
+	"sap/ui/base/ManagedObjectObserver"
 ], function(
 	Element,
-	qutils,
 	createAndAppendDiv,
 	List,
 	ObjectAttribute,
@@ -24,9 +22,9 @@ sap.ui.define([
 	jQuery,
 	coreLibrary,
 	ObjectMarker,
+	nextUIUpdate,
 	mobileLibrary,
-	ManagedObjectObserver,
-	oCore
+	ManagedObjectObserver
 ) {
 	"use strict";
 
@@ -130,7 +128,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("RenderLockedIcon", function(assert) {
+	QUnit.test("RenderLockedIcon", async function(assert) {
 		var lockedOlI = new ObjectListItem( "LockedOLI", {
 			icon : IMAGE_PATH + "action.png",
 			intro : "On behalf of John Smith",
@@ -145,7 +143,7 @@ sap.ui.define([
 		});
 
 		list.addItem(lockedOlI);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(document.getElementById("LockMarker"), "Locked marker should be rendered.");
 		assert.ok(jQuery("#" + "LockMarker").hasClass("sapMObjectMarker"), "Locked is sapMObjectMarker.");
@@ -155,7 +153,7 @@ sap.ui.define([
 
 	/************* ARIA Rendering *******************/
 
-	QUnit.test("ARIA attribute 'aria-labelledby' ID Refs list", function(assert) {
+	QUnit.test("ARIA attribute 'aria-labelledby' ID Refs list", async function(assert) {
 		// create ObjectListItem
 		var oAttrsAndStatuseListItem = new ObjectListItem({
 			id: 'oAttrsAndStatuseListItemId',
@@ -178,7 +176,7 @@ sap.ui.define([
 		});
 		list.addItem(oAttrsAndStatuseListItem);
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert ObjectListItem inner nodes ids are added to aria-labelledby attribute
 		var sAriaLabelledByValue = oAttrsAndStatuseListItem.$().attr("aria-labelledby");
@@ -204,7 +202,7 @@ sap.ui.define([
 	});
 
 	//BCP: 1770099014
-	QUnit.test("Empty attributes and statuses are not used as ARIA labels", function(assert) {
+	QUnit.test("Empty attributes and statuses are not used as ARIA labels", async function(assert) {
 		//arrange
 		var oOLI = new ObjectListItem({
 				attributes: [
@@ -232,7 +230,7 @@ sap.ui.define([
 			}).placeAt('qunit-fixture'),
 			sResultARIA;
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 		sResultARIA = oOLI.$().attr('aria-labelledby');
 
 		//assert
@@ -260,7 +258,7 @@ sap.ui.define([
 	});
 	list.addItem(showTextDir);
 
-	QUnit.test("TitleNumberIntroTextDirection RTL rendering", function(assert) {
+	QUnit.test("TitleNumberIntroTextDirection RTL rendering", async function(assert) {
 		assert.equal(jQuery('#showTextDir-intro>span').attr("dir"), undefined, "intro has no dir attribute");
 		assert.equal(jQuery('#showTextDir-titleText').attr("dir"), "rtl", "title has attribute dir=rtl");
 		assert.equal(jQuery('#showTextDir-ObjectNumber').attr("dir"), "ltr", "ObjectNumber has attribute dir=ltr");
@@ -268,7 +266,7 @@ sap.ui.define([
 		showTextDir.setIntroTextDirection(TextDirection.RTL);
 		showTextDir.setTitleTextDirection(TextDirection.Inherit);
 		showTextDir.setNumberTextDirection(TextDirection.Inherit);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(jQuery('#showTextDir-intro>span').attr("dir"), "rtl", "intro has attribute dir=rtl");
 		assert.equal(jQuery('#showTextDir-titleText').attr("dir"), "auto", "title has no dir attribute");
@@ -287,7 +285,7 @@ sap.ui.define([
 	/******************************************************************/
 	QUnit.module("Rendering Markers aggregation");
 
-	QUnit.test("Render Draft and Favorite", function(assert) {
+	QUnit.test("Render Draft and Favorite", async function(assert) {
 		var markersOlI = new ObjectListItem({
 			id: "markersOlI",
 			title : "Markers agregation",
@@ -304,7 +302,7 @@ sap.ui.define([
 		});
 
 		list.addItem(markersOlI);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(document.getElementById("markersOlI-Draft"), "marker draft should be rendered.");
 		assert.ok(document.getElementById("markersOlI-Favorite"), "marker favorite should be rendered.");
@@ -312,7 +310,7 @@ sap.ui.define([
 		markersOlI.destroy();
 	});
 
-	QUnit.test("Render marker by setting the markers aggregation", function(assert) {
+	QUnit.test("Render marker by setting the markers aggregation", async function(assert) {
 		var markersOlI = new ObjectListItem({
 			id: "markersOlI",
 			title : "Markers agregation",
@@ -324,20 +322,20 @@ sap.ui.define([
 		});
 
 		list.addItem(markersOlI);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $allRows = jQuery("#markersOlI .sapMObjStatusMarker");
 		assert.ok($allRows.length === 0, "There are no markers");
 
 		markersOlI.insertMarker(marker, 0);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(document.getElementById("markersOlI-Draft"), "marker draft should be rendered.");
 
 		markersOlI.destroy();
 	});
 
-	QUnit.test("Removing marker", function(assert) {
+	QUnit.test("Removing marker", async function(assert) {
 		var markersOlI = new ObjectListItem({
 			id: "markersOlI",
 			title : "Markers agregation",
@@ -351,12 +349,12 @@ sap.ui.define([
 		});
 
 		list.addItem(markersOlI);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(document.getElementById("markersOlI-Flag"), "marker flag should be rendered.");
 
 		markersOlI.removeAllMarkers();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $allRows = jQuery("#markersOlI .sapMObjStatusMarker");
 		assert.ok($allRows.length === 0, "There are no markers");
@@ -489,7 +487,7 @@ sap.ui.define([
 	/******************************************************************/
 	QUnit.module("Active state");
 
-	QUnit.test("TestActiveIcon", function(assert) {
+	QUnit.test("TestActiveIcon", async function(assert) {
 		// Setup
 		var imageSrc,
 			imageOLI1 = new ObjectListItem("imageOLI1", {
@@ -504,7 +502,7 @@ sap.ui.define([
 			});
 
 		list.addItem(imageOLI1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		imageSrc = imageOLI1.$('img').attr('src');
@@ -512,7 +510,7 @@ sap.ui.define([
 
 		// Act
 		imageOLI1.setActive(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		imageSrc = imageOLI1.$('img').attr('src');
@@ -520,7 +518,7 @@ sap.ui.define([
 
 		// Act
 		imageOLI1.setActive(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		imageSrc = imageOLI1.$('img').attr('src');
@@ -543,7 +541,7 @@ sap.ui.define([
 
 	QUnit.module("Icon / Image ratio");
 
-	QUnit.test("Icon has equal width and height", function(assert) {
+	QUnit.test("Icon has equal width and height", async function(assert) {
 		var done = assert.async();
 		var imageOLIIcon = new ObjectListItem("imageOLIIcon", {
 			icon : "sap-icon://hint",
@@ -554,7 +552,7 @@ sap.ui.define([
 			numberUnit : "EUR"
 		});
 		list.addItem(imageOLIIcon);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		setTimeout(function() {
 			var iconWidth = imageOLIIcon.$().find('.sapMObjLIcon').width();
@@ -565,7 +563,7 @@ sap.ui.define([
 		},1000);
 	});
 
-	QUnit.test("Image has different width and height", function(assert) {
+	QUnit.test("Image has different width and height", async function(assert) {
 		var done = assert.async();
 		var imageOLIImg = new ObjectListItem("imageOLIImg", {
 			icon : IMAGE_PATH + "grass.jpg",
@@ -576,7 +574,7 @@ sap.ui.define([
 			numberUnit : "EUR"
 		});
 		list.addItem(imageOLIImg);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		setTimeout(function() {
 			var imageWidth = imageOLIImg.$('img').width();

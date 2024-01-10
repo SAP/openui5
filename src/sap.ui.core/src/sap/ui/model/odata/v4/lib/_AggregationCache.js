@@ -1562,7 +1562,7 @@ sap.ui.define([
 	 * @param {object} oElement - The element
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   An original lock for the group ID to be used for the GET request, to be cloned via
-	 *   {@link {sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
+	 *   {@link sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
 	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result in case of success, or
 	 *   rejected in case of an error
@@ -1588,7 +1588,7 @@ sap.ui.define([
 	 * @param {string[]} aSelect - The relative paths to properties to be requested
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   An original lock for the group ID to be used for the GET request, to be cloned via
-	 *   {@link {sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
+	 *   {@link sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
 	 * @returns {Promise<number>}
 	 *   A promise which is resolved with the result object, or rejected in case of an error
 	 *
@@ -1616,7 +1616,7 @@ sap.ui.define([
 	 * @param {object} oElement - The element
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   An original lock for the group ID to be used for the GET request, to be cloned via
-	 *   {@link {sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
+	 *   {@link sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
 	 * @returns {Promise<number>}
 	 *   A promise which is resolved with the (limited preorder) rank of the given element, or
 	 *   rejected in case of an error

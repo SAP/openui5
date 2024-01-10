@@ -213,7 +213,7 @@ sap.ui.define([
 						itemId: { type: "string" },
 						/**
 						 * If <code>true</code> the filtering was executed case sensitive
-						 * since 1.121.0
+						 * @since 1.121.0
 						 */
 						caseSensitive: { type: "boolean" }
 					}

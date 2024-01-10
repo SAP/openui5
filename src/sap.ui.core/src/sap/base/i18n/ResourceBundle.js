@@ -12,8 +12,6 @@ sap.ui.define([
 	function(assert, Log, Localization, formatMessage, Properties, merge) {
 	"use strict";
 
-	/* global Promise */
-
 	/**
 	 * A regular expression that describes language tags according to BCP-47.
 	 * @see BCP47 "Tags for Identifying Languages" (http://www.ietf.org/rfc/bcp/bcp47.txt)
@@ -41,8 +39,7 @@ sap.ui.define([
 	var M_ISO639_NEW_TO_OLD = {
 		"he" : "iw",
 		"yi" : "ji",
-		"nb" : "no",
-		"sr" : "sh" // for backward compatibility, as long as "sr (Cyrillic)" is not supported
+		"nb" : "no"
 	};
 
 	/**
@@ -83,7 +80,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sLocale Locale to normalize
 	 * @param {boolean} [bPreserveLanguage=false] Whether to keep the language untouched, otherwise
-	 *     the language is mapped from modern to legacy ISO639 codes, e.g. "sr" to "sh"
+	 *     the language is mapped from modern to legacy ISO639 codes, e.g. "he" to "iw"
 	 * @returns {string|undefined} Normalized locale or <code>undefined</code> if the locale can't be normalized
 	 * @private
 	 */
@@ -131,7 +128,7 @@ sap.ui.define([
 	 * @param {string} sLocale locale (aka 'language tag') to be normalized.
 	 * 	   Can either be a BCP47 language tag or a JDK compatible locale string (e.g. "en-GB", "en_GB" or "fr");
 	 * @param {boolean} [bPreserveLanguage=false] whether to keep the language untouched, otherwise
-	 *     the language is mapped from modern to legacy ISO639 codes, e.g. "sr" to "sh"
+	 *     the language is mapped from modern to legacy ISO639 codes, e.g. "he" to "iw"
 	 * @returns {string} normalized locale
 	 * @throws {TypeError} Will throw an error if the locale is not a valid BCP47 language tag.
 	 * @private
@@ -731,8 +728,8 @@ sap.ui.define([
 	 *     (e.g. "en-GB", "en_GB" or "en"). An empty string (<code>""</code>) represents the 'raw' bundle.
 	 *     <b>Note:</b> The given language tags can use modern or legacy ISO639 language codes. Whatever
 	 *     language code is used in the list of supported locales will also be used when requesting a file
-	 *     from the server. If the <code>locale</code> contains a legacy language code like "sh" and the
-	 *     <code>supportedLocales</code> contains [...,"sr",...], "sr" will be used in the URL.
+	 *     from the server. If the <code>locale</code> contains a legacy language code like "iw" and the
+	 *     <code>supportedLocales</code> contains [...,"he",...], "he" will be used in the URL.
 	 *     This mapping works in both directions.
 	 * @property {string} [fallbackLocale="en"] A fallback locale to be used after all locales
 	 *     derived from <code>locale</code> have been tried, but before the 'raw' bundle is used.
@@ -766,8 +763,8 @@ sap.ui.define([
 	 *     (e.g. "en-GB", "en_GB" or "en"). An empty string (<code>""</code>) represents the 'raw' bundle.
 	 *     <b>Note:</b> The given language tags can use modern or legacy ISO639 language codes. Whatever
 	 *     language code is used in the list of supported locales will also be used when requesting a file
-	 *     from the server. If the <code>locale</code> contains a legacy language code like "sh" and the
-	 *     <code>supportedLocales</code> contains [...,"sr",...], "sr" will be used in the URL.
+	 *     from the server. If the <code>locale</code> contains a legacy language code like "iw" and the
+	 *     <code>supportedLocales</code> contains [...,"he",...], "he" will be used in the URL.
 	 *     This mapping works in both directions.
 	 * @public
 	 */
@@ -894,8 +891,8 @@ sap.ui.define([
 	 *     (e.g. "en-GB", "en_GB" or "en"). An empty string (<code>""</code>) represents the 'raw' bundle.
 	 *     <b>Note:</b> The given language tags can use modern or legacy ISO639 language codes. Whatever
 	 *     language code is used in the list of supported locales will also be used when requesting a file
-	 *     from the server. If the <code>locale</code> contains a legacy language code like "sh" and the
-	 *     <code>supportedLocales</code> contains [...,"sr",...], "sr" will be used in the URL.
+	 *     from the server. If the <code>locale</code> contains a legacy language code like "iw" and the
+	 *     <code>supportedLocales</code> contains [...,"he",...], "he" will be used in the URL.
 	 *     This mapping works in both directions.
 	 * @param {string} [mParams.fallbackLocale="en"] A fallback locale to be used after all locales
 	 *     derived from <code>locale</code> have been tried, but before the 'raw' bundle is used.
@@ -1006,28 +1003,28 @@ sap.ui.define([
 	 * is contained in the list, the alternative locale is returned.
 	 *
 	 * If there is no match, <code>undefined</code> is returned.
-	 * @param {string} sLocale Locale, using legacy ISO639 language code, e.g. sh_RS
-	 * @param {string[]} aSupportedLocales List of supported locales, e.g. ["sr_RS"]
+	 * @param {string} sLocale Locale, using legacy ISO639 language code, e.g. iw_IL
+	 * @param {string[]} aSupportedLocales List of supported locales, e.g. ["he_IL"]
 	 * @returns {string} The match in the supportedLocales (using either modern or legacy ISO639 language codes),
-	 *   e.g. "sr_RS"; <code>undefined</code> if not matched
+	 *   e.g. "he_IL"; <code>undefined</code> if not matched
 	 */
 	function findSupportedLocale(sLocale, aSupportedLocales) {
 
 		// if supportedLocales array is empty or undefined or if it contains the given locale,
 		// return that locale (with a legacy ISO639 language code)
-		if (!aSupportedLocales || aSupportedLocales.length === 0 || aSupportedLocales.indexOf(sLocale) >= 0) {
+		if (!aSupportedLocales || aSupportedLocales.length === 0 || aSupportedLocales.includes(sLocale)) {
 			return sLocale;
 		}
 
 		// determine an alternative locale, using a modern ISO639 language code
-		// (converts "sh_RS" to "sr-RS")
+		// (converts "iw_IL" to "he-IL")
 		sLocale = convertLocaleToBCP47(sLocale, true);
 		if (sLocale) {
 			// normalize it to JDK syntax for easier comparison
-			// (converts "sr-RS" to "sr_RS" - using an underscore ("_") between the segments)
+			// (converts "he-IL" to "he_IL" - using an underscore ("_") between the segments)
 			sLocale = normalize(sLocale, true);
 		}
-		if (aSupportedLocales.indexOf(sLocale) >= 0) {
+		if (aSupportedLocales.includes(sLocale)) {
 			// return the alternative locale (with a modern ISO639 language code)
 			return sLocale;
 		}

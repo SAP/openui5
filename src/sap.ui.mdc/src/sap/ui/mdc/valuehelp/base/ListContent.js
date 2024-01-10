@@ -112,7 +112,7 @@ sap.ui.define([
 
 	/**
 	 * Gets the relevant <code>BindingContexts</code> of the content.
-	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} oConfig
+	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} oConfig Configuration
 	 * @returns {sap.ui.model.Context[]} <code>BindingContexts</code>
 	 * @protected
 	 */

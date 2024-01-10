@@ -1,20 +1,20 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/m/PlanningCalendarHeader",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/Calendar",
 	"sap/ui/unified/calendar/CustomMonthPicker",
 	"sap/ui/unified/calendar/CustomYearPicker",
 	"sap/m/SegmentedButtonItem",
-	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core"
+	"sap/ui/core/InvisibleText"
 ], function(
 	PlanningCalendarHeader,
+	nextUIUpdate,
 	Calendar,
 	CustomMonthPicker,
 	CustomYearPicker,
 	SegmentedButtonItem,
-	InvisibleText,
-	oCore
+	InvisibleText
 ) {
 	"use strict";
 
@@ -39,7 +39,7 @@ sap.ui.define([
 
 	QUnit.module("ARIA");
 
-	QUnit.test("View switch has an invisible label", function (assert) {
+	QUnit.test("View switch has an invisible label", async function (assert) {
 		var oPlanningCalendarHeader = new PlanningCalendarHeader(),
 			oFirstMockView = new SegmentedButtonItem({ text: "A view" }),
 			oSecondMockView = new SegmentedButtonItem({ text: "Another view" }),
@@ -49,8 +49,7 @@ sap.ui.define([
 		oPlanningCalendarHeader._oViewSwitch.addItem(oSecondMockView);
 
 		oPlanningCalendarHeader.placeAt("qunit-fixture");
-		oCore.applyChanges();
-
+		await nextUIUpdate();
 
 		$viewSwitch = oPlanningCalendarHeader._oViewSwitch.$();
 		assert.strictEqual($viewSwitch.attr("aria-labelledby"), InvisibleText.getStaticId("sap.m", "PCH_VIEW_SWITCH"),

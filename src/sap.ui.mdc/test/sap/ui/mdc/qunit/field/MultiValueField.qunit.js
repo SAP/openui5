@@ -242,9 +242,11 @@ sap.ui.define([
 				}).setModel(oModel);
 			oFieldEdit.placeAt("content");
 			oFieldDisplay.placeAt("content");
+			sinon.spy(MultiValueFieldDelegate, "createCondition");
 			await nextUIUpdate();
 		},
 		afterEach: function() {
+			MultiValueFieldDelegate.createCondition.restore();
 			oFieldEdit.destroy();
 			oFieldDisplay.destroy();
 			oFieldEdit = undefined;
@@ -268,31 +270,30 @@ sap.ui.define([
 
 	QUnit.test("conditions & Tokens", function(assert) {
 
-		const fnDone = assert.async();
-		setTimeout(function() { // async set of condition
-			const aConditions = oFieldEdit.getConditions();
-			assert.ok(aConditions.length, 3, "Conditions created");
-			assert.equal(aConditions[0].operator, OperatorName.EQ, "Condition0 operator");
-			assert.equal(aConditions[0].values[0], 1, "Condition0 value0");
-			assert.equal(aConditions[0].values[1], "Text 1", "Condition0 value1");
-			assert.equal(aConditions[0].validated, ConditionValidated.Validated, "Condition0 validated");
+		assert.equal(MultiValueFieldDelegate.createCondition.callCount, 6, "Conditions created via delegate");
 
-			let aContent = oFieldEdit.getAggregation("_content");
-			let oContent = aContent && aContent.length > 0 && aContent[0];
-			let aTokens = oContent.getTokens();
-			assert.ok(aTokens.length, 3, "Tokens created");
-			assert.equal(aTokens[0].getText(), "Text 1", "Token0 text");
+		const aConditions = oFieldEdit.getConditions();
+		assert.ok(aConditions.length, 3, "Conditions created");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "Condition0 operator");
+		assert.equal(aConditions[0].values[0], 1, "Condition0 value0");
+		assert.equal(aConditions[0].values[1], "Text 1", "Condition0 value1");
+		assert.equal(aConditions[0].validated, ConditionValidated.Validated, "Condition0 validated");
 
-			aContent = oFieldDisplay.getAggregation("_content");
-			oContent = aContent && aContent.length > 0 && aContent[0];
-			aTokens = oContent.getTokens();
-			assert.ok(aTokens.length, 3, "Tokens created");
-			assert.equal(aTokens[0].getText(), "Text 1", "Token0 text");
-			assert.equal(aTokens[1].getText(), "Text 2", "Token1 text");
-			assert.equal(aTokens[2].getText(), "Text 3", "Token2 text");
+		let aContent = oFieldEdit.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
+		let aTokens = oContent.getTokens();
+		assert.ok(aTokens.length, 3, "Tokens created");
+		assert.equal(aTokens[0].getText(), "Text 1", "Token0 text");
+		assert.equal(aTokens[1].getText(), "Text 2", "Token1 text");
+		assert.equal(aTokens[2].getText(), "Text 3", "Token2 text");
 
-			fnDone();
-		}, 0);
+		aContent = oFieldDisplay.getAggregation("_content");
+		oContent = aContent && aContent.length > 0 && aContent[0];
+		aTokens = oContent.getTokens();
+		assert.ok(aTokens.length, 3, "Tokens created");
+		assert.equal(aTokens[0].getText(), "Text 1", "Token0 text");
+		assert.equal(aTokens[1].getText(), "Text 2", "Token1 text");
+		assert.equal(aTokens[2].getText(), "Text 3", "Token2 text");
 
 	});
 
@@ -335,37 +336,35 @@ sap.ui.define([
 	QUnit.test("update via ValueHelp", function(assert) {
 
 		const fnDone = assert.async();
-		setTimeout(function() { // async set of condition
-			const oValueHelp = Element.getElementById(oField.getValueHelp());
-			const oCondition = Condition.createItemCondition(4, "Text 4");
-			oValueHelp.fireSelect({ conditions: [oCondition], add: false, close: true });
+		const oValueHelp = Element.getElementById(oField.getValueHelp());
+		const oCondition = Condition.createItemCondition(4, "Text 4");
+		oValueHelp.fireSelect({ conditions: [oCondition], add: false, close: true });
 
-			setTimeout(function() { // async model update
-				assert.ok(MultiValueFieldDelegate.updateItems.calledOnce, "MultiValueFieldDelegate.updateItems called once");
-				assert.ok(MultiValueFieldDelegate.updateItems.calledWith({}, [oCondition], oField), "MultiValueFieldDelegate.updateItems arguments");
-				assert.equal(iCount, 1, "Change event fired once");
-				assert.equal(sId, "F1", "Change event fired on Field");
-				assert.equal(aChangeItems.length, 1, "Change event: items");
-				assert.equal(aChangeItems[0].getKey(), 4, "Change event: item key");
-				assert.equal(aChangeItems[0].getDescription(), "Text 4", "Change event: item key");
-				assert.ok(oPromise, "Promise returned");
-				assert.ok(bValid, "Change event: valid");
-				oPromise.then(function(vResult) {
-					assert.ok(true, "Promise resolved");
-					assert.ok(Array.isArray(vResult), "Result is array");
-					assert.ok(vResult.length, 1, "One item returned");
-					assert.ok(vResult[0].isA("sap.ui.mdc.field.MultiValueFieldItem"), "MultiItem returned");
-					assert.equal(vResult[0].getKey(), 4, "Result: item key");
-					assert.equal(vResult[0].getDescription(), "Text 4", "Result: item key");
+		setTimeout(function() { // async model update
+			assert.ok(MultiValueFieldDelegate.updateItems.calledOnce, "MultiValueFieldDelegate.updateItems called once");
+			assert.ok(MultiValueFieldDelegate.updateItems.calledWith({}, [oCondition], oField), "MultiValueFieldDelegate.updateItems arguments");
+			assert.equal(iCount, 1, "Change event fired once");
+			assert.equal(sId, "F1", "Change event fired on Field");
+			assert.equal(aChangeItems.length, 1, "Change event: items");
+			assert.equal(aChangeItems[0].getKey(), 4, "Change event: item key");
+			assert.equal(aChangeItems[0].getDescription(), "Text 4", "Change event: item key");
+			assert.ok(oPromise, "Promise returned");
+			assert.ok(bValid, "Change event: valid");
+			oPromise.then(function(vResult) {
+				assert.ok(true, "Promise resolved");
+				assert.ok(Array.isArray(vResult), "Result is array");
+				assert.ok(vResult.length, 1, "One item returned");
+				assert.ok(vResult[0].isA("sap.ui.mdc.field.MultiValueFieldItem"), "MultiItem returned");
+				assert.equal(vResult[0].getKey(), 4, "Result: item key");
+				assert.equal(vResult[0].getDescription(), "Text 4", "Result: item key");
 
-					const aItems = oField.getItems();
-					assert.equal(aItems.length, 1, "Field: items");
-					assert.equal(aItems[0].getKey(), 4, "Field: item key");
-					assert.equal(aItems[0].getDescription(), "Text 4", "Field: item key");
+				const aItems = oField.getItems();
+				assert.equal(aItems.length, 1, "Field: items");
+				assert.equal(aItems[0].getKey(), 4, "Field: item key");
+				assert.equal(aItems[0].getDescription(), "Text 4", "Field: item key");
 
-				fnDone();
-				});
-			}, 0);
+			fnDone();
+			});
 		}, 0);
 
 	});
@@ -377,53 +376,51 @@ sap.ui.define([
 		});
 
 		const fnDone = assert.async();
-		setTimeout(function() { // async control creation in applySettings
-			let aContent = oField.getAggregation("_content");
-			let oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.notOk(oContent, "no content exist before rendering"); // as edit mode is not explicit defined
+		let aContent = oField.getAggregation("_content");
+		let oContent = aContent && aContent.length > 0 && aContent[0];
+		assert.notOk(oContent, "no content exist before rendering"); // as edit mode is not explicit defined
 
-			oField.setEditMode(FieldEditMode.Display);
-			setTimeout(function() { // async control creation in observeChanges
+		oField.setEditMode(FieldEditMode.Display);
+		setTimeout(function() { // async control creation in observeChanges
+			aContent = oField.getAggregation("_content");
+			oContent = aContent && aContent.length > 0 && aContent[0];
+			assert.ok(oContent, "content exist after setting editMode and multipleLines");
+
+			oField.destroy();
+			oField = new MultiValueField("F3", {
+				items: {path: "/items", template: oItemTemplate},
+				editMode: FieldEditMode.Editable
+			});
+
+			setTimeout(function() { // async control creation in applySettings
 				aContent = oField.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
-				assert.ok(oContent, "content exist after setting editMode and multipleLines");
+				assert.ok(oContent, "content exist before rendering");
 
 				oField.destroy();
 				oField = new MultiValueField("F3", {
 					items: {path: "/items", template: oItemTemplate},
-					editMode: FieldEditMode.Editable
+					editMode: { path: "/editMode"}
 				});
 
 				setTimeout(function() { // async control creation in applySettings
 					aContent = oField.getAggregation("_content");
 					oContent = aContent && aContent.length > 0 && aContent[0];
-					assert.ok(oContent, "content exist before rendering");
+					assert.notOk(oContent, "content not exist before rendering"); // as editMode has not set by binding right now
 
 					oField.destroy();
 					oField = new MultiValueField("F3", {
 						items: {path: "/items", template: oItemTemplate},
 						editMode: { path: "/editMode"}
 					});
+					oField.setModel(oModel);
 
 					setTimeout(function() { // async control creation in applySettings
 						aContent = oField.getAggregation("_content");
 						oContent = aContent && aContent.length > 0 && aContent[0];
-						assert.notOk(oContent, "content not exist before rendering"); // as editMode has not set by binding right now
-
+						assert.ok(oContent, "content exist before rendering");
 						oField.destroy();
-						oField = new MultiValueField("F3", {
-							items: {path: "/items", template: oItemTemplate},
-							editMode: { path: "/editMode"}
-						});
-						oField.setModel(oModel);
-
-						setTimeout(function() { // async control creation in applySettings
-							aContent = oField.getAggregation("_content");
-							oContent = aContent && aContent.length > 0 && aContent[0];
-							assert.ok(oContent, "content exist before rendering");
-							oField.destroy();
-							fnDone();
-						}, 0);
+						fnDone();
 					}, 0);
 				}, 0);
 			}, 0);

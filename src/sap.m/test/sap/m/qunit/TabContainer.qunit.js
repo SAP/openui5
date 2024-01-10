@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/Lib",
+	"sap/ui/core/ElementRegistry",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/model/json/JSONModel",
@@ -11,16 +11,15 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/TabContainer",
 	"sap/m/TabStripItem",
-	"sap/ui/core/Element",
 	"sap/ui/core/CustomData",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/Device",
 	"sap/m/Button",
 	"sap/m/library",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/jquery"
 ], function(
-	ElementRegistry,
 	Library,
+	ElementRegistry,
 	qutils,
 	createAndAppendDiv,
 	JSONModel,
@@ -30,13 +29,12 @@ sap.ui.define([
 	Link,
 	TabContainer,
 	TabStripItem,
-	Element,
 	CustomData,
+	nextUIUpdate,
 	Device,
 	Button,
 	mobileLibrary,
-	jQuery,
-	oCore
+	jQuery
 ) {
 	"use strict";
 
@@ -108,7 +106,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Deletion", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oTabContainer = new TabContainer({
 				items: {
 					path: "/ProductCollection",
@@ -119,12 +117,12 @@ sap.ui.define([
 			});
 			this.oTabContainer.setModel(oModel);
 			this.oTabContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.oTabContainer.destroy();
 			this.oTabContainer = null;
-
+			await nextUIUpdate(this.clock);
 		}
 	});
 
@@ -201,7 +199,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Misc", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oTabContainer = new TabContainer({
 				items: {
 					path: "/ProductCollection",
@@ -212,11 +210,12 @@ sap.ui.define([
 
 			this.oTabContainer.setModel(oModel);
 			this.oTabContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.oTabContainer.destroy();
 			this.oTabContainer = null;
+			await nextUIUpdate(this.clock);
 		}
 	});
 
@@ -279,7 +278,7 @@ sap.ui.define([
 		oTestPage.destroy();
 	});
 
-	QUnit.test("Add button rendering in nested TabContainer with binding", function (assert) {
+	QUnit.test("Add button rendering in nested TabContainer with binding", async function (assert) {
 		//arrange
 		var oTemplate2,
 			oTabContainer2,
@@ -312,7 +311,7 @@ sap.ui.define([
 
 		oTabContainer2.setModel(oModel);
 		oTabContainer2.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oItems = oTabContainer2.getItems();
 
@@ -337,7 +336,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Focus", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oTabContainer = new TabContainer({
 				items: {
 					path: "/ProductCollection",
@@ -350,15 +349,16 @@ sap.ui.define([
 			this.oTabContainer.placeAt("qunit-fixture");
 			this.oTabStrip = this.oTabContainer._getTabStrip();
 			this.items = this.oTabContainer.getItems();
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.oTabContainer.destroy();
 			this.oTabContainer = null;
+			await nextUIUpdate(this.clock);
 		}
 	});
 
-	QUnit.test("Selection prevented", function (assert) {
+	QUnit.test("Selection prevented", async function (assert) {
 		var oTabContainer = new TabContainer({
 			items: {
 				path: "/ProductCollection",
@@ -372,7 +372,7 @@ sap.ui.define([
 
 		oTabContainer.setModel(oModel);
 		oTabContainer.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		var oItem = oTabContainer._getTabStrip().getItems()[1];
 		var oTabStrip = oTabContainer._getTabStrip();
@@ -406,7 +406,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Items synchronization", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oTabContainer = new TabContainer({
 			});
 
@@ -414,11 +414,12 @@ sap.ui.define([
 			this.oTabContainer.placeAt("qunit-fixture");
 			this.oTabStrip = this.oTabContainer._getTabStrip();
 			this.items = this.oTabContainer.getItems();
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.oTabContainer.destroy();
 			this.oTabContainer = null;
+			await nextUIUpdate(this.clock);
 		}
 	});
 
@@ -533,7 +534,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Constructing with array of items", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.item = new TabContainerItem({
 				id: 'test2',
 				name: 'test2'
@@ -558,14 +559,15 @@ sap.ui.define([
 			this.oTabContainer.placeAt("qunit-fixture");
 			this.oTabStrip = this.oTabContainer._getTabStrip();
 			this.items = this.oTabContainer.getItems();
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.oTabContainer.destroy();
 			this.oTabContainer 	= null;
 			this.oTabStrip 		= null;
 			this.items 			= null;
 			this.item 			= null;
+			await nextUIUpdate(this.clock);
 		}
 	});
 
@@ -610,7 +612,7 @@ sap.ui.define([
 		oTabContainer.destroy();
 	});
 
-	QUnit.test("showAddNewButton on mobile", function(assert) {
+	QUnit.test("showAddNewButton on mobile", async function(assert) {
 		// preapre
 		this.stub(Device.system, "phone").value(true);
 		this.stub(Device.system, "desktop").value(false);
@@ -619,7 +621,7 @@ sap.ui.define([
 			showAddNewButton: true
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		jQuery('body').addClass('sap-phone');
 
 		// act
@@ -629,9 +631,10 @@ sap.ui.define([
 		// clean
 		oTabContainer.destroy();
 		jQuery('body').removeClass('sap-phone');
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("Closing the only item, resets the selected item", function(assert) {
+	QUnit.test("Closing the only item, resets the selected item", async function(assert) {
 		//arrange
 		var oTabContainer = new TabContainer({
 			items: [
@@ -647,12 +650,12 @@ sap.ui.define([
 			oTabStripItemToRemove;
 
 		oTabContainer.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//act
 		oTabStripItemToRemove = oTabContainer._toTabStripItem(oTabContainer.getItems()[0]);
 		oTabContainer._getTabStrip()._removeItem(oTabStripItemToRemove);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//assert
 		assert.equal(oTabContainer.getSelectedItem(), undefined, "content is empty after the last tab is closed");
@@ -660,9 +663,10 @@ sap.ui.define([
 		//clean
 		oTabContainer.destroy();
 		oTabContainer = null;
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("Removing several items from the model keeps a selected item", function(assert) {
+	QUnit.test("Removing several items from the model keeps a selected item", async function(assert) {
 		//arrange
 		var oModel = new JSONModel();
 		oModel.setData({
@@ -704,16 +708,16 @@ sap.ui.define([
 
 		oTabContainer.setModel(oModel);
 		oTabContainer.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oTabContainer.setSelectedItem(oTabContainer.getItems()[2]);
 		var sFirstItemDomId = oTabContainer.getItems()[0].getId();
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//act
 		var data = oModel.getData();
 		data.employees.splice(1, 2); //remove the 2nd and 3rd items
 		oModel.setData(data);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//assert
 		assert.equal(oTabContainer.getSelectedItem(), sFirstItemDomId, "there is a selected and existing item after removing several items from the model");
@@ -722,5 +726,6 @@ sap.ui.define([
 		oTabContainer.destroy();
 		oTabContainer = null;
 		oModel = null;
+		await nextUIUpdate(this.clock);
 	});
 });

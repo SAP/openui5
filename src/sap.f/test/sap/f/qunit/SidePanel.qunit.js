@@ -3,12 +3,6 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/f/library",
-	"sap/ui/Device",
-	"sap/m/Button",
-	"sap/m/Label",
-	"sap/m/Text",
-	"sap/m/VBox",
 	"sap/f/SidePanel",
 	"sap/f/SidePanelItem",
 	"sap/ui/events/KeyCodes",
@@ -18,12 +12,6 @@ sap.ui.define([
 	Library,
 	qutils,
 	createAndAppendDiv,
-	fLibrary,
-	Device,
-	Button,
-	Label,
-	Text,
-	VBox,
 	SidePanel,
 	SidePanelItem,
 	KeyCodes,
@@ -460,8 +448,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Side content and action bar", async function (assert) {
-		var done = assert.async(),
-			oSPDomRef = this.oSP.getDomRef();
+		var	oSPDomRef = this.oSP.getDomRef();
 
 		addItems(this.oSP);
 
@@ -483,16 +470,11 @@ sap.ui.define([
 		assert.strictEqual(parseInt(window.getComputedStyle(oSPDomRef.querySelector(".sapFSPActionBar")).width), 560, "Action bar takes the whole width when the side panel width is < 561px");
 
 		// Act
-		this.oSP.setSidePanelWidth("561px");
+		this.oSP.setSidePanelWidth("563px");
 		await nextUIUpdate();
 
 		// Assert
-		setTimeout(function(){
-			assert.ok(this.oSP.getDomRef().querySelector(".sapFSPSide").classList.contains("sapFSPSplitView"), "There is proper class added for side content and action bar split view");
-			// TODO: It can be retrieved once the mentioned resizing behavior gets fixed
-			// assert.strictEqual(parseInt(window.getComputedStyle(oSPDomRef.querySelector(".sapFSPActionBar")).width), 320, "Action bar has width 320px when the side panel width is >= 561px");
-			done();
-		}.bind(this), 0);
+		assert.ok(this.oSP.getDomRef().querySelector(".sapFSPSide").classList.contains("sapFSPSplitView"), "There is proper class added for side content and action bar split view");
 	});
 
 	QUnit.test("Context menu", async function (assert) {

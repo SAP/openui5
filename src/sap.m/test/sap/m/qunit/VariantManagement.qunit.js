@@ -1319,6 +1319,30 @@ sap.ui.define([
 		this.oVM.onclick();
 	});
 
+	QUnit.test("check manage dialog Save behavour", function(assert) {
+		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "public", executeOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "2", title:"Two", remove: true, sharing: "private", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "private", executeOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "4", title:"Four", favorite: false, rename: false, sharing: "public", author: "B"}));
+
+		this.oVM.setDefaultKey("3");
+
+		this.oVM._openManagementDialog();
+		assert.ok(this.oVM._handleManageSavePressed(), "expected no errors");
+
+		var oRow = this.oVM._getRowForKey("3");
+		assert.ok(oRow, "expected row found");
+
+		var oInput = oRow.getCells()[VariantManagement.COLUMN_NAME_IDX];
+		assert.ok(oInput, "expected input found");
+		oInput.setValueState("Error");
+		assert.ok(!this.oVM._handleManageSavePressed(), "expected errors detected");
+
+		var oView = this.oVM.getItemByKey("3");
+		assert.ok(oView, "expected view found");
+		this.oVM._handleManageDeletePressed(oView);
+		assert.ok(this.oVM._handleManageSavePressed(), "expected no errors");
+	});
 
 	QUnit.module("VariantManagement Roles handling", {
 		beforeEach: async function() {

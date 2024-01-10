@@ -128,10 +128,10 @@ sap.ui.define([
 	 *
 	 * If this needs to be determined asynchronously, a <code>Promise</code> is returned.
 	 *
-	 * If the item cannot be determined, a corresponding <code>ParseException<code> is thrown.
+	 * If the item cannot be determined, a corresponding {@link sap.ui.model.ParseException ParseException} is thrown.
 	 *
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
-	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control
 	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} [oConfig] Configuration
 	 * @returns {sap.ui.mdc.valuehelp.ValueHelpItem|Promise<sap.ui.mdc.valuehelp.ValueHelpItem>} Object containing description, key, and payload. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.ParseException} if item cannot be determined
@@ -157,10 +157,10 @@ sap.ui.define([
 	 *
 	 * As the key might change (uppercase), an object with key and description can be returned.
 	 *
-	 * If the description cannot be determined, a corresponding <code>FormatException<code> is thrown.
+	 * If the description cannot be determined, a corresponding {@link sap.ui.model.FormatException FormatException} is thrown.
 	 *
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
-	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control
 	 * @param {any} vKey Key
 	 * @param {object} oInParameters In parameters for the key (as a key is not necessarily unique.) (Only filled in conditions of old variants.)
 	 * @param {object} oOutParameters Out parameters for the key (as a key is not necessarily unique.) (Only filled in conditions of old variants.)
@@ -230,7 +230,7 @@ sap.ui.define([
 	 * By Default this method uses the {@link sap.ui.mdc.field.FieldBase#getDisplay display} property of the
 	 * {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control
 	 * to determine what text (key or description) is used as autocomplete-text. A text is only used if it matches the user input.
-	 * If set to <code>Valur</code>, the key is used.
+	 * If set to <code>Value</code>, the key is used.
 	 * If set to <code>Description</code>, the description is used.
 	 * If set to <code>ValueDescription</code>, the key is used, if it maps, otherwise the description.
 	 * If set to <code>DescriptionValue</code>, the description is used, if it maps, otherwise the key.

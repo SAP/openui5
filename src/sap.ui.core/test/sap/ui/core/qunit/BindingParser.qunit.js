@@ -30,7 +30,10 @@ sap.ui.define([
 			myInstancedType : new Date({
 				pattern : "yyyy-MM-dd"
 			}),
-			myeventHandler: function () {}
+			myeventHandler: function () {},
+			joiningFormatter : function () {
+				return Array.prototype.join.call(arguments);
+			}
 		},
 		oGlobalContext = {
 			module1: {
@@ -218,15 +221,6 @@ sap.ui.define([
 		assert.strictEqual(o.parts[0].parameters.scope, mLocals);
 	});
 
-	QUnit.test("Single Binding with global formatter", function (assert) {
-		var o = parse("{path:'something', formatter: 'Global.formatter'}");
-		assert.strictEqual(typeof o, "object", "parse should return an object");
-		assert.strictEqual(o.parts, undefined, "binding info should not be a composite binding info");
-		assert.strictEqual(o.path, "something", "path should be as specified");
-		assert.strictEqual(o.type, undefined, "parse should not return a type name");
-		assert.strictEqual(o.formatter, Global.formatter, "parse should return the global formatter function");
-	});
-
 	QUnit.test("Single Binding with local formatter", function (assert) {
 		var o = parse("{path:'something', formatter: '.myformatter'}", oController);
 		assert.strictEqual(typeof o, "object", "parse should return an object");
@@ -234,15 +228,6 @@ sap.ui.define([
 		assert.strictEqual(o.path, "something", "path should be as specified");
 		assert.strictEqual(o.type, undefined, "parse should not return a type name");
 		this.assertBoundTo(o.formatter, oController.myformatter, oController, "parse should return the local formatter function");
-	});
-
-	QUnit.test("Single Binding with global type", function (assert) {
-		var o = parse("{path:'something', type: 'Global.type'}");
-		assert.strictEqual(typeof o, "object", "parse should return an object");
-		assert.strictEqual(o.parts, undefined, "binding info should not be a composite binding info");
-		assert.strictEqual(o.path, "something", "path should be as specified");
-		assert.ok(o.type instanceof String, "parse should return the global type");
-		assert.strictEqual(o.formatter, undefined, "parse should return no formatter");
 	});
 
 	QUnit.test("Single Binding with required type", function (assert) {
@@ -275,14 +260,6 @@ sap.ui.define([
 		assert.strictEqual(o.formatter, undefined, "parse should return no formatter");
 	});
 
-	QUnit.test("Single Binding with global event", function (assert) {
-		var o = parse("{path:'something', events: {event: 'Global.eventHandler'}}");
-		assert.strictEqual(typeof o, "object", "parse should return an object");
-		assert.strictEqual(o.parts, undefined, "binding info should not be a composite binding info");
-		assert.strictEqual(o.path, "something", "path should be as specified");
-		assert.strictEqual(o.events.event, Global.eventHandler, "parse should return the global event handler function");
-	});
-
 	QUnit.test("Single Binding with local event", function (assert) {
 		var o = parse("{path:'something', events: {event: '.myeventHandler'}}", oController);
 		assert.strictEqual(typeof o, "object", "parse should return an object");
@@ -311,8 +288,8 @@ sap.ui.define([
 		assert.deepEqual(o.type.oConstraints.search, /@/, "parse should return the search constraint as regex");
 	});
 
-	QUnit.test("Single Binding with instanced type", function (assert) {
-		var o = parse("{path:'something', type: 'Global.instancedType'}");
+	QUnit.test("Single Binding with instanced type - local", function (assert) {
+		const o = parse("{path:'something', type: '.myInstancedType'}", oController);
 		assert.strictEqual(typeof o, "object", "parse should return an object");
 		assert.strictEqual(o.parts, undefined, "binding info should not be a composite binding info");
 		assert.strictEqual(o.path, "something", "path should be as specified");
@@ -329,16 +306,6 @@ sap.ui.define([
 		assert.strictEqual(o.filters.sPath, "someFilterPath", "filter path should return the specified path");
 		assert.strictEqual(o.filters.oValue1, "someCompareValue", "compare value should be as defined");
 		assert.strictEqual(o.filters.sOperator, "EQ", "operator should be as defined");
-	});
-
-	QUnit.test("Single Binding with filter and custom global test function", function (assert) {
-		var o = parse("{path:'something', filters: {path:'someFilterPath', test:'Global.test'}}");
-		assert.strictEqual(typeof o, "object", "parse should return an object");
-		assert.strictEqual(o.parts, undefined, "binding info should not be a composite binding info");
-		assert.strictEqual(o.path, "something", "path should be as specified");
-		assert.ok(o.filters instanceof Filter, "parse should return the specified filter");
-		assert.strictEqual(o.filters.sPath, "someFilterPath", "filter path should return the specified path");
-		assert.strictEqual(o.filters.fnTest, Global.test, "test function should be resolved");
 	});
 
 	QUnit.test("Single Binding with filter and custom local test function", function (assert) {
@@ -460,16 +427,6 @@ sap.ui.define([
 		assert.strictEqual(o.sorter.bDescending, false, "sort should not be descending");
 	});
 
-	QUnit.test("Single Binding with sorter and custom global comparator function", function (assert) {
-		var o = parse("{path:'something', sorter: {path:'someSortPath', comparator: 'Global.compare'}}");
-		assert.strictEqual(typeof o, "object", "parse should return an object");
-		assert.strictEqual(o.parts, undefined, "binding info should not be a composite binding info");
-		assert.strictEqual(o.path, "something", "path should be as specified");
-		assert.ok(o.sorter instanceof Sorter, "parse should return the specified sorter");
-		assert.strictEqual(o.sorter.sPath, "someSortPath", "sorter path should return the specified path");
-		assert.strictEqual(o.sorter.fnCompare, Global.compare, "compare function should be resolved");
-	});
-
 	QUnit.test("Single Binding with sorter and custom local comparator function", function (assert) {
 		var o = parse("{path:'something', sorter: {path:'someSortPath', comparator: '.mycompare'}}", oController);
 		assert.strictEqual(typeof o, "object", "parse should return an object");
@@ -495,12 +452,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Complex binding with formatter", function (assert) {
-		var o = parse("{parts: [ {path:'something', type: 'Global.type'}, {path: '/lastName'}, {path:'address/firstName', formatter: '.myformatter'} ], formatter: 'Global.formatter'}", oController);
+		var o = parse("{parts: [ {path:'something', type: '.mytype'}, {path: '/lastName'}, {path:'address/firstName', formatter: '.myformatter'} ], formatter: '.myformatter'}", oController);
 		assert.strictEqual(typeof o, "object", "parse should return an object");
 		assert.strictEqual(typeof o.parts, "object", "binding info should be a composite binding info");
 		assert.strictEqual(o.parts.length, 3, "binding info should contain three parts");
 		assert.strictEqual(o.parts[0].path, "something", "parse should return the correct path for part 1");
-		assert.ok(o.parts[0].type instanceof String, "parse should return the global type for part 1");
+		assert.ok(o.parts[0].type instanceof String, "parse should return the type for part 1");
 		assert.strictEqual(o.parts[0].formatter, undefined, "parse should not return a formatter for part 2");
 		assert.strictEqual(o.parts[1].path, "/lastName", "parse should return the correct path for part 2");
 		assert.strictEqual(o.parts[1].type, undefined, "parse should not return a type for part 2");
@@ -508,11 +465,11 @@ sap.ui.define([
 		assert.strictEqual(o.parts[2].path, "address/firstName", "parse should return the correct path for part 3");
 		assert.strictEqual(o.parts[2].type, undefined, "parse should not return a type for part 3");
 		this.assertBoundTo(o.parts[2].formatter, oController.myformatter, oController, "parse should return the local formatter function for part 3");
-		assert.strictEqual(o.formatter, Global.formatter, "parse should return the Global formatter for the complex binding");
+		this.assertBoundTo(o.formatter, oController.myformatter, oController, "parse should return the local formatter function for the complex binding");
 	});
 
 	QUnit.test("Embedded Binding (single)", function (assert) {
-		var o = parse("Some prefix {path:'something', type: 'Global.type'} and some suffix");
+		var o = parse("Some prefix {path:'something', type: '.mytype'} and some suffix", oController);
 		assert.strictEqual(typeof o, "object", "parse should return an object");
 		assert.strictEqual(typeof o.parts, "object", "binding info should be a composite binding info");
 		assert.strictEqual(o.parts.length, 1, "binding info should contain a single part");
@@ -521,7 +478,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Embedded Binding (multiple)", function (assert) {
-		var o = parse("Some prefix {path:'something', type: 'Global.type'}, some other {/lastName} and some {address/firstName} suffix");
+		var o = parse("Some prefix {path:'something', type: '.mytype'}, some other {/lastName} and some {address/firstName} suffix", oController);
 		assert.strictEqual(typeof o, "object", "parse should return an object");
 		assert.strictEqual(typeof o.parts, "object", "binding info should be a composite binding info");
 		assert.strictEqual(o.parts.length, 3, "binding info should contain three parts");
@@ -538,7 +495,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Derived Formatter", function (assert) {
-		var o = parse("Some prefix {path:'something', type: 'Global.type'}, some other {/lastName} and some {address/firstName} suffix");
+		var o = parse("Some prefix {path:'something', type: '.mytype'}, some other {/lastName} and some {address/firstName} suffix", oController);
 		assert.strictEqual(typeof o, "object", "parse should return an object");
 		assert.strictEqual(typeof o.parts, "object", "binding info should be a composite binding info");
 		assert.strictEqual(o.parts.length, 3, "binding info should contain three parts");
@@ -546,17 +503,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Keep binding Strings", function (assert) {
-		var o = parse("Some prefix {path:'something', type: 'Global.type'}, some other {/lastName} and some {address/firstName} suffix");
+		var o = parse("Some prefix {path:'something', type: '.mytype'}, some other {/lastName} and some {address/firstName} suffix", oController);
 		assert.ok(!o.bindingString, "binding String should not exist in binding info object");
 		BindingParser._keepBindingStrings = true;
-		o = parse("Some prefix {path:'something', type: 'Global.type'}, some other {/lastName} and some {address/firstName} suffix");
+		o = parse("Some prefix {path:'something', type: '.mytype'}, some other {/lastName} and some {address/firstName} suffix", oController);
 		assert.ok(o.bindingString, "binding String should exist in binding info object");
-		assert.strictEqual(o.bindingString, "Some prefix {path:'something', type: 'Global.type'}, some other {/lastName} and some {address/firstName} suffix", "bindingString stored correctly");
+		assert.strictEqual(o.bindingString, "Some prefix {path:'something', type: '.mytype'}, some other {/lastName} and some {address/firstName} suffix", "bindingString stored correctly");
 		BindingParser._keepBindingStrings = false;
 	});
 
 	QUnit.test("Escaping", function (assert) {
-		var o = parse("Some pre\\{fix {path:'something', type: 'Global.type'}, some\\} other {/lastName} and } some {address/firstName} suffix");
+		var o = parse("Some pre\\{fix {path:'something', type: '.mytype'}, some\\} other {/lastName} and } some {address/firstName} suffix", oController);
 		assert.strictEqual(typeof o, "object", "parse should return an object");
 		assert.strictEqual(typeof o.parts, "object", "binding info should be a composite binding info");
 		assert.strictEqual(o.parts.length, 3, "binding info should contain three parts");
@@ -675,68 +632,68 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
-[undefined, false, true, "n/a"].forEach(function (vRequiresIContext) {
-	var sTitle = "mergeParts: requiresIContext = " + vRequiresIContext;
+	[undefined, false, true, "n/a"].forEach(function (vRequiresIContext) {
+		var sTitle = "mergeParts: requiresIContext = " + vRequiresIContext;
 
-	QUnit.test(sTitle, function (assert) {
-		var oBindingInfo = {
-				parts : [{
-					path : "/bar"
-				}, {
-					formatter : formatter1,
-					parts : [{path : "/foo"}]
-				}, {
-					formatter : formatter2,
-					parts : [{path : "/qux"}]
-				}]
-			},
-			fnFormatter,
-			oInterface = {
-				_slice : function () {}
-			};
+		QUnit.test(sTitle, function (assert) {
+			var oBindingInfo = {
+					parts : [{
+						path : "/bar"
+					}, {
+						formatter : formatter1,
+						parts : [{path : "/foo"}]
+					}, {
+						formatter : formatter2,
+						parts : [{path : "/qux"}]
+					}]
+				},
+				fnFormatter,
+				oInterface = {
+					_slice : function () {}
+				};
 
-		function formatter1(oInterface0, oValue) {
-			if (vRequiresIContext === true) {
-				assert.strictEqual(arguments.length, 2);
-				assert.strictEqual(oInterface0, "~oInterfaceSlice~");
-			} else {
-				assert.strictEqual(arguments.length, 1);
-				oValue = oInterface0; // no interface requested ;-)
+			function formatter1(oInterface0, oValue) {
+				if (vRequiresIContext === true) {
+					assert.strictEqual(arguments.length, 2);
+					assert.strictEqual(oInterface0, "~oInterfaceSlice~");
+				} else {
+					assert.strictEqual(arguments.length, 1);
+					oValue = oInterface0; // no interface requested ;-)
+				}
+				return "*" + oValue + "*";
 			}
-			return "*" + oValue + "*";
-		}
 
-		function formatter2(oValue) {
-			assert.strictEqual(arguments.length, 1);
-			return ">" + oValue + "<";
-		}
+			function formatter2(oValue) {
+				assert.strictEqual(arguments.length, 1);
+				return ">" + oValue + "<";
+			}
 
-		formatter1.requiresIContext = vRequiresIContext;
-		formatter2.requiresIContext = "n/a";
-
-		// code under test
-		BindingParser.mergeParts(oBindingInfo);
-
-		fnFormatter = oBindingInfo.formatter;
-		delete oBindingInfo.formatter;
-		assert.deepEqual(oBindingInfo, {
-			parts : [{path : "/bar"}, {path : "/foo"}, {path : "/qux"}]}
-		);
-
-		if (vRequiresIContext === true) {
-			assert.strictEqual(fnFormatter.requiresIContext, true);
-
-			this.mock(oInterface).expects("_slice").withExactArgs(1, 2)
-				.returns("~oInterfaceSlice~");
+			formatter1.requiresIContext = vRequiresIContext;
+			formatter2.requiresIContext = "n/a";
 
 			// code under test
-			assert.strictEqual(fnFormatter(oInterface, "a", "b", "c", "n/a"), "a *b* >c<");
-		} else {
-			assert.notOk("requiresIContext" in fnFormatter);
-			assert.strictEqual(fnFormatter("a", "b", "c", "n/a"), "a *b* >c<");
-		}
+			BindingParser.mergeParts(oBindingInfo);
+
+			fnFormatter = oBindingInfo.formatter;
+			delete oBindingInfo.formatter;
+			assert.deepEqual(oBindingInfo, {
+				parts : [{path : "/bar"}, {path : "/foo"}, {path : "/qux"}]}
+			);
+
+			if (vRequiresIContext === true) {
+				assert.strictEqual(fnFormatter.requiresIContext, true);
+
+				this.mock(oInterface).expects("_slice").withExactArgs(1, 2)
+					.returns("~oInterfaceSlice~");
+
+				// code under test
+				assert.strictEqual(fnFormatter(oInterface, "a", "b", "c", "n/a"), "a *b* >c<");
+			} else {
+				assert.notOk("requiresIContext" in fnFormatter);
+				assert.strictEqual(fnFormatter("a", "b", "c", "n/a"), "a *b* >c<");
+			}
+		});
 	});
-});
 
 	QUnit.test("mergeParts w/o any formatter", function (assert) {
 		var oBindingInfo = {
@@ -1031,7 +988,7 @@ sap.ui.define([
 
 		// complex binding with parts
 		oBindingInfo = parse("prefix {parts:[{path:'/p1'},{path:'/p2'},{path:'/p3'}],"
-			+ "formatter:'Global.joiningFormatter'}");
+			+ "formatter:'.joiningFormatter'}", oController);
 		oControl.bindProperty("text", oBindingInfo);
 
 		assert.strictEqual(oControl.getText(), "prefix 0,foo,bar", "prefix 0,foo,bar");
@@ -1146,7 +1103,6 @@ sap.ui.define([
 
 	QUnit.test("Scope access w/o dot", function (assert) {
 		var sBinding1 = "{path : '/', formatter : 'foo'}",
-			sBinding2 = "{path : '/', formatter : 'Global.formatter'}",
 			oBindingInfo,
 			oScope = {
 				foo : function () {}
@@ -1162,11 +1118,6 @@ sap.ui.define([
 			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/true, /*bPreferContext*/true);
 
 		assert.strictEqual(oBindingInfo.formatter, oScope.foo);
-
-		oBindingInfo = parse(sBinding2, oScope, /*bUnescape*/false,
-			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/true);
-
-		assert.strictEqual(oBindingInfo.formatter, Global.formatter);
 	});
 
 	QUnit.test("Scope access w/o dot by given static context", function (assert) {
@@ -1240,16 +1191,6 @@ sap.ui.define([
 		assert.strictEqual(oBindingInfo.formatter, undefined);
 		assert.deepEqual(oBindingInfo.functionsNotFound, ["Global.ns.global"]);
 
-		oBindingInfo = parse(sBinding6, oScope, /*bUnescape*/false,
-			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false);
-
-		assert.strictEqual(oBindingInfo.formatter.toString(),
-			Global.ns.global.toString());
-
-		oBindingInfo.formatter();
-		assert.strictEqual(enclosingContext, oBindingInfo);
-		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
-
 		oBindingInfo = parse(sBinding7, oScope, /*bUnescape*/false,
 			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
 			/*mGlobals*/oGlobalContext);
@@ -1262,15 +1203,14 @@ sap.ui.define([
 		enclosingContext = null;
 	});
 
-	QUnit.test("Expression binding with embedded composite binding", function (assert) {
-		var sBinding
-			= "{:= ${parts:['m2>/foo',{path:'/bar'}],formatter:'Global.joiningFormatter'} }",
+	QUnit.test("Expression binding with embedded composite binding - local formatter", function (assert) {
+		const sBinding = "{:= ${parts:['m2>/foo',{path:'/bar'}],formatter:'.joiningFormatter'} }",
 			oModel = new JSONModel({"bar" : 1}),
 			oModel2 = new JSONModel({"foo" : 0}),
 			oInvisibleText = new InvisibleText({models : {undefined : oModel, "m2" : oModel2}});
 
 		// code under test
-		oInvisibleText.bindProperty("text", parse(sBinding));
+		oInvisibleText.bindProperty("text", parse(sBinding, oController));
 
 		assert.strictEqual(oInvisibleText.getText(), "0,1");
 		oModel.setProperty("/bar", 42);

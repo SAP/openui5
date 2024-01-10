@@ -3,27 +3,27 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/CalendarWeekInterval",
 	"sap/ui/unified/CalendarDateInterval",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date"
-], function(Localization, Element, qutils, CalendarWeekInterval, CalendarDateInterval, CalendarDate, KeyCodes, jQuery, oCore, UI5Date) {
+], function(Localization, Element, nextUIUpdate, qutils, CalendarWeekInterval, CalendarDateInterval, CalendarDate, KeyCodes, jQuery, UI5Date) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
 	Localization.setLanguage("en_US");
 
 	QUnit.module("Events", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.sut = new CalendarWeekInterval("CalP",{
 				startDate: UI5Date.getInstance("2015", "0", "1", "8", "0", "0"),
 				pickerPopup: true
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.sutMonth = this.sut.getAggregation("month")[0];
 		},
 		afterEach: function () {
@@ -87,7 +87,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calendar Picker");
-	QUnit.test("If choosed date from the Calendar picker is in the 'selected' week the startDate should stay the same", function(assert) {
+	QUnit.test("If choosed date from the Calendar picker is in the 'selected' week the startDate should stay the same", async function(assert) {
 		// arrange
 		var $Date,
 			oCalP = new CalendarWeekInterval("CalP",{
@@ -95,11 +95,11 @@ sap.ui.define([
 						pickerPopup: true
 					}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar3: Calendar picker not initial rendered");
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(jQuery("#CalP--Cal").get(0), "Calendar picker rendered");
 		assert.ok(oCalP._oPopup.getContent()[0].isA("sap.ui.unified.Calendar"), "Calendar picker rendered in static area");
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
@@ -118,7 +118,8 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("If chosen date from the Calendar picker is NOT in the 'selected' week the startDate should be changed to the start date of the week in which is the selected date", function(assert) {
+	QUnit.test("If chosen date from the Calendar picker is NOT in the 'selected' week the startDate should be changed to the start date of the week in which is the selected date",
+		async function(assert) {
 		// arrange
 		var $Date,
 			oCalP = new CalendarWeekInterval("CalP",{
@@ -126,11 +127,11 @@ sap.ui.define([
 						pickerPopup: true
 					}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar3: Calendar picker not initial rendered");
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(jQuery("#CalP--Cal").get(0), "Calendar picker rendered");
 		assert.ok(oCalP._oPopup.getContent()[0].isA("sap.ui.unified.Calendar"), "Calendar picker rendered in static area");
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
@@ -139,7 +140,7 @@ sap.ui.define([
 		$Date = jQuery("#CalP--Cal--Month0-20150805");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(Element.getElementById("CalP").getStartDate().getDate(), 2, "start date is set correctly");
 
@@ -150,7 +151,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("fireStartDateChange", function(assert) {
+	QUnit.test("fireStartDateChange", async function(assert) {
 		// arrange
 		var $Date, oCalStartDate,
 			oSpyFireDateChange = this.spy(CalendarWeekInterval.prototype, "fireStartDateChange"),
@@ -159,35 +160,35 @@ sap.ui.define([
 						pickerPopup: true
 					}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar picker not initial rendered");
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// click on Month button inside calendar picker
 		qutils.triggerEvent("click", "CalP--Cal--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// click on September
 		$Date = jQuery("#CalP--Cal--MP-m8");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// click on Year button inside calendar picker
 		qutils.triggerEvent("click", "CalP--Cal--Head-B2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// click on 2016
 		$Date = jQuery("#CalP--Cal--YP-y20160101");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// click on 17 of September 2016
 		$Date = jQuery("#CalP--Cal--Month0-20160917");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oCalStartDate = Element.getElementById("CalP").getStartDate();
 
@@ -200,14 +201,14 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("User opens the picker but escapes it - click outside for desktop or click cancel button", function(assert) {
+	QUnit.test("User opens the picker but escapes it - click outside for desktop or click cancel button", async function(assert) {
 		// arrange
 		var oSpyCancel = this.spy(CalendarWeekInterval.prototype, "fireCancel");
 		var oCalP = new CalendarWeekInterval("CalP",{
 			pickerPopup: true
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		qutils.triggerEvent("click", "CalP--Head-B1");
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
@@ -220,7 +221,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("User opens date picker from the button and sees a predefined range of days marked in the date picker.", function(assert) {
+	QUnit.test("User opens date picker from the button and sees a predefined range of days marked in the date picker.", async function(assert) {
 		// arrange
 		var oCalPicker,
 			$Date,
@@ -229,10 +230,10 @@ sap.ui.define([
 						pickerPopup: true
 					}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
 
 		oCalPicker = oCalP._getCalendar();
@@ -248,7 +249,7 @@ sap.ui.define([
 
 		// open again the CalendarPicker
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// check for the selected date range
 		assert.strictEqual(oCalPicker.getSelectedDates()[0].getStartDate().getDate(), 13, "start date is 13");
@@ -260,7 +261,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("Text of the direct navigation button is correct", function(assert) {
+	QUnit.test("Text of the direct navigation button is correct", async function(assert) {
 		// arrange
 		var $Date,
 			oCalP = new CalendarWeekInterval("CalP",{
@@ -268,25 +269,25 @@ sap.ui.define([
 						pickerPopup: true
 					}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// click on Month button inside calendar picker
 		qutils.triggerEvent("click", "CalP--Cal--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// click on December
 		$Date = jQuery("#CalP--Cal--MP-m11");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// click on 11 of December
 		$Date = jQuery("#CalP--Cal--Month0-20171211");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(jQuery("#CalP--Head-B1").text(), "December 2017", "button text is correct");
 
@@ -323,14 +324,14 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("Changing of the pickerPopup mode doesn't break min and max date inside calendarPicker", function(assert) {
+	QUnit.test("Changing of the pickerPopup mode doesn't break min and max date inside calendarPicker", async function(assert) {
 		// arrange
 		var oCalPicker,
 			oCalP = new CalendarWeekInterval("CalP",{
 				pickerPopup: true
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// open calendarPicker
 		qutils.triggerEvent("click", "CalP--Head-B1");
@@ -343,7 +344,7 @@ sap.ui.define([
 
 		// close calendarPicker
 		qutils.triggerKeydown(Element.getElementById("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// change the pickerPopup to false
 		oCalP.setPickerPopup(false);

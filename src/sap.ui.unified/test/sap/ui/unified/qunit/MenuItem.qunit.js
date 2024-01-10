@@ -2,10 +2,10 @@
 sap.ui.define([
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Label",
-	"sap/ui/core/TooltipBase",
-	"sap/ui/core/Core"
-], function(Menu, MenuItem, Label, TooltipBase, oCore) {
+	"sap/ui/core/TooltipBase"
+], function(Menu, MenuItem, nextUIUpdate, Label, TooltipBase) {
 	"use strict";
 
 	QUnit.module("Accessibility");
@@ -27,7 +27,7 @@ sap.ui.define([
 		oMenu.destroy();
 	});
 
-	QUnit.test("ariaLabelledBy association", function (assert) {
+	QUnit.test("ariaLabelledBy association", async function (assert) {
 		var oLabel = new Label("menuItemLabel", {
 			text: "Some label"
 		});
@@ -42,7 +42,7 @@ sap.ui.define([
 
 		oLabel.placeAt("qunit-fixture");
 		oMenu.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oMenu.open();
 		var $menuItemRef = oMenuItem.$();
@@ -56,13 +56,13 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.test("aria-haspopup", function (assert) {
+	QUnit.test("aria-haspopup", async function (assert) {
 		var oMenuItem = new MenuItem({ text: "Plain" }),
 			oMenuItemWithSubmenu = new MenuItem({ text: "With submenu", submenu: new Menu() }),
 			oMenu = new Menu({ items: [oMenuItem, oMenuItemWithSubmenu] });
 
 		oMenu.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oMenu.open();
 		assert.notOk(oMenuItem.$().attr("aria-haspopup"), "Menu items don't have aria-haspopup when there's no submenu");
@@ -83,7 +83,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Events", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMenuItem = new MenuItem({
 				text: "Some MenuItem",
 				tooltip: new Tooltip({
@@ -96,7 +96,7 @@ sap.ui.define([
 			});
 
 			this.oMenu.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oMenu.destroy();

@@ -4,7 +4,7 @@
 
 // Provides control sap.m.SinglePlanningCalendarMonthGrid.
 sap.ui.define([
-	"sap/base/i18n/Formatting",
+	'sap/base/i18n/Formatting',
 	'sap/ui/core/Element',
 	'sap/ui/core/Control',
 	"sap/ui/core/Lib",
@@ -28,11 +28,9 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/InvisibleMessage',
 	'sap/ui/core/library',
-	"sap/ui/core/date/CalendarWeekNumbering",
-	"sap/ui/core/date/CalendarUtils",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/unified/DateRange"
+	'sap/ui/core/date/CalendarUtils',
+	'sap/ui/core/date/UI5Date',
+	'sap/ui/unified/DateRange'
 ],
 	function(
 		Formatting,
@@ -59,9 +57,7 @@ sap.ui.define([
 		jQuery,
 		InvisibleMessage,
 		coreLibrary,
-		CalendarWeekNumbering,
 		CalendarDateUtils,
-		Configuration,
 		UI5Date,
 		DateRange
 	) {
@@ -585,7 +581,7 @@ sap.ui.define([
 
 			} else if (this._bCurrentWeekSelection && SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode()){
 				var iStartDate = oStartDate.getDate(),
-					oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(new Locale(Formatting.getLanguageTag()).toString())),
+				oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(new Locale(Formatting.getLanguageTag()).toString())),
 					iAPIFirstDayOfWeek = this.getFirstDayOfWeek(),
 					iFirstDayOfWeek,
 					iWeekStartDate;

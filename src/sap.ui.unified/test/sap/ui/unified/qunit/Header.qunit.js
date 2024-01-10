@@ -2,16 +2,16 @@
 
 sap.ui.define([
 	"sap/ui/unified/calendar/Header",
-	"sap/ui/core/Core"
-], function(Header, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Header, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Rendering", function (hooks) {
-		hooks.beforeEach(function () {
+		hooks.beforeEach(async function () {
 			this.oHeader = new Header();
 
 			this.oHeader.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		});
 		hooks.afterEach(function () {
 			this.oHeader.destroy();
@@ -195,7 +195,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("visibleCurrentDateButton", function (assert) {
+		QUnit.test("visibleCurrentDateButton", async function (assert) {
 			var oHeader = this.oHeader,
 				sHeaderId = "#" + oHeader.getId() + "-today";
 
@@ -204,7 +204,7 @@ sap.ui.define([
 
 			// act
 			oHeader.setVisibleCurrentDateButton(true);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assert
 			assert.ok(oHeader.getDomRef().querySelector(sHeaderId), "button is rendered");
@@ -217,11 +217,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Private API", function (hooks) {
-		hooks.beforeEach(function () {
+		hooks.beforeEach(async function () {
 			this.oHeader = new Header();
 
 			this.oHeader.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		});
 		hooks.afterEach(function () {
 			this.oHeader.destroy();
@@ -281,7 +281,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("_set- and _getTextButton", function () {
-			QUnit.test("_setTextButton3 should set property and change the text of the DOM element", function (assert) {
+			QUnit.test("_setTextButton3 should set property and change the text of the DOM element", async function (assert) {
 				this.oHeader._setVisibleButton3(true);
 				// arrange
 				var sExpectedText = "Expected text",
@@ -289,7 +289,7 @@ sap.ui.define([
 
 				// act
 				this.oHeader._setTextButton3(sExpectedText);
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				// assert
 				assert.equal(this.oHeader._textButton3, sExpectedText, "inner property should be set properly");
@@ -309,7 +309,7 @@ sap.ui.define([
 				assert.equal(this.oHeader._getTextButton3(), bExpectedValue, "_getTextButton3 should return the inner value property");
 			});
 
-			QUnit.test("_setTextButton4 should set property and change the text of the DOM element", function (assert) {
+			QUnit.test("_setTextButton4 should set property and change the text of the DOM element", async function (assert) {
 				this.oHeader._setVisibleButton4(true);
 				// arrange
 				var sExpectedText = "Expected text",
@@ -317,7 +317,7 @@ sap.ui.define([
 
 				// act
 				this.oHeader._setTextButton4(sExpectedText);
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				// assert
 				assert.equal(this.oHeader._textButton4, sExpectedText, "inner property should be set properly");
@@ -339,7 +339,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("_set- and _getAriaLabelButton", function () {
-			QUnit.test("_setAriaLabelButton3 should set property and change the aria-label of the DOM element", function (assert) {
+			QUnit.test("_setAriaLabelButton3 should set property and change the aria-label of the DOM element", async function (assert) {
 				this.oHeader._setVisibleButton3(true);
 				// arrange
 				var sExpectedText = "Expected text",
@@ -347,7 +347,7 @@ sap.ui.define([
 
 				// act
 				this.oHeader._setAriaLabelButton3(sExpectedText);
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				// assert
 				assert.equal(this.oHeader._ariaLabelButton3, sExpectedText, "inner property should be set properly");
@@ -367,7 +367,7 @@ sap.ui.define([
 				assert.equal(this.oHeader._getAriaLabelButton3(), bExpectedValue, "_getAriaLabelButton3 should return the inner value property");
 			});
 
-			QUnit.test("_setAriaLabelButton4 should set property and change the aria-label of the DOM element", function (assert) {
+			QUnit.test("_setAriaLabelButton4 should set property and change the aria-label of the DOM element", async function (assert) {
 				this.oHeader._setVisibleButton4(true);
 				// arrange
 				var sExpectedText = "Expected text",
@@ -375,7 +375,7 @@ sap.ui.define([
 
 				// act
 				this.oHeader._setAriaLabelButton4(sExpectedText);
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				// assert
 				assert.equal(this.oHeader._ariaLabelButton4, sExpectedText, "inner property should be set properly");

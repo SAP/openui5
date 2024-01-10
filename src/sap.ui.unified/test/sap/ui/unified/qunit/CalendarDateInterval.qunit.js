@@ -17,10 +17,9 @@ sap.ui.define([
 	"sap/ui/unified/calendar/DatesRow",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Localization, Element, KeyCodes, qutils, CalendarDateInterval, CalendarType, Locale, LocaleData, DateFormat, DateRange, DateTypeRange, CalendarDate, CalendarWeekInterval, DatesRow, Device, jQuery, oCore, UI5Date, nextUIUpdate) {
+], function(Localization, Element, KeyCodes, qutils, CalendarDateInterval, CalendarType, Locale, LocaleData, DateFormat, DateRange, DateTypeRange, CalendarDate, CalendarWeekInterval, DatesRow, Device, jQuery, UI5Date, nextUIUpdate) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -43,23 +42,23 @@ sap.ui.define([
 	var oToday = UI5Date.getInstance();
 
 	QUnit.module("Rendering", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCal = new CalendarDateInterval("myCal",{
 				startDateChange: handleStartDateChange,
 				startDate: UI5Date.getInstance("2015", "1", "2"),
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCal.destroy();
 		}
 	});
 
-	QUnit.test("Rendered days by default", function(assert) {
+	QUnit.test("Rendered days by default", async function(assert) {
 		// Prepare
 		var oCal =  new CalendarDateInterval("myCal2").placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		var $DatesRow = Element.getElementById("myCal2").getAggregation("month")[0].$();
@@ -76,9 +75,9 @@ sap.ui.define([
 		oCal.destroy();
 	});
 
-	QUnit.test("Rendered days with set properties days and startDate", function(assert) {
+	QUnit.test("Rendered days with set properties days and startDate", async function(assert) {
 		this.oCal.setDays(14);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		var $DatesRow = Element.getElementById("myCal").getAggregation("month")[0].$();
@@ -93,10 +92,10 @@ sap.ui.define([
 		assert.equal(iStartDateChanged, 0, "no startDateChangeEvent fired by rendering");
 	});
 
-	QUnit.test("Rendered days with set properties days and startDate and showDayNamesLine set to false", function(assert) {
+	QUnit.test("Rendered days with set properties days and startDate and showDayNamesLine set to false", async function(assert) {
 		this.oCal.setShowDayNamesLine(false);
 		this.oCal.setDays(14);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		var $DatesRow = Element.getElementById("myCal").getAggregation("month")[0].$();
@@ -117,10 +116,10 @@ sap.ui.define([
 		assert.ok(!jQuery("#myCal").attr("style"), "Calendar has no width set");
 	});
 
-	QUnit.test("set width", function(assert) {
+	QUnit.test("set width", async function(assert) {
 		// act
 		this.oCal.setWidth("1000px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 
 		// assert
@@ -148,13 +147,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("initialize", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
 				startDate: UI5Date.getInstance("2015", "1", "2"),
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCal.destroy();
@@ -185,24 +184,24 @@ sap.ui.define([
 	});
 
 	QUnit.module("change date via API", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
 				startDate: UI5Date.getInstance("2015", "1", "2"),
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCal.destroy();
 		}
 	});
 
-	QUnit.test("setStartDate", function(assert) {
+	QUnit.test("setStartDate", async function(assert) {
 		// act
 		iStartDateChanged = 0;
 		this.oCal.setStartDate(UI5Date.getInstance("2015", "2", "10"));
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $DatesRow = Element.getElementById("myCal").getAggregation("month")[0].$();
 		var aDays = $DatesRow.find(".sapUiCalItem");
 
@@ -211,15 +210,15 @@ sap.ui.define([
 		assert.equal(iStartDateChanged, 0, "no startDateChangeEvent fired by API change");
 	});
 
-	QUnit.test("focusDate", function(assert) {
+	QUnit.test("focusDate", async function(assert) {
 		this.oCal.setStartDate(UI5Date.getInstance("2015", "2", "10"));
 		this.oCal.setDays(14);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//act
 		iStartDateChanged = 0;
 		this.oCal.focusDate(UI5Date.getInstance("2015", "2", "11"));
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $DatesRow = Element.getElementById("myCal").getAggregation("month")[0].$();
 		var aDays = $DatesRow.find(".sapUiCalItem");
 
@@ -229,7 +228,7 @@ sap.ui.define([
 
 		//act
 		this.oCal.focusDate(UI5Date.getInstance("2015", "3", "11"));
-		oCore.applyChanges();
+		await nextUIUpdate();
 		aDays = $DatesRow.find(".sapUiCalItem");
 
 		// assert
@@ -240,27 +239,27 @@ sap.ui.define([
 	});
 
 	QUnit.module("change date via navigation", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
 				startDate: UI5Date.getInstance("2015", "3", "10"),
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCal.destroy();
 		}
 	});
 
-	QUnit.test("next/prev days", function(assert) {
+	QUnit.test("next/prev days", async function(assert) {
 		// Prepare
 		iStartDateChanged = 0;
 
 		// act
 		this.oCal.focusDate(UI5Date.getInstance("2015", "3", "11"));
 		qutils.triggerEvent("click", "myCal--Head-next");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(iStartDateChanged, 1, "Calendar: startDateChangeEvent fired");
@@ -277,7 +276,7 @@ sap.ui.define([
 		// act
 		iStartDateChanged = 0;
 		qutils.triggerEvent("click", "myCal--Head-prev");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(iStartDateChanged, 1, "Calendar: startDateChangeEvent fired");
@@ -312,9 +311,9 @@ sap.ui.define([
 			oMonthDomRef, sExpected;
 
 		oCalendarDateInt.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oExternalControl.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oMonthDomRef = oExternalControl.getAggregation("month")[0].getDomRef();
 		sExpected = oMonthDomRef.childNodes[1].childNodes[0].id;
@@ -332,25 +331,25 @@ sap.ui.define([
 		oExternalControl.destroy();
 	});
 
-	QUnit.test("Header next button handler works correct for YearRangePicker", function (assert) {
+	QUnit.test("Header next button handler works correct for YearRangePicker", async function (assert) {
 		// Prepare
 		// open calendarPicker
 		this.oCal.setStartDate(UI5Date.getInstance(2000, 0, 1));
 		// Make rendering sync, so we can assert safely
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oYearRangePicker = this.oCal.getAggregation("yearRangePicker"),
 			oNextPageSpy = this.spy(oYearRangePicker, "nextPage"),
 			oTogglePrevNexYearPicker = this.spy(this.oCal, "_togglePrevNexYearPicker");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.oCal._showYearPicker();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oCal._showYearRangePicker();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oCal._handleNext();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oNextPageSpy.calledOnce, "YearRangePicker nextPage is called");
@@ -362,7 +361,7 @@ sap.ui.define([
 		oTogglePrevNexYearPicker.restore();
 	});
 
-	QUnit.test("Header previous button handler works correct for YearRangePicker", function (assert) {
+	QUnit.test("Header previous button handler works correct for YearRangePicker", async function (assert) {
 		// Prepare
 		var oCal = new CalendarDateInterval({
 				primaryCalendarType: CalendarType.Gregorian,
@@ -372,15 +371,15 @@ sap.ui.define([
 			oPreviousPageSpy = this.spy(oYearRangePicker, "previousPage"),
 			oTogglePrevNexYearPicker = this.spy(oCal, "_togglePrevNexYearPicker");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oCal._showYearPicker();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCal._showYearRangePicker();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCal._handlePrevious();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oPreviousPageSpy.calledOnce, "YearRangePicker previousPage is called");
@@ -393,14 +392,14 @@ sap.ui.define([
 		oTogglePrevNexYearPicker.restore();
 	});
 
-	QUnit.test("There is no focus on mobile", function (assert) {
+	QUnit.test("There is no focus on mobile", async function (assert) {
 		// Prepare
 		var oDeviceStub = this.stub(Device.system, "phone").value(true),
 			oFocusSpy = this.spy(this.oCal, "focus");
 
 		// Act
 		this.oCal._handleNext();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oFocusSpy.callCount, 0, "focus is not called");
@@ -426,23 +425,23 @@ sap.ui.define([
 	});
 
 	QUnit.module("MonthPicker", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
 				startDate: UI5Date.getInstance("2015", "3", "10"),
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCal.destroy();
 		}
 	});
 
-	QUnit.test("displayed months default", function(assert) {
+	QUnit.test("displayed months default", async function(assert) {
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $MonthPicker = Element.getElementById("myCal").getAggregation("monthPicker").$();
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
@@ -455,15 +454,15 @@ sap.ui.define([
 		assert.ok(!jQuery("#myCal--Head-next").hasClass("sapUiCalDsbl"), "Next Button is enabled");
 	});
 
-	QUnit.test("displayed months when days are 14", function(assert) {
+	QUnit.test("displayed months when days are 14", async function(assert) {
 		// System under test
 		this.oCal.setStartDate(UI5Date.getInstance("2015", "1", "2"));
 		this.oCal.setDays(14);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $MonthPicker = Element.getElementById("myCal").getAggregation("monthPicker").$();
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
@@ -475,11 +474,11 @@ sap.ui.define([
 		assert.ok(!jQuery("#myCal--Head-next").hasClass("sapUiCalDsbl"), "Next Button is enabled");
 	});
 
-	QUnit.test("change block default", function(assert) {
+	QUnit.test("change block default", async function(assert) {
 		qutils.triggerEvent("click", "myCal--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		qutils.triggerEvent("click", "myCal--Head-prev");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $MonthPicker = Element.getElementById("myCal").getAggregation("monthPicker").$();
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
@@ -490,17 +489,17 @@ sap.ui.define([
 		assert.ok(!jQuery("#myCal--Head-next").hasClass("sapUiCalDsbl"), "Calendar: Next Button enabled");
 	});
 
-	QUnit.test("change block 14 days", function(assert) {
+	QUnit.test("change block 14 days", async function(assert) {
 		// System under test
 		this.oCal.setStartDate(UI5Date.getInstance("2015", "1", "2"));
 		this.oCal.setDays(14);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		qutils.triggerEvent("click", "myCal--Head-next");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $MonthPicker = Element.getElementById("myCal").getAggregation("monthPicker").$();
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
@@ -512,7 +511,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-next");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(!jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Calendar: Previous Button enabled");
@@ -520,7 +519,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "myCal--Head-B1");
 	});
 
-	QUnit.test("change months pages", function(assert) {
+	QUnit.test("change months pages", async function(assert) {
 		var $MonthPicker,
 			$Month,
 			aMonths;
@@ -528,11 +527,11 @@ sap.ui.define([
 		// System under test
 		this.oCal.setStartDate(UI5Date.getInstance("2015", "4", "2"));
 		this.oCal.setDays(14);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		$MonthPicker = Element.getElementById("myCal").getAggregation("monthPicker").$();
 		aMonths = $MonthPicker.find(".sapUiCalItem");
@@ -540,7 +539,7 @@ sap.ui.define([
 		$Month = jQuery("#myCal--MP-m4");
 		$Month.trigger("focus");
 		qutils.triggerKeydown($Month, KeyCodes.ARROW_RIGHT);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		aMonths = $MonthPicker.find(".sapUiCalItem");
@@ -550,7 +549,7 @@ sap.ui.define([
 		$Month = jQuery("#myCal--MP-m5");
 		$Month.trigger("focus");
 		qutils.triggerKeydown($Month, KeyCodes.ARROW_LEFT);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		aMonths = $MonthPicker.find(".sapUiCalItem");
@@ -559,30 +558,30 @@ sap.ui.define([
 
 
 	QUnit.module("YearPicker", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
 				startDate: UI5Date.getInstance("2015", "3", "10"),
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCal.destroy();
 		}
 	});
 
-	QUnit.test("Select year after selecting a range of years", function(assert) {
+	QUnit.test("Select year after selecting a range of years", async function(assert) {
 		// act
 		this.oCal._showYearPicker();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oCal._showYearRangePicker();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oCal._getYearRangePicker().setDate(UI5Date.getInstance("2014", "3", "10"));
 		this.oCal._selectYearRange();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oCal._selectYear();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(true, "Selecting a year doesn't throw an error");
@@ -598,10 +597,10 @@ sap.ui.define([
 		assert.ok(true, "Navigating with the keyboard arrows doesn't throw an error");
 	});
 
-	QUnit.test("displayed years default", function(assert) {
+	QUnit.test("displayed years default", async function(assert) {
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $YearPicker = Element.getElementById("myCal").getAggregation("yearPicker").$();
 		var aYears = $YearPicker.find(".sapUiCalItem");
 
@@ -612,15 +611,15 @@ sap.ui.define([
 		assert.equal(jQuery(aYears[1]).attr("tabindex"), "0", "Calendar: second displayed year is focused");
 	});
 
-	QUnit.test("displayed years 14 days", function(assert) {
+	QUnit.test("displayed years 14 days", async function(assert) {
 		// System under test
 		this.oCal.setStartDate(UI5Date.getInstance("2015", "1", "2"));
 		this.oCal.setDays(14);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $YearPicker = Element.getElementById("myCal").getAggregation("yearPicker").$();
 		var aYears = $YearPicker.find(".sapUiCalItem");
 
@@ -630,12 +629,12 @@ sap.ui.define([
 		assert.equal(jQuery(aYears[3]).attr("tabindex"), "0", "Calendar: 4. displayed year is focused");
 	});
 
-	QUnit.test("change block default days", function(assert) {
+	QUnit.test("change block default days", async function(assert) {
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		qutils.triggerEvent("click", "myCal--Head-prev");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $YearPicker = Element.getElementById("myCal").getAggregation("yearPicker").$();
 		var aYears = $YearPicker.find(".sapUiCalItem");
 
@@ -645,17 +644,17 @@ sap.ui.define([
 		qutils.triggerEvent("click", "myCal--Head-B2");
 	});
 
-	QUnit.test("change block 14 days", function(assert) {
+	QUnit.test("change block 14 days", async function(assert) {
 		// System under test
 		this.oCal.setStartDate(UI5Date.getInstance("2015", "1", "2"));
 		this.oCal.setDays(14);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		qutils.triggerEvent("click", "myCal--Head-next");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $YearPicker = Element.getElementById("myCal").getAggregation("yearPicker").$();
 		var aYears = $YearPicker.find(".sapUiCalItem");
 
@@ -665,13 +664,13 @@ sap.ui.define([
 		qutils.triggerEvent("click", "myCal--Head-B2");
 	});
 
-	QUnit.test("Min/Max", function(assert) {
+	QUnit.test("Min/Max", async function(assert) {
 		// System under test
 		this.oCal.setStartDate(UI5Date.getInstance("2000", "1", "2"));
 		this.oCal.setMinDate(UI5Date.getInstance("2000", "1", "1"));
 		this.oCal.setMaxDate(UI5Date.getInstance("2050", "7", "31"));
 		this.oCal.setDays(14);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(!jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Calendar: Previous Button enabled");
@@ -679,7 +678,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $MonthPicker = Element.getElementById("myCal").getAggregation("monthPicker").$();
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
@@ -691,7 +690,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $YearPicker = Element.getElementById("myCal").getAggregation("yearPicker").$();
 		var aYears = $YearPicker.find(".sapUiCalItem");
 
@@ -704,15 +703,15 @@ sap.ui.define([
 		var $Date = jQuery("#myCal--YP-y20000101");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date.get(0), KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		qutils.triggerEvent("click", "myCal--Head-prev");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Calendar: Previous Button disabled");
 
 		// act
 		this.oCal.setStartDate(UI5Date.getInstance(2050, 7, 17));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(!jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Calendar: Previous Button enabled");
@@ -720,7 +719,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$MonthPicker = Element.getElementById("myCal").getAggregation("monthPicker").$();
 		aMonths = $MonthPicker.find(".sapUiCalItem");
 
@@ -732,7 +731,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$YearPicker = Element.getElementById("myCal").getAggregation("yearPicker").$();
 		aYears = $YearPicker.find(".sapUiCalItem");
 
@@ -744,19 +743,19 @@ sap.ui.define([
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B2");
 		qutils.triggerEvent("click", "myCal--Head-next");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery("#myCal--Head-next").hasClass("sapUiCalDsbl"), "Calendar: Next Button disabled");
 	});
 
 	QUnit.module("Private API", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCal = new CalendarDateInterval("myCal", {
 				startDateChange: handleStartDateChange,
 				startDate: UI5Date.getInstance("2015", "1", "2"),
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCal.destroy();
@@ -918,7 +917,7 @@ sap.ui.define([
 		oHeader = null;
 	});
 
-	QUnit.test("special days", function(assert) {
+	QUnit.test("special days", async function(assert) {
 		// Arrange
 		this.oCal.setStartDate(UI5Date.getInstance("2015", "0", "31"));
 		this.oCal.addSpecialDate(new DateTypeRange({
@@ -926,33 +925,33 @@ sap.ui.define([
 			endDate: UI5Date.getInstance("2015", "1", "1"),
 			type: "Type01"
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// Assert
 		assert.ok(jQuery("#myCal--Month0-20150131").hasClass("sapUiCalItemType01"), "special date from start date month rendered");
 		assert.ok(jQuery("#myCal--Month0-20150201").hasClass("sapUiCalItemType01"), "special date outside start date month rendered");
 	});
 
 	QUnit.module("Calendar Picker", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCal = new CalendarDateInterval("CalP", {
 				startDateChange: handleStartDateChange,
 				startDate: UI5Date.getInstance("2015", "7", "13"),
 				pickerPopup: true,
 				primaryCalendarType: CalendarType.Gregorian
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCal.destroy();
 		}
 	});
-	QUnit.test("Chosen date from the date picker is set as start date of the underying view", function(assert) {
+	QUnit.test("Chosen date from the date picker is set as start date of the underying view", async function(assert) {
 		// arrange
 		var $Date;
 
 		assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar3: Calendar picker not initial rendered");
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(jQuery("#CalP--Cal").get(0), "Calendar picker rendered");
 		assert.ok(this.oCal._oPopup.getContent()[0].isA("sap.ui.unified.Calendar"), "Calendar picker rendered in static area");
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
@@ -961,7 +960,7 @@ sap.ui.define([
 		$Date = jQuery("#CalP--Cal--Month0-20150814");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(Element.getElementById("CalP").getStartDate().getDate(), 14, "start date is set correctly");
 
@@ -969,7 +968,7 @@ sap.ui.define([
 		assert.ok(!jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker not visible after closing");
 	});
 
-	QUnit.test("fireStartDateChange", function(assert) {
+	QUnit.test("fireStartDateChange", async function(assert) {
 		// arrange
 		var $Date, oCalStartDate,
 			oSpyFireDateChange = this.spy(CalendarDateInterval.prototype, "fireStartDateChange");
@@ -977,31 +976,31 @@ sap.ui.define([
 
 		assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar picker not initial rendered");
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// click on Month button inside calendar picker
 		qutils.triggerEvent("click", "CalP--Cal--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// click on September
 		$Date = jQuery("#CalP--Cal--MP-m8");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// click on Year button inside calendar picker
 		qutils.triggerEvent("click", "CalP--Cal--Head-B2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// click on 2016
 		$Date = jQuery("#CalP--Cal--YP-y20160101");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// click on 14 of September
 		$Date = jQuery("#CalP--Cal--Month0-20160914");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oCalStartDate = Element.getElementById("CalP").getStartDate();
 
@@ -1011,34 +1010,34 @@ sap.ui.define([
 		assert.strictEqual(oSpyFireDateChange.callCount, 1, "CalendarDateInterval 'fireStartDateChange' was called once after selecting month, year and date");
 	});
 
-	QUnit.test("User opens the picker but escapes it - click outside for desktop or click cancel button", function(assert) {
+	QUnit.test("User opens the picker but escapes it - click outside for desktop or click cancel button", async function(assert) {
 		// arrange
 		var oSpyCancel = this.spy(CalendarDateInterval.prototype, "fireCancel");
 
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
 
 		qutils.triggerKeydown(Element.getElementById("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker not visible after closing");
 		assert.strictEqual(oSpyCancel.callCount, 1, "CalendarDateInterval 'fireCancel' was called once");
 	});
 
 
-	QUnit.test("User opens date picker from the button and sees a predefined range of days marked in the date picker.", function(assert) {
+	QUnit.test("User opens date picker from the button and sees a predefined range of days marked in the date picker.", async function(assert) {
 		// arrange
 		var oCalPicker,
 			$Date;
 
 		// System under test
 		this.oCal.setStartDate(UI5Date.getInstance("2017", "7", "10"));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
 
 		oCalPicker = this.oCal._getCalendar();
@@ -1051,11 +1050,11 @@ sap.ui.define([
 		$Date = jQuery("#CalP--Cal--Month0-20170817");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// open again the CalendarPicker
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// check for the selected date range
 		assert.strictEqual(oCalPicker.getSelectedDates()[0].getStartDate().getDate(), 17, "start date is 17");
@@ -1064,31 +1063,31 @@ sap.ui.define([
 		qutils.triggerKeydown(Element.getElementById("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 	});
 
-	QUnit.test("Text of the direct navigation button is correct", function(assert) {
+	QUnit.test("Text of the direct navigation button is correct", async function(assert) {
 		// arrange
 		var $Date;
 
 		// System under test
 		this.oCal.setStartDate(UI5Date.getInstance("2017", "4", "11"));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// click on Month button inside calendar picker
 		qutils.triggerEvent("click", "CalP--Cal--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// click on December
 		$Date = jQuery("#CalP--Cal--MP-m11");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// click on 11 of December
 		$Date = jQuery("#CalP--Cal--Month0-20171211");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(jQuery("#CalP--Head-B1").text(), "December 2017", "button text is correct");
 	});
@@ -1122,13 +1121,13 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("Changing of the pickerPopup mode doesn't break min and max date inside calendarPicker aggregation", function(assert) {
+	QUnit.test("Changing of the pickerPopup mode doesn't break min and max date inside calendarPicker aggregation", async function(assert) {
 		// arrange
 		var oCalPicker;
 
 		// open calendarPicker
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oCalPicker = this.oCal._getCalendar();
 
@@ -1138,7 +1137,7 @@ sap.ui.define([
 
 		// close calendarPicker
 		qutils.triggerKeydown(Element.getElementById("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// change the pickerPopup to false
 		this.oCal.setPickerPopup(false);
@@ -1161,31 +1160,31 @@ sap.ui.define([
 		qutils.triggerKeydown(Element.getElementById("CalP").getFocusDomRef(), KeyCodes.ESCAPE);
 	});
 
-	QUnit.test("Triggering button receives the focus on picker ESC", function(assert) {
+	QUnit.test("Triggering button receives the focus on picker ESC", async function(assert) {
 		// open calendarPicker
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// close calendarPicker
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ESCAPE);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// check if the triggering button receives the focus after picker close
 		assert.strictEqual(document.activeElement.id, this.oCal.getAggregation("header").getDomRef("B1").id, "After picker close the triggering button receives the focus");
 	});
 
 	// BCP: 1780521519
-	QUnit.test("Closing the picker will remove the overlay", function (assert) {
+	QUnit.test("Closing the picker will remove the overlay", async function (assert) {
 		// arrange
 		var oCloseCalendarPickerStub = this.spy(this.oCal, "_closeCalendarPicker"),
 			oHideOverlayStub = this.spy(this.oCal, "_hideOverlay");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerEvent("click", "CalP--Head-B1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oCal._oPopup.close();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oCloseCalendarPickerStub.calledOnce, "_closeCalendarPicker method should be called");
@@ -1196,11 +1195,11 @@ sap.ui.define([
 		oCloseCalendarPickerStub.restore();
 	});
 
-	QUnit.test("Content overlay is shown when picker is open", function(assert) {
+	QUnit.test("Content overlay is shown when picker is open", async function(assert) {
 		// open calendarPicker
 		qutils.triggerEvent("click", "CalP--Head-B1");
 		// Make rendering sync, so we can assert safely
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oCal.$("contentOver").get(0).style.display, "", "After opening the picker overlay is shown");
 
@@ -1315,7 +1314,7 @@ sap.ui.define([
 
 	QUnit.module("Other");
 
-	QUnit.test("CalendarDateInterval year range picker interaction sets proper start date", function(assert) {
+	QUnit.test("CalendarDateInterval year range picker interaction sets proper start date", async function(assert) {
 		//arrange
 		var oCDI = new CalendarDateInterval({
 			startDate: UI5Date.getInstance(2022, 1, 7),
@@ -1323,12 +1322,12 @@ sap.ui.define([
 		});
 
 		oCDI.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//act
 		oCDI.getAggregation("month")[0]._focusDate(new CalendarDate(2022, 1, 9), true, false);
 		oCDI._focusDateExtend(new CalendarDate(2029, 1, 9), true, false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.equal(oCDI.getAggregation("month")[0].getStartDate().getTime(), UI5Date.getInstance(2029, 1, 7).getTime(), "New start date is properly set");

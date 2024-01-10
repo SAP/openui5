@@ -1,9 +1,8 @@
 sap.ui.define([
-	"sap/ui/core/ElementRegistry",
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/core/Element',
+	'sap/ui/core/ElementRegistry',
 	'sap/m/MessageToast'
-], function(ElementRegistry, Controller, Element, MessageToast) {
+], function(Controller, ElementRegistry, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.SegmentedButton.Page", {

@@ -6,14 +6,13 @@
 sap.ui.define([
 	'./library',
 	"sap/base/i18n/Localization",
-	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/m/HyphenationSupport',
 	"./TextRenderer"
 ],
-function(library, Localization, Core, Control, coreLibrary, Device, HyphenationSupport, TextRenderer) {
+function(library, Localization, Control, coreLibrary, Device, HyphenationSupport, TextRenderer) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -112,7 +111,6 @@ function(library, Localization, Core, Control, coreLibrary, Device, HyphenationS
 				/**
 				 * Limits the number of lines for wrapping texts.
 				 *
-				 * <b>Note</b>: The multi-line overflow indicator depends on the browser line clamping support. For such browsers, this will be shown as ellipsis, for the other browsers the overflow will just be hidden.
 				 * @since 1.13.2
 				 */
 				maxLines: { type: "int", group: "Appearance", defaultValue: null },
@@ -149,6 +147,7 @@ function(library, Localization, Core, Control, coreLibrary, Device, HyphenationS
 	 * @since 1.22
 	 * @protected
 	 * @type {int}
+	 * @deprecated As of version 1.121.
 	 */
 	Text.prototype.normalLineHeight = 1.2;
 
@@ -160,6 +159,7 @@ function(library, Localization, Core, Control, coreLibrary, Device, HyphenationS
 	 * @since 1.22
 	 * @protected
 	 * @type {boolean}
+	 * @deprecated As of version 1.121. Native line clamp is now available in all supported browsers.
 	 */
 	Text.prototype.cacheLineHeight = true;
 
@@ -171,6 +171,7 @@ function(library, Localization, Core, Control, coreLibrary, Device, HyphenationS
 	 * @since 1.13.2
 	 * @protected
 	 * @type {string}
+	 * @deprecated As of version 1.121.  Native line clamp is now available in all supported browsers.
 	 */
 	Text.prototype.ellipsis = '...';
 
@@ -182,6 +183,7 @@ function(library, Localization, Core, Control, coreLibrary, Device, HyphenationS
 	 * @protected
 	 * @readonly
 	 * @static
+	 * @deprecated As of version 1.121. Native line clamp is now available in all supported browsers.
 	 */
 	Text.hasNativeLineClamp = ("webkitLineClamp" in document.documentElement.style);
 
@@ -193,6 +195,7 @@ function(library, Localization, Core, Control, coreLibrary, Device, HyphenationS
 	 * @param {HTMLElement} oDomRef DOM reference of the text node container.
 	 * @param {string} [sNodeValue] new Node value.
 	 * @since 1.30.3
+	 * @deprecated As of version 1.121. Since native line clamp is now available in all supported browsers and the renderer uses <code>apiVersion: 2</code>, this method is no longer needed.
 	 */
 	Text.setNodeValue = function (oDomRef, sNodeValue) {
 		sNodeValue = sNodeValue || "";
@@ -221,39 +224,6 @@ function(library, Localization, Core, Control, coreLibrary, Device, HyphenationS
 		}
 
 		return sText;
-	};
-	/**
-	 * Overwrites onAfterRendering
-	 *
-	 * @public
-	 */
-	Text.prototype.onAfterRendering = function () {
-		// required adaptations after rendering
-		// check visible, max-lines and line-clamping support
-		if (this.getVisible() &&
-			this.hasMaxLines() &&
-			!this.canUseNativeLineClamp()) {
-
-				if (Core.isThemeApplied()) {
-					// set max-height for maxLines support
-					this.clampHeight();
-				} else {
-					Core.attachThemeChanged(this._handleThemeLoad, this);
-				}
-		}
-	};
-
-	/**
-	 * Fired when the theme is loaded
-	 *
-	 * @private
-	 */
-	Text.prototype._handleThemeLoad = function() {
-
-		// set max-height for maxLines support
-		this.clampHeight();
-
-		Core.detachThemeChanged(this._handleThemeLoad, this);
 	};
 
 	/**
@@ -295,6 +265,7 @@ function(library, Localization, Core, Control, coreLibrary, Device, HyphenationS
 	 * @since 1.20
 	 * @protected
 	 * @return {boolean}
+	 * @deprecated As of version 1.121. Native line clamp is now available in all supported browsers.
 	 */
 	Text.prototype.canUseNativeLineClamp = function () {
 		// has line clamp feature
@@ -323,6 +294,7 @@ function(library, Localization, Core, Control, coreLibrary, Device, HyphenationS
 	 * @returns {int} returns calculated line height
 	 * @see sap.m.Text#cacheLineHeight
 	 * @since 1.22
+	 * @deprecated As of version 1.121
 	 */
 	Text.prototype.getLineHeight = function (oDomRef) {
 		// return cached value if possible and available
@@ -376,6 +348,7 @@ function(library, Localization, Core, Control, coreLibrary, Device, HyphenationS
 	 * @param {HTMLElement} [oDomRef] DOM reference of the text container.
 	 * @returns {int} The clamp height of the text.
 	 * @since 1.22
+	 * @deprecated As of version 1.121. Native line clamp is now available in all supported browsers.
 	 */
 	Text.prototype.getClampHeight = function (oDomRef) {
 		oDomRef = oDomRef || this.getTextDomRef();
@@ -389,6 +362,7 @@ function(library, Localization, Core, Control, coreLibrary, Device, HyphenationS
 	 * @param {HTMLElement} [oDomRef] DOM reference of the text container.
 	 * @returns {int} Calculated max height value.
 	 * @since 1.22
+	 * @deprecated As of version 1.121. Native line clamp is now available in all supported browsers.
 	 */
 	Text.prototype.clampHeight = function (oDomRef) {
 		oDomRef = oDomRef || this.getTextDomRef();
@@ -415,6 +389,7 @@ function(library, Localization, Core, Control, coreLibrary, Device, HyphenationS
 	 * @param {int} [iEndPos] End point of the ellipsis search.
 	 * @returns {int|undefined} Returns found ellipsis position or <code>undefined</code>.
 	 * @since 1.20
+	 * @deprecated As of version 1.121. Native line clamp is now available in all supported browsers.
 	 */
 	Text.prototype.clampText = function (oDomRef, iStartPos, iEndPos) {
 		// check DOM reference

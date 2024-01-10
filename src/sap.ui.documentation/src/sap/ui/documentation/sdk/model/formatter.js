@@ -159,7 +159,7 @@ sap.ui.define([
 
 						// If the link has a protocol, do not modify, but open in a new window
 						if (target.match("://")) {
-							return '<a target="_blank" href="' + target + '">' + (text || target) + '</a>';
+							return '<a target="_blank" href="' + target + '" rel="noopener">' + (text || target) + '</a>';
 						}
 
 						target = target.trim().replace(/\.prototype\./g, "#");

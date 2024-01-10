@@ -3,11 +3,16 @@
 	xmlns="sap.m"
 	xmlns:semantic="sap.f.semantic"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout">
 	<semantic:SemanticPage
 		id="page"
 		busy="{detailView>/busy}"
-		busyIndicatorDelay="{detailView>/delay}">
+		busyIndicatorDelay="{detailView>/delay}"
+		core:require="{
+			formatMessage: 'sap/base/strings/formatMessage',
+			DateType: 'sap/ui/model/type/Date'
+		}">
 		<semantic:titleHeading>
 			<Title
 				text="{
@@ -15,7 +20,7 @@
 						'i18n>commonItemTitle',
 						'OrderID'
 					],
-					formatter: 'jQuery.sap.formatMessage'
+					formatter: 'formatMessage'
 				}"/>
 		</semantic:titleHeading>
 		<semantic:headerContent>
@@ -28,7 +33,7 @@
 						title="{i18n>detailOrderDate}"
 						text="{
 							path: 'OrderDate',
-							type: 'sap.ui.model.type.Date',
+							type: 'DateType',
 							formatOptions: { style: 'medium' }
 						}"/>
 					<ObjectAttribute
@@ -36,7 +41,7 @@
 						text="{= ${ShippedDate} ?
 								${
 									path: 'ShippedDate',
-									type: 'sap.ui.model.type.Date',
+									type: 'DateType',
 									formatOptions: { style: 'medium' }
 								}
 							:${i18n>commonItemNotYetShipped} }"/>

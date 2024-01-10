@@ -123,7 +123,6 @@ sap.ui.define([
 			var oPage = oView.byId("page");
 			var oBoxButton = oView.byId("boxButton");
 			var oToastButton = oView.byId("toastButton");
-			var oGlobalToastButton = oView.byId("globalToastButton");
 			var oOuterButton = oView.byId("outerButton");
 			var oHelperButton = oView.byId("helperButton");
 			var oNewButton = oView.byId("newBoxButton");
@@ -148,9 +147,6 @@ sap.ui.define([
 			oToastButton.fireEvent("press");
 			assert.ok(oToastShowSpy.calledOnce, "show method is called once");
 			assert.equal(oToastShowSpy.getCall(0).args[0], "Show Toast", "The method is called with correct argument");
-
-			oGlobalToastButton.fireEvent("press");
-			assert.ok(oToastShowSpy.calledTwice, "show method is called twice");
 
 			oOuterButton.fireEvent("press");
 			assert.ok(oBoxShowSpy.calledOnce, "show method from other require isn't called");

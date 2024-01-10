@@ -1517,9 +1517,7 @@ sap.ui.define([
 
 	QUnit.test("Component.create with loaded manifest content", function(assert) {
 		var oProcessI18nSpy = this.spy(Manifest.prototype, "_processI18n");
-		// there's still one sync path where the i18n file is processed synchronously
-		// it's documented in BLI CPOUI5FRAMEWORK-286
-		var iExpectedSyncCallCount = 1;
+
 		return LoaderExtensions.loadResource(
 			"sap/ui/test/mixed/manifest.json",
 			{async: true}
@@ -1535,7 +1533,33 @@ sap.ui.define([
 				}
 				return acc;
 			}, 0);
-			assert.equal(iSyncCall, iExpectedSyncCallCount, "The number of sync loading of i18n file is the same as expectation");
+			assert.equal(iSyncCall, 0, "No sync loading of i18n is done");
+		});
+	});
+
+
+	QUnit.test("Check the loading of i18n of a component and its inheriting parent", function(assert) {
+		var oProcessI18nSpy = this.spy(Manifest.prototype, "_processI18n");
+
+		return Component.create({
+			name: "sap.ui.test.inherit"
+		}).then(function(oComponent) {
+			assert.ok(oComponent, "Component instance is created");
+
+			// _processI18n are called 3 times:
+			//  1. for the oComponent instance itself
+			//  2. for the sap.ui.test.inherit ComponentMetadata
+			//  3. for the inheriting parent sap.ui.test.inherit.parent ComponentMetadata
+			assert.equal(oProcessI18nSpy.callCount, 3, "_processI18n is called for the expected times");
+
+			var iSyncCall = oProcessI18nSpy.getCalls().reduce(function(acc, oCall) {
+				if (oCall.args.length === 0 || !oCall.args[0]) {
+					acc++;
+				}
+				return acc;
+			}, 0);
+
+			assert.equal(iSyncCall, 0, "No sync loading of i18n is done");
 		});
 	});
 
@@ -2462,17 +2486,7 @@ sap.ui.define([
 			]
 		};
 
-		var oResourceBundleCreateStub = sinon.stub(ResourceBundle, "create").callsFake(function (mParams) {
-			if (mParams.async) {
-				assert.deepEqual(mParams, oExpected, "ResourceBundle.create should be called with the correct arguments");
-				return Promise.resolve({
-					getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
-				});
-			}
-			return {
-				getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
-			};
-		});
+		var oResourceBundleCreateSpy = this.spy(ResourceBundle, "create");
 		var oManifestI18nSpy = sinon.spy(Manifest.prototype, "_loadI18n");
 
 		return Component.create({
@@ -2482,15 +2496,17 @@ sap.ui.define([
 			this.oComponent = oComponent;
 			assert.ok(true, "assertions have been successful");
 
+			assert.equal(oResourceBundleCreateSpy.callCount, 2, "ResourceBundle.create is call twice");
+			assert.deepEqual(oResourceBundleCreateSpy.getCall(0).args[0], oExpected, "ResourceBundle.create should be called with the correct arguments");
+
 			// check how many "data-loading" calls are made from the Manifest
 			// TODO: The number of loading calls will sink down to 1 with an additional optimization on ComponentMetadata.prototype._applyManifest
-			assert.equal(oManifestI18nSpy.args.length, 2, "Only two calls made to Manifest.prototype._loadI18n");
-			assert.ok(oManifestI18nSpy.args[0][0], "Manifest.prototype._loadI18n: 1st time called with async=true, after Component preload");
-			// TODO: This check can be enabled with an additional optimization on ComponentMetadata.prototype._applyManifest
-			//assert.ok(oManifestI18nSpy.args[0][1], "Manifest.prototype._loadI18n: 2nd time called with async=true");
+			assert.equal(oManifestI18nSpy.callCount, 2, "Only two calls made to Manifest.prototype._loadI18n");
+			assert.ok(oManifestI18nSpy.getCall(0).args[0], "Manifest.prototype._loadI18n: 1st time called with async=true, after Component preload");
+			assert.ok(oManifestI18nSpy.getCall(1).args[0], "Manifest.prototype._loadI18n: 2nd time called with async=true");
 
 			oManifestI18nSpy.restore();
-			oResourceBundleCreateStub.restore();
+			oResourceBundleCreateSpy.restore();
 		}.bind(this));
 	});
 

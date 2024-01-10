@@ -3,23 +3,18 @@
  */
 
 sap.ui.define([
-	"sap/base/i18n/Formatting",
-	"sap/base/i18n/Localization",
-	"sap/ui/core/Element",
-	"sap/ui/core/Theming",
+	'sap/base/i18n/Formatting',
+	'sap/base/i18n/Localization',
+	'sap/ui/core/Element',
+	'sap/ui/core/Theming',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/Month',
-	// side effect: required when calling RenderManager#icon
-	'sap/ui/core/IconPool',
+	'sap/ui/core/IconPool',// side effect: required when calling RenderManager#icon
 	'./PlanningCalendarLegend',
 	'sap/ui/core/InvisibleText',
-	'sap/ui/core/Core',
 	'sap/ui/unified/library',
-	"sap/ui/core/date/CalendarUtils",
-	'sap/ui/core/Locale',
-	"sap/ui/core/Configuration",
-	"sap/ui/core/date/UI5Date"
+	'sap/ui/core/date/UI5Date'
 ], function(
 	Formatting,
 	Localization,
@@ -31,11 +26,7 @@ sap.ui.define([
 	_IconPool,
 	PlanningCalendarLegend,
 	InvisibleText,
-	Core,
 	unifiedLibrary,
-	CalendarDateUtils,
-	Locale,
-	Configuration,
 	UI5Date
 ) {
 	"use strict";

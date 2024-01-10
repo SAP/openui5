@@ -72,9 +72,10 @@ sap.ui.define([
 	var fnConfirmFormContainerIsInvisible = function(oUiComponent, oViewAfterAction, assert) {
 		assert.strictEqual(oViewAfterAction.byId("container").getVisible(), false, "then the form container is invisible");
 		var oButton = oViewAfterAction.byId("btn");
+		var oPressSpy = sinon.spy();
+		oButton.attachPress(oPressSpy);
 		oButton.firePress();
-		assert.strictEqual(window.oPressSpy.callCount, 1);
-		window.oPressSpy.resetHistory();
+		assert.strictEqual(oPressSpy.callCount, 1);
 	};
 
 	var fnConfirmFormContainerIsVisible = function(oUiComponent, oViewAfterAction, assert) {
@@ -88,7 +89,7 @@ sap.ui.define([
 					'<Form id="form">' +
 						'<FormContainer id="container">' +
 							'<FormElement id="formelement">' +
-								'<m:Button text="click me" id="btn" press="oPressSpy" />' +
+								'<m:Button text="click me" id="btn"/>' +
 							"</FormElement>" +
 						"</FormContainer>" +
 					"</Form>" +
@@ -109,13 +110,9 @@ sap.ui.define([
 			}
 		},
 		before() {
-			window.oPressSpy = sinon.spy();
-
 			this.sSomeProperty = "some property";
 		},
 		after(assert) {
-			delete window.oPressSpy;
-
 			assert.strictEqual(this.sSomeProperty, "some property", "then context between hooks is shared");
 		},
 		afterAction: fnConfirmFormContainerIsInvisible,

@@ -2076,7 +2076,6 @@ sap.ui.define([
 
 	function loadManifests(oRootMetadata) {
 		var aManifestsToLoad = [];
-		var aMetadataObjects = [];
 
 		/**
 		 * Collects the promises to load the manifest content and all of its parents manifest files.
@@ -2111,10 +2110,14 @@ sap.ui.define([
 
 					// If the request fails, ignoring the error would end up in a sync call, which would fail, too.
 					return {};
+				}).then(function(oManifestJson) {
+					if (oManifestJson) {
+						oMetadata._applyManifest(oManifestJson, true /* skip processing */);
+						return oMetadata.getManifestObject()._processI18n(true);
+					}
 				});
 
 				aManifestsToLoad.push(pLoadManifest);
-				aMetadataObjects.push(oMetadata);
 			}
 
 			var oParentMetadata = oMetadata.getParent();
@@ -2125,14 +2128,7 @@ sap.ui.define([
 
 		collectLoadManifestPromises(oRootMetadata);
 
-		return Promise.all(aManifestsToLoad).then(function(aManifestJson) {
-			// Inject the manifest into the metadata class
-			for (var i = 0; i < aManifestJson.length; i++) {
-				if (aManifestJson[i]) {
-					aMetadataObjects[i]._applyManifest(aManifestJson[i]);
-				}
-			}
-		});
+		return Promise.all(aManifestsToLoad);
 	}
 
 	/**
@@ -3341,16 +3337,22 @@ sap.ui.define([
 					var oMetadata = oClass.getMetadata();
 					var sName = oMetadata.getComponentName();
 					var sDefaultManifestUrl = getManifestUrl(sName);
-					var pLoaded;
+					var aPromises = [];
 
 					// Check if we loaded the manifest.json from the default location
 					// In this case it can be directly passed to its metadata class to prevent an additional request
 					if (oManifest && typeof vManifest !== "object" && (typeof sManifestUrl === "undefined" || sManifestUrl === sDefaultManifestUrl)) {
-						oMetadata._applyManifest(JSON.parse(JSON.stringify(oManifest.getRawJson())));
+						// We could use oManifest.getJson() to avoid calling '_processI18n(true)' at the next line.
+						// However, we have to use oManifest.getRawJson() instead of oManifest.getJson() because the
+						//  urls start with "ui5://" are already resolved in the oManifest.getJson() and
+						//  ComponentMetadata needs to keep them unresolved until the resource roots are set.
+						oMetadata._applyManifest(JSON.parse(JSON.stringify(oManifest.getRawJson())), true /* skip processing */);
+						aPromises.push(oMetadata.getManifestObject()._processI18n(true));
 					}
-					pLoaded = loadManifests(oMetadata);
 
-					return pLoaded.then(function() {
+					aPromises.push(loadManifests(oMetadata));
+
+					return Promise.all(aPromises).then(function() {
 
 						// The following processing of the sap.app/i18n resources happens under two conditions:
 						//    1. The manifest is defined in the component metadata (no Manifest object yet)

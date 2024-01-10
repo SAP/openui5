@@ -7,13 +7,13 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/m/Panel",
 	"sap/m/library",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
-], function(Library, qutils, createAndAppendDiv, Link, Text, KeyCodes, coreLibrary, Core, DragInfo, Panel, mobileLibrary, jQuery, Device) {
+], function(Library, qutils, createAndAppendDiv, Link, Text, KeyCodes, coreLibrary, DragInfo, Panel, mobileLibrary, nextUIUpdate, jQuery, Device) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -110,14 +110,14 @@ sap.ui.define([
 		qutils.triggerKeydown(oLink1.getDomRef(), KeyCodes.SPACE);
 	});
 
-	QUnit.test("Space event should not fire press if escape is pressed and released after the Space is released", function(assert) {
+	QUnit.test("Space event should not fire press if escape is pressed and released after the Space is released", async function(assert) {
 		// System under Test
 		var pressSpy = this.spy(),
 			oLink = new Link({
 				press: pressSpy
 			}).placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 		// Action
 		// first keydown on SPACE, keydown on ESCAPE, release SPACE then release ESCAPE
 		var oLinkDomRef = oLink.getDomRef();
@@ -133,14 +133,14 @@ sap.ui.define([
 		oLink.destroy();
 	});
 
-	QUnit.test("Space event should not fire press if escape is pressed then Space is released and then Escape is released", function(assert) {
+	QUnit.test("Space event should not fire press if escape is pressed then Space is released and then Escape is released", async function(assert) {
 		// System under Test
 		var pressSpy = this.spy(),
 			oLink = new Link({
 				press: pressSpy
 			}).placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Action
 		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then release SPACE
@@ -163,34 +163,34 @@ sap.ui.define([
 		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
 	});
 
-	QUnit.test("Enabled is properly validated", function(assert) {
+	QUnit.test("Enabled is properly validated", async function(assert) {
 		var sut = new Link({text : "text"}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		sut.setEnabled(undefined);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(!sut.$().hasClass("sapMLnkDsbl"), "The disabled CSS class was not set when trying to set undefined for the enabled property.");
 	});
 
-	QUnit.test("When width is not set max-width should apply to control", function(assert) {
+	QUnit.test("When width is not set max-width should apply to control", async function(assert) {
 		var sut = new Link({text : "text"}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(sut.$().hasClass("sapMLnkMaxWidth"), "Link has max width restriction for the trunctation.");
 
 		sut.setWidth("100px");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(!sut.$().hasClass("sapMLnkMaxWidth"), "Link has width and does not have max width restriction.");
 	});
 
-	QUnit.test("Subtle", function(assert) {
+	QUnit.test("Subtle", async function(assert) {
 		oLink1.setSubtle(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oLink1.$().hasClass('sapMLnkSubtle'), "Link is subtle.");
 	});
 
-	QUnit.test("Emphasized", function(assert) {
+	QUnit.test("Emphasized", async function(assert) {
 		oLink1.setEmphasized(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oLink1.$().hasClass('sapMLnkEmphasized'), "Link is emphasized.");
 		oLink1.destroy();
 	});
@@ -213,20 +213,20 @@ sap.ui.define([
 		oLinkNRE.destroy();
 	});
 
-	QUnit.test("Rendered initial Subtle values", function(assert) {
+	QUnit.test("Rendered initial Subtle values", async function(assert) {
 		assert.expect(1);
 		var oLinkRIS = new Link({subtle: true});
 		oLinkRIS.placeAt("uiArea1");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oLinkRIS.$().hasClass('sapMLnkSubtle'), "Link should have the 'sapMLnkSubtle' CSS class.");
 		oLinkRIS.destroy();
 	});
 
-	QUnit.test("Rendered initial Emphasized values", function(assert) {
+	QUnit.test("Rendered initial Emphasized values", async function(assert) {
 		assert.expect(1);
 		var oLinkRIE = new Link({emphasized: true});
 		oLinkRIE.placeAt("uiArea1");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oLinkRIE.$().hasClass('sapMLnkEmphasized'), "Link should have the 'sapMLnkEmphasized' CSS class.");
 		oLinkRIE.destroy();
 	});
@@ -237,17 +237,17 @@ sap.ui.define([
 		oLink.destroy();
 	});
 
-	QUnit.test("Disabled link should have empty href", function(assert) {
+	QUnit.test("Disabled link should have empty href", async function(assert) {
 		assert.equal(oLink2.$().attr("href"), "#", "oLink2 href should be empty");
 		oLink2.setEnabled(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oLink2.$().attr("href"), "x.html", "oLink2 href should be 'x.html' again after enabling");
 		oLink2.destroy();
 	});
 
 	// Keyboard handling
 
-	QUnit.test("Link with empty or no text should not be in the tab chain", function(assert) {
+	QUnit.test("Link with empty or no text should not be in the tab chain", async function(assert) {
 		var oLink1 = new Link("l1", {
 			text : "",
 			href: "x.html",
@@ -255,7 +255,7 @@ sap.ui.define([
 			width : "200px"
 		}).placeAt("uiArea1");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var $oLink = oLink1.$();
 
@@ -264,19 +264,19 @@ sap.ui.define([
 		oLink1.destroy();
 	});
 
-	QUnit.test("setEnabled(false) does not remove the tabindex", function(assert) {
+	QUnit.test("setEnabled(false) does not remove the tabindex", async function(assert) {
 		// arrange
 		var oLink1 = new Link({
 				text: 'linkwithtext'
 			}).placeAt("uiArea1"),
 			$Link1;
 
-		Core.applyChanges();
+		await nextUIUpdate();
 		$Link1 = oLink1.$();
 
 		// act
 		oLink1.setEnabled(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual($Link1.attr("tabindex"), "-1", "disabled link shouldn't be focusable");
@@ -305,7 +305,7 @@ sap.ui.define([
 		oLink1.destroy();
 	});
 
-	QUnit.test("Normal link should be in the tab chain", function(assert) {
+	QUnit.test("Normal link should be in the tab chain", async function(assert) {
 		var oLink1 = new Link("l1", {
 			text : sText,
 			href: "x.html",
@@ -313,7 +313,7 @@ sap.ui.define([
 			width : "200px"
 		}).placeAt("uiArea1");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var $oLink = oLink1.$();
 
@@ -323,7 +323,7 @@ sap.ui.define([
 	});
 
 	// ARIA specific tests
-	QUnit.test("ARIA specific test", function(assert) {
+	QUnit.test("ARIA specific test", async function(assert) {
 		var oLink = new Link({
 				text : sText,
 				href: "x.html",
@@ -336,60 +336,60 @@ sap.ui.define([
 			AriaHasPopup = coreLibrary.aria.HasPopup,
 			oLinkDomRef;
 
-		Core.applyChanges();
+		await nextUIUpdate();
 		oLinkDomRef = oLink.getDomRef();
 
 		// ARIA role
 		assert.notOk(oLinkDomRef.getAttribute("role"), "Attribute 'role' is redundant on an anchor tag");
 
 		oLink.setHref("");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oLinkDomRef.getAttribute("role"), "Links without href shouldn't have a role too");
 		assert.strictEqual(oLinkDomRef.getAttribute("href"), "#", "Links without href should have an empty href attribute");
 
 		// ARIA disabled
 		oLink.setEnabled(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oLinkDomRef.getAttribute("aria-disabled"), "Attribute 'aria-disabled' should be placed on disabled links");
 		oLink.setEnabled(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oLinkDomRef.getAttribute("aria-disabled"), "Attribute 'aria-disabled' should not exist for non-disabled links");
 
 		// ARIA describedby for Subtle link
 		oLink.setSubtle(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oLinkDomRef.getAttribute("aria-describedby"). length > 0, true, "Property 'aria-describedby' should exist");
 		assert.strictEqual(((oLinkDomRef.getAttribute("aria-describedby").indexOf(oLink._sAriaLinkSubtleId)) !== -1), true,
 			"Subtle ID: " + oLink._sAriaLinkSubtleId + " should be included in aria-describedby");
 
 		oLink.setSubtle(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oLinkDomRef.getAttribute("aria-describedby"), "Property 'aria-describedby' should not exist");
 
 		// ARIA describedby for Emphasized link
 		oLink.setEmphasized(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oLinkDomRef.getAttribute("aria-describedby").length > 0, true, "Property 'aria-describedby' should exist");
 		assert.strictEqual(((oLinkDomRef.getAttribute("aria-describedby").indexOf(oLink._sAriaLinkEmphasizedId)) !== -1), true,
 			"Emphasized ID: " + oLink._sAriaLinkEmphasizedId + " should be included in aria-describedby");
 
 		oLink.setEmphasized(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oLinkDomRef.getAttribute("aria-describedby"), "Property 'aria-describedby' should not exist");
 
 		oLink.addAriaLabelledBy("id1");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(oLinkDomRef.getAttribute("aria-labelledby"), "id1 " + oLink.getId(),
 			"Property 'aria-labelledby' should contain the link ID");
 
 		oLink.removeAriaLabelledBy("id1");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oLinkDomRef.getAttribute("aria-labelledby"), "Property 'aria-labelledby' should not exist");
 
 		// check initial aria-haspopup state
@@ -397,7 +397,7 @@ sap.ui.define([
 
 		// act
 		oLink.setAriaHasPopup(AriaHasPopup.Menu);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// check if aria-haspopup appears
 		assert.equal(oLinkDomRef.getAttribute("aria-haspopup"), AriaHasPopup.Menu.toLowerCase(),
@@ -405,7 +405,7 @@ sap.ui.define([
 
 		// act
 		oLink.setAriaHasPopup(AriaHasPopup.None);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// check if aria-haspopup disappears
 		assert.notOk(oLinkDomRef.getAttribute("aria-haspopup"),
@@ -413,14 +413,14 @@ sap.ui.define([
 
 		// check ih href disappears if there is no text
 		oLink.setText("");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oLinkDomRef.getAttribute("href"), "Empty links don't have href");
 
 		oLink.destroy();
 	});
 
 	// Behavior tests
-	QUnit.test("Behavior test", function(assert) {
+	QUnit.test("Behavior test", async function(assert) {
 		var oLink = new Link({
 				text: "Link",
 				href: "https://sap.com"
@@ -428,7 +428,7 @@ sap.ui.define([
 			oLinkDomRef;
 
 		oLink.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oLinkDomRef = oLink.getDomRef();
 
@@ -438,7 +438,7 @@ sap.ui.define([
 
 		// act
 		oLink.setAccessibleRole(LinkAccessibleRole.Button);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oLinkDomRef.getAttribute("role"), "button",
@@ -446,7 +446,7 @@ sap.ui.define([
 
 		// act
 		oLink.setAccessibleRole("Default");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oLinkDomRef.getAttribute("role"),
@@ -456,21 +456,21 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("textAlign set to END", function(assert) {
+	QUnit.test("textAlign set to END", async function(assert) {
 		var oLink = new Link({
 			text: "(+359) 111 222 333",
 			textAlign: TextAlign.End
 		});
 
 		oLink.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
 
 		oLink.destroy();
 	});
 
-	QUnit.test("textDirection set to RTL and textAlign set to Begin", function(assert) {
+	QUnit.test("textDirection set to RTL and textAlign set to Begin", async function(assert) {
 		var oLink = new Link({
 			text: "(+359) 111 222 333",
 			textAlign: TextAlign.Begin,
@@ -478,7 +478,7 @@ sap.ui.define([
 		});
 
 		oLink.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oLink.$().attr('dir'), 'rtl', "The dir element must be set to 'rtl'");
 		assert.strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
@@ -486,7 +486,7 @@ sap.ui.define([
 		oLink.destroy();
 	});
 
-	QUnit.test("textDirection set to LTR and textAlign set to END", function(assert) {
+	QUnit.test("textDirection set to LTR and textAlign set to END", async function(assert) {
 		var oLink = new Link({
 			text: "(+359) 111 222 333",
 			textAlign: TextAlign.End,
@@ -494,7 +494,7 @@ sap.ui.define([
 		});
 
 		oLink.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oLink.$().attr('dir'), 'ltr', "The dir element must be set to 'ltr'");
 		assert.strictEqual(oLink.$().css("text-align"), "right", "Text align style is shifted to right");
@@ -502,20 +502,20 @@ sap.ui.define([
 		oLink.destroy();
 	});
 
-	QUnit.test("textDirection not set", function(assert) {
+	QUnit.test("textDirection not set", async function(assert) {
 		var oLink = new Link({
 			text: "(+359) 111 222 333"
 		});
 
 		oLink.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oLink.$().attr('dir'), undefined, "The dir attribute should not be rendered");
 
 		oLink.destroy();
 	});
 
-	QUnit.test("validateUrl property behavior", function(assert) {
+	QUnit.test("validateUrl property behavior", async function(assert) {
 		var sValidUrl = "http://sap.com",
 			sInvalidUrl = "hhtp://invalid",
 			oLink = new Link({
@@ -525,17 +525,17 @@ sap.ui.define([
 			});
 
 		oLink.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oLink.$().attr("href"), "#", "Link href should be empty if an invalid URL is provided");
 
 		oLink.setHref(sValidUrl);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oLink.$().attr("href"), sValidUrl, "Link href should equal the valid URL");
 
 		oLink.setHref(sInvalidUrl);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oLink.$().attr("href"), "#", "Link href should be empty if an invalid URL is set");
 
@@ -570,7 +570,7 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
-	QUnit.test("Subtle and Emphasized types don't overwrite default description", function (assert) {
+	QUnit.test("Subtle and Emphasized types don't overwrite default description", async function (assert) {
 		var oDescr = new Text({ text: "Description" }),
 			oLink = new Link({
 				text: "Link",
@@ -582,7 +582,7 @@ sap.ui.define([
 			oLinkDescription;
 
 		oLink.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oLinkDescription = oLink.$().attr("aria-describedby");
 		assert.ok(oLinkDescription.indexOf(oDescr.getId()) !== -1, "Default description is still present");
@@ -593,37 +593,37 @@ sap.ui.define([
 		oLink.destroy();
 	});
 
-	QUnit.test("drag and drop", function(assert) {
+	QUnit.test("drag and drop", async function(assert) {
 		var oLink = new Link({
 			dragDropConfig: new DragInfo({
 				enabled: false
 			})
 		}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oLink.$().attr('draggable'), "false", "The draggable attribute should be rendered with value false");
 
 		oLink.getDragDropConfig()[0].setEnabled(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(oLink.$().attr('draggable'), "true", "The draggable attribute should be rendered with value true");
 
 		oLink.destroy();
 	});
 
 
-	QUnit.test("Rel attribute derived properly", function(assert) {
+	QUnit.test("Rel attribute derived properly", async function(assert) {
 		var oLink = new Link({
 			target: "_blank",
 			href: "https://www.sap.com"
 		}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(oLink.getDomRef().rel, "noopener noreferrer", "oLink rel is set based on blank target and " +
 			"cross-origin URL");
 
 		oLink.destroy();
 	});
 
-	QUnit.test("Prevent navigation", function(assert) {
+	QUnit.test("Prevent navigation", async function(assert) {
 		// Prepare
 		var oLink = new Link({text: "text"}),
 			oClickEvent = new Event("click", {bubbles: true, cancelable: true}),
@@ -633,7 +633,7 @@ sap.ui.define([
 		var oDeviceStub = this.stub(Device, "system").value({ phone: true });
 
 		oLink.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oLink.getDomRef().dispatchEvent(oClickEvent);
@@ -648,7 +648,7 @@ sap.ui.define([
 
 		// Act
 		oLink.setHref("www.sample.domain.com");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oLink.getDomRef().dispatchEvent(oClickEvent);
@@ -684,7 +684,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("EmptyIndicator", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oLink = new Link({
 				text: "",
 				emptyIndicatorMode: EmptyIndicatorMode.On
@@ -711,7 +711,7 @@ sap.ui.define([
 			this.oLink.placeAt("qunit-fixture");
 			this.oPanel.placeAt("qunit-fixture");
 			this.oPanel1.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oLink.destroy();
@@ -729,19 +729,19 @@ sap.ui.define([
 		assert.strictEqual(oSpan.lastElementChild.textContent, "Empty Value", "Accessibility text is added");
 	});
 
-	QUnit.test("Indicator should not be rendered when text is not empty", function(assert) {
+	QUnit.test("Indicator should not be rendered when text is not empty", async function(assert) {
 		//Arrange
 		this.oLink.setText("test");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(this.oLink.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");
 	});
 
-	QUnit.test("Indicator should not be rendered when property is set to off", function(assert) {
+	QUnit.test("Indicator should not be rendered when property is set to off", async function(assert) {
 		//Arrange
 		this.oLink.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(this.oLink.getDomRef().childNodes[0].textContent, "", "Empty indicator is not rendered");
@@ -755,32 +755,32 @@ sap.ui.define([
 		assert.strictEqual(oSpan.lastElementChild.textContent, "Empty Value", "Accessibility text is added");
 	});
 
-	QUnit.test("Indicator should not be rendered when text is available", function(assert) {
+	QUnit.test("Indicator should not be rendered when text is available", async function(assert) {
 		//Arrange
 		this.oLinkEmptyAuto.setText("test");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(this.oLinkEmptyAuto.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");
 	});
 
-	QUnit.test("Indicator should be rendered when 'sapMShowEmpty-CTX' is added", function(assert) {
+	QUnit.test("Indicator should be rendered when 'sapMShowEmpty-CTX' is added", async function(assert) {
 		var oSpan = this.oLinkEmptyAutoNoClass.getDomRef().childNodes[0];
 		//Assert
 		assert.strictEqual(window.getComputedStyle(oSpan)["display"], "none", "Empty indicator is not rendered");
 		//Arrange
 		this.oPanel1.addStyleClass("sapMShowEmpty-CTX");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(window.getComputedStyle(oSpan)["display"], "inline-block", "Empty indicator is rendered");
 	});
 
-	QUnit.test("Indicator should not be rendered when property is set to off and there is a text", function(assert) {
+	QUnit.test("Indicator should not be rendered when property is set to off and there is a text", async function(assert) {
 		//Arrange
 		this.oLink.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
 		this.oLink.setText("test");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(this.oLink.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");

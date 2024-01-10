@@ -8,7 +8,6 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/ui/core/Lib",
-	"sap/ui/dt/SelectionMode",
 	"sap/ui/core/library"
 ], function(
 	ManagedObjectMetadata,
@@ -28,11 +27,10 @@ sap.ui.define([
 	 */
 	var thisLib = Lib.init({
 		name: "sap.ui.dt",
+		apiVersion: 2,
 		version: "${version}",
 		dependencies: ["sap.ui.core"],
-		types: [
-			"sap.ui.dt.SelectionMode"
-		],
+		types: [],
 		interfaces: [],
 		controls: [],
 		elements: []

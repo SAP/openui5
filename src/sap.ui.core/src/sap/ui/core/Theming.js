@@ -27,7 +27,6 @@ sap.ui.define([
 
 	const oWritableConfig = BaseConfig.getWritableInstance();
 	const oEventing = new Eventing();
-	let mChanges;
 	let oThemeManager;
 
 	/**
@@ -97,21 +96,17 @@ sap.ui.define([
 					throw new TypeError("Providing a theme root as part of the theme parameter is not allowed.");
 				}
 
-				const bFireChange = !mChanges;
-				mChanges ??= {};
 				const sOldTheme = Theming.getTheme();
 				oWritableConfig.set("sapTheme", sTheme);
 				const sNewTheme = Theming.getTheme();
 				const bThemeChanged = sOldTheme !== sNewTheme;
 				if (bThemeChanged) {
-					mChanges.theme = {
-						"new": sNewTheme,
-						"old": sOldTheme
+					const mChanges = {
+						theme: {
+							"new": sNewTheme,
+							"old": sOldTheme
+						}
 					};
-				} else {
-					mChanges = undefined;
-				}
-				if (bFireChange) {
 					fireChange(mChanges);
 				}
 				if (!oThemeManager && bThemeChanged) {
@@ -199,9 +194,6 @@ sap.ui.define([
 			assert(typeof sThemeName === "string", "sThemeName must be a string");
 			assert(typeof sThemeBaseUrl === "string", "sThemeBaseUrl must be a string");
 
-			const bFireChange = !mChanges;
-			mChanges ??= {};
-
 			const oThemeRootConfigParam = {
 				name: "sapUiThemeRoots",
 				type: oWritableConfig.Type.MergedObject
@@ -239,24 +231,21 @@ sap.ui.define([
 				mNewThemeRoots[sThemeName][""] = sThemeBaseUrl;
 			}
 			if (!deepEqual(mOldThemeRoots, mNewThemeRoots)) {
+				const mChanges = {};
 				oWritableConfig.set("sapUiThemeRoots", mNewThemeRoots);
 				if (aLibraryNames) {
-					mChanges.themeRoots = {
+					mChanges["themeRoots"] = {
 						"new": Object.assign({}, mNewThemeRoots[sThemeName]),
 						"old": Object.assign({}, mOldThemeRoots[sThemeName])
 					};
 				} else {
-					mChanges.themeRoots = {
+					mChanges["themeRoots"] = {
 						"new": sThemeBaseUrl,
 						"old": mOldThemeRoots[sThemeName]?.[""]
 					};
 				}
-				mChanges.themeRoots.forceUpdate = bForceUpdate && sThemeName === Theming.getTheme();
-			} else {
-				mChanges = undefined;
-			}
-			if (bFireChange) {
-				fireChange();
+				mChanges["themeRoots"].forceUpdate = bForceUpdate && sThemeName === Theming.getTheme();
+				fireChange(mChanges);
 			}
 		},
 
@@ -503,10 +492,9 @@ sap.ui.define([
 		}
 	};
 
-	function fireChange() {
+	function fireChange(mChanges) {
 		if (mChanges) {
 			oEventing.fireEvent("change", mChanges);
-			mChanges = undefined;
 		}
 	}
 

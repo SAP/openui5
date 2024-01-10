@@ -7147,8 +7147,9 @@ sap.ui.define([
 				assert(oEntityMetadata, "No Metadata for collection " + sNormalizedPath + " found");
 				return undefined;
 			}
+			oEntity = bDeepCreate ? {} : that.getForeignKeysFromReferentialConstraints(sNormalizedPath);
 			if (typeof vProperties === "object" && !Array.isArray(vProperties)) {
-				oEntity = merge({}, vProperties);
+				oEntity = merge(oEntity, vProperties);
 			}
 			sEntityType = "" + oEntityMetadata.entityType;
 			oEntitySetMetadata = that.oMetadata._getEntitySetByType(oEntityMetadata);
@@ -7374,6 +7375,36 @@ sap.ui.define([
 		return undefined;
 	};
 
+	/**
+	 * Gets an object with the values for the foreign keys defined by referential constraints for the given path.
+	 *
+	 * @param {string} sNormalizedPath
+	 *   The absolute normalized path to create an entity, see {@link #_normalizePath}
+	 * @returns {Object<string, any>}
+	 *   An object containing the values from the parent entity for the properties defined in the association's
+	 *   referential constraints; if there are no referential constraints defined an empty object is returned
+	 * @private
+	 */
+	ODataModel.prototype.getForeignKeysFromReferentialConstraints = function (sNormalizedPath) {
+		const mSplitPath = this.oMetadata._splitByLastNavigationProperty(sNormalizedPath);
+
+		if (mSplitPath.lastNavigationProperty) {
+			// check referential constraints
+			const oParentEntityType = this.oMetadata._getEntityTypeByName(mSplitPath.pathBeforeLastNavigationProperty);
+			const mSource2TargetProperty = this.oMetadata._getReferentialConstraintsMapping(oParentEntityType,
+				mSplitPath.lastNavigationProperty.slice(1));
+			const oData = this._getObject(mSplitPath.pathBeforeLastNavigationProperty);
+			if (oData) {
+				return Object.keys(mSource2TargetProperty).reduce((oResult, sSourcePropertyName) => {
+					if (oData[sSourcePropertyName]) {
+						oResult[mSource2TargetProperty[sSourcePropertyName]] = oData[sSourcePropertyName];
+					}
+					return oResult;
+				}, {});
+			}
+		}
+		return {};
+	};
 	/**
 	 * Returns whether the given entity has been created using createEntry.
 	 * @param {object} oEntity The entity to check

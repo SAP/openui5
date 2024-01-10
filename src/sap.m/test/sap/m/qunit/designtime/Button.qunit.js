@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
+	"sap/ui/core/mvc/Controller",
 	"sap/ui/dt/enablement/elementDesigntimeTest",
 	"sap/ui/rta/enablement/elementActionTest",
 	"sap/ui/model/json/JSONModel",
@@ -13,6 +14,7 @@ sap.ui.define([
 ], function(
 	Localization,
 	Element,
+	Controller,
 	elementDesigntimeTest,
 	elementActionTest,
 	JSONModel,
@@ -110,31 +112,39 @@ sap.ui.define([
 			afterRedo: fnConfirmButtonIsVisible
 		});
 
+		var oPressSpy = sinon.spy();
+
+		sap.ui.define("qunit/designtime/Button.controller", function() {
+			return Controller.extend("qunit.designtime.Button", {
+				onPress: oPressSpy
+			});
+		});
+
 		// Combine action
 		var fnPressEventFiredCorrectlyAfterCombine = function (oButton, oViewAfterAction, assert) {
 			var oCreatedMenuButton = oViewAfterAction.byId("bar0").getContentMiddle()[0];
 			var oFirstMenuItem = oCreatedMenuButton.getMenu().getItems()[0];
 			oCreatedMenuButton.getMenu().fireItemSelected({item: oFirstMenuItem});
-			assert.strictEqual(window.oPressSpy.callCount, 1, "then the press event handler on the original button was called once");
-			window.oPressSpy.resetHistory();
+			assert.strictEqual(oPressSpy.callCount, 1, "then the press event handler on the original button was called once");
+			oPressSpy.resetHistory();
 		};
 
 		var fnPressEventFiredCorrectlyAfterUndo = function (oButton, oViewAfterAction, assert) {
-			var oButton = oViewAfterAction.byId("btn0");
+			oButton = oViewAfterAction.byId("btn0");
 			oButton.firePress();
-			assert.strictEqual(window.oPressSpy.callCount, 1, "then the press event handler on the original button was called once");
-			window.oPressSpy.resetHistory();
+			assert.strictEqual(oPressSpy.callCount, 1, "then the press event handler on the original button was called once");
+			oPressSpy.resetHistory();
 		};
 
 		elementActionTest("Checking the press action for a Button (combine action)", {
 			jsOnly: true,
 			xmlView:
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="qunit.designtime.Button">' +
 					'<Page id="page0" >' +
 						'<customHeader>' +
 							'<Bar id="bar0">' +
 								'<contentMiddle>' +
-									'<Button id="btn0" text="button0" press="oPressSpy" />' +
+									'<Button id="btn0" text="button0" press=".onPress" />' +
 									'<Button id="btn1" text="button1" />' +
 									'<Button id="btn2" text="button2" />' +
 								'</contentMiddle>' +
@@ -157,12 +167,6 @@ sap.ui.define([
 				}
 			},
 			layer: "VENDOR",
-			before: function () {
-				window.oPressSpy = sinon.spy();
-			},
-			after: function () {
-				delete window.oPressSpy;
-			},
 			afterAction: fnPressEventFiredCorrectlyAfterCombine,
 			afterUndo: fnPressEventFiredCorrectlyAfterUndo,
 			afterRedo: fnPressEventFiredCorrectlyAfterCombine
@@ -180,19 +184,19 @@ sap.ui.define([
 			oCreatedMenuButton.getMenu().fireItemSelected({item: oFirstMenuItem});
 			oTextButton.firePress();
 
-			assert.strictEqual(window.oPressSpy.callCount, 2, "then the press event handler on the original button was called twice");
-			window.oPressSpy.resetHistory();
+			assert.strictEqual(oPressSpy.callCount, 2, "then the press event handler on the original button was called twice");
+			oPressSpy.resetHistory();
 		};
 
 		elementActionTest("Checking the press action for a MenuButton in Split mode (combine action)", {
 			jsOnly: true,
 			xmlView:
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="qunit.designtime.Button">' +
 					'<Page id="page0" >' +
 						'<customHeader>' +
 							'<Bar id="bar0">' +
 								'<contentMiddle>' +
-									'<Button id="btn0" text="button0" press="oPressSpy" />' +
+									'<Button id="btn0" text="button0" press=".onPress" />' +
 									'<Button id="btn1" text="button1" />' +
 									'<Button id="btn2" text="button2" />' +
 								'</contentMiddle>' +
@@ -215,12 +219,6 @@ sap.ui.define([
 				}
 			},
 			layer: "VENDOR",
-			before: function () {
-				window.oPressSpy = sinon.spy();
-			},
-			after: function () {
-				delete window.oPressSpy;
-			},
 			afterAction: fnPreviousActionFiredCorrectlyAfterCombine,
 			afterUndo: fnPressEventFiredCorrectlyAfterUndo,
 			afterRedo: fnPreviousActionFiredCorrectlyAfterCombine
@@ -274,7 +272,7 @@ sap.ui.define([
 		});
 
 		var fnEnableDisableAfterCombine = function (oButton, oViewAfterAction, assert) {
-			var oButton = oViewAfterAction.byId("btn0");
+			oButton = oViewAfterAction.byId("btn0");
 			var oCreatedMenuButton = oViewAfterAction.byId("bar0").getContentMiddle()[0];
 			var oFirstMenuItem = oCreatedMenuButton.getMenu().getItems()[0];
 
@@ -311,27 +309,27 @@ sap.ui.define([
 						'</customHeader>' +
 					'</Page>' +
 				'</mvc:View>',
-				model: new JSONModel({
-					enabled: false,
-					visible: false,
-					text: "Title 1",
-					icon: "sap-icon://accept"
-				}),
-				action: {
-					name: "combine",
-					controlId: "btn0",
-					parameter: function(oView){
-						return {
-							source : oView.byId("btn0"),
-							combineElements : [
-								oView.byId("btn0"),
-								oView.byId("btn1"),
-								oView.byId("btn2")
-							]
-						};
-					}
-				},
-				layer: "VENDOR",
+			model: new JSONModel({
+				enabled: false,
+				visible: false,
+				text: "Title 1",
+				icon: "sap-icon://accept"
+			}),
+			action: {
+				name: "combine",
+				controlId: "btn0",
+				parameter: function(oView){
+					return {
+						source : oView.byId("btn0"),
+						combineElements : [
+							oView.byId("btn0"),
+							oView.byId("btn1"),
+							oView.byId("btn2")
+						]
+					};
+				}
+			},
+			layer: "VENDOR",
 			afterAction: fnEnableDisableAfterCombine,
 			afterUndo: fnEnableDisableAfterUndo,
 			afterRedo: fnEnableDisableAfterCombine
@@ -360,7 +358,7 @@ sap.ui.define([
 				key: "myCustomData",
 				value: "my custom data value"
 			});
-			var oButton = oViewAfterAction.byId("btn0");
+			oButton = oViewAfterAction.byId("btn0");
 			var aCustomData = oButton.getCustomData();
 			var bIsFound = aCustomData.some(function (oCustomData) {
 				return (
@@ -392,21 +390,21 @@ sap.ui.define([
 						'</customHeader>' +
 					'</Page>' +
 				'</mvc:View>',
-				action: {
-					name: "combine",
-					controlId: "btn0",
-					parameter: function(oView){
-						return {
-							source: oView.byId("btn0"),
-							combineElements : [
-								oView.byId("btn0"),
-								oView.byId("btn1"),
-								oView.byId("btn2")
-							]
-						};
-					}
-				},
-				layer: "VENDOR",
+			action: {
+				name: "combine",
+				controlId: "btn0",
+				parameter: function(oView){
+					return {
+						source: oView.byId("btn0"),
+						combineElements : [
+							oView.byId("btn0"),
+							oView.byId("btn1"),
+							oView.byId("btn2")
+						]
+					};
+				}
+			},
+			layer: "VENDOR",
 			afterAction: fnCustomDataAfterCombine,
 			afterUndo: fnCustomDataAfterUndo,
 			afterRedo: fnCustomDataAfterCombine
@@ -448,21 +446,21 @@ sap.ui.define([
 						'</customHeader>' +
 					'</Page>' +
 				'</mvc:View>',
-				action: {
-					name: "combine",
-					controlId: "btn0",
-					parameter: function(oView){
-						return {
-							source: oView.byId("btn0"),
-							combineElements: [
-								oView.byId("btn0"),
-								oView.byId("btn1"),
-								oView.byId("btn2")
-							]
-						};
-					}
-				},
-				layer: "VENDOR",
+			action: {
+				name: "combine",
+				controlId: "btn0",
+				parameter: function(oView){
+					return {
+						source: oView.byId("btn0"),
+						combineElements: [
+							oView.byId("btn0"),
+							oView.byId("btn1"),
+							oView.byId("btn2")
+						]
+					};
+				}
+			},
+			layer: "VENDOR",
 			afterAction: fnCustomDataOriginalBtnIdAfterCombine,
 			afterUndo: fnCustomDataOriginalBtnIdAfterUndo,
 			afterRedo: fnCustomDataOriginalBtnIdAfterCombine
@@ -649,21 +647,21 @@ sap.ui.define([
 						'</customHeader>' +
 					'</Page>' +
 				'</mvc:View>',
-				action: {
-					name: "combine",
-					controlId: "btn2",
-					parameter: function(oView){
-						return {
-							source: oView.byId("btn3"),
-							combineElements: [
-								oView.byId("btn3"),
-								oView.byId("btn1"),
-								oView.byId("btn2")
-							]
-						};
-					}
-				},
-				layer: "VENDOR",
+			action: {
+				name: "combine",
+				controlId: "btn2",
+				parameter: function(oView){
+					return {
+						source: oView.byId("btn3"),
+						combineElements: [
+							oView.byId("btn3"),
+							oView.byId("btn1"),
+							oView.byId("btn2")
+						]
+					};
+				}
+			},
+			layer: "VENDOR",
 			afterAction: fnButtonsOrderAfterCombine,
 			afterUndo: fnButtonsOrderAfterUndo,
 			afterRedo: fnButtonsOrderAfterCombine

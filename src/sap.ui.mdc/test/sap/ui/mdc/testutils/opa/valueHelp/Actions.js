@@ -87,7 +87,8 @@ sap.ui.define([
                             Opa5.assert.equal(aResults.length, 1, "exactly 1 listitem for " + aResults[0] + "found.");
                             const oResult = aResults[0];
                             if (oResult.isA('sap.m.ColumnListItem')) {
-                                new Press().executeOn(oResult);
+                                const oSelector = oResult.getMultiSelectControl() || oResult.getSingleSelectControl();
+                                new Press().executeOn(oSelector || oResult);
                             } else {
                                 const $RowSelector = oResult.getDomRefs().rowSelector;
                                 const bUseSelector = $RowSelector?.offsetParent;

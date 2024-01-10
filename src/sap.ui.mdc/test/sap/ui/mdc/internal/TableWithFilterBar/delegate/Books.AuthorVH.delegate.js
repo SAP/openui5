@@ -76,12 +76,16 @@ sap.ui.define([
 						delegate: {name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}},
 						threshold: 50,
 						enableAutoColumnWidth: true,
-						type: new ResponsiveTableType({growingMode: GrowingMode.Scroll}),
+						type: new GridTableType({rowCountMode: TableRowCountMode.Auto}),
 						columns: [
-							new MdcColumn({header: "ID", propertyKey : "ID", template: new Text(oCurrentContent.getId() + "--" +  "template1-AuthorId", {text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"})}),
-							new MdcColumn({header: "Name", propertyKey : "name", template: new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})}),
-							new MdcColumn({header: "Country", propertyKey : "countryOfOrigin_code", template: new Text({text: "{path: 'countryOfOrigin_code', type:'sap.ui.model.odata.type.String'}"})})
-						]
+							new MdcColumn({header: "ID", propertyKey : "ID", template: new Text(oCurrentContent.getId() + "--" +  "template1-AuthorId", {text: {path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}})}),
+							new MdcColumn({header: "Name", propertyKey : "name", template: new Text({text: {path: 'name', type:'sap.ui.model.odata.type.String'}})}),
+							new MdcColumn({header: "Country", propertyKey : "countryOfOrigin_code_ComplexWithText", template: new Text({text: {parts: [{path: 'countryOfOrigin_code', type:'sap.ui.model.odata.type.String'}, {path: 'countryOfOrigin/name', type:'sap.ui.model.odata.type.String'}], formatter: _formatText}})})
+						],
+						...(bMultiSelect ? {
+							cellSelector: [new CellSelector({rangeLimit: 200})],
+							copyProvider: [new CopyProvider()]
+						} : {})
 					});
 					break;
 
@@ -117,14 +121,14 @@ sap.ui.define([
 						delegate: {name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}},
 						threshold: 50,
 						enableAutoColumnWidth: true,
-						type: new GridTableType({rowCountMode: TableRowCountMode.Auto}),
+						type: new ResponsiveTableType({growingMode: GrowingMode.Scroll}),
 						columns: [
 							new MdcColumn({header: "ID", propertyKey : "ID", template: new Text(oCurrentContent.getId() + "--" +  "template1-AuthorId", {text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"})}),
 							new MdcColumn({header: "Name", propertyKey : "name", template: new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})}),
 							new MdcColumn({header: "Date of Birth", propertyKey : "dateOfBirth", template: new Text({text: "{path: 'dateOfBirth', type:'sap.ui.model.odata.type.Date'}"})})
 						],
 						...(bMultiSelect ? {
-							dependents: [new CellSelector({rangeLimit: 200})],
+							cellSelector: [new CellSelector({rangeLimit: 200})],
 							copyProvider: [new CopyProvider()]
 						} : {})
 					});
@@ -143,6 +147,10 @@ sap.ui.define([
 	Delegate.determineSearchSupported = function(oValueHelp) {
 		return Promise.resolve();
 	};
+
+	function _formatText(sValue, sTextValue) {
+		return sValue + (sTextValue ? " (" + sTextValue + ")" : "");
+	}
 
 	return Delegate;
 });

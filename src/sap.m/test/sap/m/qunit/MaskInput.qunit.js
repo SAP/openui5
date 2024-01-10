@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	// provides jQuery.fn.cursorPos
 	"sap/ui/dom/jquery/cursorPos"
 ], function(
@@ -30,7 +30,7 @@ sap.ui.define([
 	Device,
 	coreLibrary,
 	KeyCodes,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -44,14 +44,15 @@ sap.ui.define([
 	//the SUT won't be destroyed when single test is run
 	var bSkipDestroy = new URLSearchParams(window.location.search).has("testId");
 	QUnit.module("API", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oMaskInput = new MaskInput();
 			this.oMaskInput.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			if (!bSkipDestroy) {
 				this.oMaskInput.destroy();
+				await nextUIUpdate(this.clock);
 			}
 		}
 	});
@@ -119,7 +120,7 @@ sap.ui.define([
 				"Verify the exact error");
 	});
 
-	QUnit.test("setValue", function (assert){
+	QUnit.test("setValue", async function (assert){
 		//Prepare
 		var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aa-aa');
 		//Act
@@ -158,7 +159,7 @@ sap.ui.define([
 		oControl.setMask("ISBN99-99");
 		var oOtherControl = new Input({value: "some other value"});
 		oOtherControl.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Act
 		oControl.focus();
@@ -330,14 +331,15 @@ sap.ui.define([
 	});
 
 	QUnit.module("Deletion", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oMaskInput = new MaskInput();
 			this.oMaskInput.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			if (!bSkipDestroy) {
 				this.oMaskInput.destroy();
+				await nextUIUpdate(this.clock);
 			}
 		},
 		//sets certain properties, and deletes certain character
@@ -383,7 +385,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Paste", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oMaskSerialNumber = new MaskInput({
 				mask: "ZXYI-9999-9999-9999",
 				placeholderSymbol: "_",
@@ -403,12 +405,13 @@ sap.ui.define([
 
 			this.oMaskSerialNumber.placeAt("content");
 			this.oMaskPhoneNumber.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			if (!bSkipDestroy) {
 				this.oMaskSerialNumber.destroy();
 				this.oMaskPhoneNumber.destroy();
+				await nextUIUpdate(this.clock);
 			}
 		}
 	});
@@ -430,14 +433,15 @@ sap.ui.define([
 	});
 
 	QUnit.module("Focusing", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oMaskInput = new MaskInput();
 			this.oMaskInput.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			if (!bSkipDestroy) {
 				this.oMaskInput.destroy();
+				await nextUIUpdate(this.clock);
 			}
 		}
 	});
@@ -453,10 +457,10 @@ sap.ui.define([
 		checkForEmptyValue(oControl);
 	});
 
-	QUnit.test("Initial focusing of MaskInput - caret positioning", function (assert){
+	QUnit.test("Initial focusing of MaskInput - caret positioning", async function (assert){
 		//arrange
 		this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oMaskInput.focus();
 		this.clock.tick(1000);
 
@@ -464,10 +468,10 @@ sap.ui.define([
 		checkCursorIsAtPosition(this.oMaskInput, 0, "On initial focus the caret is on the first placeholder symbol");
 	});
 
-	QUnit.test("Focus of MaskInput when it has incomplete value - caret positioning", function (assert){
+	QUnit.test("Focus of MaskInput when it has incomplete value - caret positioning", async function (assert){
 		//arrange
 		this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oMaskInput.focus();
 		this.clock.tick(1000);
 		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "1");
@@ -482,10 +486,10 @@ sap.ui.define([
 		checkCursorIsAtPosition(this.oMaskInput, 3, "When partially value is present and we focus again the caret is on the first placeholder position");
 	});
 
-	QUnit.test("Focus of MaskInput when it has complete value - caret positioning", function (assert){
+	QUnit.test("Focus of MaskInput when it has complete value - caret positioning", async function (assert){
 		//arrange
 		this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oMaskInput.focus();
 		this.clock.tick(1000);
 		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "1");
@@ -509,11 +513,11 @@ sap.ui.define([
 		checkSelection(this.oMaskInput, 0, this.oMaskInput.getMask().length, "When complete value is present (no placeholders are left) and we focus the input all the input is selected");
 	});
 
-	QUnit.test("Focusout for input with deleted value restores an empty value", function (assert){
+	QUnit.test("Focusout for input with deleted value restores an empty value", async function (assert){
 		var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123"),
 			oOtherControl = new Input({value: "some other value"});
 		oOtherControl.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(1000);
 
 		oControl.focus();
@@ -528,12 +532,12 @@ sap.ui.define([
 		oOtherControl.destroy();
 	});
 
-	QUnit.test("Focusout after partially filled value is set through the API validates it against MaskInput rules", function (assert){
+	QUnit.test("Focusout after partially filled value is set through the API validates it against MaskInput rules", async function (assert){
 		var oControl = this.oMaskInput.setPlaceholderSymbol('#').setMask('99-99'),
 			oOtherControl = new Input({value: "some other value"});
 
 		oOtherControl.placeAt('content');
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(1000);
 
 		oControl.setValue('#1-23');
@@ -579,7 +583,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Events", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oMaskInput = new MaskInput();
 			this.oMaskInput.setMask("999");
 			this.oMaskInput.placeAt("content");
@@ -587,16 +591,17 @@ sap.ui.define([
 			this.oOtherControl = new Button({text: "my button"});
 			this.oOtherControl.placeAt("content");
 
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 			this.oChangeListenerPassedEvent = null;
 			this.spyChangeEvent = this.spy(this.changeListener.bind(this));
 			this.oMaskInput.attachEvent("change", this.spyChangeEvent);
 
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			if (!bSkipDestroy) {
 				this.oMaskInput.destroy();
 				this.oOtherControl.destroy();
+				await nextUIUpdate(this.clock);
 			}
 		},
 		changeListener: function () {
@@ -669,7 +674,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("RTL support", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.sTestLatinValue = "abcd";
 			this.sTestHebrewValue = "אני רוצה";//"I want" in Hebrew
 			this.sTestMixedValue = "1234אני רוצה";//"1234I want" in Hebrew
@@ -697,13 +702,14 @@ sap.ui.define([
 			});
 			this.oMaskInputHebrew.placeAt("content");
 
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
 
-		afterEach: function () {
+		afterEach: async function () {
 			if (!bSkipDestroy) {
 				this.oMaskInputLatin.destroy();
 				this.oMaskInputHebrew.destroy();
+				await nextUIUpdate(this.clock);
 			}
 		},
 		testSelectedInputWithArrow: function(oControl, oClock, sArrowName, iExpectedPosition, sMessagePrefix) {
@@ -806,14 +812,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Typing in a empty field (Latin content)", function(assert){
+	QUnit.test("Typing in a empty field (Latin content)", async function(assert){
 		this.oMaskInputLatin.destroy();
 		this.oMaskInputLatin = new MaskInput( {
 			textDirection: TextDirection.RTL,
 			mask: "aaaa"
 		});
 		this.oMaskInputLatin.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(1000);
 		var sContent = "abc";
 		this.testTypeInEmptyField(this.oMaskInputLatin, this.clock, sContent, 3, "Latin content");
@@ -821,7 +827,7 @@ sap.ui.define([
 		assert.equal(this.oMaskInputLatin.getValue(), sContent + "_", "Latin content check.");
 	});
 
-	QUnit.test("Typing in a empty field (Hebrew content)", function(assert){
+	QUnit.test("Typing in a empty field (Hebrew content)", async function(assert){
 		this.oMaskInputHebrew.destroy();
 		this.oMaskInputHebrew = new MaskInput({
 			textDirection: TextDirection.RTL,
@@ -839,7 +845,7 @@ sap.ui.define([
 			]
 		});
 		this.oMaskInputHebrew.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(1000);
 		var sContent =  "וצה"; /*3 chars*/
 		this.testTypeInEmptyField(this.oMaskInputHebrew, this.clock, sContent, 3, "Hebrew content");
@@ -849,14 +855,15 @@ sap.ui.define([
 	});
 
 	QUnit.module("Others", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oMaskInput = new MaskInput();
 			this.oMaskInput.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			if (!bSkipDestroy) {
 				this.oMaskInput.destroy();
+				await nextUIUpdate(this.clock);
 			}
 		},
 		sendAndValidate: function (iPos, sChar, sExpectedValue, oControl) {
@@ -872,11 +879,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("DOM and 'value' should be updated according to the user input ", function (assert) {
+	QUnit.test("DOM and 'value' should be updated according to the user input ", async function (assert) {
 		var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aaaa'),
 			oOtherControl = new Input({value: "some other value"});
 		oOtherControl.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(1000);
 
 		assert.strictEqual(getMaskInputDomValue(oControl), "", "Unless focused an empty dom value should remain empty");
@@ -1026,11 +1033,11 @@ sap.ui.define([
 				"Invalid mask input: Empty mask. Duplicated rule's maskFormatSymbol [+]", "Message");
 	});
 
-	QUnit.test("Once the user completed the input, the property 'value' is changed", function (assert){
+	QUnit.test("Once the user completed the input, the property 'value' is changed", async function (assert){
 		var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123"),
 			oOtherControl = new Input({value: "some other value"});
 		oOtherControl.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.clock.tick(1000);
 
 		oControl.focus();
@@ -1087,18 +1094,19 @@ sap.ui.define([
 	});
 
 	QUnit.module("Android", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMaskInput = new MaskInput();
 			this.oMaskInput.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 
 			this.fnIsChromeOnAndroidStub = this.stub(this.oMaskInput, "_isChromeOnAndroid").callsFake(function () {
 				return true;
 			});
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			if (!bSkipDestroy) {
 				this.oMaskInput.destroy();
+				await nextUIUpdate(this.clock);
 			}
 		}
 	});
@@ -1154,10 +1162,10 @@ sap.ui.define([
 				"..should return info about the backspace key");
 		});
 
-	QUnit.test("Private, Android specific: onkeydown, current state is stored", function(assert) {
+	QUnit.test("Private, Android specific: onkeydown, current state is stored", async function(assert) {
 		// Prepare
 		this.oMaskInput.setMask("99999");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.oMaskInput.focus();
@@ -1170,12 +1178,12 @@ sap.ui.define([
 			"State");
 	});
 
-	QUnit.test("Private, Android specific: When input event fires _onInputForAndroidHandler is called", function(assert) {
+	QUnit.test("Private, Android specific: When input event fires _onInputForAndroidHandler is called", async function(assert) {
 		// Prepare
 		var	fnOnInputForAndroidHandlerStub = this.spy(this.oMaskInput, "_onInputForAndroidHandler");
 
 		this.oMaskInput.setMask("99999");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.oMaskInput.oninput(new jQuery.Event());
@@ -1188,7 +1196,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Private, Android specific: _onInputForAndroidHandler when a char is added",
-		function (assert) {
+		async function (assert) {
 			// Prepare
 			var done = assert.async(),
 				oOnInputEvent = new jQuery.Event(),
@@ -1198,7 +1206,7 @@ sap.ui.define([
 				fnBuildKeyboardEventInfoStub = this.stub(this.oMaskInput, "_buildKeyboardEventInfo").callsFake(function() { return oBuildKeyboardEventInfoResponse;});
 
 			this.oMaskInput.setMask("99999");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oMaskInput._oKeyDownStateAndroid = {};
 
 			// Act
@@ -1223,7 +1231,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Private, Android specific: _onInputForAndroidHandler when a char is deleted",
-		function (assert) {
+		async function (assert) {
 			// Prepare
 			var done = assert.async(),
 				oOnInputEvent = new jQuery.Event(),
@@ -1233,7 +1241,7 @@ sap.ui.define([
 				fnBuildKeyboardEventInfoStub = this.stub(this.oMaskInput, "_buildKeyboardEventInfo").callsFake(function() { return oBuildKeyboardEventInfoResponse;});
 
 			this.oMaskInput.setMask("99999");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oMaskInput._oKeyDownStateAndroid = {oSelection: {}};
 
 			// Act
@@ -1258,7 +1266,7 @@ sap.ui.define([
 		});
 
 	QUnit.module("ARIA", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oMaskInput = new MaskInput({
 				mask: "993-99-999",
 				placeholderSymbol: "_",
@@ -1266,11 +1274,12 @@ sap.ui.define([
 			});
 			this.oRenderer = this.oMaskInput.getRenderer();
 			this.oMaskInput.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			if (!bSkipDestroy) {
 				this.oMaskInput.destroy();
+				await nextUIUpdate(this.clock);
 			}
 		}
 	});
@@ -1289,18 +1298,19 @@ sap.ui.define([
 	});
 
 	QUnit.module("Clear Icon", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oMaskInput = new MaskInput({
 				mask: "9",
 				placeholderSymbol: "_",
 				showClearIcon: true
 			});
 			this.oMaskInput.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			if (!bSkipDestroy) {
 				this.oMaskInput.destroy();
+				await nextUIUpdate(this.clock);
 			}
 		}
 	});
@@ -1392,17 +1402,18 @@ sap.ui.define([
 	});
 
 	QUnit.module("liveChange event", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oMaskInput = new MaskInput({
 				mask: "99",
 				placeholderSymbol: "_"
 			});
 			this.oMaskInput.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			if (!bSkipDestroy) {
 				this.oMaskInput.destroy();
+				await nextUIUpdate(this.clock);
 			}
 		}
 	});

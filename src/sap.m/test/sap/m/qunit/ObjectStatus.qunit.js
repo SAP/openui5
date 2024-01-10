@@ -5,13 +5,13 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/IconPool",
 	"sap/m/ObjectStatus",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/ui/core/ValueStateSupport",
 	"sap/m/Panel",
 	"sap/m/library",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/m/Label",
 	// side effect: provides jQuery.event.prototype.getMark
 	"sap/ui/events/jquery/EventExtension"
@@ -21,13 +21,13 @@ sap.ui.define([
 	createAndAppendDiv,
 	IconPool,
 	ObjectStatus,
+	nextUIUpdate,
 	jQuery,
 	coreLibrary,
 	ValueStateSupport,
 	Panel,
 	mobileLibrary,
 	KeyCodes,
-	oCore,
 	Label
 ) {
 	"use strict";
@@ -86,14 +86,14 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("render a placeholder if _isEmpty", function(assert) {
+	QUnit.test("render a placeholder if _isEmpty", async function(assert) {
 		//arrange
 		var oOS = new ObjectStatus(),
 			$OS;
 
 		//act
 		oOS.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		$OS = jQuery("#" + oOS.getId());
 
@@ -142,7 +142,7 @@ sap.ui.define([
 
 	QUnit.module("changing properties");
 
-	QUnit.test("ObjectStatus if the text is changed", function(assert) {
+	QUnit.test("ObjectStatus if the text is changed", async function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oResult,
@@ -150,11 +150,11 @@ sap.ui.define([
 
 		// System under Test
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oResult = oObjectStatus.setText(sTextToSet);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
@@ -165,7 +165,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("ObjectStatus if the text is a number", function(assert) {
+	QUnit.test("ObjectStatus if the text is a number", async function(assert) {
 		// Arrange
 		var iNumberToSet = 5,
 			sTextToExpect = "5",
@@ -174,11 +174,11 @@ sap.ui.define([
 
 		// System under Test
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oResult = oObjectStatus.setText(iNumberToSet);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
@@ -188,7 +188,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("ObjectStatus title is changed", function(assert) {
+	QUnit.test("ObjectStatus title is changed", async function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oResult,
@@ -196,11 +196,11 @@ sap.ui.define([
 
 		// System under Test
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oResult = oObjectStatus.setTitle(sTextToSet);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
@@ -215,7 +215,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("ObjectStatus if the title is a number", function(assert) {
+	QUnit.test("ObjectStatus if the title is a number", async function(assert) {
 		// Arrange
 		var iNumberToSet = 5,
 			sTitleToExpect = "5",
@@ -226,11 +226,11 @@ sap.ui.define([
 
 		// System under Test
 		oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oResult = oObjectStatus.setTitle(iNumberToSet);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$Title = oObjectStatus.$().children(".sapMObjStatusTitle");
 
 		// Assert
@@ -250,18 +250,18 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("if the new text is empty", function(assert) {
+	QUnit.test("if the new text is empty", async function(assert) {
 		// Arrange
 		var sTextToSet = "  ",
 			oConstructor = { text : "not empty text"};
 
 		// System under Test
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oObjectStatus.setText(sTextToSet);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(!oObjectStatus.$().children(".sapMObjStatusText").length, "Did not render the text span");
@@ -271,18 +271,18 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("if the new title is empty", function(assert) {
+	QUnit.test("if the new title is empty", async function(assert) {
 		// Arrange
 		var sTitleToSet = "  ",
 			oConstructor = { title : "not empty text"};
 
 		// System under Test
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oObjectStatus.setTitle(sTitleToSet);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(!oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did not render the title span");
@@ -292,18 +292,18 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("if the new text is undefined", function(assert) {
+	QUnit.test("if the new text is undefined", async function(assert) {
 		// Arrange
 		var sTextToSet,
 			oConstructor = { text : "not empty text"};
 
 		// System under Test
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oObjectStatus.setText(sTextToSet);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(!oObjectStatus.$().children(".sapMObjStatusText").length, "Did not render the text span");
@@ -313,18 +313,18 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("if the new title is undefined", function(assert) {
+	QUnit.test("if the new title is undefined", async function(assert) {
 		// Arrange
 		var sTitleToSet,
 			oConstructor = { title : "not empty text"};
 
 		// System under Test
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oObjectStatus.setTitle(sTitleToSet);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(!oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did not render the title span");
@@ -334,18 +334,18 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should rerender if the text was empty before", function(assert) {
+	QUnit.test("Should rerender if the text was empty before", async function(assert) {
 		// Arrange
 		var sTextToSet = "not empty text",
 			oConstructor = { text : ""};
 
 		// System under Test
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oObjectStatus.setText(sTextToSet);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oObjectStatus.$().children(".sapMObjStatusText").length, "Did render the text span");
@@ -355,18 +355,18 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should rerender if the title was empty before", function(assert) {
+	QUnit.test("Should rerender if the title was empty before", async function(assert) {
 		// Arrange
 		var sTitleToSet = "not empty text",
 			oConstructor = { title : ""};
 
 		// System under Test
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oObjectStatus.setTitle(sTitleToSet);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did render the title span");
@@ -376,18 +376,18 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should display titles with special characters correctly", function(assert) {
+	QUnit.test("Should display titles with special characters correctly", async function(assert) {
 		// Arrange
 		var sTitleToSet = "Account blocked - Blocked for payment",
 			oConstructor = { title : "not empty text"};
 
 		// System under Test
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oObjectStatus.setTitle(sTitleToSet);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
@@ -397,18 +397,18 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should display texts with special characters correctly", function(assert) {
+	QUnit.test("Should display texts with special characters correctly", async function(assert) {
 		// Arrange
 		var sTextToSet = "Account blocked - Blocked for payment",
 			oConstructor = { text : "not empty text"};
 
 		// System under Test
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oObjectStatus.setText(sTextToSet);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the value");
@@ -418,18 +418,18 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should display titles with special characters correctly", function(assert) {
+	QUnit.test("Should display titles with special characters correctly", async function(assert) {
 		// Arrange
 		var sTitleToSet = "Account blocked - Blocked for payment",
 			oConstructor = { title : "not empty text"};
 
 		// System under Test
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oObjectStatus.setTitle(sTitleToSet);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
@@ -439,27 +439,27 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("setState", function(assert) {
+	QUnit.test("setState", async function(assert) {
 		// Arrange
 		var oObjectStatus = new ObjectStatus({text: "test", state: "Warning"});
 
 
 		oObjectStatus.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oObjectStatus.getState(), "Warning", "correct state is set");
 
 		// Act
 		oObjectStatus.setState("Indication02");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oObjectStatus.getState(), "Indication02", "correct state is set");
 
 		// Act
 		oObjectStatus.setState(null);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oObjectStatus.getState(), "None", "state 'None' is set by default if null is given");
@@ -467,7 +467,7 @@ sap.ui.define([
 		try {
 			// Act
 			oObjectStatus.setState("noSuchState");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		} catch (err) {
 			// Assert
 			assert.ok(true, "Error is thrown:" + err);
@@ -496,12 +496,12 @@ sap.ui.define([
 
 	QUnit.module("Screen reader ARIA support");
 
-	QUnit.test("General ARIA attributes", function (assert) {
+	QUnit.test("General ARIA attributes", async function (assert) {
 		//Arrange
 		var oObjectStatus = new ObjectStatus({text: "Success object status", state: ValueState.Success});
 
 		oObjectStatus.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		//Assert
@@ -511,12 +511,12 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Active Object Status aria role ", function (assert) {
+	QUnit.test("Active Object Status aria role ", async function (assert) {
 		//Arrange
 		var oObjectStatus = new ObjectStatus({text: "test", active: true});
 
 		oObjectStatus.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		//Assert
@@ -529,11 +529,11 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Inactive Object Status aria role", function(assert) {
+	QUnit.test("Inactive Object Status aria role", async function(assert) {
 		//Arrange
 		var oObjectStatus = new ObjectStatus({text: "text"});
 		oObjectStatus.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		//Assert
@@ -600,7 +600,7 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
-	QUnit.test("Active ObjectStatus specific ARIA", function(assert) {
+	QUnit.test("Active ObjectStatus specific ARIA", async function(assert) {
 		// Arrange
 		var oObjectStatus = new ObjectStatus({
 			title: "Title",
@@ -609,7 +609,7 @@ sap.ui.define([
 		});
 
 		oObjectStatus.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal(oObjectStatus.$().attr("role"), "button", "Active ObjectStatus has button role");
@@ -618,7 +618,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("State element is being referenced", function (assert) {
+	QUnit.test("State element is being referenced", async function (assert) {
 		// Arrange
 		var sId = "os",
 			oObjectStatus = new ObjectStatus(sId, {
@@ -626,14 +626,14 @@ sap.ui.define([
 		});
 
 		oObjectStatus.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notOk(document.getElementById(sId + "-state"), "Hidden state text element has not been created");
 
 		// Act
 		oObjectStatus.setState(ValueState.Error);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(document.getElementById(sId + "-state-text"), "Hidden state text element has been created");
@@ -644,7 +644,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Tooltip and aria-describedby", function (assert) {
+	QUnit.test("Tooltip and aria-describedby", async function (assert) {
 		// Arrange
 		var sId = "os",
 			oObjectStatus = new ObjectStatus(sId, {
@@ -652,14 +652,14 @@ sap.ui.define([
 				tooltip: "Good"
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notOk(document.getElementById(sId + "-tooltip"), "Hidden tooltip text element has not been created");
 
 		// Act
 		oObjectStatus.addAriaDescribedBy("boo");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(document.getElementById(sId + "-tooltip"), "Hidden tooltip text element has been created");
@@ -670,7 +670,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Labelling using aria-labelledby", function (assert) {
+	QUnit.test("Labelling using aria-labelledby", async function (assert) {
 		// Arrange
 		var sId = "oslab",
 		oLabel = new Label("info", {
@@ -686,7 +686,7 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oObjectStatus.getDomRef().getAttribute("aria-labelledby"),
@@ -698,16 +698,15 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.test("Internal icon ARIA for icon-only ObjectStatus", function (assert) {
+	QUnit.test("Internal icon ARIA for icon-only ObjectStatus", async function (assert) {
 		// Arrange
-		var oCore = sap.ui.getCore(),
-			oObjectStatus = new ObjectStatus({
+		var oObjectStatus = new ObjectStatus({
 				icon: "sap-icon://status-inactive"
 			}),
 			$oInternalIcon;
 
 		oObjectStatus.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		$oInternalIcon = oObjectStatus._oImageControl.$();
 
@@ -720,7 +719,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Internal icon ARIA for non-icon-only ObjectStatus", function (assert) {
+	QUnit.test("Internal icon ARIA for non-icon-only ObjectStatus", async function (assert) {
 		// Arrange
 		var oObjectStatus = new ObjectStatus({
 				icon: "sap-icon://status-inactive",
@@ -729,7 +728,7 @@ sap.ui.define([
 			$oInternalIcon;
 
 		oObjectStatus.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		$oInternalIcon = oObjectStatus._oImageControl.$();
 
@@ -741,7 +740,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("accessibilityState on inactive control instance", function (assert) {
+	QUnit.test("accessibilityState on inactive control instance", async function (assert) {
 		// Arrange
 		var oObjectStatus = new ObjectStatus({
 			ariaLabelledBy: ["label"],
@@ -751,7 +750,7 @@ sap.ui.define([
 		});
 
 		oObjectStatus.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oObjectStatusDOM = oObjectStatus.getDomRef();
 
 		// Assert
@@ -764,11 +763,11 @@ sap.ui.define([
 
 	QUnit.module("textDirection");
 
-	QUnit.test("Title and Text has dir set to LTR when Inherit", function (assert) {
+	QUnit.test("Title and Text has dir set to LTR when Inherit", async function (assert) {
 		//Arange
 		var oObjectStatus = new ObjectStatus({title: "Staus", text: "Success object"});
 		oObjectStatus.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		assert.equal(oObjectStatus.$("title").attr("dir"), "ltr", "When the textDirection has the Inherit value, for the title is set LTR when on LTR page");
@@ -778,11 +777,11 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Title and Text has dir set to RTL when textDirection=RTL", function (assert) {
+	QUnit.test("Title and Text has dir set to RTL when textDirection=RTL", async function (assert) {
 		//Arange
 		var oObjectStatus = new ObjectStatus({title: "Staus", text: "Success object", textDirection: TextDirection.RTL});
 		oObjectStatus.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		assert.equal(oObjectStatus.$("title").attr("dir"), "rtl", "When textDirection=RTL, for the title is set also RTL");
@@ -807,9 +806,9 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Active status has 'sapMObjStatusActive' class and icon and text are encapsulated in one span", function(assert) {
+	QUnit.test("Active status has 'sapMObjStatusActive' class and icon and text are encapsulated in one span", async function(assert) {
 		this.oActiveStat.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(this.oActiveStat.$().hasClass("sapMObjStatusActive"), "Active status has sapMObjStatusActive class.");
@@ -819,11 +818,11 @@ sap.ui.define([
 		assert.strictEqual(this.oActiveStat.$().find(".sapMObjStatusText").length, 1, "The text span has class sapMObjStatusText.");
 	});
 
-	QUnit.test("Active status with empty icon and text", function(assert) {
+	QUnit.test("Active status with empty icon and text", async function(assert) {
 		this.oActiveStat.setText("");
 		this.oActiveStat.setIcon("");
 		this.oActiveStat.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(!this.oActiveStat.$().hasClass("sapMObjStatusActive"), "Active class is not set when there is no icon and text.");
@@ -831,7 +830,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Private function _isClickable", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oActiveStat = new ObjectStatus("oStatus", {
 				title: "Title",
 				text: "Contract #D1234567890",
@@ -839,7 +838,7 @@ sap.ui.define([
 				active: true
 			});
 			this.oActiveStat.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oStub = sinon.stub(ObjectStatus.prototype, "_isActive");
 		},
@@ -922,10 +921,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("press active ObjectStatus with text and icon", function(assert) {
+	QUnit.test("press active ObjectStatus with text and icon", async function(assert) {
 		// Act
 		this.oActiveStat.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.expect(3);
 		qutils.triggerEvent("tap", this.oActiveStat.$().children()[1]); // click on a wrapper IconText span, should fire event
@@ -934,26 +933,26 @@ sap.ui.define([
 		qutils.triggerEvent("tap", this.oActiveStat.$().children()[0]);//click on a title should not fire event
 	});
 
-	QUnit.test("press title of active ObjectStatus with no text and icon should not fire event", function(assert) {
+	QUnit.test("press title of active ObjectStatus with no text and icon should not fire event", async function(assert) {
 		this.oActiveStat.setText("");
 		this.oActiveStat.setIcon("");
 
 		// Act
 		this.oActiveStat.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.expect(0);
 		qutils.triggerEvent("tap", this.oActiveStat.$().children()[0]);//click on a title should not fire event
 	});
 
 
-	QUnit.test("ObjectStatus marks the Event on touchstart", function(assert) {
+	QUnit.test("ObjectStatus marks the Event on touchstart", async function(assert) {
 		// Arrange
 		var oEvent = new jQuery.Event();
 
 		// Act
 		this.oActiveStat.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oEvent.target = this.oActiveStat.$().find(".sapMObjStatusText")[0];
 		this.oActiveStat.ontouchstart(oEvent);
@@ -963,7 +962,7 @@ sap.ui.define([
 
 	QUnit.module("Keyboard handling");
 
-	QUnit.test("Enter", function(assert) {
+	QUnit.test("Enter", async function(assert) {
 
 		// Arrange
 		var oObjectStatus = new ObjectStatus({
@@ -974,7 +973,7 @@ sap.ui.define([
 
 		// Act
 		oObjectStatus.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oPressSpy = sinon.spy(ObjectStatus.prototype, "firePress");
 		qutils.triggerKeydown(oObjectStatus.getFocusDomRef(), KeyCodes.ENTER);
@@ -986,7 +985,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Space", function(assert) {
+	QUnit.test("Space", async function(assert) {
 
 		// Arrange
 		var oObjectStatus = new ObjectStatus({
@@ -997,7 +996,7 @@ sap.ui.define([
 
 		// Act
 		oObjectStatus.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oPressSpy = sinon.spy(ObjectStatus.prototype, "firePress");
 		qutils.triggerKeydown(oObjectStatus.getFocusDomRef(), KeyCodes.SPACE);
@@ -1010,7 +1009,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("EmptyIndicator", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oText = new ObjectStatus({
 				text: "",
 				emptyIndicatorMode: EmptyIndicatorMode.On
@@ -1037,7 +1036,7 @@ sap.ui.define([
 			this.oText.placeAt("qunit-fixture");
 			this.oPanel.placeAt("qunit-fixture");
 			this.oPanel1.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oText.destroy();
@@ -1055,19 +1054,19 @@ sap.ui.define([
 		assert.strictEqual(oSpan.lastElementChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
 	});
 
-	QUnit.test("Indicator should not be rendered when text is not empty", function(assert) {
+	QUnit.test("Indicator should not be rendered when text is not empty", async function(assert) {
 		//Arrange
 		this.oText.setText("test");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(this.oText.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");
 	});
 
-	QUnit.test("Indicator should not be rendered when property is set to off", function(assert) {
+	QUnit.test("Indicator should not be rendered when property is set to off", async function(assert) {
 		//Arrange
 		this.oText.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.strictEqual(this.oText.getDomRef().textContent, "", "Empty indicator is not rendered");
 	});
@@ -1080,32 +1079,32 @@ sap.ui.define([
 		assert.strictEqual(oSpan.lastElementChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
 	});
 
-	QUnit.test("Indicator should not be rendered when text is available", function(assert) {
+	QUnit.test("Indicator should not be rendered when text is available", async function(assert) {
 		//Arrange
 		this.oTextEmptyAuto.setText("test");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(this.oTextEmptyAuto.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");
 	});
 
-	QUnit.test("Indicator should be rendered when 'sapMShowEmpty-CTX' is added", function(assert) {
+	QUnit.test("Indicator should be rendered when 'sapMShowEmpty-CTX' is added", async function(assert) {
 		var oSpan = this.oTextEmptyAutoNoClass.getDomRef().childNodes[0];
 		//Assert
 		assert.strictEqual(window.getComputedStyle(oSpan)["display"], "none", "Empty indicator is not rendered");
 		//Arrange
 		this.oPanel1.addStyleClass("sapMShowEmpty-CTX");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(window.getComputedStyle(oSpan)["display"], "inline-block", "Empty indicator is rendered");
 	});
 
-	QUnit.test("Indicator should not be rendered when property is set to off and there is a text", function(assert) {
+	QUnit.test("Indicator should not be rendered when property is set to off and there is a text", async function(assert) {
 		//Arrange
 		this.oText.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
 		this.oText.setText("test");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(this.oText.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");

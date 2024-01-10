@@ -544,13 +544,19 @@ sap.ui.define([
 			// for a virtual context or if below a transient context
 			if (!that.prepareDeepCreate(oContext, mQueryOptions)) {
 				return that.fetchResourcePath(oContext).then(function (sResourcePath) {
-					var oError;
-
 					// create cache only for the latest call to fetchCache
 					if (that.oFetchCacheCallToken !== oCallToken) {
-						oError = new Error("Cache discarded as a new cache has been created");
-						oError.canceled = true;
-						throw oError;
+						// a previous call waits for the current one to finish
+						return that.oCachePromise.then(function (oNewCache) {
+							// the previous call must fail if a new cache was created
+							if (oNewCache === oCallToken.oOldCache) {
+								return oNewCache;
+							}
+							const oError
+								= new Error("Cache discarded as a new cache has been created");
+							oError.canceled = true;
+							throw oError;
+						});
 					}
 					that.oFetchCacheCallToken = undefined; // cleanup
 					return that.createAndSetCache(mQueryOptions, sResourcePath, oContext,

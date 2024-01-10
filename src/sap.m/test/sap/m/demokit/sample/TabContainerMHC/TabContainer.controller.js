@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/ui/core/ElementRegistry",
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/core/Element',
+	'sap/ui/core/ElementRegistry',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
@@ -12,7 +11,7 @@ sap.ui.define([
 	'sap/base/util/deepExtend',
 	'sap/base/util/extend'
 ],
-	function(ElementRegistry, Controller, Element, JSONModel, Filter, FilterOperator, TabContainer, TabContainerItem, MessageBox, Fragment, deepExtend, extend) {
+	function (Controller, ElementRegistry, JSONModel, Filter, FilterOperator, TabContainer, TabContainerItem, MessageBox, Fragment, deepExtend, extend) {
 		"use strict";
 
 		function fnNavBackButton() {

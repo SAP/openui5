@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/core/mvc/Controller",
 	"sap/m/MenuButton",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
@@ -6,6 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/enablement/elementActionTest",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
+	Controller,
 	MenuButton,
 	Menu,
 	MenuItem,
@@ -135,16 +137,26 @@ sap.ui.define([
 			afterRedo: fnConfirmGroupMenuButtonIsSplited
 		});
 
+		var oPressSpy = sinon.spy();
+		var oItemSelectedSpy = sinon.spy();
+
+		sap.ui.define("qunit/designtime/MenuButton.controller", function() {
+			return Controller.extend("qunit.designtime.MenuButton", {
+				onPress: oPressSpy,
+				onItemSelected: oItemSelectedSpy
+			});
+		});
+
 		// Split action: press event propagation
 		var fnPressEventFiredCorrectlyAfterSplit = function (oUiComponent,oViewAfterAction, assert) {
 			var oButton1 = oViewAfterAction.byId("toolbar").getContent()[0];
 			oButton1.firePress();
 
-			assert.strictEqual(window.oPressSpy.callCount, 1, "then the press event handler on the original menu item is called once");
-			assert.strictEqual(window.oItemSelectedSpy.callCount, 1, "then the itemSelected event handler on the original menu is called once");
+			assert.strictEqual(oPressSpy.callCount, 1, "then the press event handler on the original menu item is called once");
+			assert.strictEqual(oItemSelectedSpy.callCount, 1, "then the itemSelected event handler on the original menu is called once");
 
-			window.oPressSpy.resetHistory();
-			window.oItemSelectedSpy.resetHistory();
+			oPressSpy.resetHistory();
+			oItemSelectedSpy.resetHistory();
 		};
 
 		var fnPressEventFiredCorrectlyAfterUndo = function (oUiComponent, oViewAfterAction, assert) {
@@ -154,26 +166,26 @@ sap.ui.define([
 			oMenuItem.firePress();
 			oMenu.fireItemSelected({ item: oMenuItem });
 
-			assert.strictEqual(window.oPressSpy.callCount, 1, "then the press event handler on the original menu item is called once");
-			assert.strictEqual(window.oItemSelectedSpy.callCount, 1, "then the itemSelected event handler on the original menu is called once");
+			assert.strictEqual(oPressSpy.callCount, 1, "then the press event handler on the original menu item is called once");
+			assert.strictEqual(oItemSelectedSpy.callCount, 1, "then the itemSelected event handler on the original menu is called once");
 
-			window.oPressSpy.resetHistory();
-			window.oItemSelectedSpy.resetHistory();
+			oPressSpy.resetHistory();
+			oItemSelectedSpy.resetHistory();
 		};
 
 		elementActionTest("Split / press event propagation", {
 			jsOnly: true,
 			xmlView:
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="qunit.designtime.MenuButton">' +
 					'<Page id="page" >' +
 						'<customHeader>' +
 							'<Toolbar id="toolbar">' +
 								'<content>' +
 									'<MenuButton id="menubtn">' +
 										'<menu>' +
-											'<Menu id="menu1" itemSelected="oItemSelectedSpy">' +
+											'<Menu id="menu1" itemSelected=".onItemSelected">' +
 												'<items>' +
-													'<MenuItem id="menuItem1" text="item1" press="oPressSpy" />' +
+													'<MenuItem id="menuItem1" text="item1" press=".onPress" />' +
 													'<MenuItem id="menuItem2" text="item2"/>' +
 												'</items>' +
 											'</Menu>' +
@@ -196,14 +208,6 @@ sap.ui.define([
 				}
 			},
 			layer: "VENDOR",
-			before: function () {
-				window.oPressSpy = sinon.spy();
-				window.oItemSelectedSpy = sinon.spy();
-			},
-			after: function () {
-				delete window.oPressSpy;
-				delete window.oItemSelectedSpy;
-			},
 			afterAction: fnPressEventFiredCorrectlyAfterSplit,
 			afterUndo: fnPressEventFiredCorrectlyAfterUndo,
 			afterRedo: fnPressEventFiredCorrectlyAfterSplit

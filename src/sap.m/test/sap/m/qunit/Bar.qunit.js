@@ -3,6 +3,7 @@
 
 sap.ui.define([
 	"sap/base/i18n/Localization",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Bar",
 	"sap/m/Button",
 	"sap/m/Label",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ], function(
 	Localization,
+	nextUIUpdate,
 	Bar,
 	Button,
 	Label,
@@ -38,7 +40,7 @@ sap.ui.define([
 
 	QUnit.module("rendering");
 
-	function renderingTest (fnAssertions) {
+	async function renderingTest (fnAssertions, clock) {
 
 		//Arrange systems under test
 		var bar = new Bar("myBar", {
@@ -60,7 +62,7 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 
 		//Act
-		oCore.applyChanges();
+		await nextUIUpdate(clock);
 
 		//Assert
 		fnAssertions();
@@ -69,34 +71,35 @@ sap.ui.define([
 		bar.destroy();
 		bar1.destroy();
 		bar2.destroy();
+		await nextUIUpdate(clock);
 	}
 
-	QUnit.test("Should render the bars", function(assert) {
+	QUnit.test("Should render the bars", async function(assert) {
 
-		renderingTest.call(this, function() {
+		await renderingTest.call(this, function() {
 
 			assert.ok(document.getElementById("myBar"), "Bar should be rendered");
 			assert.ok(document.getElementById("myBar1"), "Bar1 should be rendered");
 
-		});
+		},this.clock);
 
 	});
 
 	// This is more like visual test, but will leave it as it is for now.
-	QUnit.test("Should position the bars", function(assert) {
+	QUnit.test("Should position the bars", async function(assert) {
 
-		renderingTest.call(this, function() {
+		await renderingTest.call(this, function() {
 
 			assert.equal(Math.round(jQuery("#myBar1").position().top), Math.round(jQuery("#myBar").position().top + jQuery("#myBar").outerHeight()),
 					"Bar1 should be located below Bar");
 
-		});
+		}, this.clock);
 
 	});
 
-	QUnit.test("content Element position", function(assert) {
+	QUnit.test("content Element position", async function(assert) {
 
-		renderingTest.call(this, function() {
+		await renderingTest.call(this, function() {
 
 			assert.ok(jQuery("#CancelBtn").parent().hasClass("sapMBarLeft"), "header button should have class sapMBarLeft");
 			assert.ok(jQuery("#myIcon").parent().hasClass("sapMBarLeft"), "header icon should have class sapMBarLeft");
@@ -105,11 +108,11 @@ sap.ui.define([
 			assert.ok(jQuery("#EditBtn").parent().hasClass("sapMBarRight"), "header button should have class sapMBarRight");
 			assert.ok(jQuery("#EditBtn1").parent().hasClass("sapMBarRight"), "header button should have class sapMBarRight");
 
-		});
+		}, this.clock);
 
 	});
 
-	QUnit.test("Should set the design class to the containers", function(assert) {
+	QUnit.test("Should set the design class to the containers", async function(assert) {
 		// Arrange
 		var sBarBaseContext = "sapMIBar-CTX";
 
@@ -117,7 +120,7 @@ sap.ui.define([
 		var oBar = new Bar().placeAt("qunit-fixture");
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		var sExpectedClass = BarRenderer.getContext(oBar);
 
@@ -127,14 +130,15 @@ sap.ui.define([
 
 		//Cleanup
 		oBar.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("Should get the correct contexts", function(assert) {
+	QUnit.test("Should get the correct contexts", async function(assert) {
 		// System under Test
 		var oBar = new Bar().placeAt("qunit-fixture");
 
 		// Act
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		var oExpectedContexts = oBar.getContext(oBar);
 
@@ -147,11 +151,12 @@ sap.ui.define([
 
 		//Cleanup
 		oBar.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("tag property", function(assert) {
+	QUnit.test("tag property", async function(assert) {
 
-		renderingTest.call(this, function() {
+		await renderingTest.call(this, async function() {
 
 			assert.ok(jQuery("#myBar").is("div"), "bar should be rendered as div");
 			assert.ok(jQuery("#myBar1").is("div"), "bar1 should be rendered as div");
@@ -159,27 +164,27 @@ sap.ui.define([
 			var bar = Element.getElementById("myBar");
 			bar.setHTMLTag('Header');
 			bar.invalidate();
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 			assert.ok(jQuery("#myBar").is("header"), "bar should be rendered as header");
 
 			var bar1 = Element.getElementById("myBar1");
 			bar1.setHTMLTag('Footer');
 			bar1.invalidate();
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 			assert.ok(jQuery("#myBar1").is("footer"), "bar1 should be rendered as footer");
 
 			var bar2 = Element.getElementById("myBar2");
 			bar2.setHTMLTag('H1');
 			bar2.invalidate();
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 			assert.ok(jQuery("#myBar2").is("H1"), "bar2 should be rendered as H1");
 			assert.equal(bar2.getHTMLTag(), "H1", "Even when sap.m.Bar has HTML tag set with value different than header and footer, " +
 				"the getHTMLTag should behave in one and the same way- should return the tag value itself");
-		});
+		}, this.clock);
 
 	});
 
-	QUnit.test("Should not register resize handlers if the bar is invisible", function(assert) {
+	QUnit.test("Should not register resize handlers if the bar is invisible", async function(assert) {
 		var //System under Test
 				oBar = new Bar({
 					visible : true,
@@ -188,24 +193,25 @@ sap.ui.define([
 
 		//Arrange + Act
 		oBar.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		var fnSpy = this.spy(ResizeHandler, "register");
 
 		//Act
 		oBar.setVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Assert
 		assert.strictEqual(fnSpy.callCount, 0,"the resize listeners did not get registered");
 
 		//Cleanup
 		oBar.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	var iMargin = 4;
 	var iStartEndPadding = 4;
 
-	QUnit.test("Each first child should not have margins and each none first should have", function(assert) {
+	QUnit.test("Each first child should not have margins and each none first should have", async function(assert) {
 		// Arrange
 		var oFirstButton = new Button("first"),
 			oMiddleButton = new Button("middle"),
@@ -222,7 +228,7 @@ sap.ui.define([
 
 		// Act + assert
 		oBar.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		function assertButton (oButton, oMargins) {
@@ -258,6 +264,7 @@ sap.ui.define([
 
 		// Cleanup
 		oBar.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	function getBarContentStyles(sut) {
@@ -285,7 +292,7 @@ sap.ui.define([
 		}
 		return oSut;
 	}
-	QUnit.test("Single left aggregation is set with width 100%", function(assert) {
+	QUnit.test("Single left aggregation is set with width 100%", async function(assert) {
 		//Sut
 		var sut = createSUTSingleAggregation("contentLeft"),
 				oBarWidths;
@@ -305,16 +312,17 @@ sap.ui.define([
 		   Bar.prototype.onAfterRendering.apply(sut, arguments);
 		});
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Assert
 		check("after onAfterRendering");
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("Single middle aggregation is set with width 100%", function(assert) {
+	QUnit.test("Single middle aggregation is set with width 100%", async function(assert) {
 		//Sut
 		var sut = createSUTSingleAggregation("contentMiddle"),
 				oBarWidths;
@@ -334,16 +342,17 @@ sap.ui.define([
 			Bar.prototype.onAfterRendering.apply(sut, arguments);
 		});
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Assert
 		check("after onAfterRendering");
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("Single right aggregation is set with width 100%", function(assert) {
+	QUnit.test("Single right aggregation is set with width 100%", async function(assert) {
 		//Sut
 		var sut = createSUTSingleAggregation("contentRight"),
 				oBarWidths;
@@ -363,16 +372,17 @@ sap.ui.define([
 			Bar.prototype.onAfterRendering.apply(sut, arguments);
 		});
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Assert
 		check("after onAfterRendering");
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("ariaLabbeledBy", function(assert) {
+	QUnit.test("ariaLabbeledBy", async function(assert) {
 
 	//Arrange
 	var oBar = new Bar(),
@@ -386,6 +396,7 @@ sap.ui.define([
 	//Cleanup
 	oInvisibleText.destroy();
 	oBar.destroy();
+	await nextUIUpdate(this.clock);
 });
 
 	//Firefox has flexbox therefore positioning is different
@@ -434,7 +445,7 @@ sap.ui.define([
 		}
 	}
 
-	function createAndPlaceSUT(iLeftBarouterWidth, iRightBarouterWidth, iMidBarouterWidth) {
+	async function createAndPlaceSUT(iLeftBarouterWidth, iRightBarouterWidth, iMidBarouterWidth, clock) {
 		var leftButton, rightButton, midButton;
 
 		if (iLeftBarouterWidth !== undefined) {
@@ -464,13 +475,13 @@ sap.ui.define([
 
 		jQuery("#qunit-fixture").width("500px");
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(clock);
 
 		return sut;
 	}
 
 	function testAlsoForRTL(sName, fnTest) {
-		QUnit.test(sName, function (assert) {
+		QUnit.test(sName, async function (assert) {
 			var config = oCore.getConfiguration();
 
 			//turn on rtl for this test
@@ -478,10 +489,10 @@ sap.ui.define([
 				return false;
 			});
 
-			fnTest.call(this, assert);
+			await fnTest.call(this, assert);
 		});
 
-		QUnit.test(sName + " RTL", function (assert) {
+		QUnit.test(sName + " RTL", async function (assert) {
 			var config = oCore.getConfiguration();
 
 			//turn on rtl for this test
@@ -489,15 +500,14 @@ sap.ui.define([
 				return true;
 			});
 
-			fnTest.call(this, assert);
+			await fnTest.call(this, assert);
 		});
 	}
 
-	testAlsoForRTL("Should position the mid content centered, left content left and right content right, if nothing overlaps", function(assert) {
+	testAlsoForRTL("Should position the mid content centered, left content left and right content right, if nothing overlaps", async function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
-		var sut = createAndPlaceSUT(100, 100, 100);
-
+		var sut = await createAndPlaceSUT(100, 100, 100, this.clock);
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
 
@@ -515,13 +525,14 @@ sap.ui.define([
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 		jQuery("#qunit-fixture").width("");
 	});
 
-	testAlsoForRTL("Should hide the mid content, and shorten leftContent if right content overlaps the leftContent", function(assert) {
+	testAlsoForRTL("Should hide the mid content, and shorten leftContent if right content overlaps the leftContent", async function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
-		var sut = createAndPlaceSUT(100, 450, 100);
+		var sut = await createAndPlaceSUT(100, 450, 100, this.clock);
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -537,13 +548,14 @@ sap.ui.define([
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 		jQuery("#qunit-fixture").width("");
 	});
 
-	testAlsoForRTL("Should hide the mid content, and shorten leftContent if left content overlaps the RightContent", function(assert) {
+	testAlsoForRTL("Should hide the mid content, and shorten leftContent if left content overlaps the RightContent", async function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
-		var sut = createAndPlaceSUT(450, 100, 100);
+		var sut = await createAndPlaceSUT(450, 100, 100, this.clock);
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -559,13 +571,14 @@ sap.ui.define([
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 		jQuery("#qunit-fixture").width("");
 	});
 
-	testAlsoForRTL("Should push the Middle content to the space between left and right if the left content overlaps the centered mid content", function(assert) {
+	testAlsoForRTL("Should push the Middle content to the space between left and right if the left content overlaps the centered mid content", async function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
-		var sut = createAndPlaceSUT(225, 100, 100);
+		var sut = await createAndPlaceSUT(225, 100, 100, this.clock);
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -578,13 +591,14 @@ sap.ui.define([
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 		jQuery("#qunit-fixture").width("");
 	});
 
-	testAlsoForRTL("Should hide left and mid content, if the right content is bigger than the bar", function(assert) {
+	testAlsoForRTL("Should hide left and mid content, if the right content is bigger than the bar", async function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
-		var sut = createAndPlaceSUT(100, 600, 100);
+		var sut = await createAndPlaceSUT(100, 600, 100, this.clock);
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -597,18 +611,19 @@ sap.ui.define([
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 		jQuery("#qunit-fixture").width("");
 	});
 
-	testAlsoForRTL("Should hide mid content, if the left content is bigger than the bar", function(assert) {
+	testAlsoForRTL("Should hide mid content, if the left content is bigger than the bar", async function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
-		var sut = createAndPlaceSUT(600, undefined, 100);
+		var sut = await createAndPlaceSUT(600, undefined, 100, this.clock);
 
 		//Act
 		jQuery("#qunit-fixture").width("500px");
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -621,18 +636,19 @@ sap.ui.define([
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 		jQuery("#qunit-fixture").width("");
 	});
 
-	QUnit.test("Should push the mid content, right content that overlaps", function(assert) {
+	QUnit.test("Should push the mid content, right content that overlaps", async function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
-		var sut = createAndPlaceSUT(undefined, 225, 100);
+		var sut = await createAndPlaceSUT(undefined, 225, 100, this.clock);
 
 		//Act
 		jQuery("#qunit-fixture").width("500px");
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -645,18 +661,19 @@ sap.ui.define([
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 		jQuery("#qunit-fixture").width("");
 	});
 
-	testAlsoForRTL("Should give the right content the whole space if its the only content", function(assert) {
+	testAlsoForRTL("Should give the right content the whole space if its the only content", async function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
-		var sut = createAndPlaceSUT(undefined, 100, undefined);
+		var sut = await createAndPlaceSUT(undefined, 100, undefined, this.clock);
 
 		//Act
 		jQuery("#qunit-fixture").width("500px");
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -675,18 +692,19 @@ sap.ui.define([
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 		jQuery("#qunit-fixture").width("");
 	});
 
-	QUnit.test("leftContent should not overlap the rightContent", function(assert) {
+	QUnit.test("leftContent should not overlap the rightContent", async function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
-		var sut = createAndPlaceSUT(300, 450, 0);
+		var sut = await createAndPlaceSUT(300, 450, 0, this.clock);
 
 		//Act
 		jQuery("#qunit-fixture").width("750px");
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -699,23 +717,24 @@ sap.ui.define([
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 		jQuery("#qunit-fixture").width("");
 	});
 
 
 	QUnit.module("resizing");
 
-	QUnit.test("Should attach to the resize handlers", function(assert) {
+	QUnit.test("Should attach to the resize handlers", async function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
-		var sut = createAndPlaceSUT(225, 225, 100);
+		var sut = await createAndPlaceSUT(225, 225, 100, this.clock);
 
 		var oHandleResizeSpy = this.spy(Bar.prototype, "_handleResize");
 
 		//Act
 		jQuery("#qunit-fixture").width("500px");
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize was called once");
 
@@ -750,10 +769,11 @@ sap.ui.define([
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 		jQuery("#qunit-fixture").width("");
 	});
 
-	QUnit.test("Should not attach resizeHandlers if the bar has no content", function(assert) {
+	QUnit.test("Should not attach resizeHandlers if the bar has no content", async function(assert) {
 		//Arrange + System under Test + Act
 		//left | right | mid
 		var sut = new Bar();
@@ -762,7 +782,7 @@ sap.ui.define([
 
 		jQuery("#qunit-fixture").width("500px");
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize was called once");
 
@@ -775,7 +795,7 @@ sap.ui.define([
 		assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize not called twice");
 
 		sut.addContentLeft(new Button());
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(oHandleResizeSpy.callCount, 2, "resize was called twice");
 
@@ -785,16 +805,17 @@ sap.ui.define([
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 		jQuery("#qunit-fixture").width("");
 	});
 
-	QUnit.test("Should attach and detach resize listeners to the content", function(assert) {
+	QUnit.test("Should attach and detach resize listeners to the content", async function(assert) {
 
 		var oHandleResizeSpy = this.spy(Bar.prototype, "_handleResize");
 
 		//Arrange + System under Test + Act
 		//left | right | mid
-		var sut = createAndPlaceSUT(100, 100, 100);
+		var sut = await createAndPlaceSUT(100, 100, 100, this.clock);
 
 		assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize was called");
 
@@ -830,21 +851,22 @@ sap.ui.define([
 
 		//Cleanup
 		sut.destroy();
+		await nextUIUpdate(this.clock);
 		jQuery("#qunit-fixture").width("");
 	});
 
 	QUnit.module("Accessibility",{
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.Bar = new Bar({
 				contentMiddle: [ new Label("myLabel", {text: "my Bar"})]
 			});
 			this.Bar.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.Bar.destroy();
 			this.Bar = null;
-
+			await nextUIUpdate(this.clock);
 		}
 	});
 
@@ -858,20 +880,19 @@ sap.ui.define([
 
 	QUnit.module("Title Alignment");
 
-	QUnit.test("setTitleAlignment test", function (assert) {
+	QUnit.test("setTitleAlignment test", async function (assert) {
 
 		var oBar = new Bar({
 				contentMiddle: new Title({
 					text: "Header"
 				})
 			}),
-			oCore = sap.ui.getCore(),
 			sAlignmentClass = "sapMBarTitleAlign",
 			sInitialAlignment,
 			sAlignment;
 
 		oBar.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		sInitialAlignment = oBar.getTitleAlignment();
 
 		// initial titleAlignment test (when titleAlignment is None)
@@ -881,12 +902,13 @@ sap.ui.define([
 		// check if all types of alignment lead to apply the proper CSS class
 		for (sAlignment in TitleAlignment) {
 			oBar.setTitleAlignment(sAlignment);
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 			assert.ok(oBar.hasStyleClass(sAlignmentClass + sAlignment),
 						"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Bar");
 		}
 
 		// cleanup
 		oBar.destroy();
+		await nextUIUpdate(this.clock);
 	});
 });
