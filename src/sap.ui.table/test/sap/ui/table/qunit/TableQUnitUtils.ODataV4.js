@@ -118,21 +118,76 @@ sap.ui.define([
 	/**
 	 * Creates an ODataModel for a service that provides hierarchical data.
 	 *
+	 * The BindingInfo should be as follows:
+	 * <pre><code>
+	 * {
+	 *   path: '/EMPLOYEES',
+	 *	 parameters: {$count: false, $orderby: 'AGE', $$aggregation: {hierarchyQualifier: "OrgChart", expandTo: 3}},
+	 *	 suspended: true
+	 * }
+	 * </code></pre>
+	 *
+	 * The Binding is initially suspended and should be resumed after the table is created.
+	 *
 	 * @returns {sap.ui.model.odata.v4.ODataModel} The created ODataModel
 	 */
 	TableQUnitUtilsODataV4.createModelForHierarchyDataService = function() {
-		// TODO: options (maybe for model parameters)? use different sandboxmodel?
-		return new HierarchySandboxModel();
+		return new HierarchySandboxModel({
+			serviceUrl: "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+			autoExpandSelect: true
+		});
 	};
 
 	/**
 	 * Creates an ODataModel for a service that provides data aggregation.
 	 *
+	 * If the V4Aggregation plugin is applied, the BindingInfo should be as follows:
+	 * <pre><code>
+	 * {
+	 *   path: '/BusinessPartners',
+	 *   parameters: {
+	 *     $count: false,
+	 *     $orderby: 'Country desc,Region desc,Segment,AccountResponsible'
+	 *   },
+	 *   suspended: true
+	 * }
+	 * </code></pre>
+	 *
+	 * Otherwise:
+	 * <pre><code>
+	 * {
+	 *   path: '/BusinessPartners',
+	 *   parameters: {
+	 *     $count: false,
+	 *     $orderby: 'Country desc,Region desc,Segment,AccountResponsible',
+	 *     $$aggregation: {
+	 *       aggregate: {
+	 *         SalesAmountLocalCurrency: {
+	 *           grandTotal: true,
+	 *           subtotals: true,
+	 *           unit: "LocalCurrency"
+	 *         },
+	 *         SalesNumber: {}
+	 *       },
+	 *       group: {
+	 *         AccountResponsible: {},
+	 *         Country_Code: {additionally: ["Country"]}
+	 *       },
+	 *       groupLevels: ["Country_Code", "Region", "Segment"]
+	 *     }
+	 *   },
+	 *   suspended: true
+	 * }
+	 * </code></pre>
+	 *
+	 * The Binding is initially suspended and should be resumed after the table is created.
+	 *
 	 * @returns {sap.ui.model.odata.v4.ODataModel} The created ODataModel
 	 */
 	TableQUnitUtilsODataV4.createModelForDataAggregationService = function() {
-		// TODO: options (maybe for model parameters)? use different sandboxmodel?
-		return new DataAggregationSandboxModel();
+		return new DataAggregationSandboxModel({
+			serviceUrl: "/odata/v4/sap.fe.managepartners.ManagePartnersService/"
+		});
 	};
 
 	return TableQUnitUtilsODataV4;

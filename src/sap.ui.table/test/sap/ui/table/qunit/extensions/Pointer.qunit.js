@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/table/extensions/Pointer",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(
@@ -18,6 +19,7 @@ sap.ui.define([
 	PointerExtension,
 	TableUtils,
 	tableLibrary,
+	FixedRowMode,
 	jQuery,
 	oCore
 ) {
@@ -954,6 +956,113 @@ sap.ui.define([
 
 		qutils.triggerMouseEvent(getCell(2, 0), "tap");
 		assert.deepEqual(oTable.getSelectedIndices(), [2], "Click on selected row with index 2");
+	});
+
+	QUnit.module("Selection plugin", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				rowMode: new FixedRowMode({
+					rowCount: 5
+				}),
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModel(8),
+				columns: [
+					TableQUnitUtils.createTextColumn(),
+					TableQUnitUtils.createTextColumn()
+				],
+				dependents: [new TableQUnitUtils.TestSelectionPlugin()]
+			});
+
+			return this.oTable.qunit.whenRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Single Selection", function(assert) {
+		var oTable = this.oTable;
+		var oSelectionPlugin = oTable.getDependents()[0];
+		var oSpyIsSelected = this.spy(oSelectionPlugin, "isSelected");
+		var oSpySetSelected = this.spy(oSelectionPlugin, "setSelected");
+
+		function testSelection(oRow, oTarget) {
+			qutils.triggerMouseEvent(oTarget, "tap");
+			assert.ok(oSpyIsSelected.calledOnceWithExactly(oRow), "isSelected is called once with the correct parameter");
+			assert.ok(oSpySetSelected.calledOnceWithExactly(oRow, !oSpyIsSelected.returnValues[0]),
+					"setSelected is called once with the correct parameters");
+			oSpyIsSelected.resetHistory();
+			oSpySetSelected.resetHistory();
+		}
+
+		// default selectionBehavior is RowSelection
+		testSelection(oTable.getRows()[0], oTable.qunit.getRowHeaderCell(0));
+		testSelection(oTable.getRows()[0], oTable.qunit.getRowHeaderCell(0));
+		testSelection(oTable.getRows()[1], oTable.qunit.getRowHeaderCell(1));
+
+		oTable.setSelectionBehavior("Row");
+		testSelection(oTable.getRows()[1], oTable.qunit.getDataCell(1, 0));
+		testSelection(oTable.getRows()[2], oTable.qunit.getRowHeaderCell(2));
+
+		oTable.setSelectionBehavior("RowOnly");
+		testSelection(oTable.getRows()[2], oTable.qunit.getDataCell(2, 1));
+		testSelection(oTable.getRows()[3], oTable.qunit.getDataCell(3, 1));
+
+		oSpyIsSelected.restore();
+		oSpySetSelected.restore();
+	});
+
+	QUnit.test("Range Selection", function(assert) {
+		var oTable = this.oTable, bSelected;
+		var oSelectionPlugin = oTable.getDependents()[0];
+		var oSpySetSelected = this.spy(oSelectionPlugin, "setSelected");
+
+		function testSelectRow(oRow, oTarget) {
+			qutils.triggerEvent("tap", oTarget);
+			assert.ok(oSpySetSelected.calledOnceWithExactly(oRow, true),
+					"setSelected is called once with the correct parameters");
+			oSpySetSelected.resetHistory();
+		}
+
+		function testRangeSelection(oRow, oTarget) {
+			bSelected = oSelectionPlugin.isSelected(oRow);
+			qutils.triggerEvent("tap", oTarget, {shiftKey: true});
+			assert.ok(oSpySetSelected.calledOnceWithExactly(oRow, !bSelected, {range: true}),
+					"setSelected is called once with the correct parameters");
+			oSpySetSelected.resetHistory();
+		}
+
+		// default selectionBehavior is RowSelector
+		testSelectRow(oTable.getRows()[0], oTable.qunit.getRowHeaderCell(0));
+		testRangeSelection(oTable.getRows()[2], oTable.qunit.getRowHeaderCell(2));
+		testSelectRow(oTable.getRows()[4], oTable.qunit.getRowHeaderCell(4));
+		testRangeSelection(oTable.getRows()[3], oTable.qunit.getRowHeaderCell(3));
+
+		oTable.setSelectionBehavior("Row");
+		oSelectionPlugin.clearSelection();
+		testSelectRow(oTable.getRows()[1], oTable.qunit.getDataCell(1, 0));
+		testRangeSelection(oTable.getRows()[2], oTable.qunit.getRowHeaderCell(2));
+		testSelectRow(oTable.getRows()[4], oTable.qunit.getRowHeaderCell(4));
+		testRangeSelection(oTable.getRows()[0], oTable.qunit.getDataCell(0, 0));
+
+		oTable.setSelectionBehavior("RowOnly");
+		oSelectionPlugin.clearSelection();
+		testSelectRow(oTable.getRows()[3], oTable.qunit.getDataCell(3, 0));
+		testRangeSelection(oTable.getRows()[2], oTable.qunit.getDataCell(2, 0));
+		testSelectRow(oTable.getRows()[0], oTable.qunit.getDataCell(0, 0));
+		testRangeSelection(oTable.getRows()[4], oTable.qunit.getDataCell(4, 0));
+
+		oSpySetSelected.restore();
+	});
+
+	QUnit.test("SelectAll/DeselectAll", function(assert) {
+		var oTable = this.oTable;
+		var oSelectionPlugin = oTable._getSelectionPlugin();
+		var oSpyHeaderSelectorPress = this.spy(oSelectionPlugin, "onHeaderSelectorPress");
+
+		qutils.triggerMouseEvent(oTable.qunit.getSelectAllCell(), "tap");
+		assert.ok(oSpyHeaderSelectorPress.calledOnce, "onHeaderSelectorPress is called once");
+		oSpyHeaderSelectorPress.restore();
 	});
 
 	QUnit.module("Column Reordering", {
