@@ -1122,7 +1122,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the request with;
-	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @param {function} [fnDataRequested]
@@ -2709,7 +2709,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the request with
-	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @param {function} [_fnDataRequested]
@@ -3492,7 +3492,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the ID of the group that is associated with the request;
-	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string[]} aPaths
 	 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
 	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
@@ -3832,7 +3832,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the request with
-	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [_sPath]
 	 *   ignored for property caches, should be empty
 	 * @param {function} [fnDataRequested]
@@ -3965,7 +3965,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the request with
-	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @param {function} [fnDataRequested]
@@ -4043,7 +4043,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the ID of the group that is associated with the request;
-	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {object} [oData]
 	 *   A copy of the data to be sent with the POST request; may be used to tunnel a different
 	 *   HTTP method via a property "X-HTTP-Method" (which is removed)
@@ -4176,7 +4176,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the ID of the group that is associated with the request;
-	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string[]} aPaths
 	 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
 	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
@@ -4335,7 +4335,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the request with
-	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [_sPath]
 	 *   ignored for property caches, should be empty
 	 * @param {function} [fnDataRequested]
