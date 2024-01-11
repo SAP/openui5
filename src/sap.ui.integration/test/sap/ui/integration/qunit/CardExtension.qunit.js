@@ -2,14 +2,16 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/Extension"
+	"sap/ui/integration/Extension",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	Log,
-	Core,
 	Card,
-	Extension
+	Extension,
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -27,9 +29,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initialization", function (assert) {
+	QUnit.test("Initialization", async function (assert) {
 		// arrange
-		var done = assert.async();
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "sap.ui.integration.test"
@@ -50,20 +51,18 @@ sap.ui.define([
 			}
 		});
 
-		this.oCard.attachEvent("_ready", function () {
-			// assert
-			assert.ok(this.oCard.getAggregation("_extension"), "The extension is created successfully.");
-			done();
-		}.bind(this));
-
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		// assert
+		assert.ok(this.oCard.getAggregation("_extension"), "The extension is created successfully.");
 	});
 
-	QUnit.test("Changing manifest from one with extension to one without extension", function (assert) {
+	QUnit.test("Changing manifest from one with extension to one without extension", async function (assert) {
 		// arrange
-		var done = assert.async(),
-			oManifest1 = {
+		var oManifest1 = {
 				"sap.app": {
 					"id": "sap.ui.integration.test"
 				},
@@ -99,24 +98,22 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEventOnce("_ready", function () {
-			this.oCard.attachEventOnce("_ready", function () {
-				assert.notOk(!!this.oCard.getAggregation("_extension"), "The extension should be destroyed.");
-				done();
-			}.bind(this));
-
-			// act 2
-			this.oCard.setManifest(oManifest2);
-		}.bind(this));
-
-		// act 1
+		// act
 		this.oCard.setManifest(oManifest1);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		// act
+		this.oCard.setManifest(oManifest2);
+
+		await nextCardReadyEvent(this.oCard);
+
+		assert.notOk(!!this.oCard.getAggregation("_extension"), "The extension should be destroyed.");
 	});
 
-	QUnit.test("Extension providing data on card level", function (assert) {
+	QUnit.test("Extension providing data on card level", async function (assert) {
 		// arrange
-		var done = assert.async();
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "sap.ui.integration.test"
@@ -137,21 +134,19 @@ sap.ui.define([
 			}
 		});
 
-		this.oCard.attachEvent("_ready", function () {
-			var aItems = this.oCard.getCardContent().getInnerList().getItems();
-
-			// assert
-			assert.ok(aItems.length, "The data request on card level is successful.");
-			done();
-		}.bind(this));
-
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var aItems = this.oCard.getCardContent().getInnerList().getItems();
+
+		// assert
+		assert.ok(aItems.length, "The data request on card level is successful.");
 	});
 
-	QUnit.test("Extension providing data on header level", function (assert) {
+	QUnit.test("Extension providing data on header level", async function (assert) {
 		// arrange
-		var done = assert.async();
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "sap.ui.integration.test"
@@ -170,19 +165,17 @@ sap.ui.define([
 			}
 		});
 
-		this.oCard.attachEvent("_ready", function () {
-			// assert
-			assert.ok(this.oCard.getCardHeader().getTitle(), "The data request on header level is successful.");
-			done();
-		}.bind(this));
-
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		// assert
+		assert.ok(this.oCard.getCardHeader().getTitle(), "The data request on header level is successful.");
 	});
 
-	QUnit.test("Extension providing data on content level", function (assert) {
+	QUnit.test("Extension providing data on content level", async function (assert) {
 		// arrange
-		var done = assert.async();
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "sap.ui.integration.test"
@@ -203,21 +196,19 @@ sap.ui.define([
 			}
 		});
 
-		this.oCard.attachEvent("_ready", function () {
-			var aItems = this.oCard.getCardContent().getInnerList().getItems();
-
-			// assert
-			assert.ok(aItems.length, "The data request on content level is successful.");
-			done();
-		}.bind(this));
-
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var aItems = this.oCard.getCardContent().getInnerList().getItems();
+
+		// assert
+		assert.ok(aItems.length, "The data request on content level is successful.");
 	});
 
-	QUnit.test("Extension providing data for a Filter", function (assert) {
+	QUnit.test("Extension providing data for a Filter", async function (assert) {
 		// arrange
-		var done = assert.async();
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "sap.ui.integration.test"
@@ -256,26 +247,23 @@ sap.ui.define([
 			}
 		});
 
-		this.oCard.attachEvent("_ready", function () {
-			var oFilterBar = this.oCard.getAggregation("_filterBar");
-			assert.strictEqual(oFilterBar._getFilters().length, 1, "The filter bar has 1 filter");
-
-			var oFilter = oFilterBar._getFilters()[0];
-			assert.strictEqual(oFilter._getSelect().getSelectedKey(), "hi", "property binding works");
-
-			assert.strictEqual(oFilter._getSelect().getItems()[2].getKey(), "lo", "option has the expected key");
-
-			done();
-		}.bind(this));
-
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oFilterBar = this.oCard.getAggregation("_filterBar");
+		assert.strictEqual(oFilterBar._getFilters().length, 1, "The filter bar has 1 filter");
+
+		var oFilter = oFilterBar._getFilters()[0];
+
+		assert.strictEqual(oFilter._getSelect().getSelectedKey(), "hi", "property binding works");
+		assert.strictEqual(oFilter._getSelect().getItems()[2].getKey(), "lo", "option has the expected key");
 	});
 
-	QUnit.test("Extension making request with custom dataType", function (assert) {
+	QUnit.test("Extension making request with custom dataType", async function (assert) {
 		// arrange
-		var done = assert.async(),
-			oServer = sinon.createFakeServer({
+		var oServer = sinon.createFakeServer({
 				autoRespond: true
 			});
 
@@ -311,18 +299,18 @@ sap.ui.define([
 			}
 		});
 
-		this.oCard.attachEvent("_ready", function () {
-			var aItems = this.oCard.getCardContent().getInnerList().getItems();
-
-			// assert
-			assert.ok(aItems.length, "The data request is successful.");
-
-			oServer.restore();
-			done();
-		}.bind(this));
-
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var aItems = this.oCard.getCardContent().getInnerList().getItems();
+
+		// assert
+		assert.ok(aItems.length, "The data request is successful.");
+
+		oServer.restore();
+
 	});
 
 	/**
@@ -353,32 +341,23 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initial actions", function (assert) {
-		// arrange
-		var done = assert.async(),
-			oHeader,
-			aActionButtons;
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			oHeader = this.oCard.getCardHeader();
-			aActionButtons = oHeader.getToolbar().getAggregation("_actionSheet").getButtons();
-
-			assert.strictEqual(aActionButtons.length, 1, "there is 1 action");
-			assert.strictEqual(aActionButtons[0].getText(), "AutoOpen - SAP website - Extension", "action text is correct");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Initial actions", async function (assert) {
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const oHeader = this.oCard.getCardHeader();
+		const aActionButtons = oHeader.getToolbar().getAggregation("_actionSheet").getButtons();
+
+		assert.strictEqual(aActionButtons.length, 1, "there is 1 action");
+		assert.strictEqual(aActionButtons[0].getText(), "AutoOpen - SAP website - Extension", "action text is correct");
 	});
 
-	QUnit.test("setActions method", function (assert) {
+	QUnit.test("setActions method", async function (assert) {
 		// arrange
-		var done = assert.async(),
-			oHeader,
+		var oHeader,
 			aActionButtons,
 			oToolbar,
 			aNewActions = [
@@ -396,35 +375,32 @@ sap.ui.define([
 				}
 			];
 
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			oHeader = this.oCard.getCardHeader();
-			oToolbar = oHeader.getToolbar();
-
-			// set new actions
-			this.oCard.getAggregation("_extension").setActions(aNewActions);
-			Core.applyChanges();
-
-			assert.strictEqual(oToolbar, oHeader.getToolbar(), "The toolbar is kept the same");
-
-			oToolbar = oHeader.getToolbar();
-			aActionButtons = oToolbar.getAggregation("_actionSheet").getButtons();
-
-			assert.strictEqual(aActionButtons.length, 2, "there are 2 actions");
-			assert.strictEqual(aActionButtons[0].getText(), "Action 1", "action text is correct");
-			assert.strictEqual(aActionButtons[1].getText(), "Action 2", "action text is correct");
-
-			// set the new actions again
-			this.oCard.getAggregation("_extension").setActions(aNewActions);
-
-			assert.strictEqual(oToolbar, oHeader.getToolbar(), "the actions toolbar is not changed");
-
-			done();
-		}.bind(this));
-
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		oHeader = this.oCard.getCardHeader();
+		oToolbar = oHeader.getToolbar();
+
+		// set new actions
+		this.oCard.getAggregation("_extension").setActions(aNewActions);
+		await nextUIUpdate();
+
+		assert.strictEqual(oToolbar, oHeader.getToolbar(), "The toolbar is kept the same");
+
+		oToolbar = oHeader.getToolbar();
+		aActionButtons = oToolbar.getAggregation("_actionSheet").getButtons();
+
+		assert.strictEqual(aActionButtons.length, 2, "there are 2 actions");
+		assert.strictEqual(aActionButtons[0].getText(), "Action 1", "action text is correct");
+		assert.strictEqual(aActionButtons[1].getText(), "Action 2", "action text is correct");
+
+		// set the new actions again
+		this.oCard.getAggregation("_extension").setActions(aNewActions);
+
+		assert.strictEqual(oToolbar, oHeader.getToolbar(), "the actions toolbar is not changed");
 	});
 
 	QUnit.module("Custom Formatters", {
@@ -458,49 +434,42 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Formatting the title", function (assert) {
+	QUnit.test("Formatting the title", async function (assert) {
+		// act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oFirstItem = this.oCard.getCardContent().getInnerList().getItems()[0];
+
+		// assert
+		assert.strictEqual(oFirstItem.getTitle(), "BERLIN", "The formatter successfully transformed the title to upper case characters.");
+	});
+
+	QUnit.test("setFormatters method", async function (assert) {
 		// arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oFirstItem = this.oCard.getCardContent().getInnerList().getItems()[0];
-
-			// assert
-			assert.strictEqual(oFirstItem.getTitle(), "BERLIN", "The formatter successfully transformed the title to upper case characters.");
-			done();
-		}.bind(this));
+		var oErrorSpy = sinon.spy(Log, "error");
 
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		this.oCard.getAggregation("_extension").setFormatters({
+			toUpperCase: function (sValue) {
+				return sValue.toUpperCase() + " New";
+			}
+		});
+
+		// assert
+		assert.ok(oErrorSpy.called, "An error is logged");
+
+		oErrorSpy.restore();
 	});
 
-	QUnit.test("setFormatters method", function (assert) {
+	QUnit.test("Formatters are local to card instance", async function (assert) {
 		// arrange
-		var oErrorSpy = this.spy(Log, "error"),
-			done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-
-			this.oCard.getAggregation("_extension").setFormatters({
-				toUpperCase: function (sValue) {
-					return sValue.toUpperCase() + " New";
-				}
-			});
-
-			assert.ok(oErrorSpy.called, "An error is logged");
-
-			oErrorSpy.restore();
-			done();
-		}.bind(this));
-
-		// act
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
-	});
-
-	QUnit.test("Formatters are local to card instance", function (assert) {
-		// arrange
-		var done = assert.async(),
-			oCard2 = new Card({
+		var oCard2 = new Card({
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
 				manifest: {
 					"sap.app": {
@@ -518,23 +487,23 @@ sap.ui.define([
 				}
 			});
 
-		this.oCard.attachEventOnce("_ready", function () {
-			var oBindingNamespaces = this.oCard.getBindingNamespaces();
-
-			oCard2.attachEventOnce("_ready", function () {
-				// assert
-				assert.notDeepEqual(oBindingNamespaces, oCard2.getBindingNamespaces(), "Namespaces contain different functions for both cards");
-				assert.deepEqual(this.oCard.getBindingNamespaces(), oBindingNamespaces, "Namespace of the first card remains unchanged");
-
-				done();
-			}.bind(this));
-
-			// act 2
-			oCard2.placeAt(DOM_RENDER_LOCATION);
-		}.bind(this));
-
-		// act 1
+		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		// act
+		oCard2.placeAt(DOM_RENDER_LOCATION);
+		var oBindingNamespaces = this.oCard.getBindingNamespaces();
+
+		await nextCardReadyEvent(oCard2);
+
+		// assert
+		assert.notDeepEqual(oBindingNamespaces, oCard2.getBindingNamespaces(), "Namespaces contain different functions for both cards");
+		assert.deepEqual(this.oCard.getBindingNamespaces(), oBindingNamespaces, "Namespace of the first card remains unchanged");
+
+		// clean up
+		oCard2.destroy();
 	});
 
 	QUnit.module("Extension Lifecycle", {
@@ -562,15 +531,13 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Method onCardReady is called once on card initialization", function (assert) {
+	QUnit.test("Method onCardReady is called once on card initialization", async function (assert) {
 		// arrange
-		var done = assert.async();
 		var onCardReadyStub = this.stub(Extension.prototype, "onCardReady");
 
-		this.oCard.attachEvent("_ready", function () {
-			assert.ok(onCardReadyStub.calledOnce, "The onCardReady event is called once.");
-			done();
-		});
+		await nextCardReadyEvent(this.oCard);
+
+		assert.ok(onCardReadyStub.calledOnce, "The onCardReady event is called once.");
 	});
 
 	QUnit.test("Method resolveDestination inside onCardReady does not throw an error", function (assert) {
@@ -586,16 +553,14 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Method loadDependencies is called once on card initialization", function (assert) {
+	QUnit.test("Method loadDependencies is called once on card initialization", async function (assert) {
 		// arrange
-		var done = assert.async();
 		var loadDependenciesStub = this.stub(Extension.prototype, "loadDependencies");
 
-		this.oCard.attachEvent("_ready", function () {
-			// assert
-			assert.ok(loadDependenciesStub.calledOnce, "'loadDependencies' is called once.");
-			done();
-		});
+		await nextCardReadyEvent(this.oCard);
+
+		// assert
+		assert.ok(loadDependenciesStub.calledOnce, "'loadDependencies' is called once.");
 	});
 
 	QUnit.module("Use translations from inside the extension", {
@@ -681,44 +646,23 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("validation method", function (assert) {
+	QUnit.test("validation method", async function (assert) {
 		// arrange
-		var done = assert.async();
 		var bValid = false;
-
-		this.oCard.attachEvent("_ready", function () {
-
-			bValid = this.oCard.getAggregation("_extension").validateEmail("Text");
-			assert.strictEqual(bValid, false, "E-mail is not valid");
-
-			bValid = this.oCard.getAggregation("_extension").validateEmail("my@mail.com");
-			assert.strictEqual(bValid, true, "E-mail is valid");
-
-			done();
-		}.bind(this));
 
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		bValid = this.oCard.getAggregation("_extension").validateEmail("Text");
+		assert.strictEqual(bValid, false, "E-mail is not valid");
+
+		bValid = this.oCard.getAggregation("_extension").validateEmail("my@mail.com");
+		assert.strictEqual(bValid, true, "E-mail is valid");
 	});
 
-	QUnit.test("No data IllustratedMessage set by extension binding", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEventOnce("_ready", function () {
-			Core.applyChanges();
-			var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
-
-			// Assert
-			assert.strictEqual(oMessage.getIllustrationType(), sap.m.IllustratedMessageType.SimpleError, "The no data message type set by expression binding is correct");
-			assert.strictEqual(oMessage.getDescription(), "Test", "The no data message description set by expression binding is correct");
-			assert.strictEqual(oMessage.getTitle(), "No Data", "The no data message title set by expression binding is correct");
-			assert.strictEqual(oMessage.getIllustrationSize(), "Auto", "The no data message size set by expression binding is correct");
-
-			// Clean up
-			done();
-		}.bind(this));
-
+	QUnit.test("No data IllustratedMessage set by extension binding", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.card.NoData"
@@ -754,13 +698,21 @@ sap.ui.define([
 			}
 		});
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
+
+		// Assert
+		assert.strictEqual(oMessage.getIllustrationType(), sap.m.IllustratedMessageType.SimpleError, "The no data message type set by expression binding is correct");
+		assert.strictEqual(oMessage.getDescription(), "Test", "The no data message description set by expression binding is correct");
+		assert.strictEqual(oMessage.getTitle(), "No Data", "The no data message title set by expression binding is correct");
+		assert.strictEqual(oMessage.getIllustrationSize(), "Auto", "The no data message size set by expression binding is correct");
 	});
 
-	QUnit.test("No data IllustratedMessage set by extension binding with 'tnt' set", function (assert) {
+	QUnit.test("No data IllustratedMessage set by extension binding with 'tnt' set", async function (assert) {
 		// Arrange
-		var done = assert.async();
-
-
 		var oTntSet = {
 			setFamily: "tnt",
 			setURI: sap.ui.require.toUrl("sap/tnt/themes/base/illustrations")
@@ -768,20 +720,6 @@ sap.ui.define([
 
 		// register tnt illustration set
 		sap.m.IllustrationPool.registerIllustrationSet(oTntSet, false);
-
-		this.oCard.attachEventOnce("_ready", function () {
-			Core.applyChanges();
-			var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
-
-			// Assert
-			assert.strictEqual(oMessage.getIllustrationType(), "tnt-Tools", "The no data message type set by expression binding is correct");
-			assert.strictEqual(oMessage.getDescription(), "Test", "The no data message description set by expression binding is correct");
-			assert.strictEqual(oMessage.getTitle(), "No Data", "The no data message title set by expression binding is correct");
-			assert.strictEqual(oMessage.getIllustrationSize(), "Auto", "The no data message size set by expression binding is correct");
-
-			// Clean up
-			done();
-		}.bind(this));
 
 		this.oCard.setManifest({
 			"sap.app": {
@@ -816,7 +754,19 @@ sap.ui.define([
 					"maxItems": "{maxItems}"
 				}
 			}
+
 		});
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
+
+		// Assert
+		assert.strictEqual(oMessage.getIllustrationType(), "tnt-Tools", "The no data message type set by expression binding is correct");
+		assert.strictEqual(oMessage.getDescription(), "Test", "The no data message description set by expression binding is correct");
+		assert.strictEqual(oMessage.getTitle(), "No Data", "The no data message title set by expression binding is correct");
+		assert.strictEqual(oMessage.getIllustrationSize(), "Auto", "The no data message size set by expression binding is correct");
 	});
 });

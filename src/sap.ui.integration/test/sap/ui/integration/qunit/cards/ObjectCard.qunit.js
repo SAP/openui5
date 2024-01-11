@@ -8,11 +8,12 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/integration/cards/ObjectContent",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/util/DateRangeHelper",
-	"sap/ui/qunit/utils/MemoryLeakCheck"
+	"sap/ui/qunit/utils/MemoryLeakCheck",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	Log,
 	mLibrary,
@@ -21,11 +22,12 @@ sap.ui.define([
 	library,
 	ObjectContent,
 	Card,
-	Core,
 	CardActions,
 	RequestDataProvider,
 	DateRangeHelper,
-	MemoryLeakCheck
+	MemoryLeakCheck,
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -978,147 +980,106 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Using manifest", function (assert) {
-
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oObjectContent = this.oCard.getAggregation("_content");
-			var oContent = oObjectContent.getAggregation("_content");
-			var oHeader = this.oCard.getAggregation("_header");
-			var aGroups = oContent.getItems()[0].getContent();
-			var oData = oManifest_ObjectCard["sap.card"].data.json;
-			var oManifestContent = oManifest_ObjectCard["sap.card"].content;
-
-			Core.applyChanges();
-
-			assert.equal(aGroups.length, 3, "Should have 3 groups.");
-
-			// Header assertions
-			assert.equal(oHeader.getTitle(), oData.firstName + " " + oData.lastName, "Should have correct header title.");
-			assert.equal(oHeader.getSubtitle(), oData.position, "Should have correct header subtitle.");
-			assert.equal(oHeader.getIconSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Woman_avatar_01.png", "Should have correct header icon source.");
-
-			// Group 1 assertions
-			assert.equal(aGroups[0].getItems().length, 12, "Should have 12 items.");
-			assert.equal(aGroups[0].getItems()[0].getText(), oManifestContent.groups[0].title, "Should have correct group title.");
-			assert.equal(aGroups[0].getItems()[2].getText(), oData.firstName, "Should have correct item value.");
-			assert.equal(aGroups[0].getItems()[4].getText(), oData.lastName, "Should have correct item value.");
-			assert.equal(aGroups[0].getItems()[6].getItems()[0].getText(), oData.phone, "Should have correct item value.");
-			assert.equal(aGroups[0].getItems()[9].getShowStateIcon(), oData.showErrorStateIcon, "Should have correct status icon value.");
-			assert.equal(aGroups[0].getItems()[10].getShowStateIcon(), oData.showWarningStateIcon, "Should have correct status icon value.");
-			assert.equal(aGroups[0].getItems()[11].getIcon(), oData.CustomSuccessStateIcon, "Should have correct custom status icon value.");
-			assert.ok(aGroups[0].getItems()[11].hasStyleClass("sapMObjStatusShowCustomIcon"), "Should have correct class for custom state icon");
-
-			// Group 2 assertions
-			assert.equal(aGroups[1].getItems().length, 2, "Should have 2 items.");
-			assert.equal(aGroups[1].getItems()[0].getText(), oManifestContent.groups[1].title, "Should have correct group title.");
-			assert.equal(aGroups[1].getItems()[1].getItems()[0].getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Woman_avatar_01.png", "Should have correct image source.");
-			assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[1].getText(), oData.manager.firstName + " " + oData.manager.lastName, "Should have correct item value.");
-
-			// Group 3 assertions
-			assert.equal(aGroups[2].getItems().length, 14, "Should have 14 items.");
-			assert.equal(aGroups[2].getItems()[0].getText(), oManifestContent.groups[2].title, "Should have correct group title.");
-			assert.equal(aGroups[2].getItems()[2].getText(), oData.company.name, "Should have correct item value.");
-			assert.equal(aGroups[2].getItems()[4].getText(), oData.company.address, "Should have correct item value.");
-			assert.equal(aGroups[2].getItems()[6].getItems()[0].getText(), oData.company.email, "Should have correct item value.");
-			assert.equal(aGroups[2].getItems()[8].getItems()[0].getText(), "newmail@example.com", "Should have correct item value.");
-			assert.equal(aGroups[2].getItems()[10].getItems()[0].getText(), oData.company.website, "Should have correct item value.");
-			// Rating Indicator
-			assert.ok(aGroups[2].getItems()[12].isA("sap.m.RatingIndicator"), "RatingIndicator is rendered.");
-			assert.equal(aGroups[2].getItems()[12].getMaxValue(), 7, "RatingIndicator's maxValue is correctly set.");
-			assert.equal(aGroups[2].getItems()[12].getValue(), 4.5, "RatingIndicator's value is correctly set.");
-			assert.equal(aGroups[2].getItems()[12].getVisualMode(), "Full", "RatingIndicator's visualMode is correctly set.");
-			// Image
-			assert.ok(aGroups[2].getItems()[13].isA("sap.m.Image"), "Image is rendered.");
-			assert.equal(aGroups[2].getItems()[13].getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/grass.jpg", "Image's source is correctly set.");
-			assert.equal(aGroups[2].getItems()[13].getAlt(), "Picture of grass", "Image's alt text is correctly set.");
-			assert.equal(aGroups[2].getItems()[13].getTooltip(), "Green grass", "Image's tooltip is correctly set.");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Using manifest", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_ObjectCard);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oObjectContent = this.oCard.getAggregation("_content");
+		var oContent = oObjectContent.getAggregation("_content");
+		var oHeader = this.oCard.getAggregation("_header");
+		var aGroups = oContent.getItems()[0].getContent();
+		var oData = oManifest_ObjectCard["sap.card"].data.json;
+		var oManifestContent = oManifest_ObjectCard["sap.card"].content;
+
+		assert.equal(aGroups.length, 3, "Should have 3 groups.");
+
+		// Header assertions
+		assert.equal(oHeader.getTitle(), oData.firstName + " " + oData.lastName, "Should have correct header title.");
+		assert.equal(oHeader.getSubtitle(), oData.position, "Should have correct header subtitle.");
+		assert.equal(oHeader.getIconSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Woman_avatar_01.png", "Should have correct header icon source.");
+
+		// Group 1 assertions
+		assert.equal(aGroups[0].getItems().length, 12, "Should have 12 items.");
+		assert.equal(aGroups[0].getItems()[0].getText(), oManifestContent.groups[0].title, "Should have correct group title.");
+		assert.equal(aGroups[0].getItems()[2].getText(), oData.firstName, "Should have correct item value.");
+		assert.equal(aGroups[0].getItems()[4].getText(), oData.lastName, "Should have correct item value.");
+		assert.equal(aGroups[0].getItems()[6].getItems()[0].getText(), oData.phone, "Should have correct item value.");
+		assert.equal(aGroups[0].getItems()[9].getShowStateIcon(), oData.showErrorStateIcon, "Should have correct status icon value.");
+		assert.equal(aGroups[0].getItems()[10].getShowStateIcon(), oData.showWarningStateIcon, "Should have correct status icon value.");
+		assert.equal(aGroups[0].getItems()[11].getIcon(), oData.CustomSuccessStateIcon, "Should have correct custom status icon value.");
+		assert.ok(aGroups[0].getItems()[11].hasStyleClass("sapMObjStatusShowCustomIcon"), "Should have correct class for custom state icon");
+
+		// Group 2 assertions
+		assert.equal(aGroups[1].getItems().length, 2, "Should have 2 items.");
+		assert.equal(aGroups[1].getItems()[0].getText(), oManifestContent.groups[1].title, "Should have correct group title.");
+		assert.equal(aGroups[1].getItems()[1].getItems()[0].getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Woman_avatar_01.png", "Should have correct image source.");
+		assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[1].getText(), oData.manager.firstName + " " + oData.manager.lastName, "Should have correct item value.");
+
+		// Group 3 assertions
+		assert.equal(aGroups[2].getItems().length, 14, "Should have 14 items.");
+		assert.equal(aGroups[2].getItems()[0].getText(), oManifestContent.groups[2].title, "Should have correct group title.");
+		assert.equal(aGroups[2].getItems()[2].getText(), oData.company.name, "Should have correct item value.");
+		assert.equal(aGroups[2].getItems()[4].getText(), oData.company.address, "Should have correct item value.");
+		assert.equal(aGroups[2].getItems()[6].getItems()[0].getText(), oData.company.email, "Should have correct item value.");
+		assert.equal(aGroups[2].getItems()[8].getItems()[0].getText(), "newmail@example.com", "Should have correct item value.");
+		assert.equal(aGroups[2].getItems()[10].getItems()[0].getText(), oData.company.website, "Should have correct item value.");
+		// Rating Indicator
+		assert.ok(aGroups[2].getItems()[12].isA("sap.m.RatingIndicator"), "RatingIndicator is rendered.");
+		assert.equal(aGroups[2].getItems()[12].getMaxValue(), 7, "RatingIndicator's maxValue is correctly set.");
+		assert.equal(aGroups[2].getItems()[12].getValue(), 4.5, "RatingIndicator's value is correctly set.");
+		assert.equal(aGroups[2].getItems()[12].getVisualMode(), "Full", "RatingIndicator's visualMode is correctly set.");
+		// Image
+		assert.ok(aGroups[2].getItems()[13].isA("sap.m.Image"), "Image is rendered.");
+		assert.equal(aGroups[2].getItems()[13].getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/grass.jpg", "Image's source is correctly set.");
+		assert.equal(aGroups[2].getItems()[13].getAlt(), "Picture of grass", "Image's alt text is correctly set.");
+		assert.equal(aGroups[2].getItems()[13].getTooltip(), "Green grass", "Image's tooltip is correctly set.");
 	});
 
-	QUnit.test("Spacing between groups are correctly calculated", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oObjectContent = this.getAggregation("_content");
-			var oRoot = oObjectContent.getAggregation("_content");
-			var oLayout = oRoot.getItems()[0];
-			var oEvent = {
-				size: {
-					width: 400
-				},
-				oldSize: {
-					width: 0
-				},
-				control: oRoot
-			};
-
-			Core.applyChanges();
-
-			//This is the case when 2 groups are in one column and the last group is on another row
-			oObjectContent._onResize(oEvent);
-			assert.ok(oLayout.getContent()[0].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The first group should have the separation class");
-			assert.ok(!oLayout.getContent()[1].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The second group should not have the separation class");
-			assert.ok(oLayout.getContent()[2].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The last group should have the separation class");
-
-			//This is the case when all groups are in one column
-			oEvent.size.width = 200;
-			oObjectContent._onResize(oEvent);
-			assert.ok(!oLayout.getContent()[0].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
-			assert.ok(!oLayout.getContent()[1].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
-			assert.ok(!oLayout.getContent()[2].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
-
-			//This is the case when all groups are in one row
-			oEvent.size.width = 800;
-			oObjectContent._onResize(oEvent);
-			assert.ok(oLayout.getContent()[0].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should have the separation class");
-			assert.ok(oLayout.getContent()[1].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should have the separation class");
-			assert.ok(!oLayout.getContent()[2].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
-
-			done();
-		});
-
+	QUnit.test("Spacing between groups are correctly calculated", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_ObjectCard);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oObjectContent = this.oCard.getAggregation("_content");
+		var oRoot = oObjectContent.getAggregation("_content");
+		var oLayout = oRoot.getItems()[0];
+		var oEvent = {
+			size: {
+				width: 400
+			},
+			oldSize: {
+				width: 0
+			},
+			control: oRoot
+		};
+
+		//This is the case when 2 groups are in one column and the last group is on another row
+		oObjectContent._onResize(oEvent);
+		assert.ok(oLayout.getContent()[0].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The first group should have the separation class");
+		assert.ok(!oLayout.getContent()[1].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The second group should not have the separation class");
+		assert.ok(oLayout.getContent()[2].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The last group should have the separation class");
+
+		//This is the case when all groups are in one column
+		oEvent.size.width = 200;
+		oObjectContent._onResize(oEvent);
+		assert.ok(!oLayout.getContent()[0].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
+		assert.ok(!oLayout.getContent()[1].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
+		assert.ok(!oLayout.getContent()[2].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
+
+		//This is the case when all groups are in one row
+		oEvent.size.width = 800;
+		oObjectContent._onResize(oEvent);
+		assert.ok(oLayout.getContent()[0].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should have the separation class");
+		assert.ok(oLayout.getContent()[1].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should have the separation class");
+		assert.ok(!oLayout.getContent()[2].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
 	});
 
-	QUnit.test("Spacing around groups when the last group is 'stretched'", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oObjectContent = this.getAggregation("_content");
-			var oRoot = oObjectContent.getAggregation("_content");
-			var aItems = oRoot.getItems();
-			var oEvent = {
-				size: {
-					width: 400
-				},
-				oldSize: {
-					width: 0
-				},
-				control: oRoot
-			};
-
-			// Act
-			Core.applyChanges();
-			oObjectContent._onResize(oEvent);
-
-			// Assert
-			assert.strictEqual(oRoot.$().find(".sapFCardObjectGroupLastInColumn").length, 1, "There should be one group marked as last");
-			assert.ok(aItems[aItems.length - 1].hasStyleClass("sapFCardObjectGroupLastInColumn"), "The last group should have the 'sapFCardObjectGroupLastInColumn' class");
-
-			done();
-		});
-
+	QUnit.test("Spacing around groups when the last group is 'stretched'", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.cards.object.card3",
@@ -1149,38 +1110,55 @@ sap.ui.define([
 				}
 			}
 		});
-	});
 
-	QUnit.test("Visible property", function (assert) {
-		// Arrange
-		var done = assert.async();
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
 
-		this.oCard.attachEvent("_ready", function () {
-			var oLayout = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
-				aTestItems = oLayout.getContent()[1].getItems();
-
-			Core.applyChanges();
-
-			assert.ok(oLayout.getDomRef().children[0].classList.contains("sapFCardInvisibleContent"), "Group is hidden");
-			assert.notOk(oLayout.getDomRef().children[1].classList.contains("sapFCardInvisibleContent"), "Group should be visible");
-
-			assert.notOk(aTestItems[1].getVisible(), "The group item should not be visible");
-			assert.notOk(aTestItems[2].getVisible(), "The group item should not be visible");
-			assert.ok(aTestItems[3].getVisible(), "The group item should be visible");
-			assert.ok(aTestItems[4].getVisible(), "The group item should be visible");
-			assert.ok(aTestItems[5].getVisible(), "The numeric data group item should not be visible");
-			assert.ok(aTestItems[6].getVisible(), "The icon group group item should not be visible");
-			done();
-		}.bind(this));
+		var oObjectContent = this.oCard.getAggregation("_content");
+		var oRoot = oObjectContent.getAggregation("_content");
+		var aItems = oRoot.getItems();
+		var oEvent = {
+			size: {
+				width: 400
+			},
+			oldSize: {
+				width: 0
+			},
+			control: oRoot
+		};
 
 		// Act
-		this.oCard.setManifest(oManifest_ObjectCard_Visible);
+		oObjectContent._onResize(oEvent);
+
+		// Assert
+		assert.strictEqual(oRoot.$().find(".sapFCardObjectGroupLastInColumn").length, 1, "There should be one group marked as last");
+		assert.ok(aItems[aItems.length - 1].hasStyleClass("sapFCardObjectGroupLastInColumn"), "The last group should have the 'sapFCardObjectGroupLastInColumn' class");
 	});
 
-	QUnit.test("Visible property of items - determined by binding", function (assert) {
+	QUnit.test("Visible property", async function (assert) {
+		// Act
+		this.oCard.setManifest(oManifest_ObjectCard_Visible);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oLayout = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
+			aTestItems = oLayout.getContent()[1].getItems();
+
+		assert.ok(oLayout.getDomRef().children[0].classList.contains("sapFCardInvisibleContent"), "Group is hidden");
+		assert.notOk(oLayout.getDomRef().children[1].classList.contains("sapFCardInvisibleContent"), "Group should be visible");
+
+		assert.notOk(aTestItems[1].getVisible(), "The group item should not be visible");
+		assert.notOk(aTestItems[2].getVisible(), "The group item should not be visible");
+		assert.ok(aTestItems[3].getVisible(), "The group item should be visible");
+		assert.ok(aTestItems[4].getVisible(), "The group item should be visible");
+		assert.ok(aTestItems[5].getVisible(), "The numeric data group item should not be visible");
+		assert.ok(aTestItems[6].getVisible(), "The icon group group item should not be visible");
+	});
+
+	QUnit.test("Visible property of items - determined by binding", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "test.cards.object.visibleItemsWithBinding",
 					"type": "card"
@@ -1220,28 +1198,25 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			var oLayout = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
-				aGroupItems = oLayout.getContent()[0].getItems();
-
-			Core.applyChanges();
-
-			// Assert
-			assert.notOk(aGroupItems[1].getVisible(), "Label for link is NOT visible");
-			assert.notOk(aGroupItems[2].getItems()[0].getVisible(), "Link is also NOT visible");
-			assert.notOk(aGroupItems[3].getVisible(), "Label for text is NOT visible");
-			assert.notOk(aGroupItems[4].getVisible(), "Text is also NOT visible");
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oLayout = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
+			aGroupItems = oLayout.getContent()[0].getItems();
+
+		// Assert
+		assert.notOk(aGroupItems[1].getVisible(), "Label for link is NOT visible");
+		assert.notOk(aGroupItems[2].getItems()[0].getVisible(), "Link is also NOT visible");
+		assert.notOk(aGroupItems[3].getVisible(), "Label for text is NOT visible");
+		assert.notOk(aGroupItems[4].getVisible(), "Text is also NOT visible");
 	});
 
-	QUnit.test("Visible property of items - determined by binding with parameters", function (assert) {
+	QUnit.test("Visible property of items - determined by binding with parameters", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "test.cards.object.visibleItemsWithParameters",
 					"type": "card"
@@ -1304,40 +1279,26 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			var oContent = this.oCard.getCardContent(),
-				aGroups = oContent.getAggregation("_content").getItems()[0].getContent(),
-				oFirstGroup = aGroups[0],
-				oSecondGroup = aGroups[1];
-
-			Core.applyChanges();
-
-			// Assert
-			assert.strictEqual(oFirstGroup.getVisible(), false, "Group is not visible");
-			assert.strictEqual(oSecondGroup.getVisible(), true, "Group is visible");
-			oSecondGroup.getItems().forEach(function (oGroupItem) {
-				assert.strictEqual(oGroupItem.getVisible(), false, "Group item is not visible");
-			});
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oContent = this.oCard.getCardContent(),
+			aGroups = oContent.getAggregation("_content").getItems()[0].getContent(),
+			oFirstGroup = aGroups[0],
+			oSecondGroup = aGroups[1];
+
+		// Assert
+		assert.strictEqual(oFirstGroup.getVisible(), false, "Group is not visible");
+		assert.strictEqual(oSecondGroup.getVisible(), true, "Group is visible");
+		oSecondGroup.getItems().forEach(function (oGroupItem) {
+			assert.strictEqual(oGroupItem.getVisible(), false, "Group item is not visible");
+		});
 	});
 
-	QUnit.test("Icon property", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oContent = this.oCard.getCardContent(),
-				oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
-
-			assert.ok(oAvatar.hasStyleClass("sapFCardIcon"), "'sapFCardIcon' class is added");
-			done();
-		}.bind(this));
-
+	QUnit.test("Icon property", async function (assert) {
 		// Act
 		this.oCard.setManifest({
 			"sap.app": {
@@ -1358,20 +1319,16 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oContent = this.oCard.getCardContent(),
+			oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
+
+		assert.ok(oAvatar.hasStyleClass("sapFCardIcon"), "'sapFCardIcon' class is added");
 	});
 
-	QUnit.test("Icon default size should be 'XS'", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oContent = this.oCard.getAggregation("_content"),
-				oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
-
-			assert.strictEqual(oAvatar.getDisplaySize(), AvatarSize.XS, "Avatar default size is 'XS'");
-			done();
-		}.bind(this));
-
+	QUnit.test("Icon default size should be 'XS'", async function (assert) {
 		// Act
 		this.oCard.setManifest({
 			"sap.app": {
@@ -1392,20 +1349,16 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oContent = this.oCard.getAggregation("_content"),
+			oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
+
+		assert.strictEqual(oAvatar.getDisplaySize(), AvatarSize.XS, "Avatar default size is 'XS'");
 	});
 
-	QUnit.test("Icon allows to set custom 'size'", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oContent = this.oCard.getAggregation("_content"),
-				oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
-
-			assert.strictEqual(oAvatar.getDisplaySize(), AvatarSize.M, "'size' from the manifest is applied");
-			done();
-		}.bind(this));
-
+	QUnit.test("Icon allows to set custom 'size'", async function (assert) {
 		// Act
 		this.oCard.setManifest({
 			"sap.app": {
@@ -1427,22 +1380,16 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oContent = this.oCard.getAggregation("_content"),
+			oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
+
+		assert.strictEqual(oAvatar.getDisplaySize(), AvatarSize.M, "'size' from the manifest is applied");
 	});
 
-	QUnit.test("'backgroundColor' of icon with src", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oContent = this.oCard.getAggregation("_content"),
-				oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
-
-			// Assert
-			assert.strictEqual(oAvatar.getBackgroundColor(), AvatarColor.Transparent, "Background should be 'Transparent' when there is only icon.");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("'backgroundColor' of icon with src", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"type": "card",
@@ -1462,24 +1409,17 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oContent = this.oCard.getAggregation("_content"),
+			oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
+
+		// Assert
+		assert.strictEqual(oAvatar.getBackgroundColor(), AvatarColor.Transparent, "Background should be 'Transparent' when there is only icon.");
 	});
 
-	QUnit.test("'backgroundColor' of icon with initials", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oContent = this.oCard.getAggregation("_content"),
-				oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0],
-				sExpected = oAvatar.getMetadata().getPropertyDefaults().backgroundColor;
-
-			// Assert
-			assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should have default value when there are initials.");
-			assert.strictEqual(oAvatar.getInitials(), "AC", "Initials should be correctly set.");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("'backgroundColor' of icon with initials", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"type": "card",
@@ -1499,22 +1439,19 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oContent = this.oCard.getAggregation("_content"),
+			oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0],
+			sExpected = oAvatar.getMetadata().getPropertyDefaults().backgroundColor;
+
+		// Assert
+		assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should have default value when there are initials.");
+		assert.strictEqual(oAvatar.getInitials(), "AC", "Initials should be correctly set.");
 	});
 
-	QUnit.test("Icon initials set with deprecated 'text' property", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oContent = this.oCard.getAggregation("_content"),
-				oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
-
-			// Assert
-			assert.strictEqual(oAvatar.getInitials(), "AC", "Initials should be correctly set.");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Icon initials set with deprecated 'text' property", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"type": "card",
@@ -1534,20 +1471,17 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oContent = this.oCard.getAggregation("_content"),
+			oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
+
+		// Assert
+		assert.strictEqual(oAvatar.getInitials(), "AC", "Initials should be correctly set.");
 	});
 
-	QUnit.test("Icon visible property", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
-				bAvatarVisible = oGroup.getItems()[1].getItems()[0];
-
-			assert.strictEqual(bAvatarVisible.getVisible(), false, "avatar is not visible when visible property is set to false");
-			done();
-		}.bind(this));
-
+	QUnit.test("Icon visible property", async function (assert) {
 		// Act
 		this.oCard.setManifest({
 			"sap.app": {
@@ -1575,19 +1509,16 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
+			bAvatarVisible = oGroup.getItems()[1].getItems()[0];
+
+		assert.strictEqual(bAvatarVisible.getVisible(), false, "avatar is not visible when visible property is set to false");
 	});
 
-	QUnit.test("Group title is not rendered when missing from manifest", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oContent = this.oCard.getAggregation("_content"),
-				bHasTitle = !!oContent.$().find(".sapFCardObjectItemTitle").length;
-
-			assert.strictEqual(bHasTitle, false, "group title is not rendered");
-			done();
-		}.bind(this));
-
+	QUnit.test("Group title is not rendered when missing from manifest", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"type": "card",
@@ -1605,22 +1536,16 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oContent = this.oCard.getAggregation("_content"),
+			bHasTitle = !!oContent.$().find(".sapFCardObjectItemTitle").length;
+
+		assert.strictEqual(bHasTitle, false, "group title is not rendered");
 	});
 
-	QUnit.test("'maxLines' set to text item", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
-				oText = oGroup.getItems()[0];
-
-			// Assert
-			assert.strictEqual(oText.getMaxLines(), 2, "'maxLines' should be set to the inner text control");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("'maxLines' set to text item", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"type": "card",
@@ -1638,23 +1563,17 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
+			oText = oGroup.getItems()[0];
+
+		// Assert
+		assert.strictEqual(oText.getMaxLines(), 2, "'maxLines' should be set to the inner text control");
 	});
 
-	QUnit.test("'size' of NumericData", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
-				oNumericData = oGroup.getItems()[0].getItems()[0];
-			Core.applyChanges();
-
-			// Assert
-			assert.ok(oNumericData.$().hasClass("sapMTileSmallPhone"), "Class for small size should be added");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("'size' of NumericData", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"type": "card",
@@ -1675,11 +1594,19 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
+			oNumericData = oGroup.getItems()[0].getItems()[0];
+
+		// Assert
+		assert.ok(oNumericData.$().hasClass("sapMTileSmallPhone"), "Class for small size should be added");
 	});
 
-	QUnit.test("Avatar group with template", function (assert) {
+	QUnit.test("Avatar group with template", async function (assert) {
 		// Arrange
-		var done = assert.async();
 		var oCardData = {
 			team: [
 				{},
@@ -1687,21 +1614,6 @@ sap.ui.define([
 				{}
 			]
 		};
-
-		this.oCard.attachEvent("_ready", function () {
-			var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
-				oAvatarGroup = oGroup.getItems()[1];
-			Core.applyChanges();
-
-			// Assert
-			assert.strictEqual(oAvatarGroup.getItems().length, oCardData.team.length, "Correct number of items should be created");
-			oAvatarGroup.getItems().forEach(function (oItem) {
-				assert.ok(oItem.getDomRef(), "Item " + oItem.getId() + " should be rendered");
-			});
-
-			done();
-		}.bind(this));
-
 		this.oCard.setManifest({
 			"sap.app": {
 				"type": "card",
@@ -1729,24 +1641,21 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
+			oAvatarGroup = oGroup.getItems()[1];
+
+		// Assert
+		assert.strictEqual(oAvatarGroup.getItems().length, oCardData.team.length, "Correct number of items should be created");
+		oAvatarGroup.getItems().forEach(function (oItem) {
+			assert.ok(oItem.getDomRef(), "Item " + oItem.getId() + " should be rendered");
+		});
 	});
 
-	QUnit.test("Properties of item template for avatars are correctly bound", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
-				oAvatarGroup = oGroup.getItems()[1],
-				oItemTemplate = oAvatarGroup.getBindingInfo("items").template;
-
-			// Assert
-			assert.strictEqual(oItemTemplate.getBindingPath("src"), "/iconSrc", "'src' property should be correctly bound");
-			assert.strictEqual(oItemTemplate.getBindingPath("initials"), "/name", "'initials' property should be correctly bound");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Properties of item template for avatars are correctly bound", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"type": "card",
@@ -1774,23 +1683,21 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
+			oAvatarGroup = oGroup.getItems()[1],
+			oItemTemplate = oAvatarGroup.getBindingInfo("items").template;
+
+		// Assert
+		assert.strictEqual(oItemTemplate.getBindingPath("src"), "/iconSrc", "'src' property should be correctly bound");
+		assert.strictEqual(oItemTemplate.getBindingPath("initials"), "/name", "'initials' property should be correctly bound");
+
 	});
 
-	QUnit.test("Initials property of item template for avatars is correctly bound with deprecated 'text' property", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
-				oAvatarGroup = oGroup.getItems()[1],
-				oItemTemplate = oAvatarGroup.getBindingInfo("items").template;
-
-			// Assert
-			assert.strictEqual(oItemTemplate.getBindingPath("initials"), "/name", "'initials' property should be correctly bound");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Initials property of item template for avatars is correctly bound with deprecated 'text' property", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"type": "card",
@@ -1817,47 +1724,44 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
+			oAvatarGroup = oGroup.getItems()[1],
+			oItemTemplate = oAvatarGroup.getBindingInfo("items").template;
+
+		// Assert
+		assert.strictEqual(oItemTemplate.getBindingPath("initials"), "/name", "'initials' property should be correctly bound");
 	});
 
-	QUnit.test("Empty label with binding is not rendered", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oLayout = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
-				aItems = oLayout.getContent()[0].getItems(),
-				oLabel = aItems[0].getItems()[1].getItems()[0];
-
-			// Assert
-			assert.strictEqual(oLabel.getVisible(), false, "The empty label is not visible.");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Empty label with binding is not rendered", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_EmptyLabelWithBinding);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oLayout = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
+			aItems = oLayout.getContent()[0].getItems(),
+			oLabel = aItems[0].getItems()[1].getItems()[0];
+
+		// Assert
+		assert.strictEqual(oLabel.getVisible(), false, "The empty label is not visible.");
 	});
 
-	QUnit.test("Label showColon property", function (assert) {
-
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oObjectContent = this.oCard.getAggregation("_content");
-			var oContent = oObjectContent.getAggregation("_content");
-			var aGroups = oContent.getItems()[0].getContent();
-
-			Core.applyChanges();
-
-			assert.equal(aGroups[0].getItems()[1].getShowColon(), true, "'showColon' is set to true by default.");
-			assert.equal(aGroups[0].getItems()[5].getShowColon(), false, "'showColon' is correctly set to false from manifest.");
-
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Label showColon property", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_ObjectCard_showColon);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oObjectContent = this.oCard.getAggregation("_content");
+		var oContent = oObjectContent.getAggregation("_content");
+		var aGroups = oContent.getItems()[0].getContent();
+
+		assert.equal(aGroups[0].getItems()[1].getShowColon(), true, "'showColon' is set to true by default.");
+		assert.equal(aGroups[0].getItems()[5].getShowColon(), false, "'showColon' is correctly set to false from manifest.");
 	});
 
 	[
@@ -1870,8 +1774,7 @@ sap.ui.define([
 		[],
 		{}
 	].forEach(function (hasDataValue) {
-		QUnit.test("Negative cases - 'No data' message when 'hasData' is " + JSON.stringify(hasDataValue), function (assert) {
-			var done = assert.async();
+		QUnit.test("Negative cases - 'No data' message when 'hasData' is " + JSON.stringify(hasDataValue), async function (assert) {
 			var oManifest = {
 				"sap.app": {
 					"id": "test.object.card.hasData"
@@ -1906,18 +1809,16 @@ sap.ui.define([
 				}
 			};
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oContent = this.oCard.getCardContent();
-
-				// Assert
-				assert.ok(oContent.getDomRef().querySelector(".sapMIllustratedMessage"), "'No data' message should be shown when 'hasData' is " + JSON.stringify(hasDataValue));
-
-				done();
-			}.bind(this));
-
 			// Act
 			this.oCard.setManifest(oManifest);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oContent = this.oCard.getCardContent();
+
+			// Assert
+			assert.ok(oContent.getDomRef().querySelector(".sapMIllustratedMessage"), "'No data' message should be shown when 'hasData' is " + JSON.stringify(hasDataValue));
 		});
 	});
 
@@ -1931,8 +1832,7 @@ sap.ui.define([
 		{ key: "value" },
 		[{}]
 	].forEach(function (hasDataValue) {
-		QUnit.test("Positive cases - 'No data' message when 'hasData' is " + JSON.stringify(hasDataValue), function (assert) {
-			var done = assert.async();
+		QUnit.test("Positive cases - 'No data' message when 'hasData' is " + JSON.stringify(hasDataValue), async function (assert) {
 			var oManifest = {
 				"sap.app": {
 					"id": "test.object.card.hasData"
@@ -1969,18 +1869,16 @@ sap.ui.define([
 				}
 			};
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oContent = this.oCard.getCardContent();
-
-				// Assert
-				assert.notOk(oContent.getDomRef().querySelector(".sapMIllustratedMessage"), "'No data' message should NOT be shown when 'hasData' is " + JSON.stringify(hasDataValue));
-
-				done();
-			}.bind(this));
-
 			// Act
 			this.oCard.setManifest(oManifest);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oContent = this.oCard.getCardContent();
+
+			// Assert
+			assert.notOk(oContent.getDomRef().querySelector(".sapMIllustratedMessage"), "'No data' message should NOT be shown when 'hasData' is " + JSON.stringify(hasDataValue));
 		});
 	});
 
@@ -2000,21 +1898,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Actionable controls should be labeled", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			var oLayout = this.oCard.getAggregation("_content").getAggregation("_content").getItems()[0],
-				oLabel = oLayout.getContent()[0].getItems()[0],
-				oLink = oLayout.getContent()[0].getItems()[1].getItems()[0];
-
-			assert.ok(oLink.getAriaLabelledBy().length, "Link should be labeled");
-			assert.strictEqual(oLink.getAriaLabelledBy()[0], oLabel.getId(), "Link should be labeled by the correct label");
-			done();
-		}.bind(this));
-
+	QUnit.test("Actionable controls should be labeled", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"type": "card",
@@ -2040,18 +1924,20 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oLayout = this.oCard.getAggregation("_content").getAggregation("_content").getItems()[0],
+			oLabel = oLayout.getContent()[0].getItems()[0],
+			oLink = oLayout.getContent()[0].getItems()[1].getItems()[0];
+
+		assert.ok(oLink.getAriaLabelledBy().length, "Link should be labeled");
+		assert.strictEqual(oLink.getAriaLabelledBy()[0], oLabel.getId(), "Link should be labeled by the correct label");
 	});
 
-	QUnit.test("Actionable controls with missing label", function (assert) {
-		var done = assert.async(),
-			oLogSpy = this.spy(Log, "warning");
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			assert.ok(oLogSpy.calledWithExactly(sinon.match.any, sinon.match.any, "sap.ui.integration.widgets.Card"), "Warning for missing label should be logged");
-			done();
-		});
+	QUnit.test("Actionable controls with missing label", async function (assert) {
+		var oLogSpy = this.spy(Log, "warning");
 
 		this.oCard.setManifest({
 			"sap.app": {
@@ -2077,24 +1963,14 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		assert.ok(oLogSpy.calledWithExactly(sinon.match.any, sinon.match.any, "sap.ui.integration.widgets.Card"), "Warning for missing label should be logged");
 	});
 
-	QUnit.test("Email, link and phone fields should have tooltip set correctly", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-			var oGroup = this.getCardContent().getAggregation("_content").getItems()[0].getContent()[0],
-				oPhone = oGroup.getItems()[1].getItems()[0],
-				oEmail = oGroup.getItems()[3].getItems()[0],
-				oLink = oGroup.getItems()[5].getItems()[0];
-
-			assert.strictEqual(oPhone.getDomRef().getAttribute("title"), "Make a call", "The tooltip of the phone is correct");
-			assert.strictEqual(oEmail.getDomRef().getAttribute("title"), "Write an e-mail", "The tooltip of the email is correct");
-			assert.strictEqual(oLink.getDomRef().getAttribute("title"), "Visit website", "The tooltip of the link is correct (binding used)");
-			done();
-		});
-
+	QUnit.test("Email, link and phone fields should have tooltip set correctly", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"type": "card",
@@ -2143,11 +2019,23 @@ sap.ui.define([
 								}
 							}]
 						}
-						]
+					]
 					}]
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oGroup = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0],
+			oPhone = oGroup.getItems()[1].getItems()[0],
+			oEmail = oGroup.getItems()[3].getItems()[0],
+			oLink = oGroup.getItems()[5].getItems()[0];
+
+		assert.strictEqual(oPhone.getDomRef().getAttribute("title"), "Make a call", "The tooltip of the phone is correct");
+		assert.strictEqual(oEmail.getDomRef().getAttribute("title"), "Write an e-mail", "The tooltip of the email is correct");
+		assert.strictEqual(oLink.getDomRef().getAttribute("title"), "Visit website", "The tooltip of the link is correct (binding used)");
 	});
 
 	QUnit.module("Layout", {
@@ -2166,46 +2054,40 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Controls are properly nested", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oContent = this.oCard.getCardContent(),
-				oRoot = oContent._getRootContainer();
-
-			// Assert
-			assert.ok(oRoot.isA("sap.m.VBox"), "Root container is sap.m.VBox");
-			assert.strictEqual(oRoot.getItems().length, 4, "Root container has 4 items");
-			assert.ok(oRoot.getItems()[1].isA("sap.ui.layout.AlignedFlowLayout"), "AlignedFlowLayout is created");
-			assert.strictEqual(oRoot.getItems()[1].getContent().length, 2, "2 items are added in the AlignedFlowLayout");
-			done();
-		}.bind(this));
-
+	QUnit.test("Controls are properly nested", async function (assert) {
 		this.oCard.setManifest(oManifest_ComplexLayout);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oContent = this.oCard.getCardContent(),
+			oRoot = oContent._getRootContainer();
+
+		// Assert
+		assert.ok(oRoot.isA("sap.m.VBox"), "Root container is sap.m.VBox");
+		assert.strictEqual(oRoot.getItems().length, 4, "Root container has 4 items");
+		assert.ok(oRoot.getItems()[1].isA("sap.ui.layout.AlignedFlowLayout"), "AlignedFlowLayout is created");
+		assert.strictEqual(oRoot.getItems()[1].getContent().length, 2, "2 items are added in the AlignedFlowLayout");
 	});
 
-	QUnit.test("Resize handler is called for AlignedFlowLayout containers", function (assert) {
-		var done = assert.async(),
-			oResizeSpy = this.spy(ObjectContent.prototype, "_onAlignedFlowLayoutResize");
-
-		this.oCard.attachEvent("_ready", function () {
-			// Act
-			this.oCard.getCardContent()._onResize({
-				size: {
-					width: 400
-				},
-				oldSize: {
-					width: 0
-				}
-			});
-
-			// Assert
-			assert.strictEqual(oResizeSpy.callCount, 2, "First AlignedFlowLayout is destroyed");
-
-			done();
-		}.bind(this));
+	QUnit.test("Resize handler is called for AlignedFlowLayout containers", async function (assert) {
+		var oResizeSpy = this.spy(ObjectContent.prototype, "_onAlignedFlowLayoutResize");
 
 		this.oCard.setManifest(oManifest_ComplexLayout);
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Act
+		this.oCard.getCardContent()._onResize({
+			size: {
+				width: 400
+			},
+			oldSize: {
+				width: 0
+			}
+		});
+
+		// Assert
+		assert.strictEqual(oResizeSpy.callCount, 2, "First AlignedFlowLayout is destroyed");
 	});
 
 	MemoryLeakCheck.checkControl("ObjectContent with IconGroup", function () {
@@ -2269,60 +2151,54 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Form controls are properly created", function (assert) {
-		var done = assert.async(),
-			oCard = this.oCard;
+	QUnit.test("Form controls are properly created", async function (assert) {
+		this.oCard.setManifest(oManifest_ObjectCardFormControls);
 
-		oCard.attachEvent("_ready", function () {
-			var oLayout = oCard.getCardContent().getAggregation("_content").getItems()[0],
-				aItems = oLayout.getItems(),
-				oComboBox = aItems[1],
-				oTextArea = aItems[3],
-				oInput = aItems[5],
-				oTimePicker = aItems[7],
-				oDateRange = aItems[9];
+		await nextCardReadyEvent(this.oCard);
 
-			// Assert Combo Box
-			assert.ok(oComboBox.isA("sap.m.ComboBox"), "ComboBox is created.");
-			assert.strictEqual(oComboBox.getPlaceholder(), "Select", "ComboBox has correct placeholder.");
-			assert.strictEqual(oComboBox.getSelectedKey(), "reason1", "ComboBox has correct value.");
-			assert.strictEqual(oComboBox.getItems().length, 2, "ComboBox has 2 options.");
-			assert.strictEqual(oComboBox.getLabels()[0].getText(), "Reason", "ComboBox is referenced to the correct label.");
+		var oLayout = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
+			aItems = oLayout.getItems(),
+			oComboBox = aItems[1],
+			oTextArea = aItems[3],
+			oInput = aItems[5],
+			oTimePicker = aItems[7],
+			oDateRange = aItems[9];
 
-			// Assert Text Area
-			assert.ok(oTextArea.isA("sap.m.TextArea"), "TextArea is created.");
-			assert.strictEqual(oTextArea.getPlaceholder(), "Comment", "TextArea has correct placeholder.");
-			assert.strictEqual(oTextArea.getValue(), "Free text comment", "TextArea has correct value.");
-			assert.strictEqual(oTextArea.getRows(), 4, "TextArea has 4 rows.");
-			assert.strictEqual(oTextArea.getLabels()[0].getText(), "Comment", "TextArea is referenced to the correct label.");
+		// Assert Combo Box
+		assert.ok(oComboBox.isA("sap.m.ComboBox"), "ComboBox is created.");
+		assert.strictEqual(oComboBox.getPlaceholder(), "Select", "ComboBox has correct placeholder.");
+		assert.strictEqual(oComboBox.getSelectedKey(), "reason1", "ComboBox has correct value.");
+		assert.strictEqual(oComboBox.getItems().length, 2, "ComboBox has 2 options.");
+		assert.strictEqual(oComboBox.getLabels()[0].getText(), "Reason", "ComboBox is referenced to the correct label.");
 
-			// Assert Input
-			assert.ok(oInput.isA("sap.m.Input"), "oInput is created.");
-			assert.strictEqual(oInput.getPlaceholder(), "Enter user value", "Input has correct placeholder.");
-			assert.strictEqual(oInput.getValue(), "Initial value", "Input has correct value.");
-			assert.strictEqual(oInput.getLabels()[0].getText(), "User Value", "Input is referenced to the correct label.");
+		// Assert Text Area
+		assert.ok(oTextArea.isA("sap.m.TextArea"), "TextArea is created.");
+		assert.strictEqual(oTextArea.getPlaceholder(), "Comment", "TextArea has correct placeholder.");
+		assert.strictEqual(oTextArea.getValue(), "Free text comment", "TextArea has correct value.");
+		assert.strictEqual(oTextArea.getRows(), 4, "TextArea has 4 rows.");
+		assert.strictEqual(oTextArea.getLabels()[0].getText(), "Comment", "TextArea is referenced to the correct label.");
 
-			// Assert Duration
-			assert.ok(oTimePicker.isA("sap.m.TimePicker"), "oTimePicker is created.");
-			assert.strictEqual(oTimePicker.getValue(), "11:12", "Duration has correct value.");
-			assert.strictEqual(oTimePicker.getLabels()[0].getText(), "Duration", "Duration is referenced to the correct label.");
+		// Assert Input
+		assert.ok(oInput.isA("sap.m.Input"), "oInput is created.");
+		assert.strictEqual(oInput.getPlaceholder(), "Enter user value", "Input has correct placeholder.");
+		assert.strictEqual(oInput.getValue(), "Initial value", "Input has correct value.");
+		assert.strictEqual(oInput.getLabels()[0].getText(), "User Value", "Input is referenced to the correct label.");
 
-			// Assert DateRange
-			assert.ok(oDateRange.isA("sap.m.DatePicker"), "DateRange is created.");
-			assert.strictEqual(oDateRange.getValue(), "2000-01-01T00:00:00.000Z", "DateRange has correct value.");
-			assert.strictEqual(oDateRange.getLabels()[0].getText(), "Date Range", "DateRange is referenced to the correct label.");
+		// Assert Duration
+		assert.ok(oTimePicker.isA("sap.m.TimePicker"), "oTimePicker is created.");
+		assert.strictEqual(oTimePicker.getValue(), "11:12", "Duration has correct value.");
+		assert.strictEqual(oTimePicker.getLabels()[0].getText(), "Duration", "Duration is referenced to the correct label.");
 
-			done();
-		});
-
-		oCard.setManifest(oManifest_ObjectCardFormControls);
+		// Assert DateRange
+		assert.ok(oDateRange.isA("sap.m.DatePicker"), "DateRange is created.");
+		assert.strictEqual(oDateRange.getValue(), "2000-01-01T00:00:00.000Z", "DateRange has correct value.");
+		assert.strictEqual(oDateRange.getLabels()[0].getText(), "Date Range", "DateRange is referenced to the correct label.");
 	});
 
-	QUnit.test("Form control values are properly passed on submit action", function (assert) {
-		var done = assert.async(),
-			oCard = this.oCard;
+	QUnit.test("Form control values are properly passed on submit action", async function (assert) {
+		var done = assert.async();
 
-		oCard.attachAction(function (oEvent) {
+		this.oCard.attachAction((oEvent) => {
 			var mParameters = oEvent.getParameter("parameters"),
 				mExpectedData = {
 					"reason": {
@@ -2332,39 +2208,28 @@ sap.ui.define([
 					"comment": "Free text comment",
 					"userValue": "Initial value",
 					"durationValue": "PT11H12M",
-					"dateRangeValue": DateRangeHelper.getValueForModel(oCard.getCardContent().getAggregation("_content").getItems()[0].getItems()[9])
+					"dateRangeValue": DateRangeHelper.getValueForModel(this.oCard.getCardContent().getAggregation("_content").getItems()[0].getItems()[9])
 				};
 
 			assert.deepEqual(mParameters.data, mExpectedData, "Data is properly passed to action handler.");
-			assert.deepEqual(oCard.getModel("form").getData(), mExpectedData, "Data is properly populated in the form model.");
+			assert.deepEqual(this.oCard.getModel("form").getData(), mExpectedData, "Data is properly populated in the form model.");
 
 			done();
 		});
 
-		oCard.attachEvent("_ready", function () {
-			oCard.triggerAction({
-				type: CardActionType.Submit
-			});
-		});
+		this.oCard.setManifest(oManifest_ObjectCardFormControls);
 
-		oCard.setManifest(oManifest_ObjectCardFormControls);
+		await nextCardReadyEvent(this.oCard);
+
+		this.oCard.triggerAction({
+			type: CardActionType.Submit
+		});
 	});
 
-	QUnit.test("Check for duplicate ID in form controls", function(assert) {
-		var done = assert.async(),
-			oLogSpy = this.spy(Log, "error"),
-			oCard = this.oCard;
+	QUnit.test("Check for duplicate ID in form controls", async function(assert) {
+		var oLogSpy = this.spy(Log, "error");
 
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			assert.ok(oLogSpy.calledWithExactly(sinon.match("Duplicate form control ID"), "sap.ui.integration.widgets.Card"), "Error for duplicate ID should be logged");
-
-			oLogSpy.restore();
-			done();
-		});
-
-		oCard.setManifest({
+		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.cards.object.card6",
 				"type": "card"
@@ -2390,50 +2255,42 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		assert.ok(oLogSpy.calledWithExactly(sinon.match("Duplicate form control ID"), "sap.ui.integration.widgets.Card"), "Error for duplicate ID should be logged");
+
+		oLogSpy.restore();
 	});
 
-	QUnit.test("Form control values are properly passed on submit action - special value", function (assert) {
-		var done = assert.async(),
-			oCard = this.oCard,
-			oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
+	QUnit.test("Form control values are properly passed on submit action - special value", async function (assert) {
+		var oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
 
-		oCard.attachEvent("_ready", function () {
-			var oTextArea = oCard.getCardContent().getAggregation("_content").getItems()[0].getItems()[0];
+		this.oCard.setManifest(oManifest_ObjectCardFormControlsSpecialValue);
 
-			// Act
-			Core.applyChanges();
-			oTextArea.$("inner").val('{"reason": "{form>/reason/key}"}').trigger("input");
-			oCard.triggerAction({
-				type: CardActionType.Submit
-			});
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
 
-			// Assert
-			assert.deepEqual(
-				oDataProviderStub.thisValues[0].getSettings().request.parameters,
-				{
-					"status": "approved",
-					"comment": '{"reason": "{form>/reason/key}"}'
-				},
-				"Text area with special value shouldn't break form submit"
-			);
-			done();
+		var oTextArea = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getItems()[0];
+		oTextArea.$("inner").val('{"reason": "{form>/reason/key}"}').trigger("input");
+		this.oCard.triggerAction({
+			type: CardActionType.Submit
 		});
 
-		oCard.setManifest(oManifest_ObjectCardFormControlsSpecialValue);
+		// Assert
+		assert.deepEqual(
+			oDataProviderStub.thisValues[0].getSettings().request.parameters,
+			{
+				"status": "approved",
+				"comment": '{"reason": "{form>/reason/key}"}'
+			},
+			"Text area with special value shouldn't break form submit"
+		);
 	});
 
-	QUnit.test("Initial form control values are stored in the 'form' model", function (assert) {
-		var done = assert.async(),
-			oCard = this.oCard;
-
-		oCard.attachEvent("_ready", function () {
-			// Assert
-			assert.strictEqual(oCard.getModel("form").getProperty("/comment"), "initial text area value", "Value should be stored in the 'form' model");
-
-			done();
-		});
-
-		oCard.setManifest({
+	QUnit.test("Initial form control values are stored in the 'form' model", async function (assert) {
+		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.cards.object.card5"
 			},
@@ -2454,20 +2311,15 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/comment"), "initial text area value", "Value should be stored in the 'form' model");
 	});
 
-	QUnit.test("Initial form control values that are bound are stored in the 'form' model", function (assert) {
-		var done = assert.async(),
-			oCard = this.oCard;
-
-		oCard.attachEvent("_ready", function () {
-			// Assert
-			assert.strictEqual(oCard.getModel("form").getProperty("/comment"), "initial text area value", "Value should be stored in the 'form' model");
-
-			done();
-		});
-
-		oCard.setManifest({
+	QUnit.test("Initial form control values that are bound are stored in the 'form' model", async function (assert) {
+		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.cards.object.card5"
 			},
@@ -2493,53 +2345,16 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/comment"), "initial text area value", "Value should be stored in the 'form' model");
 	});
 
-	QUnit.test("Changes from user to form control values are reflected in the 'form' model", function (assert) {
-		var done = assert.async(),
-			oCard = this.oCard;
-
-		oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			var oContent = oCard.getCardContent(),
-				oInput = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[0],
-				oTextArea = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1],
-				oComboBox = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[2],
-				oDateRange = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[3],
-				oDuration = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[4];
-
-			// Assert
-			assert.strictEqual(oCard.getModel("form").getProperty("/i1"), undefined, "No initial value is stored");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), undefined, "No initial value is stored");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i3"), undefined, "No initial value is stored");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i4"), undefined, "No initial value is stored");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i5"), undefined, "No initial value is stored");
-
-			// Act
-			oInput.$("inner").val("a").trigger("input");
-			oTextArea.$("inner").val("a").trigger("input");
-			oComboBox.$("inner").val("a");
-			oComboBox.fireEvent("change");
-			oDateRange.$().find("input").val("Oct 7, 2021");
-			oDateRange.onChange();
-			oDuration.$().find("input").val("12:30");
-			oDuration.onChange();
-
-			Core.applyChanges();
-
-			// Assert
-			assert.strictEqual(oCard.getModel("form").getProperty("/i1"), "a", "Value in model is updated");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), "a", "Value in model is updated");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i3").value, "a", "Value in model is updated");
-			assert.deepEqual(oCard.getModel("form").getProperty("/i4"), DateRangeHelper.getValueForModel(oDateRange), "Value in model is updated");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i5"), "PT12H30M", "Value in model is updated");
-
-			done();
-		});
-
+	QUnit.test("Changes from user to form control values are reflected in the 'form' model", async function (assert) {
 		// Setup
-		oCard.setManifest({
+		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.cards.object.card5change"
 			},
@@ -2575,56 +2390,82 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oContent = this.oCard.getCardContent(),
+			oInput = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[0],
+			oTextArea = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1],
+			oComboBox = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[2],
+			oDateRange = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[3],
+			oDuration = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[4];
+
+		// Assert
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/i1"), undefined, "No initial value is stored");
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/i2"), undefined, "No initial value is stored");
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/i3"), undefined, "No initial value is stored");
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/i4"), undefined, "No initial value is stored");
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/i5"), undefined, "No initial value is stored");
+
+		// Act
+		oInput.$("inner").val("a").trigger("input");
+		oTextArea.$("inner").val("a").trigger("input");
+		oComboBox.$("inner").val("a");
+		oComboBox.fireEvent("change");
+		oDateRange.$().find("input").val("Oct 7, 2021");
+		oDateRange.onChange();
+		oDuration.$().find("input").val("12:30");
+		oDuration.onChange();
+
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/i1"), "a", "Value in model is updated");
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/i2"), "a", "Value in model is updated");
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/i3").value, "a", "Value in model is updated");
+		assert.deepEqual(this.oCard.getModel("form").getProperty("/i4"), DateRangeHelper.getValueForModel(oDateRange), "Value in model is updated");
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/i5"), "PT12H30M", "Value in model is updated");
 	});
 
-	QUnit.test("Setting form data using public card API - invalid input", function (assert) {
-		var done = assert.async(),
-			oCard = this.oCard;
+	QUnit.test("Setting form data using public card API - invalid input", async function (assert) {
+		this.oCard.setManifest(oManifest_ObjectCardFormControlsPublicAPI);
 
-		oCard.attachEvent("_ready", function () {
-			// Act
-			oCard.setFormValues([
-				{ "id": "i1", "value": "some text" },
-				{ "id": "i2", "value": "too short" }
-			]);
+		await nextCardReadyEvent(this.oCard);
 
-			// Assert
-			assert.strictEqual(oCard.getModel("messages").getProperty("/hasErrors"), true, "Form has errors");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i1"), "some text", "Form model has value");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), "too short", "Form model has value");
+		// Act
+		this.oCard.setFormValues([
+			{ "id": "i1", "value": "some text" },
+			{ "id": "i2", "value": "too short" }
+		]);
 
-			done();
-		});
-
-		oCard.setManifest(oManifest_ObjectCardFormControlsPublicAPI);
+		// Assert
+		assert.strictEqual(this.oCard.getModel("messages").getProperty("/hasErrors"), true, "Form has errors");
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/i1"), "some text", "Form model has value");
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/i2"), "too short", "Form model has value");
 	});
 
-	QUnit.test("Setting form data using public card API - valid input", function (assert) {
-		var done = assert.async(),
-			oCard = this.oCard;
+	QUnit.test("Setting form data using public card API - valid input", async function (assert) {
+		this.oCard.setManifest(oManifest_ObjectCardFormControlsPublicAPI);
 
-		oCard.attachEvent("_ready", function () {
-			var oDateRange = oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0].getItems()[2];
+		await nextCardReadyEvent(this.oCard);
 
-			// Act
-			oCard.setFormValues([
-				{ "id": "i1", "value": "some text" },
-				{ "id": "i2", "value": "some long text" },
-				{ "id": "i3", "value": { "option": "date", "values": ["2020-05-20"]} },
-				{ "id": "i4", "value": "PT12H30M" }
-			]);
+		var oDateRange = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0].getItems()[2];
 
-			// Assert
-			assert.strictEqual(oCard.getModel("messages").getProperty("/hasErrors"), false, "Form has no errors");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i1"), "some text", "Form model has correct value for Input");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i2"), "some long text", "Form model has correct value for TextArea");
-			assert.deepEqual(oCard.getModel("form").getProperty("/i3"), DateRangeHelper.getValueForModel(oDateRange), "Form model has correct value for DateRange");
-			assert.strictEqual(oCard.getModel("form").getProperty("/i4"), "PT12H30M", "Form model has correct value for Duration");
+		// Act
+		this.oCard.setFormValues([
+			{ "id": "i1", "value": "some text" },
+			{ "id": "i2", "value": "some long text" },
+			{ "id": "i3", "value": { "option": "date", "values": ["2020-05-20"]} },
+			{ "id": "i4", "value": "PT12H30M" }
+		]);
 
-			done();
-		});
-
-		oCard.setManifest(oManifest_ObjectCardFormControlsPublicAPI);
+		// Assert
+		assert.strictEqual(this.oCard.getModel("messages").getProperty("/hasErrors"), false, "Form has no errors");
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/i1"), "some text", "Form model has correct value for Input");
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/i2"), "some long text", "Form model has correct value for TextArea");
+		assert.deepEqual(this.oCard.getModel("form").getProperty("/i3"), DateRangeHelper.getValueForModel(oDateRange), "Form model has correct value for DateRange");
+		assert.strictEqual(this.oCard.getModel("form").getProperty("/i4"), "PT12H30M", "Form model has correct value for Duration");
 	});
 
 	QUnit.module("Form controls with Validation", {
@@ -2641,229 +2482,222 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Controls validation", function (assert) {
-		var done = assert.async(),
-			oCard = this.oCard;
+	QUnit.test("Controls validation", async function (assert) {
+		this.oCard.setManifest(oManifest_ObjectCardFormControlsWithValidation);
 
-		oCard.attachEvent("_ready", function () {
-			var oObjectContent = oCard.getCardContent(),
-				oLayout = oObjectContent.getAggregation("_content").getItems()[0],
-				aItems = oLayout.getItems(),
-				oComboBox1 = aItems[1],
-				oComboBox2 = aItems[3],
-				oTextArea = aItems[5],
-				oTextArea2 = aItems[7],
-				oTextArea3 = aItems[9],
-				oInput = aItems[11],
-				oDateRange = aItems[13];
+		await nextCardReadyEvent(this.oCard);
 
-			assert.strictEqual(oComboBox1.getValueState(), ValueState.None, "Control has no error");
+		var oObjectContent = this.oCard.getCardContent(),
+			oLayout = oObjectContent.getAggregation("_content").getItems()[0],
+			aItems = oLayout.getItems(),
+			oComboBox1 = aItems[1],
+			oComboBox2 = aItems[3],
+			oTextArea = aItems[5],
+			oTextArea2 = aItems[7],
+			oTextArea3 = aItems[9],
+			oInput = aItems[11],
+			oDateRange = aItems[13];
 
-			assert.deepEqual(oCard.getModel("messages").getData(), {
-				"hasErrors": true,
-				"hasWarnings": false,
-				"records": [
-					{
-						"bindingPath": "/reason",
-						"message": oResourceBundle.getText("EDITOR_VAL_FIELDREQ"),
-						"type": "Error"
-					},
-					{
-						"bindingPath": "/comment",
-						"message": "Value is required",
-						"type": "Error"
-					},
-					{
-						"bindingPath": "/e-mail",
-						"message": "Value is required",
-						"type": "Error"
-					},
-					{
-						"bindingPath": "/path",
-						"message": "Value is required",
-						"type": "Error"
-					},
-					{
-						"bindingPath": "/inputId",
-						"message": "Value is required",
-						"type": "Error"
-					},
-					{
-						"bindingPath": "/dateRangeValue",
-						"message": oResourceBundle.getText("EDITOR_VAL_FIELDREQ"),
-						"type": "Error"
-					}
-				]
-			}, "messages model is correct");
+		assert.strictEqual(oComboBox1.getValueState(), ValueState.None, "Control has no error");
 
-			oCard.validateControls();
-
-			assert.strictEqual(oComboBox1.getValueState(), ValueState.Error, "Control has an error");
-			assert.strictEqual(oComboBox1.getValueStateText(), oResourceBundle.getText("EDITOR_VAL_FIELDREQ"), "Error text is correct");
-
-			assert.strictEqual(oComboBox2.getValueState(), ValueState.None, "Control doesn't have an error");
-
-			assert.strictEqual(oTextArea.getValueState(), ValueState.Error, "Control has an error");
-			assert.strictEqual(oTextArea.getValueStateText(), "Value is required", "Error text is correct");
-
-			assert.strictEqual(oTextArea2.getValueState(), ValueState.Error, "Control has an error");
-			assert.strictEqual(oTextArea2.getValueStateText(), "Value is required", "Error text is correct");
-
-			assert.strictEqual(oInput.getValueState(), ValueState.Error, "Control has an error");
-			assert.strictEqual(oInput.getValueStateText(), "Value is required", "Error text is correct");
-
-			assert.strictEqual(oDateRange.getValueState(), ValueState.Error, "Control has an error");
-			assert.strictEqual(oDateRange.getValueStateText(), oResourceBundle.getText("EDITOR_VAL_FIELDREQ"), "Error text is correct");
-
-			assert.deepEqual(oCard.getModel("messages").getData(), {
-				"hasErrors": true,
-				"hasWarnings": false,
-				"records": [
-					{
-						"bindingPath": "/reason",
-						"message": oResourceBundle.getText("EDITOR_VAL_FIELDREQ"),
-						"type": "Error"
-					},
-					{
-						"bindingPath": "/comment",
-						"message": "Value is required",
-						"type": "Error"
-					},
-					{
-						"bindingPath": "/e-mail",
-						"message": "Value is required",
-						"type": "Error"
-					},
-					{
-						"bindingPath": "/path",
-						"message": "Value is required",
-						"type": "Error"
-					},
-					{
-						"bindingPath": "/inputId",
-						"message": "Value is required",
-						"type": "Error"
-					},
-					{
-						"bindingPath": "/dateRangeValue",
-						"message": oResourceBundle.getText("EDITOR_VAL_FIELDREQ"),
-						"type": "Error"
-					}
-				]
-			}, "messages model is correct");
-
-			oComboBox1.setValue("Text");
-			oComboBox2.setValue("Text");
-			oTextArea.setValue("Text");
-			oTextArea2.setValue("Text");
-			oTextArea3.setValue("Text");
-			oDateRange.setValue("invalid date");
-
-			Core.applyChanges();
-			oCard.validateControls();
-
-			assert.strictEqual(oComboBox1.getValueState(), ValueState.None, "Control doesn't have an error");
-			assert.strictEqual(oComboBox2.getValueState(), ValueState.Error, "Control has an error 1111");
-			assert.strictEqual(oComboBox2.getValueStateText(), oResourceBundle.getText("EDITOR_ONLY_LISTED_VALUES_ALLOWED"), "Error text is correct");
-			assert.strictEqual(oTextArea.getValueState(), ValueState.Warning, "ComboBox has an warning");
-			assert.strictEqual(oTextArea.getValueStateText(), "Your comment should be between 10 and 200 characters.", "Text is correct");
-			assert.strictEqual(oTextArea2.getValueState(), ValueState.Error, "TextArea has an error");
-			assert.strictEqual(oTextArea2.getValueStateText(), "You should enter a valid e-mail.", "Text is correct");
-			assert.strictEqual(oTextArea3.getValueStateText(), "You should enter a valid path.", "Text is correct");
-			assert.strictEqual(oDateRange.getValueState(), ValueState.Error, "Control has an error");
-			assert.strictEqual(oDateRange.getValueStateText(), Library.getResourceBundleFor("sap.ui.core").getText("VALUE_STATE_ERROR"), "Text is correct");
-
-			assert.deepEqual(oCard.getModel("messages").getData(),
+		assert.deepEqual(this.oCard.getModel("messages").getData(), {
+			"hasErrors": true,
+			"hasWarnings": false,
+			"records": [
 				{
-					"hasErrors": true,
-					"hasWarnings": true,
-					"records": [
-						{
-							"bindingPath": "/reason2",
-							"message": oResourceBundle.getText("EDITOR_ONLY_LISTED_VALUES_ALLOWED"),
-							"type": "Error"
-						},
-						{
-							"bindingPath": "/comment",
-							"message": "Your comment should be between 10 and 200 characters.",
-							"type": "Warning"
-						},
-						{
-							"bindingPath": "/e-mail",
-							"message": "You should enter a valid e-mail.",
-							"type": "Error"
-						},
-						{
-							"bindingPath": "/path",
-							"message": "You should enter a valid path.",
-							"type": "Error"
-						},
-						{
-							"bindingPath": "/inputId",
-							"message": "Value is required",
-							"type": "Error"
-						},
-						{
-							"bindingPath": "/dateRangeValue",
-							"message": Library.getResourceBundleFor("sap.ui.core").getText("VALUE_STATE_ERROR"),
-							"type": "Error"
-						}
-					]
-				}, "messages model is correct");
+					"bindingPath": "/reason",
+					"message": oResourceBundle.getText("EDITOR_VAL_FIELDREQ"),
+					"type": "Error"
+				},
+				{
+					"bindingPath": "/comment",
+					"message": "Value is required",
+					"type": "Error"
+				},
+				{
+					"bindingPath": "/e-mail",
+					"message": "Value is required",
+					"type": "Error"
+				},
+				{
+					"bindingPath": "/path",
+					"message": "Value is required",
+					"type": "Error"
+				},
+				{
+					"bindingPath": "/inputId",
+					"message": "Value is required",
+					"type": "Error"
+				},
+				{
+					"bindingPath": "/dateRangeValue",
+					"message": oResourceBundle.getText("EDITOR_VAL_FIELDREQ"),
+					"type": "Error"
+				}
+			]
+		}, "messages model is correct");
 
-			oComboBox2.setSelectedKey("reason1");
-			oTextArea.setValue("TextTextTextTextTextTextTextTextText");
-			oTextArea2.setValue("my@mymail.com");
-			oTextArea3.setValue("Folder\\file.pdf");
-			oInput.setValue("Some Value");
-			oDateRange.setValue("May 2, 2023");
+		this.oCard.validateControls();
 
-			Core.applyChanges();
-			oCard.validateControls();
+		assert.strictEqual(oComboBox1.getValueState(), ValueState.Error, "Control has an error");
+		assert.strictEqual(oComboBox1.getValueStateText(), oResourceBundle.getText("EDITOR_VAL_FIELDREQ"), "Error text is correct");
 
-			assert.strictEqual(oComboBox2.getValueState(), ValueState.None, "Control doesn't have an error");
-			assert.strictEqual(oTextArea.getValueState(), ValueState.None, "Control doesn't have an error");
-			assert.strictEqual(oTextArea2.getValueState(), ValueState.None, "Control doesn't have an error");
-			assert.strictEqual(oTextArea3.getValueState(), ValueState.None, "Control doesn't have an error and backslashes are escaped correctly");
-			assert.strictEqual(oInput.getValueState(), ValueState.None, "Control doesn't have an error");
-			assert.strictEqual(oDateRange.getValueState(), ValueState.None, "Control doesn't have an error");
+		assert.strictEqual(oComboBox2.getValueState(), ValueState.None, "Control doesn't have an error");
 
-			assert.deepEqual(oCard.getModel("messages").getData(), {
-				"hasErrors": false,
-				"hasWarnings": false,
-				"records": []
+		assert.strictEqual(oTextArea.getValueState(), ValueState.Error, "Control has an error");
+		assert.strictEqual(oTextArea.getValueStateText(), "Value is required", "Error text is correct");
+
+		assert.strictEqual(oTextArea2.getValueState(), ValueState.Error, "Control has an error");
+		assert.strictEqual(oTextArea2.getValueStateText(), "Value is required", "Error text is correct");
+
+		assert.strictEqual(oInput.getValueState(), ValueState.Error, "Control has an error");
+		assert.strictEqual(oInput.getValueStateText(), "Value is required", "Error text is correct");
+
+		assert.strictEqual(oDateRange.getValueState(), ValueState.Error, "Control has an error");
+		assert.strictEqual(oDateRange.getValueStateText(), oResourceBundle.getText("EDITOR_VAL_FIELDREQ"), "Error text is correct");
+
+		assert.deepEqual(this.oCard.getModel("messages").getData(), {
+			"hasErrors": true,
+			"hasWarnings": false,
+			"records": [
+				{
+					"bindingPath": "/reason",
+					"message": oResourceBundle.getText("EDITOR_VAL_FIELDREQ"),
+					"type": "Error"
+				},
+				{
+					"bindingPath": "/comment",
+					"message": "Value is required",
+					"type": "Error"
+				},
+				{
+					"bindingPath": "/e-mail",
+					"message": "Value is required",
+					"type": "Error"
+				},
+				{
+					"bindingPath": "/path",
+					"message": "Value is required",
+					"type": "Error"
+				},
+				{
+					"bindingPath": "/inputId",
+					"message": "Value is required",
+					"type": "Error"
+				},
+				{
+					"bindingPath": "/dateRangeValue",
+					"message": oResourceBundle.getText("EDITOR_VAL_FIELDREQ"),
+					"type": "Error"
+				}
+			]
+		}, "messages model is correct");
+
+		oComboBox1.setValue("Text");
+		oComboBox2.setValue("Text");
+		oTextArea.setValue("Text");
+		oTextArea2.setValue("Text");
+		oTextArea3.setValue("Text");
+		oDateRange.setValue("invalid date");
+
+		await nextUIUpdate();
+		this.oCard.validateControls();
+
+		assert.strictEqual(oComboBox1.getValueState(), ValueState.None, "Control doesn't have an error");
+		assert.strictEqual(oComboBox2.getValueState(), ValueState.Error, "Control has an error 1111");
+		assert.strictEqual(oComboBox2.getValueStateText(), oResourceBundle.getText("EDITOR_ONLY_LISTED_VALUES_ALLOWED"), "Error text is correct");
+		assert.strictEqual(oTextArea.getValueState(), ValueState.Warning, "ComboBox has an warning");
+		assert.strictEqual(oTextArea.getValueStateText(), "Your comment should be between 10 and 200 characters.", "Text is correct");
+		assert.strictEqual(oTextArea2.getValueState(), ValueState.Error, "TextArea has an error");
+		assert.strictEqual(oTextArea2.getValueStateText(), "You should enter a valid e-mail.", "Text is correct");
+		assert.strictEqual(oTextArea3.getValueStateText(), "You should enter a valid path.", "Text is correct");
+		assert.strictEqual(oDateRange.getValueState(), ValueState.Error, "Control has an error");
+		assert.strictEqual(oDateRange.getValueStateText(), Library.getResourceBundleFor("sap.ui.core").getText("VALUE_STATE_ERROR"), "Text is correct");
+
+		assert.deepEqual(this.oCard.getModel("messages").getData(),
+			{
+				"hasErrors": true,
+				"hasWarnings": true,
+				"records": [
+					{
+						"bindingPath": "/reason2",
+						"message": oResourceBundle.getText("EDITOR_ONLY_LISTED_VALUES_ALLOWED"),
+						"type": "Error"
+					},
+					{
+						"bindingPath": "/comment",
+						"message": "Your comment should be between 10 and 200 characters.",
+						"type": "Warning"
+					},
+					{
+						"bindingPath": "/e-mail",
+						"message": "You should enter a valid e-mail.",
+						"type": "Error"
+					},
+					{
+						"bindingPath": "/path",
+						"message": "You should enter a valid path.",
+						"type": "Error"
+					},
+					{
+						"bindingPath": "/inputId",
+						"message": "Value is required",
+						"type": "Error"
+					},
+					{
+						"bindingPath": "/dateRangeValue",
+						"message": Library.getResourceBundleFor("sap.ui.core").getText("VALUE_STATE_ERROR"),
+						"type": "Error"
+					}
+				]
 			}, "messages model is correct");
 
-			done();
-		});
+		oComboBox2.setSelectedKey("reason1");
+		oTextArea.setValue("TextTextTextTextTextTextTextTextText");
+		oTextArea2.setValue("my@mymail.com");
+		oTextArea3.setValue("Folder\\file.pdf");
+		oInput.setValue("Some Value");
+		oDateRange.setValue("May 2, 2023");
 
-		oCard.setManifest(oManifest_ObjectCardFormControlsWithValidation);
+		await nextUIUpdate();
+		this.oCard.validateControls();
+
+		assert.strictEqual(oComboBox2.getValueState(), ValueState.None, "Control doesn't have an error");
+		assert.strictEqual(oTextArea.getValueState(), ValueState.None, "Control doesn't have an error");
+		assert.strictEqual(oTextArea2.getValueState(), ValueState.None, "Control doesn't have an error");
+		assert.strictEqual(oTextArea3.getValueState(), ValueState.None, "Control doesn't have an error and backslashes are escaped correctly");
+		assert.strictEqual(oInput.getValueState(), ValueState.None, "Control doesn't have an error");
+		assert.strictEqual(oDateRange.getValueState(), ValueState.None, "Control doesn't have an error");
+
+		assert.deepEqual(this.oCard.getModel("messages").getData(), {
+			"hasErrors": false,
+			"hasWarnings": false,
+			"records": []
+		}, "messages model is correct");
+
 	});
 
-	QUnit.test("Controls validation when no data and no binding", function (assert) {
-		var done = assert.async(),
-			oCard = this.oCard;
+	QUnit.test("Controls validation when no data and no binding", async function (assert) {
+		this.oCard.setManifest(oManifest_ObjectCardFormControlsWithValidationNoDataNoBinding);
 
-		oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
 
-			assert.deepEqual(oCard.getModel("messages").getData(),
-				{
-					"hasErrors": true,
-					"hasWarnings": false,
-					"records": [
-						{
-							"bindingPath": "/name",
-							"message": "Field is required. Please enter a text.",
-							"type": "Error"
-						}
-					]
-				}, "messages model is correct");
-
-			done();
-		});
-
-		oCard.setManifest(oManifest_ObjectCardFormControlsWithValidationNoDataNoBinding);
+		assert.deepEqual(
+			this.oCard.getModel("messages").getData(),
+			{
+				"hasErrors": true,
+				"hasWarnings": false,
+				"records": [
+					{
+						"bindingPath": "/name",
+						"message": "Field is required. Please enter a text.",
+						"type": "Error"
+					}
+				]
+			},
+			"messages model is correct"
+		);
 	});
 
 	QUnit.module("titleMaxLine and labelWrapping", {
@@ -2880,35 +2714,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("titleMaxLine and labelWrapping are applied correctly", function (assert) {
-		var done = assert.async(),
-			oCard = this.oCard;
-
-		oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			var oContent = oCard.getCardContent(),
-				aGroups = oContent.getAggregation("_content").getItems()[0].getContent(),
-				oGroupTitle1 = aGroups[0].getItems()[0],
-				iFirstGroupTitleMaxLines = aGroups[0].getItems()[0].getMaxLines(),
-				oGroupTitle2 = aGroups[1].getItems()[0],
-				aGroup1Label1 = aGroups[0].getItems()[1],
-				aGroup1Label2 = aGroups[0].getItems()[2],
-				aGroup2Label1 = aGroups[1].getItems()[1],
-				aGroup2Label2 = aGroups[1].getItems()[2];
-
-
-
-			assert.strictEqual(oGroupTitle1.$("inner").css("-webkit-line-clamp"), iFirstGroupTitleMaxLines.toString(), "Title is clamped correctly based on titleMaxLines");
-			assert.strictEqual(oGroupTitle2.$("inner").css("-webkit-line-clamp"), undefined, "Title is not clamped when titleMaxLines is set to 1");
-			assert.ok(aGroup1Label1.$().hasClass("sapMLabelWrapped"), "First label is wrapped when labelWrapping is set to true");
-			assert.ok(aGroup1Label2.$().hasClass("sapMLabelWrapped"), "Second label is wrapped when labelWrapping is set to true");
-			assert.notOk(aGroup2Label1.$().hasClass("sapMLabelWrapped"), "First label is not wrapped when labelWrapping is set to false");
-			assert.notOk(aGroup2Label2.$().hasClass("sapMLabelWrapped"), "Second label is not wrapped when labelWrapping is set to false");
-			done();
-		});
-
-		oCard.setManifest({
+	QUnit.test("titleMaxLine and labelWrapping are applied correctly", async function (assert) {
+		this.oCard.setManifest({
 			"sap.app": {
 				"type": "card",
 				"id": "test.object.card"
@@ -2926,7 +2733,7 @@ sap.ui.define([
 						{
 							"label": "Another very very long label that will be wrapped if labelWrapping is set to true"
 						}
-						]
+					]
 					},
 					{
 						"title": "Another very very long title that will be clamped based on the titleMaxLine property",
@@ -2938,11 +2745,31 @@ sap.ui.define([
 						{
 							"label": "Another very very long label that will be wrapped if labelWrapping is set to true"
 						}
-						]
-					}]
+					]
+				}]
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oContent = this.oCard.getCardContent(),
+			aGroups = oContent.getAggregation("_content").getItems()[0].getContent(),
+			oGroupTitle1 = aGroups[0].getItems()[0],
+			iFirstGroupTitleMaxLines = aGroups[0].getItems()[0].getMaxLines(),
+			oGroupTitle2 = aGroups[1].getItems()[0],
+			aGroup1Label1 = aGroups[0].getItems()[1],
+			aGroup1Label2 = aGroups[0].getItems()[2],
+			aGroup2Label1 = aGroups[1].getItems()[1],
+			aGroup2Label2 = aGroups[1].getItems()[2];
+
+		assert.strictEqual(oGroupTitle1.$("inner").css("-webkit-line-clamp"), iFirstGroupTitleMaxLines.toString(), "Title is clamped correctly based on titleMaxLines");
+		assert.strictEqual(oGroupTitle2.$("inner").css("-webkit-line-clamp"), undefined, "Title is not clamped when titleMaxLines is set to 1");
+		assert.ok(aGroup1Label1.$().hasClass("sapMLabelWrapped"), "First label is wrapped when labelWrapping is set to true");
+		assert.ok(aGroup1Label2.$().hasClass("sapMLabelWrapped"), "Second label is wrapped when labelWrapping is set to true");
+		assert.notOk(aGroup2Label1.$().hasClass("sapMLabelWrapped"), "First label is not wrapped when labelWrapping is set to false");
+		assert.notOk(aGroup2Label2.$().hasClass("sapMLabelWrapped"), "Second label is not wrapped when labelWrapping is set to false");
 	});
 
 	QUnit.module("Forms Extension Validation", {
@@ -2960,32 +2787,8 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Function", function(assert) {
-		var done = assert.async(),
-			oCard = this.oCard;
-
-		oCard.attachEvent("_ready", function () {
-			var oObjectContent = oCard.getCardContent(),
-				oTextArea = oObjectContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1];
-
-			oTextArea.setValue("Text");
-
-			Core.applyChanges();
-			oCard.validateControls();
-
-			assert.strictEqual(oTextArea.getValueState(), ValueState.Warning, "Input field has a warning");
-			assert.strictEqual(oTextArea.getValueStateText(), "You should enter valid e-mail.", "Validation warning message is correct");
-
-			oTextArea.setValue("my@mail.com");
-			Core.applyChanges();
-			oCard.validateControls();
-
-			assert.strictEqual(oTextArea.getValueState(), ValueState.None, "Validation passed");
-
-			done();
-		});
-
-		oCard.setManifest({
+	QUnit.test("Function", async function(assert) {
+		this.oCard.setManifest({
 			"sap.app": {
 				"id": "sap.ui.integration.test"
 			},
@@ -3020,5 +2823,22 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		var oObjectContent = this.oCard.getCardContent(),
+			oTextArea = oObjectContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1];
+
+		oTextArea.setValue("Text");
+		await nextUIUpdate();
+		this.oCard.validateControls();
+
+		assert.strictEqual(oTextArea.getValueState(), ValueState.Warning, "Input field has a warning");
+		assert.strictEqual(oTextArea.getValueStateText(), "You should enter valid e-mail.", "Validation warning message is correct");
+
+		oTextArea.setValue("my@mail.com");
+		await nextUIUpdate();
+		this.oCard.validateControls();
+
+		assert.strictEqual(oTextArea.getValueState(), ValueState.None, "Validation passed");
 	});
 });

@@ -1,17 +1,19 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
-	Core,
 	library,
 	RequestDataProvider,
 	Card,
-	qutils
+	qutils,
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -56,14 +58,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Triggering submit request from Adaptive Content", function (assert) {
+	QUnit.test("Triggering submit request from Adaptive Content", async function (assert) {
 		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-			// Act
-			this._pressSubmitButton();
-		}.bind(this));
 
 		this.oServer.respondWith("POST", /test-resources\/sap\/ui\/integration\/qunit\/fake-api$/, function (oXhr) {
 			// Assert
@@ -102,16 +98,16 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Act
+		this._pressSubmitButton();
 	});
 
-	QUnit.test("Data request with custom payload with bindings to 'form' model", function (assert) {
+	QUnit.test("Data request with custom payload with bindings to 'form' model", async function (assert) {
 		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-			// Act
-			this._pressSubmitButton();
-		}.bind(this));
 
 		this.oServer.respondWith("POST", /test-resources\/sap\/ui\/integration\/qunit\/fake-api$/, function (oXhr) {
 			// Assert
@@ -172,6 +168,12 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Act
+		this._pressSubmitButton();
 	});
 
 	QUnit.module("Submit action payload", {
@@ -188,27 +190,13 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Default payload", function (assert) {
-		var done = assert.async(),
-			oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
+	QUnit.test("Default payload", async function (assert) {
+		var oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
 			oDefaultPayload = {
 				someKey: "someValue"
 			};
 
 		this.oCard.getModel("form").setData(oDefaultPayload);
-
-		this.oCard.attachEvent("_ready", function () {
-			// Act
-			this.oCard.getCardContent().getActions().fireAction(
-				this.oCard.getCardContent(),
-				CardActionType.Submit
-			);
-
-			// Assert
-			assert.deepEqual(oStubRequest.thisValues[0].getSettings().request.parameters, oDefaultPayload, "Default payload is correct");
-			done();
-		}.bind(this));
-
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.adaptive.submit.action.payload",
@@ -228,11 +216,21 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Act
+		this.oCard.getCardContent().getActions().fireAction(
+			this.oCard.getCardContent(),
+			CardActionType.Submit
+		);
+
+		// Assert
+		assert.deepEqual(oStubRequest.thisValues[0].getSettings().request.parameters, oDefaultPayload, "Default payload is correct");
 	});
 
-	QUnit.test("Custom payload (specified in 'configuration/actionHandlers')", function (assert) {
-		var done = assert.async(),
-			oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
+	QUnit.test("Custom payload (specified in 'configuration/actionHandlers')", async function (assert) {
+		var oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
 			oDefaultPayload = {
 				someKey: "someValue"
 			},
@@ -243,19 +241,6 @@ sap.ui.define([
 			};
 
 		this.oCard.getModel("form").setData(oDefaultPayload);
-
-		this.oCard.attachEvent("_ready", function () {
-			// Act
-			this.oCard.getCardContent().getActions().fireAction(
-				this.oCard.getCardContent(),
-				CardActionType.Submit
-			);
-
-			// Assert
-			assert.deepEqual(oStubRequest.thisValues[0].getSettings().request.parameters, oCustomPayload, "Custom payload should override the default");
-			done();
-		}.bind(this));
-
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.adaptive.submit.action.payload",
@@ -276,11 +261,21 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Act
+		this.oCard.getCardContent().getActions().fireAction(
+			this.oCard.getCardContent(),
+			CardActionType.Submit
+		);
+
+		// Assert
+		assert.deepEqual(oStubRequest.thisValues[0].getSettings().request.parameters, oCustomPayload, "Custom payload should override the default");
 	});
 
-	QUnit.test("Undefined values in data request", function (assert) {
-		var done = assert.async(),
-			oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
+	QUnit.test("Undefined values in data request", async function (assert) {
+		var oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
 			oDefaultPayload = {
 				userName: "DonnaMoore",
 				email: undefined
@@ -299,22 +294,6 @@ sap.ui.define([
 			};
 
 		this.oCard.getModel("form").setData(oDefaultPayload);
-
-		this.oCard.attachEvent("_ready", function () {
-			// Act
-			this.oCard.getCardContent().getActions().fireAction(
-				this.oCard.getCardContent(),
-				CardActionType.Submit
-			);
-
-			var oDataProviderSettings = oStubRequest.thisValues[0].getSettings();
-
-			// Assert
-			assert.ok(oDataProviderSettings.request.parameters.user.hasOwnProperty("email"), "Key with 'undefined' value should be part of the payload");
-			assert.deepEqual(oDataProviderSettings.request.parameters, oExpectedPayload, "Undefined values should be turned to 'null'");
-			done();
-		}.bind(this));
-
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.adaptive.submit.action.payload",
@@ -335,31 +314,23 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Act
+		this.oCard.getCardContent().getActions().fireAction(
+			this.oCard.getCardContent(),
+			CardActionType.Submit
+		);
+
+		var oDataProviderSettings = oStubRequest.thisValues[0].getSettings();
+
+		// Assert
+		assert.ok(oDataProviderSettings.request.parameters.user.hasOwnProperty("email"), "Key with 'undefined' value should be part of the payload");
+		assert.deepEqual(oDataProviderSettings.request.parameters, oExpectedPayload, "Undefined values should be turned to 'null'");
 	});
 
-	QUnit.test("Binding in action handler", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			// Arrange
-			var oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
-
-			// Act
-			this.oCard.getCardContent().getActions().fireAction(
-				this.oCard.getCardContent(),
-				CardActionType.Submit
-			);
-
-			// Assert
-			assert.strictEqual(
-				oDataProviderStub.thisValues[0].getSettings().request.url,
-				"some/fake/api",
-				"Binding should be resolved"
-			);
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Binding in action handler", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.adaptive.submit.action.payload",
@@ -387,35 +358,30 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Arrange
+		var oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
+
+		// Act
+		this.oCard.getCardContent().getActions().fireAction(
+			this.oCard.getCardContent(),
+			CardActionType.Submit
+		);
+
+		// Assert
+		assert.strictEqual(
+			oDataProviderStub.thisValues[0].getSettings().request.url,
+			"some/fake/api",
+			"Binding should be resolved"
+		);
 	});
 
-	QUnit.test("Binding in action handler parameters", function (assert) {
-		var done = assert.async();
-
+	QUnit.test("Binding in action handler parameters", async function (assert) {
 		this.oCard.getModel("form").setData({
 			userName: "DonnaMoore"
 		});
-
-		this.oCard.attachEvent("_ready", function () {
-			// Arrange
-			var oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
-
-			// Act
-			this.oCard.getCardContent().getActions().fireAction(
-				this.oCard.getCardContent(),
-				CardActionType.Submit
-			);
-
-			// Assert
-			assert.strictEqual(
-				oDataProviderStub.thisValues[0].getSettings().request.parameters.user.name,
-				"My name is DonnaMoore",
-				"Binding should be resolved"
-			);
-
-			done();
-		}.bind(this));
-
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.adaptive.submit.action.payload",
@@ -440,31 +406,27 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Arrange
+		var oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
+
+		// Act
+		this.oCard.getCardContent().getActions().fireAction(
+			this.oCard.getCardContent(),
+			CardActionType.Submit
+		);
+
+		// Assert
+		assert.strictEqual(
+			oDataProviderStub.thisValues[0].getSettings().request.parameters.user.name,
+			"My name is DonnaMoore",
+			"Binding should be resolved"
+		);
 	});
 
-	QUnit.test("Expression binding in action handler parameters", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			// Arrange
-			var oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
-
-			// Act
-			this.oCard.getCardContent().getActions().fireAction(
-				this.oCard.getCardContent(),
-				CardActionType.Submit
-			);
-
-			// Assert
-			assert.strictEqual(
-				oDataProviderStub.thisValues[0].getSettings().request.parameters.user.name,
-				"The winner is second player",
-				"Binding should be resolved"
-			);
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Expression binding in action handler parameters", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.adaptive.submit.action.payload",
@@ -489,6 +451,24 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Arrange
+		var oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
+
+		// Act
+		this.oCard.getCardContent().getActions().fireAction(
+			this.oCard.getCardContent(),
+			CardActionType.Submit
+		);
+
+		// Assert
+		assert.strictEqual(
+			oDataProviderStub.thisValues[0].getSettings().request.parameters.user.name,
+			"The winner is second player",
+			"Binding should be resolved"
+		);
 	});
 
 });

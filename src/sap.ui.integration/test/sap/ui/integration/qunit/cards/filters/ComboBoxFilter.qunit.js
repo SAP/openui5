@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/integration/cards/filters/ComboBoxFilter",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	Element,
 	ComboBoxFilter,
 	Card,
-	Core
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -26,13 +28,11 @@ sap.ui.define([
 			this.oCard.destroy();
 			this.oCard = null;
 		}
-
 	});
 
-	QUnit.test("ComboBox for filter 'category' is rendered", function (assert) {
+	QUnit.test("ComboBox for filter 'category' is rendered", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			aOptions = [
+		var aOptions = [
 				{
 					"title": "Flat Screen Monitors",
 					"key": "FSM",
@@ -55,59 +55,51 @@ sap.ui.define([
 				}
 			];
 
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			// Assert
-			var oFilterBar = this.oCard.getAggregation("_filterBar");
-			assert.strictEqual(oFilterBar._getFilters().length, 1, "The filter bar has 1 filter");
-
-			var oFirstFilter = oFilterBar._getFilters()[0];
-			assert.strictEqual(oFirstFilter._getComboBox().getItems().length, 4, "The filter options are 4.");
-
-			assert.strictEqual(oFirstFilter._getComboBox().getPlaceholder(), "Test Placeholder", "The property placeholder is set");
-
-			oFirstFilter._getComboBox().getItems().forEach(function (oItem, iInd) {
-				assert.strictEqual(oItem.getKey(), aOptions[iInd].key, "Option at position " + iInd + " has a valid key.");
-				assert.strictEqual(oItem.getText(), aOptions[iInd].title, "Option at position " + iInd + " has a valid title.");
-				assert.strictEqual(oItem.getAdditionalText(), aOptions[iInd].additionalText, "Option at position " + iInd + " has a valid additional text.");
-			});
-
-			assert.strictEqual(oFirstFilter._getComboBox().getSelectedKey(), aOptions[0].key, "The proper key is selected");
-			assert.strictEqual(oFirstFilter._getComboBox().getSelectedItem().getKey(), aOptions[0].key, "The selected item key is correct");
-			assert.strictEqual(oFirstFilter._getComboBox().getSelectedItem().getText(), aOptions[0].title, "The selected item title is correct");
-			assert.strictEqual(oFirstFilter._getComboBox().getSelectedItem().getAdditionalText(), aOptions[0].additionalText, "The selected item additional text is correct");
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/combo_box_filter.json");
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Assert
+		var oFilterBar = this.oCard.getAggregation("_filterBar");
+		assert.strictEqual(oFilterBar._getFilters().length, 1, "The filter bar has 1 filter");
+
+		var oFirstFilter = oFilterBar._getFilters()[0];
+		assert.strictEqual(oFirstFilter._getComboBox().getItems().length, 4, "The filter options are 4.");
+
+		assert.strictEqual(oFirstFilter._getComboBox().getPlaceholder(), "Test Placeholder", "The property placeholder is set");
+
+		oFirstFilter._getComboBox().getItems().forEach(function (oItem, iInd) {
+			assert.strictEqual(oItem.getKey(), aOptions[iInd].key, "Option at position " + iInd + " has a valid key.");
+			assert.strictEqual(oItem.getText(), aOptions[iInd].title, "Option at position " + iInd + " has a valid title.");
+			assert.strictEqual(oItem.getAdditionalText(), aOptions[iInd].additionalText, "Option at position " + iInd + " has a valid additional text.");
+		});
+
+		assert.strictEqual(oFirstFilter._getComboBox().getSelectedKey(), aOptions[0].key, "The proper key is selected");
+		assert.strictEqual(oFirstFilter._getComboBox().getSelectedItem().getKey(), aOptions[0].key, "The selected item key is correct");
+		assert.strictEqual(oFirstFilter._getComboBox().getSelectedItem().getText(), aOptions[0].title, "The selected item title is correct");
+		assert.strictEqual(oFirstFilter._getComboBox().getSelectedItem().getAdditionalText(), aOptions[0].additionalText, "The selected item additional text is correct");
 	});
 
-	QUnit.test("Loading a filter using a static data", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			// Assert
-			var oFilterBar = this.oCard.getAggregation("_filterBar");
-
-			var oFilter = oFilterBar._getFilters()[0];
-			assert.strictEqual(oFilter._getComboBox().getSelectedKey(), "FSM", "property binding works");
-			assert.strictEqual(oFilter._getComboBox().getItems()[1].getKey(), "GC", "option has the expected key");
-			assert.strictEqual(this.oCard.getCardHeader().getTitle(), oFilter._getComboBox().getItems()[0].getText(), "Filter title is properly resolved");
-			assert.strictEqual(this.oCard.getCardHeader().getSubtitle(), oFilter._getComboBox().getItems()[0].getAdditionalText(), "Filter additional text is properly resolved");
-			assert.strictEqual(this.oCard.getCardContent()._getList().getItems()[0].getTitle(), oFilter._getComboBox().getItems()[0].getKey(), "Filter key is properly resolved");
-			assert.strictEqual(this.oCard.getCardContent()._getList().getItems()[0].getDescription(), oFilter._getComboBox().getValue(), "Filter value is properly resolved");
-			assert.strictEqual(this.oCard.getCardHeader().getSubtitle(), "FSM", "The additional text is correct");
-			done();
-		}, this);
-
+	QUnit.test("Loading a filter using a static data", async function (assert) {
 		// Act
 		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/combo_box_filter.json");
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oFilterBar = this.oCard.getAggregation("_filterBar");
+		var oFilter = oFilterBar._getFilters()[0];
+
+		// Assert
+		assert.strictEqual(oFilter._getComboBox().getSelectedKey(), "FSM", "property binding works");
+		assert.strictEqual(oFilter._getComboBox().getItems()[1].getKey(), "GC", "option has the expected key");
+		assert.strictEqual(this.oCard.getCardHeader().getTitle(), oFilter._getComboBox().getItems()[0].getText(), "Filter title is properly resolved");
+		assert.strictEqual(this.oCard.getCardHeader().getSubtitle(), oFilter._getComboBox().getItems()[0].getAdditionalText(), "Filter additional text is properly resolved");
+		assert.strictEqual(this.oCard.getCardContent()._getList().getItems()[0].getTitle(), oFilter._getComboBox().getItems()[0].getKey(), "Filter key is properly resolved");
+		assert.strictEqual(this.oCard.getCardContent()._getList().getItems()[0].getDescription(), oFilter._getComboBox().getValue(), "Filter value is properly resolved");
+		assert.strictEqual(this.oCard.getCardHeader().getSubtitle(), "FSM", "The additional text is correct");
 	});
 
 	QUnit.test("ComboBox filter with dynamic data", function (assert) {

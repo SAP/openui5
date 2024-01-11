@@ -4,15 +4,15 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/util/CardObserver",
-	"sap/ui/core/Core",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ],
 	function(
 		library,
 		Card,
 		CardObserver,
-		Core,
-		nextUIUpdate
+		nextUIUpdate,
+		nextCardReadyEvent
 	) {
 		"use strict";
 
@@ -108,36 +108,30 @@ sap.ui.define([
 			await nextUIUpdate();
 			this.oObserveSpy.reset();
 
-			var done = assert.async();
 			var oUnobserveSpy;
-
-			this.oCardAuto.attachEvent("_ready", function () {
-				Core.applyChanges();
-				// Assert
-				assert.strictEqual(this.oCreateObserverSpy.callCount, 1, "CardObserver is created");
-				assert.strictEqual(this.oLoadManifestSpy.callCount, 1, "Manifest is loaded");
-				assert.strictEqual(this.oObserveSpy.callCount, 1, "Observe function is called");
-				assert.strictEqual(oUnobserveSpy.callCount, 1, "Card is unobserved");
-
-				done();
-			}.bind(this));
 
 			oUnobserveSpy = sinon.spy(this.oCardAuto._oCardObserver._oObserver, "unobserve");
 			this.oCardAuto.setManifest(oManifest_ListCard);
+
+			await nextCardReadyEvent(this.oCardAuto);
+			await nextUIUpdate();
+
+			// Assert
+			assert.strictEqual(this.oCreateObserverSpy.callCount, 1, "CardObserver is created");
+			assert.strictEqual(this.oLoadManifestSpy.callCount, 1, "Manifest is loaded");
+			assert.strictEqual(this.oObserveSpy.callCount, 1, "Observe function is called");
+			assert.strictEqual(oUnobserveSpy.callCount, 1, "Card is unobserved");
 		});
 
-		QUnit.test("Manifest should be set when card is in viewport", function (assert) {
-			var done = assert.async(),
-				oStartProcessingManifestSpy = sinon.spy(this.oCardAuto, "startManifestProcessing");
-
-			this.oCardAuto.attachEvent("_ready", function () {
-				// Assert
-				assert.strictEqual(oStartProcessingManifestSpy.callCount, 2, "Manifest is set");
-
-				done();
-			});
+		QUnit.test("Manifest should be set when card is in viewport", async function (assert) {
+			var oStartProcessingManifestSpy = sinon.spy(this.oCardAuto, "startManifestProcessing");
 
 			this.oCardAuto.setManifest(oManifest_ListCard).placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCardAuto);
+
+			// Assert
+			assert.strictEqual(oStartProcessingManifestSpy.callCount, 2, "Manifest is set");
 		});
 
 		QUnit.module("CardObserver is not instantiated", {
@@ -158,23 +152,19 @@ sap.ui.define([
 				this.oCreateObserverSpy.restore();
 				this.oLoadManifestSpy.restore();
 				this.oUnobserveSpy.restore();
-
 			}
 		});
 
-		QUnit.test("CardObserver will not be initialized", function (assert) {
-			var done = assert.async();
-			this.oCard.attachEvent("_ready", function () {
-				// Assert
-				assert.strictEqual(this.oUnobserveSpy.callCount, 2, "Unobserve function is called");
-				assert.strictEqual(this.oCreateObserverSpy.callCount, 0, "CardObserver is not created");
-				assert.strictEqual(this.oLoadManifestSpy.callCount, 0, "loadManifest function is not called");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("CardObserver will not be initialized", async function (assert) {
 			this.oCard.setManifest(oManifest_ListCard);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+
+			// Assert
+			assert.strictEqual(this.oUnobserveSpy.callCount, 2, "Unobserve function is called");
+			assert.strictEqual(this.oCreateObserverSpy.callCount, 0, "CardObserver is not created");
+			assert.strictEqual(this.oLoadManifestSpy.callCount, 0, "loadManifest function is not called");
 		});
 
 	}

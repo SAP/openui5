@@ -1,19 +1,19 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/integration/cards/AnalyticsCloudContent",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/integration/widgets/Card",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
-	Core,
 	AnalyticsCloudContent,
 	IllustratedMessageType,
 	Card,
 	Log,
-	nextUIUpdate
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -200,26 +200,23 @@ sap.ui.define([
 		}.bind(this), 300);
 	});
 
-	QUnit.test("Card type: 'AnalyticsCloud' has 'Generic' placeholder", function (assert) {
-		var done = assert.async(),
-			oCard = new Card({
+	QUnit.test("Card type: 'AnalyticsCloud' has 'Generic' placeholder", async function (assert) {
+		var oCard = new Card({
 				baseUrl: "test-resources/sap/ui/integration/qunit/"
 			});
 
-		oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			var oContent = oCard.getCardContent(),
-				oPlaceholder = oContent.getAggregation("_loadingPlaceholder");
-
-			assert.strictEqual(oPlaceholder.isA("sap.f.cards.loading.GenericPlaceholder"), true, "Placeholder has correct type");
-
-			oCard.destroy();
-			done();
-		});
-
 		oCard.setManifest(oExample1);
 		oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(oCard);
+		await nextUIUpdate();
+
+		var oContent = oCard.getCardContent(),
+			oPlaceholder = oContent.getAggregation("_loadingPlaceholder");
+
+		assert.strictEqual(oPlaceholder.isA("sap.f.cards.loading.GenericPlaceholder"), true, "Placeholder has correct type");
+
+		oCard.destroy();
 	});
 
 	QUnit.module("Display errors", {

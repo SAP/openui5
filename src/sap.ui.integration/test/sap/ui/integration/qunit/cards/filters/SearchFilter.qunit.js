@@ -4,18 +4,18 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/integration/cards/filters/SearchFilter",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	Element,
 	SearchFilter,
 	Card,
-	Core,
 	KeyCodes,
 	QUnitUtils,
-	nextUIUpdate
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -45,23 +45,7 @@ sap.ui.define([
 		oSF.destroy();
 	});
 
-	QUnit.test("Card creating 'Search' filter", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			// Assert
-			var oFilterBar = this.oCard.getAggregation("_filterBar");
-			assert.strictEqual(oFilterBar._getFilters().length, 1, "The filter bar has 1 filter");
-
-			var oFirstFilter = oFilterBar._getFilters()[0];
-			assert.ok(oFirstFilter.isA(SearchFilter.getMetadata().getName()), "The filter type is correct");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Card creating 'Search' filter", async function (assert) {
 		// Act
 		this.oCard.setManifest({
 			"sap.app": {
@@ -80,7 +64,7 @@ sap.ui.define([
 				"content": {
 					"data": {
 						"json": [{
-								"Name": "item1"
+							"Name": "item1"
 						}]
 					},
 					"item": {
@@ -89,6 +73,16 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Assert
+		var oFilterBar = this.oCard.getAggregation("_filterBar");
+		assert.strictEqual(oFilterBar._getFilters().length, 1, "The filter bar has 1 filter");
+
+		var oFirstFilter = oFilterBar._getFilters()[0];
+		assert.ok(oFirstFilter.isA(SearchFilter.getMetadata().getName()), "The filter type is correct");
 	});
 
 	QUnit.test("setValueFromOutside", function (assert) {
@@ -158,21 +152,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Placeholder set with binding", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-			var oFilterBar = this.oCard.getAggregation("_filterBar"),
-				oSearchField = oFilterBar._getFilters()[0].getField();
-
-			// Assert
-			assert.strictEqual(oSearchField.getPlaceholder(), "Some placeholder", "The placeholder binding should be resolved");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Placeholder set with binding", async function (assert) {
 		// Act
 		this.oCard.setManifest({
 			"sap.app": {
@@ -199,23 +179,18 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oFilterBar = this.oCard.getAggregation("_filterBar"),
+			oSearchField = oFilterBar._getFilters()[0].getField();
+
+		// Assert
+		assert.strictEqual(oSearchField.getPlaceholder(), "Some placeholder", "The placeholder binding should be resolved");
 	});
 
-	QUnit.test("Value set with binding", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-			var oFilterBar = this.oCard.getAggregation("_filterBar"),
-				oSearchField = oFilterBar._getFilters()[0].getField();
-
-			// Assert
-			assert.strictEqual(oSearchField.getValue(), "Some value", "The value binding should be resolved");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Value set with binding", async function (assert) {
 		// Act
 		this.oCard.setManifest({
 			"sap.app": {
@@ -242,6 +217,15 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oFilterBar = this.oCard.getAggregation("_filterBar"),
+			oSearchField = oFilterBar._getFilters()[0].getField();
+
+		// Assert
+		assert.strictEqual(oSearchField.getValue(), "Some value", "The value binding should be resolved");
 	});
 
 	QUnit.module("SearchFilter Value", {

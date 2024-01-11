@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/integration/util/SkeletonCard",
-	"sap/ui/integration/util/ManifestResolver"
+	"sap/ui/integration/util/ManifestResolver",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	SkeletonCard,
-	ManifestResolver
+	ManifestResolver,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -27,23 +29,20 @@ sap.ui.define([
 
 	QUnit.module("Generic");
 
-	QUnit.test("Can create a SkeletonCard", function (assert) {
+	QUnit.test("Can create a SkeletonCard", async function (assert) {
 		// Arrange
-		var done = assert.async(1),
-			oCard = new SkeletonCard(oSampleManifest);
-
-		oCard.attachEvent("_ready", function () {
-			// Assert
-			assert.ok(true, "Card was created.");
-
-			// Clean up
-			oCard.destroy();
-
-			done();
-		});
+		var oCard = new SkeletonCard(oSampleManifest);
 
 		// Act
 		oCard.startManifestProcessing();
+
+		await nextCardReadyEvent(oCard);
+
+		// Assert
+		assert.ok(true, "Card was created.");
+
+		// Clean up
+		oCard.destroy();
 	});
 
 	QUnit.test("Calls ManifestResolver", function (assert) {

@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	Card,
 	nextUIUpdate,
-	jQuery
+	jQuery,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -35,48 +37,40 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Await event - content turns busy and loading placeholders are shown", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEventOnce("_ready", function () {
-			// Arrange
-			var oContent = this.oCard.getCardContent();
-
-			// Act
-			oContent.awaitEvent("someEvent", true);
-
-			// Assert
-			assert.notOk(oContent.isReady(), "Content should NOT be ready when event is awaited");
-			assert.ok(oContent.isLoading(), "The content should have loading placeholders");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Await event - content turns busy and loading placeholders are shown", async function (assert) {
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Arrange
+		var oContent = this.oCard.getCardContent();
+
+		// Act
+		oContent.awaitEvent("someEvent", true);
+
+		// Assert
+		assert.notOk(oContent.isReady(), "Content should NOT be ready when event is awaited");
+		assert.ok(oContent.isLoading(), "The content should have loading placeholders");
 	});
 
-	QUnit.test("Await the same event more than once", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEventOnce("_ready", function () {
-			// Arrange
-			var oContent = this.oCard.getCardContent(),
-				oAttachEventSpy = this.spy(oContent, "attachEventOnce");
-
-			// Act
-			oContent.awaitEvent("someEvent");
-			oContent.awaitEvent("someEvent");
-			oContent.awaitEvent("someEvent");
-
-			// Assert
-			assert.ok(oContent.isLoading(), "The content should have loading placeholders");
-			assert.strictEqual(oContent._oAwaitedEvents.size, 1, "1 event should be counted for busy state");
-			assert.strictEqual(oAttachEventSpy.callCount, 1, "Shouldn't attach listener to the same event more than once");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Await the same event more than once", async function (assert) {
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Arrange
+		var oContent = this.oCard.getCardContent(),
+			oAttachEventSpy = this.spy(oContent, "attachEventOnce");
+
+		// Act
+		oContent.awaitEvent("someEvent");
+		oContent.awaitEvent("someEvent");
+		oContent.awaitEvent("someEvent");
+
+		// Assert
+		assert.ok(oContent.isLoading(), "The content should have loading placeholders");
+		assert.strictEqual(oContent._oAwaitedEvents.size, 1, "1 event should be counted for busy state");
+		assert.strictEqual(oAttachEventSpy.callCount, 1, "Shouldn't attach listener to the same event more than once");
 	});
 
 	QUnit.module("Card with data", {
@@ -145,18 +139,11 @@ sap.ui.define([
 
 	QUnit.test("Default data mode, multiple times placeAt", async function (assert) {
 		// Arrange
-		var done = assert.async();
 		var oCard = new Card("asd");
 
 		// Act
 		oCard.placeAt(DOM_RENDER_LOCATION);
 		await nextUIUpdate();
-
-		oCard.attachEvent("_ready", function () {
-			assert.ok(true, "_ready event should be called even if the DOM ref of the card changes");
-
-			done();
-		});
 
 		oCard.setManifest({
 			"sap.app": {
@@ -175,6 +162,9 @@ sap.ui.define([
 
 		// Act - change the DOM ref
 		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextCardReadyEvent(oCard);
+
+		assert.ok(true, "_ready event should be called even if the DOM ref of the card changes");
 	});
 
 	QUnit.module("Card Ready State");

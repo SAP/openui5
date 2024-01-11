@@ -2,19 +2,21 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core",
 	"sap/base/Log",
 	"sap/ui/integration/Host",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/integration/cards/actions/CustomAction"
+	"sap/ui/integration/cards/actions/CustomAction",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ],
 function (
 	Card,
-	Core,
 	Log,
 	Host,
 	QUnitUtils,
-	CustomAction
+	CustomAction,
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -98,31 +100,28 @@ function (
 		}
 	});
 
-	QUnit.test("Actions sequence", function (assert) {
-		//Arrange
-		var done = assert.async();
-		this.oCard.attachEvent("_ready", function () {
-			var oHeader = this.oCard.getCardHeader(),
-				oLogSpy = sinon.spy(Log, "error");
-
-			//Act
-			QUnitUtils.triggerEvent("tap", oHeader);
-
-			//Assert
-			assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
-			assert.ok(oLogSpy.calledWith("Card"), "Action called from card");
-			assert.ok(oLogSpy.calledWith("Host"), "Action called from host");
-			assert.strictEqual(oLogSpy.firstCall.args[0], "Extension", "Action first call was from the extension");
-			assert.strictEqual(oLogSpy.secondCall.args[0], "Card", "Action second call was from the card");
-			assert.strictEqual(oLogSpy.thirdCall.args[0], "Host", "Action third call was from the host");
-			assert.ok(this.spyCustomAction.called, "The default action handler is executed.");
-
-			//Cleanup
-			oLogSpy.restore();
-			done();
-		}.bind(this));
-
+	QUnit.test("Actions sequence", async function (assert) {
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oHeader = this.oCard.getCardHeader(),
+			oLogSpy = sinon.spy(Log, "error");
+
+		//Act
+		QUnitUtils.triggerEvent("tap", oHeader);
+
+		//Assert
+		assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
+		assert.ok(oLogSpy.calledWith("Card"), "Action called from card");
+		assert.ok(oLogSpy.calledWith("Host"), "Action called from host");
+		assert.strictEqual(oLogSpy.firstCall.args[0], "Extension", "Action first call was from the extension");
+		assert.strictEqual(oLogSpy.secondCall.args[0], "Card", "Action second call was from the card");
+		assert.strictEqual(oLogSpy.thirdCall.args[0], "Host", "Action third call was from the host");
+		assert.ok(this.spyCustomAction.called, "The default action handler is executed.");
+
+		//Cleanup
+		oLogSpy.restore();
 	});
 
 	QUnit.module("Actions sequence extension prevents default", {
@@ -151,31 +150,28 @@ function (
 		}
 	});
 
-	QUnit.test("Extension prevents default", function (assert) {
-		//Arrange
-		var done = assert.async();
-		this.oCardHostPreventDefault.attachEvent("_ready", function () {
-			var oHeader = this.oCardHostPreventDefault.getCardHeader(),
-				oLogSpy = sinon.spy(Log, "error");
-
-			//Act
-			QUnitUtils.triggerEvent("tap", oHeader);
-
-			//Assert
-			assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
-			assert.notOk(oLogSpy.calledWith("Card"), "Action not called from card");
-			assert.notOk(oLogSpy.calledWith("Host"), "Action not called from host");
-			assert.strictEqual(oLogSpy.firstCall.args[0], "Extension", "Action first call was from the extension");
-			assert.strictEqual(oLogSpy.secondCall, null, "Action second call did not happen");
-			assert.strictEqual(oLogSpy.thirdCall, null, "Action third call did not happen");
-			assert.notOk(this.spyCustomAction.called, "The default action handler is not executed.");
-
-			//Cleanup
-			oLogSpy.restore();
-			done();
-		}.bind(this));
-
+	QUnit.test("Extension prevents default", async function (assert) {
 		this.oCardHostPreventDefault.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCardHostPreventDefault);
+
+		var oHeader = this.oCardHostPreventDefault.getCardHeader(),
+			oLogSpy = sinon.spy(Log, "error");
+
+		//Act
+		QUnitUtils.triggerEvent("tap", oHeader);
+
+		//Assert
+		assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
+		assert.notOk(oLogSpy.calledWith("Card"), "Action not called from card");
+		assert.notOk(oLogSpy.calledWith("Host"), "Action not called from host");
+		assert.strictEqual(oLogSpy.firstCall.args[0], "Extension", "Action first call was from the extension");
+		assert.strictEqual(oLogSpy.secondCall, null, "Action second call did not happen");
+		assert.strictEqual(oLogSpy.thirdCall, null, "Action third call did not happen");
+		assert.notOk(this.spyCustomAction.called, "The default action handler is not executed.");
+
+		//Cleanup
+		oLogSpy.restore();
 	});
 
 	QUnit.module("Actions sequence host prevents default", {
@@ -205,31 +201,28 @@ function (
 		}
 	});
 
-	QUnit.test("Host prevents default", function (assert) {
-		//Arrange
-		var done = assert.async();
-		this.oCardHostPreventDefault.attachEvent("_ready", function () {
-			var oHeader = this.oCardHostPreventDefault.getCardHeader(),
-				oLogSpy = sinon.spy(Log, "error");
-
-			//Act
-			QUnitUtils.triggerEvent("tap", oHeader);
-
-			//Assert
-			assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
-			assert.ok(oLogSpy.calledWith("Card"), "Action called from card");
-			assert.ok(oLogSpy.calledWith("Host"), "Action called from host");
-			assert.strictEqual(oLogSpy.firstCall.args[0], "Extension", "Action first call was from the extension");
-			assert.strictEqual(oLogSpy.secondCall.args[0], "Card", "Action second call was from the card");
-			assert.strictEqual(oLogSpy.thirdCall.args[0], "Host", "Action third call was from the host");
-			assert.notOk(this.spyCustomAction.called, "The default action handler is not executed.");
-
-			//Cleanup
-			oLogSpy.restore();
-			done();
-		}.bind(this));
-
+	QUnit.test("Host prevents default", async function (assert) {
 		this.oCardHostPreventDefault.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCardHostPreventDefault);
+
+		var oHeader = this.oCardHostPreventDefault.getCardHeader(),
+			oLogSpy = sinon.spy(Log, "error");
+
+		//Act
+		QUnitUtils.triggerEvent("tap", oHeader);
+
+		//Assert
+		assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
+		assert.ok(oLogSpy.calledWith("Card"), "Action called from card");
+		assert.ok(oLogSpy.calledWith("Host"), "Action called from host");
+		assert.strictEqual(oLogSpy.firstCall.args[0], "Extension", "Action first call was from the extension");
+		assert.strictEqual(oLogSpy.secondCall.args[0], "Card", "Action second call was from the card");
+		assert.strictEqual(oLogSpy.thirdCall.args[0], "Host", "Action third call was from the host");
+		assert.notOk(this.spyCustomAction.called, "The default action handler is not executed.");
+
+		//Cleanup
+		oLogSpy.restore();
 	});
 
 	QUnit.module("Actions sequence card prevents default", {
@@ -259,31 +252,28 @@ function (
 		}
 	});
 
-	QUnit.test("Card prevents default", function (assert) {
-		//Arrange
-		var done = assert.async();
-		this.oCardPreventDefault.attachEvent("_ready", function () {
-			var oHeader = this.oCardPreventDefault.getCardHeader(),
-				oLogSpy = sinon.spy(Log, "error");
-
-			//Act
-			QUnitUtils.triggerEvent("tap", oHeader);
-
-			//Assert
-			assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
-			assert.ok(oLogSpy.calledWith("Card"), "Action called from card");
-			assert.notOk(oLogSpy.calledWith("Host"), "Action not called from host");
-			assert.strictEqual(oLogSpy.firstCall.args[0], "Extension", "Action first call was from the extension");
-			assert.strictEqual(oLogSpy.secondCall.args[0], "Card", "Action second call was from the card");
-			assert.strictEqual(oLogSpy.thirdCall, null, "Action not called third time");
-			assert.notOk(this.spyCustomAction.called, "The default action handler is not executed.");
-
-			//Cleanup
-			oLogSpy.restore();
-			done();
-		}.bind(this));
-
+	QUnit.test("Card prevents default", async function (assert) {
 		this.oCardPreventDefault.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCardPreventDefault);
+
+		var oHeader = this.oCardPreventDefault.getCardHeader(),
+			oLogSpy = sinon.spy(Log, "error");
+
+		//Act
+		QUnitUtils.triggerEvent("tap", oHeader);
+
+		//Assert
+		assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
+		assert.ok(oLogSpy.calledWith("Card"), "Action called from card");
+		assert.notOk(oLogSpy.calledWith("Host"), "Action not called from host");
+		assert.strictEqual(oLogSpy.firstCall.args[0], "Extension", "Action first call was from the extension");
+		assert.strictEqual(oLogSpy.secondCall.args[0], "Card", "Action second call was from the card");
+		assert.strictEqual(oLogSpy.thirdCall, null, "Action not called third time");
+		assert.notOk(this.spyCustomAction.called, "The default action handler is not executed.");
+
+		//Cleanup
+		oLogSpy.restore();
 	});
 
 	QUnit.module("CardMenuAction properties", {
@@ -301,102 +291,84 @@ function (
 		}
 	});
 
-	QUnit.test("Action property 'text'", function(assert) {
+	QUnit.test("Action property 'text'", async function(assert) {
 		// Arrange
-		var done = assert.async();
 		this.oHost.setActions([{
 					type: 'Custom',
 					text: 'Test text'
 				}]);
 		this.oCard.setHost(this.oHost);
-
-		this.oCard.attachEvent("_ready", function () {
-			var oHeader = this.oCard.getCardHeader(),
-				oToolbar = oHeader.getToolbar();
-
-			Core.applyChanges();
-
-			// Assert
-			assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getText(), "Test text", "The rendered action button text is the same as the host 'text' property");
-			done();
-		}.bind(this));
-
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oHeader = this.oCard.getCardHeader(),
+			oToolbar = oHeader.getToolbar();
+
+		// Assert
+		assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getText(), "Test text", "The rendered action button text is the same as the host 'text' property");
 	});
 
-	QUnit.test("Action property 'buttonType'", function(assert) {
+	QUnit.test("Action property 'buttonType'", async function(assert) {
 		// Arrange
-		var done = assert.async();
-
 		this.oHost.setActions([{
 			type: 'Custom',
 			buttonType: 'Accept'
 		}]);
 		this.oCard.setHost(this.oHost);
-
-		this.oCard.attachEvent("_ready", function () {
-			var oHeader = this.oCard.getCardHeader(),
-				oToolbar = oHeader.getToolbar();
-
-			Core.applyChanges();
-
-			// Assert
-			assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getType(), "Accept", "The rendered action button type is the same as the host 'buttonType' property");
-			done();
-		}.bind(this));
-
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oHeader = this.oCard.getCardHeader(),
+			oToolbar = oHeader.getToolbar();
+
+		// Assert
+		assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getType(), "Accept", "The rendered action button type is the same as the host 'buttonType' property");
 	});
 
-	QUnit.test("Action property 'tooltip'", function(assert) {
+	QUnit.test("Action property 'tooltip'", async function(assert) {
 		// Arrange
-		var done = assert.async();
 		this.oHost.setActions([{
 			type: 'Custom',
 			tooltip: 'Action button tooltip'
 		}]);
 		this.oCard.setHost(this.oHost);
-
-		this.oCard.attachEvent("_ready", function () {
-			var oHeader = this.oCard.getCardHeader(),
-				oToolbar = oHeader.getToolbar();
-
-			Core.applyChanges();
-
-			// Assert
-			assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getTooltip(), "Action button tooltip", "The rendered action button tooltip is the same as the host 'tooltip' property");
-			done();
-		}.bind(this));
-
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oHeader = this.oCard.getCardHeader(),
+			oToolbar = oHeader.getToolbar();
+
+		// Assert
+		assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getTooltip(), "Action button tooltip", "The rendered action button tooltip is the same as the host 'tooltip' property");
 	});
 
-	QUnit.test("Action property 'icon'", function(assert) {
+	QUnit.test("Action property 'icon'", async function(assert) {
 		// Arrange
-		var done = assert.async();
 		this.oHost.setActions([{
 			type: 'Custom',
 			icon: 'sap-icon://help'
 
 		}]);
 		this.oCard.setHost(this.oHost);
-
-		this.oCard.attachEvent("_ready", function () {
-			var oHeader = this.oCard.getCardHeader(),
-				oToolbar = oHeader.getToolbar();
-
-			Core.applyChanges();
-
-			// Assert
-			assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getIcon(), "sap-icon://help", "The rendered action button icon is the same as the host 'icon' property");
-			done();
-		}.bind(this));
-
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oHeader = this.oCard.getCardHeader(),
+			oToolbar = oHeader.getToolbar();
+
+		// Assert
+		assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getIcon(), "sap-icon://help", "The rendered action button icon is the same as the host 'icon' property");
 	});
 
-
-	QUnit.test("Action property 'enabled' is true", function(assert) {
+	QUnit.test("Action property 'enabled' is true", async function(assert) {
 		// Arrange
 		var done = assert.async(),
 			oSpyEnabled = sinon.spy();
@@ -412,32 +384,32 @@ function (
 			}
 		]);
 		this.oCard.setHost(this.oHost);
-
-		this.oCard.attachEvent("_ready", function () {
-			var oHeader = this.oCard.getCardHeader(),
-				oToolbar = oHeader.getToolbar();
-			oToolbar.addEventDelegate({
-				"onAfterRendering": function () {
-					var oButton = oToolbar.getDomRef("overflowButton");
-					// Act
-					QUnitUtils.triggerEvent("tap", oButton);
-					Core.applyChanges();
-
-					oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
-
-						QUnitUtils.triggerEvent("tap", oToolbar.getAggregation("_actionSheet").getButtons()[0]);
-						// Assert
-						assert.ok(oSpyEnabled.called, "Host action is fired if host action is enabled.");
-						done();
-					});
-				}
-			});
-		}.bind(this));
-
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oHeader = this.oCard.getCardHeader(),
+			oToolbar = oHeader.getToolbar();
+
+		oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
+			QUnitUtils.triggerEvent("tap", oToolbar.getAggregation("_actionSheet").getButtons()[0]);
+
+			// Assert
+			assert.ok(oSpyEnabled.called, "Host action is fired if host action is enabled.");
+			done();
+		});
+
+		oToolbar.addEventDelegate({
+			"onAfterRendering": function () {
+				var oButton = oToolbar.getDomRef("overflowButton");
+
+				// Act
+				QUnitUtils.triggerEvent("tap", oButton);
+			}
+		});
 	});
 
-	QUnit.test("Action property 'enabled' is false", function(assert) {
+	QUnit.test("Action property 'enabled' is false", async function(assert) {
 		// Arrange
 		var done = assert.async(),
 			oSpyDisabled = sinon.spy();
@@ -453,33 +425,32 @@ function (
 			}
 		]);
 		this.oCard.setHost(this.oHost);
-
-		this.oCard.attachEvent("_ready", function () {
-			var oHeader = this.oCard.getCardHeader(),
-				oToolbar = oHeader.getToolbar();
-			oToolbar.addEventDelegate({
-				"onAfterRendering": function () {
-					var oButton = oToolbar.getDomRef("overflowButton");
-					// Act
-					QUnitUtils.triggerEvent("tap", oButton);
-					Core.applyChanges();
-
-					oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
-
-						QUnitUtils.triggerEvent("tap", oToolbar.getAggregation("_actionSheet").getButtons()[0]);
-
-						// Assert
-						assert.notOk(oSpyDisabled.called, "Host action is not fired if host action is disabled.");
-						done();
-					});
-				}
-			});
-		}.bind(this));
-
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oHeader = this.oCard.getCardHeader(),
+			oToolbar = oHeader.getToolbar();
+
+		oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
+			QUnitUtils.triggerEvent("tap", oToolbar.getAggregation("_actionSheet").getButtons()[0]);
+
+			// Assert
+			assert.notOk(oSpyDisabled.called, "Host action is not fired if host action is disabled.");
+			done();
+		});
+
+		oToolbar.addEventDelegate({
+			"onAfterRendering": function () {
+				var oButton = oToolbar.getDomRef("overflowButton");
+
+				// Act
+				QUnitUtils.triggerEvent("tap", oButton);
+			}
+		});
 	});
 
-	QUnit.test("Action property 'visible'", function(assert) {
+	QUnit.test("Action property 'visible'", async function(assert) {
 		// Arrange
 		var done = assert.async();
 
@@ -496,34 +467,32 @@ function (
 			}
 		]);
 		this.oCard.setHost(this.oHost);
-
-		this.oCard.attachEvent("_ready", function () {
-			var oHeader = this.oCard.getCardHeader(),
-				oToolbar = oHeader.getToolbar();
-			oToolbar.addEventDelegate({
-				"onAfterRendering": function () {
-					var oButton = oToolbar.getDomRef("overflowButton");
-
-					// Act
-					QUnitUtils.triggerEvent("tap", oButton);
-					Core.applyChanges();
-
-					oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
-
-						// Assert
-						assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getText(), "Visible", "If the host action property 'visible' is set to false the action button is rendered");
-						assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[1].getDomRef(), null, "If the host action property 'visible' is set to false the action button is not rendered");
-
-						done();
-					});
-				}
-			});
-		}.bind(this));
-
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oHeader = this.oCard.getCardHeader(),
+			oToolbar = oHeader.getToolbar();
+
+		oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
+			// Assert
+			assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[0].getText(), "Visible", "If the host action property 'visible' is set to false the action button is rendered");
+			assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons()[1].getDomRef(), null, "If the host action property 'visible' is set to false the action button is not rendered");
+
+			done();
+		});
+
+		oToolbar.addEventDelegate({
+			"onAfterRendering": function () {
+				var oButton = oToolbar.getDomRef("overflowButton");
+
+				// Act
+				QUnitUtils.triggerEvent("tap", oButton);
+			}
+		});
 	});
 
-	QUnit.test("Action property 'parameters'", function (assert) {
+	QUnit.test("Action property 'parameters'", async function (assert) {
 		// Arrange
 		var done = assert.async(),
 			oWindowOpenStub = sinon.stub(window, 'open');
@@ -537,32 +506,31 @@ function (
 			}
 		}]);
 		this.oCard.setHost(this.oHost);
-
-		this.oCard.attachEvent("_ready", function () {
-			var oHeader = this.oCard.getCardHeader(),
-				oToolbar = oHeader.getToolbar();
-			oToolbar.addEventDelegate({
-				"onAfterRendering": function () {
-					var oButton = oToolbar.getDomRef("overflowButton");
-					// Act
-					QUnitUtils.triggerEvent("tap", oButton);
-					Core.applyChanges();
-
-					oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
-
-						// Assert
-						QUnitUtils.triggerEvent("tap", oToolbar.getAggregation("_actionSheet").getButtons()[0]);
-						assert.ok(oWindowOpenStub.calledWith("https://www.sap.com"), "Action triggered with host 'url' parameter");
-
-						//Cleanup
-						oWindowOpenStub.restore();
-						done();
-					});
-				}
-			});
-		}.bind(this));
-
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oHeader = this.oCard.getCardHeader(),
+			oToolbar = oHeader.getToolbar();
+
+		oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
+			// Assert
+			QUnitUtils.triggerEvent("tap", oToolbar.getAggregation("_actionSheet").getButtons()[0]);
+			assert.ok(oWindowOpenStub.calledWith("https://www.sap.com"), "Action triggered with host 'url' parameter");
+
+			//Cleanup
+			oWindowOpenStub.restore();
+			done();
+		});
+
+		oToolbar.addEventDelegate({
+			"onAfterRendering": function () {
+				var oButton = oToolbar.getDomRef("overflowButton");
+
+				// Act
+				QUnitUtils.triggerEvent("tap", oButton);
+			}
+		});
 	});
 
 	QUnit.module("Actions for card with no header", {
@@ -580,10 +548,7 @@ function (
 		}
 	});
 
-	QUnit.test("Empty header added for actions toolbar", function(assert) {
-		// Arrange
-		var done = assert.async();
-
+	QUnit.test("Empty header added for actions toolbar", async function(assert) {
 		this.oHost.setActions([
 			{
 				type: 'Custom',
@@ -592,16 +557,13 @@ function (
 			}
 		]);
 		this.oCard.setHost(this.oHost);
-
-		this.oCard.attachEvent("_ready", function () {
-			var oHeader = this.oCard.getCardHeader();
-
-			assert.notOk(oHeader, "Empty header shouldn't be added only to hold the actions toolbar.");
-
-			done();
-		}.bind(this));
-
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oHeader = this.oCard.getCardHeader();
+
+		assert.notOk(oHeader, "Empty header shouldn't be added only to hold the actions toolbar.");
 	});
 
 	QUnit.module("Actions for card with header", {
@@ -629,10 +591,8 @@ function (
 		}
 	});
 
-	QUnit.test("Action property 'visible' is false", function(assert) {
+	QUnit.test("Action property 'visible' is false", async function(assert) {
 		// Arrange
-		var done = assert.async();
-
 		this.oHost.setActions([
 			{
 				type: 'Custom',
@@ -650,23 +610,18 @@ function (
 			}
 		]);
 		this.oCard.setHost(this.oHost);
-
-		this.oCard.attachEvent("_ready", function () {
-			var oHeader = this.oCard.getCardHeader();
-			Core.applyChanges();
-
-			assert.ok(oHeader.getVisible(), "The header is still visible when all actions are not visible.");
-
-			done();
-		}.bind(this));
-
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oHeader = this.oCard.getCardHeader();
+
+		assert.ok(oHeader.getVisible(), "The header is still visible when all actions are not visible.");
 	});
 
-	QUnit.test("Actions toolbar button has aria-haspopup=menu", function (assert) {
+	QUnit.test("Actions toolbar button has aria-haspopup=menu", async function (assert) {
 		// Arrange
-		var done = assert.async();
-
 		this.oHost.setActions([
 			{
 				type: 'Custom',
@@ -674,16 +629,13 @@ function (
 			}
 		]);
 		this.oCard.setHost(this.oHost);
-
-		this.oCard.attachEvent("_ready", function () {
-			var oToolbar = this.oCard.getCardHeader().getToolbar();
-			Core.applyChanges();
-
-			assert.strictEqual(oToolbar.$("overflowButton").attr("aria-haspopup"), "menu", "The menu button has aria-haspopup=menu.");
-
-			done();
-		}.bind(this));
-
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oToolbar = this.oCard.getCardHeader().getToolbar();
+
+		assert.strictEqual(oToolbar.$("overflowButton").attr("aria-haspopup"), "menu", "The menu button has aria-haspopup=menu.");
 	});
 });

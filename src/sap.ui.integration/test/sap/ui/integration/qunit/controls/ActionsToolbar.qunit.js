@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/integration/Host",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	Core,
 	Library,
@@ -15,7 +16,8 @@ sap.ui.define([
 	Host,
 	Card,
 	QUnitUtils,
-	nextUIUpdate
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -33,36 +35,39 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Actions toolbar is invisible when there are no items", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-			var oHeader = this.oCard.getCardHeader();
-
-			// Assert
-			assert.notOk(oHeader.getToolbar().getVisible(), "Actions toolbar is invisible");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Actions toolbar is invisible when there are no items", async function (assert) {
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oHeader = this.oCard.getCardHeader();
+
+		// Assert
+		assert.notOk(oHeader.getToolbar().getVisible(), "Actions toolbar is invisible");
 	});
 
-	QUnit.test("Actions toolbar appears when item is added before rendering", function (assert) {
+	QUnit.test("Actions toolbar appears when item is added before rendering", async function (assert) {
+		// Act
+		this.oCard.addActionDefinition(new ActionDefinition({
+			type: "Navigation",
+			text: "Text",
+			icon: "sap-icon://learning-assistant"
+		}));
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oHeader = this.oCard.getCardHeader();
+
+		// Assert
+		assert.ok(oHeader.getToolbar(), "There is actions toolbar");
+	});
+
+	QUnit.test("Actions toolbar appears when item is added after rendering", async function (assert) {
 		// Arrange
 		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oHeader = this.oCard.getCardHeader();
-
-			// Assert
-			assert.ok(oHeader.getToolbar(), "There is actions toolbar");
-
-			done();
-		}.bind(this));
 
 		// Act
 		this.oCard.addActionDefinition(new ActionDefinition({
@@ -71,103 +76,90 @@ sap.ui.define([
 			icon: "sap-icon://learning-assistant"
 		}));
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		this.oCard.destroyActionDefinitions();
+
+		setTimeout(async function () {
+			var oHeader = this.oCard.getCardHeader();
+			// Assert
+			assert.notOk(oHeader.getToolbar().getVisible(), "Actions toolbar should not be visible");
+
+			// Act
+			this.oCard.addActionDefinition(new ActionDefinition({
+				type: "Navigation",
+				text: "Text",
+				icon: "sap-icon://learning-assistant"
+			}));
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(oHeader.getToolbar().getVisible(), "There is actions toolbar");
+			assert.strictEqual(oHeader.getToolbar().getAggregation("_actionSheet").getButtons().length, 1, "There is 1 item");
+
+			done();
+		}.bind(this), 1000);
 	});
 
-	QUnit.test("Actions toolbar appears when item is added after rendering", function (assert) {
+	QUnit.test("Actions toolbar disappears when item is removed after rendering", async function (assert) {
 		// Arrange
-		var done = assert.async();
+		var done = assert.async(),
+			oAI = new ActionDefinition({
+				type: "Navigation",
+				text: "Text",
+				icon: "sap-icon://learning-assistant"
+			});
 
-		this.oCard.attachEvent("_ready", function () {
+		// Act
+		this.oCard.addActionDefinition(oAI);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		setTimeout(async function () {
+			// Act
+			this.oCard.removeActionDefinition(oAI);
+			await nextUIUpdate();
+			var oHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.notOk(oHeader.getToolbar().getVisible(), "Actions toolbar is hidden");
+			assert.strictEqual(oHeader.getToolbar().getAggregation("_actionSheet").getButtons().length, 0, "There are no items");
+
+			done();
+		}.bind(this), 1000);
+	});
+
+	QUnit.test("Actions toolbar disappears when destroyActions is called", async function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oAI = new ActionDefinition({
+				type: "Navigation",
+				text: "Text",
+				icon: "sap-icon://learning-assistant"
+			});
+
+		// Act
+		this.oCard.addActionDefinition(oAI);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		setTimeout(async function () {
+			// Act
 			this.oCard.destroyActionDefinitions();
+			await nextUIUpdate();
+			var oToolbar = this.oCard.getCardHeader().getToolbar();
 
-			setTimeout(async function () {
-				var oHeader = this.oCard.getCardHeader();
-				// Assert
-				assert.notOk(oHeader.getToolbar().getVisible(), "Actions toolbar should not be visible");
-
-				// Act 2
-				this.oCard.addActionDefinition(new ActionDefinition({
-					type: "Navigation",
-					text: "Text",
-					icon: "sap-icon://learning-assistant"
-				}));
-				await nextUIUpdate();
-
-				// Assert
-				assert.ok(oHeader.getToolbar().getVisible(), "There is actions toolbar");
-				assert.strictEqual(oHeader.getToolbar().getAggregation("_actionSheet").getButtons().length, 1, "There is 1 item");
-
-				done();
-			}.bind(this), 1000);
-		}.bind(this));
-
-		// Act 1
-		this.oCard.addActionDefinition(new ActionDefinition({
-			type: "Navigation",
-			text: "Text",
-			icon: "sap-icon://learning-assistant"
-		}));
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
+			// Assert
+			assert.notOk(oToolbar.getVisible(), "Actions toolbar is hidden");
+			assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons().length, 0, "There are no items");
+			done();
+		}.bind(this), 1000);
 	});
 
-	QUnit.test("Actions toolbar disappears when item is removed after rendering", function (assert) {
-		// Arrange
-		var done = assert.async(),
-			oAI = new ActionDefinition({
-				type: "Navigation",
-				text: "Text",
-				icon: "sap-icon://learning-assistant"
-			});
-
-		this.oCard.attachEvent("_ready", function () {
-			setTimeout(async function () {
-				// Act
-				this.oCard.removeActionDefinition(oAI);
-				await nextUIUpdate();
-				var oHeader = this.oCard.getCardHeader();
-
-				// Assert
-				assert.notOk(oHeader.getToolbar().getVisible(), "Actions toolbar is hidden");
-				assert.strictEqual(oHeader.getToolbar().getAggregation("_actionSheet").getButtons().length, 0, "There are no items");
-
-				done();
-			}.bind(this), 1000);
-		}.bind(this));
-
-		// Act
-		this.oCard.addActionDefinition(oAI);
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
-	});
-
-	QUnit.test("Actions toolbar disappears when destroyActions is called", function (assert) {
-		// Arrange
-		var done = assert.async(),
-			oAI = new ActionDefinition({
-				type: "Navigation",
-				text: "Text",
-				icon: "sap-icon://learning-assistant"
-			});
-
-		this.oCard.attachEvent("_ready", function () {
-			setTimeout(async function () {
-				// Act
-				this.oCard.destroyActionDefinitions();
-				await nextUIUpdate();
-				var oToolbar = this.oCard.getCardHeader().getToolbar();
-
-				// Assert
-				assert.notOk(oToolbar.getVisible(), "Actions toolbar is hidden");
-				assert.strictEqual(oToolbar.getAggregation("_actionSheet").getButtons().length, 0, "There are no items");
-				done();
-			}.bind(this), 1000);
-		}.bind(this));
-
-		// Act
-		this.oCard.addActionDefinition(oAI);
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
-	});
-
-	QUnit.test("Press event of Action is fired", function (assert) {
+	QUnit.test("Press event of Action is fired", async function (assert) {
 		// Arrange
 		var done = assert.async(),
 			oStub = sinon.stub(),
@@ -177,28 +169,28 @@ sap.ui.define([
 				press: oStub
 			});
 
-		this.oCard.attachEvent("_ready", function () {
-			var oToolbar = this.oCard.getCardHeader().getToolbar();
-
-			oToolbar.getAggregation("_actionSheet").attachAfterOpen(function () {
-				// Act 3
-				oToolbar.getAggregation("_actionSheet").getButtons()[0].$().trigger("tap");
-
-				// Assert
-				assert.ok(oStub.calledOnce, "Press event is fired");
-				done();
-			});
-
-			// Act 2
-			oToolbar._getToolbar().$().trigger("tap");
-		}.bind(this));
-
 		// Act 1
 		this.oCard.addActionDefinition(oAI);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oToolbar = this.oCard.getCardHeader().getToolbar();
+
+		oToolbar.getAggregation("_actionSheet").attachAfterOpen(function () {
+			// Act 3
+			oToolbar.getAggregation("_actionSheet").getButtons()[0].$().trigger("tap");
+
+			// Assert
+			assert.ok(oStub.calledOnce, "Press event is fired");
+			done();
+		});
+
+		// Act 2
+		oToolbar._getToolbar().$().trigger("tap");
 	});
 
-	QUnit.test("Actions toolbar disappears when all items inside it become invisible", function (assert) {
+	QUnit.test("Actions toolbar disappears when all items inside it become invisible", async function (assert) {
 		// Arrange
 		var done = assert.async(),
 			oStub = sinon.stub(),
@@ -208,28 +200,27 @@ sap.ui.define([
 				press: oStub
 			});
 
-		this.oCard.attachEvent("_ready", function () {
-			setTimeout(async function () {
-				// Act
-				oAI.setVisible(false);
-				await nextUIUpdate();
-				var oToolbar = this.oCard.getCardHeader().getToolbar();
-
-				// Assert
-				assert.notOk(oToolbar.getVisible(), "Actions toolbar is hidden");
-				done();
-			}.bind(this), 1000);
-		}.bind(this));
-
 		// Act
 		this.oCard.addActionDefinition(oAI);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		setTimeout(async function () {
+			// Act
+			oAI.setVisible(false);
+			await nextUIUpdate();
+			var oToolbar = this.oCard.getCardHeader().getToolbar();
+
+			// Assert
+			assert.notOk(oToolbar.getVisible(), "Actions toolbar is hidden");
+			done();
+		}.bind(this), 1000);
 	});
 
-	QUnit.test("removeActionDefinition removes button from the action sheet", function (assert) {
+	QUnit.test("removeActionDefinition removes button from the action sheet", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oAI = new ActionDefinition({
+		var oAI = new ActionDefinition({
 				type: "Navigation",
 				text: "Item 1"
 			}),
@@ -242,72 +233,68 @@ sap.ui.define([
 				text: "Item 3"
 			});
 
-		this.oCard.attachEvent("_ready", function () {
-			var oActionSheet = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet");
-
-			// Act
-			this.oCard.removeActionDefinition(oAI); // by reference
-			this.oCard.removeActionDefinition(0); // by index
-			this.oCard.removeActionDefinition("cardAction"); // by id
-
-			// Assert
-			assert.strictEqual(oActionSheet.getButtons().length, 0, "Buttons are also removed from the toolbar");
-			done();
-		}.bind(this));
 
 		// Act
 		this.oCard.addActionDefinition(oAI);
 		this.oCard.addActionDefinition(oAI2);
 		this.oCard.addActionDefinition(oAI3);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oActionSheet = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet");
+
+		// Act
+		this.oCard.removeActionDefinition(oAI); // by reference
+		this.oCard.removeActionDefinition(0); // by index
+		this.oCard.removeActionDefinition("cardAction"); // by id
+
+		// Assert
+		assert.strictEqual(oActionSheet.getButtons().length, 0, "Buttons are also removed from the toolbar");
 	});
 
-	QUnit.test("actions aggregation is destroyed when manifest changes", function (assert) {
+	QUnit.test("actions aggregation is destroyed when manifest changes", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oStub = sinon.spy(Card.prototype, "destroyActionDefinitions");
+		var oStub = sinon.spy(Card.prototype, "destroyActionDefinitions");
 
-		this.oCard.attachEventOnce("_ready", function () {
-			this.oCard.attachEventOnce("_ready", function () {
-				// Assert
-				assert.ok(oStub.calledOnce, "Previous actions are destroyed");
-				done();
-			});
-
-			// Act 2
-			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/tableCard.manifest.json");
-		}.bind(this));
-
-		// Act 1
+		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/tableCard.manifest.json");
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		assert.ok(oStub.calledOnce, "Previous actions are destroyed");
 	});
 
-	QUnit.test("Actions toolbar item initially enabled=false", function (assert) {
+	QUnit.test("Actions toolbar item initially enabled=false", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oAI = new ActionDefinition({
+		var oAI = new ActionDefinition({
 				type: "Navigation",
 				text: "Text",
 				enabled: false
 			});
 
-		this.oCard.attachEvent("_ready", function () {
-			// Act
-			oAI.setVisible(false);
-			Core.applyChanges();
-			var aButtons = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet").getButtons();
-
-			// Assert
-			assert.notOk(aButtons[0].getEnabled(), "Button in the menu is disabled");
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.addActionDefinition(oAI);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		oAI.setVisible(false);
+
+		await nextUIUpdate();
+
+		var aButtons = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet").getButtons();
+
+		// Assert
+		assert.notOk(aButtons[0].getEnabled(), "Button in the menu is disabled");
 	});
 
-	QUnit.test("Actions toolbar item enabled=false set after rendering", function (assert) {
+	QUnit.test("Actions toolbar item enabled=false set after rendering", async function (assert) {
 		// Arrange
 		var done = assert.async(),
 			oAI = new ActionDefinition({
@@ -315,27 +302,27 @@ sap.ui.define([
 				text: "Text"
 			});
 
-		this.oCard.attachEventOnce("_ready", function () {
-			setTimeout(async function () {
-				// Act
-				oAI.setEnabled(false);
-				await nextUIUpdate();
-				var aButtons = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet").getButtons();
-
-				// Assert
-				assert.notOk(aButtons[0].getEnabled(), "Button in the menu is disabled");
-				done();
-			}.bind(this), 500);
-		}.bind(this));
-
 		// Act
 		this.oCard.addActionDefinition(oAI);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		setTimeout(async function () {
+			// Act
+			oAI.setEnabled(false);
+			await nextUIUpdate();
+			var aButtons = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet").getButtons();
+
+			// Assert
+			assert.notOk(aButtons[0].getEnabled(), "Button in the menu is disabled");
+			done();
+		}.bind(this), 500);
 	});
 
-	QUnit.test("Actions toolbar is disabled when some loading placeholder is active", function (assert) {
+	QUnit.test("Actions toolbar is disabled when some loading placeholder is active", async function (assert) {
 		// Arrange
-		var done = assert.async(2);
+		var done = assert.async();
 
 		this.oCard.addActionDefinition(new ActionDefinition({
 			type: "Navigation",
@@ -349,22 +336,20 @@ sap.ui.define([
 			done();
 		}.bind(this));
 
-		this.oCard.attachEvent("_ready", function () {
-			var oToolbar = this.oCard.getCardHeader().getToolbar();
-			assert.ok(oToolbar._getToolbar().getEnabled(), "Toolbar is enabled");
-
-			this.oCard.showLoadingPlaceholders();
-			Core.applyChanges();
-			assert.notOk(oToolbar._getToolbar().getEnabled(), "Toolbar is disabled");
-
-			this.oCard.hideLoadingPlaceholders();
-			Core.applyChanges();
-			assert.ok(oToolbar._getToolbar().getEnabled(), "Toolbar is enabled");
-
-			done();
-		}.bind(this));
-
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oToolbar = this.oCard.getCardHeader().getToolbar();
+		assert.ok(oToolbar._getToolbar().getEnabled(), "Toolbar is enabled");
+
+		this.oCard.showLoadingPlaceholders();
+		await nextUIUpdate();
+		assert.notOk(oToolbar._getToolbar().getEnabled(), "Toolbar is disabled");
+
+		this.oCard.hideLoadingPlaceholders();
+		await nextUIUpdate();
+		assert.ok(oToolbar._getToolbar().getEnabled(), "Toolbar is enabled");
 	});
 
 	QUnit.module("Actions Toolbar in Card with Host ", {
@@ -404,92 +389,86 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Click on actions toolbar", function (assert) {
+	QUnit.test("Click on actions toolbar", async function (assert) {
 		// Arrange
 		var done = assert.async();
 
-		this.oCard.attachEvent("_ready", function () {
-			var oHeader = this.oCard.getCardHeader(),
-				fnHeaderPressStub = sinon.stub(),
-				oToolbar = oHeader.getToolbar();
-
-			oHeader.attachEvent("press", function () {
-				fnHeaderPressStub();
-			});
-
-			oToolbar.addEventDelegate({
-				"onAfterRendering": function () {
-					var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
-					var sTooltipText = oResourceBundle.getText("CARD_ACTIONS_OVERFLOW_BUTTON_TOOLTIP");
-					var oButton = oToolbar.getDomRef("overflowButton");
-
-					oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
-						// Assert
-						assert.ok(oToolbar.getAggregation("_actionSheet").isOpen(), "Action sheet is opened after overflow button is pressed.");
-						assert.ok(fnHeaderPressStub.notCalled, "Header press is not triggered.");
-						assert.strictEqual(oButton.title, sTooltipText, "Overflow button tooltip is correctly set to string: " + sTooltipText);
-						done();
-					});
-
-					// Act
-					QUnitUtils.triggerEvent("tap", oButton);
-					Core.applyChanges();
-				}
-			});
-		}.bind(this));
-
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oHeader = this.oCard.getCardHeader(),
+			fnHeaderPressStub = sinon.stub(),
+			oToolbar = oHeader.getToolbar();
+
+		oHeader.attachEvent("press", function () {
+			fnHeaderPressStub();
+		});
+
+		oToolbar.addEventDelegate({
+			"onAfterRendering": function () {
+				var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
+				var sTooltipText = oResourceBundle.getText("CARD_ACTIONS_OVERFLOW_BUTTON_TOOLTIP");
+				var oButton = oToolbar.getDomRef("overflowButton");
+
+				oToolbar.getAggregation("_actionSheet").attachEvent("afterOpen", function () {
+					// Assert
+					assert.ok(oToolbar.getAggregation("_actionSheet").isOpen(), "Action sheet is opened after overflow button is pressed.");
+					assert.ok(fnHeaderPressStub.notCalled, "Header press is not triggered.");
+					assert.strictEqual(oButton.title, sTooltipText, "Overflow button tooltip is correctly set to string: " + sTooltipText);
+					done();
+				});
+
+				// Act
+				QUnitUtils.triggerEvent("tap", oButton);
+			}
+		});
 	});
 
-	QUnit.test("Remove action item from card by index", function (assert) {
+	QUnit.test("Remove action item from card by index", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oAI = new ActionDefinition({
+		var oAI = new ActionDefinition({
 				text: "Card action item"
 			});
-
-		this.oCard.attachEvent("_ready", function () {
-			var oToolbar = this.oCard.getCardHeader().getToolbar(),
-				oActionSheet = oToolbar.getAggregation("_actionSheet");
-			Core.applyChanges();
-			assert.strictEqual(oActionSheet.getButtons()[0].getText(), "Card action item", "First button in the menu is the one added by the card");
-			assert.strictEqual(oActionSheet.getButtons()[1].getText(), "Host action", "Second button in the menu is the one added by the host");
-
-			// Act
-			this.oCard.removeActionDefinition(0);
-
-			assert.strictEqual(oActionSheet.getButtons()[0].getText(), "Host action", "Action added from the host is still there");
-
-			oAI.destroy();
-			done();
-		}.bind(this));
 
 		// Act
 		this.oCard.addActionDefinition(oAI);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-	});
 
-	QUnit.test("Action definition added by the card later should be placed before the host actions", function (assert) {
-		// Arrange
-		var done = assert.async();
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
 
-		this.oCard.attachEvent("_ready", function () {
-			var oToolbar = this.oCard.getCardHeader().getToolbar(),
-				oActionSheet = oToolbar.getAggregation("_actionSheet");
-			Core.applyChanges();
+		var oToolbar = this.oCard.getCardHeader().getToolbar(),
+			oActionSheet = oToolbar.getAggregation("_actionSheet");
 
-			// Act
-			this.oCard.addActionDefinition(new ActionDefinition({ text: "New card action item" }));
-
-			assert.strictEqual(oActionSheet.getButtons()[0].getText(), "New card action item", "Action added by the card later should be at the top");
-			assert.strictEqual(oActionSheet.getButtons()[1].getText(), "Host action", "Host action should be after the card actions");
-
-			done();
-		}.bind(this));
+		// Assert
+		assert.strictEqual(oActionSheet.getButtons()[0].getText(), "Card action item", "First button in the menu is the one added by the card");
+		assert.strictEqual(oActionSheet.getButtons()[1].getText(), "Host action", "Second button in the menu is the one added by the host");
 
 		// Act
+		this.oCard.removeActionDefinition(0);
+
+		// Assert
+		assert.strictEqual(oActionSheet.getButtons()[0].getText(), "Host action", "Action added from the host is still there");
+
+		oAI.destroy();
+	});
+
+	QUnit.test("Action definition added by the card later should be placed before the host actions", async function (assert) {
+		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oToolbar = this.oCard.getCardHeader().getToolbar(),
+			oActionSheet = oToolbar.getAggregation("_actionSheet");
+
+		// Act
+		this.oCard.addActionDefinition(new ActionDefinition({ text: "New card action item" }));
+
+		assert.strictEqual(oActionSheet.getButtons()[0].getText(), "New card action item", "Action added by the card later should be at the top");
 	});
 
 	QUnit.module("Translation", {
@@ -504,7 +483,27 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Action text is translated", function (assert) {
+	QUnit.test("Action text is translated", async function (assert) {
+		// Arrange
+		var oAI = new ActionDefinition({
+				type: "Navigation",
+				text: "{i18n>translatedText}"
+			});
+
+		// Act
+		this.oCard.addActionDefinition(oAI);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var aButtons = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet").getButtons();
+
+		// Assert
+		assert.strictEqual(aButtons[0].getText(), this.oCard.getTranslatedText("translatedText"), "Button text is translated");
+	});
+
+	QUnit.test("Action text is translated when added later in time", async function (assert) {
 		// Arrange
 		var done = assert.async(),
 			oAI = new ActionDefinition({
@@ -512,45 +511,22 @@ sap.ui.define([
 				text: "{i18n>translatedText}"
 			});
 
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
+		// Act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		setTimeout(async function () {
+			// Act
+			this.oCard.addActionDefinition(oAI);
+			await nextUIUpdate();
 			var aButtons = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet").getButtons();
 
 			// Assert
 			assert.strictEqual(aButtons[0].getText(), this.oCard.getTranslatedText("translatedText"), "Button text is translated");
 
 			done();
-		}.bind(this));
-
-		// Act
-		this.oCard.addActionDefinition(oAI);
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
-	});
-
-	QUnit.test("Action text is translated when added later in time", function (assert) {
-		// Arrange
-		var done = assert.async(),
-			oAI = new ActionDefinition({
-				type: "Navigation",
-				text: "{i18n>translatedText}"
-			});
-
-		this.oCard.attachEvent("_ready", function () {
-			setTimeout(async function () {
-				// Act
-				this.oCard.addActionDefinition(oAI);
-				await nextUIUpdate();
-				var aButtons = this.oCard.getCardHeader().getToolbar().getAggregation("_actionSheet").getButtons();
-
-				// Assert
-				assert.strictEqual(aButtons[0].getText(), this.oCard.getTranslatedText("translatedText"), "Button text is translated");
-
-				done();
-			}.bind(this), 1000);
-		}.bind(this));
-
-		// Act
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		}.bind(this), 1000);
 	});
 
 	QUnit.module("Empty header");
@@ -578,7 +554,7 @@ sap.ui.define([
 		}
 	};
 
-	QUnit.test("Actions toolbar disappears and hides the parent header when it's empty", function (assert) {
+	QUnit.test("Actions toolbar disappears and hides the parent header when it's empty", async function (assert) {
 		// Arrange
 		var done = assert.async(),
 			oCard = new Card({
@@ -594,23 +570,24 @@ sap.ui.define([
 
 		oCard.placeAt(DOM_RENDER_LOCATION);
 
-		oCard.attachEventOnce("_ready", function () {
+		await nextCardReadyEvent(oCard);
+
+		// Assert
+		assert.notOk(oCard.getCardHeader(), "Card header shouldn't be created only to show actions toolbar header");
+		assert.ok(oCard.getDomRef().classList.contains("sapFCardNoHeader"), "The card has correct CSS class");
+
+		// Act
+		oCard.destroyActionDefinitions();
+
+		await nextUIUpdate();
+
+		setTimeout(function () {
 			// Assert
 			assert.notOk(oCard.getCardHeader(), "Card header shouldn't be created only to show actions toolbar header");
-			assert.ok(oCard.getDomRef().classList.contains("sapFCardNoHeader"), "The card has correct CSS class");
+			assert.ok(oCard.getDomRef().classList.contains("sapFCardNoHeader"), "The card still has correct CSS class");
 
-			// Act
-			oCard.destroyActionDefinitions();
-			Core.applyChanges();
-
-			setTimeout(function () {
-				// Assert
-				assert.notOk(oCard.getCardHeader(), "Card header shouldn't be created only to show actions toolbar header");
-				assert.ok(oCard.getDomRef().classList.contains("sapFCardNoHeader"), "The card still has correct CSS class");
-
-				oCard.destroy();
-				done();
-			}, 300);
-		});
+			oCard.destroy();
+			done();
+		}, 300);
 	});
 });

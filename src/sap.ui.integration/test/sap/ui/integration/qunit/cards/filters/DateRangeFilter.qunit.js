@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/m/DynamicDateRange",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
@@ -10,10 +9,10 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	DynamicDateRange,
-	Core,
 	Element,
 	coreLibrary,
 	KeyCodes,
@@ -21,7 +20,8 @@ sap.ui.define([
 	Card,
 	QUnitUtils,
 	UI5Date,
-	nextUIUpdate
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -51,23 +51,7 @@ sap.ui.define([
 		oDRF.destroy();
 	});
 
-	QUnit.test("Card creating 'DateRange' filter", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			// Assert
-			var oFilterBar = this.oCard.getAggregation("_filterBar");
-			assert.strictEqual(oFilterBar._getFilters().length, 1, "The filter bar has 1 filter");
-
-			var oFirstFilter = oFilterBar._getFilters()[0];
-			assert.ok(oFirstFilter.isA(DateRangeFilter.getMetadata().getName()), "The filter type is correct");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Card creating 'DateRange' filter", async function (assert) {
 		// Act
 		this.oCard.setManifest({
 			"sap.app": {
@@ -86,7 +70,7 @@ sap.ui.define([
 				"content": {
 					"data": {
 						"json": [{
-								"Name": "item1"
+							"Name": "item1"
 						}]
 					},
 					"item": {
@@ -95,6 +79,16 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Assert
+		var oFilterBar = this.oCard.getAggregation("_filterBar");
+		assert.strictEqual(oFilterBar._getFilters().length, 1, "The filter bar has 1 filter");
+
+		var oFirstFilter = oFilterBar._getFilters()[0];
+		assert.ok(oFirstFilter.isA(DateRangeFilter.getMetadata().getName()), "The filter type is correct");
 	});
 
 	QUnit.module("DateRangeFilter Value", {
