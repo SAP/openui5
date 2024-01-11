@@ -133,6 +133,8 @@ sap.ui.define([
 			}
 		}
 
+		this._updateToolbarArialLabelledBy();
+
 		//recreate the navigation items
 		this.getViews().forEach((oView) => {
 			this._addToNavigator(oView);
@@ -153,8 +155,18 @@ sap.ui.define([
 		this.getLayout().setShowFooter(sKey !== this.DEFAULT_KEY); //Don't show footer in default view
 		this._getTabBar().setSelectedKey(sKey);
 		this._getNavBackBtn().setVisible(sKey !== this.DEFAULT_KEY);
-		this._getHeaderText().setText((this.getView(sKey) && this.getView(sKey).getText()) || sKey);
-		this._getHeaderText().setVisible(this._getNavBackBtn().getVisible());
+		const oTitle = this._getHeaderText();
+		oTitle.setText(this.getView(sKey)?.getText() || sKey);
+		oTitle.setVisible(this._getNavBackBtn().getVisible());
+		this._updateToolbarArialLabelledBy();
+	};
+
+	Container.prototype._updateToolbarArialLabelledBy = function () {
+		const oTitle = this._getHeaderText();
+		const oBar = this.getHeader();
+		if (oTitle && oBar?.getAriaLabelledBy().indexOf(oTitle.getId()) == -1) {
+			oBar.addAriaLabelledBy(oTitle);
+		}
 	};
 
 	/**
