@@ -1795,8 +1795,7 @@ sap.ui.define([
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li>group ID is '$cached'. The error has a property <code>$cached = true</code>
-	 *     <li>a <code>oGroupLock</code> for group ID "$single" is given and there is already an
-	 *       existing batch queue for this group
+	 *     <li>group ID is '$single' and there is already an existing batch queue for this group
 	 *   </ul>
 	 * @public
 	 */

@@ -257,8 +257,8 @@ sap.ui.define([
 	 *   that is not in the collection and of which you know that it does not exist on the server
 	 *   anymore (for example, a draft after activation). Since 1.108.0 the usage of a group ID with
 	 *   {@link sap.ui.model.odata.v4.SubmitMode.API} is possible. Since 1.121.0, you can use the
-	 *   <code>$single</code> group ID to send a DELETE request as fast as possible; it will be
-	 *   wrapped in a batch request as for a <code>$auto</code> group.
+	 *   '$single' group ID to send a DELETE request as fast as possible; it will be wrapped in a
+	 *   batch request as for a '$auto' group.
 	 * @param {boolean} [bDoNotRequestCount]
 	 *   Whether not to request the new count from the server; useful in case of
 	 *   {@link #replaceWith} where it is known that the count remains unchanged (since 1.97.0).
@@ -285,9 +285,7 @@ sap.ui.define([
 	 *       {@link #isKeepAlive kept alive},
 	 *     <li> the context is already being deleted,
 	 *     <li> the context's binding is a list binding with data aggregation,
-	 *     <li> the restrictions for deleting from a recursive hierarchy (see above) are not met,
-	 *     <li> group ID '$single' is given and there is already another request with the same group
-	 *       ID enqueued.
+	 *     <li> the restrictions for deleting from a recursive hierarchy (see above) are not met.
 	 *   </ul>
 	 *
 	 * @function
