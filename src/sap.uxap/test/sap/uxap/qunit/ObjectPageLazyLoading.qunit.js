@@ -1,13 +1,6 @@
 /*global QUnit, */
-sap.ui.define(["sap/ui/thirdparty/jquery",
-               "sap/ui/core/Core",
-               "sap/ui/model/json/JSONModel",
-			   "sap/m/Button",
-			   "sap/m/Title",
-			   "sap/uxap/ObjectPageDynamicHeaderTitle",
-               "sap/uxap/ObjectPageLayout",
-               "sap/ui/core/mvc/XMLView"],
-function (jQuery, Core, JSONModel, Button, Title, ObjectPageDynamicHeaderTitle, ObjectPageLayout, XMLView) {
+sap.ui.define(["sap/ui/qunit/utils/nextUIUpdate", "sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/ui/model/json/JSONModel", "sap/m/Button", "sap/m/Title", "sap/uxap/ObjectPageDynamicHeaderTitle", "sap/uxap/ObjectPageLayout", "sap/ui/core/mvc/XMLView"],
+function(nextUIUpdate, jQuery, Core, JSONModel, Button, Title, ObjectPageDynamicHeaderTitle, ObjectPageLayout, XMLView) {
 	"use strict";
 
 	// utility function that will be used in these tests
@@ -301,14 +294,14 @@ function (jQuery, Core, JSONModel, Button, Title, ObjectPageDynamicHeaderTitle, 
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("BCP: 1870326083 - _triggerVisibleSubSectionsEvents should force OP to recalculate", function (assert) {
+	QUnit.test("BCP: 1870326083 - _triggerVisibleSubSectionsEvents should force OP to recalculate", async function(assert) {
 		// Arrange
 		var oObjectPageLayout = new ObjectPageLayout({enableLazyLoading: true}),
 			oRequestAdjustLayoutSpy = this.spy(oObjectPageLayout, "_requestAdjustLayout");
 
 		// We have to render the OP as LazyLoading is initiated on onBeforeRendering
 		oObjectPageLayout.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act - call the method
 		oObjectPageLayout._oLazyLoading._triggerVisibleSubSectionsEvents();
@@ -324,7 +317,7 @@ function (jQuery, Core, JSONModel, Button, Title, ObjectPageDynamicHeaderTitle, 
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("Early lazyLoading onAfterRendering", function (assert) {
+	QUnit.test("Early lazyLoading onAfterRendering", async function(assert) {
 
 		var oObjectPage = new ObjectPageLayout({enableLazyLoading: true}),
 			iExpectedLazyLoadingDelay,
@@ -353,10 +346,10 @@ function (jQuery, Core, JSONModel, Button, Title, ObjectPageDynamicHeaderTitle, 
 		}, this);
 
 		oObjectPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("Early lazyLoading onAfterRendering if already scheduled", function (assert) {
+	QUnit.test("Early lazyLoading onAfterRendering if already scheduled", async function(assert) {
 
 		var oObjectPage = new ObjectPageLayout({enableLazyLoading: true}),
 			that = this,
@@ -384,10 +377,10 @@ function (jQuery, Core, JSONModel, Button, Title, ObjectPageDynamicHeaderTitle, 
 		});
 
 		oObjectPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("Early lazyLoading onAfterRendering when hidden", function (assert) {
+	QUnit.test("Early lazyLoading onAfterRendering when hidden", async function(assert) {
 
 		var oObjectPage = new ObjectPageLayout({enableLazyLoading: true}),
 			iExpectedLazyLoadingDelay,
@@ -447,10 +440,10 @@ function (jQuery, Core, JSONModel, Button, Title, ObjectPageDynamicHeaderTitle, 
 		});
 
 		oObjectPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("Sections are lazy loaded when header content is pinned initially", function (assert) {
+	QUnit.test("Sections are lazy loaded when header content is pinned initially", async function(assert) {
 		// Arrange
 		var oObjectPageLayout = new ObjectPageLayout({
 				enableLazyLoading: true,
@@ -483,7 +476,7 @@ function (jQuery, Core, JSONModel, Button, Title, ObjectPageDynamicHeaderTitle, 
 		);
 
 		oObjectPageLayout.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
 
