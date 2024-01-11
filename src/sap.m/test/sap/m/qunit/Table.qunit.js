@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
@@ -35,7 +36,7 @@ sap.ui.define([
 	"sap/m/RatingIndicator",
 	"sap/ui/core/Item",
 	"sap/m/TextArea"
-], function(Localization, Core, Element, Library, qutils, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column, Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea) {
+], function(Localization, Core, Element, Library, qutils, nextUIUpdate, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column, Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea) {
 	"use strict";
 
 	function createSUT(bCreateColumns, bCreateHeader, sMode, bNoDataIllustrated) {
@@ -1132,35 +1133,83 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("ColumnListItem aria-labelledby reference to Accessibility Text", async function(assert) {
+		const sut = createSUT(true, true);
+		var oColumn = sut.getColumns()[1];
+		oColumn.setDemandPopin(true);
+		oColumn.setMinScreenWidth("4444px");
+		sut.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		const oRow = sut.getItems()[0];
+		const oInvisibleText = ListBase.getInvisibleText();
+
+		assert.equal(oRow.getDomRef().getAttribute("aria-labelledby"), null, "aria-labelledby is not set");
+		oRow.$().trigger("focusin");
+		assert.equal(oRow.getDomRef().getAttribute("aria-labelledby"), oInvisibleText.getId(), "reference to invisible text is added on focusin of row");
+		oRow.$().trigger("focusout");
+		assert.equal(oRow.getDomRef().getAttribute("aria-labelledby"), null, "reference to invisible text is removed on focusout of row");
+
+		let oCellDomRef = oRow.getDomRef().querySelector(".sapMListTblCell");
+		jQuery(oCellDomRef).trigger("focusin");
+		assert.equal(oCellDomRef.getAttribute("aria-labelledby"), oInvisibleText.getId(), "reference to invisible text is added on focusin of cell");
+		jQuery(oCellDomRef).trigger("focusout");
+		assert.equal(oCellDomRef.getAttribute("aria-labelledby"), null, "reference to invisible text is removed on focusout of cell");
+
+		oCellDomRef = oRow.getDomRef().nextElementSibling.querySelector(".sapMListTblSubCnt");
+		jQuery(oCellDomRef).trigger("focusin");
+		assert.equal(oCellDomRef.getAttribute("aria-labelledby"), oInvisibleText.getId(), "reference to invisible text is added on focusin of pop-in");
+		jQuery(oCellDomRef).trigger("focusout");
+		assert.equal(oCellDomRef.getAttribute("aria-labelledby"), null, "reference to invisible text is removed on focusout of pop-in");
+
+		sut.destroy();
+	});
+
 	QUnit.test("Accessibility Test for ColumnListItem", function(assert) {
-		var oListItem = new ColumnListItem({
+		const oListItem = new ColumnListItem({
 			type: "Navigation",
 			header: "header",
 			cells: [
 				new Label({required: true, text: "Max"}),
-				new Label({text: "Mustermann"})
+				new Label({text: "Mustermann"}),
+				new CheckBox()
 			]
 		});
-		var oBundle = Library.getResourceBundleFor("sap.m");
-		var oTable = new Table({
+		const oBundle = Library.getResourceBundleFor("sap.m");
+		const oTable = new Table({
 			mode: "MultiSelect",
 			header: "header",
 			columns: [
-				new Column({width: "125px", header: new Label({text: "First Name"})}),
-				new Column({width: "auto", header: new Label({text: "Last Name"})})
+				new Column({width: "15rem", header: new Label({text: "First Name"})}),
+				new Column({width: "15rem", header: new Label({text: "Last Name"})}),
+				new Column({width: "15rem", header: new Label({text: "Available"})})
 			],
 			items: oListItem
 		});
 
-		var sRequired = oBundle.getText("ELEMENT_REQUIRED");
+		const aColumns = oTable.getColumns();
+		const sRequired = oBundle.getText("ELEMENT_REQUIRED");
 
-		assert.strictEqual(oListItem.getContentAnnouncement(), "First Name Max " + sRequired + " . Last Name Mustermann", "Accessibility punctuation test for ColumnListItem");
-		assert.strictEqual(oListItem.getAccessibilityInfo().description, oBundle.getText("LIST_ITEM_NAVIGATION") + " . " + "First Name Max " + sRequired + " . Last Name Mustermann", "Accessibility punctuation test for ColumnListItem");
+		assert.strictEqual(oListItem.getContentAnnouncement(),
+							"First Name Max " + sRequired + " . Last Name Mustermann . Available Checkbox Not Checked",
+							"Content announcement for ColumnListItem");
+		assert.strictEqual(oListItem.getAccessibilityInfo().description,
+							oBundle.getText("LIST_ITEM_NAVIGATION") + " . " + "First Name Max " + sRequired + " . Last Name Mustermann . Available Checkbox Not Checked",
+							"Announcement of required state");
 
-		oTable.getColumns()[0].setOrder(1);
-		oTable.getColumns()[1].setOrder(0);
-		assert.strictEqual(oListItem.getContentAnnouncement(), "Last Name Mustermann . First Name Max " + sRequired, "Accessibility order is updated");
+		aColumns[0].setOrder(1);
+		aColumns[1].setOrder(0);
+		assert.strictEqual(oListItem.getContentAnnouncement(),
+							"Last Name Mustermann . First Name Max " + sRequired + " . Available Checkbox Not Checked",
+							"Accessibility order is updated");
 
+		assert.strictEqual(oListItem.getContentAnnouncementOfCell(aColumns[0]), "Max Required");
+		assert.strictEqual(oListItem.getContentAnnouncementOfCell(aColumns[1]), "Mustermann");
+		assert.strictEqual(oListItem.getContentAnnouncementOfCell(aColumns[2]), "Checkbox Not Checked");
+
+		const oVisiblePopinStub = sinon.stub(oTable, "_getVisiblePopin").returns([aColumns[1], aColumns[2]]);
+		assert.strictEqual(oListItem.getContentAnnouncementOfPopin(), "Last Name Mustermann . Available Checkbox Not Checked");
+		oVisiblePopinStub.reset();
 		oTable.destroy();
 	});
 
