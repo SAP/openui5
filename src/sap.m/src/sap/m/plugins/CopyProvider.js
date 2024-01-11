@@ -260,7 +260,8 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 	 */
 	CopyProvider.prototype.getCopyButton = function(mSettings) {
 		if (!this._oCopyButton) {
-			const sText = coreLib.getResourceBundleFor("sap.m").getText("COPYPROVIDER_COPY");
+			const oBundle = coreLib.getResourceBundleFor("sap.m");
+			const sText = oBundle.getText("COPYPROVIDER_COPY");
 			this._oCopyButton = new OverflowToolbarButton({
 				icon: "sap-icon://copy",
 				enabled: this._getEffectiveEnabled(),
@@ -269,6 +270,11 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 				tooltip: sText,
 				press: this.copySelectionData.bind(this, true),
 				...mSettings
+			});
+			sap.ui.require(["sap/ui/core/ShortcutHintsMixin"], (ShortcutHintsMixin) => {
+				ShortcutHintsMixin.addConfig(this._oCopyButton, {
+					message: oBundle.getText(Device.os.macintosh ? "COPYPROVIDER_SHORTCUT_MAC" : "COPYPROVIDER_SHORTCUT_WIN")
+				}, this.getParent());
 			});
 		}
 		return this._oCopyButton;
