@@ -153,9 +153,37 @@ sap.ui.define([
 					appointments: { type: "sap.ui.unified.CalendarAppointment", multiple: true, singularName: "appointment", dnd: { draggable: true }},
 
 					/**
-					 * The special days in the header visualized as a date range with type.
+					 * Special days in the header visualized as a date range with type.
 					 *
-					 * <b>Note:</b> If one day is assigned to more than one type, only the first type is used.
+					 * <b>Note:</b> In case there are multiple <code>sap.ui.unified.DateTypeRange</code> instances given for a single date,
+					 * only the first <code>sap.ui.unified.DateTypeRange</code> instance will be used.
+					 * For example, using the following sample, the 1st of November will be displayed as a working day of type "Type10":
+					 *
+					 *
+					 *	<pre>
+					 *	new DateTypeRange({
+					 *		startDate: UI5Date.getInstance(2023, 10, 1),
+					 *		type: CalendarDayType.Type10,
+					 *	}),
+					 *	new DateTypeRange({
+					 *		startDate: UI5Date.getInstance(2023, 10, 1),
+					 *		type: CalendarDayType.NonWorking
+					 *	})
+					 *	</pre>
+					 *
+					 * If you want the first of November to be displayed as a non-working day and also as "Type10," the following should be done:
+					 *	<pre>
+					 *	new DateTypeRange({
+					 *		startDate: UI5Date.getInstance(2023, 10, 1),
+					 *		type: CalendarDayType.Type10,
+					 *		secondaryType: CalendarDayType.NonWorking
+					 *	})
+					 *	</pre>
+					 *
+					 * You can use only one of the following types for a given date: <code>sap.ui.unified.CalendarDayType.NonWorking</code>,
+					 * <code>sap.ui.unified.CalendarDayType.Working</code> or <code>sap.ui.unified.CalendarDayType.None</code>.
+					 * Assigning more than one of these values in combination for the same date will lead to unpredictable results.
+					 *
 					 */
 					specialDates: { type: "sap.ui.unified.DateTypeRange", multiple: true, singularName: "specialDate" },
 
