@@ -122,6 +122,7 @@ sap.ui.define([
 		  "sap.m.IBarHTMLTag",
 		  "sap.m.IconTabDensityMode",
 		  "sap.m.IconTabFilterDesign",
+		  "sap.m.IconTabFilterInteractionMode",
 		  "sap.m.IconTabHeaderMode",
 		  "sap.m.IllustratedMessageSize",
 		  "sap.m.IllustratedMessageType",
@@ -2402,6 +2403,36 @@ sap.ui.define([
 		 Vertical : "Vertical"
 
 	 };
+
+	 /**
+	  * Available Interaction Modes.
+	  *
+	  * @enum {string}
+	  * @public
+	  * @experimental Since 1.121. Behavior might change.
+	  */
+	 thisLib.IconTabFilterInteractionMode = {
+
+		 /**
+		  * The item is selectable if it has own content. Select event will not be fired if it has no own content.
+		  * Note: When IconTabHeader is placed in ToolHeader the items will act as selectable items even if they don’t explicitly have content.
+		  * @public
+		  */
+		 Auto : "Auto",
+
+		 /**
+		  * The item is selectable and select event will be fired.
+		  * @public
+		  */
+		 Select : "Select",
+
+		 /**
+		  * The item is selectable (and select event is fired) only if it doesn't have any sub items. Select event will not be fired if it has sub items.
+		  * @public
+		  */
+		 SelectLeavesOnly : "SelectLeavesOnly"
+	 };
+
 
 	 /**
 	 * Determines how the source image is used on the output DOM element.

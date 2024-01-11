@@ -483,7 +483,7 @@ sap.ui.define([
 			_getEffectiveObjectName : function (sName) {
 				var sPath = this._oOptions.path;
 
-				if (sPath) {
+				if (sPath && sName && !sName.startsWith("module:")) {
 					sName = sPath + "." + sName;
 				}
 

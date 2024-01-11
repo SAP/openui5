@@ -50,6 +50,13 @@ describe("sap.m.IconTabBarGeneric3", function() {
 			});
 		});
 
+		it("should see 'interactionMode' testing", function() {
+			var itb1a = element(by.id("itb1b2"));
+			browser.executeScript("document.getElementById('itb1b2').scrollIntoView()").then(function() {
+				expect(takeScreenshot(itb1a)).toLookAs(sType + "_5_1_interactionMode_property");
+			});
+		});
+
 		// focus
 		it("should focus the first filter icon when I simulate click on it", function() {
 			element(by.id("itf1a")).click();

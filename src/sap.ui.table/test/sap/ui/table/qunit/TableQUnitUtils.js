@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/table/RowActionItem",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/plugins/PluginBase",
+	"sap/ui/table/plugins/SelectionPlugin",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Control",
@@ -28,6 +29,7 @@ sap.ui.define([
 	RowActionItem,
 	FixedRowMode,
 	PluginBase,
+	SelectionPlugin,
 	TableUtils,
 	JSONModel,
 	Control,
@@ -49,6 +51,34 @@ sap.ui.define([
 	var iTouchPositionX;
 	var iTouchPositionY;
 	var oTouchTargetElement;
+
+	var TestSelectionPlugin = SelectionPlugin.extend("sap.ui.table.test.TestSelectionPlugin", {
+		init: function() {
+			this.aSelectedRows = [];
+		},
+
+		setSelected: function(oRow, bSelected, mConfig) {
+			var iIndex;
+			if (bSelected) {
+				iIndex = this.aSelectedRows.indexOf(oRow.getIndex());
+				if (iIndex === -1) {
+					this.aSelectedRows.push(oRow.getIndex());
+				}
+			} else {
+				iIndex = this.aSelectedRows.indexOf(oRow.getIndex());
+				this.aSelectedRows.splice(iIndex, 1);
+			}
+		},
+
+		isSelected: function(oRow) {
+			return this.aSelectedRows.indexOf(oRow.getIndex()) > -1;
+		},
+
+		clearSelection: function() {
+			this.aSelectedRows = [];
+		}
+
+	});
 
 	var TestControl = Control.extend("sap.ui.table.test.TestControl", {
 		metadata: {
@@ -890,6 +920,7 @@ sap.ui.define([
 		};
 	}
 
+	TableQUnitUtils.TestSelectionPlugin = TestSelectionPlugin;
 	TableQUnitUtils.TestControl = TestControl;
 	TableQUnitUtils.TestInputControl = TestInputControl;
 	TableQUnitUtils.HeightTestControl = HeightTestControl;

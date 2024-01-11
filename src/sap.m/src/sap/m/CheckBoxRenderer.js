@@ -31,6 +31,7 @@ CheckBoxRenderer.render = function(oRm, oCheckBox){
 		bEnabled = oCheckBox.getEnabled(),
 		bDisplayOnly = oCheckBox.getDisplayOnly(),
 		bEditable = oCheckBox.getEditable(),
+		bRequired = oCheckBox.getRequired(),
 		bInteractive = bEnabled && !bDisplayOnly,
 		bDisplayOnlyApplied = bEnabled && bDisplayOnly,
 		oCbLabel = oCheckBox.getAggregation("_label"),
@@ -97,6 +98,7 @@ CheckBoxRenderer.render = function(oRm, oCheckBox){
 	oRm.accessibilityState(oCheckBox, {
 		role: "checkbox",
 		selected: null,
+		required: oCheckBox._isRequired() || undefined,
 		checked: oCheckBox._getAriaChecked(),
 		describedby: sTooltip && bEditableAndEnabled ? sId + "-Descr" : undefined,
 		labelledby: { value: oCbLabel ? oCbLabel.getId() : undefined, append: true }
@@ -155,6 +157,11 @@ CheckBoxRenderer.render = function(oRm, oCheckBox){
 
 	oRm.voidEnd();
 	oRm.close("div");
+
+	if (oCbLabel) {
+		oCbLabel.setRequired(bRequired);
+	}
+
 	oRm.renderControl(oCbLabel);
 
 	if (sTooltip && ControlBehavior.isAccessibilityEnabled() && bEditableAndEnabled) {

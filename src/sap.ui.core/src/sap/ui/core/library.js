@@ -89,6 +89,7 @@ sap.ui.define([
 		 interfaces: [
 			 "sap.ui.core.IShrinkable",
 			 "sap.ui.core.Label",
+			 "sap.ui.core.ILabelable",
 			 "sap.ui.core.PopupInterface",
 			 "sap.ui.core.Toolbar",
 			 "sap.ui.core.IContextMenu",
@@ -1230,6 +1231,27 @@ sap.ui.define([
 	  * @name sap.ui.core.Label
 	  * @interface
 	  * @public
+	  */
+
+	 /**
+	  * Defines a control, which can specify if it can be bound to a label
+	  *
+	  * @since 1.121.0
+	  * @name sap.ui.core.ILabelable
+	  * @interface
+	  * @private
+	  * @ui5-restricted sap.ui.mdc
+	  */
+
+	 /**
+	  * Returns if the control can be bound to a label
+	  *
+	  * @returns {boolean} <code>true</code> if the control can be bound to a label
+	  * @private
+	  * @ui5-restricted sap.ui.mdc
+	  * @function
+	  * @since 1.121.0
+	  * @name sap.ui.core.ILabelable.hasLabelableHTMLElement
 	  */
 
 	 /**

@@ -19,7 +19,7 @@ sap.ui.define([
 						regExp : /^DELETE \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)$/,
 						response : {buildResponse : buildDeleteResponse, code : 204}
 					}, {
-						regExp : /^GET [\w\/.]+\$metadata[\w?&\-=]+sap-language=..$/,
+						regExp : /^GET [\w\/.]+\$metadata([\w?&\-=]+sap-language=..|)$/,
 						response : {source : "metadata.xml"}
 					}, {
 						regExp : /^GET \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\?(.*)$/,

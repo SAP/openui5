@@ -2302,9 +2302,14 @@ sap.ui.define([
 				name: "typed",
 				pattern: "typedView",
 				target: "typedView"
-			}], {async: true}, null, {
+			}], {
+				async: true,
+				/* simulate a typical usage that 'viewType' and 'path' are set */
+				viewType: "XML",
+				path: "abc",
+				type: "View"
+			}, null, {
 				typedView: {
-					type: "View",
 					name: "module:test/routing/target/TypedView",
 					id: "myView",
 					controlId: this.oShell.getId(),

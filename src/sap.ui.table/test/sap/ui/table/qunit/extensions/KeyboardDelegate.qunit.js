@@ -6,14 +6,14 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/extensions/KeyboardDelegate",
-	"sap/ui/Device",
-	"sap/ui/events/F6Navigation",
 	"sap/ui/table/library",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/CreationRow",
 	"sap/ui/table/rowmodes/Type",
 	"sap/ui/table/rowmodes/Fixed",
+	"sap/ui/Device",
+	"sap/ui/events/F6Navigation",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Element",
@@ -28,14 +28,14 @@ sap.ui.define([
 	nextUIUpdate,
 	TableUtils,
 	KeyboardDelegate,
-	Device,
-	F6Navigation,
 	library,
 	Table,
 	Column,
 	CreationRow,
 	RowModeType,
 	FixedRowMode,
+	Device,
+	F6Navigation,
 	KeyCodes,
 	JSONModel,
 	Element,
@@ -5379,6 +5379,160 @@ sap.ui.define([
 			checkFocus(getCell(1, 0, false, null, oTreeTable), assert);
 			assert.ok(!oTreeTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 		});
+	});
+
+	QUnit.module("Selection plugin", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				rowMode: new FixedRowMode({
+					rowCount: 5
+				}),
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModel(8),
+				columns: [
+					TableQUnitUtils.createTextColumn(),
+					TableQUnitUtils.createTextColumn()
+				],
+				dependents: [new TableQUnitUtils.TestSelectionPlugin()]
+			});
+
+			return this.oTable.qunit.whenRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Single Selection - SPACE and ENTER", function(assert) {
+		var oTable = this.oTable;
+		var oSelectionPlugin = oTable.getDependents()[0];
+		var oSpyIsSelected = this.spy(oSelectionPlugin, "isSelected");
+		var oSpySetSelected = this.spy(oSelectionPlugin, "setSelected");
+
+		function testSelection(oRow, oTarget, sKey) {
+			qutils.triggerKeydown(oTarget, sKey, false, false, false);
+			qutils.triggerKeyup(oTarget, sKey, false, false, false);
+			assert.ok(oSpyIsSelected.calledOnceWithExactly(oRow), "isSelected is called once with the correct parameter");
+			assert.ok(oSpySetSelected.calledOnceWithExactly(oRow, !oSpyIsSelected.returnValues[0]),
+					"setSelected is called once with the correct parameters");
+			oSpyIsSelected.resetHistory();
+			oSpySetSelected.resetHistory();
+		}
+
+		// default selectionBehavior is RowSelection
+		testSelection(oTable.getRows()[0], oTable.qunit.getRowHeaderCell(0), Key.ENTER);
+		testSelection(oTable.getRows()[0], oTable.qunit.getRowHeaderCell(0), Key.ENTER);
+		testSelection(oTable.getRows()[1], oTable.qunit.getRowHeaderCell(1), Key.SPACE);
+
+		oTable.setSelectionBehavior("Row");
+		testSelection(oTable.getRows()[1], oTable.qunit.getDataCell(1, 0), Key.SPACE);
+		testSelection(oTable.getRows()[2], oTable.qunit.getRowHeaderCell(2), Key.SPACE);
+
+		oTable.setSelectionBehavior("RowOnly");
+		testSelection(oTable.getRows()[2], oTable.qunit.getDataCell(2, 1), Key.SPACE);
+		testSelection(oTable.getRows()[3], oTable.qunit.getDataCell(3, 1), Key.SPACE);
+
+		oSpyIsSelected.restore();
+		oSpySetSelected.restore();
+	});
+
+	QUnit.test("Range Selection", function(assert) {
+		var oTable = this.oTable, bSelected;
+		var oSelectionPlugin = oTable.getDependents()[0];
+		var oSpySetSelected = this.spy(oSelectionPlugin, "setSelected");
+		var oSpyTableScroll = this.spy();
+		oTable.attachEvent("firstVisibleRowChanged", oSpyTableScroll);
+
+		function testRangeSelection(oRow, oTarget, sKey, bShouldScroll) {
+			return new Promise(function(resolve) {
+				bSelected = oSelectionPlugin.isSelected(oRow);
+				oTarget.focus();
+				qutils.triggerKeydown(oTarget, Key.SHIFT, false, false, false);
+				qutils.triggerKeydown(oTarget, sKey, true, false, false);
+				qutils.triggerKeyup(oTarget, sKey, true, false, false);
+
+				if (bShouldScroll) {
+					oTable.qunit.whenVSbScrolled().then(function() {
+						assert.ok(oSpyTableScroll.calledOnce, "table is scrolled");
+						assert.ok(oSpyTableScroll.calledBefore(oSpySetSelected), "setSelected is called after scrolling");
+						assert.ok(oSpySetSelected.calledOnceWithExactly(oRow, bSelected),
+							"setSelected is called once with the correct parameters");
+						qutils.triggerKeyup(oTarget, Key.SHIFT, false, false, false);
+						oSpyTableScroll.resetHistory();
+						oSpySetSelected.resetHistory();
+						resolve();
+					});
+				} else {
+					assert.ok(oSpySetSelected.calledOnceWithExactly(oRow, !bSelected),
+						"setSelected is called once with the correct parameters");
+					qutils.triggerKeyup(oTarget, Key.SHIFT, false, false, false);
+					oSpySetSelected.resetHistory();
+					resolve();
+				}
+			});
+		}
+
+		qutils.triggerKeydown(oTable.qunit.getRowHeaderCell(3), Key.ENTER, false, false, false);
+		qutils.triggerKeyup(oTable.qunit.getRowHeaderCell(3), Key.ENTER, false, false, false);
+		assert.ok(oSpySetSelected.calledOnceWithExactly(oTable.getRows()[3], true),
+				"setSelected is called once with the correct parameters");
+		oSpySetSelected.resetHistory();
+
+		// default selectionBehavior is RowSelector
+		testRangeSelection(oTable.getRows()[4], oTable.qunit.getRowHeaderCell(3), Key.Arrow.DOWN);
+		return testRangeSelection(oTable.getRows()[4], oTable.qunit.getRowHeaderCell(4), Key.Arrow.DOWN, true).then(function() {
+			testRangeSelection(oTable.getRows()[1], oTable.qunit.getRowHeaderCell(2), Key.Arrow.UP);
+			testRangeSelection(oTable.getRows()[0], oTable.qunit.getRowHeaderCell(1), Key.Arrow.UP);
+			return testRangeSelection(oTable.getRows()[0], oTable.qunit.getRowHeaderCell(0), Key.Arrow.UP, true);
+		}).then(function() {
+			qutils.triggerKeydown(oTable.qunit.getRowHeaderCell(3), Key.ENTER, false, false, false);
+			assert.ok(oSpySetSelected.calledOnceWithExactly(oTable.getRows()[3], false),
+				"setSelected is called once with the correct parameters");
+			oSpySetSelected.resetHistory();
+
+			oTable.setSelectionBehavior("Row");
+			testRangeSelection(oTable.getRows()[4], oTable.qunit.getDataCell(3, 1), Key.Arrow.DOWN);
+			return testRangeSelection(oTable.getRows()[4], oTable.qunit.getDataCell(4, 1), Key.Arrow.DOWN, true);
+		}).then(function() {
+			testRangeSelection(oTable.getRows()[1], oTable.qunit.getDataCell(2, 1), Key.Arrow.UP);
+			testRangeSelection(oTable.getRows()[0], oTable.qunit.getDataCell(1, 1), Key.Arrow.UP);
+			return testRangeSelection(oTable.getRows()[0], oTable.qunit.getRowHeaderCell(0, 1), Key.Arrow.UP, true);
+		}).then(function() {
+			qutils.triggerKeydown(oTable.qunit.getRowHeaderCell(3), Key.ENTER, false, false, false);
+			assert.ok(oSpySetSelected.calledOnceWithExactly(oTable.getRows()[3], true),
+				"setSelected is called once with the correct parameters");
+			oSpySetSelected.resetHistory();
+
+			oTable.setSelectionBehavior("RowOnly");
+			testRangeSelection(oTable.getRows()[4], oTable.qunit.getDataCell(3, 0), Key.Arrow.DOWN);
+			return testRangeSelection(oTable.getRows()[4], oTable.qunit.getDataCell(4, 0), Key.Arrow.DOWN, true);
+		}).then(function() {
+			testRangeSelection(oTable.getRows()[1], oTable.qunit.getDataCell(2, 0), Key.Arrow.UP);
+			testRangeSelection(oTable.getRows()[0], oTable.qunit.getDataCell(1, 0), Key.Arrow.UP);
+			return testRangeSelection(oTable.getRows()[0], oTable.qunit.getDataCell(0, 0), Key.Arrow.UP, true);
+		}).then(function() {
+			oSpySetSelected.restore();
+		});
+	});
+
+	QUnit.test("SelectAll/DeselectAll", function(assert) {
+		var oTable = this.oTable;
+		var oSelectionPlugin = oTable._getSelectionPlugin();
+		var oSpyHeaderSelectorPress = this.spy(oSelectionPlugin, "onHeaderSelectorPress");
+		var oSpyKeyboardShortcut = this.spy(oSelectionPlugin, "onKeyboardShortcut");
+
+		qutils.triggerKeyup(oTable.qunit.getSelectAllCell(), Key.SPACE, false, false, false);
+		assert.ok(oSpyHeaderSelectorPress.calledOnce, "onHeaderSelectorPress is called once");
+
+		var oElem = oTable.qunit.getDataCell(0, 0);
+		var oEvent;
+		oElem.focus();
+		oTable.addDelegate({onkeydown: function(e) { oEvent = e; }});
+		qutils.triggerKeydown(oElem, Key.A, false, false, true);
+		assert.ok(oSpyKeyboardShortcut.calledOnceWith("toggle", oEvent), "onKeyboardShortcut is called once with the correct parameters");
+
+		oSpyHeaderSelectorPress.restore();
+		oSpyKeyboardShortcut.restore();
 	});
 
 	QUnit.module("Interaction > Ctrl+A (Select/Deselect All)", {

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>CheckBox - Required</title>
+
+		<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap">
+		</script>
+
+		<style>
+			.formContainer:not(:last-child) {
+				margin-bottom: 1rem;
+			}
+		</style>
+
+		<script id="SampleView" type="text/xmldata">
+			<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form" controllerName="SampleController" displayBlock="true" height="100%">
+				<App>
+					<Page class="sapUiResponsiveContentPadding" title="sap.m.CheckBox with required=&quot;true&quot;" titleAlignment="Center">
+						<form:SimpleForm title="CheckBox with Label" class="formContainer">
+							<form:content>
+								<VBox>
+									<Label labelFor="cb_1" text="Do you accept the terms and conditions?" required="true" />
+									<CheckBox id="cb_1" selected="{/selected_cb_1}" text="I accept" />
+									<Button id="btn_1" text="Submit" press=".onSubmit('cb_1')" type="Emphasized" />
+								</VBox>
+							</form:content>
+						</form:SimpleForm>
+
+						<form:SimpleForm title="CheckBox without Label" class="formContainer">
+							<form:content>
+								<VBox>
+									<CheckBox id="cb_2" text="I accept the terms and conditions." selected="{/selected_cb_2}" required="true" />
+									<Button id="btn_2" text="Submit" press=".onSubmit('cb_2')" type="Emphasized" />
+								</VBox>
+							</form:content>
+						</form:SimpleForm>
+					</Page>
+				</App>
+			</mvc:View>
+		</script>
+
+		<script>
+			sap.ui.require(["sap/ui/core/mvc/Controller", "sap/ui/core/mvc/XMLView", "sap/ui/model/json/JSONModel", "sap/m/MessageToast"],
+				function (Controller, XMLView, JSONModel, MessageToast) {
+					Controller.extend("SampleController", {
+						onInit: function () {
+							var model = new JSONModel();
+							model.setData({
+								selected_cb_1: false,
+								selected_cb_2: false
+							});
+							this.getView().setModel(model);
+						},
+
+						onSubmit: function (sCheckBoxId) {
+							var bSelected = this.getView().getModel().getProperty("/selected_" + sCheckBoxId);
+							if (!bSelected) {
+								MessageToast.show("Please accept the terms and conditions.");
+							} else {
+								MessageToast.show("Form submitted!");
+							}
+						}
+					});
+
+					XMLView.create({definition: jQuery('#SampleView').html()}).then(function (oView) {
+						oView.placeAt("content");
+					});
+				});
+		</script>
+
+	</head>
+	<body id="content" class="sapUiBody">
+	</body>
+</html>

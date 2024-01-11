@@ -136,10 +136,13 @@ sap.ui.define([
 				case "View":
 					oCreateOptions = {
 						name: sName,
-						type: oOptions.viewType,
 						id: oOptions.id,
 						async: true
 					};
+
+					if (!sName.startsWith("module:")) {
+						oCreateOptions.type = oOptions.viewType;
+					}
 					break;
 				case "Component":
 					oOptions.id = oOptions.id || ManagedObjectMetadata.uid("uicomponent");

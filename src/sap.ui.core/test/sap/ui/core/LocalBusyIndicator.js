@@ -213,7 +213,16 @@ sap.ui.define([
 	 */
 	 var oToggleAllBlockedButton = new Button({
 		text: "Toggle All - Blocked",
-		press: function () {}
+		press: function () {
+			oMyListBox.setBlocked(!oMyListBox.getBlocked());
+			oMyTable.setBlocked(!oMyTable.getBlocked());
+			oIcon.setBlocked(!oIcon.getBlocked());
+			oMButton.setBlocked(!oMButton.getBlocked());
+			oInput.setBlocked(!oInput.getBlocked());
+			oPanel.setBlocked(!oPanel.getBlocked());
+			oPanel2.setBlocked(!oPanel2.getBlocked(), "header");
+			oSC.setBlocked(!oSC.getBlocked());
+		}
 	});
 	oToggleAllBlockedButton.placeAt("toggleAll");
 

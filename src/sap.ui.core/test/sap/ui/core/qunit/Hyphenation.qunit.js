@@ -468,4 +468,26 @@ var sSingleLangTest = "de",
 		});
 	});
 
+	QUnit.module("Language Code Extraction", {
+		before: function () {
+			this.oHyphenation = Hyphenation.getInstance();
+			this.oLogSpy = sinon.spy(Log, "info");
+		},
+		after: function () {
+			this.oLogSpy.restore();
+		}
+	});
+
+	QUnit.test("Language code extraction from pattern name", function(assert) {
+		var aTestLangCodes = ["cnr-ME", "sma-SE", "fa-IR"];
+		var aExpectedLangCodes = ["cnr", "sma", "fa"];
+
+		aTestLangCodes.forEach(function(sLangCode, i) {
+			this.oHyphenation.isLanguageSupported(sLangCode);
+			assert.ok(this.oLogSpy.calledWithMatch("[UI5 Hyphenation] Language '" + aExpectedLangCodes[i] + "'"),
+				"Language code '" + aExpectedLangCodes[i] + "' is correctly extracted in the logs for '" + sLangCode + "'");
+			this.oLogSpy.resetHistory();
+		}, this);
+	});
+
 });

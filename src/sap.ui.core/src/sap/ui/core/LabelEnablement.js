@@ -127,6 +127,10 @@ function isLabelableControl(oControl) {
 		return true;
 	}
 
+	if (oControl.isA("sap.ui.core.ILabelable")) {
+		return oControl.hasLabelableHTMLElement();
+	}
+
 	var sName = oControl.getMetadata().getName();
 	return NON_LABELABLE_CONTROLS.indexOf(sName) < 0;
 }
@@ -307,7 +311,10 @@ LabelEnablement.enrich = function(oControl) {
 
 		Element = Element ? Element : sap.ui.require("sap/ui/core/Element");
 
-		if (oControl && oControl.getIdForLabel && oControl.getIdForLabel()) {
+		if (oControl &&
+			!oControl.isA("sap.ui.core.ILabelable") &&
+			oControl.getIdForLabel
+			&& oControl.getIdForLabel()) {
 			oLabelForControl = Element.getElementById(oControl.getIdForLabel());
 			if (oLabelForControl) {
 				oControl = oLabelForControl;
