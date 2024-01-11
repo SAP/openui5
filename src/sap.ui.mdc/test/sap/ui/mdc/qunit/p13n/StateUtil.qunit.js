@@ -1139,22 +1139,19 @@ sap.ui.define([
                 name: "CategoryName",
                 dataType: "String",
                 label: "Category",
-                groupable: true,
-                kind: "Groupable"
+                groupable: true
             },
             {
                 name: "SalesNumber",
                 path: "SalesNumber",
                 dataType: "Edm.Int32",
                 aggregatable: true,
-                label: "Sales Number",
-                kind: "Aggregatable"
+                label: "Sales Number"
             }, {
                 name: "agSalesAmount",
                 path: "SalesAmount",
                 dataType: "String",
                 label: "Sales Amount",
-                kind: "Aggregatable",
                 aggregatable: true
                 //defaultAggregation: "sum",
                 //supportedAggregations: ["sum", "min", "max", "average"]
@@ -1163,26 +1160,22 @@ sap.ui.define([
                 path: "Name",
                 dataType: "String",
                 label: "Name",
-                groupable: true,
-                kind: "Groupable"
+                groupable: true
             }, {
                 name: "Industry",
                 dataType: "String",
                 label: "Industry",
-                groupable: true,
-                kind: "Groupable"
+                groupable: true
             }, {
                 name: "Country",
                 dataType: "String",
                 label: "Country",
-                groupable: true,
-                kind: "Groupable"
+                groupable: true
             }, {
                 name: "SomePropertyName",
                 dataType: "String",
                 label: "SomeProperty",
-                groupable: true,
-                kind: "Groupable"
+                groupable: true
             }
         ];
 

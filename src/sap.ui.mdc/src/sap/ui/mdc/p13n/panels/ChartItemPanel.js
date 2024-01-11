@@ -28,8 +28,9 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/mdc/enums/ChartItemRoleType",
-	"sap/ui/core/InvisibleMessage"
-], (BasePanel, Label, ColumnListItem, Select, Text, Item, Button, Column, Table, Library, Element, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, coreLibrary, KeyCode, ChartItemRoleType, InvisibleMessage) => {
+	"sap/ui/core/InvisibleMessage",
+	"sap/ui/mdc/chart/Util"
+], (BasePanel, Label, ColumnListItem, Select, Text, Item, Button, Column, Table, Library, Element, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, coreLibrary, KeyCode, ChartItemRoleType, InvisibleMessage, Util) => {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -732,13 +733,13 @@ sap.ui.define([
 
 		this.getP13nData().forEach((oItem, iIndex) => {
 			if (!oItem.availableRoles) {
-				oItem.availableRoles = this._getChartItemTextByKey(oItem.kind);
+				oItem.availableRoles = Util.getLayoutOptionsForType(oItem.kind);
 			}
 
 			if (this.getPanelConfig() && this.getPanelConfig().allowedLayoutOptions) {
 				const aAllowedRoles = this.getPanelConfig().allowedLayoutOptions;
 
-				if (aAllowedRoles && aAllowedRoles.length >= 1) {
+				if (aAllowedRoles?.length >= 1) {
 					oItem.availableRoles = oItem.availableRoles.filter((it) => { return aAllowedRoles.indexOf(it.key) != -1; });
 
 					//Reset if an invalid role is selected
@@ -1221,33 +1222,6 @@ sap.ui.define([
 		}
 
 		return BasePanel.prototype._getMoveBottomButton.apply(this, arguments);
-	};
-
-	ChartItemPanel.prototype._getChartItemTextByKey = function(sKey) {
-		const MDCRb = Library.getResourceBundleFor("sap.ui.mdc");
-		const oAvailableRoles = {
-			Dimension: [{
-				key: ChartItemRoleType.category,
-				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY')
-			}, {
-				key: ChartItemRoleType.category2,
-				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY2')
-			}, {
-				key: ChartItemRoleType.series,
-				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_SERIES')
-			}],
-			Measure: [{
-				key: ChartItemRoleType.axis1,
-				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS1')
-			}, {
-				key: ChartItemRoleType.axis2,
-				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS2')
-			}, {
-				key: ChartItemRoleType.axis3,
-				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS3')
-			}]
-		};
-		return oAvailableRoles[sKey];
 	};
 
 	ChartItemPanel.prototype._getResourceTextMDC = function(sText, aValue) {
