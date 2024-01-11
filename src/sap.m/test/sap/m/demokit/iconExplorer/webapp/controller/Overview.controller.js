@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/m/Label",
 	"sap/m/MessageToast",
-	"sap/m/ToggleButton",
+	"sap/m/Token",
 	"sap/ui/Device",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
@@ -18,7 +18,7 @@ sap.ui.define([
 ], function(
 	Label,
 	MessageToast,
-	ToggleButton,
+	Token,
 	Device,
 	Core,
 	Element,
@@ -54,7 +54,7 @@ sap.ui.define([
 				oTagModel,
 				sThemeKey = ThemePicker._oConfigUtil.getCookieValue("appearance") || "light";
 
-			this._oPreviousQueryContext = {};
+				this._oPreviousQueryContext = {};
 			this._oCurrentQueryContext = null;
 
 			// model used to manipulate control states
@@ -82,9 +82,7 @@ sap.ui.define([
 				fontName: "",
 				iconPath : "",
 				busy : true,
-				getSomeResultsVisible: false,
-				noResultsVisible: false,
-				contentVisible: false
+				iconsFound: true
 			});
 			this.setModel(oViewModel, "view");
 
@@ -194,15 +192,7 @@ sap.ui.define([
 			// show total count of items
 			this.getModel("view").setProperty("/iconFilterCount", iFilteredIcons, null, true);
 			this.getModel("view").setProperty("/allIconsCount", iAllIcons, null, true);
-
-			if (this._oCurrentQueryContext.tab !== "favorites") {
-				this.getModel("view").setProperty("/getSomeResultsVisible", iFilteredIcons === iAllIcons, null, true);
-				this.getModel("view").setProperty("/contentVisible", iFilteredIcons > 0 && iFilteredIcons !== iAllIcons, null, true);
-			} else {
-				this.getModel("view").setProperty("/getSomeResultsVisible", false, null, true);
-				this.getModel("view").setProperty("/contentVisible", iFilteredIcons > 0, null, true);
-			}
-			this.getModel("view").setProperty("/noResultsVisible", iFilteredIcons === 0, null, true);
+			this.getModel("view").setProperty("/iconsFound", iFilteredIcons > 0, null, true);
 
 			// register press callback for grid
 			if (this._oCurrentQueryContext.tab === "grid") {
@@ -307,7 +297,7 @@ sap.ui.define([
 		 * @public
 		 */
 		onTagSelect: function (oEvent) {
-			this._updateHash("tag", oEvent.getParameter("pressed") === false ? "" : oEvent.getSource().getText());
+			this._updateHash("tag", oEvent.getParameter("selected") === false ? "" : oEvent.getSource().getText());
 		},
 
 		/**
@@ -549,7 +539,7 @@ sap.ui.define([
 					this._resultsLoaded = Promise.resolve(this._resultsLoaded)
 						.catch(function() {})
 						.then(function() {
-							oResultContainer.getContent()[1] && oResultContainer.getContent()[1].destroy();
+							oResultContainer.getContent()[2] && oResultContainer.getContent()[2].destroy();
 							// load the fragment only now
 							return Fragment.load({
 								id: this.getView().getId(),
@@ -822,8 +812,8 @@ sap.ui.define([
 				// filter tags to the currently visible
 				for (i = 0; i < this._aCategoryTags.length; i++) {
 					if (aAllTags.indexOf(this._aCategoryTags[i].name) >= 0) {
-						this._aCategoryTags[i].pressed = (this._aCategoryTags[i].name === oQuery.tag);
-						if (this._aCategoryTags[i].pressed) {
+						this._aCategoryTags[i].selected = (this._aCategoryTags[i].name === oQuery.tag);
+						if (this._aCategoryTags[i].selected) {
 							bTagVisible = true;
 						}
 						aCurrentTags.push(this._aCategoryTags[i]);
@@ -833,7 +823,7 @@ sap.ui.define([
 				// add current tag if it is not visible yet (tag bar only contains the top [x] tags)
 				if (oQuery.tag && !bTagVisible) {
 					aCurrentTags.push({
-						pressed : true,
+						selected : true,
 						name : oQuery.tag
 					});
 				}
@@ -849,8 +839,8 @@ sap.ui.define([
 		 * @private
 		 */
 		_updateTagSelectionBar: function (aTags) {
-			this.getModel("tags").setData([{"name" : ""}].concat(aTags));
-			this.byId("tagSelection").bindAggregation("content", {
+			this.getModel("tags").setData(aTags);
+			this.byId("tagSelection").bindAggregation("tokens", {
 				path: "tags>/",
 				length: 51,
 				factory: this._tagSelectionFactory.bind(this)
@@ -862,22 +852,30 @@ sap.ui.define([
 		 * First item is a label, then the tags are listed
 		 * @param {string} sId the id for the control to be created
 		 * @param {sap.ui.model.Context} oContext the binding context for the control to be created
-		 * @return {sap.m.Label|sap.m.ToggleButton} the control for the toolbar
+		 * @return {sap.m.Label|sap.m.Token} the control for the toolbar
 		 * @private
 		 */
-		_tagSelectionFactory: function (sId, oContext) {
-			if (oContext.getProperty("name") === "") {
-				return new Label(sId, {
-					text: "{i18n>overviewTagSelectionLabel}"
-				});
-			} else {
-				return new ToggleButton(sId, {
-					text: "{tags>name}",
-					pressed: "{tags>pressed}",
-					press: [this.onTagSelect, this],
-					ariaLabelledBy: this.byId("labelTags")
-				});
+        _tagSelectionFactory: function (sId, oContext) {
+			return new Token(sId, {
+				text: "{tags>name}",
+				press: [this.onTagSelect, this],
+				selected: "{tags>selected}",
+				ariaLabelledBy: this.byId("labelTags"),
+				editable: false
+			});
+        },
+
+		/**
+		 * Expands the details view when icon is clicked.
+		 */
+
+		expandSidePanel: function() {
+			var oSidePanelExpanded = this.byId("mySidePanel").getProperty("actionBarExpanded");
+
+			if (!oSidePanelExpanded) {
+				this.byId("mySidePanel").setProperty("actionBarExpanded", true);
 			}
+
 		}
 
 	});

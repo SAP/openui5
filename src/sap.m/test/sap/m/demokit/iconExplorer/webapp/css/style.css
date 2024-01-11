@@ -50,8 +50,9 @@
 	background-image: linear-gradient(#FA4F96, #0057d2);
 }
 
-.sapUiTheme-sap_horizon .IconExplorerHomePage .IconExplorerSearchContainer .sapUiIcon,
-.sapUiTheme-sap_horizon .IconExplorerHomePage .IconExplorerSearchContainer .sapMTitle  {
+.sapUiTheme-sap_horizon .IconExplorerHomePage .IconExplorerSearchContainer .sapUiIcon:not(.sapMInputBaseIcon),
+.sapUiTheme-sap_horizon .IconExplorerHomePage .IconExplorerSearchContainer .sapMTitle,
+.sapUiTheme-sap_horizon .IconExplorerHomePage .IconExplorerSearchContainer .sapMCbLabel{
 	color: #eaecee;
 }
 
@@ -62,7 +63,7 @@
 
 .sapUiTheme-sap_horizon_dark .sapUiDemoIconExplorer .IconExplorerHomePage,
 .sapUiTheme-sap_horizon_hcb .sapUiDemoIconExplorer .IconExplorerHomePage {
-	background-image: linear-gradient(#E40052, #00409A);
+	background-image: linear-gradient(#FFC933, #DF1278);
 }
 
 .sapUiDemoIconExplorer .SidePanelGridList {
@@ -78,6 +79,10 @@
 	left: 0;
 	top: 0;
 	background-color: transparent;
+}
+
+.sapUiDemoIconExplorer .sapFDynamicPageHeaderWrapper .sapMIBar .sapMLabel  {
+	flex-shrink: 0;
 }
 
 /*SMALL*/

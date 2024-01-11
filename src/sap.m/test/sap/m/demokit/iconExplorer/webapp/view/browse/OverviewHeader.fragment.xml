@@ -35,7 +35,7 @@
 					<core:ListItem  key="auto" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_AUTO}" />
 				</Select>
 			</VBox>
-			<VBox 
+			<VBox
 				id="categorySelectionContainer"
 				visible="{= ${device>/system/phone} ? false : true}"
 				class="sapUiSmallMarginEnd">
@@ -66,17 +66,23 @@
 				</layoutData>
 			</VBox>
 		</FlexBox>
-		<OverflowToolbar
-			id="tagSelection"
-			visible="{= ${view>/iconFilterCount} !== 0 &amp;&amp; (${device>/system/phone} ? false : true)}"
-			width="auto"
-			design="Transparent"
-			style="Clear"
-			content="{
-				path: 'groups/0/tags',
-				factory: '._tagSelectionFactory',
-				length: 50
-			}">
-		</OverflowToolbar>
+      <Toolbar
+            visible="{= ${view>/iconFilterCount} !== 0 &amp;&amp; (${device>/system/phone} ? false : true)}"
+            width="auto"
+            design="Transparent"
+            style="Clear">
+            <Label text="{i18n>overviewTagSelectionLabel}" />
+            <Tokenizer
+                id="tagSelection"
+                renderMode="Narrow"
+                editable="false"
+                width="100%"
+                tokens="{
+                    path: 'groups/0/tags',
+                    factory: '._tagSelectionFactory',
+                    length: 50
+                }">
+            </Tokenizer>
+        </Toolbar>
 	</f:DynamicPageHeader>
 </core:FragmentDefinition>
