@@ -516,7 +516,7 @@ sap.ui.define([
 		assert.equal(jQuery("#Cal2--Month0-20110106").attr("aria-label"), "Non-Working Day 6. Januar 2011; My Type 1", "20110106 aria label");
 		assert.ok(jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemWeekEnd"),
 				"20110106 is date of type 'NonWorking' as part of a date range");
-		assert.ok(jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemType01") && jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemWeekEnd"),
+		assert.notOk(jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemType01") && jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemWeekEnd"),
 		"20110106 is date of type 'Type0' and type 'NonWorking'");
 		assert.ok(jQuery("#Cal2--Month0-20110108").hasClass("sapUiCalItemWeekEnd"),
 				"20110108 is date of type 'NonWorking' as part of a date range");

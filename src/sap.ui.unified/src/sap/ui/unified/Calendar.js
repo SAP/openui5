@@ -230,16 +230,43 @@ sap.ui.define([
 			selectedDates : {type : "sap.ui.unified.DateRange", multiple : true, singularName : "selectedDate"},
 
 			/**
-			 * Dates or date ranges with type, to visualize special days in the <code>Calendar</code>.
-			 * If one day is assigned to more than one Type, only the first one will be used.
+			 * Dates or date ranges with type, to visualize special days.
 			 *
 			 * To set a single date (instead of a range), set only the <code>startDate</code> property
-			 * of the {@link sap.ui.unified.DateRange} class.
+			 * of the {@link sap.ui.unified.DateTypeRange} class.
 			 *
-			 * <b>Note:</b> Keep in mind that the <code>NonWorking</code> type is for marking specific
-			 * dates or date ranges as non-working, where if you need a weekly-reccuring non-working days
+			 * <b>Note:</b> If you need a weekly-reccuring non-working days
 			 * (weekend), you should use the <code>nonWorkingDays</code> property. Both the non-working
 			 * days (from property) and dates (from aggregation) are visualized the same.
+			 *
+			 * <b>Note:</b> In case there are multiple <code>sap.ui.unified.DateTypeRange</code> instances given for a single date,
+			 * only the first <code>sap.ui.unified.DateTypeRange</code> instance will be used.
+			 * For example, using the following sample, the 1st of November will be displayed as a working day of type "Type10":
+			 *
+			 *
+			 *	<pre>
+			 *	new DateTypeRange({
+			 *		startDate: UI5Date.getInstance(2023, 10, 1),
+			 *		type: CalendarDayType.Type10,
+			 *	}),
+			 *	new DateTypeRange({
+			 *		startDate: UI5Date.getInstance(2023, 10, 1),
+			 *		type: CalendarDayType.NonWorking
+			 *	})
+			 *	</pre>
+			 *
+			 * If you want the first of November to be displayed as a non-working day and also as "Type10," the following should be done:
+			 *	<pre>
+			 *	new DateTypeRange({
+			 *		startDate: UI5Date.getInstance(2023, 10, 1),
+			 *		type: CalendarDayType.Type10,
+			 *		secondaryType: CalendarDayType.NonWorking
+			 *	})
+			 *	</pre>
+			 *
+			 * You can use only one of the following types for a given date: <code>sap.ui.unified.CalendarDayType.NonWorking</code>,
+			 * <code>sap.ui.unified.CalendarDayType.Working</code> or <code>sap.ui.unified.CalendarDayType.None</code>.
+			 * Assigning more than one of these values in combination for the same date will lead to unpredictable results.
 			 *
 			 * @since 1.24.0
 			 */
