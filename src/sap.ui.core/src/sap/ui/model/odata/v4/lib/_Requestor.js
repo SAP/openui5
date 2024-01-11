@@ -2287,9 +2287,9 @@ sap.ui.define([
 	 * @param {function} oModelInterface.reportTransitionMessages
 	 *   A function to report OData transition messages
 	 * @param {function(sap.ui.core.message.Message[],sap.ui.core.message.Message[]):void} oModelInterface.updateMessages
-	 *   A function to report messages to {@link sap.ui.core.Messaging}, expecting two arrays of
-	 *   {sap.ui.core.message.Message} as parameters. The first array should be the old messages and
-	 *   the second array the new messages.
+	 *   A function to report messages to {@link module:sap/ui/core/Messaging}, expecting two arrays
+	 *   of {@link sap.ui.core.message.Message} as parameters. The first array should be the old
+	 *   messages and the second array the new messages.
 	 * @param {object} [mHeaders={}]
 	 *   Map of default headers; may be overridden with request-specific headers; certain
 	 *   OData V4 headers are predefined, but may be overridden by the default or
