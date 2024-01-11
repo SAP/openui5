@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 	QUnit.config.reorder = false;
 	var requestCounter = 0;
 
-	// window.performance is hijacked by sinon's fakeTimers (https://github.com/sinonjs/fake-timers/issues/374)
+	// performance is hijacked by sinon's fakeTimers (https://github.com/sinonjs/fake-timers/issues/374)
 	// and might be out of sync with the latest specs and APIs. Therefore, mock them further,
 	// so they won't affect tests.
 	//

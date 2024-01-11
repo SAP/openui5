@@ -9,7 +9,7 @@ sap.ui.define([
 ], function(Interaction, XMLView, FESRHelper, Press, Button, nextUIUpdate) {
 	"use strict";
 
-	// window.performance is hijacked by sinon's fakeTimers (https://github.com/sinonjs/fake-timers/issues/374)
+	// performance is hijacked by sinon's fakeTimers (https://github.com/sinonjs/fake-timers/issues/374)
 	// and might be out of sync with the latest specs and APIs. Therefore, mock them further,
 	// so they won't affect tests.
 	//
