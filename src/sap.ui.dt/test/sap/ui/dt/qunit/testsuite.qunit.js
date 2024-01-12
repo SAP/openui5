@@ -198,12 +198,6 @@ sap.ui.define(function() {
 					only: ["sap/ui/dt/plugin/ElementMover"]
 				}
 			},
-			"plugin/TabHandling": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/dt/plugin/TabHandling"]
-				}
-			},
 			"plugin/ToolHooks": {
 				group: "Plugin",
 				coverage: {

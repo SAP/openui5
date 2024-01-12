@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Lib",
-	"sap/ui/dt/plugin/TabHandling",
+	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/Util",
@@ -39,7 +39,7 @@ sap.ui.define([
 	Page,
 	ComponentContainer,
 	Lib,
-	TabHandling,
+	ToolHooks,
 	ZIndexManager,
 	DesignTime,
 	DtUtil,
@@ -220,17 +220,17 @@ sap.ui.define([
 
 		QUnit.test("when RTA is created with custom plugins and start is triggered", async function(assert) {
 			const oStretchPlugin = new Stretch("nonDefaultStretch");
-			const oTabHandlingPlugin = new TabHandling("nonDefaultRemovePlugin");
+			const oToolHooksPlugin = new ToolHooks("nonDefaultRemovePlugin");
 
 			this.oRta.setPlugins({
-				tabHandling: oTabHandlingPlugin,
+				toolHooks: oToolHooksPlugin,
 				stretch: oStretchPlugin
 			});
 			const oPreparePluginsSpy = sinon.spy(this.oRta.getPluginManager(), "preparePlugins");
 
 			await this.oRta.start();
 			assert.equal(this.oRta.getPlugins().stretch.getId(), oStretchPlugin.getId(), " then the custom stretch is set");
-			assert.equal(this.oRta.getPlugins().tabHandling.getId(), oTabHandlingPlugin.getId(), " then the custom tabHandling is set");
+			assert.equal(this.oRta.getPlugins().toolHooks.getId(), oToolHooksPlugin.getId(), " then the custom toolHooks is set");
 			assert.equal(Object.keys(this.oRta.getPlugins()).length, 2, " and the default plugins are not loaded");
 			assert.equal(oPreparePluginsSpy.callCount, 1, " and getPluginManager.preparePlugins() have been called once on oRta.start()");
 		});
