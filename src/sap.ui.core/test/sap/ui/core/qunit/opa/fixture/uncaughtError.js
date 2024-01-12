@@ -1,9 +1,12 @@
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View"
-], function (library, Controller, View) {
+], async function (Core, library, Controller, View) {
 	"use strict";
+
+	await Core.ready();
 
 	var VIEW_DEFINITION =
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="myController" displayBlock="true">' +
