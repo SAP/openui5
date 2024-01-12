@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/CreateContainer",
 	"sap/ui/rta/plugin/Settings",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	Settings,
 	Layer,
 	PluginManager,
@@ -68,7 +67,6 @@ function(
 				"settings",
 				"split",
 				"stretch",
-				"tabHandling",
 				"toolHooks"
 			];
 

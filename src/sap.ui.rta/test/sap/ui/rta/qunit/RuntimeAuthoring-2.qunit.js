@@ -3,6 +3,7 @@
 sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/base/util/isEmptyObject",
+	"sap/m/Button",
 	"sap/m/MessageToast",
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/dt/plugin/TabHandling",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/Util",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/Version",
@@ -32,6 +34,7 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	isEmptyObject,
+	Button,
 	MessageToast,
 	Page,
 	ComponentContainer,
@@ -39,6 +42,7 @@ sap.ui.define([
 	TabHandling,
 	ZIndexManager,
 	DesignTime,
+	DtUtil,
 	FlexRuntimeInfoAPI,
 	FlexInfoSession,
 	Version,
@@ -276,7 +280,8 @@ sap.ui.define([
 						}
 					};
 				},
-				destroy() {}
+				destroy() {},
+				getRootElements() {return [];}
 			};
 
 			assert.strictEqual(this.oRta.getSelection(), "foo", "the result of the getSelectionManager.get function is returned");
@@ -317,6 +322,8 @@ sap.ui.define([
 
 		QUnit.test("when RTA is stopped and destroyed, the default plugins get created and destroyed", function(assert) {
 			const done = assert.async();
+			const done2 = assert.async();
+			const oSetBlockedStub = sandbox.stub(oComp.getRootControl(), "setBlocked");
 
 			assert.equal(this.oPreparePluginsSpy.callCount, 1, " and getPluginManager.preparePlugins() have been called 1 time on oRta.start()");
 			assert.ok(!isEmptyObject(this.oRta.getPlugins()), "then plugins are created on start");
@@ -330,6 +337,9 @@ sap.ui.define([
 			}.bind(this));
 			this.oRta.stop().then(function() {
 				assert.ok(true, "then the promise got resolved");
+				assert.strictEqual(oSetBlockedStub.callCount, 1, "the setBlocked is called");
+				assert.strictEqual(oSetBlockedStub.getCall(0).args[0], false, "blocked is set to false");
+				done2();
 			});
 		});
 
@@ -375,58 +385,48 @@ sap.ui.define([
 		});
 
 		QUnit.test("when Mode is changed from adaptation to navigation and back to adaptation", function(assert) {
-			const oTabHandlingPlugin = this.oRta.getPlugins().tabHandling;
-			const oTabHandlingRemoveSpy = sandbox.spy(oTabHandlingPlugin, "removeTabIndex");
-			const oTabHandlingRestoreSpy = sandbox.spy(oTabHandlingPlugin, "restoreTabIndex");
-			const oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabHandlingPlugin, "removeOverlayTabIndex");
-			const oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabHandlingPlugin, "restoreOverlayTabIndex");
-			const oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
+			const oFireModeChangedStub = sandbox.stub(this.oRta, "fireModeChanged");
 			const oStopCutPasteStub = sandbox.stub(this.oRta.getPluginManager(), "handleStopCutPaste");
+			const oSetBlockedStub = sandbox.stub(oComp.getRootControl(), "setBlocked");
 
 			this.oRta.setMode("navigation");
 			assert.notOk(this.oRta._oDesignTime.getEnabled(), " in navigation mode the designTime property enabled is false");
-			assert.equal(oTabHandlingRestoreSpy.callCount, 1, "restoreTabIndex was called");
-			assert.equal(oTabHandlingRemoveOverlaySpy.callCount, 1, "removeOverlayTabIndex was called");
-			assert.equal(oFireModeChangedSpy.callCount, 1, "the event ModeChanged was fired");
-			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "navigation"}, "the argument of the event is correct");
+			assert.strictEqual(oSetBlockedStub.callCount, 1, "setBlocked was called");
+			assert.strictEqual(oSetBlockedStub.lastCall.args[0], false, "blocked is set to false");
+			assert.strictEqual(oFireModeChangedStub.callCount, 1, "the event ModeChanged was fired");
+			assert.deepEqual(oFireModeChangedStub.lastCall.args[0], {mode: "navigation"}, "the argument of the event is correct");
 			assert.strictEqual(oStopCutPasteStub.callCount, 1, "the cut paste was stopped");
 
 			// simulate mode change from toolbar
 			this.oRta.getToolbar().fireModeChange({item: { getKey() {return "adaptation";}}});
 			assert.ok(this.oRta._oDesignTime.getEnabled(), "in adaption mode the designTime property enabled is true again");
-			assert.equal(oTabHandlingRemoveSpy.callCount, 1, "removeTabIndex was called");
-			assert.equal(oTabHandlingRestoreOverlaySpy.callCount, 1, "restoreOverlayTabIndex was called");
-			assert.equal(oFireModeChangedSpy.callCount, 2, "the event ModeChanged was fired again");
-			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "adaptation"}, "the argument of the event is correct");
+			assert.strictEqual(oSetBlockedStub.callCount, 2, "setBlocked was called again");
+			assert.strictEqual(oSetBlockedStub.lastCall.args[0], true, "blocked is set to true");
+			assert.equal(oFireModeChangedStub.callCount, 2, "the event ModeChanged was fired again");
+			assert.deepEqual(oFireModeChangedStub.lastCall.args[0], {mode: "adaptation"}, "the argument of the event is correct");
 			assert.strictEqual(oStopCutPasteStub.callCount, 1, "the cut paste was not stopped again");
 		});
 
 		QUnit.test("when Mode is changed from adaptation to visualization and back to adaptation", function(assert) {
 			oComp.getRootControl().addStyleClass("sapUiDtOverlayMovable");
-			const oTabHandlingPlugin = this.oRta.getPlugins().tabHandling;
-			const oTabHandlingRemoveSpy = sandbox.spy(oTabHandlingPlugin, "removeTabIndex");
-			const oTabHandlingRestoreSpy = sandbox.spy(oTabHandlingPlugin, "restoreTabIndex");
-			const oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabHandlingPlugin, "removeOverlayTabIndex");
-			const oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabHandlingPlugin, "restoreOverlayTabIndex");
-			const oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
+			const oFireModeChangedStub = sandbox.stub(this.oRta, "fireModeChanged");
 			const oStopCutPasteStub = sandbox.stub(this.oRta.getPluginManager(), "handleStopCutPaste");
+			const oSetBlockedStub = sandbox.stub(oComp.getRootControl(), "setBlocked");
 
 			this.oRta.setMode("visualization");
 			assert.ok(this.oRta._oDesignTime.getEnabled(), "in visualization mode the designTime property enabled is true");
-			assert.equal(oTabHandlingRestoreSpy.callCount, 0, "restoreTabIndex was not called");
-			assert.equal(oTabHandlingRemoveOverlaySpy.callCount, 1, "removeOverlayTabIndex was called");
-			assert.equal(oFireModeChangedSpy.callCount, 1, "the event ModeChanged was fired");
-			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "visualization"}, "the argument of the event is correct");
+			assert.strictEqual(oSetBlockedStub.callCount, 0, "setBlocked was not called");
+			assert.equal(oFireModeChangedStub.callCount, 1, "the event ModeChanged was fired");
+			assert.deepEqual(oFireModeChangedStub.lastCall.args[0], {mode: "visualization"}, "the argument of the event is correct");
 			assert.equal(getComputedStyle(document.querySelector(".sapUiDtOverlayMovable")).cursor, "default", "the movable overlays switched to the default cursor");
 			assert.strictEqual(oStopCutPasteStub.callCount, 1, "the cut paste was stopped");
 
 			// simulate mode change from toolbar
 			this.oRta.getToolbar().fireModeChange({item: { getKey() {return "adaptation";}}});
 			assert.ok(this.oRta._oDesignTime.getEnabled(), "in adaption mode the designTime property enabled is true");
-			assert.equal(oTabHandlingRemoveSpy.callCount, 0, "removeTabIndex was not called");
-			assert.equal(oTabHandlingRestoreOverlaySpy.callCount, 1, "restoreOverlayTabIndex was called");
-			assert.equal(oFireModeChangedSpy.callCount, 2, "the event ModeChanged was fired again");
-			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "adaptation"}, "the argument of the event is correct");
+			assert.strictEqual(oSetBlockedStub.callCount, 0, "setBlocked was not called");
+			assert.equal(oFireModeChangedStub.callCount, 2, "the event ModeChanged was fired again");
+			assert.deepEqual(oFireModeChangedStub.lastCall.args[0], {mode: "adaptation"}, "the argument of the event is correct");
 			assert.equal(getComputedStyle(document.querySelector(".sapUiDtOverlayMovable")).cursor, "move", "the movable overlays switched back to the move cursor");
 			oComp.getRootControl().removeStyleClass("sapUiDtOverlayMovable");
 			assert.strictEqual(oStopCutPasteStub.callCount, 1, "the cut paste was not stopped again");
@@ -435,29 +435,25 @@ sap.ui.define([
 		QUnit.test("when Mode is changed from visualization to navigation and back to visualization", function(assert) {
 			oComp.getRootControl().addStyleClass("sapUiDtOverlayMovable");
 			this.oRta.setMode("visualization");
-			const oTabHandlingPlugin = this.oRta.getPlugins().tabHandling;
-			const oTabHandlingRemoveSpy = sandbox.spy(oTabHandlingPlugin, "removeTabIndex");
-			const oTabHandlingRestoreSpy = sandbox.spy(oTabHandlingPlugin, "restoreTabIndex");
-			const oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabHandlingPlugin, "removeOverlayTabIndex");
-			const oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabHandlingPlugin, "restoreOverlayTabIndex");
-			const oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
+			const oSetBlockedStub = sandbox.stub(oComp.getRootControl(), "setBlocked");
+			const oFireModeChangedStub = sandbox.stub(this.oRta, "fireModeChanged");
 			assert.equal(getComputedStyle(document.querySelector(".sapUiDtOverlayMovable")).cursor, "default", "the movable overlays switched to the default cursor");
 
 			this.oRta.setMode("navigation");
 			assert.notOk(this.oRta._oDesignTime.getEnabled(), " in navigation mode the designTime property enabled is false");
-			assert.equal(oTabHandlingRestoreSpy.callCount, 1, "restoreTabIndex was called");
-			assert.equal(oTabHandlingRemoveOverlaySpy.callCount, 1, "removeOverlayTabIndex was called");
-			assert.equal(oFireModeChangedSpy.callCount, 1, "the event ModeChanged was fired");
-			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "navigation"}, "the argument of the event is correct");
+			assert.strictEqual(oSetBlockedStub.callCount, 1, "setBlocked was called");
+			assert.strictEqual(oSetBlockedStub.lastCall.args[0], false, "blocked is set to false");
+			assert.equal(oFireModeChangedStub.callCount, 1, "the event ModeChanged was fired");
+			assert.deepEqual(oFireModeChangedStub.lastCall.args[0], {mode: "navigation"}, "the argument of the event is correct");
 			assert.equal(getComputedStyle(document.querySelector(".sapUiDtOverlayMovable")).cursor, "move", "the movable overlays back to the move cursor");
 
 			// simulate mode change from toolbar
 			this.oRta.getToolbar().fireModeChange({item: { getKey() {return "visualization";}}});
 			assert.ok(this.oRta._oDesignTime.getEnabled(), "in visualization mode the designTime property enabled is true again");
-			assert.equal(oTabHandlingRemoveSpy.callCount, 1, "removeTabIndex was called");
-			assert.equal(oTabHandlingRestoreOverlaySpy.callCount, 0, "restoreOverlayTabIndex was not called");
-			assert.equal(oFireModeChangedSpy.callCount, 2, "the event ModeChanged was fired again");
-			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "visualization"}, "the argument of the event is correct");
+			assert.strictEqual(oSetBlockedStub.callCount, 2, "setBlocked was called");
+			assert.strictEqual(oSetBlockedStub.lastCall.args[0], true, "blocked is set to true");
+			assert.equal(oFireModeChangedStub.callCount, 2, "the event ModeChanged was fired again");
+			assert.deepEqual(oFireModeChangedStub.lastCall.args[0], {mode: "visualization"}, "the argument of the event is correct");
 			assert.equal(getComputedStyle(document.querySelector(".sapUiDtOverlayMovable")).cursor, "default", "the movable overlays switched again to the default cursor");
 			oComp.getRootControl().removeStyleClass("sapUiDtOverlayMovable");
 		});
@@ -480,6 +476,34 @@ sap.ui.define([
 				}]
 			});
 			assert.ok(oMessageToastSpy.notCalled, "then the toast is only shown once");
+		});
+
+		// when a dialog gets opened by the application it is added as a root element to the designtime
+		QUnit.test("when rta mode is switched and stopped with multiple root elements", async function(assert) {
+			const oButton = new Button("foo");
+			const oButtonBlockedStub = sandbox.stub(oButton, "setBlocked");
+			const oRootControlBlockedStub = sandbox.stub(oComp.getRootControl(), "setBlocked");
+			this.oRta._oDesignTime.addRootElement(oButton);
+			await DtUtil.waitForSynced(this.oRta._oDesignTime)();
+
+			this.oRta.setMode("navigation");
+			assert.strictEqual(oButtonBlockedStub.callCount, 1, "setBlocked is called");
+			assert.strictEqual(oButtonBlockedStub.lastCall.args[0], false, "and set to false");
+			assert.strictEqual(oRootControlBlockedStub.callCount, 1, "setBlocked is called");
+			assert.strictEqual(oRootControlBlockedStub.lastCall.args[0], false, "and set to false");
+
+			this.oRta.setMode("visualization");
+			assert.strictEqual(oButtonBlockedStub.callCount, 2, "setBlocked is called");
+			assert.strictEqual(oButtonBlockedStub.lastCall.args[0], true, "and set to true");
+			assert.strictEqual(oRootControlBlockedStub.callCount, 2, "setBlocked is called");
+			assert.strictEqual(oRootControlBlockedStub.lastCall.args[0], true, "and set to true");
+
+			await this.oRta.stop();
+
+			assert.strictEqual(oButtonBlockedStub.callCount, 3, "setBlocked is called");
+			assert.strictEqual(oButtonBlockedStub.lastCall.args[0], false, "and set to false");
+			assert.strictEqual(oRootControlBlockedStub.callCount, 3, "setBlocked is called");
+			assert.strictEqual(oRootControlBlockedStub.lastCall.args[0], false, "and set to false");
 		});
 	});
 
