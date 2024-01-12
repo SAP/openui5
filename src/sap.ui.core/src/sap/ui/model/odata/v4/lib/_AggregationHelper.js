@@ -527,16 +527,19 @@ sap.ui.define([
 					delete mQueryOptions.$orderby;
 				}
 				oAggregation.expandTo ??= 1;
+				const sExpandLevels = !bAllLevels && oAggregation.$ExpandLevels;
 				sApply += "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root"
 					+ (oAggregation.$path || "")
 					+ ",HierarchyQualifier='" + oAggregation.hierarchyQualifier
 					+ "',NodeProperty='" + sNodeProperty + "'"
 					+ (bAllLevels || oAggregation.expandTo >= Number.MAX_SAFE_INTEGER
-						? ")" // "all levels"
-						: ",Levels=" + oAggregation.expandTo + ")");
+						? "" // "all levels"
+						: ",Levels=" + oAggregation.expandTo)
+					+ (sExpandLevels ? ",ExpandLevels=" + sExpandLevels : "")
+					+ ")";
 				if (bAllLevels) {
 					select("DistanceFromRoot");
-				} else if (oAggregation.expandTo > 1) {
+				} else if (oAggregation.expandTo > 1 || sExpandLevels) {
 					select("DistanceFromRoot");
 					select("LimitedDescendantCount");
 				}

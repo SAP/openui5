@@ -1175,28 +1175,30 @@ sap.ui.define([
 [undefined, 1, 2, 3, Number.MAX_SAFE_INTEGER, Infinity].forEach(function (iExpandTo) {
 	[false, true].forEach(function (bStored) {
 		[false, true].forEach(function (bAllLevels) {
-			[{
-				DistanceFromRootProperty : {$PropertyPath : "DistFromRoot"},
-				DrillStateProperty : {$PropertyPath : "myDrillState"},
-				LimitedDescendantCountProperty : {$PropertyPath : "LtdDescendant_Count"}
-			}, {
-				DistanceFromRoot : {$Path : "DistFromRoot"},
-				DrillState : {$Path : "myDrillState"},
-				LimitedDescendantCount : {$Path : "LtdDescendant_Count"}
-			}, {
-				DistanceFromRoot : {$Path : "DistFromRoot"},
-				DrillState : {$Path : "myDrillState"},
-				LimitedDescendantCount : {$Path : "LtdDescendant_Count"},
-				LimitedRank : {$Path : "LtdPreorderRank"}
-			}].forEach((oRecursiveHierarchy, i) => {
-				var sTitle = "buildApply4Hierarchy: top levels of nodes, $select, expandTo : "
-					+ iExpandTo + ", property paths already stored: " + bStored
-					+ ", all levels: " + bAllLevels
-					+ ", Rec.Hier. #" + i;
+			[false, true].forEach(function (bExpandLevels) {
+				[{
+					DistanceFromRootProperty : {$PropertyPath : "DistFromRoot"},
+					DrillStateProperty : {$PropertyPath : "myDrillState"},
+					LimitedDescendantCountProperty : {$PropertyPath : "LtdDescendant_Count"}
+				}, {
+					DistanceFromRoot : {$Path : "DistFromRoot"},
+					DrillState : {$Path : "myDrillState"},
+					LimitedDescendantCount : {$Path : "LtdDescendant_Count"}
+				}, {
+					DistanceFromRoot : {$Path : "DistFromRoot"},
+					DrillState : {$Path : "myDrillState"},
+					LimitedDescendantCount : {$Path : "LtdDescendant_Count"},
+					LimitedRank : {$Path : "LtdPreorderRank"}
+				}].forEach((oRecursiveHierarchy, i) => {
+					var sTitle = "buildApply4Hierarchy: top levels of nodes, $select, expandTo : "
+						+ iExpandTo + ", property paths already stored: " + bStored
+						+ ", all levels: " + bAllLevels
+						+ ", expand levels: " + bExpandLevels
+						+ ", Rec.Hier. #" + i;
 
-				if (iExpandTo >= Number.MAX_SAFE_INTEGER && bAllLevels) {
-					return;
-				}
+					if (iExpandTo >= Number.MAX_SAFE_INTEGER && bAllLevels) {
+						return;
+					}
 
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = {
@@ -1212,7 +1214,7 @@ sap.ui.define([
 				$LimitedDescendantCount : "LtdDescendant_Count"
 			} : {},
 			iExpectedLevels = iExpandTo || 1,
-			aExpectedSelect = iExpandTo > 1
+			aExpectedSelect = iExpandTo > 1 || bExpandLevels
 			? ["ID", "SomeNodeID", "DistFromRoot", "LtdDescendant_Count", "myDrillState"]
 			: ["ID", "SomeNodeID", "myDrillState"],
 			mQueryOptions = {
@@ -1234,9 +1236,17 @@ sap.ui.define([
 			if (bStored) {
 				oAggregation.$DistanceFromRoot = "DistFromRoot";
 			}
-		} else if (bStored && iExpandTo > 1) {
+		} else if (bStored && (iExpandTo > 1 || bExpandLevels)) {
 			oAggregation.$DistanceFromRoot = "DistFromRoot";
 			oAggregation.$LimitedDescendantCount = "LtdDescendant_Count";
+		}
+		if (bExpandLevels) {
+			oAggregation.$ExpandLevels = "~$ExpandLevels~";
+			oExpectedAggregation.$ExpandLevels = "~$ExpandLevels~";
+			oExpectedAggregation.$DistanceFromRoot = "DistFromRoot";
+			if (!bAllLevels) {
+				oExpectedAggregation.$LimitedDescendantCount = "LtdDescendant_Count";
+			}
 		}
 		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1)
 			.withExactArgs("/meta/@Org.OData.Aggregation.V1.RecursiveHierarchy#X")
@@ -1264,9 +1274,12 @@ sap.ui.define([
 			{
 				$apply : bAllLevels || iExpandTo >= Number.MAX_SAFE_INTEGER
 					? "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
-					+ ",HierarchyQualifier='X',NodeProperty='SomeNodeID')"
+					+ ",HierarchyQualifier='X',NodeProperty='SomeNodeID'"
+					+ (bExpandLevels && !bAllLevels ? ",ExpandLevels=~$ExpandLevels~" : "")
+					+ ")"
 					: "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
 					+ ",HierarchyQualifier='X',NodeProperty='SomeNodeID',Levels=" + iExpectedLevels
+					+ (bExpandLevels ? ",ExpandLevels=~$ExpandLevels~" : "")
 					+ ")",
 				$select : aExpectedSelect,
 				foo : "bar"
@@ -1284,6 +1297,7 @@ sap.ui.define([
 		}
 		assert.deepEqual(oAggregation, oExpectedAggregation);
 	});
+				});
 			});
 		});
 	});

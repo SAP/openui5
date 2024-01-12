@@ -69,6 +69,7 @@ sap.ui.define(function () {
 			"lib/_MinMaxHelper" : {},
 			"lib/_Parser" : {},
 			"lib/_Requestor" : {},
+			"lib/_TreeState" : {},
 			"lib/_V2MetadataConverter" : {},
 			"lib/_V2Requestor" : {},
 			"lib/_V4MetadataConverter" : {},

@@ -6776,6 +6776,46 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[false, true].forEach(function (bAggregationCache) {
+	const sTitle = "doCreateCache w/ old cache, recursive hierarchy, aggregation cache: "
+		+ bAggregationCache;
+	QUnit.test(sTitle, function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "foo"};
+		const oOldCache = {
+			$deepResourcePath : "deep/resource/path",
+			getResourcePath : mustBeMocked,
+			reset : mustBeMocked
+		};
+
+		if (bAggregationCache) {
+			Object.setPrototypeOf(oOldCache, _AggregationCache.prototype);
+		}
+		this.mock(oOldCache).expects("getResourcePath").withExactArgs().returns("resource/path");
+		this.mock(oBinding).expects("getKeepAlivePredicates").withExactArgs().returns([]);
+		this.mock(oBinding).expects("isGrouped").withExactArgs().returns("~isGrouped~");
+		this.mock(oOldCache).expects("reset").exactly(bAggregationCache ? 1 : 0)
+			.withExactArgs([], "myGroup", "~queryOptions~",
+				sinon.match.same(oBinding.mParameters.$$aggregation), "~isGrouped~");
+		this.mock(oBinding).expects("inheritQueryOptions").exactly(bAggregationCache ? 0 : 1)
+			.withExactArgs("~queryOptions~", "~context~")
+			.returns("~mInheritedQueryOptions~");
+		this.mock(_AggregationCache).expects("create").exactly(bAggregationCache ? 0 : 1)
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
+				"deep/resource/path", "~mInheritedQueryOptions~",
+				sinon.match.same(oBinding.mParameters.$$aggregation), this.oModel.bAutoExpandSelect,
+				false, "~isGrouped~")
+			.returns("~oNewCache~");
+
+		assert.strictEqual(
+			// code under test
+			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
+				"deep/resource/path", "myGroup", oOldCache),
+			bAggregationCache ? oOldCache : "~oNewCache~");
+	});
+});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bWithOld) {
 	[false, true].forEach(function (bFromModel) {
 		[false, true].forEach(function (bShared) {
@@ -9308,13 +9348,15 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bSuccess) {
 	[false, true].forEach(function (bDataRequested) {
-		[0, 3].forEach(function (iCount) { // 0 means collapse before expand has finished
+		// iCount=0 means collapse before expand has finished
+		// iCount=-1 means unified cache
+		[-1, 0, 3].forEach(function (iCount) {
 			[false, true].forEach((bSilent) => {
 				var sTitle = "expand: success=" + bSuccess + ", data requested=" + bDataRequested
 						+ ", count=" + iCount + ", silent=" + bSilent;
 
-	if (!bSuccess && !iCount) { // ignore useless combination
-		return;
+	if (!bSuccess && iCount === 0 || bDataRequested && iCount < 0) {
+		return; // ignore useless combinations
 	}
 
 	QUnit.test(sTitle, function (assert) {
@@ -9349,13 +9391,20 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oGroupLock), "~cachepath~", sinon.match.func)
 			.returns(Promise.resolve().then(function () {
 				if (bSuccess) {
-					that.mock(oContext).expects("getModelIndex").exactly(iCount ? 1 : 0)
+					that.mock(oContext).expects("getModelIndex").exactly(iCount > 0 ? 1 : 0)
 						.withExactArgs().returns("~iModelIndex~");
-					oGapCall = that.mock(oBinding).expects("insertGap").exactly(iCount ? 1 : 0)
+					oGapCall = that.mock(oBinding).expects("insertGap").exactly(iCount > 0 ? 1 : 0)
 						.withExactArgs("~iModelIndex~", iCount);
 					oChangeCall = that.mock(oBinding).expects("_fireChange")
-						.exactly(iCount && !bSilent ? 1 : 0)
+						.exactly(iCount > 0 && !bSilent ? 1 : 0)
 						.withExactArgs({reason : ChangeReason.Change});
+					that.mock(oBinding).expects("getGroupId")
+						.exactly(iCount < 0 ? 1 : 0)
+						.withExactArgs().returns("~group~");
+					that.mock(oBinding).expects("requestSideEffects")
+						.exactly(iCount < 0 ? 1 : 0)
+						.withExactArgs("~group~", [""])
+						.resolves("~requestSideEffects~");
 					oDataReceivedCall = that.mock(oBinding).expects("fireDataReceived")
 						.exactly(bDataRequested ? 1 : 0).withExactArgs({});
 
@@ -9368,7 +9417,7 @@ sap.ui.define([
 			}));
 
 		// code under test
-		oPromise = oBinding.expand(oContext, bSilent).then(function () {
+		oPromise = oBinding.expand(oContext, bSilent).then(function (vResult) {
 			assert.ok(bSuccess);
 			if (bDataRequested && iCount) {
 				if (bSilent) {
@@ -9376,6 +9425,9 @@ sap.ui.define([
 				} else {
 					sinon.assert.callOrder(oGapCall, oChangeCall, oDataReceivedCall);
 				}
+			}
+			if (iCount < 0) {
+				assert.strictEqual(vResult, "~requestSideEffects~");
 			}
 		}, function (oResult) {
 			assert.notOk(bSuccess);

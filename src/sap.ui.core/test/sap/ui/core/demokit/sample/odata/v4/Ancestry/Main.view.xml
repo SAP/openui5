@@ -15,6 +15,9 @@
 				<m:Button icon="sap-icon://excel-attachment" press="onExport"
 					tooltip="Export To Spreadsheet"/>
 				<m:ToolbarSpacer/>
+				<m:Button icon="sap-icon://refresh" press="onRefresh" tooltip="Refresh"/>
+				<m:Button icon="sap-icon://synchronize" press="onSynchronize"
+					tooltip="Synchronize"/>
 				<m:SearchField placeholder="Hobby contains..." search="onFilter"
 					value="{ui>/sFilter}" width="40%"/>
 			</m:Toolbar>
