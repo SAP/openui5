@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/ControlBehavior", "./library", "sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/InvisibleRenderer", "sap/ui/core/Configuration", "sap/ui/core/Lib"], function(ControlBehavior, library, Device, InvisibleText, InvisibleRenderer, Configuration, Library) {
+sap.ui.define(["sap/ui/core/AnimationMode", "sap/ui/core/ControlBehavior", "./library", "sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/InvisibleRenderer", "sap/ui/core/Configuration", "sap/ui/core/Lib"], function(AnimationMode, ControlBehavior, library, Device, InvisibleText, InvisibleRenderer, Configuration, Library) {
 "use strict";
 
 
@@ -82,7 +82,7 @@ ListItemBaseRenderer.decorateMode = function(oModeControl, oLI) {
 	oModeControl.removeStyleClass("sapMLIBSelectAnimation sapMLIBUnselectAnimation");
 
 	// determine whether animation is necessary or not
-	if (ControlBehavior.getAnimationMode() === Configuration.AnimationMode.none || !oLI.getListProperty("modeAnimationOn")) {
+	if (ControlBehavior.getAnimationMode() === AnimationMode.none || !oLI.getListProperty("modeAnimationOn")) {
 		return;
 	}
 

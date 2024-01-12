@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/AnimationMode",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
@@ -14,7 +15,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/dom/jquery/Focusable" /* jQuery Plugin "firstFocusableDomRef" */
 ],
-function(ControlBehavior, Element, jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar, ObjectPageSubSection) {
+function(AnimationMode, ControlBehavior, Element, jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar, ObjectPageSubSection) {
 	"use strict";
 
 	var sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton";
@@ -702,7 +703,7 @@ function(ControlBehavior, Element, jQuery, Core, Configuration, KeyCodes, QUtils
 		assert.expect(3);
 
 		// Setup
-		ControlBehavior.setAnimationMode(Configuration.AnimationMode.none);
+		ControlBehavior.setAnimationMode(AnimationMode.none);
 		this.oScrollSpy.resetHistory();
 		this.oFocusSpy.resetHistory();
 
@@ -748,7 +749,7 @@ function(ControlBehavior, Element, jQuery, Core, Configuration, KeyCodes, QUtils
 		assert.expect(1);
 
 		// Setup
-		ControlBehavior.setAnimationMode(Configuration.AnimationMode.none);
+		ControlBehavior.setAnimationMode(AnimationMode.none);
 
 
 		// Check

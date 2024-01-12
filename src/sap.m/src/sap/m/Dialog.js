@@ -4,6 +4,7 @@
 
 // Provides control sap.m.Dialog.
 sap.ui.define([
+	"sap/ui/core/AnimationMode",
 	"sap/ui/core/ControlBehavior",
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Lib",
@@ -37,6 +38,7 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Focusable"
 ],
 function(
+	AnimationMode,
 	ControlBehavior,
 	Localization,
 	Library,
@@ -91,7 +93,7 @@ function(
 	var TitleAlignment = library.TitleAlignment;
 
 	var sAnimationMode = ControlBehavior.getAnimationMode();
-	var bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+	var bUseAnimations = sAnimationMode !== AnimationMode.none && sAnimationMode !== AnimationMode.minimal;
 
 	// the time should be longer the longest transition in the CSS (200ms),
 	// because of focusing and transition related issues,

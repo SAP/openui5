@@ -124,7 +124,7 @@ sap.ui.define([
 			var sUI5ICFNode = "/sap/bc/ui5_ui5/";
 			var aAppNames = [];
 			var sAppName;
-			var aRequests = window.performance.getEntriesByType("resource");
+			var aRequests = performance.getEntriesByType("resource");
 			for (var i = 0; i < aRequests.length; i++) {
 				var sUrl = aRequests[i].name;
 				//We limit the check to requests under ICF node "/sap/bc/ui5_ui5/", only these are relevant here

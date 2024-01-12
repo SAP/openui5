@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/i18n/Localization",
+	"sap/ui/core/AnimationMode",
 	'sap/ui/core/Control',
 	"sap/ui/core/ControlBehavior",
 	'sap/ui/core/Element',
@@ -37,6 +38,7 @@ sap.ui.define([
 ],
 function(
 	Localization,
+	AnimationMode,
 	Control,
 	ControlBehavior,
 	Element,
@@ -252,7 +254,7 @@ function(
 		TabStrip.SCROLL_ANIMATION_DURATION = (function(){
 			var sAnimationMode = ControlBehavior.getAnimationMode();
 
-			return (sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal ? 500 : 0);
+			return sAnimationMode !== AnimationMode.none && sAnimationMode !== AnimationMode.minimal ? 500 : 0;
 		})();
 
 

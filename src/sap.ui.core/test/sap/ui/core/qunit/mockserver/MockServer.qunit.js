@@ -2750,6 +2750,52 @@ sap.ui.define([
 		oMockServer.destroy();
 	});
 
+	QUnit.test("test OData $filter datetimeoffset and datetime", function (assert) {
+		const oMockServer = new MockServer({
+			rootUri: "/myservice/"
+		});
+
+		oMockServer.simulate("test-resources/sap/ui/core/qunit/mockserver/testdata/shopping/metadata.xml",
+			"test-resources/sap/ui/core/qunit/mockserver/testdata/shopping/");
+		oMockServer.start();
+
+		[
+			"ChangedAt gt datetimeoffset'2015-04-02T21:59:59Z' and ChangedAt lt datetimeoffset'2015-04-02T22:00:01Z",
+			"ChangedAt gt datetimeoffset'2015-04-02T21:59:59.999Z'"
+				+ " and ChangedAt lt datetimeoffset'2015-04-02T22:00:00.001Z",
+			"ChangedAt gt datetimeoffset'2015-04-02T22:59:59.999+01:00'"
+				+ " and ChangedAt lt datetimeoffset'2015-04-02T23:00:00.001+01:00'",
+			"ChangedAt gt datetimeoffset'2015-04-02T21:59:59.9999999Z'"
+				// mockserver supports only a precision of 3; .0000001 does not work
+				+ " and ChangedAt lt datetimeoffset'2015-04-02T22:00:00.001Z"
+		].forEach((sFilter) => {
+			const oResponse = syncAjax({
+				url: "/myservice/Reviews?$top=5&$filter=" + sFilter,
+				dataType: "json"
+			});
+			assert.ok(oResponse.success, "DateTimeOffset $filter=" + sFilter);
+			assert.strictEqual(oResponse.data.d.results.length, 1);
+			assert.strictEqual(oResponse.data.d.results[0].Id, "00505691-115B-1EE5-98EF-D8AB48B28A78");
+		});
+
+		[// all values are treated as UTC timestamps
+			"ChangedAt gt datetime'2015-04-02T21:59:59' and ChangedAt lt datetime'2015-04-02T22:00:01'",
+			"ChangedAt gt datetime'2015-04-02T21:59:59.999' and ChangedAt lt datetime'2015-04-02T22:00:00.001'",
+			// mockserver supports only a precision of 3; .0000001 does not work
+			"ChangedAt gt datetime'2015-04-02T21:59:59.9999999' and ChangedAt lt datetime'2015-04-02T22:00:00.001'"
+		].forEach((sFilter) => {
+			const oResponse = syncAjax({
+				url: "/myservice/Reviews?$top=5&$filter=" + sFilter,
+				dataType: "json"
+			});
+			assert.ok(oResponse.success, "DateTime $filter=" + sFilter);
+			assert.strictEqual(oResponse.data.d.results.length, 1);
+			assert.strictEqual(oResponse.data.d.results[0].Id, "00505691-115B-1EE5-98EF-D8AB48B28A78");
+		});
+
+		oMockServer.destroy();
+	});
+
 	QUnit.test("test OData $select", function (assert) {
 		var oMockServer = new MockServer({
 			rootUri: "/myservice/"

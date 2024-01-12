@@ -1,5 +1,6 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/ui/core/AnimationMode",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
@@ -27,6 +28,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ],
 function(
+	AnimationMode,
 	ControlBehavior,
 	Element,
 	Library,
@@ -947,7 +949,7 @@ function(
 			sOriginalMode = ControlBehavior.getAnimationMode();
 
 		//setup
-		ControlBehavior.setAnimationMode(Configuration.AnimationMode.none);
+		ControlBehavior.setAnimationMode(AnimationMode.none);
 
 		// Act: toggle to 'true'
 		this.oDynamicPage.setShowFooter(true);
@@ -962,7 +964,7 @@ function(
 		assert.ok($footerWrapper.hasClass("sapUiHidden"), "footer is hidden when the Animation mode is 'none'");
 
 		//setup
-		ControlBehavior.setAnimationMode(Configuration.AnimationMode.minimal);
+		ControlBehavior.setAnimationMode(AnimationMode.minimal);
 
 		// Act: toggle to 'true'
 		this.oDynamicPage.setShowFooter(true);
@@ -986,7 +988,7 @@ function(
 			oContentBoundingClientRect;
 
 		//setup
-		ControlBehavior.setAnimationMode(Configuration.AnimationMode.none);
+		ControlBehavior.setAnimationMode(AnimationMode.none);
 
 		// Act: toggle to 'true'
 		this.oDynamicPage.setShowFooter(true);

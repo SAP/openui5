@@ -867,6 +867,7 @@ sap.ui.define([
 				this._bSearchTriggered = true;
 				return Promise.resolve();
 			}
+			this._bFireSearch = true;
 			return this.validate();
 		};
 
@@ -885,6 +886,7 @@ sap.ui.define([
 		FilterBarBase.prototype.validate = function(bSuppressSearch) {
 
 			const bFireSearch = !bSuppressSearch;
+			this._bFireSearch = this._bFireSearch || bFireSearch;
 
 			const fValidateFc = function() {
 				if (!this._oValidationPromise) {
@@ -1165,8 +1167,8 @@ sap.ui.define([
 						this._bFieldInErrorState = true;
 						fnCallBack(bFireSearch);
 					}).catch((oEx) => {
-					this._bFieldInErrorState = true;
-					fnCallBack(bFireSearch);
+						this._bFieldInErrorState = true;
+						fnCallBack(bFireSearch);
 				});
 			}
 		};
@@ -1201,7 +1203,7 @@ sap.ui.define([
 
 		FilterBarBase.prototype._checkAndNotify = function(bFireSearch, vRetErrorState) {
 			const fnCheckAndFireSearch = function() {
-				if (bFireSearch) {
+				if (bFireSearch || this._bFireSearch) {
 					const oObj = {
 						reason: this._sReason ? this._sReason : ReasonMode.Unclear
 					};
@@ -1216,6 +1218,7 @@ sap.ui.define([
 				this._oValidationPromise = null;
 				this._fRejectedSearchPromise = null;
 				this._fResolvedSearchPromise = null;
+				this._bFireSearch = false;
 			}.bind(this);
 
 			if (vRetErrorState === FilterBarValidationStatus.AsyncValidation) {

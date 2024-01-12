@@ -435,7 +435,7 @@ sap.ui.define([
 	 *   The context for the created entity
 	 * @param {boolean} oEvent.getParameters.success
 	 *   Whether the POST was successfully processed; in case of an error, the error is already
-	 *   reported to {@link sap.ui.core.Messaging}
+	 *   reported to {@link module:sap/ui/core/Messaging}
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#createCompleted
 	 * @public

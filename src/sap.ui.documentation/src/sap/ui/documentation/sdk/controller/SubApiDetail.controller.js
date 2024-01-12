@@ -474,9 +474,26 @@ sap.ui.define([
 							}, true);
 						},
 						_getSubclassesBlock: function (oControlData, oEntityData) {
-							var aSubClasses = oEntityData.extendedBy || oEntityData.implementedBy,
+							var aSubClasses =
+									oEntityData.extendedBy ||
+									oEntityData.implementedBy,
+								fnFilterSubclassesByVisibility = function (aSubClasses) {
+									return aSubClasses.filter((oSubClassInfo) =>
+										this._aAllowedMembers.includes(
+											oSubClassInfo.visibility
+										)
+									);
+								}.bind(this),
+								fnGetSubclassesNames = function (aSubClasses) {
+									return aSubClasses.map(
+										(oSubClassInfo) => oSubClassInfo.name
+									);
+								},
 								oSubClassesLink;
 
+							if (aSubClasses && typeof aSubClasses[0] === "object") {
+								aSubClasses = fnGetSubclassesNames(fnFilterSubclassesByVisibility(aSubClasses));
+							}
 							this._aSubClasses = aSubClasses;
 
 							if (aSubClasses.length === 1) {

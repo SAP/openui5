@@ -5,17 +5,16 @@
  * Initialization Code and shared classes of library sap.ui.integration.
  */
 sap.ui.define([
- "sap/ui/base/DataType",
- "sap/ui/core/Core",
- "sap/ui/core/Lib",
- "sap/ui/Global",
- // library dependency
- "sap/ui/core/library",
- "sap/m/library",
- "sap/f/library",
- "sap/ui/unified/library",
- "sap/ui/layout/library"
-], function(DataType, oCore, Library) {
+	"sap/ui/base/DataType",
+	"sap/ui/core/Lib",
+	"sap/ui/Global",
+	// library dependency
+	"sap/ui/core/library",
+	"sap/m/library",
+	"sap/f/library",
+	"sap/ui/unified/library",
+	"sap/ui/layout/library"
+], function (DataType, Library) {
 	"use strict";
 
 	/**
@@ -29,6 +28,7 @@ sap.ui.define([
 	 * @public
 	 */
 	var thisLib = Library.init({
+		apiVersion: 2,
 		name: "sap.ui.integration",
 		version: "${version}",
 		dependencies: [
@@ -44,7 +44,9 @@ sap.ui.define([
 			"sap.ui.integration.CardMenuAction",
 			"sap.ui.integration.CardDesign",
 			"sap.ui.integration.CardDisplayVariant",
-			"sap.ui.integration.CardBlockingMessageType"
+			"sap.ui.integration.CardBlockingMessageType",
+			"sap.ui.integration.CardPreviewMode",
+			"sap.ui.integration.AttributesLayoutType"
 		],
 		controls: [
 			"sap.ui.integration.widgets.Card",
@@ -348,6 +350,18 @@ sap.ui.define([
 			});
 		}
 	}, "object");
+
+
+	/**
+	 * Register all of the above defined enums.
+	 */
+	DataType.registerEnum("sap.ui.integration.CardActionType", thisLib.CardActionType);
+	DataType.registerEnum("sap.ui.integration.CardDataMode", thisLib.CardDataMode);
+	DataType.registerEnum("sap.ui.integration.CardDesign", thisLib.CardDesign);
+	DataType.registerEnum("sap.ui.integration.CardDisplayVariant", thisLib.CardDisplayVariant);
+	DataType.registerEnum("sap.ui.integration.CardBlockingMessageType", thisLib.CardBlockingMessageType);
+	DataType.registerEnum("sap.ui.integration.CardPreviewMode", thisLib.CardPreviewMode);
+	DataType.registerEnum("sap.ui.integration.AttributesLayoutType", thisLib.AttributesLayoutType);
 
 	return thisLib;
 });

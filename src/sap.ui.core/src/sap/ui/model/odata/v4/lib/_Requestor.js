@@ -1795,8 +1795,7 @@ sap.ui.define([
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li>group ID is '$cached'. The error has a property <code>$cached = true</code>
-	 *     <li>a <code>oGroupLock</code> for group ID "$single" is given and there is already an
-	 *       existing batch queue for this group
+	 *     <li>group ID is '$single' and there is already an existing batch queue for this group
 	 *   </ul>
 	 * @public
 	 */
@@ -2288,9 +2287,9 @@ sap.ui.define([
 	 * @param {function} oModelInterface.reportTransitionMessages
 	 *   A function to report OData transition messages
 	 * @param {function(sap.ui.core.message.Message[],sap.ui.core.message.Message[]):void} oModelInterface.updateMessages
-	 *   A function to report messages to {@link sap.ui.core.Messaging}, expecting two arrays of
-	 *   {sap.ui.core.message.Message} as parameters. The first array should be the old messages and
-	 *   the second array the new messages.
+	 *   A function to report messages to {@link module:sap/ui/core/Messaging}, expecting two arrays
+	 *   of {@link sap.ui.core.message.Message} as parameters. The first array should be the old
+	 *   messages and the second array the new messages.
 	 * @param {object} [mHeaders={}]
 	 *   Map of default headers; may be overridden with request-specific headers; certain
 	 *   OData V4 headers are predefined, but may be overridden by the default or

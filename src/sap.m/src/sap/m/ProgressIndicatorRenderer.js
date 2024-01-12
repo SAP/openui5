@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/core/ControlBehavior", "sap/ui/core/library", "sap/ui/core/Configuration"], function(ControlBehavior, coreLibrary, Configuration) {
+sap.ui.define(["sap/ui/core/AnimationMode", "sap/ui/core/ControlBehavior", "sap/ui/core/library", "sap/ui/core/Configuration"], function(AnimationMode, ControlBehavior, coreLibrary, Configuration) {
 "use strict";
 
 
@@ -35,7 +35,7 @@ ProgressIndicatorRenderer.render = function(oRm, oControl) {
 		sControlId = oControl.getId(),
 		bEnabled = oControl.getEnabled(),
 		sAnimationMode = ControlBehavior.getAnimationMode(),
-		bAnimate = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal
+		bAnimate = sAnimationMode !== AnimationMode.none && sAnimationMode !== AnimationMode.minimal
 			&& oControl.getDisplayAnimation();
 
 	// PI container

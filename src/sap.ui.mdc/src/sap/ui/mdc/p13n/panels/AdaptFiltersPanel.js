@@ -14,12 +14,13 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
+	"sap/ui/core/InvisibleText",
 	"sap/m/SearchField",
 	"sap/m/OverflowToolbarLayoutData",
 	"sap/ui/core/Item",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel"
-], (AbstractContainer, AbstractContainerItem, SelectionPanel, GroupView, Library, Filter, Button, Bar, ToolbarSpacer, Select, SegmentedButton, SegmentedButtonItem, SearchField, OverflowToolbarLayoutData, Item, mLibrary, JSONModel) => {
+], (AbstractContainer, AbstractContainerItem, SelectionPanel, GroupView, Library, Filter, Button, Bar, ToolbarSpacer, Select, SegmentedButton, SegmentedButtonItem, InvisibleText, SearchField, OverflowToolbarLayoutData, Item, mLibrary, JSONModel) => {
 	"use strict";
 
 	// shortcut for sap.m.BarDesign
@@ -417,6 +418,12 @@ sap.ui.define([
 					this.switchView(sKey);
 				}.bind(this)
 			});
+
+			this._oInvText = new InvisibleText({
+				text: this._getResourceText("p13nDialog.VIEW_SWITCH")
+			}).toStatic();
+
+			this._oViewSwitch.addAriaLabelledBy(this._oInvText);
 		}
 
 		return this._oViewSwitch;
@@ -505,6 +512,12 @@ sap.ui.define([
 		AbstractContainer.prototype.exit.apply(this, arguments);
 		this._sModeKey = null;
 		this._sSearchString = null;
+
+		if (this._oInvText) {
+			this._oInvText.destroy();
+			this._oInvText = null;
+		}
+
 	};
 
 	return AdaptFiltersPanel;

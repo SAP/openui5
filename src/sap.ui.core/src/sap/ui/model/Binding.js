@@ -766,7 +766,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes all control messages for this binding from {@link sap.ui.core.Messaging} in addition
+	 * Removes all control messages for this binding from {@link module:sap/ui/core/Messaging} in addition
 	 * to the standard clean-up tasks.
 	 * @see sap.ui.base.EventProvider#destroy
 	 *

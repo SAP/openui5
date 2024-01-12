@@ -4,6 +4,7 @@
 // Provides control sap.m.SelectionDetails.
 sap.ui.define([
 	'./library',
+	"sap/ui/core/AnimationMode",
 	'sap/ui/core/Control',
 	'sap/m/Button',
 	'sap/ui/base/Interface',
@@ -17,6 +18,7 @@ sap.ui.define([
 ],
 function(
 	library,
+	AnimationMode,
 	Control,
 	Button,
 	Interface,
@@ -371,7 +373,7 @@ function(
 
 			height = Math.min(SelectionDetails._POPOVER_MAX_HEIGHT, height);
 			oPopover._oControl._deregisterContentResizeHandler();
-			var bAnimationMode = ControlBehavior.getAnimationMode() !== Configuration.AnimationMode.none;
+			var bAnimationMode = ControlBehavior.getAnimationMode() !== AnimationMode.none;
 			$PopoverContent.animate({
 				"height": Math.min(height, iMaxHeight)
 			}, bAnimationMode ? 100 : 0, function() {

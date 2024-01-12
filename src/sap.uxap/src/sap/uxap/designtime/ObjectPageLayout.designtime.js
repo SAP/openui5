@@ -126,7 +126,7 @@ function(
 						return {
 							actions: {
 								getResponsibleElement: getSectionForAnchorBarButton,
-								actionsFromResponsibleElement: ["remove", "rename", "reveal", "addIFrame"],
+								actionsFromResponsibleElement: ["remove", "rename", "reveal", "addIFrame", "settings"],
 								combine: null,
 								split: null
 							}

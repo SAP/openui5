@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/Device",
+	"sap/ui/core/AnimationMode",
 	"sap/ui/core/Control",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Element",
@@ -37,6 +38,7 @@ sap.ui.define([
 ], function(
 	Localization,
 	Device,
+	AnimationMode,
 	Control,
 	ControlBehavior,
 	Element,
@@ -2244,7 +2246,7 @@ sap.ui.define([
 		var $this = this.$();
 		var sTableId = this.getId();
 
-		if (ControlBehavior.getAnimationMode() !== Configuration.AnimationMode.none) {
+		if (ControlBehavior.getAnimationMode() !== AnimationMode.none) {
 			jQuery(document.body).on("webkitTransitionEnd." + sTableId + " transitionend." + sTableId,
 				function(oEvent) {
 					if (jQuery(oEvent.target).has($this).length > 0) {

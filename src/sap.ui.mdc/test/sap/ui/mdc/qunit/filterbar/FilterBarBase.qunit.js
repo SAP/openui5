@@ -319,6 +319,52 @@ sap.ui.define([
         });
     });
 
+    QUnit.test("Check 'valid' promise - when called twice with same suppressSearch information", function(assert){
+        const oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
+        sinon.stub(this.oFilterBarBase, "waitForInitialization").returns(Promise.resolve());
+
+        let fResolveApplyChanges;
+		this.oFilterBarBase._aOngoingChangeAppliance = [new Promise((resolve) => {
+			fResolveApplyChanges = resolve;
+		})];
+
+        const oValid = this.oFilterBarBase.validate(true);
+
+		const fDelayedFunction = function() {
+			this.oFilterBarBase.validate(true);
+			fResolveApplyChanges();
+		};
+        setTimeout(fDelayedFunction.bind(this), 300);
+
+        return oValid.then(function(){
+            assert.ok(true, "Valid Promise resolved");
+            assert.equal(oSearchSpy.callCount, 0, "No Search executed");
+        });
+    });
+
+    QUnit.test("Check 'valid' promise - when called twice with contradictionary suppressSearch information", function(assert){
+        const oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
+        sinon.stub(this.oFilterBarBase, "waitForInitialization").returns(Promise.resolve());
+
+        let fResolveApplyChanges;
+		this.oFilterBarBase._aOngoingChangeAppliance = [new Promise((resolve) => {
+			fResolveApplyChanges = resolve;
+		})];
+
+        const oValid = this.oFilterBarBase.validate(true);
+
+		const fDelayedFunction = function() {
+			this.oFilterBarBase.validate(false);
+			fResolveApplyChanges();
+		};
+        setTimeout(fDelayedFunction.bind(this), 300);
+
+        return oValid.then(function(){
+            assert.ok(true, "Valid Promise resolved");
+            assert.equal(oSearchSpy.callCount, 1, "Search executed");
+        });
+    });
+
     QUnit.test("Check cleanup for search promise", function(assert){
 
         sinon.stub(this.oFilterBarBase, "waitForInitialization").returns(Promise.resolve());

@@ -1514,9 +1514,9 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The group ID that is used for the DELETE request; if not specified, the model's
 	 *   {@link #getUpdateGroupId update group ID} is used; the resulting group ID must not have
-	 *   {@link sap.ui.model.odata.v4.SubmitMode.API}. You can use the <code>$single</code> group ID
-	 *   to send a DELETE request as fast as possible; it will be wrapped in a batch request as for
-	 *   a <code>$auto</code> group (since 1.121.0).
+	 *   {@link sap.ui.model.odata.v4.SubmitMode.API}. You can use the '$single' group ID to send a
+	 *   DELETE request as fast as possible; it will be wrapped in a batch request as for a '$auto'
+	 *   group (since 1.121.0).
 	 * @param {boolean} [bRejectIfNotFound]
 	 *   If <code>true</code>, deletion fails if the entity does not exist (HTTP status code 404 or
 	 *   412 due to the <code>If-Match: *</code> header); otherwise we assume that it has already
@@ -1529,9 +1529,7 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li> the path does not start with a '/',
 	 *     <li> the given group ID is invalid,
-	 *     <li> the resulting group ID has {@link sap.ui.model.odata.v4.SubmitMode.API},
-	 *     <li> group ID '$single' is given and there is already another request with the same group
-	 *       ID enqueued.
+	 *     <li> the resulting group ID has {@link sap.ui.model.odata.v4.SubmitMode.API}.
 	 *   </ul>
 	 *
 	 * @public

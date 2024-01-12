@@ -5,6 +5,7 @@
 // Provides control sap.m.Page.
 sap.ui.define([
 	"./library",
+	"sap/ui/core/AnimationMode",
 	"sap/ui/core/Control",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Lib",
@@ -24,6 +25,7 @@ sap.ui.define([
 ],
 function(
 	library,
+	AnimationMode,
 	Control,
 	ControlBehavior,
 	Library,
@@ -415,7 +417,7 @@ function(
 
 			var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last(),
 				sAnimationMode = ControlBehavior.getAnimationMode(),
-				bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+				bHasAnimations = sAnimationMode !== AnimationMode.none && sAnimationMode !== AnimationMode.minimal;
 
 			if (!this.getFloatingFooter()) {
 				this.setProperty("showFooter", bShowFooter);

@@ -339,20 +339,6 @@ sap.ui.define([
 	});
 
 	/**
-	 * Enumerable list with available animation modes.
-	 *
-	 * This enumerable is used to validate the animation mode. Animation modes allow to specify
-	 * different animation scenarios or levels. The implementation of the Control (JavaScript or CSS)
-	 * has to be done differently for each animation mode.
-	 *
-	 * @enum {string}
-	 * @name sap.ui.core.Configuration.AnimationMode
-	 * @since 1.50.0
-	 * @public
-	 * @deprecated As of Version 1.120. Please use module {@link module:sap/ui/core/AnimationMode AnimationMode} instead.
-	 */
-
-	/**
 	 * <code>full</code> represents a mode with unrestricted animation capabilities.
 	 * @public
 	 * @name sap.ui.core.Configuration.AnimationMode.full

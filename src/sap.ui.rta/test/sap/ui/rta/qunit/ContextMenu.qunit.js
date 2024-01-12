@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/changeHandler/PropertyChange",
+	"sap/ui/fl/util/IFrame",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/fl/registry/Settings",
@@ -25,6 +26,7 @@ sap.ui.define([
 	OverlayRegistry,
 	DtUtil,
 	PropertyChange,
+	IFrame,
 	ChangesWriteAPI,
 	FieldExtensibility,
 	Settings,
@@ -641,6 +643,11 @@ sap.ui.define([
 				blocks: [new Button({text: "ButtonSubsection2"})]
 			});
 
+			var oSubSection3 = new ObjectPageSubSection({
+				id: oEmbeddedView.createId("subsection3"),
+				blocks: [new IFrame()]
+			});
+
 			this.oObjectPageSection1 = new ObjectPageSection({
 				id: oEmbeddedView.createId("section1"),
 				title: "Section_1",
@@ -663,6 +670,13 @@ sap.ui.define([
 
 			this.oObjectPageSection3 = oObjectPageSection3;
 
+			this.oObjectPageSection4 = new ObjectPageSection({
+				id: oEmbeddedView.createId("section4"),
+				title: "Section_4",
+				visible: true,
+				subSections: [oSubSection3]
+			});
+
 			var oEmbeddedPage = Element.getElementById("Comp1---idMain1--mainPage");
 
 			this.oObjectPageLayout = new ObjectPageLayout({
@@ -670,7 +684,8 @@ sap.ui.define([
 				sections: [
 					this.oObjectPageSection1,
 					oObjectPageSection2,
-					oObjectPageSection3
+					oObjectPageSection3,
+					this.oObjectPageSection4
 				]
 			});
 			oEmbeddedPage.addContent(this.oObjectPageLayout);
@@ -784,6 +799,53 @@ sap.ui.define([
 				} else {
 					assert.ok(false, sText);
 				}
+			}.bind(this));
+		});
+
+		QUnit.test("when context menu (context menu) is opened on ObjectPageSection that contains an iFrame", function(assert) {
+			const oOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection4);
+			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
+				assert.ok(true, "the contextMenu is open");
+			});
+			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
+				const {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
+				assert.strictEqual(oContextMenuControl.getItems().length, 6, " and 6 Menu Items are available");
+				assert.strictEqual(
+					oContextMenuControl.getItems()[5].getKey(),
+					"CTX_SETTINGS",
+					"settings action is available (update embedded content)"
+				);
+				assert.strictEqual(
+					oContextMenuControl.getItems()[5].getEnabled(),
+					true,
+					"update embedded content is enabled (update embedded content)"
+				);
+			}.bind(this));
+		});
+
+		QUnit.test("when context menu (context menu) is opened on ObjectPageSection on the anchorbar that contains an iFrame", async function(assert) {
+			const oObjectPageSection4 = this.oObjectPageLayout.getSections()[3];
+			this.oObjectPageLayout.removeSection(oObjectPageSection4);
+			this.oObjectPageLayout.insertSection(oObjectPageSection4, 0);
+			await nextUIUpdate();
+			await DtUtil.waitForSynced(this.oRta._oDesignTime)();
+			const oOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout.getAggregation("_anchorBar").getContent()[0]);
+			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
+				assert.ok(true, "the contextMenu is open");
+			});
+			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
+				const {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
+				assert.strictEqual(oContextMenuControl.getItems().length, 6, " and 6 Menu Items are available");
+				assert.strictEqual(
+					oContextMenuControl.getItems()[5].getKey(),
+					"CTX_SETTINGS",
+					"settings action is available (update embedded content)"
+				);
+				assert.strictEqual(
+					oContextMenuControl.getItems()[5].getEnabled(),
+					true,
+					"update embedded content is enabled (update embedded content)"
+				);
 			}.bind(this));
 		});
 	});

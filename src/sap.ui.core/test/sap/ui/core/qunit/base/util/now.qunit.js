@@ -12,7 +12,7 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	});
 
 	QUnit.test("tests for window performance object", function(assert) {
-		assert.ok(window.performance && performance.now && performance.timeOrigin, "check for presence of window.performance");
+		assert.ok(performance && performance.now && performance.timeOrigin, "check for presence of performance");
 		assert.ok(new Date(now()) instanceof Date, "should be a valid date");
 	});
 

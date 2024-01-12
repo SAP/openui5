@@ -5,6 +5,7 @@
 sap.ui.define([
 	"../library",
 	"sap/ui/base/EventProvider",
+	"sap/ui/core/AnimationMode",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Control",
 	"sap/ui/core/Configuration",
@@ -14,6 +15,7 @@ sap.ui.define([
 ], function(
 	library,
 	EventProvider,
+	AnimationMode,
 	ControlBehavior,
 	Control,
 	Configuration,
@@ -24,7 +26,7 @@ sap.ui.define([
 	"use strict";
 
 	var sAnimationMode = ControlBehavior.getAnimationMode(),
-		bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal,
+		bHasAnimations = sAnimationMode !== AnimationMode.none && sAnimationMode !== AnimationMode.minimal,
 		iServerSideAfterTransitionDelay = 200,
 		oResourceBundle = Library.getResourceBundleFor("sap.m");
 

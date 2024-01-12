@@ -5,6 +5,7 @@
 // Provides control sap.m.NavContainer.
 sap.ui.define([
 	'./library',
+	"sap/ui/core/AnimationMode",
 	"sap/ui/core/Configuration",
 	'sap/ui/core/Control',
 	"sap/ui/core/ControlBehavior",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Focusable"
 ], function(
 	library,
+	AnimationMode,
 	Configuration,
 	Control,
 	ControlBehavior,
@@ -328,7 +330,7 @@ sap.ui.define([
 
 	var fnGetDelay = function (iDelay) {
 		var sAnimationMode = ControlBehavior.getAnimationMode(),
-			bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+			bUseAnimations = sAnimationMode !== AnimationMode.none && sAnimationMode !== AnimationMode.minimal;
 
 		return bUseAnimations ? iDelay : 0;
 	},

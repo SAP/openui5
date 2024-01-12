@@ -5,8 +5,8 @@
 /**
  * Initialization Code and shared classes of library sap.ui.support.
  */
-sap.ui.define(["sap/ui/core/Lib", "sap/ui/core/library"],
-	function(Library, library1) {
+sap.ui.define(["sap/ui/core/Lib", "sap/ui/base/DataType", "sap/ui/core/library"],
+	function (Library, DataType, library1) {
 	"use strict";
 
 	/**
@@ -27,6 +27,7 @@ sap.ui.define(["sap/ui/core/Lib", "sap/ui/core/library"],
 	 */
 	var thisLib = Library.init({
 		name : "sap.ui.support",
+		apiVersion: 2,
 		dependencies : ["sap.ui.core"],
 		types: [
 			"sap.ui.support.Severity"
@@ -67,6 +68,8 @@ sap.ui.define(["sap/ui/core/Lib", "sap/ui/core/library"],
 		 */
 		Low: "Low"
 	};
+
+	DataType.registerEnum("sap.ui.support.Severity", thisLib.Severity);
 
 	/**
 	 * Defines the Audiences.

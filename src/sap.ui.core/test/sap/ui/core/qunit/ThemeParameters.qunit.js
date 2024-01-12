@@ -15,9 +15,9 @@ sap.ui.define([
 
 	QUnit.module("Parmeters.get", {
 		before: function() {
-			// For some reasons window.performance.getResourceByType does only return the first 250?!
+			// For some reasons performance.getResourceByType does only return the first 250?!
 			// entries therefore clear the resource timings upfront
-			window.performance.clearResourceTimings();
+			performance.clearResourceTimings();
 		}
 	});
 
@@ -51,7 +51,7 @@ sap.ui.define([
 	}
 
 	function checkLibraryParametersJsonRequestForLib(sLibNumber) {
-		return window.performance.getEntriesByType("resource").filter(function (oResource) {
+		return performance.getEntriesByType("resource").filter(function (oResource) {
 			return oResource.name.endsWith("themeParameters/lib" + sLibNumber + "/themes/sap_hcb/library-parameters.json");
 		});
 	}
@@ -74,9 +74,9 @@ sap.ui.define([
 
 	QUnit.module("Parmeters.get (async)", {
 		before: function() {
-			// For some reasons window.performance.getResourceByType does only return the first 250?!
+			// For some reasons performance.getResourceByType does only return the first 250?!
 			// entries therefore clear the resource timings upfront
-			window.performance.clearResourceTimings();
+			performance.clearResourceTimings();
 		}
 	});
 

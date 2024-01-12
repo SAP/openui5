@@ -17,6 +17,17 @@ sap.ui
 		function(Log, isEmptyObject, ManagedObject, DraftEnabledMockServer, ODataMetadata, jQuery, sinon) {
 			"use strict";
 
+			// Extract from OData ABNF:
+			//   dateTime = "datetime" SQUOTE dateTimeBody SQUOTE
+			//   dateTimeOffset = "datetimeoffset" SQUOTE dateTimeOffsetBody SQUOTE
+			//   dateTimeBody = year "-" month "-" day "T" hour ":" minute [ ":" second [ "." nanoSeconds ] ]
+			//   dateTimeOffsetBody = dateTimeBody "Z" / ; TODO: is the Z optional?
+			//   dateTimeBody sign zeroToThirteen [ ":00" ] /
+			//   dateTimeBody sign zeroToTwelve [ ":" zeroToSixty ]
+			// Valid timestamps must start with: year "-" month "-" day "T" hour ":" minute, so it is enough to check
+			// only Z|+|- after T whether a timezone offset is given
+			const rHasTimezoneOffset = /T.*(\+|\-|Z)/;
+
 			/**
 			 * Creates a mocked server. This helps to mock some back-end calls, e.g. for OData V2/JSON Models or simple XHR calls, without
 			 * changing the application code. This class can also be used for qunit tests.
@@ -3600,18 +3611,11 @@ sap.ui
 					return;
 				}
 				var fnNoOffset = function(s) {
-					var day = jQuery.map(s.slice(0, -5).split(/\D/), function(itm) {
-						return parseInt(itm) || 0;
-					});
-					day[1] -= 1;
-					day = new Date(Date.UTC.apply(Date, day));
-					var offsetString = s.slice(-5);
-					var offset = parseInt(offsetString) / 100;
-					if (offsetString.slice(0, 1) === "+") {
-						offset *= -1;
+					// treat all date time strings as UTC timestamps
+					if (!rHasTimezoneOffset.test(s)) {
+						s += "Z";
 					}
-					day.setHours(day.getHours() + offset);
-					return day.getTime();
+					return new Date(s).getTime();
 				};
 
 				if (sString.indexOf("datetimeoffset") > -1) {
