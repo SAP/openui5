@@ -318,6 +318,44 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("_selectCells should not be called when hovering same cell", function(assert) {
+		this.oTable.addDependent(this.oCellSelector);
+		var done = assert.async();
+
+		const oEvent = {target: null, preventDefault: () => {}};
+		const oSelectCellsSpy = sinon.spy(this.oCellSelector, "_selectCells");
+
+		this.oTable.attachEventOnce("rowsUpdated", () => {
+			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
+			qutils.triggerEvent("mousedown", oCell, { button: 0, ctrlKey: true }); // select first cell of first row with left-click/primary button
+			assert.ok(this.oCellSelector._bMouseDown, "Flag has been set");
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
+			assert.equal(oSelectCellsSpy.callCount, 1, "_selectCells was called once");
+
+			oCell = getCell(this.oTable, 1, 1);
+			oEvent.target = oCell;
+			this.oCellSelector._onmousemove(oEvent);
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 1}}, "Cell has been selected");
+			assert.equal(oSelectCellsSpy.callCount, 2, "_selectCells was called again");
+
+			// Hover same cell again
+			this.oCellSelector._onmousemove(oEvent);
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 1}}, "Cell has been selected");
+			assert.equal(oSelectCellsSpy.callCount, 2, "_selectCells was not called again, as hovered cell has not changed");
+
+			oCell = getCell(this.oTable, 1, 0);
+			oEvent.target = oCell;
+			this.oCellSelector._onmousemove(oEvent);
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
+			assert.equal(oSelectCellsSpy.callCount, 3, "_selectCells was called thrice as hovered cell changed");
+
+			qutils.triggerEvent("mouseup", oCell);
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
+
+			done();
+		});
+	});
+
 	QUnit.test("MDCTable - getSelection", function(assert) {
 		const done = assert.async();
 		this.oTable.removeDependent(this.oCellSelector);

@@ -197,7 +197,7 @@ sap.ui.define([
 			var oSelectableCell = this._getSelectableCell(oEvent.target);
 			if (oSelectableCell) {
 				this._bMouseDown = true;
-				this._mClickedCell = this.getConfig("getCellInfo", this.getControl(), oSelectableCell);
+				this._mClickedCell = this._oPreviousCell = this.getConfig("getCellInfo", this.getControl(), oSelectableCell);
 			}
 		},
 		onmouseup: function(oEvent) {
@@ -205,6 +205,7 @@ sap.ui.define([
 			this._bBorderDown = false;
 			this._mClickedCell = undefined;
 			this._bScrolling = false;
+			this._oPreviousCell = undefined;
 			this._clearScroller();
 		}
 	};
@@ -219,7 +220,11 @@ sap.ui.define([
 			if (this._bScrolling) {
 				this._scrollSelect(this._oSession.scrollForward, this._oSession.isVertical, oEvent);
 			} else {
-				this._selectCells();
+				if (!this._oSession.mSource || !this._oSession.mTarget) {
+					return;
+				}
+				const mBounds = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
+				this._drawSelection(mBounds);
 			}
 		}.bind(this);
 		this._fnOnMouseEnter = this._onmouseenter.bind(this);
@@ -462,11 +467,11 @@ sap.ui.define([
 
 		// If clicked cell (=starting cell) is equal to currently hovered cell, don't do anything
 		var oInfo = this.getConfig("getCellInfo", this.getControl(), oSelectableCell);
-		if (this._mClickedCell
-			&& oInfo.rowIndex == this._mClickedCell.rowIndex
-			&& oInfo.colIndex == this._mClickedCell.colIndex) {
+		if (oInfo.rowIndex == this._oPreviousCell?.rowIndex && oInfo.colIndex == this._oPreviousCell?.colIndex) {
+			// If currently hovered cell is the same as previous cell, nothing needs to be done.
 			return;
 		}
+		this._oPreviousCell = oInfo;
 
 		// Remove text selection during mouse cell selection
 		window.getSelection().removeAllRanges();
@@ -663,12 +668,10 @@ sap.ui.define([
 	 * @param {int} mTo.colIndex column index
 	 * @private
 	 */
-	CellSelector.prototype._selectCells = function (mFrom, mTo, mFocus) {
+	CellSelector.prototype._selectCells = function (mFrom, mTo) {
 		if (!this._bSelecting) {
 			return;
 		}
-
-		this._clearSelection();
 
 		mFrom = mFrom ? mFrom : this._oSession.mSource;
 		mTo = mTo ? mTo : this._oSession.mTarget;
@@ -695,6 +698,8 @@ sap.ui.define([
 		if (!mBounds.from || !mBounds.to) {
 			return;
 		}
+
+		this._clearSelection();
 
 		this._oSession.cellRefs = [];
 		for (var iRow = mBounds.from.rowIndex; iRow <= mBounds.to.rowIndex; iRow++) {
