@@ -126,5 +126,23 @@ sap.ui.define([
 
 	};
 
+	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer) {
+
+		const aCurrentContent = oContainer && oContainer.getContent();
+		if (oContainer.isA("sap.ui.mdc.valuehelp.Dialog") && aCurrentContent?.length > 0) {
+			aCurrentContent.forEach(function(oCurrentContent) {
+				if (oCurrentContent.isA("sap.ui.mdc.valuehelp.content.MDCTable")) {
+					const oTable = oCurrentContent.getTable();
+					if (oTable?._setShowP13nButton) {
+						oTable._setShowP13nButton(false);
+					}
+				}
+			});
+
+		}
+
+		return ODataV4ValueHelpDelegate.retrieveContent.apply(this, arguments);
+	};
+
 	return ValueHelpDelegate;
 });
