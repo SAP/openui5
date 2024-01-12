@@ -48,8 +48,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 							"dataSource": "ODataV2Consumption",
 							"settings" : {
 								"autoExpandSelect" : false,
-								"operationMode" : "Server",
-								"synchronizationMode" : "None"
+								"operationMode" : "Server"
 							},
 							"type" : "sap.ui.model.odata.v4.ODataModel"
 						}

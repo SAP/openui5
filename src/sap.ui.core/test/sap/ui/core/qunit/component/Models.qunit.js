@@ -370,8 +370,7 @@ sap.ui.define([
 			sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
 				odataVersion: "4.0",
 				serviceUrl: '/path/to/odata/service/?sap-client=foo&sap-server=bar',
-				metadataUrlParams: {"sap-language": "EN"},
-				synchronizationMode: "None"
+				metadataUrlParams: {"sap-language": "EN"}
 			});
 
 
@@ -845,8 +844,7 @@ sap.ui.define([
 					'/path/to/odata/annotations/3?sap-language=EN&sap-client=200&sap-context-token=1476971160',
 					'/path/to/odata/annotations/4?sap-language=EN&sap-client=200&sap-context-token=1476971188'
 				],
-				operationMode: "Server",
-				synchronizationMode: "None"
+				operationMode: "Server"
 			});
 
 			// destroy the component
@@ -1291,8 +1289,7 @@ sap.ui.define([
 				metadataUrlParams: {"sap-language": "EN"},
 				autoExpandSelect: false,
 				odataVersion: "2.0",
-				operationMode: "Server",
-				synchronizationMode: "None"
+				operationMode: "Server"
 			});
 
 			// check if models are set on component (and save them internally)
@@ -1321,8 +1318,7 @@ sap.ui.define([
 				metadataUrlParams: {"sap-language": "EN"},
 				autoExpandSelect: false,
 				odataVersion: "foo",
-				operationMode: "Server",
-				synchronizationMode: "None"
+				operationMode: "Server"
 			});
 
 		}.bind(this));

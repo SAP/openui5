@@ -39,7 +39,6 @@ sap.ui.define([
 
 				var oModel = new ODataModel({
 				 serviceUrl: oCloudPickerInstance.getContent()[0].getModel().sServiceUrl,
-				 synchronizationMode: "None",
 				 earlyRequests: false
 				 });
 
