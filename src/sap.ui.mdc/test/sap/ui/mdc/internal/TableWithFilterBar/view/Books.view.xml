@@ -321,7 +321,7 @@
 													<mdc:table.Column id="FHLanguage-mdcTable--name" header="Name" propertyKey="name">
 														<Text text="{name}"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="HLanguage-mdcTable--nativeName" header="navitve Name" propertyKey="nativeName">
+													<mdc:table.Column id="HLanguage-mdcTable--nativeName" header="native Name" propertyKey="nativeName">
 														<Text text="{nativeName}"/>
 													</mdc:table.Column>
 												</mdc:columns>
