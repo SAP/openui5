@@ -90,7 +90,7 @@ sap.ui.define([
 			var oView = this.getView(),
 				oModel = oView.getModel(),
 				oTable = oView.byId("ToLineItems"),
-				oSelectedItem = oTable.getContextByIndex(oTable.getSelectedIndex()).getObject(),
+				oSelectedItem = oTable.getContextByIndex(oTable.getSelectedIndices()[0]).getObject(),
 				sSalesOrderID = oSelectedItem.SalesOrderID,
 				sSalesOrderItemPosition = oSelectedItem.ItemPosition,
 				sItem = "\"" + sSalesOrderID + " / " + sSalesOrderItemPosition + "\"";
@@ -206,7 +206,7 @@ sap.ui.define([
 		onDeleteItem : function () {
 			var sSalesOrderLineItem,
 				oTable = this.byId("ToLineItems"),
-				oItemContext = oTable.getContextByIndex(oTable.getSelectedIndex()),
+				oItemContext = oTable.getContextByIndex(oTable.getSelectedIndices()[0]),
 				that = this;
 
 			function onConfirm(sCode) {
