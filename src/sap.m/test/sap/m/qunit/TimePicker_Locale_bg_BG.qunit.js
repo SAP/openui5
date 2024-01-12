@@ -16,7 +16,8 @@ sap.ui.define([
 		// Prepare
 		var oSut = new TimePicker({
 			dateValue: UI5Date.getInstance(2018, 7, 20, 17, 21),
-			valueFormat: "dd MMMM yyyy h:mm a" /* value format should be defined as well*/
+			displayFormat: "HH:mm:ss 'ч'.",
+			valueFormat: "HH:mm:ss 'ч'." /* value format should be defined as well*/
 		}).placeAt('content');
 
 		await nextUIUpdate();

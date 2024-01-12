@@ -272,7 +272,7 @@
             <copyright>Google Inc.</copyright>
             <pattern>sap/ui/thirdparty/caja-html-sanitizer.js</pattern>
         </lib>
-        <lib name="cldr" displayName="Unicode Common Locale Data Repository" npmName="cldr-core" version="43" hash="95c4c14ea80b264cddea65bd5609eab6" homepage="http://cldr.unicode.org/" id="73555000106100020909">
+        <lib name="cldr" displayName="Unicode Common Locale Data Repository" npmName="cldr-core" version="44" hash="132467204ffa486e82a48a3a0e51f5b4" homepage="http://cldr.unicode.org/" id="73555000106100020909">
             <license url="http://www.unicode.org/copyright.html" type="Unicode-DFS-2015" />
             <copyright>1991-2023 Unicode, Inc.</copyright>
             <pattern>sap/ui/core/cldr/*</pattern>
@@ -405,7 +405,7 @@
             <copyright>Isaac Z. Schlueter and Contributors</copyright>
             <pattern partial="true" otherContent="SAP" explanation="LRUPersistentCache.js is overall written by SAP, but portions ('Least Recently Used' logic) are taken from the node-lru-cache project (see https://github.com/isaacs/node-lru-cache/blob/v2.7.3/README.md) and modified.">sap/ui/core/cache/LRUPersistentCache.js</pattern>
         </lib>
-        <lib name="tzdata" displayName="Time Zone Database" npmName="n/a" version="2023c" homepage="http://www.iana.org/time-zones" id="73554900106100123193">
+        <lib name="tzdata" displayName="Time Zone Database" npmName="n/a" version="2023d" homepage="http://www.iana.org/time-zones" id="73554900106100123193">
             <license url="https://github.com/eggert/tz/blob/main/LICENSE" type="LicenseRef-tzdata-PublicDomain" />
             <copyright>Arthur David Olson, Paul Eggert and other contributors</copyright>
             <pattern partial="true" otherContent="SAP" explanation="_timezones.js is overall written by SAP, but the list of IANA timezone IDs is taken from the Timezone Database">../test/sap/ui/core/qunit/i18n/helper/_timezones.js</pattern>

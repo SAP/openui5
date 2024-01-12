@@ -280,7 +280,11 @@ sap.ui.define([
 
 			// parse minusSign
 			var sMinusSymbols = oLocaleData.getLenientNumberSymbols("minusSign");
-			var aMinusSymbols = sMinusSymbols.split("");
+			// With CLDR version 44, spaces were added to the lenient-scope-number property, in both the minus and plus
+			// sign values. This causing the issue that we cannot distinguish whether " 123" is meant to be a "-123" or
+			// a "+123". Therefore, we are excluding the spaces from the minus signs here since, we must not parse a
+			// number like e.g. " 123" to "-123".
+			var aMinusSymbols = sMinusSymbols.split("").filter((s) => s !== " ");
 			assert.ok(aMinusSymbols.length > 0, "There should be minus symbols present");
 			aMinusSymbols.forEach(function(sSymbol) {
 				assert.strictEqual(oFormat.parse(sSymbol + "100"), -100, "-100 is parsed correctly for '" + sSymbol + "' from '" + sMinusSymbols + "' (" + aMinusSymbols.join(",") + ")");

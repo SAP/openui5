@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "43.0.0",
-	"__buildtime": "2023-09-28T11:39:07.908Z",
+	"__version": "44.0.0",
+	"__buildtime": "2024-01-12T14:24:50.280Z",
 	"languages": {
 		"aa": "Afar",
 		"ab": "Abkhaz",
@@ -60,6 +60,7 @@
 		"bez": "Bena",
 		"bfd": "Bafut",
 		"bg": "Bulgaria",
+		"bgc": "Haryanvi",
 		"bgn": "Balochi Barat",
 		"bho": "Bhojpuri",
 		"bi": "Bislama",
@@ -102,7 +103,7 @@
 		"chy": "Cheyenne",
 		"ckb": "Kurdi Sorani",
 		"ckb_alt-menu": "Kurdi Sorani",
-		"ckb_alt-variant": "Kurdi Sorani",
+		"ckb_alt-variant": "Kurdi, Sorani",
 		"clc": "Chilcotin",
 		"cnr": "Bahasa Montenegro",
 		"co": "Korsika",
@@ -152,7 +153,6 @@
 		"en": "Inggris",
 		"en_GB": "Inggris (Britania)",
 		"en_GB-alt-short": "Inggris (UK)",
-		"en_US-alt-short": "Inggris (AS)",
 		"enm": "Inggris Abad Pertengahan",
 		"eo": "Esperanto",
 		"es": "Spanyol",
@@ -875,7 +875,7 @@
 		"CG-alt-variant": "Kongo (Republik)",
 		"CH": "Swiss",
 		"CI": "Côte d’Ivoire",
-		"CI-alt-variant": "Côte d’Ivoire",
+		"CI-alt-variant": "Pantai Gading",
 		"CK": "Kepulauan Cook",
 		"CL": "Cile",
 		"CM": "Kamerun",
@@ -948,6 +948,8 @@
 		"IM": "Pulau Man",
 		"IN": "India",
 		"IO": "Wilayah Inggris di Samudra Hindia",
+		"IO-alt-biot": "Wilayah Inggris di Samudra Hindia",
+		"IO-alt-chagos": "Kepulauan Chagos",
 		"IQ": "Irak",
 		"IR": "Iran",
 		"IS": "Islandia",
@@ -1059,7 +1061,7 @@
 		"SX": "Sint Maarten",
 		"SY": "Suriah",
 		"SZ": "eSwatini",
-		"SZ-alt-variant": "eSwatini",
+		"SZ-alt-variant": "Eswatini",
 		"TA": "Tristan da Cunha",
 		"TC": "Kepulauan Turks dan Caicos",
 		"TD": "Chad",
@@ -1074,7 +1076,7 @@
 		"TN": "Tunisia",
 		"TO": "Tonga",
 		"TR": "Turki",
-		"TR-alt-variant": "Turki",
+		"TR-alt-variant": "Turkiye",
 		"TT": "Trinidad dan Tobago",
 		"TV": "Tuvalu",
 		"TW": "Taiwan",
@@ -4013,7 +4015,7 @@
 			"displayName": "j",
 			"relative-type-0": "jam ini",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "dalam {0} jam"
+				"relativeTimePattern-count-other": "dlm {0} jam"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} jam lalu"
@@ -4722,6 +4724,12 @@
 			"10p-24": {
 				"unitPrefixPattern": "y{0}"
 			},
+			"10p-27": {
+				"unitPrefixPattern": "r{0}"
+			},
+			"10p-30": {
+				"unitPrefixPattern": "q{0}"
+			},
 			"10p1": {
 				"unitPrefixPattern": "da{0}"
 			},
@@ -4751,6 +4759,12 @@
 			},
 			"10p24": {
 				"unitPrefixPattern": "Y{0}"
+			},
+			"10p27": {
+				"unitPrefixPattern": "R{0}"
+			},
+			"10p30": {
+				"unitPrefixPattern": "Q{0}"
 			},
 			"1024p1": {
 				"unitPrefixPattern": "Ki{0}"
@@ -5128,8 +5142,8 @@
 				"unitPattern-count-other": "{0} dpi"
 			},
 			"graphics-dot": {
-				"displayName": "piksel",
-				"unitPattern-count-other": "{0} px"
+				"displayName": "dot",
+				"unitPattern-count-other": "{0} dot"
 			},
 			"length-earth-radius": {
 				"displayName": "R⊕",
@@ -5384,6 +5398,10 @@
 				"displayName": "kn",
 				"unitPattern-count-other": "{0} kn"
 			},
+			"speed-beaufort": {
+				"displayName": "Bft",
+				"unitPattern-count-other": "B {0}"
+			},
 			"temperature-generic": {
 				"displayName": "°",
 				"unitPattern-count-other": "{0}°"
@@ -5559,9 +5577,9 @@
 		}
 	},
 	"lenient-scope-number": {
-		"minusSign": "-‒⁻₋−➖﹣－",
-		"commaSign": ",،٫、︐︑﹐﹑，､",
-		"plusSign": "+⁺₊➕﬩﹢＋"
+		"minusSign": "-－﹣ ‑‒−⁻₋➖",
+		"commaSign": ",，﹐︐ ،٫、﹑､︑",
+		"plusSign": "+＋﬩﹢⁺₊ ➕"
 	},
 	"currencyFormat-sap-short": {
 		"1000-other": "0 rb ¤",

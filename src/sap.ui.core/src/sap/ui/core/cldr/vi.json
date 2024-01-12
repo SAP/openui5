@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "43.0.0",
-	"__buildtime": "2023-09-28T11:39:07.908Z",
+	"__version": "44.0.0",
+	"__buildtime": "2024-01-12T14:24:50.280Z",
 	"languages": {
 		"aa": "Tiếng Afar",
 		"ab": "Tiếng Abkhazia",
@@ -61,6 +61,7 @@
 		"bfd": "Tiếng Bafut",
 		"bfq": "Tiếng Badaga",
 		"bg": "Tiếng Bulgaria",
+		"bgc": "Tiếng Haryana",
 		"bgn": "Tiếng Tây Balochi",
 		"bho": "Tiếng Bhojpuri",
 		"bi": "Tiếng Bislama",
@@ -926,6 +927,8 @@
 		"IM": "Đảo Man",
 		"IN": "Ấn Độ",
 		"IO": "Lãnh thổ Ấn Độ Dương thuộc Anh",
+		"IO-alt-biot": "Lãnh thổ Ấn Độ Dương thuộc Anh",
+		"IO-alt-chagos": "Quần đảo Chagos",
 		"IQ": "Iraq",
 		"IR": "Iran",
 		"IS": "Iceland",
@@ -992,7 +995,7 @@
 		"NR": "Nauru",
 		"NU": "Niue",
 		"NZ": "New Zealand",
-		"NZ-alt-variant": "New Zealand",
+		"NZ-alt-variant": "Aotearoa New Zealand",
 		"OM": "Oman",
 		"PA": "Panama",
 		"PE": "Peru",
@@ -1090,7 +1093,7 @@
 			"full": "EEEE, d MMMM, y",
 			"long": "d MMMM, y",
 			"medium": "d MMM, y",
-			"short": "dd/MM/y"
+			"short": "d/M/yy"
 		},
 		"timeFormats": {
 			"full": "HH:mm:ss zzzz",
@@ -1101,28 +1104,28 @@
 		"dateTimeFormats": {
 			"full": "{0} {1}",
 			"long": "{0} {1}",
-			"medium": "{0}, {1}",
-			"short": "{0}, {1}",
+			"medium": "{0} {1}",
+			"short": "{0} {1}",
 			"availableFormats": {
-				"Bh": "h B",
+				"Bh": "h 'giờ' B",
 				"Bhm": "h:mm B",
 				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
-				"EBhm": "E h:mm B",
-				"EBhms": "E h:mm:ss B",
+				"EBhm": "h:mm B E",
+				"EBhms": "h:mm:ss B E",
 				"Ed": "E, 'ngày' d",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"Ehm": "h:mm a E",
+				"EHm": "HH:mm E",
+				"Ehms": "h:mm:ss a E",
+				"EHms": "HH:mm:ss E",
 				"Gy": "y G",
-				"GyMd": "dd/MM/y GGGGG",
+				"GyMd": "d/M/y G",
 				"GyMMM": "MMM y G",
-				"GyMMMd": "dd MMM, y G",
-				"GyMMMEd": "E, dd/MM/y G",
+				"GyMMMd": "d MMM, y G",
+				"GyMMMEd": "E, d MMM, y G",
 				"h": "h a",
-				"H": "HH",
+				"H": "HH 'giờ'",
 				"hm": "h:mm a",
 				"Hm": "H:mm",
 				"hms": "h:mm:ss a",
@@ -1132,8 +1135,8 @@
 				"hmv": "h:mm a v",
 				"Hmv": "HH:mm v",
 				"M": "L",
-				"Md": "dd/M",
-				"MEd": "E, dd/M",
+				"Md": "d/M",
+				"MEd": "E, d/M",
 				"MMdd": "dd-MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
@@ -1145,7 +1148,7 @@
 				"y": "y",
 				"yM": "M/y",
 				"yMd": "d/M/y",
-				"yMEd": "E, dd/M/y",
+				"yMEd": "E, d/M/y",
 				"yMM": "'tháng' MM, y",
 				"yMMM": "MMM y",
 				"yMMMd": "d MMM, y",
@@ -1172,8 +1175,8 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
-					"h": "h – h B"
+					"B": "h 'giờ' B  –  h 'giờ' B",
+					"h": "h – h 'giờ' B"
 				},
 				"Bhm": {
 					"B": "h:mm B – h:mm B",
@@ -1181,31 +1184,31 @@
 					"m": "h:mm – h:mm B"
 				},
 				"d": {
-					"d": "'Ngày' dd–dd"
+					"d": "d – d"
 				},
 				"Gy": {
 					"G": "y G – y G",
 					"y": "y – y G"
 				},
 				"GyM": {
-					"G": "M/y GGGGG – M/y GGGGG",
-					"M": "M/y – M/y GGGGG",
-					"y": "M/y – M/y GGGGG"
+					"G": "M/y G  –  M/y G",
+					"M": "M/y– M/y G",
+					"y": "M/y – M/y G"
 				},
 				"GyMd": {
-					"d": "dd-MM-y – dd-MM-y GGGGG",
-					"G": "dd-MM-y GGGGG – dd-MM-y GGGGG",
-					"M": "dd-MM-y – dd-MM-y GGGGG",
-					"y": "dd-MM-y – dd-MM-y GGGGG"
+					"d": "d/M/y – d/M/y G",
+					"G": "d/M/y G  –  d/M/y G",
+					"M": "d/M/y – d/M/y G",
+					"y": "d/M/y – d/M/y G"
 				},
 				"GyMEd": {
-					"d": "E, dd-MM-y – E, dd-MM-y GGGGG",
-					"G": "E, dd-MM-y GGGGG – E, dd-MM-y GGGGG",
-					"M": "E, dd-MM-y – E, dd-MM-y GGGGG",
-					"y": "E, dd-MM-y – E, dd-MM-y GGGGG"
+					"d": "E, d/M/y  –  E, d/M/y G",
+					"G": "E, d/M/y G  –  E, d/M/y G",
+					"M": "E, d/M/y  –  E, d/M/y G",
+					"y": "E, d/M/y  –  E, d/M/y G"
 				},
 				"GyMMM": {
-					"G": "MM y G – MM y G",
+					"G": "MMM y G  –  MMM y G",
 					"M": "MMM – MMM y G",
 					"y": "MMM y – MMM y G"
 				},
@@ -1257,19 +1260,19 @@
 					"M": "'Tháng' M – M"
 				},
 				"Md": {
-					"d": "dd/MM – dd/MM",
-					"M": "dd/MM – dd/MM"
+					"d": "d/M – d/M",
+					"M": "d/M – d/M"
 				},
 				"MEd": {
-					"d": "EEEE, dd/MM – EEEE, dd/MM",
-					"M": "EEEE, dd/MM – EEEE, dd/MM"
+					"d": "E, d/M  –  E, d/M",
+					"M": "E, d/M  –  E, d/M"
 				},
 				"MMM": {
-					"M": "MMM–MMM"
+					"M": "MMM – MMM"
 				},
 				"MMMd": {
-					"d": "'Ngày' dd - 'Ngày' dd 'tháng' M",
-					"M": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M"
+					"d": "d – d MMM",
+					"M": "d MMM  –  d MMM"
 				},
 				"MMMEd": {
 					"d": "E, d MMM – E, d MMM",
@@ -1279,36 +1282,36 @@
 					"y": "y–y"
 				},
 				"yM": {
-					"M": "MM/y – MM/y",
-					"y": "MM/y – MM/y"
+					"M": "M/y – M/y",
+					"y": "M/y – M/y"
 				},
 				"yMd": {
-					"d": "dd/MM/y – dd/MM/y",
-					"M": "dd/MM/y – dd/MM/y",
-					"y": "dd/MM/y – dd/MM/y"
+					"d": "d/M/y – d/M/y",
+					"M": "d/M/y – d/M/y",
+					"y": "d/M/y – d/M/y"
 				},
 				"yMEd": {
-					"d": "EEEE, dd/MM/y – EEEE, dd/MM/y",
-					"M": "EEEE, dd/MM/y – EEEE, dd/MM/y",
-					"y": "EEEE, dd/MM/y – EEEE, dd/MM/y"
+					"d": "E, d/M/y  –  E, d/M/y",
+					"M": "E, d/M/y  –  E, d/M/y",
+					"y": "E, d/M/y  –  E, d/M/y"
 				},
 				"yMMM": {
-					"M": "'Tháng' M - 'Tháng' M 'năm' y",
-					"y": "'Tháng' M 'năm' y - 'Tháng' M 'năm' y"
+					"M": "MMM  –  MMM y",
+					"y": "MMM y  –  MMM y"
 				},
 				"yMMMd": {
 					"d": "d – d MMM, y",
-					"M": "d MMM – d MMM, y",
-					"y": "'Ngày' dd 'tháng' M 'năm' y - 'Ngày' dd 'tháng' M 'năm' y"
+					"M": "d MMM  –  d MMM, y",
+					"y": "d MMM, y  –  d MMM, y"
 				},
 				"yMMMEd": {
-					"d": "EEEE, 'ngày' dd MMM – EEEE, 'ngày' dd MMM 'năm' y",
-					"M": "E, dd 'tháng' M – E, dd 'tháng' M, y",
-					"y": "E, dd 'tháng' M, y – E, dd 'tháng' M, y"
+					"d": "E, d MMM  –  E, d MMM, y",
+					"M": "E, d MMM  –  E, d MMM, y",
+					"y": "E, d MMM, y  –  E, d MMM, y"
 				},
 				"yMMMM": {
-					"M": "MMMM–MMMM 'năm' y",
-					"y": "MMMM, y – MMMM, y"
+					"M": "MMMM  –  MMMM 'năm' y",
+					"y": "MMMM 'năm' y  –  MMMM 'năm' y"
 				}
 			}
 		},
@@ -1359,18 +1362,54 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Thg 1",
-					"Thg 2",
-					"Thg 3",
-					"Thg 4",
-					"Thg 5",
-					"Thg 6",
-					"Thg 7",
-					"Thg 8",
-					"Thg 9",
-					"Thg 10",
-					"Thg 11",
-					"Thg 12"
+					[
+						"Tháng 1",
+						"Thg 1"
+					],
+					[
+						"Tháng 2",
+						"Thg 2"
+					],
+					[
+						"Tháng 3",
+						"Thg 3"
+					],
+					[
+						"Tháng 4",
+						"Thg 4"
+					],
+					[
+						"Tháng 5",
+						"Thg 5"
+					],
+					[
+						"Tháng 6",
+						"Thg 6"
+					],
+					[
+						"Tháng 7",
+						"Thg 7"
+					],
+					[
+						"Tháng 8",
+						"Thg 8"
+					],
+					[
+						"Tháng 9",
+						"Thg 9"
+					],
+					[
+						"Tháng 10",
+						"Thg 10"
+					],
+					[
+						"Tháng 11",
+						"Thg 11"
+					],
+					[
+						"Tháng 12",
+						"Thg 12"
+					]
 				],
 				"narrow": [
 					"1",
@@ -1572,7 +1611,7 @@
 				},
 				"wide": {
 					"midnight": "nửa đêm",
-					"noon": "TR",
+					"noon": "trưa",
 					"morning1": "sáng",
 					"afternoon1": "chiều",
 					"evening1": "tối",
@@ -1607,24 +1646,24 @@
 			}
 		},
 		"era-wide": {
-			"0": "Trước Thiên Chúa",
+			"0": "Trước Chúa Giáng Sinh",
 			"1": "Sau Công Nguyên"
 		},
 		"era-abbreviated": {
 			"0": "TCN",
-			"1": "CN"
+			"1": "SCN"
 		},
 		"era-narrow": {
-			"0": "tr. CN",
-			"1": "sau CN"
+			"0": "TCN",
+			"1": "CN"
 		}
 	},
 	"ca-islamic": {
 		"dateFormats": {
-			"full": "EEEE, 'ngày' dd 'tháng' MM 'năm' y G",
-			"long": "'Ngày' dd 'tháng' M 'năm' y G",
-			"medium": "dd-MM-y G",
-			"short": "dd/MM/y GGGGG"
+			"full": "EEEE, 'ngày' d 'tháng' M 'năm' y G",
+			"long": "'ngày' d 'tháng' M 'năm' y G",
+			"medium": "d MMM, y G",
+			"short": "d/M/y GGGGG"
 		},
 		"timeFormats": {
 			"full": "HH:mm:ss zzzz",
@@ -1633,37 +1672,37 @@
 			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} {0}",
-			"long": "{1} {0}",
-			"medium": "{1} {0}",
-			"short": "{1} {0}",
+			"full": "{0} {1}",
+			"long": "{0} {1}",
+			"medium": "{0} {1}",
+			"short": "{0} {1}",
 			"availableFormats": {
-				"Bh": "h B",
+				"Bh": "h 'giờ' B",
 				"Bhm": "h:mm B",
 				"Bhms": "h:mm:ss B",
-				"d": "'Ngày' dd",
+				"d": "d",
 				"E": "ccc",
-				"EBhm": "E h:mm B",
-				"EBhms": "E h:mm:ss B",
-				"Ed": "E, dd",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"EBhm": "h:mm B E",
+				"EBhms": "h:mm:ss B E",
+				"Ed": "E, 'ngày' d",
+				"Ehm": "h:mm a E",
+				"EHm": "HH:mm E",
+				"Ehms": "h:mm:ss a E",
+				"EHms": "HH:mm:ss E",
 				"Gy": "y G",
-				"GyMd": "dd/MM/y GGGGG",
+				"GyMd": "d/M/y GGGGG",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM, y G",
 				"GyMMMEd": "E, d MMM, y G",
 				"h": "h a",
-				"H": "HH",
+				"H": "HH 'giờ'",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
 				"hms": "h:mm:ss a",
 				"Hms": "HH:mm:ss",
 				"M": "L",
-				"Md": "dd/M",
-				"MEd": "E, dd/M",
+				"Md": "d/M",
+				"MEd": "E, d/M",
 				"MMdd": "dd-MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
@@ -1673,8 +1712,8 @@
 				"ms": "mm:ss",
 				"y": "y G",
 				"yyyy": "y G",
-				"yyyyM": "M/y G",
-				"yyyyMd": "d/M/y G",
+				"yyyyM": "M/y GGGGG",
+				"yyyyMd": "d/M/y GGGGG",
 				"yyyyMEd": "E, d/M/y GGGGG",
 				"yyyyMM": "MM-y G",
 				"yyyyMMM": "MMM y G",
@@ -1709,7 +1748,7 @@
 					"m": "h:mm – h:mm B"
 				},
 				"d": {
-					"d": "'Ngày' dd–dd"
+					"d": "d–d"
 				},
 				"Gy": {
 					"G": "y G – y G",
@@ -1782,60 +1821,60 @@
 					"H": "HH'h'-HH'h' v"
 				},
 				"M": {
-					"M": "'Tháng' M - 'Tháng' M"
+					"M": "M – M"
 				},
 				"Md": {
-					"d": "dd/MM – dd/MM",
-					"M": "dd/MM – dd/MM"
+					"d": "d/M – d/M",
+					"M": "d/M – d/M"
 				},
 				"MEd": {
-					"d": "EEEE, dd/MM – EEEE, dd/MM",
-					"M": "EEEE, dd/MM – EEEE, dd/MM"
+					"d": "E, d/M  –  E, d/M",
+					"M": "E, d/M  –  E, d/M"
 				},
 				"MMM": {
-					"M": "MMM–MMM"
+					"M": "MMM  –  MMM"
 				},
 				"MMMd": {
-					"d": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M",
-					"M": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M"
+					"d": "d – d MMM",
+					"M": "d MMM  –  d MMM"
 				},
 				"MMMEd": {
-					"d": "EEEE, 'ngày' dd – EEEE, 'ngày' dd 'tháng' M",
-					"M": "EEEE, 'ngày' dd 'tháng' M – EEEE, 'ngày' dd 'tháng' M"
+					"d": "E, d MMM  –  E, d MMM",
+					"M": "E, d MMM  –  E, d MMM"
 				},
 				"y": {
 					"y": "y–y G"
 				},
 				"yM": {
-					"M": "MM/y – MM/y G",
-					"y": "MM/y – MM/y G"
+					"M": "M/y – M/y GGGGG",
+					"y": "M/y – M/y GGGGG"
 				},
 				"yMd": {
-					"d": "dd/MM/y – dd/MM/y G",
-					"M": "dd/MM/y – dd/MM/y G",
-					"y": "dd/MM/y – dd/MM/y G"
+					"d": "d/M/y – d/M/y GGGGG",
+					"M": "d/M/y – d/M/y GGGGG",
+					"y": "d/M/y – d/M/y GGGGG"
 				},
 				"yMEd": {
-					"d": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
-					"M": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
-					"y": "EEEE, dd/MM/y – EEEE, dd/MM/y G"
+					"d": "E, d/M/y  –  E, d/M/y GGGGG",
+					"M": "E, d/M/y  –  E, d/M/y GGGGG",
+					"y": "E, d/M/y  –  E, d/M/y GGGGG"
 				},
 				"yMMM": {
-					"M": "'Tháng' M - 'Tháng' M 'năm' y G",
-					"y": "'Tháng' M 'năm' y - 'Tháng' M 'năm' y G"
+					"M": "MMM  –  MMM y G",
+					"y": "MMM y  –  MMM y G"
 				},
 				"yMMMd": {
-					"d": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' y G",
-					"M": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' y G",
-					"y": "'Ngày' dd 'tháng' M 'năm' y - 'Ngày' dd 'tháng' M 'năm' y G"
+					"d": "d – d MMM, y G",
+					"M": "d MMM  –  d MMM, y G",
+					"y": "d MMM, y  –  d MMM, y G"
 				},
 				"yMMMEd": {
-					"d": "EEEE, 'ngày' dd MMM – EEEE, 'ngày' dd MMM 'năm' y G",
-					"M": "E, dd 'tháng' M – E, dd 'tháng' M, y G",
-					"y": "E, dd 'tháng' M, y – E, dd 'tháng' M, y G"
+					"d": "E, d MMM  –  E, d MMM, y G",
+					"M": "E, d MMM  –  E, d MMM, y G",
+					"y": "E, d MMM, y  –  E, d MMM, y G"
 				},
 				"yMMMM": {
-					"M": "MMMM–MMMM y G",
+					"M": "MMMM  –  MMMM y G",
 					"y": "MMMM y – MMMM y G"
 				}
 			}
@@ -2100,7 +2139,7 @@
 				},
 				"wide": {
 					"midnight": "nửa đêm",
-					"noon": "TR",
+					"noon": "trưa",
 					"morning1": "sáng",
 					"afternoon1": "chiều",
 					"evening1": "tối",
@@ -2158,37 +2197,37 @@
 			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} {0}",
-			"long": "{1} {0}",
-			"medium": "{1} {0}",
-			"short": "{1} {0}",
+			"full": "{0} {1}",
+			"long": "{0} {1}",
+			"medium": "{0} {1}",
+			"short": "{0} {1}",
 			"availableFormats": {
-				"Bh": "h B",
+				"Bh": "h 'giờ' B",
 				"Bhm": "h:mm B",
 				"Bhms": "h:mm:ss B",
-				"d": "'Ngày' dd",
+				"d": "d",
 				"E": "ccc",
-				"EBhm": "E h:mm B",
-				"EBhms": "E h:mm:ss B",
-				"Ed": "E, dd",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"EBhm": "h:mm B E",
+				"EBhms": "h:mm:ss B E",
+				"Ed": "E, 'ngày' d",
+				"Ehm": "h:mm a E",
+				"EHm": "HH:mm E",
+				"Ehms": "h:mm:ss a E",
+				"EHms": "HH:mm:ss E",
 				"Gy": "y G",
-				"GyMd": "dd/MM/y GGGGG",
+				"GyMd": "d/M/y GGGGG",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM, y G",
 				"GyMMMEd": "E, d MMM, y G",
 				"h": "h a",
-				"H": "HH",
+				"H": "HH 'giờ'",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
 				"hms": "h:mm:ss a",
 				"Hms": "HH:mm:ss",
 				"M": "L",
-				"Md": "dd/M",
-				"MEd": "E, dd/M",
+				"Md": "d/M",
+				"MEd": "E, d/M",
 				"MMdd": "dd-MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
@@ -2198,8 +2237,8 @@
 				"ms": "mm:ss",
 				"y": "y G",
 				"yyyy": "y G",
-				"yyyyM": "M/y G",
-				"yyyyMd": "d/M/y G",
+				"yyyyM": "M/y GGGGG",
+				"yyyyMd": "d/M/y GGGGG",
 				"yyyyMEd": "E, d/M/y GGGGG",
 				"yyyyMM": "MM-y G",
 				"yyyyMMM": "MMM y G",
@@ -2234,7 +2273,7 @@
 					"m": "h:mm – h:mm B"
 				},
 				"d": {
-					"d": "'Ngày' dd–dd"
+					"d": "d–d"
 				},
 				"Gy": {
 					"G": "y G – y G",
@@ -2307,67 +2346,67 @@
 					"H": "HH'h'-HH'h' v"
 				},
 				"M": {
-					"M": "'Tháng' M - 'Tháng' M"
+					"M": "M – M"
 				},
 				"Md": {
-					"d": "dd/MM – dd/MM",
-					"M": "dd/MM – dd/MM"
+					"d": "d/M – d/M",
+					"M": "d/M – d/M"
 				},
 				"MEd": {
-					"d": "EEEE, dd/MM – EEEE, dd/MM",
-					"M": "EEEE, dd/MM – EEEE, dd/MM"
+					"d": "E, d/M  –  E, d/M",
+					"M": "E, d/M  –  E, d/M"
 				},
 				"MMM": {
-					"M": "MMM–MMM"
+					"M": "MMM  –  MMM"
 				},
 				"MMMd": {
-					"d": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M",
-					"M": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M"
+					"d": "d – d MMM",
+					"M": "d MMM  –  d MMM"
 				},
 				"MMMEd": {
-					"d": "EEEE, 'ngày' dd – EEEE, 'ngày' dd 'tháng' M",
-					"M": "EEEE, 'ngày' dd 'tháng' M – EEEE, 'ngày' dd 'tháng' M"
+					"d": "E, d MMM  –  E, d MMM",
+					"M": "E, d MMM  –  E, d MMM"
 				},
 				"y": {
 					"y": "y–y G",
 					"G": "y G–y G"
 				},
 				"yM": {
-					"M": "MM/y – MM/y G",
-					"y": "MM/y – MM/y G",
-					"G": "MM/y G – MM/y G"
+					"M": "M/y – M/y GGGGG",
+					"y": "M/y – M/y GGGGG",
+					"G": "M/y GGGGG – M/y GGGGG"
 				},
 				"yMd": {
-					"d": "dd/MM/y – dd/MM/y G",
-					"M": "dd/MM/y – dd/MM/y G",
-					"y": "dd/MM/y – dd/MM/y G",
-					"G": "dd/MM/y G – dd/MM/y G"
+					"d": "d/M/y – d/M/y GGGGG",
+					"M": "d/M/y – d/M/y GGGGG",
+					"y": "d/M/y – d/M/y GGGGG",
+					"G": "d/M/y GGGGG – d/M/y GGGGG"
 				},
 				"yMEd": {
-					"d": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
-					"M": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
-					"y": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
-					"G": "EEEE, dd/MM/y G – EEEE, dd/MM/y G"
+					"d": "E, d/M/y  –  E, d/M/y GGGGG",
+					"M": "E, d/M/y  –  E, d/M/y GGGGG",
+					"y": "E, d/M/y  –  E, d/M/y GGGGG",
+					"G": "E, d/M/y GGGGG  –  E, d/M/y GGGGG"
 				},
 				"yMMM": {
-					"M": "'Tháng' M - 'Tháng' M 'năm' y G",
-					"y": "'Tháng' M 'năm' y - 'Tháng' M 'năm' y G",
-					"G": "'Tháng' M 'năm' y G - 'Tháng' M 'năm' y G"
+					"M": "MMM  –  MMM y G",
+					"y": "MMM y  –  MMM y G",
+					"G": "MMM y G  –  MMM y G"
 				},
 				"yMMMd": {
-					"d": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' y G",
-					"M": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' y G",
-					"y": "'Ngày' dd 'tháng' M 'năm' y - 'Ngày' dd 'tháng' M 'năm' y G",
-					"G": "'Ngày G' dd 'tháng' M 'năm' y G - 'Ngày G' dd 'tháng' M 'năm' y G"
+					"d": "d – d MMM, y G",
+					"M": "d MMM  –  d MMM, y G",
+					"y": "d MMM, y  –  d MMM, y G",
+					"G": "d MMM, y G  –  d MMM, y G"
 				},
 				"yMMMEd": {
-					"d": "EEEE, 'ngày' dd MMM – EEEE, 'ngày' dd MMM 'năm' y G",
-					"M": "E, dd 'tháng' M – E, dd 'tháng' M, y G",
-					"y": "E, dd 'tháng' M, y – E, dd 'tháng' M, y G",
-					"G": "E, dd 'tháng' M, y G – E, dd 'tháng' M, y G"
+					"d": "E, d MMM  –  E, d MMM, y G",
+					"M": "E, d MMM  –  E, d MMM, y G",
+					"y": "E, d MMM, y  –  E, d MMM, y G",
+					"G": "E, d MMM, y G  –  E, d MMM, y G"
 				},
 				"yMMMM": {
-					"M": "MMMM–MMMM y G",
+					"M": "MMMM  –  MMMM y G",
 					"y": "MMMM y – MMMM y G",
 					"G": "MMMM y G – MMMM y G"
 				}
@@ -2420,18 +2459,54 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Thg 1",
-					"Thg 2",
-					"Thg 3",
-					"Thg 4",
-					"Thg 5",
-					"Thg 6",
-					"Thg 7",
-					"Thg 8",
-					"Thg 9",
-					"Thg 10",
-					"Thg 11",
-					"Thg 12"
+					[
+						"Tháng 1",
+						"Thg 1"
+					],
+					[
+						"Tháng 2",
+						"Thg 2"
+					],
+					[
+						"Tháng 3",
+						"Thg 3"
+					],
+					[
+						"Tháng 4",
+						"Thg 4"
+					],
+					[
+						"Tháng 5",
+						"Thg 5"
+					],
+					[
+						"Tháng 6",
+						"Thg 6"
+					],
+					[
+						"Tháng 7",
+						"Thg 7"
+					],
+					[
+						"Tháng 8",
+						"Thg 8"
+					],
+					[
+						"Tháng 9",
+						"Thg 9"
+					],
+					[
+						"Tháng 10",
+						"Thg 10"
+					],
+					[
+						"Tháng 11",
+						"Thg 11"
+					],
+					[
+						"Tháng 12",
+						"Thg 12"
+					]
 				],
 				"narrow": [
 					"1",
@@ -2633,7 +2708,7 @@
 				},
 				"wide": {
 					"midnight": "nửa đêm",
-					"noon": "TR",
+					"noon": "trưa",
 					"morning1": "sáng",
 					"afternoon1": "chiều",
 					"evening1": "tối",
@@ -2691,10 +2766,10 @@
 	},
 	"ca-persian": {
 		"dateFormats": {
-			"full": "EEEE, 'ngày' dd 'tháng' MM 'năm' y G",
-			"long": "'Ngày' dd 'tháng' M 'năm' y G",
-			"medium": "dd-MM-y G",
-			"short": "dd/MM/y GGGGG"
+			"full": "EEEE, 'ngày' d 'tháng' M 'năm' y G",
+			"long": "'ngày' d 'tháng' M 'năm' y G",
+			"medium": "d MMM, y G",
+			"short": "d/M/y GGGGG"
 		},
 		"timeFormats": {
 			"full": "HH:mm:ss zzzz",
@@ -2703,37 +2778,37 @@
 			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} {0}",
-			"long": "{1} {0}",
-			"medium": "{1} {0}",
-			"short": "{1} {0}",
+			"full": "{0} {1}",
+			"long": "{0} {1}",
+			"medium": "{0} {1}",
+			"short": "{0} {1}",
 			"availableFormats": {
-				"Bh": "h B",
+				"Bh": "h 'giờ' B",
 				"Bhm": "h:mm B",
 				"Bhms": "h:mm:ss B",
-				"d": "'Ngày' dd",
+				"d": "d",
 				"E": "ccc",
-				"EBhm": "E h:mm B",
-				"EBhms": "E h:mm:ss B",
-				"Ed": "E, dd",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"EBhm": "h:mm B E",
+				"EBhms": "h:mm:ss B E",
+				"Ed": "E, 'ngày' d",
+				"Ehm": "h:mm a E",
+				"EHm": "HH:mm E",
+				"Ehms": "h:mm:ss a E",
+				"EHms": "HH:mm:ss E",
 				"Gy": "y G",
-				"GyMd": "dd/MM/y GGGGG",
+				"GyMd": "d/M/y GGGGG",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM, y G",
 				"GyMMMEd": "E, d MMM, y G",
 				"h": "h a",
-				"H": "HH",
+				"H": "HH 'giờ'",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
 				"hms": "h:mm:ss a",
 				"Hms": "HH:mm:ss",
 				"M": "L",
-				"Md": "dd/M",
-				"MEd": "E, dd/M",
+				"Md": "d/M",
+				"MEd": "E, d/M",
 				"MMdd": "dd-MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
@@ -2743,8 +2818,8 @@
 				"ms": "mm:ss",
 				"y": "y G",
 				"yyyy": "y G",
-				"yyyyM": "M/y G",
-				"yyyyMd": "d/M/y G",
+				"yyyyM": "M/y GGGGG",
+				"yyyyMd": "d/M/y GGGGG",
 				"yyyyMEd": "E, d/M/y GGGGG",
 				"yyyyMM": "MM-y G",
 				"yyyyMMM": "MMM y G",
@@ -2779,7 +2854,7 @@
 					"m": "h:mm – h:mm B"
 				},
 				"d": {
-					"d": "'Ngày' dd–dd"
+					"d": "d–d"
 				},
 				"Gy": {
 					"G": "y G – y G",
@@ -2852,60 +2927,60 @@
 					"H": "HH'h'-HH'h' v"
 				},
 				"M": {
-					"M": "'Tháng' M - 'Tháng' M"
+					"M": "M – M"
 				},
 				"Md": {
-					"d": "dd/MM – dd/MM",
-					"M": "dd/MM – dd/MM"
+					"d": "d/M – d/M",
+					"M": "d/M – d/M"
 				},
 				"MEd": {
-					"d": "EEEE, dd/MM – EEEE, dd/MM",
-					"M": "EEEE, dd/MM – EEEE, dd/MM"
+					"d": "E, d/M  –  E, d/M",
+					"M": "E, d/M  –  E, d/M"
 				},
 				"MMM": {
-					"M": "MMM–MMM"
+					"M": "MMM  –  MMM"
 				},
 				"MMMd": {
-					"d": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M",
-					"M": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M"
+					"d": "d – d MMM",
+					"M": "d MMM  –  d MMM"
 				},
 				"MMMEd": {
-					"d": "EEEE, 'ngày' dd – EEEE, 'ngày' dd 'tháng' M",
-					"M": "EEEE, 'ngày' dd 'tháng' M – EEEE, 'ngày' dd 'tháng' M"
+					"d": "E, d MMM  –  E, d MMM",
+					"M": "E, d MMM  –  E, d MMM"
 				},
 				"y": {
 					"y": "y–y G"
 				},
 				"yM": {
-					"M": "MM/y – MM/y G",
-					"y": "MM/y – MM/y G"
+					"M": "M/y – M/y GGGGG",
+					"y": "M/y – M/y GGGGG"
 				},
 				"yMd": {
-					"d": "dd/MM/y – dd/MM/y G",
-					"M": "dd/MM/y – dd/MM/y G",
-					"y": "dd/MM/y – dd/MM/y G"
+					"d": "d/M/y – d/M/y GGGGG",
+					"M": "d/M/y – d/M/y GGGGG",
+					"y": "d/M/y – d/M/y GGGGG"
 				},
 				"yMEd": {
-					"d": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
-					"M": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
-					"y": "EEEE, dd/MM/y – EEEE, dd/MM/y G"
+					"d": "E, d/M/y  –  E, d/M/y GGGGG",
+					"M": "E, d/M/y  –  E, d/M/y GGGGG",
+					"y": "E, d/M/y  –  E, d/M/y GGGGG"
 				},
 				"yMMM": {
-					"M": "'Tháng' M - 'Tháng' M 'năm' y G",
-					"y": "'Tháng' M 'năm' y - 'Tháng' M 'năm' y G"
+					"M": "MMM  –  MMM y G",
+					"y": "MMM y  –  MMM y G"
 				},
 				"yMMMd": {
-					"d": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' y G",
-					"M": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' y G",
-					"y": "'Ngày' dd 'tháng' M 'năm' y - 'Ngày' dd 'tháng' M 'năm' y G"
+					"d": "d – d MMM, y G",
+					"M": "d MMM  –  d MMM, y G",
+					"y": "d MMM, y  –  d MMM, y G"
 				},
 				"yMMMEd": {
-					"d": "EEEE, 'ngày' dd MMM – EEEE, 'ngày' dd MMM 'năm' y G",
-					"M": "E, dd 'tháng' M – E, dd 'tháng' M, y G",
-					"y": "E, dd 'tháng' M, y – E, dd 'tháng' M, y G"
+					"d": "E, d MMM  –  E, d MMM, y G",
+					"M": "E, d MMM  –  E, d MMM, y G",
+					"y": "E, d MMM, y  –  E, d MMM, y G"
 				},
 				"yMMMM": {
-					"M": "MMMM–MMMM y G",
+					"M": "MMMM  –  MMMM y G",
 					"y": "MMMM y – MMMM y G"
 				}
 			}
@@ -3170,7 +3245,7 @@
 				},
 				"wide": {
 					"midnight": "nửa đêm",
-					"noon": "TR",
+					"noon": "trưa",
 					"morning1": "sáng",
 					"afternoon1": "chiều",
 					"evening1": "tối",
@@ -3217,9 +3292,9 @@
 	"ca-buddhist": {
 		"dateFormats": {
 			"full": "EEEE, 'ngày' dd MMMM 'năm' y G",
-			"long": "'Ngày' dd 'tháng' M 'năm' y G",
-			"medium": "dd-MM-y G",
-			"short": "dd/MM/y GGGGG"
+			"long": "'ngày' d 'tháng' M 'năm' y G",
+			"medium": "d MMM, y G",
+			"short": "d/M/y GGGGG"
 		},
 		"timeFormats": {
 			"full": "HH:mm:ss zzzz",
@@ -3228,36 +3303,36 @@
 			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} {0}",
-			"long": "{1} {0}",
-			"medium": "{1} {0}",
-			"short": "{1} {0}",
+			"full": "{0} {1}",
+			"long": "{0} {1}",
+			"medium": "{0} {1}",
+			"short": "{0} {1}",
 			"availableFormats": {
-				"Bh": "h B",
+				"Bh": "h 'giờ' B",
 				"Bhm": "h:mm B",
 				"Bhms": "h:mm:ss B",
 				"d": "'Ngày' dd",
 				"E": "ccc",
-				"EBhm": "E h:mm B",
-				"EBhms": "E h:mm:ss B",
-				"Ed": "E, dd",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"EBhm": "h:mm B E",
+				"EBhms": "h:mm:ss B E",
+				"Ed": "E, 'ngày' d",
+				"Ehm": "h:mm a E",
+				"EHm": "HH:mm E",
+				"Ehms": "h:mm:ss a E",
+				"EHms": "HH:mm:ss E",
 				"Gy": "y G",
-				"GyMd": "dd/MM/y GGGGG",
+				"GyMd": "d/M/y GGGGG",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM, y G",
 				"GyMMMEd": "E, d MMM, y G",
 				"h": "h a",
-				"H": "HH",
+				"H": "HH 'giờ'",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
 				"hms": "h:mm:ss a",
 				"Hms": "HH:mm:ss",
 				"M": "'tháng' L",
-				"Md": "dd/M",
+				"Md": "d/M",
 				"MEd": "E, dd-M",
 				"MMdd": "dd-MM",
 				"MMM": "LLL",
@@ -3268,8 +3343,8 @@
 				"ms": "mm:ss",
 				"y": "y G",
 				"yyyy": "y G",
-				"yyyyM": "M/y G",
-				"yyyyMd": "d/M/y G",
+				"yyyyM": "M/y GGGGG",
+				"yyyyMd": "d/M/y GGGGG",
 				"yyyyMEd": "E, d/M/y GGGGG",
 				"yyyyMM": "MM-y G",
 				"yyyyMMM": "MMM y G",
@@ -3304,7 +3379,7 @@
 					"m": "h:mm – h:mm B"
 				},
 				"d": {
-					"d": "'Ngày' dd–dd"
+					"d": "d–d"
 				},
 				"Gy": {
 					"G": "y G – y G",
@@ -3377,60 +3452,60 @@
 					"H": "HH'h'-HH'h' v"
 				},
 				"M": {
-					"M": "'Tháng' M - 'Tháng' M"
+					"M": "M – M"
 				},
 				"Md": {
-					"d": "dd/MM – dd/MM",
-					"M": "dd/MM – dd/MM"
+					"d": "d/M – d/M",
+					"M": "d/M – d/M"
 				},
 				"MEd": {
-					"d": "EEEE, dd/MM – EEEE, dd/MM",
-					"M": "EEEE, dd/MM – EEEE, dd/MM"
+					"d": "E, d/M  –  E, d/M",
+					"M": "E, d/M  –  E, d/M"
 				},
 				"MMM": {
-					"M": "MMM–MMM"
+					"M": "MMM  –  MMM"
 				},
 				"MMMd": {
-					"d": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M",
-					"M": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M"
+					"d": "d – d MMM",
+					"M": "d MMM  –  d MMM"
 				},
 				"MMMEd": {
-					"d": "EEEE, 'ngày' dd – EEEE, 'ngày' dd 'tháng' M",
-					"M": "EEEE, 'ngày' dd 'tháng' M – EEEE, 'ngày' dd 'tháng' M"
+					"d": "E, d MMM  –  E, d MMM",
+					"M": "E, d MMM  –  E, d MMM"
 				},
 				"y": {
 					"y": "y–y G"
 				},
 				"yM": {
-					"M": "MM/y – MM/y G",
-					"y": "MM/y – MM/y G"
+					"M": "M/y – M/y GGGGG",
+					"y": "M/y – M/y GGGGG"
 				},
 				"yMd": {
-					"d": "dd/MM/y – dd/MM/y G",
-					"M": "dd/MM/y – dd/MM/y G",
-					"y": "dd/MM/y – dd/MM/y G"
+					"d": "d/M/y – d/M/y GGGGG",
+					"M": "d/M/y – d/M/y GGGGG",
+					"y": "d/M/y – d/M/y GGGGG"
 				},
 				"yMEd": {
-					"d": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
-					"M": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
-					"y": "EEEE, dd/MM/y – EEEE, dd/MM/y G"
+					"d": "E, d/M/y  –  E, d/M/y GGGGG",
+					"M": "E, d/M/y  –  E, d/M/y GGGGG",
+					"y": "E, d/M/y  –  E, d/M/y GGGGG"
 				},
 				"yMMM": {
-					"M": "'Tháng' M - 'Tháng' M 'năm' y G",
-					"y": "'Tháng' M 'năm' y - 'Tháng' M 'năm' y G"
+					"M": "MMM  –  MMM y G",
+					"y": "MMM y  –  MMM y G"
 				},
 				"yMMMd": {
-					"d": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' y G",
-					"M": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' y G",
-					"y": "'Ngày' dd 'tháng' M 'năm' y - 'Ngày' dd 'tháng' M 'năm' y G"
+					"d": "d – d MMM, y G",
+					"M": "d MMM  –  d MMM, y G",
+					"y": "d MMM, y  –  d MMM, y G"
 				},
 				"yMMMEd": {
-					"d": "EEEE, 'ngày' dd MMM – EEEE, 'ngày' dd MMM 'năm' y G",
-					"M": "E, dd 'tháng' M – E, dd 'tháng' M, y G",
-					"y": "E, dd 'tháng' M, y – E, dd 'tháng' M, y G"
+					"d": "E, d MMM  –  E, d MMM, y G",
+					"M": "E, d MMM  –  E, d MMM, y G",
+					"y": "E, d MMM, y  –  E, d MMM, y G"
 				},
 				"yMMMM": {
-					"M": "MMMM–MMMM y G",
+					"M": "MMMM  –  MMMM y G",
 					"y": "MMMM y – MMMM y G"
 				}
 			}
@@ -3482,18 +3557,54 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Thg 1",
-					"Thg 2",
-					"Thg 3",
-					"Thg 4",
-					"Thg 5",
-					"Thg 6",
-					"Thg 7",
-					"Thg 8",
-					"Thg 9",
-					"Thg 10",
-					"Thg 11",
-					"Thg 12"
+					[
+						"Tháng 1",
+						"Thg 1"
+					],
+					[
+						"Tháng 2",
+						"Thg 2"
+					],
+					[
+						"Tháng 3",
+						"Thg 3"
+					],
+					[
+						"Tháng 4",
+						"Thg 4"
+					],
+					[
+						"Tháng 5",
+						"Thg 5"
+					],
+					[
+						"Tháng 6",
+						"Thg 6"
+					],
+					[
+						"Tháng 7",
+						"Thg 7"
+					],
+					[
+						"Tháng 8",
+						"Thg 8"
+					],
+					[
+						"Tháng 9",
+						"Thg 9"
+					],
+					[
+						"Tháng 10",
+						"Thg 10"
+					],
+					[
+						"Tháng 11",
+						"Thg 11"
+					],
+					[
+						"Tháng 12",
+						"Thg 12"
+					]
 				],
 				"narrow": [
 					"1",
@@ -3695,7 +3806,7 @@
 				},
 				"wide": {
 					"midnight": "nửa đêm",
-					"noon": "TR",
+					"noon": "trưa",
 					"morning1": "sáng",
 					"afternoon1": "chiều",
 					"evening1": "tối",
@@ -4338,7 +4449,7 @@
 			"Thimphu": "Thimphu",
 			"Tokyo": "Tokyo",
 			"Tomsk": "Tomsk",
-			"Ulaanbaatar": "Ulaanbaatar",
+			"Ulaanbaatar": "Ulan Bator",
 			"Urumqi": "Urumqi",
 			"Ust-Nera": "Ust-Nera",
 			"Vientiane": "Viêng Chăn",
@@ -4667,6 +4778,12 @@
 			"10p-24": {
 				"unitPrefixPattern": "y{0}"
 			},
+			"10p-27": {
+				"unitPrefixPattern": "r{0}"
+			},
+			"10p-30": {
+				"unitPrefixPattern": "q{0}"
+			},
 			"10p1": {
 				"unitPrefixPattern": "da{0}"
 			},
@@ -4696,6 +4813,12 @@
 			},
 			"10p24": {
 				"unitPrefixPattern": "Y{0}"
+			},
+			"10p27": {
+				"unitPrefixPattern": "R{0}"
+			},
+			"10p30": {
+				"unitPrefixPattern": "Q{0}"
 			},
 			"1024p1": {
 				"unitPrefixPattern": "Ki{0}"
@@ -4919,7 +5042,7 @@
 			},
 			"duration-quarter": {
 				"displayName": "quý",
-				"unitPattern-count-other": "{0} qúy",
+				"unitPattern-count-other": "{0} quý",
 				"perUnitPattern": "{0}/quý"
 			},
 			"duration-month": {
@@ -4957,8 +5080,8 @@
 				"unitPattern-count-other": "{0} mili giây"
 			},
 			"duration-microsecond": {
-				"displayName": "μs",
-				"unitPattern-count-other": "{0} μs"
+				"displayName": "micrô giây",
+				"unitPattern-count-other": "{0} micrô giây"
 			},
 			"duration-nanosecond": {
 				"displayName": "nano giây",
@@ -4989,8 +5112,8 @@
 				"unitPattern-count-other": "{0} cal"
 			},
 			"energy-foodcalorie": {
-				"displayName": "kcal",
-				"unitPattern-count-other": "{0} kcal"
+				"displayName": "Cal",
+				"unitPattern-count-other": "{0} Cal"
 			},
 			"energy-kilojoule": {
 				"displayName": "kJ",
@@ -5049,20 +5172,20 @@
 				"unitPattern-count-other": "{0} em"
 			},
 			"graphics-pixel": {
-				"displayName": "px",
-				"unitPattern-count-other": "{0} px"
+				"displayName": "pixel",
+				"unitPattern-count-other": "{0} pixel"
 			},
 			"graphics-megapixel": {
 				"displayName": "megapixel",
 				"unitPattern-count-other": "{0} MP"
 			},
 			"graphics-pixel-per-centimeter": {
-				"displayName": "ppcm",
-				"unitPattern-count-other": "{0} ppcm"
+				"displayName": "pixel/cm",
+				"unitPattern-count-other": "{0} pixel/cm"
 			},
 			"graphics-pixel-per-inch": {
-				"displayName": "ppi",
-				"unitPattern-count-other": "{0} ppi"
+				"displayName": "pixel/inch",
+				"unitPattern-count-other": "{0} pixel/inch"
 			},
 			"graphics-dot-per-centimeter": {
 				"displayName": "dpcm",
@@ -5323,11 +5446,15 @@
 			},
 			"speed-mile-per-hour": {
 				"displayName": "mi/h",
-				"unitPattern-count-other": "{0} mi/h"
+				"unitPattern-count-other": "{0} mph"
 			},
 			"speed-knot": {
 				"displayName": "kn",
 				"unitPattern-count-other": "{0} kn"
+			},
+			"speed-beaufort": {
+				"displayName": "Bft",
+				"unitPattern-count-other": "B {0}"
 			},
 			"temperature-generic": {
 				"displayName": "°",
@@ -5394,7 +5521,7 @@
 			"volume-liter": {
 				"displayName": "l",
 				"unitPattern-count-other": "{0} L",
-				"perUnitPattern": "{0}/l"
+				"perUnitPattern": "{0}/L"
 			},
 			"volume-deciliter": {
 				"displayName": "dL",
@@ -5443,7 +5570,7 @@
 				"unitPattern-count-other": "{0} pt"
 			},
 			"volume-cup": {
-				"displayName": "c",
+				"displayName": "tách",
 				"unitPattern-count-other": "{0} tách"
 			},
 			"volume-fluid-ounce": {
@@ -5455,12 +5582,12 @@
 				"unitPattern-count-other": "{0} fl oz Anh"
 			},
 			"volume-tablespoon": {
-				"displayName": "thìa xúp",
-				"unitPattern-count-other": "{0} thìa xúp"
+				"displayName": "muỗng canh",
+				"unitPattern-count-other": "{0} muỗng canh"
 			},
 			"volume-teaspoon": {
-				"displayName": "tsp",
-				"unitPattern-count-other": "{0} thìa cà phê"
+				"displayName": "muỗng cà phê",
+				"unitPattern-count-other": "{0} muỗng cà phê"
 			},
 			"volume-barrel": {
 				"displayName": "thùng",
@@ -5468,11 +5595,11 @@
 			},
 			"volume-dessert-spoon": {
 				"displayName": "thìa tráng miệng",
-				"unitPattern-count-other": "{0} thìa tm"
+				"unitPattern-count-other": "{0} thìa tráng miệng"
 			},
 			"volume-dessert-spoon-imperial": {
 				"displayName": "thìa tráng miệng Anh",
-				"unitPattern-count-other": "{0} thìa tm Anh"
+				"unitPattern-count-other": "{0} thìa tráng miệng Anh"
 			},
 			"volume-drop": {
 				"displayName": "giọt",
@@ -5504,9 +5631,9 @@
 		}
 	},
 	"lenient-scope-number": {
-		"minusSign": "-‒⁻₋−➖﹣－",
-		"commaSign": ",،٫⹁、︐︑﹐﹑，､",
-		"plusSign": "+⁺₊➕﬩﹢＋"
+		"minusSign": "-－﹣ ‑‒−⁻₋➖",
+		"commaSign": ",，﹐︐ ⹁،٫、﹑､︑",
+		"plusSign": "+＋﬩﹢⁺₊ ➕"
 	},
 	"currencyFormat-sap-short": {
 		"1000-other": "0 N ¤",

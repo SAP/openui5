@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "43.0.0",
-	"__buildtime": "2023-09-28T11:39:07.908Z",
+	"__version": "44.0.0",
+	"__buildtime": "2024-01-12T14:24:50.280Z",
 	"languages": {
 		"aa": "афар тілі",
 		"ab": "абхаз тілі",
@@ -39,6 +39,7 @@
 		"bem": "бемба тілі",
 		"bez": "бена тілі",
 		"bg": "болгар тілі",
+		"bgc": "хариани тілі",
 		"bgn": "батыс балучи тілі",
 		"bho": "бходжпури тілі",
 		"bi": "бислама тілі",
@@ -88,7 +89,6 @@
 		"dar": "даргин тілі",
 		"dav": "таита тілі",
 		"de": "неміс тілі",
-		"de_AT": "неміс тілі (Аустрия)",
 		"de_CH": "швейцариялық әдеби неміс тілі",
 		"dgr": "догриб тілі",
 		"dje": "зарма тілі",
@@ -143,8 +143,7 @@
 		"hax": "оңтүстік хайда тілі",
 		"he": "иврит тілі",
 		"hi": "хинди тілі",
-		"hi_Latn": "Хинди (латын жазуы)",
-		"hi_Latn-alt-variant": "Хинглиш",
+		"hi_Latn-alt-variant": "хинглиш",
 		"hil": "хилигайнон тілі",
 		"hmn": "хмонг тілі",
 		"hr": "хорват тілі",
@@ -307,6 +306,7 @@
 		"om": "оромо тілі",
 		"or": "ория тілі",
 		"os": "осетин тілі",
+		"osa": "осейдж тілі",
 		"pa": "пенджаб тілі",
 		"pag": "пангасинан тілі",
 		"pam": "пампанга тілі",
@@ -323,6 +323,7 @@
 		"pt_PT": "еуропалық португал тілі",
 		"qu": "кечуа тілі",
 		"quc": "киче тілі",
+		"raj": "раджастани тілі",
 		"rap": "рапануй тілі",
 		"rar": "раротонган тілі",
 		"rhg": "рохинджа",
@@ -786,6 +787,8 @@
 		"IM": "Мэн аралы",
 		"IN": "Үндістан",
 		"IO": "Үнді мұхитындағы Британ аймағы",
+		"IO-alt-biot": "Үнді мұхитындағы Британ аймағы",
+		"IO-alt-chagos": "Чагос архипелагі",
 		"IQ": "Ирак",
 		"IR": "Иран",
 		"IS": "Исландия",
@@ -1775,47 +1778,61 @@
 			"stand-alone": {
 				"abbreviated": [
 					[
+						"Мұх.",
 						"Қаң.",
 						"Muh."
 					],
 					[
+						"Саф.",
 						"Ақп.",
 						"Saf."
 					],
 					[
+						"Раб. І",
 						"Нау.",
 						"Rab. I"
 					],
 					[
+						"Раб. ІІ",
 						"Сәу.",
 						"Rab. II"
 					],
 					[
+						"Жум. І",
 						"Мам.",
 						"Jum. I"
 					],
-					"Jum. II",
 					[
+						"Жум. ІІ",
+						"Jum. II"
+					],
+					[
+						"Радж.",
 						"шіл.",
 						"Raj."
 					],
 					[
+						"Шағ.",
 						"там.",
 						"Sha."
 					],
 					[
+						"Рам.",
 						"Қыр.",
 						"Ram."
 					],
 					[
+						"Шәу.",
 						"Қаз.",
 						"Shaw."
 					],
 					[
+						"Зул-Қ.",
 						"Қар.",
 						"Dhuʻl-Q."
 					],
 					[
+						"Зул-Х.",
 						"Жел.",
 						"Dhuʻl-H."
 					]
@@ -4738,6 +4755,12 @@
 			"10p-24": {
 				"unitPrefixPattern": "й{0}"
 			},
+			"10p-27": {
+				"unitPrefixPattern": "р{0}"
+			},
+			"10p-30": {
+				"unitPrefixPattern": "кв{0}"
+			},
 			"10p1": {
 				"unitPrefixPattern": "да{0}"
 			},
@@ -4768,6 +4791,12 @@
 			"10p24": {
 				"unitPrefixPattern": "Й{0}"
 			},
+			"10p27": {
+				"unitPrefixPattern": "Р{0}"
+			},
+			"10p30": {
+				"unitPrefixPattern": "Кв{0}"
+			},
 			"1024p1": {
 				"unitPrefixPattern": "Ки{0}"
 			},
@@ -4797,12 +4826,10 @@
 			},
 			"power2": {
 				"compoundUnitPattern1": "{0}²",
-				"compoundUnitPattern1-count-one": "{0}²",
 				"compoundUnitPattern1-count-other": "{0}²"
 			},
 			"power3": {
 				"compoundUnitPattern1": "{0}³",
-				"compoundUnitPattern1-count-one": "{0}³",
 				"compoundUnitPattern1-count-other": "{0}³"
 			},
 			"times": {
@@ -4810,7 +4837,6 @@
 			},
 			"acceleration-g-force": {
 				"displayName": "гравитациялық күш",
-				"unitPattern-count-one": "{0} G",
 				"unitPattern-count-other": "{0} G"
 			},
 			"acceleration-meter-per-square-second": {
@@ -4867,10 +4893,10 @@
 				"perUnitPattern": "{0}/см²"
 			},
 			"area-square-mile": {
-				"displayName": "шаршы миля",
-				"unitPattern-count-one": "{0} миля²",
-				"unitPattern-count-other": "{0} миля²",
-				"perUnitPattern": "{0}/миля²"
+				"displayName": "шаршы миль",
+				"unitPattern-count-one": "{0} миль²",
+				"unitPattern-count-other": "{0} миль²",
+				"perUnitPattern": "{0}/миль²"
 			},
 			"area-acre": {
 				"displayName": "акр",
@@ -4920,22 +4946,18 @@
 			},
 			"concentr-permillion": {
 				"displayName": "ppm",
-				"unitPattern-count-one": "{0} ppm",
 				"unitPattern-count-other": "{0} ppm"
 			},
 			"concentr-percent": {
 				"displayName": "пайыз",
-				"unitPattern-count-one": "{0}%",
 				"unitPattern-count-other": "{0}%"
 			},
 			"concentr-permille": {
 				"displayName": "промилле",
-				"unitPattern-count-one": "{0}‰",
 				"unitPattern-count-other": "{0}‰"
 			},
 			"concentr-permyriad": {
 				"displayName": "промириад",
-				"unitPattern-count-one": "{0}‱",
 				"unitPattern-count-other": "{0}‱"
 			},
 			"concentr-mole": {
@@ -4954,14 +4976,14 @@
 				"unitPattern-count-other": "{0} л/100 км"
 			},
 			"consumption-mile-per-gallon": {
-				"displayName": "миля/галлон",
-				"unitPattern-count-one": "{0} миля/гал.",
-				"unitPattern-count-other": "{0} миля/гал."
+				"displayName": "миль/галлон",
+				"unitPattern-count-one": "{0} миль/гал.",
+				"unitPattern-count-other": "{0} миль/гал."
 			},
 			"consumption-mile-per-gallon-imperial": {
-				"displayName": "миля/имп. гал.",
-				"unitPattern-count-one": "{0} миля/имп. гал.",
-				"unitPattern-count-other": "{0} миля/имп. гал."
+				"displayName": "миль/имп. гал.",
+				"unitPattern-count-one": "{0} миль/имп. гал.",
+				"unitPattern-count-other": "{0} миль/имп. гал."
 			},
 			"digital-petabyte": {
 				"displayName": "Пбайт",
@@ -5093,7 +5115,6 @@
 			},
 			"electric-ampere": {
 				"displayName": "А",
-				"unitPattern-count-one": "{0} A",
 				"unitPattern-count-other": "{0} A"
 			},
 			"electric-milliampere": {
@@ -5148,17 +5169,15 @@
 			},
 			"energy-british-thermal-unit": {
 				"displayName": "BTU",
-				"unitPattern-count-one": "{0} Btu",
 				"unitPattern-count-other": "{0} Btu"
 			},
 			"energy-therm-us": {
-				"displayName": "америка термі",
-				"unitPattern-count-one": "{0} амер. термі",
-				"unitPattern-count-other": "{0} амер. термі"
+				"displayName": "АҚШ термі",
+				"unitPattern-count-one": "{0} АҚШ термі",
+				"unitPattern-count-other": "{0} АҚШ термі"
 			},
 			"force-pound-force": {
 				"displayName": "фунт-күш",
-				"unitPattern-count-one": "{0} lbf",
 				"unitPattern-count-other": "{0} lbf"
 			},
 			"force-newton": {
@@ -5227,13 +5246,12 @@
 				"unitPattern-count-other": "{0} нүкте/дюйм"
 			},
 			"graphics-dot": {
-				"displayName": "пиксель",
-				"unitPattern-count-one": "{0} пиксель",
-				"unitPattern-count-other": "{0} пиксель"
+				"displayName": "нүкте",
+				"unitPattern-count-one": "{0} нүкте",
+				"unitPattern-count-other": "{0} нүкте"
 			},
 			"length-earth-radius": {
 				"displayName": "R⊕",
-				"unitPattern-count-one": "{0} R⊕",
 				"unitPattern-count-other": "{0} R⊕"
 			},
 			"length-kilometer": {
@@ -5280,9 +5298,9 @@
 				"unitPattern-count-other": "{0} пм"
 			},
 			"length-mile": {
-				"displayName": "миля",
-				"unitPattern-count-one": "{0} миля",
-				"unitPattern-count-other": "{0} миля"
+				"displayName": "миль",
+				"unitPattern-count-one": "{0} миль",
+				"unitPattern-count-other": "{0} миль"
 			},
 			"length-yard": {
 				"displayName": "ярд",
@@ -5328,12 +5346,10 @@
 			},
 			"length-nautical-mile": {
 				"displayName": "nmi",
-				"unitPattern-count-one": "{0} nmi",
 				"unitPattern-count-other": "{0} nmi"
 			},
 			"length-mile-scandinavian": {
 				"displayName": "smi",
-				"unitPattern-count-one": "{0} smi",
 				"unitPattern-count-other": "{0} smi"
 			},
 			"length-point": {
@@ -5343,7 +5359,6 @@
 			},
 			"length-solar-radius": {
 				"displayName": "Күн радиусы",
-				"unitPattern-count-one": "{0} R☉",
 				"unitPattern-count-other": "{0} R☉"
 			},
 			"light-lux": {
@@ -5363,7 +5378,6 @@
 			},
 			"light-solar-luminosity": {
 				"displayName": "Күн жарықтығы",
-				"unitPattern-count-one": "{0} L☉",
 				"unitPattern-count-other": "{0} L☉"
 			},
 			"mass-tonne": {
@@ -5432,12 +5446,10 @@
 			},
 			"mass-earth-mass": {
 				"displayName": "M⊕",
-				"unitPattern-count-one": "{0} M⊕",
 				"unitPattern-count-other": "{0} M⊕"
 			},
 			"mass-solar-mass": {
 				"displayName": "Күн массасы",
-				"unitPattern-count-one": "{0} M☉",
 				"unitPattern-count-other": "{0} M☉"
 			},
 			"mass-grain": {
@@ -5482,7 +5494,6 @@
 			},
 			"pressure-pound-force-per-square-inch": {
 				"displayName": "psi",
-				"unitPattern-count-one": "{0} psi",
 				"unitPattern-count-other": "{0} psi"
 			},
 			"pressure-inch-ofhg": {
@@ -5536,28 +5547,30 @@
 				"unitPattern-count-other": "{0} м/с"
 			},
 			"speed-mile-per-hour": {
-				"displayName": "миля/сағат",
-				"unitPattern-count-one": "{0} миля/сағ",
-				"unitPattern-count-other": "{0} миля/сағ"
+				"displayName": "миль/сағат",
+				"unitPattern-count-one": "{0} миль/сағ",
+				"unitPattern-count-other": "{0} миль/сағ"
 			},
 			"speed-knot": {
-				"displayName": "kn",
-				"unitPattern-count-one": "{0} kn",
-				"unitPattern-count-other": "{0} kn"
+				"displayName": "тн",
+				"unitPattern-count-one": "{0} түйін",
+				"unitPattern-count-other": "{0} түйін"
+			},
+			"speed-beaufort": {
+				"displayName": "бфт",
+				"unitPattern-count-one": "бофорт {0}",
+				"unitPattern-count-other": "бофорт {0}"
 			},
 			"temperature-generic": {
 				"displayName": "°",
-				"unitPattern-count-one": "{0}°",
 				"unitPattern-count-other": "{0}°"
 			},
 			"temperature-celsius": {
 				"displayName": "Цельсий градусы",
-				"unitPattern-count-one": "{0}°C",
 				"unitPattern-count-other": "{0}°C"
 			},
 			"temperature-fahrenheit": {
 				"displayName": "F градусы",
-				"unitPattern-count-one": "{0}°F",
 				"unitPattern-count-other": "{0}°F"
 			},
 			"temperature-kelvin": {
@@ -5567,7 +5580,6 @@
 			},
 			"torque-pound-force-foot": {
 				"displayName": "lbf⋅ft",
-				"unitPattern-count-one": "{0} lbf⋅ft",
 				"unitPattern-count-other": "{0} lbf⋅ft"
 			},
 			"torque-newton-meter": {
@@ -5593,9 +5605,9 @@
 				"perUnitPattern": "{0}/см³"
 			},
 			"volume-cubic-mile": {
-				"displayName": "миля³",
-				"unitPattern-count-one": "{0} миля³",
-				"unitPattern-count-other": "{0} миля³"
+				"displayName": "миль³",
+				"unitPattern-count-one": "{0} миль³",
+				"unitPattern-count-other": "{0} миль³"
 			},
 			"volume-cubic-yard": {
 				"displayName": "ярд³",
@@ -5671,8 +5683,8 @@
 			},
 			"volume-gallon-imperial": {
 				"displayName": "имп. галлон",
-				"unitPattern-count-one": "{0} брит. галлон",
-				"unitPattern-count-other": "{0} брит. галлон",
+				"unitPattern-count-one": "{0} имп. галлон",
+				"unitPattern-count-other": "{0} имп. галлон",
 				"perUnitPattern": "{0}/имп. галлон"
 			},
 			"volume-quart": {
@@ -5696,9 +5708,9 @@
 				"unitPattern-count-other": "{0} сұй. унц."
 			},
 			"volume-fluid-ounce-imperial": {
-				"displayName": "брит. сұй. унция",
-				"unitPattern-count-one": "{0} брит. сұй. унция",
-				"unitPattern-count-other": "{0} брит. сұй. унция"
+				"displayName": "имп. сұй. унция",
+				"unitPattern-count-one": "{0} имп. сұй. унция",
+				"unitPattern-count-other": "{0} имп. сұй. унция"
 			},
 			"volume-tablespoon": {
 				"displayName": "ас қ.",
@@ -5721,9 +5733,9 @@
 				"unitPattern-count-other": "{0} дес. қас."
 			},
 			"volume-dessert-spoon-imperial": {
-				"displayName": "брит. дес. қас.",
-				"unitPattern-count-one": "{0} брит. дес. қас.",
-				"unitPattern-count-other": "{0} брит. дес. қас."
+				"displayName": "имп. дес. қас.",
+				"unitPattern-count-one": "{0} имп. дес. қас.",
+				"unitPattern-count-other": "{0} имп. дес. қас."
 			},
 			"volume-drop": {
 				"displayName": "тамшы",
@@ -5760,9 +5772,9 @@
 		}
 	},
 	"lenient-scope-number": {
-		"minusSign": "-‐‒–⁻₋−➖﹣－",
-		"commaSign": ",،٫⹁、︐︑﹐﹑，､",
-		"plusSign": "+⁺₊➕﬩﹢＋"
+		"minusSign": "-－﹣ ‐‑‒–−⁻₋➖",
+		"commaSign": ",，﹐︐ ⹁،٫、﹑､︑",
+		"plusSign": "+＋﬩﹢⁺₊ ➕"
 	},
 	"currencyFormat-sap-short": {
 		"1000-one": "0 мың ¤",
