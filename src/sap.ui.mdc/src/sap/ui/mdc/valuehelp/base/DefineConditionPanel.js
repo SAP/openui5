@@ -190,6 +190,30 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: false,
 					visibility: "hidden"
+				},
+
+				/**
+				 * Indicates if previous button is active
+				 *
+				 * @since 1.121.0
+				 * @private
+				 */
+				_prevButtonActive: {
+					type: "boolean",
+					defaultValue: false,
+					visibility: "hidden"
+				},
+
+				/**
+				 * Indicates if next button is active
+				 *
+				 * @since 1.121.0
+				 * @private
+				 */
+				_nextButtonActive: {
+					type: "boolean",
+					defaultValue: false,
+					visibility: "hidden"
 				}
 
 			},
@@ -368,7 +392,6 @@ sap.ui.define([
 
 			aConditions.splice(iIndex, 1);
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
-			_checkInvalidInput.call(this, undefined); // check if invalid condition was removed
 
 			this.fireConditionProcessed();
 		},
@@ -572,7 +595,6 @@ sap.ui.define([
 					if (bUpdate) {
 						FilterOperatorUtil.checkConditionsEmpty(oCondition, _getOperators.call(this));
 						this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
-						_checkInvalidInput.call(this, false); // set imediately, not only if row left
 					}
 				}
 
@@ -589,7 +611,6 @@ sap.ui.define([
 				oCondition.invalid = true;
 				this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
 				oField._sOldKey = oField.getValue();
-				_checkInvalidInput.call(this, true); // set imediately, not only if row left
 			});
 
 		},
@@ -1168,6 +1189,7 @@ sap.ui.define([
 			icon: IconPool.getIconURI("navigation-left-arrow"),
 			tooltip: oMessageBundleM.getText("PAGINGBUTTON_PREVIOUS"),
 			visible: { path: "$this>/_pagination" },
+			enabled: "{= ${$this>/inputOK} && ${$this>/_prevButtonActive}}",
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.NeverOverflow
 			}),
@@ -1177,6 +1199,7 @@ sap.ui.define([
 			icon: IconPool.getIconURI("navigation-right-arrow"),
 			tooltip: oMessageBundleM.getText("PAGINGBUTTON_NEXT"),
 			visible: { path: "$this>/_pagination" },
+			enabled: "{= ${$this>/inputOK} && ${$this>/_nextButtonActive}}",
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.NeverOverflow
 			}),
@@ -1193,6 +1216,7 @@ sap.ui.define([
 		const oButtonInsert = new Button(this.getId() + "--insert", {
 			icon: IconPool.getIconURI("add"),
 			visible: { path: "$this>/_pagination" },
+			enabled: { path: "$this>/inputOK" },
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
 			}),
@@ -1303,8 +1327,6 @@ sap.ui.define([
 
 		const aConditions = this.getConditions();
 		const oGrid = this.byId("conditions");
-		const oButtonPrev = this.byId("prev");
-		const oButtonNext = this.byId("next");
 		const oPageCount = this.byId("pageCount");
 		let aGridContent;
 		let iRow = -1;
@@ -1350,9 +1372,10 @@ sap.ui.define([
 			iIndex++;
 		}
 
+		_checkInvalidInput.call(this, undefined); // check if invalid condition was removed
 		oPageCount.setText(_getPageText.call(this));
-		oButtonPrev.setEnabled(this._iStartIndex > 0);
-		oButtonNext.setEnabled(iRow >= iShownConditions); // there is at least one more row than conditions are shown
+		this.setProperty("_prevButtonActive", this._iStartIndex > 0);
+		this.setProperty("_nextButtonActive", iRow >= iShownConditions); // there is at least one more row than conditions are shown
 		this.setProperty("_pagination", iDefineConditions >= iShownConditions);
 
 		this._bGridUpdated = true;
@@ -1754,7 +1777,7 @@ sap.ui.define([
 				}
 			}
 
-			if (oField.getMetadata().getAllProperties().valueState && !oField.isInvalidInput() && (!oField2 || !oField2.isInvalidInput())) { // TODO: better was to find out parsing error
+			if (oField instanceof Field && !oField.isInvalidInput() && (!oField2 || !oField2.isInvalidInput())) { // TODO: better was to find out parsing error
 				// if Field is in parsing error state, user entry is not transfered to condition, so validating makes no sense.
 				const oType = oField.getBinding("value").getType(); // use nullable data type from Field - don't create new type for each check
 				try {
@@ -1806,7 +1829,7 @@ sap.ui.define([
 			bInvalid = false;
 			for (i = 0; i < aContent.length; i++) {
 				const oControl = aContent[i];
-				if (oControl.hasOwnProperty("_iValueIndex") && oControl.getValueState && oControl.getValueState() === ValueState.Error) {
+				if (oControl.hasOwnProperty("_iValueIndex") && ((oControl instanceof Field && oControl.isInvalidInput()) || (Control.getValueState && oControl.getValueState() === ValueState.Error))) {
 					bInvalid = true;
 					break;
 				}
