@@ -632,6 +632,14 @@ sap.ui.define([
 		/**
 		 * Creates a placeholder.
 		 *
+		 * A placeholder is recognized by the private annotation "placeholder" which may have the
+		 * following values:
+		 * <ul>
+		 *   <li> <code>true</code>: an initial placeholder as created by this function
+		 *   <li> <code>1</code>: A placeholder converted back from a node in
+		 *     {@link sap.ui.model.odata.v4.lib._AggregationCache#turnIntoPlaceholder}
+		 * </ul>
+		 *
 		 * @param {number} iLevel - The level
 		 * @param {number|undefined} [iRank]
 		 *   The rank (aka. $skip index) within the parent cache's collection, or

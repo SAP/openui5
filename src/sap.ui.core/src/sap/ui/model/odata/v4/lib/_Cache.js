@@ -3067,6 +3067,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns whether the element at the given index is missing (it does not exist and has not been
+	 * requested yet).
+	 *
+	 * @param {int} iIndex - The index
+	 * @returns {boolean} Whether the element is missing
+	 *
+	 * @protected
+	 */
+	_CollectionCache.prototype.isMissing = function (iIndex) {
+		return this.aElements[iIndex] === undefined
+			// if there is $tail, check whether the index is part of some read request
+			&& !(this.$tail
+				&& this.aReadRequests.some(
+					(oReadRequest) => oReadRequest.iStart <= iIndex && iIndex < oReadRequest.iEnd
+				)
+			);
+	};
+
+	/**
 	 * Determines the list of elements determined by the given predicates. All other elements from
 	 * the back end are discarded!
 	 *

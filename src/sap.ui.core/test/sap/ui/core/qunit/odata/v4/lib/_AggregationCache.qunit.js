@@ -1547,7 +1547,7 @@ sap.ui.define([
 			oGrandTotal = {},
 			oGrandTotalCopy = {},
 			iOffset = oFixture.bHasGrandTotal && oFixture.grandTotalAtBottomOnly !== true ? 1 : 0,
-			iPrefetchLength = 100,
+			iPrefetchLength = 20,
 			oReadResult = {
 				value : []
 			},
@@ -1563,12 +1563,12 @@ sap.ui.define([
 			oCache.oGrandTotalPromise = SyncPromise.resolve(oGrandTotal);
 			_Helper.setPrivateAnnotation(oGrandTotal, "copy", oGrandTotalCopy);
 		}
-		for (i = 0; i < iFirstLevelLength; i += 1) {
+		for (i = 0; i < Math.min(iFirstLevelLength + iPrefetchLength, 42); i += 1) {
 			oReadResult.value.push({});
 		}
 		oReadResult.value.$count = 42;
 		this.mock(oCache.oFirstLevel).expects("read")
-			.withExactArgs(iFirstLevelIndex, iFirstLevelLength, iPrefetchLength,
+			.withExactArgs(iFirstLevelIndex, iFirstLevelLength + iPrefetchLength, 0,
 				"~oGroupLock~", "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oReadResult)));
 		if (oFixture.bHasGrandTotal) {
@@ -1604,7 +1604,7 @@ sap.ui.define([
 				.withExactArgs(iExpectedLevel, i, sinon.match.same(oCache.oFirstLevel))
 				.returns("~placeholder~" + i);
 		}
-		for (i = iFirstLevelIndex + iFirstLevelLength; i < 42; i += 1) {
+		for (i = iFirstLevelIndex + iFirstLevelLength + iPrefetchLength; i < 42; i += 1) {
 			oAggregationHelperMock.expects("createPlaceholder")
 				.withExactArgs(iExpectedLevel, i, sinon.match.same(oCache.oFirstLevel))
 				.returns("~placeholder~" + i);
@@ -1618,7 +1618,7 @@ sap.ui.define([
 				for (i = 0; i < iFirstLevelIndex; i += 1) {
 					assert.strictEqual(oCache.aElements[iOffset + i], "~placeholder~" + i);
 				}
-				for (i = iFirstLevelIndex + iFirstLevelLength; i < 42; i += 1) {
+				for (i = iFirstLevelIndex + iFirstLevelLength + iPrefetchLength; i < 42; i += 1) {
 					assert.strictEqual(oCache.aElements[iOffset + i], "~placeholder~" + i);
 				}
 
@@ -1736,7 +1736,7 @@ sap.ui.define([
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 7;
 
-		this.mock(ODataUtils).expects("_getReadRange")
+		const oReadRangeExpectation = this.mock(ODataUtils).expects("_getReadRange")
 			.withExactArgs(sinon.match.same(oCache.aElements), 1, 4, 5, sinon.match.func)
 			.returns({length : 9, start : 1}); // note: beyond $count
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLockCopy0~");
@@ -1750,7 +1750,7 @@ sap.ui.define([
 		oGroupLockMock.expects("unlock").withExactArgs();
 
 		// code under test
-		return oCache.read(1, 4, 5, oGroupLock, "~fnDataRequested~").then(function (oResult) {
+		return oCache.read(1, 4, 5, oGroupLock, "~fnDataRequested~").then((oResult) => {
 			assert.strictEqual(oResult.value.length, 4);
 			assert.strictEqual(oResult.value[0], oFirstLeaf);
 			assert.strictEqual(oResult.value[1], aReadResult0[0]);
@@ -1765,6 +1765,40 @@ sap.ui.define([
 			assert.strictEqual(oCache.aElements[5], aReadResult1[1]);
 			assert.strictEqual(oCache.aElements[6], aReadResult1[2]);
 			assert.strictEqual(oCache.aElements[7], aReadResult1[3]);
+
+			const fnReadRangeCallback = oReadRangeExpectation.args[0][4];
+
+			// code under test
+			assert.notOk(fnReadRangeCallback({}));
+
+			const oGroupLevelCache = {isMissing : mustBeMocked};
+			this.mock(oGroupLevelCache).expects("isMissing").withExactArgs(0).returns("~");
+			let oEntity = {
+				"@$ui5._" : {
+					parent : oGroupLevelCache,
+					placeholder : true,
+					rank : 0
+				}
+			};
+
+			// code under test
+			assert.strictEqual(fnReadRangeCallback(oEntity), "~");
+
+			oEntity = {
+				"@$ui5._" : {
+					placeholder : 1,
+					predicate : "('~')"
+				}
+			};
+			oCache.aElements.$byPredicate["('~')"] = oEntity;
+
+			// code under test
+			assert.ok(fnReadRangeCallback(oEntity));
+
+			oCache.aElements.$byPredicate["('~')"] = SyncPromise.resolve();
+
+			// code under test
+			assert.notOk(fnReadRangeCallback(oEntity));
 		});
 	});
 
