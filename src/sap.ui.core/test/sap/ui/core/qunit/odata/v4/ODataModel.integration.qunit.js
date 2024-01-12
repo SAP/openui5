@@ -47528,6 +47528,41 @@ make root = ${bMakeRoot}`;
 });
 
 	//*********************************************************************************************
+	// A list binding for a complex type is refreshed, while a context (last segment of path without
+	// key predicate) is selected
+	// SNOW: DINC0029552
+	QUnit.test("DINC0029552", async function (assert) {
+		const oModel = this.createSalesOrdersModel();
+		const sView = `
+<Table id="list" items="{/SalesOrderList('0')/Messages}">
+	<Text id="code" text="{code}"/>
+</Table>`;
+
+		this.expectRequest("SalesOrderList('0')/Messages?$skip=0&$top=100", {
+				value : [{code : "42"}]
+			})
+			.expectChange("code", ["42"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTableBinding = this.oView.byId("list").getBinding("items");
+		oTableBinding.getCurrentContexts()[0].setSelected(true);
+
+		assert.strictEqual(oTableBinding.getCurrentContexts()[0].getPath(),
+			"/SalesOrderList('0')/Messages/0");
+
+		this.expectRequest("SalesOrderList('0')/Messages?$skip=0&$top=100", {
+				value : [{code : "23"}]
+			})
+			.expectChange("code", ["23"]);
+
+		// code under test
+		oModel.refresh();
+
+		await this.waitForChanges(assert);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Multiple creation rows, grid table
 	//
 	// Create contexts at different insert positions (CPOUI5ODATAV4-1379):
