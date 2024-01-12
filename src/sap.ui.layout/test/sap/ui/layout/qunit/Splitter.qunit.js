@@ -598,6 +598,9 @@ sap.ui.define([
 		oSplitter.destroy();
 	});
 
+	/**
+	 * @deprecated As of version 1.21
+	 */
 	QUnit.test("Live resize enabling", function (assert) {
 		var oSplitter = new Splitter();
 		oSplitter.placeAt("qunit-fixture");

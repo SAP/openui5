@@ -10,7 +10,11 @@
 				data-sap-ui-async="true"
 				data-sap-ui-compatVersion="edge"
 				data-sap-ui-libs="sap.ui.layout, sap.m"
-				data-sap-ui-theme="sap_horizon">
+				data-sap-ui-theme="sap_horizon"
+				data-sap-ui-onInit="module:local/ResponsiveSplitterDefaultPane"
+				data-sap-ui-resourceroots='{
+					"local": "./"
+				}'>
 		</script>
 		<script id="myXml" type="text/xmldata">
 			<mvc:View xmlns:mvc="sap.ui.core.mvc"
@@ -118,20 +122,6 @@
 					</l:PaneContainer>
 				</l:ResponsiveSplitter>
 			</mvc:View>
-		</script>
-
-		<script>
-			sap.ui.getCore().attachInit(function() {
-				sap.ui.require([
-					"sap/ui/core/mvc/XMLView",
-				], function(XMLView) {
-					XMLView.create({
-						definition: document.getElementById("myXml").textContent,
-					}).then(function(oXMLView) {
-						oXMLView.placeAt("content");
-					});
-				})
-			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
