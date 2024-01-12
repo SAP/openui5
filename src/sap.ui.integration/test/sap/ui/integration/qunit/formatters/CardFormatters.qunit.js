@@ -2,17 +2,19 @@
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date"
-], function (
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(
 	Card,
 	Core,
-	UI5Date
+	UI5Date,
+	nextUIUpdate
 ) {
 	"use strict";
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	QUnit.module("Formatters in different places of 'sap.card'", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCard = new Card({
 				width: "400px",
 				height: "600px",
@@ -20,7 +22,7 @@ sap.ui.define([
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCard.destroy();

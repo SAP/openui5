@@ -7,7 +7,6 @@
 sap.ui.define([
 	"sap/ui/base/DataType",
 	"sap/ui/core/Lib",
-	"sap/ui/Global",
 	// library dependency
 	"sap/ui/core/library",
 	"sap/m/library",

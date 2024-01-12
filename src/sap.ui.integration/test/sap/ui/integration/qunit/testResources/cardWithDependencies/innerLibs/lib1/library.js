@@ -1,10 +1,10 @@
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Core"
-], function (Log) {
+	"sap/ui/core/Lib"
+], function(Log, Library) {
 	"use strict";
 
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Library.init({
 		name : "cardWithDependencies.innerLibs.lib1",
 		version: "1.0.0",
 		noLibraryCSS: true

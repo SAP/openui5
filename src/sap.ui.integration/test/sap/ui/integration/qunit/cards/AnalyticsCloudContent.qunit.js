@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/integration/cards/AnalyticsCloudContent",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/integration/widgets/Card",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 	Core,
 	AnalyticsCloudContent,
 	IllustratedMessageType,
 	Card,
-	Log
+	Log,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -153,7 +155,6 @@ sap.ui.define([
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.fnLoadStub.restore();
@@ -168,8 +169,8 @@ sap.ui.define([
 			fnLoadStub = this.fnLoadStub,
 			fnChartStub = this.fnChartStub;
 
-		setTimeout(function () {
-			Core.applyChanges();
+		setTimeout(async function () {
+			await nextUIUpdate();
 
 			// Assert
 			assert.ok(fnLoadStub.calledOnce, "Highcharts library is loaded once.");
@@ -185,8 +186,8 @@ sap.ui.define([
 		var done = assert.async();
 		var oErrorSpy = sinon.spy(Log, "error");
 
-		setTimeout(function () {
-			Core.applyChanges();
+		setTimeout(async function () {
+			await nextUIUpdate();
 			this.oCard.refresh();
 
 			setTimeout(function () {
@@ -219,7 +220,6 @@ sap.ui.define([
 
 		oCard.setManifest(oExample1);
 		oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 	QUnit.module("Display errors", {
@@ -234,7 +234,6 @@ sap.ui.define([
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.fnCreateHighchartStub.restore();
@@ -248,8 +247,8 @@ sap.ui.define([
 		var done = assert.async(),
 			fnCreateHighchartStub = this.fnCreateHighchartStub;
 
-		setTimeout(function () {
-			Core.applyChanges();
+		setTimeout(async function () {
+			await nextUIUpdate();
 
 			// Assert
 			assert.ok(fnCreateHighchartStub.calledOnce, "_createHighchart is called once");
@@ -259,7 +258,7 @@ sap.ui.define([
 				title: "Title"
 			});
 
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.ok(fnCreateHighchartStub.calledOnce, "_createHighchart is called once");
 			done();

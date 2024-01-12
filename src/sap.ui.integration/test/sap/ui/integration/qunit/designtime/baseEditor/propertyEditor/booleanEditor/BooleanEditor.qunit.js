@@ -5,13 +5,13 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/model/resource/ResourceModel",
 	"qunit/designtime/EditorQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 	BaseEditor,
 	ResourceBundle,
 	ResourceModel,
 	EditorQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -45,10 +45,10 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleBoolean").then(function (aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleBoolean").then(async function (aPropertyEditor) {
 				this.oBooleanEditor = aPropertyEditor[0];
 				this.oBooleanEditor.setValue(true);
-				oCore.applyChanges();
+				await nextUIUpdate();
 				this.oBooleanEditorElement = this.oBooleanEditor.getContent();
 			}.bind(this));
 		},

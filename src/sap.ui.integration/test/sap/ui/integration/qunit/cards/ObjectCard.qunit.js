@@ -963,7 +963,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Object Card", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oCard = new Card({
 				width: "400px",
 				height: "600px",
@@ -971,7 +971,6 @@ sap.ui.define([
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -1986,7 +1985,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Accessibility", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oCard = new Card({
 				width: "400px",
 				height: "600px",
@@ -1994,7 +1993,6 @@ sap.ui.define([
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -2153,7 +2151,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Layout", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oCard = new Card({
 				width: "400px",
 				height: "600px",
@@ -2161,7 +2159,6 @@ sap.ui.define([
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -2259,13 +2256,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Form controls", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oCard = new Card({
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -2354,7 +2350,7 @@ sap.ui.define([
 		oCard.setManifest(oManifest_ObjectCardFormControls);
 	});
 
-	QUnit.test("Check for duplicate ID in form controls", function (assert) {
+	QUnit.test("Check for duplicate ID in form controls", function(assert) {
 		var done = assert.async(),
 			oLogSpy = this.spy(Log, "error"),
 			oCard = this.oCard;
@@ -2394,7 +2390,6 @@ sap.ui.define([
 				}
 			}
 		});
-		Core.applyChanges();
 	});
 
 	QUnit.test("Form control values are properly passed on submit action - special value", function (assert) {
@@ -2633,13 +2628,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Form controls with Validation", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oCard = new Card({
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -2873,13 +2867,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("titleMaxLine and labelWrapping", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oCard = new Card({
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -2953,13 +2946,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Forms Extension Validation", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.oCard = new Card({
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -2968,7 +2960,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Function", function (assert) {
+	QUnit.test("Function", function(assert) {
 		var done = assert.async(),
 			oCard = this.oCard;
 
@@ -3028,7 +3020,5 @@ sap.ui.define([
 				}
 			}
 		});
-
-		Core.applyChanges();
 	});
 });

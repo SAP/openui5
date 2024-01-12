@@ -1,11 +1,11 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/ui/integration/controls/Microchart"
-], function (
-	Core,
-	Microchart
+	"sap/ui/integration/controls/Microchart",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(
+	Microchart,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -13,14 +13,14 @@ sap.ui.define([
 
 	QUnit.module("Rendering");
 
-	QUnit.test("Value of the chart has same color as the chart", function (assert) {
+	QUnit.test("Value of the chart has same color as the chart", async function (assert) {
 		// arrange
 		var oMicrochart = new Microchart({
 			valueColor: "Good"
 		});
 
 		oMicrochart.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oMicrochart.$().find(".sapUiIntMicrochartValue" + oMicrochart.getValueColor()).length, "The value div should have 'Good' class.");

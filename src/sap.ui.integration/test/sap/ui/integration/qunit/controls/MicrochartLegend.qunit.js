@@ -2,16 +2,16 @@
 
 sap.ui.define([
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/integration/controls/MicrochartLegend"
-], function (
+	"sap/ui/integration/controls/MicrochartLegend",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(
 	mLibrary,
-	Core,
 	Control,
 	Parameters,
-	MicrochartLegend
+	MicrochartLegend,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -58,20 +58,20 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Legend item color from chart palette", function (assert) {
+	QUnit.test("Legend item color from chart palette", async function (assert) {
 		// arrange
 		var sExpectedBackground = "rgb(1, 1, 1)";
 		this.oMicrochartLegend.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 		var oFirstBarBackground = this.oMicrochartLegend.$().find(".sapUiIntMicrochartLegendItem :first-child")[0].style.backgroundColor;
 
 		// assert
 		assert.strictEqual(oFirstBarBackground, sExpectedBackground, "The item should have expected background from chart color palette.");
 	});
 
-	QUnit.test("Legend item color from ValueColor enumeration", function (assert) {
+	QUnit.test("Legend item color from ValueColor enumeration", async function (assert) {
 		this.oMicrochartLegend.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oSecondBar = this.oMicrochartLegend.$().find(".sapUiIntMicrochartLegendItem > :first-child")[1];
 
@@ -79,9 +79,9 @@ sap.ui.define([
 		assert.ok(oSecondBar.classList.contains("sapUiIntMicrochartLegendItemGood"), "The item should have correct background class set.");
 	});
 
-	QUnit.test("Legend item color as CSS value", function (assert) {
+	QUnit.test("Legend item color as CSS value", async function (assert) {
 		this.oMicrochartLegend.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oThirdBarBackground = this.oMicrochartLegend.$().find(".sapUiIntMicrochartLegendItem > :first-child")[2].style.backgroundColor;
 
@@ -106,7 +106,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Legend items width when there is an item with long title", function (assert) {
+	QUnit.test("Legend items width when there is an item with long title", async function (assert) {
 		// arrange
 		var oMicrochartLegend = new MicrochartLegend({
 			chart: this.oChartStub
@@ -117,7 +117,7 @@ sap.ui.define([
 			{ legendTitle: "Bar3" }
 		], "");
 		oMicrochartLegend.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var aMinWidths = oMicrochartLegend.$().children(".sapUiIntMicrochartLegendItem").map(function () {
 			return this.style.minWidth;

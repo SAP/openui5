@@ -2,12 +2,12 @@
 sap.ui.define([
 	"sap/ui/integration/cards/AdaptiveContent",
 	"sap/ui/integration/cards/adaptivecards/elements/UI5InputTime",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function (
 	AdaptiveContent,
 	UI5InputTime,
-	Core
+	nextUIUpdate
 ) {
 	"use strict";
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -61,10 +61,10 @@ function (
 		};
 
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 			var oTimeInput = document.querySelector("#TimeVal ui5-time-picker");
 			var oLabel = document.querySelector("#TimeVal ui5-label");
 			var oTimeInputWithMinMaxValues = document.querySelector("#TimeInputWithMinMaxValues ui5-time-picker");

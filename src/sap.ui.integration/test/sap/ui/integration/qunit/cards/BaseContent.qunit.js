@@ -3,14 +3,14 @@
 sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/integration/util/ContentFactory",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card"
 ], function (
 	Text,
 	ContentFactory,
+	nextUIUpdate,
 	jQuery,
-	Core,
 	Card
 ) {
 	"use strict";
@@ -26,11 +26,11 @@ sap.ui.define([
 				return oContentFactory.getClass(sType).getMetadata().getRenderer().getMinHeight(oConfiguration, oContent, this.oCard);
 			}.bind(this);
 		},
-		beforeEach: function () {
+		beforeEach: async function () {
 			jQuery("html").addClass("sapUiSizeCompact");
 			this.oFakeContent = new Text();
 			this.oFakeContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oFakeContent.destroy();

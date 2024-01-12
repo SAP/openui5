@@ -4,10 +4,11 @@
 
 // reflects changes from code editor to the card in the example page
 sap.ui.define([
+	"sap/ui/core/Component",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Core"
-], function(jQuery, ComponentContainer, Core) {
+], function(Component, jQuery, ComponentContainer, Core) {
 	"use strict";
 
 	var rDestinations = /^\/destinations\/northwind\/V3\/Northwind\/Northwind\.svc\/(.*)/;
@@ -42,7 +43,7 @@ sap.ui.define([
 		}
 
 		Core.ready(function () {
-			var oComponent = Core.getComponent("container-scp");
+			var oComponent = Component.getComponentById("container-scp");
 
 			if (oComponent) {
 				var oView = oComponent.getRootControl(),

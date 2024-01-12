@@ -28,7 +28,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustratedMessageSize",
-	"sap/ui/integration/formatters/IconFormatter"
+	"sap/ui/integration/formatters/IconFormatter",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 	function(
 		Library,
@@ -58,7 +59,8 @@ sap.ui.define([
 		JSONModel,
 		IllustratedMessageType,
 		IllustratedMessageSize,
-		IconFormatter
+		IconFormatter,
+		nextUIUpdate
 	) {
 		"use strict";
 
@@ -842,7 +844,6 @@ sap.ui.define([
 
 			// Act
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 
 			oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -858,13 +859,13 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("Rendered classes", function (assert) {
+		QUnit.test("Rendered classes", async function (assert) {
 			// Arrange
 			var oCard = new Card();
 
 			// Act
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.ok(oCard.$().hasClass("sapUiIntCard"), "Class is added to the root div");
@@ -944,7 +945,7 @@ sap.ui.define([
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
-		QUnit.test("Default model is not propagated", function (assert) {
+		QUnit.test("Default model is not propagated", async function (assert) {
 			// Arrange
 			var oContainer = new HBox({
 					items: [
@@ -962,7 +963,7 @@ sap.ui.define([
 
 			// Act
 			oContainer.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(oCard.getModel().getProperty("/test"), undefined, "Default model is not propagated to the card.");
@@ -1013,12 +1014,11 @@ sap.ui.define([
 
 			// Act
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.module("Clone");
 
-		QUnit.test("Cloned card has its own models", function (assert) {
+		QUnit.test("Cloned card has its own models", async function (assert) {
 			var done = assert.async();
 
 			var oCard = new Card("somecard", {
@@ -1028,10 +1028,10 @@ sap.ui.define([
 
 			// Act
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			oClonedCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			oClonedCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -1122,7 +1122,6 @@ sap.ui.define([
 
 			oCard.setManifest(oManifest_ListCard);
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.test("createManifest called twice", function (assert) {
@@ -1304,13 +1303,13 @@ sap.ui.define([
 		});
 
 		QUnit.module("showMessage", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oCard = new Card({
 					width: "400px",
 					height: "600px"
 				});
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				Core.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -1489,14 +1488,14 @@ sap.ui.define([
 		});
 
 		QUnit.module("Default Header", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oCard = new Card({
 					width: "400px",
 					height: "600px"
 				});
 
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				Core.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -1504,7 +1503,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Default Header initialization", function (assert) {
+		QUnit.test("Default Header initialization", async function (assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -1533,7 +1532,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 			this.oCard.setManifest(oManifest_Header);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.notOk(this.oCard.getAggregation("_header"), "Card header should be empty.");
@@ -2095,14 +2094,14 @@ sap.ui.define([
 		});
 
 		QUnit.module("Numeric Header", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oCard = new Card("somecard", {
 					width: "400px",
 					height: "600px"
 				});
 
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				Core.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -2144,7 +2143,6 @@ sap.ui.define([
 			}.bind(this));
 
 			this.oCard.setManifest(oManifest);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Numeric Header generic", function (assert) {
@@ -2171,7 +2169,6 @@ sap.ui.define([
 				done();
 			}.bind(this));
 			this.oCard.setManifest(oManifest_NumericHeader);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Numeric Header main indicator with json data", function (assert) {
@@ -2196,7 +2193,6 @@ sap.ui.define([
 				done();
 			}.bind(this));
 			this.oCard.setManifest(oManifest_NumericHeader);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Numeric Header main indicator without 'data'", function (assert) {
@@ -2221,7 +2217,6 @@ sap.ui.define([
 				done();
 			}.bind(this));
 			this.oCard.setManifest(oManifest_NumericHeader2);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Numeric Header side indicators", function (assert) {
@@ -2250,7 +2245,6 @@ sap.ui.define([
 				done();
 			}.bind(this));
 			this.oCard.setManifest(oManifest_NumericHeader);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Numeric Header with no Details and no Indicators (Main and Side)", function (assert) {
@@ -2271,7 +2265,6 @@ sap.ui.define([
 				done();
 			});
 			this.oCard.setManifest(oManifest_NumericHeader_OnlyTitleAndSubtitle);
-			Core.applyChanges();
 		});
 
 		QUnit.test("hidden header", function (assert) {
@@ -2510,14 +2503,14 @@ sap.ui.define([
 		});
 
 		QUnit.module("Footer", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oCard = new Card("somecard", {
 					width: "400px",
 					height: "600px"
 				});
 
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				Core.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -2686,7 +2679,6 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest(oManifest_AvatarHeader);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Numeric Header", function (assert) {
@@ -2720,7 +2712,6 @@ sap.ui.define([
 
 			// Act
 			this.oNumericHeaderCard.setManifest(oManifest_NumericHeader);
-			Core.applyChanges();
 		});
 
 		QUnit.module("Error handling", {
@@ -2738,7 +2729,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Handler call", function (assert) {
+		QUnit.test("Handler call", async function (assert) {
 			// Arrange
 			var oLogSpy = sinon.spy(Log, "error"),
 				mErrorInfo = {
@@ -2747,11 +2738,11 @@ sap.ui.define([
 
 			this.oCard.setManifest(oManifest_ListCard);
 			this.oCard.setDataMode(CardDataMode.Active);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Act
 			this.oCard._handleError(mErrorInfo);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.ok(oLogSpy.calledWith(mErrorInfo.title), "Provided message should be logged to the console.");
@@ -3497,7 +3488,6 @@ sap.ui.define([
 				}
 			});
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Event stateChanged is fired only once", function (assert) {
@@ -3535,7 +3525,6 @@ sap.ui.define([
 				}
 			});
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.module("Data mode", {
@@ -3903,14 +3892,14 @@ sap.ui.define([
 		});
 
 		QUnit.module("Style classes", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oCard = new Card({
 					width: "400px",
 					height: "600px"
 				});
 
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				Core.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -4399,13 +4388,13 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Destroy card while manifest is loading", function (assert) {
+		QUnit.test("Destroy card while manifest is loading", async function (assert) {
 			// Arrange
 			var done = assert.async();
 
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/listCard.manifest.json");
 			this.oCard.setDataMode(CardDataMode.Active);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.ok(this.oCard._oCardManifest, "There is Manifest instance");
 			var oSpy = sinon.spy(this.oCard._oCardManifest, "loadDependenciesAndIncludes");
@@ -4580,7 +4569,6 @@ sap.ui.define([
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			oCard.setDesign("Transparent");
 			oCard.setManifest(oManifest_ListCard);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Design property in table card", function (assert) {
@@ -4598,7 +4586,6 @@ sap.ui.define([
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			oCard.setDesign("Transparent");
 			oCard.setManifest(oManifest_TableCard);
-			Core.applyChanges();
 		});
 
 		QUnit.module("Card manifest initialization", {

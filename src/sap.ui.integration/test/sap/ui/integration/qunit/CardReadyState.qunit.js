@@ -2,12 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/thirdparty/jquery"
 ], function (
 	Card,
-	jQuery,
-	Core
+	nextUIUpdate,
+	jQuery
 ) {
 	"use strict";
 
@@ -143,14 +143,14 @@ sap.ui.define([
 
 	QUnit.module("Ready state with different data modes");
 
-	QUnit.test("Default data mode, multiple times placeAt", function (assert) {
+	QUnit.test("Default data mode, multiple times placeAt", async function (assert) {
 		// Arrange
 		var done = assert.async();
 		var oCard = new Card("asd");
 
 		// Act
 		oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oCard.attachEvent("_ready", function () {
 			assert.ok(true, "_ready event should be called even if the DOM ref of the card changes");

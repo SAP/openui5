@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/core/Core"
 ],
-function (
+function(
 	Card,
 	DataProvider,
 	RequestDataProvider,
@@ -565,8 +565,6 @@ function (
 			var fnHeaderFireEventSpy = sinon.spy(Header.prototype, "fireEvent");
 			var fnContentFireEventSpy = sinon.spy(BaseContent.prototype, "fireEvent");
 
-			Core.applyChanges();
-
 			this.oCard.attachEvent("_ready", function () {
 
 				var _fnSpy = fnCardFireEventSpy;
@@ -602,8 +600,6 @@ function (
 			this._fnHandleErrorStub.restore();
 			var fnHeaderFireEventSpy = sinon.spy(Header.prototype, "fireEvent");
 			var fnContentFireEventSpy = sinon.spy(BaseContent.prototype, "fireEvent");
-
-			Core.applyChanges();
 
 			this.oCard.attachEvent("_ready", function () {
 

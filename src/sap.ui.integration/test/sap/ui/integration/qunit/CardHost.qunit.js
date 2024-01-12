@@ -87,7 +87,6 @@ sap.ui.define([
 
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 	QUnit.module("Events", {
@@ -159,6 +158,5 @@ sap.ui.define([
 
 		// Act
 		oCard.startManifestProcessing();
-		Core.applyChanges();
 	});
 });

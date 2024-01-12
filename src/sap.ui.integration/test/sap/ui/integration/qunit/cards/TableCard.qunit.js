@@ -578,7 +578,6 @@ sap.ui.define([
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -796,7 +795,6 @@ sap.ui.define([
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCard.destroy();

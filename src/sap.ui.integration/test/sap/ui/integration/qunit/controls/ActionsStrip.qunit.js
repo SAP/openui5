@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/integration/controls/ActionsStrip",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 	Core,
 	ActionsStrip,
 	Card,
 	JSONModel,
-	coreLibrary
+	coreLibrary,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -374,7 +376,7 @@ sap.ui.define([
 		oActionsStrip.destroy();
 	});
 
-	QUnit.test("Card action is fired when button is pressed", function (assert) {
+	QUnit.test("Card action is fired when button is pressed", async function (assert) {
 		// Arrange
 		var oActionsStrip = ActionsStrip.create([
 			{
@@ -387,7 +389,7 @@ sap.ui.define([
 		oActionsStrip.placeAt(DOM_RENDER_LOCATION);
 		oActionsStrip.enableItems();
 
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.oCard.attachAction(function (oEvent) {
 			// Assert
 			assert.ok(true, "Card action should be fired when button is pressed");
@@ -400,7 +402,7 @@ sap.ui.define([
 		oActionsStrip._getToolbar().getContent()[1].$().trigger("tap");
 	});
 
-	QUnit.test("Card action is fired when button is pressed, item created from template", function (assert) {
+	QUnit.test("Card action is fired when button is pressed, item created from template", async function (assert) {
 		// Arrange
 		const oActionsStrip = ActionsStrip.create({
 			item: {
@@ -432,7 +434,7 @@ sap.ui.define([
 		oActionsStrip.enableItems();
 		oActionsStrip.onDataChanged();
 
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.oCard.attachAction(function (oEvent) {
 			// Assert
 			assert.ok(true, "Card action should be fired when button is pressed");

@@ -2,10 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 	BaseEditor,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -41,9 +41,9 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleSeparator").then(function (aPropertyEditors) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleSeparator").then(async function (aPropertyEditors) {
 				this.oSeparatorEditor = aPropertyEditors[0];
-				oCore.applyChanges();
+				await nextUIUpdate();
 				this.oSeparatorEditorElement = this.oSeparatorEditor.getContent();
 			}.bind(this));
 		},

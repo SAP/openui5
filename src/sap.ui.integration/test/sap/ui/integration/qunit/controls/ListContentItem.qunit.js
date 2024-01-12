@@ -1,7 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/integration/cards/ListContent",
@@ -10,7 +9,6 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/ObjectStatus"
 ], function(
-	Core,
 	Library,
 	coreLibrary,
 	ListContent,
@@ -27,12 +25,12 @@ sap.ui.define([
 
 	QUnit.module("Rendering");
 
-	QUnit.test("Root classes", function (assert) {
+	QUnit.test("Root classes", async function (assert) {
 		// arrange
 		var oLCI = new ListContentItem();
 
 		oLCI.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oLCI.$().hasClass("sapUiIntLCI"), "'sapUiIntLCI' class should be present.");
@@ -41,7 +39,7 @@ sap.ui.define([
 		oLCI.destroy();
 	});
 
-	QUnit.test("Content layout when there are title and description", function (assert) {
+	QUnit.test("Content layout when there are title and description", async function (assert) {
 		// arrange
 		var oLCI = new ListContentItem({
 			title: "This is title",
@@ -49,13 +47,13 @@ sap.ui.define([
 		});
 
 		oLCI.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oLCI.$().hasClass("sapUiIntLCITwoLines"), "'sapUiIntLCITwoLines' class should be present.");
 
 		oLCI.setDescriptionVisible(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oLCI.$().hasClass("sapUiIntLCIOneLine"), "'sapUiIntLCIOneLine' class should be present.");
@@ -64,7 +62,7 @@ sap.ui.define([
 		oLCI.destroy();
 	});
 
-	QUnit.test("Content layout when there are title and chart", function (assert) {
+	QUnit.test("Content layout when there are title and chart", async function (assert) {
 		// arrange
 		var oMicrochart = new Microchart();
 		var oLCI = new ListContentItem({
@@ -73,14 +71,14 @@ sap.ui.define([
 		});
 
 		oLCI.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oLCI.$().hasClass("sapUiIntLCITwoLines"), "'sapUiIntLCITwoLines' class should be present.");
 
 		oMicrochart.setVisible(false);
 		oLCI.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oLCI.$().hasClass("sapUiIntLCIOneLine"), "'sapUiIntLCIOneLine' class should be present.");
@@ -89,7 +87,7 @@ sap.ui.define([
 		oLCI.destroy();
 	});
 
-	QUnit.test("Content layout when there are title and 1 row of attributes", function (assert) {
+	QUnit.test("Content layout when there are title and 1 row of attributes", async function (assert) {
 		// arrange
 		var oLCI = new ListContentItem({
 			title: "This is title",
@@ -100,7 +98,7 @@ sap.ui.define([
 		});
 
 		oLCI.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oLCI.$().hasClass("sapUiIntLCITwoLines"), "'sapUiIntLCITwoLines' class should be present.");
@@ -109,7 +107,7 @@ sap.ui.define([
 		oLCI.destroy();
 	});
 
-	QUnit.test("Content layout when there are title, chart and description", function (assert) {
+	QUnit.test("Content layout when there are title, chart and description", async function (assert) {
 		// arrange
 		var oLCI = new ListContentItem({
 			title: "This is title",
@@ -118,7 +116,7 @@ sap.ui.define([
 		});
 
 		oLCI.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oLCI.$().hasClass("sapUiIntLCIMultipleLines"), "'sapUiIntLCIMultipleLines' class should be present.");

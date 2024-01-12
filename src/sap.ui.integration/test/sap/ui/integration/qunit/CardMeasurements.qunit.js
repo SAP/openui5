@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
-	"sap/base/config"
+	"sap/base/config",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 	Card,
 	Core,
-	BaseConfig
+	BaseConfig,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -36,7 +38,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Markers placing is correct", function (assert) {
+	QUnit.test("Markers placing is correct", async function (assert) {
 		// arrange
 		var done = assert.async();
 
@@ -72,7 +74,7 @@ sap.ui.define([
 
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.spyMark.withArgs(sinon.match(/-start$/)).callCount, 3, "There should be 3 'start' markers after the card is rendered");
@@ -110,7 +112,6 @@ sap.ui.define([
 
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 });

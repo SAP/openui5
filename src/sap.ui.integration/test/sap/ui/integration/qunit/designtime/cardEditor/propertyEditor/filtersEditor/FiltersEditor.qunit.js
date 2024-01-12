@@ -3,10 +3,12 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"qunit/designtime/EditorQunitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	BaseEditor,
 	EditorQunitUtils,
+	nextUIUpdate,
 	sinon
 ) {
 	"use strict";
@@ -216,9 +218,9 @@ sap.ui.define([
 			});
 			this.oBaseEditor.setConfig(mConfig);
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleFilter").then(function (aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleFilter").then(async function(aPropertyEditor) {
 				var oFiltersEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				await nextUIUpdate();
 				var oNestedArrayEditor = oFiltersEditor.getContent();
 				return oNestedArrayEditor.ready().then(function () {
 					var oComplexEditors = _getComplexMapEditors(oNestedArrayEditor)[0];
@@ -256,9 +258,9 @@ sap.ui.define([
 			var mConfig = _createBaseEditorConfig();
 			this.oBaseEditor.setConfig(mConfig);
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleFilter").then(function (aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleFilter").then(async function(aPropertyEditor) {
 				var oFiltersEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				await nextUIUpdate();
 				var oNestedArrayEditor = oFiltersEditor.getContent();
 				return oNestedArrayEditor.ready().then(function() {
 					var oComplexEditors = _getComplexMapEditors(oNestedArrayEditor)[0];

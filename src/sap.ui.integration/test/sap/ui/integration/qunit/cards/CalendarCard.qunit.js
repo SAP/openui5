@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/integration/widgets/Card",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/integration/cards/CalendarContent",
 	"sap/ui/core/date/UI5Date"
@@ -12,6 +13,7 @@ sap.ui.define([
 		Core,
 		DateFormat,
 		Card,
+		nextUIUpdate,
 		CalendarDate,
 		CalendarContent,
 		UI5Date
@@ -1312,15 +1314,14 @@ sap.ui.define([
 					width: "400px",
 					height: "600px"
 				}).placeAt(DOM_RENDER_LOCATION);
-
-				Core.applyChanges();
 			},
 			afterEach: function () {
 				this.oCard.destroy();
 			}
 		});
 
-		QUnit.test("Initialization - CalendarContent", function (assert) {
+		QUnit.test("Initialization - CalendarContent", async function (assert) {
+			await nextUIUpdate();
 			// Arrange
 			var done = assert.async();
 			this.oCard.setManifest(oManifest);
@@ -1420,8 +1421,6 @@ sap.ui.define([
 					width: "400px",
 					height: "600px"
 				}).placeAt(DOM_RENDER_LOCATION);
-
-				Core.applyChanges();
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -1598,8 +1597,6 @@ sap.ui.define([
 					width: "400px",
 					height: "600px"
 				}).placeAt(DOM_RENDER_LOCATION);
-
-				Core.applyChanges();
 			},
 			afterEach: function () {
 				this.oCard.destroy();

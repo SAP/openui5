@@ -1,6 +1,7 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/integration/cards/AnalyticalContent",
 	"sap/ui/integration/cards/actions/NavigationAction",
 	"sap/ui/integration/widgets/Card",
@@ -8,6 +9,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/actions/CardActions",
 	"../services/SampleServices"
 ], function (
+	Library,
 	AnalyticalContent,
 	NavigationAction,
 	Card,
@@ -970,7 +972,7 @@ sap.ui.define([
 
 
 
-	return Core.loadLibrary("sap.viz", { async: true }).then(function () {
+	return Library.load("sap.viz").then(function () {
 		QUnit.module("Chart creation", {
 			beforeEach: function () {
 				this.oCard = new Card({
@@ -979,7 +981,6 @@ sap.ui.define([
 					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 				});
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				Core.applyChanges();
 			},
 			afterEach: function () {
 				this.oCard.destroy();

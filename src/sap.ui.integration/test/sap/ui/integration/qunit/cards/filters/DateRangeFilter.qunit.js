@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/integration/cards/filters/DateRangeFilter",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	DynamicDateRange,
 	Core,
@@ -19,7 +20,8 @@ sap.ui.define([
 	DateRangeFilter,
 	Card,
 	QUnitUtils,
-	UI5Date
+	UI5Date,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -220,11 +222,11 @@ sap.ui.define([
 		assert.strictEqual(oModelValue.rangeOData.endLocalDate, "9999-12-31", "Upper boundary of rangeOData in short ISO 8601 date format should be correct");
 	});
 
-	QUnit.test("Value is updated when new value is entered", function (assert) {
+	QUnit.test("Value is updated when new value is entered", async function (assert) {
 		// Arrange
 		this.oDRF.setConfig({});
 		this.oDRF.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 		var oOldValue = this.oDRF.getValue();
 
 		// Act
@@ -235,11 +237,11 @@ sap.ui.define([
 		assert.notDeepEqual(this.oDRF.getValue(), oOldValue, "Value should be changed after new value is entered");
 	});
 
-	QUnit.test("Value state is updated when new value is entered", function (assert) {
+	QUnit.test("Value state is updated when new value is entered", async function (assert) {
 		// Arrange
 		this.oDRF.setConfig({});
 		this.oDRF.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.oDRF._getDdr().$("input-inner").val("invalid value").trigger("input");
@@ -410,7 +412,7 @@ sap.ui.define([
 		assert.ok(oModelValue.rangeOData.hasOwnProperty("end"), "'end' property should be part of rangeOData");
 	});
 
-	QUnit.test("Value is updated when new DateTime value is entered", function (assert) {
+	QUnit.test("Value is updated when new DateTime value is entered", async function (assert) {
 		// Arrange
 		this.oDRF.setConfig({
 			value: {
@@ -422,7 +424,7 @@ sap.ui.define([
 			]
 		});
 		this.oDRF.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 		var oOldValue = this.oDRF.getValue();
 
 		// Act
