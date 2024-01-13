@@ -1,0 +1,94 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.View.navigationTypedView",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"config": {
+			"sapFiori2Adaptation": true,
+			"sample": {
+				"files": [
+					"view/RootView.js",
+					"view/HomeView.js",
+					"view/Next.view.xml",
+					"view/HomeContentDesktop.fragment.js",
+					"view/HomeContentMobile.fragment.js",
+					"view/Next.view.xml",
+					"controller/Home.controller.js",
+					"controller/Next.controller.js",
+					"Component.js",
+					"manifest.json"
+				]
+			}
+		},
+		"models": {},
+		"rootView": {
+			"id": "rootView",
+			"viewName": "module:sap/ui/core/sample/View/navigationTypedView/view/RootView"
+		},
+		"routing": {
+			"routes": [
+				{
+					"name": "home",
+					"pattern": "",
+					"target": "home"
+				},
+				{
+					"name": "next",
+					"pattern": "next",
+					"target": "next"
+				}
+			],
+			"targets": {
+				"home": {
+					"id": "homeView",
+					"name": "module:sap/ui/core/sample/View/navigationTypedView/view/HomeView",
+					"level": 1
+				},
+				"next": {
+					"id": "nextView",
+					"name": "Next",
+					"level": 2,
+					"viewType": "XML",
+					"path": "sap.ui.core.sample.View.navigationTypedView.view"
+				},
+				"notFound": {
+					"id": "notFoundView",
+					"name": "module:sap/ui/core/sample/View/navigationTypedView/view/HomeView",
+					"transition": "show"
+				}
+			},
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"type": "View",
+				"transition": "slide",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"bypassed": {
+					"target": "notFound"
+				}
+			}
+		}
+	}
+}
