@@ -1,4 +1,4 @@
-sap.ui.define(["sap/ui/core/Lib", "sap/ui/core/Core"], function(Library) {
+sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 	"use strict";
 
 	var thisLib = Library.init({

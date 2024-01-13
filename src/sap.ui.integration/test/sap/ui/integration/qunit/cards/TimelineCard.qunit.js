@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/integration/cards/BaseListContent",
 	"sap/ui/integration/widgets/Card"
-], function(
+], function (
 	Library,
 	TimelineContent,
 	Core,
@@ -131,7 +131,6 @@ sap.ui.define([
 			});
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.module("Data and items length", {
@@ -143,7 +142,6 @@ sap.ui.define([
 				});
 
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				Core.applyChanges();
 			},
 			afterEach: function () {
 				this.oCard.destroy();

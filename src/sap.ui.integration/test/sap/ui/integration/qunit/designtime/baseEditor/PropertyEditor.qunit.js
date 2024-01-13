@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ],
@@ -13,6 +14,7 @@ function (
 	PropertyEditor,
 	PropertyEditorFactory,
 	StringEditor,
+	nextUIUpdate,
 	sinon,
 	oCore
 ) {
@@ -117,7 +119,7 @@ function (
 			this.oBaseEditor.placeAt("qunit-fixture");
 		});
 
-		QUnit.test("when config doesn't contain a path", function (assert) {
+		QUnit.test("when config doesn't contain a path", async function (assert) {
 			var oPropertyEditor = new PropertyEditor({
 				config: {
 					"label": "Baz property",
@@ -127,7 +129,7 @@ function (
 			});
 			this.oBaseEditor.addContent(oPropertyEditor);
 			this.oBaseEditor.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			return oPropertyEditor.ready().then(function () {
 				assert.strictEqual(
@@ -179,7 +181,7 @@ function (
 	});
 
 	QUnit.module("Initialisation via setters", {
-		beforeEach: function (assert) {
+		beforeEach: async function (assert) {
 			this.oBaseEditor = new BaseEditor({
 				config: mConfig,
 				json: mJson
@@ -191,7 +193,7 @@ function (
 			this.oBaseEditor.addContent(this.oPropertyEditor);
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oBaseEditor.destroy();
@@ -869,7 +871,7 @@ function (
 	});
 
 	QUnit.module("PropertyEditor is not descendant of BaseEditor initially", {
-		beforeEach: function (assert) {
+		beforeEach: async function (assert) {
 			this.oBaseEditor = new BaseEditor({
 				config: mConfig,
 				json: mJson
@@ -877,7 +879,7 @@ function (
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", assert.async());
 			this.oPropertyEditor = new PropertyEditor();
 			this.oPropertyEditor.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oPropertyEditor.destroy();
@@ -955,7 +957,7 @@ function (
 	});
 
 	QUnit.module("Ready handling", {
-		beforeEach: function (assert) {
+		beforeEach: async function (assert) {
 			this.oBaseEditor = new BaseEditor({
 				config: mConfig,
 				json: mJson
@@ -966,7 +968,7 @@ function (
 			this.oPropertyEditor = new PropertyEditor();
 			this.oBaseEditor.addContent(this.oPropertyEditor);
 			this.oBaseEditor.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oBaseEditor.destroy();
@@ -1012,7 +1014,7 @@ function (
 	});
 
 	QUnit.module("Destroy", {
-		beforeEach: function (assert) {
+		beforeEach: async function (assert) {
 			this.oBaseEditor = new BaseEditor({
 				config: mConfig,
 				json: mJson
@@ -1023,7 +1025,7 @@ function (
 			this.oPropertyEditor = new PropertyEditor();
 			this.oBaseEditor.addContent(this.oPropertyEditor);
 			this.oBaseEditor.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oBaseEditor.destroy();

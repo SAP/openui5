@@ -2,12 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core",
 	"sap/ui/integration/Designtime"
 ],
 function (
 	Card,
-	Core,
 	Designtime
 ) {
 	"use strict";
@@ -39,6 +37,5 @@ function (
 
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 });

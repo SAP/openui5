@@ -8,9 +8,9 @@ sap.ui.define([
 	"sap/ui/integration/designtime/editor/CardEditor",
 	"sap/ui/integration/Designtime",
 	"sap/ui/integration/Host",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"./ContextHost",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/base/i18n/ResourceBundle",
@@ -26,9 +26,9 @@ sap.ui.define([
 	CardEditor,
 	Designtime,
 	Host,
+	nextUIUpdate,
 	sinon,
 	ContextHost,
-	Core,
 	QUnitUtils,
 	KeyCodes,
 	ResourceBundle,
@@ -1429,7 +1429,7 @@ sap.ui.define([
 		QUnit.test("1 date parameter and label with no value (as json)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1date", "type": "List", "configuration": { "parameters": { "dateParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(async function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1438,7 +1438,7 @@ sap.ui.define([
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.DateField"), "Field: Date Field");
 					assert.equal(oField.getAggregation("_field").getValue(), "", "Field: No Value");
 					//force rendering
-					Core.applyChanges();
+					await nextUIUpdate();
 					//check the change event handling of the field
 					oField.getAggregation("_field").setValue(UI5Date.getInstance());
 					// oField.getAggregation("_field").fireChange({ valid: true });
@@ -1453,7 +1453,7 @@ sap.ui.define([
 		QUnit.test("1 datetime parameter and label with no value (as json)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1datetime", "type": "List", "configuration": { "parameters": { "datetimeParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(async function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1462,7 +1462,7 @@ sap.ui.define([
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.DateTimeField"), "Field: DateTime Field");
 					assert.equal(oField.getAggregation("_field").getValue(), "", "Field: No Value");
 					//force rendering
-					Core.applyChanges();
+					await nextUIUpdate();
 					//check the change event handling of the field
 					oField.getAggregation("_field").setValue(UI5Date.getInstance());
 					// oField.getAggregation("_field").fireChange({ valid: true });

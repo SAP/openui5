@@ -1,20 +1,20 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/base/Log",
-	"sap/ui/core/Lib",
-	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/util/RequestDataProvider",
-	"sap/ui/core/Core",
-	"sap/ui/integration/cards/BaseContent",
-	"sap/ui/integration/cards/AnalyticalContent",
-	"sap/ui/integration/cards/Header",
-	"sap/ui/integration/cards/filters/SelectFilter",
-	"sap/ui/core/ComponentContainer",
-	"sap/ui/base/Event",
-	"sap/ui/core/UIComponent",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/integration/library"
+		"sap/base/Log",
+		"sap/ui/core/Lib",
+		"sap/ui/integration/widgets/Card",
+		"sap/ui/integration/util/RequestDataProvider",
+		"sap/ui/core/Core",
+		"sap/ui/integration/cards/BaseContent",
+		"sap/ui/integration/cards/AnalyticalContent",
+		"sap/ui/integration/cards/Header",
+		"sap/ui/integration/cards/filters/SelectFilter",
+		"sap/ui/core/ComponentContainer",
+		"sap/ui/base/Event",
+		"sap/ui/core/UIComponent",
+		"sap/ui/thirdparty/jquery",
+		"sap/ui/integration/library"
 ],
 	function(
 		Log,

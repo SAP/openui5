@@ -214,7 +214,6 @@ sap.ui.define([
 
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 	QUnit.test("Error message is shown when the src doesn't start with 'https://'", function (assert) {
@@ -233,7 +232,6 @@ sap.ui.define([
 
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 	QUnit.test("Error message is shown when the src is empty string", function (assert) {
@@ -253,7 +251,6 @@ sap.ui.define([
 
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 });

@@ -7,15 +7,13 @@ sap.ui.define([
 	"sap/f/cards/loading/TimelinePlaceholder",
 	"sap/ui/core/Lib",
 	"sap/ui/integration/library",
-	"sap/ui/core/Core",
 	"sap/ui/integration/util/BindingHelper"
-], function(
+], function (
 	BaseListContent,
 	TimelineContentRenderer,
 	TimelinePlaceholder,
 	Library,
 	library,
-	Core,
 	BindingHelper
 ) {
 	"use strict";

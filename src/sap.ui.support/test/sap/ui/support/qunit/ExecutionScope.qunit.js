@@ -87,12 +87,6 @@ sap.ui.define([
 
 		var core;
 
-		oCore.registerPlugin({
-			startPlugin: function (oCore) {
-				core = oCore;
-			}
-		});
-
 		QUnit.module("Execution Scope API test", {
 			beforeEach: function () {
 

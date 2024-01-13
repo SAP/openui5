@@ -6,14 +6,14 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/base/util/restricted/_merge",
 	"qunit/designtime/EditorQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 	BaseEditor,
 	QUnitUtils,
 	ObjectPath,
 	_merge,
 	EditorQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -246,8 +246,8 @@ sap.ui.define([
 
 			this.oArrayEditor.setConfig(this.oPropertyConfig);
 
-			this.oArrayEditor.ready().then(function () {
-				oCore.applyChanges();
+			this.oArrayEditor.ready().then(async function () {
+				await nextUIUpdate();
 				this.oArrayEditor.attachValueChange(function (oEvent) {
 					assert.strictEqual(oEvent.getParameter("value").length, 1, "Then there is one item");
 					assert.deepEqual(oEvent.getParameter("value")[0], {}, "Then the new item is created with proper default values");
@@ -483,9 +483,9 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(function (aPropertyEditor) {
+			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(async function (aPropertyEditor) {
 				this.oArrayEditor = aPropertyEditor[0];
-				oCore.applyChanges();
+				await nextUIUpdate();
 				fnReady();
 			}.bind(this));
 		},
@@ -611,9 +611,9 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(function (aPropertyEditor) {
+			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(async function (aPropertyEditor) {
 				this.oArrayEditor = aPropertyEditor[0];
-				oCore.applyChanges();
+				await nextUIUpdate();
 				fnReady();
 			}.bind(this));
 		},
@@ -681,9 +681,9 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(function (aPropertyEditor) {
+			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(async function (aPropertyEditor) {
 				this.oArrayEditor = aPropertyEditor[0].getAggregation("propertyEditor");
-				oCore.applyChanges();
+				await nextUIUpdate();
 				fnReady();
 			}.bind(this));
 		},
@@ -709,7 +709,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Custom configuration", {
-		beforeEach: function (assert) {
+		beforeEach: async function (assert) {
 			var mJson = {
 				"content": [
 					{
@@ -726,7 +726,7 @@ sap.ui.define([
 			});
 
 			this.oBaseEditor.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oBaseEditor.destroy();
@@ -788,7 +788,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Integration with BaseEditor", {
-		beforeEach: function (assert) {
+		beforeEach: async function (assert) {
 			var fnDone = assert.async();
 
 			var mConfig = {
@@ -873,7 +873,7 @@ sap.ui.define([
 			});
 
 			this.oBaseEditor.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function (oEvent) {
 				this.oArrayEditor = oEvent.getSource().getPropertyEditorsByNameSync("cars")[0].getAggregation("propertyEditor");

@@ -1,23 +1,23 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Supportability",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/controls/BlockingMessage",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/ErrorHandler",
 	"sap/m/InstanceManager",
-	"sap/m/IllustratedMessageType"
-], function (
-	Core,
+	"sap/m/IllustratedMessageType",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(
 	Supportability,
 	Card,
 	BlockingMessage,
 	library,
 	ErrorHandler,
 	InstanceManager,
-	IllustratedMessageType
+	IllustratedMessageType,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -43,7 +43,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Create message without details", function (assert) {
+	QUnit.test("Create message without details", async function (assert) {
 		// Act
 		var mErrorInfo = {
 				type: CardBlockingMessageType.Error,
@@ -55,7 +55,7 @@ sap.ui.define([
 			oIllustratedMessage;
 
 		oMessage.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oMessage.isA("sap.ui.integration.controls.BlockingMessage"), "BlockingMessage is created");
@@ -71,7 +71,7 @@ sap.ui.define([
 		oMessage.destroy();
 	});
 
-	QUnit.test("Create message with details", function (assert) {
+	QUnit.test("Create message with details", async function (assert) {
 		// Act
 		var done = assert.async(),
 			oDebugStub = sinon.stub(Supportability, "isDebugModeEnabled").returns(true),
@@ -88,7 +88,7 @@ sap.ui.define([
 			oDialog;
 
 		oMessage.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oMessage.isA("sap.ui.integration.controls.BlockingMessage"), "BlockingMessage is created");
@@ -116,7 +116,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Create error message", function (assert) {
+	QUnit.test("Create error message", async function (assert) {
 		// Act
 		var done = assert.async(),
 			oDebugStub = sinon.stub(Supportability, "isDebugModeEnabled").returns(true),
@@ -131,7 +131,7 @@ sap.ui.define([
 			oDialog;
 
 		oMessage.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oMessage.isA("sap.ui.integration.controls.BlockingMessage"), "BlockingMessage is created");
@@ -161,7 +161,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Create data request error message", function (assert) {
+	QUnit.test("Create data request error message", async function (assert) {
 		// Act
 		var done = assert.async(),
 			oDebugStub = sinon.stub(Supportability, "isDebugModeEnabled").returns(true),
@@ -189,7 +189,7 @@ sap.ui.define([
 			oDialog;
 
 		oMessage.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oMessage.isA("sap.ui.integration.controls.BlockingMessage"), "BlockingMessage is created");
@@ -218,7 +218,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Create custom message with buttons", function (assert) {
+	QUnit.test("Create custom message with buttons", async function (assert) {
 		// Act
 		const oMessage = BlockingMessage.create({
 				title: "Test title",
@@ -242,7 +242,7 @@ sap.ui.define([
 		assert.expect(8);
 
 		oMessage.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oMessage.isA("sap.ui.integration.controls.BlockingMessage"), "BlockingMessage is created");

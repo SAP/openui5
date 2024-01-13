@@ -10005,6 +10005,70 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("Referencing labels focusing on tap when selection type is not a range", function (assert) {
+			var oLabel = new Label({ text: "referencing label", labelFor: 'selectTest1' }),
+				oItemA = new Item({ key: "Item1", text: "Item1" }),
+				oItemB = new Item({ key: "Item2", text: "Item2" }),
+				oSelect = new Select('selectTest1', {
+					items: [oItemA, oItemB]
+				});
+
+			// Arrange
+			oLabel.placeAt("content");
+			oSelect.placeAt("content");
+
+			Core.applyChanges();
+
+			var oOriginalGetSelection = window.getSelection;
+			window.getSelection = function() {
+				return { type: "DummyType" };
+			};
+
+			// Act
+			qutils.triggerEvent("tap", oLabel.getId());
+
+			// Assert
+			assert.equal(oSelect._isFocused(), true, "Focus is received after tap when selection type is not a range");
+
+			// Cleanup
+			window.getSelection = oOriginalGetSelection;
+
+			oLabel.destroy();
+			oSelect.destroy();
+		});
+
+		QUnit.test("Referencing labels not focusing on tap when selection type is a range", function (assert) {
+			var oLabel = new Label({ text: "referencing label", labelFor: 'selectTest1' }),
+				oItemA = new Item({ key: "Item1", text: "Item1" }),
+				oItemB = new Item({ key: "Item2", text: "Item2" }),
+				oSelect = new Select('selectTest1', {
+					items: [oItemA, oItemB]
+				});
+
+			// Arrange
+			oLabel.placeAt("content");
+			oSelect.placeAt("content");
+
+			Core.applyChanges();
+
+			var oOriginalGetSelection = window.getSelection;
+			window.getSelection = function () {
+				return { type: "Range" };
+			};
+
+			// Act
+			qutils.triggerEvent("tap", oLabel.getId());
+
+			// Assert
+			assert.equal(oSelect._isFocused(), false, "Focus is not received after tap when selection type is a range");
+
+			// Cleanup
+			window.getSelection = oOriginalGetSelection;
+
+			oLabel.destroy();
+			oSelect.destroy();
+		});
+
 		QUnit.test("Should have correct value for aria-activedescendant after invalidation", function (assert) {
 			var oItemA = new Item({key: "Item1", text: "Item1"}),
 				oItemB = new Item({key: "Item2", text: "Item2"}),

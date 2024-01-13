@@ -2,12 +2,12 @@
 sap.ui.define([
 	"sap/ui/integration/cards/AdaptiveContent",
 	"sap/ui/integration/cards/adaptivecards/elements/UI5InputDate",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function (
 	AdaptiveContent,
 	UI5InputDate,
-	Core
+	nextUIUpdate
 ) {
 	"use strict";
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -54,9 +54,9 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function () {
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			//Arrange
 			var oDateInput = document.querySelector("#DateVal ui5-date-picker");

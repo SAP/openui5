@@ -1,7 +1,6 @@
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Core"
+	"sap/ui/core/Lib"
 ], function(Log, Library) {
 	"use strict";
 

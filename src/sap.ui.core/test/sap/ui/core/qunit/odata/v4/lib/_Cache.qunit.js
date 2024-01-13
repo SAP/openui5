@@ -12954,6 +12954,31 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache#isMissing", function (assert) {
+		const oCache = _Cache.create(this.oRequestor, "SalesOrders");
+
+		oCache.aElements = [{}];
+
+		// code under test
+		assert.notOk(oCache.isMissing(0));
+		assert.ok(oCache.isMissing(1));
+
+		oCache.$tail = Promise.resolve();
+		oCache.aReadRequests = [{iStart : 5, iEnd : 8}, {iStart : 20, iEnd : 10000}];
+
+		// code under test
+		assert.notOk(oCache.isMissing(0));
+		assert.ok(oCache.isMissing(4));
+		assert.notOk(oCache.isMissing(5));
+		assert.notOk(oCache.isMissing(7));
+		assert.ok(oCache.isMissing(8));
+		assert.ok(oCache.isMissing(19));
+		assert.notOk(oCache.isMissing(20));
+		assert.notOk(oCache.isMissing(9999));
+		assert.ok(oCache.isMissing(10000));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("from$skip", function (assert) {
 		var aCollection = [];
 

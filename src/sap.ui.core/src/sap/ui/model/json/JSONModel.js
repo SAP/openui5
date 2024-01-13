@@ -417,7 +417,7 @@ sap.ui.define([
 	 * @private
 	 */
 	JSONModel.prototype._getObject = function (sPath, oContext) {
-		var oNode = null;
+		let oNode = null;
 		if (oContext instanceof Context) {
 			oNode = this._getObject(oContext.getPath());
 		} else if (oContext != null) {

@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/integration/cards/actions/CardActions",
 	"../services/SampleServices"
-], function(
+], function (
 	Library,
 	AnalyticalContent,
 	NavigationAction,
@@ -981,7 +981,6 @@ sap.ui.define([
 					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 				});
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				Core.applyChanges();
 			},
 			afterEach: function () {
 				this.oCard.destroy();

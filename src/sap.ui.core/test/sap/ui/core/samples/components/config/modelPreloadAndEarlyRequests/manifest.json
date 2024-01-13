@@ -22,16 +22,14 @@
 				"preload" : true,
 				"settings" : {
 					"earlyRequests" : false,
-					"operationMode" : "Server",
-					"synchronizationMode" : "None"
+					"operationMode" : "Server"
 				}
 			},
 			"without earlyRequests" : {
 				"dataSource" : "default",
 				"preload" : true,
 				"settings" : {
-					"operationMode" : "Server",
-					"synchronizationMode" : "None"
+					"operationMode" : "Server"
 				}
 			}
 		}

@@ -23,7 +23,6 @@ sap.ui.define([
 			const oModel = new ODataModel({
 				serviceUrl: "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
 				groupId: "$direct",
-				synchronizationMode: 'None',
 				autoExpandSelect: true,
 				operationMode: "Server"
 			});

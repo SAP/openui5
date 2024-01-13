@@ -406,8 +406,7 @@ sap.ui.define([
 				this.oServer.respondWith("GET", /.*\$metadata/, [200, { "Content-Type": "application/xml" }, sMetadataV4]);
 
 				var oModel = new ODataModelV4({
-					serviceUrl: "/sap/opu/odata4/sap/sb_cfd_tsm_bupa_rap_pv_v4/srvd/sap/sd_cfd_tsm_bupa_rap_pv/0001/",
-					synchronizationMode: "None"
+					serviceUrl: "/sap/opu/odata4/sap/sb_cfd_tsm_bupa_rap_pv_v4/srvd/sap/sd_cfd_tsm_bupa_rap_pv/0001/"
 				});
 				var oControl = {
 					getBindingContext() {

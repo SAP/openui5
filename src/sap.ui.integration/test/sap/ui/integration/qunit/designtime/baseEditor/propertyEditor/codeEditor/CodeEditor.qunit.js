@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/codeEditor/CodeEditor",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/util/deepEqual",
 	"qunit/designtime/EditorQunitUtils"
@@ -13,6 +14,7 @@ sap.ui.define([
 	CodeEditor,
 	BaseEditor,
 	QUnitUtils,
+	nextUIUpdate,
 	sinon,
 	deepEqual,
 	EditorQunitUtils
@@ -65,10 +67,10 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleJson").then(function(aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleJson").then(async function (aPropertyEditor) {
 				this.oCodeEditor = aPropertyEditor[0].getAggregation("propertyEditor");
 				this.oCodeEditor.setValue(this.oValue);
-				Core.applyChanges();
+				await nextUIUpdate();
 				this.oCodeEditorElement = this.oCodeEditor.getContent();
 			}.bind(this));
 		},
@@ -181,7 +183,7 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("click", this.oCodeEditorElement.$("vhi"));
 		});
 
-		QUnit.test("When a value is correctly changed in the inline editor", function (assert) {
+		QUnit.test("When a value is correctly changed in the inline editor", async function (assert) {
 			var fnDone = assert.async();
 
 			this.oCodeEditor.attachValueChange(function (oEvent) {
@@ -200,7 +202,7 @@ sap.ui.define([
 				name: "John Foo",
 				age: 48
 			}]));
-			Core.applyChanges();
+			await nextUIUpdate();
 		});
 
 		QUnit.test("When a value is incorrectly changed in the editor dialog", function (assert) {

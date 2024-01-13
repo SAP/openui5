@@ -58,7 +58,6 @@ sap.ui.define([
 	TestCorePlugin.prototype.startPlugin = function(oCore, bOnInit) {
 		oRealCore = oCore;
 	};
-	oCore.registerPlugin(new TestCorePlugin());
 
 
 	// ---------------------------------------------------------------------------

@@ -304,7 +304,7 @@ sap.ui.define([
 		if (!oRootNode) {
 			return null;
 		}
-		var oNode = [];
+		let oNode = [];
 		if (oContext instanceof Context) {
 			oNode = this._getObject(oContext.getPath());
 		} else if (oContext) {

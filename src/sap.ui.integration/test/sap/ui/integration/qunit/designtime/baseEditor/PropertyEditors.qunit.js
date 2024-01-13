@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 	"sap/base/util/deepClone",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function (
@@ -14,6 +15,7 @@ sap.ui.define([
 	PropertyEditorFactory,
 	StringEditor,
 	deepClone,
+	nextUIUpdate,
 	sinon,
 	oCore
 ) {
@@ -84,8 +86,8 @@ sap.ui.define([
 			this.oBaseEditor.addContent(oPropertyEditors);
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return oPropertyEditors.ready().then(function () {
-				oCore.applyChanges();
+			return oPropertyEditors.ready().then(async function () {
+				await nextUIUpdate();
 				assert.ok(
 					oPropertyEditors.getDomRef() instanceof HTMLElement
 					&& oPropertyEditors.getDomRef().offsetHeight > 0
@@ -117,8 +119,8 @@ sap.ui.define([
 			this.oBaseEditor.addContent(oPropertyEditors);
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return oPropertyEditors.ready().then(function () {
-				oCore.applyChanges();
+			return oPropertyEditors.ready().then(async function () {
+				await nextUIUpdate();
 				assert.ok(
 					oPropertyEditors.getDomRef() instanceof HTMLElement
 					&& oPropertyEditors.getDomRef().offsetHeight > 0
@@ -147,8 +149,8 @@ sap.ui.define([
 			this.oBaseEditor.addContent(oPropertyEditors);
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return oPropertyEditors.ready().then(function () {
-				oCore.applyChanges();
+			return oPropertyEditors.ready().then(async function () {
+				await nextUIUpdate();
 				assert.strictEqual(oPropertyEditors._getPropertyEditors()[0].getValue(), "baz value", "then priority is over config object");
 			});
 		});
@@ -161,8 +163,8 @@ sap.ui.define([
 			this.oBaseEditor.addContent(oPropertyEditors);
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return oPropertyEditors.ready().then(function () {
-				oCore.applyChanges();
+			return oPropertyEditors.ready().then(async function () {
+				await nextUIUpdate();
 				var oOldContent = oPropertyEditors.getContent();
 				oPropertyEditors.setLayout("form");
 				assert.strictEqual(
@@ -175,7 +177,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Initialisation via setters", {
-		beforeEach: function (assert) {
+		beforeEach: async function (assert) {
 			this.oBaseEditor = new BaseEditor({
 				config: mConfig,
 				json: mJson
@@ -186,7 +188,7 @@ sap.ui.define([
 			this.oPropertyEditors = new PropertyEditors();
 			this.oBaseEditor.addContent(this.oPropertyEditors);
 			this.oBaseEditor.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oBaseEditor.destroy();
@@ -196,8 +198,8 @@ sap.ui.define([
 		QUnit.test("when tags parameter is set", function (assert) {
 			this.oPropertyEditors.setTags("foo");
 
-			return this.oPropertyEditors.ready().then(function () {
-				oCore.applyChanges();
+			return this.oPropertyEditors.ready().then(async function () {
+				await nextUIUpdate();
 				assert.ok(
 					this.oPropertyEditors.getDomRef() instanceof HTMLElement
 					&& this.oPropertyEditors.getDomRef().offsetHeight > 0
@@ -276,8 +278,8 @@ sap.ui.define([
 				"type": "string"
 			}]);
 
-			return this.oPropertyEditors.ready().then(function () {
-				oCore.applyChanges();
+			return this.oPropertyEditors.ready().then(async function () {
+				await nextUIUpdate();
 				assert.ok(
 					this.oPropertyEditors.getDomRef() instanceof HTMLElement
 					&& this.oPropertyEditors.getDomRef().offsetHeight > 0
@@ -332,8 +334,8 @@ sap.ui.define([
 				"type": "string"
 			}]);
 
-			this.oPropertyEditors.ready().then(function () {
-				oCore.applyChanges();
+			this.oPropertyEditors.ready().then(async function () {
+				await nextUIUpdate();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 
 				var oSpy = sandbox.spy();
@@ -422,8 +424,8 @@ sap.ui.define([
 		QUnit.test("when tags parameter is set, then config is set", function (assert) {
 			this.oPropertyEditors.setTags("foo");
 
-			return this.oPropertyEditors.ready().then(function () {
-				oCore.applyChanges();
+			return this.oPropertyEditors.ready().then(async function () {
+				await nextUIUpdate();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 
@@ -449,8 +451,8 @@ sap.ui.define([
 				"type": "string"
 			}]);
 
-			this.oPropertyEditors.ready().then(function () {
-				oCore.applyChanges();
+			this.oPropertyEditors.ready().then(async function () {
+				await nextUIUpdate();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "baz value", "then internal property editor has a correct value");
 
 				var oSpy = sandbox.spy();
@@ -477,8 +479,8 @@ sap.ui.define([
 			}]);
 			this.oPropertyEditors.setTags("foo");
 
-			this.oPropertyEditors.ready().then(function () {
-				oCore.applyChanges();
+			this.oPropertyEditors.ready().then(async function () {
+				await nextUIUpdate();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "baz value", "then internal property editor has a correct value");
 
 				var oSpy = sandbox.spy();
@@ -821,7 +823,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("PropertyEditor is not descendant of BaseEditor initially", {
-		beforeEach: function (assert) {
+		beforeEach: async function (assert) {
 			this.oBaseEditor = new BaseEditor({
 				config: mConfig,
 				json: mJson
@@ -829,7 +831,7 @@ sap.ui.define([
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", assert.async());
 			this.oPropertyEditors = new PropertyEditors();
 			this.oPropertyEditors.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oPropertyEditors.destroy();
@@ -909,7 +911,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Destroy", {
-		beforeEach: function (assert) {
+		beforeEach: async function (assert) {
 			this.oBaseEditor = new BaseEditor({
 				config: mConfig,
 				json: mJson
@@ -920,7 +922,7 @@ sap.ui.define([
 			this.oPropertyEditors = new PropertyEditors();
 			this.oBaseEditor.addContent(this.oPropertyEditors);
 			this.oBaseEditor.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oBaseEditor.destroy();
@@ -1053,13 +1055,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Ready handling", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oBaseEditor = new BaseEditor({
 				config: mConfig,
 				json: mJson
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oBaseEditor.destroy();
@@ -1068,7 +1070,7 @@ sap.ui.define([
 			}
 		}
 	}, function () {
-		QUnit.test("When a PropertyEditors wrapper is created", function (assert) {
+		QUnit.test("When a PropertyEditors wrapper is created", async function (assert) {
 			var fnDone = assert.async();
 
 			var fnRegisterWrapper = function (oEvent) {
@@ -1084,15 +1086,15 @@ sap.ui.define([
 				init: fnRegisterWrapper.bind(this)
 			});
 			this.oBaseEditor.addContent(this.oPropertyEditors);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		});
 
-		QUnit.test("When a PropertyEditors wrapper has no nested editors", function (assert) {
+		QUnit.test("When a PropertyEditors wrapper has no nested editors", async function (assert) {
 			this.oPropertyEditors = new PropertyEditors({
 				config: []
 			});
 			this.oBaseEditor.addContent(this.oPropertyEditors);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			return this.oPropertyEditors.ready().then(function () {
 				assert.strictEqual(
@@ -1115,9 +1117,9 @@ sap.ui.define([
 				]
 			});
 
-			return this.oBaseEditor.ready().then(function() {
+			return this.oBaseEditor.ready().then(async function () {
 				this.oBaseEditor.addContent(this.oPropertyEditors);
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				return this.oPropertyEditors.ready();
 			}.bind(this)).then(function () {
@@ -1188,8 +1190,8 @@ sap.ui.define([
 				layout: 'form'
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
-			return this.oBaseEditor.getPropertyEditorsByTag("foo").then(function (aPropertyEditors) {
-				oCore.applyChanges();
+			return this.oBaseEditor.getPropertyEditorsByTag("foo").then(async function (aPropertyEditors) {
+				await nextUIUpdate();
 				this.oFoo1LayoutGroup = this.oBaseEditor.getContent()[0].getContent().getFormContainers()[0];
 				this.oFooTagLayoutGroup = this.oBaseEditor.getContent()[0].getContent().getFormContainers()[1];
 			}.bind(this));

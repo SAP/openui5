@@ -71,7 +71,7 @@ sap.ui.define([
 					useFakeTimers: true
 				},
 				ui5: {
-					theme: "sap_belize"
+					theme: "sap_horizon"
 				}
 			},
 

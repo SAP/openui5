@@ -10,9 +10,8 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/base/Log",
-	"sap/base/util/merge",
-	"sap/ui/core/Core"
-], function(
+	"sap/base/util/merge"
+], function (
 	AnalyticalContentRenderer,
 	BaseContent,
 	AnalyticalPlaceholder,
@@ -21,8 +20,7 @@ sap.ui.define([
 	library,
 	BindingResolver,
 	Log,
-	merge,
-	Core
+	merge
 ) {
 	"use strict";
 

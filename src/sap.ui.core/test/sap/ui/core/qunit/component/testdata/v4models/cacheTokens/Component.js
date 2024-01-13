@@ -63,8 +63,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						"ODataV4Consumption": {
 							"dataSource": "ODataV4Consumption",
 							"settings" : {
-								"operationMode" : "Server",
-								"synchronizationMode" : "None"
+								"operationMode" : "Server"
 							},
 							"type" : "sap.ui.model.odata.v4.ODataModel"
 						}

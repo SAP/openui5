@@ -6,7 +6,6 @@
 /**
  * The main Splitter element can have the following classes in addition to its main class
  * "sapUiLoSplitter":
- *   sapUiLoSplitterAnimated - Resizing should be animated (through css-transitions)
  *   sapUiLoSplitterH        - It's a horizontal splitter
  *   sapUiLoSplitterV        - It's a vertical splitter
  * The splitter bars "sapUiLoSplitterBar" and "sapUiLoSplitterOverlayBar" can have the following
@@ -85,6 +84,7 @@
 	}
 }
 
+/* Animated resizing is deprecated since version 1.21 */
 .sapUiLoSplitterAnimated.sapUiLoSplitterH > .sapUiLoSplitterContent {
 	transition: width 200ms ease 0ms;
 }
@@ -177,6 +177,7 @@
 	width: 100%;
 }
 
+/* Animated resizing is deprecated since version 1.21 */
 .sapUiLoSplitterAnimated.sapUiLoSplitterV > .sapUiLoSplitterContent {
 	transition: height 200ms ease 0ms;
 }

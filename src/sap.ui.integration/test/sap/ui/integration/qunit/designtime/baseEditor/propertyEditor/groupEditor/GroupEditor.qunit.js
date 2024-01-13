@@ -2,10 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 	BaseEditor,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -42,9 +42,9 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleGroup").then(function (aPropertyEditors) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleGroup").then(async function (aPropertyEditors) {
 				this.oGroupEditor = aPropertyEditors[0];
-				oCore.applyChanges();
+				await nextUIUpdate();
 				this.oGroupEditorElement = this.oGroupEditor.getContent();
 			}.bind(this));
 		},

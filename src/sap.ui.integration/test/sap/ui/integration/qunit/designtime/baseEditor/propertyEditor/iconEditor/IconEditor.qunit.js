@@ -7,8 +7,8 @@ sap.ui.define([
 	"qunit/designtime/EditorQunitUtils",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/thirdparty/sinon-4"
 ], function (
 	IconEditor,
 	BaseEditor,
@@ -16,8 +16,8 @@ sap.ui.define([
 	EditorQunitUtils,
 	ResourceBundle,
 	ResourceModel,
-	sinon,
-	oCore
+	nextUIUpdate,
+	sinon
 ) {
 	"use strict";
 
@@ -55,10 +55,10 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleIcon").then(function(aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleIcon").then(async function (aPropertyEditor) {
 				this.oIconEditor = aPropertyEditor[0].getAggregation("propertyEditor");
 				this.oIconEditor.setValue("sap-icon://target-group");
-				oCore.applyChanges();
+				await nextUIUpdate();
 				this.oIconEditorElement = this.oIconEditor.getContent();
 			}.bind(this));
 		},

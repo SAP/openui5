@@ -1500,21 +1500,6 @@ sap.ui.define([
 		}
 
 		/**
-			 * Creates a new {@link sap.ui.core.UIArea UIArea}.
-			 *
-			 * @param {string|Element} oDomRef a DOM Element or ID string of the UIArea
-			 * @return {sap.ui.core.UIArea} a new UIArea
-			 * @private
-			 * @ui5-restricted sap.ui.core
-			 */
-		Core.prototype.createUIArea = function(oDomRef) {
-			if (typeof oDomRef === "string" && oDomRef === StaticArea.STATIC_UIAREA_ID) {
-				return StaticArea.getUIArea();
-			}
-			return UIArea.create(oDomRef);
-		};
-
-		/**
 		* Attaches event handler <code>fnFunction</code> to the {@link #event:ThemeChanged ThemeChanged} event
 		* of this <code>sap.ui.core.Core</code>.
 		*
@@ -1679,86 +1664,6 @@ sap.ui.define([
 			assert(sId == null || typeof sId === "string", "sId must be a string when defined");
 			assert(this.mObjects[sType] !== undefined, "sType must be a supported stereotype");
 			return sId == null ? undefined : this.mObjects[sType] && this.mObjects[sType][sId];
-		};
-
-		/**
-			 * Registers a Plugin to the <code>sap.ui.core.Core</code>, which lifecycle
-			 * will be managed (start and stop).
-			 *
-			 * Plugin object need to implement two methods:
-			 * <ul>
-			 *   <li><code>startPlugin(oCore)</code>: will be invoked, when the Plugin
-			 *       should start (as parameter the reference to the Core will be provided</li>
-			 *   <li><code>stopPlugin()</code>: will be invoked, when the Plugin should stop</li>
-			 * </ul>
-			 *
-			 * @param {object} oPlugin reference to a Plugin object
-			 * @private
-			 * @ui5-restricted sap.ui.core
-			 */
-		Core.prototype.registerPlugin = function(oPlugin) {
-			assert(typeof oPlugin === "object", "oPlugin must be an object");
-
-			// check for a valid plugin
-			if (!oPlugin) {
-				return;
-			}
-
-			// check if the plugin is already registered
-			// if yes, the exit this function
-			for (var i = 0, l = this.aPlugins.length; i < l; i++) {
-				if (this.aPlugins[i] === oPlugin) {
-					return;
-				}
-			}
-
-			// register the plugin (keep the plugin in the plugin array)
-			this.aPlugins.push(oPlugin);
-
-			// if the Core is initialized also start the plugin
-			if (this.bInitialized && oPlugin && oPlugin.startPlugin) {
-				oPlugin.startPlugin(this);
-			}
-
-		};
-
-		/**
-			 * Unregisters a Plugin out of the <code>sap.ui.core.Core</code>
-			 *
-			 * @param {object} oPlugin reference to a Plugin object
-			 * @private
-			 * @ui5-restricted sap.ui.core
-			 */
-		Core.prototype.unregisterPlugin = function(oPlugin) {
-			assert(typeof oPlugin === "object", "oPlugin must be an object");
-
-			// check for a valid plugin
-			if (!oPlugin) {
-				return;
-			}
-
-			// check if the plugin is already registered
-			var iPluginIndex = -1;
-			for (var i = this.aPlugins.length; i--; i >= 0) {
-				if (this.aPlugins[i] === oPlugin) {
-					iPluginIndex = i;
-					break;
-				}
-			}
-
-			// plugin was not registered!
-			if (iPluginIndex == -1) {
-				return;
-			}
-
-			// stop the plugin
-			if (this.bInitialized && oPlugin && oPlugin.stopPlugin) {
-				oPlugin.stopPlugin(this);
-			}
-
-			// remove the plugin
-			this.aPlugins.splice(iPluginIndex, 1);
-
 		};
 
 		/**

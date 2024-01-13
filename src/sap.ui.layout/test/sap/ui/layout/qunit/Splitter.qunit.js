@@ -598,22 +598,6 @@ sap.ui.define([
 		oSplitter.destroy();
 	});
 
-	QUnit.test("Live resize enabling", function (assert) {
-		var oSplitter = new Splitter();
-		oSplitter.placeAt("qunit-fixture");
-		oCore.applyChanges();
-
-		assert.strictEqual(oSplitter._liveResize, true, "Live resize enabled by default");
-
-		oSplitter.disableLiveResize();
-		assert.strictEqual(oSplitter._liveResize, false, "Disable Live resize");
-
-		oSplitter.enableLiveResize();
-		assert.strictEqual(oSplitter._liveResize, true, "Enable Live resize");
-
-		oSplitter.destroy();
-	});
-
 	QUnit.test("Keyboard support enabling", function (assert) {
 		var oSplitter = new Splitter({
 			contentAreas: [
@@ -1109,5 +1093,4 @@ sap.ui.define([
 		// clean up
 		oHorizontalSplitter.destroy();
 	});
-
 });

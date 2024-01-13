@@ -9,8 +9,9 @@ sap.ui.define([
 		"sap/ui/integration/cards/actions/CardActions",
 		"sap/ui/integration/thirdparty/adaptivecards",
 		"sap/ui/core/library",
-		"sap/ui/core/Core"
-	],
+		"sap/ui/core/Core",
+		"sap/ui/qunit/utils/nextUIUpdate"
+],
 	function (
 		library,
 		Card,
@@ -21,7 +22,8 @@ sap.ui.define([
 		CardActions,
 		AdaptiveCards,
 		coreLibrary,
-		Core
+		Core,
+		nextUIUpdate
 	) {
 		"use strict";
 
@@ -414,7 +416,6 @@ sap.ui.define([
 			var oFireEventSpy = sinon.spy(AdaptiveContent.prototype, "fireEvent");
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 
 			oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -462,7 +463,6 @@ sap.ui.define([
 			oCard.attachEvent("_ready", fnChecks);
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Adaptive Card with wrong JSON descriptor request", function (assert) {
@@ -493,7 +493,6 @@ sap.ui.define([
 			oCard.attachEvent("_ready", fnChecks);
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Adaptive Card with empty content", function (assert) {
@@ -529,7 +528,6 @@ sap.ui.define([
 			oCard.attachEvent("_ready", fnChecks);
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Adaptive Card should not make new data request when re-rendered", function (assert) {
@@ -542,7 +540,6 @@ sap.ui.define([
 
 			// Act
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 
 			oCard.attachEvent("_ready", function () {
 				// Assert
@@ -612,7 +609,6 @@ sap.ui.define([
 			oCard.attachEvent("_ready", fnChecks);
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Templating with $data", function (assert) {
@@ -660,7 +656,6 @@ sap.ui.define([
 			oCard.attachEvent("_ready", fnChecks);
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Templating with empty $data", function (assert) {
@@ -707,7 +702,6 @@ sap.ui.define([
 			oCard.attachEvent("_ready", fnChecks);
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Templating with $data and incorrect templating", function (assert) {
@@ -729,7 +723,6 @@ sap.ui.define([
 			oCard.attachEvent("_ready", fnChecks);
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Templating with data feature on content level - request", function (assert) {
@@ -778,8 +771,6 @@ sap.ui.define([
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			oCard.attachEvent("_ready", fnChecks);
-
-			Core.applyChanges();
 		});
 
 		QUnit.test("Templating with data feature on card level - request", function (assert) {
@@ -826,8 +817,6 @@ sap.ui.define([
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			oCard.attachEvent("_ready", fnChecks);
-
-			Core.applyChanges();
 		});
 
 		QUnit.test("Templating with data feature on card level", function (assert) {
@@ -873,8 +862,6 @@ sap.ui.define([
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			oCard.attachEvent("_ready", fnChecks);
-
-			Core.applyChanges();
 		});
 
 		QUnit.test("Templating - mixed usage (full)", function (assert) {
@@ -896,8 +883,6 @@ sap.ui.define([
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			oCard.attachEvent("_ready", fnChecks);
-
-			Core.applyChanges();
 		});
 
 		QUnit.test("Templating - mixed usage (data feature)", function (assert) {
@@ -919,8 +904,6 @@ sap.ui.define([
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			oCard.attachEvent("_ready", fnChecks);
-
-			Core.applyChanges();
 		});
 
 		QUnit.module("Adaptive Card Markdown Support");
@@ -932,7 +915,6 @@ sap.ui.define([
 			});
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 
 			oCard.attachEvent("_ready", function () {
 				// Assert
@@ -952,7 +934,6 @@ sap.ui.define([
 			});
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 
 			oCard.attachEvent("_ready", function () {
 
@@ -976,9 +957,6 @@ sap.ui.define([
 					manifest: mActionSubmitManifest
 				}).placeAt(DOM_RENDER_LOCATION);
 
-			Core.applyChanges();
-
-
 			oCard.attachEvent("_ready", function () {
 				oAdaptiveContent = oCard.getCardContent();
 
@@ -992,8 +970,8 @@ sap.ui.define([
 				});
 
 				// Assert
-				setTimeout(function () { // .getData() returns a Promise and MessageStrip's manipulations are executed in then()'s callbacks
-					Core.applyChanges();
+				setTimeout(async function () { // .getData() returns a Promise and MessageStrip's manipulations are executed in then()'s callbacks
+					await nextUIUpdate();
 					assert.ok(oStubRequest.called, "DataProvider's _fetch should have been called");
 					assert.strictEqual(oAdaptiveContent.getAggregation("_messageContainer").getItems()[0].getType(), MessageType.Success,
 						"The success execution should put the state of the MessageStrip to Success");

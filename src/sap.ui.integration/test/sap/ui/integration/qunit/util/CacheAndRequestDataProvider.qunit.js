@@ -1,14 +1,12 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/ui/integration/util/CacheAndRequestDataProvider",
 	"sap/ui/integration/Host",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/date/UI5Date"
-], function (
-	Core,
+], function(
 	DataProviderFactory,
 	CacheAndRequestDataProvider,
 	Host,
@@ -356,7 +354,6 @@ sap.ui.define([
 		});
 
 		oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
 	});
 
 	QUnit.module("Usage without a card or editor", {

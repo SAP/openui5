@@ -1,23 +1,23 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"../../services/SampleServices",
-	"sap/ui/core/Lib",
-	"sap/ui/integration/library",
-	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/cards/actions/CardActions",
-	"sap/ui/integration/cards/actions/NavigationAction",
-	"sap/ui/integration/cards/actions/SubmitAction",
-	"sap/ui/integration/util/RequestDataProvider",
-	"sap/ui/integration/Host",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element",
-	"sap/base/Log",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/m/library"
+		"../../services/SampleServices",
+		"sap/ui/core/Lib",
+		"sap/ui/integration/library",
+		"sap/ui/integration/widgets/Card",
+		"sap/ui/integration/cards/actions/CardActions",
+		"sap/ui/integration/cards/actions/NavigationAction",
+		"sap/ui/integration/cards/actions/SubmitAction",
+		"sap/ui/integration/util/RequestDataProvider",
+		"sap/ui/integration/Host",
+		"sap/ui/core/Core",
+		"sap/ui/core/Element",
+		"sap/base/Log",
+		"sap/ui/events/KeyCodes",
+		"sap/ui/qunit/QUnitUtils",
+		"sap/m/library"
 ],
-	function(
+	function (
 		SampleServices,
 		Library,
 		library,
@@ -1658,7 +1658,6 @@ sap.ui.define([
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_No_Request);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -1866,8 +1865,6 @@ sap.ui.define([
 			// Setup
 			this.oCard.setManifest(oManifestActionSubmit);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
 
 			this.oCard.attachEvent("_ready", function () {
 				mEventArguments = {
@@ -1917,8 +1914,6 @@ sap.ui.define([
 			this.oCard.setManifest(oManifestActionSubmit);
 			this.oCard.setHost(oHost1);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
 
 			this.oCard.attachEvent("_ready", function () {
 				mEventArguments = {
@@ -2002,7 +1997,6 @@ sap.ui.define([
 			// Act
 			this.oCard.setManifest(tableContent_action_on_cell);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.test("Trigger action", function (assert) {
@@ -2035,7 +2029,6 @@ sap.ui.define([
 
 			oCard.setManifest(oIntegrationCardManifest);
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.module("ActionsStrip", {
@@ -2070,7 +2063,6 @@ sap.ui.define([
 
 			oCard.setManifest(oManifest_ActionsStrip);
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		return Library.load("sap.suite.ui.commons").then(function () {
@@ -2097,7 +2089,6 @@ sap.ui.define([
 				// Act
 				this.oCard.setManifest(oManifest_TimelineCard_No_Request);
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				Core.applyChanges();
 
 				this.oCard.attachEvent("_ready", function () {
 					Core.applyChanges();

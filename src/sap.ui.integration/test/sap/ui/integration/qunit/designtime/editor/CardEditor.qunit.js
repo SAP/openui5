@@ -8,9 +8,9 @@ sap.ui.define([
 	"sap/ui/integration/designtime/editor/CardEditor",
 	"sap/ui/integration/Designtime",
 	"sap/ui/integration/Host",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"./ContextHost",
-	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
@@ -27,9 +27,9 @@ sap.ui.define([
 	CardEditor,
 	Designtime,
 	Host,
+	nextUIUpdate,
 	sinon,
 	ContextHost,
-	Core,
 	Card,
 	QUnitUtils,
 	KeyCodes,
@@ -727,11 +727,11 @@ sap.ui.define([
 							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							EditorQunitUtils.wait().then(function () {
+							EditorQunitUtils.wait().then(async function() {
 								oMultiComboBox.focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
-								Core.applyChanges();
+								await nextUIUpdate();
 								var sMsgStripId = oField1.getAssociation("_messageStrip");
 								var oMsgStrip = Element.getElementById(sMsgStripId);
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");

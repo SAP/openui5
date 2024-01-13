@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/filters/ComboBoxFilter",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core"
-], function(
+], function (
 	Element,
 	ComboBoxFilter,
 	Card,

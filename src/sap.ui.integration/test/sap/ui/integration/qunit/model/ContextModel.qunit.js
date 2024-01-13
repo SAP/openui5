@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/ui/integration/model/ContextModel",
 	"sap/ui/integration/Host",
 	"sap/ui/integration/util/Utils",
-	"sap/ui/integration/widgets/Card"
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
-function (
+function(
 	Core,
 	ContextModel,
 	Host,
 	Utils,
-	Card
+	Card,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -184,7 +186,7 @@ function (
 		}
 	});
 
-	QUnit.test("Calling refresh() must clean the context model", function (assert) {
+	QUnit.test("Calling refresh() must clean the context model", async function (assert) {
 		// arrange
 		var done = assert.async(),
 			oCard = this.oCard,
@@ -216,6 +218,6 @@ function (
 		// act
 		oCard.setManifest(oManifestSampleWithParameter);
 		oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 	});
 });
