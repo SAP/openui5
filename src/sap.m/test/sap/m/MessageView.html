@@ -14,8 +14,6 @@
 
 	<script>
 
-		var core = sap.ui.getCore();
-
 		var mockMarkupDescription = "<h2>Heading h2</h2><script>alert('this JS will be sanitized')<\/script>" +
 				"<p>Paragraph. At vero eos et accusamus et iusto odio dignissimos ducimus qui ...</p>" +
 				"<ul>" +
@@ -313,6 +311,12 @@
 			]
 		});
 
+		page1.addDependent(oDialog1);
+		page1.addDependent(oDialog2);
+		page1.addDependent(oDialogWithOneHeader);
+		page1.addDependent(oMessageViewWithHeader);
+		page1.addDependent(oMessageViewPopoverWithOneItemType);
+
 		var headerButton = new sap.m.Button({text: "Clear"});
 
 		//list.bindAggregation("items", "/", oMessageTemplate);
@@ -404,20 +408,20 @@
 
 		var oCollapsedPopover = new sap.m.MessagePopover("mPop", {
 			initiallyExpanded: false,
-			items: [{
+			items: [new sap.m.MessageItem({
 				type: "Error",
 				title: "Error Message 1",
 				description: "First Error message description"
 
-			}, {
+			}), new sap.m.MessageItem({
 				type: "Error",
 				title: "Error Message 2",
 				description: "Second Error message description"
-			}, {
+			}), new sap.m.MessageItem({
 				type: "Error",
 				title: "Error Message 3",
 				description: "Third Error message description"
-			}]
+			})]
 		});
 
 		var oDialogWithOneHeader = new sap.m.Dialog("dialog2", {
@@ -514,10 +518,12 @@
 			}
 		});
 
-
 		oMessagePopoverButton.addDependent(oMessagePopover);
+		oMessageViewPopoverButton.addDependent(oPopover);
 		oMessageViewPopoverButton2.addDependent(oPopoverWithOneItem);
 		oMessageViewPopoverButton3.addDependent(oPopoverWithOneItemType);
+		oMessageViewPopoverButton4.addDependent(oPopoverWithHeader);
+		oMessageViewPopoverButton4.addDependent(oCollapsedPopover);
 
 
 		var page2 = new sap.m.Page("page2", {
@@ -559,8 +565,7 @@
 			initialDetail: "page2"
 		});
 
-		core.setModel(oModel);
-
+		oSplitApp.setModel(oModel);
 		oSplitApp.placeAt("content");
 	</script>
 </head>
