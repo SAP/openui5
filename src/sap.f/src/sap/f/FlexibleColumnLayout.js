@@ -2967,14 +2967,14 @@ sap.ui.define([
 	/**
 	 * Returns a string, representing the relative percentage sizes of the columns for the given layout in the format "begin/mid/end" (f.e. "33/67/0")
 	 * @param {string} sLayout - the layout
-	 * @param {boolean} bAsArray - return an array in the format [33, 67, 0] instead of a string "33/67/0"
+	 * @param {boolean} bAsIntArray - return an array in the format [33, 67, 0] instead of a string "33/67/0"
 	 * @param {number} [iMaxColumnsCount] the maximun number of columns. If not provided, the result of
 	 * <code>getMaxColumnsCount</code> will be taken
 	 * @returns {string|array}
 	 * @private
 	 * @ui5-restricted sap.f.FlexibleColumnLayoutSemanticHelper
 	 */
-	FlexibleColumnLayout.prototype._getColumnWidthDistributionForLayout = function (sLayout, bAsArray, iMaxColumnsCount) {
+	FlexibleColumnLayout.prototype._getColumnWidthDistributionForLayout = function (sLayout, bAsIntArray, iMaxColumnsCount) {
 		var sColumnWidthDistribution = this._getLocalStorage(iMaxColumnsCount).get(sLayout),
 			vResult;
 
@@ -2991,10 +2991,11 @@ sap.ui.define([
 			vResult = this._getDefaultColumnWidthDistributionForLayout(sLayout, iMaxColumnsCount);
 		}
 
-		if (bAsArray) {
+		if (bAsIntArray) {
 			vResult = vResult.split("/").map(function (sColumnWidth) {
-				return parseInt(sColumnWidth);
+				return Math.round(parseFloat(sColumnWidth));
 			});
+			normalizeColumnPercentWidths(vResult);
 		}
 
 		return vResult;
@@ -3381,6 +3382,29 @@ sap.ui.define([
 		}
 		return oConfig.pageX;
 	}
+
+	/**
+	 * Ensures the sum of all column percent widths is 100.
+	 * (Used after converting all the column widths from floats to integers,
+	 * to avoid inconsistency of the final sum due to rounding.)
+	 *
+	 * @param {object} aColumnPercentWidths the percent widths of all three columns
+	 */
+	function normalizeColumnPercentWidths(aColumnPercentWidths) {
+		var oColumnIndex = {
+			begin: 0,
+			mid: 1,
+			end: 2
+		},
+		iSum = aColumnPercentWidths.reduce((a, b) => a + b, 0);
+		if (iSum !== 100) {
+			// the CSS of the mid column always causes it take the space that remained
+			// after sizing the begin and end columns
+			aColumnPercentWidths[oColumnIndex.mid] = 100 -
+			(aColumnPercentWidths[oColumnIndex.begin] + aColumnPercentWidths[oColumnIndex.end]);
+		}
+	}
+
 
 	return FlexibleColumnLayout;
 

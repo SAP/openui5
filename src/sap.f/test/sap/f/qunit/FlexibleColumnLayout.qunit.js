@@ -1558,6 +1558,21 @@ function(
 		assert.strictEqual(oEventSpy.callCount, 1, "_hideShowColumnSeparators is called");
 	});
 
+	QUnit.test("_getColumnWidthDistributionForLayout converts percent widths to integers", function (assert) {
+		// setup
+		this.oFCL = new FlexibleColumnLayout();
+		this.stub(this.oFCL, "_getLocalStorage").returns({
+			get: function() {
+				return "33.5/66.5/0";
+			}
+		});
+		var oExpectedResult = [34, 66, 0];
+
+		// assert
+		assert.deepEqual(this.oFCL._getColumnWidthDistributionForLayout(LT.TwoColumnsMidExpanded, true, 2),
+			oExpectedResult, "conversion to integer is correct");
+	});
+
 	QUnit.module("Focus handling");
 
 	QUnit.test("AutoFocus - Should synchronize with NavContainer instances", function (assert) {
