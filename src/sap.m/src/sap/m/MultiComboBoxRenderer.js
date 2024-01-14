@@ -43,7 +43,7 @@ sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', "sap/ui/c
 			oTokenizer = oControl.getAggregation("tokenizer"),
 			oInvisibleTextId = oTokenizer && oTokenizer.getTokensInfoId();
 
-		return (sAriaDescribedBy || "") + " " + oInvisibleTextId;
+		return (sAriaDescribedBy ? sAriaDescribedBy + " " : "") + oInvisibleTextId;
 	};
 
 	/**
