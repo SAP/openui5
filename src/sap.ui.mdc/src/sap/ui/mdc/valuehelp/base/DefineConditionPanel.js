@@ -612,16 +612,16 @@ sap.ui.define([
 				delete oFormatOptions.dataType;
 				const oConditionsType = new ConditionsType(oFormatOptions);
 
-				try {
-					aConditions.splice(iIndex, 1); // remove old condition that is overwitten by pasting
-					const aNewConditions = oConditionsType._parseValueToIndex(sOriginalText, "string", iIndex);
-					oConditionsType.validateValue(aConditions);
+				aConditions.splice(iIndex, 1); // remove old condition that is overwitten by pasting
+				oConditionsType._parseValueToIndex(sOriginalText, "string", iIndex).then((aNewConditions) => {
+					oConditionsType.validateValue(aNewConditions);
 
 					FilterOperatorUtil.checkConditionsEmpty(aNewConditions);
 					this.setProperty("conditions", aNewConditions, true); // do not invalidate whole DefineConditionPanel
 
 					this.fireConditionProcessed();
-				} catch (error) {
+					oConditionsType.destroy();
+				}).catch((error) => {
 					const oException = new ParseException(oMessageBundle.getText("field.PASTE_ERROR"));
 					const mErrorParameters = {
 						element: oSource,
@@ -633,9 +633,8 @@ sap.ui.define([
 						message: oException.message
 					};
 					oSource.fireParseError(mErrorParameters, false, true); // mParameters, bAllowPreventDefault, bEnableEventBubbling
-				}
-
-				oConditionsType.destroy();
+					oConditionsType.destroy();
+				});
 
 				oEvent.stopImmediatePropagation(true); // to prevent controls own logic
 				oEvent.preventDefault(); // to prevent pasting string into INPUT

@@ -1140,7 +1140,7 @@ sap.ui.define([
 				break;
 			}
 		}
-		oControl.updateModelProperty(sBoundProperty, sOriginalText, oControl.getProperty(sBoundProperty)); // Use normal parsing functionality to habe Async-handling and error handling
+		oControl.updateModelProperty(sBoundProperty, sOriginalText, oControl.getProperty(sBoundProperty)); // Use normal parsing functionality to have Async-handling and error handling
 
 		oEvent.stopImmediatePropagation(true); // to prevent MultiInputs own logic
 		oEvent.preventDefault(); // to prevent pasting string into INPUT
