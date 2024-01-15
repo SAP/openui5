@@ -3,11 +3,15 @@
 sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/m/Button",
+	"sap/ui/core/HTML",
+	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	DOMUtil,
 	Button,
+	HTML,
+	HorizontalLayout,
 	jQuery,
 	nextUIUpdate
 ) {
@@ -149,6 +153,38 @@ sap.ui.define([
 			document.getElementById("qunit-fixture").style.zIndex = 1000;
 			var zIndex = DOMUtil.getZIndex(oButtonDomRef);
 			assert.equal(zIndex, "1000", 'and the static method "getZIndex" returns the right value');
+		});
+
+		QUnit.test("when a dom element has no z-index, but his parent ui5Element has", async function(assert) {
+			const oButton = new Button();
+			const oParentElement = new HorizontalLayout("ParentId", {
+				content: [oButton]
+			});
+			oParentElement.placeAt("qunit-fixture");
+			await nextUIUpdate();
+
+			oParentElement.getDomRef().style.zIndex = "7";
+			// Manipulate position to have a reliable test independent of control styles
+			oParentElement.getDomRef().style.position = "relative";
+			oButton.getDomRef().style.position = "static";
+
+			const zIndex = DOMUtil.getZIndex(oButton.getDomRef());
+			assert.strictEqual(zIndex, "auto", "the z-index is not taken from the parent");
+			oParentElement.destroy();
+		});
+
+		QUnit.test("when a dom element has no z-index, but his parent non-ui5 element has", async function(assert) {
+			const oParentElement = new HTML("ParentId", {
+				content: "<div id='Container'></div>"
+			});
+			oParentElement.placeAt("qunit-fixture");
+			await nextUIUpdate();
+			const oContainerDIV = document.getElementById("Container");
+			oContainerDIV.style.zIndex = "5";
+			oContainerDIV.appendChild(this.oButton.getDomRef());
+			const zIndex = DOMUtil.getZIndex(this.oButton.getDomRef());
+			assert.strictEqual(zIndex, 5, "the z-index is taken from non ui5 parent");
+			oParentElement.destroy();
 		});
 
 		QUnit.test("when a transition style is applied to the underlying element", function(assert) {
