@@ -861,4 +861,31 @@ sap.ui.define([
 			Filter.checkFilterNone([new Filter("path", FilterOperator.EQ, "value"), Filter.NONE]);
 		}, new Error("Filter.NONE cannot be used together with other filters"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("constructor initializes members for fractional seconds", function (assert) {
+		// code under test
+		const oFilter = new Filter({path : "~path", operator : "~operator", value1 : "~value1"});
+
+		assert.strictEqual(oFilter.sPath, "~path");
+		assert.strictEqual(oFilter.sFractionalSeconds1, undefined);
+		assert.ok(oFilter.hasOwnProperty("sFractionalSeconds1"));
+		assert.strictEqual(oFilter.sFractionalSeconds2, undefined);
+		assert.ok(oFilter.hasOwnProperty("sFractionalSeconds2"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("appendFractionalSeconds(1|2)", function (assert) {
+		const oFilter = new Filter({path : "~path", operator : "~operator", value1 : "~value1"});
+
+		// code under test
+		oFilter.appendFractionalSeconds1("~f1");
+
+		assert.strictEqual(oFilter.sFractionalSeconds1, "~f1");
+
+		// code under test
+		oFilter.appendFractionalSeconds2("~f2");
+
+		assert.strictEqual(oFilter.sFractionalSeconds2, "~f2");
+	});
 });
