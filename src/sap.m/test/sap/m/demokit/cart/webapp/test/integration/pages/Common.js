@@ -1,8 +1,8 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/base/strings/capitalize",
-	"sap/ui/core/Core"
-], function (Opa5, capitalize, oCore) {
+	"sap/ui/core/Lib"
+], function (Opa5, capitalize, Library) {
 	"use strict";
 
 	return Opa5.extend("sap.ui.demo.cart.test.integration.pages.Common", {
@@ -18,7 +18,7 @@ sap.ui.define([
 			var sPropertyValue = fnProperty.call(oControl);
 
 			if (sLibrary) {
-				oResourceBundle = oCore.getLibraryResourceBundle(sLibrary);
+				oResourceBundle = Library.getResourceBundleFor(sLibrary);
 			} else {
 				oModel = oControl.getModel("i18n");
 				oResourceBundle = oModel.getResourceBundle();
