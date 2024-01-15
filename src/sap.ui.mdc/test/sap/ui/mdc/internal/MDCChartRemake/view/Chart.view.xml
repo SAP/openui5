@@ -238,7 +238,7 @@
 													<mdc:table.Column id="FHLanguage-Dia-Table--name" header="Name" propertyKey="name">
 														<Text text="{name}"/>
 													</mdc:table.Column>
-													<mdc:table.Column id="FHLanguage-Dia-Table--nativeName" header="navitve Name" propertyKey="nativeName">
+													<mdc:table.Column id="FHLanguage-Dia-Table--nativeName" header="native Name" propertyKey="nativeName">
 														<Text text="{nativeName}"/>
 													</mdc:table.Column>
 												</mdc:columns>
