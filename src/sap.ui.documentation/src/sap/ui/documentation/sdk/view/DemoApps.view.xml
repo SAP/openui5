@@ -23,9 +23,7 @@
 				<f:header>
 					<card:Header
 						title="{i18n>DEMO_APPS_TITLE}"
-						subtitle="{= ${versionData>/isOpenUI5}
-							? ${i18n>DEMO_APPS_SUBTITLE} + ' OpenUI5.'
-							: ${i18n>DEMO_APPS_SUBTITLE} + ' SAPUI5.'}"
+						subtitle="{= ${versionData>/isOpenUI5} ? ${i18n>DEMO_APPS_SUBTITLE_OPENUI5} : ${i18n>DEMO_APPS_SUBTITLE_SAPUI5} }"
 						subtitleMaxLines="5" />
 				</f:header>
 				<f:content>
