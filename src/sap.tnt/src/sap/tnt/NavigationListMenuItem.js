@@ -3,8 +3,25 @@
  */
 
 // Provides control sap.ui.unified.MenuItem.
-sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItem', 'sap/ui/unified/library', 'sap/ui/core/library', 'sap/ui/core/Icon'],
-	function(IconPool, MenuItem, library, coreLibrary, Icon) {
+sap.ui.define([
+	'sap/ui/core/IconPool',
+	'sap/ui/unified/MenuItem',
+	'sap/ui/unified/library',
+	'sap/ui/core/library',
+	'sap/ui/core/Icon',
+	"sap/ui/util/defaultLinkTypes",
+	"sap/ui/util/openWindow",
+	"sap/ui/events/KeyCodes"],
+	function (
+		IconPool,
+		MenuItem,
+		library,
+		coreLibrary,
+		Icon,
+		defaultLinkTypes,
+		openWindow,
+		KeyCodes
+) {
 	"use strict";
 
 	const EXTERNAL_LINK_ICON = "sap-icon://arrow-right";
@@ -29,8 +46,30 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItem', 'sap/ui/unifie
 
 		library : "sap.ui.unified",
 		properties : {
+			/**
+			 * Defines the text which should be displayed on the item.
+			 */
+			text : {type : "string", group : "Appearance", defaultValue : ''},
 
-			isExternalLink: {type : "boolean", group : "Appearance", defaultValue : false}
+			/**
+			 * Defines an icon from the {@link sap.ui.core.IconPool sap.ui.core.IconPool} or an image which should be displayed on the item.
+			 */
+			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
+
+			/**
+			 * Defines the link target URI. Supports standard hyperlink behavior. If a JavaScript action should be triggered,
+			 * this should not be set, but instead an event handler for the <code>select</code> event should be registered.
+			 */
+			href: { type: "sap.ui.core.URI", group: "Data", defaultValue: null },
+
+			/**
+			 * Specifies the browsing context where the linked content will open.
+			 *
+			 * Options are the standard values for window.open() supported by browsers:
+			 * <code>_self</code>, <code>_top</code>, <code>_blank</code>, <code>_parent</code>, <code>_search</code>.
+			 * Alternatively, a frame name can be entered. This property is only used when the <code>href</code> property is set.
+			 */
+			target: { type: "string", group: "Behavior", defaultValue: null }
 		},
 		aggregations: {
 
@@ -44,15 +83,16 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItem', 'sap/ui/unifie
 
 	IconPool.insertFontFaceStyle(); //Ensure Icon Font is loaded
 
-	NavigationListMenuItem.prototype.render = function(oRenderManager, oItem, oMenu, oInfo){
+		NavigationListMenuItem.prototype.render = function(oRenderManager, oItem, oMenu, oInfo){
 		var rm = oRenderManager,
 			oSubMenu = oItem.getSubmenu(),
 			bIsEnabled = oItem.getEnabled(),
-			oIcon;
+			oIcon,
+			bIsExternalLink = this.getHref() && this.getTarget() === "_blank";
 
 		rm.openStart("li", oItem);
 
-		if (oItem.getIsExternalLink()) {
+		if (this.getHref()) {
 			rm.class("sapUiMnuItmExternalLink");
 		}
 
@@ -94,6 +134,12 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItem', 'sap/ui/unifie
 
 		// Left border
 		rm.openEnd();
+
+		// External link "a" tag
+		if (this.getHref()) {
+			this._renderLinkTag(rm);
+		}
+
 		rm.openStart("div");
 		rm.class("sapUiMnuItmL");
 		rm.openEnd();
@@ -137,8 +183,7 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItem', 'sap/ui/unifie
 		rm.close("div");
 
 		// External link icon
-		if (oItem.getIsExternalLink()) {
-
+		if (bIsExternalLink) {
 			const oIcon = this._getExternalLinkIcon();
 			rm.renderControl(oIcon);
 		}
@@ -148,6 +193,11 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItem', 'sap/ui/unifie
 		rm.class("sapUiMnuItmR");
 		rm.openEnd();
 		rm.close("div");
+
+		// End of external link "a" tag
+		if (this.getHref()) {
+			rm.close("a");
+		}
 
 		rm.close("li");
 	};
@@ -161,6 +211,42 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItem', 'sap/ui/unifie
 			this.$().trigger("focus");
 		} else {
 			oMenu.focus();
+		}
+	};
+
+	/**
+	 * Handles click event.
+	 *
+	 * @param {sap.ui.base.Event} oEvent click event
+	 * @private
+	 */
+	NavigationListMenuItem.prototype.onclick = function (oEvent) {
+		oEvent.preventDefault();
+		this._openUrl();
+	};
+
+	/**
+	 * Handle the key down event for SPACE and ENTER.
+	 * @param {jQuery.Event} oEvent - the keyboard event.
+	 * @private
+	 */
+	NavigationListMenuItem.prototype.onkeyup = function (oEvent) {
+
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
+			this._openUrl();
+		}
+	};
+
+	/**
+	 * Opens a url.
+	 *
+	 * @private
+	 */
+	NavigationListMenuItem.prototype._openUrl = function () {
+		const sHref = this.getHref();
+
+		if (sHref) {
+			openWindow(sHref, this.getTarget() || "_self");
 		}
 	};
 
@@ -180,6 +266,40 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItem', 'sap/ui/unifie
 			this.setAggregation("_externalLinkIcon", oIcon);
 		}
 		return oIcon;
+	};
+
+	/**
+	 * Renders opening tag of anchor element.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRM renderer instance
+	 * @private
+	 */
+	NavigationListMenuItem.prototype._renderLinkTag = function (oRM) {
+		const sHref = this.getHref(),
+			sTarget = this.getTarget(),
+			bDisabled = this.getEnabled();
+
+		oRM.openStart("a", `${this.getId()}-a`);
+
+		const sTooltip = this.getTooltip_AsString() || this.getText();
+		if (sTooltip) {
+			oRM.attr("title", sTooltip);
+		}
+
+		if (!bDisabled) {
+			oRM.attr("tabindex", "-1");
+		}
+
+		if (sHref) {
+			oRM.attr("href", sHref);
+		}
+
+		if (sTarget) {
+			oRM.attr("target", sTarget)
+				.attr("rel", defaultLinkTypes("", sTarget));
+		}
+
+		oRM.openEnd();
 	};
 
 	return NavigationListMenuItem;

@@ -342,7 +342,8 @@ sap.ui.define([
 				tooltip: oItem.getTooltip(),
 				visible: oItem.getVisible(),
 				enabled: oItem.getEnabled(),
-				isExternalLink: !!oItem._navItem.getHref() && oItem._navItem.getTarget() === "_blank"
+				href: oItem._navItem.getHref(),
+				target: oItem._navItem.getTarget()
 			});
 
 			for (i = 0; i < aCustomData.length; i++) {
