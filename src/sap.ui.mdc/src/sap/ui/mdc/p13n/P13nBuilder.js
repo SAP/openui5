@@ -342,12 +342,13 @@ sap.ui.define([
 						"sap/ui/rta/Utils"
 					], function(rtaUtils) {
 						var oHandleExtensibility = Promise.all([
+							FieldExtensibility.onControlSelected(oDialogParent),
 							rtaUtils.isServiceUpToDate(oDialogParent),
 							FieldExtensibility.isExtensibilityEnabled(oDialogParent)
 						]);
 
 						return oHandleExtensibility.then(function (aResult) {
-							bExtensibilityEnabled = !!aResult[1];
+							bExtensibilityEnabled = !!aResult[2];
 						})
 							.then(function() {
 								var oCustomHeader = oDialog.getCustomHeader(),
@@ -374,19 +375,11 @@ sap.ui.define([
 										tooltip: oResourceBundle.getText("p13nDialog.rtaAddTooltip"),
 										press: function (oEvt) {
 											var sRtaStyleClassName = rtaUtils.getRtaStyleClassName(),
-												oAdaptDialog =  oEvt.getSource().getParent().getParent(),
-												oControl = oAdaptDialog.getParent();
+												oAdaptDialog =  oEvt.getSource().getParent().getParent();
 
-											// cover SmartTable scenario
-											if (oParent && oParent.isA('sap.ui.comp.smarttable.SmartTable')) {
-												oControl = oParent;
-											}
-
-											FieldExtensibility.onControlSelected(oControl).then(function (oRetVal) {
-												FieldExtensibility.getExtensionData().then(function (oExtensibilityInfo) {
-													FieldExtensibility.onTriggerCreateExtensionData(oExtensibilityInfo, sRtaStyleClassName);
-													oAdaptDialog.close(); // close as if there is newly created custom field, next time user tries to open it - it checks for service outdated and shows correct information
-												});
+											FieldExtensibility.getExtensionData().then(function (oExtensibilityInfo) {
+												FieldExtensibility.onTriggerCreateExtensionData(oExtensibilityInfo, sRtaStyleClassName);
+												oAdaptDialog.close(); // close as if there is newly created custom field, next time user tries to open it - it checks for service outdated and shows correct information
 											});
 
 										}
