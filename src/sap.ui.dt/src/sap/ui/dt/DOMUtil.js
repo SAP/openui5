@@ -5,11 +5,13 @@
 // Provides object sap.ui.dt.DOMUtil.
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core",
 	"sap/ui/Device",
 	"sap/ui/dom/jquery/zIndex",
 	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function(
 	jQuery,
+	Core,
 	Device
 ) {
 	"use strict";
@@ -110,12 +112,16 @@ sap.ui.define([
 	};
 
 	DOMUtil.getZIndex = function(oDomRef) {
-		var zIndex;
-		var $ElementDomRef = jQuery(oDomRef);
-		if ($ElementDomRef.length) {
-			zIndex = $ElementDomRef.zIndex() || $ElementDomRef.css("z-index");
-		}
-		return zIndex;
+		var zIndex = null;
+		var oCurrentDomRef = oDomRef;
+		do {
+			zIndex = window.getComputedStyle(oCurrentDomRef).getPropertyValue("z-index");
+			oCurrentDomRef = oCurrentDomRef.parentElement;
+			if (!oCurrentDomRef || (oCurrentDomRef.id && Core.byId(oCurrentDomRef.id))) {
+				break;
+			}
+		} while (isNaN(zIndex));
+		return isNaN(zIndex) ? zIndex : +zIndex;
 	};
 
 	/**

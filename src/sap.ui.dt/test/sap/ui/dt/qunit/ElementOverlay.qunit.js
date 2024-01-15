@@ -1665,15 +1665,15 @@ function (
 		QUnit.test("check that the scrollcontainer overlay has the correct z-index", function (assert) {
 			var fnDone = assert.async();
 
-			var $ScrollContainerOverlayDomRef = this.oLayoutOverlay.getScrollContainerById(1);
-			var $ScrollContainerDomRef = this.oLayoutOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oLayout, this.oLayoutOverlay.getScrollContainers()[1].domRef);
+			var oScrollContainerOverlayDomRef = this.oLayoutOverlay.getScrollContainerById(1)[0];
+			var oScrollContainerDomRef = this.oLayoutOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oLayout, this.oLayoutOverlay.getScrollContainers()[1].domRef)[0];
 
 			// FIXME: remove timeout when #1870203056 is implemented
 			setTimeout(function () {
 				assert.equal(
-					DOMUtil.getZIndex($ScrollContainerOverlayDomRef),
-					DOMUtil.getZIndex($ScrollContainerDomRef),
-					"the z-index of the scrollcontainer overlay is " + DOMUtil.getZIndex($ScrollContainerDomRef) + " and correct"
+					DOMUtil.getZIndex(oScrollContainerOverlayDomRef),
+					DOMUtil.getZIndex(oScrollContainerDomRef),
+					"the z-index of the scrollcontainer overlay is " + DOMUtil.getZIndex(oScrollContainerDomRef) + " and correct"
 				);
 				fnDone();
 			}, 200);
