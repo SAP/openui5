@@ -42,7 +42,7 @@ MultiComboBoxRenderer.getAriaDescribedBy = function (oControl) {
 		oTokenizer = oControl.getAggregation("tokenizer"),
 		oInvisibleTextId = oTokenizer && oTokenizer.getTokensInfoId();
 
-	return (sAriaDescribedBy || "") + " " + oInvisibleTextId;
+	return (sAriaDescribedBy ? sAriaDescribedBy + " " : "") + oInvisibleTextId;
 };
 
 /**

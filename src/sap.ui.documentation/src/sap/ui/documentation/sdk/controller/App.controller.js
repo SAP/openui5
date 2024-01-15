@@ -650,7 +650,7 @@ sap.ui.define([
 		},
 
 		getSearchPickerTitle: function (oContext) {
-			var getMessageBundle = Core.getLibraryResourceBundle("sap.ui.documentation"),
+			var getMessageBundle = Library.getResourceBundleFor("sap.ui.documentation"),
 				sTitle;
 
 			switch (this.getModel("searchData").getProperty("/preferencedCategory")) {

@@ -458,7 +458,7 @@ sap.ui.define([
 			oHL = this.oCP._createRowFromInput(oInput, sTooltipID, "Static label", "Unit label");
 
 			// Assert
-			oAssert.ok(BaseObject.isA(oHL, "sap.ui.layout.HorizontalLayout"),
+			oAssert.ok(BaseObject.isObjectA(oHL, "sap.ui.layout.HorizontalLayout"),
 				"The returned control should be instance of sap.ui.layout.HorizontalLayout");
 
 			oAssert.strictEqual(oInput.getTooltip(), sTooltipResult,

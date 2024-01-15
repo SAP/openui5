@@ -581,7 +581,7 @@ sap.ui.define([
 			var element = oContextElements[elementId],
 				parent = coreElements[elementId] == undefined ? undefined : coreElements[elementId].getParent();
 
-			if (BaseObject.isA(coreElements[elementId], "sap.ui.core.ComponentContainer")) {
+			if (BaseObject.isObjectA(coreElements[elementId], "sap.ui.core.ComponentContainer")) {
 				var componentContainer = coreElements[elementId],
 					componentId = componentContainer.getComponent();
 
@@ -631,7 +631,7 @@ sap.ui.define([
 		copyElementsFromCoreObject(this._oExecutionScope.getElements());
 
 		this._oExecutionScope.getElements().forEach(function (element) {
-			if (BaseObject.isA(element, "sap.ui.core.ComponentContainer")) {
+			if (BaseObject.isObjectA(element, "sap.ui.core.ComponentContainer")) {
 				var componentId = element.getComponent(),
 					component = ComponentRegistry.get(componentId);
 				if (component) {

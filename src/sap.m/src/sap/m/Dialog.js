@@ -469,8 +469,6 @@ function(
 		return this._headerTitle ? this._headerTitle.getId() : false;
 	});
 
-	Dialog._bPaddingByDefault = (Configuration.getCompatibilityVersion("sapMDialogWithPadding").compareTo("1.16") < 0);
-
 	Dialog._initIcons = function () {
 		if (Dialog._mIcons) {
 			return;
@@ -565,10 +563,6 @@ function(
 			that._registerContentResizeHandler();
 		};
 
-		if (Dialog._bPaddingByDefault) {
-			this.addStyleClass("sapUiPopupWithPadding");
-		}
-
 		this._initTitlePropagationSupport();
 
 		this._initResponsivePaddingsEnablement();
@@ -581,7 +575,7 @@ function(
 
 		var oHeader = this._getAnyHeader();
 
-		if (!Dialog._bPaddingByDefault && this.hasStyleClass("sapUiPopupWithPadding")) {
+		if (this.hasStyleClass("sapUiPopupWithPadding")) {
 			Log.warning("Usage of CSS class 'sapUiPopupWithPadding' is deprecated. Use 'sapUiContentPadding' instead", null, "sap.m.Dialog");
 		}
 

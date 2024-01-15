@@ -237,7 +237,7 @@ sap.ui.define([
 	};
 
 	HeaderRenderer._isTwoMonthsCalendar = function (oHead) {
-		return BaseObject.isA(oHead.getParent(), "sap.ui.unified.Calendar") && (oHead.getParent().getMonths() >= 2);
+		return BaseObject.isObjectA(oHead.getParent(), "sap.ui.unified.Calendar") && (oHead.getParent().getMonths() >= 2);
 	};
 
 	return HeaderRenderer;

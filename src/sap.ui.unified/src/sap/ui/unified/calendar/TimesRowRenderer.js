@@ -205,7 +205,7 @@ TimesRowRenderer.getHelper = function(oTimesRow, oDate){
 	if (sLegendId) {
 		var oLegend = Element.getElementById(sLegendId);
 		if (oLegend) {
-			if (!(BaseObject.isA(oLegend, "sap.ui.unified.CalendarLegend"))) {
+			if (!(BaseObject.isObjectA(oLegend, "sap.ui.unified.CalendarLegend"))) {
 				throw new Error(oLegend + " is not an sap.ui.unified.CalendarLegend. " + oTimesRow);
 			}
 			oHelper.oLegend = oLegend;

@@ -5751,6 +5751,26 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("MultiComboBox aria-describedby attribute", function(assert) {
+		var oItem1 = new Item({key: "Item1", text: "Item1"});
+		var oMultiComboBox = new MultiComboBox({
+			valueState: "Warning",
+			items: [oItem1],
+			selectedItems: [oItem1]
+		});
+
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		Core.applyChanges();
+
+		var sValueStateAccNodeId = oMultiComboBox.getValueStateMessageId() + "-sr";
+		var sInvisibleTextId = oMultiComboBox.getAggregation("tokenizer").getTokensInfoId();
+		var sAriaDescribedBy = sValueStateAccNodeId + " " + sInvisibleTextId;
+
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute('aria-describedby'), sAriaDescribedBy, "Aria-describedby attribute value is correct");
+
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test("MultiComboBox with accessibility=false", function(assert) {
 		var oMultiComboBox = new MultiComboBox();
 		this.stub(ControlBehavior, "isAccessibilityEnabled").returns(false);

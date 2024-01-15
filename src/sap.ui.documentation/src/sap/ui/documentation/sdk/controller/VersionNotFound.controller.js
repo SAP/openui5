@@ -4,12 +4,14 @@
 
 sap.ui.define([
 	"./BaseController",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/documentation/sdk/controller/util/URLUtil",
 	"sap/m/library"
-], function (
+], function(
 	BaseController,
+	Library,
 	jQuery,
 	Core,
 	DemokitURLUtil,
@@ -91,7 +93,7 @@ sap.ui.define([
 		},
 
 		_getLibraryResourceBundle: function () {
-			return Core.getLibraryResourceBundle("sap.ui.documentation");
+			return Library.getResourceBundleFor("sap.ui.documentation");
 		},
 
 		_loadVersionInfo: function () {
