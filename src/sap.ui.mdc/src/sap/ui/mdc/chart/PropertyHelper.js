@@ -66,14 +66,6 @@ sap.ui.define([
 				},
 				textFormatter : {
 					type: "object"
-				},
-				// this is not a public property
-				availableRoles: {
-					type: "object"
-				},
-				// this is not a public property
-				kind: {
-					type: "string"
 				}
 			});
 		}
@@ -82,14 +74,6 @@ sap.ui.define([
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
 		if (!oProperty.path && oProperty.propertyPath) {
 			oProperty.path = oProperty.propertyPath;
-		}
-
-		if (oProperty.groupable) {
-			oProperty.availableRoles = this._getLayoutOptionsForType("groupable");
-			oProperty.kind = "Groupable";
-		} else if (oProperty.aggregatable) {
-			oProperty.availableRoles = this._getLayoutOptionsForType("aggregatable");
-			oProperty.kind = "Aggregatable";
 		}
 
 		if (!oProperty.typeConfig && oProperty.dataType) {
@@ -107,38 +91,6 @@ sap.ui.define([
 				return oProperty.isComplex() ? false : oProperty.aggregatable;
 			}
 		};
-	};
-
-	/**
-	 * This returns the layout options for a specific type of Item (measure/dimension,groupable/aggregatable)
-	 * It is used by p13n to determine which layout options to show in the p13n panel
-	 * @param {string} sType the type for which the layout options are requested
-	 */
-	PropertyHelper.prototype._getLayoutOptionsForType = function(sType) {
-		const MDCRb = Library.getResourceBundleFor("sap.ui.mdc");
-		const oAvailableRoles = {
-			groupable: [{
-				key: ChartItemRoleType.category,
-				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY')
-			}, {
-				key: ChartItemRoleType.category2,
-				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY2')
-			}, {
-				key: ChartItemRoleType.series,
-				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_SERIES')
-			}],
-			aggregatable: [{
-				key: ChartItemRoleType.axis1,
-				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS1')
-			}, {
-				key: ChartItemRoleType.axis2,
-				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS2')
-			}, {
-				key: ChartItemRoleType.axis3,
-				text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS3')
-			}]
-		};
-		return oAvailableRoles[sType];
 	};
 
 	/**

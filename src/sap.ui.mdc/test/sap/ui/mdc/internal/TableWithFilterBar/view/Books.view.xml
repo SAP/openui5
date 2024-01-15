@@ -767,20 +767,6 @@
                     		"role": "category",
                     		"criticality": null,
                     		"textProperty": null,
-                    		"availableRoles": [
-								\{
-									"key": "category",
-									"text": "Category"
-								\},
-								\{
-									"key": "category2",
-									"text": "Category 2"
-								\},
-								\{
-									"key": "series",
-									"text": "Series"
-								\}],
-                    		"kind": "Groupable",
                     		"visible": true,
 							"dataType": "String",
                     		"group": "",
@@ -799,20 +785,6 @@
 							"maxConditions": -1,
 							"role": "axis1",
 							"datapoint": null,
-							"availableRoles": [
-								\{
-									"key": "axis1",
-									"text": "Axis 1"
-								\},
-								\{
-									"key": "axis2",
-									"text": "Axis 2"
-								\},
-								\{
-									"key": "axis3",
-									"text": "Axis 3"
-								\}],
-							"kind": "Aggregatable",
 							"visible": true,
 							"dataType": "String",
 							"group": "",

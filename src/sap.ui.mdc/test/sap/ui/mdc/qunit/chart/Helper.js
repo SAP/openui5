@@ -25,37 +25,31 @@ sap.ui.define([
 					path: "SalesNumber",
 					dataType: "Edm.Int32",
 					label: "Sales Number",
-					aggregatable: true,
-					kind: "Measure"
+					aggregatable: true
 				}, {
 					name: "agSalesAmount",
 					path: "SalesAmount",
 					dataType: "Edm.String",
 					label: "Sales Amount",
-					groupable: true,
-					kind: "Measure"
+					groupable: true
 				}, {
 					name: "Name",
 					path: "Name",
 					dataType: "Edm.String",
 					label: "Name",
-					groupable: true,
-					kind: "Dimension"
+					groupable: true
 				}, {
 					name: "Industry",
 					dataType: "Edm.String",
-					label: "Industry",
-					kind: "Dimension"
+					label: "Industry"
 				}, {
 					name: "Country",
 					dataType: "Edm.String",
-					label: "Country",
-					kind: "Dimension"
+					label: "Country"
 				}, {
 					name: "SomePropertyName",
 					dataType: "Edm.String",
 					label: "SomeProperty",
-					kind: "Dimension",
 					groupable: true
 				}
 			]
