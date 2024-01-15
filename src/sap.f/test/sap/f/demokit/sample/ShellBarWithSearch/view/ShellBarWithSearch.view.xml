@@ -4,10 +4,9 @@
 	xmlns:m="sap.m" height="100%">
 	<ShellBar title="Application Title"
 		secondTitle="Short description"
-		homeIcon="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
+		homeIcon="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
 		showCopilot="true"
 		showNotifications="true"
-		showProductSwitcher="true"
 		notificationsNumber="2">
 		<menu>
 			<m:Menu>
