@@ -38,7 +38,10 @@ sap.ui.define([
 
 			var oOpa5 = new Opa5();
 
-			oOpa5.iStartMyAppInAFrame(UNCAUGHT_ERROR_URL);
+			oOpa5.iStartMyAppInAFrame({
+				source: UNCAUGHT_ERROR_URL,
+				autoWait: true
+			});
 
 			oOpa5.waitFor({
 				viewName: "myView",
@@ -63,7 +66,15 @@ sap.ui.define([
 	// In this module a site full of errors is launched and the error messages are checked
 	// for each test, a full module of the tested site is loaded
 	// test sequence here should correspond to the sequence of tests in the erronous site's test module
-	QUnit.module("iFrame - Tests with errors");
+	QUnit.module("iFrame - Tests with errors", {
+		before() {
+			this.defaultTestTimeout = QUnit.config.testTimeout;
+			QUnit.config.testTimeout = 200 * 1000;
+		},
+		after() {
+			QUnit.config.testTimeout = this.defaultTestTimeout;
+		}
+	});
 
 	function createMatcherForTestMessage (oOptions) {
 		var bIncreased = false;
@@ -79,7 +90,10 @@ sap.ui.define([
 	}
 
 	opaTest("Should empty the queue if QUnit times out", function (oOpa) {
-		oOpa.iStartMyAppInAFrame(FAILING_OPA_TEST_URL + "?sap-ui-qunittimeout=4000&module=Timeouts");
+		oOpa.iStartMyAppInAFrame({
+			source: FAILING_OPA_TEST_URL + "?sap-ui-qunittimeout=4000&module=Timeouts",
+			autoWait: true
+		});
 
 		oOpa.waitFor({
 			matchers: createMatcherForTestMessage({
@@ -177,7 +191,10 @@ sap.ui.define([
 	});
 
 	opaTest("Should log exceptions in callbacks currectly", function (oOpa) {
-		oOpa.iStartMyAppInAFrame(FAILING_OPA_TEST_URL + "?sap-ui-qunittimeout=4000&module=Exceptions");
+		oOpa.iStartMyAppInAFrame({
+			source: FAILING_OPA_TEST_URL + "?sap-ui-qunittimeout=4000&module=Exceptions",
+			autoWait: true
+		});
 
 		function assertException ($Messages, sCallbackName) {
 			var sOpaMessage = $Messages.eq(0).text();
@@ -236,7 +253,10 @@ sap.ui.define([
 	});
 
 	opaTest("Should write log messages from an iFrame startup", function (oOpa) {
-		oOpa.iStartMyAppInAFrame(FAILING_OPA_TEST_URL + "?sap-ui-qunittimeout=90000&module=IFrame");
+		oOpa.iStartMyAppInAFrame({
+			source: FAILING_OPA_TEST_URL + "?sap-ui-qunittimeout=90000&module=IFrame",
+			autoWait: true
+		});
 
 		oOpa.waitFor({
 			matchers: createMatcherForTestMessage({
