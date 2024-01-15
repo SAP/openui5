@@ -227,6 +227,16 @@ sap.ui.define([
 		assert.ok(this.oColumnMenu._oPopover.getShowHeader(), "Header is shown on mobile");
 	});
 
+	QUnit.test("Add menu to/remove from StaticArea", function (assert) {
+		this.createMenu(true, true, true, true);
+
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu.isOpen(), "Popover was opened");
+		assert.strictEqual(StaticArea.getUIArea().getContent()[0], this.oColumnMenu);
+		this.oColumnMenu.close();
+		assert.equal(StaticArea.getUIArea().getContent().length, 0);
+	});
+
 	QUnit.test("Form containers and item container are created on open and destroyed on close", function(assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
