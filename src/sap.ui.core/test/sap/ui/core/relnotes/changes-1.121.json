@@ -3,6 +3,42 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "cb82d703ad6bfa15113e59bc01df25640a1e9e0a",
+        "type": "FIX",
+        "text": " sap/ui/core/util/MockServer: support milliseconds in timestamps"
+      },
+      {
+        "id": "4852ecaf47d36e56aa4a1834eb086a1ce89cf5a4",
+        "type": "FEATURE",
+        "text": " sap/ui/model/odata/v2/ODataModel#createEntry: consider referential constraints"
+      },
+      {
+        "id": "5fbbe717f1a56eab7083bdf7f09180d87f972821",
+        "type": "FIX",
+        "text": " core/routing/Target: ignore 'viewType' and 'path' for Typed View",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500010684002023"
+          }
+        ]
+      },
+      {
+        "id": "bebaa98f63afb2f259a24e98980a0f6af6a3db70",
+        "type": "FIX",
+        "text": " sap/ui/core/Theming: Ensure change event is fired after changes"
+      },
+      {
+        "id": "9ad6cc71f1cdc503450433787c7bb3eaead7d854",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: handle properties of type Edm.time in grouping"
+      },
+      {
+        "id": "0ed733e4efeba6acfbe685c57a3ae6496276e9ee",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#submitChangesWithHeaders: ensure change requests use custom headers"
+      },
+      {
         "id": "bbc1726c431b8ffeb7adc67179255f882d3ee6e1",
         "type": "FIX",
         "text": " sap.ui.model.odata.v2.ODataTreeBinding: consider deep path for context"
@@ -11,6 +47,11 @@
         "id": "551a4c26244524798905cec7b8644c6f16b6dea8",
         "type": "FIX",
         "text": " sap.ui.core.format.NumberFormat#parse: support all WhiteSpace and RTL codes in pattern for NumberFormat UnitType instances"
+      },
+      {
+        "id": "ee5312ec78b23a422e8040513234399130f326db",
+        "type": "FIX",
+        "text": " Text/Icon: Alignment in ResponsiveTable"
       },
       {
         "id": "56ac9c875048c053b273a2e48213e438362d46e8",

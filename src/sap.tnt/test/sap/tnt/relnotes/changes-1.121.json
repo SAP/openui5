@@ -3,6 +3,17 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "ad3d8bb8e6545f76d21b8129fdfc1e2ea7a1bea5",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabHeader: New property \"interactionMode\" introduced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "c2d44b4cf177a43616638e931d4b4ab23a2a4ce0",
         "type": "FIX",
         "text": " sap.tnt.SideNavigation:  selecting disabled elements from overflow is not allowed"

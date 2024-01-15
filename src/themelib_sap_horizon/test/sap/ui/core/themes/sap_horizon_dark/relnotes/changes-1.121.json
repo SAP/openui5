@@ -3,6 +3,11 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "49ac61f0faa29b4243ccc3af3e769919ab892ab5",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Horizon theme alignment"
+      },
+      {
         "id": "a6bbb20b9afb06888e7c517bbdea0345a9de1844",
         "type": "FEATURE",
         "text": " sap.ui.unified.Calendar: redesign dual-type calendar"

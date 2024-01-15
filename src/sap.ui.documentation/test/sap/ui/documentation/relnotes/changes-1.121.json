@@ -40,6 +40,11 @@
         "text": " Demo Kit: Align DemoApps category header"
       },
       {
+        "id": "b9a77e05bfe0f46deac4335b8d3eca2f7a134fb6",
+        "type": "FIX",
+        "text": " Demokit: ApiRef now filters subclasses by visibility"
+      },
+      {
         "id": "07ce8256d4d4dd9d854e552b2eefc8c73cbf1c73",
         "type": "FIX",
         "text": " Rename sap/ui/core/Component.get to sap/ui/core/Component.getComponentById"

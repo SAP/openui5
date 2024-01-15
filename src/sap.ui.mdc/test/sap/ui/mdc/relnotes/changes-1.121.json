@@ -3,6 +3,17 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "60c0ad4be67bece8e382d5dd70dc59d80b05403c",
+        "type": "FIX",
+        "text": " mdc.FilterBarBase: validate call enhancement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380139482"
+          }
+        ]
+      },
+      {
         "id": "424ad7689fc854d0357099782e700f081c6d0270",
         "type": "FIX",
         "text": " Field: invalid unit/currency leads to runtime error",

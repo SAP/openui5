@@ -3,9 +3,46 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "f7d4e034343cbf6cb01812c041ce67c0bfb27c58",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Adjust aria-describedby value"
+      },
+      {
+        "id": "003c8ef2c99bd945697943a0c46f2133119329e5",
+        "type": "FIX",
+        "text": " sap.m.Select: Prevent focus when label's text is being selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370089666"
+          }
+        ]
+      },
+      {
+        "id": "27d366a0e692c85f0fff6ae69ae568b94f809440",
+        "type": "FEATURE",
+        "text": " sap.m.CheckBox: Implement required property"
+      },
+      {
+        "id": "1383363cae682285494aa73521c83979ed753eb2",
+        "type": "FIX",
+        "text": " m.VariantManagement: fix for save in 'Manage Dialog'"
+      },
+      {
         "id": "3fb6cba47c0c8a20af00c29874fd1201239d7104",
         "type": "FEATURE",
         "text": "ActionTile: We now ensure that the links are rendered correctly within a To-Dos card"
+      },
+      {
+        "id": "ad3d8bb8e6545f76d21b8129fdfc1e2ea7a1bea5",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabHeader: New property \"interactionMode\" introduced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
       },
       {
         "id": "dfbf95cbdcc26ea4b59b047c33e09f848ea034d9",
@@ -33,6 +70,11 @@
             "reference": ""
           }
         ]
+      },
+      {
+        "id": "ee5312ec78b23a422e8040513234399130f326db",
+        "type": "FIX",
+        "text": " Text/Icon: Alignment in ResponsiveTable"
       },
       {
         "id": "2375725b20b2ab3bc34f0f96fe298f8329abf88d",
