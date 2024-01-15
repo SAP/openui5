@@ -239,8 +239,9 @@ sap.ui.define([
 		let oAddCustomFieldButton;
 
         // Arrange
-        sinon.stub(FieldExtensibility, "isExtensibilityEnabled").returns(Promise.resolve(true));
+        sinon.stub(FieldExtensibility, "onControlSelected").returns(Promise.resolve(undefined));
         sinon.stub(Utils, "isServiceUpToDate").returns(Promise.resolve(false));
+        sinon.stub(FieldExtensibility, "isExtensibilityEnabled").returns(Promise.resolve(true));
         const oLibraryResourceBundleStub = sinon.stub(sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc"), "getText");
         oLibraryResourceBundleStub.withArgs("p13nDialog.rtaAddTooltip").returns("OK");
 
@@ -276,8 +277,9 @@ sap.ui.define([
                 .finally(function () {
                     // Cleanup
                     oDialog.destroy();
-                    FieldExtensibility.isExtensibilityEnabled.restore();
+                    FieldExtensibility.onControlSelected.restore();
                     Utils.isServiceUpToDate.restore();
+                    FieldExtensibility.isExtensibilityEnabled.restore();
                     done();
                 });
 
