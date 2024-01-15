@@ -5,12 +5,14 @@
 // Provides object sap.ui.dt.DOMUtil.
 sap.ui.define([
 	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/dom/jquery/zIndex",
 	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function(
 	Localization,
+	Element,
 	jQuery,
 	Device
 ) {
@@ -159,12 +161,16 @@ sap.ui.define([
 	};
 
 	DOMUtil.getZIndex = function(oDomRef) {
-		var zIndex;
-		var $ElementDomRef = jQuery(oDomRef);
-		if ($ElementDomRef.length) {
-			zIndex = $ElementDomRef.zIndex() || $ElementDomRef.css("z-index");
-		}
-		return zIndex;
+		let zIndex = null;
+		let oCurrentDomRef = oDomRef;
+		do {
+			zIndex = window.getComputedStyle(oCurrentDomRef).getPropertyValue("z-index");
+			oCurrentDomRef = oCurrentDomRef.parentElement;
+			if (!oCurrentDomRef || (oCurrentDomRef.id && Element.getElementById(oCurrentDomRef.id))) {
+				break;
+			}
+		} while (isNaN(zIndex));
+		return isNaN(zIndex) ? zIndex : +zIndex;
 	};
 
 	DOMUtil._getElementDimensions = function(oDomRef, sMeasure, aDirection) {
