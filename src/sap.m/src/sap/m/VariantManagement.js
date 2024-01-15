@@ -111,6 +111,9 @@ sap.ui.define([
 	// shortcut for sap.m.ListKeyboardMode
 	var ListKeyboardMode = mobileLibrary.ListKeyboardMode;
 
+	// shortcut for sap.m.FlexJustifyContent
+	var FlexJustifyContent = mobileLibrary.FlexJustifyContent;
+
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
@@ -834,7 +837,8 @@ sap.ui.define([
 	VariantManagement.prototype._createInnerModel = function() {
 		var oModel = new JSONModel({
 			showCreateTile: false,
-			isDesignMode: false
+			isDesignMode: false,
+			hasNoData: false
 		});
 		this.setModel(oModel, VariantManagement.INNER_MODEL_NAME);
 	};
@@ -852,6 +856,9 @@ sap.ui.define([
 	};
 	VariantManagement.prototype.setDesignMode = function(bValue) {
 		this._setInnerModelProperty("/isDesignMode", bValue);
+	};
+	VariantManagement.prototype.setHasNoData = function(bValue) {
+		this._setInnerModelProperty("/hasNoData", bValue);
 	};
 
 	VariantManagement.prototype._setInnerModelProperty = function(sPropertyPath, vValue) {
@@ -1199,6 +1206,13 @@ sap.ui.define([
 				path: "/selectedKey",
 				model: "$mVariants"
 			},
+			visible: {
+				path: "/hasNoData",
+				model: VariantManagement.INNER_MODEL_NAME,
+				formatter: function(bValue) {
+					return !bValue;
+				}
+			},
 			itemPress: function(oEvent) {
 				var sSelectionKey = null;
 				if (oEvent && oEvent.getParameters()) {
@@ -1213,7 +1227,6 @@ sap.ui.define([
 				}
 			}.bind(this)
 		});
-		this.oVariantList.setNoDataText(this._oRb.getText("VARIANT_MANAGEMENT_NODATA"));
 
 		this.oVariantListInvisibleText = new InvisibleText({
 			text: this._oRb.getText("VARIANT_MANAGEMENT_VIEW_LIST")
@@ -1221,6 +1234,19 @@ sap.ui.define([
 
 		this.oVariantListInvisibleText.toStatic();
 		this.oVariantList.addAriaLabelledBy(this.oVariantListInvisibleText);
+
+
+		this.oVariantListNoDataText = new Text(this.getId() + "-no-data-text", { text: this._oRb.getText("VARIANT_MANAGEMENT_NODATA") });
+		this.oNodataTextLayout = new HBox(this.getId() + "-no-data", {
+			visible: {
+				path: "/hasNoData",
+				model: VariantManagement.INNER_MODEL_NAME
+			},
+			justifyContent: FlexJustifyContent.Center,
+			enableScrolling: false,
+			fitContainer: true,
+			items: [this.oVariantListNoDataText]
+		});
 
 		var oItemTemplate = new Item({
 			key: "{$mVariants>key}",
@@ -1245,7 +1271,7 @@ sap.ui.define([
 				]
 			}),
 			content: [
-				this.oVariantList
+				this.oVariantList, this.oNodataTextLayout
 			],
 			footer: new OverflowToolbar({
 				content: [
@@ -1294,8 +1320,6 @@ sap.ui.define([
 		this.oVariantPopOver.isPopupAdaptationAllowed = function() {
 			return false;
 		};
-
-		// this.oVariantList.getBinding("items").filter(this._getFilters());
 	};
 
 
@@ -1350,7 +1374,15 @@ sap.ui.define([
 		this._createVariantList();
 		this._oSearchField.setValue("");
 
-		this.oVariantList.getBinding("items").filter(this._getFilters());
+		const oListBinding = this.oVariantList.getBinding("items");
+		oListBinding.attachChange(function(oEvent) {
+			this.setHasNoData(this.oVariantList.getItems().length === 0);
+		}.bind(this));
+		oListBinding.filter(this._getFilters());
+
+		if (this.oVariantList.getItems().length < 1) {
+			this.oVariantListNoDataText.setText(this._oRb.getText("VARIANT_MANAGEMENT_NODATA"));
+		}
 
 		this.oVariantSelectionPage.setShowSubHeader(this.oVariantList.getItems().length > 9);
 
@@ -1385,6 +1417,10 @@ sap.ui.define([
 		});
 
 		oVariantList.getBinding("items").filter(this._getFilters(oFilter));
+
+		if (oVariantList.getItems().length < 1) {
+			this.oVariantListNoDataText.setText(this._oRb.getText("VARIANT_MANAGEMENT_NODATA_FOUND"));
+		}
 	};
 
 	// Save View dialog
@@ -1920,6 +1956,10 @@ sap.ui.define([
 
 		oManagementTable.getBinding("items").filter(aFilters);
 
+        if (this.oManagementTable.getItems().length < 1) {
+			this.oManagementTable.setNoDataText(this._oRb.getText("VARIANT_MANAGEMENT_NODATA_FOUND"));
+		}
+
 		this._bRebindRequired = true;
 	};
 
@@ -1934,6 +1974,7 @@ sap.ui.define([
 				contextualWidth: "Auto",
 				fixedLayout: false,
 				growing: true,
+				noDataText: this._oRb.getText("VARIANT_MANAGEMENT_NODATA"),
 				keyboardMode: ListKeyboardMode.Navigation,
 				columns: [
 					new Column({
@@ -2355,6 +2396,10 @@ sap.ui.define([
 			}
 		}
 
+        if (this.oManagementTable.getItems().length < 1) {
+			this.oManagementTable.setNoDataText(this._oRb.getText("VARIANT_MANAGEMENT_NODATA"));
+		}
+
 		this.oManagementDialog.open();
 	};
 
@@ -2480,7 +2525,7 @@ sap.ui.define([
 		var sKey = oItem.getKey();
 
 		// do not allow the deletion of the standard
-		if (this.getStandardVariantKey() === sKey) {
+		if (!oItem.getRemove()) {
 			return;
 		}
 
