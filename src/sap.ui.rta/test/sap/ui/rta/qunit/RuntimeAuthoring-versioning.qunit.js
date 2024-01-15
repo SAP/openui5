@@ -270,6 +270,23 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when onActivate is called on draft and commands requiring hard reload were executed (e.g. app descriptor commands)", function(assert) {
+			var fnDone = assert.async();
+			var sVersionTitle = "aVersionTitle";
+
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
+			sandbox.stub(this.oRta._oSerializer, "needsReload").resolves(true);
+
+			sandbox.stub(this.oRta.getCommandStack(), "removeAllCommands").callsFake(function() {
+				assert.strictEqual(this.oRta._bSavedChangesNeedReload, true, "then the needs reload flag is set to true");
+				fnDone();
+			}.bind(this));
+
+			this.oRta.getToolbar().fireActivate({
+				versionTitle: sVersionTitle
+			});
+		});
+
 		QUnit.test("when save is called on Draft without leaving RTA", function(assert) {
 			return this.oRta.save()
 			.then(function() {
