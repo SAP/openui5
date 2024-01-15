@@ -49,6 +49,7 @@ sap.ui.define([
 				 * This property enables scenarios where popovers need to be shown earlier (for example, recommendations or recently entered values).
 				 * See also {@link module:sap/ui/mdc/ValueHelpDelegate.showTypeahead showTypeahead}
 				 * @since 1.110.0
+				 * @deprecated (since 1.121.0) - replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.shouldOpenOnClick shouldOpenOnClick}
 				 */
 				opensOnClick: {
 					type: "boolean",
@@ -61,6 +62,7 @@ sap.ui.define([
 				 * This property enables scenarios where popovers need to be shown earlier (for example, recommendations or recently entered values).
 				 * See also {@link module:sap/ui/mdc/ValueHelpDelegate.showTypeahead showTypeahead}
 				 * @since 1.112.0
+				 * @deprecated (since 1.121.0) - replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.shouldOpenOnFocus shouldOpenOnFocus}
 				 */
 				opensOnFocus: {
 					type: "boolean",
@@ -391,19 +393,6 @@ sap.ui.define([
 		}
 
 		return Container.prototype.getAriaAttributes.apply(this, arguments);
-
-	};
-
-	Popover.prototype.shouldOpenOnFocus = function() {
-
-		return this.getOpensOnFocus();
-
-	};
-
-	Popover.prototype.shouldOpenOnClick = function() {
-
-		const oContent = this._getContent();
-		return this.isPropertyInitial("opensOnClick") ? !!oContent && oContent.shouldOpenOnClick() : this.getOpensOnClick(); //If opensOnClick is not explicitly set,  the content's preference is used instead.
 
 	};
 

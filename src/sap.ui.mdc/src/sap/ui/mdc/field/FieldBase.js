@@ -691,14 +691,19 @@ sap.ui.define([
 
 	const _setFocusTimer = function(oEvent) {
 		const oValueHelp = _getValueHelp.call(this);
-		if (this.getEditMode() === FieldEditMode.Editable && oValueHelp && !this._iFocusTimer && oValueHelp.shouldOpenOnFocus() && !oValueHelp.isOpen()) {
-			this._iFocusTimer = setTimeout(() => {
-				if (!this.isFieldDestroyed() && !oValueHelp.isOpen()) {
-					_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
-					this._redirectFocus(oEvent, oValueHelp);
+		const oSuggestControl = this.getControlForSuggestion();
+		if (this.getEditMode() === FieldEditMode.Editable && oValueHelp && !this._iFocusTimer && !oValueHelp.isOpen() && containsOrEquals(oSuggestControl.getDomRef(), oEvent.target)) {
+			oValueHelp.shouldOpenOnFocus().then((bShouldOpen) => {
+				if (bShouldOpen) {
+					this._iFocusTimer = setTimeout(() => {
+						if (!this.isFieldDestroyed() && !oValueHelp.isOpen() && _isFocused.call(this)) {
+							_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
+							this._redirectFocus(oEvent, oValueHelp);
+						}
+						this._iFocusTimer = null;
+					}, 300);
 				}
-				this._iFocusTimer = null;
-			}, 300);
+			});
 		}
 	};
 
@@ -953,9 +958,14 @@ sap.ui.define([
 
 		// in "Select"-case the suggestion help should open on click into field
 		const oValueHelp = _getValueHelp.call(this);
-		if (this.getEditMode() === FieldEditMode.Editable && oValueHelp) {
-			if (oValueHelp.shouldOpenOnClick() && !oValueHelp.isOpen()) {
-				_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
+		const oSuggestControl = this.getControlForSuggestion();
+		if (this.getEditMode() === FieldEditMode.Editable && oValueHelp && containsOrEquals(oSuggestControl.getDomRef(), oEvent.target)) {
+			if (!oValueHelp.isOpen()) {
+				oValueHelp.shouldOpenOnClick().then((bShouldOpen) => {
+					if (bShouldOpen && !this.isFieldDestroyed() && _isFocused.call(this) && !oValueHelp.isOpen()) {
+						_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
+					}
+				});
 			}
 			this._redirectFocus(oEvent, oValueHelp);
 		}

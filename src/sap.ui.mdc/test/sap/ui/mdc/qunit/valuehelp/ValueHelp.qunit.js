@@ -145,12 +145,14 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("default values", function(assert) {
+	QUnit.test("default values", async function(assert) {
 
 		assert.equal(oValueHelp.getConditions().length, 0, "Conditions");
 		assert.equal(oValueHelp.getFilterValue(), "", "FilterValue");
-		assert.notOk(oValueHelp.shouldOpenOnClick(), "shouldOpenOnClick");
-		assert.notOk(oValueHelp.shouldOpenOnFocus(), "shouldOpenOnFocus");
+		let bShouldOpen = await oValueHelp.shouldOpenOnClick();
+		assert.notOk(bShouldOpen, "shouldOpenOnClick");
+		bShouldOpen = await oValueHelp.shouldOpenOnFocus();
+		assert.notOk(bShouldOpen, "shouldOpenOnFocus");
 		assert.notOk(oValueHelp.isFocusInHelp(), "isFocusInHelp");
 
 	});
@@ -539,35 +541,40 @@ sap.ui.define([
 		};
 		let oAttributes = oValueHelp.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
-		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes on closed typeaheas");
+		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes on closed typeahead");
 
 		oCheckAttributes.contentId = null; // will only be set by content
 		sinon.stub(oContainer, "isOpen").returns(true);
 		oAttributes = oValueHelp.getAriaAttributes();
-		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes on open typeaheas");
+		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes on open typeahead");
 
 	});
 
-	QUnit.test("shouldOpenOnFocus", function(assert) {
+	QUnit.test("shouldOpenOnFocus", async function(assert) {
 
-		sinon.stub(oContainer, "shouldOpenOnFocus").returns(true);
-		assert.notOk(oValueHelp.shouldOpenOnFocus(), "if only typeahed no opening on click");
+		sinon.stub(oContainer, "shouldOpenOnFocus").returns(Promise.resolve(true));
+		let bShouldOpen = await oValueHelp.shouldOpenOnFocus();
+		assert.notOk(bShouldOpen, "if only typeahed no opening on focus");
 
 		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
-		assert.ok(oValueHelp.shouldOpenOnFocus(), "returns value of container (true) if used as valueHelp");
+		bShouldOpen = await oValueHelp.shouldOpenOnFocus();
+		assert.ok(bShouldOpen, "returns value of container (true) if used as valueHelp");
 
-		oContainer.shouldOpenOnFocus.returns(false);
-		assert.notOk(oValueHelp.shouldOpenOnFocus(), "returns value of container (false) if used as valueHelp");
+		oContainer.shouldOpenOnFocus.returns(Promise.resolve(false));
+		bShouldOpen = await oValueHelp.shouldOpenOnFocus();
+		assert.notOk(bShouldOpen, "returns value of container (false) if used as valueHelp");
 
 	});
 
-	QUnit.test("shouldOpenOnClick", function(assert) {
+	QUnit.test("shouldOpenOnClick", async function(assert) {
 
-		sinon.stub(oContainer, "shouldOpenOnClick").returns(true);
-		assert.notOk(oValueHelp.shouldOpenOnClick(), "if only typeahed no opening on click");
+		sinon.stub(oContainer, "shouldOpenOnClick").returns(Promise.resolve(true));
+		let bShouldOpen = await oValueHelp.shouldOpenOnClick();
+		assert.notOk(bShouldOpen, "if only typeahed no opening on click");
 
 		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
-		assert.ok(oValueHelp.shouldOpenOnClick(), "returns value of container if used as valueHelp");
+		bShouldOpen = await oValueHelp.shouldOpenOnClick();
+		assert.ok(bShouldOpen, "returns value of container if used as valueHelp");
 
 	});
 
