@@ -100,5 +100,21 @@
         ]
       }
     ]
+  },
+  "1.114.15": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "9d3129150b2bed458c28ad1d0ae69d57432a7e2f",
+        "type": "FIX",
+        "text": " mTable: consider useFirstMatch on filtering existing items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500010450352023"
+          }
+        ]
+      }
+    ]
   }
 }

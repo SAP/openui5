@@ -660,5 +660,32 @@
         ]
       }
     ]
+  },
+  "1.114.15": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "08c2afe98ba45cc062e66cbc7088445d2fd182be",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Arrow has hover state now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009692332023"
+          }
+        ]
+      },
+      {
+        "id": "f6a3be134cce6b3813e1c5fbc0a3bee19178f17c",
+        "type": "FIX",
+        "text": " m.ColumnListItem: popin row shouldn't focus main row on touchstart",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380137565"
+          }
+        ]
+      }
+    ]
   }
 }

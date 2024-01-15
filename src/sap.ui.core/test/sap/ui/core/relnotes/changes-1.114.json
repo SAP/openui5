@@ -299,5 +299,37 @@
         ]
       }
     ]
+  },
+  "1.114.15": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "30e8cad97e838f91cf65f5dbff0e1f18ed50b162",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: handle properties of type Edm.time in grouping"
+      },
+      {
+        "id": "7d16af7b463a266ab0e29a5cc9e254b3f7561e37",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._CollectionCache#read: avoid endless busy indicator sometimes when scrolling up",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "0f438f944b7f6ba3467e41bcfa5ba5f3b6f62031",
+        "type": "FIX",
+        "text": " sap.ui.core.format.TimezoneUtil.calculateOffset: Fix Daylight Saving Time issues",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370140369"
+          }
+        ]
+      }
+    ]
   }
 }
