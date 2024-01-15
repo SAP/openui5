@@ -9,6 +9,7 @@ QUnit.config.autostart = false;
  */
 
 sap.ui.require([
+	"sap/ui/core/Core",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/Opa",
 	"sap/ui/test/_OpaLogger",
@@ -18,8 +19,10 @@ sap.ui.require([
 	"sap/base/Log",
 	"sap/ui/qunit/qunit-junit",
 	"sap/ui/qunit/qunit-coverage-istanbul"
-], function (Opa5, Opa, _OpaLogger, opaTest, PropertyStrictEquals, _timeoutWaiter, Log) {
+], async function (Core, Opa5, Opa, _OpaLogger, opaTest, PropertyStrictEquals, _timeoutWaiter, Log) {
 	"use strict";
+
+	await Core.ready();
 
 	QUnit.module("Timeouts");
 

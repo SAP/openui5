@@ -6,9 +6,12 @@ QUnit.config.autostart = false;
 // Load sinon in a first step so that the sinon-qunit bridge finds it. Could be ensured with
 // a shim as well. But that shim would depend on the QUnit version, which would be cumbersome.
 sap.ui.require([
+	"sap/ui/core/Core",
 	"sap/ui/thirdparty/sinon"
-], function() {
+], async function(Core) {
 	"use strict";
+
+	await Core.ready();
 
 	sap.ui.require([
 		"sap/ui/test/opaQunit",
