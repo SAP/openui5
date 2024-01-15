@@ -137,11 +137,12 @@ sap.ui.define([
 			oCurrentContent.setTable(oTable);
 		}
 
-		return new Promise(function(resolve, reject) {
-			setTimeout(resolve, 0);
-		});
 
-		// return Promise.resolve();
+		return ODataValueHelpDelegate.retrieveContent.apply(this, arguments).then(() => {
+			return new Promise(function(resolve, reject) {
+				setTimeout(resolve, 0);
+			});
+		});
 	};
 
 	Delegate.determineSearchSupported = function(oValueHelp) {
