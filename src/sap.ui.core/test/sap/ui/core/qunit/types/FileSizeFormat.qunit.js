@@ -1,5 +1,10 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/core/format/FileSizeFormat", "sap/ui/core/Locale"], function (FileSizeFormat, Locale) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Locale",
+	"sap/ui/core/format/FileSizeFormat"
+], function (Log, Localization, Locale, FileSizeFormat) {
 	"use strict";
 
 	var oFormatBinary = FileSizeFormat.getInstance({ binaryFilesize: true, maxFractionDigits: 2 }, new Locale("en"));
@@ -10,6 +15,7 @@ sap.ui.define(["sap/ui/core/format/FileSizeFormat", "sap/ui/core/Locale"], funct
 	var aDecimalUnitNames = ["Kilobyte", "Megabyte", "Gigabyte", "Terabyte", "Petabyte", "Exabyte", "Zettabyte", "Yottabyte"];
 	var aBinaryUnits;
 	var aDecimalUnits;
+	const sDefaultLanguage = Localization.getLanguage();
 
 	function extractUnits(names) {
 		return names.map(function (name) {
@@ -91,6 +97,15 @@ sap.ui.define(["sap/ui/core/format/FileSizeFormat", "sap/ui/core/Locale"], funct
 	QUnit.module("sap.ui.core.format.FileSizeFormat", {
 		before() {
 			this.__ignoreIsolatedCoverage__ = true;
+		},
+		beforeEach() {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
+			Localization.setLanguage("en-US");
+		},
+		afterEach() {
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -108,6 +123,7 @@ sap.ui.define(["sap/ui/core/format/FileSizeFormat", "sap/ui/core/Locale"], funct
 		checkFormat("binary", "1", "1 Byte");
 		checkFormat("binary", "0x1", "1 Byte");
 		checkFormat("binary", 1048575, "1 MiB");
+		checkFormat("binary", NaN, " Byte"); // NumberFormat by default formats NaN to empty string
 	});
 
 	QUnit.test("format decimal", function (assert) {
@@ -124,6 +140,7 @@ sap.ui.define(["sap/ui/core/format/FileSizeFormat", "sap/ui/core/Locale"], funct
 		checkFormat("decimal", "1", "1 Byte");
 		checkFormat("decimal", "0x1", "1 Byte");
 		checkFormat("decimal", 999999, "1 MB");
+		checkFormat("binary", NaN, " Byte");
 	});
 
 	QUnit.test("format default", function (assert) {
@@ -139,6 +156,7 @@ sap.ui.define(["sap/ui/core/format/FileSizeFormat", "sap/ui/core/Locale"], funct
 		checkFormat("default", 1, "1 Byte");
 		checkFormat("default", "1", "1 Byte");
 		checkFormat("default", "0x1", "1 Byte");
+		checkFormat("binary", NaN, " Byte");
 	});
 
 	QUnit.test("parse binary", function (assert) {
