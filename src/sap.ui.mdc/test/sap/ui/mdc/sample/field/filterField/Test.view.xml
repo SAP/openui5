@@ -434,7 +434,7 @@
 						liveChange="handleLiveChange"
 						valueHelp="VH-Material">
 						<mdc:dependents>
-							<mdc:ValueHelp id="VH-Material" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["MatrId","Text"]\}\}'>
+							<mdc:ValueHelp id="VH-Material" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["MatrId","Text"], "showWithoutFilter": true, "shouldOpenOnFocus": true\}\}'>
 								<mdc:typeahead>
 									<mdcValueHelp:Popover id="VH-Material-Pop">
 										<mdcValueHelpContent:MTable id="VH-Material-Pop-MTable"
