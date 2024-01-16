@@ -976,7 +976,7 @@ sap.ui.define([
 				// remove datajs artefact for inline annotations in $metadata
 				delete oSchema.annotations;
 
-				Utils.liftSAPData(oSchema, bIgnoreAnnotationsFromMetadata);
+				Utils.liftSAPData(oSchema, /*sTypeClass*/undefined, bIgnoreAnnotationsFromMetadata);
 				oSchema.$path = "/dataServices/schema/" + i;
 				sSchemaVersion = oSchema["sap:schema-version"];
 				if (sSchemaVersion && !bIgnoreAnnotationsFromMetadata) {
