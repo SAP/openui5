@@ -4,8 +4,10 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Core",
 	"sap/ui/core/StashedControlSupport",
-	"sap/uxap/ObjectPageLazyLoader"],
-function (XMLView, Core, StashedSupport, ObjectPageLazyLoader) {
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/uxap/ObjectPageLazyLoader"
+],
+function(XMLView, Core, StashedSupport, nextUIUpdate, ObjectPageLazyLoader) {
 	"use strict";
 
 	QUnit.module("Stashing Tests", {
@@ -14,10 +16,10 @@ function (XMLView, Core, StashedSupport, ObjectPageLazyLoader) {
 			XMLView.create({
 				id: "UxAP-12-ObjectPageSubSectionStashing",
 				viewName: "view.UxAP-12-ObjectPageSubSectionStashing"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.objectPageSampleView = oView;
 				this.objectPageSampleView.placeAt('qunit-fixture');
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},
@@ -59,10 +61,10 @@ function (XMLView, Core, StashedSupport, ObjectPageLazyLoader) {
 			XMLView.create({
 				id: "UxAP-12-ObjectPageSubSectionStashing-Optimization",
 				viewName: "view.UxAP-12-ObjectPageSubSectionStashing-Optimization"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.objectPageSampleView = oView;
 				this.objectPageSampleView.placeAt('qunit-fixture');
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},

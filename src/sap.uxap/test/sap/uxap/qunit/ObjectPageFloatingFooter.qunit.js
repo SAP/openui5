@@ -1,7 +1,10 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/core/ControlBehavior", "sap/ui/core/Core", "sap/ui/core/Configuration", "sap/ui/core/mvc/XMLView", "sap/m/OverflowToolbar", "sap/m/HBox", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/uxap/ObjectPageSubSection"],
-function(ControlBehavior, Core, Configuration, XMLView, OverflowToolbar, HBox, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection) {
+sap.ui.define(["sap/ui/core/AnimationMode", "sap/ui/core/ControlBehavior", "sap/ui/core/Core", "sap/ui/core/Configuration", "sap/ui/core/mvc/XMLView", "sap/m/OverflowToolbar", "sap/m/HBox", "sap/ui/qunit/utils/nextUIUpdate", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/uxap/ObjectPageSubSection"],
+function(AnimationMode, ControlBehavior, Core, Configuration, XMLView, OverflowToolbar, HBox, nextUIUpdate, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection) {
 	"use strict";
+
+	//eslint-disable-next-line no-void
+	const makeVoid = (fn) => (...args) => void fn(...args);
 
 	QUnit.module("ObjectPage - Rendering - Footer Visibility", {
 		beforeEach: function (assert) {
@@ -9,10 +12,10 @@ function(ControlBehavior, Core, Configuration, XMLView, OverflowToolbar, HBox, O
 			XMLView.create({
 				id: "UxAP-162_ObjectPageSample",
 				viewName: "view.UxAP-162_ObjectPageSample"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.objectPageSampleView = oView;
 				this.objectPageSampleView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				this.oObjectPage = this.objectPageSampleView.byId("objectPage162");
 				done();
 			}.bind(this));
@@ -111,7 +114,7 @@ function(ControlBehavior, Core, Configuration, XMLView, OverflowToolbar, HBox, O
 			sOriginalMode = ControlBehavior.getAnimationMode();
 
 		//setup
-		ControlBehavior.setAnimationMode(Configuration.AnimationMode.none);
+		ControlBehavior.setAnimationMode(AnimationMode.none);
 
 		// Act: toggle to 'true'
 		this.oObjectPage.setShowFooter(true);
@@ -133,7 +136,7 @@ function(ControlBehavior, Core, Configuration, XMLView, OverflowToolbar, HBox, O
 			sOriginalMode = ControlBehavior.getAnimationMode();
 
 		//setup
-		ControlBehavior.setAnimationMode(Configuration.AnimationMode.minimal);
+		ControlBehavior.setAnimationMode(AnimationMode.minimal);
 
 		// Act: toggle to 'true'
 		this.oObjectPage.setShowFooter(true);
@@ -175,7 +178,7 @@ function(ControlBehavior, Core, Configuration, XMLView, OverflowToolbar, HBox, O
 
 	QUnit.module("ObjectPage - Setter");
 
-	QUnit.test("Setting 'footer' aggregation and 'showFooter' property", function (assert) {
+	QUnit.test("Setting 'footer' aggregation and 'showFooter' property", async function(assert) {
 		// Arrange
 		var oObjectPage = new ObjectPageLayout({
 			sections: [new ObjectPageSection({
@@ -189,11 +192,11 @@ function(ControlBehavior, Core, Configuration, XMLView, OverflowToolbar, HBox, O
 		fnDone = assert.async();
 
 		oObjectPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.expect(1);
 
-		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", makeVoid(async function () {
 			oObjectPage.addEventDelegate({
 				onAfterRendering: function () {
 					// Assert
@@ -207,8 +210,8 @@ function(ControlBehavior, Core, Configuration, XMLView, OverflowToolbar, HBox, O
 			// Act
 			oObjectPage.setShowFooter(true);
 			oObjectPage.setFooter(new OverflowToolbar());
-			Core.applyChanges();
-		});
+			await nextUIUpdate();
+		}));
 	});
 
 });

@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/uxap/ObjectPageLayout",
@@ -21,6 +22,7 @@ sap.ui.define([
 ],
 function(
 	Element,
+	nextUIUpdate,
 	jQuery,
 	Core,
 	ObjectPageLayout,
@@ -42,6 +44,9 @@ function(
 	"use strict";
 
 	var ButtonType = mLib.ButtonType;
+
+	//eslint-disable-next-line no-void
+	const makeVoid = (fn) => (...args) => void fn(...args);
 
 	function createPage(key, useDynamicTitle) {
 		var oHeaderTitleType = useDynamicTitle ? ObjectPageDynamicHeaderTitle : ObjectPageHeader;
@@ -85,14 +90,14 @@ function(
 		return oOPL;
 	}
 
-	QUnit.test("Show/Hide Page preserves expanded state", function (assert) {
+	QUnit.test("Show/Hide Page preserves expanded state", async function(assert) {
 
 		var oPage1 = createPage("page1"),
 			oPage2 = createPage("page2"),
 			oApp = new App({pages: [oPage1, oPage2],
 									initialPage: oPage1});
 		oApp.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oPage1._bStickyAnchorBar === false, "page is expanded");
 
@@ -109,7 +114,7 @@ function(
 		oApp.to(oPage1); //back page1
 	});
 
-	QUnit.test("Show/Hide Page preserves header actions state", function (assert) {
+	QUnit.test("Show/Hide Page preserves header actions state", async function(assert) {
 
 		var oPage1 = createPage("page1"),
 			oPage2 = createPage("page2"),
@@ -118,7 +123,7 @@ function(
 			done = assert.async();
 
 		oApp.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oPage1.attachEventOnce("onAfterRenderingDOMReady", function() {
 
@@ -142,7 +147,7 @@ function(
 
 	});
 
-	QUnit.test("Resize is detected if rerendered while hidden", function (assert) {
+	QUnit.test("Resize is detected if rerendered while hidden", async function(assert) {
 
 		var oPage1 = createPage("page1"),
 			done = assert.async(),
@@ -156,7 +161,7 @@ function(
 			});
 
 		oPage1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.expect(2);
 
@@ -173,13 +178,13 @@ function(
 		});
 	});
 
-	QUnit.test("CSS white-space rule reset. BCP: 1780382804", function (assert) {
+	QUnit.test("CSS white-space rule reset. BCP: 1780382804", async function(assert) {
 		// Arrange
 		var oOPL = new ObjectPageLayout().placeAt("qunit-fixture"),
 			oComputedStyle;
 
 		// Act
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Wrap the control in an element which apply's white-space
 		oOPL.$().wrap(jQuery("<div></div>").css("white-space", "nowrap"));
@@ -193,10 +198,10 @@ function(
 
 	QUnit.module("_hasVisibleDynamicTitleAndHeader (private method)");
 
-	QUnit.test("Object page with ObjectPageHeader", function (assert) {
+	QUnit.test("Object page with ObjectPageHeader", async function(assert) {
 		// Arrange
 		var oOPL = createPage("testPage", false).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oOPL._hasVisibleDynamicTitleAndHeader(), false, "Doesn't have visible dynamic title and header");
@@ -205,10 +210,10 @@ function(
 		oOPL.destroy();
 	});
 
-	QUnit.test("Object page with ObjectPageDynamicHeaderTitle", function (assert) {
+	QUnit.test("Object page with ObjectPageDynamicHeaderTitle", async function(assert) {
 		// Arrange
 		var oOPL = createPage("testPage", true).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oOPL._hasVisibleDynamicTitleAndHeader(), true, "Has visible dynamic title and header");
@@ -217,12 +222,12 @@ function(
 		oOPL.destroy();
 	});
 
-	QUnit.test("Object page with not visible ObjectPageDynamicHeaderTitle", function (assert) {
+	QUnit.test("Object page with not visible ObjectPageDynamicHeaderTitle", async function(assert) {
 		// Arrange
 		var oOPL = createPage("testPage", true).placeAt("qunit-fixture");
 		oOPL.getHeaderTitle().setVisible(false);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oOPL._hasVisibleDynamicTitleAndHeader(), false, "Doesn't have visible dynamic title and header");
@@ -231,13 +236,13 @@ function(
 		oOPL.destroy();
 	});
 
-	QUnit.test("Object page with empty header content", function (assert) {
+	QUnit.test("Object page with empty header content", async function(assert) {
 		// Arrange
 		var oOPL = createPage("testPage", true).placeAt("qunit-fixture");
 		oOPL.getHeaderContent().forEach(function(oControl) {
 			oControl.destroy();
 		});
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oOPL._hasVisibleDynamicTitleAndHeader(), false, "Doesn't have visible dynamic title and header");
@@ -246,11 +251,11 @@ function(
 		oOPL.destroy();
 	});
 
-	QUnit.test("Object page with not visible header content", function (assert) {
+	QUnit.test("Object page with not visible header content", async function(assert) {
 		// Arrange
 		var oOPL = createPage("testPage", true).placeAt("qunit-fixture");
 		oOPL.setShowHeaderContent(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oOPL._hasVisibleDynamicTitleAndHeader(), false, "Doesn't have visible dynamic title and header");
@@ -269,7 +274,7 @@ function(
 		}
 	});
 
-	QUnit.test("do not invalidate parent upon first rendering", function (assert) {
+	QUnit.test("do not invalidate parent upon first rendering", async function(assert) {
 
 		var oTextArea = new TextArea({rows: 5, width: "100%", value: "12345678901234567890", growing: true}),
 			oPage = new Page("page01", {content: [oTextArea]}),
@@ -299,7 +304,7 @@ function(
 		});
 
 		oApp.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 
 		var afterBackToPage1 = function() {
@@ -316,14 +321,14 @@ function(
 		oApp.to("page02");
 	});
 
-	QUnit.test("toggleTitle upon rerendering", function (assert) {
+	QUnit.test("toggleTitle upon rerendering", async function(assert) {
 
 		var oObjectPage = this.oObjectPage,
 			oSection = oObjectPage.getSections()[0],
 			done = assert.async();
 
 		// Setup step1: wait for page to render
-		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", makeVoid(async function() {
 
 			// Setup step3: wait to onBeforeRendering
 			oObjectPage.addEventDelegate({
@@ -344,11 +349,11 @@ function(
 
 			// Setup step2: cause rerendering
 			oObjectPage.invalidate();
-			Core.applyChanges();
-		});
+			await nextUIUpdate();
+		}));
 
 		oObjectPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
 
@@ -358,10 +363,10 @@ function(
 			XMLView.create({
 				id: "UxAP-ObjectPageState",
 				viewName: "view.UxAP-ObjectPageState"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oView = oView;
 				this.oView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				this.oObjectPage = this.oView.byId("ObjectPageLayout");
 				done();
 			}.bind(this));
@@ -403,7 +408,7 @@ function(
 		}
 	});
 
-	QUnit.test("updates the title positioning", function (assert) {
+	QUnit.test("updates the title positioning", async function(assert) {
 		//setup
 		var oPage = this.oObjectPage,
 			oSpy = this.spy(oPage, "_adjustTitlePositioning"),
@@ -421,10 +426,10 @@ function(
 		});
 
 		oPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("updates the title positioning in first onAfterRendering", function (assert) {
+	QUnit.test("updates the title positioning in first onAfterRendering", async function(assert) {
 		//setup
 		var oPage = this.oObjectPage,
 			oSpy = this.spy(oPage, "_adjustTitlePositioning"),
@@ -439,10 +444,10 @@ function(
 		});
 
 		oPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("sets scrollPaddingTop", function (assert) {
+	QUnit.test("sets scrollPaddingTop", async function(assert) {
 		//setup
 		var oPage = this.oObjectPage,
 			oSpy = this.spy(oPage, "_adjustTitlePositioning"),
@@ -462,7 +467,7 @@ function(
 		});
 
 		oPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
 	QUnit.module("update content size", {
@@ -471,12 +476,12 @@ function(
 			XMLView.create({
 				id: "UxAP-ObjectPageState",
 				viewName: "view.UxAP-ObjectPageState"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oView = oView;
 				this.oView.placeAt("qunit-fixture");
 				this.oObjectPage = this.oView.byId("ObjectPageLayout");
 				this.oObjectPage.setSelectedSection(this.oObjectPage.getSections()[1].getId());
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},
@@ -530,12 +535,12 @@ function(
 				XMLView.create({
 					id: "UxAP-ObjectPageState",
 					viewName: "view.UxAP-ObjectPageState"
-				}).then(function (oView) {
+				}).then(async function(oView) {
 					this.oView = oView;
 					this.oObjectPage = this.oView.byId("ObjectPageLayout");
 					this.oObjectPage.setUseIconTabBar(bUseIconTabBar);
 					this.oView.placeAt("qunit-fixture");
-					Core.applyChanges();
+					await nextUIUpdate();
 					done();
 				}.bind(this));
 			},
@@ -609,9 +614,7 @@ function(
 				bExpectedSnapped = true,
 				done = assert.async(),
 				iScrollPosition,
-				fnOnDomReady = function() {
-					oPage.detachEvent("onAfterRenderingDOMReady", fnOnDomReady);
-
+				fnOnDomReady = async function() {
 					oPage.scrollToSection(oSecondSection_secondSubsection.getId(), 0);
 					iScrollPosition = oPage._computeScrollPosition(oSecondSection_secondSubsection);
 					// call the scroll listener synchronously to save a timeout
@@ -630,7 +633,7 @@ function(
 						bExpectedSnapped = true; // TODO Verify this is correct since these tests were disabled (changed from false)
 					}
 
-					Core.applyChanges();
+					await nextUIUpdate();
 
 					sectionIsSelected(oPage, assert, {
 						bSnapped: bExpectedSnapped,
@@ -639,7 +642,7 @@ function(
 					done();
 
 			};
-			oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
+			oPage.attachEventOnce("onAfterRenderingDOMReady", makeVoid(fnOnDomReady));
 		});
 	}
 
@@ -682,13 +685,13 @@ function(
 		}
 	});
 
-	QUnit.test("Expand button listener lifecycle", function (assert) {
+	QUnit.test("Expand button listener lifecycle", async function(assert) {
 		// Arrange
 		var oSpy = sinon.spy(this.oObjectPage, "_handleExpandButtonPressEventLifeCycle");
 
 		// Act
 		this.oObjectPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 2,
@@ -722,13 +725,13 @@ function(
 		assert.strictEqual(oDetachSpy.callCount, 1, "detachPress method called once");
 	});
 
-	QUnit.test("this.iHeaderContentHeight is acquired in the correct way", function (assert) {
+	QUnit.test("this.iHeaderContentHeight is acquired in the correct way", async function(assert) {
 		// Arrange - add a button to the header content so we will have height
 		this.oObjectPage.addHeaderContent(new Button());
 
 		// Act
 		this.oObjectPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Arrange spy method on the headerContent DOM instance
 		var oSpy = sinon.spy(this.oObjectPage._$headerContent[0], "getBoundingClientRect");
@@ -750,11 +753,11 @@ function(
 		}
 	});
 
-	QUnit.test("event is fired upon moving the header in/out scroll container", function (assert) {
+	QUnit.test("event is fired upon moving the header in/out scroll container", async function(assert) {
 		var oSpy = this.spy();
 		this.oObjectPage.attachEvent("_snapChange", oSpy);
 		this.oObjectPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		oSpy.resetHistory();
 
 		this.oObjectPage._moveHeaderToTitleArea();
