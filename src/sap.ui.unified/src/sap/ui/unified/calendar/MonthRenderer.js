@@ -466,7 +466,8 @@ sap.ui.define([
 		}
 
 		if (this.renderWeekNumbers && oMonth._oDate) {
-			mAccProps["describedby"] = mAccProps["describedby"] + " " + oMonth.getId() + "-week-" + oMonth._calculateWeekNumber(oDay) + "-text";
+			const iWeekNumber = CalendarUtils.calculateWeekNumber(oDay.toLocalJSDate(), oDay.toLocalJSDate().getFullYear(), Configuration.getLanguage(), oMonth._getLocaleData());
+			mAccProps["describedby"] = mAccProps["describedby"] + " " + oMonth.getId() + "-week-" + iWeekNumber + "-text";
 		}
 
 		if (bNonWorking) {
