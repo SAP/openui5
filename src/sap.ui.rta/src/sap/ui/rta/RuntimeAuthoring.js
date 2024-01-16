@@ -870,16 +870,16 @@ sap.ui.define([
 	// ---- API ----
 
 	// this function is used to save in the Visual Editor
-	RuntimeAuthoring.prototype._serializeToLrep = function(bCondenseAnyLayer, bIsExit) {
+	RuntimeAuthoring.prototype._serializeToLrep = function(bCondenseAnyLayer, bIsExit, bActivateVersion) {
 		// when saving a change that requires a reload, the information has to be cached
 		// to do the reload when exiting UI Adaptation as then the change will not be available anymore
 		if (!this._bSavedChangesNeedReload) {
 			return this._oSerializer.needsReload().then(function(bReloadNeeded) {
 				this._bSavedChangesNeedReload = bReloadNeeded;
-				return serializeAndSave.call(this, undefined, bCondenseAnyLayer, bIsExit);
+				return serializeAndSave.call(this, bActivateVersion, bCondenseAnyLayer, bIsExit);
 			}.bind(this));
 		}
-		return serializeAndSave.call(this, undefined, bCondenseAnyLayer, bIsExit);
+		return serializeAndSave.call(this, bActivateVersion, bCondenseAnyLayer, bIsExit);
 	};
 
 	/**
@@ -1170,7 +1170,7 @@ sap.ui.define([
 		const oSelector = this.getRootControlInstance();
 		const sDisplayedVersion = this._oVersionsModel.getProperty("/displayedVersion");
 		try {
-			await serializeAndSave.call(this, true);
+			await this._serializeToLrep(/* bActivateVersion= */true);
 			await VersionsAPI.activate({
 				layer: sLayer,
 				control: oSelector,
