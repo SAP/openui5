@@ -35,8 +35,13 @@ html.sap-desktop .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed{
 	background-color: @sapUiButtonAttentionActiveBackground;
 }
 
-.sapFShellBarSizeLargeDesktop {
+.sapFShellBarSizeLargeDesktop,
+.sapFShellBarSizeExtraLargeDesktop {
 	padding: 0 3rem;
+}
+
+.sapFShellBarSizeExtraLargeDesktop.sapFShellBar .sapFShellBarSearchWrap .sapMBtn:not(.sapFShellBarSearchCancelButton) {
+	right: 0;
 }
 
 .sapFShellBarSizeDesktop {
@@ -109,6 +114,10 @@ html.sap-desktop .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed{
 		background-color: none;
 	}
 
+	.sapFShellBarProfile:hover::before {
+		content: none;
+	}
+
 	// Mega Menu
 	.sapFSHMegaMenu {
 		color: @sapUiShellTextColor;
@@ -142,6 +151,8 @@ html.sap-desktop .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed{
 	// Home Icon
 	.sapFShellBarHomeIcon {
 		max-height: 2rem;
+		padding: 0.25rem;
+		overflow-clip-margin: border-box;
 
 		&:hover {
 			background: @sapUiShellHoverBackground;
@@ -197,6 +208,10 @@ html.sap-desktop .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed{
 	.sapFShellBarSearch.sapFShellBarSearchFullWidth .sapFShellBarSearchWrap {
 		max-width: 35rem;
 		padding: 0;
+
+		.sapMSF {
+			max-width: 100%;
+		}
 	}
 
 	.sapFShellBarSearch.sapFShellBarSearchFullWidth .sapFShellBarSearchWrap .sapMSF.sapMSFVal form.sapMSFNS:not(.sapMSFReload) {
