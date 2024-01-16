@@ -2,11 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ],
 	function(
 		Card,
-		Core
+		nextUIUpdate,
+		nextCardReadyEvent
 	) {
 		"use strict";
 
@@ -28,10 +30,8 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Header translation and icon", function (assert) {
-
+		QUnit.test("Header translation and icon", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			var oManifest = {
 				"sap.app": {
 					"id": "my.test.card",
@@ -50,26 +50,22 @@ sap.ui.define([
 			};
 
 			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oHeader = this.oCard.getCardHeader();
-
-				// Assert
-				assert.equal(oHeader.getTitle(), "Card Bundle", "Should have loaded the i18n files and used them for translating the title.");
-				assert.equal(oHeader._getAvatar().getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
-
-				// Clean up
-				done();
-			}.bind(this));
 			this.oCard.setManifest(oManifest);
 			this.oCard.setBaseUrl("test-resources/sap/ui/integration/qunit/cardbundle/bundle/");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.equal(oHeader.getTitle(), "Card Bundle", "Should have loaded the i18n files and used them for translating the title.");
+			assert.equal(oHeader._getAvatar().getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 		});
 
-		QUnit.test("Header icon with binding", function (assert) {
+		QUnit.test("Header icon with binding", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				sBaseUrl = "test-resources/sap/ui/integration/qunit/cardbundle/bundle/",
+			var sBaseUrl = "test-resources/sap/ui/integration/qunit/cardbundle/bundle/",
 				oManifest = {
 					"sap.app": {
 						"id": "my.test.card.icon.with.binding",
@@ -90,25 +86,19 @@ sap.ui.define([
 					}
 				};
 
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				var oHeader = this.oCard.getAggregation("_header");
-				assert.strictEqual(oHeader.getAggregation("_avatar").getSrc(), sBaseUrl + "./test-src", "Card header avatar src is correct.");
-				done();
-			}.bind(this));
-
-			// Arrange
 			this.oCard.setManifest(oManifest);
 			this.oCard.setBaseUrl(sBaseUrl);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			var oHeader = this.oCard.getAggregation("_header");
+			assert.strictEqual(oHeader.getAggregation("_avatar").getSrc(), sBaseUrl + "./test-src", "Card header avatar src is correct.");
 		});
 
-		QUnit.test("ListContent item icon", function (assert) {
-
+		QUnit.test("ListContent item icon", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			var oManifest = {
 				"sap.app": {
 					"id": "my.test.card.list",
@@ -136,27 +126,20 @@ sap.ui.define([
 					}
 				}
 			};
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
-
-				// Assert
-				assert.equal(oListItem.getIcon(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
-
-				// Clean up
-				done();
-			}.bind(this));
 			this.oCard.setManifest(oManifest);
 			this.oCard.setBaseUrl("test-resources/sap/ui/integration/qunit/cardbundle/bundle/");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
+
+			// Assert
+			assert.equal(oListItem.getIcon(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 		});
 
-		QUnit.test("TableContent item icon", function (assert) {
-
+		QUnit.test("TableContent item icon", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			var oManifest = {
 				"sap.app": {
 					"id": "my.test.card.table",
@@ -210,28 +193,21 @@ sap.ui.define([
 					}
 				}
 			};
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
-
-				// Assert
-				assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
-
-				// Clean up
-				done();
-			}.bind(this));
 			this.oCard.setManifest(oManifest);
 			this.oCard.setBaseUrl("test-resources/sap/ui/integration/qunit/cardbundle/bundle/");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
+
+			// Assert
+			assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 		});
 
-		QUnit.test("ObjectContent item icon", function (assert) {
-
+		QUnit.test("ObjectContent item icon", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			var oManifest = {
 				"sap.app": {
 					"id": "my.test.card.object",
@@ -268,27 +244,20 @@ sap.ui.define([
 					}
 				}
 			};
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
-
-				// Assert
-				assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
-
-				// Clean up
-				done();
-			}.bind(this));
 			this.oCard.setManifest(oManifest);
 			this.oCard.setBaseUrl("test-resources/sap/ui/integration/qunit/cardbundle/bundle/");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
+
+			// Assert
+			assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 		});
 
-		QUnit.test("ListContent item icon with protocol-relative url", function (assert) {
-
+		QUnit.test("ListContent item icon with protocol-relative url", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			var oManifest = {
 				"sap.app": {
 					"id": "my.test.card.list",
@@ -315,19 +284,16 @@ sap.ui.define([
 			};
 
 			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
-
-				// Assert
-				assert.equal(oListItem.getIcon(), "//icons/edit.png", "Should NOT format protocol-relative URL.");
-
-				// Clean up
-				done();
-			}.bind(this));
 			this.oCard.setManifest(oManifest);
 			this.oCard.setBaseUrl("test-resources/sap/ui/integration/qunit/cardbundle/bundle/");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
+
+			// Assert
+			assert.equal(oListItem.getIcon(), "//icons/edit.png", "Should NOT format protocol-relative URL.");
 		});
 
 		QUnit.module("Card Static Resources with manifest URL", {
@@ -346,105 +312,65 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Header translation and icon", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oHeader = this.oCard.getCardHeader();
-
-				// Assert
-				assert.equal(oHeader.getTitle(), "Card Bundle", "Should have loaded the i18n files and used them for translating the title.");
-				assert.equal(oHeader._getAvatar().getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
-
-				// Clean up
-				done();
-			}.bind(this));
+		QUnit.test("Header translation and icon", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/cardbundle/bundle/manifest.json");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.equal(oHeader.getTitle(), "Card Bundle", "Should have loaded the i18n files and used them for translating the title.");
+			assert.equal(oHeader._getAvatar().getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 		});
 
-		QUnit.test("ListContent item icon", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
-
-				// Assert
-				assert.equal(oListItem.getIcon(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
-
-				// Clean up
-				done();
-			}.bind(this));
+		QUnit.test("ListContent item icon", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/cardbundle/bundle/listmanifest.json");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
+
+			// Assert
+			assert.equal(oListItem.getIcon(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 		});
 
-		QUnit.test("TableContent item icon", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
-
-				// Assert
-				assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
-
-				// Clean up
-				done();
-			}.bind(this));
+		QUnit.test("TableContent item icon", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/cardbundle/bundle/tablemanifest.json");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
+
+			// Assert
+			assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 		});
 
-		QUnit.test("ObjectContent item icon", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
-
-				// Assert
-				assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
-
-				// Clean up
-				done();
-			}.bind(this));
+		QUnit.test("ObjectContent item icon", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/cardbundle/bundle/objectmanifest.json");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
+
+			// Assert
+			assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 		});
 
-		QUnit.test("ListContent header icon with protocol-relative url", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oAvatar = this.oCard.getCardHeader().getAggregation("_avatar");
-
-				// Assert
-				assert.equal(oAvatar.getSrc(), "//icons/edit.png", "Should NOT format protocol-relative URL.");
-
-				// Clean up
-				done();
-			}.bind(this));
+		QUnit.test("ListContent header icon with protocol-relative url", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/cardbundle/bundle/listmanifest.json");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oAvatar = this.oCard.getCardHeader().getAggregation("_avatar");
+
+			// Assert
+			assert.equal(oAvatar.getSrc(), "//icons/edit.png", "Should NOT format protocol-relative URL.");
 		});
 	}
 );

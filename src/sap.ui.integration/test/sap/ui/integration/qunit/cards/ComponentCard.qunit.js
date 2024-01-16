@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/integration/library",
-	"sap/ui/integration/widgets/Card"
+	"sap/ui/integration/widgets/Card",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	library,
-	Card
+	Card,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -25,15 +27,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("ComponentContainer shouldn't be created when preview mode is 'Abstract'", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEventOnce("_ready", function () {
-			assert.notOk(this.oCard.getCardContent().getAggregation("_content"), "ComponentContainer shouldn't have been created");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("ComponentContainer shouldn't be created when preview mode is 'Abstract'", async function (assert) {
 		this.oCard.setPreviewMode(CardPreviewMode.Abstract);
 		this.oCard.setManifest({
 			"sap.app": {
@@ -44,36 +38,24 @@ sap.ui.define([
 				"type": "Component"
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		assert.notOk(this.oCard.getCardContent().getAggregation("_content"), "ComponentContainer shouldn't have been created");
 	});
 
-	QUnit.test("resourceRoots described in the manifest are applied", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEventOnce("_ready", function () {
-			// Assert
-			assert.ok(this.oCard.getCardContent(), "The card content should be created");
-			assert.notOk(this.oCard.getBlockingMessage(), "There shouldn't be any error during the creation");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("resourceRoots described in the manifest are applied", async function (assert) {
 		// Act
 		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/componentCard/manifest.json");
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		assert.ok(this.oCard.getCardContent(), "The card content should be created");
+		assert.notOk(this.oCard.getBlockingMessage(), "There shouldn't be any error during the creation");
 	});
 
-	QUnit.test("resourceRoots described in the manifest are applied when the manifest is provided as object", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEventOnce("_ready", function () {
-			// Assert
-			assert.ok(this.oCard.getCardContent(), "The card content should be created");
-			assert.notOk(this.oCard.getBlockingMessage(), "There shouldn't be any error during the creation");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("resourceRoots described in the manifest are applied when the manifest is provided as object", async function (assert) {
 		// Act
 		this.oCard.setManifest({
 			"sap.app": {
@@ -105,6 +87,12 @@ sap.ui.define([
 			}
 		});
 		this.oCard.setBaseUrl("test-resources/sap/ui/integration/qunit/testResources/componentCard/");
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		assert.ok(this.oCard.getCardContent(), "The card content should be created");
+		assert.notOk(this.oCard.getBlockingMessage(), "There shouldn't be any error during the creation");
 	});
 
 

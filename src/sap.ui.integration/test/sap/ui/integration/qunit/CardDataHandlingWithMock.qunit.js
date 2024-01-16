@@ -2,13 +2,15 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core",
-	"./testResources/localService/SEPMRA_PROD_MAN/mockServer"
+	"./testResources/localService/SEPMRA_PROD_MAN/mockServer",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ],
 function (
 	Card,
-	Core,
-	ProductsMockServer
+	ProductsMockServer,
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -99,39 +101,28 @@ function (
 		}
 	});
 
-	QUnit.test("Batch request", function (assert) {
-		// Arrange
-		var done = assert.async(),
-			oCard = this.oCard;
-
-		oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			var aItems,
-				oHeader = oCard.getCardHeader();
-
-			aItems = oCard.getCardContent().getInnerList().getItems();
-
-			// Assert
-			assert.strictEqual(oHeader.getTitle(), "Bionic Research Lab", "Title from header level is correct.");
-
-			assert.strictEqual(aItems.length, 2, "List has 2 items.");
-			assert.strictEqual(aItems[0].getTitle(), "Hurricane GX/LN", "First list item has correct title.");
-
-			done();
-		});
-
+	QUnit.test("Batch request", async function (assert) {
 		// Act
-		oCard.setManifest(oManifest_Batch);
+		this.oCard.setManifest(oManifest_Batch);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const aItems = this.oCard.getCardContent().getInnerList().getItems();
+		const oHeader = this.oCard.getCardHeader();
+
+		// Assert
+		assert.strictEqual(oHeader.getTitle(), "Bionic Research Lab", "Title from header level is correct.");
+		assert.strictEqual(aItems.length, 2, "List has 2 items.");
+		assert.strictEqual(aItems[0].getTitle(), "Hurricane GX/LN", "First list item has correct title.");
 	});
 
 	QUnit.test("Simulate error", function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oCard = this.oCard;
+		var done = assert.async();
 
-		oCard.attachEvent("_error", function (oEvent) {
+		this.oCard.attachEvent("_error", function (oEvent) {
 			var sMessage = oEvent.getParameter("message");
 
 			assert.ok(sMessage.indexOf("404 Not Found") > 0, "Error is fired when part of batch request fails.");
@@ -139,7 +130,7 @@ function (
 		});
 
 		// Act
-		oCard.setManifest(oManifest_BatchError);
+		this.oCard.setManifest(oManifest_BatchError);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 

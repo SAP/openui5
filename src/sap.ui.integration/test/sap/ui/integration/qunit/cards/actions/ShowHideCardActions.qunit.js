@@ -1,13 +1,13 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function(
-	Core,
 	Card,
-	nextUIUpdate
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -84,113 +84,97 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Open and close details card", function (assert) {
+	QUnit.test("Open and close details card", async function (assert) {
 		// Arrange
 		const done = assert.async();
 
-		this.oCard.attachEvent("_ready", () => {
-			Core.applyChanges();
-
-			const oActionsStrip = this.oCard.getAggregation("_footer").getActionsStrip();
-			const aButtons = oActionsStrip._getToolbar().getContent();
-			let oDialog = this.oCard.getDependents()[0];
-
-			// Assert
-			assert.notOk(oDialog, "Child card dialog is not available yet");
-
-			// Act
-			aButtons[1].firePress();
-			oDialog = this.oCard.getDependents()[0];
-
-			// Assert
-			const oSnackCard = oDialog.getContent()[0];
-			assert.ok(oSnackCard, "Child card is available, 'showCard' action is working");
-			assert.ok(oSnackCard.isA("sap.ui.integration.widgets.Card"), "Card is correctly found");
-
-			Promise.all([
-				new Promise((resolve) => { oSnackCard.attachEventOnce("_ready", resolve); }),
-				new Promise((resolve) => { oDialog.attachAfterOpen(resolve); })
-			]).then(async () => {
-				await nextUIUpdate();
-
-				//Assert
-				assert.strictEqual(oSnackCard.getCombinedParameters().test, this.oCard.getCombinedParameters().test, "Parameters are transferred between cards");
-				assert.strictEqual(oSnackCard.getWidth(), "320px", "The width is transferred between cards properly");
-				assert.strictEqual(oSnackCard.getCardHeader().getTitle(), "Donna", "Data is transferred between cards properly");
-				assert.strictEqual(oSnackCard.getCardHeader().getProperty("headingLevel"), "1", "When card is in a dialog aria-level should be set to 1");
-
-				const oSnackCardActionStrip = oSnackCard.getAggregation("_footer").getActionsStrip(),
-					aSnackCardButtons = oSnackCardActionStrip._getToolbar().getContent();
-
-				// Act
-				aSnackCardButtons[1].firePress();
-			});
-
-			oDialog.attachAfterClose(() => {
-				// Assert
-				assert.ok(oSnackCard.isDestroyed(), "Child card is not destroyed, 'hideCard' action is working");
-				done();
-			});
-		});
-
 		this.oCard.setManifest(oBiteManifestWithUrl);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const oActionsStrip = this.oCard.getAggregation("_footer").getActionsStrip();
+		const aButtons = oActionsStrip._getToolbar().getContent();
+		let oDialog = this.oCard.getDependents()[0];
+
+		// Assert
+		assert.notOk(oDialog, "Child card dialog is not available yet");
+
+		// Act
+		aButtons[1].firePress();
+		oDialog = this.oCard.getDependents()[0];
+
+		// Assert
+		const oSnackCard = oDialog.getContent()[0];
+		assert.ok(oSnackCard, "Child card is available, 'showCard' action is working");
+		assert.ok(oSnackCard.isA("sap.ui.integration.widgets.Card"), "Card is correctly found");
+
+		await Promise.all([
+			nextCardReadyEvent(oSnackCard),
+			new Promise((resolve) => { oDialog.attachAfterOpen(resolve); })
+		]);
+		await nextUIUpdate();
+
+		//Assert
+		assert.strictEqual(oSnackCard.getCombinedParameters().test, this.oCard.getCombinedParameters().test, "Parameters are transferred between cards");
+		assert.strictEqual(oSnackCard.getWidth(), "320px", "The width is transferred between cards properly");
+		assert.strictEqual(oSnackCard.getCardHeader().getTitle(), "Donna", "Data is transferred between cards properly");
+		assert.strictEqual(oSnackCard.getCardHeader().getProperty("headingLevel"), "1", "When card is in a dialog aria-level should be set to 1");
+
+		const oSnackCardActionStrip = oSnackCard.getAggregation("_footer").getActionsStrip(),
+			aSnackCardButtons = oSnackCardActionStrip._getToolbar().getContent();
+
+		// Act
+		aSnackCardButtons[1].firePress();
+
+		oDialog.attachAfterClose(() => {
+			// Assert
+			assert.ok(oSnackCard.isDestroyed(), "Child card is not destroyed, 'hideCard' action is working");
+			done();
+		});
 	});
 
-	QUnit.test("Destroy main card while details card is opened", function (assert) {
+	QUnit.test("Destroy main card while details card is opened", async function (assert) {
 		// Arrange
-		const done = assert.async();
-
-		this.oCard.attachEvent("_ready", () => {
-			Core.applyChanges();
-
-			const oActionsStrip = this.oCard.getAggregation("_footer").getActionsStrip();
-			const aButtons = oActionsStrip._getToolbar().getContent();
-
-			// Act
-			aButtons[1].firePress();
-			const oDialog = this.oCard.getDependents()[0];
-			const oSnackCard = oDialog.getContent()[0];
-
-			oSnackCard.attachEventOnce("_ready", () => {
-				Core.applyChanges();
-				//Assert
-
-				// Act
-				this.oCard.destroy();
-
-				// Assert
-				assert.ok(oSnackCard.isDestroyed(), "Child card should be destroyed");
-				assert.ok(oDialog.isDestroyed(),  "Dialog should be destroyed");
-
-				done();
-			});
-		});
-
 		this.oCard.setManifest(oBiteManifestWithUrl);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const oActionsStrip = this.oCard.getAggregation("_footer").getActionsStrip();
+		const aButtons = oActionsStrip._getToolbar().getContent();
+
+		// Act
+		aButtons[1].firePress();
+		const oDialog = this.oCard.getDependents()[0];
+		const oSnackCard = oDialog.getContent()[0];
+
+		await nextCardReadyEvent(oSnackCard);
+
+		// Act
+		this.oCard.destroy();
+
+		// Assert
+		assert.ok(oSnackCard.isDestroyed(), "Child card should be destroyed");
+		assert.ok(oDialog.isDestroyed(),  "Dialog should be destroyed");
 	});
 
-	QUnit.test("Hiding close button", function (assert) {
-		// Arrange
-		const done = assert.async();
-
-		this.oCard.attachEvent("_ready", () => {
-			const oActionsStrip = this.oCard.getAggregation("_footer").getActionsStrip(),
-				aButtons = oActionsStrip._getToolbar().getContent();
-
-			aButtons[1].firePress();
-
-			const oSnackCard = this.oCard.getDependents()[0].getContent()[0];
-
-			oSnackCard.attachEventOnce("_ready", function () {
-				//Assert
-				assert.strictEqual(oSnackCard.getCardHeader().getToolbar().getVisible(), false, "Close Button is not visible");
-				assert.strictEqual(oSnackCard.getCardHeader().getDomRef().querySelector("sapMBtn"), null, "Close Button is not in DOM");
-
-				done();
-			});
-		});
-
+	QUnit.test("Hiding close button", async function (assert) {
 		this.oCard.setManifest(oBiteManifestWithUrl);
+		await nextCardReadyEvent(this.oCard);
+
+		const oActionsStrip = this.oCard.getAggregation("_footer").getActionsStrip(),
+			aButtons = oActionsStrip._getToolbar().getContent();
+
+		aButtons[1].firePress();
+
+		const oSnackCard = this.oCard.getDependents()[0].getContent()[0];
+
+		await nextCardReadyEvent(oSnackCard);
+
+		//Assert
+		assert.strictEqual(oSnackCard.getCardHeader().getToolbar().getVisible(), false, "Close Button is not visible");
+		assert.strictEqual(oSnackCard.getCardHeader().getDomRef().querySelector("sapMBtn"), null, "Close Button is not in DOM");
 	});
 
 	QUnit.module("Show/Hide Card Actions - Resizing", {
@@ -205,27 +189,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Open resizable dialog", function (assert) {
+	QUnit.test("Open resizable dialog", async function (assert) {
 		// Arrange
 		const done = assert.async();
-
-		this.oCard.attachEvent("_ready", () => {
-			Core.applyChanges();
-
-			const oActionsStrip = this.oCard.getAggregation("_footer").getActionsStrip();
-			const aButtons = oActionsStrip._getToolbar().getContent();
-
-			// Act
-			aButtons[1].firePress();
-			const oDialog = this.oCard.getDependents()[0];
-
-			oDialog.attachAfterOpen(() => {
-				// Assert
-				assert.ok(oDialog.getResizable(), "Resizing should be enabled");
-
-				done();
-			});
-		});
 
 		this.oCard.setManifest({
 			"sap.app": {
@@ -264,6 +230,23 @@ sap.ui.define([
 					}]
 				}
 			}
+		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const oActionsStrip = this.oCard.getAggregation("_footer").getActionsStrip();
+		const aButtons = oActionsStrip._getToolbar().getContent();
+
+		// Act
+		aButtons[1].firePress();
+		const oDialog = this.oCard.getDependents()[0];
+
+		oDialog.attachAfterOpen(() => {
+			// Assert
+			assert.ok(oDialog.getResizable(), "Resizing should be enabled");
+
+			done();
 		});
 	});
 

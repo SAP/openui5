@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/integration/cards/filters/SelectFilter",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	Element,
 	SelectFilter,
 	Card,
-	Core
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -28,10 +30,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Select for filter 'category' is rendered", function (assert) {
+	QUnit.test("Select for filter 'category' is rendered", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			aOptions = [
+		var aOptions = [
 				{
 					"title": "Flat Screen Monitors",
 					"key": "flat_screens"
@@ -42,26 +43,23 @@ sap.ui.define([
 				}
 			];
 
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			// Assert
-			var oFilterBar = this.oCard.getAggregation("_filterBar");
-			assert.strictEqual(oFilterBar._getFilters().length, 5, "The filter bar has 5 filters");
-
-			var oFirstFilter = oFilterBar._getFilters()[0];
-			assert.strictEqual(oFirstFilter._getSelect().getItems().length, 2, "The filter options are 2.");
-
-			oFirstFilter._getSelect().getItems().forEach(function (oItem, iInd) {
-				assert.strictEqual(oItem.getKey(), aOptions[iInd].key, "Option at position " + iInd + " has a valid key.");
-				assert.strictEqual(oItem.getText(), aOptions[iInd].title, "Option at position " + iInd + " has a valid title.");
-			});
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_static_filter.json");
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Assert
+		var oFilterBar = this.oCard.getAggregation("_filterBar");
+		assert.strictEqual(oFilterBar._getFilters().length, 5, "The filter bar has 5 filters");
+
+		var oFirstFilter = oFilterBar._getFilters()[0];
+		assert.strictEqual(oFirstFilter._getSelect().getItems().length, 2, "The filter options are 2.");
+
+		oFirstFilter._getSelect().getItems().forEach(function (oItem, iInd) {
+			assert.strictEqual(oItem.getKey(), aOptions[iInd].key, "Option at position " + iInd + " has a valid key.");
+			assert.strictEqual(oItem.getText(), aOptions[iInd].title, "Option at position " + iInd + " has a valid title.");
+		});
 	});
 
 	QUnit.test("Initial value for filters model when filter is with dynamic data", function (assert) {

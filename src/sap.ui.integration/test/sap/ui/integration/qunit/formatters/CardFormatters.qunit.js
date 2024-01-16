@@ -3,12 +3,14 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	Card,
 	Core,
 	UI5Date,
-	nextUIUpdate
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -30,10 +32,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Default Header - Formatter in title", function (assert) {
+	QUnit.test("Default Header - Formatter in title", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "card.explorer.highlight.list.card",
 					"type": "card"
@@ -50,24 +51,22 @@ sap.ui.define([
 			},
 			sYear = UI5Date.getInstance().getUTCFullYear();
 
-		this.oCard.attachEventOnce("_ready", function () {
-			var sTitle = this.oCard.getCardHeader().getTitle();
-
-			Core.applyChanges();
-
-			// Assert
-			assert.ok(sTitle.indexOf(sYear) > 0, "Title should contain parsed year.");
-			done();
-		}.bind(this));
 
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var sTitle = this.oCard.getCardHeader().getTitle();
+
+		// Assert
+		assert.ok(sTitle.indexOf(sYear) > 0, "Title should contain parsed year.");
 	});
 
-	QUnit.test("List content - Formatter in item title", function (assert) {
+	QUnit.test("List content - Formatter in item title", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oListManifest = {
+		var oListManifest = {
 				"sap.app": {
 					"id": "card.explorer.highlight.list.card",
 					"type": "card"
@@ -91,24 +90,21 @@ sap.ui.define([
 			},
 			sYear = UI5Date.getInstance().getUTCFullYear();
 
-		this.oCard.attachEventOnce("_ready", function () {
-			var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
-
-			Core.applyChanges();
-
-			// Assert
-			assert.ok(oListItem.getTitle().indexOf(sYear) > 0, "List item should contain parsed year.");
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oListManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
+
+		// Assert
+		assert.ok(oListItem.getTitle().indexOf(sYear) > 0, "List item should contain parsed year.");
 	});
 
-	QUnit.test("Object content - formatter in group item", function (assert) {
+	QUnit.test("Object content - formatter in group item", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "test.object.card",
 					"type": "card"
@@ -137,28 +133,24 @@ sap.ui.define([
 			},
 			sYear = UI5Date.getInstance().getUTCFullYear();
 
-		this.oCard.attachEvent("_ready", function () {
-			var oObjectContent = this.oCard.getAggregation("_content");
-			var oContent = oObjectContent.getAggregation("_content");
-			var aGroups = oContent.getItems()[0].getContent();
-
-			Core.applyChanges();
-
-			// Group 1 assertions
-			assert.ok(aGroups[0].getItems()[1].getText().indexOf(sYear) > 0, "Should have correct year after expression binding and formatting.");
-			assert.ok(aGroups[0].getItems()[2].getText().indexOf(sYear) > 0, "Should have correct year after expression binding and formatting.");
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oObjectContent = this.oCard.getAggregation("_content");
+		var oContent = oObjectContent.getAggregation("_content");
+		var aGroups = oContent.getItems()[0].getContent();
+
+		// Group 1 assertions
+		assert.ok(aGroups[0].getItems()[1].getText().indexOf(sYear) > 0, "Should have correct year after expression binding and formatting.");
+		assert.ok(aGroups[0].getItems()[2].getText().indexOf(sYear) > 0, "Should have correct year after expression binding and formatting.");
 	});
 
-	QUnit.test("Table content - formatter", function (assert) {
+	QUnit.test("Table content - formatter", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "test.table.card.formatter"
 				},
@@ -183,22 +175,19 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			var oCardContent = this.oCard.getAggregation("_content"),
-				oTable = oCardContent.getAggregation("_content"),
-				sYear = UI5Date.getInstance().getUTCFullYear(),
-				aCells = oTable.getItems()[0].getCells();
-
-			Core.applyChanges();
-
-			// Column values
-			assert.ok(aCells[0].getTitle().indexOf(sYear), "Should have correct year after expression binding and formatting.");
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oCardContent = this.oCard.getAggregation("_content"),
+			oTable = oCardContent.getAggregation("_content"),
+			sYear = UI5Date.getInstance().getUTCFullYear(),
+			aCells = oTable.getItems()[0].getCells();
+
+		// Column values
+		assert.ok(aCells[0].getTitle().indexOf(sYear), "Should have correct year after expression binding and formatting.");
 	});
 
 	QUnit.module("Formatters using i18n model of the card", {
@@ -215,21 +204,16 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Text formatter", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var sTitle = this.oCard.getCardHeader().getTitle();
-
-			// Column values
-			assert.strictEqual(sTitle, "Hello World from card header.", "The text is properly formatted");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Text formatter", async function (assert) {
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var sTitle = this.oCard.getCardHeader().getTitle();
+
+		// Column values
+		assert.strictEqual(sTitle, "Hello World from card header.", "The text is properly formatted");
 	});
 
 });

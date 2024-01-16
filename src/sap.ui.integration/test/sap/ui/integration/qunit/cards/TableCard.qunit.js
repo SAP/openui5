@@ -3,13 +3,15 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	mLibrary,
 	Card,
-	Core,
-	QUnitUtils
+	QUnitUtils,
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -585,206 +587,164 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Using manifest", function (assert) {
-
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oManifestData = oManifest_TableCard["sap.card"].content.data.json;
-			var oManifestContent = oManifest_TableCard["sap.card"].content;
-			var oCardContent = this.oCard.getAggregation("_content");
-			var oTable = oCardContent.getAggregation("_content");
-			var aColumns = oTable.getColumns();
-			var aRows = oTable.getItems();
-			var aCells = aRows[0].getCells();
-			var aCellsSecondRow = aRows[1].getCells();
-			var aCellsThirdRow = aRows[2].getCells();
-
-
-			Core.applyChanges();
-
-			// row highlight
-			assert.equal(aRows[0].getHighlight(), oManifestData[0].progressState, "Should have correct highlight value");
-			assert.equal(aRows[1].getHighlight(), oManifestData[1].progressState, "Should have correct highlight value");
-			assert.equal(aRows[2].getHighlight(), oManifestData[2].progressState, "Should have correct highlight value");
-
-			assert.equal(aRows[0].getHighlightText(), oManifestData[0].progressState, "Should have correct highlight text");
-			assert.equal(aRows[1].getHighlightText(), oManifestData[1].progressState, "Should have correct highlight text");
-			assert.equal(aRows[2].getHighlightText(), oManifestData[2].progressState, "Should have correct highlight text");
-
-			// Assert
-			assert.equal(aColumns.length, 7, "Should have 7 columns.");
-
-			// Assert
-			assert.equal(oTable.getAriaLabelledBy()[0], this.oCard.getCardHeader().getAggregation("_title").getId() + "-inner", "Should have correct table aria label");
-
-			// Columns titles
-			assert.equal(aColumns[0].getHeader().getText(), oManifestContent.row.columns[0].title, "Should have correct column title");
-			assert.equal(aColumns[1].getHeader().getText(), oManifestContent.row.columns[1].title, "Should have correct column title");
-			assert.equal(aColumns[2].getHeader().getText(), oManifestContent.row.columns[2].title, "Should have correct column title");
-			assert.equal(aColumns[3].getHeader().getText(), oManifestContent.row.columns[3].title, "Should have correct column title");
-			assert.equal(aColumns[4].getHeader().getText(), oManifestContent.row.columns[4].title, "Should have correct column title");
-			assert.equal(aColumns[5].getHeader().getText(), oManifestContent.row.columns[5].title, "Should have correct column title");
-			assert.equal(aColumns[5].getHeader().getText(), oManifestContent.row.columns[5].title, "Should have correct column title");
-			assert.equal(aColumns[6].getHeader().getText(), oManifestContent.row.columns[6].title, "Should have correct column title");
-
-			// Column cells types
-			assert.ok(aCells[0].isA("sap.m.ObjectIdentifier"), "Column with 'identifier' set to 'true' should be of type 'ObjectIdentifier'");
-			assert.ok(aCells[1].isA("sap.m.Text"), "Column with 'value' only should be of type 'Text'");
-			assert.ok(aCells[2].isA("sap.m.ObjectStatus"), "Column with a 'state' should be of type 'ObjectStatus'");
-			assert.ok(aCells[3].isA("sap.m.Link"), "Column with an 'url' should be of type 'Link'");
-			assert.ok(aCells[4].isA("sap.m.ProgressIndicator"), "Column with a 'progressIndicator' should be of type 'ProgressIndicator'");
-			assert.ok(aCells[5].isA("sap.m.Avatar"), "Column with an 'icon' should be of type 'Avatar'");
-			assert.ok(aCells[6].isA("sap.m.ObjectIdentifier"), "Column with 'identifier' as an object should be of type 'ObjectIdentifier'");
-
-			// Column properties
-			assert.equal(aColumns[2].getHAlign(), "End", "The status column is aligned at 'End'");
-
-			// Column values
-			assert.equal(aCells[0].getTitle(), oManifestData[0].product, "Should have correct identifier value.");
-			assert.equal(aCells[1].getText(), oManifestData[0].customer, "Should have correct text value.");
-			assert.equal(aCells[2].getText(), oManifestData[0].status, "Should have correct text value.");
-			assert.equal(aCells[2].getState(), oManifestData[0].statusState, "Should have correct state.");
-			assert.equal(aCells[3].getText(), oManifestData[0].orderUrl, "Should have correct text value.");
-			assert.equal(aCells[4].getPercentValue(), oManifestData[0].percent, "Should have correct percentage.");
-			assert.equal(aCells[4].getDisplayValue(), oManifestData[0].percentValue, "Should have correct progress text.");
-			assert.equal(aCells[4].getState(), oManifestData[0].progressState, "Should have correct progress state.");
-			assert.equal(aCells[5].getSrc(), oManifestData[0].iconSrc, "Should have correct icon src.");
-			assert.ok(aCells[6].getTitleActive(), "Should be active identifier.");
-
-			// Second and third row - Object Status
-			assert.ok(aCellsSecondRow[2].getShowStateIcon(), "Should have 'showStateIcon' correctly set to true.");
-			assert.equal(aCellsSecondRow[2].getIcon(), oManifestData[1].customStateIcon, "Should have custom icon with src '" + oManifestData[1].customStateIcon + "'");
-			assert.notOk(aCellsSecondRow[2].hasStyleClass("sapMObjStatusShowIcon"),  "Default State Icon is not shown");
-			assert.ok(aCellsSecondRow[2].hasStyleClass("sapMObjStatusShowCustomIcon"),  "Custom State Icon is shown");
-			assert.equal(aCellsThirdRow[2].getShowStateIcon(), oManifestData[2].showStateIcon, "Should have 'showStateIcon' correctly set to " + oManifestData[2].showStateIcon);
-			assert.ok(aCellsThirdRow[2].hasStyleClass("sapMObjStatusShowIcon"),  "Default State Icon is shown");
-			assert.notOk(aCellsThirdRow[2].hasStyleClass("sapMObjStatusShowCustomIcon"),  "Custom State Icon is not shown");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Using manifest", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_TableCard);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oManifestData = oManifest_TableCard["sap.card"].content.data.json;
+		var oManifestContent = oManifest_TableCard["sap.card"].content;
+		var oCardContent = this.oCard.getAggregation("_content");
+		var oTable = oCardContent.getAggregation("_content");
+		var aColumns = oTable.getColumns();
+		var aRows = oTable.getItems();
+		var aCells = aRows[0].getCells();
+		var aCellsSecondRow = aRows[1].getCells();
+		var aCellsThirdRow = aRows[2].getCells();
+
+		// row highlight
+		assert.equal(aRows[0].getHighlight(), oManifestData[0].progressState, "Should have correct highlight value");
+		assert.equal(aRows[1].getHighlight(), oManifestData[1].progressState, "Should have correct highlight value");
+		assert.equal(aRows[2].getHighlight(), oManifestData[2].progressState, "Should have correct highlight value");
+
+		assert.equal(aRows[0].getHighlightText(), oManifestData[0].progressState, "Should have correct highlight text");
+		assert.equal(aRows[1].getHighlightText(), oManifestData[1].progressState, "Should have correct highlight text");
+		assert.equal(aRows[2].getHighlightText(), oManifestData[2].progressState, "Should have correct highlight text");
+
+		// Assert
+		assert.equal(aColumns.length, 7, "Should have 7 columns.");
+
+		// Assert
+		assert.equal(oTable.getAriaLabelledBy()[0], this.oCard.getCardHeader().getAggregation("_title").getId() + "-inner", "Should have correct table aria label");
+
+		// Columns titles
+		assert.equal(aColumns[0].getHeader().getText(), oManifestContent.row.columns[0].title, "Should have correct column title");
+		assert.equal(aColumns[1].getHeader().getText(), oManifestContent.row.columns[1].title, "Should have correct column title");
+		assert.equal(aColumns[2].getHeader().getText(), oManifestContent.row.columns[2].title, "Should have correct column title");
+		assert.equal(aColumns[3].getHeader().getText(), oManifestContent.row.columns[3].title, "Should have correct column title");
+		assert.equal(aColumns[4].getHeader().getText(), oManifestContent.row.columns[4].title, "Should have correct column title");
+		assert.equal(aColumns[5].getHeader().getText(), oManifestContent.row.columns[5].title, "Should have correct column title");
+		assert.equal(aColumns[5].getHeader().getText(), oManifestContent.row.columns[5].title, "Should have correct column title");
+		assert.equal(aColumns[6].getHeader().getText(), oManifestContent.row.columns[6].title, "Should have correct column title");
+
+		// Column cells types
+		assert.ok(aCells[0].isA("sap.m.ObjectIdentifier"), "Column with 'identifier' set to 'true' should be of type 'ObjectIdentifier'");
+		assert.ok(aCells[1].isA("sap.m.Text"), "Column with 'value' only should be of type 'Text'");
+		assert.ok(aCells[2].isA("sap.m.ObjectStatus"), "Column with a 'state' should be of type 'ObjectStatus'");
+		assert.ok(aCells[3].isA("sap.m.Link"), "Column with an 'url' should be of type 'Link'");
+		assert.ok(aCells[4].isA("sap.m.ProgressIndicator"), "Column with a 'progressIndicator' should be of type 'ProgressIndicator'");
+		assert.ok(aCells[5].isA("sap.m.Avatar"), "Column with an 'icon' should be of type 'Avatar'");
+		assert.ok(aCells[6].isA("sap.m.ObjectIdentifier"), "Column with 'identifier' as an object should be of type 'ObjectIdentifier'");
+
+		// Column properties
+		assert.equal(aColumns[2].getHAlign(), "End", "The status column is aligned at 'End'");
+
+		// Column values
+		assert.equal(aCells[0].getTitle(), oManifestData[0].product, "Should have correct identifier value.");
+		assert.equal(aCells[1].getText(), oManifestData[0].customer, "Should have correct text value.");
+		assert.equal(aCells[2].getText(), oManifestData[0].status, "Should have correct text value.");
+		assert.equal(aCells[2].getState(), oManifestData[0].statusState, "Should have correct state.");
+		assert.equal(aCells[3].getText(), oManifestData[0].orderUrl, "Should have correct text value.");
+		assert.equal(aCells[4].getPercentValue(), oManifestData[0].percent, "Should have correct percentage.");
+		assert.equal(aCells[4].getDisplayValue(), oManifestData[0].percentValue, "Should have correct progress text.");
+		assert.equal(aCells[4].getState(), oManifestData[0].progressState, "Should have correct progress state.");
+		assert.equal(aCells[5].getSrc(), oManifestData[0].iconSrc, "Should have correct icon src.");
+		assert.ok(aCells[6].getTitleActive(), "Should be active identifier.");
+
+		// Second and third row - Object Status
+		assert.ok(aCellsSecondRow[2].getShowStateIcon(), "Should have 'showStateIcon' correctly set to true.");
+		assert.equal(aCellsSecondRow[2].getIcon(), oManifestData[1].customStateIcon, "Should have custom icon with src '" + oManifestData[1].customStateIcon + "'");
+		assert.notOk(aCellsSecondRow[2].hasStyleClass("sapMObjStatusShowIcon"),  "Default State Icon is not shown");
+		assert.ok(aCellsSecondRow[2].hasStyleClass("sapMObjStatusShowCustomIcon"),  "Custom State Icon is shown");
+		assert.equal(aCellsThirdRow[2].getShowStateIcon(), oManifestData[2].showStateIcon, "Should have 'showStateIcon' correctly set to " + oManifestData[2].showStateIcon);
+		assert.ok(aCellsThirdRow[2].hasStyleClass("sapMObjStatusShowIcon"),  "Default State Icon is shown");
+		assert.notOk(aCellsThirdRow[2].hasStyleClass("sapMObjStatusShowCustomIcon"),  "Custom State Icon is not shown");
 	});
 
-	QUnit.test("Visible columns", function (assert) {
-
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oCardContent = this.oCard.getAggregation("_content"),
-				oTable = oCardContent.getAggregation("_content"),
-				aColumns = oTable.getColumns();
-
-			Core.applyChanges();
-			// Assert
-			assert.notOk(aColumns[2].getVisible(), "Column three should not be visible");
-			assert.ok(aColumns[1].getVisible(), "Column two should be visible");
-			assert.notOk(aColumns[3].getVisible(), "Column four should not be visible");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Visible columns", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_TableCard_Visible);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oCardContent = this.oCard.getAggregation("_content"),
+			oTable = oCardContent.getAggregation("_content"),
+			aColumns = oTable.getColumns();
+
+		// Assert
+		assert.notOk(aColumns[2].getVisible(), "Column three should not be visible");
+		assert.ok(aColumns[1].getVisible(), "Column two should be visible");
+		assert.notOk(aColumns[3].getVisible(), "Column four should not be visible");
 	});
 
-	QUnit.test("Table Card - static content", function (assert) {
-
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oContent = this.oCard.getAggregation("_content");
-
-			Core.applyChanges();
-
-			// Assert
-			assert.ok(oContent, "Table Card static content should be set");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Table Card - static content", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_TableCard_StaticContent);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oContent = this.oCard.getAggregation("_content");
+		// Assert
+		assert.ok(oContent, "Table Card static content should be set");
 	});
 
-	QUnit.test("Using manifest with card level data section", function (assert) {
-
+	QUnit.test("Using manifest with card level data section", async function (assert) {
 		// Arrange
-		var done = assert.async();
 		var oManifestValueToCheck = oManifest_TableCard_WithCardLevelData["sap.card"].data.json[0].salesOrder;
-
-		this.oCard.attachEvent("_ready", function () {
-
-			Core.applyChanges();
-
-			var aItems = this.oCard.getCardContent().getAggregation("_content").getItems();
-			assert.equal(aItems.length, 5, "Should have 5 items in the table.");
-
-			var oItemCell = aItems[0].getCells()[0];
-			assert.ok(oItemCell.isA("sap.m.ObjectIdentifier"), "Should have created an object identifier.");
-
-			// Aggregation binding succeeded if one of the cells have correct value.
-			assert.equal(oItemCell.getTitle(), oManifestValueToCheck, "Cell should have correct value.");
-
-			done();
-		}.bind(this));
 
 		// Act
 		this.oCard.setManifest(oManifest_TableCard_WithCardLevelData);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var aItems = this.oCard.getCardContent().getAggregation("_content").getItems();
+		assert.equal(aItems.length, 5, "Should have 5 items in the table.");
+
+		var oItemCell = aItems[0].getCells()[0];
+		assert.ok(oItemCell.isA("sap.m.ObjectIdentifier"), "Should have created an object identifier.");
+
+		// Aggregation binding succeeded if one of the cells have correct value.
+		assert.equal(oItemCell.getTitle(), oManifestValueToCheck, "Cell should have correct value.");
 	});
 
-	QUnit.test("Using maxItems manifest property", function (assert) {
-
+	QUnit.test("Using maxItems manifest property", async function (assert) {
 		// Arrange
-		var done = assert.async();
 		var iMaxItems = oManifest_TableCard_MaxItems["sap.card"]["content"]["maxItems"];
-
-		this.oCard.attachEvent("_ready", function () {
-
-			Core.applyChanges();
-
-			var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
-			assert.ok(iNumberOfItems <= iMaxItems, "Should have less items than the maximum.");
-
-			done();
-		}.bind(this));
 
 		// Act
 		this.oCard.setManifest(oManifest_TableCard_MaxItems);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
+		assert.ok(iNumberOfItems <= iMaxItems, "Should have less items than the maximum.");
 	});
 
-	QUnit.test("Using columns defined by parameters", function (assert) {
-
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oCardContent = this.oCard.getAggregation("_content");
-			var oTable = oCardContent.getAggregation("_content");
-			var aRows = oTable.getItems();
-			var aCellsFirstRow = aRows[0].getCells();
-			var aCellsSecondRow = aRows[1].getCells();
-
-
-			Core.applyChanges();
-
-			// Assert column values
-			assert.equal(aCellsFirstRow[0].getText(), "5000010050", "First row should have correct value for first column.");
-			assert.equal(aCellsFirstRow[1].getText(), "Delivered", "First row should have correct value for second column.");
-
-			assert.equal(aCellsSecondRow[0].getText(), "5000010051", "Second row should have correct value for first column.");
-			assert.equal(aCellsSecondRow[1].getText(), "Canceled", "Second row should have correct value for second column.");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Using columns defined by parameters", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_TableCardColumnsFromParams);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oCardContent = this.oCard.getAggregation("_content");
+		var oTable = oCardContent.getAggregation("_content");
+		var aRows = oTable.getItems();
+		var aCellsFirstRow = aRows[0].getCells();
+		var aCellsSecondRow = aRows[1].getCells();
+
+		// Assert column values
+		assert.equal(aCellsFirstRow[0].getText(), "5000010050", "First row should have correct value for first column.");
+		assert.equal(aCellsFirstRow[1].getText(), "Delivered", "First row should have correct value for second column.");
+
+		assert.equal(aCellsSecondRow[0].getText(), "5000010051", "Second row should have correct value for first column.");
+		assert.equal(aCellsSecondRow[1].getText(), "Canceled", "Second row should have correct value for second column.");
 	});
 
 	QUnit.module("Manifest properties", {
@@ -802,10 +762,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Icon properties", function (assert) {
+	QUnit.test("Icon properties", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "table.card.test.icon"
 				},
@@ -832,26 +791,24 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
-
-			assert.strictEqual(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Image_1.png", "Should have correct avatar src");
-			assert.strictEqual(oAvatar.getDisplayShape(), oManifest["sap.card"].content.row.columns[0].icon.shape, "Should have 'Circle' shape");
-			assert.strictEqual(oAvatar.getTooltip_AsString(), oManifest["sap.card"].content.row.columns[0].icon.alt, "Should have tooltip set");
-			assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.row.columns[0].icon.initials, "Should have initials set");
-			assert.strictEqual(oAvatar.getDisplaySize(), AvatarSize.XS, "The default size of the avatar is 'XS'");
-			assert.ok(oAvatar.hasStyleClass("sapFCardIcon"), "'sapFCardIcon' class is added");
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
+
+		assert.strictEqual(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Image_1.png", "Should have correct avatar src");
+		assert.strictEqual(oAvatar.getDisplayShape(), oManifest["sap.card"].content.row.columns[0].icon.shape, "Should have 'Circle' shape");
+		assert.strictEqual(oAvatar.getTooltip_AsString(), oManifest["sap.card"].content.row.columns[0].icon.alt, "Should have tooltip set");
+		assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.row.columns[0].icon.initials, "Should have initials set");
+		assert.strictEqual(oAvatar.getDisplaySize(), AvatarSize.XS, "The default size of the avatar is 'XS'");
+		assert.ok(oAvatar.hasStyleClass("sapFCardIcon"), "'sapFCardIcon' class is added");
 	});
 
-	QUnit.test("Icon initials set with deprecated 'text' property", function (assert) {
+	QUnit.test("Icon initials set with deprecated 'text' property", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "table.card.test.icon"
 				},
@@ -875,21 +832,19 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
-
-			assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.row.columns[0].icon.text, "Should have initials set");
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
+
+		assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.row.columns[0].icon.text, "Should have initials set");
 	});
 
-	QUnit.test("Icon with 'size'", function (assert) {
+	QUnit.test("Icon with 'size'", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "table.card.test.icon"
 				},
@@ -914,30 +869,17 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
-
-			assert.strictEqual(oAvatar.getDisplaySize(), AvatarSize.S, "'size' is as in the manifest.");
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
+
+		assert.strictEqual(oAvatar.getDisplaySize(), AvatarSize.S, "'size' is as in the manifest.");
 	});
 
-	QUnit.test("'backgroundColor' of icon with src", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
-
-			// Assert
-			assert.strictEqual(oAvatar.getBackgroundColor(), AvatarColor.Transparent, "Background should be 'Transparent' when there is only icon.");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("'backgroundColor' of icon with src", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "testTableCard"
@@ -960,22 +902,16 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
+
+		// Assert
+		assert.strictEqual(oAvatar.getBackgroundColor(), AvatarColor.Transparent, "Background should be 'Transparent' when there is only icon.");
 	});
 
-	QUnit.test("'backgroundColor' of icon with initials", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0],
-				sExpected = oAvatar.getMetadata().getPropertyDefaults().backgroundColor;
-
-			// Assert
-			assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should have default value when there are initials.");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("'backgroundColor' of icon with initials", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "testTableCard"
@@ -998,21 +934,17 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0],
+			sExpected = oAvatar.getMetadata().getPropertyDefaults().backgroundColor;
+
+		// Assert
+		assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should have default value when there are initials.");
 	});
 
-	QUnit.test("Icon 'visible' property", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
-
-			// Assert
-			assert.strictEqual(oAvatar.getVisible(), false, "Icon is not visible.");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Icon 'visible' property", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "testTableCard"
@@ -1037,6 +969,13 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
+
+		// Assert
+		assert.strictEqual(oAvatar.getVisible(), false, "Icon is not visible.");
 	});
 
 	QUnit.module("Table Card Rendering", {
@@ -1053,38 +992,33 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Rounded corners is applied on focusin of the last row", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oContent = this.oCard.getCardContent();
-			Core.applyChanges();
-			var aItems = oContent.getInnerList().getItems();
-			var oFirstItem = aItems[0];
-			var oLastItem = aItems[aItems.length - 1];
-
-			// Assert
-			assert.notOk(oFirstItem.getDomRef().classList.contains("sapUiIntTCIRoundedCorners"), "Rounded corners class should NOT be applied on the first item");
-			assert.notOk(oLastItem.getDomRef().classList.contains("sapUiIntTCIRoundedCorners"), "Rounded corners class should NOT be applied on the last item yet");
-
-			// Act
-			QUnitUtils.triggerEvent("focusin", oFirstItem.getDomRef());
-
-			// Assert
-			assert.notOk(oFirstItem.getDomRef().classList.contains("sapUiIntTCIRoundedCorners"), "Rounded corners class should NOT be applied on the first item");
-
-			// Act
-			QUnitUtils.triggerEvent("focusin", oLastItem.getDomRef());
-
-			// Assert
-			assert.ok(oLastItem.getDomRef().classList.contains("sapUiIntTCIRoundedCorners"), "Rounded corners class should be applied on the last item");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Rounded corners is applied on focusin of the last row", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_TableCard);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oContent = this.oCard.getCardContent();
+		var aItems = oContent.getInnerList().getItems();
+		var oFirstItem = aItems[0];
+		var oLastItem = aItems[aItems.length - 1];
+
+		// Assert
+		assert.notOk(oFirstItem.getDomRef().classList.contains("sapUiIntTCIRoundedCorners"), "Rounded corners class should NOT be applied on the first item");
+		assert.notOk(oLastItem.getDomRef().classList.contains("sapUiIntTCIRoundedCorners"), "Rounded corners class should NOT be applied on the last item yet");
+
+		// Act
+		QUnitUtils.triggerEvent("focusin", oFirstItem.getDomRef());
+
+		// Assert
+		assert.notOk(oFirstItem.getDomRef().classList.contains("sapUiIntTCIRoundedCorners"), "Rounded corners class should NOT be applied on the first item");
+
+		// Act
+		QUnitUtils.triggerEvent("focusin", oLastItem.getDomRef());
+
+		// Assert
+		assert.ok(oLastItem.getDomRef().classList.contains("sapUiIntTCIRoundedCorners"), "Rounded corners class should be applied on the last item");
 	});
 
 	QUnit.module("Data and items length", {
@@ -1101,10 +1035,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Data and items length when there is grouping", function (assert) {
+	QUnit.test("Data and items length when there is grouping", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "testTableCardItemsLength"
 				},
@@ -1148,21 +1081,18 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 3, "#getItemsLength result should be correct");
-			assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+
+		assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 3, "#getItemsLength result should be correct");
+		assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
 	});
 
-	QUnit.test("Data and items length when maxItems property is set", function (assert) {
+	QUnit.test("Data and items length when maxItems property is set", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "testTableCardItemsLength"
 				},
@@ -1198,15 +1128,13 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 2, "#getItemsLength result should be correct");
-			assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+
+		assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 2, "#getItemsLength result should be correct");
+		assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
 	});
 
 	QUnit.module("Table card grouping", {
@@ -1219,21 +1147,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Table card grouping", function (assert) {
-		// Arrange
-		const done = assert.async();
-
-		this.oCard.attachEvent("_ready", () => {
-			const aItems = this.oCard.getCardContent().getInnerList().getItems();
-
-			// Assert
-			assert.strictEqual(aItems.length, 4, "There are two list items and two group titles in the list.");
-			assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "The first item of the list is the group title");
-			assert.strictEqual(aItems[0].getTitle(), "Cheap", "The group title is correct");
-
-			done();
-		});
-
+	QUnit.test("Table card grouping", async function (assert) {
 		// Act
 		this.oCard.setManifest({
 			"sap.app": {
@@ -1278,6 +1192,15 @@ sap.ui.define([
 			}
 		});
 		this.oCard.startManifestProcessing();
+
+		await nextCardReadyEvent(this.oCard);
+
+		const aItems = this.oCard.getCardContent().getInnerList().getItems();
+
+		// Assert
+		assert.strictEqual(aItems.length, 4, "There are two list items and two group titles in the list.");
+		assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "The first item of the list is the group title");
+		assert.strictEqual(aItems[0].getTitle(), "Cheap", "The group title is correct");
 	});
 
 });

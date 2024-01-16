@@ -2,24 +2,26 @@
 
 sap.ui.define([
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/integration/cards/BaseListContent",
 	"sap/ui/integration/cards/ListContent",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/MemoryLeakCheck",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	mLibrary,
-	Core,
 	Library,
 	BaseListContent,
 	ListContent,
 	CardActions,
 	Card,
 	MemoryLeakCheck,
-	QUnitUtils
+	QUnitUtils,
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -748,63 +750,49 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("List Card - using manifest", function (assert) {
-
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oContent = this.oCard.getAggregation("_content");
-			var oList = oContent.getAggregation("_content");
-			var aItems = oList.getItems();
-			var oManifestData = oManifest_ListCard["sap.card"].content.data.json;
-
-			Core.applyChanges();
-
-			// Assert
-			assert.equal(oList.getAriaLabelledBy()[0], this.oCard.getCardHeader().getAggregation("_title").getId() + "-inner", "Should have correct table aria label");
-
-			// Assert
-			assert.ok(oContent, "List Card content form manifest should be set");
-
-			// items highlight
-			assert.equal(aItems[0].getHighlight(), oManifestData[0].state, "Should have correct highlight value");
-			assert.equal(aItems[1].getHighlight(), oManifestData[1].state, "Should have correct highlight value");
-			assert.equal(aItems[2].getHighlight(), oManifestData[2].state, "Should have correct highlight value");
-
-			assert.equal(aItems[0].getHighlightText(), oManifestData[0].state, "Should have correct highlight text");
-			assert.equal(aItems[1].getHighlightText(), oManifestData[1].state, "Should have correct highlight text");
-			assert.equal(aItems[2].getHighlightText(), oManifestData[2].state, "Should have correct highlight text");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("List Card - using manifest", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_ListCard);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oContent = this.oCard.getAggregation("_content");
+		var oList = oContent.getAggregation("_content");
+		var aItems = oList.getItems();
+		var oManifestData = oManifest_ListCard["sap.card"].content.data.json;
+
+		// Assert
+		assert.equal(oList.getAriaLabelledBy()[0], this.oCard.getCardHeader().getAggregation("_title").getId() + "-inner", "Should have correct table aria label");
+
+		// Assert
+		assert.ok(oContent, "List Card content form manifest should be set");
+
+		// items highlight
+		assert.equal(aItems[0].getHighlight(), oManifestData[0].state, "Should have correct highlight value");
+		assert.equal(aItems[1].getHighlight(), oManifestData[1].state, "Should have correct highlight value");
+		assert.equal(aItems[2].getHighlight(), oManifestData[2].state, "Should have correct highlight value");
+
+		assert.equal(aItems[0].getHighlightText(), oManifestData[0].state, "Should have correct highlight text");
+		assert.equal(aItems[1].getHighlightText(), oManifestData[1].state, "Should have correct highlight text");
+		assert.equal(aItems[2].getHighlightText(), oManifestData[2].state, "Should have correct highlight text");
 	});
 
-	QUnit.test("List Card - static items", function (assert) {
-
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oContent = this.oCard.getAggregation("_content");
-
-			Core.applyChanges();
-
-			// Assert
-			assert.ok(oContent, "List Card static content should be set");
-			done();
-		}.bind(this));
-
+	QUnit.test("List Card - static items", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_ListCard_StaticContent);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oContent = this.oCard.getAggregation("_content");
+
+		// Assert
+		assert.ok(oContent, "List Card static content should be set");
 	});
 
-	QUnit.test("List Card - item title and description with string values", function (assert) {
+	QUnit.test("List Card - item title and description with string values", async function (assert) {
 		// Arrange
-		var done = assert.async();
 		var oManifest = {
 			"sap.app": {
 				"id": "test.cards.list.cardTitleAndDescription"
@@ -835,82 +823,63 @@ sap.ui.define([
 			}
 		};
 
-		this.oCard.attachEvent("_ready", function () {
-			var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
-			var oItem = oManifest["sap.card"]["content"]["data"]["json"][0];
-
-			Core.applyChanges();
-
-			// Assert
-			assert.equal(oListItem.getDescription(), oItem.Description, "Item description should be set.");
-			assert.equal(oListItem.getTitle(), oItem.Name, "Item title should be set.");
-			assert.strictEqual(oListItem._getAvatar().getDisplaySize(), "S", "Item avatar should be set and to be with the correct size");
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
+		var oItem = oManifest["sap.card"]["content"]["data"]["json"][0];
+
+		// Assert
+		assert.equal(oListItem.getDescription(), oItem.Description, "Item description should be set.");
+		assert.equal(oListItem.getTitle(), oItem.Name, "Item title should be set.");
+		assert.strictEqual(oListItem._getAvatar().getDisplaySize(), "S", "Item avatar should be set and to be with the correct size");
 	});
 
-	QUnit.test("List card with title and description defined by parameters", function (assert) {
-
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oListItems = this.oCard.getCardContent().getAggregation("_content").getItems();
-
-			Core.applyChanges();
-
-			// Assert column values
-			assert.equal(oListItems[0].getTitle(), "5000010050", "First item should have correct value for first column.");
-			assert.equal(oListItems[0].getDescription(), "Delivered", "First item should have correct value for second column.");
-
-			assert.equal(oListItems[1].getTitle(), "5000010051", "Second item should have correct value for first column.");
-			assert.equal(oListItems[1].getDescription(), "Canceled", "Second item should have correct value for second column.");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("List card with title and description defined by parameters", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_TitleAndDescriptionFromParams);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oListItems = this.oCard.getCardContent().getAggregation("_content").getItems();
+
+		// Assert column values
+		assert.equal(oListItems[0].getTitle(), "5000010050", "First item should have correct value for first column.");
+		assert.equal(oListItems[0].getDescription(), "Delivered", "First item should have correct value for second column.");
+
+		assert.equal(oListItems[1].getTitle(), "5000010051", "Second item should have correct value for first column.");
+		assert.equal(oListItems[1].getDescription(), "Canceled", "Second item should have correct value for second column.");
 	});
 
-	QUnit.test("List Card - info field", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-
-			var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
-				oListItem2 = this.oCard.getCardContent().getAggregation("_content").getItems()[1],
-				oListItem3 = this.oCard.getCardContent().getAggregation("_content").getItems()[2],
-				oListItem4 = this.oCard.getCardContent().getAggregation("_content").getItems()[3];
-
-
-			Core.applyChanges();
-
-			assert.equal(oListItem1.$().find(".sapMObjStatusShowIcon").length, 1, "Status icon is shown");
-			assert.equal(oListItem2.$().find(".sapMObjStatusShowIcon").length, 0, "Status icon is not shown");
-			assert.equal(oListItem2.$().find(".sapMObjStatusIcon").length, 0, "Status icon div is not rendered");
-			assert.equal(oListItem3.$().find(".sapMObjStatusShowIcon").length, 0, "Default status icon is not shown");
-			assert.equal(oListItem3.$().find(".sapMObjStatusShowCustomIcon").length, 1, "Custom status icon is shown");
-			assert.equal(oListItem2.$().find(".sapUiIntLCIInfo").length, 1, "Info is displayed when visibility is set to true");
-			assert.equal(oListItem3.$().find(".sapUiIntLCIInfo").length, 1, "Info is displayed when visibility is not defined");
-			assert.equal(oListItem4.$().find(".sapUiIntLCIInfo").length, 0, "Info is not displayed when visibility is set to false");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("List Card - info field", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_ListCard);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
+			oListItem2 = this.oCard.getCardContent().getAggregation("_content").getItems()[1],
+			oListItem3 = this.oCard.getCardContent().getAggregation("_content").getItems()[2],
+			oListItem4 = this.oCard.getCardContent().getAggregation("_content").getItems()[3];
+
+		assert.equal(oListItem1.$().find(".sapMObjStatusShowIcon").length, 1, "Status icon is shown");
+		assert.equal(oListItem2.$().find(".sapMObjStatusShowIcon").length, 0, "Status icon is not shown");
+		assert.equal(oListItem2.$().find(".sapMObjStatusIcon").length, 0, "Status icon div is not rendered");
+		assert.equal(oListItem3.$().find(".sapMObjStatusShowIcon").length, 0, "Default status icon is not shown");
+		assert.equal(oListItem3.$().find(".sapMObjStatusShowCustomIcon").length, 1, "Custom status icon is shown");
+		assert.equal(oListItem2.$().find(".sapUiIntLCIInfo").length, 1, "Info is displayed when visibility is set to true");
+		assert.equal(oListItem3.$().find(".sapUiIntLCIInfo").length, 1, "Info is displayed when visibility is not defined");
+		assert.equal(oListItem4.$().find(".sapUiIntLCIInfo").length, 0, "Info is not displayed when visibility is set to false");
 	});
 
-	QUnit.test("Info visible property without binding", function (assert) {
+	QUnit.test("Info visible property without binding", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "list.card.test.infoVisible"
 				},
@@ -936,87 +905,58 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
-			Core.applyChanges();
-
-			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIInfo").length, 0, "Info is not visible");
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
+
+		assert.strictEqual(oListItem1.$().find(".sapUiIntLCIInfo").length, 0, "Info is not visible");
 	});
 
-	QUnit.test("Description visible property", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[3];
-			Core.applyChanges();
-
-			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIDescription").length, 0, "Description is not visible");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Description visible property", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_ListCard);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[3];
+
+		assert.strictEqual(oListItem1.$().find(".sapUiIntLCIDescription").length, 0, "Description is not visible");
 	});
 
-	QUnit.test("List Card - attributes", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-
-			var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
-				oListItem2 = this.oCard.getCardContent().getAggregation("_content").getItems()[1],
-				oListItem3 = this.oCard.getCardContent().getAggregation("_content").getItems()[2];
-
-			Core.applyChanges();
-
-			// Assert
-			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrRow").length, 3, "3 attr rows are created.");
-			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrCell").length, 5, "5 attr cells are created.");
-			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrSecondCell").length, 2, "2 attr second cells are created.");
-
-			assert.strictEqual(oListItem2.$().find(".sapUiIntLCIAttrRow").length, 5, "5 attr rows are created.");
-			assert.strictEqual(oListItem2.$().find(".sapUiIntLCIAttrCell").length, 5, "5 attr cells are created.");
-			assert.notOk(oListItem2.$().find(".sapUiIntLCIAttrSecondCell").length, "attr second cells are not created.");
-
-			assert.ok(oListItem2.$().find(".sapUiIntLCIAttrRow:nth-of-type(6) .sapMObjStatusShowIcon").length, "Status icon is shown");
-			assert.notOk(oListItem3.$().find(".sapUiIntLCIAttrRow:nth-of-type(4) .sapMObjStatusShowIcon").length, "Status icon is not shown");
-
-			QUnitUtils.triggerEvent("focusin", oListItem1.getDomRef());
-			assert.notOk(oListItem1.getDomRef().getAttribute("aria-labelledby"), "aria-labelledby is not set when focused");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("List Card - attributes", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_ListCard_Attributes);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
+			oListItem2 = this.oCard.getCardContent().getAggregation("_content").getItems()[1],
+			oListItem3 = this.oCard.getCardContent().getAggregation("_content").getItems()[2];
+
+
+		// Assert
+		assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrRow").length, 3, "3 attr rows are created.");
+		assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrCell").length, 5, "5 attr cells are created.");
+		assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrSecondCell").length, 2, "2 attr second cells are created.");
+
+		assert.strictEqual(oListItem2.$().find(".sapUiIntLCIAttrRow").length, 5, "5 attr rows are created.");
+		assert.strictEqual(oListItem2.$().find(".sapUiIntLCIAttrCell").length, 5, "5 attr cells are created.");
+		assert.notOk(oListItem2.$().find(".sapUiIntLCIAttrSecondCell").length, "attr second cells are not created.");
+
+		assert.ok(oListItem2.$().find(".sapUiIntLCIAttrRow:nth-of-type(6) .sapMObjStatusShowIcon").length, "Status icon is shown");
+		assert.notOk(oListItem3.$().find(".sapUiIntLCIAttrRow:nth-of-type(4) .sapMObjStatusShowIcon").length, "Status icon is not shown");
+
+		QUnitUtils.triggerEvent("focusin", oListItem1.getDomRef());
+		assert.notOk(oListItem1.getDomRef().getAttribute("aria-labelledby"), "aria-labelledby is not set when focused");
 	});
 
-	QUnit.test("List Card - attributes visibility", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-
-			var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
-			Core.applyChanges();
-
-			// Assert
-			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrRow").length, 2, "2 attr rows are created.");
-			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrCell").length, 3, "3 attr cells are created.");
-			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrSecondCell").length, 1, "1 attr second cells is created.");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("List Card - attributes visibility", async function (assert) {
 		// Act
 		this.oCard.setManifest({
 			"sap.app": {
@@ -1062,11 +1002,20 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
+
+		// Assert
+		assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrRow").length, 2, "2 attr rows are created.");
+		assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrCell").length, 3, "3 attr cells are created.");
+		assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrSecondCell").length, 1, "1 attr second cells is created.");
 	});
 
-	QUnit.test("List Card - ActionsStrip", function (assert) {
+	QUnit.test("List Card - ActionsStrip", async function (assert) {
 		// Arrange
-		var done = assert.async();
 		var oManifest = {
 			"sap.app": {
 				"id": "oManifest_ListCard_Actions_Strip"
@@ -1100,26 +1049,23 @@ sap.ui.define([
 			}
 		};
 
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-			var oCardContent = this.oCard.getCardContent(),
-				oList = oCardContent.getAggregation("_content"),
-				oListContentItem = oList.getItems()[0],
-				oActionsStrip = oListContentItem.getActionsStrip(),
-				aItems = oActionsStrip._getToolbar().getContent();
-
-			assert.strictEqual(aItems[1].getText(), "Add to Favorites Comfort Easy", "Action text is correct");
-			assert.ok(aItems[1].getEnabled(), "Action is initially enabled");
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oCardContent = this.oCard.getCardContent(),
+			oList = oCardContent.getAggregation("_content"),
+			oListContentItem = oList.getItems()[0],
+			oActionsStrip = oListContentItem.getActionsStrip(),
+			aItems = oActionsStrip._getToolbar().getContent();
+
+		assert.strictEqual(aItems[1].getText(), "Add to Favorites Comfort Easy", "Action text is correct");
+		assert.ok(aItems[1].getEnabled(), "Action is initially enabled");
 	});
 
-	QUnit.test("List Card - ActionsStrip with template", function (assert) {
-		var done = assert.async();
+	QUnit.test("List Card - ActionsStrip with template", async function (assert) {
 		var oManifest = {
 			"sap.app": {
 				"id": "oManifest_ListCard_Actions_Strip"
@@ -1160,84 +1106,61 @@ sap.ui.define([
 			}
 		};
 
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-			var oCardContent = this.oCard.getCardContent(),
-				oList = oCardContent.getAggregation("_content"),
-				oListContentItem = oList.getItems()[0],
-				oActionsStrip = oListContentItem.getActionsStrip(),
-				aItems = oActionsStrip._getToolbar().getContent();
-
-			assert.strictEqual(aItems[1].getText(), "Action 1", "Action text is correct");
-			assert.strictEqual(aItems[2].getText(), "Action 2", "Action text is correct");
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oCardContent = this.oCard.getCardContent(),
+			oList = oCardContent.getAggregation("_content"),
+			oListContentItem = oList.getItems()[0],
+			oActionsStrip = oListContentItem.getActionsStrip(),
+			aItems = oActionsStrip._getToolbar().getContent();
+
+		assert.strictEqual(aItems[1].getText(), "Action 1", "Action text is correct");
+		assert.strictEqual(aItems[2].getText(), "Action 2", "Action text is correct");
 	});
 
-	QUnit.test("Using maxItems manifest property", function (assert) {
-
+	QUnit.test("Using maxItems manifest property", async function (assert) {
 		// Arrange
-		var done = assert.async();
 		var iMaxItems = oManifest_ListCard_MaxItems["sap.card"]["content"]["maxItems"];
-
-		this.oCard.attachEvent("_ready", function () {
-
-			Core.applyChanges();
-
-			var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
-			assert.ok(iNumberOfItems <= iMaxItems, "Should have less items than the maximum.");
-
-			done();
-		}.bind(this));
 
 		// Act
 		this.oCard.setManifest(oManifest_ListCard_MaxItems);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
+		assert.ok(iNumberOfItems <= iMaxItems, "Should have less items than the maximum.");
 	});
 
-	QUnit.test("Using maxItems set through parameters", function (assert) {
-
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
-			assert.strictEqual(iNumberOfItems, 2, "After Manifest is processed maxItems should be a number");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Using maxItems set through parameters", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_ListCard_maxItems_Parameters);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
+		assert.strictEqual(iNumberOfItems, 2, "After Manifest is processed maxItems should be a number");
 	});
 
-	QUnit.test("Using maxItems set through binding", function (assert) {
-
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
-			assert.strictEqual(iNumberOfItems, 2, "After Manifest is processed maxItems should be a number");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Using maxItems set through binding", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_ListCard_maxItems_Parameters_Binding);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
+		assert.strictEqual(iNumberOfItems, 2, "After Manifest is processed maxItems should be a number");
 	});
 
-	QUnit.test("Icon properties", function (assert) {
+	QUnit.test("Icon properties", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "list.card.test.icon"
 				},
@@ -1261,25 +1184,23 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
-
-			assert.strictEqual(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Image_1.png", "Should have correct avatar src");
-			assert.strictEqual(oAvatar.getDisplayShape(), oManifest["sap.card"].content.item.icon.shape, "Should have 'Circle' shape");
-			assert.strictEqual(oAvatar.getTooltip_AsString(), oManifest["sap.card"].content.item.icon.alt, "Should have tooltip set");
-			assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.item.icon.initials, "Should have initials set");
-			assert.ok(oAvatar.hasStyleClass("sapFCardIcon"), "'sapFCardIcon' class is added");
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
+
+		assert.strictEqual(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Image_1.png", "Should have correct avatar src");
+		assert.strictEqual(oAvatar.getDisplayShape(), oManifest["sap.card"].content.item.icon.shape, "Should have 'Circle' shape");
+		assert.strictEqual(oAvatar.getTooltip_AsString(), oManifest["sap.card"].content.item.icon.alt, "Should have tooltip set");
+		assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.item.icon.initials, "Should have initials set");
+		assert.ok(oAvatar.hasStyleClass("sapFCardIcon"), "'sapFCardIcon' class is added");
 	});
 
-	QUnit.test("Icon visible property", function (assert) {
+	QUnit.test("Icon visible property", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "list.card.test.icon"
 				},
@@ -1303,21 +1224,18 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
-			assert.strictEqual(oAvatar.getVisible(), false, "Should not have an icon when visible is set to false");
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
+		assert.strictEqual(oAvatar.getVisible(), false, "Should not have an icon when visible is set to false");
 	});
 
-	QUnit.test("Icon initials set with deprecated 'text' property", function (assert) {
+	QUnit.test("Icon initials set with deprecated 'text' property", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "list.card.test.icon"
 				},
@@ -1336,22 +1254,19 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
-
-			// Assert
-			assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.item.icon.text, "Should have initials set");
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
+
+		// Assert
+		assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.item.icon.text, "Should have initials set");
 	});
 
-	QUnit.test("Default 'size' of icon when there is no description", function (assert) {
+	QUnit.test("Default 'size' of icon when there is no description", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "list.card.test.icon"
 				},
@@ -1373,21 +1288,19 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
-
-			assert.strictEqual(oAvatar.getDisplaySize(), "XS", "Should have 'XS' size");
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
+
+		assert.strictEqual(oAvatar.getDisplaySize(), "XS", "Should have 'XS' size");
 	});
 
-	QUnit.test("Default 'size' of icon when there are title and description", function (assert) {
+	QUnit.test("Default 'size' of icon when there are title and description", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "list.card.test.icon"
 				},
@@ -1410,21 +1323,19 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
-
-			assert.strictEqual(oAvatar.getDisplaySize(), "S", "Should have 'S' size");
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
+
+		assert.strictEqual(oAvatar.getDisplaySize(), "S", "Should have 'S' size");
 	});
 
-	QUnit.test("Icon allows to set custom 'size'", function (assert) {
+	QUnit.test("Icon allows to set custom 'size'", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "list.card.test.icon"
 				},
@@ -1448,16 +1359,14 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
-
-			assert.strictEqual(oAvatar.getDisplaySize(), "M", "Should have 'M' size");
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
+
+		assert.strictEqual(oAvatar.getDisplaySize(), "M", "Should have 'M' size");
 	});
 
 	QUnit.module("Overridden methods", {
@@ -1476,10 +1385,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("#hideLoadingPlaceholders - Placeholder is hidden after loading has completed", function (assert) {
+	QUnit.test("#hideLoadingPlaceholders - Placeholder is hidden after loading has completed", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			spy = sinon.spy(BaseListContent.prototype, "hideLoadingPlaceholders"),
+		var spy = sinon.spy(BaseListContent.prototype, "hideLoadingPlaceholders"),
 			oManifest = {
 				"sap.app": {
 					"id": "test.cards.list.card.hidePlaceholder"
@@ -1500,13 +1408,12 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			assert.ok(spy.called, "The method in the base class for hiding placeholder is called.");
-			done();
-		});
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+
+		assert.ok(spy.called, "The method in the base class for hiding placeholder is called.");
 	});
 
 	QUnit.module("Data and items length", {
@@ -1523,10 +1430,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Data and items length when there is grouping", function (assert) {
+	QUnit.test("Data and items length when there is grouping", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "test.cards.list.itemsLengthGrouping"
 				},
@@ -1565,21 +1471,18 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 3, "#getItemsLength result should be correct");
-			assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+
+		assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 3, "#getItemsLength result should be correct");
+		assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
 	});
 
-	QUnit.test("Data and items length when maxItems property is set", function (assert) {
+	QUnit.test("Data and items length when maxItems property is set", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oManifest = {
+		var oManifest = {
 				"sap.app": {
 					"id": "test.cards.list.itemsLengthGrouping"
 				},
@@ -1610,15 +1513,13 @@ sap.ui.define([
 				}
 			};
 
-		this.oCard.attachEvent("_ready", function () {
-			assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 2, "#getItemsLength result should be correct");
-			assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
-
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+
+		assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 2, "#getItemsLength result should be correct");
+		assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
 	});
 
 	QUnit.module("Icons", {
@@ -1636,19 +1537,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("'backgroundColor' when there is icon src", function (assert) {
+	QUnit.test("'backgroundColor' when there is icon src", async function (assert) {
 		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
-
-			// Assert
-			assert.strictEqual(oAvatar.getBackgroundColor(), AvatarColor.Transparent, "Background should be 'Transparent' when there is only icon.");
-
-			done();
-		}.bind(this));
-
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "testListCard"
@@ -1669,22 +1559,16 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
+
+		// Assert
+		assert.strictEqual(oAvatar.getBackgroundColor(), AvatarColor.Transparent, "Background should be 'Transparent' when there is only icon.");
 	});
 
-	QUnit.test("'backgroundColor' when there are initials", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar(),
-				sExpected = oAvatar.getMetadata().getPropertyDefaults().backgroundColor;
-
-			// Assert
-			assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should have default value when there are initials.");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("'backgroundColor' when there are initials", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "testListCard"
@@ -1705,22 +1589,17 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar(),
+			sExpected = oAvatar.getMetadata().getPropertyDefaults().backgroundColor;
+
+		// Assert
+		assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should have default value when there are initials.");
 	});
 
-	QUnit.test("Default icons when src is empty string and shape is 'Circle'", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatarIcon = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar()._getIcon(),
-				sPersonPlaceHolder = "sap-icon://person-placeholder";
-
-			// Assert
-			assert.strictEqual(oAvatarIcon.getSrc(), sPersonPlaceHolder, "Should show 'sap-icon://person-placeholder' when icon src is empty and the shape is 'Circle'.");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Default icons when src is empty string and shape is 'Circle'", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "testListCard"
@@ -1742,22 +1621,17 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatarIcon = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar()._getIcon(),
+			sPersonPlaceHolder = "sap-icon://person-placeholder";
+
+		// Assert
+		assert.strictEqual(oAvatarIcon.getSrc(), sPersonPlaceHolder, "Should show 'sap-icon://person-placeholder' when icon src is empty and the shape is 'Circle'.");
 	});
 
-	QUnit.test("Default icons when src is empty string and shape is 'Square'", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oAvatarIcon = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar()._getIcon(),
-				sProduct = "sap-icon://product";
-
-			// Assert
-			assert.strictEqual(oAvatarIcon.getSrc(), sProduct, "Should show 'sap-icon://product' when icon src is empty and the shape is 'Square'.");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Default icons when src is empty string and shape is 'Square'", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "testListCard"
@@ -1779,6 +1653,14 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oAvatarIcon = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar()._getIcon(),
+			sProduct = "sap-icon://product";
+
+		// Assert
+		assert.strictEqual(oAvatarIcon.getSrc(), sProduct, "Should show 'sap-icon://product' when icon src is empty and the shape is 'Square'.");
 	});
 
 	QUnit.module("Loading of the Microchart library", {
@@ -1796,18 +1678,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Loading of Microchart library when there is NO chart in the content", function (assert) {
+	QUnit.test("Loading of Microchart library when there is NO chart in the content", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			loadLibraryStub = sinon.stub(Library, "load");
-
-		this.oCard.attachEvent("_ready", function () {
-			// Assert
-			assert.ok(loadLibraryStub.notCalled, "Should NOT load Microchart library when there is no chart in the content.");
-			// Clean up
-			loadLibraryStub.restore();
-			done();
-		});
+		var loadLibraryStub = sinon.stub(Library, "load");
 
 		// Act
 		this.oCard.setManifest({
@@ -1819,20 +1692,18 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		assert.ok(loadLibraryStub.notCalled, "Should NOT load Microchart library when there is no chart in the content.");
+		// Clean up
+		loadLibraryStub.restore();
 	});
 
-	QUnit.test("Loading of Microchart library when there is chart in the content", function (assert) {
+	QUnit.test("Loading of Microchart library when there is chart in the content", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			loadLibraryStub = sinon.stub(Library, "load").resolves();
-
-		this.oCard.attachEvent("_ready", function () {
-			// Assert
-			assert.ok(loadLibraryStub.called, "Should load Microchart library when there is chart in the content.");
-			// Clean up
-			loadLibraryStub.restore();
-			done();
-		});
+		var loadLibraryStub = sinon.stub(Library, "load").resolves();
 
 		// Act
 		this.oCard.setManifest({
@@ -1846,6 +1717,13 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		assert.ok(loadLibraryStub.called, "Should load Microchart library when there is chart in the content.");
+		// Clean up
+		loadLibraryStub.restore();
 	});
 
 	QUnit.module("Microchart creation", {
@@ -2012,9 +1890,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Relative binding - the legend items should have correct titles", function (assert) {
-		testWithMicrochart(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
+		testWithMicrochart(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, async function (done) {
 			// Arrange
-			Core.applyChanges();
+			await nextUIUpdate();
 			var aExpectedTitles = oManifest_ListCard_StackedBarMicrochart["sap.card"]["content"]["data"]["json"]["Notebooks"],
 				aActualTitles = this.oCard.getCardContent().getAggregation("_legend").getAggregation("_titles");
 
@@ -2026,9 +1904,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Absolute binding- the legend items should have correct titles", function (assert) {
-		testWithMicrochart(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart_AbsoluteBinding, function (done) {
+		testWithMicrochart(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart_AbsoluteBinding, async function (done) {
 			// Arrange
-			Core.applyChanges();
+			await nextUIUpdate();
 			var oTitles = oManifest_ListCard_StackedBarMicrochart_AbsoluteBinding["sap.card"]["content"]["data"]["json"]["titles"],
 				aActualTitles = this.oCard.getCardContent().getAggregation("_legend").getAggregation("_titles");
 
@@ -2040,9 +1918,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("No binding- the legend items should have the same titles as the chart bars", function (assert) {
-		testWithMicrochart(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart_NoBinding, function (done) {
+		testWithMicrochart(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart_NoBinding, async function (done) {
 			// Arrange
-			Core.applyChanges();
+			await nextUIUpdate();
 			var aExpectedTitles = oManifest_ListCard_StackedBarMicrochart_NoBinding["sap.card"]["content"]["item"]["chart"]["bars"],
 				aActualTitles = this.oCard.getCardContent().getAggregation("_legend").getAggregation("_titles");
 
@@ -2114,38 +1992,34 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Rounded corners is applied on focusin of the last item", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			var oContent = this.oCard.getCardContent();
-			Core.applyChanges();
-			var aItems = oContent.getInnerList().getItems();
-			var oFirstItem = aItems[0];
-			var oLastItem = aItems[aItems.length - 1];
-
-			// Assert
-			assert.notOk(oFirstItem.getDomRef().classList.contains("sapUiIntLCIRoundedCorners"), "Rounded corners class should NOT be applied on the first item");
-			assert.notOk(oLastItem.getDomRef().classList.contains("sapUiIntLCIRoundedCorners"), "Rounded corners class should NOT be applied on the last item yet");
-
-			// Act
-			QUnitUtils.triggerEvent("focusin", oFirstItem.getDomRef());
-
-			// Assert
-			assert.notOk(oFirstItem.getDomRef().classList.contains("sapUiIntLCIRoundedCorners"), "Rounded corners class should NOT be applied on the first item");
-
-			// Act
-			QUnitUtils.triggerEvent("focusin", oLastItem.getDomRef());
-
-			// Assert
-			assert.ok(oLastItem.getDomRef().classList.contains("sapUiIntLCIRoundedCorners"), "Rounded corners class should be applied on the last item");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Rounded corners is applied on focusin of the last item", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_ListCard);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oContent = this.oCard.getCardContent();
+		var aItems = oContent.getInnerList().getItems();
+		var oFirstItem = aItems[0];
+		var oLastItem = aItems[aItems.length - 1];
+
+		// Assert
+		assert.notOk(oFirstItem.getDomRef().classList.contains("sapUiIntLCIRoundedCorners"), "Rounded corners class should NOT be applied on the first item");
+		assert.notOk(oLastItem.getDomRef().classList.contains("sapUiIntLCIRoundedCorners"), "Rounded corners class should NOT be applied on the last item yet");
+
+		// Act
+		QUnitUtils.triggerEvent("focusin", oFirstItem.getDomRef());
+
+		// Assert
+		assert.notOk(oFirstItem.getDomRef().classList.contains("sapUiIntLCIRoundedCorners"), "Rounded corners class should NOT be applied on the first item");
+
+		// Act
+		QUnitUtils.triggerEvent("focusin", oLastItem.getDomRef());
+
+		// Assert
+		assert.ok(oLastItem.getDomRef().classList.contains("sapUiIntLCIRoundedCorners"), "Rounded corners class should be applied on the last item");
+
 	});
 
 	QUnit.module("List card grouping", {
@@ -2159,21 +2033,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("List card items can be grouped", function (assert) {
-		// Arrange
-		const done = assert.async();
-
-		this.oCard.attachEvent("_ready", () => {
-			const aItems = this.oCard.getCardContent().getInnerList().getItems();
-
-			// Assert
-			assert.strictEqual(aItems.length, 4, "There are two list items and two group titles in the list.");
-			assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "The first item of the list is the group title");
-			assert.strictEqual(aItems[0].getTitle(), "Expensive", "The group title is correct");
-
-			done();
-		});
-
+	QUnit.test("List card items can be grouped", async function (assert) {
 		// Act
 		this.oCard.setManifest({
 			"sap.app": {
@@ -2211,6 +2071,15 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		const aItems = this.oCard.getCardContent().getInnerList().getItems();
+
+		// Assert
+		assert.strictEqual(aItems.length, 4, "There are two list items and two group titles in the list.");
+		assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "The first item of the list is the group title");
+		assert.strictEqual(aItems[0].getTitle(), "Expensive", "The group title is correct");
 	});
 
 	QUnit.test("List card grouping with microcharts", function (assert) {

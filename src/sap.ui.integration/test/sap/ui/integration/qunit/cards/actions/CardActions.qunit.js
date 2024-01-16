@@ -10,12 +10,13 @@ sap.ui.define([
 		"sap/ui/integration/cards/actions/SubmitAction",
 		"sap/ui/integration/util/RequestDataProvider",
 		"sap/ui/integration/Host",
-		"sap/ui/core/Core",
 		"sap/ui/core/Element",
 		"sap/base/Log",
 		"sap/ui/events/KeyCodes",
 		"sap/ui/qunit/QUnitUtils",
-		"sap/m/library"
+		"sap/m/library",
+		"sap/ui/qunit/utils/nextUIUpdate",
+		"qunit/testResources/nextCardReadyEvent"
 ],
 	function (
 		SampleServices,
@@ -27,12 +28,13 @@ sap.ui.define([
 		SubmitAction,
 		RequestDataProvider,
 		Host,
-		Core,
 		Element,
 		Log,
 		KeyCodes,
 		qutils,
-		mLibrary
+		mLibrary,
+		nextUIUpdate,
+		nextCardReadyEvent
 	) {
 		"use strict";
 
@@ -961,107 +963,99 @@ sap.ui.define([
 			}
 		};
 
-		function testNavigationServiceListContent(oManifest, assert) {
+		async function testNavigationServiceListContent(oManifest, assert) {
 			// Arrange
-			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction"),
+			var oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				});
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
-
-				// Assert
-				assert.strictEqual(oCardListItems[0].getType(), ListType.Active, "Card list item is actionable");
-				assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
-
-				//Act
-				oCardListItems[0].firePress();
-				Core.applyChanges();
-
-				// Assert
-				assert.ok(oActionSpy.callCount === 1, "Card List Item is clicked");
-
-				// Cleanup
-				oStubOpenUrl.restore();
-				oActionSpy.restore();
-
-				done();
-			}.bind(this));
-
 			// Act
 			this.oCard.setManifest(oManifest);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardListItems = this.oCard.getCardContent()._getList().getItems();
+
+			// Assert
+			assert.strictEqual(oCardListItems[0].getType(), ListType.Active, "Card list item is actionable");
+			assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
+
+			//Act
+			oCardListItems[0].firePress();
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(oActionSpy.callCount === 1, "Card List Item is clicked");
+
+			// Cleanup
+			oStubOpenUrl.restore();
+			oActionSpy.restore();
 		}
 
-		function testActionOnContentService(oManifest, assert) {
+		async function testActionOnContentService(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
 
-			this.oCard.attachEvent("_ready", function () {
-
-				Core.applyChanges();
-				var oCardLContent = this.oCard.getCardContent();
-
-				this.oCard.attachAction(function (oEvent) {
-
-					oEvent.preventDefault();
-
-					// Assert
-					assert.ok(oCardLContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
-					assert.ok(oActionSpy.callCount === 1, "Card Content is clicked and action event is fired");
-
-					// Cleanup
-					oStubOpenUrl.restore();
-					oActionSpy.restore();
-
-					done();
-				});
-
-				//Act
-				oCardLContent.firePress();
-				Core.applyChanges();
-			}.bind(this));
-
 			// Act
 			this.oCard.setManifest(oManifest);
-		}
 
-		function testActionOnContentUrl(oManifest, assert) {
-			// Arrange
-			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardLContent = this.oCard.getCardContent(),
-					oCardHeader = this.oCard.getCardHeader();
+			var oCardLContent = this.oCard.getCardContent();
+
+			this.oCard.attachAction(function (oEvent) {
+				oEvent.preventDefault();
 
 				// Assert
 				assert.ok(oCardLContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
-				assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header is clickable");
-
-				//Act
-				oCardLContent.firePress();
-				oCardHeader.firePress();
-				Core.applyChanges();
-
-				//Assert
-				assert.strictEqual(oActionSpy.callCount, 2, "Card Content and header are clicked and action event is fired twice");
+				assert.ok(oActionSpy.callCount === 1, "Card Content is clicked and action event is fired");
 
 				// Cleanup
 				oStubOpenUrl.restore();
 				oActionSpy.restore();
 
 				done();
-			}.bind(this));
+			});
+
+			//Act
+			oCardLContent.firePress();
+		}
+
+		async function testActionOnContentUrl(oManifest, assert) {
+			// Arrange
+			var oActionSpy = sinon.spy(CardActions, "fireAction"),
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
 
 			// Act
 			this.oCard.setManifest(oManifest);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardLContent = this.oCard.getCardContent(),
+				oCardHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.ok(oCardLContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
+			assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header is clickable");
+
+			//Act
+			oCardLContent.firePress();
+			oCardHeader.firePress();
+
+			await nextUIUpdate();
+
+			//Assert
+			assert.strictEqual(oActionSpy.callCount, 2, "Card Content and header are clicked and action event is fired twice");
+
+			// Cleanup
+			oStubOpenUrl.restore();
+			oActionSpy.restore();
 		}
 
 		QUnit.module("CardActions API", {
@@ -1128,116 +1122,91 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Service navigation", function (assert) {
-
+		QUnit.test("Service navigation", async function (assert) {
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oLogSpy = sinon.spy(Log, "error");
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardHeader = this.oCard.getCardHeader();
-
-				assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header has a clickable style is added");
-
-				this.oCard.attachAction(function () {
-					// Assert
-					assert.ok(oLogSpy.calledWith(LOG_MESSAGE), "Provided message should be logged to the console.");
-					assert.ok(oActionSpy.callCount, "Card Header is clicked");
-
-					//Clean up
-					oLogSpy.restore();
-					oActionSpy.restore();
-					done();
-				});
-				//Act
-				oCardHeader.firePress();
-				Core.applyChanges();
-
-			}.bind(this));
 
 			// Act
 			this.oCard.setManifest(oManifest_Header_Service);
-		});
 
-		QUnit.test("Action URL should navigate", function (assert) {
-			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
-					Log.error(LOG_MESSAGE);
-				});
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
+			var oCardHeader = this.oCard.getCardHeader();
 
-				var oCardHeader = this.oCard.getCardHeader();
-				assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header has a clickable style is added");
-				//Act
-				oCardHeader.firePress();
-				Core.applyChanges();
+			assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header has a clickable style is added");
 
+			this.oCard.attachAction(function () {
 				// Assert
+				assert.ok(oLogSpy.calledWith(LOG_MESSAGE), "Provided message should be logged to the console.");
 				assert.ok(oActionSpy.callCount, "Card Header is clicked");
 
 				//Clean up
-				oStubOpenUrl.restore();
+				oLogSpy.restore();
 				oActionSpy.restore();
 				done();
+			});
 
-			}.bind(this));
-
-			// Act
-			this.oCard.setManifest(oManifest_Header_Url);
+			//Act
+			oCardHeader.firePress();
 		});
 
-		QUnit.test("Action URL should navigate without parameters", function (assert) {
-			var done = assert.async(),
+		QUnit.test("Action URL should navigate", async function (assert) {
+			var oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				});
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
+			// Act
+			this.oCard.setManifest(oManifest_Header_Url);
 
-				var oCardHeader = this.oCard.getCardHeader();
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				//Act
-				oCardHeader.firePress();
-				Core.applyChanges();
+			// Assert
+			var oCardHeader = this.oCard.getCardHeader();
+			assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header has a clickable style is added");
 
-				// Assert
-				assert.strictEqual(oStubOpenUrl.callCount, 1, "Header has navigate to new url");
+			// Act
+			oCardHeader.firePress();
+			await nextUIUpdate();
 
-				//Clean up
-				oStubOpenUrl.restore();
-				done();
+			// Assert
+			assert.ok(oActionSpy.callCount, "Card Header is clicked");
 
-			}.bind(this));
+			// Clean up
+			oStubOpenUrl.restore();
+			oActionSpy.restore();
+		});
+
+		QUnit.test("Action URL should navigate without parameters", async function (assert) {
+			var oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
+					Log.error(LOG_MESSAGE);
+				});
 
 			// Act
 			this.oCard.setManifest(oIntegrationCardManifest);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardHeader = this.oCard.getCardHeader();
+
+			//Act
+			oCardHeader.firePress();
+			await nextUIUpdate();
+
+			// Assert
+			assert.strictEqual(oStubOpenUrl.callCount, 1, "Header has navigate to new url");
+
+			//Clean up
+			oStubOpenUrl.restore();
 		});
 
-		QUnit.test("Enabled property of header action set to 'false'", function (assert) {
-			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction");
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardHeader = this.oCard.getCardHeader();
-				// Assert
-				assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
-
-				//Act
-				qutils.triggerEvent("tap", oCardHeader);
-
-				// Assert
-				assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
-
-				//Clean up
-				oActionSpy.restore();
-				done();
-			}.bind(this));
+		QUnit.test("Enabled property of header action set to 'false'", async function (assert) {
+			var oActionSpy = sinon.spy(CardActions, "fireAction");
 
 			// Act
 			this.oCard.setManifest({
@@ -1259,29 +1228,26 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardHeader = this.oCard.getCardHeader();
+			// Assert
+			assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
+
+			//Act
+			qutils.triggerEvent("tap", oCardHeader);
+
+			// Assert
+			assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
+
+			//Clean up
+			oActionSpy.restore();
 		});
 
-		QUnit.test("Enabled property of header action set to 'false' with binding", function (assert) {
-			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction");
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardHeader = this.oCard.getCardHeader();
-
-				// Assert
-				assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
-
-				// Act
-				qutils.triggerEvent("tap", oCardHeader);
-
-				// Assert
-				assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
-
-				// Clean up
-				oActionSpy.restore();
-				done();
-			}.bind(this));
+		QUnit.test("Enabled property of header action set to 'false' with binding", async function (assert) {
+			var oActionSpy = sinon.spy(CardActions, "fireAction");
 
 			// Act
 			this.oCard.setManifest({
@@ -1308,48 +1274,61 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
+
+			// Act
+			qutils.triggerEvent("tap", oCardHeader);
+
+			// Assert
+			assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
+
+			// Clean up
+			oActionSpy.restore();
 		});
 
-		QUnit.test("No actions available", function (assert) {
-			var done = assert.async(),
-				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction");
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardHeader = this.oCard.getCardHeader();
-
-				// Assert
-				assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header has not a clickable style is added");
-				assert.ok(oAttachNavigationSpy.callCount === 0, "_attachAction should not be called");
-
-				//Clean up
-				oAttachNavigationSpy.restore();
-				done();
-			}.bind(this));
+		QUnit.test("No actions available", async function (assert) {
+			var oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction");
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_No_Actions);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header has not a clickable style is added");
+			assert.ok(oAttachNavigationSpy.callCount === 0, "_attachAction should not be called");
+
+			//Clean up
+			oAttachNavigationSpy.restore();
 		});
 
-		QUnit.test("No action type available", function (assert) {
-			var done = assert.async(),
-				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction");
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardHeader = this.oCard.getCardHeader();
-
-				// Assert
-				assert.notOk(oCardHeader.hasStyleClass("sapFCardHeaderClickable"), "Card Header has not a clickable style is added");
-				assert.ok(oAttachNavigationSpy.callCount === 0, "_attachAction should not be called");
-
-				//Clean up
-				oAttachNavigationSpy.restore();
-				done();
-			}.bind(this));
+		QUnit.test("No action type available", async function (assert) {
+			var oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction");
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_Actions_Missing_Type);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.notOk(oCardHeader.hasStyleClass("sapFCardHeaderClickable"), "Card Header has not a clickable style is added");
+			assert.ok(oAttachNavigationSpy.callCount === 0, "_attachAction should not be called");
+
+			//Clean up
+			oAttachNavigationSpy.restore();
 		});
 
 		QUnit.module("Action Enablement - NumericHeader", {
@@ -1368,26 +1347,8 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Enabled property of numeric header action set to 'false'", function (assert) {
-			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction");
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardHeader = this.oCard.getCardHeader();
-				// Assert
-				assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
-
-				//Act
-				qutils.triggerEvent("tap", oCardHeader);
-
-				// Assert
-				assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
-
-				//Clean up
-				oActionSpy.restore();
-				done();
-			}.bind(this));
+		QUnit.test("Enabled property of numeric header action set to 'false'", async function (assert) {
+			var oActionSpy = sinon.spy(CardActions, "fireAction");
 
 			// Act
 			this.oCard.setManifest({
@@ -1410,29 +1371,26 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardHeader = this.oCard.getCardHeader();
+			// Assert
+			assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
+
+			//Act
+			qutils.triggerEvent("tap", oCardHeader);
+
+			// Assert
+			assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
+
+			//Clean up
+			oActionSpy.restore();
 		});
 
-		QUnit.test("Enabled property of numeric header action set to 'false' with binding", function (assert) {
-			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction");
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardHeader = this.oCard.getCardHeader();
-
-				// Assert
-				assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
-
-				// Act
-				qutils.triggerEvent("tap", oCardHeader);
-
-				// Assert
-				assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
-
-				// Clean up
-				oActionSpy.restore();
-				done();
-			}.bind(this));
+		QUnit.test("Enabled property of numeric header action set to 'false' with binding", async function (assert) {
+			var oActionSpy = sinon.spy(CardActions, "fireAction");
 
 			// Act
 			this.oCard.setManifest({
@@ -1460,6 +1418,23 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
+
+			// Act
+			qutils.triggerEvent("tap", oCardHeader);
+
+			// Assert
+			assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
+
+			// Clean up
+			oActionSpy.restore();
 		});
 
 		QUnit.module("Navigation Service - List Content", {
@@ -1476,161 +1451,143 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("List should be actionable ", function (assert) {
-			testNavigationServiceListContent.call(this, oManifest_ListCard_CONTENT_ACTION, assert);
+		QUnit.test("List should be actionable ", async function (assert) {
+			await testNavigationServiceListContent.call(this, oManifest_ListCard_CONTENT_ACTION, assert);
 		});
 
-		QUnit.test("Static Data - List should be actionable ", function (assert) {
-
-			testNavigationServiceListContent.call(this, oManifest_ListCard_No_Request, assert);
+		QUnit.test("Static Data - List should be actionable ", async function (assert) {
+			await testNavigationServiceListContent.call(this, oManifest_ListCard_No_Request, assert);
 		});
 
-		QUnit.test("Card items with url should be hidden", function (assert) {
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
-
-				//Assert
-				assert.ok(oCardListItems.length === 2, "There should be two items");
-				assert.notOk(oCardListItems[0].getVisible(), "First items should not be visible");
-				assert.ok(oCardListItems[1].getVisible(), "Second item should be visible");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Card items with url should be hidden", async function (assert) {
 			// Act
 			this.oCard.setManifest(oManifest_List_Hidden_Items);
+
+			await nextCardReadyEvent(this.oCard);
+
+			var oCardListItems = this.oCard.getCardContent()._getList().getItems();
+
+			//Assert
+			assert.ok(oCardListItems.length === 2, "There should be two items");
+			assert.notOk(oCardListItems[0].getVisible(), "First items should not be visible");
+			assert.ok(oCardListItems[1].getVisible(), "Second item should be visible");
 		});
 
-		QUnit.test("Card items should be visible if service does not implement method 'hidden'", function (assert) {
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
-
-				//Assert
-				assert.strictEqual(oCardListItems.length, 2, "All items should be visible if 'hidden' is not implemented.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Card items should be visible if service does not implement method 'hidden'", async function (assert) {
 			// Act
 			this.oCard.setManifest(oManifest_List_Broken_Navigation);
+
+			await nextCardReadyEvent(this.oCard);
+
+			var oCardListItems = this.oCard.getCardContent()._getList().getItems();
+
+			//Assert
+			assert.strictEqual(oCardListItems.length, 2, "All items should be visible if 'hidden' is not implemented.");
 		});
 
-		QUnit.test("No service URL in navigation actions", function (assert) {
+		QUnit.test("No service URL in navigation actions", async function (assert) {
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oLogSpy = sinon.spy(Log, "error");
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
-
-				this.oCard.attachAction(function () {
-					// Assert
-					assert.strictEqual(oCardListItems[0].getType(), ListType.Active, "Card list item is actionable");
-					assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
-					assert.ok(oLogSpy.calledWith(LOG_MESSAGE), "Provided message should be logged to the console.");
-					assert.ok(oActionSpy.callCount, "Card List item is clicked");
-
-					//Clean up
-					oLogSpy.restore();
-					oActionSpy.restore();
-
-					done();
-				});
-
-				//Act
-				oCardListItems[0].firePress();
-				Core.applyChanges();
-			}.bind(this));
-
 			// Act
 			this.oCard.setManifest(oManifest_List_Binded_Items);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardListItems = this.oCard.getCardContent()._getList().getItems();
+
+			this.oCard.attachAction(function () {
+				// Assert
+				assert.strictEqual(oCardListItems[0].getType(), ListType.Active, "Card list item is actionable");
+				assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
+				assert.ok(oLogSpy.calledWith(LOG_MESSAGE), "Provided message should be logged to the console.");
+				assert.ok(oActionSpy.callCount, "Card List item is clicked");
+
+				//Clean up
+				oLogSpy.restore();
+				oActionSpy.restore();
+
+				done();
+			});
+
+			//Act
+			oCardListItems[0].firePress();
 		});
 
-		QUnit.test("Action enabled/disabled in template, no service", function (assert) {
+		QUnit.test("Action enabled/disabled in template", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction"),
+			var oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				});
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
-
-				//Act
-				oCardListItems[3].firePress();
-				Core.applyChanges();
-
-				// Assert
-				assert.strictEqual(oCardListItems[0].getType(), ListType.Inactive, "Card list item is NOT actionable");
-				assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
-				assert.strictEqual(oCardListItems[2].getType(), ListType.Inactive, "Card list item is NOT actionable");
-				assert.strictEqual(oCardListItems[3].getType(), ListType.Active, "Card list item is actionable");
-				assert.strictEqual(oCardListItems[4].getType(), ListType.Active, "Card list item is actionable");
-
-				assert.ok(oActionSpy.callCount, "Card List item is clicked");
-
-				//Clean up
-				oStubOpenUrl.restore();
-				oActionSpy.restore();
-
-				done();
-			}.bind(this));
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_Action_Enabled);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardListItems = this.oCard.getCardContent()._getList().getItems();
+
+			//Act
+			oCardListItems[3].firePress();
+			await nextUIUpdate();
+
+			// Assert
+			assert.strictEqual(oCardListItems[0].getType(), ListType.Inactive, "Card list item is NOT actionable");
+			assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
+			assert.strictEqual(oCardListItems[2].getType(), ListType.Inactive, "Card list item is NOT actionable");
+			assert.strictEqual(oCardListItems[3].getType(), ListType.Active, "Card list item is actionable");
+			assert.strictEqual(oCardListItems[4].getType(), ListType.Active, "Card list item is actionable");
+
+			assert.ok(oActionSpy.callCount, "Card List item is clicked");
+
+			//Clean up
+			oStubOpenUrl.restore();
+			oActionSpy.restore();
 		});
 
-		QUnit.test("No actions available", function (assert) {
+		QUnit.test("No actions available", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction");
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
-				// Assert
-				assert.strictEqual(oCardListItems[0].getType(), ListType.Inactive, "Card list item is NOT actionable");
-				assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
-				assert.strictEqual(oAttachNavigationSpy.callCount, 0, "_attachAction should not be called");
-
-				//Clean up
-				oAttachNavigationSpy.restore();
-
-				done();
-			}.bind(this));
+			var oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction");
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_No_Actions);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardListItems = this.oCard.getCardContent()._getList().getItems();
+			// Assert
+			assert.strictEqual(oCardListItems[0].getType(), ListType.Inactive, "Card list item is NOT actionable");
+			assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
+			assert.strictEqual(oAttachNavigationSpy.callCount, 0, "_attachAction should not be called");
+
+			//Clean up
+			oAttachNavigationSpy.restore();
 		});
 
-		QUnit.test("No action type available", function (assert) {
+		QUnit.test("No action type available", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction");
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
-				// Assert
-				assert.strictEqual(oCardListItems[0].getType(), ListType.Inactive, "Card list item is NOT actionable");
-				assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
-				assert.strictEqual(oAttachNavigationSpy.callCount, 0, "_attachAction should not be called");
-
-				//Clean up
-				oAttachNavigationSpy.restore();
-
-				done();
-			}.bind(this));
+			var oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction");
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_Actions_Missing_Type);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardListItems = this.oCard.getCardContent()._getList().getItems();
+			// Assert
+			assert.strictEqual(oCardListItems[0].getType(), ListType.Inactive, "Card list item is NOT actionable");
+			assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
+			assert.strictEqual(oAttachNavigationSpy.callCount, 0, "_attachAction should not be called");
+
+			//Clean up
+			oAttachNavigationSpy.restore();
 		});
 
 		QUnit.module("Navigation Action - List Content", {
@@ -1647,10 +1604,8 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("List should be actionable ", function (assert) {
-
-			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction"),
+		QUnit.test("List should be actionable ", async function (assert) {
+			var oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				});
@@ -1659,26 +1614,25 @@ sap.ui.define([
 			this.oCard.setManifest(oManifest_ListCard_No_Request);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				// Assert
-				assert.strictEqual(oCardListItems[0].getType(), ListType.Active, "Card list item is actionable");
-				assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
+			var oCardListItems = this.oCard.getCardContent()._getList().getItems();
 
-				//Act
-				oCardListItems[0].firePress();
-				Core.applyChanges();
+			// Assert
+			assert.strictEqual(oCardListItems[0].getType(), ListType.Active, "Card list item is actionable");
+			assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
 
-				// Assert
-				assert.ok(oActionSpy.callCount === 1, "Card List Item is clicked");
+			//Act
+			oCardListItems[0].firePress();
+			await nextUIUpdate();
 
-				// Cleanup
-				oActionSpy.restore();
-				oStubOpenUrl.restore();
-				done();
-			}.bind(this));
+			// Assert
+			assert.ok(oActionSpy.callCount === 1, "Card List Item is clicked");
+
+			// Cleanup
+			oActionSpy.restore();
+			oStubOpenUrl.restore();
 		});
 
 		QUnit.module("Navigation Action - Object Content", {
@@ -1697,105 +1651,91 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Object content should be actionable - service", function (assert) {
-
-			testActionOnContentService.call(this, objectContent_service, assert);
+		QUnit.test("Object content should be actionable - service", async function (assert) {
+			await testActionOnContentService.call(this, objectContent_service, assert);
 		});
 
-		QUnit.test("Object content should be actionable - url", function (assert) {
-
-			testActionOnContentUrl.call(this, objectContent_url, assert);
+		QUnit.test("Object content should be actionable - url", async function (assert) {
+			await testActionOnContentUrl.call(this, objectContent_url, assert);
 		});
 
-		QUnit.test("Using a service for action on link in object content should not throw error", function (assert) {
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				// Assert
-				assert.ok(true, "Error was not thrown");
-
-				done();
-			});
-
+		QUnit.test("Using a service for action on link in object content should not throw error", async function (assert) {
 			// Act
 			this.oCard.setManifest(objectContentItemDetail_service);
+
+			await nextCardReadyEvent(this.oCard);
+
+			// Assert
+			assert.ok(true, "Error was not thrown");
 		});
 
-		QUnit.test("On pressing link, action should be fired", function (assert) {
-			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction"),
+		QUnit.test("On pressing link, action should be fired", async function (assert) {
+			var oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oObjContent = this.oCard.getCardContent();
-
-				//Act
-				var oLink = Element.closestTo(oObjContent.$().find(".sapMLnk")[0]);
-				oLink.firePress();
-
-				Core.applyChanges();
-
-				// Assert
-				assert.ok(oObjContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
-				assert.ok(oActionSpy.callCount === 1, "Link is clicked and action event is not fired");
-
-				// Cleanup
-				oActionSpy.restore();
-				oStubOpenUrl.restore();
-				done();
-			}.bind(this));
 
 			// Act
 			this.oCard.setManifest(objectContent_service);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oObjContent = this.oCard.getCardContent();
+
+			//Act
+			var oLink = Element.closestTo(oObjContent.$().find(".sapMLnk")[0]);
+			oLink.firePress();
+
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(oObjContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
+			assert.ok(oActionSpy.callCount === 1, "Link is clicked and action event is not fired");
+
+			// Cleanup
+			oActionSpy.restore();
+			oStubOpenUrl.restore();
 		});
 
-		QUnit.test("Disabled actions should also disable links", function (assert) {
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oContent = this.oCard.getCardContent();
-
-				//Act
-				var oLink = Element.closestTo(oContent.$().find(".sapMLnk")[1]);
-				assert.strictEqual(oLink.getEnabled(), false, "Link is disabled");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Disabled actions should also disable links", async function (assert) {
 			// Act
 			this.oCard.setManifest(objectContent_url);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oContent = this.oCard.getCardContent();
+
+			//Act
+			var oLink = Element.closestTo(oContent.$().find(".sapMLnk")[1]);
+			assert.strictEqual(oLink.getEnabled(), false, "Link is disabled");
 		});
 
-		QUnit.test("Pressing a field with type 'action' should fire an action", function (assert) {
-			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction"),
+		QUnit.test("Pressing a field with type 'action' should fire an action", async function (assert) {
+			var oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oContent = this.oCard.getCardContent();
-
-				//Act
-				var oLink = Element.closestTo(oContent.$().find("a:contains('Book a meeting')")[0]);
-				assert.strictEqual(oLink.getEnabled(), true, "Link is enabled");
-				oLink.firePress();
-
-				Core.applyChanges();
-
-				// Assert
-				assert.ok(oContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
-				assert.ok(oActionSpy.callCount === 1, "Field with type='action' is clicked and action event is fired");
-
-				// Cleanup
-				oActionSpy.restore();
-				oStubOpenUrl.restore();
-				done();
-			}.bind(this));
-
 			// Act
 			this.oCard.setManifest(objectContent_url);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oContent = this.oCard.getCardContent();
+
+			//Act
+			var oLink = Element.closestTo(oContent.$().find("a:contains('Book a meeting')")[0]);
+			assert.strictEqual(oLink.getEnabled(), true, "Link is enabled");
+			oLink.firePress();
+
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(oContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
+			assert.ok(oActionSpy.callCount === 1, "Field with type='action' is clicked and action event is fired");
+
+			// Cleanup
+			oActionSpy.restore();
+			oStubOpenUrl.restore();
 		});
 
 		QUnit.module("Navigation Action - Table Content", {
@@ -1814,32 +1754,30 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Pressing a table row column with type 'action' should fire an action", function (assert) {
-			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction"),
+		QUnit.test("Pressing a table row column with type 'action' should fire an action", async function (assert) {
+			var oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oContent = this.oCard.getCardContent();
-
-				//Act
-				var oLink = Element.closestTo(oContent.$().find(".sapMLnk:not(.sapMLnkDsbl)")[0]);
-				qutils.triggerKeydown(oLink.getDomRef(), KeyCodes.ENTER);
-
-				Core.applyChanges();
-
-				// Assert
-				assert.ok(oActionSpy.callCount === 1, "Field with type='action' is clicked and action event is fired");
-
-				// Cleanup
-				oActionSpy.restore();
-				oStubOpenUrl.restore();
-				done();
-			}.bind(this));
 
 			// Act
 			this.oCard.setManifest(tableContent_action_on_cell);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oContent = this.oCard.getCardContent();
+
+			//Act
+			var oLink = Element.closestTo(oContent.$().find(".sapMLnk:not(.sapMLnkDsbl)")[0]);
+			qutils.triggerKeydown(oLink.getDomRef(), KeyCodes.ENTER);
+
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(oActionSpy.callCount === 1, "Field with type='action' is clicked and action event is fired");
+
+			// Cleanup
+			oActionSpy.restore();
+			oStubOpenUrl.restore();
 		});
 
 		QUnit.module("Action Handlers", {
@@ -1856,47 +1794,43 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Submit action handler", function (assert) {
-			var mEventArguments,
-				done = assert.async(),
-				oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
+		QUnit.test("Submit action handler", async function (assert) {
+			var oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
 				oSpyActionHandler = this.spy(SubmitAction.prototype, "execute");
 
 			// Setup
 			this.oCard.setManifest(oManifestActionSubmit);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
-			this.oCard.attachEvent("_ready", function () {
-				mEventArguments = {
-					card: this.oCard,
-					host: null,
-					action: {
-						type: CardActionType.Submit
-					},
-					parameters: {
-						configuration: {},
-						data: {
-							foo: "bar"
-						}
-					},
-					source: this.oCard.getCardContent()
-				};
-				// Act
-				CardActions.fireAction(mEventArguments);
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				Core.applyChanges();
-				assert.ok(oStubRequest.called, "DataProvider's getData should have been called.");
-				assert.ok(oSpyActionHandler.called, "Submit Action's handler should have been called.");
-				assert.deepEqual(oSpyActionHandler.thisValues[0].getParameters(), mEventArguments.parameters, "Submit Action's handler should have been called with the event configuration.");
+			const mEventArguments = {
+				card: this.oCard,
+				host: null,
+				action: {
+					type: CardActionType.Submit
+				},
+				parameters: {
+					configuration: {},
+					data: {
+						foo: "bar"
+					}
+				},
+				source: this.oCard.getCardContent()
+			};
 
-				done();
-			}.bind(this));
+			// Act
+			CardActions.fireAction(mEventArguments);
+			await nextUIUpdate();
+
+			assert.ok(oStubRequest.called, "DataProvider's getData should have been called.");
+			assert.ok(oSpyActionHandler.called, "Submit Action's handler should have been called.");
+			assert.deepEqual(oSpyActionHandler.thisValues[0].getParameters(), mEventArguments.parameters, "Submit Action's handler should have been called with the event configuration.");
 		});
 
-		QUnit.test("Submit action handler at the Host", function (assert) {
-			var mEventArguments,
-				done = assert.async(),
-				oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
+		QUnit.test("Submit action handler at the Host", async function (assert) {
+			var oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
 				oSpyActionHandler = this.spy(SubmitAction.prototype, "execute"),
 				oHostActionHandlerSpy1 = this.spy(),
 				oHost1 = new Host({
@@ -1909,49 +1843,47 @@ sap.ui.define([
 					action: oHostActionHandlerSpy2
 				});
 
-
 			// Setup
 			this.oCard.setManifest(oManifestActionSubmit);
 			this.oCard.setHost(oHost1);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
-			this.oCard.attachEvent("_ready", function () {
-				mEventArguments = {
-					card: this.oCard,
-					host: oHost1,
-					action: {
-						type: CardActionType.Submit
-					},
-					parameters: {
-						configuration: {},
-						data: {
-							foo: "bar"
-						}
-					},
-					source: this.oCard.getCardContent()
-				};
-				// Act
-				CardActions.fireAction(mEventArguments);
-				Core.applyChanges();
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				// Assert
-				assert.ok(oHostActionHandlerSpy1.calledOnce, "Host's action handler should have been called");
-				assert.ok(oStubRequest.calledOnce, "DataProvider's getData should have been called.");
-				assert.ok(oSpyActionHandler.calledOnce, "Submit Action's handler should have been called.");
-				assert.deepEqual(oSpyActionHandler.thisValues[0].getParameters(), mEventArguments.parameters, "Submit Action's handler should have been called with the event configuration.");
+			const mEventArguments = {
+				card: this.oCard,
+				host: oHost1,
+				action: {
+					type: CardActionType.Submit
+				},
+				parameters: {
+					configuration: {},
+					data: {
+						foo: "bar"
+					}
+				},
+				source: this.oCard.getCardContent()
+			};
+			// Act
+			CardActions.fireAction(mEventArguments);
+			await nextUIUpdate();
 
-				// Act
-				this.oCard.setHost(oHost2);
-				mEventArguments.host = oHost2;
-				CardActions.fireAction(mEventArguments);
-				Core.applyChanges();
+			// Assert
+			assert.ok(oHostActionHandlerSpy1.calledOnce, "Host's action handler should have been called");
+			assert.ok(oStubRequest.calledOnce, "DataProvider's getData should have been called.");
+			assert.ok(oSpyActionHandler.calledOnce, "Submit Action's handler should have been called.");
+			assert.deepEqual(oSpyActionHandler.thisValues[0].getParameters(), mEventArguments.parameters, "Submit Action's handler should have been called with the event configuration.");
 
-				// Assert
-				assert.ok(oHostActionHandlerSpy2.calledOnce, "Host's action handler should have been called");
-				assert.ok(oSpyActionHandler.calledOnce, "Submit Action's handler should be skipped this time.");
+			// Act
+			this.oCard.setHost(oHost2);
+			mEventArguments.host = oHost2;
+			CardActions.fireAction(mEventArguments);
+			await nextUIUpdate();
 
-				done();
-			}.bind(this));
+			// Assert
+			assert.ok(oHostActionHandlerSpy2.calledOnce, "Host's action handler should have been called");
+			assert.ok(oSpyActionHandler.calledOnce, "Submit Action's handler should be skipped this time.");
 		});
 
 		QUnit.module("Card API", {
@@ -1965,7 +1897,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("When preventing an action within action handler, no further processing of that action should be done", function (assert) {
+		QUnit.test("When preventing an action within action handler, no further processing of that action should be done", async function (assert) {
 			var done = assert.async(2),
 				oCardFireActionSpy = sinon.spy(this.oCard, "fireAction"),
 				oFurtherProcessingSpy = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
@@ -1988,47 +1920,43 @@ sap.ui.define([
 				}, 300);
 			});
 
-			this.oCard.attachEvent("_ready", function () {
-				//Act
-				var oLink = Element.closestTo(this.oCard.getCardContent().$().find(".sapMLnk:not(.sapMLnkDsbl)")[0]);
-				qutils.triggerKeydown(oLink.getDomRef(), KeyCodes.ENTER);
-			}.bind(this));
-
 			// Act
 			this.oCard.setManifest(tableContent_action_on_cell);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+
+			//Act
+			var oLink = Element.closestTo(this.oCard.getCardContent().$().find(".sapMLnk:not(.sapMLnkDsbl)")[0]);
+			qutils.triggerKeydown(oLink.getDomRef(), KeyCodes.ENTER);
 		});
 
-		QUnit.test("Trigger action", function (assert) {
+		QUnit.test("Trigger action", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard,
-				oActionSpy = sinon.spy(CardActions, "fireAction"),
+			var oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "_openUrl").callsFake(function () {});
 
-			oCard.attachEvent("_ready", function () {
-				// Act
-				oCard.triggerAction({
-					type: "Navigation",
-					parameters: {
-						url: "test-url"
-					}
-				});
+			this.oCard.setManifest(oIntegrationCardManifest);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
-				// Assert
-				assert.ok(oActionSpy.calledOnce, "The action is triggered.");
-				assert.ok(oStubOpenUrl.calledOnce, "The predefined action is executed.");
-				assert.ok(oStubOpenUrl.calledWith("test-url"), "The predefined action has correct parameters.");
+			await nextCardReadyEvent(this.oCard);
 
-				done();
-
-				// Clean
-				oActionSpy.restore();
-				oStubOpenUrl.restore();
+			// Act
+			this.oCard.triggerAction({
+				type: "Navigation",
+				parameters: {
+					url: "test-url"
+				}
 			});
 
-			oCard.setManifest(oIntegrationCardManifest);
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			// Assert
+			assert.ok(oActionSpy.calledOnce, "The action is triggered.");
+			assert.ok(oStubOpenUrl.calledOnce, "The predefined action is executed.");
+			assert.ok(oStubOpenUrl.calledWith("test-url"), "The predefined action has correct parameters.");
+
+			// Clean
+			oActionSpy.restore();
+			oStubOpenUrl.restore();
 		});
 
 		QUnit.module("ActionsStrip", {
@@ -2045,24 +1973,18 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Complex expression binding", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard;
+		QUnit.test("Complex expression binding", async function (assert) {
+			this.oCard.setManifest(oManifest_ActionsStrip);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
-			oCard.attachEvent("_ready", function () {
-				var oActionsStrip = oCard.getAggregation("_footer").getActionsStrip(),
-					aButtons = oActionsStrip._getToolbar().getContent();
+			await nextCardReadyEvent(this.oCard);
 
-				// Assert
-				assert.notOk(aButtons[1].getEnabled(), "Button is disabled.");
-				assert.notOk(aButtons[2].getEnabled(), "Button is disabled.");
+			var oActionsStrip = this.oCard.getAggregation("_footer").getActionsStrip(),
+				aButtons = oActionsStrip._getToolbar().getContent();
 
-				done();
-			});
-
-			oCard.setManifest(oManifest_ActionsStrip);
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			// Assert
+			assert.notOk(aButtons[1].getEnabled(), "Button is disabled.");
+			assert.notOk(aButtons[2].getEnabled(), "Button is disabled.");
 		});
 
 		return Library.load("sap.suite.ui.commons").then(function () {
@@ -2079,9 +2001,8 @@ sap.ui.define([
 				}
 			});
 
-			QUnit.test("Timeline should be actionable ", function (assert) {
-				var done = assert.async(),
-					oActionSpy = sinon.spy(CardActions, "fireAction"),
+			QUnit.test("Timeline should be actionable ", async function (assert) {
+				var oActionSpy = sinon.spy(CardActions, "fireAction"),
 					oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
 						Log.error(LOG_MESSAGE);
 					});
@@ -2090,23 +2011,21 @@ sap.ui.define([
 				this.oCard.setManifest(oManifest_TimelineCard_No_Request);
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
 
-				this.oCard.attachEvent("_ready", function () {
-					Core.applyChanges();
+				await nextCardReadyEvent(this.oCard);
+				await nextUIUpdate();
 
-					var oContentItems = this.oCard.getCardContent().getInnerList().getContent();
+				var oContentItems = this.oCard.getCardContent().getInnerList().getContent();
 
-					//Act
-					oContentItems[0].fireSelect();
-					Core.applyChanges();
+				//Act
+				oContentItems[0].fireSelect();
+				await nextUIUpdate();
 
-					// Assert
-					assert.ok(oActionSpy.callCount === 1, "Timeline item action is fired");
+				// Assert
+				assert.ok(oActionSpy.callCount === 1, "Timeline item action is fired");
 
-					// Cleanup
-					oActionSpy.restore();
-					oStubOpenUrl.restore();
-					done();
-				}.bind(this));
+				// Cleanup
+				oActionSpy.restore();
+				oStubOpenUrl.restore();
 			});
 		}).catch(function () {
 			QUnit.module("Navigation Action - Timeline Content");
