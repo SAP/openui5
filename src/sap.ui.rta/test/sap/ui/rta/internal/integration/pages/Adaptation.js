@@ -220,6 +220,8 @@ sap.ui.define([
 					const oResources = Lib.getResourceBundleFor("sap.ui.rta");
 					return this.waitFor({
 						controlType: "sap.ui.unified.MenuItem",
+						searchOpenDialogs: true,
+						visible: false,
 						matchers: new PropertyStrictEquals({
 							name: "text",
 							value: oResources.getText(sText)

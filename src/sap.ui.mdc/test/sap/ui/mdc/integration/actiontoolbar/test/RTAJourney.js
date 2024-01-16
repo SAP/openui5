@@ -5,17 +5,23 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/test/Opa5",
+    "sap/ui/core/library",
+    "sap/ui/core/Lib",
+    "sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
     "sap/ui/mdc/enums/ActionToolbarActionAlignment",
     "sap/ui/mdc/ActionToolbarTesting/pages/App",
     "test-resources/sap/ui/rta/integration/pages/Adaptation"
 ], function(
+    coreLibrary,
+    Library,
 	Opa5,
 	opaTest,
     ActionToolbarActionAlignment
 ) {
 	"use strict";
+
+    const oRb = Library.getResourceBundleFor("sap.m");
 
     Opa5.extendConfig({
 
@@ -43,13 +49,15 @@ sap.ui.define([
             name: "StandAlone",
             toolbarID: "---app--actionToolbarId",
             contextMenuEntries: ["Cut", "Paste", "Toolbar Actions"],
-            renameActionID: "standaloneButton4"
+            renameActionID: "standaloneButton4",
+            blockAdaptationActionID: "standaloneButton3"
         },
         {
             name: "Table",
             toolbarID: "---app--actionToolbarTable-toolbar",
             contextMenuEntries: ["Toolbar Actions"],
             renameActionID: "tableButton4",
+            blockAdaptationActionID: "tableButton3",
             variantManagementID: "ActionToolbarTesting---app--IDVariantManagementOfTable"
         },
         {
@@ -57,6 +65,7 @@ sap.ui.define([
             toolbarID: "---app--actionToolbarChart--toolbar",
             contextMenuEntries: ["Toolbar Actions"],
             renameActionID: "chartButton4",
+            blockAdaptationActionID: "chartButton3",
             variantManagementID: "ActionToolbarTesting---app--IDVariantManagementOfChart"
         }
     ];
@@ -181,6 +190,48 @@ sap.ui.define([
             });
         });
 
+        opaTest("cannot move 'Action 3'", function(Given, When, Then) {
+            When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("ActionToolbarTesting---app");
+            Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("ActionToolbarTesting---app", undefined);
+
+            // Open Context Menu of ActionToolbar
+            When.onPageWithRTA.iRightClickOnAnElementOverlay("ActionToolbarTesting" + oTestSetting.toolbarID);
+
+            Then.onPageWithRTA.iShouldSeetheContextMenu();
+            Then.onPageWithRTA.iShouldSeetheContextMenuEntries(oTestSetting.contextMenuEntries);
+            When.onPageWithRTA.iClickOnAContextMenuEntryWithText("Toolbar Actions");
+
+            // Change button order
+            When.onTheApp.iCannotMoveAction("Action 3");
+            Then.onPageWithRTA.iShouldSeeTheMessageStrip(oRb.getText("p13n.MESSAGE_DISABLED_ITEMS"), coreLibrary.MessageType.Warning);
+
+            // Close dialog
+            When.onTheApp.iPressOkButtonOnP13nDialog();
+
+            // Close RTA
+            When.onPageWithRTA.iExitRtaMode(true);
+
+            // Check button order
+            Then.onTheApp.iShouldSeeActionToolbarWithActions("ActionToolbarTesting" + oTestSetting.toolbarID, {
+                "Action 5": {
+                    alignment: ActionToolbarActionAlignment.Begin,
+                    aggregationName: "end"
+                },
+                "Action 4": {
+                    alignment: ActionToolbarActionAlignment.Begin,
+                    aggregationName: "end"
+                },
+                "Action 3": {
+                    alignment: ActionToolbarActionAlignment.End,
+                    aggregationName: "end"
+                },
+                "Action 2": {
+                    alignment: ActionToolbarActionAlignment.End,
+                    aggregationName: "end"
+                }
+            });
+        });
+
         opaTest("rename 'Action 4'", function(Given, When, Then) {
             When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("ActionToolbarTesting---app");
             Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("ActionToolbarTesting---app", undefined);
@@ -195,6 +246,37 @@ sap.ui.define([
 
             // Close RTA
             When.onPageWithRTA.iExitRtaMode();
+
+             // Check button order
+             Then.onTheApp.iShouldSeeActionToolbarWithActions("ActionToolbarTesting" + oTestSetting.toolbarID, {
+                "Action 5": {
+                    alignment: ActionToolbarActionAlignment.Begin,
+                    aggregationName: "end"
+                },
+                "Rename Test": {
+                    alignment: ActionToolbarActionAlignment.Begin,
+                    aggregationName: "end"
+                },
+                "Action 3": {
+                    alignment: ActionToolbarActionAlignment.End,
+                    aggregationName: "end"
+                },
+                "Action 2": {
+                    alignment: ActionToolbarActionAlignment.End,
+                    aggregationName: "end"
+                }
+            });
+        });
+
+        opaTest("cannot adapt 'Action 3'", function(Given, When, Then) {
+            When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("ActionToolbarTesting---app");
+            Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("ActionToolbarTesting---app", undefined);
+
+            // Check if I can open the Context Menu of the element
+            When.onPageWithRTA.iCanNotRightClickOnAnElementOverlay("ActionToolbarTesting---app--" + oTestSetting.blockAdaptationActionID);
+
+            // Close RTA
+            When.onPageWithRTA.iExitRtaMode(true);
 
              // Check button order
              Then.onTheApp.iShouldSeeActionToolbarWithActions("ActionToolbarTesting" + oTestSetting.toolbarID, {

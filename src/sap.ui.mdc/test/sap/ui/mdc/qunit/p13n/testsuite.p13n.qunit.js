@@ -77,6 +77,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},*/
+			"ActionToolbarPanel": {
+				group: "UI Panels",
+				module: "./panels/ActionToolbarPanel.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"AdaptFiltersPanel": {
 				group: "UI Panels",
 				module: "./panels/AdaptFiltersPanel.qunit",

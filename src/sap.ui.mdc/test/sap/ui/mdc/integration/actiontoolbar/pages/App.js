@@ -34,6 +34,8 @@ sap.ui.require([
 								const oLabelControl = aLabels[0];
 								this.waitFor({
 									controlType: "sap.m.CheckBox",
+                                    searchOpenDialogs: true,
+                                    visible: false,
 									matchers: [
 										new Ancestor(oColumnListItem, false)
 									],
@@ -52,7 +54,7 @@ sap.ui.require([
         });
     };
 
-    const iMoveAction = function(sActionLabel, sDirection) {
+    const waitForP13nColumListItem = function(sActionLabel, fnSuccess) {
         return waitForP13nDialog.call(this, {
             matchers: [
                 new Properties({
@@ -67,38 +69,53 @@ sap.ui.require([
                         const oListView = aListViews[0];
                         this.waitFor({
                             controlType: "sap.m.ColumnListItem",
+                            visible: false,
                             matchers: function(oColumnListItem) {
                                 return new Ancestor(oListView, false)(oColumnListItem) && oColumnListItem.getCells()[0].getItems()[0].getText() === sActionLabel;
                             },
                             actions: new Press(),
                             success: function(aColumnListItem) {
-                                const oColumnListItem = aColumnListItem[0];
-                                this.waitFor({
-                                    controlType: "sap.m.CheckBox",
-                                    matchers: [
-                                        new Ancestor(oColumnListItem, false)
-                                    ],
-                                    success: function(aCheckBoxes) {
-                                        if (aCheckBoxes[0].getSelected()) {
-                                            this.waitFor({
-                                                controlType: "sap.m.Button",
-                                                matchers: [
-                                                    new PropertyStrictEquals({
-                                                        name: "icon",
-                                                        value: sDirection
-                                                    }),
-                                                    new Ancestor(oColumnListItem, false)
-                                                ],
-                                                actions: new Press()
-                                            });
-                                        }
-                                    }
-                                });
+                                fnSuccess([aColumnListItem[0]]);
                             }
                         });
                     }
                 });
             }
+        });
+    };
+
+    const iMoveAction = function(sActionLabel, sDirection) {
+        return waitForP13nColumListItem.call(this, sActionLabel, (aArgs) => {
+            const oColumnListItem = aArgs[0];
+            this.waitFor({
+                controlType: "sap.m.CheckBox",
+                matchers: [
+                    new Ancestor(oColumnListItem, false)
+                ],
+                success: function(aCheckBoxes) {
+                    if (aCheckBoxes[0].getSelected()) {
+                        this.waitFor({
+                            controlType: "sap.m.Button",
+                            matchers: [
+                                new PropertyStrictEquals({
+                                    name: "icon",
+                                    value: sDirection
+                                }),
+                                new Ancestor(oColumnListItem, false)
+                            ],
+                            actions: new Press()
+                        });
+                    }
+                }
+            });
+        });
+    };
+
+    const iCannotMoveAction = function(sActionLabel, aDirection) {
+        return waitForP13nColumListItem.call(this, sActionLabel, (aArgs) => {
+            const oColumnListItem = aArgs[0];
+            const aItems = oColumnListItem.getCells()[1].getItems();
+            Opa5.assert.ok(aItems.length == 1, "No buttons visible");
         });
     };
 
@@ -138,6 +155,14 @@ sap.ui.require([
                             iChangeSelectedActions.call(this, oP13nDialog, aActions);
                         }
                     });
+                },
+                iCannotMoveAction: function(sActionLabel) {
+                    iCannotMoveAction.call(this, sActionLabel, [
+                        Util.icons.moveup,
+                        Util.icons.movedown,
+                        Util.icons.movetotop,
+                        Util.icons.movetobottom
+                    ]);
                 },
                 iMoveActionUp: function(sActionLabel) {
                     iMoveAction.call(this, sActionLabel, Util.icons.moveup);
