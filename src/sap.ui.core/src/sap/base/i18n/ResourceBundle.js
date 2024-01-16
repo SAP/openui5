@@ -927,7 +927,7 @@ sap.ui.define([
 			mParams.url = mParams.url || ResourceBundle._getUrl(mParams.bundleUrl, mParams.bundleName);
 		}
 
-		// Hook implemented by Core.js; adds missing terminology information from the library manifest, if available
+		// Hook implemented by sap/ui/core/Lib.js; adds missing terminology information from the library manifest, if available
 		mParams = ResourceBundle._enrichBundleConfig(mParams);
 
 		// Note: ResourceBundle constructor returns a Promise in async mode!
@@ -972,14 +972,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook implemented by sap.ui.core.Core. to enrich bundle config with terminologies.
-	 * See also the documentation of the hook's implementation in Core.js.
+	 * Hook implemented by sap/ui/core/Lib to enrich bundle config with terminologies.
+	 * See also the documentation of the hook's implementation in sap/ui/core/Lib.js.
 	 *
-	 * @see sap.ui.core.Core.getLibraryResourceBundle
+	 * @see sap.ui.core.Lib.getResourceBundleFor
 	 *
-	 * @params {object} the ResourceBundle.create bundle config
+	 * @param {object} mParams the ResourceBundle.create bundle config
+	 * @returns {object} the enriched bundle config
 	 * @private
-	 * @ui5-restricted sap.ui.core.Core
+	 * @ui5-restricted sap.ui.core.Lib
 	 */
 	ResourceBundle._enrichBundleConfig = function(mParams) {
 		// Note: the ResourceBundle is a base module, which might be used standalone without the Core,
