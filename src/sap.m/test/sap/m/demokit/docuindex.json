@@ -1403,7 +1403,7 @@
 		},
 		{
 		  "id": "sap.m.Table",
-		  "name": "Responsive Table",
+		  "name": "Table (sap.m, Responsive Table)",
 		  "category": "List",
 		  "since": "1.12",
 		  "samples": [
