@@ -1126,7 +1126,7 @@ sap.ui.define([
 	});
 
 	// Related to: 002075129500008606402021
-	QUnit.test("The initial 'iconAlt' property value could be overridden", function(assert){
+	QUnit.test("The initial 'iconAlt' property value could be overridden", async function(assert){
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 				icon : "non existing path/icon.png",
@@ -1135,7 +1135,7 @@ sap.ui.define([
 			oImage = oObjectHeader._getImageControl();
 
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oImage.onerror();
@@ -1145,7 +1145,7 @@ sap.ui.define([
 
 		// Act
 		oObjectHeader.setIconAlt("");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		oImage.onerror();
 
 		// Assert

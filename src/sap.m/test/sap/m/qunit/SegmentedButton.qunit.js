@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Localization,
 	Element,
@@ -48,7 +49,8 @@ sap.ui.define([
 	XMLView,
 	KeyCodes,
 	Log,
-	oCore
+	oCore,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -634,10 +636,10 @@ sap.ui.define([
 
 		// Cleanup
 		oBar.destroy();
-
+		oCore.applyChanges();
 	});
 
-	QUnit.test("Initialize with items aggregation", function(assert) {
+	QUnit.test("Initialize with items aggregation", async function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -656,7 +658,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getItems().length, 3, "Control should have 3 items");
@@ -665,10 +667,11 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 
 	});
 
-	QUnit.test("Items aggregation tooltip", function(assert) {
+	QUnit.test("Items aggregation tooltip", async function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -685,7 +688,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		var aButtons = oSegmentedButton.getButtons(),
@@ -698,10 +701,10 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
-
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("Items aggregation visible property", function(assert) {
+	QUnit.test("Items aggregation visible property", async function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -724,7 +727,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getItems().length, 4, "Control should have 4 items");
@@ -734,7 +737,7 @@ sap.ui.define([
 
 		//Act
 		oSegmentedButton.getItems()[3].setVisible(true);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Assert
 		assert.strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 4, "Control should have 4 buttons visible");
@@ -742,10 +745,11 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 
 	});
 
-	QUnit.test("selectedKey is set correctly for invisible items and removes the selection from other items", function(assert) {
+	QUnit.test("selectedKey is set correctly for invisible items and removes the selection from other items", async function(assert) {
 
 		//Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -769,14 +773,14 @@ sap.ui.define([
 
 		//System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Assert
 		assert.strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn.sapMSegBBtnSel").length, 1, "1 selected button is rendered");
 
 		//Act
 		oSegmentedButton.setSelectedKey("k2");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Assert
 		assert.strictEqual(oSegmentedButton.getSelectedButton(), oSegmentedButton.getButtons()[1].getId(), "The invisible button is selected");
@@ -784,10 +788,11 @@ sap.ui.define([
 
 		//Cleanup
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 
 	});
 
-	QUnit.test("Initialize with XML view", function(assert) {
+	QUnit.test("Initialize with XML view", async function(assert) {
 
 		// Arrange
 		var xmlData = '<mvc:View\
@@ -804,28 +809,28 @@ sap.ui.define([
 		</SegmentedButton>\
 		</mvc:View>';
 
-		return XMLView.create({
+		var oView = await XMLView.create({
 			definition: xmlData
-		}).then(function(oView) {
-			var oSegmentedButton = oView.byId("XMLSegmentedButton");
-
-			// System under Test
-			oView.placeAt("qunit-fixture");
-			oCore.applyChanges();
-
-			// Assert
-			assert.strictEqual(oSegmentedButton.getItems().length, 3, "Control should have 3 items");
-			assert.strictEqual(oSegmentedButton.getButtons().length, 3, "Control should have 3 buttons from the button aggregation");
-			assert.strictEqual(oSegmentedButton.$().find("li").length, 3, "Control should have 3 buttons rendered");
-			assert.strictEqual(oSegmentedButton.getButtons()[0].getText(), "Btn 1", "Button text should be equal to xml view ListItem text");
-			assert.strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
-
-			// Cleanup
-			oView.destroy();
 		});
+		var oSegmentedButton = oView.byId("XMLSegmentedButton");
+
+		// System under Test
+		oView.placeAt("qunit-fixture");
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.strictEqual(oSegmentedButton.getItems().length, 3, "Control should have 3 items");
+		assert.strictEqual(oSegmentedButton.getButtons().length, 3, "Control should have 3 buttons from the button aggregation");
+		assert.strictEqual(oSegmentedButton.$().find("li").length, 3, "Control should have 3 buttons rendered");
+		assert.strictEqual(oSegmentedButton.getButtons()[0].getText(), "Btn 1", "Button text should be equal to xml view ListItem text");
+		assert.strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
+
+		// Cleanup
+		oView.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("ID's of internal elements properly set/rendered", function(assert) {
+	QUnit.test("ID's of internal elements properly set/rendered", async function(assert) {
 
 		var sItemIdComponent = "segmentedButtonItem-",
 			aButtons,
@@ -862,7 +867,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		aButtons = oSegmentedButton.getButtons();
 
@@ -883,10 +888,11 @@ sap.ui.define([
 		// Cleanup
 		aButtons = null;
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 
 	});
 
-	QUnit.test("Using the .sapMSegmentedButtonNoAutoWidth CSS class", function (assert) {
+	QUnit.test("Using the .sapMSegmentedButtonNoAutoWidth CSS class", async function (assert) {
 
 		// Arrange
 		var oSB,
@@ -905,7 +911,7 @@ sap.ui.define([
 			]
 		}).addStyleClass("sapMSegmentedButtonNoAutoWidth").placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		aButtons = oSB.getButtons();
 
@@ -930,10 +936,11 @@ sap.ui.define([
 		iBtn4Width = null;
 		oSB.destroy();
 		oSB = null;
+		await nextUIUpdate(this.clock);
 
 	});
 
-	QUnit.test("Too long SegmentedButton inside the OveflowToolbar", function (assert) {
+	QUnit.test("Too long SegmentedButton inside the OveflowToolbar", async function (assert) {
 
 		// Arrange
 		var oSB,
@@ -952,7 +959,7 @@ sap.ui.define([
 		oOTB = new OverflowToolbar({
 			content: [ oSB ]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(oOTB._getOverflowButtonNeeded(), "The SegmentedButton is hidden and Overflow button is visible.");
@@ -963,7 +970,7 @@ sap.ui.define([
 		oSB = null;
 		oOTB.destroy();
 		oOTB = null;
-
+		await nextUIUpdate(this.clock);
 	});
 
 	/* =========================================================== */
@@ -1035,13 +1042,14 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		oCore.applyChanges();
 	});
 
 	/**
 	 * BCP: 1780019055
 	 * @deprecated as of version 1.52, replaced by <code>selectionChange</code> event
 	 */
-	QUnit.test("Select event in overflowed mode", function(assert) {
+	QUnit.test("Select event in overflowed mode", async function(assert) {
 		//arrange
 		var fnCallback = sinon.spy(),
 			oBtn1 = new SegmentedButtonItem({
@@ -1062,7 +1070,7 @@ sap.ui.define([
 			oInnerSelect;
 
 		oToolbar.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oInnerSelect = oSegmentedButton.getAggregation("_select");
 
@@ -1074,10 +1082,11 @@ sap.ui.define([
 
 		//clean
 		oToolbar.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	//BCP: 1770067241
-	QUnit.test("SegmentedItem press", function(assert) {
+	QUnit.test("SegmentedItem press", async function(assert) {
 		//arrange
 		var fnOnPress = function(oEvent) {
 				sSelectedKeyInsidePressHandler = oSB.getSelectedKey();
@@ -1102,7 +1111,7 @@ sap.ui.define([
 			fnFireSelectionChangeSpy;
 
 		fnFireSelectionChangeSpy = this.spy(oSB, "fireSelectionChange");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//act
 		oSB.getButtons()[1].firePress();
@@ -1243,9 +1252,10 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		oCore.applyChanges();
 	});
 
-	QUnit.test("SegmentedButton setSelectedItem API call", function(assert) {
+	QUnit.test("SegmentedButton setSelectedItem API call", async function(assert) {
 
 		// Arrange
 		var oButton1 = new SegmentedButtonItem({text : "first button"}),
@@ -1260,7 +1270,7 @@ sap.ui.define([
 		});
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), oButton1.getId(),
@@ -1270,7 +1280,7 @@ sap.ui.define([
 
 		// Act
 		oThisForChaining = oSegmentedButton.setSelectedItem(oButton2);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), oButton2.getId(), "now the second button is selected");
@@ -1279,7 +1289,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem("label");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), "label",
@@ -1289,7 +1299,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem(oLabel);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), oLabel.getId(),
@@ -1297,7 +1307,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem(undefined);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), oSegmentedButton.getItems()[0].getId(),
@@ -1307,7 +1317,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem(oButton3.getId());
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), oButton3.getId(), "now the third button is selected");
@@ -1315,7 +1325,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem("mumpitz");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), "mumpitz", "selectedItem association contains \"mumpitz\"");
@@ -1324,6 +1334,7 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	/* ------------------------------ */
@@ -1630,9 +1641,10 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		oCore.applyChanges();
 	});
 
-	QUnit.test("getSelectedKey()", function(assert) {
+	QUnit.test("getSelectedKey()", async function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -1655,17 +1667,18 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 
 	});
 
-	QUnit.test("when using items & setSelectedKey() is called, setSelectedButton() is called too", function(assert) {
+	QUnit.test("when using items & setSelectedKey() is called, setSelectedButton() is called too", async function(assert) {
 		// Arrange
 		var oItem1 = new SegmentedButtonItem({
 			key: "b1",
@@ -1692,9 +1705,11 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
+
 	});
 
-	QUnit.test("setSelectedKey()", function(assert) {
+	QUnit.test("setSelectedKey()", async function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -1717,7 +1732,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedKey(), "b1", "When not set selectedKey should be equal to the first key in the list 'b1'");
@@ -1742,10 +1757,11 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 
 	});
 
-	QUnit.test("selectedKey property on button press", function(assert) {
+	QUnit.test("selectedKey property on button press", async function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -1763,7 +1779,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		// Click on the second button
@@ -1775,10 +1791,11 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 
 	});
 
-	QUnit.test("sap.m.SegmentedButtonItem property update", function (assert) {
+	QUnit.test("sap.m.SegmentedButtonItem property update", async function (assert) {
 
 		// Arrange
 		var oSBI = new SegmentedButtonItem({
@@ -1794,7 +1811,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oSBI.setText("Btn changed");
@@ -1805,7 +1822,7 @@ sap.ui.define([
 		oSBI.setKey("changed");
 		oSegmentedButton.setSelectedKey("changed");
 
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		var oButton = oSegmentedButton.getButtons()[0];
@@ -2088,7 +2105,6 @@ sap.ui.define([
 		oSB.destroy();
 		oSB = null;
 		aButtons = null;
-
 	});
 
 	/**
@@ -2124,9 +2140,10 @@ sap.ui.define([
 		oSB.destroy();
 		oSB = null;
 		aButtons = null;
+		oCore.applyChanges();
 	});
 
-	QUnit.test("_clearAutoWidthAppliedToControl private method", function (assert) {
+	QUnit.test("_clearAutoWidthAppliedToControl private method", async function (assert) {
 		// Arrange
 		var oSB,
 			aButtons,
@@ -2139,7 +2156,7 @@ sap.ui.define([
 				new SegmentedButtonItem({text: "Btn 3"})
 			]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		aButtons = oSB.getButtons();
 
@@ -2162,7 +2179,7 @@ sap.ui.define([
 		// Act
 		oSB.setWidth("200px");
 		aButtons[0].setWidth("10px");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oSB._clearAutoWidthAppliedToControl();
 
 		// Assert
@@ -2173,6 +2190,7 @@ sap.ui.define([
 		oSB.destroy();
 		oSB = null;
 		aButtons = null;
+		await nextUIUpdate(this.clock);
 	});
 
 	QUnit.test("_handleContainerResize private method", function (assert) {
@@ -2202,7 +2220,7 @@ sap.ui.define([
 		oSB = null;
 	});
 
-	QUnit.test("_updateWidth private method", function (assert) {
+	QUnit.test("_updateWidth private method", async function (assert) {
 		// Arrange
 		var oSB,
 			aButtons,
@@ -2217,7 +2235,7 @@ sap.ui.define([
 			]
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		aButtons = oSB.getButtons();
 
@@ -2249,9 +2267,10 @@ sap.ui.define([
 		aButtons = null;
 		oSB.destroy();
 		oSB = null;
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("_updateWidth - sum of buttons width is greater than parent element width", function (assert) {
+	QUnit.test("_updateWidth - sum of buttons width is greater than parent element width", async function (assert) {
 		// Arrange
 		var that = this,
 			oSB = new SegmentedButton({
@@ -2263,7 +2282,7 @@ sap.ui.define([
 				]
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		// Here we replace the jQuery.innerWidth method to report stable width for the parent element if the parent
@@ -2289,9 +2308,10 @@ sap.ui.define([
 		oSB.destroy();
 		oSB = null;
 		this._ojQueryInnerWidthMethod = null;
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("_handleContainerResize fires _containerWidthChanged event when width is changed", function (assert) {
+	QUnit.test("_handleContainerResize fires _containerWidthChanged event when width is changed", async function (assert) {
 		// Arrange
 		var oSB = new SegmentedButton({
 			items: [
@@ -2303,7 +2323,7 @@ sap.ui.define([
 
 		this.spy(oSB, "fireEvent");
 
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.equal(oSB.fireEvent.callCount, 0, "FireEvent is not called on first rendering");
@@ -2318,6 +2338,7 @@ sap.ui.define([
 		// Cleanup
 		oSB.destroy();
 		oSB = null;
+		await nextUIUpdate(this.clock);
 	});
 
 	QUnit.test("getOverflowToolbarConfig - correct configuration for sap.m.OverflowToolbar control", function (assert) {
@@ -2432,9 +2453,10 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		oCore.applyChanges();
 	});
 
-	QUnit.test("Data binding items aggregation", function(assert) {
+	QUnit.test("Data binding items aggregation", async function(assert) {
 		// Arrange
 		var mData = {
 			selectedKey: "b7",
@@ -2472,7 +2494,7 @@ sap.ui.define([
 		oSegmentedButton.setModel(oModel);
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedKey(), oModel.getData().selectedKey,
@@ -2506,9 +2528,10 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("Data binding items aggregation live model change", function(assert) {
+	QUnit.test("Data binding items aggregation live model change", async function(assert) {
 		var mDataInitial,
 			mDataSecond,
 			oSegmentedButton,
@@ -2558,7 +2581,7 @@ sap.ui.define([
 		oSegmentedButton.setModel(oModel);
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getItems().length, 3, "Should have 3 items");
@@ -2570,7 +2593,7 @@ sap.ui.define([
 
 		// Act
 		oModel.setData(mDataSecond);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getItems().length, 8, "Should have 8 items");
@@ -2590,11 +2613,12 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	QUnit.module("Keyboard handling");
 
-	QUnit.test("alt/meta key + right/left or + home/end is not handled", function(assert) {
+	QUnit.test("alt/meta key + right/left or + home/end is not handled", async function(assert) {
 		var oSegmentedButton = new SegmentedButton({
 			items: [
 				new SegmentedButtonItem({ text: 'a'}),
@@ -2602,7 +2626,7 @@ sap.ui.define([
 				new SegmentedButtonItem({ text: 'c'})
 			]
 		}).placeAt('qunit-fixture');
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		var oModifiers = oSegmentedButton._oItemNavigation.getDisabledModifiers();
 		assert.ok(oModifiers["sapnext"], "sapnext has disabled modifiers");
@@ -2618,6 +2642,7 @@ sap.ui.define([
 		assert.ok(oModifiers["sapend"].indexOf("meta") !== -1, "end is not handled when meta key is pressed");
 
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	function checkKeyboardEventhandling(sTestName, oOptions) {
@@ -2727,6 +2752,7 @@ sap.ui.define([
 
 		//Clean up
 		SegmentedIcons.destroy();
+		oCore.applyChanges();
 	}
 
 	/**
@@ -2870,7 +2896,7 @@ sap.ui.define([
 
 	QUnit.module('ARIA');
 
-	QUnit.test("Root's general ARIA attributes", function (assert) {
+	QUnit.test("Root's general ARIA attributes", async function (assert) {
 		var oFirstButton = new SegmentedButtonItem({ text: "First" }),
 			oSecondButton = new SegmentedButtonItem({ text: "Second" }),
 			oSegmentedButton = new SegmentedButton({
@@ -2879,7 +2905,7 @@ sap.ui.define([
 			$segmentedButton;
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 
 		$segmentedButton = oSegmentedButton.$();
@@ -2891,9 +2917,11 @@ sap.ui.define([
 			"Tutor message for selection is added");
 
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
+
 	});
 
-	QUnit.test("Inner buttons' general ARIA attributes", function (assert) {
+	QUnit.test("Inner buttons' general ARIA attributes", async function (assert) {
 		var oInnerButton = new SegmentedButtonItem({ text: "First" }),
 			oInnerDisabledButton = new SegmentedButtonItem({ text: "Second", enabled: false }),
 			oSegmentedButton = new SegmentedButton({
@@ -2903,7 +2931,7 @@ sap.ui.define([
 			$innerDisabledButton;
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		$innerButton = oInnerButton.$();
 		$innerDisabledButton = oInnerDisabledButton.$();
@@ -2920,6 +2948,7 @@ sap.ui.define([
 		assert.strictEqual($innerDisabledButton.attr("aria-disabled"), "true", "Disabled buttons have aria-disabled");
 
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	/**
@@ -2951,24 +2980,27 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		oCore.applyChanges();
 	});
 
-	QUnit.test("Text-only SegmentedButtonItem's ARIA", function (assert) {
+	QUnit.test("Text-only SegmentedButtonItem's ARIA", async function (assert) {
 		var oItem = new SegmentedButtonItem({ text: "Something" }),
 			oSegmentedButton = new SegmentedButton({ items: oItem }),
 			oItemDomRef;
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oItemDomRef = oItem.getDomRef();
 		assert.notOk(oItemDomRef.getAttribute("title"), "Default tooltip isn't added");
 		assert.notOk(oItemDomRef.getAttribute("aria-label"), "aria-label isn't added");
 
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
+
 	});
 
-	QUnit.test("Icon-only SegmentedButtonItem's ARIA", function (assert) {
+	QUnit.test("Icon-only SegmentedButtonItem's ARIA", async function (assert) {
 		var oDefaultItem = new SegmentedButtonItem({
 				icon: "sap-icon://list"
 			}),
@@ -2986,7 +3018,7 @@ sap.ui.define([
 			oItemWithTooltipDomRef;
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oDefaultItemDomRef = oDefaultItem.getDomRef();
 		assert.strictEqual(oDefaultItemDomRef.getAttribute("title"), "list", "Icon's name serves as the tooltip");
@@ -2997,21 +3029,24 @@ sap.ui.define([
 		assert.strictEqual(oItemWithTooltipDomRef.getAttribute("aria-label"), "Something", "This tooltip is added in aria-label as well");
 
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
+
 	});
 
-	QUnit.test("Combined(text + icon) SegmentedButtonItem's ARIA", function (assert) {
+	QUnit.test("Combined(text + icon) SegmentedButtonItem's ARIA", async function (assert) {
 		var oItem = new SegmentedButtonItem({ text: "Something", icon: "sap-icon://list" }),
 			oSegmentedButton = new SegmentedButton({ items: oItem }),
 			oItemDomRef;
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oItemDomRef = oItem.getDomRef();
 		assert.notOk(oItemDomRef.getAttribute("title"), "Default tooltip isn't added");
 		assert.notOk(oItemDomRef.getAttribute("aria-label"), "aria-label isn't added");
 
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	/**
@@ -3050,9 +3085,10 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		oCore.applyChanges();
 	});
 
-	QUnit.test("getAccessibilityInfo", function(assert) {
+	QUnit.test("getAccessibilityInfo", async function(assert) {
 		// Arrange
 		var SegmentedItem = new SegmentedButtonItem({
 				tooltip: "Tooltip",
@@ -3065,7 +3101,7 @@ sap.ui.define([
 			sDescription;
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		sDescription = oSegmentedButton.getAccessibilityInfo().description;
@@ -3341,9 +3377,10 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		oCore.applyChanges();
 	});
 
-	QUnit.test("Can work with special characters in the ID", function(assert) {
+	QUnit.test("Can work with special characters in the ID", async function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -3363,7 +3400,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		assert.ok(oSegmentedButton.getDomRef(), "SegmentedButton should be rendered");
 
@@ -3398,10 +3435,11 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		oCore.applyChanges();
 	});
 
 
-	QUnit.test("Changing the text property aggregated items", function (assert) {
+	QUnit.test("Changing the text property aggregated items", async function (assert) {
 		// Arrange
 		var oTestItem = new SegmentedButtonItem({text: "Button 1"}),
 			oSegmentedButton = new SegmentedButton({items: [oTestItem]}),
@@ -3409,7 +3447,7 @@ sap.ui.define([
 			fnChangHandler = this.spy();
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		oSegmentedButton.attachEvent("_change", fnChangHandler);
 
 		// Assert
@@ -3424,6 +3462,7 @@ sap.ui.define([
 
 		// Cleanup
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	QUnit.test("Adding items (XML view with binding)", function(assert) {
@@ -3582,7 +3621,7 @@ sap.ui.define([
 		assert.strictEqual(this.oSBI.oButton, null, "The internal button should be destroyed");
 	});
 
-	QUnit.test("destroyItems should destroy internal buttons created from the SegmentedButtonItem", function (assert) {
+	QUnit.test("destroyItems should destroy internal buttons created from the SegmentedButtonItem", async function (assert) {
 		// Arrange
 		var oSegmentedButtonItem = new SegmentedButtonItem(),
 			oButtonDestroySpy = this.spy(oSegmentedButtonItem.oButton, "destroy"),
@@ -3597,9 +3636,10 @@ sap.ui.define([
 		// Cleanup
 		oSB.destroy();
 		oButtonDestroySpy.restore();
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("destroyItems should destroy internal buttons and adding item with the same ID should not throw an exception", function (assert) {
+	QUnit.test("destroyItems should destroy internal buttons and adding item with the same ID should not throw an exception", async function (assert) {
 		// Arrange
 		var sSegmentedButtonId = "testId",
 			oSegmentedButtonItem = new SegmentedButtonItem(sSegmentedButtonId),
@@ -3614,10 +3654,11 @@ sap.ui.define([
 
 		// Cleanup
 		oSB.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	QUnit.module("sap.ui.core.CustomData and 'items' aggregation", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			// Create the control
 			this.oSB = new SegmentedButton({
 				items: [
@@ -3642,18 +3683,18 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("qunit-fixture");
-
 			// Get custom data of the first item
 			this.oCD = this.oSB.getItems()[0].getCustomData()[0];
 
-			oCore.applyChanges();
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.oSB.destroy();
 			this.oSB = null;
 
 			this.oCD.destroy();
 			this.oCD = null;
+			await nextUIUpdate(this.clock);
 		}
 	});
 
@@ -3669,22 +3710,22 @@ sap.ui.define([
 		assert.strictEqual(aBtn[2].$().data("my"), undefined, "There is no CustomData rendered on the third button");
 	});
 
-	QUnit.test("Update of item's CustomData Value property must be reflected in the SegmentedButton", function (assert) {
+	QUnit.test("Update of item's CustomData Value property must be reflected in the SegmentedButton", async function (assert) {
 		// Act - change the CustomData value of the item
 		this.oCD.setValue("2222");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oSB.getButtons()[0].$().data("my"), 2222, "The rendered CustomData on the first button should be updated");
 	});
 
-	QUnit.test("Update of item's CustomData Key property must be reflected in the SegmentedButton", function (assert) {
+	QUnit.test("Update of item's CustomData Key property must be reflected in the SegmentedButton", async function (assert) {
 		// Arrange
 		var oFirstButton;
 
 		// Act - change the CustomData key of the item
 		this.oCD.setKey("yours");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Get first button after update because it's regenerated
 		oFirstButton = this.oSB.getButtons()[0];
@@ -3696,10 +3737,10 @@ sap.ui.define([
 			"There should be new CustomData with key 'yours' rendered on the first button");
 	});
 
-	QUnit.test("Update of item's CustomData writeToDom property must be reflected in the SegmentedButton", function (assert) {
+	QUnit.test("Update of item's CustomData writeToDom property must be reflected in the SegmentedButton", async function (assert) {
 		// Act - change the CustomData writeToDom property
 		this.oCD.setWriteToDom(false);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oSB.getButtons()[0].$().data(this.oCD.getKey()), undefined,

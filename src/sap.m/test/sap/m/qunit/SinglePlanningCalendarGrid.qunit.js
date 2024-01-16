@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CalendarDate',
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/unified/DateTypeRange"
+	"sap/ui/unified/DateTypeRange",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Formatting,
 	jQuery,
@@ -24,7 +25,8 @@ sap.ui.define([
 	CalendarDate,
 	oCore,
 	UI5Date,
-	DateTypeRange
+	DateTypeRange,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -187,7 +189,7 @@ sap.ui.define([
 		assert.equal(sLineClamp, "8", "Eight lines of appointment text will be shown");
 	});
 
-	QUnit.test("_getCellStartEndInfo start/end format for 12-hour clocks", function (assert) {
+	QUnit.test("_getCellStartEndInfo start/end format for 12-hour clocks", async function (assert) {
 		// Prepare
 		Formatting.setLanguageTag("en-US");
 
@@ -199,16 +201,17 @@ sap.ui.define([
 				oGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": Monday 05/08/2019 at 3:00:00\u202fPM";
 
 		oGrid.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oGrid._getCellStartEndInfo(oMockStardDate, oMockEndDate), sExpectedInfo, "Cell's start/end info is properly formatted");
 
 		// Destroy
 		oGrid.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("_getCellStartEndInfo start/end format for 24-hour clocks", function (assert) {
+	QUnit.test("_getCellStartEndInfo start/end format for 24-hour clocks", async function (assert) {
 		// Prepare
 		Formatting.setLanguageTag("en-GB");
 
@@ -219,16 +222,17 @@ sap.ui.define([
 				oGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": Monday 05/08/2019 at 15:00:00";
 
 		oGrid.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oGrid._getCellStartEndInfo(oMockStardDate, oMockEndDate), sExpectedInfo, "Cell's start/end info is properly formatted");
 
 		// Destroy
 		oGrid.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("applyFocusInfo", function(assert) {
+	QUnit.test("applyFocusInfo", async function(assert) {
 		// prepare
 		var oAppointment = new CalendarAppointment({
 				startDate: UI5Date.getInstance(2018, 6, 14, 5),
@@ -245,7 +249,7 @@ sap.ui.define([
 			fnApplyFocusInfoSpy = this.spy(oGrid, "applyFocusInfo");
 
 		oGrid.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// act
 		oAppointment.getDomRef().focus();
@@ -267,6 +271,7 @@ sap.ui.define([
 
 		// cleanup
 		oGrid.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	QUnit.test("_getVisibleStartHour returns the proper start hour", function (assert) {
@@ -367,7 +372,7 @@ sap.ui.define([
 		oGrid.destroy();
 	});
 
-	QUnit.test("_findSrcControl", function(assert) {
+	QUnit.test("_findSrcControl", async function(assert) {
 		// Prepare
 		var oAppointment = new CalendarAppointment({
 				startDate: UI5Date.getInstance(2022,0,20),
@@ -380,7 +385,7 @@ sap.ui.define([
 			oFireAppointmentSelectSpy = this.spy(oGrid, "fireAppointmentSelect");
 
 		oGrid.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oGrid.ontap({
@@ -399,7 +404,7 @@ sap.ui.define([
 
 		// Destroy
 		oGrid.destroy();
-
+		await nextUIUpdate(this.clock);
 	});
 
 	QUnit.test("Formatters pattern is correct", function (assert) {
@@ -448,7 +453,7 @@ sap.ui.define([
 		assert.notOk(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oWorkingWeekend)), "01.06.2018 is working day");
 	});
 
-	QUnit.test("CalendarAppointment's getDomRef() returns proper DOM element", function(assert) {
+	QUnit.test("CalendarAppointment's getDomRef() returns proper DOM element", async function(assert) {
 		// Prepare
 		var aAppointments = [
 				new CalendarAppointment("SPC-app-111", {
@@ -480,7 +485,7 @@ sap.ui.define([
 
 		// arrange
 		oSPCGrid.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(aAppointments[1].getDomRef().getAttribute("id"), "SPC-app-11-0_1", "The returned DOM reference of the appointment with index 1 is correct.");
@@ -488,6 +493,7 @@ sap.ui.define([
 
 		// cleanup
 		oSPCGrid.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	QUnit.module("Events");

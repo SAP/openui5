@@ -5,9 +5,9 @@ sap.ui.define([
 	"sap/ui/layout/ResponsiveFlowLayoutData",
 	"sap/m/Button",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/dom/jquery/rect" // provides jQuery.fn.rect
-], function(ResponsiveFlowLayout, ResponsiveFlowLayoutData, Button, jQuery, oCore) {
+], function(ResponsiveFlowLayout, ResponsiveFlowLayoutData, Button, jQuery, nextUIUpdate) {
 	"use strict";
 
 	function injectDefaultContent(context) {
@@ -36,14 +36,14 @@ sap.ui.define([
 
 
 	QUnit.module("Basics", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			injectDefaultContent(this).placeAt("qunit-fixture");
 			this.oBtn1.getLayoutData().setLinebreak(false);
 			this.oBtn2.getLayoutData().setLinebreak(false);
 
 			var $layout = jQuery("#qunit-fixture");
 			$layout.css("width", "300px");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oRFL.destroy();
@@ -67,10 +67,10 @@ sap.ui.define([
 		assert.ok(bTest, "Button2 is twice of Button2");
 	});
 
-	QUnit.test("Line break works & LayoutData event catched by Layout", function(assert) {
+	QUnit.test("Line break works & LayoutData event catched by Layout", async function(assert) {
 		assert.expect(3);
 		this.oBtn2.getLayoutData().setLinebreak(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oBtn1DomRef = document.getElementById("button1-cont0_0");
 		var oBtn2DomRef = document.getElementById("button2-cont1_0");
@@ -89,27 +89,27 @@ sap.ui.define([
 	});
 
 	QUnit.module("Resize", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			injectDefaultContent(this).placeAt("qunit-fixture");
 			this.oBtn1.getLayoutData().setLinebreak(false);
 			this.oBtn2.getLayoutData().setLinebreak(false);
 
 			var $layout = jQuery("#qunit-fixture");
 			$layout.css("width", "400px");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oRFL.destroy();
 		}
 	});
-	QUnit.test("Shrink", function(assert) {
+	QUnit.test("Shrink", async function(assert) {
 		var done = assert.async();
 		assert.expect(2);
 
 		var $layout = jQuery("#qunit-fixture");
 		// this sets the layout to a size where the size falls below the min-width of a button
 		$layout.css("width", "150px");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// have to wait more than 300ms until the layout recognized the minimization
 		setTimeout(function() {
@@ -186,7 +186,7 @@ sap.ui.define([
 		assert.ok(!this.oRFL._getElementRect(null), "When null is passed, null should be returned");
 	});
 
-	QUnit.test("The private render manager is lazy initialized", function(assert) {
+	QUnit.test("The private render manager is lazy initialized", async function(assert) {
 		//prepare
 		var oResponsiveFlowLayout = {};
 		//act
@@ -198,7 +198,7 @@ sap.ui.define([
 		oResponsiveFlowLayout = new ResponsiveFlowLayout();
 		//act
 		oResponsiveFlowLayout.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//check
 		assert.ok(oResponsiveFlowLayout.oRm, "RenderManager should be created during rendering");
 		//cleanup
@@ -206,12 +206,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("destroy on exit");
-	QUnit.test("Render manager is not created when control is not visible therefore it is not destroyed on exit", function(assert) {
+	QUnit.test("Render manager is not created when control is not visible therefore it is not destroyed on exit", async function(assert) {
 		var oResponsiveFlowLayout = new ResponsiveFlowLayout({visible: false});
 		var oExitSpy = this.spy(ResponsiveFlowLayout.prototype, "exit");
 		//act
 		oResponsiveFlowLayout.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//check
 		assert.ok(!oResponsiveFlowLayout.oRm, "RenderManager should not be created since the control is not visible");
@@ -228,11 +228,11 @@ sap.ui.define([
 		assert.strictEqual(oResponsiveFlowLayout.oRm, null, "RenderManager is null since the destroy is not called on it");
 	});
 
-	QUnit.test("Render manager is destroyed on exit of the control", function(assert) {
+	QUnit.test("Render manager is destroyed on exit of the control", async function(assert) {
 		var oResponsiveFlowLayout = new ResponsiveFlowLayout();
 		//act
 		oResponsiveFlowLayout.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oDestroySpy = this.spy(oResponsiveFlowLayout.oRm, "destroy");
 

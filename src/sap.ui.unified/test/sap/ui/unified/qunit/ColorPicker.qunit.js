@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/ColorPickerHelper"
 ], function(
 	Localization,
@@ -34,14 +34,13 @@ sap.ui.define([
 	Device,
 	KeyCodes,
 	jQuery,
-	oCore,
+	nextUIUpdate,
 	ColorPickerHelper
 ) {
 	"use strict";
 
 		var ColorPickerMode = library.ColorPickerMode;
-		var CONSTANTS = new ColorPicker()._getConstants(), // Get control constants
-			applyChanges = oCore.applyChanges;
+		var CONSTANTS = new ColorPicker()._getConstants(); // Get control constants
 
 		QUnit.module("sap.ui.unified.ColorPickerHelper");
 
@@ -106,13 +105,13 @@ sap.ui.define([
 				"Control mode property should be set to HSL");
 		});
 
-		QUnit.test("colorString property with 'transparent' string case handling", function (oAssert) {
+		QUnit.test("colorString property with 'transparent' string case handling", async function (oAssert) {
 			// Arrange
 			this.oCP.placeAt("qunit-fixture");
 
 			// Act
 			this.oCP.setColorString("transparent");
-			applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			oAssert.strictEqual(this.oCP.oAlphaSlider.getValue(), 0,
@@ -173,7 +172,7 @@ sap.ui.define([
 				"When control is in HSL mode the method should be a reference to _processHSLChanges");
 		});
 
-		QUnit.test("_handleAlphaSliderChange - Color conversion related to output mode", function (oAssert) {
+		QUnit.test("_handleAlphaSliderChange - Color conversion related to output mode", async function (oAssert) {
 			// Arrange
 			var oPHSLCSpy = sinon.spy(this.oCP, "_processHSLChanges"),
 				oPRGBCSpy = sinon.spy(this.oCP, "_processRGBChanges");
@@ -182,7 +181,7 @@ sap.ui.define([
 			this.oCP.setMode(ColorPickerMode.HSL);
 			this.oCP.Color.formatHSL = false; // Mock RGB output mode
 			this.oCP.placeAt("qunit-fixture");
-			applyChanges();
+			await nextUIUpdate();
 
 			// Act - change slider value and fire the event handler.
 			// Keep in mind that we are calling the event handler manually because setters should not call events.
@@ -215,12 +214,12 @@ sap.ui.define([
 			oAssert.strictEqual(oPRGBCSpy.callCount, 0, "_processRGBChanges should not be called");
 		});
 
-		QUnit.test("Alpha fields and alpha slider are in sync", function (oAssert) {
+		QUnit.test("Alpha fields and alpha slider are in sync", async function (oAssert) {
 			// Arrange
 			this.oCP.setColorString("427cac");
 			this.oCP.setMode(ColorPickerMode.HSL);
 			this.oCP.placeAt("qunit-fixture");
-			applyChanges();
+			await nextUIUpdate();
 
 			// Act - simulate typing in the first alpha value field.
 			this.oCP.oAlphaField.focus();
@@ -249,9 +248,9 @@ sap.ui.define([
 		});
 
 		QUnit.module("Accessibility", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oCP = new ColorPicker().placeAt("qunit-fixture");
-				applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oCP.destroy();
@@ -391,21 +390,21 @@ sap.ui.define([
 			this.oCP._updateColorStringProperty(true, true);
 		});
 
-		QUnit.test("", function(assert) {
+		QUnit.test("change event", async function(assert) {
 			// arrange
 			var oCP = new ColorPicker();
 			var oFireChangeSpy = this.spy(oCP, "fireChange");
 
 			// act
 			oCP.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assert
 			assert.strictEqual(oFireChangeSpy.callCount, 0, "no events are fired on rendering");
 
 			// act
 			oCP.setColorString("red");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(oFireChangeSpy.callCount, 0, "no events are fired on rendering");
 
@@ -493,13 +492,13 @@ sap.ui.define([
 				"only 2 items in it's 'content' aggregation");
 		});
 
-		QUnit.test("_createLayout lifecycle", function (oAssert) {
+		QUnit.test("_createLayout lifecycle", async function (oAssert) {
 			// Arrange
 			var oSpy = sinon.spy(this.oCP, "_createLayout");
 
 			// Act
 			this.oCP.placeAt("qunit-fixture");
-			applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			oAssert.strictEqual(oSpy.callCount, 1, "Internal controls should be created only once");
@@ -510,10 +509,10 @@ sap.ui.define([
 			oSpy.restore();
 		});
 
-		QUnit.test("exit - cleanup", function (oAssert) {
+		QUnit.test("exit - cleanup", async function (oAssert) {
 			// Arrange
 			this.oCP.placeAt("qunit-fixture");
-			applyChanges();
+			await nextUIUpdate();
 
 			// Act
 			this.oCP.destroy();
@@ -538,7 +537,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("getRGB method", function (oAssert) {
+		QUnit.test("getRGB method", async function (oAssert) {
 			// Arrange
 			this.oCP.placeAt("qunit-fixture");
 
@@ -548,7 +547,7 @@ sap.ui.define([
 
 			// Act
 			this.oCP.setColorString("rgb(255,0,0)");
-			applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			oAssert.deepEqual(this.oCP.getRGB(), {r: 255, g: 0, b: 0},
@@ -597,7 +596,7 @@ sap.ui.define([
 				"The passed string is not a valid HSL CSS Color string");
 		});
 
-		QUnit.test("_processRGBChanges - does not reset the HUE slide if pure white color is used", function (oAssert) {
+		QUnit.test("_processRGBChanges - does not reset the HUE slide if pure white color is used", async function (oAssert) {
 			// Arrange
 			var iHueValue = 30, // Arbitrary number different than 0
 				oCalculateHSVSpy,
@@ -606,7 +605,7 @@ sap.ui.define([
 			this.oCP.setColorString("white");
 			this.oCP.placeAt("qunit-fixture");
 
-			applyChanges();
+			await nextUIUpdate();
 
 			oCalculateHSVSpy = sinon.spy(this.oCP, "_calculateHSV");
 			oHueFieldSetterSpy = sinon.spy(this.oCP.oHueField, "setValue");
@@ -622,11 +621,11 @@ sap.ui.define([
 			oAssert.strictEqual(oHueFieldSetterSpy.callCount, 0, "HUE field 'setValue' should not be called");
 		});
 
-		QUnit.test("_toggleFields", function (oAssert) {
+		QUnit.test("_toggleFields", async function (oAssert) {
 			var oDevicePhoneStub = this.stub(Device.system, "phone").value(true);
 
 			this.oCP.placeAt("qunit-fixture");
-			applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			oAssert.ok(document.getElementsByClassName("sapUiCPHexVisible").length, "Hex field is visible by default on phone");
@@ -649,10 +648,10 @@ sap.ui.define([
 		});
 
 		QUnit.module("sap.ui.unified._ColorPickerBox", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oCP = new ColorPicker();
 				this.oCP.placeAt("qunit-fixture");
-				applyChanges();
+				await nextUIUpdate();
 				this.oCPBox = this.oCP.oCPBox;
 			},
 			afterEach: function () {
@@ -882,10 +881,10 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("rendering", function (oAssert) {
+		QUnit.test("rendering", async function (oAssert) {
 			// Act
 			this.oCP.placeAt("qunit-fixture");
-			applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			oAssert.strictEqual(this.oCP.getDisplayMode(), "Default", "The ColorPicker's default displayMode is 'Default'");
@@ -903,11 +902,11 @@ sap.ui.define([
 			oAssert.strictEqual(this.oCP.getDisplayMode(), "Large", "The ColorPicker's displayMode is Large");
 		});
 
-		QUnit.test("in display mode Large, half the inputs are disabled", function(assert) {
+		QUnit.test("in display mode Large, half the inputs are disabled", async function(assert) {
 			// arrange
 			this.oCP.setDisplayMode(ColorPickerDisplayMode.Large);
 			this.oCP.placeAt("qunit-fixture");
-			applyChanges();
+			await nextUIUpdate();
 
 			// assert
 			assert.equal(this.oCP.oRedField.getEnabled(), true, "red is enabled");

@@ -1857,12 +1857,11 @@ sap.ui.define([
 
 	QUnit.test("Navigation buttons ARIA", async function (assert) {
 		// Prepare
-		var oCore = sap.ui.getCore(),
-			oSPC = new SinglePlanningCalendar(),
+		var oSPC = new SinglePlanningCalendar(),
 			oHeader = oSPC._getHeader(),
 			sNavigationToolbarId = oHeader.getAggregation("_navigationToolbar").getId(),
-			oPreviousButton = oCore.byId(sNavigationToolbarId + "-PrevBtn"),
-			oNextButton = oCore.byId(sNavigationToolbarId + "-NextBtn"),
+			oPreviousButton = Element.getElementById(sNavigationToolbarId + "-PrevBtn"),
+			oNextButton = Element.getElementById(sNavigationToolbarId + "-NextBtn"),
 			sTodayButtonLabelId = InvisibleText.getStaticId("sap.m", "PCH_NAVIGATE_TO_TODAY"),
 			sPickerButtonLabelId = InvisibleText.getStaticId("sap.m", "PCH_SELECT_RANGE");
 
