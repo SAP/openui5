@@ -96,7 +96,8 @@
 				"since" : "1.30",
 				"samples" : [
 					"sap.ui.core.sample.View.async",
-					"sap.ui.core.sample.View.preprocessor"
+					"sap.ui.core.sample.View.preprocessor",
+					"sap.ui.core.sample.View.navigationTypedView"
 				]
 			},
 			{
@@ -610,6 +611,11 @@
 				"id": "sap.ui.core.sample.View.preprocessor",
 				"name": "Preprocessor example with XMLView",
 				"description": "A small example for View Preprocessor usage with XMLViews."
+			},
+			{
+				"id": "sap.ui.core.sample.View.navigationTypedView",
+				"name": "Typed View",
+				"description": "Based on defining views via Typed Views primarily, this small sample demonstrates basic routing configuration, event handler registration, asynchronous content creation incl. JS fragments and stable IDs. See the provided sample code."
 			},
 			{
 				"id": "sap.ui.core.sample.odata.v4.ConsumeV2Service",

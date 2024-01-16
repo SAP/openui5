@@ -1,0 +1,15 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.View.navigationTypedView.controller.Next"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	height="100%"
+>
+	<Page
+		id="nextPage"
+		class="sapUiResponsivePadding--header sapUiResponsivePadding--content"
+		showNavButton="true"
+		navButtonTooltip="Navigate Back or Up"
+		title="Navigated View"
+		navButtonPress=".onNavButtonPress($controller, 'home')"
+	/>
+</mvc:View>
