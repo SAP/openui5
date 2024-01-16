@@ -279,6 +279,7 @@ sap.ui.define([
 
 			sandbox.stub(this.oRta.getCommandStack(), "removeAllCommands").callsFake(function() {
 				assert.strictEqual(this.oRta._bSavedChangesNeedReload, true, "then the needs reload flag is set to true");
+				assert.strictEqual(this.oSaveStub.lastCall.args[0].version, "-1", "then saveCommands is called with the right version");
 				fnDone();
 			}.bind(this));
 
