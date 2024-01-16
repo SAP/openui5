@@ -7,8 +7,13 @@
 
 .alwaysDarkModeOverrideByParent(~"sapFShellBar");
 
-.sapFShellBarSizeLargeDesktop {
+.sapFShellBarSizeLargeDesktop,
+.sapFShellBarSizeExtraLargeDesktop {
 	padding: 0 3rem;
+}
+
+.sapFShellBar .sapFShellBarSearchIsOpen .sapFShellBarSearchWrap .sapMBtn:not(.sapFShellBarSearchCancelButton) {
+	right: 2.75rem;
 }
 
 .sapFShellBarSizeDesktop {
@@ -56,6 +61,7 @@
 		&:focus {
 			outline: @sapUiContentFocusWidth solid @sapUiContentFocusColor;
 			border-radius: 0.375rem;
+			background-color: @sapUiShellActiveBackground;
 			color: @sapUiShellActiveTextColor;
 			&:after {
 				box-shadow: @sapUiContentSelectedShadow;
@@ -101,17 +107,20 @@
 			color: @sapUiShellTextColor;
 		}
 
+		.sapMBtn:hover > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) bdi,
+		&.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnTransparent:not(.sapMBtnActive)::after {
+			color:  @sapUiShellTextColor;
+		}
+
 		.sapMBtn:hover > .sapMBtnHoverable:not(.sapMBtnActive) {
 			background: @sapUiShellHoverBackground;
 			box-shadow: @sapUiContentInteractionShadow;
 			border-color: @sapUiButtonLiteBorderColor;
-			color: @sapUiShellActiveTextColor;
 		}
 
 		.sapMBtn:hover > .sapMBtnHoverable.sapMBtnActive {
 			background: @sapUiShellHoverBackground;
 			color: @sapUiShellActiveTextColor;
-			border-color: @sapUiButtonLiteActiveBorderColor;
 		}
 
 		.sapMBtnInner,
@@ -129,11 +138,17 @@
 	// Home Icon
 	.sapFShellBarHomeIcon {
 		max-height: 2rem;
+		padding: 0.25rem;
+		overflow-clip-margin: border-box;
 
 		&:hover {
 			background: @sapUiShellHoverBackground;
 			box-shadow: @sapUiContentInteractionShadow;
 			border-radius: 0.5rem;
+		}
+
+		&:focus {
+			outline-offset: -0.125rem;
 		}
 	}
 
@@ -158,10 +173,13 @@
 			height: 1.75rem;
 			line-height: 1.75rem;
 			padding: 0;
-			margin-top: 0.25rem;
+			margin-top: auto;
+			margin-bottom: auto;
 			margin-left: 0.25rem;
 			position: absolute;
 			right: 0;
+			top: 0;
+			bottom: 0;
 			.sapMBtnInner {
 				min-width: 1.75rem;
 				border-radius: 1.125rem;
@@ -202,7 +220,9 @@
 	.sapFShellBarSearchWrap {
 		position: relative;
 		.sapMSFF {
-			background: @sapUiShellInteractiveBackground;
+			background: @sapUiFieldBackgroundStyle;
+			background-color: @sapUiShellInteractiveBackground;
+			box-shadow: @sapUiFieldShadow;
 			border: none;
 			color: @sapUiShellInteractiveTextColor;
 			border-radius: 1.125rem;
@@ -249,7 +269,7 @@
 
 		.sapMSF:not(.sapMSFDisabled):hover .sapMSFF {
 			background-color: @sapUiShellHoverBackground;
-			box-shadow: @sapUiContentInteractionShadow;
+			box-shadow: @sapUiFieldHoverShadow;
 		}
 
 		.sapMSFI {
@@ -257,8 +277,8 @@
 			font-weight: italic;
 		}
 
-		// Reflection: styles overwritten
 		// sap.m.Button
+		// Reflection: styles overwritten
 		.sapMBtn:not(.sapFShellBarSearchCancelButton) {
 			height: 2.25rem;
 			line-height: 2.25rem;
@@ -295,6 +315,10 @@ html.sap-desktop .sapFShellBarSearchWrap .sapMBtn:not(.sapFShellBarSearchCancelB
 	border-radius: 1.125rem;
 }
 
+html.sap-desktop .sapMOverflowToolbarMenu-CTX .sapFShellBarSearchWrap .sapMBtn:not(.sapFShellBarSearchCancelButton):focus > .sapMFocusable:not(.sapMBadgeIndicator):before {
+	border-radius: 0.375rem;
+}
+
 // Resets of sizes for "Compact" mode - controls should remain in cozy mode
 .alwaysCozyOverrideByParent(@controlClass) {
 	.sapUiSizeCompact {
@@ -311,6 +335,8 @@ html.sap-desktop .sapFShellBarSearchWrap .sapMBtn:not(.sapFShellBarSearchCancelB
 			.sapFSHMegaMenu {
 				height: 2.75rem;
 			}
+
+			// Reflection: styles overwritten
 			// sap.m.Button
 			.sapMBtn {
 				height: 2.75rem;
@@ -353,15 +379,12 @@ html.sap-desktop .sapFShellBarSearchWrap .sapMBtn:not(.sapFShellBarSearchCancelB
 				margin-left: 0.2rem;
 			}
 
-			.sapMBtn:not(.sapMBtnDisabled):hover > .sapMBtnInner{
-				border-color: transparent !important;
-		 	}
-
 		  	html.sap-desktop & .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed, .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
 				background-color: @sapUiShellActiveBackground;
 			}
 
 			// sap.m.MenuButton
+			// Reflection: styles overwritten
 			.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
 				height: 38px; //ie does not accept rem for height in pseudo elements, but it works with px when you zoom
 				line-height: 2.2rem;
@@ -378,6 +401,7 @@ html.sap-desktop .sapFShellBarSearchWrap .sapMBtn:not(.sapFShellBarSearchCancelB
 				padding-right: 0.75rem;
 			}
 
+			// Reflection: styles overwritten
 			// sap.m.SearchField
 			.sapFShellBarSearch {
 				max-width: 35rem;
@@ -385,15 +409,17 @@ html.sap-desktop .sapFShellBarSearchWrap .sapMBtn:not(.sapFShellBarSearchCancelB
 					max-width: 35rem;
 				}
 
-				// Reflection: styles overwritten
 				.sapMBtn:not(.sapFShellBarSearchCancelButton) {
 					width: 1.75rem;
 					height: 1.75rem;
 					line-height: 1.75rem;
 					padding: 0;
-					margin-top: 0.25rem;
+					margin-top: auto;
+					margin-bottom: auto;
 					margin-left: 0.25rem;
 					position: absolute;
+					top: 0;
+					bottom: 0;
 					.sapMBtnInner {
 						min-width: 1.75rem;
 						border-radius: 1.125rem;
@@ -420,7 +446,6 @@ html.sap-desktop .sapFShellBarSearchWrap .sapMBtn:not(.sapFShellBarSearchCancelB
 
 			.sapFShellBarSearchWrap {
 				// sap.m.Button
-
 				// Reflection: styles overwritten
 				.sapMBtn:not(.sapFShellBarSearchCancelButton) {
 					height: 2.25rem;
@@ -531,14 +556,13 @@ html.sap-desktop .sapFShellBarSearchWrap .sapMBtn:not(.sapFShellBarSearchCancelB
 				>span.sapMBtnInner.sapMBtnHoverable:not(.sapMToggleBtnPressed) {
 					&:not(.sapMBtnActive) {
 						background: @sapUiShellHoverBackground;
-						box-shadow: @sapUiContentInteractionShadow;
-						border-color: @sapUiButtonLiteBorderColor;
 					}
 					&.sapMBtnActive,
 					&.sapMBtnActive .sapMBtnContent,
 					&.sapMBtnActive .sapMBtnContent bdi {
 						background: @sapUiShellActiveBackground;
 						color: @sapUiShellActiveTextColor;
+						border: 1px solid @sapUiButtonLiteActiveBorderColor;
 					}
 					&.sapMBtnActive:after,
 					&.sapMBtnActive >.sapMBtnIcon {
@@ -554,6 +578,12 @@ html.sap-desktop .sapFShellBarSearchWrap .sapMBtn:not(.sapFShellBarSearchCancelB
 						color: @sapUiShellTextColor;
 					}
 
+				}
+				&.sapFShellBarSearchCancelButton:hover:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnHoverable:not(.sapMToggleBtnPressed) {
+					&.sapMBtnActive .sapMBtnContent,
+					&.sapMBtnActive .sapMBtnContent bdi {
+						border: none;
+					}
 				}
 				&.sapMToggleBtnPressed {
 					background: @sapUiShellActiveBackground;

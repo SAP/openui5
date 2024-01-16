@@ -3,6 +3,7 @@
 @_sap_f_ShellBar_PaddingPhone: 1rem;
 @_sap_f_ShellBar_CoPilotWidth: 3rem;
 @_sap_f_ShellBar_CoPilotHalfWidth: 1.5rem;
+@_sap_f_ShellBar_SearchHalfMaxWidth: 17.5rem;
 
 @_sap_f_ShellBar_PrimaryTitle_FontSize: @sapMFontMediumSize;
 @_sap_f_ShellBar_SecondTitle_FontSize: @sapMFontSmallSize;
@@ -16,18 +17,6 @@
 	padding: 0 @_sap_f_ShellBar_PaddingDesktop;
 	display: flex;
 	align-items: center;
-	.sapFShellBarCopilot& {
-		.sapFShellBarORHB {
-			width: 50%;
-			padding-left: ~"calc(@{_sap_f_ShellBar_CoPilotHalfWidth} + 0.5rem)";
-		}
-		.sapFShellBarOLHB {
-			width: 50%;
-			padding-right: ~"calc(@{_sap_f_ShellBar_CoPilotHalfWidth} + 0.5rem)";
-
-		}
-
-	}
 
 	.sapFShellBarOLHB,
 	.sapFShellBarORHB {
@@ -385,11 +374,13 @@
 		}
 		.sapFShellBarSearchWrap {
 			 box-sizing: border-box;
-			 width: 100%;
 			 padding: 0 1.25rem;
 			 position: absolute;
+			 align-items: center;
+			 right: 0;
 			 left: 0;
 			 top: 0;
+			 bottom: 0;
 		 }
 		.sapMSF,
 		.sapFShellBarSearch {
@@ -405,6 +396,34 @@
 	}
 }
 
+.sapFShellBar.sapFShellBarSizeExtraLargeDesktop {
+	.sapFShellBarSearch {
+		max-width: 35rem; // max width of searchField + button width
+		width: 100%;
+		flex-grow: 1;
+		flex-shrink: 1;
+		box-sizing: border-box;
+		position: absolute;
+		left: ~"calc(50% - @{_sap_f_ShellBar_SearchHalfMaxWidth})";
+
+		.sapMSF {
+			max-width: 35rem;
+			min-width: auto;
+		}
+	}
+
+	&.sapFShellBarWithSearch {
+		.sapFShellBarORHB {
+			width: 50%;
+			padding-left: ~"calc(@{_sap_f_ShellBar_SearchHalfMaxWidth} + 0.5rem)";
+		}
+		.sapFShellBarOLHB {
+			width: 50%;
+			padding-right: ~"calc(@{_sap_f_ShellBar_SearchHalfMaxWidth} + 0.5rem)";
+
+		}
+	}
+}
 .sapFButtonNotifications[data-notifications],
 .sapFShellBarOverflowButton[data-notifications] {
 	overflow: visible;

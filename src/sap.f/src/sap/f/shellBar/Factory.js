@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbarLayoutData",
 	"sap/m/FlexItemData",
-	"./CoPilot",
 	"./Accessibility",
 	"sap/m/library",
 	"sap/ui/core/library",
@@ -24,7 +23,6 @@ sap.ui.define([
 	ToolbarSpacer,
 	OverflowToolbarLayoutData,
 	FlexItemData,
-	CoPilot,
 	Accessibility,
 	library,
 	coreLibrary,
@@ -163,12 +161,20 @@ sap.ui.define([
 
 	Factory.prototype.getCopilot = function () {
 		if (!this._oControls.oCopilot) {
-			this._oControls.oCopilot = new CoPilot({
+			this._oControls.oCopilot = new OverflowToolbarButton({
 				tooltip: this._oAcc.getEntityTooltip("COPILOT"),
-				press: function () {
-					this._oContext.fireEvent("copilotPressed", {image: this._oControls.oCopilot});
+				text: this._oAcc.getEntityTooltip("COPILOT"),
+				icon: "sap-icon://da",
+				type: ButtonType.Transparent,
+				press: function (oEvent) {
+					var oSource = oEvent.getSource();
+					oSource.getIcon() === "sap-icon://da" ? oSource.setIcon("sap-icon://da-2") : oSource.setIcon("sap-icon://da");
+					this._oContext.fireEvent("copilotPressed", {image: null, button: this._oControls.oCopilot});
 				}.bind(this)
-			});
+			})
+			.setLayoutData(new OverflowToolbarLayoutData({
+				priority: OverflowToolbarPriority.Low
+			}));
 		}
 		return this._oControls.oCopilot;
 	};
@@ -176,7 +182,7 @@ sap.ui.define([
 	Factory.prototype.getSearch = function () {
 		if (!this._oControls.oSearch) {
 			this._oControls.oSearch = new OverflowToolbarButton({
-				text: "Search",
+				text: this._oAcc.getEntityTooltip("SEARCH"),
 				icon: "sap-icon://search",
 				type: ButtonType.Transparent,
 				tooltip: this._oAcc.getEntityTooltip("SEARCH"),
@@ -232,7 +238,7 @@ sap.ui.define([
 		if (!this._oControls.oNotifications) {
 			this._oControls.oNotifications = new OverflowToolbarButton({
 				ariaHasPopup: Accessibility.AriaHasPopup.NOTIFICATIONS,
-				text: "Notifications",
+				text: oAcc.getEntityTooltip("NOTIFICATIONS"),
 				icon: "sap-icon://bell",
 				type: ButtonType.Transparent,
 				tooltip: oAcc.getEntityTooltip("NOTIFICATIONS"),
