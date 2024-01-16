@@ -38,6 +38,7 @@ sap.ui.define([
 	"use strict";
 
 	var oMDCBundle = Library.getResourceBundleFor("sap.ui.mdc");
+	var oMBundle = Library.getResourceBundleFor("sap.m");
 
 	var iOpenThePersonalizationDialog = function(oControl, oSettings) {
 		var sControlId = typeof oControl === "string" ? oControl : oControl.getId();
@@ -984,8 +985,10 @@ sap.ui.define([
 			return iPersonalize.call(this, oControl, Util.texts.filter, fnOpenThePersonalizationDialog, {
 				success: function(oP13nDialog) {
 					this.waitFor({
-						controlType: "sap.ui.mdc.p13n.panels.FilterPanel",
-						//matchers: new Ancestor(oP13nDialog, false),
+						controlType: "sap.m.p13n.BasePanel",
+						properties: {
+							title: oMBundle.getText("p13n.DEFAULT_TITLE_FILTER")
+						},
 						success: function(aFilterPanels) {
 							var oFilterPanel = aFilterPanels[0];
 							iPressAllDeclineButtonsOnPanel.call(this, oFilterPanel, {
