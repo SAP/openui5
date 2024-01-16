@@ -158,7 +158,7 @@ sap.ui.define([
 			}
 		}
 
-		return this.oBundle.getText("FileSize." + oUnit.unit, sValue);
+		return this.oBundle.getText("FileSize." + oUnit.unit, [sValue]);
 	};
 
 	/**
