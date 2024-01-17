@@ -1170,7 +1170,7 @@ sap.ui.define([
 		const oSelector = this.getRootControlInstance();
 		const sDisplayedVersion = this._oVersionsModel.getProperty("/displayedVersion");
 		try {
-			await this._serializeToLrep(/* bActivateVersion= */true);
+			await this._serializeToLrep(false, false, /* bActivateVersion= */true);
 			await VersionsAPI.activate({
 				layer: sLayer,
 				control: oSelector,
