@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
 	"sap/ui/base/ManagedObject",
@@ -12,7 +11,6 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	includes,
 	merge,
 	ObjectPath,
 	ManagedObject,
@@ -317,7 +315,7 @@ sap.ui.define([
 		var mData = this.getData();
 		var aActionsFromResponsibleElement = ObjectPath.get(["actions", "actionsFromResponsibleElement"], mData);
 		if (aActionsFromResponsibleElement) {
-			return includes(aActionsFromResponsibleElement, sActionName);
+			return aActionsFromResponsibleElement.includes(sActionName);
 		}
 		return false;
 	};

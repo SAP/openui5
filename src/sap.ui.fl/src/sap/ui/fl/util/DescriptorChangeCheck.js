@@ -3,10 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/ui/fl/Layer"
 ], function(
-	includes,
 	Layer
 ) {
 	"use strict";
@@ -68,10 +66,10 @@ sap.ui.define([
 				throw new Error("Invalid change format: The mandatory 'propertyValue' is not defined. Please define the mandatory property 'propertyValue'");
 			}
 		}
-		if (!includes(aSupportedProperties, oChangeEntity.propertyPath) && !isGenericPropertyPathSupported(aSupportedProperties, oChangeEntity.propertyPath)) {
+		if (!aSupportedProperties.includes(oChangeEntity.propertyPath) && !isGenericPropertyPathSupported(aSupportedProperties, oChangeEntity.propertyPath)) {
 			throw new Error(`Changing ${oChangeEntity.propertyPath} is not supported. The supported 'propertyPath' is: ${aSupportedProperties.join("|")}`);
 		}
-		if (!includes(aSupportedOperations, oChangeEntity.operation)) {
+		if (!aSupportedOperations.includes(oChangeEntity.operation)) {
 			throw new Error(`Operation ${oChangeEntity.operation} is not supported. The supported 'operation' is ${aSupportedOperations.join("|")}`);
 		}
 	}
@@ -158,7 +156,7 @@ sap.ui.define([
 	 */
 	function checkPropertyValuePattern(oChange, oSupportedPattern) {
 		// if no pattern is provided, everything is allowed
-		if (!includes(Object.keys(oSupportedPattern), oChange.propertyPath)) { return; }
+		if (!Object.keys(oSupportedPattern).includes(oChange.propertyPath)) { return; }
 		if (!oChange.propertyValue.match(oSupportedPattern[oChange.propertyPath])) {
 			throw new Error(`Not supported format for propertyPath ${oChange.propertyPath}. ` +
 							`The supported pattern is ${oSupportedPattern[oChange.propertyPath]}`);

@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/util/restricted/_curry",
 	"sap/base/util/restricted/_difference",
-	"sap/base/util/includes",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/merge",
@@ -30,7 +29,6 @@ sap.ui.define([
 ], function(
 	_curry,
 	_difference,
-	includes,
 	isEmptyObject,
 	isPlainObject,
 	merge,
@@ -1183,7 +1181,7 @@ sap.ui.define([
 				this.getSelectionManager().set(oElementOverlay);
 			}
 
-			if (!includes(this.getSelectionManager().get(), oElementOverlay)) {
+			if (!this.getSelectionManager().get().includes(oElementOverlay)) {
 				oElementOverlay.setSelected(false);
 			}
 		} else {

@@ -5,12 +5,10 @@
 // Provides class sap.ui.dt.ManagedObjectObserver.
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/ui/dt/ElementUtil",
-	"sap/base/util/includes"
+	"sap/ui/dt/ElementUtil"
 ], function(
 	ManagedObject,
-	ElementUtil,
-	includes
+	ElementUtil
 ) {
 	"use strict";
 
@@ -686,7 +684,7 @@ sap.ui.define([
 	ManagedObjectObserver.prototype._isAggregationObservable = function(sAggregationName) {
 		return (
 			this.getAggregations() === null
-			|| includes(this.getAggregations(), sAggregationName)
+			|| this.getAggregations().includes(sAggregationName)
 		);
 	};
 

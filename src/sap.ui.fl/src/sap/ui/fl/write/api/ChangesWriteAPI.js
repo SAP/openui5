@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
-	"sap/base/util/includes",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
@@ -24,7 +23,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils"
 ], function(
 	_omit,
-	includes,
 	Log,
 	JsControlTreeModifier,
 	Component,
@@ -132,7 +130,7 @@ sap.ui.define([
 		mPropertyBag.appComponent = oAppComponent;
 		mPropertyBag.changeSpecificData.reference = sReference;
 
-		if (includes(DescriptorChangeTypes.getChangeTypes(), mPropertyBag.changeSpecificData.changeType)) {
+		if (DescriptorChangeTypes.getChangeTypes().includes(mPropertyBag.changeSpecificData.changeType)) {
 			return createDescriptorChange(mPropertyBag);
 		}
 

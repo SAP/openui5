@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/base/util/values",
 	"sap/base/util/restricted/_omit",
 	"sap/base/Log",
@@ -15,7 +14,6 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/common/ChangeCategories",
 	"sap/ui/rta/util/changeVisualization/ChangeStates"
 ], function(
-	includes,
 	values,
 	_omit,
 	Log,
@@ -187,11 +185,11 @@ sap.ui.define([
 			const aCategories = this.getChangeCategories();
 			let sChangeCategory;
 			// For "settings", the control developer can choose one of the existing categories
-			if (sCommandName === "settings" && includes(Object.keys(aCategories), mChangeVisualizationInfo.descriptionPayload.category)) {
+			if (sCommandName === "settings" && Object.keys(aCategories).includes(mChangeVisualizationInfo.descriptionPayload.category)) {
 				sChangeCategory = mChangeVisualizationInfo.descriptionPayload.category;
 			} else {
 				sChangeCategory = Object.keys(aCategories).find(function(sChangeCategoryName) {
-					return includes(aCategories[sChangeCategoryName], sCommandName);
+					return aCategories[sChangeCategoryName].includes(sCommandName);
 				});
 				sChangeCategory ||= ChangeCategories.OTHER;
 			}

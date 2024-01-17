@@ -19,7 +19,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
-	"sap/base/util/includes",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Element"
@@ -42,7 +41,6 @@ sap.ui.define([
 	ChangesWriteAPI,
 	AppVariantWriteAPI,
 	DescriptorChangeTypes,
-	includes,
 	sinon,
 	RtaQunitUtils,
 	Element
@@ -180,7 +178,7 @@ sap.ui.define([
 				assert.equal(fnCreateChangesSpy.callCount, aAllInlineChanges.length, `then ChangesWriteAPI.create method is called ${fnCreateChangesSpy.callCount} times`);
 				aAllInlineChanges.forEach(function(oInlineChange) {
 					var sChangeType = oInlineChange._oInlineChange.getMap().changeType;
-					assert.equal(includes(DescriptorChangeTypes.getChangeTypes(), sChangeType), true, `then inline change ${sChangeType} got successfully created`);
+					assert.equal(DescriptorChangeTypes.getChangeTypes().includes(sChangeType), true, `then inline change ${sChangeType} got successfully created`);
 				});
 				assert.equal(aAllInlineChanges.some(function(oInlineChange) {
 					var sChangeType = oInlineChange._oInlineChange.getMap().changeType;
