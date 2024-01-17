@@ -861,6 +861,26 @@ sap.ui.define([
 		return oItem;
 	};
 
+	// add model name into binding
+	// before:
+	//   {
+	//		"text": "{text}",
+	//		"key": "{key}"
+	//   }
+	// after:
+	//   {
+	//		"text": "{model>text}",
+	//		"key": "{model>key}"
+	//   }
+	BaseField.prototype.addModelPrefix = function (oConfig, sModelName) {
+		for (var key in oConfig) {
+			var sValue = oConfig[key];
+			sValue = "{" + sModelName + ">" + sValue.substring(1);
+			oConfig[key] = sValue;
+		}
+		return oConfig;
+	};
+
 	BaseField.prototype.getPopoverPlacement = function (oControl) {
 		var sPlacement = "Right";
 		var iX = oControl.getDomRef().getBoundingClientRect().x;

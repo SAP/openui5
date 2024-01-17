@@ -36,7 +36,9 @@ sap.ui.define([
 	"sap/m/ComboBox",
 	"sap/ui/core/ListItem",
 	"sap/ui/model/type/Integer",
-	"sap/ui/model/type/Float"
+	"sap/ui/model/type/Float",
+	"sap/m/HBox",
+	"sap/ui/core/CustomData"
 ], function (
 	BaseField,
 	Text,
@@ -71,7 +73,9 @@ sap.ui.define([
 	ComboBox,
 	ListItem,
 	IntegerType,
-	FloatType
+	FloatType,
+	HBox,
+	CustomData
 ) {
 	"use strict";
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g;
@@ -436,6 +440,7 @@ sap.ui.define([
 				var oCellTemplate;
 				var oCellSettings;
 				var oCell = deepClone(oProperty.cell) || {};
+				oCell.values = oCell.values || oProperty.values;
 				delete oCell.type;
 				if (sCellType === "string" && oCell.values) {
 					sCellType = "ComboBox";
@@ -531,22 +536,23 @@ sap.ui.define([
 						oCellTemplate = new Link(oCellSettings);
 						break;
 					case "ComboBox":
+						var oItem = this.addModelPrefix(oCell.values.item, "settings");
 						oCellSettings = {
 							width: "100%",
 							selectedKey: sDefaultValue,
+							editable: false,
 							items: {
 								path: "settings>" + oCell.values.data.path,
-								template: new ListItem(oCell.values.item)
+								template: new ListItem(oItem)
 							}
 						};
 						if (oCell.values.sorter) {
 							oCellSettings.items.sorter = [new Sorter({
 								path: oCell.values.sorter
 							})];
+							delete oCell.values.sorter;
 						}
-						if (oCell.change) {
-							oCellSettings.change = oCell.change;
-						}
+						oCellSettings = merge(oCellSettings, oCell);
 						var oComboBoxSettingsModel = new JSONModel(oCell.values.data.json);
 						oCellTemplate = new ComboBox(oCellSettings);
 						oCellTemplate.setModel(oComboBoxSettingsModel,"settings");
@@ -560,6 +566,103 @@ sap.ui.define([
 						}
 						oCellSettings.tooltip = oCell.tooltip || oCellSettings.text;
 						oCellTemplate = new Input(oCellSettings);
+						break;
+					case "object":
+						oCellSettings = {
+							value: {
+								path: n,
+								formatter: function(vValue) {
+									if (!vValue || vValue === "") {
+										return undefined;
+									}
+									vValue = JSON.stringify(vValue, null, "\t");
+									if (typeof vValue === "object" && !vValue.length) {
+										vValue = vValue.replace(/\"\$\$([a-zA-Z]*)\$\$\"/g, function (s) {
+											return s.substring(3, s.length - 3);
+										});
+									}
+									return vValue;
+								}
+							},
+							editable: false
+						};
+						oCellSettings = merge(oCellSettings, oCell);
+						oCellTemplate = new HBox({
+							items: [
+								new Input(oCellSettings),
+								new Button({
+									icon: "sap-icon://display",
+									customData: [
+										new CustomData({
+											key: "value",
+											value: sDefaultValue
+										})
+									],
+									press: function(oEvent) {
+										var oControl = oEvent.getSource();
+										if (!that._oObjectPropertyDetailsPopover) {
+											var oTextArea = new TextArea(sParameterId + "_control_objectproperty_details_popover_textarea", {
+												editable: false,
+												rows: 9
+											});
+											var oCloseButton = new Button(sParameterId + "_control_objectproperty_details_popover_close_btn", {
+												text: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DETAILS_POPOVER_BUTTON_CLOSE"),
+												press: function () {
+													that._oObjectPropertyDetailsPopover.close();
+												}
+											});
+											that._oObjectPropertyDetailsPopover = new Popover(sParameterId + "_control_objectproperty_details_popover", {
+												placement: "Right",
+												contentWidth: "200px",
+												contentHeight: "240px",
+												modal: true,
+												title: oResourceBundle.getText("EDITOR_FIELD_OBJECT_PROPERTY_POPOVER_TITLE"),
+												content: [
+													new SimpleForm({
+														layout: "ResponsiveGridLayout",
+														labelSpanXL: 4,
+														labelSpanL: 4,
+														labelSpanM: 4,
+														//labelSpanS: "{= ${/editMode} === 'Properties' ? 4 : 12}",
+														labelSpanS: 12,
+														emptySpanXL: 1,
+														emptySpanL: 1,
+														emptySpanM: 1,
+														emptySpanS: 0,
+														columnsXL: 1,
+														columnsL: 1,
+														columnsM: 1,
+														content: [
+															oTextArea
+														]
+													})
+												],
+												footer: new OverflowToolbar({
+													content: [
+														new ToolbarSpacer(),
+														oCloseButton
+													]
+												})
+											}).addStyleClass("sapUiIntegrationEditorItemObjectFieldDetailsPopover");
+											that._oObjectPropertyDetailsPopover._oTextArea = oTextArea;
+											that._oObjectPropertyDetailsPopover._oCloseButton = oCloseButton;
+										}
+										var oCustomerData = oControl.getCustomData()[0];
+										var vValue = oCustomerData.getValue();
+										if (vValue) {
+											vValue = JSON.stringify(vValue, null, "\t");
+											if (typeof vValue === "object" && !vValue.length) {
+												vValue = vValue.replace(/\"\$\$([a-zA-Z]*)\$\$\"/g, function (s) {
+													return s.substring(3, s.length - 3);
+												});
+											}
+										}
+										that._oObjectPropertyDetailsPopover._oTextArea.setValue(vValue);
+										that._oObjectPropertyDetailsPopover.openBy(oControl);
+									}
+								})
+							]
+						});
 						break;
 					default:
 						oCellTemplate = new Text({
@@ -849,6 +952,7 @@ sap.ui.define([
 
 		// save change
 		that.refreshValue();
+		that.updateTable();
 	};
 
 	ObjectField.prototype.onSelectionChange = function (oEvent) {
@@ -1085,6 +1189,10 @@ sap.ui.define([
 			});
 			aPropertyContentList.push(oLable);
 			var oValueControl;
+			oProperty.values = oProperty.values || (oProperty.cell && oProperty.cell.values);
+			if (oProperty.type === "string" && oProperty.values) {
+				oProperty.type = "ComboBox";
+			}
 			var oPropertySettings = deepClone(oProperty, 500);
 			delete oPropertySettings.type;
 			delete oPropertySettings.label;
@@ -1093,6 +1201,7 @@ sap.ui.define([
 			delete oPropertySettings.formatter;
 			delete oPropertySettings.column;
 			delete oPropertySettings.cell;
+			delete oPropertySettings.values;
 			var oSettings;
 			switch (oProperty.type) {
 				case "boolean":
@@ -1151,6 +1260,24 @@ sap.ui.define([
 					oSettings = merge(oSettings, oPropertySettings);
 					oValueControl = new Input(sPropertyControlId, oSettings);
 					break;
+				case "ComboBox":
+					var oItem = this.addModelPrefix(oProperty.values.item, "settings");
+					oSettings = {
+						width: "100%",
+						selectedKey: "{" + sPathPrefix + n + "}",
+						visible: "{= ${/editMode} === 'Properties'}",
+						editable: oConfig.editable === false ? false : "{= ${" + sPathPrefix + "_dt/_editable} !== false}",
+						items: {
+							path: "settings>" + oProperty.values.data.path,
+							template: new ListItem(oItem)
+						},
+						change: fnChange
+					};
+					oSettings = merge(oSettings, oPropertySettings);
+					oValueControl = new ComboBox(sPropertyControlId, oSettings);
+					var oComboBoxSettingsModel = new JSONModel(oProperty.values.data.json);
+					oValueControl.setModel(oComboBoxSettingsModel,"settings");
+					break;
 				case "object":
 					oSettings = {
 						value: {
@@ -1170,7 +1297,31 @@ sap.ui.define([
 						},
 						visible: "{= ${/editMode} === 'Properties'}",
 						editable: oConfig.editable === false ? false : "{= ${" + sPathPrefix + "_dt/_editable} !== false}",
-						change: fnChange,
+						change: function(oEvent) {
+							var oControl = oEvent.getSource();
+							var sValue = oEvent.getParameter("value");
+							var oValueModel = oControl.getModel();
+							if (!sValue || sValue === "") {
+								oValueModel.setProperty(oControl.getBindingPath("value"), undefined);
+								oValueModel.checkUpdate(true);
+								oControl.setValueState("None");
+								oControl.setValueStateText("");
+								fnChange(oEvent);
+							} else {
+								try {
+									var oValue = JSON.parse(sValue);
+									oValueModel.setProperty(oControl.getBindingPath("value"), oValue);
+									oValueModel.checkUpdate(true);
+									oControl.setValueState("None");
+									oControl.setValueStateText("");
+									fnChange(oEvent);
+								} catch (e) {
+									var oResourceBundle = that.getResourceBundle();
+									oControl.setValueState("Error");
+									oControl.setValueStateText(oResourceBundle.getText("EDITOR_VAL_NOT_A_JSONOBJECT"));
+								}
+							}
+						},
 						rows: 3
 					};
 					oSettings = merge(oSettings, oPropertySettings);
@@ -1267,7 +1418,12 @@ sap.ui.define([
 		var that = this;
 		var oConfig = that.getConfiguration();
 		var oControl = that.getAggregation("_field");
-		var aContents = oControl.removeAllContent().slice(-2);
+		var aContents = oControl.removeAllContent();
+		for (var i = 0; i < aContents.length - 2; i++) {
+			// destroy contents manually
+			aContents[i].destroy();
+		}
+		aContents = aContents.slice(-2);
 		delete oConfig.properties;
 		that.parseValueProperties();
 		var fnChange = function() {
