@@ -490,7 +490,7 @@ sap.ui.define([
 			}
 		};
 
-		var fnAssertions = function(oComponent, oView) {
+		var fnAssertions = async function(oComponent, oView) {
 			// --------- control tree checks ---------
 			var oPanel = oView.byId("panel");
 			var oButton = oView.byId("stashedButton");
@@ -545,7 +545,7 @@ sap.ui.define([
 
 			// --------- unstash the stashed panel ---------
 			// get the real panel again, since the wrapper should now be replaced
-			var oRealPanel = oStashedPanel.unstash();
+			var oRealPanel = await oStashedPanel.unstash(true);
 			assert.ok(oRealPanel.isA("sap.m.Panel"), "The real panel instance is created after unstash");
 
 			// check for additional stashed control inside the now unstashed panel
