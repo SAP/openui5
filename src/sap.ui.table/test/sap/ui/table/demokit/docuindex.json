@@ -10,7 +10,7 @@
 		"entities": [
 			{
 				"id": "sap.ui.table.Table",
-				"name": "Grid Table",
+				"name": "Table (sap.ui.table, Grid Table)",
 				"category": "List",
 				"since": "1.0",
 				"samples": [
