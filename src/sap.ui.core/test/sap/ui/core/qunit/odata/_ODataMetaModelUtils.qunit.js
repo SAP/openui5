@@ -837,8 +837,8 @@ sap.ui.define([
 			oUtilsMock = this.mock(Utils);
 
 		// Associations, ComplexTypes and EntityType of Schema0
-		oLift0 = oUtilsMock.expects("liftSAPData").withExactArgs(sinon.match.same(oSchema0),
-			ignoreAnnotationsFromMetadata);
+		oLift0 = oUtilsMock.expects("liftSAPData")
+			.withExactArgs(sinon.match.same(oSchema0), undefined, ignoreAnnotationsFromMetadata);
 		oVisitAssociation0 = oUtilsMock.expects("visitParents")
 			.withExactArgs(sinon.match.same(oSchema0), sinon.match.same(oAnnotations),
 				"association", sinon.match.func);
@@ -849,8 +849,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oSchema0), sinon.match.same(oAnnotations),
 				"entityType", sinon.match.same(Utils.visitEntityType), undefined, ignoreAnnotationsFromMetadata);
 		// Associations, ComplexTypes and EntityType of Schema1
-		oLift1 = oUtilsMock.expects("liftSAPData").withExactArgs(sinon.match.same(oSchema1),
-			ignoreAnnotationsFromMetadata);
+		oLift1 = oUtilsMock.expects("liftSAPData")
+			.withExactArgs(sinon.match.same(oSchema1), undefined, ignoreAnnotationsFromMetadata);
 		oVisitAssociation1 = oUtilsMock.expects("visitParents")
 			.withExactArgs(sinon.match.same(oSchema1), sinon.match.same(oAnnotations),
 				"association", sinon.match.func);
