@@ -240,7 +240,7 @@ sap.ui.define([
 				oCondition.values.splice(1);
 			}
 
-			const bHideOperator = (this.oFormatOptions.hideOperator && oCondition.values.length === 1) || bIsUnit;
+			const bHideOperator = (this._getHideOperator() && oCondition.values.length === 1) || bIsUnit;
 			const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 			const aCompositeTypes = this._getCompositeTypes();
 			const aAdditionalCompositeTypes = this._getAdditionalCompositeTypes();
@@ -395,10 +395,10 @@ sap.ui.define([
 			_initCurrentValueAtType.call(this, oType);
 
 			let oOperator, bCheckForDefault, bUseDefaultOperator;
+			let bHideOperator = this._getHideOperator(); // hide operator only supported if default operator used; If no matching operator found and EQ opeator used instead also hide operator
 
 			switch (this.getPrimitiveType(sSourceType)) {
 				case "string":
-					oOperator;
 					bCheckForDefault = false;
 					bUseDefaultOperator = false;
 
@@ -431,6 +431,7 @@ sap.ui.define([
 							} else {
 								oOperator = aMatchingOperators[0]; // TODO: use the first of the matching operators
 							}
+							bHideOperator = false; // as operator is found for input
 						}
 					}
 
@@ -448,7 +449,7 @@ sap.ui.define([
 
 						if ((!bCompositeType || bIsUnit) && oOperator.validateInput && bInputValidationEnabled) {
 							// use ValueHelp to determine condition (for unit part also if composite type used)
-							oCondition = _parseDetermineKeyAndDescription.call(this, oOperator, vValue, oType, oAdditionalType, bUseDefaultOperator, bCheckForDefault, aOperators, sDisplay, true);
+							oCondition = _parseDetermineKeyAndDescription.call(this, oOperator, vValue, oType, oAdditionalType, bUseDefaultOperator, bHideOperator, bCheckForDefault, aOperators, sDisplay, true);
 							return this._fnReturnPromise(oCondition);
 						} else {
 							// just normal operator parsing
@@ -457,7 +458,7 @@ sap.ui.define([
 									// parse using unit part
 									oCondition = Condition.createCondition(oOperator.name, [oType.parseValue(vValue, "string", oType._aCurrentValue)], undefined, undefined, ConditionValidated.NotValidated);
 								} else {
-									oCondition = oOperator.getCondition(vValue, oType, sDisplay, bUseDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes);
+									oCondition = oOperator.getCondition(vValue, oType, sDisplay, bUseDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, bHideOperator);
 								}
 							} catch (oException) {
 								let oMyException = oException;
@@ -481,7 +482,10 @@ sap.ui.define([
 						}
 					}
 
-					throw new ParseException("Cannot parse value " + vValue); // use original value in message
+					if (oCondition !== null) { // if explicitly parsed to empty this is not an error
+						throw new ParseException("Cannot parse value " + vValue); // use original value in message
+					}
+					break;
 
 				default:
 					// operators can only be formatted from string. But other controls (like Slider) might just use the value
@@ -547,7 +551,7 @@ sap.ui.define([
 
 		}
 
-		function _parseDetermineKeyAndDescription(oOperator, vValue, oType, oAdditionalType, bUseDefaultOperator, bCheckForDefault, aOperators, sDisplay, bFirstCheck) {
+		function _parseDetermineKeyAndDescription(oOperator, vValue, oType, oAdditionalType, bUseDefaultOperator, bHideOperator, bCheckForDefault, aOperators, sDisplay, bFirstCheck) {
 
 			let vKey;
 			let vDescription;
@@ -556,15 +560,17 @@ sap.ui.define([
 			let vCheckValue;
 			let vCheckParsedDescription;
 			const oBindingContext = this.oFormatOptions.bindingContext;
-			let aValues;
+			const bOperatorSymbolEntered = bHideOperator ? false : oOperator.test(vValue); // if operator hidden it is always false
+			let aValues = vValue !== "" && oOperator.getValues(vValue, sDisplay, bUseDefaultOperator, bHideOperator);
+			let bExactMatch = true; // only allow exact matches (no first suggested one)
 
-			if (vValue === "") {
+			if (!aValues) { // if only operator symbol entered handle it as nothing entered
 				// check for empty key
 				aValues = [];
-				vKey = vValue;
-				vCheckValue = vValue;
+				vKey = "";
+				vCheckValue = "";
 			} else {
-				aValues = oOperator.getValues(vValue, sDisplay, bUseDefaultOperator);
+				bExactMatch = bOperatorSymbolEntered; // if operator entered just take this value as unvalidated one, if no exact match found
 				vKey = bFirstCheck ? aValues[0] : aValues[1];
 				vDescription = bFirstCheck ? aValues[1] : aValues[0]; // in second run, use second value for check
 				bCheckDescription = sDisplay !== FieldDisplay.Value;
@@ -580,7 +586,7 @@ sap.ui.define([
 
 				if (!oException._bNotUnique) { // TODO: better solution?
 					// not unique -> don't try to use default operator or search again
-					if (vValue === "") {
+					if (vCheckValue === "") {
 						// empty string might be parsed to something else for check (e.g. 0000) -> if nothing found this is not an error
 						// no empty key -> no condition
 						return null;
@@ -588,16 +594,16 @@ sap.ui.define([
 
 					if (bFirstCheck && aValues[0] && aValues[1]) {
 						// key and description entered -> check now description
-						return _parseDetermineKeyAndDescription.call(this, oOperator, vValue, oType, oAdditionalType, bUseDefaultOperator, bCheckForDefault, aOperators, sDisplay, false);
+						return _parseDetermineKeyAndDescription.call(this, oOperator, vValue, oType, oAdditionalType, bUseDefaultOperator, bHideOperator, bCheckForDefault, aOperators, sDisplay, false);
 					}
 
 					if (bCheckForDefault) {
-						return _parseUseDefaultOperator.call(this, oType, aOperators, vValue, sDisplay);
+						return _parseUseDefaultOperator.call(this, oType, oAdditionalType, aOperators, vValue, sDisplay, bHideOperator);
 					}
 				}
 
-				if (_isInvalidInputAllowed.call(this)) {
-					return _returnUserInput.call(this, oType, aOperators, vValue, sDisplay);
+				if (bOperatorSymbolEntered || _isInvalidInputAllowed.call(this)) {
+					return _returnUserInput.call(this, oType, oAdditionalType, aOperators, vValue, sDisplay, bHideOperator);
 				}
 				throw new ParseException(oException.message); // to have ParseException
 			};
@@ -685,7 +691,7 @@ sap.ui.define([
 			}
 
 			return SyncPromise.resolve().then(() => {
-				return _getItemForValue.call(this, vCheckValue, vCheckParsedValue, vCheckParsedDescription, oType, oAdditionalType, oBindingContext, bCheckKey, bCheckDescription);
+				return _getItemForValue.call(this, vCheckValue, vCheckParsedValue, vCheckParsedDescription, oType, oAdditionalType, oBindingContext, bCheckKey, bCheckDescription, bExactMatch);
 			}).then((oResult) => {
 				return fnGetResult.call(this, oResult, fnSuccess);
 			}).catch((oException) => {
@@ -694,13 +700,13 @@ sap.ui.define([
 
 		}
 
-		function _parseUseDefaultOperator(oType, aOperators, vValue, sDisplay) {
+		function _parseUseDefaultOperator(oType, oAdditionalType, aOperators, vValue, sDisplay, bHideOperator) {
 
 			const oOperator = this._getDefaultOperator(aOperators, oType);
 			let oCondition;
 
 			if (oOperator && aOperators.indexOf(oOperator.name) >= 0) {
-				oCondition = oOperator.getCondition(vValue, oType, FieldDisplay.Value, true); // use Value as displayFormat if nothing found in ValueHelp
+				oCondition = oOperator.getCondition(vValue, oType, FieldDisplay.Value, true, undefined, oAdditionalType, undefined, bHideOperator); // use Value as displayFormat if nothing found in ValueHelp
 				oCondition.validated = ConditionValidated.NotValidated;
 			}
 
@@ -708,7 +714,7 @@ sap.ui.define([
 
 		}
 
-		function _returnUserInput(oType, aOperators, vValue, sDisplay) {
+		function _returnUserInput(oType, oAdditionalType, aOperators, vValue, sDisplay, bHideOperator) {
 
 			// Field accepts values that are not found -> must be checked by caller
 			// if user input fits to the type, let the caller validate it
@@ -731,7 +737,7 @@ sap.ui.define([
 				throw new ParseException("Cannot parse value " + vValue); // use original value in message
 			}
 
-			const oCondition = oOperator.getCondition(vValue, oType, FieldDisplay.Value, true); // use display format Value as entered string should used as it is
+			const oCondition = oOperator.getCondition(vValue, oType, FieldDisplay.Value, true, undefined, oAdditionalType, undefined, bHideOperator); // use display format Value as entered string should used as it is
 
 			if (oCondition) {
 				oCondition.validated = ConditionValidated.NotValidated;
@@ -943,7 +949,7 @@ sap.ui.define([
 
 		}
 
-		function _getItemForValue(vValue, vParsedValue, vParsedDescription, oType, oAdditionalType, oBindingContext, bCheckKey, bCheckDescription) {
+		function _getItemForValue(vValue, vParsedValue, vParsedDescription, oType, oAdditionalType, oBindingContext, bCheckKey, bCheckDescription, bExactMatch) {
 
 			const oValueHelp = _getValueHelp.call(this);
 			const oDelegate = this.oFormatOptions.delegate;
@@ -956,7 +962,9 @@ sap.ui.define([
 				bindingContext: oBindingContext,
 				checkKey: bCheckKey,
 				checkDescription: bCheckDescription,
+				caseSensitive: bExactMatch ? true : undefined,
 				exception: ParseException,
+				exactMatch: bExactMatch,
 				control: oControl
 			};
 
@@ -987,6 +995,7 @@ sap.ui.define([
 					checkDescription: false,
 					caseSensitive: true, // case sensitive as used to get description for known key
 					exception: FormatException,
+					exactMatch: true,
 					control: oControl
 				};
 				return oValueHelp.getItemForValue(oConfig);

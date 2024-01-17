@@ -453,7 +453,7 @@ sap.ui.define([
 		const oOperator = this.getOperator();
 		const oType = this.getType();
 
-		if (sValue && oOperator.parse(sValue)) {
+		if (sValue && oOperator.test(sValue)) {
 			const oResult = {};
 			oResult.operator = this.getKey();
 			oResult.values = oOperator.parse(sValue, oType, FieldDisplay.Value);

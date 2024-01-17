@@ -234,6 +234,23 @@ sap.ui.define([
 
 			};
 
+			this._getHideOperator = function() {
+
+
+				if (this.oFormatOptions.hasOwnProperty("hideOperator")) {
+					return this.oFormatOptions.hideOperator;
+				} else {
+					const aOperators = this._getOperators();
+					if (aOperators.length === 1) {
+						const oOperator = FilterOperatorUtil.getOperator(aOperators[0]);
+						return !oOperator || oOperator.isSingleValue();
+					} else {
+						return false;
+					}
+				}
+
+			};
+
 			this._fnReturnPromise = function(oPromise) {
 
 				if (oPromise instanceof Promise && this.oFormatOptions.asyncParsing) {

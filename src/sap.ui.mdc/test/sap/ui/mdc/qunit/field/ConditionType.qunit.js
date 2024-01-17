@@ -160,7 +160,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: Default - simple String", function(assert) {
+	QUnit.test("Parsing: Default/hideOperator - simple String", function(assert) {
 
 		let oCondition = oConditionType.parseValue("Test");
 		assert.ok(oCondition, "Result returned");
@@ -177,6 +177,24 @@ sap.ui.define([
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "1", "Values entry");
+
+		oConditionType.setFormatOptions({hideOperator: true, operators: [OperatorName.EQ]});
+
+		oCondition = oConditionType.parseValue("=Test"); // if operator hidden it will be taken as text
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0], "=Test", "Values entry");
+
+		oCondition = oConditionType.parseValue("="); // if operator hidden it will be taken as text
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0], "=", "Values entry");
 
 		// Default operator not in list of operators
 		oConditionType.setFormatOptions({operators: [OperatorName.GT, OperatorName.LT]});
@@ -276,7 +294,7 @@ sap.ui.define([
 		assert.equal(oCondition.operator, OperatorName.GT, "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
-		assert.equal(oCondition.values[0], "Test", "Values entry");
+		assert.equal(oCondition.values[0], ">Test", "Values entry"); // as for single operator no operator symbol is used
 
 		oCondition = oConditionType.parseValue("Test");
 		assert.equal(oCondition.operator, OperatorName.GT, "Operator");
@@ -558,7 +576,6 @@ sap.ui.define([
 				originalDateType: oOriginalType,
 				compositeTypes: [oDateTimeOffsetType, oStringType],
 				operators: [OperatorName.EQ],
-				hideOperator: true,
 				delegate: FieldBaseDelegate
 			});
 
@@ -568,7 +585,6 @@ sap.ui.define([
 				originalDateType: oOriginalType,
 				compositeTypes: [oDateTimeOffsetType, oStringType],
 				operators: [OperatorName.EQ],
-				hideOperator: true,
 				delegate: FieldBaseDelegate
 			});
 		},
@@ -692,6 +708,8 @@ sap.ui.define([
 			const fnGetItemsForValue = function(oConfig) {
 				if (oConfig.value === "I1" || oConfig.value === "Item1") {
 					return Promise.resolve({key: "I1", description: "Item1"});
+				} else if (oConfig.value === "=I1" || oConfig.value === "=Item1") {
+					return Promise.resolve({key: "=I1", description: "=Item1"});
 				} else if (oConfig.value === "I2" || oConfig.value === "Item2") {
 					return new Promise(function(fResolve, fReject) {
 						setTimeout(function () { // simulate request
@@ -779,6 +797,7 @@ sap.ui.define([
 			bindingContext: "BC",
 			control: "Control",
 			caseSensitive: true,
+			exactMatch: true,
 			exception: FormatException
 		};
 		let sResult = oConditionType.formatValue(oCondition);
@@ -997,6 +1016,8 @@ sap.ui.define([
 				checkDescription: true,
 				bindingContext: "BC",
 				control: "Control",
+				exactMatch: false,
+				caseSensitive: undefined,
 				exception: ParseException
 			};
 			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
@@ -1364,12 +1385,181 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Parsing: description -> key with entered symbol", function(assert) {
+
+		oConditionType.oFormatOptions.operators = [OperatorName.EQ, OperatorName.Contains]; // fake setting directly
+
+		const oConfig = { // to compare
+			value: "X",
+			parsedValue: "X",
+			parsedDescription: "X",
+			dataType: oValueType,
+			checkKey: true,
+			checkDescription: true,
+			bindingContext: "BC",
+			control: "Control",
+			caseSensitive: true,
+			exactMatch: true,
+			exception: ParseException
+		};
+
+		const oCondition = oConditionType.parseValue("=X");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0], "X", "Values entry1");
+		assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
+		assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
+		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
+
+		oValueHelp.getItemForValue.resetHistory();
+		oConfig.value = "ZZZ";
+		oConfig.parsedValue = "ZZZ";
+		oConfig.parsedDescription = "ZZZ";
+		const fnDone = assert.async();
+		let oPromise = oConditionType.parseValue("=ZZZ");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+
+		oPromise.then(function(oCondition) {
+			assert.ok(oCondition, "Result returned");
+			assert.equal(typeof oCondition, "object", "Result is object");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
+			assert.ok(Array.isArray(oCondition.values), "values are array");
+			assert.equal(oCondition.values.length, 1, "Values length");
+			assert.equal(oCondition.values[0], "ZZZ", "Values entry1");
+			assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
+			assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
+			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
+
+			oValueHelp.getItemForValue.resetHistory();
+			oConfig.value = "Item1";
+			oConfig.parsedValue = "Item1";
+			oConfig.parsedDescription = "Item1";
+			oPromise = oConditionType.parseValue("=Item1");
+			assert.ok(oPromise instanceof Promise, "Promise returned");
+			oPromise.then(function(oCondition) {
+				assert.ok(oCondition, "Result returned");
+				assert.equal(typeof oCondition, "object", "Result is object");
+				assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
+				assert.ok(Array.isArray(oCondition.values), "values are array");
+				assert.equal(oCondition.values.length, 2, "Values length");
+				assert.equal(oCondition.values[0], "I1", "Values entry1");
+				assert.equal(oCondition.values[1], "Item1", "Values entry2");
+				assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+				assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
+				assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
+
+				oValueHelp.getItemForValue.resetHistory();
+				oConfig.value = "";
+				oConfig.parsedValue = null;
+				oConfig.parsedDescription = undefined;
+				oConfig.checkDescription = false;
+				oPromise = oConditionType.parseValue("=");
+				assert.ok(oPromise instanceof Promise, "Promise returned");
+				oPromise.then(function(oCondition) {
+					assert.deepEqual(oCondition, null, "null returned");
+					assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
+					assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
+
+					fnDone();
+				}).catch(function(oException) {
+					assert.notOk(oException, "exception fired");
+					fnDone();
+				});
+				}).catch(function(oException) {
+				assert.notOk(oException, "exception fired");
+				fnDone();
+			});
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise must not fail");
+			FilterOperatorUtil.getDefaultOperator.restore();
+			fnDone();
+		});
+
+	});
+
+	QUnit.test("Parsing: description -> key with entered symbol and hidden operator", function(assert) {
+
+		oConditionType.oFormatOptions.operators = [OperatorName.EQ]; // fake setting directly
+		oConditionType.oFormatOptions.hideOperator = true;
+
+		const oConfig = { // to compare
+			value: "=X",
+			parsedValue: "=X",
+			parsedDescription: "=X",
+			dataType: oValueType,
+			checkKey: true,
+			checkDescription: true,
+			bindingContext: "BC",
+			control: "Control",
+			caseSensitive: undefined,
+			exactMatch: false,
+			exception: ParseException
+		};
+
+		let oException;
+		try {
+			oConditionType.parseValue("=X");
+		} catch (e) {
+			oException = e;
+		}
+		assert.ok(oException, "exception fired");
+		assert.ok(oException instanceof ParseException, "Error is a ParseException");
+		assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
+		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
+
+		oValueHelp.getItemForValue.resetHistory();
+		const fnDone = assert.async();
+		oConfig.value = "=Item1";
+		oConfig.parsedValue = "=Item1";
+		oConfig.parsedDescription = "=Item1";
+		const oPromise = oConditionType.parseValue("=Item1");
+		assert.ok(oPromise instanceof Promise, "Promise returned");
+		assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
+		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
+		oPromise.then(function(oCondition) {
+			assert.ok(oCondition, "Result returned");
+			assert.equal(typeof oCondition, "object", "Result is object");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
+			assert.ok(Array.isArray(oCondition.values), "values are array");
+			assert.equal(oCondition.values.length, 2, "Values length");
+			assert.equal(oCondition.values[0], "=I1", "Values entry1");
+			assert.equal(oCondition.values[1], "=Item1", "Values entry2");
+			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+
+			oValueHelp.getItemForValue.resetHistory();
+			oConfig.value = "=";
+			oConfig.parsedValue = "=";
+			oConfig.parsedDescription = "=";
+			try {
+				oConditionType.parseValue("=");
+			} catch (e) {
+				oException = e;
+			}
+			assert.ok(oException, "exception fired");
+			assert.ok(oException instanceof ParseException, "Error is a ParseException");
+			assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
+			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
+
+			fnDone();
+		}).catch(function(oException) {
+			assert.notOk(true, "Promise must not fail");
+			FilterOperatorUtil.getDefaultOperator.restore();
+			fnDone();
+		});
+
+	});
+
 	QUnit.test("Parsing: description -> key with custom Operator", function(assert) {
 
 		let oOperator = new Operator({
 			name: "MyContains",
 			filterOperator: FilterOperator.Contains,
-			tokenParse: "^\\*(.*)\\*$",
+			tokenTest: "^\\*(.*)\\*$",
+			tokenParse: "^\\*(.+)?\\*$|^([^\\*]?.*[^\\*]?)$",
+			tokenParseMatchIndex: 1,
 			tokenFormat: "*{0}*",
 			valueTypes: [OperatorValueType.Self],
 			validateInput: false
@@ -1379,7 +1569,8 @@ sap.ui.define([
 		oOperator = new Operator({
 			name: "MyInclude",
 			filterOperator: FilterOperator.EQ,
-			tokenParse: "^=([^=].*)$",
+			tokenTest: "^=(.+)?$",
+			tokenParse: "^=?(.+)?$",
 			tokenFormat: "={0}",
 			valueTypes: [OperatorValueType.Self],
 			validateInput: true
@@ -1789,7 +1980,7 @@ sap.ui.define([
 			oUnitType = new CurrencyType({showNumber: false}, {maximum: 1000});
 			oOriginalType = new CurrencyType(undefined, {maximum: 1000});
 			oConditionType = new ConditionType({valueType: oValueType, additionalType: oUnitType, operators: [OperatorName.EQ], originalDateType: oOriginalType, delegate: FieldBaseDelegate});
-			oUnitConditionType = new ConditionType({valueType: oUnitType, additionalType: oValueType, operators: [OperatorName.EQ], hideOperator: true, originalDateType: oOriginalType, delegate: FieldBaseDelegate});
+			oUnitConditionType = new ConditionType({valueType: oUnitType, additionalType: oValueType, operators: [OperatorName.EQ], originalDateType: oOriginalType, delegate: FieldBaseDelegate});
 			oOneFieldType = new CurrencyType();
 			oOneFieldConditionType = new ConditionType({valueType: oOneFieldType, operators: [OperatorName.EQ, OperatorName.BT], delegate: FieldBaseDelegate});
 		},
@@ -2921,6 +3112,7 @@ sap.ui.define([
 			bindingContext: "BC",
 			control: "Control",
 			caseSensitive: true,
+			exactMatch: true,
 			exception: FormatException
 		};
 
@@ -2951,6 +3143,8 @@ sap.ui.define([
 			checkDescription: true,
 			bindingContext: "BC",
 			control: "Control",
+			exactMatch: false,
+			caseSensitive: undefined,
 			exception: ParseException
 		};
 
@@ -2989,6 +3183,8 @@ sap.ui.define([
 			checkDescription: false,
 			bindingContext: "BC",
 			control: "Control",
+			exactMatch: false,
+			caseSensitive: undefined,
 			exception: ParseException
 		};
 
@@ -3027,6 +3223,8 @@ sap.ui.define([
 			checkDescription: true,
 			bindingContext: "BC",
 			control: "Control",
+			exactMatch: false,
+			caseSensitive: undefined,
 			exception: ParseException
 		};
 

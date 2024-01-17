@@ -187,6 +187,7 @@ sap.ui.define([
 			checkDescription: false,
 			caseSensitive: true, // case sensitive as used to get description for known key
 			exception: FormatException,
+			exactMatch: true,
 			control: oControl
 		};
 		return oValueHelp && oValueHelp.getItemForValue(oConfig);

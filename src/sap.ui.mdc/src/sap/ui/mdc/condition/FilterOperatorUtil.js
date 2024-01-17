@@ -76,7 +76,9 @@ sap.ui.define([
 					name: OperatorName.EQ,
 					alias: { Date: "DATE", DateTime: "DATETIME" },
 					filterOperator: ModelOperator.EQ,
-					tokenParse: "^=([^=].*)$",
+					// tokenParse: "^=([^=].*)$",
+					tokenTest: "^=(.+)?$", // To check if operator used, it needs to start with "="
+					tokenParse: "^=?(.+)?$", // if "=" not entered the complete text should be parsed
 					tokenFormat: "{1} ({0})", // all placeholder should use the {x} format - the text could be store in the resourcebundle file.
 					valueTypes: [OperatorValueType.Self, null],
 					displayFormats: {
@@ -122,7 +124,7 @@ sap.ui.define([
 
 						return sTokenText;
 					},
-					parse: function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
+					parse: function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, bHideOperator) {
 						sDisplayFormat = sDisplayFormat || FieldDisplay.DescriptionValue;
 						let aResult = Operator.prototype.parse.apply(this, [sText,
 							oType,
@@ -130,7 +132,8 @@ sap.ui.define([
 							bDefaultOperator,
 							aCompositeTypes,
 							oAdditionalType,
-							aAdditionalCompositeTypes
+							aAdditionalCompositeTypes,
+							bHideOperator
 						]);
 
 						if (bDefaultOperator && (!aResult || aResult[0] === null || aResult[0] === undefined) && sDisplayFormat !== FieldDisplay.Value) {
@@ -142,7 +145,8 @@ sap.ui.define([
 								bDefaultOperator,
 								aCompositeTypes,
 								oAdditionalType,
-								aAdditionalCompositeTypes
+								aAdditionalCompositeTypes,
+								bHideOperator
 							]);
 						}
 						if (aResult && (aResult[1] === null || aResult[1] === undefined) && sDisplayFormat === FieldDisplay.Value) {
@@ -151,22 +155,17 @@ sap.ui.define([
 
 						return aResult;
 					},
-					getValues: function(sText, sDisplayFormat, bDefaultOperator) {
-						const aMatch = sText.match(this.tokenParseRegExp);
+					getValues: function(sText, sDisplayFormat, bDefaultOperator, bHideOperator) {
+						const regExp = bHideOperator ? this.hiddenOperatorRegExp : this.tokenParseRegExp; // if operator symbol is not used -> use complete text
+						const aMatch = sText.match(regExp);
 						let aValues;
-						if (aMatch || (bDefaultOperator && sText)) {
-							let sValue;
+						if (aMatch && aMatch.length > 1 && aMatch[1] !== undefined) { // only if a text was found
+							const sValue = aMatch[1];
 							const sTokenText = this.displayFormats[sDisplayFormat];
 							const iKeyIndex = sTokenText.indexOf("{0}");
 							const iDescriptionIndex = sTokenText.indexOf("{1}");
 							let sKey;
 							let sDescription;
-
-							if (aMatch) {
-								sValue = aMatch[1];
-							} else if (bDefaultOperator) {
-								sValue = sText;
-							}
 
 							if (iKeyIndex >= 0 && iDescriptionIndex >= 0) {
 								// split string
@@ -280,7 +279,9 @@ sap.ui.define([
 				lessThan: new Operator({
 					name: OperatorName.LT,
 					filterOperator: ModelOperator.LT,
-					tokenParse: "^<([^=].*)$",
+					// tokenParse: "^<([^=].*)$",
+					tokenTest: "^<([^=].*)?$", // To check if operator used, it needs to start with "<"
+					tokenParse: "^<?(.+)?$", // if "<" not entered the complete text should be parsed
 					tokenFormat: "<{0}",
 					valueTypes: [OperatorValueType.Self]
 				}),
@@ -290,7 +291,9 @@ sap.ui.define([
 				notLessThan: new Operator({
 					name: OperatorName.NOTLT,
 					filterOperator: ModelOperator.GE,
-					tokenParse: "^!<([^=].*)$",
+					// tokenParse: "^!<([^=].*)$",
+					tokenTest: "^!<([^=].*)?$",
+					tokenParse: "^(!<)?(.+)?$",
 					tokenFormat: "!(<{0})",
 					valueTypes: [OperatorValueType.Self],
 					exclude: true
@@ -301,7 +304,9 @@ sap.ui.define([
 				greaterThan: new Operator({
 					name: OperatorName.GT,
 					filterOperator: ModelOperator.GT,
-					tokenParse: "^>([^=].*)$",
+					// tokenParse: "^>([^=].*)$",
+					tokenTest: "^>([^=].*)?$", // To check if operator used, it needs to start with ">"
+					tokenParse: "^>?(.+)?$", // if ">" not entered the complete text should be parsed
 					tokenFormat: ">{0}",
 					valueTypes: [OperatorValueType.Self]
 				}),
@@ -311,7 +316,9 @@ sap.ui.define([
 				notGreaterThan: new Operator({
 					name: OperatorName.NOTGT,
 					filterOperator: ModelOperator.LE,
-					tokenParse: "^!>([^=].*)$",
+					// tokenParse: "^!>([^=].*)$",
+					tokenTest: "^!>([^=].*)?$",
+					tokenParse: "^(!>)?(.+)?$",
 					tokenFormat: "!(>{0})",
 					valueTypes: [OperatorValueType.Self],
 					exclude: true
@@ -323,7 +330,9 @@ sap.ui.define([
 					name: OperatorName.LE,
 					alias: { Date: "TO", DateTime: "TODATETIME" },
 					filterOperator: ModelOperator.LE,
-					tokenParse: "^<=(.+)$",
+					// tokenParse: "^<=(.+)$",
+					tokenTest: "^<=(.+)?$",
+					tokenParse: "^(<=)?(.+)?$",
 					tokenFormat: "<={0}",
 					valueTypes: [OperatorValueType.Self]
 				}),
@@ -333,7 +342,9 @@ sap.ui.define([
 				notLessEqual: new Operator({
 					name: OperatorName.NOTLE,
 					filterOperator: ModelOperator.GT,
-					tokenParse: "^!<=(.+)$",
+					// tokenParse: "^!<=(.+)$",
+					tokenTest: "^!<=(.+)?$",
+					tokenParse: "^(!<=)?(.+)?$",
 					tokenFormat: "!(<={0})",
 					valueTypes: [OperatorValueType.Self],
 					exclude: true
@@ -345,7 +356,10 @@ sap.ui.define([
 					name: OperatorName.GE,
 					alias: { Date: "FROM", DateTime: "FROMDATETIME" },
 					filterOperator: ModelOperator.GE,
-					tokenParse: "^>=(.+)$",
+					// tokenParse: "^>=(.+)$",
+					tokenTest: "^>=(.+)?$",
+					tokenParse: "^(>=)?(.+)?$",
+					tokenParseMatchIndex: 2,
 					tokenFormat: ">={0}",
 					valueTypes: [OperatorValueType.Self]
 				}),
@@ -355,7 +369,10 @@ sap.ui.define([
 				notGreaterEqual: new Operator({
 					name: OperatorName.NOTGE,
 					filterOperator: ModelOperator.LT,
-					tokenParse: "^!>=(.+)$",
+					// tokenParse: "^!>=(.+)$",
+					tokenTest: "^!>=(.+)?$",
+					tokenParse: "^(!>=)?(.+)?$",
+					tokenParseMatchIndex: 2,
 					tokenFormat: "!(>={0})",
 					valueTypes: [OperatorValueType.Self],
 					exclude: true
@@ -366,7 +383,10 @@ sap.ui.define([
 				startsWith: new Operator({
 					name: OperatorName.StartsWith,
 					filterOperator: ModelOperator.StartsWith,
-					tokenParse: "^([^!\\*]+.*)\\*$",
+					// tokenParse: "^([^!\\*]+.*)\\*$",
+					tokenTest: "^([^!\\*]+.*)\\*$",
+					tokenParse: "^(.+)\\*$|^(.*[^\\*])$",
+					tokenParseMatchIndex: 1,
 					tokenFormat: "{0}*",
 					valueTypes: [OperatorValueType.SelfNoParse]
 				}),
@@ -376,7 +396,10 @@ sap.ui.define([
 				notStartsWith: new Operator({
 					name: OperatorName.NotStartsWith,
 					filterOperator: ModelOperator.NotStartsWith,
-					tokenParse: "^!([^\\*].*)\\*$",
+					// tokenParse: "^!([^\\*].*)\\*$",
+					tokenTest: "^!([^\\*].*)\\*$",
+					tokenParse: "^!?(.+)\\*$|^(.*[^\\*])$",
+					tokenParseMatchIndex: 1,
 					tokenFormat: "!({0}*)",
 					valueTypes: [OperatorValueType.SelfNoParse],
 					exclude: true
@@ -387,7 +410,9 @@ sap.ui.define([
 				endsWith: new Operator({
 					name: OperatorName.EndsWith,
 					filterOperator: ModelOperator.EndsWith,
-					tokenParse: "^\\*(.*[^\\*])$",
+					// tokenParse: "^\\*(.*[^\\*])$",
+					tokenTest: "^\\*(.*[^\\*])$",
+					tokenParse: "^\\*?(.+)?$",
 					tokenFormat: "*{0}",
 					valueTypes: [OperatorValueType.SelfNoParse]
 				}),
@@ -397,7 +422,9 @@ sap.ui.define([
 				notEndsWith: new Operator({
 					name: OperatorName.NotEndsWith,
 					filterOperator: ModelOperator.NotEndsWith,
-					tokenParse: "^!\\*(.*[^\\*])$",
+					// tokenParse: "^!\\*(.*[^\\*])$",
+					tokenTest: "^!\\*(.*[^\\*])$",
+					tokenParse: "^(!\\*)?(.+)?$",
 					tokenFormat: "!(*{0})",
 					valueTypes: [OperatorValueType.SelfNoParse],
 					exclude: true
@@ -408,7 +435,10 @@ sap.ui.define([
 				contains: new Operator({
 					name: OperatorName.Contains,
 					filterOperator: ModelOperator.Contains,
-					tokenParse: "^\\*(.*)\\*$",
+					// tokenParse: "^\\*(.*)\\*$",
+					tokenTest: "^\\*(.*)\\*$",
+					tokenParse: "^\\*(.+)?\\*$|^([^\\*]?.*[^\\*]?)$",
+					tokenParseMatchIndex: 1,
 					tokenFormat: "*{0}*",
 					valueTypes: [OperatorValueType.SelfNoParse]
 				}),
@@ -418,7 +448,10 @@ sap.ui.define([
 				notContains: new Operator({
 					name: OperatorName.NotContains,
 					filterOperator: ModelOperator.NotContains,
-					tokenParse: "^!\\*(.*)\\*$",
+					// tokenParse: "^!\\*(.*)\\*$",
+					tokenTest: "^!\\*(.*)\\*$",
+					tokenParse: "^!\\*(.+)?\\*$|^!?(.+)$",
+					tokenParseMatchIndex: 1,
 					tokenFormat: "!(*{0}*)",
 					valueTypes: [OperatorValueType.SelfNoParse],
 					exclude: true
@@ -429,7 +462,10 @@ sap.ui.define([
 				notEqual: new Operator({
 					name: OperatorName.NE,
 					filterOperator: ModelOperator.NE,
-					tokenParse: "^!=(.+)$",
+					// tokenParse: "^!=(.+)$",
+					tokenTest: "^!=(.+)?$",
+					tokenParse: "^(!=)?(.+)?$",
+					tokenParseMatchIndex: 2,
 					tokenFormat: "!(={0})",
 					valueTypes: [OperatorValueType.Self],
 					exclude: true
@@ -972,20 +1008,10 @@ sap.ui.define([
 							return sReplace == null ? null : sTokenText.replace(new RegExp("\\$" + 0 + "|" + 0 + "\\$" + "|" + "\\{" + 0 + "\\}", "g"), sReplace);
 						}
 					},
-					getValues: function(sText, sDisplayFormat, bDefaultOperator) {
-						const aMatch = sText.match(this.tokenParseRegExp);
-						let aValues;
-						if (aMatch || (bDefaultOperator && sText)) {
-							aValues = [];
-							for (let i = 0; i < this.valueTypes.length; i++) {
-								let sValue;
-								if (aMatch) {
-									sValue = aMatch[i + 1];
-								} else if ((bDefaultOperator && sText)) { // only month provided
-									sValue = sText;
-								}
-								aValues.push(sValue);
-							}
+					getValues: function(sText, sDisplayFormat, bDefaultOperator, bHideOperator) {
+						const aValues = Operator.prototype.getValues.apply(this, arguments);
+
+						if (aValues) {
 							return [_getIndexOfMonth.call(this, aValues[0])];
 						}
 
@@ -1047,20 +1073,10 @@ sap.ui.define([
 							return sTokenText.replace(replaceRegExp1, iYear);
 						}
 					},
-					getValues: function(sText, sDisplayFormat, bDefaultOperator) {
-						const aMatch = sText.match(this.tokenParseRegExp);
-						let aValues;
-						if (aMatch || (bDefaultOperator && sText)) {
-							aValues = [];
-							for (let i = 0; i < this.valueTypes.length; i++) {
-								let sValue;
-								if (aMatch) {
-									sValue = aMatch[i + 1];
-								} else if ((bDefaultOperator && sText)) { // only month provided
-									sValue = sText;
-								}
-								aValues.push(sValue);
-							}
+					getValues: function(sText, sDisplayFormat, bDefaultOperator, bHideOperator) {
+						const aValues = Operator.prototype.getValues.apply(this, arguments);
+
+						if (aValues) {
 							return [_getIndexOfMonth.call(this, aValues[0]), aValues[1]];
 						}
 
@@ -2030,7 +2046,7 @@ sap.ui.define([
 			const aMonths = _getMonths.apply(this);
 			let iIndex = -1;
 			aMonths.some((sElement, i) => {
-				if (sElement.toLowerCase() == sLowerCaseMonth) {
+				if (sElement.toLowerCase() === sLowerCaseMonth || Number.parseInt(sMonth) === i + 1) {
 					iIndex = i;
 					return true;
 				}
