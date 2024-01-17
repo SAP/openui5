@@ -64,7 +64,7 @@ sap.ui.define([
 			sTooltip = oMonth.getTooltip_AsString(),
 			rb = Library.getResourceBundleFor("sap.ui.unified"),
 			sId = oMonth.getId(),
-			oAriaLabel = {value: "", append: true},
+			oAriaLabel = {value: "", append: !oMonth._bCalendar},
 			sDescribedBy = "",
 			sWidth = oMonth.getWidth();
 
@@ -97,7 +97,7 @@ sap.ui.define([
 
 		oRm.accessibilityState(oMonth, {
 			role: "grid",
-			roledescription: rb.getText("CALENDAR_DIALOG"),
+			roledescription: oMonth._bCalendar ? "" : rb.getText("CALENDAR_DIALOG"),
 			multiselectable: !oMonth.getSingleSelection() || oMonth.getIntervalSelection(),
 			labelledby: oAriaLabel,
 			describedby: sDescribedBy

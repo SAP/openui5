@@ -3068,17 +3068,16 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("Day picker DOM ref has aria-roledescription='Calendar'", function(assert) {
+	QUnit.test("Calendar root element has roledescription attribute", function(assert) {
 		// prepare
-		var oCal = new Calendar(),
-			oMonth = oCal.getAggregation("month")[0];
+		var oCal = new Calendar();
 
 		oCal.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		// act
 		// assert
-		assert.equal(oMonth.getDomRef().getAttribute("aria-roledescription"), "Calendar", "aria-roledescription corretly set");
+		assert.equal(oCal.getDomRef().getAttribute("aria-roledescription"), "Calendar", "aria-roledescription corretly set");
 
 		// clean
 		oCal.destroy();
