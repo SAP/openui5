@@ -5,16 +5,18 @@ sap.ui.define([
 	"sap/ui/integration/cards/AnalyticalContent",
 	"sap/ui/integration/cards/actions/NavigationAction",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core",
 	"sap/ui/integration/cards/actions/CardActions",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent",
 	"../services/SampleServices"
 ], function (
 	Library,
 	AnalyticalContent,
 	NavigationAction,
 	Card,
-	Core,
 	CardActions,
+	nextUIUpdate,
+	nextCardReadyEvent,
 	SampleServices
 ) {
 	"use strict";
@@ -890,86 +892,51 @@ sap.ui.define([
 		}
 	};
 
-	function testStackedBarChartCreation(oCard, oManifest, assert) {
+	async function testStackedBarChartCreation(oCard, oManifest, assert) {
 		// Arrange
-		var done = assert.async(),
-			window = {
+		var window = {
 				"start": "firstDataPoint",
 				"end": "lastDataPoint"
 			};
 
-		oCard.attachEvent("_ready", function () {
-			var oContent = oCard.getAggregation("_content"),
-				oChart = oContent.getAggregation("_content"),
-				oVizProperites = oChart.getVizProperties(),
-				oDataset = oChart.getDataset();
-			Core.applyChanges();
-
-			assert.ok(oContent, "Analytical Card content form manifest should be set");
-			assert.ok(oChart.getDomRef(), "Analytical Card content - chart should be rendered");
-			assert.equal(oChart.getVizType(), "stacked_bar", "Chart should have a vizType set");
-			assert.equal(oVizProperites.legend.visible, true, "Chart should have a legend visible property set to true using binding");
-			assert.equal(oVizProperites.legendGroup.layout.position, "bottom", "Chart should have a legend position property set to bottom");
-			assert.equal(oVizProperites.legendGroup.layout.alignment, "center", "Chart should have a legend alignment property set to center");
-			assert.equal(oVizProperites.plotArea.window.end, window.end, "Chart should have a plotAreas window property set to this window object");
-			assert.equal(oVizProperites.plotArea.window.start, window.start, "Chart should have a plotAreas window property set to this window object");
-			assert.equal(oVizProperites.plotArea.dataLabel.visible, true, "Chart should have a plotArea.datalabel.visible set to true");
-			assert.equal(oVizProperites.plotArea.dataLabel.showTotal, false, "Chart should have a plotArea.datalabel.showTotal set to false");
-			assert.equal(oVizProperites.categoryAxis.title.visible, false, "Chart should have a categoryAxis.title.visible set to false");
-			assert.equal(oVizProperites.valueAxis.title.visible, true, "Chart should have a valueAxis.title.visible set to false");
-			assert.equal(oVizProperites.title.visible, true, "Chart should have a title.visible set to true");
-			assert.equal(oVizProperites.title.text, "Stacked Bar chart", "Chart should have a title.text set to true");
-			assert.equal(oVizProperites.title.alignment, "center", "Chart should have a title.alignment set to center");
-			assert.equal(oChart.getFeeds()[0].getProperty("uid"), "valueAxis", "Chart should have a feed item with property 'uid'");
-			assert.equal(oChart.getFeeds()[0].getProperty("type"), "Measure", "Chart should have a feed item with property 'Measure'");
-			assert.equal(oChart.getFeeds()[1].getProperty("uid"), "categoryAxis", "Chart should have a feed item with property 'uid'");
-			assert.equal(oChart.getFeeds()[1].getProperty("type"), "Dimension", "Chart should have a feed item with property 'Measure'");
-			assert.deepEqual(oChart.getFeeds()[0].getProperty("values"), ["Revenue", "Costs"], "Measures values should be set using binding");
-			assert.deepEqual(oChart.getFeeds()[1].getProperty("values"), ["Weeks"], "Dimensions values should be set using binding");
-			assert.ok(oChart.getFeeds()[0].getProperty("values").indexOf("Costs") > 0, "Chart should have a feed item with value Costs of it seeds labels");
-
-			// test dataset
-			assert.strictEqual(oDataset.getDimensions()[0].getBindingInfo("value").binding.getPath(), "Week", "Dimension has expected value.");
-			assert.strictEqual(oDataset.getDimensions()[0].getBindingInfo("displayValue").binding.getPath(), "WeekDisplay", "Dimension has expected displayValue.");
-
-			done();
-		});
-
 		// Act
 		oCard.setManifest(oManifest);
-		Core.applyChanges();
+
+		await nextCardReadyEvent(oCard);
+		await nextUIUpdate();
+
+		var oContent = oCard.getAggregation("_content"),
+			oChart = oContent.getAggregation("_content"),
+			oVizProperites = oChart.getVizProperties(),
+			oDataset = oChart.getDataset();
+
+		assert.ok(oContent, "Analytical Card content form manifest should be set");
+		assert.ok(oChart.getDomRef(), "Analytical Card content - chart should be rendered");
+		assert.equal(oChart.getVizType(), "stacked_bar", "Chart should have a vizType set");
+		assert.equal(oVizProperites.legend.visible, true, "Chart should have a legend visible property set to true using binding");
+		assert.equal(oVizProperites.legendGroup.layout.position, "bottom", "Chart should have a legend position property set to bottom");
+		assert.equal(oVizProperites.legendGroup.layout.alignment, "center", "Chart should have a legend alignment property set to center");
+		assert.equal(oVizProperites.plotArea.window.end, window.end, "Chart should have a plotAreas window property set to this window object");
+		assert.equal(oVizProperites.plotArea.window.start, window.start, "Chart should have a plotAreas window property set to this window object");
+		assert.equal(oVizProperites.plotArea.dataLabel.visible, true, "Chart should have a plotArea.datalabel.visible set to true");
+		assert.equal(oVizProperites.plotArea.dataLabel.showTotal, false, "Chart should have a plotArea.datalabel.showTotal set to false");
+		assert.equal(oVizProperites.categoryAxis.title.visible, false, "Chart should have a categoryAxis.title.visible set to false");
+		assert.equal(oVizProperites.valueAxis.title.visible, true, "Chart should have a valueAxis.title.visible set to false");
+		assert.equal(oVizProperites.title.visible, true, "Chart should have a title.visible set to true");
+		assert.equal(oVizProperites.title.text, "Stacked Bar chart", "Chart should have a title.text set to true");
+		assert.equal(oVizProperites.title.alignment, "center", "Chart should have a title.alignment set to center");
+		assert.equal(oChart.getFeeds()[0].getProperty("uid"), "valueAxis", "Chart should have a feed item with property 'uid'");
+		assert.equal(oChart.getFeeds()[0].getProperty("type"), "Measure", "Chart should have a feed item with property 'Measure'");
+		assert.equal(oChart.getFeeds()[1].getProperty("uid"), "categoryAxis", "Chart should have a feed item with property 'uid'");
+		assert.equal(oChart.getFeeds()[1].getProperty("type"), "Dimension", "Chart should have a feed item with property 'Measure'");
+		assert.deepEqual(oChart.getFeeds()[0].getProperty("values"), ["Revenue", "Costs"], "Measures values should be set using binding");
+		assert.deepEqual(oChart.getFeeds()[1].getProperty("values"), ["Weeks"], "Dimensions values should be set using binding");
+		assert.ok(oChart.getFeeds()[0].getProperty("values").indexOf("Costs") > 0, "Chart should have a feed item with value Costs of it seeds labels");
+
+		// test dataset
+		assert.strictEqual(oDataset.getDimensions()[0].getBindingInfo("value").binding.getPath(), "Week", "Dimension has expected value.");
+		assert.strictEqual(oDataset.getDimensions()[0].getBindingInfo("displayValue").binding.getPath(), "WeekDisplay", "Dimension has expected displayValue.");
 	}
-
-	function testContentInitialization(oManifest, assert) {
-
-		// Arrange
-		var done = assert.async();
-		var oCard = new Card({
-			manifest: oManifest,
-			width: "400px",
-			height: "600px",
-			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
-		});
-		// Act
-		oCard.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
-		// Assert
-		assert.notOk(oCard.getAggregation("_header"), "Card header should be empty.");
-		assert.notOk(oCard.getAggregation("_content"), "Card content should be empty.");
-		assert.ok(oCard.getDomRef(), "Card should be rendered.");
-		assert.equal(oCard.getDomRef().clientWidth, 398, "Card should have width set to 398px.");
-		assert.equal(oCard.getDomRef().clientHeight, 598, "Card should have height set to 598px.");
-		oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-			// Assert
-			assert.ok(oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
-			assert.ok(oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
-			// Cleanup
-			oCard.destroy();
-			done();
-		});
-	}
-
 
 
 	return Library.load("sap.viz").then(function () {
@@ -992,77 +959,95 @@ sap.ui.define([
 		* This test should be the first one,
 		* as it covers the initial creation of the analytical content
 		 */
-		QUnit.test("Creating chart with global card data", function (assert) {
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oContent = this.oCard.getCardContent();
-				assert.ok(oContent.isA("sap.ui.integration.cards.AnalyticalContent"), "Chart is rendered");
-				done();
-			}.bind(this));
-
+		QUnit.test("Creating chart with global card data", async function (assert) {
 			// Act
 			this.oCard.setManifest(oManifest_Analytical_Global_Card_Data);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oContent = this.oCard.getCardContent();
+			assert.ok(oContent.isA("sap.ui.integration.cards.AnalyticalContent"), "Chart is rendered");
 		});
 
-		QUnit.test("Using manifest", function (assert) {
-			testStackedBarChartCreation(this.oCard, oManifest_AnalyticalCard, assert);
+		QUnit.test("Using manifest", async function (assert) {
+			await testStackedBarChartCreation(this.oCard, oManifest_AnalyticalCard, assert);
 		});
 
-		QUnit.test("Using manifest with data on card level", function (assert) {
-			testStackedBarChartCreation(this.oCard, oManifest_AnalyticalCard_DataOnCardLevel, assert);
+		QUnit.test("Using manifest with data on card level", async function (assert) {
+			await testStackedBarChartCreation(this.oCard, oManifest_AnalyticalCard_DataOnCardLevel, assert);
 		});
 
-		QUnit.test("Creating chart with 'feeds'", function (assert) {
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				var oContent = this.oCard.getCardContent(),
-					oChart = oContent.getAggregation("_content");
-				Core.applyChanges();
-
-				assert.ok(oChart.getDomRef(), "Chart should be rendered");
-				assert.strictEqual(oChart.getVizType(), oManifest_Analytical_WithFeeds["sap.card"].content.chartType, "Chart should have correct 'vizType' set");
-				assert.strictEqual(oChart.getFeeds()[0].getUid(), "valueAxis", "Feed with correct 'uid' should be created");
-				assert.strictEqual(oChart.getFeeds()[0].getType(), "Measure", "Feed type should be 'Measure'");
-				assert.deepEqual(oChart.getFeeds()[0].getValues(), ["Revenue"], "Binding of feed values should be resolved");
-				assert.strictEqual(oChart.getFeeds()[1].getUid(), "valueAxis2", "Feed with correct 'uid' should be created");
-				assert.strictEqual(oChart.getFeeds()[1].getType(), "Measure", "Feed type should be 'Measure'");
-				assert.deepEqual(oChart.getFeeds()[1].getValues(), ["Cost"], "Binding of feed values should be resolved");
-				assert.strictEqual(oChart.getFeeds()[2].getUid(), "bubbleWidth", "Feed with correct 'uid' should be created");
-				assert.strictEqual(oChart.getFeeds()[2].getType(), "Measure", "Feed type should be 'Measure'");
-				assert.deepEqual(oChart.getFeeds()[2].getValues(), ["Budget"], "Binding of feed values should be resolved");
-				assert.strictEqual(oChart.getFeeds()[3].getUid(), "color", "Feed with correct 'uid' should be created");
-				assert.strictEqual(oChart.getFeeds()[3].getType(), "Dimension", "Feed type should be 'Dimension'");
-				assert.deepEqual(oChart.getFeeds()[3].getValues(), ["Weeks"], "Binding of feed values should be resolved");
-				done();
-			}.bind(this));
-
+		QUnit.test("Creating chart with 'feeds'", async function (assert) {
 			// Act
 			this.oCard.setManifest(oManifest_Analytical_WithFeeds);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oContent = this.oCard.getCardContent(),
+				oChart = oContent.getAggregation("_content");
+
+			assert.ok(oChart.getDomRef(), "Chart should be rendered");
+			assert.strictEqual(oChart.getVizType(), oManifest_Analytical_WithFeeds["sap.card"].content.chartType, "Chart should have correct 'vizType' set");
+			assert.strictEqual(oChart.getFeeds()[0].getUid(), "valueAxis", "Feed with correct 'uid' should be created");
+			assert.strictEqual(oChart.getFeeds()[0].getType(), "Measure", "Feed type should be 'Measure'");
+			assert.deepEqual(oChart.getFeeds()[0].getValues(), ["Revenue"], "Binding of feed values should be resolved");
+			assert.strictEqual(oChart.getFeeds()[1].getUid(), "valueAxis2", "Feed with correct 'uid' should be created");
+			assert.strictEqual(oChart.getFeeds()[1].getType(), "Measure", "Feed type should be 'Measure'");
+			assert.deepEqual(oChart.getFeeds()[1].getValues(), ["Cost"], "Binding of feed values should be resolved");
+			assert.strictEqual(oChart.getFeeds()[2].getUid(), "bubbleWidth", "Feed with correct 'uid' should be created");
+			assert.strictEqual(oChart.getFeeds()[2].getType(), "Measure", "Feed type should be 'Measure'");
+			assert.deepEqual(oChart.getFeeds()[2].getValues(), ["Budget"], "Binding of feed values should be resolved");
+			assert.strictEqual(oChart.getFeeds()[3].getUid(), "color", "Feed with correct 'uid' should be created");
+			assert.strictEqual(oChart.getFeeds()[3].getType(), "Dimension", "Feed type should be 'Dimension'");
+			assert.deepEqual(oChart.getFeeds()[3].getValues(), ["Weeks"], "Binding of feed values should be resolved");
 		});
 
-		QUnit.test("Creating chart with time axis", function (assert) {
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				var oContent = this.oCard.getCardContent(),
-					oChart = oContent.getAggregation("_content");
-				Core.applyChanges();
-
-				assert.strictEqual(oChart.getDataset().getDimensions()[0].getDataType(), "date", "dataType is correctly set");
-				done();
-			}.bind(this));
-
+		QUnit.test("Creating chart with time axis", async function (assert) {
 			// Act
 			this.oCard.setManifest(oManifest_Analytical_TimeAxis);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oContent = this.oCard.getCardContent(),
+				oChart = oContent.getAggregation("_content");
+
+			assert.strictEqual(oChart.getDataset().getDimensions()[0].getDataType(), "date", "dataType is correctly set");
 		});
 
 		QUnit.module("Init");
 
-		QUnit.test("Initialization - AnalyticalContent", function (assert) {
-			testContentInitialization(oManifest_AnalyticalCard, assert);
+		QUnit.test("Initialization - AnalyticalContent", async function (assert) {
+			// Arrange
+			var oCard = new Card({
+				manifest: oManifest_AnalyticalCard,
+				width: "400px",
+				height: "600px",
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextUIUpdate();
+
+			// Assert
+			assert.notOk(oCard.getAggregation("_header"), "Card header should be empty.");
+			assert.notOk(oCard.getAggregation("_content"), "Card content should be empty.");
+			assert.ok(oCard.getDomRef(), "Card should be rendered.");
+			assert.equal(oCard.getDomRef().clientWidth, 398, "Card should have width set to 398px.");
+			assert.equal(oCard.getDomRef().clientHeight, 598, "Card should have height set to 598px.");
+
+			await nextCardReadyEvent(oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
+			assert.ok(oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
+
+			// Cleanup
+			oCard.destroy();
 		});
 
 		QUnit.module("vizProperties");
@@ -1113,111 +1098,106 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Analytical content should be actionable - service ", function (assert) {
+		QUnit.test("Analytical content should be actionable - service ", async function (assert) {
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardLContent = this.oCard.getCardContent();
-				this.oCard.attachAction(function (oEvent) {
-					oEvent.preventDefault();
-					// Assert
-					assert.ok(oCardLContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
-					assert.ok(oActionSpy.callCount === 1, "Card Content is clicked and action event is fired");
-
-					// Cleanup
-					oStubOpenUrl.restore();
-					oActionSpy.restore();
-					done();
-				});
-
-				// Act 2
-				oCardLContent.firePress();
-				Core.applyChanges();
-			}.bind(this));
-
-			// Act 1
 			this.oCard.setManifest(oManifest_Analytical_Service);
-		});
 
-		QUnit.test("Analytical Card should be actionable - url", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardLContent = this.oCard.getCardContent(),
-					oCardHeader = this.oCard.getCardHeader();
-
+			this.oCard.attachAction(function (oEvent) {
+				oEvent.preventDefault();
 				// Assert
 				assert.ok(oCardLContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
-				assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header is clickable");
-				//Act
-				oCardLContent.firePress();
-				oCardHeader.firePress();
-				Core.applyChanges();
-				//Assert
-				assert.strictEqual(oActionSpy.callCount, 2, "Card Content and header are clicked and action event is fired twice");
+				assert.ok(oActionSpy.callCount === 1, "Card Content is clicked and action event is fired");
 
 				// Cleanup
 				oStubOpenUrl.restore();
 				oActionSpy.restore();
 				done();
-			}.bind(this));
+			});
+
+			// Act
+			var oCardLContent = this.oCard.getCardContent();
+			oCardLContent.firePress();
+		});
+
+		QUnit.test("Analytical Card should be actionable - url", async function (assert) {
+			// Arrange
+			var oActionSpy = sinon.spy(CardActions, "fireAction"),
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
 
 			// Act
 			this.oCard.setManifest(oManifest_Analytical_Url);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardLContent = this.oCard.getCardContent(),
+				oCardHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.ok(oCardLContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
+			assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header is clickable");
+			//Act
+			oCardLContent.firePress();
+			oCardHeader.firePress();
+
+			await nextUIUpdate();
+
+			//Assert
+			assert.strictEqual(oActionSpy.callCount, 2, "Card Content and header are clicked and action event is fired twice");
+
+			// Cleanup
+			oStubOpenUrl.restore();
+			oActionSpy.restore();
 		});
 
-		QUnit.test("Analytical Card should not be actionable", function (assert) {
+		QUnit.test("Analytical Card should not be actionable", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction"),
+			var oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardContent = this.oCard.getCardContent(),
-					oCardHeader = this.oCard.getCardHeader();
-				// Assert
-				assert.notOk(oCardContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
-				assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
-				assert.ok(oCardContent._getVizProperties(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself also shouldn't be interactive");
-				//Act
-				oCardContent.firePress();
-				oCardHeader.firePress();
-				Core.applyChanges();
-				//Assert
-				assert.strictEqual(oActionSpy.callCount, 0, "Card Content and header are clicked and action event is fired twice");
-				// Cleanup
-				oStubOpenUrl.restore();
-				oActionSpy.restore();
-				done();
-			}.bind(this));
-
 			this.oCard.setManifest(oManifest_Analytical_No_Actions);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCardContent = this.oCard.getCardContent(),
+				oCardHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.notOk(oCardContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
+			assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
+			assert.ok(oCardContent._getVizProperties(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself also shouldn't be interactive");
+
+			//Act
+			oCardContent.firePress();
+			oCardHeader.firePress();
+			await nextUIUpdate();
+
+			//Assert
+			assert.strictEqual(oActionSpy.callCount, 0, "Card Content and header are clicked and action event is fired twice");
+
+			// Cleanup
+			oStubOpenUrl.restore();
+			oActionSpy.restore();
 		});
 
-		QUnit.test("Navigation from chart parts only", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				var oCardContent = this.oCard.getCardContent();
-				// Assert
-				assert.notOk(oCardContent.$().hasClass("sapFCardSectionClickable"), "Content area shouldn't have class 'sapFCardSectionClickable'");
-				assert.notOk(oCardContent._getVizProperties(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself should be interactive");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Navigation from chart parts only", async function (assert) {
 			// Act
 			this.oCard.setManifest(oManifest_Analytical_ChartActions);
+
+			await nextCardReadyEvent(this.oCard);
+
+			var oCardContent = this.oCard.getCardContent();
+			// Assert
+			assert.notOk(oCardContent.$().hasClass("sapFCardSectionClickable"), "Content area shouldn't have class 'sapFCardSectionClickable'");
+			assert.notOk(oCardContent._getVizProperties(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself should be interactive");
 		});
 
 		QUnit.module("Popover", {
@@ -1235,20 +1215,15 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Chart parts are interactive when popover is attached", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				var oCardContent = this.oCard.getCardContent();
-				// Assert
-				assert.notOk(oCardContent._getVizProperties(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself should be interactive");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Chart parts are interactive when popover is attached", async function (assert) {
 			// Act
 			this.oCard.setManifest(oManifest_Analytical_Popover);
+
+			await nextCardReadyEvent(this.oCard);
+
+			var oCardContent = this.oCard.getCardContent();
+			// Assert
+			assert.notOk(oCardContent._getVizProperties(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself should be interactive");
 		});
 
 	}).catch(function () {

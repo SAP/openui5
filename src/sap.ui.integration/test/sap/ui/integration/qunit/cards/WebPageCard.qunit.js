@@ -3,11 +3,15 @@
 sap.ui.define([
 	"sap/ui/integration/cards/WebPageContent",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	WebPageContent,
 	Card,
-	Core
+	Core,
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -59,30 +63,25 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Src set directly", function (assert) {
+	QUnit.test("Src set directly", async function (assert) {
 		// Arrange
-		var done = assert.async();
 		this.oManifest["sap.card"].content.src = "./page.html";
 		bypassHttpsValidation();
 
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-			restoreHttpsValidation(); // restore the getSrc method
-			var sSrc = this.oCard.getCardContent().getSrc();
-
-			assert.strictEqual(sSrc, BASE_URL + "./page.html", "The src is correctly resolved");
-
-			// clean up
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(this.oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		restoreHttpsValidation(); // restore the getSrc method
+		var sSrc = this.oCard.getCardContent().getSrc();
+
+		assert.strictEqual(sSrc, BASE_URL + "./page.html", "The src is correctly resolved");
 	});
 
-	QUnit.test("Src set with binding", function (assert) {
+	QUnit.test("Src set with binding", async function (assert) {
 		// Arrange
-		var done = assert.async();
 		this.oManifest["sap.card"].content.data = {
 			json: {
 				frameSrc: "./page.html"
@@ -91,17 +90,16 @@ sap.ui.define([
 		this.oManifest["sap.card"].content.src = "{frameSrc}";
 		bypassHttpsValidation();
 
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-			restoreHttpsValidation(); // restore the getSrc method
-			var sSrc = this.oCard.getCardContent().getSrc();
-
-			assert.strictEqual(sSrc, BASE_URL + "./page.html", "The src is correctly resolved");
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.setManifest(this.oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		restoreHttpsValidation(); // restore the getSrc method
+		var sSrc = this.oCard.getCardContent().getSrc();
+
+		assert.strictEqual(sSrc, BASE_URL + "./page.html", "The src is correctly resolved");
 	});
 
 	QUnit.module("Rendering", {
@@ -134,30 +132,30 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Frame DOM ref is preserved upon re-rendering", function (assert) {
+	QUnit.test("Frame DOM ref is preserved upon re-rendering", async function (assert) {
 		// Arrange
 		var done = assert.async();
 
-		this.oCard.attachEventOnce("_ready", function () {
-			Core.applyChanges();
-			var oContent = this.oCard.getCardContent(),
-				oFrame = this.oCard.getCardContent().getDomRef("frame"),
-				oDelegate = {
-					onAfterRendering: function () {
-						oContent.removeEventDelegate(oDelegate);
-						assert.strictEqual(oContent.getDomRef("frame"), oFrame, "DOM ref of the iframe didn't change upon re-rendering");
-						done();
-					}
-				};
-
-			oContent.addEventDelegate(oDelegate);
-
-			// Act - re-render the card
-			this.oCard.invalidate();
-		}.bind(this));
-
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oContent = this.oCard.getCardContent(),
+			oFrame = this.oCard.getCardContent().getDomRef("frame"),
+			oDelegate = {
+				onAfterRendering: function () {
+					oContent.removeEventDelegate(oDelegate);
+					assert.strictEqual(oContent.getDomRef("frame"), oFrame, "DOM ref of the iframe didn't change upon re-rendering");
+					done();
+				}
+			};
+
+		oContent.addEventDelegate(oDelegate);
+
+		// Act - re-render the card
+		this.oCard.invalidate();
 	});
 
 	QUnit.module("Handling errors", {
@@ -188,69 +186,54 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Error message is shown after frame fails to load for 15 seconds", function (assert) {
+	QUnit.test("Error message is shown after frame fails to load for 15 seconds", async function (assert) {
 		// Arrange
 		var clock = sinon.useFakeTimers();
-		var done = assert.async();
 		sinon.stub(WebPageContent.prototype, "_onFrameLoaded")
 			.callsFake(function () {}); // simulate that load event didn't happen
 
 		bypassHttpsValidation();
 
-		this.oCard.attachEventOnce("_ready", function () {
-			// Act - render the content and tick to trigger the error timeout
-			Core.applyChanges();
-			clock.tick(20000);
-
-			// Assert
-			assert.ok(this.oCard.getCardContent().getAggregation("_blockingMessage"), "Error message should be shown after timeout");
-
-			// Clean up
-			WebPageContent.prototype._onFrameLoaded.restore();
-			restoreHttpsValidation();
-			clock.restore();
-			done();
-		}.bind(this));
-
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		// Act - render the content and tick to trigger the error timeout
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate(clock);
+		clock.tick(20000);
+
+		// Assert
+		assert.ok(this.oCard.getCardContent().getAggregation("_blockingMessage"), "Error message should be shown after timeout");
+
+		// Clean up
+		WebPageContent.prototype._onFrameLoaded.restore();
+		restoreHttpsValidation();
+		clock.restore();
 	});
 
-	QUnit.test("Error message is shown when the src doesn't start with 'https://'", function (assert) {
-		// Arrange
-		var done = assert.async();
-
-		this.oCard.attachEventOnce("_ready", function () {
-			// Act - render the content
-			Core.applyChanges();
-
-			// Assert
-			assert.ok(this.oCard.getCardContent().getAggregation("_blockingMessage"), "Error message should be shown");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Error message is shown when the src doesn't start with 'https://'", async function (assert) {
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(this.oCard.getCardContent().getAggregation("_blockingMessage"), "Error message should be shown");
 	});
 
-	QUnit.test("Error message is shown when the src is empty string", function (assert) {
+	QUnit.test("Error message is shown when the src is empty string", async function (assert) {
 		// Arrange
 		this.oManifest["sap.card"].content.src = "";
-		var done = assert.async();
-
-		this.oCard.attachEventOnce("_ready", function () {
-			// Act - render the content
-			Core.applyChanges();
-
-			// Assert
-			assert.ok(this.oCard.getCardContent().getAggregation("_blockingMessage"), "Error message should be shown");
-
-			done();
-		}.bind(this));
 
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(this.oCard.getCardContent().getAggregation("_blockingMessage"), "Error message should be shown");
 	});
 
 });

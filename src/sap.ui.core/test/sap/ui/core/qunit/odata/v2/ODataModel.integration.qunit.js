@@ -21823,6 +21823,45 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return this.waitForChanges(assert);
 		});
 	});
+	//*********************************************************************************************
+	// Scenario: A filter with fractional seconds leads to a request where the fractional seconds are considered
+	// when applied to a list binding.
+	// JIRA: CPOUI5MODELS-1536
+	QUnit.test("ODataListBinding#filter considers additional fractional digits", function (assert) {
+		const oModel = createSalesOrdersModel();
+		const sView = '\
+<Table id="Table" growing="true" growingThreshold="2" items="{/SalesOrderSet}\">\
+	<Text id="SalesOrderID" text="{SalesOrderID}" />\
+</Table>';
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=2", {
+				results : [ {SalesOrderID : "1"}, {SalesOrderID : "2"} ]
+			})
+			.expectValue("SalesOrderID", ["1", "2"]);
+
+		return this.createView(assert, sView, oModel).then(() => {
+			this.expectRequest({
+				encodeRequestUri : false,
+				requestUri :"SalesOrderSet?$skip=0&$top=2&$filter=" +
+					"(ChangedAt%20ge%20datetimeoffset%272024-01-06T14%3a00%3a01.000123Z%27%20and%20"
+					+ "ChangedAt%20le%20datetimeoffset%272024-01-08T23%3a59%3a59.4567899Z%27)"
+			}, {
+				results : [ {SalesOrderID : "42"}, {SalesOrderID : "77"} ]
+			})
+			.expectValue("SalesOrderID", ["42", "77"]);
+
+			const oFilter = new Filter({path : "ChangedAt", operator : FilterOperator.BT,
+				value1 : new Date("2024-01-06T14:00:01Z"), value2 : new Date("2024-01-08T23:59:59.456Z")});
+			oFilter.appendFractionalSeconds1("123");
+			oFilter.appendFractionalSeconds2("7899");
+
+			// code under test
+			this.oView.byId("Table").getBinding("items").filter(oFilter);
+
+			return this.waitForChanges(assert);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: Custom headers are applied to *all* change requests when the $batch containing them is sent on

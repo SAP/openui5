@@ -4,32 +4,38 @@
 
 // Provides the base implementation for all model implementations
 sap.ui.define([
-		"sap/ui/core/Lib",
+		'sap/ui/core/Lib',
 		'sap/ui/mdc/field/ConditionType',
+		'sap/ui/mdc/field/ConditionTypeMixin',
+		'sap/ui/mdc/condition/Condition',
 		'sap/ui/mdc/condition/ConditionValidateException',
 		'sap/ui/mdc/condition/FilterOperatorUtil',
-		'sap/ui/mdc/field/splitValue',
+		'sap/ui/mdc/enums/ConditionValidated',
 		'sap/ui/mdc/enums/OperatorName',
 		'sap/ui/model/SimpleType',
 		'sap/ui/model/FormatException',
 		'sap/ui/model/ParseException',
 		'sap/ui/model/ValidateException',
 		'sap/base/util/merge',
-		'sap/ui/base/SyncPromise'
+		'sap/ui/base/SyncPromise',
+		'sap/ui/core/util/PasteHelper'
 	],
 	(
 		Library,
 		ConditionType,
+		ConditionTypeMixin,
+		Condition,
 		ConditionValidateException,
 		FilterOperatorUtil,
-		splitValue,
+		ConditionValidated,
 		OperatorName,
 		SimpleType,
 		FormatException,
 		ParseException,
 		ValidateException,
 		merge,
-		SyncPromise
+		SyncPromise,
+		PasteHelper
 	) => {
 		"use strict";
 
@@ -174,11 +180,11 @@ sap.ui.define([
 				vValue = 0; // if number requested use number
 			}
 
-			if (_getNoFormatting.call(this)) { // For MultiInput the value should only be parsed, the output of the conditions will be shown in Tokens
-				return _getKeepValue.call(this) || vValue;
+			if (this._getNoFormatting()) { // For MultiInput the value should only be parsed, the output of the conditions will be shown in Tokens
+				return this._getKeepValue() || vValue;
 			}
 
-			const iMaxConditions = _getMaxConditions.call(this);
+			const iMaxConditions = this._getMaxConditions();
 
 			const aSyncPromises = [];
 			const fnCreateSyncPromise = function(oCondition, sTargetType) { // as function should not be declared inside a loop
@@ -245,7 +251,7 @@ sap.ui.define([
 
 			// TODO: support multiple conditions (list separated by delimiter) ?
 
-			if (_getNoFormatting.call(this) && vValue === "") { // For MultiInput clearing value doesn't need to be validated
+			if (this._getNoFormatting() && vValue === "") { // For MultiInput clearing value doesn't need to be validated
 				return this.oFormatOptions.getConditions ? this.oFormatOptions.getConditions() : [];
 			}
 
@@ -280,13 +286,24 @@ sap.ui.define([
 		 */
 		ConditionsType.prototype._parseValueToIndex = function(vValue, sSourceType, iIndex) {
 
-			const aOperators = this.oFormatOptions.operators || [];
-			const bBetweenSupported = aOperators.indexOf(OperatorName.BT) >= 0 || aOperators.length === 0;
-			const bMultipleLines = _getMultipleLines.call(this);
-			const aSeparatedText = bMultipleLines ? [vValue] : splitValue(vValue, !bBetweenSupported);
+			const oType = this._getValueType();
+			const oDefaultOperator = this._getDefaultOperator(this._getOperators(), oType); // use default (normally EQ) operator for all entries
+			const bBetweenUsed = oDefaultOperator && oDefaultOperator.name === OperatorName.BT;
+			const bMultipleLines = this._getMultipleLines();
+			const aPastedTexts = bMultipleLines || (sSourceType && sSourceType !== "string") ? [[vValue]] : PasteHelper.getPastedDataAs2DArray(vValue);
+			// use PasteHelper to determine pasted multi-value text
+			// PasteHelper returns an array with an entry for each pasted line. For each value devided by TAB a column is returned.
+			// If copied from MDC Table with Text-Arangement the first column contains the key, the second the description.
+			// Currently only the key should be pasted in this case. As it cannot be distinguished if pasted from Table or somewhere else, this pattern is used for all pasting.
 
-			if (aSeparatedText.length > 1 || (bBetweenSupported && aSeparatedText.length === 1 && typeof aSeparatedText[0] === "string" && aSeparatedText[0].search(/\t/) >= 0)) {
-				return _parseMultipleValues.call(this, aSeparatedText, sSourceType, iIndex);
+			if (aPastedTexts.length > 1 || (aPastedTexts.length === 1 && aPastedTexts[0].length > 1)) { // if only one value pasted, but contains different columns use PasteHelper too
+				const aColumnsInfo = [
+					{property: "value", type: oType},
+					{property: "additionalValue", type: bBetweenUsed ? oType : this._getAdditionalValueType()} // in between case use the second column as "to"-value
+				];
+				const pParsedValues = PasteHelper.parse(aPastedTexts, aColumnsInfo).then((oResult) => {return _parsedValuesIntoConditions.call(this, oResult, iIndex, oDefaultOperator, bBetweenUsed);});
+
+				return this._fnReturnPromise(pParsedValues);
 			} else {
 				return _parseSingleValue.call(this, vValue, sSourceType, iIndex);
 			}
@@ -306,38 +323,30 @@ sap.ui.define([
 
 		}
 
-		function _parseMultipleValues(aValues, sSourceType, iIndex) {
+		function _parsedValuesIntoConditions(oParsedValues, iIndex, oOperator, bBetweenUsed) {
 
-			const aOperators = this.oFormatOptions.operators || [];
-			const bBetweenSupported = aOperators.indexOf(OperatorName.BT) >= 0 || aOperators.length === 0;
-			const oBTOperator = bBetweenSupported && FilterOperatorUtil.getOperator(OperatorName.BT);
-			const fnParse = function(vValue, sSourceType) {
-				return SyncPromise.resolve().then(() => {
-					// if multiple values are pasted deactivate input validation and determination of description for performance reasons.
-					// only paste as plain conditions (NotValidated)
-					// multiple values are only possible for strings
-					vValue = vValue.trim(); // remove whitspaces from the edges (as in copy source whitspaces might be used to align values)
-					if (bBetweenSupported) {
-						const aValues = vValue.split(/\t/g); // if two values exist, use it as Between and create a "a...z" value
-						if (aValues.length == 2 && aValues[0] && aValues[1]) {
-							vValue = oBTOperator.tokenFormat;
-							for (let j = 0; j < 2; j++) {
-								vValue = vValue.replace(new RegExp("\\{" + j + "\\}", "g"), aValues[j]);
-							}
-						}
-					}
-
-					return this._oConditionType._parseValue(vValue, "string", false);
-				});
-			};
-			const fnHandleError = function(oException) {
-				if (oException instanceof ParseException) {
+			if (oParsedValues.errors) {
+				if (oParsedValues.errors.length === 1) { // if only one error just return it
+					throw new ParseException(oParsedValues.errors[0].message);
+				} else { // if different errors use generic error message
 					throw new ParseException(this._oResourceBundle.getText("field.PASTE_ERROR"));
 				}
-				throw oException;
-			};
+			} else {
+				let aConditions = this.oFormatOptions.getConditions && this.oFormatOptions.getConditions();
 
-			return _parseValues.call(this, aValues, sSourceType, iIndex, fnParse, fnHandleError);
+				for (let i = 0; i < oParsedValues.parsedData.length; i++) {
+					const oParsedData = oParsedValues.parsedData[i]; // only use key, ignore description
+					const oCondition = Condition.createCondition(oOperator.name, [oParsedData.value], undefined, undefined, ConditionValidated.NotValidated, undefined);
+					if (bBetweenUsed) { // in between case use the second column as "to"-value
+						oCondition.values.push(oParsedData.additionalValue);
+					}
+					aConditions = _parseConditionToConditions.call(this, oCondition, aConditions, iIndex);
+					if (iIndex >= 0) {
+						iIndex++;
+					}
+				}
+				return aConditions;
+			}
 
 		}
 
@@ -362,24 +371,20 @@ sap.ui.define([
 				fnHandleError.call(this, oException);
 			}).unwrap();
 
-			if (aConditions instanceof Promise && this.oFormatOptions.asyncParsing) {
-				this.oFormatOptions.asyncParsing(aConditions);
-			}
-
-			return aConditions;
+			return this._fnReturnPromise(aConditions);
 
 		}
 
 		function _parseConditionToConditions(oCondition, aConditions, iIndex) {
 
-			const bIsUnit = _isUnit(this.oFormatOptions.valueType);
-			const iMaxConditions = _getMaxConditions.call(this);
+			const bIsUnit = this._isUnit(this.oFormatOptions.valueType);
+			const iMaxConditions = this._getMaxConditions();
 
 			if (iMaxConditions !== 1 && this.oFormatOptions.getConditions) {
 				// if more than one condition is allowed add the new condition to the existing ones. (Only if not already exist)
 				if (oCondition) {
 					// add new condition
-					if (_isCompositeType(this.oFormatOptions.valueType) && !bIsUnit && aConditions.length === 1 &&
+					if (this._isCompositeType(this.oFormatOptions.valueType) && !bIsUnit && aConditions.length === 1 &&
 						(aConditions[0].values[0][0] === null || aConditions[0].values[0][0] === undefined || aConditions[0].values[0][1] === null || aConditions[0].values[0][1] === undefined) &&
 						(oCondition.values[0][0] !== null && oCondition.values[0][0] !== undefined && oCondition.values[0][1] !== null && oCondition.values[0][1] !== undefined)) {
 						// if there is already a condition containing only a unit and no numeric value, remove it and use the new condition
@@ -480,7 +485,7 @@ sap.ui.define([
 					this._oConditionType.validateValue(oCondition);
 				}
 
-				const iMaxConditions = _getMaxConditions.call(this);
+				const iMaxConditions = this._getMaxConditions();
 
 				if (aConditions.length === 0 && iMaxConditions === 1) {
 					// test if type is nullable. Only for single-value Fields. For MultiValue only real conditions should be checked for type
@@ -498,75 +503,7 @@ sap.ui.define([
 
 		};
 
-		function _getMaxConditions() {
-
-			let iMaxConditions = 1;
-
-			if (this.oFormatOptions.hasOwnProperty("maxConditions")) {
-				iMaxConditions = this.oFormatOptions.maxConditions;
-			}
-
-			return iMaxConditions;
-
-		}
-
-		function _isUnit(oType) {
-
-			if (_isCompositeType(oType)) {
-				const oFormatOptions = oType.getFormatOptions();
-				const bShowMeasure = !oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure;
-				const bShowNumber = !oFormatOptions || !oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber;
-				const bShowTimezone = !oFormatOptions || !oFormatOptions.hasOwnProperty("showTimezone") || oFormatOptions.showTimezone; // handle timezone as unit
-				const bShowDate = !oFormatOptions || !oFormatOptions.hasOwnProperty("showDate") || oFormatOptions.showDate;
-				const bShowTime = !oFormatOptions || !oFormatOptions.hasOwnProperty("showTime") || oFormatOptions.showTime;
-				if ((bShowMeasure && !bShowNumber) || (bShowTimezone && !bShowDate && !bShowTime)) {
-					return true;
-				}
-			}
-
-			return false;
-
-		}
-
-		function _isCompositeType(oType) {
-
-			return oType && oType.isA("sap.ui.model.CompositeType");
-
-		}
-
-		function _getNoFormatting() {
-
-			let bNoFormatting = false;
-
-			if (this.oFormatOptions.hasOwnProperty("noFormatting")) {
-				bNoFormatting = this.oFormatOptions.noFormatting;
-			}
-
-			return bNoFormatting;
-
-		}
-
-		function _getKeepValue() {
-
-
-			if (this.oFormatOptions.hasOwnProperty("keepValue")) {
-				return this.oFormatOptions.keepValue;
-			}
-
-			return null;
-
-		}
-
-		function _getMultipleLines() {
-
-
-			if (this.oFormatOptions.hasOwnProperty("multipleLines")) {
-				return this.oFormatOptions.multipleLines;
-			}
-
-			return false;
-
-		}
+		ConditionTypeMixin.call(ConditionsType.prototype);
 
 		return ConditionsType;
 

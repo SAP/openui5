@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/integration/util/Manifest",
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/library",
-	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/core/Manifest",
 	"sap/base/Log",
@@ -28,8 +27,12 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustratedMessageSize",
-	"sap/ui/integration/formatters/IconFormatter",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent",
+	"qunit/testResources/nextCardDataReadyEvent",
+	"qunit/testResources/nextCardContentReadyEvent",
+	"qunit/testResources/nextCardManifestAppliedEvent",
+	"qunit/testResources/nextCardManifestReadyEvent"
 ],
 	function(
 		Library,
@@ -42,7 +45,6 @@ sap.ui.define([
 		CardManifest,
 		Utils,
 		library,
-		Core,
 		coreLibrary,
 		CoreManifest,
 		Log,
@@ -59,8 +61,12 @@ sap.ui.define([
 		JSONModel,
 		IllustratedMessageType,
 		IllustratedMessageSize,
-		IconFormatter,
-		nextUIUpdate
+		nextUIUpdate,
+		nextCardReadyEvent,
+		nextCardDataReadyEvent,
+		nextCardContentReadyEvent,
+		nextCardManifestAppliedEvent,
+		nextCardManifestReadyEvent
 	) {
 		"use strict";
 
@@ -759,11 +765,8 @@ sap.ui.define([
 			}
 		};
 
-		function testContentInitialization(oManifest, assert) {
-
+		async function testContentInitialization(oManifest, assert) {
 			// Arrange
-			var done = assert.async();
-
 			var oCard = new Card("somecard", {
 				manifest: oManifest,
 				width: "400px",
@@ -772,7 +775,7 @@ sap.ui.define([
 
 			// Act
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Assert
 			assert.notOk(oCard.getAggregation("_header"), "Card header should be empty.");
@@ -781,17 +784,15 @@ sap.ui.define([
 			assert.equal(oCard.getDomRef().clientWidth, 398, "Card should have width set to 398px.");
 			assert.equal(oCard.getDomRef().clientHeight, 598, "Card should have height set to 598px.");
 
-			oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
+			await nextCardReadyEvent(oCard);
+			await nextUIUpdate();
 
-				// Assert
-				assert.ok(oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
-				assert.ok(oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
+			// Assert
+			assert.ok(oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
+			assert.ok(oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
 
-				// Cleanup
-				oCard.destroy();
-				done();
-			});
+			// Cleanup
+			oCard.destroy();
 		}
 
 		function testComponentContentCreation(oCardManifest, oExpectedComponentManifest, assert) {
@@ -825,15 +826,15 @@ sap.ui.define([
 
 		QUnit.module("Init");
 
-		QUnit.test("Initialization - ListContent", function (assert) {
-			testContentInitialization(oManifest_ListCard, assert);
+		QUnit.test("Initialization - ListContent", async function (assert) {
+			await testContentInitialization(oManifest_ListCard, assert);
 		});
 
-		QUnit.test("Initialization - TableContent", function (assert) {
-			testContentInitialization(oManifest_TableCard, assert);
+		QUnit.test("Initialization - TableContent", async function (assert) {
+			await testContentInitialization(oManifest_TableCard, assert);
 		});
 
-		QUnit.test("Empty header", function (assert) {
+		QUnit.test("Empty header", async function (assert) {
 			var done = assert.async();
 
 			var oCard = new Card("somecard", {
@@ -844,19 +845,17 @@ sap.ui.define([
 
 			// Act
 			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(oCard);
+			await nextUIUpdate();
 
-			oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
+			// Assert
+			setTimeout(function () {
+				assert.notOk(oCard.getAggregation("_header"), "Card header should not be created.");
 
-				// Assert
-				setTimeout(function () {
-					assert.notOk(oCard.getAggregation("_header"), "Card header should not be created.");
-
-					// Cleanup
-					oCard.destroy();
-					done();
-				}, 300);
-			});
+				// Cleanup
+				oCard.destroy();
+				done();
+			}, 300);
 		});
 
 		QUnit.test("Rendered classes", async function (assert) {
@@ -874,75 +873,66 @@ sap.ui.define([
 			oCard.destroy();
 		});
 
-		QUnit.test("Register module path for card with manifest as object, without baseUrl", function (assert) {
+		QUnit.test("Register module path for card with manifest as object, without baseUrl", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oCard = new Card({
+			var oCard = new Card({
 					manifest: oManifest_ListCard
 				}),
 				fnRegisterSpy = sinon.spy(LoaderExtensions, "registerResourcePath");
 
-			oCard.attachEventOnce("_ready", function () {
-				// Assert
-				assert.ok(fnRegisterSpy.called, "LoaderExtensions.registerResourcePath is called.");
-				assert.ok(fnRegisterSpy.calledWith("my/card/qunit/test/ListCard", "/"), "LoaderExtensions.registerResourcePath is called with correct params.");
-
-				// Clean up
-				oCard.destroy();
-				fnRegisterSpy.restore();
-				done();
-			});
-
 			// Act
 			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(oCard);
+
+			// Assert
+			assert.ok(fnRegisterSpy.called, "LoaderExtensions.registerResourcePath is called.");
+			assert.ok(fnRegisterSpy.calledWith("my/card/qunit/test/ListCard", "/"), "LoaderExtensions.registerResourcePath is called with correct params.");
+
+			// Clean up
+			oCard.destroy();
+			fnRegisterSpy.restore();
 		});
 
-		QUnit.test("Register module path for card with manifest as object, with baseUrl", function (assert) {
+		QUnit.test("Register module path for card with manifest as object, with baseUrl", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				sBaseUrl = "test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations",
+			var sBaseUrl = "test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations",
 				oCard = new Card({
 					manifest: oManifest_ListCard,
 					baseUrl: sBaseUrl
 				}),
 				fnRegisterSpy = sinon.spy(LoaderExtensions, "registerResourcePath");
 
-			oCard.attachEventOnce("_ready", function () {
-				// Assert
-				assert.ok(fnRegisterSpy.called, "LoaderExtensions.registerResourcePath is called.");
-				assert.ok(fnRegisterSpy.calledWith("my/card/qunit/test/ListCard", sBaseUrl), "LoaderExtensions.registerResourcePath is called with correct params.");
-
-				// Clean up
-				oCard.destroy();
-				fnRegisterSpy.restore();
-				done();
-			});
-
 			// Act
 			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(oCard);
+
+			// Assert
+			assert.ok(fnRegisterSpy.called, "LoaderExtensions.registerResourcePath is called.");
+			assert.ok(fnRegisterSpy.calledWith("my/card/qunit/test/ListCard", sBaseUrl), "LoaderExtensions.registerResourcePath is called with correct params.");
+
+			// Clean up
+			oCard.destroy();
+			fnRegisterSpy.restore();
 		});
 
-		QUnit.test("Register module path for card with manifest given by URL", function (assert) {
+		QUnit.test("Register module path for card with manifest given by URL", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oCard = new Card({
+			var oCard = new Card({
 					manifest: "test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json"
 				}),
 				fnRegisterSpy = sinon.spy(LoaderExtensions, "registerResourcePath");
 
-			oCard.attachEventOnce("_ready", function () {
-				// Assert
-				assert.ok(fnRegisterSpy.called, "LoaderExtensions.registerResourcePath is called.");
-				assert.ok(fnRegisterSpy.calledWith("my/test/card", "test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations"), "LoaderExtensions.registerResourcePath is called with correct params.");
-
-				// Clean up
-				oCard.destroy();
-				fnRegisterSpy.restore();
-				done();
-			});
-
 			// Act
 			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(oCard);
+
+			// Assert
+			assert.ok(fnRegisterSpy.called, "LoaderExtensions.registerResourcePath is called.");
+			assert.ok(fnRegisterSpy.calledWith("my/test/card", "test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations"), "LoaderExtensions.registerResourcePath is called with correct params.");
+
+			// Clean up
+			oCard.destroy();
+			fnRegisterSpy.restore();
 		});
 
 		QUnit.test("Default model is not propagated", async function (assert) {
@@ -973,54 +963,46 @@ sap.ui.define([
 			oModel.destroy();
 		});
 
-		QUnit.test("Severe errors are logged", function (assert) {
+		QUnit.test("Severe errors are logged", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oCard = new Card();
-
-			oCard.attachEvent("_ready", function () {
-				var aErrors = oCard.getSevereErrors();
-
-				// Assert
-				assert.ok(aErrors.length, "Error that the section 'sap.card' is missing is logged.");
-
-				// Clean up
-				oCard.destroy();
-
-				done();
-			});
+			var oCard = new Card();
 
 			// Act
 			oCard.setManifest({});
 			oCard.startManifestProcessing();
+
+			await nextCardReadyEvent(oCard);
+
+			var aErrors = oCard.getSevereErrors();
+
+			// Assert
+			assert.ok(aErrors.length, "Error that the section 'sap.card' is missing is logged.");
+
+			// Clean up
+			oCard.destroy();
 		});
 
-		QUnit.test("Base url in combination with manifest path", function (assert) {
+		QUnit.test("Base url in combination with manifest path", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oCard = new Card({
+			var oCard = new Card({
 					manifest: "test-resources/sap/ui/integration/qunit/manifests/manifest.json",
 					baseUrl: "http://someurltest/"
 				});
 
-			oCard.attachEventOnce("_ready", function () {
-				// Assert
-				assert.strictEqual(oCard.getRuntimeUrl("/"), "http://someurltest/", "The given baseUrl is used for card base url.");
-
-				// Clean up
-				oCard.destroy();
-				done();
-			});
-
 			// Act
 			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(oCard);
+
+			// Assert
+			assert.strictEqual(oCard.getRuntimeUrl("/"), "http://someurltest/", "The given baseUrl is used for card base url.");
+
+			// Clean up
+			oCard.destroy();
 		});
 
 		QUnit.module("Clone");
 
 		QUnit.test("Cloned card has its own models", async function (assert) {
-			var done = assert.async();
-
 			var oCard = new Card("somecard", {
 					manifest: oManifest_ListCard_NoHeader
 				}),
@@ -1032,26 +1014,23 @@ sap.ui.define([
 
 			oClonedCard.placeAt(DOM_RENDER_LOCATION);
 			await nextUIUpdate();
+			await nextCardReadyEvent(oCard);
+			await nextUIUpdate();
 
-			oClonedCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var aModels = ["parameters", "filters", "paginator", "form", "context"];
+			var aModels = ["parameters", "filters", "paginator", "form", "context"];
 
-				assert.ok(oCard.getModel(), "Default model exists in original card.");
-				assert.ok(oClonedCard.getModel(), "Default model exists in cloned card.");
-				assert.notStrictEqual(oCard.getModel(), oClonedCard.getModel(), "Default model is unique per card.");
+			assert.ok(oCard.getModel(), "Default model exists in original card.");
+			assert.ok(oClonedCard.getModel(), "Default model exists in cloned card.");
+			assert.notStrictEqual(oCard.getModel(), oClonedCard.getModel(), "Default model is unique per card.");
 
-				aModels.forEach(function (sModelName) {
-					assert.ok(oCard.getModel(sModelName), "Model '" + sModelName + "' exists in original card.");
-					assert.ok(oClonedCard.getModel(sModelName), "Model '" + sModelName + "' exists in cloned card.");
-					assert.notStrictEqual(oCard.getModel(sModelName), oClonedCard.getModel(sModelName), "Model '" + sModelName + "' is unique per card.");
-				});
-
-				oCard.destroy();
-				oClonedCard.destroy();
-
-				done();
+			aModels.forEach(function (sModelName) {
+				assert.ok(oCard.getModel(sModelName), "Model '" + sModelName + "' exists in original card.");
+				assert.ok(oClonedCard.getModel(sModelName), "Model '" + sModelName + "' exists in cloned card.");
+				assert.notStrictEqual(oCard.getModel(sModelName), oClonedCard.getModel(sModelName), "Model '" + sModelName + "' is unique per card.");
 			});
+
+			oCard.destroy();
+			oClonedCard.destroy();
 		});
 
 		QUnit.module("Methods", {
@@ -1067,61 +1046,39 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("setManifest - correct and incorrect", function (assert) {
-
-			var done = assert.async(),
-				oManifest_WrongType = deepExtend({}, oManifest_ListCard);
+		QUnit.test("setManifest - correct and incorrect", async function (assert) {
+			var oManifest_WrongType = deepExtend({}, oManifest_ListCard);
 
 			oManifest_WrongType["sap.card"].type = "Wrong";
 
-			// Arrange
-			this.oCard.attachEventOnce("_ready", function () {
-
-				// Arrange
-				this.oCard.attachEventOnce("_ready", function () {
-
-					// Arrange
-					this.oCard.attachEventOnce("_ready", function () {
-
-						// Assert
-						assert.ok(true, "Exception is not thrown");
-
-						done();
-					});
-
-					this.oCard.setManifest(oManifest_ListCard);
-
-				}.bind(this));
-
-				this.oCard.setManifest(oManifest_WrongType);
-
-			}.bind(this));
-
 			this.oCard.setManifest(oManifest_ListCard);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(this.oCard);
+
+			this.oCard.setManifest(oManifest_WrongType);
+			await nextCardReadyEvent(this.oCard);
+
+			this.oCard.setManifest(oManifest_ListCard);
+			await nextCardReadyEvent(this.oCard);
+			// Assert
+			assert.ok(true, "Exception is not thrown");
 		});
 
-		QUnit.test("setManifest - to undefined and then set again", function (assert) {
-			var done = assert.async(),
-				oCard = this.oCard;
+		QUnit.test("setManifest - to undefined and then set again", async function (assert) {
+			this.oCard.setManifest(oManifest_ListCard);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(this.oCard);
 
-			oCard.attachEventOnce("_ready", function () {
-				// Act - set manifest to undefined
-				oCard.setManifest(undefined);
-				Core.applyChanges();
+			// Act - set manifest to undefined
+			this.oCard.setManifest(undefined);
+			await nextUIUpdate();
 
-				oCard.attachEventOnce("_ready", function () {
-					assert.ok(true, "Manifest can be set correctly second time after it was set to undefined.");
-					done();
-				});
+			// Act - set correct manifest
+			this.oCard.setManifest(oManifest_ListCard);
+			await nextUIUpdate();
+			await nextCardReadyEvent(this.oCard);
 
-				// Act - set correct manifest
-				oCard.setManifest(oManifest_ListCard);
-				Core.applyChanges();
-			});
-
-			oCard.setManifest(oManifest_ListCard);
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			assert.ok(true, "Manifest can be set correctly second time after it was set to undefined.");
 		});
 
 		QUnit.test("createManifest called twice", function (assert) {
@@ -1140,11 +1097,9 @@ sap.ui.define([
 			this.oCard.createManifest(oManifest_ListCard, "");
 		});
 
-		QUnit.test("Manifest works if it has very deep structure", function (assert) {
+		QUnit.test("Manifest works if it has very deep structure", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard,
-				oManifest = {
+			var oManifest = {
 					"sap.app": {
 						"id": "test.card.deepStructure"
 					},
@@ -1166,61 +1121,50 @@ sap.ui.define([
 				oCurrentLevel = oCurrentLevel.depthTest;
 			}
 
-			oCard.attachManifestReady(function () {
-				// Assert
-				assert.ok(true, "Manifest is set, there is no error.");
-				done();
-			});
-
 			// Act
-			oCard.setManifest(oManifest);
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.setManifest(oManifest);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardManifestReadyEvent(this.oCard);
+
+			// Assert
+			assert.ok(true, "Manifest is set, there is no error.");
 		});
 
-		QUnit.test("getManifestRawJson", function (assert) {
+		QUnit.test("getManifestRawJson", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard,
-				oManifest = oManifest_ListCard;
-
-			oCard.attachManifestReady(function () {
-				// Assert
-				assert.deepEqual(oCard.getManifestRawJson(), oManifest, "Method getManifestRawJson returns the original raw json.");
-				done();
-			});
+			var oManifest = oManifest_ListCard;
 
 			// Act
-			oCard.setManifest(oManifest);
-			oCard.setManifestChanges([
+			this.oCard.setManifest(oManifest);
+			this.oCard.setManifestChanges([
 				{ content: { header: { title: "Changed title" } } }
 			]);
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardManifestReadyEvent(this.oCard);
+
+			// Assert
+			assert.deepEqual(this.oCard.getManifestRawJson(), oManifest, "Method getManifestRawJson returns the original raw json.");
 		});
 
-		QUnit.test("getDataProviderFactory", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard;
-
-			oCard.attachManifestApplied(function () {
-				var oDataProviderFactory = oCard.getDataProviderFactory();
-
-				// Assert
-				assert.ok(oDataProviderFactory, "Method getDataProviderFactory returns the factory.");
-				assert.ok(oDataProviderFactory instanceof DataProviderFactory, "The result is of type sap.ui.integration.util.DataProviderFactory.");
-				done();
-			});
-
+		QUnit.test("getDataProviderFactory", async function (assert) {
 			// Act
-			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardManifestAppliedEvent(this.oCard);
+
+			var oDataProviderFactory = this.oCard.getDataProviderFactory();
+
+			// Assert
+			assert.ok(oDataProviderFactory, "Method getDataProviderFactory returns the factory.");
+			assert.ok(oDataProviderFactory instanceof DataProviderFactory, "The result is of type sap.ui.integration.util.DataProviderFactory.");
 		});
 
-		QUnit.test("getRuntimeUrl when baseUrl is not set", function (assert) {
+		QUnit.test("getRuntimeUrl when baseUrl is not set", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard,
-				oManifest = {
+			var oManifest = {
 					"sap.app": {
 						"id": "sample.card"
 					}
@@ -1243,26 +1187,24 @@ sap.ui.define([
 					["https://sap.com", "https://sap.com"]
 				]);
 
-			oCard.attachManifestReady(function () {
-				// Assert
-				mSamples.forEach(function (sExpectedResult, sUrl) {
-					var sResult = oCard.getRuntimeUrl(sUrl);
-
-					assert.strictEqual(sResult, sExpectedResult, "Result is correct for '" + sUrl + "'.");
-				});
-				done();
-			});
 
 			// Act
-			oCard.setManifest(oManifest);
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.setManifest(oManifest);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardManifestReadyEvent(this.oCard);
+
+			// Assert
+			mSamples.forEach((sExpectedResult, sUrl) => {
+				var sResult = this.oCard.getRuntimeUrl(sUrl);
+
+				assert.strictEqual(sResult, sExpectedResult, "Result is correct for '" + sUrl + "'.");
+			});
 		});
 
-		QUnit.test("getRuntimeUrl when baseUrl is set", function (assert) {
+		QUnit.test("getRuntimeUrl when baseUrl is set", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard,
-				sBaseUrl = "https://sdk.openui5.org",
+			var sBaseUrl = "https://sdk.openui5.org",
 				oManifest = {
 					"sap.app": {
 						"id": "sample.card"
@@ -1286,20 +1228,19 @@ sap.ui.define([
 					["https://sap.com", "https://sap.com"]
 				]);
 
-			oCard.attachManifestReady(function () {
-				// Assert
-				mSamples.forEach(function (sExpectedResult, sUrl) {
-					var sResult = oCard.getRuntimeUrl(sUrl);
-
-					assert.strictEqual(sResult, sExpectedResult, "Result is correct for '" + sUrl + "'.");
-				});
-				done();
-			});
-
 			// Act
-			oCard.setManifest(oManifest);
-			oCard.setBaseUrl(sBaseUrl);
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.setManifest(oManifest);
+			this.oCard.setBaseUrl(sBaseUrl);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardManifestReadyEvent(this.oCard);
+
+			// Assert
+			mSamples.forEach((sExpectedResult, sUrl) => {
+				var sResult = this.oCard.getRuntimeUrl(sUrl);
+
+				assert.strictEqual(sResult, sExpectedResult, "Result is correct for '" + sUrl + "'.");
+			});
 		});
 
 		QUnit.module("showMessage", {
@@ -1328,7 +1269,7 @@ sap.ui.define([
 			assert.ok(oLogSpy.calledWith("'showMessage' cannot be used before the card instance is ready. Consider using the event 'manifestApplied' event."), "Error should be logged in the console");
 		});
 
-		QUnit.test("showMessage delegates the call to BaseContent once created", function (assert) {
+		QUnit.test("showMessage delegates the call to BaseContent once created", async function (assert) {
 			var done = assert.async();
 			this.stub(BaseContent.prototype, "showMessage")
 				.callsFake(function () {
@@ -1337,154 +1278,153 @@ sap.ui.define([
 					done();
 				});
 
-			this.oCard.attachManifestApplied(function () {
-				// Act
-				this.oCard.showMessage();
-			}.bind(this));
-
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+
+			await nextCardManifestAppliedEvent(this.oCard);
+
+			// Act
+			this.oCard.showMessage();
 		});
 
-		QUnit.test("showMessage creates and adds the message to the DOM", function (assert) {
+		QUnit.test("showMessage creates and adds the message to the DOM", async function (assert) {
 			var done = assert.async();
 
-			this.oCard.attachManifestApplied(function () {
-				var oContent = this.oCard.getCardContent();
-				var oDelegate = {
-					onAfterRendering: function () {
-						var oMessageContainer = oContent.getAggregation("_messageContainer");
-
-						// Assert
-						assert.ok(oMessageContainer.isA("sap.m.VBox"), "Message container should be created and added aggregated");
-						assert.ok(oMessageContainer.getItems()[0].isA("sap.m.MessageStrip"), "_messageContainer has 1 message");
-						assert.ok(oMessageContainer.getDomRef(), "Message container is added to the DOM");
-
-						oContent.removeEventDelegate(oDelegate);
-						done();
-					}
-				};
-
-				oContent.addEventDelegate(oDelegate);
-
-				// Act
-				this.oCard.showMessage();
-			}.bind(this));
-
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+
+			await nextCardManifestAppliedEvent(this.oCard);
+
+			var oContent = this.oCard.getCardContent();
+			var oDelegate = {
+				onAfterRendering: function () {
+					var oMessageContainer = oContent.getAggregation("_messageContainer");
+
+					// Assert
+					assert.ok(oMessageContainer.isA("sap.m.VBox"), "Message container should be created and added aggregated");
+					assert.ok(oMessageContainer.getItems()[0].isA("sap.m.MessageStrip"), "_messageContainer has 1 message");
+					assert.ok(oMessageContainer.getDomRef(), "Message container is added to the DOM");
+
+					oContent.removeEventDelegate(oDelegate);
+					done();
+				}
+			};
+
+			oContent.addEventDelegate(oDelegate);
+
+			// Act
+			this.oCard.showMessage();
 		});
 
-		QUnit.test("Message container is destroyed when the message is closed", function (assert) {
+		QUnit.test("Message container is destroyed when the message is closed", async function (assert) {
 			var done = assert.async();
 
-			this.oCard.attachManifestApplied(function () {
-				var oContent = this.oCard.getCardContent();
-				var oDelegate = {
-					onAfterRendering: function () {
-						var oMessageContainer = oContent.getAggregation("_messageContainer");
-						var oMessageContainerDestroySpy = this.spy(oMessageContainer, "destroy");
-
-						// Act
-						oMessageContainer.getItems()[0].fireClose();
-
-						// Assert
-						assert.ok(oMessageContainerDestroySpy.called, "Message container should be destroyed");
-
-						oContent.removeEventDelegate(oDelegate);
-						done();
-					}
-				};
-
-				oContent.addEventDelegate(oDelegate, this);
-
-				// Act
-				this.oCard.showMessage();
-			}.bind(this));
-
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+
+			await nextCardManifestAppliedEvent(this.oCard);
+
+			var oContent = this.oCard.getCardContent();
+			var oDelegate = {
+				onAfterRendering: function () {
+					var oMessageContainer = oContent.getAggregation("_messageContainer");
+					var oMessageContainerDestroySpy = this.spy(oMessageContainer, "destroy");
+
+					// Act
+					oMessageContainer.getItems()[0].fireClose();
+
+					// Assert
+					assert.ok(oMessageContainerDestroySpy.called, "Message container should be destroyed");
+
+					oContent.removeEventDelegate(oDelegate);
+					done();
+				}
+			};
+
+			oContent.addEventDelegate(oDelegate, this);
+
+			// Act
+			this.oCard.showMessage();
 		});
 
-		QUnit.test("Multiple calls to showMessage - previous messages are destroyed", function (assert) {
+		QUnit.test("Multiple calls to showMessage - previous messages are destroyed", async function (assert) {
 			var done = assert.async();
 			var oMessageStripDestroySpy = this.spy(MessageStrip.prototype, "destroy");
 
-			this.oCard.attachManifestApplied(function () {
-				var oContent = this.oCard.getCardContent();
-				var oDelegate = {
-					onAfterRendering: function () {
-						var oMessageContainer = oContent.getAggregation("_messageContainer");
-						var oMessage = oMessageContainer.getItems()[0];
-
-						// Assert
-						assert.strictEqual(oMessageStripDestroySpy.callCount, 2, "The previous messages should be destroyed");
-						assert.strictEqual(oMessageContainer.getItems().length, 1, "There is only 1 message");
-						assert.strictEqual(oMessage.getType(), "Success", "The last given message type is used");
-						assert.strictEqual(oMessage.getText(), "Last message", "The last given message is used");
-
-						oContent.removeEventDelegate(oDelegate);
-						done();
-					}
-				};
-
-				oContent.addEventDelegate(oDelegate);
-
-				// Act
-				this.oCard.showMessage();
-				this.oCard.showMessage();
-				this.oCard.showMessage("Last message", MessageType.Success);
-			}.bind(this));
-
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+
+			await nextCardManifestAppliedEvent(this.oCard);
+
+			var oContent = this.oCard.getCardContent();
+			var oDelegate = {
+				onAfterRendering: function () {
+					var oMessageContainer = oContent.getAggregation("_messageContainer");
+					var oMessage = oMessageContainer.getItems()[0];
+
+					// Assert
+					assert.strictEqual(oMessageStripDestroySpy.callCount, 2, "The previous messages should be destroyed");
+					assert.strictEqual(oMessageContainer.getItems().length, 1, "There is only 1 message");
+					assert.strictEqual(oMessage.getType(), "Success", "The last given message type is used");
+					assert.strictEqual(oMessage.getText(), "Last message", "The last given message is used");
+
+					oContent.removeEventDelegate(oDelegate);
+					done();
+				}
+			};
+
+			oContent.addEventDelegate(oDelegate);
+
+			// Act
+			this.oCard.showMessage();
+			this.oCard.showMessage();
+			this.oCard.showMessage("Last message", MessageType.Success);
 		});
 
-		QUnit.test("showMessage text containing expression binding with card formatters", function (assert) {
+		QUnit.test("showMessage text containing expression binding with card formatters", async function (assert) {
 			var done = assert.async();
 
-			this.oCard.attachManifestApplied(function () {
-				var oContent = this.oCard.getCardContent();
-				var oDelegate = {
-					onAfterRendering: function () {
-						var oMessageContainer = oContent.getAggregation("_messageContainer");
-						var oMessage = oMessageContainer.getItems()[0];
-
-						// Assert
-						assert.strictEqual(oMessage.getText(), "My inserted text", "Card formatters should be available inside showMessage");
-
-						oContent.removeEventDelegate(oDelegate);
-						done();
-					}
-				};
-
-				oContent.addEventDelegate(oDelegate);
-
-				// Act
-				this.oCard.showMessage("{= format.text('My {0} text', ['inserted'])}", MessageType.Error);
-			}.bind(this));
-
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+
+			await nextCardManifestAppliedEvent(this.oCard);
+
+			var oContent = this.oCard.getCardContent();
+			var oDelegate = {
+				onAfterRendering: function () {
+					var oMessageContainer = oContent.getAggregation("_messageContainer");
+					var oMessage = oMessageContainer.getItems()[0];
+
+					// Assert
+					assert.strictEqual(oMessage.getText(), "My inserted text", "Card formatters should be available inside showMessage");
+
+					oContent.removeEventDelegate(oDelegate);
+					done();
+				}
+			};
+
+			oContent.addEventDelegate(oDelegate);
+
+			// Act
+			this.oCard.showMessage("{= format.text('My {0} text', ['inserted'])}", MessageType.Error);
 		});
 
-		QUnit.test("Any messages are removed after calling hideMessage", function (assert) {
-			var done = assert.async(),
-				oCard = this.oCard;
+		QUnit.test("Any messages are removed after calling hideMessage", async function (assert) {
+			var done = assert.async();
 
-			oCard.attachManifestApplied(function () {
-				oCard.attachEventOnce("stateChanged", function () {
-					oCard.attachEventOnce("stateChanged", function () {
-						var oContent = oCard.getCardContent(),
-							oMessageContainer = oContent.getAggregation("_messageContainer"),
-							aMessages = oMessageContainer.getItems();
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 
-							assert.strictEqual(aMessages.length, 0, "There are no messages after hideMessage().");
-							done();
-						});
-					oCard.hideMessage();
-				});
+			await nextCardManifestAppliedEvent(this.oCard);
 
-				// Act
-				oCard.showMessage();
+			this.oCard.attachEventOnce("stateChanged", () => {
+				this.oCard.attachEventOnce("stateChanged", () => {
+					var oContent = this.oCard.getCardContent(),
+						oMessageContainer = oContent.getAggregation("_messageContainer"),
+						aMessages = oMessageContainer.getItems();
+
+						assert.strictEqual(aMessages.length, 0, "There are no messages after hideMessage().");
+						done();
+					});
+				this.oCard.hideMessage();
 			});
 
-			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			// Act
+			this.oCard.showMessage();
 		});
 
 		QUnit.module("Default Header", {
@@ -1504,76 +1444,47 @@ sap.ui.define([
 		});
 
 		QUnit.test("Default Header initialization", async function (assert) {
-
 			// Arrange
-			var done = assert.async();
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-
-				Core.applyChanges();
-
-				// Assert
-				var oHeader = this.oCard.getAggregation("_header");
-				assert.ok(oHeader, "Card should have header.");
-				assert.ok(oHeader.getDomRef(), "Card header should be created and rendered.");
-				assert.ok(oHeader.getAggregation("_title") && oHeader.getAggregation("_title").getDomRef(), "Card header title should be created and rendered.");
-				assert.ok(oHeader.getAggregation("_subtitle") && oHeader.getAggregation("_subtitle").getDomRef(), "Card header subtitle should be created and rendered.");
-				assert.ok(oHeader.getAggregation("_avatar") && oHeader.getAggregation("_avatar").getDomRef(), "Card header avatar should be created and rendered.");
-				assert.ok(oHeader.getAggregation("_dataTimestamp") && oHeader.getAggregation("_dataTimestamp").getDomRef(), "Card header dataTimestamp should be created and rendered.");
-
-
-				assert.equal(oHeader.getAggregation("_title").getText(), oManifest_Header["sap.card"].header.title, "Card header title should be correct.");
-				assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest_Header["sap.card"].header.subTitle, "Card header subtitle should be correct.");
-				assert.equal(oHeader.getAggregation("_avatar").getSrc(), oManifest_Header["sap.card"].header.icon.src, "Card header icon src should be correct.");
-				assert.equal(oHeader.getStatusText(), oManifest_Header["sap.card"].header.status.text, "Card header status should be correct.");
-				assert.equal(oHeader.getDataTimestamp(), oManifest_Header["sap.card"].header.dataTimestamp, "Card header dataTimestamp should be correct.");
-
-				done();
-			}.bind(this));
 			this.oCard.setManifest(oManifest_Header);
 			await nextUIUpdate();
 
 			// Assert
 			assert.notOk(this.oCard.getAggregation("_header"), "Card header should be empty.");
 			assert.notOk(this.oCard.getAggregation("_content"), "Card content should be empty.");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			var oHeader = this.oCard.getAggregation("_header");
+			assert.ok(oHeader, "Card should have header.");
+			assert.ok(oHeader.getDomRef(), "Card header should be created and rendered.");
+			assert.ok(oHeader.getAggregation("_title") && oHeader.getAggregation("_title").getDomRef(), "Card header title should be created and rendered.");
+			assert.ok(oHeader.getAggregation("_subtitle") && oHeader.getAggregation("_subtitle").getDomRef(), "Card header subtitle should be created and rendered.");
+			assert.ok(oHeader.getAggregation("_avatar") && oHeader.getAggregation("_avatar").getDomRef(), "Card header avatar should be created and rendered.");
+			assert.ok(oHeader.getAggregation("_dataTimestamp") && oHeader.getAggregation("_dataTimestamp").getDomRef(), "Card header dataTimestamp should be created and rendered.");
+
+
+			assert.equal(oHeader.getAggregation("_title").getText(), oManifest_Header["sap.card"].header.title, "Card header title should be correct.");
+			assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest_Header["sap.card"].header.subTitle, "Card header subtitle should be correct.");
+			assert.equal(oHeader.getAggregation("_avatar").getSrc(), oManifest_Header["sap.card"].header.icon.src, "Card header icon src should be correct.");
+			assert.equal(oHeader.getStatusText(), oManifest_Header["sap.card"].header.status.text, "Card header status should be correct.");
+			assert.equal(oHeader.getDataTimestamp(), oManifest_Header["sap.card"].header.dataTimestamp, "Card header dataTimestamp should be correct.");
 		});
 
-		QUnit.test("Default Header Avatar", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-
-				Core.applyChanges();
-
-				// Assert
-				var oHeader = this.oCard.getAggregation("_header");
-				assert.notOk(oHeader.getAggregation("_avatar").getSrc(), "Card header icon src should be empty.");
-				assert.equal(oHeader.getAggregation("_avatar").getDisplayShape(), "Circle", "Card header icon shape should be 'Circle'.");
-				assert.equal(oHeader.getAggregation("_avatar").getInitials(), "AJ", "Card header initials should be 'AJ'.");
-
-				done();
-			}.bind(this));
+		QUnit.test("Default Header Avatar", async function (assert) {
 			this.oCard.setManifest(oManifest_AvatarHeader);
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			var oHeader = this.oCard.getAggregation("_header");
+			assert.notOk(oHeader.getAggregation("_avatar").getSrc(), "Card header icon src should be empty.");
+			assert.equal(oHeader.getAggregation("_avatar").getDisplayShape(), "Circle", "Card header icon shape should be 'Circle'.");
+			assert.equal(oHeader.getAggregation("_avatar").getInitials(), "AJ", "Card header initials should be 'AJ'.");
 		});
 
-		QUnit.test("Default Header Avatar initials with deprecated 'text' property", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				var oHeader = this.oCard.getAggregation("_header");
-				assert.equal(oHeader.getAggregation("_avatar").getInitials(), "AJ", "Card header initials should be correctly set with deprecated 'text' property.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Default Header Avatar initials with deprecated 'text' property", async function (assert) {
 			// Act
 			this.oCard.setManifest({
 				"sap.app": {
@@ -1588,22 +1499,16 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			var oHeader = this.oCard.getAggregation("_header");
+			assert.equal(oHeader.getAggregation("_avatar").getInitials(), "AJ", "Card header initials should be correctly set with deprecated 'text' property.");
 		});
 
-		QUnit.test("'backgroundColor' when there is icon src", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oAvatar = this.oCard.getAggregation("_header").getAggregation("_avatar");
-
-				// Assert
-				assert.strictEqual(oAvatar.getBackgroundColor(), AvatarColor.Transparent, "Background should be 'Transparent' when there is only icon.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("'backgroundColor' when there is icon src", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.backgroundColorWithIconSrc"
@@ -1617,23 +1522,17 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oAvatar = this.oCard.getAggregation("_header").getAggregation("_avatar");
+
+			// Assert
+			assert.strictEqual(oAvatar.getBackgroundColor(), AvatarColor.Transparent, "Background should be 'Transparent' when there is only icon.");
 		});
 
-		QUnit.test("'backgroundColor' when there are initials", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oAvatar = this.oCard.getAggregation("_header").getAggregation("_avatar"),
-					sExpected = oAvatar.getMetadata().getPropertyDefaults().backgroundColor;
-
-				// Assert
-				assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should be default value when there are initials.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("'backgroundColor' when there are initials", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.backgroundColorWithInitials"
@@ -1647,12 +1546,20 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oAvatar = this.oCard.getAggregation("_header").getAggregation("_avatar"),
+			sExpected = oAvatar.getMetadata().getPropertyDefaults().backgroundColor;
+
+			// Assert
+			assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should be default value when there are initials.");
 		});
 
-		QUnit.test("'statusText' set with binding", function (assert) {
+		QUnit.test("'statusText' set with binding", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oManifest = {
+			var oManifest = {
 					"sap.app": {
 						"id": "my.card.test"
 					},
@@ -1671,32 +1578,17 @@ sap.ui.define([
 					}
 				};
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oHeader = this.oCard.getCardHeader();
-
-				// Assert
-				assert.strictEqual(oHeader.getStatusText(), oManifest["sap.card"].header.data.json.statusText, "Status text binding should be resolved.");
-
-				done();
-			}.bind(this));
-
 			this.oCard.setManifest(oManifest);
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.strictEqual(oHeader.getStatusText(), oManifest["sap.card"].header.data.json.statusText, "Status text binding should be resolved.");
 		});
 
-		QUnit.test("hidden header", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("hidden header", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.hiddenHeader"
@@ -1709,21 +1601,15 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
 		});
 
-		QUnit.test("hidden header with binding", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("hidden header with binding", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.hiddenHeader"
@@ -1741,21 +1627,15 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
 		});
 
-		QUnit.test("Header icon when visible property is set to false", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				assert.notOk(this.oCard.getCardHeader().getIconVisible(), "Card Header icon is hidden.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Header icon when visible property is set to false", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.hiddenHeader"
@@ -1777,22 +1657,15 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.notOk(this.oCard.getCardHeader().getIconVisible(), "Card Header icon is hidden.");
 		});
 
-
-		QUnit.test("Header icon when visible property is not set", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				assert.ok(this.oCard.getCardHeader().getIconVisible(), "Card Header icon is not hidden.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Header icon when visible property is not set", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.hiddenHeader"
@@ -1808,21 +1681,15 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(this.oCard.getCardHeader().getIconVisible(), "Card Header icon is not hidden.");
 		});
 
-		QUnit.test("Hidden header icon if visible property is set to true", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				assert.ok(this.oCard.getCardHeader().getIconVisible(), "Card Header icon is not hidden.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Hidden header icon if visible property is set to true", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.hiddenHeader"
@@ -1844,21 +1711,15 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(this.oCard.getCardHeader().getIconVisible(), "Card Header icon is not hidden.");
 		});
 
-		QUnit.test("Header icon not visible when src set to IconFormatter.SRC_FOR_HIDDEN_ICON", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				assert.notOk(this.oCard.getCardHeader().shouldShowIcon(), "Card Header icon should not be shown.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Header icon not visible when src set to IconFormatter.SRC_FOR_HIDDEN_ICON", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.hiddenIconWithSrc"
@@ -1886,20 +1747,15 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.notOk(this.oCard.getCardHeader().shouldShowIcon(), "Card Header icon should not be shown.");
 		});
 
-		QUnit.test("Header status text when visible property is set to false", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				// Assert
-				assert.notOk(this.oCard.getCardHeader().getStatusVisible(), "Card Header status text is hidden.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Header status text when visible property is set to false", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.hiddenStatus"
@@ -1920,21 +1776,15 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.notOk(this.oCard.getCardHeader().getStatusVisible(), "Card Header status text is hidden.");
 		});
 
-		QUnit.test("Header status when visible property is set to true", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				assert.ok(this.oCard.getCardHeader().getStatusVisible(), "Card Header status text is not hidden.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Header status when visible property is set to true", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.hiddenStatus"
@@ -1955,22 +1805,15 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(this.oCard.getCardHeader().getStatusVisible(), "Card Header status text is not hidden.");
 		});
 
-		QUnit.test("Default header icon when src is empty string and shape is 'Circle'", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEvent("_ready", function () {
-
-				var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
-				sPersonPlaceHolder = "sap-icon://person-placeholder";
-
-				// Assert
-				assert.strictEqual(oAvatarIcon.getSrc(), sPersonPlaceHolder, "Should show 'sap-icon://person-placeholder' when icon src is empty and the shape is 'Circle'.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Default header icon when src is empty string and shape is 'Circle'", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.defaultHeaderIcon"
@@ -1986,22 +1829,18 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
+				sPersonPlaceHolder = "sap-icon://person-placeholder";
+
+			// Assert
+			assert.strictEqual(oAvatarIcon.getSrc(), sPersonPlaceHolder, "Should show 'sap-icon://person-placeholder' when icon src is empty and the shape is 'Circle'.");
 		});
 
-		QUnit.test("Default header icon when src is empty string and shape is 'Square'", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
-					sProduct = "sap-icon://product";
-
-				// Assert
-				assert.strictEqual(oAvatarIcon.getSrc(), sProduct, "Should show 'sap-icon://product' when icon src is empty and the shape is 'Square'.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Default header icon when src is empty string and shape is 'Square'", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.defaultHeaderIcon"
@@ -2017,22 +1856,18 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
+				sProduct = "sap-icon://product";
+
+			// Assert
+			assert.strictEqual(oAvatarIcon.getSrc(), sProduct, "Should show 'sap-icon://product' when icon src is empty and the shape is 'Square'.");
 		});
 
-		QUnit.test("Default header icon when src is empty string and shape is 'Circle' with binding", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEvent("_ready", function () {
-
-				var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
-					sPersonPlaceHolder = "sap-icon://person-placeholder";
-
-				// Assert
-				assert.strictEqual(oAvatarIcon.getSrc(), sPersonPlaceHolder, "Should show 'sap-icon://person-placeholder' when icon src is empty and the shape is 'Circle'.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Default header icon when src is empty string and shape is 'Circle' with binding", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.defaultHeaderIcon"
@@ -2054,22 +1889,18 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
+				sPersonPlaceHolder = "sap-icon://person-placeholder";
+
+			// Assert
+			assert.strictEqual(oAvatarIcon.getSrc(), sPersonPlaceHolder, "Should show 'sap-icon://person-placeholder' when icon src is empty and the shape is 'Circle'.");
 		});
 
-		QUnit.test("Default header icon when src is empty string and shape is 'Square' with binding", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
-					sProduct = "sap-icon://product";
-
-				// Assert
-				assert.strictEqual(oAvatarIcon.getSrc(), sProduct, "Should show 'sap-icon://product' when icon src is empty and the shape is 'Square'.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Default header icon when src is empty string and shape is 'Square' with binding", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.defaultHeaderIcon"
@@ -2091,17 +1922,25 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
+				sProduct = "sap-icon://product";
+
+			// Assert
+			assert.strictEqual(oAvatarIcon.getSrc(), sProduct, "Should show 'sap-icon://product' when icon src is empty and the shape is 'Square'.");
 		});
 
 		QUnit.module("Numeric Header", {
-			beforeEach: async function () {
+			beforeEach: function () {
 				this.oCard = new Card("somecard", {
 					width: "400px",
 					height: "600px"
 				});
 
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -2109,10 +1948,9 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("'statusText' set with binding", function (assert) {
+		QUnit.test("'statusText' set with binding", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oManifest = {
+			var oManifest = {
 					"sap.app": {
 						"id": "my.card.test"
 					},
@@ -2132,154 +1970,104 @@ sap.ui.define([
 					}
 				};
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oHeader = this.oCard.getCardHeader();
-
-				// Assert
-				assert.strictEqual(oHeader.getStatusText(),  oManifest["sap.card"].header.data.json.statusText, "Status text binding should be resolved.");
-
-				done();
-			}.bind(this));
-
 			this.oCard.setManifest(oManifest);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.strictEqual(oHeader.getStatusText(),  oManifest["sap.card"].header.data.json.statusText, "Status text binding should be resolved.");
 		});
 
-		QUnit.test("Numeric Header generic", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-
-				Core.applyChanges();
-
-				// Assert
-				var oHeader = this.oCard.getAggregation("_header");
-				assert.ok(oHeader.getDomRef(), "Card Numeric header should be rendered.");
-
-				// Assert properties
-				assert.equal(oHeader.getAggregation("_title").getText(), oManifest_NumericHeader["sap.card"].header.title, "Card header title should be correct.");
-				assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest_NumericHeader["sap.card"].header.subTitle, "Card header subtitle should be correct.");
-				assert.equal(oHeader.getAggregation("_unitOfMeasurement").getText(), oManifest_NumericHeader["sap.card"].header.unitOfMeasurement, "Card header unitOfMeasurement should be correct.");
-				assert.equal(oHeader.getAggregation("_details").getText(), oManifest_NumericHeader["sap.card"].header.details, "Card header details should be correct.");
-				assert.equal(oHeader.getDataTimestamp(), oManifest_NumericHeader["sap.card"].header.dataTimestamp, "Card header dataTimestamp should be correct.");
-
-				done();
-			}.bind(this));
+		QUnit.test("Numeric Header generic", async function (assert) {
 			this.oCard.setManifest(oManifest_NumericHeader);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			var oHeader = this.oCard.getAggregation("_header");
+			assert.ok(oHeader.getDomRef(), "Card Numeric header should be rendered.");
+
+			// Assert properties
+			assert.equal(oHeader.getAggregation("_title").getText(), oManifest_NumericHeader["sap.card"].header.title, "Card header title should be correct.");
+			assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest_NumericHeader["sap.card"].header.subTitle, "Card header subtitle should be correct.");
+			assert.equal(oHeader.getAggregation("_unitOfMeasurement").getText(), oManifest_NumericHeader["sap.card"].header.unitOfMeasurement, "Card header unitOfMeasurement should be correct.");
+			assert.equal(oHeader.getAggregation("_details").getText(), oManifest_NumericHeader["sap.card"].header.details, "Card header details should be correct.");
+			assert.equal(oHeader.getDataTimestamp(), oManifest_NumericHeader["sap.card"].header.dataTimestamp, "Card header dataTimestamp should be correct.");
 		});
 
-		QUnit.test("Numeric Header main indicator with json data", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oHeader = this.oCard.getAggregation("_header"),
-					oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
-
-				// Assert aggregation mainIndicator
-				assert.ok(oMainIndicator.getDomRef(), "Card header main indicator aggregation should be set and rendered");
-				assert.equal(oMainIndicator.getValue(), oManifest_NumericHeader["sap.card"].header.data.json["n"], "Card header main indicator value should be correct.");
-				assert.equal(oMainIndicator.getScale(), oManifest_NumericHeader["sap.card"].header.data.json["u"], "Card header main indicator scale should be correct.");
-				assert.equal(oMainIndicator.getIndicator(), oManifest_NumericHeader["sap.card"].header.data.json["trend"], "Card header main indicator indicator should be correct.");
-				assert.equal(oMainIndicator.getValueColor(), oManifest_NumericHeader["sap.card"].header.data.json["valueColor"], "Card header main indicator valueColor should be correct.");
-
-				done();
-			}.bind(this));
+		QUnit.test("Numeric Header main indicator with json data", async function (assert) {
 			this.oCard.setManifest(oManifest_NumericHeader);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oHeader = this.oCard.getAggregation("_header"),
+				oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
+
+			// Assert aggregation mainIndicator
+			assert.ok(oMainIndicator.getDomRef(), "Card header main indicator aggregation should be set and rendered");
+			assert.equal(oMainIndicator.getValue(), oManifest_NumericHeader["sap.card"].header.data.json["n"], "Card header main indicator value should be correct.");
+			assert.equal(oMainIndicator.getScale(), oManifest_NumericHeader["sap.card"].header.data.json["u"], "Card header main indicator scale should be correct.");
+			assert.equal(oMainIndicator.getIndicator(), oManifest_NumericHeader["sap.card"].header.data.json["trend"], "Card header main indicator indicator should be correct.");
+			assert.equal(oMainIndicator.getValueColor(), oManifest_NumericHeader["sap.card"].header.data.json["valueColor"], "Card header main indicator valueColor should be correct.");
 		});
 
-		QUnit.test("Numeric Header main indicator without 'data'", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oHeader = this.oCard.getAggregation("_header"),
-					oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
-
-				// Assert aggregation _mainIndicator
-				assert.ok(oMainIndicator.getDomRef(), "Card header main indicator aggregation should be set and rendered");
-				assert.equal(oMainIndicator.getValue(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.number, "Card header main indicator value should be correct.");
-				assert.equal(oMainIndicator.getScale(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.unit, "Card header main indicator scale should be correct.");
-				assert.equal(oMainIndicator.getIndicator(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.trend, "Card header main indicator indicator should be correct.");
-				assert.equal(oMainIndicator.getValueColor(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.state, "Card header main indicator valueColor should be correct.");
-
-				done();
-			}.bind(this));
+		QUnit.test("Numeric Header main indicator without 'data'", async function (assert) {
 			this.oCard.setManifest(oManifest_NumericHeader2);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oHeader = this.oCard.getAggregation("_header"),
+				oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
+
+			// Assert aggregation _mainIndicator
+			assert.ok(oMainIndicator.getDomRef(), "Card header main indicator aggregation should be set and rendered");
+			assert.equal(oMainIndicator.getValue(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.number, "Card header main indicator value should be correct.");
+			assert.equal(oMainIndicator.getScale(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.unit, "Card header main indicator scale should be correct.");
+			assert.equal(oMainIndicator.getIndicator(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.trend, "Card header main indicator indicator should be correct.");
+			assert.equal(oMainIndicator.getValueColor(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.state, "Card header main indicator valueColor should be correct.");
 		});
 
-		QUnit.test("Numeric Header side indicators", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oHeader = this.oCard.getAggregation("_header");
-
-				// Assert aggregation sideIndicators
-				assert.ok(oHeader.getAggregation("sideIndicators"), "Card header side indicators should be set.");
-				assert.equal(oHeader.getAggregation("sideIndicators").length, oManifest_NumericHeader["sap.card"].header.sideIndicators.length, "Card header should have two side indicators.");
-
-				oHeader.getAggregation("sideIndicators").forEach(function (oIndicator, iIndex) {
-					var oSideIndicator = oManifest_NumericHeader["sap.card"].header.sideIndicators[iIndex];
-					assert.ok(oIndicator.getDomRef(), "Card header sideIndicators one should be rendered.");
-					assert.equal(oIndicator.getTitle(), oSideIndicator.title, "Card header side indicator " + iIndex + " title should be correct.");
-					assert.equal(oIndicator.getNumber(), oSideIndicator.number, "Card header side indicator " + iIndex + " number should be correct.");
-					assert.equal(oIndicator.getUnit(), oSideIndicator.unit, "Card header side indicator " + iIndex + " unit should be correct.");
-				});
-
-				done();
-			}.bind(this));
+		QUnit.test("Numeric Header side indicators", async function (assert) {
 			this.oCard.setManifest(oManifest_NumericHeader);
-		});
 
-		QUnit.test("Numeric Header with no Details and no Indicators (Main and Side)", function (assert) {
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-			// Arrange
-			var done = assert.async();
+			var oHeader = this.oCard.getAggregation("_header");
 
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
+			// Assert aggregation sideIndicators
+			assert.ok(oHeader.getAggregation("sideIndicators"), "Card header side indicators should be set.");
+			assert.equal(oHeader.getAggregation("sideIndicators").length, oManifest_NumericHeader["sap.card"].header.sideIndicators.length, "Card header should have two side indicators.");
 
-				// Assert
-				assert.equal(document.getElementsByClassName("sapFCardHeaderDetails").length, 0, "Card header Details are not rendered.");
-				assert.equal(document.getElementsByClassName("sapFCardNumericIndicators").length, 0, "Card header Indicators are not rendered.");
-				assert.equal(document.getElementsByClassName("sapFCardNumericIndicatorsMain").length, 0, "Card header Main Indicator is not rendered.");
-				assert.equal(document.getElementsByClassName("sapFCardNumericIndicatorsSide").length, 0, "Card header Side Indicator is not rendered.");
-
-				done();
+			oHeader.getAggregation("sideIndicators").forEach(function (oIndicator, iIndex) {
+				var oSideIndicator = oManifest_NumericHeader["sap.card"].header.sideIndicators[iIndex];
+				assert.ok(oIndicator.getDomRef(), "Card header sideIndicators one should be rendered.");
+				assert.equal(oIndicator.getTitle(), oSideIndicator.title, "Card header side indicator " + iIndex + " title should be correct.");
+				assert.equal(oIndicator.getNumber(), oSideIndicator.number, "Card header side indicator " + iIndex + " number should be correct.");
+				assert.equal(oIndicator.getUnit(), oSideIndicator.unit, "Card header side indicator " + iIndex + " unit should be correct.");
 			});
-			this.oCard.setManifest(oManifest_NumericHeader_OnlyTitleAndSubtitle);
 		});
 
-		QUnit.test("hidden header", function (assert) {
-			// Arrange
-			var done = assert.async();
+		QUnit.test("Numeric Header with no Details and no Indicators (Main and Side)", async function (assert) {
+			this.oCard.setManifest(oManifest_NumericHeader_OnlyTitleAndSubtitle);
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				// Assert
-				assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
+			// Assert
+			assert.equal(document.getElementsByClassName("sapFCardHeaderDetails").length, 0, "Card header Details are not rendered.");
+			assert.equal(document.getElementsByClassName("sapFCardNumericIndicators").length, 0, "Card header Indicators are not rendered.");
+			assert.equal(document.getElementsByClassName("sapFCardNumericIndicatorsMain").length, 0, "Card header Main Indicator is not rendered.");
+			assert.equal(document.getElementsByClassName("sapFCardNumericIndicatorsSide").length, 0, "Card header Side Indicator is not rendered.");
+		});
 
-				done();
-			}.bind(this));
-
+		QUnit.test("hidden header", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.hiddenHeader"
@@ -2293,21 +2081,15 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
 		});
 
-		QUnit.test("hidden header with binding", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("hidden header with binding", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.hiddenHeader"
@@ -2326,25 +2108,15 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
 		});
 
-		QUnit.test("Numeric header main indicator visibility", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oHeader = this.oCard.getAggregation("_header"),
-					oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
-
-				// Assert aggregation mainIndicator
-				assert.notOk(oMainIndicator.getVisible(), "Card header main indicator is hidden");
-				assert.notOk(oMainIndicator.getDomRef(), "Card header main indicator should not be rendered if invisible");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Numeric header main indicator visibility", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.mainIndicator"
@@ -2388,28 +2160,19 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oHeader = this.oCard.getAggregation("_header"),
+				oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
+
+			// Assert aggregation mainIndicator
+			assert.notOk(oMainIndicator.getVisible(), "Card header main indicator is hidden");
+			assert.notOk(oMainIndicator.getDomRef(), "Card header main indicator should not be rendered if invisible");
 		});
 
-		QUnit.test("Numeric header side indicators visibility", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oHeader = this.oCard.getAggregation("_header");
-				var oSideIndicators = oHeader.getAggregation("sideIndicators");
-
-				// Assert
-				oSideIndicators.forEach(function (oIndicator, iIndex) {
-					assert.notOk(oIndicator.getDomRef(), "Card header sideIndicators shouldn't be rendered if invisible.");
-					assert.notOk(oIndicator.getVisible(), "Card header sideIndicators are hidden");
-				});
-
-				done();
-			}.bind(this));
+		QUnit.test("Numeric header side indicators visibility", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.mainIndicator"
@@ -2454,63 +2217,60 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oHeader = this.oCard.getAggregation("_header");
+			var oSideIndicators = oHeader.getAggregation("sideIndicators");
+
+			// Assert
+			oSideIndicators.forEach(function (oIndicator, iIndex) {
+				assert.notOk(oIndicator.getDomRef(), "Card header sideIndicators shouldn't be rendered if invisible.");
+				assert.notOk(oIndicator.getVisible(), "Card header sideIndicators are hidden");
+			});
 		});
 
-		QUnit.test("Numeric header main indicator visibility with binding", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oHeader = this.oCard.getAggregation("_header"),
-					oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
-
-				// Assert aggregation mainIndicator
-				assert.notOk(oMainIndicator.getVisible(), "Card header main indicator is hidden");
-				assert.notOk(oMainIndicator.getDomRef(), "Card header main indicator should not be rendered if invisible");
-				assert.equal(oHeader.getNumberVisible(), oManifest_NumericHeader_MainIndicator["sap.card"].header.data.json["visibility"], "Card header main indicator visibility property value should be correct.");
-
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Numeric header main indicator visibility with binding", async function (assert) {
 			this.oCard.setManifest(oManifest_NumericHeader_MainIndicator);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oHeader = this.oCard.getAggregation("_header"),
+				oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
+
+			// Assert aggregation mainIndicator
+			assert.notOk(oMainIndicator.getVisible(), "Card header main indicator is hidden");
+			assert.notOk(oMainIndicator.getDomRef(), "Card header main indicator should not be rendered if invisible");
+			assert.equal(oHeader.getNumberVisible(), oManifest_NumericHeader_MainIndicator["sap.card"].header.data.json["visibility"], "Card header main indicator visibility property value should be correct.");
 		});
 
-		QUnit.test("Numeric header side indicators visibility with binding", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			// Act
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oHeader = this.oCard.getAggregation("_header");
-				var oSideIndicators = oHeader.getAggregation("sideIndicators");
-
-				// Assert
-				oSideIndicators.forEach(function (oIndicator, iIndex) {
-					assert.notOk(oIndicator.getDomRef(), "Card header sideIndicators shouldn't be rendered if invisible.");
-					assert.notOk(oIndicator.getVisible(), "Card header sideIndicators are hidden");
-					assert.equal(oIndicator.getVisible(), oManifest_NumericHeader_SideIndicators["sap.card"].header.data.json["visibility"], "Card header side indicators visibility property value should be correct.");
-				});
-
-				done();
-			}.bind(this));
+		QUnit.test("Numeric header side indicators visibility with binding", async function (assert) {
 			this.oCard.setManifest(oManifest_NumericHeader_SideIndicators);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oHeader = this.oCard.getAggregation("_header");
+			var oSideIndicators = oHeader.getAggregation("sideIndicators");
+
+			// Assert
+			oSideIndicators.forEach(function (oIndicator, iIndex) {
+				assert.notOk(oIndicator.getDomRef(), "Card header sideIndicators shouldn't be rendered if invisible.");
+				assert.notOk(oIndicator.getVisible(), "Card header sideIndicators are hidden");
+				assert.equal(oIndicator.getVisible(), oManifest_NumericHeader_SideIndicators["sap.card"].header.data.json["visibility"], "Card header side indicators visibility property value should be correct.");
+			});
 		});
 
 		QUnit.module("Footer", {
-			beforeEach: async function () {
+			beforeEach: function () {
 				this.oCard = new Card("somecard", {
 					width: "400px",
 					height: "600px"
 				});
 
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -2518,19 +2278,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("hidden footer", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				assert.notOk(this.oCard.getCardFooter().getVisible(), "Card Footer is hidden.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("hidden footer", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.hiddenHeader"
@@ -2545,21 +2293,15 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.notOk(this.oCard.getCardFooter().getVisible(), "Card Footer is hidden.");
 		});
 
-		QUnit.test("hidden footer with binding", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				assert.notOk(this.oCard.getCardFooter().getVisible(), "Card Footer is hidden.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("hidden footer with binding", async function (assert) {
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.hiddenHeader"
@@ -2579,6 +2321,12 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.notOk(this.oCard.getCardFooter().getVisible(), "Card Footer is hidden.");
 		});
 
 		QUnit.module("Card Accessibility", {
@@ -2607,111 +2355,89 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Generic", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-
-				Core.applyChanges();
-
-				// Assert
-				var oCardDomRef = this.oCard.getDomRef(),
-					oHeader = this.oCard.getAggregation("_header"),
-					oHeaderDomRef = oHeader.getDomRef(),
-					oHeaderFocusDomRef = oHeader.getDomRef("focusable"),
-					oHeaderTitleDomRef = oHeaderDomRef.querySelector(".sapFCardTitle"),
-					oContentDomRef = document.getElementsByClassName("sapFCardContent")[0],
-					sAriaLabelledByIds = this.oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
-
-				// Assert Card Container
-				assert.strictEqual(oCardDomRef.getAttribute("role"), "region", "Card container should have a role - region");
-				assert.strictEqual(oCardDomRef.getAttribute("aria-labelledby"), this.oCard._getAriaLabelledIds(), "Card container should have aria-lebelledby - pointing to the static text '[Type of Card] Card' id and title id");
-
-				// Assert Card Header
-				assert.notOk(oHeaderDomRef.getAttribute("role"), "Card header should not have a role");
-				assert.notOk(oHeaderDomRef.getAttribute("aria-roledescription"), "Card header should not have aria-roledescription");
-
-				// Assert Card Header's focusable element
-				assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), "Card header focusable element should have aria-roledescription - Card Header");
-				assert.strictEqual(oHeaderFocusDomRef.getAttribute("role"), "group", "Card header focusable element should have a role - group");
-				assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header's focusable element should have aria-lebelledby - pointing to an element describing the card type, title, subtitle, status text and avatar ids if there is one");
-				assert.strictEqual(oHeaderFocusDomRef.getAttribute("tabindex"), "0", "Card header's focusable element should have tabindex=0");
-
-				// Assert Card Header Title
-				assert.strictEqual(oHeaderTitleDomRef.getAttribute("role"), "heading", "Card header Title should have a role - heading");
-				assert.strictEqual(oHeaderTitleDomRef.getAttribute("aria-level"), "3", "Card header Title should have a aria-level - 3");
-
-				// Assert Card Content
-				assert.strictEqual(oContentDomRef.getAttribute("role"), "group", "Card content should have a role - group");
-				assert.strictEqual(oContentDomRef.getAttribute("aria-labelledby"), this.oCard.getId() + "-ariaContentText", "Card container should have aria-labelledby with the correct id");
-				assert.strictEqual(this.oCard.getDomRef("ariaContentText").innerText, this.oRb.getText("ARIA_LABEL_CARD_CONTENT"), "ARIA content hidden text should have the correct value");
-				done();
-			}.bind(this));
-
-			// Act
+		QUnit.test("Generic", async function (assert) {
 			this.oCard.setManifest(oManifest_ListCard);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			var oCardDomRef = this.oCard.getDomRef(),
+				oHeader = this.oCard.getAggregation("_header"),
+				oHeaderDomRef = oHeader.getDomRef(),
+				oHeaderFocusDomRef = oHeader.getDomRef("focusable"),
+				oHeaderTitleDomRef = oHeaderDomRef.querySelector(".sapFCardTitle"),
+				oContentDomRef = document.getElementsByClassName("sapFCardContent")[0],
+				sAriaLabelledByIds = this.oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
+
+			// Assert Card Container
+			assert.strictEqual(oCardDomRef.getAttribute("role"), "region", "Card container should have a role - region");
+			assert.strictEqual(oCardDomRef.getAttribute("aria-labelledby"), this.oCard._getAriaLabelledIds(), "Card container should have aria-lebelledby - pointing to the static text '[Type of Card] Card' id and title id");
+
+			// Assert Card Header
+			assert.notOk(oHeaderDomRef.getAttribute("role"), "Card header should not have a role");
+			assert.notOk(oHeaderDomRef.getAttribute("aria-roledescription"), "Card header should not have aria-roledescription");
+
+			// Assert Card Header's focusable element
+			assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), "Card header focusable element should have aria-roledescription - Card Header");
+			assert.strictEqual(oHeaderFocusDomRef.getAttribute("role"), "group", "Card header focusable element should have a role - group");
+			assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header's focusable element should have aria-lebelledby - pointing to an element describing the card type, title, subtitle, status text and avatar ids if there is one");
+			assert.strictEqual(oHeaderFocusDomRef.getAttribute("tabindex"), "0", "Card header's focusable element should have tabindex=0");
+
+			// Assert Card Header Title
+			assert.strictEqual(oHeaderTitleDomRef.getAttribute("role"), "heading", "Card header Title should have a role - heading");
+			assert.strictEqual(oHeaderTitleDomRef.getAttribute("aria-level"), "3", "Card header Title should have a aria-level - 3");
+
+			// Assert Card Content
+			assert.strictEqual(oContentDomRef.getAttribute("role"), "group", "Card content should have a role - group");
+			assert.strictEqual(oContentDomRef.getAttribute("aria-labelledby"), this.oCard.getId() + "-ariaContentText", "Card container should have aria-labelledby with the correct id");
+			assert.strictEqual(this.oCard.getDomRef("ariaContentText").innerText, this.oRb.getText("ARIA_LABEL_CARD_CONTENT"), "ARIA content hidden text should have the correct value");
 		});
 
-		QUnit.test("Generic Interactive", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-
-				Core.applyChanges();
-
-				// Assert
-				var oHeader = this.oCard.getAggregation("_header"),
-					oHeaderFocusDomRef = oHeader.getDomRef("focusable"),
-					sAriaLabelledByIds = this.oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
-
-				// Assert Card Header
-				assert.strictEqual(oHeaderFocusDomRef.getAttribute("role"), "button", "Card header focusable element should have a role - button");
-				assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER"), "Card header focusable element should have aria-roledescription - Card Header");
-				assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header's focusable element should have aria-lebelledby - pointing to an element describing the card type, title, subtitle, status text and avatar ids if there is one");
-				assert.strictEqual(oHeaderFocusDomRef.getAttribute("tabindex"), "0", "Card header's focusable element should have tabindex=0");
-				assert.strictEqual(oHeaderFocusDomRef.getAttribute("role"), "button", "Card header's focusable element should have role=button");
-				done();
-			}.bind(this));
-
-			// Act
+		QUnit.test("Generic Interactive", async function (assert) {
 			this.oCard.setManifest(oManifest_AvatarHeader);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			var oHeader = this.oCard.getAggregation("_header"),
+				oHeaderFocusDomRef = oHeader.getDomRef("focusable"),
+				sAriaLabelledByIds = this.oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
+
+			// Assert Card Header
+			assert.strictEqual(oHeaderFocusDomRef.getAttribute("role"), "button", "Card header focusable element should have a role - button");
+			assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER"), "Card header focusable element should have aria-roledescription - Card Header");
+			assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header's focusable element should have aria-lebelledby - pointing to an element describing the card type, title, subtitle, status text and avatar ids if there is one");
+			assert.strictEqual(oHeaderFocusDomRef.getAttribute("tabindex"), "0", "Card header's focusable element should have tabindex=0");
+			assert.strictEqual(oHeaderFocusDomRef.getAttribute("role"), "button", "Card header's focusable element should have role=button");
 		});
 
-		QUnit.test("Numeric Header", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-
-			this.oNumericHeaderCard.attachEvent("_ready", function () {
-				var oHeader = this.oNumericHeaderCard.getAggregation("_header");
-				oHeader.setStatusText("3 of 5");
-
-				Core.applyChanges();
-
-				var oHeaderFocusDomRef = oHeader.getDomRef("focusable"),
-					sAriaLabelledByIds = this.oNumericHeaderCard._ariaText.getId() + " " +
-										oHeader._getTitle().getId() + " " +
-										oHeader._getSubtitle().getId() + " " +
-										oHeader.getId() + "-status" + " " +
-										oHeader._getUnitOfMeasurement().getId() + " " +
-										oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator").getId() + " " +
-										oHeader._getSideIndicatorIds() + " " +
-										oHeader._getDetails().getId();
-
-				assert.strictEqual(oHeaderFocusDomRef.getAttribute("role"), "group", "Card header focusable element should have a role - group");
-				assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), "Card header focusable element should have aria-roledescription - Card Header");
-
-				assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header's focusable element should have aria-lebelledby - pointing to an element describing the card type, title, subtitle, status text and avatar ids if there is one");
-				assert.strictEqual(oHeaderFocusDomRef.getAttribute("tabindex"), "0", "Card header should have tabindex=0");
-				done();
-			}.bind(this));
-
-			// Act
+		QUnit.test("Numeric Header", async function (assert) {
 			this.oNumericHeaderCard.setManifest(oManifest_NumericHeader);
+
+			await nextCardReadyEvent(this.oNumericHeaderCard);
+			await nextUIUpdate();
+
+			var oHeader = this.oNumericHeaderCard.getAggregation("_header");
+			oHeader.setStatusText("3 of 5");
+
+			await nextUIUpdate();
+
+			var oHeaderFocusDomRef = oHeader.getDomRef("focusable"),
+				sAriaLabelledByIds = this.oNumericHeaderCard._ariaText.getId() + " " +
+									oHeader._getTitle().getId() + " " +
+									oHeader._getSubtitle().getId() + " " +
+									oHeader.getId() + "-status" + " " +
+									oHeader._getUnitOfMeasurement().getId() + " " +
+									oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator").getId() + " " +
+									oHeader._getSideIndicatorIds() + " " +
+									oHeader._getDetails().getId();
+
+			assert.strictEqual(oHeaderFocusDomRef.getAttribute("role"), "group", "Card header focusable element should have a role - group");
+			assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), "Card header focusable element should have aria-roledescription - Card Header");
+			assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header's focusable element should have aria-lebelledby - pointing to an element describing the card type, title, subtitle, status text and avatar ids if there is one");
+			assert.strictEqual(oHeaderFocusDomRef.getAttribute("tabindex"), "0", "Card header should have tabindex=0");
 		});
 
 		QUnit.module("Error handling", {
@@ -2751,21 +2477,16 @@ sap.ui.define([
 			oLogSpy.restore();
 		});
 
-		QUnit.test("In a card with no content, the error is rendered in the header", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oHeaderDomRef = this.oCard.getCardHeader().getDomRef();
-
-				// Assert
-				assert.ok(oHeaderDomRef.querySelector(".sapUiIntBlockingMsg"), "error element is rendered in the header");
-				done();
-			}.bind(this));
-
-			// Act
+		QUnit.test("In a card with no content, the error is rendered in the header", async function (assert) {
 			this.oCard.setManifest(oManifest_DefaultHeader_NoContent);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oHeaderDomRef = this.oCard.getCardHeader().getDomRef();
+
+			// Assert
+			assert.ok(oHeaderDomRef.querySelector(".sapUiIntBlockingMsg"), "error element is rendered in the header");
 		});
 
 		QUnit.test("Error is logged when binding syntax is not 'complex'", function (assert) {
@@ -2795,59 +2516,38 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("Height of the Card should not change when error message is shown", function (assert) {
+		QUnit.test("Height of the Card should not change when error message is shown", async function (assert) {
+			this.oCard.setManifest(oManifest_List_Simple);
 
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-				var initialContentWrapperHeight = this.oCard.getDomRef("contentSection").offsetHeight;
-				var initialContentHeight = this.oCard.getCardContent().getDomRef().offsetHeight;
-				var EPS = 2;
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				// Act
-				this.oCard._handleError({
-					title: "No new products",
-					description: "Please review later",
-					size: "Auto"
-				});
-				Core.applyChanges();
-
-				var oErrorMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
-				var currentContentWrapperHeight = this.oCard.getDomRef("contentSection").offsetHeight;
-				var currentContentHeight = this.oCard.getCardContent().getDomRef().offsetHeight;
-
-				// Assert
-				assert.strictEqual(initialContentHeight + "px", oErrorMessage.getHeight(), "Height of the card error message is set correctly");
-				assert.ok(initialContentWrapperHeight - currentContentWrapperHeight <= EPS, "Height of the card content wrapper is not changed");
-				assert.ok(initialContentHeight - currentContentHeight <= EPS, "Height of the card content is not changed (Card error message is with the same height as the card before the error)");
-
-				// Clean up
-				done();
-			}.bind(this));
+			var initialContentWrapperHeight = this.oCard.getDomRef("contentSection").offsetHeight;
+			var initialContentHeight = this.oCard.getCardContent().getDomRef().offsetHeight;
+			var EPS = 2;
 
 			// Act
-			this.oCard.setManifest(oManifest_List_Simple);
+			this.oCard._handleError({
+				title: "No new products",
+				description: "Please review later",
+				size: "Auto"
+			});
+			await nextUIUpdate();
+
+			var oErrorMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
+			var currentContentWrapperHeight = this.oCard.getDomRef("contentSection").offsetHeight;
+			var currentContentHeight = this.oCard.getCardContent().getDomRef().offsetHeight;
+
+			// Assert
+			assert.strictEqual(initialContentHeight + "px", oErrorMessage.getHeight(), "Height of the card error message is set correctly");
+			assert.ok(initialContentWrapperHeight - currentContentWrapperHeight <= EPS, "Height of the card content wrapper is not changed");
+			assert.ok(initialContentHeight - currentContentHeight <= EPS, "Height of the card content is not changed (Card error message is with the same height as the card before the error)");
 		});
 
 
-		QUnit.test("Card configuration error", function (assert) {
+		QUnit.test("Card configuration error", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			var oLogSpy = this.spy(Log, "error");
-
-			this.oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-
-				var isMessageCorrect = oLogSpy.firstCall.args[1] ? oLogSpy.firstCall.args[1].message.includes("LISTD") : false;
-				assert.ok(isMessageCorrect, "Error message with correct details should be logged"
-				);
-
-				// Clean up
-				oLogSpy.restore();
-				done();
-			});
-
 			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.bindingSyntax"
@@ -2860,6 +2560,15 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var isMessageCorrect = oLogSpy.firstCall.args[1] ? oLogSpy.firstCall.args[1].message.includes("LISTD") : false;
+			assert.ok(isMessageCorrect, "Error message with correct details should be logged");
+
+			// Clean up
+			oLogSpy.restore();
 		});
 
 
@@ -2876,24 +2585,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("IllustratedMessage should be set by developer", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEventOnce("_ready", function () {
-					Core.applyChanges();
-					var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
-
-					// Assert
-					assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "The message type set by developer is correct");
-					assert.strictEqual(oMessage.getIllustrationSize(), IllustratedMessageSize.Auto, "The message size set by developer is correct");
-					assert.strictEqual(oMessage.getTitle(), "No new products", "The message title set by developer is correct");
-					assert.strictEqual(oMessage.getDescription(), "Please review later", "The message description set by developer is correct");
-
-					// Clean up
-					done();
-			}.bind(this));
-
+		QUnit.test("IllustratedMessage should be set by developer", async function (assert) {
 			// Act
 			this.oCard.setManifest({
 				"sap.app": {
@@ -2922,23 +2614,20 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
+
+			// Assert
+			assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "The message type set by developer is correct");
+			assert.strictEqual(oMessage.getIllustrationSize(), IllustratedMessageSize.Auto, "The message size set by developer is correct");
+			assert.strictEqual(oMessage.getTitle(), "No new products", "The message title set by developer is correct");
+			assert.strictEqual(oMessage.getDescription(), "Please review later", "The message description set by developer is correct");
 		});
 
-		QUnit.test("Default IllustratedMessage in no data scenario - List Card", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-				var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
-
-				// Assert
-				assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Default message type is used for list");
-				assert.strictEqual(oMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
-
-				// Clean up
-				done();
-			}.bind(this));
-
+		QUnit.test("Default IllustratedMessage in no data scenario - List Card", async function (assert) {
 			// Act
 			this.oCard.setManifest({
 				"sap.app": {
@@ -2957,23 +2646,18 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
+
+			// Assert
+			assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Default message type is used for list");
+			assert.strictEqual(oMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
 		});
 
-		QUnit.test("Default IllustratedMessage in no data scenario - Table Card", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-				var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
-
-				// Assert
-				assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Illustrated message type should be no data for Table Card");
-				assert.strictEqual(oMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
-
-				// Clean up
-				done();
-			}.bind(this));
-
+		QUnit.test("Default IllustratedMessage in no data scenario - Table Card", async function (assert) {
 			// Act
 			this.oCard.setManifest({
 				"sap.app": {
@@ -2997,25 +2681,29 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
+
+			// Assert
+			assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Illustrated message type should be no data for Table Card");
+			assert.strictEqual(oMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
 		});
 
-		QUnit.test("Default IllustratedMessage in no data scenario - Object Card", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-				var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
-
-				// Assert
-				assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.NoData, "Illustrated message type should be no data for Object Card");
-				assert.strictEqual(oMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_CHART"), "Correct message is displayed");
-
-				// Clean up
-				done();
-			}.bind(this));
-
+		QUnit.test("Default IllustratedMessage in no data scenario - Object Card", async function (assert) {
 			// Act
 			this.oCard.setManifest(oManifest_No_Data_Object);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
+
+			// Assert
+			assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.NoData, "Illustrated message type should be no data for Object Card");
+			assert.strictEqual(oMessage.getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_CHART"), "Correct message is displayed");
 		});
 
 		QUnit.module("Component Card");
@@ -3028,28 +2716,23 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("Controller must have access to the card during onInit", function (assert) {
-
+		QUnit.test("Controller must have access to the card during onInit", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oCard = new Card();
-
-			oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-
-				var oContent = oCard.getCardContent();
-
-				// Assert
-				assert.strictEqual(oContent.$().find(".sapMText").text(), "Berlin", "Controller has access to card parameters during onInit.");
-
-				// Clean up
-				oCard.destroy();
-
-				done();
-			});
+			var oCard = new Card();
 
 			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/component/cardAccess/manifest.json");
 			oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(oCard);
+			await nextUIUpdate();
+
+			var oContent = oCard.getCardContent();
+
+			// Assert
+			assert.strictEqual(oContent.$().find(".sapMText").text(), "Berlin", "Controller has access to card parameters during onInit.");
+
+			// Clean up
+			oCard.destroy();
 		});
 
 		QUnit.module("Refreshing", {
@@ -3083,29 +2766,20 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Refreshing card state", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-
-				Core.applyChanges();
-
-				this.oCard.attachEventOnce("_ready", function () {
-
-					// Assert
-					assert.ok(true, "Should have fired _ready event after refresh.");
-
-					// Cleanup
-					done();
-				});
-
-				// Act
-				this.oCard.refresh();
-			}.bind(this));
-
+		QUnit.test("Refreshing card state", async function (assert) {
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			this.oCard.setManifest(this.oManifest);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Act
+			this.oCard.refresh();
+
+			await nextCardReadyEvent(this.oCard);
+
+			// Assert
+			assert.ok(true, "Should have fired _ready event after refresh.");
 		});
 
 		QUnit.module("Refreshing data", {
@@ -3118,29 +2792,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Inner level data", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-				var oContentSpy = sinon.spy(BaseContent.prototype, "refreshData"),
-					oHeaderSpy = sinon.spy(Header.prototype, "refreshData"),
-					oFilterSpy = sinon.spy(Filter.prototype, "refreshData"),
-					oDataProviderSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
-
-				Core.applyChanges();
-				this.oCard.refreshData();
-				assert.ok(oContentSpy.called, "content refreshData method is called");
-				assert.ok(oHeaderSpy.called, "header refreshData method is called");
-				assert.strictEqual(oFilterSpy.callCount, 2, "filter refreshData method is called twice");
-				assert.strictEqual(oDataProviderSpy.callCount, 4, "dataprovider triggerDataUpdate method is called 4 times");
-
-				oContentSpy.restore();
-				oHeaderSpy.restore();
-				oFilterSpy.restore();
-				oDataProviderSpy.restore();
-				done();
-			}.bind(this));
-
+		QUnit.test("Inner level data", async function (assert) {
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			this.oCard.setManifest({
 				"sap.app": {
@@ -3188,31 +2840,29 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oContentSpy = sinon.spy(BaseContent.prototype, "refreshData"),
+			oHeaderSpy = sinon.spy(Header.prototype, "refreshData"),
+			oFilterSpy = sinon.spy(Filter.prototype, "refreshData"),
+			oDataProviderSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
+
+			await nextUIUpdate();
+			this.oCard.refreshData();
+			assert.ok(oContentSpy.called, "content refreshData method is called");
+			assert.ok(oHeaderSpy.called, "header refreshData method is called");
+			assert.strictEqual(oFilterSpy.callCount, 2, "filter refreshData method is called twice");
+			assert.strictEqual(oDataProviderSpy.callCount, 4, "dataprovider triggerDataUpdate method is called 4 times");
+
+			oContentSpy.restore();
+			oHeaderSpy.restore();
+			oFilterSpy.restore();
+			oDataProviderSpy.restore();
 		});
 
-		QUnit.test("Root(card) level data", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-				var oContentSpy = sinon.spy(BaseContent.prototype, "refreshData"),
-					oHeaderSpy = sinon.spy(Header.prototype, "refreshData"),
-					oFilterSpy = sinon.spy(Filter.prototype, "refreshData"),
-					oDataProviderSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
-
-				Core.applyChanges();
-				this.oCard.refreshData();
-				assert.ok(oContentSpy.called, "content refreshData method is called");
-				assert.ok(oHeaderSpy.called, "header refreshData method is called");
-				assert.strictEqual(oFilterSpy.callCount, 2, "filter refreshData method is called twice");
-				assert.strictEqual(oDataProviderSpy.callCount, 1, "dataprovider triggerDataUpdate method is called once");
-
-				oContentSpy.restore();
-				oHeaderSpy.restore();
-				oFilterSpy.restore();
-				oDataProviderSpy.restore();
-				done();
-			}.bind(this));
-
+		QUnit.test("Root(card) level data", async function (assert) {
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			this.oCard.setManifest({
 				"sap.app": {
@@ -3245,31 +2895,30 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oContentSpy = sinon.spy(BaseContent.prototype, "refreshData"),
+				oHeaderSpy = sinon.spy(Header.prototype, "refreshData"),
+				oFilterSpy = sinon.spy(Filter.prototype, "refreshData"),
+				oDataProviderSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
+
+			await nextUIUpdate();
+
+			this.oCard.refreshData();
+			assert.ok(oContentSpy.called, "content refreshData method is called");
+			assert.ok(oHeaderSpy.called, "header refreshData method is called");
+			assert.strictEqual(oFilterSpy.callCount, 2, "filter refreshData method is called twice");
+			assert.strictEqual(oDataProviderSpy.callCount, 1, "dataprovider triggerDataUpdate method is called once");
+
+			oContentSpy.restore();
+			oHeaderSpy.restore();
+			oFilterSpy.restore();
+			oDataProviderSpy.restore();
 		});
 
-		QUnit.test("No data", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-				var oContentSpy = sinon.spy(BaseContent.prototype, "refreshData"),
-					oHeaderSpy = sinon.spy(Header.prototype, "refreshData"),
-					oFilterSpy = sinon.spy(Filter.prototype, "refreshData"),
-					oDataProviderSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
-
-				Core.applyChanges();
-				this.oCard.refreshData();
-				assert.ok(oContentSpy.called, "content refreshData method is called");
-				assert.ok(oHeaderSpy.called, "header refreshData method is called");
-				assert.strictEqual(oFilterSpy.callCount, 2, "filter refreshData method is called twice");
-				assert.ok(oDataProviderSpy.notCalled, "dataprovider triggerDataUpdate method is not called");
-
-				oContentSpy.restore();
-				oHeaderSpy.restore();
-				oFilterSpy.restore();
-				oDataProviderSpy.restore();
-				done();
-			}.bind(this));
-
+		QUnit.test("No data", async function (assert) {
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			this.oCard.setManifest({
 				"sap.app": {
@@ -3297,6 +2946,27 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oContentSpy = sinon.spy(BaseContent.prototype, "refreshData"),
+				oHeaderSpy = sinon.spy(Header.prototype, "refreshData"),
+				oFilterSpy = sinon.spy(Filter.prototype, "refreshData"),
+				oDataProviderSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
+
+			await nextUIUpdate();
+			this.oCard.refreshData();
+
+			assert.ok(oContentSpy.called, "content refreshData method is called");
+			assert.ok(oHeaderSpy.called, "header refreshData method is called");
+			assert.strictEqual(oFilterSpy.callCount, 2, "filter refreshData method is called twice");
+			assert.ok(oDataProviderSpy.notCalled, "dataprovider triggerDataUpdate method is not called");
+
+			oContentSpy.restore();
+			oHeaderSpy.restore();
+			oFilterSpy.restore();
+			oDataProviderSpy.restore();
 		});
 
 		QUnit.test("Not ready", function (assert) {
@@ -3376,29 +3046,8 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Initially invalid response, valid second response", function (assert) {
+		QUnit.test("Initially invalid response, valid second response", async function (assert) {
 			// Arrange
-			var done = assert.async(2);
-			this.oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-
-				var oError = this.oCard.getCardContent().getAggregation("_blockingMessage");
-				assert.ok(oError.isA("sap.ui.integration.controls.BlockingMessage"), "Error is displayed.");
-
-				this.oCard.refreshData();
-
-				this.oCard.attachEventOnce("_contentReady", function () {
-					Core.applyChanges();
-
-					var oContent = this.oCard.getCardContent();
-					assert.ok(oContent.isA("sap.ui.integration.cards.BaseContent"), "Content is displayed correctly.");
-
-					done();
-				}.bind(this));
-
-				done();
-			}.bind(this));
-
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			this.oCard.setManifest({
 				"sap.app": {
@@ -3423,6 +3072,20 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oError = this.oCard.getCardContent().getAggregation("_blockingMessage");
+			assert.ok(oError.isA("sap.ui.integration.controls.BlockingMessage"), "Error is displayed.");
+
+			this.oCard.refreshData();
+
+			await nextCardContentReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oContent = this.oCard.getCardContent();
+			assert.ok(oContent.isA("sap.ui.integration.cards.BaseContent"), "Content is displayed correctly.");
 		});
 
 		QUnit.module("Event stateChanged", {
@@ -3437,22 +3100,21 @@ sap.ui.define([
 
 		QUnit.test("Event stateChanged is fired on refreshData", function (assert) {
 			var done = assert.async(),
-				oCard = this.oCard,
 				oHost = new Host();
 
 			assert.expect(4);
 
-			oCard.setHost(oHost);
+			this.oCard.setHost(oHost);
 
-			oCard.attachEventOnce("stateChanged", function () {
+			this.oCard.attachEventOnce("stateChanged", () => {
 				assert.ok(true, "stateChanged is called on card ready");
 
-				oCard.attachEventOnce("stateChanged", function () {
+				this.oCard.attachEventOnce("stateChanged", function () {
 					assert.ok(true, "stateChanged is called after data refresh");
 				});
 			});
 
-			oHost.attachEventOnce("cardStateChanged", function () {
+			oHost.attachEventOnce("cardStateChanged", () => {
 				assert.ok(true, "cardStateChanged for host is called on card ready");
 
 				oHost.attachEventOnce("cardStateChanged", function () {
@@ -3464,12 +3126,12 @@ sap.ui.define([
 				});
 
 				// Act
-				oCard.refreshData();
+				this.oCard.refreshData();
 			});
 
 			// Act
-			oCard.setBaseUrl("/test-resources/sap/ui/integration/qunit/testResources/");
-			oCard.setManifest({
+			this.oCard.setBaseUrl("/test-resources/sap/ui/integration/qunit/testResources/");
+			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.stateChanged"
 				},
@@ -3487,33 +3149,16 @@ sap.ui.define([
 					}
 				}
 			});
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
-		QUnit.test("Event stateChanged is fired only once", function (assert) {
+		QUnit.test("Event stateChanged is fired only once", async function (assert) {
 			var done = assert.async(),
-				oCard = this.oCard,
 				iStateChangedCounter = 0;
 
-			assert.expect(1);
-
-			oCard.attachEventOnce("_ready", function () {
-				oCard.attachStateChanged(function () {
-					iStateChangedCounter++;
-				});
-
-				oCard.scheduleFireStateChanged();
-				oCard.scheduleFireStateChanged();
-
-				setTimeout(function () {
-					assert.strictEqual(iStateChangedCounter, 1, "Event stateChanged is fired only once.");
-					done();
-				}, 100);
-			});
-
 			// Act
-			oCard.setBaseUrl("/test-resources/sap/ui/integration/qunit/testResources/");
-			oCard.setManifest({
+			this.oCard.setBaseUrl("/test-resources/sap/ui/integration/qunit/testResources/");
+			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.stateChanged2"
 				},
@@ -3524,7 +3169,21 @@ sap.ui.define([
 					}
 				}
 			});
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+
+			this.oCard.attachStateChanged(function () {
+				iStateChangedCounter++;
+			});
+
+			this.oCard.scheduleFireStateChanged();
+			this.oCard.scheduleFireStateChanged();
+
+			setTimeout(function () {
+				assert.strictEqual(iStateChangedCounter, 1, "Event stateChanged is fired only once.");
+				done();
+			}, 100);
 		});
 
 		QUnit.module("Data mode", {
@@ -3558,74 +3217,60 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Set data mode", function (assert) {
-
-			// Arrange
-			var done = assert.async(),
-				oApplyManifestSpy = sinon.spy(Card.prototype, "_applyManifestSettings");
-
-			this.oCard.attachEventOnce("_ready", function () {
-
-				// Assert
-				assert.ok(oApplyManifestSpy.calledOnce, "Card with default 'Auto' state should try to apply the manifest settings.");
-
-				// Act
-				oApplyManifestSpy.reset();
-				this.oCard.setDataMode(CardDataMode.Inactive);
-
-				// Assert
-				assert.ok(oApplyManifestSpy.notCalled, "Card with 'Inactive' state should NOT try to apply the manifest settings.");
-
-				// Act
-				oApplyManifestSpy.reset();
-
-				this.oCard.attachEventOnce("_ready", function () {
-					// Assert
-					assert.ok(oApplyManifestSpy.calledOnce, "Should call refresh when turning to 'Active' mode.");
-					// Cleanup
-					oApplyManifestSpy.restore();
-					done();
-				});
-
-				this.oCard.setDataMode(CardDataMode.Active);
-				Core.applyChanges();
-
-			}.bind(this));
+		QUnit.test("Set data mode", async function (assert) {
+			var oApplyManifestSpy = sinon.spy(Card.prototype, "_applyManifestSettings");
 
 			this.oCard.setManifest(this.oManifest);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+
+			// Assert
+			assert.ok(oApplyManifestSpy.calledOnce, "Card with default 'Auto' state should try to apply the manifest settings.");
+
+			// Act
+			oApplyManifestSpy.reset();
+			this.oCard.setDataMode(CardDataMode.Inactive);
+
+			// Assert
+			assert.ok(oApplyManifestSpy.notCalled, "Card with 'Inactive' state should NOT try to apply the manifest settings.");
+
+			// Act
+			oApplyManifestSpy.reset();
+			this.oCard.setDataMode(CardDataMode.Active);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(oApplyManifestSpy.calledOnce, "Should call refresh when turning to 'Active' mode.");
+
+			// Cleanup
+			oApplyManifestSpy.restore();
 		});
 
 		QUnit.module("Card manifest - URL", {
 			beforeEach: function () {
-				this.oCardUrl = new Card({
+				this.oCard = new Card({
 					width: "400px",
 					height: "600px"
 				});
 			},
 			afterEach: function () {
-				this.oCardUrl.destroy();
-				this.oCardUrl = null;
+				this.oCard.destroy();
+				this.oCard = null;
 			}
 		});
 
-		QUnit.test("Card manifest set trough url", function (assert) {
+		QUnit.test("Card manifest set through url", async function (assert) {
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
-			// Arrange
-			var done = assert.async();
-			this.oCardUrl.attachEventOnce("_ready", function () {
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				Core.applyChanges();
-
-				// Assert
-				assert.ok(true, "Should have fired _ready event.");
-
-				// Cleanup
-				done();
-			});
-
-			this.oCardUrl.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
-			this.oCardUrl.placeAt(DOM_RENDER_LOCATION);
+			// Assert
+			assert.ok(true, "Should have fired _ready event.");
 		});
 
 		QUnit.module("Header counter", {
@@ -3641,67 +3286,43 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Formatting with self translation", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-
-				Core.applyChanges();
-
-				var oHeader = this.oCard.getCardHeader();
-
-				// Assert
-				assert.equal(oHeader.getStatusText(), "2 of 115", "Should have correctly formatted and translated counter.");
-
-				// Cleanup
-				done();
-			}.bind(this));
-
+		QUnit.test("Formatting with self translation", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslationsOwnCounter/manifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.equal(oHeader.getStatusText(), "2 of 115", "Should have correctly formatted and translated counter.");
 		});
 
-		QUnit.test("Formatting with custom translation", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-
-				Core.applyChanges();
-
-				var oHeader = this.oCard.getCardHeader();
-
-				// Assert
-				assert.equal(oHeader.getStatusText(), "2 of custom 115", "Should have correctly formatted and translated counter.");
-
-				// Cleanup
-				done();
-			}.bind(this));
-
+		QUnit.test("Formatting with custom translation", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslationsCustomCounter/manifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.equal(oHeader.getStatusText(), "2 of custom 115", "Should have correctly formatted and translated counter.");
 		});
 
-		QUnit.test("Formatting with self translation and no custom translation", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachEventOnce("_ready", function () {
-
-				Core.applyChanges();
-
-				var oHeader = this.oCard.getCardHeader();
-
-				// Assert
-				assert.equal(oHeader.getStatusText(), "2 of 115", "Should have correctly formatted and translated counter.");
-
-				// Cleanup
-				done();
-			}.bind(this));
-
+		QUnit.test("Formatting with self translation and no custom translation", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslationsOwnCounter/manifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oHeader = this.oCard.getCardHeader();
+
+			// Assert
+			assert.equal(oHeader.getStatusText(), "2 of 115", "Should have correctly formatted and translated counter.");
 		});
 
 		QUnit.module("Events", {
@@ -3729,37 +3350,28 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
-		QUnit.test("getManifestEntry after 'manifestReady' event is fired.", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-			this.oCard.attachManifestReady(function () {
-				// Assert
-				assert.deepEqual(this.oCard.getManifestEntry("/"), oManifest_ListCard, "getManifestEntry returns correct result for '/'");
-				assert.deepEqual(this.oCard.getManifestEntry("/sap.card"), oManifest_ListCard["sap.card"], "getManifestEntry returns correct result for '/sap.card'");
-				assert.strictEqual(this.oCard.getManifestEntry("/sap.card/header/title"), oManifest_ListCard["sap.card"]["header"]["title"], "getManifestEntry returns correct result for '/sap.card/header/title'");
-				done();
-			}.bind(this));
-
+		QUnit.test("getManifestEntry after 'manifestReady' event is fired.", async function (assert) {
 			// Act
 			this.oCard.setManifest(oManifest_ListCard);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardManifestReadyEvent(this.oCard);
+
+			// Assert
+			assert.deepEqual(this.oCard.getManifestEntry("/"), oManifest_ListCard, "getManifestEntry returns correct result for '/'");
+			assert.deepEqual(this.oCard.getManifestEntry("/sap.card"), oManifest_ListCard["sap.card"], "getManifestEntry returns correct result for '/sap.card'");
+			assert.strictEqual(this.oCard.getManifestEntry("/sap.card/header/title"), oManifest_ListCard["sap.card"]["header"]["title"], "getManifestEntry returns correct result for '/sap.card/header/title'");
 		});
 
-		QUnit.test("'manifestApplied' event is fired.", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard;
-
-				oCard.attachManifestApplied(function () {
-				// Assert
-				assert.ok(true, "Event 'manifestApplied' is fired.");
-				done();
-			});
-
+		QUnit.test("'manifestApplied' event is fired.", async function (assert) {
 			// Act
-			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardManifestAppliedEvent(this.oCard);
+
+			// Assert
+			assert.ok(true, "Event 'manifestApplied' is fired.");
 		});
 
 		QUnit.module("Property 'manifestChanges'", {
@@ -3772,16 +3384,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Change title with manifestChanges", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				// Assert
-				assert.strictEqual(this.oCard.getAggregation("_header").getTitle(), "My new title 2", "The title is changed");
-				done();
-			}.bind(this));
-
+		QUnit.test("Change title with manifestChanges", async function (assert) {
 			// Act
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.setManifestChanges([
@@ -3789,19 +3392,15 @@ sap.ui.define([
 				{ content: { header: { title: "My new title 2" } } }
 			]);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.strictEqual(this.oCard.getAggregation("_header").getTitle(), "My new title 2", "The title is changed");
 		});
 
-		QUnit.test("Change title with manifestChanges with path syntax", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				// Assert
-				assert.strictEqual(this.oCard.getAggregation("_header").getTitle(), "My new title 2", "The title is changed");
-				done();
-			}.bind(this));
-
-			// Act
+		QUnit.test("Change title with manifestChanges with path syntax", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.setManifestChanges([
 				{ "/sap.card/header/title": "My new title 1" },
@@ -3809,19 +3408,15 @@ sap.ui.define([
 
 			]);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.strictEqual(this.oCard.getAggregation("_header").getTitle(), "My new title 2", "The title is changed");
 		});
 
-		QUnit.test("Change title with manifestChanges with mixed syntax, last path syntax", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				// Assert
-				assert.strictEqual(this.oCard.getAggregation("_header").getTitle(), "My new title 4", "The title is changed");
-				done();
-			}.bind(this));
-
-			// Act
+		QUnit.test("Change title with manifestChanges with mixed syntax, last path syntax", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.setManifestChanges([
 				{ "/sap.card/header/title": "My new title 1" },
@@ -3830,19 +3425,15 @@ sap.ui.define([
 				{ "/sap.card/header/title": "My new title 4" }
 			]);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.strictEqual(this.oCard.getAggregation("_header").getTitle(), "My new title 4", "The title is changed");
 		});
 
-		QUnit.test("Change title with manifestChanges with mixed syntax, last content syntax", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				// Assert
-				assert.strictEqual(this.oCard.getAggregation("_header").getTitle(), "My new title 4", "The title is changed");
-				done();
-			}.bind(this));
-
-			// Act
+		QUnit.test("Change title with manifestChanges with mixed syntax, last content syntax", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.setManifestChanges([
 				{ "/sap.card/header/title": "My new title 1" },
@@ -3851,44 +3442,43 @@ sap.ui.define([
 				{ content: { header: { title: "My new title 4" } } }
 			]);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.strictEqual(this.oCard.getAggregation("_header").getTitle(), "My new title 4", "The title is changed");
 		});
 
-		QUnit.test("Check getManifestWithMergedChanges", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				// Assert
-				var oMergedManifest = this.oCard.getManifestWithMergedChanges();
-				assert.strictEqual(oMergedManifest["sap.card"]["header"]["title"], "Test title", "The manifest contains the given changes.");
-				done();
-			}.bind(this));
-
+		QUnit.test("Check getManifestWithMergedChanges", async function (assert) {
 			// Act
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.setManifestChanges([
 				{ content: { header: { title: "Test title" } } }
 			]);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			var oMergedManifest = this.oCard.getManifestWithMergedChanges();
+			assert.strictEqual(oMergedManifest["sap.card"]["header"]["title"], "Test title", "The manifest contains the given changes.");
 		});
 
-		QUnit.test("Check getManifestWithMergedChanges with path syntax", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				// Assert
-				var oMergedManifest = this.oCard.getManifestWithMergedChanges();
-				assert.strictEqual(oMergedManifest["sap.card"]["header"]["title"], "Test title", "The manifest contains the given changes.");
-				done();
-			}.bind(this));
-
-			// Act
+		QUnit.test("Check getManifestWithMergedChanges with path syntax", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.setManifestChanges([
 				{ "/sap.card/header/title": "Test title" }
 			]);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			var oMergedManifest = this.oCard.getManifestWithMergedChanges();
+			assert.strictEqual(oMergedManifest["sap.card"]["header"]["title"], "Test title", "The manifest contains the given changes.");
 		});
 
 		QUnit.module("Style classes", {
@@ -3907,10 +3497,9 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("'sapUiIntCardAnalytical' is added only when the type is 'Analytical'", function (assert) {
+		QUnit.test("'sapUiIntCardAnalytical' is added only when the type is 'Analytical'", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oAnalyticalManifest = {
+			var oAnalyticalManifest = {
 					"sap.app": {
 						"id": "someId"
 					},
@@ -3927,25 +3516,23 @@ sap.ui.define([
 					}
 				};
 
-			// Act
-			this.oCard.attachEventOnce("_ready", function () {
-				// Assert
-				assert.ok(this.oCard.$().hasClass("sapUiIntCardAnalytical"), "'sapUiIntCardAnalytical' class should be set.");
-
-				this.oCard.attachEventOnce("_ready", function () {
-					// Assert
-					assert.notOk(this.oCard.$().hasClass("sapUiIntCardAnalytical"), "'sapUiIntCardAnalytical' class should NOT be set.");
-					done();
-				}.bind(this));
-
-				// Act
-				this.oCard.setManifest(oTableManifest);
-
-			}.bind(this));
-
 			this.oCard.setManifest(oAnalyticalManifest);
-		});
 
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(this.oCard.$().hasClass("sapUiIntCardAnalytical"), "'sapUiIntCardAnalytical' class should be set.");
+
+			// Act
+			this.oCard.setManifest(oTableManifest);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.notOk(this.oCard.$().hasClass("sapUiIntCardAnalytical"), "'sapUiIntCardAnalytical' class should NOT be set.");
+		});
 
 		QUnit.module("Badge", {
 			beforeEach: function () {
@@ -3960,79 +3547,60 @@ sap.ui.define([
 				});
 			},
 			afterEach: function () {
-				// this.sinon.useFakeTimers = false;
 				this.oCard.destroy();
 				this.oCard = null;
 			}
 		});
 
-		QUnit.test("Rendering", function (assert) {
-			var done = assert.async();
-
-			// Arrange
-			this.oCard.attachEventOnce("_ready", function () {
-
-				Core.applyChanges();
-
-				var $badgeIndicator = this.oCard.$().find(".sapMBadgeIndicator");
-
-				// Assert
-				assert.strictEqual(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "New", "Badge indicator is correctly rendered");
-				assert.strictEqual($badgeIndicator.attr("aria-label"), "New", "Badge aria-label correctly rendered");
-				assert.ok(this.oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) > -1, "aria-labelledby contains the badge indicator id");
-
-				done();
-
-			}.bind(this));
-
+		QUnit.test("Rendering", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var $badgeIndicator = this.oCard.$().find(".sapMBadgeIndicator");
+
+			// Assert
+			assert.strictEqual(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "New", "Badge indicator is correctly rendered");
+			assert.strictEqual($badgeIndicator.attr("aria-label"), "New", "Badge aria-label correctly rendered");
+			assert.ok(this.oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) > -1, "aria-labelledby contains the badge indicator id");
 		});
 
-
-		QUnit.test("Auto hide", function (assert) {
-			var done = assert.async();
-
-			// Arrange
-			this.oCard.attachEventOnce("_ready", function () {
-
-				Core.applyChanges();
-
-				this.clock = sinon.useFakeTimers();
-
-				var $badgeIndicator = this.oCard.$().find(".sapMBadgeIndicator");
-
-				// Assert
-				assert.ok(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is rendered");
-
-				this.oCard.focus();
-
-				this.clock.tick(4000);
-
-				assert.equal(this.oCard._isBadgeAttached, false, "Badge indicator is not rendered");
-				assert.notOk($badgeIndicator.attr("aria-label"), "Badge aria-label is removed");
-				assert.ok(this.oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) === -1, "aria-labelledby does not contain the badge indicator id");
-
-				this.oCard.addCustomData(new BadgeCustomData({value: "New"}));
-				Core.applyChanges();
-
-				$badgeIndicator = this.oCard.$().find(".sapMBadgeIndicator");
-
-				// Assert
-				assert.ok(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is rendered");
-
-				this.oCard.onsapenter();
-				assert.equal(this.oCard._isBadgeAttached, false, "Badge indicator is not rendered");
-
-				this.clock.restore();
-				done();
-
-			}.bind(this));
-
+		QUnit.test("Auto hide", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-		});
 
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			this.clock = sinon.useFakeTimers();
+			var $badgeIndicator = this.oCard.$().find(".sapMBadgeIndicator");
+
+			// Assert
+			assert.ok(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is rendered");
+
+			this.oCard.focus();
+
+			this.clock.tick(4000);
+
+			assert.equal(this.oCard._isBadgeAttached, false, "Badge indicator is not rendered");
+			assert.notOk($badgeIndicator.attr("aria-label"), "Badge aria-label is removed");
+			assert.ok(this.oCard.getCardHeader().$("focusable").attr("aria-labelledby").indexOf($badgeIndicator.attr('id')) === -1, "aria-labelledby does not contain the badge indicator id");
+
+			this.oCard.addCustomData(new BadgeCustomData({value: "New"}));
+			await nextUIUpdate(this.clock);
+
+			$badgeIndicator = this.oCard.$().find(".sapMBadgeIndicator");
+
+			// Assert
+			assert.ok(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "Badge indicator is rendered");
+
+			this.oCard.onsapenter();
+			assert.equal(this.oCard._isBadgeAttached, false, "Badge indicator is not rendered");
+
+			this.clock.restore();
+		});
 
 		QUnit.module("Translations", {
 			beforeEach: function () {
@@ -4045,52 +3613,42 @@ sap.ui.define([
 		});
 
 		QUnit.test("I18n module is initialized with integration library resource bundle", function (assert) {
-			var oCard = this.oCard,
-				oModel;
+			var oModel;
 
 			// Arrange
-			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
 			// Assert
-			oModel = oCard.getModel("i18n");
+			oModel = this.oCard.getModel("i18n");
 			assert.strictEqual(oModel.getResourceBundle(), Library.getResourceBundleFor("sap.ui.integration"), "The i18n model of the card is correctly initialized.");
 		});
 
-		QUnit.test("Integration library resource bundle is not enhanced", function (assert) {
+		QUnit.test("Integration library resource bundle is not enhanced", async function (assert) {
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
-			var done = assert.async(),
-				oCard = this.oCard;
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-			// Arrange
-			oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
-				assert.ok(oResourceBundle.aCustomBundles.length === 0, "The resource bundle for integration library is not enhanced.");
-
-				done();
-			});
-
-			oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json");
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			// Assert
+			var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
+			assert.ok(oResourceBundle.aCustomBundles.length === 0, "The resource bundle for integration library is not enhanced.");
 		});
 
 		QUnit.test("I18n module is isolated", function (assert) {
 			var oContainer = new HBox(),
-				oCard = this.oCard,
 				oModel;
 
 			// Arrange
 			oContainer.setModel(new JSONModel(), "i18n");
-			oContainer.addItem(oCard);
+			oContainer.addItem(this.oCard);
 
-			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			oContainer.placeAt(DOM_RENDER_LOCATION);
 
 			// Assert
-			oModel = oCard.getModel("i18n");
+			oModel = this.oCard.getModel("i18n");
 
 			assert.ok(oModel.isA("sap.ui.model.resource.ResourceModel"), "The i18n model of the card is ResourceModel.");
 
@@ -4098,68 +3656,44 @@ sap.ui.define([
 			oContainer.destroy();
 		});
 
-		QUnit.test("Card translations work", function (assert) {
+		QUnit.test("Card translations work", async function (assert) {
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
-			var done = assert.async(),
-				oCard = this.oCard;
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-			// Arrange
-			oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				assert.strictEqual(oCard.getCardHeader().getTitle(), "Card Translation Bundle", "The translation for title is correct.");
-
-				done();
-			});
-
-			oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json");
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			// Assert
+			assert.strictEqual(this.oCard.getCardHeader().getTitle(), "Card Translation Bundle", "The translation for title is correct.");
 		});
 
-		QUnit.test("Use getTranslatedText", function (assert) {
+		QUnit.test("Use getTranslatedText", async function (assert) {
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslationsCustomCounter/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
-			var done = assert.async(),
-				oCard = this.oCard;
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-			// Arrange
-			oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				assert.strictEqual(oCard.getTranslatedText("SUBTITLE"), "Some subtitle", "The translation for SUBTITLE is correct.");
-				assert.strictEqual(oCard.getTranslatedText("COUNT_X_OF_Y", [3, 5]), "3 of custom 5", "The translation for COUNT_X_OF_Y is correct.");
-
-				done();
-			});
-
-			oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslationsCustomCounter/manifest.json");
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			// Assert
+			assert.strictEqual(this.oCard.getTranslatedText("SUBTITLE"), "Some subtitle", "The translation for SUBTITLE is correct.");
+			assert.strictEqual(this.oCard.getTranslatedText("COUNT_X_OF_Y", [3, 5]), "3 of custom 5", "The translation for COUNT_X_OF_Y is correct.");
 		});
 
-		QUnit.test("Refresh reloads translations correctly", function (assert) {
-			var done = assert.async(),
-				oCard = this.oCard;
+		QUnit.test("Refresh reloads translations correctly", async function (assert) {
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslationsOwnCounter/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
-			// Arrange
-			oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				oCard.refresh();
+			this.oCard.refresh();
 
-				oCard.attachEventOnce("_ready", function () {
-					Core.applyChanges();
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-					// Assert
-					assert.strictEqual(oCard.getTranslatedText("SUBTITLE"), "Some subtitle", "The translation for SUBTITLE is correct.");
-					assert.strictEqual(oCard.getTranslatedText("CARD.COUNT_X_OF_Y", [3, 5]), "3 of 5", "The translation for COUNT_X_OF_Y is correct.");
-
-					done();
-				});
-			});
-
-			oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslationsOwnCounter/manifest.json");
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			// Assert
+			assert.strictEqual(this.oCard.getTranslatedText("SUBTITLE"), "Some subtitle", "The translation for SUBTITLE is correct.");
+			assert.strictEqual(this.oCard.getTranslatedText("CARD.COUNT_X_OF_Y", [3, 5]), "3 of 5", "The translation for COUNT_X_OF_Y is correct.");
 		});
 
 		QUnit.module("Size", {
@@ -4172,39 +3706,30 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Content height is not bigger than container height", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard;
-
-			oCard.setWidth("400px");
-			oCard.setHeight("200px");
-
-			oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-
-				var oContent = oCard.getCardContent(),
-					iHeight = oContent.getDomRef().getBoundingClientRect().height;
-
-				// Assert
-				assert.ok(iHeight < 200, "The height of the content is not larger than the height of the container.");
-
-				done();
-			});
+		QUnit.test("Content height is not bigger than container height", async function (assert) {
+			this.oCard.setWidth("400px");
+			this.oCard.setHeight("200px");
 
 			// Act
-			oCard.setManifest(oManifest_ListCard);
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.setManifest(oManifest_ListCard);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oContent = this.oCard.getCardContent(),
+				iHeight = oContent.getDomRef().getBoundingClientRect().height;
+
+			// Assert
+			assert.ok(iHeight < 200, "The height of the content is not larger than the height of the container.");
 		});
 
-		QUnit.test("List Content height doesn't decrease after data is changed", function (assert) {
+		QUnit.test("List Content height doesn't decrease after data is changed", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oServer = sinon.createFakeServer({
+			var oServer = sinon.createFakeServer({
 					autoRespond: true,
 					respondImmediately: true
 				}),
-				oCard = this.oCard,
 				bFirstCall = true,
 				fFirstHeight;
 
@@ -4217,34 +3742,8 @@ sap.ui.define([
 				}
 			});
 
-			function firstReady () {
-				Core.applyChanges();
-				fFirstHeight = this.oCard.getCardContent().getDomRef().getBoundingClientRect().height;
 
-				// Assert 1
-				assert.ok(fFirstHeight > 0, "The height of the content should be bigger than 0.");
-
-				// Act 2
-				oCard.attachEventOnce("_dataReady", handleDataRefresh.bind(this));
-				oCard.refreshData();
-			}
-
-			function handleDataRefresh () {
-				Core.applyChanges();
-				var iHeight = oCard.getCardContent().getDomRef().getBoundingClientRect().height;
-
-				// Assert 2
-				assert.ok(iHeight >= fFirstHeight, "The height of the content has shrunk. It is: " + iHeight + ", was: " + fFirstHeight);
-
-				// Clean up
-				oServer.restore();
-				done();
-			}
-
-			oCard.attachEventOnce("_ready", firstReady.bind(this));
-
-			// Act 1
-			oCard.setManifest({
+			this.oCard.setManifest({
 				"sap.app": {
 					"id": "my.card.qunit.test.ListCard"
 				},
@@ -4267,14 +3766,34 @@ sap.ui.define([
 					}
 				}
 			});
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			fFirstHeight = this.oCard.getCardContent().getDomRef().getBoundingClientRect().height;
+
+			// Assert
+			assert.ok(fFirstHeight > 0, "The height of the content should be bigger than 0.");
+
+			// Act
+			this.oCard.refreshData();
+
+			await nextCardDataReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var iHeight = this.oCard.getCardContent().getDomRef().getBoundingClientRect().height;
+
+			// Assert
+			assert.ok(iHeight >= fFirstHeight, "The height of the content has shrunk. It is: " + iHeight + ", was: " + fFirstHeight);
+
+			// Clean up
+			oServer.restore();
 		});
 
-		QUnit.test("Content height doesn't decrease after data is changed", function (assert) {
+		QUnit.test("Content height doesn't decrease after data is changed", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard,
-				oServer = sinon.createFakeServer({
+			var oServer = sinon.createFakeServer({
 					autoRespond: true,
 					respondImmediately: true
 				}),
@@ -4290,34 +3809,8 @@ sap.ui.define([
 				}
 			});
 
-			function firstReady () {
-				Core.applyChanges();
-				fFirstHeight = oCard.getCardContent().getDomRef().getBoundingClientRect().height;
-
-				// Assert 1
-				assert.ok(fFirstHeight > 0, "The height of the content should be bigger than 0.");
-
-				// Act 2
-				oCard.attachEventOnce("_dataReady", handleDataRefresh.bind(this));
-				oCard.refreshData();
-			}
-
-			function handleDataRefresh () {
-				Core.applyChanges();
-				var iHeight = oCard.getCardContent().getDomRef().getBoundingClientRect().height;
-
-				// Assert 2
-				assert.strictEqual(iHeight, fFirstHeight, "The height of the content did not decrease.");
-
-				// Clean up
-				oServer.restore();
-				done();
-			}
-
-			oCard.attachEventOnce("_ready", firstReady.bind(this));
-
-			// Act 1
-			oCard.setManifest({
+			// Act
+			this.oCard.setManifest({
 				"sap.app": {
 					"id": "my.card.qunit.test.ListCard"
 				},
@@ -4341,8 +3834,29 @@ sap.ui.define([
 					}
 				}
 			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
-			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			fFirstHeight = this.oCard.getCardContent().getDomRef().getBoundingClientRect().height;
+
+			// Assert
+			assert.ok(fFirstHeight > 0, "The height of the content should be bigger than 0.");
+
+			// Act
+			this.oCard.refreshData();
+
+			await nextCardDataReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var iHeight = this.oCard.getCardContent().getDomRef().getBoundingClientRect().height;
+
+			// Assert
+			assert.strictEqual(iHeight, fFirstHeight, "The height of the content did not decrease.");
+
+			// Clean up
+			oServer.restore();
 		});
 
 		QUnit.module("Card without rendering", {
@@ -4355,23 +3869,19 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Full manifest processing is done by calling the method 'startManifestProcessing'", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard;
-
-			oCard.attachEvent("_ready", function () {
-				var aItems = this.oCard.getCardContent().getInnerList().getItems();
-
-				// Assert
-				assert.ok(true, "Card processing was done even without rendering.");
-				assert.strictEqual(aItems.length, 8, "The content has 8 items in its aggregation.");
-				done();
-			}.bind(this));
-
+		QUnit.test("Full manifest processing is done by calling the method 'startManifestProcessing'", async function (assert) {
 			// Act
-			oCard.setManifest(oManifest_ListCard);
-			oCard.startManifestProcessing();
+			this.oCard.setManifest(oManifest_ListCard);
+			this.oCard.startManifestProcessing();
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var aItems = this.oCard.getCardContent().getInnerList().getItems();
+
+			// Assert
+			assert.ok(true, "Card processing was done even without rendering.");
+			assert.strictEqual(aItems.length, 8, "The content has 8 items in its aggregation.");
 		});
 
 		QUnit.module("Destroy", {
@@ -4423,71 +3933,62 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("List items can be set through custom model", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard;
-
-			oCard.attachEvent("_ready", function () {
-				var aItems;
-
-				oCard.getModel("cities").setData({
-					items: [
-						{name: "City 1"},
-						{name: "City 2"}
-					]
-				});
-
-				Core.applyChanges();
-
-				aItems = this.oCard.getCardContent().getInnerList().getItems();
-
-				// Assert
-				assert.strictEqual(aItems.length, 2, "There are two items rendered from the custom model.");
-				done();
-			}.bind(this));
-
+		QUnit.test("List items can be set through custom model", async function (assert) {
 			// Act
-			oCard.setManifest(oManifest_CustomModels);
-			oCard.startManifestProcessing();
-		});
+			this.oCard.setManifest(oManifest_CustomModels);
+			this.oCard.startManifestProcessing();
 
-		QUnit.test("Registering custom models on multiple calls to setManifest", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard,
-				fnErrorLogSpy = sinon.spy(Log, "error");
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-			oCard.attachEventOnce("_ready", function () {
-				var fnModelDestroySpy = sinon.spy(oCard.getModel("cities"), "destroy");
+			var aItems;
 
-				oCard.attachEventOnce("_ready", function () {
-					// Assert - after second setManifest
-					assert.ok(fnModelDestroySpy.calledOnce, "Destroy was called for the custom model on second setManifest.");
-					assert.strictEqual(this._aCustomModels.length, 1, "Custom model is registered only once.");
-					assert.notOk(fnErrorLogSpy.called, "There is no error logged for duplicate custom model names.");
-
-					oCard.destroy();
-					Core.applyChanges();
-
-					assert.ok(true, "Card can be successfully destroyed after multiple calls to setManifest.");
-
-					done();
-
-					// Clean up
-					fnModelDestroySpy.restore();
-					fnErrorLogSpy.restore();
-				});
-
-				// Act
-				oCard.setManifest(oManifest_CustomModels);
-				oCard.startManifestProcessing();
-				Core.applyChanges();
+			this.oCard.getModel("cities").setData({
+				items: [
+					{name: "City 1"},
+					{name: "City 2"}
+				]
 			});
 
+			await nextUIUpdate();
+
+			aItems = this.oCard.getCardContent().getInnerList().getItems();
+
+			// Assert
+			assert.strictEqual(aItems.length, 2, "There are two items rendered from the custom model.");
+		});
+
+		QUnit.test("Registering custom models on multiple calls to setManifest", async function (assert) {
+			// Arrange
+			var fnErrorLogSpy = sinon.spy(Log, "error");
+
 			// Act
-			oCard.setManifest(oManifest_CustomModels);
-			oCard.startManifestProcessing();
+			this.oCard.setManifest(oManifest_CustomModels);
+			this.oCard.startManifestProcessing();
+
+			await nextCardReadyEvent(this.oCard);
+
+			var fnModelDestroySpy = sinon.spy(this.oCard.getModel("cities"), "destroy");
+
+			// Act
+			this.oCard.setManifest(oManifest_CustomModels);
+			this.oCard.startManifestProcessing();
+
+			await nextCardReadyEvent(this.oCard);
+
+			// Assert - after second setManifest
+			assert.ok(fnModelDestroySpy.calledOnce, "Destroy was called for the custom model on second setManifest.");
+			assert.strictEqual(this.oCard._aCustomModels.length, 1, "Custom model is registered only once.");
+			assert.notOk(fnErrorLogSpy.called, "There is no error logged for duplicate custom model names.");
+
+			this.oCard.destroy();
+			await nextUIUpdate();
+
+			assert.ok(true, "Card can be successfully destroyed after multiple calls to setManifest.");
+
+			// Clean up
+			fnModelDestroySpy.restore();
+			fnErrorLogSpy.restore();
 		});
 
 		QUnit.module("Creation of children cards", {
@@ -4500,37 +4001,14 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Property referenceId is forwarded to children cards", function (assert) {
+		QUnit.test("Property referenceId is forwarded to children cards", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard,
-				sReferenceId = "test-id",
+			var sReferenceId = "test-id",
 				oChildCard;
 
-			oCard.attachEvent("_ready", function () {
-				oChildCard = oCard._createChildCard({
-					manifest: {
-						"sap.app": {
-							"id": "test.card.childCard.card2"
-						},
-						"sap.card": {
-							"type": "Object",
-							"header": {
-								"title": "Test Card 2"
-							}
-						}
-					}
-				});
-
-				// Assert
-				assert.strictEqual(oChildCard.getReferenceId(), sReferenceId, "The created child card has the same reference id as the parent card.");
-				done();
-			});
-
 			// Act
-			oCard.setReferenceId(sReferenceId);
-
-			oCard.setManifest({
+			this.oCard.setReferenceId(sReferenceId);
+			this.oCard.setManifest({
 				"sap.app": {
 					"id": "test.card.childCard.card1"
 				},
@@ -4541,7 +4019,27 @@ sap.ui.define([
 					}
 				}
 			});
-			oCard.startManifestProcessing();
+			this.oCard.startManifestProcessing();
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			oChildCard = this.oCard._createChildCard({
+				manifest: {
+					"sap.app": {
+						"id": "test.card.childCard.card2"
+					},
+					"sap.card": {
+						"type": "Object",
+						"header": {
+							"title": "Test Card 2"
+						}
+					}
+				}
+			});
+
+			// Assert
+			assert.strictEqual(oChildCard.getReferenceId(), sReferenceId, "The created child card has the same reference id as the parent card.");
 		});
 
 		QUnit.module("Design property", {
@@ -4554,38 +4052,26 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Design property in list card", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard;
+		QUnit.test("Design property in list card", async function (assert) {
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.setDesign("Transparent");
+			this.oCard.setManifest(oManifest_ListCard);
 
-			oCard.attachEvent("_ready", function () {
-				// Assert
-				assert.strictEqual(oCard.getCardContent()._getList().getBackgroundDesign(), "Transparent", "The design property is set correctly.");
-				done();
-			});
+			await nextCardReadyEvent(this.oCard);
 
-			// Act
-			oCard.placeAt(DOM_RENDER_LOCATION);
-			oCard.setDesign("Transparent");
-			oCard.setManifest(oManifest_ListCard);
+			// Assert
+			assert.strictEqual(this.oCard.getCardContent()._getList().getBackgroundDesign(), "Transparent", "The design property is set correctly.");
 		});
 
-		QUnit.test("Design property in table card", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard;
+		QUnit.test("Design property in table card", async function (assert) {
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.setDesign("Transparent");
+			this.oCard.setManifest(oManifest_TableCard);
 
-			oCard.attachEvent("_ready", function () {
-				// Assert
-				assert.strictEqual(oCard.getCardContent()._getTable().getBackgroundDesign(), "Transparent", "The design property is set correctly.");
-				done();
-			});
+			await nextCardReadyEvent(this.oCard);
 
-			// Act
-			oCard.placeAt(DOM_RENDER_LOCATION);
-			oCard.setDesign("Transparent");
-			oCard.setManifest(oManifest_TableCard);
+			// Assert
+			assert.strictEqual(this.oCard.getCardContent()._getTable().getBackgroundDesign(), "Transparent", "The design property is set correctly.");
 		});
 
 		QUnit.module("Card manifest initialization", {
@@ -4599,47 +4085,29 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("setManifest with and without translated texts", function (assert) {
-			var done = assert.async(),
-				oLoadI18nSpy = this.spy(CoreManifest.prototype, "_loadI18n");
-
-			// Arrange
-			this.oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-
-				// Assert
-				assert.ok(oLoadI18nSpy.notCalled, "translation file is not fetched");
-
-				// Arrange
-				this.oCard.attachEventOnce("_ready", function () {
-					Core.applyChanges();
-
-					// Assert
-					assert.ok(oLoadI18nSpy.called, "translation file is fetched");
-
-					// Clean up
-					done();
-				});
-
-				this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json");
-
-			}.bind(this));
+		QUnit.test("setManifest with and without translated texts", async function (assert) {
+			var oLoadI18nSpy = this.spy(CoreManifest.prototype, "_loadI18n");
 
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(oLoadI18nSpy.notCalled, "translation file is not fetched");
+
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(oLoadI18nSpy.called, "translation file is fetched");
 		});
 
-		QUnit.test("Dependencies that are listed in the manifest are loaded", function (assert) {
+		QUnit.test("Dependencies that are listed in the manifest are loaded", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			var oLoadDepsSpy = this.stub(CardManifest.prototype, "loadDependenciesAndIncludes").resolves();
-
-			this.oCard.attachEventOnce("_ready", function () {
-				// Assert
-				assert.ok(oLoadDepsSpy.calledOnce, "Manifest#loadDependenciesAndIncludes should be called");
-				assert.ok(this.oCard.getCardContent(), "The card content should be created");
-
-				done();
-			}.bind(this));
 
 			// Act
 			this.oCard.setManifest({
@@ -4669,6 +4137,12 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+
+			// Assert
+			assert.ok(oLoadDepsSpy.calledOnce, "Manifest#loadDependenciesAndIncludes should be called");
+			assert.ok(this.oCard.getCardContent(), "The card content should be created");
 		});
 
 		QUnit.module("Card grouping items count", {
@@ -4682,19 +4156,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Cards content items count", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-
-			this.oCard.attachEventOnce("_ready", function () {
-				// Assert
-				assert.strictEqual(this.oCard.getCardHeader().getStatusText(), "5 of 20", "The group headers are not counted as visible list items");
-
-				done();
-			}.bind(this));
-
-			// Act
+		QUnit.test("Cards content items count", async function (assert) {
 			this.oCard.setManifest({
 				"sap.card": {
 					"type": "List",
@@ -4774,6 +4236,11 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+
+			// Assert
+			assert.strictEqual(this.oCard.getCardHeader().getStatusText(), "5 of 20", "The group headers are not counted as visible list items");
 		});
 
 		QUnit.module("Card preview modes", {
@@ -4787,25 +4254,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Card in 'Abstract' preview mode", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEventOnce("_ready", function () {
-				Core.applyChanges();
-				var oContent = this.oCard.getCardContent();
-				var oLoadingPlaceholder = oContent.getAggregation("_loadingPlaceholder");
-
-				// Assert
-				assert.ok(oContent.isA("sap.ui.integration.cards.ObjectContent"), "ObjectContent is created as card content");
-				assert.ok(oContent.getAggregation("_loadingPlaceholder").getDomRef(), "Loading placeholder is displayed in the content");
-				assert.notOk(oLoadingPlaceholder.getDomRef().getAttribute("title"), "No tooltip is rendered");
-				assert.ok(this.oCard.getDomRef().classList.contains("sapFCardPreview"), "'sapFCardPreview' CSS class should be added");
-
-				done();
-			}.bind(this));
-
-			// Act
+		QUnit.test("Card in 'Abstract' preview mode", async function (assert) {
 			this.oCard.setPreviewMode(library.CardPreviewMode.Abstract);
 			this.oCard.setManifest({
 				"sap.app": {
@@ -4827,27 +4276,26 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oContent = this.oCard.getCardContent();
+			var oLoadingPlaceholder = oContent.getAggregation("_loadingPlaceholder");
+
+			// Assert
+			assert.ok(oContent.isA("sap.ui.integration.cards.ObjectContent"), "ObjectContent is created as card content");
+			assert.ok(oContent.getAggregation("_loadingPlaceholder").getDomRef(), "Loading placeholder is displayed in the content");
+			assert.notOk(oLoadingPlaceholder.getDomRef().getAttribute("title"), "No tooltip is rendered");
+			assert.ok(this.oCard.getDomRef().classList.contains("sapFCardPreview"), "'sapFCardPreview' CSS class should be added");
 		});
 
-		QUnit.test("Fallback to Abstract preview when mock data configuration is missing", function (assert) {
-			var done = assert.async(),
-				oCard = this.oCard;
+		QUnit.test("Fallback to Abstract preview when mock data configuration is missing", async function (assert) {
+			// Arrange
+			var done = assert.async();
 
-			oCard.attachEventOnce("_ready", function () {
-				oCard.addEventDelegate({
-					onAfterRendering: function () {
-						// Assert
-						assert.strictEqual(oCard.getPreviewMode(), library.CardPreviewMode.Abstract, "Fallback to Abstract preview.");
-						assert.ok(oCard.getDomRef().classList.contains("sapFCardPreview"), library.CardPreviewMode.Abstract, "Abstract preview class is there.");
-
-						done();
-					}
-				});
-			});
-
-			// Act
-			oCard.setPreviewMode(library.CardPreviewMode.MockData);
-			oCard.setManifest({
+			this.oCard.setPreviewMode(library.CardPreviewMode.MockData);
+			this.oCard.setManifest({
 				"sap.app": {
 					"type": "card",
 					"id": "test.dataProvider.card2"
@@ -4871,27 +4319,25 @@ sap.ui.define([
 					}
 				}
 			});
+
+			await nextCardReadyEvent(this.oCard);
+
+			this.oCard.addEventDelegate({
+				onAfterRendering: () => {
+					// Assert
+					assert.strictEqual(this.oCard.getPreviewMode(), library.CardPreviewMode.Abstract, "Fallback to Abstract preview.");
+					assert.ok(this.oCard.getDomRef().classList.contains("sapFCardPreview"), library.CardPreviewMode.Abstract, "Abstract preview class is there.");
+
+					done();
+				}
+			});
 		});
 
-		QUnit.test("Don't fallback to Abstract preview when data configuration is with 'path' only", function (assert) {
-			var done = assert.async(),
-				oCard = this.oCard;
+		QUnit.test("Don't fallback to Abstract preview when data configuration is with 'path' only", async function (assert) {
+			var done = assert.async();
 
-			oCard.attachEventOnce("_ready", function () {
-				oCard.addEventDelegate({
-					onAfterRendering: function () {
-						// Assert
-						assert.strictEqual(oCard.getPreviewMode(), library.CardPreviewMode.MockData, "Didn't fallback to Abstract preview.");
-						assert.notOk(oCard.getDomRef().classList.contains("sapFCardPreview"), library.CardPreviewMode.Abstract, "Abstract preview class is not there.");
-
-						done();
-					}
-				});
-			});
-
-			// Act
-			oCard.setPreviewMode(library.CardPreviewMode.MockData);
-			oCard.setManifest({
+			this.oCard.setPreviewMode(library.CardPreviewMode.MockData);
+			this.oCard.setManifest({
 				"sap.app": {
 					"type": "card",
 					"id": "test.dataProvider.card2"
@@ -4911,6 +4357,18 @@ sap.ui.define([
 							}
 						}
 					}
+				}
+			});
+
+			await nextCardReadyEvent(this.oCard);
+
+			this.oCard.addEventDelegate({
+				onAfterRendering: () => {
+					// Assert
+					assert.strictEqual(this.oCard.getPreviewMode(), library.CardPreviewMode.MockData, "Didn't fallback to Abstract preview.");
+					assert.notOk(this.oCard.getDomRef().classList.contains("sapFCardPreview"), library.CardPreviewMode.Abstract, "Abstract preview class is not there.");
+
+					done();
 				}
 			});
 		});

@@ -54,9 +54,9 @@ function(Library, $, KeyCodes, Core, nextUIUpdate, QUtils, Link, Text, BreadCrum
 				QUtils.triggerKeydown(oItemToStartWith.getId(), iKeyCode);
 				assert.ok(oSpy.calledOnce, sMessage);
 			},
-			renderObject: function (oSapUiObject) {
+			renderObject: async function (oSapUiObject) {
 				oSapUiObject.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				return oSapUiObject;
 			},
 			checkType: function (assert, fnConstructor, oObjectToCheck, sMessage) {
@@ -191,10 +191,10 @@ function(Library, $, KeyCodes, Core, nextUIUpdate, QUtils, Link, Text, BreadCrum
 	});
 
 	QUnit.module("BreadCrumbs - Rendering", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			Device.system.phone = false;
 			this.oBreadCrumbs = oFactory.getBreadCrumbControlWithLinks(2);
-			helpers.renderObject(this.oBreadCrumbs);
+			await helpers.renderObject(this.oBreadCrumbs);
 			this.$breadCrumbs = this.oBreadCrumbs.$();
 		},
 		afterEach: function () {
@@ -256,10 +256,10 @@ function(Library, $, KeyCodes, Core, nextUIUpdate, QUtils, Link, Text, BreadCrum
 	});
 
 	QUnit.module("BreadCrumbs - Accessibility", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			Device.system.phone = false;
 			this.oBreadCrumbs = oFactory.getBreadCrumbControlWithLinks(10);
-			helpers.renderObject(this.oBreadCrumbs);
+			await helpers.renderObject(this.oBreadCrumbs);
 			this.$breadCrumbs = this.oBreadCrumbs.$();
 		},
 		afterEach: function () {

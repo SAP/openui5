@@ -1,19 +1,19 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/integration/controls/ActionsStrip",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/library",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
-	Core,
 	ActionsStrip,
 	Card,
 	JSONModel,
 	coreLibrary,
-	nextUIUpdate
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -461,9 +461,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Actions are disabled when some loading placeholder is active", function (assert) {
+	QUnit.test("Actions are disabled when some loading placeholder is active", async function (assert) {
 		// Arrange
-		var done = assert.async(2);
+		var done = assert.async();
 
 		this.oCard.attachEvent("_footerReady", function () {
 			var oFooter = this.oCard.getAggregation("_footer"),
@@ -478,33 +478,33 @@ sap.ui.define([
 			done();
 		}.bind(this));
 
-		this.oCard.attachEvent("_ready", function () {
-			var oFooter = this.oCard.getAggregation("_footer"),
-				aItems = oFooter.getActionsStrip()._getToolbar().getContent();
-
-			assert.notOk(aItems[1].getEnabled(), "Enabled value is correct");
-			assert.ok(aItems[2].getEnabled(), "Enabled value is correct");
-			assert.ok(aItems[3].getEnabled(), "Enabled value is correct");
-			assert.notOk(aItems[4].getEnabled(), "Enabled value is correct");
-
-			this.oCard.showLoadingPlaceholders();
-			Core.applyChanges();
-			aItems.forEach(function (oItem) {
-				if (oItem.getEnabled) {
-					assert.notOk(oItem.getEnabled(), "Item is disabled after showLoadingPlaceholders()");
-				}
-			});
-
-			this.oCard.hideLoadingPlaceholders();
-			Core.applyChanges();
-			assert.notOk(aItems[1].getEnabled(), "Enabled value is correct");
-			assert.ok(aItems[2].getEnabled(), "Enabled value is correct");
-			assert.ok(aItems[3].getEnabled(), "Enabled value is correct");
-			assert.notOk(aItems[4].getEnabled(), "Enabled value is correct");
-
-			done();
-		}.bind(this));
-
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oFooter = this.oCard.getAggregation("_footer"),
+			aItems = oFooter.getActionsStrip()._getToolbar().getContent();
+
+		assert.notOk(aItems[1].getEnabled(), "Enabled value is correct");
+		assert.ok(aItems[2].getEnabled(), "Enabled value is correct");
+		assert.ok(aItems[3].getEnabled(), "Enabled value is correct");
+		assert.notOk(aItems[4].getEnabled(), "Enabled value is correct");
+
+		this.oCard.showLoadingPlaceholders();
+		await nextUIUpdate();
+
+		aItems.forEach(function (oItem) {
+			if (oItem.getEnabled) {
+				assert.notOk(oItem.getEnabled(), "Item is disabled after showLoadingPlaceholders()");
+			}
+		});
+
+		this.oCard.hideLoadingPlaceholders();
+		await nextUIUpdate();
+
+		assert.notOk(aItems[1].getEnabled(), "Enabled value is correct");
+		assert.ok(aItems[2].getEnabled(), "Enabled value is correct");
+		assert.ok(aItems[3].getEnabled(), "Enabled value is correct");
+		assert.notOk(aItems[4].getEnabled(), "Enabled value is correct");
 	});
 });

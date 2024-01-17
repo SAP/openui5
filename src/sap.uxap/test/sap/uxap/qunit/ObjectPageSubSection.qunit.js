@@ -1,6 +1,7 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
@@ -22,7 +23,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/ui/core/HTML"
 ],
-function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, Title, HTML) {
+function(Element, nextUIUpdate, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, Title, HTML) {
 	"use strict";
 
 	var TitleLevel = coreLibrary.TitleLevel;
@@ -784,7 +785,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 
 
 	QUnit.module("ObjectPageSubSection - FitContainer Height Adaptation", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oObjectPage = new ObjectPageLayout({
 				sections: [new ObjectPageSection({
 					subSections: [new ObjectPageSubSectionClass({
@@ -794,14 +795,14 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 			});
 
 			this.oObjectPage.placeAt('qunit-fixture');
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oObjectPage.destroy();
 		}
 	});
 
-	QUnit.test("height of single subSection with sapUxAPObjectPageSubSectionFitContainer adjusts with headerTitle adjusments", function (assert) {
+	QUnit.test("height of single subSection with sapUxAPObjectPageSubSectionFitContainer adjusts with headerTitle adjusments", async function(assert) {
 		var oPage = this.oObjectPage,
 			oSection = this.oObjectPage.getSections()[0],
 			oSubSection = oSection.getSubSections()[0],
@@ -815,7 +816,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		oPage.setHeaderTitle(new ObjectPageDynamicHeaderTitle({
 			heading: new Title({ text: "Title" })
 		}));
-		Core.applyChanges();
+		await nextUIUpdate();
 		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
 
 		//setup
@@ -872,7 +873,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		oSubSection.destroy();
 	});
 
-	QUnit.test("Layout is updated when visibility of a Block is changed", function (assert) {
+	QUnit.test("Layout is updated when visibility of a Block is changed", async function(assert) {
 		var oSubSection = oHelpers.getSubSection(),
 			oObjectPageLayout = new ObjectPageLayout({
 				sections: new ObjectPageSection({
@@ -892,7 +893,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		oSubSection.addBlock(oBlock2);
 
 		oObjectPageLayout.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oInnerGrid = oSubSection._getGrid();
 		oGridAddAggregationSpy = this.spy(oInnerGrid, "addAggregation");
@@ -929,15 +930,15 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		XMLView.create({
 			id: "UxAP-12-ObjectPageSubSectionStashing",
 			viewName: "view.UxAP-12-ObjectPageSubSectionStashing"
-		}).then(function (oView) {
+		}).then(async function(oView) {
 			this.objectPageSampleView = oView;
 			this.objectPageSampleView.placeAt('qunit-fixture');
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// Setup: pick a subSection and unstash its blocks
 			oSubSection = this.objectPageSampleView.byId("subsection10");
 			oSubSection.connectToModels();
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			oBlock = oSubSection.getBlocks()[0];
 			oInnerGrid = oSubSection._getGrid();
@@ -1002,13 +1003,13 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 
 		return XMLView.create({
 			definition: sXmlView
-		}).then(function(oView) {
+		}).then(async function(oView) {
 
 			var oSubSection = oView.byId("subSection"),
 				oButton = oView.byId("buttonToRemove");
 
 			oView.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(oSubSection.getBlocks().length, 2, "subSection has two blocks");
 
@@ -1023,7 +1024,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		});
 	});
 
-	QUnit.test("addAggregation", function (assert) {
+	QUnit.test("addAggregation", async function(assert) {
 		var oSubSection = new ObjectPageSubSectionClass({
 				blocks: [new Text({text: "sample"})]
 			}),
@@ -1061,7 +1062,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		});
 
 		new App({pages: [opl]}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
 	QUnit.module("Object Page SubSection - moreBlocks aggregation");
@@ -1131,7 +1132,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 
 	QUnit.module("Object Page SubSection - subSectionLayout prop");
 
-	QUnit.test("SubSection Header is with title on the LEFT", function (assert) {
+	QUnit.test("SubSection Header is with title on the LEFT", async function(assert) {
 		var oObjectPageLayout = new ObjectPageLayout({
 				subSectionLayout: library.ObjectPageSubSectionLayout.TitleOnLeft,
 				sections: [
@@ -1154,7 +1155,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 
 
 		oObjectPageLayout.placeAt('qunit-fixture');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 
 		assert.ok(oSubSection.$("header").hasClass("titleOnLeftLayout"), "SubSection header has class titleOnLeftLayout");
@@ -1162,7 +1163,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("SubSection Header is with title on TOP", function (assert) {
+	QUnit.test("SubSection Header is with title on TOP", async function(assert) {
 		var oObjectPageLayout = new ObjectPageLayout({
 					sections: [
 						new ObjectPageSection({
@@ -1184,7 +1185,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 
 
 		oObjectPageLayout.placeAt('qunit-fixture');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 
 		assert.notOk(oSubSection.$("header").hasClass("titleOnLeftLayout"), "SubSection header has no titleOnLeftLayout class");
@@ -1192,7 +1193,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("SubSection action buttons visibility", function (assert) {
+	QUnit.test("SubSection action buttons visibility", async function(assert) {
 		var oActionButton1 = new Button({text: "Invisible", visible: false}),
 			oActionButton2 = new Button({text: "Invisible", visible: false}),
 			oObjectPageLayout = new ObjectPageLayout({
@@ -1217,7 +1218,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 				oSubSection2 = oObjectPageLayout.getSections()[0].getSubSections()[1];
 
 		oObjectPageLayout.placeAt('qunit-fixture');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.ok(oSubSection1.$("header").hasClass("sapUiHidden"), "SubSection header with no visisble title and actions should be invisible");
@@ -1226,7 +1227,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		//act
 		oActionButton1.setVisible(true);
 		oSubSection2.setTitle("");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.notOk(oSubSection1.$("header").hasClass("sapUiHidden"), "SubSection header with visible actions should become visible");
@@ -1236,7 +1237,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 	});
 
 	QUnit.module("Object Page SubSection media classes", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oObjectPageLayout = new ObjectPageLayout({
 				selectedSection: "section2",
 				sections: [
@@ -1267,7 +1268,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 			});
 			this.fnOnScrollSpy = this.spy(this.oObjectPageLayout, "_onScroll");
 			this.oObjectPageLayout.placeAt('qunit-fixture');
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oObjectPageLayout.destroy();
@@ -1296,13 +1297,13 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 			"Visibility of children with .sapUxAPSubSectionSeeMoreContainer is not toggled when there is no change in visibility");
 	});
 
-	QUnit.test(".sapUxAPObjectPageSubSectionWithSeeMore is applied to SubSections correctly", function(assert) {
+	QUnit.test(".sapUxAPObjectPageSubSectionWithSeeMore is applied to SubSections correctly", async function(assert) {
 		// Arrange
 		var oSubSection = this.oObjectPageLayout.getSections()[1].getSubSections()[0];
 
 		// Act
 		oSubSection.addMoreBlock(oHelpers.getBlock());
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oSubSection.$().hasClass("sapUxAPObjectPageSubSectionWithSeeMore"),
@@ -1346,7 +1347,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 	});
 
 	QUnit.module("SubSection access to parent", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oObjectPageLayout = new ObjectPageLayout({
 				sections: [
 					new ObjectPageSection("section1", {
@@ -1363,7 +1364,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 				]
 			});
 			this.oObjectPageLayout.placeAt('qunit-fixture');
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oObjectPageLayout.destroy();
@@ -1393,10 +1394,10 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 			return XMLView.create({
 				id: "UxAP-13_objectPageSection",
 				viewName: "view.UxAP-13_ObjectPageSection"
-			}).then(function(oView) {
+			}).then(async function(oView) {
 				this.ObjectPageSectionView = oView;
 				this.ObjectPageSectionView.placeAt('qunit-fixture');
-				Core.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -1404,7 +1405,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		}
 	});
 
-    QUnit.test("Test aria-labelledby attribute", function(assert) {
+    QUnit.test("Test aria-labelledby attribute", async function(assert) {
 		// Arrange
 		var oObjectPage = this.ObjectPageSectionView.byId("ObjectPageLayout"),
 			oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
@@ -1425,7 +1426,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 
 		// Act
 		oSubSectionWithTitle.setShowTitle(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Arrange
 		sSubSectionWithTitleAriaLabelledBy = oSubSectionWithTitle.$().attr("aria-labelledby");
@@ -1438,7 +1439,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 
 		// Act
 		oObjectPage.setSubSectionLayout("TitleOnLeft");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(Element.getElementById(sPromotedSubSectionAriaLabelledBy).getText().indexOf(oPromotedSubSection.getTitle()) > -1,
@@ -1493,7 +1494,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 	});
 
 	QUnit.module("Content fit container", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oObjectPage = new ObjectPageLayout({
 				sections: [ new ObjectPageSection({
 					subSections: [new ObjectPageSubSectionClass({
@@ -1503,7 +1504,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 			});
 
 			this.oObjectPage.placeAt('qunit-fixture');
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oObjectPage.destroy();
@@ -1532,7 +1533,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		}, this);
 	});
 
-	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection tab to fit the container", function (assert) {
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection tab to fit the container", async function(assert) {
 		var oPage = this.oObjectPage,
 			oSection = this.oObjectPage.getSections()[0],
 			oSubSection = oSection.getSubSections()[0],
@@ -1545,7 +1546,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		}));
 		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
 		oPage.setUseIconTabBar(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//setup
 		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
@@ -1560,7 +1561,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		}, this);
 	});
 
-	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection when header in title area", function (assert) {
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection when header in title area", async function(assert) {
 		var oPage = this.oObjectPage,
 			oSection = oPage.getSections()[0],
 			oSubSection = oSection.getSubSections()[0],
@@ -1578,7 +1579,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
 		// ensure only a single section rendered at a time (tabs mode enabled)
 		oPage.setUseIconTabBar(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			//check
@@ -1904,7 +1905,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		}
 	});
 
-	QUnit.test("applyUxRules", function (assert) {
+	QUnit.test("applyUxRules", async function(assert) {
 
 		// Setup
 		var oSubSection = this.oObjectPageLayout.getSections()[0].getSubSections()[0],
@@ -1920,13 +1921,13 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		}, this);
 
 		this.oObjectPageLayout.placeAt('qunit-fixture');
-		Core.applyChanges();
+		await nextUIUpdate();
 		// Act
 		this.oObjectPageLayout._applyUxRules(true);
 	});
 
 	QUnit.module("SubSection title visibility", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oObjectPage = new ObjectPageLayout({
 				sections: new ObjectPageSection({
 					subSections: [
@@ -1945,7 +1946,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 			});
 
 			this.oObjectPage.placeAt('qunit-fixture');
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oObjectPage.destroy();
@@ -1972,7 +1973,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		this.oObjectPage.destroy();
 	});
 
-	QUnit.test("getTitleVisible with showTitle=true", function (assert) {
+	QUnit.test("getTitleVisible with showTitle=true", async function(assert) {
 		// Arrange
 		var oSubSection = this.oObjectPage.getSections()[0].getSubSections()[0];
 
@@ -1981,7 +1982,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 
 		// Act
 		oSubSection.setShowTitle(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSubSection.getTitleVisible(), true, "titleVisible is true");
@@ -1989,7 +1990,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		this.oObjectPage.destroy();
 	});
 
-	QUnit.test("getTitleVisible with empty title", function (assert) {
+	QUnit.test("getTitleVisible with empty title", async function(assert) {
 		// Arrange
 		var oSubSection = this.oObjectPage.getSections()[0].getSubSections()[0];
 
@@ -1999,7 +2000,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 		// Act
 		oSubSection.setShowTitle(true);
 		oSubSection.setTitle("");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSubSection.getTitleVisible(), false, "titleVisible is still false as title is empty string");
@@ -2009,7 +2010,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 
 	QUnit.module("SubSection internalTitle");
 
-	QUnit.test("Subsection _setInternalTitleLevel should invalidate control", function (assert) {
+	QUnit.test("Subsection _setInternalTitleLevel should invalidate control", async function(assert) {
 		// arrange
 		var oSubSection = new ObjectPageSubSectionClass({
 				title: "Title",
@@ -2026,13 +2027,13 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 			});
 
 		oObjectPage.placeAt('qunit-fixture');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oSubSection._setInternalTitleVisible(true);
 		oSubSection._setInternalTitleLevel(TitleLevel.H5, true);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSubSection.$("headerTitle").attr("aria-level") === "5", true,
@@ -2044,7 +2045,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 
 
 	QUnit.module("See more / see less", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oObjectPage = new ObjectPageLayout({
 				sections: new ObjectPageSection({
 					subSections: [
@@ -2059,7 +2060,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 			});
 
 			this.oObjectPage.placeAt('qunit-fixture');
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oObjectPage.destroy();
@@ -2105,7 +2106,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 	});
 
 	QUnit.module("Column span", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oObjectPage = new ObjectPageLayout({
 				sections: new ObjectPageSection({
 					subSections: [
@@ -2122,7 +2123,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamic
 			});
 
 			this.oObjectPage.placeAt('qunit-fixture');
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oObjectPage.destroy();

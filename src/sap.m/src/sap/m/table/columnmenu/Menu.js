@@ -239,6 +239,8 @@ sap.ui.define([
 				this._oItemsContainer.destroy();
 				this._oItemsContainer = null;
 			}
+
+			StaticArea.getUIArea().removeContent(this, true);
 			this._oPopover.close();
 			ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
 		}

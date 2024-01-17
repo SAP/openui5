@@ -1,6 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/enablement/elementActionTest",
 	'sap/uxap/ObjectPageLayout',
 	'sap/uxap/ObjectPageSection',
@@ -17,7 +18,8 @@ sap.ui.define([
 	'sap/ui/thirdparty/sinon-4',
 	"sap/ui/core/Core",
 	"sap/ui/dom/getFirstEditableInput"
-], function (
+], function(
+	nextUIUpdate,
 	elementActionTest,
 	ObjectPageLayout,
 	ObjectPageSection,
@@ -241,7 +243,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given ObjectPageLayout with Sections and headerContent,", {
-		beforeEach : function(assert) {
+		beforeEach : async function(assert) {
 
 			// ObjectPageLayout
 			//    headerContent
@@ -274,7 +276,7 @@ sap.ui.define([
 			});
 
 			this.oObjectPageLayout.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// create designtime
 			this.oDesignTime = new DesignTime({
@@ -333,7 +335,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given ObjectPageLayout with two Sections,", {
-		beforeEach : function(assert) {
+		beforeEach : async function(assert) {
 
 			// ObjectPageLayout
 			//    sections
@@ -369,7 +371,7 @@ sap.ui.define([
 			});
 
 			this.oObjectPageLayout.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// create designtime
 			this.oDesignTime = new DesignTime({
@@ -497,14 +499,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Width calculation after rendering inside hidden parent element", function (assert) {
+	QUnit.test("Width calculation after rendering inside hidden parent element", async function(assert) {
 		var iWidth,
 			oParentNode = document.getElementById("content");
 
 		//hiding parent element
 		oParentNode.style.display = "none";
 		this.oSimpleObjectPageLayout.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		iWidth = this.oSimpleObjectPageLayout._getWidth(this.oSimpleObjectPageLayout);
 
 		assert.equal(iWidth, 0, "The width of the DOM Element is calculated correctly");
@@ -513,7 +515,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("getFirstEditableInput method", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			var oSubSection = new ObjectPageSubSection("subsection", {});
 
 			this.oObjectPageSection = new ObjectPageSection("section", {
@@ -538,7 +540,7 @@ sap.ui.define([
 			oSubSection.addBlock(this.input2);
 
 			this.oObjectPageLayout.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oObjectPageLayout.destroy();

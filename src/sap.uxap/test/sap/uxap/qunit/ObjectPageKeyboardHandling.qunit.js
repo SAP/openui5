@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/core/AnimationMode",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/Configuration",
@@ -15,13 +16,27 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/dom/jquery/Focusable" /* jQuery Plugin "firstFocusableDomRef" */
 ],
-function(AnimationMode, ControlBehavior, Element, jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar, ObjectPageSubSection) {
+function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar, ObjectPageSubSection) {
 	"use strict";
 
 	var sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton";
 
 	function getAnchorBar() {
 		return Element.getElementById("UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar");
+	}
+
+	/**
+	 * In some tests that are using fake timers, it might happen that a rendering task is queued by
+	 * creating a fake timer. Without an appropriate clock.tick call, this timer might not execute
+	 * and a later nextUIUpdate with real timers would wait endlessly.
+	 * To prevent this, after each such test a sync rendering is executed which will clear any pending
+	 * fake timer. The rendering itself should not be needed by the tests, if they are properly
+	 * isolated.
+	 *
+	 * This function is used as an indicator for such cases. It's just a wrapper around nextUIUpdate.
+	 */
+	function clearPendingUIUpdates(clock) {
+		return nextUIUpdate(clock);
 	}
 
 	QUnit.module("F6/Group skipping", {
@@ -43,7 +58,7 @@ function(AnimationMode, ControlBehavior, Element, jQuery, Core, Configuration, K
 		}
 	});
 
-	QUnit.test("F6/SHIFT+F6 - order should be correct", function (assert) {
+	QUnit.test("F6/SHIFT+F6 - order should be correct", async function(assert) {
 		assert.expect(10); //number of assertions
 		// Arrange
 		var $oEl,
@@ -86,7 +101,7 @@ function(AnimationMode, ControlBehavior, Element, jQuery, Core, Configuration, K
 		// Arrange
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
 		this.oView.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
 	QUnit.module("AnchorBar", {
@@ -97,7 +112,7 @@ function(AnimationMode, ControlBehavior, Element, jQuery, Core, Configuration, K
 			XMLView.create({
 				id: "UxAP-70_KeyboardHandling",
 				viewName: "view.UxAP-70_KeyboardHandling"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.anchorBarView = oView;
 				jQuery("html")
 					.removeClass("sapUiMedia-Std-Phone sapUiMedia-Std-Desktop sapUiMedia-Std-Tablet")
@@ -110,14 +125,15 @@ function(AnimationMode, ControlBehavior, Element, jQuery, Core, Configuration, K
 					assert.strictEqual($elment.attr(sTabIndex), sFocusable, sMessage);
 				};
 				this.anchorBarView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate(this.clock);
 				this.clock.tick(500);
 				done();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.anchorBarView.destroy();
 			this.oObjectPage = null;
+			await clearPendingUIUpdates(this.clock);
 			this.clock.restore();
 		}
 	});
@@ -274,7 +290,7 @@ function(AnimationMode, ControlBehavior, Element, jQuery, Core, Configuration, K
 			XMLView.create({
 				id: "UxAP-70_KeyboardHandling",
 				viewName: "view.UxAP-70_KeyboardHandling"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.anchorBarView = oView;
 				var sFocusable = "0",
 					sTabIndex = "tabindex";
@@ -283,7 +299,7 @@ function(AnimationMode, ControlBehavior, Element, jQuery, Core, Configuration, K
 					assert.strictEqual($elment.attr(sTabIndex), sFocusable, sMessage);
 				};
 				this.anchorBarView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},
@@ -319,7 +335,7 @@ function(AnimationMode, ControlBehavior, Element, jQuery, Core, Configuration, K
 			"the first focusable sub section should be the first one in the container section", assert);
 	});
 
-	QUnit.test("RIGHT/DOWN", function (assert) {
+	QUnit.test("RIGHT/DOWN", async function(assert) {
 		var aSections = this.oObjectPage.getSections(),
 			aSubSections = aSections[8].getSubSections();
 
@@ -329,7 +345,7 @@ function(AnimationMode, ControlBehavior, Element, jQuery, Core, Configuration, K
 			});
 		});
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Section
 		aSections[0].$().trigger("focus");
@@ -680,13 +696,13 @@ function(AnimationMode, ControlBehavior, Element, jQuery, Core, Configuration, K
 			XMLView.create({
 				id: "UxAP-70_KeyboardHandling",
 				viewName: "view.UxAP-70_KeyboardHandling"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.anchorBarView = oView;
 				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
 				this.oScrollSpy = this.spy(AnchorBar.prototype, "onButtonPress");
 				this.oFocusSpy = this.spy(this.oObjectPage._oABHelper, "_moveFocusOnSection");
 				this.anchorBarView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},
@@ -725,11 +741,11 @@ function(AnimationMode, ControlBehavior, Element, jQuery, Core, Configuration, K
 			XMLView.create({
 				id: "UxAP-70_KeyboardHandling",
 				viewName: "view.UxAP-70_KeyboardHandling"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.anchorBarView = oView;
 				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
 				this.anchorBarView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},

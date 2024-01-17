@@ -1,6 +1,6 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/core/Core", "sap/ui/core/mvc/XMLView"],
-function(Core, XMLView) {
+sap.ui.define(["sap/ui/core/Core", "sap/ui/core/mvc/XMLView", "sap/ui/qunit/utils/nextUIUpdate"],
+function(Core, XMLView, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("aat_UxAP-162", {
@@ -9,10 +9,10 @@ function(Core, XMLView) {
 			XMLView.create({
 				id: "UxAP-162_ObjectPageSample",
 				viewName: "view.UxAP-162_ObjectPageSample"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.objectPageSampleView = oView;
 				this.objectPageSampleView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},

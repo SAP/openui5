@@ -4,12 +4,16 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/library",
-	"sap/ui/integration/cards/BaseListContent"
+	"sap/ui/integration/cards/BaseListContent",
+	"qunit/testResources/nextCardReadyEvent",
+	"qunit/testResources/nextCardManifestAppliedEvent"
 ], function (
 	Card,
 	RequestDataProvider,
 	library,
-	BaseListContent
+	BaseListContent,
+	nextCardReadyEvent,
+	nextCardManifestAppliedEvent
 ) {
 	"use strict";
 
@@ -27,9 +31,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Changing from Request to JSON data provider before request is complete should reset loading state", function (assert) {
+	QUnit.test("Changing from Request to JSON data provider before request is complete should reset loading state", async function (assert) {
 		// Arrange
-		var done = assert.async();
 		this.stub(RequestDataProvider.prototype, "getData").returns(new Promise(function () {}));
 		var oManifestWithRequest = {
 			"sap.app": {
@@ -72,22 +75,20 @@ sap.ui.define([
 			}
 		};
 
-		this.oCard.attachEventOnce("manifestApplied", function () {
-			// Assert
-			assert.ok(this.oCard.isLoading(), "Card should be in loading state while request is pending");
-
-			this.oCard.attachEventOnce("_ready", function () {
-				// Assert
-				assert.notOk(this.oCard.isLoading(), "Card shouldn't be in loading state from the previous loading provider");
-
-				done();
-			}.bind(this));
-
-			// Act - change the manifest to use JSON data provider
-			this.oCard.setManifest(oManifestWithJSONData);
-		}.bind(this));
-
 		this.oCard.setManifest(oManifestWithRequest);
+
+		await nextCardManifestAppliedEvent(this.oCard);
+
+		// Act - change the manifest to use JSON data provider
+		this.oCard.setManifest(oManifestWithJSONData);
+
+		// Assert
+		assert.ok(this.oCard.isLoading(), "Card should be in loading state while request is pending");
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		assert.notOk(this.oCard.isLoading(), "Card shouldn't be in loading state from the previous loading provider");
 	});
 
 	QUnit.module("Cleanup of internal models", {
@@ -102,24 +103,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Default model", function (assert) {
-		var done = assert.async();
+	QUnit.test("Default model", async function (assert) {
 		assert.expect(3);
 		assert.deepEqual(this.oCard.getModel().getData(), {}, "The default model should be empty");
-
-		this.oCard.attachEventOnce("_ready", function () {
-			// Assert
-			assert.notDeepEqual(this.oCard.getModel().getData(), {}, "The default model should be populated with data");
-
-			this.oCard.attachEventOnce("_ready", function () {
-				// Assert 2
-				assert.deepEqual(this.oCard.getModel().getData(), {}, "The default model should be empty");
-				done();
-			}.bind(this));
-
-			// Act 2
-			this.oCard.setPreviewMode(library.CardPreviewMode.Abstract);
-		}.bind(this));
 
 		// Act 1
 		this.oCard.setManifest({
@@ -143,9 +129,22 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		assert.notDeepEqual(this.oCard.getModel().getData(), {}, "The default model should be populated with data");
+
+		// Act 2
+		this.oCard.setPreviewMode(library.CardPreviewMode.Abstract);
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert 2
+		assert.deepEqual(this.oCard.getModel().getData(), {}, "The default model should be empty");
 	});
 
-	QUnit.test("Old default model shouldn't trigger onDataChanged of new content", function (assert) {
+	QUnit.test("Old default model shouldn't trigger onDataChanged of new content", async function (assert) {
 		var done = assert.async();
 		var oData1 = [{
 			"title": "item 1"
@@ -170,45 +169,45 @@ sap.ui.define([
 				});
 			});
 
-		this.oCard.attachEventOnce("_ready", function () {
-			// Assert
-			assert.deepEqual(this.oCard.getModel().getData(), oData1, "The default model should be populated with data");
-
-			// Arrange
-			this.stub(BaseListContent.prototype, "onDataChanged").callsFake(function () {
-				assert.deepEqual(this.getModel().getData(), oData2, "New content should receive onDataChanged event with new data");
-
-				done();
-			});
-
-			// Act 2
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.cleanup.defaultModel2"
-				},
-				"sap.card": {
-					"data": {
-						"request": {
-							"url": "some/url"
-						}
-					},
-					"type": "List",
-					"header": {
-						"title": "Available Trainings"
-					},
-					"content": {
-						"item": {
-							"title": "{title}"
-						}
-					}
-				}
-			});
-		}.bind(this));
-
-		// Act 1
+		// Act
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.card.cleanup.defaultModel1"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "some/url"
+					}
+				},
+				"type": "List",
+				"header": {
+					"title": "Available Trainings"
+				},
+				"content": {
+					"item": {
+						"title": "{title}"
+					}
+				}
+			}
+		});
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		assert.deepEqual(this.oCard.getModel().getData(), oData1, "The default model should be populated with data");
+
+		// Arrange
+		this.stub(BaseListContent.prototype, "onDataChanged").callsFake(function () {
+			assert.deepEqual(this.getModel().getData(), oData2, "New content should receive onDataChanged event with new data");
+
+			done();
+		});
+
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.cleanup.defaultModel2"
 			},
 			"sap.card": {
 				"data": {

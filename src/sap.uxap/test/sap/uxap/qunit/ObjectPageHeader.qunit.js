@@ -1,6 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
@@ -16,8 +17,9 @@ sap.ui.define([
 	"sap/m/Breadcrumbs",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/Device",
-	"sap/ui/qunit/QUnitUtils"],
-function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, ObjectPageSection, ObjectPageSubSection, Button, Link, Text, Breadcrumbs, XMLView, Device, QUtils) {
+	"sap/ui/qunit/QUnitUtils"
+],
+function(nextUIUpdate, jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, ObjectPageSection, ObjectPageSubSection, Button, Link, Text, Breadcrumbs, XMLView, Device, QUtils) {
 	"use strict";
 
 	var oFactory = {
@@ -43,10 +45,10 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 			XMLView.create({
 				id: "UxAP-ObjectPageHeader",
 				viewName: "view.UxAP-ObjectPageHeader"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oHeaderView = oView;
 				this.oHeaderView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},
@@ -80,10 +82,10 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		assert.ok(this.oHeaderView.$().find(".sapUxAPObjectPageHeaderChangesBtn").length === 0, "Unsaved changes mark is not rendered when Locked mark is set");
 	});
 
-	QUnit.test("Unsaved changes mark rendering", function (assert) {
+	QUnit.test("Unsaved changes mark rendering", async function(assert) {
 		this._oHeader = Element.getElementById("UxAP-ObjectPageHeader--header");
 		this._oHeader.setMarkLocked(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oHeaderView.$().find(".sapUxAPObjectPageHeaderChangesBtn").length === 1, "Unsaved chages mark is rendered");
 	});
@@ -106,13 +108,13 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 	QUnit.test("Placeholder rendering", function (assert) {
 		assert.ok(this.oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder"), "placeholder rendered");
 	});
-	QUnit.test("Updates when header invisible", function (assert) {
+	QUnit.test("Updates when header invisible", async function(assert) {
 		var oPage = this.oHeaderView.byId("ObjectPageLayout"),
 			oHeader = Element.getElementById("UxAP-ObjectPageHeader--header");
 
 		oPage.setVisible(false);
 		oPage.setShowTitleInHeaderContent(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		try {
 			oHeader.setObjectSubtitle("Updated");
@@ -126,7 +128,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		oPage.setShowTitleInHeaderContent(false);
 	});
 
-	QUnit.test("Adapt layout of header clone", function (assert) {
+	QUnit.test("Adapt layout of header clone", async function(assert) {
 		var oPage = this.oHeaderView.byId("ObjectPageLayout"),
 			oHeader = Element.getElementById("UxAP-ObjectPageHeader--header"),
 			oSpy;
@@ -134,7 +136,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		for (var i = 0; i < 10; i++) { // add actions
 			oHeader.addAction(new Button({text: "Action to take space"}));
 		}
-		Core.applyChanges();
+		await nextUIUpdate();
 		oSpy = this.spy(oHeader, "_adaptActions");
 
 		// Act
@@ -144,7 +146,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		assert.strictEqual(oSpy.callCount, 0, "actions are not modified");
 	});
 
-	QUnit.test("titleSelectorTooltip aggregation validation", function (assert) {
+	QUnit.test("titleSelectorTooltip aggregation validation", async function(assert) {
 		var oHeader = Element.getElementById("UxAP-ObjectPageHeader--header"),
 			oLibraryResourceBundleOP = oHeader.oLibraryResourceBundleOP,
 			oTitleArrowIconAggr = oHeader.getAggregation("_titleArrowIcon"),
@@ -155,21 +157,21 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		assert.strictEqual(oTitleArrowIconContAggr.getTooltip(), "Custom Tooltip", "_titleArrowIconCont aggregation tooltip is initially set");
 
 		oHeader.setTitleSelectorTooltip("Test tooltip");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oHeader.getTitleSelectorTooltip(), "Test tooltip", "titleSelectorTooltip aggregation is updated with the new value");
 		assert.strictEqual(oTitleArrowIconAggr.getTooltip(), "Test tooltip", "_titleArrowIcon aggregation tooltip is updated with the new value");
 		assert.strictEqual(oTitleArrowIconContAggr.getTooltip(), "Test tooltip", "_titleArrowIconCont aggregation tooltip is updated with the new value");
 
 		oHeader.destroyTitleSelectorTooltip();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oHeader.getTitleSelectorTooltip(), null, "titleSelectorTooltip aggregation is destroyed");
 		assert.strictEqual(oTitleArrowIconAggr.getTooltip(), oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"), "_titleArrowIcon aggregation tooltip is set to default");
 		assert.strictEqual(oTitleArrowIconContAggr.getTooltip(), oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"), "_titleArrowIconCont aggregation tooltip is set to default");
 	});
 
-	QUnit.test("Title text has constrained width", function (assert) {
+	QUnit.test("Title text has constrained width", async function(assert) {
 		var oHeader = Element.getElementById("UxAP-ObjectPageHeader--header"),
 			aTitleTextParts,
 			iTitleTextParts,
@@ -194,7 +196,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		}, this);
 
 		oHeader.setObjectTitle(sLongTitle);
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
 	QUnit.module("image rendering", {
@@ -203,10 +205,10 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 			XMLView.create({
 				id: "UxAP-ObjectPageHeader",
 				viewName: "view.UxAP-ObjectPageHeader"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oHeaderView = oView;
 				this.oHeaderView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				this._oPage = this.oHeaderView.byId("ObjectPageLayout");
 				this._oHeader = Element.getElementById("UxAP-ObjectPageHeader--header");
 				done();
@@ -240,11 +242,11 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 
 		assert.strictEqual(this.oHeaderView.$().find(".sapUxAPHidePlaceholder.sapUxAPObjectPageHeaderObjectImage").length, 1, "hidden placeholder is in DOM");
 	});
-	QUnit.test("Two different images in DOM if showTitleInHeaderContent===true", function (assert) {
+	QUnit.test("Two different images in DOM if showTitleInHeaderContent===true", async function(assert) {
 		//act
 		this._oPage.getHeaderTitle().setObjectImageURI("./img/HugeHeaderPicture.png");
 		this._oPage.setShowTitleInHeaderContent(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").length, 2, "two images in DOM");
 
@@ -253,12 +255,12 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 
 		assert.notEqual(img1.id, img2.id, "two different images in DOM");
 	});
-	QUnit.test("Images in DOM updated on URI change", function (assert) {
+	QUnit.test("Images in DOM updated on URI change", async function(assert) {
 		var sUpdatedSrc = "./img/imageID_273624.png";
 		//act
 		this._oPage.getHeaderTitle().setObjectImageURI(sUpdatedSrc);
 		this._oPage.setShowTitleInHeaderContent(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").length, 2, "two images in DOM");
 
@@ -268,12 +270,12 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		assert.strictEqual(Element.closestTo(img1).getSrc(), sUpdatedSrc, "image1 is updated");
 		assert.strictEqual(Element.closestTo(img2).getSrc(), sUpdatedSrc, "image2 is updated");
 	});
-	QUnit.test("Two different placeholders in DOM if showTitleInHeaderContent===true", function (assert) {
+	QUnit.test("Two different placeholders in DOM if showTitleInHeaderContent===true", async function(assert) {
 		//act
 		this._oPage.getHeaderTitle().setObjectImageURI("");
 		this._oPage.getHeaderTitle().setShowPlaceholder(true);
 		this._oPage.setShowTitleInHeaderContent(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon").length, 2, "two placeholders in DOM");
 
@@ -283,20 +285,20 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		assert.notEqual(oPlaceholder1.id, oPlaceholder2.id, "two different placeholders in DOM");
 	});
 
-	QUnit.test("Placeholder should be of type sap.m.Avatar", function (assert) {
+	QUnit.test("Placeholder should be of type sap.m.Avatar", async function(assert) {
 		// Act
 		this._oPage.getHeaderTitle().setObjectImageURI("");
 		this._oPage.getHeaderTitle().setShowPlaceholder(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(this._oHeader.getAggregation("_placeholder").isA("sap.m.Avatar"), "Placeholder is of type sap.m.Avatar");
 	});
 
-	QUnit.test("Icons should be of type sap.m.Avatar", function (assert) {
+	QUnit.test("Icons should be of type sap.m.Avatar", async function(assert) {
 		// Act
 		this._oPage.getHeaderTitle().setObjectImageURI("sap-icon://accelerated");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(this._oHeader.getAggregation("_objectImage").isA("sap.m.Avatar"), "The icon is of type sap.m.Avatar");
@@ -442,7 +444,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 
 	QUnit.module("API");
 
-	QUnit.test("setObjectTitle", function (assert) {
+	QUnit.test("setObjectTitle", async function(assert) {
 		var sHeaderTitle = "myTitle",
 			sHeaderNewTitle = "myNewTitle",
 			oHeaderTitle =  new ObjectPageHeader({
@@ -455,7 +457,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 			headerTitle: oHeaderTitle
 		}).placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oHeaderTitle.getObjectTitle(), sHeaderTitle, "The initial title text is set correctly: " + sHeaderTitle);
 		assert.ok(!oNotifyParentSpy.called, "_notifyParentOfChanges not called on first rendering");
@@ -502,10 +504,10 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 				'</mvc:View>';
 			XMLView.create({
 				definition: sViewXML
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.myView = oView;
 				this.myView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},
@@ -725,7 +727,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		assert.ok(!oHeader.getDomRef().contains($HeaderClone_identifier.get(0)), 'returned element is not part of the original element');
 	});
 
-	QUnit.test("_findById can find id with special characters", function (assert) {
+	QUnit.test("_findById can find id with special characters", async function(assert) {
 
 		var oHeader = this.myView.byId("applicationHeader"),
 			sIdWithSpecialChars = oHeader.getId() + "-my.action",
@@ -734,7 +736,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 
 		// setup
 		oHeader.addAction(new Button(sIdWithSpecialChars));
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// create the search context
 		$HeaderClone = oHeader.$().clone();
@@ -751,10 +753,10 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 			XMLView.create({
 				id: "UxAP-ObjectPageHeader",
 				viewName: "view.UxAP-ObjectPageHeader"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oHeaderView = oView;
 				this.oHeaderView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				this._oHeader = Element.getElementById("UxAP-ObjectPageHeader--header");
 				done();
 			}.bind(this));
@@ -765,7 +767,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		}
 	});
 
-	QUnit.test("Adding action buttons as invisible doesn't prevent them from becoming default", function (assert) {
+	QUnit.test("Adding action buttons as invisible doesn't prevent them from becoming default", async function(assert) {
 
 		var oActionButton = new ObjectPageHeaderActionButton({
 			text:"Invisible Button",
@@ -774,17 +776,17 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 
 		this._oHeader.addAction(oActionButton);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oActionButton.setVisible(true);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oActionButton.getType(), "Default",
 			"The button is default");
 	});
 
-	QUnit.test("Actions and buttons in overflow popover are synced correctly", function (assert) {
+	QUnit.test("Actions and buttons in overflow popover are synced correctly", async function(assert) {
 		var oActionButton = new ObjectPageHeaderActionButton({
 			enabled: false,
 			text: "Test text",
@@ -794,7 +796,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		oMappedButton;
 
 		this._oHeader.addAction(oActionButton);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oMappedButton = this._oHeader._oActionSheetButtonMap[oActionButton.getId()];
 
@@ -807,7 +809,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		oActionButton.setText("Test text 2");
 		oActionButton.setIcon("sap-icon://share");
 		oActionButton.setType("Accept");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oActionButton.getEnabled(), oMappedButton.getEnabled(), "Button enabled property is synced correctly");
 		assert.strictEqual(oActionButton.getText(), oMappedButton.getText(), "Button text property is synced correctly");
@@ -815,7 +817,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		assert.strictEqual(oActionButton.getType(), oMappedButton.getType(), "Button type property is synced correctly");
 	});
 
-	QUnit.test("Setting visibility to action buttons", function (assert) {
+	QUnit.test("Setting visibility to action buttons", async function(assert) {
 		var oButton = new Button({
 			text : "Some button",
 			visible: false
@@ -824,12 +826,12 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 
 		this._oHeader.addAction(oButton);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oSpy = this.spy(this._oHeader, "_adaptLayout");
 		oButton.setVisible(true);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oButton._getInternalVisible(), true, "The button is visible");
 		assert.ok(this._oHeader._oOverflowButton.$().is(':hidden'), "There is no overflow button");
@@ -838,14 +840,14 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		oSpy.reset();
 		oButton.setVisible(false);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oButton._getInternalVisible(), false, "The button is invisible");
 		assert.ok(this._oHeader._oOverflowButton.$().is(':hidden'), "There is no overflow button");
 		assert.ok(oSpy.called, "_adaptLayout is called, when visibility of a button is changed");
 	});
 
-	QUnit.test("Correct hook states", function (assert) {
+	QUnit.test("Correct hook states", async function(assert) {
 		var aActionButtons = [
 			new ObjectPageHeaderActionButton("test", {
 				text:"Test text"
@@ -860,13 +862,13 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 			this._oHeader.addAction(oAction);
 		}.bind(this));
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(aActionButtons[0]._getText(), "", "Button's text should be hidden through the hook");
 		assert.strictEqual(aActionButtons[1]._getText(), aActionButtons[1].getText(), "Button's text is shown");
 	});
 
-	QUnit.test("Correct accessibility attributes", function (assert) {
+	QUnit.test("Correct accessibility attributes", async function(assert) {
 		var sIconSrc = "sap-icon://search",
 			oActionButton = new ObjectPageHeaderActionButton({
 				icon: sIconSrc,
@@ -876,13 +878,13 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 
 		this._oHeader.addAction(oActionButton);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oActionButton.getDomRef().getAttribute("aria-label"), oIconInfo.text, "Aria-label attribute is set correct");
 		assert.strictEqual(oActionButton.getDomRef().getAttribute("title"), oIconInfo.text, "Title attribute is set correct");
 
 		oActionButton.setHideText(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oActionButton.getDomRef().getAttribute("aria-label"), null, "Aria-label attribute is set correct");
 		assert.strictEqual(oActionButton.getDomRef().getAttribute("title"), null, "Title attribute is set correct");
@@ -895,10 +897,10 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 			XMLView.create({
 				id: "UxAP-ObjectPageHeader",
 				viewName: "view.UxAP-ObjectPageHeader"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oHeaderView = oView;
 				this.oHeaderView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},
@@ -907,7 +909,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		}
 	});
 
-	QUnit.test("Resize listener is called after rerender while hidden", function (assert) {
+	QUnit.test("Resize listener is called after rerender while hidden", async function(assert) {
 		var oHeader = this.oHeaderView.byId("header"),
 			oSpy = this.spy(oHeader, "_adaptLayout"),
 			done = assert.async();
@@ -933,7 +935,7 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		oHeader.addEventDelegate(oDelegate);
 		// Act: rerender the header while hidden
 		oHeader.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
 	QUnit.module("Breadcrumbs rendering", {
@@ -942,12 +944,12 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 			XMLView.create({
 				id: "UxAP-ObjectPageHeader",
 				viewName: "view.UxAP-ObjectPageHeader"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oHeaderView = oView;
 				this.oHeaderView.placeAt("qunit-fixture");
 				this._oHeader = Element.getElementById("UxAP-ObjectPageHeader--header");
 				this._oHeader.destroyBreadcrumbs();
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},
@@ -961,9 +963,9 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		assert.strictEqual(this.oHeaderView.$().find(".sapMBreadcrumbs").length, 0, "There are No instances of sap.m.Breadcrumbs rendered in ObjectPageHeader");
 	});
 
-	QUnit.test("After setting the New breadcrumbs aggregation, the New breadcrumbs aggregation should be rendered", function (assert) {
+	QUnit.test("After setting the New breadcrumbs aggregation, the New breadcrumbs aggregation should be rendered", async function(assert) {
 		this._oHeader.setBreadcrumbs(new Breadcrumbs());
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
 		assert.ok(this._oHeader.getBreadcrumbs().$().length > 0, "the New breadcrumbs aggregation is rendered");
 	});

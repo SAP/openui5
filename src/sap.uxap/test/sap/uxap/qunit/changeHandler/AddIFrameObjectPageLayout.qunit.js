@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper",
 	"sap/ui/core/Core",
 	"sap/ui/core/Component",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	jQuery,
@@ -21,6 +22,7 @@ sap.ui.define([
 	XMLHelper,
 	oCore,
 	Component,
+	nextUIUpdate,
 	FlexTestAPI
 ) {
 	"use strict";
@@ -57,7 +59,7 @@ sap.ui.define([
 		});
 	});
 
-	function beforeEachFunction() {
+	async function beforeEachFunction() {
 		this.oMockedAppComponent = {
 			getLocalId: function () {
 				return undefined;
@@ -92,7 +94,7 @@ sap.ui.define([
 		});
 
 		this.oObjectPageLayout.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.mPropertyBag = {
 			view: {

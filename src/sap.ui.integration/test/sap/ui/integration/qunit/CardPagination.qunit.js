@@ -5,15 +5,31 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/Host",
-	"sap/ui/integration/cards/BaseListContent"
+	"sap/ui/integration/cards/BaseListContent",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	deepExtend,
 	Core,
 	Card,
 	Host,
-	BaseListContent
+	BaseListContent,
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
+
+	function _nextCardContentDataChangedEvent(oCard) {
+		return new Promise((resolve) => {
+			oCard.attachEventOnce("_contentDataChange", resolve);
+		});
+	}
+
+	function _nextPaginatorAnimationComplete(oPaginator) {
+		return new Promise((resolve) => {
+			oPaginator.attachEventOnce("animationComplete", resolve);
+		});
+	}
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
@@ -262,129 +278,78 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Pagination - client side with static data", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			var oPaginator = this.oCard.getCardFooter().getPaginator(),
-				oList = this.oCard.getCardContent().getInnerList(),
-				oPaginatorModel = this.oCard.getModel("paginator");
-
-			assert.ok(oPaginator, "paginator is created");
-			assert.strictEqual(oPaginator.getPageNumber(), 0, "page number is correct");
-			assert.strictEqual(oPaginator.getPageSize(), 4, "page size is correct");
-			assert.strictEqual(oList.getItems().length, oPaginator.getPageSize(), "list items number is correct");
-			assert.strictEqual(oPaginator.getPageCount(), 4, "page count is correct");
-			assert.strictEqual(oPaginatorModel.getProperty("/skip"), 0, "initial value of '/skip' should be correct");
-			assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 0, "initial value of '/pageIndex' should be correct");
-			assert.strictEqual(oPaginatorModel.getProperty("/size"), 4, "initial value of '/size' should be correct");
-
-			// Act
-			oPaginator.next();
-			Core.applyChanges();
-
-			assert.strictEqual(this.oCard.getCardContent().getInnerList().getItems().length, oPaginator.getPageSize(), "list items number is correct");
-			assert.strictEqual(oList.getItems()[0].getTitle(), "Name 5", "next page is shown");
-			assert.strictEqual(oPaginatorModel.getProperty("/skip"), 4, "value of '/skip' should be correct");
-			assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 1, "value of '/pageIndex' should be correct");
-			assert.strictEqual(oPaginatorModel.getProperty("/size"), 4, "value of '/size' should be correct");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Pagination - client side with static data", async function (assert) {
 		this.oCard.setManifest(oManifestClientSideWithStaticData);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oPaginator = this.oCard.getCardFooter().getPaginator(),
+			oList = this.oCard.getCardContent().getInnerList(),
+			oPaginatorModel = this.oCard.getModel("paginator");
+
+		assert.ok(oPaginator, "paginator is created");
+		assert.strictEqual(oPaginator.getPageNumber(), 0, "page number is correct");
+		assert.strictEqual(oPaginator.getPageSize(), 4, "page size is correct");
+		assert.strictEqual(oList.getItems().length, oPaginator.getPageSize(), "list items number is correct");
+		assert.strictEqual(oPaginator.getPageCount(), 4, "page count is correct");
+		assert.strictEqual(oPaginatorModel.getProperty("/skip"), 0, "initial value of '/skip' should be correct");
+		assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 0, "initial value of '/pageIndex' should be correct");
+		assert.strictEqual(oPaginatorModel.getProperty("/size"), 4, "initial value of '/size' should be correct");
+
+		// Act
+		oPaginator.next();
+		await nextUIUpdate();
+
+		assert.strictEqual(this.oCard.getCardContent().getInnerList().getItems().length, oPaginator.getPageSize(), "list items number is correct");
+		assert.strictEqual(oList.getItems()[0].getTitle(), "Name 5", "next page is shown");
+		assert.strictEqual(oPaginatorModel.getProperty("/skip"), 4, "value of '/skip' should be correct");
+		assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 1, "value of '/pageIndex' should be correct");
+		assert.strictEqual(oPaginatorModel.getProperty("/size"), 4, "value of '/size' should be correct");
 	});
 
-	QUnit.test("Paginator visibility", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			var oPaginator = this.oCard.getCardFooter().getPaginator();
-
-			assert.strictEqual(oPaginator.getVisible(), false, "paginator is not visible");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Paginator visibility", async function (assert) {
 		this.oCard.setManifest(oManifestClientSideWithStaticData);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oPaginator = this.oCard.getCardFooter().getPaginator();
+
+		assert.strictEqual(oPaginator.getVisible(), false, "paginator is not visible");
 	});
 
-	QUnit.test("Event stateChanged is fired", function (assert) {
+	QUnit.test("Event stateChanged is fired", async function (assert) {
 		var done = assert.async(),
 			oHost = new Host();
 
 		assert.expect(2);
 
 		this.oCard.setHost(oHost);
+		this.oCard.setManifest(oManifestClientSideWithStaticData);
 
-		this.oCard.attachEventOnce("_ready", function () {
-			var oPaginator = this.oCard.getCardFooter().getPaginator();
+		await nextCardReadyEvent(this.oCard);
 
-			this.oCard.attachEventOnce("stateChanged", function () {
-				assert.ok(true, "stateChanged is called after page change");
-			});
+		var oPaginator = this.oCard.getCardFooter().getPaginator();
 
-			oHost.attachEventOnce("cardStateChanged", function () {
-				assert.ok(true, "cardStateChanged for host is called after page change");
+		this.oCard.attachEventOnce("stateChanged", function () {
+			assert.ok(true, "stateChanged is called after page change");
+		});
 
-				// Clean up
-				this.oCard.setHost(null);
-				oHost.destroy();
-				done();
-			}.bind(this));
+		oHost.attachEventOnce("cardStateChanged", function () {
+			assert.ok(true, "cardStateChanged for host is called after page change");
 
-			// Act
-			oPaginator.next();
-			Core.applyChanges();
+			// Clean up
+			this.oCard.setHost(null);
+			oHost.destroy();
+			done();
 		}.bind(this));
 
-		this.oCard.setManifest(oManifestClientSideWithStaticData);
+		// Act
+		oPaginator.next();
 	});
 
-	QUnit.test("Pagination - client side with dynamic data and filter", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
-
-			var oPaginator = this.oCard.getCardFooter().getPaginator(),
-				oList = this.oCard.getCardContent().getInnerList(),
-				oFilterBar = this.oCard.getAggregation("_filterBar"),
-				oFilter = oFilterBar._getFilters()[0];
-
-			// Act 1 - go to page 2
-			oPaginator.next();
-
-			// Assert 1 - is on page 2
-			assert.strictEqual(oPaginator.getPageNumber(), 1, "page number is correct");
-			assert.strictEqual(oList.getItems()[0].getTitle(), "Name 5", "next page is shown");
-
-			oPaginator.attachEventOnce("animationComplete", function () {
-				// Assert 2 - is back to page 1
-				assert.strictEqual(oPaginator.getPageNumber(), 0, "Page number should have been reset to 0 after filter has changed");
-				assert.strictEqual(oList.getItems()[0].getTitle(), "Name 0", "First page should be shown in the list");
-
-				// Act 3 - go to page 2 again
-				oPaginator.next();
-				Core.applyChanges();
-
-				// Assert 3 - is on page 2
-				assert.strictEqual(oPaginator.getPageNumber(), 1, "page number is correct");
-				assert.strictEqual(oList.getItems()[0].getTitle(), "Name 5", "next page is shown");
-
-				done();
-			});
-
-			// Act 2 - change filter
-			oFilter.getField().open();
-			oFilter.getField().getItems()[1].$().trigger("tap");
-
-		}.bind(this));
-
+	QUnit.test("Pagination - client side with dynamic data and filter", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.clientSidePaginationWithDynamicDataAndFilter"
@@ -435,6 +400,39 @@ sap.ui.define([
 				}
 			}
 		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oPaginator = this.oCard.getCardFooter().getPaginator(),
+			oList = this.oCard.getCardContent().getInnerList(),
+			oFilterBar = this.oCard.getAggregation("_filterBar"),
+			oFilter = oFilterBar._getFilters()[0];
+
+		// Act - go to page 2
+		oPaginator.next();
+
+		// Assert - is on page 2
+		assert.strictEqual(oPaginator.getPageNumber(), 1, "page number is correct");
+		assert.strictEqual(oList.getItems()[0].getTitle(), "Name 5", "next page is shown");
+
+		// Act - change filter
+		oFilter.getField().open();
+		oFilter.getField().getItems()[1].$().trigger("tap");
+
+		await _nextPaginatorAnimationComplete(oPaginator);
+
+		// Assert - is back to page 1
+		assert.strictEqual(oPaginator.getPageNumber(), 0, "Page number should have been reset to 0 after filter has changed");
+		assert.strictEqual(oList.getItems()[0].getTitle(), "Name 0", "First page should be shown in the list");
+
+		// Act - go to page 2 again
+		oPaginator.next();
+		await nextUIUpdate();
+
+		// Assert - is on page 2
+		assert.strictEqual(oPaginator.getPageNumber(), 1, "page number is correct");
+		assert.strictEqual(oList.getItems()[0].getTitle(), "Name 5", "next page is shown");
 	});
 
 	QUnit.module("Server-Side Pagination", {
@@ -477,111 +475,91 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Pagination - server side", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEventOnce("_ready", () => {
-			Core.applyChanges();
-
-			var oPaginator = this.oCard.getCardFooter().getPaginator(),
-				oList = this.oCard.getCardContent().getInnerList(),
-				oPaginatorModel = this.oCard.getModel("paginator");
-
-			assert.ok(oPaginator, "paginator is created");
-			assert.strictEqual(oPaginator.getPageNumber(), 0, "page number is correct");
-			assert.strictEqual(oPaginator.getPageSize(), 5, "page size is correct");
-			assert.strictEqual(oPaginator.getPageCount(), 16, "page count is correct");
-			assert.strictEqual(oList.getItems().length, oPaginator.getPageSize(), "list items number is correct");
-			assert.strictEqual(oPaginatorModel.getProperty("/skip"), 0, "initial value of '/skip' should be correct");
-			assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 0, "initial value of '/pageIndex' should be correct");
-			assert.strictEqual(oPaginatorModel.getProperty("/size"), 5, "initial value of '/size' should be correct");
-
-			this.oCard.attachEventOnce("_contentDataChange", () => {
-				Core.applyChanges();
-
-				assert.strictEqual(this.oCard.getCardContent().getInnerList().getItems().length, oPaginator.getPageSize(), "list items number is correct");
-				assert.strictEqual(oList.getItems()[0].getTitle(), "Name 5", "next page is shown");
-				assert.strictEqual(oPaginatorModel.getProperty("/skip"), 5, "value of '/skip' should be correct");
-				assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 1, "value of '/pageIndex' should be correct");
-				assert.strictEqual(oPaginatorModel.getProperty("/size"), 5, "value of '/size' should be correct");
-
-				done();
-			});
-
-			// Act
-			oPaginator.next();
-		});
-
+	QUnit.test("Pagination - server side", async function (assert) {
 		this.oCard.setManifest(oManifestServerSide);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oPaginator = this.oCard.getCardFooter().getPaginator(),
+			oList = this.oCard.getCardContent().getInnerList(),
+			oPaginatorModel = this.oCard.getModel("paginator");
+
+		assert.ok(oPaginator, "paginator is created");
+		assert.strictEqual(oPaginator.getPageNumber(), 0, "page number is correct");
+		assert.strictEqual(oPaginator.getPageSize(), 5, "page size is correct");
+		assert.strictEqual(oPaginator.getPageCount(), 16, "page count is correct");
+		assert.strictEqual(oList.getItems().length, oPaginator.getPageSize(), "list items number is correct");
+		assert.strictEqual(oPaginatorModel.getProperty("/skip"), 0, "initial value of '/skip' should be correct");
+		assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 0, "initial value of '/pageIndex' should be correct");
+		assert.strictEqual(oPaginatorModel.getProperty("/size"), 5, "initial value of '/size' should be correct");
+
+		// Act
+		oPaginator.next();
+
+		await _nextCardContentDataChangedEvent(this.oCard);
+		await nextUIUpdate();
+
+		assert.strictEqual(this.oCard.getCardContent().getInnerList().getItems().length, oPaginator.getPageSize(), "list items number is correct");
+		assert.strictEqual(oList.getItems()[0].getTitle(), "Name 5", "next page is shown");
+		assert.strictEqual(oPaginatorModel.getProperty("/skip"), 5, "value of '/skip' should be correct");
+		assert.strictEqual(oPaginatorModel.getProperty("/pageIndex"), 1, "value of '/pageIndex' should be correct");
+		assert.strictEqual(oPaginatorModel.getProperty("/size"), 5, "value of '/size' should be correct");
 	});
 
-	QUnit.test("Pagination - server side without bindings", function (assert) {
-		var done = assert.async();
-		var oCard = this.oCard;
+	QUnit.test("Pagination - server side without bindings", async function (assert) {
+		this.oCard.setManifest(oManifestServerSideNoBindings);
 
-		oCard.attachEventOnce("_ready", function () {
-			Core.applyChanges();
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
 
-			var oPaginator = oCard.getCardFooter().getPaginator(),
-				oList = oCard.getCardContent().getInnerList();
+		var oPaginator = this.oCard.getCardFooter().getPaginator(),
+			oList = this.oCard.getCardContent().getInnerList();
 
-			assert.ok(oPaginator, "paginator is created");
-			assert.strictEqual(oPaginator.getPageNumber(), 0, "page number is correct");
-			assert.strictEqual(oPaginator.getPageSize(), 5, "page size is correct");
-			assert.strictEqual(oPaginator.getPageCount(), 16, "page count is correct");
+		assert.ok(oPaginator, "paginator is created");
+		assert.strictEqual(oPaginator.getPageNumber(), 0, "page number is correct");
+		assert.strictEqual(oPaginator.getPageSize(), 5, "page size is correct");
+		assert.strictEqual(oPaginator.getPageCount(), 16, "page count is correct");
 
-			assert.strictEqual(oList.getItems().length, oPaginator.getPageSize(), "list items number is correct");
+		assert.strictEqual(oList.getItems().length, oPaginator.getPageSize(), "list items number is correct");
 
-			oCard.attachEventOnce("_contentDataChange", function () {
-				Core.applyChanges();
+		oPaginator.next();
 
-				assert.strictEqual(oCard.getCardContent().getInnerList().getItems().length, oPaginator.getPageSize(), "list items number is correct");
-				assert.strictEqual(oList.getItems()[0].getTitle(), "Name 2", "same page is shown");
+		await _nextCardContentDataChangedEvent(this.oCard);
+		await nextUIUpdate();
 
-				oCard.destroy();
-				done();
-			});
-
-			oPaginator.next();
-		});
-
-		oCard.setManifest(oManifestServerSideNoBindings);
+		assert.strictEqual(this.oCard.getCardContent().getInnerList().getItems().length, oPaginator.getPageSize(), "list items number is correct");
+		assert.strictEqual(oList.getItems()[0].getTitle(), "Name 2", "same page is shown");
 	});
 
-	QUnit.test("Page is reset after data is refreshed", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEventOnce("_ready", function () {
-			Core.applyChanges();
-			var oPaginator = this.oCard.getCardFooter().getPaginator();
-			var oList = this.oCard.getCardContent().getInnerList();
-
-			oPaginator.attachEventOnce("animationComplete", function () {
-				assert.strictEqual(oPaginator.getPageNumber(), 1, "Page number should be 1");
-
-				oPaginator.attachEventOnce("animationComplete", function () {
-					Core.applyChanges();
-
-					// Assert
-					assert.strictEqual(oPaginator.getPageNumber(), 0, "Page number should have been reset to 0 after refreshData()");
-					assert.strictEqual(oList.getItems()[0].getTitle(), "Name 0", "First page should be shown in the list");
-
-					done();
-				});
-
-				// Act 2
-				this.oCard.refreshData();
-			}.bind(this));
-
-			// Act 1
-			oPaginator.next();
-		}.bind(this));
-
+	QUnit.test("Page is reset after data is refreshed", async function (assert) {
 		this.oCard.setManifest(oManifestServerSide);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oPaginator = this.oCard.getCardFooter().getPaginator();
+		var oList = this.oCard.getCardContent().getInnerList();
+
+		// Act 1
+		oPaginator.next();
+
+		await _nextPaginatorAnimationComplete(oPaginator);
+
+		assert.strictEqual(oPaginator.getPageNumber(), 1, "Page number should be 1");
+
+		// Act
+		this.oCard.refreshData();
+
+		await _nextPaginatorAnimationComplete(oPaginator);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oPaginator.getPageNumber(), 0, "Page number should have been reset to 0 after refreshData()");
+		assert.strictEqual(oList.getItems()[0].getTitle(), "Name 0", "First page should be shown in the list");
 	});
 
-	QUnit.test("Page is reset after filter has changed", function (assert) {
-		var done = assert.async();
+	QUnit.test("Page is reset after filter has changed", async function (assert) {
 		var oManifest = deepExtend({}, oManifestServerSide);
 
 		oManifest["sap.card"].configuration.filters = {
@@ -604,35 +582,33 @@ sap.ui.define([
 
 		oManifest["sap.card"].data.request.parameters["$filter"] = "CategoryID eq {filters>/categoryId/value}";
 
-		this.oCard.attachEventOnce("_ready", function () {
-			Core.applyChanges();
-			var oPaginator = this.oCard.getCardFooter().getPaginator();
-			var oList = this.oCard.getCardContent().getInnerList();
-
-			oPaginator.attachEventOnce("animationComplete", function () {
-				assert.strictEqual(oPaginator.getPageNumber(), 1, "Page number should be 1");
-
-				var oFilterBar = this.oCard.getAggregation("_filterBar");
-				var oFilter = oFilterBar._getFilters()[0];
-
-				oPaginator.attachEventOnce("animationComplete", function () {
-					// Assert
-					assert.strictEqual(oPaginator.getPageNumber(), 0, "Page number should have been reset to 0 after filter has changed");
-					assert.strictEqual(oList.getItems()[0].getTitle(), "Name 0", "First page should be shown in the list");
-
-					done();
-				});
-
-				// Act 2
-				oFilter.getField().open();
-				oFilter.getField().getItems()[1].$().trigger("tap");
-			}.bind(this));
-
-			// Act 1
-			oPaginator.next();
-		}.bind(this));
-
 		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oPaginator = this.oCard.getCardFooter().getPaginator();
+		var oList = this.oCard.getCardContent().getInnerList();
+
+		// Act
+		oPaginator.next();
+
+		await _nextPaginatorAnimationComplete(oPaginator);
+
+		assert.strictEqual(oPaginator.getPageNumber(), 1, "Page number should be 1");
+
+		var oFilterBar = this.oCard.getAggregation("_filterBar");
+		var oFilter = oFilterBar._getFilters()[0];
+
+		// Act
+		oFilter.getField().open();
+		oFilter.getField().getItems()[1].$().trigger("tap");
+
+		await _nextPaginatorAnimationComplete(oPaginator);
+
+		// Assert
+		assert.strictEqual(oPaginator.getPageNumber(), 0, "Page number should have been reset to 0 after filter has changed");
+		assert.strictEqual(oList.getItems()[0].getTitle(), "Name 0", "First page should be shown in the list");
 	});
 
 	QUnit.module("Slice data", {
@@ -647,69 +623,47 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("When error message is displayed", function (assert) {
+	QUnit.test("When error message is displayed", async function (assert) {
 		// Arrange
-		var done = assert.async();
-		this.oCard.attachEventOnce("_ready", function () {
-			Core.applyChanges();
-
-			var oPaginator = this.oCard.getCardFooter().getPaginator();
-			var oContent = this.oCard.getCardContent();
-
-			// Assert
-			oPaginator.next();
-			assert.strictEqual(oContent.sliceData, undefined, "Slice data is not defined on the content when there is error");
-
-			done();
-		}.bind(this));
-
-		// Act
 		this.oCard.setManifest(oManifestWithError);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
-	});
 
-	QUnit.test("With data", function (assert) {
-		// Arrange
-		var done = assert.async();
-		this.oCard.attachEventOnce("_ready", function () {
-			Core.applyChanges();
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
 
-			var oPaginator = this.oCard.getCardFooter().getPaginator();
-			var oContent = this.oCard.getCardContent();
-			var oSliceDataSpy = this.spy(oContent, "sliceData");
-
-			// Assert
-			oPaginator.next();
-			assert.strictEqual(typeof oContent.sliceData, "function", "Slice data is defined on the content when there is data");
-			assert.ok(oSliceDataSpy.calledOnce, "Slice data is called on the content when there is data");
-
-			done();
-		}.bind(this));
+		var oPaginator = this.oCard.getCardFooter().getPaginator();
+		var oContent = this.oCard.getCardContent();
 
 		// Act
-		this.oCard.setManifest(oManifestClientSideWithStaticData);
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		oPaginator.next();
+
+		// Assert
+		assert.strictEqual(oContent.sliceData, undefined, "Slice data is not defined on the content when there is error");
 	});
 
-	QUnit.test("No items", function (assert) {
+	QUnit.test("With data", async function (assert) {
 		// Arrange
-		var done = assert.async();
+		this.oCard.setManifest(oManifestClientSideWithStaticData);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oPaginator = this.oCard.getCardFooter().getPaginator();
+		var oContent = this.oCard.getCardContent();
+		var oSliceDataSpy = this.spy(oContent, "sliceData");
+
+		// Act
+		oPaginator.next();
+
+		// Assert
+		assert.strictEqual(typeof oContent.sliceData, "function", "Slice data is defined on the content when there is data");
+		assert.ok(oSliceDataSpy.calledOnce, "Slice data is called on the content when there is data");
+	});
+
+	QUnit.test("No items", async function (assert) {
+		// Arrange
 		var oBaseListContentSpy = this.spy(BaseListContent.prototype, "getDataLength");
-
-		this.oCard.attachEventOnce("_ready", function () {
-			Core.applyChanges();
-
-			var oPaginator = this.oCard.getCardFooter().getPaginator();
-			Core.applyChanges();
-			assert.strictEqual(oBaseListContentSpy.callCount, 0, "The getDataLength method is not called" );
-			assert.notOk(oPaginator.$().find(".sapMCrslBulleted span").length, "dots are not rendered");
-			assert.notOk(oPaginator.getDomRef(), "paginator is not rendered when there are no items");
-
-			var $numericIndicator = oPaginator.$().find(".sapMCrslNumeric span");
-			assert.notOk($numericIndicator.length, "numeric indicator is not rendered");
-
-			done();
-		}.bind(this));
 
 		// Act
 		this.oCard.setManifest({
@@ -747,5 +701,17 @@ sap.ui.define([
 		});
 
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oPaginator = this.oCard.getCardFooter().getPaginator();
+
+		assert.strictEqual(oBaseListContentSpy.callCount, 0, "The getDataLength method is not called" );
+		assert.notOk(oPaginator.$().find(".sapMCrslBulleted span").length, "dots are not rendered");
+		assert.notOk(oPaginator.getDomRef(), "paginator is not rendered when there are no items");
+
+		var $numericIndicator = oPaginator.$().find(".sapMCrslNumeric span");
+		assert.notOk($numericIndicator.length, "numeric indicator is not rendered");
 	});
 });

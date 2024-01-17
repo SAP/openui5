@@ -1,6 +1,6 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/core/Element", "sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/ui/core/mvc/XMLView"],
-function(Element, jQuery, Core, XMLView) {
+sap.ui.define(["sap/ui/core/Element", "sap/ui/qunit/utils/nextUIUpdate", "sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/ui/core/mvc/XMLView"],
+function(Element, nextUIUpdate, jQuery, Core, XMLView) {
 	"use strict";
 
 
@@ -26,10 +26,10 @@ function(Element, jQuery, Core, XMLView) {
 			XMLView.create({
 				id: "UxAP-FormLayout",
 				viewName: "view.UxAP-FormLayout"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oObjectPageFormView = oView;
 				this.oObjectPageFormView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				waitForForm(oView, "personalFormBlock").then(done);
 
@@ -91,11 +91,11 @@ function(Element, jQuery, Core, XMLView) {
 			XMLView.create({
 				id: "UxAP-SimpleFormLayout",
 				viewName: "view.UxAP-SimpleFormLayout"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oObjectPageFormView = oView;
 				this.oObjectPage = oView.byId("ObjectPageLayout");
 				this.oObjectPageFormView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				var oPromise1 = waitForForm(oView, "personalSimpleFormBlock"),
 				oPromise2 = waitForForm(oView, "employmentSimpleFormBlock");

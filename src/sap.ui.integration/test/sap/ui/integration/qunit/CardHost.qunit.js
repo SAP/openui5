@@ -2,12 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core",
-	"sap/ui/integration/Host"
+	"sap/ui/integration/Host",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	Card,
-	Core,
-	Host
+	Host,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -69,24 +69,19 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Context values", function (assert) {
-		// Arrange
-		var done = assert.async(),
-			oCard = this.oCard;
-
-		oCard.attachEvent("_ready", function () {
-			var oHeader = oCard.getCardHeader(),
-				sTitle = oHeader.getTitle(),
-				sSubtitle = oHeader.getSubtitle();
-
-			// Assert
-			assert.strictEqual(sTitle, "User name", "User name parameter is parsed correctly.");
-			assert.strictEqual(sSubtitle, "15", "User id parameter is parsed correctly.");
-			done();
-		});
-
+	QUnit.test("Context values", async function (assert) {
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oHeader = this.oCard.getCardHeader(),
+			sTitle = oHeader.getTitle(),
+			sSubtitle = oHeader.getSubtitle();
+
+		// Assert
+		assert.strictEqual(sTitle, "User name", "User name parameter is parsed correctly.");
+		assert.strictEqual(sSubtitle, "15", "User id parameter is parsed correctly.");
 	});
 
 	QUnit.module("Events", {
@@ -99,10 +94,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Context values", function (assert) {
+	QUnit.test("Context values", async function (assert) {
 		// Arrange
-		var done = assert.async(),
-			oHost = this.oHost,
+		var oHost = this.oHost,
 			oCard = new Card({
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources",
 				dataMode: "Active",
@@ -143,20 +137,16 @@ sap.ui.define([
 			iCounter++;
 		});
 
-		oCard.attachEventOnce("_ready", function () {
-			oCard.attachEventOnce("_ready", function () {
-				// Assert
-				assert.strictEqual(iCounter, 1, "The cardInitialized is fired only once even if refresh() is called.");
-				done();
-			});
-
-			// Act
-			oCard.refresh();
-			oCard.startManifestProcessing();
-			Core.applyChanges();
-		});
-
 		// Act
 		oCard.startManifestProcessing();
+
+		await nextCardReadyEvent(oCard);
+		oCard.refresh();
+		oCard.startManifestProcessing();
+
+		await nextCardReadyEvent(oCard);
+
+		// Assert
+		assert.strictEqual(iCounter, 1, "The cardInitialized is fired only once even if refresh() is called.");
 	});
 });

@@ -522,6 +522,51 @@ sap.ui.define([
         assert.ok(this.oVM._openVariantList.called);
 	});
 
+	QUnit.test("check no data available", function(assert) {
+		this.oVM.onclick();
+		assert.ok(!this.oVM.oVariantList.getVisible(), "list is invisible");
+		assert.ok(this.oVM.oNodataTextLayout.getVisible(), "no data text is visible");
+		assert.equal(this.oVM.oVariantListNoDataText.getText(), this.oVM._oRb.getText("VARIANT_MANAGEMENT_NODATA"), "expected text found");
+
+		this.oVM.addItem(new VariantItem({key: "1", title:"View1"}));
+
+		this.oVM.onclick();
+		assert.ok(this.oVM.oVariantList.getVisible(), "list is visible");
+		assert.ok(!this.oVM.oNodataTextLayout.getVisible(), "no data text is invisible");
+
+		var sSearchText = "XXX";
+		var oEvent = {
+			getParameters: function() { return {newValue: sSearchText};}
+		};
+
+		this.oVM.addItem(new VariantItem({key: "2", title:"View2"}));
+		this.oVM.addItem(new VariantItem({key: "3", title:"View3"}));
+		this.oVM.addItem(new VariantItem({key: "4", title:"View4"}));
+		this.oVM.addItem(new VariantItem({key: "5", title:"View5"}));
+		this.oVM.addItem(new VariantItem({key: "6", title:"View6"}));
+		this.oVM.addItem(new VariantItem({key: "7", title:"View7"}));
+		this.oVM.addItem(new VariantItem({key: "8", title:"View8"}));
+		this.oVM.addItem(new VariantItem({key: "9", title:"View9"}));
+		this.oVM.addItem(new VariantItem({key: "10", title:"View10"}));
+
+		this.oVM._triggerSearch(oEvent, this.oVM.oVariantList);
+		assert.ok(!this.oVM.oVariantList.getVisible(), "list is invisible");
+		assert.ok(this.oVM.oNodataTextLayout.getVisible(), "no data text is visible");
+		assert.equal(this.oVM.oVariantListNoDataText.getText(), this.oVM._oRb.getText("VARIANT_MANAGEMENT_NODATA_FOUND"), "expected text found");
+
+		sSearchText = "View";
+		this.oVM._triggerSearch(oEvent, this.oVM.oVariantList);
+		assert.ok(this.oVM.oVariantList.getVisible(), "list is visible");
+		assert.ok(!this.oVM.oNodataTextLayout.getVisible(), "no data text is invisible");
+
+		this.oVM.removeAllItems();
+		this.oVM.onclick();
+		assert.ok(!this.oVM.oVariantList.getVisible(), "list is invisible");
+		assert.ok(this.oVM.oNodataTextLayout.getVisible(), "no data text is visible");
+		assert.equal(this.oVM.oVariantListNoDataText.getText(), this.oVM._oRb.getText("VARIANT_MANAGEMENT_NODATA"), "expected text found");
+
+	});
+
 	QUnit.module("VariantManagement SaveAs dialog", {
 		beforeEach: async function() {
 			this.oVM = new VariantManagement();

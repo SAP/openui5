@@ -23,6 +23,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/Device",
 	"sap/m/library",
+	"sap/ui/core/library",
+	"sap/m/MessageStrip",
 	"sap/ui/core/InvisibleText"
 ], (
 	Element,
@@ -45,6 +47,8 @@ sap.ui.define([
 	Log,
 	Device,
 	library,
+	coreLibrary,
+	MessageStrip,
 	InvisibleText
 ) => {
 	"use strict";
@@ -396,8 +400,7 @@ sap.ui.define([
 			ShortcutHintsMixin.addConfig(this._oMoveTopButton, {
 					addAccessibilityLabel: true,
 					message: this._getResourceText(Device.os.macintosh ? "p13n.SHORTCUT_MOVE_TO_TOP_MAC" : "p13n.SHORTCUT_MOVE_TO_TOP") // Cmd+Home or Ctrl+Home
-				},
-				this
+				}, this
 			);
 		}
 
@@ -418,8 +421,7 @@ sap.ui.define([
 			ShortcutHintsMixin.addConfig(this._oMoveUpButton, {
 					addAccessibilityLabel: true,
 					message: this._getResourceText(Device.os.macintosh ? "p13n.SHORTCUT_MOVE_UP_MAC" : "p13n.SHORTCUT_MOVE_UP") // Cmd+CursorUp or Ctrl+CursorUp
-				},
-				this
+				}, this
 			);
 
 		}
@@ -441,8 +443,7 @@ sap.ui.define([
 			ShortcutHintsMixin.addConfig(this._oMoveDownButton, {
 					addAccessibilityLabel: true,
 					message: this._getResourceText(Device.os.macintosh ? "p13n.SHORTCUT_MOVE_DOWN_MAC" : "p13n.SHORTCUT_MOVE_DOWN") // Cmd+CursorDown or Ctrl+CursorDown
-				},
-				this
+				}, this
 			);
 		}
 
@@ -463,8 +464,7 @@ sap.ui.define([
 			ShortcutHintsMixin.addConfig(this._oMoveBottomButton, {
 					addAccessibilityLabel: true,
 					message: this._getResourceText(Device.os.macintosh ? "p13n.SHORTCUT_MOVE_TO_BOTTOM_MAC" : "p13n.SHORTCUT_MOVE_TO_BOTTOM") // Cmd+End or Ctrl+End
-				},
-				this
+				}, this
 			);
 
 		}
@@ -852,6 +852,10 @@ sap.ui.define([
 
 	BasePanel.prototype._onRearrange = function(oEvent) {
 		const oDraggedItem = oEvent.getParameter("draggedControl");
+		if (!oDraggedItem?.getMultiSelectControl()?.getEnabled()) {
+			return;
+		}
+
 		const oDroppedItem = oEvent.getParameter("droppedControl");
 		const sDropPosition = oEvent.getParameter("dropPosition");
 		const iDraggedIndex = this._oListControl.indexOfItem(oDraggedItem);

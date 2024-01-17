@@ -1,20 +1,20 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/integration/model/ContextModel",
 	"sap/ui/integration/Host",
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ],
 function(
-	Core,
 	ContextModel,
 	Host,
 	Utils,
 	Card,
-	nextUIUpdate
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -188,36 +188,30 @@ function(
 
 	QUnit.test("Calling refresh() must clean the context model", async function (assert) {
 		// arrange
-		var done = assert.async(),
-			oCard = this.oCard,
-			oHost = this.oHost,
-			fnGetContextSpy;
+		var fnGetContextSpy;
 
-		oHost.getContextValue = function (sPath) {
+		this.oHost.getContextValue = function (sPath) {
 			return Promise.resolve("value");
 		};
 
-		fnGetContextSpy = sinon.spy(oHost, "getContextValue");
-
-		// assert
-		oCard.attachEventOnce("_ready", function () {
-			assert.ok(fnGetContextSpy.called, "Method getContextValue is called once.");
-
-			fnGetContextSpy.resetHistory();
-
-			oCard.attachEventOnce("_ready", function () {
-				assert.ok(fnGetContextSpy.called, "Method getContextValue is called again after refresh.");
-
-				done();
-			});
-
-			oCard.refresh();
-			Core.applyChanges();
-		});
+		fnGetContextSpy = sinon.spy(this.oHost, "getContextValue");
 
 		// act
-		oCard.setManifest(oManifestSampleWithParameter);
-		oCard.placeAt(DOM_RENDER_LOCATION);
-		await nextUIUpdate(this.clock);
+		this.oCard.setManifest(oManifestSampleWithParameter);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await Promise.all([nextUIUpdate(this.clock), nextCardReadyEvent(this.oCard)]);
+
+		// assert
+		assert.ok(fnGetContextSpy.called, "Method getContextValue is called once.");
+
+		fnGetContextSpy.resetHistory();
+		// act
+		this.oCard.refresh();
+
+		await Promise.all([nextUIUpdate(this.clock), nextCardReadyEvent(this.oCard)]);
+
+		// assert
+		assert.ok(fnGetContextSpy.called, "Method getContextValue is called again after refresh.");
 	});
 });

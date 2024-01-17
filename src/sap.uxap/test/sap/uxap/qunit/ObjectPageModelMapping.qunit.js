@@ -1,7 +1,7 @@
 /*global QUnit*/
 
-sap.ui.define(["sap/ui/core/Core", "sap/ui/core/Element", "sap/ui/model/json/JSONModel", "sap/ui/core/mvc/XMLView"],
-function(Core, Element, JSONModel, XMLView) {
+sap.ui.define(["sap/ui/core/Core", "sap/ui/core/Element", "sap/ui/model/json/JSONModel", "sap/ui/core/mvc/XMLView", "sap/ui/qunit/utils/nextUIUpdate"],
+function(Core, Element, JSONModel, XMLView, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("modelMapping", {
@@ -10,10 +10,10 @@ function(Core, Element, JSONModel, XMLView) {
 			XMLView.create({
 				id: "UxAP-ModelMapping",
 				viewName: "view.UxAP-ModelMapping"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oView = oView;
 				this.oView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},
@@ -22,7 +22,7 @@ function(Core, Element, JSONModel, XMLView) {
 		}
 	});
 
-	QUnit.test("initial model mapping is applied", function (assert) {
+	QUnit.test("initial model mapping is applied", async function(assert) {
 		// Arrange
 		var oExpectedFirstName = "John",
 			oExpectedLastName = "Miller",
@@ -41,7 +41,7 @@ function(Core, Element, JSONModel, XMLView) {
 
 		// Act
 		this.oView.setModel(oModel, "jsonModel");
-		Core.applyChanges(); // allow model info to propagare
+		await nextUIUpdate(); // allow model info to propagare
 
 		setTimeout(function () {
 			oSelectedView = Element.getElementById(this.oView.byId('block').getSelectedView());
@@ -56,7 +56,7 @@ function(Core, Element, JSONModel, XMLView) {
 		}.bind(this), 400);
 	});
 
-	QUnit.test("updated externalPath is applied", function (assert) {
+	QUnit.test("updated externalPath is applied", async function(assert) {
 		// Arrange
 		var oNewFirstName = "John1",
 			oNewLastName = "Miller1",
@@ -80,15 +80,15 @@ function(Core, Element, JSONModel, XMLView) {
 
 		//setup
 		this.oView.setModel(oModel, "jsonModel");
-		Core.applyChanges(); // allow model info to propagare
+		await nextUIUpdate(); // allow model info to propagare
 
-		setTimeout(function () {
+		setTimeout(async function() {
 			oBlock = Element.getElementById("UxAP-ModelMapping--block");
 			oSelectedView = Element.getElementById(this.oView.byId('block').getSelectedView());
 
 			// Act
 			oBlock.getMappings()[0].setExternalPath("/newEmployee"); // update external path
-			Core.applyChanges(); // allow model info to propagare
+			await nextUIUpdate(); // allow model info to propagare
 
 			oActualFirstName = oSelectedView.byId("txtFirstName").getText();
 			oActualLastName = oSelectedView.byId("txtLastName").getText();
@@ -101,7 +101,7 @@ function(Core, Element, JSONModel, XMLView) {
 		}.bind(this), 400);
 	});
 
-	QUnit.test("mapping is updated when the model is changed", function (assert) {
+	QUnit.test("mapping is updated when the model is changed", async function(assert) {
 		// Arrange
 		var oExpectedFirstName = "JohnChanged",
 			oExpectedLastName = "MillerChanged",
@@ -125,11 +125,11 @@ function(Core, Element, JSONModel, XMLView) {
 		assert.expect(2);
 
 		this.oView.setModel(oModel, "jsonModel");
-		Core.applyChanges(); // allow model info to propagare
+		await nextUIUpdate(); // allow model info to propagare
 
 		// Act
 		this.oView.setModel(oChangedModel, "jsonModel");
-		Core.applyChanges(); // allow model info to propagare
+		await nextUIUpdate(); // allow model info to propagare
 
 		setTimeout(function () {
 			oSelectedView = Element.getElementById(this.oView.byId('block').getSelectedView());

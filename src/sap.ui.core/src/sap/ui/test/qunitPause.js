@@ -3,8 +3,7 @@
  */
 
 /*global QUnit */
-sap.ui.define("sap/ui/test/qunitPause", [
-], function () {
+(function() {
 	"use strict";
 
 	var PAUSE_RULES = {
@@ -223,7 +222,7 @@ sap.ui.define("sap/ui/test/qunitPause", [
 		});
 	}
 
-	return {
+	const qunitPause = {
 		PAUSE_RULES: PAUSE_RULES,
 		paused: paused,
 		get pauseRule() {
@@ -248,4 +247,7 @@ sap.ui.define("sap/ui/test/qunitPause", [
 		emitResume: emitResume,
 		pollForQUnitDone: pollForQUnitDone
 	};
-});
+
+	setupBeforeQUnit();
+	sap.ui.define("sap/ui/test/qunitPause", [], qunitPause);
+}());

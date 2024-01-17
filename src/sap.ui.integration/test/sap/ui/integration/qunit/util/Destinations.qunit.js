@@ -2,15 +2,15 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core",
 	"sap/base/Log",
-	'sap/ui/integration/Host'
+	"sap/ui/integration/Host",
+	"qunit/testResources/nextCardReadyEvent"
 ],
 	function(
 		Card,
-		Core,
 		Log,
-		Host
+		Host,
+		nextCardReadyEvent
 	) {
 		"use strict";
 
@@ -175,82 +175,56 @@ sap.ui.define([
 			}
 		};
 
-		function checkValidDestinations(assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				var aItems = this.oCard.getCardContent().getInnerList().getItems(),
-					sFirstItemIcon = aItems[0].getIcon(),
-					sExpectedIcon = sBaseUrl + "qunit/testResources/images/Woman_avatar_01.png",
-					aActions = this.oCard.getCardContent().getConfiguration().item.actions;
-
-				// Assert
-				assert.ok(aItems.length, "The data request is successful.");
-				assert.strictEqual(this.oCard.getCardHeader().getTitle(), sInnerText + " Card Title", "header destination is resolved successfully");
-				assert.strictEqual(sFirstItemIcon, sExpectedIcon, "The icon path is correct.");
-
-				assert.ok(aActions[0].parameters.city.indexOf(sNavigationUrl + sCardId) > -1, "Navigation destination is resolved successfully");
-				assert.strictEqual(aActions[0].parameters.empty, "/empty", "Empty destination is resolved successfully");
-
-				done();
-			}.bind(this));
-
-			// Act
+		async function checkValidDestinations(assert) {
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+
+			await nextCardReadyEvent(this.oCard);
+
+			var aItems = this.oCard.getCardContent().getInnerList().getItems(),
+				sFirstItemIcon = aItems[0].getIcon(),
+				sExpectedIcon = sBaseUrl + "qunit/testResources/images/Woman_avatar_01.png",
+				aActions = this.oCard.getCardContent().getConfiguration().item.actions;
+
+			// Assert
+			assert.ok(aItems.length, "The data request is successful.");
+			assert.strictEqual(this.oCard.getCardHeader().getTitle(), sInnerText + " Card Title", "header destination is resolved successfully");
+			assert.strictEqual(sFirstItemIcon, sExpectedIcon, "The icon path is correct.");
+
+			assert.ok(aActions[0].parameters.city.indexOf(sNavigationUrl + sCardId) > -1, "Navigation destination is resolved successfully");
+			assert.strictEqual(aActions[0].parameters.empty, "/empty", "Empty destination is resolved successfully");
 		}
 
-		function checkInvalidDestinations(assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-
-				// Assert
-				assert.notOk(this.oCard.getCardContent().getInnerList().getItems().length, "The data request is unsuccessful.");
-
-				assert.notOk(this.oCard.getCardHeader().getTitle(), "async destination is not resolved successfully");
-
-				done();
-			}.bind(this));
-
-			// Act
+		async function checkInvalidDestinations(assert) {
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+
+			await nextCardReadyEvent(this.oCard);
+
+			// Assert
+			assert.notOk(this.oCard.getCardContent().getInnerList().getItems().length, "The data request is unsuccessful.");
+
+			assert.notOk(this.oCard.getCardHeader().getTitle(), "async destination is not resolved successfully");
 		}
 
-		function checkValidResolveDestinationMethod(assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				this.oCard.resolveDestination("contentDestination").then(function (destination) {
-					assert.strictEqual(destination, sResourcePath, "destination is resolved successfully");
-					done();
-				});
-			}.bind(this));
-
-			// Act
+		async function checkValidResolveDestinationMethod(assert) {
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+
+			await nextCardReadyEvent(this.oCard);
+
+			const destination = await this.oCard.resolveDestination("contentDestination");
+
+			assert.strictEqual(destination, sResourcePath, "destination is resolved successfully");
 		}
 
-		function checkInvalidResolveDestinationMethod(assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				this.oCard.resolveDestination("contentDestination").catch(function (destination) {
-					assert.step("destination is not resolved");
-
-					done();
-				});
-			}.bind(this));
-
-			// Act
+		async function checkInvalidResolveDestinationMethod(assert) {
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+
+			await nextCardReadyEvent(this.oCard);
+
+			try {
+				await this.oCard.resolveDestination("contentDestination");
+			} catch (e) {
+				assert.ok(true, "destination is not resolved");
+			}
 		}
 
 		QUnit.module("Destinations", {
@@ -291,12 +265,12 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Resolve destinations", function (assert) {
-			checkValidDestinations.call(this, assert);
+		QUnit.test("Resolve destinations", async function (assert) {
+			await checkValidDestinations.call(this, assert);
 		});
 
-		QUnit.test("Card.resolveDestination method", function (assert) {
-			checkValidResolveDestinationMethod.call(this, assert);
+		QUnit.test("Card.resolveDestination method", async function (assert) {
+			await checkValidResolveDestinationMethod.call(this, assert);
 		});
 
 		QUnit.module("Async Destinations", {
@@ -353,12 +327,12 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Resolve destinations", function (assert) {
-			checkValidDestinations.call(this, assert);
+		QUnit.test("Resolve destinations", async function (assert) {
+			await checkValidDestinations.call(this, assert);
 		});
 
-		QUnit.test("Card.resolveDestination method", function (assert) {
-			checkValidResolveDestinationMethod.call(this, assert);
+		QUnit.test("Card.resolveDestination method", async function (assert) {
+			await checkValidResolveDestinationMethod.call(this, assert);
 		});
 
 		QUnit.module("Invalid Destinations", {
@@ -384,12 +358,12 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Resolve destinations", function (assert) {
-			checkInvalidDestinations.call(this, assert);
+		QUnit.test("Resolve destinations", async function (assert) {
+			await checkInvalidDestinations.call(this, assert);
 		});
 
-		QUnit.test("Card.resolveDestination method", function (assert) {
-			checkInvalidResolveDestinationMethod.call(this, assert);
+		QUnit.test("Card.resolveDestination method", async function (assert) {
+			await checkInvalidResolveDestinationMethod.call(this, assert);
 		});
 
 		QUnit.module("Mixed Valid and Invalid Destinations", {
@@ -422,32 +396,26 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Resolve destinations", function (assert) {
-			// Arrange
-			var done = assert.async();
-
-			this.oCard.attachEvent("_ready", function () {
-				var aItems = this.oCard.getCardContent().getInnerList().getItems(),
-					sFirstItemIcon = aItems[0].getIcon();
-
-				// Assert
-				assert.ok(aItems.length, "The data request is successful.");
-
-				assert.strictEqual(this.oCard.getCardHeader().getTitle(), "Card Title", "header destination is resolved successfully");
-
-				// Assert
-				assert.notOk(sFirstItemIcon, "The icon path is not resolved.");
-
-				done();
-			}.bind(this));
-
+		QUnit.test("Resolve destinations", async function (assert) {
 			// Act
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+
+			var aItems = this.oCard.getCardContent().getInnerList().getItems(),
+				sFirstItemIcon = aItems[0].getIcon();
+
+			// Assert
+			assert.ok(aItems.length, "The data request is successful.");
+
+			assert.strictEqual(this.oCard.getCardHeader().getTitle(), "Card Title", "header destination is resolved successfully");
+
+			// Assert
+			assert.notOk(sFirstItemIcon, "The icon path is not resolved.");
 		});
 
 		QUnit.module("No Host", {
 			beforeEach: function () {
-
 				this.oCard = new Card({
 					"manifest": oManifest_Valid,
 					"baseUrl": sBaseUrl
@@ -460,12 +428,12 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Resolve destinations", function (assert) {
-			checkInvalidDestinations.call(this, assert);
+		QUnit.test("Resolve destinations", async function (assert) {
+			await checkInvalidDestinations.call(this, assert);
 		});
 
-		QUnit.test("Card.resolveDestination method", function (assert) {
-			checkInvalidResolveDestinationMethod.call(this, assert);
+		QUnit.test("Card.resolveDestination method", async function (assert) {
+			await checkInvalidResolveDestinationMethod.call(this, assert);
 		});
 
 		QUnit.module("Default Url", {
@@ -482,11 +450,9 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Resolve destinations to default url", function (assert) {
+		QUnit.test("Resolve destinations to default url", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard,
-				oHost = new Host({
+			var oHost = new Host({
 					resolveDestination: function() {
 						return null;
 					}
@@ -494,53 +460,41 @@ sap.ui.define([
 
 			this.oCard.setHost(oHost);
 
-			this.oCard.attachEvent("_ready", function () {
-				var pTest1 = oCard.resolveDestination("test1"),
-					pTest2 = oCard.resolveDestination("test2");
-
-				Promise.all([pTest1, pTest2])
-					.then(function (aResult) {
-						assert.strictEqual(aResult[0], "test1/url", "Default url for test1 is correct.");
-						assert.strictEqual(aResult[1], "test2/url", "Default url for test1 is correct.");
-
-						done();
-					});
-			});
-
 			// Act
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+
+			var pTest1 = this.oCard.resolveDestination("test1"),
+				pTest2 = this.oCard.resolveDestination("test2");
+
+			const aResult = await Promise.all([pTest1, pTest2]);
+
+			assert.strictEqual(aResult[0], "test1/url", "Default url for test1 is correct.");
+			assert.strictEqual(aResult[1], "test2/url", "Default url for test1 is correct.");
 		});
 
-		QUnit.test("Resolves default url without host", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard;
-
-			this.oCard.attachEvent("_ready", function () {
-				oCard.resolveDestination("test1").then(function (sUrl) {
-					assert.strictEqual(sUrl, "test1/url", "Default url for test1 is correct.");
-					done();
-				});
-			});
-
+		QUnit.test("Resolves default url without host", async function (assert) {
 			// Act
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+
+			const sUrl = await this.oCard.resolveDestination("test1");
+			assert.strictEqual(sUrl, "test1/url", "Default url for test1 is correct.");
 		});
 
-		QUnit.test("Missing default url and name", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard;
-
-			this.oCard.attachEvent("_ready", function () {
-				oCard.resolveDestination("test3").catch(function () {
-					assert.ok(true, "Fails to resolve destination without name or defaultUrl.");
-					done();
-				});
-			});
-
+		QUnit.test("Missing default url and name", async function (assert) {
 			// Act
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+
+			try {
+				await this.oCard.resolveDestination("test3");
+			} catch (e) {
+				assert.ok(true, "Fails to resolve destination without name or defaultUrl.");
+			}
 		});
 	}
 );

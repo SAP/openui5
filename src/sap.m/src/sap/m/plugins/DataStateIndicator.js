@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObserver", "sap/ui/core/Lib", "sap/ui/core/Messaging"],
-	function(PluginBase, Core, ManagedObjectObserver, Library, Messaging) {
+sap.ui.define(["./PluginBase", "sap/ui/base/ManagedObjectObserver", "sap/ui/core/Lib", "sap/ui/core/Messaging"],
+	function(PluginBase, ManagedObjectObserver, Library, Messaging) {
 	"use strict";
 
 	/**
@@ -468,7 +468,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 		var oMetadata = this.getControl().getMetadata();
 		var sLibraryName = oMetadata.getLibraryName();
 		var sControlName = oMetadata.getName().split(".").pop().toUpperCase();
-		var oResourceBundle = Core.getLibraryResourceBundle(sLibraryName);
+		var oResourceBundle = Library.getResourceBundleFor(sLibraryName);
 		var sControlBundleText = sControlName + "_" + sBundleText;
 
 		if (oResourceBundle.hasText(sControlBundleText)) {

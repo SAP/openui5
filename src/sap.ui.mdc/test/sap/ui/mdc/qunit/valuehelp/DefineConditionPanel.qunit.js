@@ -1267,7 +1267,7 @@ sap.ui.define([
 			aContent = oField.getAggregation("_content");
 			const oControl = aContent && aContent.length > 0 && aContent[0];
 
-			const sPastedValues = "AA\nBB\nC	D\nEE";
+			const sPastedValues = "AA\nBB\n>C\nEE";
 
 			const oFakeClipboardData = {
 					getData: function() {
@@ -1280,13 +1280,60 @@ sap.ui.define([
 			}
 
 			qutils.triggerEvent("paste", oControl.getFocusDomRef(), {clipboardData: oFakeClipboardData});
-			setTimeout(function () { // as past handling is async
+			setTimeout(function () { // as paste handling is async
 				const aConditions = oModel.getConditions("Name");
 				assert.equal(aConditions.length, 3, "3 Conditions exist");
+				assert.equal(aConditions[0].operator, "EQ", "1. Condition operator");
 				assert.equal(aConditions[0].values[0], "BB", "1. Condition");
-				assert.equal(aConditions[1].values[0], "C", "2. Condition BT");
-				assert.equal(aConditions[1].values[1], "D", "2. Condition BT");
+				assert.equal(aConditions[1].operator, "EQ", "2. Condition operator");
+				assert.equal(aConditions[1].values[0], ">C", "2. Condition"); // to check that ">" is not used as operator
+				assert.equal(aConditions[2].operator, "EQ", "3. Condition operator");
 				assert.equal(aConditions[2].values[0], "EE", "3. Condition");
+
+				fnDone();
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("paste multiple values using BT", function(assert) {
+
+		const oCondition = Condition.createCondition(OperatorName.BT, ["1", "99"], undefined, undefined, ConditionValidated.NotValidated);
+		oDefineConditionPanel.setConditions([oCondition]);
+
+		const fnDone = assert.async();
+		setTimeout(async function () { // as model update is async
+			await nextUIUpdate();
+			const oGrid = Element.getElementById("DCP1--conditions");
+			let aContent = oGrid.getContent();
+			const oField = aContent[2];
+			assert.equal(aContent.length, 6, "BT line created");
+
+			aContent = oField.getAggregation("_content");
+			const oControl = aContent && aContent.length > 0 && aContent[0];
+
+			const sPastedValues = "A	B\nC	D";
+
+			const oFakeClipboardData = {
+					getData: function() {
+						return sPastedValues;
+					}
+			};
+
+			if (window.clipboardData) {
+				window.clipboardData.setData("text", sPastedValues);
+			}
+
+			qutils.triggerEvent("paste", oControl.getFocusDomRef(), {clipboardData: oFakeClipboardData});
+			setTimeout(function () { // as paste handling is async
+				const aConditions = oModel.getConditions("Name");
+				assert.equal(aConditions.length, 2, "2 Conditions exist");
+				assert.equal(aConditions[0].operator, "BT", "1. Condition operator");
+				assert.equal(aConditions[0].values[0], "A", "1. Condition value0");
+				assert.equal(aConditions[0].values[1], "B", "1. Condition value1");
+				assert.equal(aConditions[1].operator, "BT", "2. Condition operator");
+				assert.equal(aConditions[1].values[0], "C", "2. Condition value0");
+				assert.equal(aConditions[1].values[1], "D", "2. Condition value1");
 
 				fnDone();
 			}, 0);
@@ -1301,7 +1348,7 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("paste multiple values with operators and invalid values", function(assert) {
+	QUnit.test("paste multiple values with invalid values", function(assert) {
 
 		const oConfig = merge({}, oDefineConditionPanel.getConfig());
 		oConfig.maxConditions = -1;
@@ -1318,7 +1365,7 @@ sap.ui.define([
 			aContent = oField.getAggregation("_content");
 			const oControl = aContent && aContent.length > 0 && aContent[0];
 
-			const sPastedValues = "1\n2\n1	10\n4...8\n<10\n=12";
+			const sPastedValues = "1\n2\n11";
 
 			const oFakeClipboardData = {
 					getData: function() {

@@ -1,13 +1,14 @@
 /*global QUnit*/
 
 sap.ui.define([
-		"sap/ui/core/Core",
-		"sap/uxap/ObjectPageLayout",
-		"sap/uxap/ObjectPageSection",
-		"sap/ui/core/mvc/XMLView",
-		"sap/ui/thirdparty/jquery"
-	],
-function (Core, ObjectPageLayout, ObjectPageSection, XMLView, $) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/uxap/ObjectPageLayout",
+	"sap/uxap/ObjectPageSection",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/thirdparty/jquery"
+],
+function(Core, nextUIUpdate, ObjectPageLayout, ObjectPageSection, XMLView, $) {
 	"use strict";
 
 	var sRoleAttribute = "role",
@@ -28,10 +29,10 @@ function (Core, ObjectPageLayout, ObjectPageSection, XMLView, $) {
 			XMLView.create({
 				id: "UxAP-71_ObjectPageScreenReaderSupport",
 				viewName: "view.UxAP-71_ObjectPageScreenReaderSupport"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.objectPageView = oView;
 				this.objectPageView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				this.oObjectPage = this.objectPageView.byId("ObjectPageLayout");
 				done();
 			}.bind(this));
@@ -156,14 +157,14 @@ function (Core, ObjectPageLayout, ObjectPageSection, XMLView, $) {
 		assert.equal(oFooter.$().attr("aria-labelledby"), $InvisibleTextDomRef.attr('id'), "ObjectPageLayout Footer aria-labelledby points to the invisible text control");
 	});
 
-	QUnit.test('Invisible Text gets removed when footer aggregation is destroyed', function (assert) {
+	QUnit.test('Invisible Text gets removed when footer aggregation is destroyed', async function(assert) {
 		// Arrange
 		var oPage = this.oObjectPage,
 			oFooter = oPage.getFooter();
 
 		// Act
 		oPage.destroyFooter();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var $InvisibleTextDomRef = $("#" + oFooter.getId() + "-FooterActions-InvisibleText");
 
@@ -177,10 +178,10 @@ function (Core, ObjectPageLayout, ObjectPageSection, XMLView, $) {
 			XMLView.create({
 				id: "UxAP-71_ObjectPageScreenReaderSupport",
 				viewName: "view.UxAP-71_ObjectPageScreenReaderSupport"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.objectPageView = oView;
 				this.objectPageView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				this.oObjectPage = this.objectPageView.byId("ObjectPageLayout");
 				done();
 			}.bind(this));

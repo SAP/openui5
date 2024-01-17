@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/Shell",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/uxap/BlockBase",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
@@ -12,12 +13,12 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView"
 ],
-function(ComponentContainer, Shell, Core, Element, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, View, XMLView) {
+function(ComponentContainer, Shell, Core, Element, nextUIUpdate, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, View, XMLView) {
 	"use strict";
 
 	QUnit.module("BlockBase");
 
-	QUnit.test("Owner component propagated to views", function (assert) {
+	QUnit.test("Owner component propagated to views", async function(assert) {
 		var oComponentContainer,
 			oComponent,
 			oMainView,
@@ -30,8 +31,8 @@ function(ComponentContainer, Shell, Core, Element, BlockBase, ObjectPageLayout, 
 
 		assert.expect(5);
 
-		function fnOnComponentCreated() {
-			Core.applyChanges();
+		async function fnOnComponentCreated() {
+			await nextUIUpdate();
 
 			oComponentContainer = Element.getElementById("myComponentContainer");
 			oComponent = oComponentContainer.getComponentInstance();
@@ -68,7 +69,7 @@ function(ComponentContainer, Shell, Core, Element, BlockBase, ObjectPageLayout, 
 			})
 		}).placeAt('qunit-fixture');
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 	});
 
@@ -137,10 +138,10 @@ function(ComponentContainer, Shell, Core, Element, BlockBase, ObjectPageLayout, 
 			XMLView.create({
 				id: "UxAP-InfoBlocks",
 				viewName: "view.UxAP-InfoBlocks"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oObjectPageInfoView = oView;
 				this.oObjectPageInfoView.placeAt('qunit-fixture');
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},
@@ -173,7 +174,7 @@ function(ComponentContainer, Shell, Core, Element, BlockBase, ObjectPageLayout, 
 			oOPL._$opWrapper.scrollTop(iTargetScrollTop);
 			// (2) explicitly connect the section models (lazy loading)
 			oOPL._connectModelsForSections([oTargetSubSection]);
-			Core.applyChanges();
+			nextUIUpdate.runSync(); // TODO when using async rendering, the below expectations are no longer met?
 
 			// Check if the scrollTop [of the lazy-loaded section] matches the expected one
 			iActualScrollTop = Math.ceil(oOPL._$opWrapper.scrollTop());
@@ -189,10 +190,10 @@ function(ComponentContainer, Shell, Core, Element, BlockBase, ObjectPageLayout, 
 			XMLView.create({
 				id: "UxAP-InfoBlocks",
 				viewName: "view.UxAP-InfoBlocks"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oObjectPageInfoView = oView;
 				this.oObjectPageInfoView.placeAt('qunit-fixture');
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},

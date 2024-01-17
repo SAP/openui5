@@ -5,13 +5,16 @@ sap.ui.define([
 	"sap/ui/integration/util/CacheAndRequestDataProvider",
 	"sap/ui/integration/Host",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"qunit/testResources/nextCardReadyEvent"
+
 ], function(
 	DataProviderFactory,
 	CacheAndRequestDataProvider,
 	Host,
 	Card,
-	UI5Date
+	UI5Date,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -323,21 +326,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Show timestamp in header", function (assert) {
-		var done = assert.async(),
-			oCard = this.oCard;
-
+	QUnit.test("Show timestamp in header", async function (assert) {
 		this.clock.restore(); // data complete is not fired with fake timers
 
-		oCard.attachEvent("_ready", function () {
-			var oCardHeader = oCard.getCardHeader();
-
-			assert.ok(oCardHeader.getDataTimestamp(), "Card header has a data timestamp.");
-			done();
-		});
-
-		oCard.setBaseUrl("test-resources/sap/ui/integration/qunit/manifests/");
-		oCard.setManifest({
+		this.oCard.setBaseUrl("test-resources/sap/ui/integration/qunit/manifests/");
+		this.oCard.setManifest({
 			"sap.app": {
 				"id": "test.cache.sample1"
 			},
@@ -353,7 +346,13 @@ sap.ui.define([
 			}
 		});
 
-		oCard.placeAt(DOM_RENDER_LOCATION);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var oCardHeader = this.oCard.getCardHeader();
+
+		assert.ok(oCardHeader.getDataTimestamp(), "Card header has a data timestamp.");
 	});
 
 	QUnit.module("Usage without a card or editor", {

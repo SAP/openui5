@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
@@ -17,7 +18,7 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	// jQuery Plugin "scrollLeftRTL"
 	"sap/ui/dom/jquery/scrollLeftRTL"
-], function(Library, jQuery, QUnitUtils, KeyCodes, utils, Device, Core, InvisibleText, XMLView, JSONModel, AnchorBar, Button, Text, Localization) {
+], function(Library, nextUIUpdate, jQuery, QUnitUtils, KeyCodes, utils, Device, Core, InvisibleText, XMLView, JSONModel, AnchorBar, Button, Text, Localization) {
 	"use strict";
 
 	var iRenderingDelay = 2000,
@@ -28,6 +29,20 @@ sap.ui.define([
 			Tablet: 1024,
 			Desktop: 2000
 		};
+
+	/**
+	 * In some tests that are using fake timers, it might happen that a rendering task is queued by
+	 * creating a fake timer. Without an appropriate clock.tick call, this timer might not execute
+	 * and a later nextUIUpdate with real timers would wait endlessly.
+	 * To prevent this, after each such test a sync rendering is executed which will clear any pending
+	 * fake timer. The rendering itself should not be needed by the tests, if they are properly
+	 * isolated.
+	 *
+	 * This function is used as an indicator for such cases. It's just a wrapper around nextUIUpdate.
+	 */
+	function clearPendingUIUpdates(clock) {
+		return nextUIUpdate(clock);
+	}
 
 	function checkButtonAriaAttribute(assert, oButton, sAttribute, sExpected, sMessage) {
 		if (oButton.isA("sap.m.MenuButton")) {
@@ -43,22 +58,23 @@ sap.ui.define([
 			return XMLView.create({
 				id: "UxAP-69_anchorBar",
 				viewName: "view.UxAP-69_AnchorBar"
-			}).then(function(oView) {
+			}).then(async function(oView) {
 				this.anchorBarView = oView;
 				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
 				this.anchorBarView.placeAt('qunit-fixture');
-				Core.applyChanges();
+				await nextUIUpdate(this.clock);
 				this.clock.tick(iRenderingDelay);
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.anchorBarView.destroy();
 			this.oObjectPage = null;
+			await clearPendingUIUpdates(this.clock);
 			this.clock.restore();
 		}
 	});
 
-	QUnit.test("Show/Hide Bar", function (assert) {
+	QUnit.test("Show/Hide Bar", async function(assert) {
 		assert.expect(3); //number of assertions
 
 		// test whether it is visible by default
@@ -68,7 +84,7 @@ sap.ui.define([
 		this.oObjectPage.setShowAnchorBar(false);
 
 		// allow for re-render
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// test whether it is hidden
 		assert.strictEqual(jQuery(ANCHORBAR_CLASS_SELECTOR).length, 0, "anchorBar hidden");
@@ -77,12 +93,12 @@ sap.ui.define([
 		this.oObjectPage.setShowAnchorBar(true);
 
 		// allow for re-render
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		assert.strictEqual(jQuery(ANCHORBAR_CLASS_SELECTOR).length > 0, true, "anchorBar displayed");
 
 	});
 
-	QUnit.test("Show/Hide popover", function (assert) {
+	QUnit.test("Show/Hide popover", async function(assert) {
 		var oAnchorBarButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[1];
 
 		// initial assert
@@ -92,7 +108,7 @@ sap.ui.define([
 		this.oObjectPage.setShowAnchorBarPopover(false);
 
 		// allow for re-render
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		oAnchorBarButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[1];
 
 		// assert
@@ -257,7 +273,7 @@ sap.ui.define([
 		assert.ok($arrowDownIcons.length === 2, "Anchorbar has 2 buttons with arrow-down icon");
 	});
 
-	QUnit.test("Arrow left nad arrow right buttons should have correct tooltips", function (assert) {
+	QUnit.test("Arrow left nad arrow right buttons should have correct tooltips", async function(assert) {
 		var oArrowLeft = this.anchorBarView.byId("ObjectPageLayout-anchBar-arrowScrollLeft"),
 			oArrowRight = this.anchorBarView.byId("ObjectPageLayout-anchBar-arrowScrollRight"),
 			oRB = Library.getResourceBundleFor("sap.uxap"),
@@ -270,7 +286,7 @@ sap.ui.define([
 
 		//act
 		Localization.setRTL(true);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//assert
 		assert.ok(oArrowLeft.getTooltip() === sArrowLeftTooltip, "Arrow left button should have tooltip '" + sArrowLeftTooltip + "' in RTL mode");
@@ -280,14 +296,14 @@ sap.ui.define([
 		Localization.setRTL(false);
 	});
 
-	QUnit.test("When using the objectPageNavigation the 'navigate' event is fired with the appropriate arguments", function (assert) {
+	QUnit.test("When using the objectPageNavigation the 'navigate' event is fired with the appropriate arguments", async function(assert) {
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			oExpectedSection,
 			oExpectedSubSection,
 			navigateSpy = this.spy(this.oObjectPage, "fireNavigate");
 
 		this.oObjectPage.setShowAnchorBarPopover(false);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oExpectedSection = this.oObjectPage.getSections()[1];
 		oExpectedSubSection = oExpectedSection.getSubSections()[0];
@@ -297,7 +313,7 @@ sap.ui.define([
 		assert.ok(navigateSpy.calledWithMatch(sinon.match.has("subSection", oExpectedSubSection)), "Event fired has the correct subSection parameter attached");
 	});
 
-	QUnit.test("The 'navigate' event is fired after the navigation is done, so a new Section can be selected in the handler", function (assert) {
+	QUnit.test("The 'navigate' event is fired after the navigation is done, so a new Section can be selected in the handler", async function(assert) {
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			fnDone = assert.async();
 
@@ -307,7 +323,7 @@ sap.ui.define([
 			// On navigation to a Section, we want to programatically select another Section
 			this.oObjectPage.setSelectedSection(this.oObjectPage.getSections()[1]);
 		}.bind(this));
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oAnchorBar.getContent()[0].firePress();
 
@@ -329,17 +345,17 @@ sap.ui.define([
 	});
 
 	QUnit.module("custom setters", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oAnchorBar = new AnchorBar();
 			this.oAnchorBar.placeAt('qunit-fixture');
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oAnchorBar = null;
 		}
 	});
 
-	QUnit.test("AnchorBar - backgroundDesign", function (assert) {
+	QUnit.test("AnchorBar - backgroundDesign", async function(assert) {
 		var $oDomRef = this.oAnchorBar.$();
 
 		// assert
@@ -347,7 +363,7 @@ sap.ui.define([
 
 		// act
 		this.oAnchorBar.setBackgroundDesign("Solid");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok($oDomRef.hasClass("sapUxAPAnchorBarSolid"), "Should have sapUxAPAnchorBarSolid class");
@@ -355,7 +371,7 @@ sap.ui.define([
 
 		// act
 		this.oAnchorBar.setBackgroundDesign("Transparent");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapUxAPAnchorBarSolid"), "Should not have sapUxAPAnchorBarSolid class");
@@ -364,12 +380,13 @@ sap.ui.define([
 
 		// act
 		this.oAnchorBar.setBackgroundDesign("Translucent");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapUxAPAnchorBarTransparent"), "Should not have sapUxAPAnchorBarTransparent class");
 		assert.ok($oDomRef.hasClass("sapUxAPAnchorBarTranslucent"), "Should have sapUxAPAnchorBarTranslucent class");
 		assert.strictEqual(this.oAnchorBar.getBackgroundDesign(), "Translucent", "Should have backgroundDesign property = 'Translucent'");
+		await clearPendingUIUpdates();
 	});
 
 	QUnit.module("simple binding", {
@@ -378,19 +395,20 @@ sap.ui.define([
 			return XMLView.create({
 				id: "UxAP-69_anchorBarBinding",
 				viewName: "view.UxAP-69_AnchorBarBinding"
-			}).then(function(oView) {
+			}).then(async function(oView) {
 				this.anchorBarView = oView;
 				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
 				this.anchorBarView.setModel(oModel);
 				this.anchorBarView.placeAt('qunit-fixture');
-				Core.applyChanges();
+				await nextUIUpdate(this.clock);
 				this.clock.tick(iRenderingDelay);
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.anchorBarView.destroy();
 			this.oObjectPage = null;
 			this.oLastSectionButton = null;
+			await clearPendingUIUpdates(this.clock);
 			this.clock.restore();
 		}
 	});
@@ -523,19 +541,20 @@ sap.ui.define([
 			return XMLView.create({
 				id: "UxAP-69_anchorBarBinding",
 				viewName: "view.UxAP-69_AnchorBarBinding"
-			}).then(function(oView) {
+			}).then(async function(oView) {
 				this.anchorBarView = oView;
 				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
 				this.anchorBarView.setModel(oModel);
 				this.anchorBarView.placeAt('qunit-fixture');
-				Core.applyChanges();
+				await nextUIUpdate(this.clock);
 				this.clock.tick(iRenderingDelay);
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.anchorBarView.destroy();
 			this.oObjectPage = null;
 			this.oLastSectionButton = null;
+			await clearPendingUIUpdates(this.clock);
 			this.clock.restore();
 		}
 	});
@@ -546,11 +565,11 @@ sap.ui.define([
 		assert.strictEqual(oSectionButton.getText(), "Title(1)", "complex title binding correct");
 	});
 
-	QUnit.test("Update by model change", function (assert) {
+	QUnit.test("Update by model change", async function(assert) {
 		//section title binding updates anchor bar button
 		oModel.setProperty("/objectCount", 2);
 		oModel.refresh(true);
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// allow for re-render
 		this.clock.tick(iRenderingDelay);
@@ -592,12 +611,12 @@ sap.ui.define([
 			return XMLView.create({
 				id: "UxAP-69_anchorBarBinding",
 				viewName: "view.UxAP-69_AnchorBarBinding"
-			}).then(function(oView) {
+			}).then(async function(oView) {
 				this.anchorBarView = oView;
 				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
 				this.anchorBarView.setModel(oModel);
 				this.anchorBarView.placeAt('qunit-fixture');
-				Core.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -762,12 +781,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("content tabindex values", function (assert) {
+	QUnit.test("content tabindex values", async function(assert) {
 		assert.expect(4);
 
 		// act
 		this.oAnchorBar.placeAt('qunit-fixture');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		this.oAnchorBar.getContent().forEach(function(oButton) {
@@ -781,11 +800,11 @@ sap.ui.define([
 		assert.strictEqual(this.oAnchorBarButton1.$().attr('tabindex'), '-1', "Rest of the button remains with tabindex of -1");
 	});
 
-	QUnit.test("focus change before rerendering", function (assert) {
+	QUnit.test("focus change before rerendering", async function(assert) {
 		var oSelect = this.oAnchorBar._getHierarchicalSelect();
 
 		this.oAnchorBar.placeAt('qunit-fixture');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act:
 		// (1) focus the select
@@ -1015,7 +1034,7 @@ sap.ui.define([
 
 
 	QUnit.module("RTL", {
-		beforeEach: function (assert) {
+		beforeEach: async function(assert) {
 			Localization.setRTL(true);
 			var done = assert.async(),
 			oAnchorBar = new AnchorBar();
@@ -1030,7 +1049,7 @@ sap.ui.define([
 				this.anchorBar.addContent(new Button({text: "button " + i}));
 			}
 			this.anchorBar.placeAt('qunit-fixture');
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			Localization.setRTL(false);

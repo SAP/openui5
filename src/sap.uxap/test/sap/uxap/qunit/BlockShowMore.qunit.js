@@ -1,10 +1,12 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/core/Core",
-	"sap/ui/core/mvc/XMLView"],
-function($, isEmptyObject, Core, XMLView) {
+	"sap/ui/core/mvc/XMLView"
+],
+function(nextUIUpdate, $, isEmptyObject, Core, XMLView) {
 	"use strict";
 
 	QUnit.module("aat_UxAP-330");
@@ -15,11 +17,11 @@ function($, isEmptyObject, Core, XMLView) {
 			XMLView.create({
 				id: "UxAP-330_PropertyOnBlockToSayIfItHaveMoreInfoToDisplay",
 				viewName: "view.UxAP-330_PropertyOnBlockToSayIfItHaveMoreInfoToDisplay"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.objectPageSampleView = oView;
 				this.referencedObjectPage = this.objectPageSampleView.byId("objectPage330");
 				this.objectPageSampleView.placeAt('qunit-fixture');
-				Core.applyChanges();
+				await nextUIUpdate();
 				done();
 			}.bind(this));
 		},

@@ -261,7 +261,6 @@ sap.ui.define([
 		});
 	});
 
-
 	QUnit.test("trigger button up/down/top/bottom via shortcuts", async function(assert){
 		var oPanel = this.oBasePanel;
 		oPanel.setEnableReorder(true);

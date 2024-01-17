@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"./SelectionController", "sap/ui/core/Lib"
-], (BaseController, Library) => {
+	"./SelectionController", "sap/ui/core/Lib", "sap/ui/mdc/enums/ChartItemRoleType"
+], (BaseController, Library, ChartItemRoleType) => {
 	"use strict";
 
 	const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
@@ -43,10 +43,10 @@ sap.ui.define([
 			mItem.visible = !!oExisting;
 			mItem.position = oExisting ? oExisting.position : -1;
 			mItem.role = oExisting ? oExisting.role : oProperty.role;
-			mItem.kind = oProperty.kind;
-
-			if (oProperty.availableRoles) {
-				mItem.availableRoles = oProperty.availableRoles;
+			if (oProperty.groupable) {
+				mItem.kind = "Groupable";
+			} else if (oProperty.aggregatable) {
+				mItem.kind = "Aggregatable";
 			}
 
 			return oProperty.visible;

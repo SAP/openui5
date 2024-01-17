@@ -2,12 +2,15 @@
 QUnit.config.autostart = false;
 
 sap.ui.require([
+	"sap/ui/core/Core",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/qunitPause",
 	"sap/ui/test/matchers/PropertyStrictEquals"
-], function (opaTest, Opa5, qunitPause, PropertyStrictEquals) {
+], async function (Core, opaTest, Opa5, qunitPause, PropertyStrictEquals) {
 	"use strict";
+
+	await Core.ready();
 
 	QUnit.config.hidepassed = false;
 	window._testSequence = [];

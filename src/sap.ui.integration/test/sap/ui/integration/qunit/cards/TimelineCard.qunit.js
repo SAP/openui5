@@ -5,13 +5,17 @@ sap.ui.define([
 	"sap/ui/integration/cards/TimelineContent",
 	"sap/ui/core/Core",
 	"sap/ui/integration/cards/BaseListContent",
-	"sap/ui/integration/widgets/Card"
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	Library,
 	TimelineContent,
 	Core,
 	BaseListContent,
-	Card
+	Card,
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -56,29 +60,10 @@ sap.ui.define([
 			assert.strictEqual(this.oTimelineContent.getInnerList().getGrowingThreshold(), 35, "Growing threshold should be set according to 'maxItems'");
 		});
 
-		QUnit.test("No items pagination", function (assert) {
-
+		QUnit.test("No items pagination", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			var oBaseListContentSpy = this.spy(BaseListContent.prototype, "getDataLength");
 			var oCard =  new Card();
-			oCard.attachEventOnce("_ready", function () {
-
-				var oPaginator = oCard.getCardFooter().getPaginator();
-				Core.applyChanges();
-
-				//Assert
-				assert.strictEqual(oBaseListContentSpy.callCount, 0, "The getDataLength method is not called");
-				assert.notOk(oPaginator.$().find(".sapMCrslBulleted span").length, "dots are not rendered");
-				assert.notOk(oPaginator.getDomRef(), "paginator is not rendered when there are no items");
-
-				var $numericIndicator = oPaginator.$().find(".sapMCrslNumeric span");
-				assert.notOk($numericIndicator.length, "numeric indicator is not rendered");
-
-				done();
-				oCard.destroy();
-				oCard = null;
-			});
 
 			// Act
 			oCard.setManifest({
@@ -131,6 +116,21 @@ sap.ui.define([
 			});
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oPaginator = oCard.getCardFooter().getPaginator();
+
+			//Assert
+			assert.strictEqual(oBaseListContentSpy.callCount, 0, "The getDataLength method is not called");
+			assert.notOk(oPaginator.$().find(".sapMCrslBulleted span").length, "dots are not rendered");
+			assert.notOk(oPaginator.getDomRef(), "paginator is not rendered when there are no items");
+
+			var $numericIndicator = oPaginator.$().find(".sapMCrslNumeric span");
+			assert.notOk($numericIndicator.length, "numeric indicator is not rendered");
+
+			oCard.destroy();
 		});
 
 		QUnit.module("Data and items length", {
@@ -149,10 +149,9 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Data and items length when maxItems property is set", function (assert) {
+		QUnit.test("Data and items length when maxItems property is set", async function (assert) {
 			// Arrange
-			var done = assert.async(),
-				oManifest = {
+			var oManifest = {
 					"sap.app": {
 						"id": "testTimelineCardItemsLength"
 					},
@@ -185,14 +184,13 @@ sap.ui.define([
 					}
 				};
 
-			this.oCard.attachEvent("_ready", function () {
-				assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 2, "#getItemsLength result should be correct");
-				assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
-				done();
-			}.bind(this));
-
 			// Act
 			this.oCard.setManifest(oManifest);
+
+			await nextCardReadyEvent(this.oCard);
+
+			assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 2, "#getItemsLength result should be correct");
+			assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
 		});
 	}).catch(function () {
 		QUnit.module("Timeline Card");

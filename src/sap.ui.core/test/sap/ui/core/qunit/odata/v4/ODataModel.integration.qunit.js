@@ -1672,6 +1672,11 @@ sap.ui.define([
 					}
 				}
 
+				function readableUrl(sUrl) {
+					return sUrl.replaceAll(/%([0-9a-fA-F]{2})/g,
+						(_s, n) => String.fromCharCode(Number.parseInt(n, 16)));
+				}
+
 				if (iBatchNo === undefined) {
 					that.iBatchNo += 1;
 				}
@@ -1700,9 +1705,10 @@ sap.ui.define([
 					if ("$ContentID" in oExpectedRequest) {
 						oActualRequest.$ContentID = sContentID;
 					}
-					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
+					assert.deepEqual(oActualRequest, oExpectedRequest,
+						sMethod + " " + readableUrl(sUrl));
 				} else {
-					assert.ok(false, sMethod + " " + sUrl + " (unexpected)");
+					assert.ok(false, sMethod + " " + readableUrl(sUrl) + " (unexpected)");
 					oResponse = {value : []}; // dummy response to avoid further errors
 					mResponseHeaders = {};
 				}
@@ -2169,7 +2175,8 @@ sap.ui.define([
 					// With GET it must be visible that there is no content, with the other
 					// methods it must be possible to insert the ETag from the header
 					|| (vRequest.method === "GET" ? null : {});
-			vRequest.url = vRequest.url.replace(/ /g, "%20");
+			vRequest.url = vRequest.url.replaceAll(/[ "\[\]{}]/g,
+				(s) => `%${s.charCodeAt(0).toString(16).padStart(2, 0)}`);
 			if (vResponse && !(vResponse instanceof Error || vResponse instanceof Promise
 					|| typeof vResponse === "function")) { // vResponse may be inspected
 				if (rCountTrue.test(vRequest.url)) { // $count=true

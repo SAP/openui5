@@ -101,11 +101,12 @@ sap.ui.define([
 					bRegisteredToUI5Init = true;
 					return bUi5Loaded;
 				}
-			}
-			// otherwise, fall back to the older sap.ui.getCore().attachInit
-			if (oFrameWindow.sap.ui.getCore) {
-				oFrameWindow.sap.ui.getCore().attachInit(handleUi5Loaded);
-				bRegisteredToUI5Init = true;
+
+				// otherwise, fall back to the older sap.ui.getCore().attachInit
+				if (typeof oFrameCore?.attachInit === "function") {
+					oFrameCore.attachInit(handleUi5Loaded);
+					bRegisteredToUI5Init = true;
+				}
 			}
 		}
 

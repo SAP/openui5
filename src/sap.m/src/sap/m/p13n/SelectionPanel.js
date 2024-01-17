@@ -43,19 +43,19 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.ui.core.IconColor
-	const IconColor = coreLibrary.IconColor;
+	const {IconColor} = coreLibrary;
 
 	// shortcut for sap.m.ListKeyboardMode
-	const ListKeyboardMode = mLibrary.ListKeyboardMode;
+	const {ListKeyboardMode} = mLibrary;
 
 	// shortcut for sap.m.FlexJustifyContent
-	const FlexJustifyContent = mLibrary.FlexJustifyContent;
+	const {FlexJustifyContent} = mLibrary;
 
 	// shortcut for sap.m.ListType
-	const ListType = mLibrary.ListType;
+	const {ListType} = mLibrary;
 
 	// shortcut for sap.m.MultiSelectMode
-	const MultiSelectMode = mLibrary.MultiSelectMode;
+	const {MultiSelectMode} = mLibrary;
 
 	/**
 	 * Constructor for a new <code>SelectionPanel</code>.
@@ -316,8 +316,10 @@ sap.ui.define([
 			oIcon.setVisible(false);
 		}
 		this._oHoveredItem = oHoveredItem;
-		this._updateEnableOfMoveButtons(oHoveredItem, false);
-		this._addMoveButtons(oHoveredItem);
+		if (!(oHoveredItem.getMultiSelectControl()?.getEnabled() == false)) {
+			this._updateEnableOfMoveButtons(oHoveredItem, false);
+			this._addMoveButtons(oHoveredItem);
+		}
 	};
 
 	SelectionPanel.prototype._removeMoveButtons = function() {
@@ -387,7 +389,6 @@ sap.ui.define([
 		//remove the reorder buttons from their current location and hence reset the hover logic
 		this._removeMoveButtons();
 		this._oSelectedItem = null;
-
 		return this;
 	};
 
@@ -418,8 +419,8 @@ sap.ui.define([
 		return this._aInitializedFields;
 	};
 
-	SelectionPanel.prototype._moveSelectedItem = function() {
-		this._oSelectedItem = this._getMoveButtonContainer().getParent();
+	SelectionPanel.prototype._moveSelectedItem = function(){
+		this._oSelectedItem = this._getMoveButtonContainer()?.getParent();
 		BasePanel.prototype._moveSelectedItem.apply(this, arguments);
 	};
 

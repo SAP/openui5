@@ -9,13 +9,12 @@
 				id="sapFShellBarSample"
 				title="Application Title"
 				secondTitle="Short description"
-				homeIcon="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
+				homeIcon="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
 				showCopilot="true"
 				showSearch="true"
 				showMenuButton="true"
 				showNavButton="true"
 				showNotifications="true"
-				showProductSwitcher="true"
 				notificationsNumber="2">
 				<profile>
 					<m:Avatar initials="UI"/>

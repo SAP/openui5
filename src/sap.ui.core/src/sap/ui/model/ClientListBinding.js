@@ -359,7 +359,6 @@ sap.ui.define([
 		this.bIgnoreSuspend = true;
 
 		this._fireChange({reason: ChangeReason.Filter});
-		if (sFilterType == FilterType.Application) {} else {}
 		this.bIgnoreSuspend = false;
 
 		return this;

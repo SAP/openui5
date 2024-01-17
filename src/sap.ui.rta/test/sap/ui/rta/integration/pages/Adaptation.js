@@ -181,6 +181,19 @@ sap.ui.define([
 						errorMessage: "Did not find the Element Overlay"
 					});
 				},
+				iCanNotRightClickOnAnElementOverlay(sId) {
+					return this.waitFor({
+						autoWait: true,
+						controlType: "sap.ui.dt.ElementOverlay",
+						matchers(oOverlay) {
+							return oOverlay.getElement().getId() !== sId;
+						},
+						success() {
+							Opa5.assert.ok(true, "The wrong Overlay for the element is shown.");
+						},
+						errorMessage: "Found the right Element Overlay"
+					});
+				},
 				iClickOnAnElementOverlay(sId) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
@@ -721,6 +734,21 @@ sap.ui.define([
 							);
 						},
 						errorMessage: "The RTA restart parameter is not cleaned up"
+					});
+				},
+				iShouldSeeTheMessageStrip(sMessage, sType) {
+					return this.waitFor({
+						controlType: "sap.m.MessageStrip",
+						check(aMessageStrips) {
+							const oMessageStrip = aMessageStrips[0];
+							const bSameText = oMessageStrip.getText() === sMessage;
+							const bSameType = oMessageStrip.getType() === sType;
+							return bSameText && bSameType;
+						},
+						success() {
+							Opa5.assert.ok(true, "The correct MessageStrip exists.");
+						},
+						errorMessage: "Did not find the MessageStrip, the text was wrong or the type was wrong."
 					});
 				}
 			}

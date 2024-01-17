@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
-	'./ItemBaseFlex', './Util', "sap/ui/fl/changeHandler/common/ChangeCategories"
-], (ItemBaseFlex, Util, ChangeCategories) => {
+	'./ItemBaseFlex', './Util', "sap/ui/fl/changeHandler/common/ChangeCategories", "sap/ui/mdc/chart/Util"
+
+], (ItemBaseFlex, Util, ChangeCategories, ChartUtil) => {
 	"use strict";
 
 	const oChartItemFlex = Object.assign({}, ItemBaseFlex);
@@ -70,12 +71,10 @@ sap.ui.define([
 				aArgs.splice(0, 1, oProperty.label);
 			}
 
-			if ((oChange.getChangeType() === "addItem") && oChartPropertyHelper._getLayoutOptionsForType && sType) {
-				const oText = oChartPropertyHelper._getLayoutOptionsForType(sType).find((oEntry) => {
-					return oEntry.key === oContent.role;
-				});
+			if ((oChange.getChangeType() === "addItem") && sType) {
+				const oText = ChartUtil.getLayoutOptionTextForTypeAndRole(sType, oContent.role);
 				if (oText) {
-					aArgs.splice(2, 1, oText.text);
+					aArgs.splice(2, 1, oText);
 				}
 			}
 		}

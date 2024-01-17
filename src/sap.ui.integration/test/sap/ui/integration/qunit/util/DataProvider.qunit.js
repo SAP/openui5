@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/integration/Host",
 	"sap/ui/integration/Extension",
 	"sap/ui/integration/library",
-	"sap/ui/core/Supportability"
+	"sap/ui/core/Supportability",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	Core,
 	DataProviderFactory,
@@ -23,7 +24,8 @@ sap.ui.define([
 	Host,
 	Extension,
 	integrationLibrary,
-	Supportability
+	Supportability,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -773,20 +775,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Resolve relative url", function (assert) {
-		var done = assert.async();
-
-		// Arrange
-		this.oCard.attachEventOnce("_ready", function () {
-
-			Core.applyChanges();
-
-			assert.strictEqual(this.oCard.getCardContent().getInnerList().getItems().length, 8, "the data is resolved correctly");
-
-			done();
-
-		}.bind(this));
-
+	QUnit.test("Resolve relative url", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
 				"type": "card",
@@ -813,6 +802,10 @@ sap.ui.define([
 		});
 
 		this.oCard.placeAt("qunit-fixture");
+
+		await nextCardReadyEvent(this.oCard);
+
+		assert.strictEqual(this.oCard.getCardContent().getInnerList().getItems().length, 8, "the data is resolved correctly");
 	});
 
 	QUnit.module("ServiceDataProvider", {

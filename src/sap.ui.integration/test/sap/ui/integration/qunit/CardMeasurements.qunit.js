@@ -2,14 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core",
 	"sap/base/config",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	Card,
-	Core,
 	BaseConfig,
-	nextUIUpdate
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -39,19 +39,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Markers placing is correct", async function (assert) {
-		// arrange
-		var done = assert.async();
-
-		this.oCard.attachEventOnce("_ready", function () {
-			Core.applyChanges();
-
-			// assert
-			assert.strictEqual(this.spyMark.withArgs(sinon.match(/-end$/)).callCount, 3, "There should be 3 'end' markers after the card is ready");
-			assert.strictEqual(this.spyMeasure.callCount, 3, "There should be 3 measurements after the card is ready");
-
-			done();
-		}.bind(this));
-
 		// assert
 		assert.ok(this.spyMark.notCalled, "There should be no card markers before the manifest is set");
 		assert.ok(this.spyMeasure.notCalled, "There should be no card measures before the manifest is set");
@@ -74,26 +61,16 @@ sap.ui.define([
 
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextCardReadyEvent(this.oCard);
 		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.spyMark.withArgs(sinon.match(/-start$/)).callCount, 3, "There should be 3 'start' markers after the card is rendered");
+		assert.strictEqual(this.spyMark.withArgs(sinon.match(/-end$/)).callCount, 3, "There should be 3 'end' markers after the card is ready");
+		assert.strictEqual(this.spyMeasure.callCount, 3, "There should be 3 measurements after the card is ready");
 	});
 
-	QUnit.test("Markers are not placed if disabled", function (assert) {
-		// arrange
-		var done = assert.async();
-
-		this.oCard.attachEventOnce("_ready", function () {
-			Core.applyChanges();
-
-			// assert
-			assert.ok(this.spyMark.notCalled, "There are no markers when card measurement is disabled");
-			assert.ok(this.spyMeasure.notCalled, "There are no measurements when card measurement is disabled");
-
-			done();
-		}.bind(this));
-
+	QUnit.test("Markers are not placed if disabled", async function (assert) {
 		// act
 		BaseConfig._.invalidate();
 		this.bMeasureCards = false;
@@ -112,6 +89,13 @@ sap.ui.define([
 
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// assert
+		assert.ok(this.spyMark.notCalled, "There are no markers when card measurement is disabled");
+		assert.ok(this.spyMeasure.notCalled, "There are no measurements when card measurement is disabled");
 	});
 
 });

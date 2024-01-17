@@ -1,22 +1,22 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/integration/cards/CalendarContent",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"qunit/testResources/nextCardReadyEvent"
 ],
 	function (
-		Core,
 		DateFormat,
 		Card,
 		nextUIUpdate,
 		CalendarDate,
 		CalendarContent,
-		UI5Date
+		UI5Date,
+		nextCardReadyEvent
 	) {
 		"use strict";
 
@@ -1323,7 +1323,6 @@ sap.ui.define([
 		QUnit.test("Initialization - CalendarContent", async function (assert) {
 			await nextUIUpdate();
 			// Arrange
-			var done = assert.async();
 			this.oCard.setManifest(oManifest);
 
 			// Assert
@@ -1333,17 +1332,12 @@ sap.ui.define([
 			assert.equal(this.oCard.getDomRef().clientWidth, 398, "Card should have width set to 398px.");
 			assert.equal(this.oCard.getDomRef().clientHeight, 598, "Card should have height set to 598px.");
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				// Assert
-				assert.ok(this.oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
-				assert.ok(this.oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
-
-				// Cleanup
-				this.oCard.destroy();
-				done();
-			}.bind(this));
+			// Assert
+			assert.ok(this.oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
+			assert.ok(this.oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
 		});
 
 		QUnit.test("Initialization - CalendarContent with no selected date", function (assert) {
@@ -1353,66 +1347,64 @@ sap.ui.define([
 			assert.ok(true, "There is no error when CalendarContent is created without a selected value");
 		});
 
-		QUnit.test("Using manifest", function (assert) {
+		QUnit.test("Using manifest", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			this.oCard.setManifest(oManifest_Simple);
 
-			this.oCard.attachEvent("_ready", function () {
-				var oManifestData = oManifest_Simple["sap.card"].data.json,
-					oContent = this.oCard.getAggregation("_content"),
-					oCalendar = oContent._oCalendar,
-					oLegend = oContent._oLegend,
-					aAppointments = oContent.getAppointments(),
-					aSpecialDates = oCalendar.getSpecialDates(),
-					aCalLegItems = oLegend.getItems(),
-					aAppLegItems = oLegend.getAppointmentItems();
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				Core.applyChanges();
+			var oManifestData = oManifest_Simple["sap.card"].data.json,
+				oContent = this.oCard.getAggregation("_content"),
+				oCalendar = oContent._oCalendar,
+				oLegend = oContent._oLegend,
+				aAppointments = oContent.getAppointments(),
+				aSpecialDates = oCalendar.getSpecialDates(),
+				aCalLegItems = oLegend.getItems(),
+				aAppLegItems = oLegend.getAppointmentItems();
 
-				// Assert
-				// Start date
-				assert.equal(oCalendar.getSpecialDates()[0].getStartDate().getTime(), 1567328400000, "Should have start date.");
+			await nextUIUpdate();
 
-				// maxItems
-				assert.equal(oContent.getVisibleAppointmentsCount(), oManifestData.maxItems, "Should have visibleAppointmentsCount.");
+			// Assert
+			// Start date
+			assert.equal(oCalendar.getSpecialDates()[0].getStartDate().getTime(), 1567328400000, "Should have start date.");
 
-				// maxLegendItems
-				assert.equal(oLegend.getVisibleLegendItemsCount(), oManifestData.maxLegendItems, "Should have visibleLegendItemsCount.");
+			// maxItems
+			assert.equal(oContent.getVisibleAppointmentsCount(), oManifestData.maxItems, "Should have visibleAppointmentsCount.");
 
-				// noItemsText
-				assert.equal(oContent.getNoAppointmentsText(), oManifestData.noItemsText, "Should have noAppointmentsText.");
+			// maxLegendItems
+			assert.equal(oLegend.getVisibleLegendItemsCount(), oManifestData.maxLegendItems, "Should have visibleLegendItemsCount.");
 
-				// Appointment
-				assert.equal(aAppointments.length, 1, "Should have 1 appointment.");
-				assert.equal(aAppointments[0].getStartDate().getTime(), 1567328400000, "Should have appointment startDate");
-				assert.equal(aAppointments[0].getEndDate().getTime(), 1567332000000, "Should have appointment endDate");
-				assert.equal(aAppointments[0].getTitle(), oManifestData.item[0].title, "Should have appointment title");
-				assert.equal(aAppointments[0].getText(), oManifestData.item[0].text, "Should have appointment text");
-				assert.equal(aAppointments[0].getType(), oManifestData.item[0].type, "Should have appointment type");
-				assert.equal(aAppointments[0].getIcon(), oManifestData.item[0].icon, "Should have appointment icon");
+			// noItemsText
+			assert.equal(oContent.getNoAppointmentsText(), oManifestData.noItemsText, "Should have noAppointmentsText.");
 
-				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "Should have 1 visible appointment.");
-				assert.equal(this.oCard.getModel("parameters").getData().allItems, 1, "Should have total of 1 appointment.");
+			// Appointment
+			assert.equal(aAppointments.length, 1, "Should have 1 appointment.");
+			assert.equal(aAppointments[0].getStartDate().getTime(), 1567328400000, "Should have appointment startDate");
+			assert.equal(aAppointments[0].getEndDate().getTime(), 1567332000000, "Should have appointment endDate");
+			assert.equal(aAppointments[0].getTitle(), oManifestData.item[0].title, "Should have appointment title");
+			assert.equal(aAppointments[0].getText(), oManifestData.item[0].text, "Should have appointment text");
+			assert.equal(aAppointments[0].getType(), oManifestData.item[0].type, "Should have appointment type");
+			assert.equal(aAppointments[0].getIcon(), oManifestData.item[0].icon, "Should have appointment icon");
 
-				// Special date
-				assert.equal(aSpecialDates.length, 1, "Should have 1 special date.");
-				assert.equal(aSpecialDates[0].getStartDate().getTime(), 1567328400000, "Should have special date startDate");
-				assert.equal(aSpecialDates[0].getEndDate().getTime(), 1567332000000, "Should have special date endDate");
-				assert.equal(aSpecialDates[0].getType(), oManifestData.specialDate[0].type, "Should have special date type");
+			assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "Should have 1 visible appointment.");
+			assert.equal(this.oCard.getModel("parameters").getData().allItems, 1, "Should have total of 1 appointment.");
 
-				// Calendar legend item
-				assert.equal(aCalLegItems.length, 1, "Should have 1 calendar legend item.");
-				assert.equal(aCalLegItems[0].getText(), oManifestData.legendItem[0].text, "Should have calendar legend item text");
-				assert.equal(aCalLegItems[0].getType(), oManifestData.legendItem[0].type, "Should have calendar legend item type");
+			// Special date
+			assert.equal(aSpecialDates.length, 1, "Should have 1 special date.");
+			assert.equal(aSpecialDates[0].getStartDate().getTime(), 1567328400000, "Should have special date startDate");
+			assert.equal(aSpecialDates[0].getEndDate().getTime(), 1567332000000, "Should have special date endDate");
+			assert.equal(aSpecialDates[0].getType(), oManifestData.specialDate[0].type, "Should have special date type");
 
-				// Appointment legend item
-				assert.equal(aAppLegItems.length, 1, "Should have 1 appointment legend item.");
-				assert.equal(aAppLegItems[0].getText(), oManifestData.legendItem[1].text, "Should have appointment legend item text");
-				assert.equal(aAppLegItems[0].getType(), oManifestData.legendItem[1].type, "Should have appointment legend item type");
+			// Calendar legend item
+			assert.equal(aCalLegItems.length, 1, "Should have 1 calendar legend item.");
+			assert.equal(aCalLegItems[0].getText(), oManifestData.legendItem[0].text, "Should have calendar legend item text");
+			assert.equal(aCalLegItems[0].getType(), oManifestData.legendItem[0].type, "Should have calendar legend item type");
 
-				done();
-			}.bind(this));
+			// Appointment legend item
+			assert.equal(aAppLegItems.length, 1, "Should have 1 appointment legend item.");
+			assert.equal(aAppLegItems[0].getText(), oManifestData.legendItem[1].text, "Should have appointment legend item text");
+			assert.equal(aAppLegItems[0].getType(), oManifestData.legendItem[1].type, "Should have appointment legend item type");
 		});
 
 		QUnit.module("Parameters", {
@@ -1435,160 +1427,143 @@ sap.ui.define([
 					}.bind(this),
 					startDate: oDate
 				});
-				Core.applyChanges();
 			}
 		});
 
-		QUnit.test("3 out of 5 appointments shown", function (assert) {
+		QUnit.test("3 out of 5 appointments shown", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			this.oCard.setManifest(oManifest_3OutOf5Apps);
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				// Assert
-				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
-				assert.equal(this.oCard.getModel("parameters").getData().allItems, 5, "Should have total of 5 appointments.");
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+			// Assert
+			assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
+			assert.equal(this.oCard.getModel("parameters").getData().allItems, 5, "Should have total of 5 appointments.");
 
-				// Assert
-				assert.equal(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
+			var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
 
-				done();
-			}.bind(this));
+			// Assert
+			assert.equal(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
 		});
 
-		QUnit.test("3 out of 3 appointments shown", function (assert) {
+		QUnit.test("3 out of 3 appointments shown", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			this.oCard.setManifest(oManifest_3OutOf3Apps);
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				// Assert
-				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
-				assert.equal(this.oCard.getModel("parameters").getData().allItems, 3, "Should have total of 3 appointments.");
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+			// Assert
+			assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
+			assert.equal(this.oCard.getModel("parameters").getData().allItems, 3, "Should have total of 3 appointments.");
 
-				// Assert
-				assert.equal(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
+			var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
 
-				done();
-			}.bind(this));
+			// Assert
+			assert.equal(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
 		});
 
-		QUnit.test("2 out of 2 appointments shown", function (assert) {
+		QUnit.test("2 out of 2 appointments shown", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			this.oCard.setManifest(oManifest_2OutOf2Apps);
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				// Assert
-				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 2, "Should have 2 visible appointments.");
-				assert.equal(this.oCard.getModel("parameters").getData().allItems, 2, "Should have total of 2 appointments.");
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+			// Assert
+			assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 2, "Should have 2 visible appointments.");
+			assert.equal(this.oCard.getModel("parameters").getData().allItems, 2, "Should have total of 2 appointments.");
 
-				// Assert
-				assert.equal(aAppointmentsRefs.length, 2, "Should have 2 rendered appointments.");
+			var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
 
-				done();
-			}.bind(this));
+			// Assert
+			assert.equal(aAppointmentsRefs.length, 2, "Should have 2 rendered appointments.");
 		});
 
-		QUnit.test("No appointments shown", function (assert) {
+		QUnit.test("No appointments shown", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			this.oCard.setManifest(oManifest_NoApps);
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				// Assert
-				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 0, "Should have 0 visible appointments.");
-				assert.equal(this.oCard.getModel("parameters").getData().allItems, 0, "Should have total of 0 appointments.");
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+			// Assert
+			assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 0, "Should have 0 visible appointments.");
+			assert.equal(this.oCard.getModel("parameters").getData().allItems, 0, "Should have total of 0 appointments.");
 
-				// Assert
-				assert.equal(aAppointmentsRefs.length, 0, "Should have 0 rendered appointments.");
+			var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
 
-				done();
-			}.bind(this));
+			// Assert
+			assert.equal(aAppointmentsRefs.length, 0, "Should have 0 rendered appointments.");
 		});
 
-		QUnit.test("Appointments from yesterday, until tomorrow and all day", function (assert) {
+		QUnit.test("Appointments from yesterday, until tomorrow and all day", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			this.oCard.setManifest(oManifest_AppsOutOfTheCurrentDay);
 
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				// Assert
-				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
-				assert.equal(this.oCard.getModel("parameters").getData().allItems, 3, "Should have total of 3 appointments.");
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+			// Assert
+			assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
+			assert.equal(this.oCard.getModel("parameters").getData().allItems, 3, "Should have total of 3 appointments.");
 
-				// Assert
-				assert.equal(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
+			var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
 
-				done();
-			}.bind(this));
+			// Assert
+			assert.equal(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
 		});
 
-		QUnit.test("all day appointments display", function (assert) {
+		QUnit.test("all day appointments display", async function (assert) {
 			// arrange
-			var done = assert.async();
 			this.oCard.setManifest(oManifest_DateSelect);
 
-			this.oCard.attachEvent("_ready", function () {
-				// act
-				this.selectDate(UI5Date.getInstance(2021, 10, 19));
+			await nextCardReadyEvent(this.oCard);
 
-				// assert
-				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "there is 1 visible appointment");
+			// act
+			this.selectDate(UI5Date.getInstance(2021, 10, 19));
+			await nextUIUpdate();
 
-				// act
-				this.selectDate(UI5Date.getInstance(2021, 10, 20));
+			// assert
+			assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "there is 1 visible appointment");
 
-				// assert
-				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "there is 1 visible appointment");
+			// act
+			this.selectDate(UI5Date.getInstance(2021, 10, 20));
+			await nextUIUpdate();
 
-				// act
-				this.selectDate(UI5Date.getInstance(2021, 10, 21));
+			// assert
+			assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "there is 1 visible appointment");
 
-				// assert
-				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "there is 1 visible appointment");
+			// act
+			this.selectDate(UI5Date.getInstance(2021, 10, 21));
+			await nextUIUpdate();
 
-				done();
-			}.bind(this));
+			// assert
+			assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "there is 1 visible appointment");
 		});
 
-		QUnit.test("start of the day appointment is shown only in the 2nd day", function (assert) {
+		QUnit.test("start of the day appointment is shown only in the 2nd day", async function (assert) {
 			// arrange
-			var done = assert.async();
 			this.oCard.setManifest(oManifest_DateSelect);
 
-			this.oCard.attachEvent("_ready", function () {
-				// act
-				this.selectDate(UI5Date.getInstance(2019, 11, 2));
-				var aVisibleItems20191202 = this.oCard.getAggregation("_content")._calculateVisibleAppointments(this.oCard.getAggregation("_content").getAggregation("appointments"), UI5Date.getInstance(2019, 11, 2));
+			await nextCardReadyEvent(this.oCard);
 
-				// assert
-				assert.strictEqual(aVisibleItems20191202.length, 1, "there is 1 visible appointment");
+			// act
+			this.selectDate(UI5Date.getInstance(2019, 11, 2));
+			await nextUIUpdate();
+			var aVisibleItems20191202 = this.oCard.getAggregation("_content")._calculateVisibleAppointments(this.oCard.getAggregation("_content").getAggregation("appointments"), UI5Date.getInstance(2019, 11, 2));
 
-				// act
-				this.selectDate(UI5Date.getInstance(2019, 11, 1));
-				var aVisibleItems20191201 = this.oCard.getAggregation("_content")._calculateVisibleAppointments(this.oCard.getAggregation("_content").getAggregation("appointments"), UI5Date.getInstance(2019, 11, 1));
+			// assert
+			assert.strictEqual(aVisibleItems20191202.length, 1, "there is 1 visible appointment");
 
-				// assert
-				assert.strictEqual(aVisibleItems20191201.length, 0, "there is 0 visible appointment");
+			// act
+			this.selectDate(UI5Date.getInstance(2019, 11, 1));
+			await nextUIUpdate();
+			var aVisibleItems20191201 = this.oCard.getAggregation("_content")._calculateVisibleAppointments(this.oCard.getAggregation("_content").getAggregation("appointments"), UI5Date.getInstance(2019, 11, 1));
 
-				done();
-			}.bind(this));
+			// assert
+			assert.strictEqual(aVisibleItems20191201.length, 0, "there is 0 visible appointment");
 		});
 
 		QUnit.module("Events", {
@@ -1603,214 +1578,197 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("DateSelect", function (assert) {
+		QUnit.test("DateSelect", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			this.oCard.setManifest(oManifest_DateSelect);
 
-			this.oCard.attachEvent("_ready", function () {
-				var oCalendar = this.oCard.getAggregation("_content").getAggregation("_content").getAggregation("items")[0],
-					bDateSelectFired,
-					aAppointmentsRefs;
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				Core.applyChanges();
-				this.oCard.attachAction(function (oEvent) {
-					if (oEvent.getParameter("type") === "DateChange") {
-						bDateSelectFired = true;
-					}
-				});
+			var oCalendar = this.oCard.getAggregation("_content").getAggregation("_content").getAggregation("items")[0],
+				bDateSelectFired,
+				aAppointmentsRefs;
 
-				// Act
-				oCalendar.getSelectedDates()[0].setStartDate(UI5Date.getInstance("2019-09-01"));
-				oCalendar.fireSelect({
-					getSource: function () {
-						return this.oCard;
-					}.bind(this),
-					startDate: UI5Date.getInstance("2019-09-01")
-				});
-				Core.applyChanges();
+			this.oCard.attachAction(function (oEvent) {
+				if (oEvent.getParameter("type") === "DateChange") {
+					bDateSelectFired = true;
+				}
+			});
 
-				// Assert
-				assert.strictEqual(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
-				assert.strictEqual(this.oCard.getModel("parameters").getData().allItems, 5, "Should have total of 5 appointments.");
-				assert.ok(bDateSelectFired, "DateSelect is fired");
+			// Act
+			oCalendar.getSelectedDates()[0].setStartDate(UI5Date.getInstance("2019-09-01"));
+			oCalendar.fireSelect({
+				getSource: function () {
+					return this.oCard;
+				}.bind(this),
+				startDate: UI5Date.getInstance("2019-09-01")
+			});
 
-				aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+			await nextUIUpdate();
 
-				// Assert
-				assert.strictEqual(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
+			// Assert
+			assert.strictEqual(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
+			assert.strictEqual(this.oCard.getModel("parameters").getData().allItems, 5, "Should have total of 5 appointments.");
+			assert.ok(bDateSelectFired, "DateSelect is fired");
 
-				done();
-			}.bind(this));
+			aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+
+			// Assert
+			assert.strictEqual(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
 		});
 
-		QUnit.test("MonthChange", function (assert) {
+		QUnit.test("MonthChange", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			this.oCard.setManifest(oManifest_MonthChange);
 
-			this.oCard.attachEvent("_ready", function () {
-				var oCalendar = this.oCard.getAggregation("_content").getAggregation("_content").getAggregation("items")[0],
-					bMonthChangeFired,
-					aAppointmentsRefs,
-					aSpecialDatesRefs,
-					aLegendItemsRefs;
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				Core.applyChanges();
-				this.oCard.attachAction(function (oEvent) {
-					if (oEvent.getParameter("type") === "MonthChange") {
-						bMonthChangeFired = true;
-						assert.equal(oEvent.getParameter("parameters").firstDate.getTime(), UI5Date.getInstance(2019, 6, 28).getTime(), "parameter firstDate is correct");
-					}
-				});
+			var oCalendar = this.oCard.getAggregation("_content").getAggregation("_content").getAggregation("items")[0],
+				bMonthChangeFired,
+				aAppointmentsRefs,
+				aSpecialDatesRefs,
+				aLegendItemsRefs;
 
-				// Act
-				oCalendar._setFocusedDate(CalendarDate.fromLocalJSDate(UI5Date.getInstance(2019, 7, 1)));
-				oCalendar.displayDate(UI5Date.getInstance(2019, 7, 1));
-				Core.applyChanges();
-				oCalendar.fireStartDateChange({
-					getSource: function () {
-						return this.oCard;
-					}.bind(this)
-				});
-				Core.applyChanges();
+			this.oCard.attachAction(function (oEvent) {
+				if (oEvent.getParameter("type") === "MonthChange") {
+					bMonthChangeFired = true;
+					assert.equal(oEvent.getParameter("parameters").firstDate.getTime(), UI5Date.getInstance(2019, 6, 28).getTime(), "parameter firstDate is correct");
+				}
+			});
 
-				// Assert
-				assert.strictEqual(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
-				assert.strictEqual(this.oCard.getModel("parameters").getData().allItems, 5, "Should have total of 5 appointments.");
-				assert.ok(bMonthChangeFired, "DateSelect is fired");
+			// Act
+			oCalendar._setFocusedDate(CalendarDate.fromLocalJSDate(UI5Date.getInstance(2019, 7, 1)));
+			oCalendar.displayDate(UI5Date.getInstance(2019, 7, 1));
+			await nextUIUpdate();
+			oCalendar.fireStartDateChange({
+				getSource: function () {
+					return this.oCard;
+				}.bind(this)
+			});
+			await nextUIUpdate();
 
-				aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+			// Assert
+			assert.strictEqual(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
+			assert.strictEqual(this.oCard.getModel("parameters").getData().allItems, 5, "Should have total of 5 appointments.");
+			assert.ok(bMonthChangeFired, "DateSelect is fired");
 
-				// Assert
-				assert.strictEqual(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
+			aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
 
-				aSpecialDatesRefs = this.oCard.$().find(".sapUiCalSpecialDate");
+			// Assert
+			assert.strictEqual(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
 
-				// Assert
-				assert.strictEqual(aSpecialDatesRefs.length, 3, "Should have 3 rendered special dates.");
+			aSpecialDatesRefs = this.oCard.$().find(".sapUiCalSpecialDate");
 
-				aLegendItemsRefs = this.oCard.$().find(".sapUiUnifiedLegendItem");
+			// Assert
+			assert.strictEqual(aSpecialDatesRefs.length, 3, "Should have 3 rendered special dates.");
 
-				// Assert
-				assert.strictEqual(aLegendItemsRefs.length, 4, "Should have 3 rendered legend items and one 'More' indicator.");
+			aLegendItemsRefs = this.oCard.$().find(".sapUiUnifiedLegendItem");
 
-				done();
-			}.bind(this));
+			// Assert
+			assert.strictEqual(aLegendItemsRefs.length, 4, "Should have 3 rendered legend items and one 'More' indicator.");
 		});
 
-		QUnit.test("Appointment press", function (assert) {
+		QUnit.test("Appointment press", async function (assert) {
 			// Arrange
-			var done = assert.async();
 			this.oCard.setManifest(oManifest_Appointments_Press);
 
-			this.oCard.attachEvent("_ready", function () {
-				var aAppointments = this.oCard.getAggregation("_content").getAppointments(),
-					oFirstAppointment = aAppointments[0],
-					oSecondAppointment = aAppointments[1];
+			await nextCardReadyEvent(this.oCard);
 
-				// Assert
-				assert.notOk(oFirstAppointment.$().hasClass("sapUiCalendarAppDisabled"), "The first appointment is in active state.");
-				assert.deepEqual(oFirstAppointment.$().attr("tabindex"), "0", "The first appointment is in the tab chain.");
-				assert.ok(oSecondAppointment.$().hasClass("sapUiCalendarAppDisabled"), "Second appointment is in disabled state.");
+			var aAppointments = this.oCard.getAggregation("_content").getAppointments(),
+				oFirstAppointment = aAppointments[0],
+				oSecondAppointment = aAppointments[1];
 
-				done();
-			}.bind(this));
+			// Assert
+			assert.notOk(oFirstAppointment.$().hasClass("sapUiCalendarAppDisabled"), "The first appointment is in active state.");
+			assert.deepEqual(oFirstAppointment.$().attr("tabindex"), "0", "The first appointment is in the tab chain.");
+			assert.ok(oSecondAppointment.$().hasClass("sapUiCalendarAppDisabled"), "Second appointment is in disabled state.");
 		});
 
-
-		QUnit.test("ChangeMonth Method", function(assert) {
+		QUnit.test("ChangeMonth Method", async function(assert) {
 			// Arrange
-			var done = assert.async();
-
 			this.oCard.setManifest(oManifest_Change_Date);
 
-			this.oCard.attachEvent("_ready", function () {
-				var oCardContent = this.oCard.getCardContent(),
-					iIndexOfJune = 5,
-					aAppointmentsRefs,
-					aSpecialDatesRefs,
-					aLegendItemsRefs;
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				Core.applyChanges();
+			var oCardContent = this.oCard.getCardContent(),
+				iIndexOfJune = 5,
+				aAppointmentsRefs,
+				aSpecialDatesRefs,
+				aLegendItemsRefs;
 
-				// Act
-				oCardContent.changeMonth(iIndexOfJune);
-				assert.strictEqual(oCardContent._oCalendar._getFocusedDate().getMonth(), iIndexOfJune, "The focused date is now in June.");
-				Core.applyChanges();
+			// Act
+			oCardContent.changeMonth(iIndexOfJune);
+			assert.strictEqual(oCardContent._oCalendar._getFocusedDate().getMonth(), iIndexOfJune, "The focused date is now in June.");
+			await nextUIUpdate();
 
-				assert.strictEqual(this.oCard.getModel("parameters").getData().visibleItems, 5, "Should have 5 visible appointments.");
-				assert.strictEqual(this.oCard.getModel("parameters").getData().allItems, 7, "Should have total of 7 appointments.");
+			assert.strictEqual(this.oCard.getModel("parameters").getData().visibleItems, 5, "Should have 5 visible appointments.");
+			assert.strictEqual(this.oCard.getModel("parameters").getData().allItems, 7, "Should have total of 7 appointments.");
 
-				aSpecialDatesRefs = this.oCard.$().find(".sapUiCalSpecialDate");
-				// Assert
-				assert.strictEqual(aSpecialDatesRefs.length, 1, "Should have 1 rendered special dates.");
+			aSpecialDatesRefs = this.oCard.$().find(".sapUiCalSpecialDate");
+			// Assert
+			assert.strictEqual(aSpecialDatesRefs.length, 1, "Should have 1 rendered special dates.");
 
-				aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
-				// Assert
-				assert.strictEqual(aAppointmentsRefs.length, 5, "Should have 5 rendered appointments.");
+			aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+			// Assert
+			assert.strictEqual(aAppointmentsRefs.length, 5, "Should have 5 rendered appointments.");
 
-				aLegendItemsRefs = this.oCard.$().find(".sapUiUnifiedLegendItem");
-				// Assert
-				assert.strictEqual(aLegendItemsRefs.length, 6, "Should have 5 rendered legend items and one 'More' indicator.");
-
-				done();
-			}.bind(this));
-
+			aLegendItemsRefs = this.oCard.$().find(".sapUiUnifiedLegendItem");
+			// Assert
+			assert.strictEqual(aLegendItemsRefs.length, 6, "Should have 5 rendered legend items and one 'More' indicator.");
 		});
 
-		QUnit.test("ChangeDate Method", function(assert) {
+		QUnit.test("ChangeDate Method", async function(assert) {
 			// Arrange
-			var done = assert.async();
 			this.oCard.setManifest(oManifest_Change_Date);
 
-			this.oCard.attachEvent("_ready", function () {
-				var oCardContent = this.oCard.getCardContent(),
-					aAppointmentsRefs,
-					aSpecialDatesRefs,
-					aLegendItemsRefs;
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
 
-				// Assert
-				assert.strictEqual(oCardContent._oCalendar._getFocusedDate().getMonth(), 8, "The focused date is in September.");
+			var oCardContent = this.oCard.getCardContent(),
+				aAppointmentsRefs,
+				aSpecialDatesRefs,
+				aLegendItemsRefs;
 
-				// Act
-				oCardContent.changeDate(new Date(2019, 3, 14));
-				Core.applyChanges();
+			// Assert
+			assert.strictEqual(oCardContent._oCalendar._getFocusedDate().getMonth(), 8, "The focused date is in September.");
 
-				aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
-				// Assert
-				assert.strictEqual(aAppointmentsRefs.length, 1, "Should have 1 rendered appointment.");
+			// Act
+			oCardContent.changeDate(new Date(2019, 3, 14));
+			await nextUIUpdate();
 
-				aSpecialDatesRefs = this.oCard.$().find(".sapUiCalSpecialDate");
-				// Assert
-				assert.strictEqual(aSpecialDatesRefs.length, 0, "Should have 0 rendered special dates.");
+			aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+			// Assert
+			assert.strictEqual(aAppointmentsRefs.length, 1, "Should have 1 rendered appointment.");
 
-				aLegendItemsRefs = this.oCard.$().find(".sapUiUnifiedLegendItem");
-				// Assert
-				assert.strictEqual(aLegendItemsRefs.length, 6, "Should have 5 rendered legend items and one 'More' indicator.");
+			aSpecialDatesRefs = this.oCard.$().find(".sapUiCalSpecialDate");
+			// Assert
+			assert.strictEqual(aSpecialDatesRefs.length, 0, "Should have 0 rendered special dates.");
 
-				// Act
-				oCardContent.changeDate(new Date(2019, 8, 18));
-				Core.applyChanges();
+			aLegendItemsRefs = this.oCard.$().find(".sapUiUnifiedLegendItem");
+			// Assert
+			assert.strictEqual(aLegendItemsRefs.length, 6, "Should have 5 rendered legend items and one 'More' indicator.");
 
-				aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
-				assert.strictEqual(this.oCard.getModel("parameters").getData().visibleItems, 5, "Should have 5 visible appointments.");
-				assert.strictEqual(this.oCard.getModel("parameters").getData().allItems, 7, "Should have total of 7 appointments.");
+			// Act
+			oCardContent.changeDate(new Date(2019, 8, 18));
+			await nextUIUpdate();
 
-				aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
-				// Assert
-				assert.strictEqual(aAppointmentsRefs.length, 5, "Should have 5 rendered appointments.");
+			aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+			assert.strictEqual(this.oCard.getModel("parameters").getData().visibleItems, 5, "Should have 5 visible appointments.");
+			assert.strictEqual(this.oCard.getModel("parameters").getData().allItems, 7, "Should have total of 7 appointments.");
 
-				aSpecialDatesRefs = this.oCard.$().find(".sapUiCalSpecialDate");
-				// Assert
-				assert.strictEqual(aSpecialDatesRefs.length, 3, "Should have 3 rendered special dates.");
+			aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+			// Assert
+			assert.strictEqual(aAppointmentsRefs.length, 5, "Should have 5 rendered appointments.");
 
-				aLegendItemsRefs = this.oCard.$().find(".sapUiUnifiedLegendItem");
-				// Assert
-				assert.strictEqual(aLegendItemsRefs.length, 6, "Should have 5 rendered legend items and one 'More' indicator.");
+			aSpecialDatesRefs = this.oCard.$().find(".sapUiCalSpecialDate");
+			// Assert
+			assert.strictEqual(aSpecialDatesRefs.length, 3, "Should have 3 rendered special dates.");
 
-				done();
-			}.bind(this));
+			aLegendItemsRefs = this.oCard.$().find(".sapUiUnifiedLegendItem");
+			// Assert
+			assert.strictEqual(aLegendItemsRefs.length, 6, "Should have 5 rendered legend items and one 'More' indicator.");
 		});
 	}
 );

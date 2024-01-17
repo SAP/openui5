@@ -9,11 +9,10 @@
 			<f:ShellBar title="Application Title"
 				secondTitle="Short description"
 				showMenuButton="true"
-				homeIcon="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
+				homeIcon="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
 				showCopilot="true"
 				showNotifications="true"
 				menuButtonPressed="onMenuButtonPress"
-				showProductSwitcher="true"
 				notificationsNumber="2">
 				<f:menu>
 					<Menu>

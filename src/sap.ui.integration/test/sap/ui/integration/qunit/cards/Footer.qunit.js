@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/integration/cards/Footer",
-	"sap/ui/integration/widgets/Card"
+	"sap/ui/integration/widgets/Card",
+	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	Footer,
-	Card
+	Card,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -59,8 +61,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Create actions strip with template", function (assert) {
-		const done = assert.async();
+	QUnit.test("Create actions strip with template", async function (assert) {
 		const oManifest = {
 			"sap.card": {
 				"type": "List",
@@ -89,17 +90,15 @@ sap.ui.define([
 			}
 		};
 
-		this.oCard.attachEvent("_ready", function () {
-			const oActionsStrip = this.oCard.getCardFooter().getActionsStrip(),
-				aItems = oActionsStrip._getToolbar().getContent();
-
-			assert.strictEqual(aItems[1].getText(), "Action 1", "Action text is correct");
-			assert.strictEqual(aItems[2].getText(), "Action 2", "Action text is correct");
-
-			done();
-		}.bind(this));
-
 		this.oCard.setManifest(oManifest);
 		this.oCard.startManifestProcessing();
+
+		await nextCardReadyEvent(this.oCard);
+
+		const oActionsStrip = this.oCard.getCardFooter().getActionsStrip(),
+			aItems = oActionsStrip._getToolbar().getContent();
+
+		assert.strictEqual(aItems[1].getText(), "Action 1", "Action text is correct");
+		assert.strictEqual(aItems[2].getText(), "Action 2", "Action text is correct");
 	});
 });
