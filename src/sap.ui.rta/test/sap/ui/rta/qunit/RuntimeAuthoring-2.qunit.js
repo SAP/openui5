@@ -72,11 +72,11 @@ sap.ui.define([
 		component: oComp
 	}).placeAt("qunit-fixture");
 
-	function givenAnFLP(fnFLPToExternalStub, fnFLPReloadStub, mShellParams) {
+	function givenAnFLP(fnFLPNavigateStub, fnFLPReloadStub, mShellParams) {
 		sandbox.stub(FlexUtils, "getUshellContainer").returns({
 			getServiceAsync() {
 				return Promise.resolve({
-					toExternal: fnFLPToExternalStub,
+					navigate: fnFLPNavigateStub,
 					getHash() {
 						return "Action-somestring";
 					},
@@ -122,9 +122,9 @@ sap.ui.define([
 
 	QUnit.module("Given that RTA gets started in FLP", {
 		beforeEach() {
-			this.fnFLPToExternalStub = sandbox.spy();
+			this.fnFLPNavigateStub = sandbox.spy();
 			this.fnTriggerRealoadStub = sandbox.stub();
-			givenAnFLP(this.fnFLPToExternalStub, this.fnTriggerRealoadStub, {"sap-ui-fl-version": [Version.Number.Draft]});
+			givenAnFLP(this.fnFLPNavigateStub, this.fnTriggerRealoadStub, {"sap-ui-fl-version": [Version.Number.Draft]});
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp,

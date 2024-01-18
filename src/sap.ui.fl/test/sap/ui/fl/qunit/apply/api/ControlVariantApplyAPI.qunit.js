@@ -54,8 +54,8 @@ sap.ui.define([
 					};
 				case "ShellNavigation":
 					return {registerNavigationFilter() {}, unregisterNavigationFilter() {}};
-				case "CrossApplicationNavigation":
-					return {toExternal() {}};
+				case "Navigation":
+					return {navigate() {}};
 				default:
 					return undefined;
 			}

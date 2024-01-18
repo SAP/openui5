@@ -113,7 +113,7 @@ sap.ui.define([
 
 	function triggerReloadOnStart(oReloadInfo, bVersioningEnabled, bDeveloperMode) {
 		return Promise.resolve().then(function() {
-			if (mUShellServices.CrossApplicationNavigation && bVersioningEnabled) {
+			if (mUShellServices.Navigation && bVersioningEnabled) {
 				// clears FlexState and triggers reloading of the flex data without blocking
 				if (oReloadInfo.isDraftAvailable) {
 					return VersionsAPI.loadDraftForApplication({

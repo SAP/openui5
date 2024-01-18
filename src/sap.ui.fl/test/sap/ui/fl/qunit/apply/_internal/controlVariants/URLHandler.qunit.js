@@ -180,8 +180,8 @@ sap.ui.define([
 				}
 			});
 
-			this.oGetUShellServiceStub.withArgs("CrossApplicationNavigation").returns({
-				toExternal(mParameters) {
+			this.oGetUShellServiceStub.withArgs("Navigation").returns({
+				navigate(mParameters) {
 					assert.strictEqual(
 						mParameters.params[URLHandler.variantTechnicalParameterName],
 						mPropertyBag.parameters,
@@ -209,8 +209,8 @@ sap.ui.define([
 				}
 			});
 
-			this.oGetUShellServiceStub.withArgs("CrossApplicationNavigation").returns({
-				toExternal(mParameters) {
+			this.oGetUShellServiceStub.withArgs("Navigation").returns({
+				navigate(mParameters) {
 					assert.strictEqual(
 						mParameters.params[URLHandler.variantTechnicalParameterName],
 						mPropertyBag.parameters,
@@ -239,8 +239,8 @@ sap.ui.define([
 				}
 			});
 
-			this.oGetUShellServiceStub.withArgs("CrossApplicationNavigation").returns({
-				toExternal(mParameters) {
+			this.oGetUShellServiceStub.withArgs("Navigation").returns({
+				navigate(mParameters) {
 					assert.strictEqual(
 						mParameters.params[URLHandler.variantTechnicalParameterName],
 						mPropertyBag.parameters,
@@ -283,9 +283,9 @@ sap.ui.define([
 				}
 			});
 
-			this.oGetUShellServiceStub.withArgs("CrossApplicationNavigation").returns({
-				toExternal() {
-					assert.ok(false, "but 'toExternal' should not be called");
+			this.oGetUShellServiceStub.withArgs("Navigation").returns({
+				navigate() {
+					assert.ok(false, "but 'navigate' should not be called");
 				}
 			});
 
@@ -1219,8 +1219,8 @@ sap.ui.define([
 				}
 			};
 
-			var oCrossAppNav = {
-				toExternal: sandbox.stub()
+			var oUshellNav = {
+				navigate: sandbox.stub()
 			};
 
 			var oMockParsedHash = {
@@ -1238,7 +1238,7 @@ sap.ui.define([
 			};
 
 			this.oGetUShellServiceStub.withArgs("URLParsing").returns(oMockedURLParser);
-			this.oGetUShellServiceStub.withArgs("CrossApplicationNavigation").returns(oCrossAppNav);
+			this.oGetUShellServiceStub.withArgs("Navigation").returns(oUshellNav);
 
 			var oExpectedResult = {
 				target: {
@@ -1261,8 +1261,8 @@ sap.ui.define([
 			);
 			assert.ok(Log.warning.notCalled, "then no warning for invalid component was produced");
 			assert.ok(
-				oCrossAppNav.toExternal.calledWithExactly(oExpectedResult),
-				"then the CrossAppNavigation service was called with the correct parameters"
+				oUshellNav.navigate.calledWithExactly(oExpectedResult),
+				"then the ushell navigation service was called with the correct parameters"
 			);
 		});
 

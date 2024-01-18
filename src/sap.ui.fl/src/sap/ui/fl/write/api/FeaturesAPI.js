@@ -58,7 +58,7 @@ sap.ui.define([
 		isSaveAsAvailable(sLayer) {
 			return Promise.all([
 				Settings.getInstance(),
-				Utils.getUShellService("CrossApplicationNavigation")
+				Utils.getUShellService("Navigation")
 			])
 			.then(function(aPromises) {
 				var oSettings = aPromises[0];
@@ -70,7 +70,7 @@ sap.ui.define([
 				);
 			})
 			.catch(function() {
-				// either Settings or CrossApplicationNavigation service from Unified Shell failed -> disable save as app variant
+				// either Settings or ushell Navigation service from Unified Shell failed -> disable save as app variant
 				return false;
 			});
 		},

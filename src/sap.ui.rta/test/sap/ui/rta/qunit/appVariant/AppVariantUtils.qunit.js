@@ -566,7 +566,7 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getUshellContainer").returns({
 				getServiceAsync() {
 					return Promise.resolve({
-						toExternal() {
+						navigate() {
 							bUShellNavigationTriggered = true;
 						},
 						getCurrentApplication() {
@@ -590,7 +590,7 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getUshellContainer").returns({
 				getServiceAsync() {
 					return Promise.resolve({
-						toExternal() {
+						navigate() {
 							bUShellNavigationTriggered = true;
 						},
 						getCurrentApplication() {
