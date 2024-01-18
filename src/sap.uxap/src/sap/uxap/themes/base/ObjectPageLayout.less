@@ -59,21 +59,9 @@ body > .sapUxAPObjectPageLayout,
 	background-color: @sapUiGlobalBackgroundColor;
 }
 
-.sapUxAPObjectPageWrapperTransform {
-	/* Performance tweak - force the objectPageWrapper content on to the GPU effectively separating it in a different
-	composite layer. This is better done with will-change: transform, but at the moment is not supported on
-	many platforms. When will-change becomes widely adopted than it's better to use it rather than translate3d */
-	-webkit-transform: translate3d(0, 0, 0);
-	transform: translate3d(0, 0, 0);
-}
-
-/*Transform translate3d causes problems on IE11 with Windows 10.
-The issue can be observed while scrolling some nested controls.
-BCP: 0020751294 0000432437 2019
-BCP: 1980095977
-*/
-html[data-sap-ui-browser^="ie"] .sapUxAPObjectPageWrapperTransform {
-	transform: none;
+.sapUxAPObjectPageWrapperWillChangeScrollTop {
+	/* Performance tweak */
+	will-change: scroll-position;
 }
 
 .sapUxAPObjectPageScroll {
