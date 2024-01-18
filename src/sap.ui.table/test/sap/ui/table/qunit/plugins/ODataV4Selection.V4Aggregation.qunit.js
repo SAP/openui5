@@ -72,14 +72,14 @@ sap.ui.define([
 			this.oTable = TableQUnitUtils.createTable(Table, {}, function(oTable) {
 				const oV4AggregationPlugin = oTable.getDependents()[1];
 				oV4AggregationPlugin.setPropertyInfos([
-					{name: "SalesAmountLocalCurrency", path: "SalesAmountLocalCurrency", aggregatable: true, unit: "LocalCurrency"},
-					{name: "LocalCurrency", path: "LocalCurrency"},
-					{name: "SalesNumber", path: "SalesNumber", aggregatable: true},
-					{name: "AccountResponsible", path: "AccountResponsible", groupable: true},
-					{name: "Country_Code", path: "Country_Code", groupable: true, text: "Country"},
-					{name: "Country", path: "Country", groupable: true},
-					{name: "Region", path: "Region", groupable: true},
-					{name: "Segment", path: "Segment", groupable: true}
+					{key: "SalesAmountLocalCurrency", path: "SalesAmountLocalCurrency", aggregatable: true, unit: "LocalCurrency"},
+					{key: "LocalCurrency", path: "LocalCurrency"},
+					{key: "SalesNumber", path: "SalesNumber", aggregatable: true},
+					{key: "AccountResponsible", path: "AccountResponsible", groupable: true},
+					{key: "Country_Code", path: "Country_Code", groupable: true, text: "Country"},
+					{key: "Country", path: "Country", groupable: true},
+					{key: "Region", path: "Region", groupable: true},
+					{key: "Segment", path: "Segment", groupable: true}
 				]);
 				oV4AggregationPlugin.setAggregationInfo({
 					visible: ["SalesAmountLocalCurrency", "LocalCurrency", "SalesNumber", "AccountResponsible", "Country_Code", "Country", "Region",
