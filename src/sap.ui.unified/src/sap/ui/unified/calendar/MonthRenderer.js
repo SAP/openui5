@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	'sap/ui/unified/calendar/CalendarUtils',
@@ -16,6 +17,7 @@ sap.ui.define([
 	'sap/ui/core/date/UI5Date',
 	"sap/ui/core/Configuration"
 ], function(
+	Localization,
 	Element,
 	Library,
 	CalendarUtils,
@@ -465,7 +467,8 @@ MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWee
 	}
 
 	if (this.renderWeekNumbers && oMonth._oDate) {
-		mAccProps["describedby"] = mAccProps["describedby"] + " " + oMonth.getId() + "-week-" + oMonth._calculateWeekNumber(oDay) + "-text";
+		const iWeekNumber = CalendarUtils.calculateWeekNumber(oDay.toLocalJSDate(), oDay.toLocalJSDate().getFullYear(), Localization.getLanguage(), oMonth._getLocaleData());
+		mAccProps["describedby"] = mAccProps["describedby"] + " " + oMonth.getId() + "-week-" + iWeekNumber + "-text";
 	}
 
 	if (bNonWorking) {

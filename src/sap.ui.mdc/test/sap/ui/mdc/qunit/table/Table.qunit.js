@@ -3612,6 +3612,47 @@ sap.ui.define([
 		assert.notOk(this.oTable._oToolbar, "Toolbar not created by the getter of the action aggregation");
 	});
 
+	QUnit.test("Toolbar is hidden when the table's property hideToolbar is true", function(assert) {
+
+		return this.oTable.initialized().then(() => {
+			assert.ok(this.oTable._oToolbar.getVisible(), "Toolbar is visible.");
+			assert.notOk(this.oTable.getHideToolbar(), "Property hideToolbar is false.");
+			assert.notOk(this.oTable._oTable.getAriaLabelledBy().includes(this.oTable.getId() + "-invisibleTitle"), "Header is not referenced by ariaLabelledBy.");
+			assert.ok(this.oTable._oToolbar.getVisible(), "Toolbar is visible.");
+
+			this.oTable.setHideToolbar(true);
+			this.oTable.setHeaderVisible(false);
+			assert.ok(this.oTable.getHideToolbar(), "Property hideToolbar is true.");
+			assert.notOk(this.oTable.getHeaderVisible(), "Property headerVisible is false.");
+			assert.ok(this.oTable._oTable.getAriaLabelledBy().includes(this.oTable.getId() + "-invisibleTitle"), "Header is referenced by ariaLabelledBy.");
+			assert.notOk(this.oTable._oToolbar.getVisible(), "Toolbar is not visible.");
+
+			this.oTable.setHeaderVisible(true);
+			assert.ok(this.oTable.getHideToolbar(), "Property hideToolbar is true.");
+			assert.ok(this.oTable.getHeaderVisible(), "Property headerVisible is true.");
+			assert.ok(this.oTable._oTable.getAriaLabelledBy().includes(this.oTable.getId() + "-invisibleTitle"), "Header is referenced by ariaLabelledBy.");
+			assert.notOk(this.oTable._oToolbar.getVisible(), "Toolbar is not visible.");
+
+			this.oTable.setHideToolbar(false);
+			this.oTable.setHeaderVisible(false);
+			assert.notOk(this.oTable.getHideToolbar(), "Property hideToolbar is false.");
+			assert.notOk(this.oTable.getHeaderVisible(), "Property headerVisible is false.");
+			assert.notOk(this.oTable._oTable.getAriaLabelledBy().includes(this.oTable.getId() + "-invisibleTitle"), "Header is not referenced by ariaLabelledBy.");
+			assert.ok(this.oTable._oToolbar.getVisible(), "Toolbar is visible.");
+
+			this.oTable.setHideToolbar(true);
+			assert.equal(this.oTable.getType(), null, "Table type is null");
+
+			return this.oTable.setType("ResponsiveTable").initialized().then(() => {
+				assert.equal(this.oTable.getType(), "ResponsiveTable", "Table type is ResponsiveTable");
+				assert.ok(this.oTable.getHideToolbar(), "Property hideToolbar is true.");
+				assert.notOk(this.oTable.getHeaderVisible(), "Property headerVisible is false.");
+				assert.ok(this.oTable._oTable.getAriaLabelledBy().includes(this.oTable.getId() + "-invisibleTitle"), "Header is referenced by ariaLabelledBy.");
+				assert.notOk(this.oTable._oToolbar.getVisible(), "Toolbar is not visible.");
+			});
+		});
+	});
+
 	QUnit.test("Test enableAutoColumnWidth property", function(assert) {
 		const oCanvasContext = document.createElement("canvas").getContext("2d");
 		oCanvasContext.font = [

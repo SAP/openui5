@@ -598,6 +598,29 @@ sap.ui.define([
 				propertyInfo: {
 					type: "object[]",
 					defaultValue: []
+				},
+
+				/**
+				 * Determines whether the toolbar is visible.
+				 *
+				 * <b>Note:</b> Hiding the toolbar limits the functionality of the table in the following ways:<br>
+				 * <ul>
+				 * 	<li>The <code>showRowCount</code> property <b>must</b> be set to <code>false</code>.</li>
+				 * 	<li>The export <b>must</b> be disabled by setting the <code>enableExport</code> property to <code>false</code>.</li>
+				 * 	<li>For {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}, show and hide details won't be visible as the table will always run in "Show Details" mode.</li>
+				 * 	<li>Copy and paste will only work via keyboard.</li>
+				 * 	<li>For {@link sap.ui.mdc.table.TreeTableType TreeTable}, "Collapse All" and "Expand All" won't be possible.</li>
+				 * 	<li>The <code>actions</code> and the <code>quickFilter</code> aggregations and a table-related {@link sap.ui.fl.variants.VariantManagement} <b>must not</b> be used.</li>
+				 * 	<li>The table title will not be displayed but will be replaced by an <code>InvisibleText</code>. The <code>header</code> property <b>must</b> be set. In addition, <code>headerVisible</code> <b>must</b> be set to <code>false</code> to ensure accessibility compatibility.</li>
+				 * 	<li>Personalization (<code>p13nMode</code>) can still be used via the column headers. If the option to show or hide columns is activated, it is recommended to use an {@link sap.m.IllustratedMessage} for the <code>nodata</code> display. It ensures that columns can be made visible again when the user has accidentally hidden them all.</li>
+				 * </ul>
+				 *
+				 * @since 1.121
+				 */
+				hideToolbar: {
+					type: "boolean",
+					group: "Appearance",
+					defaultValue: false
 				}
 			},
 			aggregations: {
@@ -1844,7 +1867,24 @@ sap.ui.define([
 		if (this._oTitle) {
 			this._oTitle.setWidth(this.getHeaderVisible() ? undefined : "0px");
 		}
+		this._updateInvisibleTitle();
 		return this;
+	};
+
+	Table.prototype._updateInvisibleTitle = function() {
+		if (this._oInvisibleTitle && (!this.getHideToolbar())) {
+			this._oInvisibleTitle.destroy();
+			this._oInvisibleTitle = null;
+			this._oTable.removeAriaLabelledBy(this.getId() + "-invisibleTitle");
+		} else if (this._oTable && !this._oInvisibleTitle && this.getHideToolbar()) {
+			this._oInvisibleTitle = new InvisibleText(this.getId() + "-invisibleTitle", {
+				text: "{= ${$sap.ui.mdc.Table>/header} }"
+			}).toStatic();
+			this._oTable.addAriaLabelledBy(this.getId() + "-invisibleTitle");
+		// When the table type changes, the aria label reference gets deleted thus needs to be recreated
+		} else if (this._oInvisibleTitle && !this._oTable.getAriaLabelledBy().includes(this.getId() + "-invisibleTitle")) {
+			this._oTable.addAriaLabelledBy(this.getId() + "-invisibleTitle");
+		}
 	};
 
 	Table.prototype.setShowRowCount = function(bShowCount) {
@@ -1929,7 +1969,8 @@ sap.ui.define([
 				],
 				end: [
 					this._getCopyButton(), this._getPasteButton(), this._getP13nButton()
-				]
+				],
+				visible: "{= !${$sap.ui.mdc.Table>/hideToolbar} }"
 			});
 			// Enfore the action order according to the UI Guideline
 			this._oToolbar.setProperty("_endOrder", [
@@ -1941,6 +1982,8 @@ sap.ui.define([
 				"settings",
 				"export"
 			].map((sSuffix) => this.getId() + "-" + sSuffix));
+
+			this._updateInvisibleTitle();
 		}
 
 		this._oToolbar.setStyle(this._isOfType(TableType.ResponsiveTable) ? ToolbarStyle.Standard : ToolbarStyle.Clear);
@@ -2503,6 +2546,8 @@ sap.ui.define([
 
 			this._oColumnHeaderMenu.attachBeforeOpen(this._createColumnMenuContent, this);
 		}
+
+		this._updateInvisibleTitle();
 	};
 
 	Table.prototype._createColumnMenuContent = function(oEvent) {
@@ -2998,7 +3043,8 @@ sap.ui.define([
 			"_oFilterInfoBarInvisibleText",
 			"_oColumnHeaderMenu",
 			"_oManagedObjectModel",
-			"_oDefaultType"
+			"_oDefaultType",
+			"_oInvisibleTitle"
 		].concat((() => aToolBarBetweenAggregations.map((sAggregationName) => "_o" + capitalize(sAggregationName)))()).forEach((sField) => {
 			this[sField]?.destroy?.();
 			delete this[sField];

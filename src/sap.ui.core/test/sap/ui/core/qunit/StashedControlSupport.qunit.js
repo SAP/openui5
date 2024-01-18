@@ -63,9 +63,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			this.Button = Button.extend("Button");
 			StashedControlSupport.mixInto(this.Button);
 			this.create = function() {
-				// create final instance with the same ID as the placeholder
-				this.oUnstashedButton = new this.Button(this.sId);
-				return [this.oUnstashedButton];
+				return [this.Button];
 			}.bind(this);
 			this.mSettings = {
 				wrapperId: this.sId,
@@ -90,15 +88,15 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 		assert.strictEqual(this.oStashedInfo.fnCreate, this.create, "fnCreate hook is set");
 	});
 
-	QUnit.test("unstash", function(assert) {
+	QUnit.test("unstash", async function(assert) {
 		this.oStashedInfo = StashedControlSupport.createStashedControl(this.mSettings);
 
 		assert.ok(this.oButton.isStashed(), "Control is stashed");
 
-		this.oButton.unstash();
-		assert.strictEqual(Element.getElementById(this.sId), this.oUnstashedButton, "StashedControl has been replaced");
+		await this.oButton.unstash(true);
+		assert.strictEqual(Element.getElementById(this.sId), this.oButton, "StashedControl has been replaced");
 
-		assert.notOk(this.oUnstashedButton.isStashed(), "Control is not stashed anymore");
+		assert.notOk(this.oButton.isStashed(), "Control is not stashed anymore");
 	});
 
 	QUnit.test("destroy", function(assert) {
@@ -125,6 +123,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 				definition: sViewContent
 			}).then(function(oView) {
 				this.oView = oView.placeAt("content");
+				return nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach: function(assert) {
@@ -134,34 +133,25 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 		}
 	});
 
-	QUnit.test("StashedControl support (controls)", function(assert) {
-		var done = assert.async();
-		this.oView.onAfterRendering = function() {
-			assert.notOk(document.getElementById("view--StashedButton"), "Stashed button is not rendered");
+	QUnit.test("StashedControl support (controls)", async function(assert) {
+		assert.notOk(document.getElementById("view--StashedButton"), "Stashed button is not rendered");
 
-			var oButton = Element.getElementById("view--StashedButton");
+		var oButton = Element.getElementById("view--StashedButton");
 
-			assert.ok(oButton, "Stashed button is available by id");
-			assert.ok(oButton instanceof Button, "Stashed button is instanceof sap.m.Button");
-			assert.ok(oButton.isStashed(), "Stashed button has stashed=true");
-			assert.notOk(oButton.getVisible(), "Stashed button has visible=false");
-			assert.ok(document.getElementById("view--Button"), "Button is rendered");
-			assert.ok(Element.getElementById("view--Button") instanceof Button, "Button is a Button");
+		assert.ok(oButton, "Stashed button is available by id");
+		assert.ok(oButton instanceof Button, "Stashed button is instanceof sap.m.Button");
+		assert.ok(oButton.isStashed(), "Stashed button has stashed=true");
+		assert.notOk(oButton.getVisible(), "Stashed button has visible=false");
+		assert.ok(document.getElementById("view--Button"), "Button is rendered");
+		assert.ok(Element.getElementById("view--Button") instanceof Button, "Button is a Button");
 
-			this.oView.onAfterRendering = function() {
-				var oUnstashedButton = Element.getElementById("view--StashedButton");
-				assert.ok(document.getElementById("view--StashedButton"), "Unstashed button is rendered");
-				assert.ok(oUnstashedButton instanceof Button, "Unstashed Button is still a Button");
-				assert.notOk(oUnstashedButton.isStashed(), "UnstashedButton.isStashed() != true");
-				assert.ok(oUnstashedButton.getVisible(), "Unstashed button has visible=true");
-
-				done();
-			};
-
-			oButton.unstash();
-			this.oView.invalidate();
-		}.bind(this);
-		this.oView.invalidate(); // ensure a rerendering
+		await oButton.unstash(true);
+		await nextUIUpdate();
+		var oUnstashedButton = Element.getElementById("view--StashedButton");
+		assert.ok(document.getElementById("view--StashedButton"), "Unstashed button is rendered");
+		assert.ok(oUnstashedButton instanceof Button, "Unstashed Button is still a Button");
+		assert.notOk(oUnstashedButton.isStashed(), "UnstashedButton.isStashed() != true");
+		assert.ok(oUnstashedButton.getVisible(), "Unstashed button has visible=true");
 	});
 
 	QUnit.test("getStashedControls", function(assert) {
@@ -203,7 +193,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 						'</items>' +
 					'</SegmentedButton>' +
 				'</mvc:View>'
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			var oItemA = oView.byId("ItemA");
 			var oItemB = oView.byId("ItemB");
 			var oItemC = oView.byId("ItemC");
@@ -228,16 +218,16 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 				"the IDs of the stashed objects should match the IDs of the stashed items in the view");
 
 			// act
-			var oUnstashedItemA = oItemA.unstash();
-			var oUnstashedItemB = oItemB.unstash();
+			var oUnstashedItemA = await oItemA.unstash(true);
+			var oUnstashedItemB = await oItemB.unstash(true);
 
 			// assert
-			assert.notStrictEqual(oUnstashedItemA, oItemA, "stashed and unstashed ItemA should differ");
+			assert.strictEqual(oUnstashedItemA, oItemA, "stashed and unstashed ItemA should differ");
 			assert.ok(oUnstashedItemA instanceof SegmentedButtonItem, "unstashed ItemA is a SegmentedButtonItem");
 			assert.notOk(oUnstashedItemA.isStashed(), "unstashed ItemA no longer has stashed=true");
 			assert.ok(oUnstashedItemA.getVisible(), "unstashed ItemA is visible");
 
-			assert.notStrictEqual(oUnstashedItemB, oItemB, "stashed and unstashed ItemB should differ");
+			assert.strictEqual(oUnstashedItemB, oItemB, "stashed and unstashed ItemB should differ");
 			assert.ok(oUnstashedItemB instanceof SegmentedButtonItem, "unstashed ItemB is a SegmentedButtonItem");
 			assert.notOk(oUnstashedItemB.isStashed(), "unstashed ItemB no longer has stashed=true");
 			assert.notOk(oUnstashedItemB.getVisible(), "unstashed ItemB is still not visible");
@@ -261,7 +251,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 						'<core:ListItem id="ItemB" text="B"/>' +
 					'</Select>' +
 				'</mvc:View>'
-		}).then(function(oView) {
+		}).then(async function(oView) {
 
 			var oItemA = oView.byId("ItemA");
 			var oItemB = oView.byId("ItemB");
@@ -280,10 +270,10 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 				"the IDs of the stashed objects should match the ID of the stashed item in the view");
 
 			// act
-			var oUnstashedItemA = oItemA.unstash();
+			var oUnstashedItemA = await oItemA.unstash(true);
 
 			// assert
-			assert.notStrictEqual(oUnstashedItemA, oItemA, "stashed and unstashed ItemA should differ");
+			assert.strictEqual(oUnstashedItemA, oItemA, "stashed and unstashed ItemA should differ");
 			assert.ok(oUnstashedItemA instanceof ListItem, "unstashed ItemA is a ListItem");
 			assert.notOk(oUnstashedItemA.isStashed(), "unstashed ItemA no longer has stashed=true");
 
@@ -300,7 +290,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 		var oComponent = new Component("comp");
 		return oComponent.runAsOwner(function() {
 			return XMLView.create({definition:sViewContent});
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			var oButton = oView.byId("Button");
 			var oStashedButton = oView.byId("StashedButton");
 			var oButtonComponent = Component.getOwnerComponentFor(oButton);
@@ -308,7 +298,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			assert.strictEqual(oStashedButtonComponent, oButtonComponent, "Stashed and normal Button have same owner");
 			assert.equal(oStashedButtonComponent.getId(), "comp", "Stashed Button has the right owner");
 
-			var oUnstashedButton = oStashedButton.unstash();
+			var oUnstashedButton = await oStashedButton.unstash(true);
 			var oUnstashedButtonComponent = Component.getOwnerComponentFor(oUnstashedButton);
 			assert.strictEqual(oUnstashedButtonComponent, oButtonComponent, "Unstashed and normal Button have same owner");
 			assert.equal(oUnstashedButtonComponent.getId(), "comp", "Unstashed Button has the right owner");
@@ -332,6 +322,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			}).then(function(oView) {
 				this.oView = oView;
 				oView.placeAt("content");
+				return nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -339,39 +330,23 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 		}
 	});
 
-	QUnit.test("StashedControl support (simple)", function(assert) {
-		var done = assert.async();
+	QUnit.test("StashedControl support (simple)", async function(assert) {
+		assert.notOk(document.getElementById("view--StashedButton"), "Stashed button is not rendered");
 
-		var fnTest = function () {
-			this.oView.onAfterRendering = function() {
-				assert.notOk(document.getElementById("view--StashedButton"), "Stashed button is not rendered");
+		var oButton = Element.getElementById("view--StashedButton");
 
-				var oButton = Element.getElementById("view--StashedButton");
+		assert.ok(oButton, "Stashed button is available by id");
+		assert.ok(oButton instanceof Button, "Stashed button is instanceof sap.m.Button");
+		assert.ok(oButton.isStashed(), "Stashed button has stashed=true");
+		assert.ok(document.getElementById("view--Button"), "Button is rendered");
+		assert.ok(Element.getElementById("view--Button") instanceof Button, "Button is a Button");
 
-				assert.ok(oButton, "Stashed button is available by id");
-				assert.ok(oButton instanceof Button, "Stashed button is instanceof sap.m.Button");
-				assert.ok(oButton.isStashed(), "Stashed button has stashed=true");
-				assert.ok(document.getElementById("view--Button"), "Button is rendered");
-				assert.ok(Element.getElementById("view--Button") instanceof Button, "Button is a Button");
-
-				this.oView.onAfterRendering = function() {
-					var oUnstashedButton = Element.getElementById("view--StashedButton");
-					assert.ok(document.getElementById("view--StashedButton"), "Unstashed button is rendered");
-					assert.ok(oUnstashedButton instanceof Button, "Unstashed Button is still a Button");
-					assert.notOk(oUnstashedButton.isStashed(), "UnstashedButton.isStashed() != true");
-
-					done();
-				};
-
-				oButton.unstash();
-				this.oView.invalidate();
-			}.bind(this);
-
-			this.oView.invalidate(); // ensure a rerendering
-
-		}.bind(this);
-
-		this.oView.loaded().then(fnTest);
+		await oButton.unstash(true);
+		await nextUIUpdate();
+		var oUnstashedButton = Element.getElementById("view--StashedButton");
+		assert.ok(document.getElementById("view--StashedButton"), "Unstashed button is rendered");
+		assert.ok(oUnstashedButton instanceof Button, "Unstashed Button is still a Button");
+		assert.notOk(oUnstashedButton.isStashed(), "UnstashedButton.isStashed() != true");
 	});
 
 	QUnit.module("Stashing 2", {
@@ -399,7 +374,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			models: {
 				"undefined": oJSONModel
 			}
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			assert.ok("View was loaded");
 			this.oView = oView;
 
@@ -424,9 +399,9 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			// unstash
 			var stashed = StashedControlSupport.getStashedControls(oOPL.getId());
 
-			stashed[2].unstash();
-			stashed[1].unstash();
-			stashed[0].unstash();
+			await stashed[2].unstash(true);
+			await stashed[1].unstash(true);
+			await stashed[0].unstash(true);
 
 			aAllSections = oOPL.getSections();
 
@@ -487,7 +462,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 		return XMLView.create({
 			id: "view",
 			viewName: "testdata.mvc.stashed.OP"
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			this.oView = oView;
 
 			// remove one placeholder from it's aggregation
@@ -514,7 +489,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			assert.equal(aStashedControlsInParent2.length, 1, "Number of stashed sections 2nd ObjectPageLayout is correct.");
 
 			// unstash the moved control
-			aStashedControlsInParent2[0].unstash();
+			await aStashedControlsInParent2[0].unstash(true);
 
 			// check new runtime parent aggregation
 			var aOPL2Sections = oOPL2.getSections();
@@ -541,7 +516,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 		return XMLView.create({
 			id: "view",
 			viewName: "testdata.mvc.stashed.OP"
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			this.oView = oView;
 
 			// remove one placeholder from it's aggregation
@@ -561,7 +536,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			assert.equal(aStashedControlsInParent.length, 2, "Number of stashed sections in ObjectPageLayout is correct.");
 
 			// unstash the removed control
-			aStashedControlsTotal[1].unstash();
+			await aStashedControlsTotal[1].unstash(true);
 
 			// check final control
 			var oFinalControl = Element.getElementById(sFinalID);
@@ -617,9 +592,9 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 
 			// unstash
 			var stashed = StashedControlSupport.getStashedControls(oOPL.getId());
-			stashed[2].unstash();
-			stashed[1].unstash();
-			stashed[0].unstash();
+			await stashed[2].unstash(true);
+			await stashed[1].unstash(true);
+			await stashed[0].unstash(true);
 
 			// force rendering
 			await nextUIUpdate();
@@ -658,15 +633,15 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			models: {
 				"undefined": oJSONModel
 			}
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			this.oView = oView;
 			var oOPL = this.oView.byId("ObjectPageLayout");
 
 			// unstash
 			var stashed = StashedControlSupport.getStashedControls(oOPL.getId());
-			stashed[2].unstash();
-			stashed[1].unstash();
-			stashed[0].unstash();
+			await stashed[2].unstash(true);
+			await stashed[1].unstash(true);
+			await stashed[0].unstash(true);
 
 			// get sections anew, instances now have changed after unstash
 			var aAllSections = oOPL.getSections();

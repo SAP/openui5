@@ -727,7 +727,7 @@ sap.ui.define([
 				this.$().addClass("sapUiSizeCompact");
 				break;
 			case  IconTabDensityMode.Inherit:
-				if (this.$().closest(".sapUiSizeCompact").length) {
+				if (this.getDomRef()?.closest(".sapUiSizeCompact")) {
 					this.$().addClass("sapUiSizeCompact");
 				}
 				break;

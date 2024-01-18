@@ -260,15 +260,8 @@ sap.ui.require([
 		"sap/ui/core/qunit/xml/XMLTreeBinding.qunit",
 		"sap/ui/core/qunit/xml/XMLTwoWay.qunit"
 	], function () {
-		function start() {
-			Core.detachThemeChanged(start);
+		Core.ready().then(() => {
 			QUnit.start();
-		}
-
-		if (Core.isThemeApplied()) {
-			QUnit.start();
-		} else {
-			Core.attachThemeChanged(start);
-		}
+		});
 	});
 });

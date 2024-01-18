@@ -5,7 +5,6 @@
 // Provides control sap.m.SelectDialog.
 sap.ui.define([
 	"sap/ui/core/Lib",
-	"sap/ui/thirdparty/jquery",
 	'./Button',
 	'./Dialog',
 	'./List',
@@ -27,7 +26,6 @@ sap.ui.define([
 ],
 function(
 	Library,
-	jQuery,
 	Button,
 	Dialog,
 	List,
@@ -1345,7 +1343,7 @@ function(
 	SelectDialog.prototype._getListItemsEventDelegates = function () {
 		var fnEventDelegate = function (oEvent) {
 
-			var oListItem = Element.closestTo(jQuery(oEvent.target).closest(".sapMLIB")[0]);
+			var oListItem = Element.closestTo(oEvent.target.closest(".sapMLIB"));
 
 			if (oListItem._eventHandledByControl) {
 				return;

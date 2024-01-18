@@ -52,7 +52,7 @@ function(XMLView, Core, StashedSupport, nextUIUpdate, ObjectPageLazyLoader) {
 
 		// destroy is called once from <code>sap.ui.core.StashedControlSupport</code> after unstashing,
 		// and then a second time from <code>sap.uxap.ObjectPageSubSection</code> after emptying the unstashed content
-		assert.equal(oDestroySpy.callCount, stashedObjects * 2, "LazyLoaders are properly disposed of");
+		assert.equal(oDestroySpy.callCount, stashedObjects, "LazyLoaders are properly disposed of");
 	});
 
 	QUnit.module("Stashing optimization", {

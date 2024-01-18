@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/base/BindingInfo',
 	'sap/ui/core/CustomData',
 	'sap/ui/core/Component',
+	'sap/ui/core/ElementRegistry',
 	'./mvc/View',
 	'./mvc/ViewType',
 	'./mvc/XMLProcessingMode',
@@ -31,6 +32,7 @@ sap.ui.define([
 	BindingInfo,
 	CustomData,
 	Component,
+	ElementRegistry,
 	View,
 	ViewType,
 	XMLProcessingMode,
@@ -1453,29 +1455,25 @@ sap.ui.define([
 							childNode = childNode.cloneNode();
 							// remove stashed attribute as it is an unknown property.
 							oStashedNode.removeAttribute("stashed");
-
 							fnCreateStashedControl = function() {
 								var sControlId = getId(oView, childNode);
 
 								StashedControlSupport.createStashedControl({
 									wrapperId: sControlId,
-									fnCreate: function() {
-										// EVO-Todo: stashed control-support is still mandatory SYNC
-										// this means we need to switch back the view processing to synchronous too
-										// at this point everything is sync again
+									fnCreate: function(bSync) {
 										var bPrevAsync = bAsync;
-										bAsync = false;
+										bAsync = !bSync;
 
 										try {
-											return handleChild(node, oStashedNode, {
+											setUI5Attribute(oStashedNode, "unstash");
+											let vUnstashedControl = handleChild(node, oStashedNode, {
 												aggregation: oAggregation,
 												allAggregations: mAggregations,
 												chain: SyncPromise.resolve(oRequireContext),
 												closestBinding: oClosestBinding
-											}).unwrap();
+											});
+											return vUnstashedControl;
 										} finally {
-											// EVO-Todo:revert back to the original async/sync behavior
-											// if we moved to the sync path for the stashed control, we might now go back to the async path.
 											bAsync = bPrevAsync;
 										}
 									}
@@ -1686,7 +1684,18 @@ sap.ui.define([
 						} else {
 							// the scoped runWithOwner function is only during ASYNC processing!
 							oInstance = scopedRunWithOwner(function () {
-								var oInstance = new oClass(mSettings);
+								var oInstance;
+								if (node.getAttributeNS(UI5_INTERNAL_NAMESPACE, "unstash") === "true") {
+									oInstance = ElementRegistry.get(mSettings.id);
+									// If the placeholder has a visible property we set it to false to hide the placeholder.
+									// We must reset the setting to true to make it visible again or reflect the new settings.
+									if (oInstance.setVisible) {
+										oInstance.setVisible(true);
+									}
+									oInstance.applySettings(mSettings);
+								} else {
+									oInstance = new oClass(mSettings);
+								}
 								return oInstance;
 							});
 						}

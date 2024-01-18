@@ -637,24 +637,24 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadSet.prototype._handleClick = function (oEvent, item) {
-        var $Button = oEvent.target.closest("button");
-        var sId = "";
-        if ($Button) {
-            sId = $Button.id;
-        }
-        if (sId.lastIndexOf("editButton") === -1) {
-            if (sId.lastIndexOf("cancelButton") !== -1) {
+		var $Button = oEvent.target.closest("button");
+		var sId = "";
+		if ($Button) {
+			sId = $Button.id;
+		}
+		if (sId.lastIndexOf("editButton") === -1) {
+			if (sId.lastIndexOf("cancelButton") !== -1) {
 				if (item) {
 					this._handleItemEditCancelation(oEvent, item);
 				}
-            } else if (oEvent.target.id.lastIndexOf("thumbnail") < 0 && oEvent.target.id.lastIndexOf("icon") < 0 &&
-                oEvent.target.id.lastIndexOf("deleteButton") < 0 && oEvent.target.id.lastIndexOf("fileNameEdit-inner") < 0) {
-                if (item) {
+			} else if (oEvent.target.id.lastIndexOf("thumbnail") < 0 && oEvent.target.id.lastIndexOf("icon") < 0 &&
+				oEvent.target.id.lastIndexOf("deleteButton") < 0 && oEvent.target.id.lastIndexOf("fileNameEdit-inner") < 0) {
+				if (item) {
 					this._handleItemEditConfirmation(oEvent, item);
 				}
-            }
-        }
-    };
+			}
+		}
+	};
 
 	UploadSet.prototype.onkeydown = function (oEvent) {
 		var oListItem,
@@ -830,9 +830,9 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-        var oListItem,oItems;
-        Control.prototype.removeAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
-        if (sAggregationName === "items" || sAggregationName === "incompleteItems") {
+		var oListItem,oItems;
+		Control.prototype.removeAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
+		if (sAggregationName === "items" || sAggregationName === "incompleteItems") {
 			if (typeof oObject === 'number') { // "oObject" is the index now
 				oItems = this.getItems();
 				oListItem = oItems[oObject];
@@ -842,14 +842,14 @@ sap.ui.define([
 					oListItem = oObject.isDestroyStarted() ? oObject : oObject._getListItem();
 				}
 			}
-            var oItem = this.getList().removeAggregation("items", oListItem, bSuppressInvalidate);
-            if (oItem && oObject) {
-                oItem.destroy();
+			var oItem = this.getList().removeAggregation("items", oListItem, bSuppressInvalidate);
+			if (oItem && oObject) {
+				oItem.destroy();
 				oObject.destroy();
-            }
-            this._refreshInnerListStyle();
-        }
-    };
+			}
+			this._refreshInnerListStyle();
+		}
+	};
 
 	UploadSet.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
 		if (sAggregationName === "items") {
@@ -1112,7 +1112,7 @@ sap.ui.define([
 		var oDragSession = oEvent.getParameter("dragSession");
 		var oDraggedControl = oDragSession.getDragControl();
 		this._oDragIndicator = true;
-    this._getIllustratedMessage();
+	this._getIllustratedMessage();
 		if (oDraggedControl) {
 			oEvent.preventDefault();
 		}
@@ -2216,7 +2216,7 @@ sap.ui.define([
 		// getDropControl returns the valid drop target underneath the drop control, if no dropcontrol available UploadSet control to reset the illustrated message
 		if (!oDragSession || !oDragSession.getDropControl() || (oDragSession && !oEvent.relatedTarget)) {
 			this._oDragIndicator = false;
-      this._getIllustratedMessage();
+	  this._getIllustratedMessage();
 		}
 	};
 

@@ -105,6 +105,9 @@ sap.ui.define([
 			 "sap.ui.mdc.ActionToolbar": "sap/ui/mdc/flexibility/ActionToolbar",
 			 "sap.ui.mdc.actiontoolbar.ActionToolbarAction": "sap/ui/mdc/flexibility/ActionToolbarAction",
 			 "sap.ui.mdc.chart.ChartToolbar": "sap/ui/mdc/flexibility/ActionToolbar"
+		 },
+		 "sap.ui.support": {
+			 publicRules: true
 		 }
 	 },
 	 noLibraryCSS: false
