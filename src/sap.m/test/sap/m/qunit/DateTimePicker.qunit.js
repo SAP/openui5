@@ -189,6 +189,24 @@ sap.ui.define([
 		oDP.destroy();
 	});
 
+	QUnit.test("Overwriting the user input with model updates will be prevented", function (assert) {
+		// Prepare
+		var oDTP = new DateTimePicker(),
+			oHandleInputValueConcurrencySpy = this.spy(oDTP, "handleInputValueConcurrency");
+
+		oDTP._setPreferUserInteraction(true);
+		oDTP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDTP.setValue("test value");
+
+		// Assert
+		assert.ok(oHandleInputValueConcurrencySpy.calledOnce, "Model update is prevented");
+
+		// Clean
+		oDTP.destroy();
+	});
 
 	QUnit.module("Rendering");
 
@@ -847,6 +865,21 @@ sap.ui.define([
 		assert.ok(oPopupContent[1].isA("sap.m.internal.DateTimePickerPopup"), "There is a sap.m.internal.DateTimePickerPopup created in the popup content");
 
 		// Clean up
+		oDTP.destroy();
+	});
+
+	QUnit.test("_inPreferredUserInteraction", function (assert) {
+		// Prepare
+		var oDTP = new DateTimePicker(),
+			oInPreferredUserInteractionSpy = this.spy(oDTP, "_inPreferredUserInteraction");
+
+		oDTP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oInPreferredUserInteractionSpy.calledOnce, "Preferred interaction is handled during rendering");
+
+		// Clean
 		oDTP.destroy();
 	});
 });

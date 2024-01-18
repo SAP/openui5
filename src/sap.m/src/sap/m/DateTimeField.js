@@ -121,8 +121,18 @@ sap.ui.define([
 			this.setLastValue(sValue);
 		}
 
-		// set the property in any case but check validity on output
-		this.setProperty("value", sValue);
+		// convert to date object and check validity on output
+		var oDate = this._parseAndValidateValue(sValue);
+		this.setProperty("dateValue", oDate, this._bPreferUserInteraction);
+
+		// do not call InputBase.setValue because the displayed value and the output value might have different pattern
+		this._formatValueAndUpdateOutput(oDate, sValue);
+		this.setProperty("value", sValue, this._bPreferUserInteraction);
+
+		return this;
+	};
+
+	DateTimeField.prototype._parseAndValidateValue = function(sValue) {
 		this._bValid = true;
 
 		// convert to date object
@@ -134,26 +144,68 @@ sap.ui.define([
 				Log.warning("Value can not be converted to a valid date", this);
 			}
 		}
+		return oDate;
+	};
 
-		this.setProperty("dateValue", oDate);
+	DateTimeField.prototype._formatValueAndUpdateOutput = function(oDate, sValue) {
+		if (!this.getDomRef()) {
+			return;
+		}
+		// convert to output
+		var sOutputValue = oDate ? this._formatValue(oDate) : sValue;
 
-		// do not call InputBase.setValue because the displayed value and the output value might have different pattern
-		if (this.getDomRef()) {
-			// convert to output
-			var sOutputValue;
-			if (oDate) {
-				sOutputValue = this._formatValue(oDate);
-			} else {
-				sOutputValue = sValue;
-			}
+		if (this._bPreferUserInteraction) {
+			// Handle the value concurrency before setting the value property of the control,
+			// in order to distinguish whether the user only focused the input field or typed in it
+			this.handleInputValueConcurrency(sOutputValue);
+		} else if (this._$input.val() !== sOutputValue) {
+			// update the DOM value when necessary
+			// otherwise cursor can go to the end of text unnecessarily
+			this._$input.val(sOutputValue);
+			this._curpos = this._$input.cursorPos();
+		}
+	};
 
-			if (this._$input.val() !== sOutputValue) {
-				this._$input.val(sOutputValue);
-				this._curpos = this._$input.cursorPos();
-			}
+	DateTimeField.prototype.handleInputValueConcurrency = function(sValue) {
+		var oInnerDomRef = this.getFocusDomRef(),
+			sInputDOMValue = oInnerDomRef && InputBase.prototype._getInputValue.apply(this),
+			sInputPropertyValue = this.getProperty("value"),
+			bInputFocused = document.activeElement === oInnerDomRef,
+			bBindingUpdate = this.isBound("value") && this.getBindingInfo("value").skipModelUpdate;
+
+		// if the user is currently in the field and he has typed a value,
+		// the changes from the model should not overwrite the user input
+		if (bInputFocused && bBindingUpdate && sInputDOMValue && (sInputPropertyValue !== sInputDOMValue)) {
+			return this;
 		}
 
-		return this;
+		oInnerDomRef.value = sValue;
+
+		// when the user has focused on an empty input and a value update is
+		// triggered via binding, after updating, the value should be
+		// selected in order to be easily overwritten by the user
+		if (bInputFocused && bBindingUpdate && !sInputDOMValue) {
+			oInnerDomRef.select();
+		}
+	};
+
+	/**
+	 * Determines if a user is currently typing into the input field and this interaction should be taken with priority.
+	 * @returns {boolean} True if a user interaction is currently getting handled with priority.
+	 */
+	DateTimeField.prototype._inPreferredUserInteraction = function() {
+		if (this._bPreferUserInteraction && this.getDomRef()) {
+			var oInnerDomRef = this.getFocusDomRef(),
+				sInputDOMValue = oInnerDomRef && this._getInputValue(),
+				sInputPropertyValue = this.getProperty("value"),
+				bInputFocused = document.activeElement === oInnerDomRef;
+
+			// if the user is currently in the field and he has typed a value,
+			// the changes from the model should not overwrite the user input
+			return bInputFocused && sInputDOMValue && (sInputPropertyValue !== sInputDOMValue);
+		}
+
+		return false;
 	};
 
 	DateTimeField.prototype.setDateValue = function (oDate) {

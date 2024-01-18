@@ -3357,6 +3357,21 @@ sap.ui.define([
 		assert.ok(oPopupContent[1].isA("sap.m.TimePickerClocks"), "There is a sap.m.TimePickerClocks created in the popup content");
 	});
 
+	QUnit.test("_inPreferredUserInteraction", function (assert) {
+		// Prepare
+		var oTP = new TimePicker(),
+			oInPreferredUserInteractionSpy = this.spy(oTP, "_inPreferredUserInteraction");
+
+		oTP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oInPreferredUserInteractionSpy.calledOnce, "Preferred interaction is handled during rendering");
+
+		// Clean
+		oTP.destroy();
+	});
+
 
 	function triggerMultipleKeypress(timePicker, sFeed) {
 		var aFeed = sFeed.split(""),

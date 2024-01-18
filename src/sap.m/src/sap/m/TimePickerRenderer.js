@@ -38,7 +38,11 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		 * @param {sap.m.TimePicker} oControl An object representation of the control that should be rendered
 		 */
 		TimePickerRenderer.writeInnerValue = function(oRm, oControl) {
-			oRm.attr("value", oControl._formatValue(oControl.getDateValue()));
+			if (oControl._inPreferredUserInteraction()) {
+				oRm.attr("value", oControl._$input.val());
+			} else {
+				oRm.attr("value", oControl._formatValue(oControl.getDateValue()));
+			}
 		};
 
 		/**

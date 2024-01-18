@@ -250,6 +250,13 @@ sap.ui.define([
 			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
 				oSwitcher.setVisible(true);
 				oSwitcher.setSelectedKey("Cal");
+				var oOnAfterRenderingDelegate = {
+					onAfterRendering: function() {
+						this._switchVisibility(oSwitcher.getSelectedKey());
+						this.getCalendar().removeDelegate(oOnAfterRenderingDelegate);
+					}.bind(this)
+				};
+				this.getCalendar().addDelegate(oOnAfterRenderingDelegate);
 			} else {
 				oSwitcher.setVisible(false);
 			}
@@ -326,6 +333,28 @@ sap.ui.define([
 		DatePicker.prototype.init.apply(this, arguments);
 
 		this._bOnlyCalendar = false;
+	};
+
+	DateTimePicker.prototype._formatValueAndUpdateOutput = function(oDate, sValue) {
+		delete this._prefferedValue;
+
+		if (!this.getDomRef()) {
+			return;
+		}
+
+		// convert to output
+		var sOutputValue = oDate ? this._formatValue(oDate) : sValue;
+
+		if (this._bPreferUserInteraction) {
+			// Handle the value concurrency before setting the value property of the control,
+			// in order to distinguish whether the user only focused the input field or typed in it
+			this.handleInputValueConcurrency(sOutputValue);
+		} else if (this._$input.val() !== sOutputValue) {
+			// update the DOM value when necessary
+			// otherwise cursor can go to the end of text unnecessarily
+			this._$input.val(sOutputValue);
+			this._curpos = this._$input.cursorPos();
+		}
 	};
 
 	/**
