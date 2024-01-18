@@ -47,6 +47,29 @@ sap.ui.define([
 		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl").getText(sTextKey);
 	};
 
+	/**
+	 * Adds additional path into a URL.
+	 *
+	 * @param {string} sUrl - URL of the request
+	 * @param {string} sPath - Additional path to add into the URL
+	 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
+	 */
+	var addPathIntoUrl = function (sUrl, sPath) {
+		if (sUrl.slice(-1) !== "/" && sPath.charAt(0) !== "/") {
+			sUrl += "/";
+		}
+		return sUrl + sPath;
+	};
+
+	/**
+	 * Util class for Connector implementations (apply).
+	 *
+	 * @namespace sap.ui.fl.initial._internal.connectors.Utils
+	 * @since 1.70
+	 * @version ${version}
+	 * @private
+	 * @ui5-restricted sap.ui.fl.initial._internal.connectors, sap.ui.fl.write._internal.connectors, sap.ui.fl.write._internal.transport
+	 */
 	return {
 		/**
 		 * Adds current BCP-47 standard language code into request parameters as value of <code>sap-language</code> parameter.
@@ -93,16 +116,16 @@ sap.ui.define([
 			if (!sRoute || !mPropertyBag.url) {
 				throw new Error("Not all necessary parameters were passed");
 			}
-			var sUrl = mPropertyBag.url + sRoute;
+			var sUrl = addPathIntoUrl(mPropertyBag.url, sRoute);
 
 			// If any of the following properties are available in mPropertyBag we append them to the Url
 			if (mPropertyBag.cacheKey) {
-				sUrl += "~" + mPropertyBag.cacheKey + "~/";
+				sUrl = addPathIntoUrl(sUrl, "~" + mPropertyBag.cacheKey + "~");
 			}
 			if (mPropertyBag.reference) {
-				sUrl += mPropertyBag.reference;
+				sUrl = addPathIntoUrl(sUrl, mPropertyBag.reference);
 			} else if (mPropertyBag.fileName) {
-				sUrl += mPropertyBag.fileName;
+				sUrl = addPathIntoUrl(sUrl, mPropertyBag.fileName);
 			}
 
 			// Adding Query-Parameters to the Url

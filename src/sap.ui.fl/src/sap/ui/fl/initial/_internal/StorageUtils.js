@@ -38,6 +38,7 @@ sap.ui.define([
 			NeoLrepConnector: "sap/ui/fl/initial/_internal/connectors/NeoLrepConnector",
 			PersonalizationConnector: "sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
 			KeyUserConnector: "sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
+			BtpServiceConnector: "sap/ui/fl/initial/_internal/connectors/BtpServiceConnector",
 			StaticFileConnector: "sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
 			// Test & Demo Connectors
 			ObjectStorageConnector: "sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector",
@@ -52,6 +53,7 @@ sap.ui.define([
 			NeoLrepConnector: "sap/ui/fl/write/_internal/connectors/NeoLrepConnector",
 			PersonalizationConnector: "sap/ui/fl/write/_internal/connectors/PersonalizationConnector",
 			KeyUserConnector: "sap/ui/fl/write/_internal/connectors/KeyUserConnector",
+			BtpServiceConnector: "sap/ui/fl/write/_internal/connectors/BtpServiceConnector",
 			StaticFileConnector: "sap/ui/fl/write/_internal/connectors/StaticFileConnector",
 			// Test & Demo Connectors
 			JsObjectConnector: "sap/ui/fl/write/_internal/connectors/JsObjectConnector",
