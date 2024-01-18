@@ -27,7 +27,6 @@ sap.ui.define([
 
 		this._oLink = new Link({
 			target: "_blank",
-			emphasized: true,
 			wrapping: true
 		}).addStyleClass("sapUiDemoKitDemoAppsCardHeaderLink");
 	};
