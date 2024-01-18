@@ -1155,10 +1155,10 @@
 			"short": "y/M/d"
 		},
 		"timeFormats": {
-			"full": "Bh:mm:ss [zzzz]",
-			"long": "Bh:mm:ss [z]",
-			"medium": "Bh:mm:ss",
-			"short": "Bh:mm"
+			"full": "ah:mm:ss [zzzz]",
+			"long": "ah:mm:ss [z]",
+			"medium": "ah:mm:ss",
+			"short": "ah:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1} {0}",
@@ -1701,10 +1701,10 @@
 			"short": "Gy/M/d"
 		},
 		"timeFormats": {
-			"full": "Bh:mm:ss [zzzz]",
-			"long": "Bh:mm:ss [z]",
-			"medium": "Bh:mm:ss",
-			"short": "Bh:mm"
+			"full": "ah:mm:ss [zzzz]",
+			"long": "ah:mm:ss [z]",
+			"medium": "ah:mm:ss",
+			"short": "ah:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1}{0}",
@@ -2236,10 +2236,10 @@
 			"short": "Gy/M/d"
 		},
 		"timeFormats": {
-			"full": "Bh:mm:ss [zzzz]",
-			"long": "Bh:mm:ss [z]",
-			"medium": "Bh:mm:ss",
-			"short": "Bh:mm"
+			"full": "ah:mm:ss [zzzz]",
+			"long": "ah:mm:ss [z]",
+			"medium": "ah:mm:ss",
+			"short": "ah:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1}{0}",
@@ -2791,10 +2791,10 @@
 			"short": "G y/M/d"
 		},
 		"timeFormats": {
-			"full": "Bh:mm:ss [zzzz]",
-			"long": "Bh:mm:ss [z]",
-			"medium": "Bh:mm:ss",
-			"short": "Bh:mm"
+			"full": "ah:mm:ss [zzzz]",
+			"long": "ah:mm:ss [z]",
+			"medium": "ah:mm:ss",
+			"short": "ah:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1}{0}",
@@ -3326,10 +3326,10 @@
 			"short": "Gy/M/d"
 		},
 		"timeFormats": {
-			"full": "Bh:mm:ss [zzzz]",
-			"long": "Bh:mm:ss [z]",
-			"medium": "Bh:mm:ss",
-			"short": "Bh:mm"
+			"full": "ah:mm:ss [zzzz]",
+			"long": "ah:mm:ss [z]",
+			"medium": "ah:mm:ss",
+			"short": "ah:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1}{0}",
