@@ -1,15 +1,18 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/base/Log",
 	"sap/base/i18n/Formatting",
 	"sap/ui/core/CalendarType",
-	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/_Helper",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/odata/Filter",
-	"sap/ui/model/FilterOperator"
-], function(Formatting, CalendarType, ODataUtils, _Helper, Filter, ODataFilter, FilterOperator) {
+	"sap/ui/model/odata/ODataUtils"
+], function(Log, Formatting, CalendarType, _Helper, Filter, FilterOperator, FilterProcessor, ODataFilter, ODataUtils) {
 
 	"use strict";
+	const sClassName = "sap.ui.model.odata.ODataUtils";
 
 	function time(iMillis) {
 		return {
@@ -22,6 +25,11 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.odata.ODataUtils", {
 		before() {
 			this.__ignoreIsolatedCoverage__ = true;
+		},
+		beforeEach : function () {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
 		}
 	});
 
@@ -324,7 +332,9 @@ sap.ui.define([
 		assert.equal(ODataUtils.setOrigin("/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION/", {alias: "ABC_543"}), "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION;o=ABC_543/");
 		assert.equal(ODataUtils.setOrigin("/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION/?sap-client=400&myParam=abc", {alias: "ABC_543"}), "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION;o=ABC_543/?sap-client=400&myParam=abc");
 		assert.equal(ODataUtils.setOrigin("/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION?sap-client=400&myParam=abc", {alias: "ABC_543"}), "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION;o=ABC_543?sap-client=400&myParam=abc");
+		this.oLogMock.expects("warning").withExactArgs("ODataUtils.setOrigin: No Client or System ID given for Origin");
 		assert.equal(ODataUtils.setOrigin("/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION/", {system: "Test"}), "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION/");
+		this.oLogMock.expects("warning").withExactArgs("ODataUtils.setOrigin: No Client or System ID given for Origin");
 		assert.equal(ODataUtils.setOrigin("/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION/", {client: "552"}), "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION/");
 
 		// slash trimming (or not)
@@ -482,6 +492,9 @@ sap.ui.define([
 			force: true
 		}), "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2;o=Foo123/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value");
 
+		this.oLogMock.expects("warning")
+			.withExactArgs("ODataUtils.setAnnotationOrigin: Annotation url is missing $value segment.");
+
 		// Missing $value
 		assert.equal(ODataUtils.setAnnotationOrigin("/sap/opu/odata/IWFND/CATALOGSERVICE;v=2;o=Bla123/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/", {
 			alias: "Foo123",
@@ -492,6 +505,9 @@ sap.ui.define([
 		assert.equal(ODataUtils.setAnnotationOrigin("/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?foo=baa&test=23", {
 			alias: "Foo123"
 		}), "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2;o=Foo123/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?foo=baa&test=23");
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("ODataUtils.setAnnotationOrigin: Annotation url is missing $value segment.");
 
 		// url parameter with no change
 		assert.equal(ODataUtils.setAnnotationOrigin("/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/?foo=baa&test=23", {
@@ -604,9 +620,13 @@ sap.ui.define([
 	QUnit.test("createFilterParams: Create filter params with empty filter", function(assert) {
 		var oFilter1, oFilter2, sFilterString;
 
+		this.oLogMock.expects("error").withExactArgs("Wrong parameters defined for filter.").twice();
 		oFilter1 = new Filter({});
 		oFilter2 = new Filter({});
 
+		this.oLogMock.expects("error")
+			.withExactArgs("Unknown filter operator 'undefined'", undefined, sClassName)
+			.twice();
 		sFilterString = ODataUtils.createFilterParams([oFilter1, oFilter2]);
 		assert.equal(sFilterString, "$filter=true%20or%20true", "Filter string should be returned.");
 
@@ -826,87 +846,240 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_createFilterParams propagates fractional seconds", function (assert) {
-		const oFilter = {
-			bCaseSensitive : "~bCaseSensitive",
-			sFractionalSeconds1 : "~sFractionalSeconds1",
-			sFractionalSeconds2 : "~sFractionalSeconds2",
-			sOperator : "~sOperator",
-			sPath : "~sPath",
-			oValue1 : "~oValue1",
-			oValue2 : "~oValue2"
-		};
-
-		this.mock(ODataUtils).expects("_createFilterSegment")
-			.withExactArgs("~sPath", "~oMetadata", "~oEntityType", "~sOperator","~oValue1", "~oValue2",
-				"~bCaseSensitive", "~sFractionalSeconds1", "~sFractionalSeconds2")
-			.returns("foo");
+	QUnit.test("_createFilterParams: no filter", function (assert) {
+		this.mock(FilterProcessor).expects("groupFilters").never();
+		this.mock(ODataUtils).expects("_processSingleFilter").never();
 
 		// code under test
-		assert.strictEqual(ODataUtils._createFilterParams(oFilter, "~oMetadata", "~oEntityType"), "foo");
+		assert.strictEqual(ODataUtils._createFilterParams(undefined, "~oMetadata", "~oEntityType"), undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_resolveMultiFilter propagates fractional seconds", function (assert) {
-		const oFilter0 = {
-			bCaseSensitive : "~bCaseSensitive.0",
-			sFractionalSeconds1 : "~sFractionalSeconds1.0",
-			sFractionalSeconds2 : "~sFractionalSeconds2.0",
-			sOperator : "~sOperator.0",
-			sPath : "~sPath.0",
-			oValue1 : "~oValue1.0",
-			oValue2 : "~oValue2.0"
-		};
-		const oFilter1 = {
-			bCaseSensitive : "~bCaseSensitive.1",
-			sFractionalSeconds1 : "~sFractionalSeconds1.1",
-			sFractionalSeconds2 : "~sFractionalSeconds2.1",
-			sOperator : "~sOperator.1",
-			sPath : "~sPath.1",
-			oValue1 : "~oValue1.1",
-			oValue2 : "~oValue2.1"
+	QUnit.test("_createFilterParams: with single filter", function (assert) {
+		const oFilter = {};
+		this.mock(FilterProcessor).expects("groupFilters").never();
+		this.mock(ODataUtils).expects("_processSingleFilter")
+			.withExactArgs(sinon.match.same(oFilter), "~oMetadata", "~oEntityType", true)
+			.returns("~result");
+
+		// code under test
+		assert.strictEqual(ODataUtils._createFilterParams(oFilter, "~oMetadata", "~oEntityType"), "~result");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_createFilterParams: with filter array", function (assert) {
+		const aFilters = [{/*content not relevant for this test*/}];
+		const oFilter = {};
+		this.mock(FilterProcessor).expects("groupFilters").withExactArgs(sinon.match.same(aFilters)).returns(oFilter);
+		this.mock(ODataUtils).expects("_processSingleFilter")
+			.withExactArgs(sinon.match.same(oFilter), "~oMetadata", "~oEntityType", true)
+			.returns("~result");
+
+		// code under test
+		assert.strictEqual(ODataUtils._createFilterParams(aFilters, "~oMetadata", "~oEntityType"), "~result");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_createFilterParams: with empty filter array", function (assert) {
+		const aFilters = [/* empty array */];
+		this.mock(FilterProcessor).expects("groupFilters").withExactArgs(sinon.match.same(aFilters)).returns(undefined);
+		this.mock(ODataUtils).expects("_processSingleFilter").never();
+
+		// code under test
+		assert.strictEqual(ODataUtils._createFilterParams(aFilters, "~oMetadata", "~oEntityType"), undefined);
+	});
+
+	//*********************************************************************************************
+[true, false].forEach((bOmitBrackets) => {
+	QUnit.test("_processSingleFilter: single filter, bOmitBrackets=" + bOmitBrackets, function (assert) {
+		const oFilter = {};
+		this.mock(ODataUtils).expects("_processMultiFilter").never();
+		this.mock(ODataUtils).expects("_createFilterSegment")
+			.withExactArgs(sinon.match.same(oFilter), "~oMetadata", "~oEntityType")
+			.returns("~result");
+
+		// code under test
+		assert.strictEqual(ODataUtils._processSingleFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
+			"~result");
+	});
+});
+
+	//*********************************************************************************************
+[true, false].forEach((bOmitBrackets) => {
+	QUnit.test("_processSingleFilter: multi-filter, bOmitBrackets=" + bOmitBrackets, function (assert) {
+		const oFilter = {aFilters: []};
+		this.mock(ODataUtils).expects("_processMultiFilter")
+			.withExactArgs(sinon.match.same(oFilter), "~oMetadata", "~oEntityType", bOmitBrackets)
+			.returns("~result");
+		this.mock(ODataUtils).expects("_createFilterSegment").never();
+
+		// code under test
+		assert.strictEqual(ODataUtils._processSingleFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
+			"~result");
+	});
+});
+
+	//*********************************************************************************************
+[true, false].forEach((bOmitBrackets) => {
+	QUnit.test("_processMultiFilter: empty filter array, bOmitBrackets=" + bOmitBrackets, function (assert) {
+		const oFilter = {aFilters: []};
+
+		// code under test
+		assert.strictEqual(ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
+			"false");
+
+		oFilter.bAnd = true;
+
+		// code under test
+		assert.strictEqual(ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
+			"true");
+	});
+});
+
+	//*********************************************************************************************
+[true, false].forEach((bOmitBrackets) => {
+	QUnit.test("_processMultiFilter: single filter in the array, bOmitBrackets=" + bOmitBrackets, function (assert) {
+		const oFilter = {aFilters: [{}]};
+		const oODataUtilsMock = this.mock(ODataUtils);
+		oODataUtilsMock.expects("_processSingleFilter")
+			.withExactArgs(sinon.match.same(oFilter.aFilters[0]), "~oMetadata", "~oEntityType", true)
+			.returns("~result");
+
+		// code under test
+		assert.strictEqual(ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
+			"~result");
+
+		oFilter.aFilters[0]._bMultiFilter = true;
+		oODataUtilsMock.expects("_processSingleFilter")
+			.withExactArgs(sinon.match.same(oFilter.aFilters[0]), "~oMetadata", "~oEntityType")
+			.returns("~result2");
+
+		// code under test
+		assert.strictEqual(ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", bOmitBrackets),
+			"~result2");
+	});
+});
+
+	//*********************************************************************************************
+[
+	{bOmitBrackets: true, bAnd: true, sResult: "~a%20and%20~b%20and%20~c"},
+	{bOmitBrackets: true, bAnd: false, sResult: "~a%20or%20~b%20or%20~c"},
+	{bOmitBrackets: false, bAnd: true, sResult: "(~a%20and%20~b%20and%20~c)"},
+	{bOmitBrackets: false, bAnd: false, sResult: "(~a%20or%20~b%20or%20~c)"}
+].forEach((oFixture, i) => {
+	QUnit.test("_processMultiFilter: #" + i, function (assert) {
+		const oFilter = {
+			bAnd: oFixture.bAnd,
+			aFilters: [{}, {}, {}]
 		};
 		const oODataUtilsMock = this.mock(ODataUtils);
-		oODataUtilsMock.expects("_createFilterSegment")
-			.withExactArgs("~sPath.0", "~oMetadata", "~oEntityType", "~sOperator.0","~oValue1.0", "~oValue2.0",
-				"~bCaseSensitive.0", "~sFractionalSeconds1.0", "~sFractionalSeconds2.0")
-			.returns("foo");
-		oODataUtilsMock.expects("_createFilterSegment")
-			.withExactArgs("~sPath.1", "~oMetadata", "~oEntityType", "~sOperator.1","~oValue1.1", "~oValue2.1",
-				"~bCaseSensitive.1", "~sFractionalSeconds1.1", "~sFractionalSeconds2.1")
-			.returns("bar");
+		oODataUtilsMock.expects("_processSingleFilter")
+			.withExactArgs(sinon.match.same(oFilter.aFilters[0]), "~oMetadata", "~oEntityType")
+			.returns("~a");
+		oODataUtilsMock.expects("_processSingleFilter")
+			.withExactArgs(sinon.match.same(oFilter.aFilters[1]), "~oMetadata", "~oEntityType")
+			.returns("~b");
+		oODataUtilsMock.expects("_processSingleFilter")
+			.withExactArgs(sinon.match.same(oFilter.aFilters[2]), "~oMetadata", "~oEntityType")
+			.returns("~c");
 
 		// code under test
-		const sFilter = ODataUtils._resolveMultiFilter({aFilters : [oFilter0, oFilter1]}, "~oMetadata", "~oEntityType");
-
-		assert.strictEqual(sFilter, "(foo%20or%20bar)");
+		assert.strictEqual(
+			ODataUtils._processMultiFilter(oFilter, "~oMetadata", "~oEntityType", oFixture.bOmitBrackets),
+			oFixture.sResult);
 	});
-
+});
 
 	//*********************************************************************************************
-[{
-	operator : FilterOperator.BT,
-	result : "(~sPath%20ge%20~encoded1%20and%20~sPath%20le%20~encoded2)",
-	value2 : "~oValue2"
-}, {
-	operator : FilterOperator.LE,
-	result : "~sPath%20le%20~encoded1",
-	value2 : null
-}].forEach((oFixture) => {
-	QUnit.test("_createFilterSegment propagates fractional seconds, " + oFixture.operator, function (assert) {
-		const oMetadata = {
-			_getPropertyMetadata() {}
+	QUnit.test("_resolveMultiFilter: no aFilters", function (assert) {
+		assert.strictEqual(ODataUtils._resolveMultiFilter({}, "~oMetadata", "~oEntityType"), "");
+	});
+
+	//*********************************************************************************************
+[
+	{bAnd: true, sResult: "(~a%20and%20~b%20and%20~c%20and%20~d)"},
+	{bAnd: false, sResult: "(~a%20or%20~b%20or%20~c%20or%20~d)"}
+].forEach((oFixture, i) => {
+	QUnit.test("_resolveMultiFilter", function (assert) {
+		const oFilter = {
+			bAnd: oFixture.bAnd,
+			aFilters: [{sPath: "~path0"}, {_bMultiFilter: true}, {_bMultiFilter: true}, {sPath: "~path3"}]
 		};
+		const oODataUtilsMock = this.mock(ODataUtils);
+		oODataUtilsMock.expects("_resolveMultiFilter")
+			.withExactArgs(sinon.match.same(oFilter), "~oMetadata", "~oEntityType")
+			.callThrough();
+		oODataUtilsMock.expects("_createFilterSegment")
+			.withExactArgs(sinon.match.same(oFilter.aFilters[0]), "~oMetadata", "~oEntityType")
+			.returns("~a");
+		oODataUtilsMock.expects("_resolveMultiFilter")
+			.withExactArgs(sinon.match.same(oFilter.aFilters[1]), "~oMetadata", "~oEntityType")
+			.returns("~b");
+		oODataUtilsMock.expects("_resolveMultiFilter")
+			.withExactArgs(sinon.match.same(oFilter.aFilters[2]), "~oMetadata", "~oEntityType")
+			.returns("~c");
+		oODataUtilsMock.expects("_createFilterSegment")
+			.withExactArgs(sinon.match.same(oFilter.aFilters[3]), "~oMetadata", "~oEntityType")
+			.returns("~d");
+
+		// code under test
+		assert.strictEqual(ODataUtils._resolveMultiFilter(oFilter, "~oMetadata", "~oEntityType"), oFixture.sResult);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{sOperator: FilterOperator.EQ, sResult: "~sPath%20eq%20~encoded1"},
+	{
+		bCaseSensitive: false,
+		sOperator: FilterOperator.NE,
+		sType: "Edm.String",
+		sResult: "toupper(~sPath)%20ne%20~encoded1"
+	},
+	{bCaseSensitive: false, sOperator: FilterOperator.GT, sResult: "~sPath%20gt%20~encoded1"},
+	{sOperator: FilterOperator.GE, oValue2: null, sResult: "~sPath%20ge%20~encoded1"},
+	{sOperator: FilterOperator.LT, oValue2: undefined, sResult: "~sPath%20lt%20~encoded1"},
+	{sOperator: FilterOperator.LE, sResult: "~sPath%20le%20~encoded1"},
+	{
+		sOperator: FilterOperator.BT,
+		oValue2: "~oValue2",
+		sResult: "(~sPath%20ge%20~encoded1%20and%20~sPath%20le%20~encoded2)"
+	},
+	{
+		sOperator: FilterOperator.NB,
+		oValue2: "~oValue2",
+		sResult: "not%20(~sPath%20ge%20~encoded1%20and%20~sPath%20le%20~encoded2)"
+	},
+	{sOperator: FilterOperator.Contains, sResult: "substringof(~encoded1,~sPath)"},
+	{sOperator: FilterOperator.NotContains, sResult: "not%20substringof(~encoded1,~sPath)"},
+	{sOperator: FilterOperator.StartsWith, sResult: "startswith(~sPath,~encoded1)"},
+	{sOperator: FilterOperator.NotStartsWith, sResult: "not%20startswith(~sPath,~encoded1)"},
+	{sOperator: FilterOperator.EndsWith, sResult: "endswith(~sPath,~encoded1)"},
+	{sOperator: FilterOperator.NotEndsWith, sResult: "not%20endswith(~sPath,~encoded1)"}
+].forEach((oFixture, i) => {
+	QUnit.test("_createFilterSegment: with type information, #" + i, function (assert) {
+		const oFilter = {
+			bCaseSensitive: oFixture.bCaseSensitive,
+			sFractionalSeconds1: "~sFractionalSeconds1",
+			sFractionalSeconds2: "~sFractionalSeconds2",
+			sOperator: oFixture.sOperator,
+			sPath: "~sPath",
+			oValue1: "~oValue1",
+			oValue2: oFixture.oValue2
+		};
+		const bCaseSensitive = oFixture.bCaseSensitive !== false;
+		const sType = oFixture.sType || "~type";
+		const oMetadata = {_getPropertyMetadata() {}};
 		this.mock(oMetadata).expects("_getPropertyMetadata")
 			.withExactArgs("~oEntityType", "~sPath")
-			.returns({type : "~type"});
+			.returns({type : sType});
 		const oODataUtilsMock = this.mock(ODataUtils);
 		oODataUtilsMock.expects("_formatValue")
-			.withExactArgs("~oValue1", "~type", "~bCaseSensitive", "~sFractionalSeconds1")
+			.withExactArgs("~oValue1", sType, bCaseSensitive, "~sFractionalSeconds1")
 			.returns("~formatted1");
-		const iValue2Calls = oFixture.value2 === null ? 0 : 1;
+		const iValue2Calls = oFixture.oValue2 !== null && oFixture.oValue2 !== undefined ? 1 : 0;
 		oODataUtilsMock.expects("_formatValue")
-			.withExactArgs(oFixture.value2, "~type", "~bCaseSensitive", "~sFractionalSeconds2")
+			.withExactArgs(oFixture.oValue2, sType, bCaseSensitive, "~sFractionalSeconds2")
 			.exactly(iValue2Calls)
 			.returns("~formatted2");
 		const oHelperMock = this.mock(_Helper);
@@ -914,12 +1087,63 @@ sap.ui.define([
 		oHelperMock.expects("encodeURL").withExactArgs("~formatted2").exactly(iValue2Calls).returns("~encoded2");
 
 		// code under test
-		const sFilterSegment = ODataUtils._createFilterSegment("~sPath", oMetadata, "~oEntityType", oFixture.operator,
-			"~oValue1", oFixture.value2, "~bCaseSensitive", "~sFractionalSeconds1", "~sFractionalSeconds2");
-
-		assert.strictEqual(sFilterSegment, oFixture.result);
+		assert.strictEqual(ODataUtils._createFilterSegment(oFilter, oMetadata, "~oEntityType"), oFixture.sResult);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_createFilterSegment: no metadata for path", function (assert) {
+		const oEntityType = {name: "~oEntityType"};
+		const oFilter = {sOperator: FilterOperator.EQ, sPath: "~sPath", oValue1: "~oValue1"};
+		const oMetadata = {_getPropertyMetadata() {}};
+		this.mock(oMetadata).expects("_getPropertyMetadata")
+			.withExactArgs(sinon.match.same(oEntityType), "~sPath")
+			.returns(undefined);
+		this.oLogMock.expects("error")
+			.withExactArgs("Property type for property '~sPath' of EntityType '~oEntityType' not found!", undefined,
+				sClassName);
+		this.mock(_Helper).expects("encodeURL").withExactArgs("~oValue1").returns("~encoded1");
+
+		// code under test
+		assert.strictEqual(ODataUtils._createFilterSegment(oFilter, oMetadata, oEntityType), "~sPath%20eq%20~encoded1");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_createFilterSegment: unknown type for path", function (assert) {
+		const oEntityType = {name: "~oEntityType"};
+		const oFilter = {sOperator: FilterOperator.EQ, sPath: "~sPath", oValue1: "~oValue1"};
+		const oMetadata = {_getPropertyMetadata() {}};
+		this.mock(oMetadata).expects("_getPropertyMetadata")
+			.withExactArgs(sinon.match.same(oEntityType), "~sPath")
+			.returns({/*no type*/});
+		this.oLogMock.expects("error")
+			.withExactArgs("Type for property '~sPath' of EntityType '~oEntityType' not found!", undefined,
+				sClassName);
+		this.mock(_Helper).expects("encodeURL").withExactArgs("~oValue1").returns("~encoded1");
+
+		// code under test
+		assert.strictEqual(ODataUtils._createFilterSegment(oFilter, oMetadata, oEntityType), "~sPath%20eq%20~encoded1");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_createFilterSegment: unknown filter operator", function (assert) {
+		const oFilter = {sOperator: "foo", sPath: "~sPath", oValue1: "~oValue1"};
+		this.mock(_Helper).expects("encodeURL").withExactArgs("~oValue1").returns("~encoded1");
+		this.oLogMock.expects("error").withExactArgs("Unknown filter operator 'foo'", undefined, sClassName);
+
+		// code under test
+		assert.strictEqual(ODataUtils._createFilterSegment(oFilter), "true");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_createFilterSegment: empty values", function (assert) {
+		const oFilter = {sOperator: FilterOperator.BT, sPath: "~sPath", oValue1: null, oValue2: null};
+		this.mock(_Helper).expects("encodeURL").never();
+
+		// code under test
+		assert.strictEqual(ODataUtils._createFilterSegment(oFilter),
+			"(~sPath%20ge%20null%20and%20~sPath%20le%20null)");
+	});
 
 	//*********************************************************************************************
 	QUnit.test("formatValue delegates to _formatValue", function (assert) {
