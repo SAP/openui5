@@ -69,7 +69,8 @@
 					"sap.ui.mdc.demokit.sample.FieldValueHelpJson",
 					"sap.ui.mdc.demokit.sample.FieldCustomContent",
 					"sap.ui.mdc.demokit.sample.FieldTypes",
-					"sap.ui.mdc.demokit.sample.MultiValueField"
+					"sap.ui.mdc.demokit.sample.MultiValueField",
+					"sap.ui.mdc.demokit.sample.LinkPayloadJson"
 				]
 			}
 		],
@@ -183,6 +184,11 @@
 				"id": "sap.ui.mdc.demokit.sample.MultiValueField",
 				"name": "MultiValueField",
 				"description": "A MultiValueField updating it's JSON-Model"
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.LinkPayloadJson",
+				"name": "Link with JSON model",
+				"description": "Using a delegate payload for controlling the behavior of an mdc.Link control"
 			}
 
 		]
