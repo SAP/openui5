@@ -298,6 +298,38 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given a BtpServiceConnector is configured", {
+		beforeEach() {
+			this.oGetConnectorsSpy = sandbox.spy(Utils, "getConnectors");
+			this.oConfigurationStub = sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
+				{connector: "BtpServiceConnector"}
+			]);
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when getLoadConnectors is called", function(assert) {
+			return Utils.getLoadConnectors().then(function(mConnectors) {
+				var mConnectorsSorted = sortConnectors(mConnectors);
+				assert.equal(this.oGetConnectorsSpy.callCount, 1, "the getConnector is called once");
+				assert.equal(this.oConfigurationStub.callCount, 1, "configuration is called once");
+				assert.equal(mConnectors.length, 2, "result contains two connector");
+				assert.equal(mConnectorsSorted[0].connector, "StaticFileConnector", "first connector is of type StaticFileConnector");
+				assert.equal(mConnectorsSorted[1].connector, "BtpServiceConnector", "second connector is of type Btp Service Connector");
+			}.bind(this));
+		});
+
+		QUnit.test("when getWriteConnectors is called", function(assert) {
+			return Utils.getConnectors().then(function(mConnectors) {
+				assert.equal(this.oGetConnectorsSpy.callCount, 1, "the getConnector is called once");
+				assert.equal(this.oConfigurationStub.callCount, 1, "configuration is called once");
+				assert.equal(mConnectors.length, 1, "result contains only one connector");
+				assert.equal(mConnectors[0].connector, "BtpServiceConnector", "second connector is of type Btp Service Connector");
+			}.bind(this));
+		});
+	});
+
 	QUnit.module("Given a custom connector (legacy with applyConnector) is configured", {
 		beforeEach() {
 			this.oGetConnectorsSpy = sandbox.spy(Utils, "getConnectors");

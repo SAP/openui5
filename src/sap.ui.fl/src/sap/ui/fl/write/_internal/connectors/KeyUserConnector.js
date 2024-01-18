@@ -66,7 +66,7 @@ sap.ui.define([
 		},
 		isLanguageInfoRequired: true,
 		loadFeatures(mPropertyBag) {
-			return BackendConnector.loadFeatures.call(KeyUserConnector, mPropertyBag).then(function(oFeatures) {
+			return BackendConnector.loadFeatures.call(this, mPropertyBag).then(function(oFeatures) {
 				oFeatures.isContextSharingEnabled = true;
 				return oFeatures;
 			});
@@ -76,7 +76,7 @@ sap.ui.define([
 			var aParameters = ["type", "$skip", "$filter"];
 			var mParameters = _pick(mPropertyBag, aParameters);
 
-			var sContextsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.CONTEXTS, mPropertyBag, mParameters);
+			var sContextsUrl = InitialUtils.getUrl(this.ROUTES.CONTEXTS, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sContextsUrl, "GET", {initialConnector: InitialConnector}).then(function(oResult) {
 				return oResult.response;
 			});
@@ -85,8 +85,8 @@ sap.ui.define([
 		loadContextDescriptions(mPropertyBag) {
 			var mParameters = {};
 			InitialUtils.addLanguageInfo(mParameters);
-			_enhancePropertyBagWithTokenInfo(mPropertyBag);
-			var sContextsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.CONTEXTS, mPropertyBag, mParameters);
+			_enhancePropertyBagWithTokenInfo.call(this, mPropertyBag);
+			var sContextsUrl = InitialUtils.getUrl(this.ROUTES.CONTEXTS, mPropertyBag, mParameters);
 			mPropertyBag.payload = JSON.stringify(mPropertyBag.flexObjects);
 			mPropertyBag.dataType = "json";
 			mPropertyBag.contentType = "application/json; charset=utf-8";
@@ -112,7 +112,7 @@ sap.ui.define([
 
 	function _enhancePropertyBagWithTokenInfo(mPropertyBag) {
 		mPropertyBag.initialConnector = InitialConnector;
-		mPropertyBag.tokenUrl = KeyUserConnector.ROUTES.TOKEN;
+		mPropertyBag.tokenUrl = this.ROUTES.TOKEN;
 	}
 
 	function _enhancePropertyBagForDraftActivation(mPropertyBag) {
@@ -132,11 +132,11 @@ sap.ui.define([
 
 	KeyUserConnector.versions = {
 		load(mPropertyBag) {
-			_enhancePropertyBagWithTokenInfo(mPropertyBag);
+			_enhancePropertyBagWithTokenInfo.call(this, mPropertyBag);
 			var mParameters = {};
 			InitialUtils.addLanguageInfo(mParameters);
 			mParameters.limit = mPropertyBag.limit;
-			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.GET, mPropertyBag, mParameters);
+			var sVersionsUrl = InitialUtils.getUrl(this.ROUTES.VERSIONS.GET, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sVersionsUrl, "GET", mPropertyBag).then(function(oResult) {
 				return oResult.response.versions.map(function(oVersion) {
 					return renameVersionNumberProperty(oVersion);
@@ -144,19 +144,19 @@ sap.ui.define([
 			});
 		},
 		activate(mPropertyBag) {
-			_enhancePropertyBagWithTokenInfo(mPropertyBag);
+			_enhancePropertyBagWithTokenInfo.call(this, mPropertyBag);
 			_enhancePropertyBagForDraftActivation(mPropertyBag);
 			var mParameters = {version: mPropertyBag.version};
 			InitialUtils.addLanguageInfo(mParameters);
-			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag, mParameters);
+			var sVersionsUrl = InitialUtils.getUrl(this.ROUTES.VERSIONS.ACTIVATE, mPropertyBag, mParameters);
 			return WriteUtils.sendRequest(sVersionsUrl, "POST", mPropertyBag).then(function(oResult) {
 				var oVersion = oResult.response;
 				return renameVersionNumberProperty(oVersion);
 			});
 		},
 		discardDraft(mPropertyBag) {
-			_enhancePropertyBagWithTokenInfo(mPropertyBag);
-			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.DISCARD, mPropertyBag);
+			_enhancePropertyBagWithTokenInfo.call(this, mPropertyBag);
+			var sVersionsUrl = InitialUtils.getUrl(this.ROUTES.VERSIONS.DISCARD, mPropertyBag);
 			return WriteUtils.sendRequest(sVersionsUrl, "DELETE", mPropertyBag);
 		},
 		publish(mPropertyBag) {
@@ -174,9 +174,9 @@ sap.ui.define([
 				return "Error";
 			};
 
-			_enhancePropertyBagWithTokenInfo(mPropertyBag);
+			_enhancePropertyBagWithTokenInfo.call(this, mPropertyBag);
 			var mParameters = {version: mPropertyBag.version};
-			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.PUBLISH, mPropertyBag, mParameters);
+			var sVersionsUrl = InitialUtils.getUrl(this.ROUTES.VERSIONS.PUBLISH, mPropertyBag, mParameters);
 			return WriteUtils.sendRequest(sVersionsUrl, "POST", mPropertyBag).then(function() {
 				BusyIndicator.hide();
 				return oResourceBundle.getText("MSG_CF_PUBLISH_SUCCESS");
@@ -186,26 +186,26 @@ sap.ui.define([
 
 	KeyUserConnector.translation = {
 		getTexts(mPropertyBag) {
-			_enhancePropertyBagWithTokenInfo(mPropertyBag);
+			_enhancePropertyBagWithTokenInfo.call(this, mPropertyBag);
 			var mParameters = _pick(mPropertyBag, ["sourceLanguage", "targetLanguage"]);
-			var sTranslationUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.TRANSLATION.DOWNLOAD, mPropertyBag, mParameters);
+			var sTranslationUrl = InitialUtils.getUrl(this.ROUTES.TRANSLATION.DOWNLOAD, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sTranslationUrl, "GET", mPropertyBag).then(function(oResult) {
 				return oResult.response;
 			});
 		},
 
 		getSourceLanguages(mPropertyBag) {
-			_enhancePropertyBagWithTokenInfo(mPropertyBag);
+			_enhancePropertyBagWithTokenInfo.call(this, mPropertyBag);
 			var mParameters = {};
-			var sTranslationUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.TRANSLATION.GET_SOURCELANGUAGE, mPropertyBag, mParameters);
+			var sTranslationUrl = InitialUtils.getUrl(this.ROUTES.TRANSLATION.GET_SOURCELANGUAGE, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sTranslationUrl, "GET", mPropertyBag).then(function(oResult) {
 				return oResult && oResult.response && oResult.response.sourceLanguages ? oResult.response.sourceLanguages : [];
 			});
 		},
 
 		postTranslationTexts(mPropertyBag) {
-			_enhancePropertyBagWithTokenInfo(mPropertyBag);
-			var sTranslationUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.TRANSLATION.UPLOAD, mPropertyBag, {});
+			_enhancePropertyBagWithTokenInfo.call(this, mPropertyBag);
+			var sTranslationUrl = InitialUtils.getUrl(this.ROUTES.TRANSLATION.UPLOAD, mPropertyBag, {});
 			return InitialUtils.sendRequest(sTranslationUrl, "POST", mPropertyBag);
 		}
 	};
