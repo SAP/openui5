@@ -134,7 +134,7 @@ sap.ui.define([
 	 * When specifying the <code>PropertyInfo</code> objects in the {@link sap.ui.mdc.Table#getPropertyInfo propertyInfo} property, the
 	 * following attributes need to be specified:
 	 * <ul>
-	 *   <li><code>name</code></li>
+	 *   <li><code>key</code></li>
 	 *   <li><code>path</code></li>
 	 *   <li><code>dataType</code></li>
 	 *   <li><code>formatOptions</code></li>
@@ -151,7 +151,7 @@ sap.ui.define([
 	 *
 	 * If the property is complex, the following attributes need to be specified:
 	 * <ul>
-	 *   <li><code>name</code></li>
+	 *   <li><code>key</code></li>
 	 *   <li><code>visualSettings.widthCalculation</code></li>
 	 *   <li><code>propertyInfos</code> (all referenced properties must be specified)</li>
 	 * </ul>
@@ -209,7 +209,7 @@ sap.ui.define([
 	 * When specifying the <code>PropertyInfo</code> objects in the {@link sap.ui.mdc.Table#getPropertyInfo propertyInfo} property, the following
 	 * attributes need to be specified:
 	 * <ul>
-	 *   <li><code>name</code></li>
+	 *   <li><code>key</code></li>
 	 *   <li><code>path</code></li>
 	 *   <li><code>dataType</code></li>
 	 *   <li><code>formatOptions</code></li>
@@ -231,7 +231,7 @@ sap.ui.define([
 	 *
 	 * If the property is complex, the following attributes need to be specified:
 	 * <ul>
-	 *   <li><code>name</code></li>
+	 *   <li><code>key</code></li>
 	 *   <li><code>visualSettings.widthCalculation</code></li>
 	 *   <li><code>propertyInfos</code> (all referenced properties must be specified)</li>
 	 * </ul>

@@ -16,7 +16,7 @@ sap.ui.define([
 	QUnit.test("groupable=true and technicallyGroupable=false", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
-				name: "prop",
+				key: "prop",
 				label: "Property",
 				dataType: "String",
 				groupable: true,
@@ -30,7 +30,7 @@ sap.ui.define([
 	QUnit.test("aggregatable=true and technicallyAggregatable=false", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
-				name: "prop",
+				key: "prop",
 				label: "Property",
 				dataType: "String",
 				aggregatable: true,
@@ -44,11 +44,11 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'aggregatable'", function(assert) {
 		assert.throws(function () {
             new PropertyHelper([{
-				name: "prop",
+				key: "prop",
 				label: "Property",
 				dataType: "String"
 			}, {
-				name: "complexProp",
+				key: "complexProp",
 				label: "ComplexProperty",
 				propertyInfos: ["prop"],
 				aggregatable: true
@@ -61,11 +61,11 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'extension.technicallyGroupable'", function(assert) {
 		assert.throws(function () {
             new PropertyHelper([{
-				name: "prop",
+				key: "prop",
 				label: "Property",
 				dataType: "String"
 			}, {
-				name: "complexProp",
+				key: "complexProp",
 				label: "ComplexProperty",
 				propertyInfos: ["prop"],
 				extension: {
@@ -80,11 +80,11 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'extension.technicallyAggregatable'", function(assert) {
 		assert.throws(function () {
             new PropertyHelper([{
-				name: "prop",
+				key: "prop",
 				label: "Property",
 				dataType: "String"
 			}, {
-				name: "complexProp",
+				key: "complexProp",
 				label: "ComplexProperty",
 				propertyInfos: ["prop"],
 				extension: {
@@ -99,11 +99,11 @@ sap.ui.define([
 	QUnit.test("Complex property with attribute 'extension.customAggregate'", function(assert) {
 		assert.throws(function () {
             new PropertyHelper([{
-				name: "prop",
+				key: "prop",
 				label: "Property",
 				dataType: "String"
 			}, {
-				name: "complexProp",
+				key: "complexProp",
 				label: "ComplexProperty",
 				propertyInfos: ["prop"],
 				extension: {
@@ -118,6 +118,7 @@ sap.ui.define([
 	QUnit.module("Defaults", {
 		beforeEach: function() {
 			this.oSimplePropertyDefaults = {
+				key: "prop",
 				name: "prop",
 				label: "Property",
 				dataType: "String",
@@ -132,7 +133,6 @@ sap.ui.define([
 				groupLabel: "",
 				groupable: false,
 				aggregatable: false,
-				key: false,
 				isKey: false,
 				maxConditions: -1,
 				path: "",
@@ -162,6 +162,7 @@ sap.ui.define([
 			};
 
 			this.oComplexPropertyDefaults = {
+				key: "complexProp",
 				name: "complexProp",
 				label: "Complex Property",
 				tooltip: "",
@@ -174,7 +175,6 @@ sap.ui.define([
 				groupLabel: "",
 				groupable: false,
 				aggregatable: false,
-				key: false,
 				isKey: false,
 				propertyInfos: ["prop"],
 				sortable: false,
@@ -205,7 +205,7 @@ sap.ui.define([
 
 	QUnit.test("Simple property", function(assert) {
 		const oPropertyHelper = new PropertyHelper([{
-			name: "prop",
+			key: "prop",
 			label: "Property",
 			dataType: "String"
 		}]);
@@ -216,7 +216,7 @@ sap.ui.define([
 
 	QUnit.test("Simple property with groupable=true and aggregatable=true", function(assert) {
 		const oPropertyHelper = new PropertyHelper([{
-			name: "prop",
+			key: "prop",
 			label: "Property",
 			dataType: "String",
 			groupable: true,
@@ -236,11 +236,11 @@ sap.ui.define([
 
 	QUnit.test("Complex property", function(assert) {
 		const oPropertyHelper = new PropertyHelper([{
-			name: "prop",
+			key: "prop",
 			label: "Property",
 			dataType: "String"
 		}, {
-			name: "complexProp",
+			key: "complexProp",
 			label: "Complex Property",
 			propertyInfos: ["prop"]
 		}]);
@@ -252,7 +252,7 @@ sap.ui.define([
 	QUnit.module("API", {
 		beforeEach: function() {
 			this.oPropertyHelper = new PropertyHelper([{
-				name: "propA",
+				key: "propA",
 				path: "propAPath",
 				label: "Property A",
 				dataType: "String",
@@ -267,14 +267,14 @@ sap.ui.define([
 					}
 				}
 			}, {
-				name: "propB",
+				key: "propB",
 				label: "Property B",
 				dataType: "String",
 				extension: {
 					technicallyAggregatable: true
 				}
 			}, {
-				name: "propC",
+				key: "propC",
 				label: "Property C",
 				dataType: "String",
 				aggregatable: true,
@@ -283,19 +283,19 @@ sap.ui.define([
 					customAggregate: {}
 				}
 			}, {
-				name: "complexPropA",
+				key: "complexPropA",
 				label: "Complex property A",
 				propertyInfos: ["propA"]
 			}, {
-				name: "complexPropB",
+				key: "complexPropB",
 				label: "Complex property B",
 				propertyInfos: ["propB"]
 			}, {
-				name: "complexPropC",
+				key: "complexPropC",
 				label: "Complex property C",
 				propertyInfos: ["propA", "propB", "propC"]
 			}, {
-				name: "unit",
+				key: "unit",
 				label: "Unit",
 				dataType: "String"
 			}]);
@@ -317,7 +317,7 @@ sap.ui.define([
 
 	QUnit.test("getPropertiesForPlugin", function(assert) {
 		assert.deepEqual(this.oPropertyHelper.getPropertiesForPlugin(), [{
-			name: "propA",
+			key: "propA",
 			aggregatable: true,
 			aggregationDetails: {
 				customAggregate: {
@@ -330,7 +330,7 @@ sap.ui.define([
 			text: "propB",
 			unit: "unit"
 		}, {
-			name: "propB",
+			key: "propB",
 			aggregatable: true,
 			groupable: false,
 			isKey: false,
@@ -338,7 +338,7 @@ sap.ui.define([
 			text: "",
 			unit: ""
 		}, {
-			name: "propC",
+			key: "propC",
 			aggregatable: true,
 			aggregationDetails: {
 				customAggregate: {
@@ -351,7 +351,7 @@ sap.ui.define([
 			text: "",
 			unit: ""
 		}, {
-			name: "unit",
+			key: "unit",
 			aggregatable: false,
 			groupable: false,
 			isKey: false,
@@ -364,7 +364,7 @@ sap.ui.define([
 	QUnit.module("Property", {
 		beforeEach: function() {
 			this.oPropertyHelper = new PropertyHelper([{
-				name: "prop",
+				key: "prop",
 				label: "Property",
 				dataType: "String",
 				aggregatable: true,
@@ -374,15 +374,15 @@ sap.ui.define([
 					}
 				}
 			}, {
-				name: "prop2",
+				key: "prop2",
 				label: "Property 2",
 				dataType: "String"
 			}, {
-				name: "complexProp",
+				key: "complexProp",
 				label: "Complex property",
 				propertyInfos: ["prop"]
 			}, {
-				name: "complexProp2",
+				key: "complexProp2",
 				label: "Complex property 2",
 				propertyInfos: ["prop2"]
 			}]);

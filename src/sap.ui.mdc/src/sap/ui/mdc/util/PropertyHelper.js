@@ -26,9 +26,11 @@ sap.ui.define([
 	 *
 	 * An object literal describing a data property.
 	 *
-	 * @property {string} name
+	 * @property {string} key
 	 *   Unique, stable key for the property. It must only contain characters allowed for IDs, see {@link sap.ui.core.ID}. Does not have to be an
 	 *   existing attribute in the data model or the technical name of an attribute in the data model.
+	 *   <b>Note:</b>
+	 *   'key' replaces the deprecated 'name' attribute, which will also be interpolated by the PropertyHelper for legacy code support.
 	 * @property {string} [path]
 	 *   The technical path for a data source property.
 	 * @property {string} label
@@ -98,7 +100,7 @@ sap.ui.define([
 	 */
 	const mAttributeMetadata = { // TODO: reserve reference attributes, e.g. unit -> unitProperty
 		// Common
-		name: { // Unique key
+		key: { // Unique key
 			type: "string",
 			mandatory: true,
 			inComplexProperty: {
@@ -199,6 +201,10 @@ sap.ui.define([
 		}
 	};
 
+	const mLegacyAlias = {
+		key: "name"
+	};
+
 	/**
 	 * The methods listed in this map are added to every <code>PropertyInfo</code> object.
 	 */
@@ -256,7 +262,7 @@ sap.ui.define([
 		}
 	};
 
-	const aCommonAttributes = ["name",
+	const aCommonAttributes = ["key",
 		"label",
 		"tooltip",
 		"visible",
@@ -480,7 +486,7 @@ sap.ui.define([
 
 	function createPropertyMap(aProperties) {
 		return Object.freeze(aProperties.reduce((mMap, oProperty) => {
-			mMap[oProperty.name] = oProperty;
+			mMap[oProperty.key] = oProperty;
 			return mMap;
 		}, {}));
 	}
@@ -531,12 +537,37 @@ sap.ui.define([
 
 		oPropertyHelper.validateProperties(aClonedProperties, mPrivate.aPreviousRawProperties);
 
-		mPrivate.aProperties = aClonedProperties;
-		mPrivate.mProperties = createPropertyMap(aClonedProperties);
+		const aClonedPropertiesWithAliases = addAttributeAliases(aClonedProperties);
+		mPrivate.aProperties = aClonedPropertiesWithAliases;
+		mPrivate.mProperties = createPropertyMap(aClonedPropertiesWithAliases);
 		mPrivate.aPreviousRawProperties = merge([], aProperties);
 
-		enrichProperties(oPropertyHelper, aClonedProperties);
-		prepareProperties(oPropertyHelper, aClonedProperties);
+		enrichProperties(oPropertyHelper, aClonedPropertiesWithAliases);
+		prepareProperties(oPropertyHelper, aClonedPropertiesWithAliases);
+	}
+
+	function addAttributeAliases(aProperties) {
+		const aAliasAttributeEntries = Object.entries(mLegacyAlias);
+
+		return aProperties.map((oProperty) => {
+			const oModifiedProperty = {...oProperty};
+			aAliasAttributeEntries.forEach(([sKey, sLegacyAlias]) => {
+				if (sKey in oProperty && sLegacyAlias in oProperty && oProperty[sKey] !== oProperty[sLegacyAlias]) {
+					throwInvalidPropertyError(`The values of legacy-attribute '${sLegacyAlias}' and it's replacement '${sKey}' must be identical.`, oProperty);
+				}
+				if (!(sKey in oProperty) && sLegacyAlias in oProperty) {
+					oModifiedProperty[sKey] = oProperty[sLegacyAlias];
+				}
+				if (!(sLegacyAlias in oProperty) && sKey in oProperty) {
+					oModifiedProperty[sLegacyAlias] = oProperty[sKey];
+				}
+			});
+			return oModifiedProperty;
+		});
+	}
+
+	function getPropertyKey (oProperty) {
+		return oProperty.key || (mLegacyAlias['key'] && oProperty[mLegacyAlias['key']]);
 	}
 
 	/**
@@ -619,11 +650,11 @@ sap.ui.define([
 
 		for (let i = 0; i < aProperties.length; i++) {
 			this.validateProperty(aProperties[i], aProperties, aPreviousProperties);
-			oUniquePropertiesSet.add(aProperties[i].name);
+			oUniquePropertiesSet.add(getPropertyKey(aProperties[i]));
 		}
 
 		if (oUniquePropertiesSet.size !== aProperties.length) {
-			throwInvalidPropertyError("Properties do not have unique names.");
+			throwInvalidPropertyError("Properties do not have unique keys.");
 		}
 	};
 
@@ -656,16 +687,20 @@ sap.ui.define([
 		const mPrivate = _private.get(this);
 
 		mPrivate.aMandatoryAttributes.forEach((sMandatoryAttribute) => {
-			const bAllowedinComplexProperty = mPrivate.mAttributeMetadata[sMandatoryAttribute].inComplexProperty.allowed;
+			const mAttributeMetadata = mPrivate.mAttributeMetadata[sMandatoryAttribute];
+			const bAllowedinComplexProperty = mAttributeMetadata.inComplexProperty.allowed;
+			const sAlias = mLegacyAlias[sMandatoryAttribute];
+			const bContainsAlias = sAlias && sAlias in oProperty;
+			const bAttrIsNull = bContainsAlias ? oProperty[sAlias] == null : oProperty[sMandatoryAttribute] == null;
 
-			if (oProperty[sMandatoryAttribute] == null && PropertyHelper.isPropertyComplex(oProperty) && !bAllowedinComplexProperty) {
+			if (bAttrIsNull && PropertyHelper.isPropertyComplex(oProperty) && !bAllowedinComplexProperty) {
 				// Don't throw an error if a complex property does not contain a mandatory attribute that is not allowed in complex properties.
 				return;
 			}
 
-			if (!(sMandatoryAttribute in oProperty)) {
+			if (!(sMandatoryAttribute in oProperty || bContainsAlias)) {
 				reportInvalidProperty("Property does not contain mandatory attribute '" + sMandatoryAttribute + "'.", oProperty);
-			} else if (oProperty[sMandatoryAttribute] == null) {
+			} else if (bAttrIsNull) {
 				throwInvalidPropertyError("Property does not contain mandatory attribute '" + sMandatoryAttribute + "'.", oProperty);
 			}
 		});
@@ -680,9 +715,14 @@ sap.ui.define([
 		}
 
 		for (const sAttribute in oPropertySection) {
-			const mAttribute = mAttributeSection[sAttribute];
+			let mAttribute = mAttributeSection[sAttribute];
 			const sAttributePath = bTopLevel ? sAttribute : sPath + "." + sAttribute;
 			const vValue = oPropertySection[sAttribute];
+
+			// Consider legacy alias
+			if (!mAttribute) {
+				mAttribute = mAttributeSection[Object.entries(mLegacyAlias).find((aEntry) => aEntry[1] === sAttribute)?.[0]];
+			}
 
 			if (!mAttribute) {
 				reportInvalidProperty("Property contains invalid attribute '" + sAttributePath + "'.", oProperty);
@@ -707,7 +747,7 @@ sap.ui.define([
 		const aPropertyNames = mAttributeSection.type.endsWith("[]") ? oPropertySection : [oPropertySection];
 		const oUniquePropertiesSet = new Set(aPropertyNames);
 
-		if (aPropertyNames.indexOf(oProperty.name) > -1) {
+		if (aPropertyNames.indexOf(getPropertyKey(oProperty)) > -1) {
 			throwInvalidPropertyError("Property references itself in the '" + sPath + "' attribute.", oProperty);
 		}
 
@@ -716,11 +756,11 @@ sap.ui.define([
 		}
 
 		for (let i = 0; i < aProperties.length; i++) {
-			if (oUniquePropertiesSet.has(aProperties[i].name)) {
+			if (oUniquePropertiesSet.has(getPropertyKey(aProperties[i]))) {
 				if (PropertyHelper.isPropertyComplex(aProperties[i])) {
 					throwInvalidPropertyError("Property references complex properties in the '" + sPath + "' attribute.", oProperty);
 				}
-				oUniquePropertiesSet.delete(aProperties[i].name);
+				oUniquePropertiesSet.delete(getPropertyKey(aProperties[i]));
 			}
 		}
 
