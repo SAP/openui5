@@ -10,7 +10,7 @@ describe("sap.tnt.ToolPage", function() {
 
 	// change the page content
 	it("should change the page content", function () {
-		element(by.css("#NList li:first-of-type .sapTntNLIItemsContainer li:nth-of-type(3) [tabindex]")).click();
+		element(by.css("#NList li:first-of-type .sapTntNLIItemsContainer li:nth-of-type(4) a")).click();
 		expect(takeScreenshot()).toLookAs("1_changed_page_content");
 	});
 
@@ -62,7 +62,7 @@ describe("sap.tnt.ToolPage", function() {
 	it("should NOT display side navigation", function () {
 		element(by.id("menuToggleButton")).click();
 		element(by.css("#NList li:first-of-type .sapUiIcon[aria-label=Expand]")).click();
-		element(by.css("#NList li:first-of-type .sapTntNLIItemsContainer li:nth-of-type(4) [tabindex]")).click();
+		element(by.css("#NList li:first-of-type .sapTntNLIItemsContainer li:nth-of-type(5) a")).click();
 		expect(takeScreenshot(element(by.id("page3")))).toLookAs("9_no_side_navigation");
 	});
 });
