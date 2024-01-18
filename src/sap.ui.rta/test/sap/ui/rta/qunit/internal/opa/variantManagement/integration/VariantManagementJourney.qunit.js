@@ -3,19 +3,29 @@ sap.ui.define(
 	[
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/Opa5",
+		"test-resources/sap/ui/fl/api/FlexTestAPI",
 		"test-resources/sap/ui/rta/integration/pages/Adaptation",
 		"test-resources/sap/ui/rta/integration/pages/ChangeVisualization",
 		"test-resources/sap/ui/fl/testutils/opa/TestLibrary"
 	],
 	(
 		opaTest,
-		Opa5
+		Opa5,
+		FlexTestAPI
 	) => {
 		"use strict";
 
 		Opa5.extendConfig({
 			autoWait: true,
-			timeout: 60
+			timeout: 60,
+			arrangements: new Opa5({
+				iClearTheSessionLRep() {
+					FlexTestAPI.clearStorage("SessionStorage");
+					window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
+					window.sessionStorage.removeItem("sap.ui.rta.restart.USER");
+					localStorage.clear();
+				}
+			})
 		});
 
 		const sVMControlId = "__component0---app--variantManagementOrdersTable";
@@ -26,6 +36,7 @@ sap.ui.define(
 		QUnit.module("VariantManagement");
 		opaTest("I open the App and start RTA", (Given, When, Then) => {
 			// Arrangements
+			Given.iClearTheSessionLRep();
 			Given.iStartMyAppInAFrame("./test-resources/sap/ui/rta/internal/testdata/variantManagement/sites/standalone.html");
 
 			// Actions
