@@ -138,4 +138,26 @@ describe('sap.m.MultiInput', function() {
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 		browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
 	});
+
+	// MultiInput - ENTER on group header
+	it("should not close MultiInput dropdown on performing ENTER key on group header", function () {
+		var oMultiInput = element(by.id("mIWithSuggestions"));
+		browser.executeScript("document.getElementById('mIWithSuggestions').scrollIntoView()").then(function() {
+			oMultiInput.click();
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot()).toLookAs("mi_dropdown_group");
+
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ENTER).perform();
+			expect(takeScreenshot()).toLookAs("mi_dropdown_open_group");
+
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ENTER).perform();
+			expect(takeScreenshot()).toLookAs("mi_dropdown_closed_group");
+
+			// clear token
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+		});
+	});
 });

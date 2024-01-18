@@ -1061,7 +1061,9 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.onsapenter = function(oEvent) {
 			var oControl = oEvent.srcControl,
-				oItem = oControl.getSelectedItem();
+				oItem = oControl.getSelectedItem(),
+				oSuggestionPopover = oControl._getSuggestionsPopover(),
+				oFocusedItem = oSuggestionPopover && oSuggestionPopover.getFocusedListItem();
 
 			if (oItem && this.getFilterSecondaryValues()) {
 				oControl.updateDomValue(oItem.getText());
@@ -1071,6 +1073,11 @@ sap.ui.define([
 
 			// in case of a non-editable or disabled combo box, the selection cannot be modified
 			if (!oControl.getEnabled() || !oControl.getEditable()) {
+				return;
+			}
+
+			// prevent closing of popover, when Enter is pressed on a group header
+			if (oFocusedItem && oFocusedItem.isA("sap.m.GroupHeaderListItem")) {
 				return;
 			}
 
