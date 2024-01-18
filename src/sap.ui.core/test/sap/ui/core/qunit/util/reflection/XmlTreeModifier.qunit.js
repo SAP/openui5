@@ -535,19 +535,19 @@ sap.ui.define([
 			assert.strictEqual(oInvisibleLabel.getAttribute("visible"), null, "visible=true means not having it in xml as some controls behave differently if visible property is provided");
 		});
 
-		QUnit.test("setStash", function (assert) {
+		QUnit.test("setStash", async function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[7];
 			var aChildNodes = XmlTreeModifier._children(oVBox);
 
-			XmlTreeModifier.setStashed(oVBox, true);
+			await XmlTreeModifier.setStashed(oVBox, true);
 			assert.strictEqual(oVBox.getAttribute("stashed"), "true", "stashed attribute can be added");
 
 			var oVisibleLabel = aChildNodes[0];
-			XmlTreeModifier.setStashed(oVisibleLabel, true);
+			await XmlTreeModifier.setStashed(oVisibleLabel, true);
 			assert.strictEqual(oVisibleLabel.getAttribute("stashed"), "true", "stashed attribute can be changed");
 
 			var oStashedInvisibleLabel = aChildNodes[1];
-			XmlTreeModifier.setStashed(oStashedInvisibleLabel, false);
+			await XmlTreeModifier.setStashed(oStashedInvisibleLabel, false);
 			assert.strictEqual(oStashedInvisibleLabel.getAttribute("stashed"), null, "stashed=false means not having it in xml as some controls behave differently if visible property is provided");
 			assert.strictEqual(oStashedInvisibleLabel.getAttribute("visible"), null, "Unstash also needs to make the control visible (which is done automatically in with stash API)");
 		});

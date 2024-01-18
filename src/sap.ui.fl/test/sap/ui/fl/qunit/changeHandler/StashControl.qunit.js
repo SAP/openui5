@@ -192,10 +192,6 @@ sap.ui.define([
 				return this.oChangeHandler.revertChange(this.oChange, oStashedControl, {modifier: JsControlTreeModifier, appComponent: oMockUIComponent});
 			}.bind(this))
 			.then(function() {
-				var oStashedControl = oView.byId("toBeStashed");
-
-				this.oChangeHandler.revertChange(this.oChange, oStashedControl, {modifier: JsControlTreeModifier, appComponent: oMockUIComponent});
-
 				var aContentAfterRevert = oView.byId("verticalLayout").getContent();
 				assert.strictEqual(aContentAfterRevert.length, 4, "then the VerticalLayout has 4 controls after revert");
 
