@@ -236,7 +236,7 @@ sap.ui.define([
 
 			MessageToast.show("Submitting changes...");
 
-			oTable.getBinding("rows").submitChanges();
+			oTable.getBinding("rows").getModel().submitChanges();
 			oTable.setFirstVisibleRow(0); // scroll to top after submitting
 		},
 
