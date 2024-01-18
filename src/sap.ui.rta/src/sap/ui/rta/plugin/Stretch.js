@@ -7,13 +7,11 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
-	"sap/base/util/includes",
 	"sap/base/util/restricted/_debounce"
 ], function(
 	Plugin,
 	OverlayRegistry,
 	OverlayUtil,
-	includes,
 	_debounce
 ) {
 	"use strict";
@@ -181,7 +179,7 @@ sap.ui.define([
 
 	Stretch.prototype.addStretchCandidate = function(oOverlay) {
 		var oElement = oOverlay.getElement();
-		if (!includes(this.getStretchCandidates(), oElement.getId())) {
+		if (!this.getStretchCandidates().includes(oElement.getId())) {
 			this.addAssociation("stretchCandidates", oElement);
 		}
 	};
@@ -250,7 +248,7 @@ sap.ui.define([
 
 			this._aOverlaysCollected ||= [];
 
-			if (!includes(this._aOverlaysCollected, oOverlay)) {
+			if (!this._aOverlaysCollected.includes(oOverlay)) {
 				this._aOverlaysCollected.push(oOverlay);
 				this.fnDebounced();
 			}
@@ -325,7 +323,7 @@ sap.ui.define([
 	};
 
 	Stretch.prototype._getRelevantOverlaysOnEditableChange = function(oOverlay) {
-		var aRelevantElements = includes(this.getStretchCandidates(), oOverlay.getElement().getId()) ? [oOverlay.getElement().getId()] : [];
+		var aRelevantElements = this.getStretchCandidates().includes(oOverlay.getElement().getId()) ? [oOverlay.getElement().getId()] : [];
 		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
 		if (!oParentAggregationOverlay) {
 			return aRelevantElements;
@@ -355,7 +353,7 @@ sap.ui.define([
 				return aReturn;
 			}
 
-			if (!includes(this.getStretchCandidates(), oOverlay.getElement().getId())) {
+			if (!this.getStretchCandidates().includes(oOverlay.getElement().getId())) {
 				return aReturn;
 			}
 

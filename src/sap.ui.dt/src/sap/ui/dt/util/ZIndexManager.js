@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/dt/Util",
 	"sap/m/InstanceManager",
-	"sap/base/util/includes",
 	"sap/base/util/restricted/_max",
 	"sap/base/util/restricted/_min"
 ], function(
@@ -17,7 +16,6 @@ sap.ui.define([
 	Log,
 	Util,
 	InstanceManager,
-	includes,
 	_max,
 	_min
 ) {
@@ -55,7 +53,7 @@ sap.ui.define([
 
 	function getLastZIndex(iCurrent, iMax, aExistingIndices) {
 		if (++iCurrent <= iMax) {
-			if (includes(aExistingIndices, iCurrent)) {
+			if (aExistingIndices.includes(iCurrent)) {
 				return getLastZIndex(iCurrent, iMax, aExistingIndices);
 			}
 			return iCurrent;

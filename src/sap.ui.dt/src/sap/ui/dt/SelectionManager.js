@@ -7,16 +7,14 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/dt/SelectionMode",
-	"sap/ui/dt/ElementOverlay",
-	"sap/base/util/includes"
+	"sap/ui/dt/ElementOverlay"
 ],
 function(
 	ManagedObject,
 	OverlayRegistry,
 	Util,
 	SelectionMode,
-	ElementOverlay,
-	includes
+	ElementOverlay
 ) {
 	"use strict";
 
@@ -145,7 +143,7 @@ function(
 
 		if (this._validate(aElementOverlays)) {
 			var aElementOverlaysToRemove = this.get().filter(function(oElementOverlay) {
-				return !includes(aElementOverlays, oElementOverlay);
+				return !aElementOverlays.includes(oElementOverlay);
 			});
 
 			bResult = this._remove(aElementOverlaysToRemove) || bResult;
@@ -172,7 +170,7 @@ function(
 
 		// Filter out already selected overlays
 		aElementOverlays = aElementOverlays.filter(function(oElementOverlay) {
-			return !includes(aCurrentSelection, oElementOverlay);
+			return !aCurrentSelection.includes(oElementOverlay);
 		});
 
 		if (aElementOverlays.length) {
@@ -218,7 +216,7 @@ function(
 		var aCurrentSelection = this.get();
 
 		var aNextSelection = aCurrentSelection.filter(function(oElementOverlay) {
-			return !includes(aElementOverlays, oElementOverlay);
+			return !aElementOverlays.includes(oElementOverlay);
 		});
 
 		if (aNextSelection.length !== aCurrentSelection.length) {
@@ -271,7 +269,7 @@ function(
 	SelectionManager.prototype.addValidator = function(fnValidator) {
 		if (
 			typeof fnValidator === "function"
-			&& !includes(this._aValidators, fnValidator)
+			&& !this._aValidators.includes(fnValidator)
 		) {
 			this._aValidators = this._aValidators.concat(fnValidator);
 		}

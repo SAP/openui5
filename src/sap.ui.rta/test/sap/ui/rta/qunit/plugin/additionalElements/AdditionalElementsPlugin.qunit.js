@@ -1,7 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
@@ -32,7 +31,6 @@ sap.ui.define([
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Element"
 ], function(
-	includes,
 	isEmptyObject,
 	merge,
 	ObjectPath,
@@ -1170,7 +1168,7 @@ sap.ui.define([
 		QUnit.test("when the control's dt metadata has a reveal and addViaDelegate and the default delegate is not available", function(assert) {
 			sandbox.stub(Library, "load").callsFake(function(...aArgs) {
 				const [oLibrary] = aArgs;
-				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), oLibrary.name)) {
+				if (DelegateMediatorAPI.getKnownDefaultDelegateLibraries().includes(oLibrary.name)) {
 					return Promise.reject();
 				}
 				return Library.load.wrappedMethod.apply(this, aArgs);
@@ -1202,7 +1200,7 @@ sap.ui.define([
 		QUnit.test("when the control's dt metadata has an instance-specific delegate and an unavailable default delegate", function(assert) {
 			sandbox.stub(Library, "load").callsFake(function(...aArgs) {
 				const [oLibrary] = aArgs;
-				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), oLibrary.name)) {
+				if (DelegateMediatorAPI.getKnownDefaultDelegateLibraries().includes(oLibrary.name)) {
 					return Promise.reject();
 				}
 				return Library.load.wrappedMethod.apply(this, aArgs);

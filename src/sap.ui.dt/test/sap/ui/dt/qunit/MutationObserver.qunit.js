@@ -1,7 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/m/Button",
 	"sap/m/Panel",
 	"sap/ui/qunit/utils/nextUIUpdate",
@@ -13,7 +12,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	includes,
 	Button,
 	Panel,
 	nextUIUpdate,
@@ -80,7 +78,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oMutationObserver.registerHandler(this.sNodeId, function(mParameters) {
-				assert.ok(includes(mParameters.type, "MutationObserver"), "then domChanged callback is called for relevant node");
+				assert.ok(mParameters.type.includes("MutationObserver"), "then domChanged callback is called for relevant node");
 				fnDone();
 			}, true);
 
@@ -107,7 +105,7 @@ sap.ui.define([
 			// setTimeout is needed to ignore a mutation from setting text to Node
 			setTimeout(function() {
 				this.oMutationObserver.registerHandler(this.sNodeId, function(mParameters) {
-					assert.ok(includes(mParameters.type, "MutationObserver"), "then domChanged callback is called with a relevant node");
+					assert.ok(mParameters.type.includes("MutationObserver"), "then domChanged callback is called with a relevant node");
 					fnDone();
 				}, true);
 				this.$Node.contents().get(0).nodeValue = "123";
@@ -119,7 +117,7 @@ sap.ui.define([
 			var oShadowRoot = this.$Node.get(0).attachShadow({mode: "open"});
 			this.oMutationObserver.addNode(oShadowRoot);
 			this.oMutationObserver.registerHandler(this.sNodeId, function(mParameters) {
-				assert.ok(includes(mParameters.type, "MutationObserver"), "then domChanged callback is called with the host node");
+				assert.ok(mParameters.type.includes("MutationObserver"), "then domChanged callback is called with the host node");
 				fnDone();
 			}, true);
 			oShadowRoot.innerHTML = "<div></div>";
@@ -134,7 +132,7 @@ sap.ui.define([
 			});
 			this.oMutationObserver.registerHandler(this.sNodeId, function(mParameters) {
 				// for the target node only one domChanged event should be fired
-				assert.ok(includes(mParameters.type, "MutationObserver"), "then domChanged callback is called with a relevant node");
+				assert.ok(mParameters.type.includes("MutationObserver"), "then domChanged callback is called with a relevant node");
 				assert.ok(true, "the node change is part of the event, but emitted only once (first mutation is ignored)");
 				assert.equal(this.$Node[0].childNodes[0].id, "test1", "then first div is appended");
 				assert.equal(this.$Node[0].childNodes[1].id, "test2", "then second div is appended");

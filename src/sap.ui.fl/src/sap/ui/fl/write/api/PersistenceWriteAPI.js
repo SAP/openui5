@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/base/util/restricted/_omit",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -22,7 +21,6 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
 ], function(
-	includes,
 	_omit,
 	Log,
 	JsControlTreeModifier,
@@ -63,8 +61,8 @@ sap.ui.define([
 	 */
 	function isDescriptorChange(oChange) {
 		return (oChange._getMap
-			&& includes(DescriptorChangeTypes.getChangeTypes(), oChange._getMap().changeType))
-			|| (oChange.getChangeType && includes(DescriptorChangeTypes.getChangeTypes(), oChange.getChangeType()));
+			&& DescriptorChangeTypes.getChangeTypes().includes(oChange._getMap().changeType))
+			|| (oChange.getChangeType && DescriptorChangeTypes.getChangeTypes().includes(oChange.getChangeType()));
 	}
 
 	/**

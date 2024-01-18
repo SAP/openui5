@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_union",
-	"sap/base/util/includes",
 	"sap/base/util/merge",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -27,7 +26,6 @@ sap.ui.define([
 	"sap/ui/performance/Measurement"
 ], function(
 	union,
-	includes,
 	merge,
 	Log,
 	JsControlTreeModifier,
@@ -205,7 +203,7 @@ sap.ui.define([
 				sControlId = JsControlTreeModifier.getControlIdBySelector(oDependentControlSelector, oAppComponent);
 				aNewValidControlDependencies.push(oDependentControlSelector);
 				this._mChanges.mControlsWithDependencies[sControlId] ||= [];
-				if (!includes(this._mChanges.mControlsWithDependencies[sControlId], oChange.getId())) {
+				if (!this._mChanges.mControlsWithDependencies[sControlId].includes(oChange.getId())) {
 					this._mChanges.mControlsWithDependencies[sControlId].push(oChange.getId());
 				}
 			}
