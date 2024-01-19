@@ -801,71 +801,7 @@ sap.ui.define([
 	QUnit.module("jQuery.sap.isMouseEventDelayed");
 
 	QUnit.test("isMouseEventDelayed is set", function(assert) {
-		assert.notEqual(jQuery.sap.isMouseEventDelayed, undefined, "isMouseEventDelayed is set");
-	});
-
-	QUnit.test("Under iOS WebView with iOS version 8", function(assert) {
-		this.stub(Device, "os").value({
-			ios: true,
-			version: 8
-		});
-		this.stub(Device, "browser").value({
-			safari: true,
-			webview: true,
-			mobile: true
-		});
-
-		jQuery.sap._refreshMouseEventDelayedFlag();
-
-		assert.ok(jQuery.sap.isMouseEventDelayed, "isMouseEventDelayed should be marked with true for webview in iOS 8");
-	});
-
-	QUnit.test("Under iOS with iOS version 8 (not a webview)", function(assert) {
-		this.stub(Device, "os").value({
-			ios: true,
-			version: 8
-		});
-		this.stub(Device, "browser").value({
-			safari: true,
-			webview: false,
-			mobile: true
-		});
-
-		jQuery.sap._refreshMouseEventDelayedFlag();
-
-		assert.ok(!jQuery.sap.isMouseEventDelayed, "isMouseEventDelayed should be marked with false for safari (not a webview) iOS 8");
-	});
-
-	QUnit.test("Under Chrome (Samsung Device, version >= 32)", function(assert) {
-		this.stub(Device, "browser").value({
-			chrome: true,
-			mobile: true,
-			version: 32
-		});
-
-		//mock samsung user agent
-		var oNavigatorObjectMock = {};
-		oNavigatorObjectMock.userAgent = "Mozilla/5.0(SAMSUNG SM-G900F/XXS1CPF1 Build/MMB29M) Chrome/44.0.2403.133";
-
-		jQuery.sap._refreshMouseEventDelayedFlag(oNavigatorObjectMock);
-
-		assert.ok(jQuery.sap.isMouseEventDelayed, "isMouseEventDelayed should be marked with true for Samsung devices with Chrome with version >= 32");
-	});
-
-	QUnit.test("Under Chrome (version >= 32)", function(assert) {
-		this.stub(Device, "browser").value({
-			chrome: true,
-			mobile: true,
-			version: 32
-		});
-
-		//mock desktop chrome user agent
-		var oNavigatorObjectMock = {};
-		oNavigatorObjectMock.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/55.0.2883.87";
-
-		jQuery.sap._refreshMouseEventDelayedFlag(oNavigatorObjectMock);
-
-		assert.ok(!jQuery.sap.isMouseEventDelayed, "isMouseEventDelayed should be marked with false for Chrome with version >= 32");
+		assert.equal(jQuery.sap.isMouseEventDelayed, false, "isMouseEventDelayed is set");
 	});
 
 	var cleanupDelegatesAndEventListener = function(assert) {
