@@ -1,14 +1,14 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/Log",
+	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
 	"sap/ui/core/format/FormatUtils",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
-	"sap/base/Log",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Supportability"
-], function(Localization, FormatUtils, NumberFormat, Locale, LocaleData, Log, Configuration, Supportability) {
+], function(Log, Formatting, Localization, FormatUtils, NumberFormat, Locale, LocaleData, Supportability) {
 	"use strict";
 
 	/*eslint no-floating-decimal:0 */
@@ -2009,19 +2009,18 @@ sap.ui.define([
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 
 			//ensure custom unit mappings and custom units are reset
-			this.oFormatSettings = Configuration.getFormatSettings();
-			this.oFormatSettings.setUnitMappings();
-			this.oFormatSettings.setCustomUnits();
+			Formatting.setUnitMappings();
+			Formatting.setCustomUnits();
 
-			assert.strictEqual(this.oFormatSettings.getCustomUnits(), undefined, "units must be undefined");
-			assert.strictEqual(this.oFormatSettings.getUnitMappings(), undefined, "unit mappings must be undefined");
+			assert.strictEqual(Formatting.getCustomUnits(), undefined, "units must be undefined");
+			assert.strictEqual(Formatting.getUnitMappings(), undefined, "unit mappings must be undefined");
 		}, afterEach: function (assert) {
 			//ensure custom unit mappings and custom units are reset
-			this.oFormatSettings.setUnitMappings();
-			this.oFormatSettings.setCustomUnits();
+			Formatting.setUnitMappings();
+			Formatting.setCustomUnits();
 
-			assert.strictEqual(this.oFormatSettings.getCustomUnits(), undefined, "units must be undefined");
-			assert.strictEqual(this.oFormatSettings.getUnitMappings(), undefined, "unit mappings must be undefined");
+			assert.strictEqual(Formatting.getCustomUnits(), undefined, "units must be undefined");
+			assert.strictEqual(Formatting.getUnitMappings(), undefined, "unit mappings must be undefined");
 
 			this.oLogWarningSpy.restore();
 		}
@@ -2029,7 +2028,6 @@ sap.ui.define([
 
 
 	QUnit.test("Unit format custom pattern in config", function (assert) {
-		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"unitPattern-count-one": "{0} H",
@@ -2039,7 +2037,7 @@ sap.ui.define([
 				"unitPattern-count-other": "{0} mymm"
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 
 		var oFormat = NumberFormat.getUnitInstance({});
 
@@ -2050,7 +2048,7 @@ sap.ui.define([
 
 
 		//custom mappings should not affect parsing
-		oFormatSettings.setUnitMappings({
+		Formatting.setUnitMappings({
 			"henry": "electric-inductance",
 			"IND": "electric-inductance",
 			"MTR": "length-meter",
@@ -2082,12 +2080,11 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format(20, "one"), "20 one", "recursive mapping");
 		assert.strictEqual(oFormat.format(20, "two"), "20 two", "recursive mapping");
 
-		oFormatSettings.setCustomUnits(undefined);
-		oFormatSettings.setUnitMappings(undefined);
+		Formatting.setCustomUnits(undefined);
+		Formatting.setUnitMappings(undefined);
 	});
 
 	QUnit.test("Unit format with private FormatOptions parameter unitOptional active", function (assert) {
-		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
@@ -2095,19 +2092,18 @@ sap.ui.define([
 				"unitPattern-count-other": "{0} H"
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 		var oFormat = NumberFormat.getUnitInstance({unitOptional:true});
 
 		assert.strictEqual(oFormat.format(20), "20", "can format 20");
 		assert.strictEqual(oFormat.format(20.000), "20", "can format 20.000");
 		assert.strictEqual(oFormat.format(200000), "200,000", "can format 200000");
 
-		oFormatSettings.setCustomUnits(undefined);
+		Formatting.setCustomUnits(undefined);
 	});
 
 
 	QUnit.test("Unit parse with private FormatOptions parameter unitOptional active", function (assert) {
-		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
@@ -2115,18 +2111,17 @@ sap.ui.define([
 				"unitPattern-count-other": "{0} H"
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 		var oFormat = NumberFormat.getUnitInstance({unitOptional:true});
 
 		assert.deepEqual(oFormat.parse("20"), [20, undefined], "can parse 20");
 		assert.deepEqual(oFormat.parse("20.000"), [20, undefined], "can parse 20");
 		assert.deepEqual(oFormat.parse("20,000"), [20000, undefined], "can parse 20");
 
-		oFormatSettings.setCustomUnits(undefined);
+		Formatting.setCustomUnits(undefined);
 	});
 
 	QUnit.test("Unit parse custom pattern in config", function (assert) {
-		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
@@ -2134,14 +2129,14 @@ sap.ui.define([
 				"unitPattern-count-other": "{0} H"
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 		var oFormat = NumberFormat.getUnitInstance({});
 
 		assert.deepEqual(oFormat.parse("20 ha"), [20, "area-hectare"], "20 ha");
 		assert.deepEqual(oFormat.parse("20 H"), [20, "electric-inductance"], "20 H");
 		assert.deepEqual(oFormat.parse("1 H"), [1, "electric-inductance"], "1 H");
 
-		oFormatSettings.setCustomUnits(undefined);
+		Formatting.setCustomUnits(undefined);
 	});
 
 	QUnit.test("Unit format showNumber false", function (assert) {
@@ -2186,25 +2181,23 @@ sap.ui.define([
 	});
 
 	QUnit.test("Unit format showNumber false custom Units from global configuration with only other pattern", function (assert) {
-		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
 				"unitPattern-count-other": "{0} Hs"
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 
 		var oFormat = NumberFormat.getUnitInstance({showNumber: false});
 
 		// test custom unit in config
 		assert.strictEqual(oFormat.format(1, "electric-inductance"), "Hs", "1 H");
 
-		oFormatSettings.setCustomUnits(undefined);
+		Formatting.setCustomUnits(undefined);
 	});
 
 	QUnit.test("Unit format showNumber false custom Units from global configuration", function (assert) {
-		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
@@ -2212,7 +2205,7 @@ sap.ui.define([
 				"unitPattern-count-other": "{0} Hs"
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 
 		var oFormat = NumberFormat.getUnitInstance({showNumber: false});
 
@@ -2221,7 +2214,7 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format(20, "electric-inductance"), "Hs", "20 H");
 		assert.strictEqual(oFormat.format(1, "electric-inductance"), "H", "1 H");
 
-		oFormatSettings.setCustomUnits(undefined);
+		Formatting.setCustomUnits(undefined);
 	});
 
 	QUnit.test("Unit format showNumber false custom Units from customUnits parameter", function (assert) {
@@ -2608,7 +2601,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Unit format with global configuration overwritten by format instance", function (assert) {
-		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"steven": {
 				"unitPattern-count-one": "{0} tylr",
@@ -2618,7 +2610,7 @@ sap.ui.define([
 				"decimals": 8
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 
 		var oFormat = NumberFormat.getUnitInstance({
 			customUnits: {
@@ -2708,6 +2700,8 @@ sap.ui.define([
 		assert.strictEqual(oFormatFallback.format(1.12, "steven"), "1.12000000 tylrs", "1.12000000 tylrs");
 		assert.strictEqual(oFormatFallback.format(1.123, "steven"), "1.12300000 tylrs", "1.12300000 tylrs");
 		assert.strictEqual(oFormatFallback.format(1.125, "steven"), "1.12500000 tylrs", "1.12500000 tylrs");
+
+		Formatting.setCustomUnits(undefined);
 	});
 
 	QUnit.test("Unit parse with sMeasure", function (assert) {

@@ -1,8 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Lib",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/NumberFormat",
@@ -21,7 +21,9 @@ sap.ui.define([
 	"sap/ui/model/type/TimeInterval",
 	"sap/ui/model/type/Unit",
 	"sap/ui/test/TestUtils"
-], function(Log, Localization, Configuration, Library, UI5Date, NumberFormat, FormatException, ParseException, ValidateException, BooleanType, CurrencyType, DateTimeType, DateTimeIntervalType, FileSizeType, FloatType, IntegerType, StringType, TimeType, TimeIntervalType, UnitType, TestUtils) {
+], function(Log, Formatting, Localization, Library, UI5Date, NumberFormat, FormatException, ParseException,
+		ValidateException, BooleanType, CurrencyType, DateTimeType, DateTimeIntervalType, FileSizeType, FloatType,
+		IntegerType, StringType, TimeType, TimeIntervalType, UnitType, TestUtils) {
 	"use strict";
 
 	function checkValidateException(oEx) {
@@ -1971,7 +1973,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("unit format and parse - custom units (global)", function (assert) {
-		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"lebkuchen": {
 				"unitPattern-count-one": "{0} LK",
@@ -1980,7 +1981,7 @@ sap.ui.define([
 				"decimals": 3
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 
 		var oType = new UnitType();
 
@@ -1991,11 +1992,11 @@ sap.ui.define([
 		// format and parse valid unit
 		assert.strictEqual(oType.formatValue([200.57, "lebkuchen"], "string"), "200.570 LKs", "decimals '3' is respected");
 		assert.deepEqual(oType.parseValue("200.5123 LKs", "string"), [200.5123, "lebkuchen"], "parsing is valid");
+		Formatting.setCustomUnits(undefined);
 	});
 
 	QUnit.test("unit format and parse - custom units (global & local)", function (assert) {
 		// global config
-		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"lebkuchen": {
 				"unitPattern-count-one": "{0} LK",
@@ -2004,7 +2005,7 @@ sap.ui.define([
 				"decimals": 3
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 
 		// local config  -->  hides global config
 		var oType = new UnitType({
@@ -2039,6 +2040,8 @@ sap.ui.define([
 		// format and parse valid unit
 		assert.strictEqual(oType.formatValue([200.575, "electric-inductance"], "string"), "200.575 H", "precision 4 is respected (rounded)");
 		assert.deepEqual(oType.parseValue("200.5123 H", "string"), [200.5123, "electric-inductance"], "parsing is valid");
+
+		Formatting.setCustomUnits(undefined);
 	});
 
 	QUnit.test("unit validateValue - minimum and maximum value constraints", function (assert) {
@@ -2206,7 +2209,6 @@ sap.ui.define([
 
 	QUnit.test("Unit: Dynamic values & unit overdefiniton via Configuration (decimals)", function (assert) {
 		// overwrite the length-meter unit, and define a decimals value
-		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"length-meter": {
 				"unitPattern-count-one": "{0} m",
@@ -2215,7 +2217,7 @@ sap.ui.define([
 				"decimals": 3
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 
 		// new Meter type
 		var MeterType = UnitType.extend("sap.ui.core.test.MeterType", {
@@ -2261,11 +2263,12 @@ sap.ui.define([
 
 		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
 		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 10, "10 instances because 10 different decimal options are provided");
+
+		Formatting.setCustomUnits(undefined);
 	});
 
 	QUnit.test("Unit: Dynamic values & unit overdefiniton via Configuration (precision)", function (assert) {
 		// overwrite the length-meter unit, and define a decimals value
-		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"length-meter": {
 				"unitPattern-count-one": "{0} m",
@@ -2274,7 +2277,7 @@ sap.ui.define([
 				"precision": 4
 			}
 		};
-		oFormatSettings.setCustomUnits(oConfigObject);
+		Formatting.setCustomUnits(oConfigObject);
 
 		// new Meter type
 		var MeterType = UnitType.extend("sap.ui.core.test.MeterType", {
@@ -2320,6 +2323,8 @@ sap.ui.define([
 
 		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
 		assert.strictEqual(oMeterTypeInstanceSpy.callCount, 10, "10 instances because 10 different precision options are provided");
+
+		Formatting.setCustomUnits(undefined);
 	});
 
 	QUnit.test("Multiple Unit-Instances with bound custom units and other distinct format options", function (assert) {
