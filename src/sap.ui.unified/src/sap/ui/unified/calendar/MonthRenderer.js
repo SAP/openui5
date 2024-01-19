@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	'sap/ui/unified/calendar/CalendarUtils',
@@ -15,9 +14,10 @@ sap.ui.define([
 	"sap/base/Log",
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/date/UI5Date',
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/date/CalendarUtils",
+	"sap/ui/core/Locale"
 ], function(
-	Localization,
 	Element,
 	Library,
 	CalendarUtils,
@@ -29,7 +29,9 @@ sap.ui.define([
 	Log,
 	InvisibleText,
 	UI5Date,
-	Configuration
+	Configuration,
+	CalendarDateUtils,
+	Locale
 ) {
 "use strict";
 
@@ -467,8 +469,12 @@ MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWee
 	}
 
 	if (this.renderWeekNumbers && oMonth._oDate) {
-		const iWeekNumber = CalendarUtils.calculateWeekNumber(oDay.toLocalJSDate(), oDay.toLocalJSDate().getFullYear(), Localization.getLanguage(), oMonth._getLocaleData());
-		mAccProps["describedby"] = mAccProps["describedby"] + " " + oMonth.getId() + "-week-" + iWeekNumber + "-text";
+		// TODO: We could replace the following lines with a sap.ui.unified.calendar.CalendarUtils.calculateWeekNumber usage
+		// once the same method starts to respect the sap/ui/core/date/CalendarWeekNumbering types.
+		const oWeekConfig = CalendarDateUtils.getWeekConfigurationValues(oMonth.getCalendarWeekNumbering(), new Locale(oMonth._getLocale()));
+		oWeekConfig.firstDayOfWeek = oMonth._getFirstDayOfWeek();
+		const oFirstDateOfWeek = CalendarDate.fromUTCDate(CalendarUtils.getFirstDateOfWeek(oDay.toLocalJSDate(), oWeekConfig), oMonth.getPrimaryCalendarType());
+		mAccProps["describedby"] = mAccProps["describedby"] + " " + oMonth.getId() + "-week-" + oMonth._calculateWeekNumber(oFirstDateOfWeek) + "-text";
 	}
 
 	if (bNonWorking) {

@@ -18,32 +18,32 @@ sap.ui.define([
 			this.oPlugin = new V4Aggregation();
 
 			this.oPlugin.setPropertyInfos([{
-				name: "Property1",
+				key: "Property1",
 				path: "prop1",
 				isKey: true
 			}, {
-				name: "Property2",
+				key: "Property2",
 				path: "prop2",
 				isKey: true,
 				groupable: true
 			}, {
-				name: "Property3",
+				key: "Property3",
 				path: "prop3",
 				groupable: true,
 				text: "Property4"
 			}, {
-				name: "Property4",
+				key: "Property4",
 				path: "prop4",
 				groupable: true
 			}, {
-				name: "Property5",
+				key: "Property5",
 				path: "prop5",
 				aggregatable: true,
 				aggregationDetails: {
 					customAggregate: {}
 				}
 			}, {
-				name: "Property6",
+				key: "Property6",
 				path: "prop6",
 				aggregatable: true,
 				aggregationDetails: {
@@ -51,7 +51,7 @@ sap.ui.define([
 				},
 				unit: "Property4"
 			}, {
-				name: "Property7",
+				key: "Property7",
 				path: "prop7",
 				aggregatable: true,
 				aggregationDetails: {
@@ -59,7 +59,7 @@ sap.ui.define([
 				},
 				groupable: true
 			}, {
-				name: "Property8",
+				key: "Property8",
 				path: "prop8",
 				aggregatable: true,
 				aggregationDetails: {
@@ -68,7 +68,7 @@ sap.ui.define([
 					}
 				}
 			}, {
-				name: "Property9",
+				key: "Property9",
 				path: "prop9",
 				unit: "Property3",
 				aggregatable: true,
@@ -78,7 +78,7 @@ sap.ui.define([
 					}
 				}
 			}, {
-				name: "Property10",
+				key: "Property10",
 				path: "prop10",
 				aggregatable: true,
 				aggregationDetails: {
@@ -353,7 +353,7 @@ sap.ui.define([
 			this.oPlugin = new V4Aggregation();
 
 			this.oPlugin.setPropertyInfos([{
-				name: "Property1",
+				key: "Property1",
 				path: "prop1",
 				aggregatable: true,
 				aggregationDetails: {
@@ -435,16 +435,16 @@ sap.ui.define([
 			this.oPlugin = new V4Aggregation();
 
 			this.oPlugin.setPropertyInfos([{
-				name: "Property1",
+				key: "Property1",
 				path: "prop1",
 				label: "Property 1",
 				text: "Property2"
 			}, {
-				name: "Property2",
+				key: "Property2",
 				path: "prop2",
 				label: "Property 2"
 			}, {
-				name: "Property3",
+				key: "Property3",
 				path: "prop3",
 				label: "Property 3",
 				groupingDetails: {

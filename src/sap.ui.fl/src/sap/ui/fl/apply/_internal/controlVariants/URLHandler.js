@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/thirdparty/hasher",
-	"sap/base/util/includes",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils"
 ], function(
 	Component,
@@ -22,7 +21,6 @@ sap.ui.define([
 	isEmptyObject,
 	ManagedObjectObserver,
 	hasher,
-	includes,
 	VariantUtil
 ) {
 	"use strict";
@@ -57,7 +55,7 @@ sap.ui.define([
 
 			if (sVariantManagementReference) {
 				// check if a URL parameter for this variant management reference was already added
-				if (includes(aAddedVMReferences, sVariantManagementReference)) {
+				if (aAddedVMReferences.includes(sVariantManagementReference)) {
 					oResultantParameters.updateRequired = true;
 					return oResultantParameters;
 				}

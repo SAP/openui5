@@ -174,7 +174,7 @@
 		  // added to "aggregate" (see ODataListBinding#setaggregation)
 		  custom: {
 			alias: {
-			  name: string,
+			  key: string,
 			  with: string,
 			  grandTotal: boolean,
 			  subtotals: boolean
@@ -251,7 +251,7 @@
 					custom: {
 						SalesAmountMin: {
 							with: "min",
-							name: "SalesAmount",
+							key: "SalesAmount",
 							subtotals: true
 						}
 					}
@@ -324,31 +324,31 @@
 
 		window.V4Plugin.setPropertyInfos([
 			{
-				name: "Id",
+				key: "Id",
 				path: "Id",
-				key: true,
+				isKey: true,
 				groupable: true
 			},
 			{
-				name: "Name",
+				key: "Name",
 				path: "Name",
 				groupable: true
 			},
 			{
-				name: "Country",
+				key: "Country",
 				path: "Country",
 				label: "Country",
 				text: "CountryText",
 				groupable: true
 			},
 			{
-				name: "CountryText",
+				key: "CountryText",
 				path: "CountryText",
 				label: "Country Text",
 				groupable: true
 			},
 			{
-				name: "Region",
+				key: "Region",
 				path: "Region",
 				groupable: true,
 				groupingDetails: {
@@ -356,22 +356,22 @@
 				}
 			},
 			{
-				name: "Segment",
+				key: "Segment",
 				path: "Segment",
 				groupable: true
 			},
 			{
-				name: "Industry",
+				key: "Industry",
 				path: "Industry",
 				groupable: true
 			},
 			{
-				name: "AccountResponsible",
+				key: "AccountResponsible",
 				path: "AccountResponsible",
 				groupable: true
 			},
 			{
-				name: "SalesNumber",
+				key: "SalesNumber",
 				path: "SalesNumber",
 				aggregatable: true,
 				aggregationDetails: {
@@ -379,7 +379,7 @@
 				}
 			},
 			{
-				name: "SalesAmount",
+				key: "SalesAmount",
 				path: "SalesAmount",
 				aggregatable: true,
 				aggregationDetails: {
@@ -387,7 +387,7 @@
 				}
 			},
 			{
-				name: "SalesAmountLocalCurrency",
+				key: "SalesAmountLocalCurrency",
 				path: "SalesAmountLocalCurrency",
 				aggregatable: true,
 				aggregationDetails: {
@@ -395,7 +395,7 @@
 				}
 			},
 			{
-				name: "AmountPerSale",
+				key: "AmountPerSale",
 				path: "AmountPerSale",
 				aggregatable: true,
 				aggregationDetails: {
@@ -403,12 +403,12 @@
 				}
 			},
 			{
-				name: "Currency",
+				key: "Currency",
 				path: "Currency",
 				groupable: true
 			},
 			{
-				name: "LocalCurrency",
+				key: "LocalCurrency",
 				path: "LocalCurrency",
 				groupable: true
 			}

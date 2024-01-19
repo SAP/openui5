@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
@@ -16,7 +15,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/VersionInfo"
 ], function(
-	includes,
 	Log,
 	JsControlTreeModifier,
 	VariantUtils,
@@ -68,12 +66,12 @@ sap.ui.define([
 				});
 				var oSelector = oChange.getSelector();
 				var sControlId = JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent);
-				return includes(aIdsOfPassedControls, sControlId);
+				return aIdsOfPassedControls.includes(sControlId);
 			}
 
 			function filterByChangeType(aChangeTypes, oChange) {
 				return (Array.isArray(aChangeTypes) && aChangeTypes.length > 0)
-					? includes(aChangeTypes, oChange.getChangeType())
+					? aChangeTypes.includes(oChange.getChangeType())
 					: true;
 			}
 

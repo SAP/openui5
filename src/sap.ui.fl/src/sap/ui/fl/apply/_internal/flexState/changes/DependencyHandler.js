@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Utils"
 ], function(
-	includes,
 	JsControlTreeModifier,
 	Utils
 ) {
@@ -45,7 +43,7 @@ sap.ui.define([
 	}
 
 	function addChangeIntoList(mChangesMap, oChange) {
-		if (!includes(mChangesMap.aChanges, oChange)) {
+		if (!mChangesMap.aChanges.includes(oChange)) {
 			mChangesMap.aChanges.push(oChange);
 		}
 	}
@@ -53,7 +51,7 @@ sap.ui.define([
 	function addChangeIntoSelectorList(mChangesMap, oChange, sSelectorId) {
 		mChangesMap.mChanges[sSelectorId] ||= [];
 
-		if (!includes(mChangesMap.mChanges[sSelectorId], oChange)) {
+		if (!mChangesMap.mChanges[sSelectorId].includes(oChange)) {
 			mChangesMap.mChanges[sSelectorId].push(oChange);
 		}
 	}
@@ -137,7 +135,7 @@ sap.ui.define([
 	function addDependencyEntry(oDependentChange, oChange, sDependentControlId, mChangesMap, bIsChangesInRevertOrder) {
 		if (isDependencyNeeded(oDependentChange, oChange, sDependentControlId, mChangesMap, bIsChangesInRevertOrder)) {
 			mChangesMap.mDependencies[oDependentChange.getId()].dependencies.push(oChange.getId());
-			if (!includes(mChangesMap.mDependencies[oDependentChange.getId()].dependentIds, sDependentControlId)) {
+			if (!mChangesMap.mDependencies[oDependentChange.getId()].dependentIds.includes(sDependentControlId)) {
 				mChangesMap.mDependencies[oDependentChange.getId()].dependentIds.push(sDependentControlId);
 			}
 
@@ -149,11 +147,11 @@ sap.ui.define([
 	}
 
 	function isDependencyNeeded(oDependentChange, oChange, sDependentControlId, mChangesMap, bIsChangesInRevertOrder) {
-		var bSelectorAlreadyThere = !bIsChangesInRevertOrder && includes(mChangesMap.mDependencies[oDependentChange.getId()].dependentIds, sDependentControlId);
+		var bSelectorAlreadyThere = !bIsChangesInRevertOrder && mChangesMap.mDependencies[oDependentChange.getId()].dependentIds.includes(sDependentControlId);
 		var bIndirectDependency = false;
 		if (mChangesMap.mDependentChangesOnMe[oChange.getId()]) {
 			mChangesMap.mDependentChangesOnMe[oChange.getId()].some(function(sChangeId) {
-				bIndirectDependency = includes(mChangesMap.mDependencies[oDependentChange.getId()].dependencies, sChangeId);
+				bIndirectDependency = mChangesMap.mDependencies[oDependentChange.getId()].dependencies.includes(sChangeId);
 				return bIndirectDependency;
 			});
 		}
@@ -325,7 +323,7 @@ sap.ui.define([
 						oDependency.controlsDependencies.splice(iIndex, 1);
 						delete mChangesMap.mControlsWithDependencies[sControlId];
 						mChangesMap.dependencyRemovedInLastBatch[sControlId] ||= [];
-						if (!includes(mChangesMap.dependencyRemovedInLastBatch[sControlId], sChangeKey)) {
+						if (!mChangesMap.dependencyRemovedInLastBatch[sControlId].includes(sChangeKey)) {
 							mChangesMap.dependencyRemovedInLastBatch[sControlId].push(sChangeKey);
 						}
 					}
@@ -355,7 +353,7 @@ sap.ui.define([
 				if (iIndex > -1) {
 					oDependency.dependencies.splice(iIndex, 1);
 					mChangesMap.dependencyRemovedInLastBatch[sControlId] ||= [];
-					if (!includes(mChangesMap.dependencyRemovedInLastBatch[sControlId], sKey)) {
+					if (!mChangesMap.dependencyRemovedInLastBatch[sControlId].includes(sKey)) {
 						mChangesMap.dependencyRemovedInLastBatch[sControlId].push(sKey);
 					}
 				}

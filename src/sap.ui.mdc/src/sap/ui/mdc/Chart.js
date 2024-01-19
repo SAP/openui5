@@ -453,7 +453,7 @@ sap.ui.define([
 		 * When specifying the <code>PropertyInfo</code> objects in the {@link sap.ui.mdc.Chart#getPropertyInfo propertyInfo} property, the following
 		 * attributes need to be specified:
 		 * <ul>
-		 *   <li><code>name</code></li>
+		 *   <li><code>key</code></li>
 		 *   <li><code>label</code></li>
 		 *   <li><code>groupable</code></li>
 		 *   <li><code>aggregatable</code></li>

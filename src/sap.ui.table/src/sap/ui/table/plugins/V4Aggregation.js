@@ -216,7 +216,7 @@ sap.ui.define([
 		if (bIsGroupHeader) {
 			var mGroupLevelInfo = this._aGroupLevels[iLevel - 1];
 			var fnGroupHeaderFormatter = this.getGroupHeaderFormatter();
-			var sCustomGroupHeaderTitle = fnGroupHeaderFormatter ? fnGroupHeaderFormatter(oState.context, mGroupLevelInfo.property.name) : undefined;
+			var sCustomGroupHeaderTitle = fnGroupHeaderFormatter ? fnGroupHeaderFormatter(oState.context, mGroupLevelInfo.property.key) : undefined;
 
 			if (sCustomGroupHeaderTitle === undefined) {
 				oState.title = defaultGroupHeaderFormatter(oState.context, mGroupLevelInfo);
@@ -237,14 +237,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves a propertyInfo from its name.
+	 * Retrieves a propertyInfo by its key.
 	 *
-	 * @param {string} sPropertyName name of the propertyInfo to be found
-	 * @returns {object|undefined} the property info with the corresponding name, or undefined
+	 * @param {string} sPropertyKey key of the propertyInfo to be found
+	 * @returns {object|undefined} the property info with the corresponding key, or undefined
 	 */
-	V4Aggregation.prototype.findPropertyInfo = function(sPropertyName) {
+	V4Aggregation.prototype.findPropertyInfo = function(sPropertyKey) {
 		return this.getPropertyInfos().find(function(oPropertyInfo) {
-			return oPropertyInfo.name === sPropertyName;
+			return oPropertyInfo.key === sPropertyKey;
 		});
 	};
 

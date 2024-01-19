@@ -28,7 +28,6 @@ sap.ui.define([
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/Util",
 	"qunit/MetadataTestUtil",
-	"sap/base/util/includes",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4",
@@ -61,7 +60,6 @@ sap.ui.define([
 	ElementDesignTimeMetadata,
 	DtUtil,
 	MetadataTestUtil,
-	includes,
 	DOMUtil,
 	JSONModel,
 	sinon,
@@ -272,9 +270,9 @@ sap.ui.define([
 			var oElementOverlay = OverlayRegistry.getOverlay(this.oButton1);
 			oElementOverlay.setSelectable(true);
 			this.oDesignTime.getSelectionManager().addValidator(function(aElementOverlays) {
-				return !includes(aElementOverlays.map(function(oElementOverlay) {
+				return !aElementOverlays.map(function(oElementOverlay) {
 					return oElementOverlay.getId();
-				}), oElementOverlay.getId());
+				}).includes(oElementOverlay.getId());
 			});
 			oElementOverlay.setSelected(true);
 			assert.notOk(oElementOverlay.isSelected());

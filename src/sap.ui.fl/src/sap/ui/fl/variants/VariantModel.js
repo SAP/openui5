@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/restricted/_isEqual",
 	"sap/base/util/each",
-	"sap/base/util/includes",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
@@ -34,7 +33,6 @@ sap.ui.define([
 	_omit,
 	_isEqual,
 	each,
-	includes,
 	isEmptyObject,
 	merge,
 	ObjectPath,
@@ -1463,7 +1461,7 @@ sap.ui.define([
 		});
 
 		return this.oChangePersistence.getDirtyChanges().filter(function(oChange) {
-			return includes(aChangeFileNames, oChange.getId()) && !oChange.getSavedToVariant();
+			return aChangeFileNames.includes(oChange.getId()) && !oChange.getSavedToVariant();
 		});
 	};
 

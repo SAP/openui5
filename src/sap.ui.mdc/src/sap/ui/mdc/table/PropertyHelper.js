@@ -52,17 +52,8 @@ sap.ui.define([
 						valueIfNotAllowed: false
 					}
 				},
-				key: {
-					type: "boolean",
-					inComplexProperty: {
-						valueIfNotAllowed: false
-					}
-				},
 				isKey: {
 					type: "boolean",
-					"default": {
-						value: "attribute:key"
-					},
 					inComplexProperty: {
 						valueIfNotAllowed: false
 					}
@@ -399,7 +390,7 @@ sap.ui.define([
 			// for complex properties generate [<TypeInstance>, <TypeSettings>][] structure
 			aTypes = oProperty.getSimpleProperties().flatMap((oProp) => {
 				const mPropWidthCalculation = oProp.visualSettings ? oProp.visualSettings.widthCalculation : undefined;
-				return mPropWidthCalculation === null || mWidthCalculation.excludeProperties.includes(oProp.name) ? [] : [
+				return mPropWidthCalculation === null || mWidthCalculation.excludeProperties.includes(oProp.key) ? [] : [
 					[oProp.typeConfig.typeInstance, mPropWidthCalculation]
 				];
 			});

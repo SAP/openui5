@@ -2,13 +2,11 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/Layer"
 ], function(
-	includes,
 	Lib,
 	ControlVariantUtils,
 	FlexObjectFactory,
@@ -70,7 +68,7 @@ sap.ui.define([
 			var sVariantReference = oFlexObject.fileType === "ctrl_variant"
 				? oFlexObject.variantManagementReference
 				: oFlexObject.variantReference;
-			if (sVariantReference && !includes(aVariantIds, sVariantReference)) {
+			if (sVariantReference && !aVariantIds.includes(sVariantReference)) {
 				var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 				var oNewVariant = FlexObjectFactory.createFlVariant({
 					id: sVariantReference,

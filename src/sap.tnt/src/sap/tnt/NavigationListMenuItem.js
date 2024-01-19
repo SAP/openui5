@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.unified.MenuItem.
-sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItemBase', 'sap/ui/unified/library', 'sap/ui/core/library', 'sap/ui/core/Icon'],
-	function(IconPool, MenuItemBase, library, coreLibrary, Icon) {
+sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItem', 'sap/ui/unified/library', 'sap/ui/core/library', 'sap/ui/core/Icon'],
+	function(IconPool, MenuItem, library, coreLibrary, Icon) {
 	"use strict";
 
 	const EXTERNAL_LINK_ICON = "sap-icon://arrow-right";
@@ -25,29 +25,12 @@ sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/unified/MenuItemBase', 'sap/ui/un
 	 * @private
 	 * @alias sap.tnt.NavigationListMenuItem
 	 */
-	var NavigationListMenuItem = MenuItemBase.extend("sap.tnt.NavigationListMenuItem", /** @lends sap.ui.unified.MenuItem.prototype */ { metadata : {
+	var NavigationListMenuItem = MenuItem.extend("sap.tnt.NavigationListMenuItem", /** @lends sap.ui.unified.MenuItem.prototype */ { metadata : {
 
 		library : "sap.ui.unified",
 		properties : {
 
-			/**
-			 * Defines the text which should be displayed on the item.
-			 */
-			text : {type : "string", group : "Appearance", defaultValue : ''},
-
-			/**
-			 * Defines an icon from the {@link sap.ui.core.IconPool sap.ui.core.IconPool} or an image which should be displayed on the item.
-			 */
-			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
-
 			isExternalLink: {type : "boolean", group : "Appearance", defaultValue : false}
-		},
-		associations : {
-
-			/**
-			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
-			 */
-			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		aggregations: {
 

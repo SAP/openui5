@@ -2488,7 +2488,12 @@ sap.ui.define([
 	Calendar.prototype._adjustYearRangeDisplay = function() {
 		var oYearRangePicker = this.getAggregation("yearRangePicker"),
 			sLang = Localization.getLanguage().toLocaleLowerCase(),
-			sPrimaryCalendarType = this._getPrimaryCalendarType();
+			sPrimaryCalendarType = this._getPrimaryCalendarType(),
+			sSecondaryCalendarType = this._getSecondaryCalendarType(),
+			bKorean = sLang == "ko" || sLang == "ko-kr",
+			bJapaneseCalendar = sPrimaryCalendarType === CalendarType.Japanese || sSecondaryCalendarType === CalendarType.Japanese,
+			bGregorianCalendar = sPrimaryCalendarType === CalendarType.Gregorian
+				&& (sSecondaryCalendarType === CalendarType.Gregorian || !sSecondaryCalendarType);
 
 		if (!this._getSucessorsPickerPopup()) {
 			// An evaluation about the count of year cells that could fit in the sap.ui.unified.calendar.YearRangePicker
@@ -2496,13 +2501,13 @@ sap.ui.define([
 			// Based on those two criteria a couple of groups with different year cells count would be indicated and we
 			// could cover those scenarios with visual tests afterwards. Currently only the scenario with korean language
 			// is covered.
-			if (sPrimaryCalendarType == CalendarType.Japanese) {
+			if (bJapaneseCalendar) {
 				oYearRangePicker.setColumns(1);
 				oYearRangePicker.setYears(4);
-			} else if (sLang == "ko" || sLang == "ko-kr" || sPrimaryCalendarType != CalendarType.Gregorian) {
+			} else if (bKorean || !bGregorianCalendar) {
 				oYearRangePicker.setColumns(2);
 				oYearRangePicker.setYears(8);
-			} else if (sPrimaryCalendarType == CalendarType.Gregorian) {
+			} else if (bGregorianCalendar) {
 				oYearRangePicker.setColumns(3);
 				oYearRangePicker.setYears(9);
 			}

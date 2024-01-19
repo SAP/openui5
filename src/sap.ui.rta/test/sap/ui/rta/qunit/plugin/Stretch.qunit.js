@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_debounce",
-	"sap/base/util/includes",
 	"sap/m/Button",
 	"sap/m/HBox",
 	"sap/m/VBox",
@@ -20,7 +19,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	_debounce,
-	includes,
 	Button,
 	HBox,
 	VBox,
@@ -77,19 +75,19 @@ sap.ui.define([
 
 			this.oStretchPlugin.addStretchCandidate(oOverlay1);
 			assert.equal(this.oStretchPlugin.getStretchCandidates().length, 1, "there is one element");
-			assert.ok(includes(this.oStretchPlugin.getStretchCandidates(), "element1"), "the element of the first overlay was added");
+			assert.ok(this.oStretchPlugin.getStretchCandidates().includes("element1"), "the element of the first overlay was added");
 
 			this.oStretchPlugin.addStretchCandidate(oOverlay2);
 			assert.equal(this.oStretchPlugin.getStretchCandidates().length, 2, "there are two elements");
-			assert.ok(includes(this.oStretchPlugin.getStretchCandidates(), "element2"), "the element of the second overlay was added");
+			assert.ok(this.oStretchPlugin.getStretchCandidates().includes("element2"), "the element of the second overlay was added");
 
 			this.oStretchPlugin.removeStretchCandidate(oOverlay2);
 			assert.equal(this.oStretchPlugin.getStretchCandidates().length, 1, "there is one element");
-			assert.notOk(includes(this.oStretchPlugin.getStretchCandidates(), "element2"), "the element of the second overlay was removed");
+			assert.notOk(this.oStretchPlugin.getStretchCandidates().includes("element2"), "the element of the second overlay was removed");
 
 			this.oStretchPlugin.removeStretchCandidate(oOverlay1);
 			assert.equal(this.oStretchPlugin.getStretchCandidates().length, 0, "there is no element");
-			assert.notOk(includes(this.oStretchPlugin.getStretchCandidates(), "element1"), "the element of the first overlay was removed");
+			assert.notOk(this.oStretchPlugin.getStretchCandidates().includes("element1"), "the element of the first overlay was removed");
 		});
 	});
 
@@ -530,14 +528,13 @@ sap.ui.define([
 
 		QUnit.test("When the layout becomes invisible", function(assert) {
 			var done = assert.async();
-			assert.ok(includes(this.oStretchPlugin.getStretchCandidates(), "layout"), "the layout is part of the candidates");
-			assert.ok(includes(this.oStretchPlugin.getStretchCandidates(), "hbox"), "the hbox is part of the candidates");
+			assert.ok(this.oStretchPlugin.getStretchCandidates().includes("layout"), "the layout is part of the candidates");
+			assert.ok(this.oStretchPlugin.getStretchCandidates().includes("hbox"), "the hbox is part of the candidates");
 
 			this.oHBox.setVisible(false);
 			// wait for the dom to update
 			var fnDebounced = _debounce(function() {
-				assert.notOk(includes(this.oStretchPlugin.getStretchCandidates()), "layout", "the layout is not part of the candidates anymore");
-				assert.notOk(includes(this.oStretchPlugin.getStretchCandidates()), "hbox", "the hbox is not part of the candidates anymore");
+				assert.notOk(this.oStretchPlugin.getStretchCandidates().includes("layout"), "the layout is not part of the candidates anymore");
 				this.oLayoutOverlay.detachEvent("geometryChanged", fnDebounced);
 				done();
 			}.bind(this));

@@ -1,7 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/base/Log",
 	"sap/m/Button",
 	"sap/m/MessageBox",
@@ -16,7 +15,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
-	includes,
 	Log,
 	Button,
 	MessageBox,
@@ -125,7 +123,7 @@ sap.ui.define([
 			assert.ok(MessageBox.show.calledWith(sinon.match(function(vMessage) {
 				var sDisplayedErrorPart = vMessage.getContent()[0].getText();
 				var sError = getText(sMessageBoxTextKey);
-				return includes(sError, sDisplayedErrorPart);
+				return sError.includes(sDisplayedErrorPart);
 			})), "then message box was shown");
 		});
 
@@ -250,7 +248,7 @@ sap.ui.define([
 					assert.ok(MessageBox.show.calledWith(sinon.match(function(vMessage) {
 						var sDisplayedErrorPart = vMessage.getContent()[0].getText();
 						var sError = getText(sMessageBoxTextKey);
-						return includes(sError, sDisplayedErrorPart);
+						return sError.includes(sDisplayedErrorPart);
 					})), "then message box was shown");
 					done();
 				})();
@@ -286,7 +284,7 @@ sap.ui.define([
 					assert.ok(MessageBox.show.calledWith(sinon.match(function(vMessage) {
 						var sDisplayedErrorPart = vMessage.getContent()[0].getText();
 						var sError = getText(sMessageBoxTextKey);
-						return includes(sError, sDisplayedErrorPart);
+						return sError.includes(sDisplayedErrorPart);
 					})), "then message box was shown after mode switch to adaptation");
 					done();
 				}.bind(this))();

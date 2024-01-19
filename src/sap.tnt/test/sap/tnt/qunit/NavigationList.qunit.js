@@ -1255,6 +1255,14 @@ sap.ui.define([
 			});
 		});
 
+		QUnitUtils.triggerEvent("tap", overflowItemDomRef);
+		assert.ok(menuDomRef, "overflow menu is shown");
+		const initiallySelectedImId = this.navigationList.getSelectedItem().sId;
+		menu = Element.closestTo(document.querySelector(".sapUiMnu"));
+		menu.openSubmenu(menu.getItems()[2]);
+		QUnitUtils.triggerEvent("click",  document.querySelector(".sapUiSubmenu").getElementsByTagName("li")[2]);
+		assert.notEqual(this.navigationList.getSelectedItem().sId, initiallySelectedImId, "The sub item is selected");
+
 		menu.destroy();
 	});
 

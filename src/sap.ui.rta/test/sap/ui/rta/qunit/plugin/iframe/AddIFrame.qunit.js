@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/ui/rta/plugin/iframe/AddIFrame",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/base/util/includes",
 	"sap/base/util/uid",
 	"sap/m/Button",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
@@ -39,7 +38,6 @@ sap.ui.define([
 	AddIFramePlugin,
 	AddIFrameDialog,
 	sinon,
-	includes,
 	uid,
 	Button,
 	RtaQunitUtils,
@@ -345,8 +343,8 @@ sap.ui.define([
 				oCheckOverlay = oOverlay;
 				const aResultMenuItems = await this.oAddIFrame.getMenuItems([oOverlay]);
 				assert.strictEqual(aOverlaySiblingRequests.length, 2, "the 'available' function was called twice");
-				assert.ok(includes(aOverlaySiblingRequests, true), "the 'available' function was called twice with bOverlayIsSibling=true");
-				assert.ok(includes(aOverlaySiblingRequests, false), "the 'available' function was called twice with bOverlayIsSibling=false");
+				assert.ok(aOverlaySiblingRequests.includes(true), "the 'available' function was called twice with bOverlayIsSibling=true");
+				assert.ok(aOverlaySiblingRequests.includes(false), "the 'available' function was called twice with bOverlayIsSibling=false");
 				return aResultMenuItems;
 			}
 

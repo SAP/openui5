@@ -5,13 +5,15 @@
 sap.ui.define([
 	"delegates/odata/v4/TableDelegate",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/mdc/util/FilterUtil",
-	'sap/ui/core/date/UI5Date',
-	'sap/ui/model/FilterOperator',
-	'delegates/util/PayloadSearchKeys'
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/model/FilterOperator",
+	"delegates/util/PayloadSearchKeys"
 ], function(
 	TableDelegate,
 	Element,
+	Library,
 	FilterUtil,
 	UI5Date,
 	FilterOperator,
@@ -137,6 +139,36 @@ sap.ui.define([
 			}
 		}
 
+	};
+
+	ODataTableDelegate.formatGroupHeader = function(oTable, oContext, sProperty) {
+		const oProperty = oTable.getPropertyHelper().getProperty(sProperty);
+		const oTextProperty = oProperty.textProperty;
+		const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+		const sResourceKey = "table.ROW_GROUP_TITLE";
+		let vValue = oContext.getProperty(oProperty.path);
+		let oType = oProperty.typeConfig.typeInstance;
+
+		if (oType) {
+			vValue = oType.formatValue(vValue, "string");
+		}
+
+		if (oTextProperty) {
+			const oComplexProperty = oTable.getPropertyHelper().getProperty(sProperty + "_ComplexWithText"); // use complex property to get information about text
+			const sTemplate = oComplexProperty.exportSettings && oComplexProperty.exportSettings.template;
+			let vTextValue = oContext.getProperty(oTextProperty.path);
+			oType = oTextProperty.typeConfig.typeInstance;
+			if (oType) {
+				vTextValue = oType.formatValue(vTextValue, "string");
+			}
+			if (sTemplate) {
+				vValue = sTemplate.replace(/\{0\}/g, vValue).replace(/\{1\}/g, vTextValue);
+			}
+		}
+
+		const aValues = [oProperty.label, vValue];
+
+		return oResourceBundle.getText(sResourceKey, aValues);
 	};
 
 	return ODataTableDelegate;

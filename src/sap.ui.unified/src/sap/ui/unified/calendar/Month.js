@@ -1627,7 +1627,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calculates week number.
+	 * Calculates the week number corresponding to a date object representing a week start date.
 	 *
 	 * @param {sap.ui.unified.calendar.CalendarDate} oDate Start date of the week
 	 * @returns {int} Week number
