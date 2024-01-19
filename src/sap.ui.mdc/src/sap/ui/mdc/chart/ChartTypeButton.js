@@ -273,7 +273,10 @@ sap.ui.define([
 		}
 
 		const oModel = new JSONModel();
-		oModel.setProperty("/AvailableChartTypes", this._getChart().getAvailableChartTypes());
+		const aChartTypes = this._getChart().getAvailableChartTypes();
+		const sChartType = this._getChart().getChartType();
+		aChartTypes.forEach((oChartType) => { oChartType.selected = oChartType.key === sChartType; });
+		oModel.setProperty("/AvailableChartTypes", aChartTypes);
 		oPopover.setModel(oModel, "$chartTypes");
 
 		//Show header only in mobile scenarios

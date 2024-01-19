@@ -258,8 +258,9 @@ sap.ui.define([
         return Promise.resolve();
     };
 
-    ChartDelegate.getInnerChartSelectionHandler = function() {
-        return ["_selectionDetails", this._oInnerChart];
+    ChartDelegate.getInnerChartSelectionHandler = function(oChart) {
+        //TODO ist this ChartDelegate still used?
+        return { eventId: "_selectionDetails", listener: this._oInnerChart };
     };
 
 
