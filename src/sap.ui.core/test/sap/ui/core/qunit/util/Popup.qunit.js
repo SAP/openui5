@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/core/Popup",
 	"sap/base/Log",
 	"sap/base/util/Deferred",
-	"sap/ui/events/isMouseEventDelayed",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
@@ -23,7 +22,6 @@ sap.ui.define([
 	Popup,
 	Log,
 	Deferred,
-	isMouseEventDelayed,
 	Device,
 	jQuery,
 	Control,
@@ -2308,73 +2306,6 @@ sap.ui.define([
 		oNonModalPopup.attachClosed(fnClosedNonModalPopup);
 
 		oPopup3.open();
-	});
-
-	QUnit.module("ShieldLayer", {
-		beforeEach : function(assert) {
-			var oPopupDomRef = document.getElementById("popup");
-			this.oPopup = new Popup(oPopupDomRef, /*bModal*/ true);
-			this._Device_browser_mobile = Device.browser.mobile;
-			this._Device_browser_chrome = Device.browser.chrome;
-			this._Device_os_ios = Device.os.ios;
-
-			Device.browser.mobile = true;
-			Device.os.ios = false;
-			Device.browser.chrome = false;
-
-			assert.ok(isMouseEventDelayed(), "Using the above Device mocks 'isMouseEventDelayed' should return true");
-		},
-
-		afterEach : function() {
-			Device.browser.mobile = this._Device_browser_mobile;
-			Device.os.ios = this._Device_os_ios;
-			Device.browser.chrome = this._Device_browser_chrome;
-			this.oPopup.destroy();
-		}
-	});
-
-	QUnit.test("Creation And Destruction of ShieldLayer", function(assert) {
-		var done = assert.async();
-		var oSpyShieldBorrowObject = sinon.spy(this.oPopup.oShieldLayerPool, "borrowObject");
-		var oSpyShieldReturnObject = sinon.spy(this.oPopup.oShieldLayerPool, "returnObject");
-
-		var fnOpened = function() {
-			this.oPopup.detachOpened(fnOpened, this);
-
-			assert.equal(oSpyShieldBorrowObject.callCount, 1, "Calling the ShieldLayer factory");
-			assert.ok(this.oPopup._oTopShieldLayer, "ShieldLayer was created");
-			assert.ok(this.oPopup._iTopShieldRemoveTimer, "Timeout was started");
-
-			setTimeout(function() {
-				assert.equal(oSpyShieldReturnObject.callCount, 1, "ShieldLayer was returned");
-				assert.ok(!this.oPopup._oTopShieldLayer, "ShieldLayer was removed");
-				assert.ok(!this.oPopup._iTopShieldRemoveTimer, "Timeout has passed");
-
-				oSpyShieldBorrowObject.restore();
-				oSpyShieldReturnObject.restore();
-
-				done();
-			}.bind(this), 510);
-		};
-
-		this.oPopup.attachOpened(fnOpened, this);
-		this.oPopup.open();
-	});
-
-	QUnit.test("Destroy popup during open/close should also clear the close timer of ShieldLayer", function(assert) {
-		var oSpyShieldBorrowObject = sinon.spy(this.oPopup.oShieldLayerPool, "borrowObject"),
-			oSpyShieldReturnObject = sinon.spy(this.oPopup.oShieldLayerPool, "returnObject");
-
-		// act
-		this.oPopup.open();
-		this.oPopup.close();
-		this.oPopup.destroy();
-
-		assert.equal(oSpyShieldBorrowObject.callCount, 2, "ShieldLayer is created twice");
-		assert.equal(oSpyShieldReturnObject.callCount, 2, "All ShieldLayers are returned");
-
-		oSpyShieldReturnObject.restore();
-		oSpyShieldBorrowObject.restore();
 	});
 
 	QUnit.module("Extra Popup Content API", {
