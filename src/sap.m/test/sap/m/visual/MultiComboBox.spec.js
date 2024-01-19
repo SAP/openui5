@@ -213,6 +213,25 @@ describe('sap.m.MultiComboBox', function() {
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 	});
 
+	// MultiComboBox - ENTER on group header
+	it("should not close MultiComboBox dropdown on performing ENTER key on group header", function() {
+		browser.executeScript('document.getElementById("MultiComboBoxWithGrouping").scrollIntoView()').then(function() {
+			var oMultiComboBoxArrow = element(by.id("MultiComboBoxWithGrouping-arrow"));
+			oMultiComboBoxArrow.click();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ENTER).perform();
+			expect(takeScreenshot()).toLookAs("mcb_dropdown_open_group");
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ENTER).perform();
+			expect(takeScreenshot()).toLookAs("mcb_dropdown_closed_non_group");
+
+			// clear token
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+		});
+	});
+
 	//MultiComboBox Compact Mode
 	it("should select Compact mode", function(){
 		element(by.id("compactMode")).click();

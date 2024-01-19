@@ -263,4 +263,22 @@ describe("sap.m.InputVisualTests", function() {
 			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 		});
 	});
+
+	// Input - ENTER on group header
+	it("should not close Input dropdown on performing ENTER key on group header", function () {
+		var inputGrouping = element(by.id("inputWithSuggestions"));
+		browser.executeScript("document.getElementById('inputWithSuggestions').scrollIntoView()").then(function() {
+			inputGrouping.click();
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot()).toLookAs("input_dropdown_group");
+
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ENTER).perform();
+			expect(takeScreenshot()).toLookAs("input_dropdown_open_group");
+
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ENTER).perform();
+			expect(takeScreenshot()).toLookAs("input_dropdown_closed_group");
+		});
+	});
 });

@@ -1443,7 +1443,7 @@ function(
 			bFocusInPopup = !this.hasStyleClass("sapMFocus") && bPopupOpened,
 			aItems = this._hasTabularSuggestions() ? this.getSuggestionRows() : this.getSuggestionItems(),
 			bFireSubmit = this.getEnabled() && this.getEditable(),
-			iValueLength, oSelectedItem;
+			iValueLength, oSuggestionsPopover, oSelectedItem, oFocusedItem;
 
 		// when enter is pressed before the timeout of suggestion delay, suggest event is cancelled
 		this.cancelPendingSuggest();
@@ -1451,11 +1451,19 @@ function(
 		bFocusInPopup && this.setSelectionUpdatedFromList(true);
 
 		if (this.getShowSuggestion() && this._bDoTypeAhead && bPopupOpened) {
-			oSelectedItem = this._getSuggestionsPopover().getItemsContainer().getSelectedItem();
+			oSuggestionsPopover = this._getSuggestionsPopover();
+			oSelectedItem = oSuggestionsPopover.getItemsContainer().getSelectedItem();
+			oFocusedItem = oSuggestionsPopover.getFocusedListItem();
+
 			if (this._hasTabularSuggestions()) {
 				oSelectedItem && this.setSelectionRow(oSelectedItem, true);
 			} else {
 				oSelectedItem && this.setSelectionItem(ListHelpers.getItemByListItem(aItems, oSelectedItem), true);
+			}
+
+			// prevent closing of popover, when Enter is pressed on a group header
+			if (oFocusedItem && oFocusedItem.isA("sap.m.GroupHeaderListItem")) {
+				return;
 			}
 		}
 
