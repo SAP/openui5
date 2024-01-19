@@ -25,6 +25,7 @@ sap.ui.define([
 	 * @typedef {object} sap.m.p13n.FilterStateItem
 	 * @property {string} operator The operator of the condition
 	 * @property {string[]} values The values of the condition
+	 * @property {boolean} [filtered] Defines whether the item is filtered (if a filter state is provided, it's filtered automatically)
 	 *
 	 */
 
@@ -264,23 +265,25 @@ sap.ui.define([
 	};
 
 	FilterController.prototype.getDelta = function (mPropertyBag) {
-		const existingState = mPropertyBag.existingState;
-		let changedState = mPropertyBag.changedState;
+		const {existingState} = mPropertyBag;
+		let {changedState} = mPropertyBag;
 
 		if (deepEqual(existingState, changedState)) {
 			return [];
 		}
 
-		changedState = changedState.reduce((mConditions, oState) => {
-			const sKey = oState.key;
-			mConditions[sKey] = mConditions[sKey] || [];
-			oState.conditions.forEach((oConditionForKey) => {
-				if (oConditionForKey && oConditionForKey.values && oConditionForKey.values[0] !== undefined) {
-					mConditions[sKey].push(oConditionForKey);
-				}
-			});
-			return mConditions;
-		}, {});
+		if (changedState instanceof Array) {
+			changedState = changedState.reduce((mConditions, oState) => {
+				const sKey = oState.key;
+				mConditions[sKey] = mConditions[sKey] || [];
+				oState.conditions.forEach((oConditionForKey) => {
+					if (oConditionForKey && oConditionForKey.values && oConditionForKey.values[0] !== undefined) {
+						mConditions[sKey].push(oConditionForKey);
+					}
+				});
+				return mConditions;
+			}, {});
+		}
 
 		return this.getConditionDeltaChanges({
 			...mPropertyBag,
