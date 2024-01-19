@@ -13,6 +13,12 @@ sap.ui.define([
 ], function(timezones, Log, Localization, LoaderExtensions, CalendarType, Configuration, Locale,
 		LocaleData, CalendarWeekNumbering, TimezoneUtil) {
 	"use strict";
+	const aSupportedLanguages = ["ar", "ar_EG", "ar_SA", "bg", "ca", "cnr", "cs", "cy", "da", "de", "de_AT", "de_CH",
+		"el", "el_CY", "en", "en_AU", "en_GB", "en_HK", "en_IE", "en_IN", "en_NZ", "en_PG", "en_SG", "en_ZA", "es",
+		"es_AR", "es_BO", "es_CL", "es_CO", "es_MX", "es_PE", "es_UY", "es_VE", "et", "fa", "fi", "fr", "fr_BE",
+		"fr_CA", "fr_CH", "fr_LU", "he", "hi", "hr", "hu", "id", "it", "it_CH", "ja", "kk", "ko", "lt", "lv", "mk",
+		"ms", "nb", "nl", "nl_BE", "pl", "pt", "pt_PT", "ro", "ru", "ru_UA", "sk", "sl", "sr", "sr_Latn", "sv", "th",
+		"tr", "uk", "vi", "zh_CN", "zh_HK", "zh_SG", "zh_TW"];
 
 	QUnit.module("Locale Data Loading", {
 		beforeEach: function(assert) {
@@ -23,6 +29,11 @@ sap.ui.define([
 		}, afterEach: function(assert) {
 			this.loadResourceSpy.restore();
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Supported languages", function(assert) {
+		assert.deepEqual(LocaleData._cldrLocales.slice().sort(), aSupportedLanguages.slice().sort());
 	});
 
 	QUnit.test("LocaleData caching of data", function(assert) {
@@ -77,10 +88,8 @@ sap.ui.define([
 		assert.equal(oLocaleData.sCLDRLocaleId, "en");
 	});
 
-	var aLanguages = LocaleData._cldrLocales.slice();
-	aLanguages.push("sh");
 
-	aLanguages.forEach(function(sLanguage) {
+	aSupportedLanguages.forEach(function(sLanguage) {
 		QUnit.test("getCurrentLanguageName '" + sLanguage + "'", function(assert) {
 			var oLocaleData = new LocaleData(new Locale(sLanguage));
 			var oLanguagesObject = oLocaleData.getLanguages();
@@ -88,120 +97,37 @@ sap.ui.define([
 			assert.ok(oLocaleData.getCurrentLanguageName(), "Current language is present for locale: '" + sLanguage + "'");
 		});
 	});
-
-	QUnit.test("getCurrentLanguageName specific sh", function(assert) {
-		var oLocale = new Locale("sh"),
-			oLocaleData = new LocaleData(oLocale);
-		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: sh");
-		assert.equal(oLocaleData.getCurrentLanguageName(), "srpskohrvatski", "current language is present for locale: sh");
-	});
-
-	QUnit.test("getCurrentLanguageName specific sr-Latn", function(assert) {
-		var oLocale = new Locale("sr-Latn"),
-			oLocaleData = new LocaleData(oLocale);
-		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: sr-Latn");
-		assert.equal(oLocaleData.getCurrentLanguageName(), "srpskohrvatski", "current language is present for locale: sr-Latn");
-	});
-
-	QUnit.test("getCurrentLanguageName specific sr", function(assert) {
-		var oLocale = new Locale("sr"),
-			oLocaleData = new LocaleData(oLocale);
-		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: sr");
-		assert.equal(oLocaleData.getCurrentLanguageName(), "српски", "current language is present for locale: sr");
-	});
-
-	QUnit.test("getCurrentLanguageName specific iw", function(assert) {
-		var oLocale = new Locale("iw"),
-			oLocaleData = new LocaleData(oLocale);
-		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: iw");
-		assert.equal(oLocaleData.getCurrentLanguageName(), "עברית", "current language is present for locale: iw");
-	});
-
-	QUnit.test("getCurrentLanguageName specific he", function(assert) {
-		var oLocale = new Locale("he"),
-			oLocaleData = new LocaleData(oLocale);
-		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: he");
-		assert.equal(oLocaleData.getCurrentLanguageName(), "עברית", "current language is present for locale: he");
-	});
-
-	QUnit.test("getCurrentLanguageName specific iw-x-sapufmt", function(assert) {
-		var oLocale = new Locale("iw-x-sapufmt"),
-			oLocaleData = new LocaleData(oLocale);
-		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: iw-x-sapufmt");
-		assert.equal(oLocaleData.getCurrentLanguageName(), "עברית", "current language is present for locale: iw-x-sapufmt");
-	});
-
-	QUnit.test("getCurrentLanguageName specific he-x-sapufmt", function(assert) {
-		var oLocale = new Locale("he-x-sapufmt"),
-			oLocaleData = new LocaleData(oLocale);
-		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: he-x-sapufmt");
-		assert.equal(oLocaleData.getCurrentLanguageName(), "עברית", "current language is present for locale: he-x-sapufmt");
-	});
-
+[
+	{sLocale: "cnr", sName: "crnogorski"},
+	{sLocale: "cnr_ME", sName: "crnogorski (Crna Gora)"},
+	{sLocale: "he", sName: "עברית"},
+	{sLocale: "iw", sName: "עברית"},
+	{sLocale: "mk", sName: "македонски"},
+	{sLocale: "mk_MK", sName: "македонски (Северна Македонија)"},
+	{sLocale: "sh", sName: "srpskohrvatski"},
+	{sLocale: "sr-Latn", sName: "srpskohrvatski"},
+	{sLocale: "sr_Latn_RS", sName: "srpskohrvatski (Srbija)"},
+	{sLocale: "sr", sName: "српски"},
+	{sLocale: "sr_RS", sName: "српски (Србија)"},
+	{sLocale: "sr_Cyrl", sName: "српски (ћирилица)"},
+	{sLocale: "sr_Cyrl_RS", sName: "српски (ћирилица)"},
+	{sLocale: "de-x-sapufmt", sName: "Deutsch"},
+	{sLocale: "en-GB-x-sapufmt", sName: "British English"},
+	{sLocale: "he-x-sapufmt", sName: "עברית"},
+	{sLocale: "iw-x-sapufmt", sName: "עברית"},
+	{sLocale: "sr-Cyrl-x-sapufmt", sName: "српски (ћирилица)"},
+	{sLocale: "sr-Latn-x-sapufmt", sName: "srpskohrvatski"},
+	{sLocale: "zh-Hant-x-sapufmt", sName: "繁體中文"},
 	// neither ji nor yi is present as CLDR data (en.json is used then)
-	QUnit.test("getCurrentLanguageName specific ji", function(assert) {
-		var oLocale = new Locale("ji"),
-			oLocaleData = new LocaleData(oLocale);
-		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: ji");
-		assert.equal(oLocaleData.getCurrentLanguageName(), "Yiddish", "current language is present for locale: ji");
+	{sLocale: "ji", sName: "Yiddish"},
+	{sLocale: "yi", sName: "Yiddish"}
+].forEach((oFixture) => {
+	QUnit.test("getCurrentLanguageName specific " + oFixture.sLocale, function(assert) {
+		const oLocaleData = new LocaleData(new Locale(oFixture.sLocale));
+		assert.ok(Object.keys(oLocaleData.getLanguages()).length > 0, "languages are present");
+		assert.equal(oLocaleData.getCurrentLanguageName(), oFixture.sName, "current language is present");
 	});
-
-	QUnit.test("getCurrentLanguageName specific yi", function(assert) {
-		var oLocale = new Locale("yi"),
-			oLocaleData = new LocaleData(oLocale);
-		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: yi");
-		assert.equal(oLocaleData.getCurrentLanguageName(), "Yiddish", "current language is present for locale: yi");
-	});
-
-	QUnit.test("getCurrentLanguageName specific de-x-sapufmt", function(assert) {
-		var oLocale = new Locale("de-x-sapufmt"),
-			oLocaleData = new LocaleData(oLocale);
-		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: de-x-sapufmt");
-		assert.equal(oLocaleData.getCurrentLanguageName(), "Deutsch", "current language is present for locale: de-x-sapufmt");
-	});
-
-	QUnit.test("getCurrentLanguageName specific en-GB-x-sapufmt", function(assert) {
-		var oLocale = new Locale("en-GB-x-sapufmt"),
-			oLocaleData = new LocaleData(oLocale);
-		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: en-GB-x-sapufmt");
-		assert.equal(oLocaleData.getCurrentLanguageName(), "British English", "current language is present for locale: en-GB-x-sapufmt");
-	});
-
-	QUnit.test("getCurrentLanguageName specific zh-Hant-x-sapufmt", function(assert) {
-		var oLocale = new Locale("zh-Hant-x-sapufmt"),
-			oLocaleData = new LocaleData(oLocale);
-		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: zh-Hant-x-sapufmt");
-		assert.equal(oLocaleData.getCurrentLanguageName(), "繁體中文", "current language is present for locale: zh-Hant-x-sapufmt");
-	});
-
-	QUnit.test("getCurrentLanguageName specific sr-Latn-x-sapufmt", function(assert) {
-		var oLocale = new Locale("sr-Latn-x-sapufmt"),
-			oLocaleData = new LocaleData(oLocale);
-		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: sr-Latn-x-sapufmt");
-		assert.equal(oLocaleData.getCurrentLanguageName(), "srpskohrvatski", "current language is present for locale: sr-Latn-x-sapufmt");
-	});
-
-	QUnit.test("getCurrentLanguageName specific sr-Cyrl-x-sapufmt", function(assert) {
-		var oLocale = new Locale("sr-Cyrl-x-sapufmt"),
-			oLocaleData = new LocaleData(oLocale);
-		var oLanguagesObject = oLocaleData.getLanguages();
-		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: sr-Cyrl-x-sapufmt");
-		assert.strictEqual(oLocaleData.getCurrentLanguageName(), "српски (ћирилица)",
-			"used derived script name for locale sr-Cyrl-x-sapufmt");
-	});
+});
 
 	QUnit.test("getCurrentLanguageName: calls getLanguageName", function(assert) {
 		const oLocaleData = {
@@ -749,7 +675,7 @@ sap.ui.define([
 		"Etc/Zulu"
 	];
 
-	aLanguages.forEach(function (sLocale) {
+	aSupportedLanguages.forEach(function (sLocale) {
 		QUnit.test("getTimezoneTranslations for " + sLocale + " and ensure bijective mapping", function(assert) {
 			var oLocaleData = new LocaleData(new Locale(sLocale));
 			var mTimezoneTranslations = oLocaleData.getTimezoneTranslations();

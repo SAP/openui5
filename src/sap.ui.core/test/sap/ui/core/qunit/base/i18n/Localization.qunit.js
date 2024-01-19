@@ -42,7 +42,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getLanguageTag, getLanguage and getSAPLogonLanguage", function(assert) {
-		assert.expect(31);
+		assert.expect(46);
 		function fnAssert(mTestOptions) {
 			BaseConfig._.invalidate();
 			var sSAPLogonLanguage = mTestOptions.SAPLogonLanguage || mTestOptions.language.toUpperCase();
@@ -105,6 +105,30 @@ sap.ui.define([
 			languageTag: "sh-CC-eeeee-f-gg-X-h",
 			SAPLogonLanguage: "SH"
 		});
+
+		mConfigStubValues = {
+			"sapLanguage": "CT"
+		};
+		fnAssert({
+			language: "cnr",
+			SAPLogonLanguage: "CT"
+		});
+
+		mConfigStubValues = {
+			"sapLocale": "cnr-ME"
+		};
+		fnAssert({
+			language: "cnr-ME",
+			SAPLogonLanguage: "CT"
+		});
+
+		mConfigStubValues = {
+			"sapLocale": "cnr"
+		};
+		fnAssert({
+			language: "cnr",
+			SAPLogonLanguage: "CT"
+		});
 	});
 
 	QUnit.test("getTimezone", function(assert) {
@@ -152,6 +176,15 @@ sap.ui.define([
 			"sapUiRtl": true
 		};
 		assert.strictEqual(Localization.getRTL(), true, "getRTL should return 'true' derived from parameter 'sapUiRtl'.");
+	});
+
+	QUnit.test("getLanguagesDeliveredWithCore", function(assert) {
+		assert.deepEqual(Localization.getLanguagesDeliveredWithCore(),
+			[
+				"", "ar", "bg", "ca", "cnr", "cs", "cy", "da", "de", "el", "en", "en_GB", "es", "es_MX", "et", "fi",
+				"fr", "fr_CA", "hi", "hr", "hu", "id", "it", "iw", "ja", "kk", "ko", "lt", "lv", "mk", "ms", "nl", "no",
+				"pl", "pt", "pt_PT", "ro", "ru", "sh", "sk", "sl", "sr", "sv", "th", "tr", "uk", "vi", "zh_CN", "zh_TW"
+			]);
 	});
 
 	QUnit.test("getSupportedLanguages", function(assert) {
