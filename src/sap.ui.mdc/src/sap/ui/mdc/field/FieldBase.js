@@ -817,6 +817,7 @@ sap.ui.define([
 	};
 
 	FieldBase.prototype.onfocusin = function(oEvent) {
+		this._oFocusInHelp = undefined;
 		_connectValueHelp.call(this);
 		if (!this._oFocusInfo?.targetInfo?.silent) {
 			_setFocusTimer.call(this, oEvent);
@@ -2954,6 +2955,7 @@ sap.ui.define([
 			}
 		}
 
+		this._oFocusInHelp = undefined; // user input not longer from interest
 		const aConditionsOld = this.getConditions();
 
 		if (!deepEqual(aConditions, aConditionsOld)) {
@@ -2967,7 +2969,7 @@ sap.ui.define([
 				oValueHelp.onControlChange();
 				_triggerChange.call(this, aConditions, true);
 			}
-		} else if (bChangeAfterError) { // last valif value choosen again
+		} else if (bChangeAfterError) { // last valid value choosen again
 			_triggerChange.call(this, aConditions, true);
 		}
 	}
@@ -3070,6 +3072,7 @@ sap.ui.define([
 
 		this._bIgnoreInputValue = false; // use value for input
 		this._bDirty = true;
+		this._oFocusInHelp = undefined; // user input not longer from interest
 		this.fireLiveChange({ value: sNewValue });
 
 	}
@@ -3191,7 +3194,11 @@ sap.ui.define([
 
 		if (_isFocused.call(this)) { // restore focus visualization
 			oContent.addStyleClass("sapMFocus");
+		} else if (this._oFocusInHelp) {
+			// focus was in ValueHelp but focus is not back in Field - validate user input
+			oContent.onsapfocusleave(this._oFocusInHelp); // TODO: do we need a new Event with current focused control?
 		}
+
 
 	}
 
@@ -3316,6 +3323,7 @@ sap.ui.define([
 					if (this._sFilterValue) { // remove Autocomplete as selection is not shown if focus goes to ValueHelp
 						oContent.setDOMValue(this._sFilterValue);
 					}
+					this._oFocusInHelp = oEvent; // as focus can be set to table header in popover, here on closing input might be validated.
 				} else {
 					oValueHelp.skipOpening();
 				}
