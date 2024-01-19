@@ -38,9 +38,12 @@ sap.ui.define([
 				/**
 				 * Defines the column importance.
 				 *
-				 * The column importance is taken into consideration for calculating the <code>minScreenWidth</code>
-				 * property and for setting the <code>demandPopin</code> property of the column.
-				 * See {@link sap.m.Table#getAutoPopinMode} for more details, which is automatically set to <code>true</code>.
+				 * Columns are moved to the pop-in area in the following order:
+				 * <ul>
+				 * 	<li>With importance <code>High</code>: moved last</li>
+				 * 	<li>With importance <code>Medium</code> or <code>None</code>: moved second</li>
+				 * 	<li>With importance <code>Low</code>: moved first</li>
+				 * </ul>
 				 *
 				 * @since 1.110
 				 */
@@ -51,11 +54,9 @@ sap.ui.define([
 				},
 				/**
 				 * Defines the control serialization function to merge duplicate cells into one cell block.
-				 * The control itself uses this function to compare values of two duplicate cells.
+				 * This function is used to compare values of two cells.
 				 *
-				 * <b>Note:</b> Providing this property will automatically set {@link sap.m.Column#getMergeDuplicates} to <code>true</code>,
-				 * and the property itself is mapped to {@link sap.m.Column#getMergeFunctionName} of the inner column.
-				 * Don't set this property for cells for which the content provides a user interaction, such as <code>sap.m.Link</code>.
+				 * <b>Note:</b> Don't set this property for cells for which the content provides a user interaction, such as <code>sap.m.Link</code>.
 				 *
 				 * @since 1.110
 				 */

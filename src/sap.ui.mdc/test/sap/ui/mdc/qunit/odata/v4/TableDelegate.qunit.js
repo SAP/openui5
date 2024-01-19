@@ -1583,26 +1583,29 @@ sap.ui.define([
 		}.bind(this);
 
 		return fnTest(TableType.Table, {
+			p13nModes: ["Column", "Sort", "Filter", "Group", "Aggregate"],
 			"export": true,
-			"expandAll": false,
-			"collapseAll": false
+			expandAllRows: false,
+			collapseAllRows: false
 		}).then(function() {
 			return fnTest(TableType.TreeTable, {
+				p13nModes: ["Column", "Sort", "Filter"],
 				"export": true,
-				"expandAll": true,
-				"collapseAll": true
+				expandAllRows: true,
+				collapseAllRows: true
 			});
 		}).then(function() {
 			return fnTest(TableType.ResponsiveTable, {
+				p13nModes: ["Column", "Sort", "Filter", "Group"],
 				"export": true,
-				"expandAll": false,
-				"collapseAll": false
+				expandAllRows: false,
+				collapseAllRows: false
 			});
 		});
 	});
 
-	QUnit.test("#expandAll", function(assert) {
-		const fnTest = function(sTableType, bExpandsAll) {
+	QUnit.test("#expandAllRows", function(assert) {
+		const fnTest = function(sTableType, bSupportsExpandAll) {
 			const pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
 			return pInit.then(function(oTable) {
 				sinon.stub(oTable, "getRowBinding").returns({
@@ -1616,11 +1619,13 @@ sap.ui.define([
 				});
 				const oSetAggregationSpy = sinon.spy(oTable.getRowBinding(), "setAggregation");
 
-				oTable.getControlDelegate().expandAll(oTable);
-				if (bExpandsAll) {
+				if (bSupportsExpandAll) {
+					oTable.getControlDelegate().expandAllRows(oTable);
 					assert.ok(oSetAggregationSpy.calledOnce, sTableType + ": setAggregation was called");
 				} else {
-					assert.notOk(oSetAggregationSpy.calledOnce, sTableType + ": setAggregation was not called");
+					assert.throws(() => {
+						oTable.getControlDelegate().expandAllRows(oTable);
+					}, Error("Unsupported operation: Not supported for the current table type"));
 				}
 
 				oTable.getRowBinding.restore();
@@ -1635,8 +1640,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("#collapseAll", function(assert) {
-		const fnTest = function(sTableType, bExpandsAll) {
+	QUnit.test("#collapseAllRows", function(assert) {
+		const fnTest = function(sTableType, bSupportsCollapseAll) {
 			const pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
 			return pInit.then(function(oTable) {
 				sinon.stub(oTable, "getRowBinding").returns({
@@ -1650,11 +1655,13 @@ sap.ui.define([
 				});
 				const oSetAggregationSpy = sinon.spy(oTable.getRowBinding(), "setAggregation");
 
-				oTable.getControlDelegate().collapseAll(oTable);
-				if (bExpandsAll) {
+				if (bSupportsCollapseAll) {
+					oTable.getControlDelegate().collapseAllRows(oTable);
 					assert.ok(oSetAggregationSpy.calledOnce, sTableType + ": setAggregation was called");
 				} else {
-					assert.notOk(oSetAggregationSpy.calledOnce, sTableType + ": setAggregation was not called");
+					assert.throws(() => {
+						oTable.getControlDelegate().collapseAllRows(oTable);
+					}, Error("Unsupported operation: Not supported for the current table type"));
 				}
 
 				oTable.getRowBinding.restore();

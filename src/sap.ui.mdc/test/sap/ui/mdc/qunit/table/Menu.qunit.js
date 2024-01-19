@@ -5,9 +5,9 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/mdc/Table",
-	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/table/utils/Personalization",
+	"test-resources/sap/ui/mdc/delegates/TableDelegate",
 	"sap/m/table/columnmenu/Item",
 	"sap/m/Text",
 	"sap/m/plugins/ColumnResizer",
@@ -18,9 +18,9 @@ sap.ui.define([
 	Element,
 	Library,
 	Table,
-	GridTableType,
 	Column,
 	PersonalizationUtils,
+	TableDelegate,
 	ItemBase,
 	Text,
 	ColumnResizer,
@@ -35,6 +35,10 @@ sap.ui.define([
 			setTimeout(resolve, iMilliseconds);
 		});
 	}
+
+	TableDelegate.getSupportedFeatures = function() {
+		return {p13nModes: ["Column", "Sort", "Filter", "Group", "Aggregate"]};
+	};
 
 	QUnit.module("Menu", {
 		beforeEach: function() {
@@ -346,10 +350,6 @@ sap.ui.define([
 			assert.ok(oItem.getContent().getProperty("_useFixedWidth"), "fixed width is applied to the column panel");
 		}
 
-		oTable.getSupportedP13nModes = function() {
-			return ["Sort", "Filter", "Group", "Column"];
-		};
-
 		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
 			checkItems(oTable._oItemContainer.getItems());
 			assert.ok(oItemBaseDestroySpy.notCalled);
@@ -381,9 +381,6 @@ sap.ui.define([
 		oTable.setP13nMode([
 			"Sort"
 		]);
-		oTable.getSupportedP13nModes = function() {
-			return ["Sort"];
-		};
 
 		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
 			const aItems = oTable._oItemContainer.getItems();

@@ -2699,7 +2699,7 @@ sap.ui.define([
 		oTable.setEnableExport(true);
 
 		return oTable.awaitControlDelegate().then(function(oDelegate) {
-			sinon.stub(oDelegate, "getSupportedFeatures").returns({ "export": false });
+			sinon.stub(oDelegate, "getSupportedFeatures").returns({p13nModes: [], "export": false});
 			return oTable.initialized();
 		}).then(function() {
 			assert.notOk(oTable._oExportButton, "Export button does not exist after table initialization");
@@ -2731,7 +2731,7 @@ sap.ui.define([
 
 
 		return oTable.awaitControlDelegate().then(function(oDelegate) {
-			sinon.stub(oDelegate, "getSupportedFeatures").returns({ "export": false });
+			sinon.stub(oDelegate, "getSupportedFeatures").returns({p13nModes: [], "export": false});
 			return oTable.initialized();
 		}).then(function() {
 			oTable.setEnableExport(true);
@@ -2747,10 +2747,10 @@ sap.ui.define([
 		oTable.setEnableExport(true);
 
 		return oTable.awaitControlDelegate().then(function(oDelegate) {
-			sinon.stub(oDelegate, "getSupportedFeatures").returns({ "export": false });
+			sinon.stub(oDelegate, "getSupportedFeatures").returns({p13nModes: [], "export": false});
 			return oTable.initialized();
 		}).then(function() {
-			oTable.getControlDelegate().getSupportedFeatures.returns({ "export": true });
+			oTable.getControlDelegate().getSupportedFeatures.returns({p13nModes: [], "export": true});
 			oTable.setType(TableType.ResponsiveTable);
 			return oTable.initialized();
 		}).then(function() {
@@ -2760,7 +2760,7 @@ sap.ui.define([
 			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Export button is a child of the toolbar");
 			assert.ok(oTable._oExportButton.getVisible(), "Export button is visible");
 
-			oTable.getControlDelegate().getSupportedFeatures.returns({ "export": false });
+			oTable.getControlDelegate().getSupportedFeatures.returns({p13nModes: [], "export": false});
 			oTable.setType(TableType.Table);
 			return oTable.initialized();
 		}).then(function() {
@@ -2769,7 +2769,7 @@ sap.ui.define([
 			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Export button is a child of the toolbar");
 			assert.equal(oExportButton, oTable._oExportButton, "Same button instance is used");
 
-			oTable.getControlDelegate().getSupportedFeatures.returns({ "export": true });
+			oTable.getControlDelegate().getSupportedFeatures.returns({p13nModes: [], "export": true});
 			oTable.setType(TableType.ResponsiveTable);
 			return oTable.initialized();
 		}).then(function() {
@@ -2791,7 +2791,7 @@ sap.ui.define([
 		oTable.setEnableExport(true);
 
 		return oTable.awaitControlDelegate().then(function(oDelegate) {
-			sinon.stub(oDelegate, "getSupportedFeatures").returns({ "export": true });
+			sinon.stub(oDelegate, "getSupportedFeatures").returns({p13nModes: [], "export": true});
 			return oTable.initialized();
 		}).then(function() {
 			assert.ok(oTable._oExportButton, "Export button exists after initialization with toolbar actions");
@@ -2851,7 +2851,7 @@ sap.ui.define([
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
 			assert.ok(this.oTable._onExport.calledWith(true), "Export settings dialog opened");
 
-			sinon.stub(this.oTable.getControlDelegate(), "getSupportedFeatures").returns({ "export": false });
+			sinon.stub(this.oTable.getControlDelegate(), "getSupportedFeatures").returns({p13nModes: [], "export": false});
 			this.oTable.setType(TableType.ResponsiveTable);
 			return this.oTable.initialized();
 		}.bind(this)).then(function() {
@@ -6326,11 +6326,12 @@ sap.ui.define([
 				this.oDelegate = oDelegate;
 				this.oGetSupportedFeaturesStub = sinon.stub(oDelegate, "getSupportedFeatures");
 				this.oGetSupportedFeaturesStub.returns({
-					expandAll: bExpandCollapseSupported,
-					collapseAll: bExpandCollapseSupported
+					p13nModes: [],
+					expandAllRows: bExpandCollapseSupported,
+					collapseAllRows: bExpandCollapseSupported
 				});
-				this.oExpandAllSpy = sinon.spy(oDelegate, "expandAll");
-				this.oCollapseAllSpy = sinon.spy(oDelegate, "collapseAll");
+				this.oExpandAllSpy = sinon.spy(oDelegate, "expandAllRows");
+				this.oCollapseAllSpy = sinon.spy(oDelegate, "collapseAllRows");
 				return TableQUnitUtils.waitForBinding(this.oTable);
 			}.bind(this));
 		}

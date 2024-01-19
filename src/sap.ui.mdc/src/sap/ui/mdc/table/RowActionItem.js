@@ -4,8 +4,7 @@
 
 sap.ui.define([
 	'sap/ui/core/Element',
-	// load for availability
-	'sap/ui/mdc/enums/TableRowAction'
+	'sap/ui/mdc/enums/TableRowActionType'
 ], (Element) => {
 	"use strict";
 
@@ -33,21 +32,20 @@ sap.ui.define([
 				/**
 				 * Type of the row action item.
 				 *
-				 * As of version 1.98, only sap.ui.mdc.enums.TableRowAction.Navigation is available.
-				 * Setting the type ensures default values for the properties <code>icon</code> and <code>text</code>.
-				 * If an icon or text is set explicitly this setting is used.
+				 * Setting the type ensures default values for the properties <code>icon</code> and <code>text</code>. If an icon or text is set
+				 * explicitly, this setting is used.
 				 */
-				type: { type: "sap.ui.mdc.enums.TableRowAction" },
+				type: { type: "sap.ui.mdc.enums.TableRowActionType" },
 				/**
 				 * Text for the row action item.
 				 *
-				 * Custom text cannot be set when using <code>sap.m.Table</code>.
+				 * <b>Note:</b> A custom text cannot be set when the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}.
 				 */
 				text: { type: "string" },
 				/**
 				 * Icon for the row action item.
 				 *
-				 * A custom icon cannot be set when using <code>sap.m.Table</code>
+				 * <b>Note:</b> A custom icon cannot be set when the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}.
 				 */
 				icon: { type: "sap.ui.core.URI" },
 				/**
@@ -59,10 +57,11 @@ sap.ui.define([
 				/**
 				 * Fired when the row action item is pressed.
 				 *
-				 * <code>sap.ui.table.Table</code>: The press event is fired when a row action item is pressed.
+				 * If the table type is {@link sap.ui.mdc.table.GridTableType GridTable}, the <code>press</code> event is fired when a row action
+				 * item is pressed.
 				 *
-				 * <code>sap.m.Table</code>: The press event is fired when a row with a row action item is pressed.
-				 * The <code>sap.ui.mdc.Table</code>'s <code>rowPress</code> event is fired as well, when pressing a row with a row action item.
+				 * If the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}, the <code>press</code> event and the table's
+				 * <code>rowPress</code> event are fired when a row with a row action item is pressed.
 				 *
 				 * @private
 				 */

@@ -6,9 +6,17 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/table/RowSettings",
 	"sap/ui/mdc/table/RowActionItem",
-	"sap/ui/mdc/enums/TableRowAction",
+	"sap/ui/mdc/enums/TableRowActionType",
 	"sap/ui/model/type/Boolean"
-], function(nextUIUpdate, XMLView, JSONModel, RowSettings, RowActionItem, TableRowAction, Boolean) {
+], function(
+	nextUIUpdate,
+	XMLView,
+	JSONModel,
+	RowSettings,
+	RowActionItem,
+	RowActionType,
+	Boolean
+) {
 	'use strict';
 
 	function formatNavigated(sDescription) {
@@ -189,7 +197,7 @@ sap.ui.define([
 			assert.equal(that.oTable.getRowSettings().getRowActions().length, 1, "The row settings contain 1 row action");
 			let oRowActionItems = that.oTable._oTable.getRowActionTemplate().getItems();
 			assert.equal(oRowActionItems.length, 1, "The table has row action template with one row action item");
-			assert.equal(oRowActionItems[0].getType(), TableRowAction.Navigation, "Row action item is of type navigation");
+			assert.equal(oRowActionItems[0].getType(), RowActionType.Navigation, "Row action item is of type navigation");
 			oRowActionItems[0].firePress({item: oRowActionItems[0], row: oTest});
 			assert.equal(iCalled, 1, "Event was fired once");
 			iCalled = 0;
@@ -218,9 +226,9 @@ sap.ui.define([
 			// eslint-disable-next-line require-atomic-updates
 			oRowActionItems = that.oTable._oTable.getRowActionTemplate().getItems();
 			assert.equal(oRowActionItems.length, 2, "The table has row action template with two row action items");
-			assert.equal(oRowActionItems[0].getType(), TableRowAction.Navigation, "Row action item is of type navigation");
+			assert.equal(oRowActionItems[0].getType(), RowActionType.Navigation, "Row action item is of type navigation");
 			assert.equal(oRowActionItems[0].getText(), "Test1", "Row action item has text 'Test1'");
-			assert.equal(oRowActionItems[1].getType(), TableRowAction.Navigation, "Row action item is of type navigation");
+			assert.equal(oRowActionItems[1].getType(), RowActionType.Navigation, "Row action item is of type navigation");
 			assert.equal(oRowActionItems[1].getText(), "Test2", "Row action item has text 'Test2'");
 			oRowActionItems[0].firePress({item: oRowActionItems[0], row: oTest});
 			oRowActionItems[1].firePress({item: oRowActionItems[1], row: oTest});
@@ -250,7 +258,7 @@ sap.ui.define([
 			// eslint-disable-next-line require-atomic-updates
 			oRowActionItems = that.oTable._oTable.getRowActionTemplate().getItems();
 			that.oTable._oTable.getRowActionTemplate().setModel(oModel);
-			assert.equal(oRowActionItems[0].getType(), TableRowAction.Navigation, "Row action item is of type navigation");
+			assert.equal(oRowActionItems[0].getType(), RowActionType.Navigation, "Row action item is of type navigation");
 			assert.equal(oRowActionItems[0].getText(), "item test", "Row action item has text 'item test'");
 			oRowActionItems[0].firePress({item: oRowActionItems[0], row: oTest});
 			assert.equal(iCalled, 1, "Event was fired once");
@@ -280,9 +288,9 @@ sap.ui.define([
 				that.oTable._oTable.attachEventOnce("rowsUpdated", function() {
 					oRowActionItems = that.oTable._oTable.getRows()[0].getAggregation("_rowAction").getItems();
 					assert.equal(oRowActionItems.length, 2, "The table has row action template with one row action item");
-					assert.equal(oRowActionItems[0].getType(), TableRowAction.Navigation, "Row action item is of type navigation");
+					assert.equal(oRowActionItems[0].getType(), RowActionType.Navigation, "Row action item is of type navigation");
 					assert.equal(oRowActionItems[0].getText(), "item 1", "Row action item has text 'item 1'");
-					assert.equal(oRowActionItems[1].getType(), TableRowAction.Navigation, "Row action item is of type navigation");
+					assert.equal(oRowActionItems[1].getType(), RowActionType.Navigation, "Row action item is of type navigation");
 					assert.equal(oRowActionItems[1].getText(), "item 2", "Row action item has text 'item 2'");
 
 					oRowActionItems[0].firePress({item: oRowActionItems[0], row: oTest});

@@ -4,20 +4,12 @@
 
 sap.ui.define([
 	"./TableDelegateUtils",
-	"sap/ui/core/Element",
 	"sap/ui/mdc/TableDelegate",
-	"sap/ui/mdc/table/Column",
-	"sap/ui/mdc/FilterField",
-	"sap/ui/mdc/util/FilterUtil",
-	"sap/ui/model/Filter"
+	"sap/ui/mdc/FilterField"
 ], function(
 	TableDelegateUtils,
-	Element,
 	TableDelegate,
-	Column,
-	FilterField,
-	FilterUtil,
-	Filter
+	FilterField
 ) {
 	"use strict";
 
@@ -37,10 +29,6 @@ sap.ui.define([
 		if (!oDataStateIndicator || !oDataStateIndicator.isFiltering()) {
 			oBindingInfo.filters = this.getFilters(oMDCTable);
 		}
-	};
-
-	TestTableDelegate.getSupportedP13nModes = function() {
-		return ["Sort", "Filter", "Column", "Group"];
 	};
 
 	TestTableDelegate.getFilterDelegate = function() {
