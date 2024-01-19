@@ -229,6 +229,61 @@ function(
 		}.bind(this));
 	});
 
+	QUnit.module("sap.ui.mdc.chart.ChartToolbar: IgnoreDetailsActions", {
+
+		beforeEach: async function() {
+			const TestComponent = UIComponent.extend("test", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							"id": "",
+							"type": "application"
+						}
+					}
+				},
+				createContent: function() {
+					return new Chart("IDChart", {delegate: {
+                        name: sDelegatePath,
+					    payload: {
+						collectionPath: "/testPath"
+					}},
+					showSelectionDetails: false,
+					ignoreToolbarActions: ["ZoomInOut","DrillDownUp","Legend"]
+				});
+				}
+			});
+			this.oUiComponent = new TestComponent("IDComponent");
+			this.oUiComponentContainer = new ComponentContainer({
+				component: this.oUiComponent,
+				async: false
+			});
+            this.oMDCChart = this.oUiComponent.getRootControl();
+
+			this.oUiComponentContainer.placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach: function() {
+			this.oUiComponentContainer.destroy();
+			this.oUiComponent.destroy();
+		}
+    });
+
+	QUnit.test("ignoreToolbarActions", function(assert) {
+		const done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+			const oToolbar = this.oMDCChart._getToolbar();
+
+			assert.equal(oToolbar._oDrillDownBtn, null, "oDrillDownBtn is not created");
+			assert.equal(oToolbar._oLegendBtn, null, "oLegendBtn is not created");
+			assert.equal(oToolbar.oZoomInButton, null, "oZoomInButton is not created");
+			assert.equal(oToolbar.oZoomOutButton, null, "oZoomOutButton is not created");
+
+			done();
+		}.bind(this));
+	});
+
+
 	QUnit.module("sap.ui.mdc.chart.ChartToolbar: No Details button", {
 
 		beforeEach: async function() {
