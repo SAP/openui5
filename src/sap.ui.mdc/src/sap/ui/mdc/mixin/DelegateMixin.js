@@ -38,9 +38,6 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * <li><code>getPayload</code> - Returns the payload object set for the delegate property.</li>
 	 * <li><code>getTypeMap</code> - Returns the <code>TypeMap</code> made available by the delegate module</li>
 	 * <li><code>initControlDelegate</code> - Loads and initializes the delegate module related to the enhanced control.</li>
-	 * <li><code>initPropertyHelper</code> - Loads and initializes the property helper related to the enhanced control.</li>
-	 * <li><code>awaitPropertyHelper</code> - Provides access to the property helper initialization <code>Promise</code>.</li>
-	 * <li><code>getPropertyHelper</code> - Returns the property helper instance, if available.</li>
 	 * </ul>
 	 *
 	 * Additionally, the following methods are wrapped:
