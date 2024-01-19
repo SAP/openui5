@@ -662,7 +662,7 @@ sap.ui.define([
 				oTabHandlingPlugin[(sNewMode === "navigation") ? "restoreTabIndex" : "removeTabIndex"]();
 			}
 
-			const oChangeVisualization = this.getChangeVisualization && this.getChangeVisualization();
+			const oChangeVisualization = this.getChangeVisualization?.();
 			if (sNewMode === "visualization" || sCurrentMode === "visualization") {
 				DtUtil.waitForSynced(this._oDesignTime)()
 				.then(function() {
@@ -1147,7 +1147,7 @@ sap.ui.define([
 		}
 
 		await this._oSerializer.saveCommands(mPropertyBag);
-		if (!bIsExit) {
+		if (!bIsExit && this.getChangeVisualization) {
 			// clean CViz after Save
 			const oToolbar = this.getToolbar();
 			const oChangeVisualization = this.getChangeVisualization();
