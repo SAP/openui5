@@ -5,7 +5,6 @@
 // Provides control sap.tnt.NavigationList
 sap.ui.define([
 	"./library",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/ui/core/Element",
@@ -23,7 +22,6 @@ sap.ui.define([
 	"sap/base/Log"
 ], function (
 	library,
-	Core,
 	Lib,
 	Theming,
 	Element,
@@ -144,6 +142,7 @@ sap.ui.define([
 			});
 
 		this.addDelegate(this._oItemNavigation);
+		this._handleThemeAppliedBound = this._handleThemeApplied.bind(this);
 	};
 
 	/**
@@ -163,6 +162,8 @@ sap.ui.define([
 		}
 
 		this._deregisterResizeHandler();
+
+		Theming.detachApplied(this._handleThemeAppliedBound);
 	};
 
 	/**
@@ -191,11 +192,7 @@ sap.ui.define([
 		this.getDomRef().scrollTop = 0;
 		this._sResizeListenerId = ResizeHandler.register(this.getDomRef().parentNode, this._resize.bind(this));
 
-		if (Core.isThemeApplied()) {
-			this._updateOverflowItems();
-		} else {
-			Theming.attachAppliedOnce(this._handleThemeLoad.bind(this));
-		}
+		Theming.attachApplied(this._handleThemeAppliedBound);
 	};
 
 	NavigationList.prototype._deregisterResizeHandler = function () {
@@ -205,7 +202,9 @@ sap.ui.define([
 		}
 	};
 
-	NavigationList.prototype._handleThemeLoad = function () {
+	NavigationList.prototype._handleThemeApplied = function () {
+		Theming.detachApplied(this._handleThemeAppliedBound);
+
 		this._updateOverflowItems();
 	};
 

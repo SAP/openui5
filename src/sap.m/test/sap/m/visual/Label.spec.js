@@ -4,13 +4,20 @@ describe("sap.m.Label", function() {
 	"use strict";
 
 	function changeLanguage(sLang) {
-		return browser.executeScript(function(sLang) {
-			var oSelect = sap.ui.getCore().byId('localeSelect');
-				oSelect.setSelectedKey(sLang);
+		element(by.control({
+			id: "localeSelect",
+			interaction: {
+				idSuffix: "arrow"
+			}
+		})).click();
 
-			var oSelectedItem = oSelect.getSelectedItem();
-				oSelect.fireChange({ selectedItem: oSelectedItem});
-		}, sLang);
+		element(by.control({
+			controlType: "sap.ui.core.Item",
+			properties: {
+				key: sLang
+			},
+			searchOpenDialogs: true
+		})).click();
 	}
 
 	it("should load test page", function () {

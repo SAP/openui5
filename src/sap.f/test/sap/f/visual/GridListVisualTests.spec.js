@@ -9,12 +9,11 @@ describe("sap.f.GridListVisualTests", function () {
 
 	var bDesktop = null;
 
-	function goToIconTabFilter (sId) {
+	function goToIconTabFilter (sKey) {
 		return browser.executeScript(function (sId) {
-			var Core = sap.ui.getCore();
-			Core.byId('__component0---app--itb').setSelectedKey(sId);
-			Core.applyChanges();
-		}, sId);
+			var Element = sap.ui.require("sap/ui/core/Element");
+			Element.getElementById('__component0---app--itb').setSelectedKey(sId); // directly set the key to avoid issues with overflow behavior
+		}, sKey);
 	}
 
 	function takePictureOfContent (sPictureTitle) {
