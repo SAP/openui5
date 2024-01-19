@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/util/changeVisualization/commands/getCommandVisualization",
 	"sap/ui/rta/util/changeVisualization/ChangeCategories",
-	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils"
+	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils",
+	"sap/ui/dt/OverlayRegistry"
 ], function(
 	DateFormat,
 	Control,
@@ -29,7 +30,8 @@ sap.ui.define([
 	JSONModel,
 	getCommandVisualization,
 	ChangeCategories,
-	ChangeVisualizationUtils
+	ChangeVisualizationUtils,
+	OverlayRegistry
 ) {
 	"use strict";
 
@@ -78,6 +80,12 @@ sap.ui.define([
 				 * ID of the selector that the indicator's changes belong to
 				 */
 				selectorId: {
+					type: "string"
+				},
+				/**
+				 * ID of the element that is connected to the corresponding indicator element (e.g. section/anchor bar)
+				 */
+				connectedElementId: {
 					type: "string"
 				}
 			},
@@ -163,13 +171,18 @@ sap.ui.define([
 		oOverlay[sEventHandler]("keydown", this._onKeyDown, this);
 		oOverlay[sEventHandler]("mouseover", this._fnHoverTrue);
 		oOverlay[sEventHandler]("focusin", this._fnHoverTrue);
+		oOverlay[sEventHandler]("mouseout", this._fnHoverFalse);
+		oOverlay[sEventHandler]("focusout", this._fnHoverFalse);
 	}
 
-	// Hover/focus events are handled by the ChangeVisualization (because it can affect multiple indicators at once)
 	function handleBrowserEventsOnIndicator(oIndicator, sEventHandler) {
 		oIndicator[sEventHandler]("click", this._onSelect, this);
 		oIndicator[sEventHandler]("tap", this._onSelect, this);
 		oIndicator[sEventHandler]("keydown", this._onKeyDown, this);
+		oIndicator[sEventHandler]("mouseover", this._fnHoverTrue);
+		oIndicator[sEventHandler]("focusin", this._fnHoverTrue);
+		oIndicator[sEventHandler]("mouseout", this._fnHoverFalse);
+		oIndicator[sEventHandler]("focusout", this._fnHoverFalse);
 	}
 
 	function centerVertically(oIndicator) {
@@ -414,14 +427,23 @@ sap.ui.define([
 		this._setHoverStyleClasses(bAdd);
 	};
 
-	ChangeIndicator.prototype._setHoverStyleClasses = function(bAdd) {
+	ChangeIndicator.prototype._setHoverStyleClasses = function(bAdd, oEvent) {
+		if (oEvent) {
+			oEvent.stopPropagation();
+			oEvent.preventDefault();
+		}
 		const oOverlay = Element.getElementById(this.getOverlayId());
 		if (oOverlay.getMetadata().getName() !== "sap.ui.dt.ElementOverlay") {
 			return;
 		}
+
 		const sFunctionName = bAdd ? "addStyleClass" : "removeStyleClass";
 		oOverlay[sFunctionName]("sapUiRtaChangeIndicatorHovered");
 		this[sFunctionName]("sapUiRtaHover");
+		if (this.getConnectedElementId()) {
+			const oConnectedElementOverlay = OverlayRegistry.getOverlay(this.getConnectedElementId());
+			oConnectedElementOverlay[sFunctionName]("sapUiRtaChangeIndicatorHovered");
+		}
 	};
 
 	ChangeIndicator.prototype._toggleDetailPopover = function() {
@@ -437,14 +459,14 @@ sap.ui.define([
 				this.setAggregation("_popover", oPopover);
 				oPopover.setModel(this._oDetailModel, "details");
 				oPopover.openBy(this);
-				this.fireDetailPopoverOpened();
+				this._setHoverStyleClasses(true);
 			}.bind(this));
 		} else {
 			if (this.getAggregation("_popover").isOpen()) {
 				return this.getAggregation("_popover").close();
 			}
 			this.getAggregation("_popover").openBy(this);
-			this.fireDetailPopoverOpened();
+			this._setHoverStyleClasses(true);
 		}
 		return undefined;
 	};
