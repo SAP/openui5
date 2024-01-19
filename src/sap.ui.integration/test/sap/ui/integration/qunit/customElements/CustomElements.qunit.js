@@ -1,11 +1,9 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
-	Core,
 	Lib,
 	nextUIUpdate
 ) {
@@ -31,13 +29,11 @@ sap.ui.define([
 		);
 	}
 
-	function initTags() {
-		Core.loadLibraries(["sap.ui.integration"], {
-			async: true
-		}).then(function () {
-			//register the tags for this library
-			registerLibraryTags("sap.ui.integration");
-		});
+	async function initTags() {
+		await Lib.load({ name: "sap.ui.integration" });
+
+		//register the tags for this library
+		registerLibraryTags("sap.ui.integration");
 	}
 
 	// await the registration of all known custom elements

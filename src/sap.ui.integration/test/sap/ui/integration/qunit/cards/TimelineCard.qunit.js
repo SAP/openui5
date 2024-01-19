@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/integration/cards/TimelineContent",
-	"sap/ui/core/Core",
 	"sap/ui/integration/cards/BaseListContent",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/nextUIUpdate",
@@ -11,7 +10,6 @@ sap.ui.define([
 ], function (
 	Library,
 	TimelineContent,
-	Core,
 	BaseListContent,
 	Card,
 	nextUIUpdate,
@@ -117,7 +115,7 @@ sap.ui.define([
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
 
-			await nextCardReadyEvent(this.oCard);
+			await nextCardReadyEvent(oCard);
 			await nextUIUpdate();
 
 			var oPaginator = oCard.getCardFooter().getPaginator();
