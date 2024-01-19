@@ -2,14 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Lib",
 	"sap/ui/mdc/ActionToolbar",
 	"sap/m/p13n/Engine",
 	"../Util"
-], (Library, ActionToolbar, Engine, Util) => {
+], (ActionToolbar, Engine, Util) => {
 	"use strict";
 
-	const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 	const oDesignTime = {
 			description: "{description}",
@@ -29,13 +27,15 @@ sap.ui.define([
 			properties: {},
 			actions: {
 				settings: {
-					name: oResourceBundle.getText("actiontoolbar.RTA_SETTINGS_NAME"),
-					handler: function(oControl, mPropertyBag) {
-						return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "actionsKey").then((aChanges) => {
-							return aChanges;
-						});
-					},
-					CAUTION_variantIndependent: true
+					"sap.ui.mdc": {
+						name: "actiontoolbar.RTA_SETTINGS_NAME",
+						handler: function(oControl, mPropertyBag) {
+							return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "actionsKey").then((aChanges) => {
+								return aChanges;
+							});
+						},
+						CAUTION_variantIndependent: true
+					}
 				}
 			}
 		},
