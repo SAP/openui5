@@ -2,10 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-    "./ModificationHandler",
-    "sap/m/p13n/FlexUtil",
-    "sap/m/p13n/enums/PersistenceMode",
-    "sap/ui/core/Lib"
+	"./ModificationHandler",
+	"sap/m/p13n/FlexUtil",
+	"sap/m/p13n/enums/PersistenceMode",
+	"sap/ui/core/Lib"
 ], (ModificationHandler, FlexUtil, mode, Library) => {
 	"use strict";
 
@@ -97,10 +97,7 @@ sap.ui.define([
 			.then(() => {
 				if (sInternalPersistenceMode === mode.Global) {
 					return _requireFlexRuntimeAPI().then((FlexRuntimeInfoAPI) => {
-						return FlexRuntimeInfoAPI.isPersonalized({
-							...mPropertyBag,
-							selectors: [mPropertyBag.selector]
-						});
+						return FlexRuntimeInfoAPI.isPersonalized({ ...mPropertyBag });
 					});
 				} else {
 					return _requireWriteAPI().then((ControlPersonalizationWriteAPI) => {
@@ -131,12 +128,12 @@ sap.ui.define([
 			});
 	};
 
-    FlexModificationHandler.prototype.initialize = function() {
-        if (!pInitialize) {
-            pInitialize = Library.load({name: 'sap.ui.fl'});
-        }
-        return pInitialize;
-    };
+	FlexModificationHandler.prototype.initialize = function() {
+		if (!pInitialize) {
+			pInitialize = Library.load({ name: 'sap.ui.fl' });
+		}
+		return pInitialize;
+	};
 
 	FlexModificationHandler.getInstance = () => {
 		if (!oFlexModificationHandler) {
