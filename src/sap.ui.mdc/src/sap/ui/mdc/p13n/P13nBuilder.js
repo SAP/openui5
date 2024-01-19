@@ -343,16 +343,18 @@ sap.ui.define([
 					const oControlModel = oDialogParent && oDialogParent.getModel();
 					const sServiceUrl = oControlModel && oControlModel.sServiceUrl ? oControlModel.sServiceUrl : "";
 					const oHandleExtensibility = Promise.all([
-						FieldExtensibility.isServiceOutdated(sServiceUrl), FieldExtensibility.isExtensibilityEnabled(oDialogParent)
+						FieldExtensibility.onControlSelected(oDialogParent),
+						FieldExtensibility.isServiceOutdated(sServiceUrl),
+						FieldExtensibility.isExtensibilityEnabled(oDialogParent)
 					]);
 
 					return oHandleExtensibility.then((aResult) => {
-							if (aResult[0]) {
+							if (aResult[1]) {
 								FieldExtensibility.setServiceValid(sServiceUrl);
 								// needs FLP to trigger UI restart popup
 								EventBus.getInstance().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
 							}
-							bExtensibilityEnabled = !!aResult[1];
+							bExtensibilityEnabled = !!aResult[2];
 							return bExtensibilityEnabled;
 						})
 						.then((bExtensibilityEnabled) => {
@@ -380,21 +382,12 @@ sap.ui.define([
 									tooltip: oResourceBundle.getText("p13nDialog.rtaAddTooltip"),
 									press: function(oEvt) {
 										const sRtaStyleClassName = "sapUiRTABorder",
-											oAdaptDialog = oEvt.getSource().getParent().getParent();
-										let oControl = oAdaptDialog.getParent();
+											  oAdaptDialog = oEvt.getSource().getParent().getParent();
 
-										// cover SmartTable scenario
-										if (oParent && oParent.isA('sap.ui.comp.smarttable.SmartTable')) {
-											oControl = oParent;
-										}
-
-										FieldExtensibility.onControlSelected(oControl).then((oRetVal) => {
-											FieldExtensibility.getExtensionData().then((oExtensibilityInfo) => {
-												FieldExtensibility.onTriggerCreateExtensionData(oExtensibilityInfo, sRtaStyleClassName);
-												oAdaptDialog.close(); // close as if there is newly created custom field, next time user tries to open it - it checks for service outdated and shows correct information
-											});
+										FieldExtensibility.getExtensionData().then((oExtensibilityInfo) => {
+											FieldExtensibility.onTriggerCreateExtensionData(oExtensibilityInfo, sRtaStyleClassName);
+											oAdaptDialog.close(); // close as if there is newly created custom field, next time user tries to open it - it checks for service outdated and shows correct information
 										});
-
 									}
 								}));
 
