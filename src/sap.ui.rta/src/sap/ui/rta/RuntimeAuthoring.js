@@ -453,6 +453,11 @@ sap.ui.define([
 			);
 			await oDesignTimePromise;
 
+			// needed to access the connected elements (e.g. section/anchor bar) in CViz
+			if (this.getChangeVisualization) {
+				this.getChangeVisualization()._oDesignTime = this._oDesignTime;
+			}
+
 			// PopupManager sets the toolbar to already open popups' autoCloseAreas
 			// Since at this point the toolbar is not available, it waits for RTA to start,
 			// before adding it to the autoCloseAreas of the open popups

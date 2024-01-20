@@ -929,8 +929,16 @@ function(
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	MultiInput.prototype.onsapenter = function (oEvent) {
-		var sDOMValue = this.getDOMValue();
+		var sDOMValue = this.getDOMValue(),
+			oSuggestionsPopover = this._getSuggestionsPopover(),
+			oFocusedItem = oSuggestionsPopover && oSuggestionsPopover.getFocusedListItem();
+
 		Input.prototype.onsapenter.apply(this, arguments);
+
+		// prevent closing of popover, when Enter is pressed on a group header
+		if (oFocusedItem && oFocusedItem.isA("sap.m.GroupHeaderListItem")) {
+			return;
+		}
 
 		var bValidateFreeText = true,
 			oTokenizer = this.getAggregation("tokenizer");

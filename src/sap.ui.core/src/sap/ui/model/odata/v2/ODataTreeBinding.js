@@ -1963,7 +1963,8 @@ sap.ui.define([
 			aNavPath.splice(0,1);
 		}
 
-		var oRef = this.oModel._getObject(sPath);
+		const oModel = this.getModel();
+		var oRef = oModel._getObject(sPath);
 		if (Array.isArray(oRef)) {
 			this.oKeys[sPath] = oRef;
 			this.oLengths[sPath] = oRef.length;
@@ -1976,8 +1977,8 @@ sap.ui.define([
 		if (sNavPath && oObject[sNavPath]) {
 			if (Array.isArray(oRef)) {
 				oRef.forEach(function(sRef) {
-					var oObject = that.getModel().getData("/" + sRef);
-					that._processODataObject(oObject, "/" + sRef + "/" + sNavPath, aNavPath.join("/"));
+					that._processODataObject(oModel.getProperty("/" + sRef), "/" + sRef + "/" + sNavPath,
+						aNavPath.join("/"));
 				});
 			} else if (typeof oRef === "object") {
 				that._processODataObject(oObject, sPath + "/" + sNavPath, aNavPath.join("/"));

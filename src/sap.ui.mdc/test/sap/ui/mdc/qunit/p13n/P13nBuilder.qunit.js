@@ -241,6 +241,7 @@ sap.ui.define([
 		let oAddCustomFieldButton;
 
         // Arrange
+        sinon.stub(FieldExtensibility, "onControlSelected").returns(Promise.resolve(undefined));
         sinon.stub(FieldExtensibility, "isServiceOutdated").returns(Promise.resolve(false));
         sinon.stub(FieldExtensibility, "isExtensibilityEnabled").returns(Promise.resolve(true));
         const oLibraryResourceBundleStub = sinon.stub(Library.getResourceBundleFor("sap.ui.mdc"), "getText");
@@ -278,6 +279,7 @@ sap.ui.define([
                 .finally(function () {
                     // Cleanup
                     oDialog.destroy();
+                    FieldExtensibility.onControlSelected.restore();
                     FieldExtensibility.isServiceOutdated.restore();
                     FieldExtensibility.isExtensibilityEnabled.restore();
                     done();

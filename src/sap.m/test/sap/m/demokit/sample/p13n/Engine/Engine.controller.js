@@ -117,12 +117,16 @@ sap.ui.define([
 		},
 
 		openPersoDialog: function(oEvt) {
-			const oTable = this.byId("persoTable");
+			this._openPersoDialog(["Columns", "Sorter", "Groups", "Filter"], oEvt.getSource());
+		},
 
-			Engine.getInstance().show(oTable, ["Columns", "Sorter", "Groups", "Filter"], {
-				contentHeight: "50rem",
-				contentWidth: "45rem",
-				source: oEvt.getSource()
+		_openPersoDialog: function(aPanels, oSource) {
+			var oTable = this.byId("persoTable");
+
+			Engine.getInstance().show(oTable, aPanels, {
+				contentHeight: aPanels.length > 1 ? "50rem" : "35rem",
+				contentWidth: aPanels.length > 1 ? "45rem" : "32rem",
+				source: oSource || oTable
 			});
 		},
 
@@ -143,8 +147,8 @@ sap.ui.define([
 
 			//Create Filters & Sorters
 			const aFilter = this.createFilters(oState);
-			const aSorter = this.createSorters(oState);
 			const aGroups = this.createGroups(oState);
+			const aSorter = this.createSorters(oState, aGroups);
 
 			const aCells = oState.Columns.map(function(oColumnState) {
 				return new Text({
@@ -175,11 +179,13 @@ sap.ui.define([
 				});
 			});
 
+			this.byId("filterInfo").setVisible(aFilter.length > 0);
+
 			return aFilter;
 		},
 
-		createSorters: function(oState) {
-			const aSorter = [];
+		createSorters: function(oState, aExistingSorter) {
+			const aSorter = aExistingSorter || [];
 			oState.Sorter.forEach(function(oSorter) {
 				const oExistingSorter = aSorter.find(function(oSort) {
 					return oSort.sPath === this.oMetadataHelper.getProperty(oSorter.key).path;
@@ -251,21 +257,21 @@ sap.ui.define([
 		},
 
 		onColumnHeaderItemPress: function(oEvt) {
-			const oTable = this.byId("persoTable");
-
 			const oColumnHeaderItem = oEvt.getSource();
 			let sPanel = "Columns";
 			if (oColumnHeaderItem.getIcon().indexOf("group") >= 0) {
 				sPanel = "Groups";
 			} else if (oColumnHeaderItem.getIcon().indexOf("sort") >= 0) {
 				sPanel = "Sorter";
+			} else if (oColumnHeaderItem.getIcon().indexOf("filter") >= 0) {
+				sPanel = "Filter";
 			}
 
-			Engine.getInstance().show(oTable, [sPanel], {
-				contentHeight: "35rem",
-				contentWidth: "32rem",
-				source: oTable
-			});
+			this._openPersoDialog([sPanel]);
+		},
+
+		onFilterInfoPress: function(oEvt) {
+			this._openPersoDialog(["Filter"], oEvt.getSource());
 		},
 
 		onSort: function(oEvt) {
@@ -359,6 +365,18 @@ sap.ui.define([
 
 			Engine.getInstance().applyState(oTable, {
 				ColumnWidth: oColumnState
+			});
+		},
+
+		onClearFilterPress: function(oEvt) {
+			const oTable = this.byId("persoTable");
+			Engine.getInstance().retrieveState(oTable).then(function(oState) {
+				for (var sKey in oState.Filter) {
+					oState.Filter[sKey].map((condition) => {
+						condition.filtered = false;
+					});
+				}
+				Engine.getInstance().applyState(oTable, oState);
 			});
 		}
 	});

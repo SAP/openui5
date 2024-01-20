@@ -2013,6 +2013,12 @@ function(
 			onsapenter: function(oEvent) {
 				// Handle when enter is pressed.
 				oEvent.setMarked();
+
+				// prevent closing of popover, when Enter is pressed on a group header
+				if (oEvent.srcControl && oEvent.srcControl.isA("sap.m.GroupHeaderListItem")) {
+					return;
+				}
+
 				this.close();
 			},
 

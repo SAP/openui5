@@ -1854,21 +1854,6 @@ sap.ui.define([
 			}
 		};
 
-		/**
-		 * Registry of all <code>sap.ui.core.Element</code>s that currently exist.
-		 *
-		 * @namespace sap.ui.core.Element.registry
-		 * @public
-		 * @since 1.67
-		 * @deprecated As of version 1.120. Use {@link module:sap/ui/core/ElementRegistry} instead.
-		 * @borrows module:sap/ui/core/ElementRegistry.size as size
-		 * @borrows module:sap/ui/core/ElementRegistry.all as all
-		 * @borrows module:sap/ui/core/ElementRegistry.get as get
-		 * @borrows module:sap/ui/core/ElementRegistry.forEach as forEach
-		 * @borrows module:sap/ui/core/ElementRegistry.filter as filter
-		 */
-		Element.registry = ElementRegistry;
-
 		Theming.attachApplied(function(oEvent) {
 			// notify all elements/controls via a pseudo browser event
 			var oJQueryEvent = jQuery.Event("ThemeChanged");

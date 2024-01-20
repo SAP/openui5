@@ -24,7 +24,7 @@ sap.ui.require([
 		});
 
 		// Assign the model object to the SAPUI5 core
-		sap.ui.getCore().setModel(oModel);
+		sap.ui.getCore();
 
 		var oResourceModel = new ResourceModel({
 			bundleName: "sap.ui.demo.db.i18n.i18n",
@@ -32,7 +32,7 @@ sap.ui.require([
 			supportedLocales: ["", "de"]
 		});
 
-		sap.ui.getCore().setModel(oResourceModel, "i18n");
+		sap.ui.getCore();
 
 		// Display the XML view called "App"
 		var oView = new XMLView({

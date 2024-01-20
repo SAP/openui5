@@ -19,7 +19,7 @@ sap.ui.require([
 		oModel.setDefaultBindingMode(BindingMode.OneWay);
 
 		// Assign the model object to the SAPUI5 core
-		sap.ui.getCore().setModel(oModel);
+		sap.ui.getCore();
 
 		// Display the XML view called "App"
 		new XMLView({

@@ -31,7 +31,6 @@ sap.ui.define([
 
 	var oModel = new JSONModel();
 	oModel.setData(data);
-	Core.setModel(oModel);
 
 	function triggerClickEvent(sId) {
 		qutils.triggerEvent("mousedown", sId);
@@ -64,6 +63,7 @@ sap.ui.define([
 			assert.ok(sap.ui.require("sap/ui/core/mvc/XMLView"), "XMLView module is loaded");
 
 			oFragment.placeAt("content1");
+			oFragment.getUIArea().setModel(oModel);
 			await nextUIUpdate();
 
 			var id = oFragment.getId();
@@ -98,6 +98,7 @@ sap.ui.define([
 			controller: this.oDummyController
 		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
+			oFragment.getUIArea().setModel(oModel);
 			await nextUIUpdate();
 
 			var id = oFragment.getId();
@@ -128,6 +129,7 @@ sap.ui.define([
 			controller: this.oDummyController
 		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
+			oFragment.getUIArea().setModel(oModel);
 			await nextUIUpdate();
 
 			var id = oFragment.getId();
@@ -177,6 +179,7 @@ sap.ui.define([
 			controller: this.oDummyController
 		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
+			oFragment.getUIArea().setModel(oModel);
 			await nextUIUpdate();
 
 			var id = oFragment.getId();
@@ -208,6 +211,7 @@ sap.ui.define([
 			controller: this.oDummyController
 		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
+			oFragment.getUIArea().setModel(oModel);
 			await nextUIUpdate();
 
 			var id = oFragment.getId();
@@ -239,6 +243,7 @@ sap.ui.define([
 			controller: this.oDummyController
 		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
+			oFragment.getUIArea().setModel(oModel);
 			await nextUIUpdate();
 
 			var id = oFragment.getId();
@@ -267,6 +272,7 @@ sap.ui.define([
 			viewName: "module:my/TypedView"
 		}).then(async function (oViewWithFragments) {
 			oViewWithFragments.placeAt("content2");
+			oViewWithFragments.getUIArea().setModel(oModel);
 			await nextUIUpdate();
 			assert.ok(document.getElementById("myView"), "JSView should be rendered");
 
@@ -439,12 +445,10 @@ sap.ui.define([
 			oDialog.open();
 			assert.ok(document.getElementById("jsDialog"), "Fragment should be rendered now");
 
-			window.setTimeout(async function() {
+			window.setTimeout(function() {
 				assert.ok(oDialog.isOpen(), "Dialog should be open now");
 
-				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
 				oDialog.setModel(oDialogModel);
-				await nextUIUpdate();
 				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
 
 				triggerClickEvent("jsDialogBtn"); // close it
@@ -480,7 +484,6 @@ sap.ui.define([
 			window.setTimeout(async function() {
 				assert.ok(oDialog.isOpen(), "Dialog should be open now");
 
-				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
 				oDialog.setModel(oDialogModel);
 				await nextUIUpdate();
 				assert.equal(oDialog.getContent()[0].getText(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
@@ -604,6 +607,7 @@ sap.ui.define([
 			controller: this.oDummyController
 		}).then(async function(oFragment) {
 			oFragment.placeAt("content1");
+			oFragment.getUIArea().setModel(oModel);
 			await nextUIUpdate();
 
 			var id = oFragment.getId();

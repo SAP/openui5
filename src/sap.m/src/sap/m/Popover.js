@@ -2611,7 +2611,7 @@ sap.ui.define([
 		};
 
 		Popover.prototype.invalidate = function (oOrigin) {
-			if (this.isOpen()) {
+			if (this.oPopup && this.isOpen() && this.oPopup.getOpenState() !== OpenState.CLOSING) {
 				Control.prototype.invalidate.apply(this, arguments);
 			}
 			return this;

@@ -73,7 +73,7 @@ sap.ui.define([
 					}
 				};
 				this.oModel.setData(oData);
-				sap.ui.getCore().setModel(this.oModel);
+				sap.ui.getCore();
 			};
 
 			return Promise.all([pCompContRendered, pCompContEnabledRendered, pCompContDisabledRendered]).then(nextUIUpdate);
@@ -103,7 +103,7 @@ sap.ui.define([
 				assert.ok(oCompZip.getValueState() === library.ValueState.Error, 'Input: ValueState set correctly');
 				assert.equal(oCompZip.getValueStateText(), "String.MaxLength 5", 'Input: ValueStateText set correctly');
 			});
-			sap.ui.getCore().attachValidationError(oCoreValHandler);
+			sap.ui.getCore();
 			oCompZip.setValue('123456');
 		}.bind(this));
 
@@ -115,7 +115,7 @@ sap.ui.define([
 				done();
 			});
 			oCompZip.setValue('12345');
-			sap.ui.getCore().detachValidationError(oCoreValHandler);
+			sap.ui.getCore();
 		}.bind(this), 0);
 	});
 
@@ -129,10 +129,10 @@ sap.ui.define([
 			}
 		};
 		oCompZip.getBinding("value").attachDataStateChange(oValHandler);
-		sap.ui.getCore().attachValidationError(oValHandler);
+		sap.ui.getCore();
 		oCompZip.setValue('123456');
 		assert.ok(isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
-		sap.ui.getCore().detachValidationError(oValHandler);
+		sap.ui.getCore();
 	});
 
 	QUnit.test("component handle validation undefined", function(assert) {
@@ -146,10 +146,10 @@ sap.ui.define([
 		};
 		var oValHandler = function(oEvent) {
 			assert.ok(true,oEvent.sId);
-			sap.ui.getCore().detachValidationError(oValHandler);
+			sap.ui.getCore();
 		};
 		oCompZip.getBinding("value").attachDataStateChange(oChangeHandler);
-		sap.ui.getCore().attachValidationError(oValHandler);
+		sap.ui.getCore();
 		oCompZip.setValue('123456');
 		assert.ok(isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 	});

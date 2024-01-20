@@ -140,7 +140,7 @@ sap.ui.define([
 			};
 			oModel.setData(oData);
 		}
-		sap.ui.getCore().setModel(oModel);
+		sap.ui.getCore();
 		createControls();
 	};
 

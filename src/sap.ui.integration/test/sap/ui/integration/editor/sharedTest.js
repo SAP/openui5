@@ -34,7 +34,7 @@ function switchTheme(oSelect) {
 
 function switchLanguage(oSelect) {
 	this._sLanguage = oSelect.options[oSelect.selectedIndex].value;
-	sap.ui.getCore().getConfiguration().setLanguage(this._sLanguage)/*Not inside AMD call*//*Not inside AMD call*/;
+	sap.ui.getCore().getConfiguration();
 	updateAllLayerEditor();
 	loadAllChanges();
 }

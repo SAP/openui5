@@ -42,14 +42,14 @@ sap.ui.define([
             enabled: true
         }]
     });
-    sap.ui.getCore().setModel(oModel);
+    sap.ui.getCore();
 
     var oModel2 = new JSONModel();
     oModel2.setData({
         amount: 3000.53,
         currency: "$"
     });
-    sap.ui.getCore().setModel(oModel2, "model2");
+    sap.ui.getCore();
 
     var pXMLView = XMLView.create({
         viewName: "testdata.complexsyntax"

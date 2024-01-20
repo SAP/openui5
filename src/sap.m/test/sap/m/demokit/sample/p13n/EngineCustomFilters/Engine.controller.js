@@ -179,7 +179,10 @@ sap.ui.define([
 									});
 
 									// Use FilterPanel#setP13nData to update the FilterPanel model to create personalization changes
-									const aUdatedP13nData = Object.assign(oFilterPanel.getP13nData(), [oP13nItem]);
+									let aUdatedP13nData = oFilterPanel.getP13nData();
+									aUdatedP13nData = aUdatedP13nData.map((oFilterPanelItem) => {
+										return oFilterPanelItem.name == oP13nItem.name ? oP13nItem : oFilterPanelItem;
+									});
 									oFilterPanel.setP13nData(aUdatedP13nData);
 								},
 								// Use FilterPanel#getP13nData & FilterPanel#getItemByKey to retrieve the existing conditions

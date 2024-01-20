@@ -16,7 +16,7 @@ sap.ui.require([
 		});
 
 		// Assign the model object to the SAPUI5 core
-		sap.ui.getCore().setModel(oModel);
+		sap.ui.getCore();
 
 		// Create a resource bundle for language specific texts
 		// configured supportedLocales represent the i18n files present:
@@ -32,7 +32,7 @@ sap.ui.require([
 		});
 
 		// Assign the model object to the SAPUI5 core using the name "i18n"
-		sap.ui.getCore().setModel(oResourceModel, "i18n");
+		sap.ui.getCore();
 
 		// Display the XML view called "App"
 		new XMLView({

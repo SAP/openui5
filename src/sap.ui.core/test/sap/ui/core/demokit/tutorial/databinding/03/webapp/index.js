@@ -12,7 +12,7 @@ sap.ui.require([
 			greetingText: "Hi, my name is Harry Hawk"
 		});
 		// Assign the model object to the SAPUI5 core
-		sap.ui.getCore().setModel(oModel);
+		sap.ui.getCore();
 
 		// Display a text element whose text is derived
 		// from the model object

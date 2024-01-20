@@ -13,7 +13,7 @@ sap.ui.require([
 		});
 
 		// Assign the model object to the SAPUI5 core
-		sap.ui.getCore().setModel(oModel);
+		sap.ui.getCore();
 
 		// Create a text UI element that displays a hardcoded text string
 		new Text({text: "Hi, my name is Harry Hawk"}).placeAt("content");

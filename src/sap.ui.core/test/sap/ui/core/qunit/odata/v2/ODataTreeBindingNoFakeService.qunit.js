@@ -1384,4 +1384,28 @@ sap.ui.define([
 			assert.deepEqual(ODataTreeBinding.prototype._getHeaders.call(oBinding), oFixture.result);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_processODataObject", function (assert) {
+		const oBinding = {
+			oFinalLengths : {},
+			oKeys : {},
+			oLengths : {},
+			_processODataObject() {},
+			getModel() {}
+		};
+		const oModel = {_getObject() {}, getProperty() {}};
+		this.mock(oBinding).expects("getModel").withExactArgs().returns(oModel);
+		const aData = ["sRef"];
+		this.mock(oModel).expects("_getObject").withExactArgs("sPath").returns(aData);
+		this.mock(oModel).expects("getProperty").withExactArgs("/sRef").returns("~oObject");
+		this.mock(oBinding).expects("_processODataObject").withExactArgs("~oObject", "/sRef/foo", "bar");
+
+		// code under test
+		ODataTreeBinding.prototype._processODataObject.call(oBinding, {"foo" : "baz"}, "sPath", "foo/bar");
+
+		assert.strictEqual(oBinding.oKeys.sPath, aData);
+		assert.strictEqual(oBinding.oLengths.sPath, aData.length);
+		assert.strictEqual(oBinding.oFinalLengths.sPath, true);
+	});
 });
