@@ -195,8 +195,6 @@ sap.ui.define([
 		}
 	}
 
-	oFormatSettings = new FormatSettings(this);
-
 	//enable Eventing
 	Localization.attachChange(function(oEvent) {
 		if (!mChanges && Core) {} else if (mChanges) {
