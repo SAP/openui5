@@ -526,7 +526,7 @@ sap.ui.define([
 		const oSelectors = this._oChangeIndicatorRegistry.getSelectorsWithRegisteredChanges();
 		const oIndicators = {};
 		this._mDisplayElementsKeyMap = {};
-		const oConnectedElements = this._oDesignTime && this._oDesignTime.getSelectionManager().getConnectedElements();
+		const oConnectedElements = this._oDesignTime?.getSelectionManager?.().getConnectedElements();
 		Object.keys(oSelectors).forEach(function(sSelectorId) {
 			const aChangesOnIndicator = oSelectors[sSelectorId];
 			const aRelevantChanges = this._filterRelevantChanges(oSelectors[sSelectorId]);
@@ -545,7 +545,7 @@ sap.ui.define([
 
 			const oChangeIndicator = this._oChangeIndicatorRegistry.getChangeIndicator(sSelectorId);
 			const sOverlayId = oOverlay.getId();
-			const oConnectedElement = oConnectedElements && oConnectedElements[oOverlay.getAssociation("element")];
+			const oConnectedElement = oConnectedElements?.[oOverlay.getAssociation("element")];
 			if (!oChangeIndicator) {
 				this._createChangeIndicator(oOverlay, sSelectorId, oConnectedElement);
 				// Assumption: all changes on an indicator affect the same elements
