@@ -16,61 +16,61 @@ sap.ui.define([
 	} */
 
 	const aPropertyInfos = [{
-		name: "rank",
+		key: "rank",
 		label: "Rank",
 		visible: true,
 		path: "rank",
 		dataType: "sap.ui.model.type.Integer"
 	},{
-		name: "name",
+		key: "name",
 		label: "Name",
 		visible: true,
 		path: "name",
 		dataType: "sap.ui.model.type.String"
 	},{
-		name: "height",
+		key: "height",
 		label: "Height",
 		visible: true,
 		path: "height",
 		dataType: "mdc.sample.model.type.LengthMeter"
 	},{
-		name: "prominence",
+		key: "prominence",
 		label: "Prominence",
 		visible: true,
 		path: "prominence",
 		dataType: "mdc.sample.model.type.LengthMeter"
 	},{
-		name: "range",
+		key: "range",
 		label: "Range",
 		visible: true,
 		path: "range",
 		dataType: "sap.ui.model.type.String"
 	},{
-		name: "coordinates",
+		key: "coordinates",
 		label: "Coordinates",
 		visible: true,
 		path: "coordinates",
 		dataType: "sap.ui.model.type.String"
 	},{
-		name: "parent_mountain",
+		key: "parent_mountain",
 		label: "Parent Mountain",
 		visible: true,
 		path: "parent_mountain",
 		dataType: "sap.ui.model.type.String"
 	},{
-		name: "first_ascent",
+		key: "first_ascent",
 		label: "First Ascent",
 		visible: true,
 		path: "first_ascent",
 		dataType: "sap.ui.model.type.Integer"
 	},{
-		name: "countries",
+		key: "countries",
 		label: "Countries",
 		visible: true,
 		path: "countries",
 		dataType: "sap.ui.model.type.String"
 	},{
-		name: "$search",
+		key: "$search",
 		label: "Search",
 		visible: true,
 		maxConditions: 1,
