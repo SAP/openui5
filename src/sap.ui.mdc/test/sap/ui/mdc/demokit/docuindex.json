@@ -70,7 +70,8 @@
 					"sap.ui.mdc.demokit.sample.FieldCustomContent",
 					"sap.ui.mdc.demokit.sample.FieldTypes",
 					"sap.ui.mdc.demokit.sample.MultiValueField",
-					"sap.ui.mdc.demokit.sample.LinkPayloadJson"
+					"sap.ui.mdc.demokit.sample.LinkPayloadJson",
+					"sap.ui.mdc.demokit.sample.FilterbarTypes"
 				]
 			}
 		],
@@ -183,12 +184,17 @@
 			{
 				"id": "sap.ui.mdc.demokit.sample.MultiValueField",
 				"name": "MultiValueField",
-				"description": "A MultiValueField updating it's JSON-Model"
+				"description": "A MultiValueField updating its JSON model"
 			},
 			{
 				"id": "sap.ui.mdc.demokit.sample.LinkPayloadJson",
 				"name": "Link with JSON model",
-				"description": "Using a delegate payload for controlling the behavior of an mdc.Link control"
+				"description": "Using a delegate payload for controlling the behavior of a Link control"
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.FilterbarTypes",
+				"name": "Different FilterField types in a FilterBar",
+				"description": "A filter bar with multiple filter fields of different data types"
 			}
 
 		]
