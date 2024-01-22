@@ -489,6 +489,29 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"icon": {
 								"label": "Icon"
 							},
+							"type": {
+								"label": "Type",
+								"type": "string",
+								"values": {
+									"data": {
+										"json": {
+											"values": [
+												{ "text": "Type 01", "key": "type01"},
+												{ "text": "Type 02", "key": "type02"},
+												{ "text": "Type 03", "key": "type03"},
+												{ "text": "Type 04", "key": "type04"},
+												{ "text": "Type 05", "key": "type05"},
+												{ "text": "Type 06", "key": "type06"}
+											]
+										},
+										"path": "/values"
+									},
+									"item": {
+										"text": "{text}",
+										"key": "{key}"
+									}
+								}
+							},
 							"text": {
 								"label": "Text",
 								"translatable": true
@@ -516,6 +539,14 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 									"decimals": 1,
 									"style":"short"
 								}
+							},
+							"object": {
+								"label": "Object",
+								"type": "object",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem"
+								}
 							}
 						}
 					},
@@ -527,14 +558,14 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"data": {
 								"json": {
 									"values": [
-										{ "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 },
-										{ "text": "text02", "key": "key02", "url": "http://sap.com/05", "icon": "sap-icon://cart", "iconcolor": "#64E4CE", "int": 2 },
-										{ "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3 },
-										{ "text": "text04", "key": "key04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4 },
-										{ "text": "text05", "key": "key05", "url": "http://sap.com/02", "icon": "sap-icon://cart", "iconcolor": "#8875E7", "int": 5 },
-										{ "text": "text06", "key": "key06", "url": "https://sap.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 6 },
-										{ "text": "text07", "key": "key07", "url": "http://sap.com/02", "icon": "sap-icon://cart", "iconcolor": "#1C4C98", "int": 7 },
-										{ "text": "text08", "key": "key08", "url": "https://sap.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#8875E7", "int": 8 }
+										{ "text": "text01", "key": "key01", "type": "type01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 , "object": {"text": "text01", "key": "key01"}},
+										{ "text": "text02", "key": "key02", "type": "type02", "url": "http://sap.com/05", "icon": "sap-icon://cart", "iconcolor": "#64E4CE", "int": 2 , "object": {"text": "text02", "key": "key02"}},
+										{ "text": "text03", "key": "key03", "type": "type03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3 , "object": {"text": "text03", "key": "key03"}},
+										{ "text": "text04", "key": "key04", "type": "type04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4 , "object": {"text": "text04", "key": "key04"}},
+										{ "text": "text05", "key": "key05", "type": "type05", "url": "http://sap.com/02", "icon": "sap-icon://cart", "iconcolor": "#8875E7", "int": 5 , "object": {"text": "text05", "key": "key05"}},
+										{ "text": "text06", "key": "key06", "type": "type06", "url": "https://sap.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 6 , "object": {"text": "text06", "key": "key06"}},
+										{ "text": "text07", "key": "key07", "type": "type05", "url": "http://sap.com/02", "icon": "sap-icon://cart", "iconcolor": "#1C4C98", "int": 7 , "object": {"text": "text07", "key": "key07"}},
+										{ "text": "text08", "key": "key08", "type": "type06", "url": "https://sap.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#8875E7", "int": 8 , "object": {"text": "text08", "key": "key08"}}
 									]
 								},
 								"path": "/values"
@@ -555,6 +586,29 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"cell": {
 									"type": "Icon",
 									"color": "{iconcolor}"
+								}
+							},
+							"type": {
+								"label": "Type",
+								"type": "string",
+								"values": {
+									"data": {
+										"json": {
+											"values": [
+												{ "text": "Type 01", "key": "type01"},
+												{ "text": "Type 02", "key": "type02"},
+												{ "text": "Type 03", "key": "type03"},
+												{ "text": "Type 04", "key": "type04"},
+												{ "text": "Type 05", "key": "type05"},
+												{ "text": "Type 06", "key": "type06"}
+											]
+										},
+										"path": "/values"
+									},
+									"item": {
+										"text": "{text}",
+										"key": "{key}"
+									}
 								}
 							},
 							"text": {
@@ -613,6 +667,14 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"formatter": {
 									"decimals": 1,
 									"style":"short"
+								}
+							},
+							"object": {
+								"label": "Object",
+								"type": "object",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem"
 								}
 							}
 						},
@@ -754,6 +816,29 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 									"color": "{iconcolor}"
 								}
 							},
+							"type": {
+								"label": "Type",
+								"type": "string",
+								"values": {
+									"data": {
+										"json": {
+											"values": [
+												{ "text": "Type 01", "key": "type01"},
+												{ "text": "Type 02", "key": "type02"},
+												{ "text": "Type 03", "key": "type03"},
+												{ "text": "Type 04", "key": "type04"},
+												{ "text": "Type 05", "key": "type05"},
+												{ "text": "Type 06", "key": "type06"}
+											]
+										},
+										"path": "/values"
+									},
+									"item": {
+										"text": "{text}",
+										"key": "{key}"
+									}
+								}
+							},
 							"text": {
 								"label": "Text",
 								"defaultValue": "text",
@@ -811,6 +896,14 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 									"decimals": 1,
 									"style":"short"
 								}
+							},
+							"object": {
+								"label": "Object",
+								"type": "object",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem"
+								}
 							}
 						},
 						"addButtonText": "Add a new step"
@@ -823,14 +916,14 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"data": {
 								"json": {
 									"values": [
-										{ "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 },
-										{ "text": "text02", "key": "key02", "url": "http://sap.com/05", "icon": "sap-icon://cart", "iconcolor": "#64E4CE", "int": 2 },
-										{ "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3 },
-										{ "text": "text04", "key": "key04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4 },
-										{ "text": "text05", "key": "key05", "url": "http://sap.com/02", "icon": "sap-icon://cart", "iconcolor": "#8875E7", "int": 5 },
-										{ "text": "text06", "key": "key06", "url": "https://sap.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 6 },
-										{ "text": "text07", "key": "key07", "url": "http://sap.com/02", "icon": "sap-icon://cart", "iconcolor": "#1C4C98", "int": 7 },
-										{ "text": "text08", "key": "key08", "url": "https://sap.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#8875E7", "int": 8 }
+										{ "text": "text01", "key": "key01", "type": "type01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 , "object": {"text": "text01", "key": "key01"}},
+										{ "text": "text02", "key": "key02", "type": "type02", "url": "http://sap.com/05", "icon": "sap-icon://cart", "iconcolor": "#64E4CE", "int": 2 , "object": {"text": "text02", "key": "key02"}},
+										{ "text": "text03", "key": "key03", "type": "type03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3 , "object": {"text": "text03", "key": "key03"}},
+										{ "text": "text04", "key": "key04", "type": "type04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4 , "object": {"text": "text04", "key": "key04"}},
+										{ "text": "text05", "key": "key05", "type": "type05", "url": "http://sap.com/02", "icon": "sap-icon://cart", "iconcolor": "#8875E7", "int": 5 , "object": {"text": "text05", "key": "key05"}},
+										{ "text": "text06", "key": "key06", "type": "type06", "url": "https://sap.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 6 , "object": {"text": "text06", "key": "key06"}},
+										{ "text": "text07", "key": "key07", "type": "type05", "url": "http://sap.com/02", "icon": "sap-icon://cart", "iconcolor": "#1C4C98", "int": 7 , "object": {"text": "text07", "key": "key07"}},
+										{ "text": "text08", "key": "key08", "type": "type06", "url": "https://sap.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#8875E7", "int": 8 , "object": {"text": "text08", "key": "key08"}}
 									]
 								},
 								"path": "/values"
@@ -842,6 +935,29 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"label": "Key",
 								"column": {
 									"filterProperty": "key"
+								}
+							},
+							"type": {
+								"label": "Type",
+								"type": "string",
+								"values": {
+									"data": {
+										"json": {
+											"values": [
+												{ "text": "Type 01", "key": "type01"},
+												{ "text": "Type 02", "key": "type02"},
+												{ "text": "Type 03", "key": "type03"},
+												{ "text": "Type 04", "key": "type04"},
+												{ "text": "Type 05", "key": "type05"},
+												{ "text": "Type 06", "key": "type06"}
+											]
+										},
+										"path": "/values"
+									},
+									"item": {
+										"text": "{text}",
+										"key": "{key}"
+									}
 								}
 							},
 							"icon": {
@@ -919,6 +1035,14 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"formatter": {
 									"decimals": 1,
 									"style":"short"
+								}
+							},
+							"object": {
+								"label": "Object",
+								"type": "object",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem"
 								}
 							}
 						}

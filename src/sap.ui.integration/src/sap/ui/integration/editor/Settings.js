@@ -927,6 +927,7 @@ sap.ui.define([
 					},
 					"cell": {
 						"type": "string",
+						"editable": true,
 						"values": {
 							"data": {
 								"json": oDestinationList,

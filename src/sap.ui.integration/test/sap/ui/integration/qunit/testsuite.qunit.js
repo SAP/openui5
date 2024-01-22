@@ -1526,7 +1526,27 @@ sap.ui.define([
 				sinon: false
 			},
 
-			"editor/objectField/TextAreaAndSimpleForm": {
+			"editor/objectField/table/SpecialProperties": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/objectField/TextArea": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/objectField/SimpleForm": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
@@ -1607,6 +1627,16 @@ sap.ui.define([
 			},
 
 			"editor/objectListField/table/sort/RequestValues": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/objectListField/table/SpecialProperties": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [

@@ -209,6 +209,7 @@ sap.ui.define([
 		that.refreshValue();
 		that._oObjectDetailsPopover.close();
 		that._positionCount++;
+		that.updateTable();
 	};
 
 	ObjectListField.prototype.refreshValue = function () {
