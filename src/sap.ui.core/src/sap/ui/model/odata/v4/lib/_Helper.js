@@ -633,12 +633,13 @@ sap.ui.define([
 
 				if (!isRelevant(oClone.error, sTopLevelContentID)) {
 					oClone.error.$ignoreTopLevel = true;
-				} else {
-					oClone.strictHandlingFailed = oError.strictHandlingFailed;
+				}
+				if (oError.strictHandlingFailed) {
+					oClone.strictHandlingFailed = true;
 				}
 				if (oClone.error.details) {
-					oClone.error.details = oClone.error.details.filter(function (oDetail, i) {
-						return isRelevant(oDetail, aDetailContentIDs[i]);
+					oClone.error.details = oClone.error.details.filter(function (oDetail, j) {
+						return isRelevant(oDetail, aDetailContentIDs[j]);
 					});
 				}
 
