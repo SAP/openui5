@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library","sap/m/Link"],
-	function(library,Link) {
+sap.ui.define(["./library"],
+	function(library) {
 	"use strict";
 
 	/**

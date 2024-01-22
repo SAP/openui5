@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/ContentConfig"
-], function(ActionTile,ActionTileContent,TileAttribute,TileContent,library,FormattedText,Button,oCore,Library,KeyCodes,jQuery,JSONModel,ContentConfig) {
+	"sap/m/ContentConfig",
+	"sap/ui/core/theming/Parameters"
+], function(ActionTile,ActionTileContent,TileAttribute,TileContent,library,FormattedText,Button,oCore,Library,KeyCodes,jQuery,JSONModel,ContentConfig,Parameters) {
 	"use strict";
 
 	// shortcut for sap.m.FrameType
@@ -84,6 +85,7 @@ sap.ui.define([
 				header: "Comparative Annual Totals",
 				tileContent: new ActionTileContent("tileCont1", {
 				priority: Priority.VeryHigh,
+				linkPress: Function.prototype,
 				priorityText: "Very High",
 				attributes: {
 					path: "/attributes",
@@ -236,5 +238,32 @@ sap.ui.define([
 	QUnit.test("Priority text will not be rendered on the tooltip of the ToDo cards", function(assert) {
 		var sPriority = Library.getResourceBundleFor("sap.m").getText("TEXT_CONTENT_PRIORITY");
 		assert.notOk(this.oToDo.getTileContent()[0].getAltText().includes(sPriority),"Priority text is not rendered inside the tooltip");
+	});
+
+	QUnit.test("Border radius has been set to 0.25 rem in non-horizon themes", function(assert) {
+		var sBorderRadius,fnDone;
+		sBorderRadius = Parameters.get({name:"sapTile_BorderCornerRadius",
+		callback: function (sBRadius) {
+			var boundFn = fnPerformAssertion.bind(this);
+			boundFn(sBRadius);
+			fnDone();
+		}.bind(this)});
+		function fnPerformAssertion(sExpectedValue) {
+			assert.equal(getComputedStyle(this.oToDo.getDomRef()).borderRadius.slice(0,-2) * 1,sExpectedValue.slice(0,-3) * 16,"Border-radius has been set to the sapTile_BorderCornerRadius parameter");
+		}
+		if (sBorderRadius) {
+			var boundFn = fnPerformAssertion.bind(this);
+			boundFn(sBorderRadius);
+		} else {
+			fnDone = assert.async();
+		}
+	});
+
+	QUnit.test("One press event has been attached to the link after rerendering the tile", function(assert) {
+		this.oToDo.setHeader("Demo Tile");
+		oCore.applyChanges();
+		var oLink = this.oToDo.getTileContent()[0].getAttributes()[1].getContentConfig().getInnerControl();
+		assert.equal(oLink.mEventRegistry.press.length,1,"Only one event has been attached to the press event of the link");
+
 	});
 });
