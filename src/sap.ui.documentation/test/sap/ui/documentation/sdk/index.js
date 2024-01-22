@@ -11,7 +11,7 @@
         document.cookie = "dk_approval_requested=1";
         //We preset the path to api-index.json file to be the local mock folder
         window['sap-ui-documentation-config'] = {
-            apiInfoRootURL: '/test-resources/sap/ui/documentation/sdk/integration/mock/docs/api/api-index.json'
+            apiInfoRootURL: 'test-resources/sap/ui/documentation/sdk/integration/mock/docs/api/api-index.json'
         };
 
         Core.attachInit(function () {
@@ -22,7 +22,7 @@
             "sap/ui/documentation/sdk/controller/util/APIInfo"
             ], function (Page, ComponentContainer, APIInfo) {
 
-                APIInfo._setRoot("/test-resources/sap/ui/documentation/sdk/integration/mock");
+                APIInfo._setRoot("test-resources/sap/ui/documentation/sdk/integration/mock");
 
                 // initialize the UI component
                 new Page({
