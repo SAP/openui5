@@ -12088,7 +12088,7 @@ sap.ui.define([
 	// ContentID on root level, but missing for one message in details. Check the value state for
 	// the related input controls.
 	// JIRA: CPOUI5ODATAV4-729
-	QUnit.test("CPOUI5ODATAV4-729: @Core.ContentId", function (assert) {
+	QUnit.test("CPOUI5ODATAV4-729: @Core.ContentID", function (assert) {
 		var aItems,
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -46224,15 +46224,29 @@ make root = ${bMakeRoot}`;
 	//
 	// JIRA: CPOUI5ODATAV4-943
 	// BCP: 2280172148 more than one action in change set + check that the right callback is called
+	//
+	// Execute three actions in a changeset, each with a fnOnStrictHandlingFailed handler. The batch
+	// fails due to strict-handling and the response contains error messages for the first and
+	// second request or only for the first. No error message for the third request. See that each
+	// handler is called with the correct (or none) errors.
+	// SNOW: DINC0032238
 [true, false].forEach(function (bConfirm) {
-	QUnit.test("CPOUI5ODATAV4-943: handling=strict, confirm=" + bConfirm, function (assert) {
-		var sAction0 = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
-			sAction1 = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Cancel",
+	[true, false].forEach(function (bDifferentContentIDs) {
+		const sTitle = "CPOUI5ODATAV4-943: handling=strict, confirm=" + bConfirm
+			+ ", different content IDs=" + bDifferentContentIDs;
+	QUnit.test(sTitle, function (assert) {
+		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
 			oAction0Promise,
-			oError = createErrorInsideBatch({
-				code : "STRICT",
-				"@SAP__core.ContentID" : "0.0",
+			oAction1Promise,
+			oAction2Promise,
+			oErrorObject = {
 				details : [{
+					"@Common.numericSeverity" : 3,
+					code : "CODE1",
+					"@SAP__core.ContentID" : "0.0",
+					message : "Note is empty",
+					target : "SalesOrder/Note"
+				}, {
 					"@Common.numericSeverity" : 3,
 					code : "CODE1",
 					"@SAP__core.ContentID" : "0.0",
@@ -46243,51 +46257,96 @@ make root = ${bMakeRoot}`;
 					code : "CODE2",
 					"@SAP__core.ContentID" : "0.0",
 					message : "Some unbound info"
-				}],
-				message : "Strict Handling"
-			}, 412),
+				}]
+			},
+			oError,
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
-			fnResolve,
+			fnResolve0,
+			fnResolve1,
+			fnResolve2,
 			sView = '\
-<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+<Table id="table" items="{/SalesOrderList}">\
 	<Text id="status" text="{LifecycleStatus}"/>\
-	<FlexBox id="action" binding="{' + sAction0 + '(...)}"/>\
-</FlexBox>',
+</Table>',
 			that = this;
 
-		function onStrictHandlingFailed(aMessages) {
-			assert.strictEqual(aMessages.length, 2);
+		function onStrictHandlingFailed0(aMessages) {
 			assert.strictEqual(aMessages[0].getMessage(), "Note is empty");
 			assert.strictEqual(aMessages[0].getCode(), "CODE1");
-			assert.strictEqual(aMessages[0].getTargets()[0], "/SalesOrderList('1')/Note");
+			assert.strictEqual(aMessages[0].getTargets()[0], "/SalesOrderList('0')/Note");
 			assert.strictEqual(aMessages[0].getType(), "Warning");
-			assert.strictEqual(aMessages[1].getMessage(), "Some unbound info");
-			assert.strictEqual(aMessages[1].getCode(), "CODE2");
-			assert.strictEqual(aMessages[1].getTargets()[0], "");
-			assert.strictEqual(aMessages[1].getType(), "Information");
-
+			if (bDifferentContentIDs) {
+				assert.strictEqual(aMessages.length, 1);
+			} else {
+				assert.strictEqual(aMessages.length, 3);
+				assert.strictEqual(aMessages[1].getMessage(), "Note is empty");
+				assert.strictEqual(aMessages[1].getCode(), "CODE1");
+				assert.strictEqual(aMessages[1].getTargets()[0], "/SalesOrderList('0')/Note");
+				assert.strictEqual(aMessages[1].getType(), "Warning");
+				assert.strictEqual(aMessages[2].getMessage(), "Some unbound info");
+				assert.strictEqual(aMessages[2].getCode(), "CODE2");
+				assert.strictEqual(aMessages[2].getTargets()[0], "");
+				assert.strictEqual(aMessages[2].getType(), "Information");
+			}
 			return new Promise(function (resolve) {
-				fnResolve = resolve;
+				fnResolve0 = resolve;
 			});
 		}
 
-		this.expectRequest("SalesOrderList('1')?$select=LifecycleStatus,SalesOrderID", {
-				LifecycleStatus : "N",
-				SalesOrderID : "1"
+		function onStrictHandlingFailed1(aMessages) {
+			if (bDifferentContentIDs) {
+				assert.strictEqual(aMessages.length, 2);
+				assert.strictEqual(aMessages[0].getMessage(), "Note is empty");
+				assert.strictEqual(aMessages[0].getCode(), "CODE1");
+				assert.strictEqual(aMessages[0].getTargets()[0], "/SalesOrderList('1')/Note");
+				assert.strictEqual(aMessages[0].getType(), "Warning");
+				assert.strictEqual(aMessages[1].getMessage(), "Some unbound info");
+				assert.strictEqual(aMessages[1].getCode(), "CODE2");
+				assert.strictEqual(aMessages[1].getTargets()[0], "");
+				assert.strictEqual(aMessages[1].getType(), "Information");
+			} else {
+				assert.strictEqual(aMessages.length, 0);
+			}
+			return new Promise(function (resolve) {
+				fnResolve1 = resolve;
+			});
+		}
+
+		function onStrictHandlingFailed2(aMessages) {
+			assert.strictEqual(aMessages.length, 0);
+			return new Promise(function (resolve) {
+				fnResolve2 = resolve;
+			});
+		}
+
+		// change detail ContentID from 0.0 to 1.0 for the second and third message
+		if (bDifferentContentIDs) {
+			oErrorObject.details[1]["@SAP__core.ContentID"] = "1.0";
+			oErrorObject.details[2]["@SAP__core.ContentID"] = "1.0";
+		}
+		oError = createErrorInsideBatch(oErrorObject, 412);
+
+		this.expectRequest("SalesOrderList?$select=LifecycleStatus,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+						LifecycleStatus : "N0",
+						SalesOrderID : "0"
+					}, {
+						LifecycleStatus : "N1",
+						SalesOrderID : "1"
+					}, {
+						LifecycleStatus : "N2",
+						SalesOrderID : "2"
+				}]
 			})
-			.expectChange("status", "N");
+			.expectChange("status", ["N0", "N1", "N2"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.oLogMock.expects("error")
-				.withExactArgs("Failed to execute /SalesOrderList('2')/" + sAction1 + "(...)",
-					sinon.match("Strict Handling"), sODCB);
-
 			that.expectRequest({
 					headers : {
 						Prefer : "handling=strict"
 					},
 					method : "POST",
-					url : "SalesOrderList('1')/" + sAction0,
+					url : "SalesOrderList('0')/" + sAction,
 					payload : {}
 				}, oError, {
 					"Preference-Applied" : "handling=strict"
@@ -46297,39 +46356,70 @@ make root = ${bMakeRoot}`;
 						Prefer : "handling=strict"
 					},
 					method : "POST",
-					url : "SalesOrderList('2')/" + sAction1,
+					url : "SalesOrderList('1')/" + sAction,
+					payload : {}
+				}/*response does not matter*/)
+				.expectRequest({
+					headers : {
+						Prefer : "handling=strict"
+					},
+					method : "POST",
+					url : "SalesOrderList('2')/" + sAction,
 					payload : {}
 				}/*response does not matter*/);
 
-			oAction0Promise = that.oView.byId("action").getObjectBinding()
-				.execute("$auto", false, onStrictHandlingFailed);
+			const oListBinding = that.oView.byId("table").getBinding("items");
+			const aContexts = oListBinding.getCurrentContexts();
 
-			that.oModel.bindContext("/SalesOrderList('2')/" + sAction1 + "(...)")
-				.execute("$auto", false, "~mustNotBeCalled~")
-				.then(mustFail(assert), function (oError) {
-					assert.strictEqual(oError.message, "Strict Handling");
-					assert.notOk(oError.strictHandlingFailed);
-				});
+			// code under test
+			oAction0Promise = that.oModel.bindContext(sAction + "(...)", aContexts[0])
+				.execute("$auto", false, onStrictHandlingFailed0);
+			oAction1Promise = that.oModel.bindContext(sAction + "(...)", aContexts[1])
+				.execute("$auto", false, onStrictHandlingFailed1);
+			oAction2Promise = that.oModel.bindContext(sAction + "(...)", aContexts[2])
+				.execute("$auto", false, onStrictHandlingFailed2);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			if (bConfirm) {
 				that.expectRequest({
 						method : "POST",
-						url : "SalesOrderList('1')/" + sAction0,
+						url : "SalesOrderList('0')/" + sAction,
 						payload : {}
 					}, {
-						LifecycleStatus : "C",
+						LifecycleStatus : "C0",
+						SalesOrderID : "0"
+					})
+					.expectRequest({
+						method : "POST",
+						url : "SalesOrderList('1')/" + sAction,
+						payload : {}
+					}, {
+						LifecycleStatus : "C1",
 						SalesOrderID : "1"
 					})
-					.expectChange("status", "C");
+					.expectRequest({
+						method : "POST",
+						url : "SalesOrderList('2')/" + sAction,
+						payload : {}
+					}, {
+						LifecycleStatus : "C2",
+						SalesOrderID : "2"
+					})
+					.expectChange("status", ["C0", "C1", "C2"]);
 			} else {
-				that.expectCanceledError("Failed to execute /SalesOrderList('1')/" + sAction0
+				that.expectCanceledError("Failed to execute /SalesOrderList('0')/" + sAction
+						+ "(...)", "Action canceled due to strict handling");
+				that.expectCanceledError("Failed to execute /SalesOrderList('1')/" + sAction
+						+ "(...)", "Action canceled due to strict handling");
+				that.expectCanceledError("Failed to execute /SalesOrderList('2')/" + sAction
 						+ "(...)", "Action canceled due to strict handling");
 			}
 
-			// code under test
-			fnResolve(bConfirm);
+			// code under test - resolve call ensures that the handler is actually called
+			fnResolve0(bConfirm);
+			fnResolve1(bConfirm);
+			fnResolve2(bConfirm);
 
 			return Promise.all([
 				oAction0Promise.then(function () {
@@ -46339,9 +46429,24 @@ make root = ${bMakeRoot}`;
 					assert.strictEqual(oError.message, "Action canceled due to strict handling");
 					assert.strictEqual(oError.canceled, true);
 				}),
+				oAction1Promise.then(function () {
+					assert.ok(bConfirm);
+				}, function (oError) {
+					assert.notOk(bConfirm);
+					assert.strictEqual(oError.message, "Action canceled due to strict handling");
+					assert.strictEqual(oError.canceled, true);
+				}),
+				oAction2Promise.then(function () {
+					assert.ok(bConfirm);
+				}, function (oError) {
+					assert.notOk(bConfirm);
+					assert.strictEqual(oError.message, "Action canceled due to strict handling");
+					assert.strictEqual(oError.canceled, true);
+				}),
 				that.waitForChanges(assert)
 			]);
 		});
+	});
 	});
 });
 
