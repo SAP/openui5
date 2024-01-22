@@ -1806,5 +1806,98 @@
         ]
       }
     ]
+  },
+  "1.96.26": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "9c2cf81692607d2c60a8485cb4c0594984b3d27a",
+        "type": "FIX",
+        "text": " sap.m.DraftIndicator: JSDoc corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370142834"
+          }
+        ]
+      },
+      {
+        "id": "206fea00f920a1bb0a669387af12695df92b5454",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: adjust preferred user interaction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009687532023"
+          }
+        ]
+      },
+      {
+        "id": "d619244c86087b47d2bb3ad4a0894abc0bd63b25",
+        "type": "FIX",
+        "text": " sap.m.Label: Added selectors for simplified Chinese lang(zh-Hans) and traditional Chinese lang(zh-Hant)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280174524"
+          }
+        ]
+      },
+      {
+        "id": "562a7be59e562760ef32338286d721ad63a89bf1",
+        "type": "FIX",
+        "text": " sap.m.Label: Asterisk is now visible when label is required and used outside of forms",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280188701"
+          }
+        ]
+      },
+      {
+        "id": "4989cecaa859acf53d08ca9b2549bb599f25052c",
+        "type": "FIX",
+        "text": " sap.m.Label: Required label asterisk symbol is no longer cut off",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270118944"
+          }
+        ]
+      },
+      {
+        "id": "3a4c20d7d5c951406299b9d8e05897601c30b84f",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Arrow has hover state now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009692332023"
+          }
+        ]
+      },
+      {
+        "id": "68e23552f7992511c064e5dac403e0a6f83b8459",
+        "type": "FIX",
+        "text": " sap.m.Label: Asterisk is displayed properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270016372"
+          }
+        ]
+      },
+      {
+        "id": "2f57a019aa4c8d4188977b7d0d122229602d69cc",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: correct year range is rendered when the smallest possible min date is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370080166"
+          }
+        ]
+      }
+    ]
   }
 }

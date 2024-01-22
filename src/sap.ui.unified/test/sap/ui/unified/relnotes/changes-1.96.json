@@ -270,5 +270,21 @@
         ]
       }
     ]
+  },
+  "1.96.26": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "2f57a019aa4c8d4188977b7d0d122229602d69cc",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: correct year range is rendered when the smallest possible min date is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370080166"
+          }
+        ]
+      }
+    ]
   }
 }

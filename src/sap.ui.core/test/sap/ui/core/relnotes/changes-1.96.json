@@ -769,5 +769,15 @@
         ]
       }
     ]
+  },
+  "1.96.26": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "1491b914d84d6b01497ce305bb440d2cce05cf58",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataTreeBinding: Fix grouping of Application filters in OperationMode.Server"
+      }
+    ]
   }
 }

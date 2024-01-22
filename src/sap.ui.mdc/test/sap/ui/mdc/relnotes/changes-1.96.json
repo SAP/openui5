@@ -127,5 +127,21 @@
         ]
       }
     ]
+  },
+  "1.96.26": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "206fea00f920a1bb0a669387af12695df92b5454",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: adjust preferred user interaction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009687532023"
+          }
+        ]
+      }
+    ]
   }
 }

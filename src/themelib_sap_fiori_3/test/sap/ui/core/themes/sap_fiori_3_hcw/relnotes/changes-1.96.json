@@ -67,5 +67,15 @@
         ]
       }
     ]
+  },
+  "1.96.26": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "a53ff09468e06a5d2f6415ee887ba09fa7bc907f",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Fiori 3 theme alignment"
+      }
+    ]
   }
 }

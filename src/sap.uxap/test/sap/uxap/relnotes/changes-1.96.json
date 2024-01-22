@@ -117,5 +117,21 @@
         ]
       }
     ]
+  },
+  "1.96.26": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "9773d2b335adb7b239f3bcfdc964e7352bb0f027",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Layout issue corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009429332023"
+          }
+        ]
+      }
+    ]
   }
 }
