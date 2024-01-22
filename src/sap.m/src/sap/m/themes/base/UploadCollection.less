@@ -256,8 +256,8 @@
 }
 
 .sapMUC .sapUiIcon:focus {
-	outline-style: dotted;
-	outline-width: 1px; /*suddenly there comes 3 px outline-width from the Icon control which is not in sync with other outlines of our control */
+	outline-style: @sapUiContentFocusStyle;
+	outline-width: @sapUiContentFocusWidth;
 }
 /* ************************************************************************************* */
 
