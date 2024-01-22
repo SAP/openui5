@@ -3,6 +3,11 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "7ed3929b20bb3a8a6ae4ace48b1548d43ebf05dc",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/_ODataMetaModelUtils#merge: liftSAPData is called with correct parameters"
+      },
+      {
         "id": "cb82d703ad6bfa15113e59bc01df25640a1e9e0a",
         "type": "FIX",
         "text": " sap/ui/core/util/MockServer: support milliseconds in timestamps"

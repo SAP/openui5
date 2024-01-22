@@ -3,6 +3,17 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "5d573f5e3dc08cbf5cd5252de567faad89b4dc49",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Status with icon and text overflows correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122925"
+          }
+        ]
+      },
+      {
         "id": "913dd95fca3e7ee5ac45fedfb4eea368c6bc0555",
         "type": "FIX",
         "text": " sap.m.ProgressIndicator: Fiori 3 theme alignment"

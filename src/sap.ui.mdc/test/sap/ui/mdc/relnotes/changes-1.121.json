@@ -3,6 +3,27 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "094bbafd0e25ac0fc86bcf3af4a7ab10945003c9",
+        "type": "FIX",
+        "text": " P13nBuilder: Add button is now visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500011174622023"
+          }
+        ]
+      },
+      {
+        "id": "8785445964357b949aafbf597163a5b2294f6a7f",
+        "type": "FIX",
+        "text": " ValueHelp: ok button disabled after wrong entry removed"
+      },
+      {
+        "id": "cfdab7b5e84eb4883dd6b4bee41584ca10145dfc",
+        "type": "FEATURE",
+        "text": ": FilterField: paste values from mdc Table"
+      },
+      {
         "id": "60c0ad4be67bece8e382d5dd70dc59d80b05403c",
         "type": "FIX",
         "text": " mdc.FilterBarBase: validate call enhancement",
@@ -12,6 +33,11 @@
             "reference": "2380139482"
           }
         ]
+      },
+      {
+        "id": "55e6b102d201c280419a8fb54e4d79ee8563ad32",
+        "type": "FIX",
+        "text": " Field: no input validation if table header of typeahead focused"
       },
       {
         "id": "424ad7689fc854d0357099782e700f081c6d0270",

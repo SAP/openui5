@@ -3,6 +3,11 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "ae5128a43448ffd6ba278c2774ccd204722d799b",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: When collapsed the sub items in the Overflow can be selected"
+      },
+      {
         "id": "ad3d8bb8e6545f76d21b8129fdfc1e2ea7a1bea5",
         "type": "FEATURE",
         "text": " sap.m.IconTabHeader: New property \"interactionMode\" introduced",

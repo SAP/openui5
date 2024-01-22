@@ -3,6 +3,33 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "a69b5693cc3b2c3400d3d71863840f42fb2304e0",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Focus cutting is fixed"
+      },
+      {
+        "id": "131236ff1da67c143e7e3ac46474bce83ae464af",
+        "type": "FIX",
+        "text": " sap.m.Link: fix font for emphasized link",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370140928"
+          }
+        ]
+      },
+      {
+        "id": "5d573f5e3dc08cbf5cd5252de567faad89b4dc49",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Status with icon and text overflows correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122925"
+          }
+        ]
+      },
+      {
         "id": "49ac61f0faa29b4243ccc3af3e769919ab892ab5",
         "type": "FIX",
         "text": " sap.m.Breadcrumbs: Horizon theme alignment"

@@ -3,6 +3,38 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "b5331234a2d2d8ff3e94f3d4e683ee04ec8fce58",
+        "type": "FIX",
+        "text": " sap.m.Popover: Fix hiding of popover due to re-rendering"
+      },
+      {
+        "id": "131236ff1da67c143e7e3ac46474bce83ae464af",
+        "type": "FIX",
+        "text": " sap.m.Link: fix font for emphasized link",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370140928"
+          }
+        ]
+      },
+      {
+        "id": "5d573f5e3dc08cbf5cd5252de567faad89b4dc49",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Status with icon and text overflows correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122925"
+          }
+        ]
+      },
+      {
+        "id": "bf7e77c4f54f1b20775801f9408205750e96ce67",
+        "type": "FEATURE",
+        "text": " m.VM: show no-data text in case no views are found"
+      },
+      {
         "id": "f7d4e034343cbf6cb01812c041ce67c0bfb27c58",
         "type": "FIX",
         "text": " sap.m.MultiComboBox: Adjust aria-describedby value"

@@ -3,6 +3,11 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "bf7e77c4f54f1b20775801f9408205750e96ce67",
+        "type": "FEATURE",
+        "text": " m.VM: show no-data text in case no views are found"
+      },
+      {
         "id": "c24a6477bb01552228055d9bc02e097ebcce8acb",
         "type": "FIX",
         "text": " sap.ui.fl: resetChanges issue fixed"

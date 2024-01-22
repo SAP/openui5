@@ -3,6 +3,21 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "d4c95c1cbb717396fc9c5d155e13768e4e032467",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust year range picker display"
+      },
+      {
+        "id": "d2b483d0cd18ee968fe1a93c055047bd8f4a3413",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: fix amp tool acc concerns"
+      },
+      {
+        "id": "f56532638c31ee0cd1ddccd3e18824ed8ca3e6c3",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: fix amp tool acc concerns"
+      },
+      {
         "id": "209fe3e2f5a70bcc4a41fe9a350b287446b031fd",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: adding padding when two calendars are next to each other",

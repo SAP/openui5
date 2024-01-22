@@ -3,6 +3,11 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "75c5bd85683e5e9c3eea404a6d0f631856fdb226",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Rounding issue corected"
+      },
+      {
         "id": "0248a15311dadc900c78902c534c5541c193b5aa",
         "type": "FIX",
         "text": " sap.f.FlexibleColumnLayout: LayoutType documentation improved"
