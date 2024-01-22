@@ -122,6 +122,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Formats the title text of a group header row of the table.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {sap.ui.model.Context} oContext Binding context
+	 * @param {string} sProperty The name of the grouped property
+	 * @returns {string | undefined} The group header title. If <code>undefined</code> is returned, the default group header title is set.
+	 * @protected
+	 */
+	TableDelegate.formatGroupHeader = function(oTable, oContext, sProperty) {
+		const oProperty = oTable.getPropertyHelper().getProperty(sProperty);
+		const oTextProperty = oProperty.textProperty;
+		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+		let sResourceKey = "table.ROW_GROUP_TITLE";
+		const aValues = [oProperty.label, oContext.getProperty(oProperty.path, true)];
+
+		if (oTextProperty) {
+			sResourceKey = "table.ROW_GROUP_TITLE_FULL";
+			aValues.push(oContext.getProperty(oTextProperty.path, true));
+		}
+
+		return oResourceBundle.getText(sResourceKey, aValues);
+	};
+
+	/**
 	 * Returns the sort conditions that are used when updating the table's binding.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
@@ -158,42 +182,6 @@ sap.ui.define([
 	 */
 	TableDelegate.updateBinding = function(oTable, oBindingInfo, oBinding, mSettings) {
 		this.rebind(oTable, oBindingInfo);
-	};
-
-	/**
-	 * Formats the title text of a group header row of the table.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @param {sap.ui.model.Context} oContext Binding context
-	 * @param {string} sProperty The name of the grouped property
-	 * @returns {string | undefined} The group header title. If <code>undefined</code> is returned, the default group header title is set.
-	 * @protected
-	 */
-	TableDelegate.formatGroupHeader = function(oTable, oContext, sProperty) {
-		const oProperty = oTable.getPropertyHelper().getProperty(sProperty);
-		const oTextProperty = oProperty.textProperty;
-		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
-		let sResourceKey = "table.ROW_GROUP_TITLE";
-		const aValues = [oProperty.label, oContext.getProperty(oProperty.path, true)];
-
-		if (oTextProperty) {
-			sResourceKey = "table.ROW_GROUP_TITLE_FULL";
-			aValues.push(oContext.getProperty(oTextProperty.path, true));
-		}
-
-		return oResourceBundle.getText(sResourceKey, aValues);
-	};
-
-	TableDelegate.validateState = function(oTable, oState, sKey) {
-		if (sKey == "Filter" && oTable._oMessageFilter) {
-			const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
-			return {
-				validation: coreLibrary.MessageType.Information,
-				message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_FILTER_MESSAGESTRIP")
-			};
-		}
-
-		return AggregationBaseDelegate.validateState.apply(this, arguments);
 	};
 
 	/**
@@ -293,6 +281,50 @@ sap.ui.define([
 	 */
 	TableDelegate.collapseAll = function(oTable) {
 		throw Error("Unsupported operation: TableDelegate does not support #collapseAll");
+	};
+
+	/**
+	 * Gets the features that are supported by the combination of this delegate and the current table state (e.g. type).
+	 *
+	 * @param {sap.ui.mdc.Table} oTable
+	 * @returns {object} The supported features
+	 * @private
+	 */
+	TableDelegate.getSupportedFeatures = function(oTable) {
+		return {
+			"export": true,
+			expandAll: false,
+			collapseAll: false
+		};
+	};
+
+	/**
+	 * Gets the p13n modes that are supported by the combination of this delegate and the current table state (e.g. type).
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table.
+	 * @returns {sap.ui.mdc.enums.TableP13nMode[]} The supported p13n modes.
+	 * @private
+	 */
+	TableDelegate.getSupportedP13nModes = function(oTable) {
+		const aSupportedModes = [TableP13nMode.Column, TableP13nMode.Sort, TableP13nMode.Filter];
+
+		if (oTable._isOfType(TableType.ResponsiveTable)) {
+			aSupportedModes.push(TableP13nMode.Group);
+		}
+
+		return aSupportedModes;
+	};
+
+	TableDelegate.validateState = function(oTable, oState, sKey) {
+		if (sKey == "Filter" && oTable._oMessageFilter) {
+			const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+			return {
+				validation: coreLibrary.MessageType.Information,
+				message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_FILTER_MESSAGESTRIP")
+			};
+		}
+
+		return AggregationBaseDelegate.validateState.apply(this, arguments);
 	};
 
 	/**
@@ -494,38 +526,6 @@ sap.ui.define([
 		if (oTable._isOfType(TableType.ResponsiveTable)) {
 			oTable._oTable.removeSelections(true);
 		}
-	};
-
-	/**
-	 * Gets the features that are supported by the combination of this delegate and the current table state (e.g. type).
-	 *
-	 * @param {sap.ui.mdc.Table} oTable
-	 * @returns {object} The supported features
-	 * @private
-	 */
-	TableDelegate.getSupportedFeatures = function(oTable) {
-		return {
-			"export": true,
-			expandAll: false,
-			collapseAll: false
-		};
-	};
-
-	/**
-	 * Gets the p13n modes that are supported by the combination of this delegate and the current table state (e.g. type).
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table.
-	 * @returns {sap.ui.mdc.enums.TableP13nMode[]} The supported p13n modes.
-	 * @private
-	 */
-	TableDelegate.getSupportedP13nModes = function(oTable) {
-		const aSupportedModes = [TableP13nMode.Column, TableP13nMode.Sort, TableP13nMode.Filter];
-
-		if (oTable._isOfType(TableType.ResponsiveTable)) {
-			aSupportedModes.push(TableP13nMode.Group);
-		}
-
-		return aSupportedModes;
 	};
 
 	return TableDelegate;
