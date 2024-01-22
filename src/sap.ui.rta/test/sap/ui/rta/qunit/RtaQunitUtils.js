@@ -4,11 +4,12 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
@@ -24,11 +25,12 @@ sap.ui.define([
 	Component,
 	UIComponent,
 	KeyCodes,
+	FlexControllerFactory,
 	Layer,
 	flUtils,
+	Reverter,
 	FlexObjectFactory,
 	FlexState,
-	ChangesWriteAPI,
 	PersistenceWriteAPI,
 	VersionsAPI,
 	SessionStorageConnector,
@@ -48,44 +50,40 @@ sap.ui.define([
 
 	var RtaQunitUtils = {};
 
-	RtaQunitUtils.clear = function(oElement, bRevert) {
-		var oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || Component.getComponentById("Comp1");
-		var aCustomerChanges;
+	RtaQunitUtils.clear = async function(oElement, bRevert) {
+		const oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || Component.getComponentById("Comp1");
 
-		return VersionsAPI.initialize({
+		await VersionsAPI.initialize({
 			control: oComponent,
 			layer: Layer.CUSTOMER
-		})
-		.then(() => {
-			return FlexState.initialize({
-				componentId: oComponent.getId()
+		});
+		await FlexState.initialize({
+			componentId: oComponent.getId()
+		});
+		const aCustomerChanges = await PersistenceWriteAPI.save({
+			selector: oComponent,
+			layer: Layer.CUSTOMER,
+			draft: true
+		});
+		const aUserChangesChanges = await PersistenceWriteAPI.save({
+			selector: oComponent,
+			layer: Layer.USER
+		});
+
+		if (bRevert) {
+			const aChangesToRevert = aCustomerChanges.concat(aUserChangesChanges).reverse()
+			.filter((oChange) => {
+				// skip descriptor changes
+				return !oChange.isA("sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange");
 			});
-		})
-		.then(function() {
-			return PersistenceWriteAPI.save({selector: oComponent, layer: Layer.CUSTOMER, draft: true});
-		})
-		.then(function(aChanges) {
-			aCustomerChanges = aChanges;
-			return PersistenceWriteAPI.save({selector: oComponent, layer: Layer.USER});
-		})
-		.then(function(aUserChangesChanges) {
-			if (bRevert) {
-				return aCustomerChanges.concat(aUserChangesChanges).reverse()
-				.filter(function(oChange) {
-					// skip descriptor changes
-					return !oChange.isA("sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange");
-				})
-				.reduce(function(oPreviousPromise, oChange) {
-					var oElementToBeReverted = JsControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
-					return ChangesWriteAPI.revert({
-						element: oElementToBeReverted,
-						change: oChange
-					});
-				}, Promise.resolve());
-			}
-			return undefined;
-		})
-		.then(() => FlexTestAPI.clearStorage(SessionStorageConnector.storage));
+			await Reverter.revertMultipleChanges(aChangesToRevert, {
+				modifier: JsControlTreeModifier,
+				appComponent: oComponent,
+				flexControl: FlexControllerFactory.createForControl(oComponent)
+			});
+		}
+
+		FlexTestAPI.clearStorage(SessionStorageConnector.storage);
 	};
 
 	RtaQunitUtils.getNumberOfChangesForTestApp = function() {
