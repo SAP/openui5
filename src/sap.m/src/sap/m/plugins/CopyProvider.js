@@ -214,17 +214,23 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 		this._oDelegate = { onkeydown: this.onkeydown, onBeforeRendering: this.onBeforeRendering };
 		oControl.addEventDelegate(this._oDelegate, this);
 
-		this._oCopyButton?.setEnabled(true);
 		this._shouldManageExtractData() && this.setExtractData(this._extractData.bind(this));
-		this._bCellsAreSelectable = this.getPlugin("sap.m.plugins.CellSelector")?.isSelectable();
+
+		this._handleCellSelectorSelectionChange();
+		this._handleControlSelectionChange();
+		this._updateCopyButtonVisibility();
+		this._updateCopyButtonEnabled();
 	};
 
 	CopyProvider.prototype.onDeactivate = function(oControl) {
 		oControl.removeEventDelegate(this._oDelegate, this);
 		this._oDelegate = null;
 
-		this._oCopyButton?.setEnabled(false);
 		this._shouldManageExtractData() && this.setExtractData();
+
+		this._handleCellSelectorSelectionChange();
+		this._handleControlSelectionChange();
+		this._updateCopyButtonEnabled();
 	};
 
 	CopyProvider.prototype.setVisible = function(bVisible) {
@@ -257,11 +263,11 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 			const sText = coreLib.getResourceBundleFor("sap.m").getText("COPYPROVIDER_COPY");
 			this._oCopyButton = new OverflowToolbarButton({
 				icon: "sap-icon://copy",
-				enabled: this.getEnabled(),
+				enabled: this._getEffectiveEnabled(),
 				visible: this._getEffectiveVisible(),
 				text: sText,
 				tooltip: sText,
-				press: this._copySelectionData.bind(this, true, true),
+				press: this.copySelectionData.bind(this, true),
 				...mSettings
 			});
 		}
@@ -401,20 +407,9 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 	 * @public
 	 */
 	CopyProvider.prototype.copySelectionData = function(bFireCopyEvent) {
-		return this._copySelectionData(bFireCopyEvent, false);
-	};
-
-	CopyProvider.prototype._copySelectionData = function(bFireCopyEvent, bActivatedByButton) {
 		const vSelectionData = this.getSelectionData(true);
 		const aTextSelectionData = vSelectionData.text || vSelectionData;
 		if (!aTextSelectionData.length || bFireCopyEvent && !this.fireCopy({data: aTextSelectionData}, true)) {
-
-			if (bActivatedByButton && !aTextSelectionData.length) {
-				this._iSelectedRows = 0;
-				this._iSelectedCells = 0;
-				this._notifyUser();
-			}
-
 			return Promise.resolve();
 		}
 
@@ -451,16 +446,17 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 	/**
 	 * This hook gets called by the CellSelector when the selectable state is changed.
 	 *
-	 * @param {boolean} bSelectable Whether cells are selectable or not
+	 * @param {sap.m.plugins.CellSelector} oCellSelector The CellSelector instance
 	 * @private
 	 * @ui5-restricted sap.m.plugins.CellSelector
 	 */
-	CopyProvider.prototype.onCellSelectorSelectableChange = function(bSelectable) {
-		this._bCellsAreSelectable = bSelectable;
+	CopyProvider.prototype.onCellSelectorSelectableChange = function(oCellSelector) {
+		this._handleCellSelectorSelectionChange(oCellSelector);
 		this._updateCopyButtonVisibility();
 	};
 
 	CopyProvider.prototype.onBeforeRendering = function() {
+		this._handleControlSelectionChange();
 		this._updateCopyButtonVisibility();
 	};
 
@@ -483,8 +479,38 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 		this.copySelectionData(true);
 	};
 
+	CopyProvider.prototype._handleControlSelectionChange = function() {
+		const oControl = this.getControl();
+		this.getConfig("detachSelectionChange", oControl, this._updateCopyButtonEnabled, this);
+		if (this.isActive() && this.getConfig("isSelectable", oControl)) {
+			this.getConfig("attachSelectionChange", oControl, this._updateCopyButtonEnabled, this);
+		}
+	};
+
+	CopyProvider.prototype._handleCellSelectorSelectionChange = function(oCellSelector) {
+		oCellSelector ??= this.getPlugin("sap.m.plugins.CellSelector");
+		if (!oCellSelector) {
+			return;
+		}
+
+		oCellSelector.detachEvent("selectionChange", this._updateCopyButtonEnabled, this);
+		if (this.isActive() && oCellSelector.isSelectable()) {
+			oCellSelector.attachEvent("selectionChange", this._updateCopyButtonEnabled, this);
+		}
+	};
+
 	CopyProvider.prototype._isControlSelectable = function() {
-		return Boolean(this.getConfig("isSelectable", this.getControl()) || this._bCellsAreSelectable);
+		return Boolean(
+			this.getConfig("isSelectable", this.getControl()) ||
+			this.getPlugin("sap.m.plugins.CellSelector")?.isSelectable()
+		);
+	};
+
+	CopyProvider.prototype._hasControlSelection = function() {
+		return Boolean(
+			this.getConfig("hasSelection", this.getControl()) ||
+			this.getPlugin("sap.m.plugins.CellSelector")?.hasSelection()
+		);
 	};
 
 	CopyProvider.prototype._getEffectiveVisible = function() {
@@ -493,6 +519,14 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 
 	CopyProvider.prototype._updateCopyButtonVisibility = function() {
 		this._oCopyButton?.setVisible(this._getEffectiveVisible());
+	};
+
+	CopyProvider.prototype._getEffectiveEnabled = function() {
+		return this.isActive() ? this._hasControlSelection() : false;
+	};
+
+	CopyProvider.prototype._updateCopyButtonEnabled = function() {
+		this._oCopyButton?.setEnabled(this._getEffectiveEnabled());
 	};
 
 	CopyProvider.prototype._extractData = function(oRowContext, oColumn, bIncludeHtmlMimeType) {
@@ -544,57 +578,33 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 	};
 
 	/**
-	 * Shows a notification message to the user - either MessageToast or MessageBox.
+	 * Shows the user a notification message about the result of the copy action.
 	 *
-	 * When a message text is given a MessageBox with the given state is shown.
-	 * When the message is <code>""</code> and the state is <code>Error</code> a default error message is displayed.
-	 * Otherwise an information message based on the number of selected rows and / or cells is shown.
-	 *
-	 * @param {string} [sMessageText] An optional message text
-	 * @param {string} [sState="Error"] The severity of the optional message (Name of a function from sap.m.MessageBox, one out of "alert", "error", "information", "show", "success" or "warning")
 	 * @returns {Promise}
 	 * @private
 	 */
-	CopyProvider.prototype._notifyUser = function(sMessageText, sState = "Error") {
+	CopyProvider.prototype._notifyUser = function() {
 		const iRows = this._iSelectedRows;
 		const iCells = this._iSelectedCells;
-		const bHasSelection = iRows > 0 || iCells > 0;
-		const oBundle = coreLib.getResourceBundleFor("sap.m");
 		const bPreferCells = this.getCopyPreference() === "Cells";
 
-		return new Promise((resolve, reject) => {
-			if (sMessageText === "" && sState === "Error") {
-				sMessageText = oBundle.getText("COPYPROVIDER_DEFAULT_ERROR_MSG");
-			} else if (!bHasSelection && !sMessageText) {
-				sMessageText = oBundle.getText("COPYPROVIDER_NOSELECTION_MSG");
-				sState = "Information";
-			}
-
-			if (sMessageText) {
-				sap.ui.require(["sap/m/MessageBox"], function(MessageBox) {
-					MessageBox[sState.toLowerCase()](sMessageText);
-					resolve();
-				});
-			} else if (bHasSelection) {
-				sap.ui.require(["sap/m/MessageToast"], function(MessageToast) {
-					let sMsg;
-					if (iRows == 1 && iCells <= 0) {
-						sMsg = oBundle.getText("COPYPROVIDER_SELECT_ROW_SINGLE_MSG");
-					} else if (iRows > 1 && iCells <= 0) {
-						sMsg = oBundle.getText("COPYPROVIDER_SELECT_ROW_MULTI_MSG");
-					} else if (iCells == 1 && (iRows == 0 || bPreferCells)) {
-						sMsg = oBundle.getText("COPYPROVIDER_SELECT_CELL_SINGLE_MSG");
-					} else if (iCells > 1 && (iRows == 0 || bPreferCells)) {
-						sMsg = oBundle.getText("COPYPROVIDER_SELECT_CELL_MULTI_MSG");
-					} else if (iRows > 0 && iCells > 0) {
-						sMsg = oBundle.getText("COPYPROVIDER_SELECT_ROW_AND_CELL_MSG");
-					}
-					if (sMsg) {
-						MessageToast.show(sMsg);
-						resolve();
-					}
-				});
-			}
+		return new Promise((resolve) => {
+			sap.ui.require(["sap/m/MessageToast"], (MessageToast) => {
+				let sBundleKey;
+				if (iRows && !iCells) {
+					sBundleKey = (iRows == 1) ? "ROW_SINGLE" : "ROW_MULTI";
+				} else if (iCells && (!iRows || bPreferCells)) {
+					sBundleKey = (iCells == 1) ? "CELL_SINGLE" : "CELL_MULTI";
+				} else if (iRows > 0 && iCells > 0) {
+					sBundleKey = "ROW_AND_CELL";
+				}
+				if (sBundleKey) {
+					const oBundle = coreLib.getResourceBundleFor("sap.m");
+					const sMessage = oBundle.getText("COPYPROVIDER_SELECT_" + sBundleKey + "_MSG");
+					MessageToast.show(sMessage);
+				}
+				resolve();
+			});
 		});
 	};
 
@@ -603,6 +613,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 	 */
 	PluginBase.setConfigs({
 		"sap.m.Table": {
+			_oWM: new WeakMap(),
 			allowForCopySelector: ".sapMLIBFocusable,.sapMLIBSelectM,.sapMLIBSelectS",
 			selectedContexts: function(oTable, bSparse) {
 				const aSelectedContexts = [];
@@ -623,6 +634,25 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 			},
 			isSelectable: function(oTable) {
 				return oTable.getMode().includes("Select");
+			},
+			hasSelection: function(oTable) {
+				return Boolean(oTable.getSelectedItem());
+			},
+			attachSelectionChange: function(oTable, fnHandler, oListener) {
+				// removal of the selected item might cause a selection change
+				const oDelegate = { onBeforeRendering: fnHandler };
+				this._oWM.set(oTable, oDelegate);
+				oTable.addEventDelegate(oDelegate, oListener);
+
+				// the binding update might cause a selection change
+				oTable.attachUpdateFinished(fnHandler, oListener);
+				oTable.attachEvent("itemSelectedChange", fnHandler, oListener);
+			},
+			detachSelectionChange: function(oTable, fnHandler, oListener) {
+				const oDelegate = this._oWM.get(oTable);
+				oTable.removeEventDelegate(oDelegate, oListener);
+				oTable.detachUpdateFinished(fnHandler, oListener);
+				oTable.detachEvent("itemSelectedChange", fnHandler, oListener);
 			}
 		},
 		"sap.ui.table.Table": {
@@ -650,6 +680,17 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 			},
 			isSelectable: function(oTable) {
 				return oTable.getSelectionMode() != "None";
+			},
+			hasSelection: function(oTable) {
+				return oTable._getSelectionPlugin().getSelectedCount() > 0;
+			},
+			attachSelectionChange: function(oTable, fnHandler, oListener) {
+				oTable._getSelectionPlugin().attachSelectionChange(fnHandler, oListener);
+				oTable.attachRowsUpdated(fnHandler, oListener);
+			},
+			detachSelectionChange: function(oTable, fnHandler, oListener) {
+				oTable._getSelectionPlugin().detachSelectionChange(fnHandler, oListener);
+				oTable.detachRowsUpdated(fnHandler, oListener);
 			}
 		}
 	}, CopyProvider);
