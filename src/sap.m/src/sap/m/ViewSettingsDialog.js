@@ -378,6 +378,8 @@ function(
 				listProp: "title"
 			},
 			selected: {
+			},
+			wrapping: {
 			}
 		}, {
 			tooltip: {}
@@ -2243,7 +2245,8 @@ function(
 				title : ManagedObject.escapeSettingsValue(aSubFilters[i].getText()),
 				type : ListType.Active,
 				selected : aSubFilters[i].getSelected(),
-				tooltip : aSubFilters[i].getTooltip()
+				tooltip : aSubFilters[i].getTooltip(),
+				wrapping: aSubFilters[i].getWrapping()
 			}).data("item", aSubFilters[i]);
 			this._filterDetailList.addItem(oListItem);
 		}
@@ -2337,7 +2340,8 @@ function(
 					title: ManagedObject.escapeSettingsValue(oItem.getText()),
 					type: ListType.Active,
 					selected: oItem.getSelected(),
-					tooltip : oItem.getTooltip()
+					tooltip : oItem.getTooltip(),
+					wrapping: oItem.getWrapping()
 				}).data("item", oItem);
 				this._groupList.addItem(oListItem);
 			}, this);
@@ -2365,7 +2369,8 @@ function(
 				id: this._oGroupingNoneItem.getId() + LIST_ITEM_SUFFIX,
 				title: this._oGroupingNoneItem.getText(),
 				type: ListType.Active,
-				selected: this._oGroupingNoneItem.getSelected()
+				selected: this._oGroupingNoneItem.getSelected(),
+				wrapping: this._oGroupingNoneItem.getWrapping()
 			}).data("item", this._oGroupingNoneItem);
 			this._groupList.addItem(oListItem);
 		}
@@ -2448,7 +2453,8 @@ function(
 					title: ManagedObject.escapeSettingsValue(oItem.getText()),
 					type: ListType.Active,
 					selected: oItem.getSelected(),
-					tooltip: oItem.getTooltip()
+					tooltip: oItem.getTooltip(),
+					wrapping: oItem.getWrapping()
 				}).data("item", oItem);
 				this._presetFilterList.addItem(oListItem);
 			}, this);
@@ -2476,6 +2482,7 @@ function(
 						title : ManagedObject.escapeSettingsValue(oItem.getText()),
 						type : ListType.Active,
 						tooltip : oItem.getTooltip(),
+						wrapping: oItem.getWrapping(),
 						press : (function(oItem) {
 							return function(oEvent) {
 								// navigate to details page
