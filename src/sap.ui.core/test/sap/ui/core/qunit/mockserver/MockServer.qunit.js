@@ -2762,14 +2762,14 @@ sap.ui.define([
 		oMockServer.start();
 
 		[
-			"ChangedAt gt datetimeoffset'2015-04-02T21:59:59Z' and ChangedAt lt datetimeoffset'2015-04-02T22:00:01Z",
+			"ChangedAt gt datetimeoffset'2015-04-02T21:59:59Z' and ChangedAt lt datetimeoffset'2015-04-02T22:00:01Z'",
 			"ChangedAt gt datetimeoffset'2015-04-02T21:59:59.999Z'"
-				+ " and ChangedAt lt datetimeoffset'2015-04-02T22:00:00.001Z",
+				+ " and ChangedAt lt datetimeoffset'2015-04-02T22:00:00.001Z'",
 			"ChangedAt gt datetimeoffset'2015-04-02T22:59:59.999+01:00'"
 				+ " and ChangedAt lt datetimeoffset'2015-04-02T23:00:00.001+01:00'",
 			"ChangedAt gt datetimeoffset'2015-04-02T21:59:59.9999999Z'"
 				// mockserver supports only a precision of 3; .0000001 does not work
-				+ " and ChangedAt lt datetimeoffset'2015-04-02T22:00:00.001Z"
+				+ " and ChangedAt lt datetimeoffset'2015-04-02T22:00:00.001Z'"
 		].forEach((sFilter) => {
 			const oResponse = syncAjax({
 				url: "/myservice/Reviews?$top=5&$filter=" + sFilter,
