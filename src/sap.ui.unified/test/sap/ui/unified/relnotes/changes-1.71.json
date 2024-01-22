@@ -615,5 +615,21 @@
         ]
       }
     ]
+  },
+  "1.71.62": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "c167fc6fb8994e2b7eaa11507a837e5efc2dd5db",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Remove label in the year Button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180120741"
+          }
+        ]
+      }
+    ]
   }
 }
