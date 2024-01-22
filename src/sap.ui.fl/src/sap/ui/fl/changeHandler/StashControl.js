@@ -58,7 +58,7 @@ sap.ui.define([
 		const mRevertData = oChange.getRevertData();
 		const oModifier = mPropertyBag.modifier;
 		if (LayerUtils.isDeveloperLayer(oChange.getLayer())) {
-			const oUnstashedControl = oModifier.setStashed(oControl, mRevertData.originalValue, mPropertyBag.appComponent);
+			const oUnstashedControl = await oModifier.setStashed(oControl, mRevertData.originalValue, mPropertyBag.appComponent);
 			if (oUnstashedControl) {
 				const iUnstashedIndex = await oModifier.findIndexInParentAggregation(oUnstashedControl);
 				if (iUnstashedIndex !== mRevertData.originalIndex) {

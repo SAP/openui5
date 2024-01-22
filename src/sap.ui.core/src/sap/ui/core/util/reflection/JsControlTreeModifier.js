@@ -64,12 +64,12 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		setStashed: function (oControl, bStashed) {
+		setStashed: async function (oControl, bStashed) {
 			bStashed = !!bStashed;
 			if (oControl.unstash) {
 				// check if the control is stashed and should be unstashed
 				if (oControl.isStashed() === true && bStashed === false) {
-					oControl = oControl.unstash();
+					oControl = await oControl.unstash(true);
 				}
 
 				// ensure original control's visible property is set

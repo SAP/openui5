@@ -36,7 +36,7 @@ sap.ui.define([
 		oChange.setRevertData({
 			originalValue: bPreviouslyStashed
 		});
-		const oUnstashedControl = oModifier.setStashed(oControl, false, mPropertyBag.appComponent) || oControl;
+		const oUnstashedControl = await oModifier.setStashed(oControl, false, mPropertyBag.appComponent) || oControl;
 		// old way including move, new way will have separate move change
 		// only applicable for XML modifier
 		if (mContent.parentAggregationName) {
@@ -64,9 +64,9 @@ sap.ui.define([
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
 	 * @public
 	 */
-	UnstashControl.revertChange = function(oChange, oControl, mPropertyBag) {
+	UnstashControl.revertChange = async function(oChange, oControl, mPropertyBag) {
 		var mRevertData = oChange.getRevertData();
-		mPropertyBag.modifier.setStashed(oControl, mRevertData.originalValue);
+		await mPropertyBag.modifier.setStashed(oControl, mRevertData.originalValue);
 		oChange.resetRevertData();
 	};
 
