@@ -33,13 +33,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 		 *
 		 * @public
 		 */
-		Legend: "Legend",
-		/**
-		 * Full screen action.
-		 *
-		 * @public
-		 */
-		FullScreen: "FullScreen"
+		Legend: "Legend"
 	};
 
 	DataType.registerEnum("sap.ui.mdc.enums.ChartToolbarActionType", ChartToolbarActionType);
