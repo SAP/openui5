@@ -18,7 +18,8 @@
 		growing="true"
 		growingScrollToLoad="true"
 		growingThreshold="{view>/growingThreshold}"
-		updateFinished=".onUpdateFinished">
+		updateFinished=".onUpdateFinished"
+		visible="{= ${view>/iconsFound} }">
 		<columns>
 			<Column id="iconColumn" width="3rem" vAlign="Middle">
 				<Text id="iconColumnTitle" text="{i18n>tableIconColumnTitle}"/>

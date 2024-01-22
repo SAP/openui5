@@ -17,7 +17,8 @@
 		}"
 		growing="true"
 		growingThreshold="{view>/growingThreshold}"
-		updateFinished=".onUpdateFinished">
+		updateFinished=".onUpdateFinished"
+		visible="{= ${view>/iconsFound} }">
 		<columns>
 			<Column
 				id="iconColumn"

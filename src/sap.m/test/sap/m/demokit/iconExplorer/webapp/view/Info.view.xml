@@ -187,7 +187,7 @@
 										wrapping="true"
 										emphasized="true"
 										class='sapUiSmallMarginBegin'
-										href='https://sapui5untested.int.sap.eu2.hana.ondemand.com/#/topic/21ea0ea94614480d9a910b2e93431291' />
+										href='https://openui5.hana.ondemand.com/topic/21ea0ea94614480d9a910b2e93431291' />
 								</HBox>
 								<HBox visible="{= ${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
 									<core:Icon
