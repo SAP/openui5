@@ -25,6 +25,8 @@ sap.ui.define([
 	 */
 	var DATA_TIMESTAMP_REFRESH_INTERVAL = 60000;
 
+	var oResourceBundle = Library.getResourceBundleFor("sap.f");
+
 	var TextAlign = coreLibrary.TextAlign;
 
 	/**
@@ -287,7 +289,7 @@ sap.ui.define([
 
 		// no less than "1 minute ago" should be shown, "30 seconds ago" should not be shown
 		if (oUniversalDate.getTime() + 59000 > Date.now()) {
-			sFormattedText = "now"; //@todo get formatted (translated text) for "now"
+			sFormattedText = oResourceBundle.getText("CARD_HEADER_DATETIMESTAMP_NOW");
 		}
 
 		oDataTimestamp.setText(sFormattedText);
