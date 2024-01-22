@@ -3584,6 +3584,36 @@ sap.ui.define([
 		assert.deepEqual(this.oPC2._dateNav.getStart(), oNewStartDate, "Start date remains the same after change in date navigation");
 	});
 
+	QUnit.test("Start date is updated when firstDayOfWeek is changed", async function(assert) {
+		// Arrange
+		var oStartDate = UI5Date.getInstance(2023, 9, 16),
+			oShiftToDate = UI5Date.getInstance(2023, 9, 17),
+			oShiftToDate2 = UI5Date.getInstance(2023, 9, 18),
+			oNewStartDate = UI5Date.getInstance(2023, 9, 19);
+
+		this.oPC2.setStartDate(oStartDate);
+		this.oPC2.setBuiltInViews(["Week"]);
+		await nextUIUpdate();
+
+		// Assert - Default behaviour
+		assert.deepEqual(this.oPC2._dateNav.getStart(), oStartDate, "Nav start date is October 16th");
+		assert.deepEqual(this.oPC2.getStartDate(), oStartDate, "PlanningCalendar start date matches navigation start date");
+
+		// Arrange - Update navigation more than once to de-sync Planning Calendar and DateNavigation start dates
+		this.oPC2.shiftToDate(oShiftToDate);
+		await nextUIUpdate();
+		this.oPC2.shiftToDate(oShiftToDate2);
+		await nextUIUpdate();
+
+		// Act - Change FirstDayOfWeek
+		this.oPC2.setFirstDayOfWeek(4);
+		await nextUIUpdate();
+
+		// Assert - Changing first day of week updates Planning Calendar start date
+		assert.deepEqual(this.oPC2._dateNav.getStart(), oNewStartDate, "Nav start date is now October 19th");
+		assert.deepEqual(this.oPC2.getStartDate(), oNewStartDate, "PlanningCalendar start date matches navigation start date ");
+	});
+
 	QUnit.test("CalendarWeekNumbering does not overwrite firstDayOfWeek", async function (assert) {
 		// Arrange
 		var oStartDate = UI5Date.getInstance(2023, 9, 16),
