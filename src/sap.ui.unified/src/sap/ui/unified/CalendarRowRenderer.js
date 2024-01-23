@@ -261,7 +261,7 @@ sap.ui.define([
 	CalendarRowRenderer.writeCustomAttributes = function (oRm, oRow) {
 	};
 
-	CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType, sAdditionalNonWorkingClass){
+	CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType){
 
 		var sId = oRow.getId() + "-AppsInt" + iInterval;
 		var i;
@@ -271,19 +271,14 @@ sap.ui.define([
 
 		oRm.openStart("div", sId);
 		oRm.class("sapUiCalendarRowAppsInt");
-		if (sAdditionalNonWorkingClass) {
-			oRm.class(sAdditionalNonWorkingClass);
-		}
 		oRm.style("width", iWidth + "%");
 
 		if (iInterval >= iDaysLength && (oRow.getIntervalType() === CalendarIntervalType.OneMonth || oRow.getIntervalType() === "OneMonth")){
 			oRm.class("sapUiCalItemOtherMonth");
 		}
-		for (i = 0; i < aNonWorkingItems.length; i++) {
-			if ((iInterval + iStartOffset) % iNonWorkingMax == aNonWorkingItems[i]) {
-				oRm.class("sapUiCalendarRowAppsNoWork");
-				break;
-			}
+
+		if (oRow._isNonWorkingInterval(iInterval, aNonWorkingItems, iStartOffset, iNonWorkingMax)) {
+			oRm.class("sapUiCalendarRowAppsNoWork");
 		}
 
 		if (!bShowIntervalHeaders) {
@@ -343,11 +338,8 @@ sap.ui.define([
 				oRm.class("sapUiCalendarRowAppsSubInt");
 				oRm.style("width", iSubWidth + "%");
 
-				for (var j = 0; j < aNonWorkingSubItems.length; j++) {
-					if ((i + iSubStartOffset) % iNonWorkingSubMax == aNonWorkingSubItems[j]) {
-						oRm.class("sapUiCalendarRowAppsNoWork");
-						break;
-					}
+				if (oRow._isNonWorkingInterval(i, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax)) {
+					oRm.class("sapUiCalendarRowAppsNoWork");
 				}
 
 				oRm.openEnd();
@@ -719,11 +711,8 @@ sap.ui.define([
 			oRm.class("sapUiCalItemOtherMonth");
 		}
 
-		for (i = 0; i < aNonWorkingItems.length; i++) {
-			if ((iInterval + iStartOffset) % iNonWorkingMax == aNonWorkingItems[i]) {
-				oRm.class("sapUiCalendarRowAppsNoWork");
-				break;
-			}
+		if (oRow._isNonWorkingInterval(iInterval, aNonWorkingItems, iStartOffset, iNonWorkingMax)) {
+			oRm.class("sapUiCalendarRowAppsNoWork");
 		}
 
 		if (!bShowIntervalHeaders) {
@@ -852,12 +841,10 @@ sap.ui.define([
 				oRm.class("sapUiCalendarRowAppsSubInt");
 				oRm.style("width", iSubWidth + "%");
 
-				for (var j = 0; j < aNonWorkingSubItems.length; j++) {
-					if ((i + iSubStartOffset) % iNonWorkingSubMax == aNonWorkingSubItems[j]) {
-						oRm.class("sapUiCalendarRowAppsNoWork");
-						break;
-					}
+				if (oRow._isNonWorkingInterval(i, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax)) {
+					oRm.class("sapUiCalendarRowAppsNoWork");
 				}
+
 				oRm.openEnd(); // div element
 				oRm.close("div");
 			}

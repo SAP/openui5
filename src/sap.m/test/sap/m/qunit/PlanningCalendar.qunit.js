@@ -2816,6 +2816,70 @@ sap.ui.define([
 		this._assertIsClassNoWorkNotAvailable();
 	});
 
+	QUnit.test("Working days", function(assert) {
+		// Prepare
+		var oPC = new PlanningCalendar({
+				builtInViews: ["Day", "OneMonth", "Week"],
+				startDate: new Date(2023, 10, 1),
+				specialDates: [
+					new DateTypeRange({
+						startDate: new Date(2023, 10, 1),
+						endDate: new Date(2023, 10, 3),
+						type: "Type06",
+						secondaryType: "Working"
+					}),
+					new DateTypeRange({
+						startDate: new Date(2023, 10, 2),
+						type: "NonWorking"
+					}),
+					new DateTypeRange({
+						startDate: new Date(2023, 10, 4),
+						type: "Working"
+					}),
+					new DateTypeRange({
+						startDate: new Date(2023, 10, 6),
+						type: "NonWorking"
+					})
+				],
+				rows: [
+					new PlanningCalendarRow({
+						nonWorkingDays: [3, 5],
+						title: "One",
+						specialDates: [
+							new DateTypeRange({
+								startDate: new Date(2023, 10, 2),
+								type: "NonWorking"
+							}),
+							new sap.ui.unified.DateTypeRange({
+								startDate: new Date(2023, 10, 3),
+								type: "Working"
+							}),
+							new DateTypeRange({
+								startDate: new Date(2023, 10, 4),
+								type: "NonWorking"
+							}),
+							new DateTypeRange({
+								startDate: new Date(2023, 10, 5),
+								type: "Working"
+							})
+						]
+					})
+				]
+			}),
+			oPlanningCalendarRowTimeLine = oPC.getAggregation("table").getItems()[0].getCells()[1],
+			aNonWorkingDays = oPlanningCalendarRowTimeLine._getNonWorkingDays(),
+			iStartOffest = oPlanningCalendarRowTimeLine._getStartDate().getUTCDate(),
+			iNonWorkingMax = 7;
+
+		// Act
+		// Assert
+		assert.notOk(oPlanningCalendarRowTimeLine._isNonWorkingInterval(0, aNonWorkingDays, iStartOffest, iNonWorkingMax), "1st of November is a working day");
+		assert.ok(oPlanningCalendarRowTimeLine._isNonWorkingInterval(1, aNonWorkingDays, iStartOffest, iNonWorkingMax), "2nd of November is a non working day");
+		assert.notOk(oPlanningCalendarRowTimeLine._isNonWorkingInterval(2, aNonWorkingDays, iStartOffest, iNonWorkingMax), "3d of November is a working day");
+		assert.ok(oPlanningCalendarRowTimeLine._isNonWorkingInterval(3, aNonWorkingDays, iStartOffest, iNonWorkingMax), "4th of November is a non-working day");
+		assert.notOk(oPlanningCalendarRowTimeLine._isNonWorkingInterval(4, aNonWorkingDays, iStartOffest, iNonWorkingMax), "5th of November is a working day");
+	});
+
 	QUnit.module("events");
 
 	QUnit.test("appointmentSelect", async function(assert) {
