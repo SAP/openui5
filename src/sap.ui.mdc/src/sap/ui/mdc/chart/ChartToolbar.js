@@ -156,7 +156,7 @@ sap.ui.define([
 				this._chartInternalButtonsToEnable.push(this._oLegendBtn);
 			}
 
-			if (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(ChartToolbarActionType.ZoomInOut)) {
+			if (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(ChartToolbarActionType.ZoomInOut) < 0) {
 				this.oZoomInButton = new OverflowButton(oChart.getId() + "btnZoomIn", {
 					icon: "sap-icon://zoom-in",
 					tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_IN"),
@@ -265,6 +265,9 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.mdc, sap.fe
 		 */
 		ChartToolbar.prototype.toggleZoomButtons = function(oChart) {
+			if (!this.oZoomInButton || !this.oZoomOutButton) {
+				return;
+			}
 			const oZoomInfo = this._getZoomEnablement(oChart);
 
 			if (oZoomInfo.enabled) {
