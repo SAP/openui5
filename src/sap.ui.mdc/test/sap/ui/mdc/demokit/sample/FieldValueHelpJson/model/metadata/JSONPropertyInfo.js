@@ -16,32 +16,32 @@ sap.ui.define([
 	} */
 
 	const aPropertyInfos = [{
-        name : "buildingId",
+        key : "buildingId",
         path : "id",
         label : "Id",
-        key : true,
+        isKey : true,
         dataType : "sap.ui.model.type.String",
         sortable : true
     },{
-        name : "buildingName",
+        key : "buildingName",
         path : "name",
         label : "Building Name",
         dataType : "sap.ui.model.type.String",
         sortable : true
     },{
-        name : "buildingLocation",
+        key : "buildingLocation",
         path : "locationId",
         label : "Location",
         dataType : "sap.ui.model.type.String",
         sortable : false
     },{
-        name : "buildingCountry",
+        key : "buildingCountry",
         path : "countryId",
         label : "Country",
         dataType : "sap.ui.model.type.String",
         sortable : false
     },{
-        name : "buildingRegion",
+        key : "buildingRegion",
         path : "regionId",
         label : "Region",
         dataType : "sap.ui.model.type.String",
