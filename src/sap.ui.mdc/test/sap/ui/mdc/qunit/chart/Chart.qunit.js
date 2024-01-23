@@ -561,14 +561,12 @@ sap.ui.define([
 					return p && Object.prototype.toString.call(p) === "[object Promise]";
 				}
 
-				const _setPropertyHelperClassStub = sinon.stub(this.oMDCChart, "_setPropertyHelperClass");
 				// var _loadDelegateSpy = sinon.spy(this.oMDCChart, "_loadDelegate");
 				const isFilteringEnabledStub = sinon.stub(this.oMDCChart, "isFilteringEnabled").returns(true);
 				const retrieveInbuiltFilterSpy = sinon.spy(this.oMDCChart, "retrieveInbuiltFilter");
 
 				this.oMDCChart.applySettings(mSettings, oScope);
 
-				assert.ok(_setPropertyHelperClassStub.calledOnce, "_setPropertyHelperClass correctly called");
 				assert.ok(isPromise(this.oMDCChart.initializedPromise), "initializedPromise correctly created");
 				assert.ok(isPromise(this.oMDCChart.innerChartBoundPromise), "innerChartBoundPromise correctly created");
 				// assert.ok(_loadDelegateSpy.calledOnce, "_loadDelegat correctly called");
