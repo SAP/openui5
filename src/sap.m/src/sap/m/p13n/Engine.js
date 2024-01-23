@@ -1128,8 +1128,16 @@ sap.ui.define([
 		var aPPResults = this.hasForReference(vControl, "sap.m.p13n.PersistenceProvider").concat(this.hasForReference(vControl, "sap.ui.mdc.p13n.PersistenceProvider"));
 		var aVMResults = this.hasForReference(vControl, "sap.ui.fl.variants.VariantManagement");
 
-		var aPersistenceProvider = aPPResults.length ? aPPResults : undefined;
-		var sHandlerMode = aPersistenceProvider ? aPersistenceProvider[0].getMode() : "Standard";
+		var oRelevantPersistenceProvider;
+		if (aPPResults?.length > 1) {
+			oRelevantPersistenceProvider = aPPResults.find((oProvider) => {
+				const aDefaultProviders = Object.values(this.defaultProviderRegistry._mDefaultProviders);
+				return aDefaultProviders?.find((oDefaultProvider) => oDefaultProvider.getId() == oProvider.getId());
+			});
+		}
+
+		oRelevantPersistenceProvider = oRelevantPersistenceProvider || aPPResults?.[0];
+		var sHandlerMode = oRelevantPersistenceProvider ? oRelevantPersistenceProvider.getMode() : "Standard";
 
 		var oModificationSetting = {
 			handler: FlexModificationHandler.getInstance(),
