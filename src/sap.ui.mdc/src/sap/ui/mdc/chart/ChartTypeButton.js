@@ -177,6 +177,12 @@ sap.ui.define([
 			if (!this.oPopover) {
 				this.oPopover = this._createPopover(oChart);
 
+				this.oPopover.attachAfterOpen(function(oEvent) {
+					const oList = this.oPopover.getContent()[1];
+					const oSelectedItem = oList.getItems().filter(function(oItem){ return oItem.getSelected(); })[0];
+					oSelectedItem.focus();
+				}.bind(this));
+
 				this.oPopover.attachAfterClose(() => {
 					this.oPopover.destroy();
 					delete this.oPopover;
