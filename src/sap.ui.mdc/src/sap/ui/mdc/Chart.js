@@ -493,8 +493,8 @@ sap.ui.define([
 			this.setModel(this._oManagedObjectModel, "$mdcChart");
 			Control.prototype.init.apply(this, arguments);
 
-			this._setupPropertyInfoStore("propertyInfo");
 			this._setPropertyHelperClass(PropertyHelper);
+			this._setupPropertyInfoStore("propertyInfo");
 		};
 
 		Chart.prototype.setP13nMode = function(aModes) {
@@ -598,7 +598,6 @@ sap.ui.define([
 		 * @private
 		 */
 		Chart.prototype.applySettings = function(mSettings, oScope) {
-			this._setPropertyHelperClass(PropertyHelper);
 			Control.prototype.applySettings.apply(this, arguments);
 
 			this.initializedPromise = new Promise((resolve, reject) => {
