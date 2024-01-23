@@ -1001,7 +1001,8 @@ sap.ui.define([
 		 * Retrieves the selection handler of the inner chart.
 		 * @returns {object} Selection handler of the inner chart
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Chart.prototype.getSelectionHandler = function() {
 			return this.getControlDelegate().getInnerChartSelectionHandler(this);
@@ -1013,7 +1014,8 @@ sap.ui.define([
 		 *
 		 * @returns {object} Layout configuration
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Chart.prototype.getChartTypeLayoutConfig = function() {
 			return this.getControlDelegate().getChartTypeLayoutConfig();
