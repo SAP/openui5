@@ -23,8 +23,9 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/model/odata/v2/ODataListBinding",
-	"sap/ui/core/InvisibleMessage"
-], function(Core, Library, Theming, List, Util, ThemeParameters, JSONListBinding, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, ODataListBinding, InvisibleMessage) {
+	"sap/ui/core/InvisibleMessage",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Core, Library, Theming, List, Util, ThemeParameters, JSONListBinding, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, ODataListBinding, InvisibleMessage, nextUIUpdate) {
 	"use strict";
 	/* global QUnit,sinon */
 
@@ -237,12 +238,12 @@ sap.ui.define([
 		assert.equal(ccw([[Str(10), {maxWidth: 3}], [Str(10), {maxWidth: 2}]], "", {maxWidth: 5, treeColumn: true}), OuterWidth(5), "Column maxWidth taken into account for the treeColumn");
 	});
 
-	QUnit.test("showSelectionLimitPopover & hideSelectionLimitPopover", function(assert) {
+	QUnit.test("showSelectionLimitPopover & hideSelectionLimitPopover", async function(assert) {
 		var done = assert.async();
 		var fnGetSelectAllPopoverSpy = sinon.spy(Util, "getSelectAllPopover");
 		var oElement = new List();
 		oElement.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		Util.showSelectionLimitPopover(10, oElement);
 		Util.getSelectAllPopover().then(function(oResult) {
 			var oPopover = oResult.oSelectAllNotificationPopover;

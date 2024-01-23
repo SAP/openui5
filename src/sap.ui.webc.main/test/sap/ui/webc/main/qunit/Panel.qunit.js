@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Panel",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, Panel, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Panel, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oPanel = new Panel({
 				headerText: "Some text...",
 				content: [
@@ -65,7 +66,7 @@ sap.ui.define([
 				}
 			});
 			this.oPanel.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oPanel.destroy();

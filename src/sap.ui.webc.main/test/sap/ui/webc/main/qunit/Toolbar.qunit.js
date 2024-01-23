@@ -3,18 +3,19 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Toolbar",
 	"sap/ui/webc/main/ToolbarButton",
 	"sap/ui/webc/main/ToolbarSelect",
 	"sap/ui/webc/main/Option",
 	"sap/ui/webc/main/ToolbarSeparator"
-], function(createAndAppendDiv, Core, Toolbar, ToolbarButton, ToolbarSelect, Option, ToolbarSeparator) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Toolbar, ToolbarButton, ToolbarSelect, Option, ToolbarSeparator) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oToolbar = new Toolbar({
 				items: [
 					new ToolbarButton({
@@ -62,7 +63,7 @@ sap.ui.define([
 				]
 			});
 			this.oToolbar.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oToolbar.destroy();

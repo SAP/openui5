@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
 	"sap/base/util/deepExtend",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	AddTableColumnChangeHandler,
@@ -20,6 +21,7 @@ sap.ui.define([
 	createAndAppendDiv,
 	oCore,
 	deepExtend,
+	nextUIUpdate,
 	FlexTestAPI
 ) {
 	"use strict";
@@ -112,7 +114,7 @@ sap.ui.define([
 			return Component.create({
 				id: "comp",
 				name: "test"
-			}).then(function(oComponent) {
+			}).then(async function(oComponent) {
 				this.oUiComponent = oComponent;
 
 				// Place component in container and display
@@ -144,7 +146,7 @@ sap.ui.define([
 					}]
 				}));
 
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				var oDOMParser = new DOMParser();
 				var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");

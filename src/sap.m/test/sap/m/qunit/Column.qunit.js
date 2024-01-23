@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/Item",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(Core, Table, Device, Button, Column, library, Page, ColumnListItem, Text, Label, ColumnMenu, QuickAction, Item, jQuery) {
+], function(Core, Table, Device, Button, Column, library, Page, ColumnListItem, Text, Label, ColumnMenu, QuickAction, Item, nextUIUpdate, jQuery) {
 	"use strict";
 
 
@@ -203,7 +204,7 @@ sap.ui.define([
 
 		oTable.addColumn(sut);
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(sut.getVisible(), "Column is visible");
 		assert.ok(sut.getDomRef(), "Column is rendered");
 
@@ -284,7 +285,7 @@ sap.ui.define([
 		assert.ok(!mediaAttachSpy.called, "Media handler not attached initially");
 
 		parent.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(mediaAttachSpy.called, "Media handler attached when table is rendered");
 
@@ -300,7 +301,7 @@ sap.ui.define([
 
 		parent.placeAt("qunit-fixture");
 		parent.addColumn(sut);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(mediaAttachSpy.called, "Media handler called immediately");
 
@@ -324,7 +325,7 @@ sap.ui.define([
 
 		// The table needs to be rendered for the column media object to be initialized
 		parent.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		sut._notifyResize({from: 240}); // this is the default value for minScreenWidth="phone"
 		this.clock.tick(1);
@@ -342,7 +343,7 @@ sap.ui.define([
 		assert.equal(tableResizeSpy.callCount, 1, "Table resize not called, since column is invisible");
 
 		sut.setVisible(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(sut.getDomRef(), "Visible column is rendered");
 
 		parent.destroy();
@@ -364,7 +365,7 @@ sap.ui.define([
 
 		// The table is rendered without contextual width, the Device.media API is used
 		page.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(1);
 		assert.ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
 
@@ -392,7 +393,7 @@ sap.ui.define([
 
 		// The table is rendered without contextual width, the Device.media API is used
 		page.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(1);
 
 		assert.ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
@@ -430,7 +431,7 @@ sap.ui.define([
 
 
 		page.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		page._applyContextualSettings({contextualWidth: 100});
 
 		// Place the table in a container that already has contextual settings
@@ -462,7 +463,7 @@ sap.ui.define([
 
 
 		page.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		page._applyContextualSettings({contextualWidth: 100});
 
 		// Place the table in a container that already has contextual settings
@@ -492,7 +493,7 @@ sap.ui.define([
 
 
 		page.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		page._applyContextualSettings({contextualWidth: 1000});
 
 		// Place the table in a container that already has contextual settings
@@ -548,7 +549,7 @@ sap.ui.define([
 		});
 
 		parent.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(sut.getSortIndicator(), "None", "Default value for sorted is None");
 
@@ -590,7 +591,7 @@ sap.ui.define([
 			this.sut.setHeaderMenu(this.oMenu);
 
 			this.parent.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oMenu.destroy();
@@ -609,14 +610,14 @@ sap.ui.define([
 		var oFakeEvent = new jQuery.Event("contextmenu");
 
 		this.sut.$().trigger("tap");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oOpenSpy.callCount, 1, "openBy called exactly once when the tap event is triggered");
 		assert.ok(oOpenSpy.calledWith(this.sut), "openBy called with correct column");
 		assert.notOk(oColumnPressSpy.calledWithExactly("columnPress"), "The columnPress event is not fired");
 
 		this.sut.$().trigger(oFakeEvent);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oOpenSpy.callCount, 2, "openBy called exactly once when the contextmenu event is triggered");
 		assert.ok(oOpenSpy.calledWith(this.sut), "openBy called with correct column");

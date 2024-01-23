@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/TimePicker",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, TimePicker, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, TimePicker, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oTimePicker = new TimePicker({
 				placeholder: "This is my placeholder value",
 				value: "Control value",
@@ -25,7 +26,7 @@ sap.ui.define([
 				}
 			});
 			this.oTimePicker.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oTimePicker.destroy();

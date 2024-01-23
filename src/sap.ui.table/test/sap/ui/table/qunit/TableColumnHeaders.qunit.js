@@ -134,7 +134,7 @@ sap.ui.define([
 		oTable.bindRows("/modelData");
 
 		oTable.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	}
 
 	QUnit.module("Rendering", {

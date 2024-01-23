@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core",
@@ -26,6 +27,7 @@ sap.ui.define([
 	XMLView,
 	KeyCodes,
 	qutils,
+	nextUIUpdate,
 	jQuery,
 	JSONModel,
 	oCore,
@@ -41,7 +43,7 @@ sap.ui.define([
 			this.rangeSlider = new RangeSlider();
 
 			this.rangeSlider.placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.rangeSlider.destroy();
@@ -84,7 +86,7 @@ sap.ui.define([
 		var s1stHandleLabels, s2ndHandleLabels, sProgressIndicatorLabels, sRSLabelId;
 		this.rangeSlider.addAriaLabelledBy(new Text({text: "LabelForRS"}));
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		sRSLabelId = this.rangeSlider.getAriaLabelledBy()[0];
 		s1stHandleLabels = this.rangeSlider.getDomRef("handle1").getAttribute("aria-labelledby");
@@ -100,7 +102,7 @@ sap.ui.define([
 
 	QUnit.test("Handles' Tooltips", function (assert) {
 		this.rangeSlider.setShowAdvancedTooltip(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.rangeSlider.getAggregation("_tooltipContainer").show(this.rangeSlider);
 		assert.strictEqual(jQuery(".sapMSliderTooltip").length, 2, "There should be two tooltips.");
@@ -117,7 +119,7 @@ sap.ui.define([
 	QUnit.test("RangeSlider's Labels Width", function (assert) {
 		this.rangeSlider.setMax(10000000000000);
 		this.rangeSlider.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.rangeSlider.$().find(".sapMSliderRangeLabel:eq(1)").width(), 120, "The end label should have 120px width when the value consists of 14 digits");
 
@@ -125,7 +127,7 @@ sap.ui.define([
 
 	QUnit.test("Overlapping handles", function (assert) {
 		this.rangeSlider.setRange([50, 50]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(this.rangeSlider.$().find(".sapMSliderHandle"), "The handles should be added an Overlap class");
 		assert.strictEqual(this.rangeSlider.$().find(".sapMSliderHandle").length, 2, "Both handles should be affected");
@@ -134,7 +136,7 @@ sap.ui.define([
 	QUnit.test("Memory leak on rerender", function (assert) {
 		var oldLabel = this.rangeSlider._oRangeLabel;
 		this.rangeSlider.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var newLabel = this.rangeSlider._oRangeLabel;
 		assert.equal(oldLabel, newLabel, "No new range label should be created on control rerendering");
 	});
@@ -144,7 +146,7 @@ sap.ui.define([
 			this.rangeSlider = new RangeSlider();
 
 			this.rangeSlider.placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.rangeSlider.destroy();
@@ -181,7 +183,7 @@ sap.ui.define([
 			aLabels = oSlider.getAggregation("_handlesLabels");
 
 		oSlider.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(aLabels.length, 3, "Label for handles should be added as an aggregation");
@@ -208,7 +210,7 @@ sap.ui.define([
 		this.rangeSlider.setRange(newRange);
 		this.rangeSlider.setWidth("100px");
 		this.rangeSlider.setShowAdvancedTooltip(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		aRange = this.rangeSlider.getRange();
 
@@ -223,7 +225,7 @@ sap.ui.define([
 	QUnit.test("set/getValue()", function (assert) {
 		//act
 		this.rangeSlider.setValue(54);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(this.rangeSlider.getRange(), [54, 100], "The value should be set properly within the range");
@@ -231,7 +233,7 @@ sap.ui.define([
 
 		//act
 		this.rangeSlider.setValue(7815287);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(this.rangeSlider.getRange(), [100, 100], "The value should be set properly within the range");
@@ -239,7 +241,7 @@ sap.ui.define([
 
 		//act
 		this.rangeSlider.setValue(-100);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(this.rangeSlider.getRange(), [0, 100], "The value should be set properly within the range");
@@ -249,7 +251,7 @@ sap.ui.define([
 	QUnit.test("set/getValue2()", function (assert) {
 		//act
 		this.rangeSlider.setValue2(54);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(this.rangeSlider.getRange(), [0, 54], "The value should be set properly within the range");
@@ -257,7 +259,7 @@ sap.ui.define([
 
 		//act
 		this.rangeSlider.setValue2(7815287);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(this.rangeSlider.getRange(), [0, 100], "The value should be set properly within the range");
@@ -265,7 +267,7 @@ sap.ui.define([
 
 		//act
 		this.rangeSlider.setValue2(-100);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(this.rangeSlider.getRange(), [0, 0], "The value should be set properly within the range");
@@ -275,7 +277,7 @@ sap.ui.define([
 
 	QUnit.test("set/getValue() should update advanced tooltip state and visualization", function (assert) {
 		this.rangeSlider.setShowAdvancedTooltip(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var fnUpdateTooltipsPositionAndStateSpy = this.spy(this.rangeSlider, "updateTooltipsPositionAndState");
 		var fnUpdateTooltipContentSpy;
@@ -284,13 +286,13 @@ sap.ui.define([
 		fnUpdateTooltipContentSpy = this.spy(this.rangeSlider, "_updateTooltipContent");
 		this.rangeSlider.setValue(50);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(fnUpdateTooltipContentSpy.callCount, 3, "UpdateTooltipContent is called when setValue is executed");
 		assert.ok(fnUpdateTooltipsPositionAndStateSpy.calledOnce, "UpdateTooltipContentSpy is called");
 
 		this.rangeSlider.setValue2(60);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(fnUpdateTooltipContentSpy.callCount, 6, "UpdateTooltipContent is called when setValue2 is executed");
 		assert.ok(fnUpdateTooltipsPositionAndStateSpy.calledTwice, "UpdateTooltipContentSpy is called");
@@ -299,7 +301,7 @@ sap.ui.define([
 
 	QUnit.test("set/getValue() should not throw if advanced tooltip is not passed", function (assert) {
 		this.rangeSlider.setShowAdvancedTooltip(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.rangeSlider._mHandleTooltip.start.tooltip = null;
 		this.rangeSlider._mHandleTooltip.end.tooltip = null;
@@ -319,7 +321,7 @@ sap.ui.define([
 		//act
 		this.rangeSlider.setStep(0.05);
 		this.rangeSlider.setShowAdvancedTooltip(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		aTooltips = this.rangeSlider.getAggregation("_tooltipContainer").getAssociatedTooltipsAsControls();
@@ -333,7 +335,7 @@ sap.ui.define([
 
 		//act
 		this.rangeSlider.setStep(-0.5);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(this.rangeSlider.getStep(), -0.5, "The step should be set properly within the range");
@@ -344,11 +346,11 @@ sap.ui.define([
 	QUnit.test("set/getValue() with decimal precision", function (assert) {
 		//arrange
 		this.rangeSlider.setStep(0.05);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		this.rangeSlider.setValue(0.1500000000000001);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(this.rangeSlider.getRange(), [0.15, 100], "The value should be set properly within the range");
@@ -358,11 +360,11 @@ sap.ui.define([
 	QUnit.test("set/getValue2() with decimal precision", function (assert) {
 		//arrange
 		this.rangeSlider.setStep(0.05);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		this.rangeSlider.setValue2(0.1500000000000001);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(this.rangeSlider.getRange(), [0, 0.15], "The value should be set properly within the range");
@@ -373,7 +375,7 @@ sap.ui.define([
 		var fnWarningSpy = this.spy(Log, "warning");
 
 		this.rangeSlider.setRange([-20, 50]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aRange = this.rangeSlider.getRange();
 
@@ -390,7 +392,7 @@ sap.ui.define([
 		var fnWarningSpy = this.spy(Log, "warning");
 
 		this.rangeSlider.setRange([20, 150]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aRange = this.rangeSlider.getRange();
 
@@ -510,7 +512,7 @@ sap.ui.define([
 		oSlider.setValue(1.2542324);
 		oSlider.setValue2(3.4122);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSliderInputElement = oSlider.$().find('.sapMSliderInput')[0];
 
@@ -531,11 +533,11 @@ sap.ui.define([
 				max: 27,
 				range: aRange
 			}).placeAt(DOM_RENDER_LOCATION);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		oSlider._updateSliderValues(iStep, oSlider._mHandleTooltip.start.handle);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Test
 		aRange = oSlider.getRange();
@@ -545,7 +547,7 @@ sap.ui.define([
 		//Act
 		aRange = [10, 27];
 		oSlider.setRange(aRange);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// clock.tick(1000);
 
 		assert.strictEqual(aRange[0], 10, "Range[0] to be set properly");
@@ -553,7 +555,7 @@ sap.ui.define([
 
 		//Act
 		oSlider._updateSliderValues(-1 * iStep, oSlider._mHandleTooltip.start.handle);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Test
 		aRange = oSlider.getRange();
@@ -565,11 +567,11 @@ sap.ui.define([
 
 	QUnit.test("_updateHandleAria", function (assert) {
 		var oSlider = new RangeSlider().placeAt(DOM_RENDER_LOCATION);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		oSlider._updateHandleAria(oSlider._mHandleTooltip.start.handle, 12);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oSlider._mHandleTooltip.start.handle.getAttribute("aria-valuenow"), "12", "Change valuenow property");
@@ -582,14 +584,14 @@ sap.ui.define([
 		var clock = sinon.useFakeTimers(),
 			oSlider = new RangeSlider().placeAt(DOM_RENDER_LOCATION),
 			oInitStateStartLabel, oInitStateEndLabel;
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInitStateStartLabel = oSlider._mHandleTooltip.start.label;
 		oInitStateEndLabel = oSlider._mHandleTooltip.end.label;
 
 		//Act
 		oSlider.setRange([60, 20]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1000);
 
 		//Assert
@@ -609,14 +611,14 @@ sap.ui.define([
 			showAdvancedTooltip: true
 		}).placeAt(DOM_RENDER_LOCATION),
 			oInitStateStartTooltip, oInitStateEndTooltip;
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInitStateStartTooltip = oSlider._mHandleTooltip.start.tooltip;
 		oInitStateEndTooltip = oSlider._mHandleTooltip.end.tooltip;
 
 		//Act
 		oSlider._swapTooltips([60, 20]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.ok(oSlider._mHandleTooltip.start.tooltip === oInitStateEndTooltip, "Tooltips are swapped");
@@ -629,7 +631,7 @@ sap.ui.define([
 	QUnit.test("The order of the arguments should not matter when setting the properties min/max, value/value2", function (assert) {
 		var check = function (oSliderConfig) {
 			var oSlider = new RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			//Assert
 			assert.strictEqual(oSlider.getValue(), oSliderConfig.value, "'Value' property value should be adjusted correctly");
@@ -651,7 +653,7 @@ sap.ui.define([
 	QUnit.test("The values of value and value2 properties should be adjusted correctly when they are not in the boundaries of min and max values", function (assert) {
 		var check = function (oSliderConfig) {
 			var oSlider = new RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			//Assert
 			assert.strictEqual(oSlider.getValue(), oSliderConfig.min, "'Value' property value should be equal to the min value");
@@ -673,7 +675,7 @@ sap.ui.define([
 	QUnit.test("The order of the arguments should not matter when setting the properties min/max, range", function (assert) {
 		var check = function (oSliderConfig) {
 			var oSlider = new RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			//Assert
 			assert.strictEqual(oSlider.getValue(), oSlider.getRange()[0], "'Value' property value should be equal to the start of the range");
@@ -693,7 +695,7 @@ sap.ui.define([
 	QUnit.test("The values of the range property should be adjusted correctly when they are not in the boundaries of min and max values", function (assert) {
 		var check = function (oSliderConfig) {
 			var oSlider = new RangeSlider(oSliderConfig).placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			//Assert
 			assert.strictEqual(oSlider.getValue(), oSlider.getRange()[0], "'Value' property value should be equal to the start of the range");
@@ -723,7 +725,7 @@ sap.ui.define([
 				step: 1,
 				width: "600px"
 			}).placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oRangeSlider.getAggregation("_tooltipContainer").show(oRangeSlider);
 
@@ -742,7 +744,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oRangeSlider = new RangeSlider({range: [20, 30]});
 			this.oRangeSlider.placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oEvent = {
 				target: this.oRangeSlider._mHandleTooltip.start.handle,
@@ -761,7 +763,7 @@ sap.ui.define([
 				oMock.expects("_fireChangeAndLiveChange").once();
 
 				this.oRangeSlider[methodName](this.oEvent);
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 				oMock.verify();
 				assert.notDeepEqual(this.oRangeSlider.getRange(), aCurRange, "Not equals");
@@ -859,7 +861,7 @@ sap.ui.define([
 	QUnit.test("KH: The range should be adjusted correctly when is decreased to go out of the boundaries by pressing SHIFT + ARROW LEFT", function (assert) {
 		// Arrange
 		var oSlider = new RangeSlider({range: [-181, 19], min: -200, max: 200}).placeAt(DOM_RENDER_LOCATION);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oSlider.getDomRef("progress"), KeyCodes.ARROW_LEFT, true, false, false);
@@ -913,7 +915,7 @@ sap.ui.define([
 		var aRange = [12, 38],
 			oRangeSlider = new RangeSlider({range: aRange, min: 0, max: 100}).placeAt(DOM_RENDER_LOCATION);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.deepEqual(oRangeSlider.getRange(), aRange, "Range should equal to the initial set value: " + aRange);
 		assert.deepEqual(oRangeSlider.getRange(), oRangeSlider.getRange(), "Ranges should be equal");
@@ -929,11 +931,11 @@ sap.ui.define([
 			enableTickmarks: true,
 			step: 5
 		}).placeAt(DOM_RENDER_LOCATION);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(oRangeSlider.getDomRef("handle2"), KeyCodes.ARROW_LEFT, true, false, false);
 		qutils.triggerKeydown(oRangeSlider.getDomRef("handle2"), KeyCodes.ARROW_LEFT, true, false, false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aTickmarksDom = oRangeSlider.getDomRef().querySelectorAll(".sapMSliderTick");
 
@@ -952,7 +954,7 @@ sap.ui.define([
 
 		oRangeSlider.setModel(oModel);
 		oRangeSlider.placeAt(DOM_RENDER_LOCATION);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oData.min, oRangeSlider.getMin(), "Min threshold to be set properly");
@@ -964,7 +966,7 @@ sap.ui.define([
 		oModel.setProperty("/range", [120, 150]);
 		oModel.setProperty("/min", 100);
 		oModel.setProperty("/max", 200);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(100, oRangeSlider.getMin(), "Min threshold to be set properly");
 		assert.strictEqual(200, oRangeSlider.getMax(), "Max threshold to be set properly");
@@ -983,12 +985,12 @@ sap.ui.define([
 
 		oRangeSlider.setModel(oModel);
 		oRangeSlider.placeAt(DOM_RENDER_LOCATION);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		var oData2 = [50, 80];
 		oRangeSlider.setRange(oData2);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.deepEqual([50, 80], oModel.getProperty("/range"), "Ranges should be equal");
 		assert.deepEqual([50, 80], oRangeSlider.getRange(), "Ranges should be equal");
@@ -1004,11 +1006,11 @@ sap.ui.define([
 			aHandles = [oRangeSlider._mHandleTooltip.start.tooltip, oRangeSlider._mHandleTooltip.end.tooltip];
 
 		oRangeSlider.placeAt(DOM_RENDER_LOCATION);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		aNormalizedRange = oRangeSlider._getNormalizedRange([-110, -10], aInitialRange, aHandles);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.deepEqual(aNormalizedRange, [-100, 0], "Ranges should be equal");
 
@@ -1023,7 +1025,7 @@ sap.ui.define([
 			definition: sXMLText
 		}).then(function(oView) {
 			oView.placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oRangeSlider = oView.byId("range");
 
@@ -1038,7 +1040,7 @@ sap.ui.define([
 
 	QUnit.test("value, value2 and range bindings through setters", function (assert) {
 		var oRangeSlider = new RangeSlider({value: 12, value2: 88, min: 0, max: 90});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(oRangeSlider.getRange(), [12, 88], "Range should be equal to [12, 88]");
@@ -1048,7 +1050,7 @@ sap.ui.define([
 
 		//act
 		oRangeSlider.setValue(22);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(oRangeSlider.getRange(), [22, 88], "Range should be equal to [22, 88]");
@@ -1056,7 +1058,7 @@ sap.ui.define([
 
 		//act
 		oRangeSlider.setValue2(35);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(oRangeSlider.getRange(), [22, 35], "Range should be equal to [22, 35]");
@@ -1081,7 +1083,7 @@ sap.ui.define([
 			oRangeSlider = new RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}"});
 
 		oRangeSlider.setModel(oModel);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(oRangeSlider.getRange(), [100, 500], "Range should be equal to [100, 500]");
@@ -1092,7 +1094,7 @@ sap.ui.define([
 
 		//act
 		oRangeSlider.setValue(22);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(oRangeSlider.getRange(), [22, 500], "Range should be equal to [22, 500]");
@@ -1102,7 +1104,7 @@ sap.ui.define([
 
 		//act
 		oRangeSlider.setValue2(35);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(oRangeSlider.getRange(), [22, 35], "Range should be equal to [22, 35]");
@@ -1130,7 +1132,7 @@ sap.ui.define([
 			oRangeSlider = new RangeSlider({min: "{/min}", max: "{/max}", value: "{/range/0}", value2: "{/range/1}", range: "{/range}"});
 
 		oRangeSlider.setModel(oModel);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(oRangeSlider.getRange(), [100, 500], "Range should be equal to [100, 500]");
@@ -1141,7 +1143,7 @@ sap.ui.define([
 
 		//act
 		oRangeSlider.setValue(22);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(oRangeSlider.getRange(), [22, 500], "Range should be equal to [22, 500]");
@@ -1151,7 +1153,7 @@ sap.ui.define([
 
 		//act
 		oRangeSlider.setValue2(35);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(oRangeSlider.getRange(), [22, 35], "Range should be equal to [22, 35]");
@@ -1179,7 +1181,7 @@ sap.ui.define([
 			oRangeSlider = new RangeSlider({min: "{/min}", max: "{/max}", range: "{/range}", value: "{/range/0}", value2: "{/range/1}"});
 
 		oRangeSlider.setModel(oModel);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(oRangeSlider.getRange(), [100, 500], "Range should be equal to [100, 500]");
@@ -1189,7 +1191,7 @@ sap.ui.define([
 
 		//act
 		oModel.setProperty("/range/0", 22);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(oRangeSlider.getRange(), [22, 500], "Range should be equal to [22, 500]");
@@ -1199,7 +1201,7 @@ sap.ui.define([
 
 		//act
 		oModel.setProperty("/range/1", 35);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(oRangeSlider.getRange(), [22, 35], "Range should be equal to [22, 35]");
@@ -1209,7 +1211,7 @@ sap.ui.define([
 		//act
 		oModel.setProperty("/range", [5, 15]);
 		oModel.setProperty("/range/1", 99);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(oRangeSlider.getRange(), [5, 99], "Range should be equal to [5, 99]");
@@ -1236,7 +1238,7 @@ sap.ui.define([
 
 		oRangeSlider.placeAt(DOM_RENDER_LOCATION);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oEvent = {
 			target: oRangeSlider.getDomRef("progress"),
@@ -1268,7 +1270,7 @@ sap.ui.define([
 
 		oRangeSlider._ontouchmove(9, [0, 9], [oHandle1, oHandle2], oEvent);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.deepEqual(oRangeSlider.getRange(), [1, 10], "Range should be equal to [1, 10]");
@@ -1294,7 +1296,7 @@ sap.ui.define([
 		assert.strictEqual(oScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the user defined scale.");
 
 		oScale.destroy();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oDefaultScale = oSlider.getAggregation('_defaultScale');
 
 		// assert
@@ -1315,7 +1317,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt(DOM_RENDER_LOCATION);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oDefaultScale = oSlider.getAggregation('_defaultScale');
 
@@ -1325,7 +1327,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.setAggregation('scale', oScale);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oDefaultScale = oSlider.getAggregation('_defaultScale');
 
 		// assert
@@ -1352,7 +1354,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt(DOM_RENDER_LOCATION);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		sFirstHandleAriaId = oSlider.getDomRef("handle1").getAttribute("aria-describedby");
 		sSecondHandleAriaId = oSlider.getDomRef("handle2").getAttribute("aria-describedby");
@@ -1371,7 +1373,7 @@ sap.ui.define([
 
 		// act
 		oSlider.focus();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSlider.getDomRef("handle1").getAttribute("aria-controls"), 'The "aria-controls" should be set');
@@ -1379,7 +1381,7 @@ sap.ui.define([
 
 		// act
 		oSlider.setEnabled(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		sKeyShortcutFirstHandle = oSlider.getDomRef("handle1").getAttribute("aria-keyshortcuts");
 		sKeyShortcutSecondHandle = oSlider.getDomRef("handle2").getAttribute("aria-keyshortcuts");
@@ -1416,7 +1418,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt(DOM_RENDER_LOCATION);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oHandleDomRef = oSlider.getDomRef("handle1");
 		oSecondHandleDomRef = oSlider.getDomRef("handle2");
 		oProgressHandle = oSlider.getDomRef("progress");
@@ -1430,7 +1432,7 @@ sap.ui.define([
 			"The aria-valuetext of the progress handle should be From Zero to One.");
 
 		oSlider.setValue2(2);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1000);
 
 		assert.strictEqual(oSecondHandleDomRef.getAttribute("title"), "2", "The title should be 2.");
@@ -1482,7 +1484,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt(DOM_RENDER_LOCATION);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oHandleDomRef = oSlider.getDomRef("handle1");
 		oSecondHandleDomRef = oSlider.getDomRef("handle2");
 		oProgressHandle = oSlider.getDomRef("progress");
@@ -1500,7 +1502,7 @@ sap.ui.define([
 		// Act
 		oSlider.getAggregation("_tooltipContainer").show(oSlider);
 		oSlider.setValue(1);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1000);
 		oHandleDomRef = oSlider.getDomRef("handle1");
 		oSecondHandleDomRef = oSlider.getDomRef("handle2");
@@ -1520,7 +1522,7 @@ sap.ui.define([
 
 		//Act
 		oSlider.setShowAdvancedTooltip(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1000);
 		oHandleDomRef = oSlider.getDomRef("handle1");
 
@@ -1544,7 +1546,7 @@ sap.ui.define([
 			});
 
 			this.oRangeSlider.placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		});
 
 		hooks.afterEach(function () {
@@ -1556,7 +1558,7 @@ sap.ui.define([
 				oAssociatedTooltips;
 
 			this.oRangeSlider.addCustomTooltip(new this.SliderTooltipCustom());
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oAssociatedTooltips = oTooltipContainer.getAssociatedTooltipsAsControls();
 
@@ -1573,7 +1575,7 @@ sap.ui.define([
 			this.oRangeSlider.addCustomTooltip(new this.SliderTooltipCustom());
 			this.oRangeSlider.addCustomTooltip(new this.SliderTooltipCustom());
 			this.oRangeSlider.addCustomTooltip(new this.SliderTooltipCustom());
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oAssociatedTooltips = oTooltipContainer.getAssociatedTooltipsAsControls();
 			aCustomTooltips = this.oRangeSlider.getCustomTooltips();
@@ -1593,11 +1595,11 @@ sap.ui.define([
 
 			this.oRangeSlider.addCustomTooltip(oFirstCustomTooltip);
 			this.oRangeSlider.addCustomTooltip(oSecondCustomTooltip);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			oFirstCustomTooltip.destroy();
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oAssociatedTooltips = oSliderTooltipContainer.getAssociatedTooltipsAsControls();
 
@@ -1618,11 +1620,11 @@ sap.ui.define([
 			this.oRangeSlider.addCustomTooltip(oFirstCustomTooltip);
 			this.oRangeSlider.addCustomTooltip(oSecondCustomTooltip);
 			this.oRangeSlider.addCustomTooltip(oThirdCustomTooltip);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			oThirdCustomTooltip.destroy();
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oAssociatedTooltips = oSliderTooltipContainer.getAssociatedTooltipsAsControls();
 
@@ -1641,11 +1643,11 @@ sap.ui.define([
 			this.oRangeSlider.addCustomTooltip(oFirstCustomTooltip);
 			this.oRangeSlider.addCustomTooltip(oSecondCustomTooltip);
 			this.oRangeSlider.addCustomTooltip(oThirdCustomTooltip);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			oSecondCustomTooltip.destroy();
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oAssociatedTooltips = oSliderTooltipContainer.getAssociatedTooltipsAsControls();
 
@@ -1662,7 +1664,7 @@ sap.ui.define([
 			});
 
 			oRangeSlider.placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert
 			assert.ok(oRangeSlider.getDomRef(), true, "The rangeslider was successfully rendered.");
@@ -1674,7 +1676,7 @@ sap.ui.define([
 		QUnit.test("Tooltips: Setting a value when TooltipContainer is not visible", function (assert) {
 			this.oRangeSlider.getAggregation("_tooltipContainer").show(this.oRangeSlider);
 			this.oRangeSlider.setValue(4);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			assert.ok(true, "should not throw an error");
 		});
@@ -1690,7 +1692,7 @@ sap.ui.define([
 
 			// arrange
 			oRangeSlider.placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			var oProgressHandle = oRangeSlider.getDomRef("progress");
 
@@ -1700,7 +1702,7 @@ sap.ui.define([
 
 			oRangeSlider.setValue(4);
 			oRangeSlider.setValue2(2);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			clock.tick(500);
 
 			// assert
@@ -1725,7 +1727,7 @@ sap.ui.define([
 					keyCode: KeyCodes.SPACE
 				};
 			oRangeSlider.placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			oRangeSlider.onkeydown(fnFakeEvent);

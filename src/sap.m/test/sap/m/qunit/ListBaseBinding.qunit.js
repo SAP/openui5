@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
@@ -21,6 +22,7 @@ sap.ui.define([
 ], function(
 	MockServer,
 	ODataModel,
+	nextUIUpdate,
 	jQuery,
 	FilterOperator,
 	JSONModel,
@@ -108,7 +110,7 @@ sap.ui.define([
 
 		// render the list
 		oList.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 		// set the list as a promise
 		oDeferred.promise(oList);
@@ -541,7 +543,7 @@ sap.ui.define([
 
 			// rerender list
 			oList.invalidate();
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 			setTimeout(function() {
 				// check focus after rerender

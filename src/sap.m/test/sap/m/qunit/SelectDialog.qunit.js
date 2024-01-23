@@ -171,7 +171,7 @@ sap.ui.define([
 			var iDelay = 50;
 			this.oSelectDialog.setBusyIndicatorDelay(iDelay);
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.strictEqual(this.oSelectDialog._oList.getBusyIndicatorDelay(), iDelay, 'The List delay value should be ' + iDelay);
 			assert.strictEqual(this.oSelectDialog._oDialog.getBusyIndicatorDelay(), iDelay, 'The Dialog delay value should be ' + iDelay);
 			assert.strictEqual(this.oSelectDialog.getBusyIndicatorDelay(), iDelay, 'The SelectDialog delay value should be ' + iDelay);
@@ -181,13 +181,13 @@ sap.ui.define([
 			var sPlaceholderText = "Test placeholder";
 			this.oSelectDialog.setSearchPlaceholder(sPlaceholderText);
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.strictEqual(this.oSelectDialog._oSearchField.getPlaceholder(), sPlaceholderText, "The SearchField's placeholder text should be " + sPlaceholderText);
 		});
 
 		QUnit.test("Setting of the Title", function (assert) {
 			this.oSelectDialog.setTitle("New title");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.oSelectDialog.open();
 			assert.strictEqual(document.getElementById("selectDialog-dialog-title-inner").textContent, "New title", "The title is set correctly");
 		});
@@ -195,7 +195,7 @@ sap.ui.define([
 		QUnit.test("Setting of the ContentWidth", function (assert) {
 			assert.strictEqual(this.oSelectDialog.getContentWidth(), "", "The contentWidth is not set");
 			this.oSelectDialog.setContentWidth("400px");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.oSelectDialog.open();
 			assert.strictEqual(document.getElementById("selectDialog-dialog").offsetWidth, 400, "The width of the dialog is correctly set");
 			assert.strictEqual(this.oSelectDialog.getContentWidth(), "400px", "The contentWidth is not set");
@@ -220,7 +220,7 @@ sap.ui.define([
 		QUnit.test("growing: true (default)", function (assert) {
 			// arrange
 			bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert
 			assert.strictEqual(this.oSelectDialog._oList.getSelectedContextPaths(true).length, 3,
@@ -233,7 +233,7 @@ sap.ui.define([
 			// arrange
 			this.oSelectDialog.setGrowing(false);
 			bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert
 			assert.strictEqual(this.oSelectDialog._oList.getSelectedContextPaths(true).length, 4,
@@ -385,7 +385,7 @@ sap.ui.define([
 			}, path: "/items", template: createTemplateListItem() });
 
 			this.oSelectDialog.open();
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.strictEqual(that.oSelectDialog._oList.getInfoToolbar().getVisible(), false, "The should be no toolbar shown");
 			assert.strictEqual(that.oSelectDialog.$().attr("aria-labelledby").indexOf(that.oSelectDialog._oList.getInfoToolbar().getId()),  -1, "the info toolbar id is not added to the dialog aria-labelledby");
 		});
@@ -398,7 +398,7 @@ sap.ui.define([
 
 			// Arrange
 			bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oSelectDialog._oDialog.attachAfterOpen(function () {
 				// Reset call count of spy
@@ -448,7 +448,7 @@ sap.ui.define([
 				// Act
 				this.oSelectDialog._executeSearch("CCC", false, "search");
 
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				this.clock.tick(500);
 
 				this.oSelectDialog.getItems()[0].setSelected(true);
@@ -467,7 +467,7 @@ sap.ui.define([
 
 				this.oSelectDialog._executeSearch("BBB", false, "search");
 
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				this.clock.tick(500);
 
 				// Act
@@ -570,7 +570,7 @@ sap.ui.define([
 			this.oSelectDialog.setRememberSelections(true);
 
 			bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oSelectDialog._oDialog.attachAfterOpen(function() {
 
@@ -590,7 +590,7 @@ sap.ui.define([
 			var fnListGetSelectedContexts = sinon.spy(this.oSelectDialog._oList, "getSelectedContexts");
 
 			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oSelectDialog.open();
 
@@ -621,7 +621,7 @@ sap.ui.define([
 			var fnListGetSelectedContexts = sinon.spy(this.oSelectDialog._oList, "getSelectedContexts");
 
 			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oSelectDialog.open();
 
@@ -682,7 +682,7 @@ sap.ui.define([
 			});
 
 			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem(), filters: oFilter});
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			jQuery.when(this.oSelectDialog.open('Chuck')).then(function (oEvent) {
 				assert.strictEqual(that.oSelectDialog._oSearchField.getValue(), "Chuck", 'The search field value is "Title1" after passing "Title1" to the open method');
@@ -749,11 +749,11 @@ sap.ui.define([
 
 			// act
 			oSelectDialog.open("somevalue");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			qutils.triggerKeydown(oSelectDialog._oSearchField.getDomRef().id, KeyCodes.ESCAPE);
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.clock.tick(500);
 			oSelectDialog._oDialog.close();
 			this.clock.tick(500);
@@ -766,7 +766,7 @@ sap.ui.define([
 
 			this.oSelectDialog.setMultiSelect(true);
 			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oSelectDialog.attachConfirm(function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("selectedItem"),
@@ -940,14 +940,14 @@ sap.ui.define([
 			});
 
 			this.oSelectDialog.setRememberSelections(true);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// Act
 			this.oSelectDialog.open();
 			this.clock.tick(350);
 
 			this.oSelectDialog.getItems()[0].$().trigger("tap");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.clock.tick(350);
 
 			// Assert
@@ -1010,7 +1010,7 @@ sap.ui.define([
 			// Arrange
 			bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
 			this.oSelectDialog.insertItem(new GroupHeaderListItem({title: "Group header"}), 0);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// Act
 			this.oSelectDialog.open();
@@ -1267,7 +1267,7 @@ sap.ui.define([
 					oOkButton = that.oSelectDialog._oOkButton;
 
 				that.oSelectDialog.destroy();
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				that.clock.tick(350);
 
 				// check if internal controls are destroyed correctly (when initialized they must be destroyed)
@@ -1352,12 +1352,12 @@ sap.ui.define([
 			var done = assert.async();
 
 			this.oSelectDialog.setContentHeight("150px");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oSelectDialog._oDialog.attachAfterOpen(function (oEvent) {
 				assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 150, "content in Dialog should have height of 150px.");
 				this.oSelectDialog.setContentHeight("286px");
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 				var browserCalculatedHeight = Math.round(parseFloat(window.getComputedStyle(jQuery("#selectDialog-dialog-cont")[0]).height));
 				assert.strictEqual(browserCalculatedHeight, 286, "content in Dialog should have height of 286px.");
@@ -1460,7 +1460,7 @@ sap.ui.define([
 				var oFilter = new Filter("Title", FilterOperator.Contains, sValue);
 
 				oEvent.getSource().getBinding("items").filter([oFilter]);
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 				// Assert
 				assert.strictEqual(this.oSelectDialog._oSearchField.getFocusDomRef(), document.activeElement, 'Focus should stay on the searchfield after liveChange');
@@ -1588,7 +1588,7 @@ sap.ui.define([
 	QUnit.test("Initial loading with selected items from previous selection", function(assert) {
 		this.oSelectDialog.open();
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		//assert
@@ -1598,7 +1598,7 @@ sap.ui.define([
 	QUnit.test("Initial loading without selected items from previous selection", function(assert) {
 		this.oSelectDialog1.open();
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		//assert
@@ -1608,7 +1608,7 @@ sap.ui.define([
 	QUnit.test("Removing selection should disable button", function(assert) {
 		this.oSelectDialog.open();
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		//assert
@@ -1625,7 +1625,7 @@ sap.ui.define([
 	QUnit.test("Adding selection should enable button", function(assert) {
 		this.oSelectDialog1.open();
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		//assert
@@ -1641,7 +1641,7 @@ sap.ui.define([
 	QUnit.test("Clicking on enabled 'Clear' button should clear selection", function(assert) {
 		this.oSelectDialog.open();
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		//assert
@@ -1657,18 +1657,18 @@ sap.ui.define([
 	QUnit.test("Disable already enabled clear button and then enable it again", function(assert) {
 		this.oSelectDialog.open();
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oClearButton = this.oSelectDialog._getClearButton();
 		this.oSelectDialog.setShowClearButton(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(oClearButton.getVisible(), false, 'Clear button is not visible');
 		assert.notOk(oClearButton.getDomRef(), 'Clear button is not in dom');
 
 		this.oSelectDialog.setShowClearButton(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(oClearButton.getVisible(), true, 'Clear button is not visible');
@@ -1679,19 +1679,19 @@ sap.ui.define([
 	QUnit.test("There is no content in the contentRight aggregation of the header", function(assert) {
 		this.oSelectDialog2.open();
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oCustomHeader = this.oSelectDialog2._oDialog.getCustomHeader();
 		var oClearButton = this.oSelectDialog2._getClearButton();
 		assert.equal(oCustomHeader.getContentRight().length,  0, 'Clear button is not created');
 
 		this.oSelectDialog2.setShowClearButton(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oCustomHeader.getContentRight().length,  0, 'Clear button is not created');
 
 		this.oSelectDialog2.setShowClearButton(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oClearButton.getVisible(), true, 'Clear button is visible');
 		assert.ok(oClearButton.getDomRef(), 'Clear button is in dom');
@@ -1699,7 +1699,7 @@ sap.ui.define([
 
 	QUnit.test("After selection reset the focus should be returned to the dialog", function(assert) {
 		this.oSelectDialog.open();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oSelectDialog._oClearButton.firePress();
 		assert.equal(document.activeElement.getAttribute("id"), this.oSelectDialog._oDialog.getId(), 'After selection is reset the focus should be returned to the dialog"');
@@ -1794,7 +1794,7 @@ sap.ui.define([
 					}
 				]
 			}, path: "/items", template: createTemplateListItem() });
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		}, afterEach: function() {
 			// cleanup
 			this.oSelectDialog.destroy();
@@ -1816,12 +1816,12 @@ sap.ui.define([
 		this.oSelectDialog._oDialog.attachAfterOpen(function () {
 			// Act
 			that.oSelectDialog._getOkButton().firePress();
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.clock.tick(500);
 		}.bind(this));
 
 		this.oSelectDialog.open();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 	});
 
@@ -1842,12 +1842,12 @@ sap.ui.define([
 			that.oSelectDialog._executeSearch("Tes", false, "search");
 			that.oSelectDialog.getItems()[0].setSelected(true);
 			that.oSelectDialog._getOkButton().firePress();
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.clock.tick(500);
 		}.bind(this));
 
 		this.oSelectDialog.open();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 	});
 
@@ -1870,12 +1870,12 @@ sap.ui.define([
 			that.oSelectDialog.getItems()[1].setSelected(true);
 			that.oSelectDialog.getItems()[2].setSelected(true);
 			that.oSelectDialog._getOkButton().firePress();
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.clock.tick(500);
 		}.bind(this));
 
 		this.oSelectDialog.open();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 	});
 

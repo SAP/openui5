@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core"
-], function(Element, createAndAppendDiv, CustomTreeItem, Tree, Image, Text, JSONModel, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Element, createAndAppendDiv, CustomTreeItem, Tree, Image, Text, JSONModel, oCore, nextUIUpdate) {
 	"use strict";
 
 	createAndAppendDiv("content").style.height = "100%";
@@ -72,12 +73,12 @@ sap.ui.define([
 		this.oTree.bindItems("/", oCustomTreeItem);
 
 		this.oTree.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	}
 
 	function destroyMTree() {
 		this.oTree.destroy();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	}
 
 	/*

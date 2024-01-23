@@ -1,12 +1,13 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/PDFViewer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/ui/core/Core"
-], function ($, PDFViewer, JSONModel, Device, oCore) {
+], function(nextUIUpdate, $, PDFViewer, JSONModel, Device, oCore) {
 	"use strict";
 
 	var testUtils = {};
@@ -120,11 +121,11 @@ sap.ui.define([
 
 	testUtils.renderPdfViewer = function renderPdfViewer(oPdfViewer) {
 		oPdfViewer.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	};
 
 	testUtils.triggerRerender = function triggerRerender() {
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	};
 
 	testUtils.wait = function wait(duration) {

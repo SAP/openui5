@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/Button",
 	"sap/ui/dom/includeStylesheet",
-	"require"
+	"require",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Localization,
 	Element,
@@ -28,7 +29,8 @@ sap.ui.define([
 	Device,
 	Button,
 	includeStylesheet,
-	require
+	require,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -206,7 +208,7 @@ sap.ui.define([
 		assert.expect(3);
 
 		oSC2.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(getScrollPos(oSC2.getId(), "left"), -110, "ScrollContainer 2 should be scrolled to position 110");
 		intEqual(oSC2._oScroller._scrollX, 110, "Internally stored x scrolling position should be 110");
@@ -273,7 +275,7 @@ sap.ui.define([
 		});
 
 		oScrollContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oScrollContainer.scrollToElement(this.oTestButton);
 
@@ -303,7 +305,7 @@ sap.ui.define([
 		});
 
 		oScrollContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oScrollContainer.scrollToElement(this.oTestButton.getDomRef());
 		assert.equal(getScrollPos(oScrollContainer.getId(), "left"), -800, "ScrollContainer should be scrolled to position 800 from the left");
@@ -333,7 +335,7 @@ sap.ui.define([
 
 		// Act
 		oScrollContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oScrollContainer.scrollToElement(this.oTestButton, bSkipElementsInScrollport);
 
@@ -384,7 +386,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("Initial rendering without overflow", function(assert) {
@@ -403,7 +405,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("Resize to overflow", function(assert) {
@@ -427,7 +429,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("Resize to underflow", function(assert) {
@@ -452,7 +454,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.module("scrollTo with scrollEndCallback", {
@@ -489,7 +491,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("non-animated scroll", function(assert) {
@@ -510,7 +512,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.module("Keyboard Handling");
@@ -608,7 +610,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$().find(sContentSelector);
 

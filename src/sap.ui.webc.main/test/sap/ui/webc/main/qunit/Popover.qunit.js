@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Popover",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, Popover, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Popover, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oPopover = new Popover({
 				headerText: "Some text...",
 				content: [
@@ -97,7 +98,7 @@ sap.ui.define([
 				}
 			});
 			this.oPopover.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oPopover.destroy();

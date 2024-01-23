@@ -1,6 +1,7 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/core/ControlBehavior",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/qunit/QUnitUtils',
 	"sap/f/FlexibleColumnLayout",
@@ -15,6 +16,7 @@ sap.ui.define([
 ],
 function(
 	ControlBehavior,
+	nextUIUpdate,
 	$,
 	QUnitUtils,
 	FlexibleColumnLayout,
@@ -81,7 +83,7 @@ function(
 		oMetadata = oMetadata || {};
 		var oFCL = new FlexibleColumnLayout(oMetadata);
 		oFCL.placeAt(sQUnitFixture);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		return oFCL;
 	};
 
@@ -169,7 +171,7 @@ function(
 		// Act: change backgroundDesign to Solid
 		this.oFCL.setBackgroundDesign("Solid");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert backgroundDesign
 		assert.ok(this.oFCL.$().hasClass("sapFFCLBackgroundDesignSolid"), "Solid background is set in the  DOM");
@@ -178,7 +180,7 @@ function(
 		// Act: change backgroundDesign to Translucent
 		this.oFCL.setBackgroundDesign("Translucent");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert backgroundDesign
 		assert.ok(this.oFCL.$().hasClass("sapFFCLBackgroundDesignTranslucent"), "Translucent background is set in the  DOM");
@@ -410,7 +412,7 @@ function(
 		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
 
 		this.oFCL.placeAt(sQUnitFixture);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oEventSpy.called, "Layout change event fired");
 	});
@@ -467,7 +469,7 @@ function(
 		var oEventSpy = this.spy(this.oFCL, "fireStateChange");
 
 		this.oFCL.placeAt(sQUnitFixture);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(!oEventSpy.called, "Layout change event from onAfterRendering not fired");
 
@@ -1289,7 +1291,7 @@ function(
 
 		// Act
 		this.oFCL.setLandmarkInfo(oLandmarkInfo);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Helper function
 		var fnGetLabelText = function (sColumnName) {
@@ -1355,7 +1357,7 @@ function(
 
 		// act
 		oFCL.placeAt(sQUnitFixture);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("SemanticHelper whenReady", function (assert) {
@@ -1389,7 +1391,7 @@ function(
 
 		// act
 		oFCL.placeAt(sQUnitFixture);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("SemanticHelper provides correct default action buttons info", function (assert) {
@@ -1485,7 +1487,7 @@ function(
 
 		// act
 		this.oFCL.placeAt(sQUnitFixture);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		iCurrentWidth = this.oFCL._getControlWidth();
@@ -1704,7 +1706,7 @@ function(
 			}.bind(this);
 
 		this.oFCL.placeAt(sQUnitFixture);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function () {
 			this.oEventSpy.resetHistory();
@@ -1733,7 +1735,7 @@ function(
 
 		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
 		this.oFCL.placeAt(sQUnitFixture);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function () {
 			oResizeFunctionSpy.resetHistory();
@@ -1750,7 +1752,7 @@ function(
 
 		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
 		this.oFCL.placeAt(sQUnitFixture);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Setup: change to a layout that requires animation
 		this.oFCL.setLayout(LT.OneColumn);
@@ -1771,7 +1773,7 @@ function(
 
 		this.oFCL.setLayout(LT.OneColumn);
 		this.oFCL.placeAt(sQUnitFixture);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Setup: change to layouts that requires animation
 		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
@@ -1794,7 +1796,7 @@ function(
 		};
 
 		this.oFCL.placeAt(sQUnitFixture);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oEventSpy.resetHistory();
 		this.oFCL.setLayout(LT.ThreeColumnsEndExpanded);
@@ -1812,7 +1814,7 @@ function(
 		};
 
 		this.oFCL.placeAt(sQUnitFixture);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oEventSpy.resetHistory();
 		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
@@ -1830,7 +1832,7 @@ function(
 		};
 
 		this.oFCL.placeAt(sQUnitFixture);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oEventSpy.resetHistory();
 		this.oFCL.setLayout(LT.ThreeColumnsMidExpandedEndHidden);
@@ -1856,7 +1858,7 @@ function(
 			layout: LT.TwoColumnsBeginExpanded
 		});
 		this.oFCL.placeAt(sQUnitFixture);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.oFCL.attachColumnResize(fnCallback);
 
 		// Act: resize to a width that does not lead to <code>layoutType</code> chage
@@ -1882,7 +1884,7 @@ function(
 
 			this.oFCL.setLayout(sLayoutName);
 			this.oFCL.placeAt(sQUnitFixture);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(fnCallback.bind(this));
 		});
@@ -1911,7 +1913,7 @@ function(
 
 
 			this.oFCL.placeAt(sQUnitFixture);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 
@@ -2143,7 +2145,7 @@ function(
 			this.oFCL.setLayout(sLayoutName);
 
 			this.oFCL.placeAt(sQUnitFixture);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert
 			_widthComparisonAssertions(this.oFCL, assert);

@@ -3,16 +3,17 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Menu",
 	"sap/ui/webc/main/MenuItem",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, Menu, MenuItem, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Menu, MenuItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMenu = new Menu({
 				headerText: "Some text...",
 				items: [
@@ -253,7 +254,7 @@ sap.ui.define([
 				}
 			});
 			this.oMenu.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oMenu.destroy();

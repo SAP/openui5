@@ -420,7 +420,7 @@ sap.ui.define([
 		};
 
 		var fnHandler = function() {
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 			assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows + 1, "Row count after expand");
 			assert.ok(oTreeTable.getBinding().isExpanded(0), "Expanded");
 			oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
@@ -449,7 +449,7 @@ sap.ui.define([
 		assert.ok(!oTreeTable.getBinding().isExpanded(0), "!Expanded");
 
 		var fnHandler = function() {
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 			assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows + 1, "Row count after expand");
 			assert.ok(oTreeTable.getBinding().isExpanded(0), "Expanded");
 			oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
@@ -883,7 +883,7 @@ sap.ui.define([
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
 			setTimeout(function() {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed");
 				done();
 			}, 100);
@@ -907,7 +907,7 @@ sap.ui.define([
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
 			setTimeout(function() {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed");
 				done();
 			}, 100);
@@ -931,7 +931,7 @@ sap.ui.define([
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
 			setTimeout(function() {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed");
 				done();
 			}, 100);

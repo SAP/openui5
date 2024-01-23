@@ -63,6 +63,284 @@ sap.ui.define([
 		return V4AnalyticsPropertyHelper;
 	};
 
+	/**
+	 * Provides hook to update the binding info object that is used to bind the table to the model.
+	 *
+	 * Delegate objects that implement this method must ensure that at least the <code>path</code> key of the binding info is provided.
+	 * <b>Note:</b> To remove a binding info parameter, the value must be set to <code>undefined</code>. For more information, see
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters}.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
+	 * @function
+	 * @name module:sap/ui/mdc/odata/v4/TableDelegate.updateBindingInfo
+	 * @abstract
+	 */
+	//Delegate.updateBindingInfo = function(oTable, oBindingInfo) { };
+
+	/**
+	 * @inheritDoc
+	 */
+	Delegate.getGroupSorter = function(oTable) {
+		const oGroupedProperty = oTable._getGroupedProperties()[0];
+
+		if (!oGroupedProperty || !oTable._isOfType(TableType.ResponsiveTable)) {
+			return undefined;
+		}
+
+		if (!getVisiblePropertyNames(oTable).includes(oGroupedProperty.name)) {
+			// Suppress grouping by non-visible property.
+			return undefined;
+		}
+
+		return TableDelegate.getGroupSorter.apply(this, arguments);
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	Delegate.getSorters = function(oTable) {
+		let aSorters = TableDelegate.getSorters.apply(this, arguments);
+
+		// Sorting by a property that is not in the aggregation info (sorting by a property that is not requested) causes a backend error.
+		if (isAnalyticsEnabled(oTable)) {
+			const oPropertyHelper = oTable.getPropertyHelper();
+			const aVisiblePropertyPaths = getVisiblePropertyNames(oTable).map((sPropertyName) => oPropertyHelper.getProperty(sPropertyName).path);
+
+			aSorters = aSorters.filter((oSorter) => aVisiblePropertyPaths.includes(oSorter.sPath));
+		}
+
+		return aSorters;
+	};
+
+	/**
+	 * Updates the row binding of the table if possible, rebinds otherwise.
+	 *
+	 * Compares the current and previous state of the table to detect whether rebinding is necessary or not.
+	 * The diffing happens for the sorters, filters, aggregation, parameters, and the path of the binding.
+	 * Other {@link sap.ui.base.ManagedObject.AggregationBindingInfo binding info} keys like <code>events</code>,
+	 * <code>model</code>... must be provided in the {@link #updateBindingInfo updateBindingInfo} method always,
+	 * and those keys must not be changed conditionally.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
+	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instance of the table
+	 * @param {object} [mSettings] Additional settings
+	 * @param {boolean} [mSettings.forceRefresh] Indicates that the binding has to be refreshed even if <code>oBindingInfo</code> has not been changed
+	 * @protected
+	 * @override
+	 */
+	Delegate.updateBinding = function(oTable, oBindingInfo, oBinding, mSettings) {
+		if (!oBinding || oBinding.getPath() != oBindingInfo.path) {
+			this.rebind(oTable, oBindingInfo);
+			return;
+		}
+
+		// suspend and resume have to be called on the root binding
+		const oRootBinding = oBinding.getRootBinding();
+		let bHasRootBindingAndWasNotSuspended = oRootBinding && !oRootBinding.isSuspended();
+
+		try {
+			if (bHasRootBindingAndWasNotSuspended) {
+				oRootBinding.suspend();
+			}
+
+			setAggregation(oTable, oBindingInfo);
+			oBinding.changeParameters(oBindingInfo.parameters);
+			oBinding.filter(oBindingInfo.filters, "Application");
+			oBinding.sort(oBindingInfo.sorter);
+
+			if (mSettings && mSettings.forceRefresh) {
+				oBinding.refresh();
+			}
+		} catch (e) {
+			this.rebind(oTable, oBindingInfo);
+			if (oRootBinding == oBinding) {
+				// If we resume before the rebind, you get an extra request therefore we must
+				// resume after rebind, but only if the list binding was not the root binding.
+				bHasRootBindingAndWasNotSuspended = false;
+			}
+		} finally {
+			if (bHasRootBindingAndWasNotSuspended && oRootBinding.isSuspended()) {
+				oRootBinding.resume();
+			}
+		}
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	Delegate.rebind = function(oTable, oBindingInfo) {
+		setAggregation(oTable, oBindingInfo);
+		TableDelegate.rebind.apply(this, arguments);
+	};
+
+
+	/**
+	 * @inheritDoc
+	 */
+	Delegate.expandAll = function(oTable) {
+		if (!this.getSupportedFeatures(oTable).expandAll) {
+			return;
+		}
+
+		const oRowBinding = oTable.getRowBinding();
+		if (oRowBinding) {
+			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), { expandTo: Number.MAX_SAFE_INTEGER }));
+		}
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	Delegate.collapseAll = function(oTable) {
+		if (!this.getSupportedFeatures(oTable).collapseAll) {
+			return;
+		}
+
+		const oRowBinding = oTable.getRowBinding();
+		if (oRowBinding) {
+			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), { expandTo: 1 }));
+		}
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	Delegate.getSupportedFeatures = function(oTable) {
+		const oSupportedFeatures = TableDelegate.getSupportedFeatures.apply(this, arguments);
+		const bIsTreeTable = oTable._isOfType(TableType.TreeTable);
+
+		return Object.assign(oSupportedFeatures, {
+			expandAll: bIsTreeTable,
+			collapseAll: bIsTreeTable
+		});
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	Delegate.getSupportedP13nModes = function(oTable) {
+		const aSupportedModes = TableDelegate.getSupportedP13nModes.apply(this, arguments);
+
+		if (oTable._isOfType(TableType.Table)) {
+			if (!aSupportedModes.includes(P13nMode.Group)) {
+				aSupportedModes.push(P13nMode.Group);
+			}
+			if (!aSupportedModes.includes(P13nMode.Aggregate)) {
+				aSupportedModes.push(P13nMode.Aggregate);
+			}
+		}
+
+		return aSupportedModes;
+	};
+
+	Delegate.validateState = function(oTable, oState, sKey) {
+		const oBaseValidationResult = TableDelegate.validateState.apply(this, arguments);
+		let oValidationResult;
+
+		if (sKey == "Sort") {
+			oValidationResult = validateSortState(oTable, oState);
+		} else if (sKey == "Group") {
+			oValidationResult = validateGroupState(oTable, oState);
+		} else if (sKey == "Column") {
+			oValidationResult = validateColumnState(oTable, oState);
+		}
+
+		return mergeValidationResults(oBaseValidationResult, oValidationResult);
+	};
+
+	function validateSortState(oTable, oState) {
+		if (isAnalyticsEnabled(oTable) && hasStateForInvisibleColumns(oTable, oState.items, oState.sorters)) {
+			// Sorting by properties that are not visible in the table (not requested from the backend) is not possible in analytical scenarios.
+			// Corresponding sort conditions are not applied.
+			return {
+				validation: coreLibrary.MessageType.Information,
+				message: Lib.getResourceBundleFor("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
+			};
+		}
+
+		return null;
+	}
+
+	function validateGroupState(oTable, oState) {
+		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+
+		if (oState.aggregations) {
+			const aAggregateProperties = Object.keys(oState.aggregations);
+			const aAggregatedGroupableProperties = [];
+			const oListFormat = ListFormat.getInstance();
+
+			aAggregateProperties.forEach((sProperty) => {
+				const oProperty = oTable.getPropertyHelper().getProperty(sProperty);
+				if (oProperty && oProperty.groupable) {
+					aAggregatedGroupableProperties.push(sProperty);
+				}
+			});
+
+			if (aAggregatedGroupableProperties.length > 0) {
+				// It is not possible to group and aggregate by the same property at the same time. Aggregated properties that are also groupable are
+				// filtered out in the GroupController. This message should inform the user about that.
+				return {
+					validation: coreLibrary.MessageType.Information,
+					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_TOTALS", [
+						oListFormat.format(aAggregatedGroupableProperties)
+					])
+				};
+			}
+		} else if (oTable._isOfType(TableType.ResponsiveTable)) {
+			if (hasStateForInvisibleColumns(oTable, oState.items, oState.groupLevels)) {
+				// Grouping by a property that isn't visible in the table (not requested from the backend) causes issues with the group header text.
+				// Corresponding group conditions are not applied.
+				return {
+					validation: coreLibrary.MessageType.Information,
+					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE")
+				};
+			}
+		}
+
+		return null;
+	}
+
+	function validateColumnState(oTable, oState) {
+		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
+		const aAggregateProperties = oState.aggregations && Object.keys(oState.aggregations);
+		let sMessage;
+
+		if (oTable._isOfType(TableType.ResponsiveTable)) {
+			if (hasStateForInvisibleColumns(oTable, oState.items, oState.groupLevels)) {
+				// Grouping by a property that isn't visible in the table (not requested from the backend) causes issues with the group header text.
+				// Corresponding group conditions are not applied.
+				return {
+					validation: coreLibrary.MessageType.Information,
+					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE")
+				};
+			}
+		}
+
+		if (hasStateForInvisibleColumns(oTable, oState.items, aAggregateProperties)) {
+			// Aggregating by properties that are not visible in the table (not requested from the backend) is not possible in analytical scenarios.
+			// Corresponding aggregate conditions are not applied.
+			sMessage = oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION");
+		}
+
+		if (isAnalyticsEnabled(oTable) && hasStateForInvisibleColumns(oTable, oState.items, oState.sorters)) {
+			// Sorting by properties that are not visible in the table (not requested from the backend) is not possible in analytical scenarios.
+			// Corresponding sort conditions are not applied.
+			const sSortMessage = oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
+			sMessage = sMessage ? sMessage + "\n" + sSortMessage : sSortMessage;
+		}
+
+		if (sMessage) {
+			return {
+				validation: coreLibrary.MessageType.Information,
+				message: sMessage
+			};
+		}
+
+		return null;
+	}
+
 	Delegate.preInit = function() { // not used in the table, but is overridden in FE
 		return Promise.resolve();
 	};
@@ -173,283 +451,6 @@ sap.ui.define([
 		}
 
 		return TableDelegate.getSelectedContexts.apply(this, arguments);
-	};
-
-	Delegate.validateState = function(oTable, oState, sKey) {
-		const oBaseValidationResult = TableDelegate.validateState.apply(this, arguments);
-		let oValidationResult;
-
-		if (sKey == "Sort") {
-			oValidationResult = validateSortState(oTable, oState);
-		} else if (sKey == "Group") {
-			oValidationResult = validateGroupState(oTable, oState);
-		} else if (sKey == "Column") {
-			oValidationResult = validateColumnState(oTable, oState);
-		}
-
-		return mergeValidationResults(oBaseValidationResult, oValidationResult);
-	};
-
-	function validateSortState(oTable, oState) {
-		if (isAnalyticsEnabled(oTable) && hasStateForInvisibleColumns(oTable, oState.items, oState.sorters)) {
-			// Sorting by properties that are not visible in the table (not requested from the backend) is not possible in analytical scenarios.
-			// Corresponding sort conditions are not applied.
-			return {
-				validation: coreLibrary.MessageType.Information,
-				message: Lib.getResourceBundleFor("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
-			};
-		}
-
-		return null;
-	}
-
-	function validateGroupState(oTable, oState) {
-		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
-
-		if (oState.aggregations) {
-			const aAggregateProperties = Object.keys(oState.aggregations);
-			const aAggregatedGroupableProperties = [];
-			const oListFormat = ListFormat.getInstance();
-
-			aAggregateProperties.forEach((sProperty) => {
-				const oProperty = oTable.getPropertyHelper().getProperty(sProperty);
-				if (oProperty && oProperty.groupable) {
-					aAggregatedGroupableProperties.push(sProperty);
-				}
-			});
-
-			if (aAggregatedGroupableProperties.length > 0) {
-				// It is not possible to group and aggregate by the same property at the same time. Aggregated properties that are also groupable are
-				// filtered out in the GroupController. This message should inform the user about that.
-				return {
-					validation: coreLibrary.MessageType.Information,
-					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_TOTALS", [
-						oListFormat.format(aAggregatedGroupableProperties)
-					])
-				};
-			}
-		} else if (oTable._isOfType(TableType.ResponsiveTable)) {
-			if (hasStateForInvisibleColumns(oTable, oState.items, oState.groupLevels)) {
-				// Grouping by a property that isn't visible in the table (not requested from the backend) causes issues with the group header text.
-				// Corresponding group conditions are not applied.
-				return {
-					validation: coreLibrary.MessageType.Information,
-					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE")
-				};
-			}
-		}
-
-		return null;
-	}
-
-	function validateColumnState(oTable, oState) {
-		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
-		const aAggregateProperties = oState.aggregations && Object.keys(oState.aggregations);
-		let sMessage;
-
-		if (oTable._isOfType(TableType.ResponsiveTable)) {
-			if (hasStateForInvisibleColumns(oTable, oState.items, oState.groupLevels)) {
-				// Grouping by a property that isn't visible in the table (not requested from the backend) causes issues with the group header text.
-				// Corresponding group conditions are not applied.
-				return {
-					validation: coreLibrary.MessageType.Information,
-					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE")
-				};
-			}
-		}
-
-		if (hasStateForInvisibleColumns(oTable, oState.items, aAggregateProperties)) {
-			// Aggregating by properties that are not visible in the table (not requested from the backend) is not possible in analytical scenarios.
-			// Corresponding aggregate conditions are not applied.
-			sMessage = oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION");
-		}
-
-		if (isAnalyticsEnabled(oTable) && hasStateForInvisibleColumns(oTable, oState.items, oState.sorters)) {
-			// Sorting by properties that are not visible in the table (not requested from the backend) is not possible in analytical scenarios.
-			// Corresponding sort conditions are not applied.
-			const sSortMessage = oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
-			sMessage = sMessage ? sMessage + "\n" + sSortMessage : sSortMessage;
-		}
-
-		if (sMessage) {
-			return {
-				validation: coreLibrary.MessageType.Information,
-				message: sMessage
-			};
-		}
-
-		return null;
-	}
-
-	/**
-	 * Provides hook to update the binding info object that is used to bind the table to the model.
-	 *
-	 * Delegate objects that implement this method must ensure that at least the <code>path</code> key of the binding info is provided.
-	 * <b>Note:</b> To remove a binding info parameter, the value must be set to <code>undefined</code>. For more information, see
-	 * {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters}.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
-	 * @function
-	 * @name module:sap/ui/mdc/odata/v4/TableDelegate.updateBindingInfo
-	 * @abstract
-	 */
-	//Delegate.updateBindingInfo = function(oTable, oBindingInfo) { };
-
-	/**
-	 * Updates the row binding of the table if possible, rebinds otherwise.
-	 *
-	 * Compares the current and previous state of the table to detect whether rebinding is necessary or not.
-	 * The diffing happens for the sorters, filters, aggregation, parameters, and the path of the binding.
-	 * Other {@link sap.ui.base.ManagedObject.AggregationBindingInfo binding info} keys like <code>events</code>,
-	 * <code>model</code>... must be provided in the {@link #updateBindingInfo updateBindingInfo} method always,
-	 * and those keys must not be changed conditionally.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
-	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instance of the table
-	 * @param {object} [mSettings] Additional settings
-	 * @param {boolean} [mSettings.forceRefresh] Indicates that the binding has to be refreshed even if <code>oBindingInfo</code> has not been changed
-	 * @protected
-	 * @override
-	 */
-	Delegate.updateBinding = function(oTable, oBindingInfo, oBinding, mSettings) {
-		if (!oBinding || oBinding.getPath() != oBindingInfo.path) {
-			this.rebind(oTable, oBindingInfo);
-			return;
-		}
-
-		// suspend and resume have to be called on the root binding
-		const oRootBinding = oBinding.getRootBinding();
-		let bHasRootBindingAndWasNotSuspended = oRootBinding && !oRootBinding.isSuspended();
-
-		try {
-			if (bHasRootBindingAndWasNotSuspended) {
-				oRootBinding.suspend();
-			}
-
-			setAggregation(oTable, oBindingInfo);
-			oBinding.changeParameters(oBindingInfo.parameters);
-			oBinding.filter(oBindingInfo.filters, "Application");
-			oBinding.sort(oBindingInfo.sorter);
-
-			if (mSettings && mSettings.forceRefresh) {
-				oBinding.refresh();
-			}
-		} catch (e) {
-			this.rebind(oTable, oBindingInfo);
-			if (oRootBinding == oBinding) {
-				// If we resume before the rebind, you get an extra request therefore we must
-				// resume after rebind, but only if the list binding was not the root binding.
-				bHasRootBindingAndWasNotSuspended = false;
-			}
-		} finally {
-			if (bHasRootBindingAndWasNotSuspended && oRootBinding.isSuspended()) {
-				oRootBinding.resume();
-			}
-		}
-	};
-
-	/**
-	 * @inheritDoc
-	 */
-	Delegate.rebind = function(oTable, oBindingInfo) {
-		setAggregation(oTable, oBindingInfo);
-		TableDelegate.rebind.apply(this, arguments);
-	};
-
-	/**
-	 * @inheritDoc
-	 */
-	Delegate.getSupportedP13nModes = function(oTable) {
-		const aSupportedModes = TableDelegate.getSupportedP13nModes.apply(this, arguments);
-
-		if (oTable._isOfType(TableType.Table)) {
-			if (!aSupportedModes.includes(P13nMode.Group)) {
-				aSupportedModes.push(P13nMode.Group);
-			}
-			if (!aSupportedModes.includes(P13nMode.Aggregate)) {
-				aSupportedModes.push(P13nMode.Aggregate);
-			}
-		}
-
-		return aSupportedModes;
-	};
-
-	/**
-	 * @inheritDoc
-	 */
-	Delegate.getGroupSorter = function(oTable) {
-		const oGroupedProperty = oTable._getGroupedProperties()[0];
-
-		if (!oGroupedProperty || !oTable._isOfType(TableType.ResponsiveTable)) {
-			return undefined;
-		}
-
-		if (!getVisiblePropertyNames(oTable).includes(oGroupedProperty.name)) {
-			// Suppress grouping by non-visible property.
-			return undefined;
-		}
-
-		return TableDelegate.getGroupSorter.apply(this, arguments);
-	};
-
-	/**
-	 * @inheritDoc
-	 */
-	Delegate.getSorters = function(oTable) {
-		let aSorters = TableDelegate.getSorters.apply(this, arguments);
-
-		// Sorting by a property that is not in the aggregation info (sorting by a property that is not requested) causes a backend error.
-		if (isAnalyticsEnabled(oTable)) {
-			const oPropertyHelper = oTable.getPropertyHelper();
-			const aVisiblePropertyPaths = getVisiblePropertyNames(oTable).map((sPropertyName) => oPropertyHelper.getProperty(sPropertyName).path);
-
-			aSorters = aSorters.filter((oSorter) => aVisiblePropertyPaths.includes(oSorter.sPath));
-		}
-
-		return aSorters;
-	};
-
-	/**
-	 * @inheritDoc
-	 */
-	Delegate.getSupportedFeatures = function(oTable) {
-		const oSupportedFeatures = TableDelegate.getSupportedFeatures.apply(this, arguments);
-		const bIsTreeTable = oTable._isOfType(TableType.TreeTable);
-
-		return Object.assign(oSupportedFeatures, {
-			expandAll: bIsTreeTable,
-			collapseAll: bIsTreeTable
-		});
-	};
-
-	/**
-	 * @inheritDoc
-	 */
-	Delegate.expandAll = function(oTable) {
-		if (!this.getSupportedFeatures(oTable).expandAll) {
-			return;
-		}
-
-		const oRowBinding = oTable.getRowBinding();
-		if (oRowBinding) {
-			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), { expandTo: Number.MAX_SAFE_INTEGER }));
-		}
-	};
-
-	/**
-	 * @inheritDoc
-	 */
-	Delegate.collapseAll = function(oTable) {
-		if (!this.getSupportedFeatures(oTable).collapseAll) {
-			return;
-		}
-
-		const oRowBinding = oTable.getRowBinding();
-		if (oRowBinding) {
-			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), { expandTo: 1 }));
-		}
 	};
 
 	/**

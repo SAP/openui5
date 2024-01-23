@@ -3,16 +3,17 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Card",
 	"sap/ui/webc/main/Button",
 	"sap/ui/webc/main/CardHeader"
-], function(createAndAppendDiv, Core, Card, Button, CardHeader) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Card, Button, CardHeader) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oCard = new Card({
 				content: [
 					new Button({
@@ -200,7 +201,7 @@ sap.ui.define([
 				]
 			});
 			this.oCard.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oCard.destroy();

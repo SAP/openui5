@@ -36,6 +36,12 @@
 							width="100%"
 							textAlign="Center"/>
 						<HBox justifyContent="Center">
+							<CheckBox id="cbSAPIconsTNT" text="{i18n>fontName_SAPIconsTNT}" selected="true" select="onCheckBoxSelect"/>
+							<CheckBox id="cbSAPIcons" text="{i18n>infoSAPIcons}" selected="true" select="onCheckBoxSelect"/>
+							<CheckBox id="cbInfoSAPBusinessSuite" visible="{= !${versionData>/isOpenUI5}}" text="{i18n>infoSAPBusinessSuite}" selected="true" select="onCheckBoxSelect"/>
+						</HBox>
+						<HBox justifyContent="Center">
+
 							<Input
 								id="search"
 								placeholder="{i18n>searchPlaceholder}"

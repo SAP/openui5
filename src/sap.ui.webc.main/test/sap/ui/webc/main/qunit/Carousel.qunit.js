@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Carousel",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, Carousel, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Carousel, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oCarousel = new Carousel({
 				content: [
 					new Button({
@@ -41,7 +42,7 @@ sap.ui.define([
 				}
 			});
 			this.oCarousel.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oCarousel.destroy();

@@ -3,16 +3,17 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Select",
 	"sap/ui/webc/main/Button",
 	"sap/ui/webc/main/Option"
-], function(createAndAppendDiv, Core, Select, Button, Option) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Select, Button, Option) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oSelect = new Select({
 				valueState: "Warning",
 				valueStateMessage: "Value State Message",
@@ -73,7 +74,7 @@ sap.ui.define([
 				}
 			});
 			this.oSelect.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oSelect.destroy();

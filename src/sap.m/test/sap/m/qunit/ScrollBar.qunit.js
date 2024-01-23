@@ -2,19 +2,20 @@
 sap.ui.define([
 	"sap/m/ScrollBar",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(ScrollBar, oCore, jQuery) {
+], function(ScrollBar, oCore, nextUIUpdate, jQuery) {
 	"use strict";
 
 	var TESTS_DOM_CONTAINER = "qunit-fixture";
 
 	QUnit.module("Initialise");
 
-	QUnit.test("scroll position initialisation", function(assert) {
+	QUnit.test("scroll position initialisation", async function(assert) {
 		// Arrange
 		var oSB = new ScrollBar({contentSize: "2000px", scrollPosition: 100});
 		oSB.placeAt(TESTS_DOM_CONTAINER);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSB.getScrollPosition(), 100,
@@ -26,10 +27,10 @@ sap.ui.define([
 
 
 	QUnit.module("API", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oSB = new ScrollBar();
 			this.oSB.placeAt(TESTS_DOM_CONTAINER);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSB.destroy();
@@ -110,10 +111,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Event handler", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oSB = new ScrollBar();
 			this.oSB.placeAt(TESTS_DOM_CONTAINER);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSB.destroy();
@@ -121,7 +122,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Scroll position after re-rendering", function(assert) {
+	QUnit.test("Scroll position after re-rendering", async function(assert) {
 		assert.expect(2);
 		// Arrange
 		var oSB = this.oSB;
@@ -135,7 +136,7 @@ sap.ui.define([
 
 		// Act
 		oSB.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSB.getScrollPosition(), 5,
@@ -143,7 +144,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("_$ScrollRef is assigned correctly after rendering", function(assert) {
+	QUnit.test("_$ScrollRef is assigned correctly after rendering", async function(assert) {
 		// Arrange
 		assert.expect(8);
 		var oSB = this.oSB;
@@ -153,7 +154,7 @@ sap.ui.define([
 
 		// Act
 		oSB.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assertScrollRef();

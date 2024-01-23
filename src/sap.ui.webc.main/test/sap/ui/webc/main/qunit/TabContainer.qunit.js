@@ -3,17 +3,18 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/TabContainer",
 	"sap/ui/webc/main/Tab",
 	"sap/ui/webc/main/Button",
 	"sap/ui/webc/main/TabSeparator"
-], function(createAndAppendDiv, Core, TabContainer, Tab, Button, TabSeparator) {
+], function(createAndAppendDiv, Core, nextUIUpdate, TabContainer, Tab, Button, TabSeparator) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oTabContainer = new TabContainer({
 				items: [
 					new Tab({
@@ -277,7 +278,7 @@ sap.ui.define([
 				}
 			});
 			this.oTabContainer.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oTabContainer.destroy();

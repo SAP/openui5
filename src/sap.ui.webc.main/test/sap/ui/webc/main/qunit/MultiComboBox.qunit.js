@@ -3,17 +3,18 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/MultiComboBox",
 	"sap/ui/webc/main/Icon",
 	"sap/ui/webc/main/MultiComboBoxItem",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, MultiComboBox, Icon, MultiComboBoxItem, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, MultiComboBox, Icon, MultiComboBoxItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMultiComboBox = new MultiComboBox({
 				placeholder: "This is my placeholder value",
 				value: "Control value",
@@ -54,7 +55,7 @@ sap.ui.define([
 				}
 			});
 			this.oMultiComboBox.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oMultiComboBox.destroy();

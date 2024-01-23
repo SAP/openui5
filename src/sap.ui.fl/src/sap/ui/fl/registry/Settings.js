@@ -119,6 +119,7 @@ sap.ui.define([
 					_bFlexibilityAdaptationButtonAllowed: false
 				};
 			}
+			// The following line is used by the Flex Support Tool to set breakpoints - please adjust the tool if you change it!
 			oSettings.userId = sUserId;
 			return Settings._storeInstance(oSettings);
 		});

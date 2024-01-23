@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataModel",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/core/Core",
 	"sap/ui/test/TestUtils"
-], function(createAndAppendDiv, jQuery, JSONModel, ODataV4Model, Sorter, List, StandardListItem, App, Page, oCore, TestUtils) {
+], function(createAndAppendDiv, nextUIUpdate, jQuery, JSONModel, ODataV4Model, Sorter, List, StandardListItem, App, Page, oCore, TestUtils) {
 	"use strict";
 	createAndAppendDiv("content");
 
@@ -104,7 +105,7 @@ sap.ui.define([
 
 	// Tests
 
-	QUnit.test("GrowingList rendered", function(assert) {
+	QUnit.test("GrowingList rendered", async function(assert) {
 		gl.addEventDelegate({
 			onAfterRendering: function(){
 				assert.ok("Complete rendering happened");
@@ -113,7 +114,7 @@ sap.ui.define([
 
 		assert.expect(10); // incl. rendering
 		app.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(document.getElementById("gl"), "GrowingList should be rendered");
 		assert.equal($ul().length, 1, "GrowingList should have its list rendered");
 		assert.equal($ul().children().length, 4, "GrowingList should have one header and three items rendered");
@@ -159,10 +160,10 @@ sap.ui.define([
 		}, 0);
 	});
 
-	QUnit.test("New Data", function(assert) {
+	QUnit.test("New Data", async function(assert) {
 		assert.expect(7);
 		model.setData(data2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal($ul().children().length, 12, "GrowingList should have six headers and six items rendered");
 
 		assert.equal(info(0).header, true, "First item should be a header");
@@ -173,16 +174,16 @@ sap.ui.define([
 		assert.equal(info(2).text, "B", "Third item should be titled 'Adelheid'");
 	});
 
-	QUnit.test("Group/Ungroup", function(assert) {
+	QUnit.test("Group/Ungroup", async function(assert) {
 		var oBinding = gl.getBinding("items");
 		oBinding.sort(new Sorter("", false, function(oContext){
 			return oContext.getProperty("name").charAt(0);
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(info(0).header, "First item should be a group header");
 
 		oBinding.sort();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(info(0).header, "The group header should be removed");
 	});
 
@@ -205,7 +206,7 @@ sap.ui.define([
 				}
 			});
 		},
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oModel = new ODataV4Model({
 				serviceUrl: "/MyService/",
 				operationMode: "Server"
@@ -223,7 +224,7 @@ sap.ui.define([
 			});
 
 			this.oList.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oModel.destroy();

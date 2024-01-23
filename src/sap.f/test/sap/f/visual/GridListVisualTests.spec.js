@@ -13,7 +13,6 @@ describe("sap.f.GridListVisualTests", function () {
 		return browser.executeScript(function (sId) {
 			var Core = sap.ui.getCore();
 			Core.byId('__component0---app--itb')/*Not inside AMD call*/.setSelectedKey(sId);
-			Core.applyChanges();
 		}, sId);
 	}
 

@@ -10,10 +10,11 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/ui/core/Core",
 	"sap/base/util/extend",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function(Element, JSONModel, Icon, Sorter, Table, Column, Label, ColumnListItem, oCore, extend, jQuery, ODataV4Model, TestUtils) {
+], function(Element, JSONModel, Icon, Sorter, Table, Column, Label, ColumnListItem, oCore, extend, nextUIUpdate, jQuery, ODataV4Model, TestUtils) {
 	"use strict";
 
 
@@ -97,10 +98,10 @@ sap.ui.define([
 
 	QUnit.module("Display");
 
-	QUnit.test("Merge Label and Icon", function(assert) {
+	QUnit.test("Merge Label and Icon", async function(assert) {
 			var sut = createSUT("MergeDuplicates");
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oTable = Element.getElementById("MergeDuplicates");
 		$MergedLabel = oTable.getItems()[3].getCells()[2].$();
@@ -115,10 +116,10 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Merge in Growing Feature", function(assert) {
+	QUnit.test("Merge in Growing Feature", async function(assert) {
 		var sut = createSUT("MergeDuplicates", true);
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oDeferred = jQuery.Deferred();
 		oDeferred.promise(sut);
@@ -142,12 +143,12 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Merge when Group Header occures", function(assert) {
+	QUnit.test("Merge when Group Header occures", async function(assert) {
 		var oLastNameSorter = new Sorter("lastName", false, true);
 
 		var sut = createSUT("MergeDuplicates", false, {sorter: oLastNameSorter});
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oTable = Element.getElementById("MergeDuplicates");
 		var labelBeforeHeader = "before";
@@ -172,10 +173,10 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Merge when Table Rerendering", function(assert) {
+	QUnit.test("Merge when Table Rerendering", async function(assert) {
 		var sut = createSUT("MergeDuplicates");
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var data = {
 				teamMembers:[
@@ -183,7 +184,7 @@ sap.ui.define([
 				]};
 
 		sut.setModel(new JSONModel(data));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oTable = Element.getElementById("MergeDuplicates");
 
@@ -195,7 +196,7 @@ sap.ui.define([
 
 		//rerender the table
 		oTable.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var labelAfterRender = oTable.getItems()[0].getCells()[2].$().text();
 		var iconAfterRender = oTable.getItems()[0].getCells()[0].getSrc();
@@ -207,10 +208,10 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Merge when Items Rerendering", function(assert) {
+	QUnit.test("Merge when Items Rerendering", async function(assert) {
 		var sut = createSUT("MergeDuplicates");
 		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var data = {
 				teamMembers:[
@@ -219,7 +220,7 @@ sap.ui.define([
 				]};
 
 		sut.setModel(new JSONModel(data));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oTable = Element.getElementById("MergeDuplicates"),
 			oFirstItem = oTable.getItems()[0],
@@ -239,7 +240,7 @@ sap.ui.define([
 		//rerender the items
 		oFirstItem.invalidate();
 		oSecondItem.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var mAfterRendering = {
 			firstItem: {
@@ -276,7 +277,7 @@ sap.ui.define([
 				}
 			});
 		},
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oModel = new ODataV4Model({
 				serviceUrl: "/MyService/",
 				operationMode: "Server"
@@ -302,7 +303,7 @@ sap.ui.define([
 			});
 
 			this.oTable.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oModel.destroy();

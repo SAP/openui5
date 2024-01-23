@@ -99,24 +99,26 @@ sap.ui.define([
 	 */
 
     ActionTileContent.prototype._addEventHandlersToAttributes = function(aAttributes) {
-		aAttributes.forEach(function(oAttribute){
+		aAttributes.forEach((oAttribute) => {
             var oLink = oAttribute.getContentConfig()?.getInnerControl();
-            if (oLink?.isA("sap.m.Link")) {
-                oLink.attachPress(function(oEvent){
-                    const {ctrlKey,metaKey} = oEvent.mParameters;
-                     const bPreventDefaultNotCalled = this.fireLinkPress(
-                        {ctrlKey,
-                        metaKey,
-                        attribute: oAttribute,
-                        link: oAttribute.getContentConfig()?.getInnerControl()
-                    });
-                    if (!bPreventDefaultNotCalled) {
-                        oEvent.preventDefault();
-                    }
-                    this._isLinkPressed = true;
-                }.bind(this));
+            var fnOnLinkPress = (oEvent) => {
+                var {ctrlKey,metaKey} = oEvent.mParameters;
+                 var bPreventDefaultNotCalled = this.fireLinkPress(
+                    {ctrlKey,
+                    metaKey,
+                    attribute: oAttribute,
+                    link: oAttribute.getContentConfig()?.getInnerControl()
+                });
+                if (!bPreventDefaultNotCalled) {
+                    oEvent.preventDefault();
+                }
+                this._isLinkPressed = true;
+            };
+            if (oLink?.isA("sap.m.Link") && !oLink._bIseventAttached) {
+                oLink._bIseventAttached = true;
+                oLink.attachPress(fnOnLinkPress);
             }
-        }.bind(this));
+        });
 	};
 
     /**

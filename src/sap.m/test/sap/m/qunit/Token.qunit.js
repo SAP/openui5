@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/m/Tokenizer",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
-], function(Library, qutils, createAndAppendDiv, Token, coreLibrary, InvisibleText, Tokenizer, KeyCodes, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Library, qutils, createAndAppendDiv, Token, coreLibrary, InvisibleText, Tokenizer, KeyCodes, oCore, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -19,11 +20,11 @@ sap.ui.define([
 
 
 	QUnit.module("Basic", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.token1 = new Token("t1");
 			this.token1.placeAt("content");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.token1.destroy();
@@ -45,7 +46,7 @@ sap.ui.define([
 		assert.equal(this.token1.getText(), text, "Input value is " + text);
 	});
 
-	QUnit.test("setter / getter editableParent", function(assert) {
+	QUnit.test("setter / getter editableParent", async function(assert) {
 		var isEditableParent = true,
 			aAriaDescibedByTextIds, aUniqueTextIds;
 
@@ -63,7 +64,7 @@ sap.ui.define([
 		// Act
 		isEditableParent = false;
 		this.token1.setProperty("editableParent", isEditableParent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		aAriaDescibedByTextIds = this.token1.getDomRef().attributes["aria-describedby"].value.split(" ");
@@ -74,7 +75,7 @@ sap.ui.define([
 		// Act
 		isEditableParent = true;
 		this.token1.setProperty("editableParent", isEditableParent);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		aAriaDescibedByTextIds = this.token1.getDomRef().attributes["aria-describedby"].value.split(" ");
@@ -97,7 +98,7 @@ sap.ui.define([
 		assert.equal(this.token1.getSelected(), isSelected, "Token is not selected");
 	});
 
-	QUnit.test("show / hide delete icon depending on isEditable", function(assert) {
+	QUnit.test("show / hide delete icon depending on isEditable", async function(assert) {
 		var isEditable = true;
 		this.token1.setEditable(isEditable);
 
@@ -108,23 +109,23 @@ sap.ui.define([
 		isEditable = false;
 		this.token1.setEditable(isEditable);
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert.equal(this.token1.$().children().length, 1, "Token does not show delete icon");
 		assert.ok(this.token1.$().hasClass("sapMTokenReadOnly"), "Token does not show delete icon");
 
 	});
 
-	QUnit.test("select/deselect token", function(assert) {
+	QUnit.test("select/deselect token", async function(assert) {
 
 		this.token1.setSelected(false);
 
 		qutils.triggerEvent("tap", this.token1.getDomRef());
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(this.token1.$().hasClass("sapMTokenSelected"), "token is selected");
 
 		qutils.triggerEvent("tap", this.token1.getDomRef());
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(this.token1.$().hasClass("sapMTokenSelected"), "token is selected");
 
 	});
@@ -134,9 +135,9 @@ sap.ui.define([
 		assert.equal(this.token1.getTextDirection(), TextDirection.RTL, "Input value is " + TextDirection.RTL);
 	});
 
-	QUnit.test("Token has attribute dir", function(assert) {
+	QUnit.test("Token has attribute dir", async function(assert) {
 		this.token1.setTextDirection(TextDirection.RTL);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.token1.$().children(0).attr("dir"), 'rtl', "Token has attribute dir equal to rtl");
 	});
@@ -147,11 +148,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Keyboard Handling", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.token1 = new Token("t1");
 			this.token1.placeAt("content");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.token1.destroy();
@@ -187,7 +188,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Token in Tokenizer", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.tokenizer = new Tokenizer("t");
 			this.token1 = new Token("t1");
 			this.token2 = new Token("t2");
@@ -199,7 +200,7 @@ sap.ui.define([
 
 			this.tokenizer.placeAt("content");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
@@ -216,24 +217,24 @@ sap.ui.define([
 		assert.equal(document.activeElement, this.token2.getDomRef(), "Token2 is focused after navigation.");
 	});
 
-	QUnit.test("Pressing delete icon", function (assert) {
+	QUnit.test("Pressing delete icon", async function(assert) {
 		// arrange
 		var fnFireDeleteSpy = this.spy(this.token1, "fireDelete");
 
 		// act
 		this.token1.getAggregation("deleteIcon").firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(fnFireDeleteSpy.callCount, 1, "delete event was fired");
 	});
 
 	QUnit.module("ARIA attributes", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.token1 = new Token("t1");
 			this.token1.placeAt("content");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.token1.destroy();
@@ -255,51 +256,51 @@ sap.ui.define([
 		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) > -1, "Token has correct invisible text ID added to aria-describedby attribute");
 	});
 
-	QUnit.test("ARIA-SELECTED attribute", function(assert) {
+	QUnit.test("ARIA-SELECTED attribute", async function(assert) {
 		assert.strictEqual(this.token1.$().attr("aria-selected"), "false", "aria-selected is set to false.");
 
 		this.token1.setSelected(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.token1.$().attr("aria-selected"), "true", "aria-selected is updated correctly.");
 
 		this.token1.setSelected(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.token1.$().attr("aria-selected"), "false", "aria-selected updated correctly.");
 	});
 
-	QUnit.test("ARIA Editable (deletable) text", function(assert) {
+	QUnit.test("ARIA Editable (deletable) text", async function(assert) {
 		var sId = InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_DELETABLE");
 
 		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) > -1, "Token has correct invisible text ID added to aria-describedby attribute");
 
 		this.token1.setEditable(false);
 		this.token1.invalidate(); // simulate parent invalidation
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) === -1, "Token has the invisible text ID removed from aria-describedby attribute");
 	});
 
-	QUnit.test("ARIA editableParent (deletable) text", function(assert) {
+	QUnit.test("ARIA editableParent (deletable) text", async function(assert) {
 		var sId = InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_DELETABLE");
 
 		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) > -1, "Token has correct invisible text ID added to aria-describedby attribute");
 
 		this.token1.setProperty("editableParent", false);
 		this.token1.invalidate(); // simulate parent invalidation
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) === -1, "Token has the invisible text ID removed from aria-describedby attribute");
 	});
 
 	QUnit.module("Truncated Token", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.tokenizer = new Tokenizer("t");
 			this.token = new Token("t1");
 
 			this.tokenizer.addToken(this.token);
 
 			this.tokenizer.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();

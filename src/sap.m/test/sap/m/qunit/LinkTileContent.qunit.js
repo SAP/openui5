@@ -2,11 +2,12 @@
 sap.ui.define([
 	"sap/m/GenericTile",
 	"sap/m/LinkTileContent",
-	"sap/ui/core/Core"
-], function(GenericTile,LinkTileContent,oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(GenericTile, LinkTileContent, oCore, nextUIUpdate) {
 	"use strict";
 	QUnit.module("Rendering tests", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oGenericTile = new GenericTile({
 				linkTileContents: [
 					{
@@ -16,7 +17,7 @@ sap.ui.define([
 					}
 				]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oGenericTile.destroy();

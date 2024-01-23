@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
@@ -45,6 +46,7 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	JSONModel,
+	nextUIUpdate,
 	CalendarDate,
 	DateRange,
 	DateTypeRange,
@@ -271,27 +273,27 @@ sap.ui.define([
 			$Date;
 
 		qutils.triggerEvent("tap", oPC.getId() + "-Header-NavToolbar-PickerBtn");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		if (iYear !== undefined) {
 			// click on Year button inside current picker
 			qutils.triggerEvent("click", sMonthPickerId + "--Head-B2");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// click on the wanted year
 			$Date = jQuery("#" + sMonthPickerId + "--YP-y" + iYear + "0101");
 			$Date.trigger("focus");
 			oPC._getHeader()._oMonthPicker.getAggregation("monthPicker")._oItemNavigation.setFocusedIndex(iYear);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		}
 
 		if (iMonth !== undefined) {
 			if (bWizardUsesDaysPicker) { //we want to choose month, but the day picker is opened. Click on the month button atop
 				// click on Month button inside calendar picker
 				qutils.triggerEvent("tap", sMonthPickerId + "--Head-B1");
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 			}
 
 			// click on the wanted month
@@ -299,9 +301,9 @@ sap.ui.define([
 			$Date.trigger("focus");
 			// sets February
 			oPC._getHeader()._oMonthPicker.getAggregation("monthPicker")._oItemNavigation.setFocusedIndex(iMonth);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		}
 
 		if (bWizardUsesDaysPicker && iDay != undefined) {
@@ -310,14 +312,14 @@ sap.ui.define([
 			$Date = jQuery("#" + sCalendarPickerId + "--Month0-" + sDate);
 			$Date.trigger("focus");
 			qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		}
 	};
 
 	var _clickTodayButton = function(oPC) {
 		var sTodayButtonId = _getTodayButton.call(this, oPC).getId();
 		qutils.triggerEvent("tap", sTodayButtonId);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	};
 
 	var _getTodayButton = function(oPC) {
@@ -369,13 +371,13 @@ sap.ui.define([
 	var _navBackward = function(oPC) {
 		var sIdBackButton = oPC.getId() + "-Header-NavToolbar-PrevBtn";
 		qutils.triggerEvent("tap", sIdBackButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	};
 
 	var _navForward = function(oPC) {
 		var  sIdForwardButton = oPC.getId() + "-Header-NavToolbar-NextBtn";
 		qutils.triggerEvent("tap", sIdForwardButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	};
 
 	/**
@@ -530,7 +532,7 @@ sap.ui.define([
 			this.oPC = createPlanningCalendar("oneMonthPlanningCalendar", oSearchField, oButton, this.o14Sep2016MidOfMonth,
 				CalendarIntervalType.OneMonth);
 			this.oPC.placeAt("bigUiArea");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.oPCInterval = this.oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
 		},
 
@@ -578,12 +580,12 @@ sap.ui.define([
 
 		_clickInterval: function(oRow, iInterval) {
 			jQuery(this._getIntervalDom(oRow, iInterval)).trigger('tap');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 
 		_clickAppointment: function(oAppointment) {
 			oAppointment.$().trigger('tap');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		}
 	});
 
@@ -644,7 +646,7 @@ sap.ui.define([
 
 		//act
 		_switchToDate(this.oPC, this.oPCInterval, this.oPCInterval.getStartDate().getDate(), 5, 2014);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.ok(oAppointment1July2014.getDomRef(), "appointment is rendered");
@@ -686,7 +688,7 @@ sap.ui.define([
 
 		//act
 		_switchToDate(this.oPC, this.oPCInterval, this.oPCInterval.getStartDate().getDate(), 5, 2014);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		this._clickAppointment(oAppointment1July2014);
@@ -791,7 +793,7 @@ sap.ui.define([
 		//act
 		_switchToView.call(this, CalendarIntervalType.Month, this.oPC);
 		this.oPC.setStickyHeader(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.equal(this.oPC.getAggregation("table").getSticky().length, 2, "sticky property should be set on the info bar and on the toolbar inside Table");
@@ -844,7 +846,7 @@ sap.ui.define([
 			}, this);
 			this._oPC.placeAt("smallUiArea");
 			this._oPCOneMonthsRow = this._oPC.getAggregation('table').getAggregation('infoToolbar').getContent()[1];
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		_destroyCalendar: function () {
 			if (this._oPC) {
@@ -921,7 +923,7 @@ sap.ui.define([
 
 		//force Calendar selection by triggering ENTER keypress on a first calendar cell
 		qutils.triggerKeydown(jQuery(oEventTarget).attr("id"), KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(oHandleCalendarSelectSpy.callCount, 1, "'_handleStartDateChange()' event handler is called once");
@@ -1004,7 +1006,7 @@ sap.ui.define([
 		//arrange
 		this._createCalendar(UI5Date.getInstance(2015, 0, 1));
 		this._oPC.placeAt("smallUiArea");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oSelectedAppointment;
 		this._oPC.attachAppointmentSelect(function(oEvent) {
@@ -1066,7 +1068,7 @@ sap.ui.define([
 
 		//act
 		this._oPC.setStickyHeader(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.equal(this._oPC.getAggregation("table").getSticky().length, 0, "sticky property shouldn't be set on the info bar and on the toolbar inside Table");
@@ -1089,7 +1091,7 @@ sap.ui.define([
 
 		// act
 		this._oPC.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(this._oPC.$().find(".sapUiCalendarNoApps").get(0), "'No Entries' div should be rendered");
@@ -1104,7 +1106,7 @@ sap.ui.define([
 
 		jQuery("#qunit-fixture").css("width", "320px");
 		oPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oPC.hasStyleClass("sapMSize0"), "Width 320px: Size 0 class exists");
@@ -1114,7 +1116,7 @@ sap.ui.define([
 		// act
 		jQuery("#qunit-fixture").css("width", "800px");
 		oPC.setWidth("800px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oPC.hasStyleClass("sapMSize0"), "Width 800px: Size 0 class doesn't exist");
@@ -1124,7 +1126,7 @@ sap.ui.define([
 		// act
 		jQuery("#qunit-fixture").css("width", "1200px");
 		oPC.setWidth("1200px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oPC.hasStyleClass("sapMSize0"), "Width 1200px: Size 0 class doesn't exist");
@@ -1134,7 +1136,7 @@ sap.ui.define([
 		// act
 		jQuery("#qunit-fixture").css("width", "800px");
 		oPC.setWidth("800px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oPC.hasStyleClass("sapMSize0"), "Width 800px: Size 0 class doesn't exist");
@@ -1144,7 +1146,7 @@ sap.ui.define([
 		// act
 		jQuery("#qunit-fixture").css("width", "320px");
 		oPC.setWidth("320px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oPC.hasStyleClass("sapMSize0"), "Width 320px: Size 0 class exists");
@@ -1164,10 +1166,10 @@ sap.ui.define([
 
 		jQuery("#qunit-fixture").css("width", "320px");
 		oPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oPC.setViewKey("One Month");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oPC.hasStyleClass("sapMSize0"), "Width 320px: Size 0 class exists");
@@ -1177,7 +1179,7 @@ sap.ui.define([
 		// act
 		jQuery("#qunit-fixture").css("width", "800px");
 		oPC.setWidth("800px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oPC.hasStyleClass("sapMSize0"), "Width 800px: Size 0 class doesn't exist");
@@ -1187,7 +1189,7 @@ sap.ui.define([
 		// act
 		jQuery("#qunit-fixture").css("width", "1200px");
 		oPC.setWidth("1200px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oPC.hasStyleClass("sapMSize0"), "Width 1200px: Size 0 class doesn't exist");
@@ -1197,7 +1199,7 @@ sap.ui.define([
 		// act
 		jQuery("#qunit-fixture").css("width", "800px");
 		oPC.setWidth("800px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oPC.hasStyleClass("sapMSize0"), "Width 800px: Size 0 class doesn't exist");
@@ -1207,7 +1209,7 @@ sap.ui.define([
 		// act
 		jQuery("#qunit-fixture").css("width", "320px");
 		oPC.setWidth("320px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oPC.hasStyleClass("sapMSize0"), "Width 320px: Size 0 class exists");
@@ -1267,11 +1269,11 @@ sap.ui.define([
 					fnExtendSut(oSut);
 				}
 				oSut.placeAt("bigUiArea");
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 				//Act
 				this.oLegendWithItemsTypes01UpToTypes10.destroy();
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 				//Assert
 				//Appointments
@@ -1314,7 +1316,7 @@ sap.ui.define([
 
 				//Act
 				oSut.placeAt("bigUiArea");
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 				//Assert
 				//Appointments
@@ -1444,7 +1446,7 @@ sap.ui.define([
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Day);
 		oSut.placeAt("bigUiArea");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(jQuery("#" + oSut.getId() + "-DatesRow-20150102").attr("aria-label"), sExpectedAria,
@@ -1463,35 +1465,35 @@ sap.ui.define([
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Hour);
 		oSut.placeAt("bigUiArea");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(jQuery("#" + oSut.getId() + "-TimesRow-201501010800").attr("role"), sExpectedRole, "Correct role 'button' is set in Hours view");
 
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Day);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(jQuery("#" + oSut.getId() + "-DatesRow-20150102").attr("role"), sExpectedRole, "Correct role 'button' is set in Days view");
 
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Month);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(jQuery("#" + oSut.getId() + "-MonthsRow-20150101").attr("role"), sExpectedRole, "Correct role 'button' is set in Month view");
 
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Week);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(jQuery("#" + oSut.getId() + "-WeeksRow-20150102").attr("role"), sExpectedRole, "Correct role 'button' is set in Week view");
 
 		//Act
 		oSut.setViewKey(CalendarIntervalType.OneMonth);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(jQuery("#" + oSut.getId() + "-OneMonthsRow-20141201").attr("role"), sExpectedRole, "Correct role 'button' is set in One Month view");
@@ -1508,35 +1510,35 @@ sap.ui.define([
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Hour);
 		oSut.placeAt("bigUiArea");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(jQuery("#" + oSut.getId() + "-TimesRow-201501010800").attr("role"), sExpectedRole, "Correct role 'gridcell' is set in Hours view");
 
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Day);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(jQuery("#" + oSut.getId() + "-DatesRow-20150102").attr("role"), sExpectedRole, "Correct role 'gridcell' is set in Days view");
 
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Month);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(jQuery("#" + oSut.getId() + "-MonthsRow-20150101").attr("role"), sExpectedRole, "Correct role 'gridcell' is set in Month view");
 
 		//Act
 		oSut.setViewKey(CalendarIntervalType.Week);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(jQuery("#" + oSut.getId() + "-WeeksRow-20150102").attr("role"), sExpectedRole, "Correct role 'gridcell' is set in Week view");
 
 		//Act
 		oSut.setViewKey(CalendarIntervalType.OneMonth);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(jQuery("#" + oSut.getId() + "-OneMonthsRow-20141201").attr("role"), sExpectedRole, "Correct role 'gridcell' is set in One Month view");
@@ -1553,7 +1555,7 @@ sap.ui.define([
 			$appointmentRef;
 
 		oSut.placeAt("bigUiArea");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$appointmentRef = jQuery("#PC-R1A1");
 
@@ -1625,7 +1627,7 @@ sap.ui.define([
 			sRoledescription = oPC._oRB.getText("PLANNINGCALENDAR");
 
 		oPC.placeAt("bigUiArea");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oPC.$().attr("aria-roledescription"), sRoledescription, "Control name is indicated in aria-roledescription");
 
@@ -1636,7 +1638,7 @@ sap.ui.define([
 		var oPC = new PlanningCalendar();
 
 		oPC.placeAt("bigUiArea");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oPC.$().attr("aria-labelledby"), oPC._getHeader().getId() + "-Title",
 			"Control's title is added in aria-labelledby");
@@ -1653,7 +1655,7 @@ sap.ui.define([
 			oRowHeader, oRowTimeLine, oTableCells;
 
 		oPC.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oTableCells = oPC.getAggregation("table").getItems()[0].getCells();
 		oRowHeader = oTableCells[0];
@@ -1664,7 +1666,7 @@ sap.ui.define([
 
 		// Act
 		oPC.setShowRowHeaders(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oRowTimeLine.getAriaLabelledBy()[0] == oRowHeader.getId(), "There is a reference to the row header");
@@ -1715,7 +1717,7 @@ sap.ui.define([
 	QUnit.test("default built-in views", function (assert) {
 		var aViewKey = PlanningCalendarBuiltInView.Hour;
 		this.oPC.placeAt("bigUiArea");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(this.oPC._oIntervalTypeSelect.getItems().length, 5, "By default the planning calendar is " +
 			"created with 5 predefined views");
 		assert.equal(this.oPC.getViews().length, 0, "By default in the planning calendar there are no custom views");
@@ -1727,10 +1729,10 @@ sap.ui.define([
 			aViewType = PlanningCalendarBuiltInView,
 			aViewKey = PlanningCalendarBuiltInView.Day;
 		this.oPC.placeAt("bigUiArea");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oPC.setBuiltInViews([aViewType.Day, aViewType.Hour]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Note: updating to the current view key because adding a new view or setting the builtInViews property
 		// with items removes all the previous views and the old key is not valid any more
@@ -1751,10 +1753,10 @@ sap.ui.define([
 			aViewType = PlanningCalendarBuiltInView,
 			aViewKey = PlanningCalendarBuiltInView.Hour;
 		this.oPC.placeAt("bigUiArea");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oPC.setBuiltInViews([]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(this.oPC._oIntervalTypeSelect.getItems().length, 5, "When the buildInViews property is set with " +
 			"an empty array, the PlanningCalendar is showing the 5 predefined views");
 		oItemKey = this.oPC._oIntervalTypeSelect.getItems()[0].getKey();
@@ -1775,7 +1777,7 @@ sap.ui.define([
 	QUnit.test("with custom view", function (assert) {
 		var oItemKey;
 		this.oPC.placeAt("bigUiArea");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.oPC.addView(
 			new PlanningCalendarView({
 				key: "test",
@@ -1789,7 +1791,7 @@ sap.ui.define([
 		// Note: updating to the current view key because adding a new view or setting the builtInViews property
 		// with items removes all the previous views and the old key is not valid any more
 		this.oPC.setViewKey("test");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(this.oPC._oIntervalTypeSelect.getItems().length, 1, "When the buildInViews property is set with " +
 			"two views and there is a custom view, the PlanningCalendar is showing 3 views");
 		oItemKey = this.oPC._oIntervalTypeSelect.getItems()[0].getKey();
@@ -1818,7 +1820,7 @@ sap.ui.define([
 			]
 		}).setModel(oModel).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		// assert
@@ -1847,7 +1849,7 @@ sap.ui.define([
 		assert.throws(
 			function() {
 				oPC.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 			},
 			oExpectedError,
 			"throws correct Error object"
@@ -1862,7 +1864,7 @@ sap.ui.define([
 			aViewType = PlanningCalendarBuiltInView,
 			aViewKey = PlanningCalendarBuiltInView.Day;
 		this.oPC.placeAt("bigUiArea");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oPC.addView(
 			new PlanningCalendarView({
@@ -1877,14 +1879,14 @@ sap.ui.define([
 		// Note: updating to the current view key because adding a new view or setting the builtInViews property
 		// with items removes all the previous views and the old key is not valid any more
 		this.oPC.setViewKey("test");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(this.oPC._oIntervalTypeSelect.getItems().length, 1, "When the buildInViews property is set with " +
 			"two views and there is a custom view, the PlanningCalendar is showing 3 views");
 		oItemKey = this.oPC._oIntervalTypeSelect.getItems()[0].getKey();
 		assert.equal(oItemKey, "test", "The key of the first view is OK");
 
 		this.oPC.setBuiltInViews([aViewType.Day, aViewType.Hour]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.oPC._oIntervalTypeSelect.getItems().length, 3, "When the buildInViews property is set with " +
 			"two views and there is a custom view, the PlanningCalendar is showing 3 views");
@@ -1920,12 +1922,12 @@ sap.ui.define([
 					done();
 				}
 			}).placeAt("bigUiArea");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// act
 		$Date = jQuery("#" + oPC.getId() + "-OneMonthsRow-20180701");
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], KeyCodes.ENTER, false, false, false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	 });
 
 	QUnit.test("Adding a view after setting view key", function(assert) {
@@ -2074,12 +2076,12 @@ sap.ui.define([
 
 		oModel.setData(oData);
 		oPC.setModel(oModel);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oData.splice(0, 1);
 		oModel.setProperty("/", oData);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(_getRowTimeline(oPC.getRows()[0]).aSelectedAppointments.length, 0, "ok");
@@ -2111,7 +2113,7 @@ sap.ui.define([
 				)]
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oApp.$().find("#AppCustCont-Descr").text(), "Start Time: Friday 02/01/2015 at 08:00:00; End Time: Friday 02/01/2015 at 10:00:00; Type 1", "Start and end date are included as description");
@@ -2136,17 +2138,17 @@ sap.ui.define([
 		var oDatesRow;
 
 		this.oPC.setViewKey(CalendarIntervalType.Day);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oDatesRow = Element.getElementById("OPC-DatesRow");
 		assert.equal(oDatesRow.getShowDayNamesLine(), false, "the default property of the DatesRow in the days view is false");
 
 		this.oPC.setViewKey(CalendarIntervalType.Week);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oDatesRow = Element.getElementById("OPC-WeeksRow");
 		assert.equal(oDatesRow.getShowDayNamesLine(), false, "the default property of the WeeksRow in the week view is false");
 
 		this.oPC.setViewKey(CalendarIntervalType.OneMonth);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oDatesRow = Element.getElementById("OPC-OneMonthsRow");
 		assert.equal(oDatesRow.getShowDayNamesLine(), false, "the default property of the OneMonthsRow in the one month view is false");
 
@@ -2161,7 +2163,7 @@ sap.ui.define([
 		this.oPC.setViewKey(CalendarIntervalType.Week);
 		this.oPC.setViewKey(CalendarIntervalType.OneMonth);
 		this.oPC.setViewKey(CalendarIntervalType.Hour);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oDatesRow = Element.getElementById("OPC-DatesRow");
 		oWeeksRow = Element.getElementById("OPC-WeeksRow");
@@ -2175,7 +2177,7 @@ sap.ui.define([
 		assert.equal(oOneMonthsRow.getShowDayNamesLine(), true, "the property is passed to the OneMonthsRow in the one month view after setting the property to the Hour view");
 
 		this.oPC.setViewKey(CalendarIntervalType.Day);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.oPC.setShowDayNamesLine(false);
 		assert.equal(oDatesRow.getShowDayNamesLine(), false, "the property is passed to the DatesRow in the days view after setting the property to the Day view");
 
@@ -2184,7 +2186,7 @@ sap.ui.define([
 		assert.equal(oOneMonthsRow.getShowDayNamesLine(), false, "the property is passed to the OneMonthsRow in the one month view after setting the property to the Day view");
 
 		this.oPC.setViewKey(CalendarIntervalType.Week);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.oPC.setShowDayNamesLine(true);
 		assert.equal(oDatesRow.getShowDayNamesLine(), true, "the property is passed to the DatesRow in the days view after setting the property to the Week view");
 
@@ -2193,7 +2195,7 @@ sap.ui.define([
 		assert.equal(oOneMonthsRow.getShowDayNamesLine(), true, "the property is passed to the OneMonthsRow in the one month view after setting the property to the Week view");
 
 		this.oPC.setViewKey(CalendarIntervalType.OneMonth);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.oPC.setShowDayNamesLine(false);
 		assert.equal(oDatesRow.getShowDayNamesLine(), false, "the property is passed to the DatesRow in the days view after setting the property to the OneMonth view");
 
@@ -2207,7 +2209,7 @@ sap.ui.define([
 
 	QUnit.test("When the control is destroyed there's no need of custom invalidation logic", function (assert) {
 
-		oCore.applyChanges();	// because of BCP 2080159964/ Reply from 21.07.2020  14:26:04
+		nextUIUpdate.runSync()/*fake timer is used in module*/;	// because of BCP 2080159964/ Reply from 21.07.2020  14:26:04
 
 		this.oPC = new PlanningCalendar();
 		this.oPC.placeAt("bigUiArea");
@@ -3124,7 +3126,7 @@ sap.ui.define([
 			});
 			oView.setModel(oModel);
 			oView.placeAt("bigUiArea");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			oPC = oView.byId("pc");
 
 			// Assert

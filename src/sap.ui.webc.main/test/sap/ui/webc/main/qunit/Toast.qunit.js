@@ -3,20 +3,21 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Toast",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, Toast, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Toast, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oToast = new Toast({
 				text: "Some text..."
 			});
 			this.oToast.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oToast.destroy();

@@ -3,14 +3,15 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Switch"
-], function(createAndAppendDiv, Core, Switch) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Switch) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oSwitch = new Switch({
 				textOff: "Some text...",
 				textOn: "Some text...",
@@ -19,7 +20,7 @@ sap.ui.define([
 				}
 			});
 			this.oSwitch.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oSwitch.destroy();

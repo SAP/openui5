@@ -3,14 +3,15 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/CheckBox"
-], function(createAndAppendDiv, Core, CheckBox) {
+], function(createAndAppendDiv, Core, nextUIUpdate, CheckBox) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oCheckBox = new CheckBox({
 				text: "Some text...",
 				valueState: "Warning",
@@ -19,7 +20,7 @@ sap.ui.define([
 				}
 			});
 			this.oCheckBox.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oCheckBox.destroy();

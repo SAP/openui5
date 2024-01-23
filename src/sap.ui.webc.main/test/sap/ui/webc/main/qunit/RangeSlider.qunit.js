@@ -3,14 +3,15 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/RangeSlider"
-], function(createAndAppendDiv, Core, RangeSlider) {
+], function(createAndAppendDiv, Core, nextUIUpdate, RangeSlider) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oRangeSlider = new RangeSlider({
 				change: function(oEvent) {
 					// console.log("Event change fired for RangeSlider with parameters: ", oEvent.getParameters());
@@ -20,7 +21,7 @@ sap.ui.define([
 				}
 			});
 			this.oRangeSlider.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oRangeSlider.destroy();

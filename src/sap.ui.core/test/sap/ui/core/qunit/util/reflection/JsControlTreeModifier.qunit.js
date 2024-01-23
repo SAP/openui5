@@ -601,11 +601,11 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when setStashed is called for an already unstashed control", function(assert) {
+		QUnit.test("when setStashed is called for an already unstashed control", async function(assert) {
 			this.oControl = new Button({ text: "Test"  });
 			this.oControl.isStashed = function () { return false;};
 			var fnSetVisibleSpy = sandbox.spy(JsControlTreeModifier, "setVisible");
-			JsControlTreeModifier.setStashed(this.oControl, true);
+			await JsControlTreeModifier.setStashed(this.oControl, true);
 
 			assert.ok(fnSetVisibleSpy.calledOnce, "then modifier's setVisible() is called once");
 			assert.ok(fnSetVisibleSpy.calledWith(this.oControl, false), "then modifier's setVisible() is called with the correct arguments");
@@ -620,13 +620,13 @@ sap.ui.define([
 				'</Panel>' +
 			'</mvc:View>';
 
-			return XMLView.create({id: "testapp---view", definition: oXmlString}).then(function(oXmlView) {
+			return XMLView.create({id: "testapp---view", definition: oXmlString}).then(async function(oXmlView) {
 				this.oXmlView = oXmlView;
 				var oStashedControl = this.oXmlView.byId("button1");
 
 				sandbox.stub(JsControlTreeModifier, "setVisible");
 
-				var oUnstashedControl = JsControlTreeModifier.setStashed(oStashedControl, false);
+				var oUnstashedControl = await JsControlTreeModifier.setStashed(oStashedControl, false);
 				assert.ok(oUnstashedControl instanceof Button, "then the returned control is the unstashed control");
 				assert.ok(JsControlTreeModifier.setVisible.calledWith(oUnstashedControl, true), "then JsControlTreeModifier setVisible() called for the unstashed control");
 

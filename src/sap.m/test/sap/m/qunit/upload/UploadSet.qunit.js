@@ -52,7 +52,7 @@ sap.ui.define([
 		};
 	}
 	QUnit.module("UploadSet general functionality", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oUploadSet = new UploadSet("uploadSet", {
 				items: {
 					path: "/items",
@@ -61,7 +61,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(getData()));
 			this.oUploadSet.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadSet.destroy();
@@ -77,14 +77,14 @@ sap.ui.define([
 	NoopUploader.prototype.uploadItem = function (oItem, aHeaders) {};
 	NoopUploader.prototype.downloadItem = function (oItem, aHeaders, bAskForLocation) {};
 
-	QUnit.test("Test for progressbar visibility", function (assert) {
+	QUnit.test("Test for progressbar visibility", async function(assert) {
 		//arrange
 		var oItem = this.oUploadSet.getItems()[0];
 		oItem.setUploadState("Ready");
 		var progressBox = oItem._getProgressBox();
 		assert.ok(progressBox.getVisible(), "progress bar is visible for the uploading state");
 		this.oUploadSet.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Act
 		this.oUploadSet.uploadItem(oItem);
 		var done = assert.async();
@@ -237,7 +237,7 @@ sap.ui.define([
 		assert.notOk(oDialog, "Remove dialog should not exist at this time.");
 	});
 
-	QUnit.test("Event beforeItemEdited is called at proper time and with correct parameters, prevent default applies.", function (assert) {
+	QUnit.test("Event beforeItemEdited is called at proper time and with correct parameters, prevent default applies.", async function(assert) {
 		assert.expect(9);
 		var oItem = this.oUploadSet.getItems()[0];
 
@@ -250,7 +250,7 @@ sap.ui.define([
 			oEvent.preventDefault();
 		});
 		oItem._getEditButton().firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Check no edit mode in place
 		assert.notOk(this.oUploadSet._oEditedItem, "UploadSet should know nothing about any edited item.");
@@ -259,7 +259,7 @@ sap.ui.define([
 		assert.equal(oItem._getFileNameEdit().$().length, 0, "File name edit should be ignored.");
 
 		oItem._getEditButton().firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Check everybody on the same page regarding the edit mode
 		assert.equal(this.oUploadSet._oEditedItem, oItem, "Item should be known to the UploadSet as the edited one.");
@@ -268,7 +268,7 @@ sap.ui.define([
 		assert.equal(oItem._getFileNameLink().$().length, 0, "File name link should be ignored.");
 	});
 
-	QUnit.test("Event afterItemEdited is called at proper time and with correct parameters.", function (assert) {
+	QUnit.test("Event afterItemEdited is called at proper time and with correct parameters.", async function(assert) {
 		assert.expect(1);
 		var oItem = this.oUploadSet.getItems()[0];
 
@@ -279,10 +279,10 @@ sap.ui.define([
 			assert.ok(true, "afterItemEdited event should have been called.");
 		});
 		oItem._getEditButton().firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oItem._getConfirmRenameButton().firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 	});
 
@@ -330,7 +330,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Rename filename with no extension", function (assert) {
+	QUnit.test("Rename filename with no extension", async function(assert) {
 		assert.expect(2);
 		var oItem = this.oUploadSet.getItems()[0];
 
@@ -341,12 +341,12 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter("item").getFileName(), "testFileName", "File name should be correct.");
 		});
 		oItem._getEditButton().firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oItem.setFileName("testFileName");
 
 		oItem._getConfirmRenameButton().firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 	});
 
 	[
@@ -452,7 +452,7 @@ sap.ui.define([
 		assert.ok(spyHandleItemEditCancelation.notCalled, "UploadSet._handleItemEditCancelation is not called");
 	});
 
-	QUnit.test("Then hiding edit button, for item that is not in edit, but there is another item in edit mode UploadSet._handleItemEditCancelation is not called", function (assert) {
+	QUnit.test("Then hiding edit button, for item that is not in edit, but there is another item in edit mode UploadSet._handleItemEditCancelation is not called", async function(assert) {
 		var spyHandleItemEditCancelation = this.spy(this.oUploadSet, "_handleItemEditCancelation");
 		var oItem0 = this.oUploadSet.getItems()[0],
 			oItem1 = this.oUploadSet.getItems()[1];
@@ -462,7 +462,7 @@ sap.ui.define([
 		assert.ok(oItem1.getVisibleEdit(), "Second edit button initially is visible");
 
 		oItem0._getEditButton().firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oItem1.setVisibleEdit(false);
 
@@ -509,7 +509,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("oXhr parameters are not empty", function (assert) {
+	QUnit.test("oXhr parameters are not empty", async function(assert) {
 		var oUploader = new Uploader(),
 			oItem = this.oUploadSet.getItems()[0],
 			done = assert.async();
@@ -528,13 +528,13 @@ sap.ui.define([
 		//Arrange
 		this.oUploadSet.registerUploaderEvents(oUploader);
 		this.oUploadSet.addDependent(oUploader);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		oUploader.uploadItem(oItem);
 	});
 
-	QUnit.test("Check multi-part form data in XMLHttpRequest", function (assert) {
+	QUnit.test("Check multi-part form data in XMLHttpRequest", async function(assert) {
 		//Setup
 		var oUploader = new Uploader({
 			useMultipart: true
@@ -545,7 +545,7 @@ sap.ui.define([
 
 		this.oUploadSet.setAggregation("uploader", oUploader);
 		this.oUploadSet.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		oUploader.uploadItem(oItem);
@@ -557,14 +557,14 @@ sap.ui.define([
 		oUploader.destroy();
 	});
 
-	QUnit.test("No data rendering - with default text and description", function(assert) {
+	QUnit.test("No data rendering - with default text and description", async function(assert) {
 		//Arrange
 		this.oUploadSet.unbindAggregation("items");
 		var sNoDataText = this.oUploadSet._oRb.getText("UPLOAD_SET_NO_DATA_TEXT");
 		var sNoDataDescription = this.oUploadSet._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION");
 		var oIllustratedMessage = this.oUploadSet._getIllustratedMessage();
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.equal(this.oUploadSet.getNoDataText(), sNoDataText, "default text is returned for getNoDataText");
 		assert.equal(this.oUploadSet.getNoDataDescription(), sNoDataDescription, "default description is returned for getNoDataDescription");
@@ -573,24 +573,24 @@ sap.ui.define([
 		assert.equal(oIllustratedMessage.getDescription(), sNoDataDescription, "default discription is rendered in Upload set");
 	});
 
-	QUnit.test("No data type illustrated message rendering if not set via aggregation", function (assert) {
+	QUnit.test("No data type illustrated message rendering if not set via aggregation", async function(assert) {
 		//Arrange
 		this.oUploadSet.unbindAggregation("items");
 		var oIllustratedMessage = this.oUploadSet._getIllustratedMessage();
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.equal(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoData, "The no data illustrated message is rendred");
 		assert.equal(oIllustratedMessage.getDomRef().querySelector("svg").getAttribute("aria-labelledby"), this.oUploadSet._oInvisibleText.getId(), "AriaLabelledBy is set correctly.");
 	});
 
-	QUnit.test("No data type illustrated message rendering if set via aggregation", function (assert) {
+	QUnit.test("No data type illustrated message rendering if set via aggregation", async function(assert) {
 		var oIllustratedMessage = new IllustratedMessage({
 			illustrationType: "sapIllus-NoActivities"
 		});
 		this.oUploadSet.setAggregation("illustratedMessage", oIllustratedMessage);
 		this.oUploadSet.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Arrange
 		this.oUploadSet.unbindAggregation("items");
@@ -601,12 +601,12 @@ sap.ui.define([
 		oIllustratedMessage.destroy();
 	});
 
-	QUnit.test("Get ariaDescribedBy values and validate them with illustration message text and descriptions", function (assert) {
+	QUnit.test("Get ariaDescribedBy values and validate them with illustration message text and descriptions", async function(assert) {
 		//Arrange
 		this.oUploadSet.unbindAggregation("items");
 		var oIllustratedMessage = this.oUploadSet._getIllustratedMessage();
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		var oTextAndDescriptionIds = oIllustratedMessage.getAccessibilityReferences();
 		var aAriaDescribedById = this.oUploadSet._oUploadButton.getAriaDescribedBy();
@@ -615,7 +615,7 @@ sap.ui.define([
 		assert.equal(aAriaDescribedById[1], oTextAndDescriptionIds.description, "Description id is included in aria-describedBy");
 	});
 
-	QUnit.test("Test httpRequestMethod property with XMLHttpRequest", function (assert) {
+	QUnit.test("Test httpRequestMethod property with XMLHttpRequest", async function(assert) {
 		//Setup
 		var oUploader = new Uploader({
 			httpRequestMethod: "PUT"
@@ -625,7 +625,7 @@ sap.ui.define([
 
 		this.oUploadSet.setAggregation("uploader", oUploader);
 		this.oUploadSet.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		oUploader.uploadItem(oItem);
@@ -637,11 +637,11 @@ sap.ui.define([
 		oUploader.destroy();
 	});
 
-	QUnit.test("Test incomplete items are empty after upload completed", function (assert) {
+	QUnit.test("Test incomplete items are empty after upload completed", async function(assert) {
 		var oItem = this.oUploadSet.getItems()[0];
 		oItem.setUploadState("Ready");
 		this.oUploadSet.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		this.oUploadSet.uploadItem(oItem);
@@ -650,7 +650,7 @@ sap.ui.define([
 		assert.equal(this.oUploadSet.getIncompleteItems(), 0, "incomplete items are empty");
 	});
 
-	QUnit.test("No Data is rendered after item is removed", function (assert) {
+	QUnit.test("No Data is rendered after item is removed", async function(assert) {
 		assert.notOk(document.querySelector(".sapMUCNoDataPage"), "No Data template is not visible");
 
 		var oItem1 = this.oUploadSet.getItems()[0];
@@ -658,7 +658,7 @@ sap.ui.define([
 		this.oUploadSet.removeItem(oItem1);
 		this.oUploadSet.removeItem(oItem2);
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.ok(document.querySelector(".sapMUCNoDataPage"), "No Data template is visible");
@@ -804,11 +804,11 @@ sap.ui.define([
 		assert.ok(findByIdSpy.called, "Item to be deleted is fetched from source");
 	});
 
-	QUnit.test("Edit with different event target", function(assert) {
+	QUnit.test("Edit with different event target", async function(assert) {
 		// Arrange
 		var sEditButtonId = this.oUploadSet.getItems()[0].sId + "-editButton";
 		Element.getElementById(sEditButtonId).firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oSpy = this.spy(UploadSet.prototype, "_handleItemEditConfirmation");
 		var oEvent = {
@@ -822,17 +822,17 @@ sap.ui.define([
 
 		// Act
 		this.oUploadSet._handleClick(oEvent, this.oUploadSet.getItems()[1]);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal(oSpy.callCount, 1, "Editing will proceed with target clicked elsewhere on the list");
 	});
 
-	QUnit.test("Cancel with different event target", function(assert) {
+	QUnit.test("Cancel with different event target", async function(assert) {
 		// Arrange
 		var sEditButtonId = this.oUploadSet.getItems()[1].sId + "-editButton";
 		Element.getElementById(sEditButtonId).firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var oSpy = this.spy(UploadSet.prototype, "_handleItemEditCancelation");
 		var oEvent = {
@@ -847,17 +847,17 @@ sap.ui.define([
 
 		// Act
 		this.oUploadSet._handleClick(oEvent, this.oUploadSet.getItems()[1]);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal(oSpy.callCount, 1, "Cancel handling is done even for targets that are not the button itself.");
 	});
 
-	QUnit.test("Test for nullable Queryselection check", function(assert) {
+	QUnit.test("Test for nullable Queryselection check", async function(assert) {
 		var sEditButtonId = this.oUploadSet.getItems()[1].sId + "-editButton";
 		var oItem = this.oUploadSet.getItems()[1];
 		Element.getElementById(sEditButtonId).firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var querySpy = this.spy(oItem._oListItem.getDomRef(), "querySelector");
 		this.stub(oItem._oListItem, "getDomRef").callsFake(function(){
@@ -875,7 +875,7 @@ sap.ui.define([
 
 		// Act
 		this.oUploadSet._handleItemEditConfirmation(oEvent, this.oUploadSet.getItems()[1]);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(querySpy.notCalled, "QuerySelector not called without dom reference.");
@@ -897,35 +897,35 @@ sap.ui.define([
 		assert.ok(listItemSpy.notCalled, "UploadSetItem not created for item in destruction phase.");
 	});
 
-	QUnit.test("Test to validate enable/disable status of upload button on illustrated message section", function(assert) {
+	QUnit.test("Test to validate enable/disable status of upload button on illustrated message section", async function(assert) {
 
 		//arrange
 		this.oUploadSet.removeAllItems();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert initial case
 		assert.ok(this.oUploadSet._oUploadButton && this.oUploadSet._oUploadButton.getEnabled(), "By default uploadenabled is set to true and Upload button is enabled");
 
 		//act
 		this.oUploadSet.setUploadEnabled(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.ok(this.oUploadSet._oUploadButton && !this.oUploadSet._oUploadButton.getEnabled(), "Upload button on illustrated message section is disabled when uploadenabled is set to false");
 	});
 
-	QUnit.test("Test to validate visibility status of upload button on illustrated message section", function(assert) {
+	QUnit.test("Test to validate visibility status of upload button on illustrated message section", async function(assert) {
 
 		//arrange
 		this.oUploadSet.removeAllItems();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert initial case
 		assert.ok(this.oUploadSet._oUploadButton && this.oUploadSet._oUploadButton.getVisible(), "By default uploadButtonInvisible is set to false and Upload button is visible");
 
 		//act
 		this.oUploadSet.setUploadButtonInvisible(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.ok(this.oUploadSet._oUploadButton && !this.oUploadSet._oUploadButton.getVisible(), "Upload button on illustrated message section is hidden when uploadButtonInvisible is set to true");
@@ -960,13 +960,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("UploadSet general functionality", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oUploadSet = new UploadSet("uploadSet", {
 				uploadEnabled: false,
 				uploadButtonInvisible: false
 			}).setModel(new JSONModel(getData()));
 			this.oUploadSet.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadSet.destroy();
@@ -982,7 +982,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("UploadSet general functionality", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oUploadSet = new UploadSet("uploadSet", {
 				fileTypes:"txt,doc,png",
 				mediaTypes:"text/plain,application/msword,image/jpeg,image/png",
@@ -995,7 +995,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(getData1()));
 			this.oUploadSet.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadSet.destroy();
@@ -1003,7 +1003,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("SameFilenameAllowed set as false in uploadSet", function (assert) {
+	QUnit.test("SameFilenameAllowed set as false in uploadSet", async function(assert) {
 		assert.expect(1);
 		var oItem = this.oUploadSet.getItems()[0];
 
@@ -1012,16 +1012,16 @@ sap.ui.define([
 		this.oUploadSet.placeAt("qunit-fixture");
 
 		oItem._getEditButton().firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.oUploadSet.getItems()[0].$("fileNameEdit-inner")[0].value = "Test";
 		oItem._getConfirmRenameButton().firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oUploadSet.getItems()[0].getFileName(), "Alice.mp4", "FileName will remain same");
 	});
 
-	QUnit.test("SameFilenameAllowed set as true in uploadSet", function (assert) {
+	QUnit.test("SameFilenameAllowed set as true in uploadSet", async function(assert) {
 		assert.expect(2);
 		var oItem = this.oUploadSet.getItems()[0];
 
@@ -1029,7 +1029,7 @@ sap.ui.define([
 		this.oUploadSet.placeAt("qunit-fixture");
 
 		oItem._getEditButton().firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.oUploadSet.attachEventOnce("fileRenamed", function (oEvent) {
 			assert.ok(true, "FileRenamed event should have been called.");
@@ -1038,7 +1038,7 @@ sap.ui.define([
 		this.oUploadSet.getItems()[0].$("fileNameEdit-inner")[0].value = "Test";
 
 		oItem._getConfirmRenameButton().firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 	});
 
 	QUnit.test("Test for invalid media type, files upload attempt", function(assert) {
@@ -1386,7 +1386,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering of UploadSet with hideUploadButton = true", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oUploadSet = new UploadSet("uploadSet", {
 				items: {
 					path: "/items",
@@ -1396,7 +1396,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(getData()));
 			this.oUploadSet.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadSet.destroy();
@@ -1411,35 +1411,35 @@ sap.ui.define([
 		assert.equal(this.oUploadSet.getDefaultFileUploader().getVisible(), true, "File Uploader is visible");
 	});
 
-	QUnit.test("Remove Aggregation supports index", function (assert) {
+	QUnit.test("Remove Aggregation supports index", async function(assert) {
 		assert.equal(this.oUploadSet.getItems().length, 2, "2 items are present before operation");
 
 		this.oUploadSet.removeItem(0);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(this.oUploadSet.getItems().length, 1, "item is successfully removed using index");
 
 		this.oUploadSet.removeAggregation("items",0);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(this.oUploadSet.getItems().length, 0, "item is successfully removed using index");
 	});
 
-	QUnit.test("Remove Aggregation destroys supplied control object", function (assert) {
+	QUnit.test("Remove Aggregation destroys supplied control object", async function(assert) {
 		//Arrange
 		var uploadSetItem = this.oUploadSet.getItems()[0];
 
 		//Act
 		this.oUploadSet.removeAggregation("items", uploadSetItem);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(this.oUploadSet.getList().getItems().length, 1, "List Item removed successfully");
 	});
 
-	QUnit.test("Remove all aggregations destroys complete list and also main list aggregation", function (assert) {
+	QUnit.test("Remove all aggregations destroys complete list and also main list aggregation", async function(assert) {
 
 		//Arrange
 		var oItem = this.oUploadSet.getItems()[0];
@@ -1447,14 +1447,14 @@ sap.ui.define([
 
 		this.spy(this.oUploadSet, "removeAllAggregation");
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(this.oUploadSet.getIncompleteItems().length, 1, "incomplete items list has one item");
 
 		//Act
 		this.oUploadSet.removeAllIncompleteItems();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.ok(this.oUploadSet.removeAllAggregation.called, "Custom RemoveAllAggregation method called to destroy list aggragtion of current aggragtion to be destroyed");
@@ -1467,7 +1467,7 @@ sap.ui.define([
 
 		//Act
 		this.oUploadSet.removeAllItems();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.ok(this.oUploadSet.removeAllAggregation.called, "Custom RemoveAllAggregation method called to destroy list aggragtion of current aggragtion to be destroyed");
@@ -1477,7 +1477,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Drag and drop", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.$RootNode = jQuery(document.body);
 			this.oUploadSet = new UploadSet("uploadSet", {
 				items: {
@@ -1487,7 +1487,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(getData()));
 			this.oUploadSet.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadSet.destroy();
@@ -1995,7 +1995,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Grouping tests", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oUploadSet = new UploadSet({
 				items: {
 					path: "/items",
@@ -2010,7 +2010,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(getData()));
 			this.oUploadSet.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oUploadSet.destroy();
@@ -2041,7 +2041,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Directory Uploads", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oUploadSet = new UploadSet("uploadSet", {
 				items: {
 					path: "/items",
@@ -2050,7 +2050,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(getData1()));
 			this.oUploadSet.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadSet.destroy();
@@ -2200,7 +2200,7 @@ sap.ui.define([
 	return Library1.load("sap.suite.ui.commons")
 	.then(function() {
 		QUnit.module("Cloud File Picker", {
-			beforeEach: function () {
+			beforeEach: async function() {
 				this.$RootNode = jQuery(document.body);
 				this.oUploadSet = new UploadSet("uploadSet", {
 					items: {
@@ -2210,7 +2210,7 @@ sap.ui.define([
 					}
 				}).setModel(new JSONModel(getData()));
 				this.oUploadSet.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 				return this.oUploadSet._loadCloudFilePickerDependency()
 				.then(function(cloudFilePicker) {
 					this.oUploadSet._cloudFilePickerControl = cloudFilePicker;

@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/FlexibleColumnLayout",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, FlexibleColumnLayout, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, FlexibleColumnLayout, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oFlexibleColumnLayout = new FlexibleColumnLayout({
 				endColumn: new Button({
 					icon: "employee",
@@ -39,7 +40,7 @@ sap.ui.define([
 				}
 			});
 			this.oFlexibleColumnLayout.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oFlexibleColumnLayout.destroy();

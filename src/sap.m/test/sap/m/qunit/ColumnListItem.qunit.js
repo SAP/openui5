@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/util/Mobile",
 	"sap/ui/core/Core",
 	"sap/m/ColumnListItem",
@@ -9,7 +10,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/MessageToast",
 	"sap/m/Input"
-], function(Mobile, Core, ColumnListItem, Column, Table, Text, Label, MessageToast, Input) {
+], function(nextUIUpdate, Mobile, Core, ColumnListItem, Column, Table, Text, Label, MessageToast, Input) {
 	"use strict";
 
 
@@ -33,7 +34,7 @@ sap.ui.define([
 			});
 
 		table.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		hasPopin = sut.hasPopin();
 
 		// Act
@@ -65,7 +66,7 @@ sap.ui.define([
 				});
 
 			table.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			//Act
 			sut[sFunctionName]();
@@ -95,7 +96,7 @@ sap.ui.define([
 			});
 
 		table.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.ok(sut.getDropAreaRect().bottom > sut.getDomRef().getBoundingClientRect().bottom + 16);
@@ -133,7 +134,7 @@ sap.ui.define([
 			});
 
 		table.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(sut.hasPopin(), "Popin is generated");
@@ -145,7 +146,7 @@ sap.ui.define([
 		assert.equal(sut.getContentAnnouncement(), "Header2 Cell2 . Header1 Cell1", "content announcement is correct");
 
 		column1.setPopinDisplay("WithoutHeader");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(sut._aClonedHeaders.length, 0, "Does not have any cloned headers");
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntHdr").length, 0, "Popin header is not found in the dom");
@@ -153,7 +154,7 @@ sap.ui.define([
 		assert.strictEqual(sut.$Popin().find(".sapMListTblSubCntVal").length, 1, "Popin cell content found in the dom");
 
 		column1.destroy();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(sut._aClonedHeaders.length, 0, "Does not have any cloned headers");
 		assert.strictEqual(sut.$Popin().length, 0, "No popin in the dom");
@@ -198,7 +199,7 @@ sap.ui.define([
 		});
 
 		table.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(column1.getDependents()[0], sut._aClonedHeaders[0], "cloned popin header is added as a dependent");
 		assert.strictEqual(column1.getDependents()[1], sut2._aClonedHeaders[0], "cloned popin header is added as a dependent");
@@ -245,7 +246,7 @@ sap.ui.define([
 		});
 
 		table.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(table._aPopinHeaders.length, 1, "1 column header control is added to the array");
 		assert.strictEqual(table._aPopinHeaders[0], column1Header, "expected column header control is added to the array");
@@ -254,14 +255,14 @@ sap.ui.define([
 		assert.ok(sut2.getCells()[0].getAriaLabelledBy().indexOf(column1Header.getId()) > -1, "expected ariaLabelledBy association found");
 
 		table.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(sut.getCells()[0].getAriaLabelledBy(), column1Header.getId(), "expected and the only ariaLabelledBy association found");
 		assert.equal(sut2.getCells()[0].getAriaLabelledBy(), column1Header.getId(), "expected and the only ariaLabelledBy association found");
 
 		column1.setMinScreenWidth();
 		column1.setDemandPopin();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(sut.getCells()[0].getAriaLabelledBy().indexOf(column1Header.getId()), -1, "no ariaLabelledBy association found");
 		assert.equal(sut2.getCells()[0].getAriaLabelledBy().indexOf(column1Header.getId()), -1, "no ariaLabelledBy association found");
@@ -284,7 +285,7 @@ sap.ui.define([
 			items: [oCLI]
 		});
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $cell = oCLI.getCells()[0].getDomRef();
 		var $td = $cell.parentElement;
@@ -317,7 +318,7 @@ sap.ui.define([
 			items: [oCLI]
 		});
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var fnPress = this.spy(oCLI, "firePress");
 		oCLI.focus();
@@ -384,7 +385,7 @@ sap.ui.define([
 		});
 
 		table.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(sut.hasPopin(), "Popin is generated");
@@ -409,7 +410,7 @@ sap.ui.define([
 		});
 
 		table.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(sut.$().attr("role"), "role attribute not added");
 
@@ -436,7 +437,7 @@ sap.ui.define([
 
 
 			this.table.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.table.destroy();
@@ -456,7 +457,7 @@ sap.ui.define([
 		var oColumn = this.table.getColumns()[1];
 		oColumn.setMinScreenWidth("48000px");
 		oColumn.setDemandPopin(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aTdElements = this.sut.$().children();
 		assert.notOk(aTdElements[aTdElements.length - 1].classList.contains("sapMListTblDummyCell"), "Dummy cell is rendered as the last td element");
@@ -489,13 +490,13 @@ sap.ui.define([
 		});
 
 		table.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		sut.getCells()[0].focus();
 		assert.equal(document.activeElement, sut.getCells()[0].getFocusDomRef(), "focus is set to the input");
 
 		sut.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(document.activeElement, sut.getCells()[0].getFocusDomRef(), "focus is not change and still on the input");
 
 		table.destroy();

@@ -54,7 +54,7 @@ sap.ui.define([
 	/* Test: Default Values                    */
 	/* --------------------------------------- */
 
-	QUnit.test("Default Values", function (assert) {
+	QUnit.test("Default Values", async function(assert) {
 
 		var bEnabled = true;
 		var bEditable = true;
@@ -72,7 +72,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oCheckBox.getEnabled(), bEnabled, "Property 'enabled': Default value should be '" + bEnabled + "'");
@@ -95,14 +95,14 @@ sap.ui.define([
 	/* Test: 'visible=true'                            */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'visible=true'", function (assert) {
+	QUnit.test("'visible=true'", async function(assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox({ visible: true });
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(oCheckBox.getDomRef(), "visible=true: CheckBox should have been rendered");
@@ -116,14 +116,14 @@ sap.ui.define([
 	/* Test: 'visible=false'                           */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'visible=false'", function (assert) {
+	QUnit.test("'visible=false'", async function(assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox({ visible: false });
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(!oCheckBox.getDomRef(), "visible=false: CheckBox should not have been rendered");
@@ -137,7 +137,7 @@ sap.ui.define([
 	/* Test: 'enabled=true'                            */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'enabled=true'", function (assert) {
+	QUnit.test("'enabled=true'", async function(assert) {
 
 		// system under test
 		var bEnabled = true;
@@ -145,7 +145,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(!oCheckBox.$("CbBg").hasClass("sapMCbBgDis"), "enabled=" + bEnabled + ": CheckBox should not have class sapMCbBgDis");
@@ -162,7 +162,7 @@ sap.ui.define([
 	/* Test: 'enabled=false'                           */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'enabled=false'", function (assert) {
+	QUnit.test("'enabled=false'", async function(assert) {
 
 		// system under test
 		var bEnabled = false;
@@ -170,7 +170,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(!oCheckBox.$().hasClass("sapMPointer"), "enabled=" + bEnabled + ": CheckBox should not have class sapMPointer");
@@ -186,7 +186,7 @@ sap.ui.define([
 	/* Test: 'editable=false'                          */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'editable=false'", function (assert) {
+	QUnit.test("'editable=false'", async function(assert) {
 
 		// system under test
 		var bEditable = false;
@@ -194,7 +194,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oCheckBox.getTabIndex(), 0, "'getTabindex' should return 0");
@@ -209,7 +209,7 @@ sap.ui.define([
 	/* ----------------------------------------------- */
 	/* Test: 'displayOnly=true'                        */
 	/* ----------------------------------------------- */
-	QUnit.test("'displayOnly=true'", function (assert) {
+	QUnit.test("'displayOnly=true'", async function(assert) {
 
 		// system under test
 		var bDisplayOnly = true;
@@ -217,7 +217,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oCheckBox.getTabIndex(), -1, "'getTabindex' should return -1");
@@ -231,7 +231,7 @@ sap.ui.define([
 	/* ----------------------------------------------- */
 	/* Test: 'displayOnly=true&enabled=false'          */
 	/* ----------------------------------------------- */
-	QUnit.test("'displayOnly=true'", function (assert) {
+	QUnit.test("'displayOnly=true'", async function(assert) {
 
 		// system under test
 		var bDisplayOnly = true;
@@ -240,7 +240,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.equal(oCheckBox.$().hasClass("sapMCbDisplayOnly"), false, ": The CheckBox should not have class sapMCbDisplayOnly");
@@ -255,14 +255,14 @@ sap.ui.define([
 	/* Test: 'selected=true'                           */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'selected=true'", function (assert) {
+	QUnit.test("'selected=true'", async function(assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox({ selected: true });
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(oCheckBox.$("CbBg").hasClass("sapMCbMarkChecked"), "selected=true: CheckBox should have class sapMCbMarkChecked");
@@ -278,14 +278,14 @@ sap.ui.define([
 	/* Test: 'selected=false'						   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'selected=false'", function (assert) {
+	QUnit.test("'selected=false'", async function(assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox({ selected: false });
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(!oCheckBox.$("CbBg").hasClass("sapMCbMarkChecked"), "selected=false: CheckBox should not have class sapMCbMarkChecked");
@@ -300,14 +300,14 @@ sap.ui.define([
 	/* Test: 'selected=false'						   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'selected=null'", function (assert) {
+	QUnit.test("'selected=null'", async function(assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox({ selected: false });
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//act
 		oCheckBox.setSelected(null);
@@ -323,14 +323,14 @@ sap.ui.define([
 	/* Test: 'partiallySelected'				   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("partiallySelected=true", function (assert) {
+	QUnit.test("partiallySelected=true", async function(assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox({ partiallySelected: true });
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(oCheckBox.$("CbBg").hasClass("sapMCbMarkPartiallyChecked"), "Should have sapMCbMarkPartiallyChecked class");
@@ -338,7 +338,7 @@ sap.ui.define([
 
 		//act
 		oCheckBox.setPartiallySelected(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oCheckBox.$("CbBg").hasClass("sapMCbMarkPartiallyChecked"), "Should not have sapMCbMarkPartiallyChecked class");
 		assert.equal(oCheckBox.getPartiallySelected(), false, "Should have partiallySelected property = false");
 
@@ -385,14 +385,14 @@ sap.ui.define([
 	/* Test: wrapping property                         */
 	/* ----------------------------------------------- */
 
-	QUnit.test("wrapping property", function (assert) {
+	QUnit.test("wrapping property", async function(assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox({ wrapping: true });
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(oCheckBox._getLabel().getWrapping(), "wrapping=true: CheckBox's label wrapping should be set");
@@ -400,7 +400,7 @@ sap.ui.define([
 
 		//act
 		oCheckBox.setWrapping(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(!oCheckBox._getLabel().getWrapping(), "wrapping=false: CheckBox's label wrapping should not be set");
@@ -414,7 +414,7 @@ sap.ui.define([
 	/* Test: 'useEntireWidth functionality'            */
 	/* ----------------------------------------------- */
 
-	QUnit.test("useEntireWidth functionality", function (assert) {
+	QUnit.test("useEntireWidth functionality", async function(assert) {
 
 		// system under test
 		var CHECKBOX_WIDTH = 50,
@@ -427,7 +427,7 @@ sap.ui.define([
 		// arrange
 		oCheckBox.placeAt("content");
 		oCheckBox.setWidth("50px");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oCheckBox.$().outerWidth(), CHECKBOX_WIDTH, "CheckBox main div should have width of '50px'");
@@ -435,7 +435,7 @@ sap.ui.define([
 
 		// act
 		oCheckBox.setUseEntireWidth(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oCheckBox.$().prop("style")["width"], "", "CheckBox main div should not have width set");
@@ -449,13 +449,13 @@ sap.ui.define([
 	/* Test: 'ValueState=Error'						   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'ValueState=Error'", function (assert) {
+	QUnit.test("'ValueState=Error'", async function(assert) {
 		// system under test
 		var oCheckBox = new CheckBox({ valueState: ValueState.Error });
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(oCheckBox.$().hasClass("sapMCbErr"), "The CheckBox has value state error css class.");
@@ -469,13 +469,13 @@ sap.ui.define([
 	/* Test: 'ValueState=Warning'						   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'ValueState=Warning'", function (assert) {
+	QUnit.test("'ValueState=Warning'", async function(assert) {
 		// system under test
 		var oCheckBox = new CheckBox({ valueState: ValueState.Warning });
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(oCheckBox.$().hasClass("sapMCbWarn"), "The CheckBox has value state warning css class.");
@@ -488,13 +488,13 @@ sap.ui.define([
 	/* Test: 'ValueState=Success'						   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'ValueState=Success'", function (assert) {
+	QUnit.test("'ValueState=Success'", async function(assert) {
 		// system under test
 		var oCheckBox = new CheckBox({ valueState: ValueState.Success });
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(oCheckBox.$().hasClass("sapMCbSucc"), "The CheckBox has value state success css class.");
@@ -507,13 +507,13 @@ sap.ui.define([
 	/* Test: 'ValueState=Information'				   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'ValueState=Information'", function (assert) {
+	QUnit.test("'ValueState=Information'", async function(assert) {
 		// system under test
 		var oCheckBox = new CheckBox({ valueState: ValueState.Information });
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(oCheckBox.$().hasClass("sapMCbInfo"), "The CheckBox has value state information css class.");
@@ -526,7 +526,7 @@ sap.ui.define([
 	/* Test: 'name'                                    */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'name'", function (assert) {
+	QUnit.test("'name'", async function(assert) {
 
 		var sName = "my Name";
 
@@ -535,7 +535,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oCheckBox.$("CB").attr("name"), sName, "Property 'name=" + sName + "': CheckBox input element should have attribute 'name=" + sName + "'");
@@ -604,7 +604,7 @@ sap.ui.define([
 	/* Test: 'tabIndex' 							   */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'tabIndex'", function (assert) {
+	QUnit.test("'tabIndex'", async function(assert) {
 
 		var iTabIndex = 2;
 
@@ -614,7 +614,7 @@ sap.ui.define([
 		// arrange
 		oCheckBox.placeAt("content");
 		oCheckBox.setTabIndex(iTabIndex);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oCheckBox.$().attr("tabindex"), iTabIndex.toString(), "Property 'tabIndex=" + iTabIndex + "': CheckBox should have attribute 'tabindex=" + iTabIndex + "'");
@@ -657,7 +657,7 @@ sap.ui.define([
 
 				// arrange
 				oCheckBox.placeAt("content");
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 				// assertions
 				assert.strictEqual(oSpy.lastCall.args[0], value, "Property '" + property + "=" + value + "'testSetLabelProperty: Corresponding setter method of label control should have been called accordingly");
@@ -669,17 +669,17 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should render the text of a Checkbox after rendering the checkbox without setting label properties", function (assert) {
+	QUnit.test("Should render the text of a Checkbox after rendering the checkbox without setting label properties", async function(assert) {
 		// Arrange
 		var oCheckBox = new CheckBox();
 
 		// System under Test
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oCheckBox.setText("foo");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oCheckBox.$("label").length);
@@ -783,7 +783,7 @@ sap.ui.define([
 
 	QUnit.module("Properties");
 
-	QUnit.test("valueState with enabled and editable set to false", function (assert) {
+	QUnit.test("valueState with enabled and editable set to false", async function(assert) {
 		// system under test
 		var oCheckBox = new CheckBox({
 			enabled: false,
@@ -792,28 +792,28 @@ sap.ui.define([
 
 		// act
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oCheckBox.$().hasClass("sapMCbErr"));
 
 		// act
 		oCheckBox.setEnabled(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oCheckBox.$().hasClass("sapMCbErr"));
 
 		// act
 		oCheckBox.setEditable(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oCheckBox.$().hasClass("sapMCbErr"));
 
 		// act
 		oCheckBox.setEditable(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oCheckBox.$().hasClass("sapMCbErr"));
@@ -831,14 +831,14 @@ sap.ui.define([
 	/* Test: Existence                                 */
 	/* ----------------------------------------------- */
 
-	QUnit.test("Existence", function (assert) {
+	QUnit.test("Existence", async function(assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox();
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(oCheckBox.$().hasClass("sapMCb"), "CheckBox should have class sapMCb");
@@ -860,7 +860,7 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 		// assertions
 		if (bDesktop) {
@@ -900,7 +900,7 @@ sap.ui.define([
 	/* Test: tap                                       */
 	/* ----------------------------------------------- */
 
-	QUnit.test("tap", function (assert) {
+	QUnit.test("tap", async function(assert) {
 
 		// system under test
 		var oCheckBox = new CheckBox();
@@ -909,28 +909,28 @@ sap.ui.define([
 
 		// arrange
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
 		assert.strictEqual(oCheckBox.$().attr("aria-checked"), "false", "Property 'aria-checked': Default value should be 'false'");
 
 		QUtils.triggerEvent("tap", oCheckBox.getId());
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oSpy.calledOnce, "Event 'select' should have been fired");
 		assert.equal(oCheckBox.getSelected(), true, "CheckBox should be selected");
 		assert.strictEqual(oCheckBox.$().attr("aria-checked"), "true", "Property 'aria-checked': Default value should be 'true'");
 
 		QUtils.triggerEvent("tap", oCheckBox.getId());
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oSpy.calledTwice, "Event 'select' should have been fired");
 		assert.equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
 
 		oCheckBox.setEditable(false);
 		QUtils.triggerEvent("tap", oCheckBox.getId());
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oSpy.calledTwice, "Event 'select' should have been fired");
 		assert.equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
@@ -944,17 +944,17 @@ sap.ui.define([
 	/* ------------------------------------------------------------------------------- */
 
 	function testTap(sTestName, oTestObject, oAssertion) {
-		QUnit.test(sTestName, function (assert) {
+		QUnit.test(sTestName, async function(assert) {
 
 			// system under test
 			var oCheckBox = new CheckBox({ selected: oTestObject.selected, partiallySelected: oTestObject.partiallySelected });
 
 			// arrange
 			oCheckBox.placeAt("content");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			QUtils.triggerEvent("tap", oCheckBox.getId());
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			assert.equal(oCheckBox.getSelected(), oAssertion.isSelected, "Selected should be: " + oAssertion.isSelected);
@@ -996,7 +996,7 @@ sap.ui.define([
 	/* Test: SPACE key                                 */
 	/* ----------------------------------------------- */
 	function testSpaceKey(sTestName, oOptions) {
-		QUnit.test(sTestName, function (assert) {
+		QUnit.test(sTestName, async function(assert) {
 
 			//Arrange
 			var oSpy = this.spy();
@@ -1004,12 +1004,12 @@ sap.ui.define([
 
 			// System under Test
 			oCheckBox.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			oCheckBox.$().trigger("focus"); // set focus on checkbox
 
 			QUtils.triggerKeyup(oCheckBox.$(), KeyCodes.SPACE); // trigger Space up on checkbox
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(oSpy.callCount, 1, "SPACE is pressed, select event was fired");
 			assert.equal(oCheckBox.getSelected(), oOptions.expectedSelection, oOptions.expectedMessage);
@@ -1043,7 +1043,7 @@ sap.ui.define([
 	/* Test: ENTER key                                 */
 	/* ----------------------------------------------- */
 	function testEnterKey(sTestName, oOptions) {
-		QUnit.test(sTestName, function (assert) {
+		QUnit.test(sTestName, async function(assert) {
 
 			//Arrange
 			var oSpy = this.spy();
@@ -1051,12 +1051,12 @@ sap.ui.define([
 
 			// System under Test
 			oCheckBox.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			oCheckBox.$().trigger("focus"); // set focus on checkbox
 
 			QUtils.triggerKeydown(oCheckBox.$(), KeyCodes.ENTER); // trigger Enter on checkbox
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(oSpy.callCount, 1, "Enter is pressed, select event was fired");
 			assert.equal(oCheckBox.getSelected(), oOptions.expectedSelection, oOptions.expectedMessage);
@@ -1149,27 +1149,27 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("Tooltips", function (assert) {
+	QUnit.test("Tooltips", async function(assert) {
 		// system under test
 		var oCheckBox = new CheckBox();
 
 		// act
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oCheckBox.getDomRef().getAttribute("title"), null, "No tooltip or value state - title attribute is empty");
 
 		// act
 		oCheckBox.setTooltip("Sample tooltip");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oCheckBox.getDomRef().getAttribute("title"), "Sample tooltip", "Tooltip set - title attribute is not empty");
 
 		// act
 		oCheckBox.setValueState("Error");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oCheckBox.getDomRef().getAttribute("title"), "Sample tooltip - Invalid entry", "Tooltip and value state set - title attribute is correct");
@@ -1177,7 +1177,7 @@ sap.ui.define([
 		// act
 		oCheckBox.setEditable(false);
 		oCheckBox.setEnabled(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oCheckBox.getDomRef().getAttribute("title"), "Sample tooltip", "Checkbox not editable or enabled - title attribute is set with custom tooltip only");
@@ -1187,7 +1187,7 @@ sap.ui.define([
 
 		// act
 		oCheckBox.setValueStateText("Custom Value State");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oCheckBox.getDomRef().getAttribute("title"), "Sample tooltip - Custom Value State", "Custom value state text set - title attribute is correct");
@@ -1196,7 +1196,7 @@ sap.ui.define([
 		oCheckBox.destroy();
 	});
 
-	QUnit.test("Referencing labels enhancing", function (assert) {
+	QUnit.test("Referencing labels enhancing", async function(assert) {
 		// system under test
 		var oSpy = this.spy(CheckBox.prototype, "_handleReferencingLabels"),
 			oSpyHandler = this.spy(CheckBox.prototype, "_fnLabelTapHandler"),
@@ -1214,10 +1214,10 @@ sap.ui.define([
 		// act
 		oLabel.placeAt("content");
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		QUtils.triggerEvent("tap", oLabel.getId());
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oSpyHandler.calledOnce, "Handler function is called");
@@ -1228,7 +1228,7 @@ sap.ui.define([
 	});
 
 	// test that ariaLabelledBy includes the external label's id when the labelFor is set and there is value in the text property
-	QUnit.test("AriaLabelledBy", function (assert) {
+	QUnit.test("AriaLabelledBy", async function(assert) {
 		// system under test
 		var oLabel = new Label({
 				text: "referencing label",
@@ -1243,14 +1243,14 @@ sap.ui.define([
 		// act
 		oLabel.placeAt("content");
 		oCheckBox.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oCheckBox.getDomRef().getAttribute("aria-labelledby"), oLabel.getId(), "AriaLabelledBy includes the external label's id");
 
 		// act
 		oCheckBox.setText("Test");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		sAriaLabelledBy = oCheckBox.getDomRef().getAttribute("aria-labelledby");
 		oCbLabel = oCheckBox.getAggregation("_label");
@@ -1287,12 +1287,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Message support", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oCheckBox = new CheckBox({
 				selected: "{/selected}"
 			});
 			this.oCheckBox.placeAt('qunit-fixture');
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCheckBox.destroy();
@@ -1357,12 +1357,12 @@ sap.ui.define([
 	/* Test: 'aria-checked with different values of selected and partiallySelected properties   */
 	/* ---------------------------------------------------------------------------------------- */
 	function testAriaChecked(sTestName, oTestObject, sAssertion) {
-		QUnit.test(sTestName, function (assert) {
+		QUnit.test(sTestName, async function(assert) {
 			var oCheckBox = new CheckBox({ selected: oTestObject.selected, partiallySelected: oTestObject.partiallySelected });
 
 			// arrange
 			oCheckBox.placeAt("content");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(oCheckBox.$().attr("aria-checked"), sAssertion);

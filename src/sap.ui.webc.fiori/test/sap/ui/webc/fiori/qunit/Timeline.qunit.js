@@ -3,16 +3,17 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/Timeline",
 	"sap/ui/webc/fiori/TimelineItem",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, Timeline, TimelineItem, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Timeline, TimelineItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oTimeline = new Timeline({
 				items: [
 					new TimelineItem({
@@ -111,7 +112,7 @@ sap.ui.define([
 				]
 			});
 			this.oTimeline.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oTimeline.destroy();

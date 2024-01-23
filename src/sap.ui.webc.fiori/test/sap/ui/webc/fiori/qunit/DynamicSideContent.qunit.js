@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/DynamicSideContent",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, DynamicSideContent, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, DynamicSideContent, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oDynamicSideContent = new DynamicSideContent({
 				content: [
 					new Button({
@@ -64,7 +65,7 @@ sap.ui.define([
 				}
 			});
 			this.oDynamicSideContent.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oDynamicSideContent.destroy();

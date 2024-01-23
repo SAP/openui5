@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/InvisibleText",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/test/TestUtils",
 	"sap/m/TimePickerClocks",
 	"sap/m/TimePickerClock",
@@ -45,6 +46,7 @@ sap.ui.define([
 	createAndAppendDiv,
 	DateFormat,
 	InvisibleText,
+	nextUIUpdate,
 	TestUtils,
 	TimePickerClocks,
 	TimePickerClock,
@@ -127,7 +129,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oTp = new TimePicker();
 			this.oTp.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oTp.destroy();
@@ -266,7 +268,7 @@ sap.ui.define([
 				minutesStep: this.STEP
 			});
 			this.oClocks.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oClocks.destroy();
@@ -291,7 +293,7 @@ sap.ui.define([
 			this.clock = sinon.useFakeTimers();
 			this.oTimePicker = new TimePicker("t1");
 			this.oTimePicker.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function() {
 			this.clock.restore();
@@ -347,9 +349,9 @@ sap.ui.define([
 	QUnit.test("showCurrentTimeButton - button existence", function(assert) {
 		// Prepare
 		this.oTimePicker.setShowCurrentTimeButton(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.oTimePicker.toggleOpen();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oTimePicker._getClocks().getShowCurrentTimeButton(), "Now button visibility is propagated to the clocks");
@@ -372,7 +374,7 @@ sap.ui.define([
 			// SUT
 			this.oTimePicker = new TimePicker();
 			this.oTimePicker.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			// Cleanup
@@ -423,7 +425,7 @@ sap.ui.define([
 				dateValue: UI5Date.getInstance(2016, 1, 17, 10, 11, 12)
 			});
 			this.oTimePicker.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			// Cleanup
@@ -503,7 +505,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		for (i = 0; i < aSetValues.length; i++) {
@@ -792,7 +794,7 @@ sap.ui.define([
 			});
 
 		oTP.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oTP.setValue(null);
 		assert.strictEqual(oTP.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
@@ -1021,7 +1023,7 @@ sap.ui.define([
 		//sut
 		var tp = new TimePicker();
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//arrange
 		tp.focus();
@@ -1043,7 +1045,7 @@ sap.ui.define([
 		//sut
 		var tp = new TimePicker();
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//arrange
 		tp.focus();
@@ -1073,7 +1075,7 @@ sap.ui.define([
 			displayFormat: "HH:mm"
 		});
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//arrange
 		tp.focus();
@@ -1102,7 +1104,7 @@ sap.ui.define([
 			displayFormat: "HH:mm"
 		});
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//arrange
 		tp.focus();
@@ -1124,7 +1126,7 @@ sap.ui.define([
 		var tp = new TimePicker();
 		var oBtnCancel, oPopoverCloseSpy;
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//arrange
 		tp._openPicker();
@@ -1154,11 +1156,11 @@ sap.ui.define([
 				}
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oButton.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oTP.getAggregation("_picker"), oTP.getId() + ": picker exists");
@@ -1216,7 +1218,7 @@ sap.ui.define([
 		tp.setModel(oModel);
 
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 
@@ -1255,7 +1257,7 @@ sap.ui.define([
 		tp.setModel(oModel);
 
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
 		assert.equal(tp.getValue(), "4:35\u202fPM", "the value property is set in and formatted correctly");
@@ -1324,7 +1326,7 @@ sap.ui.define([
 	QUnit.test("tap on the input icon open/closes the picker", function(assert) {
 		var tp = new TimePicker();
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var icon = tp.$().find(".sapUiIcon");
 		qutils.triggerEvent("mousedown", icon[0]);
@@ -1345,7 +1347,7 @@ sap.ui.define([
 	QUnit.test("focussed input is styled correctly", function(assert) {
 		var tp = new TimePicker();
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		tp._openPicker();
 		this.clock.tick(1000);
@@ -1367,7 +1369,7 @@ sap.ui.define([
 	QUnit.test("_getInputValue", function(assert) {
 		var tp = new TimePicker();
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		tp.setValue("10:55:13 AM");
 		var result = tp._getInputValue();
@@ -1383,7 +1385,7 @@ sap.ui.define([
 
 		var oTp = new TimePicker();
 		oTp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oTp.setDateValue(UI5Date.getInstance(2015, 11, 1, 3, 12, 15));
 		oTp._increaseTime(-1, "hour");
@@ -1406,7 +1408,7 @@ sap.ui.define([
 		});
 
 		oTP.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		oTP._handleInputChange("24:00:00");
@@ -1437,7 +1439,7 @@ sap.ui.define([
 		//prepare
 		//this test checks the scenario when the default date pattern has HH for hours. this happens when "de-DE" is set for language.
 		Localization.setLanguage("de-DE");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var tpId = "timepicker",
 			oClocksSpy = this.spy(TimePickerClocks.prototype, "_setTimeValues"),
@@ -1447,11 +1449,11 @@ sap.ui.define([
 			}).placeAt("qunit-fixture"),
 			oGetClocksStub = this.stub(oTP, "_getClocks").callsFake(function () { return oTimePickerClocks; });
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		oTP.setValue('24:00:00');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.ok(oTP._bValid, "value is valid");
@@ -1505,7 +1507,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//render
 
@@ -1544,7 +1546,7 @@ sap.ui.define([
 
 		// arrange
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		qutils.triggerEvent("focusin", tp.getDomRef());
@@ -1567,7 +1569,7 @@ sap.ui.define([
 		oSandbox.stub(Device.system, "desktop").value(false);
 		oTimePicker.placeAt("qunit-fixture");
 		oLabel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oTimePicker._createPicker("medium");
@@ -1594,7 +1596,7 @@ sap.ui.define([
 			});
 			this.sandbox = sinon.sandbox;
 			this.oTP.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oTP.destroy();
@@ -1651,7 +1653,7 @@ sap.ui.define([
 						var oLabel = new Label(sLabelId, {
 							labelFor: oSut
 						}).placeAt('qunit-fixture');
-						oCore.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 						//assert
 						fnAssert.strictEqual(oSut.$(sInnerInputSuffix).attr("aria-labelledby").indexOf(sLabelId) > -1, true, "External label reference is applied");
 						//clear
@@ -1666,13 +1668,13 @@ sap.ui.define([
 					if (bReferencedWithPlaceholder) {
 						//prepare
 						oSut.setPlaceholder("Placeholder");
-						oCore.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 						//assert
 						fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).length, 1, "placeholder invisible label is rendered");
 						fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).text(), "Placeholder", "placeholder invisible label text is as expected");
 						//clear
 						oSut.setPlaceholder(null);
-						oCore.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 					} else {
 						//assert
 						fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).length, 1, "placeholder invisible label is rendered");
@@ -1714,7 +1716,7 @@ sap.ui.define([
 		this.oTP.setPlaceholder("Placeholder");
 		//assert
 		assert.ok(!!this.oTP.getAccessibilityInfo, "TimePicker has a getAccessibilityInfo function");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInfo = this.oTP.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.type, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"), "Type");
@@ -1812,7 +1814,7 @@ sap.ui.define([
 
 			//arrange
 			tp.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			//act
 			triggerMultipleKeypress(tp, sInput);
@@ -1963,7 +1965,7 @@ sap.ui.define([
 			displayFormat: "HH:mm"
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		qutils.triggerKeydown(jQuery(oTimePicker.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
@@ -2040,7 +2042,7 @@ sap.ui.define([
 			iCallCount;
 
 		oTp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oModel.attachEvent("propertyChange", function() {
 			iCallCount++;
@@ -2051,7 +2053,7 @@ sap.ui.define([
 		//act
 		triggerMultipleKeypress(oTp, "12");
 		qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), KeyCodes.ENTER);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(iCallCount, 1, "model uopdated only once");
@@ -2068,7 +2070,7 @@ sap.ui.define([
 
 		//arrange
 		oTp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		triggerMultipleKeypress(oTp, "15");
@@ -2089,7 +2091,7 @@ sap.ui.define([
 
 		//arrange
 		oTp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		triggerMultipleKeypress(oTp, "151");
@@ -2111,7 +2113,7 @@ sap.ui.define([
 
 		//arrange
 		oTp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//focus is explicitly needed, because sending a single key ('7' - see below) does not focus the element.
 		jQuery(oTp).trigger("focus");
 		this.clock.tick(1000);
@@ -2137,7 +2139,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
 		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
@@ -2164,7 +2166,7 @@ sap.ui.define([
 
 		//arrange
 		oTp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		triggerMultipleKeypress(oTp, "15");
@@ -2187,7 +2189,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
 		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
@@ -2214,7 +2216,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("y", 4, "12 P-");
 
@@ -2236,7 +2238,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("v", 3, "12 ------");
 
@@ -2257,7 +2259,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("b", 3, "12 --");
@@ -2279,7 +2281,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("b", 4, "12 M---");
@@ -2301,7 +2303,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("A", 4, "12 M---");
@@ -2323,7 +2325,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("a", 3, "12 --");
@@ -2440,7 +2442,7 @@ sap.ui.define([
 			});
 
 		oTp.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		oTp.setValue("");
@@ -2459,7 +2461,7 @@ sap.ui.define([
 			}).placeAt("content"),
 			oInitMaskSpy = this.spy(oTP, "_initMask");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		oTP.setDateValue();
@@ -2478,7 +2480,7 @@ sap.ui.define([
 			}).placeAt("content"),
 			iDelPressed = -1;
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		oTP.focus();
@@ -2528,7 +2530,7 @@ sap.ui.define([
 		});
 
 		oTp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		//assert
@@ -2542,7 +2544,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oTp = new TimePicker();
 			this.oTp.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 
 		afterEach: function () {
@@ -2976,7 +2978,7 @@ sap.ui.define([
 		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.Off; }),
 			oChangeSpy = this.spy();
 		this.oTp.attachChange(oChangeSpy);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		jQuery(this.oTp.getFocusDomRef()).val("11");
@@ -2993,7 +2995,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oTp = new TimePicker();
 			this.oTp.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 
 		afterEach: function () {
@@ -3137,7 +3139,7 @@ sap.ui.define([
 
 		// arrange
 		oTP.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oTP._openPicker();
@@ -3166,7 +3168,7 @@ sap.ui.define([
 
 			//arrange
 			this.oTp.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.clock.restore();
@@ -3190,7 +3192,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		tp._handleInputChange("13 00");
 		tp._handleInputChange("13 00");
@@ -3222,7 +3224,7 @@ sap.ui.define([
 
 				// Arrange
 				tp.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 				// Act
 				tp.updateDomValue(" 8:00:00 AM");
@@ -3254,7 +3256,7 @@ sap.ui.define([
 
 				// Arrange
 				tp.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 				// Act
 				tp.updateDomValue("08:00:00 AM");
@@ -3286,7 +3288,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		tp._handleInputChange("11 28");
@@ -3308,7 +3310,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		tp._$input.val("2:28:34");
@@ -3361,7 +3363,7 @@ sap.ui.define([
 		var tp = new TimePicker(),
 			oIsIconClickedSpy = this.spy(tp, "_isIconClicked");
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		tp._openPicker();
 		var icon = tp.$().find(".sapUiIcon");
@@ -3423,7 +3425,7 @@ sap.ui.define([
 		});
 		//arrange
 		oTp2.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		triggerMultipleKeypress(this.oTp, "09");
@@ -3442,7 +3444,7 @@ sap.ui.define([
 		//arrange
 		this.oTp.setValue("07:15");
 		oTp2.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		jQuery(this.oTp.getFocusDomRef()).trigger("focus");
@@ -3459,7 +3461,7 @@ sap.ui.define([
 			spyClose = this.spy(tp, "fireAfterValueHelpClose");
 
 		tp.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopup = tp._createPicker(tp._getDisplayFormatPattern());
 		oPopup.fireAfterOpen();
@@ -3478,7 +3480,7 @@ sap.ui.define([
 			spyLiveChange = this.spy(oTP, "fireLiveChange");
 
 		oTP.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oTP.focus();
@@ -3521,7 +3523,7 @@ sap.ui.define([
 
 		// Arrange
 		this.oTP.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		this.oTP.toggleOpen();
@@ -3544,7 +3546,7 @@ sap.ui.define([
 				}
 			};
 		this.oTP.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		this.oTP.onfocusin(oFakeEvent);
@@ -3559,7 +3561,7 @@ sap.ui.define([
 			oInPreferredUserInteractionSpy = this.spy(oTP, "_inPreferredUserInteraction");
 
 			oTP.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oInPreferredUserInteractionSpy.calledOnce, "Preferred interaction is handled during rendering");

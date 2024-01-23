@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/QuickViewPage",
 	"sap/m/QuickViewGroup",
-	"sap/m/QuickViewGroupElement"
+	"sap/m/QuickViewGroupElement",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	JSONModel,
 	Core,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Page,
 	QuickViewPage,
 	QuickViewGroup,
-	QuickViewGroupElement
+	QuickViewGroupElement,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -139,7 +141,7 @@ sap.ui.define([
 
 			this.oQuickViewPage.setModel(oModel);
 			oPage.addContent(this.oQuickViewPage);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oQuickViewPage.destroy();
@@ -156,7 +158,7 @@ sap.ui.define([
 
 		this.oQuickViewPage.setModel(oModel);
 		oPage.addContent(this.oQuickViewPage);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		// Assert
@@ -201,7 +203,7 @@ sap.ui.define([
 
 			this.oQuickViewPage.setModel(oModel);
 			oPage.addContent(this.oQuickViewPage);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oQuickViewPage.destroy();
@@ -218,7 +220,7 @@ sap.ui.define([
 		mData.description = "";
 		mData.iconVisibility = false;
 		oModel.setData(mData);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oQuickViewPage.$()[0].childElementCount, 1, "only the form should be rendered");
 	});
@@ -252,7 +254,7 @@ sap.ui.define([
 			displayShape: AvatarShape.Square
 		});
 		this.oQuickViewPage.setAvatar(oAvatar);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oRenderedAvatar = this.oQuickViewPage._mPageContent.header.getContent()[AVATAR_INDEX];
 
@@ -299,7 +301,7 @@ sap.ui.define([
 
 		this.oQuickViewPage.setTitle("Title");
 		this.oQuickViewPage.setTitleUrl("www.sap.com");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oRenderedAvatar = this.oQuickViewPage._getAvatar();
 

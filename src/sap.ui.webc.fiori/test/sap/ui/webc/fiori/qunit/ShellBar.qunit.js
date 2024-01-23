@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/ShellBar",
 	"sap/ui/webc/fiori/ShellBarItem",
 	"sap/ui/webc/main/Avatar",
@@ -15,13 +16,13 @@ sap.ui.define([
 	"sap/ui/webc/main/Icon",
 	"sap/ui/webc/main/SuggestionGroupItem",
 	"sap/ui/webc/main/SuggestionItem"
-], function(createAndAppendDiv, Core, ShellBar, ShellBarItem, Avatar, Button, NotificationListGroupItem, NotificationAction, NotificationListItem, CustomListItem, Input, Icon, SuggestionGroupItem, SuggestionItem) {
+], function(createAndAppendDiv, Core, nextUIUpdate, ShellBar, ShellBarItem, Avatar, Button, NotificationListGroupItem, NotificationAction, NotificationListItem, CustomListItem, Input, Icon, SuggestionGroupItem, SuggestionItem) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oShellBar = new ShellBar({
 				items: [
 					new ShellBarItem({
@@ -484,7 +485,7 @@ sap.ui.define([
 				}
 			});
 			this.oShellBar.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oShellBar.destroy();

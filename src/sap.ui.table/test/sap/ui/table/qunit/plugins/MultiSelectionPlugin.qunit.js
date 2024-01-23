@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/table/plugins/SelectionPlugin",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Core"
 ], function(
+	nextUIUpdate,
 	TableQUnitUtils,
 	MultiSelectionPlugin,
 	SelectionPlugin,
@@ -410,12 +412,12 @@ sap.ui.define([
 
 			var oSetPropertySpy = sinon.spy(oSelectionPlugin, "setProperty");
 			oSelectionPlugin.setLimit(5);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 			assert.ok(oSetPropertySpy.calledOnceWithExactly("limit", 5, true), "setProperty called once with the correct parameters");
 			oSetPropertySpy.resetHistory();
 
 			oSelectionPlugin.setLimit(0);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 			assert.ok(oSetPropertySpy.calledOnceWithExactly("limit", 0, false), "setProperty called once with the correct parameters");
 
 			assert.strictEqual($SelectAll.find(".sapUiTableSelectAllCheckBox").length, 1,

@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/IllustratedMessage",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, IllustratedMessage, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, IllustratedMessage, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oIllustratedMessage = new IllustratedMessage({
 				subtitleText: "Some text...",
 				titleText: "Some text...",
@@ -54,7 +55,7 @@ sap.ui.define([
 				})
 			});
 			this.oIllustratedMessage.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oIllustratedMessage.destroy();

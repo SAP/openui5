@@ -5,21 +5,21 @@ sap.ui.define("sap.m.qunit.UploadSetToolbar", [
 	"sap/m/upload/UploadSetToolbarPlaceholder",
 	"sap/m/Title",
 	"sap/m/ToolbarSpacer",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/FileUploader",
 	"sap/m/Button",
 	"sap/m/OverflowToolbar",
 	"sap/m/ToggleButton",
 	"sap/base/Log",
 	"sap/ui/core/Core"
-], function (UploadSet, UploadSetToolbarPlaceholder, Title, ToolbarSpacer, FileUploader, Button,
-			 OverflowToolbar, ToggleButton, Log, oCore) {
+], function(UploadSet, UploadSetToolbarPlaceholder, Title, ToolbarSpacer, nextUIUpdate, FileUploader, Button, OverflowToolbar, ToggleButton, Log, oCore) {
 	"use strict";
 
 	QUnit.module("UploadSet Toolbar Default", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oUploadSet = new UploadSet("noToolbarTest", {});
 			this.oUploadSet.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadSet.destroy();
@@ -43,7 +43,7 @@ sap.ui.define("sap.m.qunit.UploadSetToolbar", [
 		}
 	});
 
-	QUnit.test("Test for adding file uploader to fallback position if UploadSetToolbarPlaceHolder instance missing", function (assert) {
+	QUnit.test("Test for adding file uploader to fallback position if UploadSetToolbarPlaceHolder instance missing", async function(assert) {
 		//Act
 		this.oUploadSet = new UploadSet("noPHToolbarTest", {
 			toolbar: new OverflowToolbar({
@@ -51,7 +51,7 @@ sap.ui.define("sap.m.qunit.UploadSetToolbar", [
 			})
 		});
 		this.oUploadSet.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		var aToolbarElements = this.oUploadSet._oList.getAggregation("headerToolbar").getAggregation("content");
@@ -59,7 +59,7 @@ sap.ui.define("sap.m.qunit.UploadSetToolbar", [
 	});
 
 	QUnit.module("UploadSet Toolbar Custom", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oUploadSet = new UploadSet("PHToolbarTest", {
 				toolbar: new OverflowToolbar({
 					content: [new Button("element1", {text: "Filter"}),
@@ -73,7 +73,7 @@ sap.ui.define("sap.m.qunit.UploadSetToolbar", [
 				})
 			});
 			this.oUploadSet.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadSet.destroy();

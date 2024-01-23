@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/InputBase",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	// provides jQuery.fn.cursorPos
 	"sap/ui/dom/jquery/cursorPos"
@@ -22,6 +23,7 @@ sap.ui.define([
 	InputBase,
 	core,
 	coreLibrary,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -38,7 +40,7 @@ sap.ui.define([
 		var sut = new TextArea(),
 			oCounter;
 		sut.placeAt("qunit-fixture");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// check rendered
 		var $container = jQuery("div.sapMTextArea");
@@ -65,7 +67,7 @@ sap.ui.define([
 		// act
 		sut._adjustContainerDimensions();
 		sut.placeAt("qunit-fixture");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(sut.getDomRef(), "TextArea rendered");
@@ -77,7 +79,7 @@ sap.ui.define([
 	QUnit.test("Should inherit from InputBase", function(assert) {
 		var sut = new TextArea();
 		sut.placeAt("qunit-fixture");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// check input base classes are assigned
 		var $container = jQuery("div.sapMInputBase");
@@ -124,14 +126,14 @@ sap.ui.define([
 			sut = new TextArea(config);
 
 		sut.placeAt("qunit-fixture");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// check assigned properties
 		testprops(config);
 
 		// check setter functions
 		sut.applySettings(setters);
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		testprops(setters);
 
 		//Cleanup
@@ -164,16 +166,16 @@ sap.ui.define([
 					mActualValue = oProperty.get(oTextArea);
 
 					assert.strictEqual(mActualValue, mExpectedValue, "The correct value is applied for property " + sKey);
-					core.applyChanges();
+					nextUIUpdate.runSync()/*fake timer is used in module*/;
 				});
 			},
 			oTextArea = new TextArea(oConfig);
 
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// check setter functions
 		oTextArea.applySettings(oSetters);
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		getAppliedValues(oSetters);
 
 		//Cleanup
@@ -208,7 +210,7 @@ sap.ui.define([
 		});
 
 		sut.placeAt("qunit-fixture");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var $textarea = jQuery("textarea");
 
 		// check touchstart
@@ -250,7 +252,7 @@ sap.ui.define([
 
 		// arrange
 		oTA.placeAt("content");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oTADomRef = oTA.getFocusDomRef();
 		var fnFireChangeSpy = this.spy(oTA, "fireChange");
 
@@ -294,7 +296,7 @@ sap.ui.define([
 
 		// arrange
 		oTA.placeAt("content");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oTADomRef = oTA.getFocusDomRef();
 
 		// act
@@ -324,7 +326,7 @@ sap.ui.define([
 		// arrange
 		oTA.setModel(oModel);
 		oTA.placeAt("content");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnChangeSpy = this.spy(oTA, "fireChange");
 
 		oTA.focus();
@@ -357,7 +359,7 @@ sap.ui.define([
 	QUnit.module("Accessibility");
 	QUnit.test("DOM aria properties", function(assert) {
 		var oTA = new TextArea().placeAt("content");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $TA = jQuery(oTA.getFocusDomRef());
 		assert.strictEqual($TA.attr("role"), undefined, "Control role is not set. It causes issues with Jaws");
@@ -372,7 +374,7 @@ sap.ui.define([
 		var oTA = new TextArea({
 			value : sValue
 		}).placeAt("content");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oTA.focus();
 		assert.strictEqual(oTA.getValue(), sValue, "API value is correct");
@@ -388,12 +390,12 @@ sap.ui.define([
 			growing: true,
 			width: "100%"
 		}).placeAt("content");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var iInitialHeight = oTA.getFocusDomRef().clientHeight;
 
 		oTA.setValue(sLongText);
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oTA.getFocusDomRef().clientHeight >= iInitialHeight, "TextArea height is adjusted");
 		oTA.destroy();
 	});
@@ -409,7 +411,7 @@ sap.ui.define([
 		oTA._updateOverflow();
 		assert.ok(true,  "_updateOverflow is pass successfully when the control is not rendered");
 
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		fnOnResizeSpy = this.spy(oTA, "_resizeHandler");
 
@@ -431,7 +433,7 @@ sap.ui.define([
 		assert.notOk(oTA._getLineHeight(), "_getLineHeight should return null, when there is no dom ref");
 
 		oTA.placeAt('content');
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(!isNaN(oTA._getLineHeight()), "_getLineHeight should be a number");
 
@@ -446,7 +448,7 @@ sap.ui.define([
 			growingMaxLines: 5,
 			width: "100%"
 		}).placeAt("content");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oTA.focus();
 		assert.ok(oTA.getFocusDomRef().scrollHeight > oTA.getFocusDomRef().offsetHeight, "There is scroll bar. Whole content is not visible");
@@ -463,7 +465,7 @@ sap.ui.define([
 			growingMaxLines: 5,
 			width: "100%"
 		}).placeAt("content");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oDOMRef = oTA.getDomRef();
 		var oTextAreaDOMRef = oTA.getDomRef('inner');
@@ -472,7 +474,7 @@ sap.ui.define([
 
 		//Act
 		oTA.setValue(shortText);
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.ok(oMirrorDiv, "A mirror div container should be created");
@@ -483,7 +485,7 @@ sap.ui.define([
 
 		//Act
 		oTA.setValue(sLongText);
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oMirrorDiv.innerHTML.replace('&nbsp;', ''), sLongText, "The mirror div should have the same text as an inner html");
@@ -499,7 +501,7 @@ sap.ui.define([
 				growing: true,
 				cols: 80
 			}).placeAt("content");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oTextArea.getDomRef("hidden").style.width, "40rem", "Width properly calculated");
@@ -508,7 +510,7 @@ sap.ui.define([
 
 		// Act
 		oTextArea.setWidth("200px");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oTextArea.$().width(), 200, "Width property takes over the cols");
@@ -517,7 +519,7 @@ sap.ui.define([
 		// Act
 		oTextArea.setWidth(null);
 		oTextArea.setGrowing(false);
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.notEqual(oTextArea.$().width(), 200, "TextArea resizes to default dimesnions");
@@ -541,7 +543,7 @@ sap.ui.define([
 
 		// arrange
 		oTA.placeAt("content");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oCounter = oTA.$("counter");
 		oCounterStyle = window.getComputedStyle(oCounter[0]);
@@ -563,7 +565,7 @@ sap.ui.define([
 		oTA.setValue(oTA.getValue() + sPasteText);
 		this.clock.tick(10);
 		qutils.triggerEvent("input", oTA);
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(oTA.getValue(), "This is test text. Additional text is added", "The Textarea value is correct");
@@ -596,7 +598,7 @@ sap.ui.define([
 		// arrange
 		oTA.setValue(sInitValue);
 		oTA.placeAt("content");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oTA.onfocusin();
 
 		oCounter = oTA.$("counter");
@@ -608,7 +610,7 @@ sap.ui.define([
 
 		// arrange
 		oTA.setShowExceededText(true);
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oCounter = oTA.$("counter");
 
 		// assertions
@@ -618,7 +620,7 @@ sap.ui.define([
 
 		//arrange
 		oTA.setValue(sInitValue);
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oTA.getValue(), sInitValue, "The TextArea value is correct");
 		assert.strictEqual(oCounter[0].innerText, oBundle.getText(sMessageBundleKey + "_EXCEEDED", 12), "The counter is empty");
 		assert.strictEqual(oTA.$("inner")[0].hasAttribute("aria-labelledby"), true, "The TextArea has got an aria-labelledby attribute");
@@ -626,7 +628,7 @@ sap.ui.define([
 
 		// arrange
 		oTA.setShowExceededText(false);
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(oTA.getValue(), sInitValue.substring(0, iMaxLength), "The TextArea value is correct");
@@ -657,7 +659,7 @@ sap.ui.define([
 
 		// arrange
 		oTA.placeAt("content");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(oTA.getValue(), sInitValue, "The TextArea value is correct");
@@ -670,7 +672,7 @@ sap.ui.define([
 		oTA.setValue("This is test text.");
 		//fireLiveChange not "input" event because in inputBase onInput: for IE the event is marked as invalid on event simulation
 		oTA.fireLiveChange();
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(oTA.getValue(), "This is test text.", "The TextArea value is correct");
@@ -705,7 +707,7 @@ sap.ui.define([
 		oTA.setModel(oModel);
 
 		oTA.placeAt("content");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//fireLiveChange not "input" event because in inputBase onInput: for IE the event is marked as invalid on event simulation
 		oTA.fireLiveChange();
 
@@ -747,13 +749,13 @@ sap.ui.define([
 			});
 
 		oTextArea.placeAt("content");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $textarea = jQuery("textarea");
 
 		//Act
 		$textarea.val(sInitValue).trigger("input");
-		core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oTextArea.getValue(), sInitValue.substring(0, iMaxLength), "The TextArea value is correct");

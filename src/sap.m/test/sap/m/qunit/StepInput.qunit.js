@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/library",
 	"sap/m/StepInput",
@@ -22,6 +23,7 @@ sap.ui.define([
 	Library,
 	qutils,
 	createAndAppendDiv,
+	nextUIUpdate,
 	jQuery,
 	mobileLibrary,
 	StepInput,
@@ -60,7 +62,7 @@ sap.ui.define([
 			this.stepInput = new StepInput();
 
 			this.stepInput.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -122,7 +124,7 @@ sap.ui.define([
 		//Prepare and Act
 		var oSI = new StepInput({editable: false});
 		oSI.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//Assert
 		assert.equal(oSI._getDecrementButton().getVisible(), false,
 			"No decrement button since the StepInput is not editable");
@@ -131,7 +133,7 @@ sap.ui.define([
 
 		//Act
 		oSI.setEditable(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.ok(oSI._getDecrementButton().getVisible(),
@@ -149,12 +151,12 @@ sap.ui.define([
 			oSI = new StepInput();
 
 		oSI.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oRenderSpy = this.spy(oSI._getInput().getRenderer(), "openInputTag");
 		//act
 		oSI.setDescription("EUR");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oRenderSpy.callCount, 1, "openInputTag is called");
 
@@ -168,12 +170,12 @@ sap.ui.define([
 			oSI = new StepInput();
 
 		oSI.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oRenderSpy = this.spy(oSI._getInput().getRenderer(), "closeInputTag");
 		//act
 		oSI.setDescription("EUR");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oRenderSpy.callCount, 1, "closeInputTag is called");
@@ -201,12 +203,12 @@ sap.ui.define([
 			oSI = new StepInput();
 
 		oSI.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oRenderSpy = this.spy(oSI._getInput().getRenderer(), "writeInnerAttributes");
 		//act
 		oSI.setDescription("EUR");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oRenderSpy.callCount, 1, "writeInnerAttributes is called");
@@ -249,7 +251,7 @@ sap.ui.define([
 		var oSI = new StepInput({textAlign: "Center"});
 
 		oSI.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(oSI.getTextAlign(), "Center", "Step input's textAlign is set to 'Center'");
@@ -278,7 +280,7 @@ sap.ui.define([
 		var oSpyDisableButtons = this.spy(this.stepInput, "_disableButtons");
 		//act
 		this.stepInput.setMin(9);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//assert
 		assert.equal(oSpyDisableButtons.callCount, 1, "setMin always calls _disableButtons so the buttons state is reflected");
 		assert.strictEqual(oSpyDisableButtons.getCall(0).args[2], 9,
@@ -305,7 +307,7 @@ sap.ui.define([
 		oSpyDisableButtons = this.spy(this.stepInput, "_disableButtons");
 		//Act
 		this.stepInput.setMax(20);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oSpyDisableButtons.callCount, 1,
 			"setMax always calls _disableButtons so the buttons state is reflected");
@@ -316,7 +318,7 @@ sap.ui.define([
 	QUnit.test("setValue", function (assert) {
 		//act
 		this.stepInput.setValue(11.23);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(typeof this.stepInput.getValue(), typeof this.stepInput._fTempValue, "Temporary value is the same type (number) as real value when value is set as a Number");
@@ -324,7 +326,7 @@ sap.ui.define([
 
 		//act
 		this.stepInput.setValue("3.14");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(typeof this.stepInput.getValue(), typeof this.stepInput._fTempValue, "Temporary value is the same type (number) as real value when value is set as a String");
@@ -337,7 +339,7 @@ sap.ui.define([
 
 		//act
 		this.stepInput.setValueState(sValue);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(this.stepInput.getValueState(), sValue, "valueState is set to " + sValue);
@@ -356,11 +358,11 @@ sap.ui.define([
 		}});
 
 		tempStepInput.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		tempStepInput._handleButtonPress(1);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(tempStepInput.getValueState(), "Error", "valueState is set to Error");
@@ -386,11 +388,11 @@ sap.ui.define([
 	QUnit.test("valueState stays the same after updating value", function (assert) {
 		//prepare
 		this.stepInput.setMin(1).setValue(3).setMax(5);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		this.stepInput.setValue(6);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(this.stepInput.getValueState(), "None", "valueState stays None");
@@ -400,11 +402,11 @@ sap.ui.define([
 	QUnit.test("valueState stays the same after updating min", function (assert) {
 		//prepare
 		this.stepInput.setMin(1).setValue(3).setMax(5);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		this.stepInput.setMin(4);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(this.stepInput.getValueState(), "None", "valueState stays None");
@@ -414,11 +416,11 @@ sap.ui.define([
 	QUnit.test("valueState stays the same after updating max", function (assert) {
 		//prepare
 		this.stepInput.setMin(1).setMax(3).setValue(2);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		this.stepInput.setMax(2);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(this.stepInput.getValueState(), "None", "valueState stays None");
@@ -448,7 +450,7 @@ sap.ui.define([
 		// arrange
 		this.stepInput.setDescription("EUR");
 		assert.strictEqual(this.stepInput.$("input" + sNumericDescSuffix).length, 0, "Description element is not yet rendered");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(this.stepInput._getInput().getDescription(), this.stepInput.getDescription(), "the description is passed to the inner input aggregation");
@@ -460,12 +462,12 @@ sap.ui.define([
 
 		// arrange
 		this.stepInput.setDescription("EUR");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//assert
 		assert.strictEqual(this.stepInput.$().find(".sapMInputBaseContentWrapper")[0].style.width, "50%", "field width by default is 50%");
 		// arrange
 		this.stepInput.setFieldWidth("70%");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput._getInput().getFieldWidth(), this.stepInput.getFieldWidth(), "the fieldWidth is passed to the inner input aggregation");
 		assert.strictEqual(this.stepInput.$().find(".sapMInputBaseContentWrapper")[0].style.width, "70%", "field width of 70% is correctly set to the Input wraper");
@@ -478,7 +480,7 @@ sap.ui.define([
 		this.oLiveChangeSpy = sinon.spy(this.stepInput, "_attachLiveChange");
 		this.oDettachLiveChangeSpy = sinon.spy(this.stepInput, "_detachLiveChange");
 		this.stepInput.setValidationMode(StepInputValidationMode.LiveChange);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(this.stepInput.getValidationMode(), StepInputValidationMode.LiveChange, "validation mode is set to 'LiveChange'");
@@ -487,7 +489,7 @@ sap.ui.define([
 
 		// arrange
 		this.stepInput.setValidationMode(StepInputValidationMode.FocusOut);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(this.stepInput.getValidationMode(), StepInputValidationMode.FocusOut, "validation mode is set to 'FocusOut'");
@@ -500,7 +502,7 @@ sap.ui.define([
 		this.stepInput.setStepMode(StepMode.Multiple);
 		this.stepInput.setStep(5);
 		this.stepInput.setValue(2);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		this.stepInput._verifyValue();
@@ -522,7 +524,7 @@ sap.ui.define([
 
 		// act
 		oInnerInput.fireLiveChange({ value: "0", newValue: "5" });
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oDomRef2 = oInnerInput.getDomRef();
 
@@ -538,7 +540,7 @@ sap.ui.define([
 			});
 
 			this.stepInput.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -557,7 +559,7 @@ sap.ui.define([
 
 		//act
 		this.stepInput.setMin(3);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
@@ -565,28 +567,28 @@ sap.ui.define([
 
 		//act
 		this.stepInput.setValue(2);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//assert
 		assert.strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
 			"The decrement button is disabled because value < min");
 
 		//act
 		this.stepInput.setValue(4);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//assert
 		assert.strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
 			"The decrement button is enabled because the value > min");
 
 		//act
 		this.stepInput.setEnabled(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//assert
 		assert.strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
 			"The increment button is disabled because setEnabled is set to false");
 
 		//act
 		this.stepInput.setEnabled(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//assert
 		assert.strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
 			"The increment button is enabled because setEnabled is set to true");
@@ -603,7 +605,7 @@ sap.ui.define([
 		oInput.setValue(2);
 		oInput.$().trigger("blur");
 		this.stepInput._change();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(this.stepInput._getInput().getValueState(), "Error",
@@ -612,7 +614,7 @@ sap.ui.define([
 		//act
 		//value becomes 3
 		this.stepInput._getIncrementButton().firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(this.stepInput._getInput().getValueState(), "None",
@@ -641,7 +643,7 @@ sap.ui.define([
 			});
 
 			this.stepInput.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -655,12 +657,12 @@ sap.ui.define([
 		var oIncrementButton = this.stepInput._getIncrementButton(),
 			oDecrementButton = this.stepInput._getDecrementButton();
 		oIncrementButton.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(this.stepInput.getValue(), 1.1, "The value is successfuly incremented");
 		oDecrementButton.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(this.stepInput.getValue(), 0,
 			"The value is successfuly decremented");
 
@@ -683,7 +685,7 @@ sap.ui.define([
 		//act
 		oIncrementButton.firePress();
 		oIncrementButton.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(this.stepInput.getValue(), 2,
@@ -696,17 +698,17 @@ sap.ui.define([
 		this.stepInput.setMin(410.00);
 		this.stepInput.setMax(440.00);
 		this.stepInput.setStep(0.05);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oIncrementButton = this.stepInput._getIncrementButton(),
 			oDecrementButton = this.stepInput._getDecrementButton();
 
 		oIncrementButton.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(this.stepInput.getValue(), 431.2,
 			"The value is successfuly incremented");
 		oDecrementButton.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(this.stepInput.getValue(), 431.15,
 			"The value is successfuly decremented");
 
@@ -724,7 +726,7 @@ sap.ui.define([
 		this.stepInput.setDisplayValuePrecision(20);
 		this.stepInput.setValue(0.01);
 		this.stepInput.setStep(0.06);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oIncrementButton = this.stepInput._getIncrementButton();
 
 		oIncrementButton.firePress();
@@ -736,7 +738,7 @@ sap.ui.define([
 		this.stepInput.setDisplayValuePrecision(17);
 		this.stepInput.setValue(0.01);
 		this.stepInput.setStep(0.02);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oIncrementButton = this.stepInput._getIncrementButton();
 
 		oIncrementButton.firePress();
@@ -746,21 +748,21 @@ sap.ui.define([
 
 	QUnit.test("setting default displayValuePrecision when it is not correct", function (assert) {
 		this.stepInput.setDisplayValuePrecision(25);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
 	});
 
 	QUnit.test("setting default displayValuePrecision when it is not correct and can't be converted to int", function (assert) {
 		this.stepInput.setDisplayValuePrecision("test");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
 	});
 
 	QUnit.test("setting default displayValuePrecision when it is undefined", function (assert) {
 		this.stepInput.setDisplayValuePrecision();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
 	});
@@ -772,7 +774,7 @@ sap.ui.define([
 		this.stepInput.setMax(20);
 		this.stepInput.setDisplayValuePrecision(0);
 		this.stepInput.placeAt('content');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
@@ -781,29 +783,29 @@ sap.ui.define([
 		oInput.onfocusin();
 		oInput._$input.trigger("focus").val("3.12").trigger("input");
 		this.clock.tick(300);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oInput.getValue(), "3", "The value is proper (3)");
 
 		// act
 		this.stepInput.setDisplayValuePrecision(2);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput.onfocusin();
 		oInput._$input.trigger("focus").val("6.1267").trigger("input");
 		this.clock.tick(300);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oInput.getValue(), "6.12", "The value is proper (6.12)");
 
 		// act
 		this.stepInput.setDisplayValuePrecision(3);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput.onfocusin();
 		oInput._$input.trigger("focus").val("9.12588").trigger("input");
 		this.clock.tick(300);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oInput.getValue(), "9.125", "The value is proper (9.125)");
@@ -813,7 +815,7 @@ sap.ui.define([
 	QUnit.test("displayValuePrecision formating when digits after the dot are more than the value precision", function (assert) {
 		this.stepInput.setDisplayValuePrecision(2);
 		this.stepInput.setValue(1.104);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput.getValue(), 1.104, "The value is formated correctly");
 		assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.10", "The input value is correctly formatted");
@@ -822,7 +824,7 @@ sap.ui.define([
 	QUnit.test("displayValuePrecision formating when digits after the dot are less than the value precision", function (assert) {
 		this.stepInput.setDisplayValuePrecision(5);
 		this.stepInput.setValue(1.104);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput.getValue(), 1.104, "The value is formated correctly");
 		assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.10400", "The input value is correctly formatted");
@@ -831,7 +833,7 @@ sap.ui.define([
 	QUnit.test("displayValuePrecision formating when there are no digits after the dot and the value precision is bigger than 0", function (assert) {
 		this.stepInput.setDisplayValuePrecision(5);
 		this.stepInput.setValue(0);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput.getValue(), 0, "The value is formated correctly");
 		assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.00000", "The input value is correctly formatted");
@@ -840,7 +842,7 @@ sap.ui.define([
 	QUnit.test("displayValuePrecision formating when there are digits after the dot and the value precision is 0", function (assert) {
 		this.stepInput.setDisplayValuePrecision(0);
 		this.stepInput.setValue(1.325);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput.getValue(), 1.325, "The value is formated correctly");
 		assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1", "The input value is correctly formatted");
@@ -850,7 +852,7 @@ sap.ui.define([
 		this.stepInput.setDisplayValuePrecision(4);
 		this.stepInput.setStep(1.0035);
 		this.stepInput.setValue(0.325);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oIncrementButton = this.stepInput._getIncrementButton();
 
@@ -864,7 +866,7 @@ sap.ui.define([
 		this.stepInput.setDisplayValuePrecision(2);
 		this.stepInput.setStep(1.0035);
 		this.stepInput.setValue(0.325);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oIncrementButton = this.stepInput._getIncrementButton();
 
@@ -878,7 +880,7 @@ sap.ui.define([
 		this.stepInput.setDisplayValuePrecision(6);
 		this.stepInput.setStep(1.0035);
 		this.stepInput.setValue(0.325);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oIncrementButton = this.stepInput._getIncrementButton();
 
@@ -898,7 +900,7 @@ sap.ui.define([
 		});
 
 		oSI.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oSI.getValue(), 431.5, "The value is formated correctly");
 		assert.strictEqual(oSI.getAggregation("_input")._getInputValue(), "431.50", "The input value is correctly formatted");
@@ -922,7 +924,7 @@ sap.ui.define([
 
 		oSI.placeAt('qunit-fixture');
 		oSI2.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oSI.getValue(), 1.3267, "The value is formatted correctly");
 		assert.strictEqual(oSI.getAggregation("_input")._getInputValue(), "1.327", "The input value is rounded to the given displayValuePrecision");
@@ -971,13 +973,13 @@ sap.ui.define([
 		var oStepInput = new StepInput({
 			value: 0
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oStepInput.setValue(1.23);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oStepInput.setDisplayValuePrecision(1);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oStepInput.getAggregation("_input")._getInputValue(), "1.2", "The input is set correctly");
@@ -997,7 +999,7 @@ sap.ui.define([
 			});
 
 			this.stepInput.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -1171,7 +1173,7 @@ sap.ui.define([
 	QUnit.test("up/down increases/decreases the value when in warning value state", function (assert) {
 		//arrange
 		this.stepInput.setValueState("Warning");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP);
@@ -1215,7 +1217,7 @@ sap.ui.define([
 			oSpy = this.spy(this.stepInput, "_changeValueWithStep");
 
 		this.stepInput.setEditable(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		this.stepInput.onsapup(oFakeEvent);
@@ -1256,7 +1258,7 @@ sap.ui.define([
 	QUnit.test("if the value is out of min/max range, pressing up/down arrow the value will be set to min/max", function (assert) {
 		//act
 		this.stepInput.setValue(-7);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick(1000);
 
@@ -1266,7 +1268,7 @@ sap.ui.define([
 
 		//act
 		this.stepInput.setValue(13);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(1000);
 
@@ -1278,7 +1280,7 @@ sap.ui.define([
 	QUnit.test("if the value is out of min/max range, pressing up/down arrow + alt the value will be set to min/max", function (assert) {
 		//act
 		this.stepInput.setValue(-7);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP, false, true);
 		this.clock.tick(1000);
 
@@ -1288,7 +1290,7 @@ sap.ui.define([
 
 		//act
 		this.stepInput.setValue(13);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(1000);
 
@@ -1300,7 +1302,7 @@ sap.ui.define([
 	QUnit.test("if the value is out of min/max range, pressing up/down arrow + ctrl the value will be set to min/max", function (assert) {
 		//act
 		this.stepInput.setValue(-7);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_UP, false, false, true);
 		this.clock.tick(1000);
 
@@ -1310,7 +1312,7 @@ sap.ui.define([
 
 		//act
 		this.stepInput.setValue(13);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		qutils.triggerKeydown(this.stepInput.getDomRef(), KeyCodes.ARROW_DOWN, false, false, true);
 		this.clock.tick(1000);
 
@@ -1524,7 +1526,7 @@ sap.ui.define([
 			this.oResetSpinSpy = this.spy(this.stepInput, "_resetSpinValues");
 
 			this.stepInput.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 		}
@@ -1614,7 +1616,7 @@ sap.ui.define([
 		document.getElementById(this.stepInput._getInput().getId() + "-inner").value = "45";
 		this.stepInput._change(oMockEvent);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput.getValueState(), "Error", "The ValueState is set to error if the value is not valid");
 	});
@@ -1680,7 +1682,7 @@ sap.ui.define([
 			});
 
 			this.stepInput.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 		}
@@ -1778,7 +1780,7 @@ sap.ui.define([
 				ariaLabelledBy: "__text0"
 			});
 			this.stepInput.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -1794,7 +1796,7 @@ sap.ui.define([
 			$Input;
 		//act
 		oSUT.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$Input = oInput.$("inner");
 		//assert
 		assert.strictEqual($Input.attr("role"), "spinbutton", "The internal input has correct aria role");
@@ -1828,7 +1830,7 @@ sap.ui.define([
 
 		//act
 		oSUT.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$Input = oInput.$("inner");
 		aLabelledBy = $Input.attr("aria-labelledby").split(" ");
 		aDescribedBy = $Input.attr("aria-describedby").split(" ");
@@ -1860,7 +1862,7 @@ sap.ui.define([
 			$Input;
 		//act
 		oSUT.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$Input = oInput.$("inner");
 		//assert
 		assert.ok($Input.is("[aria-valuenow]"), "Internal Input has 'aria-valuenow' attribute");
@@ -1895,32 +1897,32 @@ sap.ui.define([
 		assert.strictEqual(oInput.$(sInputSuffix).attr("aria-valuenow"), "4", "'aria-valuenow' attribute has correct initial value");
 		//act - change the 'value' property
 		this.stepInput.setValue(9);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//assert - expect aria-valuenow to be changed accordingly
 		assert.strictEqual(oInput.$(sInputSuffix).attr("aria-valuenow"), "9", "'aria-valuenow' attribute was updated when the 'value' property was changed");
 		//act - change the 'editable' property
 		this.stepInput.setEditable(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//assert - expect 'aria-readonly=true' to be rendered in the DOM
 		assert.ok(oInput.$(sInputSuffix).is('[aria-readonly]'), "'aria-readonly' attribute was rendered in the DOM");
 		assert.strictEqual(oInput.$(sInputSuffix).attr("aria-readonly"), "true", "'aria-readonly' attribute was updated when the 'editable' property was changed");
 		//act - change the 'editable' property
 		this.stepInput.setEditable(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//assert - expect 'aria-readonly' not to be rendered in the DOM
 		assert.notOk(oInput.$(sInputSuffix).is('[aria-readonly]'), "'aria-readonly' attribute is not rendered in the DOM");
 		//act - change the 'enabled' property
 		this.stepInput.setEnabled(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//assert - expect 'aria-disabled=true' to be rendered in the DOM
 		assert.notOk(oInput.$(sInputSuffix).is('[aria-disabled]'), "'aria-disabled' attribute is not rendered");
 		this.stepInput.setEnabled(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//act - simulate changing the 'value' outside the possible range with typing/
 		oInput.$(sInputSuffix).val(11);
 		// loose focus
 		this.stepInput._change();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		//assert - expect 'aria-invalid=true' to be rendered in the DOM
 		assert.ok(oInput.$(sInputSuffix).is('[aria-invalid]'), "'aria-invalid' is rendered in the DOM");
 		assert.strictEqual(oInput.$(sInputSuffix).attr('aria-invalid'), "true", "'aria-invalid' attribute was updated when the invalid value is typed and confirmed");
@@ -1936,7 +1938,7 @@ sap.ui.define([
 			});
 
 		oLabel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$label = oLabel.$();
 		$innerInput = this.stepInput.$().find(".sapMInputBaseInner");
@@ -1976,7 +1978,7 @@ sap.ui.define([
 				]
 			});
 		oForm.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		// Assert
@@ -1999,7 +2001,7 @@ sap.ui.define([
 			});
 
 		oLabel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$label = oLabel.$();
 		$innerInput = this.stepInput.$().find(".sapMInputBaseInner");
@@ -2024,7 +2026,7 @@ sap.ui.define([
 
 		// Act
 		this.stepInput.setDescription("Some description");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$innerInput = this.stepInput.$().find(".sapMInputBaseInner");
 		sExpectedReferences = "the-label __text0 " + this.stepInput._getInput().getId() + "-descr";
@@ -2085,7 +2087,7 @@ sap.ui.define([
 			});
 			this.oModel = new JSONModel();
 			this.stepInput.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -2097,7 +2099,7 @@ sap.ui.define([
 	QUnit.test("Setting value to a disabled StepInput", function (assert) {
 		// Prepare
 		this.stepInput.setEnabled(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		this.stepInput._applyValue(123);
@@ -2109,7 +2111,7 @@ sap.ui.define([
 	QUnit.test("When value set via binding is undefined", function (assert) {
 		this.oModel.setData({});
 		this.stepInput.setModel(this.oModel);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 0, "The input is set correctly");
 		assert.strictEqual(this.stepInput.getValue(), 0, "Value is set to the default one if it was undefined");
@@ -2120,7 +2122,7 @@ sap.ui.define([
 			vValue: 6
 		});
 		this.stepInput.setModel(this.oModel);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput.getValue(), 6, "Value is set correctly");
 		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), "6", "The input is set correctly");
@@ -2132,7 +2134,7 @@ sap.ui.define([
 			vPrecision: 3
 		});
 		this.stepInput.setModel(this.oModel);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput.getValue(), 6, "Value is set correctly");
 		assert.strictEqual(this.stepInput.getDisplayValuePrecision(), 3, "Value precision is set correctly");
@@ -2145,7 +2147,7 @@ sap.ui.define([
 			vMin: 5
 		});
 		this.stepInput.setModel(this.oModel);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput.getValue(), 4, "Value is set correctly");
 		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), "4", "The input is set correctly");
@@ -2157,7 +2159,7 @@ sap.ui.define([
 			vMin: 5
 		});
 		this.stepInput.setModel(this.oModel);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput.getValue(), 0, "Value is set correctly");
 		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), "0", "The input is set correctly");
@@ -2169,7 +2171,7 @@ sap.ui.define([
 			this.stepInput = new StepInput();
 
 			this.stepInput.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -2191,7 +2193,7 @@ sap.ui.define([
 			this.stepInput = new StepInput({});
 
 			this.stepInput.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -2213,7 +2215,7 @@ sap.ui.define([
 			this.stepInput = new StepInput({});
 
 			this.stepInput.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -2349,7 +2351,7 @@ sap.ui.define([
 			this.stepInput.setStepMode(StepMode.Multiple);
 			this.stepInput.setValue(-1);
 			this.stepInput.setStep(5);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			//Act
 			fResult = this.stepInput._calculateNewValue(1, true);
@@ -2365,7 +2367,7 @@ sap.ui.define([
 			this.stepInput.setStepMode(StepMode.Multiple);
 			this.stepInput.setValue(-1);
 			this.stepInput.setStep(5);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			//Act
 			fResult = this.stepInput._calculateNewValue(1, false);
@@ -2383,7 +2385,7 @@ sap.ui.define([
 		this.stepInput.setValue(1);
 		this.stepInput.setStep(5);
 		this.stepInput.setLargerStep(3);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		fResult = this.stepInput._calculateNewValue(3, true);
@@ -2400,7 +2402,7 @@ sap.ui.define([
 		this.stepInput.setValue(-1);
 		this.stepInput.setStep(5);
 		this.stepInput.setLargerStep(3);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		fResult = this.stepInput._calculateNewValue(3, false);
@@ -2418,7 +2420,7 @@ sap.ui.define([
 		this.stepInput.setMax(15);
 		this.stepInput.setValue(12);
 		this.stepInput.setStep(6);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		fResult = this.stepInput._calculateNewValue(1, true);
@@ -2435,7 +2437,7 @@ sap.ui.define([
 		this.stepInput.setValue(-10);
 		this.stepInput.setStep(5);
 		this.stepInput.setMin(-14);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		fResult = this.stepInput._calculateNewValue(1, false);
@@ -2459,7 +2461,7 @@ sap.ui.define([
 			step: 5.0
 		});
 		oStepInputNoMandatory.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		fResult1 = this.stepInput._calculateNewValue(1, true);
@@ -2503,7 +2505,7 @@ sap.ui.define([
 		this.stepInput.setStepMode(StepMode.Multiple);
 		this.stepInput.setValue(-7);
 		this.stepInput.setStep(5);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oSpyCalculateNewValue = this.spy(this.stepInput, "_calculateNewValue");
 
@@ -2535,7 +2537,7 @@ sap.ui.define([
 		this.stepInput.setStepMode(StepMode.Multiple);
 		this.stepInput.setValue(-7);
 		this.stepInput.setStep(5);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oSpyCalculateNewValue = this.spy(this.stepInput, "_calculateNewValue");
 
@@ -2669,7 +2671,7 @@ sap.ui.define([
 		this.stepInput.setDisplayValuePrecision(2);
 		this.stepInput.setStep(0.05); //make sure the precision is different than the one in the value one
 		this.stepInput.setValue(1.20);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		this.stepInput.setValue(1.567); //make sure the precision is different than the one in the step above
@@ -2694,7 +2696,7 @@ sap.ui.define([
 
 	QUnit.test("_disableButtons works accordingly when enabled: false and min & max available", function (assert) {
 		this.stepInput.setMin(0).setMax(10).setEnabled(false).setValue(5);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
 			"the increment button is still disabled after setValue");
@@ -2706,10 +2708,10 @@ sap.ui.define([
 		this.stepInput.setValue(5);
 
 		this.stepInput.setEnabled(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.stepInput.setEnabled(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
 			"the increment button is enabled after the StepInput is enabled again");
@@ -2721,12 +2723,12 @@ sap.ui.define([
 		// arrange
 		this.stepInput.setMin(2);
 		this.stepInput.setDisplayValuePrecision(2);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		this.stepInput._getInput().setValue("1");
 		this.stepInput._verifyValue(); // it shouldn't invalidate
-		oCore.applyChanges(); // so here should not re-render
+		nextUIUpdate.runSync()/*fake timer is used in module*/; // so here should not re-render
 
 		// assert
 		assert.strictEqual(this.stepInput._getInput().getValue(), "1", "value has not been touched");
@@ -2833,7 +2835,7 @@ sap.ui.define([
 			max: 8
 		});
 		oStepInput.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(!oStepInput._getDecrementButton().getEnabled(), "Decrease button is disabled when the value is less then the min value");
@@ -2870,12 +2872,12 @@ sap.ui.define([
 		var oStepInput = new StepInput();
 
 		oStepInput.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		// set "undefined" alignment
 		oStepInput.setTextAlign();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oStepInput._getInput().getTextAlign(), oStepInput.getTextAlign(), "textAlign of the Input should be the same as the textAlign of the StepInput");
@@ -2896,12 +2898,12 @@ sap.ui.define([
 
 
 		oStepInput.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act - enter valid value
 		oInput.$(sInputSuffix).val(iValidValue);
 		oStepInput._change();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert - the result must be what entered
 		assert.equal(oStepInput.getValue(), iValidValue, "Value of the StepInput is correct when enter valid value (" + iValidValue + " => " + iValidValue + ")");
@@ -2909,7 +2911,7 @@ sap.ui.define([
 		// act - enter invalid value
 		oInput.$(sInputSuffix).val(sInvalidValue);
 		oStepInput._change();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert - the result must be 0 (default)
 		assert.equal(oStepInput.getValue(), iInvalidResult, "Value of the StepInput is correct when enter invalid value (" + sInvalidValue + " => " + iInvalidResult + ")");
@@ -2921,7 +2923,7 @@ sap.ui.define([
 		// enter invalid value again
 		oInput.$(sInputSuffix).val(sInvalidValue);
 		oStepInput._change();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert - the result be at the min value (if min value > 0)
 		assert.equal(oStepInput.getValue(), iMinValueToSet, "Value of the stepInput is correct when enter invalid value and there is a min value set (" + sInvalidValue + " => " + iMinValueToSet + ")");
@@ -2929,7 +2931,7 @@ sap.ui.define([
 		// act - enter valid value again
 		oInput.$(sInputSuffix).val(iValidValue);
 		oStepInput._change();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert - the result must be what entered
 		assert.equal(oStepInput.getValue(), iValidValue, "Value of the StepInput is correct when enter valid value (" + iValidValue + " => " + iValidValue + ")");
@@ -2937,7 +2939,7 @@ sap.ui.define([
 		// act - enter invalid value (empty string)
 		oInput.$(sInputSuffix).val(sInvalidEmpty);
 		oStepInput._change();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert - the result must be min value (if min value > 0)
 		assert.equal(oStepInput.getValue(), iMinValueToSet, "Value of the StepInput is correct when enter invalid value (" + sInvalidEmpty + " => " + iMinValueToSet + ")");
@@ -2957,12 +2959,12 @@ sap.ui.define([
 			sEnteredValue = "0.001";
 
 		oStepInput.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// enter invalid value again
 		oInput.$(sInputSuffix).val(sEnteredValue);
 		oStepInput._change();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.equal(oStepInput.getValue(), sEnteredValue, "Value precision is correct when enter value manually");
@@ -2976,7 +2978,7 @@ sap.ui.define([
 		var oStepInput = new StepInput();
 
 		oStepInput.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oStepInput.focus();

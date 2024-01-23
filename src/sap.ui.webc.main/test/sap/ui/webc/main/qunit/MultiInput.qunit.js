@@ -3,19 +3,20 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/MultiInput",
 	"sap/ui/webc/main/Icon",
 	"sap/ui/webc/main/SuggestionGroupItem",
 	"sap/ui/webc/main/SuggestionItem",
 	"sap/ui/webc/main/Token",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, MultiInput, Icon, SuggestionGroupItem, SuggestionItem, Token, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, MultiInput, Icon, SuggestionGroupItem, SuggestionItem, Token, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMultiInput = new MultiInput({
 				placeholder: "This is my placeholder value",
 				value: "Control value",
@@ -166,7 +167,7 @@ sap.ui.define([
 				}
 			});
 			this.oMultiInput.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oMultiInput.destroy();

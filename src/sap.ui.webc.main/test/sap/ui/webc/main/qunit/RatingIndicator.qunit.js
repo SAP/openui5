@@ -3,21 +3,22 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/RatingIndicator"
-], function(createAndAppendDiv, Core, RatingIndicator) {
+], function(createAndAppendDiv, Core, nextUIUpdate, RatingIndicator) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oRatingIndicator = new RatingIndicator({
 				change: function(oEvent) {
 					// console.log("Event change fired for RatingIndicator with parameters: ", oEvent.getParameters());
 				}
 			});
 			this.oRatingIndicator.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oRatingIndicator.destroy();

@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/Device",
 	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
@@ -20,6 +21,7 @@ sap.ui.define([
 	merge,
 	Device,
 	Element,
+	nextUIUpdate,
 	jQuery,
 	Menu,
 	MenuItem,
@@ -680,7 +682,7 @@ sap.ui.define([
 			this.sut = new Menu();
 			this.oButton = new Button();
 			this.oButton.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		},
 		afterEach : function () {
@@ -776,7 +778,7 @@ sap.ui.define([
 
 		// filter the model
 		this.sut.getBinding('items').filter(new Filter("type", FilterOperator.EQ, 'world'));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(!Element.getElementById(oItemId), 'The item that does not fit in the filter is destroyed');
 	});
@@ -801,7 +803,7 @@ sap.ui.define([
 			this.sutRootMenu = new Menu({items: this.sut});
 			this.oLabel = new Label(); //.openBy needs a reference
 			this.sutRootMenu.openBy(this.oLabel);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function () {
 			this.sutRootMenu.close();
@@ -1278,7 +1280,7 @@ sap.ui.define([
 		oMenu.setModel(oModel, "myModel");
 
 		oButton.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oMenu.openBy(oButton);

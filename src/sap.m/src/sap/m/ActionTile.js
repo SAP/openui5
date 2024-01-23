@@ -99,6 +99,12 @@ sap.ui.define([
 	ActionTile.prototype._getSizeDescription = function () {
 		return this._oRb.getText("ACTION_TILE_SIZE");
 	};
+	/**
+	 * Below function would be called from the GenericTile onAfterRendering method, so that the tile size would be changed according to the screen size.
+	 * But in current ActionTile scenario, its not needed
+	 */
+
+	ActionTile.prototype._setupResizeClassHandler = function() {};
 
 	return ActionTile;
 });

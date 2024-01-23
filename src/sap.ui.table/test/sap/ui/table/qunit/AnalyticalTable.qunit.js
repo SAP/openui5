@@ -403,7 +403,7 @@ sap.ui.define([
 
 				if (mTestSettings.renderTable) {
 					oTable.placeAt("qunit-fixture");
-					Core.applyChanges();
+					nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				}
 
 				var oUpdateColumnsSpy = sinon.spy(oTable, "_updateColumns");

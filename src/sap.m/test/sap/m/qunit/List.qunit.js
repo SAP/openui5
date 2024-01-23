@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -31,7 +32,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/date/UI5Date"
-], function(Library, jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, Text, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date) {
+], function(Library, nextUIUpdate, jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, Text, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
@@ -275,7 +276,7 @@ sap.ui.define([
 				var li = e.getParameter("listItem");
 				li.setLabel(li.getLabel() + " " + UI5Date.getInstance().toLocaleTimeString());
 				swipeDirection = e.getParameter("swipeDirection");
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 			},
 			items : [new DisplayListItem({
 				label : "Test",
@@ -941,7 +942,7 @@ sap.ui.define([
 			.addPage(selectionList).addPage(invisibleList).addPage(noDataList).addPage(swipeContentPage).addPage(backgroundDesignPage);
 	app.setInitialPage("listOverview");
 	app.placeAt("content");
-	Core.applyChanges();
+	nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 	/*
@@ -971,7 +972,7 @@ sap.ui.define([
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		function createEvent(sEventName, oTarget, oParams) {
 			var oEvent = jQuery.Event(sEventName);
@@ -1009,7 +1010,7 @@ sap.ui.define([
 	QUnit.test("standardListThumb rendered - navigate from listitem no 1 to detail page", function(assert) {
 		var done = assert.async();
 		app.to("standardListThumb", "show");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
@@ -1019,7 +1020,7 @@ sap.ui.define([
 		oEvent.srcControl = aItems[0];
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
@@ -1028,7 +1029,7 @@ sap.ui.define([
 	QUnit.test("standardListThumb rendered - navigate from listitem no 2 to detail page", function(assert) {
 		var done = assert.async();
 		app.back();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
@@ -1038,7 +1039,7 @@ sap.ui.define([
 		oEvent.srcControl = aItems[1];
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
@@ -1047,7 +1048,7 @@ sap.ui.define([
 	QUnit.test("standardListThumb rendered - navigate from listitem no 3 to detail page", function(assert) {
 		var done = assert.async();
 		app.back();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
@@ -1057,7 +1058,7 @@ sap.ui.define([
 		oEvent.srcControl = aItems[2];
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
@@ -1066,7 +1067,7 @@ sap.ui.define([
 	QUnit.test("standardListThumb rendered - navigate from listitem no 4 to detail page", function(assert) {
 		var done = assert.async();
 		app.back();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
@@ -1076,7 +1077,7 @@ sap.ui.define([
 		oEvent.srcControl = aItems[3];
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
@@ -1085,7 +1086,7 @@ sap.ui.define([
 	QUnit.test("standardListThumb rendered - navigate from listitem no 5 to detail page", function(assert) {
 		var done = assert.async();
 		app.back();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
 		var aItems = oListStandardThumb.getItems();
@@ -1095,7 +1096,7 @@ sap.ui.define([
 		oEvent.srcControl = aItems[4];
 		oListItem.ontap(oEvent);
 		setTimeout(function(){
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 			done();
 		},50);
@@ -1103,7 +1104,7 @@ sap.ui.define([
 
 	QUnit.test("standardListThumb rendered - unread indicator, counter, info should be rendered", function(assert) {
 		app.back();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[0].getId();
 
@@ -1118,11 +1119,11 @@ sap.ui.define([
 
 	QUnit.test("standardListIcon rendered", function(assert) {
 		app.to("standardListIcon", "show");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(document.getElementById("sapMList003-listUl"), "standardListIcon should be rendered");
 		assert.ok(document.getElementById("sapMList003-listUl").childNodes[0], "standardListIcon ListItem should be rendered");
 		app.to("standardListTitle", "show");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("standardListTitle rendered", function(assert) {
@@ -1130,7 +1131,7 @@ sap.ui.define([
 		assert.ok(document.getElementById("sapMList004-listUl"), "standardListTitle should be rendered");
 		assert.ok(document.getElementById("sapMList004-listUl").childNodes[0], "standardListTitle ListItem should be rendered");
 		app.to("standardListNoImage", "show");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("standardListNoImage rendered", function(assert) {
@@ -1138,7 +1139,7 @@ sap.ui.define([
 		assert.ok(document.getElementById("sapMList005-listUl"), "standardListNoImage should be rendered");
 		assert.ok(document.getElementById("sapMList005-listUl").childNodes[0], "standardListNoImage ListItem should be rendered");
 		app.to("displayList", "show");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("displayList rendered", function(assert) {
@@ -1146,7 +1147,7 @@ sap.ui.define([
 		assert.ok(document.getElementById("sapMList006-listUl"), "displayList should be rendered");
 		assert.ok(document.getElementById("sapMList006-listUl").childNodes[0], "displayList ListItem should be rendered");
 		app.to("inputList", "show");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("inputList rendered", function(assert) {
@@ -1154,7 +1155,7 @@ sap.ui.define([
 		assert.ok(document.getElementById("sapMList007-listUl"), "inputList should be rendered");
 		assert.ok(document.getElementById("sapMList007-listUl").childNodes[0], "inputList ListItem should be rendered");
 		app.to("customList", "show");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("customList rendered", function(assert) {
@@ -1162,14 +1163,14 @@ sap.ui.define([
 		assert.ok(document.getElementById("sapMList008-listUl"), "customList should be rendered");
 		assert.ok(document.getElementById("sapMList008-listUl").childNodes[0], "customList ListItem should be rendered");
 		app.to("invisibleList", "show");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("invisibleList rendered", function(assert) {
 		app.back();
 		assert.ok(!document.getElementById("sapMList010-listUl"), "invisibleList should not be rendered");
 		app.to("noDataList", "show");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("noDataList rendered", function(assert) {
@@ -1178,7 +1179,7 @@ sap.ui.define([
 		assert.ok(document.getElementById("sapMList011-nodata-text").textContent == "Forgot something???", "noDataList custom text should be rendered");
 		assert.ok(jQuery("#sapMList011-nodata").attr("role") == "listitem", "ARIA role of No Data Entry");
 		app.to("selectionList", "show");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	if (jQuery.support.touch) {
@@ -1186,7 +1187,7 @@ sap.ui.define([
 			var done = assert.async();
 			app.back();
 			app.to("swipeContentPage", "show");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			var li = swipeContentList.getItems()[0],
 				event = jQuery.Event("swipeleft", {
@@ -1196,7 +1197,7 @@ sap.ui.define([
 			swipeContentList.onswipeleft(event);
 			assert.equal(swipeDirection, "EndToBegin", "Swipe from the end to the Beginning");
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			setTimeout(function() {
 				var oContainer = swipeContentList.getDomRef("swp");
@@ -1215,7 +1216,7 @@ sap.ui.define([
 			//var done = assert.async();
 			app.back();
 			app.to("swipeContentPage", "show");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			var li = swipeContentList.getItems()[0],
 				event = jQuery.Event("swiperight", {
@@ -1381,7 +1382,7 @@ sap.ui.define([
 	QUnit.test("selectionList switch to SingleSelectionLeft", function(assert) {
 		switchModeSingleLeft();
 		assert.equal(oListSelection.getMode(), library.ListMode.SingleSelectLeft, "Switch to SingleSelectionLeft: Ok");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 	});
 
@@ -1534,7 +1535,7 @@ sap.ui.define([
 	QUnit.test("selectionList switch to multiSelection", function(assert) {
 		switchModeMulti();
 		assert.equal(oListSelection.getMode(), library.ListMode.MultiSelect, "Switch to MultiSelection: Ok");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 	});
 
@@ -1625,7 +1626,7 @@ sap.ui.define([
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oIcon = Element.closestTo(oStdLI.$().find(".sapUiIcon")[0]);
 
 		function createEvent(sEventName, oTarget, oParams) {
@@ -1689,7 +1690,7 @@ sap.ui.define([
 
 		app.back();
 		app.to("backgroundDesignPage", "show");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$list = oList.$();
 		oRenderSpy = this.spy(oList.getRenderer(), "render");
@@ -1701,14 +1702,14 @@ sap.ui.define([
 		assert.ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
 
 		assert.strictEqual(oList.setBackgroundDesign(library.BackgroundDesign.Transparent).getBackgroundDesign(), library.BackgroundDesign.Transparent, 'The property "backgroundDesign" is "Transparent" on ' + oList);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$list = oList.$();
 		assert.ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
 		assert.ok($list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list has class "sapMListBGTransparent" on ' + oList);
 		assert.ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
 
 		assert.strictEqual(oList.setBackgroundDesign(library.BackgroundDesign.Translucent).getBackgroundDesign(), library.BackgroundDesign.Translucent, 'The property "backgroundDesign" is "Translucent" on ' + oList);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$list = oList.$();
 		assert.ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
 		assert.ok(!$list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list does not have class "sapMListBGTransparent" on ' + oList);
@@ -1739,7 +1740,7 @@ sap.ui.define([
 			items : [oStdLI]
 		});
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oStdLI.setTitleTextDirection(coreLibrary.TextDirection.RTL);
 		// Assert
@@ -1758,7 +1759,7 @@ sap.ui.define([
 			items : [oStdLI]
 		});
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oStdLI.setInfoTextDirection(coreLibrary.TextDirection.RTL);
 		// Assert
@@ -1779,7 +1780,7 @@ sap.ui.define([
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oTitle = oStdLI.$().find(".sapMSLITitleOnly");
 		// Assert
@@ -1801,7 +1802,7 @@ sap.ui.define([
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oInfo = oStdLI.$().find(".sapMSLIInfo");
 		// Assert
@@ -1825,7 +1826,7 @@ sap.ui.define([
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oRb = Library.getResourceBundleFor("sap.m"),
 			fnToggleExpandCollapse = sinon.spy(oStdLI, "_toggleExpandCollapse");
@@ -1850,23 +1851,23 @@ sap.ui.define([
 
 		sinon.spy(Log, "error");
 		oStdLI.setWrapCharLimit(150);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(oStdLI._getWrapCharLimit(), 150, "WrapCharLimit is configured to 150 characters");
 		assert.equal($titleText.innerText.length, 150, "Desktop limit for collapsed text in wrapping behavior is configured to 150 characters");
 
 		oStdLI.setWrapCharLimit(-1);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(Log.error.callCount, 1, "Error was logged");
 
 		oStdLI.setWrapCharLimit(0);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(oStdLI._getWrapCharLimit(), 300, "WrapCharLimit is configured to Default Limit");
 		assert.equal($titleText.innerText.length, 300, "wrapping character limit is set to default value when the property is set to 0");
 
 		oStdLI.setWrapCharLimit(10);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oStdLI.setWrapCharLimit();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal($titleText.innerText.length, 300, "wrapping character limit is set to default value when the property is undefined");
 
 		// safari browser returns the inner text without spaces, hence trim()
@@ -1885,7 +1886,7 @@ sap.ui.define([
 
 		// trigger tap on tilte text
 		jQuery($titleButton).trigger("tap");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(fnToggleExpandCollapse.calledOnce, "_toggleExpandCollapse function called");
 		$titleText = oStdLI.getDomRef("titleText");
 		$titleThreeDots = oStdLI.getDomRef("titleThreeDots");
@@ -1899,7 +1900,7 @@ sap.ui.define([
 		qutils.triggerKeydown($descButton.getAttribute("id"), KeyCodes.SPACE);
 		this.clock.tick(50);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(fnToggleExpandCollapse.calledTwice, "_toggleExpandCollapse function called");
 		$descText = oStdLI.getDomRef("descriptionText");
 		$descThreeDots = oStdLI.getDomRef("descriptionThreeDots");
@@ -1927,7 +1928,7 @@ sap.ui.define([
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(parseFloat(oStdLI.getDomRef("info").style.minWidth) < 7.5, "calculated info text width set as min-width");
 		assert.strictEqual(oStdLI2.getDomRef("info").style.minWidth, "7.5rem", "7.5rem min-width applied as the info text is long");
@@ -1949,18 +1950,18 @@ sap.ui.define([
 
 		assert.notOk(oStdLI._initialRender, "item is not rendered yet");
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oEvent = new jQuery.Event();
 		oEvent.theme = "sap_fiori_3";
 		oStdLI.onThemeChanged(oEvent);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oStdLI._initialRender, "prevent info text calculation on initial rendering as this is done by the renderer");
 
 		var fnMeasureInfoTextWidth = sinon.spy(oStdLI, "_measureInfoTextWidth");
 		oEvent.theme = "sap_belize";
 		oStdLI.onThemeChanged(oEvent);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(fnMeasureInfoTextWidth.calledWith(true), "info text width is recalculated onThemeChanged");
 
 		oList.destroy();
@@ -1977,14 +1978,14 @@ sap.ui.define([
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oInfoTextDom = oStdLI.getDomRef("info");
 		assert.notOk(oStdLI.getInfoStateInverted(), "default value of infoStateInverted=false");
 		assert.notOk(oInfoTextDom.classList.contains("sapMSLIInfoStateInverted"), "Style class for inverted info text not added");
 
 		oStdLI.setInfoStateInverted(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oStdLI.getInfoStateInverted(), "infoStateInverted=true");
 		oInfoTextDom = oStdLI.getDomRef("info");
@@ -2006,7 +2007,7 @@ sap.ui.define([
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $titleText = oStdLI.getDomRef("titleText");
 
@@ -2051,7 +2052,7 @@ sap.ui.define([
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(document.getElementById("sliavatar1"), "Avatar should be in DOM");
 		assert.ok(oStdLI2.getAvatar(), "Avatar should be in the aggregation");
@@ -2061,18 +2062,18 @@ sap.ui.define([
 
 		// Check the size is not propagated and stays "S" or "XS"
 		oAvatar1.setDisplaySize("XL");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oAvatar1.getDisplaySize(), "S", "Size of the Avatar1 should stay S");
 
 		oStdLI1.setIconInset(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oAvatar1.getDisplaySize(), "XS", "Size of the Avatar1 should be XS now");
 
 		// Set empty avatar
 		oStdLI2.setAvatar();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oStdLI2.getAvatar(), "Avatar should be removed from the aggregation");
 		assert.notOk(document.getElementById("sliavatar2"), "Avatar should be removed from the DOM");
@@ -2106,7 +2107,7 @@ sap.ui.define([
 
 		oList.setModel(oModel);
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oItemDomRef = document.getElementById(oList.getItems()[0].getId() + "-info");
 		assert.equal(oList.getItems()[0].getTitle(), "", "title is empty string");
@@ -2134,14 +2135,14 @@ sap.ui.define([
 			});
 
 		list.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(sut1.$().hasClass("sapMLIBFocusable"), "Outline class is added");
 
 		// Act
 		list.addItem(sut2);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(sut2.$().hasClass("sapMLIBFocusable"), "Outline class is added");
@@ -2182,24 +2183,24 @@ sap.ui.define([
 			oRb = Library.getResourceBundleFor("sap.m");
 
 		oCtr1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(ListItemBase.getAccessibilityText(), "", "Empty - no control");
 
 		oCtr1.setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "", "Empty - invisble");
 		assert.equal(ListItemBase.getAccessibilityText(oCtr1, true), oRb.getText("CONTROL_EMPTY"), "Empty - invisble + detect empty");
 
 		oCtr1.setVisible(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "", "Empty - getDefaultAccessibilityInfo");
 		assert.equal(ListItemBase.getAccessibilityText(oCtr1, true), oRb.getText("CONTROL_EMPTY"), "Empty - getDefaultAccessibilityInfo + detect empty");
 
 		oCtr1.setText("ABC");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "ABC", "getDefaultAccessibilityInfo");
 
@@ -2224,7 +2225,7 @@ sap.ui.define([
 		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "Type Description", "Type and Description");
 
 		oCtr1.setTooltip("Tooltip");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oAccInfo = {
 			description: "Description"
 		};
@@ -2245,7 +2246,7 @@ sap.ui.define([
 		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "Description&Tooltip", "Description contains Tooltip");
 
 		oCtr1.setTooltip(null);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oAccInfo = {
 			description: "Description",
 			enabled: false
@@ -2423,7 +2424,7 @@ sap.ui.define([
 	QUnit.test("getAriaRole", function(assert) {
 		assert.strictEqual(this.oList.getAriaRole(), "list", "'list' is the default role");
 		this.oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// list check
 		var oListDomRef = this.oList.getDomRef("listUl");
@@ -2437,7 +2438,7 @@ sap.ui.define([
 		assert.strictEqual(oSLIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
 		assert.notOk(oSLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
 		this.oSLI.setSelected(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.notOk(oSLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
 		var oSelectedSLIDomRef = this.oSelectedSLI.getDomRef();
 		assert.notOk(oSelectedSLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added although the item is selected, since role='listitem'");
@@ -2474,7 +2475,7 @@ sap.ui.define([
 		// apply role listbox to the list control
 		this.oList.applyAriaRole("listbox");
 		this.oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// list check
 		var oListDomRef = this.oList.getDomRef("listUl");
@@ -2584,7 +2585,7 @@ sap.ui.define([
 		});
 
 		this.oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
 			return oItem.isGroupHeader();
@@ -2672,7 +2673,7 @@ sap.ui.define([
 		});
 
 		this.oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
 			return oItem.isGroupHeader();

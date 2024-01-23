@@ -5,8 +5,9 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/m/Page',
-	"sap/ui/core/Core"
-], function(createAndAppendDiv, mLib, Component, ComponentContainer, Page, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(createAndAppendDiv, mLib, Component, ComponentContainer, Page, oCore, nextUIUpdate) {
 	"use strict";
 
 	// prepare DOM
@@ -19,7 +20,7 @@ sap.ui.define([
 		before: function() {
 			return Component.create({
 				name: "samples.scrollcomp"
-			}).then(function(oComponent) {
+			}).then(async function(oComponent) {
 				oCompCont = new ComponentContainer("CompCont", {
 					component: oComponent
 				});
@@ -29,7 +30,7 @@ sap.ui.define([
 				});
 				oPage.placeAt("area");
 
-				oCore.applyChanges();
+				await nextUIUpdate();
 			});
 		}
 	});

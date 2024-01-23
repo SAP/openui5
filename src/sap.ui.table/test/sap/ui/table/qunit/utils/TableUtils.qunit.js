@@ -88,7 +88,7 @@ sap.ui.define([
 			oTreeTable.setSelectionBehavior(sSelectionBehavior);
 			oTreeTable.setSelectionMode(sSelectionMode);
 			oTreeTable.setUseGroupMode(bGroup);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			var bRes = TableUtils.isRowSelectionAllowed(oTreeTable);
 			assert.ok(bRes && bExpected || !bRes && !bExpected,
 				"isRowSelectionAllowed: " + sSelectionBehavior + ", " + sSelectionMode + ", Group: " + bGroup);
@@ -119,7 +119,7 @@ sap.ui.define([
 			oTreeTable.setSelectionBehavior(sSelectionBehavior);
 			oTreeTable.setSelectionMode(sSelectionMode);
 			oTreeTable.setUseGroupMode(bGroup);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			var bRes = TableUtils.isRowSelectorSelectionAllowed(oTreeTable);
 			assert.ok(bRes && bExpected || !bRes && !bExpected,
 				"isRowSelectorSelectionAllowed: " + sSelectionBehavior + ", " + sSelectionMode + ", Group: " + bGroup);
@@ -515,7 +515,7 @@ sap.ui.define([
 
 			oTable.clearSelection();
 			oTable.setSelectionBehavior(TableLibrary.SelectionBehavior.Row);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			if (vRowIndicator === parseInt(vRowIndicator)) {
 				iRowIndex = vRowIndicator;
@@ -649,7 +649,7 @@ sap.ui.define([
 				rowCount: iRowCount,
 				fixedBottomRowCount: iFixedBottomCount
 			}));
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		}
 
 		initTest(0, iNumberOfRows - 3);

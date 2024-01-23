@@ -3,16 +3,17 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/AvatarGroup",
 	"sap/ui/webc/main/Avatar",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, AvatarGroup, Avatar, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, AvatarGroup, Avatar, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oAvatarGroup = new AvatarGroup({
 				items: [
 					new Avatar({
@@ -91,7 +92,7 @@ sap.ui.define([
 				}
 			});
 			this.oAvatarGroup.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oAvatarGroup.destroy();

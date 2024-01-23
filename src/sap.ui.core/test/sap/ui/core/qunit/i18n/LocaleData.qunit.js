@@ -91,8 +91,7 @@ sap.ui.define([
 	});
 
 	aSupportedLanguages.forEach(function(sLanguage) {
-		//TODO: Reactivate when translation is available
-		QUnit[sLanguage === "cnr" ? "skip" : "test"]("getCurrentLanguageName '" + sLanguage + "'", function(assert) {
+		QUnit.test("getCurrentLanguageName '" + sLanguage + "'", function(assert) {
 			var oLocaleData = new LocaleData(new Locale(sLanguage));
 			var oLanguagesObject = oLocaleData.getLanguages();
 			assert.ok(Object.keys(oLanguagesObject).length > 0, "Languages are present for locale: '" + sLanguage + "'");
@@ -100,8 +99,8 @@ sap.ui.define([
 		});
 	});
 	[
-		{sLocale: "cnr", sName: "<translated text for Montenegrin>"},
-		{sLocale: "cnr_ME", sName: "<translated text for Montenegrin>"},
+		{sLocale: "cnr", sName: "crnogorski"},
+		{sLocale: "cnr_ME", sName: "crnogorski (Crna Gora)"},
 		{sLocale: "he", sName: "עברית"},
 		{sLocale: "iw", sName: "עברית"},
 		{sLocale: "mk", sName: "македонски"},
@@ -124,9 +123,7 @@ sap.ui.define([
 		{sLocale: "ji", sName: "Yiddish"},
 		{sLocale: "yi", sName: "Yiddish"}
 	].forEach((oFixture) => {
-		const sLocale = oFixture.sLocale;
-		//TODO: Reactivate when translation is available
-		QUnit[sLocale.startsWith("cnr") ? "skip" : "test"]("getCurrentLanguageName specific " + sLocale, function(assert) {
+		QUnit.test("getCurrentLanguageName specific " + oFixture.sLocale, function(assert) {
 			const oLocaleData = new LocaleData(new Locale(oFixture.sLocale));
 			assert.ok(Object.keys(oLocaleData.getLanguages()).length > 0, "languages are present");
 			assert.equal(oLocaleData.getCurrentLanguageName(), oFixture.sName, "current language is present");

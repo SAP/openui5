@@ -1,5 +1,6 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/f/DynamicPage",
@@ -14,7 +15,8 @@ sap.ui.define([
 	"sap/m/ObjectNumber",
 	"sap/m/OverflowToolbarLayoutData"
 ],
-function (
+function(
+	nextUIUpdate,
 	$,
 	Device,
 	DynamicPage,
@@ -62,7 +64,7 @@ function (
 
 		// Act: remove the content
 		oTitle.removeAllContent();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert: DynamicPageTitle content aggregation is empty
 		assert.equal(oTitle.$("main").hasClass("sapFDynamicPageTitleMainNoContent"), true,
@@ -75,14 +77,14 @@ function (
 		oTitle.addContent(oFactory.getInvisibleContent());
 
 		oUtil.renderObject(oTitle);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oTitle.$("content").hasClass("sapFDynamicPageTitleMainContentHasContent"), false,
 			"The css class has not been added as there is no visible control in 'content' aggregation");
 
 		oTitle.getContent()[0].getContent()[0].setVisible(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oTitle.$("content").hasClass("sapFDynamicPageTitleMainContentHasContent"), true,
@@ -98,7 +100,7 @@ function (
 		oTitle.addAction(oFactory.getInvisibleAction());
 
 		oUtil.renderObject(oTitle);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oTitle.$("mainActions").hasClass("sapFDynamicPageTitleMainActionsHasContent"), false,
@@ -106,7 +108,7 @@ function (
 
 		// Act
 		oTitle.getActions()[0].setVisible(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oTitle.$("mainActions").hasClass("sapFDynamicPageTitleMainActionsHasContent"), true,
@@ -123,7 +125,7 @@ function (
 			oNavigationToolbar = oTitle._getNavigationActionsToolbar();
 
 		oUtil.renderObject(oTitle);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		var $InvisibleTextDomRef = $('#' + oActionsToolbar.getId() + "-InvisibleText");
@@ -151,7 +153,7 @@ function (
 	  oTitle.destroyAggregation("heading");
 
 	  oUtil.renderObject(oTitle);
-	  Core.applyChanges();
+	  nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 	  //Assert
 	  assert.ok(oTitle._getFocusSpan()[0].getAttribute("aria-labelledby") != "undefined", "AriaLabelledBy is not undefined, when no heading is presented");
@@ -184,7 +186,7 @@ function (
 
 		// Act: remove breadCrumbs aggregation
 		oTitle.setBreadcrumbs(null);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert: DynamicPageTitle content aggregation is empty
 		assert.equal(oTitle.$("top").length > 0, false, "Title top DOM element is not rendered");
@@ -199,7 +201,7 @@ function (
 		oBreadcrumbs.setVisible(false);
 		this.oDynamicPage.setVisible(false);
 		this.oDynamicPage.setVisible(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//
 		assert.ok(oTitle.$("top").hasClass("sapUiHidden"));
@@ -524,7 +526,7 @@ function (
 
 		// Act
 		oUtil.renderObject(oDynamicPage);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$title  = oDynamicPageTitle.$();
 		$focusSpan = oDynamicPageTitle._getFocusSpan();
@@ -553,7 +555,7 @@ function (
 
 		// Act
 		oUtil.renderObject(oDynamicPage);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$title  = oDynamicPageTitle.$();
 		$focusSpan = oDynamicPageTitle._getFocusSpan();
@@ -572,7 +574,7 @@ function (
 			};
 		});
 		oDynamicPage.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual($title.hasClass("sapFDynamicPageTitleFocus"), true, "focus class is set after invalidation of the parent");
@@ -607,7 +609,7 @@ function (
 		oDynamicPageTitle.addSnappedContent(oBtn);
 
 		oUtil.renderObject(oDynamicPage);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oActiveElement = document.activeElement,
 			oBtnElement = oBtn.getDomRef();
@@ -635,7 +637,7 @@ function (
 		oDynamicPageTitle.addExpandedContent(oBtn);
 
 		oUtil.renderObject(oDynamicPage);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oActiveElement = document.activeElement,
 			oBtnElement = oBtn.getDomRef();
@@ -660,14 +662,14 @@ function (
 
 		// Act
 		oUtil.renderObject(oDynamicPage);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oDynamicPageTitle._getFocusSpan().is(":visible"), true, "focusSpan is visible");
 
 		// Act
 		oDynamicPage.destroyHeader();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oDynamicPageTitle._getFocusSpan().is(":hidden"), true, "focusSpan is hidden");
@@ -837,7 +839,7 @@ function (
 		// Add label
 		iExpectedSnappedContentNumber++;
 		this.oDynamicPageTitle.addSnappedContent(oLabel);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		iActualSnappedContentNumber = this.oDynamicPageTitle.getSnappedContent().length;
 
 		assert.equal(iActualSnappedContentNumber, iExpectedSnappedContentNumber, "Snapped Content added successfully");
@@ -846,7 +848,7 @@ function (
 		// Remove label
 		iExpectedSnappedContentNumber--;
 		this.oDynamicPageTitle.removeSnappedContent(oLabel);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		iActualSnappedContentNumber = this.oDynamicPageTitle.getSnappedContent().length;
 
 		assert.equal(iActualSnappedContentNumber, iExpectedSnappedContentNumber, "Snapped Content removed successfully");
@@ -1091,7 +1093,7 @@ function (
 		// Act
 		oDynamicPageTitle.setAreaShrinkRatio("0:0:0");
 		oDynamicPageTitle.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oDynamicPageTitle.$("left-inner").css("flex-shrink"), "0", "left area shrink factor is correct");
@@ -1104,7 +1106,7 @@ function (
 
 		// Act
 		this.oDynamicPageTitle.addContent(oLabel);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(1000);
 
 		// Assert
@@ -1123,7 +1125,7 @@ function (
 		// Act
 		this.oDynamicPageTitle.addAction(oLabel);
 		this.oDynamicPageTitle.addAction(oButton);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(1000);
 
 		// Assert
@@ -1139,7 +1141,7 @@ function (
 
 		// act
 		this.oDynamicPageTitle.setBackgroundDesign("Solid");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok($oDomRef.hasClass("sapFDynamicPageTitleSolid"), "Should have sapFDynamicPageTitleSolid class");
@@ -1147,7 +1149,7 @@ function (
 
 		// act
 		this.oDynamicPageTitle.setBackgroundDesign("Transparent");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapFDynamicPageTitleSolid"), "Should not have sapFDynamicPageTitleSolid class");
@@ -1156,7 +1158,7 @@ function (
 
 		// act
 		this.oDynamicPageTitle.setBackgroundDesign("Translucent");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapFDynamicPageTitleTransparent"), "Should not have sapFDynamicPageTitleTransparent class");
@@ -1172,12 +1174,12 @@ function (
 		assert.strictEqual($focusSpan.attr("aria-describedby"), DynamicPageTitle.TOGGLE_HEADER_TEXT_ID, "aria-describedby attribute is rendered correctly.");
 
 		oTitle.addAriaDescribedBy(oText.getId());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual($focusSpan.attr("aria-describedby"), DynamicPageTitle.TOGGLE_HEADER_TEXT_ID + " " + oText.getId(), "aria-describedby attribute is rendered correctly.");
 
 		oTitle.removeAriaDescribedBy(oText.getId());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual($focusSpan.attr("aria-describedby"), DynamicPageTitle.TOGGLE_HEADER_TEXT_ID, "aria-describedby attribute is rendered correctly.");
 	});
@@ -1233,13 +1235,13 @@ function (
 		// Act
 		oToolbar.addContent(oGenericTag);
 		this.oDynamicPageTitle.addContent(oToolbar);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		setTimeout(function () {
 
 			// Act
 			oGenericTag.setText("Looooooooooooooooooooooooooonger text");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			setTimeout(function () {
 				// Assert
@@ -1261,7 +1263,7 @@ function (
 		$qunitDOMLocation.width("300px");
 		oToolbar.addContent(oFactory.getGenericTag("Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooong test"));
 		this.oDynamicPageTitle.addContent(oToolbar);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInvalidateSpy.reset();
 
 		// Assert
@@ -1271,7 +1273,7 @@ function (
 		$qunitDOMLocation.width(sInitialWidth);
 		oToolbar._handleResize(); // call the resize listener synchronously to speed up the test
 		assert.ok(oInvalidateSpy.calledOnce, "toolbar invalidated when overflow should to change");
-		Core.applyChanges(); // trigger rerendering of the invalidated controls synchronously to speed up the test
+		nextUIUpdate.runSync()/*fake timer is used in module*/; // trigger rerendering of the invalidated controls synchronously to speed up the test
 
 		// Assert
 		assert.notOk(oToolbar._getOverflowButton().$().is(":visible"), "Overflow button is not visible when width is enough");
@@ -1290,7 +1292,7 @@ function (
 		// Act
 		oToolbar.addContent(oGenericTag);
 		this.oDynamicPageTitle.addContent(oToolbar);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		setTimeout(function () {
 			// Act
@@ -1301,7 +1303,7 @@ function (
 
 				// Act
 				oGenericTag.setVisible(true);
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 				setTimeout(function () {
 					// Assert
@@ -1324,12 +1326,12 @@ function (
 		// Act
 		oToolbar.addContent(oGenericTag);
 		this.oDynamicPageTitle.addContent(oToolbar);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oSpy = this.spy(oDynamicPageTitle, "_setContentAreaFlexBasis");
 		oGenericTag.setText("New looooooooooooooonger text");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSpy.firstCall.args[0], null,
@@ -1346,12 +1348,12 @@ function (
 		// Act
 		oToolbar.addContent(oGenericTag);
 		this.oDynamicPageTitle.addContent(oToolbar);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oSpy = this.spy(oDynamicPageTitle, "_setContentAreaFlexBasis");
 		oGenericTag.setValue(new ObjectNumber({ number: "22222222222222222222222" }));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSpy.firstCall.args[0], null,
@@ -1372,7 +1374,7 @@ function (
 		oToolbar.addContent(oGenericTag);
 		oToolbar.setWidth("100%");
 		this.oDynamicPageTitle.addContent(oToolbar);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oSpy = this.spy(oToolbar, "_cacheControlsInfo");
@@ -1458,7 +1460,7 @@ function (
 		this.oDynamicPage.setHeaderExpanded(false);
 
 		this.oDynamicPage.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oDynamicPage.setHeaderExpanded(true);
 		oSnappedHeadingWrapper = this.oDynamicPageTitle.$snappedHeadingWrapper;

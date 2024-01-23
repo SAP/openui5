@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Input",
 	"sap/ui/core/ListItem",
@@ -47,6 +48,7 @@ sap.ui.define([
 	KeyCodes,
 	Device,
 	JSONModel,
+	nextUIUpdate,
 	jQuery,
 	Input,
 	ListItem,
@@ -80,7 +82,7 @@ sap.ui.define([
 			this.multiInput1 = new MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function() {
 			this.multiInput1.destroy();
@@ -121,7 +123,7 @@ sap.ui.define([
 	QUnit.test("insertToken aggregation", function(assert) {
 
 		var oSpy = this.spy(Tokenizer.prototype, "insertToken");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.multiInput1.insertToken(new Token({text: "Token1"}), 0);
 
@@ -142,11 +144,11 @@ sap.ui.define([
 
 		// Act
 		this.multiInput1.setTokens([oToken1, oToken2, oToken3]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInvalidationSpy = this.spy(this.multiInput1, "onBeforeRendering");
 		this.multiInput1.destroyTokens();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oInvalidationSpy.calledOnce, true, "MultiInput has been rerendered after the tokens has been destroyed");
@@ -227,7 +229,7 @@ sap.ui.define([
 
 		this.multiInput1.setMaxTokens(2);
 		this.multiInput1.setTokens([token1, token2, token3]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aVisibleTokens = this.multiInput1.getTokens().filter(function (oToken) {
 			return oToken.getVisible();
@@ -242,7 +244,7 @@ sap.ui.define([
 		});
 
 		multiInput.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(multiInput._calculateSpaceForTokenizer(), "406px", "_calculateSpaceForTokenizer returns a correct px value");
 
@@ -256,7 +258,7 @@ sap.ui.define([
 		});
 
 		multiInput.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(multiInput._calculateSpaceForTokenizer(), "156px", "_calculateSpaceForTokenizer returns a correct px value");
 
@@ -268,10 +270,10 @@ sap.ui.define([
 			output;
 
 		multiInput.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		multiInput.$().find(".sapMMultiInputInputContainer").removeClass("sapMMultiInputInputContainer");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		output = multiInput._calculateSpaceForTokenizer();
 
@@ -287,7 +289,7 @@ sap.ui.define([
 		});
 
 		multiInput.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(multiInput._calculateSpaceForTokenizer(), "0px", "_calculateSpaceForTokenizer returns a non negative value");
 
@@ -342,7 +344,7 @@ sap.ui.define([
 		oTable.bindItems("/modelData", oItemTemplate);
 		oTable.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oMultiInput1 = oTable.getItems()[0].getCells()[1];
 		assert.equal(oMultiInput1.getTokens()[0].$().text(), "Doe", "text of token is correct");
@@ -384,15 +386,15 @@ sap.ui.define([
 		this.multiInput1.setModel(model);
 		this.multiInput1.bindAggregation("tokens", "/names", oTokenTemplate);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var firstToken = this.multiInput1.getTokens()[0];
 		firstToken.setSelected(true);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(firstToken.$(), KeyCodes.BACKSPACE);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.equal(this.multiInput1.getTokens().length, 3, "MultiInput has only 3 tokens");
@@ -400,7 +402,7 @@ sap.ui.define([
 		// act
 		model.setData(newData);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.equal(this.multiInput1.getTokens().length, 4, "MultiInput has 4 tokens");
@@ -424,7 +426,7 @@ sap.ui.define([
 
 		aFirstToken = this.multiInput1.getTokens()[0];
 		aSecondToken = this.multiInput1.getTokens()[1];
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(aFirstToken.$('icon').css('display'), 'inline-block', 'First token icon is visible');
@@ -432,7 +434,7 @@ sap.ui.define([
 
 		//act
 		this.multiInput1.setEditable(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(aFirstToken.$('icon').css('display'), 'none', 'First token icon is invisible');
@@ -452,10 +454,10 @@ sap.ui.define([
 
 		oMI.setValue(sText);
 		oMI.addValidator(fnValidator);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMI.onsapenter();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oMI.getTokens()[1].getText(), sText, "Token is created with escaped text");
 
@@ -471,14 +473,14 @@ sap.ui.define([
 				new Token({text: "Very, very, very long text"})
 			]
 		}).placeAt( "qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oValidationSpy = this.spy(oMI, "_validateCurrentText");
 		var oFocusOutSpy = this.spy(oMI, "onsapfocusleave");
 
 		oMI.focus();
 		qutils.triggerKeydown(oMI.getFocusDomRef(), KeyCodes.ARROW_LEFT);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oValidationSpy.callCount, 0, "_validateCurrentText not invoked when focused is moved to the tokenizer");
 		assert.strictEqual(oFocusOutSpy.callCount, 1, "onsapfocusleave is called");
@@ -560,13 +562,13 @@ sap.ui.define([
 
 		this.multiInput1.setModel(oJSONModel);
 		this.multiInput1.addToken(oToken);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInvalidateSpy.reset();
 
 		// Act
 		oJSONModel.setProperty("/text", "test");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oInvalidateSpy.callCount, 1, "MultiInput was invalidated once.");
@@ -585,7 +587,7 @@ sap.ui.define([
 
 		// Act
 		this.multiInput1.addToken(oToken);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oAttachEventSpy.callCount, 1, "Attach event was called once");
@@ -601,11 +603,11 @@ sap.ui.define([
 		var oDetachEventSpy = this.spy(oToken, "detachEvent");
 
 		this.multiInput1.addToken(oToken);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		this.multiInput1.removeToken(oToken);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oDetachEventSpy.callCount, 1, "Detach event was called once");
@@ -618,7 +620,7 @@ sap.ui.define([
 			this.multiInput1 = new MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.multiInput1.destroy();
@@ -769,35 +771,35 @@ sap.ui.define([
 			this.multiInput1.addSuggestionItem(new Item({ text : String.fromCharCode(i + AasciiCode) + "-Item"}));
 		}
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
 
 		this.multiInput1.setValue("a");
 		this.multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
 		this.multiInput1.onsapenter();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.multiInput1.getTokens().length, 1, "MultiInput contains 1 token, added via suggest");
 
 		this.multiInput1.setValue("B");
 		this.multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
 		this.multiInput1.onsapenter();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, added via suggest ");
 
 		this.multiInput1.setValue("C");
 		this.multiInput1._getIsSuggestionPopupOpen = function(){ return false; };
 		this.multiInput1.onsapenter();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, no token added, suggestion list was closed");
 
 		this.multiInput1.setValue("Z");
 		this.multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
 		this.multiInput1.onsapenter();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, no token added, value does not fit suggestion list");
 	});
@@ -887,7 +889,7 @@ sap.ui.define([
 			return new Token({ text: args.text });
 		});
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		this.multiInput1.setValue("Token 1");
@@ -906,7 +908,7 @@ sap.ui.define([
 
 		this.multiInput1.addValidator(oValidator);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.multiInput1.removeValidator(oValidator);
 		// assert
 		assert.strictEqual(this.multiInput1._aTokenValidators.length, 0 , "then the MultiInput has no validators");
@@ -921,7 +923,7 @@ sap.ui.define([
 			this.multiInput1 = new MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.multiInput1.focus();
 		},
@@ -935,13 +937,13 @@ sap.ui.define([
 
 		var token1 = new Token();
 		this.multiInput1.addToken(token1);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.multiInput1.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.BACKSPACE);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(token1.getSelected(), "Token got selected");
 		assert.strictEqual(token1.getId(), document.activeElement.id ,"Token got focused");
@@ -962,11 +964,11 @@ sap.ui.define([
 		var token1 = new Token();
 		this.multiInput1.addToken(token1);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.multiInput1.focus();
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.BACKSPACE);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(token1.getId(), document.activeElement.id ,"Token got focused");
 
@@ -1000,14 +1002,14 @@ sap.ui.define([
 
 		assert.expect(1);
 		oMI.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oToken.fireDelete({
 			byKeyboard: false,
 			backspace: false
 		});
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("test keyboard navigation", function(assert){
@@ -1015,24 +1017,24 @@ sap.ui.define([
 			that = this;
 		this.multiInput1.addToken(token);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(this.multiInput1.getTokens().length, 1, "MultiInput contains 1 token");
 
 		this.multiInput1.focus();
 
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ARROW_LEFT);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(document.activeElement, KeyCodes.DELETE);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
 
 		token = new Token({selected: false});
 		this.multiInput1.addToken(token);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
 
@@ -1049,7 +1051,7 @@ sap.ui.define([
 		var token2 = new Token({selected:true});
 		var token3 = new Token({selected:true});
 		this.multiInput1.setTokens([token1, token2, token3]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.multiInput1.fireLiveChange();
 
@@ -1062,7 +1064,7 @@ sap.ui.define([
 		var token3 = new Token();
 		this.multiInput1.setTokens([token1, token2, token3]);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(token1.$(), KeyCodes.A, false, false, true); // trigger Control key + A
 		assert.equal(token1.getSelected(), true, "Token1 got selected using ctrl+a");
@@ -1117,7 +1119,7 @@ sap.ui.define([
 			token1 = new Token({text: "Token"});
 
 		this.multiInput1.addToken(token1);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.multiInput1.getTokens()[0].focus();
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.HOME);
@@ -1134,7 +1136,7 @@ sap.ui.define([
 			token2 = new Token({text: "Token 2"});
 
 		this.multiInput1.setTokens([token1, token2]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.HOME);
 
@@ -1151,14 +1153,14 @@ sap.ui.define([
 
 		this.multiInput1.setTokens([token1, token2]);
 		this.multiInput1.setValue("text123");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.multiInput1.focus();
 		this.multiInput1._$input[0].setSelectionRange(1, 7);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.HOME);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(focusRef.id, document.activeElement.id,
@@ -1172,7 +1174,7 @@ sap.ui.define([
 				token1 = new Token({text: "Token"});
 
 		this.multiInput1.addToken(token1);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.multiInput1.getTokens()[0].focus();
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.ARROW_LEFT);
@@ -1198,7 +1200,7 @@ sap.ui.define([
 		this.multiInput1._$input.trigger("focus");
 		this.multiInput1._$input[0].setSelectionRange(3, 3);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.ARROW_LEFT);
 
@@ -1233,15 +1235,15 @@ sap.ui.define([
 	QUnit.test("onsapdelete", function(assert) {
 		this.multiInput1.setValue("text123");
 		this.multiInput1.setTokens([new Token()]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.multiInput1.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.multiInput1._$input[0].setSelectionRange(2, 3);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.DELETE);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(this.multiInput1.getTokens().length, 1, "No token was deleted");
@@ -1254,10 +1256,10 @@ sap.ui.define([
 			token3 = new Token({text: "Token 3"});
 
 		oMultiInput.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMultiInput.setTokens([token1, token2, token3]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(token3.getDomRef(), KeyCodes.DELETE);
 
@@ -1274,10 +1276,10 @@ sap.ui.define([
 			token3 = new Token({text: "Token 3", selected: true});
 
 		this.multiInput1.setTokens([token1, token2, token3]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.DELETE);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(document.activeElement, this.multiInput1.getFocusDomRef(),
@@ -1290,7 +1292,7 @@ sap.ui.define([
 			token3 = new Token({text: "Token 3", selected: true});
 
 		this.multiInput1.setTokens([token1, token2, token3]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.BACKSPACE);
 
@@ -1305,10 +1307,10 @@ sap.ui.define([
 			token3 = new Token({text: "Token 3"});
 
 		this.multiInput1.setTokens([token1, token2, token3]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.BACKSPACE);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(document.activeElement, this.multiInput1.getFocusDomRef(),
@@ -1325,7 +1327,7 @@ sap.ui.define([
 			]
 		}).placeAt("content");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oSpy = this.spy(oMI, "fireTokenUpdate");
 
@@ -1333,11 +1335,11 @@ sap.ui.define([
 
 		// focus last token
 		qutils.triggerKeydown(oMI.getDomRef(), KeyCodes.BACKSPACE);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// delete last token
 		qutils.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oMI.getTokens().length, 2, "One Token should be deleted");
 		assert.ok(oSpy.called, "Fire Token Update is called");
@@ -1356,7 +1358,7 @@ sap.ui.define([
 				new Token({ text: "Token 3"})
 			]
 		}).placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oSpy = this.spy(oMI, "fireTokenUpdate");
 
@@ -1365,7 +1367,7 @@ sap.ui.define([
 
 		// delete first token
 		qutils.triggerKeydown(oFirstToken.getDomRef(), KeyCodes.BACKSPACE);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		// Assert
@@ -1386,7 +1388,7 @@ sap.ui.define([
 			]
 		}).placeAt("content");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oSpy = this.spy(oMI, "fireTokenUpdate");
 
@@ -1394,11 +1396,11 @@ sap.ui.define([
 
 		// focus last token
 		qutils.triggerKeydown(oMI.getDomRef(), KeyCodes.BACKSPACE);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// delete last token
 		qutils.triggerKeydown(document.activeElement, KeyCodes.DELETE);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oMI.getTokens().length, 2, "One Token should be deleted");
 		assert.ok(oSpy.called, "Fire Token Update is called");
@@ -1410,7 +1412,7 @@ sap.ui.define([
 		var oSpy = this.spy(Tokenizer.prototype, "onsapdelete");
 		this.multiInput1.setValue("value");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.DELETE);
 
 		// assert
@@ -1427,7 +1429,7 @@ sap.ui.define([
 
 		this.multiInput1.addToken(new Token({}));
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.multiInput1.getTokens()[0].focus();
 
@@ -1446,7 +1448,7 @@ sap.ui.define([
 
 		var oSpy = this.spy(Tokenizer.prototype, "onsapdelete");
 		this.multiInput1.setEditable(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.DELETE);
 
 		// assert
@@ -1466,14 +1468,14 @@ sap.ui.define([
 		this.multiInput1.addValidator(function (args) {
 			return new Token({text: args.text, key: args.text});
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		// create new token by user input
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.D });
 		this.multiInput1._$input.trigger("focus").trigger(oFakeKeydown).val("D").trigger("input");
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ENTER);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// move to previous token and than back to the newly added
 		this.multiInput1.getTokens()[3].focus();
@@ -1515,7 +1517,7 @@ sap.ui.define([
 			new Token({text: "XXXX"}),
 			new Token({text: "XXXX"})
 		]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSpy = this.spy(oMI.getAggregation("tokenizer"), "_togglePopup");
 
 		oMI.$().find(".sapMTokenizerIndicator")[0].click();
@@ -1541,7 +1543,7 @@ sap.ui.define([
 		var oMI = new MultiInput().placeAt("qunit-fixture");
 		var oEvent = {setMarked: function () {}};
 		var oSpy = this.spy(oEvent, "setMarked");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oMI.onsapenter(oEvent);
@@ -1551,7 +1553,7 @@ sap.ui.define([
 
 		// Act
 		oMI.setValue("My test value");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oMI.onsapenter(oEvent);
 
 		// Assert
@@ -1583,11 +1585,11 @@ sap.ui.define([
 				})
 			]
 		}).placeAt( "qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMI._getSuggestionsPopoverPopup().open();
 		oMI.setSelectionItem(oMI.getSuggestionItems()[0]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oMI._getSuggestionsPopover().getInput().getValue(), "", "The dialog's input is cleared.");
@@ -1632,7 +1634,7 @@ sap.ui.define([
 			new Token({text: "XXXX"}),
 			new Token({text: "XXXX"})
 		]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSpy = this.spy(oMI, "_manageListsVisibility");
 
@@ -1641,7 +1643,7 @@ sap.ui.define([
 			valueHelpOnly: true
 		});
 		oMultiInput1.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oMI.ontap(oFakeEvent);
@@ -1700,7 +1702,7 @@ sap.ui.define([
 			path: "/",
 			template: new Item({text: "{name}", key: "{key}"})
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMultiInput._$input.trigger("focus");
 		this.clock.tick(400);
@@ -1720,7 +1722,7 @@ sap.ui.define([
 
 		// Act
 		oTokenizer._handleNMoreIndicatorPress();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.notOk(oMultiInput._oSuggestionPopup.isOpen(), "Suggestions should not be visible");
@@ -1728,7 +1730,7 @@ sap.ui.define([
 
 		// Act
 		oTokenizer.getTokensPopup().close();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMultiInput.onfocusin({target: oMultiInput.getDomRef("inner")});
 		this.clock.tick(1000);
@@ -1754,12 +1756,12 @@ sap.ui.define([
 		}).placeAt("content");
 		var oTokenizerPopover = oMI.getAggregation("tokenizer").getTokensPopup();
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMI.getAggregation("tokenizer")._handleNMoreIndicatorPress();
 
 		oMI._deleteTokens([oToken1], {});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(document.activeElement, oMI.getFocusDomRef(), "Multi Input should be focused");
 		assert.ok(oTokenizerPopover.isOpen(), "Popover should be open");
@@ -1767,7 +1769,7 @@ sap.ui.define([
 		var oSpy = this.spy(oTokenizerPopover, "close");
 
 		oMI._deleteTokens([oToken2, oToken3], {});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(document.activeElement, oMI.getFocusDomRef(), "Multi Input should be focused");
 		assert.ok(oSpy.called, "Popover should be closed");
@@ -1809,16 +1811,16 @@ sap.ui.define([
 		}).placeAt("content");
 
 		oMI.setModel(oModel);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aTokens = oMI.getTokens();
 		var oToken = aTokens[aTokens.length - 2];
 
 		oToken.focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(oToken.getDomRef(), KeyCodes.DELETE);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		aTokens = oMI.getTokens();
 		var oLastToken = aTokens[aTokens.length - 1];
@@ -1847,7 +1849,7 @@ sap.ui.define([
 
 			return new Token({text: text});
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oMultiInput._openSuggestionsPopover({});
@@ -1880,12 +1882,12 @@ sap.ui.define([
 			var text = args.text;
 			return new Token({text: text});
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oMultiInput.setValue("test");
 		oMultiInput.onsapfocusleave({});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oMultiInput.getAggregation("tokenizer").getTokens().length, 1, "A token is created");
@@ -1900,7 +1902,7 @@ sap.ui.define([
 		});
 
 		oMI.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMI.getFocusDomRef().focus();
 		qutils.triggerKeydown(oMI.getFocusDomRef(), KeyCodes.ARROW_LEFT);
@@ -1925,7 +1927,7 @@ sap.ui.define([
 			};
 
 			this.oMultiInput = new MultiInput({}).placeAt("content");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function() {
 			Device["system"] = {
@@ -2029,7 +2031,7 @@ sap.ui.define([
 			bChangeFired = true;
 		});
 		this.oMultiInput.setValue("test");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSuggestionsDialog.getPopover().open();
 		oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
@@ -2068,7 +2070,7 @@ sap.ui.define([
 
 		this.oMultiInput.setValue("");
 		this.oMultiInput.addValidator(oValidatorSpy);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSuggestionsDialog.getPopover().open();
 		this.clock.tick(500);
@@ -2187,7 +2189,7 @@ sap.ui.define([
 			this.multiInput1 = new MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.multiInput1.destroy();
@@ -2240,7 +2242,7 @@ sap.ui.define([
 		});
 
 		this.clock.tick(10);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(counter, 1, "tokenUpdate event should be fired once");
@@ -2271,7 +2273,7 @@ sap.ui.define([
 		});
 
 		this.clock.tick(10);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(counter, 1, "tokenUpdate event should be fired once");
@@ -2297,7 +2299,7 @@ sap.ui.define([
 		});
 
 		this.clock.tick(10);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.equal(this.multiInput1.getTokens().length, 0, "A token should not be created");
@@ -2333,7 +2335,7 @@ sap.ui.define([
 
 
 			this.clock.tick(10);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			//assert
 			assert.equal(counter, 0, "tokenUpdate event should not be fired");
@@ -2357,7 +2359,7 @@ sap.ui.define([
         });
 
 		this.clock.tick();
-        Core.applyChanges();
+        nextUIUpdate.runSync()/*fake timer is used in module*/;
 
         //assert
         assert.ok(
@@ -2391,7 +2393,7 @@ sap.ui.define([
         });
 
 		this.clock.tick();
-        Core.applyChanges();
+        nextUIUpdate.runSync()/*fake timer is used in module*/;
 
         //assert
         assert.ok(
@@ -2422,7 +2424,7 @@ sap.ui.define([
         });
 
 		this.clock.tick();
-        Core.applyChanges();
+        nextUIUpdate.runSync()/*fake timer is used in module*/;
 
         //assert
         assert.strictEqual(
@@ -2454,7 +2456,7 @@ sap.ui.define([
         });
 
 		this.clock.tick();
-        Core.applyChanges();
+        nextUIUpdate.runSync()/*fake timer is used in module*/;
 
         //assert
         assert.notOk(
@@ -2518,7 +2520,7 @@ sap.ui.define([
 			evt.preventDefault();
 		});
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oDeleteIcon = token1.getAggregation("deleteIcon");
 		qutils.triggerEvent("tap", oDeleteIcon.getDomRef());
@@ -2546,7 +2548,7 @@ sap.ui.define([
 		this.multiInput1.focus();
 		this.multiInput1.$("inner").val("Test token");
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ENTER);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.ok(oChangeFireSpy.calledOnce, "Change is fired");
@@ -2560,7 +2562,7 @@ sap.ui.define([
 		this.multiInput1.bFocusoutDueRendering = false;
 		this.multiInput1.$("inner").val("Test token 2");
 		this.multiInput1.onsapfocusleave({});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.ok(oChangeFireSpy.calledTwice, "Change is fired");
@@ -2576,7 +2578,7 @@ sap.ui.define([
 		// Act
 		this.multiInput1.focus();
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ENTER);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.notOk(oEnterSpy.args[0][0].isMarked());
@@ -2595,11 +2597,11 @@ sap.ui.define([
 		var oSpyChangeEvent = this.spy(this.multiInput1, "fireChange");
 
 		this.multiInput1.addSuggestionItem(oItem);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		this.multiInput1.setSelectedKey(oItem.getKey());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(this.multiInput1.getValue(), "", "Value of the input should be empty");
@@ -2615,7 +2617,7 @@ sap.ui.define([
 			},
 			oMultiInput = new MultiInput().placeAt("content"),
 			oSpy;
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oSpy = this.spy(oMultiInput, "setProperty");
@@ -2643,7 +2645,7 @@ sap.ui.define([
 			]
 		}).placeAt("content");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oModel = new JSONModel({
 			value: ""
@@ -2656,14 +2658,14 @@ sap.ui.define([
 		oMultiInput.setModel(oModel);
 		oMultiInput.setValue("Token 1");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act - trigger onsapfocusleave and close
 		// the suggestion popover when an item is selected
 		oMultiInput.onsapfocusleave({});
 		oMultiInput.setSelectedKey("1");
 		oMultiInput._getSuggestionsPopoverPopup().close();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oMultiInput.getValue(), "", "Value of the input should be empty");
@@ -2681,7 +2683,7 @@ sap.ui.define([
 			});
 			this.multiInput1.placeAt("qunit-fixture");
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function() {
 			this.multiInput1.destroy();
@@ -2803,21 +2805,21 @@ sap.ui.define([
 			});
 
 		oMultiInput.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMultiInput._onResize();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		sKeyShortcut = oMultiInput.getFocusDomRef().getAttribute('aria-keyshortcuts');
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(sKeyShortcut, "Enter", "'aria-keyshortcuts' attribute should be presented with the correct value");
 
 		// Act
 		oMultiInput.setEnabled(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sKeyShortcut = oMultiInput.getFocusDomRef().getAttribute('aria-keyshortcuts');
 
 		// Assert
@@ -2826,7 +2828,7 @@ sap.ui.define([
 		// Act
 		oMultiInput.setEnabled(true);
 		oMultiInput.setEditable(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sKeyShortcut = oMultiInput.getFocusDomRef().getAttribute('aria-keyshortcuts');
 
 		// Assert
@@ -2839,7 +2841,7 @@ sap.ui.define([
 
 		// act
 		this.multiInput1.addToken(new Token({text: "Token2"}));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(this.multiInput1.$().hasClass("sapMMultiInputHasTokens"), "MultiInput placeholder doesn't show placeholder");
@@ -2852,7 +2854,7 @@ sap.ui.define([
 
 		oMultiInputWithoutSuggestions.placeAt("content");
 		oMultiInputWithSuggestions.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oMultiInputWithoutSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
@@ -2860,7 +2862,7 @@ sap.ui.define([
 
 		//Act
 		oMultiInputWithSuggestions.setShowSuggestion(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oMultiInputWithSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
@@ -2881,7 +2883,7 @@ sap.ui.define([
 			});
 
 		oMultiInputWithSuggestions.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMultiInputWithSuggestions._openSuggestionsPopover();
 		this.clock.tick();
@@ -2893,7 +2895,7 @@ sap.ui.define([
 		oMultiInputWithSuggestions._closeSuggestionPopup();
 		this.clock.tick();
 		oMultiInputWithSuggestions.addToken(new Token({text: "Token1"}));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMultiInputWithSuggestions._openSuggestionsPopover();
 		this.clock.tick();
@@ -2912,7 +2914,7 @@ sap.ui.define([
 			this.multiInput1 = new MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.multiInput1.destroy();
@@ -2929,7 +2931,7 @@ sap.ui.define([
 		this.multiInput1.getTokens()[0].focus();
 
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
 			which: KeyCodes.X,
@@ -2951,7 +2953,7 @@ sap.ui.define([
 
 		this.multiInput1.getTokens()[0].focus();
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
 			which: KeyCodes.A,
@@ -2978,7 +2980,7 @@ sap.ui.define([
 
 		this.multiInput1.getTokens()[0].setSelected(true);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
 			which: KeyCodes.C,
@@ -3000,7 +3002,7 @@ sap.ui.define([
 
 		this.multiInput1.focus();
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
 			which: KeyCodes.A,
@@ -3036,7 +3038,7 @@ sap.ui.define([
 			}
 		});
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(10);
 
 		//assert
@@ -3048,7 +3050,7 @@ sap.ui.define([
 			return new Token({text: args.text});
 		});
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var result = this.multiInput1._convertTextToToken("  token");
 
@@ -3061,7 +3063,7 @@ sap.ui.define([
 			this.multiInput = new MultiInput();
 			this.multiInput.placeAt("qunit-fixture");
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function() {
 			this.multiInput.destroy();
@@ -3080,7 +3082,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
@@ -3106,7 +3108,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
@@ -3139,7 +3141,7 @@ sap.ui.define([
 			new Token({text: "XXXX", editable: false})
 		]);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oItem = oList.getItems()[0];
 		oFakeEvent = {
@@ -3167,7 +3169,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator");
 
@@ -3176,7 +3178,7 @@ sap.ui.define([
 
 		//close and open the picker
 		this.multiInput.onfocusin(oEventMock);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more label is hidden on focusin.");
@@ -3193,14 +3195,14 @@ sap.ui.define([
 			new Token({text: "XXXX"}),
 			new Token({text: "XXXX"})
 		]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Setup
 		oTokenizerSpy = this.spy(oTokenizer, "setRenderMode");
 
 		// Act. Emulate click on the Icon
 		this.multiInput.onfocusin({target: this.multiInput.getDomRef("vhi")});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oTokenizerSpy.calledOnce, "setRenderMode should not be triggered");
@@ -3208,7 +3210,7 @@ sap.ui.define([
 
 		// Act. Emulate "real" focusin
 		this.multiInput.onfocusin({target: this.multiInput.getDomRef("inner")});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oTokenizerSpy.calledOnce, "setRenderMode should be triggered");
@@ -3218,7 +3220,7 @@ sap.ui.define([
 
 		// Focus first item in the popover.
 		oTokenizer.getTokensPopup().getContent()[0].getItems()[0].$().trigger("focus");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oTokenizer.getTokensPopup().close();
 		this.clock.tick(500);
@@ -3254,7 +3256,7 @@ sap.ui.define([
 		oListItem.data("text", "text123");
 		oListItem.data("tokenId", "token");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		aTokens = this.multiInput.getTokens();
@@ -3332,7 +3334,7 @@ sap.ui.define([
 		var oTokenizer = this.multiInput1.getAggregation("tokenizer"),
 			oStub = this.stub(oTokenizer.getTokensPopup(), "openBy");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		this.multiInput1.$().find(".sapMTokenizerIndicator")[0].click();
@@ -3368,11 +3370,11 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 		oMI.setWidth("200px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oTokenizer._togglePopup(oTokenizer.getTokensPopup());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		oList = oTokenizer._getTokensList();
@@ -3382,7 +3384,7 @@ sap.ui.define([
 		oDeleteStub.withArgs("listItem").returns(oList.getItems()[0]);
 		oDeleteStub.withArgs("tokens").returns([oMI.getTokens()[0]]);
 		oTokenizer._handleListItemDelete(oFakeEvent);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oList.getItems().length, 3, "A list item is removed from the dialog.");
@@ -3391,7 +3393,7 @@ sap.ui.define([
 		// In IE the tokenizer's popup is getting auto-closed with delay, after the tokenizer itself has been destroyed.
 		// Close the popup before destroying so it has a place to return the focus to prevent exceptions in IE.
 		oTokenizer._togglePopup(oTokenizer.getTokensPopup());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		// Clean
@@ -3405,12 +3407,12 @@ sap.ui.define([
 		oTokenizer = this.multiInput.getAggregation("tokenizer");
 		this.multiInput.addToken(oToken);
 		oTokenizer._togglePopup(oTokenizer.getTokensPopup());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oTokenizer._fillTokensList(oTokenizer._getTokensList());
 		this.multiInput.removeToken(oToken);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		aListItems = oTokenizer._getTokensList().getItems();
@@ -3447,7 +3449,7 @@ sap.ui.define([
 
 		// act
 		oMultiInput.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oPopover, "Readonly Popover should be created");
@@ -3477,7 +3479,7 @@ sap.ui.define([
 
 		// act
 		oMultiInput.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oMIDomRef = oMultiInput.getFocusDomRef();
@@ -3507,7 +3509,7 @@ sap.ui.define([
 
 		// act
 		oMultiInput.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oPopover, "Readonly Popover should be created");
@@ -3540,7 +3542,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 
@@ -3563,7 +3565,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
@@ -3575,12 +3577,12 @@ sap.ui.define([
 		// act
 		oPicker.close();
 		this.multiInput.setEditable(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		var oEvent = {
@@ -3590,7 +3592,7 @@ sap.ui.define([
 		};
 
 		oTokenizer._handleListItemDelete(oEvent);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aTokens = this.multiInput.getTokens();
 		var aItems = oPicker.getDomRef().querySelectorAll('.sapMLIB');
@@ -3607,7 +3609,7 @@ sap.ui.define([
 
 		// act
 		oMultiInput.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		// assert
@@ -3630,7 +3632,7 @@ sap.ui.define([
 		qutils.triggerEvent("input", multiInput.getFocusDomRef());
 
 		multiInput.onsapfocusleave({});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(multiInput.$("inner").css("opacity"), "1", "The input value remains visible, if the n-more label is hidden");
@@ -3649,7 +3651,7 @@ sap.ui.define([
 
 		// act
 		oMultiInput.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oMultiInput.$("inner").css("opacity"), "1", "The input value remains visible, if the n-more label is hidden");
 
@@ -3661,7 +3663,7 @@ sap.ui.define([
 		]);
 
 		// act
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oMultiInput.$("inner").css("opacity"), "0", "The input value is not visible, if the n-more label is shown");
@@ -3683,7 +3685,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator");
 		assert.notOk(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is visible.");
@@ -3693,7 +3695,7 @@ sap.ui.define([
 		// Invalidating when the nMore is to be shown that is why
 		oVisibleInputSpy.reset();
 		this.multiInput.onsapfocusleave({});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oVisibleInputSpy.calledWith(false), "The input field is hidden onfocusout.");
@@ -3710,7 +3712,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator");
 		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is not visible.");
@@ -3738,7 +3740,7 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oIndicator = this.multiInput.$().find(".sapMTokenizerIndicator");
 
@@ -3748,7 +3750,7 @@ sap.ui.define([
 
 		oVisibleInputSpy.reset();
 		this.multiInput.invalidate({});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oVisibleInputSpy.calledWith(false), "The input field is hidden.");
@@ -3785,11 +3787,11 @@ sap.ui.define([
 		var oTokenizer = oMultiInput.getAggregation("tokenizer");
 		var oList  = oTokenizer._getTokensList();
 		oMultiInput.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oMultiInput.destroy();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(!oTokenizer._oTokensList, "The SelectedItemsList gets detached");
@@ -3806,12 +3808,12 @@ sap.ui.define([
 
 		// arrange
 		var oMultiInput = new MultiInput("test-input").placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oMultiInput.destroy();
 		oMultiInput = new MultiInput("test-input").placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(true, "If there's no exception so far, everything is ok");
@@ -3827,12 +3829,12 @@ sap.ui.define([
 			oMultiInput = new MultiInput({
 				tokens: [oToken]
 			}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oMultiInput.setEditable(false);
 		oMultiInput._deleteTokens([oToken], {});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oTokenSpy.calledOnce, "Token destroyed is omitted");
@@ -3843,7 +3845,7 @@ sap.ui.define([
 		oMultiInput.setEditable(true);
 		oMultiInput.setEnabled(false);
 		oMultiInput._deleteTokens([oToken], {});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oTokenSpy.calledOnce, "Token destroyed is omitted");
@@ -3853,7 +3855,7 @@ sap.ui.define([
 		oMultiInput.setEnabled(true);
 		oToken.setEditable(false);
 		oMultiInput._deleteTokens([oToken], {});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oTokenSpy.calledOnce, "Token destroyed is omitted");
@@ -3862,7 +3864,7 @@ sap.ui.define([
 		// Act
 		oToken.setEditable(true);
 		oMultiInput._deleteTokens([oToken], {});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oTokenSpy.calledOnce, "Token should be destroyed this time");
@@ -3885,7 +3887,7 @@ sap.ui.define([
 			});
 			this.multiInput1.placeAt("qunit-fixture");
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function() {
 			this.config.useFakeTimers = true;
@@ -3928,7 +3930,7 @@ sap.ui.define([
 			});
 
 		oMI.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(1000);
 
 		assert.strictEqual(oSyncInput.callCount, 2);
@@ -3957,12 +3959,12 @@ sap.ui.define([
 			bVisible;
 
 		oMultiInput.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		oMultiInput.updateDomValue("123");
 		qutils.triggerEvent("input", oMultiInput.getFocusDomRef());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Arrange
 		var oToken1 = new Token({text: "Token with a very long text content"}),
@@ -3976,7 +3978,7 @@ sap.ui.define([
 		oRenderingSpy.reset();
 		oMultiInput.setTokens([oToken1, oToken2, oToken3, oToken4, oToken5, oToken6]);
 		oMultiInput.setEditable(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oTokenizer._handleNMoreIndicatorPress();
 		bVisible = oTokenizer._getTokensList().getVisible();
@@ -4018,7 +4020,7 @@ sap.ui.define([
 			sorter: [new Sorter('group', false, true)],
 			template: new Item({text: "{name}", key: "{key}"})
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oMultiInput.onfocusin({target: oMultiInput.getDomRef("inner")}); // for some reason this is not triggered when calling focus via API
@@ -4058,7 +4060,7 @@ sap.ui.define([
 			});
 			this.oMultiInput.placeAt("content");
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function() {
 			this.oMultiInput.destroy();
@@ -4076,7 +4078,7 @@ sap.ui.define([
 			text: "Extra long token, Extra long token, Extra long token, Extra long token"
 		}));
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oMultiInput.getAggregation("tokenizer").hasOneTruncatedToken(), "Token is truncated initially.");
@@ -4109,7 +4111,7 @@ sap.ui.define([
 		// Act
 		this.oMultiInput.focus();
 		qutils.triggerKeydown(this.oMultiInput.getFocusDomRef(), KeyCodes.ARROW_LEFT);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oSpy.calledWith({preventScroll: true}), "Focus has been called with preventScroll argument.");
@@ -4194,7 +4196,7 @@ sap.ui.define([
 		var oMultiInput = new MultiInput();
 
 		oMultiInput.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerKeydown(oMultiInput, KeyCodes.I, false, false, true); // trigger Control key + I
@@ -4252,16 +4254,16 @@ sap.ui.define([
 		});
 
 		oMultiInput.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oMultiInput.getAggregation("tokenizer")._handleNMoreIndicatorPress();
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiInput.showItems();
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(nPopoverAnimationTick);
 
 		assert.ok(oMultiInput._getSuggestionsPopover().getItemsContainer().getVisible(), true, "List should be visible");
@@ -4278,7 +4280,7 @@ sap.ui.define([
 		var oGetPopoverSpy = this.spy(oMultiInput, "_getSuggestionsPopoverPopup");
 		var oEventMock = {};
 		oMultiInput.placeAt("content");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oMultiInput.focus();
@@ -4310,7 +4312,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMultiInput = new MultiInput();
 			this.oMultiInput.placeAt('content');
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oMultiInput.destroy();
@@ -4367,7 +4369,7 @@ sap.ui.define([
 
 		var oDummyBtn = new Button().placeAt("content");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// show suggestions
 		oMultiInput._openSuggestionsPopover();
@@ -4376,11 +4378,11 @@ sap.ui.define([
 		// arrow down
 		qutils.triggerKeydown(oMultiInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(300);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oDummyBtn.focus();
 		this.clock.tick();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oMultiInput.hasStyleClass("sapMFocus"), "Input should not have focus class");
 

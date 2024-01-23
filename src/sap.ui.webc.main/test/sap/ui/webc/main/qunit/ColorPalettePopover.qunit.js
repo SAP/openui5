@@ -3,16 +3,17 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/ColorPalettePopover",
 	"sap/ui/webc/main/ColorPaletteItem",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, ColorPalettePopover, ColorPaletteItem, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, ColorPalettePopover, ColorPaletteItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oColorPalettePopover = new ColorPalettePopover({
 				defaultColor: "blue",
 				colors: [
@@ -31,7 +32,7 @@ sap.ui.define([
 				}
 			});
 			this.oColorPalettePopover.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oColorPalettePopover.destroy();

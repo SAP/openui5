@@ -3,12 +3,14 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/WheelSlider",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(
 	Item,
 	WheelSlider,
 	KeyCodes,
+	nextUIUpdate,
 	jQuery,
 	oCore
 ) {
@@ -84,7 +86,7 @@ sap.ui.define([
 				});
 
 				this.oSlider.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 			},
 			afterEach: function() {
 				this.oSlider.destroy();
@@ -149,7 +151,7 @@ sap.ui.define([
 
 			// act
 			this.oSlider.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert - after first rendering
 			assert.ok(oAttachEventsSpy.calledOnce, "_attachEvents is called");
@@ -157,7 +159,7 @@ sap.ui.define([
 
 			// act
 			this.oSlider.invalidate();
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert - after second rendering
 			assert.equal(oAttachEventsSpy.callCount, 2, "_attachEvents is called 2 times");
@@ -174,7 +176,7 @@ sap.ui.define([
 			assert.ok(oSpyUpdateConstrainedMargins.notCalled, "margins are not updated before a domref exists");
 
 			this.oSlider.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert
 			assert.ok(oSpyUpdateConstrainedMargins.calledOnce, "margins are updated after rendering");
@@ -197,14 +199,14 @@ sap.ui.define([
 
 			// act
 			this.oSlider.setIsCyclic(true);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert
 			assert.ok(!this.oSlider.$().hasClass("sapMWSShort"), "slider styled correctly");
 
 			// act
 			this.oSlider.setIsCyclic(false);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert
 			assert.ok(this.oSlider.$().hasClass("sapMWSShort"), "slider styled correctly");
@@ -246,7 +248,7 @@ sap.ui.define([
 		QUnit.test("_handleTap expands the slider", function(assert) {
 			// arrange
 			this.oSlider.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			this.oSlider._handleTap(null);
@@ -259,7 +261,7 @@ sap.ui.define([
 			// arrange
 			this.oSlider.setIsExpanded(true);
 			this.oSlider.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act - tap the 3rd value
 			this.oSlider._handleTap(this._createItemMouseUp(2));
@@ -271,7 +273,7 @@ sap.ui.define([
 		QUnit.test("_doDrag method updates the top position", function(assert) {
 			// arrange
 			this.oSlider.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			this.oSlider._startDrag(200);
@@ -288,7 +290,7 @@ sap.ui.define([
 		QUnit.test("_endDrag method initiates an animation on the slider's content", function(assert) {
 			// arrange
 			this.oSlider.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			var oAnimateScrollSpy = this.spy(this.oSlider, "_animateScroll");
 
@@ -310,7 +312,7 @@ sap.ui.define([
 
 			// arrange
 			this.oSlider.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oOffsetAnimateValueSpy = this.spy(this.oSlider, "_offsetAnimateValue");
 
@@ -327,7 +329,7 @@ sap.ui.define([
 
 			// arrange
 			this.oSlider.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oOffsetAnimateValueSpy = this.spy(this.oSlider, "_offsetAnimateValue");
 
@@ -345,7 +347,7 @@ sap.ui.define([
 			// arrange
 			this.oSlider.setIsExpanded(true);
 			this.oSlider.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oOffsetAnimateValueSpy = this.spy(this.oSlider, "_offsetAnimateValue");
 
@@ -363,7 +365,7 @@ sap.ui.define([
 			// arrange
 			this.oSlider.setIsExpanded(true);
 			this.oSlider.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oOffsetAnimateValueSpy = this.spy(this.oSlider, "_offsetAnimateValue");
 
@@ -380,7 +382,7 @@ sap.ui.define([
 			this.oSlider.setIsExpanded(true);
 			this.oSlider.setSelectedKey("k2");
 			this.oSlider.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			this.oSlider.onsappageup();
@@ -394,7 +396,7 @@ sap.ui.define([
 			this.oSlider.setIsExpanded(true);
 			this.oSlider.setSelectedKey("k2");
 			this.oSlider.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			this.oSlider.onsappagedown();
@@ -409,7 +411,7 @@ sap.ui.define([
 			// arrange
 			this.oSlider.setIsExpanded(true);
 			this.oSlider.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oHandleWheelScrollSpy = this.spy(this.oSlider, "_handleWheelScroll");
 
@@ -425,7 +427,7 @@ sap.ui.define([
 			// arrange
 			this.oSlider.setIsExpanded(true);
 			this.oSlider.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			this.oSlider.onfocusout({});

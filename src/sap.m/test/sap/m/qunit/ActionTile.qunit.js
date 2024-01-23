@@ -10,10 +10,12 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/ContentConfig"
-], function(ActionTile,ActionTileContent,TileAttribute,TileContent,library,FormattedText,Button,oCore,Library,KeyCodes,jQuery,JSONModel,ContentConfig) {
+	"sap/m/ContentConfig",
+	"sap/ui/core/theming/Parameters"
+], function(ActionTile, ActionTileContent, TileAttribute, TileContent, library, FormattedText, Button, oCore, Library, KeyCodes, nextUIUpdate, jQuery, JSONModel, ContentConfig, Parameters) {
 	"use strict";
 
 	// shortcut for sap.m.FrameType
@@ -45,7 +47,7 @@ sap.ui.define([
 	});
 
     QUnit.module("S4 home Tiles", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			var oModel = new JSONModel({
 				attributes: [
 					{
@@ -84,6 +86,7 @@ sap.ui.define([
 				header: "Comparative Annual Totals",
 				tileContent: new ActionTileContent("tileCont1", {
 				priority: Priority.VeryHigh,
+				linkPress: Function.prototype,
 				priorityText: "Very High",
 				attributes: {
 					path: "/attributes",
@@ -118,7 +121,7 @@ sap.ui.define([
 				]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
             this.oToDo.destroy();
@@ -170,7 +173,7 @@ sap.ui.define([
 		assert.equal(this.oSituation.getDomRef().getAttribute("aria-label"),this.oSituation._getAriaText(),"Aria-Label has been rendered Successfully");
 	});
 
-	QUnit.test("Tooltip,aria-label generation on tasks cards when there are less than four attributes", function(assert) {
+	QUnit.test("Tooltip,aria-label generation on tasks cards when there are less than four attributes", async function(assert) {
 		//Arrange
 		var oNewModel = new JSONModel({
 			attributes: [
@@ -188,7 +191,7 @@ sap.ui.define([
 			]
 		});
 		this.oToDo.setModel(oNewModel);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oToDo.getDomRef().dispatchEvent(new Event("mouseenter"));
 		//Act
 		var sToolTip = this.oToDo.getDomRef().getAttribute("title");
@@ -198,22 +201,22 @@ sap.ui.define([
 		assert.equal(sAriaLabel,this.oToDo._getAriaText(),"Aria-label successfully generated");
 	});
 
-	QUnit.test("Setting the width through property", function(assert) {
+	QUnit.test("Setting the width through property", async function(assert) {
 		//Arrange
 		this.oToDo.setWidth("25rem");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.equal(getComputedStyle(this.oToDo.getDomRef()).width,"400px","Width set correctly");
 	});
 
-	QUnit.test("Setting pressEnabled property", function(assert) {
+	QUnit.test("Setting pressEnabled property", async function(assert) {
 		assert.ok(this.oToDo.getDomRef().classList.contains("sapMPointer"),"Hand icon would be visible");
 		this.oToDo.setPressEnabled(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(this.oToDo.getDomRef().classList.contains("sapMATAutoPointer"),"Hand icon won't be visible");
 	});
 
-	QUnit.test("Setting enableNavigationButton property", function(assert) {
+	QUnit.test("Setting enableNavigationButton property", async function(assert) {
 		//Assert
 		assert.notOk(this.oToDo.getEnableNavigationButton(),"By default enableActionButton property has been set to false");
 		assert.ok(this.oToDo.hasStyleClass("sapMATHideActionButton"),"Style class has been added sucessfully");
@@ -222,7 +225,7 @@ sap.ui.define([
 		//Arrange
 		this.oToDo.setEnableNavigationButton(true);
 		this.oSituation.setEnableNavigationButton(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.notOk(this.oToDo.hasStyleClass("sapMATHideActionButton"),"Style class should not get added");
 		assert.notOk(this.oSituation.hasStyleClass("sapMATHideActionButton"),"Style class should not get added");
@@ -236,5 +239,32 @@ sap.ui.define([
 	QUnit.test("Priority text will not be rendered on the tooltip of the ToDo cards", function(assert) {
 		var sPriority = Library.getResourceBundleFor("sap.m").getText("TEXT_CONTENT_PRIORITY");
 		assert.notOk(this.oToDo.getTileContent()[0].getAltText().includes(sPriority),"Priority text is not rendered inside the tooltip");
+	});
+
+	QUnit.test("Border radius has been set to 0.25 rem in non-horizon themes", function(assert) {
+		var sBorderRadius,fnDone;
+		sBorderRadius = Parameters.get({name:"sapTile_BorderCornerRadius",
+		callback: function (sBRadius) {
+			var boundFn = fnPerformAssertion.bind(this);
+			boundFn(sBRadius);
+			fnDone();
+		}.bind(this)});
+		function fnPerformAssertion(sExpectedValue) {
+			assert.equal(getComputedStyle(this.oToDo.getDomRef()).borderRadius.slice(0,-2) * 1,sExpectedValue.slice(0,-3) * 16,"Border-radius has been set to the sapTile_BorderCornerRadius parameter");
+		}
+		if (sBorderRadius) {
+			var boundFn = fnPerformAssertion.bind(this);
+			boundFn(sBorderRadius);
+		} else {
+			fnDone = assert.async();
+		}
+	});
+
+	QUnit.test("One press event has been attached to the link after rerendering the tile", async function(assert) {
+		this.oToDo.setHeader("Demo Tile");
+		await nextUIUpdate();
+		var oLink = this.oToDo.getTileContent()[0].getAttributes()[1].getContentConfig().getInnerControl();
+		assert.equal(oLink.mEventRegistry.press.length,1,"Only one event has been attached to the press event of the link");
+
 	});
 });

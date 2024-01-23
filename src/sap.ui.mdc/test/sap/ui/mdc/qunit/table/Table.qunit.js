@@ -31,6 +31,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/ui/mdc/odata/TypeMap",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
 	"sap/ui/mdc/ActionToolbar",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
@@ -93,6 +94,7 @@ sap.ui.define([
 	CoreLibrary,
 	MLibrary,
 	ODataTypeMap,
+	nextUIUpdate,
 	TestModificationHandler,
 	ActionToolbar,
 	ActionToolbarAction,
@@ -222,7 +224,7 @@ sap.ui.define([
 				}
 			});
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -243,7 +245,7 @@ sap.ui.define([
 			assert.ok(!oDomRef.style.width, "Table has a no default width");
 
 			this.oTable.setWidth("200px");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.equal(oDomRef.style.width, "200px", "Table has a custom width");
 
 			const TestTableType = TableTypeBase.extend("sap.ui.mdc.test.TestTableType", {
@@ -260,7 +262,7 @@ sap.ui.define([
 		}).then(() => {
 			const oDomRef = this.oTable.getDomRef();
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(oDomRef.classList.contains("sapUiMdcTable"), "Table has class sapUiMdcTable if the type provides additional classes");
 			assert.ok(oDomRef.classList.contains("MyTestClassA"), "Table has class MyTestClassA provided by the type");
 			assert.ok(oDomRef.classList.contains("MyTestClassB"), "Table has class MyTestClassB provided by the type");
@@ -409,7 +411,7 @@ sap.ui.define([
 			type: "ResponsiveTable"
 		});
 		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(!this.oTable._oTable);
 		assert.ok(!this.oTable._oRowTemplate);
@@ -434,7 +436,7 @@ sap.ui.define([
 		});
 		// place the table at the dom
 		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oTable.addColumn(
 			new Column({
@@ -496,7 +498,7 @@ sap.ui.define([
 		});
 		// place the table at the dom
 		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oTable.addColumn(new Column({
 			header: "Test",
@@ -625,7 +627,7 @@ sap.ui.define([
 		});
 		// place the table at the dom
 		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		return this.oTable.initialized().then(function() {
 			this.oTable.destroy();
@@ -1393,13 +1395,13 @@ sap.ui.define([
 				"Column"
 			]);
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			return this.oTable.initialized().then(function() {
 				const aColumns = this.oTable.getColumns();
 				const aInnerColumns = this.oTable._oTable.getColumns();
 
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				sap.ui.require([
 					sDelegatePath
 				], function(TableDelegate) {
@@ -1486,7 +1488,7 @@ sap.ui.define([
 
 		// place the table at the dom
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		return oTable.initialized().then(function() {
 			const oTest3MDCColumn = oTable.getColumns()[2];
@@ -1546,7 +1548,7 @@ sap.ui.define([
 		}));
 
 		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oTable.initialized().then(function() {
 			this.oTable._oTable.attachEventOnce("rowsUpdated", function() {
@@ -1570,12 +1572,12 @@ sap.ui.define([
 
 				assert.equal(this.oTable.getSelectionMode(), "None", "Selection Mode None - MDCTable");
 				assert.equal(this.oTable._oTable.getSelectionMode(), "None", "Selection Mode None - Inner Table");
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 				Promise.resolve().then(function() {
 					return new Promise(function(resolve) {
 						selectItem(that.oTable._oTable.getRows()[0], false);
-						Core.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 						assert.equal(iSelectionCount, -1, "No selection change event");
 						resolve();
 					});
@@ -1592,7 +1594,7 @@ sap.ui.define([
 						assert.equal(that.oTable.getSelectionMode(), "Single", "Selection Mode Single - MDCTable");
 						assert.equal(oSelectionPlugin.getSelectionMode(), "Single", "Selection Mode Single - MultiSelectionPlugin");
 						assert.equal(that.oTable._oTable.getSelectionBehavior(), "RowSelector", "Selection Behavior RowSelector");
-						Core.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 						selectItem(that.oTable._oTable.getRows()[0], true);
 					});
@@ -1608,7 +1610,7 @@ sap.ui.define([
 					return new Promise(function(resolve) {
 						iSelectionCount = -1;
 						that.oTable.clearSelection();
-						Core.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 						assert.equal(iSelectionCount, -1, "No selection change event");
 						assert.equal(that.oTable.getSelectedContexts().length, 0, "No Items selected");
@@ -1626,7 +1628,7 @@ sap.ui.define([
 						assert.equal(that.oTable.getSelectionMode(), "SingleMaster", "Selection Mode Single - MDCTable");
 						assert.equal(oSelectionPlugin.getSelectionMode(), "Single", "Selection Mode Single - MultiSelectionPlugin");
 						assert.equal(that.oTable._oTable.getSelectionBehavior(), "RowOnly", "Selection Behavior RowOnly");
-						Core.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 						selectItem(that.oTable._oTable.getRows()[0], true, true);
 					});
@@ -1643,7 +1645,7 @@ sap.ui.define([
 					return new Promise(function(resolve) {
 						iSelectionCount = -1;
 						that.oTable.clearSelection();
-						Core.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 						assert.equal(iSelectionCount, -1, "No selection change event");
 						assert.equal(that.oTable.getSelectedContexts().length, 0, "No Items selected");
@@ -1661,7 +1663,7 @@ sap.ui.define([
 						assert.equal(that.oTable.getSelectionMode(), "Multi", "Selection Mode Multi - MDCTable");
 						assert.equal(that.oTable._oTable.getSelectionMode(), "MultiToggle", "Selection Mode Multi - Inner Table");
 						assert.equal(that.oTable._oTable.getSelectionBehavior(), "RowSelector", "Selection Behavior RowSelector");
-						Core.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 						assert.ok(oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"), "Plugin is a MultiSelectionPlugin");
 
 						selectItem(that.oTable._oTable.getRows()[0], true);
@@ -1686,7 +1688,7 @@ sap.ui.define([
 					return new Promise(function(resolve) {
 						iSelectionCount = -1;
 						that.oTable.clearSelection();
-						Core.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 						assert.equal(iSelectionCount, -1, "No selection change event");
 						assert.equal(that.oTable.getSelectedContexts().length, 0, "No Items selected");
@@ -1773,14 +1775,14 @@ sap.ui.define([
 
 			assert.equal(this.oTable.getSelectionMode(), "None", "Selection Mode None - MDCTable");
 			assert.equal(this.oTable._oTable.getMode(), "None", "Selection Mode None - Inner Table");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			selectItem(this.oTable._oTable.getItems()[0], false);
 			assert.equal(iSelectionCount, -1, "No selection change event");
 
 			this.oTable.setSelectionMode("Multi");
 			assert.equal(this.oTable.getSelectionMode(), "Multi", "Selection Mode Multi - MDCTable");
 			assert.equal(this.oTable._oTable.getMode(), "MultiSelect", "Selection Mode Multi - Inner Table");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			checkSelectionMethods(this.oTable);
 			selectItem(this.oTable._oTable.getItems()[0], false);
 			assert.equal(this.oTable.getSelectedContexts().length, 1, "Item selected");
@@ -1798,7 +1800,7 @@ sap.ui.define([
 			this.oTable.setSelectionMode("Single");
 			assert.equal(this.oTable.getSelectionMode(), "Single", "Selection Mode Single - MDCTable");
 			assert.equal(this.oTable._oTable.getMode(), "SingleSelectLeft", "Selection Mode Single - Inner Table");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			checkSelectionMethods(this.oTable);
 			selectItem(this.oTable._oTable.getItems()[0], false);
 			assert.equal(this.oTable.getSelectedContexts().length, 1, "Item selected");
@@ -1814,7 +1816,7 @@ sap.ui.define([
 			this.oTable.setSelectionMode("SingleMaster");
 			assert.equal(this.oTable.getSelectionMode(), "SingleMaster", "Selection Mode SingleMaster - MDCTable");
 			assert.equal(this.oTable._oTable.getMode(), "SingleSelectMaster", "Selection Mode SingleSelectMaster - Inner Table");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			checkSelectionMethods(this.oTable);
 			selectItem(this.oTable._oTable.getItems()[0], false);
 			assert.equal(this.oTable.getSelectedContexts().length, 1, "Item selected");
@@ -2020,7 +2022,7 @@ sap.ui.define([
 		}));
 
 		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		const oTable = this.oTable;
 		const fnEvent = function() {};
@@ -2555,7 +2557,7 @@ sap.ui.define([
 		const oRemoveSelectionStub = sinon.spy(oCellSelector, "removeSelection");
 		this.oTable.addDependent(oCellSelector);
 		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		return this.oTable._fullyInitialized().then(() => {
 			this.oTable._oTable.attachEventOnce("rowsUpdated", () => {
@@ -2599,7 +2601,7 @@ sap.ui.define([
 			assert.ok(this.oTable._oPasteButton, "Paste button created");
 			assert.equal(FESRHelper.getSemanticStepname(this.oTable._oPasteButton, "press"), "mdc:tbl:paste", "Correct FESR StepName");
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(this.oTable._oPasteButton.getDomRef(), "Paste button is visible");
 
 			Promise.resolve().then(function() {
@@ -2803,7 +2805,7 @@ sap.ui.define([
 		const done = assert.async();
 
 		this.oTable.setEnableExport(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oTable.initialized().then(function() {
 			// Initilaized has to be used again as the binding itself is done when the initialized Promise is fired
@@ -2820,7 +2822,7 @@ sap.ui.define([
 						done();
 					});
 					this.oTable._oExportButton.fireDefaultAction();
-					Core.applyChanges();
+					nextUIUpdate.runSync()/*fake timer is used in module*/;
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
@@ -2831,7 +2833,7 @@ sap.ui.define([
 			sinon.stub(this.oTable, "_onExport");
 
 			this.oTable.setEnableExport(true);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			assert.notOk(this.oTable.getRowBinding(), "no binding so no binding length");
 			assert.notOk(this.oTable._oExportButton.getEnabled(), "Button is disabled as binding length is 0");
@@ -2841,7 +2843,7 @@ sap.ui.define([
 			assert.ok(this.oTable._onExport.notCalled, "Export button is disabled: Export not triggered");
 
 			this.oTable._oExportButton.setEnabled(true);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// trigger CTRL + SHIFT + E keyboard shortcut
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
@@ -3004,7 +3006,7 @@ sap.ui.define([
 		});
 
 		this.oTable.setEnableExport(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(this.oTable.getEnableExport(), "enableExport=true");
 
 		this.oTable.addColumn(new Column({
@@ -3300,7 +3302,7 @@ sap.ui.define([
 	QUnit.test("Open the p13n dialog via button and shortcut", function(assert) {
 		return this.oTable.initialized().then(function() {
 			this.oTable.setP13nMode(["Column", "Sort"]);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			const oOpenSettingsDialogStub = sinon.stub(PersonalizationUtils, "openSettingsDialog");
 
@@ -3313,7 +3315,7 @@ sap.ui.define([
 			oOpenSettingsDialogStub.reset();
 
 			this.oTable._setShowP13nButton(false);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.COMMA, false, false, true);
 			assert.ok(oOpenSettingsDialogStub.notCalled, "utils.Personalization.openSettingsDialog not called");
@@ -3321,7 +3323,7 @@ sap.ui.define([
 
 			this.oTable.setP13nMode([]);
 			this.oTable._setShowP13nButton(true);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.COMMA, false, false, true);
 			assert.ok(oOpenSettingsDialogStub.notCalled, "utils.Personalization.openSettingsDialog not called");
@@ -3352,7 +3354,7 @@ sap.ui.define([
 					type: "Error"
 				})
 			};
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oButton.focus();
 			assert.ok(oButton.getFocusDomRef() === document.activeElement, "Correct DOM element focused");
@@ -3510,7 +3512,7 @@ sap.ui.define([
 		});
 		// place the table at the dom
 		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		const fPasteHandler = function(oEvent) {
 			const aData = oEvent.getParameter("data");
@@ -3662,7 +3664,7 @@ sap.ui.define([
 
 		const fPadding = 1.0625;
 		this.oTable.setEnableAutoColumnWidth(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		const measureText = function(sRefText) {
 			return oCanvasContext.measureText(sRefText).width / 16;
@@ -3964,7 +3966,7 @@ sap.ui.define([
 			}
 		}));
 		this.oTreeTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		return Promise.all([
 			this.oTable._fullyInitialized(),
@@ -3990,7 +3992,7 @@ sap.ui.define([
 		this.oTable.destroy();
 		this.oTable = new Table();
 		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		return this.oTable.initialized().then(function() {
 			assert.strictEqual(this.oTable._oToolbar.getStyle(), "Clear", "Correct style applied to the toolbar according to the table type");
@@ -4159,7 +4161,7 @@ sap.ui.define([
 		}));
 
 		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		const oBeforeOpenContextMenuSpy = this.spy();
 		this.oTable.attachEvent("beforeOpenContextMenu", oBeforeOpenContextMenuSpy);
 
@@ -4275,7 +4277,7 @@ sap.ui.define([
 		}));
 
 		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oTable.setContextMenu(null);
 		assert.equal(this.oTable.getContextMenu(), null, "Context menu is set to null on mdc table");
@@ -4300,7 +4302,7 @@ sap.ui.define([
 			assert.equal(oContextMenu, this.oTable._oTable.getContextMenu());
 			assert.equal(oContextMenu.getItems()[0].getText(), "Test A", "ContextMenu with text Test A is shown");
 			let oDestroyContextmenuSpy = sinon.spy(this.oTable._oTable, "destroyContextMenu");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oMenu = this.oTable._oTable.getContextMenu();
 			const oCell = this.oTable._oTable.getItems()[0].getDomRef().querySelector(".sapMListTblCell");
@@ -4362,7 +4364,7 @@ sap.ui.define([
 				...mSettings
 			});
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			return this.oTable;
 		}
@@ -4478,7 +4480,7 @@ sap.ui.define([
 		createTable: function(mSettings) {
 			this.oTable = new Table(mSettings);
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -4544,7 +4546,7 @@ sap.ui.define([
 				}
 			});
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -4713,7 +4715,7 @@ sap.ui.define([
 				});
 
 				that.oTable.placeAt("qunit-fixture");
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				return that.oTable._fullyInitialized();
 			}).then(function() {
 				assert.ok(that.hasFilterInfoBar(), "Initial filter conditions: Filter info bar exists");
@@ -4811,7 +4813,7 @@ sap.ui.define([
 				assert.ok(that.hasFilterInfoBar(), "Filter disabled: Filter info bar exists");
 				assert.ok(!oFilterInfoBar.getVisible(), "Filter disabled: Filter info bar is invisible");
 				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), "", "The associated invisible text is empty");
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
 
 				that.oTable.destroy();
@@ -4920,7 +4922,7 @@ sap.ui.define([
 			return new Promise(function(resolve) {
 				oP13nDialog.attachEventOnce("afterClose", function() {
 					that.oTable.setFilterConditions({name: []}); // Hides the filter info bar
-					Core.applyChanges();
+					nextUIUpdate.runSync()/*fake timer is used in module*/;
 					resolve();
 				});
 				oP13nDialog.getButtons()[0].firePress(); // Trigger press on the OK button in the sap.m.Dialog
@@ -4938,7 +4940,7 @@ sap.ui.define([
 					type: sTableType
 				});
 				this.oTable.placeAt("qunit-fixture");
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				return this.oTable.initialized();
 			},
 			afterEach: function() {
@@ -5412,7 +5414,7 @@ sap.ui.define([
 			this.oTable.setModel(oModel);
 			this.oTable.placeAt("qunit-fixture");
 			this.oType = this.oTable.getType();
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -5432,7 +5434,7 @@ sap.ui.define([
 			assert.strictEqual(this.oType._oShowDetailsButton.getItems()[1].getTooltip(), oRb.getText("table.HIDEDETAILS_TEXT"), "Correct tooltip");
 
 			this.oTable._oTable.setContextualWidth("600px");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
 			assert.strictEqual(this.oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "hideDetails button selected");
 
@@ -5452,7 +5454,7 @@ sap.ui.define([
 
 		return this.oTable.initialized().then(function() {
 			this.oTable._oTable.setContextualWidth("Tablet");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			clock.tick(1);
 			let bButtonAddedToToolbar = this.oTable._oTable.getHeaderToolbar().getEnd().some(function(oControl) {
 				return oControl.getId() === this.oType._oShowDetailsButton.getId();
@@ -5460,7 +5462,7 @@ sap.ui.define([
 			assert.ok(bButtonAddedToToolbar, "Button is correctly added to the table header toolbar");
 
 			this.oType.setShowDetailsButton(false);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			clock.tick(1);
 			assert.notOk(this.oType.getShowDetailsButton(), "showDetailsButton = false");
 			bButtonAddedToToolbar = this.oTable._oTable.getHeaderToolbar().getEnd().some(function(oControl) {
@@ -5490,7 +5492,7 @@ sap.ui.define([
 		Device.system.desktop = false;
 		Device.system.tablet = false;
 		Device.system.phone = true;
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		return this.oTable.initialized().then(function() {
 			assert.strictEqual(this.oTable._oTable.getHiddenInPopin().length, 2, "getHiddenInPopin() contains only 1 value");
@@ -5507,7 +5509,7 @@ sap.ui.define([
 	QUnit.test("Button should be hidden with filtering leads to no data and viceversa", function(assert) {
 		return TableQUnitUtils.waitForBinding(this.oTable).then(function() {
 			this.oTable._oTable.setContextualWidth("600px");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
 
 			this.oTable._oTable.getBinding("items").filter(new Filter("test", "EQ", "foo"));
@@ -5650,7 +5652,7 @@ sap.ui.define([
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");
 				this.oTable = this.oView.byId("table");
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				ControlPersonalizationWriteAPI.restore({
 					selector: this.oTable
 				});
@@ -5670,7 +5672,7 @@ sap.ui.define([
 
 		sinon.stub(ColumnResizer, "_isInTouchMode").returns(true);
 		oTable.setType("ResponsiveTable");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		return oTable.initialized().then(function() {
 			assert.ok(oTable._oTable.getDependents()[0].isA("sap.m.plugins.ColumnResizer"),
@@ -5776,7 +5778,7 @@ sap.ui.define([
 		const oTable = this.oTable;
 
 		oTable.setType("ResponsiveTable");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		return oTable.initialized().then(function() {
 			const fOnModificationSpy = sinon.spy(oTable, "_onModifications");
@@ -5987,7 +5989,7 @@ sap.ui.define([
 			});
 			this.oTable.placeAt("qunit-fixture");
 			this.oType = this.oTable.getType();
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -6144,7 +6146,7 @@ sap.ui.define([
 			}, mSettings));
 			this.oFinalizePropertyHelperSpy = sinon.spy(this.oTable, "finalizePropertyHelper");
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			return this.oTable.awaitControlDelegate().then(function(oDelegate) {
 				this.oFetchPropertiesSpy = sinon.spy(oDelegate, "fetchProperties");
@@ -6244,7 +6246,7 @@ sap.ui.define([
 			}, mSettings));
 			this.oFinalizePropertyHelperSpy = sinon.spy(this.oTable, "finalizePropertyHelper");
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			return this.oTable.awaitControlDelegate().then(function(oDelegate) {
 				this.oDelegate = oDelegate;
@@ -6264,7 +6266,7 @@ sap.ui.define([
 		return this.createTable({
 			models: new JSONModel({ testPath: [ {"lastname": "A"}, {"age": "B"} ] })
 		}, true).then(function() {
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
 			FESRHelper.setSemanticStepname(this.oTable._oExpandAllButton, "press", "mdc:tbl:expandAll");
@@ -6284,7 +6286,7 @@ sap.ui.define([
 		return this.createTable({
 			models: new JSONModel({ testPath: [] })
 		}, true).then(function() {
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			assert.ok(this.oTable._oExpandAllButton, "Expand All Button was created");
 			assert.ok(this.oTable._oExpandAllButton.getVisible(), "Expand All Button is visible");
@@ -6302,7 +6304,7 @@ sap.ui.define([
 		return this.createTable({
 			models: new JSONModel({ testPath: [ {"lastname": "A", "age": 10}, {"lastname": "B", "age": 20} ] })
 		}, false).then(function() {
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			assert.notOk(this.oTable._oExpandAllButton, "Expand All Button was not created");
 			assert.notOk(this.oTable._oCollapseAllButton, "Collapse All Button was not created");

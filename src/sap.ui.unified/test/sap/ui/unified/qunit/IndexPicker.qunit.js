@@ -1,16 +1,17 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/calendar/IndexPicker",
 	"sap/ui/core/Core"
-], function(IndexPicker, oCore) {
+], function(nextUIUpdate, IndexPicker, oCore) {
 	"use strict";
 
 		QUnit.module("API ", {
-			beforeEach: function () {
+			beforeEach: async function() {
 				this.oIP = new IndexPicker();
 				this.oIP.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oIP.destroy();

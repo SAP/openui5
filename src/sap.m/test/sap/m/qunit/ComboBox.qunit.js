@@ -31,6 +31,7 @@ sap.ui.define([
 	'sap/ui/core/ValueStateSupport',
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	// provides jQuery.fn.getSelectedText
 	"sap/ui/dom/jquery/getSelectedText",
@@ -68,6 +69,7 @@ sap.ui.define([
 	ValueStateSupport,
 	coreLibrary,
 	oCore,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -146,7 +148,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getName(), "", 'Default name is ""');
@@ -218,14 +220,14 @@ sap.ui.define([
 		oComboBox.setModel(oModel);
 		oComboBox.setBindingContext(oModel.getContext("/rebum"));
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getValue(), "ipsum");
 
 		// act
 		oComboBox.setBindingContext(oModel.getContext("/sanctus"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getValue(), "dolor");
@@ -241,7 +243,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.setValue("test");
@@ -362,7 +364,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -403,7 +405,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -460,7 +462,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -499,7 +501,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -540,7 +542,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -579,7 +581,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -606,7 +608,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -652,7 +654,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -698,7 +700,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -739,7 +741,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -796,7 +798,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -835,7 +837,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -874,7 +876,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -913,7 +915,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -989,7 +991,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1016,7 +1018,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1062,7 +1064,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -1108,7 +1110,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -1149,7 +1151,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -1171,7 +1173,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1210,7 +1212,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1249,7 +1251,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1288,7 +1290,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1329,7 +1331,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -1358,12 +1360,12 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oItem.setKey("GER");
 		oItem.setText("Germany");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "GER");
@@ -1398,7 +1400,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.setSelectedItem(oItem1);
 		this.clock.tick(500);
 
@@ -1427,7 +1429,7 @@ sap.ui.define([
 		var oComboBox = new ComboBox();
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// arrange
 		var fnAddItemSpy = this.spy(oComboBox, "addItem");
@@ -1438,7 +1440,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.addItem(oItem);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getFirstItem() === oItem);
@@ -1464,7 +1466,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1485,7 +1487,7 @@ sap.ui.define([
 		var oComboBox = new ComboBox();
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// arrange
 		var fnInsertItem = this.spy(oComboBox, "insertItem");
@@ -1496,7 +1498,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.insertItem(oItem, 0);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getFirstItem() === oItem);
@@ -1529,7 +1531,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -1673,7 +1675,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.setSelectedItem(oComboBox.getLastItem());
@@ -1716,7 +1718,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.setSelectedItem(null);
@@ -1759,7 +1761,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -1767,7 +1769,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.setSelectedItem(null);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1855,7 +1857,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.setSelectedItemId("item-id");
@@ -1898,7 +1900,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.setSelectedItemId("");
@@ -1941,7 +1943,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -1949,7 +1951,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.setSelectedItemId("");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1972,7 +1974,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -2014,7 +2016,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -2092,7 +2094,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var fnSetPropertySpy = this.spy(oComboBox, "setProperty"),
 			fnSetAssociationSpy = this.spy(oComboBox, "setAssociation"),
@@ -2146,7 +2148,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.setSelectedKey("");
@@ -2189,7 +2191,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -2197,7 +2199,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.setSelectedKey("");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -2228,7 +2230,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oComboBox.open();
 		this.clock.tick();
@@ -2252,13 +2254,13 @@ sap.ui.define([
 
 	// Arrange
 	oComboBox.placeAt("content");
-	oCore.applyChanges();
+	nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 	// Act
 	oComboBox.focus();
 	this.clock.tick();
 	qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-	oCore.applyChanges();
+	nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 	this.clock.tick(300);
 
@@ -2290,14 +2292,14 @@ sap.ui.define([
 
 		// Arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oComboBox.focus();
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
 
@@ -2329,7 +2331,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oComboBox.unbindObject();
 		assert.strictEqual(oComboBox.getModel().oData.context[0].value, "1", "unbindObject doesn't overwrite model");
@@ -2362,7 +2364,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oComboBox.getValue(), "1", "the value is set properly");
 		oComboBox.unbindObject();
@@ -2382,7 +2384,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getDomRef().style.maxWidth, "100%");
@@ -2400,7 +2402,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getDomRef().style.maxWidth, "50%");
@@ -2416,11 +2418,11 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.setMaxWidth("40%");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getDomRef().style.maxWidth, "40%");
@@ -2506,7 +2508,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 
 		var oSelectedItem = oComboBox.getItemByKey("8");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oEvent = new jQuery.Event("input", {
 			target: oComboBox.getFocusDomRef()
@@ -2518,7 +2520,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.removeItem(8);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(fnDestroyItems.callCount, 1, "sap.m.List.prototype.destroyItems() method was called");
@@ -2590,11 +2592,11 @@ sap.ui.define([
 		oComboBox.setModel(oModel);
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.removeItem(0);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -2623,11 +2625,11 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.removeItem(0);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -2670,13 +2672,13 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnRemoveAllItemsSpy = this.spy(oComboBox, "removeAllItems");
 		// var fnListRemoveAllItemsSpy = this.spy(oComboBox._getList(), "removeAllItems");
 
 		// act
 		var oRemovedItems = oComboBox.removeAllItems();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		// assert.strictEqual(fnListRemoveAllItemsSpy.callCount, 1, "sap.m.List.prototype.removeAllItems() method was called");
@@ -2724,7 +2726,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(1000); // wait 1s after the open animation is completed
@@ -2732,7 +2734,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.destroyItems();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(fnDestroyItemsSpy.returned(oComboBox), "sap.m.ComboBox.prototype.destroyItems() method returns the ComboBox instance");
@@ -2773,7 +2775,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		document.documentElement.style.overflow = "hidden"; // hide scrollbar during test
 
 		// act
@@ -2826,7 +2828,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -2834,7 +2836,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.hasStyleClass(InputBase.ICON_PRESSED_CSS_CLASS), "The correct CSS class was added to the control.");
@@ -2863,7 +2865,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.syncPickerContent();
@@ -2890,7 +2892,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var sExpectedValue = "lorem ipsum";
 		var oTarget = oComboBox.getFocusDomRef();
@@ -2929,7 +2931,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -2965,7 +2967,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.placeAt("content");
 		oLabel.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
@@ -3020,7 +3022,7 @@ sap.ui.define([
 			});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.focus();
@@ -3073,14 +3075,14 @@ sap.ui.define([
 			oCloseSpy = this.spy(oComboBox, "close");
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.open();
 		this.clock.tick(1000);
 
 		oComboBox._getList().getItems()[1].$().trigger("tap");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(1000);
 
 		// Assert
@@ -3214,7 +3216,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oItem1 = oComboBox.getItemAt(2);
@@ -3257,7 +3259,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oItem = oComboBox.getFirstItem();
@@ -3276,7 +3278,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oItem = oComboBox.getFirstItem();
@@ -3317,7 +3319,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oItem = oComboBox.getLastItem();
@@ -3336,7 +3338,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oItem = oComboBox.getLastItem();
@@ -3379,7 +3381,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oItem1 = oComboBox.getItemByKey("0"),
@@ -3476,7 +3478,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnSetValueSpy = this.spy(oComboBox, "setValue");
 
 		// act
@@ -3516,7 +3518,7 @@ sap.ui.define([
 
 		// arrange
 		oErrorComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oErrorComboBox.focus();
@@ -3550,7 +3552,7 @@ sap.ui.define([
 		var sValueStateText = "Error message. Extra long text used as an error message. Extra long text used as an error message - 2. Extra long text used as an error message - 3.";
 		oComboBox.placeAt("content");
 		oComboBox.syncPickerContent();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oComboBox._oSuggestionPopover._getValueStateHeader().getText(), sText,
 			"The text is forwarded correctly.");
@@ -3559,7 +3561,7 @@ sap.ui.define([
 		oComboBox.setValueStateText("");
 		oComboBox.setValueState("Error");
 		oComboBox.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox._oSuggestionPopover._getValueStateHeader().getText(), ValueStateSupport.getAdditionalText(oComboBox),
@@ -3567,7 +3569,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.setValueStateText(sValueStateText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox._oSuggestionPopover._getValueStateHeader().getText(), sValueStateText, "The text is set correctly when is set from the user.");
@@ -3585,11 +3587,11 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.setValueState(ValueState.Error);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.$("content").hasClass("sapMInputBaseContentWrapperState"));
@@ -3623,7 +3625,7 @@ sap.ui.define([
 		// Arrange
 		oErrorComboBox.syncPickerContent();
 		oErrorComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		// Assert
@@ -3651,7 +3653,7 @@ sap.ui.define([
 		// Arrange
 		oErrorComboBox.syncPickerContent();
 		oErrorComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oErrorComboBox._getSuggestionsPopover().getPopover().getCustomHeader().getText(), "custom", "text should be custom");
@@ -3686,11 +3688,11 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.destroy();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getItems().length, 0);
@@ -3726,7 +3728,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -3734,7 +3736,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.destroy();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getItems().length, 0);
@@ -3757,7 +3759,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnAddAggregationSpy = this.spy(oComboBox, "addAggregation");
 		var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
 
@@ -3784,7 +3786,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnAddAggregationSpy = this.spy(oComboBox, "addAggregation");
 		var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
 
@@ -3907,7 +3909,7 @@ sap.ui.define([
 		oModel.setData(mData);
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.updateAggregation("items");
@@ -3918,7 +3920,7 @@ sap.ui.define([
 		// cleanup
 		oComboBox.destroy();
 		oModel.destroy();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	// BCP 1570460580
@@ -3985,11 +3987,11 @@ sap.ui.define([
 		oComboBox.setModel(oModel);
 		oComboBox.setBindingContext(oModel.getContext("/1"));
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.setBindingContext(oModel.getContext("/0"));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "DZ");
@@ -4073,7 +4075,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.open();
 		var fnFindAggregatedObjectsSpy = this.spy(oComboBox, "findAggregatedObjects");
 
@@ -4448,7 +4450,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(getComputedStyle(oComboBox.getDomRef("arrow")).getPropertyValue("opacity"), "0");
@@ -4469,7 +4471,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(getComputedStyle(oComboBox.getDomRef("arrow")).getPropertyValue("cursor"), "default");
@@ -4494,7 +4496,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnLoadItemsSpy = this.spy(oComboBox, "fireLoadItems");
 
@@ -4518,7 +4520,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnLoadItemsSpy = this.spy(oComboBox, "fireLoadItems");
 
@@ -4717,7 +4719,7 @@ sap.ui.define([
 		oComboBox6.placeAt("content");
 		oComboBox7.placeAt("content");
 		oComboBox8.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		aComboBox.forEach(function (oComboBox) {
@@ -4765,7 +4767,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getArrowIcon().getVisible(), false, "Icons visibility is false");
@@ -4799,7 +4801,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerTouchEvent("touchstart", oComboBox.getOpenArea(), {
 			touches: {
@@ -4867,7 +4869,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // wait 1s after the open animation is completed
@@ -4916,7 +4918,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox._getList().getItems()[0].getTitle(), "", "List item title is not updated");
@@ -4929,7 +4931,7 @@ sap.ui.define([
 
 		oComboBox.setModel(oModel);
 		oComboBox.syncPickerContent(); // Simulate before open of the popover
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox._getList().getItems()[0].getTitle(), "Item 1", "List item title is updated");
@@ -4947,7 +4949,7 @@ sap.ui.define([
 
 		// Arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		aEndIcons = oComboBox.getAggregation("_endIcon");
 
@@ -4982,7 +4984,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
@@ -5040,7 +5042,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.placeAt("content");
 		oComboBox2.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -5052,7 +5054,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		oComboBox2.focus();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oComboBox.getDomRef().classList.contains("sapMFocus"), "The input field should not have visual focus.");
@@ -5082,7 +5084,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -5118,13 +5120,13 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// arrange
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
@@ -5161,7 +5163,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -5195,7 +5197,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
@@ -5241,7 +5243,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5278,7 +5280,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
@@ -5317,7 +5319,7 @@ sap.ui.define([
 			oSelectTextSpy = this.spy(oComboBox, "selectText");
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.onsapshow(oFakeEvent);
@@ -5358,7 +5360,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnHideSpy = this.spy(oComboBox, "onsaphide");
 
@@ -5397,7 +5399,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -5431,7 +5433,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnHideSpy = this.spy(oComboBox, "onsaphide");
 
@@ -5469,7 +5471,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnEscapeSpy = this.spy(oComboBox, "onsapescape");
 		var fnCloseSpy = this.spy(oComboBox, "close");
@@ -5510,7 +5512,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5552,7 +5554,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5584,7 +5586,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5631,7 +5633,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.getFocusDomRef().value = "A";
 		qutils.triggerEvent("input", oComboBox.getFocusDomRef());
@@ -5663,7 +5665,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5696,7 +5698,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5729,7 +5731,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5763,7 +5765,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 
@@ -5808,7 +5810,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var fnKeyDownSpy = this.spy(oComboBox, "onsapdown");
@@ -5844,7 +5846,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -5888,7 +5890,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnKeyDownSpy = this.stub(oComboBox, "onsapdown");
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
@@ -5935,7 +5937,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var fnKeyDownSpy = this.spy(oComboBox, "onsapdown");
@@ -5971,7 +5973,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -6016,7 +6018,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
@@ -6029,7 +6031,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().value, "Algeria");
@@ -6064,7 +6066,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		qutils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
@@ -6100,7 +6102,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // wait after the open animation is completed
@@ -6108,7 +6110,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -6148,7 +6150,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnKeyUpSpy = this.spy(oComboBox, "onsapup");
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
@@ -6191,7 +6193,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -6235,7 +6237,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnKeyUpSpy = this.spy(oComboBox, "onsapup");
 
@@ -6282,7 +6284,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnKeyUpSpy = this.stub(oComboBox, "onsapup");
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
@@ -6324,7 +6326,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -6370,7 +6372,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		qutils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
@@ -6418,7 +6420,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		qutils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
@@ -6462,7 +6464,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.open();
@@ -6471,7 +6473,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -6522,7 +6524,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var fnKeyHomeSpy = this.spy(oComboBox, "onsaphome");
@@ -6558,7 +6560,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -6614,7 +6616,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var fnKeyHomeSpy = this.spy(oComboBox, "onsaphome");
@@ -6674,7 +6676,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -6729,7 +6731,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
@@ -6739,7 +6741,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick(0);
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -6786,7 +6788,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0); // tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var fnKeyEndSpy = this.spy(oComboBox, "onsapend");
@@ -6843,7 +6845,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -6889,7 +6891,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 		oComboBox.focus();
 
@@ -6931,7 +6933,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);	// wait after the open animation is completed
@@ -6939,7 +6941,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -6958,7 +6960,7 @@ sap.ui.define([
 
 			// arrange
 			oComboBox.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			oComboBox.focus();
 			this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 			var fnPageDownSpy = this.spy(oComboBox, "onsappagedown");
@@ -7142,7 +7144,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -7198,7 +7200,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 		oComboBox.focus();
 
@@ -7250,7 +7252,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);	// wait after the open animation is completed
@@ -7258,7 +7260,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -7277,7 +7279,7 @@ sap.ui.define([
 
 			// arrange
 			oComboBox.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			oComboBox.focus();
 			this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 			var fnPageUpSpy = this.spy(oComboBox, "onsappageup");
@@ -7465,7 +7467,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -7520,7 +7522,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 		oComboBox.focus();
 
@@ -7574,7 +7576,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);	// wait 1s after the open animation is completed
@@ -7582,7 +7584,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -7614,7 +7616,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		var fnOpenSpy = this.spy(oComboBox, "open");
@@ -7649,7 +7651,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -7689,7 +7691,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var oEvent = new jQuery.Event("input", {
 			target: oComboBox.getFocusDomRef()
@@ -7725,7 +7727,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -7772,7 +7774,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -7819,7 +7821,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -7866,7 +7868,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -7897,7 +7899,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnOpenSpy = this.spy(ComboBox.prototype, "open");
 		oComboBox.focus();
 
@@ -7926,7 +7928,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var oTarget = oComboBox.getFocusDomRef();
 		oTarget.value = "l";
@@ -7966,7 +7968,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
@@ -8016,7 +8018,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -8068,7 +8070,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -8110,7 +8112,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -8142,7 +8144,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -8175,7 +8177,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var oFocusDomRef = oComboBox.getFocusDomRef();
 
@@ -8233,7 +8235,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oComboBox.focus();
 		oComboBox.open();
@@ -8288,7 +8290,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		qutils.triggerEvent("focusin", oComboBox.getOpenArea(), {
@@ -8317,7 +8319,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.focus();
@@ -8352,7 +8354,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		qutils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
 			which: KeyCodes.L
@@ -8389,7 +8391,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -8419,7 +8421,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -8450,7 +8452,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -8653,7 +8655,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -8682,7 +8684,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -8715,7 +8717,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 
@@ -8755,7 +8757,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.open();
 
 		// act
@@ -8779,7 +8781,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -8814,7 +8816,7 @@ sap.ui.define([
 			},
 			fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oComboBox.syncPickerContent();
@@ -8843,7 +8845,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -8876,7 +8878,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -8913,7 +8915,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -8951,7 +8953,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -8988,7 +8990,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9026,7 +9028,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9063,7 +9065,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9101,7 +9103,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9142,7 +9144,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9184,7 +9186,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9225,7 +9227,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9267,7 +9269,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9292,7 +9294,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 		oComboBox.updateDomValue("Germany");
@@ -9318,7 +9320,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 		oComboBox.updateDomValue("lorem ipsum");
@@ -9345,7 +9347,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -9382,7 +9384,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
@@ -9418,7 +9420,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 
@@ -9477,7 +9479,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 
@@ -9531,7 +9533,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.open();
 		var oParams = {
 			touches: {
@@ -9601,7 +9603,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -9650,7 +9652,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -9685,7 +9687,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -9716,7 +9718,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(0);
@@ -9760,7 +9762,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.focus();
@@ -9805,7 +9807,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.focus();
@@ -9929,12 +9931,12 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oItem.bVisible = false;
 		oComboBox.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oItem.bVisible, false);
@@ -9980,7 +9982,7 @@ sap.ui.define([
 	QUnit.test("Role combobox should be on the wrapper div of the input", function (assert) {
 		var oComboBox = new ComboBox();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("role"), "combobox", "should be combobox");
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("type"), "text", "should be text");
@@ -9992,7 +9994,7 @@ sap.ui.define([
 			oArrowSpan;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oArrowSpan = oComboBox.getDomRef("arrow");
 
 		assert.strictEqual(oArrowSpan.tagName.toLowerCase(), "span", "tag should be span");
@@ -10005,14 +10007,14 @@ sap.ui.define([
 		var oComboBox = new ComboBox();
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oComboBox.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should not be set before picker creation');
 
 		//act
 		oComboBox.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-controls"), oComboBox.getPicker().getId(), 'The "aria-controls" should be');
@@ -10032,7 +10034,7 @@ sap.ui.define([
 		}), oResourceBundle = Library.getResourceBundleFor("sap.m").getText("COMBOBOX_AVAILABLE_OPTIONS");
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(Element.getElementById(oComboBox.getPickerInvisibleTextId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
 
@@ -10051,7 +10053,7 @@ sap.ui.define([
 
 		oLabel.placeAt("content");
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var sAriaLabelledBy = oComboBox.getDomRef("arrow").getAttribute("aria-labelledby").split(" ");
 		assert.ok(sAriaLabelledBy.indexOf(oLabel.getId()) > -1, "ComboBox aria-labelledby attribute is set to label id");
 
@@ -10076,7 +10078,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.open();
@@ -10095,7 +10097,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var bAriaHidden = oComboBox.getDomRef().querySelector(".sapMInputBaseIconContainer").getAttribute("aria-hidden");
 
@@ -10126,7 +10128,7 @@ sap.ui.define([
 				]
 			});
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(!oComboBox._getList(), "No list available on init (lazy loading)");
@@ -10134,7 +10136,7 @@ sap.ui.define([
 
 		// Act (init the SuggestionPopover with the List)
 		oComboBox.syncPickerContent();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length - 2, oComboBox._getList().getVisibleItems().length, "On init the List item should be the same as the enabled core items");
@@ -10142,12 +10144,12 @@ sap.ui.define([
 		// Act
 		oComboBox.open();
 		assert.strictEqual(oComboBox.getVisibleItems().length, oComboBox._getList().getVisibleItems().length, "ComboBox should not display disabled items as a suggestions");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		vTemp = oComboBox.removeAllItems();
 		oComboBox.syncPickerContent();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10157,7 +10159,7 @@ sap.ui.define([
 		// Act
 		vTemp = aItems.pop();
 		oComboBox.addItem(vTemp);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10165,7 +10167,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.removeItem(vTemp);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10175,7 +10177,7 @@ sap.ui.define([
 		oComboBox.insertItem(aItems[0]);
 		oComboBox.insertItem(aItems[1]);
 		oComboBox.insertItem(aItems[2], 1);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10184,7 +10186,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.destroyItems();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10192,7 +10194,7 @@ sap.ui.define([
 
 		oComboBox.destroy();
 		oComboBox = null;
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.test("Object cloning", function (assert) {
@@ -10243,11 +10245,11 @@ sap.ui.define([
 			selectedItem: oItem
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oClone = oCB.clone();
 		oClone.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oClone.getValue(), "Dryanovo", "Value should be kept");
 		assert.strictEqual(oClone.getSelectedItem().getText(), "Dryanovo", "Selected item should be cloned");
@@ -10279,7 +10281,7 @@ sap.ui.define([
 			content: [oComboBox]
 		}).placeAt('content');
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oListItem = ListHelpers.getListItem(oComboBox.getItems()[1]);
 		oComboBox._getList().fireItemPress({listItem: oListItem});
@@ -10312,7 +10314,7 @@ sap.ui.define([
 			oCB.addItem(oItem);
 		}
 		oCB.placeAt('content');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oCB.focus();
 
@@ -10341,7 +10343,7 @@ sap.ui.define([
 
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//Assert
@@ -10350,7 +10352,7 @@ sap.ui.define([
 
 		//Act
 		oComboBox.setSelectedKey("1");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//Assert
@@ -10359,7 +10361,7 @@ sap.ui.define([
 
 		//Act
 		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//Assert
@@ -10385,7 +10387,7 @@ sap.ui.define([
 		//Act
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//Assert
@@ -10396,7 +10398,7 @@ sap.ui.define([
 
 		//Act
 		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "33", text: "33"}]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//Assert
@@ -10424,7 +10426,7 @@ sap.ui.define([
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
 		oComboBox.setSelectedKey("2");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//Assert
@@ -10433,7 +10435,7 @@ sap.ui.define([
 
 		//Act
 		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "33", text: "33"}]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//Assert
@@ -10463,7 +10465,7 @@ sap.ui.define([
 		//Act
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//Assert
@@ -10474,7 +10476,7 @@ sap.ui.define([
 		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "3", text: "3"}]);
 		oComboBox.getModel().setProperty("/selectedKey", "3");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(100);
 
 		//Assert
@@ -10494,7 +10496,7 @@ sap.ui.define([
 			value: "Testt",
 			items: [oItem]
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.BACKSPACE);
@@ -10526,7 +10528,7 @@ sap.ui.define([
 			oFocusinStub = this.stub(oComboBox, "focus");
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oFakeEvent = {target: oComboBox.getDomRef("arrow")};
 
@@ -10548,7 +10550,7 @@ sap.ui.define([
 		oComboBox.syncPickerContent();
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oComboBox.getPicker().getInitialFocus(), oComboBox.getId());
 
@@ -10567,7 +10569,7 @@ sap.ui.define([
 
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oFakeEvent = {
 			target: oComboBox.getFocusDomRef(),
@@ -10601,7 +10603,7 @@ sap.ui.define([
 			]
 		});
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oComboBox._handlePopupOpenAndItemsLoad(false);
 
@@ -10623,12 +10625,12 @@ sap.ui.define([
 
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.getFocusDomRef().value = "A";
 		qutils.triggerEvent("input", oComboBox.getFocusDomRef());
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		oList = oComboBox._getList();
@@ -10639,7 +10641,7 @@ sap.ui.define([
 		// act
 		oComboBox.getFocusDomRef().value = "AC";
 		qutils.triggerEvent("input", oComboBox.getFocusDomRef());
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox.$().hasClass("sapMFocus"), "The input field should have visual focus.");
@@ -10664,7 +10666,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		oList = oComboBox._getList();
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oComboBox.focus();
@@ -10710,7 +10712,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		oList = oComboBox._getList();
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oComboBox.setSelectedItem(oItem1);
 		this.clock.tick(500);
@@ -10746,7 +10748,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		qutils.triggerEvent("focusin", oComboBox.getOpenArea(), {
@@ -10779,7 +10781,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -10810,7 +10812,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.highlightList("(T");
 
 		// act
@@ -10832,13 +10834,13 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oFocusDomRef = oComboBox.getFocusDomRef();
 
 		oFocusDomRef.value = "b";
 		qutils.triggerEvent("input", oFocusDomRef);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var highlightedPart = oComboBox._getList().getItems()[0].getDomRef().querySelector(".sapMInputHighlight");
 
@@ -10872,7 +10874,7 @@ sap.ui.define([
 
 			this.oComboBox.syncPickerContent();
 			this.oComboBox.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oComboBox.destroy();
@@ -10928,7 +10930,7 @@ sap.ui.define([
 
 	QUnit.test("Setting a valid filter should apply on items and their text", function (assert) {
 		this.oComboBox.setFilterSecondaryValues(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var aFilteredItems = this.oComboBox.filterItems("B").items;
@@ -11026,7 +11028,7 @@ sap.ui.define([
 				}
 			}).placeAt("content");
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.comboBox.destroy();
@@ -11095,7 +11097,7 @@ sap.ui.define([
 
 			this.comboBox.setModel(oSpecialCharsModel);
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.comboBox.destroy();
@@ -11106,7 +11108,7 @@ sap.ui.define([
 	QUnit.test('Input text selection "without" re-rendering on selection change', function (assert) {
 
 		this.comboBox._$input.trigger("focus").val("n").trigger("input");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		var selectedText = this.comboBox._$input.getSelectedText();
@@ -11119,7 +11121,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.comboBox._$input.trigger("focus").val("n").trigger("input");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		var selectedText = this.comboBox._$input.getSelectedText();
@@ -11145,7 +11147,7 @@ sap.ui.define([
 				]
 			}).placeAt("content");
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.comboBox.destroy();
@@ -11292,7 +11294,7 @@ sap.ui.define([
 			}
 		}).setModel(oModel);
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oItem1 = oComboBox.getItems()[0],
 			oListItem1 = oComboBox._mapItemToListItem(oItem1);
@@ -11325,13 +11327,13 @@ sap.ui.define([
 
 		this.oComboBox.addItem(oItem);
 		oListItem = this.oComboBox._mapItemToListItem(oItem);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oItem.setText("New Item Title");
 		oItem.setTooltip("New Tooltip Text");
 		oItem.setEnabled(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oListItem.getTitle(), "New Item Title", "The list item title is updated.");
@@ -11348,11 +11350,11 @@ sap.ui.define([
 		this.oComboBox.addItem(oItem);
 		this.oComboBox.setShowSecondaryValues(true);
 		oListItem = this.oComboBox._mapItemToListItem(oItem);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oItem.setAdditionalText("New additional text");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oListItem.getInfo(), "New additional text", "The list item info is updated.");
@@ -11380,7 +11382,7 @@ sap.ui.define([
 		}.bind(this);
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		openComboBox();
@@ -11395,7 +11397,7 @@ sap.ui.define([
 		assert.strictEqual(getVisibleListItems(), 1, "One item should be visible");
 
 		oItem.setEnabled(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.close();
 
 		openComboBox();
@@ -11477,7 +11479,7 @@ sap.ui.define([
 			};
 
 			this.oComboBox.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			// clean
@@ -11812,7 +11814,7 @@ sap.ui.define([
 					template: new Item({key: "{key}", text: "{text}"})
 				}
 			}).setModel(new JSONModel(oData)).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oComboBox.getItems().length > 4, "There should be more items as there's a separator item for each group");
@@ -11835,7 +11837,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// arrange
 		oComboBox.focus();
@@ -11872,7 +11874,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// arrange
 		oComboBox.focus();
@@ -11916,7 +11918,7 @@ sap.ui.define([
 				}
 			}).setModel(oModel).placeAt("content");
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		},
 		afterEach: function () {
@@ -11945,7 +11947,7 @@ sap.ui.define([
 		this.oCombobox.oninput(oEvent);
 		this.oCombobox.invalidate();
 		this.clock.tick(500);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "There should be 5 items in the list...");
@@ -11956,7 +11958,7 @@ sap.ui.define([
 		this.oCombobox.oninput(oEvent);
 		this.oCombobox.invalidate();
 		this.clock.tick(500);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(fnFilterVisibleItems(this.oCombobox._getList().getItems()).length, 5, "All items should be visible");
@@ -11997,7 +11999,7 @@ sap.ui.define([
 
 		// Act
 		this.oCombobox.showItems();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
@@ -12016,7 +12018,7 @@ sap.ui.define([
 		this.oCombobox.showItems(function (sValue, oItem) {
 			return oItem.getText() === "A Item 1";
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
@@ -12033,12 +12035,12 @@ sap.ui.define([
 
 		// arrange
 		var oComboBox = new ComboBox("test-combobox").placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oComboBox.destroy();
 		oComboBox = new ComboBox("test-combobox").placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(true, "If there's no exception so far, everything is ok");
@@ -12126,7 +12128,7 @@ sap.ui.define([
 		this.oCombobox.showItems(function (sValue, oItem) {
 			return oItem.getText() === "A Item 1";
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
@@ -12134,7 +12136,7 @@ sap.ui.define([
 
 		// Act
 		this.oCombobox._handlePopupOpenAndItemsLoad(true); // Icon press
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
 		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._getList().getItems()).length, 5, "All items are visible");
@@ -12145,7 +12147,7 @@ sap.ui.define([
 		this.oCombobox.showItems(function () {
 			return false;
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oCombobox.isOpen(), false, "The Popover should not be displayed.");
@@ -12156,7 +12158,7 @@ sap.ui.define([
 
 		// Act
 		this.oCombobox.addItem(new Item({text: "", key: "emptyItem"}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oCombobox.open();
 
@@ -12173,10 +12175,10 @@ sap.ui.define([
 	QUnit.test("List css classes", function (assert) {
 		// setup
 		var oComboBox = new ComboBox().placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oComboBox.open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oComboBox._getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "List"),
@@ -12219,7 +12221,7 @@ sap.ui.define([
 			});
 
 			this.oErrorComboBox.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oErrorComboBox.destroy();
@@ -12290,12 +12292,12 @@ sap.ui.define([
 		// Act
 		this.oErrorComboBox.open();
 		this.clock.tick(500);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oErrorComboBox.getPicker().getCustomHeader().$().hasClass("sapMPseudoFocus"), "The visual pseudo focus is on the first item");
@@ -12324,7 +12326,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oFakeEvent = {
 			getEnabled: function () { return true; },
@@ -12334,7 +12336,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.focus();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick();
@@ -12384,7 +12386,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oComboBox.ontap();
@@ -12425,7 +12427,7 @@ sap.ui.define([
 		});
 
 		this.oErrorComboBox.setFormattedValueStateText(oFormattedValueStateText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oErrorComboBox.open();
 		this.clock.tick();
@@ -12441,7 +12443,7 @@ sap.ui.define([
 
 		// Act
 		this.oErrorComboBox._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oErrorComboBox.open();
 		this.clock.tick();
@@ -12463,7 +12465,7 @@ sap.ui.define([
 		this.clock.tick();
 
 		this.oErrorComboBox._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSuggPopoverHeaderValueState = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader().getFormattedText().getDomRef().textContent;
 
 		// Assert
@@ -12632,7 +12634,7 @@ sap.ui.define([
 
 		// Act
 		this.oErrorComboBox.focus();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick();
@@ -12686,7 +12688,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -12708,7 +12710,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -12730,7 +12732,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -12752,7 +12754,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -12773,7 +12775,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "", "selectedKey should remain");
@@ -12794,7 +12796,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -12816,7 +12818,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -12838,7 +12840,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -12859,12 +12861,12 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oComboBox.focus();
 		qutils.triggerCharacterInput(oComboBox._$input, "T", "This is a user input");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		// Assert
@@ -12886,12 +12888,12 @@ sap.ui.define([
 			})
 				.setModel(this.oModel)
 				.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oComboBox.focus();
 		qutils.triggerCharacterInput(oComboBox._$input, "T", "This is a user input");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		// Assert
@@ -12914,16 +12916,16 @@ sap.ui.define([
 			})
 				.setModel(oModel)
 				.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oComboBox.focus();
 		qutils.triggerCharacterInput(oComboBox._$input, "T", "This is a user input");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oModel.setData(this.oData);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		// Assert
@@ -12955,7 +12957,7 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oComboBox.open();
@@ -13003,11 +13005,11 @@ sap.ui.define([
 
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oComboBox.showItems();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems()[0].getText(), "{ ttt", "Braces are correctly escaped in the separator item.");
@@ -13032,13 +13034,13 @@ sap.ui.define([
 		var oSpy;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.onkeyup();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSpy.called, true, "setProperty was called");
@@ -13058,13 +13060,13 @@ sap.ui.define([
 		var oSpy;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.onkeyup();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSpy.called, true, "setProperty was called");
@@ -13084,13 +13086,13 @@ sap.ui.define([
 		var oSpy;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.onkeyup();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSpy.called, false, "setProperty was not called");
@@ -13109,13 +13111,13 @@ sap.ui.define([
 		var oSpy;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSpy = this.spy(oComboBox._oClearIcon, "setVisible");
 
 		// Act
 		oComboBox.setShowClearIcon(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "setVisible was called exactly 1 time");
@@ -13135,14 +13137,14 @@ sap.ui.define([
 		var oClearSelectionSpy, oSetPropertySpy;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oClearSelectionSpy = this.spy(oComboBox, "clearSelection");
 		oSetPropertySpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.handleClearIconPress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oClearSelectionSpy.called, true, "clearSelection was called");
@@ -13172,17 +13174,17 @@ sap.ui.define([
 		oSelectionChangeEventSpy, oChangeEventSpy;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oComboBox.setSelectedItem(oItem1);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSelectionChangeEventSpy = this.spy(oComboBox, "fireSelectionChange");
 		oChangeEventSpy = this.spy(oComboBox, "fireChange");
 
 		oComboBox.handleClearIconPress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSelectionChangeEventSpy.callCount, 1, "selectionChange event is triggered");
@@ -13194,10 +13196,10 @@ sap.ui.define([
 
 		oComboBox.setValue("test");
 		oComboBox.focus();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oComboBox.handleClearIconPress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSelectionChangeEventSpy.callCount, 1, "selectionChange event is not triggered when there is no selected item");
@@ -13219,14 +13221,14 @@ sap.ui.define([
 		var oClearSelectionSpy, oSetPropertySpy;
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oClearSelectionSpy = this.spy(oComboBox, "clearSelection");
 		oSetPropertySpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.handleClearIconPress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oClearSelectionSpy.called, false, "clearSelection was called");
@@ -13235,13 +13237,13 @@ sap.ui.define([
 		// Arrange
 		oComboBox.setEnabled(true);
 		oComboBox.setEditable(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oClearSelectionSpy.reset();
 		oSetPropertySpy.reset();
 
 		// Act
 		oComboBox.handleClearIconPress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oClearSelectionSpy.called, false, "clearSelection was called");
@@ -13277,7 +13279,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oComboBox.focus();
@@ -13291,7 +13293,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.handleClearIconPress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.notOk(oComboBox.isOpen(), "ComboBox is closed");
@@ -13325,7 +13327,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oComboBox.focus();
@@ -13340,7 +13342,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.handleClearIconPress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oComboBox.isOpen(), "ComboBox remains open");
@@ -13365,7 +13367,7 @@ sap.ui.define([
 			]
 		});
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oFirstMatchingItem;
 
@@ -13418,7 +13420,7 @@ sap.ui.define([
 				events: {
 					dataReceived: function() {
 						oComboBox.placeAt("content");
-						oCore.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 						assert.strictEqual(oComboBox.getSelectedItem().getText(), "Monitor Locking Cable");
 
@@ -13457,7 +13459,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event
@@ -13494,7 +13496,7 @@ sap.ui.define([
 				events: {
 					dataRequested: function() {
 						oComboBox.placeAt("content");
-						oCore.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 						oComboBox.focus();
 
@@ -13507,7 +13509,7 @@ sap.ui.define([
 						assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-busy"), "true");
 					},
 					dataReceived: function() {
-						oCore.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 						assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
 						assert.strictEqual(oComboBox._getList().getBusy(), false, "the loading indicator in the dropdown list is not shown");
@@ -13545,12 +13547,12 @@ sap.ui.define([
 				}),
 				events: {
 					dataRequested: function() {
-						oCore.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 						that.clock.tick(300);
 						assert.strictEqual(oComboBox.getBusy(), true);
 					},
 					dataReceived: function() {
-						oCore.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 						assert.strictEqual(oComboBox.getBusy(), false);
 
 						oComboBox.destroy();
@@ -13566,7 +13568,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -13591,7 +13593,7 @@ sap.ui.define([
 				}),
 				events: {
 					dataReceived: function() {
-						oCore.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 						// assert
 						assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
@@ -13617,7 +13619,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -13645,7 +13647,7 @@ sap.ui.define([
 				}),
 				events: {
 					dataReceived: function() {
-						oCore.applyChanges();
+						nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 						// assert
 						assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
@@ -13668,7 +13670,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -13714,7 +13716,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -13761,7 +13763,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -13806,7 +13808,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 
 		// act
@@ -13855,7 +13857,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oComboBox.focus();
 		var oTarget = oComboBox.getFocusDomRef();
 
@@ -13863,12 +13865,12 @@ sap.ui.define([
 		oTarget.value = "F";
 		qutils.triggerKeydown(oTarget, KeyCodes.F);
 		qutils.triggerEvent("input", oTarget);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oTarget.value = "Fl";
 		qutils.triggerKeydown(oTarget, KeyCodes.L);
 		qutils.triggerEvent("input", oTarget);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)

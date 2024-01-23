@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/OverflowToolbar",
 	"sap/ui/Device",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/includeStylesheet",
 	"require",
@@ -31,6 +32,7 @@ sap.ui.define([
 	JSONModel,
 	OverflowToolbar,
 	Device,
+	nextUIUpdate,
 	jQuery,
 	includeStylesheet,
 	require,
@@ -155,11 +157,11 @@ sap.ui.define([
 		assert.equal(iRenderCounter, 0, "Page should not be rendered directly after instantiation");
 
 		oRenderOncePage.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(iRenderCounter, 1, "Page should be rendered only once");
 
 		oRenderOncePage.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(iRenderCounter, 2, "Page should be rendered twice after another forced rerendering");
 
 		oRenderOncePage.destroy();
@@ -179,11 +181,11 @@ sap.ui.define([
 		assert.equal(iRenderCounter, 0, "Page should not be rendered directly after instantiation");
 
 		oRenderOncePage.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(iRenderCounter, 1, "Page should be rendered only once");
 
 		oRenderOncePage.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(iRenderCounter, 2, "Page should be rendered twice after another forced rerendering");
 
 		oRenderOncePage.destroy();
@@ -200,7 +202,7 @@ sap.ui.define([
 				content: "<div id='p4content'>another test content</div>"
 			})
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPageContentRef = oPage.getDomRef("cont");
 		var hasScroll = oPageContentRef.getBoundingClientRect().height < oPageContentRef.scrollHeight;
@@ -223,7 +225,7 @@ sap.ui.define([
 		});
 		oPage.setModel(oModel);
 		oPage.placeAt('content');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oPage.getTitle(), oPage.$("title-inner").text(), "Title should be escaped properly when using curly braces.");
@@ -239,11 +241,11 @@ sap.ui.define([
 
 
 		oPage.setShowSubHeader(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(document.getElementById("mySubHeader"), undefined, "subHeader should not be rendered when 'showSubHeader' is false");
 
 		oPage.setShowSubHeader(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(document.getElementById("mySubHeader"), "subHeader should be rendered");
 	});
 
@@ -257,7 +259,7 @@ sap.ui.define([
 
 		oPage.placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(!!document.getElementById("myFooter"), true, "footer should be rendered");
 		assert.equal(oPage.getFooter().$().parent().hasClass("sapUiHidden"), true, "footer is hidden");
@@ -275,7 +277,7 @@ sap.ui.define([
 		done = assert.async();
 
 		oPage.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $footer = oPage.$().find(".sapMPageFooter").last();
 
@@ -283,7 +285,7 @@ sap.ui.define([
 
 		//Act
 		oPage.setShowFooter(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		setTimeout(function() {
 			//Assert
@@ -304,7 +306,7 @@ sap.ui.define([
 				showFooter: false,
 				footer: oBar
 			}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oBar.$().parent().hasClass("sapUiHidden"), "Footer is there, but is hidden.");
@@ -313,7 +315,7 @@ sap.ui.define([
 
 		// Act
 		oPage.setShowFooter(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(!oBar.$().parent().hasClass("sapUiHidden"), "Footer is visible.");
@@ -322,7 +324,7 @@ sap.ui.define([
 
 		// Act
 		oPage.setShowFooter(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oBar.$().parent().hasClass("sapUiHidden"), "Footer is there, but is hidden.");
@@ -332,7 +334,7 @@ sap.ui.define([
 		// Act
 		oPage.setShowFooter(true);
 		oPage.setFooter(null);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oPage.$().hasClass("sapMPageWithFooter"), false,
@@ -352,11 +354,11 @@ sap.ui.define([
 				oPage = new Page("myPage");
 
 		oPage.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oPage.setBusy(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1000);
 
 		oBusyIndicator = [].filter.call(oPage.getDomRef().childNodes, function (oChild) {
@@ -368,12 +370,12 @@ sap.ui.define([
 
 		// Setup & Act
 		oPage.setBusy(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1000);
 
 		oPage.setContentOnlyBusy(true);
 		oPage.setBusy(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1000);
 
 		oBusyIndicator = [].filter.call(oPage.getDomRef().childNodes, function (oChild) {
@@ -442,7 +444,7 @@ sap.ui.define([
 				]
 			});
 			oPage4.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oPage4.scrollToElement(this.oTestButton);
 
@@ -462,7 +464,7 @@ sap.ui.define([
 				});
 
 			oPage5.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			var oScrollEnablement = oPage5.getScrollDelegate(),
 				oSpy = sinon.spy(oScrollEnablement, "scrollToElement");
@@ -478,7 +480,7 @@ sap.ui.define([
 		QUnit.test("Restoring scrolling state after rendering", function(assert) {
 			assert.expect(1); // event should not be fired after rerendering
 			oPage2.invalidate();
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.equal(getScrollPos("mySecondPage"), -100, "Page 2 should be scrolled to position 100");
 		});
 
@@ -491,7 +493,7 @@ sap.ui.define([
 
 			// Act
 			oContainer.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			oContainer.addStyleClass("sapUiNoContentPadding");
 			$containerContent = oContainer.$().find(sContentSelector);
 
@@ -612,7 +614,7 @@ sap.ui.define([
 			sAlignment;
 
 		oPage.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sInitialAlignment = oPage.getTitleAlignment();
 
 		// initial titleAlignment test depending on theme
@@ -622,7 +624,7 @@ sap.ui.define([
 		// check if all types of alignment lead to apply the proper CSS class
 		for (sAlignment in TitleAlignment) {
 			oPage.setTitleAlignment(sAlignment);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(oPage._getAnyHeader().hasStyleClass(sAlignmentClass + sAlignment),
 						"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
 		}
@@ -646,7 +648,7 @@ sap.ui.define([
 				footer: new Bar({ contentRight: [new Button({ text: "Button" })] })
 			});
 			this.oPage.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oPage.destroy();
@@ -687,7 +689,7 @@ sap.ui.define([
 
 			oPage.setLandmarkInfo(new PageAccessibleLandmarkInfo(oSetting));
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			assert.ok(oPage[sTagGeter](), sExtectedTag);
 		}

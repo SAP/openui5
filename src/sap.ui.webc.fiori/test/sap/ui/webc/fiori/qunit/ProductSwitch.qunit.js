@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/ProductSwitch",
 	"sap/ui/webc/fiori/ProductSwitchItem"
-], function(createAndAppendDiv, Core, ProductSwitch, ProductSwitchItem) {
+], function(createAndAppendDiv, Core, nextUIUpdate, ProductSwitch, ProductSwitchItem) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oProductSwitch = new ProductSwitch({
 				items: [
 					new ProductSwitchItem({
@@ -41,7 +42,7 @@ sap.ui.define([
 				]
 			});
 			this.oProductSwitch.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oProductSwitch.destroy();

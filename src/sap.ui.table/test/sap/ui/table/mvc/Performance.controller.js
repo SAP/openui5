@@ -1,6 +1,7 @@
 /*eslint-disable no-console*/
 
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/rowmodes/Auto",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Fragment"
 ], function(
+	nextUIUpdate,
 	Table,
 	Column,
 	AutoRowMode,
@@ -249,7 +251,7 @@ sap.ui.define([
 				this.oTable.placeAt("tableContainer");
 			}
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 		},
 
 		destroyTable: function() {

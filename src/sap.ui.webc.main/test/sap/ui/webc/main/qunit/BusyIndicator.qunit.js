@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/BusyIndicator",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, BusyIndicator, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, BusyIndicator, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBusyIndicator = new BusyIndicator({
 				text: "Some text...",
 				content: [
@@ -39,7 +40,7 @@ sap.ui.define([
 				]
 			});
 			this.oBusyIndicator.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oBusyIndicator.destroy();

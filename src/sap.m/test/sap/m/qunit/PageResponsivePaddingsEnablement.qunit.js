@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Page",
 	"sap/m/Bar",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(
@@ -11,6 +12,7 @@ sap.ui.define([
 	Button,
 	Page,
 	Bar,
+	nextUIUpdate,
 	jQuery,
 	oCore
 ) {
@@ -53,12 +55,12 @@ sap.ui.define([
 		oTestPage.addStyleClass("sapUiResponsivePadding--content");
 		oTestPage.addStyleClass("sapUiResponsivePadding--footer");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $page = jQuery("#testPage");
 		$page.css("width", "300px");
 		this.clock.tick(300);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		var $pageHeader = oTestPage.$().find("#testPage-intHeader"),
@@ -80,7 +82,7 @@ sap.ui.define([
 		//Act
 		$page.css("width", "700px");
 		this.clock.tick(300);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		bIsHeaderResponsive = $pageHeader.hasClass("sapUi-Std-PaddingM");
 		bIsSubHeaderResponsive = $pageSubHeader.hasClass("sapUi-Std-PaddingM");
@@ -95,7 +97,7 @@ sap.ui.define([
 
 		//Act
 		$page.css("width", "1300px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(300);
 
 		bIsHeaderResponsive = $pageHeader.hasClass("sapUi-Std-PaddingL");
@@ -112,7 +114,7 @@ sap.ui.define([
 		//Act
 		$page.css("width", "1700px");
 		this.clock.tick(300);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		bIsHeaderResponsive = $pageHeader.hasClass("sapUi-Std-PaddingXL");
 		bIsSubHeaderResponsive = $pageSubHeader.hasClass("sapUi-Std-PaddingXL");

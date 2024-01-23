@@ -7,12 +7,13 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
-], function(Switch, Page, Label, mobileLibrary, Element, Library, jQuery, qutils, createAndAppendDiv, KeyCodes, oCore) {
+], function(Switch, Page, Label, mobileLibrary, Element, Library, nextUIUpdate, jQuery, qutils, createAndAppendDiv, KeyCodes, oCore) {
 	"use strict";
 	createAndAppendDiv("content");
 
@@ -159,7 +160,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "false", 'The "aria-checked" attribute is set to "false"');
@@ -177,7 +178,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "true", 'The "aria-checked" attribute is set to "true"');
@@ -193,7 +194,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oSwitch.setState(false);
@@ -224,7 +225,7 @@ sap.ui.define([
 		// arrange
 		oLabel.placeAt("content");
 		oSwitch.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var sExpectedLabelledBy = "label " + oSwitch.getInvisibleElementId();
 
 		// assert
@@ -250,7 +251,7 @@ sap.ui.define([
 		// arrange
 		oLabel.placeAt("content");
 		oSwitch.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var sExpectedLabelledBy = "label " + oSwitch.getInvisibleElementId();
 
 		// assert
@@ -275,7 +276,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var sExpectedLabelledBy = "label " + oSwitch.getInvisibleElementId();
 
 		// assert
@@ -297,7 +298,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oSwitch.getDomRef("invisible").textContent, "Yes");
@@ -393,7 +394,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oSwitch.getDomRef("invisible").textContent, Library.getResourceBundleFor("sap.m").getText("SWITCH_ARIA_REJECT"));
@@ -499,7 +500,7 @@ sap.ui.define([
 		var oSwitch = new Switch().placeAt("content"),
 			aDomRefs;
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		aDomRefs = oSwitch.$().find(".sapMSwtLabel");
 
 		// Assert
@@ -528,7 +529,7 @@ sap.ui.define([
 		oSwitch7.setEnabled(false);
 
 		// arrange
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		testSwitchOFF(assert, oSwitch7);
@@ -541,7 +542,7 @@ sap.ui.define([
 		oSwitch7.setEnabled(true);
 
 		// arrange
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		testSwitchOFF(assert, oSwitch7);
@@ -730,7 +731,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oTouchstart = {
 			touches: {
@@ -798,7 +799,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oTouchstart = {
 			touches: {
@@ -889,7 +890,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnFireChangeSpy = this.spy(oSwitch, "fireChange");
 
 		// act
@@ -913,7 +914,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnFireChangeSpy = this.spy(oSwitch, "fireChange");
 
 		// act
@@ -957,7 +958,7 @@ sap.ui.define([
 
 		// arrange
 		oCustomSwitch.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oCustomSwitch.isActive());
@@ -971,7 +972,7 @@ sap.ui.define([
 			this.switch = new Switch();
 			this.switch.placeAt("content");
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach : function() {
 			this.switch.destroy();
@@ -988,7 +989,7 @@ sap.ui.define([
 
 		// act
 		this.switch.setState(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.equal($IT.html(), "On", "its text is correct");

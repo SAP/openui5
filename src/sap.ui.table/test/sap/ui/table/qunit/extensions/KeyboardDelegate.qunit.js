@@ -6219,7 +6219,7 @@ sap.ui.define([
 			// Group header icon cell
 			await fakeGroupRow(0, oTable);
 			oTable.getRows()[0].toggleExpandedState();
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 			oElem = checkFocus(getRowHeader(0, true), assert);
 			assert.ok(TableUtils.Grouping.isInGroupHeaderRow(oElem), "Cell to be tested is in a group header row");

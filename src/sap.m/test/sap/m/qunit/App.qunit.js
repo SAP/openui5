@@ -4,10 +4,11 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/App",
 	"sap/m/Page",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/core/Core"
-], function(Element, createAndAppendDiv, App, Page, jQuery, Device, Core) {
+], function(Element, createAndAppendDiv, App, Page, nextUIUpdate, jQuery, Device, Core) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -80,10 +81,10 @@ sap.ui.define([
 
 
 	QUnit.module("backgroundColor", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oApp = new App();
 			this.oApp.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oApp.destroy();
@@ -91,14 +92,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("only valid color is set to DOM element", function(assert) {
+	QUnit.test("only valid color is set to DOM element", async function(assert) {
 		var oApp = this.oApp;
 
 		oApp.setBackgroundColor("blue;5px solid red;");
 
 		// Act
 		oApp.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Check
 		assert.strictEqual(getBgDomElement(oApp).style.backgroundColor, '', "correct property value");
@@ -106,10 +107,10 @@ sap.ui.define([
 
 
 	QUnit.module("backgroundImage", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oApp = new App();
 			this.oApp.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oApp.destroy();
@@ -117,7 +118,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("style is set to DOM element", function(assert) {
+	QUnit.test("style is set to DOM element", async function(assert) {
 		// Arrange
 		var oApp = this.oApp,
 			sExpectedOutputImagePath = 'url("' + (sBackroungImageSrc) + '")',
@@ -125,7 +126,7 @@ sap.ui.define([
 
 		// Act
 		oApp.setBackgroundImage(sBackroungImageSrc);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Arrange
 		$oAppImageHolder = oApp.$().find('.sapUiGlobalBackgroundImage').get(0);
@@ -136,7 +137,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("url value with special characters", function(assert) {
+	QUnit.test("url value with special characters", async function(assert) {
 		// Arrange
 		var oApp = this.oApp,
 			sPath = "test-resources/sap/m/images/",
@@ -153,7 +154,7 @@ sap.ui.define([
 
 		// Act
 		oApp.setBackgroundImage(sImgSrc);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Arrange
 		$oAppImageHolder = oApp.$().find('.sapUiGlobalBackgroundImage').get(0);
@@ -163,7 +164,7 @@ sap.ui.define([
 				"background-image URL is correct.");
 	});
 
-	QUnit.test("url value with base64 encoding", function(assert) {
+	QUnit.test("url value with base64 encoding", async function(assert) {
 		// Arrange
 		var oApp = this.oApp,
 			sImgSrc = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
@@ -172,7 +173,7 @@ sap.ui.define([
 
 		// Act
 		oApp.setBackgroundImage(sImgSrc);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Arrange
 		$oAppImageHolder = oApp.$().find('.sapUiGlobalBackgroundImage').get(0);
@@ -183,7 +184,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("encodes css-specific chars in backgroundImage value", function(assert) {
+	QUnit.test("encodes css-specific chars in backgroundImage value", async function(assert) {
 		// Arrange
 		var sImageSrc = sBackroungImageSrc + ");border:5px solid red;",
 			oApp = this.oApp,
@@ -192,7 +193,7 @@ sap.ui.define([
 
 		// Act
 		oApp.setBackgroundImage(sImageSrc);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Check
 		oAppDom = getBgDomElement(oApp);
@@ -200,7 +201,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("encodes html-specific chars in backgroundImage style", function(assert) {
+	QUnit.test("encodes html-specific chars in backgroundImage style", async function(assert) {
 		// Arrange
 		var sImageSrc = sBackroungImageSrc + ')"; onmouseover="console.log"',
 			oApp = this.oApp,
@@ -209,7 +210,7 @@ sap.ui.define([
 
 		// Act
 		oApp.setBackgroundImage(sImageSrc);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Check
 		oAppDom = getBgDomElement(oApp);
@@ -217,11 +218,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Parent traversing", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oApp = new App();
 			this.oSpy = this.spy(this.oApp, "_adjustParentsHeight");
 			this.oApp.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oApp.destroy();
@@ -229,22 +230,22 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("isTopLevel property", function(assert) {
+	QUnit.test("isTopLevel property", async function(assert) {
 		assert.strictEqual(this.oSpy.called, true, "Parents are traversed when isTopLevel value is true");
 
 		this.oSpy.resetHistory();
 
 		this.oApp.setIsTopLevel(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oSpy.notCalled, true, "Parents are not traversed when isTopLevel value is false");
 	});
 
 	QUnit.module("Invisible App", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oApp = new App({ visible: false });
 			this.oApp.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oApp.destroy();

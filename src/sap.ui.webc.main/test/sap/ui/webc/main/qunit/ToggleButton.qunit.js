@@ -3,14 +3,15 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/ToggleButton"
-], function(createAndAppendDiv, Core, ToggleButton) {
+], function(createAndAppendDiv, Core, nextUIUpdate, ToggleButton) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oToggleButton = new ToggleButton({
 				icon: "employee",
 				text: "Some text...",
@@ -19,7 +20,7 @@ sap.ui.define([
 				}
 			});
 			this.oToggleButton.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oToggleButton.destroy();

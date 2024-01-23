@@ -3,14 +3,15 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/ColorPicker"
-], function(createAndAppendDiv, Core, ColorPicker) {
+], function(createAndAppendDiv, Core, nextUIUpdate, ColorPicker) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oColorPicker = new ColorPicker({
 				color: "blue",
 				change: function(oEvent) {
@@ -18,7 +19,7 @@ sap.ui.define([
 				}
 			});
 			this.oColorPicker.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oColorPicker.destroy();

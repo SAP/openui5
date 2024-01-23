@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/DateRangePicker",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, DateRangePicker, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, DateRangePicker, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oDateRangePicker = new DateRangePicker({
 				placeholder: "This is my placeholder value",
 				value: "Control value",
@@ -25,7 +26,7 @@ sap.ui.define([
 				}
 			});
 			this.oDateRangePicker.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oDateRangePicker.destroy();

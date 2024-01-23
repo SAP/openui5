@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/core/StaticArea",
 	"sap/ui/layout/GridData",
 	"sap/ui/Device",
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Element,
 	QUnitUtils,
@@ -38,7 +39,8 @@ sap.ui.define([
 	StaticArea,
 	GridData,
 	Device,
-	containsOrEquals
+	containsOrEquals,
+	nextUIUpdate
 ) {
 	"use strict";
 	// Test setup
@@ -79,7 +81,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
@@ -135,7 +137,7 @@ sap.ui.define([
 			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oColumnMenu.destroy();
@@ -178,7 +180,7 @@ sap.ui.define([
 			this.oButton.placeAt("content");
 			this.oButton1 = new Button();
 			this.oButton1.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			if (this.oColumnMenu) {
@@ -272,7 +274,7 @@ sap.ui.define([
 	QUnit.test("Check hidden header and footer in default view", function (assert) {
 		this.createMenu(false);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(this.oColumnMenu._oItemsContainer.oLayout.getShowHeader());
 		assert.notOk(this.oColumnMenu._oItemsContainer.oLayout.getShowFooter());
@@ -281,7 +283,7 @@ sap.ui.define([
 	QUnit.test("View switch event", function (assert) {
 		this.createMenu(false, false, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aCalls = [],
 			fnViewSwitch = function (oEvt) {
@@ -302,7 +304,7 @@ sap.ui.define([
 	QUnit.test("ScrollDelegate", function(assert) {
 		this.createMenu(false, true, false, true);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var sId = this.oColumnMenu.getAggregation("_items")[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
@@ -319,7 +321,7 @@ sap.ui.define([
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var sId = this.oColumnMenu._getAllEffectiveQuickActions()[0].getContent()[0].sId;
 		assert.equal(document.activeElement.id, sId);
@@ -329,7 +331,7 @@ sap.ui.define([
 		this.createMenu(true, true, true, false);
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var sId = this.oColumnMenu._getAllEffectiveQuickActions()[0].getContent()[0].sId;
 		assert.equal(document.activeElement.id, sId);
@@ -339,7 +341,7 @@ sap.ui.define([
 		this.createMenu(true, false, true, false);
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var sId = this.oColumnMenu.getAggregation("_quickActions")[0].getContent()[0].getId();
 		assert.equal(document.activeElement.id, sId);
@@ -349,7 +351,7 @@ sap.ui.define([
 		this.createMenu(true, false, false, false);
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var sId = this.oColumnMenu.getQuickActions()[0].getContent()[0].getId();
 		assert.equal(document.activeElement.id, sId);
@@ -358,13 +360,13 @@ sap.ui.define([
 	QUnit.test("Check focus when view is switched", function (assert) {
 		this.createMenu(false, false, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Navigate to item
 		var sId = this.oColumnMenu.getAggregation("_items")[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
 		this.clock.tick(500);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavBackBtn().getId());
 	});
@@ -372,16 +374,16 @@ sap.ui.define([
 	QUnit.test("Check focus when view is switched back", function (assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Navigate to item
 		var sId = this.oColumnMenu.getItems()[1].getId(); // Third item (Control Item, App Item, *App Item*)
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Navigate to item
 		this.oColumnMenu._oItemsContainer.switchView("$default");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[2].getId());
 	});
@@ -422,7 +424,7 @@ sap.ui.define([
 			oMenu1.openBy(this);
 		});
 		this.oButton1.addDependent(oMenu1);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oButton.firePress();
 		clock.tick(1000);
@@ -483,7 +485,7 @@ sap.ui.define([
 
 		// Case A: Both QuickActions in the container should be visible
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 3, "Three quick actions are visible");
 
@@ -492,7 +494,7 @@ sap.ui.define([
 		// Case B: Container should not be visible
 		oQuickActionContainer.setVisible(false);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 1, "One quick actions is visible");
 
@@ -502,7 +504,7 @@ sap.ui.define([
 		oQuickActionContainer.setVisible(true);
 		oQuickAction1.setVisible(false);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 2, "Two quick actions are visible");
 	});
@@ -511,7 +513,7 @@ sap.ui.define([
 		var clock = sinon.useFakeTimers();
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aItems = this.oColumnMenu._oItemsContainer._getNavigationList().getItems();
 		assert.equal(aItems.length, 3, "Menu has exactly 3 items");
@@ -521,7 +523,7 @@ sap.ui.define([
 
 		var oItem = new Item({label: "Added Item", content: new Button({text: "Added Button"})});
 		this.oColumnMenu.addItem(oItem);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.oColumnMenu.openBy(this.oButton);
 
 		aItems = this.oColumnMenu._oItemsContainer._getNavigationList().getItems();
@@ -577,7 +579,7 @@ sap.ui.define([
 	QUnit.test("Accessibility", function(assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oMenu = this.oColumnMenu;
 
@@ -615,7 +617,7 @@ sap.ui.define([
 			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
@@ -626,12 +628,12 @@ sap.ui.define([
 
 	QUnit.test("Check default button settings", function (assert) {
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Navigate to first item
 		var sId = this.oColumnMenu.getItems()[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(this.oColumnMenu._oBtnOk.getVisible());
 		assert.ok(this.oColumnMenu._oBtnCancel.getVisible());
@@ -644,17 +646,17 @@ sap.ui.define([
 
 	QUnit.test("Switch reset button states", function (assert) {
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Navigate to first item
 		var sId = this.oColumnMenu.getItems()[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oItem.changeButtonSettings({
 			reset: {visible: false}
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getVisible());
 		assert.notOk(this.oItem.getButtonSettings()["reset"]["visible"]);
@@ -662,7 +664,7 @@ sap.ui.define([
 		this.oItem.changeButtonSettings({
 			reset: {visible: true, enabled: false}
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getVisible());
 		assert.notOk(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getEnabled());
@@ -672,17 +674,17 @@ sap.ui.define([
 
 	QUnit.test("Switch cancel button states", function (assert) {
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Navigate to first item
 		var sId = this.oColumnMenu.getItems()[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oItem.changeButtonSettings({
 			cancel: {visible: false}
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(this.oColumnMenu._oBtnCancel.getVisible());
 		assert.notOk(this.oItem.getButtonSettings()["cancel"]["visible"]);
@@ -690,17 +692,17 @@ sap.ui.define([
 
 	QUnit.test("Switch confirm button states", function (assert) {
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Navigate to first item
 		var sId = this.oColumnMenu.getItems()[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oItem.changeButtonSettings({
 			confirm: {visible: false}
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(this.oColumnMenu._oBtnOk.getVisible());
 		assert.notOk(this.oItem.getButtonSettings()["confirm"]["visible"]);
@@ -714,7 +716,7 @@ sap.ui.define([
 			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
@@ -785,7 +787,7 @@ sap.ui.define([
 
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
@@ -850,7 +852,7 @@ sap.ui.define([
 		this.oColumnMenu.close();
 		clock.tick(500);
 		this.oColumnMenu.addQuickAction(new QuickAction({label: "Added Action", content: [new Button({text: "Button Added"})]}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oColumnMenu.openBy(this.oButton);
 
@@ -879,7 +881,7 @@ sap.ui.define([
 			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
@@ -955,13 +957,13 @@ sap.ui.define([
 		var oMenu = this.oColumnMenu;
 		var oButton = this.oButton;
 		oMenu.openBy(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Navigate to first item
 		var oItem = oMenu.getItems()[1];
 		var sId = oItem.getId();
 		oMenu._oItemsContainer.switchView(sId);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		return new Promise(function(resolve) {
 			oItem.attachEventOnce("confirm", function(oEvent) {
@@ -987,7 +989,7 @@ sap.ui.define([
 
 			oMenu.openBy(oButton);
 			oMenu._oItemsContainer.switchView(sId);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			return new Promise(function(resolve) {
 				oItem.attachEventOnce("cancel", function(oEvent) {
@@ -1014,7 +1016,7 @@ sap.ui.define([
 
 			oMenu.openBy(oButton);
 			oMenu._oItemsContainer.switchView(sId);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			return new Promise(function(resolve) {
 				oItem.attachEventOnce("reset", function() {
@@ -1037,7 +1039,7 @@ sap.ui.define([
 			this.oButton.placeAt("qunit-fixture");
 			this.oButton1 = new Button();
 			this.oButton1.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
@@ -1083,7 +1085,7 @@ sap.ui.define([
 		});
 
 		oDialog.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oDialog.open();
 		this.oColumnMenu.openBy(oButton1);

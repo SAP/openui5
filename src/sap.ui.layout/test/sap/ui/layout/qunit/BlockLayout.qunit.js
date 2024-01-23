@@ -1,5 +1,6 @@
 /*global QUnit sinon */
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/thirdparty/jquery',
 	'sap/base/Log',
 	'sap/ui/layout/BlockLayoutCell',
@@ -13,6 +14,7 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/Device'
 ], function(
+	nextUIUpdate,
 	jQuery,
 	Log,
 	BlockLayoutCell,
@@ -24,7 +26,8 @@ sap.ui.define([
 	Link,
 	Text,
 	Core,
-	Device) {
+	Device
+) {
 	'use strict';
 
 	var BlockBackgroundType = layoutLibrary.BlockBackgroundType;
@@ -52,7 +55,7 @@ sap.ui.define([
 			this.BlockLayoutRowConstants = BlockLayoutRow.CONSTANTS;
 
 			this.BlockLayout.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.clock = sinon.useFakeTimers();
 
 			this._fixtureWidth = jQuery("#qunit-fixture").width();
@@ -133,7 +136,7 @@ sap.ui.define([
 	QUnit.test("S Breakpoint case", function (assert) {
 		jQuery("#qunit-fixture").width(500);
 		this.BlockLayout._onParentResize();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.expect(9);
 		assert.strictEqual(this.BlockLayoutRow._arrangements["S"].length, 4, "The arrangement should contain 4 rows");
@@ -148,7 +151,7 @@ sap.ui.define([
 	QUnit.test("M Breakpoint case", function (assert) {
 		jQuery("#qunit-fixture").width(1000);
 		this.BlockLayout._onParentResize();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.expect(7);
 		assert.strictEqual(this.BlockLayoutRow._arrangements["M"].length, 2, "The arrangement should contain 2 rows");
@@ -164,7 +167,7 @@ sap.ui.define([
 		//setting title text
 		var oFirstCell = this.BlockLayoutRow.getContent()[0];
 		oFirstCell.setTitle("test title");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oFirstCell.getTitle(), "test title", "Property title should be \"test title\"");
 		assert.strictEqual(jQuery("#firstCell-Title").text(), "test title", "Title of the cell should be \"test title\"");
@@ -172,7 +175,7 @@ sap.ui.define([
 		//setting link as title
 		var oLinkTitle = new Link({text: "test link", href: "http://www.sap.com"});
 		oFirstCell.setTitleLink(oLinkTitle);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oFirstCell.getTitle(), "test title", "When there is titleLink aggregation provided property title shouldn't change and should be \"test title\"");
 		assert.strictEqual(jQuery("#firstCell-Title").text(), "test link", "When there is titleLink aggregation provided title of the cell should be \"test link\"");
@@ -184,7 +187,7 @@ sap.ui.define([
 
 		oSecondCell.setTitle("test title 2");
 		oSecondCell.setTitleLink(oTextTitle);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(jQuery("#secondCell-Title").text(), "test title 2", "When there is invalid titleLink aggregation provided title of the cell should be \"test title 2\"");
 		sinon.assert.calledWith(warningFunctionStub, sinon.match(/sap.ui.layout.BlockLayoutCell secondCell: Can't add value for titleLink aggregation different than sap.m.Link./));
@@ -193,26 +196,26 @@ sap.ui.define([
 		//title is not set, the titleLink is set
 		oSecondCell.setTitle("");
 		oSecondCell.setTitleLink(oLinkTitle);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(jQuery("#secondCell-Title").text(), "test link", "When there no title provided and titleLink aggregation is provided title of the cell should be \"test link\"");
 
 		//title and titleLink are not set
 		oSecondCell.setTitle("");
 		oSecondCell.setTitleLink("");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(jQuery("#secondCell-Title").text(), "", "When there is no title or titleLink provided title of the cell should be empty");
 
 		//When the title is set, then the link is set and removed and destroyed
 		oSecondCell.setTitle("test title 2");
 		oSecondCell.setTitleLink(oLinkTitle);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(jQuery("#secondCell-Title").text(), "test link", "When there is no title or titleLink provided title of the cell should be \"test title 2\"");
 
 		oSecondCell.destroyAggregation("titleLink");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(jQuery("#secondCell-Title").text(), "test title 2", "When there is no title or titleLink provided title of the cell should be \"test title 2\"");
 
@@ -222,7 +225,7 @@ sap.ui.define([
 		// Arrange
 		var oFirstCell = this.BlockLayoutRow.getContent()[0];
 		oFirstCell.setTitle("test title");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert default state
 		assert.strictEqual(oFirstCell.getTitleAlignment(), "Begin", "Property title alignement is \"Begin\"");
@@ -230,7 +233,7 @@ sap.ui.define([
 
 		// Act
 		oFirstCell.setTitleAlignment("Center");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oFirstCell.getTitleAlignment(), "Center", "Property title alignement is \"Center\"");
 		assert.ok(jQuery("#firstCell .sapUiBlockCellContent").hasClass("sapUiBlockCellCenteredContent"), "When title alignment is Center, there should be class sapUiBlockCellCenteredContent");
@@ -244,7 +247,7 @@ sap.ui.define([
 
 		// System under Test
 		var oBlockLayout = new BlockLayout({}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oBlockLayout.getBackground(), sType, "Background with undefined argument should be of Default type");
@@ -253,7 +256,7 @@ sap.ui.define([
 		// Act
 		sType = BlockBackgroundType.Accent;
 		oBlockLayout.setBackground(sType);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oBlockLayout.getBackground(), sType, "Background to be set of Accent type");
@@ -269,7 +272,7 @@ sap.ui.define([
 
 		// System under Test
 		var oBlockLayout = new BlockLayout({background: sType}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oBlockLayout.getBackground(), sType, "Background to be set of Accent type");
@@ -282,7 +285,7 @@ sap.ui.define([
 	QUnit.test("BlockLayoutRow predefined Color Set", function (assert) {
 		var sColorSet = BlockRowColorSets.ColorSet2,
 			oBlockRow = new BlockLayoutRow({rowColorSet: sColorSet});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oBlockRow.getRowColorSet(), sColorSet, "Color set should be of type " + sColorSet);
@@ -295,7 +298,7 @@ sap.ui.define([
 	QUnit.test("BlockLayoutRow dynamically change Color Set", function (assert) {
 		var sColorSet = BlockRowColorSets.ColorSet2;
 		var oBlockRow = new BlockLayoutRow({rowColorSet: sColorSet});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		sColorSet = BlockRowColorSets.ColorSet3;
@@ -319,7 +322,7 @@ sap.ui.define([
 				background: BlockBackgroundType.Accent,
 				content: [oRow1, oRow2]
 			}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oRow1.getRowColorSet(), sColorSet, "Color set should be of type " + sColorSet);
@@ -351,7 +354,7 @@ sap.ui.define([
 				background: BlockBackgroundType.Accent,
 				content: [oRow1, oRow2]
 			}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oRow1.getRowColorSet(), sColorSet1, "Color set should be of type " + sColorSet1);
@@ -362,7 +365,7 @@ sap.ui.define([
 
 		// Act
 		oRow1.setRowColorSet(sColorSet2);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oRow1.getRowColorSet(), sColorSet2, "Color set should be of type " + sColorSet2);
@@ -390,7 +393,7 @@ sap.ui.define([
 			}).placeAt("qunit-fixture");
 
 		var oSpy = this.spy(oRow, "_processAccentCellStyles");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oSpy.called, "Accent layout cell processor has been called");
@@ -400,7 +403,7 @@ sap.ui.define([
 
 		// Act
 		oRow.addAccentCell(oCell2);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oRow.getAccentCells()[1], oCell2.getId(), "Should have set Cell2 as an accent cell");
@@ -421,7 +424,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$cell = oContainer.$("Title");
 
 		// Assert
@@ -429,7 +432,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.addContent(new BlockLayoutCell());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$cell = oContainer.$("Title");
 
 		// Assert
@@ -447,7 +450,7 @@ sap.ui.define([
 		// Act
 		oContainer.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$().find(".sapUiBlockCellContent");
 
@@ -489,14 +492,14 @@ sap.ui.define([
 
 		// Act
 		blockLayout.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		assert.ok(blockLayout.$().hasClass("sapUiBlockLayoutKeepFontSize"), "style class is added");
 
 		// Act part 2 - change the property - style class should be gone
 		blockLayout.setKeepFontSize(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(!blockLayout.$().hasClass("sapUiBlockLayoutKeepFontSize"), "no style class is added");
 	});
@@ -511,7 +514,7 @@ sap.ui.define([
 
 		oBlockLayout.addContent(oBlockLayoutRow);
 		oBlockLayout.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.deepEqual(oBlockLayoutRow._getCellArangementForCurrentSize(), [[1, 1, 1]], "Arrangement should be [1, 1, 1] for cells with equal height on size M");
 	});
@@ -530,7 +533,7 @@ sap.ui.define([
 		oBlockLayoutRow.insertContent(oBlockLayoutCell);
 		oBlockLayoutCell.setWidth(4);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oBlockLayoutCell.getWidth(), 4, "The width of the cell is applied correctly");
 		assert.strictEqual(oBlockLayoutCell.getLayoutData().getSSize(), 1, "The width of the cell in S size is set");
@@ -607,7 +610,7 @@ sap.ui.define([
 
 		// Act
 		oBlockLayout.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oCell1.$().width(), oCell2.$().width(), "Cells with same width should be sized the same.");

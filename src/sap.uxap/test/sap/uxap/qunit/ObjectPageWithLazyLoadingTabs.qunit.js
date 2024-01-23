@@ -3,8 +3,10 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/XMLView"],
-function (Core, JSONModel, XMLView) {
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/qunit/utils/nextUIUpdate"
+],
+function(Core, JSONModel, XMLView, nextUIUpdate) {
 	"use strict";
 
 	// global vars
@@ -83,7 +85,7 @@ function (Core, JSONModel, XMLView) {
 			var aSections = oObjectPageLayout.getSections();
 			oObjectPageLayout.scrollToSection(aSections[iIndex].getId());
 			aLoadedSections.push(iIndex);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			testContext.clock.tick(iLoadingDelay);
 			fnAssertTabsAreLoaded(assert, aSections, aLoadedSections);
 		};

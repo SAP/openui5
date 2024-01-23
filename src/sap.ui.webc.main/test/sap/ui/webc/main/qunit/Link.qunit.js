@@ -3,14 +3,15 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Link"
-], function(createAndAppendDiv, Core, Link) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Link) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oLink = new Link({
 				text: "Some text...",
 				click: function(oEvent) {
@@ -18,7 +19,7 @@ sap.ui.define([
 				}
 			});
 			this.oLink.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oLink.destroy();

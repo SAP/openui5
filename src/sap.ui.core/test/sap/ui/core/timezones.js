@@ -88,7 +88,6 @@ sap.ui.define([
 			var aEntities = getEntities(aActiveLocales);
 			oModel.setProperty("/entities", aEntities);
 			oTable.invalidate();
-			Core.applyChanges();
 		});
 	});
 });

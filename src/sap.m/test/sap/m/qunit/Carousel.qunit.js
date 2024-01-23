@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Carousel",
@@ -20,6 +21,7 @@ sap.ui.define([
 	"sap/ui/events/F6Navigation"
 ], function(
 	Library,
+	nextUIUpdate,
 	jQuery,
 	qutils,
 	Carousel,
@@ -118,7 +120,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCarousel = new Carousel();
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -147,7 +149,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCarousel = createCarouselWithContent("");
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -191,7 +193,7 @@ sap.ui.define([
 		// Arrange
 		this.oCarousel.setActivePage("keyTestPage_6");
 		this.oCarousel.setLoop(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		this.oCarousel.next();
@@ -204,7 +206,7 @@ sap.ui.define([
 		// Arrange
 		this.oCarousel.setActivePage("keyTestPage_1");
 		this.oCarousel.setLoop(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// Act
 		this.oCarousel.previous();
 		// Assert
@@ -216,7 +218,7 @@ sap.ui.define([
 		this.oCarousel.getFocusDomRef().focus();
 		this.oCarousel.setActivePage("keyTestPage_6");
 		this.oCarousel.setLoop(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		pressArrowNext(this.oCarousel);
@@ -230,7 +232,7 @@ sap.ui.define([
 		this.oCarousel.getFocusDomRef().focus();
 		this.oCarousel.setActivePage("keyTestPage_1");
 		this.oCarousel.setLoop(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// Act
 		pressArrowPrev(this.oCarousel);
 
@@ -242,7 +244,7 @@ sap.ui.define([
 	QUnit.test("#setShowPageIndicator(false) should make Page Indicator invisible", function (assert) {
 		// Act
 		this.oCarousel.setShowPageIndicator(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oCarousel.$().find(".sapMCrslBulleted").length, 0, "Page Indicator should be invisible");
@@ -262,7 +264,7 @@ sap.ui.define([
 	QUnit.test("#setPageIndicatorPlacement() to 'top' position", function (assert) {
 		// Act
 		this.oCarousel.setPageIndicatorPlacement(PlacementType.Top);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oCarousel.$().children().eq(1).hasClass('sapMCrslControlsTop'), "Page Indicator should be on top");
@@ -289,7 +291,7 @@ sap.ui.define([
 	QUnit.test("#setArrowsPlacement() to 'PageIndicator' position", function (assert) {
 		// Act
 		this.oCarousel.setArrowsPlacement(CarouselArrowsPlacement.PageIndicator);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oCarousel.$().find('.sapMCrslHud').length, 0, "Arrows hud should not be rendered");
@@ -299,7 +301,7 @@ sap.ui.define([
 	QUnit.test("#setBackgroundDesign() to 'Solid'", function (assert) {
 		// Act
 		this.oCarousel.setBackgroundDesign(BackgroundDesign.Solid);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oCarousel.$().hasClass("sapMCrslBackground-Solid"), "Correct class for Solid Background should be set");
@@ -308,7 +310,7 @@ sap.ui.define([
 	QUnit.test("#setBackgroundDesign() to 'Transparent'", function (assert) {
 		// Act
 		this.oCarousel.setBackgroundDesign(BackgroundDesign.Transparent);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oCarousel.$().hasClass("sapMCrslBackground-Transparent"), "Correct class for Transparent Background should be set");
@@ -317,7 +319,7 @@ sap.ui.define([
 	QUnit.test("#setPageIndicatorBackgroundDesign() to 'Translucent'", function (assert) {
 		// Act
 		this.oCarousel.setPageIndicatorBackgroundDesign(BackgroundDesign.Translucent);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oCarousel.$().find(".sapMCrslControlsNoArrows").hasClass("sapMCrslControlsBackground-Translucent"), "Correct class for Translucent Background should be set");
@@ -326,7 +328,7 @@ sap.ui.define([
 	QUnit.test("#setPageIndicatorBackgroundDesign() to 'Transparent'", function (assert) {
 		// Act
 		this.oCarousel.setPageIndicatorBackgroundDesign(BackgroundDesign.Transparent);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oCarousel.$().find(".sapMCrslControlsNoArrows").hasClass("sapMCrslControlsBackground-Transparent"), "Correct class for Transparent Background should be set");
@@ -335,7 +337,7 @@ sap.ui.define([
 	QUnit.test("#setPageIndicatorBorderDesign() to 'None'", function (assert) {
 		// Act
 		this.oCarousel.setPageIndicatorBorderDesign(BorderDesign.None);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oCarousel.$().find(".sapMCrslControlsNoArrows").hasClass("sapMCrslControlsBorder-None"), "Correct class for Border should be set");
@@ -372,7 +374,7 @@ sap.ui.define([
 	QUnit.test("#_setWidthOfPages(6)", function (assert) {
 		// Set up
 		this.oCarousel.setWidth("700px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		this.oCarousel._setWidthOfPages(6);
@@ -497,7 +499,7 @@ sap.ui.define([
 		this.oCarousel.setCustomLayout(new CarouselLayout({
 			visiblePagesCount: iPagesToShow
 		}));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		this.oCarousel._adjustArrowsVisibility();
@@ -546,7 +548,7 @@ sap.ui.define([
 			// Act
 			oCarousel.setActivePage(oCarousel.getPages()[3]);
 			oCarousel.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// Assert
 			assert.ok(oCarousel._aAllActivePages[0] === "keyTestPage_4new" && oCarousel._aAllActivePages[1] === "keyTestPage_5new",
@@ -609,7 +611,7 @@ sap.ui.define([
 				activePage: "keyTestPage_2"
 			});
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -744,7 +746,7 @@ sap.ui.define([
 				]
 			});
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -766,7 +768,7 @@ sap.ui.define([
 				activePage: "keyTestPage_1"
 			});
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -817,7 +819,7 @@ sap.ui.define([
 				text: "Text"
 			});
 			this.oButton.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oCarousel.getFocusDomRef().focus();
 		},
@@ -1208,7 +1210,7 @@ sap.ui.define([
 		// Arrange
 		this.oCarousel.setActivePage("keyTestPage2");
 		this.oCarousel.getFocusDomRef().focus();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oInteractiveElementInsidePage = this.oCarousel.getPages()[1].getContent()[2].getDomRef();
 		qutils.triggerKeydown(document.activeElement, KeyCodes.TAB);
@@ -1258,7 +1260,7 @@ sap.ui.define([
 			target: this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide"),
 			preventDefault: function () {}
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(document.activeElement, this.oCarousel.getFocusDomRef(), "Focus is on the second element");
@@ -1272,7 +1274,7 @@ sap.ui.define([
 			target: this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide"),
 			preventDefault: function () {}
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(document.activeElement, this.oCarousel.getFocusDomRef(), "Focus is on the first element");
@@ -1286,7 +1288,7 @@ sap.ui.define([
 			target: this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide"),
 			preventDefault: function () {}
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(document.activeElement.contains(this.oCarousel.getFocusDomRef()), "Focus is on the last element");
@@ -1300,7 +1302,7 @@ sap.ui.define([
 
 		// act
 		this.oCarousel.setActivePage(aPages[0]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(document.activeElement, this.oButton.getFocusDomRef(), "Focus should stay on the button");
@@ -1327,7 +1329,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$().find(sContentSelector);
 
@@ -1380,7 +1382,7 @@ sap.ui.define([
 			text: "Open Carousel"
 		});
 		oButton.placeAt('qunit-fixture');
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var	oSystem = {
 			desktop: true,
@@ -1423,7 +1425,7 @@ sap.ui.define([
 
 			this.oCarousel = new Carousel();
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -1456,7 +1458,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			oModel.setData(this.data);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			assert.strictEqual(this.oCarousel.getPages().length, 3, "There are 3 pages in the carousel");
 			assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMIllustratedMessage").length, 0, "When there is late binding there is no sap.m.IllustratedMessage rendered");
@@ -1470,7 +1472,7 @@ sap.ui.define([
 			sinon.config.useFakeTimers = false;
 			this.oCarousel = createCarouselWithContent("");
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -1510,7 +1512,7 @@ sap.ui.define([
 				activePage: "keyTestPage_4"
 			});
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -1626,7 +1628,7 @@ sap.ui.define([
 		}));
 		var oLastPage = this.oCarousel.getPages()[this.oCarousel.getPages().length - 1];
 		this.oCarousel.setActivePage(oLastPage);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act - press right arrow
 		pressArrowNext(this.oCarousel);
@@ -1643,7 +1645,7 @@ sap.ui.define([
 		}));
 		var oFirstPage = this.oCarousel.getPages()[0];
 		this.oCarousel.setActivePage(oFirstPage);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act - press left arrow
 		pressArrowPrev(this.oCarousel);
@@ -1662,7 +1664,7 @@ sap.ui.define([
 		const oFirstPage = this.oCarousel.getPages()[0];
 		const oThirdPage = this.oCarousel.getPages()[2];
 		this.oCarousel.setActivePage(oFirstPage);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act - press left arrow
 		pressArrowNext(this.oCarousel);
@@ -1698,7 +1700,7 @@ sap.ui.define([
 			visiblePagesCount: 3
 		}));
 		this.oCarousel.setActivePage(aPages[0]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oButton.$().trigger("focusin");
@@ -1712,7 +1714,7 @@ sap.ui.define([
 		this.oCarousel.setCustomLayout(new CarouselLayout({
 			visiblePagesCount: 3
 		}));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var sMiddlePageId = this.oCarousel._aAllActivePages[1];
 		var sNextPageId = this.oCarousel._aAllActivePages[2];
 
@@ -1740,7 +1742,7 @@ sap.ui.define([
 		this.oCarousel.setCustomLayout(new CarouselLayout({
 			visiblePagesCount: 3
 		}));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var sMiddlePageId = this.oCarousel._aAllActivePages[1];
 		var sPrevPageId = this.oCarousel._aAllActivePages[0];
 
@@ -1768,7 +1770,7 @@ sap.ui.define([
 			this.oCarousel = new Carousel({
 			});
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -1777,7 +1779,7 @@ sap.ui.define([
 
 	QUnit.test("carousel.invalidate() doesn't throw error", function (assert) {
 		this.oCarousel.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.clock.tick(100);
 
@@ -1818,7 +1820,7 @@ sap.ui.define([
 			this.oInnerCarousel.insertPage(text2);
 			this.oOuterCarousel.setActivePage(this.oOuterCarousel.getPages()[0]);
 			this.oOuterCarousel.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oOuterCarousel.destroy();
@@ -1862,7 +1864,7 @@ sap.ui.define([
 			});
 
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -1897,7 +1899,7 @@ sap.ui.define([
 	QUnit.test("When there are no pages, 'No Data' element is rendered with correct aria attributes", function (assert) {
 		// arrange
 		this.oCarousel.destroyPages();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oNoData = this.oCarousel.getDomRef("noData");
 		var oAccInfo = this.oCarousel._getEmptyPage().getAccessibilityInfo();
 		var sExpectedLabel = oAccInfo.type + " " + oAccInfo.description;
@@ -1926,7 +1928,7 @@ sap.ui.define([
 				]
 			});
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -2006,7 +2008,7 @@ sap.ui.define([
 
 	QUnit.test("Arrows in the Page Indicator area visibility when multiple pages are displayed", function (assert) {
 		this.oCarousel.setArrowsPlacement("PageIndicator");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(this.oCarousel.$("arrow-previous").hasClass(Carousel._LEFTMOST_CLASS), "Left arrow should be hidden");
@@ -2069,7 +2071,7 @@ sap.ui.define([
 			activePage: oPage2
 		});
 		oCarousel.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPage2DomRef = oCarousel.getDomRef(oPage2.getId() + "-slide");
 
@@ -2137,7 +2139,7 @@ sap.ui.define([
 				]
 			});
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();

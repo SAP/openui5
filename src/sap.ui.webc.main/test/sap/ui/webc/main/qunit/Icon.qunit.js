@@ -3,14 +3,15 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Icon"
-], function(createAndAppendDiv, Core, Icon) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Icon) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oIcon = new Icon({
 				color: "blue",
 				name: "add",
@@ -19,7 +20,7 @@ sap.ui.define([
 				}
 			});
 			this.oIcon.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oIcon.destroy();

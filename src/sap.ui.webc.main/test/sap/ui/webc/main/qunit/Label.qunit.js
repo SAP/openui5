@@ -3,19 +3,20 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Label"
-], function(createAndAppendDiv, Core, Label) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Label) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oLabel = new Label({
 				text: "Some text..."
 			});
 			this.oLabel.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oLabel.destroy();

@@ -85,13 +85,13 @@ sap.ui.define([
 		oTable.setModel(oModel);
 
 		oTable.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 		return oTable;
 	}
 
 	function destroyTable(oTable) {
 		oTable.destroy();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	}
 
 	// *************************************************************************

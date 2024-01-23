@@ -2069,6 +2069,7 @@ sap.ui.define([
 		}
 
 		this._dateNav.setWeekConfiguration(oWeekConfiguration);
+		this.setStartDate(this._dateNav.getStart());
 	};
 
 	PlanningCalendar.prototype._handleFocus = function (oEvent) {

@@ -3,16 +3,17 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/SelectMenu",
 	"sap/ui/webc/main/SelectMenuOption",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, SelectMenu, SelectMenuOption, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, SelectMenu, SelectMenuOption, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oSelectMenu = new SelectMenu({
 				content: [
 					new SelectMenuOption({
@@ -99,7 +100,7 @@ sap.ui.define([
 				]
 			});
 			this.oSelectMenu.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oSelectMenu.destroy();

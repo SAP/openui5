@@ -3,14 +3,15 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Slider"
-], function(createAndAppendDiv, Core, Slider) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Slider) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oSlider = new Slider({
 				change: function(oEvent) {
 					// console.log("Event change fired for Slider with parameters: ", oEvent.getParameters());
@@ -20,7 +21,7 @@ sap.ui.define([
 				}
 			});
 			this.oSlider.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oSlider.destroy();

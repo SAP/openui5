@@ -207,7 +207,7 @@ sap.ui.define([
 			text: "Some text"
 		}));
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(iMaxHeight > parseFloat(oDomRef.style.maxHeight), "dialog max height is bigger when there is no dialog footer.");
 
@@ -605,7 +605,7 @@ sap.ui.define([
 		oDialog.setVerticalScrolling(false);
 		oDialog.setHorizontalScrolling(false);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(oDialog.getDomRef().className.indexOf("sapMDialogVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
 		assert.equal(oDialog.getDomRef().className.indexOf("sapMDialogHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
 		assert.equal(oDialog.getVerticalScrolling(), false, "verticalScrolling should be disabled");
@@ -625,7 +625,7 @@ sap.ui.define([
 		oDialog.setVerticalScrolling(true);
 		oDialog.setHorizontalScrolling(true);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(oDialog.getDomRef().className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
 		assert.equal(oDialog.getDomRef().className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
 		assert.equal(oDialog.getVerticalScrolling(), true, "verticalScrolling should be enabled");
@@ -858,13 +858,13 @@ sap.ui.define([
 		// act
 		oDialog.open();
 		this.clock.tick(250);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oDialog._oCloseTrigger = 'some button';
 
 		qutils.triggerKeydown(oDialog.getDomRef(), KeyCodes.ESCAPE);
 		this.clock.tick(250);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(fnEscapeHandlerFunctionSpy.callCount, 1, 'escapeHandler function should be called');
@@ -906,7 +906,7 @@ sap.ui.define([
 		aButtons.forEach(function (oButton) {
 			oDialog.addButton(oButton);
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(oDialog._oToolbar.getContent().length, 4, "Toolbar contains 3 new buttons");
 		assert.equal(oDialog._oToolbar.indexOfContent(oBBtn), -1, "Toolbar doesn't contain beginButton");
 		assert.equal(oDialog._oToolbar.indexOfContent(oEBtn), -1, "Toolbar doesn't contain endButton");
@@ -922,7 +922,7 @@ sap.ui.define([
 		oDialog.setBeginButton(oBBtn);
 		oDialog.setEndButton(oEBtn);
 		oDialog.removeAllButtons();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(oDialog._oToolbar.getContent().length, 3, "Toolbar contains 2 buttons");
 		assert.equal(oDialog._oToolbar.indexOfContent(oBBtn), 1, "Toolbar contains beginButton");
 		assert.equal(oDialog._oToolbar.indexOfContent(oEBtn), 2, "Toolbar contains endButton");
@@ -972,7 +972,7 @@ sap.ui.define([
 		aButtons.forEach(function (oButton) {
 			oDialog.addButton(oButton);
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oDialog._oToolbar, "Toolbar instance is created");
 		assert.equal(oDialog._oToolbar.getContent().length, 4, "Toolbar contains 3 new buttons");
 
@@ -987,7 +987,7 @@ sap.ui.define([
 		oDialog.setBeginButton(oBBtn);
 		oDialog.setEndButton(oEBtn);
 		oDialog.removeAllButtons();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oBBtn.$().closest(".sapMIBar").length, "BeginButton should be rendered");
 		assert.ok(oEBtn.$().closest(".sapMIBar").length, "EndButton should be rendered");
 
@@ -1066,7 +1066,7 @@ sap.ui.define([
 		for (var sState in mIcons) {
 			// Act
 			oDialog.setState(sState);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// Assert
 			assert.strictEqual(oDialog.getIcon(), mIcons[sState], "Dialog has the correct icon for state " + sState);
@@ -1084,7 +1084,7 @@ sap.ui.define([
 
 		// Act
 		oDialog.open();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.notOk(oDialog.getIcon(), "Dialog does not have a default icon if state is None");
@@ -1103,7 +1103,7 @@ sap.ui.define([
 
 		// Act
 		oDialog.open();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oDialog.getIcon(), sCustomIcon, "Custom icon overrides default icon");
@@ -1391,7 +1391,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$().find(sContentSelector);
 
@@ -1848,7 +1848,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		Element.getElementById("txt").setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oDialog._onResize();
 
 		var iAfterResizeHeight = oDialog.$().height();
@@ -2143,7 +2143,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		oDialog.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oDialog.getDomRef().style.maxHeight, "max height is set");
 
@@ -2509,7 +2509,7 @@ sap.ui.define([
 
 		this.oDialog.setResizable(false);
 		this.oDialog.setDraggable(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oTitle = this.oDialog._getFocusableHeader();
 
@@ -2526,7 +2526,7 @@ sap.ui.define([
 
 
 		this.oDialog.setDraggable(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oTitle = this.oDialog._getFocusableHeader();
 
@@ -3019,19 +3019,19 @@ sap.ui.define([
 		this.stub(window, "requestAnimationFrame", function (fnCallback) {
 			fnCallback();
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oDialog.addStyleClass("sapUiResponsivePadding--header");
 		oDialog.addStyleClass("sapUiResponsivePadding--subHeader");
 		oDialog.addStyleClass("sapUiResponsivePadding--content");
 		oDialog.addStyleClass("sapUiResponsivePadding--footer");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oDialog.open();
 
 		// Arrange for size S
 		oDialog.setContentWidth("0%");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		// Assert for size S
@@ -3039,7 +3039,7 @@ sap.ui.define([
 
 		// Arrange for size M
 		oDialog.setContentWidth("600px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		// Assert for size M
@@ -3047,7 +3047,7 @@ sap.ui.define([
 
 		// Arrange for size S
 		oDialog.setContentWidth("0%");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		// Assert for size S
@@ -3079,13 +3079,13 @@ sap.ui.define([
 		});
 
 		oDialog.addStyleClass("sapUiResponsivePadding--footer");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oDialog.open();
 
 		// Arrange for size S
 		oDialog.setContentWidth("0%");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		// Assert for size S
@@ -3093,7 +3093,7 @@ sap.ui.define([
 
 		// Arrange for size M
 		oDialog.setContentWidth("600px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		// Assert for size M
@@ -3101,7 +3101,7 @@ sap.ui.define([
 
 		// Arrange for size S
 		oDialog.setContentWidth("0%");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		// Assert for size S
@@ -3449,7 +3449,7 @@ sap.ui.define([
 		var oWindowDimensions = this.oDialog._getAreaDimensions(),
 			iNewWindowWidth = oWindowDimensions.width - 200;
 		this.oDialog.setStretch(true).open();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.clock.tick(500);
 
@@ -3475,7 +3475,7 @@ sap.ui.define([
 		var oWindowDimensions = this.oDialog._getAreaDimensions(),
 			iNewWindowHeight = oWindowDimensions.height - 200;
 		this.oDialog.setStretch(true).open();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.clock.tick(500);
 
@@ -3540,7 +3540,7 @@ sap.ui.define([
 		// Arrange
 
 		this.oDialog.open();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.clock.tick(500);
 

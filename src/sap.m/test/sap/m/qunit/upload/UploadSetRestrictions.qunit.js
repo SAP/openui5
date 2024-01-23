@@ -10,9 +10,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
 	"./UploadSetTestUtils",
-	"sap/ui/core/Core"
-], function (UploadSet, UploadSetItem, Toolbar, Label, UploadSetRenderer, ListItemBaseRenderer, Dialog, Device,
-			 JSONModel, TestUtils, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(UploadSet, UploadSetItem, Toolbar, Label, UploadSetRenderer, ListItemBaseRenderer, Dialog, Device, JSONModel, TestUtils, oCore, nextUIUpdate) {
 	"use strict";
 
 	function getData() {
@@ -38,7 +38,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("UploadSet restrictions", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oUploadSet = new UploadSet("uploadSet", {
 				items: {
 					path: "/items",
@@ -47,7 +47,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(getData()));
 			this.oUploadSet.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadSet.destroy();

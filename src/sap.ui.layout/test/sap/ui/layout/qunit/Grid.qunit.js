@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/layout/GridData",
 	"sap/ui/layout/library",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ],
 function(
@@ -20,6 +21,7 @@ function(
 	GridData,
 	Library,
 	Core,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -125,7 +127,7 @@ function(
 			setupFunction: function() {
 				this.oGrid = oFactory.getGrid(GRID_ID);
 				this.oGrid.placeAt(TESTS_DOM_CONTAINER);
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 			},
 			teardownFunction: function() {
 				this.oGrid.destroy();

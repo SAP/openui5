@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/AnalyticalTable",
@@ -21,6 +22,7 @@ sap.ui.define([
 	// provides jQuery.fn.scrollLeftRTL
 	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function(
+	nextUIUpdate,
 	Table,
 	TreeTable,
 	AnalyticalTable,
@@ -987,7 +989,7 @@ sap.ui.define([
 
 		if (sContainerId != null) {
 			oTable.placeAt(sContainerId);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 		}
 
 		return oTable;
@@ -1265,7 +1267,7 @@ sap.ui.define([
 			}
 		}
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	};
 
 	/**
@@ -1719,7 +1721,7 @@ sap.ui.define([
 		if (!bSkipPlaceAt) {
 			oTable.placeAt("qunit-fixture");
 			oTreeTable.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 		}
 	};
 
@@ -1868,7 +1870,7 @@ sap.ui.define([
 		oRow.isContentHidden = function() { return true; };
 
 		oTableInstance.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 		return new Promise(function(resolve) {
 			oTableInstance.attachEventOnce("rowsUpdated", function() {
 				resolve(getRowDomRefs(oTableInstance, iRow));
@@ -1887,7 +1889,7 @@ sap.ui.define([
 		oRow.getLevel = function() { return 1; };
 
 		oTableInstance.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 		return new Promise(function(resolve) {
 			oTableInstance.attachEventOnce("rowsUpdated", function() {
 				resolve(getRowDomRefs(oTableInstance, iRow));
@@ -1908,7 +1910,7 @@ sap.ui.define([
 			oRowAction.addItem(oItem);
 		}
 		oTable.setRowActionTemplate(oRowAction);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	};
 
 	window.removeRowActions = function(oTable) {
@@ -1918,7 +1920,7 @@ sap.ui.define([
 		}
 
 		oTable.setRowActionCount(0);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	};
 
 	return TableQUnitUtils;

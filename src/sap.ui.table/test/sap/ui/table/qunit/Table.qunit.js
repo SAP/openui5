@@ -244,7 +244,7 @@ sap.ui.define([
 		oTable.bindRows(sBindingPrefix + "/modelData");
 
 		oTable.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	}
 
 	function destroyTable() {

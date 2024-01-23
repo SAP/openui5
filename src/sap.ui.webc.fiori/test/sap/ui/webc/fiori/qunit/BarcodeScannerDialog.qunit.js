@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/BarcodeScannerDialog",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, BarcodeScannerDialog, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, BarcodeScannerDialog, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBarcodeScannerDialog = new BarcodeScannerDialog({
 				scanError: function(oEvent) {
 					// console.log("Event scanError fired for BarcodeScannerDialog with parameters: ", oEvent.getParameters());
@@ -21,7 +22,7 @@ sap.ui.define([
 				}
 			});
 			this.oBarcodeScannerDialog.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oBarcodeScannerDialog.destroy();

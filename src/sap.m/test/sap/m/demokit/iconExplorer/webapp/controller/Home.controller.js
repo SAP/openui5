@@ -1,7 +1,10 @@
 sap.ui.define([
 	"sap/ui/demo/iconexplorer/model/formatter",
-	"sap/ui/demo/iconexplorer/controller/BaseController"
-], function(formatter, BaseController) {
+	"sap/ui/demo/iconexplorer/controller/BaseController",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/VersionInfo"
+], function(formatter, BaseController, Filter, FilterOperator, VersionInfo) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.iconexplorer.controller.Home", {
@@ -25,8 +28,12 @@ sap.ui.define([
 					if (this.getValue().length >= this.getStartSuggestion()) {
 						this._oSuggestionPopup.open();
 					}
-				}.bind(oSearchField)
+				}.bind(oSearchField),
+				oninput: function () {
+					this.applyFilters();
+				}.bind(this)
 			});
+
 		},
 
 		/**
@@ -70,16 +77,48 @@ sap.ui.define([
 		},
 
 		/**
-		 * Navigate to the selected icon font
-		 * @param {sap.ui.base.Event} oEvent the press event
-		 * @public
-		 */
-		onTitleLinkPress: function (oEvent) {
-			var sSelectedFont = oEvent.getSource().getCustomData().length && oEvent.getSource().getCustomData()[0].getValue();
+         * Triggered on each checkbox de/selection.
+         */
+		onCheckBoxSelect: function () {
+			this.applyFilters();
+		},
 
-			this.getRouter().navTo("overview", {
-				fontName : sSelectedFont
-			});
+		/**
+         * Applies filters depending on the selected checkboxes.
+         */
+		applyFilters: function () {
+			var oView = this.getView(),
+				aLibraryFilters = [],
+				oSuggestionInput = oView.byId("search"),
+				oSuggestionRowBinding = oSuggestionInput.getBinding("suggestionRows"),
+				sSearchValue = oSuggestionInput.getValue(),
+				aAllFilters = [];
+
+			// Check each checkbox's state and add corresponding filters
+			if (oView.byId("cbSAPIconsTNT").getSelected()) {
+				aLibraryFilters.push(new Filter("font", FilterOperator.EQ, "SAP-icons-TNT"));
+			}
+
+			if (oView.byId("cbSAPIcons").getSelected()) {
+				aLibraryFilters.push(new Filter("font", FilterOperator.EQ, "SAP-icons"));
+			}
+
+			if (oView.byId("cbInfoSAPBusinessSuite").getSelected()) {
+				aLibraryFilters.push(new Filter("font", FilterOperator.EQ, "BusinessSuiteInAppSymbols"));
+			}
+
+			aAllFilters = [new Filter({
+				filters: aLibraryFilters,
+				or: true
+			})];
+
+			if (aLibraryFilters.length > 0 && sSearchValue.length > 0) {
+				aAllFilters.push(new Filter("tagString", FilterOperator.Contains, sSearchValue));
+			}
+
+			oSuggestionRowBinding.filter(aAllFilters);
+
+			return null;
 		}
 	});
 });

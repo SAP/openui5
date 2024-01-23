@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/Bar",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, Bar, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Bar, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBar = new Bar({
 				endContent: [
 					new Button({
@@ -84,7 +85,7 @@ sap.ui.define([
 				]
 			});
 			this.oBar.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oBar.destroy();

@@ -3,16 +3,17 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/MediaGallery",
 	"sap/ui/webc/fiori/MediaGalleryItem",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, MediaGallery, MediaGalleryItem, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, MediaGallery, MediaGalleryItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMediaGallery = new MediaGallery({
 				items: [
 					new MediaGalleryItem({
@@ -75,7 +76,7 @@ sap.ui.define([
 				}
 			});
 			this.oMediaGallery.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oMediaGallery.destroy();

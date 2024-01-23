@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/util/Mobile",
 	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",
@@ -21,6 +22,7 @@ sap.ui.define([
 	coreLibrary,
 	Core,
 	KeyCodes,
+	nextUIUpdate,
 	Mobile,
 	Label,
 	JSONModel,
@@ -57,7 +59,7 @@ sap.ui.define([
 		});
 		oRadioButton2.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.ok(oRadioButton1.$().hasClass('sapMRb'), true);
@@ -78,7 +80,7 @@ sap.ui.define([
 			groupName:"Gruppe1"
 		});
 		oRadioButton1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.equal(oRadioButton1.$("RB").attr("name"), 'Gruppe1', "Group name should be Gruppe1");
@@ -99,7 +101,7 @@ sap.ui.define([
 			enabled: true
 		});
 		oEnabledRadioButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.equal(oDisabledRadioButton.$().hasClass('sapMRbDis'), true, 'The disabled radio button should have class sapMRbDis');
@@ -119,14 +121,14 @@ sap.ui.define([
 		});
 		oRadioButton.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.equal(oRadioButton.$().hasClass('sapMRbHasLabel'), true, 'The button should have class sapMRbHasLabel');
 
 		// act
 		oRadioButton.setText("");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.equal(oRadioButton.$().hasClass('sapMRbHasLabel'), false, 'The button should not have class sapMRbHasLabel');
@@ -155,7 +157,7 @@ sap.ui.define([
 		oRadioButton._setEditableParent(false);
 
 		oRadioButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(!oRadioButton.getDomRef().getAttribute("aria-readonly"), "Readonly should not be present");
@@ -210,7 +212,7 @@ sap.ui.define([
 			selected: true
 		});
 		oRadioButton2.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.equal(oRadioButton1.getSelected(),false, "The Radio Button should not be selected");
@@ -238,10 +240,10 @@ sap.ui.define([
 			selected: true
 		});
 		oRadioButton2.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oRadioButton1.setSelected(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.equal(oRadioButton1.getSelected(),true, "The Radio Button should not be selected");
@@ -265,12 +267,12 @@ sap.ui.define([
 			selected: true
 		});
 		oRadioButton2.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oRadioButton1.setSelected(true);
 		oRadioButton1.setGroupName("AnotherGroup");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.ok(oRadioButton1.getSelected(), "Alone Radio Button in group 'R1' should be selected");
@@ -285,7 +287,7 @@ sap.ui.define([
 		var oRadioButton = new RadioButton();
 
 		oRadioButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oRadioButton.setSelected(null);
 
@@ -310,12 +312,12 @@ sap.ui.define([
 		oRadioButton3.placeAt("qunit-fixture");
 		oRadioButton4.placeAt("qunit-fixture");
 		oRadioButton5.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		qutils.triggerEvent("tap", oRadioButton2.getId());
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.ok(!oRadioButton1.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
@@ -340,12 +342,12 @@ sap.ui.define([
 
 		oRadioButton1.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oRadioButton1.setSelected(true);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oUpdateGroupNameSpy.called, "_updateGroupName was called");
@@ -363,14 +365,14 @@ sap.ui.define([
 		oRadioButton1.placeAt("qunit-fixture");
 		oRadioButton2.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oRadioButton1.setSelected(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oRadioButton2.setSelected(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(!oRadioButton1.getSelected(), "RadioButton should not be selected");
@@ -391,7 +393,7 @@ sap.ui.define([
 		oRadioButton1.placeAt("qunit-fixture");
 		oRadioButton2.placeAt("qunit-fixture");
 		oRadioButton3.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(RB1SetSelectedSpy.callCount, 0, "Before initial rendering, a radio button in one group, does not uncheck radio buttons from another group.");
 		assert.notOk(RB1SetSelectedSpy.calledWith(false), "Other radio button does not get unchecked");
@@ -408,7 +410,7 @@ sap.ui.define([
 			text: 'Foo'
 		});
 		oRadioButton1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(oRadioButton1.getText(), 'Foo', "The Radio Button should have text 'Foo' ");
@@ -426,11 +428,11 @@ sap.ui.define([
 			text: 'Foo'
 		});
 		oRadioButton1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oRadioButton1.setText("Bar");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(oRadioButton1.getText(), 'Bar', "The Radion Button should have text 'Bar'");
@@ -451,7 +453,7 @@ sap.ui.define([
 			width:'10px'
 		});
 		oRadioButton1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(oRadioButton1.getWidth(), '10px', 'The width of the Radio Button should be 10px');
@@ -468,7 +470,7 @@ sap.ui.define([
 			useEntireWidth: true
 		});
 		oRadioButton1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(oRadioButton1.$().width(), 50, "Width of both RadioButton and Label should be 50");
@@ -492,7 +494,7 @@ sap.ui.define([
 			textDirection: "RTL"
 		});
 		oRadioButton2.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(oRadioButton1.$('label').find('bdi').css('direction'),'ltr','The text is with left ro right direction');
@@ -511,7 +513,7 @@ sap.ui.define([
 		var iTabIndex = 1,
 			oRadioButton1 = new RadioButton();
 		oRadioButton1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oRadioButton1.setTabIndex(iTabIndex);
@@ -532,7 +534,7 @@ sap.ui.define([
 				tooltip: sTooltip
 			});
 			oRadioButton1.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(oRadioButton1.$().attr("title"), sTooltip, "Tooltip title attribute is set");
@@ -550,7 +552,7 @@ sap.ui.define([
 		});
 
 		oRadioButton1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.ok(oRadioButton1.$('label'), 'Label should be created');
@@ -569,7 +571,7 @@ sap.ui.define([
 		});
 
 		oRadioButton1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(oRadioButton1.$("label").css("text-align"), "left", "Text Align should be left");
@@ -588,18 +590,18 @@ sap.ui.define([
 		oRadioButton1.placeAt("qunit-fixture");
 		oRadioButton2.placeAt("qunit-fixture");
 		oRadioButton3.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oRadioButton1.setGroupName("test");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		qutils.triggerEvent("tap", oRadioButton1.getId());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		qutils.triggerEvent("tap", oRadioButton2.getId());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		qutils.triggerEvent("tap", oRadioButton3.getId());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oRadioButton1.getSelected(), true, "RadioButton1 should be selected");
@@ -622,7 +624,7 @@ sap.ui.define([
 		var _sLabelText = 'foobar';
 		var oRadioButton1 = new RadioButton({text: _sLabelText, width: '20px' });
 		oRadioButton1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.equal(oRadioButton1.$('label').css('width'), '20px', "Label width should be 20px");
@@ -639,7 +641,7 @@ sap.ui.define([
 			groupName: "group1"
 		});
 		oRadioButton1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oRadioButton1.destroy();
@@ -656,7 +658,7 @@ sap.ui.define([
 		// arrange
 		var oRadioButton = new RadioButton();
 		oRadioButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var oFocusDomRef = oRadioButton.getFocusDomRef();
@@ -673,7 +675,7 @@ sap.ui.define([
 		// arrange
 		var oRadioButton = new RadioButton();
 		oRadioButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oRadioButton.applyFocusInfo();
@@ -691,7 +693,7 @@ sap.ui.define([
 		var oSelectSpy = this.spy();
 		var oRadioButton = new RadioButton();
 		oRadioButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oRadioButton.attachSelect(oSelectSpy);
@@ -721,7 +723,7 @@ sap.ui.define([
 
 		// arrange
 		oRadioButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(oRadioButton.$().attr("tabindex"), "0" , "'getTabindex' should return 0");
@@ -738,12 +740,12 @@ sap.ui.define([
 		// arrange
 		var oRadioButton = new RadioButton();
 		oRadioButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oRadioButton.attachSelect(function () {
 			oRadioButton.invalidate();
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assertions
 			assert.ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
@@ -765,7 +767,7 @@ sap.ui.define([
 		// arrange
 		var oRadioButton1 = new RadioButton();
 		oRadioButton1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		qutils.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
@@ -783,7 +785,7 @@ sap.ui.define([
 		// arrange
 		var oRadioButton1 = new RadioButton();
 		oRadioButton1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		qutils.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
@@ -809,7 +811,7 @@ sap.ui.define([
 			var oRadioButton1 = new RadioButton();
 
 			oRadioButton1.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			var fnFireSelectSpy = this.spy(oRadioButton1, "fireSelect");
@@ -849,7 +851,7 @@ sap.ui.define([
 
 			oRadioButton1.placeAt("qunit-fixture");
 			oRadioButton2.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oRadioButton1.applyFocusInfo();
 			qutils.triggerKeydown(oRadioButton1.getDomRef(), iKeyCode);
@@ -878,7 +880,7 @@ sap.ui.define([
 
 		oRadioButton1.placeAt("qunit-fixture");
 		oRadioButton2.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		var fnFireSelectSpy1 = this.spy(oRadioButton1, "fireSelect");
@@ -906,7 +908,7 @@ sap.ui.define([
 		oRadioButton1.placeAt("qunit-fixture");
 		oRadioButton2.placeAt("qunit-fixture");
 		oRadioButton3.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oRadioButton1.applyFocusInfo();
 		qutils.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ARROW_RIGHT);
@@ -932,7 +934,7 @@ sap.ui.define([
 		oRadioButton1.placeAt("qunit-fixture");
 		oRadioButton2.placeAt("qunit-fixture");
 		oRadioButton3.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		oRadioButton3.applyFocusInfo();
@@ -955,7 +957,7 @@ sap.ui.define([
 		oRadioButton.addAriaLabelledBy(oLabel.getId());
 		oRadioButton.addAriaDescribedBy(oLabel.getId());
 		oRadioButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		aAriaLabelledBy = oRadioButton.$().attr("aria-labelledby").split(" ");
 
 		assert.strictEqual(aAriaLabelledBy.length, 2, "should append to the existing label's ID");
@@ -979,12 +981,12 @@ sap.ui.define([
 		oRadioButton2.placeAt("qunit-fixture");
 		oRadioButton3.placeAt("qunit-fixture");
 		oRadioButton4.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oRadioButton3.setSelected(false);
 		oRadioButton4.setSelected(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$oRadio1 = oRadioButton1.$();
 		$oRadio2 = oRadioButton2.$();
@@ -1017,7 +1019,7 @@ sap.ui.define([
 				oAccInfo1 = oRadioButton1.getAccessibilityInfo();
 
 		oRadioButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oAccInfo.type, sExpectedType, "input type set correctly");
 		assert.strictEqual(oAccInfo.role, sExpectedRole, "role set correctly");
@@ -1033,7 +1035,7 @@ sap.ui.define([
 		var oRadioButton = new RadioButton({ text: "test" });
 
 		oRadioButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oSvg = oRadioButton.getDomRef().getElementsByClassName('sapMRbSvg')[0];
 
 		assert.strictEqual(oSvg.getAttribute('role'), "presentation", "The SVG icon should have a role=presentation");
@@ -1047,7 +1049,7 @@ sap.ui.define([
 
 		oRBError.placeAt("qunit-fixture");
 		oRBSuccess.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oRBError.getDomRef().getAttribute("aria-invalid"), null, "aria-invalid is not present");
 		assert.strictEqual(oRBSuccess.getDomRef().getAttribute("aria-invalid"), null, "aria-invalid attribute is not present");
@@ -1065,7 +1067,7 @@ sap.ui.define([
 				selected:"{/selected}"
 			});
 			this.oRadioButton.placeAt('qunit-fixture');
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oRadioButton.destroy();
@@ -1108,7 +1110,7 @@ sap.ui.define([
 
 		// act
 		this.oRadioButton.setValueStateText(sMessage);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(this.oRadioButton.$("Descr").text(), sMessage, "The error message should be shown in the tooltip");
@@ -1139,7 +1141,7 @@ sap.ui.define([
 		for (var sState in this.mStateClass) {
 			var sClass = this.mStateClass[sState];
 			this.oRB.setValueState(sState);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			assert.notOk(this.oRB.$().hasClass(sClass), sClass + " class is not added when radio button is disabled");
 		}
@@ -1153,7 +1155,7 @@ sap.ui.define([
 		for (var sState in this.mStateClass) {
 			var sClass = this.mStateClass[sState];
 			this.oRB.setValueState(sState);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			assert.notOk(this.oRB.$().hasClass(sClass), sClass + " class is not added when radio button isn't editable");
 		}

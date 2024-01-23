@@ -3,16 +3,17 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/Page",
 	"sap/ui/webc/main/Button",
 	"sap/ui/webc/fiori/Bar"
-], function(createAndAppendDiv, Core, Page, Button, Bar) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Page, Button, Bar) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oPage = new Page({
 				content: [
 					new Button({
@@ -181,7 +182,7 @@ sap.ui.define([
 				})
 			});
 			this.oPage.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oPage.destroy();

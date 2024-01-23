@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/m/Label",
 	"sap/m/SearchField",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/core/Popup",
@@ -48,6 +49,7 @@ sap.ui.define([
 	Image,
 	Label,
 	SearchField,
+	nextUIUpdate,
 	jQuery,
 	Device,
 	Popup,
@@ -245,7 +247,7 @@ sap.ui.define([
 				contentHeight: "300px"
 			});
 			page.addContent(this.oButton);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oPopover.destroy();
@@ -457,7 +459,7 @@ sap.ui.define([
 			}
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		oButton.focus();
@@ -705,11 +707,11 @@ sap.ui.define([
 		oButton.firePress();
 		this.clock.tick(500);
 		oPopover.setModal(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(document.getElementById("sap-ui-blocklayer-popup"), "Block layer is rendered");
 		assert.equal(jQuery("#sap-ui-blocklayer-popup").css("visibility"), "visible", "block layer is visible");
 		oPopover.setModal(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(jQuery("#sap-ui-blocklayer-popup").css("visibility"), "hidden", "block layer is invisible");
 	});
 
@@ -718,19 +720,19 @@ sap.ui.define([
 		assert.equal(oPopover.$("title").text(), sOldTitleValue, "Title should be with the right value");
 		assert.ok(oPopover.$("title").closest("#" + oPopover.getId() + "-intHeader-BarMiddle")[0], "Title should be rendered in the middle part of the bar");
 		oPopover.setTitle(sNewTitleValue);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(oPopover.$("title").text(), sNewTitleValue, "Title should be changed to the new value");
 	});
 
 	QUnit.test("Set title to empty string", function (assert){
 		oPopover.setTitle("");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(oPopover.$("title").text(), "", "Title should be able to be set to empty string");
 	});
 
 	QUnit.test("Add left button", function (assert){
 		oPopover.setBeginButton(oBeginButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oBeginButtonFocusDom = oBeginButton.getFocusDomRef();
 		assert.ok(oBeginButtonFocusDom, "BeginButton should be rendered");
 		if (!Device.support.touch) {
@@ -739,7 +741,7 @@ sap.ui.define([
 		assert.ok(oBeginButton.$().closest("#" + oPopover.getId() + "-intHeader-BarLeft")[0], "Left button is set in the left side of the bar in iOS");
 
 		oBeginButton.setEnabled(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		if (!Device.support.touch) {
 			assert.equal(oPopover.getDomRef(), document.activeElement, "beginButton should not trap the focus");
@@ -749,7 +751,7 @@ sap.ui.define([
 	QUnit.test("Add right button", function (assert){
 		var oInserAggregationSpy = this.spy(oPopover._internalHeader.insertAggregation);
 		oPopover.setEndButton(oEndButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(document.getElementById("endButton"), "EndButton should be rendered");
 		assert.ok(oEndButton.$().closest("#" + oPopover.getId() + "-intHeader-BarRight")[0], "EndButton is set in the right side of the bar");
 
@@ -759,7 +761,7 @@ sap.ui.define([
 		}
 
 		oEndButton.setEnabled(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		if (!Device.support.touch) {
 			assert.equal(oPopover.getDomRef(), document.activeElement, "endButton should not trap the focus");
@@ -770,7 +772,7 @@ sap.ui.define([
 
 	QUnit.test("Remove beginButton", function (assert){
 		oPopover.setBeginButton(null);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oEndButtonFocusDom = oEndButton.getFocusDomRef();
 		if (!Device.support.touch) {
 			assert.equal(oEndButtonFocusDom, document.activeElement, "EndButton should have the focus");
@@ -784,13 +786,13 @@ sap.ui.define([
 
 	QUnit.test("Remove right button", function (assert){
 		oPopover.setEndButton(null);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(!jQuery("#" + oPopover.getId() + "-intHeader-BarRight").children("#endButton")[0], "EndButton is removed from the bar");
 	});
 
 	QUnit.test("Set sub header", function (assert){
 		oPopover.setSubHeader(oSubHeader);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oPopover.$().children(".sapMPopoverSubHeader")[0], "Sub header is rendered");
 	});
 
@@ -829,7 +831,7 @@ sap.ui.define([
 	QUnit.test("Set vertical/horizontal scrolling", function (assert){
 		oPopover.setVerticalScrolling(false);
 		oPopover.setHorizontalScrolling(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
 		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
@@ -838,7 +840,7 @@ sap.ui.define([
 
 		oPopover.setVerticalScrolling(true);
 		oPopover.setHorizontalScrolling(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
 		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
@@ -850,16 +852,16 @@ sap.ui.define([
 		assert.ok(oPopover.getDomRef("intHeader"), "Internal header is rendered");
 		oPopover.setModal(true);
 		oPopover.setShowHeader(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(!oPopover.getDomRef("intHeader"), "Internal header is removed");
 		oPopover.setShowHeader(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oPopover.$("intHeader").css("display") !== "none", "Internal header is re-rendered");
 	});
 
 	QUnit.test("Set custom header", function (assert){
 		oPopover.setCustomHeader(oCustomHeader);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(document.getElementById("customHeader"), "Custom Header is rendered");
 		assert.ok(!oPopover.getDomRef("intHeader"), "Internal header is destroyed");
 		oPopover.destroy();
@@ -873,7 +875,7 @@ sap.ui.define([
 		});
 
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
@@ -912,7 +914,7 @@ sap.ui.define([
 
 		oButton.placeAt("content");
 		oButton2.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oButton.$().removeClass("positioned positioned1 positioned2");
 		oButton.$().addClass("positioned3");
@@ -927,7 +929,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		oPopover.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oSpy = this.spy(console, "assert");
 		var oBeforeCloseSpy = this.spy();
@@ -993,7 +995,7 @@ sap.ui.define([
 
 		var oButton = new Button();
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.focus();
 
 		var oPopover = new Popover({
@@ -1211,7 +1213,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover({
 			contentWidth: "400px",
@@ -1243,7 +1245,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oButton.$().css({
 			position: "absolute",
@@ -1311,7 +1313,7 @@ sap.ui.define([
 		});
 
 		oSegBtn.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSegBtn.getItems()[1].oButton.firePress(); // TODO avoid private property 'oButton'
 
@@ -1332,7 +1334,7 @@ sap.ui.define([
 		});
 
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
@@ -1373,7 +1375,7 @@ sap.ui.define([
 		});
 
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oPopover.openBy(oButton);
 
 		this.clock.tick(500);
@@ -1407,7 +1409,7 @@ sap.ui.define([
 			text: "Focus Problem with Popover"
 		});
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oPopover.openBy(oButton);
 		this.clock.tick(1000);
@@ -1426,7 +1428,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$().find(sContentSelector);
 
@@ -1465,7 +1467,7 @@ sap.ui.define([
 			text: "Right Border Stays"
 		}).addStyleClass("positioned2");
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover({
 			contentWidth: "200px",
@@ -1475,7 +1477,7 @@ sap.ui.define([
 		this.clock.tick(400);
 		assert.ok(oPopover.isOpen(), "Popover should be opened");
 		oButton.setText("Short");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(400);
 		assert.ok(oPopover.isOpen(), "Popover should still be open");
 
@@ -1488,7 +1490,7 @@ sap.ui.define([
 			text: "Open Popover"
 		}).addStyleClass("positioned2");
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover({
 			contentWidth: "200px",
@@ -1521,7 +1523,7 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover({showArrow: false}),
 				oSpyGetArrowOffsetCss = sinon.spy(oPopover, "_getArrowOffsetCss"),
@@ -1546,7 +1548,7 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover({showArrow: true}),
 				oSpyGetArrowOffsetCss = sinon.spy(oPopover, "_getArrowOffsetCss"),
@@ -1571,7 +1573,7 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Arrange
 		this.oPopover = new Popover();
@@ -2008,7 +2010,7 @@ sap.ui.define([
 		oScrollContainer.addContent(oButton);
 
 		oScrollContainer.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oPopover.openBy(oButton);
 
 		assert.equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
@@ -2023,7 +2025,7 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover();
 		var oSpy = this.spy(oPopover, "_afterAdjustPositionAndArrowHook");
@@ -2042,7 +2044,7 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover();
 		oPopover.openBy(oButton);
@@ -2061,7 +2063,7 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover();
 		oPopover.openBy(oButton);
@@ -2079,7 +2081,7 @@ sap.ui.define([
 		});
 
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover({
 			title: "Title text"
@@ -2100,7 +2102,7 @@ sap.ui.define([
 		});
 
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover({
 			title: "Title text"
@@ -2127,7 +2129,7 @@ sap.ui.define([
 
 		oInvisibleText.placeAt("content");
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover({
 			showHeader: false,
@@ -2153,7 +2155,7 @@ sap.ui.define([
 
 		oInvisibleText.placeAt("content");
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover({
 			title: "Title text",
@@ -2185,7 +2187,7 @@ sap.ui.define([
 
 		oInvisibleText.placeAt("content");
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover({
 			title: "Title text",
@@ -2224,7 +2226,7 @@ sap.ui.define([
 
 		oInvisibleText.placeAt("content");
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover({
 			ariaLabelledBy: sInvTextId
@@ -2250,7 +2252,7 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopover = new Popover();
 		oPopover.openBy(oButton);
@@ -2282,7 +2284,7 @@ sap.ui.define([
 			text: "Open Popover"
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
@@ -2315,7 +2317,7 @@ sap.ui.define([
 			text: "Open Popover"
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
@@ -2374,7 +2376,7 @@ sap.ui.define([
 		var oBeforeCloseSpy = this.spy();
 
 		// Act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oPopover.openBy(oOpenButton);
 		this.clock.tick(300);
 
@@ -2401,14 +2403,14 @@ sap.ui.define([
 
 		oButton.addDependent(oPopover);
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oPopover.attachBeforeClose(beforeCloseSpy);
 		oPopover.attachAfterClose(afterCloseSpy);
 
 		//Act
 		oPopover.openBy(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(1000);
 
 		oPopover.oPopup.close();
@@ -2454,7 +2456,7 @@ sap.ui.define([
 			}
 		});
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oPopover.openBy(oButton);
@@ -2496,13 +2498,13 @@ sap.ui.define([
 				oPopover.destroy();
 			}
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		//Act
 		try {
 			oButton.firePress();
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		} catch (e) {}
 
 		// Assert
@@ -2549,7 +2551,7 @@ sap.ui.define([
 				]
 			});
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oPopover.destroy();
@@ -2562,7 +2564,7 @@ sap.ui.define([
 		this.clock.tick(500);
 		this.clock.tick(1); // also process nested setTimeout calls
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $longTextItem = this.oPopover.$().find("#longTextItem .sapMSLITitleOnly");
 
@@ -2572,7 +2574,7 @@ sap.ui.define([
 
 	QUnit.test("Text is truncated when width is too small", function(assert) {
 		this.oPopover.setContentWidth("20rem");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oPopover.openBy(this.oButton);
 		this.clock.tick(500);
@@ -2596,7 +2598,7 @@ sap.ui.define([
 		var oSpy = sinon.spy(Popover.prototype, "_initResponsivePaddingsEnablement");
 		var oButton = new Button().placeAt("content");
 		var oPopover = new Popover({});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oPopover.openBy(oButton);
@@ -2644,17 +2646,17 @@ sap.ui.define([
 
 		page.addContent(oButton);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oPopover.addStyleClass("sapUiResponsivePadding--header");
 		oPopover.addStyleClass("sapUiResponsivePadding--subHeader");
 		oPopover.addStyleClass("sapUiResponsivePadding--content");
 		oPopover.addStyleClass("sapUiResponsivePadding--footer");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oPopover.openBy(oButton);
 		clock.tick(300);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var fnIsResponsive = function (sParentSelector, sChildSelector) {
 			return oPopover.$().find(sParentSelector).hasClass(sChildSelector);
@@ -2669,7 +2671,7 @@ sap.ui.define([
 		// Act
 		oPopover.setContentWidth("600px");
 		clock.tick(300);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(fnIsResponsive("#responsivePaddingsPopover-intHeader", "sapUi-Std-PaddingM"), "The sapUi-Std-PaddingM class is applied to the header");
@@ -2680,7 +2682,7 @@ sap.ui.define([
 		// Act
 		oPopover.setContentWidth("300px");
 		clock.tick(300);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(fnIsResponsive("#responsivePaddingsPopover-intHeader", "sapUi-Std-PaddingS"), "The sapUi-Std-PaddingS class is applied to the header");
@@ -2697,7 +2699,7 @@ sap.ui.define([
 		var oPopover = new Popover({}),
 			oStub = sinon.stub(oPopover, "getDomRef").callsFake(function() { return null; });
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oPopover._clearCSSStyles();
 
 		assert.ok(true, "No exception is thrown");
@@ -2721,9 +2723,9 @@ sap.ui.define([
 			sAlignment;
 
 		oButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oPopover.openBy(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sInitialAlignment = oPopover.getTitleAlignment();
 
 		// initial titleAlignment test depending on theme
@@ -2733,7 +2735,7 @@ sap.ui.define([
 		// check if all types of alignment lead to apply the proper CSS class
 		for (sAlignment in TitleAlignment) {
 			oPopover.setTitleAlignment(sAlignment);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(oPopover._getAnyHeader().hasStyleClass(sAlignmentClass + sAlignment),
 						"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
 		}

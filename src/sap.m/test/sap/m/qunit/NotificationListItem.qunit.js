@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/m/Button",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	NotificationListItem,
 	NotificationListGroup,
@@ -25,7 +26,8 @@ sap.ui.define([
 	Element,
 	Button,
 	KeyCodes,
-	JSONModel
+	JSONModel,
+	nextUIUpdate
 ) {
 	'use strict';
 
@@ -189,7 +191,7 @@ sap.ui.define([
 			});
 
 			this.list.placeAt(RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.list.destroy();
@@ -226,7 +228,7 @@ sap.ui.define([
 	QUnit.test('footer', function(assert) {
 
 		this.notificationListItem.setDatetime('');
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $item = this.notificationListItem.$();
 
@@ -235,7 +237,7 @@ sap.ui.define([
 
 		this.notificationListItem.setDatetime('3 days');
 		this.notificationListItem.setAuthorName('');
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$item = this.notificationListItem.$();
 
@@ -254,7 +256,7 @@ sap.ui.define([
 			});
 
 			this.list.placeAt(RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.list.destroy();
@@ -277,7 +279,7 @@ sap.ui.define([
 			});
 
 			this.list.placeAt(RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.list.destroy();
@@ -288,7 +290,7 @@ sap.ui.define([
 		var $item = this.notificationListItem.$();
 		var showMoreButton = Element.closestTo($item.find('.sapMNLIFooter .sapMNLIShowMore a')[0]);
 		showMoreButton.firePress();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$item = this.notificationListItem.$();
 		assert.notOk($item.find('.sapMNLITitleText').hasClass('sapMNLIItemTextLineClamp'), 'title does not have sapMNLIItemTextLineClamp class');
@@ -296,7 +298,7 @@ sap.ui.define([
 		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_SHOW_LESS"), 'text is "Show Less"');
 
 		showMoreButton.firePress();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$item = this.notificationListItem.$();
 		assert.ok($item.find('.sapMNLITitleText').hasClass('sapMNLIItemTextLineClamp'), 'title has sapMNLIItemTextLineClamp class');
@@ -304,7 +306,7 @@ sap.ui.define([
 		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_SHOW_MORE"), 'text is "Show More"');
 
 		this.list.setWidth('1000px');
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$item = this.notificationListItem.$();
 		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').length, 0, '"Show More" is not rendered');
@@ -331,7 +333,7 @@ sap.ui.define([
 			});
 
 			this.list.placeAt(RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.list.destroy();
@@ -351,21 +353,21 @@ sap.ui.define([
 		// ACC  text result: "Notification unread. Created By John Smith Due in 3 days. High Priority."
 
 		this.notificationListItem.setPriority("None");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sInvisibleACCTextRendered = this.notificationListItem.getDomRef().getElementsByClassName("sapUiInvisibleText")[2].innerText;
 		sInvisibleACCText = oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_UNREAD") + " " +  oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_CREATED_BY") + " " + this.notificationListItem.getAuthorName() + " " + oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_DATETIME", [this.notificationListItem.getDatetime()]);
 		assert.strictEqual(sInvisibleACCTextRendered, sInvisibleACCText, "ACC text is OK the correct one when the priority is \"None\"");
 		// ACC  text result: "Notification unread. Created By John Smith Due in 3 days."
 
 		this.notificationListItem.setDatetime("");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sInvisibleACCTextRendered = this.notificationListItem.getDomRef().getElementsByClassName("sapUiInvisibleText")[2].innerText;
 		sInvisibleACCText = oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_UNREAD") + " " +  oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_CREATED_BY") + " " + this.notificationListItem.getAuthorName();
 		assert.strictEqual(sInvisibleACCTextRendered, sInvisibleACCText, "ACC text is OK the correct one when the priority is \"None\" and there is no Datetime");
 		// ACC  text result: "Notification unread. Created By John Smith"
 
 		this.notificationListItem.setAuthorName("");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sInvisibleACCTextRendered = this.notificationListItem.getDomRef().getElementsByClassName("sapUiInvisibleText")[2].innerText;
 		sInvisibleACCText = oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_UNREAD");
 		assert.strictEqual(sInvisibleACCTextRendered, sInvisibleACCText, "ACC text is OK the correct one when the priority is \"None\", there is no Datetime and there is no authorName");
@@ -378,7 +380,7 @@ sap.ui.define([
 			this.notificationList = createNotificationList();
 
 			this.notificationList.placeAt(RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.notificationList.destroy();
@@ -599,7 +601,7 @@ sap.ui.define([
 		});
 
 		list.placeAt(RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(notificationCloning.getButtons().length, 2, "The clone should have the binned aggregation");
@@ -650,7 +652,7 @@ sap.ui.define([
 
 		// act
 		list.placeAt(RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(list.getItems()[0]._getOverflowToolbar().getContent()[0].getVisible(), true, "The button is visible on mobile");
@@ -671,7 +673,7 @@ sap.ui.define([
 				]
 			});
 			this.list.placeAt(RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.list.destroy();
@@ -685,12 +687,12 @@ sap.ui.define([
 		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
 
 		this.notificationListItem.removeButton(buttons[1]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'button overflow priority is ok');
 
 		this.notificationListItem.addButton(buttons[1]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
 	});
@@ -698,7 +700,7 @@ sap.ui.define([
 	QUnit.test('Close button destruction', function(assert) {
 		var notificationListItem = createNotificatoinListItem();
 		notificationListItem.placeAt(RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var closeButton = notificationListItem._getCloseButton();
 		var closeButtonId = closeButton.sId;
 
@@ -716,7 +718,7 @@ sap.ui.define([
 				]
 			});
 			this.list.placeAt(RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.list.destroy();
@@ -738,7 +740,7 @@ sap.ui.define([
 		assert.ok(toolbarSeparator.getVisible(), 'toolbar separator is visible');
 
 		this.notificationListItem.setShowButtons(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'button overflow priority is ok');
 		assert.strictEqual(buttons[1].getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'button overflow priority is ok');
@@ -754,7 +756,7 @@ sap.ui.define([
 
 		this.notificationListItem.setShowButtons(true);
 		this.notificationListItem.setShowCloseButton(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		closeButton = this.notificationListItem._getCloseButton();
 		toolbarSeparator = this.notificationListItem._getToolbarSeparator();
@@ -765,7 +767,7 @@ sap.ui.define([
 		this.notificationListItem.setShowCloseButton(true);
 		this.notificationListItem.removeButton(buttons[0]);
 		this.notificationListItem.removeButton(buttons[1]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		closeButton = this.notificationListItem._getCloseButton();
 		toolbarSeparator = this.notificationListItem._getToolbarSeparator();
@@ -782,14 +784,14 @@ sap.ui.define([
 			description: 'Notification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item Description'
 		});
 		this.list.addItem(nli);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var showMoreButton = Element.closestTo(nli.getDomRef("showMoreButton"));
 		var closeButton = Element.closestTo(nli.getDomRef("closeButtonX"));
 
 		// act
 		showMoreButton.firePress();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(closeButton.$().is(":visible"), "Close button should be visible after details are expanded");
@@ -805,7 +807,7 @@ sap.ui.define([
 				]
 			});
 			this.list.placeAt(RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.list.destroy();

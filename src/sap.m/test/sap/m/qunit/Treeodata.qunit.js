@@ -7,15 +7,16 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/m/StandardTreeItem",
 	"sap/m/Tree",
-	"sap/ui/core/Core"
-], function(createAndAppendDiv, qutils, MockServer, ODataModelV2, StandardTreeItem, Tree, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(createAndAppendDiv, qutils, MockServer, ODataModelV2, StandardTreeItem, Tree, oCore, nextUIUpdate) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
 
 
 	QUnit.module("initial check", {
-		beforeEach: function(){
+		beforeEach: async function() {
 			// create odata service
 			var sMetaDataURI = "test-resources/sap/m/mockdata/";
 
@@ -54,7 +55,7 @@ sap.ui.define([
 			});
 
 			oTree.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oTree = oTree;
 		},

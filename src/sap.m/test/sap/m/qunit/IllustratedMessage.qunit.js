@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/IllustratedMessage",
 	"sap/m/Button",
@@ -12,6 +13,7 @@ sap.ui.define([
 function(
 	library,
 	Library,
+	nextUIUpdate,
 	jQuery,
 	IllustratedMessage,
 	Button,
@@ -32,7 +34,7 @@ function(
 
 	/* --------------------------- IllustratedMessage API -------------------------------------- */
 	QUnit.module("IllustratedMessage - API ", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			// Arrange
 			this.oIllustratedMessage = new IllustratedMessage({
 				title: "Test title",
@@ -40,7 +42,7 @@ function(
 				additionalContent: new Button({text: "Test button"})
 			});
 			this.oIllustratedMessage.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			// Clean
@@ -86,11 +88,11 @@ function(
 
 	/* --------------------------- IllustratedMessage Lifecycle -------------------------------------- */
 	QUnit.module("IllustratedMessage - Lifecycle ", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			// Arrange
 			this.oIllustratedMessage = new IllustratedMessage();
 			this.oIllustratedMessage.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			// Clean
@@ -155,11 +157,11 @@ function(
 
 	/* --------------------------- IllustratedMessage GETTERS/SETTERS -------------------------------------- */
 	QUnit.module("IllustratedMessage - getters and setters ", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			// Arrange
 			this.oIllustratedMessage = new IllustratedMessage();
 			this.oIllustratedMessage.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			// Clean
@@ -168,7 +170,7 @@ function(
 		}
 	});
 
-	QUnit.test("setIllustrationType", function (assert) {
+	QUnit.test("setIllustrationType", async function(assert) {
 		// Arrange
 		var fnUpdateInternalSpy = this.spy(this.oIllustratedMessage, "_updateInternalIllustrationSetAndType"),
 			sNewType = IllustratedMessageType.UnableToLoad;
@@ -186,7 +188,7 @@ function(
 		assert.ok(fnUpdateInternalSpy.calledOnce, "_updateInternalIllustrationSetAndType isn't called second time if the type isn't string");
 
 		this.oIllustratedMessage.setIllustrationType("sapIllus-Connection");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var sUseHrefValue = this.oIllustratedMessage
 			.getDomRef()
@@ -198,7 +200,7 @@ function(
 		);
 	});
 
-	QUnit.test("_getDescription - sap.m.FormattedText", function (assert) {
+	QUnit.test("_getDescription - sap.m.FormattedText", async function(assert) {
 		// Arrange
 		var oDescription,
 			sCurrDescrVal,
@@ -234,7 +236,7 @@ function(
 		this.oIllustratedMessage.setDescription(sEmptyString);
 		this.oIllustratedMessage.setEnableDefaultTitleAndDescription(false);
 		sCurrDescrVal = this.oIllustratedMessage._getDescription().getHtmlText();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notEqual(sCurrDescrVal, sDefaultText,
@@ -244,7 +246,7 @@ function(
 		assert.strictEqual(oDescription.getDomRef(), null, "The description control instance is not rendered when no text is present");
 	});
 
-	QUnit.test("_getDescription - sap.m.Text", function (assert) {
+	QUnit.test("_getDescription - sap.m.Text", async function(assert) {
 		// Arrange
 		var oDescription = this.oIllustratedMessage._getDescription(),
 			sEmptyString = '',
@@ -274,7 +276,7 @@ function(
 		this.oIllustratedMessage.setDescription(sEmptyString);
 		this.oIllustratedMessage.setEnableDefaultTitleAndDescription(false);
 		sCurrDescrVal = this.oIllustratedMessage._getDescription().getText();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notEqual(sCurrDescrVal, sDefaultText,
@@ -298,7 +300,7 @@ function(
 			"Internal getter _getResourceBundle is correctly returning the sap.m resource bundle");
 	});
 
-	QUnit.test("_getTitle", function (assert) {
+	QUnit.test("_getTitle", async function(assert) {
 		// Arrange
 		var sTitleText = this.oIllustratedMessage._getTitle().getText(),
 		sEmptyString = '',
@@ -325,7 +327,7 @@ function(
 		this.oIllustratedMessage.setTitle(sEmptyString);
 		this.oIllustratedMessage.setEnableDefaultTitleAndDescription(false);
 		sTitleText = this.oIllustratedMessage._getTitle().getText();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notEqual(sTitleText, sDefaultText,
@@ -335,7 +337,7 @@ function(
 		assert.strictEqual(this.oIllustratedMessage._getTitle().getDomRef(), null, "The description control instance is not rendered when no text is present");
 	});
 
-	QUnit.test("ariaTitleLevel is set correctly", function(assert) {
+	QUnit.test("ariaTitleLevel is set correctly", async function(assert) {
 		// Arrange
 		this.oIllustratedMessage.setTitle("Test Title");
 
@@ -344,7 +346,7 @@ function(
 
 		// Act
 		this.oIllustratedMessage.setAriaTitleLevel(TitleLevel.H3);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oIllustratedMessage._getTitle().getLevel(), TitleLevel.H3, "IllustratedMessage ariaTitleLevel is correctly set to the title instance");
@@ -353,11 +355,11 @@ function(
 	/* --------------------------- IllustratedMessage Private methods -------------------------------------- */
 
 	QUnit.module("IllustratedMessage - Private methods ", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			// Arrange
 			this.oIllustratedMessage = new IllustratedMessage();
 			this.oIllustratedMessage.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			// Clean
@@ -552,7 +554,7 @@ function(
 		}, this);
 	});
 
-	QUnit.test("_updateMedia (vertical) with enableVerticalResponsiveness property", function (assert) {
+	QUnit.test("_updateMedia (vertical) with enableVerticalResponsiveness property", async function(assert) {
 		// Assert
 		assert.expect(24);
 
@@ -574,7 +576,7 @@ function(
 
 		// Act Enable vertical responsiveness in order to test the height breakpoints
 		this.oIllustratedMessage.setEnableVerticalResponsiveness(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(this.oIllustratedMessage.$().hasClass(sScalableClass),
@@ -604,7 +606,7 @@ function(
 		}, this);
 	});
 
-	QUnit.test("IllustratedMessage should fit its container height when enableVerticalResponsiveness property is true", function (assert) {
+	QUnit.test("IllustratedMessage should fit its container height when enableVerticalResponsiveness property is true", async function(assert) {
 		var oFixtureDOM = document.getElementById("qunit-fixture"),
 			sFixtureOriginalHeight = oFixtureDOM.style.height,
 			sFixtureTargetHeight = '160px',
@@ -613,7 +615,7 @@ function(
 		// Act Enable vertical responsiveness in order to test the height breakpoints
 		this.oIllustratedMessage.setEnableVerticalResponsiveness(true);
 		oFixtureDOM.style.height = sFixtureTargetHeight;
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oIMDOMRef.getBoundingClientRect().height > oIMDOMRef.querySelector('.sapMIllustratedMessageMainContent').getBoundingClientRect().height,
@@ -640,7 +642,7 @@ function(
 
 			// Act
 			this.oIllustratedMessage._updateMediaStyle(sCurrTestMedia);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 			sCurrStyleClass = sCurrTestMedia;
 
 			// Assert
@@ -680,7 +682,7 @@ function(
 			// Act
 			this.oIllustratedMessage._sLastKnownMedia = null; // the method compares the proposed media to _sLastKnownMedia, to update only when necessary
 			this.oIllustratedMessage._updateSymbol(IllustratedMessage.MEDIA[sMedia]);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 			sExpectedNewSymbolId = this.oIllustratedMessage._sIllustrationSet + "-" + sIdMedia + "-" + this.oIllustratedMessage._sIllustrationType;
 			sUseHrefValue = this.oIllustratedMessage
@@ -705,13 +707,13 @@ function(
 		}, this);
 	});
 
-	QUnit.test("_getFallbackMedia", function (assert) {
+	QUnit.test("_getFallbackMedia", async function(assert) {
 		// Arrange
 		var sExpectedFallbackMedia;
 
 		// Act
 		this.oIllustratedMessage._updateMedia(IllustratedMessage.BREAK_POINTS.DOT);
-		Core.applyChanges();
+		await nextUIUpdate();
 		sExpectedFallbackMedia = this.oIllustratedMessage._getFallbackMedia();
 
 		// Assert
@@ -719,7 +721,7 @@ function(
 
 		// Act
 		this.oIllustratedMessage._updateMedia(IllustratedMessage.BREAK_POINTS.DIALOG);
-		Core.applyChanges();
+		await nextUIUpdate();
 		sExpectedFallbackMedia = this.oIllustratedMessage._getFallbackMedia();
 
 		// Assert
@@ -728,11 +730,11 @@ function(
 
 	/* --------------------------- IllustratedMessage Accessibility -------------------------------------- */
 	QUnit.module("IllustratedMessage - Accessibility ", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			// Arrange
 			this.oIllustratedMessage = new IllustratedMessage();
 			this.oIllustratedMessage.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			// Clean
@@ -771,11 +773,11 @@ function(
 
 	/* --------------------------- IllustratedMessage Default Text Fallback -------------------------------------- */
 	QUnit.module("IllustratedMessage - Default Text Fallback logic ", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			// Arrange
 			this.oIllustratedMessage = new IllustratedMessage();
 			this.oIllustratedMessage.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			// Clean
@@ -827,12 +829,12 @@ function(
 
 	/* --------------------------- IllustratedMessage Associations -------------------------------------- */
 	QUnit.module("IllustratedMessage - Associations ", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			// Arrange
 			this.oIllustratedMessage = new IllustratedMessage();
 			this.oIllustratedMessage.placeAt("qunit-fixture");
 			this.oIllustration = this.oIllustratedMessage._getIllustration();
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			// Clean
@@ -843,7 +845,7 @@ function(
 		}
 	});
 
-	QUnit.test("Testing the default ariaLabelledBy association in combination with calls of the other ariaLabelledBy related methods ", function (assert) {
+	QUnit.test("Testing the default ariaLabelledBy association in combination with calls of the other ariaLabelledBy related methods ", async function(assert) {
 
 		// Arrange
 		var $illustration = this.oIllustration.$(),
@@ -857,34 +859,34 @@ function(
 
 		// Act
 		this.oIllustratedMessage.addIllustrationAriaLabelledBy('illustration_label');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal($illustration.attr("aria-labelledby"), 'illustration_label');
 
 		// Act
 		this.oIllustratedMessage.removeIllustrationAriaLabelledBy('illustration_label');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal($illustration.attr("aria-labelledby"), sTitleId);
 
 		// Act
 		this.oIllustratedMessage.addIllustrationAriaLabelledBy('illustration_label');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal($illustration.attr("aria-labelledby"), 'illustration_label');
 
 		// Act
 		this.oIllustratedMessage.removeAllAriaLabelledBy('illustration_label');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal($illustration.attr("aria-labelledby"), sTitleId);
 	});
 
-	QUnit.test("Testing illustrationAriaLabelledBy association", function (assert) {
+	QUnit.test("Testing illustrationAriaLabelledBy association", async function(assert) {
 
 		// Arrange
 		new InvisibleText("illustration_label2", {text: "My label"}).toStatic();
@@ -893,7 +895,7 @@ function(
 
 		// Act
 		this.oIllustratedMessage.addIllustrationAriaLabelledBy('illustration_label2');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.equal($illustration.attr("aria-labelledby"), 'illustration_label2');

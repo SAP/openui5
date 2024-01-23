@@ -84,7 +84,7 @@ sap.ui.define([
 			}
 		}));
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	}
 
 	QUnit.module("Highlights", {

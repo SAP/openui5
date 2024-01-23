@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Core",
-	"sap/ui/dom/units/Rem"
-], function (
+	"sap/ui/dom/units/Rem",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(
 	Log,
 	Splitter,
 	SplitterLayoutData,
@@ -24,7 +25,8 @@ sap.ui.define([
 	RenderManager,
 	ResizeHandler,
 	oCore,
-	Rem
+	Rem,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -62,7 +64,7 @@ sap.ui.define([
 		this.oSplitter = new Splitter("mySplitter0", {
 			contentAreas: [createExampleContent("100px"), createExampleContent("200px"), createExampleContent("300px")]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	}
 
 	QUnit.module("API", {
@@ -161,7 +163,7 @@ sap.ui.define([
 			]
 		});
 		oSplitter.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oBtn1.getLayoutData().setSize("30rem");
@@ -206,7 +208,7 @@ sap.ui.define([
 				contentAreas: [oContainer1, oContainer2, oContainer3]
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act- don't use loops in unit tests- anti-pattern
 		oCurContainer = oSplitter.getContentAreas()[0];
@@ -300,7 +302,7 @@ sap.ui.define([
 				height: "300px"
 			});
 			this.oContainer.placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oContainer.destroy();
@@ -328,7 +330,7 @@ sap.ui.define([
 
 		// Act
 		this.oContainer.setWidth("1000px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		iExpectedSize = 25 * this.oSplitter._calcAvailableContentSize() / 100;
@@ -342,7 +344,7 @@ sap.ui.define([
 			layoutData: new SplitterLayoutData({size: "100%"})
 		});
 		this.oSplitter.addContentArea(oCont);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oCont.$().parent().width(), this.oSplitter.$().width(), "Content area should take all the available width when size is 100%");
@@ -422,7 +424,7 @@ sap.ui.define([
 				height: "300px"
 			});
 			this.oContainer.placeAt(DOM_RENDER_LOCATION);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oContainer.destroy();
@@ -445,7 +447,7 @@ sap.ui.define([
 
 		// Act
 		this.oContainer.setWidth("500px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		aCalculatedSizes = this.oSplitter._calculatedSizes;
 		iFirstContentAreaWidth = aCalculatedSizes[0];
@@ -486,7 +488,7 @@ sap.ui.define([
 
 		// Act
 		this.oContainer.setWidth("300px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		aSizes = this.oSplitter._calculatedSizes;
@@ -509,7 +511,7 @@ sap.ui.define([
 				size: "60%" // results in 600px
 			})
 		}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var aAreas = this.oSplitter._getContentAreas(),
 			iFirstAreaWidth = aAreas[0].$().parent().width(),
 			iSecondAreaWidth = aAreas[1].$().parent().width(),
@@ -533,7 +535,7 @@ sap.ui.define([
 			})
 		}));
 		this.oSplitter.addContentArea(new Button());
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var $bar = this.oSplitter.$().children("#splitter-splitbar-0");
 
 		// Act - move the bar
@@ -556,7 +558,7 @@ sap.ui.define([
 
 		// Act - shrink the whole splitter
 		this.oSplitter.setWidth("600px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var iSecondAreaWidthAfterParentShrink = aAreas[1].$().parent().width();
 
 		assert.ok(iSecondAreaWidthAfterParentShrink < iSecondAreaWidthBeforeParentShrink, "Second area had shrunk");
@@ -571,7 +573,7 @@ sap.ui.define([
 
 		oSplitter.addContentArea(oButton);
 		oSplitter.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		assert.strictEqual(oSplitter.getContentAreas().length, oSplitter._getContentAreas().length, "Should return same value as getContent()");
@@ -583,7 +585,7 @@ sap.ui.define([
 	QUnit.test("triggerResize", function (assert) {
 		var oSplitter = new Splitter();
 		oSplitter.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oResizeSpy = this.spy(oSplitter, "_resize"),
 			oDelayedResizeSpy = this.spy(oSplitter, "_delayedResize");
@@ -606,7 +608,7 @@ sap.ui.define([
 			]
 		});
 		oSplitter.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oEnableKeyboardSupportSpy = this.spy(oSplitter, "_enableKeyboardListeners"),
 			oDisableKeyboardSupportSpy = this.spy(oSplitter, "_disableKeyboardListeners");
@@ -635,13 +637,13 @@ sap.ui.define([
 				}
 			};
 		oSplitter.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oKeyboardResizeSpy = this.spy(oSplitter, "_resizeContents");
 		oKeyboardResizeSpy.withArgs(12, 5, true);
 
 		oSplitter._onKeyboardResize("inc", 5, oEvent);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oKeyboardResizeSpy.withArgs(0, 5, true).calledOnce);
 
@@ -660,7 +662,7 @@ sap.ui.define([
 			addedItem = new Button();
 		oSplitter.placeAt("qunit-fixture");
 		oSplitter.addContentArea(addedItem);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oSplitter.$().children(".sapUiLoSplitterContent").length, 3, "Has 3 content areas rendered");
 
@@ -677,7 +679,7 @@ sap.ui.define([
 			addedItem = new Button();
 		oSplitter.placeAt("qunit-fixture");
 		oSplitter.insertContentArea(addedItem, 1);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oSplitter.$().children(".sapUiLoSplitterContent").length, 3, "Has 3 content areas");
 
@@ -693,7 +695,7 @@ sap.ui.define([
 			});
 		oSplitter.placeAt("qunit-fixture");
 		oSplitter.removeContentArea(addedItem);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oSplitter.$().children(".sapUiLoSplitterContent").length, 0, "Has 0 content areas");
 
@@ -713,14 +715,14 @@ sap.ui.define([
 			contentAreas: [createExampleContent("400px"), createExampleContent()]
 		});
 		oSplitter.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aContentAreas = oSplitter.getContentAreas();
 
 		var aOldContentSize = aContentAreas.map(getSize);
 
 		oSplitter.resetContentAreasSizes();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		setTimeout(function () {
 			var aNewContentSize = aContentAreas.map(getSize);
@@ -747,13 +749,13 @@ sap.ui.define([
 				contentAreas: [oArea]
 			});
 		oSplitter.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSplitter.triggerResize(true);
 		var iOldWidth = oSplitter.$("content-0").width();
 
 		// Act
 		oSplitter.resetContentAreasSizes();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		setTimeout(function () {
 			var iNewContentSize = oSplitter.$("content-0").width();
@@ -776,7 +778,7 @@ sap.ui.define([
 				]
 			});
 			this.oSplitter.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oSplitter.destroy();
@@ -870,7 +872,7 @@ sap.ui.define([
 			var oResizeSplitter = oXMLView.byId("myResizeSplitter");
 
 			oXMLView.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			var oSpy = this.spy(oResizeSplitter, "getCalculatedSizes");
 
 			oXMLView.attachBeforeRendering(function () {
@@ -893,7 +895,7 @@ sap.ui.define([
 			contentAreas: []
 		});
 		oSplitter.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oSpy = this.spy(oSplitter, "getCalculatedSizes");
 
 		// Act
@@ -941,7 +943,7 @@ sap.ui.define([
 
 		// Act
 		oPanel.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		fnTriggerResize();
 		this.clock.runAll();
 		fnTriggerResize();
@@ -975,7 +977,7 @@ sap.ui.define([
 	QUnit.test("'left' position of overlay bar - Horizontal splitter", function (assert) {
 		// arrange
 		this.oSplitter.setOrientation("Horizontal");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var $splitterBar = this.oSplitter.$().children("#splitter-splitbar-1"),
 			iBarWidth = $splitterBar.outerWidth();
 
@@ -992,7 +994,7 @@ sap.ui.define([
 	QUnit.test("'top' position of overlay bar - Vertical splitter", function (assert) {
 		// arrange
 		this.oSplitter.setOrientation("Vertical");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var $splitterBar = this.oSplitter.$().children("#splitter-splitbar-1"),
 			iBarHeight = $splitterBar.outerHeight();
 
@@ -1030,7 +1032,7 @@ sap.ui.define([
 				minSize: 100
 			})
 		}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(
@@ -1053,7 +1055,7 @@ sap.ui.define([
 				minSize: 80
 			})
 		}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(
@@ -1081,7 +1083,7 @@ sap.ui.define([
 			]
 		});
 		oHorizontalSplitter.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(

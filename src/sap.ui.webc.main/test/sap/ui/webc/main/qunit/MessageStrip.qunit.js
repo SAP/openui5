@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/MessageStrip",
 	"sap/ui/webc/main/Icon"
-], function(createAndAppendDiv, Core, MessageStrip, Icon) {
+], function(createAndAppendDiv, Core, nextUIUpdate, MessageStrip, Icon) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMessageStrip = new MessageStrip({
 				text: "Some text...",
 				icon: new Icon({
@@ -26,7 +27,7 @@ sap.ui.define([
 				}
 			});
 			this.oMessageStrip.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oMessageStrip.destroy();

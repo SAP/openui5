@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/m/plugins/CellSelector",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/Table",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/util/MockServer",
@@ -20,7 +21,7 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column"
-], function (Core, qutils, KeyCodes, CellSelector, GridTable, ODataModel, MockServer, GridColumn, GridFixedRowMode, Text, DragDropInfo, DropInfo, Dialog, JSONModel, CustomData, MDCTable, MDCColumn) {
+], function(Core, qutils, KeyCodes, CellSelector, nextUIUpdate, GridTable, ODataModel, MockServer, GridColumn, GridFixedRowMode, Text, DragDropInfo, DropInfo, Dialog, JSONModel, CustomData, MDCTable, MDCColumn) {
 	"use strict";
 
 	const sServiceURI = "/service/";
@@ -75,7 +76,7 @@ sap.ui.define([
 
 		var oTable = new MDCTable(mSettings);
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		return oTable;
 	}
 
@@ -99,7 +100,7 @@ sap.ui.define([
 			this.oTable.addDependent(this.oCellSelector);
 			this.oTable.placeAt("qunit-fixture");
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oMockServer.destroy();
@@ -406,7 +407,7 @@ sap.ui.define([
 				content: this.oTable
 			}).placeAt("qunit-fixture");
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oMockServer.destroy();
@@ -418,7 +419,7 @@ sap.ui.define([
 		var clock = sinon.useFakeTimers();
 		this.oDialog.open();
 		clock.tick(500);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oCell = getCell(this.oTable, 1, 0); // first cell of first row
 		qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
@@ -428,14 +429,14 @@ sap.ui.define([
 		qutils.triggerKeydown(oCell, KeyCodes.ESCAPE);
 		qutils.triggerKeyup(oCell, KeyCodes.ESCAPE);
 		clock.tick(500);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.oCellSelector.getSelectionRange(), null, "Selection is cleared");
 		assert.ok(this.oDialog.isOpen(), "Dialog is still open");
 
 		qutils.triggerKeydown(oCell, KeyCodes.ESCAPE);
 		clock.tick(500);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(this.oDialog.isOpen(), "Dialog is closed");
 	});

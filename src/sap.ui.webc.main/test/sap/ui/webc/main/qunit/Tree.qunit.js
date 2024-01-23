@@ -3,17 +3,18 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Tree",
 	"sap/ui/webc/main/Button",
 	"sap/ui/webc/main/TreeItem",
 	"sap/ui/webc/main/TreeItemCustom"
-], function(createAndAppendDiv, Core, Tree, Button, TreeItem, TreeItemCustom) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Tree, Button, TreeItem, TreeItemCustom) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oTree = new Tree({
 				footerText: "Some text...",
 				headerText: "Some text...",
@@ -549,7 +550,7 @@ sap.ui.define([
 				}
 			});
 			this.oTree.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oTree.destroy();

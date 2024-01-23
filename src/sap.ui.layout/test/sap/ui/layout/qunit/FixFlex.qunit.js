@@ -1,6 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/layout/FixFlex',
 	'sap/m/Button',
@@ -8,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ], function(
 	Element,
+	nextUIUpdate,
 	jQuery,
 	FixFlex,
 	Button,
@@ -50,7 +52,7 @@ sap.ui.define([
 
 	QUnit.module("Render");
 
-	QUnit.test("Check if fix/flex content is rendered", function (assert) {
+	QUnit.test("Check if fix/flex content is rendered", async function(assert) {
 		// Arrange
 		var oButton1 = new Button(), oButton2 = new Button(), oButton3 = new Button();
 
@@ -61,7 +63,7 @@ sap.ui.define([
 		});
 
 		oFixFlex.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oFixFlex.$().hasClass("sapUiFixFlex"), "FixFlex should be rendered");
@@ -81,7 +83,7 @@ sap.ui.define([
 
 	QUnit.module("API");
 
-	QUnit.test("Test child order", function (assert) {
+	QUnit.test("Test child order", async function(assert) {
 		// Arrange
 		var oButton1 = new Button(), oButton2 = new Button(), oButton3 = new Button();
 
@@ -92,11 +94,11 @@ sap.ui.define([
 		});
 
 		oFixFlex.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oFixFlex.setFixFirst(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(jQuery(oFixFlex.$().children()[0]).hasClass("sapUiFixFlexFlexible"), "Flex container should be the first child");
@@ -105,7 +107,7 @@ sap.ui.define([
 		oFixFlex.destroy();
 	});
 
-	QUnit.test("Test layout direction", function (assert) {
+	QUnit.test("Test layout direction", async function(assert) {
 		// Arrange
 		var oButton1 = new Button(), oButton2 = new Button(), oButton3 = new Button();
 
@@ -116,11 +118,11 @@ sap.ui.define([
 		});
 
 		oFixFlex.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oFixFlex.setVertical(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(jQuery(oFixFlex.$()).hasClass("sapUiFixFlexRow"), "The layout direction should be horizontal (row)");
@@ -129,7 +131,7 @@ sap.ui.define([
 		oFixFlex.destroy();
 	});
 
-	QUnit.test("Flexible part Scrolling", function (assert) {
+	QUnit.test("Flexible part Scrolling", async function(assert) {
 		var oFlexLabel = new Label({
 				text: "Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text."
 			}),
@@ -141,14 +143,14 @@ sap.ui.define([
 		});
 
 		oFixFlex.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		var $flexible = oFixFlex.$().find('.sapUiFixFlexFlexible');
 		assert.equal($flexible.css('overflow'), 'hidden', 'Overflow is hidden.');
 
 		oFixFlex.setMinFlexSize(100);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		$flexible = oFixFlex.$().find('.sapUiFixFlexFlexible');
@@ -159,7 +161,7 @@ sap.ui.define([
 		oFixFlex.destroy();
 	});
 
-	QUnit.test("Flexible part Scrolling with minFlexSize", function (assert) {
+	QUnit.test("Flexible part Scrolling with minFlexSize", async function(assert) {
 		var oFlexLabel = new Label({
 				text: "Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text."
 			}),
@@ -173,7 +175,7 @@ sap.ui.define([
 
 		// Act
 		oFixFlex.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oFixFlex.$().hasClass("sapUiFixFlexScrolling"), "'sapUiFixFlexScrolling' class should be added to the FixFlex.");

@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Breadcrumbs",
 	"sap/ui/webc/main/BreadcrumbsItem"
-], function(createAndAppendDiv, Core, Breadcrumbs, BreadcrumbsItem) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Breadcrumbs, BreadcrumbsItem) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBreadcrumbs = new Breadcrumbs({
 				items: [
 					new BreadcrumbsItem({
@@ -29,7 +30,7 @@ sap.ui.define([
 				}
 			});
 			this.oBreadcrumbs.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oBreadcrumbs.destroy();

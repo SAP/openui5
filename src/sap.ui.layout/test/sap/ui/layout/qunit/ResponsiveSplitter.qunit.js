@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	'sap/ui/qunit/QUnitUtils',
+	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/layout/SplitPane',
 	'sap/ui/layout/PaneContainer',
@@ -21,6 +22,7 @@ sap.ui.define([
 	Element,
 	Library,
 	QunitUtils,
+	nextUIUpdate,
 	jQuery,
 	SplitPane,
 	PaneContainer,
@@ -56,7 +58,7 @@ sap.ui.define([
 		this.oPaneContainer1 = new PaneContainer({panes: [this.oSplitPane1, this.oPaneContainer2]});
 		this.oResponsiveSplitter.setRootPaneContainer(this.oPaneContainer1);
 		this.oScrollContainer.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	}
 
 	QUnit.module("Initial rendering", {
@@ -64,7 +66,7 @@ sap.ui.define([
 			this.oResponsiveSplitter = new ResponsiveSplitter();
 
 			this.oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oResponsiveSplitter.destroy();
@@ -79,7 +81,7 @@ sap.ui.define([
 
 	QUnit.test("Rendering of ResponsiveSplitter with a View and without panes", function (assert) {
 		this.oResponsiveSplitter.setRootPaneContainer(new PaneContainer());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(!!this.oResponsiveSplitter.getDomRef(), true, "Should be rendered");
 		assert.strictEqual(this.oResponsiveSplitter.$().hasClass("sapUiResponsiveSplitter"), true, "class should be applied");
@@ -92,7 +94,7 @@ sap.ui.define([
 		this.oResponsiveSplitter.setRootPaneContainer(oPaneContainer);
 		this.oResponsiveSplitter.setAssociation("defaultPane", "default");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").length, 0, "paginator should not be rendered when there is only one view/pane");
 	});
 
@@ -103,7 +105,7 @@ sap.ui.define([
 		this.oResponsiveSplitter.setRootPaneContainer(oPaneContainer);
 		this.oResponsiveSplitter.setAssociation("defaultPane", "firstPane");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").length, 1, "paginator should be rendered when there are multiple panes");
 		assert.strictEqual(this.oResponsiveSplitter.$().hasClass("sapUiRSVisiblePaginator"), false, "class sapUiRSVisiblePaginator is not applied when there are no hidden panes");
 	});
@@ -115,7 +117,7 @@ sap.ui.define([
 		this.oResponsiveSplitter.setRootPaneContainer(oPaneContainer);
 		this.oResponsiveSplitter.setAssociation("defaultPane", "firstPane");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").length, 0, "paginator not should be rendered when there is only one page");
 		assert.strictEqual(this.oResponsiveSplitter.$().hasClass("sapUiRSVisiblePaginator"), false, "class sapUiRSVisiblePaginator is not applied when there are no hidden panes");
@@ -142,13 +144,13 @@ sap.ui.define([
 			this.oResponsiveSplitter.setAssociation("defaultPane", "first");
 			this.oScrollContainer.placeAt(DOM_RENDER_LOCATION);
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oResponsiveSplitter.destroy();
 			this.oScrollContainer.destroy();
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		}
 	});
 
@@ -163,7 +165,7 @@ sap.ui.define([
 		this.oSplitPane2.setDemandPane(false);
 		this.oScrollContainer.setWidth("450px");
 		this.oSplitPane2.setRequiredParentWidth(600);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "0px", "Paginator's height should be 0");
 		assert.strictEqual(this.oResponsiveSplitter.getRootPaneContainer()._oSplitter.getAssociatedContentAreas().length, 1, "The internal Splitter should have 2 contentAreas");
@@ -172,7 +174,7 @@ sap.ui.define([
 	QUnit.test("Demand true panes first in range second not", function (assert) {
 		this.oScrollContainer.setWidth("450px");
 		this.oSplitPane2.setRequiredParentWidth(600);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "40px", "Paginator's height should be 40");
 		assert.strictEqual(this.oResponsiveSplitter.getRootPaneContainer()._oSplitter.getAssociatedContentAreas().length, 1, "The internal Splitter should have 1 contentArea");
@@ -187,7 +189,7 @@ sap.ui.define([
 		this.oScrollContainer.setWidth("320px");
 
 		this.oSplitPane1.setDemandPane(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "0px", "Paginator's height should be 0");
 		assert.strictEqual(this.oResponsiveSplitter.getAggregation("_pages")[0].getVisible(), true, "The first page should be visible");
@@ -227,7 +229,7 @@ sap.ui.define([
 
 			this.oScrollContainer.placeAt(DOM_RENDER_LOCATION);
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oScrollContainer.destroy();
@@ -244,7 +246,7 @@ sap.ui.define([
 		assert.ok(!!this.oButton1.getDomRef(), "Button 1 sould have a dom ref");
 		QunitUtils.triggerEvent("tap", aPaginationButtons[1]);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(jQuery(aPaginationButtons[0]).hasClass("sapUiResponsiveSplitterPaginatorSelectedButton"), false, "First button should not have selected class");
 		assert.strictEqual(jQuery(aPaginationButtons[1]).hasClass("sapUiResponsiveSplitterPaginatorSelectedButton"), true, "First button should have selected class");
@@ -425,7 +427,7 @@ sap.ui.define([
 
 
 			this.oResponsiveSplitter.getRootPaneContainer().addPane(oPaneContainer);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		}, afterEach: function () {
 			this.oScrollContainer.destroy();
 		}
@@ -518,11 +520,11 @@ sap.ui.define([
 		var oResizeSpy = this.spy(oPane._oSplitter, "triggerResize");
 
 		oSplitter.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		oSplitter.getRootPaneContainer().insertPane(oPane, 0);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oResizeSpy.callCount, 1, "The resizer should be called manually after panel has been inserted");
@@ -570,11 +572,11 @@ sap.ui.define([
 		var oResizeSpy = this.spy(oPane._oSplitter, "triggerResize");
 
 		oSplitter.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		oSplitter.getRootPaneContainer().removePane(defaultPaneContainer);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oResizeSpy.callCount, 1, "The resizer should be called manually after panel has been removed");
@@ -633,11 +635,11 @@ sap.ui.define([
 		});
 
 		oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oResponsiveSplitter.setWidth("1050px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var iActualWidth = jQuery("#righText").width();
 
@@ -678,7 +680,7 @@ sap.ui.define([
 
 		// Act
 		oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		var iLeftWidth = jQuery("#leftContent").parent().width(),
@@ -706,7 +708,7 @@ sap.ui.define([
 			})
 		});
 		oSplitter.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oSplitter.$().find("#testSvg").tap();
@@ -732,12 +734,12 @@ sap.ui.define([
 		});
 
 		oSplitter.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oHTMLElement.getDomRef().innerText = "changed content";
 		oSplitter.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oHTMLElement.getDomRef().innerText, "changed content", "HTML element content should be preserved.");
@@ -750,7 +752,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oResponsiveSplitter = new ResponsiveSplitter();
 			this.oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oResponsiveSplitter.destroy();
@@ -779,7 +781,7 @@ sap.ui.define([
 				})
 			]
 		}));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(
@@ -813,7 +815,7 @@ sap.ui.define([
 				})
 			]
 		}));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(
@@ -904,7 +906,7 @@ sap.ui.define([
 		});
 
 		oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons > div")[0].getAttribute("title"), "the button has a title attribute");
 

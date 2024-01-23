@@ -4,19 +4,21 @@ sap.ui.define([
 	"sap/m/NotificationList",
 	"sap/m/NotificationListGroup",
 	"sap/m/NotificationListItem",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	NotificationList,
 	NotificationListGroup,
 	NotificationListItem,
-	Core
+	Core,
+	nextUIUpdate
 ) {
 	'use strict';
 
 	var RENDER_LOCATION = 'qunit-fixture';
 
 	QUnit.module('Rendering', {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.notificationList = new NotificationList({
 				items: [
 					new NotificationListGroup({
@@ -49,7 +51,7 @@ sap.ui.define([
 			});
 
 			this.notificationList.placeAt(RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.notificationList.destroy();

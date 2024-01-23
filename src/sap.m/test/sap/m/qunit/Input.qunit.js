@@ -33,6 +33,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/FormattedText",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	// provides jQuery.fn.zIndex
@@ -71,6 +72,7 @@ sap.ui.define([
 	Filter,
 	FilterOperator,
 	FormattedText,
+	nextUIUpdate,
 	jQuery,
 	oCore
 ) {
@@ -215,7 +217,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt('content');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput.invalidate();
@@ -246,7 +248,7 @@ sap.ui.define([
 
 	QUnit.test("Change", function(assert) {
 		i1.setValue("new");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		i1.attachChange(function() {
 			assert.equal(this.getValue(), "new", "New value in onChange");
 		});
@@ -266,7 +268,7 @@ sap.ui.define([
 			bChangeEventCalled = false;
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
@@ -350,7 +352,7 @@ sap.ui.define([
 		i4.setValueState("Warning");
 		i5.setValueState("Error");
 		i8.setValueState("Information");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(i4.$("content").hasClass('sapMInputBaseContentWrapperWarning'), true, "After new value state : Warning");
 		assert.equal(i5.$("content").hasClass('sapMInputBaseContentWrapperError'), true, "After new value state : Error");
@@ -379,7 +381,7 @@ sap.ui.define([
 
 		// set value help indicator to true
 		oInput.setShowValueHelp(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// screen reader announcement for F4, there should be at least one description
 		var describedById = oInput.getFocusDomRef().getAttribute("aria-describedby");
@@ -404,7 +406,7 @@ sap.ui.define([
 
 		// Act
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oValueHelpIcon = document.getElementById(oInput._getValueHelpIcon().sId);
 
@@ -426,7 +428,7 @@ sap.ui.define([
 
 		// Act
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oInput._getValueHelpIcon().getSrc(), "sap-icon://arrow-down", "The value help icon is a custom one");
@@ -485,7 +487,7 @@ sap.ui.define([
 			oSpy = sinon.spy(oInput, "fireValueHelpRequest");
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput._fireValueHelpRequest();
@@ -507,7 +509,7 @@ sap.ui.define([
 
 		// Arrange
 		oInput.setShowSuggestion(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		try {
@@ -515,7 +517,7 @@ sap.ui.define([
 		} catch (e) {
 			// continue
 		}
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(!oUpdateSpy.threw(), "No error was thrown.");
@@ -548,7 +550,7 @@ sap.ui.define([
 
 		// Arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "t");
@@ -588,7 +590,7 @@ sap.ui.define([
 
 		// change event should be fired only when the input is on focus
 		oInput.onfocusin();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		function checkSubmit(sText, bSubmitExpected, bChangeExpected, sExpectedValue) {
 			var e = "";
@@ -601,7 +603,7 @@ sap.ui.define([
 
 			sEvents = "";
 			sValue = "";
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
 			assert.equal(sEvents, e, sText + ": Correct number of events fired and order correct: " + e.length + (e.length > 0 ? "/" + e : ""));
 			if (bSubmitExpected) {
@@ -615,31 +617,31 @@ sap.ui.define([
 
 		checkSubmit("Enter pressed without change", true, false, "");
 		oInput.$("inner").val("hello");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		checkSubmit("Enter pressed after change", true, true, "hello");
 		oInput.setEnabled(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		checkSubmit("Enter pressed on disabled field", false, false);
 		oInput.setEnabled(true);
 		oInput.setEditable(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		checkSubmit("Enter pressed on readonly field", false, false);
 		oInput.setEditable(true);
 		oInput.setShowValueHelp(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		checkSubmit("Enter pressed on field with value help", true, false, "hello");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 
 		// Enter on Suggestions
 		if (Device.system.desktop) {
 			oInput.setShowSuggestion(true);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			var aItemsAdded = [];
 			oInput.attachSuggest(function() {
@@ -651,12 +653,12 @@ sap.ui.define([
 					}
 				}
 			});
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oInput.onfocusin();
 			oInput._$input.trigger("focus").val("abc").trigger("input");
 			this.clock.tick(300);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			assert.ok(oInput._getSuggestionsPopover() && oInput._getSuggestionsPopover().getPopover().isOpen && oInput._getSuggestionsPopover().getPopover().isOpen(), "Suggestion Popup is open now");
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
@@ -686,14 +688,14 @@ sap.ui.define([
 			oInput.attachSuggest(function () {
 				oInput.addSuggestionItem(new ListItem({text: sSuggestion}));
 			});
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oInput.onfocusin();
 			oInput._$input.trigger("focus").val(" ").trigger("input");
 			this.clock.tick(300);
 
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
 			assert.equal(sValue, sSuggestion, ": Correct parameter 'value' in enter event");
 		}
@@ -717,7 +719,7 @@ sap.ui.define([
 			valueLiveUpdate: true
 		});
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "a");
@@ -754,7 +756,7 @@ sap.ui.define([
 		var oGetSpy = sinon.spy(oInput, "_getTypedInValue");
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput._bDoTypeAhead = true;
 		qutils.triggerEvent("focus", oInput.getFocusDomRef());
@@ -791,7 +793,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput._bDoTypeAhead = true;
 		qutils.triggerEvent("focus", oInput.getFocusDomRef());
@@ -827,7 +829,7 @@ sap.ui.define([
 		$Input;
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$Input = oInput.$();
 
 		assert.strictEqual($Input.length, 1, "Before destroy input is rendered in DOM");
@@ -872,7 +874,7 @@ sap.ui.define([
 		oInput.bindAggregation("suggestionItems", "/", new Item({text: "{name}"}));
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("De").trigger("input");
@@ -890,7 +892,7 @@ sap.ui.define([
 				type: "Text",
 				showSuggestion: true
 			});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSpy = sinon.spy(oInput, "_openSuggestionsPopover");
 		// Arrange
@@ -923,7 +925,7 @@ sap.ui.define([
 			oSpy = this.spy(oInput, "_openSuggestionPopup");
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
@@ -958,7 +960,7 @@ sap.ui.define([
 					sorter: [new Sorter('group', false, true)]
 				}
 			}).setModel(oModel).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oInput._getSuggestionsPopover().getItemsContainer().isA("sap.m.List"), "The container is a sap.m.List");
@@ -980,7 +982,7 @@ sap.ui.define([
 				header: new Label({text: "{columnLabel}"})
 			})
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oInput._getSuggestionsPopover().getItemsContainer().isA("sap.m.Table"), "The container is a sap.m.Table");
@@ -1011,7 +1013,7 @@ sap.ui.define([
 				}
 			}).setModel(oModel).placeAt("content"),
 			oOpenerSpy = this.spy(oInput, "_openSuggestionsPopover");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput._openSuggestionPopup();
@@ -1062,7 +1064,7 @@ sap.ui.define([
 			}
 		});
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput6.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput6._$input.trigger("focus").val("abc").trigger("input");
@@ -1095,7 +1097,7 @@ sap.ui.define([
 			oSpy = this.spy();
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.attachSuggest(oSpy);
 
@@ -1138,7 +1140,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
@@ -1171,7 +1173,7 @@ sap.ui.define([
 		this.stub(ObjectPool.prototype, "returnObject", function(){});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++) {
@@ -1223,7 +1225,7 @@ sap.ui.define([
 
 		oInput.placeAt("content");
 		oNextInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
@@ -1283,7 +1285,7 @@ sap.ui.define([
 		oInput.setModel(oModel);
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
@@ -1311,7 +1313,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopup1,
 			aItems,
@@ -1328,12 +1330,12 @@ sap.ui.define([
 				}
 			}
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		});
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.clock.tick(300);
 		oPopup1 = oInput._getSuggestionsPopover().getPopover();
@@ -1384,7 +1386,7 @@ sap.ui.define([
 			showSuggestion: true
 		});
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
@@ -1504,7 +1506,7 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopup, // is lazy loaded
 			i,
@@ -1586,7 +1588,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput.ontap({
@@ -1658,7 +1660,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput.ontap({
@@ -1709,7 +1711,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.ontap({
 			target: {
@@ -1766,7 +1768,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput.ontap({
@@ -1867,11 +1869,11 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// this tests calling the setter of showSuggestion after input is rendered
 		oInput.setShowSuggestion(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopup, // is lazy loaded
 			aAlreadyAddedProducts = [],
@@ -2011,11 +2013,11 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// this tests calling the setter of showSuggestion after input is rendered
 		oInput.setShowSuggestion(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopup, // is lazy loaded
 			aAlreadyAddedProducts = [],
@@ -2118,7 +2120,7 @@ sap.ui.define([
 			})
 		});
 
-		sap.ui.getCore().applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("a").trigger("input");
@@ -2285,7 +2287,7 @@ sap.ui.define([
 		oInput.setModel(tableModel);
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("Prod").trigger("input");
@@ -2322,7 +2324,7 @@ sap.ui.define([
 
 		// Arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick();
 
 		// Act
@@ -2440,7 +2442,7 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oPopup, // is lazy loaded
 			aAlreadyAddedProducts = [],
@@ -2615,7 +2617,7 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// custom filter for limit field
 		oInput.setFilterFunction(function(sValue, oColumnListItem) {
@@ -2744,7 +2746,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 		oInput._getSuggestionsPopover().getPopover().open();
@@ -2848,7 +2850,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		var oRemovedRow = oInput.getSuggestionRows()[0];
@@ -2941,7 +2943,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput._$input.trigger("focus").val("P").trigger("input");
@@ -2970,7 +2972,7 @@ sap.ui.define([
 
 		// Arrange
 		oInput9.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oInput9.getProperty("separateSuggestions"), true, "The separateSuggestions property initially set to true");
@@ -3007,7 +3009,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput._$input.trigger("focus").val("25").trigger("input");
 		this.clock.tick(400);
@@ -3042,7 +3044,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput._$input.trigger("focus");
 		this.clock.tick(400);
@@ -3155,10 +3157,10 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.setShowSuggestion(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oInput._getSuggestionsPopover().getPopover(), "Suggestion Popup instance is created");
 		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter().isA("sap.m.Toolbar"), "Suggestion Popup has Toolbar footer");
@@ -3259,7 +3261,7 @@ sap.ui.define([
 		oInput.setShowValueHelp(true);
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.setShowSuggestion(true);
 
@@ -3274,7 +3276,7 @@ sap.ui.define([
 		var oInput = createInputWithSuggestions();
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("It").trigger("input");
@@ -3295,11 +3297,11 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oInput.setShowSuggestion(true); // set show suggestion after items are added
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oInput._getSuggestionsPopover().getItemsContainer(), "List should be created when enabling suggestions");
@@ -3347,7 +3349,7 @@ sap.ui.define([
 		});
 		var fnTriggerSuggestSpy = sinon.spy(oInput, "_triggerSuggest");
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.onfocusin();
 		oInput._$input.trigger("focus").val("te").trigger("input");
@@ -3408,18 +3410,18 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Trigger false
 		oInput.setShowSuggestion(!oInput.getShowSuggestion());
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(this._oButtonToolbar, "Toolbar ref should be cleaned up");
 		assert.notOk(this._oShowMoreButton, "Button ref should be cleaned up");
 
 		// Trigger true
 		oInput.setShowSuggestion(!oInput.getShowSuggestion());
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(true, "No exception should be thrown");
 	});
@@ -3445,13 +3447,13 @@ sap.ui.define([
 			}).setModel(oModel);
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput.focus();
 		oInput._$input.val("Tex");
 		oInput._triggerSuggest("Tex");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		// Assert
@@ -3509,7 +3511,7 @@ sap.ui.define([
 		oInput.attachSuggestionItemSelected(fnCallback);
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("It").trigger("input");
@@ -3536,7 +3538,7 @@ sap.ui.define([
 		var fnOnChangeSpy = this.spy(InputBase.prototype, 'onChange');
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput._$input.trigger("focus").val("It").trigger("input");
@@ -3561,7 +3563,7 @@ sap.ui.define([
 		oInput.placeAt("content");
 		oInput._bDoTypeAhead = true;
 		oInput._createSuggestionPopupContent();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput._$input.trigger("focus").val("it").trigger("input");
@@ -3572,7 +3574,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSetSelectionItemSpy.firstCall.args[1], true, "Second parameter was 'true' indicating the selection was made by interaction.");
@@ -3590,14 +3592,14 @@ sap.ui.define([
 		oInput.placeAt("content");
 		oInput._bDoTypeAhead = true;
 		oInput._createSuggestionPopupContent(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput._$input.trigger("focus").val("Auch").trigger("input");
 		oInput._getFilteredSuggestionItems("Auch");
 		oInput._openSuggestionsPopover();
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSetSelectionRowSpy.callCount, 1, "'setSelectionRow' was called once.");
@@ -3621,7 +3623,7 @@ sap.ui.define([
 		oInput.setTextFormatMode("KeyValue");
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.setSelectedKey("2");
 		assert.equal(oInput.getDOMValue(), "(2) Item 2", "Selected input value is " + oInput.getDOMValue());
@@ -3649,25 +3651,25 @@ sap.ui.define([
 			});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oInput.getValue(), "", "Initially when the input has selected key but no suggestion items it's value has to be empty");
 
 		oInput.setModel(oModelData);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oInput.getValue(), "a1", "After a json model is set and one of the items has key that item has to be selected");
 
 
 		oInput.setSelectedKey("a3");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oInput.getValue(), "", "After setting new selected key which is not in the list items the value should be empyt");
 
 		oInput.setValue("New value");
 
 		oInput.setSelectedKey("");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oInput.getValue(), "", "After the selected key to empty string, the value should be cleared");
 
@@ -3675,33 +3677,33 @@ sap.ui.define([
 
 		oInput.setValue('');
 		oInput.addSuggestionItem(new Item({text: "a3", key: "a3"}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.removeAllSuggestionItems();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oInput.getValue(), "", "The value must be cleared after removing all items");
 
 		oInput.addSuggestionItem(new Item({text: "a3", key: "a3"}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.destroySuggestionItems();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oInput.getValue(), "", "The value must be cleared after destroying all items");
 
 		var oItem = new Item({text: "a3", key: "a3"});
 		oInput.addSuggestionItem(oItem);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.removeSuggestionItem(oItem);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oInput.getValue(), "", "The value must be cleared after removing item");
 
@@ -3717,7 +3719,7 @@ sap.ui.define([
 		oInput.attachSuggestionItemSelected(fnCallback);
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.setSelectedItem(oInput.getSuggestionItems()[1]);
 
@@ -3752,19 +3754,19 @@ sap.ui.define([
 
 		oInput.setModel(new JSONModel(oModelData));
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.setValue("111");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.setValue("");
 		oInput.setLastValue("111");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oInput.getModel().getData().value, "", "The model value is cleared");
 
 		oInput.setSelectedItem(oInput.getSuggestionItems()[0]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oInput.getModel().getData().value, "111", "The model value is updated");
 
@@ -3870,7 +3872,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.clock.tick(50);
 
@@ -3887,7 +3889,7 @@ sap.ui.define([
 		oInput.setTextFormatMode(InputTextFormatMode.ValueKey);
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.setSelectedItem(oInput.getSuggestionItems()[1]);
 
@@ -4072,7 +4074,7 @@ sap.ui.define([
 		oInput.attachSuggestionItemSelected(fnCallback);
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.setSelectedRow(oInput.getSuggestionRows()[1]);
 
@@ -4094,7 +4096,7 @@ sap.ui.define([
 		oInput.attachSuggestionItemSelected(fnSuggestionItemSelectedCallback);
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput._$input.trigger("focus").val("Au").trigger("input");
 		this.clock.tick(300);
@@ -4118,7 +4120,7 @@ sap.ui.define([
 		oInput.attachSuggestionItemSelected(fnSuggestionItemSelectedCallback);
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput._$input.trigger("focus").val("Au").trigger("input");
 		this.clock.tick(300);
@@ -4155,7 +4157,7 @@ sap.ui.define([
 		oInput.setTextFormatMode(InputTextFormatMode.ValueKey);
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.setSelectedRow(oInput.getSuggestionRows()[1]);
 
@@ -4173,14 +4175,14 @@ sap.ui.define([
 
 		// Act
 		oInput.setEnableTableAutoPopinMode(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oInput._getSuggestionsTable().getAutoPopinMode(), "The table should have autopopin set to true.");
 
 		// Act
 		oInput.setEnableTableAutoPopinMode(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.notOk(oInput._getSuggestionsTable().getAutoPopinMode(), "The table should have autopopin set to false.");
@@ -4197,12 +4199,12 @@ sap.ui.define([
 		});
 		oInputWithDes.setDescription("EUR");
 		oInputWithDes.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oInputWithDes.$().find(".sapMInputDescriptionText").text(), "EUR", "Input description is EUR");
 
 		oInputWithDes.setFieldWidth("100px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oInputWithDes.$('descr').text(), "EUR", "Description ID is set to the correct span");
 		assert.equal(oInputWithDes.getDomRef('descr').id, oInputWithDes.$('inner').attr('aria-describedby'), "Inner input aria-describedby attribute is correct");
@@ -4267,7 +4269,7 @@ sap.ui.define([
 		var oInput = createInputWithSuggestions();
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
@@ -4290,7 +4292,7 @@ sap.ui.define([
 
 		oInputWithoutSuggestions.placeAt("content");
 		oInputWithSuggestions.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oInputWithoutSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
@@ -4298,7 +4300,7 @@ sap.ui.define([
 
 		//Act
 		oInputWithoutSuggestions.setShowSuggestion(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oInputWithoutSuggestions._$input.attr("aria-haspopup"), "listbox", "aria-haspopup should have value 'listbox'.");
@@ -4313,12 +4315,12 @@ sap.ui.define([
 		var oInputWithSuggestions = createInputWithSuggestions();
 
 		oInputWithSuggestions.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInputWithSuggestions._openSuggestionsPopover();
 		this.clock.tick();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oInputWithSuggestions.getFocusDomRef().getAttribute("aria-describedby"), null, "The sugg. results acc node is not referenced in the Input");
@@ -4345,7 +4347,7 @@ sap.ui.define([
 			});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput.onfocusin();
@@ -4379,7 +4381,7 @@ sap.ui.define([
 					oSelectionItem
 				]
 			}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.notOk(oInput.getSelectedItem(), "SelectedItems should be empty");
@@ -4387,7 +4389,7 @@ sap.ui.define([
 		// Act
 		oInput._setProposedItemText("Bulgaria");
 		oInput.onsapfocusleave({relatedControlId: null});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedItem(), oSelectionItem.getId(), "Focusleave should have triggered item selection");
@@ -4410,7 +4412,7 @@ sap.ui.define([
 		}).placeAt("content");
 
 		var oBtn = new Button().placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Arrange
 		oInput._createSuggestionPopupContent();
@@ -4420,16 +4422,16 @@ sap.ui.define([
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(300);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput._setProposedItemText("Item 1");
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.TAB);
 		this.clock.tick(300);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oBtn.focus();
 		this.clock.tick(300);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		assert.strictEqual(fnSpy.callCount, 1, "Suggestion item select should be fired once.");
@@ -4447,7 +4449,7 @@ sap.ui.define([
 				new Item({text: "Item 3"})
 			]
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput.getFocusDomRef().focus();
@@ -4480,7 +4482,7 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput.getFocusDomRef().focus();
@@ -4513,7 +4515,7 @@ sap.ui.define([
 		}).placeAt("content");
 
 		oInput.setSelectedRow(oInput.getSuggestionRows()[0]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput.getFocusDomRef().focus();
@@ -4538,7 +4540,7 @@ sap.ui.define([
 					new Item({text: "Item 3"})
 				]
 			}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Arrange
 		oInput._createSuggestionPopupContent();
@@ -4571,7 +4573,7 @@ sap.ui.define([
 		var oAccDomRef;
 
 		oInputWithValueState.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oAccDomRef = document.getElementById(oInputWithValueState.getValueStateMessageId() + "-sr");
 
 		//Assert
@@ -4589,7 +4591,7 @@ sap.ui.define([
 		});
 
 		oInputWithValueState.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oInputWithValueState.getFocusDomRef().getAttribute("aria-describedby"), oInputWithValueState.getValueStateMessageId() + "-sr", "Input has static aria-describedby reference pointing to the correct ID");
@@ -4606,7 +4608,7 @@ sap.ui.define([
 		});
 
 		oInputWithValueState.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oInputWithValueState.getFocusDomRef().getAttribute("aria-errormessage"), oInputWithValueState.getValueStateMessageId() + "-sr", "Input has static aria-describedby reference pointing to the correct ID");
@@ -4623,7 +4625,7 @@ sap.ui.define([
 		var oAccDomRef;
 
 		oInputWithValueState.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInputWithValueState.openValueStateMessage();
 		this.clock.tick();
@@ -4632,7 +4634,7 @@ sap.ui.define([
 		// Simulate dynamic update of the value state by the user by changing the value state while focused
 		oInputWithValueState.focus();
 		oInputWithValueState.setValueState("Information");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oAccDomRef = document.getElementById(oInputWithValueState.getValueStateMessageId() + "-sr");
 
 		//Assert
@@ -4653,7 +4655,7 @@ sap.ui.define([
 			showSuggestion: true
 		});
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
@@ -4803,7 +4805,7 @@ sap.ui.define([
 			});
 
 		var oPage = new Page("myPage", {content: oInput}).setModel(oData, "local").placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.onfocusin();
 		oInput._$input.trigger("focus").val("New").trigger("input");
@@ -4811,7 +4813,7 @@ sap.ui.define([
 
 		var oClonedInput = oInput.clone();
 		oPage.addContent(oClonedInput);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oClonedInput.getAggregation("suggestionRows").length, 5, "The suggestions rows should be cloned correctly");
@@ -4844,7 +4846,7 @@ sap.ui.define([
 			}
 		}).placeAt('content');
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var fnChangeCallback = this.spy();
 		oInput.attachChange(fnChangeCallback);
@@ -4855,7 +4857,7 @@ sap.ui.define([
 
 		oValueHelpIcon.firePress();
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(2000);
 
 		assert.equal(fnChangeCallback.callCount, 0, "change event is not fired");
@@ -4865,7 +4867,7 @@ sap.ui.define([
 
 		oDialog.open();
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		assert.equal(fnChangeCallback.callCount, 1, "change event is fired once");
@@ -4905,7 +4907,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oFakeKeydown = new jQuery.Event("keydown", { which: KeyCodes.P });
 		oInput._getSuggestionsPopover().getPopover().open();
@@ -4975,11 +4977,11 @@ sap.ui.define([
 			maxSuggestionWidth: "200px"
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput._getSuggestionsPopover().getPopover().open();
 
 		this.clock.tick(300);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oInput._bAfterOpenFinisihed, "After open flag is correct");
 
@@ -5005,7 +5007,7 @@ sap.ui.define([
 			oPopover = oInput._getSuggestionsPopover(),
 			oPopupInput = oPopover.getInput();
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oPopover.getPopover().open();
@@ -5027,7 +5029,7 @@ sap.ui.define([
 		// arrange
 		var oInput = new Input().placeAt("content");
 		var oSpy = this.spy();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.attachChange(oSpy);
 
@@ -5036,7 +5038,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oInput._$input, "G");
 		qutils.triggerKeyup(oInput._$input, "G");
 		oInput.onsapenter();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "change event has been fired");
@@ -5044,7 +5046,7 @@ sap.ui.define([
 		// Act
 		oSpy.reset();
 		oInput.onsapenter();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 0, "change event has NOT been fired for the same value twice.");
@@ -5056,7 +5058,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
 		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
 		oInput.onsapenter();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "change event has been fired");
@@ -5067,7 +5069,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
 		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
 		oInput.onsapenter();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 0, "change event has NOT been fired for the same value twice.");
@@ -5085,19 +5087,19 @@ sap.ui.define([
 		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
 
 		oInput.setShowClearIcon(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon should not be visible when value is empty");
 
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("G").trigger("input");
 		qutils.triggerKeyup(oInput._$input, "G");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oInput._oClearButton.getVisible(), "clear icon should be visible when value is not empty");
 
 		oInput._$input.val("").trigger("input");
 		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon should not be visible when value is empty");
 
@@ -5109,12 +5111,12 @@ sap.ui.define([
 			showClearIcon: true,
 			value: "Dryanovo"
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oInput._oClearButton.getVisible(), "clear icon should be visible when value is not empty");
 
 		oInput.setShowClearIcon(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon should not be visible after property change");
 
@@ -5127,7 +5129,7 @@ sap.ui.define([
 		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
 
 		oInput.setShowClearIcon(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oInput._oClearButton.getVisible(), "clear icon should be visible after presetting API");
 
@@ -5140,7 +5142,7 @@ sap.ui.define([
 		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
 
 		oInput.setShowClearIcon(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon is not visible");
 
@@ -5153,7 +5155,7 @@ sap.ui.define([
 		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
 
 		oInput.setShowClearIcon(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon is not visible");
 
@@ -5165,12 +5167,12 @@ sap.ui.define([
 			value: "test"
 		 }).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oInput._oClearButton, "dialog's clear icon should be created");
 
 		oInput.setShowClearIcon(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oInput._oClearButton.getVisible(), "dialog's clear icon should be visible after presetting API");
 
@@ -5183,12 +5185,12 @@ sap.ui.define([
 			showValueHelp: true
 		 }).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oInput.getAggregation("_endIcon")[0], oInput._getValueHelpIcon(), "Value help Icon should be inserted first");
 
 		oInput.setShowClearIcon(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oInput.getAggregation("_endIcon")[1], oInput._getValueHelpIcon(), "Value help Icon should be second");
 		assert.strictEqual(oInput.getAggregation("_endIcon")[0], oInput._oClearButton, "Clear Icon should be inserted first");
@@ -5207,7 +5209,7 @@ sap.ui.define([
 			liveChange: liveChangeHandler
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput._oClearButton.firePress();
 		assert.strictEqual(changeHandler.callCount, 1, "Change should be called once");
@@ -5229,7 +5231,7 @@ sap.ui.define([
 			var sValue = oEvent.getParameter("value");
 			var oInputValue = oEvent.getSource().getValue();
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// Assert
 			assert.strictEqual(sValue, oInputValue, 'Value should be updated before firing the live change event');
@@ -5241,14 +5243,14 @@ sap.ui.define([
 			var sValue = oEvent.getParameter("value");
 			var oInputValue = oEvent.getSource().getValue();
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// Assert
 			assert.strictEqual(sValue, oInputValue, 'Value should be updated before firing the change event');
 			done();
 		});
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput._oClearButton.firePress();
 
 		assert.strictEqual(oInput.getValue(), "", "Input's value should be cleared");
@@ -5262,12 +5264,12 @@ sap.ui.define([
 			showValueHelp: true
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oInput._getValueHelpIcon().getVisible(), "Icon should be visible");
 
 		oInput.setShowValueHelp(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oInput._getValueHelpIcon().getVisible(), "Icon should not be visible");
 	});
@@ -5284,7 +5286,7 @@ sap.ui.define([
 			showClearIcon: true
 		 }).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput._openSuggestionsPopover();
 		this.clock.tick(300);
@@ -5319,7 +5321,7 @@ sap.ui.define([
 			]
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 
@@ -5349,7 +5351,7 @@ sap.ui.define([
 			]
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 
@@ -5373,7 +5375,7 @@ sap.ui.define([
 				new Item({text: "Brave"})
 			]
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		oInput._bDoTypeAhead = true;
@@ -5399,7 +5401,7 @@ sap.ui.define([
 			]
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 		// act
@@ -5494,12 +5496,12 @@ sap.ui.define([
 
 		oInputWithTabularSuggestions.setModel(oModel);
 		oInputWithTabularSuggestions.placeAt('content');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oTabularPopover = oInputWithTabularSuggestions._getSuggestionsPopover();
 
 		oInputWithTabularSuggestions._$input.trigger("focus").trigger("keydown").val("test6").trigger("input");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(300);
 
 		assert.strictEqual(oTabularPopover.getItemsContainer().getItems()[0].getSelected(), true, "Correct item in the Suggested list is selected");
@@ -5544,7 +5546,7 @@ sap.ui.define([
 
 		oInput.setModel(oModel);
 		oInput.placeAt('content');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oPopover = oInput._getSuggestionsPopover();
 		oPopover.getPopover().open();
@@ -5607,7 +5609,7 @@ sap.ui.define([
 
 		oInput.setModel(oModel);
 		oInput.placeAt('content');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oPopover = oInput._getSuggestionsPopover();
 		oPopupInput = oPopover.getInput();
@@ -5635,7 +5637,7 @@ sap.ui.define([
 				new Item({text: "Italy"})
 			]
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Arrange - open the suggestions
 		oInput._$input.trigger("focus").val("Germ").trigger("input");
@@ -5680,7 +5682,7 @@ sap.ui.define([
 		var oPopover = oInput._getSuggestionsPopover(),
 			oPopupInput = oPopover.getInput();
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oPopover.getPopover().open();
@@ -5723,10 +5725,10 @@ sap.ui.define([
 			liveChange: fnLiveChange
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.onsapright();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(fnLiveChange.callCount, 0, "liveChange handler is not fired");
 
@@ -5809,7 +5811,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 		oInput._getSuggestionsPopover().getPopover().open();
@@ -5873,18 +5875,18 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput._getSuggestionsPopover().getPopover().open();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		oPopupInput = oInput._getSuggestionsPopover().getInput();
 		oPopupInput.setValue("My");
 		oPopupInput._bDoTypeAhead = true;
 		oPopupInput.focus();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oPopupInput._handleTypeAhead();
 
@@ -5893,7 +5895,7 @@ sap.ui.define([
 
 		// clean up
 		oInput._getSuggestionsPopover().getPopover().close();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		oInput.destroy();
@@ -5913,7 +5915,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.t });
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
@@ -5939,7 +5941,7 @@ sap.ui.define([
 		}).placeAt("content");
 		var mResult;
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.setValue("B");
 		oInput._$input.trigger("focus");
@@ -6029,7 +6031,7 @@ sap.ui.define([
 
 		oInput.placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.setValue("P");
 		oInput._$input.trigger("focus");
@@ -6066,7 +6068,7 @@ sap.ui.define([
 			}
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
@@ -6095,7 +6097,7 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput._$input.trigger("focus").val("o").trigger("input");
 		this.clock.tick(300);
@@ -6152,7 +6154,7 @@ sap.ui.define([
 			}
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
@@ -6186,7 +6188,7 @@ sap.ui.define([
 			}
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
@@ -6233,7 +6235,7 @@ sap.ui.define([
 			}
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
@@ -6267,7 +6269,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			if (this.inputWithSuggestions._oValueStateMessage._oPopup) {
@@ -6337,7 +6339,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			if (this.inputWithSuggestions._oValueStateMessage._oPopup) {
@@ -6410,7 +6412,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			if (this.inputWithSuggestions._oValueStateMessage._oPopup) {
@@ -6538,7 +6540,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			if (this.oInput._oValueStateMessage._oPopup) {
@@ -6580,7 +6582,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		/* When value stage message containing a sap.m.FormattedText aggregation is set
 		it should override the standart plain value state text */
@@ -6626,7 +6628,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oInput.onfocusin();
 		this.clock.tick();
@@ -6657,7 +6659,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oInput.focus();
 		this.clock.tick();
@@ -6690,11 +6692,11 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oInput.getFocusDomRef().focus();
 		this.clock.tick();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oFakeEvent = {
 			relatedTarget: this.oInput.getFormattedValueStateText().getControls()[0].getDomRef()
@@ -6729,7 +6731,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oInput.focus();
 		this.clock.tick();
@@ -6757,7 +6759,7 @@ sap.ui.define([
 		// Act
 		this.oInput.setValueState("Error");
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Open sugg. popover with the initialy set formatted text value state
 		// to switch the FormattedText aggregation to the value state header
@@ -6781,7 +6783,7 @@ sap.ui.define([
 		});
 
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oInput._getSuggestionsPopover().getPopover().attachAfterOpen(function () {
 			oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
@@ -6808,10 +6810,10 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oInput._getSuggestionsPopover().getPopover().attachAfterOpen(function () {
 			oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
@@ -6844,7 +6846,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
 
 		// Assert
@@ -6877,7 +6879,7 @@ sap.ui.define([
 		// Act
 		this.oInput.setValueState("Information");
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oInput._$input.trigger("focus").val("o").trigger("input");
 		this.clock.tick(300);
@@ -6933,7 +6935,7 @@ sap.ui.define([
 			this.oInput.bindAggregation("suggestionItems", "/", new Item({text: "{userid}"}));
 
 			this.oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oInput.destroy();
@@ -7005,7 +7007,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
 
 		assert.ok(true, 'there is no endless loop');
@@ -7044,7 +7046,7 @@ sap.ui.define([
 				sorter: [new Sorter('group', false, true)],
 				template: new Item({text: "{name}", key: "{key}"})
 			});
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		},
 		afterEach : function() {
@@ -7132,7 +7134,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(this.oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		// go to the header group item
@@ -7141,7 +7143,7 @@ sap.ui.define([
 		// act
 		// go to the next list item
 		qutils.triggerKeydown(this.oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(this.oInput.getValue(), aVisibleItems[1].getTitle(), "The value is populated again.");
@@ -7187,7 +7189,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: oItem
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), oItem.getTitle(), "The title is autocompleted in the Input.");
@@ -7199,7 +7201,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: null
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), oItem.getTitle().substr(0, 3), "User's input is kept.");
@@ -7222,7 +7224,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: oItem
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), oItem.getTitle(), "The title is autocompleted in the Input.");
@@ -7235,7 +7237,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: null
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), "", "The input is reset");
@@ -7259,7 +7261,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: oGroupItem
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), "A I", "User's input is not reset.");
@@ -7270,7 +7272,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: null
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), "A I", "The input value should not be reset");
@@ -7301,7 +7303,7 @@ sap.ui.define([
 				}
 			}).setModel(oModel).placeAt("content");
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		},
 		afterEach: function () {
@@ -7335,7 +7337,7 @@ sap.ui.define([
 					}
 				}).setModel(oModel).placeAt("content");
 
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			},
 			afterEach: function () {
@@ -7372,7 +7374,7 @@ sap.ui.define([
 	QUnit.test("Should show all the items", function (assert) {
 		// Act
 		this.oInput.showItems();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.clock.tick(500);
 
@@ -7385,7 +7387,7 @@ sap.ui.define([
 		this.oInput.showItems(function (sValue, oItem) {
 			return oItem.getText() === "A Item 1";
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(getVisibleItems(this.oInput._getSuggestionsPopover().getPopover()).length, 1, "Show only the matching items");
@@ -7431,7 +7433,7 @@ sap.ui.define([
 				}
 			}).setModel(oModel).placeAt("content");
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		},
 		afterEach: function () {
@@ -7450,7 +7452,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput.showItems();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oInput._getSuggestionsTable().getItems().length, 5, "All the items are available");
@@ -7469,7 +7471,7 @@ sap.ui.define([
 		this.oInput.showItems(function (sValue, oItem) {
 			return oItem.getCells()[0].getText() === "A Item 1";
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oInput._getSuggestionsTable().getItems().length, 5, "All the items are available");
@@ -7480,14 +7482,14 @@ sap.ui.define([
 		var oInput = new Input({ showSuggestion: true });
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.showItems(function () { return true; });
 		this.clock.tick(400);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.focus();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var sDescription = oInput.getDomRef("SuggDescr").innerText;
 
@@ -7509,14 +7511,14 @@ sap.ui.define([
 		 }));
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.showItems(function () { return true; });
 		this.clock.tick(400);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.focus();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var sDescription = oInput.getDomRef("SuggDescr").innerText;
 		var sExpectedText = oMessageBundle.getText("INPUT_SUGGESTIONS_ONE_HIT");
@@ -7543,7 +7545,7 @@ sap.ui.define([
 		this.oRb = Library.getResourceBundleFor("sap.m");
 
 		this.oInput._openSuggestionsPopover();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oDialog = this.oInput._getSuggestionsPopover().getPopover();
 		oCustomHeader = oDialog.getCustomHeader();
@@ -7574,7 +7576,7 @@ sap.ui.define([
 
 		this.oInput = new Input({showSuggestion: true});
 		this.oInput._openSuggestionsPopover();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSuggPopover = this.oInput._getSuggestionsPopover();
 		oCloseButton = oSuggPopover.getPopover().getCustomHeader().getContentRight()[0];
@@ -7601,7 +7603,7 @@ sap.ui.define([
 
 		this.oInput = new Input({showSuggestion: true});
 		this.oInput._openSuggestionsPopover();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSuggPopover = this.oInput._getSuggestionsPopover();
 		oOKButton = oSuggPopover.getPopover().getBeginButton();
@@ -7637,7 +7639,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput._openSuggestionsPopover();
 		this.clock.tick(500);
 
@@ -7686,7 +7688,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput._openSuggestionsPopover();
 		this.clock.tick(500);
 
@@ -7739,7 +7741,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput._openSuggestionsPopover();
 		this.clock.tick(500);
 
@@ -7791,7 +7793,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput._openSuggestionsPopover();
 		this.clock.tick(500);
 
@@ -7833,12 +7835,12 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oInput.attachChange(function() {
 			bChangeFired = true;
 		});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		oInput._$input.trigger("focus").trigger(jQuery.Event("keydown", { which: KeyCodes.BACKSPACE })).val("").trigger("input");
@@ -7886,7 +7888,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -7909,7 +7911,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -7932,7 +7934,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -7955,7 +7957,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -7977,7 +7979,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "", "selectedKey should remain");
@@ -7999,7 +8001,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oReadOnlyInput = new Input({
 			selectedKey: "{/selectedKey}",
@@ -8012,7 +8014,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -8037,7 +8039,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -8060,7 +8062,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -8082,12 +8084,12 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput.focus();
 		qutils.triggerCharacterInput(oInput._$input, "T", "This is a user input");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		// Assert
@@ -8110,12 +8112,12 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput.focus();
 		qutils.triggerCharacterInput(oInput._$input, "T", "This is a user input");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		// Assert
@@ -8139,16 +8141,16 @@ sap.ui.define([
 			})
 				.setModel(oModel)
 				.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput.focus();
 		qutils.triggerCharacterInput(oInput._$input, "T", "This is a user input");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oModel.setData(this.oData);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		// Assert
@@ -8163,7 +8165,7 @@ sap.ui.define([
 		// Setup
 		var oInput = new Input({
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput._$input.trigger("focus").val("t").trigger("input");
@@ -8176,7 +8178,7 @@ sap.ui.define([
 		oInput._$input.trigger("focus").trigger(jQuery.Event("keydown", { which: KeyCodes.BACKSPACE })).val("").trigger("input");
 		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
 		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oInvalidationSpy.callCount, 0, "setValue is not triggered on BACKSPACE");
@@ -8206,7 +8208,7 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oInput.getSuggestionItems()[0].getTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
@@ -8239,7 +8241,7 @@ sap.ui.define([
 
 		oInput.setModel(new JSONModel(oData));
 		oInput.placeAt('content');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
@@ -8295,7 +8297,7 @@ sap.ui.define([
 
 		oInput.setModel(new JSONModel(oData));
 		oInput.placeAt('content');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
@@ -8354,7 +8356,7 @@ sap.ui.define([
 			var oInput = new Input({maxLength: mSettings.maxLength, value: mSettings.value});
 
 			oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// Assert
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
@@ -8375,7 +8377,7 @@ sap.ui.define([
 			var fnSetValueSpy = sinon.spy(oInput, "setValue");
 
 			oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			var fnRerenderSpy = sinon.spy(oInput, "onAfterRendering");
 
 			// Act
@@ -8444,7 +8446,7 @@ sap.ui.define([
 				]
 			})).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		var oSuggPopover = oInput._getSuggestionsPopover();
@@ -8455,7 +8457,7 @@ sap.ui.define([
 		oPopupInput.setValue("te");
 		oPopupInput.fireLiveChange({value: "", newValue: "te"});
 		oInput._fireValueHelpRequest();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		// Cleanup

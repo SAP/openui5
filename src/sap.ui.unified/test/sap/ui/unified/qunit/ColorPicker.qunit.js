@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/ColorPicker",
 	"sap/ui/unified/ColorPickerDisplayMode",
 	"sap/ui/unified/library",
@@ -22,6 +23,7 @@ sap.ui.define([
 ], function(
 	Localization,
 	Library,
+	nextUIUpdate,
 	ColorPicker,
 	ColorPickerDisplayMode,
 	library,
@@ -43,7 +45,7 @@ sap.ui.define([
 
 		var ColorPickerMode = library.ColorPickerMode;
 		var CONSTANTS = new ColorPicker()._getConstants(), // Get control constants
-			applyChanges = oCore.applyChanges;
+			applyChanges = undefined;
 
 		QUnit.module("sap.ui.unified.ColorPickerHelper");
 
@@ -393,21 +395,21 @@ sap.ui.define([
 			this.oCP._updateColorStringProperty(true, true);
 		});
 
-		QUnit.test("", function(assert) {
+		QUnit.test("", async function(assert) {
 			// arrange
 			var oCP = new ColorPicker();
 			var oFireChangeSpy = this.spy(oCP, "fireChange");
 
 			// act
 			oCP.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// assert
 			assert.strictEqual(oFireChangeSpy.callCount, 0, "no events are fired on rendering");
 
 			// act
 			oCP.setColorString("red");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(oFireChangeSpy.callCount, 0, "no events are fired on rendering");
 

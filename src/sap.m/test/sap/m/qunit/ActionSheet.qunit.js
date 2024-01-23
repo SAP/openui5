@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/Device",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	library,
 	App,
@@ -26,7 +27,8 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	Device,
-	oCore
+	oCore,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -306,7 +308,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -343,7 +345,7 @@ sap.ui.define([
 		}), oSpy;
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 		oClock.tick(300);
 
@@ -431,7 +433,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -511,7 +513,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -585,7 +587,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -660,7 +662,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -704,7 +706,7 @@ sap.ui.define([
 			oActionSheetContentDivRole;
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -739,7 +741,7 @@ sap.ui.define([
 			sActualText;
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 
 		sActualText = Element.getElementById(oActionSheet.getPopupHiddenLabelId()).getText();
@@ -785,7 +787,7 @@ sap.ui.define([
 
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 
 		sActualText = Element.getElementById(oActionSheet.getPopupHiddenLabelId()).getText();
@@ -821,7 +823,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -872,7 +874,7 @@ sap.ui.define([
 		oActionSheet.addButton(button1);
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -919,7 +921,7 @@ sap.ui.define([
 		oActionSheet.insertButton(oASButton2, 1);
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -959,7 +961,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -986,7 +988,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 
 		assert.strictEqual(oActionSheet._parent.getProperty('ariaRoleApplication'), true, "ariaRoleApplication of the ActionSheet is set to true.");
@@ -1090,7 +1092,7 @@ sap.ui.define([
 
 		//Act
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 		oActionSheet.close();
 		oClock.tick(300);
@@ -1129,7 +1131,7 @@ sap.ui.define([
 
 		//Act
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 		oActionSheet.onmousedown({ srcControl: oButton1 });
 		oButton1.firePress();
@@ -1180,7 +1182,7 @@ sap.ui.define([
 
 		//Act
 		page.addContent(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oButton.firePress();
 		oActionSheet.onmousedown({ srcControl: oCancelButton });
 		oCancelButton.firePress();

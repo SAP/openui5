@@ -897,9 +897,9 @@ sap.ui.define([
 				//Uses excact MDC CHart Item name
 				this._getPropertyInfosByName(oItem.getPropertyKey(), oItem.getParent()).then((oPropertyInfo) => {
 					this._getAdditionalColoringMeasuresForItem(oPropertyInfo).forEach((oMeasure) => {
-
-						if (this._getState(oItem.getParent()).aColMeasures && this._getState(oItem.getParent()).aColMeasures.indexOf(oMeasure) == -1) {
-							this._getState(oItem.getParent()).aColMeasures.push(oMeasure);
+						const oState = this._getState(oItem.getParent());
+						if (oState.aColMeasures?.indexOf(oMeasure) == -1) {
+							oState.aColMeasures.push(oMeasure);
 						}
 					});
 
@@ -915,7 +915,7 @@ sap.ui.define([
 
 		const oCriticality = oPropertyInfo.datapoint ? oPropertyInfo.datapoint.criticality : null;
 
-		if (oCriticality && oCriticality.DynamicThresholds) {
+		if (oCriticality?.DynamicThresholds) {
 			aAdditional = oCriticality.DynamicThresholds.usedMeasures;
 		}
 
@@ -937,7 +937,7 @@ sap.ui.define([
 		//Uses excact MDC chart item name to idenfiy property
 		return this._getPropertyInfosByName(oItem.getPropertyKey(), oItem.getParent()).then((oPropertyInfo) => {
 
-			if (oPropertyInfo.criticality || (oPropertyInfo.datapoint && oPropertyInfo.datapoint.criticality)) {
+			if (oPropertyInfo.criticality || oPropertyInfo.datapoint?.criticality) {
 				const oColorings = this._getState(oItem.getParent()).oColorings || {
 					Criticality: {
 						DimensionValues: {},
@@ -949,7 +949,7 @@ sap.ui.define([
 
 				if (oItem.getType() == "groupable") {
 
-					const mCrit = oPropertyInfo.criticality ? oPropertyInfo.criticality : [];
+					const mCrit = oPropertyInfo.criticality || [];
 
 					for (const sKey in mCrit) {
 
@@ -984,7 +984,7 @@ sap.ui.define([
 
 	/**
 	 * Updates the coloring on the inner chart.
-	 * @param {sap.chart.Chart} oChart Inner chart
+	 * @param {sap.ui.mdc.Chart} oChart chart
 	 * @param {array} aVisibleDimensions Visible dimensions for inner chart
 	 * @param {array} aVisibleMeasures Visible measures for inner chart
 	 *
@@ -993,20 +993,21 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 */
 	ChartDelegate._updateColoring = function(oChart, aVisibleDimensions, aVisibleMeasures) {
-		const oTempColorings = jQuery.extend(true, {}, this._getState(oChart).oColorings);
-		let k;
+		const oInnerChart = this._getChart(oChart);
+		const oState =  this._getState(oChart);
+		const oTempColorings = jQuery.extend(true, {}, oState.oColorings);
 
 		if (oTempColorings && oTempColorings.Criticality) {
 			let oActiveColoring;
 
 			//dimensions overrule
-			for (k = 0; k < aVisibleDimensions.length; k++) {
-
-				if (this._getState(oChart).oColorings.Criticality.DimensionValues[aVisibleDimensions[k]]) {
+			for (let k = 0; k < aVisibleDimensions.length; k++) {
+				const sVisibleDimension = aVisibleDimensions[k];
+				if (oState.oColorings.Criticality.DimensionValues[sVisibleDimension]) {
 					oActiveColoring = {
 						coloring: "Criticality",
 						parameters: {
-							dimension: aVisibleDimensions[k]
+							dimension: sVisibleDimension
 						}
 					};
 
@@ -1034,8 +1035,8 @@ sap.ui.define([
 			}
 
 			if (oActiveColoring) {
-				this._getChart(oChart).setColorings(oTempColorings);
-				this._getChart(oChart).setActiveColoring(oActiveColoring);
+				oInnerChart.setColorings(oTempColorings);
+				oInnerChart.setActiveColoring(oActiveColoring);
 			}
 		}
 	};

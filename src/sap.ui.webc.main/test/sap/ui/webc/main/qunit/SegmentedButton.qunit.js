@@ -3,16 +3,17 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/SegmentedButton",
 	"sap/ui/webc/main/SegmentedButtonItem",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, SegmentedButton, SegmentedButtonItem, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, SegmentedButton, SegmentedButtonItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oSegmentedButton = new SegmentedButton({
 				items: [
 					new SegmentedButtonItem({
@@ -42,7 +43,7 @@ sap.ui.define([
 				}
 			});
 			this.oSegmentedButton.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oSegmentedButton.destroy();

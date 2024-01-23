@@ -3,17 +3,18 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/SideNavigation",
 	"sap/ui/webc/fiori/SideNavigationItem",
 	"sap/ui/webc/fiori/SideNavigationSubItem",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, SideNavigation, SideNavigationItem, SideNavigationSubItem, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, SideNavigation, SideNavigationItem, SideNavigationSubItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oSideNavigation = new SideNavigation({
 				fixedItems: [
 					new SideNavigationItem({
@@ -227,7 +228,7 @@ sap.ui.define([
 				}
 			});
 			this.oSideNavigation.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oSideNavigation.destroy();

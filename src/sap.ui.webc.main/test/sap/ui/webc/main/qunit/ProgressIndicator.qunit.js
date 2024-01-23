@@ -3,19 +3,20 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/ProgressIndicator"
-], function(createAndAppendDiv, Core, ProgressIndicator) {
+], function(createAndAppendDiv, Core, nextUIUpdate, ProgressIndicator) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oProgressIndicator = new ProgressIndicator({
 				valueState: "Warning"
 			});
 			this.oProgressIndicator.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oProgressIndicator.destroy();

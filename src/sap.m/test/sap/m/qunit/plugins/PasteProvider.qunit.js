@@ -7,10 +7,11 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/m/plugins/PasteProvider",
 	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/HTML",
 	"sap/ui/core/Icon",
 	"sap/m/Popover"
-], function(Table, Button, OverflowToolbarButton, Device, Core, coreLib, PasteProvider, Element) {
+], function(Table, Button, OverflowToolbarButton, Device, Core, coreLib, PasteProvider, Element, nextUIUpdate) {
 
 	"use strict";
 	/*global sinon, QUnit, ClipboardEvent, DataTransfer */
@@ -42,7 +43,7 @@ sap.ui.define([
 			dependents: oPlugin
 		});
 		oButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oButton.getIcon(), "sap-icon://paste");
 		assert.equal(oButton.getTooltip_AsString(), "Paste");
@@ -72,7 +73,7 @@ sap.ui.define([
 
 			this.oButton.placeAt("qunit-fixture");
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oButton.destroy();

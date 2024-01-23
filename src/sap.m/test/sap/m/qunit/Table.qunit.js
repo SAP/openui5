@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/message/Message",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/IllustratedMessage",
 	"sap/m/ComboBox",
@@ -35,7 +36,7 @@ sap.ui.define([
 	"sap/m/RatingIndicator",
 	"sap/ui/core/Item",
 	"sap/m/TextArea"
-], function(Localization, Core, Element, Library, qutils, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column, Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea) {
+], function(Localization, Core, Element, Library, qutils, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column, Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, nextUIUpdate, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea) {
 	"use strict";
 
 	function createSUT(bCreateColumns, bCreateHeader, sMode, bNoDataIllustrated) {
@@ -234,7 +235,7 @@ sap.ui.define([
 		});
 
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		return oTable;
 	}
 
@@ -249,7 +250,7 @@ sap.ui.define([
 	QUnit.test("Basic Properties", function(assert) {
 		var sut = createSUT(false, true);
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Check if table has been added to dom tree
 		assert.ok(sut.$().length > 0, "Table in DOM tree");
@@ -258,7 +259,7 @@ sap.ui.define([
 
 		assert.ok(!sut.$().children().hasClass("sapMTableOverlay"), "Table overlay is not rendered as showOverlay=false");
 		sut.setShowOverlay(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var $Overlay = sut.$("overlay");
 		var sAriaLabelledBy = sut.getHeaderToolbar().getContent()[0].getId() + " " + InvisibleText.getStaticId("sap.m", "TABLE_INVALID");
 		assert.ok($Overlay.hasClass("sapUiOverlay"), "Table overlay is rendered as showOverlay=true");
@@ -267,7 +268,7 @@ sap.ui.define([
 		assert.equal($Overlay.attr("aria-labelledby"), sAriaLabelledBy, "aria-labelledby valid for overlay");
 
 		sut.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$Overlay = sut.$("overlay");
 		assert.ok($Overlay.attr("aria-labelledby"), "There is already aria-labelledby for overlay after rerendering.");
@@ -277,11 +278,11 @@ sap.ui.define([
 		assert.equal($Overlay.attr("aria-labelledby"), sAriaLabelledBy, "aria-labelledby valid for overlay after rerendering");
 
 		sut.setShowOverlay(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.notOk(sut.getDomRef("overlay"), "Table overlay is removed as showOverlay=false");
 
 		sut.setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(sut.$().length === 0, "Table has been removed from DOM");
 
 		assert.equal(sut.getItemsContainerDomRef(), sut.$("tblBody")[0]);
@@ -295,7 +296,7 @@ sap.ui.define([
 			labelFilter = 'th>.sapMColumnHeader>.sapMLabel',
 			aLabels;
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Check table columns (should be three)
 		aLabels = sut.$().find(labelFilter);
@@ -306,7 +307,7 @@ sap.ui.define([
 
 		//Remove first column
 		var oFirstColumn = sut.removeColumn("__column0");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Check table columns (should be two)
 		aLabels = sut.$().find(labelFilter);
@@ -315,7 +316,7 @@ sap.ui.define([
 
 		//Insert column again
 		sut.insertColumn(oFirstColumn, 1);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Check table columns and their positions
 		aLabels = sut.$().find(labelFilter);
@@ -326,7 +327,7 @@ sap.ui.define([
 
 		//remove all columns
 		sut.removeAllColumns();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		aLabels = sut.$().find(labelFilter);
 		assert.ok(aLabels.length === 0, "Table has no more columns rendered");
 
@@ -337,7 +338,7 @@ sap.ui.define([
 	QUnit.test("Header Toolbar Display", function(assert) {
 		var sut = createSUT(true, true);
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Check if header toolbar is in DOM
 		var oToolBar = sut.getHeaderToolbar();
@@ -351,7 +352,7 @@ sap.ui.define([
 	QUnit.test("Empty Table", function(assert) {
 		var sut = createSUT(true, true);
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		//Check if header toolbar is in DOM
@@ -361,7 +362,7 @@ sap.ui.define([
 			cols: ["Name", "Color", "Number"]
 		};
 		sut.setModel(new JSONModel(oData));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aNoDataRow = sut.$().find("#" + sut.getId() + "-nodata");
 
@@ -369,7 +370,7 @@ sap.ui.define([
 		assert.equal(aNoDataRow.text(), sut.getNoDataText());
 
 		sut.removeAllColumns();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.notEqual(aNoDataRow.text(), sut.getNoDataText()); // no columns message will be shown
 
 		//clean up
@@ -379,26 +380,26 @@ sap.ui.define([
 	QUnit.test("Colspan and col count", function(assert) {
 		var sut = createSUT(true, true);
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(sut.getColCount(), 5, "highlight, 3 visible columns, navigated columns");
 
 		sut.setMode("MultiSelect");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(sut.getColCount(), 6, "highlight, MultiSelect, 3 visible columns, navigated columns");
 
 		sut.getItems()[0].setType("Navigation");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(sut.getColCount(), 7, "highlight, MultiSelect, 3 visible columns, navigation, navigated columns");
 
 		sut.setFixedLayout("Strict");
 		sut.getColumns().forEach(function(oColumn) {
 			oColumn.setWidth("10rem");
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(sut.getColCount(), 8, "highlight, MultiSelect, 3 visible columns, navigation, navigated & dummy columns");
 
 		sut.addColumn(sut.removeAllColumns().pop());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(sut.getColumns()[0].getDomRef().style.width, "10rem", "highlight, Single columns is not handled for the Strict layout");
 
 		sut.destroy();
@@ -412,7 +413,7 @@ sap.ui.define([
 		oColumn.setMinScreenWidth("4444px");
 		sut.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(sut.hasPopin(), "Table has popins");
 		assert.equal(sut.getVisibleItems()[0].$Popin().attr("tabindex"), "-1", "Popin row has the tabindex=1. this is needed for the text selection");
 
@@ -438,38 +439,38 @@ sap.ui.define([
 	QUnit.test("Fixed Layout", function(assert) {
 		var sut = createSUT();
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// check initial rendering
 		assert.strictEqual(sut.$().find("table").css("table-layout"), "fixed", "Table has fixed layout after initial rendering");
 
 		sut.setFixedLayout(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(sut.$().find("table").css("table-layout"), "auto", "Table has correct layout after disabling fix layout.");
 		assert.strictEqual(sut.getFixedLayout(), false, "getter is returning the correct value");
 
 		sut.setFixedLayout("true");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(sut.$().find("table").css("table-layout"), "fixed", "Table has correct layout after fix layout is set.");
 		assert.strictEqual(sut.getFixedLayout(), true, "getter is returning the boolean value");
 
 		sut.setFixedLayout("false");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(sut.$().find("table").css("table-layout"), "auto", "Table has correct layout after disabling fix layout.");
 		assert.strictEqual(sut.getFixedLayout(), false, "getter is returning the boolean value");
 
 		sut.setFixedLayout();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(sut.$().find("table").css("table-layout"), "fixed", "Table has correct layout for the undefined value");
 		assert.strictEqual(sut.getFixedLayout(), true, "getter is returning the default value");
 
 		sut.setFixedLayout(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(sut.$().find("table").css("table-layout"), "auto", "Table has correct layout after disabling fix layout.");
 		assert.strictEqual(sut.getFixedLayout(), false, "getter is returning the boolean value");
 
 		sut.setFixedLayout("Strict");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(sut.$().find("table").css("table-layout"), "fixed", "Table has fixed layout for the Strict value");
 		assert.strictEqual(sut.getFixedLayout(), "Strict", "getter is returning the correct string value");
 
@@ -489,7 +490,7 @@ sap.ui.define([
 		oColumn.setDemandPopin(true);
 		oColumn.setMinScreenWidth("48000px");
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oItem = sut.getItems()[0];
 		var oItemPopin = oItem.hasPopin();
@@ -499,11 +500,11 @@ sap.ui.define([
 
 		assert.notOk(oItem.getDomRef().classList.contains("sapMPopinHovered"), "sapMPopinHovered class not added to the item yet as there is no mouseover");
 		oItemPopin.$().trigger("mouseenter");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oItem.getDomRef().classList.contains("sapMPopinHovered"), "sapMPopinHovered class added to the ItemDomRef as popin is hovered");
 
 		oItemPopin.$().trigger("mouseleave");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.notOk(oItem.getDomRef().classList.contains("sapMPopinHovered"), "sapMPopinHovered class removed as mouse is out of the popin");
 
 		sut.destroy();
@@ -515,11 +516,11 @@ sap.ui.define([
 		oColumn.setDemandPopin(true);
 		oColumn.setMinScreenWidth("48000px");
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(sut.getDomRef("popin-headers"), "DOM element found");
 		oColumn.setDemandPopin(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(sut.getDomRef("popin-headers"), "DOM element does not exist since there are no popins");
 
@@ -532,7 +533,7 @@ sap.ui.define([
 		var sut = createSUT(true, true, "MultiSelect");
 		var oBundle = Library.getResourceBundleFor("sap.m");
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check if multiselect checkboxes are visible
 		var aSelectionChecks = sut.$().find(".sapMCb");
@@ -551,7 +552,7 @@ sap.ui.define([
 
 		// Check if 'selectAll' marks all rows as selected
 		sut.selectAll();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		aSelectionChecksMarked = sut.$().find(".sapMCbMarkChecked");
 		assert.ok(aSelectionChecksMarked.length === 4, "Selection checkboxes ALL checked");
@@ -564,7 +565,7 @@ sap.ui.define([
 		var sut = createSUT(true, true, "MultiSelect"),
 			clock = sinon.useFakeTimers();
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is enabled since there are visible items");
 
@@ -582,7 +583,7 @@ sap.ui.define([
 		assert.ok(sut._selectAllCheckBox.getSelected(), "SelectAll checkbox is selected again");
 
 		sut._selectAllCheckBox.setEnabled(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.notOk(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is disabled, only when explicitly enabled=false is set");
 
 		clock.restore();
@@ -593,13 +594,13 @@ sap.ui.define([
 		var sut = createSUT(true, false, "MultiSelect");
 		sut.placeAt("qunit-fixture");
 		var fnFireSelectionChangeEvent = this.spy(sut, "_fireSelectionChangeEvent");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// test for table header row
 		sut.getVisibleItems()[1].focus();
 		// select the item
 		qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
 
 		// trigger shift keydown so that sut._mRangeSelection object is available
@@ -625,11 +626,11 @@ sap.ui.define([
 		sut.getItems().forEach(function(oItem) {
 			oItem.setSelected(false);
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// test for table footer row
 		sut.getColumns()[2].setFooter(new Text({text: "4.758"}));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		fnFireSelectionChangeEvent.reset();
 
 		assert.ok(!sut._mRangeSelection, "rangeSelection object not available");
@@ -637,7 +638,7 @@ sap.ui.define([
 		sut.getVisibleItems()[1].focus();
 		// select the item
 		qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
 
 		// trigger shift keydown so that sut._mRangeSelection object is available
@@ -679,7 +680,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$();
 
@@ -716,7 +717,7 @@ sap.ui.define([
 	QUnit.test("Focus style class on tr element", function(assert) {
 		var sut = createSUT(true, true);
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oTableHeader = sut.getDomRef("tblHeader");
 		assert.ok(oTableHeader.classList.contains("sapMTableRowCustomFocus"), "sapMTableRowCustomFocus style class is added to the tr element");
@@ -730,42 +731,42 @@ sap.ui.define([
 	QUnit.test("TypeColumn visibility should updated correctly", function(assert) {
 		var oTable = createSUT(true);
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible by default");
 		assert.strictEqual(oTable.$().find("th").last().attr("role"), "presentation", "role=presentation is set correctly");
 
 		oTable.getItems()[0].setType("Navigation");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible when an item type is Navigation");
 
 		oTable.getItems()[0].setType("Active");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible since Active type does not need column");
 
 		oTable.getItems()[0].setType("Detail");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible when an item type is Detail");
 
 		oTable.getItems()[0].setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible since item is not visible");
 
 		var oClone = oTable.getItems()[1].clone().setType("DetailAndActive");
 		oTable.addItem(oClone);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible because new type is DetailAndActive");
 
 		oClone.destroy();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible since new item is destroyed");
 
 		oTable.getItems()[0].setVisible(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible because first item with type detail is visible again");
 
 		oTable.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible rerender did not change the visibility of the type column");
 
 		oTable.destroy();
@@ -779,7 +780,7 @@ sap.ui.define([
 			oSecondItem = oTable.getItems()[1];
 		oTable.placeAt("qunit-fixture");
 		oFirstItem.setNavigated(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oTable.$().find("table").hasClass("sapMListNavigated"), "Navigated class added");
 		var $oNavigatedCol = oTable.$().find(".sapMListTblNavigatedCol");
@@ -795,7 +796,7 @@ sap.ui.define([
 		assert.equal(oSecondItem.$().find(".sapMListTblNavigatedCell").children().length, 0, "navigated indicator not added as navigated property is not enabled for the item");
 
 		oFirstItem.setNavigated(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oTable.$().find("table").hasClass("sapMListNavigated"), "Navigated column is removed");
 
@@ -811,7 +812,7 @@ sap.ui.define([
 		var oLastColumn = oTable.getColumns()[oTable.getColumns().length - 1];
 		oLastColumn.setDemandPopin(true);
 		oLastColumn.setMinScreenWidth("48000px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oNavigatedIndicator = oFirstItem.getPopin().getDomRef().childNodes[2];
 		assert.equal(oNavigatedIndicator.getAttribute("role"), "presentation", "presentation role is set correctly");
@@ -826,7 +827,7 @@ sap.ui.define([
 	QUnit.test("SelectAll in selectionChange event", function(assert) {
 		var sut = createSUT(true, true, "MultiSelect");
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		sut.attachEventOnce("selectionChange", function(e) {
 			assert.ok(e.getParameter("selectAll"), "selectAll parameter is true when the 'selectAll' checkbox is pressed");
@@ -853,7 +854,7 @@ sap.ui.define([
 		};
 
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $tblHeader = sut.$("tblHeader");
 
@@ -866,7 +867,7 @@ sap.ui.define([
 		assert.ok(document.activeElement === $tblHeader[0], "Table header is focused");
 
 		sut.removeAllColumns();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sut.focus(oFocusInfo);
 		assert.notOk(sut.getColumns().length, "Columns removed from table");
 		assert.ok(fnFocusSpy.calledWith(oFocusInfo), "Focus event called with core:Message parameter");
@@ -881,7 +882,7 @@ sap.ui.define([
 	QUnit.test("Test for removeAllItems", function(assert) {
 		var sut = createSUT(true, true);
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(sut.getItems().length > 0, "Table contains items");
 		sut.removeAllItems();
@@ -895,12 +896,12 @@ sap.ui.define([
 		var oResourceBundle = Library.getResourceBundleFor("sap.m");
 		var sut = createSUT(true, false, "MultiSelect");
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(sut._selectAllCheckBox, "Table contains select all checkBox");
 		assert.notOk(sut._clearAllButton, "Table does not contain clear all icon");
 		sut.setMultiSelectMode("ClearAll");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(sut._clearAllButton, "Table contains select all clear all icon button");
 		assert.ok(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is inactive by adding style class since no items selected");
 
@@ -917,7 +918,7 @@ sap.ui.define([
 
 		var oItem = sut.getItems()[0];
 		oItem.setSelected(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(1);
 		assert.notOk(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is active by adding style class since items selected");
 		sut.destroy();
@@ -971,7 +972,7 @@ sap.ui.define([
 		}));
 
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(sut._clearAllButton, "Table contains clear all icon button");
 		assert.ok(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "Clear selection icon is inactive by removing style class since no items selected");
@@ -990,13 +991,13 @@ sap.ui.define([
 		sut.setMultiSelectMode("ClearAll");
 		sut.getItems()[1].setSelected(true);
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $tblHeader = sut.$("tblHeader").trigger("focus");
 		assert.notOk(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "ClearAll button is enabled since an item is selected in the table");
 
 		qutils.triggerKeydown($tblHeader, KeyCodes.SPACE);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(sut._clearAllButton.hasStyleClass("sapMTableDisableClearAll"), "ClearAll button is disabled, since items are desected in the table via space key");
 		sut.destroy();
 	});
@@ -1006,7 +1007,7 @@ sap.ui.define([
 		const fnSelectionChangeSpy = sinon.spy();
 		sut.attachSelectionChange(fnSelectionChangeSpy);
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		sut.getItems()[0].focus();
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ENTER);
@@ -1017,7 +1018,7 @@ sap.ui.define([
 	QUnit.test("Test for destroyItems", function(assert) {
 		var sut = createSUT(true, true);
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(sut.getItems().length > 0, "Table contains items");
 		sut.destroyItems();
@@ -1039,7 +1040,7 @@ sap.ui.define([
 
 		// The table needs to be rendered for the column media object to be initialized
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oColumn._notifyResize({from: 600}); // this is the default value for minScreenWidth="phone"
 		this.clock.tick(1);
@@ -1058,7 +1059,7 @@ sap.ui.define([
 	QUnit.test("Test for onItemSelectedChange", function(assert) {
 		var sut = createSUT(true, false, "MultiSelect");
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnOnItemSelectedChange = sinon.spy(sut, "onItemSelectedChange");
 
 		var oItem = sut.getItems()[0];
@@ -1077,7 +1078,7 @@ sap.ui.define([
 		oColumn.setFooter(new Label({text: "Greetings"}));
 		oColumnHeader.setRequired(true);
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		// accessibility role
@@ -1107,7 +1108,7 @@ sap.ui.define([
 
 		// noDataText test
 		oBinding.filter([new Filter("name", "Contains", "xxx")]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sut.$("nodata").trigger("focus");
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("LIST_NO_DATA"), "Text correctly assinged for screen reader announcement");
 
@@ -1122,7 +1123,7 @@ sap.ui.define([
 		sut.setHiddenInPopin(["Low"]);
 		oColumn.setMinScreenWidth("480000px");
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $tblHeader = sut.$("tblHeader").trigger("focus");
 		var oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
@@ -1172,7 +1173,7 @@ sap.ui.define([
 			});
 
 		oVerticalLayout.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(sut._getSelectAllCheckbox().getEnabled(), true, "SelectAll checkbox control was not disabled by the EnabledPropagator");
 		oVerticalLayout.destroy();
 	});
@@ -1183,7 +1184,7 @@ sap.ui.define([
 		sut.getItems()[0].setType("Navigation");
 		sut.getItems()[0].setHighlight("Error");
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(sut.getAriaRole(), "grid", "Grid role attribute returned for table control");
 		assert.equal(sut.$("listUl").attr("role"), "grid", "grid role attribute is applied in DOM");
@@ -1221,7 +1222,7 @@ sap.ui.define([
 		var fnForwardTab = sinon.spy(sut, "forwardTab");
 		oColumn.setFooter(new Label({text: "Greetings"}));
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// forwardTab on tblHeader
 		var $tblHeader = sut.$("tblHeader").trigger("focus");
@@ -1241,7 +1242,7 @@ sap.ui.define([
 		sut.setGrowing(true);
 		sut.setGrowingThreshold(5);
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $tblHeader = sut.$("tblHeader").trigger("focus");
 		// shift-tab on header row
@@ -1268,11 +1269,11 @@ sap.ui.define([
 		assert.equal(document.activeElement, $tblHeader[0]);
 
 		sut.setVisible(false).setShowOverlay(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.notOk(sut.getDomRef("overlay"), "There is no overlay for invisible table");
 
 		sut.setVisible(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(sut.getDomRef("overlay"), "Overlay is rendered for the visible table");
 
 		sut.getItems()[0].focus();
@@ -1352,7 +1353,7 @@ sap.ui.define([
 		}));
 
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var fnCheckGrowingFromScratch = sinon.spy(sut, "checkGrowingFromScratch");
 
@@ -1371,7 +1372,7 @@ sap.ui.define([
 	QUnit.test("Test onsapspace on SelectAll checkbox", function(assert) {
 		var sut = createSUT(true, false, "MultiSelect");
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $tblHeader = sut.$('tblHeader').trigger("focus");
 
@@ -1389,7 +1390,7 @@ sap.ui.define([
 		var sut = createSUT(true);
 		sut.setAlternateRowColors(true);
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oItem1 = sut.getItems()[0];
 		var oItem2 = sut.getItems()[1];
@@ -1402,7 +1403,7 @@ sap.ui.define([
 		var oColumn = sut.getColumns()[1];
 		oColumn.setDemandPopin(true);
 		oColumn.setMinScreenWidth("480000px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oItem1.$().css("background-color"), oItem1.$Popin().css("background-color"), "popin and item background is same");
 		assert.equal(oItem2.$().css("background-color"), oItem2.$Popin().css("background-color"), "popin and item background is same");
@@ -1416,7 +1417,7 @@ sap.ui.define([
 			};
 		});
 		sut.getBinding("items").sort(oGrouping);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oItem1 = sut.getItems()[0];
 		oItem2 = sut.getItems()[1];
@@ -1432,19 +1433,19 @@ sap.ui.define([
 		oColumn.setDemandPopin(true);
 		oColumn.setMinScreenWidth("400000px");
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(sut.getPopinLayout(), "GridSmall", "popinLayout=GridSmall, property is set correctly");
 		assert.ok(jQuery(".sapMListTblSubCntGridSmall").length > 0, "DOM classes updated correctly");
 
 		sut.setPopinLayout(library.PopinLayout.GridLarge);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(sut.getPopinLayout(), "GridLarge", "popinLayout=GridLarge, property is set correctly");
 		assert.ok(jQuery(".sapMListTblSubCntGridLarge").length > 0, "DOM classes updated correctly");
 
 		sut.setPopinLayout(library.PopinLayout.Block);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(sut.getPopinLayout(), "Block", "popinLayout=Block, property is set correctly");
 		assert.equal(jQuery(".sapMListTblSubCntGridSmall").length, 0, "GridSmall style class not added");
@@ -1456,13 +1457,13 @@ sap.ui.define([
 	QUnit.test("Sticky Column Headers property check", function(assert) {
 		var sut = createSUT(true);
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(!sut.getSticky(), "No stickiness");
 		assert.equal(sut.$().find(".sapMSticky").length, 0, "Sticky column header style class not rendered");
 
 		sut.setSticky(["ColumnHeaders"]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(sut.getSticky().length, 1, "Property set correctly");
 		assert.equal(sut.getSticky()[0], "ColumnHeaders", "Stickiness set on ColumnHeaders");
 
@@ -1473,7 +1474,7 @@ sap.ui.define([
 		var sut = createSUT();
 		sut.placeAt("qunit-fixture");
 		sut.setSticky(["ColumnHeaders"]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(!sut.getDomRef().classList.contains("sapMSticky4"), "Sticky column header class not added as columns are not available");
 
@@ -1505,11 +1506,11 @@ sap.ui.define([
 		sut.setHeaderToolbar(oHeaderToolbar);
 
 		sut.setSticky(["ColumnHeaders", "InfoToolbar", "HeaderToolbar"]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(sut.getDomRef().classList.contains("sapMSticky3"), "Only sticky infoToolbar style class added");
 		sut.getInfoToolbar().setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(sut.getDomRef().classList.contains("sapMSticky1"), "sticky infoToolbar style class removed as infoToolbar is not visible");
 
 		sut.destroy();
@@ -1526,7 +1527,7 @@ sap.ui.define([
 		});
 		sut.setSticky(["ColumnHeaders"]);
 		oScrollContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aClassList = sut.$()[0].classList;
 		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky4"), "Sticky class added for sticky column headers only");
@@ -1590,18 +1591,18 @@ sap.ui.define([
 		});
 		sut.setSticky(["InfoToolbar"]);
 		oScrollContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aClassList = sut.$()[0].classList;
 		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky class added for sticky infoToolbar only");
 
 		sut.getInfoToolbar().setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		aClassList = sut.$()[0].classList;
 		assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky2"), "Sticky classes removed");
 
 		sut.getInfoToolbar().setVisible(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		aClassList = sut.$()[0].classList;
 		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky classes added");
 
@@ -1658,18 +1659,18 @@ sap.ui.define([
 		});
 		sut.setSticky(["HeaderToolbar"]);
 		oScrollContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aClassList = sut.$()[0].classList;
 		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky class added for sticky headerToolbar only");
 
 		sut.getHeaderToolbar().setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		aClassList = sut.$()[0].classList;
 		assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky1"), "Sticky classes removed as no element is sticky");
 
 		sut.getHeaderToolbar().setVisible(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		aClassList = sut.$()[0].classList;
 		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky classes added");
 
@@ -1751,24 +1752,24 @@ sap.ui.define([
 		});
 		sut.setSticky(["HeaderToolbar", "InfoToolbar", "ColumnHeaders"]);
 		oScrollContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aClassList = sut.$()[0].classList;
 		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky7"), "Sticky class added for sticky headerToolbar, infoToolbar and column headers");
 
 		sut.getHeaderToolbar().setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		aClassList = sut.$()[0].classList;
 		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky6"), "Sticky class updated for sticky infoToolbar and column headers");
 
 		sut.getInfoToolbar().setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		aClassList = sut.$()[0].classList;
 		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky4"), "Sticky class updated for column headers");
 
 		sut.getHeaderToolbar().setVisible(true);
 		sut.getInfoToolbar().setVisible(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		aClassList = sut.$()[0].classList;
 		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky7"), "Sticky class added for sticky headerToolbar, infoToolbar and column headers");
 
@@ -1838,7 +1839,7 @@ sap.ui.define([
 		var oColumn2 = new Column({ header: oHeader2, hAlign: "Center" });
 		var oTable = new Table({ columns: [oColumn1, oColumn2] });
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// column alignment in LTR mode
 		assert.equal(oColumn1.getDomRef().firstChild.style.justifyContent, "flex-start", "Column header content is aligned to the left");
@@ -1846,7 +1847,7 @@ sap.ui.define([
 
 		var fnGetRTLStub = sinon.stub(Localization, "getRTL").returns(true);
 		oTable.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// column alignment in RTL mode
 		assert.equal(oColumn1.getDomRef().firstChild.style.justifyContent, "flex-end", "Column header content is aligned to the right");
@@ -1870,7 +1871,7 @@ sap.ui.define([
 
 		oTable.bActiveHeaders = true;
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oColumn1.$().attr("role"), "columnheader", "role=columnheader applied to the columns");
 		assert.equal(oColumn2.$().attr("role"), "columnheader", "role=columnheader applied to the columns");
@@ -1941,7 +1942,7 @@ sap.ui.define([
 		oTable.bActiveHeaders = true;
 
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oTblHeader = oTable.getDomRef("tblHeader");
 		var oFirstColumnHeaderCell = oTable.getColumns()[0].getDomRef();
@@ -1991,7 +1992,7 @@ sap.ui.define([
 		var oTableResizeSpy = sinon.spy(sut, "_onResize");
 
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(sut.getContextualWidth(), "Inherit", "ContextualWidth with initial size has been applied.");
 		assert.equal(jQuery(".sapMListTblSubRow").length, 0, "by default no popin for table");
@@ -1999,7 +2000,7 @@ sap.ui.define([
 		// CSS size
 		sut.setContextualWidth("200px");
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(sut.getContextualWidth(), "200px", "ContextualWidth with css size has been applied.");
 		assert.ok(jQuery(".sapMListTblSubRow").length > 0, "popin is correct when contextualWidth is set to fixed pixel value.");
@@ -2008,7 +2009,7 @@ sap.ui.define([
 		sut.setContextualWidth("auto");
 
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(sut.getContextualWidth(), "auto", "ContextualWidth with auto has been applied.");
 
@@ -2017,7 +2018,7 @@ sap.ui.define([
 		// inherit
 		sut.setContextualWidth("Inherit");
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(sut.getContextualWidth(), "Inherit", "ContextualWidth with inherit has been applied.");
 		assert.equal(jQuery(".sapMListTblSubCntGridSmall").length, 0, "no popin for table when contextualWidth is set to inherit");
@@ -2044,7 +2045,7 @@ sap.ui.define([
 			})
 		});
 		table.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var sTest = "Aa\tBb b\nCc\tDd";
 		var aTestResult = [["Aa", "Bb b"],["Cc", "Dd"]];
@@ -2074,7 +2075,7 @@ sap.ui.define([
 			});
 
 		table.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.notOk(sut.hasPopin(), "Item do not have a popin even though the column is configured to be shown as popin");
@@ -2088,7 +2089,7 @@ sap.ui.define([
 			header: new Text({text: "Column1"})
 		});
 		table.addColumn(column1);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(sut.hasPopin(), "Item now has popin");
@@ -2103,7 +2104,7 @@ sap.ui.define([
 			header: new Text({text: "Column2"})
 		});
 		table.addColumn(column2);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(sut.hasPopin(), "Item still has popin");
@@ -2118,7 +2119,7 @@ sap.ui.define([
 		column0.setVisible(false);
 		column2.setMinScreenWidth("46000px");
 		column2.setDemandPopin(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(column0.getVisible(), false, "Column0 is not visible");
@@ -2217,7 +2218,7 @@ sap.ui.define([
 		var oTable = this.oTable;
 		assert.strictEqual(oTable.getAutoPopinMode(), false, "Default value for autoPopinMode property is false");
 		oTable.setAutoPopinMode(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
 	});
 
@@ -2227,7 +2228,7 @@ sap.ui.define([
 
 		oTable.setContextualWidth("Desktop");
 		oTable.setAutoPopinMode(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oTable.getColumns().forEach(function(oColumn) {
 			assert.strictEqual(oColumn.getImportance(), "None", "column importance=None by default");
@@ -2256,7 +2257,7 @@ sap.ui.define([
 
 		oTable.setAutoPopinMode(true);
 		oTable.setContextualWidth("Tablet");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
 
 		var oColumnsInfo = this.groupColumnsInfo(aColumns);
@@ -2273,7 +2274,7 @@ sap.ui.define([
 
 		oTable.setAutoPopinMode(true);
 		oTable.setContextualWidth("Phone");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
 
 		var oColumnsInfo = this.groupColumnsInfo(aColumns);
@@ -2299,7 +2300,7 @@ sap.ui.define([
 
 		oTable.setContextualWidth("Small");
 		oTable.setAutoPopinMode(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
 
 		assert.notOk(oTable.getColumns()[0].isPopin(), "First column is not in the popin area");
@@ -2322,7 +2323,7 @@ sap.ui.define([
 				]
 			})
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var aColumns = oTable.getColumns();
 		var aItems = oTable.getItems();
 
@@ -2335,13 +2336,13 @@ sap.ui.define([
 		assert.ok(parseFloat(parseFloat(fAccumulatedWidth).toFixed(2)) === fAutoPopinWidth, "Expected autoPopinWidth for next column in pop-in area is " + fAccumulatedWidth + "rem");
 
 		oTable.setInset(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		fInitAccumulatedWidth = oTable._getInitialAccumulatedWidth(aItems);
 		assert.strictEqual(fInitAccumulatedWidth, 10.25, "Initial accumulated width is " + fAccumulatedWidth + "rem");
 
 		document.getElementById("qunit-fixture").classList.add("sapUiSizeCompact");
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		fInitAccumulatedWidth = oTable._getInitialAccumulatedWidth(aItems);
 		assert.strictEqual(fInitAccumulatedWidth, 8.25, "Initial accumulated width is " + fInitAccumulatedWidth + "rem. Since compact theme density is applied");
 		oTable.destroy();
@@ -2353,25 +2354,25 @@ sap.ui.define([
 
 		oTable.setContextualWidth("Desktop");
 		oTable.setAutoPopinMode(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
 
 		var fnConfigureAutoPopin = sinon.spy(oTable, "_configureAutoPopin");
 		aColumns[0].setWidth("8rem");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnConfigureAutoPopin.callCount, 1, "_configureAutoPopin called since column width property changed");
 
 		aColumns[1].setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnConfigureAutoPopin.callCount, 2, "_configureAutoPopin called since column visible property changed");
 
 		aColumns[2].setImportance("High");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnConfigureAutoPopin.callCount, 3, "_configureAutoPopin called since column importance property changed");
 
 		aColumns[3].setAutoPopinWidth(10);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnConfigureAutoPopin.callCount, 4, "_configureAutoPopin called since column autoPopinWidth property changed");
 	});
 
@@ -2380,7 +2381,7 @@ sap.ui.define([
 		var aColumns = oTable.getColumns();
 
 		oTable.setContextualWidth("Desktop");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oTable.getAutoPopinMode(), false, "autoPopinMode is set to false");
 
@@ -2406,46 +2407,46 @@ sap.ui.define([
 
 		oTable.setContextualWidth("Desktop");
 		oTable.setAutoPopinMode(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 1, "autoPopinMode calculation performed");
 
 		oTable.setAutoPopinMode(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 1, "autoPopinMode=false, hence recalculation was not necessary");
 
 		oTable.setAutoPopinMode(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 2, "autoPopinMode=true, hence recalculation was done");
 
 		aColumns[1].setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 3, "column visibility changed, hence autoPopinMode required recalculation");
 
 		aColumns[1].setVisible(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 4, "column visibility changed, hence autoPopinMode required recalculation");
 
 		var fnOnBeforeRendering = sinon.spy(oTable, "onBeforeRendering");
 		aColumns.forEach(function(oColumn) {
 			oColumn.setWidth("10rem");
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnOnBeforeRendering.callCount, 1, "onBeforeRendering of the Table is only called once");
 		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 5, "multiple columns width changed, but the recalulation was perfromed only once");
 
 		aColumns.forEach(function(oColumn) {
 			oColumn.setWidth("15rem");
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnOnBeforeRendering.callCount, 2, "onBeforeRendering of the Table is only called once");
 		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 6, "multiple columns width changed, but the recalulation was perfromed only once");
 
 		aColumns[2].setImportance("Low");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 7, "column importance changed, autoPopinMode recalculation done");
 
 		aColumns[2].setAutoPopinWidth(11);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 8, "column autoPopinWidth changed, autoPopinMode recalculation done");
 
 		oTable.getColumns().forEach(function(oColumn, iIndex) {
@@ -2453,7 +2454,7 @@ sap.ui.define([
 				oColumn.setImportance("Low");
 			}
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		fnOnBeforeRendering.reset();
 		fnGetInitialAccumulatedWidth.reset();
@@ -2481,21 +2482,21 @@ sap.ui.define([
 
 		oTable.setAutoPopinMode(true);
 		oTable.setContextualWidth("Desktop");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1);
 
 		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
 		assert.strictEqual(oTable._getHiddenInPopin().length, 0, "All columns are rendered as regular columns");
 
 		oTable.setContextualWidth("Tablet");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1);
 
 		assert.strictEqual(oTable.hasPopin(), true, "Call oTable.hasPopin(): Table has Columns in the pop-in area");
 		assert.strictEqual(fnPopinChangedEvent.callCount, 1, "popinChange event fired");
 
 		oTable.setHiddenInPopin(["None", "Low", "Medium"]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1);
 
 		assert.strictEqual(oTable.hasPopin(), false, "Call oTable.hasPopin(): Table has no Columns in the pop-in area");
@@ -2508,12 +2509,12 @@ sap.ui.define([
 	QUnit.test("test shouldGrowingSuppressInvalidation", function(assert) {
 		var oTable = this.oTable;
 		oTable.setGrowing(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.notOk(oTable.getAutoPopinMode(), "autoPopinMode=false");
 		assert.strictEqual(oTable.shouldGrowingSuppressInvalidation(), true, "Growing will suppress invalidation since autoPopinMode=false");
 
 		oTable.setAutoPopinMode(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oTable.getAutoPopinMode(), "autoPopinMode=true");
 		assert.strictEqual(oTable.shouldGrowingSuppressInvalidation(), false, "Growing will not suppress invalidation since autoPopinMode=true");
 	});
@@ -2523,7 +2524,7 @@ sap.ui.define([
 			this.sut = createSUT(true, false, "MultiSelect");
 			this.sut.setFixedLayout("Strict");
 			this.sut.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.sut.destroy();
@@ -2531,7 +2532,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check if dummy column should be rendered", function(assert) {
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(this.sut.shouldRenderDummyColumn(), "no dummy column since dynamic column width is available");
 
@@ -2539,7 +2540,7 @@ sap.ui.define([
 		this.sut.getColumns().forEach(function(oColumn) {
 			oColumn.setWidth("15rem");
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.sut.shouldRenderDummyColumn(), true, "No Dynamic column available");
 		assert.equal(this.sut.$("tblHeadDummyCell").length, 1, "DummyCol rendered");
@@ -2547,20 +2548,20 @@ sap.ui.define([
 		// Dummy column should be removed when a column width is changed to a dynamic width
 		// remove the width
 		this.sut.getColumns()[0].setWidth();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.sut.shouldRenderDummyColumn(), false, "Dynamic column is available");
 		assert.equal(this.sut.$("tblHeadDummyCell").length, 0, "DummyCol rendered");
 
 		this.sut.getColumns()[0].setWidth("10%");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.sut.shouldRenderDummyColumn(), true, "Dynamic column is available, since all the columns have a width defined");
 		assert.equal(this.sut.$("tblHeadDummyCell").length, 1, "DummyCol rendered");
 
 		// add static width back to the column
 		this.sut.getColumns()[0].setWidth();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.sut.shouldRenderDummyColumn(), false, "Column found that does not have a width defined, hence dummy column not required");
 		assert.equal(this.sut.$("tblHeadDummyCell").length, 0, "DummyCol not rendered");
@@ -2573,7 +2574,7 @@ sap.ui.define([
 		this.sut.getColumns().forEach(function(oColumn) {
 			oColumn.setWidth("15rem");
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(this.sut.shouldRenderDummyColumn(), "Dummy column should not render since fixedLayout=false");
 	});
@@ -2585,7 +2586,7 @@ sap.ui.define([
 			oColumn.setVisible(false);
 			oColumn.setWidth("15rem");
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(this.sut.shouldRenderDummyColumn(), "Dummy column should not render since there is no visible column");
 	});
@@ -2596,7 +2597,7 @@ sap.ui.define([
 		this.sut.getColumns().forEach(function(oColumn) {
 			oColumn.setWidth("15rem");
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(this.sut.hasPopin(), "Table does not contain popins");
 		var aTHElements = this.sut.$("tblHeader").children();
@@ -2614,7 +2615,7 @@ sap.ui.define([
 				oColumn.setWidth("15rem");
 			}
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(this.sut.hasPopin(), "Table has popins");
 		var aTHElements = this.sut.$("tblHeader").children();
@@ -2625,7 +2626,7 @@ sap.ui.define([
 
 		var oSorter = new Sorter("name", false, true);
 		this.sut.getBinding("items").sort(oSorter);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oGHLI = this.sut.getItems()[0];
 		assert.ok(oGHLI.isA("sap.m.GroupHeaderListItem"), "Table is grouped");
@@ -2635,7 +2636,7 @@ sap.ui.define([
 			oColumn.setWidth("15rem");
 		});
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oGHLI.getDomRef().classList.contains("sapMTableRowCustomFocus"), "GroupHeaderListItem contains sapMTableRowCustomFocus class");
 	});
 
@@ -2672,7 +2673,7 @@ sap.ui.define([
 			assert.notOk(this.sut._bCheckLastColumnWidth, "_bCheckLastColumnWidth=false, since _checkLastColumnWidth has been processed");
 
 			oColumn.setWidth("10px");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(this.sut._bCheckLastColumnWidth, "_bCheckLastColumnWidth=true");
 			assert.notOk(this.sut.$().find(".sapMListTblCell:visible").hasClass("sapMTableForcedColumn"), "sapMTableForcedColumn class not added since column is smaller than table");
 
@@ -2680,7 +2681,7 @@ sap.ui.define([
 		}.bind(this), 1);
 
 		this.sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(this.sut._bCheckLastColumnWidth, "_bCheckLastColumnWidth=true");
 	});
@@ -2723,10 +2724,10 @@ sap.ui.define([
 		});
 
 		this.sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oSmallColumn.setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		window.setTimeout(function() {
 			assert.ok(this.sut.$().find(".sapMListTblCell:visible").hasClass("sapMTableForcedColumn"), "sapMTableForcedColumn class added to the column");
@@ -2777,13 +2778,13 @@ sap.ui.define([
 		});
 
 		this.sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.sut.$("tblHeadDummyCell").length, 1, "DummyCol rendered");
 		// simulate changning of table width
 		this.sut.setWidth("500px");
 		this.sut.setContextualWidth("500px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1);
 
 		assert.ok(this.sut.$("tblHeader").find(".sapMTableForcedColumn").length > 0, "sapMTableForcedColumn class added to the column");
@@ -2791,7 +2792,7 @@ sap.ui.define([
 		// simulate changing of table width
 		this.sut.setWidth();
 		this.sut.setContextualWidth("1200px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1);
 
 		assert.notOk(this.sut.$("tblHeader").find(".sapMTableForcedColumn").length, "sapMTableForcedColumn not found and is removed from the column");
@@ -2854,21 +2855,21 @@ sap.ui.define([
 		var fOnColumnResizeSpy = sinon.spy(this.sut, "onColumnResize");
 
 		this.sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oTriggerDomRef = this.sut.getDomRef("trigger");
 		assert.ok(fOnColumnResizeSpy.notCalled, "onColumnResize is not called yet");
 		var oOldTriggerClientWidth = oTriggerDomRef.clientWidth;
 
 		this.sut.setContextualWidth("800px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		clock.tick(1);
 		assert.ok(fOnColumnResizeSpy.called, "onColumnResize is called since the contextualWidth changed");
 		waitRequestAnimationFrame().then(function() {
 			assert.ok(oTriggerDomRef.clientWidth < oOldTriggerClientWidth, "Trigger width was adapted via onColumnResize");
 			oOldTriggerClientWidth = oTriggerDomRef.clientWidth;
 			this.sut.setContextualWidth("600px");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			clock.tick(1);
 			assert.ok(fOnColumnResizeSpy.called, "onColumnResize is called since the contextualWidth changed");
 			waitRequestAnimationFrame().then(function() {
@@ -2888,7 +2889,7 @@ sap.ui.define([
 				this.iPopinChangedEventCounter++;
 			}, this);
 			this.sut.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.clock.restore();
@@ -2946,12 +2947,12 @@ sap.ui.define([
 			});
 
 			this.sut.setContextualWidth("1200px");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.clock.tick(1);
 		}, this);
 
 		this.sut.setContextualWidth("800px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(1);
 	});
 
@@ -2959,19 +2960,19 @@ sap.ui.define([
 		var fnFirePopinChanged = sinon.spy(this.sut, "_firePopinChangedEvent");
 
 		this.sut.setHiddenInPopin(["Low"]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnFirePopinChanged.callCount, 1, "hiddenInPopin=Low");
 
 		this.sut.setHiddenInPopin(["Low", "Medium"]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnFirePopinChanged.callCount, 2, "hiddenInPopin=Low,Medium");
 
 		this.sut.setHiddenInPopin(["Low", "None"]);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnFirePopinChanged.callCount, 3, "hiddenInPopin=Low,None");
 
 		this.sut.setHiddenInPopin();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(fnFirePopinChanged.callCount, 4, "hiddenInPopin=undefined");
 	});
 
@@ -2985,7 +2986,7 @@ sap.ui.define([
 		};
 		sut.setModel(new JSONModel(oData));
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $noData = sut.$("nodata");
 		var $noDataText = sut.$("nodata-text");
@@ -3003,7 +3004,7 @@ sap.ui.define([
 		var sut = createSUT(false, false, "None", true);
 		var oBundle = Library.getResourceBundleFor("sap.m");
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var sTitle = oBundle.getText("TABLE_NO_COLUMNS_TITLE");
 		var sDescription = oBundle.getText("TABLE_NO_COLUMNS_DESCRIPTION");
@@ -3023,7 +3024,7 @@ sap.ui.define([
 		assert.equal(Element.getElementById(sLabelledBy).getText(), "Illustrated Message " + sTitle + ". " + sDescription, "Accessbility text is set correctly");
 
 		sut.setNoData(new Button({text: "Test Button"}));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(sut.getNoData().isA("sap.m.Button"), "noData aggregation is of type sap.m.Button");
 		assert.strictEqual($noDataText.text(), oBundle.getText("TABLE_NO_COLUMNS"), "Table's nodata-text contains the text for no columns");
 
@@ -3039,7 +3040,7 @@ sap.ui.define([
 		};
 		sut.setModel(new JSONModel(oData));
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $noData = sut.$().find("#" + sut.getId() + "-nodata");
 		var $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
@@ -3050,7 +3051,7 @@ sap.ui.define([
 		assert.equal(Element.getElementById(sLabelledBy).getText(), "No data", "Accessbility text is set correctly");
 
 		sut.setNoData(sNoData);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(typeof sut.getNoData(), "string", "noData aggregation is of type string");
 		assert.strictEqual($noDataText.text(), sNoData, "Table's nodata-text contains correct string");
@@ -3069,7 +3070,7 @@ sap.ui.define([
 		var oBundle = Library.getResourceBundleFor("sap.m");
 		var oInvisibleMessage = ListBase.getInvisibleText();
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $noData = sut.$().find("#" + sut.getId() + "-nodata");
 		$noData.trigger("focus");
@@ -3090,7 +3091,7 @@ sap.ui.define([
 			sut.setNoData(new IllustratedMessage());
 			setTimeout(function() {
 				sut.setNoData();
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 				$noData.trigger("focus");
 				var oNoColumnsMessage = sut.getAggregation("_noColumnsMessage");
@@ -3114,7 +3115,7 @@ sap.ui.define([
 
 		var oControl = new Button({text: "Button 1"});
 		sut.setNoData(oControl);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $noData = sut.$().find("#" + sut.getId() + "-nodata");
 		var $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
@@ -3128,7 +3129,7 @@ sap.ui.define([
 
 		oControl = new Text({text: "Text 1"});
 		sut.setNoData(oControl);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(sut.getNoData().isA("sap.m.Text"), "Table's changed no data aggregation is a text");
 		assert.equal(sut.getNoData().getText(), oControl.getText(), "Table's changed no data aggregation has correct text");
@@ -3143,7 +3144,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.vt = createVarietyTable();
 			this.vt.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.vt.destroy();
@@ -3161,7 +3162,7 @@ sap.ui.define([
 
 	QUnit.test("Tabbables", function(assert) {
 		this.vt.setMode("SingleSelectLeft");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		const o1stItem = this.vt.getItems()[0];
 		assert.equal(o1stItem.getTabbables()[0], o1stItem.getModeControl().getFocusDomRef(), "the first tabbable element is checkbox");
@@ -3410,7 +3411,7 @@ sap.ui.define([
 			});
 
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -3438,7 +3439,7 @@ sap.ui.define([
 	QUnit.test("visible column header row should be included in the ItemNavigation items", function(assert) {
 		var oColumn = this.oTable.getColumns()[1];
 		oColumn.setHeader(new Text({text: "Last Name"}));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $tblHeader = this.oTable.$("tblHeader");
 		$tblHeader.trigger("focus");
@@ -3512,7 +3513,7 @@ sap.ui.define([
 		}));
 
 		sut.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var fnShowSelectionLimitPopoverSpy = this.spy(Util, "showSelectionLimitPopover");
 		var sMessage;
@@ -3562,7 +3563,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oTable = createVarietyTable();
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.o1stItem = this.oTable.getItems()[0];
 			this.o2ndItem = this.oTable.getItems()[1];
 			this.o3rdItem = this.oTable.getItems()[2];
@@ -3680,7 +3681,7 @@ sap.ui.define([
 			if (aColumns[2].getVisible()) {
 				assert.ok(true, "*************** testing invisible 3rd column ***************");
 				oTable.getColumns()[2].setVisible(false);
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				return this.testAria.apply(this, arguments);
 			}
 
@@ -3688,7 +3689,7 @@ sap.ui.define([
 				assert.ok(true, "*************** testing table with popin ***************");
 				oTable.getColumns()[0].setDemandPopin(true);
 				oTable.getColumns()[0].setMinScreenWidth("10000px");
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				return this.testAria.apply(this, arguments);
 			}
 		}
@@ -3700,7 +3701,7 @@ sap.ui.define([
 
 	QUnit.test("aria - selection", function(assert) {
 		this.oTable.setMode("MultiSelect");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.testAria(1);
 
 		this.testHeaderCell(this.oTable.getDomRef("tblHeadModeCol"), 1, false);
@@ -3719,7 +3720,7 @@ sap.ui.define([
 	QUnit.test("aria - row actions", function(assert) {
 		this.o1stItem.setType("Navigation");
 		this.oTable.setMode("Delete");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.testAria(0, 2);
 
 		var iColumnsLength = this.oTable.getColumns().filter(function(oColumn) {

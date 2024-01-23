@@ -23,7 +23,7 @@ sap.ui.define([
 
 	function setCodeEditorValue (oCodeEditor, sInput) {
 		oCodeEditor.setValue(sInput);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	}
 
 	QUnit.module("JSON Data Editor: Given an editor config", {

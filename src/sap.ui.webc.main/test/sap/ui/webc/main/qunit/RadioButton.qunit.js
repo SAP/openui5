@@ -3,14 +3,15 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/RadioButton"
-], function(createAndAppendDiv, Core, RadioButton) {
+], function(createAndAppendDiv, Core, nextUIUpdate, RadioButton) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oRadioButton = new RadioButton({
 				text: "Some text...",
 				value: "Control value",
@@ -20,7 +21,7 @@ sap.ui.define([
 				}
 			});
 			this.oRadioButton.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oRadioButton.destroy();

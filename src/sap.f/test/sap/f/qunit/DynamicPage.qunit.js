@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"./DynamicPageUtil",
 	"sap/f/DynamicPage",
@@ -32,6 +33,7 @@ function(
 	ControlBehavior,
 	Element,
 	Library,
+	nextUIUpdate,
 	$,
 	DynamicPageUtil,
 	DynamicPage,
@@ -120,7 +122,7 @@ function(
 		});
 
 		this.oDynamicPage.setLandmarkInfo(oLandmarkInfo);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oDynamicPage.$().attr("role"), "region", "Root role is set correctly.");
 		assert.strictEqual(this.oDynamicPage.$().attr("aria-label"), "Root", "Root label is set correctly.");
@@ -142,7 +144,7 @@ function(
 
 		// act
 		oDynamicPage.setBackgroundDesign("Solid");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok($oDomRef.hasClass("sapFDynamicPageContentWrapperSolid"), "Should have sapFDynamicPageContentWrapperSolid class");
@@ -150,7 +152,7 @@ function(
 
 		// act
 		oDynamicPage.setBackgroundDesign("Standard");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapFDynamicPageContentWrapperSolid"), "Should not have sapFDynamicPageContentWrapperSolid class");
@@ -159,7 +161,7 @@ function(
 
 		// act
 		oDynamicPage.setBackgroundDesign("List");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapFDynamicPageContentWrapperStandard"), "Should not have sapFDynamicPageContentWrapperStandard class");
@@ -168,7 +170,7 @@ function(
 
 		// act
 		oDynamicPage.setBackgroundDesign("Transparent");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapFDynamicPageContentWrapperList"), "Should not have sapFDynamicPageContentWrapperList class");
@@ -177,7 +179,7 @@ function(
 
 		// act
 		oDynamicPage.setBackgroundDesign(null);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapFDynamicPageContentWrapperTransparent"), "Should not have sapFDynamicPageContentWrapperTransparent class");
@@ -372,7 +374,7 @@ function(
 	QUnit.test("DynamicPage headerExpanded=false expand header with click", function (assert) {
 		// setup
 		this.oDynamicPage.setContent(oFactory.getContent(500));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.oDynamicPage.getHeader().$().addClass("sapFDynamicPageHeaderHidden");
 		this.oDynamicPage._titleExpandCollapseWhenAllowed(true);
 
@@ -384,7 +386,7 @@ function(
 		// setup
 		var oHeaderElement;
 		this.oDynamicPage.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// assert
 
 		oHeaderElement = this.oDynamicPage.$().find(".sapFDynamicPageContentWrapper .sapFDynamicPageHeader");
@@ -468,7 +470,7 @@ function(
 
 		//Act
 		this.oDynamicPage.setFitContent(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.oDynamicPage._updateFitContainer();
 
 		// Assert
@@ -527,7 +529,7 @@ function(
 
 		this.oDynamicPage._snapHeader(true);
 		oDynamicPageTitle.setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		setTimeout(function() {
 
 			// Assert
@@ -565,7 +567,7 @@ function(
 		this.stub(this.oDynamicPageNoTitle, "getHeaderExpanded").returns(false);
 
 		this.oDynamicPageNoTitle.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(true, "No error is thrown");
 	});
@@ -587,7 +589,7 @@ function(
 
 			this.oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
 
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oDynamicPage.destroy();
@@ -612,7 +614,7 @@ function(
 	QUnit.test("DynamicPage Invisible Header", function (assert) {
 		this.oDynamicPage.getHeader().setVisible(false);
 		this.oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(this.oDynamicPage.getTitle()._getExpandButton().$().hasClass("sapUiHidden"), "Title expand button is hidden");
 	});
 
@@ -621,7 +623,7 @@ function(
 			iAllocatedSpaceForTitleHeight,
 			iActualTitleHeight;
 		this.oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSpy.resetHistory();
 
 		// Act: hide the header
@@ -641,7 +643,7 @@ function(
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPage();
 			this.oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oDynamicPage.destroy();
@@ -661,12 +663,12 @@ function(
 
 		// setup
 		this.oDynamicPage.getHeader().setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSpy = this.spy(this.oDynamicPage, "_updateTitleVisualState");
 
 		// act
 		this.oDynamicPage.getHeader().setVisible(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// asert
 		assert.ok(oSpy.callCount, 1, "Method is called when the visilibity of header is changed");
@@ -1072,7 +1074,7 @@ function(
 		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 
 		oUtil.renderObject(this.oDynamicPage);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick();
 
 		// Setup header too big to be preserved in the title area
@@ -1106,7 +1108,7 @@ function(
 		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 
 		oUtil.renderObject(this.oDynamicPage);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick();
 
 		// Setup header too big to be preserved in the title area
@@ -1155,7 +1157,7 @@ function(
 		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 
 		oUtil.renderObject(this.oDynamicPage);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick();
 
 		// Setup header too big to be preserved in the title area
@@ -1359,7 +1361,7 @@ function(
 		// Arrange
 		iSnapBreakpoint = this.oDynamicPage._getSnappingHeight();
 		this.oDynamicPage.getHeader().setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Arrange: scroll to snap
 		this.oDynamicPage._setScrollPosition(iSnapBreakpoint + 10);
@@ -1546,7 +1548,7 @@ function(
 		//Act
 		oDeregisterSpy.resetHistory();
 		oHeader.removeAllContent();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Check
 		assert.ok(oDeregisterSpy.notCalled, "resize handler is not deregistered");
@@ -1565,7 +1567,7 @@ function(
 
 		//Act - simulating invalidation of DynamicPage and rerendering
 		this.oDynamicPage.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oTogglePinButtonVisibilitySpy = this.spy(this.oDynamicPage, "_togglePinButtonVisibility");
 
@@ -2039,7 +2041,7 @@ function(
 		// Act
 		this.oDynamicPage._pin(true); // forcing user interaction in order to change the headerPinned property
 		this.oDynamicPage.invalidate(); //rerender while header is pinned
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The header is in the Header wrapper when pinned");
@@ -2054,7 +2056,7 @@ function(
 		assert.equal(this.oDynamicPage._canSnapHeaderOnScroll(), true, "The header can snap");
 
 		this.oDynamicPage.setContent(new Panel({height: "800px"}));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(this.oDynamicPage._canSnapHeaderOnScroll(), false, "The header cannot snap with scroll");
 
 		this.oDynamicPage._moveHeaderToTitleArea();
@@ -2102,7 +2104,7 @@ function(
 		oDynamicPage.$wrapper.scrollTop(iExpectedScrollPosition);
 		//act
 		oDynamicPage.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.ok(oDynamicPage.$wrapper.scrollTop, iExpectedScrollPosition,
@@ -2120,7 +2122,7 @@ function(
 		//act
 		oDynamicPage.toggleStyleClass("sapMNavItemHidden", true);
 		oDynamicPage.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oDynamicPage.toggleStyleClass("sapMNavItemHidden", false);
 
 		//assert
@@ -2162,7 +2164,7 @@ function(
 		assert.ok(!oDynamicPage._headerScrolledOut(), "Header is not scrolled out initially");
 
 		oDynamicPage._setScrollPosition(iScrolledOutPoint);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oDynamicPage._headerScrolledOut(), "Header is scrolled out after scrolling to the header`s very bottom");
 	});
@@ -2437,7 +2439,7 @@ function(
 
 		// Act
 		this.oDynamicPage.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		setTimeout(function() {
@@ -2557,7 +2559,7 @@ function(
 
 		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 		oDynamicPage.setHeaderExpanded(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oDynamicPage.getScrollDelegate().scrollTo(0, iSnappingHeight + 100);
 
 		//act
@@ -2816,7 +2818,7 @@ function(
 					assertHeaderSnapped(assert, !bHeaderInContent, oDynamicPage, iExpectedScrollPosition);
 					oDynamicPage.removeEventDelegate(oDelegateFirstRendering);
 					oDynamicPage.setPreserveHeaderStateOnScroll(true); // causes invalidation, so check in next rendering:
-					Core.applyChanges();
+					nextUIUpdate.runSync()/*fake timer is used in module*/;
 					assertHeaderSnapped(assert, !bHeaderInContent, oDynamicPage, iExpectedScrollPosition);
 					done();
 				}
@@ -2962,12 +2964,12 @@ function(
 			"The tooltip is correct");
 
 		this.oDynamicPage.setPreserveHeaderStateOnScroll(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(oPinButton.getTooltip(), sPinTooltip,
 			"The tooltip is correct: unchanged when preserveHeaderStateOnScroll is true");
 
 		this.oDynamicPage.setPreserveHeaderStateOnScroll(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(oPinButton.getTooltip(), sPinTooltip,
 			"The tooltip is correct: resetted when preserveHeaderStateOnScroll is false");
 	});
@@ -2989,7 +2991,7 @@ function(
 
 		// Act
 		oPage.destroyFooter();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $InvisibleTextDomRef = $("#" + oFooter.getId() + "-FooterActions-InvisibleText");
 
@@ -3085,7 +3087,7 @@ function(
 				});
 
 				this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				done();
 			}.bind(this));
 		},
@@ -3183,7 +3185,7 @@ function(
 				});
 
 				this.oUiComponentContainer.placeAt(TESTS_DOM_CONTAINER);
-				Core.applyChanges();
+				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				done();
 			}.bind(this));
 		},
@@ -3202,7 +3204,7 @@ function(
 		// act
 		oTitle.setAreaShrinkRatio("1:2:4");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.equal(parseFloat(oHeading.css("flex-shrink")).toFixed(1), 1, "Heading shrink factor is correct");
@@ -3305,7 +3307,7 @@ function(
 		oDynamicPage.removeAggregation("content");
 		oDynamicPage.setContent(oVbox);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		assert.equal(oDynamicPage.$wrapper.css("scroll-padding-top"), oDynamicPage.$wrapper.css("padding-top"),

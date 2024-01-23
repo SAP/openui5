@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	JSONModel,
@@ -30,6 +31,7 @@ sap.ui.define([
 	Page,
 	InvisibleText,
 	oCore,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -151,7 +153,7 @@ sap.ui.define([
 
 			bindListData(data, oItemTemplate1, this.oList);
 			this.oButton.placeAt('qunit-fixture');
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		},
 		afterEach: function() {
@@ -219,13 +221,13 @@ sap.ui.define([
 
 		// Open the ResponsivePopover
 		this.oResponsivePopover.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(jQuery("#" + this.oResponsivePopover.getId() + "-closeButton").length === 0, "CloseButton should not be rendered");
 
 		this.oResponsivePopover.setShowCloseButton(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(jQuery("#" + this.oResponsivePopover.getId() + "-closeButton").length === 1, "CloseButton should be rendered");
 	});
@@ -249,7 +251,7 @@ sap.ui.define([
 
 		// Open the ResponsivePopover
 		oResponsivePopover.openBy(this.oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		this.clock.tick(500);
 
 		assert.ok(true, "does not throw an exception");
@@ -276,7 +278,7 @@ sap.ui.define([
 
 		// act
 		oPopover.setEndButton(new Button());
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oInserAggregationSpy.getCall(0).args[1], 1, "insert content should be called with position 1 for end button");
@@ -313,7 +315,7 @@ sap.ui.define([
 		});
 
 		this.oResponsivePopover.addContent(oNavContainer);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oResponsivePopover.openBy(this.oButton);
 		this.clock.tick(500);
@@ -425,7 +427,7 @@ sap.ui.define([
 		});
 
 		// Act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oResponsivePopover.getDependents().length, 1, "Dependents aggregation is forwarded correctly");
@@ -436,7 +438,7 @@ sap.ui.define([
 		var oButton = new Button();
 
 		oButton.placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// open the RPO
 		oResponsivePopover.openBy(oButton);
@@ -445,11 +447,11 @@ sap.ui.define([
 		// remove it from the UI Area
 		var oUIArea = oResponsivePopover.getParent();
 		oUIArea.removeAllContent();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// invalidate it
 		oResponsivePopover.addContent(new Button());
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(true, "Assertion has done");
 	});
@@ -496,9 +498,9 @@ sap.ui.define([
 			sAlignment;
 
 		oButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oPopover.openBy(oButton);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		sInitialAlignment = oPopover.getTitleAlignment();
 
 		// initial titleAlignment test depending on theme
@@ -508,7 +510,7 @@ sap.ui.define([
 		// check if all types of alignment lead to apply the proper CSS class
 		for (sAlignment in TitleAlignment) {
 			oPopover.setTitleAlignment(sAlignment);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(oPopover._oControl._getAnyHeader().hasStyleClass(sAlignmentClass + sAlignment),
 						"titleAlignment is set to '" + sAlignment + "', there is class '" + sAlignmentClass + sAlignment + "' applied to the Header");
 		}

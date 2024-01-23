@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/SuggestionsPopover",
 	'sap/m/List',
@@ -12,10 +13,11 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/core/Item",
 	"sap/ui/core/Core"
-], function (
+], function(
 	Device,
 	qutils,
 	KeyCodes,
+	nextUIUpdate,
 	jQuery,
 	SuggestionsPopover,
 	List,
@@ -29,9 +31,9 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Highlighting", {
-		before: function () {
+		before: async function() {
 			this.oSuggestionsPopover = new SuggestionsPopover();
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		after: function () {
 			this.oSuggestionsPopover.destroy();
@@ -66,9 +68,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("initContent", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oSuggestionsPopover = new SuggestionsPopover();
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oSuggestionsPopover.destroy();
@@ -76,7 +78,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_onsaparrowkey should not be called when we have composition characters", function (assert) {
+	QUnit.test("_onsaparrowkey should not be called when we have composition characters", async function(assert) {
 		// Arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -90,7 +92,7 @@ sap.ui.define([
 		// Act
 		oInput._bIsComposingCharacter = true;
 		oInput.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oInput._$input.trigger("focus").val("te").trigger("input");
 
@@ -107,7 +109,7 @@ sap.ui.define([
 
 	QUnit.module("mobile");
 
-	QUnit.test("On mobile the sapUiNoContentPadding class is added to the picker.", function (assert) {
+	QUnit.test("On mobile the sapUiNoContentPadding class is added to the picker.", async function(assert) {
 		var oComboBox, oSuggestionsPopover;
 
 		// Arrange
@@ -122,7 +124,7 @@ sap.ui.define([
 		oSuggestionsPopover = new SuggestionsPopover();
 		oSuggestionsPopover._bUseDialog = true;
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		oSuggestionsPopover.createSuggestionPopup(oComboBox, {});
@@ -135,7 +137,7 @@ sap.ui.define([
 		oSuggestionsPopover.destroy();
 	});
 
-	QUnit.test("ComboBox: The following condition is met: height != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", function (assert) {
+	QUnit.test("ComboBox: The following condition is met: height != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", async function(assert) {
 		var oComboBox;
 
 		// Arrange
@@ -147,7 +149,7 @@ sap.ui.define([
 
 		oComboBox = new ComboBox();
 		oComboBox.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oComboBox.open();
@@ -162,7 +164,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("MultiComboBox: The following condition is met: height != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", function (assert) {
+	QUnit.test("MultiComboBox: The following condition is met: height != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", async function(assert) {
 		var oMultiComboBox;
 
 		// Arrange
@@ -174,7 +176,7 @@ sap.ui.define([
 
 		oMultiComboBox = new MultiComboBox();
 		oMultiComboBox.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oMultiComboBox.open();
@@ -189,7 +191,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Get the proper list", function (assert) {
+	QUnit.test("Get the proper list", async function(assert) {
 		var oSuggPopover, oInput;
 
 		// Arrange
@@ -202,11 +204,11 @@ sap.ui.define([
 		// Setup
 		oInput = new Input();
 		oSuggPopover = oInput._getSuggestionsPopover();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oSuggPopover.addContent(new List());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notOk(oSuggPopover.getItemsContainer(), "This is not the items container, but a custom list");
@@ -217,7 +219,7 @@ sap.ui.define([
 		oSuggPopover.destroy();
 	});
 
-	QUnit.test("Navigating through GroupItems should deselect items from the list", function (assert) {
+	QUnit.test("Navigating through GroupItems should deselect items from the list", async function(assert) {
 		var oSuggPopover, oInput, oListItem, oList, oListSpy;
 
 		// Setup
@@ -225,7 +227,7 @@ sap.ui.define([
 		oInput = new Input();
 		oSuggPopover = oInput._getSuggestionsPopover();
 		oSuggPopover.initContent();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oList = oSuggPopover.getItemsContainer();
 		oListSpy = this.spy(oList, "removeSelections");

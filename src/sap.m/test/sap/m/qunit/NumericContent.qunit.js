@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Button",
 	"sap/m/GenericTile",
@@ -21,7 +22,7 @@ sap.ui.define([
 	"sap/ui/util/Mobile",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils"
-], function(Localization, Library, jQuery, Button, GenericTile, Label, NumericContent, Table, Toolbar, ToolbarSpacer, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, KeyCodes, Mobile, oCore, qutils) {
+], function(Localization, Library, nextUIUpdate, jQuery, Button, GenericTile, Label, NumericContent, Table, Toolbar, ToolbarSpacer, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, KeyCodes, Mobile, oCore, qutils) {
 	"use strict";
 
 	var oResourceBundle = Library.getResourceBundleFor("sap.m");
@@ -41,80 +42,80 @@ sap.ui.define([
 	Mobile.init();
 
 	QUnit.module("Rendering test - sap.m.NumericContent", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oNumericContent = fnCreateExampleNumericContent();
 			this.oNumericContent.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oNumericContent.destroy();
 			this.oNumericContent = null;
 		}
 	});
-	QUnit.test("Numeric Content rendered.", function (assert) {
+	QUnit.test("Numeric Content rendered.", async function(assert) {
 		this.oNumericContent.setValue("12");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		fnAssertNumericContentHasRendered(assert);
 	});
-	QUnit.test("Fire Event Not triggered when pressing enter key", function(assert) {
+	QUnit.test("Fire Event Not triggered when pressing enter key", async function(assert) {
 		this.oNumericContent.setValue("12");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oSpy = this.spy(this.oNumericContent, "firePress");
 		qutils.triggerKeyup("numeric-cnt", KeyCodes.ENTER);
 		qutils.triggerKeyEvent("keypress", "numeric-cnt", KeyCodes.ENTER);
 		assert.ok(oSpy.notCalled, "The firePress function has been called only once when the enter key is press");
 	});
 
-	QUnit.test("Numeric Content rendered with correct value and scale when formatterValue is set to true.", function (assert) {
+	QUnit.test("Numeric Content rendered with correct value and scale when formatterValue is set to true.", async function(assert) {
 		var value = '12.2';
 		var scale = '%';
 
 		this.oNumericContent.setFormatterValue(true);
 
 		this.oNumericContent.setValue(value + scale);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(document.getElementById("numeric-cnt-value-inner").innerText, value, "Value is rendered correctly");
 		assert.strictEqual(document.getElementById("numeric-cnt-scale").innerText, scale, "Scale is rendered correctly");
 
 		// for few countries metric representation is different
 		// for eg; in turkish % is written as %12.2 instead of 12.2%
 		this.oNumericContent.setValue(scale + value);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(document.getElementById("numeric-cnt-value-inner").innerText, value, "Value is rendered correctly");
 		assert.strictEqual(document.getElementById("numeric-cnt-scale").innerText, scale, "Scale is rendered correctly");
 	});
 
-	QUnit.test("Numeric Content - Render Placeholder loading animation", function (assert) {
+	QUnit.test("Numeric Content - Render Placeholder loading animation", async function(assert) {
 		//Switch to Loading State
 		this.oNumericContent.setState(LoadState.Loading);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(document.querySelector(".sapMNCLoadingShimmer"), "Loading Shimmer present on 'Loading' state");
 
 		//Switch to Loaded State
 		this.oNumericContent.setState(LoadState.Loaded);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(document.querySelector(".sapMNCLoadingShimmer"), null, "Loading Shimmer absent on 'Loaded' state");
 	});
 
-	QUnit.test("Numeric Content - State test", function (assert) {
+	QUnit.test("Numeric Content - State test", async function(assert) {
 		this.oNumericContent.setValue(200);
 
 		//Switch to Loading State
 		this.oNumericContent.setState(LoadState.Loading);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(document.querySelector(".sapMNCLoadingShimmer"), "Loading Shimmer present on 'Loading' state");
 		assert.equal(getComputedStyle(document.querySelector(".sapMNCLoadingShimmer")).opacity, "1" ,"Loading Shimmer Opacity is set correctly");
 		assert.equal(getComputedStyle(document.querySelector(".sapMNCValue.Good.Loading")).opacity, "1" ,"NumericContent Opacity is set correctly");
 
 		//Switch to Loaded State
 		this.oNumericContent.setState(LoadState.Loaded);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(document.querySelector(".sapMNCLoadingShimmer"), null, "Loading Shimmer absent on 'Loaded' state");
 		assert.equal(getComputedStyle(document.querySelector(".sapMNCValue.Good.Loaded")).opacity, "1" ,"NumericContent Opacity is set correctly");
 
 		//Switch to Failed State
 		this.oNumericContent.setState(LoadState.Failed);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(getComputedStyle(document.querySelector(".sapMNCValue.Good.Failed")).opacity, "0.25" ,"sapMNCValue Opacity is set correctly");
 		assert.equal(getComputedStyle(document.querySelector(".sapMNCIconImage.Failed")).opacity, "1" ,"sapMNCValue Opacity is set correctly");
 		assert.equal(getComputedStyle(document.querySelector(".sapMNCScale.Failed")).opacity, "1" ,"sapMNCScale Opacity is set correctly");
@@ -160,7 +161,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering test - sap.m.NumericContent inside sap.m.Table");
 
-	QUnit.test("Numeric content inside sap.m.Table", function(assert) {
+	QUnit.test("Numeric content inside sap.m.Table", async function(assert) {
 		var oModel = new JSONModel();
 				oModel.setData({
 					numbers: [
@@ -202,13 +203,13 @@ sap.ui.define([
 				}));
 		oTable.setWidth("320px");
 		oTable.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oTable.mAggregations.items[0].mAggregations.cells[0].$("value").hasClass("sapMNCValue"), true , "Success");
 	});
 
 	QUnit.module("Rendering test - sap.m.NumericContent inside sap.m.GenericTile");
 
-	QUnit.test("Numeric Content inside sap.m.GenericTile rendered.", function (assert) {
+	QUnit.test("Numeric Content inside sap.m.GenericTile rendered.", async function(assert) {
 		// Arrange
 		this.oNumericContent = fnCreateExampleNumericContent();
 		this.oGenericTile = new GenericTile("generic-tile", {
@@ -217,11 +218,11 @@ sap.ui.define([
 			})]
 		});
 		this.oGenericTile.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.oNumericContent.setValue("12");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(document.getElementById("generic-tile"), "GenericTile (wrapper of NumericContent) was rendered successfully");
@@ -233,7 +234,7 @@ sap.ui.define([
 		this.oNumericContent = null;
 	});
 
-	QUnit.test("Resize handler is registered in init phase.", function (assert) {
+	QUnit.test("Resize handler is registered in init phase.", async function(assert) {
 		// Arrange
 		var oSpyRegister = sinon.spy(ResizeHandler, "register");
 		var oSpyDeregister = sinon.spy(ResizeHandler, "deregister");
@@ -246,7 +247,7 @@ sap.ui.define([
 
 		// Act
 		this.oGenericTile.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSpyRegister.callCount, 2, "ResizeHandler.register was called.");
@@ -259,10 +260,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Functional tests - sap.m.NumericContent", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oNumericContent = fnCreateExampleNumericContent();
 			this.oNumericContent.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oNumericContent.destroy();
@@ -270,39 +271,39 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Test formatter value processing", function (assert) {
+	QUnit.test("Test formatter value processing", async function(assert) {
 		this.oNumericContent.setFormatterValue(false);
 		this.oNumericContent.setValue("68Mio.");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "68Mi", "Value was rendered successfully with formatter switched off");
 		assert.strictEqual(this.oNumericContent.getDomRef("scale").textContent, "M", "Scale was rendered successfully with formatter switched off");
 		this.oNumericContent.setFormatterValue(true);
 		this.oNumericContent.setValue("68 Mio");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "68", "Value was rendered successfully with formatter switched on");
 		assert.strictEqual(this.oNumericContent.getDomRef("scale").textContent, "Mio", "Scale was rendered successfully with formatter switched on");
 		this.oNumericContent.setValue(undefined);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "0", "Value cleaned successfully with formatter switched on");
 		assert.strictEqual(this.oNumericContent.getDomRef("scale"), null, "Scale cleaned successfully with formatter switched on");
 	});
 
-	QUnit.test("Test processing of formatter value with RTL and LTR mark", function (assert) {
+	QUnit.test("Test processing of formatter value with RTL and LTR mark", async function(assert) {
 		this.oNumericContent.setFormatterValue(true);
 		var sFormattedValue = String.fromCharCode(8206) + String.fromCharCode(8207) + "58,7 Mio";
 		this.oNumericContent.setValue(sFormattedValue);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "58,7", "Value was rendered successfully with formatter switched on");
 		assert.strictEqual(this.oNumericContent.getDomRef("scale").textContent, "Mio", "Scale was rendered successfully with formatter switched on");
 	});
 
-	QUnit.test("Test nullify parameter", function (assert) {
+	QUnit.test("Test nullify parameter", async function(assert) {
 		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "0", "Value was nullified successfully");
 		this.oNumericContent.setNullifyValue(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "", "Value was not nullified");
 	});
 
@@ -328,7 +329,7 @@ sap.ui.define([
 		assert.notDeepEqual(sTooltip, "Test, test", "Tooltip is not a string");
 	});
 
-	QUnit.test("Tests tooltip to check if it includes value color text", function (assert) {
+	QUnit.test("Tests tooltip to check if it includes value color text", async function(assert) {
 		//Arrange
 		var sTooltip = this.oNumericContent.getTooltip_AsString();
 		//Act
@@ -339,7 +340,7 @@ sap.ui.define([
 		//Arrange
 		this.oNumericContent.setValueColor(ValueColor.None);
 		//Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 		sTooltip = this.oNumericContent.getTooltip_AsString();
 		isValueColorPresent = sTooltip.indexOf(ValueColor.None) > -1;
 
@@ -431,13 +432,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Property withoutMargin", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oNumericContent = new NumericContent({
 				scale: "Mrd",
 				indicator: DeviationIndicator.Up,
 				value: "699"
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oNumericContent.destroy();
@@ -449,10 +450,10 @@ sap.ui.define([
 		assert.ok(this.oNumericContent.getWithMargin(), "Default value shall be 'false'.");
 	});
 
-	QUnit.test("CSS Class needs to be added if withoutMargin is set to true", function (assert) {
+	QUnit.test("CSS Class needs to be added if withoutMargin is set to true", async function(assert) {
 		assert.ok(!this.oNumericContent.$().hasClass("WithoutMargin"));
 		this.oNumericContent.setWithMargin(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(this.oNumericContent.$().hasClass("WithoutMargin"), "'withoutMargin' CSS class expected.");
 		assert.ok(jQuery(this.oNumericContent.$().children()[0]).hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the inner div container.");
 		assert.ok(this.oNumericContent.$("value").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the parent value container.");
@@ -461,10 +462,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Events test", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oNumericContent = fnCreateExampleNumericContent();
 			this.oNumericContent.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oNumericContent.destroy();
@@ -515,7 +516,7 @@ sap.ui.define([
 		assert.strictEqual(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class has been removed successfully");
 	});
 	QUnit.module("Negative values", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oNumericContent = new NumericContent("numeric-cnt", {
 				indicator: DeviationIndicator.Up,
 				value: "−859,65 t.",
@@ -524,7 +525,7 @@ sap.ui.define([
 				animateTextChange: false,
 				icon:  "sap-icon://line-charts"
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oNumericContent.destroy();
@@ -538,14 +539,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Adaptive font size", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oNumericContent = new NumericContent("numeric-cnt", {
 				indicator: DeviationIndicator.Up,
 				value: "12345678",
 				animateTextChange: false,
 				icon:  "sap-icon://line-charts"
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oNumericContent.destroy();
@@ -573,63 +574,63 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Test the adaptive font size change based on language - small", function (assert) {
+	QUnit.test("Test the adaptive font size change based on language - small", async function(assert) {
 		// Arrange
 		var sDefaultLanguage = Localization.getLanguage(),
 			sNewLanguage = "de";
 		Localization.setLanguage(sNewLanguage);
 		this.oNumericContent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCSmallFontSize", sNewLanguage);
 		// Arrange
 		sNewLanguage = "de-de";
 		Localization.setLanguage(sNewLanguage);
 		this.oNumericContent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCSmallFontSize", sNewLanguage);
 		// Arrange
 		this.oNumericContent.setAdaptiveFontSize(false);
 		this.oNumericContent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCLargeFontSize", sNewLanguage);
 		Localization.setLanguage(sDefaultLanguage);
 	});
 
-	QUnit.test("Test the adaptive font size change based on language - medium", function (assert) {
+	QUnit.test("Test the adaptive font size change based on language - medium", async function(assert) {
 		// Arrange
 		var sDefaultLanguage = Localization.getLanguage(),
 			sNewLanguage = "es";
 		Localization.setLanguage(sNewLanguage);
 		this.oNumericContent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCMediumFontSize", sNewLanguage);
 		// Arrange
 		this.oNumericContent.setAdaptiveFontSize(false);
 		this.oNumericContent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCLargeFontSize", sNewLanguage);
 		this.oNumericContent.setAdaptiveFontSize(true);
 		Localization.setLanguage(sDefaultLanguage);
 	});
 
-	QUnit.test("Test the adaptive font size change based on language - large", function (assert) {
+	QUnit.test("Test the adaptive font size change based on language - large", async function(assert) {
 		// Arrange
 		var sDefaultLanguage = Localization.getLanguage(),
 			sNewLanguage = "bg";
 		Localization.setLanguage(sNewLanguage);
 		this.oNumericContent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCLargeFontSize", sNewLanguage);
 		// Arrange
 		this.oNumericContent.setAdaptiveFontSize(false);
 		this.oNumericContent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCLargeFontSize", sNewLanguage);
 		this.oNumericContent.setAdaptiveFontSize(true);
@@ -649,12 +650,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Truncate value to", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oNumericContent = new NumericContent("numeric-cnt", {
 				value: "12345678123456781234567812345678",
 				animateTextChange: false
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oNumericContent.destroy();
@@ -662,37 +663,37 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Test custom truncateValueTo property", function(assert) {
+	QUnit.test("Test custom truncateValueTo property", async function(assert) {
 		// Arrange
 		this.oNumericContent.setTruncateValueTo(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 1, "Value is truncated to 1 char");
 
 		// Arrange
 		this.oNumericContent.setTruncateValueTo(20);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 20, "Value is truncated to 20 chars");
 	});
 
-	QUnit.test("Test default value when adaptiveFontSize=false", function(assert) {
+	QUnit.test("Test default value when adaptiveFontSize=false", async function(assert) {
 		// Arrange
 		this.oNumericContent.setAdaptiveFontSize(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 4, "Value is truncated to 4 chars");
 	});
 
-	QUnit.test("Test default value for specific language", function(assert) {
+	QUnit.test("Test default value for specific language", async function(assert) {
 		// Arrange
 		var sDefaultLanguage = Localization.getLanguage();
 		Localization.setLanguage("de");
 		this.oNumericContent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 8, "Value is truncated to 8 chars for 'de'");
@@ -700,7 +701,7 @@ sap.ui.define([
 		// Arrange
 		Localization.setLanguage("es");
 		this.oNumericContent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 6, "Value is truncated to 6 chars for 'es'");
@@ -708,7 +709,7 @@ sap.ui.define([
 		// Arrange
 		Localization.setLanguage("en");
 		this.oNumericContent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 4, "Value is truncated to 4 chars for 'en'");

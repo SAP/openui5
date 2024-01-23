@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/InputBase",
 	"sap/ui/core/library",
 	"sap/m/Label",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Input",
 	"sap/m/Button",
@@ -29,6 +30,7 @@ sap.ui.define([
 	InputBase,
 	coreLibrary,
 	Label,
+	nextUIUpdate,
 	jQuery,
 	Input,
 	Button,
@@ -93,7 +95,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(oInput.getValue(), "", 'The default value is ""');
@@ -374,14 +376,14 @@ sap.ui.define([
 				"lorem-ipsum-label"
 			]
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oInput.getFocusDomRef().getAttribute("aria-required"), "The attribute is set correctly");
 
 		// Act
 		oLabel.setRequired(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.notOk(oInput.getFocusDomRef().getAttribute("aria-required"), "The attribute is removed");
@@ -403,7 +405,7 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assertions
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
@@ -443,7 +445,7 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			var fnRerenderSpy = this.spy(oInput.getRenderer(), "render");
 
 			// act
@@ -509,7 +511,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act - set dom value
 		oInput.getFocusDomRef().value = sValue + sValue;
@@ -539,7 +541,7 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assertions
 			assert.strictEqual(oInput.getDomRef().style.width, mSettings.output);
@@ -578,11 +580,11 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			oInput.setWidth(mSettings.input);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assertions
 			assert.strictEqual(oInput.getDomRef().style.width, mSettings.output);
@@ -621,11 +623,11 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oInput.setEnabled(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
@@ -644,7 +646,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
@@ -661,7 +663,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("disabled"), undefined);
@@ -682,7 +684,7 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assertions
 			assert.ok(oInput.$("content").hasClass(mSettings.output));
@@ -735,11 +737,11 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			oInput.setValueState(mSettings.input);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assertions
 			assert.ok(oInput.$("content").hasClass(mSettings.output), "Input should have the class " + mSettings.output);
@@ -771,17 +773,17 @@ sap.ui.define([
 		var oInput = new InputBase({
 			valueState : null
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oInput.getValueState(), ValueState.None, "Invalid value state before rendering is converted to default value.");
 
 		oInput.setValueState(ValueState.Error);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oInput.$("content").hasClass("sapMInputBaseContentWrapperError"), "Input has the state class before testing the invalid value.");
 
 		oInput.setValueState(undefined);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oInput.getValueState(), ValueState.None, "Invalid value state is converted to default value.");
 		assert.ok(!oInput.$().hasClass("sapMInputBaseState"), "Input's state class is removed after setting the invalid value");
@@ -798,21 +800,21 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oInput.getDomRef("content").classList.contains("sapMInputBaseContentWrapperInformation"));
 
 		// act
 		oInput.setEditable(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oInput.getDomRef("content").classList.contains("sapMInputBaseContentWrapperInformation"));
 
 		// act
 		oInput.setEnabled(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.notOk(oInput.getDomRef("content").classList.contains("sapMInputBaseContentWrapperInformation"));
@@ -834,7 +836,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("name"), "myInput", 'The attribute name is "myInput"');
@@ -850,11 +852,11 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oInput.setName("myInput");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("name"), "myInput", 'The attribute name is "myInput"');
@@ -875,11 +877,11 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			oInput.setPlaceholder(mSettings.input);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assertions
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder") || "", mSettings.output);
@@ -920,7 +922,7 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assertions
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("readonly"), mSettings.output);
@@ -952,11 +954,11 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			oInput.setEditable(mSettings.input);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assertions
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("readonly"), mSettings.output);
@@ -991,7 +993,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(oInput.$().length, 0);
@@ -1012,7 +1014,7 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assertions
 			assert.strictEqual(oInput.getFocusDomRef().style.textAlign, mSettings.output);
@@ -1044,11 +1046,11 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// act
 			oInput.setTextAlign(mSettings.input);
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assertions
 			assert.strictEqual(oInput.getFocusDomRef().style.textAlign, mSettings.output);
@@ -1081,7 +1083,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oInput.destroy();
@@ -1117,7 +1119,7 @@ sap.ui.define([
 		// arrange
 		oErrorInput.placeAt("content");
 		oWarningInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oErrorInput.focus();
 		this.clock.tick(500);
 
@@ -1143,7 +1145,7 @@ sap.ui.define([
 		assert.ok(!document.getElementById("warninginput-message"), "warning message popup is closed when focus is out");
 
 		oErrorInput.setShowValueStateMessage(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oErrorInput.focus();
 		this.clock.tick(500);
 		assert.ok(!document.getElementById("errorinput-message"), "no error message popup if showValueStateMessage is set to false");
@@ -1164,27 +1166,27 @@ sap.ui.define([
 						switch (i % 5) {
 							case 0:
 								oValueStateInput.setValueState("None");
-								oCore.applyChanges();
+								nextUIUpdate.runSync()/*fake timer is used in module*/;
 								break;
 
 							case 1:
 								oValueStateInput.setValueState("Warning");
-								oCore.applyChanges();
+								nextUIUpdate.runSync()/*fake timer is used in module*/;
 								break;
 
 							case 2:
 								oValueStateInput.setValueState("Success");
-								oCore.applyChanges();
+								nextUIUpdate.runSync()/*fake timer is used in module*/;
 								break;
 
 							case 3:
 								oValueStateInput.setValueState("Error");
-								oCore.applyChanges();
+								nextUIUpdate.runSync()/*fake timer is used in module*/;
 								break;
 
 							case 4:
 								oValueStateInput.setValueState("Information");
-								oCore.applyChanges();
+								nextUIUpdate.runSync()/*fake timer is used in module*/;
 								break;
 						}
 					}
@@ -1192,7 +1194,7 @@ sap.ui.define([
 
 		var fnSetErrorAnnounceSpy  = this.spy(oValueStateInput, "setErrorMessageAnnouncementState");
 		oValueStateInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// warning state
 		oValueStateInput.updateDomValue("1").focus();
@@ -1265,7 +1267,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("dir"), "rtl");
 
@@ -1281,7 +1283,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("dir"), "ltr");
 
@@ -1298,7 +1300,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $Input = jQuery(oInput.getFocusDomRef());
 
@@ -1318,7 +1320,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $Input = jQuery(oInput.getFocusDomRef());
 
@@ -1342,7 +1344,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 
 		// act
@@ -1370,7 +1372,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput.focus();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "a");
@@ -1394,7 +1396,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput.focus();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "bar");
@@ -1431,7 +1433,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput.focus();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "a");
@@ -1458,7 +1460,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oInputDomRef = oInput.getFocusDomRef();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 
@@ -1502,7 +1504,7 @@ sap.ui.define([
 		// arrange
 		oInput.placeAt("content");
 		oButton.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput.focus();
 		oInput.getFocusDomRef().value = sExpectedValue;
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
@@ -1532,7 +1534,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnFireEventSpy = this.spy(oInput, "fireEvent");
 		var fnOnEscapeSpy = this.spy(oInput, "onsapescape");
 
@@ -1580,7 +1582,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oInputDomRef = oInput.getFocusDomRef();
 		var fnInputDelegateSpy = this.spy();
 		var oInputDelegate = {
@@ -1609,7 +1611,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		try {
@@ -1636,7 +1638,7 @@ sap.ui.define([
 			},
 			oStub = sinon.stub(oInput, "getDomRef").returns(undefined);
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		try {
 			// act
@@ -1664,7 +1666,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertion - before escape
 		assert.strictEqual(oInput.getFocusDomRef(), oInput.$().find("input")[0], "getFocusDomRef returns the input field.");
@@ -1681,7 +1683,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 
 		// act - set dom value and change cursor position
@@ -1691,7 +1693,7 @@ sap.ui.define([
 
 		// invalidate the control after dom value changes
 		oInput.setPlaceholder("placeholder");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertions
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "Change event should not be fired during the rendering");
@@ -1718,7 +1720,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act - set dom value and set value property and change cursor position
 		oInput.focus();
@@ -1728,7 +1730,7 @@ sap.ui.define([
 
 		// invalidate the control after dom and property value changes
 		oInput.setPlaceholder("placeholder");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertion
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), sTestValue, "InputBase respected setProperty value call and did not revert the dom value.");
@@ -1752,7 +1754,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var $Input = jQuery(oInput.getFocusDomRef());
 
 		// act - get focus info and change cursor position of the dom element
@@ -1779,15 +1781,15 @@ sap.ui.define([
 		// arrange
 		var sValue = "Lorem Ipsum";
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput.focus();
 
 		// act
 		oInput.updateDomValue(sValue);
 		oInput.setVisible(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oInput.setVisible(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oInput.getFocusDomRef().value, sValue);
@@ -1802,7 +1804,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertion - before escape
 		assert.strictEqual(oInput.getPopupAnchorDomRef(), oInput.$()[0], "getFocusDomRef returns the control's DOM reference.");
@@ -1838,7 +1840,7 @@ sap.ui.define([
 		});
 		oInput.setModel(oModel);
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assertion
 		assert.strictEqual(oInput.getValue(), smile(sInitValue), "Initial formatter is applied correctly");
@@ -1874,7 +1876,7 @@ sap.ui.define([
 		var oInput = new InputBase().placeAt("content");
 		var fnSetErrorAnnounceSpy  = this.spy(oInput, "setErrorMessageAnnouncementState");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("role"), "textbox", "Textbox role set correctly");
@@ -1884,24 +1886,24 @@ sap.ui.define([
 		assert.strictEqual($Input.attr("aria-labelledby"), undefined, "No aria-labelledby set by default");
 
 		oInput.setValueState(ValueState.Warning);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(fnSetErrorAnnounceSpy.calledWith, false,
 			"The error announcement state should not be changed, when the value state is not Error");
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Warning does not make control invalid");
 
 		oInput.setValueState(ValueState.Success);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Success does not make control invalid");
 
 		oInput.setValueState(ValueState.Information);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Information does not make control invalid");
 
 		oInput.setValueState(ValueState.Error);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(fnSetErrorAnnounceSpy.calledWith, false,
 			"The error announcement state should not be changed, when the control is not focused");
@@ -1909,30 +1911,30 @@ sap.ui.define([
 
 		oInput.focus();
 		oInput.setValueState(ValueState.Error);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(fnSetErrorAnnounceSpy.calledWith, true,
 			"The error annoucement state should be changed, when the control is on focus and there are dynamic changes");
 		assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error makes control invalid");
 
 		oInput.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error is at the dom after rendering");
 
 		oInput.setEditable(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("readonly"), "readonly", "readonly attribute is set for editable=false");
 
 		oInput.setEnabled(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("disabled"), "disabled", "disabled attribute is set for enabled=false");
 
 		var oText = new Text("text");
 		oInput.addAriaLabelledBy(oText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("aria-labelledby"), "text", "aria-labelledby set for assosiation");
 
@@ -1949,11 +1951,11 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oInput.setTooltip("");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oInput.$().attr("title"), undefined);
@@ -1972,11 +1974,11 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oInput.setTooltip("");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oInput.$().attr("title") === undefined);
@@ -2005,11 +2007,11 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oInput.setTooltip("");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oInput.$().attr("title") === undefined);
@@ -2043,7 +2045,7 @@ sap.ui.define([
 		// arrange
 		oInput.placeAt("content");
 		oText.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oInput.setTooltip("");
@@ -2092,7 +2094,7 @@ sap.ui.define([
 		var oInput = new MyTextField({
 			valueState: ValueState.Error
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var $Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("role"), "combobox", "Control role set correctly");
@@ -2105,14 +2107,14 @@ sap.ui.define([
 		var oText = new Text("text");
 		oInput.addAriaLabelledBy(oText);
 		oInput.addAriaDescribedBy(oText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("aria-labelledby"), "text internal_labelledby_id", "aria-labelledby is set for assosiation and internal together");
 		assert.strictEqual($Input.attr("aria-describedby"), "text internal_describedby_id", "aria-describedby is set for assosiation and internal together");
 
 		oInput.removeAriaLabelledBy(oText);
 		oInput.removeAriaDescribedBy(oText);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("aria-labelledby"), "internal_labelledby_id", "aria-labelledby is set only for internal");
 		assert.strictEqual($Input.attr("aria-describedby"), "internal_describedby_id", "aria-describedby is set only for internal");
@@ -2161,7 +2163,7 @@ sap.ui.define([
 				})
 			})
 		}).placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oInput.getAggregation("_invisibleFormattedValueStateText").getControls()[0].getDomRef().getAttribute("tabindex"), "-1", "The link shouldn't be tabbable");
 		oInput.destroy();
@@ -2193,7 +2195,7 @@ sap.ui.define([
 		}).placeAt("content");
 
 		oInput.oninput = oninputOverride;
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		setTimeout(function () {
 			if (callCount) {
@@ -2232,13 +2234,13 @@ sap.ui.define([
 			value: 'ä'
 		}).placeAt("content");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		setTimeout(function () {
 			oInput.oninput = oninputOverride;
 
 			oInput.invalidate();
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			setTimeout(function () {
 				if (callCount) {
@@ -2281,13 +2283,13 @@ sap.ui.define([
 		var oPanel = new Panel({
 			content: oInput
 		}).placeAt('content');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		setTimeout(function () {
 			oInput.oninput = oninputOverride;
 
 			oPanel.invalidate();
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			setTimeout(function () {
 				if (callCount) {
@@ -2327,7 +2329,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oInputDomRef = oInput.getFocusDomRef(),
 			fnFireChangeSpy = this.spy(oInput, "fireChange"),
@@ -2354,19 +2356,19 @@ sap.ui.define([
 			oBeginIcon, oEndIcon;
 
 		oInput.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(0, oInput._calculateIconsSpace(),
 			"The space taken by the icon should be 0, when no icon present");
 
 		oEndIcon = oInput.addEndIcon({src: "sap-icon://slim-arrow-down"});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oEndIcon.getDomRef().offsetWidth, oInput._calculateIconsSpace(),
 			"The space taken by the icon should be calculated");
 
 		oBeginIcon = oInput.addBeginIcon({src: "sap-icon://slim-arrow-down"});
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oBeginIcon.getDomRef().offsetWidth + oEndIcon.getDomRef().offsetWidth,
 			oInput._calculateIconsSpace(), "The space taken by the icons should be calculated" );
@@ -2384,7 +2386,7 @@ sap.ui.define([
 		var fnOnInputBaseSpy = this.spy(oRenderer, "getInnerSuffix");
 
 		oInputBase.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(fnOnInputBaseSpy.callCount, 1, "getInnerSuffix() is called");
 		assert.strictEqual(oInputBase.$(oRenderer.getInnerSuffix()).length, 1, "The inner element has proper Id");
@@ -2403,7 +2405,7 @@ sap.ui.define([
 			this.oModel.setData({"value": 'Initial Value'});
 			this.oInput.setModel(this.oModel);
 			this.oInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			this.oInputFocusDomRef = this.oInput.getFocusDomRef();
 		},
 		afterEach: function () {

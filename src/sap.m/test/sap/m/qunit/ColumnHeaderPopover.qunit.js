@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Input",
 	"sap/m/MessageToast",
-	"sap/ui/core/Item"
+	"sap/ui/core/Item",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Localization,
 	Core,
@@ -31,7 +32,8 @@ sap.ui.define([
 	Button,
 	Input,
 	MessageToast,
-	Item
+	Item,
+	nextUIUpdate
 ) {
 	"use strict";
 	createAndAppendDiv("content");
@@ -114,7 +116,7 @@ QUnit.test("Overview rendered", function(assert){
 	});
 
 	oButton.placeAt("content");
-	Core.applyChanges();
+	nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 	oPopover.openBy(oButton);
 	this.clock.tick(500);
@@ -137,7 +139,7 @@ QUnit.test("Item render", function(assert){
 		}
 	});
 	oButton.placeAt("content");
-	Core.applyChanges();
+	nextUIUpdate.runSync()/*fake timer is used in module*/;
 	oPopover.openBy(oButton);
 	this.clock.tick(1000);
 
@@ -183,7 +185,7 @@ QUnit.test("update item", function(assert){
 	});
 
 	oButton.placeAt("content");
-	Core.applyChanges();
+	nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 	oPopover.openBy(oButton);
 	this.clock.tick(2000);
@@ -216,7 +218,7 @@ QUnit.test("ColumnPopoverActionItem", function(assert){
 	var oButton = new Button({text : "open columnHeaderPopover"});
 
 	oButton.placeAt("content");
-	Core.applyChanges();
+	nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 	oPopover.getItems()[2].attachPress(function() {
 		assert.ok(document.activeElement === oButton.getFocusDomRef(), "Focus is on the Button which opened the Popover before");
@@ -256,7 +258,7 @@ QUnit.test("ColumnPopoverCustomItem", function(assert){
 	});
 
 	oButton.placeAt("content");
-	Core.applyChanges();
+	nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 	oPopover.openBy(oButton);
 	this.clock.tick(500);
@@ -283,7 +285,7 @@ QUnit.test("ColumnPopoverCustomItem", function(assert){
 	assert.equal(oRBPopover.getContent()[2].getVisible(), true, "content of the second custom is visible after the second custom item is pressed");
 
 	oCustomButton2.destroy();
-	Core.applyChanges();
+	nextUIUpdate.runSync()/*fake timer is used in module*/;
 	this.clock.tick(5000);
 
 	assert.ok(oRBPopover.$().find("input"), "content of the second custom item is removed");
@@ -327,7 +329,7 @@ QUnit.test("ColumnPopoverSortItem", function(assert){
 	});
 
 	oButton.placeAt("content");
-	Core.applyChanges();
+	nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 	oButton.getFocusDomRef().focus();
 	oPopover.openBy(oButton);
@@ -386,7 +388,7 @@ QUnit.test("item visibility", function(assert){
 	});
 
 	oButton.placeAt("content");
-	Core.applyChanges();
+	nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 	oPopover.openBy(oButton);
 	this.clock.tick(2000);

@@ -1,6 +1,7 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/base/i18n/Formatting",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ResponsivePopover",
 	"sap/m/SinglePlanningCalendarGrid",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/unified/DateTypeRange"
 ], function(
 	Formatting,
+	nextUIUpdate,
 	jQuery,
 	ResponsivePopover,
 	SinglePlanningCalendarGrid,
@@ -199,7 +201,7 @@ sap.ui.define([
 				oGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": Monday 05/08/2019 at 3:00:00\u202fPM";
 
 		oGrid.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oGrid._getCellStartEndInfo(oMockStardDate, oMockEndDate), sExpectedInfo, "Cell's start/end info is properly formatted");
@@ -219,7 +221,7 @@ sap.ui.define([
 				oGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": Monday 05/08/2019 at 15:00:00";
 
 		oGrid.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oGrid._getCellStartEndInfo(oMockStardDate, oMockEndDate), sExpectedInfo, "Cell's start/end info is properly formatted");
@@ -245,7 +247,7 @@ sap.ui.define([
 			fnApplyFocusInfoSpy = this.spy(oGrid, "applyFocusInfo");
 
 		oGrid.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oAppointment.getDomRef().focus();
@@ -380,7 +382,7 @@ sap.ui.define([
 			oFireAppointmentSelectSpy = this.spy(oGrid, "fireAppointmentSelect");
 
 		oGrid.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oGrid.ontap({
@@ -480,7 +482,7 @@ sap.ui.define([
 
 		// arrange
 		oSPCGrid.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(aAppointments[1].getDomRef().getAttribute("id"), "SPC-app-11-0_1", "The returned DOM reference of the appointment with index 1 is correct.");

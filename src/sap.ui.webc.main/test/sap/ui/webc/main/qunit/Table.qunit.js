@@ -3,19 +3,20 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Table",
 	"sap/ui/webc/main/TableColumn",
 	"sap/ui/webc/main/Button",
 	"sap/ui/webc/main/TableGroupRow",
 	"sap/ui/webc/main/TableRow",
 	"sap/ui/webc/main/TableCell"
-], function(createAndAppendDiv, Core, Table, TableColumn, Button, TableGroupRow, TableRow, TableCell) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Table, TableColumn, Button, TableGroupRow, TableRow, TableCell) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oTable = new Table({
 				growingButtonSubtext: "Some text...",
 				growingButtonText: "Some text...",
@@ -201,7 +202,7 @@ sap.ui.define([
 				}
 			});
 			this.oTable.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oTable.destroy();

@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/LayoutData",
@@ -41,6 +42,7 @@ sap.ui.define([
 	Label,
 	JSONModel,
 	ChangeReason,
+	nextUIUpdate,
 	jQuery,
 	CustomData,
 	LayoutData,
@@ -151,7 +153,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getItems().length, 3, "Control should have 3 items");
@@ -180,7 +182,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		var aButtons = oSegmentedButton.getButtons(),
@@ -219,7 +221,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getItems().length, 4, "Control should have 4 items");
@@ -229,7 +231,7 @@ sap.ui.define([
 
 		//Act
 		oSegmentedButton.getItems()[3].setVisible(true);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 4, "Control should have 4 buttons visible");
@@ -264,14 +266,14 @@ sap.ui.define([
 
 		//System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn.sapMSegBBtnSel").length, 1, "1 selected button is rendered");
 
 		//Act
 		oSegmentedButton.setSelectedKey("k2");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.strictEqual(oSegmentedButton.getSelectedButton(), oSegmentedButton.getButtons()[1].getId(), "The invisible button is selected");
@@ -306,7 +308,7 @@ sap.ui.define([
 
 			// System under Test
 			oView.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// Assert
 			assert.strictEqual(oSegmentedButton.getItems().length, 3, "Control should have 3 items");
@@ -357,7 +359,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		aButtons = oSegmentedButton.getButtons();
 
@@ -400,7 +402,7 @@ sap.ui.define([
 			]
 		}).addStyleClass("sapMSegmentedButtonNoAutoWidth").placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		aButtons = oSB.getButtons();
 
@@ -447,7 +449,7 @@ sap.ui.define([
 		oOTB = new OverflowToolbar({
 			content: [ oSB ]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(oOTB._getOverflowButtonNeeded(), "The SegmentedButton is hidden and Overflow button is visible.");
@@ -493,7 +495,7 @@ sap.ui.define([
 			fnFireSelectionChangeSpy;
 
 		fnFireSelectionChangeSpy = this.spy(oSB, "fireSelectionChange");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		oSB.getButtons()[1].firePress();
@@ -539,7 +541,7 @@ sap.ui.define([
 		});
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), oButton1.getId(),
@@ -549,7 +551,7 @@ sap.ui.define([
 
 		// Act
 		oThisForChaining = oSegmentedButton.setSelectedItem(oButton2);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), oButton2.getId(), "now the second button is selected");
@@ -558,7 +560,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem("label");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), "label",
@@ -568,7 +570,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem(oLabel);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), oLabel.getId(),
@@ -576,7 +578,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem(undefined);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), oSegmentedButton.getItems()[0].getId(),
@@ -586,7 +588,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem(oButton3.getId());
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), oButton3.getId(), "now the third button is selected");
@@ -594,7 +596,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem("mumpitz");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), "mumpitz", "selectedItem association contains \"mumpitz\"");
@@ -628,7 +630,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
@@ -690,7 +692,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedKey(), "b1", "When not set selectedKey should be equal to the first key in the list 'b1'");
@@ -736,7 +738,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		// Click on the second button
@@ -767,7 +769,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		oSBI.setText("Btn changed");
@@ -778,7 +780,7 @@ sap.ui.define([
 		oSBI.setKey("changed");
 		oSegmentedButton.setSelectedKey("changed");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		var oButton = oSegmentedButton.getButtons()[0];
@@ -814,7 +816,7 @@ sap.ui.define([
 	QUnit.module("API Items aggregation", {
 		beforeEach: function () {
 			this.oSB = new SegmentedButton().placeAt("qunit-fixture");
-			this.applyChanges = oCore.applyChanges;
+			this.applyChanges = undefined;
 		},
 		afterEach: function () {
 			this.oSB.destroy();
@@ -1077,7 +1079,7 @@ sap.ui.define([
 				new SegmentedButtonItem({text: "Btn 3"})
 			]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		aButtons = oSB.getButtons();
 
@@ -1100,7 +1102,7 @@ sap.ui.define([
 		// Act
 		oSB.setWidth("200px");
 		aButtons[0].setWidth("10px");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSB._clearAutoWidthAppliedToControl();
 
 		// Assert
@@ -1155,7 +1157,7 @@ sap.ui.define([
 			]
 		}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		aButtons = oSB.getButtons();
 
@@ -1201,7 +1203,7 @@ sap.ui.define([
 				]
 			}).placeAt("qunit-fixture");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		// Here we replace the jQuery.innerWidth method to report stable width for the parent element if the parent
@@ -1241,7 +1243,7 @@ sap.ui.define([
 
 		this.spy(oSB, "fireEvent");
 
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.equal(oSB.fireEvent.callCount, 0, "FireEvent is not called on first rendering");
@@ -1321,7 +1323,7 @@ sap.ui.define([
 		oSegmentedButton.setModel(oModel);
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedKey(), oModel.getData().selectedKey,
@@ -1407,7 +1409,7 @@ sap.ui.define([
 		oSegmentedButton.setModel(oModel);
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getItems().length, 3, "Should have 3 items");
@@ -1419,7 +1421,7 @@ sap.ui.define([
 
 		// Act
 		oModel.setData(mDataSecond);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getItems().length, 8, "Should have 8 items");
@@ -1451,7 +1453,7 @@ sap.ui.define([
 				new SegmentedButtonItem({ text: 'c'})
 			]
 		}).placeAt('qunit-fixture');
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oModifiers = oSegmentedButton._oItemNavigation.getDisabledModifiers();
 		assert.ok(oModifiers["sapnext"], "sapnext has disabled modifiers");
@@ -1512,7 +1514,7 @@ sap.ui.define([
 			$segmentedButton;
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		$segmentedButton = oSegmentedButton.$();
@@ -1536,7 +1538,7 @@ sap.ui.define([
 			$innerDisabledButton;
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$innerButton = oInnerButton.$();
 		$innerDisabledButton = oInnerDisabledButton.$();
@@ -1561,7 +1563,7 @@ sap.ui.define([
 			oItemDomRef;
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oItemDomRef = oItem.getDomRef();
 		assert.notOk(oItemDomRef.getAttribute("title"), "Default tooltip isn't added");
@@ -1588,7 +1590,7 @@ sap.ui.define([
 			oItemWithTooltipDomRef;
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oDefaultItemDomRef = oDefaultItem.getDomRef();
 		assert.strictEqual(oDefaultItemDomRef.getAttribute("title"), "list", "Icon's name serves as the tooltip");
@@ -1607,7 +1609,7 @@ sap.ui.define([
 			oItemDomRef;
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oItemDomRef = oItem.getDomRef();
 		assert.notOk(oItemDomRef.getAttribute("title"), "Default tooltip isn't added");
@@ -1629,7 +1631,7 @@ sap.ui.define([
 			sDescription;
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
 		sDescription = oSegmentedButton.getAccessibilityInfo().description;
@@ -1666,7 +1668,7 @@ sap.ui.define([
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oSegmentedButton.getDomRef(), "SegmentedButton should be rendered");
 
@@ -1684,7 +1686,7 @@ sap.ui.define([
 			fnChangHandler = this.spy();
 
 		oSegmentedButton.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oSegmentedButton.attachEvent("_change", fnChangHandler);
 
 		// Assert
@@ -1921,7 +1923,7 @@ sap.ui.define([
 			// Get custom data of the first item
 			this.oCD = this.oSB.getItems()[0].getCustomData()[0];
 
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oSB.destroy();
@@ -1947,7 +1949,7 @@ sap.ui.define([
 	QUnit.test("Update of item's CustomData Value property must be reflected in the SegmentedButton", function (assert) {
 		// Act - change the CustomData value of the item
 		this.oCD.setValue("2222");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oSB.getButtons()[0].$().data("my"), 2222, "The rendered CustomData on the first button should be updated");
@@ -1959,7 +1961,7 @@ sap.ui.define([
 
 		// Act - change the CustomData key of the item
 		this.oCD.setKey("yours");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Get first button after update because it's regenerated
 		oFirstButton = this.oSB.getButtons()[0];
@@ -1974,7 +1976,7 @@ sap.ui.define([
 	QUnit.test("Update of item's CustomData writeToDom property must be reflected in the SegmentedButton", function (assert) {
 		// Act - change the CustomData writeToDom property
 		this.oCD.setWriteToDom(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oSB.getButtons()[0].$().data(this.oCD.getKey()), undefined,

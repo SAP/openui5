@@ -9,10 +9,11 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/library",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
 ],
-function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, Text, library, oCore, jQuery, Device) {
+function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, Text, library, oCore, nextUIUpdate, jQuery, Device) {
 	"use strict";
 	var oFactory, helpers;
 
@@ -53,14 +54,14 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 
 	helpers = {
 		waitForUIUpdates: function (){
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		countChildren: function (oControl){
 			return oControl.$().find("li").length;
 		},
 		renderObject: function (oSapUiObject) {
 			oSapUiObject.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			return oSapUiObject;
 		},
 		controlIsInTheDom: function (oControl){
@@ -193,13 +194,13 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 			$currentLocationText;
 
 		oStandardBreadCrumbsControl.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$currentLocationText = oStandardBreadCrumbsControl.$("currentText");
 		assert.strictEqual($currentLocationText.length, 0, "has " + 0 + " links");
 
 		oStandardBreadCrumbsControl.setCurrentLocationText("Test");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$currentLocationText = oStandardBreadCrumbsControl.$("currentText");
 		assert.strictEqual($currentLocationText.length, 1, "has " + 1 + " links");
@@ -246,7 +247,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 			sExpectedSymbol;
 
 		oControl.setSeparatorStyle(sStyle);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//act
 		sAppliedSymbol = oControl.$().find(".sapMBreadcrumbsSeparator").first().text();
@@ -268,7 +269,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 
 			// clean up
 			oControl.destroy();
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		} );
 	});
 
@@ -276,7 +277,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		// arrange
 		var oControl = oFactory.getBreadCrumbControlWithLinks(4, oFactory.getText());
 		oControl.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(oControl.getDomRef().querySelector(".sapMBreadcrumbsSeparator").getAttribute("aria-hidden"), "true",
@@ -291,7 +292,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		var oControl = this.oStandardBreadCrumbsControl;
 		oControl.placeAt("qunit-fixture");
 		// initial rendering is always string rendering, later re-renderings will use DOM patching
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		Object.keys(library.BreadcrumbsSeparatorStyle).forEach( function (sStyle) {
@@ -518,7 +519,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 
 		this.oStandardBreadCrumbsControl._resetControl();
 		this.oStandardBreadCrumbsControl.invalidate();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(this.oStandardBreadCrumbsControl._getSelect().getVisible(), false, "select is not shown");
 	});
@@ -696,7 +697,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 			oInvisibleTextData;
 
 		oStandardBreadCrumbsControl.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		aAriaLabelledByFirstLink = oFirstLink.getAriaLabelledBy();
 		oInvisibleTextData = oStandardBreadCrumbsControl._aCachedInvisibleTexts.find(function (oItem) {
@@ -743,14 +744,14 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 			oCurrentLocation = oStandardBreadCrumbsControl._getCurrentLocation();
 
 		oStandardBreadCrumbsControl.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// Act
 		oCurrentLocation.focus();
 		// Assert
 		assert.equal(document.activeElement, oCurrentLocation.getDomRef(), "Focus on the current location element");
 		// Act
 		oStandardBreadCrumbsControl.addLink(new Link({text: "New Test Link"}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// Assert
 		assert.equal(document.activeElement, oCurrentLocation.getDomRef(), "Focus is correctly restored");
 
@@ -762,7 +763,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		});
 
 		oBreadcrumbsControl.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oBreadcrumbsControl.getAriaLabelledBy().join(""), "id1", "aria-labelledby is set correctly");
 

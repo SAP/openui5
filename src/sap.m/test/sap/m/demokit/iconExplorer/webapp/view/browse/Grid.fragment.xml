@@ -19,13 +19,14 @@
 		growing="true"
 		growingScrollToLoad="true"
 		growingThreshold="{view>/growingThreshold}"
-		updateFinished=".onUpdateFinished">
+		updateFinished=".onUpdateFinished"
+		showNoData="false">
 
 		<f:customLayout>
 			<grid:GridBoxLayout boxWidth="8.125rem"/>
 		</f:customLayout>
 
-		<f:GridListItem class="sapUiTinyMargin">
+		<f:GridListItem class="sapUiTinyMargin" press=".expandSidePanel" type="Active">
 			<VBox alignItems="Center">
 				<core:Icon
 					class="sapUiTinyMarginTop"
@@ -57,5 +58,6 @@
 				</HBox>
 				</VBox>
 		</f:GridListItem>
+		
 	</f:GridList>
 </core:FragmentDefinition>

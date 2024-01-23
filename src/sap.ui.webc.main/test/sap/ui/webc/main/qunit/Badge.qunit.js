@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Badge",
 	"sap/ui/webc/main/Icon"
-], function(createAndAppendDiv, Core, Badge, Icon) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Badge, Icon) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBadge = new Badge({
 				text: "Some text...",
 				icon: [
@@ -39,7 +40,7 @@ sap.ui.define([
 				]
 			});
 			this.oBadge.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oBadge.destroy();

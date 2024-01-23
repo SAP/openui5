@@ -333,7 +333,7 @@ sap.ui.define([
 				));
 
 				oTable.setCreationRow(new CreationRow());
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 			};
 		},
 		afterEach: function() {

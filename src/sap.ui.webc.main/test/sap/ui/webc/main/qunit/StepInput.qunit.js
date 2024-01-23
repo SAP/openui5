@@ -3,14 +3,15 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/StepInput"
-], function(createAndAppendDiv, Core, StepInput) {
+], function(createAndAppendDiv, Core, nextUIUpdate, StepInput) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oStepInput = new StepInput({
 				placeholder: "This is my placeholder value",
 				valueState: "Warning",
@@ -20,7 +21,7 @@ sap.ui.define([
 				}
 			});
 			this.oStepInput.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oStepInput.destroy();

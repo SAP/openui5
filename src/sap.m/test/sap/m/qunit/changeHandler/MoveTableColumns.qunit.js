@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
 	"sap/base/util/deepExtend",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	MoveTableColumnsChangeHandler,
@@ -22,6 +23,7 @@ sap.ui.define([
 	oCore,
 	XMLView,
 	deepExtend,
+	nextUIUpdate,
 	FlexTestAPI
 ) {
 	'use strict';
@@ -101,7 +103,7 @@ sap.ui.define([
 
 			this.oUiComponent = new Comp("comp");
 
-			return this.oUiComponent.rootControlLoaded().then(function() {
+			return this.oUiComponent.rootControlLoaded().then(async function() {
 				// Place component in container and display
 				this.oUiComponentContainer = new ComponentContainer({
 					component : this.oUiComponent
@@ -110,7 +112,7 @@ sap.ui.define([
 
 				this.oView = this.oUiComponent.getRootControl();
 
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				this.oTable = this.oView.byId('myTable');
 				this.oColumn0 = this.oView.byId('column0');
@@ -280,7 +282,7 @@ sap.ui.define([
 			});
 			this.oUiComponent = new Comp("comp");
 
-			return this.oUiComponent.rootControlLoaded().then(function() {
+			return this.oUiComponent.rootControlLoaded().then(async function() {
 				// Place component in container and display
 				this.oUiComponentContainer = new ComponentContainer({
 					component : this.oUiComponent
@@ -307,7 +309,7 @@ sap.ui.define([
 					}]
 				}));
 
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				this.oTable = this.oView.byId('myTable');
 

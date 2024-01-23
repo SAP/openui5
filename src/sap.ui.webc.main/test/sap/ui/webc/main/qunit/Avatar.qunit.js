@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Avatar",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, Avatar, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Avatar, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oAvatar = new Avatar({
 				icon: "employee",
 				badge: new Button({
@@ -33,7 +34,7 @@ sap.ui.define([
 				}
 			});
 			this.oAvatar.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oAvatar.destroy();

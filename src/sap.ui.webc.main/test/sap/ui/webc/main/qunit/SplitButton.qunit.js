@@ -3,14 +3,15 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/SplitButton"
-], function(createAndAppendDiv, Core, SplitButton) {
+], function(createAndAppendDiv, Core, nextUIUpdate, SplitButton) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oSplitButton = new SplitButton({
 				icon: "employee",
 				text: "Some text...",
@@ -22,7 +23,7 @@ sap.ui.define([
 				}
 			});
 			this.oSplitButton.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oSplitButton.destroy();

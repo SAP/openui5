@@ -68,7 +68,7 @@ function (
 			});
 
 			oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.ok(
 					oPropertyEditor.getDomRef() instanceof HTMLElement
 					&& oPropertyEditor.getDomRef().offsetHeight > 0
@@ -99,7 +99,7 @@ function (
 			});
 
 			oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.ok(
 					oPropertyEditor.getDomRef() instanceof HTMLElement
 					&& oPropertyEditor.getDomRef().offsetHeight > 0
@@ -152,7 +152,7 @@ function (
 			});
 
 			oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(oPropertyEditor.getAggregation("propertyEditor").getValue(), "baz value", "then priority is over config object");
 				fnDone();
 			});
@@ -204,7 +204,7 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.ok(
 					this.oPropertyEditor.getDomRef() instanceof HTMLElement
 					&& this.oPropertyEditor.getDomRef().offsetHeight > 0
@@ -227,14 +227,14 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "foo value", "then internal property editor has a correct value");
 
 				this.oPropertyEditor.attachEvent(
 					"propertyEditorChange",
 					sandbox.stub()
 						.onSecondCall().callsFake(function () {
-							oCore.applyChanges();
+							nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 							assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "bar value", "then internal property editor has a correct value");
 							fnDone();
 						}.bind(this))
@@ -250,7 +250,7 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "bar value", "then internal property editor has a correct value");
 				fnDone();
 			}, this);
@@ -266,7 +266,7 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.ok(
 					this.oPropertyEditor.getDomRef() instanceof HTMLElement
 					&& this.oPropertyEditor.getDomRef().offsetHeight > 0
@@ -293,14 +293,14 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "foo value", "then internal property editor has a correct value");
 
 				this.oPropertyEditor.attachEvent(
 					"propertyEditorChange",
 					sandbox.stub()
 						.onSecondCall().callsFake(function () {
-							oCore.applyChanges();
+							nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 							assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "baz value", "then internal property editor has a correct value");
 							fnDone();
 						}.bind(this))
@@ -324,7 +324,7 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "baz value", "then internal property editor has a correct value");
 				fnDone();
 			}, this);
@@ -365,14 +365,14 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "foo value", "then internal property editor has a correct value");
 
 				this.oPropertyEditor.attachEvent(
 					"propertyEditorChange",
 					sandbox.stub()
 						.onSecondCall().callsFake(function () {
-							oCore.applyChanges();
+							nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 							assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "baz value", "then priority is over config object");
 							fnDone();
 						}.bind(this))
@@ -392,7 +392,7 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "baz value", "then internal property editor has a correct value");
 
 				var oSpy = sandbox.spy();
@@ -418,7 +418,7 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "baz value", "then internal property editor has a correct value");
 
 				var oSpy = sandbox.spy();
@@ -445,14 +445,14 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "baz value", "then internal property editor has a correct value");
 
 				this.oPropertyEditor.attachEvent(
 					"propertyEditorChange",
 					sandbox.stub()
 						.onSecondCall().callsFake(function () {
-							oCore.applyChanges();
+							nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 							assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "foo value", "then priority is over config object");
 							fnDone();
 						}.bind(this))
@@ -473,7 +473,7 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "foo value", "then internal property editor has a correct value");
 
 				var oBaseEditor2 = new BaseEditor({
@@ -499,7 +499,7 @@ function (
 						"propertyEditorChange",
 						sandbox.stub()
 							.onSecondCall().callsFake(function () {
-								oCore.applyChanges();
+								nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 								assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "foo2 value", "then internal editor re-rendered and received correct value from new editor");
 								oBaseEditor2.destroy();
 								fnDone();
@@ -517,7 +517,7 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "foo value", "then internal property editor has a correct value");
 
 				var oBaseEditor2 = new BaseEditor({
@@ -543,7 +543,7 @@ function (
 						"propertyEditorChange",
 						sandbox.stub()
 							.onSecondCall().callsFake(function () {
-								oCore.applyChanges();
+								nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 								assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "foo2 value", "then internal editor re-rendered and received correct value from new editor");
 								oBaseEditor2.destroy();
 								fnDone();
@@ -643,12 +643,12 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				var oInternalPropertyEditor = this.oPropertyEditor.getAggregation("propertyEditor");
 				assert.strictEqual(oInternalPropertyEditor.getValue(), "baz value", "then internal property editor has a correct value");
 
 				this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-					oCore.applyChanges();
+					nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 					assert.ok(!this.oPropertyEditor.getAggregation("propertyEditor"), "then internal editor is removed");
 					assert.strictEqual(oInternalPropertyEditor.bIsDestroyed, true, "then custom property editor is destroyed");
 					fnDone();
@@ -668,12 +668,12 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				var oInternalPropertyEditor = this.oPropertyEditor.getAggregation("propertyEditor");
 				assert.strictEqual(oInternalPropertyEditor.getValue(), "foo value", "then internal property editor has a correct value");
 
 				this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-					oCore.applyChanges();
+					nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 					assert.ok(!this.oPropertyEditor.getAggregation("propertyEditor"), "then internal editor is removed");
 					assert.ok(oInternalPropertyEditor.bIsDestroyed, "then internal property editor is destroyed");
 					fnDone();
@@ -689,12 +689,12 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				var oInternalPropertyEditor = this.oPropertyEditor.getAggregation("propertyEditor");
 				assert.strictEqual(oInternalPropertyEditor.getValue(), "foo value", "then internal property editor has a correct value");
 
 				this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-					oCore.applyChanges();
+					nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 					assert.ok(!this.oPropertyEditor.getAggregation("propertyEditor"), "then internal editor is removed");
 					assert.ok(oInternalPropertyEditor.bIsDestroyed, "then internal property editor is destroyed");
 					fnDone();
@@ -751,7 +751,7 @@ function (
 			});
 
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				fnDone();
 			});
 
@@ -905,7 +905,7 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "foo value", "then internal property editor has a correct value");
 				fnDone();
 			}, this);
@@ -918,7 +918,7 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				assert.strictEqual(this.oPropertyEditor.getAggregation("propertyEditor").getValue(), "foo value", "then internal property editor has a correct value");
 				fnDone();
 			}, this);
@@ -1036,7 +1036,7 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				var oInternalPropertyEditor = this.oPropertyEditor.getAggregation("propertyEditor");
 				assert.strictEqual(oInternalPropertyEditor.getValue(), "foo value", "then internal property editor has a correct value");
 				this.oPropertyEditor.destroy();
@@ -1051,7 +1051,7 @@ function (
 			var fnDone = assert.async();
 
 			this.oPropertyEditor.attachEventOnce("propertyEditorChange", function () {
-				oCore.applyChanges();
+				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 				var oInternalPropertyEditor = this.oPropertyEditor.getAggregation("propertyEditor");
 				assert.strictEqual(oInternalPropertyEditor.getValue(), "baz value", "then internal property editor has a correct value");
 				this.oPropertyEditor.destroy();

@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/MaskInputRule",
 	"sap/m/MaskInput",
 	"sap/base/Log",
-	"sap/ui/core/Core"
-], function(createAndAppendDiv, MaskInputRule, MaskInput, Log, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(createAndAppendDiv, MaskInputRule, MaskInput, Log, oCore, nextUIUpdate) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -17,7 +18,7 @@ sap.ui.define([
 			this.oMaskInputRule = new MaskInputRule();
 			this.oMaskInput = new MaskInput({rules: [this.oMaskInputRule]});
 			this.oMaskInput.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oMaskInput.destroy();

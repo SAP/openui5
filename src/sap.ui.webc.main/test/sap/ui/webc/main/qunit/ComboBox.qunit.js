@@ -3,17 +3,18 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/ComboBox",
 	"sap/ui/webc/main/Icon",
 	"sap/ui/webc/main/ComboBoxGroupItem",
 	"sap/ui/webc/main/ComboBoxItem"
-], function(createAndAppendDiv, Core, ComboBox, Icon, ComboBoxGroupItem, ComboBoxItem) {
+], function(createAndAppendDiv, Core, nextUIUpdate, ComboBox, Icon, ComboBoxGroupItem, ComboBoxItem) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oComboBox = new ComboBox({
 				placeholder: "This is my placeholder value",
 				value: "Control value",
@@ -65,7 +66,7 @@ sap.ui.define([
 				}
 			});
 			this.oComboBox.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oComboBox.destroy();

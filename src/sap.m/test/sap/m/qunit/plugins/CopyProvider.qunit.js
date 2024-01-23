@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
@@ -20,7 +21,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"test-resources/sap/ui/mdc/qunit/QUnitUtils",
 	"test-resources/sap/ui/mdc/qunit/table/QUnitUtils"
-], function(ClipboardUtils, Text, Table, Column, ColumnListItem, GridTable, GridColumn, MultiSelectionPlugin, MDCTable, MDCColumn, PluginBase, CopyProvider, CellSelector, JSONModel, CustomData, Core, coreLib, MessageToast, MessageBox, MDCQUnitUtils, MDCTableQUnitUtils) {
+], function(ClipboardUtils, Text, Table, Column, ColumnListItem, nextUIUpdate, GridTable, GridColumn, MultiSelectionPlugin, MDCTable, MDCColumn, PluginBase, CopyProvider, CellSelector, JSONModel, CustomData, Core, coreLib, MessageToast, MessageBox, MDCQUnitUtils, MDCTableQUnitUtils) {
 
 	"use strict";
 	/*global sinon, QUnit */
@@ -62,7 +63,7 @@ sap.ui.define([
 
 		var oTable = new Table(mSettings);
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 		oTable.focus();
 		return oTable;
 	}
@@ -84,7 +85,7 @@ sap.ui.define([
 
 		var oTable = new GridTable(mSettings);
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 		oTable.focus();
 		return oTable;
 	}
@@ -112,7 +113,7 @@ sap.ui.define([
 
 		var oTable = new MDCTable(mSettings);
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 		oTable.focus();
 		return oTable;
 	}
@@ -348,7 +349,7 @@ sap.ui.define([
 		aClonedItems[1].setSelected(true);
 		aClonedItems[3].setSelected(true);
 		aClonedItems.forEach(this.oTable.addItem.bind(this.oTable));
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		this.oCopyProvider.setExtractData(function(oRow, oColumn) {
 			var iColumnIndex = oColumn.getParent().indexOfColumn(oColumn);
@@ -371,7 +372,7 @@ sap.ui.define([
 		assert.ok(oCopyButton.getText() === oCopyButton.getTooltip(), "Copy Button text is the same like tooltip");
 
 		this.oTable.setMode("None");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oCopyButton.getVisible(), "The copy button is not invisible since selection is not possible");
 
 		await navigator.clipboard.writeText("DummyClipboardText");
@@ -379,11 +380,11 @@ sap.ui.define([
 		assert.equal(await navigator.clipboard.readText(), "DummyClipboardText", "Copy action is not taken into account since there is no selection");
 
 		this.oTable.setMode("SingleSelectMaster");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oCopyButton.getVisible(), "The copy button is visible again with single selection");
 
 		this.oTable.setMode("Delete");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oCopyButton.getVisible(), "The copy button is not invisible since selection is not possible");
 	});
 
@@ -483,7 +484,7 @@ sap.ui.define([
 		assert.ok(oCopyButton.getVisible(), "The copy button is visible at the beginning");
 
 		this.oTable.setSelectionMode("None");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oCopyButton.getVisible(), "The copy button is not invisible since selection is not possible");
 
 		await navigator.clipboard.writeText("DummyClipboardText");
@@ -491,11 +492,11 @@ sap.ui.define([
 		assert.equal(await navigator.clipboard.readText(), "DummyClipboardText", "Copy action is not taken into account since there is no selection");
 
 		this.oTable.setSelectionMode("Single");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oCopyButton.getVisible(), "The copy button is visible again with single selection");
 
 		this.oTable.setSelectionMode("None");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oCopyButton.getVisible(), "The copy button is not invisible since row selection is not possible");
 
 		const oCellSelector = new CellSelector();
@@ -529,19 +530,19 @@ sap.ui.define([
 
 		const oMultiSelectionPlugin = new MultiSelectionPlugin({selectionMode: "MultiToggle"});
 		this.oTable.addDependent(oMultiSelectionPlugin);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oCopyButton.getVisible(), "The copy button is visible since multi selection is enabled with MultiSelectionPlugin");
 
 		oMultiSelectionPlugin.setEnabled(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oCopyButton.getVisible(), "The copy button is not visible since the MultiSelectionPlugin is disabled");
 
 		oMultiSelectionPlugin.setEnabled(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oCopyButton.getVisible(), "The copy button is visible again since the MultiSelectionPlugin is enabled again");
 
 		oMultiSelectionPlugin.setSelectionMode("None");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oCopyButton.getVisible(), "The copy button is not invisible since the setSelectionMode is set to None");
 
 		this.oCopyProvider.setVisible(false).setVisible(true);
@@ -569,8 +570,8 @@ sap.ui.define([
 		});
 		return this.oTable._fullyInitialized().then(function() {
 			return MDCTableQUnitUtils.waitForBinding(that.oTable);
-		}).then(function() {
-			Core.applyChanges();
+		}).then(async function() {
+			await nextUIUpdate();
 			apiTest.call(that, assert);
 		});
 	});
@@ -654,7 +655,7 @@ sap.ui.define([
 				}
 		}]);
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 		oTable.focus();
 		return oTable;
 	}
@@ -717,7 +718,7 @@ sap.ui.define([
 			assert.equal(await navigator.clipboard.readText(), "1\tname1\t1\tname1\tcolor1\t1\n3\tname3\t3\tname3\tcolor3\t3", "Only text is in clipboard");
 
 			this.oTable.setSelectionMode("None");
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.notOk(oNewCopyButton.getVisible(), "The copy button is invisible since there is no selection possible");
 
 			oNewCopyProvider.destroy();
@@ -808,7 +809,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("MimeTypes", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oCopyProvider = new CopyProvider({extractData: Function.prototype});
 			this.oTable = new Table({
 				mode: "SingleSelectMaster",
@@ -821,7 +822,7 @@ sap.ui.define([
 				}),
 				dependents: this.oCopyProvider
 			}).placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oTable.destroy();

@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/ui/layout/cssgrid/GridResponsiveLayout",
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
 	"sap/ui/core/Core",
-	"sap/ui/core/ResizeHandler"
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
-function (
+function(
 	CSSGrid,
 	HTML,
 	GridItemLayoutData,
@@ -18,7 +19,8 @@ function (
 	GridResponsiveLayout,
 	GridLayoutDelegate,
 	Core,
-	ResizeHandler
+	ResizeHandler,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -151,17 +153,17 @@ function (
 	});
 
 	QUnit.module("Items", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oGrid = new CSSGrid();
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
 		}
 	});
 
-	QUnit.test("Items initialization", function (assert) {
+	QUnit.test("Items initialization", async function(assert) {
 
 		// Arrange
 		var aItems = [
@@ -176,7 +178,7 @@ function (
 		aItems.forEach(function (oItem) {
 			this.oGrid.addItem(oItem);
 		}, this);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(this.oGrid.getItems().length === 3, "Should have 3 items");
@@ -276,7 +278,7 @@ function (
 	});
 
 	QUnit.module("GridItemLayoutData", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oGrid = new CSSGrid({
 				items: [
 					new HTML({ content: "<div></div>" }),
@@ -290,7 +292,7 @@ function (
 			});
 			this.oItem = this.oGrid.getItems()[0];
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -300,7 +302,7 @@ function (
 		}
 	});
 
-	QUnit.test("Set item layoutData", function (assert) {
+	QUnit.test("Set item layoutData", async function(assert) {
 
 		// Arrange
 		this.spy(GridLayoutBase, "setItemStyles");
@@ -308,7 +310,7 @@ function (
 
 		// Act
 		this.oItem.setLayoutData(this.oLayoutData);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(GridLayoutBase.setItemStyles.calledOnce, "Should update item styles on layout data change");
@@ -317,16 +319,16 @@ function (
 		assert.ok(this.oItem.getDomRef().style.getPropertyValue("grid-column"), "Should have grid-column property");
 	});
 
-	QUnit.test("Remove item layoutData", function (assert) {
+	QUnit.test("Remove item layoutData", async function(assert) {
 
 		// Arrange
 		this.oItem.setLayoutData(this.oLayoutData);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.oItem.setLayoutData(null);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notOk(this.oItem.getDomRef().style.getPropertyValue("grid-row"), "Should NOT have grid-row property");
@@ -335,7 +337,7 @@ function (
 
 
 	QUnit.module("Clone", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oGrid = new CSSGrid({
 				items: [
 					new HTML({
@@ -349,19 +351,19 @@ function (
 				]
 			});
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
 		}
 	});
 
-	QUnit.test("Full cloning", function (assert) {
+	QUnit.test("Full cloning", async function(assert) {
 
 		// Act
 		var oClone = this.oGrid.clone();
 		oClone.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var sGridRow = oClone.getItems()[0].getDomRef().style.getPropertyValue("grid-row");
 
@@ -484,7 +486,7 @@ function (
 		assert.ok(GridItemLayoutData._setItemStyle.notCalled, "Should NOT call _setItemStyle when no item is provided");
 	});
 
-	QUnit.test("_setItemStyle", function (assert) {
+	QUnit.test("_setItemStyle", async function(assert) {
 
 		// Arrange
 		var oGrid = new CSSGrid({
@@ -501,7 +503,7 @@ function (
 			]
 		});
 		oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		var oItemDomRef = oGrid.getItems()[0].getDomRef();
@@ -513,7 +515,7 @@ function (
 
 	QUnit.module("Delegate");
 
-	QUnit.test("Delegate with responsive layout", function (assert) {
+	QUnit.test("Delegate with responsive layout", async function(assert) {
 
 		// Arrange
 		var oResizeRegisterSpy = this.spy(ResizeHandler, "register"),
@@ -524,7 +526,7 @@ function (
 			sId;
 
 		oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oResizeRegisterSpy.withArgs(oGrid).calledOnce, "Should register resize handler when the layout is responsive.");
@@ -561,7 +563,7 @@ function (
 	});
 
 	QUnit.module("Rendering", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oGrid = new CSSGrid();
 
 			var aItems = [
@@ -575,27 +577,27 @@ function (
 			}, this);
 
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
 		}
 	});
 
-	QUnit.test("Busy element inside the grid", function (assert) {
+	QUnit.test("Busy element inside the grid", async function(assert) {
 
 		// Arrange
 		var oItem = this.oGrid.getItems()[0];
 		this.oGrid.setGridTemplateColumns("repeat(auto-fit, 8rem)");
 		oItem.setBusyIndicatorDelay(0);
-		Core.applyChanges();
+		await nextUIUpdate();
 		var oItemPositionBeforeBusy = oItem.$().position(),
 			oItemPositionAfterBusy;
 
 		// Act
 		oItem.setBusy(true);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Arrange
 		oItemPositionAfterBusy = oItem.$().position();

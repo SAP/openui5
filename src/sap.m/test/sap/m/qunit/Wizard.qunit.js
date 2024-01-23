@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(Log, DesignTime, Core, Wizard, WizardStep, Button, ObjectPool, library, Library, coreLibrary, jQuery) {
+], function(Log, DesignTime, Core, Wizard, WizardStep, Button, ObjectPool, library, Library, coreLibrary, nextUIUpdate, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -77,7 +78,7 @@ sap.ui.define([
 
 			this.oWizardSecondStep = this.oWizard.getSteps()[1];
 			this.oWizard.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.stub(ObjectPool.prototype, "returnObject").callsFake(function () {
 			});
@@ -98,7 +99,7 @@ sap.ui.define([
 
 		//act
 		this.oWizard.setStepTitleLevel(TitleLevel.H5);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(this.oWizard.getStepTitleLevel(), "H5", "steps title level is updated");
@@ -161,7 +162,7 @@ sap.ui.define([
 		});
 
 		tempWiz.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var stepContainer = tempWiz.getDomRef("step-container");
 		tempWiz.nextStep();
 		tempWiz.destroy();
@@ -182,7 +183,7 @@ sap.ui.define([
 		oSpyNextStep = this.spy(oWizard._getProgressNavigator(), "nextStep");
 		aWizardSteps = oWizard.getSteps();
 		oWizard.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oWizard.goToStep(oWizard.getSteps()[2]);
 
 		// Act
@@ -221,7 +222,7 @@ sap.ui.define([
 		oWizard._getNextStep();
 		oWizard.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oWizard.goToStep(oWizard.getSteps()[0]);
 
 		assert.ok(oSpy.returned(oWizard), "goToStep is executed");
@@ -261,7 +262,7 @@ sap.ui.define([
 
 		oWizard.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(this.oSpies.error.calledOnce, "Wizard should log error when minimum allowed step number is not met.");
 
@@ -281,7 +282,7 @@ sap.ui.define([
 
 		oWizard.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(this.oSpies.error.calledOnce, "Wizard should not log error when max allowed step number is reached.");
 
@@ -298,7 +299,7 @@ sap.ui.define([
 
 		//Act
 		this.oWizard.destroySteps();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Assert
 		assert.ok(this.oWizard.getSteps().length === 0, "Aggregation should be empty");
@@ -478,7 +479,7 @@ sap.ui.define([
 		var step0 = this.oWizard.getSteps()[0];
 		var domRefInit = step0.$()[0];
 		step0.setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(step0.$()[0], domRefInit, "setVisible(false) of the wizardStep should not hide the step");
 	});
 
@@ -503,7 +504,7 @@ sap.ui.define([
 
 		// arrange
 		oWizard.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//assert
 		assert.strictEqual(oWizard.getCurrentStep(), oWizard.getSteps()[2].getId(), "The currentStep is the correct one.");
@@ -534,7 +535,7 @@ sap.ui.define([
 
 		// arrange
 		oWizard.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oNavigator = oWizard._getProgressNavigator();
 		oFirstStepRef = jQuery(oNavigator.$().find("li")[0]);
@@ -555,12 +556,12 @@ sap.ui.define([
 			steps: [oStep1]
 		});
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oWizard.removeAllSteps();
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oWizard.addStep(oStep1);
 
 		// assert
@@ -656,7 +657,7 @@ sap.ui.define([
 			steps: [oStep1]
 		});
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		oWizard.removeAllSteps();
@@ -715,7 +716,7 @@ sap.ui.define([
 			});
 
 			this.oWizard.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.stub(ObjectPool.prototype, "returnObject").callsFake(function () {
 			});
@@ -784,7 +785,7 @@ sap.ui.define([
 		});
 
 		wizard.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.strictEqual(step1.getNextStep(), step2.getId(), "Step1's nextStep is not overwritten");
@@ -846,7 +847,7 @@ sap.ui.define([
 		});
 
 		oWiz.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var sectionWrapper = oWiz.$().find(".sapMWizardStepContainer")[0],
 			aChildren = Array.prototype.slice.call(sectionWrapper.children),
@@ -873,7 +874,7 @@ sap.ui.define([
 		});
 
 		oWiz.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(s3.getDomRef(), "Step3 is rendered.");
 		assert.ok(s2.getDomRef(), "Step2 is rendered.");
@@ -916,7 +917,7 @@ sap.ui.define([
 			});
 
 			this.oWizard.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oResourceBundle = Library.getResourceBundleFor("sap.m");
 
@@ -952,14 +953,14 @@ sap.ui.define([
 		});
 
 		oWizard.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSpy.calledWith(1), "The correct step position is forwarded to the wizard step.");
 
 		// set-up
 		oWizard.nextStep();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
 		assert.ok(oSpy.calledWith(2), "The correct step position is forwarded to the wizard step.");
@@ -987,7 +988,7 @@ sap.ui.define([
 			});
 
 			this.oWizard.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oResourceBundle = Library.getResourceBundleFor("sap.m");
 
@@ -1007,7 +1008,7 @@ sap.ui.define([
 
 		// act
 		oNextButton.$().tap();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// assert
 		oNextButton = this.oWizard._getNextButton();
 		assert.strictEqual(this.oWizard.getProgressStep().getId(), this.oWizard.getSteps()[1].getId(), "The wizard has navigated to the next step on next button click.");
@@ -1020,7 +1021,7 @@ sap.ui.define([
 		var oRenderingSpy =  this.spy(WizardStep.prototype, "onBeforeRendering");
 		// act
 		oNextButton.$().tap();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		// assert
 		assert.notOk(oRenderingSpy.called, "The wizard step should not be rerendered on navigation.");
 	});
@@ -1182,16 +1183,16 @@ sap.ui.define([
 			});
 
 		oWizard.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act
 		oWizard.addStyleClass("sapUiResponsivePadding--header");
 		oWizard.addStyleClass("sapUiResponsivePadding--content");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oWizard.setWidth("300px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 
 		var $wizardProgressNavigator = oWizard.$().find("#testWizard-progressNavigator"),
@@ -1208,7 +1209,7 @@ sap.ui.define([
 
 		//Act
 		oWizard.setWidth("700px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$wizardProgressNavigator = oWizard.$().find("#testWizard-progressNavigator");
 		$wizardStepContent = oWizard.$().find("#testWizard-step-container");
@@ -1223,7 +1224,7 @@ sap.ui.define([
 
 		//Act
 		oWizard.setWidth("1300px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$wizardProgressNavigator = oWizard.$().find("#testWizard-progressNavigator");
 		$wizardStepContent = oWizard.$().find("#testWizard-step-container");
@@ -1238,7 +1239,7 @@ sap.ui.define([
 
 		//Act
 		oWizard.setWidth("1700px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		$wizardProgressNavigator = oWizard.$().find("#testWizard-progressNavigator");
 		$wizardStepContent = oWizard.$().find("#testWizard-step-container");
@@ -1275,7 +1276,7 @@ sap.ui.define([
 			});
 
 			this.oWizard.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oWizard.destroy();
@@ -1342,10 +1343,10 @@ sap.ui.define([
 			]
 		}).placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oWizard._activateStep(oSecondStep);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oWizard.goToStep(oSecondStep, true);
 
@@ -1377,7 +1378,7 @@ sap.ui.define([
 			});
 
 			this.oWizard.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			this.oResourceBundle = Library.getResourceBundleFor("sap.m");
 		},
@@ -1411,7 +1412,7 @@ sap.ui.define([
 		assert.strictEqual(this.oWizard.getSteps().length, 3, "Wizard has 3 steps");
 
 		this.oWizard.addStep(new WizardStep());
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oWizard.getSteps().length, 4, "Wizard has 4 steps");
 		const oProgressNavigator = this.oWizard._getProgressNavigator();
@@ -1427,7 +1428,7 @@ sap.ui.define([
 		assert.strictEqual(this.oWizard.getSteps().length, 3, "Wizard has 3 steps");
 
 		this.oWizard.addStep(new WizardStep("test"));
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oWizard.getSteps().length, 4, "Wizard has 4 steps");
 		const oProgressNavigator = this.oWizard._getProgressNavigator();
@@ -1442,7 +1443,7 @@ sap.ui.define([
 		this.stub(DesignTime, "isDesignModeEnabled").returns(true);
 
 		this.oWizard.removeStep(this.oWizardStep0);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		const oProgressNavigator = this.oWizard._getProgressNavigator();
 		const $aNavigatorSteps = oProgressNavigator.$().find("li");

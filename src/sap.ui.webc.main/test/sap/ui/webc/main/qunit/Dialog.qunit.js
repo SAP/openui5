@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Dialog",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, Dialog, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Dialog, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oDialog = new Dialog({
 				headerText: "Some text...",
 				content: [
@@ -97,7 +98,7 @@ sap.ui.define([
 				}
 			});
 			this.oDialog.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oDialog.destroy();

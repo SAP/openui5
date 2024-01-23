@@ -9,10 +9,11 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/model/DataState',
 	'sap/ui/model/Filter',
+	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/m/Toolbar',
 	'sap/m/Link',
 	'sap/m/Text'
-], function(List, StandardListItem, Core, Messaging, JSONModel, Message, DataStateIndicator, ManagedObjectObserver, DataState, Filter) {
+], function(List, StandardListItem, Core, Messaging, JSONModel, Message, DataStateIndicator, ManagedObjectObserver, DataState, Filter, nextUIUpdate) {
 
 	"use strict";
 	/*global QUnit */
@@ -24,7 +25,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("DataStateIndicator", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oModel = new JSONModel({ names: [{name: "SAP"}] });
 			this.oPlugin = new DataStateIndicator();
 			this.oList = new List({
@@ -37,7 +38,7 @@ sap.ui.define([
 			}).setModel(this.oModel);
 
 			this.oList.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oPromise = new Promise(function(resolve) {
 				this.oList.addEventDelegate({
@@ -301,7 +302,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Enable Filtering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oModel = new JSONModel({ names: [{name: "A"}, {name: "B"}, {name: "C"}, {name: "D"}] });
 			this.oPlugin = new DataStateIndicator({
 				enableFiltering: true
@@ -316,7 +317,7 @@ sap.ui.define([
 			}).setModel(this.oModel);
 
 			this.oList.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oDataState = new DataState();
 			this.oList.getBinding("items").getDataState = function() {

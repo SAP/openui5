@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/FileUploader",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, FileUploader, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, FileUploader, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oFileUploader = new FileUploader({
 				placeholder: "This is my placeholder value",
 				value: "Control value",
@@ -45,7 +46,7 @@ sap.ui.define([
 				}
 			});
 			this.oFileUploader.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oFileUploader.destroy();

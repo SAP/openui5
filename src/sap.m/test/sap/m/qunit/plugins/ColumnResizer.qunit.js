@@ -7,6 +7,7 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/Core',
 	'sap/ui/qunit/QUnitUtils',
@@ -20,6 +21,7 @@ sap.ui.define([
 ], function(
 	Localization,
 	Library,
+	nextUIUpdate,
 	jQuery,
 	Core,
 	QUtils,
@@ -101,7 +103,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oTable = createResponsiveTable();
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			var bRTL = Localization.getRTL();
 			this.sBeginDirection = bRTL ? "right" : "left";
 			this.sEndDirection = bRTL ? "left" : "right";
@@ -138,7 +140,7 @@ sap.ui.define([
 		assert.notOk(oTableDomRef.children[oTableDomRef.children.length - 1].classList.contains("sapMPluginsColumnResizerHandle"), "ColumnResizer handle not created");
 		var oColumnResizer = new ColumnResizer();
 		this.oTable.addDependent(oColumnResizer);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oTableDomRef.classList.contains("sapMPluginsColumnResizerContainer"), "ColumnResizer container style class added");
 		assert.notOk(oTableDomRef.children[oTableDomRef.children.length - 1].classList.contains("sapMPluginsColumnResizerHandle"), "ColumnResizer handle not yet created");
 
@@ -150,7 +152,7 @@ sap.ui.define([
 		});
 
 		oColumnResizer.setEnabled(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		aResizableColumns = jQuery(oColumnResizer.getConfig("resizable")).get();
 		aResizableColumns.forEach(function(TH) {
 			assert.notOk(TH.classList.contains("sapMPluginsColumnResizerResizable"), "Resizable column styleClass removed");
@@ -167,7 +169,7 @@ sap.ui.define([
 
 		var oColumnResizer = new ColumnResizer();
 		this.oTable.addDependent(oColumnResizer);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(this.oTable.getDomRef().querySelector(oColumnResizer.getConfig("resizable")).tabIndex, -1, "Resizable columns are focusable");
 		assert.notOk(oColumnResizer.getConfig("allowTouchResizing"), "allowTouchResizing=false, since its Desktop device");
@@ -184,7 +186,7 @@ sap.ui.define([
 
 		var oColumnResizer = new ColumnResizer();
 		this.oTable.addDependent(oColumnResizer);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(this.oTable.getDomRef().querySelector(oColumnResizer.getConfig("resizable")).tabIndex, -1, "Resizable columns are focusable");
 		assert.ok(oColumnResizer.getConfig("allowTouchResizing"), "allowTouchResizing=true, since its Mobile device");
@@ -196,7 +198,7 @@ sap.ui.define([
 		this.oTable.bActiveHeaders = true;
 		var oColumnResizer = new ColumnResizer();
 		this.oTable.addDependent(oColumnResizer);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.notOk(oColumnResizer.getConfig("enableColumnHeaderFocus"), "enableColumnHeaderFocus not set, since bActiveHeaders=true");
 
@@ -299,7 +301,7 @@ sap.ui.define([
 		oCurrentColumn.setWidth("100px");
 		var oNextColumn = this.oTable.getColumns()[2];
 		oNextColumn.setWidth("100px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oCurrentColumnDom = oCurrentColumn.getDomRef();
 
 		this.oColumnResizer.attachColumnResize(function(oEvent) {
@@ -321,7 +323,7 @@ sap.ui.define([
 
 		var oTouchEnd = createTouchEvent("touchend", oCurrentColumnDom, iClientX + 20, this.oColumnResizer);
 		this.oColumnResizer._ontouchend(oTouchEnd);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oCurrentColumnUpdatedWidth = oCurrentColumn.getWidth();
 		var oNextColumnUpdatedWidth = oNextColumn.getWidth();
 		assert.ok(oCurrentColumnOriginalWidth !== oCurrentColumnUpdatedWidth, "CurrentColumn original width !== CurrentColumn updated width");
@@ -340,7 +342,7 @@ sap.ui.define([
 		this.oTable.getColumns().forEach(function(oColumn) {
 			oColumn.setWidth("10rem");
 		});
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oCurrentColumn = this.oTable.getColumns()[0],
 			oCurrentColumnDom = oCurrentColumn.getDomRef(),
@@ -363,7 +365,7 @@ sap.ui.define([
 		this.oColumnResizer.ontouchmove(oTouchMove);
 		var oTouchEnd = createTouchEvent("touchend", oCurrentColumnDom, iClientX + 20, this.oColumnResizer);
 		this.oColumnResizer._ontouchend(oTouchEnd);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oCurrentColumnUpdatedWidth = oCurrentColumn.getWidth();
 		var oNextColumnUpdatedWidth = oNextColumn.getWidth();
@@ -412,7 +414,7 @@ sap.ui.define([
 
 		var oTouchEnd = createTouchEvent("touchend", oCurrentColumnDom, iClientX + 20, this.oColumnResizer);
 		this.oColumnResizer._ontouchend(oTouchEnd);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(fnFireColumnResie.called, "_fireColumnResize called");
 		assert.strictEqual(oCurrentColumn.getWidth(), sColumnWidth, "Column width did not change due to preventDefault()");
@@ -423,7 +425,7 @@ sap.ui.define([
 			oColumnDomRef = oColumn.getDomRef();
 
 		oColumn.setWidth("100px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oColumn.getWidth(), "100px", "Column width is set to 100px initially");
 		var iClientX = oColumnDomRef.getBoundingClientRect()[this.sEndDirection],
@@ -436,7 +438,7 @@ sap.ui.define([
 		});
 
 		this.oColumnResizer.ondblclick(oEvent);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oColumn.getWidth() !== "100px", "Column width changed due to auto column resize");
 		assert.ok(parseInt(oColumn.getWidth()) > 100, "Column is made bigger");
 	});
@@ -445,7 +447,7 @@ sap.ui.define([
 		var oColumn = this.oTable.getColumns()[2];
 
 		oColumn.setWidth("300px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oColumnDomRef = oColumn.getDomRef();
 		assert.strictEqual(oColumn.getWidth(), "300px", "Column width is set to 300px initially (bigger than necessary)");
@@ -460,7 +462,7 @@ sap.ui.define([
 		});
 
 		this.oColumnResizer.ondblclick(oEvent);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oColumn.getWidth() !== "300px", "Column width changed due to auto column resize");
 		assert.ok(parseInt(oColumn.getWidth()) < 300, "Column is made bigger");
 	});
@@ -470,7 +472,7 @@ sap.ui.define([
 
 		oColumn.setWidth("300px");
 		oColumn.setSortIndicator("Descending");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oColumnDomRef = oColumn.getDomRef();
 		assert.strictEqual(oColumn.getWidth(), "300px", "Column width is set to 300px initially (bigger than necessary)");
@@ -489,7 +491,7 @@ sap.ui.define([
 
 		this.oColumnResizer.ondblclick(oEvent);
 		assert.ok(fnGetComputedStyleSpy.calledWith(oColumnDomRef.firstChild, ":after"), ":after pseudo element was called");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 	});
 
 	QUnit.module("Keyboard events", {
@@ -520,11 +522,11 @@ sap.ui.define([
 		oColumn.setWidth("100px");
 		var oNextColumn = this.oTable.getColumns()[1];
 		oNextColumn.setWidth("100px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oColumn.focus();
 		QUtils.triggerKeydown(oColumn.getDomRef(), KeyCodes.ARROW_RIGHT, true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oColumn.getWidth(), "116px", "Column 0 has increased width by 16px");
 		assert.strictEqual(oNextColumn.getWidth(), "84px", "Column 1 has decreased width by 16px");
 	});
@@ -534,11 +536,11 @@ sap.ui.define([
 		oColumn.setWidth("100px");
 		var oNextColumn = this.oTable.getColumns()[1];
 		oNextColumn.setWidth("100px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oColumn.focus();
 		QUtils.triggerKeydown(oColumn.getDomRef(), KeyCodes.ARROW_LEFT, true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oColumn.getWidth(), "84px", "Column 0 has decreased width by 16px");
 		assert.strictEqual(oNextColumn.getWidth(), "116px", "Column 1 has increased width by 16px");
 	});
@@ -546,30 +548,30 @@ sap.ui.define([
 	QUnit.test("Column resize should strictly happen only when SHIFT + ARROW_KEY is pressed", function(assert) {
 		var oColumn = this.oTable.getColumns()[0];
 		oColumn.setWidth("100px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oColumnDomRef = oColumn.getDomRef();
 		oColumn.focus();
 
 		// ALT key is pressed
 		QUtils.triggerKeydown(oColumnDomRef, KeyCodes.ARROW_LEFT, true, true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oColumn.getWidth(), "100px", "Column width did not change, since ALT key was also pressed");
 
 		// CTRL key is pressed
 		QUtils.triggerKeydown(oColumnDomRef, KeyCodes.ARROW_LEFT, true, false, true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oColumn.getWidth(), "100px", "Column width did not change, since CTRL key was also pressed");
 
 		// CTRL & ALT keys are pressed
 		QUtils.triggerKeydown(oColumnDomRef, KeyCodes.ARROW_LEFT, true, true, true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oColumn.getWidth(), "100px", "Column width did not change, since CTRL & ALT keys are also pressed");
 	});
 
 	QUnit.test("No column resize when text is selected in the column header", function(assert) {
 		var oColumn = this.oTable.getColumns()[0];
 		oColumn.setWidth("100px");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		var oColumnDomRef = oColumn.getDomRef();
 		oColumn.focus();
 
@@ -583,7 +585,7 @@ sap.ui.define([
 		});
 
 		QUtils.triggerKeydown(oColumn.getDomRef(), KeyCodes.ARROW_LEFT, true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oColumn.getWidth(), "100px", "Column width did not change, since there was text selected in the column header");
 
 		bStubWindowGetSelection.restore();

@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/Tree",
 	"sap/m/library",
-	"sap/ui/core/Core"
-], function(Element, Library, createAndAppendDiv, qutils, KeyCodes, JSONModel, Sorter, StandardTreeItem, StandardListItem, Tree, library, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Element, Library, createAndAppendDiv, qutils, KeyCodes, JSONModel, Sorter, StandardTreeItem, StandardListItem, Tree, library, oCore, nextUIUpdate) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
@@ -147,7 +148,7 @@ sap.ui.define([
 		oModel.setData(oData);
 		oTree.bindItems("/", oTreeItem);
 		oTree.placeAt("content");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		return oTree;
 	}
@@ -203,7 +204,7 @@ sap.ui.define([
 
 		var oArrow = Element.getElementById(oTree.getItems()[1].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oTree.getDeepestLevel(), 1, "deepestLevel");
 		assert.equal(oTree.getItems()[1].$().css("padding-left"), "0px", "padding");
@@ -211,7 +212,7 @@ sap.ui.define([
 
 		oArrow = Element.getElementById(oTree.getItems()[2].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oTree.getDeepestLevel(), 2, "deepestLevel");
 		assert.equal(oTree.getItems()[1].$().css("padding-left"), "0px", "padding");
@@ -220,7 +221,7 @@ sap.ui.define([
 
 		oArrow = Element.getElementById(oTree.getItems()[3].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oTree.getDeepestLevel(), 3, "deepestLevel");
 		assert.equal(oTree.getItems()[1].$().css("padding-left"), "0px", "padding");
@@ -230,15 +231,15 @@ sap.ui.define([
 
 		oArrow = Element.getElementById(oTree.getItems()[4].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oArrow = Element.getElementById(oTree.getItems()[5].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oArrow = Element.getElementById(oTree.getItems()[6].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oTree.getDeepestLevel(), 6, "deepestLevel");
 		assert.equal(oTree.getItems()[1].$().css("padding-left"), "0px", "padding");
@@ -251,12 +252,12 @@ sap.ui.define([
 		// collapse
 		var oArrowDomRef = oTree.getItems()[2].$().find(".sapMTreeItemBaseExpander");
 		oArrowDomRef.trigger("click");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//expand
 		oArrow = Element.getElementById(oTree.getItems()[2].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oTree.getItems()[2].$().css("padding-left"), "4px", "padding");
 
@@ -345,7 +346,7 @@ sap.ui.define([
 		assert.strictEqual(oMyTree.getAriaRole(), "tree", "role='tree' returned");
 
 		oMyTree.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.strictEqual(oMyTree.getDomRef("listUl").getAttribute("role"), oMyTree.getAriaRole(), "role='tree' not affected in DOM");
 		assert.strictEqual(oMyTree.getItems()[0].getDomRef().getAttribute("role"), "treeitem", "role='treeitem', tree item is also not affected in DOM");
 		oMyTree.destroy();
@@ -376,7 +377,7 @@ sap.ui.define([
 
 		var oArrow = Element.getElementById(oTree.getItems()[0].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oTree.getItems().length, 4, "four nodes displayed after tree expanding");
 
@@ -402,7 +403,7 @@ sap.ui.define([
 		oTree.focus();
 		var oArrow = Element.getElementById(oTree.getItems()[0].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(oTree.getItems().length, 2, "two nodes displayed after tree collapsing");
 
@@ -417,7 +418,7 @@ sap.ui.define([
 		var oBundle = Library.getResourceBundleFor("sap.m");
 		assert.strictEqual(oTree.getItems()[0]._oExpanderControl.getTooltip(), oBundle.getText("TREE_ITEM_EXPAND_NODE"), "Tooltip is correctly set to the Expander control");
 		oTree.expandToLevel(3);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.ok(oTree.getItems()[0].getExpanded(),"node is expanded");
 		assert.strictEqual(oTree.getItems()[0]._oExpanderControl.getTooltip(), oBundle.getText("TREE_ITEM_COLLAPSE_NODE"), "Tooltip for the Expander control updated correctly");
 		assert.equal(oTree.getItems()[4].getLevel(), 3, "expand to level 3");
@@ -433,12 +434,12 @@ sap.ui.define([
 	QUnit.test("Expand/collapse multiple nodes", function(assert) {
 		var oTree = this.oTree;
 		oTree.expand([0,1]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oTree.getItems().length, 5, "multiple expanding success.");
 
 		oTree.collapse([0,3]);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(oTree.getItems().length, 2, "multiple collapsing success.");
 	});
@@ -524,7 +525,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oTree = new Tree();
 			this.oTree.placeAt("content");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oTree.destroy();
@@ -551,7 +552,7 @@ sap.ui.define([
 		assert.ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "initial binding context.");
 
 		oTree.getModel().setProperty("/", oData2);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oTree.getItems()[0].$().hasClass("sapMTreeItemBaseLeaf"), "data changed");
 		assert.ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "icon has correct source.");
@@ -586,7 +587,7 @@ sap.ui.define([
 
 		oTree.getModel().setData(aTreeData);
 		oTree.expandToLevel(1);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// 2nd tree item is a leaf node
 		var oSecondItem = oTree.getItems()[1];
@@ -600,7 +601,7 @@ sap.ui.define([
 		var oBinding = oTree.getBinding("items");
 		var oSorter = new Sorter("title", false);
 		oBinding.sort(oSorter);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// 2nd tree item becomes a top level node after sorting is applied
 		assert.ok(oSecondItem.isTopLevel(), "2nd item is a top level node");

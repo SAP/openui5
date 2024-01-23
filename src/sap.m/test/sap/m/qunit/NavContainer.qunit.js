@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Popup",
 	"sap/m/NavContainer",
@@ -22,6 +23,7 @@ sap.ui.define([
 	ControlBehavior,
 	Element,
 	createAndAppendDiv,
+	nextUIUpdate,
 	jQuery,
 	Popup,
 	NavContainer,
@@ -44,7 +46,7 @@ sap.ui.define([
 
 	function invalidate(oControl) {
 		oControl.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 	}
 
 	Mobile.init();
@@ -141,7 +143,7 @@ sap.ui.define([
 
 	QUnit.module("Initial");
 
-	QUnit.test("NavContainer rendered", function(assert) {
+	QUnit.test("NavContainer rendered", async function(assert) {
 
 		assert.equal(window.mPage1EventLog.beforeFirstShow, 1, "Lifecycle event invocation count page1 beforeFirstShow should be correct");
 		assert.equal(window.mPage1EventLog.beforeShow, 1, "Lifecycle event invocation count page1 beforeShow should be correct");
@@ -173,7 +175,7 @@ sap.ui.define([
 		assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
 		nc2.setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(document.getElementById("nc2"), "NavContainer 2 should be rendered");
 	});
@@ -239,7 +241,7 @@ sap.ui.define([
 		assert.ok(!this.fnApplyAutoFocusToSpy.calledWith(this.pageId));
 	});
 
-	QUnit.test("Auto focus disabled", function (assert) {
+	QUnit.test("Auto focus disabled", async function(assert) {
 		// Arrange
 		var oApplyAutoFocusSpy = this.spy(NavContainer.prototype, "_applyAutoFocus"),
 			fnDone = assert.async(),
@@ -263,7 +265,7 @@ sap.ui.define([
 			}).placeAt("qunit-fixture");
 
 		assert.expect(1);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oNavContainer.to("secondPage");
@@ -301,7 +303,7 @@ sap.ui.define([
 			"The method should be called when focus is inside the current page");
 	});
 
-	QUnit.test("Auto focus should't be modified when the focus was not inside the current page", function (oAssert) {
+	QUnit.test("Auto focus should't be modified when the focus was not inside the current page", async function(oAssert) {
 		// Arrange
 		var fnDone = oAssert.async(),
 			oOutsideButton = new Button({text: "Outside Button"}).placeAt("qunit-fixture"),
@@ -313,7 +315,7 @@ sap.ui.define([
 				]
 			}).placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oNavContainer.attachNavigate(function (oEvent) {
 			// Assert
@@ -359,11 +361,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("afterNavigate is fired event if no transition", function (assert) {
+	QUnit.test("afterNavigate is fired event if no transition", async function(assert) {
 		// Arrange
 		var oSpy = this.spy(this.nc, "fireAfterNavigate");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.nc.to("page2a");
@@ -395,14 +397,14 @@ sap.ui.define([
 		this.nc.to("page2a");
 	});
 
-	QUnit.test("navigationFinished is fired if the nav container is rendered", function (assert) {
+	QUnit.test("navigationFinished is fired if the nav container is rendered", async function(assert) {
 		assert.expect(2);
 		// Arrange
 		var fnDone = assert.async(),
 			oSpy = this.spy(this.nc, "fireNavigationFinished");
 
 		this.nc.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(this.nc.getDomRef(), "NavContainer is rendered");
@@ -788,10 +790,10 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Dimensions", function(assert) {
+	QUnit.test("Dimensions", async function(assert) {
 		nc.setWidth("100px");
 		nc.setHeight("100px");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var ncDom = document.getElementById("myNC");
 		assert.equal(ncDom.offsetWidth, "100", "width should be 100px");
@@ -799,7 +801,7 @@ sap.ui.define([
 
 		nc.setWidth("100%");
 		nc.setHeight("100%");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		ncDom = document.getElementById("myNC");
 		var ww = document.documentElement.clientWidth || window.innerWidth; // depending on the browser
@@ -852,7 +854,7 @@ sap.ui.define([
 		assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 	});
 
-	QUnit.test("_safeBackToPage should work with back transition", function(assert) {
+	QUnit.test("_safeBackToPage should work with back transition", async function(assert) {
 		var nc = new NavContainer({
 			pages : [
 				new Page("firstPage"),
@@ -864,7 +866,7 @@ sap.ui.define([
 
 		nc.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		spy = this.spy(NavContainer.transitions["slide"], "back");
 
@@ -880,7 +882,7 @@ sap.ui.define([
 
 	var pageRenderCounter = 0;
 	var realPageRender;
-	QUnit.test("Page rerendering", function(assert) {
+	QUnit.test("Page rerendering", async function(assert) {
 		realPageRender = PageRenderer.render;
 		PageRenderer.render = function() {
 			pageRenderCounter++;
@@ -890,15 +892,15 @@ sap.ui.define([
 		assert.equal(pageRenderCounter, 0, "no rendering should have happened yet");
 
 		Element.getElementById("page2").invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(pageRenderCounter, 1, "one page rendering should have happened");
 
 		Element.getElementById("page2").addContent(new Button({text:"Button p2"}));
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(pageRenderCounter, 2, "two page renderings should have happened");
 
 		Element.getElementById("page3").addContent(new Button({text:"Button p3"})); // invisible page - should cause NO re-rendering!
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(pageRenderCounter, 2, "still, only two page renderings should have happened");
 
 		assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
@@ -1050,7 +1052,7 @@ sap.ui.define([
 
 			// Render
 			oNavContainer.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 			//Act
 			oNavContainer.attachAfterNavigate(afterNavigate);
@@ -1081,7 +1083,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Focus management", function(assert) {
+	QUnit.test("Focus management", async function(assert) {
 		var done = assert.async();
 		//Arrange
 		var //System under test
@@ -1146,7 +1148,7 @@ sap.ui.define([
 
 		// Render
 		oNavContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Initial focus check on first page
 		var oButtonPage1FocusDom = Element.getElementById("btn1_1").getFocusDomRef();
@@ -1824,7 +1826,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Should build a navigation stack if there is no page at the moment", function(assert) {
+	QUnit.test("Should build a navigation stack if there is no page at the moment", async function(assert) {
 		var done = assert.async();
 		var page1 = new Page({
 			title: "Other Page 1"
@@ -1840,7 +1842,7 @@ sap.ui.define([
 			]
 		});
 		localNc.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		//Arrange
 		var calls = [],
 			afterNavigate = function(evt) {
@@ -1869,7 +1871,7 @@ sap.ui.define([
 		}, 2000);
 	});
 
-	QUnit.test("Base Slide transition", function(assert) {
+	QUnit.test("Base Slide transition", async function(assert) {
 		// Assert
 		assert.expect(27);
 		// Arrange
@@ -1904,7 +1906,7 @@ sap.ui.define([
 			};
 
 		localNc.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		localNc.attachAfterNavigate(function (e) {
@@ -1966,7 +1968,7 @@ sap.ui.define([
 		localNc.back();
 	});
 
-	QUnit.test("Navigation with animationMode=none", function(assert) {
+	QUnit.test("Navigation with animationMode=none", async function(assert) {
 		// Arrange
 		var oPage1 = new Page("page1-animation"),
 			oPage2 = new Page("page2-animation"),
@@ -1980,7 +1982,7 @@ sap.ui.define([
 			oSpy = sinon.spy(window, "setTimeout");
 
 		oNavContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.expect(1);
 
@@ -2021,7 +2023,7 @@ sap.ui.define([
 
 	QUnit.module("Navigation stack cleanup");
 
-	QUnit.test("Should remove a page that is no longer aggregated from the navigation stack", function(assert) {
+	QUnit.test("Should remove a page that is no longer aggregated from the navigation stack", async function(assert) {
 		//Arrange
 		var oPage1 = new Page("localPage1"),
 			oPage2 = new Page("localPage2"),
@@ -2035,7 +2037,7 @@ sap.ui.define([
 				]
 			});
 		oLocalNavContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oLocalNavContainer.to(oPage2.getId(), "show");
 		oLocalNavContainer.to(oPage3.getId(), "show");
@@ -2043,7 +2045,7 @@ sap.ui.define([
 		//Act
 		oLocalNavContainer.removePage(oPage3);
 		assert.ok(!oPage3.getDomRef(), "Did remove the dom of page 3");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oLocalNavContainer.getCurrentPage().getId(), oPage2.getId(), "Page2 is the current page, since page3 got removed");
 		assert.ok(oPage2.$().is(":visible"), "Page 2 is visible");
@@ -2057,7 +2059,7 @@ sap.ui.define([
 	QUnit.module("Event data");
 
 	function beforeRenderingTestCase (sTestName, sEventName) {
-		QUnit.test(sTestName, function(assert) {
+		QUnit.test(sTestName, async function(assert) {
 			var done = assert.async();
 			// Arrange
 			var oInitialPage = new Page(),
@@ -2091,7 +2093,7 @@ sap.ui.define([
 
 
 			// Render
-			Core.applyChanges();
+			await nextUIUpdate();
 
 		});
 	}
@@ -2100,7 +2102,7 @@ sap.ui.define([
 	beforeRenderingTestCase("Should pass to data to the page's onBeforeFirstShow when called before rendering", "onBeforeFirstShow");
 	beforeRenderingTestCase("Should pass to daa to the page's onAfterShow when called before rendering", "onAfterShow");
 
-	QUnit.test("Event data on initial page", function(assert) {
+	QUnit.test("Event data on initial page", async function(assert) {
 		var done = assert.async();
 		var oInitialPage = new Page(),
 			oSecondPage = new Page(),
@@ -2120,7 +2122,7 @@ sap.ui.define([
 		oNavContainer.to(oInitialPage.getId(), "show", oNavigationData);
 		oNavContainer.to(oSecondPage.getId(), "show");
 		oNavContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oInitialPage.addEventDelegate({
 			onBeforeShow: function(oEvent) {
@@ -2136,7 +2138,7 @@ sap.ui.define([
 
 	QUnit.module("Lifecycle");
 
-	QUnit.test("Exit/Destruction", function(assert) {
+	QUnit.test("Exit/Destruction", async function(assert) {
 		var done = assert.async();
 		var page1 = new Page({
 			title: "Page 1"
@@ -2152,7 +2154,7 @@ sap.ui.define([
 			]
 		});
 		localNc.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Arrange
 		var afterNavigate = function(evt) {
@@ -2248,7 +2250,7 @@ sap.ui.define([
 		localNc.destroy();
 	});
 
-	QUnit.test("Clear stack upon removeAllPages", function(assert) {
+	QUnit.test("Clear stack upon removeAllPages", async function(assert) {
 		var pageA = new Page("pageA", {
 				title: "pageA"
 			}),
@@ -2262,7 +2264,7 @@ sap.ui.define([
 			});
 
 		localNc.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert init state
 		assert.strictEqual(localNc._pageStack.length, 1, "page stack is initialized");
@@ -2277,7 +2279,7 @@ sap.ui.define([
 		pageB.destroy();
 	});
 
-	QUnit.test("Clear stack upon removePage", function(assert) {
+	QUnit.test("Clear stack upon removePage", async function(assert) {
 		var pageA = new Page("pageA", {
 				title: "pageA"
 			}),
@@ -2291,7 +2293,7 @@ sap.ui.define([
 			});
 
 		localNc.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert init state
 		assert.strictEqual(localNc._pageStack.length, 1, "page stack is initialized");
@@ -2494,7 +2496,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_isFocusInControl", function (oAssert) {
+	QUnit.test("_isFocusInControl", async function(oAssert) {
 		// Arrange
 		var oInsideButton = new Button({text: "Inside Button"}),
 			oOutsideButton = new Button({text: "Outside Button"}).placeAt("content"),
@@ -2504,7 +2506,7 @@ sap.ui.define([
 				]
 			}).placeAt("content");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oInsideButton.$().trigger("focus");

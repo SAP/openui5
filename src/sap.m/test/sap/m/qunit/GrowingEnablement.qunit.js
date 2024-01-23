@@ -17,10 +17,11 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/ui/core/HTML",
 	"sap/m/Page",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes"
-], function(Core, Library, createAndAppendDiv, MockServer, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page, jQuery, qutils, KeyCodes) {
+], function(Core, Library, createAndAppendDiv, MockServer, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page, nextUIUpdate, jQuery, qutils, KeyCodes) {
 	"use strict";
 	createAndAppendDiv("growing1");
 	createAndAppendDiv("growing2");
@@ -54,7 +55,7 @@ sap.ui.define([
 		});
 
 		oPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// sytem under test
 		var oGrowingDelegate = oList._oGrowingDelegate;
@@ -86,7 +87,7 @@ sap.ui.define([
 
 			// act + assert growingScrollToLoad=true
 			oList.setGrowingScrollToLoad(true);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			assert.ok(oList.$("triggerList").is(":hidden"), "Load more trigger is not visible");
 
 			// act + assert loading is started case for growingScrollToLoad=true
@@ -118,7 +119,7 @@ sap.ui.define([
 
 			// act + assert growingScrollToLoad=true
 			oList.setGrowingScrollToLoad(false);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			setTimeout(function() {
 				assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is  visible");
@@ -154,7 +155,7 @@ sap.ui.define([
 		new Page({
 			content: oList
 		}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// sytem under test
 		//var oGrowingDelegate = oList._oGrowingDelegate;
@@ -219,7 +220,7 @@ sap.ui.define([
 		});
 
 		oPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aVisibleItems = oList.getVisibleItems();
 
@@ -227,7 +228,7 @@ sap.ui.define([
 			oItem.setVisible(false);
 		});
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		aVisibleItems = oList.getVisibleItems();
 		assert.strictEqual(aVisibleItems.length, 0, "List has no visible items.");
 
@@ -266,7 +267,7 @@ sap.ui.define([
 		var sut = new GrowingEnablement(oList);
 
 		page.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act + Assert
 		assert.ok(sut._getHasScrollbars(), "The list has scrollbars");
@@ -287,7 +288,7 @@ sap.ui.define([
 		var sut = new GrowingEnablement(oList);
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act + Assert
 		assert.ok(!sut._getHasScrollbars(), "The list has no scrollbars");
@@ -323,7 +324,7 @@ sap.ui.define([
 		});
 
 		oPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
 
@@ -355,7 +356,7 @@ sap.ui.define([
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		//Act + Assert
 		assert.ok(!!oList.getDomRef(), "DomRef OK");
@@ -437,7 +438,7 @@ sap.ui.define([
 			});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oList.attachEventOnce("updateFinished", oInitialLoadDeferred.resolve);
 
@@ -493,7 +494,7 @@ sap.ui.define([
 
 		//System under test
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oList.attachEventOnce("updateFinished", oInitialLoadDeferred.resolve);
 
@@ -581,18 +582,18 @@ sap.ui.define([
 		oTable.setModel(oModel);
 
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.equal(document.getElementById(oTable.$("trigger").attr("aria-describedby")).textContent, Library.getResourceBundleFor("sap.m").getText("LOAD_MORE_ROWS_ACC_WITH_COUNT", [2, 3]));
 		assert.strictEqual(oTable.getItems().length, 2, "2 items are rendered");
 		var sItemIds = oTable.getItems().toString();
 
 		oTable.setVisible(false);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oTable.getModel().refresh(true);
 		assert.strictEqual(oTable.getItems().toString(), sItemIds, "During the binding udpate the items are not destroy even though the table is invisible");
 		oTable.setVisible(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// hide all columns
 		var oColumn = oTable.getColumns()[0];
@@ -642,7 +643,7 @@ sap.ui.define([
 
 		//System under test
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		oTable.attachEventOnce("updateFinished", oDeferred.resolve);
 		var fnGetInitialAccumulatedWidth = sinon.spy(oTable, "_getInitialAccumulatedWidth");
@@ -704,7 +705,7 @@ sap.ui.define([
 			});
 
 			this.oPage.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oPage.destroy();
@@ -723,7 +724,7 @@ sap.ui.define([
 
 		oColumn.setMinScreenWidth("48000px");
 		oColumn.setDemandPopin(true);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oTableDomRef = this.oTable.getDomRef(),
 			oTriggerDomRef = this.oTable.getDomRef("trigger");
@@ -790,7 +791,7 @@ sap.ui.define([
 				})
 			});
 			this.oList.placeAt("qunit-fixture");
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 			this.oList.destroy();
@@ -809,7 +810,7 @@ sap.ui.define([
 			}
 		});
 		oBinding.sort(oSorter);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
 			return oItem.isGroupHeader();
@@ -852,7 +853,7 @@ sap.ui.define([
 			}
 		});
 		oBinding.sort(oSorter);
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var aVisibleItems = this.oList.getVisibleItems();
 		var aGroupHeaderListItems = aVisibleItems.filter(function(oItem) {

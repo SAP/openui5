@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/base/Log",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Element,
@@ -20,6 +21,7 @@ sap.ui.define([
 	HTML,
 	Log,
 	oCore,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -366,7 +368,7 @@ sap.ui.define([
 
 	QUnit.module("Events");
 
-	QUnit.test("Mousedown on SVG element should not throw exception", function (assert) {
+	QUnit.test("Mousedown on SVG element should not throw exception", async function(assert) {
 		var done = assert.async();
 		var oSvgCircle = new HTML({
 			content: '<svg id="svg-circle" height="100" width="100">' +
@@ -375,7 +377,7 @@ sap.ui.define([
 		});
 
 		oPage.addContent(oSvgCircle);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		MessageToast.show("test", {
 			onClose: function () {

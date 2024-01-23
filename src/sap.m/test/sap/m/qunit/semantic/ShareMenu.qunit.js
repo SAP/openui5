@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/semantic/SendMessageAction",
 	"sap/m/ActionSheet",
 	"sap/m/Button",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	coreLibrary,
 	qutils,
@@ -26,7 +27,8 @@ sap.ui.define([
 	SendMessageAction,
 	ActionSheet,
 	Button,
-	oCore
+	oCore,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -37,7 +39,7 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("Aria attributes", function (assert) {
+	QUnit.test("Aria attributes", async function(assert) {
 		// Arrange
 		var oDetail = new DetailPage("detailPage", {
 				sendEmailAction: new SendEmailAction(),
@@ -48,7 +50,7 @@ sap.ui.define([
 
 		// Act
 		oDetail.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oShareMenuBtn.getAriaHasPopup(), AriaHasPopup.Menu, "aria-haspopup is as expected");

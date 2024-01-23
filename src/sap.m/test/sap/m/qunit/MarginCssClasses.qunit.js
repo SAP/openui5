@@ -4,13 +4,9 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/Device",
-	"sap/ui/core/Core"
-], function(createAndAppendDiv,
-	Component,
-	ComponentContainer,
-	Device,
-	oCore
-) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(createAndAppendDiv, Component, ComponentContainer, Device, oCore, nextUIUpdate) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -245,7 +241,7 @@ sap.ui.define([
 		{cssProperty: 'margin-bottom', marginClass: 'sapUiNoMarginTop sapUiNoMarginBottom sapUiLargeMargin', expected: '0px'}
 	].forEach(function(oConfig) {
 
-		QUnit.test("Testing margin class '" + oConfig.marginClass + "'", function(assert) {
+		QUnit.test("Testing margin class '" + oConfig.marginClass + "'", async function(assert) {
 
 			// add css classes to each control
 			this.aControls.forEach(function(oControl) {
@@ -262,7 +258,7 @@ sap.ui.define([
 			}.bind(this));
 
 			// render
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			//check values
 			assert.equal(this.oPage.$().css(oConfig.cssProperty), oConfig.expected, oConfig.cssProperty + " Page " +  oConfig.expected);

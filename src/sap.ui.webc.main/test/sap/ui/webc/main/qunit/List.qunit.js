@@ -3,18 +3,19 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/List",
 	"sap/ui/webc/main/Button",
 	"sap/ui/webc/main/CustomListItem",
 	"sap/ui/webc/main/GroupHeaderListItem",
 	"sap/ui/webc/main/StandardListItem"
-], function(createAndAppendDiv, Core, List, Button, CustomListItem, GroupHeaderListItem, StandardListItem) {
+], function(createAndAppendDiv, Core, nextUIUpdate, List, Button, CustomListItem, GroupHeaderListItem, StandardListItem) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oList = new List({
 				footerText: "Some text...",
 				headerText: "Some text...",
@@ -140,7 +141,7 @@ sap.ui.define([
 				}
 			});
 			this.oList.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oList.destroy();

@@ -39,9 +39,7 @@
 		</f:header>
 		<f:content>
 			<VBox renderType="Bare" justifyContent="Center" height="100%">
-				<IllustratedMessage visible="{= ${view>/getSomeResultsVisible} }" illustrationType="sapIllus-SearchEarth"/>
-				<IllustratedMessage visible="{= ${view>/noResultsVisible} }" illustrationType="sapIllus-SearchFolder" title="{view>/overviewNoDataText}"/>
-				<f:SidePanel visible="{= ${view>/contentVisible} }" id="mySidePanel" toggle="onToggle">
+				<f:SidePanel id="mySidePanel" toggle="onToggle">
 					<f:mainContent>
 						<core:Fragment fragmentName="sap.ui.demo.iconexplorer.view.browse.OverviewMainContent" type="XML" />
 					</f:mainContent>

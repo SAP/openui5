@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/ActionListItem",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(qutils, KeyCodes, List, ActionListItem, oCore, jQuery) {
+], function(qutils, KeyCodes, List, ActionListItem, oCore, nextUIUpdate, jQuery) {
 	"use strict";
 
 
@@ -16,7 +17,7 @@ sap.ui.define([
 			items : [ new ActionListItem(sListItemId, oMetadata) ]
 		});
 		oList.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		return oList;
 	};
 
@@ -38,7 +39,7 @@ sap.ui.define([
 				includeItemInSelection : bIncludeItemInSelection
 			});
 			oList.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			qutils.triggerKeydown("item1", KeyCodes.SPACE);
 

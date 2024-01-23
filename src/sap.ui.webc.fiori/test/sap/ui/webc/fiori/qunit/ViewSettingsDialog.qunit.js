@@ -3,18 +3,19 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/ViewSettingsDialog",
 	"sap/ui/webc/fiori/FilterItem",
 	"sap/ui/webc/fiori/FilterItemOption",
 	"sap/ui/webc/fiori/SortItem",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, ViewSettingsDialog, FilterItem, FilterItemOption, SortItem, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, ViewSettingsDialog, FilterItem, FilterItemOption, SortItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oViewSettingsDialog = new ViewSettingsDialog({
 				filterItems: [
 					new FilterItem({
@@ -79,7 +80,7 @@ sap.ui.define([
 				}
 			});
 			this.oViewSettingsDialog.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oViewSettingsDialog.destroy();

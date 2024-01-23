@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Text",
 	"sap/base/Log",
-	"sap/ui/core/Core"
-], function(SimpleFixFlex, Button, Text, Log, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(SimpleFixFlex, Button, Text, Log, oCore, nextUIUpdate) {
 	"use strict";
 
 	/* --------------------------- SimpleFixFlex API ---------------------------------- */
@@ -29,7 +30,7 @@ sap.ui.define([
 
 	QUnit.test("SimpleFixFlex should be rendered when zero configuration is passed", function (assert) {
 		var oSimpleFixFlex = new SimpleFixFlex().placeAt("qunit-fixture");
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(oSimpleFixFlex.getDomRef(), "SimpleFixFlex should be rendered.");
 		assert.ok(oSimpleFixFlex.getDomRef("flexContentContainer"), "The flex content container was rendered with id.");
@@ -46,14 +47,14 @@ sap.ui.define([
 			iFixContentTextLength;
 
 		// Act
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(fnErrorSpy.callCount, 0, "No warning logged for unset text.");
 
 		// Act
 		oSimpleFixFlex.setFixContent(new Text({text: "Really short text."}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Arrange
 		iFixContentTextLength = oSimpleFixFlex.getFixContent().getText().length;
@@ -65,7 +66,7 @@ sap.ui.define([
 
 		// Act
 		oSimpleFixFlex.setFixContent(new Text({text: "Really long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long  text."}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Arrange
 		iFixContentTextLength = oSimpleFixFlex.getFixContent().getText().length;
@@ -99,7 +100,7 @@ sap.ui.define([
 
 			// Act
 			this.oSimpleFixFlex.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function() {
 
@@ -119,7 +120,7 @@ sap.ui.define([
 
 		// Act
 		this.oSimpleFixFlex.addFlexContent(new Button({ text: "test"}));
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		this.oSimpleFixFlex.getFlexContent().forEach(function (oControl) {
 
@@ -144,7 +145,7 @@ sap.ui.define([
 
 		// Arrange
 		this.oSimpleFixFlex.setFitParent(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.strictEqual(this.oSimpleFixFlex.$().css("padding-top"), "0px",
@@ -160,7 +161,7 @@ sap.ui.define([
 
 		// Act
 		this.oSimpleFixFlex.getFixContent().setVisible(false);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		try {
 			oSpy.apply(this.oSimpleFixFlex);

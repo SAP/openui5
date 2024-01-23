@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/m/QuickViewGroupElement",
 	"sap/m/Button",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Element,
@@ -30,6 +31,7 @@ sap.ui.define([
 	QuickViewGroupElement,
 	Button,
 	KeyCodes,
+	nextUIUpdate,
 	jQuery
 ) {
 	"use strict";
@@ -370,7 +372,7 @@ sap.ui.define([
 
 			oPage.addContent(this.oButton);
 			oPage.addContent(this.oButton2);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -441,7 +443,7 @@ sap.ui.define([
 			});
 
 			oPage.addContent(this.oButton);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -493,7 +495,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		this.oButton.invalidate();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oQuickView._oPopover.$().is(':visible'), true, "Should not close the QuickView control.");
 	});
@@ -523,7 +525,7 @@ sap.ui.define([
 		this.oQuickView.openBy(document.body);
 		this.oQuickView.setTooltip(sTooltip);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oQuickView.getDomRef().getAttribute("title"), sTooltip, "Tooltip should be " + sTooltip);
 	});
@@ -533,7 +535,7 @@ sap.ui.define([
 		this.oQuickView.setBusyIndicatorDelay(0);
 		this.oQuickView.setBusy(true);
 
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.ok(this.oQuickView.getDomRef("busyIndicator"), "QuickView should have a busy indicator");
 	});
@@ -605,7 +607,7 @@ sap.ui.define([
 			});
 
 			oPage.addContent(this.oButton);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		},
 		afterEach: function () {
@@ -673,7 +675,7 @@ sap.ui.define([
 			});
 
 			oPage.addContent(this.oButton);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -732,7 +734,7 @@ sap.ui.define([
 			});
 
 			oPage.addContent(this.oButton);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -763,7 +765,7 @@ sap.ui.define([
 			});
 
 			oPage.addContent(this.oButton);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -812,7 +814,7 @@ sap.ui.define([
 			});
 
 			oPage.addContent(this.oButton);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -987,7 +989,7 @@ sap.ui.define([
 			});
 
 			oPage.addContent(this.oButton);
-			Core.applyChanges();
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -1001,14 +1003,14 @@ sap.ui.define([
 	QUnit.test("Test navigation with sap.m.QuickViewGroupElementType.pageLink", function (assert) {
 		// Act
 		this.oButton.firePress();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oLink = this.oQuickView.getPages()[0].getPageContent().form.getContent().find(function(item){
 			return item.isA("sap.m.Link");
 		});
 
 		oLink.firePress();
-		Core.applyChanges();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
 		assert.ok(this.oQuickView._oPopover.isOpen(), "After a link is clicked, the popup should stay opened with the content of the linked page.");

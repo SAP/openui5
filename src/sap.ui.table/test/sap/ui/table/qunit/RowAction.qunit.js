@@ -144,7 +144,7 @@ sap.ui.define([
 
 	function checkRendering(that, assert, fnChanges, aExpectedIcons, aExpectedTexts) {
 		fnChanges.apply(that);
-		oCore.applyChanges();
+		nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 		var aChildren = that.oRowAction.getDomRef().children;
 

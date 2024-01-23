@@ -3,19 +3,20 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Title"
-], function(createAndAppendDiv, Core, Title) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Title) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oTitle = new Title({
 				text: "Some text..."
 			});
 			this.oTitle.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oTitle.destroy();

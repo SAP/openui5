@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Calendar",
 	"sap/ui/webc/main/CalendarDate"
-], function(createAndAppendDiv, Core, Calendar, CalendarDate) {
+], function(createAndAppendDiv, Core, nextUIUpdate, Calendar, CalendarDate) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oCalendar = new Calendar({
 				dates: [
 					new CalendarDate({
@@ -29,7 +30,7 @@ sap.ui.define([
 				}
 			});
 			this.oCalendar.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oCalendar.destroy();

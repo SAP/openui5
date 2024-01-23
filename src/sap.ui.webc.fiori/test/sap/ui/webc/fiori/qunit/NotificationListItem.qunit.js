@@ -3,17 +3,18 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/NotificationListItem",
 	"sap/ui/webc/fiori/NotificationAction",
 	"sap/ui/webc/main/Avatar",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, NotificationListItem, NotificationAction, Avatar, Button) {
+], function(createAndAppendDiv, Core, nextUIUpdate, NotificationListItem, NotificationAction, Avatar, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oNotificationListItem = new NotificationListItem({
 				titleText: "Some text...",
 				actions: [
@@ -87,7 +88,7 @@ sap.ui.define([
 				}
 			});
 			this.oNotificationListItem.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oNotificationListItem.destroy();
