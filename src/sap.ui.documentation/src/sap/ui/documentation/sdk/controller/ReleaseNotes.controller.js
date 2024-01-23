@@ -19,6 +19,8 @@ sap.ui.define([
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ReleaseNotes", {
 
 			onInit: function() {
+				BaseController.prototype.onInit.call(this);
+
 				this._oView = this.getView();
 
 				// Async resource handling
@@ -31,9 +33,6 @@ sap.ui.define([
 
 				this._oView.setModel(this._oModel);
 				this._oView.setModel(this._oVersionModel, "select");
-
-				library._getAppInfo(this._processAppInfo.bind(this));
-
 			},
 			_processAppInfo: function (oAppInfo) {
 				var oVersion,
@@ -64,14 +63,15 @@ sap.ui.define([
 					items : []
 				};
 
-				while (iMinor >= 28) {
-					sVersion = iMajor + "." + iMinor;
-					oVersions.items.push({
-						key : sVersion,
-						value : sVersion
-					});
-					iMinor = iMinor - (iMinor <= 60 ? 2 : 1);
-				}
+				oVersions.items = this._oNeoAppVersions.reduce(function(result, oVersion) {
+					var sMajorMinorVersion = oVersion.target.version.split(".")[0] + "." + oVersion.target.version.split(".")[1];
+
+					if (!result.some((o) => o.key == sMajorMinorVersion)) {
+						result.push({ key: sMajorMinorVersion, value: sMajorMinorVersion });
+					}
+					return result;
+				}, []);
+
 				this._oVersionModel.setData(oVersions);
 
 				this.appendPageTitle(this.getModel("i18n").getProperty("RELEASE_NOTES_TITLE"));
@@ -124,6 +124,7 @@ sap.ui.define([
 						// Store needed data
 						this._oNeoAppVersions = oNeoAppJson[0].routes;
 						this._sSapUiVersion = oSapUiVersionJson[0].version;
+						library._getAppInfo(this._processAppInfo.bind(this));
 
 						// Make version select visible
 						this._oView.byId("VersionSelect").setVisible(true);
