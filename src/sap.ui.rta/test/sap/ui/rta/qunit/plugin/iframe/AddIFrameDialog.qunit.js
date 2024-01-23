@@ -449,26 +449,32 @@ sap.ui.define([
 			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
-		QUnit.test("when a forbidden url is entered", async function(assert) {
-			this.oAddIFrameDialog.attachOpened(async function() {
+		QUnit.test("when you enter an invalid url", async function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
 				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+				const oSaveButton = Element.getElementById("sapUiRtaAddIFrameDialogSaveButton");
+				oUrlTextArea.attachEventOnce("validateFieldGroup", () => {
+					assert.strictEqual(oUrlTextArea.getValueState(), ValueState.Error, "then an error is displayed");
+					this.oAddIFrameDialog._oController.onShowPreview();
+					assert.strictEqual(
+						this.oAddIFrameDialog._oJSONModel.getProperty("/previewUrl/value"),
+						"",
+						"then the preview is not updated"
+					);
+					assert.strictEqual(
+						Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
+						false,
+						"then the save button is disabled"
+					);
+				});
 				// eslint-disable-next-line no-script-url
 				oUrlTextArea.setValue("javascript:someJs");
-				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
-				await nextUIUpdate();
+				oUrlTextArea.getFocusDomRef().focus();
 
-				assert.strictEqual(oUrlTextArea.getValueState(), "Error", "then an error is displayed");
-				this.oAddIFrameDialog._oController.onShowPreview();
-				assert.strictEqual(
-					this.oAddIFrameDialog._oJSONModel.getProperty("/previewUrl/value"),
-					"",
-					"then the preview is not updated"
-				);
-				assert.strictEqual(
-					Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
-					false,
-					"then the save button is disabled"
-				);
+				setTimeout(() => {
+					oSaveButton.getFocusDomRef().focus();
+					clickOnSave();
+				}, 0);
 				clickOnCancel();
 			}.bind(this));
 			const oResponse = await this.oAddIFrameDialog.open(mTestURLBuilderData, oReferenceControl);
@@ -476,27 +482,33 @@ sap.ui.define([
 		});
 
 		QUnit.test("when an empty string is entered as url", async function(assert) {
-			this.oAddIFrameDialog.attachOpened(async function() {
+			this.oAddIFrameDialog.attachOpened(function() {
 				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
-				// Set a valure beforehand to ensure that the empty string is really refused as input
-				oUrlTextArea.setValue("someValue");
-				this.oAddIFrameDialog._oController.onShowPreview();
-				oUrlTextArea.setValue("   ");
-				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
-				await nextUIUpdate();
+				const oSaveButton = Element.getElementById("sapUiRtaAddIFrameDialogSaveButton");
+				oUrlTextArea.attachEventOnce("validateFieldGroup", () => {
+					assert.strictEqual(oUrlTextArea.getValueState(), ValueState.Error, "then an error is displayed");
+					this.oAddIFrameDialog._oController.onShowPreview();
+					assert.strictEqual(
+						this.oAddIFrameDialog._oJSONModel.getProperty("/previewUrl/value"),
+						"",
+						"then empty string is trimmed and the preview is not updated"
+					);
+					assert.strictEqual(
+						Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
+						false,
+						"then the save button is disabled"
+					);
+				});
 
-				assert.strictEqual(oUrlTextArea.getValueState(), "Error", "then an error is displayed");
-				this.oAddIFrameDialog._oController.onShowPreview();
-				assert.strictEqual(
-					this.oAddIFrameDialog._oJSONModel.getProperty("/previewUrl/value"),
-					"someValue",
-					"then the preview is not updated"
-				);
-				assert.strictEqual(
-					Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
-					false,
-					"then the save button is disabled"
-				);
+				// Set a value beforehand to ensure that the empty string is really refused as input
+				oUrlTextArea.setValue("someValue");
+				oUrlTextArea.setValue("   ");
+				oUrlTextArea.getFocusDomRef().focus();
+
+				setTimeout(() => {
+					oSaveButton.getFocusDomRef().focus();
+					clickOnSave();
+				}, 0);
 				clickOnCancel();
 			}.bind(this));
 			const oResponse = await this.oAddIFrameDialog.open(mTestURLBuilderData, oReferenceControl);
@@ -511,7 +523,7 @@ sap.ui.define([
 				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
 				await nextUIUpdate();
 
-				assert.strictEqual(oUrlTextArea.getValueState(), "None", "then it is not showing an error");
+				assert.strictEqual(oUrlTextArea.getValueState(), ValueState.None, "then it is not showing an error");
 				assert.ok(oPreviewButton.getEnabled(), "then the preview button is enabled after url was entered");
 				this.oAddIFrameDialog._oController.onShowPreview();
 				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled after refreshing the preview");
