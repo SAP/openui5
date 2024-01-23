@@ -271,15 +271,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onActivate is called on draft and commands requiring hard reload were executed (e.g. app descriptor commands)", function(assert) {
-			var fnDone = assert.async();
-			var sVersionTitle = "aVersionTitle";
+			const fnDone = assert.async();
+			const sVersionTitle = "aVersionTitle";
 
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			sandbox.stub(this.oRta._oSerializer, "needsReload").resolves(true);
 
 			sandbox.stub(this.oRta.getCommandStack(), "removeAllCommands").callsFake(function() {
 				assert.strictEqual(this.oRta._bSavedChangesNeedReload, true, "then the needs reload flag is set to true");
-				assert.strictEqual(this.oSaveStub.lastCall.args[0].version, "-1", "then saveCommands is called with the right version");
+				assert.strictEqual(
+					this.oSaveStub.lastCall.args[0].version,
+					this.oRta._oVersionsModel.getProperty("/displayedVersion"),
+					"then saveCommands is called with the right version"
+				);
 				fnDone();
 			}.bind(this));
 
