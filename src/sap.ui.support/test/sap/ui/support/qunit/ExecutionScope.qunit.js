@@ -28,7 +28,7 @@ sap.ui.define([
 			 InputBase,
 			 List,
 			 StandardListItem,
-			 oCore,
+			 Core,
 			 Log) {
 		'use strict';
 
@@ -97,14 +97,6 @@ sap.ui.define([
 			list.bindAggregation("items", "/navigation", itemTemplate);
 		}
 
-		var core;
-
-		oCore.registerPlugin({
-			startPlugin: function (oCore) {
-				core = oCore;
-			}
-		});
-
 		QUnit.module("Execution Scope API test", {
 			beforeEach: function () {
 
@@ -142,7 +134,7 @@ sap.ui.define([
 				});
 				this.page.placeAt("qunit-fixture");
 
-				this.es = ExecutionScope(core, {
+				this.es = ExecutionScope(Core, {
 					type: "global"
 				});
 			},
@@ -221,7 +213,7 @@ sap.ui.define([
 
 		QUnit.test("getElements with subtree context", function (assert) {
 			var elementsInCore = this.es.getElements();
-			var esNew = ExecutionScope(core, {
+			var esNew = ExecutionScope(Core, {
 				type: "subtree",
 				parentId: "innerPanel"
 			});
@@ -292,14 +284,14 @@ sap.ui.define([
 		QUnit.test("getType return value", function (assert) {
 			assert.strictEqual(this.es.getType(), "global", "Execution scope type should be global.");
 
-			var	esSubtree = ExecutionScope(core, {
+			var esSubtree = ExecutionScope(Core, {
 					type: "subtree",
 					parentId: "innerPanel"
 				});
 
 			assert.strictEqual(esSubtree.getType(), "subtree", "Execution scope type should be subtree.");
 
-			var esComponents = ExecutionScope(core, {
+			var esComponents = ExecutionScope(Core, {
 				type: "components",
 				components: []
 			});
@@ -340,7 +332,7 @@ sap.ui.define([
 						}
 					];
 				});
-				this.es = ExecutionScope(core, {
+				this.es = ExecutionScope(Core, {
 					type: "global"
 				});
 				this.filteringFunction = function (logEntry) {
