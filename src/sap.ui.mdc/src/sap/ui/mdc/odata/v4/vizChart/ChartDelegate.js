@@ -637,7 +637,7 @@ sap.ui.define([
 	 * @param {string} sPropertyName the name of the property in the propertyInfo object.
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
 	 * @param {string} sRole Role of the new item (if available)
-	 * @returns {sap.ui.mdc.chart.Item} Created MDC Item
+ 	 * @returns {Promise<sap.ui.mdc.chart.Item>} Created MDC Item
 	 *
 	 * @experimental
 	 * @private
@@ -1153,8 +1153,7 @@ sap.ui.define([
 				aChartTypes.push({
 					key: sType,
 					icon: ChartTypeButton.mMatchingIcon[sType],
-					text: oChartResourceBundle.getText("info/" + sType),
-					selected: (sType == oChart.getChartType())
+					text: oChartResourceBundle.getText("info/" + sType)
 				});
 			}
 		}
