@@ -30,7 +30,6 @@ sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/deepExtend",
 	"sap/ui/events/F6Navigation",
-	"sap/ui/events/isMouseEventDelayed",
 	"sap/ui/base/EventProvider",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/jqueryui/jquery-ui-position",
@@ -62,7 +61,6 @@ sap.ui.define([
 	each,
 	deepExtend,
 	F6Navigation,
-	isMouseEventDelayed,
 	EventProvider,
 	jQuery
 	//jquery-ui-position
@@ -1042,34 +1040,11 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._duringOpen = function(bOpenAnimated) {
-		var $Ref = this._$(/* bForceReRender */false, /* bGetOnly */true),
-			oStaticArea = StaticArea.getDomRef(),
+		var oStaticArea = StaticArea.getDomRef(),
 			oFirstFocusableInStaticArea = document.getElementById(oStaticArea.id + "-firstfe");
 
 		Popup._clearSelection();
 		this._setupUserSelection();
-
-		// shield layer is needed for mobile devices whose browser fires the mouse
-		// events with delay after touch events to prevent the delayed mouse events
-		// from reaching the dom element in popup while it's being open.
-		if (isMouseEventDelayed()) {
-			if (this._oTopShieldLayer) {
-				// very extreme case where the same popop is opened and closed again
-				// before the 500ms timed out. Reuse the same shield layer and clear
-				// the timeout
-				clearTimeout(this._iTopShieldRemoveTimer);
-				this._iTopShieldRemoveTimer = null;
-			} else {
-				this._oTopShieldLayer = this.oShieldLayerPool.borrowObject($Ref, this._iZIndex + 1);
-			}
-
-			// hide the shield layer after the delayed mouse events are fired.
-			this._iTopShieldRemoveTimer = setTimeout(function(){
-				this.oShieldLayerPool.returnObject(this._oTopShieldLayer);
-				this._oTopShieldLayer = null;
-				this._iTopShieldRemoveTimer = null;
-			}.bind(this), 500);
-		}
 
 		if (this._bModal) {
 			this._showBlockLayer();
@@ -1356,27 +1331,6 @@ sap.ui.define([
 		// unsubscribe the event listeners from EventBus
 		if (this._bEventBusEventsRegistered) {
 			this._unregisterEventBusEvents();
-		}
-
-		// shield layer is needed for mobile devices whose browser fires the mouse events with delay after touch events
-		//  to prevent the delayed mouse events from reaching the underneath DOM element.
-		if (isMouseEventDelayed()) {
-			if (this._oBottomShieldLayer) {
-
-				// very extreme case where the same popop is opened and closed again before the 500ms timed out.
-				// reuse the same shield layer and clear the timeout
-				clearTimeout(this._iBottomShieldRemoveTimer);
-				this._iBottomShieldRemoveTimer = null;
-			} else {
-				this._oBottomShieldLayer = this.oShieldLayerPool.borrowObject($Ref, this._iZIndex - 3);
-			}
-
-			// hide the shield layer after the delayed mouse events are fired.
-			this._iBottomShieldRemoveTimer = setTimeout(function(){
-				this.oShieldLayerPool.returnObject(this._oBottomShieldLayer);
-				this._oBottomShieldLayer = null;
-				this._iBottomShieldRemoveTimer = null;
-			}.bind(this), 500);
 		}
 
 		// Check if this instance is a child Popup. If true de-register this from
