@@ -69,9 +69,13 @@ sap.ui.define([
 		});
 	};
 
-	thisLibrary._getAppInfo = function(fnCallback) {
-		var sUrl = sap.ui.require.toUrl("sap-ui-version.json");
-			sUrl = ResourcesUtil.getResourceOriginPath(sUrl);
+	thisLibrary._getAppInfo = function(fnCallback, sReqVersion) {
+		var sUrl;
+		if (sReqVersion){
+			sUrl = ResourcesUtil.getResourceOriginPath(`${sReqVersion}/resources/sap-ui-version.json`);
+		} else {
+			sUrl = ResourcesUtil.getResourceOriginPath("resources/sap-ui-version.json");
+		}
 
 		jQuery.ajax({
 			url: sUrl,
@@ -116,6 +120,7 @@ sap.ui.define([
 		}
 
 		var libInfo = thisLibrary._getLibraryInfoSingleton();
+		var sReqVersionFull;
 
 		// special case: fetching library info and release notes in one cycle
 		// this will use the _getLibraryInfo functionality and
@@ -124,6 +129,12 @@ sap.ui.define([
 			sInfoType = "_getLibraryInfo";
 		}
 
+		if (!sReqVersion || (sReqVersion.match(/\./g) || []).length == 2) {
+			sReqVersionFull = sReqVersion;
+
+		} else {
+			sReqVersionFull = sReqVersion + ".0";
+		}
 		thisLibrary._getAppInfo(function(oAppInfo) {
 			if (!(oAppInfo && oAppInfo.libraries)) {
 				fnCallback(null, null);
@@ -171,7 +182,7 @@ sap.ui.define([
 				});
 				/*eslint-enable no-loop-func */
 			}
-		});
+		}, sReqVersionFull);
 	};
 
 	return thisLibrary;
