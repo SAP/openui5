@@ -484,10 +484,12 @@ sap.ui.define([
 		}
 
 		if (bShouldBeMarkedAsSpecialDate) {
-			aDayTypes.forEach(function(oDayType) {
+			aDayTypes.forEach(function(oDayType, iIndex) {
 				if (oDayType.type !== CalendarDayType.None) {
 					if (sSpecialDateTypeFilter === "" || sSpecialDateTypeFilter === CalendarDayType.None || sSpecialDateTypeFilter === oDayType.type) {
-						oRm.class("sapUiCalItem" + oDayType.type);
+						if (iIndex === 0) {
+							oRm.class("sapUiCalItem" + oDayType.type);
+						}
 						sAriaType = oDayType.type;
 						if (oDayType.tooltip) {
 							oRm.attr('title', oDayType.tooltip);
