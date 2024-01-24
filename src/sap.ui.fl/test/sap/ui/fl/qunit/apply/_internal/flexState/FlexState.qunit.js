@@ -1300,45 +1300,29 @@ sap.ui.define([
 			await FlexState.initialize({
 				reference: sReference
 			});
+			const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
 			// initial data
-			FlexState.updateStorageResponse(sReference, [
-				{
-					type: "add",
-					flexObject: FlexObjectFactory.createUIChange({id: "initialUIChange1"}).convertToFileContent()
-				},
-				{
-					type: "add",
-					flexObject: FlexObjectFactory.createUIChange({id: "initialUIChange2", variantReference: "flVariant12"})
-					.convertToFileContent()
-				},
-				{
-					type: "add",
-					flexObject: FlexObjectFactory.createUIChange({id: "initialUIChange3", fileType: "ctrl_variant_change"})
-					.convertToFileContent()
-				},
-				{
-					type: "add",
-					flexObject: FlexObjectFactory.createUIChange({id: "initialUIChange4", fileType: "ctrl_variant_management_change"})
-					.convertToFileContent()
-				},
-				{
-					type: "add",
-					flexObject: FlexObjectFactory.createFlVariant({id: "initialFlVariant1"}).convertToFileContent()
-				},
-				{
-					type: "add",
-					flexObject: FlexObjectFactory.createCompVariant({id: "initialCompVariant1"}).convertToFileContent()
-				},
-				{
-					type: "add",
-					flexObject: FlexObjectFactory.createUIChange({
-						id: "initialUIChange5",
-						selector: {
-							persistencyKey: "foo"
-						}
-					}).convertToFileContent()
-				}
-			]);
+			const aInitialChanges = [
+				FlexObjectFactory.createUIChange({id: "initialUIChange1"}),
+				FlexObjectFactory.createUIChange({id: "initialUIChange2", variantReference: "flVariant12"}),
+				FlexObjectFactory.createUIChange({id: "initialUIChange3", fileType: "ctrl_variant_change"}),
+				FlexObjectFactory.createUIChange({id: "initialUIChange4", fileType: "ctrl_variant_management_change"}),
+				FlexObjectFactory.createFlVariant({id: "initialFlVariant1"}),
+				FlexObjectFactory.createCompVariant({id: "initialCompVariant1"}),
+				FlexObjectFactory.createUIChange({
+					id: "initialUIChange5",
+					selector: {
+						persistencyKey: "foo"
+					}
+				})
+			];
+			aInitialChanges.forEach(function(oFlexObject) {
+				oChangePersistence.addDirtyChange(oFlexObject);
+			});
+			FlexState.updateStorageResponse(sReference, aInitialChanges.map((flexObject) => ({
+				type: "add",
+				flexObject: flexObject.convertToFileContent()
+			})));
 			FlexState.rebuildFilteredResponse(sReference);
 			this.oUIChange = FlexObjectFactory.createUIChange({
 				id: "uiChange1"
@@ -1374,16 +1358,26 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with all operations at once", async function(assert) {
-			let aFlexObjects = FlexState.getFlexObjectsDataSelector().get({ reference: sReference });
+			const oFlexObjectsDataSelector = FlexState.getFlexObjectsDataSelector();
+			let aFlexObjects = oFlexObjectsDataSelector.get({ reference: sReference });
 			assert.strictEqual(aFlexObjects.length, 8, "initially there are 8 flexObjects");
+			const aNewChanges = [
+				this.oUIChange,
+				this.oVariantChange1,
+				this.oVariantChange2,
+				this.oVariantDepUIChange,
+				this.oFlVariant,
+				this.oCompVariant,
+				this.oCompChange
+			];
+			aNewChanges.forEach(function(oFlexObject) {
+				FlexState.addDirtyFlexObject(sReference, oFlexObject);
+			});
 			FlexState.updateStorageResponse(sReference, [
-				{type: "add", flexObject: this.oUIChange.convertToFileContent()},
-				{type: "add", flexObject: this.oVariantChange1.convertToFileContent()},
-				{type: "add", flexObject: this.oVariantChange2.convertToFileContent()},
-				{type: "add", flexObject: this.oVariantDepUIChange.convertToFileContent()},
-				{type: "add", flexObject: this.oFlVariant.convertToFileContent()},
-				{type: "add", flexObject: this.oCompVariant.convertToFileContent()},
-				{type: "add", flexObject: this.oCompChange.convertToFileContent()},
+				...aNewChanges.map((flexObject) => ({
+					type: "add",
+					flexObject: flexObject.convertToFileContent()
+				})),
 				{type: "ui2", newData: "ui2"}
 			]);
 			const oStorageResponse = await FlexState.getStorageResponse(sReference);
@@ -1396,8 +1390,7 @@ sap.ui.define([
 			assert.strictEqual(oStorageResponse.changes.variants.length, 2, "fl variant was added");
 			assert.strictEqual(oStorageResponse.changes.ui2personalization, "ui2", "ui2 was set");
 
-			FlexState.rebuildFilteredResponse(sReference);
-			aFlexObjects = FlexState.getFlexObjectsDataSelector().get({ reference: sReference });
+			aFlexObjects = oFlexObjectsDataSelector.get({ reference: sReference });
 			assert.strictEqual(aFlexObjects.length, 15, "all flexObjects are part of the DataSelector");
 
 			this.oFlVariant.setFavorite(true);
@@ -1405,16 +1398,17 @@ sap.ui.define([
 			this.oUIChange.setContent("foo");
 			this.oCompChange.setContent("bar");
 
+			const oUpdateSpy = sandbox.spy(oFlexObjectsDataSelector, "checkUpdate");
+			const aUpdates = [this.oUIChange, this.oFlVariant, this.oCompVariant, this.oCompChange];
 			FlexState.updateStorageResponse(sReference, [
-				{type: "update", flexObject: this.oUIChange.convertToFileContent()},
-				{type: "update", flexObject: this.oFlVariant.convertToFileContent()},
-				{type: "update", flexObject: this.oCompVariant.convertToFileContent()},
-				{type: "update", flexObject: this.oCompChange.convertToFileContent()},
+				...aUpdates.map((flexObject) => ({
+					type: "update",
+					flexObject: flexObject.convertToFileContent()
+				})),
 				{type: "ui2", newData: "newUi2"}
 			]);
 			assert.strictEqual(oStorageResponse.changes.ui2personalization, "newUi2", "ui2 was set");
-			FlexState.rebuildFilteredResponse(sReference);
-			aFlexObjects = FlexState.getFlexObjectsDataSelector().get({ reference: sReference });
+			aFlexObjects = oFlexObjectsDataSelector.get({ reference: sReference });
 			assert.strictEqual(aFlexObjects.length, 15, "all flexObjects are part of the DataSelector");
 			assert.strictEqual(
 				aFlexObjects.find((oFlexObject) => oFlexObject.getId() === "uiChange1").getContent(),
@@ -1433,14 +1427,12 @@ sap.ui.define([
 				"bar", "the content was updated"
 			);
 
-			FlexState.updateStorageResponse(sReference, [
-				{type: "delete", flexObject: this.oVariantDepUIChange.convertToFileContent()},
-				{type: "delete", flexObject: this.oFlVariant.convertToFileContent()},
-				{type: "delete", flexObject: this.oCompVariant.convertToFileContent()},
-				{type: "delete", flexObject: this.oCompChange.convertToFileContent()}
-			]);
-			FlexState.rebuildFilteredResponse(sReference);
-			aFlexObjects = FlexState.getFlexObjectsDataSelector().get({ reference: sReference });
+			const aDeletes = [this.oVariantDepUIChange, this.oFlVariant, this.oCompVariant, this.oCompChange];
+			FlexState.updateStorageResponse(sReference, aDeletes.map((flexObject) => ({
+				type: "delete",
+				flexObject: flexObject.convertToFileContent()
+			})));
+			aFlexObjects = oFlexObjectsDataSelector.get({ reference: sReference });
 			assert.strictEqual(aFlexObjects.length, 11, "all remaining flexObjects are part of the DataSelector");
 			assert.notOk(
 				aFlexObjects.find((oFlexObject) => oFlexObject.getId() === this.oVariantDepUIChange.getId()),
@@ -1457,6 +1449,58 @@ sap.ui.define([
 			assert.notOk(
 				aFlexObjects.find((oFlexObject) => oFlexObject.getId() === this.oCompChange.getId()),
 				"the flexObject was deleted"
+			);
+			assert.ok(
+				oUpdateSpy.firstCall.args[1].every((oUpdateInfo, iIdx) => {
+					return oUpdateInfo.type === "updateFlexObject" && oUpdateInfo.updatedObject === aUpdates[iIdx];
+				}),
+				"the data selector was updated with the correct operation"
+			);
+			assert.ok(
+				oUpdateSpy.secondCall.args[1].every((oUpdateInfo, iIdx) => {
+					return oUpdateInfo.type === "removeFlexObject" && oUpdateInfo.updatedObject === aDeletes[iIdx];
+				}),
+				"the data selector was updated with the correct operation"
+			);
+		});
+
+		QUnit.test("when only ui2personalization is updated", async function(assert) {
+			const oUpdateFlexObjectsSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
+			await FlexState.updateStorageResponse(sReference, [
+				{type: "ui2", newData: "ui2"}
+			]);
+			assert.strictEqual(oUpdateFlexObjectsSpy.callCount, 0, "then the flex objects data selector is not updated");
+		});
+
+		QUnit.test("when adding a flex object that is not part of the runtime pertsistence", function(assert) {
+			assert.throws(
+				function() {
+					FlexState.updateStorageResponse(sReference, [
+						{type: "add", flexObject: {id: "unknownObject"}}
+					]);
+				},
+				"then an error is thrown"
+			);
+		});
+
+		QUnit.test("when updating the storage response", function(assert) {
+			FlexState.addDirtyFlexObject(sReference, this.oUIChange);
+			FlexState.updateStorageResponse(sReference, [
+				{type: "add", flexObject: this.oUIChange.convertToFileContent()}
+			]);
+			FlexState.updateStorageResponse(sReference, [
+				{
+					type: "update",
+					flexObject: {
+						...this.oUIChange.convertToFileContent(),
+						...{content: "bar"}
+					}
+				}
+			]);
+			assert.strictEqual(
+				this.oUIChange.getContent(),
+				"bar",
+				"then the content of the runtime persistence object is also updated"
 			);
 		});
 	});
