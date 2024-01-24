@@ -1,0 +1,705 @@
+<mvc:View
+	controllerName="sap.ui.documentation.sdk.controller.Resources"
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:card="sap.f.cards"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:custom="sap.ui.documentation"
+	displayBlock="true"
+	height="100%">
+
+	<ScrollContainer
+		id="sapUiDemoKitResourcesPage"
+		class="sapUiDemoKitResourcesPage"
+		vertical="true"
+		horizontal="false"
+		height="100%"
+		width="100%">
+
+		<VBox class="sapUiMediumMargin sapUiLargeMarginBottom">
+			<f:Card class="sapUiDemoKitResourcesIntroCard">
+				<f:header>
+					<card:Header
+						title="{i18n>RESOURCES_INTRO_CARD_TITLE}"
+						subtitle="{= ${versionData>/isOpenUI5}
+							? ${i18n>RESOURCES_INTRO_CARD_SUBTITLE_OPENUI5}
+							: ${i18n>RESOURCES_INTRO_CARD_SUBTITLE_SAPUI5} }"
+						subtitleMaxLines="10" />
+				</f:header>
+			</f:Card>
+		</VBox>
+
+		<grid:CSSGrid class="sapUiDemoKitResourcesPaddingBeginEnd sapUiDemoKitResourcesPaddingBottom">
+			<!-- Page Content Ratio Config -->
+			<grid:customLayout>
+				<grid:GridResponsiveLayout>
+					<grid:layout>
+						<grid:GridSettings gridTemplateColumns="1fr" gridColumnGap="1rem" />
+					</grid:layout>
+					<grid:layoutL>
+						<grid:GridSettings gridTemplateColumns="2fr 1fr" gridColumnGap="1rem" />
+					</grid:layoutL>
+					<grid:layoutXL>
+						<grid:GridSettings gridTemplateColumns="3fr 1fr" gridColumnGap="1rem" />
+					</grid:layoutXL>
+				</grid:GridResponsiveLayout>
+			</grid:customLayout>
+
+			<grid:items>
+				<!-- Main -->
+				<grid:CSSGrid id="sapUiDemoKitResourcesMain" class="sapUiDemoKitResourcesMain">
+					<grid:customLayout>
+						<grid:GridBasicLayout gridRowGap="3rem" />
+					</grid:customLayout>
+
+					<!-- #1 Category: Featured -->
+					<grid:CSSGrid class="sapUiDemoKitResourcesCategoryFeatured">
+						<grid:customLayout>
+							<grid:GridBasicLayout gridRowGap="1rem" />
+						</grid:customLayout>
+
+						<Title
+							class="sapUiDemoKitResourcesCategoryTitle"
+							text="{i18n>RESOURCES_CATEGORY_TITLE_FEATURED}"
+							titleStyle="{= ${device>/system/phone} ? 'H4' : 'H3' }"
+							level="H3"
+							wrapping="true" />
+
+						<grid:CSSGrid>
+							<grid:customLayout>
+								<grid:GridResponsiveLayout>
+									<grid:layoutS>
+										<grid:GridSettings
+											gridTemplateColumns="1fr"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layoutS>
+									<grid:layout>
+										<grid:GridSettings
+											gridTemplateColumns="repeat(2, 1fr)"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layout>
+									<grid:layoutXL>
+										<grid:GridSettings
+											gridTemplateColumns="repeat(3, 1fr)"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layoutXL>
+								</grid:GridResponsiveLayout>
+							</grid:customLayout>
+
+							<!-- Icon Explorer -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard">
+								<f:header>
+									<custom:DemoKitCardHeader
+										title="{i18n>RESOURCES_CARD_TITLE_ICON_EXPLORER}"
+										href="{resources>/iconExplorer/href}"
+										iconSrc="sap-icon://sap-ui5" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesContentPadding sapUiDemoKitResourcesContentGap"
+										wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_ICON_EXPLORER}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+
+										<VBox>
+											<Link
+												text="{i18n>RESOURCES_CARD_LINK_VIEW_DOC}"
+												href="{
+													path: 'resources>/iconExplorer/viewDocHref',
+													formatter: '.formatter.formatHttpHrefForNewWindow'
+												}"
+												target="_blank"
+												wrapping="true" />
+										</VBox>
+									</VBox>
+								</f:content>
+							</f:Card>
+
+							<!-- Accessibility Guide -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard"
+								visible="{
+									path: 'resources>/accessibilityGuide',
+									formatter: '.formatter.formatResourceCardVisibility'
+								}">
+								<f:header>
+									<custom:DemoKitCardHeader
+										title="{i18n>RESOURCES_CARD_TITLE_ACC_GUIDE}"
+										href="{resources>/accessibilityGuide/href}"
+										iconSrc="sap-icon://show" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesContentPadding sapUiDemoKitResourcesContentGap"
+										wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_ACC_GUIDE}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+									</VBox>
+								</f:content>
+							</f:Card>
+						</grid:CSSGrid>
+					</grid:CSSGrid>
+
+					<!-- #2 Category: Development Tools -->
+					<grid:CSSGrid class="sapUiDemoKitResourcesCategoryDevTools">
+						<grid:customLayout>
+							<grid:GridBasicLayout gridRowGap="1rem" />
+						</grid:customLayout>
+
+						<Title
+							class="sapUiDemoKitResourcesCategoryTitle"
+							text="{i18n>RESOURCES_CATEGORY_TITLE_DEV_TOOLS}"
+							titleStyle="{= ${device>/system/phone} ? 'H4' : 'H3' }"
+							level="H3"
+							wrapping="true" />
+
+						<grid:CSSGrid>
+							<grid:customLayout>
+								<grid:GridResponsiveLayout>
+									<grid:layoutS>
+										<grid:GridSettings
+											gridTemplateColumns="1fr"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layoutS>
+									<grid:layout>
+										<grid:GridSettings
+											gridTemplateColumns="repeat(2, 1fr)"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layout>
+									<grid:layoutXL>
+										<grid:GridSettings
+											gridTemplateColumns="repeat(3, 1fr)"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layoutXL>
+								</grid:GridResponsiveLayout>
+							</grid:customLayout>
+
+							<!-- UI5 Tooling -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard">
+								<f:header>
+									<custom:DemoKitCardHeader
+										title="{i18n>RESOURCES_CARD_TITLE_TOOLING}"
+										href="{resources>/tooling/href}"
+										iconSrc="sap-icon://hello-world" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesContentPadding sapUiDemoKitResourcesContentGap"
+										wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_TOOLING}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+
+										<VBox>
+											<Link
+												text="{i18n>RESOURCES_CARD_LINK_GETTING_STARTED}"
+												href="{resources>/tooling/gettingStartedHref}"
+												target="_blank"
+												wrapping="true" />
+											<Link
+												text="{i18n>RESOURCES_CARD_LINK_UI5_TOOLING_CLI_DOC}"
+												href="{resources>/tooling/cliDocHref}"
+												target="_blank"
+												wrapping="true" />
+										</VBox>
+									</VBox>
+								</f:content>
+							</f:Card>
+
+							<!-- SAP Fiori Tools -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard">
+								<f:header>
+									<custom:DemoKitCardHeader
+										href="{resources>/fioriTools/href}"
+										title="{i18n>RESOURCES_CARD_TITLE_FIORI_TOOLS}"
+										iconSrc="sap-icon://fx" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesContentPadding sapUiDemoKitResourcesContentGap"
+										wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_FIORI_TOOLS}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+
+										<VBox>
+											<Link
+												text="{i18n>RESOURCES_CARD_LINK_VIEW_DOC}"
+												href="{resources>/fioriTools/viewDocHref}"
+												target="_blank"
+												wrapping="true" />
+										</VBox>
+									</VBox>
+								</f:content>
+							</f:Card>
+
+							<!-- Card Explorer -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard">
+								<f:header>
+									<custom:DemoKitCardHeader
+										title="{i18n>RESOURCES_CARD_TITLE_CARD_EXPLORER}"
+										href="{resources>/cardExplorer/href}"
+										iconSrc="sap-icon://card" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesContentPadding sapUiDemoKitResourcesContentGap"
+										wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_CARD_EXPLORER}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+
+										<VBox>
+											<Link
+												text="{i18n>RESOURCES_CARD_LINK_VIEW_DOC}"
+												href="{resources>/cardExplorer/viewDocHref}"
+												target="_blank"
+												wrapping="true" />
+											<Link
+												text="{i18n>RESOURCES_CARD_LINK_CARD_EXPLORER_SAMPLES}"
+												href="{resources>/cardExplorer/samplesHref}"
+												target="_blank"
+												wrapping="true" />
+										</VBox>
+									</VBox>
+								</f:content>
+							</f:Card>
+
+							<!-- Flexible Programming Model Explorer -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard"
+								visible="{
+									path: 'resources>/fpmExplorer',
+									formatter: '.formatter.formatResourceCardVisibility'
+								}">
+								<f:header>
+									<custom:DemoKitCardHeader
+										title="{i18n>RESOURCES_CARD_TITLE_FPM_EXPLORER}"
+										href="{resources>/fpmExplorer/href}"
+										iconSrc="sap-icon://explorer" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesContentPadding sapUiDemoKitResourcesContentGap"
+										wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_FPM_EXPLORER}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+									</VBox>
+								</f:content>
+							</f:Card>
+
+							<!-- SAP Business Application Studio -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard">
+								<f:header>
+									<custom:DemoKitCardHeader
+										title="{i18n>RESOURCES_CARD_TITLE_BUSINESS_APP_STUDIO}"
+										href="{resources>/businessAppStudio/href}"
+										iconSrc="sap-icon://command-line-interfaces" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesContentPadding sapUiDemoKitResourcesContentGap"
+										wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_BUSINESS_APP_STUDIO}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+
+										<VBox>
+											<Link
+												text="{i18n>RESOURCES_CARD_LINK_VIEW_DOC}"
+												href="{resources>/businessAppStudio/viewDocHref}"
+												target="_blank"
+												wrapping="true" />
+										</VBox>
+									</VBox>
+								</f:content>
+							</f:Card>
+
+						</grid:CSSGrid>
+					</grid:CSSGrid>
+
+					<!-- #3 Category: Customising -->
+					<grid:CSSGrid class="sapUiDemoKitResourcesCategoryCustomising">
+						<grid:customLayout>
+							<grid:GridBasicLayout gridRowGap="1rem" />
+						</grid:customLayout>
+
+						<Title
+							class="sapUiDemoKitResourcesCategoryTitle"
+							text="{i18n>RESOURCES_CATEGORY_TITLE_CUSTOMISING}"
+							level="H3"
+							wrapping="true"
+							titleStyle="{= ${device>/system/phone} ? 'H4' : 'H3' }" />
+
+						<grid:CSSGrid>
+							<grid:customLayout>
+								<grid:GridResponsiveLayout>
+									<grid:layoutS>
+										<grid:GridSettings
+											gridTemplateColumns="1fr"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layoutS>
+									<grid:layout>
+										<grid:GridSettings
+											gridTemplateColumns="repeat(2, 1fr)"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layout>
+									<grid:layoutXL>
+										<grid:GridSettings
+											gridTemplateColumns="repeat(3, 1fr)"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layoutXL>
+								</grid:GridResponsiveLayout>
+							</grid:customLayout>
+
+							<!-- UI Theme Designer -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard">
+								<f:header>
+									<custom:DemoKitCardHeader
+										title="{i18n>RESOURCES_CARD_TITLE_THEME_DESIGNER}"
+										href="{resources>/themeDesigner/href}"
+										iconSrc="sap-icon://palette" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesContentPadding sapUiDemoKitResourcesContentGap"
+										wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_THEME_DESIGNER}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+
+										<VBox>
+											<Link
+												text="{i18n>RESOURCES_CARD_LINK_VIEW_DOC}"
+												href="{resources>/themeDesigner/viewDocHref}"
+												target="_blank"
+												wrapping="true" />
+										</VBox>
+									</VBox>
+								</f:content>
+							</f:Card>
+
+							<!-- Theme Parameter Toolbox -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard">
+								<f:header>
+									<custom:DemoKitCardHeader
+										title="{i18n>RESOURCES_CARD_TITLE_THEME_PARAMETER_TOOLBOX}"
+										href="{resources>/themeParameterToolbox/href}"
+										iconSrc="sap-icon://sap-box" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesContentPadding sapUiDemoKitResourcesContentGap"
+										wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_THEME_PARAMETER_TOOLBOX}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+									</VBox>
+								</f:content>
+							</f:Card>
+
+							<!-- SAPUI5 Flexibility -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard">
+								<f:header>
+									<custom:DemoKitCardHeader
+										title="{i18n>RESOURCES_CARD_TITLE_FLEXIBILITY}"
+										href="{
+											path: 'resources>/flexibility/href',
+											formatter: '.formatter.formatHttpHrefForNewWindow'
+										}"
+										iconSrc="sap-icon://wrench" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesContentPadding sapUiDemoKitResourcesContentGap"
+										wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_FLEXIBILITY}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+									</VBox>
+								</f:content>
+							</f:Card>
+
+						</grid:CSSGrid>
+					</grid:CSSGrid>
+
+					<!-- #4 Category: Troubleshooting -->
+					<grid:CSSGrid class="sapUiDemoKitResourcesCategoryTroubleshooting">
+						<grid:customLayout>
+							<grid:GridBasicLayout gridRowGap="1rem" />
+						</grid:customLayout>
+
+						<Title
+							class="sapUiDemoKitResourcesCategoryTitle"
+							text="{i18n>RESOURCES_CATEGORY_TITLE_TROUBLESHOOTING}"
+							level="H3"
+							wrapping="true"
+							titleStyle="{= ${device>/system/phone} ? 'H4' : 'H3' }" />
+
+						<grid:CSSGrid>
+							<grid:customLayout>
+								<grid:GridResponsiveLayout>
+									<grid:layoutS>
+										<grid:GridSettings
+											gridTemplateColumns="1fr"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layoutS>
+									<grid:layout>
+										<grid:GridSettings
+											gridTemplateColumns="repeat(2, 1fr)"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layout>
+									<grid:layoutXL>
+										<grid:GridSettings
+											gridTemplateColumns="repeat(3, 1fr)"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layoutXL>
+								</grid:GridResponsiveLayout>
+							</grid:customLayout>
+
+							<!-- UI5 Inspector -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard">
+								<f:header>
+									<custom:DemoKitCardHeader
+										title="{i18n>RESOURCES_CARD_TITLE_INSPECTOR}"
+										href="{resources>/inspector/href}"
+										iconSrc="sap-icon://inspection" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesContentPadding sapUiDemoKitResourcesContentGap"
+										wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_INSPECTOR}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+
+										<VBox>
+											<Link
+												text="{i18n>RESOURCES_CARD_LINK_VIEW_DOC}"
+												href="{
+													path: 'resources>/inspector/viewDocHref',
+													formatter: '.formatter.formatHttpHrefForNewWindow'
+												}"
+												target="_blank"
+												wrapping="true" />
+											<Link
+												text="{i18n>RESOURCES_CARD_LINK_VIEW_SOURCE}"
+												href="{resources>/inspector/viewSourceHref}"
+												target="_blank"
+												wrapping="true" />
+										</VBox>
+									</VBox>
+								</f:content>
+							</f:Card>
+
+							<!-- Support Assistant -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard">
+								<f:header>
+									<custom:DemoKitCardHeader
+										title="{i18n>RESOURCES_CARD_TITLE_SUPPORT_ASSISTANT}"
+										href="{
+											path: 'resources>/supportAssistant/href',
+											formatter: '.formatter.formatHttpHrefForNewWindow'
+										}"
+										iconSrc="sap-icon://person-placeholder" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesContentPadding sapUiDemoKitResourcesContentGap"
+										wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_SUPPORT_ASSISTANT}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+									</VBox>
+								</f:content>
+							</f:Card>
+
+						</grid:CSSGrid>
+					</grid:CSSGrid>
+
+					<!-- #5 Category: Testing -->
+					<grid:CSSGrid class="sapUiDemoKitResourcesCategoryTesting">
+						<grid:customLayout>
+							<grid:GridBasicLayout gridRowGap="1rem" />
+						</grid:customLayout>
+
+						<Title
+							class="sapUiDemoKitResourcesCategoryTitle"
+							text="{i18n>RESOURCES_CATEGORY_TITLE_TESTING}"
+							level="H3"
+							wrapping="true"
+							titleStyle="{= ${device>/system/phone} ? 'H4' : 'H3' }" />
+
+						<grid:CSSGrid>
+							<grid:customLayout>
+								<grid:GridResponsiveLayout>
+									<grid:layoutS>
+										<grid:GridSettings
+											gridTemplateColumns="1fr"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layoutS>
+									<grid:layout>
+										<grid:GridSettings
+											gridTemplateColumns="repeat(2, 1fr)"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layout>
+									<grid:layoutXL>
+										<grid:GridSettings
+											gridTemplateColumns="repeat(3, 1fr)"
+											gridAutoRows="minmax(15rem, auto)"
+											gridGap="1rem" />
+									</grid:layoutXL>
+								</grid:GridResponsiveLayout>
+							</grid:customLayout>
+
+							<!-- Test Recorder -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard"
+								visible="{
+									path: 'resources>/testRecorder',
+									formatter: '.formatter.formatResourceCardVisibility'
+								}">
+								<f:header>
+									<custom:DemoKitCardHeader
+										title="{i18n>RESOURCES_CARD_TITLE_TEST_RECORDER}"
+										href="{
+											path: 'resources>/testRecorder/href',
+											formatter: '.formatter.formatHttpHrefForNewWindow'
+										}"
+										iconSrc="sap-icon://record" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesContentPadding sapUiDemoKitResourcesContentGap"
+										wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_TEST_RECORDER}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+									</VBox>
+								</f:content>
+							</f:Card>
+
+							<!-- WDI5 -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard">
+								<f:header>
+									<custom:DemoKitCardHeader
+										title="{i18n>RESOURCES_CARD_TITLE_WDI5}"
+										href="{resources>/wdi5/href}"
+										iconSrc="sap-icon://order-status" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesContentPadding sapUiDemoKitResourcesContentGap"
+										wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_WDI5}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+
+										<VBox>
+											<Link
+												text="{i18n>RESOURCES_CARD_LINK_GETTING_STARTED}"
+												href="{resources>/wdi5/gettingStartedHref}"
+												target="_blank"
+												wrapping="true" />
+										</VBox>
+									</VBox>
+								</f:content>
+							</f:Card>
+
+						</grid:CSSGrid>
+					</grid:CSSGrid>
+
+				</grid:CSSGrid> <!-- Main Container End-->
+
+				<!-- Aside -->
+				<grid:CSSGrid id="sapUiDemoKitResourcesAside" class="sapUiDemoKitResourcesAside">
+					<VBox class="sapUiDemoKitResourcesAsideDekstop" wrap="Wrap">
+						<f:Card class="sapUiDemoKitResourcesAsideCard">
+							<f:header>
+								<card:Header title="{i18n>RESOURCES_ASIDE_CARD_TITLE}" />
+							</f:header>
+							<f:content>
+								<List items="{path: 'resources>/_raw/', sorter: {path: 'text'}}" showSeparators="None">
+									<InputListItem
+										label="{resources>text}"
+										visible="{
+											path: 'resources>',
+											formatter: '.formatter.formatResourceCardVisibility'
+										}">
+
+										<Button
+											type="Transparent"
+											icon="sap-icon://action"
+											tooltip="{i18n>RESOURCES_ASIDE_CARD_BTN_TOOLTIP}"
+											press=".onAsideListItemPress" />
+
+										<customData>
+											<core:CustomData key="href" value="{resources>href}" />
+										</customData>
+									</InputListItem>
+								</List>
+							</f:content>
+						</f:Card>
+					</VBox>
+
+					<VBox class="sapUiDemoKitResourcesAsideMobile" wrap="Wrap">
+						<Panel class="sapUiDemoKitResourcesAsidePanel" expandable="true" headerText="{i18n>RESOURCES_ASIDE_CARD_TITLE}">
+							<List showSeparators="None" items="{path: 'resources>/_raw/', sorter: {path: 'text'}}">
+								<InputListItem
+									label="{resources>text}"
+									visible="{
+										path: 'resources>',
+										formatter: '.formatter.formatResourceCardVisibility'
+									}">
+
+									<Button
+										type="Transparent"
+										icon="sap-icon://action"
+										tooltip="{i18n>RESOURCES_ASIDE_CARD_BTN_TOOLTIP}"
+										press=".onAsideListItemPress" />
+
+									<customData>
+										<core:CustomData key="href" value="{resources>href}" />
+									</customData>
+								</InputListItem>
+							</List>
+						</Panel>
+					</VBox>
+				</grid:CSSGrid> <!-- Aside Container End-->
+
+			</grid:items>
+		</grid:CSSGrid>
+
+		<core:Fragment fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
+	</ScrollContainer>
+</mvc:View>

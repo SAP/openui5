@@ -50,12 +50,11 @@ sap.ui.define([
 		Then.onTheDemoAppsPage.iShouldSeeTheDemoAppsPage();
 	});
 
-	opaTest("Should navigate to Tools Page", function (Given, When, Then) {
+	opaTest("Should navigate to Resources Page", function (Given, When, Then) {
 		// Action
-		When.onTheAppPage.iPressTheToolsTabButton();
+		When.onTheAppPage.iPressTheResourcesTabButton();
 		// Assertions
-		Then.onTheToolsPage.iShouldSeeTheToolsPage();
-		Then.onTheToolsPage.iShouldSeeTheHeadline();
+		Then.onTheResourcesPage.iShouldSeeTheToolsPage();
 	});
 
 	opaTest("Should navigate to Welcome Page", function (Given, When, Then) {

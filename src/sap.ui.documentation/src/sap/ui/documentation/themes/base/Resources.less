@@ -1,0 +1,207 @@
+/* =========================================== */
+/* Demo Kit: Resources Page styles             */
+/* =========================================== */
+@resourcesCardHeaderTextColor: #FFFFFF;
+
+@resourcesIntroCardBgColor: #A00875;
+@resourcesIntroCardBgColorDark: #223548;
+@resourcesIntroCardMinHeight: 12.25rem; // 196px
+@resourcesIntroCardSubtitleMaxWidth: 37.5rem; // 600px
+
+@resourcesAsideCardMarginTop: 2.7rem; // 43px
+
+@resourcesFeaturedCardHeaderBgColor: #A00875;
+@resourcesRegularCardHeaderBgColor: #223546;
+
+.sapUiDemokit {
+
+	.sapUiDemoKitResourcesPage {
+
+		// Utilities
+		.sapUiDemoKitResourcesContentPadding {
+			padding: 1rem;
+		}
+
+		.sapUiDemoKitResourcesPaddingBeginEnd {
+			padding: 0 2rem;
+		}
+
+		.sapUiDemoKitResourcesPaddingBottom {
+			padding-bottom: 3rem;
+		}
+
+		.sapUiDemoKitResourcesContentRowGap {
+			row-gap: .5rem;
+		}
+
+		// Intro Card
+		.sapUiDemoKitResourcesIntroCard.sapFCard {
+			background: url("../../sdk/images/intro_card_stripe.svg") no-repeat center center,
+				linear-gradient(to right, @resourcesIntroCardBgColor, @resourcesIntroCardBgColorDark);
+			background-size: cover;
+			background-clip: content-box;
+
+			min-height: @resourcesIntroCardMinHeight;
+
+			.sapFCardHeader {
+				background-color: unset;
+
+				.sapFCardHeaderText {
+
+					.sapFCardTitle,
+					.sapFCardSubtitle {
+						color: @resourcesCardHeaderTextColor;
+					}
+
+					.sapFCardTitle {
+						font-size: @sapMFontLargeSize * 2;
+					}
+
+					.sapFCardSubtitle {
+						font-size: @sapMFontLargeSize;
+					}
+
+					.sapFCardHeaderTextFirstLine,
+					.sapFCardHeaderTextSecondLine {
+						box-sizing: border-box;
+					}
+
+					.sapFCardHeaderTextFirstLine {
+						padding: .5rem 1rem 0 1rem;
+					}
+
+					.sapFCardHeaderTextSecondLine {
+						max-width: @resourcesIntroCardSubtitleMaxWidth;
+						padding: .5rem 1rem;
+					}
+				}
+			}
+
+			.sapFCardContent {
+				padding: 1rem 2rem;
+			}
+		}
+
+		// Main
+		.sapUiDemoKitResourcesMain {
+			.sapUiDemoKitResourcesCategoryTitle {
+				justify-self: start;
+			}
+
+			.sapUiDemoKitResourcesRegularCard.sapFCard {
+				.sapUiDemoKitCardHeader.sapFCardHeader {
+					background-color: @resourcesRegularCardHeaderBgColor;
+					transition: background-color 200ms ease;
+					text-decoration: none;
+
+					&:hover {
+						background-color: lighten(@resourcesRegularCardHeaderBgColor, 5%);
+
+						.sapFCardHeaderText {
+							.sapFCardTitle {
+								::after {
+									visibility: visible;
+									opacity: 1;
+								}
+							}
+						}
+					}
+
+					.sapFCardHeaderText {
+						.sapFCardTitle {
+							font-size: @sapMFontLargeSize;
+							color: @resourcesCardHeaderTextColor;
+							cursor: pointer;
+
+							::after {
+								font-family: SAP-icons;
+								font-size: .8rem;
+								content: "\e05a";
+								vertical-align: middle;
+								visibility: hidden;
+								opacity: 0;
+								transition: all 200ms ease;
+								margin-left: .5rem;
+							}
+						}
+					}
+
+					.sapFCardHeaderImage .sapFCardIcon.sapFAvatar .sapUiIcon {
+						color: @resourcesCardHeaderTextColor;
+					}
+				}
+			}
+
+			.sapUiDemoKitResourcesCategoryFeatured {
+				.sapUiDemoKitResourcesRegularCard.sapFCard {
+					.sapUiDemoKitCardHeader.sapFCardHeader {
+						background-color: @resourcesFeaturedCardHeaderBgColor;
+
+						&:hover {
+							background-color: lighten(@resourcesFeaturedCardHeaderBgColor, 5%);
+						}
+					}
+				}
+			}
+		}
+
+		// Aside
+		.sapUiDemoKitResourcesAside {
+			margin-top: @resourcesAsideCardMarginTop;
+
+			.sapUiDemoKitResourcesAsideDekstop {
+				.sapUiDemoKitResourcesAsideCard {
+					.sapFCardHeader {
+						padding: 1.5rem;
+
+						.sapFCardHeaderText .sapFCardTitle {
+							font-size: @sapMFontLargeSize;
+						}
+					}
+
+					.sapFCardContent {
+						padding-bottom: .5rem;
+
+						.sapMListItems .sapMLIB {
+							padding: 1.5rem;
+
+							.sapMILILabel {
+								font-size: @sapMFontMediumSize;
+								white-space: normal;
+							}
+						}
+					}
+				}
+			}
+
+			.sapUiDemoKitResourcesAsideMobile {
+				display: none;
+
+				.sapUiDemoKitResourcesAsidePanel {
+					.sapMList {
+						.sapMILILabel {
+							font-size: @sapMFontMediumSize;
+							white-space: normal;
+						}
+					}
+				}
+			}
+		}
+
+		@media screen and (max-width: 63.9375em) {
+			.sapUiDemoKitResourcesAside {
+				order: -1;
+				margin-top: 0;
+				margin-bottom: 2rem;
+
+				.sapUiDemoKitResourcesAsideDekstop {
+					display: none;
+				}
+
+				.sapUiDemoKitResourcesAsideMobile {
+					display: initial;
+				}
+			}
+		}
+	}
+}

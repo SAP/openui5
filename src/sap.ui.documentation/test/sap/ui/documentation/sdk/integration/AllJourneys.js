@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/test/pageobjects/ApiMaster",
 	"sap/ui/documentation/sdk/test/pageobjects/ControlsMaster",
 	"sap/ui/documentation/sdk/test/pageobjects/DemoApps",
-	"sap/ui/documentation/sdk/test/pageobjects/Tools",
+	"sap/ui/documentation/sdk/test/pageobjects/Resources",
 	"sap/ui/documentation/sdk/test/pageobjects/ApiDetail",
 	"sap/ui/documentation/sdk/test/pageobjects/SubApiDetail",
 	"sap/ui/documentation/sdk/test/pageobjects/Entity",

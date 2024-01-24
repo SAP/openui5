@@ -44,7 +44,7 @@ sap.ui.getCore().attachInit(function () {
 				viewName: sViewName,
 				controlType: "sap.f.Card",
 				matchers: function (oCard) {
-					return oCard.$().hasClass("sapUiDemoKitDemoAppsCommonCard");
+					return oCard.$().hasClass("sapUiDemoKitDemoAppsRegularCard");
 				},
 				success: function (aItems) {
 					Opa5.assert.ok(aItems.length >= 10, "Found at least 10 demo apps");
@@ -73,7 +73,7 @@ sap.ui.getCore().attachInit(function () {
 				controlType: "sap.f.Card",
 				matchers: function (oCard) {
 					var $Card = oCard.$(),
-						$TitleElement = $Card.find('.sapUiDemoKitDemoAppsCardHeaderLink');
+						$TitleElement = $Card.find('.sapUiDemoKitCardHeader .sapFCardTitle > span');
 
 					return $TitleElement.text() === 'Shopping Cart';
 				},
@@ -91,7 +91,7 @@ sap.ui.getCore().attachInit(function () {
 					// icon
 					Then.waitFor({
 						viewName: sViewName,
-						controlType: "sap.ui.documentation.DemoAppsCardHeader",
+						controlType: "sap.ui.documentation.DemoKitCardHeader",
 						matchers: [
 							new Ancestor(oCard),
 							new Properties({ iconSrc: "sap-icon://" + oData.icon })
@@ -104,12 +104,12 @@ sap.ui.getCore().attachInit(function () {
 					// title
 					Then.waitFor({
 						viewName: sViewName,
-						controlType: "sap.ui.documentation.DemoAppsCardHeader",
+						controlType: "sap.ui.documentation.DemoKitCardHeader",
 						matchers: [
 							new Ancestor(oCard),
 							new Properties({
 								href: oData.ref,
-								hrefText: oData.name
+								title: oData.name
 							})
 						],
 						success: function () {

@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/controller/util/DocuInfo",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
-	"sap/ui/documentation/sdk/controller/util/ToolsInfo",
+	"sap/ui/documentation/sdk/controller/util/ResourcesInfo",
 	'sap/ui/documentation/sdk/model/libraryData'
 ], function (
 	BaseController,
@@ -16,7 +16,7 @@ sap.ui.define([
 	DocuInfo,
 	JSONModel,
 	ControlsInfo,
-	ToolsInfo,
+	ResourcesInfo,
 	libraryData
 ) {
 	"use strict";
@@ -24,7 +24,7 @@ sap.ui.define([
 	var RESOURCES_TYPES = {
 		API: "api",
 		TOPIC: "topic",
-		TOOLS: "tools",
+		RESOURCES: "resources",
 		ENTITY: "entity",
 		DEMO_APPS: "demoApps"
 	};
@@ -75,8 +75,8 @@ sap.ui.define([
 		}
 	};
 
-	parsers[RESOURCES_TYPES.TOOLS] = {
-		getData: ToolsInfo.getToolsConfig,
+	parsers[RESOURCES_TYPES.RESOURCES] = {
+		getData: ResourcesInfo.getResourcesConfig,
 		formatNode: function (oNode) {
 			return {
 				name: oNode.text,
@@ -174,8 +174,8 @@ sap.ui.define([
 				case RESOURCES_TYPES.DEMO_APPS:
 					this._onDemoAppsData(oParams.data);
 					break;
-				case RESOURCES_TYPES.TOOLS:
-					this._onToolsData(oParams.data);
+				case RESOURCES_TYPES.RESOURCES:
+					this._onResourcesData(oParams.data);
 					break;
 			}
 		},
@@ -187,7 +187,6 @@ sap.ui.define([
 		_getDocuIndexPromise: function () {
 			return DocuInfo.getDocuIndexPromise(this.getConfig());
 		},
-
 
 		/**
 		 * Populates the API Reference data
@@ -241,11 +240,11 @@ sap.ui.define([
 
 
 		/**
-		 * Populates the Tools data
+		 * Populates the Resources data
 		 * @private
 		 */
-		_onToolsData: function (oResult) {
-			var sType = RESOURCES_TYPES.TOOLS;
+		_onResourcesData: function (oResult) {
+			var sType = RESOURCES_TYPES.RESOURCES;
 
 			this._oData[sType] = formatNodes(oResult, sType);
 		},
