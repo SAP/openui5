@@ -2693,7 +2693,7 @@ sap.ui.define([
 			aItems = this.oIconTabBar.getItems();
 
 		assert.strictEqual(aItems[0].getDomRef().getAttribute("aria-haspopup"), "menu", "aria-haspopup is set");
-		assert.notOk(aItems[1].getDomRef().getAttribute("aria-haspopup"), "aria-haspopup is not set");
+		assert.strictEqual(aItems[1].getDomRef().getAttribute("aria-haspopup"), "menu","aria-haspopup is set");
 		assert.notOk(aItems[2].getDomRef().getAttribute("aria-haspopup"), "aria-haspopup is not set");
 
 		assert.strictEqual(oIconTabHeader.getDomRef("head").getAttribute("aria-describedby"), IconTabHeaderRenderer.getInvisibleSplitTabDescriptionText().getId(), "aria-describedby is set");

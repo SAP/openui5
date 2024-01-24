@@ -629,7 +629,7 @@ sap.ui.define([
 						var oSubTabFilter = oSubTab.getItems()[0];
 						oSubTab.setExpanded(false);
 						EditorQunitUtils.wait(500).then(function () {
-							var expandedBtn = oSubTabFilter._getExpandButton();
+							var expandedBtn = oSubTabFilter._getExpandIcon();
 							assert.ok(expandedBtn.getVisible(), "Error icon appeared.");
 							resolve();
 							//TBD

@@ -481,7 +481,7 @@ sap.ui.define([
 						assert.equal(oSubTabFilter.getId(), sEditorId + "_subGroup_control_icontabfilter", "Field: sub tab filter id");
 						oSubTab.setExpanded(false);
 						EditorQunitUtils.wait(500).then(function () {
-							var expandedBtn = oSubTabFilter._getExpandButton();
+							var expandedBtn = oSubTabFilter._getExpandIcon();
 							assert.ok(expandedBtn.getVisible(), "Error icon appeared.");
 							resolve();
 							//TBD

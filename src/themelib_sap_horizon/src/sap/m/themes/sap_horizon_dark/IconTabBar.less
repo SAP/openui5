@@ -163,6 +163,8 @@
 // =========== Shell ===========
 @_sap_m_IconTabBar_ShellHeaderShadow: @sapUiShellShadow;
 @_sap_m_IconTabBar_ShellSelectedTextColor: @sapUiShellNavigationSelectedTextColor;
+@_sap_m_IconTabBar_Filter_Expand_Shell_BackgroundColor_Hover: @sapUiButtonHoverBackground;
+@_sap_m_IconTabBar_Filter_Expand_Shell_BorderColor_Hover: @sapUiButtonHoverBorderColor;
 
 
 /* Head Container */
@@ -214,10 +216,6 @@
 		margin-top: 1.0625rem;
 	}
 
-	.sapMITBFilterExpandBtn:hover .sapMBtnInner {
-		border-radius: 0.25rem;
-	}
-
 	//More Button
 	.sapMITHStartOverflow,
 	.sapMITHEndOverflow {
@@ -248,7 +246,7 @@
 	}
 
 	//Arrow button
-	.sapMITBFilterWithItems .sapMITBFilterExpandBtn .sapMBtnIcon  {
+	.sapMITBFilterWithItems .sapMITBFilterExpandBtn .sapUiIcon  {
 		color: @sapUiBaseText;
 	}
 }
@@ -350,19 +348,19 @@
 /* Tab Filter Item */
 
 .sapMITH:not(.sapMITBTextOnly) .sapMITBHorizontal {
-	.sapMBtn {
+	.sapMITBFilterExpandBtn {
 		margin-bottom: 0.9375rem;
 	}
 }
 
 .sapMITH:not(.sapMITBTextOnly):not(.sapMITBNoText) .sapMITBVertical {
-	.sapMBtn {
+	.sapMITBFilterExpandBtn {
 		margin-bottom: 1.875rem;
 	}
 }
 
 .sapMITBNoText.sapMITH {
-	.sapMBtn {
+	.sapMITBFilterExpandBtn {
 		margin-bottom: 0.9375rem;
 	}
 }
@@ -371,8 +369,8 @@
 	.sapMITBFilterExpandBtnSeparator {
 		margin-top: 1.3125rem;
 	}
-	.sapMBtn {
-		margin-top: 0.4375rem;
+	.sapMITBFilterExpandBtn {
+		margin-top: 0.25rem;
 	}
 }
 
@@ -385,7 +383,7 @@
 		.sapMITBFilterExpandBtnSeparator {
 			border-color: @sapUiContentSelectedForegroundColor;
 		}
-		.sapMBtnIcon {
+		.sapUiIcon {
 			color: @_sap_m_IconTabBar_SelectedTextColor !important;
 		}
 	}
@@ -398,7 +396,7 @@
 			color: @sapUiNeutralText;
 		}
 		.sapMITBFilterExpandBtn:hover{
-			.sapMBtnIcon {
+			.sapUiIcon {
 				color: @sapUiNeutralText;
 			}
 		}
@@ -415,7 +413,7 @@
 			color: @sapUiPositiveText;
 		}
 		.sapMITBFilterExpandBtn:hover{
-			.sapMBtnIcon {
+			.sapUiIcon {
 				color: @sapUiPositiveText !important;
 			}
 		}
@@ -432,7 +430,7 @@
 			color: @sapUiNegativeText;
 		}
 		.sapMITBFilterExpandBtn:hover{
-			.sapMBtnIcon {
+			.sapUiIcon {
 				color: @sapUiNegativeText;
 			}
 		}
@@ -449,7 +447,7 @@
 			color: @sapUiCriticalText;
 		}
 		.sapMITBFilterExpandBtn:hover{
-			.sapMBtnIcon {
+			.sapUiIcon {
 				color: @sapUiCriticalText;
 			}
 		}
@@ -471,7 +469,7 @@
 		border-color: @sapUiBaseText;
 	}
 
-	.sapMBtnIcon {
+	.sapUiIcon {
 		color: @sapUiBaseText !important;
 	}
 }
@@ -484,7 +482,7 @@
 	}
 
 	.sapMITBFilterExpandBtn:hover {
-		.sapMBtnIcon {
+		.sapUiIcon {
 			color: @sapUiBaseText;
 		}
 	}
@@ -498,7 +496,7 @@
 		border-color: @sapUiNeutralText;
 	}
 
-	.sapMBtnIcon {
+	.sapUiIcon {
 		color: @sapUiNeutralText !important;
 	}
 }
@@ -511,7 +509,7 @@
 		border-color: @sapUiPositiveText;
 	}
 
-	.sapMBtnIcon {
+	.sapUiIcon {
 		color: @sapUiPositiveText !important;
 	}
 }
@@ -524,7 +522,7 @@
 		border-color: @sapUiNegativeText;
 	}
 
-	.sapMBtnIcon {
+	.sapUiIcon {
 		color: @sapUiNegativeText !important;
 	}
 }
@@ -537,7 +535,7 @@
 		border-color: @sapUiCriticalText;
 	}
 
-	.sapMBtnIcon {
+	.sapUiIcon {
 		color: @sapUiCriticalText !important;
 	}
 }
@@ -547,7 +545,7 @@
 		.sapMITBFilterExpandBtnSeparator {
 			border-color: @sapUiNeutralElement;
 		}
-		.sapMBtnIcon {
+		.sapUiIcon {
 			color: @sapUiNeutralElement !important;
 		}
 	}
@@ -556,7 +554,7 @@
 		.sapMITBFilterExpandBtnSeparator {
 			border-color: @sapUiPositiveElement;
 		}
-		.sapMBtnIcon {
+		.sapUiIcon {
 			color: @sapUiPositiveElement !important;
 		}
 	}
@@ -565,7 +563,7 @@
 		.sapMITBFilterExpandBtnSeparator {
 			border-color: @sapUiNegativeElement;
 		}
-		.sapMBtnIcon {
+		.sapUiIcon {
 			color: @sapUiNegativeElement !important;
 		}
 	}
@@ -573,7 +571,7 @@
 		.sapMITBFilterExpandBtnSeparator {
 			border-color: @sapUiCriticalElement;
 		}
-		.sapMBtnIcon {
+		.sapUiIcon {
 			color: @sapUiCriticalElement !important;
 		}
 	}
