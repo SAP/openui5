@@ -19167,4 +19167,107 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: A table is filtered via a property of a complex type which is addressed via a navigation
+	// property. The binding is using the operation mode "Client".
+	// SNOW: CS20230006626867
+	QUnit.test("Filter via a complex type property addressed via navigation property (client)", function (assert) {
+		var oModel = createSalesOrdersModel({defaultOperationMode : "Client"}),
+			sView = '\
+<t:Table id="Table" rows="{\
+			path: \'/SalesOrderSet\',\
+			parameters: {\
+				expand: \'ToBusinessPartner\',\
+				select: \'SalesOrderID,ToBusinessPartner/BusinessPartnerID,ToBusinessPartner/Address\'\
+			}\
+		}" visibleRowCount="2">\
+	<Text id="SalesOrderID" text="{SalesOrderID}" />\
+	<Text id="City" text="{ToBusinessPartner/Address/City}" />\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$expand=ToBusinessPartner"
+					+ "&$select=SalesOrderID,ToBusinessPartner/BusinessPartnerID,ToBusinessPartner/Address", {
+				results: [{
+					__metadata: {uri: "/SalesOrderSet('1')"},
+					SalesOrderID: "1",
+					ToBusinessPartner: {
+						__metadata: {uri: "/BusinessPartnerSet('42')"},
+						BusinessPartnerID: "42",
+						Address: {City: "Foo"}
+					}
+				}, {
+					__metadata: {uri: "/SalesOrderSet('2')"},
+					SalesOrderID: "2",
+					ToBusinessPartner: {
+						__metadata: {uri: "/BusinessPartnerSet('43')"},
+						BusinessPartnerID: "43",
+						Address: {City: "Bar"}
+					}
+				}]
+			})
+			.expectValue("SalesOrderID", ["1", "2"])
+			.expectValue("City", ["Foo", "Bar"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectValue("SalesOrderID", "", 1)
+				.expectValue("City", "", 1);
+
+			// code under test
+			that.oView.byId("Table").getBinding("rows").filter(
+				new Filter({
+					path: "ToBusinessPartner/Address/City",
+					operator: FilterOperator.EQ,
+					value1: "Foo"
+				})
+			);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A table is filtered via a property of a complex type which is addressed via a navigation
+	// property. The binding is using the operation mode "Server".
+	// SNOW: CS20230006626867
+	QUnit.test("Filter via a complex type property addressed via navigation property (server)", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<t:Table id="Table" rows="{\
+			path: \'/SalesOrderSet\',\
+			parameters: {\
+				expand: \'ToBusinessPartner\',\
+				select: \'SalesOrderID,ToBusinessPartner/BusinessPartnerID,ToBusinessPartner/Address\'\
+			},\
+			filters : [{path: \'ToBusinessPartner/Address/City\', operator: \'EQ\', value1: \'Foo\'}]\
+		}" visibleRowCount="2">\
+	<Text id="SalesOrderID" text="{SalesOrderID}" />\
+	<Text id="City" text="{ToBusinessPartner/Address/City}" />\
+</t:Table>';
+
+		this.expectHeadRequest()
+			.expectRequest({
+				encodeRequestUri: false, // the / in the filter is not escaped
+				requestUri: "SalesOrderSet?$skip=0&$top=102"
+					+ "&$filter=ToBusinessPartner/Address/City%20eq%20%27Foo%27"
+					+ "&$expand=ToBusinessPartner"
+					+ "&$select=SalesOrderID%2cToBusinessPartner%2fBusinessPartnerID%2cToBusinessPartner%2fAddress"
+			}, {
+				results: [{
+					__metadata: {uri: "/SalesOrderSet('1')"},
+					SalesOrderID: "1",
+					ToBusinessPartner: {
+						__metadata: {uri: "/BusinessPartnerSet('42')"},
+						BusinessPartnerID: "42",
+						Address: {City: "Foo"}
+					}
+				}]
+			})
+			.expectValue("SalesOrderID", ["1", ""])
+			.expectValue("City", ["Foo", ""]);
+
+		return this.createView(assert, sView, oModel);
+	});
 });
