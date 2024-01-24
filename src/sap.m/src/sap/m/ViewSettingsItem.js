@@ -41,7 +41,7 @@ sap.ui.define(['./library', 'sap/ui/core/Item'],
 			selected : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * Defines the wrapping behavior of title and description texts.
+			 * Defines the wrapping behavior of the title text.
 			 *
 			 * @since 1.121.0
 			 */
