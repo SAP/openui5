@@ -1178,14 +1178,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Extract the property metadata of a specified property of an entity type out of the metadata
-	 * document.
+	 * Gets the property metadata of the given property path relative to the given entity type.
 	 *
-	 * @param {object} oEntityType The entity type
-	 * @param {string} sProperty The property in the entity type
-	 * @returns {object} The property's metadata
+	 * @param {object} oEntityType
+	 *   The entity type
+	 * @param {string} sPropertyPath
+	 *   The property path relative to the given entity type; may contain leading or trailing "/" and may contain
+	 *   navigation properties, complex types and annotation path, for example: "Description" (simple property),
+	 *   "ToProducts/Name" (property via navigation property), "Address/Street" (property via complex type),
+	 *   "ToSupplier/Address/Street" (property via navigation property and complex type), "Amount/@sap:label" (property
+	 *   with additional annotation path)
+	 * @returns {object|undefined}
+	 *   The property's metadata; or <code>undefined</code> if no property metadata could be found
 	 */
-	ODataMetadata.prototype._getPropertyMetadata = function(oEntityType, sProperty) {
+	ODataMetadata.prototype._getPropertyMetadata = function(oEntityType, sPropertyPath) {
 		var oPropertyMetadata, that = this;
 
 		if (!oEntityType) {
@@ -1193,8 +1199,8 @@ sap.ui.define([
 		}
 
 		// remove starting/trailing /
-		sProperty = sProperty.replace(/^\/|\/$/g, "");
-		var aParts = sProperty.split("/"); // path could point to a complex type or nav property
+		sPropertyPath = sPropertyPath.replace(/^\/|\/$/g, "");
+		var aParts = sPropertyPath.split("/"); // path could point to a complex type or nav property
 
 		each(oEntityType.property, function(k, oProperty) {
 			if (oProperty.name === aParts[0]) {
@@ -1207,17 +1213,25 @@ sap.ui.define([
 		if (aParts.length > 1) {
 			// check for navigation property and complex type
 			if (!oPropertyMetadata) {
+				var oLastEntityType;
 				while (oEntityType && aParts.length > 1) {
 					oEntityType = this._getEntityTypeByNavProperty(oEntityType, aParts[0]);
-					aParts.shift();
+					if (oEntityType) {
+						oLastEntityType = oEntityType;
+						aParts.shift();
+					}
 				}
-				if (oEntityType) {
+				if (oEntityType) { // then there is only one part left
 					oPropertyMetadata = that._getPropertyMetadata(oEntityType, aParts[0]);
-				}
+				} else if (oLastEntityType) {
+					// the remaining first part may be a complex type; retry with the last known entity type and the
+					// remaining path
+					oPropertyMetadata = that._getPropertyMetadata(oLastEntityType, aParts.join("/"));
+				} // else: then the first part is neither a complex type nor a navigation property -> return undefined
 			} else if (!oPropertyMetadata.type.toLowerCase().startsWith("edm.")) {
 				var oNameInfo = this._splitName(oPropertyMetadata.type);
 				oPropertyMetadata = this._getPropertyMetadata(this._getObjectMetadata("complexType", oNameInfo.name, oNameInfo.namespace), aParts[1]);
-			}
+			} // else: the rest of the path is not relevant as it may be a metadata path, e.g. @sap:label
 		}
 
 		return oPropertyMetadata;
