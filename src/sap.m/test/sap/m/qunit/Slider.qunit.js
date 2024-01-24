@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/base/i18n/Localization",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -18,10 +18,11 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dom/includeStylesheet",
 	"sap/ui/thirdparty/jquery",
+	"sap/base/Log",
 	"require"
 ], function(
 	Localization,
-	Core,
+	nextUIUpdate,
 	Library,
 	qutils,
 	createAndAppendDiv,
@@ -38,6 +39,7 @@ sap.ui.define([
 	KeyCodes,
 	includeStylesheet,
 	jQuery,
+	log,
 	require
 ) {
 	"use strict";
@@ -61,23 +63,22 @@ sap.ui.define([
 
 
 	// helper functions
-	var fnGetControlProperty = function(mOptions) {
-
-		// arrange
+	var fnGetControlProperty = function (mOptions) {
 		var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
 
-		if (mOptions.invalidate) {
-			oPage.addContent(mOptions.control);
-			Core.applyChanges();
-		}
+		QUnit.test("method: get" + sProperty + "()", async function (assert) {
+			// arrange
+			if (mOptions.invalidate) {
+				oPage.addContent(mOptions.control);
+				await nextUIUpdate();
+			}
 
-		// assert
-		QUnit.test("method: get" + sProperty + "()", function(assert) {
+			// assert
 			assert.strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description + " on " + mOptions.control);
-		});
 
-		// cleanup
-		mOptions.control.destroy();
+			// cleanup
+			mOptions.control.destroy();
+		});
 	};
 
 	/* =========================================================== */
@@ -90,7 +91,7 @@ sap.ui.define([
 	/* rendering                      */
 	/* ------------------------------ */
 
-	QUnit.test("rendering", function(assert) {
+	QUnit.test("rendering", async function(assert) {
 		var oSlider0 = new Slider();
 
 		var oSlider1 = new Slider({
@@ -190,7 +191,7 @@ sap.ui.define([
 		oPage.addContent(oSlider9);
 		oPage.addContent(oSlider10);
 		oPage.addContent(oSlider11);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var aSliders = [oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7, oSlider8, oSlider9, oSlider10, oSlider11];
 		var CSS_CLASS = SliderRenderer.CSS_CLASS;
@@ -255,13 +256,13 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("End labels should be rendered in correct order", function(assert) {
+	QUnit.test("End labels should be rendered in correct order", async function(assert) {
 
 		var oSlider = new Slider();
 		// arrange
 		oSlider.setEnableTickmarks(true);
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(oSlider.$().find(".sapMSliderLabel:eq(1)").html(), oSlider.getMax(), "The end label shows the max value");
@@ -272,7 +273,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("it should render two handles", function(assert) {
+	QUnit.test("it should render two handles", async function(assert) {
 
 		// system under test
 		Slider.extend("sap.m.RangeSlider", {
@@ -292,7 +293,7 @@ sap.ui.define([
 
 		// arrange
 		oRangeSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oRangeSlider.getDomRef("handle1"));
@@ -312,7 +313,7 @@ sap.ui.define([
 	/* default Values                 */
 	/* ------------------------------ */
 
-	QUnit.test("default Values", function(assert) {
+	QUnit.test("default Values", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider(),
@@ -320,7 +321,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		sKeyShortcut = oSlider.getDomRef("handle").getAttribute("aria-keyshortcuts");
 
@@ -350,7 +351,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("_handlesLabels aggregation", function (assert) {
+	QUnit.test("_handlesLabels aggregation", async function (assert) {
 		// arrange & act
 		var oResourceBundle = Library.getResourceBundleFor("sap.m"),
 			oSlider = new Slider(),
@@ -371,7 +372,7 @@ sap.ui.define([
 		oSlider.placeAt("content");
 		oSliderWithTickmarks.placeAt("content");
 		oSliderWithLables.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var sInvisibleTextId = oSliderWithLables.getDomRef("handle").getAttribute("aria-labelledby");
 
@@ -388,13 +389,13 @@ sap.ui.define([
 		oSliderWithLables.destroy();
 	});
 
-	QUnit.test("Aria labels forwarding to handle", function (assert) {
+	QUnit.test("Aria labels forwarding to handle", async function (assert) {
 		// arrange & act
 		var sHandleLabels,
 			oSlider = new Slider({ariaLabelledBy: new Label({text: "LabelForSlider"})});
 
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		sHandleLabels = oSlider.getDomRef("handle").getAttribute("aria-labelledby");
@@ -404,14 +405,14 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("Register and deregister the ResizeHandler", function(assert) {
+	QUnit.test("Register and deregister the ResizeHandler", async function(assert) {
 		var oSlider = new Slider({
 			width: "300px"
 		});
 		var fnRegisterResizeHandlerSpy = this.spy(oSlider, "_registerResizeHandler");
 		var fnDeregisterResizeHandlerSpy = this.spy(oSlider, "_deregisterResizeHandler");
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(fnDeregisterResizeHandlerSpy.callCount, 1, "_deregisterResizeHandler should be called");
@@ -429,7 +430,7 @@ sap.ui.define([
 		fnDeregisterResizeHandlerSpy.restore();
 	});
 
-	QUnit.test("Tooltips aggregation should be destroyed on exit", function(assert) {
+	QUnit.test("Tooltips aggregation should be destroyed on exit", async function(assert) {
 		// arrange
 		var oSlider = new Slider({
 			width: "300px",
@@ -437,7 +438,7 @@ sap.ui.define([
 		});
 		var fnDestroyAggregationSpy = this.spy(oSlider, "destroyAggregation");
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oSlider.exit();
@@ -451,7 +452,7 @@ sap.ui.define([
 		fnDestroyAggregationSpy.restore();
 	});
 
-	QUnit.test("_handleSliderResize is called after Slider is rendered", function(assert) {
+	QUnit.test("_handleSliderResize is called after Slider is rendered", async function(assert) {
 		var oSlider = new Slider({
 			width: "300px"
 		});
@@ -459,8 +460,7 @@ sap.ui.define([
 		//arrange
 		var fnHandleSliderResizeSpy = this.spy(oSlider, "_handleSliderResize");
 		oSlider.placeAt("content");
-		Core.applyChanges();
-		this.clock.tick(1);
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(fnHandleSliderResizeSpy.callCount, "_handleSliderResize was called");
@@ -621,7 +621,7 @@ sap.ui.define([
 	/* setWidth()                     */
 	/* ------------------------------ */
 
-	QUnit.test("method: setWidth()", function(assert) {
+	QUnit.test("method: setWidth()", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -630,7 +630,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.$().outerWidth() + "px", "100px", "Check the slider width after rendering");
@@ -643,7 +643,7 @@ sap.ui.define([
 	/* setName()                      */
 	/* ------------------------------ */
 
-	QUnit.test("method: setName()", function(assert) {
+	QUnit.test("method: setName()", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -652,7 +652,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), +oSlider.$("input").attr("value"), 'Check the "value" attribute of the native input');
@@ -666,7 +666,7 @@ sap.ui.define([
 	/* setValue()                     */
 	/* ------------------------------ */
 
-	QUnit.test("method: setValue() the value must not be bigger than the minimum", function(assert) {
+	QUnit.test("method: setValue() the value must not be bigger than the minimum", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider();
@@ -677,7 +677,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 50);
@@ -687,7 +687,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("method: setValue() the value must not be bigger than the maximum", function(assert) {
+	QUnit.test("method: setValue() the value must not be bigger than the maximum", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -699,7 +699,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 100);
@@ -708,7 +708,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("method: setValue() the value has to be in a valid step", function(assert) {
+	QUnit.test("method: setValue() the value has to be in a valid step", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -720,7 +720,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 95);
@@ -729,7 +729,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("method: setValue() the value has to be in a valid step", function(assert) {
+	QUnit.test("method: setValue() the value has to be in a valid step", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -741,7 +741,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 90);
@@ -750,7 +750,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("method: setValue()", function(assert) {
+	QUnit.test("method: setValue()", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -759,10 +759,9 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var log = sap.ui.require('sap/base/Log'),
-			fnErrorSpy = this.spy(log, "error");
+		var fnErrorSpy = this.spy(log, "error");
 
 		// act
 		var oReturnedValue = oSlider.setValue("96");	// string
@@ -779,7 +778,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test('method: setValue() the attribute "aria-valuenow" is updated accordingly (initial rendering)', function(assert) {
+	QUnit.test('method: setValue() the attribute "aria-valuenow" is updated accordingly (initial rendering)', async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -788,7 +787,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "50");
@@ -797,14 +796,14 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test('method: setValue() the attribute "aria-valuenow" is updated accordingly', function(assert) {
+	QUnit.test('method: setValue() the attribute "aria-valuenow" is updated accordingly', async function(assert) {
 
 		// system under test
 		var oSlider = new Slider();
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oSlider.setValue(50);
@@ -816,7 +815,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("it should not round the value", function(assert) {
+	QUnit.test("it should not round the value", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -826,7 +825,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 0.5555555555);
@@ -835,7 +834,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("it should corretly render the progress bar and handle elements", function(assert) {
+	QUnit.test("it should corretly render the progress bar and handle elements", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -847,7 +846,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getDomRef("progress").style.width, "0%");
@@ -857,7 +856,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("it should corretly render the progress bar and handle elements", function(assert) {
+	QUnit.test("it should corretly render the progress bar and handle elements", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -868,11 +867,11 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oSlider.setValue(50);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getDomRef("progress").style.width, "100%");
@@ -882,7 +881,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("it should correctly round the value to the nearest step", function(assert) {
+	QUnit.test("it should correctly round the value to the nearest step", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -894,7 +893,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 13);
@@ -904,7 +903,7 @@ sap.ui.define([
 	});
 
 	// BCP: 1580215885
-	QUnit.test("it should not throw an exception when the id has a dot", function(assert) {
+	QUnit.test("it should not throw an exception when the id has a dot", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -913,7 +912,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oSlider.setValue(50);
@@ -925,7 +924,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("it should display values using the fixed-point notation instead of the e-notation (initial rendering)", function(assert) {
+	QUnit.test("it should display values using the fixed-point notation instead of the e-notation (initial rendering)", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -938,7 +937,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 		var oHandleDomRef = oSlider.getDomRef("handle");
 
 		// assert
@@ -952,7 +951,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("it should display values using the fixed-point notation instead of the e-notation", function(assert) {
+	QUnit.test("it should display values using the fixed-point notation instead of the e-notation", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -964,7 +963,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 		var oHandleDomRef = oSlider.getDomRef("handle");
 
 		// act
@@ -981,7 +980,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("it should display values using the fixed-point notation instead of the e-notation (labels)", function(assert) {
+	QUnit.test("it should display values using the fixed-point notation instead of the e-notation (labels)", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -995,7 +994,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 		var $HandleDomRef = oSlider.$().find(".sapMSliderLabel");
 
 		// assert
@@ -1011,7 +1010,7 @@ sap.ui.define([
 	/* setMin()                       */
 	/* ------------------------------ */
 
-	QUnit.test("method: setMin() the minimum must not be bigger than the maximum", function(assert) {
+	QUnit.test("method: setMin() the minimum must not be bigger than the maximum", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1020,11 +1019,10 @@ sap.ui.define([
 		});
 
 		// arrange
-		var log = sap.ui.require('sap/base/Log'),
-			fnWarningSpy = this.spy(log, "warning");
+		var fnWarningSpy = this.spy(log, "warning");
 
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(fnWarningSpy.callCount, 1, "sap.base.log.Warning method was called");
@@ -1033,7 +1031,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test('method: setMin() the attribute "aria-valuemin" is updated accordingly (initial rendering)', function(assert) {
+	QUnit.test('method: setMin() the attribute "aria-valuemin" is updated accordingly (initial rendering)', async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1042,7 +1040,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "5");
@@ -1051,7 +1049,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test('it should display the "aria-valuemin" attribute using the fixed-point notation', function(assert) {
+	QUnit.test('it should display the "aria-valuemin" attribute using the fixed-point notation', async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1061,7 +1059,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "10000000");
@@ -1074,7 +1072,7 @@ sap.ui.define([
 	/* setMax()                       */
 	/* ------------------------------ */
 
-	QUnit.test('method: setMax() the attribute "aria-valuemax" is updated accordingly (initial rendering)', function(assert) {
+	QUnit.test('method: setMax() the attribute "aria-valuemax" is updated accordingly (initial rendering)', async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1083,7 +1081,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "200");
@@ -1092,7 +1090,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test('it should display the "aria-valuemax" attribute using the fixed-point notation', function(assert) {
+	QUnit.test('it should display the "aria-valuemax" attribute using the fixed-point notation', async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1102,7 +1100,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "10000000");
@@ -1115,7 +1113,7 @@ sap.ui.define([
 	/* setProgress()                  */
 	/* ------------------------------ */
 
-	QUnit.test("method: setProgress()", function(assert) {
+	QUnit.test("method: setProgress()", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1124,7 +1122,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oSlider.getDomRef("progress"), "The progress indicator HTMLDivElement is in DOM");
@@ -1262,23 +1260,22 @@ sap.ui.define([
 	/* setStep()                      */
 	/* ------------------------------ */
 
-	QUnit.test("method: setStep() should give a warning when called with faulty parameter", function(assert) {
+	QUnit.test("method: setStep() should give a warning when called with faulty parameter", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
 			value: 50,
 			step: 1
 		}),
-			log = sap.ui.require('sap/base/Log'),
 			fnWarningSpy = this.spy(log, "warning");
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oSlider.setStep(-1);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getStep(), -1);
@@ -1308,7 +1305,7 @@ sap.ui.define([
 	/* handle tooltip                 */
 	/* ------------------------------ */
 
-	QUnit.test("it should render the handle tooltip (test case 1)", function(assert) {
+	QUnit.test("it should render the handle tooltip (test case 1)", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1317,7 +1314,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oSlider.getDomRef("handle").hasAttribute("title"));
@@ -1326,14 +1323,14 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("it should render the handle tooltip (test case 2)", function(assert) {
+	QUnit.test("it should render the handle tooltip (test case 2)", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider();
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oSlider.setValue(5);
@@ -1345,7 +1342,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("it should not render the handle tooltip (test case 1)", function(assert) {
+	QUnit.test("it should not render the handle tooltip (test case 1)", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1354,7 +1351,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getDomRef("handle").hasAttribute("title"), false);
@@ -1363,7 +1360,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("it should not render the handle tooltip (test case 2)", function(assert) {
+	QUnit.test("it should not render the handle tooltip (test case 2)", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1372,11 +1369,11 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oSlider.setValue(5);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getDomRef("handle").hasAttribute("title"), false);
@@ -1395,7 +1392,7 @@ sap.ui.define([
 	/* touchstart                     */
 	/* ------------------------------ */
 
-	QUnit.test("Firing events: touchstart", function(assert) {
+	QUnit.test("Firing events: touchstart", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1408,7 +1405,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var fnFocus = this.spy(oSlider.getDomRef("handle"), "focus");
 		var oTouches = {
@@ -1426,7 +1423,6 @@ sap.ui.define([
 			srcControl: oSlider
 		});
 
-		this.clock.tick(1);
 
 		// assert
 		assert.ok(oSlider.$("inner").hasClass(SliderRenderer.CSS_CLASS + "Pressed"), 'On touchstart event the slider innner div muss have the CSS class “' + SliderRenderer.CSS_CLASS + 'Pressed”');
@@ -1441,7 +1437,7 @@ sap.ui.define([
 	/* touchmove                           */
 	/* ----------------------------------- */
 
-	QUnit.test("Firing events: touchmove", function(assert) {
+	QUnit.test("Firing events: touchmove", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1453,7 +1449,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oTouches = {
 			0: {
@@ -1468,7 +1464,6 @@ sap.ui.define([
 			targetTouches: oTouches,
 			srcControl: oSlider
 		});
-		Core.applyChanges();
 
 		for (var i = 51; i <= 100; i++) {
 
@@ -1478,7 +1473,6 @@ sap.ui.define([
 				targetTouches: oTouches,
 				pageX: i
 			}, '_on');
-			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSlider.getValue(), i);
@@ -1487,7 +1481,6 @@ sap.ui.define([
 		qutils.triggerTouchEvent("touchend", oSlider.getDomRef(), {
 			targetTouches: oTouches
 		}, '_on');
-		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 100);
@@ -1500,7 +1493,7 @@ sap.ui.define([
 	/* tap                                 */
 	/* ----------------------------------- */
 
-	QUnit.test("Firing events: tap", function(assert) {
+	QUnit.test("Firing events: tap", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1512,7 +1505,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oTouches = {
 			0: {
@@ -1545,7 +1538,7 @@ sap.ui.define([
 			srcControl: oSlider
 		}, '_on');
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 50);
@@ -1562,14 +1555,14 @@ sap.ui.define([
 	/* change and liveChange          */
 	/* ------------------------------ */
 
-	QUnit.test("Firing events: change and liveChange", function(assert) {
+	QUnit.test("Firing events: change and liveChange", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider().addStyleClass("sapMSliderWithoutPadding");
 
 		// arrange
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oTouches = {
 			0: {
@@ -1606,7 +1599,7 @@ sap.ui.define([
 	/* onsapincrease                  */
 	/* ------------------------------ */
 
-	QUnit.test("Firing events: onsapincrease", function(assert) {
+	QUnit.test("Firing events: onsapincrease", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1619,7 +1612,7 @@ sap.ui.define([
 		var fnIncreaseSpy = this.spy(oSlider, "onsapincrease");
 
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_RIGHT);
@@ -1639,7 +1632,7 @@ sap.ui.define([
 	/* onsapincreasemodifiers         */
 	/* ------------------------------ */
 
-	QUnit.test("Firing events: onsapincreasemodifiers", function(assert) {
+	QUnit.test("Firing events: onsapincreasemodifiers", async function(assert) {
 		// system under test
 		var oSlider = new Slider({
 			min: 0,
@@ -1656,12 +1649,10 @@ sap.ui.define([
 		this.spy(oSlider, "onsapincreasemodifiers");
 
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_RIGHT, false, false, /* Ctrl key */ true);
-		Core.applyChanges();
-		this.clock.tick(500);
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), expectedValue, "The slider value must be increased to " + expectedValue);
@@ -1676,7 +1667,7 @@ sap.ui.define([
 	/* onsapdecrease                  */
 	/* ------------------------------ */
 
-	QUnit.test("Firing events: onsapdecrease", function(assert) {
+	QUnit.test("Firing events: onsapdecrease", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1689,7 +1680,7 @@ sap.ui.define([
 		var fnDecreaseSpy = this.spy(oSlider, "onsapdecrease");
 
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_LEFT);
@@ -1709,7 +1700,7 @@ sap.ui.define([
 	/* onsapdecreasemodifiers         */
 	/* ------------------------------ */
 
-	QUnit.test("Firing events: onsapdecreasemodifiers", function(assert) {
+	QUnit.test("Firing events: onsapdecreasemodifiers", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1735,7 +1726,7 @@ sap.ui.define([
 		oPage.addContent(oSlider);
 		oPage.addContent(oAnotherSlider);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_LEFT, false, false, /* Ctrl key */ true);
@@ -1769,7 +1760,7 @@ sap.ui.define([
 	/* onsappageup                    */
 	/* ------------------------------ */
 
-	QUnit.test("Firing events: onsappageup", function(assert) {
+	QUnit.test("Firing events: onsappageup", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1782,7 +1773,7 @@ sap.ui.define([
 		var fnPageUpSpy = this.spy(oSlider, "onsappageup");
 
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.PAGE_UP);
@@ -1801,7 +1792,7 @@ sap.ui.define([
 	/* onsappagedown                  */
 	/* ------------------------------ */
 
-	QUnit.test("Firing events: onsappagedown", function(assert) {
+	QUnit.test("Firing events: onsappagedown", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1814,7 +1805,7 @@ sap.ui.define([
 		var fnPageDownSpy = this.spy(oSlider, "onsappagedown");
 
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.PAGE_DOWN);
@@ -1833,7 +1824,7 @@ sap.ui.define([
 	/* onsaphome                      */
 	/* ------------------------------ */
 
-	QUnit.test("Firing events: onsaphome", function(assert) {
+	QUnit.test("Firing events: onsaphome", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1846,13 +1837,11 @@ sap.ui.define([
 		var fnHomeSpy = this.spy(oSlider, "onsaphome");
 
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.HOME);
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.HOME);
-		Core.applyChanges();
-		this.clock.tick(500);
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 0);
@@ -1868,7 +1857,7 @@ sap.ui.define([
 	/* onsapend                       */
 	/* ------------------------------ */
 
-	QUnit.test("Firing events: onsapend", function(assert) {
+	QUnit.test("Firing events: onsapend", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider();
@@ -1879,7 +1868,7 @@ sap.ui.define([
 		var fnEndSpy = this.spy(oSlider, "onsapend");
 
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.END);
@@ -1927,7 +1916,7 @@ sap.ui.define([
 	/* oInput change               */
 	/* ------------------------------ */
 
-	QUnit.test("Tooltip firing events: fire change should fire Slider's change and livechange", function(assert) {
+	QUnit.test("Tooltip firing events: fire change should fire Slider's change and livechange", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider({
@@ -1944,7 +1933,7 @@ sap.ui.define([
 		var fnFireLiveChangeSpy = this.spy(oSlider, "fireLiveChange");
 
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oSlider.getAggregation("_tooltipContainer").show(oSlider);
 		oSlider.getAggregation("_defaultTooltips")[0].fireChange({ value: 0.45 });
@@ -1963,7 +1952,7 @@ sap.ui.define([
 	/* keydown                                                     */
 	/* =========================================================== */
 
-	QUnit.test("Firing event keydown === SPACE should prevent the page to scroll down", function(assert) {
+	QUnit.test("Firing event keydown === SPACE should prevent the page to scroll down", async function(assert) {
 
 		// system under test
 		var oSlider = new Slider();
@@ -1976,11 +1965,10 @@ sap.ui.define([
 				keyCode: KeyCodes.SPACE
 			};
 		oPage.addContent(oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oSlider.onkeydown(fnFakeEvent);
-		this.clock.tick(200);
 
 		// assert
 		assert.ok(preventDefaultSpy.calledOnce, "Prevent default should be called once.");
@@ -2004,12 +1992,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("End labels should be rendered in correct order when in RTL mode", function(assert) {
+	QUnit.test("End labels should be rendered in correct order when in RTL mode", async function(assert) {
 
 		// arrange
 		this.oSlider.setEnableTickmarks(true);
 		oPage.addContent(this.oSlider);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(this.oSlider.$().find(".sapMSliderLabel:eq(0)").html(), this.oSlider.getMin(), "The start label shows the min value");
@@ -2019,7 +2007,7 @@ sap.ui.define([
 
 	QUnit.module('Scale');
 
-	QUnit.test("Slider with scale, should fallback to default one, after the scale is destroyed", function(assert) {
+	QUnit.test("Slider with scale, should fallback to default one, after the scale is destroyed", async function(assert) {
 			var oSlider, oDefaultScale,
 				oScale = new ResponsiveScale({tickmarksBetweenLabels: 1});
 
@@ -2039,7 +2027,7 @@ sap.ui.define([
 
 			// arrange
 			oSlider.placeAt("content");
-			Core.applyChanges();
+			await nextUIUpdate();
 			var $HandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
 
 			// assert
@@ -2050,7 +2038,7 @@ sap.ui.define([
 
 			// arrange
 			oScale.destroy();
-			Core.applyChanges();
+			await nextUIUpdate();
 			oDefaultScale = oSlider.getAggregation('_defaultScale');
 			$HandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
 
@@ -2065,7 +2053,7 @@ sap.ui.define([
 			oSlider.destroy();
 		});
 
-	QUnit.test("Slider with default scale", function(assert) {
+	QUnit.test("Slider with default scale", async function(assert) {
 		var oSlider;
 
 		oSlider = new Slider({
@@ -2074,14 +2062,14 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt('content');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oSlider.getAggregation('_defaultScale'), "The default scale should be created.");
 
 		// arrange
 		oSlider.setEnableTickmarks(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oSlider.getAggregation('_defaultScale'), "The default scale should be destroyed.");
@@ -2090,7 +2078,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("Slider with enabled tickmarks and not set scale, should remove the default one, after 'scale' aggregation is set", function(assert) {
+	QUnit.test("Slider with enabled tickmarks and not set scale, should remove the default one, after 'scale' aggregation is set", async function(assert) {
 		var oSlider, oDefaultScale,
 			oScale = new ResponsiveScale({tickmarksBetweenLabels: 1});
 
@@ -2100,7 +2088,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt('content');
-		Core.applyChanges();
+		await nextUIUpdate();
 		oDefaultScale = oSlider.getAggregation('_defaultScale');
 
 		// assert
@@ -2109,7 +2097,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.setAggregation('scale', oScale);
-		Core.applyChanges();
+		await nextUIUpdate();
 		oDefaultScale = oSlider.getAggregation('_defaultScale');
 
 		// assert
@@ -2120,7 +2108,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("Slider with custom Scale", function(assert) {
+	QUnit.test("Slider with custom Scale", async function(assert) {
 		var oSlider, CustomScale,
 		$SliderTickmarksDomRef, $SliderLabelsDomRef, $SliderTicksDomRef;
 
@@ -2150,7 +2138,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 		$SliderTickmarksDomRef = oSlider.$().find('.sapMSliderTickmarks');
 		$SliderLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
 		$SliderTicksDomRef = oSlider.$().find(".sapMSliderTick");
@@ -2164,170 +2152,170 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.module("Tooltips", function (hooks) {
-		hooks.before(function () {
+	QUnit.module("Tooltips", {
+		before: function () {
 			// dummy class
 			this.SliderTooltipCustom = SliderTooltipBase.extend("sap.xx.SliderTooltipCustom", {});
-		});
+		},
 
-		hooks.beforeEach(function () {
+		beforeEach: async function () {
 			this.oSlider = new Slider({
 				showAdvancedTooltip: true
 			});
 
 			this.oSlider.placeAt('content');
-			Core.applyChanges();
-		});
+			await nextUIUpdate();
+		},
 
-		hooks.afterEach(function () {
+		afterEach: function () {
 			this.oSlider.destroy();
-		});
-
-		QUnit.test("Default tooltips: should be set if no custom are provided", function (assert) {
-			assert.strictEqual(this.oSlider.getCustomTooltips().length, 0, "Custom Tooltips should be 0");
-			assert.strictEqual(this.oSlider.getAggregation("_defaultTooltips").length, 1, "Default Tooltips should be 1");
-		});
-
-		QUnit.test("Custom tooltips: should be set if provided", function (assert) {
-			var aDefaultTooltips;
-
-			this.oSlider.addCustomTooltip(new this.SliderTooltipCustom());
-			Core.applyChanges();
-
-			aDefaultTooltips = this.oSlider.getAggregation("_defaultTooltips") || [];
-
-			assert.strictEqual(this.oSlider.getCustomTooltips().length, 1, "Custom tooltip is set");
-			assert.strictEqual(aDefaultTooltips.length, 0, "No default tooltip show be set");
-		});
-
-		QUnit.test("Custom tooltips: Adding more than 1 tooltip should log an error and ignore the additional tooltips", function (assert) {
-			var log = sap.ui.require('sap/base/Log'),
-				fnWarningSpy = this.spy(log, "warning");
-
-			this.oSlider.addCustomTooltip(new this.SliderTooltipCustom());
-			this.oSlider.addCustomTooltip(new this.SliderTooltipCustom());
-			this.oSlider.placeAt("content");
-			Core.applyChanges();
-
-			assert.strictEqual(this.oSlider.getCustomTooltips().length, 2, "Custom tooltips are set");
-			assert.strictEqual(this.oSlider.getAggregation("_tooltipContainer").getAssociatedTooltips().length, 1, "TooltipContainer should render 1 Tooltip");
-			assert.strictEqual(fnWarningSpy.callCount, 1, "sap.base.log.Warning is called");
-		});
-
-		QUnit.test("TooltipContainer: Should be initialized on demand", function (assert) {
-			var oSlider = new Slider();
-
-			assert.notOk(oSlider.getAggregation("_tooltipContainer"), "TooltipContainer should not be initialized on init");
-
-			oSlider.placeAt("content");
-			Core.applyChanges();
-
-			assert.notOk(oSlider.getAggregation("_tooltipContainer"), "TooltipContainer should not be initialized if advancedTooltips is false");
-
-			oSlider.setShowAdvancedTooltip(true);
-			Core.applyChanges();
-
-			assert.ok(oSlider.getAggregation("_tooltipContainer"), "TooltipContainer is initialized after advanced tooltips are on");
-
-			oSlider.destroy();
-		});
-
-		QUnit.test("Tooltips: Removing all custom tooltips should fallback the defaults", function (assert) {
-			var oTooltip = new this.SliderTooltipCustom(),
-				oSliderTooltipContainer = this.oSlider.getAggregation("_tooltipContainer");
-
-			// act
-			this.oSlider.addCustomTooltip(oTooltip);
-			Core.applyChanges();
-
-			// assert
-			assert.strictEqual(this.oSlider.getCustomTooltips()[0], oSliderTooltipContainer.getAssociatedTooltipsAsControls()[0], "Custom tooltip should be used");
-
-			// act
-			this.oSlider.removeAllCustomTooltips();
-			Core.applyChanges();
-
-			// assert
-			assert.strictEqual(this.oSlider.getAggregation("_defaultTooltips")[0], oSliderTooltipContainer.getAssociatedTooltipsAsControls()[0], "Default tooltip should be used");
-		});
-
-		QUnit.test("Tooltips: Should be initialized on demand", function (assert) {
-			var oSlider = new Slider(),
-				aDefaultTooltips;
-
-			oSlider.placeAt("content");
-			Core.applyChanges();
-
-			aDefaultTooltips = oSlider.getAggregation("_defaultTooltips") || [];
-
-			assert.strictEqual(oSlider.getCustomTooltips().length, 0, "No custom tooltips are added initially");
-			assert.strictEqual(aDefaultTooltips.length, 0, "No default tooltips are added initially");
-
-			oSlider.setShowAdvancedTooltip(true);
-			Core.applyChanges();
-
-			aDefaultTooltips = oSlider.getAggregation("_defaultTooltips") || [];
-
-			assert.strictEqual(oSlider.getCustomTooltips().length, 0, "No custom tooltips are being added");
-			assert.strictEqual(aDefaultTooltips.length, 1, "Default tooltips are added after invalidation and showAdvanedTooltips set to true");
-
-			oSlider.destroy();
-		});
-
-		QUnit.test("Tooltips: Destroying Custom tooltip should fallback to default", function (assert) {
-			var oCustomTooltip = new this.SliderTooltipCustom(),
-				oSliderTooltipContainer = this.oSlider.getAggregation("_tooltipContainer");
-
-			this.oSlider.addCustomTooltip(oCustomTooltip);
-			Core.applyChanges();
-
-			// act
-			oCustomTooltip.destroy();
-			Core.applyChanges();
-
-			// assert
-			assert.ok(true, "No exception have been thrown");
-			assert.strictEqual(this.oSlider.getAggregation("_defaultTooltips")[0], oSliderTooltipContainer.getAssociatedTooltipsAsControls()[0], "Default tooltip should be used");
-		});
-
-		QUnit.test("Tooltips: Setting a value when TooltipContainer is not visible", function (assert) {
-			this.oSlider.setValue(4);
-			Core.applyChanges();
-
-			assert.ok(true, "should not throw an error");
-		});
-
-		QUnit.test("Tooltips: Setting the editable property should toggle a class", function (assert) {
-			// arrange
-			var oSliderTooltip = this.oSlider.getUsedTooltips()[0];
-
-			// act
-			this.oSlider.getAggregation("_tooltipContainer").show(this.oSlider);
-			var oLeftTooltip = jQuery("#" + this.oSlider.getId() + "-" + "leftTooltip-input");
-			Core.applyChanges();
-
-			// assert
-			assert.ok(oLeftTooltip.hasClass("sapMSliderTooltipNotEditable"), "'sapMSliderTooltipNotEditable' class should be applied");
-
-			//act
-			oSliderTooltip.setEditable(true);
-			Core.applyChanges();
-
-			// assert
-			assert.notOk(oLeftTooltip.hasClass("sapMSliderTooltipNotEditable"), "'sapMSliderTooltipNotEditable' class should not be applied");
-		});
+		}
 	});
+
+	QUnit.test("Default tooltips: should be set if no custom are provided", function (assert) {
+		assert.strictEqual(this.oSlider.getCustomTooltips().length, 0, "Custom Tooltips should be 0");
+		assert.strictEqual(this.oSlider.getAggregation("_defaultTooltips").length, 1, "Default Tooltips should be 1");
+	});
+
+	QUnit.test("Custom tooltips: should be set if provided", async function (assert) {
+		var aDefaultTooltips;
+
+		this.oSlider.addCustomTooltip(new this.SliderTooltipCustom());
+		await nextUIUpdate();
+
+		aDefaultTooltips = this.oSlider.getAggregation("_defaultTooltips") || [];
+
+		assert.strictEqual(this.oSlider.getCustomTooltips().length, 1, "Custom tooltip is set");
+		assert.strictEqual(aDefaultTooltips.length, 0, "No default tooltip show be set");
+	});
+
+	QUnit.test("Custom tooltips: Adding more than 1 tooltip should log an error and ignore the additional tooltips", async function (assert) {
+		var fnWarningSpy = this.spy(log, "warning");
+
+		this.oSlider.addCustomTooltip(new this.SliderTooltipCustom());
+		this.oSlider.addCustomTooltip(new this.SliderTooltipCustom());
+		this.oSlider.placeAt("content");
+		await nextUIUpdate();
+
+		assert.strictEqual(this.oSlider.getCustomTooltips().length, 2, "Custom tooltips are set");
+		assert.strictEqual(this.oSlider.getAggregation("_tooltipContainer").getAssociatedTooltips().length, 1, "TooltipContainer should render 1 Tooltip");
+		assert.strictEqual(fnWarningSpy.callCount, 1, "sap.base.log.Warning is called");
+	});
+
+	QUnit.test("TooltipContainer: Should be initialized on demand", async function (assert) {
+		var oSlider = new Slider();
+
+		assert.notOk(oSlider.getAggregation("_tooltipContainer"), "TooltipContainer should not be initialized on init");
+
+		oSlider.placeAt("content");
+		await nextUIUpdate();
+
+		assert.notOk(oSlider.getAggregation("_tooltipContainer"), "TooltipContainer should not be initialized if advancedTooltips is false");
+
+		oSlider.setShowAdvancedTooltip(true);
+		await nextUIUpdate();
+
+		assert.ok(oSlider.getAggregation("_tooltipContainer"), "TooltipContainer is initialized after advanced tooltips are on");
+
+		oSlider.destroy();
+	});
+
+	QUnit.test("Tooltips: Removing all custom tooltips should fallback the defaults", async function (assert) {
+		var oTooltip = new this.SliderTooltipCustom(),
+			oSliderTooltipContainer = this.oSlider.getAggregation("_tooltipContainer");
+
+		// act
+		this.oSlider.addCustomTooltip(oTooltip);
+		await nextUIUpdate();
+
+		// assert
+		assert.strictEqual(this.oSlider.getCustomTooltips()[0], oSliderTooltipContainer.getAssociatedTooltipsAsControls()[0], "Custom tooltip should be used");
+
+		// act
+		this.oSlider.removeAllCustomTooltips();
+		await nextUIUpdate();
+
+		// assert
+		assert.strictEqual(this.oSlider.getAggregation("_defaultTooltips")[0], oSliderTooltipContainer.getAssociatedTooltipsAsControls()[0], "Default tooltip should be used");
+	});
+
+	QUnit.test("Tooltips: Should be initialized on demand", async function (assert) {
+		var oSlider = new Slider(),
+			aDefaultTooltips;
+
+		oSlider.placeAt("content");
+		await nextUIUpdate();
+
+		aDefaultTooltips = oSlider.getAggregation("_defaultTooltips") || [];
+
+		assert.strictEqual(oSlider.getCustomTooltips().length, 0, "No custom tooltips are added initially");
+		assert.strictEqual(aDefaultTooltips.length, 0, "No default tooltips are added initially");
+
+		oSlider.setShowAdvancedTooltip(true);
+		await nextUIUpdate();
+
+		aDefaultTooltips = oSlider.getAggregation("_defaultTooltips") || [];
+
+		assert.strictEqual(oSlider.getCustomTooltips().length, 0, "No custom tooltips are being added");
+		assert.strictEqual(aDefaultTooltips.length, 1, "Default tooltips are added after invalidation and showAdvanedTooltips set to true");
+
+		oSlider.destroy();
+	});
+
+	QUnit.test("Tooltips: Destroying Custom tooltip should fallback to default", async function (assert) {
+		var oCustomTooltip = new this.SliderTooltipCustom(),
+			oSliderTooltipContainer = this.oSlider.getAggregation("_tooltipContainer");
+
+		this.oSlider.addCustomTooltip(oCustomTooltip);
+		await nextUIUpdate();
+
+		// act
+		oCustomTooltip.destroy();
+		await nextUIUpdate();
+
+		// assert
+		assert.ok(true, "No exception have been thrown");
+		assert.strictEqual(this.oSlider.getAggregation("_defaultTooltips")[0], oSliderTooltipContainer.getAssociatedTooltipsAsControls()[0], "Default tooltip should be used");
+	});
+
+	QUnit.test("Tooltips: Setting a value when TooltipContainer is not visible", async function (assert) {
+		this.oSlider.setValue(4);
+		await nextUIUpdate();
+
+		assert.ok(true, "should not throw an error");
+	});
+
+	QUnit.test("Tooltips: Setting the editable property should toggle a class", async function (assert) {
+		// arrange
+		var oSliderTooltip = this.oSlider.getUsedTooltips()[0];
+
+		// act
+		this.oSlider.getAggregation("_tooltipContainer").show(this.oSlider);
+		var oLeftTooltip = jQuery("#" + this.oSlider.getId() + "-" + "leftTooltip-input");
+		await nextUIUpdate();
+
+		// assert
+		assert.ok(oLeftTooltip.hasClass("sapMSliderTooltipNotEditable"), "'sapMSliderTooltipNotEditable' class should be applied");
+
+		//act
+		oSliderTooltip.setEditable(true);
+		await nextUIUpdate();
+
+		// assert
+		assert.notOk(oLeftTooltip.hasClass("sapMSliderTooltipNotEditable"), "'sapMSliderTooltipNotEditable' class should not be applied");
+	});
+
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("Tooltips should have aria-label set.", function (assert) {
+	QUnit.test("Tooltips should have aria-label set.", async function (assert) {
 		// arrange
 		var oSlider = new Slider({
 			showAdvancedTooltip: true
 		});
 
 		oSlider.placeAt('content');
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oRb = Library.getResourceBundleFor("sap.m"),
 			sAriaLabel;
@@ -2335,7 +2323,7 @@ sap.ui.define([
 		// act
 		oSlider.getAggregation("_tooltipContainer").show(oSlider);
 		var oLeftTooltip = jQuery("#" + oSlider.getId() + "-" + "leftTooltip-input");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		sAriaLabel = oLeftTooltip.attr('aria-label');
 
@@ -2346,7 +2334,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("Slider with inputs as tooltip should add an aria", function(assert) {
+	QUnit.test("Slider with inputs as tooltip should add an aria", async function(assert) {
 		var sInvisibleTextId, sKeyShortcut,
 			oSlider = new Slider({
 				step: 1,
@@ -2358,7 +2346,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		sInvisibleTextId = oSlider.getDomRef("handle").getAttribute("aria-describedby");
 		sKeyShortcut = oSlider.getDomRef("handle").getAttribute("aria-keyshortcuts");
@@ -2370,14 +2358,13 @@ sap.ui.define([
 
 		// act
 		oSlider.onfocusin();
-		this.clock.tick(1);
 
 		// assert
 		assert.ok(oSlider.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should be set');
 
 		// act
 		oSlider.setEnabled(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		sKeyShortcut = oSlider.getDomRef("handle").getAttribute("aria-keyshortcuts");
 
@@ -2388,7 +2375,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("Slider with custom scale should change handle title html attribute accordingly", function(assert) {
+	QUnit.test("Slider with custom scale should change handle title html attribute accordingly", async function(assert) {
 		var oSlider,
 			oScale = new ResponsiveScale({tickmarksBetweenLabels: 1}),
 			oHandleDomRef;
@@ -2409,7 +2396,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 		oHandleDomRef = oSlider.$().find(".sapMSliderHandle");
 
 		// assert
@@ -2433,7 +2420,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("Slider with scale and tooltip should use the prioritisation of the labelling", function (assert) {
+	QUnit.test("Slider with scale and tooltip should use the prioritisation of the labelling", async function (assert) {
 		var oSlider, oTooltip, oHandleDomRef,
 				oScale = new ResponsiveScale({tickmarksBetweenLabels: 1});
 
@@ -2470,7 +2457,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 		oHandleDomRef = oSlider.$().find(".sapMSliderHandle");
 
 		// assert
@@ -2481,7 +2468,7 @@ sap.ui.define([
 
 		// Act
 		oSlider.setValue(1);
-		Core.applyChanges();
+		await nextUIUpdate();
 		oHandleDomRef = oSlider.$().find(".sapMSliderHandle");
 
 		assert.strictEqual(oHandleDomRef.attr("title"), undefined, "The title should be undefined if there's a tooltip.");
@@ -2490,7 +2477,7 @@ sap.ui.define([
 
 		//Act
 		oSlider.setShowAdvancedTooltip(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 		oHandleDomRef = oSlider.$().find(".sapMSliderHandle");
 
 		assert.strictEqual(oHandleDomRef.attr("title"), "One", "The title should be One.");
@@ -2501,7 +2488,7 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	QUnit.test("Invisible Messaging announcement and aria attributes", function(assert) {
+	QUnit.test("Invisible Messaging announcement and aria attributes", async function(assert) {
 		// Arrange
 		var oSlider = new Slider({
 			step: 1,
@@ -2513,7 +2500,7 @@ sap.ui.define([
 
 		// Act
 		oSlider.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oSlider.onfocusin({});
 		oSliderTooltip = oSlider.getAggregation("_defaultTooltips")[0];

@@ -16,14 +16,16 @@
 		</style>
 
 		<script>
-			sap.ui.getCore().attachInit(function () {
 				sap.ui.require([
+					"sap/ui/core/Core",
 					"sap/ui/core/HTML",
 					"sap/m/App",
 					"sap/m/Page",
 					"sap/m/ResponsiveScale",
 					"sap/m/Slider"
-				], function (HTML, App, Page, ResponsiveScale, Slider){
+				], async function (Core, HTML, App, Page, ResponsiveScale, Slider){
+					await Core.ready();
+
 					var oDefaultTitle = new HTML({ content: "<h2>Default</h2>" }),
 						oSlider0 = new Slider("__slider0", {
 							value: 30,
@@ -237,7 +239,6 @@
 					oApp.addPage(oPage);
 					oApp.placeAt("body");
 				});
-			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

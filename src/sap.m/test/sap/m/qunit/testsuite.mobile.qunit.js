@@ -1521,10 +1521,6 @@ sap.ui.define([
 			},
 			Slider: {
 				title: "Test page for sap.m.Slider",
-				sinon: {
-					version: 1, // sinon-qunit-bridge does not supported nested modules
-					useFakeTimers: true
-				},
 				ui5: {
 					language: "en-US"
 				}

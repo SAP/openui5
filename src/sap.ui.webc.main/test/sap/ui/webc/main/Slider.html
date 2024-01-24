@@ -20,15 +20,16 @@
 	</style>
 
 	<script>
-		sap.ui.getCore().attachInit(function() {
 			sap.ui.require([
+				"sap/ui/core/Core",
 				"sap/ui/webc/main/Slider",
 				"sap/ui/webc/main/Toast",
 				"sap/ui/webc/fiori/Bar",
 				"sap/ui/webc/fiori/Page",
 				"sap/ui/webc/main/Label",
 				"sap/ui/webc/main/Title"
-			], function(
+			], async function(
+				Core,
 				Slider,
 				Toast,
 				Bar,
@@ -36,6 +37,8 @@
 				Label,
 				Title
 			) {
+				await Core.ready();
+
 				var oVerticalLayout = new sap.ui.layout.VerticalLayout("outlineVL", {
 					content: [
 						new Label({
@@ -114,7 +117,6 @@
 
 				oPage.placeAt("body");
 			});
-		});
 	</script>
 </head>
 
