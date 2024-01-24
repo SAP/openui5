@@ -109,6 +109,12 @@ sap.ui.define(function() {
 				],
 				sinon: 1 // because MockServer is used which has a hard dependency to sinon V1
 			},
+			ODataMetadataNoFakeService: {
+				title: "sap.ui.model.odata.ODataMetadata (ODataMetadataNoFakeService.qunit)",
+				module: [
+					"test-resources/sap/ui/core/qunit/odata/ODataMetadataNoFakeService.qunit"
+				]
+			},
 			ODataModel: {
 				title: "sap.ui.model.odata.ODataModel - QUnit Tests",
 				module: [
