@@ -2899,12 +2899,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("IconTabHeader Tab density mode");
+
 	QUnit.test("Classes should respond to the mode", function(assert) {
 		var oIconTabHeader;
 		var done = assert.async();
-		var fnThemeChanged = function() {
-			Core.detachThemeChanged(fnThemeChanged);
-			fnThemeChanged = function() {
+		var fnThemeApplied = function() {
+			Theming.detachApplied(fnThemeApplied);
+			fnThemeApplied = function() {
 				nextUIUpdate.runSync()/*fake timer is used in module*/;
 				assert.ok(!oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has to take the Cozy mode from global scope");
 
@@ -2914,7 +2915,7 @@ sap.ui.define([
 
 				// Clean up
 				oIconTabHeader.destroy();
-				Core.detachThemeChanged(fnThemeChanged);
+				Theming.detachApplied(fnThemeApplied);
 				done();
 			};
 			nextUIUpdate.runSync()/*fake timer is used in module*/;
@@ -2923,10 +2924,10 @@ sap.ui.define([
 			jQuery('body').removeClass("sapUiSizeCompact");
 			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			jQuery('body').addClass("sapUiSizeCozy");
-			Core.attachThemeChanged(fnThemeChanged);
 			Theming.notifyContentDensityChanged();
-
+			Theming.attachApplied(fnThemeApplied);
 		};
+
 		// Arrange
 		oIconTabHeader = new IconTabHeader({
 			items: [
@@ -2960,8 +2961,8 @@ sap.ui.define([
 		assert.ok(!oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has to take the global mode which is Cozy");
 
 		jQuery('body').addClass("sapUiSizeCompact");
-		Core.attachThemeChanged(fnThemeChanged);
 		Theming.notifyContentDensityChanged();
+		Theming.attachApplied(fnThemeApplied);
 	});
 
 	QUnit.module("Drag&Drop", {

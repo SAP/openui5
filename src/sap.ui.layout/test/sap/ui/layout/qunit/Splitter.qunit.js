@@ -873,7 +873,7 @@ sap.ui.define([
 
 			oXMLView.placeAt("qunit-fixture");
 			nextUIUpdate.runSync()/*fake timer is used in module*/;
-			var oSpy = this.spy(oResizeSplitter, "getCalculatedSizes");
+			var oSpy = this.spy(oResizeSplitter, "_recalculateSizes");
 
 			oXMLView.attachBeforeRendering(function () {
 				// check
@@ -896,7 +896,7 @@ sap.ui.define([
 		});
 		oSplitter.placeAt("qunit-fixture");
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
-		var oSpy = this.spy(oSplitter, "getCalculatedSizes");
+		var oSpy = this.spy(oSplitter, "_recalculateSizes");
 
 		// Act
 		oSplitter.$().css("display", "none");

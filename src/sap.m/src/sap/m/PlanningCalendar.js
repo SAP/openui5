@@ -439,8 +439,36 @@ sap.ui.define([
 				/**
 				 * Special days in the header calendar visualized as date range with a type.
 				 *
-				 * <b>Note:</b> If one day is assigned to more than one type, only the first type will be used.
-				 */
+				 * <b>Note:</b> In case there are multiple <code>sap.ui.unified.DateTypeRange</code> instances given for a single date,
+				 * only the first <code>sap.ui.unified.DateTypeRange</code> instance will be used.
+				 * For example, using the following sample, the 1st of November will be displayed as a working day of type "Type10":
+				 *
+				 *
+				 *	<pre>
+				 *	new DateTypeRange({
+				 *		startDate: UI5Date.getInstance(2023, 10, 1),
+				 *		type: CalendarDayType.Type10,
+				 *	}),
+				 *	new DateTypeRange({
+				 *		startDate: UI5Date.getInstance(2023, 10, 1),
+				 *		type: CalendarDayType.NonWorking
+				 *	})
+				 *	</pre>
+				 *
+				 * If you want the first of November to be displayed as a non-working day and also as "Type10," the following should be done:
+				 *	<pre>
+				 *	new DateTypeRange({
+				 *		startDate: UI5Date.getInstance(2023, 10, 1),
+				 *		type: CalendarDayType.Type10,
+				 *		secondaryType: CalendarDayType.NonWorking
+				 *	})
+				 *	</pre>
+				 *
+				 * You can use only one of the following types for a given date: <code>sap.ui.unified.CalendarDayType.NonWorking</code>,
+				 * <code>sap.ui.unified.CalendarDayType.Working</code> or <code>sap.ui.unified.CalendarDayType.None</code>.
+				 * Assigning more than one of these values in combination for the same date will lead to unpredictable results.
+				 *
+				*/
 				specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
 
 				/**
@@ -3979,60 +4007,6 @@ sap.ui.define([
 		}
 	};
 
-	PlanningCalendarRowTimelineRenderer.renderInterval = function (oRm, oTimeline, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType) {
-		var sIntervalType = oTimeline.getIntervalType(),
-			sAdditionalNonWorkingClass;
-		if (oTimeline._getRelativeInfo().bIsRelative){
-			var aEmptyNonWorkDay = [];
-		return CalendarRowRenderer.renderInterval(oRm, oTimeline, iInterval, iWidth,  aIntervalHeaders, aEmptyNonWorkDay, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType, sAdditionalNonWorkingClass);
-		}
-		if (sIntervalType === CalendarIntervalType.Day || sIntervalType === CalendarIntervalType.Week || sIntervalType === CalendarIntervalType.OneMonth || sIntervalType === "OneMonth") {
-			var oRow = getRow(oTimeline.getParent()),
-				oPC = oRow.getParent(),
-				fnNonWorkingFilter = function (oSpecialDate) {
-					return oSpecialDate.getType() === CalendarDayType.NonWorking;
-				},
-				aRowNonWorkingDates = oRow._getSpecialDates().filter(fnNonWorkingFilter),
-				aPCNonWorkingDates = oPC._getSpecialDates().filter(fnNonWorkingFilter),
-				oRowStartDate = oTimeline.getStartDate(),
-				aAllNonworkingDates, oCurrentDate, oNonWorkingStartDate, oNonWorkingEndDate;
-
-			if (aPCNonWorkingDates && aRowNonWorkingDates) {
-				aAllNonworkingDates = aPCNonWorkingDates.concat(aRowNonWorkingDates);
-			} else if (aRowNonWorkingDates) {
-				aAllNonworkingDates = aRowNonWorkingDates;
-			}
-
-			if (aAllNonworkingDates && aAllNonworkingDates.length) {
-				var fnDayMatchesCurrentDate = function (iDay) {
-					return iDay === oCurrentDate.getDay();
-				};
-				oCurrentDate = UI5Date.getInstance(oRowStartDate.getTime());
-				oCurrentDate.setHours(0, 0, 0);
-				oCurrentDate.setDate(oRowStartDate.getDate() + iInterval);
-
-				for (var i = 0; i < aAllNonworkingDates.length; i++) {
-					if (aAllNonworkingDates[i].getStartDate()) {
-						oNonWorkingStartDate = UI5Date.getInstance(aAllNonworkingDates[i].getStartDate().getTime());
-					}
-					if (aAllNonworkingDates[i].getEndDate()) {
-						oNonWorkingEndDate = UI5Date.getInstance(aAllNonworkingDates[i].getEndDate().getTime());
-					} else {
-						oNonWorkingEndDate = UI5Date.getInstance(aAllNonworkingDates[i].getStartDate().getTime());
-						oNonWorkingEndDate.setHours(23, 59, 59);
-					}
-					if (oCurrentDate.getTime() >= oNonWorkingStartDate.getTime() && oCurrentDate.getTime() <= oNonWorkingEndDate.getTime()) {
-						var bAlreadyNonWorkingDate = aNonWorkingItems.some(fnDayMatchesCurrentDate);
-						if (!bAlreadyNonWorkingDate) {
-							sAdditionalNonWorkingClass = "sapUiCalendarRowAppsNoWork";
-						}
-					}
-				}
-			}
-		}
-		CalendarRowRenderer.renderInterval(oRm, oTimeline, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType, sAdditionalNonWorkingClass);
-	};
-
 	/**
 	 * Represents timeline that holds the appointments and intervals inside the PlanningCalendarRowListItem
 	 */
@@ -4086,6 +4060,54 @@ sap.ui.define([
 
 	PlanningCalendarRowTimeline.prototype._isCreatingPerformed = function () {
 		return this._isRowAppsIntervalMouseDownTarget;
+	};
+
+	/**
+	 * @private
+	 * @override
+	 */
+	PlanningCalendarRowTimeline.prototype._isNonWorkingInterval = function (iInterval, aNonWorkingItems, iStartOffset, iNonWorkingMax) {
+		const oRow = Element.getElementById(this.getAssociation("row")),
+			oDate = CalendarDate.fromLocalJSDate(this._getStartDate().getJSDate()),
+			oRowSpecialDates = oRow._getSpecialDates(),
+			oPCSpecialDates = oRow.getParent()._getSpecialDates();
+
+		oDate.setDate(oDate.getDate() + iInterval);
+
+		const bWorkingInRow = this._isDateOfType(oDate, CalendarDayType.Working, oRowSpecialDates),
+			bNonWorkingInRow = this._isDateOfType(oDate, CalendarDayType.NonWorking, oRowSpecialDates),
+			bWorkingInPC = this._isDateOfType(oDate, CalendarDayType.Working, oPCSpecialDates),
+			bNonWorkingInPC = this._isDateOfType(oDate, CalendarDayType.NonWorking, oPCSpecialDates),
+			bNonWorkingProperty = CalendarRow.prototype._isNonWorkingInterval.call(this, iInterval, aNonWorkingItems, iStartOffset, iNonWorkingMax);
+
+		return bNonWorkingInRow
+			|| (bNonWorkingInPC && !bWorkingInRow)
+			|| (bNonWorkingProperty && !bWorkingInRow && !bWorkingInPC);
+	};
+
+	/**
+	 * Checks if a given date corresponds to a given type.
+	 *
+	 * @private
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate Date object to check if it corresponds to a given type
+	 * @param {string} sType String used for type checking
+	 * @param {array} aSpecialDates A of predefined date types
+	 * @returns {boolean}
+	 */
+	PlanningCalendarRowTimeline.prototype._isDateOfType = function (oDate, sType, aSpecialDates) {
+		let oStartDate, oEndDate;
+		const oDateRange = aSpecialDates
+			.find(function(oDateType) {
+				oStartDate = oDateType.getStartDate()
+					? CalendarDate.fromLocalJSDate(oDateType.getStartDate())
+					: CalendarDate.fromLocalJSDate(oDateType.getEndDate());
+				oEndDate = oDateType.getEndDate()
+					? CalendarDate.fromLocalJSDate(oDateType.getEndDate())
+					: CalendarDate.fromLocalJSDate(oDateType.getStartDate());
+				return CalendarUtils._isBetween(oDate, oStartDate, oEndDate, true);
+			});
+
+		return Boolean(oDateRange) && (oDateRange.getType() === sType || oDateRange.getSecondaryType() === sType);
 	};
 
 	/**
@@ -4746,11 +4768,14 @@ sap.ui.define([
 	PlanningCalendar.prototype._getSpecialDates = function(){
 		var specialDates = this.getSpecialDates();
 		for (var i = 0; i < specialDates.length; i++) {
-			var bNeedsSecondTypeAdding = specialDates[i].getSecondaryType() === unifiedLibrary.CalendarDayType.NonWorking
-					&& specialDates[i].getType() !== unifiedLibrary.CalendarDayType.NonWorking;
+			var bNeedsSecondTypeAdding = (specialDates[i].getSecondaryType() === CalendarDayType.NonWorking
+					&& specialDates[i].getType() !== CalendarDayType.NonWorking)
+					|| (specialDates[i].getSecondaryType() === CalendarDayType.Working
+					&& specialDates[i].getType() !== CalendarDayType.Working);
+
 			if (bNeedsSecondTypeAdding) {
 				var newSpecialDate = new DateTypeRange();
-				newSpecialDate.setType(unifiedLibrary.CalendarDayType.NonWorking);
+				newSpecialDate.setType(specialDates[i].getSecondaryType());
 				newSpecialDate.setStartDate(specialDates[i].getStartDate());
 				if (specialDates[i].getEndDate()) {
 					newSpecialDate.setEndDate(specialDates[i].getEndDate());

@@ -177,6 +177,12 @@ sap.ui.define([
 			if (!this.oPopover) {
 				this.oPopover = this._createPopover(oChart);
 
+				this.oPopover.attachAfterOpen(function(oEvent) {
+					const oList = this.oPopover.getContent()[1];
+					const oSelectedItem = oList.getItems().filter(function(oItem){ return oItem.getSelected(); })[0];
+					oSelectedItem.focus();
+				}.bind(this));
+
 				this.oPopover.attachAfterClose(() => {
 					this.oPopover.destroy();
 					delete this.oPopover;
@@ -273,7 +279,10 @@ sap.ui.define([
 		}
 
 		const oModel = new JSONModel();
-		oModel.setProperty("/AvailableChartTypes", this._getChart().getAvailableChartTypes());
+		const aChartTypes = this._getChart().getAvailableChartTypes();
+		const sChartType = this._getChart().getChartType();
+		aChartTypes.forEach((oChartType) => { oChartType.selected = oChartType.key === sChartType; });
+		oModel.setProperty("/AvailableChartTypes", aChartTypes);
 		oPopover.setModel(oModel, "$chartTypes");
 
 		//Show header only in mobile scenarios

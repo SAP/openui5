@@ -8,9 +8,8 @@
 sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
 	"sap/ui/support/library"
-], function(Library) {
+], function (Library) {
 	"use strict";
 
 	/**
@@ -29,6 +28,7 @@ sap.ui.define([
 	 */
 	var thisLib = Library.init({
 		name : "sap.ui.testrecorder",
+		apiVersion: 2,
 		dependencies : [
 			"sap.ui.core",
 			"sap.ui.support"

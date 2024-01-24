@@ -2760,14 +2760,14 @@ sap.ui.define([
 		oMockServer.start();
 
 		[
-			"ChangedAt gt datetimeoffset'2015-04-02T21:59:59Z' and ChangedAt lt datetimeoffset'2015-04-02T22:00:01Z",
+			"ChangedAt gt datetimeoffset'2015-04-02T21:59:59Z' and ChangedAt lt datetimeoffset'2015-04-02T22:00:01Z'",
 			"ChangedAt gt datetimeoffset'2015-04-02T21:59:59.999Z'"
-				+ " and ChangedAt lt datetimeoffset'2015-04-02T22:00:00.001Z",
+				+ " and ChangedAt lt datetimeoffset'2015-04-02T22:00:00.001Z'",
 			"ChangedAt gt datetimeoffset'2015-04-02T22:59:59.999+01:00'"
 				+ " and ChangedAt lt datetimeoffset'2015-04-02T23:00:00.001+01:00'",
 			"ChangedAt gt datetimeoffset'2015-04-02T21:59:59.9999999Z'"
 				// mockserver supports only a precision of 3; .0000001 does not work
-				+ " and ChangedAt lt datetimeoffset'2015-04-02T22:00:00.001Z"
+				+ " and ChangedAt lt datetimeoffset'2015-04-02T22:00:00.001Z'"
 		].forEach((sFilter) => {
 			const oResponse = syncAjax({
 				url: "/myservice/Reviews?$top=5&$filter=" + sFilter,
@@ -3906,6 +3906,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("$batch GET Operation with dfferent status codes", function (assert) {
+
 		var done = assert.async();
 		var sUri = "/mock/";
 		var oMockServer = new MockServer({
@@ -3963,6 +3964,7 @@ sap.ui.define([
 		oMockServer.start();
 
 		var oModel = new ODataModelV2(sUri);
+		oModel.setDeferredGroups(["myId"]);
 
 		var fnReadResult = function (oResponse) {
 			assert.ok(oResponse.statusCode != undefined, "Status Code " + oResponse.statusCode + " is set");
@@ -3981,7 +3983,7 @@ sap.ui.define([
 		for (var i = 0; i < aStatusListKeys.length; i++) {
 			oModel.read("/LeaveItemCollection", {
 				urlParameters: { code: oStatusList[aStatusListKeys[i]].statusCode },
-				batchGroupId: "myId",
+				groupId: "myId",
 				success: fnSuccess,
 				error: fnError
 			});
@@ -4000,6 +4002,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("$batch: custom headers of contained requests", function (assert) {
+
 		var done = assert.async();
 		var sUri = "/mock/";
 		var oMockServer = new MockServer({
@@ -4039,9 +4042,10 @@ sap.ui.define([
 		oMockServer.start();
 
 		var oModel = new ODataModelV2(sUri);
+		oModel.setDeferredGroups(["myId"]);
 
 		oModel.read("/LeaveItemCollection", {
-			batchGroupId: "myId",
+			groupId: "myId",
 			success: function (oData, oResponse) {
 				assert.equal(oResponse.headers["sap-message"], sHeaderMsgString, "sap-message header available");
 				assert.equal(oResponse.headers["my-custom-header"], "HelloWorld", "my-custom-header was transferred correctly");
@@ -4739,12 +4743,13 @@ sap.ui.define([
 		oMockServer.start();
 
 		var oModel = new ODataModelV2(sUri);
+		oModel.setDeferredGroups(["myId"]);
 
 		oModel.update("/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')", {
 			availablebalance: "40 days",
 			state: "Approved"
 		}, {
-			batchGroupId: "myId",
+			groupId: "myId",
 			eTag: "123456789" // Should be transmitted as If-Match request header
 		});
 

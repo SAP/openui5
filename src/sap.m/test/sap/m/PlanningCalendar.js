@@ -799,6 +799,11 @@ sap.ui.define([
 						startDate: UI5Date.getInstance(2015, 0, 7),
 						endDate: UI5Date.getInstance(2015, 0, 8),
 						type: CalendarDayType.NonWorking
+					}),
+					new DateTypeRange({
+						startDate: UI5Date.getInstance(2015, 0, 3),
+						endDate: UI5Date.getInstance(2015, 0, 4),
+						type: CalendarDayType.Working
 					})
 				],
 				intervalHeaders: [
@@ -1304,6 +1309,7 @@ sap.ui.define([
 			new DateTypeRange({
 				startDate: UI5Date.getInstance(2015, 0, 10),
 				type: CalendarDayType.Type01,
+				secondaryType: CalendarDayType.Working,
 				tooltip: "Lunch"
 			}),
 			new DateTypeRange({

@@ -722,6 +722,37 @@ sap.ui.define([
 		oVSD._dialog.getBeginButton().firePress();
 	});
 
+	QUnit.test("ViewSettingsItem: wrapping property", function(assert) {
+		// Prepare
+		var oVSD = new ViewSettingsDialog({
+			sortItems: [
+				new ViewSettingsItem({ text: "sort", key: "sort", wrapping: true })
+			],
+			filterItems: [
+				new ViewSettingsItem({ text: "filter", key: "filter", wrapping: true })
+			],
+			groupItems: [
+				new ViewSettingsItem({ text: "group", key: "group", wrapping: true })
+			]
+		});
+
+		// Assert
+		assert.ok(oVSD._sortList.getItems()[1].getWrapping(), "Wrapping property is properly set to the list sort item");
+
+		// Act
+		oVSD._initFilterContent();
+		oVSD._initFilterItems();
+
+		// Assert
+		assert.ok(oVSD._filterList.getItems()[1].getWrapping(), "Wrapping property is properly set to the list filter item");
+
+		oVSD._initGroupContent();
+		oVSD._initGroupItems();
+
+		// Assert
+		assert.ok(oVSD._groupList.getItems()[1].getWrapping(), "Wrapping property is properly set to the list group item");
+	});
+
 	QUnit.module("Performance", {
 		beforeEach : function () {
 			this.oVSD = new ViewSettingsDialog();

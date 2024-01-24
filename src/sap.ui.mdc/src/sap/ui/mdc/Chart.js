@@ -493,8 +493,8 @@ sap.ui.define([
 			this.setModel(this._oManagedObjectModel, "$mdcChart");
 			Control.prototype.init.apply(this, arguments);
 
-			this._setupPropertyInfoStore("propertyInfo");
 			this._setPropertyHelperClass(PropertyHelper);
+			this._setupPropertyInfoStore("propertyInfo");
 		};
 
 		Chart.prototype.setP13nMode = function(aModes) {
@@ -598,7 +598,6 @@ sap.ui.define([
 		 * @private
 		 */
 		Chart.prototype.applySettings = function(mSettings, oScope) {
-			this._setPropertyHelperClass(PropertyHelper);
 			Control.prototype.applySettings.apply(this, arguments);
 
 			this.initializedPromise = new Promise((resolve, reject) => {
@@ -1001,7 +1000,8 @@ sap.ui.define([
 		 * Retrieves the selection handler of the inner chart.
 		 * @returns {object} Selection handler of the inner chart
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Chart.prototype.getSelectionHandler = function() {
 			return this.getControlDelegate().getInnerChartSelectionHandler(this);
@@ -1013,7 +1013,8 @@ sap.ui.define([
 		 *
 		 * @returns {object} Layout configuration
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
 		 */
 		Chart.prototype.getChartTypeLayoutConfig = function() {
 			return this.getControlDelegate().getChartTypeLayoutConfig();

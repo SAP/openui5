@@ -21,12 +21,15 @@ sap.ui
 			//   dateTime = "datetime" SQUOTE dateTimeBody SQUOTE
 			//   dateTimeOffset = "datetimeoffset" SQUOTE dateTimeOffsetBody SQUOTE
 			//   dateTimeBody = year "-" month "-" day "T" hour ":" minute [ ":" second [ "." nanoSeconds ] ]
-			//   dateTimeOffsetBody = dateTimeBody "Z" / ; TODO: is the Z optional?
+			//   dateTimeOffsetBody = dateTimeBody "Z" /
 			//   dateTimeBody sign zeroToThirteen [ ":00" ] /
 			//   dateTimeBody sign zeroToTwelve [ ":" zeroToSixty ]
 			// Valid timestamps must start with: year "-" month "-" day "T" hour ":" minute, so it is enough to check
 			// only Z|+|- after T whether a timezone offset is given
 			const rHasTimezoneOffset = /T.*(\+|\-|Z)/;
+			// A regular expression that can be used to truncate the nanoseconds part of a timestamp to avoid rounding
+			// issues in some browsers (e.g. Safari) when creating a JavaScript Date; $1 contains the milliseconds part
+			const rTruncateNanoseconds = /(\.\d{3})\d+/;
 
 			/**
 			 * Creates a mocked server. This helps to mock some back-end calls, e.g. for OData V2/JSON Models or simple XHR calls, without
@@ -3615,6 +3618,9 @@ sap.ui
 					if (!rHasTimezoneOffset.test(s)) {
 						s += "Z";
 					}
+					// to avoid rounding issues truncate the nanoseconds part of the timestamp
+					s = s.replace(rTruncateNanoseconds, "$1");
+
 					return new Date(s).getTime();
 				};
 

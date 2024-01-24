@@ -111,10 +111,10 @@ describe("sap.m.Carousel", function() {
 
 	it("should show focus border all around the carousel", function() {
 		myCarousel.click();
-		browser.executeScript(function () {
-			var oCarousel = sap.ui.getCore().byId("myCarousel")/*Not inside AMD call*/;
-			oCarousel.focus();
-		});
+		element(by.control({
+			id: "myCarousel",
+			interaction: "focus"
+		}));
 		expect(takeScreenshot(myCarousel)).toLookAs("7_1_focus");
 	});
 
