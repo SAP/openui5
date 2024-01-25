@@ -60,24 +60,6 @@ sap.ui.define(function() {
 				page: "test-resources/sap/ui/core/qunit/Core_unavoidablyUsingEval.qunit.html"
 			},
 			/**
-			 * The tests for the preload files all share the same test configuration.
-			 * There is only one HTML test page, which is opened with different URL parameters.
-			 * The HTML test page then points to this general configuration.
-			 */
-			Core_libraryPreloadFiles: {
-				title: "sap.ui.core: library preload with libraryPreloadFiles=",
-				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=none",
-				loader: {
-					paths: {
-						testlibs: "testdata/libraries/"
-					}
-				}
-			},
-			Core_libraryPreloadFiles2: {
-				title: "sap.ui.core: library preload with libraryPreloadFiles=",
-				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=js"
-			},
-			/**
 			 * legacy-relevant:
 			 * The following tests covers the different combinations of the legacy configuration to allow libraries to
 			 * configure whether they use the JS or JSON format for their library preload.
@@ -185,6 +167,24 @@ sap.ui.define(function() {
 				ui5: {
 					preload: "async"
 				}
+			},
+						/**
+			 * The tests for the preload files all share the same test configuration.
+			 * There is only one HTML test page, which is opened with different URL parameters.
+			 * The HTML test page then points to this general configuration.
+			 */
+			Lib_preloadFiles: {
+				title: "sap.ui.core: library preload with libraryPreloadFiles=",
+				page: "test-resources/sap/ui/core/qunit/Lib_preloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=none",
+				loader: {
+					paths: {
+						testlibs: "testdata/libraries/"
+					}
+				}
+			},
+			Lib_preloadFiles2: {
+				title: "sap.ui.core: library preload with libraryPreloadFiles=",
+				page: "test-resources/sap/ui/core/qunit/Lib_preloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=js"
 			}
 		}
 	};
