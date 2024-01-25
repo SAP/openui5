@@ -1356,10 +1356,7 @@ sap.ui.define([
 				}
 			},
 			ResponsivePopover: {
-				title: "QUnit Page for sap.m.ResponsivePopover",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "QUnit Page for sap.m.ResponsivePopover"
 			},
 			ResponsiveScale: {
 				title: "Test page for sap.m.ResponsiveScale"
