@@ -88,7 +88,11 @@ sap.ui.define(['sap/ui/core/Control',
 			this._layoutDataWhenClosed = new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
 			});
+			this._layoutDataPhoneWhenClosed = new OverflowToolbarLayoutData({
+				priority: OverflowToolbarPriority.AlwaysOverflow
+			});
 			this._oAcc = new Accessibility();
+			this._bUserOpened = false;
 		};
 
 		Search.prototype.onBeforeRendering = function () {
@@ -189,8 +193,10 @@ sap.ui.define(['sap/ui/core/Control',
 
 			if (this.getIsOpen()) {
 				oLayoutData = this._layoutDataWhenOpen;
-			} else if (!this._bInOverflow) {
+			} else if (!this._bInOverflow && !this.getPhoneMode()) {
 				oLayoutData = this._layoutDataWhenClosed;
+			} else if (this.getPhoneMode()) {
+				oLayoutData = this._layoutDataPhoneWhenClosed;
 			}
 
 			if (!oLayoutData || this.getLayoutData() === oLayoutData) {
@@ -213,12 +219,22 @@ sap.ui.define(['sap/ui/core/Control',
 					query: oSearch.getValue(),
 					clearButtonPressed: false
 				});
-			} else {
-				this.toggleVisibilityOfSearchField();
 			}
+
+			if (this.sCurrentRange === "ExtraLargeDesktop") {
+				return;
+			}
+
+			this.toggleVisibilityOfSearchField();
+			this._bUserOpened = !this._bUserOpened;
+		};
+
+		Search.prototype._setMedia = function (sMediaRange) {
+			this.sCurrentRange = sMediaRange;
 		};
 
 		Search.prototype._onPressCancelButtonHandler = function () {
+			this._bUserOpened = false;
 			this.toggleVisibilityOfSearchField();
 		};
 

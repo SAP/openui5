@@ -59,7 +59,7 @@ sap.ui.define([
 	 */
 	ResponsiveHandler.prototype.onAfterRendering = function () {
 
-		var bPhoneRange = Device.media.getCurrentRange("StdExt", this._oControl.$().outerWidth(true)).name === "Phone";
+		var bPhoneRange = Device.media.getCurrentRange(this._oControl._sRangeSet, this._oControl.$().outerWidth(true)).name === "Phone";
 		this._oButton = this._oControl._oMegaMenu && this._oControl._oMegaMenu.getAggregation("_button");
 		this._oDomRef = this._oControl.getDomRef(); // Cache DOM Reference
 		this.bIsMegaMenuConfigured = this._oControl._oTitleControl &&
@@ -101,14 +101,19 @@ sap.ui.define([
 
 		var $Control = this._oControl.$(),
 			iWidth = $Control.outerWidth(),
-			oCurrentRange = Device.media.getCurrentRange("StdExt", iWidth),
+			oCurrentRange = Device.media.getCurrentRange(this._oControl._sRangeSet, iWidth),
 			bPhoneRange;
 
-		this.sCurrentRange = oCurrentRange.name;
+		if (this.sCurrentRange !== oCurrentRange.name) {
+			this._oControl._bOTBUpdateNeeded = true;
+			this.sCurrentRange = oCurrentRange.name;
+			this._oControl._oManagedSearch && this._oControl._oManagedSearch._setMedia(this.sCurrentRange);
+		}
 		// Adapt control padding's outside the managed area
 		if (oCurrentRange) {
 			bPhoneRange = this.sCurrentRange === "Phone";
 
+			$Control.toggleClass("sapFShellBarSizeExtraLargeDesktop", this.sCurrentRange === "ExtraLargeDesktop");
 			$Control.toggleClass("sapFShellBarSizeLargeDesktop", this.sCurrentRange === "LargeDesktop");
 			$Control.toggleClass("sapFShellBarSizeDesktop", this.sCurrentRange === "Desktop");
 			$Control.toggleClass("sapFShellBarSizeTablet", this.sCurrentRange === "Tablet");
@@ -118,11 +123,23 @@ sap.ui.define([
 		/**
 		 * Resize adaptation for the Search Bar UX requirements
 		 */
-		if (this._oControl._oManagedSearch && this._oControl._oManagedSearch.getIsOpen()) {
-			setTimeout(this._adaptSearch.bind(this), 100);
-		} else {
+		if (this._oControl._oManagedSearch && !this._oControl._oManagedSearch.getIsOpen()) {
 			this._oControl._bSearchPlaceHolder = false;
 		}
+
+		if (this.sCurrentRange === "ExtraLargeDesktop") {
+			this._oControl._oManagedSearch && this._oControl._oManagedSearch.setIsOpen(true);
+			setTimeout(this._adaptSearch.bind(this), 100);
+		}
+		if (this.sCurrentRange !== "ExtraLargeDesktop" && this._oControl._oManagedSearch && this._oControl._oManagedSearch.getIsOpen()) {
+			if (!this._oControl._oManagedSearch._bUserOpened) {
+				this._oControl._oManagedSearch.setIsOpen(false);
+			} else {
+				setTimeout(this._adaptSearch.bind(this), 100);
+			}
+		}
+
+		this._oControl._bOTBUpdateNeeded && this._oControl.invalidate();
 
 		if (this._iPreviousWidth === iWidth) {
 			return; // We have nothing to update
