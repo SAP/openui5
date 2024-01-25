@@ -603,7 +603,7 @@ sap.ui.define([
 			return oBindingType.getOutputPattern();
 		}
 
-		if (oBindingType instanceof ODataType) {
+		if (oBindingType instanceof ODataType && oBindingType.getFormat) {
 			return oBindingType.getFormat().oFormatOptions.pattern;
 		}
 
