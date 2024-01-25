@@ -3,12 +3,12 @@
  */
 
 // Provides the Design Time Metadata for the sap.m.Link control
-sap.ui.define(["sap/base/util/Deferred", "sap/ui/core/Element", "sap/ui/core/Core", "sap/ui/core/Fragment", "sap/ui/model/json/JSONModel"],
-	function(Deferred, Element, Core, Fragment, JSONModel) {
+sap.ui.define(["sap/base/util/Deferred", "sap/ui/core/Element", "sap/ui/core/Lib", "sap/ui/core/Fragment", "sap/ui/model/json/JSONModel"],
+	function(Deferred, Element, Library, Fragment, JSONModel) {
 		"use strict";
 
 	var fnSelectTargetDialog = function(oControl, mPropertyBag) {
-		var oTextResources = Core.getLibraryResourceBundle("sap.m.designtime");
+		var oTextResources = Library.getResourceBundleFor("sap.m.designtime");
 		return Fragment.load({
 			name: "sap.m.designtime.LinkTargetSelectDialog"
 		}).then(function(oDialog) {

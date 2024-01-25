@@ -137,24 +137,21 @@ sap.ui.define([
 			page: "test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame.html?sap-ui-animation=false",
 			title: "Opa sample for starting an app with a frame",
 			ui5: {
-				libs: "sap.m",
-				theme: "sap_belize"
+				libs: "sap.m"
 			}
 		},
 		"demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrameDebug": {
 			page: "test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame.html?sap-ui-debug=true",
 			title: "Opa sample for starting an app with a frame",
 			ui5: {
-				libs: "sap.m",
-				theme: "sap_belize"
+				libs: "sap.m"
 			}
 		},
 		"demokit/sample/OpaStartup/iStartMyUIComponent/iStartMyUIComponent": {
 			page: "test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyUIComponent/iStartMyUIComponent.html?sap-ui-animation=false",
 			title: "OPA sample for starting an app with a component",
 			ui5: {
-				libs: "sap.m",
-				theme: "sap_belize"
+				libs: "sap.m"
 			},
 			loader: {
 				paths: {
@@ -442,8 +439,7 @@ sap.ui.define([
 				page: "test-resources/sap/ui/core/demokit/sample/OpaAction/Opa.html",
 				title: "Opa sample for triggering actions on controls",
 				ui5: {
-					libs: "sap.m",
-					theme: "sap_belize"
+					libs: "sap.m"
 				},
 				loader: {
 					paths: {

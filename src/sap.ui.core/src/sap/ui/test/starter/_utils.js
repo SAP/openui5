@@ -130,7 +130,7 @@ sap.ui.define([
 			bindingSyntax: 'complex',
 			noConflict: true,
 			libs: [],
-			theme: "sap_belize"
+			theme: "sap_horizon"
 		},
 		bootCore: true,
 		autostart: true

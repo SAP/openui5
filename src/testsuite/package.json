@@ -42,7 +42,6 @@
 		"@openui5/sap.ui.webc.fiori": "2.0.0-SNAPSHOT",
 		"@openui5/sap.ui.webc.main": "2.0.0-SNAPSHOT",
 		"@openui5/sap.uxap": "2.0.0-SNAPSHOT",
-		"@openui5/themelib_sap_belize": "2.0.0-SNAPSHOT",
 		"@openui5/themelib_sap_fiori_3": "2.0.0-SNAPSHOT",
 		"@openui5/themelib_sap_horizon": "2.0.0-SNAPSHOT"
 	},

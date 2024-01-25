@@ -83,7 +83,12 @@ function(
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/link/ Link}
 	 *
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent, sap.ui.core.ITitleContent, sap.ui.core.IAccessKeySupport
+	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent, sap.ui.core.ITitleContent, sap.ui.core.IAccessKeySupport
+	 *
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormFormattedValue as #getFormFormattedValue
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormValueProperty as #getFormValueProperty
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormObservingProperties as #getFormObservingProperties
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormRenderAsControl as #getFormRenderAsControl
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -99,6 +104,7 @@ function(
 			interfaces : [
 				"sap.ui.core.IShrinkable",
 				"sap.ui.core.IFormContent",
+				"sap.ui.core.ISemanticFormContent",
 				"sap.ui.core.ITitleContent",
 				"sap.ui.core.IAccessKeySupport",
 				"sap.m.IToolbarInteractiveControl"
@@ -565,6 +571,22 @@ function(
 				this.setProperty("accesskey", oLabel.getText()[0].toLowerCase());
 			}
 		}
+	};
+
+	Link.prototype.getFormFormattedValue = function () {
+		return this.getText();
+	};
+
+	Link.prototype.getFormValueProperty = function () {
+		return "text";
+	};
+
+	Link.prototype.getFormObservingProperties = function() {
+		return ["text"];
+	};
+
+	Link.prototype.getFormRenderAsControl = function () {
+		return true;
 	};
 
 	return Link;

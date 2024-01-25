@@ -661,6 +661,9 @@ if (typeof window.sap.ui !== "object") {
 					oResult =  {
 						name: BROWSER.SAFARI,
 						fullscreen: bStandalone === undefined ? false : bStandalone,
+						/**
+						 * @deprecated as of version 1.98
+						 */
 						webview: /SAPFioriClient/.test(sUserAgent),
 						mobile: oExpMobile.test(sUserAgent),
 						webkit: true,

@@ -5,7 +5,6 @@ sap.ui.define(function() {
 		name: "TestSuite for ui5loader: GTP testcase CORE/LOADER",
 		defaults: {
 			ui5: {
-				theme: "sap_belize"
 			},
 			qunit: {
 				version: 2

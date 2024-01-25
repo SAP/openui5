@@ -76,18 +76,6 @@
 
 				await Core.ready();
 
-				// TODO: Fake iSematicFormContent on controls until it is official supported
-				var myTypeCheck = function(vTypeName) {
-					if (vTypeName === "sap.ui.core.ISemanticFormContent") {
-						return true;
-					} else {
-						return this.getMetadata().isA(vTypeName);
-					}
-				};
-				Input.prototype.isA = myTypeCheck;
-				Link.prototype.isA = myTypeCheck;
-				Link.prototype.getFormRenderAsControl = function() {return true; };
-
 				var InputType = MLib.InputType;
 				var BackgroundDesign = LayoutLib.BackgroundDesign;
 

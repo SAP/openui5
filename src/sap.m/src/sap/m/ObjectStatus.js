@@ -43,8 +43,13 @@ sap.ui.define([
 
 	 *
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IFormContent
+	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
 	 * @version ${version}
+	 *
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormFormattedValue as #getFormFormattedValue
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormValueProperty as #getFormValueProperty
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormObservingProperties as #getFormObservingProperties
+	 * @borrows sap.ui.core.ISemanticFormContent.getFormRenderAsControl as #getFormRenderAsControl
 	 *
 	 * @constructor
 	 * @public
@@ -54,7 +59,7 @@ sap.ui.define([
 	var ObjectStatus = Control.extend("sap.m.ObjectStatus", /** @lends sap.m.ObjectStatus.prototype */ {
 		metadata : {
 
-			interfaces : ["sap.ui.core.IFormContent"],
+			interfaces : ["sap.ui.core.IFormContent", "sap.ui.core.ISemanticFormContent"],
 			library : "sap.m",
 			designtime: "sap/m/designtime/ObjectStatus.designtime",
 			properties : {
@@ -355,6 +360,22 @@ sap.ui.define([
 
 		//event should only be fired if the click is on the text, link or icon
 		return this._isActive() && (sSourceId === this.getId() + "-link" || sSourceId === this.getId() + "-text" || sSourceId === this.getId() + "-statusIcon" || sSourceId === this.getId() + "-icon");
+	};
+
+	ObjectStatus.prototype.getFormFormattedValue = function () {
+		return this.getText();
+	};
+
+	ObjectStatus.prototype.getFormValueProperty = function () {
+		return "text";
+	};
+
+	ObjectStatus.prototype.getFormObservingProperties = function() {
+		return ["text", "title"]; // title should not used inside Form as there is a Label
+	};
+
+	ObjectStatus.prototype.getFormRenderAsControl = function () {
+		return true;
 	};
 
 	return ObjectStatus;

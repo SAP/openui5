@@ -57,6 +57,8 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IFormContent
 	 *
+	 * @borrows sap.ui.core.IFormContent.getFormDoNotAdjustWidth as #getFormDoNotAdjustWidth
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *

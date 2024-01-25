@@ -4,12 +4,10 @@ sap.ui.define([
 	"sap/ui/layout/ResponsiveFlowLayout",
 	"sap/ui/layout/ResponsiveFlowLayoutData",
 	"sap/m/Button",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
-	// provides jQuery.fn.rect
-	"sap/ui/dom/jquery/rect"
-], function(ResponsiveFlowLayout, ResponsiveFlowLayoutData, Button, nextUIUpdate, jQuery, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/dom/jquery/rect" // provides jQuery.fn.rect
+], function(ResponsiveFlowLayout, ResponsiveFlowLayoutData, Button, jQuery, nextUIUpdate) {
 	"use strict";
 
 	function injectDefaultContent(context) {

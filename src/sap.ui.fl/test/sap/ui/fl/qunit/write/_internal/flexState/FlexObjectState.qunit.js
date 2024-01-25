@@ -59,6 +59,8 @@ sap.ui.define([
 			changeType: "addGroup",
 			layer: Layer.USER
 		});
+		oChangePersistence.addDirtyChanges([oChangeInPersistence1, oChangeInPersistence2]);
+		// Some tests require persisted changes
 		sandbox.stub(oChangePersistence, "getChangesForComponent").resolves([oChangeInPersistence1, oChangeInPersistence2]);
 	}
 

@@ -507,7 +507,7 @@ sap.ui.define([
 			}
 		} else if (bCtrlOrCmd && oEvent.which === KeyCodes.ARROW_RIGHT && bSideContentExpanded) {
 			if (bSideContentExpanded) {
-				this._contentControlToFocus = Core.getCurrentFocusedControlId();
+				this._contentControlToFocus = Element.getActiveElement()?.getId() || null;
 			}
 			this._oItemNavigation.getFocusedDomRef().focus();
 		} else if (bCtrlOrCmd && oEvent.shiftKey && oEvent.which === KeyCodes.P) {

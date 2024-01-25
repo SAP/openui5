@@ -105,6 +105,11 @@ function(
 		 * @extends sap.ui.core.Control
 		 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
 		 *
+		 * @borrows sap.ui.core.ISemanticFormContent.getFormFormattedValue as #getFormFormattedValue
+		 * @borrows sap.ui.core.ISemanticFormContent.getFormValueProperty as #getFormValueProperty
+		 * @borrows sap.ui.core.ISemanticFormContent.getFormObservingProperties as #getFormObservingProperties
+		 * @borrows sap.ui.core.ISemanticFormContent.getFormRenderAsControl as #getFormRenderAsControl
+		 *
 		 * @author SAP SE
 		 * @version ${version}
 		 *
@@ -2415,6 +2420,14 @@ function(
 
 		Select.prototype.getFormValueProperty = function () {
 			return "selectedKey";
+		};
+
+		Select.prototype.getFormObservingProperties = function() {
+			return ["selectedKey"];
+		};
+
+		Select.prototype.getFormRenderAsControl = function () {
+			return false;
 		};
 
 		/**

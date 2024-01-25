@@ -3881,6 +3881,19 @@ function(
 		}
 	};
 
+	// support for SemanticFormElement
+	MultiComboBox.prototype.getFormFormattedValue = function () {
+		return this.getSelectedItems()
+			.map(function (oItem) {
+				return oItem.getText();
+			})
+			.join(", ");
+	};
+
+	MultiComboBox.prototype.getFormObservingProperties = function() {
+		return ["value", "selectedKeys"];
+	};
+
 	return MultiComboBox;
 
 	});

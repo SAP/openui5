@@ -181,7 +181,7 @@ sap.ui.define([
 
 		if (!_renderAsText.call(this)) {
 			if (this.getAggregation("_displayField")) {
-				// switch to control mode missing, this could happen if something unexpected chaged on field what leads to update of getFormRenderAsControl
+				// switch to control mode missing, this could happen if something unexpected changed on field what leads to update of getFormRenderAsControl
 				// (happens if the change is not observed because of missing property in getFormObservingProperties or some internal change)
 				// -> update now, even if it is somehow late and could lead to re-rendering
 				this.destroyAggregation("_displayField");

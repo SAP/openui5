@@ -207,6 +207,10 @@ sap.ui.define([
 
 	function _getText(sKey, sType) {
 
+		if (sType === "time" || sType === "datetime") {
+			sType = "date"; // use the date type operator longname (e.g. before) for all Time and DateTime types.
+		}
+
 		const key = sKey + (sType ? "." + sType : "");
 		let sText;
 

@@ -11,7 +11,6 @@ sap.ui.define([
 			bootCore: true,
 			ui5: {
 				libs: "sap.m",
-				theme: "sap_belize",
 				noConflict: true,
 				preload: "auto",
 				"xx-waitForTheme": "init"

@@ -16,7 +16,6 @@ sap.ui.define(function() {
 				language: "en-US",
 				rtl: false,					// Whether to run the tests in RTL mode
 				libs: ["sap.ui.unified"],	// Libraries to load upfront in addition to the library which is tested (sap.ui.unified), if null no libs are loaded
-				theme: "sap_belize",
 				"xx-waitForTheme": "init"	// Whether the start of the test should be delayed until the theme is applied
 			},
 			coverage: {

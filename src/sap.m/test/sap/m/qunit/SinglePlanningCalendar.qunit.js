@@ -1857,8 +1857,7 @@ sap.ui.define([
 
 	QUnit.test("Navigation buttons ARIA", async function (assert) {
 		// Prepare
-		var oCore = sap.ui.getCore(),
-			oSPC = new SinglePlanningCalendar(),
+		var oSPC = new SinglePlanningCalendar(),
 			oHeader = oSPC._getHeader(),
 			sNavigationToolbarId = oHeader.getAggregation("_navigationToolbar").getId(),
 			oPreviousButton = Element.getElementById(sNavigationToolbarId + "-PrevBtn"),

@@ -123,7 +123,7 @@ sap.ui.define([
 						developerMode: false
 					}
 				});
-				return RtaQunitUtils.clear()
+				return RtaQunitUtils.clear(oRootControl, true)
 				.then(this.oRta.start.bind(this.oRta))
 				.then(function() {
 					this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
