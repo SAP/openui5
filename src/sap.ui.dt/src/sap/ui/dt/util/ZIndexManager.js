@@ -3,21 +3,21 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Popup",
-	"sap/ui/core/BusyIndicator",
-	"sap/base/Log",
-	"sap/ui/dt/Util",
-	"sap/m/InstanceManager",
 	"sap/base/util/restricted/_max",
-	"sap/base/util/restricted/_min"
+	"sap/base/util/restricted/_min",
+	"sap/base/Log",
+	"sap/m/InstanceManager",
+	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/Popup",
+	"sap/ui/dt/Util"
 ], function(
-	Popup,
-	BusyIndicator,
-	Log,
-	Util,
-	InstanceManager,
 	_max,
-	_min
+	_min,
+	Log,
+	InstanceManager,
+	BusyIndicator,
+	Popup,
+	Util
 ) {
 	"use strict";
 
@@ -64,7 +64,7 @@ sap.ui.define([
 	}
 
 	function getZIndexFromPopups(aPopups) {
-		return aPopups.map(function(oPopupElement) {
+		return aPopups.map((oPopupElement) => {
 			return oPopupElement._iZIndex || oPopupElement.oPopup._iZIndex;
 		});
 	}
@@ -96,27 +96,29 @@ sap.ui.define([
 		 */
 		getNextZIndex() {
 			// get all open popups from InstanceManager
-			var aAllOpenPopups = getPopups();
-			var aValidatedPopups = [];
-			var aInvalidatedPopups = [];
+			const aAllOpenPopups = getPopups();
+			const aValidatedPopups = [];
+			const aInvalidatedPopups = [];
 
-			aAllOpenPopups.forEach(function(oOpenPopup) {
+			aAllOpenPopups.forEach((oOpenPopup) => {
 				// check if non-adaptable popup
 				var bValid = _aPopupFilters.every(function(fnFilter) {
 					return fnFilter(oOpenPopup);
 				});
-				bValid && _aPopupFilters.length > 0
-					? aValidatedPopups.push(oOpenPopup)
-					: aInvalidatedPopups.push(oOpenPopup);
+				if (bValid && _aPopupFilters.length > 0) {
+					aValidatedPopups.push(oOpenPopup);
+				} else {
+					aInvalidatedPopups.push(oOpenPopup);
+				}
 			});
 
 			// get max Z-Index from validated popups
-			var iMaxValidatedZIndex = aValidatedPopups.length > 0
+			const iMaxValidatedZIndex = aValidatedPopups.length > 0
 				? _max(getZIndexFromPopups(aValidatedPopups))
 				: -1;
 
 			// get minimum Z-Index from invalidated popups
-			var iMinInvalidatedZIndex = aInvalidatedPopups.length > 0
+			const iMinInvalidatedZIndex = aInvalidatedPopups.length > 0
 				? _min(getZIndexFromPopups(aInvalidatedPopups))
 				: -1;
 
@@ -134,8 +136,8 @@ sap.ui.define([
 		 * @public
 		 */
 		getZIndexBelowPopups() {
-			var aOpenPopups = getPopups();
-			var iLowestPopupZIndex;
+			const aOpenPopups = getPopups();
+			let iLowestPopupZIndex;
 
 			if (aOpenPopups.length > 0) {
 				iLowestPopupZIndex = Math.min.apply(null, getZIndexFromPopups(aOpenPopups));
@@ -169,7 +171,7 @@ sap.ui.define([
 		 */
 		removePopupFilter(fnFilter) {
 			_aPopupFilters = _aPopupFilters.filter(
-				function(fnExistingFilter) {
+				(fnExistingFilter) => {
 					return fnExistingFilter === fnFilter;
 				}
 			);
@@ -183,10 +185,10 @@ sap.ui.define([
 		 */
 		_getNextMinZIndex(iCurrent) {
 			// deduct indices reserved from current z-index
-			var iMaxZIndex = iCurrent - Z_INDICES_RESERVED;
+			const iMaxZIndex = iCurrent - Z_INDICES_RESERVED;
 			// initial minimum z-index
-			var iMinZIndex = iCurrent - Z_INDEX_STEP;
-			var iNextZIndex = getLastZIndex(iMinZIndex, iMaxZIndex, _aAssignedZIndices);
+			const iMinZIndex = iCurrent - Z_INDEX_STEP;
+			const iNextZIndex = getLastZIndex(iMinZIndex, iMaxZIndex, _aAssignedZIndices);
 			_aAssignedZIndices.push(iNextZIndex);
 			return iNextZIndex;
 		},
