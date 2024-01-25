@@ -806,6 +806,47 @@ sap.ui.define([
 		_checkColor(oBorderColor, {R: 255, G:0, B: 0}, "Row2: IntervalHeader1 has the right custom border color");
 	});
 
+	QUnit.test("rowHeaderDescription property", async function (assert) {
+		// Prepare
+		var oPC = new PlanningCalendar({
+				builtInViews: ["Day"],
+				rows: [
+					new PlanningCalendarRow({
+						title: "One",
+						rowHeaderDescription: "Has popup"
+					}),
+					new PlanningCalendarRow({
+						title: "Two"
+					})
+				]
+			}),
+			oRb = Library.getResourceBundleFor("sap.m");
+
+		oPC.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		var aRowHeaderElements = oPC.getDomRef().querySelectorAll(".sapMPlanCalRowHead");
+
+		// Assert
+		assert.notOk(aRowHeaderElements[1].getAttribute("aria-description"), "There is no custom description");
+		assert.notOk(aRowHeaderElements[2].getAttribute("aria-description"), "There is no default description");
+
+		// Act
+		oPC.attachEventOnce("rowHeaderPress", function() {});
+
+		// Assert
+		assert.strictEqual(aRowHeaderElements[1].getAttribute("aria-description"), "Has popup", "Custom description is set");
+		assert.strictEqual(
+			aRowHeaderElements[2].getAttribute("aria-description"),
+			oRb.getText("PLANNING_CALENDAR_ROW_HEADER_DESCRIPTION"),
+			"Default description is set"
+		);
+
+		// Clean
+		oPC.destroy();
+		await nextUIUpdate();
+	});
+
 	QUnit.module("rendering - Hours View", {
 		beforeEach: function () {
 			this.oPC = createPlanningCalendar("PC3", new SearchField(), new Button());

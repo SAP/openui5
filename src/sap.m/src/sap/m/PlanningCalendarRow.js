@@ -180,8 +180,12 @@ sap.ui.define([
 			/**
 			 * Defines the text that is displayed when no {@link sap.ui.unified.CalendarAppointment CalendarAppointments} are assigned.
 			 */
-			noAppointmentsText : {type : "string", group : "Misc", defaultValue : null}
+			noAppointmentsText : {type : "string", group : "Misc", defaultValue : null},
 
+			/**
+			 * Defines the text that will be announced by the screen reader when a user navigates to the row header.
+			 */
+			rowHeaderDescription: {type : "string", group : "Misc", defaultValue : null}
 		},
 		aggregations : {
 
