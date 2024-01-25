@@ -368,7 +368,7 @@ function(
 
 	// handle tap for active toolbar, do nothing if already handled
 	Toolbar.prototype.ontap = function(oEvent) {
-		if (this.getActive() && !oEvent.isMarked() || oEvent.srcControl === this._getActiveButton()) {
+		if (this.getActive() && !oEvent.isMarked() || oEvent.srcControl === this._activeButton) {
 			oEvent.setMarked();
 			this.firePress({
 				srcControl : oEvent.srcControl
@@ -379,7 +379,7 @@ function(
 
 	// fire press event when enter is hit on the active toolbar
 	Toolbar.prototype.onsapenter = function(oEvent) {
-		if (this.getActive() && !oEvent.isMarked() || oEvent.srcControl === this._getActiveButton()) {
+		if (this.getActive() && !oEvent.isMarked() || oEvent.srcControl === this._activeButton) {
 			oEvent.setMarked();
 			this.firePress({
 				srcControl : this
@@ -389,7 +389,7 @@ function(
 
 	Toolbar.prototype.onsapspace = function(oEvent) {
 		// Prevent browser scrolling in case of SPACE key
-		if (oEvent.srcControl === this._getActiveButton()) {
+		if (!this.getActive() || oEvent.srcControl === this._activeButton) {
 			oEvent.preventDefault();
 		}
 	};
