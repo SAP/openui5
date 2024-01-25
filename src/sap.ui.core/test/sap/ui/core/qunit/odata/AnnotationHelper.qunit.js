@@ -563,6 +563,11 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			}
 		}),
 		mHeaders = {"Content-Type" : "application/xml"},
+		oHelper = {
+			help(oRawValue) {
+				return "_" + oRawValue + "_";
+			}
+		},
 		mFixture = {
 			"/GWSAMPLE_BASIC/$metadata" : {source : "GWSAMPLE_BASIC.metadata.xml"},
 			"/GWSAMPLE_BASIC/annotations" : {source : "GWSAMPLE_BASIC.annotations.xml"},
@@ -740,23 +745,6 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.AnnotationHelper", {
-		after : function () {
-			delete window.foo;
-		},
-
-		before : function () {
-			// candidate for a leaf formatter, also inside a composite binding
-			window.foo = {
-				Helper : {
-					help : function help(oRawValue) {
-//TODO						assert.ok(this instanceof PropertyBinding || this === oControl,
-//							"foo.Helper.help: 'this' is kept");
-						return "_" + oRawValue + "_";
-					}
-				}
-			};
-		},
-
 		beforeEach : function () {
 			var oModel = new JSONModel({bar : "world", foo : "hello"}),
 				oControl = new TestControl({
@@ -803,7 +791,10 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					: aExpectedValues.join(" ");
 
 				oControl.applySettings({
-					"text" : AnnotationHelper.createPropertySetting(aParts, fnRootFormatter)
+					"text" : AnnotationHelper.createPropertySetting(aParts, fnRootFormatter, {
+						help: oHelper.help,
+						Helper: oHelper
+					})
 				});
 
 				assert.strictEqual(oControl.getText(), sExpectedText);
@@ -828,7 +819,10 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				}
 
 				oControl.applySettings({
-					"text" : AnnotationHelper.createPropertySetting(aParts, fnRootFormatter)
+					"text" : AnnotationHelper.createPropertySetting(aParts, fnRootFormatter, {
+						help: oHelper.help,
+						Helper: oHelper
+					})
 				});
 
 				assert.strictEqual(oControl.getText(), sExpectedText, "sBinding: " + sBinding);
@@ -2049,22 +2043,18 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	QUnit.test("createPropertySetting: complex binding syntax", function (assert) {
-		this.checkSingle(assert, "{path : 'model>/foo', formatter : 'foo.Helper.help'}", "_hello_");
-		this.checkSingle(assert, "{model : 'model', path : '/bar', formatter : 'foo.Helper.help'}",
-			"_world_");
-		this.checkSingle(assert, "{parts : [{path : '/foo', formatter : 'foo.Helper.help'}]}",
-			"_hello_");
+		this.checkSingle(assert, "{path : 'model>/foo', formatter : 'Helper.help'}", "_hello_");
+		this.checkSingle(assert, "{path : 'model>/foo', formatter : 'help'}", "_hello_");
+		this.checkSingle(assert, "{model : 'model', path : '/bar', formatter : 'Helper.help'}", "_world_");
+		this.checkSingle(assert, "{parts : [{path : '/foo', formatter : 'Helper.help'}]}", "_hello_");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("createPropertySetting: composite binding", function (assert) {
-		this.checkSingle(assert, "hello {path : '/bar', formatter : 'foo.Helper.help'}",
-			"hello _world_");
-		this.checkSingle(assert, "hello {path : 'model>/bar', formatter : 'foo.Helper.help'}",
-			"hello _world_");
-		this.checkSingle(assert,
-			"hello {model : 'model', path : '/bar', formatter : 'foo.Helper.help'}",
-			"hello _world_");
+		this.checkSingle(assert, "hello {path : '/bar', formatter : 'Helper.help'}", "hello _world_");
+		this.checkSingle(assert, "hello {path : '/bar', formatter : 'help'}", "hello _world_");
+		this.checkSingle(assert, "hello {path : 'model>/bar', formatter : 'Helper.help'}", "hello _world_");
+		this.checkSingle(assert, "hello {model : 'model', path : '/bar', formatter : 'Helper.help'}", "hello _world_");
 	});
 
 	//*********************************************************************************************
@@ -2090,17 +2080,25 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	//*********************************************************************************************
 	QUnit.test("createPropertySetting: multiple parts: complex binding syntax", function (assert) {
 		this.checkMultiple(assert, [
-				"{path : '/foo', formatter : 'foo.Helper.help'}",
-				"{model : 'model', path : '/bar', formatter : 'foo.Helper.help'}"
+				"{path : '/foo', formatter : 'Helper.help'}",
+				"{model : 'model', path : '/bar', formatter : 'Helper.help'}"
+			], ["_hello_", "_world_"]);
+		this.checkMultiple(assert, [
+				"{path : '/foo', formatter : 'help'}",
+				"{model : 'model', path : '/bar', formatter : 'help'}"
 			], ["_hello_", "_world_"]);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("createPropertySetting: multiple parts: composite binding", function (assert) {
 		this.checkMultiple(assert, [
-				"hello {model : 'model', path : '/bar', formatter : 'foo.Helper.help'}",
-				"{path : 'model>/foo', formatter : 'foo.Helper.help'} world"
+				"hello {model : 'model', path : '/bar', formatter : 'Helper.help'}",
+				"{path : 'model>/foo', formatter : 'Helper.help'} world"
 			], ["hello _world_", "_hello_ world"]);
+		this.checkMultiple(assert, [
+			"hello {model : 'model', path : '/bar', formatter : 'help'}",
+			"{path : 'model>/foo', formatter : 'help'} world"
+		], ["hello _world_", "_hello_ world"]);
 	});
 
 	//*********************************************************************************************
@@ -2274,7 +2272,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		var oBindingInfo,
 			oControl = this.oControl,
 			aParts = [{
-				formatter : window.foo.Helper.help,
+				formatter : oHelper.help,
 				model : "model",
 				path : "/foo"
 			}];
@@ -2283,7 +2281,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		oBindingInfo = AnnotationHelper.createPropertySetting(aParts, this.formatter);
 
 		assert.deepEqual(aParts[0], {
-			formatter : window.foo.Helper.help,
+			formatter : oHelper.help,
 			model : "model",
 			path : "/foo"
 		}, "array argument unchanged");
