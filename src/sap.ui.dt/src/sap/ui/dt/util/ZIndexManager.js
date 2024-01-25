@@ -33,15 +33,15 @@ sap.ui.define([
 	 * @alias sap.ui.dt.util.ZIndexManager
 	 */
 
-	var Z_INDEX_STEP = 10; // Hardcoded in sap.ui.core.Popup
+	const Z_INDEX_STEP = 10; // Hardcoded in sap.ui.core.Popup
 
 	// '-3' because sap.ui.core.Popup is using -1 and -2 levels for the internal purpose
 	// (e.g. rendering the underlying gray overlay below the BusyIndicator)
-	var Z_INDICES_RESERVED = 3;
+	const Z_INDICES_RESERVED = 3;
 
-	var aAssignedZIndices = [];
+	let _aAssignedZIndices = [];
 
-	var _aPopupFilters = [];
+	let _aPopupFilters = [];
 
 	function getPopups() {
 		return InstanceManager.getOpenDialogs()
@@ -186,9 +186,18 @@ sap.ui.define([
 			var iMaxZIndex = iCurrent - Z_INDICES_RESERVED;
 			// initial minimum z-index
 			var iMinZIndex = iCurrent - Z_INDEX_STEP;
-			var iNextZIndex = getLastZIndex(iMinZIndex, iMaxZIndex, aAssignedZIndices);
-			aAssignedZIndices.push(iNextZIndex);
+			var iNextZIndex = getLastZIndex(iMinZIndex, iMaxZIndex, _aAssignedZIndices);
+			_aAssignedZIndices.push(iNextZIndex);
 			return iNextZIndex;
+		},
+
+		/**
+		 * Clear method for assigned zIndicies and PopupFilters
+		 * @public
+		 */
+		clearState() {
+			_aAssignedZIndices = [];
+			_aPopupFilters = [];
 		}
 	};
 

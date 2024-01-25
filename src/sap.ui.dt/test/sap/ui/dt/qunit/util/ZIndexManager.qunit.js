@@ -99,6 +99,15 @@ sap.ui.define([
 			var iExpectedNumberOfErrors = aIndexes.length - (iEqualSequenceStartIndex + 1);
 			assert.strictEqual(iExpectedNumberOfErrors, this.oLogStubWithArgs.callCount, "then the expected error messages were logged");
 		});
+		QUnit.test("when 'clearState()' is called", function(assert) {
+			const iNextZIndexBeforeClearState = ZIndexManager.getNextZIndex();
+			ZIndexManager.clearState();
+			assert.strictEqual(
+				ZIndexManager.getNextZIndex(),
+				iNextZIndexBeforeClearState,
+				"the returned value is equal to the value reurned before clearState, it is NOT the next z-index"
+			);
+		});
 	});
 	QUnit.module("Given an adaptable popup is open", {
 		beforeEach(assert) {
