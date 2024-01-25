@@ -1,0 +1,108 @@
+<mvc:View
+	height="100%"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:ce="sap.ui.codeeditor"
+	xmlns:custom="mdc.sample.controls"
+	xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
+	xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
+	controllerName="mdc.sample.controller.Controller"
+	>
+
+	<f:DynamicPage id="page">
+		<f:header>
+			<f:DynamicPageHeader pinnable="true">
+				<mdc:FilterBar
+					id="customFilterbar"
+					delegate="{ name: 'mdc/sample/delegate/FilterBarDelegate', payload: {}}"
+					p13nMode="Item,Value"
+					filtersChanged="handleFiltersChanged">
+					<mdc:filterItems>
+						<!-- Slider (single-value) -->
+						<mdc:FilterField id="F1"
+							label="Number of words (single-value)"
+							conditions="{$filters>/conditions/numberWords}"
+							propertyKey="numberWords"
+							dataType="sap.ui.model.type.Integer"
+							maxConditions="1"
+							operators="EQ"
+							delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
+							<Slider id="F1-S" value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" min="0" max="100000"/>
+						</mdc:FilterField>
+
+						<!-- Custom input (multi-value) -->
+						<mdc:FilterField id="F2"
+							label="Description (multi-value)"
+							conditions="{$filters>/conditions/descr}"
+							propertyKey="descr"
+							dataType="sap.ui.model.type.String"
+							maxConditions="-1"
+							valueHelp="VH-Conditions"
+							delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
+							<custom:CustomMultiInput id="F3-CMI" value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" tokens="{path: '$field>/conditions'}">
+								<Token text="{path: '$field>', type: 'sap.ui.mdc.field.ConditionType'}"/>
+							</custom:CustomMultiInput>
+						</mdc:FilterField>
+
+						<!-- Custom Input (single-value) -->
+						<mdc:FilterField id="F3"
+							label="Status (single-value)"
+							conditions="{$filters>/conditions/status}"
+							propertyKey="status"
+							dataType="sap.ui.model.type.String"
+							maxConditions="1"
+							operators="EQ"
+							delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
+							<custom:CustomSegmentedButton conditions="{path: '$field>/conditions'}">
+								<custom:items>
+									<SegmentedButtonItem text="Planning" key="planning"/>
+									<SegmentedButtonItem text="In Process" key="inProcess"/>
+									<SegmentedButtonItem text="Done" key="done"/>
+								</custom:items>
+							</custom:CustomSegmentedButton>
+						</mdc:FilterField>
+					</mdc:filterItems>
+
+					<mdc:dependents>
+						<mdc:ValueHelp id="VH-Conditions"
+							delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
+							<mdc:dialog>
+								<mdcValueHelp:Dialog title="Description">
+									<mdcValueHelpContent:Conditions label="Description"/>
+								</mdcValueHelp:Dialog>
+							</mdc:dialog>
+						</mdc:ValueHelp>
+					</mdc:dependents>
+				</mdc:FilterBar>
+			</f:DynamicPageHeader>
+		</f:header>
+
+		<!-- Code Editor -->
+		<f:content>
+			<VBox>
+				<Title text="Conditions"/>
+				<Text text="The following JSON is the output of the FilterField's conditions." class="sapUiSmallMarginBottom" />
+				<Label text="Editor height (px)" labelFor="inputText" />
+				<Slider
+					id="inputText"
+					value="{/editorHeight}"
+					min="100"
+					enableTickmarks="true"
+					max="800"
+					step="50"
+					class="sapUiMediumMarginBottom"/>
+				<ce:CodeEditor
+					type="json"
+					value="{/conditionsText}"
+					editable="false"
+					height="{
+						path: '/editorHeight',
+						formatter: '.formatter.formatHeight'
+					}" />
+			</VBox>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>
