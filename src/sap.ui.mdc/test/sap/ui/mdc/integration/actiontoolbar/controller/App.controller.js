@@ -24,8 +24,7 @@ sap.ui.define([
 			oChart.setIgnoreToolbarActions([
 				ChartToolbarActionType.ZoomInOut,
 				ChartToolbarActionType.DrillDownUp,
-				ChartToolbarActionType.Legend,
-				ChartToolbarActionType.FullScreen
+				ChartToolbarActionType.Legend
 			]);
 		}
 	});

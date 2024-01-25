@@ -1026,13 +1026,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		Legend: "Legend",
-		/**
-		 * Full screen action.
-		 *
-		 * @public
-		 */
-		FullScreen: "FullScreen"
+		Legend: "Legend"
 	};
 
 	/**
