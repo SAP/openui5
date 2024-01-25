@@ -21,7 +21,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 * @param {object} [oNavigator] The custom window.navigator object reserved for unit test
 	 * @returns {boolean} True if the mouse event is delayed
 	 * @private
-	 * @deprecated since 1.120
+	 * @deprecated
 	 * @ui5-restricted sap.ui.core
 	 */
 	var isMouseEventDelayed = function(oNavigator) {
