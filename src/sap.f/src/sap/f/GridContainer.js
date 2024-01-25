@@ -525,7 +525,7 @@ sap.ui.define([
 			that.addDelegate(this._oItemNavigation);
 		}
 
-		that.$().children().map(function (iIndex, oWrapperItem) {
+		that.$("listUl").children().map(function (iIndex, oWrapperItem) {
 			if (oWrapperItem.getAttribute("class").indexOf("sapFGridContainerItemWrapper") > -1) {
 				aWrapperItemsDomRef.push(oWrapperItem);
 			}
@@ -674,15 +674,17 @@ sap.ui.define([
 			return this;
 		}
 
+		iIndex = Math.max(0, Math.min(iIndex, this.getItems().length - 1));
+
 		var oRm = new RenderManager().getInterface(),
 			oWrapper = this._createItemWrapper(oItem),
-			oNextItem = this._getItemAt(iIndex + 1),
-			oGridRef = this.getDomRef();
+			oGridRef = this.getDomRef("listUl"),
+			oNextItem = oGridRef.children[iIndex];
 
 		if (oNextItem) {
-			oGridRef.insertBefore(oWrapper, GridContainerUtils.getItemWrapper(oNextItem));
+			oGridRef.insertBefore(oWrapper, oNextItem);
 		} else {
-			oGridRef.insertBefore(oWrapper, oGridRef.lastChild);
+			oGridRef.appendChild(oWrapper);
 		}
 
 		oRm.render(oItem, oWrapper);
@@ -700,7 +702,7 @@ sap.ui.define([
 	 */
 	GridContainer.prototype.removeItem = function (vItem) {
 		var oRemovedItem = this.removeAggregation("items", vItem, true),
-			oGridRef = this.getDomRef(),
+			oGridRef = this.getDomRef("listUl"),
 			oItemRef = oRemovedItem.getDomRef();
 
 		if (!oGridRef || !oItemRef) {
@@ -866,7 +868,7 @@ sap.ui.define([
 		}
 
 		if (bSettingsAreChanged) {
-			this.$().css(this._getActiveGridStyles());
+			this.$("listUl").css(this._getActiveGridStyles());
 			this.getItems().forEach(this._applyItemAutoRows.bind(this));
 		}
 
@@ -933,7 +935,7 @@ sap.ui.define([
 			return;
 		}
 
-		iMaxColumns = oSettings.getComputedColumnsCount(this.$().innerWidth());
+		iMaxColumns = oSettings.getComputedColumnsCount(this.$("listUl").innerWidth());
 
 		if (!iMaxColumns) {
 			// if the max columns can not be calculated correctly, don't do anything
@@ -944,26 +946,6 @@ sap.ui.define([
 			// if item has more columns than total columns, it brakes the whole layout
 			oItem.$().parent().css("grid-column", "span " + Math.min(getItemColumnCount(oItem), iMaxColumns));
 		});
-	};
-
-	/**
-	 * Gets the item at specified index.
-	 * @param {int} iIndex Which item to get
-	 * @return {sap.ui.core.Control|null} The item at the specified index. <code>null</code> if index is out of range.
-	 */
-	GridContainer.prototype._getItemAt = function (iIndex) {
-		var aItems = this.getItems(),
-			oTarget;
-
-		if (iIndex < 0) {
-			iIndex = 0;
-		}
-
-		if (aItems.length && aItems[iIndex]) {
-			oTarget = aItems[iIndex];
-		}
-
-		return oTarget;
 	};
 
 	/**
@@ -1187,7 +1169,7 @@ sap.ui.define([
 			return aAcc;
 		}, []);
 
-		return GridNavigationMatrix.create(this.getDomRef(), aItemsDomRefs);
+		return GridNavigationMatrix.create(this.getDomRef("listUl"), aItemsDomRefs);
 	};
 
 	GridContainer.prototype._isItemWrapper = function (oElement) {
