@@ -369,8 +369,9 @@ sap.ui.define([
 				//Arrange
 				const oMockItem = new Item({ propertyKey: "testName", label: "testLabel", type: "groupable", role: "category" });
 				const oMockChange = { mutation: "insert", child: oMockItem };
-				const oMockBreadcrumbs = { updateDrillBreadcrumbs: function () { } };
-				this.oMDCChart._oBreadcrumbs = oMockBreadcrumbs;
+				if (!this.oMDCChart.getAggregation("_breadcrumbs")) {
+					this.oMDCChart.setAggregation("_breadcrumbs", new Breadcrumbs(this.oMDCChart.getId() + "--breadcrumbs"));
+				}
 
 				this.oMDCChart.addItem(new Item({ propertyKey: "testName1", label: "testLabel1", type: "groupable", role: "category" }));
 				this.oMDCChart.addItem(new Item({ propertyKey: "testName2", label: "testLabel2", type: "aggregatable", role: "category" }));
@@ -608,10 +609,10 @@ sap.ui.define([
 		QUnit.test("_createBreadcrumbs", function (assert) {
 			const oMockDelegate = { getDrillableItems: function () { return []; } };
 			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
-			// this.oMDCChart.getControlDelegate = function () { return oMockDelegate; };
-			// this.oMDCChart.setAggregation("_breadcrumbs", null);
-			this.oMDCChart._oBreadcrumbs?.destroy();
-			this.oMDCChart._oBreadcrumbs = undefined;
+			if (this.oMDCChart.getAggregation("_breadcrumbs")) {
+				this.oMDCChart.getAggregation("_breadcrumbs").destroy();
+				this.oMDCChart.setAggregation("_breadcrumbs", null);
+			}
 
 			this.oMDCChart._createBreadcrumbs();
 
@@ -622,7 +623,6 @@ sap.ui.define([
 		QUnit.test("getAdaptionUI", function (assert) {
 			const oMockDelegate = { getAdaptionUI: function () { return "Test"; } };
 			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
-			// this.oMDCChart.getControlDelegate = function () { return oMockDelegate; };
 			const oDelegateSpy = sinon.spy(oMockDelegate, "getAdaptionUI");
 
 			const sResult = this.oMDCChart.getAdaptationUI();
@@ -772,18 +772,16 @@ sap.ui.define([
 
 		QUnit.test("_checkStyleClassesForDimensions with dimension after removal", function (assert) {
 			//Arrange
-			if (!this.oMDCChart._oBreadcrumbs) {
-				this.oMDCChart._oBreadcrumbs = new Breadcrumbs(this.oMDCChart.getId() + "--breadcrumbs");
-			} else {
-				this.oMDCChart._oBreadcrumbs.setVisible(true);
+			if (!this.oMDCChart.getAggregation("_breadcrumbs")) {
+				this.oMDCChart.setAggregation("_breadcrumbs", new Breadcrumbs(this.oMDCChart.getId() + "--breadcrumbs"));
 			}
 
 			this.oMDCChart.removeAllItems();
 			this.oMDCChart.addStyleClass("sapUiMDCChartGrid");
 			this.oMDCChart._checkStyleClassesForDimensions();
 			this.oMDCChart.addItem(new Item({ propertyKey: "Test1", type: "groupable" }));
-			if (!this.oMDCChart._oBreadcrumbs.getVisible()) { // as on insert item it is reset
-				this.oMDCChart._oBreadcrumbs.setVisible(true);
+			if (!this.oMDCChart.getAggregation("_breadcrumbs").getVisible()) { // as on insert item it is reset
+				this.oMDCChart.getAggregation("_breadcrumbs").setVisible(true);
 			}
 
 			const addStyleClassSpy = sinon.spy(this.oMDCChart, "addStyleClass");
@@ -797,9 +795,6 @@ sap.ui.define([
 			assert.ok(removeStyleClassSpy.calledOnceWith("sapUiMDCChartGridNoBreadcrumbs"), "sapUiMDCChartGridNoBreadcrumbs removed");
 			assert.ok(this.oMDCChart.hasStyleClass("sapUiMDCChartGrid"), "Styleclass in DOM");
 			assert.ok(!this.oMDCChart.hasStyleClass("sapUiMDCChartGridNoBreadcrumbs"), "Styleclass not in DOM");
-
-			this.oMDCChart._oBreadcrumbs.destroy();
-			delete this.oMDCChart._oBreadcrumbs;
 		});
 
 		QUnit.test("_getSortedProperties", function (assert) {
