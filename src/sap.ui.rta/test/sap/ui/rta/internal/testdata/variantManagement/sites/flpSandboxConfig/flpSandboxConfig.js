@@ -47,12 +47,6 @@
 			}
 		},
 		services: {
-			NavTargetResolution: {
-				config: {
-					allowTestUrlComponentConfig: true,
-					enableClientSideTargetResolution: true
-				}
-			},
 			EndUserFeedback: {
 				adapter: {
 					config: {

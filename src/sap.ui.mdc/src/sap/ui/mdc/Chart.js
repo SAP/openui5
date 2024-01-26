@@ -764,10 +764,11 @@ sap.ui.define([
 		};
 
 		Chart.prototype._createBreadcrumbs = function() {
-			if (!this._oBreadcrumbs && !this._bIsDestroyed) {
-				this._oBreadcrumbs = new Breadcrumbs(this.getId() + "--breadcrumbs");
-				this._oBreadcrumbs.updateDrillBreadcrumbs(this, this.getControlDelegate().getDrillableItems(this));
-				this.setAggregation("_breadcrumbs", this._oBreadcrumbs);
+			let _oBreadcrumbs = this.getAggregation("_breadcrumbs");
+			if (!_oBreadcrumbs && !this._bIsDestroyed) {
+				_oBreadcrumbs = new Breadcrumbs(this.getId() + "--breadcrumbs");
+				_oBreadcrumbs.updateDrillBreadcrumbs(this, this.getControlDelegate().getDrillableItems(this));
+				this.setAggregation("_breadcrumbs", _oBreadcrumbs);
 			}
 		};
 
@@ -849,7 +850,7 @@ sap.ui.define([
 			this._rebind();
 
 			//Update the breadcrumbs after an MDC Item change
-			this._oBreadcrumbs.updateDrillBreadcrumbs(this, this.getControlDelegate().getDrillableItems(this));
+			this.getAggregation("_breadcrumbs").updateDrillBreadcrumbs(this, this.getControlDelegate().getDrillableItems(this));
 		};
 
 		/**
@@ -1204,8 +1205,8 @@ sap.ui.define([
 		};
 
 		Chart.prototype._checkStyleClassesForDimensions = function() {
-			const bHasDimension = this._oBreadcrumbs && this._oBreadcrumbs.getVisible() // breadcrump must be visible and dimension exist
-				&&
+			const _oBreadcrumbs = this.getAggregation("_breadcrumbs");
+			const bHasDimension = _oBreadcrumbs?.getVisible() && // breadcrump must be visible and dimension exist
 				this.getItems().some((oItem) => { return oItem.getType() === "groupable"; });
 
 			if (!bHasDimension && this.hasStyleClass("sapUiMDCChartGrid")) {
@@ -1444,7 +1445,6 @@ sap.ui.define([
 			Control.prototype.exit.apply(this, arguments);
 
 			this._oObserver?.destroy();
-			this._oBreadcrumbs = undefined;
 		};
 
 		/**

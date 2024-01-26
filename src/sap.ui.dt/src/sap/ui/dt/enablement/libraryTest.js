@@ -132,7 +132,15 @@ sap.ui.define([
 					} else if (typeof mActions[sAction] === "string") {
 						assert.strictEqual(typeof mActions[sAction], "string", `${sControlName} defines ${sAction} as string`);
 					} else if (sAction === "settings" && typeof mActions[sAction] === "object") {
-						mModelChecks["/actions"].check(assert, mActions[sAction], sControlName);
+						if (mActions[sAction].handler) {
+							assert.strictEqual(typeof mActions[sAction].handler, "function", `${sControlName} defines ${sAction} with handler function`);
+						} else if (Object.keys(mActions[sAction]).length) {
+							assert.strictEqual(typeof mActions[sAction], "object", `${sControlName} defines ${sAction} with multiple action definitions`);
+							Object.keys(mActions[sAction]).forEach((sKey) => {
+								const oValue = mActions[sAction][sKey];
+								assert.strictEqual(typeof oValue.handler, "function", `${sControlName} defines ${sAction} action with ${sKey} with handler function`);
+							});
+						}
 					} else {
 						assert.strictEqual(typeof mActions[sAction], "function", `${sControlName} defines ${sAction} as function`);
 					}

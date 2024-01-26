@@ -137,7 +137,7 @@ function(
 	 * @param {Assert} assert Assert
 	 */
 	function assertGridSettings(oGrid, oSettings, sLayout, assert) {
-		var oGridStyle = oGrid.getDomRef().style,
+		var oGridStyle = oGrid.getDomRef("listUl").style,
 			sColumnsTemplate,
 			sExpectedColumnsTemplate,
 			sColumnSize = oSettings.getColumnSize(),
@@ -238,7 +238,7 @@ function(
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
-		assert.ok(this.oGrid.$().hasClass("sapFGridContainerSnapToRow"), "Has class sapFGridContainerSnapToRow when snapToRow is true");
+		assert.ok(this.oGrid.$("listUl").hasClass("sapFGridContainerSnapToRow"), "Has class sapFGridContainerSnapToRow when snapToRow is true");
 	});
 
 	QUnit.test("Width", function (assert) {
@@ -257,21 +257,21 @@ function(
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
-		assert.strictEqual(this.oGrid.$().css("min-height"), "32px", "Default min height is 2rem.");
+		assert.strictEqual(this.oGrid.$("listUl").css("min-height"), "32px", "Default min height is 2rem.");
 
 		// Act
 		this.oGrid.setMinHeight("0");
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
-		assert.strictEqual(this.oGrid.$().css("min-height"), "0px", "Min height can be set to 0.");
+		assert.strictEqual(this.oGrid.$("listUl").css("min-height"), "0px", "Min height can be set to 0.");
 
 		// Act
 		this.oGrid.setMinHeight("20px");
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
-		assert.strictEqual(this.oGrid.$().css("min-height"), "20px", "Min height can be set to 20px.");
+		assert.strictEqual(this.oGrid.$("listUl").css("min-height"), "20px", "Min height can be set to 20px.");
 	});
 
 	QUnit.test("Tooltip", function (assert) {
@@ -283,7 +283,7 @@ function(
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
-		assert.strictEqual(this.oGrid.$().attr("title"), sExample, "The grid has the expected tooltip");
+		assert.strictEqual(this.oGrid.$("listUl").attr("title"), sExample, "The grid has the expected tooltip");
 	});
 
 	QUnit.test("Allow dense fill", function (assert) {
@@ -294,7 +294,7 @@ function(
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
-		assert.ok(this.oGrid.$().hasClass("sapFGridContainerDenseFill"), "The grid has class 'sapFGridContainerDenseFill' when allowDenseFill is true");
+		assert.ok(this.oGrid.$("listUl").hasClass("sapFGridContainerDenseFill"), "The grid has class 'sapFGridContainerDenseFill' when allowDenseFill is true");
 
 	});
 
@@ -310,7 +310,7 @@ function(
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
-		assert.strictEqual(this.oGrid.$().css("grid-auto-rows"), "min-content", "The grid has 'grid-auto-rows:min-content', when inlineBlockLayout is true");
+		assert.strictEqual(this.oGrid.$("listUl").css("grid-auto-rows"), "min-content", "The grid has 'grid-auto-rows:min-content', when inlineBlockLayout is true");
 		assert.strictEqual(oTile.$().parent().css("grid-row-start"), "span 1", "The grid items have row span 1");
 
 	});
@@ -404,13 +404,13 @@ function(
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
-		$grid = this.oGrid.$();
+		$grid = this.oGrid.$("listUl");
 		assert.strictEqual($grid.find("#tile1").length, 1, "Item 1 is inserted with index which is out of range");
 		assert.ok($grid.find("#tile1").attr("id"), "Item 1's wrapper has an ID created through insertItem");
 		assert.strictEqual($grid.find("#tile2").length, 1, "Item 2 is inserted with index which is out of range");
 		assert.ok($grid.find("#tile2").attr("id"), "Item 2's wrapper has an ID created through insertItem");
 		assert.strictEqual($grid.find("#tile3").length, 1, "Item 3 is inserted with index 1");
-		assert.strictEqual($grid.find("#tile3").parent().index(), 2, "Item 3 is inserted on correct location");
+		assert.strictEqual($grid.find("#tile3").parent().index(), 1, "Item 3 is inserted on correct location");
 		assert.ok($grid.find("#tile3").attr("id"), "Item 3's wrapper has an ID created through insertItem");
 
 		oItem1.destroy();
@@ -480,7 +480,7 @@ function(
 		this.oGrid.addItem(oInvisibleItem);
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
-		var aWrappers = this.oGrid.$().children();
+		var aWrappers = this.oGrid.$("listUl").children();
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act
@@ -488,15 +488,15 @@ function(
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
-		assert.ok(aWrappers[2].offsetWidth > 0, "When item is turned to visible, its wrapper should take width.");
+		assert.ok(aWrappers[1].offsetWidth > 0, "When item is turned to visible, its wrapper should take width.");
 
 		// Act
 		oVisibleItem.setVisible(false);
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
-		assert.notOk(aWrappers[1].offsetWidth > 0, "When item is turned to invisible, its wrapper should NOT take width.");
-		assert.ok(aWrappers[2].offsetWidth > 0, "Wrapper of visible item should take width.");
+		assert.notOk(aWrappers[0].offsetWidth > 0, "When item is turned to invisible, its wrapper should NOT take width.");
+		assert.ok(aWrappers[1].offsetWidth > 0, "Wrapper of visible item should take width.");
 	});
 
 	QUnit.test("Visible/Invisible items with model", function (assert) {
@@ -529,28 +529,28 @@ function(
 		});
 
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
-		$grid = this.oGrid.$();
+		$grid = this.oGrid.$("listUl");
 
 		// Act - hide first item
 		oModel.setProperty("/0/visible", false);
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
-		assert.ok($grid.children()[1].offsetWidth === 0, "The first item is not visible and wrapper is not visible.");
+		assert.ok($grid.children()[0].offsetWidth === 0, "The first item is not visible and wrapper is not visible.");
 
 		// Act - back to visible
 		oModel.setProperty("/0/visible", true);
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
-		assert.ok($grid.children()[1].offsetWidth > 0, "The first item is visible again.");
+		assert.ok($grid.children()[0].offsetWidth > 0, "The first item is visible again.");
 
 		// Act - set second item to visible
 		oModel.setProperty("/1/visible", true);
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
-		assert.ok($grid.children()[2].offsetWidth > 0, "The second item is visible.");
+		assert.ok($grid.children()[1].offsetWidth > 0, "The second item is visible.");
 
 		// Clean up
 		this.oGrid.setModel(null);
@@ -1024,8 +1024,8 @@ function(
 
 	QUnit.test("Right Arrow navigation through grid container", function (assert) {
 		// Arrange
-		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
-			oItemWrapper2 = this.oGrid.getDomRef().children[2],
+		var oItemWrapper1 = this.oGrid.getDomRef("listUl").children[0],
+			oItemWrapper2 = this.oGrid.getDomRef("listUl").children[1],
 			oScrollSpy = this.spy(this.oGrid.getItems()[1].getCardHeader().getDomRef(), "scrollIntoView");
 
 		oItemWrapper1.focus();
@@ -1052,9 +1052,9 @@ function(
 	QUnit.test("Down Arrow navigating through grid container", function (assert) {
 		// Arrange
 		var done = assert.async();
-		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
-			oItemWrapper3 = this.oGrid.getDomRef().children[3],
-			oItemWrapper5 = this.oGrid.getDomRef().children[5];
+		var oItemWrapper1 = this.oGrid.getDomRef("listUl").children[0],
+			oItemWrapper3 = this.oGrid.getDomRef("listUl").children[2],
+			oItemWrapper5 = this.oGrid.getDomRef("listUl").children[4];
 
 		oItemWrapper1.focus();
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
@@ -1081,7 +1081,7 @@ function(
 
 	QUnit.test("Left Arrow navigating through grid container", function (assert) {
 		// Arrange
-		var oItemWrapper3 = this.oGrid.getDomRef().children[3];
+		var oItemWrapper3 = this.oGrid.getDomRef("listUl").children[2];
 		oItemWrapper3.focus();
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
@@ -1094,8 +1094,8 @@ function(
 
 	QUnit.test("Up Arrow navigating through grid container", function (assert) {
 		// Arrange
-		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
-			oItemWrapper3 = this.oGrid.getDomRef().children[3];
+		var oItemWrapper1 = this.oGrid.getDomRef("listUl").children[0],
+			oItemWrapper3 = this.oGrid.getDomRef("listUl").children[2];
 		oItemWrapper3.focus();
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
@@ -1108,8 +1108,8 @@ function(
 
 	QUnit.test("Page Down navigating through grid container", function (assert) {
 		// Arrange
-		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
-			oItemWrapper5 = this.oGrid.getDomRef().children[5];
+		var oItemWrapper1 = this.oGrid.getDomRef("listUl").children[0],
+			oItemWrapper5 = this.oGrid.getDomRef("listUl").children[4];
 		oItemWrapper1.focus();
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
@@ -1122,8 +1122,8 @@ function(
 
 	QUnit.test("Page Up navigating through grid container", function (assert) {
 		// Arrange
-		var oItemWrapper2 = this.oGrid.getDomRef().children[2],
-			oItemWrapper4 = this.oGrid.getDomRef().children[4];
+		var oItemWrapper2 = this.oGrid.getDomRef("listUl").children[1],
+			oItemWrapper4 = this.oGrid.getDomRef("listUl").children[3];
 			oItemWrapper4.focus();
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
@@ -1137,7 +1137,7 @@ function(
 	QUnit.test("Tabbing through a tile - focus should leave the grid container", function (assert) {
 
 		// Arrange
-		var oItemWrapperTile = this.oGrid.getDomRef().children[4],
+		var oItemWrapperTile = this.oGrid.getDomRef("listUl").children[3],
 			oTile = oItemWrapperTile.children[0],
 			oForwardTabSpy = this.spy(this.oGrid._oItemNavigation, "forwardTab");
 
@@ -1189,13 +1189,13 @@ function(
 		this.oCard.attachEvent("_ready", function () {
 			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
-			var oItemWrapper = this.oGrid.getDomRef().children[2];
+			var oItemWrapper = this.oGrid.getDomRef("listUl").children[1];
 			oItemWrapper.focus();
 
 			// Assert
 			assert.ok(oCardFocusInSpy.called, "onfocusin is called");
 
-			oItemWrapper = this.oGrid.getDomRef().children[5];
+			oItemWrapper = this.oGrid.getDomRef("listUl").children[4];
 			oItemWrapper.focus();
 
 			// Assert
@@ -1208,8 +1208,9 @@ function(
 	QUnit.test("Press on wrapper should transfer events to the inner control", function (assert) {
 
 		// Arrange
-		var oItemWrapper = this.oGrid.getDomRef().children[4],
+		var oItemWrapper = this.oGrid.getDomRef("listUl").children[3],
 			oAttachPressSpy = this.spy(this.oTile, "firePress");
+
 		oItemWrapper.focus();
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
@@ -1874,7 +1875,7 @@ function(
 
 	QUnit.test("Wrapper attributes", function (assert) {
 		var done = assert.async(),
-			oWrapper = this.oGrid.$().children().eq(1),
+			oWrapper = this.oGrid.$("listUl").children().eq(0),
 			oCard,
 			oHeader,
 			sAriaLabelledByIds;
@@ -1885,7 +1886,7 @@ function(
 		setTimeout(function () {
 			oCard = this.oGrid.getItems()[2];
 			oHeader = oCard.getCardHeader();
-			oWrapper = this.oGrid.$().children().eq(3);
+			oWrapper = this.oGrid.$("listUl").children().eq(2);
 			sAriaLabelledByIds = oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
 
 			assert.notOk(oWrapper.attr("aria-roledescription"), "aria-roledescription attribute is not set");
@@ -2112,8 +2113,8 @@ function(
 		this.oGrid.addItem(new SearchField());
 		this.oGrid.addItem(new SearchField());
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
-		var oFirstItemWrapper = this.oGrid.getDomRef().children[1];
-		var oLastItemWrapper = this.oGrid.getDomRef().children[3];
+		var oFirstItemWrapper = this.oGrid.getDomRef("listUl").children[0];
+		var oLastItemWrapper = this.oGrid.getDomRef("listUl").children[2];
 		oLastItemWrapper.focus();
 
 		assert.strictEqual(document.activeElement, oLastItemWrapper, "Focus is on the last grid item");
@@ -2128,8 +2129,8 @@ function(
 		this.oGrid.addItem(new SearchField());
 		this.oGrid.addItem(new SearchField());
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
-		var oFirstItemWrapper = this.oGrid.getDomRef().children[1];
-		var oLastItemWrapper = this.oGrid.getDomRef().children[3];
+		var oFirstItemWrapper = this.oGrid.getDomRef("listUl").children[0];
+		var oLastItemWrapper = this.oGrid.getDomRef("listUl").children[2];
 		oFirstItemWrapper.focus();
 
 		assert.strictEqual(document.activeElement, oFirstItemWrapper, "Focus is on the first grid item");

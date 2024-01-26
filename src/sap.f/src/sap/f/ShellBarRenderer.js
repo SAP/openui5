@@ -47,10 +47,10 @@ sap.ui.define([], function() {
 				oControl._aLeftControls.forEach(oRm.renderControl, oRm);
 
 				oRm.close("div");
-
 			}
-			if (oControl._oCopilot) {
-				oRm.renderControl(oControl._oCopilot);
+
+			if (oControl._oManagedSearch && oControl.sCurrentRange === "ExtraLargeDesktop") {
+				oRm.renderControl(oControl._oManagedSearch);
 			}
 
 			if (oControl._aRightControls && oControl._aRightControls.length) {

@@ -925,7 +925,7 @@ sap.ui.define([
 					this._initPageForParent(oParentItem);
 					oParentItem._setVisualChild(oParentItem.getItems()[0]._getVisualParent());
 					oLI = Element.getElementById(oParentItem._getVisualControl());
-					oLI.invalidate();
+					oLI && oLI.invalidate();
 				} else {
 					this._initMenuForItems(oParentItem.getItems(), Element.getElementById(oParentItem._getVisualControl()));
 					oParentItem._setVisualChild(oParentItem.getItems()[0]._getVisualParent());

@@ -1655,5 +1655,20 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
+	QUnit.module("DateTimeField - _getBoundValueTypePattern");
+
+	QUnit.test("DateTimePicker shouldn't throw error when the binding type is string.", function(assert) {
+		try {
+			var oDTP9 = new DateTimePicker("DTP9", {
+				value: {
+					path: "/dateValue",
+					type: "sap.ui.model.odata.type.String"}
+			}).placeAt("content");
+			assert.ok(true, "DateTimePicker doesn't throw error when the binding type is string.");
+		} catch (e) {
+			assert.ok(0, "The control throws an error " + e.stack);
+		}
+		oDTP9.destroy();
+	});
 
 });

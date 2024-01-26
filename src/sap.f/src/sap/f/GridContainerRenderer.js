@@ -25,7 +25,19 @@ sap.ui.define([], function () {
 			aItems = oControl.getItems(),
 			sTooltip = oControl.getTooltip_AsString();
 
-		oRM.openStart("div", oControl).class("sapFGridContainer");
+		oRM.openStart("div", oControl)
+			.class("sapFGridContainer");
+
+		if (oControl.getWidth()) {
+			oRM.style("width", oControl.getWidth());
+		}
+
+		oRM.openEnd();
+
+		this.renderDummyArea(oRM, sId, "before", aItems.length > 0 ? 0 : -1);
+
+		oRM.openStart("div", `${sId}-listUl`)
+			.class("sapFGridContainerListUl");
 
 		this.setGridStyles(oRM, oControl._getActiveGridStyles());
 
@@ -33,6 +45,10 @@ sap.ui.define([], function () {
 			role: "list",
 			roledescription: oControl._oRb.getText("GRIDCONTAINER_ROLEDESCRIPTION")
 		});
+
+		if (oControl.getMinHeight()) {
+			oRM.style("min-height", oControl.getMinHeight());
+		}
 
 		if (oControl.getSnapToRow()) {
 			oRM.class("sapFGridContainerSnapToRow");
@@ -42,25 +58,17 @@ sap.ui.define([], function () {
 			oRM.class("sapFGridContainerDenseFill");
 		}
 
-		if (oControl.getWidth()) {
-			oRM.style("width", oControl.getWidth());
-		}
-
-		if (oControl.getMinHeight()) {
-			oRM.style("min-height", oControl.getMinHeight());
-		}
-
 		if (sTooltip) {
 			oRM.attr("title", sTooltip);
 		}
 
 		oRM.openEnd();
 
-		this.renderDummyArea(oRM, sId, "before", aItems.length > 0 ? 0 : -1);
-
 		aItems.forEach(function (oItem, iIndex) {
 			this.renderItem(oRM, oItem, oControl, iIndex);
 		}.bind(this));
+
+		oRM.close("div");
 
 		this.renderDummyArea(oRM, sId, "after", 0);
 
