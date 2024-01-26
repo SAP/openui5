@@ -73,7 +73,8 @@
 					"sap.ui.mdc.demokit.sample.LinkPayloadJson",
 					"sap.ui.mdc.demokit.sample.FilterbarTypes",
 					"sap.ui.mdc.demokit.sample.FilterbarCustomContent",
-					"sap.ui.mdc.demokit.sample.TableJson"
+					"sap.ui.mdc.demokit.sample.TableJson",
+					"sap.ui.mdc.demokit.sample.FilterbarCustomOperators"
 				]
 			}
 		],
@@ -207,6 +208,11 @@
 				"id": "sap.ui.mdc.demokit.sample.TableJson",
 				"name": "Table with JSON model",
 				"description": "A simple table with enabled personalization."
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.FilterbarCustomOperators",
+				"name": "A FilterField with custom operators",
+				"description": "A filter bar with two custom operators"
 			}
 		]
 	}
