@@ -1048,7 +1048,7 @@ function(
 
 		var aChangedListItems = [];
 		this.getItems(true).forEach(function(oItem) {
-			if (!oItem.getSelected()) {
+			if (oItem.isSelectable() && !oItem.getSelected()) {
 				oItem.setSelected(true, true);
 				aChangedListItems.push(oItem);
 				this._updateSelectedPaths(oItem);
