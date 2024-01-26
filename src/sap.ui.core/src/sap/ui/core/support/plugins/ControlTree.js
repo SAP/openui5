@@ -716,7 +716,11 @@ sap.ui.define([
 											.text(" (" + oBinding.model.location.id + ")")
 										.close("a");
 									rm.close("div");
-								} else {
+								}
+								/**
+								 * @deprecated As of version 1.118
+								 */
+								if (oBinding.model.location.type !== 'control') {
 									rm.openStart("div").openEnd().openStart("span").attr("title", "Core").openEnd().text("Core").close("span").close("div");
 								}
 							} else {
@@ -1735,8 +1739,10 @@ sap.ui.define([
 					}
 				} while ( (oCurrentControl = oCurrentControl.getParent()) );
 
-				// check for core model if no model was found
-				if (!mModelInfo.location) {
+				/**
+				 * @deprecated As of version 1.118
+				 */
+				if (!mModelInfo.location) { // check for core model if no model was found
 
 					var oCoreModel = null;
 
