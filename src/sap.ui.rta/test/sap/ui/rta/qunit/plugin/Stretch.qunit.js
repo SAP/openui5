@@ -527,19 +527,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("When the layout becomes invisible", function(assert) {
-			var done = assert.async();
+			const fnDone = assert.async();
 			assert.ok(this.oStretchPlugin.getStretchCandidates().includes("layout"), "the layout is part of the candidates");
 			assert.ok(this.oStretchPlugin.getStretchCandidates().includes("hbox"), "the hbox is part of the candidates");
 
-			this.oHBox.setVisible(false);
-			// wait for the dom to update
-			var fnDebounced = _debounce(function() {
-				assert.notOk(this.oStretchPlugin.getStretchCandidates().includes("layout"), "the layout is not part of the candidates anymore");
-				this.oLayoutOverlay.detachEvent("geometryChanged", fnDebounced);
-				done();
-			}.bind(this));
+			const oRemoveStretchCandidateStub = sandbox.stub(this.oStretchPlugin, "removeStretchCandidate")
+			.callsFake((...aArgs) => {
+				oRemoveStretchCandidateStub.wrappedMethod.apply(this.oStretchPlugin, aArgs);
+				assert.notOk(this.oStretchPlugin.getStretchCandidates().includes("layout"),
+					"the layout is not part of the candidates anymore");
+				fnDone();
+			});
 
-			this.oLayoutOverlay.attachEvent("geometryChanged", fnDebounced);
+			this.oHBox.setVisible(false);
 		});
 	});
 
