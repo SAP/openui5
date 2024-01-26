@@ -1,0 +1,98 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mdc="sap.ui.mdc"
+		xmlns:mdcField="sap.ui.mdc.field"
+		xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
+		xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:form="sap.ui.layout.form"
+		controllerName="sap.ui.mdc.demokit.sample.MultiValueField.Controller">
+
+	<form:SimpleForm layout="ColumnLayout" editable="{path: 'view>/editMode'}">
+		<form:toolbar>
+			<OverflowToolbar>
+				<Title text="MultiValueFields"/>
+				<ToolbarSpacer/>
+				<ToggleButton text="Edit" type="Emphasized" pressed="{path: 'view>/editMode'}"/>
+			</OverflowToolbar>
+		</form:toolbar>
+
+		<Label text="MultiValueField with ValueHelp"/>
+		<mdc:MultiValueField id="F-VH" 
+			items="{path: 'data>/items'}"
+			delegate='\{"name": "mdc/sample/MultiValueFieldDelegate", "payload": \{\}\}'
+ 			display="Description"
+			editMode="{= ${view>/editMode} ? 'Editable' : 'Display'}"
+			showEmptyIndicator="true"
+			valueHelp="VH-Countries">
+			<mdcField:MultiValueFieldItem key="{path: 'data>key', type:'sap.ui.model.type.String', constraints: {maxLength: 2}}" description="{path: 'data>description', type:'sap.ui.model.type.String'}" />
+		</mdc:MultiValueField>
+
+		<Label text="date field"/>
+		<mdc:MultiValueField id="F4-date"
+			items="{path: 'data>/dates'}"
+			display="Value"
+			editMode="{= ${view>/editMode} ? 'Editable' : 'Display'}"
+			showEmptyIndicator="true">
+			<mdcField:MultiValueFieldItem key="{path: 'data>date', type:'sap.ui.model.type.Date', formatOptions: {style: 'short'}}" />
+		</mdc:MultiValueField>
+
+		<form:dependents>
+			<mdc:ValueHelp id="VH-Countries"
+				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"]\}\}'>
+				<mdc:typeahead>
+					<mdcValueHelp:Popover id="VH-Countries-Pop">
+						<mdcValueHelpContent:MTable id="VH-Countries-Pop-MTable"
+							keyPath="key"
+							descriptionPath="name"
+							caseSensitive="true"
+							useAsValueHelp="false">
+							<Table id="VH-Countries-Pop-Table" items="{path: 'data>/countries'}" width="15rem" mode="SingleSelectMaster">
+								<columns>
+									<Column width="2rem">
+										<Label text="ID"/>
+									</Column>
+									<Column width="10rem">
+										<Label text="Name"/>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<Text text="{path: 'data>key', type:'sap.ui.model.type.String', constraints: {maxLength: 2}}"/>
+										<Text text="{path: 'data>name', type:'sap.ui.model.type.String'}"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcValueHelpContent:MTable>
+					</mdcValueHelp:Popover>
+				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcValueHelp:Dialog id="VH-Countries-Dialog" title="Countries">
+						<mdcValueHelpContent:MTable id="VH-Countries-Dialog-MTable"
+							keyPath="key"
+							descriptionPath="name"
+							caseSensitive="true">
+							<Table id="VH-Countries-Dialog-Table" items="{path: 'data>/countries'}" mode="MultiSelect">
+								<columns>
+									<Column width="2rem">
+										<Label text="ID"/>
+									</Column>
+									<Column width="10rem">
+										<Label text="Name"/>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<Text text="{path: 'data>key', type:'sap.ui.model.type.String', constraints: {maxLength: 2}}"/>
+										<Text text="{path: 'data>name', type:'sap.ui.model.type.String'}"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcValueHelpContent:MTable>
+					</mdcValueHelp:Dialog>
+				</mdc:dialog>
+			</mdc:ValueHelp>
+		</form:dependents>
+	</form:SimpleForm>
+</mvc:View>

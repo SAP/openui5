@@ -1097,7 +1097,6 @@ sap.ui.define([
 		assert.equal(token2.getSelected(), false, "Token2 is unselected");
 		assert.equal(token3.getSelected(), false, "Token3 is unselected");
 	});
-
 	QUnit.test("esc key", function(assert) {
 
 		this.multiInput1.setValue("123");
@@ -1346,28 +1345,6 @@ sap.ui.define([
 		assert.ok(oSpy.called, "Fire Token Update is called");
 
 		oMI.destroy();
-	});
-
-	QUnit.test("delete tokens with backspace after ctrl + A should fire tokenUpdate", function(assert) {
-		var token1 = new Token();
-		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.D });
-		var oSpy;
-
-		this.multiInput1.setTokens([token1]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
-
-		this.multiInput1._$input.trigger("focus").trigger(oFakeKeydown).val("D").trigger("input");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
-
-		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.A, false, false, true); // trigger Control key + A
-
-		assert.equal(token1.getSelected(), true, "Token1 is selected");
-
-		oSpy = this.spy(this.multiInput1, "fireTokenUpdate");
-
-		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.BACKSPACE);
-
-		assert.ok(oSpy.called, "Fire Token Update is called");
 	});
 
 	QUnit.test("Backspace should not delete token and fire tokenUpdate when not editable", function (assert) {

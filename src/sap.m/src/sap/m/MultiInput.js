@@ -691,6 +691,7 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype.onsapbackspace = function (oEvent) {
+		var sValue = this.getValue();
 		var isFocused = this.getFocusDomRef() === document.activeElement;
 		var aTokens = this.getTokens();
 		var oTokenToFocus = aTokens[aTokens.length - 1];
@@ -702,7 +703,7 @@ function(
 			return;
 		}
 
-		if (isFocused && oTokenToFocus && oEvent.srcControl === this) {
+		if (sValue === "" && isFocused && oTokenToFocus && oEvent.srcControl === this) {
 			var bAllTokensSelected = aTokens.filter(function(oToken) {
 				return oToken.getSelected();
 			}).length === aTokens.length;

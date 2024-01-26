@@ -1,0 +1,39 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mdc="sap.ui.mdc"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:form="sap.ui.layout.form"
+		controllerName="sap.ui.mdc.demokit.sample.FieldTypes.Controller">
+
+	<form:SimpleForm layout="ColumnLayout" editable="{path: 'view>/editMode'}">
+		<form:toolbar>
+			<OverflowToolbar>
+				<Title text="Fields"/>
+				<ToolbarSpacer/>
+				<ToggleButton text="Edit" type="Emphasized" pressed="{path: 'view>/editMode'}"/>
+			</OverflowToolbar>
+		</form:toolbar>
+
+		<Label text="string Field"/>
+		<mdc:Field id="F-String" value="{path: 'data>/string', type: 'sap.ui.model.type.String'}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display'}" showEmptyIndicator="true"/>
+
+		<Label text="integer Field"/>
+		<mdc:Field id="F-Integer" value="{path: 'data>/integer', type: 'sap.ui.model.type.Integer', formatOptions: {emptyString: null}}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display'}" showEmptyIndicator="true"/>
+
+		<Label text="boolean Field"/>
+		<mdc:Field id="F-Boolean" value="{path: 'data>/boolean', type: 'sap.ui.model.type.Boolean'}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display'}" showEmptyIndicator="true"/>
+
+		<Label text="currency Field"/>
+		<mdc:Field id="F-Currency" value="{parts: [{path: 'data>/price', type: 'sap.ui.model.type.Float'}, {path: 'data>/currency', type: 'sap.ui.model.type.String'}], type: 'sap.ui.model.type.Currency'}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display'}" showEmptyIndicator="true"/>
+
+		<Label text="date Field"/>
+		<mdc:Field id="F-Date" value="{path: 'data>/date', type: 'sap.ui.model.type.Date'}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display'}" showEmptyIndicator="true"/>
+
+		<Label text="dateTime Field"/>
+		<mdc:Field id="F-DateTime" value="{path: 'data>/dateTime', type: 'sap.ui.model.type.DateTime'}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display'}" showEmptyIndicator="true"/>
+
+		<Label text="time Field"/>
+		<mdc:Field id="F-Time" value="{path: 'data>/time', type: 'sap.ui.model.type.Time'}" editMode="{= ${view>/editMode} ? 'Editable' : 'Display'}" showEmptyIndicator="true"/>
+	</form:SimpleForm>
+</mvc:View>
