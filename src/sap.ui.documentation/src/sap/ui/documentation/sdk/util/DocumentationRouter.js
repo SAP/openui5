@@ -330,7 +330,7 @@ sap.ui.define([
 		// or if the ctrl is hold and left mouse button is clicked
 		// we change the href of the anchor element
 		if (iPressedButton === 2 || iPressedButton === 4 || (bNewWindow && iPressedButton === 1)) {
-			if (URLUtil.hasSEOOptimizedFormat) {
+			if (URLUtil.hasSEOOptimizedFormat(sTargetHref)) {
 				sTargetHref = this.convertToStaticFormat(sTargetHref);
 			}
 			oAnchorElement.setAttribute("href", sTargetHref);
