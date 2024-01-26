@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/library",
 	"sap/ui/integration/util/Manifest",
 	"sap/ui/integration/util/ServiceManager",
 	"sap/base/Log",
@@ -48,7 +47,6 @@ sap.ui.define([
 	Element,
 	Library,
 	jQuery,
-	coreLibrary,
 	CardManifest,
 	ServiceManager,
 	Log,
@@ -116,8 +114,6 @@ sap.ui.define([
 	var CARD_DESTROYED_ERROR = "Card is destroyed!";
 
 	var MODULE_PREFIX = "module:";
-
-	var MessageType = coreLibrary.MessageType;
 
 	var DEFAULT_MODEL_SIZE_LIMIT = 1000;
 
@@ -3022,12 +3018,8 @@ sap.ui.define([
 		});
 
 		if (bHasMissingMockData) {
-			Log.warning("'mockData' configuration is missing, but the card 'previewMode' is 'MockData'. Abstract mode will be used instead.", this);
+			Log.info("'mockData' configuration is missing, but the card 'previewMode' is 'MockData'. Abstract mode will be used instead.", this);
 			this.setProperty("previewMode", CardPreviewMode.Abstract);
-
-			this.attachEventOnce("manifestApplied", function () {
-				this.showMessage(this._oIntegrationRb.getText("CARD_MISSING_PREVIEW_CONFIGURATION"), MessageType.Information);
-			}.bind(this));
 		}
 	};
 
