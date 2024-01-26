@@ -1804,8 +1804,40 @@
 				</form:FormContainer>
 				<form:FormContainer title="empty indicator">
 					<form:SemanticFormElement label="String Fields">
-					<mdc:Field id="F4-14" value="" showEmptyIndicator="true" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress"></mdc:Field>
-					<mdc:Field id="F4-15" value="" showEmptyIndicator="true" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress"></mdc:Field>
+						<mdc:Field id="F4-14" value="" showEmptyIndicator="true" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress"></mdc:Field>
+						<mdc:Field id="F4-15" value="" showEmptyIndicator="true" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress"></mdc:Field>
+					</form:SemanticFormElement>
+				</form:FormContainer>
+				<form:FormContainer title="different controls">
+					<form:SemanticFormElement >
+						<form:fieldLabels>
+							<m:Label text="Fieldinfo"></m:Label>
+							<m:Label text="custom Link"></m:Label>
+						</form:fieldLabels>
+						<mdc:Field id="F4-16" value="{ProductId}" additionalValue="{Name}" display="ValueDescription" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress" multipleLines="false">
+							<mdc:fieldInfo>
+								<mdcField:CustomFieldInfo id="F4-16-I" >
+									<m:Text text="Test"/>
+								</mdcField:CustomFieldInfo>
+							</mdc:fieldInfo>
+						</mdc:Field>
+						<mdc:Field id="F4-17" value="Url" additionalValue="{= '../../../../../../' + ${ProductPicUrl}}" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" press="handlePress" submit="handleSubmit" multipleLines="false">
+							<m:Link text="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" href="{path:'$field>/additionalValue', type:'sap.ui.model.type.String'}" />
+						</mdc:Field>
+					</form:SemanticFormElement>
+					<form:SemanticFormElement >
+						<form:fieldLabels>
+							<m:Label text="ObjectStatus"></m:Label>
+							<m:Label text="CheckBox"></m:Label>
+						</form:fieldLabels>
+						<mdc:Field id="F4-18" value="{Name}" additionalValue="{ProductId}" valueState="Error" display="ValueDescription" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" multipleLines="false">
+							<mdc:contentDisplay>
+								<m:ObjectStatus text="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" state="{$field>/valueState}"/>
+							</mdc:contentDisplay>
+						</mdc:Field>
+						<mdc:Field id="F4-19" value="{path:'Important', type:'sap.ui.model.type.Boolean'}" display="Description" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" multipleLines="false">
+							<m:CheckBox selected="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" displayOnly="{= %{path: '$field>/editMode', targetType: 'any'} === 'Display'}"/>
+						</mdc:Field>
 					</form:SemanticFormElement>
 				</form:FormContainer>
 			</form:Form>
