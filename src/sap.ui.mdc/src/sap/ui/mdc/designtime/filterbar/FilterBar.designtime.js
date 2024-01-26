@@ -8,16 +8,16 @@ sap.ui.define([
 
 	return {
 		actions: {
-			settings: function() {
-				return {
+			settings: {
+				"sap.ui.mdc": {
 					name: "filterbar.ADAPT_TITLE",
-					handler: function(oControl, mPropertyBag) {
+					handler: function (oControl, mPropertyBag) {
 						//CHECK: move metadata finalizing to Engine?
 						return oControl.initializedWithMetadata().then(() => {
 							return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "Item");
 						});
 					}
-				};
+				}
 			}
 		},
 		aggregations: {

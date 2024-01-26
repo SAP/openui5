@@ -4,14 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/core/Element",
-	"sap/ui/core/Lib",
 	'sap/ui/fl/Utils',
 	'sap/ui/fl/apply/api/FlexRuntimeInfoAPI',
 	'sap/m/p13n/Engine'
-], (Element, Library, Utils, FlexRuntimeInfoAPI, Engine) => {
+], (Element, Utils, FlexRuntimeInfoAPI, Engine) => {
 	"use strict";
 
-	const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 	return {
 		properties: {
@@ -23,7 +21,7 @@ sap.ui.define([
 				ignore: true
 			}
 		},
-		getStableElements: function(oField) {
+		getStableElements: function (oField) {
 			if (!oField.getFieldInfo()) {
 				return [];
 			}
@@ -41,14 +39,11 @@ sap.ui.define([
 			}];
 		},
 		actions: {
-			settings: function(oField) {
-				if (!oField.getFieldInfo()) {
-					return {};
-				}
-
-				return {
-					name: oResourceBundle.getText("info.POPOVER_DEFINE_LINKS"),
-					handler: function(oControl, mPropertyBag) {
+			settings: {
+				"sap.ui.mdc": {
+					name: "info.POPOVER_DEFINE_LINKS",
+					isEnabled: (oControl) => !!oControl.getFieldInfo(),
+					handler: function (oControl, mPropertyBag) {
 						const oFieldInfo = oControl.getFieldInfo();
 						return oFieldInfo.getContent().then((oPanel) => {
 							oFieldInfo.addDependent(oPanel);
@@ -56,16 +51,16 @@ sap.ui.define([
 							return FlexRuntimeInfoAPI.waitForChanges({
 								element: oPanel
 							}).then(() => {
-								mPropertyBag.fnAfterClose = function() {
+								mPropertyBag.fnAfterClose = function () {
 									oPanel.destroy();
 								};
-								const fnGetChanges = function() {
+								const fnGetChanges = function () {
 									return Engine.getInstance().getRTASettingsActionHandler(oPanel, mPropertyBag, "LinkItems").then((aChanges) => {
 										aChanges.forEach((oChange) => {
 											const oSelectorElement = oChange.selectorElement;
 											delete oChange.selectorElement;
 
-											const oAppComponent = Utils.getAppComponentForControl(oControl) || Utils.getAppComponentForControl(oField);
+											const oAppComponent = Utils.getAppComponentForControl(oControl);
 											oChange.selectorControl = {
 												id: oSelectorElement.getId(),
 												controlType: oSelectorElement === oPanel ? "sap.ui.mdc.link.Panel" : "sap.ui.mdc.link.PanelItem",
@@ -91,14 +86,14 @@ sap.ui.define([
 						});
 					},
 					CAUTION_variantIndependent: true
-				};
+				}
 			}
 		},
 		tool: {
-			start: function(oField) {
+			start: function (oField) {
 				oField.getFieldInfo()?.setEnablePersonalization(false);
 			},
-			stop: function(oField) {
+			stop: function (oField) {
 				oField.getFieldInfo()?.setEnablePersonalization(true);
 			}
 		}

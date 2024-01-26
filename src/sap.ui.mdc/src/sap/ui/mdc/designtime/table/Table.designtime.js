@@ -11,15 +11,15 @@ sap.ui.define([
 		name: "{name}",
 		description: "{description}",
 		actions: {
-			settings: function() {
-				//RTA expects the settings to be returned as function
-				return {
-					handler: function(oControl, mPropertyBag) {
+			settings: {
+				"sap.ui.mdc": {
+					name: "p13nDialog.VIEW_SETTINGS",
+					handler: function (oControl, mPropertyBag) {
 						return oControl.finalizePropertyHelper().then(() => {
 							return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, oControl.getActiveP13nModes());
 						});
 					}
-				};
+				}
 			}
 		},
 		properties: {},
@@ -33,7 +33,7 @@ sap.ui.define([
 				// This should not affect the size or position of any overlays, it just fixes the RTA algorithm for determining the visibility of
 				// an element.
 				domRef: ":sap-domref",
-				propagateMetadata: function(oElement) {
+				propagateMetadata: function (oElement) {
 					if (oElement.isA("sap.ui.fl.variants.VariantManagement") ||
 						oElement.isA("sap.ui.mdc.ActionToolbar") ||
 						oElement.isA("sap.ui.mdc.actiontoolbar.ActionToolbarAction") ||
@@ -53,17 +53,17 @@ sap.ui.define([
 	};
 	// array containing all allowed control properties. Update the aAllowedProperties to enable a property for DTA
 	const aAllowedProperties = ["width",
-			"headerLevel",
-			"header",
-			"headerVisible",
-			"showRowCount",
-			"threshold",
-			"enableExport",
-			"busyIndicatorDelay",
-			"enableColumnResize",
-			"showPasteButton",
-			"multiSelectMode"
-		],
+		"headerLevel",
+		"header",
+		"headerVisible",
+		"showRowCount",
+		"threshold",
+		"enableExport",
+		"busyIndicatorDelay",
+		"enableColumnResize",
+		"showPasteButton",
+		"multiSelectMode"
+	],
 		// array containing all allowed control aggregations. Update the aAllowedAggregations to enable an aggregation for DTA
 		aAllowedAggregations = [
 			"_content"
