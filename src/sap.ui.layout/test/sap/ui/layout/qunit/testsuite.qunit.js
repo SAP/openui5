@@ -87,22 +87,22 @@ sap.ui.define([], function() {
 				coverage: {
 					only: [
 						"sap/ui/layout/Splitter",
-						"sap/ui/layout/SplitPane",
-						"sap/ui/layout/PaneContainer",
-						"sap/ui/layout/SplitLayoutData"
+						"sap/ui/layout/SplitterLayoutData"
 					]
 				}
 			},
 			"ResponsiveSplitter": {
+				theme: "sap_horizon",
 				sinon: {
 					useFakeTimers: true
 				},
 				coverage: {
 					only: [
 						"sap/ui/layout/ResponsiveSplitter",
+						"sap/ui/layout/AssociativeSplitter",
 						"sap/ui/layout/SplitPane",
 						"sap/ui/layout/PaneContainer",
-						"sap/ui/layout/SplitLayoutData"
+						"sap/ui/layout/SplitterLayoutData"
 					]
 				}
 			},
@@ -116,7 +116,10 @@ sap.ui.define([], function() {
 			},
 			"AssociativeSplitter": {
 				coverage: {
-					only: ["sap/ui/layout/AssociativeSplitter"]
+					only: [
+						"sap/ui/layout/AssociativeSplitter",
+						"sap/ui/layout/SplitterLayoutData"
+					]
 				}
 			},
 			"PaneContainer": { },
