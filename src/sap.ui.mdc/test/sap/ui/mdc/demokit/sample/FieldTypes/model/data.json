@@ -1,0 +1,10 @@
+{
+    "string": "Test",
+    "integer": 1,
+    "boolean": true,
+    "price": 1.23,
+    "currency": "EUR",
+    "date": null,
+    "dateTime": null,
+    "time": null
+}
