@@ -636,6 +636,23 @@
 	padding-left: 0;
 }
 
+.sapUiMnuItmExternalLink a{
+	min-width: 100%;
+	height: 100%;
+	text-decoration: none;
+	outline: none;
+	background: inherit;
+	border-radius: inherit;
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	color: @_sap_tnt_NavigationList_ExpandIconColor;
+
+	.sapTntNLIExternalLinkIcon::before {
+		margin-left: 0.8rem;
+	}
+}
+
 /* Compact size */
 .sapUiSizeCompact {
 

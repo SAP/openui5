@@ -1107,7 +1107,7 @@ sap.ui.define([
 			sExternalLinkWithoutTarget = Element.getElementById("groupItem3").getDomRef().querySelector("a").children[2].classList.contains("sapTntNLIExternalLinkIcon");
 
 		// Assert
-		assert.ok(sExternalLinkWithTarget, "External link icon is rendered when href is set and 'targe=_blank'");
+		assert.ok(sExternalLinkWithTarget, "External link icon is rendered when href is set and 'target=_blank'");
 		assert.notOk(sExternalLinkWithoutTarget, "External link icon is rendered when href is set but target is not '_blank'.");
 	});
 
@@ -1264,6 +1264,35 @@ sap.ui.define([
 		assert.notEqual(this.navigationList.getSelectedItem().sId, initiallySelectedImId, "The sub item is selected");
 
 		menu.destroy();
+	});
+
+	QUnit.test("Click on external link item in the overflow", function (assert) {
+
+		// Arrange
+		var navListDomRef = this.navigationList.getDomRef(),
+			overflowItemDomRef = navListDomRef.querySelector(".sapTntNLOverflow"),
+			items = this.navigationList.getItems(),
+			sCurrHref = window.location.href,iInitialHeight = 50;
+			navListDomRef.style.height = `${iInitialHeight}px`;
+
+		this.navigationList._updateOverflowItems();
+		while (items[0].getDomRef().classList.contains("sapTntNLIHidden")) {
+			iInitialHeight += 25;
+			navListDomRef.style.height = `${iInitialHeight}px`;
+			this.navigationList._updateOverflowItems();
+		}
+
+		// Act
+		QUnitUtils.triggerEvent("tap", overflowItemDomRef);
+		var menuDomRef = document.querySelector(".sapUiMnu"),
+			anchor = menuDomRef.children[0].children[4].querySelector("a");
+
+		assert.ok(anchor, "Anchor tag is rendered");
+
+		anchor.click();
+
+		// Assert
+		assert.strictEqual(window.location.href, sCurrHref, "Default action when clicking on anchor tag is prevented.");
 	});
 
 	QUnit.module("Navigation List Group", {
