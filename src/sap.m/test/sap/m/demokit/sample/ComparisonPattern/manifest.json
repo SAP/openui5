@@ -26,6 +26,7 @@
 					"app/view/App.view.xml",
 					"app/view/App.view.xml",
 					"ComparisonPattern.html",
+					"ComparisonPattern.js",
 					"manifest.json"
 				]
 			}

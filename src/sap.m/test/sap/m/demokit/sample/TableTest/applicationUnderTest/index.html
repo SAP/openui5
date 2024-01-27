@@ -2,29 +2,18 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>Walkthrough</title>
+		<title>TableTest - Application under Test</title>
 		<script
 			id="sap-ui-bootstrap"
 			src="../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-async="true"
-			data-sap-ui-compatVersion="edge"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="module:sap/m/sample/TableTest/applicationUnderTest/index"
 			data-sap-ui-libs="sap.m"
-			data-sap-ui-resourceroots='{
+			data-sap-ui-resource-roots='{
 				"sap.m.sample.TableTest.applicationUnderTest": "./"
 			}'
-			data-sap-ui-theme="sap_horizon" >
-		</script>
-		<script>
-			sap.ui.getCore().attachInit(function () {
-				sap.ui.require(["sap/ui/core/mvc/XMLView"], function(XMLView) {
-					XMLView.create({
-						viewName : "sap.m.sample.TableTest.applicationUnderTest.view.Table"
-					}).then(function(oView) {
-						oView.placeAt("content");
-					});
-				});
-			});
-		</script>
+		></script>
 	</head>
 	<body class="sapUiBody" id="content">
 	</body>
