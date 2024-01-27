@@ -135,16 +135,6 @@ sap.ui.define([
 		},
 
 		getCompatibilityVersion : getCompatibilityVersion,
-
-		/**
-		 * Returns the theme name
-		 * @return {string} the theme name
-		 * @function
-		 * @public
-		 * @deprecated Since 1.119. Please use {@link module:sap/ui/core/Theming.getTheme Theming.getTheme} instead.
-		 */
-		getTheme : Theming.getTheme,
-
 		getLanguagesDeliveredWithCore : Localization.getLanguagesDeliveredWithCore,
 		getSupportedLanguages : Localization.getSupportedLanguages,
 

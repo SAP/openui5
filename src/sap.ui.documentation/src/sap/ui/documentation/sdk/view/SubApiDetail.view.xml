@@ -145,7 +145,7 @@
 												</custom:Row>
 											</custom:LightTable>
 										</template:if>
-										<template:if test="{data>/isFunction}">
+										<template:if test="{data>/examples}">
 											<template:repeat list="{data>/examples}" var="example">
 												<custom:JSDocText sanitizeContent="false" text="{path: 'example>data', formatter: '.formatter.escapeSettingsValue'}"/>
 											</template:repeat>
@@ -176,6 +176,9 @@
 												</layout:VerticalLayout>
 												<layout:VerticalLayout>
 													<custom:JSDocText sanitizeContent="false" text="{description}"/>
+													<layout:VerticalLayout content="{path: 'examples', templateShareable: false}" width="100%">
+														<custom:JSDocText sanitizeContent="false" text="{path: 'data', formatter: '.formatter.escapeSettingsValue'}"/>
+													</layout:VerticalLayout>
 													<m:MessageStrip
 															visible="{=${deprecated} !== undefined}"
 															text="Deprecated as of version {deprecated/since}"

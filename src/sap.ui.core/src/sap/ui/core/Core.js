@@ -1070,25 +1070,6 @@ sap.ui.define([
 		});
 
 		/**
-		 * Registers a given function that is executed after the framework has been initialized.
-		 *
-		 * The given function will either be called as soon as the framework has been initialized
-		 * or, if it has been initialized already, it will be called immediately.
-		 *
-		 * More information about the initialization process and the steps it consists of can be found
-		 * in the documentation topic "{@link topic:91f2c9076f4d1014b6dd926db0e91070 Initialization Process}".
-		 *
-		 * @param {function} fnFunction Function to be after initialization of the framework
-		 * @public
-		 * @since 1.13.2
-		 * @deprecated since 1.118. Please use {@link sap.ui.core.Core.ready Core.ready} instead.
-		 */
-		Core.prototype.attachInit = function (fnFunction) {
-			assert(typeof fnFunction === "function", "fnFunction must be a function");
-			this.ready(fnFunction);
-		};
-
-		/**
 		 * Returns the Configuration of the Core.
 		 *
 		 * @return {sap.ui.core.Configuration} the Configuration of the current Core.
@@ -1097,45 +1078,6 @@ sap.ui.define([
 		 */
 		Core.prototype.getConfiguration = function () {
 			return Configuration;
-		};
-
-		/**
-		 * Returns the Id of the control/element currently in focus.
-		 * @return {string} the Id of the control/element currently in focus.
-		 * @public
-		 * @deprecated since 1.119.
-		 * Please use {@link sap.ui.core.Element.getActiveElement Element.getActiveElement} to get
-		 * the currently focused element. You can then retrieve the ID of that element with
-		 * {@link sap.ui.core.Element#getId Element#getId}. Please be aware,
-		 * {@link sap.ui.core.Element.getActiveElement Element.getActiveElement} can return 'undefined'.
-		 */
-		Core.prototype.getCurrentFocusedControlId = function() {
-			if (!this.isInitialized()) {
-				throw new Error("Core must be initialized");
-			}
-			return Element.getActiveElement()?.getId() || null;
-		};
-
-		/**
-		 * Returns a map of library info objects for all currently loaded libraries,
-		 * keyed by their names.
-		 *
-		 * The structure of the library info objects matches the structure of the info object
-		 * that the {@link #initLibrary} method expects. Only property names documented with
-		 * <code>initLibrary</code> should be accessed, any additional properties might change or
-		 * disappear in future. When a property does not exists, its default value (as documented
-		 * with <code>initLibrary</code>) should be assumed.
-		 *
-		 * <b>Note:</b> The returned info objects must not be modified. They might be a living
-		 * copy of the internal data (for efficiency reasons) and the framework is not prepared
-		 * to handle modifications to these objects.
-		 *
-		 * @return {Object<string,Object>} Map of library info objects keyed by the library names.
-		 * @public
-		 * @deprecated since 1.119
-		 */
-		Core.prototype.getLoadedLibraries = function() {
-			return Library.all();
 		};
 
 		/**
@@ -1368,24 +1310,6 @@ sap.ui.define([
 			}
 		};
 
-
-		/**
-		 * Get the model with the given model name.
-		 *
-		 * The name can be omitted to reference the default model or it must be a non-empty string.
-		 *
-		 * Note: to be compatible with future versions of this API, applications must not use the value <code>null</code>,
-		 * the empty string <code>""</code> or the string literals <code>"null"</code> or <code>"undefined"</code> as model name.
-		 *
-		 * @param {string} [sName] name of the model to be retrieved
-		 * @return {sap.ui.model.Model} oModel
-		 * @public
-		 * @deprecated since 1.118. Please use {@link sap.ui.base.ManagedObject#getModel ManagedObject#getModel} instead.
-		 */
-		Core.prototype.getModel = function(sName) {
-			assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
-			return this.oModels[sName];
-		};
 
 		/**
 		 * Friendly function to access the provider from outside the core.

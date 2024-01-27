@@ -10,7 +10,7 @@ describe("sap.m.PageWithResponsivePaddings", function () {
 
 	it("Should load test page with size S", function () {
 		browser.executeScript(function() {
-			var oPageDomRef = sap.ui.getCore().byId("page")/*Not inside AMD call*/.getDomRef();
+			var oPageDomRef = sap.ui.core.Element.getElementById("page").getDomRef();
 			jQuery(oPageDomRef).css("width", "580px");
 		});
 		expect(takeScreenshot()).toLookAs("page-size-S");
@@ -18,7 +18,7 @@ describe("sap.m.PageWithResponsivePaddings", function () {
 
 	it("Should load test page with size M", function () {
 		browser.executeScript(function() {
-			var oPageDomRef = sap.ui.getCore().byId("page")/*Not inside AMD call*/.getDomRef();
+			var oPageDomRef = sap.ui.core.Element.getElementById("page").getDomRef();
 			jQuery(oPageDomRef).css("width", "1000px");
 		});
 		expect(takeScreenshot()).toLookAs("page-size-M");
@@ -26,7 +26,7 @@ describe("sap.m.PageWithResponsivePaddings", function () {
 
 	it("Should load test page with size L", function () {
 		browser.executeScript(function() {
-			var oPageDomRef = sap.ui.getCore().byId("page")/*Not inside AMD call*/.getDomRef();
+			var oPageDomRef = sap.ui.core.Element.getElementById("page").getDomRef();
 			jQuery(oPageDomRef).css("width", "1430px");
 		});
 		expect(takeScreenshot()).toLookAs("page-size-L");
@@ -34,7 +34,7 @@ describe("sap.m.PageWithResponsivePaddings", function () {
 
 	it("Should load test page with size XL", function () {
 		browser.executeScript(function() {
-			var oPageDomRef = sap.ui.getCore().byId("page")/*Not inside AMD call*/.getDomRef();
+			var oPageDomRef = sap.ui.core.Element.getElementById("page").getDomRef();
 			jQuery(oPageDomRef).css("width", "1500px");
 		});
 		expect(takeScreenshot()).toLookAs("page-size-XL");
@@ -48,7 +48,7 @@ describe("sap.m.PageWithResponsivePaddings", function () {
 
 	it("Should load test page with floating footer and size S", function () {
 		browser.executeScript(function() {
-            var oPageDomRef = sap.ui.getCore().byId("page")/*Not inside AMD call*/.getDomRef();
+            var oPageDomRef = sap.ui.core.Element.getElementById("page").getDomRef();
 			jQuery(oPageDomRef).css("width", "580px");
 		});
 		expect(takeScreenshot()).toLookAs("page-floating-footer-size-S");
@@ -56,7 +56,7 @@ describe("sap.m.PageWithResponsivePaddings", function () {
 
 	it("Should load test page with floating footer and size M", function () {
 		browser.executeScript(function() {
-			var oPageDomRef = sap.ui.getCore().byId("page")/*Not inside AMD call*/.getDomRef();
+			var oPageDomRef = sap.ui.core.Element.getElementById("page").getDomRef();
 			jQuery(oPageDomRef).css("width", "1000px");
 		});
 		expect(takeScreenshot()).toLookAs("page-floating-footer-size-M");
@@ -64,7 +64,7 @@ describe("sap.m.PageWithResponsivePaddings", function () {
 
 	it("Should load test page with floating footer and size L", function () {
 		browser.executeScript(function() {
-			var oPageDomRef = sap.ui.getCore().byId("page")/*Not inside AMD call*/.getDomRef();
+			var oPageDomRef = sap.ui.core.Element.getElementById("page").getDomRef();
 			jQuery(oPageDomRef).css("width", "1430px");
 		});
 		expect(takeScreenshot()).toLookAs("page-floating-footer-size-L");
@@ -72,7 +72,7 @@ describe("sap.m.PageWithResponsivePaddings", function () {
 
 	it("Should load test page with floating footer and size XL", function () {
 		browser.executeScript(function() {
-			var oPageDomRef = sap.ui.getCore().byId("page")/*Not inside AMD call*/.getDomRef();
+			var oPageDomRef = sap.ui.core.Element.getElementById("page").getDomRef();
 			jQuery(oPageDomRef).css("width", "1500px");
 		});
 		expect(takeScreenshot()).toLookAs("page-floating-footer-size-XL");

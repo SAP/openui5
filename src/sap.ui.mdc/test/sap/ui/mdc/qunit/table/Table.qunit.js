@@ -132,6 +132,8 @@ sap.ui.define([
 	const HasPopup = CoreLibrary.aria.HasPopup;
 	const aTestedTypes = ["Table", "ResponsiveTable"];
 	const sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
+	const ButtonType = MLibrary.ButtonType;
+	const ToolbarDesign = MLibrary.ToolbarDesign;
 
 	const CustomFilterControl = Control.extend("sap.ui.mdc.table.qunit.CustomFilterControl", {
 		metadata: {
@@ -4004,36 +4006,43 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Export Button ButtonType for different Themes", function (assert) {
+	QUnit.test("Export Button ButtonType for different Themes and Toolbar theming", function (assert) {
 		const iTimeout = QUnit.config.testTimeout;
 		QUnit.config.testTimeout = 50000; //BCP: 2270148312
 		const done = assert.async();
 		//Default theme must not be first
 		const aThemes = ["sap_horizon", "sap_horizon_dark", "sap_horizon_hcb", "sap_horizon_hcw", "sap_fiori_3"];
 
-		const fnGetExpectedTheme = function (sTheme) {
-			switch (sTheme) {
-				case "sap_horizon":
-				case "sap_horizon_dark":
-				case "sap_horizon_hcw":
-				case "sap_horizon_hcb":
-					return MLibrary.ButtonType["Transparent"];
-				default:
-					return MLibrary.ButtonType["Ghost"];
-			}
-		};
-
-		assert.expect(aThemes.length);
+		assert.expect(aThemes.length * 2 + 2);
 
 		this.oTable.setEnableExport(true);
 		this.oTable.initialized().then(() => {
+			assert.ok(this.oTable._oExportButton, "Export to Excel Button exists.");
+			assert.ok(this.oTable._oToolbar , "Toolbar exists.");
 
 			const fnThemeChanged = function (oEvent) {
 				const sTheme = oEvent.theme;
-				assert.deepEqual(this.oTable._oExportButton.getType(), fnGetExpectedTheme(sTheme), "Export button ButtonType equals to expected Theme styling, Theme: " + sTheme);
+				let sExpectedButtontype;
+				let sExpectedToolbarDesign;
+				switch (sTheme) {
+					case "sap_horizon":
+					case "sap_horizon_dark":
+					case "sap_horizon_hcw":
+					case "sap_horizon_hcb":
+						sExpectedButtontype = ButtonType.Transparent;
+						sExpectedToolbarDesign = ToolbarDesign.Transparent;
+						break;
+					default:
+						sExpectedButtontype = ButtonType.Ghost;
+						sExpectedToolbarDesign = ToolbarDesign.Transparent;
+				}
+
+				assert.deepEqual(this.oTable._oExportButton.getType(), sExpectedButtontype, "Export button ButtonType equals to expected Theme styling, Theme: " + sTheme);
+				assert.deepEqual(this.oTable._oToolbar.getDesign(), sExpectedToolbarDesign, "Toolbar design equals to expected Theme design, Theme: " + sTheme);
 				if (sTheme === aThemes.at(-1)){
 					Theming.detachApplied(fnThemeChanged);
 					QUnit.config.testTimeout = iTimeout;
+					Theming.setTheme("sap_fiori_3"); // Set default theme to Fiori 3 to prevent issues with the multiple theme changes
 					done();
 				} else {
 					const iPosition = aThemes.indexOf(sTheme);

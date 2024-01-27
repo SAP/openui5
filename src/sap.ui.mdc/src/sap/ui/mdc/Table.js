@@ -1963,7 +1963,7 @@ sap.ui.define([
 			});
 			// Create Toolbar
 			this._oToolbar = new ActionToolbar(this.getId() + "-toolbar", {
-				design: ToolbarDesign.Transparent,
+				design: ToolbarDesign[ThemeParameters.get({name: "_sap_ui_mdc_Table_ToolbarDesign"})],
 				begin: [
 					this._oTitle
 				],
@@ -3070,6 +3070,11 @@ sap.ui.define([
 		if (this._oExportButton) {
 			const sButtonType = MLibrary.ButtonType[ThemeParameters.get({name: "_sap_ui_mdc_Table_ExportButtonType"})];
 			this._oExportButton.setType(sButtonType);
+		}
+
+		if (this._oToolbar) {
+			const sToolBarDesign = ToolbarDesign[ThemeParameters.get({name: "_sap_ui_mdc_Table_ToolbarDesign"})];
+			this._oToolbar.setDesign(sToolBarDesign);
 		}
 	};
 

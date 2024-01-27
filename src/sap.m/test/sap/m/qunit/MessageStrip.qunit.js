@@ -5,12 +5,11 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/m/Link",
 	"sap/m/FormattedText",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(Library, KeyCodes, MessageStrip, Link, FormattedText, Core, JSONModel, qutils, nextUIUpdate, jQuery) {
+], function(Library, KeyCodes, MessageStrip, Link, FormattedText, nextUIUpdate, JSONModel, qutils, jQuery) {
 	"use strict";
 
 
@@ -152,7 +151,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("setEnableFormattedText", async function(oAssert) {
+	QUnit.test("setEnableFormattedText", async function (oAssert) {
 		// Arrange
 		var oLimitSpy = sinon.spy(FormattedText.prototype, "_setUseLimitedRenderingRules"),
 			oSetterSpy = sinon.spy(FormattedText.prototype, "setHtmlText"),
@@ -194,7 +193,8 @@ sap.ui.define([
 		oSetterSpy.restore();
 	});
 
-	QUnit.test("setText and enableFormattedText", async function(oAssert) {
+
+	QUnit.test("setText and enableFormattedText", async function (oAssert) {
 		// Arrange
 		var sTestString = "<strong>Warning:</strong> something went wrong",
 			sTestStringSanitized = "<strong style=\"position: static !important;\">Warning:</strong> something went wrong",
@@ -218,7 +218,7 @@ sap.ui.define([
 			"Test string is propagated to the internal sap.m.FormattedText control");
 	});
 
-	QUnit.test("setText and sap.m.FormattedText - limiting sap.m.FormattedText valid HTML elements", async function(oAssert) {
+	QUnit.test("setText and sap.m.FormattedText - limiting sap.m.FormattedText valid HTML elements", async function (oAssert) {
 		// Arrange
 		var oSpy = sinon.spy(FormattedText.prototype, "_setUseLimitedRenderingRules"),
 			sHTMLString = [
@@ -371,7 +371,6 @@ sap.ui.define([
 
 		setTimeout(function() {
 			this.oMessageStrip.close();
-			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 		}.bind(this), nAnimationLengthTimeout);
 	});
 
@@ -401,7 +400,7 @@ sap.ui.define([
 		assert.strictEqual(role, "note", "role=note is present");
 	});
 
-	QUnit.test("Labelledby attribute", async function(assert) {
+	QUnit.test("Labelledby attribute", async function (assert) {
 		//Arrange
 		var oMessageStrip = new MessageStrip({
 			text: "Some text",
@@ -449,7 +448,7 @@ sap.ui.define([
 			assert.strictEqual(describedBy, sId, "aria-describedby is not changed");
 	});
 
-	QUnit.test("When we have a close button it should have an aria-labelledby attribute", async function(assert) {
+	QUnit.test("When we have a close button it should have an aria-labelledby attribute", async function (assert) {
 		//Arrange
 		var oRb = Library.getResourceBundleFor("sap.m");
 

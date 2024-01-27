@@ -1,0 +1,26 @@
+{
+    "product1": {
+        "productId": "1239102",
+        "name": "Power Projector 4713",
+        "category": "Projector",
+        "image": "test-resources/sap/ui/documentation/sdk/images/HT-6100.jpg"
+    },
+    "product2": {
+        "productId": "2212-121-828",
+        "name": "Gladiator MX",
+        "category": "Graphics Card",
+        "image": "test-resources/sap/ui/documentation/sdk/images/HT-1072.jpg"
+    },
+    "product3": {
+        "productId": "K47322.1",
+        "name": "Hurricane GX",
+        "category": "Graphics Card",
+        "image": "test-resources/sap/ui/documentation/sdk/images/HT-1070.jpg"
+    },
+    "product4": {
+        "productId": "214-121-828",
+        "name": "Laptop Case",
+        "category": "Accessory",
+        "image": "test-resources/sap/ui/documentation/sdk/images/HT-1003.jpg"
+    }
+}

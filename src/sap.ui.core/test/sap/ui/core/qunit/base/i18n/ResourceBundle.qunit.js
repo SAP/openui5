@@ -8,7 +8,11 @@ sap.ui.define([
 ], function(Localization, ResourceBundle, Properties, merge, Log) {
 	"use strict";
 
-	QUnit.module("sap/base/i18n/ResourceBundle");
+	QUnit.module("sap/base/i18n/ResourceBundle", {
+		afterEach: function() {
+			ResourceBundle._getPropertiesCache().clear();
+		}
+	});
 
 	QUnit.test("create invalid url", function(assert) {
 		assert.throws(ResourceBundle.create, new Error("resource URL '' has unknown type (should be one of .properties,.hdbtextbundle)"), "creation fails without valid url");
@@ -1172,7 +1176,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("sap/base/i18n/ResourceBundle: hdbtextbundle");
+	QUnit.module("sap/base/i18n/ResourceBundle: hdbtextbundle", {
+		afterEach: function() {
+			ResourceBundle._getPropertiesCache().clear();
+		}
+	});
 
 	QUnit.test("create with default locale", async function(assert) {
 		var oEmptyProps = createFakeProperties({number: "47"});
@@ -1472,6 +1480,7 @@ sap.ui.define([
 			}).returns(createFakePropertiesPromise({name: "appvar2 oil de"}, this.oCallChainStub));
 		},
 		afterEach: function () {
+			ResourceBundle._getPropertiesCache().clear();
 		}
 	});
 
@@ -1882,7 +1891,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("sap/base/i18n/ResourceBundle: Terminologies integration");
+	QUnit.module("sap/base/i18n/ResourceBundle: Terminologies integration", {
+		afterEach: function(){
+			ResourceBundle._getPropertiesCache().clear();
+		}
+	});
 
 	QUnit.test("2 enhancements with 2 terminologies", function(assert) {
 		var oOriginalGetTextFromProperties = ResourceBundle.prototype._getTextFromProperties;
@@ -1971,4 +1984,356 @@ sap.ui.define([
 			], "the value retrieval should be in correct order");
 		});
 	});
+
+	QUnit.module("sap/base/i18n/ResourceBundle: Properties Cache", {
+		beforeEach: function () {
+			this.oPropertiesCreateStub = this.stub(Properties, "create");
+			this.oPropertiesCreateStub.withArgs({
+				url: 'my_de.properties', headers: undefined, async: false, returnNullIfMissing: true
+			}).returns(createFakeProperties({ name: "base" }));
+			this.oPropertiesCreateStub.withArgs({
+				url: 'my_de.properties', headers: undefined, async: true, returnNullIfMissing: true
+			}).returns(createFakePropertiesPromise({ name: "base" }));
+		},
+		afterEach: function (assert) {
+			assert.ok(!this.oPropertiesCreateStub.exceptions.some(Boolean), "calls to Properties.create were successful");
+			this.oPropertiesCreateStub.restore();
+			ResourceBundle._getPropertiesCache().clear();
+		}
+	});
+
+	QUnit.test("first sync, then sync", function (assert) {
+		ResourceBundle.create({ url: 'my.properties', locale: "de", async: false });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after first request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was only called once, because cache is empty");
+		ResourceBundle.create({ url: 'my.properties', locale: "de", async: false });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after second request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was only called once, because cache is active");
+	});
+
+	QUnit.test("first sync, then async", function (assert) {
+		ResourceBundle.create({ url: 'my.properties', locale: "de", async: false });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after first request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was only called once, because cache is empty");
+		ResourceBundle.create({ url: 'my.properties', locale: "de", async: false });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after second request");
+
+		const aPromises = [];
+		aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true }));
+		aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true }));
+
+		return Promise.all(aPromises).then(() => {
+			assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after fourth request");
+			assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was only called once, because cache is active");
+		});
+	});
+
+	QUnit.test("first async, then sync", function (assert) {
+		const aPromises = [];
+		aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true }));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after first request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was only called once, because cache is empty");
+		aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true }));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after second request");
+
+		return Promise.all(aPromises).then(() => {
+			ResourceBundle.create({ url: 'my.properties', locale: "de", async: false });
+			ResourceBundle.create({ url: 'my.properties', locale: "de", async: false });
+			assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after fourth request");
+			assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was only called once, because cache is active");
+		});
+	});
+
+	QUnit.test("first async, then async", function (assert) {
+		let aPromises = [];
+		aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true }));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after first request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was only called once, because cache is empty");
+		aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true }));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after second request");
+
+		return Promise.all(aPromises).then(() => {
+			aPromises = [];
+			aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true }));
+			aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true }));
+			return Promise.all(aPromises);
+		}).then(() => {
+			assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after fourth request");
+			assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was only called once, because cache is active");
+		});
+	});
+
+	QUnit.test("mixed async/sync", function (assert) {
+		const aPromises = [];
+
+		aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true }));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after first request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was only called once, because cache is empty");
+
+		aPromises.push(Promise.resolve(ResourceBundle.create({ url: 'my.properties', locale: "de", async: false })));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after second request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was only called twice, because sync and async were concurrently requested");
+
+		aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true }));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after third request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was only called twice, because initial sync request filled the cache");
+
+		aPromises.push(Promise.resolve(ResourceBundle.create({ url: 'my.properties', locale: "de", async: false })));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after fourth request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was only called twice, because initial sync request filled the cache");
+
+		aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true }));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after fifth request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was only called twice, because initial sync request filled the cache");
+
+		aPromises.push(Promise.resolve(ResourceBundle.create({ url: 'my.properties', locale: "de", async: false })));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after sixth request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was only called twice, because initial sync request filled the cache");
+
+		return Promise.all(aPromises).then(() => {
+			assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after seventh request");
+			assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was called twice, because sync and async were concurrently requested");
+		});
+	});
+
+	QUnit.test("multiple locales", function (assert) {
+		this.oPropertiesCreateStub.returns(createFakeProperties({ name: "base" }));
+		var aLocales = [
+			"ar", "bg", "ca", "cs", "cy", "da", "de", "de_DE", "el", "en", "en_GB", "es"
+		];
+		aLocales.forEach(function (sLocale) {
+			ResourceBundle.create({ url: 'my.properties', locale: sLocale, async: false });
+		});
+		aLocales.forEach(function (sLocale) {
+			ResourceBundle.create({ url: 'my.properties', locale: sLocale, async: false });
+		});
+
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, aLocales.length, "properties cache is filled with correct number of files");
+		assert.equal(this.oPropertiesCreateStub.callCount, aLocales.length, "stub was called once per defined locale");
+	});
+
+	QUnit.test("multiple locales with .hdbtextbundle", function(assert) {
+		this.oPropertiesCreateStub.returns(createFakeProperties({ name: "base" }));
+		var aLocales = [
+			"en", "de", "en_US", "en_US_saptrc"
+		];
+		aLocales.forEach(function (sLocale) {
+			ResourceBundle.create({ url: 'my.hdbtextbundle', locale: sLocale, async: false });
+		});
+		aLocales.forEach(function (sLocale) {
+			ResourceBundle.create({ url: 'my.hdbtextbundle', locale: sLocale, async: false });
+		});
+
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, aLocales.length, "properties cache is filled with correct number of files");
+		assert.equal(this.oPropertiesCreateStub.callCount, aLocales.length, "stub was called once per defined locale");
+	});
+
+	QUnit.module("sap/base/i18n/ResourceBundle: Properties Cache with non-existing properties", {
+		beforeEach: function () {
+			this.oPropertiesCreateStub = this.stub(Properties, "create");
+			this.oPropertiesCreateStub.withArgs({
+				url: 'my_de.properties', headers: undefined, async: true, returnNullIfMissing: true
+			}).returns(Promise.resolve(null));
+			this.oPropertiesCreateStub.withArgs({
+				url: 'my_de.properties', headers: undefined, async: false, returnNullIfMissing: true
+			}).returns(null);
+		},
+		afterEach: function (assert) {
+			assert.ok(!this.oPropertiesCreateStub.exceptions.some(Boolean), "calls to Properties.create were successful");
+			this.oPropertiesCreateStub.restore();
+			ResourceBundle._getPropertiesCache().clear();
+		}
+	});
+
+	QUnit.test("Failing requests are not cached: first sync, then sync", function (assert) {
+		var aSupportedLocales = ["de"];
+		ResourceBundle.create({ url: 'my.properties', locale: "de", async: false, supportedLocales: aSupportedLocales });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was called once, because null values are not cached");
+		ResourceBundle.create({ url: 'my.properties', locale: "de", async: false, supportedLocales: aSupportedLocales });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was called twice, because null values are not cached");
+	});
+
+	QUnit.test("Failing requests are not cached: first sync, then async", async function (assert) {
+		var aSupportedLocales = ["de"];
+		ResourceBundle.create({ url: 'my.properties', locale: "de", async: false, supportedLocales: aSupportedLocales });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was called once, because null values are not cached");
+		await ResourceBundle.create({ url: 'my.properties', locale: "de", async: true, supportedLocales: aSupportedLocales });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was called twice, because null values are not cached");
+	});
+	QUnit.test("Failing requests are not cached: first async, then sync", async function (assert) {
+		var aSupportedLocales = ["de"];
+		await ResourceBundle.create({ url: 'my.properties', locale: "de", async: true, supportedLocales: aSupportedLocales });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was called once, because null values are not cached");
+		ResourceBundle.create({ url: 'my.properties', locale: "de", async: false, supportedLocales: aSupportedLocales });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was called twice, because null values are not cached");
+	});
+
+	QUnit.test("Failing requests are not cached: first async, then async", async function (assert) {
+		const aSupportedLocales = ["de"];
+		await ResourceBundle.create({ url: 'my.properties', locale: "de", async: true, supportedLocales: aSupportedLocales });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was called once, because null values are not cached");
+		await ResourceBundle.create({ url: 'my.properties', locale: "de", async: true, supportedLocales: aSupportedLocales });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was called twice, because null values are not cached");
+	});
+
+	QUnit.test("Failing requests are not cached: mixed async/sync", async function (assert) {
+		const aPromises = [];
+		const aSupportedLocales = ["de"];
+
+		aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true, supportedLocales: aSupportedLocales }));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with promise of first async request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was called once, because cache is empty");
+
+		aPromises.push(Promise.resolve(ResourceBundle.create({ url: 'my.properties', locale: "de", async: false, supportedLocales: aSupportedLocales })));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with promise of first async request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was called twice, because null values are not cached");
+
+		aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true, supportedLocales: aSupportedLocales }));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with promise of first async request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was called twice, because async request before has not responded an error yet");
+
+		aPromises.push(Promise.resolve(ResourceBundle.create({ url: 'my.properties', locale: "de", async: false, supportedLocales: aSupportedLocales })));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with promise of first async request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 3, "stub was called three times, because only errors are retrieved so far");
+
+		const aAllSettledPromises = await Promise.allSettled(aPromises);
+		assert.ok(aAllSettledPromises.every((result) => result.status === "fulfilled"), "All async requests are resolved");
+		assert.equal(this.oPropertiesCreateStub.callCount, 3, "stub was called three times, because cache is filled");
+	});
+
+	QUnit.module("sap/base/i18n/ResourceBundle: Properties Cache with non parseable properties", {
+		beforeEach: function () {
+			this.oPropertiesCreateStub = this.stub(Properties, "create");
+			this.oParsingError = new Error("An error occurred when parsing the properties file");
+			this.oPropertiesCreateStub.withArgs({
+				url: 'my_de.properties', headers: undefined, async: true, returnNullIfMissing: true
+			}).rejects(this.oParsingError);
+			this.oPropertiesCreateStub.withArgs({
+				url: 'my_de.properties', headers: undefined, async: false, returnNullIfMissing: true
+			}).throws(this.oParsingError);
+		},
+		afterEach: function (assert) {
+			assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty");
+			this.oPropertiesCreateStub.restore();
+			ResourceBundle._getPropertiesCache().clear();
+		}
+	});
+
+	QUnit.test("Property Files with parsing errors are not cached: first sync, then sync", function (assert) {
+		assert.throws(() => {
+			ResourceBundle.create({ url: 'my.properties', locale: "de", async: false });
+		}, "An error occurred when parsing the properties file");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was called once, because null values are not cached");
+		assert.throws(() => {
+			ResourceBundle.create({ url: 'my.properties', locale: "de", async: false });
+		}, "An error occurred when parsing the properties file");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was called twice, because null values are not cached");
+	});
+
+	QUnit.test("Property Files with parsing errors are not cached: first sync, then async", async function (assert) {
+		assert.throws(() => {
+			ResourceBundle.create({ url: 'my.properties', locale: "de", async: false });
+		}, this.oParsingError, "An error is thrown");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was called once, because non parseable property files are not cached");
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty, because non parseable property files are not cached");
+
+		// To be clarified: Currently, the ResourceBundle.create gets not rejected when a parsing error occurs
+		// try {
+		// 	await ResourceBundle.create({ url: 'my.properties', locale: "de", async: true });
+		// 	assert.ok(false, "Promise should be rejected");
+		// } catch (e){
+		// 	assert.deepEqual(e, this.oParsingError, "Promise is rejected with the error");
+		// }
+
+		await ResourceBundle.create({ url: 'my.properties', locale: "de", async: true });
+
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty, because non parseable property files are not cached");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was called twice, because non parseable property files are not cached");
+	});
+	QUnit.test("Property Files with parsing errors are not cached: first async, then sync", async function (assert) {
+		// To be clarified: Currently, the ResourceBundle.create gets not rejected when a parsing error occurs
+		// try {
+		// 	await ResourceBundle.create({ url: 'my.properties', locale: "de", async: true });
+		// 	assert.ok(false, "Promise should be rejected");
+		// } catch (e){
+		// 	assert.deepEqual(e, this.oParsingError, "Promise is rejected with the error");
+		// }
+
+		await ResourceBundle.create({ url: 'my.properties', locale: "de", async: true });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty, because non parseable property files are not cached");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was called once, because non parseable property files are not cached");
+
+		assert.throws(() => {
+			ResourceBundle.create({ url: 'my.properties', locale: "de", async: false });
+		}, this.oParsingError, "An error is thrown");
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty, because non parseable property files are not cached");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was called twice, because non parseable property files are not cached");
+	});
+
+	QUnit.test("Property Files with parsing errors are not cached: first async, then async", async function (assert) {
+		// To be clarified: Currently, the ResourceBundle.create gets not rejected when a parsing error occurs
+		// try {
+		// 	await ResourceBundle.create({ url: 'my.properties', locale: "de", async: true });
+		// 	assert.ok(false, "Promise should be rejected");
+		// } catch (e){
+		// 	assert.deepEqual(e, this.oParsingError, "Promise is rejected with the error");
+		// }
+
+		await ResourceBundle.create({ url: 'my.properties', locale: "de", async: true });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty, because non parseable property files are not cached");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was called once, because non parseable property files are not cached");
+
+		// To be clarified: Currently, the ResourceBundle.create gets not rejected when a parsing error occurs
+		// try {
+		// 	await ResourceBundle.create({ url: 'my.properties', locale: "de", async: true });
+		// 	assert.ok(false, "Promise should be rejected");
+		// } catch (e){
+		//	assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty, because non parseable property files are not cached");
+		// 	assert.deepEqual(e, this.oParsingError, "Promise is rejected with the error");
+		// }
+
+		await ResourceBundle.create({ url: 'my.properties', locale: "de", async: true });
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty, because non parseable property files are not cached");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was called twice, because non parseable property files are not cached");
+	});
+
+	QUnit.test("Property Files with parsing errors are not cached: mixed async/sync", async function (assert) {
+		const aPromises = [];
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 0, "properties cache is empty");
+
+		aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true}));
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was called once, because cache is empty");
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one async request");
+
+		assert.throws(() => {
+			ResourceBundle.create({ url: 'my.properties', locale: "de", async: false });
+		}, this.oParsingError, "An error is thrown");
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was called twice, because non parseable property files are not cached");
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one async request");
+
+		aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true }));
+		assert.equal(this.oPropertiesCreateStub.callCount, 2, "stub was called twice, because async request before has not responded an error yet");
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one async request");
+
+		assert.throws(() => {
+			ResourceBundle.create({ url: 'my.properties', locale: "de", async: false });
+		});
+		assert.equal(this.oPropertiesCreateStub.callCount, 3, "stub was called three times, because non parseable property files are retrieved so far");
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one async request");
+
+		const aAllSettledPromises = await Promise.allSettled(aPromises);
+		// To be clarified: Currently, the ResourceBundle.create gets not rejected when a parsing error occurs
+		// assert.ok(aAllSettledPromises.every((result) => result.status === "rejected"), "All async requests are rejected");
+		assert.ok(aAllSettledPromises.every((result) => result.status === "fulfilled"), "All async requests are resolved");
+		assert.equal(this.oPropertiesCreateStub.callCount, 3, "stub was called three times, because non parseable property files are retrieved so far");
+	});
+
 });

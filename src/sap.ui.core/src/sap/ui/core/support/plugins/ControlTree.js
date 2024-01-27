@@ -716,8 +716,6 @@ sap.ui.define([
 											.text(" (" + oBinding.model.location.id + ")")
 										.close("a");
 									rm.close("div");
-								} else {
-									rm.openStart("div").openEnd().openStart("span").attr("title", "Core").openEnd().text("Core").close("span").close("div");
 								}
 							} else {
 								rm.openStart("div").openEnd().openStart("span").openEnd().text("No binding").close("span").close("div");
@@ -1697,7 +1695,6 @@ sap.ui.define([
 			mModelInfo.name = getModelName(oControl.oModels) || getModelName(oControl.oPropagatedProperties.oModels);
 
 			if (mModelInfo.name) {
-
 				var oCurrentControl = oControl;
 
 				// check for the model on control level (including all parents)
@@ -1711,25 +1708,6 @@ sap.ui.define([
 						break;
 					}
 				} while ( (oCurrentControl = oCurrentControl.getParent()) );
-
-				// check for core model if no model was found
-				if (!mModelInfo.location) {
-
-					var oCoreModel = null;
-
-					if (mModelInfo.name === 'undefined') {
-						oCoreModel = this.oCore.getModel();
-					} else {
-						oCoreModel = this.oCore.getModel(mModelInfo.name);
-					}
-
-					if (oCoreModel) {
-						mModelInfo.location = {
-							type: 'core'
-						};
-					}
-				}
-
 			}
 
 			// Get Model Type (JSON, XML, OData)

@@ -4,8 +4,8 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
+	"sap/ui/core/theming/Parameters",
 	'sap/ui/qunit/QUnitUtils',
-	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/layout/SplitPane',
 	'sap/ui/layout/PaneContainer',
@@ -15,14 +15,16 @@ sap.ui.define([
 	'sap/m/Text',
 	'sap/m/ScrollContainer',
 	'sap/ui/core/HTML',
-	'sap/ui/events/KeyCodes'
+	'sap/ui/events/KeyCodes',
+	'sap/ui/dom/units/Rem',
+	'sap/ui/qunit/utils/nextUIUpdate'
 ], function(
 	Log,
 	Core,
 	Element,
 	Library,
+	Parameters,
 	QunitUtils,
-	nextUIUpdate,
 	jQuery,
 	SplitPane,
 	PaneContainer,
@@ -32,7 +34,9 @@ sap.ui.define([
 	Text,
 	ScrollContainer,
 	HTML,
-	KeyCodes
+	KeyCodes,
+	Rem,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -172,14 +176,35 @@ sap.ui.define([
 	});
 
 	QUnit.test("Demand true panes first in range second not", function (assert) {
-		this.oScrollContainer.setWidth("450px");
-		this.oSplitPane2.setRequiredParentWidth(600);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		this.clock.restore();
+		const done = assert.async();
 
-		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "40px", "Paginator's height should be 40");
-		assert.strictEqual(this.oResponsiveSplitter.getRootPaneContainer()._oSplitter.getAssociatedContentAreas().length, 1, "The internal Splitter should have 1 contentArea");
-		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons > div").length, 2, "Two buttons should be rendered");
-		assert.strictEqual(jQuery(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons > div")[0]).hasClass("sapUiResponsiveSplitterPaginatorSelectedButton"), true, "The first button should be selected");
+		const test = async (sExpectedHeight) => {
+			this.oScrollContainer.setWidth("450px");
+			this.oSplitPane2.setRequiredParentWidth(600);
+			await nextUIUpdate();
+
+			assert.ok(typeof sExpectedHeight === "string", "CSS parameter is correctly loaded");
+			assert.ok(sExpectedHeight.includes("rem"), "CSS value is given with 'rem' units");
+			assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), `${Rem.toPx(sExpectedHeight)}px`, "Paginator's height should be 40");
+			assert.strictEqual(this.oResponsiveSplitter.getRootPaneContainer()._oSplitter.getAssociatedContentAreas().length, 1, "The internal Splitter should have 1 contentArea");
+			assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons > div").length, 2, "Two buttons should be rendered");
+			assert.strictEqual(jQuery(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons > div")[0]).hasClass("sapUiResponsiveSplitterPaginatorSelectedButton"), true, "The first button should be selected");
+
+			done();
+		};
+
+		let sExpectedHeight = Parameters.get({
+			name: "_sap_ui_layout_ResponsiveSplitter_PaginatorHeight",
+			callback: (sValue) => {
+				sExpectedHeight = sValue;
+				test(sExpectedHeight);
+			}
+		});
+
+		if (sExpectedHeight) {
+			test(sExpectedHeight);
+		}
 	});
 
 	QUnit.test("Demand false panes both not in range second default", function (assert) {

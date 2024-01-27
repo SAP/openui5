@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/App",
 	"sap/m/Bar",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Element, createAndAppendDiv, Page, App, Bar, oCore, nextUIUpdate) {
+], function(Element, createAndAppendDiv, Page, App, Bar, nextUIUpdate) {
 	"use strict";
 
 	createAndAppendDiv("page-content");

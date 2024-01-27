@@ -8,9 +8,9 @@ sap.ui.define([
 
 	const oDesignTime = {
 		actions: {
-			settings: function() {
-				//RTA expects the settings to be returned as function
-				return {
+			settings: {
+				"sap.ui.mdc": {
+					name: "p13nDialog.VIEW_SETTINGS",
 					handler: function(oControl, mPropertyBag) {
 						const aP13nMode = oControl.getP13nMode();
 						const iIdx = aP13nMode.indexOf("Type");
@@ -26,7 +26,7 @@ sap.ui.define([
 							});
 						}
 					}
-				};
+				}
 			}
 		},
 		aggregations: {

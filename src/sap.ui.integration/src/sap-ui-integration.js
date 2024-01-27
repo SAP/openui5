@@ -32,7 +32,8 @@
 
 	//extract base URL from script tag
 	var oScriptTag, mMatch, sBaseUrl;
-	var coreInstance;
+	var Core;
+	var Lib;
 	//identify the own script include
 	oScriptTag = document.getElementById("sap-ui-bootstrap");
 
@@ -94,22 +95,24 @@
 
 	//initialize the loader
 	function boot() {
-		if (window.sap && window.sap.ui && window.sap.ui.getCore) {
-			coreInstance = window.sap.ui.getCore();
-			return initTags();
+		if (window.sap.ui.require("sap/ui/core/Core") && window.sap.ui.require("sap/ui/core/Lib")) {
+			Core = window.sap.ui.require("sap/ui/core/Core");
+			Lib = window.sap.ui.require("sap/ui/core/Lib");
+			initTags();
+			return;
 		}
-		window.sap.ui.require(['/ui5loader-autoconfig', 'sap/ui/core/Core'],
-			function (config, Core) {
+
+		window.sap.ui.require(["/ui5loader-autoconfig", "sap/ui/core/Core", "sap/ui/core/Lib"],
+			function (config, _Core, _Lib) {
+				Core = _Core;
+				Lib = _Lib;
 				Core.boot();
-				coreInstance = Core;
 				initTags();
 			});
-
 	}
 
-	function registerLibraryTags(sLibrary) {
-		var oLibrary = coreInstance.getLoadedLibraries()[sLibrary],
-			mCustomElements = oLibrary.extensions["sap.ui.integration"].customElements,
+	function registerLibraryTags(oIntegrationLib) {
+		var mCustomElements = oIntegrationLib.extensions["sap.ui.integration"].customElements,
 			aTags = Object.keys(mCustomElements);
 
 		//collect all the implementation classes and require them
@@ -123,11 +126,10 @@
 	}
 
 	function initTags() {
-		coreInstance.loadLibrary("sap.ui.integration", {
-			async: true
-		}).then(function () {
-			//register the tags for this library
-			registerLibraryTags("sap.ui.integration");
-		});
+		Lib.load({ name: "sap.ui.integration"})
+			.then(function (oIntegrationLib) {
+				//register the tags for this library
+				registerLibraryTags(oIntegrationLib);
+			});
 	}
 })(window);

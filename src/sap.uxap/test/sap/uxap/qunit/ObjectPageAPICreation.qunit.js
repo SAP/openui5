@@ -3641,6 +3641,24 @@ function(
 		assert.ok(oObjectPage.$().hasClass("sapUxAPObjectPageLayout-Std-Desktop-XL"), "Desktop XL class is applied");
     });
 
+	QUnit.test("ObjectPage _computeLastVisibleHeight floors the top position of the spacer", async function(assert) {
+		// setup
+		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5),
+			oSpy;
+
+		oObjectPage.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// act
+		oSpy = this.spy(Math, "floor");
+		oObjectPage._computeLastVisibleHeight(oObjectPage.getSections()[4].getSubSections()[0]);
+
+		// assert
+		assert.ok(oSpy.calledOnce, "Spacer's top positioned is floored");
+
+		// clean up
+		oObjectPage.destroy();
+	});
 
 	QUnit.module("Header DOM changes", {
 		beforeEach: function () {

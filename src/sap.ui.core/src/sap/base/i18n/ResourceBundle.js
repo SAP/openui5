@@ -76,6 +76,94 @@ sap.ui.define([
 	var rSAPSupportabilityLocales = /(?:^|-)(saptrc|sappsd|saprigi)(?:-|$)/i;
 
 	/**
+	 * The cache for property file requests
+	 *
+	 * @private
+	 */
+	const oPropertiesCache = {
+
+		/**
+		 * Holds the cache entries
+		 *
+		 * @private
+		 */
+		_oCache: new Map(),
+
+		/**
+		 * Removes the given cache entry
+		 *
+		 * @param {string} sKey The key of the cache entry
+		 * @private
+		 */
+		_delete(sKey){
+			this._oCache.delete(sKey);
+		},
+
+		/**
+		 * Creates and returns a new instance of {@link module:sap/base/util/Properties}.
+		 *
+		 * @see {@link module:sap/base/util/Properties.create}
+		 * @param {object} oOptions The options to create the properties object
+		 * @returns {module:sap/base/util/Properties|null|Promise<module:sap/base/util/Properties|null>} The properties object or a promise on it
+		 * @private
+		 */
+		_load(oOptions){
+			return Properties.create(oOptions);
+		},
+
+		/**
+		 * Inserts or updates an entry
+		 *
+		 * @param {string} sKey the cache id
+		 * @param {object} oValue entry to cache
+		 * @private
+		 */
+		_set(sKey, oValue){
+			this._oCache.set(sKey, oValue);
+		},
+
+		/**
+		 * Retrieves an entry from the cache
+		 *
+		 * @param {string} sKey the cache id
+		 * @param {object} [oLoadOptions] options which are passed to #load
+		 * @param {boolean} [bAsync=false] async requested
+		 * @returns {object} entry which either comes from cache or from #load
+		 * @private
+		 */
+		get(sKey, oLoadOptions, bAsync){
+			if (this._oCache.has(sKey)) {
+				const oExisting = this._oCache.get(sKey);
+				if (bAsync){
+					return Promise.resolve(oExisting);
+				} else if (!(oExisting instanceof Promise)) {
+					return oExisting;
+				}
+				// can't use cached, non-fulfilled promise in sync mode
+			}
+
+			const oNewEntry = this._load(oLoadOptions);
+			if (oNewEntry instanceof Promise) {
+				// update cache entry with actual object instead of fulfilled promise
+				oNewEntry.then((oResult) => {
+					if (oResult) {
+						this._set(sKey, oResult);
+					} else {
+						this._delete(sKey);
+					}
+				}).catch((e) => {
+					this._delete(sKey);
+					throw e;
+				});
+			}
+			if (oNewEntry) {
+				this._set(sKey, oNewEntry);
+			}
+			return oNewEntry;
+		}
+	};
+
+	/**
 	 * Helper to normalize the given locale (in BCP-47 syntax) to the java.util.Locale format.
 	 *
 	 * @param {string} sLocale Locale to normalize
@@ -596,12 +684,19 @@ sap.ui.define([
 				sUrl = oUrl.prefix + (sLocale ? "_" + sLocale : "") + oUrl.suffix;
 			}
 
-			var vProperties = Properties.create({
+			// headers might contain "accept-language" tag which can lead to a different properties
+			// request, therefore it needs to be integrated into the cache key
+			// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
+			var sCacheKey = JSON.stringify({url: sUrl, headers: mHeaders});
+
+			var oOptions = {
 				url: sUrl,
 				headers: mHeaders,
 				async: !!bAsync,
 				returnNullIfMissing: true
-			});
+			};
+
+			const vProperties = oPropertiesCache.get(sCacheKey, oOptions, oOptions.async);
 
 			var addProperties = function(oProps) {
 				if ( oProps ) {
@@ -1171,6 +1266,16 @@ sap.ui.define([
 			sFallbackLocale,
 			/* no context info */ ""
 		);
+	};
+
+	/**
+	 * Gets the properties cache
+	 *
+	 * @returns {Map} The properties cache
+	 * @private
+	 */
+	ResourceBundle._getPropertiesCache = function () {
+		return oPropertiesCache._oCache;
 	};
 
 	return ResourceBundle;
