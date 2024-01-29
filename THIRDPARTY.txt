@@ -344,7 +344,7 @@ Contained in: src/sap.ui.core/test/sap/ui/core/qunit/i18n/helper/_timezones.js
 
 Library: sap.ui.documentation:
 
-Component: highlight.js, version: 10.4.1
+Component: highlight.js, version: 11.9.0
 Copyright: 2006-2020, Ivan Sagalaev
 License: BSD-3-Clause
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
