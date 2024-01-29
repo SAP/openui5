@@ -916,6 +916,41 @@ sap.ui.define([
 
 		});
 
+		QUnit.test("Should switch positions of value1 and value2 if value2 is set first", function(assert){
+			// Arrange
+			var oP13nConditionPanel = new P13nConditionPanel(),
+				value1 = {
+					id: "value1",
+					getVisible: function(){ return true;}
+				},
+				value2 = {
+					id: "value2",
+					getVisible: function(){ return true;}
+				},
+				aContent = [value2, value1],
+				oConditionGrid = {
+					operation: {
+						getSelectedKey: function(){ return "BT"; }
+					},
+					value1: value1,
+					value2: value2,
+					mAggregations: {
+						content: aContent
+					},
+					getContent: function(){ return aContent; }
+				},
+				fnStub = sinon.stub(oP13nConditionPanel, "_adjustValue1Span");
+
+			// Act
+			oP13nConditionPanel._changeOperationValueFields(undefined, oConditionGrid);
+
+			// Assert
+			assert.equal(aContent[0], value1, "The 'from' input is first");
+
+			// Cleanup
+			oP13nConditionPanel.destroy();
+			fnStub.restore();
+		});
 
 		QUnit.module("Date Format Options BCP: 0020751294 0000389830 2019", {
 			beforeEach: function () {
