@@ -283,9 +283,6 @@ sap.ui.define([
 		// Assert
 		function assertButton (oButton, oMargins) {
 			if (Localization.getRTL()) {
-				if (oButton === oMiddleButton) {
-					oMargins.right -= 4;
-				}
 				assert.strictEqual(oButton.$().css("margin-left"), oMargins.right + "px", oButton + " did have the correct right margin");
 				assert.strictEqual(oButton.$().css("margin-right"),  oMargins.left + "px", oButton + " did have the correct left margin");
 			} else {
@@ -310,7 +307,7 @@ sap.ui.define([
 		});
 
 		if (Localization.getRTL()) {
-			assert.strictEqual(oBar.$("BarLeft").css("padding-right"), iStartEndPadding + "px", "Left bar does have a padding");
+			assert.strictEqual(oBar.$("BarLeft").css("padding-right"), iStartEndPadding + 12 + "px", "Left bar does have a padding");
 		} else {
 			assert.strictEqual(oBar.$("BarLeft").css("padding-left"), iStartEndPadding + 12 + "px", "Left bar does have a padding");
 		}
@@ -563,7 +560,7 @@ sap.ui.define([
 		var sut = await createAndPlaceSUT(100, 100, 100, this.clock);
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
-		var iExtraPadding = Localization.getRTL() ? 0 : 16;
+		var iExtraPadding = 16;
 
 		assert.strictEqual(oBarInternals.$left.outerWidth(), 100 + iStartEndPadding + iExtraPadding, "left outerWidth is correct");
 		elementHasNoWidth(assert, oBarInternals.$left, "left Bar");
@@ -587,7 +584,7 @@ sap.ui.define([
 		//Arrange + System under Test + Act
 		//left | right | mid
 		var sut = await createAndPlaceSUT(100, 450, 100, this.clock);
-		var iExtraPadding = Localization.getRTL() ? 0 : 16;
+		var iExtraPadding = 16;
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -611,7 +608,7 @@ sap.ui.define([
 		//Arrange + System under Test + Act
 		//left | right | mid
 		var sut = await createAndPlaceSUT(450, 100, 100, this.clock);
-		var iExtraPadding = Localization.getRTL() ? 0 : 16;
+		var iExtraPadding = 16;
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
 
@@ -634,7 +631,7 @@ sap.ui.define([
 		//Arrange + System under Test + Act
 		//left | right | mid
 		var sut = await createAndPlaceSUT(225, 100, 100, this.clock);
-		var iExtraPadding = Localization.getRTL() ? 0 : 16;
+		var iExtraPadding = 16;
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -657,7 +654,7 @@ sap.ui.define([
 	QUnit.test("Should push the mid to the center of the remaining space, if the right content overlaps it", async function(assert) {
 		var bRtl = Localization.getRTL(),
 			sLeftOrRight = bRtl ? "right" : "left";
-		var iExtraPadding = bRtl ? 0 : 16;
+		var iExtraPadding = 16;
 		//Arrange + System under Test + Act
 		//left | right | mid
 		var sut = await createAndPlaceSUT(undefined, 225, 100, this.clock);
@@ -701,7 +698,7 @@ sap.ui.define([
 		//Arrange + System under Test + Act
 		//left | right | mid
 		var sut = await createAndPlaceSUT(100, 600, 100, this.clock);
-		var iExtraPadding = Localization.getRTL() ? 0 : 16;
+		var iExtraPadding = 16;
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -750,7 +747,7 @@ sap.ui.define([
 		//Arrange + System under Test + Act
 		//left | right | mid
 		var sut = await createAndPlaceSUT(100, 100, 500, this.clock);
-		var iExtraPadding = Localization.getRTL() ? 0 : 16;
+		var iExtraPadding = 16;
 
 		//Act
 		jQuery("#qunit-fixture").width("500px");
@@ -789,7 +786,7 @@ sap.ui.define([
 		//Arrange + System under Test + Act
 		//left | right | mid
 		var sut = await createAndPlaceSUT(undefined, 225, 100, this.clock);
-		var iExtraPadding = Localization.getRTL() ? 0 : 16;
+		var iExtraPadding = 16;
 
 		//Act
 		jQuery("#qunit-fixture").width("500px");
@@ -874,7 +871,7 @@ sap.ui.define([
 		//Arrange + System under Test + Act
 		//left | right | mid
 		var sut = await createAndPlaceSUT(225, 225, 100, this.clock);
-		var iExtraPadding = Localization.getRTL() ? 0 : 16;
+		var iExtraPadding = 16;
 
 		var oHandleResizeSpy = this.spy(Bar.prototype, "_handleResize");
 
