@@ -47,7 +47,7 @@ sap.ui.define([
 			return waitForFilterField.call(this, Utils.enhanceWaitFor(vIdentifier, {
 				success:function(oField) {
 					var oTarget = oField.getCurrentContent()[0];
-					new TriggerEvent({event: "focusin"}).executeOn(oTarget); // doesnt work with focusdomref
+					oField.focus();
 					new TriggerEvent({event: "tap"}).executeOn(oTarget); // doesnt work with focusdomref
 					Opa5.assert.ok(oField, "tap event on Field '" + oField.getId() + "' triggered.");
 				}

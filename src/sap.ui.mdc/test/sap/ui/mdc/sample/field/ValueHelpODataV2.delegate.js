@@ -43,5 +43,15 @@ sap.ui.define([
 		});
 	};
 
+	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
+		var oPayload = oValueHelp.getPayload();
+
+		if (oPayload && oPayload.hasOwnProperty("shouldOpenOnFocus") && oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
+			return oPayload.shouldOpenOnFocus;
+		} else {
+			return TestValueHelpDelegate.shouldOpenOnFocus.apply(this, arguments);
+		}
+	};
+
 	return ValueHelpDelegate;
 });

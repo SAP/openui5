@@ -123,7 +123,13 @@ sap.ui.define([
 					});
 					oField.setModel(oModel);
 					// configure the Field und ValueHelp faking somme calls what would be triggered by opening
-					oField.onfocusin(); // to connect ValueHelp
+					const oEvent = {
+						type: "focusin",
+						srcControl: oField,
+						target: null, // as not rendered, but Event needs to defined for check
+						currentTarget: null
+					};
+					oField.onfocusin(oEvent); // to connect ValueHelp
 					oMTable.getContent(); // to create internal controls
 					oPopover.getContainerControl(); // to create internal controls
 					oValueHelp.open(true); // fake typeahead
@@ -228,7 +234,13 @@ sap.ui.define([
 					});
 					oField.setModel(oModel);
 					// configure the Field und ValueHelp faking somme calls what would be triggered by opening
-					oField.onfocusin(); // to connect ValueHelp
+					const oEvent = {
+						type: "focusin",
+						srcControl: oField,
+						target: null, // as not rendered, but Event needs to defined for check
+						currentTarget: null
+					};
+					oField.onfocusin(oEvent); // to connect ValueHelp
 					oMTable.getContent(); // to create internal controls
 					oDialog.getContainerControl(); // to create internal controls
 					oValueHelp.open(false);

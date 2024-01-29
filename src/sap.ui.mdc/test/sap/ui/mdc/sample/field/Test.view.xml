@@ -774,7 +774,7 @@
 					submit="handleSubmit"
 					valueHelp="VH-Currency">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-Currency" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+						<mdc:ValueHelp id="VH-Currency" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"shouldOpenOnFocus": true\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Currency-Pop">
 									<mdcValueHelpContent:FixedList id="VH-Currency-FL" useFirstMatch="false" items="{/currencies}" >
@@ -806,7 +806,7 @@
 					submit="handleSubmit"
 					valueHelp="VH-Currency2">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-Currency2" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+						<mdc:ValueHelp id="VH-Currency2" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"shouldOpenOnFocus": true\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Currency2-Pop">
 									<mdcValueHelpContent:FixedList id="VH-Currency2-FL" useFirstMatch="false" items="{/currencies}" >

@@ -391,5 +391,56 @@ sap.ui.define([
 		return oContent.getCaseSensitive();
 	};
 
+	/**
+	 * Determines if the value help should be opened when the user focuses the connected control.
+	 * <br/>By default the value of the {@link sap.ui.mdc.valuehelp.Popover#getOpensOnFocus opensOnFocus} property is returned.
+	 *
+	 * Currently this is only supported for type-ahead container.
+	 *
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
+	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
+	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user focuses the connected field control
+	 * @public
+	 * @since 1.121.0
+	 */
+	ValueHelpDelegate.shouldOpenOnFocus = function(oValueHelp, oContainer) {
+		let bShouldOpenOnFocus = false;
+
+		/**
+		 *  @deprecated since 1.121.0
+		 */
+		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
+			bShouldOpenOnFocus = oContainer.getOpensOnFocus();
+		}
+
+		return Promise.resolve(bShouldOpenOnFocus);
+	};
+
+	/**
+	 * Determines if the value help should be opened when the user clicks into the connected control.
+	 * <br/>By default the value of the {@link sap.ui.mdc.valuehelp.Popover#getOpensOnClick opensOnClick} property is returned, if set, or the content configuration is checked.
+	 *
+	 * Currently this is only supported for type-ahead container.
+	 *
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
+	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
+	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user clicks into the connected field control
+	 * @public
+	 * @since 1.121.0
+	 */
+	ValueHelpDelegate.shouldOpenOnClick = function(oValueHelp, oContainer) {
+		let bShouldOpenOnClick = false;
+
+		/**
+		 *  @deprecated since 1.121.0
+		 */
+		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
+			const oContent = oContainer._getContent();
+			bShouldOpenOnClick = oContainer.isPropertyInitial("opensOnClick") ? !!oContent && oContent.shouldOpenOnClick() : oContainer.getOpensOnClick(); //If opensOnClick is not explicitly set,  the content's preference is used instead.
+		}
+
+		return Promise.resolve(bShouldOpenOnClick);
+	};
+
 	return ValueHelpDelegate;
 });

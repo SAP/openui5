@@ -135,13 +135,16 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("default values", function(assert) {
+	QUnit.test("default values", async function(assert) {
 
 		assert.equal(oDialog.getMaxConditions(), undefined, "getMaxConditions");
 		assert.ok(oDialog.isMultiSelect(), "isMultiSelect");
 		assert.notOk(oDialog.isSingleSelect(), "isSingleSelect");
 		assert.notOk(oDialog.getUseAsValueHelp(), "getUseAsValueHelp");
-		assert.notOk(oDialog.shouldOpenOnClick(), "shouldOpenOnClick");
+		let bShouldOpen = await oDialog.shouldOpenOnClick();
+		assert.notOk(bShouldOpen, "shouldOpenOnClick");
+		bShouldOpen = await oDialog.shouldOpenOnFocus();
+		assert.notOk(bShouldOpen, "shouldOpenOnFocus");
 		assert.notOk(oDialog.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
 		assert.ok(oDialog.isFocusInHelp(), "isFocusInHelp");
 		assert.equal(oDialog.getValueHelpIcon(), "sap-icon://value-help", "getValueHelpIcon");
