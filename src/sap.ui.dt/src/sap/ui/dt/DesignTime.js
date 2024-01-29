@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/ui/dt/SelectionMode",
 	"sap/ui/dt/TaskManager",
 	"sap/ui/dt/TaskRunner",
+	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/dt/Util"
 ], function(
 	_curry,
@@ -49,6 +50,7 @@ sap.ui.define([
 	SelectionMode,
 	TaskManager,
 	TaskRunner,
+	ZIndexManager,
 	Util
 ) {
 	"use strict";
@@ -452,6 +454,9 @@ sap.ui.define([
 		this._oTaskManager.destroy();
 
 		this._destroyAllOverlays();
+		// ZIndexManager is static and is used in overlays, dt-plugins and rta-toolbar.
+		// Desingtime seems to be the best place for ZIndexManager to be cleared.
+		ZIndexManager.clearState();
 
 		this._aOverlaysCreatedInLastBatch = [];
 		delete this._bDestroyPending;
