@@ -56,7 +56,7 @@ sap.ui.define([
 			return Promise.resolve()
 			.then(function() {
 				if (oUShellContainer) {
-					return oUShellContainer.getServiceAsync("CrossApplicationNavigation")
+					return oUShellContainer.getServiceAsync("Navigation")
 					.then(function(oCrossAppNavService) {
 						_oCrossAppNavService = oCrossAppNavService;
 					});
@@ -67,7 +67,8 @@ sap.ui.define([
 			.then(function(aAppVariantOverviewAttributes) {
 				BusyIndicator.hide();
 				if (aAppVariantOverviewAttributes.length) {
-					return this._arrangeOverviewDataAndBindToModel(aAppVariantOverviewAttributes).then(function(aAppVariantOverviewAttributes) {
+					return this._arrangeOverviewDataAndBindToModel(aAppVariantOverviewAttributes)
+					.then(function(aAppVariantOverviewAttributes) {
 						return this._highlightNewCreatedAppVariant(aAppVariantOverviewAttributes);
 					}.bind(this));
 				}
@@ -198,6 +199,7 @@ sap.ui.define([
 						// Do nothing
 				}
 			}
+			return undefined;
 		},
 
 		formatAdaptUIButtonVisibility(bVisible, bKeyUser) {
@@ -253,7 +255,7 @@ sap.ui.define([
 				RuntimeAuthoring.enableRestart(Layer.CUSTOMER);
 
 				if (_oCrossAppNavService) {
-					_oCrossAppNavService.toExternal(oNavigationParams);
+					_oCrossAppNavService.navigate(oNavigationParams);
 				}
 
 				AppVariantUtils.closeOverviewDialog();

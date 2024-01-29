@@ -28,12 +28,12 @@ function(
 
 	Utils._checkNavigationSupported = function(oNavigationParams) {
 		var oUShellContainer = FlUtils.getUshellContainer();
-		return oUShellContainer.getServiceAsync("CrossApplicationNavigation")
+		return oUShellContainer.getServiceAsync("Navigation")
 		.then(function(oNavigationService) {
 			return oNavigationService.getLinks(oNavigationParams);
 		})
 		.catch(function(vError) {
-			throw new Error(`Error retrieving ushell service CrossApplicationNavigation: ${vError}`);
+			throw new Error(`Error retrieving ushell service Navigation: ${vError}`);
 		});
 	};
 

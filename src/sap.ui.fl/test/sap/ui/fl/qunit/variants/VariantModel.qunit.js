@@ -3167,8 +3167,8 @@ sap.ui.define([
 			assert.strictEqual(this.oModel.getUShellService("UserInfo"), "UserInfo", "the UserInfo service was loaded");
 			assert.strictEqual(this.oModel.getUShellService("URLParsing"), "URLParsing", "the URLParsing service was loaded");
 			assert.strictEqual(
-				this.oModel.getUShellService("CrossApplicationNavigation"),
-				"CrossApplicationNavigation", "the CrossApplicationNavigation service was loaded"
+				this.oModel.getUShellService("Navigation"),
+				"Navigation", "the Navigation service was loaded"
 			);
 			assert.strictEqual(
 				this.oModel.getUShellService("ShellNavigation"),

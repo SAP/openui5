@@ -45,7 +45,7 @@ sap.ui.define([
 		var oUshellContainerStub = {
 			getServiceAsync() {
 				return Promise.resolve({
-					toExternal() {
+					navigate() {
 					},
 					getHash() {
 						return "Action-somestring";
@@ -78,7 +78,7 @@ sap.ui.define([
 
 	QUnit.module("Given that a RtaAppVariantFeature is instantiated", {
 		afterEach() {
-			sandbox.stub(FlUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(undefined));
+			sandbox.stub(FlUtils, "getUShellService").withArgs("Navigation").returns(Promise.resolve(undefined));
 			sandbox.restore();
 		},
 		after() {

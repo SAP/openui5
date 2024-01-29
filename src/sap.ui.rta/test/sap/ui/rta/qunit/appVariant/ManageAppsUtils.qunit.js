@@ -75,7 +75,11 @@ sap.ui.define([
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, true, "then it is a S4/Hana Cloud system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, true, "then the button Adapt UI is enabled");
-				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, false, "then the button Delete App Variant is not available on an orginal application");
+				assert.equal(
+					oAppVariantAttributes.delAppVarButtonVisibility,
+					false,
+					"then the button Delete App Variant is not available on an orginal application"
+				);
 			});
 		});
 
@@ -111,8 +115,16 @@ sap.ui.define([
 				assert.equal(oAppVariantAttributes.adaptUIButtonVisibility, true, "then the button Adapt UI is available");
 				assert.equal(oAppVariantAttributes.appVarStatus, "U", "then the right app var status is set");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is enabled");
-				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
-				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, true, "then the button Delete App Variant is enabled on an app variant");
+				assert.equal(
+					oAppVariantAttributes.delAppVarButtonVisibility,
+					true,
+					"then the button Delete App Variant is available on an app variant"
+				);
+				assert.equal(
+					oAppVariantAttributes.delAppVarButtonEnabled,
+					true,
+					"then the button Delete App Variant is enabled on an app variant"
+				);
 			});
 		});
 
@@ -144,8 +156,16 @@ sap.ui.define([
 				assert.equal(oAppVariantAttributes.adaptUIButtonVisibility, true, "then the button Adapt UI is available");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is enabled");
 				assert.equal(oAppVariantAttributes.appVarStatus, "R", "then the right app var status is set");
-				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
-				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, false, "then the button Delete App Variant is not enabled on an app variant");
+				assert.equal(
+					oAppVariantAttributes.delAppVarButtonVisibility,
+					true,
+					"then the button Delete App Variant is available on an app variant"
+				);
+				assert.equal(
+					oAppVariantAttributes.delAppVarButtonEnabled,
+					false,
+					"then the button Delete App Variant is not enabled on an app variant"
+				);
 			});
 		});
 
@@ -175,8 +195,16 @@ sap.ui.define([
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, false, "then it is a S4/Hana on premise system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is enabled");
 				assert.equal(oAppVariantAttributes.appVarStatus, undefined, "then the right app var status is set");
-				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
-				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, true, "then the button Delete App Variant is not enabled on an app variant");
+				assert.equal(
+					oAppVariantAttributes.delAppVarButtonVisibility,
+					true,
+					"then the button Delete App Variant is available on an app variant"
+				);
+				assert.equal(
+					oAppVariantAttributes.delAppVarButtonEnabled,
+					true,
+					"then the button Delete App Variant is not enabled on an app variant"
+				);
 			});
 		});
 
@@ -210,8 +238,16 @@ sap.ui.define([
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, false, "then it is a S4/Hana on premise system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, true, "then the button Adapt UI is enabled");
 				assert.equal(oAppVariantAttributes.appVarStatus, undefined, "then the right app var status is set");
-				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
-				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, false, "then the button Delete App Variant is not enabled on an app variant");
+				assert.equal(
+					oAppVariantAttributes.delAppVarButtonVisibility,
+					true,
+					"then the button Delete App Variant is available on an app variant"
+				);
+				assert.equal(
+					oAppVariantAttributes.delAppVarButtonEnabled,
+					false,
+					"then the button Delete App Variant is not enabled on an app variant"
+				);
 			});
 		});
 
@@ -246,8 +282,16 @@ sap.ui.define([
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, true, "then it is a S4/Hana Cloud system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is not enabled");
 				assert.equal(oAppVariantAttributes.appVarStatus, "E", "then the right app var status is set");
-				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
-				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, true, "then the button Delete App Variant is enabled on an app variant");
+				assert.equal(
+					oAppVariantAttributes.delAppVarButtonVisibility,
+					true,
+					"then the button Delete App Variant is available on an app variant"
+				);
+				assert.equal(
+					oAppVariantAttributes.delAppVarButtonEnabled,
+					true,
+					"then the button Delete App Variant is enabled on an app variant"
+				);
 			});
 		});
 
@@ -282,7 +326,11 @@ sap.ui.define([
 				assert.strictEqual(oAppVariantAttributes.params, undefined, "then the params property does not exist");
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, false, "then it is an S4/Hana on prem system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, true, "then the button Adapt UI is enabled");
-				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, false, "then the button Delete App Variant is not available on an original application");
+				assert.equal(
+					oAppVariantAttributes.delAppVarButtonVisibility,
+					false,
+					"then the button Delete App Variant is not available on an original application"
+				);
 			});
 		});
 
@@ -359,7 +407,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getAppVariantOverviewAttributes() method is called but the ushell container fails to retrieve the CrossApplicationNavigation service", function(assert) {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called but the ushell container fails to retrieve the Navigation service", function(assert) {
 			var oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
@@ -386,7 +434,11 @@ sap.ui.define([
 
 			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true)
 			.catch(function(oError) {
-				assert.equal(oError.message, "Error retrieving ushell service CrossApplicationNavigation: Failed to get service", "then an error is raised");
+				assert.equal(
+					oError.message,
+					"Error retrieving ushell service Navigation: Failed to get service",
+					"then an error is raised"
+				);
 			});
 		});
 
@@ -433,7 +485,11 @@ sap.ui.define([
 			return AppVariantOverviewUtils.getAppVariantOverview("testId", true).then(function(aAppVariantOverviewAttributes) {
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");
-				assert.equal(aAppVariantOverviewAttributes[0].iconText, "history", "then the icon tooltip text of an app variant is correct");
+				assert.equal(
+					aAppVariantOverviewAttributes[0].iconText,
+					"history",
+					"then the icon tooltip text of an app variant is correct"
+				);
 				assert.strictEqual(aAppVariantOverviewAttributes[0].semanticObject, "SemObj", "then the semantic object is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].action, "Action", "then the action is correct");
 				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonEnabled, true, "then the app is adaptable");
@@ -497,7 +553,11 @@ sap.ui.define([
 			return AppVariantOverviewUtils.getAppVariantOverview("testId", false).then(function(aAppVariantOverviewAttributes) {
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");
-				assert.equal(aAppVariantOverviewAttributes[0].iconText, "history", "then the icon tooltip text of an app variant is correct");
+				assert.equal(
+					aAppVariantOverviewAttributes[0].iconText,
+					"history",
+					"then the icon tooltip text of an app variant is correct"
+				);
 				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonEnabled, false, "then the app is not adaptable");
 				assert.ok(sendRequestStub.calledOnce, "then the sendRequest is called once");
 			});
@@ -564,24 +624,75 @@ sap.ui.define([
 				})
 			);
 
-			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId", true), oResourceBundlePromise]).then(function(aParams) {
+			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId", true), oResourceBundlePromise])
+			.then(function(aParams) {
 				var aAppVariantOverviewAttributes = aParams[0];
 				var oResourceBundle = aParams[1];
 
-				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
+				assert.ok(
+					aAppVariantOverviewAttributes,
+					"then the result contains app variant overview properties"
+				);
 
-				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of first app(variant) is correct");
-				assert.equal(aAppVariantOverviewAttributes[0].iconText, "history", "then the icon tooltip text of a first app(variant) is correct");
-				assert.strictEqual(aAppVariantOverviewAttributes[1].icon, "sap-icon://account", "then the icon of second app is correct");
-				assert.equal(aAppVariantOverviewAttributes[1].iconText, "account", "then the icon tooltip text of a second app(variant) is correct");
-				assert.strictEqual(aAppVariantOverviewAttributes[0].semanticObject, undefined, "then the semantic object of first app(variant) is correct");
-				assert.strictEqual(aAppVariantOverviewAttributes[1].semanticObject, "SemObj", "then the semantic object of second app is correct");
-				assert.strictEqual(aAppVariantOverviewAttributes[0].action, undefined, "then the action of first app(variant) is correct");
-				assert.strictEqual(aAppVariantOverviewAttributes[1].action, "Action", "then the action of second app is correct");
-				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonEnabled, false, "then the first app(variant) is not adaptable");
-				assert.equal(aAppVariantOverviewAttributes[1].adaptUIButtonEnabled, true, "then the second app is adaptable");
-				assert.equal(aAppVariantOverviewAttributes[0].currentStatus, oResourceBundle.getText("MAA_NEW_APP_VARIANT"), "then the first app(variant) is highlighted blue");
-				assert.ok(sendRequestStub.calledOnce, "then the sendRequest is called once");
+				assert.strictEqual(
+					aAppVariantOverviewAttributes[0].icon,
+					"sap-icon://history",
+					"then the icon of first app(variant) is correct"
+				);
+				assert.equal(
+					aAppVariantOverviewAttributes[0].iconText,
+					"history",
+					"then the icon tooltip text of a first app(variant) is correct"
+				);
+				assert.strictEqual(
+					aAppVariantOverviewAttributes[1].icon,
+					"sap-icon://account",
+					"then the icon of second app is correct"
+				);
+				assert.equal(
+					aAppVariantOverviewAttributes[1].iconText,
+					"account",
+					"then the icon tooltip text of a second app(variant) is correct"
+				);
+				assert.strictEqual(
+					aAppVariantOverviewAttributes[0].semanticObject,
+					undefined,
+					"then the semantic object of first app(variant) is correct"
+				);
+				assert.strictEqual(
+					aAppVariantOverviewAttributes[1].semanticObject,
+					"SemObj",
+					"then the semantic object of second app is correct"
+				);
+				assert.strictEqual(
+					aAppVariantOverviewAttributes[0].action,
+					undefined,
+					"then the action of first app(variant) is correct"
+				);
+				assert.strictEqual(
+					aAppVariantOverviewAttributes[1].action,
+					"Action",
+					"then the action of second app is correct"
+				);
+				assert.equal(
+					aAppVariantOverviewAttributes[0].adaptUIButtonEnabled,
+					false,
+					"then the first app(variant) is not adaptable"
+				);
+				assert.equal(
+					aAppVariantOverviewAttributes[1].adaptUIButtonEnabled,
+					true,
+					"then the second app is adaptable"
+				);
+				assert.equal(
+					aAppVariantOverviewAttributes[0].currentStatus,
+					oResourceBundle.getText("MAA_NEW_APP_VARIANT"),
+					"then the first app(variant) is highlighted blue"
+				);
+				assert.ok(
+					sendRequestStub.calledOnce,
+					"then the sendRequest is called once"
+				);
 			});
 		});
 
@@ -633,19 +744,50 @@ sap.ui.define([
 				})
 			);
 
-			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId", true), oResourceBundlePromise]).then(function(aParams) {
+			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId", true), oResourceBundlePromise])
+			.then(function(aParams) {
 				var aAppVariantOverviewAttributes = aParams[0];
 				var oResourceBundle = aParams[1];
 
-				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
+				assert.ok(
+					aAppVariantOverviewAttributes,
+					"then the result contains app variant overview properties"
+				);
 
-				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of first app(variant) is correct");
-				assert.equal(aAppVariantOverviewAttributes[0].iconText, "history", "then the icon tooltip text of a first app(variant) is correct");
-				assert.strictEqual(aAppVariantOverviewAttributes[0].semanticObject, "SemObj", "then the semantic object of first app(variant) is correct");
-				assert.strictEqual(aAppVariantOverviewAttributes[0].action, "Action", "then the action of first app(variant) is correct");
-				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonEnabled, false, "then the first app(variant) is not adaptable");
-				assert.equal(aAppVariantOverviewAttributes[0].currentStatus, oResourceBundle.getText("MAA_OPERATION_IN_PROGRESS"), "then the first app(variant) is highlighted blue");
-				assert.ok(sendRequestStub.calledOnce, "then the sendRequest is called once");
+				assert.strictEqual(
+					aAppVariantOverviewAttributes[0].icon,
+					"sap-icon://history",
+					"then the icon of first app(variant) is correct"
+				);
+				assert.equal(
+					aAppVariantOverviewAttributes[0].iconText,
+					"history",
+					"then the icon tooltip text of a first app(variant) is correct"
+				);
+				assert.strictEqual(
+					aAppVariantOverviewAttributes[0].semanticObject,
+					"SemObj",
+					"then the semantic object of first app(variant) is correct"
+				);
+				assert.strictEqual(
+					aAppVariantOverviewAttributes[0].action,
+					"Action",
+					"then the action of first app(variant) is correct"
+				);
+				assert.equal(
+					aAppVariantOverviewAttributes[0].adaptUIButtonEnabled,
+					false,
+					"then the first app(variant) is not adaptable"
+				);
+				assert.equal(
+					aAppVariantOverviewAttributes[0].currentStatus,
+					oResourceBundle.getText("MAA_OPERATION_IN_PROGRESS"),
+					"then the first app(variant) is highlighted blue"
+				);
+				assert.ok(
+					sendRequestStub.calledOnce,
+					"then the sendRequest is called once"
+				);
 			});
 		});
 	});

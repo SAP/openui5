@@ -248,7 +248,7 @@ sap.ui.define([
 			}
 			this.pServices = this.pServices.then(this.getService.bind(this, "supportTools"));
 
-			this._loadUShellServicesPromise = FlexUtils.getUShellServices(["URLParsing", "AppLifeCycle", "CrossApplicationNavigation"])
+			this._loadUShellServicesPromise = FlexUtils.getUShellServices(["URLParsing", "AppLifeCycle", "Navigation"])
 			.then(function(mUShellServices) {
 				this._mUShellServices = mUShellServices;
 				ReloadManager.setUShellServices(mUShellServices);

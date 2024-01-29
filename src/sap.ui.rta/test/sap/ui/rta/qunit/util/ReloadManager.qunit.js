@@ -225,7 +225,7 @@ sap.ui.define([
 			}.bind(this);
 			this.oLoadDraftStub = sandbox.stub(VersionsAPI, "loadDraftForApplication").callsFake(fnSlowCall);
 			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication").callsFake(fnSlowCall);
-			ReloadManager.setUShellServices({URLParsing: "foo", CrossApplicationNavigation: "bar"});
+			ReloadManager.setUShellServices({URLParsing: "foo", Navigation: "bar"});
 		},
 		afterEach() {
 			sandbox.restore();
@@ -401,7 +401,6 @@ sap.ui.define([
 				appSpecificRoute: "appSpecificRoute"
 			});
 			this.oReloadCurrentAppStub = sandbox.stub();
-			this.oToExternalStub = sandbox.stub();
 			ReloadManager.setUShellServices({
 				URLParsing: "foo",
 				AppLifeCycle: {reloadCurrentApp: this.oReloadCurrentAppStub}

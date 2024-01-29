@@ -166,7 +166,7 @@ sap.ui.define([
 	function setTechnicalURLParameterValues(mPropertyBag) {
 		var oModel = mPropertyBag.model;
 		var oURLParsingService = oModel.getUShellService("URLParsing");
-		var oCrossApplicationNavigationService = oModel.getUShellService("CrossApplicationNavigation");
+		var oUshellNavigationService = oModel.getUShellService("Navigation");
 		var oParsedHash = oURLParsingService && oURLParsingService.parseShellHash(hasher.getHash());
 
 		if (oParsedHash && oParsedHash.params) {
@@ -177,14 +177,18 @@ sap.ui.define([
 				&& oModel.oAppComponent.getComponentData().technicalParameters;
 			// if mTechnicalParameters are not available we write a warning and continue updating the hash
 			if (!mTechnicalParameters) {
-				Log.warning("Component instance not provided, so technical parameters in component data and browser history remain unchanged");
+				Log.warning(
+					"Component instance not provided, so technical parameters in component data and browser history remain unchanged"
+				);
 			}
 			if (mPropertyBag.parameters.length === 0) {
 				delete oParsedHash.params[VariantUtil.VARIANT_TECHNICAL_PARAMETER];
-				mTechnicalParameters && delete mTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER]; // Case when ControlVariantsAPI.clearVariantParameterInURL is called with a parameter
+				// Case when ControlVariantsAPI.clearVariantParameterInURL is called with a parameter
+				mTechnicalParameters && delete mTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER];
 			} else {
 				oParsedHash.params[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = mPropertyBag.parameters;
-				mTechnicalParameters && (mTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = mPropertyBag.parameters); // Technical parameters need to be in sync with the URL hash
+				// Technical parameters need to be in sync with the URL hash
+				mTechnicalParameters && (mTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = mPropertyBag.parameters);
 			}
 
 			if (mPropertyBag.silent) {
@@ -192,7 +196,7 @@ sap.ui.define([
 				hasher.replaceHash(oURLParsingService.constructShellHash(oParsedHash));
 				hasher.changed.active = true; // re-enable changed signal
 			} else if (!deepEqual(mOldHashParams, oParsedHash.params)) {
-				oCrossApplicationNavigationService.toExternal({
+				oUshellNavigationService.navigate({
 					target: {
 						semanticObject: oParsedHash.semanticObject,
 						action: oParsedHash.action,
@@ -236,7 +240,8 @@ sap.ui.define([
 			}
 
 			if (Array.isArray(mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER])) {
-				mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER].map(decodeURIComponent);
+				mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] =
+					mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER].map(decodeURIComponent);
 				mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER].some(function(sParamDecoded, iIndex) {
 					if (!isEmptyObject(oModel.getVariant(sParamDecoded, mPropertyBag.vmReference))) {
 						mReturnObject.index = iIndex;
@@ -248,7 +253,9 @@ sap.ui.define([
 		}
 		return merge(
 			mReturnObject,
-			mURLParameters && mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] && {parameters: mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER]}
+			mURLParameters
+			&& mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER]
+			&& {parameters: mURLParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER]}
 		);
 	}
 
@@ -337,7 +344,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the variant URL parameter for the passed variant management and returns the index at which the passed variant management is present.
+	 * Removes the variant URL parameter for the passed variant management
+	 * and returns the index at which the passed variant management is present.
 	 *
 	 * @param {object} mPropertyBag - Property bag
 	 * @param {string} mPropertyBag.vmReference - Variant management reference

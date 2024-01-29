@@ -555,13 +555,13 @@ sap.ui.define([
 				var oApplication = oAppConfiguration.getCurrentApplication();
 				oComponentInstance = oApplication.componentInstance;
 				if (oComponentInstance) {
-					return oUshellContainer.getServiceAsync("CrossApplicationNavigation");
+					return oUshellContainer.getServiceAsync("Navigation");
 				}
 				return undefined;
 			})
 			.then(function(oCrossAppNav) {
-				if (oCrossAppNav && oCrossAppNav.toExternal) {
-					oCrossAppNav.toExternal({target: {shellHash: "#"}}, oComponentInstance);
+				if (oCrossAppNav && oCrossAppNav.navigate) {
+					oCrossAppNav.navigate({target: {shellHash: "#"}}, oComponentInstance);
 				}
 			})
 			.catch(function(vError) {

@@ -32,7 +32,7 @@ sap.ui.define([
 		before() {
 			this. oCrossApp = {
 				mIntents: {},
-				hrefForExternal(mIntentWithParameter) {
+				getHref(mIntentWithParameter) {
 					return JSON.stringify(mIntentWithParameter);
 				},
 				isNavigationSupported(aIntents) {
@@ -51,7 +51,11 @@ sap.ui.define([
 			this.oGetTextStub = this.oSandbox.stub(Utils, "getText").callsFake(function(sTextKey) {
 				return sTextKey;
 			});
-			this.oSandbox.stub(FlexUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(this.oCrossApp));
+			this.oSandbox.stub(FlexUtils, "getUShellService")
+			.withArgs("Navigation")
+			.returns(
+				Promise.resolve(this.oCrossApp)
+			);
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
 		},
