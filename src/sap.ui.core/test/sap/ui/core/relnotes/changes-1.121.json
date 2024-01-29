@@ -3,6 +3,26 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "fc35cf7f776c6ebcd9c058fbc0bf5cc5db2d685d",
+        "type": "FEATURE",
+        "text": " sap/base/i18n/ResourceBundle: Enable caching of .properties files"
+      },
+      {
+        "id": "492181471039accfca4dae1c2f0e4c63b991daf1",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/ODataMetadata#_getPropertyMetadata: fix for complex type property"
+      },
+      {
+        "id": "727b7687455953e72c12c050451248e2eaaa9fb1",
+        "type": "FIX",
+        "text": " sap/ui/core/util/MockServer: truncate nanoseconds in timestamps"
+      },
+      {
+        "id": "75fdd9633bf23dedfc474115a4cab40efec4c03f",
+        "type": "FEATURE",
+        "text": " Support new locales: mk_MK, cnr_ME and sr_Cyrl_RS"
+      },
+      {
         "id": "7ed3929b20bb3a8a6ae4ace48b1548d43ebf05dc",
         "type": "FIX",
         "text": " sap/ui/model/odata/_ODataMetaModelUtils#merge: liftSAPData is called with correct parameters"

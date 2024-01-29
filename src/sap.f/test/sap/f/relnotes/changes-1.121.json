@@ -3,6 +3,27 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "c188e7912a15d0abc346d87abf9e82b01ca98053",
+        "type": "FEATURE",
+        "text": " sap.f.ShellBar: Search and copilot reworked"
+      },
+      {
+        "id": "c0f0bf5440aa998b204e22267029ff7f01567eea",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: nested HTML elements are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009980592023"
+          }
+        ]
+      },
+      {
+        "id": "1e12373d128077a1c42b28a411ec73bf6f807d7a",
+        "type": "FIX",
+        "text": "  Integration Cards: DateTimestamp text in the header is translated now"
+      },
+      {
         "id": "75c5bd85683e5e9c3eea404a6d0f631856fdb226",
         "type": "FIX",
         "text": " sap.f.FlexibleColumnLayout: Rounding issue corected"

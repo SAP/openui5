@@ -3,6 +3,16 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "c188e7912a15d0abc346d87abf9e82b01ca98053",
+        "type": "FEATURE",
+        "text": " sap.f.ShellBar: Search and copilot reworked"
+      },
+      {
+        "id": "410ffd23ac4c119df17c942df3450e33c17b871b",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Fix overlapping in table"
+      },
+      {
         "id": "a69b5693cc3b2c3400d3d71863840f42fb2304e0",
         "type": "FIX",
         "text": " sap.f.DynamicPageTitle: Focus cutting is fixed"

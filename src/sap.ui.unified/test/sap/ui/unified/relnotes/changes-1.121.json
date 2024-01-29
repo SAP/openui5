@@ -3,6 +3,16 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "271d30e502ac8b9cdd81132928aa1f75a7cfbefd",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: adjust special dates display"
+      },
+      {
+        "id": "48cab8915c0b0c09024f540062160decb36e1f82",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust special dates display"
+      },
+      {
         "id": "d4c95c1cbb717396fc9c5d155e13768e4e032467",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: adjust year range picker display"

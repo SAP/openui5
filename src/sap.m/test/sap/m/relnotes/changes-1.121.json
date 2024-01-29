@@ -3,6 +3,69 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "0b6e37609b266b56e208ae3386d6b1b23211fd3b",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: provide row header description"
+      },
+      {
+        "id": "a232af064c64805313b752b9685ca4ec5fa9635e",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: Doesn't throw error when the binding type is string."
+      },
+      {
+        "id": "fa486f7fe7f74319e27f0a089135b0e42f55aa27",
+        "type": "FIX",
+        "text": " sap.m.MulitInput, sap.m.MultiComboBox: Clear value upon token creation with composite characters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380101431"
+          }
+        ]
+      },
+      {
+        "id": "94e7f3b712d8083be0d829ce62e97b91020f68ea",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fire tokenUpdate on token deletion"
+      },
+      {
+        "id": "75e0a70c7ee318b6134632abdbea5c7d09659754",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: load items with data binding on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370150250"
+          }
+        ]
+      },
+      {
+        "id": "ea5ea380f4a12800a4d57430f40ac326c3561682",
+        "type": "FEATURE",
+        "text": " SemanticFormElement: support for controls"
+      },
+      {
+        "id": "271d30e502ac8b9cdd81132928aa1f75a7cfbefd",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: adjust special dates display"
+      },
+      {
+        "id": "d68d0974e6e191391a6dca44726413cbc2d0f05c",
+        "type": "FEATURE",
+        "text": " sap.m.ViewSettingsItem: enable text wrapping"
+      },
+      {
+        "id": "f21ae61d2f4c1eb986ff44976aa38b34be950905",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: update startDate when changing firstDayOfWeek",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370117189"
+          }
+        ]
+      },
+      {
         "id": "b5331234a2d2d8ff3e94f3d4e683ee04ec8fce58",
         "type": "FIX",
         "text": " sap.m.Popover: Fix hiding of popover due to re-rendering"

@@ -3,6 +3,11 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "ea5ea380f4a12800a4d57430f40ac326c3561682",
+        "type": "FEATURE",
+        "text": " SemanticFormElement: support for controls"
+      },
+      {
         "id": "5a449957102df238683827acc6bd002237c5820a",
         "type": "FEATURE",
         "text": " sap.ui.layout.DynamicSideContent: side content width can be set for different breakpoints"

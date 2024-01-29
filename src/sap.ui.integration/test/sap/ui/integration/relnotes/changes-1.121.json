@@ -3,6 +3,16 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "1479513499e9b7d9c313e44a3588033034b0c2f0",
+        "type": "FIX",
+        "text": " Integration Card: Object Status icon in List Card is correctly positioned"
+      },
+      {
+        "id": "ff8e461c6e1bf8167dbb0cb6d253820343640c16",
+        "type": "FIX",
+        "text": " Integration Cards: Numeric Content in the Tile Like Cards are aligned correctly now"
+      },
+      {
         "id": "a66695f0d12aa6f511918909bc9a0f83377b241a",
         "type": "FIX",
         "text": " Integration Cards: Fixed failing visual tests"

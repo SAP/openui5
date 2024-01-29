@@ -3,6 +3,11 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "5862076fc6add34c46b2fcf45163ef67d3b721bb",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix collapsing header"
+      },
+      {
         "id": "f16f2e1529e8b4940d2068d2b7d2c3e74977b5cb",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: Relocate volatile unit test"

@@ -3,6 +3,37 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "647819bcb2bb537af0690b97a80eaf961862e448",
+        "type": "FIX",
+        "text": " Demo Kit: Fix broken links"
+      },
+      {
+        "id": "48299453639630dae62cba8cd41715eef4324aa4",
+        "type": "FIX",
+        "text": " Demo Kit:Revert \" Opa tests iframe path FIX\""
+      },
+      {
+        "id": "ad18e15c8df29ce4546c2767e77b92ae5c3ba2a6",
+        "type": "FIX",
+        "text": " Demo Kit: Change log select filtered"
+      },
+      {
+        "id": "42ea7e5e35cc1584f6a64b6ebd03d42667da277f",
+        "type": "FIX",
+        "text": " Demo Kit: Opa tests iframe path FIX"
+      },
+      {
+        "id": "b0c7b3238b0bd2f98ee8fb39a5ab2275ca86256f",
+        "type": "FIX",
+        "text": " Demo Kit: Examples now shown in API ref",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380097731"
+          }
+        ]
+      },
+      {
         "id": "3f1f403420de63b478214f58e5cf41627e2bb4f2",
         "type": "FIX",
         "text": " Demo Kit: Demo Apps Card Header Font Weight Tweak"

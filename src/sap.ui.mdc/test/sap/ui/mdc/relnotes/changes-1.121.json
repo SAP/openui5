@@ -3,6 +3,11 @@
     "date": "January 2024",
     "notes": [
       {
+        "id": "8f88625b7f5aef4bf84c24141eaed36a7a8775e4",
+        "type": "FEATURE",
+        "text": " Field: support as content in SemanticFormElement"
+      },
+      {
         "id": "094bbafd0e25ac0fc86bcf3af4a7ab10945003c9",
         "type": "FIX",
         "text": " P13nBuilder: Add button is now visible",
