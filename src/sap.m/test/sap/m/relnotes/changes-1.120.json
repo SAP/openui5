@@ -571,5 +571,53 @@
         ]
       }
     ]
+  },
+  "1.120.4": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "b2586289852efbdca6d82ae13ae6b646bbd8e50d",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: load items with data binding on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370150250"
+          }
+        ]
+      },
+      {
+        "id": "9a4e737a8395db29953e8fe77e1757944f80a6fa",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: Doesn't throw error when the binding type is string."
+      },
+      {
+        "id": "552a5a90ae2a745c332c15c9bc709c547e4f719d",
+        "type": "FIX",
+        "text": " m.VariantManagement: fix for save in 'Manage Dialog'"
+      },
+      {
+        "id": "cfef398013fe5f735b674d93bd158009fbf92353",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: apply horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370126403"
+          }
+        ]
+      },
+      {
+        "id": "52fc7714f5b5918bdab35b2c32e68edb7bac6604",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Arrow has hover state now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009692332023"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -128,5 +128,15 @@
         ]
       }
     ]
+  },
+  "1.120.4": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "c75e9f183a4a84856375637c548f3afd39bb033b",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Fixed incorrect rendering of separator"
+      }
+    ]
   }
 }

@@ -148,5 +148,21 @@
         ]
       }
     ]
+  },
+  "1.120.4": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "cfef398013fe5f735b674d93bd158009fbf92353",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: apply horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370126403"
+          }
+        ]
+      }
+    ]
   }
 }

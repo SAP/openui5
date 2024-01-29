@@ -684,5 +684,36 @@
         ]
       }
     ]
+  },
+  "1.120.4": {
+    "date": "January 2024",
+    "notes": [
+      {
+        "id": "af61e41ea8060843c7d3d2d0cf4a3fd62f2077f7",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/ODataMetadata#_getPropertyMetadata: fix for complex type property"
+      },
+      {
+        "id": "c22c5b0911ca2a9af5a5488e69e4d3a6f484ad1b",
+        "type": "FIX",
+        "text": " sap.ui.core.cldr.zh_TW.json: Replace \"B\" to \"a\" in default timeFormats",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380141822"
+          }
+        ]
+      },
+      {
+        "id": "3473d4adbd3220a2f1251663d5f1955a95b09c30",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/_ODataMetaModelUtils#merge: liftSAPData is called with correct parameters"
+      },
+      {
+        "id": "b3b59d532ae43e5f230f21449e85c89d702156a6",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: handle properties of type Edm.time in grouping"
+      }
+    ]
   }
 }
