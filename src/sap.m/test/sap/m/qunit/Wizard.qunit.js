@@ -1,8 +1,8 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/DesignTime",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Wizard",
 	"sap/m/WizardStep",
 	"sap/m/Button",
@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery"
-], function(Log, DesignTime, Core, Wizard, WizardStep, Button, ObjectPool, library, Library, coreLibrary, jQuery) {
+], function(Log, DesignTime, nextUIUpdate, Wizard, WizardStep, Button, ObjectPool, library, Library, coreLibrary, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -23,10 +23,15 @@ sap.ui.define([
 	// shortcut for sap.m.WizardRenderMode
 	var WizardRenderMode = library.WizardRenderMode;
 
+	function runAllTimersAndRestore(clock){
+		clock.runAll();
+		clock.restore();
+	}
+
 	QUnit.module("Wizard Public API", {
 		sWizardId: "wizard-id",
 		oSpies: {},
-		beforeEach: function (assert) {
+		beforeEach: async function (assert) {
 			var that = this;
 			this.oParams = {};
 			this.oSpies.onStepActivated = this.spy(function (oEvent) {
@@ -77,7 +82,7 @@ sap.ui.define([
 
 			this.oWizardSecondStep = this.oWizard.getSteps()[1];
 			this.oWizard.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.stub(ObjectPool.prototype, "returnObject").callsFake(function () {
 			});
@@ -92,13 +97,13 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("stepTitleLevel property", function (assert) {
+	QUnit.test("stepTitleLevel property", async function (assert) {
 		//assert
 		assert.strictEqual(this.oWizard.getStepTitleLevel(), "H3", "default steps title level is correct");
 
 		//act
 		this.oWizard.setStepTitleLevel(TitleLevel.H5);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.strictEqual(this.oWizard.getStepTitleLevel(), "H5", "steps title level is updated");
@@ -155,20 +160,21 @@ sap.ui.define([
 		assert.equal(this.oWizard.getSteps()[0].getValidated(), false, " should invalidate the current step");
 	});
 
-	QUnit.test("Scroll handler", function (assert) {
+	QUnit.test("Scroll handler", async function (assert) {
 		var tempWiz = new Wizard({
 			steps: [ new WizardStep(), new WizardStep(), new WizardStep() ]
 		});
 
 		tempWiz.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		var stepContainer = tempWiz.getDomRef("step-container");
 		tempWiz.nextStep();
 		tempWiz.destroy();
 		assert.equal(stepContainer.onscroll, null, " should be null when wizard is destroyed");
 	});
 
-	QUnit.test("ScrollHandler methods check", function (assert) {
+	QUnit.test("ScrollHandler methods check", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSpyPreviousStep,
 			oSpyNextStep,
 			aWizardSteps,
@@ -182,7 +188,7 @@ sap.ui.define([
 		oSpyNextStep = this.spy(oWizard._getProgressNavigator(), "nextStep");
 		aWizardSteps = oWizard.getSteps();
 		oWizard.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 		oWizard.goToStep(oWizard.getSteps()[2]);
 
 		// Act
@@ -208,9 +214,10 @@ sap.ui.define([
 
 		// cleanup
 		oWizard.destroy();
+		runAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("goToStep should be applied on id, containing with special symbols (::)", function (assert) {
+	QUnit.test("goToStep should be applied on id, containing with special symbols (::)", async function (assert) {
 		var oWizard = new Wizard({
 			id: "wizard::complex::id",
 			steps: [ new WizardStep(), new WizardStep(), new WizardStep() ]
@@ -221,7 +228,7 @@ sap.ui.define([
 		oWizard._getNextStep();
 		oWizard.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 		oWizard.goToStep(oWizard.getSteps()[0]);
 
 		assert.ok(oSpy.returned(oWizard), "goToStep is executed");
@@ -246,14 +253,14 @@ sap.ui.define([
 
 	QUnit.test("addStep() should log an error", function (assert) {
 		// 3 steps are already added to the Wizard
-		for (var i = 0; i < 6; i++) {
+		for (let i = 0; i < 6; i++) {
 			this.oWizard.addStep(new WizardStep());
 		}
 
 		assert.ok(this.oSpies.error.calledOnce, "Wizard should log error when maximum allowed steps are exceeded.");
 	});
 
-	QUnit.test("Validate min step count inside onBeforeRendering", function (assert) {
+	QUnit.test("Validate min step count inside onBeforeRendering", async function (assert) {
 		var oWizard = new Wizard({
 			id: "wizard::id",
 			steps: [ new WizardStep(), new WizardStep()]
@@ -261,7 +268,7 @@ sap.ui.define([
 
 		oWizard.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oSpies.error.calledOnce, "Wizard should log error when minimum allowed step number is not met.");
 
@@ -272,7 +279,7 @@ sap.ui.define([
 		oWizard.destroy();
 	});
 
-	QUnit.test("Validate max step count inside onBeforeRendering", function (assert) {
+	QUnit.test("Validate max step count inside onBeforeRendering", async function (assert) {
 		var oWizard = new Wizard({
 			id: "wizard::id",
 			steps: [ new WizardStep(), new WizardStep(), new WizardStep(), new WizardStep(),
@@ -281,7 +288,7 @@ sap.ui.define([
 
 		oWizard.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(this.oSpies.error.calledOnce, "Wizard should not log error when max allowed step number is reached.");
 
@@ -292,13 +299,13 @@ sap.ui.define([
 		oWizard.destroy();
 	});
 
-	QUnit.test("DestroySteps() empties the steps aggregation", function (assert) {
+	QUnit.test("DestroySteps() empties the steps aggregation", async function (assert) {
 		//Arrange
 		var oSpy = this.spy(Wizard.prototype, "_activateAllPreceedingSteps");
 
 		//Act
 		this.oWizard.destroySteps();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.ok(this.oWizard.getSteps().length === 0, "Aggregation should be empty");
@@ -361,6 +368,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Click on next button should change the enable state of the button", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oWizard.invalidateStep(this.oWizard._getStartingStep());
 		this.clock.tick(500);
 
@@ -370,6 +378,8 @@ sap.ui.define([
 
 		assert.strictEqual(firstStepVisibility, false, "On the first step button should not be visible");
 		assert.strictEqual(this.oWizard._getNextButton().getVisible(), true, "On the second step button should be visible");
+
+		runAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.test("Click on next on lastStep should call complete", function (assert) {
@@ -404,11 +414,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Next button should not be visible on non validated step", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oButton = this.oWizard._getNextButton();
 		this.oWizard.getSteps()[0].setValidated(false);
 		this.clock.tick(500);
 
 		assert.ok(!oButton.getVisible(), "Button should not be visible");
+		runAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.test("GetProgress() should return the progress of the wizard", function (assert) {
@@ -474,11 +486,11 @@ sap.ui.define([
 		 assert.strictEqual(this.oWizard.getProgress(), 2, "Should be at step 1");
 	 });
 
-	QUnit.test("setVisible() of WizardStep should not change the visibility of the steps", function (assert) {
+	QUnit.test("setVisible() of WizardStep should not change the visibility of the steps", async function (assert) {
 		var step0 = this.oWizard.getSteps()[0];
 		var domRefInit = step0.$()[0];
 		step0.setVisible(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(step0.$()[0], domRefInit, "setVisible(false) of the wizardStep should not hide the step");
 	});
 
@@ -491,7 +503,7 @@ sap.ui.define([
 		assert.ok(this.oWizard.previousStep().previousStep(), "previousStep chaining should not throw an Error");
 	});
 
-	QUnit.test("currentStep is set correctly", function (assert) {
+	QUnit.test("currentStep is set correctly", async function (assert) {
 		var oStep1 = new WizardStep({id: "firstStep", title: "First", optional: true}),
 			oStep2 = new WizardStep({id: "secondStep", title: "Second", optional: false}),
 			oStep3 = new WizardStep({id: "thirdStep", title: "Third"});
@@ -503,7 +515,7 @@ sap.ui.define([
 
 		// arrange
 		oWizard.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//assert
 		assert.strictEqual(oWizard.getCurrentStep(), oWizard.getSteps()[2].getId(), "The currentStep is the correct one.");
@@ -512,7 +524,7 @@ sap.ui.define([
 		oWizard.destroy();
 	});
 
-	QUnit.test("Optional Step property", function (assert) {
+	QUnit.test("Optional Step property", async function (assert) {
 		var oNavigator,
 			oFirstStepRef,
 			oSecondStepRef,
@@ -534,7 +546,7 @@ sap.ui.define([
 
 		// arrange
 		oWizard.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oNavigator = oWizard._getProgressNavigator();
 		oFirstStepRef = jQuery(oNavigator.$().find("li")[0]);
@@ -548,19 +560,19 @@ sap.ui.define([
 		oWizard.destroy();
 	});
 
-	QUnit.test("addStep - next button handler propagation", function (assert) {
+	QUnit.test("addStep - next button handler propagation", async function (assert) {
 		var oStep1 = new WizardStep({
 			title: "First"
 		}), oWizard = new Wizard({
 			steps: [oStep1]
 		});
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oWizard.removeAllSteps();
 
-		Core.applyChanges();
+		await nextUIUpdate();
 		oWizard.addStep(oStep1);
 
 		// assert
@@ -649,14 +661,14 @@ sap.ui.define([
 
 	QUnit.module("Methods");
 
-	QUnit.test("_getStepScrollOffset", function (assert) {
+	QUnit.test("_getStepScrollOffset", async function (assert) {
 		var oStep1 = new WizardStep({
 			title: "First"
 		}), oWizard = new Wizard({
 			steps: [oStep1]
 		});
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oWizard.removeAllSteps();
@@ -677,7 +689,7 @@ sap.ui.define([
 
 	QUnit.module("Wizard Branching", {
 		sWizardId: "wizard-branching-id",
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.externalStep = new WizardStep();
 			this.step6 = new WizardStep({
 				content : []
@@ -715,7 +727,7 @@ sap.ui.define([
 			});
 
 			this.oWizard.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.stub(ObjectPool.prototype, "returnObject").callsFake(function () {
 			});
@@ -767,7 +779,7 @@ sap.ui.define([
 		assert.strictEqual(stepsAfterDiscard, 1, "should be equal to 1");
 	});
 
-	QUnit.test("First step's initial nextStep shouldn't be overwritten during onafterrendering", function (assert) {
+	QUnit.test("First step's initial nextStep shouldn't be overwritten during onafterrendering", async function (assert) {
 		var step3 = new WizardStep({
 			content: []
 		}), step2 = new WizardStep({
@@ -784,7 +796,7 @@ sap.ui.define([
 		});
 
 		wizard.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(step1.getNextStep(), step2.getId(), "Step1's nextStep is not overwritten");
@@ -834,7 +846,7 @@ sap.ui.define([
 			}, "Should raise an error.");
 	});
 
-	QUnit.test("Wizard should render the steps in correct order", function (assert) {
+	QUnit.test("Wizard should render the steps in correct order", async function (assert) {
 		var s4 = new WizardStep({id: "wizStep4"}),
 			s2 = new WizardStep({id: "wizStep2", nextStep: s4}),
 			s3 = new WizardStep({id: "wizStep3", subsequentSteps: [s2, s4]}),
@@ -846,7 +858,7 @@ sap.ui.define([
 		});
 
 		oWiz.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var sectionWrapper = oWiz.$().find(".sapMWizardStepContainer")[0],
 			aChildren = Array.prototype.slice.call(sectionWrapper.children),
@@ -861,7 +873,7 @@ sap.ui.define([
 		oWiz.destroy();
 	});
 
-	QUnit.test("Wizard shouldn't throw an error, when currentStep is set.", function (assert) {
+	QUnit.test("Wizard shouldn't throw an error, when currentStep is set.", async function (assert) {
 		var s3 = new WizardStep({id: "wizStep3"}),
 			s2 = new WizardStep({id: "wizStep2", nextStep: "wizStep3"}),
 			s1 = new WizardStep({id: "wizStep1", nextStep: "wizStep2", subsequentSteps: [s2, s3]});
@@ -873,7 +885,7 @@ sap.ui.define([
 		});
 
 		oWiz.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(s3.getDomRef(), "Step3 is rendered.");
 		assert.ok(s2.getDomRef(), "Step2 is rendered.");
@@ -898,7 +910,7 @@ sap.ui.define([
 
 	QUnit.module("Wizard ACC", {
 		sWizardId: "wizard-acc-id",
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oWizard = new Wizard(this.sWizardId, {
 				steps: [
 					new WizardStep({
@@ -916,7 +928,7 @@ sap.ui.define([
 			});
 
 			this.oWizard.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oResourceBundle = Library.getResourceBundleFor("sap.m");
 
@@ -936,7 +948,7 @@ sap.ui.define([
 		assert.strictEqual(sAriaLabel, sWizardLabel, "Aria-label attribute of the wizard should be set to '" + sWizardLabel + "'");
 	});
 
-	QUnit.test("WizardStep labelled-by reference number step and title", function (assert) {
+	QUnit.test("WizardStep labelled-by reference number step and title", async function (assert) {
 		var oSpy = this.spy(WizardStep.prototype, "_setNumberInvisibleText"),
 			oWizard = new Wizard({
 			steps: [
@@ -952,14 +964,14 @@ sap.ui.define([
 		});
 
 		oWizard.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oSpy.calledWith(1), "The correct step position is forwarded to the wizard step.");
 
 		// set-up
 		oWizard.nextStep();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oSpy.calledWith(2), "The correct step position is forwarded to the wizard step.");
@@ -969,7 +981,7 @@ sap.ui.define([
 
 	QUnit.module("Wizard Navigation", {
 		sWizardId: "wizard-nav-id",
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oWizard = new Wizard(this.sWizardId, {
 				steps: [
 					new WizardStep({
@@ -987,7 +999,7 @@ sap.ui.define([
 			});
 
 			this.oWizard.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oResourceBundle = Library.getResourceBundleFor("sap.m");
 
@@ -999,7 +1011,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Basic interaction", function (assert) {
+	QUnit.test("Basic interaction", async function (assert) {
 		var oNextButton = this.oWizard._getNextButton();
 
 		// assert
@@ -1007,25 +1019,26 @@ sap.ui.define([
 
 		// act
 		oNextButton.$().tap();
-		Core.applyChanges();
+		await nextUIUpdate();
 		// assert
 		oNextButton = this.oWizard._getNextButton();
 		assert.strictEqual(this.oWizard.getProgressStep().getId(), this.oWizard.getSteps()[1].getId(), "The wizard has navigated to the next step on next button click.");
 		assert.strictEqual(this.oWizard._getNextButtonText(), this.oResourceBundle.getText("WIZARD_STEP") + " " + 3, "The next button's text is correct.");
 	});
 
-	QUnit.test("Step rerendering on navigation", function (assert) {
+	QUnit.test("Step rerendering on navigation", async function (assert) {
 		var oNextButton = this.oWizard._getNextButton();
 
 		var oRenderingSpy =  this.spy(WizardStep.prototype, "onBeforeRendering");
 		// act
 		oNextButton.$().tap();
-		Core.applyChanges();
+		await nextUIUpdate();
 		// assert
 		assert.notOk(oRenderingSpy.called, "The wizard step should not be rerendered on navigation.");
 	});
 
 	QUnit.test("setShowNextButton(false)", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oWizard.setShowNextButton(false);
 		this.clock.tick(500);
 
@@ -1039,9 +1052,11 @@ sap.ui.define([
 		// assert
 		oNextButton = this.oWizard._getNextButton();
 		assert.notOk(oNextButton.getVisible(), "The next button for step 2 should be hidden.");
+		runAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.test("setShowNextButton()", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		assert.ok(this.oWizard._getNextButton().getVisible(), "The next button for step 1 should be visible.");
 
 		// act
@@ -1056,10 +1071,11 @@ sap.ui.define([
 		this.clock.tick(500);
 		// assert
 		assert.notOk(this.oWizard._getNextButton().getVisible(), "The next button for step 2 should be hidden.");
-
+		runAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.test("showNextButton set to false initially", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oWizard = new Wizard({
 			steps: [new WizardStep({validated: true})],
 			showNextButton: false
@@ -1074,9 +1090,11 @@ sap.ui.define([
 
 		// clean up
 		oWizard.destroy();
+		runAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.test("nextButton visibility on discardProgress", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// act
 		this.oWizard.nextStep().nextStep();
 		this.oWizard.discardProgress(this.oWizard.getSteps()[0]);
@@ -1090,9 +1108,12 @@ sap.ui.define([
 				assert.notOk(oStep.$().hasClass("sapMWizardStepActivated"), "The discarded steps are hidden.");
 			}
 		}, this);
+
+		runAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.test("step's height after discardProgress", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var aWizardSteps = this.oWizard.getSteps(),
 			oFirstStep = aWizardSteps[0],
 			iInitialHeight = oFirstStep.getDomRef().offsetHeight,
@@ -1115,6 +1136,7 @@ sap.ui.define([
 		}, this);
 
 		assert.strictEqual(iInitialHeight, iHeightAfterDiscard, "Discarding progress doesn't change the height of the steps.");
+		runAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.test("isStepFinal", function (assert) {
@@ -1170,7 +1192,8 @@ sap.ui.define([
 		oTestPage.destroy();
 	});
 
-	QUnit.test("Correct style classes are applied", function (assert) {
+	QUnit.test("Correct style classes are applied", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oStep1 = new WizardStep({id: "firstStep", title: "First"}),
 			oStep2 = new WizardStep({id: "secondStep", title: "Second"}),
@@ -1182,16 +1205,16 @@ sap.ui.define([
 			});
 
 		oWizard.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		//Act
 		oWizard.addStyleClass("sapUiResponsivePadding--header");
 		oWizard.addStyleClass("sapUiResponsivePadding--content");
 
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oWizard.setWidth("300px");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 
 		var $wizardProgressNavigator = oWizard.$().find("#testWizard-progressNavigator"),
@@ -1208,7 +1231,7 @@ sap.ui.define([
 
 		//Act
 		oWizard.setWidth("700px");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		$wizardProgressNavigator = oWizard.$().find("#testWizard-progressNavigator");
 		$wizardStepContent = oWizard.$().find("#testWizard-step-container");
@@ -1223,7 +1246,7 @@ sap.ui.define([
 
 		//Act
 		oWizard.setWidth("1300px");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		$wizardProgressNavigator = oWizard.$().find("#testWizard-progressNavigator");
 		$wizardStepContent = oWizard.$().find("#testWizard-step-container");
@@ -1238,7 +1261,7 @@ sap.ui.define([
 
 		//Act
 		oWizard.setWidth("1700px");
-		Core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		$wizardProgressNavigator = oWizard.$().find("#testWizard-progressNavigator");
 		$wizardStepContent = oWizard.$().find("#testWizard-step-container");
@@ -1253,11 +1276,12 @@ sap.ui.define([
 		assert.ok(bIsContentResponsive, "The sapUi-Std-PaddingXL class is applied to the content");
 
 		oWizard.destroy();
+		runAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.module("Wizard sticky content interface", {
 		sWizardId: "wizard-sticky-id",
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oWizard = new Wizard(this.sWizardId, {
 				steps: [
 					new WizardStep({
@@ -1275,7 +1299,7 @@ sap.ui.define([
 			});
 
 			this.oWizard.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oWizard.destroy();
@@ -1323,7 +1347,7 @@ sap.ui.define([
 		assert.strictEqual(oPrependSpy.firstCall.args[0][0], $WizardElement, "The sticky content was returned to the correct DOM element.");
 	});
 
-	QUnit.test("goToStep should consider bFocusFirstStepElement in Page Mode", function (assert) {
+	QUnit.test("goToStep should consider bFocusFirstStepElement in Page Mode", async function (assert) {
 		var oBtn = new Button();
 		var oSecondStep = new WizardStep({
 			validated: true,
@@ -1342,10 +1366,10 @@ sap.ui.define([
 			]
 		}).placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oWizard._activateStep(oSecondStep);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oWizard.goToStep(oSecondStep, true);
 
@@ -1357,7 +1381,7 @@ sap.ui.define([
 
 	QUnit.module("Progress Navigator", {
 		sWizardId: "wizard-nav-id",
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oWizardStep0 = new WizardStep({
 				id: "Step1",
 				title: "Step 1"
@@ -1377,7 +1401,7 @@ sap.ui.define([
 			});
 
 			this.oWizard.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oResourceBundle = Library.getResourceBundleFor("sap.m");
 		},
@@ -1407,11 +1431,11 @@ sap.ui.define([
 		assert.strictEqual(jQuery($aNavigatorSteps[2]).attr("id"), sThirdId, "Third navigator step id is as expected");
 	});
 
-	QUnit.test("New added wizard step without predefined id generates proper id for the progress navigator li item", function(assert){
+	QUnit.test("New added wizard step without predefined id generates proper id for the progress navigator li item", async function(assert){
 		assert.strictEqual(this.oWizard.getSteps().length, 3, "Wizard has 3 steps");
 
 		this.oWizard.addStep(new WizardStep());
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oWizard.getSteps().length, 4, "Wizard has 4 steps");
 		const oProgressNavigator = this.oWizard._getProgressNavigator();
@@ -1423,11 +1447,11 @@ sap.ui.define([
 		assert.strictEqual(jQuery($aNavigatorSteps[3]).attr("id"), sLastStepId, "Newly added wizard step results in element in the navigator with proper id");
 	});
 
-	QUnit.test("New added wizard step with predefined id generates proper id for the progress navigator li item", function(assert){
+	QUnit.test("New added wizard step with predefined id generates proper id for the progress navigator li item", async function(assert){
 		assert.strictEqual(this.oWizard.getSteps().length, 3, "Wizard has 3 steps");
 
 		this.oWizard.addStep(new WizardStep("test"));
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oWizard.getSteps().length, 4, "Wizard has 4 steps");
 		const oProgressNavigator = this.oWizard._getProgressNavigator();
@@ -1438,11 +1462,11 @@ sap.ui.define([
 		assert.strictEqual(jQuery($aNavigatorSteps[3]).attr("id"), sLastStepId, "Newly added wizard step results in element in the navigator with proper id");
 	});
 
-	QUnit.test("Removing wizard step does not break progress navigator IDs", function(assert){
+	QUnit.test("Removing wizard step does not break progress navigator IDs", async function(assert){
 		this.stub(DesignTime, "isDesignModeEnabled").returns(true);
 
 		this.oWizard.removeStep(this.oWizardStep0);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		const oProgressNavigator = this.oWizard._getProgressNavigator();
 		const $aNavigatorSteps = oProgressNavigator.$().find("li");

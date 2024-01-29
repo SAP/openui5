@@ -1956,10 +1956,7 @@ sap.ui.define([
 				}
 			},
 			Wizard: {
-				title: "QUnit Page for sap.m.Wizard",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "QUnit Page for sap.m.Wizard"
 			},
 			WizardIntegrationOpa: {
 				title: "Opa test Page for sap.m.Wizard",
@@ -1980,9 +1977,6 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.WizardStep",
 				qunit: {
 					version: 2
-				},
-				sinon: {
-					version: 4
 				}
 			},
 			"changeHandler/MoveTableColumns": {
