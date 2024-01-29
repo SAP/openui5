@@ -1748,10 +1748,7 @@ sap.ui.define([
 				title: "QUnit Tests - sap.m.Text"
 			},
 			TextArea: {
-				title: "Test Page for sap.m.TextArea",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "Test Page for sap.m.TextArea"
 			},
 			/**
 			 * @deprecated as of version 1.50

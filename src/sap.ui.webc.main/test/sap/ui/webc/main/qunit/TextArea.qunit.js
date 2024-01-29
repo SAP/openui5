@@ -2,15 +2,15 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/TextArea"
-], function(createAndAppendDiv, Core, TextArea) {
+], function(createAndAppendDiv, nextUIUpdate, TextArea) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oTextArea = new TextArea({
 				placeholder: "This is my placeholder value",
 				value: "Control value",
@@ -24,7 +24,7 @@ sap.ui.define([
 				}
 			});
 			this.oTextArea.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oTextArea.destroy();

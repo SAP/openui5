@@ -13,15 +13,15 @@
 		}'>
 	</script>
 	<style>
-		.sapUiBody {
+		#body.sapUiBody {
 			height: 100vh;
 			overflow: hidden;
 		}
 	</style>
 
 	<script>
-		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
+				"sap/ui/core/Core",
 				"sap/ui/webc/main/TextArea",
 				"sap/ui/webc/main/Label",
 				"sap/ui/webc/main/Toast",
@@ -29,7 +29,8 @@
 				"sap/ui/webc/main/Title",
 				"sap/ui/webc/fiori/Page",
 				"sap/ui/webc/fiori/Bar"
-			], function (
+			], async function (
+				Core,
 				TextArea,
 				Label,
 				Toast,
@@ -38,6 +39,8 @@
 				Page,
 				Bar
 			) {
+				await Core.ready();
+
 				var oVerticalLayout = new sap.ui.layout.VerticalLayout({
 					content: [
 						new Label("label1", {
@@ -222,7 +225,6 @@
 
 				oPage.placeAt("body");
 			});
-		});
 	</script>
 </head>
 
