@@ -167,13 +167,14 @@
 								   class="sapUiRtaAddIFrameDialogEditUrlLabel" text="{dialogInfo>/text/editUrlLabel}" design="Bold" />
 							<TextArea
 								id="sapUiRtaAddIFrameDialog_EditUrlTA"
+								fieldGroupIds = "sapUiRtaAddIFrameDialog_EditUrlTA"
 								ariaLabelledBy="sapUiRtaAddIFrameDialog_EditUrlLabel"
 								class="sapUiRtaAddIFrameDialog_EditUrlTA"
 								valueLiveUpdate="true"
 								value="{dialogInfo>/frameUrl/value}"
 								valueState="{= !!${dialogInfo>/frameUrlError/value} ? 'Error' : 'None'}"
 								valueStateText="{dialogInfo>/frameUrlError/value}"
-								liveChange="onUrlChange"
+								validateFieldGroup="onValidateUrl"
 								rows="11"
 								width="100%" />
 						</items>
