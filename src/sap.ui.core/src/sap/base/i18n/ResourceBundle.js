@@ -687,7 +687,7 @@ sap.ui.define([
 			// headers might contain "accept-language" tag which can lead to a different properties
 			// request, therefore it needs to be integrated into the cache key
 			// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
-			var sCacheKey = JSON.stringify({url: sUrl, headers: mHeaders});
+			var sCacheKey = JSON.stringify({url: new URL(sUrl, document.baseURI).href, headers: mHeaders});
 
 			var oOptions = {
 				url: sUrl,
