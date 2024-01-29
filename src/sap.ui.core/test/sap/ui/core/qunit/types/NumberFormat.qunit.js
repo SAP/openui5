@@ -33,7 +33,49 @@ sap.ui.define([
 			decimalSeparator: ","
 		});
 
+	function getNumber(sNumber, bAsNumber) {
+		return bAsNumber ? Number(sNumber) : sNumber;
+	}
+
 	QUnit.module("NumberFormat");
+
+	//*********************************************************************************************
+[
+	{sInteger: "0", iSummand: 5, sResult: "5"},
+	{sInteger: "0", iSummand: 1, sResult: "1"},
+	{sInteger: "0", iSummand: -1, sResult: "-1"},
+	{sInteger: "0", iSummand: -5, sResult: "-5"},
+	{sInteger: "1", iSummand: 5, sResult: "6"},
+	{sInteger: "1", iSummand: 1, sResult: "2"},
+	{sInteger: "1", iSummand: -1, sResult: "0"},
+	{sInteger: "1", iSummand: -5, sResult: "-4"},
+	{sInteger: "9", iSummand: 5, sResult: "14"},
+	{sInteger: "9", iSummand: 1, sResult: "10"},
+	{sInteger: "9", iSummand: -1, sResult: "8"},
+	{sInteger: "9", iSummand: -5, sResult: "4"},
+	{sInteger: "10", iSummand: 5, sResult: "15"},
+	{sInteger: "10", iSummand: 1, sResult: "11"},
+	{sInteger: "10", iSummand: -1, sResult: "9"},
+	{sInteger: "10", iSummand: -5, sResult: "5"},
+	{sInteger: "-1", iSummand: 5, sResult: "4"},
+	{sInteger: "-1", iSummand: 1, sResult: "0"},
+	{sInteger: "-1", iSummand: -1, sResult: "-2"},
+	{sInteger: "-1", iSummand: -5, sResult: "-6"},
+	{sInteger: "-9", iSummand: 5, sResult: "-4"},
+	{sInteger: "-9", iSummand: 1, sResult: "-8"},
+	{sInteger: "-9", iSummand: -1, sResult: "-10"},
+	{sInteger: "-9", iSummand: -5, sResult: "-14"},
+	{sInteger: "-10", iSummand: 5, sResult: "-5"},
+	{sInteger: "-10", iSummand: 1, sResult: "-9"},
+	{sInteger: "-10", iSummand: -1, sResult: "-11"},
+	{sInteger: "-10", iSummand: -5, sResult: "-15"}
+].forEach((oFixture) => {
+	const {sInteger, iSummand, sResult} = oFixture;
+	QUnit.test(`add: (${sInteger}) + (${iSummand}) = ${sResult}`, function (assert) {
+		// code under test
+		assert.strictEqual(NumberFormat.add(sInteger, iSummand), sResult);
+	});
+});
 
 	QUnit.test("invalid groupingSize", function(assert) {
 		[-1, 0].forEach(function (groupingSize) {
@@ -809,17 +851,21 @@ sap.ui.define([
 		assert.strictEqual(oFloatInstanceWithPreserveDecimals.format(123456789.123456789), "123,456,789.12345679", "123456789.12345679 (number)");
 	});
 
-	QUnit.test("float with rounding", function (assert) {
+[false, true].forEach((bAsNumber) => {
+	QUnit.test("float with rounding - number as string: " + !bAsNumber, function (assert) {
 		var oFloatInstanceWithPreserveDecimals = NumberFormat.getFloatInstance({preserveDecimals: true});
 
 		// 123456789.12345679
-		assert.strictEqual(oDefaultFloat.format(123456789.12345679), "123,456,789.12345679", "123456789.12345679 (number)");
-		assert.strictEqual(oFloatInstanceWithPreserveDecimals.format(123456789.12345679), "123,456,789.12345679", "123456789.12345679 (number)");
+		assert.strictEqual(oDefaultFloat.format(getNumber("123456789.12345679", bAsNumber)), "123,456,789.12345679");
+		assert.strictEqual(oFloatInstanceWithPreserveDecimals.format(getNumber("123456789.12345679", bAsNumber)),
+			"123,456,789.12345679");
 
 		// 0.9999999999999999
-		assert.strictEqual(oDefaultFloat.format(0.9999999999999999), "0.9999999999999999", "0.9999999999999999");
-		assert.strictEqual(oFloatInstanceWithPreserveDecimals.format(0.9999999999999999), "0.9999999999999999", "0.9999999999999999");
+		assert.strictEqual(oDefaultFloat.format(getNumber("0.9999999999999999", bAsNumber)), "0.9999999999999999");
+		assert.strictEqual(oFloatInstanceWithPreserveDecimals.format(getNumber("0.9999999999999999", bAsNumber)),
+			"0.9999999999999999");
 	});
+});
 
 	QUnit.test("float with big numbers and maxIntegerDigits", function (assert) {
 		var oLocale = new Locale("de-DE");
@@ -1032,61 +1078,87 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("float format with default rounding mode: HALF_AWAY_FROM_ZERO", function (assert) {
+[false, true].forEach((bAsNumber) => {
+	const sTitle = "float format with default rounding mode: HALF_AWAY_FROM_ZERO - number as string: " + !bAsNumber;
+	QUnit.test(sTitle, function (assert) {
 		var oFormat = NumberFormat.getFloatInstance({
 			maxFractionDigits: 3
 		});
 
-		assert.strictEqual(oFormat.format(.127), "0.127", ".127");
-		assert.strictEqual(oFormat.format(.1230), "0.123", ".123");
-		assert.strictEqual(oFormat.format(.1234), "0.123", ".1234");
-		assert.strictEqual(oFormat.format(.1235), "0.124", ".1235");
-		assert.strictEqual(oFormat.format(.1239), "0.124", ".1239");
-		assert.strictEqual(oFormat.format(2.1999), "2.2", "2.1999");
-		assert.strictEqual(oFormat.format(2.11), "2.11", "2.11");
-		assert.strictEqual(oFormat.format(-.1234), "-0.123", "-.1234");
-		assert.strictEqual(oFormat.format(-.1236), "-0.124", "-.1236");
-		assert.strictEqual(oFormat.format(.0005), "0.001", ".0005");
-		assert.strictEqual(oFormat.format(.0004), "0", ".0004");
-		assert.strictEqual(oFormat.format(-.0005), "-0.001", "-.0005");
-		assert.strictEqual(oFormat.format(-.0004), "0", "-.0004");
+		assert.strictEqual(oFormat.format(getNumber(".127", bAsNumber)), "0.127", ".127");
+		assert.strictEqual(oFormat.format(getNumber(".1230", bAsNumber)), "0.123", ".123");
+		assert.strictEqual(oFormat.format(getNumber(".1234", bAsNumber)), "0.123", ".1234");
+		assert.strictEqual(oFormat.format(getNumber(".1235", bAsNumber)), "0.124", ".1235");
+		assert.strictEqual(oFormat.format(getNumber(".1239", bAsNumber)), "0.124", ".1239");
+		assert.strictEqual(oFormat.format(getNumber("2.1999", bAsNumber)), "2.2", "2.1999");
+		assert.strictEqual(oFormat.format(getNumber("2.11", bAsNumber)), "2.11", "2.11");
+		assert.strictEqual(oFormat.format(getNumber("-.1234", bAsNumber)), "-0.123", "-.1234");
+		assert.strictEqual(oFormat.format(getNumber("-.1236", bAsNumber)), "-0.124", "-.1236");
+		assert.strictEqual(oFormat.format(getNumber(".0005", bAsNumber)), "0.001", ".0005");
+		assert.strictEqual(oFormat.format(getNumber(".0004", bAsNumber)), "0", ".0004");
+		assert.strictEqual(oFormat.format(getNumber("-.0005", bAsNumber)), "-0.001", "-.0005");
+		assert.strictEqual(oFormat.format(getNumber("-.0004", bAsNumber)), "0", "-.0004");
+		assert.strictEqual(oFormat.format(getNumber("-.0000000004", bAsNumber)), "0", "-.0000000004");
 
 		oFormat = NumberFormat.getFloatInstance({
 			maxFractionDigits: 2
 		});
 
 		// These two are the famous test cases for problematic rounding in Javascript
-		assert.strictEqual(oFormat.format(35.855), "35.86", "35.855");
-		assert.strictEqual(oFormat.format(1.005), "1.01", "1.005");
+		assert.strictEqual(oFormat.format(getNumber("35.855", bAsNumber)), "35.86", "35.855");
+		assert.strictEqual(oFormat.format(getNumber("1.005", bAsNumber)), "1.01", "1.005");
 
-		assert.strictEqual(oFormat.format(-35.855), "-35.86", "-35.855");
-		assert.strictEqual(oFormat.format(-1.005), "-1.01", "-1.005");
+		assert.strictEqual(oFormat.format(getNumber("-35.855", bAsNumber)), "-35.86", "-35.855");
+		assert.strictEqual(oFormat.format(getNumber("-1.005", bAsNumber)), "-1.01", "-1.005");
+
+		oFormat = NumberFormat.getFloatInstance({maxFractionDigits: 0});
+		assert.strictEqual(oFormat.format(getNumber("-.567", bAsNumber)), "-1", "-.567");
+		assert.strictEqual(oFormat.format(getNumber("-.456", bAsNumber)), "0", "-.456");
+		assert.strictEqual(oFormat.format(getNumber(".456", bAsNumber)), "0", ".456");
+		assert.strictEqual(oFormat.format(getNumber(".567", bAsNumber)), "1", ".567");
+		assert.strictEqual(oFormat.format(getNumber("-2.3456e2", bAsNumber)), "-235", "-2.3456e3");
+		assert.strictEqual(oFormat.format(getNumber("-2.3456e1", bAsNumber)), "-23", "-2.3456e2");
+		assert.strictEqual(oFormat.format(getNumber("2.3456e1", bAsNumber)), "23", "2.3456e2");
+		assert.strictEqual(oFormat.format(getNumber("2.3456e2", bAsNumber)), "235", "2.3456e3");
 
 		oFormat = NumberFormat.getFloatInstance({
 			decimals: 2
 		});
-		assert.strictEqual(oFormat.format(.005), "0.01", ".005");
-		assert.strictEqual(oFormat.format(.004), "0.00", ".004");
-		assert.strictEqual(oFormat.format(-.005), "-0.01", "-.005");
-		assert.strictEqual(oFormat.format(-.004), "0.00", "-.004");
-
+		assert.strictEqual(oFormat.format(getNumber(".005", bAsNumber)), "0.01", ".005");
+		assert.strictEqual(oFormat.format(getNumber(".004", bAsNumber)), "0.00", ".004");
+		assert.strictEqual(oFormat.format(getNumber("-.005", bAsNumber)), "-0.01", "-.005");
+		assert.strictEqual(oFormat.format(getNumber("-.004", bAsNumber)), "0.00", "-.004");
 	});
+});
 
-	QUnit.test("float format with rounding mode: CEILING", function (assert) {
+[false, true].forEach((bAsNumber) => {
+	QUnit.test("float format with rounding mode: CEILING - number as string: " + !bAsNumber, function (assert) {
 		var oFormat = NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 			roundingMode: NumberFormat.RoundingMode.CEILING
 		});
 
-		assert.strictEqual(oFormat.format(.1230), "0.123", ".123");
-		assert.strictEqual(oFormat.format(.1234), "0.124", ".1234");
-		assert.strictEqual(oFormat.format(.1235), "0.124", ".1235");
-		assert.strictEqual(oFormat.format(.1239), "0.124", ".1239");
-		assert.strictEqual(oFormat.format(2.1999), "2.2", "2.1999");
-		assert.strictEqual(oFormat.format(2.11), "2.11", "2.11");
-		assert.strictEqual(oFormat.format(-.1234), "-0.123", "-.1234");
-		assert.strictEqual(oFormat.format(-.1236), "-0.123", "-.1236");
+		assert.strictEqual(oFormat.format(getNumber(".1230", bAsNumber)), "0.123", ".123");
+		assert.strictEqual(oFormat.format(getNumber(".1234", bAsNumber)), "0.124", ".1234");
+		assert.strictEqual(oFormat.format(getNumber(".1235", bAsNumber)), "0.124", ".1235");
+		assert.strictEqual(oFormat.format(getNumber(".1239", bAsNumber)), "0.124", ".1239");
+		assert.strictEqual(oFormat.format(getNumber("2.1999", bAsNumber)), "2.2", "2.1999");
+		assert.strictEqual(oFormat.format(getNumber("2.11", bAsNumber)), "2.11", "2.11");
+		assert.strictEqual(oFormat.format(getNumber("-.1234", bAsNumber)), "-0.123", "-.1234");
+		assert.strictEqual(oFormat.format(getNumber("-.1236", bAsNumber)), "-0.123", "-.1236");
+		assert.strictEqual(oFormat.format(getNumber("2", bAsNumber)), "2", "2");
+
+		oFormat = NumberFormat.getFloatInstance({
+			maxFractionDigits: 0,
+			roundingMode: NumberFormat.RoundingMode.CEILING
+		});
+		assert.strictEqual(oFormat.format(getNumber(".1230", bAsNumber)), "1", ".1230");
+		assert.strictEqual(oFormat.format(getNumber("-2.3456e2", bAsNumber)), "-234", "-2.3456e3");
+		assert.strictEqual(oFormat.format(getNumber("-2.3456e1", bAsNumber)), "-23", "-2.3456e2");
+		assert.strictEqual(oFormat.format(getNumber("2.3456e1", bAsNumber)), "24", "2.3456e2");
+		assert.strictEqual(oFormat.format(getNumber("2.3456e2", bAsNumber)), "235", "2.3456e3");
 	});
+});
 
 	QUnit.test("float format with rounding mode: CEILING (via legacy all lower case letters: ceiling)", function (assert) {
 		var oFormat = NumberFormat.getFloatInstance({
@@ -1120,72 +1192,91 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format(-.1236), "-0.123", "-.1236");
 	});
 
-	QUnit.test("float format with rounding mode: FLOOR", function (assert) {
+[false, true].forEach((bAsNumber) => {
+	QUnit.test("float format with rounding mode: FLOOR - number as string: " + !bAsNumber, function (assert) {
 		var oFormat = NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 			roundingMode: NumberFormat.RoundingMode.FLOOR
 		});
 
-		assert.strictEqual(oFormat.format(.1230), "0.123", ".123");
-		assert.strictEqual(oFormat.format(.1234), "0.123", ".1234");
-		assert.strictEqual(oFormat.format(.1235), "0.123", ".1235");
-		assert.strictEqual(oFormat.format(.1239), "0.123", ".1239");
-		assert.strictEqual(oFormat.format(2.0001), "2", "2.0001");
-		assert.strictEqual(oFormat.format(2.11), "2.11", "2.11");
-		assert.strictEqual(oFormat.format(-.1234), "-0.124", "-.1234");
-		assert.strictEqual(oFormat.format(-.1236), "-0.124", "-.1236");
-	});
+		assert.strictEqual(oFormat.format(getNumber(".1230", bAsNumber)), "0.123", ".123");
+		assert.strictEqual(oFormat.format(getNumber(".1234", bAsNumber)), "0.123", ".1234");
+		assert.strictEqual(oFormat.format(getNumber(".1235", bAsNumber)), "0.123", ".1235");
+		assert.strictEqual(oFormat.format(getNumber(".1239", bAsNumber)), "0.123", ".1239");
+		assert.strictEqual(oFormat.format(getNumber("2.0001", bAsNumber)), "2", "2.0001");
+		assert.strictEqual(oFormat.format(getNumber("2.11", bAsNumber)), "2.11", "2.11");
+		assert.strictEqual(oFormat.format(getNumber("-.1234", bAsNumber)), "-0.124", "-.1234");
+		assert.strictEqual(oFormat.format(getNumber("-.1236", bAsNumber)), "-0.124", "-.1236");
 
-	QUnit.test("float format with rounding mode: TOWARDS_ZERO", function (assert) {
+		oFormat = NumberFormat.getFloatInstance({
+			maxFractionDigits: 0,
+			roundingMode: NumberFormat.RoundingMode.FLOOR
+		});
+		assert.strictEqual(oFormat.format(getNumber(".1230", bAsNumber)), "0", ".1230");
+		assert.strictEqual(oFormat.format(getNumber("-2.3456e2", bAsNumber)), "-235", "-2.3456e3");
+		assert.strictEqual(oFormat.format(getNumber("-2.3456e1", bAsNumber)), "-24", "-2.3456e2");
+		assert.strictEqual(oFormat.format(getNumber("2.3456e1", bAsNumber)), "23", "2.3456e2");
+		assert.strictEqual(oFormat.format(getNumber("2.3456e2", bAsNumber)), "234", "2.3456e3");
+	});
+});
+
+[false, true].forEach((bAsNumber) => {
+	QUnit.test("float format with rounding mode: TOWARDS_ZERO - number as string: " + !bAsNumber, function (assert) {
 		var oFormat = NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 			roundingMode: NumberFormat.RoundingMode.TOWARDS_ZERO
 		});
 
-		assert.strictEqual(oFormat.format(.1230), "0.123", ".123");
-		assert.strictEqual(oFormat.format(.1234), "0.123", ".1234");
-		assert.strictEqual(oFormat.format(.1235), "0.123", ".1235");
-		assert.strictEqual(oFormat.format(.1239), "0.123", ".1239");
-		assert.strictEqual(oFormat.format(2.0001), "2", "2.0001");
-		assert.strictEqual(oFormat.format(2.11), "2.11", "2.11");
-		assert.strictEqual(oFormat.format(-.1234), "-0.123", "-.1234");
-		assert.strictEqual(oFormat.format(-.1235), "-0.123", "-.1235");
-		assert.strictEqual(oFormat.format(-.1236), "-0.123", "-.1236");
+		assert.strictEqual(oFormat.format(getNumber(".1230", bAsNumber)), "0.123", ".123");
+		assert.strictEqual(oFormat.format(getNumber(".1234", bAsNumber)), "0.123", ".1234");
+		assert.strictEqual(oFormat.format(getNumber(".1235", bAsNumber)), "0.123", ".1235");
+		assert.strictEqual(oFormat.format(getNumber(".1239", bAsNumber)), "0.123", ".1239");
+		assert.strictEqual(oFormat.format(getNumber("2.0001", bAsNumber)), "2", "2.0001");
+		assert.strictEqual(oFormat.format(getNumber("2.11", bAsNumber)), "2.11", "2.11");
+		assert.strictEqual(oFormat.format(getNumber("-.1234", bAsNumber)), "-0.123", "-.1234");
+		assert.strictEqual(oFormat.format(getNumber("-.1235", bAsNumber)), "-0.123", "-.1235");
+		assert.strictEqual(oFormat.format(getNumber("-.1236", bAsNumber)), "-0.123", "-.1236");
 	});
+});
 
-	QUnit.test("float format with rounding mode: AWAY_FROM_ZERO", function (assert) {
+[false, true].forEach((bAsNumber) => {
+	QUnit.test("float format with rounding mode: AWAY_FROM_ZERO - number as string: " + !bAsNumber, function (assert) {
 		var oFormat = NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 			roundingMode: NumberFormat.RoundingMode.AWAY_FROM_ZERO
 		});
 
-		assert.strictEqual(oFormat.format(.1230), "0.123", ".123");
-		assert.strictEqual(oFormat.format(.1234), "0.124", ".1234");
-		assert.strictEqual(oFormat.format(.1235), "0.124", ".1235");
-		assert.strictEqual(oFormat.format(.1239), "0.124", ".1239");
-		assert.strictEqual(oFormat.format(2.1999), "2.2", "2.0001");
-		assert.strictEqual(oFormat.format(2.11), "2.11", "2.11");
-		assert.strictEqual(oFormat.format(-.1234), "-0.124", "-.1234");
-		assert.strictEqual(oFormat.format(-.1235), "-0.124", "-.1235");
-		assert.strictEqual(oFormat.format(-.1236), "-0.124", "-.1236");
+		assert.strictEqual(oFormat.format(getNumber(".1230", bAsNumber)), "0.123", ".123");
+		assert.strictEqual(oFormat.format(getNumber(".1234", bAsNumber)), "0.124", ".1234");
+		assert.strictEqual(oFormat.format(getNumber(".1235", bAsNumber)), "0.124", ".1235");
+		assert.strictEqual(oFormat.format(getNumber(".1239", bAsNumber)), "0.124", ".1239");
+		assert.strictEqual(oFormat.format(getNumber("2.1999", bAsNumber)), "2.2", "2.0001");
+		assert.strictEqual(oFormat.format(getNumber("2.11", bAsNumber)), "2.11", "2.11");
+		assert.strictEqual(oFormat.format(getNumber("-.1234", bAsNumber)), "-0.124", "-.1234");
+		assert.strictEqual(oFormat.format(getNumber("-.1235", bAsNumber)), "-0.124", "-.1235");
+		assert.strictEqual(oFormat.format(getNumber("-.1236", bAsNumber)), "-0.124", "-.1236");
 	});
+});
 
-	QUnit.test("float format with rounding mode: HALF_TOWARDS_ZERO", function (assert) {
+[false, true].forEach((bAsNumber) => {
+	QUnit.test("float format with rounding mode: HALF_TOWARDS_ZERO - number as string: " + !bAsNumber, function (assert) {
 		var oFormat = NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 			roundingMode: NumberFormat.RoundingMode.HALF_TOWARDS_ZERO
 		});
 
-		assert.strictEqual(oFormat.format(.1230), "0.123", ".123");
-		assert.strictEqual(oFormat.format(.1234), "0.123", ".1234");
-		assert.strictEqual(oFormat.format(.1235), "0.123", ".1235");
-		assert.strictEqual(oFormat.format(.1239), "0.124", ".1239");
-		assert.strictEqual(oFormat.format(2.1999), "2.2", "2.1999");
-		assert.strictEqual(oFormat.format(2.11), "2.11", "2.11");
-		assert.strictEqual(oFormat.format(-.1230), "-0.123", "-.1230");
-		assert.strictEqual(oFormat.format(-.1234), "-0.123", "-.1234");
-		assert.strictEqual(oFormat.format(-.1235), "-0.123", "-.1235");
-		assert.strictEqual(oFormat.format(-.1239), "-0.124", "-.1239");
+		assert.strictEqual(oFormat.format(getNumber(".1230", bAsNumber)), "0.123", ".123");
+		assert.strictEqual(oFormat.format(getNumber(".1234", bAsNumber)), "0.123", ".1234");
+		assert.strictEqual(oFormat.format(getNumber(".1235", bAsNumber)), "0.123", ".1235");
+		assert.strictEqual(oFormat.format(getNumber(".1239", bAsNumber)), "0.124", ".1239");
+		assert.strictEqual(oFormat.format(getNumber("2.1999", bAsNumber)), "2.2", "2.1999");
+		assert.strictEqual(oFormat.format(getNumber("2.11", bAsNumber)), "2.11", "2.11");
+		assert.strictEqual(oFormat.format(getNumber("-.1230", bAsNumber)), "-0.123", "-.1230");
+		assert.strictEqual(oFormat.format(getNumber("-.1234", bAsNumber)), "-0.123", "-.1234");
+		assert.strictEqual(oFormat.format(getNumber("-.1235", bAsNumber)), "-0.123", "-.1235");
+		assert.strictEqual(oFormat.format(getNumber("-.1239", bAsNumber)), "-0.124", "-.1239");
+		assert.strictEqual(oFormat.format(getNumber("-0.0001", bAsNumber)), "0", "-0.0001");
+
 
 		oFormat = NumberFormat.getFloatInstance({
 			maxFractionDigits: 2,
@@ -1193,29 +1284,31 @@ sap.ui.define([
 		});
 
 		// These two are the famous test cases for problematic rounding in Javascript
-		assert.strictEqual(oFormat.format(35.855), "35.85", "35.855");
-		assert.strictEqual(oFormat.format(1.005), "1", "1.005");
+		assert.strictEqual(oFormat.format(getNumber("35.855", bAsNumber)), "35.85", "35.855");
+		assert.strictEqual(oFormat.format(getNumber("1.005", bAsNumber)), "1", "1.005");
 
-		assert.strictEqual(oFormat.format(-35.855), "-35.85", "-35.855");
-		assert.strictEqual(oFormat.format(-1.005), "-1", "-1.005");
+		assert.strictEqual(oFormat.format(getNumber("-35.855", bAsNumber)), "-35.85", "-35.855");
+		assert.strictEqual(oFormat.format(getNumber("-1.005", bAsNumber)), "-1", "-1.005");
 	});
+});
 
-	QUnit.test("float format with rounding mode: HALF_CEILING", function (assert) {
+[false, true].forEach((bAsNumber) => {
+	QUnit.test("float format with rounding mode: HALF_CEILING - number as string: " + !bAsNumber, function (assert) {
 		var oFormat = NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 			roundingMode: NumberFormat.RoundingMode.HALF_CEILING
 		});
 
-		assert.strictEqual(oFormat.format(.1230), "0.123", ".123");
-		assert.strictEqual(oFormat.format(.1234), "0.123", ".1234");
-		assert.strictEqual(oFormat.format(.1235), "0.124", ".1235");
-		assert.strictEqual(oFormat.format(.1239), "0.124", ".1239");
-		assert.strictEqual(oFormat.format(2.1999), "2.2", "2.1999");
-		assert.strictEqual(oFormat.format(2.11), "2.11", "2.11");
-		assert.strictEqual(oFormat.format(-.1230), "-0.123", "-.1230");
-		assert.strictEqual(oFormat.format(-.1234), "-0.123", "-.1234");
-		assert.strictEqual(oFormat.format(-.1235), "-0.123", "-.1235");
-		assert.strictEqual(oFormat.format(-.1239), "-0.124", "-.1239");
+		assert.strictEqual(oFormat.format(getNumber(".1230", bAsNumber)), "0.123", ".123");
+		assert.strictEqual(oFormat.format(getNumber(".1234", bAsNumber)), "0.123", ".1234");
+		assert.strictEqual(oFormat.format(getNumber(".1235", bAsNumber)), "0.124", ".1235");
+		assert.strictEqual(oFormat.format(getNumber(".1239", bAsNumber)), "0.124", ".1239");
+		assert.strictEqual(oFormat.format(getNumber("2.1999", bAsNumber)), "2.2", "2.1999");
+		assert.strictEqual(oFormat.format(getNumber("2.11", bAsNumber)), "2.11", "2.11");
+		assert.strictEqual(oFormat.format(getNumber("-.1230", bAsNumber)), "-0.123", "-.1230");
+		assert.strictEqual(oFormat.format(getNumber("-.1234", bAsNumber)), "-0.123", "-.1234");
+		assert.strictEqual(oFormat.format(getNumber("-.1235", bAsNumber)), "-0.123", "-.1235");
+		assert.strictEqual(oFormat.format(getNumber("-.1239", bAsNumber)), "-0.124", "-.1239");
 
 		oFormat = NumberFormat.getFloatInstance({
 			maxFractionDigits: 2,
@@ -1223,29 +1316,31 @@ sap.ui.define([
 		});
 
 		// These two are the famous test cases for problematic rounding in Javascript
-		assert.strictEqual(oFormat.format(35.855), "35.86", "35.855");
-		assert.strictEqual(oFormat.format(1.005), "1.01", "1.005");
+		assert.strictEqual(oFormat.format(getNumber("35.855", bAsNumber)), "35.86", "35.855");
+		assert.strictEqual(oFormat.format(getNumber("1.005", bAsNumber)), "1.01", "1.005");
 
-		assert.strictEqual(oFormat.format(-35.855), "-35.85", "-35.855");
-		assert.strictEqual(oFormat.format(-1.005), "-1", "-1.005");
+		assert.strictEqual(oFormat.format(getNumber("-35.855", bAsNumber)), "-35.85", "-35.855");
+		assert.strictEqual(oFormat.format(getNumber("-1.005", bAsNumber)), "-1", "-1.005");
 	});
+});
 
-	QUnit.test("float format with rounding mode: HALF_FLOOR", function (assert) {
+[false, true].forEach((bAsNumber) => {
+	QUnit.test("float format with rounding mode: HALF_FLOOR - number as string: " + !bAsNumber, function (assert) {
 		var oFormat = NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
 			roundingMode: NumberFormat.RoundingMode.HALF_FLOOR
 		});
 
-		assert.strictEqual(oFormat.format(.1230), "0.123", ".123");
-		assert.strictEqual(oFormat.format(.1234), "0.123", ".1234");
-		assert.strictEqual(oFormat.format(.1235), "0.123", ".1235");
-		assert.strictEqual(oFormat.format(.1239), "0.124", ".1239");
-		assert.strictEqual(oFormat.format(2.1999), "2.2", "2.1999");
-		assert.strictEqual(oFormat.format(2.11), "2.11", "2.11");
-		assert.strictEqual(oFormat.format(-.1230), "-0.123", "-.1230");
-		assert.strictEqual(oFormat.format(-.1234), "-0.123", "-.1234");
-		assert.strictEqual(oFormat.format(-.1235), "-0.124", "-.1235");
-		assert.strictEqual(oFormat.format(-.1239), "-0.124", "-.1239");
+		assert.strictEqual(oFormat.format(getNumber(".1230", bAsNumber)), "0.123", ".123");
+		assert.strictEqual(oFormat.format(getNumber(".1234", bAsNumber)), "0.123", ".1234");
+		assert.strictEqual(oFormat.format(getNumber(".1235", bAsNumber)), "0.123", ".1235");
+		assert.strictEqual(oFormat.format(getNumber(".1239", bAsNumber)), "0.124", ".1239");
+		assert.strictEqual(oFormat.format(getNumber("2.1999", bAsNumber)), "2.2", "2.1999");
+		assert.strictEqual(oFormat.format(getNumber("2.11", bAsNumber)), "2.11", "2.11");
+		assert.strictEqual(oFormat.format(getNumber("-.1230", bAsNumber)), "-0.123", "-.1230");
+		assert.strictEqual(oFormat.format(getNumber("-.1234", bAsNumber)), "-0.123", "-.1234");
+		assert.strictEqual(oFormat.format(getNumber("-.1235", bAsNumber)), "-0.124", "-.1235");
+		assert.strictEqual(oFormat.format(getNumber("-.1239", bAsNumber)), "-0.124", "-.1239");
 
 		oFormat = NumberFormat.getFloatInstance({
 			maxFractionDigits: 2,
@@ -1253,12 +1348,13 @@ sap.ui.define([
 		});
 
 		// These two are the famous test cases for problematic rounding in Javascript
-		assert.strictEqual(oFormat.format(35.855), "35.85", "35.855");
-		assert.strictEqual(oFormat.format(1.005), "1", "1.005");
+		assert.strictEqual(oFormat.format(getNumber("35.855", bAsNumber)), "35.85", "35.855");
+		assert.strictEqual(oFormat.format(getNumber("1.005", bAsNumber)), "1", "1.005");
 
-		assert.strictEqual(oFormat.format(-35.855), "-35.86", "-35.855");
-		assert.strictEqual(oFormat.format(-1.005), "-1.01", "-1.005");
+		assert.strictEqual(oFormat.format(getNumber("-35.855", bAsNumber)), "-35.86", "-35.855");
+		assert.strictEqual(oFormat.format(getNumber("-1.005", bAsNumber)), "-1.01", "-1.005");
 	});
+});
 
 	QUnit.test("float format with custom rounding function", function (assert) {
 		var oSpy = this.spy(function (a, b) {
@@ -2298,15 +2394,15 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format("0", "area-hectare"), "0 ha", "string number '0'");
 
 		//exponential numbers as string
-		assert.strictEqual(oFormat.format("0.2e2", "area-hectare"), "020 ha", "string number '0.2e2'");
-		assert.strictEqual(oFormat.format("0.02e2", "area-hectare"), "002 ha", "string number '0.2e2'");
-		assert.strictEqual(oFormat.format("0.00e2", "area-hectare"), "000 ha", "string number '0.2e2'");
-		assert.strictEqual(oFormat.format("0.000e2", "area-hectare"), "000.0 ha", "string number '0.2e2'");
+		assert.strictEqual(oFormat.format("0.2e2", "area-hectare"), "20 ha", "string number '0.2e2'");
+		assert.strictEqual(oFormat.format("0.02e2", "area-hectare"), "2 ha", "string number '0.2e2'");
+		assert.strictEqual(oFormat.format("0.00e2", "area-hectare"), "0 ha", "string number '0.2e2'");
+		assert.strictEqual(oFormat.format("0.000e2", "area-hectare"), "0 ha", "string number '0.2e2'");
 
 		//invalid number
 		assert.strictEqual(oFormat.format("2e2", "area-hectare"), "200 ha", "string number '2e2'");
 		assert.strictEqual(oFormat.format("2e1", "area-hectare"), "20 ha", "string number '2e1'");
-		assert.strictEqual(oFormat.format("0e2", "area-hectare"), "000 ha", "string number '0e2'");
+		assert.strictEqual(oFormat.format("0e2", "area-hectare"), "0 ha", "string number '0e2'");
 		assert.strictEqual(oFormat.format("a", "area-hectare"), "", "character a");
 		assert.strictEqual(oFormat.format("null", "area-hectare"), "", "string 'null'");
 		assert.strictEqual(oFormat.format(undefined, "area-hectare"), "", "undefined");
@@ -2866,8 +2962,8 @@ sap.ui.define([
 
 		assert.strictEqual(oFormat.format("12"), "1,200%", "12");
 		assert.strictEqual(oFormat.format("12.34"), "1,234%", "12.34");
-		assert.strictEqual(oFormat.format(".1234567"), "12.345%", ".1234567");
-		assert.strictEqual(oFormat.format("-.1234567"), "-12.345%", ".1234567");
+		assert.strictEqual(oFormat.format(".1234567"), "12.346%", ".1234567");
+		assert.strictEqual(oFormat.format("-.1234567"), "-12.346%", ".1234567");
 		assert.strictEqual(oFormat.format(".1234"), "12.34%", ".1234");
 	});
 
