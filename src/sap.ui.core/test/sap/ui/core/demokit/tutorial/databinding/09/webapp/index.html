@@ -2,19 +2,17 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Data Binding Tutorial</title>
 	<script id="sap-ui-bootstrap"
 		src="../../../../../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_belize"
-		data-sap-ui-libs="sap.m"
-		data-sap-ui-resourceroots='{
-			"sap.ui.demo.db": "./"
-		}'
-		data-sap-ui-compatVersion="edge"
-		data-sap-ui-async="true">
+		data-sap-ui-theme="sap_horizon"
+		data-sap-ui-compat-version="edge"
+		data-sap-ui-async="true"
+		data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+		data-sap-ui-resource-roots='{"ui5.databinding": "./"}'>
 	</script>
-	<script src="index.js"></script>
 </head>
-<body class="sapUiBody" id="content"></body>
+<body class="sapUiBody" id="content">
+	<div data-sap-ui-component data-name="ui5.databinding" data-id="container" data-settings='{"id" : "databinding"}'></div>
+</body>
 </html>

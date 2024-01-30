@@ -1,14 +1,15 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
-	"sap/m/library"
-], function (Controller, mobileLibrary) {
+	"sap/m/library",
+	"sap/ui/core/mvc/Controller"
+], (mobileLibrary, Controller) => {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.db.controller.App", {
-		formatMail: function(sFirstName, sLastName) {
-			var oBundle = this.getView().getModel("i18n").getResourceBundle();
+	return Controller.extend("ui5.databinding.controller.App", {
+		formatMail(sFirstName, sLastName) {
+			const oBundle = this.getView().getModel("i18n").getResourceBundle();
+
 			return mobileLibrary.URLHelper.normalizeEmail(
-				sFirstName + "." + sLastName + "@example.com",
+				`${sFirstName}.${sLastName}@example.com`,
 				oBundle.getText("mailSubject", [sFirstName]),
 				oBundle.getText("mailBody"));
 		}
