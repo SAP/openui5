@@ -495,7 +495,7 @@ sap.ui.define([
 			for (var i = 0; i < aInfos.length; i++) {
 				sDOMRefID = aInfos[i].id;
 				oElement = document.getElementById(sDOMRefID);
-				oElement.setAttribute("aria-keyshortcuts", _getShortcutHintText(sDOMRefID));
+				oElement && oElement.setAttribute("aria-keyshortcuts", _getShortcutHintText(sDOMRefID));
 			}
 		}
 	};
