@@ -181,10 +181,8 @@ sap.ui.define([
 				true,
 				"isEnabled is called and returns true"
 			);
-			var aPluginList = this.oInvisiblePanelOverlay.getEditableByPlugins();
-			assert.strictEqual(
-				aPluginList.indexOf("sap.ui.rta.plugin.AddXMLAtExtensionPoint"),
-				-1,
+			assert.notOk(
+				this.oInvisiblePanelOverlay.getEditableByPlugins()["sap.ui.rta.plugin.AddXMLAtExtensionPoint"],
 				"then overlay is not marked as editable for addXmlAtExtensionPoint action"
 			);
 		});

@@ -90,11 +90,12 @@ sap.ui.define([
 			var fnDone = assert.async();
 			// To prevent changes in the control's designtime affecting this test, we return
 			// these three plugins and check for the number of plugins in the response
-			sandbox.stub(ElementOverlay.prototype, "getEditableByPlugins").returns([
-				"sap.ui.rta.plugin.Rename",
-				"sap.ui.rta.plugin.Remove",
-				"sap.ui.rta.plugin.Combine"
-			]);
+			sandbox.stub(ElementOverlay.prototype, "getEditableByPlugins").returns({
+				"sap.ui.rta.plugin.Rename": true,
+				"sap.ui.rta.plugin.Remove": true,
+				"sap.ui.rta.plugin.Combine": true,
+				someOtherPlugin: false
+			});
 			// The same goes for the "isAvailable" function
 			sandbox.stub(RenamePlugin.prototype, "isAvailable").returns(true);
 
