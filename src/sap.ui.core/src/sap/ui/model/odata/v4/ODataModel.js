@@ -140,7 +140,7 @@ sap.ui.define([
 		 *   Whether to ignore all annotations from service metadata and "cross-service references";
 		 *   only the value <code>true</code> is allowed. Only annotations from annotation files
 		 *   (see parameter "annotationURI") are loaded. This parameter is not inherited by value
-		 *   list models. @experimental as of version 1.111.0
+		 *   list models. Supported since 1.121.0
 		 * @param {object} [mParameters.metadataUrlParams]
 		 *   Additional map of URL parameters used specifically for $metadata requests. Note that
 		 *   "sap-context-token" applies only to the service's root $metadata, but not to
