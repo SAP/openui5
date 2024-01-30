@@ -20,7 +20,7 @@ sap.ui.require([
 	});
 
 	sap.ui.require([
-		"test-resources/sap/ui/mdc/qunit/table/OpaTests/appUnderTestMDCTable/test/TableJourney"
+		"test-resources/sap/ui/mdc/qunit/table/OpaTests/appTableODataV4/test/TableJourney"
 	], function() {
 		QUnit.start();
 	});

@@ -40,19 +40,6 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.qunit.table.OpaTests.pages.Actions
 	 */
 	return {
-
-		/**
-		 * Just look at the screen
-		 *
-		 * @function
-		 * @name iLookAtTheScreen
-		 * @return {sap.ui.mdc.qunit.table.OpaTests.pages.Actions} Action object
-		 * @private
-		 */
-		iLookAtTheScreen: function() {
-			return this;
-		},
-
 		/**
 		 * Emulates a click action on the 'Select all' check box to select / deselect all visible rows.
 		 * Succeeds only if {@link sap.ui.mdc.Table#multiSelectMode} is set to <code>Default</code>

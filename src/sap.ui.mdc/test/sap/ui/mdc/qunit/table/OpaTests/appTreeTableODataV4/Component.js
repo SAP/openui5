@@ -6,9 +6,9 @@ sap.ui.define([
 	/** @type sap.ui.core.UIComponent */ UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.mdc.table.OpaTests.appMDCTreeTableV4.Component", {
+	return UIComponent.extend("sap.ui.mdc.table.OpaTests.appTreeTableODataV4.Component", {
 		metadata: {
-			id: "appMDCTreeTableV4",
+			id: "appTreeTableODataV4",
 			manifest: "json"
 		},
 

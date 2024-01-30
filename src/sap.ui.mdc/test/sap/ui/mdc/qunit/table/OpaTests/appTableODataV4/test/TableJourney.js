@@ -8,7 +8,7 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary',
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Arrangements",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
-	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/AppUnderTestMDCTable",
+	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/TestObjects",
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	"sap/ui/core/library"
 ], function(
@@ -30,7 +30,7 @@ sap.ui.define([
 	}
 
 	Opa5.extendConfig({
-		viewNamespace: "appUnderTestMDCTable",
+		viewNamespace: "appTableODataV4",
 		arrangements: new Arrangements(),
 		actions: {
 			P13nActions: new P13nActions()
@@ -45,15 +45,15 @@ sap.ui.define([
 		}
 	});
 
-	const sTableId = "container-appUnderTestMDCTable---MyView--mdcTable";
+	const sTableId = "container-appTableODataV4---MyView--mdcTable";
 
 	QUnit.module("MDC Table OpaTests");
 
 	opaTest("After starting the OPA tests and I look at the screen I should see an MDCTable", function(Given, When, Then) {
 		//insert application
-		Given.iStartMyApp("appUnderTestMDCTable");
-		When.onTheAppUnderTestMDCTable.iLookAtTheScreen();
-		Then.onTheAppUnderTestMDCTable.iShouldSeeATable(sTableId);
+		Given.iStartMyApp("appTableODataV4");
+		When.onTheApp.iLookAtTheScreen();
+		Then.onTheApp.iShouldSeeATable(sTableId);
 	});
 
 	/* =========================================================== */
@@ -477,7 +477,7 @@ sap.ui.define([
 		When.onTheAppUnderTestMDCTable.iRemoveAllFiltersViaInfoFilterBar(sTableId);
 		Then.onTheAppUnderTestMDCTable.iShouldNotSeeInfoFilterBar(sTableId);
 
-		Then.onTheAppUnderTestMDCTable.iTeardownMyAppFrame();
+		Then.iTeardownMyAppFrame();
 	});
 
 });

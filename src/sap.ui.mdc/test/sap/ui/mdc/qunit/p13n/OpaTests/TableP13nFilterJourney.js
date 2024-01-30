@@ -8,9 +8,9 @@ sap.ui.define([
 	'sap/ui/Device',
 	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary',
 	'test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util',
-	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/AppUnderTestMDCTable",
+	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/TestObjects",
 	'sap/ui/core/library'
-], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device, TestLibrary, TableTestUtil, AppUnderTestMDCTable, coreLibrary) {
+], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device, TestLibrary, TableTestUtil, TableTestObjects, coreLibrary) {
 	'use strict';
 
 	Opa5.extendConfig({

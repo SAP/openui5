@@ -5,7 +5,7 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Arrangement',
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
-	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/AppUnderTestMDCTable"
+	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/TestObjects"
 ], function (Opa5, opaTest, TestLibrary, Action, Arrangement, TableUtil, TableTestLibrary) {
 	'use strict';
 

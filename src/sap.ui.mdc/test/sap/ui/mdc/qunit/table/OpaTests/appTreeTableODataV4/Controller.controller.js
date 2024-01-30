@@ -4,7 +4,7 @@ sap.ui.define([
 ], function(Controller, StateUtil) {
 	"use strict";
 
-	return Controller.extend("sap.ui.mdc.tableOpaTests.appMDCTreeTableV4.Controller", {
+	return Controller.extend("sap.ui.mdc.tableOpaTests.appTreeTableODataV4.Controller", {
 		onInit: function() {
 			StateUtil.attachStateChange(this._onStateChange.bind(this));
 		},
