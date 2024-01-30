@@ -3,10 +3,14 @@
 sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
+	"sap/ui/test/actions/Press",
+	"sap/ui/mdc/enums/TableP13nMode",
 	"sap/ui/core/library"
 ], function(
 	/** @type sap.ui.test.opaQunit */ opaTest,
 	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
+	Press,
+	TableP13nMode,
 	coreLibrary
 ) {
 	"use strict";
@@ -53,7 +57,7 @@ sap.ui.define([
 
 		// Press Info Filter Bar and check if filter is set
 		When.onTheAppMDCTable.iPressFilterInfoBar(sTableId);
-		Then.onTheAppMDCTable.iShouldSeeP13nDialog();
+		Then.P13nAssertions.iShouldSeeTheFilterDialog();
 		Then.onTheAppMDCTable.iShouldSeeValuesInFilterDialog("Category", "Notebooks");
 
 		// Check Focus Handling when closing the dialog
@@ -70,6 +74,12 @@ sap.ui.define([
 	QUnit.module("Column menu");
 
 	opaTest("Open column menu", function(Given, When, Then) {
+		When.onTheApp.iGetTheTableInstance(sTableId, function(oTable) {
+			// TODO: Move tests related to grouping to ResponsiveTableJourney and DataAggregation app -> TableJourney. The mock server used in this
+			//       app does not support grouping of the GridTable.
+			oTable.setP13nMode(oTable.getP13nMode().concat(TableP13nMode.Group));
+		});
+
 		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Category");
 		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
 		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(2);
@@ -176,5 +186,32 @@ sap.ui.define([
 		When.onTheApp.iGetTheTableInstance(sTableId, function(oTable) {
 			oTable._setShowP13nButton(true);
 		});
+	});
+
+	QUnit.module("DataStateIndicator");
+
+	opaTest("Set Messages", function(Given, When, Then) {
+		When.waitFor({
+			id: "setMessagesButton",
+			actions: new Press()
+		});
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 201);
+	});
+
+	opaTest("Filter by messages", function(Given, When, Then) {
+		When.onTheAppMDCTable.iPressFilterOfDataStateIndicator(sTableId);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 1);
+		Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 0, data: {ProductID: "HT-1002"}});
+	});
+
+	opaTest("Press filter info bar to open filter dialog", function(Given, When, Then) {
+		When.onTheAppMDCTable.iPressFilterInfoBarOfDataStateIndicator(sTableId);
+		Then.P13nAssertions.iShouldSeeTheFilterDialog();
+		Then.P13nActions.iPressDialogCancel();
+	});
+
+	opaTest("Remove message filtering", function(Given, When, Then) {
+		When.onTheAppMDCTable.iPressFilterOfDataStateIndicator(sTableId);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 201);
 	});
 });

@@ -410,7 +410,7 @@ sap.ui.define([
 							return oTable.getRowBinding().getLength() === iLength;
 						},
 						success: function() {
-							Opa5.assert.ok(true, `Binding length is (${iLength})`);
+							Opa5.assert.ok(true, `Binding length is ${iLength}`);
 						},
 						errorMessage: `Binding length (expected: ${iLength}, actual: ${oTable.getRowBinding().getLength()})`
 					});
@@ -888,20 +888,6 @@ sap.ui.define([
 				visible: false,
 				success: function(oFilterBar) {
 					Opa5.assert.notOk(oFilterBar.getVisible(), "Info Filterbar is not visible");
-				}
-			});
-		},
-
-		/**
-		 * Checks if the p13n dialog is open.
-		 *
-		 * @returns {Promise} OPA waitFor
-		 */
-		iShouldSeeP13nDialog: function() {
-			return Util.waitForP13nDialog.call(this, {
-				success: function(oDialog) {
-					Opa5.assert.ok(oDialog.getParent().isA("sap.m.p13n.Popup"), "Dialog's parent is a P13n Popup");
-					Opa5.assert.ok(oDialog.isOpen(), "P13n Dialog is open");
 				}
 			});
 		},
