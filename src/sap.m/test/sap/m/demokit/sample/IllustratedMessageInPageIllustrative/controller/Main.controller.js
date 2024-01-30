@@ -17,6 +17,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap
 						{ key: oIllustratedMessageType.NoFilterResults, text: 'NoFilterResults'},
 						{ key: oIllustratedMessageType.PageNotFound, text: 'PageNotFound'},
 						{ key: oIllustratedMessageType.SleepingBell, text: 'SleepingBell'},
+						{ key: oIllustratedMessageType.NewMail, text: 'NewMail'},
 						{ key: oIllustratedMessageType.NoMailV1, text: 'NoMailV1'},
 						{ key: oIllustratedMessageType.Tent, text: 'Tent'},
 						{ key: oIllustratedMessageType.EmptyList, text: 'EmptyList'},
