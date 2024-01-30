@@ -2,9 +2,8 @@ sap.ui.define(function() {
 	"use strict";
 
 	return {
-		name: "MDCTable related tests", /* Just for a nice title on the pages */
+		name: "Library 'sap.ui.mdc' - Testsuite Table", /* Just for a nice title on the pages */
 		defaults: {
-			group: "Personalization",
 			qunit: {
 				version: 2, // Whether QUnit should be loaded and if so, which version
 				reorder: false
@@ -38,44 +37,34 @@ sap.ui.define(function() {
 		},
 		tests: {
 			"Table": {
-				group: "Controls",
-				module: "./{name}.qunit"
+				group: "Controls"
 			},
 			"Column": {
-				group: "Controls",
-				module: "./{name}.qunit"
+				group: "Controls"
 			},
 			"CreationRow": {
-				group: "Controls",
-				module: "./{name}.qunit"
+				group: "Controls"
 			},
 			"Menu": {
-				group: "Controls",
-				module: "./{name}.qunit"
+				group: "Controls"
 			},
 			"RowActionItem": {
-				group: "Controls",
-				module: "./{name}.qunit"
+				group: "Controls"
 			},
 			"TableTypeBase": {
-				group: "Table types",
-				module: "./{name}.qunit"
+				group: "Table types"
 			},
 			"GridTableType": {
-				group: "Table types",
-				module: "./{name}.qunit"
+				group: "Table types"
 			},
 			"ResponsiveTableType": {
-				group: "Table types",
-				module: "./{name}.qunit"
+				group: "Table types"
 			},
 			"TreeTableType": {
-				group: "Table types",
-				module: "./{name}.qunit"
+				group: "Table types"
 			},
 			"TableDelegate": {
-				group: "Delegates",
-				module: "./{name}.qunit"
+				group: "Delegates"
 			},
 			"TableDelegate for ODataV4": {
 				group: "Delegates",
@@ -87,12 +76,11 @@ sap.ui.define(function() {
 				}
 			},
 			"PropertyHelper": {
-				group: "Helper",
-				module: "./{name}.qunit"
+				group: "PropertyHelper"
 			},
 			"PropertyHelper for ODataV4": {
-				group: "Helper",
-				module: "./V4AnalyticsPropertyHelper.qunit"
+				group: "PropertyHelper",
+				module: "./PropertyHelper.ODataV4.qunit"
 			},
 			"Personalization": {
 				group: "Utils",
@@ -104,32 +92,25 @@ sap.ui.define(function() {
 				}
 			},
 			"TableSettings": {
-				group: "Utils",
-				module: "./{name}.qunit"
+				group: "Utils"
 			},
-			"Table Journey": {
+			"Table with ODataV4": {
 				group: "OPA",
-				module: "./OpaTests/TableJourney.qunit",
+				module: "./OpaTests/Table.ODataV4.qunit",
 				autostart: false
 			},
-			"TableFlex": {
+			"TreeTable with ODataV4": {
+				group: "OPA",
+				module: "./OpaTests/TreeTable.ODataV4.qunit",
+				autostart: false
+			},
+			"Flexibility": {
 				group: "Flexibility",
-				module: "./{name}.qunit",
 				ui5: {
 					libs: [
 						"sap.ui.fl", "sap.ui.mdc"
 					]
 				}
-			},
-			"MDCTreeTableV4OPA": {
-				group: "Table UI Test",
-				module: "./OpaTests/MDCTreeTableV4Opa.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				},
-				autostart: false
 			},
 			"ChangeCondenser": {
 				group: "Flexibility",
@@ -148,7 +129,6 @@ sap.ui.define(function() {
 			},
 			"DragDropConfig": {
 				group: "DragAndDrop",
-				module: "./DragDropConfig.qunit",
 				ui5: {
 					libs: ["sap.m", "sap.ui.table", "sap.ui.mdc"]
 				},

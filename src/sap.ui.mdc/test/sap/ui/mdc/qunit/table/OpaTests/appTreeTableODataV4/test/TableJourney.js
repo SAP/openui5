@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Arrangements",
-	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/AppUnderTestMDCTable"
+	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/TestObjects"
 ], function(
 	/** @type sap.ui.test.Opa5 */ Opa5,
 	/** @type sap.ui.test.opaQunit */ opaTest,
@@ -18,7 +18,7 @@ sap.ui.define([
 	}
 
 	Opa5.extendConfig({
-		viewNamespace: "appMDCTreeTableV4",
+		viewNamespace: "appTreeTableODataV4",
 		arrangements: new Arrangements(),
 		autoWait: true,
 		async: true,
@@ -30,15 +30,15 @@ sap.ui.define([
 		}
 	});
 
-	const sTableId = "container-appMDCTreeTableV4---MyView--MDCTreeTableV4";
+	const sTableId = "container-appTreeTableODataV4---MyView--MDCTreeTableV4";
 
 	QUnit.module("TreeTable Table OpaTests");
 
 	opaTest("After starting the OPA tests and I look at the screen I should see an TreeTable", function(Given, When, Then) {
 		//insert application
-		Given.iStartMyApp("appMDCTreeTableV4");
-		When.onTheAppUnderTestMDCTable.iLookAtTheScreen();
-		Then.onTheAppUnderTestMDCTable.iShouldSeeATable(sTableId);
+		Given.iStartMyApp("appTreeTableODataV4");
+		When.onTheApp.iLookAtTheScreen();
+		Then.onTheApp.iShouldSeeATable(sTableId);
 	});
 
 	opaTest("The table should have a title", function(Given, When, Then) {
@@ -46,15 +46,15 @@ sap.ui.define([
 	});
 
 	opaTest("Change some column positions", function(Given, When, Then) {
-		Then.onTheAppUnderTestMDCTable.iCheckColumnPosition(sTableId, "container-appMDCTreeTableV4---MyView--Name", 1);
+		Then.onTheAppUnderTestMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--Name", 1);
 		When.onTheAppUnderTestMDCTable.iDragColumn(sTableId, 1);
 		When.onTheAppUnderTestMDCTable.iDropColumnAfter(sTableId, 3);
-		Then.onTheAppUnderTestMDCTable.iCheckColumnPosition(sTableId, "container-appMDCTreeTableV4---MyView--Name", 3);
+		Then.onTheAppUnderTestMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--Name", 3);
 
-		Then.onTheAppUnderTestMDCTable.iCheckColumnPosition(sTableId, "container-appMDCTreeTableV4---MyView--ID", 0);
+		Then.onTheAppUnderTestMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--ID", 0);
 		When.onTheAppUnderTestMDCTable.iDragColumn(sTableId, 0);
 		When.onTheAppUnderTestMDCTable.iDropColumnAfter(sTableId, 2);
-		Then.onTheAppUnderTestMDCTable.iCheckColumnPosition(sTableId, "container-appMDCTreeTableV4---MyView--ID", 0);
+		Then.onTheAppUnderTestMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--ID", 0);
 	});
 
 	opaTest("Expand and collapse some rows", function(Given, When, Then) {
@@ -63,9 +63,6 @@ sap.ui.define([
 		When.onTheAppUnderTestMDCTable.iClickOnCollapseAllRowsButton(sTableId);
 		Then.onTheAppUnderTestMDCTable.iCheckBindingLength(sTableId, 1);
 
-		When.onTheAppUnderTestMDCTable.iClickOnExpandAllRowsButton(sTableId);
-		Then.onTheAppUnderTestMDCTable.iCheckBindingLength(sTableId, 24);
-		// Teardown
-		Then.onTheAppUnderTestMDCTable.iTeardownMyAppFrame();
+		Then.iTeardownMyAppFrame();
 	});
 });

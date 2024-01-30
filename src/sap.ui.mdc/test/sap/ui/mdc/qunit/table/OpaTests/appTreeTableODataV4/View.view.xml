@@ -4,11 +4,11 @@
 	xmlns:mdcTable="sap.ui.mdc.table"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:variants="sap.ui.fl.variants"
-	controllerName="sap.ui.mdc.tableOpaTests.appMDCTreeTableV4.Controller">
+	controllerName="sap.ui.mdc.tableOpaTests.appTreeTableODataV4.Controller">
     <mdc:Table
         id="MDCTreeTableV4"
         header="Products MDC Table with TreeTableType"
-        delegate='\{ "name": "sap/ui/mdc/tableOpaTests/MDCTreeTableV4Delegate", "payload": \{ "collectionName": "EMPLOYEES" \} \}'
+        delegate='\{ "name": "sap/ui/mdc/tableOpaTests/appTreeTableODataV4/TableDelegate", "payload": \{ "collectionName": "EMPLOYEES" \} \}'
         p13nMode="Column,Sort,Filter"
         autoBindOnInit="true"
         headerVisible="true"
