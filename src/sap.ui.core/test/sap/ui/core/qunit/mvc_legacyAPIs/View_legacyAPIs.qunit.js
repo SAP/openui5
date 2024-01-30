@@ -356,4 +356,49 @@ sap.ui.define([
 			oXMLView.destroy();
 		}.bind(this));
 	});
+
+	QUnit.test("loadControllerClass >> prevent max call stack issue", (assert) => {
+		// Controller definition
+		sap.ui.predefine("my/own/Main.controller", [
+		  "sap/ui/core/mvc/Controller"
+		], function (Controller) {
+		  // define a new controller
+		  return Controller.extend("my.own.Main", {
+			  doSomething: function () {
+			  }
+		  });
+		});
+
+		// View definition
+		sap.ui.predefine("my/own/Main.view", [
+				"sap/ui/core/mvc/View",
+				"sap/m/Button"
+		  ], function (View, Button) {
+			// define a new typed view
+			return View.extend("my.own.Main", {
+				getControllerName: function () {
+					return "my.own.Main";
+				},
+
+				getAutoPrefixId: function () {
+					return true;
+				},
+
+				createContent: function (oController) {
+					return new Button({ text: 'Button pressed!', press: oController.doSomething });
+				}
+			});
+		});
+
+		const expectedErrorMsg = `The controller 'my.own.Main' define for the View with ID 'myOwnView' is not a valid Controller, but rather a View. ` +
+			`This happens when the View and Controller classes have the same fully qualified class name. Please make sure that the class names in` +
+			`Controller.extend("...") and the View.extend("...") call differ. If you migrated a 'JSView' to a 'Typed View' please refer to the documentation section under 'Typed View'`;
+
+		return View.create({
+			id: "myOwnView",
+			viewName: "module:my/own/Main.view"
+		}).catch((err) => {
+			assert.equal(err.message, expectedErrorMsg, "Correct Error thrown");
+		});
+	});
 });
