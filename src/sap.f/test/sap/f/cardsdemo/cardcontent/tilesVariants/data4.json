@@ -1,0 +1,8 @@
+{
+	"title": "Image with Large Size",
+	"subTitle": "Image fits with imageFitType 'Contain'",
+	"icon": {
+		"src": "./images/sap-logo.svg",
+		"shape": "Square"
+	}
+}

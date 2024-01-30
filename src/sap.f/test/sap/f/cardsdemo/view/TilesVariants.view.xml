@@ -13,6 +13,7 @@
 				<ToolbarSpacer/>
 			</Toolbar>
 		</subHeader>
+		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
 		<Panel headerText="Tiles Standard 2x2" class="sapUiSmallMargin">
 			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample1.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample2.json" class="sapUiSmallMargin"/>

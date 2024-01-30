@@ -4173,8 +4173,8 @@ sap.ui.define([
 								}
 							}
 						},
-						"title": "Top 5 products sales",
-						"subTitle": "By average price",
+						"title": "Top 5 Products Sales",
+						"subTitle": "By Average Price",
 						"unitOfMeasurement": "EUR",
 						"mainIndicator": {
 							"number": "{number}",

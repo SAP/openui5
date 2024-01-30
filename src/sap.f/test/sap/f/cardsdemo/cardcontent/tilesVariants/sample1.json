@@ -9,7 +9,7 @@
 			"title": "{parameters>/title/value}",
 			"subTitle": "{parameters>/subTitle/value}",
 			"icon": {
-				"src": "sap-icon://desktop-mobile"
+				"src": "{parameters>/iconSrc/value}"
 			},
 			"status": {
 				"text": "{parameters>/maxItems/value} of 20"
@@ -41,6 +41,9 @@
 				},
 				"subTitle": {
 					"value": "These are the top sellers this month"
+				},
+				"iconSrc": {
+					"value": "sap-icon://desktop-mobile"
 				},
 				"maxItems": {
 					"value": 4
