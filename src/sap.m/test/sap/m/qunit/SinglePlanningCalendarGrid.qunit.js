@@ -1,5 +1,6 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
 	"sap/base/i18n/Formatting",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ResponsivePopover",
@@ -9,11 +10,11 @@ sap.ui.define([
 	"sap/ui/unified/CalendarAppointment",
 	"sap/ui/events/KeyCodes",
 	'sap/ui/unified/calendar/CalendarDate',
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
+	qutils,
 	Formatting,
 	jQuery,
 	ResponsivePopover,
@@ -23,7 +24,6 @@ sap.ui.define([
 	CalendarAppointment,
 	KeyCodes,
 	CalendarDate,
-	oCore,
 	UI5Date,
 	DateTypeRange,
 	nextUIUpdate
@@ -31,6 +31,7 @@ sap.ui.define([
 	"use strict";
 
 	var PlacementType = mobileLibrary.PlacementType;
+	var SinglePlanningCalendarSelectionMode = mobileLibrary.SinglePlanningCalendarSelectionMode;
 
 	QUnit.module("Other");
 
@@ -494,6 +495,34 @@ sap.ui.define([
 		// cleanup
 		oSPCGrid.destroy();
 		await nextUIUpdate(this.clock);
+	});
+
+	QUnit.test("selectedDates: single select via keyboard (Space)", async function (assert){
+		// arrange
+		var iCellIndexInMiddleInWeek = 3,
+			oGrid = new SinglePlanningCalendarGrid({
+				startDate: UI5Date.getInstance(2022,0,1),
+				firstDayOfWeek: 1,
+				dateSelectionMode: SinglePlanningCalendarSelectionMode.SingleSelect
+			});
+
+		oGrid.placeAt("qunit-fixture");
+		await nextUIUpdate(this.clock);
+
+		// assert
+		assert.strictEqual(oGrid.getSelectedDates().length, 0, "no days initially added");
+
+		// act
+		oGrid.$().find('.sapUiCalItem')[iCellIndexInMiddleInWeek].focus();
+
+		qutils.triggerKeyup(document.activeElement, KeyCodes.SPACE, false);
+		await nextUIUpdate(this.clock);
+
+		// assert
+		assert.ok(oGrid.$().find('.sapUiCalItem')[iCellIndexInMiddleInWeek].classList.contains("sapUiCalItemSel"), iCellIndexInMiddleInWeek + " cell is selected");
+
+		//clean up
+		oGrid.destroy();
 	});
 
 	QUnit.module("Events");
