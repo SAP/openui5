@@ -11,6 +11,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap
 
 				var aIMISizeData = [],
 					aIMITypeData = [
+						{ key: oIllustratedMessageType.SignOut, text: 'SignOut'},
 						{ key: oIllustratedMessageType.SearchEarth, text: 'SearchEarth'},
 						{ key: oIllustratedMessageType.SearchFolder, text: 'SearchFolder'},
 						{ key: oIllustratedMessageType.NoFilterResults, text: 'NoFilterResults'},

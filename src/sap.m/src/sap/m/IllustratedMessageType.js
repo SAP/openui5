@@ -226,6 +226,12 @@ sap.ui.define([], function () {
 		SearchFolder: "sapIllus-SearchFolder",
 
 		/**
+		 * "Sign Out" illustration type.
+		 * @public
+		 */
+		SignOut: "sapIllus-SignOut",
+
+		/**
 		 * "Simple Balloon" illustration type.
 		 * @public
 		 */
