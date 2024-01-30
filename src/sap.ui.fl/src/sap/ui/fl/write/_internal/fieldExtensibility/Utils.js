@@ -350,9 +350,9 @@ sap.ui.define([
 	 * @returns {Promise<string|null>} Resolves with navigation URI or null
 	 */
 	Utils.getNavigationUriForIntent = function(mIntent) {
-		return FlexUtils.getUShellService("CrossApplicationNavigation").then(function(oCrossAppNavigationService) {
-			if (oCrossAppNavigationService && oCrossAppNavigationService.hrefForExternal) {
-				return oCrossAppNavigationService.hrefForExternal(mIntent);
+		return FlexUtils.getUShellService("Navigation").then(function(oUshellNavigationService) {
+			if (oUshellNavigationService && oUshellNavigationService.getHref) {
+				return oUshellNavigationService.getHref(mIntent);
 			}
 
 			return Promise.resolve(null);
@@ -414,9 +414,9 @@ sap.ui.define([
 	 * @returns {Promise<Array<boolean>>} Resolves with an array of booleans
 	 */
 	Utils.isNavigationSupportedForIntents = function(aIntents) {
-		return FlexUtils.getUShellService("CrossApplicationNavigation").then(function(oCrossAppNavigationService) {
-			if (oCrossAppNavigationService && oCrossAppNavigationService.isNavigationSupported) {
-				return oCrossAppNavigationService.isNavigationSupported(aIntents).then(function(aResults) {
+		return FlexUtils.getUShellService("Navigation").then(function(oUshellNavigationService) {
+			if (oUshellNavigationService && oUshellNavigationService.isNavigationSupported) {
+				return oUshellNavigationService.isNavigationSupported(aIntents).then(function(aResults) {
 					return aResults.map(function(oResult) {
 						return oResult && oResult.supported === true;
 					});

@@ -3461,7 +3461,7 @@ sap.ui.define([
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 
-		sinon.stub(oValueHelp, "shouldOpenOnFocus").returns(true);
+		sinon.stub(oValueHelp, "shouldOpenOnFocus").returns(Promise.resolve(true));
 		sinon.spy(oValueHelp, "toggleOpen");
 		sinon.stub(oValueHelp, "isOpen").callsFake(function() {
 			return this.toggleOpen.called;
@@ -3477,7 +3477,7 @@ sap.ui.define([
 				//do the same test with opensOnFocus(false) and the open should not be called
 				oField.getFocusDomRef().blur();
 				oValueHelp.shouldOpenOnFocus.resetHistory();
-				oValueHelp.shouldOpenOnFocus.returns(false);
+				oValueHelp.shouldOpenOnFocus.returns(Promise.resolve(false));
 				oValueHelp.toggleOpen.resetHistory();
 
 				oField.focus();
@@ -3489,7 +3489,7 @@ sap.ui.define([
 					// Typehaead schold not open if Dialog was opened
 					oField.getFocusDomRef().blur();
 					oValueHelp.shouldOpenOnFocus.resetHistory();
-					oValueHelp.shouldOpenOnFocus.returns(true);
+					oValueHelp.shouldOpenOnFocus.returns(Promise.resolve(true));
 					oValueHelp.toggleOpen.resetHistory();
 					const aContent = oField.getAggregation("_content");
 					const oContent = aContent && aContent.length > 0 && aContent[0];
@@ -3505,7 +3505,7 @@ sap.ui.define([
 						//in display mode value help must not open
 						oField.getFocusDomRef().blur();
 						oValueHelp.shouldOpenOnFocus.resetHistory();
-						oValueHelp.shouldOpenOnFocus.returns(true);
+						oValueHelp.shouldOpenOnFocus.returns(Promise.resolve(true));
 						oValueHelp.toggleOpen.resetHistory();
 
 						oField.setEditMode(FieldEditMode.Display);
@@ -3516,7 +3516,7 @@ sap.ui.define([
 							oField.focus();
 
 							setTimeout(function () {
-								assert.notOk(oValueHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus must not be called");
+								assert.notOk(oValueHelp.shouldOpenOnFocus.called, "shouldOpenOnFocus must not be called");
 								assert.notOk(oValueHelp.toggleOpen.called, "open not called");
 
 								oValueHelp.close();
@@ -3533,7 +3533,7 @@ sap.ui.define([
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 
-		sinon.stub(oValueHelp, "shouldOpenOnFocus").returns(true);
+		sinon.stub(oValueHelp, "shouldOpenOnFocus").returns(Promise.resolve(true));
 		sinon.spy(oValueHelp, "toggleOpen");
 		sinon.stub(oValueHelp, "isOpen").callsFake(function() {
 			return this.toggleOpen.called;
@@ -3543,9 +3543,9 @@ sap.ui.define([
 
 		return new Promise(function (resolve, reject) {
 			setTimeout(function () {
-				assert.notOk(oValueHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
+				assert.notOk(oValueHelp.shouldOpenOnFocus.called, "shouldOpenOnFocus called once");
 				assert.notOk(oField._iFocusTimer, "FocusTimer not triggered");
-				assert.notOk(oValueHelp.toggleOpen.calledOnce, "open called once");
+				assert.notOk(oValueHelp.toggleOpen.called, "open called once");
 				resolve();
 			},350);
 		});
@@ -3555,7 +3555,7 @@ sap.ui.define([
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 
-		sinon.stub(oValueHelp, "shouldOpenOnClick").returns(true);
+		sinon.stub(oValueHelp, "shouldOpenOnClick").returns(Promise.resolve(true));
 		sinon.spy(oValueHelp, "toggleOpen");
 
 		oField.focus();
@@ -3563,39 +3563,45 @@ sap.ui.define([
 		qutils.triggerEvent("tap", oInnerField.getId());
 
 		assert.ok(oValueHelp.shouldOpenOnClick.calledOnce, "shouldOpenOnClick called once");
-		assert.ok(oValueHelp.toggleOpen.calledOnce, "open called once");
-		assert.ok(oValueHelp.toggleOpen.calledWith(true), "open called for typeahed");
-
-		//do the same test with openByClick(false) and the open should not be called
-		oValueHelp.shouldOpenOnClick.resetHistory();
-		oValueHelp.shouldOpenOnClick.returns(false);
-		oValueHelp.toggleOpen.resetHistory();
-
-		oField.focus();
-		qutils.triggerEvent("tap", oInnerField.getId());
-
-		assert.ok(oValueHelp.shouldOpenOnClick.calledOnce, "shouldOpenOnClick called once");
-		assert.notOk(oValueHelp.toggleOpen.called, "open not called");
-
-		//in display mode value help must not open
-		oValueHelp.shouldOpenOnClick.resetHistory();
-		oValueHelp.shouldOpenOnClick.returns(true);
-		oValueHelp.toggleOpen.resetHistory();
-
-		oField.setEditMode(FieldEditMode.Display);
 		const fnDone = assert.async();
-		setTimeout(async function() { // to wait for promises taht changes inner controls
-			await nextUIUpdate();
+		setTimeout(function() { // As opened after Promise is resolved
+			assert.ok(oValueHelp.toggleOpen.calledOnce, "open called once");
+			assert.ok(oValueHelp.toggleOpen.calledWith(true), "open called for typeahed");
+
+			//do the same test with openByClick(false) and the open should not be called
+			oValueHelp.shouldOpenOnClick.resetHistory();
+			oValueHelp.shouldOpenOnClick.returns(Promise.resolve(false));
+			oValueHelp.toggleOpen.resetHistory();
+
 			oField.focus();
-			oInnerField = oField.getAggregation("_content")[0];
 			qutils.triggerEvent("tap", oInnerField.getId());
 
-			assert.notOk(oValueHelp.shouldOpenOnClick.calledOnce, "shouldOpenOnClick must not be called");
-			assert.notOk(oValueHelp.toggleOpen.called, "open not called");
+			assert.ok(oValueHelp.shouldOpenOnClick.calledOnce, "shouldOpenOnClick called once");
+			setTimeout(function() { // As opened after Promise is resolved
+				assert.notOk(oValueHelp.toggleOpen.called, "open not called");
 
-			oValueHelp.close();
-			fnDone();
-		});
+				//in display mode value help must not open
+				oValueHelp.shouldOpenOnClick.resetHistory();
+				oValueHelp.shouldOpenOnClick.returns(Promise.resolve(true));
+				oValueHelp.toggleOpen.resetHistory();
+
+				oField.setEditMode(FieldEditMode.Display);
+				setTimeout(async function() { // to wait for promises that changes inner controls
+					await nextUIUpdate();
+					oField.focus();
+					oInnerField = oField.getAggregation("_content")[0];
+					qutils.triggerEvent("tap", oInnerField.getId());
+
+					assert.notOk(oValueHelp.shouldOpenOnClick.calledOnce, "shouldOpenOnClick must not be called");
+					setTimeout(function() { // As opened after Promise is resolved
+						assert.notOk(oValueHelp.toggleOpen.called, "open not called");
+
+						oValueHelp.close();
+						fnDone();
+					}, 0);
+				}, 0);
+			}, 0);
+		}, 0);
 	});
 
 	QUnit.test("Opening ValueHelp after isTypeaheadSupported-Promise is resolved", function (assert) {

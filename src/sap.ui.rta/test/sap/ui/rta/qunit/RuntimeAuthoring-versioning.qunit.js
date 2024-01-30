@@ -36,7 +36,7 @@ sap.ui.define([
 		sandbox.stub(FlexUtils, "getUshellContainer").returns({
 			getServiceAsync() {
 				return Promise.resolve({
-					toExternal() {},
+					navigate() {},
 					getHash() {
 						return "Action-somestring";
 					},

@@ -805,23 +805,27 @@ sap.ui.define([
 	/**
 	 * Determines if the value help should be opened when the user focuses the connected control.
 	 *
-	 * @returns {boolean} If <code>true</code>, the value help should open when user focuses the connected field control
+	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user focuses the connected field control
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.shouldOpenOnFocus = function() {
-		return false;
+		const oDelegate = this.getValueHelpDelegate();
+		const oValueHelp = this.getValueHelp();
+		return oDelegate ? oDelegate.shouldOpenOnFocus(oValueHelp, this) : Promise.resolve(false);
 	};
 
 	/**
 	 * Determines if the value help should be opened when the user clicks into the connected control.
 	 *
-	 * @returns {boolean} If <code>true</code>, the value help should open when user clicks into the connected field control
+	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user clicks into the connected field control
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.shouldOpenOnClick = function() {
-		return false;
+		const oDelegate = this.getValueHelpDelegate();
+		const oValueHelp = this.getValueHelp();
+		return oDelegate ? oDelegate.shouldOpenOnClick(oValueHelp, this) : Promise.resolve(false);
 	};
 
 	/**

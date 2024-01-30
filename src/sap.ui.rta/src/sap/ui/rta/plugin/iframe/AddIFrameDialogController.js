@@ -131,7 +131,7 @@ sap.ui.define([
 		onParameterPress(oEvent) {
 			const sKey = oEvent.getSource().getBindingContext("dialogInfo").getObject().key;
 			this._oJSONModel.setProperty("/frameUrl/value", this._addURLParameter(sKey));
-			this.onUrlChange();
+			this.onValidateUrl();
 		},
 
 		/**
@@ -207,7 +207,7 @@ sap.ui.define([
 			return urlCleaner(this._oJSONModel.getProperty("/frameUrl/value"));
 		},
 
-		onUrlChange() {
+		onValidateUrl() {
 			const sUrl = this._buildPreviewURL();
 			const { result: bResult, error: sError } = isValidUrl(sUrl);
 			if (bResult) {

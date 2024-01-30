@@ -370,7 +370,7 @@ sap.ui.define([
 				getServiceAsync(sServiceName) {
 					if (sServiceName === "ShellNavigation") {
 						return Promise.resolve({
-							toExternal() {
+							navigate() {
 								return true;
 							},
 							registerNavigationFilter() {
@@ -422,7 +422,7 @@ sap.ui.define([
 				getServiceAsync(sServiceName) {
 					if (sServiceName === "ShellNavigation") {
 						return Promise.resolve({
-							toExternal() {
+							navigate() {
 								return true;
 							},
 							registerNavigationFilter() {

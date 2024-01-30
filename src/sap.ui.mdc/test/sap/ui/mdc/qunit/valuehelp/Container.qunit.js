@@ -84,13 +84,16 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("default values", function(assert) {
+	QUnit.test("default values", async function(assert) {
 
 		assert.equal(oContainer.getMaxConditions(), undefined, "getMaxConditions");
 		assert.notOk(oContainer.isMultiSelect(), "isMultiSelect");
 		assert.notOk(oContainer.isSingleSelect(), "isSingleSelect");
 		assert.notOk(oContainer.getUseAsValueHelp(), "getUseAsValueHelp");
-		assert.notOk(oContainer.shouldOpenOnClick(), "shouldOpenOnClick");
+		let bShouldOpen = await oContainer.shouldOpenOnClick();
+		assert.notOk(bShouldOpen, "shouldOpenOnClick");
+		bShouldOpen = await oContainer.shouldOpenOnFocus();
+		assert.notOk(bShouldOpen, "shouldOpenOnFocus");
 		assert.notOk(oContainer.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
 		assert.notOk(oContainer.isNavigationEnabled(1), "isNavigationEnabled");
 		assert.ok(oContainer.isFocusInHelp(), "isFocusInHelp");
@@ -585,6 +588,34 @@ sap.ui.define([
 		oContent.destroy();
 		oParentContainer.destroy();
 		oChildContainer.destroy();
+	});
+
+	QUnit.test("shouldOpenOnFocus", async function(assert) {
+
+		sinon.stub(ValueHelpDelegate, "shouldOpenOnFocus").returns(Promise.resolve(true));
+		let bShouldOpen = await oContainer.shouldOpenOnFocus();
+		assert.ok(bShouldOpen, "value taken from delegate");
+
+		ValueHelpDelegate.shouldOpenOnFocus.returns(Promise.resolve(false));
+		bShouldOpen = await oContainer.shouldOpenOnFocus();
+		assert.notOk(bShouldOpen, "value taken from delegate");
+
+		ValueHelpDelegate.shouldOpenOnFocus.restore();
+
+	});
+
+	QUnit.test("shouldOpenOnClick", async function(assert) {
+
+		sinon.stub(ValueHelpDelegate, "shouldOpenOnClick").returns(Promise.resolve(true));
+		let bShouldOpen = await oContainer.shouldOpenOnClick();
+		assert.ok(bShouldOpen, "value taken from delegate");
+
+		ValueHelpDelegate.shouldOpenOnClick.returns(Promise.resolve(false));
+		bShouldOpen = await oContainer.shouldOpenOnClick();
+		assert.notOk(bShouldOpen, "value taken from delegate");
+
+		ValueHelpDelegate.shouldOpenOnClick.restore();
+
 	});
 
 	// TODO: Test Operator determination on Content

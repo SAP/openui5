@@ -529,7 +529,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("No Cross App Navigation Service", function(assert) {
 			var done = assert.async();
-			oSandbox.stub(FlexUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(null));
+			oSandbox.stub(FlexUtils, "getUShellService").withArgs("Navigation").returns(Promise.resolve(null));
 
 			var aNavigationIntents = [{
 				semanticObject: "CustomField",
@@ -561,7 +561,7 @@ sap.ui.define([
 					return Promise.resolve(aResults);
 				}
 			};
-			oSandbox.stub(FlexUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(oCrossApp));
+			oSandbox.stub(FlexUtils, "getUShellService").withArgs("Navigation").returns(Promise.resolve(oCrossApp));
 
 			var aNavigationIntents = [{
 				semanticObject: "CustomField",

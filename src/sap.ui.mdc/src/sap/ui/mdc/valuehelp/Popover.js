@@ -41,32 +41,7 @@ sap.ui.define([
 			interfaces: [
 				"sap.ui.mdc.valuehelp.ITypeaheadContainer", "sap.ui.mdc.valuehelp.IDialogContainer", "sap.ui.core.PopupInterface"
 			],
-			properties: {
-				/**
-				 * Controls the possibility to open this popover container by clicking on a connected control, even if no content enforces it.
-				 *
-				 * <b>Note:</b> By default, a type-ahead is only shown to provide suggestions when users enter input in a connected control.
-				 * This property enables scenarios where popovers need to be shown earlier (for example, recommendations or recently entered values).
-				 * See also {@link module:sap/ui/mdc/ValueHelpDelegate.showTypeahead showTypeahead}
-				 * @since 1.110.0
-				 */
-				opensOnClick: {
-					type: "boolean",
-					defaultValue: false
-				},
-				/**
-				 * Controls the possibility to open this popover container by focussing on a connected control.
-				 *
-				 * <b>Note:</b> By default, a type-ahead is only shown to provide suggestions when users enter input in a connected control.
-				 * This property enables scenarios where popovers need to be shown earlier (for example, recommendations or recently entered values).
-				 * See also {@link module:sap/ui/mdc/ValueHelpDelegate.showTypeahead showTypeahead}
-				 * @since 1.112.0
-				 */
-				opensOnFocus: {
-					type: "boolean",
-					defaultValue: false
-				}
-			},
+			properties: {},
 			defaultAggregation: "content"
 		}
 	});
@@ -391,19 +366,6 @@ sap.ui.define([
 		}
 
 		return Container.prototype.getAriaAttributes.apply(this, arguments);
-
-	};
-
-	Popover.prototype.shouldOpenOnFocus = function() {
-
-		return this.getOpensOnFocus();
-
-	};
-
-	Popover.prototype.shouldOpenOnClick = function() {
-
-		const oContent = this._getContent();
-		return this.isPropertyInitial("opensOnClick") ? !!oContent && oContent.shouldOpenOnClick() : this.getOpensOnClick(); //If opensOnClick is not explicitly set,  the content's preference is used instead.
 
 	};
 

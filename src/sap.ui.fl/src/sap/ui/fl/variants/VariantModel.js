@@ -246,20 +246,21 @@ sap.ui.define([
 			var aServicePromises = [
 				Utils.getUShellService("UserInfo"),
 				Utils.getUShellService("URLParsing"),
-				Utils.getUShellService("CrossApplicationNavigation"),
+				Utils.getUShellService("Navigation"),
 				Utils.getUShellService("ShellNavigation")
 			];
 			return Promise.all(aServicePromises)
 			.then(function(aServices) {
 				setUShellService("UserInfo", aServices[0]);
 				setUShellService("URLParsing", aServices[1]);
-				setUShellService("CrossApplicationNavigation", aServices[2]);
+				setUShellService("Navigation", aServices[2]);
 				setUShellService("ShellNavigation", aServices[3]);
 			})
 			.catch(function(vError) {
 				throw new Error(`Error getting service from Unified Shell: ${vError}`);
 			});
 		}
+		return undefined;
 	}
 
 	function getVariant(aVariants, sVariantKey) {

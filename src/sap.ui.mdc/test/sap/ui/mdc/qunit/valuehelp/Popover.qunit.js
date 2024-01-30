@@ -103,14 +103,16 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("default values", function(assert) {
+	QUnit.test("default values", async function(assert) {
 
 		assert.equal(oPopover.getMaxConditions(), undefined, "getMaxConditions");
 		assert.notOk(oPopover.isMultiSelect(), "isMultiSelect");
 		assert.notOk(oPopover.isSingleSelect(), "isSingleSelect");
 		assert.notOk(oPopover.getUseAsValueHelp(), "getUseAsValueHelp");
-		assert.notOk(oPopover.shouldOpenOnClick(), "shouldOpenOnClick");
-		assert.notOk(oPopover.shouldOpenOnFocus(), "shouldOpenOnFocus");
+		let bShouldOpen = await oPopover.shouldOpenOnClick();
+		assert.notOk(bShouldOpen, "shouldOpenOnClick");
+		bShouldOpen = await oPopover.shouldOpenOnFocus();
+		assert.notOk(bShouldOpen, "shouldOpenOnFocus");
 		assert.notOk(oPopover.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
 		assert.notOk(oPopover.isNavigationEnabled(1), "isNavigationEnabled");
 		assert.notOk(oPopover.isFocusInHelp(), "isFocusInHelp");
@@ -515,32 +517,29 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnFocus", function(assert) {
+	QUnit.test("shouldOpenOnFocus", async function(assert) {
+		let bShouldOpen = await oPopover.shouldOpenOnFocus();
+		assert.ok(bShouldOpen, "shouldOpenOnFocus enabled by container property");
 
-		oPopover.setOpensOnFocus(true);
-		assert.ok(oPopover.shouldOpenOnFocus(), "shouldOpenOnFocus enabled by container property");
-
-		oPopover.setOpensOnFocus(false);
-		assert.notOk(oPopover.shouldOpenOnFocus(), "shouldOpenOnFocus disabled by container property");
-
+		bShouldOpen = await oPopover.shouldOpenOnFocus();
+		assert.notOk(bShouldOpen, "shouldOpenOnFocus disabled by container property");
 	});
 
-	QUnit.test("shouldOpenOnClick", function(assert) {
+	QUnit.test("shouldOpenOnClick", async function(assert) {
+		sinon.stub(oContent, "shouldOpenOnClick").returns(true);
 
-		sinon.stub(oContent, "shouldOpenOnClick");
-
-		oContent.shouldOpenOnClick.returns(true);
-		assert.ok(oPopover.shouldOpenOnClick(), "shouldOpenOnClick enabled by content");
+		let bShouldOpen = await oPopover.shouldOpenOnClick();
+		assert.ok(bShouldOpen, "shouldOpenOnClick enabled by content");
 		assert.ok(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content called");
+		oContent.shouldOpenOnClick.reset();
 
-		oPopover.setOpensOnClick(true);
-		assert.ok(oPopover.shouldOpenOnClick(), "shouldOpenOnClick enabled by container property");
-		assert.notOk(oContent.shouldOpenOnClick.calledTwice, "shouldOpenOnClick of Content not called, when opensOnClick is set");
+		bShouldOpen = await oPopover.shouldOpenOnClick();
+		assert.ok(bShouldOpen, "shouldOpenOnClick enabled by container property");
+		assert.notOk(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content not called, when opensOnClick is set");
 
-		oPopover.setOpensOnClick(false);
-		assert.notOk(oPopover.shouldOpenOnClick(), "shouldOpenOnClick disabled by container property");
-		assert.notOk(oContent.shouldOpenOnClick.calledTwice, "shouldOpenOnClick of Content not called, when opensOnClick is set");
-
+		bShouldOpen = await oPopover.shouldOpenOnClick();
+		assert.notOk(bShouldOpen, "shouldOpenOnClick disabled by container property");
+		assert.notOk(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content not called, when opensOnClick is set");
 	});
 
 	QUnit.test("shouldOpenOnNavigate", function(assert) {

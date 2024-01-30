@@ -234,11 +234,11 @@ sap.ui.define([
 			const aFilteredFlexObjects = aFlexObjects.filter((oFlexObject) =>
 				oFlexObject.version === undefined || aVersionChain.includes(oFlexObject.version)
 			);
-			StorageUtils.sortFlexObjects(aFilteredFlexObjects);
-			var mGroupedFlexObjects = StorageUtils.getGroupedFlexObjects(aFilteredFlexObjects);
-			var aResponses = StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
+			const aSortedFilteredFlexObjects = StorageUtils.sortFlexObjects(aFilteredFlexObjects);
+			const mGroupedFlexObjects = StorageUtils.getGroupedFlexObjects(aSortedFilteredFlexObjects);
+			const aResponses = StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
 			if (aResponses.length) {
-				aResponses[0].cacheKey = calculateCacheKey(aFilteredFlexObjects);
+				aResponses[0].cacheKey = calculateCacheKey(aSortedFilteredFlexObjects);
 			}
 			return aResponses;
 		},

@@ -57,7 +57,7 @@ sap.ui.define([
 			}
 		},
 		oCrossApp: {
-			hrefForExternal(mIntentWithParameter) {
+			getHref(mIntentWithParameter) {
 				return JSON.stringify(mIntentWithParameter);
 			},
 			isNavigationSupported(aIntents) {
@@ -77,7 +77,7 @@ sap.ui.define([
 			oSandbox.stub(ExtUtils, "getText").callsFake(function(sTextKey) {
 				return sTextKey;
 			});
-			oSandbox.stub(FlexUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(this.oCrossApp));
+			oSandbox.stub(FlexUtils, "getUShellService").withArgs("Navigation").returns(Promise.resolve(this.oCrossApp));
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
 			this.oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
@@ -241,7 +241,7 @@ sap.ui.define([
 
 	QUnit.module("Given a complex test view with oData Model...", {
 		oCrossApp: {
-			hrefForExternal(mIntentWithParameter) {
+			getHref(mIntentWithParameter) {
 				return JSON.stringify(mIntentWithParameter);
 			},
 			isNavigationSupported(aIntents) {
@@ -268,7 +268,7 @@ sap.ui.define([
 		},
 		beforeEach() {
 			ABAPExtensibilityVariantFactory.reset();
-			oSandbox.stub(FlexUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(this.oCrossApp));
+			oSandbox.stub(FlexUtils, "getUShellService").withArgs("Navigation").returns(Promise.resolve(this.oCrossApp));
 		},
 		afterEach() {
 			this.oServer.restore();

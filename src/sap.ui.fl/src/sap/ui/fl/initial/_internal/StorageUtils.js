@@ -213,9 +213,14 @@ sap.ui.define([
 		},
 
 		sortFlexObjects(aFlexObjects) {
-			aFlexObjects.sort(function(oChangeA, oChangeB) {
-				return new Date(oChangeA.creation) - new Date(oChangeB.creation);
+			const aFlexObjectsWithCreation = aFlexObjects.filter((oFlexObject) => oFlexObject.creation);
+			// The Object Storage Connector also delivers "version" entries which don't contain creation
+			// and don't require any particular sorting. Therefore they are placed at the beginning of the array.
+			const aFlexObjectWithoutCreation = aFlexObjects.filter((oFlexObject) => !oFlexObject.creation);
+			aFlexObjectsWithCreation.sort(function(oChangeA, oChangeB) {
+				return Date.parse(oChangeA.creation) - Date.parse(oChangeB.creation);
 			});
+			return aFlexObjectWithoutCreation.concat(aFlexObjectsWithCreation);
 		},
 
 		/**
@@ -225,7 +230,7 @@ sap.ui.define([
 		 * @returns {object} Map of grouped flexibility objects per layer
 		 */
 		getGroupedFlexObjects(aFlexObjects) {
-			this.sortFlexObjects(aFlexObjects);
+			const aSortedFlexObjects = this.sortFlexObjects(aFlexObjects);
 			var mGroupedFlexObjects = {};
 
 			// build empty groups
@@ -235,7 +240,7 @@ sap.ui.define([
 			}.bind(this));
 
 			// fill groups
-			aFlexObjects.forEach(function(oFlexObject) {
+			aSortedFlexObjects.forEach(function(oFlexObject) {
 				var sLayer = oFlexObject.layer;
 
 				if (oFlexObject.fileType === "ctrl_variant" && oFlexObject.variantManagementReference) {

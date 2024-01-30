@@ -284,7 +284,7 @@ sap.ui.define([
 
 		/**
 		 * Determines if a reload on exit is needed and if yes - it returns what kind of reload should happen
-		 * (CrossAppNavigation or hard reload).
+		 * (ushell Navigation or hard reload).
 		 *
 		 * @param {object} oReloadInfo - Contains the information needed to check if a reload on exit should happen
 		 * @param {sap.ui.fl.Layer} oReloadInfo.layer - Current layer

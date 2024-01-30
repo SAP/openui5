@@ -105,21 +105,21 @@ sap.ui.define([
 					}
 				});
 
-				sandbox.stub(Utils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve("DummyService"));
+				sandbox.stub(Utils, "getUShellService").withArgs("Navigation").returns(Promise.resolve("DummyService"));
 
 				return FeaturesAPI.isSaveAsAvailable(Layer.CUSTOMER).then(function(bReturnValue) {
 					assert.strictEqual(bReturnValue, bValueToBeSet, `then ${bValueToBeSet} is returned`);
 				});
 			});
 
-			QUnit.test(`when isSaveAsAvailable() is called for ${bValueToBeSet ? "not a" : "a"} steampunk system and standalone app without CrossApplicationNavigation service`, function(assert) {
+			QUnit.test(`when isSaveAsAvailable() is called for ${bValueToBeSet ? "not a" : "a"} steampunk system and standalone app without Navigation service`, function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
 					isAppVariantSaveAsEnabled() {
 						return bValueToBeSet;
 					}
 				});
 
-				sandbox.stub(Utils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.reject("DummyService"));
+				sandbox.stub(Utils, "getUShellService").withArgs("Navigation").returns(Promise.reject("DummyService"));
 
 				return FeaturesAPI.isSaveAsAvailable(Layer.CUSTOMER).then(function(bReturnValue) {
 					assert.strictEqual(bReturnValue, false, "then false is returned");

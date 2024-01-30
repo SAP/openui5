@@ -58,6 +58,7 @@ sap.ui.define([
 
 	// the List
 	var gl = new List("gl", {
+		mode: "MultiSelect",
 		growingThreshold: 3,
 		growing : true
 	});
@@ -182,9 +183,21 @@ sap.ui.define([
 		await nextUIUpdate();
 		assert.ok(info(0).header, "First item should be a group header");
 
+		const fnUpdateSelectedPathsSpy = sinon.spy(gl, "_updateSelectedPaths");
+		gl.attachEventOnce("selectionChange", function(oEvent) {
+			assert.equal(gl.getItems().length, 6, "The list has 6 items");
+			assert.ok(gl.isAllSelectableSelected(), "Select all executed only for selectable items");
+			assert.equal(oEvent.getParameter("listItems").length, 3, "Selection is changed for 3 items");
+			assert.notOk(oEvent.getParameter("listItems").some((oLI) => oLI.isA("sap.m.GroupHeaderListItem")), "No group header is informed in the event");
+		}).selectAll(true);
+		assert.ok(fnUpdateSelectedPathsSpy.neverCalledWith(gl.getItems()[0]), "GroupHeaders do not participate in selection remembering");
+
+		fnUpdateSelectedPathsSpy.restore();
+
 		oBinding.sort();
 		await nextUIUpdate();
 		assert.notOk(info(0).header, "The group header should be removed");
+		assert.ok(gl.isAllSelectableSelected(), "Select all worked correctly even after binding update");
 	});
 
 	QUnit.module("OData V4", {

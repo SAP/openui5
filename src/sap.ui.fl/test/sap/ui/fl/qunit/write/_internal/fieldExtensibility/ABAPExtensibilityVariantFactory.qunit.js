@@ -58,7 +58,7 @@ sap.ui.define([
 			}
 		},
 		beforeEach() {
-			this.oSandbox.stub(Utils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(this.oCrossApp));
+			this.oSandbox.stub(Utils, "getUShellService").withArgs("Navigation").returns(Promise.resolve(this.oCrossApp));
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
 		},
