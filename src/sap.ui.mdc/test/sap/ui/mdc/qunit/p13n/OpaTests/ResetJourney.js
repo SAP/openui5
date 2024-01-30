@@ -72,21 +72,21 @@ sap.ui.define([
     opaTest("Table (ColumnMenu): Open the menu, check the reset button enablement before and after some changes and after reset", function(Given, When, Then){
 
         //no changes yet --> reset disabled
-        When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableID, "Founding Year");
-		Then.onTheAppUnderTestMDCTable.iShouldSeeTheColumnMenu();
-        When.onTheAppUnderTestMDCTable.iPressOnColumnMenuItem(TableUtil.P13nDialogInfo.Titles.columns);
+        When.onTheAppMDCTable.iPressOnColumnHeader(sTableID, "Founding Year");
+		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
+        When.onTheAppMDCTable.iPressOnColumnMenuItem(TableUtil.P13nDialogInfo.Titles.columns);
         Then.checkResetEnablementInColumnMenu(false);
 
         //do some changes --> reset enabled
-		When.onTheAppUnderTestMDCTable.iSelectColumns(["Name", "Founding Year", "Changed By", "Created On", "Country"], false);
+		When.onTheAppMDCTable.iSelectColumns(["Name", "Founding Year", "Changed By", "Created On", "Country"], false);
         Then.checkResetEnablementInColumnMenu(true);
-        When.onTheAppUnderTestMDCTable.iConfirmColumnMenuItemContent();
+        When.onTheAppMDCTable.iConfirmColumnMenuItemContent();
 
         //reset the changes --> reset disabled again
         When.onTheMDCTable.iResetThePersonalization(sTableID);
-        When.onTheAppUnderTestMDCTable.iPressOnColumnHeader(sTableID, "Founding Year");
-		Then.onTheAppUnderTestMDCTable.iShouldSeeTheColumnMenu();
-        When.onTheAppUnderTestMDCTable.iPressOnColumnMenuItem(TableUtil.P13nDialogInfo.Titles.columns);
+        When.onTheAppMDCTable.iPressOnColumnHeader(sTableID, "Founding Year");
+		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
+        When.onTheAppMDCTable.iPressOnColumnMenuItem(TableUtil.P13nDialogInfo.Titles.columns);
         Then.checkResetEnablementInColumnMenu(false);
     });
 

@@ -13,10 +13,6 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	if (window.blanket) {
-		window.blanket.options("sap-ui-cover-never", "sap/viz");
-	}
-
 	Opa5.extendConfig({
 		viewNamespace: "appTreeTableODataV4",
 		arrangements: new Arrangements(),
@@ -35,33 +31,35 @@ sap.ui.define([
 	QUnit.module("TreeTable Table OpaTests");
 
 	opaTest("After starting the OPA tests and I look at the screen I should see an TreeTable", function(Given, When, Then) {
-		//insert application
 		Given.iStartMyApp("appTreeTableODataV4");
 		When.onTheApp.iLookAtTheScreen();
 		Then.onTheApp.iShouldSeeATable(sTableId);
 	});
 
 	opaTest("The table should have a title", function(Given, When, Then) {
-		Then.onTheAppUnderTestMDCTable.iShouldSeeTheHeaderText(sTableId, "Products");
+		Then.onTheAppMDCTable.iShouldSeeTheHeaderText(sTableId, "Products");
 	});
 
 	opaTest("Change some column positions", function(Given, When, Then) {
-		Then.onTheAppUnderTestMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--Name", 1);
-		When.onTheAppUnderTestMDCTable.iDragColumn(sTableId, 1);
-		When.onTheAppUnderTestMDCTable.iDropColumnAfter(sTableId, 3);
-		Then.onTheAppUnderTestMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--Name", 3);
+		Then.onTheAppMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--Name", 1);
+		When.onTheAppMDCTable.iDragColumn(sTableId, 1);
+		When.onTheAppMDCTable.iDropColumnAfter(sTableId, 3);
+		Then.onTheAppMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--Name", 3);
 
-		Then.onTheAppUnderTestMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--ID", 0);
-		When.onTheAppUnderTestMDCTable.iDragColumn(sTableId, 0);
-		When.onTheAppUnderTestMDCTable.iDropColumnAfter(sTableId, 2);
-		Then.onTheAppUnderTestMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--ID", 0);
+		Then.onTheAppMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--ID", 0);
+		When.onTheAppMDCTable.iDragColumn(sTableId, 0);
+		When.onTheAppMDCTable.iDropColumnAfter(sTableId, 2);
+		Then.onTheAppMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--ID", 0);
 	});
 
 	opaTest("Expand and collapse some rows", function(Given, When, Then) {
-		Then.onTheAppUnderTestMDCTable.iCheckBindingLength(sTableId, 6);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 6);
 
-		When.onTheAppUnderTestMDCTable.iClickOnCollapseAllRowsButton(sTableId);
-		Then.onTheAppUnderTestMDCTable.iCheckBindingLength(sTableId, 1);
+		When.onTheAppMDCTable.iClickOnCollapseAllRowsButton(sTableId);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 1);
+
+		When.onTheAppMDCTable.iClickOnExpandAllRowsButton(sTableId);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 24);
 
 		Then.iTeardownMyAppFrame();
 	});
