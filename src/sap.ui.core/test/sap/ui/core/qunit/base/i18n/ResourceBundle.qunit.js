@@ -2128,6 +2128,46 @@ sap.ui.define([
 		assert.equal(this.oPropertiesCreateStub.callCount, aLocales.length, "stub was called once per defined locale");
 	});
 
+	QUnit.module("sap/base/i18n/ResourceBundle: Properties Cache with same resulting url", {
+		beforeEach: function () {
+			this.oPropertiesCreateStub = this.stub(Properties, "create");
+			this.oPropertiesCreateStub.withArgs({
+				url: 'my_de.properties', headers: undefined, async: true, returnNullIfMissing: true
+			}).returns(createFakePropertiesPromise({ name: "base" }));
+			this.oPropertiesCreateStub.withArgs({
+				url: './my_de.properties', headers: undefined, async: true, returnNullIfMissing: true
+			}).returns(createFakePropertiesPromise({ name: "base" }));
+			this.oPropertiesCreateStub.withArgs({
+				url: './mydir/../my_de.properties', headers: undefined, async: true, returnNullIfMissing: true
+			}).returns(createFakePropertiesPromise({ name: "base" }));
+		},
+		afterEach: function (assert) {
+			assert.ok(!this.oPropertiesCreateStub.exceptions.some(Boolean), "calls to Properties.create were successful");
+			this.oPropertiesCreateStub.restore();
+			ResourceBundle._getPropertiesCache().clear();
+		}
+	});
+
+	QUnit.test("Relative URL Notation with and without './'", function (assert) {
+		const aPromises = [];
+		aPromises.push(ResourceBundle.create({ url: './my.properties', locale: "de", async: true }));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after first request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was only called once, because cache is empty");
+
+		aPromises.push(ResourceBundle.create({ url: 'my.properties', locale: "de", async: true }));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after second request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was only called once, because cache is filled with same resulting URL");
+
+		aPromises.push(ResourceBundle.create({ url: './mydir/../my.properties', locale: "de", async: true }));
+		assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after third request");
+		assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was only called once, because cache is filled with same resulting URL");
+
+		return Promise.all(aPromises).then(() => {
+			assert.strictEqual(ResourceBundle._getPropertiesCache().size, 1, "properties cache is filled with one entry after all promised are resolved");
+			assert.equal(this.oPropertiesCreateStub.callCount, 1, "stub was only called once, because cache is filled with same resulting URL");
+		});
+	});
+
 	QUnit.module("sap/base/i18n/ResourceBundle: Properties Cache with non-existing properties", {
 		beforeEach: function () {
 			this.oPropertiesCreateStub = this.stub(Properties, "create");
