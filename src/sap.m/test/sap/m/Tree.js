@@ -765,6 +765,7 @@ sap.ui.define([
 
 	var oTree = new Tree({
 		headerText: "Data in Tree Structure",
+		headerLevel: "H2",
 		'delete': handleControlEvent,
 		dragDropConfig: new DragDropInfo({
 			sourceAggregation: "items",
