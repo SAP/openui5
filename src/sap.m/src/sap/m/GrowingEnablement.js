@@ -854,7 +854,7 @@ sap.ui.define([
 					oControl.$("triggerList").css("display", "");
 					oControl.$("listUl").addClass("sapMListHasGrowing");
 					oTrigger.$().removeClass("sapMGrowingListBusyIndicatorVisible");
-					this.adaptTriggerButtonWidth();
+					setTimeout(this.adaptTriggerButtonWidth.bind(this));
 				}
 
 				// store the last item count to be able to focus to the newly added item when the growing button is pressed
@@ -882,13 +882,13 @@ sap.ui.define([
 		// adapt trigger button width if dummy col is rendered
 		adaptTriggerButtonWidth: function() {
 			var oControl = this._oControl;
-			if (!oControl.isA("sap.m.Table") || oControl.hasPopin() || !oControl.shouldRenderDummyColumn()) {
+			if (!oControl || !oControl.isA("sap.m.Table") || oControl.hasPopin() || !oControl.shouldRenderDummyColumn()) {
 				return;
 			}
 
 			window.requestAnimationFrame(function() {
 				var oTriggerDomRef = this._oTrigger && this._oTrigger.getDomRef();
-				if (!oTriggerDomRef) {
+				if (!oTriggerDomRef || !oTriggerDomRef.clientWidth) {
 					return;
 				}
 
