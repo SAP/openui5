@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ContextMenuPlugin,
@@ -25,6 +26,7 @@ sap.ui.define([
 	Button,
 	VerticalLayout,
 	KeyCodes,
+	nextUIUpdate,
 	sinon
 ) {
 	"use strict";
@@ -57,7 +59,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("ContextMenu API", {
-		beforeEach(assert) {
+	 async	beforeEach(assert) {
 			var done = assert.async();
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2", {text: "Button 2 text"});
@@ -68,6 +70,7 @@ sap.ui.define([
 				]
 			});
 			this.oLayout.placeAt("qunit-fixture");
+			await nextUIUpdate();
 			this.oMenuEntries = {};
 			this.oMenuEntries.available = {
 				id: "CTX_ALWAYS_THERE",
@@ -175,10 +178,10 @@ sap.ui.define([
 			}.bind(this));
 		},
 		afterEach() {
+			this.clock.restore();
 			sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
-			this.clock.restore();
 		}
 	}, function() {
 		QUnit.test("When context menu is opened and an item is selected", function(assert) {
@@ -472,7 +475,7 @@ sap.ui.define([
 			assert.ok(this.oContextMenuPlugin._checkForPluginLock(), "then return true when busy plugin exists");
 		});
 
-		QUnit.test("calling open with plain menu item for overlay", function(assert) {
+		QUnit.test("calling open with plain menu item for overlay", async function(assert) {
 			var oPlainMenuItem = { id: "plainItem", group: undefined, submenu: undefined };
 			var aPlugins = [
 				{
@@ -482,11 +485,10 @@ sap.ui.define([
 			];
 			var oAddMenuItemStub = sandbox.stub(this.oContextMenuPlugin, "addMenuItem");
 			sandbox.stub(this.oDesignTime, "getPlugins").returns(aPlugins);
-			return openContextMenu.call(this, this.oButton1Overlay).then(function() {
-				assert.equal(oAddMenuItemStub.callCount, 1, "then addMenuItems is called");
-				assert.equal(oAddMenuItemStub.args[0][0], oPlainMenuItem, "then addMenuItems is called with the plain menu item");
-				sandbox.restore();
-			});
+			await openContextMenu.call(this, this.oButton1Overlay);
+			assert.equal(oAddMenuItemStub.callCount, 1, "then addMenuItems is called");
+			assert.equal(oAddMenuItemStub.args[0][0], oPlainMenuItem, "then addMenuItems is called with the plain menu item");
+			sandbox.restore();
 		});
 
 		QUnit.test("calling open with only group menu item for overlay", function(assert) {

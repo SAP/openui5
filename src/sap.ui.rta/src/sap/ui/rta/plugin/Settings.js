@@ -246,7 +246,7 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {object[]} array of the items with required data
 	 */
-	Settings.prototype.getMenuItems = function(aElementOverlays) {
+	Settings.prototype.getMenuItems = async function(aElementOverlays) {
 		const oElementOverlay = aElementOverlays[0];
 		const oResponsibleElementOverlay = this.getResponsibleElementOverlay(oElementOverlay);
 		let vSettingsActions = this.getAction(oResponsibleElementOverlay);
@@ -259,6 +259,11 @@ sap.ui.define([
 				vSettingsActions = {
 					settings: vSettingsActions
 				};
+			}
+			if (this._isEditableByPlugin(oResponsibleElementOverlay) === undefined) {
+				// The responsibleElement editableByPlugin state was not evaluated yet e.g. because it
+				// has no visible geometry, thus evaluateEditable now
+				await this.evaluateEditable([oResponsibleElementOverlay], { onRegistration: false });
 			}
 			const aSettingsActions = Object.keys(vSettingsActions);
 			aSettingsActions.forEach(function(sSettingsAction, iIndex, aActions) {

@@ -170,7 +170,7 @@ sap.ui.define([
 				}
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
+			this.oDesignTime.attachEventOnce("synced", async function() {
 				var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
 				this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
@@ -178,8 +178,8 @@ sap.ui.define([
 				assert.strictEqual(this.oSettingsPlugin.isAvailable([oButtonOverlay]), true, "... then isAvailable is called, then it returns true");
 				assert.strictEqual(this.oSettingsPlugin.isEnabled([oButtonOverlay]), false, "... then isEnabled is called, then it returns correct value");
 				assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "then the overlay is editable");
-				assert.strictEqual(this.oSettingsPlugin.getMenuItems([oButtonOverlay])[0].icon, sDefaultSettingsIcon, "then the default icon parameter is set");
-
+				const oMenuItems = await this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+				assert.strictEqual(oMenuItems[0].icon, sDefaultSettingsIcon, "then the correct icon parameter is set");
 				this.oDesignTime.destroy();
 				fnDone();
 			}.bind(this));
@@ -242,7 +242,7 @@ sap.ui.define([
 				}
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
+			this.oDesignTime.attachEventOnce("synced", async function() {
 				var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
 				this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
@@ -250,7 +250,8 @@ sap.ui.define([
 				assert.strictEqual(this.oSettingsPlugin.isAvailable([oButtonOverlay]), true, "... then isAvailable is called, then it returns true");
 				assert.strictEqual(this.oSettingsPlugin.isEnabled([oButtonOverlay]), true, "... then isEnabled is called, then it returns correct value");
 				assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "then the overlay is editable");
-				assert.strictEqual(this.oSettingsPlugin.getMenuItems([oButtonOverlay])[0].icon, sIcon, "then the correct icon parameter is set");
+				const oMenuItems = await this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+				assert.strictEqual(oMenuItems[0].icon, sIcon, "then the correct icon parameter is set");
 
 				this.oDesignTime.destroy();
 				fnDone();
@@ -558,9 +559,17 @@ sap.ui.define([
 			return this.oSettingsPlugin.handler([oButtonOverlay], { eventItem: {}, contextElement: this.oButton }, {});
 		});
 
-		QUnit.test("when retrieving the context menu item for single 'settings' action", function(assert) {
+		QUnit.test("when retrieving the context menu item for single 'settings' action", async function(assert) {
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
 				handler() {}
+			});
+
+			// Simulate that editableByPlugin was not evaluated yet
+			const oEditableByPluginStub = sandbox.stub(this.oSettingsPlugin, "_isEditableByPlugin").returns(undefined);
+			sandbox.stub(this.oSettingsPlugin, "evaluateEditable").callsFake(() => {
+				assert.ok(true, "then the evaluateEditable function is called");
+				oEditableByPluginStub.restore();
+				return Promise.resolve();
 			});
 
 			var bIsAvailable = true;
@@ -575,20 +584,20 @@ sap.ui.define([
 				assert.equal(aElementOverlays[0].getId(), oButtonOverlay.getId(), "the 'enabled' function calls isEnabled with the correct overlay");
 			});
 
-			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+			var aMenuItems = await this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
 			assert.equal(aMenuItems[0].id, "CTX_SETTINGS", "'getMenuItems' returns the context menu item for the plugin");
 
 			aMenuItems[0].handler([oButtonOverlay]);
 
 			bIsAvailable = false;
 			assert.equal(
-				this.oSettingsPlugin.getMenuItems([oButtonOverlay]).length,
+				(await this.oSettingsPlugin.getMenuItems([oButtonOverlay])).length,
 				0,
 				"and if plugin is not available for the overlay, no menu items are returned"
 			);
 		});
 
-		QUnit.test("when retrieving the context menu item for single 'settings' action with a submenu", function(assert) {
+		QUnit.test("when retrieving the context menu item for single 'settings' action with a submenu", async function(assert) {
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
 				handler() {},
 				submenu: [
@@ -614,7 +623,7 @@ sap.ui.define([
 				return bIsAvailable;
 			});
 
-			var oMenuItem = this.oSettingsPlugin.getMenuItems([oButtonOverlay])[0];
+			var oMenuItem = (await this.oSettingsPlugin.getMenuItems([oButtonOverlay]))[0];
 			assert.equal(oMenuItem.id, "CTX_SETTINGS", "'getMenuItems' returns the context menu item for the plugin");
 			assert.deepEqual(oMenuItem.submenu[0], {
 				id: "foo",
@@ -636,7 +645,7 @@ sap.ui.define([
 			}, "the submennu entry 2 is correct");
 		});
 
-		QUnit.test("when retrieving the context menu items and executing two 'settings' actions", function(assert) {
+		QUnit.test("when retrieving the context menu items and executing two 'settings' actions", async function(assert) {
 			var done1 = assert.async();
 			var done2 = assert.async();
 
@@ -703,7 +712,7 @@ sap.ui.define([
 				}
 			});
 
-			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+			var aMenuItems = await this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
 			assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
 			assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
 			assert.equal(aMenuItems[0].icon, sDefaultSettingsIcon, "'getMenuItems' returns the default item icon for action 1");
@@ -715,7 +724,7 @@ sap.ui.define([
 			aMenuItems[1].handler([oButtonOverlay]);
 		});
 
-		QUnit.test("when retrieving the context menu items for two 'settings' actions, but one does not have a handler", function(assert) {
+		QUnit.test("when retrieving the context menu items for two 'settings' actions, but one does not have a handler", async function(assert) {
 			var done = assert.async();
 
 			var mAction1Change = {
@@ -750,7 +759,7 @@ sap.ui.define([
 
 			var spyLog = sinon.spy(BaseLog, "warning");
 
-			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+			var aMenuItems = await this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
 			assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
 			assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
 			aMenuItems[0].handler([oButtonOverlay]);
@@ -758,7 +767,7 @@ sap.ui.define([
 			assert.equal(spyLog.callCount, 1, "then there is a warning in the log saying the handler was not found for action 2");
 		});
 
-		QUnit.test("when retrieving the menu items for two 'settings', one has changeOnRelevantContainer true and the relevant container doesn't have a stable id", function(assert) {
+		QUnit.test("when retrieving the menu items for two 'settings', one has changeOnRelevantContainer true and the relevant container doesn't have a stable id", async function(assert) {
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
 				Action1: {
 					name: "CTX_ACTION1",
@@ -783,14 +792,14 @@ sap.ui.define([
 			sandbox.stub(oButtonOverlay, "getRelevantContainer").returns(oVerticalLayoutOverlay);
 			sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
 
-			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+			var aMenuItems = await this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
 			assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
 			assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
 			assert.equal(aMenuItems.length, 1, "'getMenuItems' doesn't return the action where the relevant container has no stable id");
 			assert.equal(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "and _isEditable() returns true because one action is valid");
 		});
 
-		QUnit.test("when retrieving the menu items for two 'settings', but both have changeOnRelevantContainer true and the relevant container doesn't have a stable id", function(assert) {
+		QUnit.test("when retrieving the menu items for two 'settings', but both have changeOnRelevantContainer true and the relevant container doesn't have a stable id", async function(assert) {
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
 				Action1: {
 					name: "CTX_ACTION1",
@@ -816,12 +825,12 @@ sap.ui.define([
 			sandbox.stub(oButtonOverlay, "getRelevantContainer").returns(oVerticalLayoutOverlay);
 			sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
 
-			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+			var aMenuItems = await this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
 			assert.equal(aMenuItems.length, 0, "then no menu items are returned");
 			assert.equal(this.oSettingsPlugin._isEditable(oButtonOverlay), false, "and _isEditable() returns false because no actions are valid");
 		});
 
-		QUnit.test("when retrieving the context menu items for two 'settings' actions, but one is disabled", function(assert) {
+		QUnit.test("when retrieving the context menu items for two 'settings' actions, but one is disabled", async function(assert) {
 			var {oButton} = this;
 
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
@@ -849,14 +858,14 @@ sap.ui.define([
 
 			sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
 
-			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+			var aMenuItems = await this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
 			assert.equal(aMenuItems[0].text, "CTX_ACTION1", "'getMenuItems' returns the context menu item for action 1");
 			assert.equal(aMenuItems[0].enabled, true, "and it is enabled");
 			assert.equal(aMenuItems[1].text, "CTX_ACTION2", "'getMenuItems' returns the context menu item for action 2");
 			assert.equal(aMenuItems[1].enabled([oButtonOverlay]), false, "and it is disabled");
 		});
 
-		QUnit.test("when retrieving the context menu items and executing two 'settings' actions with diffrent icon settings", function(assert) {
+		QUnit.test("when retrieving the context menu items and executing two 'settings' actions with diffrent icon settings", async function(assert) {
 			var sIconAction1 = "sap-icon://myIconAction1";
 
 			var oButtonOverlay = createOverlayWithSettingsAction(this.oButton, [
@@ -895,7 +904,7 @@ sap.ui.define([
 			var oLogErrorStub = sandbox.stub(BaseLog, "error");
 			sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
 
-			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+			var aMenuItems = await this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
 			assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
 			assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
 			assert.equal(aMenuItems[0].icon, sIconAction1, "'getMenuItems' returns the correct item icon for action 1");
