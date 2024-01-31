@@ -63,12 +63,12 @@ function(nextUIUpdate, jQuery, Core, JSONModel, Button, Title, ObjectPageDynamic
 			XMLView.create({
 				id: "UxAP-27_ObjectPageConfig",
 				viewName: "view.UxAP-27_ObjectPageConfig"
-			}).then(function (oView) {
+			}).then(async function (oView) {
 				this.oView = oView;
 				this.oComponentContainer = this.oView.byId("objectPageContainer");
 				this.oView.setModel(oConfigModel, "objectPageLayoutMetadata");
 				this.oView.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 				this.oComponentContainer.attachEventOnce("componentCreated", function () {
 					done();
 				});
@@ -175,7 +175,6 @@ function(nextUIUpdate, jQuery, Core, JSONModel, Button, Title, ObjectPageDynamic
 
 		//act
 		oObjectPageLayout.scrollToSection(oObjectPageLayout.getSections()[5].getId());
-		Core.applyChanges();
 
 		var done = assert.async();
 
@@ -192,7 +191,7 @@ function(nextUIUpdate, jQuery, Core, JSONModel, Button, Title, ObjectPageDynamic
 	/**
 	 * @deprecated Since version 1.120
 	 */
-	QUnit.test("model mapping for scrolled sections", function (assert) {
+	QUnit.test("model mapping for scrolled sections", async function (assert) {
 
 		var oObjectPageLayout = this.oComponentContainer
 			.getObjectPageLayoutInstance();
@@ -202,17 +201,17 @@ function(nextUIUpdate, jQuery, Core, JSONModel, Button, Title, ObjectPageDynamic
 
 		this.oView.setModel(oDataModel, "objectPageData");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var done = assert.async();
 
 		setTimeout(function() {
 
 			var oThirdSubSection = oObjectPageLayout.getSections()[3].getSubSections()[0];
-			assert.strictEqual(oThirdSubSection.$().find(".sapUxAPBlockBase .sapMImg").length > 0, false, "data of disconnected blocks is not loaded");
+			assert.strictEqual(oThirdSubSection.getBlocks()[0]._bConnected, false, "data of disconnected blocks is not loaded");
 
 			var oLastSubSection = oObjectPageLayout.getSections()[5].getSubSections()[0];
-			assert.strictEqual(oLastSubSection.$().find(".sapUxAPBlockBase .sapMImg").length > 0, false, "data of last connected blocks is loaded"); // TODO Verify this is correct since these tests were disabled (changed from true)
+			assert.strictEqual(oLastSubSection.getBlocks()[0]._bConnected, false, "data of last connected blocks is loaded"); // TODO Verify this is correct since these tests were disabled (changed from true)
 			done();
 		}, iLoadingDelay);
 	});
@@ -283,6 +282,34 @@ function(nextUIUpdate, jQuery, Core, JSONModel, Button, Title, ObjectPageDynamic
 		aSectionBases[1].getParent = fnCustomGetParent;
 
 		assert.equal(oObjectPageLayout._grepCurrentTabSectionBases().length, 2, "_grepCurrentTabSectionBases returns a valid value if some of the sections parent is undefined");
+	});
+
+	QUnit.test("_triggerVisibleSubSectionsEvents fires subSectionEnteredViewPort event for visible SubSections", async function(assert) {
+		// Arrange
+		var oObjectPageLayout = this.oComponentContainer.getObjectPageLayoutInstance(),
+			fnDone = assert.async(),
+			iCallCounts = 0,
+			fnOnSubSectionEnteredViewPort = function (oEvent) {
+				var oSubSection = oEvent.getParameter("subSection");
+				assert.ok(true, "subSectionEnteredViewPort fired for " + oSubSection.getId());
+				iCallCounts++;
+
+				if (iCallCounts === 3) {
+					fnDone();
+				}
+			},
+			oData = oConfigModel.getData();
+
+		_loadBlocksData(oData);
+		oConfigModel.setData(oData);
+		await nextUIUpdate();
+
+		setTimeout(function () {
+			oObjectPageLayout.attachEvent("subSectionEnteredViewPort", fnOnSubSectionEnteredViewPort);
+
+			// Act - call _triggerVisibleSubSectionsEvents to force subSectionEnteredViewPort event firing
+			oObjectPageLayout._oLazyLoading._triggerVisibleSubSectionsEvents();
+		}, 1000);
 	});
 
 	QUnit.module("ObjectPageAfterRendering");
