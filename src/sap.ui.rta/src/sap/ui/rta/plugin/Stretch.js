@@ -122,7 +122,8 @@ sap.ui.define([
 	}
 
 	/**
-	 * Checks all the decendants for an editable child. Stops as soon as an editable is found or the children don't have the same size anymore.
+	 * Checks all the decendants for an editable child. Stops as soon as an editable is found
+	 * or the children don't have the same size anymore.
 	 *
 	 * @param {sap.ui.dt.ElementOverlay} oReferenceOverlay - overlay object
 	 * @param {sap.ui.dt.ElementOverlay[]} aChildOverlays - array of child overlay objects
@@ -274,7 +275,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * When editable changes on an overlay, all parent-overlays and the overlay itself, who are already stretch candidates, have to be reevaluated
+	 * When editable changes on an overlay, all parent-overlays and the overlay itself,
+	 * who are already stretch candidates, have to be reevaluated
 	 *
 	 * @param {sap.ui.base.Event} oEvent event object
 	 */
@@ -297,7 +299,9 @@ sap.ui.define([
 		var aRelevantOverlays = this._getRelevantOverlays(oOverlay);
 		var fnDebounced = _debounce(function() {
 			if (!this.bIsDestroyed && !oOverlay.bIsDestroyed) {
-				var aNewStretchCandidates = this._getNewStretchCandidates(aRelevantOverlays).concat(this._getRelevantOverlaysOnEditableChange(oOverlay));
+				var aNewStretchCandidates =
+					this._getNewStretchCandidates(aRelevantOverlays)
+					.concat(this._getRelevantOverlaysOnEditableChange(oOverlay));
 				aNewStretchCandidates = aNewStretchCandidates.filter(function(sId, iPosition, aAllCandidates) {
 					return aAllCandidates.indexOf(sId) === iPosition;
 				});
@@ -359,6 +363,7 @@ sap.ui.define([
 
 			aReturn.push(oOverlay.getElement().getId());
 		}
+		return aReturn;
 	};
 
 	Stretch.prototype._getNewStretchCandidates = function(aOverlays) {
@@ -386,6 +391,7 @@ sap.ui.define([
 				}
 			}
 		}
+		return false;
 	};
 
 	Stretch.prototype._checkParentAndAddToStretchCandidates = function(oOverlay) {
