@@ -1,0 +1,44 @@
+/* ============================================================ */
+/* CSS for control sap.ui.integration.controls/ImageWithOverlay */
+/* Base theme                                                   */
+/* ============================================================ */
+
+.sapUiIntImageWithOverlay {
+	display: flex;
+
+	.sapUiIntImgWithOverlayImg {
+		width: 100%;
+		height: 100%;
+	}
+
+	.sapUiIntImgWithOverlayLayout {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		padding: 1rem;
+		height: 100%;
+
+		.sapMText {
+			line-height: 1.5rem;
+			font-weight: 700;
+
+			&.sapUiIntImgWithOverlayTitle {
+				font-size:  1.75rem;
+				line-height: 1.75rem;
+				font-weight: 900;
+			}
+		}
+	}
+}
+
+.sapFCardObjectGroup {
+	.sapUiIntImageWithOverlay.sapFCardObjectImageFullWidth.sapFCardObjectImage:only-child {
+		height:  ~"calc(100% + 32px)";
+	}
+	
+	.sapUiIntImageWithOverlay:not(.sapFCardObjectImageFullWidth):only-child .sapUiIntImgWithOverlayImg {
+		max-height: 100%;
+	}
+}

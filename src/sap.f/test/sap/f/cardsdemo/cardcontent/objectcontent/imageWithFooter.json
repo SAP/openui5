@@ -28,7 +28,7 @@
 						{
 							"type": "Image",
 							"src": "../../images/grass.jpg",
-							"fullWidth" : true
+							"fullWidth": true
 						}
 					]
 				}
