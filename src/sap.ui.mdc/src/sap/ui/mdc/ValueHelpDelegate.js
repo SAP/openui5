@@ -392,14 +392,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the value help should be opened when the user focuses the connected control.
-	 * <br/>By default the value of the {@link sap.ui.mdc.valuehelp.Popover#getOpensOnFocus opensOnFocus} property is returned.
+	 * Determines if the value help is opened when the user focuses on the connected control.
+	 * <br/>By default, the value of the {@link sap.ui.mdc.valuehelp.Popover#getOpensOnFocus opensOnFocus} property is returned.
 	 *
-	 * Currently this is only supported for type-ahead container.
+	 * Currently this is only supported for the type-ahead container.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
-	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user focuses the connected field control
+	 * @returns {Promise<boolean>} If <code>true</code>, the value help is opened when user focuses on the connected field control
 	 * @public
 	 * @since 1.121.0
 	 */
@@ -417,14 +417,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the value help should be opened when the user clicks into the connected control.
-	 * <br/>By default the value of the {@link sap.ui.mdc.valuehelp.Popover#getOpensOnClick opensOnClick} property is returned, if set, or the content configuration is checked.
+	 * Determines if the value help is opened when the user clicks into the connected control.
+	 * <br/>By default, the value of the {@link sap.ui.mdc.valuehelp.Popover#getOpensOnClick opensOnClick} property is returned, if set, or the content configuration is checked.
 	 *
-	 * Currently this is only supported for type-ahead container.
+	 * Currently this is only supported for the type-ahead container.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
-	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user clicks into the connected field control
+	 * @returns {Promise<boolean>} If <code>true</code>, the value help is opened when user clicks into the connected field control
 	 * @public
 	 * @since 1.121.0
 	 */
