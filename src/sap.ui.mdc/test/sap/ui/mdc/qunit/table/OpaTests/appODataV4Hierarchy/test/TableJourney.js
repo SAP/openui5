@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	Opa5.extendConfig({
-		viewNamespace: "appTreeTableODataV4",
+		viewNamespace: "appODataV4Hierarchy",
 		arrangements: new Arrangements(),
 		autoWait: true,
 		async: true,
@@ -26,12 +26,12 @@ sap.ui.define([
 		}
 	});
 
-	const sTableId = "container-appTreeTableODataV4---MyView--MDCTreeTableV4";
+	const sTableId = "container-appODataV4Hierarchy---MyView--mdcTable";
 
-	QUnit.module("TreeTable Table OpaTests");
+	QUnit.module("Basics");
 
-	opaTest("After starting the OPA tests and I look at the screen I should see an TreeTable", function(Given, When, Then) {
-		Given.iStartMyApp("appTreeTableODataV4");
+	opaTest("After starting the app I should see a table", function(Given, When, Then) {
+		Given.iStartMyApp("appODataV4Hierarchy");
 		When.onTheApp.iLookAtTheScreen();
 		Then.onTheApp.iShouldSeeATable(sTableId);
 	});
@@ -40,24 +40,32 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iShouldSeeTheHeaderText(sTableId, "Products");
 	});
 
-	opaTest("Change some column positions", function(Given, When, Then) {
-		Then.onTheAppMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--Name", 1);
+	QUnit.module("Column reordering");
+
+	opaTest("Drag 2nd column to 4th position", function(Given, When, Then) {
+		Then.onTheAppMDCTable.iCheckColumnPosition(sTableId, `${sTableId}-Name`, 1);
 		When.onTheAppMDCTable.iDragColumn(sTableId, 1);
 		When.onTheAppMDCTable.iDropColumnAfter(sTableId, 3);
-		Then.onTheAppMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--Name", 3);
-
-		Then.onTheAppMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--ID", 0);
-		When.onTheAppMDCTable.iDragColumn(sTableId, 0);
-		When.onTheAppMDCTable.iDropColumnAfter(sTableId, 2);
-		Then.onTheAppMDCTable.iCheckColumnPosition(sTableId, "container-appTreeTableODataV4---MyView--ID", 0);
+		Then.onTheAppMDCTable.iCheckColumnPosition(sTableId, `${sTableId}-Name`, 3);
 	});
 
-	opaTest("Expand and collapse some rows", function(Given, When, Then) {
+	opaTest("Drag 1st column to 2nd position", function(Given, When, Then) {
+		Then.onTheAppMDCTable.iCheckColumnPosition(sTableId, `${sTableId}-ID`, 0);
+		When.onTheAppMDCTable.iDragColumn(sTableId, 0);
+		When.onTheAppMDCTable.iDropColumnAfter(sTableId, 2);
+		Then.onTheAppMDCTable.iCheckColumnPosition(sTableId, `${sTableId}-ID`, 0);
+	});
+
+	QUnit.module("Expand/Collapse");
+
+	opaTest("Collapse all", function(Given, When, Then) {
 		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 6);
 
 		When.onTheAppMDCTable.iClickOnCollapseAllRowsButton(sTableId);
 		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 1);
+	});
 
+	opaTest("Expand all", function(Given, When, Then) {
 		When.onTheAppMDCTable.iClickOnExpandAllRowsButton(sTableId);
 		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 24);
 

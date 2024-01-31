@@ -3,7 +3,7 @@
 
 <head>
 
-    <title>Application under test</title>
+    <title>MDCTable with ODataV4 (Flat)</title>
     <meta charset="utf-8">
 
     <script
@@ -17,7 +17,7 @@
             data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
             data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'
             data-sap-ui-resourceroots='{
-                "appTableODataV4": "./",
+                "appODataV4Flat": "./",
 				"sap.ui.mdc.tableOpaTests": "../../../../../../../../test-resources/sap/ui/mdc/qunit/table/OpaTests",
 				"sap.ui.mdc.testutils": "../../../../../../../../test-resources/sap/ui/mdc/testutils",
 				"delegates": "../../../../../../../../test-resources/sap/ui/mdc/delegates"
@@ -25,8 +25,8 @@
     </script>
 </head>
 
-<body class="sapUiBody">
-    <div data-sap-ui-component data-name="appTableODataV4" data-id="container" data-settings='{"id" : "appTableODataV4"}'></div>
+<body class="sapUiBody sapUiSizeCozy">
+    <div data-sap-ui-component data-name="appODataV4Flat" data-id="container" data-settings='{"id" : "appODataV4Flat"}'></div>
 </body>
 
 </html>

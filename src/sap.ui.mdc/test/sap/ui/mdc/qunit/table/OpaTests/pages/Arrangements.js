@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/test/Opa5",
-	"test-resources/sap/ui/mdc/testutils/opa/table/waitForTable"
+	"sap/ui/test/Opa5"
 ], function(
-	/** @type sap.ui.test.Opa5 */ Opa5,
-	/** @type sap.ui.test.Opa5 */ waitForTable) {
+	/** @type sap.ui.test.Opa5 */ Opa5) {
 	"use strict";
 
 	/**
@@ -19,7 +17,7 @@ sap.ui.define([
 	const Arrangements = Opa5.extend("sap.ui.mdc.table.OpaTests.pages.Arrangements", {
 		iStartMyApp: function(sAppFolderName) {
 			return this.iStartMyAppInAFrame({
-				source: "test-resources/sap/ui/mdc/qunit/table/OpaTests/" + sAppFolderName + "/start.html",
+				source: "test-resources/sap/ui/mdc/qunit/table/OpaTests/" + sAppFolderName + "/index.html",
 				autoWait: true,
 				width: 1024,
 				height: 720

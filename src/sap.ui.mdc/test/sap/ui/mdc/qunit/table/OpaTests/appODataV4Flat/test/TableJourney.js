@@ -5,11 +5,10 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary',
+	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Arrangements",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/TestObjects",
-	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	"sap/ui/core/library"
 ], function(
 	/** @type sap.base.Log */ Log,
@@ -20,17 +19,13 @@ sap.ui.define([
 	/** @type sap.ui.test.Opa5 */ Arrangements,
 	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
 	/** @type sap.ui.test.PageObjectDefinition */ TestObjects,
-	/** @type sap.ui.test.Opa5 */ P13nActions,
 	coreLibrary
 ) {
 	"use strict";
 
 	Opa5.extendConfig({
-		viewNamespace: "appTableODataV4",
+		viewNamespace: "appODataV4Flat",
 		arrangements: new Arrangements(),
-		actions: {
-			P13nActions: new P13nActions()
-		},
 		autoWait: true,
 		async: true,
 		timeout: 40,
@@ -41,19 +36,16 @@ sap.ui.define([
 		}
 	});
 
-	const sTableId = "container-appTableODataV4---MyView--mdcTable";
+	const sTableId = "container-appODataV4Flat---MyView--mdcTable";
 
-	QUnit.module("MDC Table OpaTests");
+	QUnit.module("Basics");
 
-	opaTest("After starting the OPA tests and I look at the screen I should see an MDCTable", function(Given, When, Then) {
-		Given.iStartMyApp("appTableODataV4");
+	opaTest("After starting the app I should see a table", function(Given, When, Then) {
+		Given.iStartMyApp("appODataV4Flat");
 		When.onTheApp.iLookAtTheScreen();
 		Then.onTheApp.iShouldSeeATable(sTableId);
 	});
 
-	/* =========================================================== */
-	/* opaTests that are tableType independent                     */
-	/* =========================================================== */
 	opaTest("The table should have the 'Select All' check box", function(Given, When, Then) {
 		Then.onTheAppMDCTable.iShouldSeeTheSelectAllCheckBox(sTableId);
 	});
@@ -119,12 +111,9 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iShouldNotSeeTheColumnMenu();
 	});
 
-	/* ================================================================ */
-	/* opaTests related to the excel export                             */
-	/*                                                                  */
-	/* THESE TESTS ARE SKIPPED IF NO sap.ui.export LIBRARY IS AVAILABLE */
-	/* ================================================================ */
 	if (Lib.all().hasOwnProperty("sap.ui.export")) {
+		QUnit.module("Excel export");
+
 		opaTest("The table should have the export button", function(Given, When, Then) {
 			Then.onTheAppMDCTable.iShouldSeeTheExportMenuButton(sTableId);
 		});
@@ -154,12 +143,11 @@ sap.ui.define([
 			Then.onTheAppMDCTable.iShouldSeeExportProcessDialog();
 		});
 	} else {
-		Log.warning("sap.ui.export not available", "Export tests are skipped, ensure sap.ui.export is loaded to execute them");
+		Log.warning("sap.ui.export not available", "Export tests are skipped. Ensure sap.ui.export is loaded to execute them");
 	}
 
-	/* =========================================================== */
-	/* opaTests when tableType is ResponsiveTableType              */
-	/* =========================================================== */
+	QUnit.module("ResponsiveTableType");
+
 	opaTest("Select / de-select all visible rows via 'Select all'", function(Given, When, Then) {
 		When.onTheAppMDCTable.iClickOnSelectAllCheckBox(sTableId);
 		Then.onTheAppMDCTable.iShouldSeeAllVisibleRowsSelected(sTableId, true);
@@ -189,7 +177,6 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iShouldSeePopins(sTableId, false);
 	});
 
-	//test the public actions
 	opaTest("Tests the public actions in combination with a ResponsiveTable", function(Given, When, Then) {
 		When.onTheAppMDCTable.iChangeMultiSelectMode(sTableId, "Default");
 		When.onTheAppMDCTable.iSelectAllRows(sTableId); // <- public action
@@ -204,6 +191,8 @@ sap.ui.define([
 		When.onTheAppMDCTable.iClearSelection(sTableId); // <- public action
 		Then.onTheAppMDCTable.iShouldSeeAllVisibleRowsSelected(sTableId, false);
 	});
+
+	QUnit.module("Filter info bar");
 
 	opaTest("Filter and open filter info bar", function(Given, When, Then) {
 		// Filter 'Category' column
@@ -241,7 +230,7 @@ sap.ui.define([
 
 		When.onTheAppMDCTable.iPressOnColumnMenuItem(Util.P13nDialogInfo.Titles.columns);
 		Then.onTheAppMDCTable.iShouldSeeColumnMenuItemContent(Util.P13nDialogInfo.Titles.columns);
-		When.onTheAppMDCTable.iSelectColumns(["Range of Creation Date", "Product", "Name"], false);
+		When.P13nActions.iSelectColumns(["Range of Creation Date", "Product", "Name"], false);
 		When.onTheAppMDCTable.iConfirmColumnMenuItemContent();
 		Then.onTheAppMDCTable.iShouldSeeTheShowHideDetailsButton(sTableId, "showDetails", false);
 
@@ -249,64 +238,61 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iShouldSeeOneColumnMenu();
 		When.onTheAppMDCTable.iPressOnColumnMenuItem(Util.P13nDialogInfo.Titles.columns);
 		Then.onTheAppMDCTable.iShouldSeeColumnMenuItemContent(Util.P13nDialogInfo.Titles.columns);
-		When.onTheAppMDCTable.iSelectColumns(["Name"], false);
+		When.P13nActions.iSelectColumns(["Name"], false);
 		When.onTheAppMDCTable.iConfirmColumnMenuItemContent();
 		Then.onTheAppMDCTable.iShouldSeeTheShowHideDetailsButton(sTableId, "showDetails", true);
 
-		When.onTheAppMDCTable.iSelectVariant("Standard");
+		When.P13nActions.iSelectVariant("Standard");
 		Then.onTheAppMDCTable.iShouldSeeSelectedVariant("Standard");
 	});
 
 	opaTest("When I select the 'Country' column and press ok, the table should be changed", function (Given, When, Then) {
+		When.onTheAppMDCTable.iOpenP13nDialog();
+		Then.onTheAppMDCTable.iShouldSeeP13nDialog();
+		When.P13nActions.iSelectColumns(["Range of Creation Date", "Product", "Category"], null, undefined);
+
+		When.P13nActions.iPressDialogOk();
 
 		When.onTheAppMDCTable.iOpenP13nDialog();
 		Then.onTheAppMDCTable.iShouldSeeP13nDialog();
-		When.onTheAppMDCTable.iSelectColumns(["Range of Creation Date", "Product", "Category"], null, undefined);
-
-		When.onTheAppMDCTable.iPressDialogOk();
-
-		When.onTheAppMDCTable.iOpenP13nDialog();
-		Then.onTheAppMDCTable.iShouldSeeP13nDialog();
-		When.onTheAppMDCTable.iSelectColumns(["Category"], null, undefined);
-		When.onTheAppMDCTable.iPressDialogOk();
+		When.P13nActions.iSelectColumns(["Category"], null, undefined);
+		When.P13nActions.iPressDialogOk();
 		Then.onTheAppMDCTable.iShouldSeeTheShowHideDetailsButton(sTableId, "showDetails", true);
 
-		When.onTheAppMDCTable.iSelectVariant("Standard");
+		When.P13nActions.iSelectVariant("Standard");
 		Then.onTheAppMDCTable.iShouldSeeSelectedVariant("Standard");
 	});
 
 	opaTest("When I remove column and add another column the showDetail button is not visible", function (Given, When, Then) {
+		When.onTheAppMDCTable.iOpenP13nDialog();
+		Then.onTheAppMDCTable.iShouldSeeP13nDialog();
+		When.P13nActions.iSelectColumns(["Range of Creation Date", "Product", "Category"], null, undefined);
+
+		When.P13nActions.iPressDialogOk();
 
 		When.onTheAppMDCTable.iOpenP13nDialog();
 		Then.onTheAppMDCTable.iShouldSeeP13nDialog();
-		When.onTheAppMDCTable.iSelectColumns(["Range of Creation Date", "Product", "Category"], null, undefined);
-
-		When.onTheAppMDCTable.iPressDialogOk();
-
-		When.onTheAppMDCTable.iOpenP13nDialog();
-		Then.onTheAppMDCTable.iShouldSeeP13nDialog();
-		When.onTheAppMDCTable.iSelectColumns(["Category"], null, undefined);
-		When.onTheAppMDCTable.iPressDialogOk();
+		When.P13nActions.iSelectColumns(["Category"], null, undefined);
+		When.P13nActions.iPressDialogOk();
 
 		When.onTheAppMDCTable.iOpenP13nDialog();
 		Then.onTheAppMDCTable.iShouldSeeP13nDialog();
-		When.onTheAppMDCTable.iSelectColumns(["Category"], null, undefined);
-		When.onTheAppMDCTable.iPressDialogOk();
+		When.P13nActions.iSelectColumns(["Category"], null, undefined);
+		When.P13nActions.iPressDialogOk();
 		Then.onTheAppMDCTable.iShouldSeeTheShowHideDetailsButton(sTableId, "showDetails", false);
 
 		When.onTheAppMDCTable.iOpenP13nDialog();
 		Then.onTheAppMDCTable.iShouldSeeP13nDialog();
-		When.onTheAppMDCTable.iSelectColumns(["ChangedAt"], null, undefined);
-		When.onTheAppMDCTable.iPressDialogOk();
+		When.P13nActions.iSelectColumns(["ChangedAt"], null, undefined);
+		When.P13nActions.iPressDialogOk();
 		Then.onTheAppMDCTable.iShouldSeeTheShowHideDetailsButton(sTableId, "showDetails", true);
 
-		When.onTheAppMDCTable.iSelectVariant("Standard");
+		When.P13nActions.iSelectVariant("Standard");
 		Then.onTheAppMDCTable.iShouldSeeSelectedVariant("Standard");
 	});
 
-	/* =========================================================== */
-	/* opaTests when tableType is GridTableType                    */
-	/* =========================================================== */
+	QUnit.module("GridTableType");
+
 	opaTest("The table should be changed to type 'Table' so it has a GridTable inside", function(Given, When, Then) {
 		When.onTheAppMDCTable.iChangeType(sTableId, "Table");
 		Then.onTheAppMDCTable.iShouldSeeTheDeselectAllIcon(sTableId);
@@ -331,7 +317,6 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iShouldSeeAllVisibleRowsSelected(sTableId, false);
 	});
 
-	//test the public actions
 	opaTest("Tests the public actions in combination with a GridTable", function(Given, When, Then) {
 		When.onTheAppMDCTable.iSelectAllRows(sTableId); // <- public action
 		Then.onTheAppMDCTable.iShouldSeeAllVisibleRowsSelected(sTableId, true);
@@ -349,9 +334,7 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iShouldSeeAllVisibleRowsSelected(sTableId, false);
 	});
 
-	/* =========================================================== */
-	/* Column menu                                                 */
-	/* =========================================================== */
+	QUnit.module("Column menu");
 
 	opaTest("Open column menu", function(Given, When, Then) {
 		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Category");
@@ -426,7 +409,7 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iShouldNotSeeTheColumnMenu();
 	});
 
-	opaTest("Reset  changes", function(Given, When, Then) {
+	opaTest("Reset changes", function(Given, When, Then) {
 		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Category");
 		Then.onTheAppMDCTable.iShouldSeeOneColumnMenu();
 		When.onTheAppMDCTable.iPressOnColumnMenuItem(Util.P13nDialogInfo.Titles.sort);

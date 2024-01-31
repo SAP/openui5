@@ -7,12 +7,9 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/matchers/Ancestor",
-	"sap/ui/test/matchers/Descendant",
 	"test-resources/sap/ui/mdc/testutils/opa/table/waitForTable",
 	"test-resources/sap/ui/mdc/testutils/opa/table/Actions",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
-	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action",
 	"sap/ui/test/actions/Drag",
 	"sap/ui/test/actions/Drop",
 	"sap/ui/mdc/enums/TableType"
@@ -21,12 +18,9 @@ sap.ui.define([
 	/** @type sap.ui.test.Opa5 */ Opa5,
 	/** @type sap.ui.test.actions.Press */ Press,
 	/** @type sap.ui.test.matchers.PropertyStrictEquals */ PropertyStrictEquals,
-	/** @type sap.ui.test.matchers.Ancestor */ Ancestor,
-	/** @type sap.ui.test.matchers.Descendant */ Descendant,
 	/** @type sap.ui.test.Opa5 */ waitForTable,
 	/** @type sap.ui.test.Opa5 */ TableActions,
 	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
-	/** @type sap.ui.test.Opa5 */ P13nAction,
 	/** @type sap.ui.test.actions.Drag */ Drag,
 	/** @type sap.ui.test.actions.Drop */ Drop,
 	/** @type sap.ui.mdc.enums.TableType */ TableType) {
@@ -821,13 +815,13 @@ sap.ui.define([
 		},
 
 		/**
-				 * Selects all visible rows available in the MDCTable.
-				 *
-				 * @function
-				 * @name iSelectAllRows
-				 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
-				 * @returns {Promise} OPA waitFor
-				 */
+		 * Selects all visible rows available in the MDCTable.
+		 *
+		 * @function
+		 * @name iSelectAllRows
+		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+		 * @returns {Promise} OPA waitFor
+		 */
 		iSelectAllRows: TableActions.iSelectAllRows,
 
 		/**
@@ -850,33 +844,6 @@ sap.ui.define([
 		 * @param {Number} iEndIndex Index up to the selection ends
 		 * @returns {Promise} OPA waitFor
 		 */
-		iSelectRows: TableActions.iSelectRows,
-
-		iSelectVariant: function(sVariantName) {
-			const Action = new P13nAction();
-			return Action.iSelectVariant(sVariantName);
-		},
-
-		/** Selects the column in Selection panel from p13n or column menu
-		 *
-		 * @param {Array} aColumnName list of column lanel that needs to be selected.
-		 * @param {Boolean} [bModal] Indicates whether column menu or p13n dialog is used.
-		 * @returns {Promise} OPA waitFor
-		 */
-		iSelectColumns: function(aColumnName, bModal) {
-			const Action = new P13nAction();
-			return aColumnName.forEach(function(sColumnName) {
-				Action.iSelectColumn(sColumnName, null, undefined, bModal);
-			});
-		},
-
-		/** Closes the p13n dialog
-		 *
-		 * @returns {Promise} OPA waitFor
-		 */
-		iPressDialogOk: function() {
-			const Action = new P13nAction();
-			return Action.iPressDialogOk();
-		}
+		iSelectRows: TableActions.iSelectRows
 	};
 });

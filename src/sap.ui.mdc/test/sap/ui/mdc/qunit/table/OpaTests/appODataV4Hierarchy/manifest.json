@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "sap.ui.mdc.tableOpaTests.appTreeTableODataV4",
+		"id": "sap.ui.mdc.tableOpaTests.appODataV4Hierarchy",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
@@ -18,7 +18,7 @@
 	"sap.ui5": {
 		"rootView": {
 			"id": "MyView",
-			"viewName": "sap.ui.mdc.tableOpaTests.appTreeTableODataV4.View",
+			"viewName": "sap.ui.mdc.tableOpaTests.appODataV4Hierarchy.View",
 			"type": "XML",
 			"async": true
 		},
