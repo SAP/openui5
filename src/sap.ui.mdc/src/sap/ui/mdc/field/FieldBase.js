@@ -118,6 +118,9 @@ sap.ui.define([
 				/**
 				 * The type of data handled by the field.
 				 * This type is used to parse, format, and validate the value.
+				 *
+				 * <b>Note:</b> The module of the data type should be loaded before it is assigned to the field.
+				 * Otherwise the asynchronous loading of the module might lead to unwanted side effects.
 				 */
 				dataType: {
 					type: "string",
