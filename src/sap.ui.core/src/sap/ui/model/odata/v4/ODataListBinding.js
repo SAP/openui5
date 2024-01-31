@@ -2013,11 +2013,13 @@ sap.ui.define([
 	 * Please use either the automatic grouping of filters (where applicable) or explicit
 	 * AND/OR filters, as a mixture of both is not supported.
 	 *
-	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [vFilters]
-	 *   The dynamic filters to be used; replaces the dynamic filters given in
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}.
-	 *   The filter executed on the list is created from the following parts, which are combined
-	 *   with a logical 'and':
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [vFilters=[]]
+	 *   The dynamic filters to be used; in case of type {@link sap.ui.model.FilterType.Application}
+	 *   this replaces the dynamic filters given in
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}. A nullish or missing value is treated as
+	 *   an empty array and thus removes all dynamic filters of the specified type. The filter
+	 *   executed on the list is created from the following parts, which are combined with a logical
+	 *   'and':
 	 *   <ul>
 	 *     <li> Dynamic filters of type {@link sap.ui.model.FilterType.Application}
 	 *     <li> Dynamic filters of type {@link sap.ui.model.FilterType.Control}
@@ -4426,11 +4428,11 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
 	 * {@link #sort}.
 	 *
-	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
+	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters=[]]
 	 *   The dynamic sorters to be used; they replace the dynamic sorters given in
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}.
-	 *   Static sorters, as defined in the '$orderby' binding parameter, are always executed after
-	 *   the dynamic sorters.
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}. A nullish or missing value is treated as
+	 *   an empty array and thus removes all dynamic sorters. Static sorters, as defined in the
+	 *   '$orderby' binding parameter, are always executed after the dynamic sorters.
 	 * @returns {this}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
