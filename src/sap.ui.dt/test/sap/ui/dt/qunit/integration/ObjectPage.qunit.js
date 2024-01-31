@@ -1,32 +1,32 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/m/Button",
+	"sap/m/VBox",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/uxap/ObjectPageHeader",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-	"sap/uxap/ObjectPageHeader",
-	"sap/m/Button",
-	"sap/m/VBox",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
+	Button,
+	VBox,
 	DesignTime,
 	OverlayRegistry,
+	ObjectPageHeader,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
-	ObjectPageHeader,
-	Button,
-	VBox,
 	nextUIUpdate
 ) {
 	"use strict";
 
 	QUnit.module("Basic functionality", {
 		async beforeEach(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			this.oButton = new Button({text: "foo"});
 			this.oSubSection = new ObjectPageSubSection("subsection", {
@@ -65,28 +65,42 @@ function(
 			this.oDesignTime.destroy();
 			this.oVBox.destroy();
 		}
-	}, function() {
-		QUnit.test("invisible section", async function(assert) {
-			var fnDone = assert.async();
+	}, () => {
+		QUnit.test("Check overlay positions after invisible section is made visible", function(assert) {
+			const fnDone = assert.async();
+			const oSectionOverlay = OverlayRegistry.getOverlay(this.oSection);
+			const oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 
-			OverlayRegistry.getOverlay(this.oSection).attachEventOnce("geometryChanged", function() {
-				var oSectionOverlay = OverlayRegistry.getOverlay(this.oSection);
-				var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-
-				assert.deepEqual(Math.ceil(oSectionOverlay.$().offset().top), Math.ceil(this.oSection.$().offset().top), "top position of the Section overlay is correct");
-				assert.deepEqual(Math.ceil(oSectionOverlay.$().offset().left), Math.ceil(this.oSection.$().offset().left), "left position of the Section overlay is correct");
-				assert.deepEqual(Math.ceil(oButtonOverlay.$().offset().top), Math.ceil(this.oButton.$().offset().top), "top position of the Button overlay is correct");
-				assert.deepEqual(Math.ceil(oButtonOverlay.$().offset().left), Math.ceil(this.oButton.$().offset().left), "left position of the Button overlay is correct");
+			oSectionOverlay.attachEventOnce("geometryChanged", () => {
+				assert.deepEqual(
+					Math.ceil(oSectionOverlay.getDomRef().getBoundingClientRect().top),
+					Math.ceil(this.oSection.getDomRef().getBoundingClientRect().top),
+					"top position of the Section overlay is correct"
+				);
+				assert.deepEqual(
+					Math.ceil(oSectionOverlay.getDomRef().getBoundingClientRect().left),
+					Math.ceil(this.oSection.getDomRef().getBoundingClientRect().left),
+					"left position of the Section overlay is correct"
+				);
+				assert.deepEqual(
+					Math.ceil(oButtonOverlay.getDomRef().getBoundingClientRect().top),
+					Math.ceil(this.oButton.getDomRef().getBoundingClientRect().top),
+					"top position of the Button overlay is correct"
+				);
+				assert.deepEqual(
+					Math.ceil(oButtonOverlay.getDomRef().getBoundingClientRect().left),
+					Math.ceil(this.oButton.getDomRef().getBoundingClientRect().left),
+					"left position of the Button overlay is correct"
+				);
 
 				fnDone();
-			}, this);
+			});
 
 			this.oSection.setVisible(true);
-			await nextUIUpdate();
 		});
 	});
 
-	QUnit.done(function() {
+	QUnit.done(() => {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });
