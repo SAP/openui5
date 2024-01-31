@@ -1394,9 +1394,18 @@ sap.ui.define([
 	 * @private
 	 */
 	FilterBarBase.prototype._onModifications = function(aAffectedControllers) {
+
+		var fResolveAppliance = function() {
+			if (this._oApplyingChanges) {
+				this._fResolveApplyingChanges();
+				this._oApplyingChanges = null;
+			}
+		}.bind(this);
+
 		if (aAffectedControllers && aAffectedControllers.indexOf("Filter") === -1) {
 			// optimized executions in case nothing needs to be done
 			// --> no filter changes have been done
+			fResolveAppliance();
 			return Promise.resolve();
 		}
 		return this._setXConditions(this.getFilterConditions()).then(function(){
@@ -1405,11 +1414,7 @@ sap.ui.define([
 				triggerFilterUpdate: true,
 				recheckMissingRequired: true
 			});
-
-			if (this._oApplyingChanges) {
-				this._fResolveApplyingChanges();
-				this._oApplyingChanges = null;
-			}
+			fResolveAppliance();
 		}.bind(this));
 	};
 
