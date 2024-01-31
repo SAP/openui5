@@ -121,7 +121,7 @@ sap.ui.define([
 										href: oMetadataOfNewItem.href,
 										target: oMetadataOfNewItem.target,
 										icon: oMetadataOfNewItem.icon,
-										visible: true
+										visible: false
 									});
 								})
 								.then((oItem) => {

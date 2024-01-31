@@ -137,8 +137,6 @@ sap.ui.define([
 			countItemsWithIcon: 0,
 			countItemsWithoutIcon: 0,
 
-			showResetEnabled: false,
-
 			// Additionally the property 'icon' can be modified in 'runtimeItems'.
 			runtimeItems: [],
 			contentTitle: ""
@@ -364,109 +362,33 @@ sap.ui.define([
 	};
 
 	Panel.prototype._openPersonalizationDialog = function() {
-		return new Promise((resolve, reject) => {
-			sap.ui.require([this.getMetadataHelperPath() || "sap/ui/mdc/Link"], (MetadataHelper) => {
-				const oModel = this._getInternalModel();
-				const aMBaselineItems = MetadataHelper.retrieveBaseline(this);
-				const aMBaselineItemsTotal = aMBaselineItems;
-				const fnUpdateResetButton = function(oSelectionPanel) {
-					let aSelectedItems = oSelectionPanel._oListControl.getItems().filter((oItem) => {
-						return oItem.getSelected();
-					});
-					aSelectedItems = aSelectedItems.map((oSelectedItem) => {
-						const oItem = oSelectionPanel._getP13nModel().getProperty(oSelectedItem.getBindingContext(oSelectionPanel.P13N_MODEL).sPath);
-						return {
-							id: oItem.name,
-							description: oItem.description,
-							href: oItem.href,
-							internalHref: oItem.internalHref,
-							target: oItem.target,
-							text: oItem.text,
-							visible: oItem.visible
-						};
-					});
-					const bShowResetEnabled = Panel._showResetButtonEnabled(aMBaselineItemsTotal, aSelectedItems);
-					this._getInternalModel().setProperty("/showResetEnabled", bShowResetEnabled);
-				};
-
-				const oParent = this.getParent();
-				// In case of mobile oParent isA sap.m.Dialog
-				if (oParent.isA("sap.m.Popover")) {
-					oParent.setModal(true);
-				}
-				Engine.getInstance().uimanager.show(this, "LinkItems", {
-					contentWidth: "28rem",
-					contentHeight: "35rem",
-					close: function() {
-						if (oParent.isA("sap.m.Popover")) {
-							oParent.setModal(false);
-						}
+		return new Promise((resolve) => {
+			const oParent = this.getParent();
+			// In case of mobile oParent isA sap.m.Dialog
+			if (oParent.isA("sap.m.Popover")) {
+				oParent.setModal(true);
+			}
+			Engine.getInstance().show(this, "LinkItems", {
+				contentWidth: "28rem",
+				contentHeight: "35rem",
+				close: () => {
+					if (oParent.isA("sap.m.Popover")) {
+						oParent.setModal(false);
 					}
-				}).then((oDialog) => {
-					const oResetButton = oDialog.getCustomHeader().getContentRight()[0];
-					const oSelectionPanel = oDialog.getContent()[0];
-					oResetButton.setModel(oModel, "$sapuimdclinkPanel");
-					oResetButton.bindProperty("enabled", {
-						path: '$sapuimdclinkPanel>/showResetEnabled'
-					});
-					fnUpdateResetButton.call(this, oSelectionPanel);
-					oSelectionPanel.attachChange((oEvent) => {
-						fnUpdateResetButton.call(this, oSelectionPanel);
-						oSelectionPanel.attachChange((oEvent) => {
-							fnUpdateResetButton.call(this, oSelectionPanel);
-						});
-						oDialog.attachAfterClose(() => {
-							if (oParent.isA("sap.m.Popover")) {
-								oParent.setModal(false);
-							}
-						});
-					});
-					resolve(oDialog);
+				}
+			}).then((oDialog) => {
+				oDialog.attachAfterClose(() => {
+					if (oParent.isA("sap.m.Popover")) {
+						oParent.setModal(false);
+					}
 				});
+				resolve(oDialog);
 			});
 		});
 	};
 
-	Panel._showResetButtonEnabled = function(aMBaseLineItems, aSelectedItems) {
-		let bShowResetButtonEnabled = false;
-
-		const aMVisibleRuntimeItems = Panel._getVisibleItems(aSelectedItems);
-		const aMVisibleBaseLineItems = Panel._getVisibleItems(aMBaseLineItems);
-
-		if (aSelectedItems.length !== aMBaseLineItems.length) {
-			bShowResetButtonEnabled = true;
-		} else if (aMVisibleBaseLineItems.length && aMVisibleRuntimeItems.length) {
-			const bAllVisibleBaselineItemsIncludedInVisibleRuntimeItems = Panel._allItemsIncludedInArray(aMVisibleBaseLineItems, aMVisibleRuntimeItems);
-			const bAllVisibleRuntimeItemsIncludedInVisibleBaselineItems = Panel._allItemsIncludedInArray(aMVisibleRuntimeItems, aMVisibleBaseLineItems);
-
-			bShowResetButtonEnabled = !bAllVisibleBaselineItemsIncludedInVisibleRuntimeItems || !bAllVisibleRuntimeItemsIncludedInVisibleBaselineItems;
-		}
-		return bShowResetButtonEnabled;
-	};
-
-	Panel._allItemsIncludedInArray = function(aMItemsToBeIncluded, aMArrayToCheck) {
-		let bAllItemsIncluded = true;
-		aMItemsToBeIncluded.forEach((oItemToBeIncluded) => {
-			const aMItemsIncluded = Panel._getItemsById(oItemToBeIncluded.id, aMArrayToCheck);
-			if (aMItemsIncluded.length === 0) {
-				bAllItemsIncluded = false;
-			}
-		});
-		return bAllItemsIncluded;
-	};
-
-	Panel._getItemsById = function(sId, aMItems) {
-		return aMItems.filter((oItem) => {
-			return oItem.id === sId;
-		});
-	};
-
-	Panel._getItemById = function(sId, aArray) {
-		return Panel._getItemsById(sId, aArray)[0];
-	};
-
 	Panel._getVisibleItems = function(aMItems) {
-		return aMItems.filter((oItem) => {
+		return aMItems.filter(function(oItem) {
 			return oItem.id !== undefined && oItem.visible;
 		});
 	};
@@ -678,8 +600,8 @@ sap.ui.define([
 	Panel.prototype._getLinkControls = function() {
 		return this._getLinkArea().getItems().map((HorizontalLayout) /* see _fnLinkItemFactory */ => // Link
 			HorizontalLayout.getContent()[0] // HBox
-			.getItems()[1] // VBox
-			.getItems()[0]);
+				.getItems()[1] // VBox
+				.getItems()[0]);
 	};
 
 	Panel.prototype._getFooterArea = function() {

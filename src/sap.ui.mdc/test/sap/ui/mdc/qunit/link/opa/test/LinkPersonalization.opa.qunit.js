@@ -61,6 +61,10 @@ sap.ui.define([
 
 		When.iPressOkButton();
 		Then.thePersonalizationDialogShouldBeClosed();
+
+		Then.onTheMDCLink.theResetButtonIsEnabled({text: "Flat S"}, false);
+		When.iPressOkButton();
+		Then.thePersonalizationDialogShouldBeClosed();
 	});
 
 	opaTest("When I click on '1239102' link in the 'Product ID' column, popover should open with main link and with link personalization button", function(Given, When, Then) {
@@ -101,6 +105,7 @@ sap.ui.define([
 			"Name Link2 (Superior)",
 			"Name Link3"
 		]);
+		Then.onTheMDCLink.theResetButtonIsEnabled({text: "Flat S"}, true);
 	});
 
 	opaTest("When I click on 'Flat S' link in the 'Name' column and deselect 'Select all Links' in the selection dialog I should see no links on the popup", function(Given, When, Then) {

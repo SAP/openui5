@@ -1,7 +1,12 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enums/LinkType'], (BaseDelegate, LinkType) => {
+sap.ui.define([
+	'sap/ui/mdc/BaseDelegate',
+	'sap/ui/mdc/enums/LinkType',
+	'sap/ui/fl/Utils',
+	'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'
+], (BaseDelegate, LinkType, Utils, FlexRuntimeInfoAPI) => {
 	"use strict";
 	/**
 	 * Base delegate for {@link sap.ui.mdc.Link}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.Link}.
@@ -87,6 +92,33 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enums/LinkType'], (BaseDel
 	 */
 	LinkDelegate.beforeNavigationCallback = function(oLink, oEvent) {
 		return Promise.resolve(true);
+	};
+
+	/**
+	 * Allows to differenciate the created <code>Panel</code> of multiple <code>Link</code> instances for personalization reasons.
+	 * Please provide different IDs for each <code>Link</code> as otherwise the personalization will have problems keeping the <code>Panel</code> controls apart.
+	 * @public
+	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
+	 * @returns {string} The ID of the <code>Panel</code> that is created by the <code>Link</code>
+	 */
+	LinkDelegate.getPanelId = function(oLink) {
+		let oField;
+		if (oLink.getParent()) {
+			oField = oLink.getParent();
+		}
+		let oControl = oLink._getSourceControl();
+		if (!oControl) {
+			//SapBaseLog.error("Invalid source control: " + this.getSourceControl() + ". The mandatory 'sourceControl' association should be defined due to personalization reasons, parent: " + oField + " used instead.");
+			oLink.setSourceControl(oField);
+			oControl = oField;
+		}
+		if (!FlexRuntimeInfoAPI.isFlexSupported({ element: oLink }) || !FlexRuntimeInfoAPI.isFlexSupported({ element: oControl })) {
+			//SapBaseLog.error("Invalid component. The mandatory 'sourceControl' association should be assigned to the app component due to personalization reasons.");
+			return oLink.getId() + "-idInfoPanel";
+		} else {
+			const oAppComponent = Utils.getAppComponentForControl(oControl) || Utils.getAppComponentForControl(oField);
+			return oAppComponent.createId("idInfoPanel");
+		}
 	};
 
 	return LinkDelegate;

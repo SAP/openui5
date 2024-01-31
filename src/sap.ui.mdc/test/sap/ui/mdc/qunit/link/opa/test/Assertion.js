@@ -167,6 +167,10 @@ sap.ui.define([
 						controlType: "sap.m.Button",
 						matchers: [
 							new PropertyStrictEquals({
+								name: "enabled",
+								value: bEnabled
+							}),
+							new PropertyStrictEquals({
 								name: "text",
 								value: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.RESET")
 							}),

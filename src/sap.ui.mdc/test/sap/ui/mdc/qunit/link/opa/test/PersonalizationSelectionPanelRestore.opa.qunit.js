@@ -23,7 +23,7 @@ sap.ui.define([
 	});
 
 	const fnCheckLinks = function(Then, mItems) {
-		Object.entries(mItems).forEach(function (oEntry) {
+		Object.entries(mItems).forEach(function(oEntry) {
 			const sLinkText = oEntry[0];
 			const oValue = oEntry[1];
 			Then.iShouldSeeLinkItemOnPosition(sLinkText, oValue.position);
@@ -70,10 +70,10 @@ sap.ui.define([
 	// Test: select an item and restore
 	// ------------------------------------------------------
 	opaTest("When I click on 'Gladiator MX' link in the 'Name' column, popover should open with initiallyVisible link", function(Given, When, Then) {
-		When.onTheMDCLink.iPressTheLink({text: "Gladiator MX"});
+		When.onTheMDCLink.iPressTheLink({ text: "Gladiator MX" });
 
-		Then.onTheMDCLink.iShouldSeeAPopover({text: "Gladiator MX"});
-		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Gladiator MX"}, [
+		Then.onTheMDCLink.iShouldSeeAPopover({ text: "Gladiator MX" });
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({ text: "Gladiator MX" }, [
 			"Name Link2 (Superior)"
 		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
@@ -90,7 +90,7 @@ sap.ui.define([
 	});
 
 	opaTest("When I deselect the 'Name Link2 (Superior)' item and select the 'FactSheet of Name' item, the 'Restore' button should be enabled", function(Given, When, Then) {
-		When.onTheMDCLink.iPersonalizeTheLinks({text: "Gladiator MX"}, [
+		When.onTheMDCLink.iPersonalizeTheLinks({ text: "Gladiator MX" }, [
 			"FactSheet of Name"
 		]);
 
@@ -103,23 +103,24 @@ sap.ui.define([
 
 		When.iPressOnLinkPersonalizationButton();
 		fnCheckLinks(Then, this.mItems);
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 	});
 
 	opaTest("When I press 'Ok' button, the dialog should close", function(Given, When, Then) {
 		When.iPressOkButton();
 
 		Then.thePersonalizationDialogShouldBeClosed();
-		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Gladiator MX"}, [
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({ text: "Gladiator MX" }, [
 			"FactSheet of Name"
 		]);
 	});
 
 	opaTest("When I click on 'Flat Medium' link in the 'Name' column, popover should open", function(Given, When, Then) {
 		When.onTheMDCLink.iCloseThePopover();
-		When.onTheMDCLink.iPressTheLink({text: "Flat Medium"});
+		When.onTheMDCLink.iPressTheLink({ text: "Flat Medium" });
 
-		Then.onTheMDCLink.iShouldSeeAPopover({text: "Flat Medium"});
-		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Flat Medium"}, [
+		Then.onTheMDCLink.iShouldSeeAPopover({ text: "Flat Medium" });
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({ text: "Flat Medium" }, [
 			"FactSheet of Name"
 		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
@@ -136,7 +137,7 @@ sap.ui.define([
 	});
 
 	opaTest("When I press 'Restore' and then 'OK' button, popover should show previous link selection again", function(Given, When, Then) {
-		When.onTheMDCLink.iResetThePersonalization({text: "Flat Medium"});
+		When.onTheMDCLink.iResetThePersonalization({ text: "Flat Medium" });
 
 		// Change the position value as we reset the personalization
 		this.mItems["Name Link2 (Superior)"].selected = true;
@@ -146,8 +147,8 @@ sap.ui.define([
 		this.mItems["FactSheet of Name"].position = 2;
 
 		Then.thePersonalizationDialogShouldBeClosed();
-		Then.onTheMDCLink.iShouldSeeAPopover({text: "Flat Medium"});
-		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Flat Medium"}, [
+		Then.onTheMDCLink.iShouldSeeAPopover({ text: "Flat Medium" });
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({ text: "Flat Medium" }, [
 			"Name Link2 (Superior)"
 		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
@@ -160,10 +161,10 @@ sap.ui.define([
 		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/link/opa/appUnderTest/start.html');
 		Given.iClearTheLocalStorageFromRtaRestart();
 
-		When.onTheMDCLink.iPressTheLink({text: "Gladiator MX"});
+		When.onTheMDCLink.iPressTheLink({ text: "Gladiator MX" });
 
-		Then.onTheMDCLink.iShouldSeeAPopover({text: "Gladiator MX"});
-		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Gladiator MX"}, [
+		Then.onTheMDCLink.iShouldSeeAPopover({ text: "Gladiator MX" });
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({ text: "Gladiator MX" }, [
 			"Name Link2 (Superior)"
 		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
@@ -180,7 +181,7 @@ sap.ui.define([
 	});
 
 	opaTest("When I select the 'FactSheet of Name' item, the 'Restore' button should be enabled", function(Given, When, Then) {
-		When.onTheMDCLink.iPersonalizeTheLinks({text: "Gladiator MX"}, [
+		When.onTheMDCLink.iPersonalizeTheLinks({ text: "Gladiator MX" }, [
 			"Name Link2 (Superior)",
 			"FactSheet of Name"
 		]);
@@ -197,7 +198,7 @@ sap.ui.define([
 		When.iPressOkButton();
 
 		Then.thePersonalizationDialogShouldBeClosed();
-		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Gladiator MX"}, [
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({ text: "Gladiator MX" }, [
 			"FactSheet of Name",
 			"Name Link2 (Superior)"
 		]);
@@ -214,26 +215,26 @@ sap.ui.define([
 	});
 
 	opaTest("When I press 'Restore' then select 'FactSheet of Name' again and then 'OK' button, popover should show the same link selection again", function(Given, When, Then) {
-		When.onTheMDCLink.iResetThePersonalization({text: "Gladiator MX"});
+		When.onTheMDCLink.iResetThePersonalization({ text: "Gladiator MX" });
 		Then.thePersonalizationDialogShouldBeClosed();
 
-		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Gladiator MX"}, [
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({ text: "Gladiator MX" }, [
 			"Name Link2 (Superior)"
 		]);
 
 		Then.thePersonalizationDialogShouldBeClosed();
-		Then.onTheMDCLink.iShouldSeeAPopover({text: "Gladiator MX"});
+		Then.onTheMDCLink.iShouldSeeAPopover({ text: "Gladiator MX" });
 
 		When.iPressOnLinkPersonalizationButton();
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 		When.iPressOkButton();
 
-		When.onTheMDCLink.iPersonalizeTheLinks({text: "Gladiator MX"}, [
+		When.onTheMDCLink.iPersonalizeTheLinks({ text: "Gladiator MX" }, [
 			"Name Link2 (Superior)",
 			"FactSheet of Name"
 		]);
 
-		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Gladiator MX"}, [
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({ text: "Gladiator MX" }, [
 			"FactSheet of Name",
 			"Name Link2 (Superior)"
 		]);

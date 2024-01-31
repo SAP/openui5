@@ -39,5 +39,9 @@ sap.ui.define([
 		return Promise.resolve(aLinkItems);
 	};
 
+	SampleLinkDelegate.getPanelId = function(oLink) {
+		return LinkDelegate.getPanelId(oLink) + "--testLink";
+	};
+
 	return SampleLinkDelegate;
 });
