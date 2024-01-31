@@ -18,31 +18,32 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
-	var sAdaptableDialogId = "adaptableDialog";
-	var sandbox = sinon.createSandbox();
-	var fnFilter = function(oPopupElement) {
-		if (oPopupElement.getId() === sAdaptableDialogId) {
-			return true;
-		}
-	};
+	const sAdaptableDialogId = "adaptableDialog";
+	const sandbox = sinon.createSandbox();
+
+	function fnFilter(oPopupElement) {
+		return oPopupElement.getId() === sAdaptableDialogId;
+	}
 
 	QUnit.module("Given no open popups", function() {
 		QUnit.test("when getNextZIndex() is called to check basic functionality", function(assert) {
 			assert.ok(Util.isInteger(ZIndexManager.getNextZIndex()), "then returned value is an integer");
 		});
 		QUnit.test("when getNextZIndex() is called multiple times without open popups", function(assert) {
-			var aIndexes = [];
-			for (var i = 0; i < 100; i++) {
+			const aIndexes = [];
+			for (let i = 0; i < 100; i++) {
 				aIndexes.push(ZIndexManager.getNextZIndex());
 			}
 
+			function indexCheck(iCurrent, iIndex, aSource) {
+				return (
+					iIndex === 0 // do not check the first element of the array
+					|| iCurrent > aSource[iIndex - 1]
+				);
+			}
+
 			assert.ok(
-				aIndexes.every(function(iCurrent, iIndex, aSource) {
-					return (
-						iIndex === 0 // do not check the first element of the array
-						|| iCurrent > aSource[iIndex - 1]
-					);
-				}),
+				aIndexes.every(indexCheck),
 				"then returned value is greater than previous value"
 			);
 		});
@@ -90,6 +91,7 @@ sap.ui.define([
 						iEqualSequenceStartIndex = !Util.isInteger(iEqualSequenceStartIndex) ? iIndex - 1 : iEqualSequenceStartIndex;
 						return iEqualSequenceStartIndex;
 					}
+					return false;
 				}.bind(this)),
 				"then the z-index value is greater than or equal to the non-adaptable popup minus the reserved indices"
 			);
@@ -109,6 +111,7 @@ sap.ui.define([
 			);
 		});
 	});
+
 	QUnit.module("Given an adaptable popup is open", {
 		beforeEach(assert) {
 			var done = assert.async();
@@ -188,13 +191,17 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when getZIndexBelowPopups() is called", function(assert) {
 			var iLowerZIndex = ZIndexManager.getZIndexBelowPopups();
-			assert.ok(iLowerZIndex < this.iDialogZIndex, "then the returned z-index was less than the adaptable popup z-index");
-			assert.ok(iLowerZIndex < BusyIndicator.oPopup._iZIndex, "then the returned z-index was lower than the non-adaptable popup z-index");
+			assert.ok(iLowerZIndex < this.iDialogZIndex,
+				"then the returned z-index was less than the adaptable popup z-index");
+			assert.ok(iLowerZIndex < BusyIndicator.oPopup._iZIndex,
+				"then the returned z-index was lower than the non-adaptable popup z-index");
 		});
 		QUnit.test("when getNextZIndex() is called", function(assert) {
 			var iNextZIndex = ZIndexManager.getNextZIndex();
-			assert.ok(BusyIndicator.oPopup._iZIndex < this.iDialogZIndex, "then the z-index of the non-adaptable popup was less than the adaptable popup");
-			assert.ok(iNextZIndex > this.iDialogZIndex, "then the returned z-index was higher than the adaptable popup z-index");
+			assert.ok(BusyIndicator.oPopup._iZIndex < this.iDialogZIndex,
+				"then the z-index of the non-adaptable popup was less than the adaptable popup");
+			assert.ok(iNextZIndex > this.iDialogZIndex,
+				"then the returned z-index was higher than the adaptable popup z-index");
 		});
 	});
 
@@ -220,14 +227,19 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when getZIndexBelowPopups() is called", function(assert) {
 			var iLowerZIndex = ZIndexManager.getZIndexBelowPopups();
-			assert.ok(iLowerZIndex < this.iDialogZIndex, "then the returned z-index was less than the adaptable popup z-index");
-			assert.ok(iLowerZIndex < BusyIndicator.oPopup._iZIndex, "then the returned z-index was lower than the non-adaptable popup z-index");
+			assert.ok(iLowerZIndex < this.iDialogZIndex,
+				"then the returned z-index was less than the adaptable popup z-index");
+			assert.ok(iLowerZIndex < BusyIndicator.oPopup._iZIndex,
+				"then the returned z-index was lower than the non-adaptable popup z-index");
 		});
 		QUnit.test("when getNextZIndex() is called", function(assert) {
 			var iNextZIndex = ZIndexManager.getNextZIndex();
-			assert.ok(BusyIndicator.oPopup._iZIndex > this.iDialogZIndex, "then the z-index of the adaptable popup was less than the non-adaptable popup");
-			assert.ok(iNextZIndex > this.iDialogZIndex, "then the returned z-index was higher than the adaptable popup z-index");
-			assert.ok(iNextZIndex < BusyIndicator.oPopup._iZIndex, "then the returned z-index was lower than the non-adaptable popup");
+			assert.ok(BusyIndicator.oPopup._iZIndex > this.iDialogZIndex,
+				"then the z-index of the adaptable popup was less than the non-adaptable popup");
+			assert.ok(iNextZIndex > this.iDialogZIndex,
+				"then the returned z-index was higher than the adaptable popup z-index");
+			assert.ok(iNextZIndex < BusyIndicator.oPopup._iZIndex,
+				"then the returned z-index was lower than the non-adaptable popup");
 		});
 	});
 
