@@ -963,12 +963,22 @@
 
 	})();
 
-	if (BaseConfig.get({
+	const bFuture = BaseConfig.get({
+		name: "sapUiXxFuture",
+		type: BaseConfig.Type.Boolean,
+		external: true,
+		freeze: true
+	});
+
+	// xx-future implicitly sets the loader to async
+	const bAsync = BaseConfig.get({
 		name: "sapUiAsync",
 		type: BaseConfig.Type.Boolean,
 		external: true,
 		freeze: true
-	})) {
+	}) || bFuture;
+
+	if (bAsync) {
 		ui5loader.config({
 			async: true
 		});
@@ -1000,12 +1010,16 @@
 
 	//calculate syncCallBehavior
 	let syncCallBehavior = 0; // ignore
-	const sNoSync = BaseConfig.get({
+	let sNoSync = BaseConfig.get({ // call must be made to ensure freezing
 		name: "sapUiXxNoSync",
 		type: BaseConfig.Type.String,
 		external: true,
 		freeze: true
 	});
+
+	// sap-ui-xx-future enforces strict sync call behavior
+	sNoSync = bFuture ? "x" : sNoSync;
+
 	if (sNoSync === 'warn') {
 		syncCallBehavior = 1;
 	} else if (/^(true|x)$/i.test(sNoSync)) {
@@ -1013,7 +1027,7 @@
 	}
 
 	/**
-	 * @deprectaed As of Version 1.120
+	 * @deprecated As of Version 1.120
 	 */
 	(() => {
 		const GlobalConfigurationProvider = sap.ui.require("sap/base/config/GlobalConfigurationProvider");
