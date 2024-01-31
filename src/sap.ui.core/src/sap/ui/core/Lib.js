@@ -1436,8 +1436,10 @@ sap.ui.define([
 			if ( !/^(any|boolean|float|int|string|object|void)$/.test(oLib.types[i]) ) {
 				// register a wrapper module that logs a deprecation warning
 				const sTypeName = oLib.types[i];
+				const sLibraryJsPath = oLib.name.replace(/\./g, "/") + "/library";
 				sap.ui.loader._.declareModule(sTypeName.replace(/\./g, "/") + ".js",
-					`Deprecation: Importing the type '${sTypeName}' as a module is deprecated. Please require the corresponding 'library.js' containing the type directly. You can then reference the type via the library's module export.`);
+					`Deprecation: Importing the type '${sTypeName}' as a pseudo module is deprecated. Please import the type from the module '${sLibraryJsPath}'. You can then reference this type via the library's module export. ` +
+					`For more information, see documentation under 'Best Practices for Loading Modules'.`);
 
 				// ensure parent namespace of the type
 				var sNamespacePrefix = sTypeName.substring(0, sTypeName.lastIndexOf("."));

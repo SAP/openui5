@@ -604,7 +604,7 @@ sap.ui.define([
 			name: "testing.pseudo.modules.deprecation"
 		});
 
-		const sExpectedErrorMessage = "Deprecation: Importing the type 'testing.pseudo.modules.deprecation.Type1' as a module is deprecated. Please require the corresponding 'library.js' containing the type directly. You can then reference the type via the library's module export.";
+		const sExpectedErrorMessage = "Deprecation: Importing the type 'testing.pseudo.modules.deprecation.Type1' as a pseudo module is deprecated. Please import the type from the module 'testing/pseudo/modules/deprecation/library'. You can then reference this type via the library's module export. For more information, see documentation under 'Best Practices for Loading Modules'.";
 
 		// Anonymous require: Log does not contain the requesting module
 		await new Promise((resolve, reject) => {
