@@ -11,9 +11,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(Library, DynamicSideContent, layoutLibrary, Button, List, Panel, Page, StandardListItem, Device, ResizeHandler, nextUIUpdate, $, oCore) {
+	"sap/ui/thirdparty/jquery"
+], function(Library, DynamicSideContent, layoutLibrary, Button, List, Panel, Page, StandardListItem, Device, ResizeHandler, nextUIUpdate, $) {
 	"use strict";
 
 	var SideContentFallDown = layoutLibrary.SideContentFallDown;

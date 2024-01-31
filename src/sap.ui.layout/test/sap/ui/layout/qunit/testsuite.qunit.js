@@ -158,7 +158,8 @@ sap.ui.define([], function() {
 			"ResponsiveFlowLayout": {
 				group: "ResponsiveFlowLayout",
 				ui5: {
-					noConflict: true
+					noConflict: true,
+					theme: "sap_horizon"
 				},
 				coverage: {
 					only: ["sap/ui/layout/ResponsiveFlowLayout"]

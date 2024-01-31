@@ -2,12 +2,11 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Card",
 	"sap/ui/webc/main/Button",
 	"sap/ui/webc/main/CardHeader"
-], function(createAndAppendDiv, Core, nextUIUpdate, Card, Button, CardHeader) {
+], function(createAndAppendDiv, nextUIUpdate, Card, Button, CardHeader) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

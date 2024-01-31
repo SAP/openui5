@@ -5,7 +5,6 @@
 // Provides control sap.ui.layout.Grid.
 sap.ui.define([
 	'sap/ui/core/Control',
-	'./library',
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/base/ManagedObjectObserver',
@@ -14,7 +13,6 @@ sap.ui.define([
 ],
 	function(
 		Control,
-		library,
 		Device,
 		ResizeHandler,
 		ManagedObjectObserver,

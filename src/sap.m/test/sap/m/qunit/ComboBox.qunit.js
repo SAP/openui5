@@ -30,7 +30,6 @@ sap.ui.define([
 	"sap/m/InputBase",
 	'sap/ui/core/ValueStateSupport',
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	// provides jQuery.fn.getSelectedText
@@ -68,7 +67,6 @@ sap.ui.define([
 	InputBase,
 	ValueStateSupport,
 	coreLibrary,
-	oCore,
 	nextUIUpdate,
 	jQuery
 ) {

@@ -4,7 +4,6 @@
 
 // Provides control sap.f.DynamicPageTitle.
 sap.ui.define([
-	"./library",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
@@ -23,7 +22,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/InvisibleMessage"
 ], function(
-	library,
 	Library,
 	CoreLibrary,
 	Control,

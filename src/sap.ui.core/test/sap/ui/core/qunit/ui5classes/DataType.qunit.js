@@ -1,12 +1,12 @@
 /*global sinon, QUnit*/
 sap.ui.define([
 	"sap/base/Log",
-	"sap/base/util/ObjectPath",
 	"sap/base/util/isPlainObject",
 	"sap/ui/base/DataType",
 	"sap/ui/core/Lib",
-	'sap/ui/core/library' // provides sap.ui.core data type and enums
-], function (Log, ObjectPath, isPlainObject, DataType, Library) {
+	// provides sap.ui.core data type and enums
+	'sap/ui/core/library'
+], function(Log, isPlainObject, DataType, Library) {
 	"use strict";
 
 	function random(values) {

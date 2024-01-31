@@ -8,13 +8,12 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/Label",
 	"sap/m/ColumnListItem",
-	"sap/ui/core/Core",
 	"sap/base/util/extend",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function(Element, JSONModel, Icon, Sorter, Table, Column, Label, ColumnListItem, oCore, extend, nextUIUpdate, jQuery, ODataV4Model, TestUtils) {
+], function(Element, JSONModel, Icon, Sorter, Table, Column, Label, ColumnListItem, extend, nextUIUpdate, jQuery, ODataV4Model, TestUtils) {
 	"use strict";
 
 

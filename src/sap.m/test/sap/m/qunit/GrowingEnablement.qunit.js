@@ -1,6 +1,5 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/util/MockServer",
@@ -21,7 +20,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes"
-], function(Core, Library, createAndAppendDiv, MockServer, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page, nextUIUpdate, jQuery, qutils, KeyCodes) {
+], function(Library, createAndAppendDiv, MockServer, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page, nextUIUpdate, jQuery, qutils, KeyCodes) {
 	"use strict";
 	createAndAppendDiv("growing1");
 	createAndAppendDiv("growing2");

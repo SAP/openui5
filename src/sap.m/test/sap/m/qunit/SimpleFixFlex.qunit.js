@@ -4,9 +4,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Text",
 	"sap/base/Log",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(SimpleFixFlex, Button, Text, Log, oCore, nextUIUpdate) {
+], function(SimpleFixFlex, Button, Text, Log, nextUIUpdate) {
 	"use strict";
 
 	/* --------------------------- SimpleFixFlex API ---------------------------------- */

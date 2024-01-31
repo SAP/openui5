@@ -20,7 +20,6 @@ sap.ui.define([
 	'sap/ui/core/CustomData',
 	'sap/ui/events/KeyCodes',
 	'sap/base/Log',
-	'sap/ui/core/Core',
 	'./Link',
 	'./library',
 	'./PlanningCalendarLegend',
@@ -31,8 +30,8 @@ sap.ui.define([
 	'sap/ui/core/date/CalendarUtils',
 	'sap/ui/core/date/UI5Date',
 	'sap/ui/unified/DateRange'
-],
-	function(
+	],
+	function (
 		Formatting,
 		Element,
 		Control,
@@ -49,7 +48,6 @@ sap.ui.define([
 		CustomData,
 		KeyCodes,
 		Log,
-		Core,
 		Link,
 		library,
 		PlanningCalendarLegend,

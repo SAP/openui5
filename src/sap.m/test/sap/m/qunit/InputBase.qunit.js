@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	// provides jQuery.fn.cursorPos
 	"sap/ui/dom/jquery/cursorPos"
 ], function(
@@ -43,8 +42,7 @@ sap.ui.define([
 	InputBaseRenderer,
 	Device,
 	ManagedObject,
-	KeyCodes,
-	oCore
+	KeyCodes
 ) {
 	"use strict";
 

@@ -1,29 +1,29 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/m/Button",
+	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Lib",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/rta/util/changeVisualization/ChangeIndicator",
-	"sap/ui/rta/util/changeVisualization/commands/RenameVisualization",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/format/DateFormat",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/rta/util/changeVisualization/ChangeIndicator",
+	"sap/ui/rta/util/changeVisualization/commands/RenameVisualization",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
+	Button,
+	DateFormat,
 	Lib,
-	sinon,
-	QUnitUtils,
-	ChangeIndicator,
-	RenameVisualization,
 	DesignTime,
 	OverlayRegistry,
-	Button,
 	JSONModel,
-	DateFormat,
-	nextUIUpdate
+	QUnitUtils,
+	nextUIUpdate,
+	ChangeIndicator,
+	RenameVisualization,
+	sinon
 ) {
 	"use strict";
 
@@ -183,8 +183,10 @@ sap.ui.define([
 				format() { return "myTime"; }
 			});
 			var mPayload = {
-				originalLabel: "BeforeValueOfAFieldWithAnExtremelyLongButtonNameOrIDWhichThePopoverCouldNotCorrectlyDisplayWithoutAnyIssues",
-				newLabel: "AfterValueOfAFieldWithAnExtremelyLongButtonNameOrIDWhichThePopoverCouldNotCorrectlyDisplayWithoutAnyIssues"
+				originalLabel:
+					"BeforeValueOfAFieldWithAnExtremelyLongButtonNameOrIDWhichThePopoverCouldNotCorrectlyDisplayWithoutAnyIssues",
+				newLabel:
+					"AfterValueOfAFieldWithAnExtremelyLongButtonNameOrIDWhichThePopoverCouldNotCorrectlyDisplayWithoutAnyIssues"
 			};
 
 			this.oChangeIndicator.getModel().setData({
@@ -586,9 +588,21 @@ sap.ui.define([
 			this.oButton.setModel(oJSONModel);
 
 			sandbox.stub(RenameVisualization, "getDescription").callsFake(function(mPayloadParameter, sElementLabel) {
-				assert.strictEqual(mPayloadParameter.originalLabel, "BeforeValue", "getDescription is called with the right original label");
-				assert.strictEqual(mPayloadParameter.newLabel, "AfterValue", "getDescription is called with the right new label");
-				assert.strictEqual(sElementLabel, "TestButton", "getDescription is called with the right element label");
+				assert.strictEqual(
+					mPayloadParameter.originalLabel,
+					"BeforeValue",
+					"getDescription is called with the right original label"
+				);
+				assert.strictEqual(
+					mPayloadParameter.newLabel,
+					"AfterValue",
+					"getDescription is called with the right new label"
+				);
+				assert.strictEqual(
+					sElementLabel,
+					"TestButton",
+					"getDescription is called with the right element label"
+				);
 				return { descriptionText: "Test Description", descriptionTooltip: "tooltip" };
 			});
 
@@ -621,9 +635,21 @@ sap.ui.define([
 			this.oButton.setModel(oJSONModel);
 
 			sandbox.stub(RenameVisualization, "getDescription").callsFake(function(mPayloadParameter, sElementLabel) {
-				assert.strictEqual(mPayloadParameter.originalLabel, "BeforeValue", "getDescription is called with the right original label");
-				assert.strictEqual(mPayloadParameter.newLabel, "AfterValue", "getDescription is called with the right new label");
-				assert.strictEqual(sElementLabel, "TestButton", "getDescription is called with the right element label");
+				assert.strictEqual(
+					mPayloadParameter.originalLabel,
+					"BeforeValue",
+					"getDescription is called with the right original label"
+				);
+				assert.strictEqual(
+					mPayloadParameter.newLabel,
+					"AfterValue",
+					"getDescription is called with the right new label"
+				);
+				assert.strictEqual(
+					sElementLabel,
+					"TestButton",
+					"getDescription is called with the right element label"
+				);
 				return { descriptionText: "Test Description", descriptionTooltip: "tooltip" };
 			});
 
@@ -667,6 +693,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When a ChangeIndicator is created on an initially narrow overlay that later increases in height", async function(assert) {
+			const fnDone = assert.async();
 			var mPayload = {
 				originalLabel: "BeforeValue",
 				newLabel: "AfterValue"
@@ -684,14 +711,18 @@ sap.ui.define([
 				"then the indicator is vertically centered before the element has changed its height"
 			);
 
-			this.oButtonOverlay.getDomRef().style.height = "100px";
-			this.oChangeIndicator.invalidate();
-			await nextUIUpdate();
+			// we need to wait until the overlay styles has been applied
+			this.oDesignTime.attachEventOnce("synced", async () => {
+				this.oChangeIndicator.invalidate();
+				await nextUIUpdate();
+				assert.notOk(
+					this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorVerticallyCentered"),
+					"then the styleClass was deleted after the element changed its height"
+				);
+				fnDone();
+			});
 
-			assert.notOk(
-				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorVerticallyCentered"),
-				"then the styleClass was deleted after the element changed its height"
-			);
+			this.oButton.getDomRef().style.height = "100px";
 		});
 
 		QUnit.test("when a change indicator is hidden", async function(assert) {

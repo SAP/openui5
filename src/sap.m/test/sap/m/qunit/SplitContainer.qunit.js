@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	'sap/ui/core/Core',
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/SplitContainer",
 	"sap/m/ScrollContainer",
@@ -24,7 +23,6 @@ sap.ui.define([
 ], function(
 	qutils,
 	createAndAppendDiv,
-	Core,
 	nextUIUpdate,
 	SplitContainer,
 	ScrollContainer,

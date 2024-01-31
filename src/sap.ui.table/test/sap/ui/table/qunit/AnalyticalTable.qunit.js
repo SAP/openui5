@@ -8,14 +8,12 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
-	"sap/ui/model/TreeAutoExpandMode",
 	"sap/ui/table/AnalyticalColumn",
 	"sap/ui/model/Filter",
 	"sap/ui/model/type/Float",
 	"sap/ui/table/Row",
 	"sap/ui/table/library",
 	"sap/ui/core/Element",
-	"sap/ui/core/Core",
 	"sap/m/table/columnmenu/Menu",
 	// provides mock data
 	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
@@ -29,14 +27,12 @@ sap.ui.define([
 	TableUtils,
 	ODataModelV2,
 	o4aFakeService,
-	TreeAutoExpandMode,
 	AnalyticalColumn,
 	Filter,
 	FloatType,
 	Row,
 	library,
 	Element,
-	Core,
 	ColumnMenu
 ) {
 	"use strict";

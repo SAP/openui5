@@ -12,9 +12,8 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/Tree",
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Element, Library, createAndAppendDiv, qutils, KeyCodes, JSONModel, Sorter, StandardTreeItem, StandardListItem, Tree, library, oCore, nextUIUpdate) {
+], function(Element, Library, createAndAppendDiv, qutils, KeyCodes, JSONModel, Sorter, StandardTreeItem, StandardListItem, Tree, library, nextUIUpdate) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 

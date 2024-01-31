@@ -507,7 +507,7 @@ sap.ui.define([
 			}
 		} else if (bCtrlOrCmd && oEvent.which === KeyCodes.ARROW_RIGHT && bSideContentExpanded) {
 			if (bSideContentExpanded) {
-				this._contentControlToFocus = Element.getActiveElement()?.getId() || null;
+				this._contentControlToFocus = Element.getActiveElement();
 			}
 			this._oItemNavigation.getFocusedDomRef().focus();
 		} else if (bCtrlOrCmd && oEvent.shiftKey && oEvent.which === KeyCodes.P) {
@@ -695,7 +695,7 @@ sap.ui.define([
 
 	SidePanel.prototype._focusSideContent = function() {
 		// set focus to the last focused side content element, or to the Close Button
-		var oFocusControl = this._contentControlToFocus ? Element.getElementById(this._contentControlToFocus) : this.getAggregation("_closeButton");
+		var oFocusControl = this._contentControlToFocus || this.getAggregation("_closeButton");
 
 		oFocusControl && oFocusControl.focus();
 	};

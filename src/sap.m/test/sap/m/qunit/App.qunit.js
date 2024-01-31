@@ -6,9 +6,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/Device",
-	"sap/ui/core/Core"
-], function(Element, createAndAppendDiv, App, Page, nextUIUpdate, jQuery, Device, Core) {
+	"sap/ui/Device"
+], function(Element, createAndAppendDiv, App, Page, nextUIUpdate, jQuery, Device) {
 	"use strict";
 
 	createAndAppendDiv("content");

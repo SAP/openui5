@@ -10,15 +10,11 @@ sap.ui.define([
 	"sap/ui/mdc/BaseDelegate",
 	"sap/ui/model/FilterType",
 	"sap/ui/mdc/enums/ConditionValidated",
-	"sap/ui/mdc/enums/OperatorName",
-	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterConverter'
 ], (
 	BaseDelegate,
 	FilterType,
 	ConditionValidated,
-	OperatorName,
-	Condition,
 	FilterConverter
 ) => {
 	"use strict";

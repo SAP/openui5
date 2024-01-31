@@ -12,10 +12,9 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/events/KeyCodes",
 	"sap/m/Button",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ],
-	function(AnimationMode, Control, TimePickerSliderRenderer, ControlBehavior, IconPool, Device, Library, KeyCodes, Button, jQuery, Configuration) {
+	function(AnimationMode, Control, TimePickerSliderRenderer, ControlBehavior, IconPool, Device, Library, KeyCodes, Button, jQuery) {
 		"use strict";
 
 		/**

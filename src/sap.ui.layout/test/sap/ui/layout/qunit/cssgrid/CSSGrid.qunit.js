@@ -7,18 +7,16 @@ sap.ui.define([
 	"sap/ui/layout/cssgrid/GridLayoutBase",
 	"sap/ui/layout/cssgrid/GridResponsiveLayout",
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
-	"sap/ui/core/Core",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ],
-function(
+function (
 	CSSGrid,
 	HTML,
 	GridItemLayoutData,
 	GridLayoutBase,
 	GridResponsiveLayout,
 	GridLayoutDelegate,
-	Core,
 	ResizeHandler,
 	nextUIUpdate
 ) {

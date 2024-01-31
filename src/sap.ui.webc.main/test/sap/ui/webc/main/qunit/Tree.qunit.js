@@ -2,13 +2,12 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Tree",
 	"sap/ui/webc/main/Button",
 	"sap/ui/webc/main/TreeItem",
 	"sap/ui/webc/main/TreeItemCustom"
-], function(createAndAppendDiv, Core, nextUIUpdate, Tree, Button, TreeItem, TreeItemCustom) {
+], function(createAndAppendDiv, nextUIUpdate, Tree, Button, TreeItem, TreeItemCustom) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

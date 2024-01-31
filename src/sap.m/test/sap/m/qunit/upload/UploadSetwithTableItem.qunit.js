@@ -3,10 +3,9 @@ sap.ui.define([
 	"sap/m/upload/UploadSetwithTable",
 	"sap/m/upload/UploadSetwithTableItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
 	"./UploadSetwithTableTestUtils",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(UploadSetwithTable, UploadSetwithTableItem, JSONModel, oCore, TestUtils, nextUIUpdate) {
+], function (UploadSetwithTable, UploadSetwithTableItem, JSONModel, TestUtils, nextUIUpdate) {
 	"use strict";
 
 	function getData() {

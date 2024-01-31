@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
-	"sap/ui/core/ControlBehavior",
-	"sap/ui/core/Core"
-], function(Library, createAndAppendDiv, ProgressIndicator, Page, nextUIUpdate, jQuery, coreLibrary, ControlBehavior, Core) {
+	"sap/ui/core/ControlBehavior"
+], function(Library, createAndAppendDiv, ProgressIndicator, Page, nextUIUpdate, jQuery, coreLibrary, ControlBehavior) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState

@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/m/QuickViewPage",
 	"sap/m/QuickViewGroup",
 	"sap/m/QuickViewGroupElement",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Element,
@@ -24,7 +23,6 @@ sap.ui.define([
 	QuickViewPage,
 	QuickViewGroup,
 	QuickViewGroupElement,
-	oCore,
 	nextUIUpdate
 ) {
 	"use strict";

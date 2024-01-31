@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/PDFViewer",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/Device",
-	"sap/ui/core/Core"
-], function(nextUIUpdate, $, PDFViewer, JSONModel, Device, oCore) {
+	"sap/ui/Device"
+], function (nextUIUpdate, $, PDFViewer, JSONModel, Device) {
 	"use strict";
 
 	var testUtils = {};

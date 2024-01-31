@@ -4,10 +4,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/List",
 	"sap/m/ActionListItem",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(qutils, KeyCodes, List, ActionListItem, oCore, nextUIUpdate, jQuery) {
+], function(qutils, KeyCodes, List, ActionListItem, nextUIUpdate, jQuery) {
 	"use strict";
 
 

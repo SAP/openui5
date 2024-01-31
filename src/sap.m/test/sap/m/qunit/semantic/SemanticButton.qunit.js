@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/base/strings/capitalize"
 ], function(
 	Element,
@@ -45,7 +44,6 @@ sap.ui.define([
 	KeyCodes,
 	nextUIUpdate,
 	jQuery,
-	Core,
 	capitalize
 ) {
 	"use strict";

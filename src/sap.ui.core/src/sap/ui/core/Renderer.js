@@ -7,10 +7,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/base/util/isPlainObject",
-	"sap/base/util/ObjectPath",
 	"sap/base/assert",
 	"sap/base/util/extend"
-], function(Log, Localization, isPlainObject, ObjectPath, assert, extend) {
+], function(Log, Localization, isPlainObject, assert, extend) {
 	"use strict";
 
 	/**

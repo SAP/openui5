@@ -1,13 +1,12 @@
 /*global QUnit sinon*/
 sap.ui.define([
 	"sap/ui/core/Lib",
-	"sap/base/util/ObjectPath",
 	"sap/ui/core/theming/ThemeManager",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/dom/includeScript",
 	"sap/base/util/LoaderExtensions",
 	"sap/base/Log"
-], function(Library, ObjectPath, ThemeManager, ResourceBundle, includeScript, LoaderExtensions, Log) {
+], function(Library, ThemeManager, ResourceBundle, includeScript, LoaderExtensions, Log) {
 	"use strict";
 
 	QUnit.module("Instance methods");

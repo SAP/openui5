@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarMenuButton",
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/ui/core/Core",
 	"sap/ui/core/IconPool",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
@@ -13,7 +12,6 @@ sap.ui.define([
 	OverflowToolbar,
 	OverflowToolbarMenuButton,
 	OverflowToolbarLayoutData,
-	oCore,
 	IconPool,
 	nextUIUpdate
 ) {

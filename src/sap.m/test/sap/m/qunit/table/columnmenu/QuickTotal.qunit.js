@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickTotalItem",
 	"sap/m/Button",
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Library, QUnitUtils, Menu, QuickTotal, QuickTotalItem, Button, library, Core, nextUIUpdate) {
+], function(Library, QUnitUtils, Menu, QuickTotal, QuickTotalItem, Button, library, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Basic", {

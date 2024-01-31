@@ -1,18 +1,13 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
 	"sap/m/Button",
 	"sap/m/library",
-	"sap/m/Bar",
 	"sap/ui/core/library",
-	"sap/ui/core/IconPool",
 	"sap/m/OverflowToolbar",
-	"sap/m/Dialog",
 	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/ChangeReason",
@@ -21,24 +16,16 @@ sap.ui.define([
 	"sap/ui/core/LayoutData",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/events/KeyCodes",
-	"sap/base/Log",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
-	Localization,
 	Element,
 	Library,
-	qutils,
 	SegmentedButton,
 	SegmentedButtonItem,
 	Button,
 	mobileLibrary,
-	Bar,
 	coreLibrary,
-	IconPool,
 	OverflowToolbar,
-	Dialog,
 	Label,
 	JSONModel,
 	ChangeReason,
@@ -47,9 +34,6 @@ sap.ui.define([
 	LayoutData,
 	InvisibleText,
 	XMLView,
-	KeyCodes,
-	Log,
-	oCore,
 	nextUIUpdate
 ) {
 	"use strict";
@@ -514,15 +498,7 @@ sap.ui.define([
 
 		//clean
 		oSB.destroy();
-	});
-
-	/* =========================================================== */
-	/* Dialog module                                               */
-	/* =========================================================== */
-
-	QUnit.module("SegmentedButton in Dialog", {
-		before : function () { sinon.config.useFakeTimers = false; },
-		after : function () { sinon.config.useFakeTimers = true; }
+		await nextUIUpdate(this.clock);
 	});
 
 	/* =========================================================== */
@@ -825,18 +801,19 @@ sap.ui.define([
 	});
 
 	QUnit.module("API Items aggregation", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oSB = new SegmentedButton().placeAt("qunit-fixture");
-			this.applyChanges = undefined;
+			await nextUIUpdate(this.clock);
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			this.oSB.destroy();
 			this.oSB = null;
 			this.applyChanges = null;
+			await nextUIUpdate(this.clock);
 		}
 	});
 
-	QUnit.test("addItem", function (assert) {
+	QUnit.test("addItem", async function (assert) {
 		// Arrange
 		var aItems,
 			aButtons;
@@ -845,7 +822,7 @@ sap.ui.define([
 		this.oSB.addItem(new SegmentedButtonItem({text: "Button 1"}));
 		aItems = this.oSB.getButtons();
 		aButtons = this.oSB.getButtons();
-		this.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(aItems.length, 1, "There should be one item");
@@ -859,7 +836,7 @@ sap.ui.define([
 		this.oSB.addItem(new SegmentedButtonItem({text: "Button 2"}));
 		aButtons = this.oSB.getButtons();
 		this.oSB.setSelectedButton(aButtons[1]);
-		this.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oSB.getItems().length, 2, "There should be two items");
@@ -872,7 +849,7 @@ sap.ui.define([
 		// Act - add third item
 		this.oSB.addItem(new SegmentedButtonItem({text: "Button 3"}));
 		aButtons = this.oSB.getButtons();
-		this.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oSB.getItems().length, 3, "There should be three items");
@@ -881,7 +858,7 @@ sap.ui.define([
 			"The second button should remain selected");
 	});
 
-	QUnit.test("removeItem", function (assert){
+	QUnit.test("removeItem", async function (assert){
 		var aItems;
 
 		// Arrange
@@ -893,7 +870,7 @@ sap.ui.define([
 
 		// Act - remove Button 2
 		this.oSB.removeItem(aItems[1]);
-		this.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oSB.getItems().length, 2, "There are 2 items");
@@ -903,7 +880,7 @@ sap.ui.define([
 
 		// Act - remove Button 3
 		this.oSB.removeItem(aItems[2]);
-		this.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oSB.getButtons().length, 1, "There is one button");
@@ -911,7 +888,7 @@ sap.ui.define([
 
 		// Act - remove last button
 		this.oSB.removeItem(aItems[0]);
-		this.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oSB.getButtons().length, 0, "There are no buttons");
@@ -920,7 +897,7 @@ sap.ui.define([
 
 		// Act - adding an item after all ware removed
 		this.oSB.addItem(new SegmentedButtonItem({key: "b4", text: "Button 4"}));
-		this.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oSB.$().find("li").length, 1, "There is one buttons rendered");
@@ -947,14 +924,14 @@ sap.ui.define([
 		oSegmentedButtonItem2.destroy();
 	});
 
-	QUnit.test("insertItem", function (assert) {
+	QUnit.test("insertItem", async function (assert) {
 		// Arrange
 		this.oSB.addItem(new SegmentedButtonItem({text: "Button 1"}));
 		this.oSB.addItem(new SegmentedButtonItem({text: "Button 2"}));
 
 		// Act - insert item between Button 1 and 2
 		this.oSB.insertItem(new SegmentedButtonItem({text: "Button 3"}), 1);
-		this.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oSB.getItems().length, 3, "There are 3 items");
@@ -964,7 +941,7 @@ sap.ui.define([
 			"Button with text 'Button 3' should be the second button");
 	});
 
-	QUnit.test("removeAllItems", function (assert) {
+	QUnit.test("removeAllItems", async function (assert) {
 		// Arrange
 		this.oSB.addItem(new SegmentedButtonItem({key: "b1", text: "Button 1"}));
 		this.oSB.addItem(new SegmentedButtonItem({key: "b2", text: "Button 2"}));
@@ -973,7 +950,7 @@ sap.ui.define([
 
 		// Act
 		this.oSB.removeAllItems();
-		this.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oSB.getItems().length, 0, "There are 0 items");
@@ -1486,16 +1463,6 @@ sap.ui.define([
 
 		oSegmentedButton.destroy();
 		await nextUIUpdate(this.clock);
-	});
-
-	function checkKeyboardEventhandling(sTestName, oOptions) {}
-
-	checkKeyboardEventhandling("Firing ENTER event", {
-		keyCode : KeyCodes.ENTER
-	});
-
-	checkKeyboardEventhandling("Firing SPACE event", {
-		keyCode : KeyCodes.SPACE
 	});
 
 	QUnit.test("Press 'SPACE' should not scroll the page", function (assert) {

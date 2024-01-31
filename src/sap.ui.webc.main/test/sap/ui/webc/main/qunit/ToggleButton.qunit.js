@@ -2,10 +2,9 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/ToggleButton"
-], function(createAndAppendDiv, Core, nextUIUpdate, ToggleButton) {
+], function(createAndAppendDiv, nextUIUpdate, ToggleButton) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

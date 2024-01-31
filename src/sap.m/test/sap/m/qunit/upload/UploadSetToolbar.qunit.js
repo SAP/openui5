@@ -10,9 +10,9 @@ sap.ui.define("sap.m.qunit.UploadSetToolbar", [
 	"sap/m/Button",
 	"sap/m/OverflowToolbar",
 	"sap/m/ToggleButton",
-	"sap/base/Log",
-	"sap/ui/core/Core"
-], function(UploadSet, UploadSetToolbarPlaceholder, Title, ToolbarSpacer, nextUIUpdate, FileUploader, Button, OverflowToolbar, ToggleButton, Log, oCore) {
+	"sap/base/Log"
+], function (UploadSet, UploadSetToolbarPlaceholder, Title, ToolbarSpacer, nextUIUpdate, FileUploader,
+			 Button, OverflowToolbar, ToggleButton, Log) {
 	"use strict";
 
 	QUnit.module("UploadSet Toolbar Default", {

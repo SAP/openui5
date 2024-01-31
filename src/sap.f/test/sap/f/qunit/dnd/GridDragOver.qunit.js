@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/f/GridContainer",
 	"sap/f/GridContainerSettings",
 	"sap/m/Text",
-	"sap/ui/core/Core",
 	"sap/base/Log"
 ], function(
 	nextUIUpdate,
@@ -18,7 +17,6 @@ sap.ui.define([
 	GridContainer,
 	GridContainerSettings,
 	Text,
-	Core,
 	Log
 ) {
 	"use strict";

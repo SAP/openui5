@@ -2,13 +2,12 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/TabContainer",
 	"sap/ui/webc/main/Tab",
 	"sap/ui/webc/main/Button",
 	"sap/ui/webc/main/TabSeparator"
-], function(createAndAppendDiv, Core, nextUIUpdate, TabContainer, Tab, Button, TabSeparator) {
+], function(createAndAppendDiv, nextUIUpdate, TabContainer, Tab, Button, TabSeparator) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

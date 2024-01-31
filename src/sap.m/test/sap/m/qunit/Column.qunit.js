@@ -1,6 +1,5 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/m/Table",
 	"sap/ui/Device",
 	"sap/m/Button",
@@ -15,7 +14,7 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Item",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(Core, Table, Device, Button, Column, library, Page, ColumnListItem, Text, Label, ColumnMenu, QuickAction, Item, nextUIUpdate, jQuery) {
+], function(Table, Device, Button, Column, library, Page, ColumnListItem, Text, Label, ColumnMenu, QuickAction, Item, nextUIUpdate, jQuery) {
 	"use strict";
 
 

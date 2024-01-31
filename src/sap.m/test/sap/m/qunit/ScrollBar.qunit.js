@@ -1,10 +1,9 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/m/ScrollBar",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(ScrollBar, oCore, nextUIUpdate, jQuery) {
+], function(ScrollBar, nextUIUpdate, jQuery) {
 	"use strict";
 
 	var TESTS_DOM_CONTAINER = "qunit-fixture";

@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/IconPool",
 	"sap/uxap/ObjectPageLayout",
@@ -19,7 +18,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils"
 ],
-function(nextUIUpdate, jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, ObjectPageSection, ObjectPageSubSection, Button, Link, Text, Breadcrumbs, XMLView, Device, QUtils) {
+function(nextUIUpdate, jQuery, Element, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, ObjectPageSection, ObjectPageSubSection, Button, Link, Text, Breadcrumbs, XMLView, Device, QUtils) {
 	"use strict";
 
 	var oFactory = {

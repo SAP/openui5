@@ -7,8 +7,6 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/layout/Grid",
 	"sap/ui/layout/GridData",
-	"sap/ui/layout/library",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ],
@@ -19,8 +17,6 @@ function(
 	Element,
 	Grid,
 	GridData,
-	Library,
-	Core,
 	nextUIUpdate,
 	jQuery
 ) {

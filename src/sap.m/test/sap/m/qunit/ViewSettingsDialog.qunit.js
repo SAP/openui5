@@ -23,7 +23,6 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/core/StaticArea"
 ], function(
 	Element,
@@ -49,7 +48,6 @@ sap.ui.define([
 	ManagedObject,
 	Log,
 	KeyCodes,
-	oCore,
 	StaticArea
 ) {
 	"use strict";

@@ -11,7 +11,6 @@ sap.ui.define([
 	'sap/m/Dialog',
 	'sap/m/Link',
 	'sap/m/Text',
-	'sap/ui/core/Core',
 	'sap/ui/Device'
 ], function(
 	nextUIUpdate,
@@ -25,9 +24,7 @@ sap.ui.define([
 	Dialog,
 	Link,
 	Text,
-	Core,
-	Device
-) {
+	Device) {
 	'use strict';
 
 	var BlockBackgroundType = layoutLibrary.BlockBackgroundType;

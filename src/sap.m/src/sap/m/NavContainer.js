@@ -6,7 +6,6 @@
 sap.ui.define([
 	'./library',
 	"sap/ui/core/AnimationMode",
-	"sap/ui/core/Configuration",
 	'sap/ui/core/Control',
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Core",
@@ -20,7 +19,6 @@ sap.ui.define([
 ], function(
 	library,
 	AnimationMode,
-	Configuration,
 	Control,
 	ControlBehavior,
 	Core,

@@ -23,8 +23,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/documentation/sdk/util/Resources",
 	"./config/sampleForwardingConfig",
-	"sap/base/strings/capitalize",
-	"sap/ui/core/Configuration"
+	"sap/base/strings/capitalize"
 ], function(
 	Localization,
 	Element,
@@ -45,8 +44,7 @@ sap.ui.define([
 	Fragment,
 	ResourcesUtil,
 	sampleForwardingConfig,
-	capitalize,
-	Configuration
+	capitalize
 ) {
 		"use strict";
 

@@ -1,6 +1,6 @@
 {
   "sap.app": {
-	"id": "sap.ui.mdc.tableOpaTests.appUnderTestMDCTable",
+	"id": "sap.ui.mdc.tableOpaTests.appTableODataV4",
 	"type": "application",
 	"applicationVersion": {
 	  "version": "1.0.0"
@@ -9,7 +9,7 @@
   "sap.ui5": {
 	"rootView": {
       "id": "MyView",
-	  "viewName": "sap.ui.mdc.tableOpaTests.appUnderTestMDCTable.View",
+	  "viewName": "sap.ui.mdc.tableOpaTests.appTableODataV4.View",
 	  "type": "XML",
 	  "async": true
 	},

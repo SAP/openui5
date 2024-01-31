@@ -1,12 +1,10 @@
 /*global QUnit, sinon*/
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/XMLView",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ],
-function(Core, JSONModel, XMLView, nextUIUpdate) {
+function(JSONModel, nextUIUpdate) {
 	"use strict";
 
 	// global vars

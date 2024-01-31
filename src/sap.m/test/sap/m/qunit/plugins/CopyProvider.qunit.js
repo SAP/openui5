@@ -15,13 +15,12 @@ sap.ui.define([
 	"sap/m/plugins/CellSelector",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/CustomData",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"test-resources/sap/ui/mdc/qunit/QUnitUtils",
 	"test-resources/sap/ui/mdc/qunit/table/QUnitUtils"
-], function(ClipboardUtils, Text, Table, Column, ColumnListItem, nextUIUpdate, GridTable, GridColumn, MultiSelectionPlugin, MDCTable, MDCColumn, PluginBase, CopyProvider, CellSelector, JSONModel, CustomData, Core, coreLib, MessageToast, MessageBox, MDCQUnitUtils, MDCTableQUnitUtils) {
+], function(ClipboardUtils, Text, Table, Column, ColumnListItem, nextUIUpdate, GridTable, GridColumn, MultiSelectionPlugin, MDCTable, MDCColumn, PluginBase, CopyProvider, CellSelector, JSONModel, CustomData, coreLib, MessageToast, MessageBox, MDCQUnitUtils, MDCTableQUnitUtils) {
 
 	"use strict";
 	/*global sinon, QUnit */

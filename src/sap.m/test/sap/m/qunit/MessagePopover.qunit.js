@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/m/MessageItem",
 	"sap/ui/Device",
 	"sap/ui/core/CustomData",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -34,7 +33,6 @@ sap.ui.define([
 	MessageItem,
 	Device,
 	CustomData,
-	Core,
 	nextUIUpdate,
 	jQuery
 ) {

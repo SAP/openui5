@@ -2,9 +2,8 @@
 sap.ui.define([
 	"sap/m/MultiEditField",
 	"sap/ui/core/Item",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(MultiEditField, Item, oCore, nextUIUpdate) {
+], function (MultiEditField, Item, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Default values", {

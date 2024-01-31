@@ -2,11 +2,10 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/DateTimePicker",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, nextUIUpdate, DateTimePicker, Button) {
+], function(createAndAppendDiv, nextUIUpdate, DateTimePicker, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

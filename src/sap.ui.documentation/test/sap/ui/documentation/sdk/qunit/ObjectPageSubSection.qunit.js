@@ -1,6 +1,6 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/core/Core", "sap/ui/core/Element", "sap/ui/qunit/utils/nextUIUpdate", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/ui/documentation/ObjectPageSubSection", "sap/ui/core/HTML"],
-    function(Core, Element, nextUIUpdate, ObjectPageLayout, ObjectPageSection, ObjectPageDemokitSubSection, HTML) {
+sap.ui.define(["sap/ui/core/Element", "sap/ui/qunit/utils/nextUIUpdate", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/ui/documentation/ObjectPageSubSection", "sap/ui/core/HTML"],
+    function(Element, nextUIUpdate, ObjectPageLayout, ObjectPageSection, ObjectPageDemokitSubSection, HTML) {
     "use strict";
 
     QUnit.module("Lifecycle");

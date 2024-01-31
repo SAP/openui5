@@ -17,8 +17,7 @@ sap.ui.define([
 	"sap/m/ViewSettingsDialog",
 	"sap/m/Input",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -37,8 +36,7 @@ sap.ui.define([
 	ViewSettingsDialog,
 	Input,
 	nextUIUpdate,
-	jQuery,
-	oCore
+	jQuery
 ) {
 	"use strict";
 

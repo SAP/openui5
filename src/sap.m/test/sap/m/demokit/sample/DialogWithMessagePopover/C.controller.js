@@ -7,9 +7,8 @@ sap.ui.define([
 	'sap/ui/core/message/Message',
 	'sap/ui/core/library',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/core/Element'
-], function(MessagePopover, MessageItem, MessageToast, ElementRegistry, Messaging, Message, coreLibrary, Controller, JSONModel, Element) {
+	'sap/ui/model/json/JSONModel'
+], function (MessagePopover, MessageItem, MessageToast, ElementRegistry, Messaging, Message, coreLibrary, Controller, JSONModel) {
 	"use strict";
 
 	// shortcut for sap.ui.core.MessageType

@@ -10,9 +10,8 @@ sap.ui.define([
 	"sap/m/Shell",
 	"sap/m/SplitApp",
 	"sap/m/Page",
-	"sap/ui/util/Mobile",
-	"sap/ui/core/Core"
-], function(Element, Library, qutils, createAndAppendDiv, nextUIUpdate, jQuery, coreLibrary, Shell, SplitApp, Page, Mobile, oCore) {
+	"sap/ui/util/Mobile"
+], function(Element, Library, qutils, createAndAppendDiv, nextUIUpdate, jQuery, coreLibrary, Shell, SplitApp, Page, Mobile) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel

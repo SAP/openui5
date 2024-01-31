@@ -19,7 +19,6 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Table",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Element,
@@ -41,7 +40,6 @@ sap.ui.define([
 	Dialog,
 	Table,
 	XMLView,
-	Core,
 	nextUIUpdate
 ) {
 	"use strict";

@@ -2,13 +2,12 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/MultiComboBox",
 	"sap/ui/webc/main/Icon",
 	"sap/ui/webc/main/MultiComboBoxItem",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, nextUIUpdate, MultiComboBox, Icon, MultiComboBoxItem, Button) {
+], function(createAndAppendDiv, nextUIUpdate, MultiComboBox, Icon, MultiComboBoxItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Toolbar",
 	"sap/m/Title",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
@@ -25,7 +24,6 @@ sap.ui.define([
 	Input,
 	Toolbar,
 	MobileTitle,
-	oCore,
 	nextUIUpdate,
 	FlexTestAPI
 ) {

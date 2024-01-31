@@ -3,7 +3,6 @@
  */
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/m/plugins/CellSelector",
@@ -21,7 +20,7 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column"
-], function(Core, qutils, KeyCodes, CellSelector, nextUIUpdate, GridTable, ODataModel, MockServer, GridColumn, GridFixedRowMode, Text, DragDropInfo, DropInfo, Dialog, JSONModel, CustomData, MDCTable, MDCColumn) {
+], function (qutils, KeyCodes, CellSelector, nextUIUpdate, GridTable, ODataModel, MockServer, GridColumn, GridFixedRowMode, Text, DragDropInfo, DropInfo, Dialog, JSONModel, CustomData, MDCTable, MDCColumn) {
 	"use strict";
 
 	const sServiceURI = "/service/";

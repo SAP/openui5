@@ -9,9 +9,8 @@ sap.ui.define([
 	"sap/m/RatingIndicator",
 	"sap/m/CheckBox",
 	"sap/m/Label",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Device, VerticalLayout, Button, Input, Image, Slider, RatingIndicator, CheckBox, Label, oCore, nextUIUpdate) {
+], function(Device, VerticalLayout, Button, Input, Image, Slider, RatingIndicator, CheckBox, Label, nextUIUpdate) {
 	"use strict";
 
 	var oLayout1 = new VerticalLayout("Layout1", {

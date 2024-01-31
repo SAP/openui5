@@ -1,6 +1,6 @@
 /*global QUnit, */
-sap.ui.define(["sap/ui/qunit/utils/nextUIUpdate", "sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/ui/model/json/JSONModel", "sap/m/Button", "sap/m/Title", "sap/uxap/ObjectPageDynamicHeaderTitle", "sap/uxap/ObjectPageLayout", "sap/ui/core/mvc/XMLView"],
-function(nextUIUpdate, jQuery, Core, JSONModel, Button, Title, ObjectPageDynamicHeaderTitle, ObjectPageLayout, XMLView) {
+sap.ui.define(["sap/ui/qunit/utils/nextUIUpdate", "sap/ui/thirdparty/jquery", "sap/ui/model/json/JSONModel", "sap/uxap/ObjectPageDynamicHeaderTitle", "sap/uxap/ObjectPageLayout"],
+function(nextUIUpdate, jQuery, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayout) {
 	"use strict";
 
 	// utility function that will be used in these tests

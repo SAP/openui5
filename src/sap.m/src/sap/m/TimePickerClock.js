@@ -5,13 +5,12 @@
 sap.ui.define([
 	"sap/ui/core/AnimationMode",
 	"sap/ui/core/Control",
-	"sap/ui/core/Configuration",
 	"./TimePickerClockRenderer",
 	"sap/ui/Device",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(AnimationMode, Control, Configuration, TimePickerClockRenderer, Device, ControlBehavior, jQuery) {
+	function(AnimationMode, Control, TimePickerClockRenderer, Device, ControlBehavior, jQuery) {
 		"use strict";
 
 		var ANIMATION_DURATION_MAX = 200,	// total animation duration, without the delay before firing the event

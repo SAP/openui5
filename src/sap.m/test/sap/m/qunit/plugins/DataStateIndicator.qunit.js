@@ -1,7 +1,6 @@
 sap.ui.define([
 	'sap/m/List',
 	'sap/m/StandardListItem',
-	'sap/ui/core/Core',
 	"sap/ui/core/Messaging",
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/message/Message',
@@ -13,7 +12,7 @@ sap.ui.define([
 	'sap/m/Toolbar',
 	'sap/m/Link',
 	'sap/m/Text'
-], function(List, StandardListItem, Core, Messaging, JSONModel, Message, DataStateIndicator, ManagedObjectObserver, DataState, Filter, nextUIUpdate) {
+], function(List, StandardListItem, Messaging, JSONModel, Message, DataStateIndicator, ManagedObjectObserver, DataState, Filter, nextUIUpdate) {
 
 	"use strict";
 	/*global QUnit */

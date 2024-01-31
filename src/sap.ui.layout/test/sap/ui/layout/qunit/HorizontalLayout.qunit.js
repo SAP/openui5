@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/Device",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(Element, HorizontalLayout, Button, Input, Label, Device, nextUIUpdate, jQuery, oCore) {
+	"sap/ui/thirdparty/jquery"
+], function(Element, HorizontalLayout, Button, Input, Label, Device, nextUIUpdate, jQuery) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";

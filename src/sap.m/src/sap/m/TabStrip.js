@@ -31,7 +31,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/core/Configuration",
 	"sap/ui/base/Object",
 	// jQuery Plugin "scrollLeftRTL"
 	"sap/ui/dom/jquery/scrollLeftRTL"
@@ -65,7 +64,6 @@ function(
 	jQuery,
 	KeyCodes,
 	Core,
-	Configuration,
 	BaseObject
 ) {
 		"use strict";

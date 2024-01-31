@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/Select",
 	"sap/ui/core/Item",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Element,
@@ -27,7 +26,6 @@ sap.ui.define([
 	OverflowToolbar,
 	Select,
 	Item,
-	oCore,
 	nextUIUpdate
 ) {
 	"use strict";

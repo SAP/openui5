@@ -17,7 +17,6 @@ sap.ui.define([
 	"./MessageStripRenderer",
 	"sap/base/Log",
 	"sap/m/Button",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/InvisibleText"
 ], function(
 	library,
@@ -33,7 +32,6 @@ sap.ui.define([
 	MessageStripRenderer,
 	Log,
 	Button,
-	Configuration,
 	InvisibleText
 ) {
 	"use strict";

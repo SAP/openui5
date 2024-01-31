@@ -2,14 +2,13 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Input",
 	"sap/ui/webc/main/Icon",
 	"sap/ui/webc/main/SuggestionGroupItem",
 	"sap/ui/webc/main/SuggestionItem",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, nextUIUpdate, Input, Icon, SuggestionGroupItem, SuggestionItem, Button) {
+], function(createAndAppendDiv, nextUIUpdate, Input, Icon, SuggestionGroupItem, SuggestionItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

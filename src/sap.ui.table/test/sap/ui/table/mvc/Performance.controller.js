@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement",
 	"sap/base/Log",
-	"sap/ui/core/Core",
 	"sap/ui/core/Fragment"
 ], function(
 	nextUIUpdate,
@@ -24,7 +23,6 @@ sap.ui.define([
 	JSONModel,
 	Measurement,
 	Log,
-	oCore,
 	Fragment
 ) {
 	"use strict";

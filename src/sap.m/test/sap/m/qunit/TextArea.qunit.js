@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/InputBase",
-	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
@@ -21,7 +20,6 @@ sap.ui.define([
 	Device,
 	JSONModel,
 	InputBase,
-	core,
 	coreLibrary,
 	nextUIUpdate,
 	jQuery

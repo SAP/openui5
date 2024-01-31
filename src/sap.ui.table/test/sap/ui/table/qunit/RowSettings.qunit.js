@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/library",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/core/Core",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem"
 ], function(
@@ -17,7 +16,6 @@ sap.ui.define([
 	TableUtils,
 	CoreLibrary,
 	ThemeParameters,
-	oCore,
 	RowAction,
 	RowActionItem
 ) {

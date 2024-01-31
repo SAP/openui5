@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Table",
 	"sap/ui/table/library",
-	"sap/ui/core/library",
-	"sap/ui/core/Core"
+	"sap/ui/core/library"
 ], function(
 	TableQUnitUtils,
 	nextUIUpdate,
@@ -18,8 +17,7 @@ sap.ui.define([
 	JSONModel,
 	Table,
 	tableLibrary,
-	coreLibrary,
-	oCore
+	coreLibrary
 ) {
 	"use strict";
 

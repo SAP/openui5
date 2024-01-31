@@ -8,9 +8,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	"sap/ui/dom/isBehindOtherElement",
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/core/Element'
-], function(MessagePopover, MessageItem, MessageToast, ElementRegistry, Messaging, Message, coreLibrary, isBehindOtherElement, Controller, JSONModel, Element) {
+	'sap/ui/model/json/JSONModel'
+], function(MessagePopover, MessageItem, MessageToast, ElementRegistry, Messaging, Message, coreLibrary, isBehindOtherElement, Controller, JSONModel) {
 	"use strict";
 
 	// shortcut for sap.ui.core.MessageType

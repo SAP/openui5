@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/base/util/deepExtend",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
@@ -19,7 +18,6 @@ sap.ui.define([
 	ComponentContainer,
 	JSONModel,
 	createAndAppendDiv,
-	oCore,
 	deepExtend,
 	nextUIUpdate,
 	FlexTestAPI

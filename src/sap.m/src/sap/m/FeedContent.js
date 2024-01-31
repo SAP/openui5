@@ -6,11 +6,10 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/m/Text',
-	'sap/ui/Device',
 	'./FeedContentRenderer',
 	"sap/ui/events/KeyCodes"
 ],
-	function(library, Control, Text, Device, FeedContentRenderer, KeyCodes) {
+	function(library, Control, Text, FeedContentRenderer, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.m.Size

@@ -40,8 +40,7 @@ sap.ui.define([
 	"sap/m/FlexItemData",
 	"sap/m/Title",
 	"sap/m/SegmentedButton",
-	"sap/m/SegmentedButtonItem",
-	"sap/ui/core/Core"
+	"sap/m/SegmentedButtonItem"
 ], function(
 	Library,
 	DomUnitsRem,
@@ -81,8 +80,7 @@ sap.ui.define([
 	FlexItemData,
 	Title,
 	SegmentedButton,
-	SegmentedButtonItem,
-	oCore
+	SegmentedButtonItem
 ) {
 	"use strict";
 

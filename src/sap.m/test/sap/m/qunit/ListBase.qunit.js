@@ -1,6 +1,5 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -40,7 +39,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/IllustratedMessage",
 	"sap/ui/core/InvisibleMessage"
-], function(Core, Element, Library, createAndAppendDiv, nextUIUpdate, jQuery, qutils, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, Theming, library, StandardListItem, App, Page, ListBase, List, Toolbar, ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator, VerticalLayout, IllustratedMessage, InvisibleMessage) {
+], function(Element, Library, createAndAppendDiv, nextUIUpdate, jQuery, qutils, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, Theming, library, StandardListItem, App, Page, ListBase, List, Toolbar, ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator, VerticalLayout, IllustratedMessage, InvisibleMessage) {
 	"use strict";
 	jQuery("#qunit-fixture").attr("data-sap-ui-fastnavgroup", "true");
 

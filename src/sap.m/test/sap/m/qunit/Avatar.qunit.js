@@ -1,6 +1,5 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/Device",
@@ -16,7 +15,6 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/ui/core/InvisibleText"
 ], function(
-	oCore,
 	Library,
 	coreLibrary,
 	Device,

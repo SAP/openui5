@@ -4,12 +4,11 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
 	"sap/m/upload/FilePreviewDialog",
 	"./UploadSetwithTableTestUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(UploadSetwithTable, Element, Library, JSONModel, oCore, FilePreviewDialog, TestUtils, nextUIUpdate, jQuery) {
+], function(UploadSetwithTable, Element, Library, JSONModel, FilePreviewDialog, TestUtils, nextUIUpdate, jQuery) {
 	"use strict";
 
 

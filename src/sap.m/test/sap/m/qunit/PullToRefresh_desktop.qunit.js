@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/m/PullToRefresh",
 	"sap/m/Page",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
@@ -24,7 +23,6 @@ sap.ui.define([
 	PullToRefresh,
 	Page,
 	Device,
-	oCore,
 	KeyCodes,
 	nextUIUpdate
 ) {

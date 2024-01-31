@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/IllustratedMessage",
 	"sap/m/Button",
-	"sap/ui/core/Core",
 	'sap/ui/core/library',
 	"sap/ui/core/InvisibleText"
 ],
@@ -17,7 +16,6 @@ function(
 	jQuery,
 	IllustratedMessage,
 	Button,
-	Core,
 	coreLibrary,
 	InvisibleText
 ) {

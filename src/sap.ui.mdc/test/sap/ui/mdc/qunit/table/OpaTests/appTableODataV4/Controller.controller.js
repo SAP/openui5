@@ -4,7 +4,7 @@ sap.ui.define([
 	/** @type sap.ui.core.mvc.Controller */ Controller) {
 	"use strict";
 
-	return Controller.extend("sap.ui.mdc.tableOpaTests.appUnderTestMDCTable.Controller", {
+	return Controller.extend("sap.ui.mdc.tableOpaTests.appTableODataV4.Controller", {
 
 		onInit: function() {
 			this.getView().bindElement("/ProductList");

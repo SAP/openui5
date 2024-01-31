@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/m/TextArea",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Context",
 	"sap/ui/model/ChangeReason"
@@ -34,7 +33,6 @@ sap.ui.define([
 	TextArea,
 	Device,
 	Control,
-	oCore,
 	JSONModel,
 	Context,
 	ChangeReason

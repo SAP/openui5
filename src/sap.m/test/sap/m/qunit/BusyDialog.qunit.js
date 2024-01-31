@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/events/KeyCodes",
-	'sap/ui/core/Core',
 	"sap/ui/core/mvc/XMLView",
 	"sap/base/Log"
 ], function(
@@ -24,7 +23,6 @@ sap.ui.define([
 	RenderManager,
 	InvisibleText,
 	KeyCodes,
-	Core,
 	XMLView,
 	Log
 ) {

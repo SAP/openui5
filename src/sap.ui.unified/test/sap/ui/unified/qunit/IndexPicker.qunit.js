@@ -2,9 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/unified/calendar/IndexPicker",
-	"sap/ui/core/Core"
-], function(nextUIUpdate, IndexPicker, oCore) {
+	"sap/ui/unified/calendar/IndexPicker"
+], function(nextUIUpdate, IndexPicker) {
 	"use strict";
 
 		QUnit.module("API ", {

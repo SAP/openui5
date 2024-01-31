@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/CustomData",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Localization,
@@ -22,7 +21,6 @@ sap.ui.define([
 	JSONModel,
 	CustomData,
 	sinon,
-	oCore,
 	jQuery
 ) {
 	"use strict";

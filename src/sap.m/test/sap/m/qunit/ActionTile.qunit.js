@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/FormattedText",
 	"sap/m/Button",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/nextUIUpdate",
@@ -15,7 +14,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ContentConfig",
 	"sap/ui/core/theming/Parameters"
-], function(ActionTile, ActionTileContent, TileAttribute, TileContent, library, FormattedText, Button, oCore, Library, KeyCodes, nextUIUpdate, jQuery, JSONModel, ContentConfig, Parameters) {
+], function(ActionTile,ActionTileContent,TileAttribute,TileContent,library,FormattedText,Button,Library,KeyCodes,nextUIUpdate,jQuery,JSONModel,ContentConfig,Parameters) {
 	"use strict";
 
 	// shortcut for sap.m.FrameType

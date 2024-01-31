@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/m/FlexBox",
-	"sap/ui/core/Core",
 	"sap/ui/core/HTML",
 	"sap/m/Image",
 	"sap/m/FlexItemData",
@@ -11,9 +10,8 @@ sap.ui.define([
 	"sap/ui/dom/includeStylesheet",
 	"require",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(
+], function (
 	FlexBox,
-	Core,
 	HTML,
 	Image,
 	FlexItemData,

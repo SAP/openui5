@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/m/FeedInput",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Library, qutils, FeedInput, TooltipBase, KeyCodes, oCore, nextUIUpdate) {
+], function(Library, qutils, FeedInput, TooltipBase, KeyCodes, nextUIUpdate) {
 	"use strict";
 
 	var oRb = Library.getResourceBundleFor("sap.m");

@@ -136,10 +136,9 @@ sap.ui.define([
 	 * @param {Object<string,string>} [mParameters.headers]
 	 *   Map of custom headers (name/value pairs) like {"myHeader":"myHeaderValue",...}
 	 * @param {boolean} [mParameters.ignoreAnnotationsFromMetadata]
-	 *   <b>Experimental</b> as of version 1.112.0; may change behavior or be removed in future versions.
 	 *   Whether to ignore all annotations from service metadata, so that they are not available as V4 annotations
 	 *   in this model's metamodel; see {@link #getMetaModel}. Only annotations from annotation files are loaded;
-	 *   see the <code>annotationURI</code> parameter.
+	 *   see the <code>annotationURI</code> parameter. Supported since 1.121.0
 	 * @param {boolean} [mParameters.json=true]
 	 *   If set to <code>true</code>, request payloads will be JSON, XML for <code>false</code>
 	 * @param {boolean} [mParameters.loadAnnotationsJoined]

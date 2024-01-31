@@ -20,8 +20,7 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"./TitlePropagationSupport",
 	"./PageRenderer",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	library,
@@ -40,8 +39,7 @@ function(
 	InvisibleText,
 	TitlePropagationSupport,
 	PageRenderer,
-	jQuery,
-	Configuration
+	jQuery
 ) {
 		"use strict";
 

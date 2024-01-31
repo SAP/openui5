@@ -8,51 +8,33 @@
 		"header": {
 			"type": "Numeric",
 			"data": {
-				"json": {
-					"kpiInfos": {
-						"kpi": {
-							"number": "200",
-							"unit": "K",
-							"trend": "Up",
-							"state": "Critical",
-							"target": {
-								"number": 250,
-								"unit": "K"
-							},
-							"deviation": {
-								"number": 25
-							},
-							"details": "Q1, 2019",
-							"appShortcut": "App Shortcut",
-							"systemInfo": "System Info"
-						}
+				"request": {
+					"url": "./data2.json"
 					}
-				},
-				"path": "/kpiInfos/kpi"
 			},
-			"title": "Top 5 products sales",
-			"subTitle": "By average price",
+			"title": "{title}",
+			"subTitle": "{subTitle}",
 			"icon": {
-				"src": "sap-icon://line-charts"
+				"src": "{numericIndicator/iconSrc}"
 			},
-			"unitOfMeasurement": "EUR",
+			"unitOfMeasurement": "{numericIndicator/unit}",
 			"mainIndicator": {
-				"number": "1762"
+				"number": "{numericIndicator/number}"
 			},
 			"sideIndicators": [
 				{
 					"title": "Target",
-					"number": "{target/number}",
-					"unit": "{target/unit}"
+					"number": "{kpiInfos/kpi/target/number}",
+					"unit": "{kpiInfos/kpi/target/unit}"
 				},
 				{
 					"title": "Deviation",
-					"number": "{deviation/number}",
+					"number": "{kpiInfos/kpi/deviation/number}",
 					"unit": "%"
 				}
 			],
 			"details": {
-				"text": "{details}",
+				"text": "{kpiInfos/kpi/details}",
 				"state": "Warning"
 			},
 			"actions": [
@@ -66,11 +48,11 @@
 			"dataTimestamp": "2023-08-01T12:00:00Z",
 			"banner": [
 				{
-					"text": "{= ${appShortcut}.toUpperCase()}",
+					"text": "{= ${kpiInfos/kpi/appShortcut}.toUpperCase()}",
 					"diminished": true
 				},
 				{
-					"text": "{= ${systemInfo}.toUpperCase()}"
+					"text": "{= ${kpiInfos/kpi/systemInfo}.toUpperCase()}"
 				}
 			]
 		},

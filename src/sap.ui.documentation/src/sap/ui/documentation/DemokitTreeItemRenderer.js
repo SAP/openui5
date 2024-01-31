@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/m/TreeItemBaseRenderer', 'sap/ui/core/Core', "sap/ui/core/Lib", 'sap/ui/core/Renderer'], function(TreeItemBaseRenderer, Core, Library, Renderer) {
+sap.ui.define(['sap/m/TreeItemBaseRenderer',"sap/ui/core/Lib", 'sap/ui/core/Renderer'], function(TreeItemBaseRenderer, Library, Renderer) {
 	"use strict";
 
 	var DemokitTreeItemRender = Renderer.extend(TreeItemBaseRenderer);

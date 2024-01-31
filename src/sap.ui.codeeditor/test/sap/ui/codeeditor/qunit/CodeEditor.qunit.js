@@ -158,8 +158,8 @@ sap.ui.define([
 		assert.strictEqual(fNewScrollbarPos, fPrevScrollbarPos, "scrollbar position remains the same after rerendering");
 	});
 
-	QUnit.test("Method getInternalEditorInstance", function (assert) {
-		var oInternalEditor = this.oCodeEditor.getInternalEditorInstance();
+	QUnit.test("Method getAceEditor", function (assert) {
+		var oInternalEditor = this.oCodeEditor.getAceEditor();
 		assert.ok(oInternalEditor, "internal editor instance is available");
 	});
 

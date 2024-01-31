@@ -523,7 +523,7 @@ sap.ui.define([
 					let sSearchPath = "$search";
 
 					const oNewConditions = merge({}, this._oInitialFilterConditions);
-					return Promise.resolve(!oNewConditions[sSearchPath] && StateUtil.retrieveExternalState(oFilterBar).then((oState) => {
+					const pHandleConditions = Promise.resolve(!oNewConditions[sSearchPath] && StateUtil.retrieveExternalState(oFilterBar).then((oState) => {
 						if (bInitial) {
 							_addSearchConditionToConditionMap(oNewConditions, sSearchPath, this.getSearch());
 							return StateUtil.diffState(oFilterBar, oState, { filter: oNewConditions });
@@ -531,6 +531,8 @@ sap.ui.define([
 					})).then((oStateDiff) => {
 						return StateUtil.applyExternalState(oFilterBar, oStateDiff);
 					});
+
+					return pHandleConditions.then(() => oFilterBar.awaitPendingModification());
 				}
 			});
 		}

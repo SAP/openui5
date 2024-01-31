@@ -80,7 +80,8 @@ sap.ui.define([
 					useFakeTimers: true
 				},
 				ui5: {
-					rtl: true
+					rtl: true,
+					theme: "sap_horizon"
 				},
 				module: "./Bar.qunit"
 			},

@@ -20,8 +20,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/events/KeyCodes"
 ], function(
 	UI5Element,
 	Library,
@@ -43,8 +42,7 @@ sap.ui.define([
 	mobileLibrary,
 	jQuery,
 	Device,
-	KeyCodes,
-	oCore
+	KeyCodes
 ) {
 	"use strict";
 

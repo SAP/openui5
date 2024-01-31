@@ -2,14 +2,13 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/List",
 	"sap/ui/webc/main/Button",
 	"sap/ui/webc/main/CustomListItem",
 	"sap/ui/webc/main/GroupHeaderListItem",
 	"sap/ui/webc/main/StandardListItem"
-], function(createAndAppendDiv, Core, nextUIUpdate, List, Button, CustomListItem, GroupHeaderListItem, StandardListItem) {
+], function(createAndAppendDiv, nextUIUpdate, List, Button, CustomListItem, GroupHeaderListItem, StandardListItem) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

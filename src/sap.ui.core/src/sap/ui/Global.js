@@ -24,12 +24,8 @@
 /*global OpenAjax */
 
 sap.ui.define([
-	'sap/ui/VersionInfo',
-	'sap/base/Log',
-	'sap/base/assert',
-	'sap/base/util/ObjectPath'
 ],
-	function(VersionInfo, Log, assert, ObjectPath) {
+	function() {
 		"use strict";
 
 		// Register to the OpenAjax Hub if it exists

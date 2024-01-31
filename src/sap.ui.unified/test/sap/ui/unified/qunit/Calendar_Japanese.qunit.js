@@ -12,11 +12,10 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	// load all required calendars in advance
 	"sap/ui/core/date/Gregorian",
 	"sap/ui/core/date/Japanese"
-], function(qutils, nextUIUpdate, Calendar, CalendarType, UniversalDate, DateFormat, LocaleData, Locale, DateRange, KeyCodes, jQuery, oCore) {
+], function(qutils, nextUIUpdate, Calendar, CalendarType, UniversalDate, DateFormat, LocaleData, Locale, DateRange, KeyCodes, jQuery) {
 	"use strict";
 
 	var oLocaleData = LocaleData.getInstance(new Locale("en-US"));

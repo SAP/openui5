@@ -5,9 +5,9 @@
 /**
  * Initialization Code and shared classes of library sap.f.
  */
-sap.ui.define(["sap/ui/base/DataType", "sap/m/AvatarShape", "sap/m/AvatarSize", "sap/m/AvatarType", "sap/m/AvatarColor", "sap/m/AvatarImageFitType", "sap/m/IllustratedMessageType", "sap/m/IllustratedMessageSize", "sap/ui/core/Lib", // library dependency
+sap.ui.define(["sap/ui/base/DataType", "sap/ui/core/Lib", // library dependency
 "sap/m/library", "sap/ui/Global", "sap/ui/core/library", "sap/ui/layout/library"], // library dependency
-	function(DataType, AvatarShape, AvatarSize, AvatarType, AvatarColor, AvatarImageFitType, IllustratedMessageType, IllustratedMessageSize, Library) {
+	function(DataType, Library) {
 	 "use strict";
 
 	 /**

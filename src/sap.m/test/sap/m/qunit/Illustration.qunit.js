@@ -3,16 +3,14 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/Illustration",
 	"sap/m/IllustrationPool",
-	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Theming",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ],
-function(
+function (
 	Log,
 	Illustration,
 	IllustrationPool,
-	Core,
 	InvisibleText,
 	Theming,
 	nextUIUpdate

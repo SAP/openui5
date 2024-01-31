@@ -2,9 +2,8 @@ sap.ui.define([
 	"sap/ui/core/Theming",
 	"sap/ui/demo/iconexplorer/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/library",
-	"sap/ui/core/Core"
-], function(Theming, BaseController, JSONModel, mobileLibrary, Core) {
+	"sap/m/library"
+], function (Theming, BaseController, JSONModel, mobileLibrary) {
 	"use strict";
 
 	var SUPPORTED_FONTS = {

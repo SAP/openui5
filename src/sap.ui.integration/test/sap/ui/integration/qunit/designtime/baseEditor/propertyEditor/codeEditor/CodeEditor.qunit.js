@@ -1,7 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/codeEditor/CodeEditor",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/qunit/QUnitUtils",
@@ -9,8 +8,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/util/deepEqual",
 	"qunit/designtime/EditorQunitUtils"
-], function (
-	Core,
+], function(
 	CodeEditor,
 	BaseEditor,
 	QUnitUtils,

@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'./SelectionDetailsRenderer',
-	'sap/base/util/uid',
-	"sap/ui/core/Configuration"
+	'sap/base/util/uid'
 ],
 function(
 	library,
@@ -27,8 +26,7 @@ function(
 	Library,
 	CoreLibrary,
 	SelectionDetailsRenderer,
-	uid,
-	Configuration
+	uid
 ) {
 	"use strict";
 

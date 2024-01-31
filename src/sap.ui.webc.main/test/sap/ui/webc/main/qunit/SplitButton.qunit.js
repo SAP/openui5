@@ -2,10 +2,9 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/SplitButton"
-], function(createAndAppendDiv, Core, nextUIUpdate, SplitButton) {
+], function(createAndAppendDiv, nextUIUpdate, SplitButton) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

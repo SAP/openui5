@@ -18,8 +18,7 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/m/Button",
 	"sap/m/Label",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/events/KeyCodes"
 ], function(
 	Library,
 	qutils,
@@ -39,8 +38,7 @@ sap.ui.define([
 	Popover,
 	Button,
 	Label,
-	KeyCodes,
-	oCore
+	KeyCodes
 ) {
 	"use strict";
 

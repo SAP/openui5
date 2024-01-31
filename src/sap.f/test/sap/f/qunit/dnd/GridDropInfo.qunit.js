@@ -10,9 +10,8 @@ sap.ui.define([
 	"sap/f/GridList",
 	"sap/m/CustomListItem",
 	"sap/m/Text",
-	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Core"
-], function(nextUIUpdate, jQuery, DropInfo, GridDropInfo, GridDragOver, GridContainer, GridList, CustomListItem, Text, ManagedObject, Core) {
+	"sap/ui/base/ManagedObject"
+], function(nextUIUpdate, jQuery, DropInfo, GridDropInfo, GridDragOver, GridContainer, GridList, CustomListItem, Text, ManagedObject) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";

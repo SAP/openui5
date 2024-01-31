@@ -11,9 +11,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
-], function(Switch, Page, Label, mobileLibrary, Element, Library, nextUIUpdate, jQuery, qutils, createAndAppendDiv, KeyCodes, oCore) {
+	"sap/ui/events/KeyCodes"
+], function(Switch, Page, Label, mobileLibrary, Element, Library, nextUIUpdate, jQuery, qutils, createAndAppendDiv, KeyCodes) {
 	"use strict";
 	createAndAppendDiv("content");
 

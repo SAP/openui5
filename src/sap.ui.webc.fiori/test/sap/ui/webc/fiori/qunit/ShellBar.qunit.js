@@ -2,7 +2,6 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/ShellBar",
 	"sap/ui/webc/fiori/ShellBarItem",
@@ -16,7 +15,7 @@ sap.ui.define([
 	"sap/ui/webc/main/Icon",
 	"sap/ui/webc/main/SuggestionGroupItem",
 	"sap/ui/webc/main/SuggestionItem"
-], function(createAndAppendDiv, Core, nextUIUpdate, ShellBar, ShellBarItem, Avatar, Button, NotificationListGroupItem, NotificationAction, NotificationListItem, CustomListItem, Input, Icon, SuggestionGroupItem, SuggestionItem) {
+], function(createAndAppendDiv, nextUIUpdate, ShellBar, ShellBarItem, Avatar, Button, NotificationListGroupItem, NotificationAction, NotificationListItem, CustomListItem, Input, Icon, SuggestionGroupItem, SuggestionItem) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

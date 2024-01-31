@@ -2,9 +2,8 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/integration/Extension",
 	"sap/ui/integration/ActionDefinition",
-	"sap/base/Log",
-	"sap/ui/core/Core"
-], function(Library, Extension, ActionDefinition, Log, Core) {
+	"sap/base/Log"
+], function (Library, Extension, ActionDefinition, Log) {
 	"use strict";
 
 	// function that adjusts the data

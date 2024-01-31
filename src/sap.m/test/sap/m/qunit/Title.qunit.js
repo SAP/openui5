@@ -7,10 +7,9 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/Toolbar",
 	"sap/ui/core/Title",
-	"sap/ui/core/Core",
 	"sap/ui/core/Renderer",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(createAndAppendDiv, Title, Link, mobileLibrary, coreLibrary, Toolbar, coreTitle, Core, Renderer, nextUIUpdate) {
+], function (createAndAppendDiv, Title, Link, mobileLibrary, coreLibrary, Toolbar, coreTitle, Renderer, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection

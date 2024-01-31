@@ -32,7 +32,6 @@ sap.ui.define([
 	"./DialogRenderer",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
 	"sap/ui/dom/units/Rem",
 	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
@@ -66,7 +65,6 @@ function(
 	DialogRenderer,
 	Log,
 	jQuery,
-	Configuration,
 	Rem
 ) {
 	"use strict";

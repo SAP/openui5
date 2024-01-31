@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/AnimationMode",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Control",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Icon",
 	"sap/ui/core/Lib",
 	"./PaginatorRenderer"
@@ -18,7 +17,6 @@ sap.ui.define([
 	AnimationMode,
 	ControlBehavior,
 	Control,
-	Configuration,
 	Icon,
 	Library,
 	PaginatorRenderer

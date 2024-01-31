@@ -35,7 +35,6 @@ sap.ui.define([
 	"sap/m/FormattedText",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	// provides jQuery.fn.zIndex
 	"sap/ui/dom/jquery/zIndex"
 ], function(
@@ -73,8 +72,7 @@ sap.ui.define([
 	FilterOperator,
 	FormattedText,
 	nextUIUpdate,
-	jQuery,
-	oCore
+	jQuery
 ) {
 	"use strict";
 

@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/ListItem", "sap/ui/core/Configuration"
-], function(ListItem, Configuration) {
+	"sap/ui/core/ListItem"
+], function(ListItem) {
 	"use strict";
 
 	var oListItem;

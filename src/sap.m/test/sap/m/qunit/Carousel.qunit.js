@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/m/ResponsivePopover",
-	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/events/F6Navigation"
 ], function(
@@ -35,7 +34,6 @@ sap.ui.define([
 	KeyCodes,
 	Device,
 	ResponsivePopover,
-	Core,
 	JSONModel,
 	F6Navigation
 ) {

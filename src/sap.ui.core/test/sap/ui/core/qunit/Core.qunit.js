@@ -1,25 +1,11 @@
 /*global QUnit, sinon, testlibs */
 sap.ui.define([
-	'sap/base/Log',
 	'sap/base/i18n/Localization',
-	'sap/base/i18n/ResourceBundle',
-	'sap/base/util/LoaderExtensions',
 	'sap/base/util/ObjectPath',
 	'sap/ui/Device',
-	'sap/ui/base/Interface',
-	'sap/ui/VersionInfo',
-	'sap/ui/core/Core',
-	"sap/ui/core/Supportability",
-	'sap/ui/core/UIArea',
-	'sap/ui/core/Element',
-	'sap/ui/core/Configuration',
 	'sap/ui/core/Lib',
-	'sap/ui/core/RenderManager',
-	'sap/ui/core/Theming',
-	'sap/ui/core/theming/ThemeManager',
-	'sap/ui/qunit/utils/createAndAppendDiv',
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Log, Localization, ResourceBundle, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, Supportability, UIArea, Element, Configuration, Library, RenderManager, Theming, ThemeManager, createAndAppendDiv, nextUIUpdate) {
+], function(Localization, ObjectPath, Device, Library, nextUIUpdate) {
 	"use strict";
 
 	var privateLoaderAPI = sap.ui.loader._;

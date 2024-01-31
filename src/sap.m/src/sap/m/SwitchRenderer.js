@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/AnimationMode", "sap/ui/core/Configuration", "sap/ui/core/ControlBehavior"], function(Device, library, AnimationMode, Configuration, ControlBehavior) {
+sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/AnimationMode", "sap/ui/core/ControlBehavior"], function(Device, library, AnimationMode, ControlBehavior) {
 		"use strict";
 
 		// shortcut for sap.m.SwitchType

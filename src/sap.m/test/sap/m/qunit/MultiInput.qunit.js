@@ -25,7 +25,6 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/base/Event",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core",
 	"sap/ui/model/Sorter",
 	"sap/m/library",
 	// side effect: provides jQuery.Event.prototype.isMarked
@@ -56,7 +55,6 @@ sap.ui.define([
 	coreLibrary,
 	Event,
 	InvisibleText,
-	Core,
 	Sorter,
 	Library
 ) {

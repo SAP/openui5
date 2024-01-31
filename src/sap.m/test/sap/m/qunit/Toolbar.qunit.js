@@ -19,7 +19,6 @@ sap.ui.define([
 	"sap/m/ToolbarLayoutData",
 	"sap/m/ToolbarRenderer",
 	"sap/m/ToolbarSpacer",
-	"sap/ui/core/Core",
 	"sap/ui/core/library"
 ], function(
 	QUtils,
@@ -41,7 +40,6 @@ sap.ui.define([
 	ToolbarLayoutData,
 	ToolbarRenderer,
 	ToolbarSpacer,
-	Core,
 	coreLibrary
 ) {
 	"use strict";

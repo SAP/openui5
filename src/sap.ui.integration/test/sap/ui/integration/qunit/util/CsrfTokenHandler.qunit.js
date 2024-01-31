@@ -1,11 +1,9 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/integration/Host",
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/ui/integration/widgets/Card"
-], function (
-	Host,
+], function(
 	DataProviderFactory,
 	Card
 ) {

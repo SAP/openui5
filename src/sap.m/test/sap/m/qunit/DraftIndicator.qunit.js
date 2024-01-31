@@ -4,9 +4,8 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/DraftIndicator",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Element, Library, createAndAppendDiv, DraftIndicator, oCore, nextUIUpdate) {
+], function(Element, Library, createAndAppendDiv, DraftIndicator, nextUIUpdate) {
 	"use strict";
 
 	// prepare DOM

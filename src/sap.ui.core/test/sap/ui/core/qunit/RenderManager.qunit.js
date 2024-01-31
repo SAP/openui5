@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/Element",
 	"sap/ui/core/HTML",
@@ -14,9 +13,8 @@ sap.ui.define([
 	"sap/base/security/encodeXML",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/base/Log",
-	"sap/ui/core/Configuration"
-], function(Device, Control, Core, RenderManager, Element, HTML, IconPool, XMLView, UIArea, jQuery, encodeXML, createAndAppendDiv, nextUIUpdate, Log, Configuration) {
+	"sap/base/Log"
+], function(Device, Control, RenderManager, Element, HTML, IconPool, XMLView, UIArea, jQuery, encodeXML, createAndAppendDiv, nextUIUpdate, Log) {
 	"use strict";
 
 	// prepare DOM

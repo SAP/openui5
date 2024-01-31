@@ -36,7 +36,11 @@ CalendarRenderer.render = function(oRm, oCal){
 		sCurrentPicker = oCal.getProperty("_currentPicker"),
 		sWidth = oCal.getWidth(),
 		rb = Library.getResourceBundleFor("sap.ui.unified"),
-		mAccProps = {labelledby: {value: "", append: false}};
+		mAccProps = {
+			labelledby: {value: "", append: !oCal._oSpecialDatesControlOrigin},
+			role: oCal._oSpecialDatesControlOrigin ? "" : "group",
+			roledescription: oCal._oSpecialDatesControlOrigin ? "" : rb.getText("CALENDAR_DIALOG")
+		};
 
 	oRm.openStart("div", oCal);
 	oRm.class("sapUiCal");

@@ -4,11 +4,10 @@
 
 // Provides class sap.ui.base.Metadata
 sap.ui.define([
-	'sap/base/util/ObjectPath',
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/array/uniqueSort"
-], function(ObjectPath, assert, Log, uniqueSort) {
+], function(assert, Log, uniqueSort) {
 	"use strict";
 
 	function isFunction(obj) {

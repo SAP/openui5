@@ -2,17 +2,15 @@
 
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/m/BadgeEnabler",
 	"sap/m/BadgeCustomData",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Control,
-	Core,
 	BadgeEnabler,
 	BadgeCustomData,
 	nextUIUpdate
-) {
+){
 	"use strict";
 
 	var MyCustomControl = Control.extend("sap.custom.MyCustomControl", {

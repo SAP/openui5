@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Panel",
 	"sap/m/RatingIndicator",
-	"sap/ui/core/Core",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
@@ -11,11 +10,10 @@ sap.ui.define([
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/String",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function (
+], function(
 	Input,
 	Panel,
 	RatingIndicator,
-	Core,
 	FormatException,
 	ParseException,
 	ValidateException,

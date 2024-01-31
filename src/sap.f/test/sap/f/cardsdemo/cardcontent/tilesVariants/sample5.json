@@ -7,33 +7,38 @@
 		"type": "List",
 		"header": {
 			"type": "Numeric",
-			"title": "Large image in numeric header",
-			"icon": {
-				"src": "./images/sap-logo.svg",
-				"shape": "Square"
+			"data": {
+				"request": {
+					"url": "./data5.json"
+					}
 			},
-			"unitOfMeasurement": "EUR",
+			"title": "{title}",
+			"icon": {
+				"src": "{icon/src}",
+				"shape": "{icon/shape}"
+			},
+			"unitOfMeasurement": "{unitOfMeasurement}",
 			"mainIndicator": {
-				"number": "200",
-				"unit": "K",
-				"trend": "Up",
-				"state": "Good"
+				"number": "{mainIndicator/number}",
+				"unit": "{mainIndicator/unit}",
+				"trend": "{mainIndicator/trend}",
+				"state": "{mainIndicator/state}"
 			},
 			"sideIndicators": [
 				{
-					"title": "Target",
-					"number": "210",
-					"unit": "K"
+					"title": "{sideIndicator1/title}",
+					"number": "{sideIndicator1/number}",
+					"unit": "{sideIndicator1/unit}"
 				},
 				{
-					"title": "Deviation",
-					"number": "5",
-					"unit": "%"
+					"title": "{sideIndicator2/title}",
+					"number": "{sideIndicator2/number}",
+					"unit": "{sideIndicator2/unit}"
 				}
 			],
 			"details": {
-				"text": "{details}",
-				"state": "Success"
+				"text": "{details/text}",
+				"state": "{details/state}"
 			},
 			"actions": [
 				{

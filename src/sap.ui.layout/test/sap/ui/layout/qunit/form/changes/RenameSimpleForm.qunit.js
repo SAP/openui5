@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
@@ -24,7 +23,6 @@ sap.ui.define([
 	Label,
 	Input,
 	JSONModel,
-	oCore,
 	nextUIUpdate,
 	FlexTestAPI
 ) {

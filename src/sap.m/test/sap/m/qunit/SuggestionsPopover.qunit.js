@@ -11,9 +11,8 @@ sap.ui.define([
 	"sap/m/ComboBox",
 	"sap/m/MultiComboBox",
 	"sap/m/GroupHeaderListItem",
-	"sap/ui/core/Item",
-	"sap/ui/core/Core"
-], function(
+	"sap/ui/core/Item"
+], function (
 	Device,
 	qutils,
 	KeyCodes,
@@ -25,8 +24,7 @@ sap.ui.define([
 	ComboBox,
 	MultiComboBox,
 	GroupHeaderListItem,
-	Item,
-	oCore
+	Item
 ) {
 	"use strict";
 

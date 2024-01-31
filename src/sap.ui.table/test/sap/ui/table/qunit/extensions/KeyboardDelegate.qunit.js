@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Element",
-	"sap/ui/core/Core",
 	"sap/base/i18n/Localization",
 	"sap/ui/thirdparty/jquery",
 	// provides jQuery custom selector ":sapTabbable"
@@ -39,7 +38,6 @@ sap.ui.define([
 	KeyCodes,
 	JSONModel,
 	Element,
-	oCore,
 	Localization,
 	jQuery
 ) {

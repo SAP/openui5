@@ -7,13 +7,12 @@
 /*eslint max-nested-callbacks: [2, 10]*/
 
 sap.ui.define([
-		"sap/ui/mdc/condition/ConditionModel",
-		"sap/ui/mdc/condition/Condition",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/model/ChangeReason",
-		"sap/ui/mdc/enums/ConditionValidated",
-		"sap/ui/mdc/enums/OperatorName"
-		], function(ConditionModel, Condition, JSONModel, ChangeReason, ConditionValidated, OperatorName) {
+	"sap/ui/mdc/condition/ConditionModel",
+	"sap/ui/mdc/condition/Condition",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/mdc/enums/OperatorName"
+], function(ConditionModel, Condition, JSONModel, ChangeReason, OperatorName) {
 	"use strict";
 
 	let oConditionModel;

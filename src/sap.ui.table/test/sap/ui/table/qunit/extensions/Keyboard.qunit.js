@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/ui/table/extensions/ExtensionBase",
 	"sap/ui/table/extensions/Keyboard",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	TableQUnitUtils,
 	nextUIUpdate,
@@ -24,8 +23,7 @@ sap.ui.define([
 	ExtensionBase,
 	KeyboardExtension,
 	JSONModel,
-	jQuery,
-	oCore
+	jQuery
 ) {
 	"use strict";
 

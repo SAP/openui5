@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/m/Tokenizer",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Library, qutils, createAndAppendDiv, Token, coreLibrary, InvisibleText, Tokenizer, KeyCodes, oCore, nextUIUpdate) {
+], function(Library, qutils, createAndAppendDiv, Token, coreLibrary, InvisibleText, Tokenizer, KeyCodes, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection

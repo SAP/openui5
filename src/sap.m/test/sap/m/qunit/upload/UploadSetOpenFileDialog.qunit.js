@@ -9,9 +9,8 @@ sap.ui.define("sap.m.qunit.UploadSetOpenFileDialog", [
 	"sap/ui/Device",
 	"sap/m/upload/UploadSetItem",
 	"sap/m/ObjectMarker",
-	"sap/base/Log",
-	"sap/ui/core/Core"
-], function(nextUIUpdate, jQuery, UploadSet, JSONModel, Event, Device, UploadSetItem, ObjectMarker, Log, oCore) {
+	"sap/base/Log"
+], function (nextUIUpdate, jQuery, UploadSet, JSONModel, Event, Device, UploadSetItem, ObjectMarker, Log) {
 	"use strict";
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";

@@ -1,7 +1,6 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/base/i18n/Localization",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -22,7 +21,6 @@ sap.ui.define([
 	"require"
 ], function(
 	Localization,
-	Core,
 	Library,
 	qutils,
 	createAndAppendDiv,

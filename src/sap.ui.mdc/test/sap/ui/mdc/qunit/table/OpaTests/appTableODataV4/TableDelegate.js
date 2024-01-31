@@ -32,9 +32,7 @@ sap.ui.define([
 				label: "NoDataColumn2",
 				dataType: "String",
 				sortable: false,
-				filterable: false,
-				exportSettings: {
-				}
+				filterable: false
 			};
 
 			aProperties.push(oProductIdName, oNoDataCol1, oNoDataCol2);

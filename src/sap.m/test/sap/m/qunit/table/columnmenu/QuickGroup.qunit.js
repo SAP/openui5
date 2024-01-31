@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickGroupItem",
 	"sap/m/Button",
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Library, QUnitUtils, Menu, QuickGroup, QuickGroupItem, Button, library, Core, nextUIUpdate) {
+], function(Library, QUnitUtils, Menu, QuickGroup, QuickGroupItem, Button, library, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Basic", {

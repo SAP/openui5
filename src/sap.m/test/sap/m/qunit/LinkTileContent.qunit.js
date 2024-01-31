@@ -2,9 +2,8 @@
 sap.ui.define([
 	"sap/m/GenericTile",
 	"sap/m/LinkTileContent",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(GenericTile, LinkTileContent, oCore, nextUIUpdate) {
+], function(GenericTile,LinkTileContent,nextUIUpdate) {
 	"use strict";
 	QUnit.module("Rendering tests", {
 		beforeEach: async function() {

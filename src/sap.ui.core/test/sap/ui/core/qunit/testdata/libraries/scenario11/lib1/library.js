@@ -1,9 +1,8 @@
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library"
-], function(oCore, Library) {
+], function(Library) {
 	"use strict";
 	return Library.init({
 		name: "testlibs.scenario11.lib1",

@@ -4,11 +4,9 @@
 
 // Provides class sap.ui.core.ElementMetadata
 sap.ui.define([
-	'sap/base/Log',
-	'sap/base/util/ObjectPath',
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/core/Renderer'
-], function(Log, ObjectPath, ManagedObjectMetadata, Renderer) {
+], function(ManagedObjectMetadata, Renderer) {
 "use strict";
 
 /**

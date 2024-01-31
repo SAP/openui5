@@ -7,11 +7,8 @@
 // ---------------------------------------------------------------------------------------
 
 sap.ui.define([
-	"sap/ui/mdc/field/FieldBaseDelegate", 'sap/ui/mdc/odata/v4/TypeMap'
-], (
-	FieldBaseDelegate,
-	ODataV4TypeMap
-) => {
+	'sap/ui/mdc/odata/v4/TypeMap'
+], ODataV4TypeMap => {
 	"use strict";
 
 	ODataFieldBaseDelegate.getTypeMap = function(oPayload) {

@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(LightBox, LightBoxItem, Library, qutils, KeyCodes, library, oCore, nextUIUpdate) {
+], function(LightBox, LightBoxItem, Library, qutils, KeyCodes, library, nextUIUpdate) {
 		'use strict';
 
 		// shortcut for sap.m.LightBoxLoadingStates

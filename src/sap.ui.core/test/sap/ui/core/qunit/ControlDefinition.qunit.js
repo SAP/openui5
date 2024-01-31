@@ -1,6 +1,5 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/base/util/ObjectPath",
 	"sap/ui/base/Object",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
@@ -9,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(ObjectPath, BaseObject, Control, Element, Button, Input, Library, createAndAppendDiv, nextUIUpdate) {
+], function(BaseObject, Control, Element, Button, Input, Library, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	createAndAppendDiv("content");

@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/library",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
@@ -47,7 +46,6 @@ sap.ui.define([
 	mobileLibrary,
 	coreLibrary,
 	Device,
-	oCore,
 	Element,
 	nextUIUpdate,
 	jQuery

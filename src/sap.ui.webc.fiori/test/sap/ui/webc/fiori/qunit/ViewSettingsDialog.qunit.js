@@ -2,14 +2,13 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/ViewSettingsDialog",
 	"sap/ui/webc/fiori/FilterItem",
 	"sap/ui/webc/fiori/FilterItemOption",
 	"sap/ui/webc/fiori/SortItem",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, nextUIUpdate, ViewSettingsDialog, FilterItem, FilterItemOption, SortItem, Button) {
+], function(createAndAppendDiv, nextUIUpdate, ViewSettingsDialog, FilterItem, FilterItemOption, SortItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

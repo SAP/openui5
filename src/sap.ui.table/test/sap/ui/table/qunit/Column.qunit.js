@@ -9,15 +9,11 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/CreationRow",
 	"sap/ui/table/menus/ColumnHeaderMenuAdapter",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Integer",
-	"sap/ui/unified/Menu",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/Item",
 	"sap/m/Button",
-	"sap/ui/core/Element",
-	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragDropInfo"
 ], function(
 	TableQUnitUtils,
@@ -28,15 +24,11 @@ sap.ui.define([
 	Table,
 	CreationRow,
 	ColumnHeaderMenuAdapter,
-	JSONModel,
 	IntegerType,
-	Menu,
 	ColumnMenu,
 	QuickAction,
 	Item,
 	Button,
-	Element,
-	oCore,
 	DragDropInfo
 ) {
 	"use strict";

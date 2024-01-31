@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/m/SuggestionsList",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
@@ -24,7 +23,6 @@ sap.ui.define([
 	SuggestionsList,
 	Device,
 	InvisibleText,
-	Core,
 	KeyCodes,
 	nextUIUpdate,
 	jQuery

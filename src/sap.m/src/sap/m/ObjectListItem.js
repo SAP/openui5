@@ -11,7 +11,6 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/m/ObjectNumber',
 	'sap/ui/core/library',
-	'./ObjectMarker',
 	'./Text',
 	'./ObjectListItemRenderer',
 	"sap/m/ImageHelper"
@@ -24,11 +23,10 @@ function(
 	IconPool,
 	ObjectNumber,
 	coreLibrary,
-	ObjectMarker,
 	Text,
 	ObjectListItemRenderer,
 	ImageHelper
-	) {
+) {
 	"use strict";
 
 

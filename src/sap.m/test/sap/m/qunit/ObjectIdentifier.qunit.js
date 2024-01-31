@@ -20,8 +20,7 @@ sap.ui.define([
 	"sap/m/ObjectIdentifierRenderer",
 	"sap/m/Panel",
 	"sap/m/library",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/events/KeyCodes"
 ], function(
 	Element,
 	Library,
@@ -43,8 +42,7 @@ sap.ui.define([
 	ObjectIdentifierRenderer,
 	Panel,
 	mobileLibrary,
-	KeyCodes,
-	oCore
+	KeyCodes
 ) {
 	"use strict";
 

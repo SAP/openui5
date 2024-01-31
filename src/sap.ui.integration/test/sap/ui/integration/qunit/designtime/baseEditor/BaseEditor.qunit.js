@@ -7,17 +7,15 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
-], function (
+	"sap/ui/thirdparty/sinon-4"
+], function(
 	BaseEditor,
 	_omit,
 	_merge,
 	PropertyEditor,
 	StringEditor,
 	nextUIUpdate,
-	sinon,
-	oCore
+	sinon
 ) {
 	"use strict";
 

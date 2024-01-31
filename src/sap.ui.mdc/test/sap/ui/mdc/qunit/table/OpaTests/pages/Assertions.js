@@ -34,19 +34,6 @@ sap.ui.define([
 	 */
 	return {
 		/**
-		 * Checks if a MDCTable is visible on the MDCTable
-		 *
-		 * @function
-		 * @name iShouldSeeATable
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
-		 * @returns {Promise} OPA waitFor
-		 * @private
-		 */
-		iShouldSeeATable: function(oControl) {
-			return waitForTable.call(this, oControl);
-		},
-
-		/**
 		 * Checks if the 'Select all' check box is visible on the MDCTable.
 		 * Succeeds only if {@link sap.ui.mdc.Table#multiSelectMode} is set to 'Default'
 		 * when using a ResponsiveTable or if {@link sap.ui.table.plugins.MultiSelectionPlugin#limit} is set

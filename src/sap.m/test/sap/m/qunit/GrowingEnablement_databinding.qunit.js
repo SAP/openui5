@@ -10,9 +10,8 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/App",
 	"sap/m/Page",
-	"sap/ui/core/Core",
 	"sap/ui/test/TestUtils"
-], function(createAndAppendDiv, nextUIUpdate, jQuery, JSONModel, ODataV4Model, Sorter, List, StandardListItem, App, Page, oCore, TestUtils) {
+], function(createAndAppendDiv, nextUIUpdate, jQuery, JSONModel, ODataV4Model, Sorter, List, StandardListItem, App, Page, TestUtils) {
 	"use strict";
 	createAndAppendDiv("content");
 

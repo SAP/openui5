@@ -1,11 +1,10 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/m/PagingButton",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(PagingButton, oCore, nextUIUpdate, $) {
+	function(PagingButton, nextUIUpdate, $) {
 		"use strict";
 
 

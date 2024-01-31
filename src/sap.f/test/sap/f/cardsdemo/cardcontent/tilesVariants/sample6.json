@@ -7,12 +7,17 @@
 		"type": "List",
 		"header": {
 			"type": "Numeric",
-			"title": "Tile without icon",
-			"subTitle": "And with subtitle",
-			"unitOfMeasurement": "EUR",
+			"data": {
+				"request": {
+					"url": "./data6.json"
+					}
+			},
+			"title": "{title}",
+			"subTitle": "{subTitle}",
+			"unitOfMeasurement": "{unitOfMeasurement}",
 			"details": {
-				"text": "{details}",
-				"state": "Success"
+				"text": "{details/text}",
+				"state": "{details/state}"
 			},
 			"actions": [
 				{

@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.define(["sap/m/Bar", "sap/ui/core/Core", "sap/ui/qunit/utils/nextUIUpdate"], function(Bar, oCore, nextUIUpdate) {
+sap.ui.define(["sap/m/Bar", "sap/ui/qunit/utils/nextUIUpdate"], function(Bar, nextUIUpdate) {
 	"use strict";
 
 	function renderBarInPageTestCase(sTestName, sContext, sExpectedTag, sExpectedClass) {

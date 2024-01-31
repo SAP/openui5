@@ -3,17 +3,19 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Actions",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Assertions",
 	"test-resources/sap/ui/mdc/testutils/opa/table/Actions",
+	"test-resources/sap/ui/mdc/testutils/opa/table/waitForTable",
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action"
 ], function(
 	/** @type sap.ui.test.Opa5 */ Opa5,
 	/** @type sap.ui.test.Opa5 */ AppUnderTestActions,
 	/** @type sap.ui.test.Opa5 */ AppUnderTestAssertions,
 	/** @type sap.ui.test.Opa5 */ TableActions,
+	waitForTable,
 	/** @type sap.ui.test.Opa5 */ P13nAction) {
 	"use strict";
 
 	Opa5.createPageObjects({
-		onTheAppUnderTestMDCTable: {
+		onTheApp: {
 			actions: {
 				/**
 				 * Just look at the screen
@@ -24,9 +26,26 @@ sap.ui.define([
 				 * @private
 				 */
 				iLookAtTheScreen: function() {
-					return AppUnderTestActions.iLookAtTheScreen.call(this);
-				},
-
+					return this;
+				}
+			},
+			assertions: {
+				/**
+				 * Checks if a table is visible on the screen.
+				 *
+				 * @function
+				 * @name iShouldSeeATable
+				 * @param {String|sap.ui.mdc.Table} oControl Id or instance of the table
+				 * @returns {Promise} OPA waitFor
+				 * @private
+				 */
+				iShouldSeeATable: function(oControl) {
+					return waitForTable.call(this, oControl);
+				}
+			}
+		},
+		onTheAppUnderTestMDCTable: {
+			actions: {
 				/**
 				 * Emulate a click action on the 'Select all' check box to select / deselect all rows.
 				 *
@@ -437,19 +456,6 @@ sap.ui.define([
 				}
 			},
 			assertions: {
-				/**
-				 * Checks if a MDCTable is visible on the screen.
-				 *
-				 * @function
-				 * @name iShouldSeeATable
-				 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
-				 * @returns {Promise} OPA waitFor
-				 * @private
-				 */
-				iShouldSeeATable: function(oControl) {
-					return AppUnderTestAssertions.iShouldSeeATable.call(this, oControl);
-				},
-
 				/**
 				 * Checks if the 'Select all' check box is visible on the MDCTable.
 				 *

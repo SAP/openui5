@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Table",
-	"sap/ui/table/Column",
 	"sap/ui/table/CreationRow",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/rowmodes/Fixed",
@@ -17,7 +16,6 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/i18n/Localization",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	// provides jQuery custom selectors ":sapTabbable", ":sapFocusable"
 	"sap/ui/dom/jquery/Selectors"
 ], function(
@@ -25,7 +23,6 @@ sap.ui.define([
 	nextUIUpdate,
 	TableUtils,
 	Table,
-	Column,
 	CreationRow,
 	RowAction,
 	FixedRowMode,
@@ -36,8 +33,7 @@ sap.ui.define([
 	BaseObject,
 	ResourceBundle,
 	Localization,
-	jQuery,
-	oCore
+	jQuery
 ) {
 	"use strict";
 

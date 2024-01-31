@@ -4,10 +4,8 @@ sap.ui.define([
 	"sap/m/BusyIndicator",
 	"sap/ui/core/AnimationMode",
 	"sap/ui/core/ControlBehavior",
-	"sap/ui/core/Core",
-	"sap/ui/core/Configuration",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(BusyIndicator, AnimationMode, ControlBehavior, Core, Configuration, nextUIUpdate) {
+], function(BusyIndicator, AnimationMode, ControlBehavior, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("sap.m.BusyIndicator API", {

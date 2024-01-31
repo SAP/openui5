@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/m/Input",
 	"sap/base/strings/capitalize",
-	"sap/ui/core/Core",
 	"sap/ui/base/ManagedObjectObserver"
 ], function(
 	MockServer,
@@ -36,8 +35,7 @@ sap.ui.define([
 	Text,
 	VBox,
 	Input,
-	capitalize,
-	oCore
+	capitalize
 ) {
 	"use strict";
 

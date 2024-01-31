@@ -4,13 +4,11 @@ sap.ui.define([
 	"sap/m/NotificationList",
 	"sap/m/NotificationListGroup",
 	"sap/m/NotificationListItem",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	NotificationList,
 	NotificationListGroup,
 	NotificationListItem,
-	Core,
 	nextUIUpdate
 ) {
 	'use strict';

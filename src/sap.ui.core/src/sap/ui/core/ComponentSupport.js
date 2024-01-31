@@ -9,7 +9,6 @@ sap.ui.define([
 	'sap/ui/core/library',
 	"sap/base/future",
 	"sap/base/Log",
-	"sap/base/util/ObjectPath",
 	"sap/base/strings/camelize"
 ], function(
 	DataType,
@@ -17,7 +16,6 @@ sap.ui.define([
 	library,
 	future,
 	Log,
-	ObjectPath,
 	camelize
 ) {
 	"use strict";

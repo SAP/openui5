@@ -2,12 +2,11 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/SelectMenu",
 	"sap/ui/webc/main/SelectMenuOption",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, nextUIUpdate, SelectMenu, SelectMenuOption, Button) {
+], function(createAndAppendDiv, nextUIUpdate, SelectMenu, SelectMenuOption, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

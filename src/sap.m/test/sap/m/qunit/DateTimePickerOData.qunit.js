@@ -2,13 +2,11 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/test/TestUtils",
-	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/odata/v2/ODataModel"
 ], function(
 	nextUIUpdate,
 	TestUtils,
-	Core,
 	XMLView,
 	ODataModel
 ) {

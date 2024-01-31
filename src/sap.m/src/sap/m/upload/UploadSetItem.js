@@ -19,11 +19,8 @@ sap.ui.define([
 	"sap/m/ProgressIndicator",
 	"sap/m/VBox",
 	"sap/m/HBox",
-	"sap/ui/core/Lib",
-	"sap/ui/core/Core"
-], function (Log, CoreLibrary, Element, Icon, IconPool, HTML,
-			 MobileLibrary, Button, CustomListItem, Image, Input,
-			 Label, Link, ProgressIndicator, VBox, HBox, CoreLib, Core) {
+	"sap/ui/core/Lib"
+], function(Log, CoreLibrary, Element, Icon, IconPool, HTML, MobileLibrary, Button, CustomListItem, Image, Input, Label, Link, ProgressIndicator, VBox, HBox, CoreLib) {
 	"use strict";
 
 	var UploadType = MobileLibrary.UploadType;

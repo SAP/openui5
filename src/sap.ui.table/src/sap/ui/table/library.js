@@ -6,16 +6,14 @@
  * Initialization Code and shared classes of library sap.ui.table.
  */
 sap.ui.define([
-	"sap/ui/core/Lib",
-	"sap/ui/base/DataType",
-	"sap/ui/model/TreeAutoExpandMode", // TODO: Remove in UI5 2.0
-	// library dependencies
-	"sap/ui/core/library",
-	"sap/ui/unified/library"
+ "sap/ui/core/Lib",
+ "sap/ui/base/DataType",
+ // library dependencies
+ "sap/ui/core/library",
+ "sap/ui/unified/library"
 ], function(
-	Library,
-	DataType,
-	TreeAutoExpandMode // TODO: Remove in UI5 2.0
+ Library,
+ DataType
 ) {
  "use strict";
 

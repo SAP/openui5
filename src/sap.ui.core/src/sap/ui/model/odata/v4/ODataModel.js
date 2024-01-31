@@ -30,7 +30,6 @@ sap.ui.define([
 	"./lib/_MetadataRequestor",
 	"./lib/_Parser",
 	"./lib/_Requestor",
-	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/ui/base/SyncPromise",
@@ -45,10 +44,7 @@ sap.ui.define([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/thirdparty/URI"
-], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
-		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
-		Localization, SyncPromise, coreLibrary, Messaging, Rendering, Supportability,
-		CacheManager, Message, BindingMode, BaseContext, Model, OperationMode, URI) {
+], function(ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding, SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, Log, Localization, SyncPromise, coreLibrary, Messaging, Rendering, Supportability, CacheManager, Message, BindingMode, BaseContext, Model, OperationMode, URI) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -140,7 +136,7 @@ sap.ui.define([
 		 *   Whether to ignore all annotations from service metadata and "cross-service references";
 		 *   only the value <code>true</code> is allowed. Only annotations from annotation files
 		 *   (see parameter "annotationURI") are loaded. This parameter is not inherited by value
-		 *   list models. @experimental as of version 1.111.0
+		 *   list models. Supported since 1.121.0
 		 * @param {object} [mParameters.metadataUrlParams]
 		 *   Additional map of URL parameters used specifically for $metadata requests. Note that
 		 *   "sap-context-token" applies only to the service's root $metadata, but not to

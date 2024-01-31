@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/m/upload/UploadSetwithTableItem",
 	"sap/m/upload/UploadSetwithTableRenderer",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
 	"./UploadSetwithTableTestUtils",
 	"sap/m/upload/UploaderTableItem",
 	"sap/m/library",
@@ -17,7 +16,8 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/IllustratedMessageType",
 	"sap/m/upload/UploaderHttpRequestMethod"
-], function(UploadSetwithTable, UploadSetwithTableItem, UploadSetwithTableRenderer, JSONModel, oCore, TestUtils, Uploader, Library, ToolbarSpacer, nextUIUpdate, FileUploader, UploadSetToolbarPlaceholder, Button, ToggleButton, OverflowToolbar, IllustratedMessageType, UploaderHttpRequestMethod) {
+], function (UploadSetwithTable, UploadSetwithTableItem, UploadSetwithTableRenderer, JSONModel, TestUtils, Uploader, Library, ToolbarSpacer,
+	nextUIUpdate, FileUploader, UploadSetToolbarPlaceholder, Button, ToggleButton, OverflowToolbar, IllustratedMessageType, UploaderHttpRequestMethod) {
 	"use strict";
 
 	function getData() {

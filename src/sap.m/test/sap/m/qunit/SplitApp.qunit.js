@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/NavContainer",
 	"sap/m/library",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -27,8 +26,7 @@ sap.ui.define([
 	jQuery,
 	NavContainer,
 	mobileLibrary,
-	KeyCodes,
-	oCore
+	KeyCodes
 ) {
 	"use strict";
 

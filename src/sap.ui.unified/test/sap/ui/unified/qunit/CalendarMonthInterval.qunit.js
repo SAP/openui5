@@ -15,9 +15,8 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date"
-], function(Localization, Element, qutils, nextUIUpdate, CalendarMonthInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, Button, unifiedLibrary, DateFormat, KeyCodes, jQuery, oCore, UI5Date) {
+], function(Localization, Element, qutils, nextUIUpdate, CalendarMonthInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, Button, unifiedLibrary, DateFormat, KeyCodes, jQuery, UI5Date) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested

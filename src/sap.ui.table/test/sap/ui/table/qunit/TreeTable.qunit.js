@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	TableQUnitUtils,
 	nextUIUpdate,
@@ -20,8 +19,7 @@ sap.ui.define([
 	TableUtils,
 	library,
 	JSONModel,
-	jQuery,
-	oCore
+	jQuery
 ) {
 	"use strict";
 

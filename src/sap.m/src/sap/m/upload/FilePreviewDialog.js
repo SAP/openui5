@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/HTML",
 	"sap/m/Button",
@@ -15,7 +14,7 @@ sap.ui.define([
 	"sap/m/Carousel",
 	"sap/base/Log",
 	"sap/ui/core/Lib"
-], function(Core, Element, HTML, Button, Image, PDFViewer, Dialog, IllustratedMessage, IllustratedMessageType, Carousel, Log, Library) {
+], function(Element, HTML, Button, Image, PDFViewer, Dialog, IllustratedMessage, IllustratedMessageType, Carousel, Log, Library) {
 	"use strict";
 
 	// get resource translation bundle;

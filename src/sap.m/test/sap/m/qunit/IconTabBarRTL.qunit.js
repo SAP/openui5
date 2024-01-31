@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Element",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -14,7 +13,6 @@ sap.ui.define([
 	Button,
 	Element,
 	KeyCodes,
-	Core,
 	nextUIUpdate,
 	jQuery
 ) {

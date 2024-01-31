@@ -20,9 +20,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/util/Mobile",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils"
-], function(Localization, Library, nextUIUpdate, jQuery, Button, GenericTile, Label, NumericContent, Table, Toolbar, ToolbarSpacer, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, KeyCodes, Mobile, oCore, qutils) {
+], function(Localization, Library, nextUIUpdate, jQuery, Button, GenericTile, Label, NumericContent, Table, Toolbar, ToolbarSpacer, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, KeyCodes, Mobile, qutils) {
 	"use strict";
 
 	var oResourceBundle = Library.getResourceBundleFor("sap.m");

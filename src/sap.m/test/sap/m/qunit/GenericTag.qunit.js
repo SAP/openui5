@@ -10,10 +10,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbar",
-	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(GenericTag, GenericTagRenderer, library, ObjectNumber, Library, coreLibrary, KeyCodes, qutils, ToolbarSpacer, OverflowToolbar, oCore, InvisibleText, nextUIUpdate) {
+], function(GenericTag, GenericTagRenderer, library, ObjectNumber, Library, coreLibrary, KeyCodes, qutils, ToolbarSpacer, OverflowToolbar, InvisibleText, nextUIUpdate) {
 	"use strict";
 
 	var GenericTagDesign = library.GenericTagDesign,

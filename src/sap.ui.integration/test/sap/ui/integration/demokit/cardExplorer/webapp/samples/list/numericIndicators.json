@@ -54,7 +54,7 @@
 				"path": "/kpiInfos/kpi"
 			},
 			"title": "Top 5 Products Sales",
-			"subTitle": "By average price",
+			"subTitle": "By Average Price",
 			"unitOfMeasurement": "EUR",
 			"mainIndicator": {
 				"visible": "{mainIndicatorVisible}",

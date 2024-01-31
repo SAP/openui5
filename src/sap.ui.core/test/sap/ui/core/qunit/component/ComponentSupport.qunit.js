@@ -2,13 +2,12 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/base/strings/hyphenate',
 	'sap/base/util/Deferred',
-	'sap/base/util/ObjectPath',
 	'sap/ui/core/UIComponent',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/ComponentSupport',
 	"sap/ui/core/Element",
 	'sap/ui/core/library'
-], function(Log, hyphenate, Deferred, ObjectPath, UIComponent, ComponentContainer, ComponentSupport, Element, library) {
+], function(Log, hyphenate, Deferred, UIComponent, ComponentContainer, ComponentSupport, Element, library) {
 	"use strict";
 	/*global QUnit, sinon*/
 

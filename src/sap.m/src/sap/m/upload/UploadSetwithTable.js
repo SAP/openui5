@@ -28,7 +28,6 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/MessageBox",
 	"sap/m/Button",
-	"sap/ui/core/Core",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/m/upload/p13n/PersManager",
 	"sap/m/upload/p13n/mediator/ColumnsMediator",
@@ -40,7 +39,7 @@ sap.ui.define([
 	"sap/m/MenuButton",
 	"sap/m/MenuItem",
 	"sap/m/Menu"
-], function(Table, ToolbarSpacer, UploadSetwithTableRenderer, Library1, FileUploader, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetwithTableItem, deepEqual, Log, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core, VariantManagement, PersManager, ColumnsMediator, SortMediator, GroupMediator, FilterMediator, View, Element, MenuButton, MenuItem, Menu) {
+], function(Table, ToolbarSpacer, UploadSetwithTableRenderer, Library1, FileUploader, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetwithTableItem, deepEqual, Log, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, VariantManagement, PersManager, ColumnsMediator, SortMediator, GroupMediator, FilterMediator, View, Element, MenuButton, MenuItem, Menu) {
 	"use strict";
 
 	var MenuButtonMode = Library.MenuButtonMode;

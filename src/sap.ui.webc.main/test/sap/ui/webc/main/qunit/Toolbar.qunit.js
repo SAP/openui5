@@ -2,14 +2,13 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Toolbar",
 	"sap/ui/webc/main/ToolbarButton",
 	"sap/ui/webc/main/ToolbarSelect",
 	"sap/ui/webc/main/Option",
 	"sap/ui/webc/main/ToolbarSeparator"
-], function(createAndAppendDiv, Core, nextUIUpdate, Toolbar, ToolbarButton, ToolbarSelect, Option, ToolbarSeparator) {
+], function(createAndAppendDiv, nextUIUpdate, Toolbar, ToolbarButton, ToolbarSelect, Option, ToolbarSeparator) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

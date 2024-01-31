@@ -2,11 +2,9 @@
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	// form layout used by SimpleForm
-	"sap/ui/layout/form/ResponsiveGridLayout"
-], function(Component, ComponentContainer, oCore, nextUIUpdate) {
+	"sap/ui/layout/form/ResponsiveGridLayout" // form layout used by SimpleForm
+], function(Component, ComponentContainer, nextUIUpdate) {
 	"use strict";
 
 	sap.ui.define("margin/qunit/controller.controller", [

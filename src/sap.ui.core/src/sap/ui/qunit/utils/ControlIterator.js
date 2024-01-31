@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Core', "sap/ui/VersionInfo", "sap/ui/core/Lib"], function(oCore, VersionInfo, Lib) {
+sap.ui.define(["sap/ui/VersionInfo", "sap/ui/core/Lib"], function(VersionInfo, Lib) {
 "use strict";
 
 /**

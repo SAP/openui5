@@ -8,7 +8,6 @@ sap.ui.define([
 	'sap/m/Label',
 	'sap/m/Page',
 	'sap/m/RatingIndicator',
-	'sap/ui/core/Core',
 	'sap/ui/core/IconPool',
 	'sap/m/library',
 	'sap/ui/events/KeyCodes',
@@ -16,7 +15,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/thirdparty/jquery',
 	'require'
-], function(Element, Library, qutils, createAndAppendDiv, App, Label, Page, RatingIndicator, Core, IconPool, mobileLibrary, KeyCodes, includeStylesheet, nextUIUpdate, jQuery, require) {
+], function(Element, Library, qutils, createAndAppendDiv, App, Label, Page, RatingIndicator, IconPool, mobileLibrary, KeyCodes, includeStylesheet, nextUIUpdate, jQuery, require) {
 	"use strict";
 
 	createAndAppendDiv("content");

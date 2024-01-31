@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/message/Message",
 	"sap/base/Log"
@@ -25,7 +24,6 @@ sap.ui.define([
 	Label,
 	Device,
 	KeyCodes,
-	Core,
 	JSONModel,
 	Message,
 	Log

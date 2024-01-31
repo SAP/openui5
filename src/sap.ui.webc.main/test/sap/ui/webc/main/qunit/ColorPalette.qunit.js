@@ -2,11 +2,10 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/ColorPalette",
 	"sap/ui/webc/main/ColorPaletteItem"
-], function(createAndAppendDiv, Core, nextUIUpdate, ColorPalette, ColorPaletteItem) {
+], function(createAndAppendDiv, nextUIUpdate, ColorPalette, ColorPaletteItem) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

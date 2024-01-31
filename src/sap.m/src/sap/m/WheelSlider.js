@@ -11,10 +11,9 @@ sap.ui.define([
 	'sap/ui/Device',
 	"sap/ui/events/KeyCodes",
 	"sap/m/Button",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ],
-	function(AnimationMode, Control, WheelSliderRenderer, ControlBehavior, IconPool, Device, KeyCodes, Button, jQuery, Configuration) {
+	function(AnimationMode, Control, WheelSliderRenderer, ControlBehavior, IconPool, Device, KeyCodes, Button, jQuery) {
 		"use strict";
 
 		/**

@@ -13,8 +13,7 @@ sap.ui.define([
 	'./FormElement',
 	'./FormLayout',
 	'./SimpleFormRenderer',
-	'sap/base/Log',
-	'sap/ui/thirdparty/jquery'
+	'sap/base/Log'
 ], function(
 	Control,
 	ManagedObjectObserver,
@@ -25,8 +24,7 @@ sap.ui.define([
 	FormElement,
 	FormLayout,
 	SimpleFormRenderer,
-	Log,
-	jQuery
+	Log
 ) {
 	"use strict";
 

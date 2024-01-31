@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/m/ObjectMarker",
-	"sap/m/library",
-	"sap/ui/core/Core"
+	"sap/m/library"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -27,8 +26,7 @@ sap.ui.define([
 	jQuery,
 	Device,
 	ObjectMarker,
-	mobileLibrary,
-	oCore
+	mobileLibrary
 ) {
 	"use strict";
 

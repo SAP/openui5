@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/Row",
 	"sap/ui/table/rowmodes/Fixed",
-	"sap/ui/core/Core",
 	"sap/ui/Device"
 ], function(
 	TableQUnitUtils,
@@ -18,7 +17,6 @@ sap.ui.define([
 	AnalyticalTable,
 	Row,
 	FixedRowMode,
-	oCore,
 	Device
 ) {
 	"use strict";

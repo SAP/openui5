@@ -5,16 +5,14 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/layout/FixFlex',
 	'sap/m/Button',
-	'sap/m/Label',
-	"sap/ui/core/Core"
+	'sap/m/Label'
 ], function(
 	Element,
 	nextUIUpdate,
 	jQuery,
 	FixFlex,
 	Button,
-	Label,
-	oCore
+	Label
 ) {
 	'use strict';
 

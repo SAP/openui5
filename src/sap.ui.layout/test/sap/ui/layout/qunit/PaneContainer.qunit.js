@@ -4,14 +4,12 @@ sap.ui.define([
 	"sap/ui/layout/ResponsiveSplitter",
 	"sap/ui/layout/SplitPane",
 	"sap/m/Text",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	PaneContainer,
 	ResponsiveSplitter,
 	SplitPane,
 	Text,
-	Core,
 	nextUIUpdate
 ) {
 	"use strict";

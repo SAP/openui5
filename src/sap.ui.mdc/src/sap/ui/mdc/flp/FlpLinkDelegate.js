@@ -4,14 +4,13 @@
 sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
-	"sap/ui/mdc/LinkDelegate",
 	"sap/ui/mdc/link/LinkItem",
 	"sap/ui/mdc/link/Factory",
 	"sap/ui/mdc/link/Log",
 	"sap/base/Log",
 	"sap/base/util/isPlainObject",
 	"sap/ui/mdc/enums/LinkType"
-], (Element, Library, LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, LinkType) => {
+], (Element, Library, LinkItem, Factory, Log, SapBaseLog, isPlainObject, LinkType) => {
 	"use strict";
 
 	/**

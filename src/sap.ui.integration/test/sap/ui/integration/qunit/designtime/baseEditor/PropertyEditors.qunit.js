@@ -7,17 +7,15 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 	"sap/base/util/deepClone",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
-], function (
+	"sap/ui/thirdparty/sinon-4"
+], function(
 	BaseEditor,
 	PropertyEditors,
 	PropertyEditorFactory,
 	StringEditor,
 	deepClone,
 	nextUIUpdate,
-	sinon,
-	oCore
+	sinon
 ) {
 	"use strict";
 

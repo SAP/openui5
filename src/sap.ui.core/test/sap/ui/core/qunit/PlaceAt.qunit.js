@@ -2,12 +2,11 @@
 sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Button",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/StaticArea",
 	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Panel, Button, oCore, Element, StaticArea, UIAreaRegistry, createAndAppendDiv) {
+], function(Panel, Button, Element, StaticArea, UIAreaRegistry, createAndAppendDiv) {
 	"use strict";
 
 	createAndAppendDiv(["uiArea1", "uiArea2", "uiArea3", "uiArea4"]);

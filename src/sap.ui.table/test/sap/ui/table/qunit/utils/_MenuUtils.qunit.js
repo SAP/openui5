@@ -7,9 +7,7 @@ sap.ui.define([
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
 	"sap/ui/table/rowmodes/Fixed",
-	"sap/ui/Device",
-	"sap/ui/core/Control",
-	"sap/ui/core/Core"
+	"sap/ui/core/Control"
 ], function(
 	TableQUnitUtils,
 	TableUtils,
@@ -17,9 +15,7 @@ sap.ui.define([
 	RowAction,
 	RowActionItem,
 	FixedRowMode,
-	Device,
-	Control,
-	oCore
+	Control
 ) {
 	"use strict";
 

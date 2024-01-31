@@ -4,15 +4,13 @@ sap.ui.define([
 	"sap/m/WheelSlider",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Item,
 	WheelSlider,
 	KeyCodes,
 	nextUIUpdate,
-	jQuery,
-	oCore
+	jQuery
 ) {
 		"use strict";
 

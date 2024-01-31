@@ -1,5 +1,4 @@
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/m/List",
@@ -25,7 +24,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/core/InvisibleMessage",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Core, Library, Theming, List, Util, ThemeParameters, JSONListBinding, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, ODataListBinding, InvisibleMessage, nextUIUpdate) {
+], function(Library, Theming, List, Util, ThemeParameters, JSONListBinding, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, ODataListBinding, InvisibleMessage, nextUIUpdate) {
 	"use strict";
 	/* global QUnit,sinon */
 

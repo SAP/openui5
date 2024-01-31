@@ -2,7 +2,6 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/main/Table",
 	"sap/ui/webc/main/TableColumn",
@@ -10,7 +9,7 @@ sap.ui.define([
 	"sap/ui/webc/main/TableGroupRow",
 	"sap/ui/webc/main/TableRow",
 	"sap/ui/webc/main/TableCell"
-], function(createAndAppendDiv, Core, nextUIUpdate, Table, TableColumn, Button, TableGroupRow, TableRow, TableCell) {
+], function(createAndAppendDiv, nextUIUpdate, Table, TableColumn, Button, TableGroupRow, TableRow, TableCell) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

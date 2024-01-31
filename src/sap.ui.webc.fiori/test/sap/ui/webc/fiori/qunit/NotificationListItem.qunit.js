@@ -2,13 +2,12 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/NotificationListItem",
 	"sap/ui/webc/fiori/NotificationAction",
 	"sap/ui/webc/main/Avatar",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, nextUIUpdate, NotificationListItem, NotificationAction, Avatar, Button) {
+], function(createAndAppendDiv, nextUIUpdate, NotificationListItem, NotificationAction, Avatar, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

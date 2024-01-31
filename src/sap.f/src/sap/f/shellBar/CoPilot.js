@@ -6,11 +6,10 @@
 sap.ui.define([
 	"sap/ui/core/AnimationMode",
 	"sap/ui/core/Control",
-	"sap/ui/core/Configuration",
 	"sap/f/shellBar/CoPilotRenderer",
 	"sap/ui/core/ControlBehavior"
 ],
-	function(AnimationMode, Control, Configuration, CoPilotRenderer, ControlBehavior) {
+	function(AnimationMode, Control, CoPilotRenderer, ControlBehavior) {
 	"use strict";
 
 	/**

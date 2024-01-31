@@ -2,12 +2,11 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/MediaGallery",
 	"sap/ui/webc/fiori/MediaGalleryItem",
 	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, nextUIUpdate, MediaGallery, MediaGalleryItem, Button) {
+], function(createAndAppendDiv, nextUIUpdate, MediaGallery, MediaGalleryItem, Button) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");

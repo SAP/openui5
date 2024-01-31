@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
 	"sap/m/Panel"
 ], function(
@@ -24,7 +23,6 @@ sap.ui.define([
 	Text,
 	nextUIUpdate,
 	jQuery,
-	Core,
 	XMLView,
 	Panel
 ) {

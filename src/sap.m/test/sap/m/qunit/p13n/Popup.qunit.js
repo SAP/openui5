@@ -2,13 +2,12 @@
 sap.ui.define([
 	"sap/m/p13n/Popup",
 	"sap/m/Button",
-	"sap/ui/core/Element",
 	"sap/ui/core/Control",
 	"sap/ui/core/ElementRegistry",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/p13n/SelectionPanel",
 	"sap/ui/model/json/JSONModel"
-], function(P13nPopup, Button, Element, Control, ElementRegistry, nextUIUpdate, SelectionPanel, JSONModel) {
+], function(P13nPopup, Button, Control, ElementRegistry, nextUIUpdate, SelectionPanel, JSONModel) {
 	"use strict";
 
 	QUnit.module("p13n.Popup API tests", {

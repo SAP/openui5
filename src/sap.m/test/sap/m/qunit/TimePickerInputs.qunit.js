@@ -4,10 +4,9 @@ sap.ui.define([
 	"sap/m/TimePickerInternals",
 	"sap/ui/core/Element",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(TimePickerInputs, TimePickerInternals, Element, KeyCodes, oCore, UI5Date, nextUIUpdate) {
+], function(TimePickerInputs, TimePickerInternals, Element, KeyCodes, UI5Date, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("API", {

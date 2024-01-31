@@ -1,8 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/m/App",
 	"sap/m/Avatar",
 	"sap/m/library",
@@ -13,8 +11,6 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	JSONModel,
-	Core,
-	QUnitUtils,
 	App,
 	Avatar,
 	library,

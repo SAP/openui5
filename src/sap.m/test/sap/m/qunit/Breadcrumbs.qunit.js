@@ -8,12 +8,11 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/Text",
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
 ],
-function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, Text, library, oCore, nextUIUpdate, jQuery, Device) {
+function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, Text, library, nextUIUpdate, jQuery, Device) {
 	"use strict";
 	var oFactory, helpers;
 

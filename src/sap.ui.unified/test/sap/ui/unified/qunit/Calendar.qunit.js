@@ -23,7 +23,6 @@ sap.ui.define([
 	"sap/ui/unified/library",
 	"sap/ui/unified/calendar/MonthRenderer",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
 	// load all required calendars in advance
 	"sap/ui/core/date/Buddhist",
@@ -53,7 +52,6 @@ sap.ui.define([
 	unifiedLibrary,
 	MonthRenderer,
 	jQuery,
-	oCore,
 	UI5Date
 ) {
 
@@ -3070,17 +3068,16 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("Day picker DOM ref has aria-roledescription='Calendar'", function(assert) {
+	QUnit.test("Calendar root element has roledescription attribute", function(assert) {
 		// prepare
-		var oCal = new Calendar(),
-			oMonth = oCal.getAggregation("month")[0];
+		var oCal = new Calendar();
 
 		oCal.placeAt("qunit-fixture");
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// act
 		// assert
-		assert.equal(oMonth.getDomRef().getAttribute("aria-roledescription"), "Calendar", "aria-roledescription corretly set");
+		assert.equal(oCal.getDomRef().getAttribute("aria-roledescription"), "Calendar", "aria-roledescription corretly set");
 
 		// clean
 		oCal.destroy();

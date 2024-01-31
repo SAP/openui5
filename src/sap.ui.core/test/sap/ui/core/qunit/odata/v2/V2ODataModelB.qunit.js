@@ -1,7 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/util/each",
-	"sap/base/util/isEmptyObject",
 	"sap/m/Input",
 	"sap/m/Label",
 	"sap/ui/core/util/MockServer",
@@ -12,8 +11,7 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(each, isEmptyObject, Input, Label, MockServer, Filter, Sorter, UpdateMethod, ODataModel,
-	Table, Column, nextUIUpdate) {
+], function(each, Input, Label, MockServer, Filter, Sorter, UpdateMethod, ODataModel, Table, Column, nextUIUpdate) {
 	"use strict";
 
 	var sServiceUri = "/SalesOrderSrv/";

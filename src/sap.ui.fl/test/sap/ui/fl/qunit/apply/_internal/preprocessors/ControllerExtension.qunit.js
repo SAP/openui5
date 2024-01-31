@@ -2,32 +2,20 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/base/ManagedObject",
-	"sap/ui/core/mvc/ViewType",
-	"sap/ui/core/mvc/View",
-	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/ControllerExtension",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
-	ManagedObject,
-	ViewType,
-	View,
-	ComponentContainer,
-	Component,
 	VariantManagementState,
 	ManifestUtils,
 	ControllerExtension,
 	Layer,
 	Utils,
-	sinon,
-	FlQUnitUtils
+	sinon
 ) {
 	"use strict";
 

@@ -2,12 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
-	"sap/ui/table/Table",
 	"sap/ui/model/Filter",
 	"sap/ui/core/Element"
 ], function(
 	TableQUnitUtils,
-	Table,
 	Filter,
 	Element
 ) {

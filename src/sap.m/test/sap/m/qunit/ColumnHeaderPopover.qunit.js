@@ -2,7 +2,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/i18n/Localization",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -19,7 +18,6 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Localization,
-	Core,
 	Element,
 	Library,
 	createAndAppendDiv,

@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/table/Row",
 	"sap/ui/table/Table",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/Device",
-	"sap/ui/core/Core"
+	"sap/ui/Device"
 ], function(
 	qutils,
 	nextUIUpdate,
@@ -18,8 +17,7 @@ sap.ui.define([
 	Row,
 	Table,
 	TableUtils,
-	Device,
-	oCore
+	Device
 ) {
 	"use strict";
 

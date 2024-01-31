@@ -1,7 +1,6 @@
 /*global QUnit */
 sap.ui.define([
 	'sap/base/Log',
-	'sap/ui/core/Core',
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/theming/Parameters",
@@ -20,7 +19,6 @@ sap.ui.define([
 	'sap/ui/qunit/utils/nextUIUpdate'
 ], function(
 	Log,
-	Core,
 	Element,
 	Library,
 	Parameters,

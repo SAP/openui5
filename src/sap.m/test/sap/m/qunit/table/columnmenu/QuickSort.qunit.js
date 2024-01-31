@@ -7,10 +7,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickSortItem",
 	"sap/m/Button",
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Library, QUnitUtils, Menu, QuickSort, QuickSortItem, Button, library, oCore, CoreLibrary, nextUIUpdate) {
+], function(Library, QUnitUtils, Menu, QuickSort, QuickSortItem, Button, library, CoreLibrary, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Basic", {

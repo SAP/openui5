@@ -17,8 +17,7 @@ sap.ui.define([
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/ui/layout/GridData",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/model/type/Float",
-	"sap/ui/core/Core"
+	"sap/ui/model/type/Float"
 ], function(
 	Library,
 	qutils,
@@ -37,8 +36,7 @@ sap.ui.define([
 	ResponsiveGridLayout,
 	GridData,
 	KeyCodes,
-	TypeFloat,
-	oCore
+	TypeFloat
 ) {
 	"use strict";
 

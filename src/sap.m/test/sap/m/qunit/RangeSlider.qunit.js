@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element"
 ], function(
 	Log,
@@ -30,7 +29,6 @@ sap.ui.define([
 	nextUIUpdate,
 	jQuery,
 	JSONModel,
-	oCore,
 	Element
 ) {
 	"use strict";

@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/f/dnd/GridKeyboardDragAndDrop",
 	"sap/f/GridContainer",
 	"sap/m/Text",
-	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
@@ -14,7 +13,6 @@ sap.ui.define([
 	GridKeyboardDragAndDrop,
 	GridContainer,
 	Text,
-	Core,
 	DragInfo,
 	nextUIUpdate,
 	jQuery

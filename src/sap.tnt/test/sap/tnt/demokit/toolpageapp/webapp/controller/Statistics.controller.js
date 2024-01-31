@@ -3,9 +3,8 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	'sap/ui/model/json/JSONModel',
 	"sap/ui/VersionInfo",
-	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/Core"
-], function(BaseController, Library, JSONModel, VersionInfo, XMLView, oCore) {
+	"sap/ui/core/mvc/XMLView"
+], function (BaseController, Library, JSONModel, VersionInfo, XMLView) {
 	"use strict";
 	return BaseController.extend("sap.ui.demo.toolpageapp.controller.Statistics", {
 

@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/table/rowmodes/Fixed",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	TableQUnitUtils,
 	qutils,
@@ -20,8 +19,7 @@ sap.ui.define([
 	TableUtils,
 	tableLibrary,
 	FixedRowMode,
-	jQuery,
-	oCore
+	jQuery
 ) {
 	"use strict";
 

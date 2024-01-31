@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/m/SelectDialog",
 	"sap/ui/model/Filter",
 	"sap/m/StandardListItem",
-	"sap/ui/core/Core",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/m/qunit/localService/mockserver"
@@ -13,7 +12,6 @@ sap.ui.define([
 		SelectDialog,
 		Filter,
 		StandardListItem,
-		Core,
 		ODataModel,
 		nextUIUpdate,
 		mockserver

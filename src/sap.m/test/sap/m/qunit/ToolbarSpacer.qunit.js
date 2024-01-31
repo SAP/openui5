@@ -3,9 +3,8 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/ToolbarLayoutData",
 	"sap/ui/core/LayoutData",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(ToolbarSpacer, ToolbarLayoutData, LayoutData, Core, nextUIUpdate) {
+], function(ToolbarSpacer, ToolbarLayoutData, LayoutData, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Test behavior in overflow toolbar");

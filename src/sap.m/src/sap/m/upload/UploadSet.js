@@ -28,13 +28,12 @@ sap.ui.define([
 	"sap/m/IllustratedMessage",
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustratedMessageSize",
-	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/m/MenuButton",
 	"sap/ui/core/Lib"
-], function(Control, Element, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar, StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod, DragDropInfo, DropInfo, UploadSetToolbarPlaceholder, IllustratedMessage, IllustratedMessageType, IllustratedMessageSize, Core, InvisibleText, Menu, MenuItem, MenuButton, CoreLib) {
+], function(Control, Element, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar, StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod, DragDropInfo, DropInfo, UploadSetToolbarPlaceholder, IllustratedMessage, IllustratedMessageType, IllustratedMessageSize, InvisibleText, Menu, MenuItem, MenuButton, CoreLib) {
 	"use strict";
 
 	var UploadType = MobileLibrary.UploadType;

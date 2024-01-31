@@ -1,11 +1,10 @@
 /*global QUnit, sinon */
 sap.ui.define([
-		"sap/m/ToolbarSeparator",
-		"sap/m/Button",
-		"sap/m/OverflowToolbar",
-		"sap/ui/core/Core",
-		"sap/ui/qunit/utils/nextUIUpdate"
-], function(ToolbarSeparator, Button, OverflowToolbar, Core, nextUIUpdate) {
+	"sap/m/ToolbarSeparator",
+	"sap/m/Button",
+	"sap/m/OverflowToolbar",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(ToolbarSeparator, Button, OverflowToolbar, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Test behavior in overflow toolbar");

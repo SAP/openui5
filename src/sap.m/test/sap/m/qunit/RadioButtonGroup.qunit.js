@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
 	"sap/m/RadioButtonGroup",
-	"sap/m/RadioButton",
-	"sap/ui/core/Core"
+	"sap/m/RadioButton"
 ], function(
 	qutils,
 	nextUIUpdate,
@@ -18,8 +17,7 @@ sap.ui.define([
 	coreLibrary,
 	KeyCodes,
 	RadioButtonGroup,
-	RadioButton,
-	Core
+	RadioButton
 ) {
 	"use strict";
 

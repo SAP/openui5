@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	createAndAppendDiv,
@@ -18,7 +17,6 @@ sap.ui.define([
 	Select,
 	Control,
 	coreLibrary,
-	oCore,
 	nextUIUpdate
 ) {
 	"use strict";

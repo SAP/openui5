@@ -10,10 +10,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/Core",
 	"sap/ui/dom/units/Rem",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(
+], function (
 	Log,
 	Splitter,
 	SplitterLayoutData,
@@ -24,7 +23,6 @@ sap.ui.define([
 	XMLView,
 	RenderManager,
 	ResizeHandler,
-	oCore,
 	Rem,
 	nextUIUpdate
 ) {

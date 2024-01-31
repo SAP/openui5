@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/base/util/deepExtend",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/Router",
 	"sap/ui/core/routing/Views",
@@ -14,7 +13,7 @@ sap.ui.define([
 	"./AsyncViewModuleHook",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer"
-], function (Log, deepExtend, UIComponent, View, ViewType, HashChanger, Router, Views, App, NavContainer, Panel, ModuleHook, Component, ComponentContainer) {
+], function(Log, deepExtend, UIComponent, View, HashChanger, Router, Views, App, NavContainer, Panel, ModuleHook, Component, ComponentContainer) {
 	"use strict";
 
 	// This global namespace is used for creating custom component classes.

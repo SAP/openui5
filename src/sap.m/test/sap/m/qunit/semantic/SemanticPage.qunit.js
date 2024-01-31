@@ -22,7 +22,6 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Label",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -48,7 +47,6 @@ sap.ui.define([
 	mobileLibrary,
 	Label,
 	InvisibleText,
-	oCore,
 	nextUIUpdate,
 	$
 ) {

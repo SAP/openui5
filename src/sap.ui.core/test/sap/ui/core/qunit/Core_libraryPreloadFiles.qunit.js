@@ -1,9 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/base/util/ObjectPath",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Lib"
-], function(ObjectPath, jQuery, Library) {
+], function(jQuery, Library) {
 	"use strict";
 
 	var privateLoaderAPI = sap.ui.loader._;

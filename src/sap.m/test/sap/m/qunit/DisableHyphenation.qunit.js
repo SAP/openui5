@@ -3,9 +3,8 @@
 sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/hyphenation/Hyphenation",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Text, Hyphenation, oCore, nextUIUpdate) {
+], function(Text, Hyphenation, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Hyphenation", {

@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/m/StandardTreeItem",
 	"sap/m/Tree",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(createAndAppendDiv, qutils, MockServer, ODataModelV2, StandardTreeItem, Tree, oCore, nextUIUpdate) {
+], function(createAndAppendDiv, qutils, MockServer, ODataModelV2, StandardTreeItem, Tree, nextUIUpdate) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 

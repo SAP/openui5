@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/m/NavContainer",
 	"sap/m/Page",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -30,7 +29,6 @@ sap.ui.define([
 	NavContainer,
 	Page,
 	InvisibleText,
-	oCore,
 	nextUIUpdate,
 	jQuery
 ) {

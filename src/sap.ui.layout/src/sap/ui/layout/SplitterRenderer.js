@@ -2,18 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	/** @deprecated As of version 1.21. */
-	"sap/ui/core/AnimationMode",
-	/** @deprecated As of version 1.21. */
-	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
-	"sap/ui/core/IconPool" // side effect: required when calling RenderManager#icon
+	// side effect: required when calling RenderManager#icon
+	"sap/ui/core/IconPool"
 ], function(
-	/** @deprecated As of version 1.21. */
-	AnimationMode,
-	/** @deprecated As of version 1.21. */
-	ControlBehavior,
 	Library,
 	coreLibrary
 ) {

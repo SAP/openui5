@@ -1,7 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/i18n/Localization",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
@@ -36,7 +35,7 @@ sap.ui.define([
 	"sap/m/RatingIndicator",
 	"sap/ui/core/Item",
 	"sap/m/TextArea"
-], function(Localization, Core, Element, Library, qutils, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column, Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, nextUIUpdate, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea) {
+], function(Localization, Element, Library, qutils, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column, Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, nextUIUpdate, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea) {
 	"use strict";
 
 	function createSUT(bCreateColumns, bCreateHeader, sMode, bNoDataIllustrated) {

@@ -12,13 +12,12 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ],
-function(
+function (
 	GridList,
 	fLibrary,
 	GridBoxLayout,
@@ -30,7 +29,6 @@ function(
 	GroupHeaderListItem,
 	JSONModel,
 	Sorter,
-	Core,
 	qutils,
 	KeyCodes,
 	nextUIUpdate,

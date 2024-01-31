@@ -5,14 +5,12 @@ sap.ui.define([
 	"sap/ui/layout/SplitterLayoutData",
 	"sap/m/Button",
 	"sap/m/ScrollContainer",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	AssociativeSplitter,
 	SplitterLayoutData,
 	Button,
 	ScrollContainer,
-	oCore,
 	nextUIUpdate
 ) {
 	"use strict";

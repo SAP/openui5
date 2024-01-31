@@ -10,9 +10,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
 	"./UploadSetTestUtils",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(UploadSet, UploadSetItem, Toolbar, Label, UploadSetRenderer, ListItemBaseRenderer, Dialog, Device, JSONModel, TestUtils, oCore, nextUIUpdate) {
+], function (UploadSet, UploadSetItem, Toolbar, Label, UploadSetRenderer, ListItemBaseRenderer, Dialog, Device,
+			 JSONModel, TestUtils, nextUIUpdate) {
 	"use strict";
 
 	function getData() {

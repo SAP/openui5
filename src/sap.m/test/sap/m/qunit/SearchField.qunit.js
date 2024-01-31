@@ -1,7 +1,6 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -16,7 +15,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/SuggestionItem"
 ], function(
-	Core,
 	Library,
 	QunitUtils,
 	createAndAppendDiv,

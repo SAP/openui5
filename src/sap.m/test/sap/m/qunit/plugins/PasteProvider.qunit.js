@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/OverflowToolbarButton",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/m/plugins/PasteProvider",
 	"sap/ui/core/Element",
@@ -11,7 +10,7 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/ui/core/Icon",
 	"sap/m/Popover"
-], function(Table, Button, OverflowToolbarButton, Device, Core, coreLib, PasteProvider, Element, nextUIUpdate) {
+], function(Table, Button, OverflowToolbarButton, Device, coreLib, PasteProvider, Element, nextUIUpdate) {
 
 	"use strict";
 	/*global sinon, QUnit, ClipboardEvent, DataTransfer */

@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/HTML",
 	"sap/ui/layout/cssgrid/CSSGrid",
 	"sap/ui/layout/cssgrid/GridLayoutBase",
@@ -20,10 +19,9 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes"
-], function(
+], function (
 	nextUIUpdate,
 	jQuery,
-	Core,
 	HTML,
 	CSSGrid,
 	GridLayoutBase,

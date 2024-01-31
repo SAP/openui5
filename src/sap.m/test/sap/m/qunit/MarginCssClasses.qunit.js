@@ -4,9 +4,13 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(createAndAppendDiv, Component, ComponentContainer, Device, oCore, nextUIUpdate) {
+], function(createAndAppendDiv,
+	Component,
+	ComponentContainer,
+	Device,
+	nextUIUpdate
+) {
 	"use strict";
 
 	createAndAppendDiv("content");

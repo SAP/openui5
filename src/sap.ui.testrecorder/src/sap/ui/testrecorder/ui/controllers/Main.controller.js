@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/Device",
 	"sap/ui/util/Storage",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/dom/includeStylesheet",
@@ -21,8 +20,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/support/supportRules/ui/external/ElementTree",
 	"sap/ui/testrecorder/interaction/ContextMenu"
-], function ($, Device, Storage, Controller, includeStylesheet, SharedModel, CommunicationBus, CommunicationChannels, JSONModel, ResourceModel,
-		Binding, MessageToast, Dialog, CheckBox, Button, VBox, ElementTree, ContextMenu) {
+], function($, Storage, Controller, includeStylesheet, SharedModel, CommunicationBus, CommunicationChannels, JSONModel, ResourceModel, Binding, MessageToast, Dialog, CheckBox, Button, VBox, ElementTree, ContextMenu) {
 	"use strict";
 
 	return Controller.extend("sap.ui.testrecorder.ui.controllers.Main", {

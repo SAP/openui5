@@ -4,9 +4,8 @@ sap.ui.define([
 	"sap/m/semantic/SortSelect",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Item",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(createAndAppendDiv, SortSelect, JSONModel, Item, oCore, nextUIUpdate) {
+], function(createAndAppendDiv, SortSelect, JSONModel, Item, nextUIUpdate) {
 	"use strict";
 
 	var oVisibleFixture = createAndAppendDiv("qunit-fixture-visible");

@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Element, createAndAppendDiv, CustomTreeItem, Tree, Image, Text, JSONModel, oCore, nextUIUpdate) {
+], function(Element, createAndAppendDiv, CustomTreeItem, Tree, Image, Text, JSONModel, nextUIUpdate) {
 	"use strict";
 
 	createAndAppendDiv("content").style.height = "100%";

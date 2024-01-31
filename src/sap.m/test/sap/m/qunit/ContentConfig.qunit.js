@@ -2,10 +2,9 @@
 sap.ui.define([
 	"sap/m/TileAttribute",
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/m/ContentConfig",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(TileAttribute, library, oCore, ContentConfig, nextUIUpdate) {
+], function(TileAttribute,library,ContentConfig,nextUIUpdate) {
 	"use strict";
 
 	//shortcut for sap.m.ContentConfigType

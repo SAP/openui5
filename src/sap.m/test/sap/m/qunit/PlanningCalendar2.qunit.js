@@ -35,7 +35,6 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date"
 ], function(
 	Formatting,
@@ -73,7 +72,6 @@ sap.ui.define([
 	XMLView,
 	InvisibleText,
 	KeyCodes,
-	oCore,
 	UI5Date
 ) {
 	"use strict";

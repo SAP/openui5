@@ -22,14 +22,13 @@ sap.ui.define([
 	"sap/ui/core/Rendering",
 	"sap/ui/core/StaticArea",
 	'sap/ui/thirdparty/jquery',
-	'sap/ui/Global',
 	'sap/ui/base/Object',
 	'sap/ui/core/mvc/View',
 	'sap/ui/test/matchers/Ancestor',
 	'sap/ui/test/matchers/MatcherFactory',
 	'sap/ui/test/pipelines/MatcherPipeline',
 	'sap/ui/test/_OpaLogger'
-], function(extend, ObjectPath, ElementRegistry, Rendering, StaticArea, $, Global, UI5Object, View, Ancestor, MatcherFactory, MatcherPipeline, _OpaLogger) {
+], function(extend, ObjectPath, ElementRegistry, Rendering, StaticArea, $, UI5Object, View, Ancestor, MatcherFactory, MatcherPipeline, _OpaLogger) {
 
 		/**
 		 * @class A Plugin to search UI5 controls.

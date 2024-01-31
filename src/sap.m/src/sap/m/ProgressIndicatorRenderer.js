@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/core/AnimationMode", "sap/ui/core/ControlBehavior", "sap/ui/core/library", "sap/ui/core/Configuration"], function(AnimationMode, ControlBehavior, coreLibrary, Configuration) {
+sap.ui.define(["sap/ui/core/AnimationMode", "sap/ui/core/ControlBehavior", "sap/ui/core/library"], function(AnimationMode, ControlBehavior, coreLibrary) {
 "use strict";
 
 

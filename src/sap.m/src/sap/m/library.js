@@ -12,7 +12,6 @@ sap.ui.define([
  "sap/ui/base/DataType",
  "sap/ui/base/EventProvider",
  "sap/ui/core/Control",
- "sap/base/util/ObjectPath",
  "sap/ui/core/Locale",
  "sap/ui/util/openWindow",
  // library dependency
@@ -43,7 +42,6 @@ sap.ui.define([
 	 DataType,
 	 EventProvider,
 	 Control,
-	 ObjectPath,
 	 Locale,
 	 openWindow,
 	 CoreLibrary,

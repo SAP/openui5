@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Item",
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(SelectionDetailsItem, SelectionDetailsItemLine, Element, Item, library, oCore, nextUIUpdate) {
+], function(SelectionDetailsItem, SelectionDetailsItemLine, Element, Item, library, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.SelectionDetailsActionLevel

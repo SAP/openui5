@@ -3,8 +3,8 @@
  */
 
 // Provides inactive support for controls
-sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/core/Element"],
-	function(assert, Log, Element) {
+sap.ui.define(["sap/base/assert", "sap/ui/core/Element"],
+	function(assert, Element) {
 		"use strict";
 
 		/**

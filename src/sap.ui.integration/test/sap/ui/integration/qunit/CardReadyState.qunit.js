@@ -1,11 +1,13 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"qunit/testResources/nextCardReadyEvent"
 ], function (
+	Library,
 	Card,
 	nextUIUpdate,
 	jQuery,
@@ -35,6 +37,19 @@ sap.ui.define([
 			this.oCard.destroy();
 			this.oCard = null;
 		}
+	});
+
+	QUnit.test("Ready state", async function (assert) {
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Arrange
+		var oContent = this.oCard.getCardContent();
+
+		// Assert
+		assert.ok(oContent.isReady(), "Content is ready");
+		assert.notOk(oContent.isLoading(), "The content should not have loading placeholders");
 	});
 
 	QUnit.test("Await event - content turns busy and loading placeholders are shown", async function (assert) {
@@ -204,6 +219,45 @@ sap.ui.define([
 
 		// Cleanup
 		oCard.destroy();
+	});
+
+	return Library.load("sap.viz").then(function () {
+		QUnit.module("Ready state of analytical content", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					manifest: {
+						"sap.app": {
+							"id": "test.readyState.card"
+						},
+						"sap.card": {
+							"type": "Analytical",
+							"content": { }
+						}
+					}
+				});
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Ready state", async function (assert) {
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+
+			// Arrange
+			var oContent = this.oCard.getCardContent();
+
+			// Assert
+			assert.ok(oContent.isReady(), "Content is ready");
+			assert.notOk(oContent.isLoading(), "The content should not have loading placeholders");
+		});
+	}).catch(function () {
+		QUnit.test("Analytical not supported", function (assert) {
+			assert.ok(true, "Analytical content type is not available with this distribution.");
+		});
 	});
 
 });

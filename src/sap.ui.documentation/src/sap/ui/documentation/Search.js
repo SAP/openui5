@@ -2,16 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
-	"sap/ui/Device",
+    "sap/ui/Device",
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/library",
-	"sap/m/Button",
-	"sap/m/SearchField"
+    "sap/m/Button",
+    "sap/m/SearchField"
 ], function(
-	Core,
 	Control,
 	Device,
 	Library,

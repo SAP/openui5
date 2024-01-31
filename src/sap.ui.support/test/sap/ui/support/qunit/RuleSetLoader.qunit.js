@@ -8,17 +8,8 @@ sap.ui.define([
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/base/Log",
-	"sap/base/util/deepExtend",
-	"sap/base/util/ObjectPath"
-], function (VersionInfo,
-			 Bootstrap,
-			 RuleSet,
-			 RuleSetLoader,
-			 CommunicationBus,
-			 channelNames,
-			 Log,
-			 deepExtend,
-			 ObjectPath) {
+	"sap/base/util/deepExtend"
+], function(VersionInfo, Bootstrap, RuleSet, RuleSetLoader, CommunicationBus, channelNames, Log, deepExtend) {
 	"use strict";
 
 	function createValidRule(sRuleId) {

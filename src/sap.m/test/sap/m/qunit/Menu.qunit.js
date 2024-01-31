@@ -15,8 +15,7 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/MenuListItem",
 	"sap/ui/core/CustomData",
-	"sap/ui/core/Control",
-	"sap/ui/core/Core"
+	"sap/ui/core/Control"
 ], function(
 	merge,
 	Device,
@@ -33,8 +32,7 @@ sap.ui.define([
 	Item,
 	MenuListItem,
 	CustomData,
-	Control,
-	oCore
+	Control
 ) {
 	"use strict";
 

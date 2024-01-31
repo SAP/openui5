@@ -1,7 +1,6 @@
 
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
@@ -18,7 +17,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(Core, Element, Library1, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel, nextUIUpdate, jQuery) {
+], function(Element, Library1, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel, nextUIUpdate, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("content");

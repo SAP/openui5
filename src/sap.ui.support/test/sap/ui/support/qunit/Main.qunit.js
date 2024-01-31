@@ -11,23 +11,9 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Button",
 	"sap/m/Text",
-	"sap/base/Log",
-	"sap/base/util/deepExtend",
-	"sap/base/util/ObjectPath"
-	],
-	function (Bootstrap,
-			  Main,
-			  CommunicationBus,
-			  channelNames,
-			  RuleSet,
-			  RuleSetLoader,
-			  Icon,
-			  Panel,
-			  Button,
-			  Text,
-			  Log,
-			  deepExtend,
-			  ObjectPath) {
+	"sap/base/util/deepExtend"
+],
+	function(Bootstrap, Main, CommunicationBus, channelNames, RuleSet, RuleSetLoader, Icon, Panel, Button, Text, deepExtend) {
 		"use strict";
 
 		var spyChannel = function (channelName) {

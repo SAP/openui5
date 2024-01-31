@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/AnimationMode",
 	"sap/ui/core/Control",
 	"sap/ui/core/ControlBehavior",
-	"sap/ui/core/Element",
 	"sap/ui/core/util/PasteHelper",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
@@ -33,7 +32,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/ui/core/Core",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/library"
 ], function(
 	Localization,
@@ -41,7 +39,6 @@ sap.ui.define([
 	AnimationMode,
 	Control,
 	ControlBehavior,
-	Element,
 	PasteHelper,
 	ChangeReason,
 	Filter,
@@ -66,7 +63,6 @@ sap.ui.define([
 	jQuery,
 	Log,
 	Core,
-	Configuration,
 	CoreLibrary
 ) {
 	"use strict";

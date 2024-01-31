@@ -22,8 +22,7 @@ sap.ui.define([
 	"sap/m/SelectionDetailsItem",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Control",
-	"sap/ui/core/Core"
+	"sap/ui/core/Control"
 ], function(
 	ControlBehavior,
 	Element,
@@ -47,8 +46,7 @@ sap.ui.define([
 	SelectionDetailsItem,
 	Device,
 	ManagedObject,
-	Control,
-	oCore
+	Control
 ) {
 	"use strict";
 

@@ -2,13 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/Log",
-	"sap/ui/base/ManagedObjectRegistry",
-	"sap/ui/core/Configuration"
+ "sap/base/Log",
+ "sap/ui/base/ManagedObjectRegistry"
 ], (
-	Log,
-	ManagedObjectRegistry,
-	Configuration
+ Log,
+ ManagedObjectRegistry
 ) => {
 	"use strict";
 

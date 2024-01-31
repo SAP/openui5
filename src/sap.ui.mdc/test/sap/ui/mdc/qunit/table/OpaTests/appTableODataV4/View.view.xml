@@ -5,7 +5,7 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:variants="sap.ui.fl.variants"
-	controllerName="sap.ui.mdc.tableOpaTests.appUnderTestMDCTable.Controller">
+	controllerName="sap.ui.mdc.tableOpaTests.appTableODataV4.Controller">
     <App id="FlexTestApp">
         <Page showHeader="false">
             <mdc:Table
@@ -15,7 +15,7 @@
                 showPasteButton="true"
                 enableExport="true"
                 beforeExport="onBeforeExport"
-                delegate='\{ "name": "sap/ui/mdc/tableOpaTests/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
+                delegate='\{ "name": "sap/ui/mdc/tableOpaTests/appTableODataV4/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
                 selectionMode="Multi"
                 p13nMode="Column,Sort,Filter,Group"
                 enableAutoColumnWidth="true">

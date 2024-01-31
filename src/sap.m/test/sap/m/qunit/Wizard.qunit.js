@@ -2,7 +2,6 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/DesignTime",
-	"sap/ui/core/Core",
 	"sap/m/Wizard",
 	"sap/m/WizardStep",
 	"sap/m/Button",
@@ -12,7 +11,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(Log, DesignTime, Core, Wizard, WizardStep, Button, ObjectPool, library, Library, coreLibrary, nextUIUpdate, jQuery) {
+], function(Log, DesignTime, Wizard, WizardStep, Button, ObjectPool, library, Library, coreLibrary, nextUIUpdate, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel

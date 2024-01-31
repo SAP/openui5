@@ -7,12 +7,10 @@
 // Provides class sap.ui.base.DataType
 sap.ui.define([
 	'sap/base/future',
-	'sap/base/util/ObjectPath',
 	"sap/base/assert",
-	"sap/base/Log",
 	"sap/base/util/isPlainObject",
 	'sap/base/util/resolveReference'
-], function(future, ObjectPath, assert, Log, isPlainObject, resolveReference) {
+], function(future, assert, isPlainObject, resolveReference) {
 	"use strict";
 
 	/**

@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/m/ExpandableText",
 	"sap/ui/core/library",
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(
 	Library,
@@ -15,7 +14,6 @@ sap.ui.define([
 	ExpandableText,
 	coreLibrary,
 	library,
-	Core,
 	createAndAppendDiv
 ) {
 	"use strict";

@@ -12,7 +12,6 @@ sap.ui.define([
 	'./UIComponentMetadata',
 	'./mvc/Controller',
 	'./mvc/View',
-	'sap/base/util/ObjectPath',
 	'sap/base/future',
 	'sap/base/Log'
 ],
@@ -25,7 +24,6 @@ sap.ui.define([
 		UIComponentMetadata,
 		Controller,
 		View,
-		ObjectPath,
 		future,
 		Log
 	) {

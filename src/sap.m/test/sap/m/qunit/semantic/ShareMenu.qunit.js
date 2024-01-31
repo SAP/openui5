@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/m/semantic/SendMessageAction",
 	"sap/m/ActionSheet",
 	"sap/m/Button",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	coreLibrary,
@@ -27,7 +26,6 @@ sap.ui.define([
 	SendMessageAction,
 	ActionSheet,
 	Button,
-	oCore,
 	nextUIUpdate
 ) {
 	"use strict";

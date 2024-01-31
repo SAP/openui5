@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/util/MockServer",
-	"sap/ui/core/Core"
+	"sap/ui/core/util/MockServer"
 ], function(
 	nextUIUpdate,
 	TableQUnitUtils,
@@ -22,8 +21,7 @@ sap.ui.define([
 	library,
 	ODataModel,
 	qutils,
-	MockServer,
-	oCore
+	MockServer
 ) {
 	"use strict";
 

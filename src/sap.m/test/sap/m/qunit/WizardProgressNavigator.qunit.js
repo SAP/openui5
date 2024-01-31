@@ -6,11 +6,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(WizardProgressNavigator, Library, JSONModel, Device, InvisibleText, oCore, QUnitUtils, KeyCodes, nextUIUpdate) {
+], function(WizardProgressNavigator, Library, JSONModel, Device, InvisibleText, QUnitUtils, KeyCodes, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("sap.m.WizardProgressNavigator API", {

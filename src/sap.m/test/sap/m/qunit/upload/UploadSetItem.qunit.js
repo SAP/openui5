@@ -15,11 +15,11 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/m/upload/Uploader",
 	"sap/ui/core/Item",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/m/ObjectStatus",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(KeyCodes, UploadSet, UploadSetItem, UploadSetRenderer, Toolbar, Label, ListItemBaseRenderer, Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool, Uploader, Item, oCore, Element, ObjectStatus, nextUIUpdate) {
+], function (KeyCodes, UploadSet, UploadSetItem, UploadSetRenderer, Toolbar, Label, ListItemBaseRenderer,
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool, Uploader, Item, Element, ObjectStatus,nextUIUpdate) {
 	"use strict";
 
 	function getData() {

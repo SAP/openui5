@@ -9,12 +9,11 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Text",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/Device",
 	"sap/m/VBox",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/library"
-], function(Image, Library, nextUIUpdate, jQuery, mobileLibrary, LightBox, Page, Text, KeyCodes, Core, Device, VBox, createAndAppendDiv, coreLibrary) {
+], function(Image, Library, nextUIUpdate, jQuery, mobileLibrary, LightBox, Page, Text, KeyCodes, Device, VBox, createAndAppendDiv, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.m.ImageMode

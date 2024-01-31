@@ -8,9 +8,8 @@
 sap.ui.define([
 	"sap/ui/core/Lib",
 	// library dependencies
-	"sap/ui/core/library",
-	"sap/ui/core/Core"
-], function(Library, coreLib, Core) {
+	"sap/ui/core/library"
+], function(Library, coreLib) {
 	"use strict";
 
 	// delegate further initialization of this library to the Core
