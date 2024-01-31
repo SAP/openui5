@@ -6,8 +6,8 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.core.sample.View.navigationTypedView.controller.Home", {
 		navToNext() {
-			const router = UIComponent.getRouterFor(this);
-			router.navTo("next");
+			const oRouter = UIComponent.getRouterFor(this);
+			oRouter.navTo("next");
 		}
 
 	});
