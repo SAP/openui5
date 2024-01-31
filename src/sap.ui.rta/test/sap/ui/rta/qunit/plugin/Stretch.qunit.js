@@ -360,7 +360,10 @@ sap.ui.define([
 			sandbox.stub(this.oStretchPlugin, "_setStyleClassForAllStretchCandidates");
 
 			this.oStretchPlugin.getDesignTime().attachEventOnce(sEventName, function() {
-				assert.ok(this.oStretchPlugin._setStyleClassForAllStretchCandidates.notCalled, "then no style class was set for the destroyed overlay");
+				assert.ok(
+					this.oStretchPlugin._setStyleClassForAllStretchCandidates.notCalled,
+					"then no style class was set for the destroyed overlay"
+				);
 				done();
 			}, this);
 
@@ -368,65 +371,68 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.module("Given a designTime and stretch plugin are instantiated with nested editable containers (one invisible) of different sizes", {
-		async beforeEach(assert) {
-			var done = assert.async();
-			this.oLayout = new VerticalLayout("layout", {
-				width: "600px",
-				content: [
-					this.oVBox1 = new VBox("vbox1", {
-						width: "300px",
-						items: [
-							this.oVBox2 = new VBox("vbox11", {
-								width: "300px",
-								items: new Button()
-							})
-						],
-						visible: false
-					})
-				]
-			}).addStyleClass("sapUiRtaRoot");
-			this.oLayout.placeAt("qunit-fixture");
-			await nextUIUpdate();
+	QUnit.module(
+		"Given a designTime and stretch plugin are instantiated with nested editable containers (one invisible) of different sizes",
+		{
+			async beforeEach(assert) {
+				var done = assert.async();
+				this.oLayout = new VerticalLayout("layout", {
+					width: "600px",
+					content: [
+						this.oVBox1 = new VBox("vbox1", {
+							width: "300px",
+							items: [
+								this.oVBox2 = new VBox("vbox11", {
+									width: "300px",
+									items: new Button()
+								})
+							],
+							visible: false
+						})
+					]
+				}).addStyleClass("sapUiRtaRoot");
+				this.oLayout.placeAt("qunit-fixture");
+				await nextUIUpdate();
 
-			this.oStretchPlugin = new Stretch();
-			sandbox.stub(this.oStretchPlugin, "_isEditable").returns(true);
+				this.oStretchPlugin = new Stretch();
+				sandbox.stub(this.oStretchPlugin, "_isEditable").returns(true);
 
-			this.oDesignTime = new DesignTime({
-				rootElements: [this.oLayout],
-				plugins: [this.oStretchPlugin]
+				this.oDesignTime = new DesignTime({
+					rootElements: [this.oLayout],
+					plugins: [this.oStretchPlugin]
+				});
+
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
+					this.oVBoxOverlay1 = OverlayRegistry.getOverlay(this.oVBox1);
+					done();
+				}.bind(this));
+			},
+			afterEach() {
+				this.oDesignTime.destroy();
+				this.oLayout.destroy();
+				sandbox.restore();
+			}
+		}, function() {
+			QUnit.test("when the size of the layout changes", function(assert) {
+				var done = assert.async();
+				var oEvent = {
+					getParameters: function() {
+						return {
+							id: this.oLayoutOverlay.getId()
+						};
+					}.bind(this)
+				};
+				this.oLayout.setWidth("300px");
+
+				this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
+					this.oStretchPlugin._onElementOverlayChanged(oEvent);
+					assert.notOk(isStretched(this.oLayoutOverlay), "the style class was not set");
+					done();
+				}, this);
 			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
-				this.oVBoxOverlay1 = OverlayRegistry.getOverlay(this.oVBox1);
-				done();
-			}.bind(this));
-		},
-		afterEach() {
-			this.oDesignTime.destroy();
-			this.oLayout.destroy();
-			sandbox.restore();
 		}
-	}, function() {
-		QUnit.test("when the size of the layout changes", function(assert) {
-			var done = assert.async();
-			var oEvent = {
-				getParameters: function() {
-					return {
-						id: this.oLayoutOverlay.getId()
-					};
-				}.bind(this)
-			};
-			this.oLayout.setWidth("300px");
-
-			this.oLayoutOverlay.attachEventOnce("geometryChanged", function() {
-				this.oStretchPlugin._onElementOverlayChanged(oEvent);
-				assert.notOk(isStretched(this.oLayoutOverlay), "the style class was not set");
-				done();
-			}, this);
-		});
-	});
+	);
 
 	QUnit.module("Given a designTime and stretch plugin are instantiated with nested containers (not all editable)", {
 		async beforeEach(assert) {
@@ -465,12 +471,15 @@ sap.ui.define([
 				plugins: [this.oStretchPlugin]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
+			this.oDesignTime.attachEventOnce("synced", () => {
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
 				this.oHBoxOverlay = OverlayRegistry.getOverlay(this.oHBox);
 				this.oVBoxOverlay = OverlayRegistry.getOverlay(this.oVBox);
-				done();
-			}.bind(this));
+				// wait another time for rerendering because of the stretch adjustments
+				this.oDesignTime.attachEventOnce("synced", () => {
+					done();
+				});
+			});
 		},
 		afterEach() {
 			sandbox.restore();
@@ -531,14 +540,17 @@ sap.ui.define([
 			assert.ok(this.oStretchPlugin.getStretchCandidates().includes("layout"), "the layout is part of the candidates");
 			assert.ok(this.oStretchPlugin.getStretchCandidates().includes("hbox"), "the hbox is part of the candidates");
 
-			const oRemoveStretchCandidateStub = sandbox.stub(this.oStretchPlugin, "removeStretchCandidate")
-			.callsFake((...aArgs) => {
-				oRemoveStretchCandidateStub.wrappedMethod.apply(this.oStretchPlugin, aArgs);
-				assert.notOk(this.oStretchPlugin.getStretchCandidates().includes("layout"),
-					"the layout is not part of the candidates anymore");
+			// wait for the dom to update
+			var fnDebounced = _debounce(function() {
+				assert.notOk(
+					this.oStretchPlugin.getStretchCandidates().includes("layout"),
+					"the layout is not part of the candidates anymore"
+				);
+				this.oLayoutOverlay.detachEvent("geometryChanged", fnDebounced);
 				fnDone();
-			});
+			}.bind(this));
 
+			this.oLayoutOverlay.attachEvent("geometryChanged", fnDebounced);
 			this.oHBox.setVisible(false);
 		});
 	});
