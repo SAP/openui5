@@ -121,5 +121,37 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Enables the modification of the {@link sap.m.ResponsivePopover#title} property and setting which <code>Control</code> should be added to the <code>ariaLabelledBy</code> association.
+	 * @public
+	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
+	 * @param {sap.ui.mdc.link.Panel} oPanel Instance of the <code>Panel</code>
+	 * @returns {Promise<{string, sap.ui.core.Control}>} Once resolved, an <code>Object</code> containing the title string and an <code>Control</code> which is referenced as arialabelledBy.
+	 */
+	LinkDelegate.fetchPopoverTitle = function(oLink, oPanel) {
+		if (!oLink) {
+			const sTitle = "";
+			return Promise.resolve({ sTitle, undefined });
+		}
+		const sTitle = oLink.getParent()?.getValue();
+		const oLabelledByControl = LinkDelegate._getLabelledByControl(oPanel);
+
+		return Promise.resolve({ sTitle, oLabelledByControl });
+	};
+
+	LinkDelegate._getLabelledByControl = function(oPanel) {
+		const aAdditionalContent = oPanel._getAdditionalContentArea().getItems();
+		let oLabelledByControl = oPanel._getPersonalizationButton();
+		if (aAdditionalContent.length > 0) {
+			[oLabelledByControl] = aAdditionalContent;
+		} else {
+			const aLinkControls = oPanel._getLinkControls();
+			if (aLinkControls.length > 0) {
+				[oLabelledByControl] = aLinkControls;
+			}
+		}
+		return oLabelledByControl;
+	};
+
 	return LinkDelegate;
 });

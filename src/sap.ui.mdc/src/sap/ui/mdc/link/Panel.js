@@ -138,8 +138,7 @@ sap.ui.define([
 			countItemsWithoutIcon: 0,
 
 			// Additionally the property 'icon' can be modified in 'runtimeItems'.
-			runtimeItems: [],
-			contentTitle: ""
+			runtimeItems: []
 		});
 		oModel.setDefaultBindingMode(BindingMode.TwoWay);
 		oModel.setSizeLimit(1000);
@@ -526,19 +525,7 @@ sap.ui.define([
 					Log.error("The '" + oChanges.name + "' of PanelItem is not supported yet.");
 			}
 		}
-		this._updateContentTitle();
 	}
-
-	Panel.prototype.getContentTitle = function() {
-		const oModel = this._getInternalModel();
-		const oContentTitle = oModel.getProperty("/contentTitle");
-		if (oContentTitle) {
-			return oContentTitle;
-		} else {
-			this._updateContentTitle();
-			return this.getContentTitle();
-		}
-	};
 
 	Panel.prototype.getCurrentState = function() {
 		const aItems = [];
@@ -587,23 +574,6 @@ sap.ui.define([
 				return aItems;
 			}
 		});
-	};
-
-	Panel.prototype._updateContentTitle = function() {
-		const oModel = this._getInternalModel();
-		const aAdditionalContent = this._getAdditionalContentArea().getItems();
-		let oContentTitle = this._getPersonalizationButton();
-
-		if (aAdditionalContent.length > 0) {
-			oContentTitle = aAdditionalContent[0];
-		} else {
-			const aLinkControls = this._getLinkControls();
-			if (aLinkControls.length > 0) {
-				oContentTitle = aLinkControls[0];
-			}
-		}
-
-		oModel.setProperty("/contentTitle", oContentTitle);
 	};
 
 	Panel.prototype._getAdditionalContentArea = function() {

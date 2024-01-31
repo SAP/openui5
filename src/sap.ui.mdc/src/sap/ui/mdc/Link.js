@@ -467,11 +467,20 @@ sap.ui.define([
 
 	// ----------------------- sap/ui/mdc/LinkDelegate function calls ----------------------------------------------
 
+	/**
+	 * @private
+	 * @param {sap.ui.mdc.link.Panel} oPanel Instance of the <code>Panel</code>
+	 * @returns {Promise<string>} Generated title for the popover
+	 */
+	Link.prototype.retrievePopoverTitle = async function(oPanel) {
+		const oControlDelegate = await this.awaitControlDelegate();
+		return oControlDelegate.fetchPopoverTitle(this, oPanel);
+	};
 
 	/**
 	 * Generates an ID for the panel of the <code>Link</code> control. The result depends on whether the <code>Link</code> control supports flexibility.
 	 * @private
-	 * @returns {string} Generated ID of the panel
+	 * @returns {Promise<string>} Generated ID of the panel
 	 */
 	Link.prototype.retrievePanelId = async function() {
 		if (this.awaitControlDelegate()) {
