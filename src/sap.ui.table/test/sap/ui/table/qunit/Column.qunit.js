@@ -16,6 +16,10 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/Item",
 	"sap/m/Button",
+	"sap/m/Label",
+	"sap/m/Text",
+	"sap/m/Link",
+	"sap/m/CheckBox",
 	"sap/ui/core/Element",
 	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragDropInfo"
@@ -35,6 +39,10 @@ sap.ui.define([
 	QuickAction,
 	Item,
 	Button,
+	Label,
+	Text,
+	Link,
+	CheckBox,
 	Element,
 	oCore,
 	DragDropInfo
@@ -250,6 +258,283 @@ sap.ui.define([
 
 		assert.strictEqual(this._oColumn.getSorted(), true, "sorted property");
 		assert.strictEqual(this._oColumn.getSortOrder(), "Descending", "sortOrder property");
+	});
+
+	QUnit.module("#autoResize", {
+		beforeEach: function() {
+			this.oColumnResizeHandler = this.spy();
+			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1),
+				columnResize: (oEvent) => {
+					this.oColumnResizeHandler(oEvent.getParameters());
+				}
+			});
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		longText: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+		measureControlWidth: async function(oControl) {
+			const hiddenDiv = document.createElement("div");
+
+			hiddenDiv.style.position = "absolute";
+			hiddenDiv.style.visibility = "hidden";
+			hiddenDiv.style.whiteSpace = "nowrap";
+			document.body.appendChild(hiddenDiv);
+
+			oControl.placeAt(hiddenDiv);
+			await nextUIUpdate();
+			const iWidth = hiddenDiv.clientWidth;
+
+			document.body.removeChild(hiddenDiv);
+			oControl.destroy();
+
+			return iWidth;
+		},
+		getCellInnerWidth: function(oCell) {
+			const mComputedStyle = getComputedStyle(oCell.querySelector(".sapUiTableCellInner"));
+			return parseFloat(mComputedStyle.width) - parseFloat(mComputedStyle.paddingLeft) - parseFloat(mComputedStyle.paddingRight);
+		},
+		assertWidth: function(assert, iActualWidth, iCellContentWidth, sMessage) {
+			const iThreshold = 8; // The actual width should not be greater than the expected with + the threshold.
+			assert.ok(iActualWidth > iCellContentWidth && iActualWidth < iCellContentWidth + iThreshold,
+				`${sMessage} width (${iActualWidth}px) is, within threshold, greater than the cell content width`
+			);
+		}
+	});
+
+	QUnit.test("Normal cell content", async function(assert) {
+		this.oTable.addColumn(new Column({
+			width: "3rem",
+			label: new Label({text: this.longText}),
+			template: new Label({text: "Text"})
+		}));
+		this.oTable.addColumn(new Column({
+			width: "3rem",
+			label: new Label({text: "Text"}),
+			template: new Label({text: this.longText})
+		}));
+		this.oTable.addColumn(new Column({
+			width: "3rem",
+			label: new Label({text: "Text"}),
+			template: new Text({text: this.longText, wrapping: false})
+		}));
+		this.oTable.addColumn(new Column({
+			width: "3rem",
+			label: new Label({text: "Text"}),
+			template: new Text({text: this.longText})
+		}));
+		this.oTable.addColumn(new Column({
+			width: "3rem",
+			label: new Label({text: "Text"}),
+			template: new Link({text: this.longText, href: "https://www.sap.com"})
+		}));
+		this.oTable.addColumn(new Column({
+			width: "3rem",
+			label: new Label({text: "Text"}),
+			template: new CheckBox({text: this.longText})
+		}));
+
+		await this.oTable.qunit.whenRenderingFinished();
+
+		for (const oColumn of this.oTable.getColumns()) {
+			this.oColumnResizeHandler.resetHistory();
+			oColumn.autoResize();
+			await this.oTable.qunit.whenRenderingFinished();
+
+			const iLabelWidth = await this.measureControlWidth(oColumn.getLabel().clone());
+			const iTemplateWidth = await this.measureControlWidth(oColumn.getTemplate().clone());
+			const iContentWidth = Math.max(iLabelWidth, iTemplateWidth);
+			const iColumnIndex = oColumn.getIndex();
+			const sColumnWidth = oColumn.getWidth();
+			const sHeaderCellInnerWidth = this.getCellInnerWidth(this.oTable.qunit.getColumnHeaderCell(iColumnIndex));
+			const sDataCellInnerWidth = this.getCellInnerWidth(this.oTable.qunit.getDataCell(0, iColumnIndex));
+
+			assert.ok(true, `Column ${iColumnIndex + 1}; Cell content width ${iContentWidth}px`);
+			assert.ok(parseFloat(sColumnWidth) > iContentWidth, `Column width (${sColumnWidth}) is greater than the cell content width`);
+			this.assertWidth(assert, sHeaderCellInnerWidth, iContentWidth, "Header cell inner container");
+			this.assertWidth(assert, sDataCellInnerWidth, iContentWidth, "Data cell inner container");
+			assert.ok(this.oColumnResizeHandler.calledOnceWithExactly({
+				column: oColumn,
+				id: this.oTable.getId(),
+				width: sColumnWidth
+			}), "columnResize event was fired once with the correct parameters");
+		}
+	});
+
+	QUnit.test("Small cell content", async function(assert) {
+		const oColumn = new Column({
+			width: "10rem",
+			label: new Label(),
+			template: new Text()
+		});
+
+		this.oTable.addColumn(oColumn);
+		await this.oTable.qunit.whenRenderingFinished();
+		oColumn.autoResize();
+		await this.oTable.qunit.whenRenderingFinished();
+
+		assert.strictEqual(oColumn.getWidth(), TableUtils.Column.getMinColumnWidth() + "px", "Column has the minimum width");
+		assert.ok(this.oColumnResizeHandler.calledOnceWithExactly({
+			column: oColumn,
+			id: this.oTable.getId(),
+			width: oColumn.getWidth()
+		}), "columnResize event was fired once with the correct parameters");
+	});
+
+	QUnit.test("Large cell content", async function(assert) {
+		const oColumn = new Column({
+			width: "3rem",
+			label: new Label(),
+			template: new Text({text: "The column width should not become greater than the table width.".concat("A".repeat(200))})
+		});
+
+		this.oTable.addColumn(oColumn);
+		await this.oTable.qunit.whenRenderingFinished();
+		oColumn.autoResize();
+		await this.oTable.qunit.whenRenderingFinished();
+
+		assert.strictEqual(oColumn.getWidth(), "1000px" /* qunit-fixture width */, "Column width is equal to the table width");
+		assert.ok(this.oColumnResizeHandler.calledOnceWithExactly({
+			column: oColumn,
+			id: this.oTable.getId(),
+			width: oColumn.getWidth()
+		}), "columnResize event was fired once with the correct parameters");
+	});
+
+	QUnit.test("Invisible cell content", async function(assert) {
+		const oColumn = new Column({
+			width: "10rem",
+			label: new Label({text: this.longText, visible: false}),
+			template: new Text({text: this.longText, visible: false})
+		});
+
+		this.oTable.addColumn(oColumn);
+		await this.oTable.qunit.whenRenderingFinished();
+		oColumn.autoResize();
+		await this.oTable.qunit.whenRenderingFinished();
+
+		assert.strictEqual(oColumn.getWidth(), TableUtils.Column.getMinColumnWidth() + "px", "Column has the minimum width");
+		assert.ok(this.oColumnResizeHandler.calledOnceWithExactly({
+			column: oColumn,
+			id: this.oTable.getId(),
+			width: oColumn.getWidth()
+		}), "columnResize event was fired once with the correct parameters");
+	});
+
+	QUnit.test("Header span", async function(assert) {
+		this.oTable.addColumn(new Column({
+			width: "3rem",
+			label: new Label({text: "A".repeat(500)}), // Spans 2 columns
+			template: new Text({text: this.longText, wrapping: false}),
+			headerSpan: 2
+		}));
+		this.oTable.addColumn(new Column({
+			width: "3rem",
+			label: new Label({text: "A".repeat(500)}), // Invisible due to the span of the first column
+			template: new Text({text: this.longText, wrapping: false})
+		}));
+
+		await this.oTable.qunit.whenRenderingFinished();
+
+		// Labels are ignored for both columns. First column label has a span, second column label is hidden by this span.
+		for (const oColumn of this.oTable.getColumns()) {
+			this.oColumnResizeHandler.resetHistory();
+			oColumn.autoResize();
+			await this.oTable.qunit.whenRenderingFinished();
+
+			const iContentWidth = await this.measureControlWidth(oColumn.getTemplate().clone());
+			const iColumnIndex = oColumn.getIndex();
+			const sColumnWidth = oColumn.getWidth();
+			const sDataCellInnerWidth = this.getCellInnerWidth(this.oTable.qunit.getDataCell(0, iColumnIndex));
+
+			assert.ok(true, `Column ${iColumnIndex + 1}; Cell content width ${iContentWidth}px`);
+
+			assert.ok(parseFloat(sColumnWidth) > iContentWidth, `Column width (${sColumnWidth}) is greater than the cell content width`);
+			this.assertWidth(assert, sDataCellInnerWidth, iContentWidth, "Data cell inner container");
+			assert.ok(this.oColumnResizeHandler.calledOnceWithExactly({
+				column: oColumn,
+				id: this.oTable.getId(),
+				width: sColumnWidth
+			}), "columnResize event was fired once with the correct parameters");
+		}
+	});
+
+	QUnit.test("Multi headers", async function(assert) {
+		this.oTable.addColumn(new Column({
+			width: "3rem",
+			multiLabels: [
+				new Label({text: "A".repeat(500)}), // Spans 2 columns
+				new Label({text: this.longText})
+			],
+			template: new Text(),
+			headerSpan: 2
+		}));
+		this.oTable.addColumn(new Column({
+			width: "3rem",
+			multiLabels: [
+				new Label({text: "A".repeat(500)}), // Invisible due to the span of the first column
+				new Label(),
+				new Label({text: this.longText})
+			],
+			template: new Text()
+		}));
+
+		await this.oTable.qunit.whenRenderingFinished();
+
+		for (const oColumn of this.oTable.getColumns()) {
+			this.oColumnResizeHandler.resetHistory();
+			oColumn.autoResize();
+			await this.oTable.qunit.whenRenderingFinished();
+
+			const iColumnIndex = oColumn.getIndex();
+			const iMultiLabelIndex = iColumnIndex === 0 ? 1 : 2;
+			const iLabelWidth = await this.measureControlWidth(oColumn.getMultiLabels()[iMultiLabelIndex].clone());
+			const iTemplateWidth = await this.measureControlWidth(oColumn.getTemplate().clone());
+			const iContentWidth = Math.max(iLabelWidth, iTemplateWidth);
+			const sColumnWidth = oColumn.getWidth();
+			const sHeaderCellInnerWidth = this.getCellInnerWidth(this.oTable.qunit.getColumnHeaderCell(iColumnIndex, 1));
+			const sDataCellInnerWidth = this.getCellInnerWidth(this.oTable.qunit.getDataCell(0, iColumnIndex));
+
+			assert.ok(true, `Column ${iColumnIndex + 1}; Cell content width ${iContentWidth}px`);
+			assert.ok(parseFloat(sColumnWidth) > iContentWidth, `Column width (${sColumnWidth}) is greater than the cell content width`);
+			this.assertWidth(assert, sHeaderCellInnerWidth, iContentWidth, "Header cell inner container");
+			this.assertWidth(assert, sDataCellInnerWidth, iContentWidth, "Data cell inner container");
+			assert.ok(this.oColumnResizeHandler.calledOnceWithExactly({
+				column: oColumn,
+				id: this.oTable.getId(),
+				width: sColumnWidth
+			}), "columnResize event was fired once with the correct parameters");
+		}
+	});
+
+	QUnit.test("Column is not rendered", async function(assert) {
+		const oColumn = new Column({
+			width: "3rem",
+			label: new Label(),
+			template: new Label()
+		});
+
+		assert.throws(() => {
+			oColumn.autoResize();
+		}, new Error("Column is not rendered"), "Throws if the column is not a child of a table");
+
+		sinon.stub(oColumn, "shouldRender").returns(false);
+		this.oTable.addColumn(oColumn);
+		await this.oTable.qunit.whenRenderingFinished();
+
+		assert.throws(() => {
+			oColumn.autoResize();
+		}, new Error("Column is not rendered"), "Throws if the column is not rendered");
+
+		oColumn.shouldRender.returns(true);
+		this.oTable.setVisible(false);
+		await nextUIUpdate();
+
+		assert.throws(() => {
+			oColumn.autoResize();
+		}, new Error("Column is not rendered"), "Throws if the table is not rendered");
 	});
 
 	QUnit.module("Lazy aggregations", {

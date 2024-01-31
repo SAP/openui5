@@ -4219,16 +4219,36 @@ sap.ui.define([
 
 	QUnit.test("#autoResizeColumn", function(assert) {
 		const oColumn = this.oTable.getColumns()[0];
+		const assertAutoResizeCalled = (bCalled) => {
+			const sMessage = ` - resizable=${oColumn.getResizable()}, autoResizable=${oColumn.getAutoResizable()}, visible=${oColumn.getVisible()}`;
+
+			if (bCalled) {
+				assert.ok(oColumn.autoResize.calledOnceWithExactly(), "Column#autoResize called once with correct parameters" + sMessage);
+			} else {
+				assert.ok(oColumn.autoResize.notCalled, "Column#autoResize not called" + sMessage);
+			}
+
+			oColumn.autoResize.resetHistory();
+		};
+
+		sinon.spy(oColumn, "autoResize");
+
 		oColumn.setResizable(false);
 		oColumn.setAutoResizable(false);
 		this.oTable.autoResizeColumn(0);
-		assert.ok(!oColumn.getResizable(), "Columns did not resize as getResizable() returned false");
-		assert.ok(!oColumn.getAutoResizable(), "Columns did not resize as getAutoResizable() returned false");
-		oColumn.setResizable(true);
+		assertAutoResizeCalled(false);
+
 		oColumn.setAutoResizable(true);
-		const sOldColumnWidth = oColumn.getWidth();
 		this.oTable.autoResizeColumn(0);
-		assert.ok(oColumn.getWidth() !== sOldColumnWidth, "Columns have been resized");
+		assertAutoResizeCalled(false);
+
+		oColumn.setResizable(true);
+		this.oTable.autoResizeColumn(0);
+		assertAutoResizeCalled(true);
+
+		oColumn.setVisible(false);
+		this.oTable.autoResizeColumn(0);
+		assertAutoResizeCalled(false);
 	});
 
 	QUnit.test("#getFocusInfo, #applyFocusInfo", function(assert) {

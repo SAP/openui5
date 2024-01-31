@@ -2626,9 +2626,15 @@ sap.ui.define([
 	 * @param {int} iColIndex The index of the column in the list of visible columns.
 	 * @function
 	 * @public
+	 * @deprecated As of version 1.125, replaced by {@link sap.ui.table.Column#autoResize}
 	 */
 	Table.prototype.autoResizeColumn = function(iColIndex) {
-		this._getPointerExtension().doAutoResizeColumn(iColIndex);
+		const aVisibleColumns = this._getVisibleColumns();
+		const oColumn = aVisibleColumns[iColIndex];
+
+		if (oColumn?.getResizable() && oColumn?.getAutoResizable()) {
+			oColumn.autoResize();
+		}
 	};
 
 	// =============================================================================

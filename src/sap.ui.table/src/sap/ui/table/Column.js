@@ -259,12 +259,10 @@ sap.ui.define([
 			headerSpan: {type: "any", group: "Behavior", defaultValue: 1},
 
 			/**
-			 * Enables auto-resizing of the column on double clicking the resize bar. The width is determined on the widest
-			 * currently displayed content. It does not consider rows which are currently not scrolled into view.
-			 * Currently only implemented to work with the following controls:
-			 * <code>sap.m.Text, sap.m.Label, sap.m.Link, sap.m.Input,
-			 * sap.ui.commons.TextView, sap.ui.commons.Label, sap.ui.commons.Link and sap.ui.commons.TextField,
-			 * sap.ui.commons.Checkbox, sap.m.CheckBox</code>
+			 * Enables auto-resizing of the column on double-clicking the resize bar, if the column is resizable depending on the
+			 * <code>resizable</code> property.
+			 * See {@link #autoResize} for details about the auto-resize feature.
+			 *
 			 * @since 1.21.1
 			 */
 			autoResizable: {type: "boolean", group: "Behavior", defaultValue: false}
@@ -1289,6 +1287,35 @@ sap.ui.define([
 	 */
 	Column.ofCell = function(oCell) {
 		return CellMap.get(oCell) || null;
+	};
+
+	/**
+	 * The column is resized to the width of the widest cell content that is currently displayed.
+	 * This can be the content of a column header cell, or a data cell.
+	 * Only rows that are currently scrolled into view are taken into consideration.
+	 * The content of cells that span multiple columns is not taken into consideration, for example, if the <code>headerSpan</code> property is used.
+	 *
+	 * The width might not be accurate if the cell content is not rendered yet, for example, because the data is still being loaded.
+	 *
+	 * This behavior only works if the cell content is one of the following controls:
+	 * <ul>
+	 *   <li><code>sap.m.Text</code></li>
+	 *   <li><code>sap.m.Label</code></li>
+	 *   <li><code>sap.m.Link</code></li>
+	 *   <li><code>sap.m.CheckBox</code></li>
+	 * </ul>
+	 * Otherwise, the width might not be accurate either. This includes cases where the listed control is wrapped in another control.
+	 *
+	 * @throws {Error} If the column is not rendered
+	 * @public
+	 * @since 1.125
+	 */
+	Column.prototype.autoResize = function() {
+		if (!this.getDomRef()) {
+			throw new Error("Column is not rendered");
+		}
+
+		TableUtils.Column.autoResizeColumn(this);
 	};
 
 	return Column;

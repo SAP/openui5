@@ -398,7 +398,8 @@ sap.ui.define([
 		 * @returns {boolean} Whether the column can be moved to another position.
 		 */
 		isColumnMovable: function(oColumn, bIgnoreReorderingProperty) {
-			const oTable = oColumn.getParent();
+			const oTable = oColumn._getTable();
+
 			if (!oTable || (!oTable.getEnableColumnReordering() && !bIgnoreReorderingProperty)) {
 				// Column reordering is not active at all
 				return false;
@@ -428,7 +429,7 @@ sap.ui.define([
 		 * @private
 		 */
 		normalizeColumnMoveTargetIndex: function(oColumn, iNewIndex) {
-			const oTable = oColumn.getParent();
+			const oTable = oColumn._getTable();
 			const iCurrentIndex = oTable.indexOfColumn(oColumn);
 			const aColumns = oTable.getColumns();
 
@@ -458,7 +459,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether the column can be moved to the desired position.
 		 */
 		isColumnMovableTo: function(oColumn, iNewIndex, bIgnoreReorderingProperty) {
-			const oTable = oColumn.getParent();
+			const oTable = oColumn._getTable();
 
 			if (!oTable || iNewIndex === undefined || !ColumnUtils.isColumnMovable(oColumn, bIgnoreReorderingProperty)) {
 				// Column is not movable at all
@@ -508,7 +509,7 @@ sap.ui.define([
 				return false;
 			}
 
-			const oTable = oColumn.getParent();
+			const oTable = oColumn._getTable();
 			const iCurrentIndex = oTable.indexOfColumn(oColumn);
 
 			if (iNewIndex === iCurrentIndex) {
@@ -557,6 +558,60 @@ sap.ui.define([
 		},
 
 		/**
+		 * Resizes the given column to its optimal width.
+		 * Cleans up the state which is created while resizing a column via drag&drop
+		 * and sets the new width to the column.
+		 *
+		 * @param {sap.ui.table.Column} oColumn The column which should be resized
+		 * @private
+		 */
+		autoResizeColumn: function(oColumn) {
+			const oTable = oColumn._getTable();
+			const sCurrentWidth = oColumn.getWidth();
+			const iNewWidth = ColumnUtils._calculateColumnWidth(oColumn);
+
+			if (iNewWidth + "px" !== sCurrentWidth) {
+				ColumnUtils.resizeColumn(oTable, oColumn, iNewWidth);
+			}
+		},
+
+		/**
+		 * Calculates the widest content width of the currently visible column cells including headers.
+		 * Headers with column span are not taken into account.
+		 *
+		 * @param {sap.ui.table.Column} oColumn The column control
+		 * @returns {int} iWidth Calculated column width
+		 * @private
+		 */
+		_calculateColumnWidth: function(oColumn) {
+			const oTableElement = oColumn._getTable().getDomRef();
+			const oHiddenArea = document.createElement("div");
+
+			oHiddenArea.classList.add("sapUiTableHiddenSizeDetector", "sapUiTableHeaderDataCell", "sapUiTableDataCell");
+			oTableElement.appendChild(oHiddenArea);
+
+			// Create a copy of all visible cells in the column, including the header cells without colspan
+			const aCells = Array.from(oTableElement.querySelectorAll(`td[data-sap-ui-colid="${oColumn.getId()}"]:not([colspan])`))
+				.filter((element) => !element.classList.contains("sapUiTableHidden"))
+				.map((element) => element.firstElementChild.cloneNode(true));
+
+			aCells.forEach((cell) => {
+				cell.removeAttribute('id');
+				oHiddenArea.appendChild(cell);
+			});
+
+			// Determine the column width
+			let iWidth = oHiddenArea.getBoundingClientRect().width + 4; // widest cell + 4px for borders and rounding
+			const iTableWidth = oTableElement.querySelector('.sapUiTableCnt').getBoundingClientRect().width;
+			iWidth = Math.min(iWidth, iTableWidth); // no wider as the table
+			iWidth = Math.max(iWidth, ColumnUtils.getMinColumnWidth()); // not too small
+
+			oTableElement.removeChild(oHiddenArea);
+
+			return Math.round(iWidth);
+		},
+
+		/**
 		 * Resizes one or more visible columns to the specified amount of pixels.
 		 *
 		 * In case a column span is specified:
@@ -569,25 +624,53 @@ sap.ui.define([
 		 * and execution of the default action is prevented in the event handler.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {int} iColumnIndex The index of a column. Must the index of a visible column.
+		 * @param {int} oColumn The column which should be resized
 		 * @param {int} iWidth The width in pixel to set the column or column span to. Must be greater than 0.
 		 * @param {boolean} [bFireEvent=true] Whether the ColumnResize event should be fired. The event will be fired for every resized column.
 		 * @param {int} [iColumnSpan=1] The span of columns to resize beginning from <code>iColumnIndex</code>.
 		 * @returns {boolean} Returns <code>true</code>, if at least one column has been resized.
 		 */
-		resizeColumn: function(oTable, iColumnIndex, iWidth, bFireEvent, iColumnSpan) {
-			if (!oTable ||
-				iColumnIndex == null || iColumnIndex < 0 ||
+		resizeColumn: function(oTable, oColumn, iWidth, bFireEvent = true, iColumnSpan = 1) {
+			if (!oTable || !oColumn ||
 				iWidth == null || iWidth <= 0) {
 				return false;
 			}
-			if (iColumnSpan == null || iColumnSpan <= 0) {
-				iColumnSpan = 1;
-			}
-			if (bFireEvent == null) {
-				bFireEvent = true;
+
+			const aVisibleColumns = ColumnUtils._getVisibleColumnsInSpan(oTable, oColumn.getIndex(), iColumnSpan);
+			const aResizableColumns = ColumnUtils._getResizableColumns(aVisibleColumns);
+
+			if (aResizableColumns.length === 0) {
+				return false;
 			}
 
+			const iSpanWidth = ColumnUtils._calculateSpanWidth(oTable, aVisibleColumns);
+
+			if (!ColumnUtils.TableUtils.isFixedColumn(oTable, oColumn.getIndex())) {
+				ColumnUtils._fixAutoColumns(oTable, aResizableColumns);
+			}
+
+			const iPixelDelta = iWidth - iSpanWidth;
+			return ColumnUtils._performResize(oTable, aResizableColumns, iPixelDelta, bFireEvent);
+		},
+
+		/**
+		 * Returns an <code>Array</code> of visible columns inside the resized column by the number of <code>iColumnSpan</code>.
+		 * The <code>iColumnSpan</code> is used when the table has multiple headers and one of this header gets
+		 * resized via keyboard. If due so we resize all columns represented in the <code>iColumnSpan</code> uniformly.
+		 *
+		 * Assuming iColumnIndex = 1 and iColumnSpan = 2
+		 * |--          --|--       Multi Header      --|--          --|
+		 * |--          --|--          Span 2         --|--          --|
+		 * |-- Column A --|-- Column B --|-- Column C --|-- Column D --|
+		 * |-- Index 0  --|-- Index 1  --|-- Index 2  --|-- Inddex 3 --|
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {int} iColumnIndex Starting column index
+		 * @param {int} iColumnSpan Number of columns within the header span beginning from <code>iColumnIndex</code>
+		 * @returns {sap.ui.table.Column[]} aVisibleColumns Array of visible columns
+		 * @private
+		 */
+		_getVisibleColumnsInSpan: function(oTable, iColumnIndex, iColumnSpan) {
 			const aColumns = oTable.getColumns();
 			if (iColumnIndex >= aColumns.length || !aColumns[iColumnIndex].getVisible()) {
 				return false;
@@ -606,47 +689,88 @@ sap.ui.define([
 					}
 				}
 			}
+			return aVisibleColumns;
+		},
 
+		/**
+		 * Returns an <code>Array</code> of <code>sap.ui.table.Column</code> which property
+		 * <code>resizable</code> is set to <code>true</code>.
+		 *
+		 * @param {sap.ui.table.Column[]} aVisibleColumns Array of visible columns
+		 * @returns {sap.ui.table.Column[]} aResizableColumns Array of resizable columns
+		 * @private
+		 */
+		_getResizableColumns: function(aVisibleColumns) {
 			const aResizableColumns = [];
+
 			for (let i = 0; i < aVisibleColumns.length; i++) {
 				const oVisibleColumn = aVisibleColumns[i];
 				if (oVisibleColumn.getResizable()) {
 					aResizableColumns.push(oVisibleColumn);
 				}
 			}
-			if (aResizableColumns.length === 0) {
-				return false;
-			}
+			return aResizableColumns;
+		},
 
+		/**
+		 * Fix Columns with property <code>{@link sap.ui.table.Column#getWidth} = auto<code>.
+		 * If a column was resized in the scrollable area:
+		 * Set minimum widths of all columns with variable width except those in aResizableColumns.
+		 * As a result, flexible columns cannot shrink smaller as their current width after the resize
+		 * (see {@link sap.ui.table.Table#setMinColWidths}).
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {sap.ui.table.Column[]} aResizableColumns Array of resizable columns
+		 */
+		_fixAutoColumns: function(oTable, aResizableColumns) {
+			const oTableElement = oTable.getDomRef();
+
+			oTable._getVisibleColumns().forEach(function(oColumn) {
+				const sWidth = oColumn.getWidth();
+				let $columnElement;
+
+				if (oTableElement && aResizableColumns.indexOf(oColumn) < 0 && ColumnUtils.TableUtils.isVariableWidth(sWidth)) {
+					$columnElement = oTableElement.querySelector("th[data-sap-ui-colid=\"" + oColumn.getId() + "\"]");
+					if ($columnElement) {
+						oColumn._minWidth = Math.max($columnElement.offsetWidth, ColumnUtils.getMinColumnWidth());
+					}
+				}
+			});
+		},
+
+		/**
+		 * Calculate and returns the actual width of the header span which is getting resized.
+		 * The amount is a sum of the column widths of all columns within in the header span.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {sap.ui.table.Column[]} aVisibleColumns Array of visible columns within the header span
+		 * @returns {int} iSpanWidth The width of the resizing header span
+		 * @private
+		 */
+		_calculateSpanWidth: function(oTable, aVisibleColumns) {
 			let iSpanWidth = 0;
 			for (let i = 0; i < aVisibleColumns.length; i++) {
 				const oVisibleColumn = aVisibleColumns[i];
 				iSpanWidth += ColumnUtils.getColumnWidth(oTable, oVisibleColumn.getIndex());
 			}
 
-			let iPixelDelta = iWidth - iSpanWidth;
+			return iSpanWidth;
+		},
+
+		/**
+		 * Sets the new width to one or more columns.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {sap.ui.table.Column[]} aResizableColumns Array of resizable columns
+		 * @param {int} iPixelDelta The new calculated width which should be destributed by the number of <code>aResizableColumns</code>
+		 * @param {boolean} bFireEvent Whether the ColumnResize event should be fired. The event will be fired for every resized column.
+		 * @returns {boolean} Returns <code>true</code>, if at least one column has been resized.
+		 */
+		_performResize: function(oTable, aResizableColumns, iPixelDelta, bFireEvent) {
+			// when resizing a header span the new width must be destributed by the number of underlying columns
+			// of course when resizing a single column via D&D iPixelDelta is automatically the new column width
 			let iSharedPixelDelta = Math.round(iPixelDelta / aResizableColumns.length);
 			let bResizeWasPerformed = false;
-
-			const oTableElement = oTable.getDomRef();
-
-			// Fix Auto Columns if a column in the scrollable area was resized:
-			// Set minimum widths of all columns with variable width except those in aResizableColumns.
-			// As a result, flexible columns cannot shrink smaller as their current width after the resize
-			// (see setMinColWidths in Table.js).
-			if (!ColumnUtils.TableUtils.isFixedColumn(oTable, iColumnIndex)) {
-				oTable._getVisibleColumns().forEach(function(col) {
-					const width = col.getWidth();
-					let colElement;
-
-					if (oTableElement && aResizableColumns.indexOf(col) < 0 && ColumnUtils.TableUtils.isVariableWidth(width)) {
-						colElement = oTableElement.querySelector("th[data-sap-ui-colid=\"" + col.getId() + "\"]");
-						if (colElement) {
-							col._minWidth = Math.max(colElement.offsetWidth, ColumnUtils.getMinColumnWidth());
-						}
-					}
-				});
-			}
 
 			// Resize all resizable columns. Share the width change (pixel delta) between them.
 			for (let i = 0; i < aResizableColumns.length; i++) {

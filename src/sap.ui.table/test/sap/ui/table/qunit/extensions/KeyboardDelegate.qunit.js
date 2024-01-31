@@ -1537,8 +1537,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Multi header", async function(assert) {
-		const that = this;
-
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
 		this.oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
 		this.oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
@@ -1549,21 +1547,17 @@ sap.ui.define([
 		this.oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
 		await this.oTable.qunit.whenRenderingFinished();
 
-		function getMultiHeader(iColumnIndex) {
-			return document.getElementById(that.oTable.qunit.getColumnHeaderCell(iColumnIndex).getAttribute("id") + "_1");
-		}
-
 		simulateTabEvent(TableQUnitUtils.setFocusOutsideOfTable(assert, "FocusDummyBeforeTable"), false);
-		this.triggerKey(Key.Arrow.DOWN, this.oTable.qunit.getColumnHeaderCell(0), getMultiHeader(0));
-		this.triggerKey(Key.Arrow.RIGHT, getMultiHeader(0), getMultiHeader(1));
-		this.triggerKey(Key.Arrow.UP, getMultiHeader(1), this.oTable.qunit.getColumnHeaderCell(1));
-		this.triggerKey(Key.Arrow.DOWN, this.oTable.qunit.getColumnHeaderCell(1), getMultiHeader(1));
-		this.triggerKey(Key.Arrow.RIGHT, getMultiHeader(1), getMultiHeader(2));
-		this.triggerKey(Key.Arrow.UP, getMultiHeader(2), this.oTable.qunit.getColumnHeaderCell(1));
+		this.triggerKey(Key.Arrow.DOWN, this.oTable.qunit.getColumnHeaderCell(0), this.oTable.qunit.getColumnHeaderCell(0, 1));
+		this.triggerKey(Key.Arrow.RIGHT, this.oTable.qunit.getColumnHeaderCell(0, 1), this.oTable.qunit.getColumnHeaderCell(1, 1));
+		this.triggerKey(Key.Arrow.UP, this.oTable.qunit.getColumnHeaderCell(1, 1), this.oTable.qunit.getColumnHeaderCell(1));
+		this.triggerKey(Key.Arrow.DOWN, this.oTable.qunit.getColumnHeaderCell(1), this.oTable.qunit.getColumnHeaderCell(1, 1));
+		this.triggerKey(Key.Arrow.RIGHT, this.oTable.qunit.getColumnHeaderCell(1, 1), this.oTable.qunit.getColumnHeaderCell(2, 1));
+		this.triggerKey(Key.Arrow.UP, this.oTable.qunit.getColumnHeaderCell(2, 1), this.oTable.qunit.getColumnHeaderCell(1));
 		this.triggerKey(Key.Arrow.RIGHT, this.oTable.qunit.getColumnHeaderCell(1), this.oTable.qunit.getColumnHeaderCell(3));
-		this.triggerKey(Key.Arrow.DOWN, this.oTable.qunit.getColumnHeaderCell(3), getMultiHeader(3));
-		this.triggerKey(Key.Arrow.LEFT, getMultiHeader(3), getMultiHeader(2));
-		this.triggerKey(Key.Arrow.UP, getMultiHeader(2), this.oTable.qunit.getColumnHeaderCell(1));
+		this.triggerKey(Key.Arrow.DOWN, this.oTable.qunit.getColumnHeaderCell(3), this.oTable.qunit.getColumnHeaderCell(3, 1));
+		this.triggerKey(Key.Arrow.LEFT, this.oTable.qunit.getColumnHeaderCell(3, 1), this.oTable.qunit.getColumnHeaderCell(2, 1));
+		this.triggerKey(Key.Arrow.UP, this.oTable.qunit.getColumnHeaderCell(2, 1), this.oTable.qunit.getColumnHeaderCell(1));
 		this.triggerKey(Key.Arrow.LEFT, this.oTable.qunit.getColumnHeaderCell(1), this.oTable.qunit.getColumnHeaderCell(0));
 		this.triggerKey(Key.Arrow.LEFT, this.oTable.qunit.getColumnHeaderCell(0), this.oTable.qunit.getSelectAllCell());
 		this.triggerKey(Key.Arrow.DOWN, this.oTable.qunit.getSelectAllCell(), this.oTable.qunit.getRowHeaderCell(0));
@@ -2494,7 +2488,6 @@ sap.ui.define([
 
 	QUnit.test("Fixed columns with multi header", async function(assert) {
 		const iColSpan = 2;
-		const that = this;
 
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
 		this.oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
@@ -2509,10 +2502,6 @@ sap.ui.define([
 		this.oTable.getColumns()[4].addMultiLabel(new TestControl({text: "d2"}));
 		this.oTable.setFixedColumnCount(3);
 		await this.oTable.qunit.whenRenderingFinished();
-
-		function getMultiHeader(iColumnIndex) {
-			return document.getElementById(that.oTable.qunit.getColumnHeaderCell(iColumnIndex).getAttribute("id") + "_1");
-		}
 
 		/* Test on first column header row */
 
@@ -2533,19 +2522,19 @@ sap.ui.define([
 
 		// Fixed area - First cell
 		// *END* -> Fixed area - Last cell
-		this.triggerKey(Key.END, getMultiHeader(0), getMultiHeader(2));
+		this.triggerKey(Key.END, this.oTable.qunit.getColumnHeaderCell(0, 1), this.oTable.qunit.getColumnHeaderCell(2, 1));
 
 		// *END* -> Non-Fixed area - Last cell
-		this.triggerKey(Key.END, getMultiHeader(2), getMultiHeader(-1));
+		this.triggerKey(Key.END, this.oTable.qunit.getColumnHeaderCell(2, 1), this.oTable.qunit.getColumnHeaderCell(-1, 1));
 
 		// *END* -> Non-Fixed area - Last cell
-		this.triggerKey(Key.END, getMultiHeader(-1), getMultiHeader(-1));
+		this.triggerKey(Key.END, this.oTable.qunit.getColumnHeaderCell(-1, 1), this.oTable.qunit.getColumnHeaderCell(-1, 1));
 
 		// *HOME* -> Non-Fixed area - First cell
-		this.triggerKey(Key.HOME, getMultiHeader(-1), getMultiHeader(3));
+		this.triggerKey(Key.HOME, this.oTable.qunit.getColumnHeaderCell(-1, 1), this.oTable.qunit.getColumnHeaderCell(3, 1));
 
 		// *HOME* -> Fixed area - First cell
-		this.triggerKey(Key.HOME, getMultiHeader(3), getMultiHeader(0));
+		this.triggerKey(Key.HOME, this.oTable.qunit.getColumnHeaderCell(3, 1), this.oTable.qunit.getColumnHeaderCell(0, 1));
 	});
 
 	QUnit.test("Group Row Header", async function(assert) {

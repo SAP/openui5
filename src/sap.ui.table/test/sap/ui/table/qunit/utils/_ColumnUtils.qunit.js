@@ -4,18 +4,26 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/core/Control",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/m/Label",
+	"sap/m/Text",
+	"sap/m/Link"
 ], function(
 	TableQUnitUtils,
 	nextUIUpdate,
 	TableUtils,
+	JSONModel,
 	Table,
 	Column,
 	Control,
-	Device
+	Device,
+	Label,
+	Text,
+	Link
 ) {
 	"use strict";
 
@@ -744,77 +752,77 @@ sap.ui.define([
 		assertUnchanged();
 		ColumnUtils.resizeColumn(oTable);
 		assertUnchanged();
-		ColumnUtils.resizeColumn(oTable, 1);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[1]);
 		assertUnchanged();
-		ColumnUtils.resizeColumn(oTable, aVisibleColumns.length, 1);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[aVisibleColumns.length], 1);
 		assertUnchanged();
-		ColumnUtils.resizeColumn(oTable, -1, 1);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[-1], 1);
 		assertUnchanged();
-		ColumnUtils.resizeColumn(oTable, 0, 0);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0], 0);
 		assertUnchanged();
-		ColumnUtils.resizeColumn(oTable, 0, -1);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0], -1);
 		assertUnchanged();
 
 		// Column 4
-		ColumnUtils.resizeColumn(oTable, 3, 150, false);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[3], 150, false);
 		assertColumnWidth(3, 150);
 		assertUnchanged([3]);
-		ColumnUtils.resizeColumn(oTable, 3, aOriginalColumnWidths[3], false);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[3], aOriginalColumnWidths[3], false);
 		assertUnchanged();
 
 		// Column 1 to 3
-		ColumnUtils.resizeColumn(oTable, 0, 434, false, 3);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0], 434, false, 3);
 		const iNewWidth = Math.round(434 / 3);
 		assertColumnWidth(0, iNewWidth);
 		assertColumnWidth(1, iNewWidth);
 		assertColumnWidth(2, iNewWidth);
 		assertUnchanged([0, 1, 2]);
-		ColumnUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0] + aOriginalColumnWidths[1] + aOriginalColumnWidths[2], false, 3);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0], aOriginalColumnWidths[0] + aOriginalColumnWidths[1] + aOriginalColumnWidths[2], false, 3);
 		assertUnchanged();
 
 		// Column 1 to 3 - Column 2 not resizable
 		aVisibleColumns[1].setResizable(false);
-		ColumnUtils.resizeColumn(oTable, 0, 100, false, 3);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0], 100, false, 3);
 		assertColumnWidth(0, TableUtils.Column.getMinColumnWidth());
 		assertColumnWidth(2, TableUtils.Column.getMinColumnWidth());
 		assertUnchanged([0, 2]);
-		ColumnUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0], false);
-		ColumnUtils.resizeColumn(oTable, 2, aOriginalColumnWidths[2], false);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0], aOriginalColumnWidths[0], false);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[2], aOriginalColumnWidths[2], false);
 		assertUnchanged();
 		aVisibleColumns[1].setResizable(true);
 
 		// Column 2 - Not resizable
 		aVisibleColumns[1].setResizable(false);
-		ColumnUtils.resizeColumn(oTable, 1, 50, false);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[1], 50, false);
 		assertUnchanged();
 		aVisibleColumns[1].setResizable(true);
 
 		// Invalid span values default to 1
-		ColumnUtils.resizeColumn(oTable, oTable.columnCount - 1, 150, false, 2);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[aVisibleColumns.length - 1], 150, false, 2);
 		assertColumnWidth(oTable.columnCount - 1, 150);
 		assertUnchanged([oTable.columnCount - 1]);
-		ColumnUtils.resizeColumn(oTable, oTable.columnCount - 1, aOriginalColumnWidths[oTable.columnCount - 1], false, 0);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[aVisibleColumns.length - 1], aOriginalColumnWidths[oTable.columnCount - 1], false, 0);
 		assertUnchanged();
 
 		// Do not decrease column width below the minimum column width value.
-		ColumnUtils.resizeColumn(oTable, 1, 1, false);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[1], 1, false);
 		assertColumnWidth(1, TableUtils.Column.getMinColumnWidth());
 		assertUnchanged([1]);
-		ColumnUtils.resizeColumn(oTable, 1, aOriginalColumnWidths[1], false);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[1], aOriginalColumnWidths[1], false);
 		assertUnchanged();
 
-		ColumnUtils.resizeColumn(oTable, 0, 1, false, 3);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0], 1, false, 3);
 		assertColumnWidth(0, TableUtils.Column.getMinColumnWidth());
 		assertColumnWidth(1, TableUtils.Column.getMinColumnWidth());
 		assertColumnWidth(2, TableUtils.Column.getMinColumnWidth());
 		assertUnchanged([0, 1, 2]);
-		ColumnUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0] + aOriginalColumnWidths[1] + aOriginalColumnWidths[2], false, 3);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0], aOriginalColumnWidths[0] + aOriginalColumnWidths[1] + aOriginalColumnWidths[2], false, 3);
 		assertUnchanged();
 
 		// Fire the ColumnResize event.
 		let oColumnResizeHandler = this.spy();
 		oTable.attachColumnResize(oColumnResizeHandler);
-		ColumnUtils.resizeColumn(oTable, 0, 250);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0], 250);
 		assertColumnWidth(0, 250);
 		assertUnchanged([0]);
 		assert.ok(oColumnResizeHandler.called, "ColumnResize handler was called");
@@ -825,14 +833,14 @@ sap.ui.define([
 			oEvent.preventDefault();
 		});
 		oTable.attachColumnResize(oColumnResizeHandler);
-		ColumnUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0]);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0], aOriginalColumnWidths[0]);
 		assertColumnWidth(0, 250);
 		assertUnchanged([0]);
 		assert.ok(oColumnResizeHandler.called, "ColumnResize handler was called");
 
 		// Do not fire the event.
 		oColumnResizeHandler.resetHistory();
-		ColumnUtils.resizeColumn(oTable, 0, aOriginalColumnWidths[0], false);
+		ColumnUtils.resizeColumn(oTable, aVisibleColumns[0], aOriginalColumnWidths[0], false);
 		assertUnchanged();
 		assert.ok(oColumnResizeHandler.notCalled, "ColumnResize handler was not called");
 	});
@@ -985,5 +993,164 @@ sap.ui.define([
 		assert.strictEqual(ColumnUtils.getHeaderLabel(aColumns[3]), oLabelC,
 			"multiLabels and label are set -> returned the correct label instance C");
 		assert.strictEqual(ColumnUtils.getHeaderLabel(aColumns[4]), oLabelE, "name, multiLabels, label are set -> returned the label instance E");
+	});
+
+	QUnit.test("_getVisibleColumnsInSpan", function(assert) {
+		const oLabelA = new TestControl({text: "Column1Label1"});
+		const oLabelB = new TestControl({text: "Column2Label1"});
+		const oLabelC = new TestControl({text: "Column3Label2"});
+		const oLabelD = new TestControl({text: "Column4Label1"});
+		const oLabelE = new TestControl({text: "Column4Label2"});
+
+		oTable.removeAllColumns();
+		oTable.addColumn(new Column({
+			label: oLabelA
+		}));
+
+		oTable.addColumn(new Column({
+			label: oLabelB
+		}));
+
+		oTable.addColumn(new Column({
+			label: "Label2",
+			headerSpan: [2],
+			multiLabels: [oLabelE, oLabelC]
+		}));
+
+		oTable.addColumn(new Column({
+			label: "Label3",
+			multiLabels: [oLabelE, oLabelD]
+		}));
+
+		let aVisibleColumns = ColumnUtils._getVisibleColumnsInSpan(oTable, 2, 2);
+		assert.strictEqual(aVisibleColumns.length, 2, "Columns in span at column 3: 2");
+
+		aVisibleColumns = ColumnUtils._getVisibleColumnsInSpan(oTable, 3, 2);
+		assert.strictEqual(aVisibleColumns.length, 1, "Columns in span at column 4: 1");
+
+		aVisibleColumns = ColumnUtils._getVisibleColumnsInSpan(oTable, 5, 5);
+		assert.strictEqual(aVisibleColumns, false, "_getVisibleColumnsInSpan returns false due of exiding index of available columns");
+	});
+
+	QUnit.test("autoResizeColumn", async function(assert) {
+		oTable.removeAllColumns();
+		const oColumnResizeHandler = this.stub();
+		const oModel = new JSONModel([{x: "x"}]);
+
+		const oColumn1 = new Column({
+			width: "3rem",
+			autoResizable: true,
+			label: new TableQUnitUtils.TestControl({text: "Simple Text"}),
+			template: new TableQUnitUtils.TestControl({text: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"})
+		});
+
+		const oColumn2 = new Column({
+			width: "3rem",
+			autoResizable: true,
+			label: new Label({text: "Simple Text"}),
+			template: new Label({text: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", wrapping: false})
+		});
+
+		const oColumn3 = new Column({
+			width: "3rem",
+			autoResizable: true,
+			label: new Label({text: "Simple Text"}),
+			template: new Text({text: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", wrapping: false})
+		});
+
+		const oColumn4 = new Column({
+			width: "3rem",
+			autoResizable: true,
+			label: new Label({text: "Simple Text"}),
+			template: new Link({text: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", href: "https://www.sap.com", wrapping: false})
+		});
+
+		oTable.addColumn(oColumn1);
+		oTable.addColumn(oColumn2);
+		oTable.addColumn(oColumn3);
+		oTable.addColumn(oColumn4);
+
+		oTable.bindRows("/");
+		oTable.setModel(oModel);
+		oTable.attachColumnResize(function(oEvent) {
+			return oColumnResizeHandler.call(oEvent.getParameters());
+		});
+		oTable.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Create a hidden div element with a text to estimate its width
+		const hiddenDiv = document.createElement("div");
+		hiddenDiv.style.position = "absolute";
+		hiddenDiv.style.visibility = "hidden";
+		hiddenDiv.style.whiteSpace = "nowrap";
+		hiddenDiv.style.fontSize = "14px";
+		hiddenDiv.textContent = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		document.body.appendChild(hiddenDiv);
+		const iDivWidth = hiddenDiv.offsetWidth;
+
+		assert.ok(oColumn1.getDomRef().offsetWidth < iDivWidth, "Column1 width is " + oColumn1.getDomRef().offsetWidth + "px => text is truncated");
+		assert.ok(oColumn2.getDomRef().offsetWidth < iDivWidth, "Column2 width is " + oColumn2.getDomRef().offsetWidth + "px => text is truncated");
+		assert.ok(oColumn3.getDomRef().offsetWidth < iDivWidth, "Column3 width is " + oColumn3.getDomRef().offsetWidth + "px => text is truncated");
+		assert.ok(oColumn4.getDomRef().offsetWidth < iDivWidth, "Column4 width is " + oColumn4.getDomRef().offsetWidth + "px => text is truncated");
+
+		ColumnUtils.autoResizeColumn(oColumn1);
+		await nextUIUpdate();
+
+		assert.ok(true, "Column has been resized via autoResizeColumn");
+		assert.ok(oColumn1.getDomRef().offsetWidth > iDivWidth, "Column1 width is " + oColumn1.getDomRef().offsetWidth + "px => text fits and it is not truncated");
+		assert.ok(oColumnResizeHandler.calledOnce, "columnResize event handler was called once");
+		assert.deepEqual(oColumnResizeHandler.lastCall.thisValue, {
+			column: oColumn1,
+			id: oTable.getId(),
+			width: oColumn1.getWidth()
+		}, "columnResize event parameters");
+
+		oColumnResizeHandler.resetHistory();
+		ColumnUtils.autoResizeColumn(oColumn2);
+		await nextUIUpdate();
+
+		assert.ok(true, "Column has been resized via autoResizeColumn");
+		assert.ok(oColumn2.getDomRef().offsetWidth > iDivWidth, "Column2 width is " + oColumn2.getDomRef().offsetWidth + "px => text fits and it is not truncated");
+		assert.ok(oColumnResizeHandler.calledOnce, "columnResize event handler was called once");
+		assert.deepEqual(oColumnResizeHandler.lastCall.thisValue, {
+			column: oColumn2,
+			id: oTable.getId(),
+			width: oColumn2.getWidth()
+		}, "columnResize event parameters");
+
+		oColumnResizeHandler.resetHistory();
+		ColumnUtils.autoResizeColumn(oColumn3);
+		await nextUIUpdate();
+
+		assert.ok(true, "Column has been resized via autoResizeColumn");
+		assert.ok(oColumn3.getDomRef().offsetWidth > iDivWidth, "Column3 width is " + oColumn3.getDomRef().offsetWidth + "px => text fits and it is not truncated");
+		assert.ok(oColumnResizeHandler.calledOnce, "columnResize event handler was called once");
+		assert.deepEqual(oColumnResizeHandler.lastCall.thisValue, {
+			column: oColumn3,
+			id: oTable.getId(),
+			width: oColumn3.getWidth()
+		}, "columnResize event parameters");
+
+		oColumnResizeHandler.resetHistory();
+		ColumnUtils.autoResizeColumn(oColumn4);
+		await nextUIUpdate();
+
+		assert.ok(true, "Column has been resized via autoResize");
+		assert.ok(oColumn4.getDomRef().offsetWidth > iDivWidth, "Column4 width is " + oColumn4.getDomRef().offsetWidth + "px => text fits and it is not truncated");
+		assert.ok(oColumnResizeHandler.calledOnce, "columnResize event handler was called once");
+		assert.deepEqual(oColumnResizeHandler.lastCall.thisValue, {
+			column: oColumn4,
+			id: oTable.getId(),
+			width: oColumn4.getWidth()
+		}, "columnResize event parameters");
+
+		oColumnResizeHandler.resetHistory();
+		ColumnUtils.autoResizeColumn(oColumn2);
+		await nextUIUpdate();
+		assert.ok(oColumnResizeHandler.notCalled, "columnResize event handler was not called when trying to auto-resize the same column again");
+
+		// Remove the hidden div from the DOM
+		document.body.removeChild(hiddenDiv);
+		oTable.destroy();
 	});
 });

@@ -1650,8 +1650,8 @@ sap.ui.define([
 					iColumnSpanWidth += TableUtils.Column.getColumnWidth(this, i);
 				}
 
-				TableUtils.Column.resizeColumn(this, oCellInfo.columnIndex, iColumnSpanWidth + iResizeDelta, true, oCellInfo.columnSpan);
-
+				const oColumn = this.getColumns()[oCellInfo.columnIndex];
+				TableUtils.Column.resizeColumn(this, oColumn, iColumnSpanWidth + iResizeDelta, true, oCellInfo.columnSpan);
 				preventItemNavigation(oEvent);
 			}
 
@@ -1721,7 +1721,8 @@ sap.ui.define([
 					iColumnSpanWidth += TableUtils.Column.getColumnWidth(this, i);
 				}
 
-				TableUtils.Column.resizeColumn(this, oCellInfo.columnIndex, iColumnSpanWidth + iResizeDelta, true, oCellInfo.columnSpan);
+				const oColumn = this.getColumns()[oCellInfo.columnIndex];
+				TableUtils.Column.resizeColumn(this, oColumn, iColumnSpanWidth + iResizeDelta, true, oCellInfo.columnSpan);
 
 				preventItemNavigation(oEvent);
 

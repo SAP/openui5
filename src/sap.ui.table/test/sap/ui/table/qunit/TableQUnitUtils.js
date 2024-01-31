@@ -839,14 +839,15 @@ sap.ui.define([
 		};
 
 		/**
-		 * Gets the column header cell element. In case of multi-headers, the cell in the first header row is returned.
+		 * Gets the column header cell element.
 		 *
 		 * @param {int} iColumnIndex Index of the column in the list of visible columns. Can be negative, for example -1 for the last column.
+		 * @param {int} [iRowIndex] Index of the header row.
 		 * @returns {HTMLElement} The cell DOM element.
 		 */
-		oTable.qunit.getColumnHeaderCell = function(iColumnIndex) {
+		oTable.qunit.getColumnHeaderCell = function(iColumnIndex, iRowIndex = 0) {
 			iColumnIndex = iColumnIndex < 0 ? oTable._getVisibleColumns().length + iColumnIndex : iColumnIndex;
-			return document.getElementById(oTable._getVisibleColumns()[iColumnIndex].getId());
+			return document.getElementById(oTable._getVisibleColumns()[iColumnIndex].getId() + (iRowIndex > 0 ? "_" + iRowIndex : ""));
 		};
 
 		/**

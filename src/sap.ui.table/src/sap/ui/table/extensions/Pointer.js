@@ -153,7 +153,8 @@ sap.ui.define([
 			const iCalculatedColumnWidth = Math.round(iColumnWidth + iDeltaX * (this._bRtlMode ? -1 : 1)) - iPaddingAndBorder;
 			const iNewColumnWidth = Math.max(iCalculatedColumnWidth, TableUtils.Column.getMinColumnWidth());
 
-			ColumnResizeHelper._resizeColumn(this, this._iLastHoveredVisibleColumnIndex, this._bColumnResizerMoved ? iNewColumnWidth : null);
+			ColumnResizeHelper._cleanupColumResizing(this);
+			TableUtils.Column.resizeColumn(this, oColumn, this._bColumnResizerMoved ? iNewColumnWidth : null);
 		},
 
 		/*
@@ -177,8 +178,10 @@ sap.ui.define([
 			}
 		},
 
-		/*
-		 * Cleans up the state which is created while resize a column via drag&drop.
+		/**
+		 * Cleans up the state which is created while resizing a column via drag&drop.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 */
 		_cleanupColumResizing: function(oTable) {
 			if (oTable._$colResize) {
@@ -194,77 +197,6 @@ sap.ui.define([
 			$Document.off("touchend.sapUiTableColumnResize");
 			$Document.off("mousemove.sapUiTableColumnResize");
 			$Document.off("mouseup.sapUiTableColumnResize");
-		},
-
-		/*
-		 * Cleans up the state which is created while resize a column via drag&drop and recalculates the new column width.
-		 */
-		_resizeColumn: function(oTable, iColIndex, iNewWidth) {
-			const aVisibleColumns = oTable._getVisibleColumns();
-			let oColumn;
-
-			if (iColIndex >= 0 && iColIndex < aVisibleColumns.length) {
-				oColumn = aVisibleColumns[iColIndex];
-				if (iNewWidth != null) {
-					TableUtils.Column.resizeColumn(oTable, oTable.indexOfColumn(oColumn), iNewWidth);
-				}
-			}
-
-			ColumnResizeHelper._cleanupColumResizing(oTable);
-			oColumn.focus();
-		},
-
-		/*
-		 * Computes the optimal width for a column and changes the width if the auto resize feature is activated for the column.
-		 *
-		 * Experimental feature.
-		 */
-		doAutoResizeColumn: function(oTable, iColIndex) {
-			const aVisibleColumns = oTable._getVisibleColumns();
-			let oColumn;
-
-			if (iColIndex >= 0 && iColIndex < aVisibleColumns.length) {
-				oColumn = aVisibleColumns[iColIndex];
-				if (!oColumn.getAutoResizable() || !oColumn.getResizable()) {
-					return;
-				}
-
-				const iNewWidth = ColumnResizeHelper._calculateAutomaticColumnWidth.apply(oTable, [oColumn, iColIndex]);
-				if (iNewWidth) {
-					ColumnResizeHelper._resizeColumn(oTable, iColIndex, iNewWidth);
-				}
-			}
-		},
-
-		/*
-		 * Calculates the widest content width of the currently visible column cells including headers.
-		 * Headers with column span are not taken into account.
-		 * @param {sap.ui.table.Column} oCol the column
-		 * @param {int} iColIndex index of the column
-		 * @returns {int} iWidth calculated column width
-		 * @private
-		 */
-		_calculateAutomaticColumnWidth: function(oCol, iColIndex) {
-			oCol = oCol || this.getColumns()[iColIndex];
-			const $this = this.$();
-			const $hiddenArea = jQuery("<div>").addClass("sapUiTableHiddenSizeDetector sapUiTableHeaderDataCell sapUiTableDataCell");
-			$this.append($hiddenArea);
-
-			// Create a copy of  all visible cells in the column, including the header cells without colspan
-			const $cells = $this.find("td[data-sap-ui-colid = \"" + oCol.getId() + "\"]:not([colspan])")
-							  .filter(function(index, element) {
-								  return element.style.display !== "none";
-							  }).children().clone();
-			$cells.removeAttr("id"); // remove all id attributes
-
-			// Determine the column width
-			let iWidth = $hiddenArea.append($cells).width() + 4; // widest cell + 4px for borders, padding and rounding
-			iWidth = Math.min(iWidth, $this.find(".sapUiTableCnt").width()); // no wider as the table
-			iWidth = Math.max(iWidth + 4, TableUtils.Column.getMinColumnWidth()); // not to small
-
-			$hiddenArea.remove();
-
-			return iWidth;
 		},
 
 		/*
@@ -676,7 +608,13 @@ sap.ui.define([
 		ondblclick: function(oEvent) {
 			if (Device.system.desktop && oEvent.target === this.getDomRef("rsz")) {
 				oEvent.preventDefault();
-				ColumnResizeHelper.doAutoResizeColumn(this, this._iLastHoveredVisibleColumnIndex);
+				ColumnResizeHelper._cleanupColumResizing(this);
+
+				const oColumn = this._getVisibleColumns()[this._iLastHoveredVisibleColumnIndex];
+
+				if (oColumn.getAutoResizable()) {
+					oColumn.autoResize();
+				}
 			}
 		},
 
@@ -831,18 +769,6 @@ sap.ui.define([
 			this._ExtensionDelegate = ExtensionDelegate;
 			this._RowHoverHandler = RowHoverHandler;
 			this._KNOWNCLICKABLECONTROLS = KNOWNCLICKABLECONTROLS;
-		},
-
-		/**
-		 * Resizes the given column to its optimal width if the auto resize feature is available for this column.
-		 *
-		 * @param {int} iColIndex The index of the column to resize.
-		 */
-		doAutoResizeColumn: function(iColIndex) {
-			const oTable = this.getTable();
-			if (oTable) {
-				ColumnResizeHelper.doAutoResizeColumn(oTable, iColIndex);
-			}
 		},
 
 		/**

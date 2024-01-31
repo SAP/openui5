@@ -120,7 +120,7 @@ sap.ui.define([
 			const iDistance = oTable.getDomRef("rsz").getBoundingClientRect().left - oColumn.getDomRef().getBoundingClientRect().right;
 			const bCorrect = Math.abs(iDistance) < 5;
 			assert.ok(bExpect && bCorrect || !bExpect && !bCorrect, "Position of Resizer");
-			assert.equal(oTable._iLastHoveredVisibleColumnIndex, iIndex, "Index of last hovered resizable table");
+			assert.equal(oTable._iLastHoveredVisibleColumnIndex, iIndex, "Index of last hovered resizable column");
 		}
 	}
 
@@ -144,16 +144,23 @@ sap.ui.define([
 	});
 
 	QUnit.test("Automatic Column Resize via Double Click", async function(assert) {
-		Device.system.desktop = true;
+		const assertAutoResizeCalled = (bCalled) => {
+			const sMessage =
+				` - resizable=${this.oColumn.getResizable()}, autoResizable=${this.oColumn.getAutoResizable()}, desktop=${Device.system.desktop}`;
 
-		const oColumn = this.oColumn;
-		let iWidth = oColumn.$().width();
+			if (bCalled) {
+				assert.ok(this.oColumn.autoResize.calledOnceWithExactly(), "Column#autoResize called once with correct parameters" + sMessage);
+			} else {
+				assert.ok(this.oColumn.autoResize.notCalled, "Column#autoResize not called" + sMessage);
+			}
 
-		function triggerDoubleClick(bExpect, iIndex) {
+			this.oColumn.autoResize.resetHistory();
+		};
+		const triggerDoubleClick = () => {
 			const oResizer = oTable.getDomRef("rsz");
 
 			// Move resizer to correct column
-			moveResizer(oColumn, assert, bExpect, iIndex);
+			moveResizer(this.oColumn);
 
 			// Simulate double click on resizer
 			return new Promise(function(resolve) {
@@ -170,65 +177,32 @@ sap.ui.define([
 					setTimeout(resolve, 50);
 				});
 			});
-		}
+		};
 
-		assert.ok(Math.abs(iWidth - 100) < 10, "check column width before resize: " + iWidth);
-		await triggerDoubleClick(false, 0);
+		sinon.spy(this.oColumn, "autoResize");
 
-		assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
-		oColumn.setAutoResizable(true);
-		await nextUIUpdate();
-
-		assert.ok(oColumn.getAutoResizable(), "Column is autoresizable");
-		assert.ok(!oColumn.getResizable(), "Column is not yet resizable");
-		await triggerDoubleClick(false, 0);
-
-		assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
-		oColumn.setResizable(true);
-		await nextUIUpdate();
-
-		assert.ok(oColumn.getAutoResizable(), "Column is autoresizable");
-		assert.ok(oColumn.getResizable(), "Column is resizable");
-		Device.system.desktop = false;
-		await triggerDoubleClick(true, 1);
-
-		assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
 		Device.system.desktop = true;
-		await triggerDoubleClick(true, 1);
+		await triggerDoubleClick();
+		assertAutoResizeCalled(false);
 
-		iWidth = oColumn.$().width();
-		assert.ok(Math.abs(iWidth - 270) < 40, "check column width after resize: " + iWidth);
-	});
-
-	QUnit.test("Automatic Column Resize via API", async function(assert) {
-		const done = assert.async();
-		const oColumn = this.oColumn;
-		let iWidth = oColumn.$().width();
-
-		assert.ok(Math.abs(iWidth - 100) < 10, "check column width before resize: " + iWidth);
-		oTable.autoResizeColumn(1);
-		await TableQUnitUtils.wait(50);
-
-		assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
-		oColumn.setAutoResizable(true);
+		this.oColumn.setAutoResizable(true);
 		await nextUIUpdate();
+		await triggerDoubleClick();
+		assertAutoResizeCalled(false);
 
-		assert.ok(oColumn.getAutoResizable(), "Column is autoresizable");
-		assert.ok(!oColumn.getResizable(), "Column is not yet resizable");
-		oTable.autoResizeColumn(1);
-		await TableQUnitUtils.wait(50);
-
-		assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
-		oColumn.setResizable(true);
+		this.oColumn.setResizable(true);
 		await nextUIUpdate();
-		assert.ok(oColumn.getAutoResizable(), "Column is autoresizable");
-		assert.ok(oColumn.getResizable(), "Column is resizable");
-		oTable.autoResizeColumn(1);
-		await TableQUnitUtils.wait(50);
+		Device.system.desktop = false;
+		await triggerDoubleClick();
+		assertAutoResizeCalled(false);
 
-		iWidth = oColumn.$().width();
-		assert.ok(Math.abs(iWidth - 270) < 40, "check column width after resize: " + iWidth);
-		done();
+		Device.system.desktop = true;
+		await triggerDoubleClick();
+		assertAutoResizeCalled(true);
+
+		this.oColumn.setAutoResizable(false);
+		await triggerDoubleClick();
+		assertAutoResizeCalled(false);
 	});
 
 	QUnit.test("Resize via Drag&Drop", async function(assert) {
@@ -1402,6 +1376,7 @@ sap.ui.define([
 		assert.ok(!oExtension._KNOWNCLICKABLECONTROLS, "_KNOWNCLICKABLECONTROLS: No debug mode");
 
 		oExtension._debug();
+		assert.ok(!!oExtension._delegate, "_Delegate: Debug mode");
 		assert.ok(!!oExtension._ExtensionHelper, "_ExtensionHelper: Debug mode");
 		assert.ok(!!oExtension._ColumnResizeHelper, "_ColumnResizeHelper: Debug mode");
 		assert.ok(!!oExtension._ReorderHelper, "_ReorderHelper: Debug mode");

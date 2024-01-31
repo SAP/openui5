@@ -79,8 +79,9 @@ sap.ui.define([
 			},
 			"Column": {
 				ui5: {
-					// Test has dependencies to sap.ui.unified modules
-					libs: ["sap.ui.table", "sap.ui.unified"]
+					// Test has dependencies to sap.ui.unified and sap.m modules modules
+					libs: ["sap.ui.table", "sap.ui.unified", "sap.m."],
+					"xx-waitForTheme": "init"
 				}
 			},
 			// Menus
