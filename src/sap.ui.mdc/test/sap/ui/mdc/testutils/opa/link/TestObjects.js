@@ -6,13 +6,15 @@ sap.ui.define([
 	"./Actions",
 	"./Assertions",
 	"./waitForLink",
-	"../p13n/Actions"
+	"../p13n/Actions",
+	"../p13n/Assertions"
 ], function(
 	Opa5,
 	linkActions,
 	linkAssertions,
 	waitForLink,
-	p13nActions
+	p13nActions,
+	p13nAssertions
 ) {
 	"use strict";
 
@@ -121,6 +123,22 @@ sap.ui.define([
 				 */
 				iShouldSeeLinksOnPopover: function(oLinkIdentifier, aLinks) {
 					return linkAssertions.iShouldSeeLinksOnPopover.call(this, oLinkIdentifier, aLinks);
+				},
+				/**
+				 * Opa5 test action
+				 * @memberof onTheMDCLink
+				 * @method iShouldSeeLinksOnPopover
+				 * @param {LinkIdentifier} oLinkIdentifier The object to identify the <code>sap.ui.mdc.Link</code> that opens the popover
+				 * @param {boolean} bEnabled Determines if the reset button is enabled
+				 * @returns {Promise} OPA waitFor
+				 * Creates an assumption that there is an open SelectionDialog for a given <code>sap.ui.mdc.Link</code> and checks if the reset button is enabled.
+				 */
+				theResetButtonIsEnabled: function(oLinkIdentifier, bEnabled) {
+					return waitForLink.call(this, oLinkIdentifier, {
+						success: function(oLink) {
+							p13nAssertions.theResetButtonIsEnabled.call(this, oLink, bEnabled, linkActions.iOpenThePersonalizationDialog);
+						}
+					});
 				}
 			}
 		}

@@ -300,6 +300,33 @@ sap.ui.define([
 					});
 				}
 			});
+		},
+
+		theResetButtonIsEnabled: function(oControl, bEnabled, fnOpenThePersonalizationDialog) {
+			fnOpenThePersonalizationDialog = fnOpenThePersonalizationDialog ? fnOpenThePersonalizationDialog : iOpenThePersonalizationDialog;
+			return fnOpenThePersonalizationDialog.call(this, oControl, {
+				success: function(oP13nDialog) {
+					this.waitFor({
+						controlType: "sap.m.Button",
+						searchOpenDialogs: true,
+						visible: bEnabled,
+						matchers: [
+							new Ancestor(oP13nDialog, false),
+							new PropertyStrictEquals({
+								name: "enabled",
+								value: bEnabled
+							}),
+							new PropertyStrictEquals({
+								name: "text",
+								value: oMDCBundle.getText("p13nDialog.RESET")
+							})
+						],
+						success: function(aButtons) {
+							Opa5.assert.equal(aButtons.length, 1, `The reset button is ${bEnabled ? "enabled" : "disabled"}`);
+						}
+					});
+				}
+			});
 		}
 	};
 

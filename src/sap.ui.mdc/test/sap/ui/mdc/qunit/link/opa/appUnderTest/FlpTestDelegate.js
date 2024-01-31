@@ -23,24 +23,28 @@ sap.ui.define([
 				beginButton: new Button({
 					type: ButtonType.Emphasized,
 					text: 'Navigate',
-					press: function () {
+					press: function() {
 						oDialog.close();
 						resolve(true);
 					}
 				}),
 				endButton: new Button({
 					text: 'Cancel',
-					press: function () {
+					press: function() {
 						oDialog.close();
 						resolve(false);
 					}
 				}),
-				afterClose: function () {
+				afterClose: function() {
 					oDialog.destroy();
 				}
 			});
 			oDialog.open();
 		});
+	};
+
+	SampleLinkDelegate.getPanelId = function(oLink) {
+		return LinkDelegate.getPanelId(oLink) + "--flpLink";
 	};
 
 	return SampleLinkDelegate;

@@ -247,70 +247,62 @@ sap.ui.define([
 		return oLinkType && oLinkType.type === LinkType.DirectLink && oLinkType.directLink;
 	};
 
-	Link.prototype.getContent = function(fnGetAutoClosedControl) {
+	Link.prototype.getContent = async function(fnGetAutoClosedControl) {
 		const oLinkItemsPromise = this.retrieveLinkItems();
 		const oAdditionalContentPromise = this.retrieveAdditionalContent();
-		return Promise.all([oLinkItemsPromise, oAdditionalContentPromise]).then((values) => {
-			const aLinkItems = values[0];
-			const aAdditionalContent = values[1];
-			return new Promise((resolve) => {
-				sap.ui.require([
-					'sap/ui/fl/Utils', 'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'
-				], (Utils, FlexRuntimeInfoAPI) => {
-					this._setConvertedLinkItems(aLinkItems);
-					const aMLinkItems = this._getInternalModel().getProperty("/linkItems");
-					const aMBaselineLinkItems = this._getInternalModel().getProperty("/baselineLinkItems");
+		const oPanelIdPromise = this.retrievePanelId();
+		const [aLinkItems, aAdditionalContent, sPanelId] = await Promise.all([oLinkItemsPromise, oAdditionalContentPromise, oPanelIdPromise]);
 
-					const oPanelAdditionalContent = !aAdditionalContent.length && !aMLinkItems.length ? this._getNoContent() : aAdditionalContent;
+		this._setConvertedLinkItems(aLinkItems);
+		const aMLinkItems = this._getInternalModel().getProperty("/linkItems");
+		const aMBaselineLinkItems = this._getInternalModel().getProperty("/baselineLinkItems");
 
-					const sPanelId = this._createPanelId(Utils, FlexRuntimeInfoAPI);
-					const oExistingPanel = Element.getElementById(sPanelId);
-					if (oExistingPanel) {
-						// close Popover if existing
-						if (oExistingPanel.getParent() && oExistingPanel.getParent().close) {
-							oExistingPanel.getParent().close();
-						}
-						oExistingPanel.destroy();
-					}
+		const oPanelAdditionalContent = !aAdditionalContent.length && !aMLinkItems.length ? this._getNoContent() : aAdditionalContent;
 
-					const oPanel = new Panel(sPanelId, {
-						enablePersonalization: this.getEnablePersonalization(), // brake the binding chain
-						items: aMBaselineLinkItems.map((oMLinkItem) => {
-							return new PanelItem(oMLinkItem.key, {
-								text: oMLinkItem.text,
-								description: oMLinkItem.description,
-								href: oMLinkItem.href,
-								internalHref: oMLinkItem.internalHref,
-								target: oMLinkItem.target,
-								icon: oMLinkItem.icon,
-								visible: true
-							});
-						}),
-						additionalContent: oPanelAdditionalContent,
-						beforeSelectionDialogOpen: function() {
-							if (fnGetAutoClosedControl && fnGetAutoClosedControl()) {
-								fnGetAutoClosedControl().setModal(true);
-							}
-						},
-						afterSelectionDialogClose: function() {
-							if (fnGetAutoClosedControl && fnGetAutoClosedControl()) {
-								fnGetAutoClosedControl().setModal(false);
-							}
-						},
-						beforeNavigationCallback: this._beforeNavigationCallback.bind(this),
-						metadataHelperPath: "sap/ui/mdc/Link"
-					});
-					oPanel.setModel(new JSONModel({
-						metadata: jQuery.extend(true, [], this._getInternalModel().getProperty("/linkItems")),
-						baseline: jQuery.extend(true, [], this._getInternalModel().getProperty("/baselineLinkItems"))
-					}), "$sapuimdcLink");
-					// reset _aAdditionalContent as the additionalContent gets forwarded to the Panel and will be destroyed when the Popover is closed
-					this._setAdditionalContent(undefined);
+		const oExistingPanel = Element.getElementById(sPanelId);
+		if (oExistingPanel) {
+			// close Popover if existing
+			if (oExistingPanel.getParent() && oExistingPanel.getParent().close) {
+				oExistingPanel.getParent().close();
+			}
+			oExistingPanel.destroy();
+		}
 
-					return resolve(oPanel);
+		const oPanel = new Panel(sPanelId, {
+			enablePersonalization: this.getEnablePersonalization(), // brake the binding chain
+			items: aMBaselineLinkItems.map((oMLinkItem) => {
+				return new PanelItem(oMLinkItem.key, {
+					text: oMLinkItem.text,
+					description: oMLinkItem.description,
+					href: oMLinkItem.href,
+					internalHref: oMLinkItem.internalHref,
+					target: oMLinkItem.target,
+					icon: oMLinkItem.icon,
+					visible: true
 				});
-			});
+			}),
+			additionalContent: oPanelAdditionalContent,
+			beforeSelectionDialogOpen: function() {
+				if (fnGetAutoClosedControl && fnGetAutoClosedControl()) {
+					fnGetAutoClosedControl().setModal(true);
+				}
+			},
+			afterSelectionDialogClose: function() {
+				if (fnGetAutoClosedControl && fnGetAutoClosedControl()) {
+					fnGetAutoClosedControl().setModal(false);
+				}
+			},
+			beforeNavigationCallback: this._beforeNavigationCallback.bind(this),
+			metadataHelperPath: "sap/ui/mdc/Link"
 		});
+		oPanel.setModel(new JSONModel({
+			metadata: jQuery.extend(true, [], this._getInternalModel().getProperty("/linkItems")),
+			baseline: jQuery.extend(true, [], this._getInternalModel().getProperty("/baselineLinkItems"))
+		}), "$sapuimdcLink");
+		// reset _aAdditionalContent as the additionalContent gets forwarded to the Panel and will be destroyed when the Popover is closed
+		this._setAdditionalContent(undefined);
+
+		return oPanel;
 	};
 
 	Link.prototype.checkDirectNavigation = function() {
@@ -376,32 +368,6 @@ sap.ui.define([
 		});
 		oSimpleForm.addStyleClass("mdcbaseinfoPanelDefaultAdditionalContent");
 		return oSimpleForm;
-	};
-
-	/**
-	 * Generates an ID for the panel of the <code>Link</code> control. The result depends on whether the <code>Link</code> control supports flexibility.
-	 * @private
-	 * @param {sap.ui.fl.Utils} Utils Flexibility utility class
-	 * @param {sap.ui.fl.apply.api.FlexRuntimeInfoAPI} FlexRuntimeInfoAPI Flexibility runtime info API
-	 * @returns {string} Generated ID of the panel
-	 */
-	Link.prototype._createPanelId = function(Utils, FlexRuntimeInfoAPI) {
-		let oField;
-		if (this.getParent()) {
-			oField = this.getParent();
-		}
-		let oControl = this._getSourceControl();
-		if (!oControl) {
-			//SapBaseLog.error("Invalid source control: " + this.getSourceControl() + ". The mandatory 'sourceControl' association should be defined due to personalization reasons, parent: " + oField + " used instead.");
-			this.setSourceControl(oField);
-			oControl = oField;
-		}
-		if (!FlexRuntimeInfoAPI.isFlexSupported({ element: this }) || !FlexRuntimeInfoAPI.isFlexSupported({ element: oControl })) {
-			SapBaseLog.error("Invalid component. The mandatory 'sourceControl' association should be assigned to the app component due to personalization reasons.");
-			return this.getId() + "-idInfoPanel";
-		}
-		const oAppComponent = Utils.getAppComponentForControl(oControl) || Utils.getAppComponentForControl(oField);
-		return oAppComponent.createId("idInfoPanel");
 	};
 
 	// ------------------------------ sap/ui/mdc/link/Panel relevant methods ---------------------------------------
@@ -481,6 +447,21 @@ sap.ui.define([
 	};
 
 	// ----------------------- sap/ui/mdc/LinkDelegate function calls ----------------------------------------------
+
+
+	/**
+	 * Generates an ID for the panel of the <code>Link</code> control. The result depends on whether the <code>Link</code> control supports flexibility.
+	 * @private
+	 * @returns {string} Generated ID of the panel
+	 */
+	Link.prototype.retrievePanelId = async function() {
+		if (this.awaitControlDelegate()) {
+			await this.awaitControlDelegate();
+			return this.getControlDelegate().getPanelId(this);
+		}
+		SapBaseLog.error("mdc.Link retrieveAdditionalContent: control delegate is not set - could not load AdditionalContent from delegate.");
+		return Promise.resolve("idInfoPanel");
+	};
 
 	/**
 	 * Retrieves the <code>AdditionalContent</code> objects depending on the given <code>LinkDelegate</code>.
