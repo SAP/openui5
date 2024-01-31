@@ -190,6 +190,12 @@ sap.ui.define([], function () {
 		GroupTable: "sapIllus-GroupTable",
 
 		/**
+		 * "New Mail" illustration type.
+		 * @public
+		 */
+		NewMail: "sapIllus-NewMail",
+
+		/**
 		 * "No Filter Results" illustration type.
 		 * @public
 		 */
