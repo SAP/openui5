@@ -55,14 +55,13 @@ sap.ui.define([
 	 * This is needed in the stand alone scenario; ATTENTION: if also the ushell-plugin of rta runs, the first one will
 	 * actually trigger the reload and clear the flag for the second.
 	 *
-	 * @param {object} oResult - The result which will be passed after the rta startup was checked and triggered if needed
 	 * @param {object} oComponent - Application component about to be started
-	 * @returns {Promise} Promise resolving with the initially passed result
+	 * @returns {Promise<undefined>} Resolves with undefined
 	 */
-	function checkForRtaStartOnDraftAndReturnResult(oResult, oComponent) {
+	function checkForRtaStartOnDraftAndReturnResult(oComponent) {
 		// if the FLP is available the restart behavior is handled there
 		if (Utils.getUshellContainer()) {
-			return Promise.resolve(oResult);
+			return Promise.resolve();
 		}
 
 		var sRestartingComponent = window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.CUSTOMER}`);
@@ -73,7 +72,7 @@ sap.ui.define([
 					Triggering component: ${sRestartingComponent}
 					Started component: ${sComponentId}`);
 
-				return Promise.resolve(oResult);
+				return Promise.resolve();
 			}
 
 			return new Promise(function(resolve, reject) {
@@ -86,7 +85,7 @@ sap.ui.define([
 						startKeyUserAdaptation({
 							rootControl: oComponent
 						});
-						resolve(oResult);
+						resolve();
 					});
 				})
 				.catch(function(oError) {
@@ -95,7 +94,7 @@ sap.ui.define([
 			});
 		}
 
-		return Promise.resolve(oResult);
+		return Promise.resolve();
 	}
 
 	/**
@@ -117,30 +116,23 @@ sap.ui.define([
 		}
 	}
 
-	function propagateChangesForAppComponent(oAppComponent) {
+	async function propagateChangesForAppComponent(oAppComponent) {
 		// only manifest with type = "application" will fetch changes
 		var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+		const sReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 		var oVariantModel;
-		return oFlexController._oChangePersistence.loadChangesMapForComponent(oAppComponent)
-		.then(function(fnGetChangesMap) {
-			var fnPropagationListener = ChangesApplier.applyAllChangesForControl.bind(
-				ChangesApplier,
-				fnGetChangesMap,
-				oAppComponent,
-				oFlexController
-			);
-			fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
-			oAppComponent.addPropagationListener(fnPropagationListener);
-			oVariantModel = ComponentLifecycleHooks._createVariantModel(oFlexController, oAppComponent);
-			return oVariantModel.initialize();
-		})
-		.then(function() {
-			oAppComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
-			Measurement.end("flexProcessing");
-			return oVariantModel;
-		}).then(function(oResult) {
-			return checkForRtaStartOnDraftAndReturnResult(oResult, oAppComponent);
-		});
+		var fnPropagationListener = ChangesApplier.applyAllChangesForControl.bind(
+			ChangesApplier,
+			oAppComponent,
+			sReference
+		);
+		fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
+		oAppComponent.addPropagationListener(fnPropagationListener);
+		oVariantModel = ComponentLifecycleHooks._createVariantModel(oFlexController, oAppComponent);
+		await oVariantModel.initialize();
+		Measurement.end("flexProcessing");
+		oAppComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
+		await checkForRtaStartOnDraftAndReturnResult(oAppComponent);
 	}
 
 	function getChangesAndPropagate(oComponent, vConfig) {

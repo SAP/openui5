@@ -18,6 +18,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
@@ -45,6 +47,8 @@ sap.ui.define([
 	Reverter,
 	URLHandler,
 	FlexObjectFactory,
+	DependencyHandler,
+	UIChangesState,
 	Switcher,
 	VariantManagementState,
 	ManifestUtils,
@@ -326,6 +330,15 @@ sap.ui.define([
 			// Initialize data
 			this.updateData();
 
+			const oLiveDependencyMap = UIChangesState.getLiveDependencyMap(this.sFlexReference);
+			VariantManagementState.getInitialChanges(
+				{reference: this.sFlexReference},
+				this.oAppComponent.getId(),
+				this.sFlexReference
+			).forEach((oFlexObject) => {
+				DependencyHandler.addChangeAndUpdateDependencies(oFlexObject, this.oAppComponent.getId(), oLiveDependencyMap);
+			});
+
 			this.setDefaultBindingMode(BindingMode.OneWay);
 		}
 	});
@@ -353,6 +366,7 @@ sap.ui.define([
 			oCurrentData[sVariantManagementKey].modified = oVariantMapEntry.modified;
 		});
 		this.setData(oCurrentData);
+
 		// Since the model has an one-way binding, some VariantItem properties that were overridden
 		// via direct setter calls need to be updated explicitly
 		this.refresh(true);

@@ -431,6 +431,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexState/changes/ExtensionPointState"]
 				}
 			},
+			"apply/_internal/flexState/changes/UIChangesState": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/changes/UIChangesState"]
+				}
+			},
 			"apply/_internal/flexState/controlVariants/VariantManagementState": {
 				group: "Apply Internal",
 				coverage: {

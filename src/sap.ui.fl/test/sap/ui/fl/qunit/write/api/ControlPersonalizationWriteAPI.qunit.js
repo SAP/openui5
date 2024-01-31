@@ -93,6 +93,7 @@ sap.ui.define([
 			this.oCompContainer = new ComponentContainer({
 				component: this.oComp
 			});
+			FlexState.clearState();
 			return FlexState.initialize({
 				componentId: this.oComp.getId()
 			});
@@ -633,6 +634,7 @@ sap.ui.define([
 			});
 			this.oComp = new MockComponent("testComponent");
 
+			FlexState.clearState();
 			return FlexState.initialize({
 				componentId: this.oComp.getId()
 			});

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -19,6 +20,7 @@ sap.ui.define([
 	ObjectPath,
 	JsControlTreeModifier,
 	VariantsApplyUtil,
+	DependencyHandler,
 	DataSelector,
 	States,
 	FlexState,
@@ -299,9 +301,13 @@ sap.ui.define([
 		parentDataSelector: FlexState.getFlexObjectsDataSelector(),
 		executeFunction: createVariantsMap,
 		checkInvalidation(mParameters, oUpdateInfo) {
+			if (oUpdateInfo.type === "switchVariant") {
+				return true;
+			}
+
 			const aRelevantFlexObjectTypes = ["addFlexObject", "updateFlexObject", "removeFlexObject"];
 			const bRelevantType = aRelevantFlexObjectTypes.includes(oUpdateInfo.type);
-			const aRelevantVariantFileTypes = ["change", "ctrl_variant", "ctrl_variant_change", "ctrl_variant_management_change"];
+			const aRelevantVariantFileTypes = ["ctrl_variant", "ctrl_variant_change", "ctrl_variant_management_change"];
 			const bRelevantVariantType = aRelevantVariantFileTypes.includes(oUpdateInfo.updatedObject?.getFileType?.());
 			const bHasVariantReference = oUpdateInfo.updatedObject?.getVariantReference?.();
 			return bRelevantType && (bRelevantVariantType || bHasVariantReference);
@@ -312,8 +318,8 @@ sap.ui.define([
 		id: "variantManagements",
 		parameterKey: "variantManagementReference",
 		parentDataSelector: oVariantManagementMapDataSelector,
-		executeFunction(oVariantManagementsMap, sVMReference) {
-			return oVariantManagementsMap[sVMReference];
+		executeFunction(oVariantManagementsMap, mParameters) {
+			return oVariantManagementsMap[mParameters.variantManagementReference];
 		}
 	});
 
@@ -321,10 +327,40 @@ sap.ui.define([
 		id: "variants",
 		parameterKey: "variantReference",
 		parentDataSelector: oVariantManagementsDataSelector,
-		executeFunction(oVariantManagement, sVariantReference) {
+		executeFunction(oVariantManagement, mParameters) {
 			return oVariantManagement.variants.find((oVariant) => {
-				return oVariant.instance.getId() === sVariantReference;
+				return oVariant.instance.getId() === mParameters.variantReference;
 			});
+		}
+	});
+
+	const oUIChangesDependencyMapDataSelector = new DataSelector({
+		id: "vmDependentDependencyMap",
+		parentDataSelector: oVariantManagementMapDataSelector,
+		executeFunction(oVariantManagementsMap, mParameters) {
+			let aAllUIChanges = [];
+			Object.entries(oVariantManagementsMap).forEach(([sVariantManagementReference, oVariantManagement]) => {
+				aAllUIChanges = aAllUIChanges.concat(VariantManagementState.getControlChangesForVariant({
+					vmReference: sVariantManagementReference,
+					vReference: oVariantManagement.currentVariant,
+					reference: mParameters.reference
+				}));
+			});
+			const oDependencyMap = DependencyHandler.createEmptyDependencyMap();
+			const sComponentId = FlexState.getComponentIdForReference(mParameters.reference);
+			aAllUIChanges.forEach((oFlexObject) => {
+				DependencyHandler.addChangeAndUpdateDependencies(oFlexObject, sComponentId, oDependencyMap);
+			});
+			return oDependencyMap;
+		},
+		checkInvalidation(mParameters, oUpdateInfo) {
+			if (oUpdateInfo.type === "switchVariant") {
+				return true;
+			}
+			const bRelevantType = ["addFlexObject", "removeFlexObject"].includes(oUpdateInfo.type);
+			const bRelevantFlexObjectType = oUpdateInfo.updatedObject.getFileType() === "change";
+			const aCurrentVariants = Object.values((mCurrentVariantReferences[mParameters.reference] || {}));
+			return bRelevantFlexObjectType && bRelevantType && aCurrentVariants.includes(oUpdateInfo.updatedObject.getVariantReference());
 		}
 	});
 
@@ -341,6 +377,10 @@ sap.ui.define([
 			});
 		}
 	});
+
+	VariantManagementState.getDependencyMap = function(sReference) {
+		return oUIChangesDependencyMapDataSelector.get({reference: sReference});
+	};
 
 	VariantManagementState.getVariantDependentFlexObjects = function(sReference) {
 		return oVariantDependentFlexObjectsDataSelector.get({reference: sReference});
@@ -584,9 +624,10 @@ sap.ui.define([
 			mPropertyBag.newVReference,
 			mCurrentVariantReferences
 		);
-		oVariantManagementMapDataSelector.checkUpdate({
-			reference: mPropertyBag.reference
-		});
+		oVariantManagementMapDataSelector.checkUpdate(
+			{ reference: mPropertyBag.reference },
+			[{ type: "switchVariant"}]
+		);
 	};
 
 	/**

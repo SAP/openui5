@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -22,6 +23,7 @@ sap.ui.define([
 	ChangesUtils,
 	FlexObjectFactory,
 	FlexObjectStates,
+	FlexState,
 	ManifestUtils,
 	ChangeHandlerStorage,
 	ChangePersistenceFactory,
@@ -180,7 +182,7 @@ sap.ui.define([
 
 					// If the component creation is async, the changesMap already created without changes on EP --> it need to be updated
 					// Otherwise, update the selector of changes is enough, change map will be created later correctly
-					if (oChangePersistence.isChangeMapCreated()) {
+					if (FlexState.isInitialized(mPropertyBag)) {
 						oChangePersistence.addChangeAndUpdateDependencies(mPropertyBag.appComponent, oChange);
 					}
 				} else if (isValidForRuntimeOnlyChanges(oChange, mExtensionPointInfo)) {

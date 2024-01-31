@@ -137,7 +137,10 @@ sap.ui.define([
 					]
 				}
 			}, {
-				flexController: oFlexController
+				flexController: oFlexController,
+				appComponent: {
+					getId: () => {"foo";}
+				}
 			});
 
 			sinon.stub(oModel, "updateCurrentVariant").returns(Promise.resolve());

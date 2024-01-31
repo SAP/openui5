@@ -46,7 +46,7 @@ sap.ui.define([
 			this.aTargetControlChangesForVariant = [this.oChangesMap.mChanges.control2[0]];
 			this.oFlexController = {
 				_oChangePersistence: {
-					getChangesMapForComponent: function() {
+					getDependencyMapForComponent: function() {
 						return this.oChangesMap;
 					}.bind(this)
 				},

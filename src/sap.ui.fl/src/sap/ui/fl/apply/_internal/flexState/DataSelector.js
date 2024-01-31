@@ -263,7 +263,7 @@ sap.ui.define([
 
 		var vNewResult = this.getExecuteFunction()(
 			oParentData,
-			vParameterValue
+			mParameters
 		);
 		this._setParameterizedCachedResult(mParameters, vNewResult);
 		return vNewResult;

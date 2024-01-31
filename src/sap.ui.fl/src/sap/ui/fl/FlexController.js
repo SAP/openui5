@@ -162,15 +162,20 @@ sap.ui.define([
 	 * @param {string[]} mPropertyBag.changeTypes - An array containing the change types that should be considered
 	 * @returns {Promise} Resolves when all changes on the control have been processed
 	 */
-	FlexController.prototype._waitForChangesToBeApplied = function(mPropertyBag) {
+	FlexController.prototype._waitForChangesToBeApplied = async function(mPropertyBag) {
 		function filterChanges(oChange) {
 			return !oChange.isCurrentProcessFinished()
 			&& (mPropertyBag.changeTypes.length === 0 || mPropertyBag.changeTypes.includes(oChange.getChangeType()));
 		}
 
+		const oControl = mPropertyBag.selector.id && Element.getElementById(mPropertyBag.selector.id) || mPropertyBag.selector;
+		const oAppComponent = mPropertyBag.selector.appComponent || Utils.getAppComponentForControl(oControl);
+		await FlexState.initialize({
+			componentId: oAppComponent.getId()
+		});
+
 		mPropertyBag.changeTypes ||= [];
-		var oControl = mPropertyBag.selector.id && Element.getElementById(mPropertyBag.selector.id) || mPropertyBag.selector;
-		var mChangesMap = this._oChangePersistence.getChangesMapForComponent();
+		var mChangesMap = this._oChangePersistence.getDependencyMapForComponent();
 		var aPromises = [];
 		var mDependencies = Object.assign({}, mChangesMap.mDependencies);
 		var {mChanges} = mChangesMap;
@@ -179,7 +184,6 @@ sap.ui.define([
 		// filter out already applied changes and, if given, filter by change type
 		var aNotYetProcessedChanges = aChangesForControl.filter(filterChanges);
 
-		var oAppComponent = mPropertyBag.selector.appComponent || Utils.getAppComponentForControl(oControl);
 		var aRelevantChanges = [];
 		aNotYetProcessedChanges.forEach(function(oChange) {
 			var aChanges = checkDependencies(oChange, mDependencies, mChangesMap.mChanges, oAppComponent, []);
@@ -324,7 +328,7 @@ sap.ui.define([
 					modifier: JsControlTreeModifier,
 					appComponent: oAppComponent
 				};
-				this._oChangePersistence._addRunTimeCreatedChangeAndUpdateDependencies(oAppComponent, oChange);
+				this._oChangePersistence._addRunTimeCreatedChangeToDependencyMap(oAppComponent, oChange);
 				oControl = mPropertyBag.modifier.bySelector(oChange.getSelector(), oAppComponent);
 				if (oControl) {
 					return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag);
