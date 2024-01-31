@@ -49,7 +49,7 @@ sap.ui.define([
 				 * This property enables scenarios where popovers need to be shown earlier (for example, recommendations or recently entered values).
 				 * See also {@link module:sap/ui/mdc/ValueHelpDelegate.showTypeahead showTypeahead}
 				 * @since 1.110.0
-				 * @deprecated (since 1.121.0) - replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.shouldOpenOnClick shouldOpenOnClick}
+				 * @deprecated As of version 1.121.0, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.shouldOpenOnClick shouldOpenOnClick}
 				 */
 				opensOnClick: {
 					type: "boolean",
@@ -62,7 +62,7 @@ sap.ui.define([
 				 * This property enables scenarios where popovers need to be shown earlier (for example, recommendations or recently entered values).
 				 * See also {@link module:sap/ui/mdc/ValueHelpDelegate.showTypeahead showTypeahead}
 				 * @since 1.112.0
-				 * @deprecated (since 1.121.0) - replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.shouldOpenOnFocus shouldOpenOnFocus}
+				 * @deprecated As of version 1.121.0, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.shouldOpenOnFocus shouldOpenOnFocus}
 				 */
 				opensOnFocus: {
 					type: "boolean",
