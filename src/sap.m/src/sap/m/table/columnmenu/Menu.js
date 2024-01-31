@@ -571,11 +571,15 @@ sap.ui.define([
 	};
 
 	Menu.prototype._setItemVisibility = function (oItem, bVisible) {
+		if (!this._oItemsContainer) {
+			return;
+		}
+
 		var oList = this._oItemsContainer._getNavigationList().getItems();
 		var oListItem = oList.find(function (oListItem) {
 			return oListItem._key == oItem.getId();
 		});
-		oListItem && oListItem.setVisible(bVisible);
+		oListItem?.setVisible(bVisible);
 	};
 
 	Menu.prototype._initQuickActionContainer = function () {

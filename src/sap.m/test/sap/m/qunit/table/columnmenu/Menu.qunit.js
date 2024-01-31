@@ -124,6 +124,25 @@ sap.ui.define([
 		assert.ok(this.oColumnMenu.getAggregation("_items").length === 3);
 	});
 
+	QUnit.test("ColumnMenu with hidden items if container is not yet initialized", function(assert) {
+		this.oColumnMenu = new Menu({
+			quickActions: [new QuickAction({label: "My Label", content: new Button({text: "My button"}), visible: false})],
+			items: [
+				new Item({label: "My Visible and then Invisible Label", content: new Button({text: "My button"}), visible: true}),
+				new Item({label: "My Visible Label", content: new Button({text: "My button"}), visible: true})
+			]
+		});
+
+		this.oColumnMenu.getItems()[0].setVisible(false); // set visibility of item to false, when containers are not yet initialized
+
+		assert.ok(this.oColumnMenu, "Menu has instance");
+		assert.ok(this.oColumnMenu.getQuickActions(), "Menu has quick actions");
+		assert.ok(this.oColumnMenu.getItems(), "Menu has items");
+		assert.ok(this.oColumnMenu.getQuickActions().length === 1, "Menu has 1 quick action");
+		assert.ok(this.oColumnMenu.getItems().length === 2, "Menu has 2 items");
+		assert.ok(this.oColumnMenu._getAllEffectiveItems().length === 1, "Menu has 1 visible/effective item");
+	});
+
 	QUnit.module("Destruction", {
 		beforeEach: function() {
 			this.oColumnMenu = new Menu({
