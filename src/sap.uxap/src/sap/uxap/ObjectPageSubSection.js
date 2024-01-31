@@ -215,6 +215,8 @@ sap.ui.define([
 	ObjectPageSubSection.prototype.init = function () {
 		ObjectPageSectionBase.prototype.init.call(this);
 		this._aStashedControls = [];
+		this._aUnStashedControls = [];
+		this._bUnstashed = false;
 		//proxy public aggregations
 		this._bRenderedFirstTime = false;
 		this._aAggregationProxy = {blocks: [], moreBlocks: []};
@@ -509,6 +511,7 @@ sap.ui.define([
 		};
 	});
 
+	/**@deprecated */
 	ObjectPageSubSection.prototype._unStashControls = function () {
 		var oUnstashedControl;
 		this._aStashedControls.forEach(function (oControlHandle) {
@@ -519,6 +522,28 @@ sap.ui.define([
 		this._aStashedControls = [];
 	};
 
+	ObjectPageSubSection.prototype._unStashControlsAsync = function () {
+		var oUnstashedControl;
+
+		if (!this._bUnstashed) {
+			this._aStashedControls.forEach(function (oControlHandle) {
+				this._aUnStashedControls.push(oControlHandle.control.unstash(true).then(function() {
+					oUnstashedControl = Element.getElementById(oControlHandle.control.getId());
+					this.addAggregation(oControlHandle.aggregationName, oUnstashedControl, true);
+				}.bind(this)));
+			}.bind(this));
+
+			this._bUnstashed = true;
+		}
+
+		return Promise.all(this._aUnStashedControls).then(() => {
+			this._bUnstashed = false;
+			this._aUnStashedControls = [];
+			this._aStashedControls = [];
+		});
+	};
+
+	/**@deprecated */
 	ObjectPageSubSection.prototype.connectToModels = function () {
 		var aBlocks = this.getBlocks() || [],
 			aMoreBlocks = this.getMoreBlocks() || [],
@@ -545,6 +570,34 @@ sap.ui.define([
 				}
 			});
 		}
+	};
+
+	ObjectPageSubSection.prototype.connectToModelsAsync = function () {
+		var aBlocks = this.getBlocks() || [],
+			aMoreBlocks = this.getMoreBlocks() || [],
+			sCurrentMode = this.getMode();
+
+		return this._unStashControlsAsync().then(function() {
+			aBlocks.forEach(function (oBlock) {
+				if (oBlock instanceof BlockBase) {
+					if (!oBlock.getMode()) {
+						oBlock.setMode(sCurrentMode);
+					}
+					oBlock.connectToModels();
+				}
+			});
+
+			if (aMoreBlocks.length > 0 && sCurrentMode === ObjectPageSubSectionMode.Expanded) {
+				aMoreBlocks.forEach(function (oMoreBlock) {
+					if (oMoreBlock instanceof BlockBase) {
+						if (!oMoreBlock.getMode()) {
+							oMoreBlock.setMode(sCurrentMode);
+						}
+						oMoreBlock.connectToModels();
+					}
+				});
+			}
+		});
 	};
 
 	ObjectPageSubSection.prototype._allowPropagationToLoadedViews = function (bAllow) {
@@ -1232,6 +1285,11 @@ sap.ui.define([
 		var iVisibleBlocks = this._aStashedControls.length;
 
 		(this.getBlocks() || []).forEach(function (oBlock) {
+			// Skip if it's undefined
+			if (!oBlock) {
+				return;
+			}
+
 			if (oBlock.getVisible && !oBlock.getVisible()) {
 				return true;
 			}

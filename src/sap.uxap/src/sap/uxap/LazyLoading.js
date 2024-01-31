@@ -15,6 +15,7 @@ sap.ui.define([
 	function(Element, jQuery, Device, BaseObject, ObjectPageSubSection, library, Log, isEmptyObject) {
 		"use strict";
 
+		var oPendingPromises = {};
 		var LazyLoading = BaseObject.extend("sap.uxap._helpers.LazyLoading", {
 			/**
 			 * @private
@@ -213,21 +214,32 @@ sap.ui.define([
 			//Load the subsections
 			jQuery.each(oSubSectionsToLoad, jQuery.proxy(function (idx, sSectionId) {
 				Log.debug("ObjectPageLayout :: lazyLoading", "connecting " + sSectionId);
-				Element.getElementById(sSectionId).connectToModels();
+				oPendingPromises[idx] = true;
+				Element.getElementById(sSectionId).connectToModelsAsync().then(function () {
+					// newly scrolled in view
+					oPendingPromises[idx] = false;
+					Log.debug("ObjectPageLayout :: lazyLoading", "subSectionEnteredViewPort " + sSectionId);
+					this._oObjectPageLayout.fireEvent("subSectionEnteredViewPort", {
+						subSection: Element.getElementById(sSectionId)
+					});
+					this._oPrevSubSectionsInView[idx] = Element.getElementById(sSectionId);
+				}.bind(this));
 				oSectionInfo[sSectionId].loaded = true;
 			}, this));
 
+
 			// fire event for sections scrolled in view (for app to resume binding)
 			jQuery.each(oSubSectionsInView, jQuery.proxy(function (idx, sSectionId) {
-				if (!this._oPrevSubSectionsInView[idx]) {
+				if (!this._oPrevSubSectionsInView[idx] && !oPendingPromises[idx]) {
 					// newly scrolled in view
 					Log.debug("ObjectPageLayout :: lazyLoading", "subSectionEnteredViewPort " + sSectionId);
 					this._oObjectPageLayout.fireEvent("subSectionEnteredViewPort", {
 						subSection: Element.getElementById(sSectionId)
 					});
+					this._oPrevSubSectionsInView[idx] = Element.getElementById(sSectionId);
 				}
 			}, this));
-			this._oPrevSubSectionsInView = oSubSectionsInView;
+
 
 			if (bOnGoingScroll) {
 				//bOnGoingScroll is just a prediction, we can't be 100% sure as there's no end-of-scroll event
@@ -239,7 +251,6 @@ sap.ui.define([
 				this._sLazyLoadingTimer = null;
 			}
 		};
-
 
 		/**
 		 * Load in advance the subsections which will likely be visible once the operation (firstRendering or scrolltoSection)

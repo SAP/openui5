@@ -214,7 +214,8 @@ sap.ui.define([
 	 */
 	ObjectPageSectionBase.prototype._resetLayoutData = function (aGridItems) {
 		aGridItems.forEach(function (oItem) {
-			if (oItem.getLayoutData()) {
+			// There might be cases when the content of the SubSection is not yet unstashed (created) and it is still the ObjectPageLazyLoader
+			if (oItem?.getLayoutData?.()) {
 				oItem.destroyLayoutData();
 			}
 		}, this);
@@ -252,7 +253,13 @@ sap.ui.define([
 		//step 1: the visible blocks should be separated
 		// as only they should take space inside the grid
 		aGridItems.forEach(function(oItem) {
-			if (oItem.getVisible && oItem.getVisible()) {
+			// Skip if there is undefined
+			if (!oItem) {
+				return;
+			}
+
+			// Check if it's ObjectPageLazyLoader
+			if (oItem.getVisible?.()) {
 				aVisibleItems.push(oItem);
 			} else {
 				aInvisibleItems.push(oItem);
@@ -303,8 +310,8 @@ sap.ui.define([
 		}, this);
 
 		aInvisibleItems.forEach(function(oItem) {
-			// ensure invisible blocks do not take space at all
-			oItem.setLayoutData(new GridData({
+			// ensure invisible blocks do not take space at all. Don't setLayoutData if it's ObjectPageLazyLoader
+			oItem.setLayoutData?.(new GridData({
 				visibleS: false,
 				visibleM: false,
 				visibleL: false,
