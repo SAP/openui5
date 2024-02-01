@@ -1,0 +1,291 @@
+sap.ui.define([
+	"sap/ui/core/Icon",
+	"sap/m/App",
+	"sap/m/Button",
+	"sap/m/Label",
+	"sap/m/MessageToast",
+	"sap/m/Page",
+	"sap/m/Panel",
+	"sap/m/Text",
+	"sap/m/Title",
+	"sap/m/Toolbar",
+	"sap/m/ToolbarSpacer",
+	"sap/m/Input"
+], function (
+	Icon,
+	App,
+	Button,
+	Label,
+	MessageToast,
+	Page,
+	Panel,
+	Text,
+	Title,
+	Toolbar,
+	ToolbarSpacer,
+	Input
+) {
+	"use strict";
+
+	var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
+
+	var oPanel1 = new Panel("panel1", {
+		headerText: "This is the Panel header",
+		content: [
+			new Input("input1"),
+			new Text({ text: "This is a Text control inside a Panel." })
+		]
+	}),
+		oPanel2 = new Panel("panel2", {
+			headerText: "This is the Panel header",
+			content: [
+				new Text({ text: "This is a Panel with a defined size.\n" + lorem })
+			],
+			width: "400px",
+			height: "80px"
+		}),
+		oPanel3 = new Panel("panel3", {
+			headerText: "This is the Panel header",
+			headerToolbar: new Toolbar({
+				design: "Transparent",
+				content: [
+					new Title({ text: "Panel header" }),
+					new ToolbarSpacer(),
+					new Button({
+						icon: "sap-icon://drop-down-list",
+						press: function () {
+							MessageToast.show("Sorting-Grouping-Filtering popup will be shown on press.");
+						}
+					}),
+					new Button({
+						icon: "sap-icon://person-placeholder",
+						press: function () {
+							MessageToast.show("Table personalization popup will be shown on press.");
+						}
+					})
+				]
+			}),
+			infoToolbar: new Toolbar({
+				design: "Info",
+				active: true,
+				content: [
+					new Label({ text: "The quick brown fox jumps over the lazy dog." }),
+					new ToolbarSpacer(),
+					new Icon({ src: "sap-icon://add-filter" })
+				]
+			}).attachPress(function () {
+				MessageToast.show("InfoBar Pressed!");
+			}),
+			content: [
+				new Text({ text: "This is a Panel with a header toolbar and an info toolbar.\n" + lorem + lorem + lorem + lorem + lorem + lorem + lorem + lorem + lorem })
+			],
+			height: "200px"
+		}),
+		oPanel4 = new Panel("panel4", {
+			expandable: true,
+			expanded: false,
+			headerToolbar: new Toolbar({
+				design: "Transparent",
+				content: [
+					new Title({ text: "1st Header toolbar content ..." })
+				]
+			}),
+			infoToolbar: new Toolbar({
+				design: "Info",
+				content: [
+					new Label({ text: "1st InfoToolbar ....." })
+				]
+			}),
+			content: [
+				new Text({ text: "1st This is a Panel with a header toolbar and an info toolbar - this is the content." + lorem + lorem + lorem + lorem + lorem })
+			],
+			height: "100px"
+		}),
+		oPanel5 = new Panel("panel5", {
+			expandable: true,
+			expanded: true,
+			headerText: "2nd Header Text",
+			infoToolbar: new Toolbar({
+				design: "Info",
+				content: [
+					new Label({ text: "2nd InfoToolbar ....." })
+				]
+			}),
+			content: [
+				new Text({ text: "2nd This is a Panel with a header text and an info toolbar - this is the content." })
+			]
+		}),
+		oPanel6 = new Panel("panel6", {
+			expandable: true,
+			expanded: true,
+			headerText: "3rd Header Text",
+			content: [
+				new Text({ text: "3rd This is a Panel with a header text and no info toolbar - this is the content." })
+			]
+		}),
+		oPanel7 = new Panel("panel7", {
+			expandable: true,
+			expanded: true,
+			headerToolbar: new Toolbar({
+				design: "Transparent",
+				content: [
+					new Title({ text: "4th Header toolbar content ..." })
+				]
+			}),
+			content: [
+				new Text({ text: "4th This is a Panel with a header toolbar and no info toolbar - this is the content." })
+			]
+		}),
+		oPanel8 = new Panel("panel8", {
+			expandable: true,
+			expanded: false,
+			headerToolbar: new Toolbar({
+				design: "Transparent",
+				content: [
+					new Title({ text: "5th Header toolbar content ..." })
+				]
+			}),
+			infoToolbar: new Toolbar({
+				design: "Info",
+				content: [
+					new Label({ text: "5th InfoToolbar ....." })
+				]
+			}),
+			content: [
+				new Text({ text: "5th This is a Panel with a header toolbar and an info toolbar - this is the content." })
+			]
+		}),
+		oPanel9 = new Panel("panel9", {
+			expandable: true,
+			expanded: true,
+			headerText: "6th Header Text",
+			infoToolbar: new Toolbar({
+				design: "Info",
+				content: [
+					new Label({ text: "6th InfoToolbar ....." })
+				]
+			}),
+			content: [
+				new Text({ text: "6th This is a Panel with a header text and an info toolbar - this is the content." })
+			]
+		}),
+		oPanel10 = new Panel("panel10", {
+			expandable: true,
+			expanded: false,
+			headerText: "7th Header Text",
+			content: [
+				new Text({ text: "7th This is a Panel with a header text and no info toolbar - this is the content." })
+			]
+		}),
+		oPanel11 = new Panel("panel11", {
+			expandable: true,
+			expanded: false,
+			headerToolbar: new Toolbar({
+				design: "Transparent",
+				content: [
+					new Title({ text: "8th Header toolbar content ..." })
+				]
+			}),
+			content: [
+				new Text({ text: "8th This is a Panel with a header toolbar and no info toolbar - this is the content." })
+			]
+		}),
+		oPanel12 = new Panel("panel12", {
+			expandable: true,
+			expanded: false,
+			expandAnimation: false,
+			headerToolbar: new Toolbar({
+				design: "Transparent",
+				content: [
+					new Title({ text: "9th Header toolbar content ..." })
+				]
+			}),
+			content: [
+				new Text({ text: "9th This is a Panel with expand animation set to false." })
+			]
+		}),
+		oPanel13 = new Panel("panel13", {
+			expandable: true,
+			expanded: false,
+			expandAnimation: false,
+			headerToolbar: new Toolbar({
+				design: "Transparent",
+				content: [
+					new Title({ text: "10th Header toolbar content ..." })
+				]
+			}),
+			content: [
+				new Text({ text: "10th This is a second Panel with expand animation set to false." })
+			]
+		}),
+		oPanel14 = new Panel("panel14", {
+			headerText: "Panel Header Text",
+			content: [
+				new Button("button1", { text: "Click me" })
+			]
+		}),
+		oPanel15 = new Panel("panel15", {
+			headerText: "Panel Header Text",
+			expandable: true,
+			expanded: true,
+			content: [
+				new Button("button2", { text: "Click me" })
+			]
+		}),
+		oPanel16 = new Panel("panel16", {
+			headerText: "Panel Header Text",
+			expandable: true,
+			headerToolbar: new Toolbar({
+				content: [
+					new Title({ text: "Panel Header Toolbar Title Text" })
+				]
+			}),
+			content: [
+				new Button("button3", { text: "Click me" })
+			]
+		}),
+		oPanelSticky = new Panel("panelSticky", {
+			headerText: "Panel Sticky Header Text",
+			expandable: true,
+			expanded: true,
+			stickyHeader: true,
+			headerToolbar: new Toolbar({
+				content: [
+					new Title({ text: "Panel Sticky Header Toolbar Title Text" })
+				]
+			}),
+			content: [
+				new Text("textSticky", { text: "I am content text of the Sticky Header panel " + lorem })
+			]
+		});
+
+	var oPage = new Page("page", {
+		title: "Panel Test Page",
+		content: [
+			oPanelSticky,
+			oPanel1,
+			oPanel2,
+			oPanel3,
+			oPanel4,
+			oPanel5,
+			oPanel6,
+			oPanel7,
+			oPanel8,
+			oPanel9,
+			oPanel10,
+			oPanel11,
+			oPanel12,
+			oPanel13,
+			oPanel14,
+			oPanel15,
+			oPanel16
+		]
+	}).addStyleClass("sapUiContentPadding");
+
+	var oApp = new App("myApp", {
+		initialPage: "page"
+	});
+
+	oApp.addPage(oPage);
+	oApp.placeAt("body");
+});
