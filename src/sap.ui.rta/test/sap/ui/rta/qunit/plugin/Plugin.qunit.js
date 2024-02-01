@@ -96,6 +96,13 @@ sap.ui.define([
 		});
 	});
 
+	function getEditableByPluginsArray(oOverlay) {
+		const mEditableByPlugins = oOverlay.getEditableByPlugins();
+		return Object.keys(mEditableByPlugins).filter(function(sPluginName) {
+			return mEditableByPlugins[sPluginName];
+		});
+	}
+
 	QUnit.module("Given the Plugin is initialized with move registered for a control", {
 		async beforeEach(assert) {
 			var done = assert.async();
@@ -153,28 +160,56 @@ sap.ui.define([
 			assert.notOk(this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
 
 			this.oPlugin.registerElementOverlay(this.oButtonOverlay);
-			assert.equal(this.oButtonOverlay.getEditableByPlugins().length, 1, "then a plugin got added");
-			assert.equal(this.oButtonOverlay.getEditableByPlugins()[0], "sap.ui.rta.plugin.Plugin", "then the name of the added plugin is correct");
+			assert.strictEqual(
+				getEditableByPluginsArray(this.oButtonOverlay).length,
+				1,
+				"then a plugin got added"
+			);
+			assert.strictEqual(
+				getEditableByPluginsArray(this.oButtonOverlay)[0],
+				"sap.ui.rta.plugin.Plugin",
+				"then the name of the added plugin is correct"
+			);
 			assert.ok(this.oButtonOverlay.getEditable(), "then the Overlay is editable");
 			assert.ok(this.oPlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is editable by this plugin");
 			assert.notOk(this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
 
 			this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
-			assert.equal(this.oButtonOverlay.getEditableByPlugins().length, 2, "then another plugin got added");
-			assert.equal(this.oButtonOverlay.getEditableByPlugins()[1], "sap.ui.rta.plugin.Remove", "then the name of the added plugin is correct");
+			assert.strictEqual(
+				getEditableByPluginsArray(this.oButtonOverlay).length,
+				2,
+				"then another plugin got added"
+			);
+			assert.strictEqual(
+				getEditableByPluginsArray(this.oButtonOverlay)[1],
+				"sap.ui.rta.plugin.Remove",
+				"then the name of the added plugin is correct"
+			);
 			assert.ok(this.oButtonOverlay.getEditable(), "then the Overlay is editable");
 			assert.ok(this.oPlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is editable by this plugin");
 			assert.ok(this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is editable by this plugin");
 
 			this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
-			assert.equal(this.oButtonOverlay.getEditableByPlugins().length, 1, "then a plugin got removed");
-			assert.equal(this.oButtonOverlay.getEditableByPlugins()[0], "sap.ui.rta.plugin.Plugin", "then the name of the plugin left is correct");
+			assert.strictEqual(
+				getEditableByPluginsArray(this.oButtonOverlay).length,
+				1,
+				"then a plugin got removed"
+			);
+			assert.strictEqual(
+				getEditableByPluginsArray(this.oButtonOverlay)[0],
+				"sap.ui.rta.plugin.Plugin",
+				"then the name of the plugin left is correct"
+			);
 			assert.ok(this.oButtonOverlay.getEditable(), "then the Overlay is editable");
 			assert.ok(this.oPlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is editable by this plugin");
 			assert.notOk(this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
 
 			this.oPlugin.deregisterElementOverlay(this.oButtonOverlay);
-			assert.equal(this.oButtonOverlay.getEditableByPlugins().length, 0, "then all plugins got removed");
+			assert.strictEqual(
+				getEditableByPluginsArray(this.oButtonOverlay).length,
+				0,
+				"then all plugins got removed"
+			);
 			assert.notOk(this.oButtonOverlay.getEditable(), "then the Overlay is not editable");
 			assert.notOk(this.oPlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
 			assert.notOk(this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
@@ -334,11 +369,15 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the controls are checked for a stable id and at least one plugin has been initialized", function(assert) {
-			assert.equal(this.oCheckControlIdSpy.callCount, 2, "then the utility method to check the control id has been already called element overlays");
+			assert.strictEqual(this.oCheckControlIdSpy.callCount, 2, "then the utility method to check the control id has been already called element overlays");
 			assert.strictEqual(this.oButtonOverlay.data("hasStableId"), true, "and the 'getElementHasStableId' property of the Overlay is set to true");
 			assert.ok(this.oPlugin.hasStableId(this.oButtonOverlay), "then if hasStableId is called again it also returns true");
-			assert.equal(this.oCheckControlIdSpy.callCount, 2, "but then the utility method to check the control ids is not called another time");
-			assert.equal(this.oButtonOverlay.getEditableByPlugins().length, 2, "then the overlay is editable by 2 plugins");
+			assert.strictEqual(this.oCheckControlIdSpy.callCount, 2, "but then the utility method to check the control ids is not called another time");
+			assert.strictEqual(
+				getEditableByPluginsArray(this.oButtonOverlay).length,
+				2,
+				"then the overlay is editable by 2 plugins"
+			);
 		});
 	});
 
@@ -539,18 +578,30 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _modifyPluginList is called multiple times", function(assert) {
-			assert.equal(this.oButtonOverlay.getEditableByPlugins(), "sap.ui.rta.plugin.Rename", "then initially the rename plugin is in the list");
+			assert.deepEqual(
+				getEditableByPluginsArray(this.oButtonOverlay),
+				["sap.ui.rta.plugin.Rename"],
+				"then initially the rename plugin is in the list"
+			);
 
 			this.oRemovePlugin._modifyPluginList(this.oButtonOverlay, true);
 			this.oRemovePlugin._modifyPluginList(this.oButtonOverlay, true);
 			this.oRenamePlugin._modifyPluginList(this.oButtonOverlay, true);
-			assert.deepEqual(this.oButtonOverlay.getEditableByPlugins(), ["sap.ui.rta.plugin.Rename", "sap.ui.rta.plugin.Remove"], "then both plugins are in the list once");
+			assert.deepEqual(
+				getEditableByPluginsArray(this.oButtonOverlay),
+				["sap.ui.rta.plugin.Remove", "sap.ui.rta.plugin.Rename"],
+				"then both plugins are in the list once"
+			);
 
 			this.oRemovePlugin._modifyPluginList(this.oButtonOverlay, false);
 			this.oRemovePlugin._modifyPluginList(this.oButtonOverlay, false);
 			this.oRenamePlugin._modifyPluginList(this.oButtonOverlay, false);
 			this.oRenamePlugin._modifyPluginList(this.oButtonOverlay, false);
-			assert.deepEqual(this.oButtonOverlay.getEditableByPlugins(), [], "then both plugins got deleted");
+			assert.deepEqual(
+				getEditableByPluginsArray(this.oButtonOverlay),
+				[],
+				"then both plugins got deleted"
+			);
 		});
 	});
 

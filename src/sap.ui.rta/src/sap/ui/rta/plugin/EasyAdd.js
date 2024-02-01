@@ -158,7 +158,7 @@ sap.ui.define([
 	 * @private
 	 */
 	EasyAdd.prototype._addButton = function(oOverlay, fnCallback, oOverlayDom, sControlName, bOverlayIsSibling) {
-		var bIsEditable = oOverlay.getEditableByPlugins().indexOf(this._retrievePluginName(bOverlayIsSibling)) > -1;
+		var bIsEditable = !!oOverlay.getEditableByPlugins()[this._retrievePluginName(bOverlayIsSibling)];
 		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 
 		var sId = `${oOverlay.getId()}-AddButton`;
