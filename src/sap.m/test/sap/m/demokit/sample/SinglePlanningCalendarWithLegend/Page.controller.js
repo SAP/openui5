@@ -25,6 +25,15 @@ function(Controller, JSONModel, unifiedLibrary, UI5Date) {
 						}
 						return aTypes;
 					})(),
+					secondaryTypes: (function() {
+						var aSecondaryType = [];
+						for (var key in CalendarDayType) {
+							aSecondaryType.push({
+								secondaryType: CalendarDayType[key]
+							});
+						}
+						return aSecondaryType;
+					})(),
 						specialDates: [
 						{
 							start: UI5Date.getInstance("2018", "6", "6"),
@@ -52,6 +61,12 @@ function(Controller, JSONModel, unifiedLibrary, UI5Date) {
 							start: UI5Date.getInstance("2018", "6", "13"),
 							end: UI5Date.getInstance("2018", "6", "13", "23", "59"),
 							type: "Type09"
+						},
+						{
+							start: UI5Date.getInstance("2018", "6", "14"),
+							end: UI5Date.getInstance("2018", "6", "14"),
+							type: "Type10",
+							secondaryType: "Working"
 						},
 						{
 							start: UI5Date.getInstance("2018", "6", "17"),

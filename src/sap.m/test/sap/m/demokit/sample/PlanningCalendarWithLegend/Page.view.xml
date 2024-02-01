@@ -50,7 +50,8 @@
 							<unified:DateTypeRange
 								startDate="{start}"
 								endDate="{end}"
-								type="{type}"/>
+								type="{type}"
+								secondaryType="{secondaryType}"/>
 						</specialDates>
 						<appointments>
 							<unified:CalendarAppointment
