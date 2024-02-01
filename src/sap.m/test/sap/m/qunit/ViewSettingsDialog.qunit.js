@@ -4356,4 +4356,67 @@ sap.ui.define([
 		oVSD.destroy();
 	});
 
+	QUnit.test("There is no default title set when there is no subheader", function (assert) {
+		var oResourceBundle = Library.getResourceBundleFor("sap.m"),
+			oVSD = new ViewSettingsDialog({
+			filterItems: [
+				new ViewSettingsFilterItem({
+					text: "Filter 1",
+					items: [
+						new ViewSettingsItem({
+							key:"noEmptyString",
+							text: ""
+						}),
+						new ViewSettingsItem({
+							key:"Contacts",
+							text: "Contacts"
+						}),
+						new ViewSettingsItem({
+							key:"test",
+							text: "Interactions Rating"
+						})
+					]
+				}),
+				new ViewSettingsFilterItem({
+					text: "Filter 2",
+					items: [
+						new ViewSettingsItem({
+							key:"noEmptyString",
+							text: ""
+						}),
+						new ViewSettingsItem({
+							key:"Contacts",
+							text: "Contacts"
+						}),
+						new ViewSettingsItem({
+							key:"test",
+							text: "Interactions Rating"
+						})
+					]
+				})
+			]
+		}).placeAt("content");
+
+		// act
+		oVSD.open();
+		oCore.applyChanges();
+
+		// assert
+		assert.notOk(oVSD._hasSubHeader(), "There is no sub-header");
+		assert.strictEqual(oVSD._getTitleLabel().getText(), oResourceBundle.getText("VIEWSETTINGS_TITLE_FILTER"), "The dialog title is 'Filter'");
+
+		// act
+		oVSD._getDialog().close();
+		oVsdConfig.addSortItems(oVSD);
+		oVSD.open();
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(oVSD._hasSubHeader(), "There is sub-header");
+		assert.strictEqual(oVSD._getTitleLabel().getText(), oResourceBundle.getText("VIEWSETTINGS_TITLE"), "The dialog title is 'View Settings'");
+
+		// cleanup
+		oVSD.destroy();
+	});
+
 });
