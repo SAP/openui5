@@ -36,6 +36,7 @@
 							startDate="{start}"
 							endDate="{end}"
 							type="{type}"
+							secondaryType="{secondaryType}"
 							color="{color}"/>
 				</specialDates>
 				<appointments>
