@@ -1,0 +1,140 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mdc="sap.ui.mdc"
+		xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
+		xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:form="sap.ui.layout.form"
+		controllerName="sap.ui.mdc.demokit.sample.FieldValueHelpTypes.Controller">
+
+	<form:SimpleForm layout="ColumnLayout" editable="true">
+		<form:title>
+			<core:Title text="Fields with ValueHelp"/>
+		</form:title>
+
+		<Label text="Field with only typeahead"/>
+		<mdc:Field id="F-TypeAhead" value="{path: 'data>/value1', type: 'sap.ui.model.type.String', constraints: {maxLength: 2}}" editMode="Editable" display="Description" valueHelp="VH-TypeAhead"/>
+
+		<Label text="Field with typeahead and dropdown"/>
+		<mdc:Field id="F-TypeAheadDropdown" value="{path: 'data>/value2', type: 'sap.ui.model.type.String', constraints: {maxLength: 2}}" editMode="Editable" display="Description" valueHelp="VH-TypeAheadDropdown"/>
+
+		<Label text="Field with typeahead and dropdown, opens on focus"/>
+		<mdc:Field id="F-TypeAheadDropdownFocus" value="{path: 'data>/value3', type: 'sap.ui.model.type.String', constraints: {maxLength: 2}}" editMode="Editable" display="Description" valueHelp="VH-TypeAheadDropdownFocus"/>
+
+		<Label text="Field with only dropdown (no typeahead), opens on click"/>
+		<mdc:Field id="F-DropdownOnly" value="{path: 'data>/value4', type: 'sap.ui.model.type.String', constraints: {maxLength: 2}}" editMode="Editable" display="Description" valueHelp="VH-DropdownOnly"/>
+
+		<Label text="Field with only dialog (no typeahead)"/>
+		<mdc:Field id="F-DialogOnly" value="{path: 'data>/value5', type: 'sap.ui.model.type.String', constraints: {maxLength: 2}}" editMode="Editable" display="Description" valueHelp="VH-DialogOnly"/>
+
+		<Label text="Field with dialog and typeahead"/>
+		<mdc:Field id="F-Countries" value="{path: 'data>/value6', type: 'sap.ui.model.type.String', constraints: {maxLength: 2}}" editMode="Editable" display="Description" valueHelp="VH-Countries"/>
+
+		<form:dependents>
+			<mdc:ValueHelp id="VH-TypeAhead"
+				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"]\}\}'>
+				<mdc:typeahead>
+					<mdcValueHelp:Popover id="VH-TypeAhead-Pop">
+						<mdcValueHelpContent:MTable id="VH-TypeAhead-Pop-MTable"
+							keyPath="key"
+							descriptionPath="name"
+							caseSensitive="true"
+							useAsValueHelp="false">
+							<Table id="VH-TypeAhead-Pop-Table" items="{path: 'data>/countries'}" width="13rem" mode="SingleSelectMaster">
+								<columns>
+									<Column width="3rem">
+										<Label text="ID"/>
+									</Column>
+									<Column width="10rem">
+										<Label text="Name"/>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<Text text="{path: 'data>key', type:'sap.ui.model.type.String', constraints: {maxLength: 2}}"/>
+										<Text text="{path: 'data>name', type:'sap.ui.model.type.String'}"/>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcValueHelpContent:MTable>
+					</mdcValueHelp:Popover>
+				</mdc:typeahead>
+			</mdc:ValueHelp>
+
+			<mdc:ValueHelp id="VH-TypeAheadDropdown"
+				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{\}\}'>
+				<mdc:typeahead>
+					<mdcValueHelp:Popover id="VH-TypeAheadDropdown-Pop">
+						<mdcValueHelpContent:FixedList id="H-TypeAheadDropdown-Pop-FixedList" items="{path: 'data>/countries'}" >
+							<mdcValueHelpContent:FixedListItem text="{path: 'data>name', type:'sap.ui.model.type.String'}" additionalText="{path: 'data>key', type:'sap.ui.model.type.String', constraints: {maxLength: 2}}" key="{path: 'data>key', type:'sap.ui.model.type.String', constraints: {maxLength: 2}}"/>
+						</mdcValueHelpContent:FixedList>
+					</mdcValueHelp:Popover>
+				</mdc:typeahead>
+			</mdc:ValueHelp>
+
+			<mdc:ValueHelp id="VH-TypeAheadDropdownFocus"
+				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"], "shouldOpenOnFocus": true\}\}'>
+				<mdc:typeahead>
+					<mdcValueHelp:Popover id="VH-TypeAheadDropdownFocus-Pop">
+						<mdcValueHelpContent:MTable id="VH-TypeAheadDropdownFocus-Pop-MTable"
+							keyPath="key"
+							descriptionPath="name"
+							caseSensitive="false"
+							useAsValueHelp="true"/> <!-- create table via delegate-->
+					</mdcValueHelp:Popover>
+				</mdc:typeahead>
+			</mdc:ValueHelp>
+
+			<mdc:ValueHelp id="VH-DropdownOnly"
+				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"], "shouldOpenOnClick": true\}\}'>
+				<mdc:typeahead>
+					<mdcValueHelp:Popover id="VH-DropdownOnly-Pop">
+						<mdcValueHelpContent:FixedList id="H-DropdownOnly-Pop-FixedList" filterList="false" useFirstMatch="false" items="{path: 'data>/countries'}" >
+							<mdcValueHelpContent:FixedListItem text="{path: 'data>name', type:'sap.ui.model.type.String'}" additionalText="{path: 'data>key', type:'sap.ui.model.type.String', constraints: {maxLength: 2}}" key="{path: 'data>key', type:'sap.ui.model.type.String', constraints: {maxLength: 2}}"/>
+						</mdcValueHelpContent:FixedList>
+					</mdcValueHelp:Popover>
+				</mdc:typeahead>
+			</mdc:ValueHelp>
+
+			<mdc:ValueHelp id="VH-DialogOnly"
+				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"]\}\}'>
+				<mdc:dialog>
+					<mdcValueHelp:Dialog id="VH-DialogOnly-Dialog" title="Countries">
+						<mdcValueHelpContent:MTable id="VH-DialogOnly-Dialog-MTable"
+							keyPath="key"
+							descriptionPath="name"
+							caseSensitive="true">
+							 <!-- create table via delegate-->
+						</mdcValueHelpContent:MTable>
+					</mdcValueHelp:Dialog>
+				</mdc:dialog>
+			</mdc:ValueHelp>
+
+			<mdc:ValueHelp id="VH-Countries"
+				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"]\}\}'>
+				<mdc:typeahead>
+					<mdcValueHelp:Popover id="VH-Countries-Pop">
+						<mdcValueHelpContent:MTable id="VH-Countries-Pop-MTable"
+							keyPath="key"
+							descriptionPath="name"
+							caseSensitive="true"
+							useAsValueHelp="false">
+ 							<!-- create table via delegate-->
+ 						</mdcValueHelpContent:MTable>
+					</mdcValueHelp:Popover>
+				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcValueHelp:Dialog id="VH-Countries-Dialog" title="Countries">
+						<mdcValueHelpContent:MTable id="VH-Countries-Dialog-MTable"
+							keyPath="key"
+							descriptionPath="name"
+							caseSensitive="true">
+							 <!-- create table via delegate-->
+						</mdcValueHelpContent:MTable>
+					</mdcValueHelp:Dialog>
+				</mdc:dialog>
+			</mdc:ValueHelp>
+		</form:dependents>
+	</form:SimpleForm>
+</mvc:View>
