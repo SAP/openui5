@@ -277,7 +277,6 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 .sapMSticky > .sapMListHdr,
 .sapMSticky > .sapMListInfoTBarContainer {
 	position: sticky;
-	position: -webkit-sticky;
 }
 
 /* sticky headerToolbar/headerText background when transparent */
@@ -309,6 +308,20 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 /* top: 3rem sticky conditions : 2nd sticky elements*/
 .sapMSticky3 > .sapMListInfoTBarContainer {
 	top: @sapUiElementLineHeight;
+}
+
+/* handle transparent background on rounded corners to not show underlaying elements on scrolling */
+._sap_m_ListBase_Rounded_HeaderToolbarMixin() {
+	.sapMSticky:has(> .sapMListHdr)::before {
+		position: sticky;
+		content: "";
+		display: block;
+		background: @sapUiGroupContentBackground;
+		height: @sapUiElementBorderCornerRadius;
+		margin-bottom: -@sapUiElementBorderCornerRadius; /* prevent new empty space above sticky element */
+		top: 0;
+		z-index: 3;
+	}
 }
 
 /* Compact size */
