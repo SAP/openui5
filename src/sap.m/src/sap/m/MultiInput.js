@@ -309,6 +309,9 @@ function(
 				case "insert":
 					oToken.attachEvent("_change", this.invalidate, this);
 
+					/**
+					 * @deprecated As of version 1.46
+					 */
 					this.fireTokenChange({
 						type: Tokenizer.TokenChangeType.Added,
 						token: oToken,
@@ -320,6 +323,9 @@ function(
 					var sType = oChange.object.getTokens().length ? Tokenizer.TokenChangeType.Removed : Tokenizer.TokenChangeType.RemovedAll;
 					oToken.detachEvent("_change", this.invalidate, this);
 
+					/**
+					 * @deprecated As of version 1.46
+					 */
 					this.fireTokenChange({
 						type: sType,
 						token: oToken,
@@ -957,6 +963,9 @@ function(
 							type: Tokenizer.TokenUpdateType.Added
 						});
 
+						/**
+						 * @deprecated As of version 1.46
+						 */
 						this.fireTokenChange({
 							addedTokens : aAddedTokens,
 							removedTokens : [],
@@ -1401,6 +1410,9 @@ function(
 		}, this);
 
 		// compatibility
+		/**
+		 * @deprecated As of version 1.46
+		 */
 		this.fireTokenChange({
 			type: Tokenizer.TokenChangeType.TokensChanged,
 			addedTokens: aTokens,
@@ -1893,6 +1905,9 @@ function(
 				type : Tokenizer.TokenUpdateType.Added
 			});
 
+			/**
+			 * @deprecated As of version 1.46
+			 */
 			// added for backward compatibility
 			this.fireTokenChange({
 				addedTokens : [oToken],

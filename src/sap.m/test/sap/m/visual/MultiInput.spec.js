@@ -26,7 +26,7 @@ describe('sap.m.MultiInput', function() {
 	// MultiInput invalidated
 	it("should invalidate the MultiInput, so all MI elements are there", function () {
 		browser.executeScript('document.getElementById("dataBoundMultiInput").scrollIntoView()').then(function() {
-			browser.executeScript('sap.ui.getCore().byId("dataBoundMultiInput").getTokens()[1].setText("Lorem ipsulum")').then(function() {
+			browser.executeScript('sap.ui.core.Element.getElementById("dataBoundMultiInput").getTokens()[1].setText("Lorem ipsulum")').then(function() {
 				expect(takeScreenshot(element(by.id("dataBoundMultiInput")))).toLookAs("token-update-text");
 			});
 		});
@@ -93,7 +93,7 @@ describe('sap.m.MultiInput', function() {
 		browser.executeScript("arguments[0].scrollIntoView()", oMultiInput).then(function () {
 			expect(takeScreenshot()).toLookAs("multiinput_nmore_initial");
 
-			browser.executeScript("sap.ui.getCore().byId('mi-placeholder').setTokens([])");
+			browser.executeScript("sap.ui.core.Element.getElementById('mi-placeholder').setTokens([])");
 			expect(takeScreenshot()).toLookAs("multiinput_placeholder");
 
 			oMultiInput.click();
