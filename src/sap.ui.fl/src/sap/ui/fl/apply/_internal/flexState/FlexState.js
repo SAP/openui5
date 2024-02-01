@@ -287,7 +287,9 @@ sap.ui.define([
 					return oExistingFlexObject;
 				}
 				// If unknown change definitions are found, throw error (storage does not create flex objects)
-				throw new Error("Error updating runtime persistence: storage returned unknown flex objects");
+				const sErrorText = "Error updating runtime persistence: storage returned unknown flex objects";
+				Log.error(sErrorText);
+				throw new Error(sErrorText);
 			})
 		});
 
@@ -410,8 +412,9 @@ sap.ui.define([
 		});
 	}
 
+	// TODO: the additional safeguard for the runtimePersistence will not be necessary after the FlexState.initialize rework
 	FlexState.getRuntimeOnlyData = function(sReference) {
-		return _mInstances[sReference]?.runtimePersistence.runtimeOnlyData || {};
+		return _mInstances[sReference]?.runtimePersistence?.runtimeOnlyData || {};
 	};
 
 	/**
