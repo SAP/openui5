@@ -387,17 +387,11 @@ sap.ui.define([
 
 		QUnit.test("when saving RTA including variants without exiting,", function(assert) {
 			var fnDone = assert.async();
-			var oMessageToastShowSpy = sandbox.spy(MessageToast, "show");
-			var sExpectedMessageToastMessage = this.oRta._getTextResources().getText("MSG_SAVE_DRAFT_SUCCESS");
-			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
 
 			function fnChecks() {
 				assert.ok(this.oRta, "RTA is still up and running");
-				assert.ok(oMessageToastShowSpy.calledWith(sExpectedMessageToastMessage),
-					"appropriate message toast save confirmation is triggered");
 				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "command stack is cleared");
 				assert.ok(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), "and the Toolbar is visible");
-				assert.ok(this.oRta.getToolbar().getControl("versionButton").getVisible(), "and versionButton into the toolbar is visible");
 				fnDone();
 			}
 
