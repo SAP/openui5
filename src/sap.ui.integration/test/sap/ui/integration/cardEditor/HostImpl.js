@@ -34,7 +34,7 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 					}
 				];
 				for (var i = 0; i < 1000; i++) {
-					items.push({name: i + 1});
+					items.push({name: (i + 1) + ""});
 				}
 				resolve(items);
 			}, 1000);

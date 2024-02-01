@@ -3518,6 +3518,27 @@ sap.ui.define([
 										key: 'i18n.properties'
 									}
 								]
+							},
+							{
+								title: 'Destinations with sorters and filters',
+								key: 'designtimeDestinationsSorterAndFilter',
+								files: [
+									{
+										url: '/samples/designtimeDestinationsSorterAndFilter/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimeDestinationsSorterAndFilter/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimeDestinationsSorterAndFilter/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
 							}
 						]
 					}
