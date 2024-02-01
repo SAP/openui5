@@ -265,10 +265,7 @@ sap.ui.define([
 	 * To be implemented by subclasses.
 	 * @abstract
 	 */
-	BaseContent.prototype.applyConfiguration = function () {
-		//workaround until actions refactor
-		this.fireEvent("_actionContentReady");
-	};
+	BaseContent.prototype.applyConfiguration = function () { };
 
 	BaseContent.prototype.setLoadDependenciesPromise = function (oPromise) {
 		this._pLoadDependencies = oPromise;
