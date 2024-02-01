@@ -223,7 +223,7 @@ sap.ui.define([
 			rm.openEnd();
 
 			if (oCell && bRenderCell) {
-				this.applyAriaLabelledBy(oColumn.getHeader(), oCell, true);
+				this.applyAriaLabelledBy(oColumn.getHeader(), oCell);
 				rm.renderControl(oCell);
 			}
 
@@ -239,14 +239,12 @@ sap.ui.define([
 		rm.close("td");
 	};
 
-	ColumnListItemRenderer.applyAriaLabelledBy = function(oHeader, oCell, bRemove) {
+	ColumnListItemRenderer.applyAriaLabelledBy = function(oHeader, oCell) {
 		if (!oHeader || !oHeader.getText || !oHeader.getVisible() || !oCell.getAriaLabelledBy) {
 			return;
 		}
 
-		if (bRemove) {
-			oCell.removeAriaLabelledBy(oHeader);
-		} else if (!oCell.getAriaLabelledBy().includes(oHeader.getId())) {
+		if (!oCell.getAriaLabelledBy().includes(oHeader.getId())) {
 			oCell.addAriaLabelledBy(oHeader);
 		}
 	};
