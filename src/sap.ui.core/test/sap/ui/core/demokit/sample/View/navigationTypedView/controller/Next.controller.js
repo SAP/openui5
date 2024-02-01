@@ -11,8 +11,8 @@ sap.ui.define([
 			} else {
 				// User visited this Next view directly via a deep link.
 				sap.ui.require(["sap/ui/core/UIComponent"], (UIComponent) => {
-					const router = UIComponent.getRouterFor(oController);
-					router.navTo(sHomeRouteName); // Allow the user to navigate up to home.
+					const oRouter = UIComponent.getRouterFor(oController);
+					oRouter.navTo(sHomeRouteName); // Allow the user to navigate up to home.
 				});
 			}
 		}

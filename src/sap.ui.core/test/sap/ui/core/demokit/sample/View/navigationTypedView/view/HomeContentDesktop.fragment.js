@@ -4,7 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	return {
-		createContent: (oController) => {
+		createContent(oController) {
 			return new Text({
 				id: oController.createId("textFromFragment"),
 				text: "Some desktop content.."

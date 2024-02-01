@@ -10,8 +10,11 @@ sap.ui.define([
 	const { ButtonType } = sapMLibrary;
 
 	return View.extend("sap.ui.core.sample.View.navigationTypedView.view.HomeView", {
-		getControllerName: () => "sap.ui.core.sample.View.navigationTypedView.controller.Home",
-		// getAutoPrefixId: () => true has no effect if createContent returns a Promise. Use createId instead.
+		getControllerName() {
+			return "sap.ui.core.sample.View.navigationTypedView.controller.Home";
+		},
+
+		// getAutoPrefixId returning true has no effect here since createContent returns a Promise. Use createId instead.
 
 		async createContent(oController) {
 			this.setHeight("100%");
