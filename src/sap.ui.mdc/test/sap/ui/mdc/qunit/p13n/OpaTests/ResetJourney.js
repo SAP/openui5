@@ -78,7 +78,7 @@ sap.ui.define([
         Then.checkResetEnablementInColumnMenu(false);
 
         //do some changes --> reset enabled
-		When.onTheAppMDCTable.iSelectColumns(["Name", "Founding Year", "Changed By", "Created On", "Country"], false);
+		When.P13nActions.iSelectColumns(["Name", "Founding Year", "Changed By", "Created On", "Country"], false);
         Then.checkResetEnablementInColumnMenu(true);
         When.onTheAppMDCTable.iConfirmColumnMenuItemContent();
 

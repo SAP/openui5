@@ -3,7 +3,7 @@
 
 <head>
 
-    <title>Application under test</title>
+    <title>MDCTable with ODataV4 (Hierarchy)</title>
     <meta charset="utf-8">
 
     <script
@@ -17,7 +17,7 @@
             data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
             data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'
             data-sap-ui-resourceroots='{
-                "appTreeTableODataV4": "./",
+                "appODataV4Hierarchy": "./",
 				"sap.ui.mdc.tableOpaTests": "../../../../../../../../test-resources/sap/ui/mdc/qunit/table/OpaTests",
 				"sap.ui.mdc.testutils": "../../../../../../../../test-resources/sap/ui/mdc/testutils",
 				"delegates": "../../../../../../../../test-resources/sap/ui/mdc/delegates",
@@ -26,8 +26,8 @@
     </script>
 </head>
 
-<body class="sapUiBody">
-    <div data-sap-ui-component data-name="appTreeTableODataV4" data-id="container" data-settings='{"id" : "appTreeTableODataV4"}'></div>
+<body class="sapUiBody sapUiSizeCozy">
+    <div data-sap-ui-component data-name="appODataV4Hierarchy" data-id="container" data-settings='{"id" : "appODataV4Hierarchy"}'></div>
 </body>
 
 </html>

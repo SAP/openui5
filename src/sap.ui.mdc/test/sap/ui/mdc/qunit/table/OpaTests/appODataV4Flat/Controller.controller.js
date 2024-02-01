@@ -4,10 +4,8 @@ sap.ui.define([
 	/** @type sap.ui.core.mvc.Controller */ Controller) {
 	"use strict";
 
-	return Controller.extend("sap.ui.mdc.tableOpaTests.appTableODataV4.Controller", {
-
+	return Controller.extend("sap.ui.mdc.tableOpaTests.appODataV4Flat.Controller", {
 		onInit: function() {
-			this.getView().bindElement("/ProductList");
 		},
 
 		onBeforeExport: function(oEvt) {
@@ -18,6 +16,5 @@ sap.ui.define([
 			// Disable useBatch as the Mockserver doesn't support it
 			mExcelSettings.dataSource.useBatch = false;
 		}
-
 	});
 });

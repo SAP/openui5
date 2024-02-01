@@ -10,9 +10,9 @@ sap.ui.define([
 	/** @type mockserver.mockServer */ MockServer) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.mdc.tableOpaTests.appTableODataV4.Component", {
+	return UIComponent.extend("sap.ui.mdc.tableOpaTests.appODataV4Flat.Component", {
 		metadata: {
-			id: "appTableODataV4",
+			id: "appODataV4Flat",
 			manifest: "json"
 		},
 
