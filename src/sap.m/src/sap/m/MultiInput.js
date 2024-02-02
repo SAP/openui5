@@ -1705,6 +1705,25 @@ function(
 		}
 	};
 
+
+	/**
+	 * A helper function calculating if the SuggestionsPopover should be opened on mobile.
+	 *
+	 * @protected
+	 * @param {jQuery.Event} oEvent Ontap event.
+	 * @returns {boolean} If the popover should be opened.
+	 */
+	MultiInput.prototype.shouldSuggetionsPopoverOpenOnMobile = function(oEvent) {
+		var oTokenizer = this.getAggregation("tokenizer");
+
+		return this.isMobileDevice()
+			&& this.getEditable()
+			&& this.getEnabled()
+			&& (this.getShowSuggestion() || oTokenizer.getHiddenTokensCount() || oTokenizer.hasOneTruncatedToken())
+			&& (!this._bClearButtonPressed)
+			&& oEvent.target.id !== this.getId() + "-vhi";
+	};
+
 	/**
 	 * Function calculates the available space for the tokenizer
 	 *
