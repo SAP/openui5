@@ -813,9 +813,6 @@ sap.ui.define([
 			},
 			MultiComboBox: {
 				title: "QUnit tests: sap.m.MultiComboBox",
-				sinon: {
-					useFakeTimers: true
-				},
 				ui5: {
 					theme: "sap_horizon"
 				}
