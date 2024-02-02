@@ -633,6 +633,13 @@ sap.ui.define([
 			</Record>\
 		</Annotation>\
 	</Annotations>\
+	<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.Item/CompanyCode">\
+		<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+			<Record>\
+				<PropertyValue Property="CollectionPath" String="VL_SH_H_T001"/>\
+			</Record>\
+		</Annotation>\
+	</Annotations>\
 </Schema>\
 </edmx:DataServices>\
 </edmx:Edmx>\
@@ -3049,6 +3056,34 @@ sap.ui.define([
 			});
 		}
 	);
+
+	//*********************************************************************************************
+	// SNOW: DINC0054202
+	// Local customer annotations for value help must not prevent requesting VL metadata
+	QUnit.test("getODataValueLists: partial VL metadata due to local customer annotations", function (assert) {
+		const that = this;
+
+		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", "/FAR_CUSTOMER_LINE_ITEMS/annotations",
+				function (oMetaModel) {
+			const oContext = oMetaModel.getMetaContext("/Items('foo')/CompanyCode");
+			const oMetaData = oContext.getObject();
+			// via local annotations some VL metadata is already available
+			assert.strictEqual(oMetaData["sap:value-list"], "standard");
+			assert.deepEqual(oMetaData["com.sap.vocabularies.Common.v1.ValueList"], {
+				CollectionPath : {String : "VL_SH_H_T001"}
+			});
+			// but VL EntitySet is not yet loaded
+			assert.strictEqual(oMetaModel.getODataEntitySet("VL_SH_H_T001"), null);
+			const fnSpy = that.spy(oMetaModel, "getODataEntitySet");
+
+			// code under test
+			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
+				assert.ok(fnSpy.calledWithExactly("VL_SH_H_T001"));
+				assert.strictEqual(mValueLists[""].CollectionPath.String, "VL_SH_H_T001");
+				assert.strictEqual(oMetaModel.getODataEntitySet("VL_SH_H_T001").name, "VL_SH_H_T001");
+			});
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("getODataValueLists: addAnnotationUrl rejects", function (assert) {
