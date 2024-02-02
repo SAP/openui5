@@ -2697,8 +2697,8 @@ sap.ui.define([
 		const oFieldInfo = this.getFieldInfo();
 		if (oFieldInfo) {
 			oFieldInfo.getTriggerHref().then((sHref) => {
-				if (!sHref) {
-					oFieldInfo.open(this.getCurrentContent()[0]);
+				if (!sHref) { // in this case sap.m.Link prevents the default of the press event
+					oFieldInfo.open(this.getCurrentContent()[0], oEvent);
 					_setAriaAttributes.call(this, true);
 				}
 			});

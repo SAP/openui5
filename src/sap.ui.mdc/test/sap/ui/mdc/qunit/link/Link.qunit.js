@@ -574,6 +574,8 @@ sap.ui.define([
 
 		const fnMessageToastSpy = sinon.spy(MessageToast, "show");
 		const sBaseUrl = window.location.href;
+		// eslint-disable-next-line prefer-const
+		let oMLink, fnLinkOnNavigationCallbackSpy, fnPanelOnNavigateSpy;
 
 		const oLink = new Link({
 			delegate: {
@@ -593,7 +595,10 @@ sap.ui.define([
 					beforeNavigationCallback: function() {
 						return new Promise(function(resolve) {
 							MessageToast.show("test");
-							assert.ok(fnMessageToastSpy.calledOnce);
+							assert.ok(fnMessageToastSpy.calledOnce, "MessageToast.show called once.");
+							assert.ok(fnPanelOnNavigateSpy.notCalled, "Panel._onNavigate not called.");
+							assert.ok(fnLinkOnNavigationCallbackSpy.notCalled, "Link._onNavigationCallback not called.");
+
 							resolve(true);
 						});
 					}
@@ -601,7 +606,13 @@ sap.ui.define([
 			}
 		});
 
+		fnLinkOnNavigationCallbackSpy = sinon.spy(oLink, "_onNavigationCallback");
+
 		const fnCheckURL = function() {
+			assert.ok(fnPanelOnNavigateSpy.calledOnce, "Panel._onNavigate called once.");
+			assert.ok(fnPanelOnNavigateSpy.calledWith(), oMLink, "");
+			assert.ok(fnLinkOnNavigationCallbackSpy.calledOnce, "Link._onNavigationCallback called once.");
+			assert.ok(fnLinkOnNavigationCallbackSpy.calledWith(), oMLink, "");
 			window.removeEventListener('hashchange', fnCheckURL);
 			const oResultUrl = window.location.href;
 			assert.equal(oResultUrl, sBaseUrl + "#Action01", "Navigation happened");
@@ -609,13 +620,17 @@ sap.ui.define([
 		};
 
 		oLink.getContent().then(async function(oPanel) {
+			fnPanelOnNavigateSpy = sinon.spy(oPanel, "_onNavigate");
 			oPanel.placeAt("qunit-fixture");
 			await nextUIUpdate();
 			assert.ok(fnMessageToastSpy.notCalled);
+			assert.ok(fnPanelOnNavigateSpy.notCalled, "Panel._onNavigate not called.");
+			assert.ok(fnLinkOnNavigationCallbackSpy.notCalled, "Link._onNavigationCallback not called.");
 
 			window.addEventListener('hashchange', fnCheckURL);
 
-			oPanel._getLinkControls()[0].firePress();
+			oMLink = oPanel._getLinkControls()[0];
+			oMLink.firePress();
 		});
 	});
 
@@ -869,7 +884,7 @@ sap.ui.define([
 							initiallyVisible: true
 						})
 					],
-					additionalContent: [ oAdditionalContentText ]
+					additionalContent: [oAdditionalContentText]
 				}
 			}
 		});
@@ -899,7 +914,7 @@ sap.ui.define([
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
-					additionalContent: [ oAdditionalContentText ]
+					additionalContent: [oAdditionalContentText]
 				}
 			}
 		});

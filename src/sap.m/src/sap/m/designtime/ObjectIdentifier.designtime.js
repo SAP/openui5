@@ -32,10 +32,6 @@ sap.ui.define([
 					if (!oWrapper) {
 						return;
 					}
-					if (!oWrapper.isSettingsAvailable()) {
-						Log.error("sap.m.ObjectIdentifier.designtime: 'settings' action is not available");
-						return;
-					}
 					return {
 						handler: function(oObjectIdentifier, fGetUnsavedChanges) {
 							return oWrapper.execute(oObjectIdentifier, fGetUnsavedChanges);

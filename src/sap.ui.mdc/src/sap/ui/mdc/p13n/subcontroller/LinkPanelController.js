@@ -63,6 +63,7 @@ sap.ui.define([
 		if (oPanel.getBeforeNavigationCallback) {
 			oPanel.getBeforeNavigationCallback()(oEvent).then((bNavigate) => {
 				if (bNavigate) {
+					oPanel._onNavigate(oSource);
 					oPanel.getMetadata()._oClass.navigate(sHref);
 				}
 			});
@@ -75,6 +76,7 @@ sap.ui.define([
 				],
 				onClose: function(oAction) {
 					if (oAction === MessageBox.Action.YES) {
+						oPanel._onNavigate(oSource);
 						oPanel.getMetadata()._oClass.navigate(sHref);
 					}
 				},

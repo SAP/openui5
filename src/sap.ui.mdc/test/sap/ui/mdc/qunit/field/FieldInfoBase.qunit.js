@@ -123,7 +123,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("open without parent", function(assert) {
+	QUnit.test("open without parent", async function(assert) {
 
 		oField.removeDependent(oFieldInfoBase);
 
@@ -135,7 +135,7 @@ sap.ui.define([
 
 		let bExceptionRaised = false;
 		try {
-			oFieldInfoBase.open();
+			await oFieldInfoBase.open();
 		} catch (e) {
 			bExceptionRaised = true;
 		}

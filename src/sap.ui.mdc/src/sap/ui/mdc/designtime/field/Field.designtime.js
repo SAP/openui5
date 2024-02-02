@@ -10,7 +10,6 @@ sap.ui.define([
 ], (Element, Utils, FlexRuntimeInfoAPI, Engine) => {
 	"use strict";
 
-
 	return {
 		properties: {
 			value: {
