@@ -9,17 +9,9 @@ sap.ui.define([
 	"use strict";
 
 
-	// shortcut for sap.m.Size
-	var Size = library.Size;
-
-
-	/**
-	 * @deprecated Since version 1.38.0.
-	 */
 	QUnit.module("Basic rendering", {
 		beforeEach : function() {
 			this.oNewsContent = new NewsContent("news-cnt", {
-				size : Size.M,
 				contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
 				subheader : "August 21, 2013",
 				tooltip : "Test tooltip",
@@ -68,13 +60,9 @@ sap.ui.define([
 		assert.equal(document.getElementById("news-cnt-subheader-text").innerHTML, "My <u style=\"position: static !important;\">new</u> Text", "Inner text is parsed in DOM");
 	});
 
-	/**
-	 * @deprecated Since version 1.38.0.
-	 */
 	QUnit.module("Functional tests", {
 		beforeEach : function() {
 			this.oNewsContent = new NewsContent({
-				size : Size.M
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -147,13 +135,10 @@ sap.ui.define([
 		assert.deepEqual(sTooltip.getText(), "Tooltip", "Tooltip is an object with a text property containing the correct string"); //TODO
 	});
 
-	/**
-	 * @deprecated Since version 1.38.0.
-	 */
+
 	QUnit.module("Events test", {
 		beforeEach : function() {
 			this.oNewsContent = new NewsContent({
-				size : Size.M,
 				contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
 				subheader : "August 21, 2013",
 				tooltip : "Test tooltip"
