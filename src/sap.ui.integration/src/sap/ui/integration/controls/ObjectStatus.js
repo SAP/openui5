@@ -47,6 +47,8 @@ sap.ui.define([
 				this.addStyleClass("sapMObjStatusShowCustomIcon");
 			}
 		}
+
+		this.addStyleClass("sapUiIntObjStatus");
 	};
 
 	return ObjectStatus;
