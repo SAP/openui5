@@ -4105,10 +4105,12 @@ sap.ui.define([
 	 * @param {string} sGroupId ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {function} fnSuccess Success callback function
 	 * @param {function} fnError Error callback function
+	 * @param {string} [mChangeHeaders]
+	 *   The map of headers to add to each change request within the $batch requests created
 	 * @returns {object|array} oRequestHandle The request handle: array if multiple requests are sent
 	 * @private
 	 */
-	ODataModel.prototype._processRequestQueue = function(mRequests, sGroupId, fnSuccess, fnError){
+	ODataModel.prototype._processRequestQueue = function(mRequests, sGroupId, fnSuccess, fnError, mChangeHeaders){
 		var that = this, sPath,
 			aRequestHandles = [];
 
@@ -4169,6 +4171,7 @@ sap.ui.define([
 							aChanges = [];
 							for (i = 0; i < aChangeSet.length; i++) {
 								oCurrentRequest = aChangeSet[i].request;
+								_Helper.extend(oCurrentRequest.headers, mChangeHeaders);
 								//increase laundering
 								sPath = '/' + that.getKey(oCurrentRequest.data);
 								that.increaseLaundering(sPath, oCurrentRequest.data);
@@ -6224,7 +6227,47 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.submitChanges = function(mParameters) {
-		var mChangedEntities, fnError, sGroupId, sMethod, oRequestHandle, vRequestHandleInternal,
+		return this.submitChangesWithChangeHeaders(mParameters && {
+			batchGroupId : mParameters.batchGroupId,
+			error : mParameters.error,
+			groupId : mParameters.groupId,
+			merge : mParameters.merge,
+			success : mParameters.success
+		});
+	};
+
+	/**
+	 * Submits all deferred requests just like {@link #submitChanges} but in addition adds the given headers to
+	 * all requests in the $batch request(s).
+	 *
+	 * @param {object} [mParameters]
+	 *   A map of parameters
+	 * @param {Object<string,string>} [mParameters.changeHeaders]
+	 *   The map of headers to add to each change (i.e. non-GET) request within the $batch; ignored if $batch is not
+	 *   used
+	 * @param {function} [mParameters.error]
+	 *   A callback function which is called when the request failed
+	 * @param {string} [mParameters.groupId]
+	 *   The group to be submitted; if not given, all deferred groups are submitted
+	 * @param {function} [mParameters.success]
+	 *   A callback function which is called when the request has been successful
+	 * @param {string} [mParameters.batchGroupId]
+	 *   <b>Deprecated</b>, use <code>groupId</code> instead
+	 * @param {boolean} [mParameters.merge]
+	 *   <b>Deprecated</b> since 1.38.0; whether the update method <code>sap.ui.model.odata.UpdateMethod.Merge</code>
+	 *   is used
+	 * @returns {object}
+	 *   An object which has an <code>abort</code> function
+	 * @throws {Error}
+	 *   If the given headers contain one of the following private headers managed by the ODataModel:
+	 *   accept, accept-language, maxdataserviceversion, dataserviceversion, x-csrf-token, sap-contextid-accept,
+	 *   sap-contextid
+	 *
+	 * @private
+	 * @ui5-restricted sap.suite.ui.generic
+	 */
+	ODataModel.prototype.submitChangesWithChangeHeaders = function(mParameters) {
+		var mChangedEntities, fnError, sGroupId, sMethod, sPrivateHeader, oRequestHandle, vRequestHandleInternal,
 			fnSuccess,
 			bAborted = false,
 			bRefreshAfterChange = this.bRefreshAfterChange,
@@ -6237,6 +6280,12 @@ sap.ui.define([
 		// ensure merge parameter backwards compatibility
 		if (mParameters.merge !== undefined) {
 			sMethod =  mParameters.merge ? "MERGE" : "PUT";
+		}
+		sPrivateHeader = Object.keys(mParameters.changeHeaders || {}).find(function (sHeader) {
+			return that._isHeaderPrivate(sHeader);
+		});
+		if (sPrivateHeader) {
+			throw new Error("Must not use private header: " + sPrivateHeader);
 		}
 
 		this.getBindings().forEach(function (oBinding) {
@@ -6310,7 +6359,8 @@ sap.ui.define([
 				}
 			}
 
-			vRequestHandleInternal = that._processRequestQueue(that.mDeferredRequests, sGroupId, fnSuccess, fnError);
+			vRequestHandleInternal = that._processRequestQueue(that.mDeferredRequests, sGroupId, fnSuccess, fnError,
+				mParameters.changeHeaders);
 			if (bAborted) {
 				oRequestHandle.abort();
 			}
