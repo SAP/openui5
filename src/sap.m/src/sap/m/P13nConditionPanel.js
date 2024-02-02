@@ -2087,6 +2087,7 @@ sap.ui.define([
 		var oValue1 = oConditionGrid.value1;
 		var oValue2 = oConditionGrid.value2;
 		var oShowIfGroupedvalue = oConditionGrid.showIfGrouped;
+		var aContent, iValue1Index, iValue2Index;
 
 		if (!sOperation) {
 			return;
@@ -2110,6 +2111,13 @@ sap.ui.define([
 				oValue2.setVisible(true);
 				// workaround: making fields invisible for all mode L/M/S does not work, so we remove the fields from the grid.
 				oConditionGrid.insertContent(oValue2, oConditionGrid.getContent().length - this._getSecondValueNegativeIndex());
+			}
+			aContent = oConditionGrid.getContent();
+			iValue1Index = aContent.indexOf(oValue1);
+			iValue2Index = aContent.indexOf(oValue2);
+			if (iValue1Index > iValue2Index) {
+				oConditionGrid.mAggregations.content[iValue1Index] = oValue2;
+				oConditionGrid.mAggregations.content[iValue2Index] = oValue1;
 			}
 		} else {
 			if (sOperation === P13nConditionOperation.GroupAscending || sOperation === P13nConditionOperation.GroupDescending) {

@@ -88,33 +88,36 @@ sap.ui.define([
          */
 		applyFilters: function () {
 			var oView = this.getView(),
-				aLibraryFilters = [],
+				inputFilters = [],
 				oSuggestionInput = oView.byId("search"),
 				oSuggestionRowBinding = oSuggestionInput.getBinding("suggestionRows"),
 				sSearchValue = oSuggestionInput.getValue(),
 				aAllFilters = [];
 
 			// Check each checkbox's state and add corresponding filters
-			if (oView.byId("cbSAPIconsTNT").getSelected()) {
-				aLibraryFilters.push(new Filter("font", FilterOperator.EQ, "SAP-icons-TNT"));
+			if (oView.byId("cbSAPIcons").getSelected()) {
+				aAllFilters.push(new Filter("font", FilterOperator.EQ, "SAP-icons"));
 			}
 
-			if (oView.byId("cbSAPIcons").getSelected()) {
-				aLibraryFilters.push(new Filter("font", FilterOperator.EQ, "SAP-icons"));
+			if (oView.byId("cbSAPIconsTNT").getSelected()) {
+				aAllFilters.push(new Filter("font", FilterOperator.EQ, "SAP-icons-TNT"));
 			}
 
 			if (oView.byId("cbInfoSAPBusinessSuite").getSelected()) {
-				aLibraryFilters.push(new Filter("font", FilterOperator.EQ, "BusinessSuiteInAppSymbols"));
+				aAllFilters.push(new Filter("font", FilterOperator.EQ, "BusinessSuiteInAppSymbols"));
 			}
 
-			aAllFilters = [new Filter({
-				filters: aLibraryFilters,
-				or: true
-			})];
-
-			if (aLibraryFilters.length > 0 && sSearchValue.length > 0) {
-				aAllFilters.push(new Filter("tagString", FilterOperator.Contains, sSearchValue));
+			if (aAllFilters.length > 0 && sSearchValue.length > 0) {
+				// Filter icons, where 'name' or 'tag' contains the provided input value
+				inputFilters = (new Filter({
+					filters: [
+						new Filter("tagString", FilterOperator.Contains, sSearchValue),
+						new Filter("name", FilterOperator.Contains, sSearchValue)
+					],
+					or: true
+				}));
 			}
+			aAllFilters.push(inputFilters);
 
 			oSuggestionRowBinding.filter(aAllFilters);
 

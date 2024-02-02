@@ -94,13 +94,13 @@ sap.ui.define([
 			 * oSupplierContext = oMetaModel.getMetaContext("/ProductSet('HT-1021')/ToSupplier");
 			 * oValueContext = oMetaModel.createBindingContext("com.sap.vocabularies.UI.v1.DataPoint/Value", oSupplierContext);
 			 *
-			 * vPropertySetting =  sap.ui.model.odata.AnnotationHelper.createPropertySetting([
-			 *     sap.ui.model.odata.AnnotationHelper.format(oValueContext),
-			 *     "{path : 'meta>Value', formatter : 'sap.ui.model.odata.AnnotationHelper.simplePath'}",
+			 * vPropertySetting = AnnotationHelper.createPropertySetting([
+			 *     AnnotationHelper.format(oValueContext),
+			 *     "{path : 'meta>Value', formatter : 'AH.simplePath'}",
 			 *     "{:= 'Mr. ' + ${/FirstName} + ' ' + ${/LastName}}",
 			 *     "hello, world!",
 			 *     42
-			 * ], myRootFormatter);
+			 * ], myRootFormatter, {AH : AnnotationHelper});
 			 *
 			 * oControl.applySettings({"someProperty" : vPropertySetting});
 			 * </pre>
@@ -111,6 +111,10 @@ sap.ui.define([
 			 *   root formatter function; default: <code>Array.prototype.join(., " ")</code>
 			 *   in case of multiple parts, just like
 			 *   {@link sap.ui.model.CompositeBinding#getExternalValue getExternalValue}
+	 		 * @param {Object<object|function>} [oScope]
+	 		 *   Maps an alias to a module (like <code>{AH : AnnotationHelper}</code>) or a function (like
+			 *   <code>{format : AnnotationHelper.format}</code>); the alias must not contain a dot.
+			 *   Since 1.121.0 global names are deprecated; always use this scope instead.
 			 * @returns {any|object}
 			 *   constant value or binding info object for a property as expected by
 			 *   {@link sap.ui.base.ManagedObject#applySettings applySettings}
@@ -119,8 +123,9 @@ sap.ui.define([
 			 *   found
 			 * @public
 			 * @since 1.31.0
+			 * @deprecated As of version 1.121.0
 			 */
-			createPropertySetting : function (aParts, fnRootFormatter) {
+			createPropertySetting : function (aParts, fnRootFormatter, oScope) {
 				var bMergeNeeded = false,
 					vPropertySetting;
 
@@ -134,12 +139,12 @@ sap.ui.define([
 							break;
 
 						case "string":
-							vPropertySetting = BindingParser.complexParser(vPart, null, true, true);
+							vPropertySetting = BindingParser.complexParser(vPart, oScope, true, true, false, true);
 							if (vPropertySetting !== undefined) {
 								if (vPropertySetting.functionsNotFound) {
 									throw new Error("Function name(s) "
 										+ vPropertySetting.functionsNotFound.join(", ")
-										+  " not found");
+										+ " not found");
 								}
 								aParts[i] = vPart = vPropertySetting;
 							}

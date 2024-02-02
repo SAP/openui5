@@ -53,7 +53,8 @@ sap.ui.define([
 			"sap.ui.integration.cards.Header",
 			"sap.ui.integration.cards.NumericHeader",
 			"sap.ui.integration.controls.ListContentItem",
-			"sap.ui.integration.controls.BlockingMessage"
+			"sap.ui.integration.controls.BlockingMessage",
+			"sap.ui.integration.controls.ImageWithOverlay"
 		],
 		elements: [
 			"sap.ui.integration.ActionDefinition",

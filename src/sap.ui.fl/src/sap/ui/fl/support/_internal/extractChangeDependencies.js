@@ -6,12 +6,12 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState"
 ], function(
 	JsControlTreeModifier,
 	Element,
 	ManifestUtils,
-	jQuery
+	UIChangesState
 ) {
 	"use strict";
 
@@ -43,6 +43,10 @@ sap.ui.define([
 		return oCorrectAppComponent;
 	}
 
+	// TODO with regards to variants, what is the expected outcome here? All UI Changes, all vm-independent + current variant UI Changes,
+	// all vm-independent + all vm-dependent UI Changes?
+	// as of now, _mChangesEntries is extremely unreliable. After creating a variant it includes all variants and all vm-dependent changes,
+	// after a reload only the initial vm-dependent change is available.
 	function enhanceExportWithChangeData(oChangePersistence, oExport) {
 		var oAppComponent = getAppComponentInstance(oExport.sComponentName);
 		for (var sChangeId in oChangePersistence._mChangesEntries) {
@@ -68,23 +72,16 @@ sap.ui.define([
 			}
 		}
 
-		enhanceExportWithDependencyData(oChangePersistence, oExport);
+		enhanceExportWithDependencyData(oExport.sComponentName, oExport);
 	}
 
-	function enhanceExportWithDependencyData(oChangePersistence, oExport) {
-		for (var sChangeId in oChangePersistence._mChangesInitial.mDependencies) {
-			var mChangeSpecificDependencies = oChangePersistence._mChangesInitial.mDependencies[sChangeId];
+	function enhanceExportWithDependencyData(sReference, oExport) {
+		const mInitialDependencies = UIChangesState.getCompleteDependencyMap(sReference);
+		for (var sChangeId in mInitialDependencies) {
+			var mChangeSpecificDependencies = mInitialDependencies[sChangeId];
 			oExport.mChangesEntries[sChangeId].aControlsDependencies = mChangeSpecificDependencies.controlsDependencies;
 			oExport.mChangesEntries[sChangeId].aDependencies = mChangeSpecificDependencies.dependencies;
 		}
-	}
-
-	function enhanceExportWithVariantChangeData(oChangePersistence, oExport) {
-		jQuery.each(oChangePersistence._mVariantsChanges, function(sChangeId, oChange) {
-			oExport.mVariantsChanges[sChangeId] = {
-				mDefinition: oChange._oDefinition
-			};
-		});
 	}
 
 	function enhanceWithChangetypeSpecificData(oExport, sExportParameterName, mControlData, sControlDataParameterName, aCustomDataChanges) {
@@ -113,7 +110,7 @@ sap.ui.define([
 	function enhanceExportWithControlData(oChangePersistence, oExport) {
 		// collect applied changes
 
-		for (var sControlId in oChangePersistence._mChanges.mChanges) {
+		for (var sControlId in oChangePersistence.getDependencyMapForComponent().mChanges) {
 			var mControlData = {
 				bPresent: false,
 				aAppliedChanges: [],
@@ -126,10 +123,34 @@ sap.ui.define([
 
 			if (oControl) {
 				mControlData.bPresent = true;
-				enhanceWithChangetypeSpecificData(oExport, "aAppliedChanges", mControlData, "aAppliedChanges", getChangesForControlFromCustomData(oControl, "sap.ui.fl.appliedChanges."));
-				enhanceWithChangetypeSpecificData(oExport, "aFailedChanges", mControlData, "aFailedChangesJs", getChangesForControlFromCustomData(oControl, "sap.ui.fl.failedChanges.js."));
-				enhanceWithChangetypeSpecificData(oExport, "aFailedChanges", mControlData, "aFailedChangesXml", getChangesForControlFromCustomData(oControl, "sap.ui.fl.failedChanges.xml."));
-				enhanceWithChangetypeSpecificData(oExport, "aNotApplicableChanges", mControlData, "aNotApplicableChanges", getChangesForControlFromCustomData(oControl, "sap.ui.fl.notApplicableChanges."));
+				enhanceWithChangetypeSpecificData(
+					oExport,
+					"aAppliedChanges",
+					mControlData,
+					"aAppliedChanges",
+					getChangesForControlFromCustomData(oControl, "sap.ui.fl.appliedChanges.")
+				);
+				enhanceWithChangetypeSpecificData(
+					oExport,
+					"aFailedChanges",
+					mControlData,
+					"aFailedChangesJs",
+					getChangesForControlFromCustomData(oControl, "sap.ui.fl.failedChanges.js.")
+				);
+				enhanceWithChangetypeSpecificData(
+					oExport,
+					"aFailedChanges",
+					mControlData,
+					"aFailedChangesXml",
+					getChangesForControlFromCustomData(oControl, "sap.ui.fl.failedChanges.xml.")
+				);
+				enhanceWithChangetypeSpecificData(
+					oExport,
+					"aNotApplicableChanges",
+					mControlData,
+					"aNotApplicableChanges",
+					getChangesForControlFromCustomData(oControl, "sap.ui.fl.notApplicableChanges.")
+				);
 			}
 			oExport.mControlData[sControlId] = mControlData;
 		}
@@ -153,7 +174,6 @@ sap.ui.define([
 		};
 
 		enhanceExportWithChangeData(oChangePersistence, oExport);
-		enhanceExportWithVariantChangeData(oChangePersistence, oExport);
 		enhanceExportWithControlData(oChangePersistence, oExport);
 
 		return oExport;

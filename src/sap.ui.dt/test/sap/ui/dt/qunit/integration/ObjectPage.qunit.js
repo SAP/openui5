@@ -71,7 +71,7 @@ function(
 			const oSectionOverlay = OverlayRegistry.getOverlay(this.oSection);
 			const oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 
-			oSectionOverlay.attachEventOnce("geometryChanged", () => {
+			const checkPositions = () => {
 				assert.deepEqual(
 					Math.ceil(oSectionOverlay.getDomRef().getBoundingClientRect().top),
 					Math.ceil(this.oSection.getDomRef().getBoundingClientRect().top),
@@ -92,8 +92,12 @@ function(
 					Math.ceil(this.oButton.getDomRef().getBoundingClientRect().left),
 					"left position of the Button overlay is correct"
 				);
-
 				fnDone();
+			};
+
+			this.oDesignTime.attachEventOnce("synced", async () => {
+				oSectionOverlay.attachEventOnce("geometryChanged", checkPositions);
+				await nextUIUpdate();
 			});
 
 			this.oSection.setVisible(true);

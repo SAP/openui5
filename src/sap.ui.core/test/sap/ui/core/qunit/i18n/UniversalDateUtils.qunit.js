@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Locale",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/UniversalDate",
@@ -14,7 +13,7 @@ sap.ui.define([
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/Persian"
-], function(Formatting, Localization, CalendarType, Configuration, Locale, UI5Date, UniversalDate, UniversalDateUtils) {
+], function(Formatting, Localization, CalendarType, Locale, UI5Date, UniversalDate, UniversalDateUtils) {
 	"use strict";
 
 	const sLanguage = Localization.getLanguage();
@@ -595,33 +594,6 @@ sap.ui.define([
 
 		// Code under test
 		assert.strictEqual(UniversalDateUtils._getDateFromWeekStartByDayOffset("~sCalendarWeekNumbering", 1), oResult);
-	});
-
-	//*********************************************************************************************
-	// Integration test for BCP: 2380029711
-	// This test is currently skipped due to missing functionality in Configuration.setFirstDayOfWeek,
-	// see TODO below and BCP 2370022908
-	QUnit.skip("_getDateFromWeekStartByDayOffset with a configured first day of week", function(assert) {
-		var oFirstDateOfWeek,
-			sCalendarWeekNumbering = 'Default',
-			sDefaultLanguage = Localization.getLanguage();
-
-		this.mock(UniversalDateUtils).expects("createNewUniversalDate")
-			.withExactArgs()
-			.returns(new UniversalDate(2023, 0, 13));
-
-		Localization.setLanguage('en-US');
-		Configuration.getFormatSettings().setFirstDayOfWeek(1);
-
-		// code under test
-		oFirstDateOfWeek = UniversalDateUtils._getDateFromWeekStartByDayOffset(sCalendarWeekNumbering);
-		// In en-US locale the first day of the second calendar week is actually the 8th (Sunday),
-		// but due to setting the firstDayOfWeek to 1 (Mon), the returned date should be the 9th of Jan
-		testDate(assert, oFirstDateOfWeek, 1, "WEEKS", 2023, 0, 9, 0, 0, 0, 0);
-
-		Localization.setLanguage(sDefaultLanguage);
-		//TODO: The parameter null is documented in the setFirstDayOfWeek method but is currently not supported
-		Configuration.getFormatSettings().setFirstDayOfWeek(null);
 	});
 
 	QUnit.test("_getDateFromWeekStartByDayOffset with custom timezone", function(assert) {

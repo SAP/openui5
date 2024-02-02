@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
@@ -29,8 +29,8 @@ sap.ui.define([
 	Control,
 	FlexObjectFactory,
 	States,
-	UIChange,
 	DependencyHandler,
+	UIChangesState,
 	VariantManagementState,
 	FlexState,
 	ManifestUtils,
@@ -49,10 +49,6 @@ sap.ui.define([
 	const sandbox = sinon.createSandbox();
 	const aControls = [];
 	const sComponentName = "MyComponent";
-
-	function getInitialChangesMap(mPropertyBag) {
-		return merge(DependencyHandler.createEmptyDependencyMap(), mPropertyBag);
-	}
 
 	QUnit.module("sap.ui.fl.ChangePersistence", {
 		async beforeEach() {
@@ -82,32 +78,6 @@ sap.ui.define([
 			});
 		}
 	}, function() {
-		QUnit.test("loadChangesMapForComponent shall return a map of changes for the component", function(assert) {
-			var oAppComponent = {
-				id: "mockAppComponent"
-
-			};
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([
-				FlexObjectFactory.createFromFileContent({}),
-				FlexObjectFactory.createFromFileContent({}),
-				FlexObjectFactory.createFromFileContent({})
-			]);
-
-			var mExpectedChangesMap = {changesStub: true};
-			var oAddChangeStub = sandbox.stub(DependencyHandler, "addChangeAndUpdateDependencies");
-			var oSetStateStub = sandbox.stub(UIChange.prototype, "setInitialApplyState");
-			sandbox.stub(DependencyHandler, "createEmptyDependencyMap").returns(mExpectedChangesMap);
-			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {}).then(function(fnGetChangesMap) {
-				assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-				assert.equal(oAddChangeStub.callCount, 3, "3 changes were added");
-				assert.equal(oSetStateStub.callCount, 3, "the state was set 3 times");
-
-				var mChangesMap = fnGetChangesMap();
-				assert.deepEqual(mChangesMap, mExpectedChangesMap, "the changes map is properly returned");
-				assert.deepEqual(mChangesMap, this.oChangePersistence._mChangesInitial, "the changes map is saved in _mChangesInitial");
-			}.bind(this));
-		});
-
 		QUnit.test("getAllUIChanges shall return an map array with all UI changes for the component", function(assert) {
 			var oChange1 = FlexObjectFactory.createFromFileContent({
 				fileName: "change1",
@@ -143,167 +113,40 @@ sap.ui.define([
 				selector: {id: "id5"}
 			});
 
-			sandbox.stub(this.oChangePersistence, "getChangesMapForComponent").returns({
+			sandbox.stub(this.oChangePersistence, "getDependencyMapForComponent").returns({
 				aChanges: [oChange1, oChange2, oChange3]
 			});
+
 			sandbox.stub(this.oChangePersistence, "getDirtyChanges").returns([oChange4, oChange5]);
 
 			var aAllUIChanges = this.oChangePersistence.getAllUIChanges({
 				includeDirtyChanges: true,
 				layer: Layer.CUSTOMER
 			});
-			assert.deepEqual(aAllUIChanges, [oChange2, oChange3, oChange4, oChange5], "all UI changes are returned");
-		});
-
-		QUnit.test("copyDependenciesFromInitialChangesMap", function(assert) {
-			var oChange0 = {
-				getId() {
-					return "fileNameChange0";
-				}
-			};
-			var oChange1 = {
-				getId() {
-					return "fileNameChange1";
-				},
-				getDependentControlSelectorList() {
-					return [{
-						id: "group3"
-					}, {
-						id: "group2"
-					}];
-				}
-			};
-			var oChange2 = {
-				getId() {
-					return "fileNameChange2";
-				},
-				getDependentControlSelectorList() {
-					return [{
-						id: "group2"
-					}, {
-						id: "group1"
-					}];
-				}
-			};
-			var mChanges = {
-				"field3-2": [oChange1, oChange2],
-				group1: [oChange0]
-			};
-			var mInitialChangesMap = getInitialChangesMap({
-				mChanges,
-				mDependencies: {
-					fileNameChange1: {
-						changeObject: oChange1,
-						dependencies: [],
-						controlsDependencies: ["group3", "group2"]
-					},
-					fileNameChange2: {
-						changeObject: oChange2,
-						dependencies: ["fileNameChange1", "fileNameChange0"],
-						controlsDependencies: ["group2", "group1"]
-					}
-				},
-				mDependentChangesOnMe: {
-					fileNameChange0: ["fileNameChange2"],
-					fileNameChange1: ["fileNameChange2"]
-				},
-				mControlsWithDependencies: {
-					group1: [
-						"fileNameChange2"
-					],
-					group2: [
-						"fileNameChange1",
-						"fileNameChange2"
-					],
-					group3: [
-						"fileNameChange1"
-					]
-				}
-			});
-			var mCurrentChangesMap = getInitialChangesMap({
-				mChanges
-			});
-			var mExpectedDependenciesMapAfterFirstChange = getInitialChangesMap({
-				mChanges,
-				mDependencies: {
-					fileNameChange1: {
-						changeObject: oChange1,
-						dependencies: [],
-						controlsDependencies: ["group3", "group2"]
-					}
-				},
-				mControlsWithDependencies: {
-					group2: [
-						"fileNameChange1"
-					],
-					group3: [
-						"fileNameChange1"
-					]
-				}
-			});
-
-			var mExpectedDependenciesMapAfterSecondChange = getInitialChangesMap({
-				mChanges,
-				mDependencies: {
-					fileNameChange1: {
-						changeObject: oChange1,
-						dependencies: [],
-						controlsDependencies: ["group3", "group2"]
-					},
-					fileNameChange2: {
-						changeObject: oChange2,
-						dependencies: [],
-						controlsDependencies: ["group2", "group1"]
-					}
-				},
-				mControlsWithDependencies: {
-					group1: [
-						"fileNameChange2"
-					],
-					group2: [
-						"fileNameChange1",
-						"fileNameChange2"
-					],
-					group3: [
-						"fileNameChange1"
-					]
-				}
-			});
-
-			this.oChangePersistence._mChangesInitial = mInitialChangesMap;
-			this.oChangePersistence._mChanges = mCurrentChangesMap;
-
-			function dependencyValid() {
-				return true;
-			}
-
-			function dependencyInvalid() {
-				return false;
-			}
-
-			this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange0, dependencyValid);
-			assert.deepEqual(this.oChangePersistence._mChanges, mCurrentChangesMap, "no dependencies got copied");
-			this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange1, dependencyValid);
-			assert.deepEqual(this.oChangePersistence._mChanges,
-				mExpectedDependenciesMapAfterFirstChange, "all dependencies from change1 got copied");
-			this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, dependencyInvalid);
-			assert.deepEqual(this.oChangePersistence._mChanges,
-				mExpectedDependenciesMapAfterSecondChange, "no dependencies from change2 got copied");
-			this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, dependencyValid);
-			assert.deepEqual(this.oChangePersistence._mChanges, mInitialChangesMap, "all dependencies from change2 got copied");
-			assert.deepEqual(this.oChangePersistence._mChanges,
-				this.oChangePersistence._mChanges, "the updated dependencies map is saved in the internal changes map");
+			assert.deepEqual(aAllUIChanges, [oChange2, oChange3, oChange4, oChange5], "all CUSTOMER layer UI changes are returned");
 		});
 
 		QUnit.test("deleteChanges with bRunTimeCreatedChange parameter set, shall remove the given change from the map", function(assert) {
-			var oAppComponent = {
+			const oAppComponent = {
 				id: "mockAppComponent"
 			};
-			sandbox.stub(FlexState.getFlexObjectsDataSelector(), "get").returns([
+
+			const oDependencyMap = this.oChangePersistence.getDependencyMapForComponent();
+			DependencyHandler.addChangeAndUpdateDependencies(
 				createChange("change1", null, null, null, {id: "controlId"}),
+				oAppComponent,
+				oDependencyMap
+			);
+			DependencyHandler.addChangeAndUpdateDependencies(
 				createChange("change2", null, null, null, {id: "controlId"}),
-				createChange("change3", null, null, null, {id: "anotherControlId"})
-			]);
+				oAppComponent,
+				oDependencyMap
+			);
+			DependencyHandler.addChangeAndUpdateDependencies(
+				createChange("change3", null, null, null, {id: "controlId"}),
+				oAppComponent,
+				oDependencyMap
+			);
 
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
 			.callThrough()
@@ -311,31 +154,27 @@ sap.ui.define([
 			.returns("appComponentReference");
 			sandbox.spy(this.oChangePersistence, "_deleteChangeInMap");
 
-			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
-			.then(function(fnGetChangesMap) {
-				var {mChanges} = fnGetChangesMap();
-				var oChangeForDeletion = mChanges.controlId[1]; // second change for 'controlId' shall be removed
-				this.oChangePersistence.deleteChange(oChangeForDeletion, true);
-				assert.ok(this.oChangePersistence._deleteChangeInMap.calledWith(oChangeForDeletion, true),
-					"then _deleteChangeInMap() was called with the correct parameters");
-			}.bind(this));
+			const oChangeForDeletion = oDependencyMap.mChanges.controlId[1]; // second change for 'controlId' shall be removed
+			this.oChangePersistence.deleteChange(oChangeForDeletion, true);
+			assert.ok(this.oChangePersistence._deleteChangeInMap.calledWith(oChangeForDeletion, true),
+				"then _deleteChangeInMap() was called with the correct parameters");
 		});
 
 		QUnit.test("removeChange with dirty and not dirty changes", function(assert) {
-			var oDeleteChangeInMapStub = sandbox.stub(this.oChangePersistence, "_deleteChangeInMap");
+			const oDeleteChangeInMapStub = sandbox.stub(this.oChangePersistence, "_deleteChangeInMap");
 			sandbox.stub(WriteStorage, "write").resolves();
 			sandbox.stub(this.oChangePersistence, "_updateCacheAndDirtyState");
-			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+			const aDirtyChanges = addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
+				aDirtyChanges[0].setState(States.LifecycleState.PERSISTED);
+				aDirtyChanges[1].setState(States.LifecycleState.PERSISTED);
 
-				addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+				const aNewDirtyChanges = addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 
-				this.oChangePersistence.removeChange(this.oChangePersistence._mChanges.aChanges[0]);
-				this.oChangePersistence.removeChange(this.oChangePersistence._mChanges.aChanges[1]);
-				this.oChangePersistence.removeChange(this.oChangePersistence._mChanges.aChanges[2]);
-				this.oChangePersistence.removeChange(this.oChangePersistence._mChanges.aChanges[3]);
+				this.oChangePersistence.removeChange(aDirtyChanges[0]);
+				this.oChangePersistence.removeChange(aDirtyChanges[1]);
+				this.oChangePersistence.removeChange(aNewDirtyChanges[0]);
+				this.oChangePersistence.removeChange(aNewDirtyChanges[1]);
 
 				assert.equal(this.oChangePersistence._aDirtyChanges.length, 0, "both dirty changes were removed from the persistence");
 				assert.equal(oDeleteChangeInMapStub.callCount, 4, "all changes got removed from the map");
@@ -483,9 +322,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("_getChangesFromMapByNames returns array of changes with corresponding name", function(assert) {
-			var oAppComponent = {
-				id: "mockAppComponent"
-			};
 			var oChange0 = FlexObjectFactory.createFromFileContent(
 				{
 					fileName: "fileNameChange0",
@@ -533,19 +369,11 @@ sap.ui.define([
 			var aNames = ["fileNameChange0", "fileNameChange2"];
 			var aExpectedChanges = [oChange0, oChange2];
 
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oChange0, oChange1, oChange2]);
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
-			.callThrough()
-			.withArgs(oAppComponent)
-			.returns("appComponentReference");
-
-			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
-			.then(function() {
-				return this.oChangePersistence._getChangesFromMapByNames(aNames);
-			}.bind(this))
-			.then(function(aChanges) {
-				assert.deepEqual(aChanges, aExpectedChanges, " 2 changes should be found");
+			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns({
+				aChanges: [oChange0, oChange1, oChange2]
 			});
+
+			assert.deepEqual(this.oChangePersistence._getChangesFromMapByNames(aNames), aExpectedChanges, "2 changes are returned");
 		});
 
 		QUnit.test("when calling transportAllUIChanges successfully", function(assert) {
@@ -1143,10 +971,6 @@ sap.ui.define([
 			assert.strictEqual(aFlexObjects.length, 5, "five changes are returned");
 			assert.strictEqual(this.oFlexStateUpdateStub.callCount, 0, "the FlexState is not updated");
 			assert.strictEqual(this.oFlexStateGetResponseStub.callCount, 1, "the FlexState is called to load the data");
-			assert.strictEqual(Object.keys(this.oChangePersistence._mChangesEntries).length, 5, "the changes were saved");
-			assert.deepEqual(Object.keys(this.oChangePersistence._mChangesEntries), [
-				"customerUI", "customerUI2", "userUI", "customerVariant", "userVariant"
-			], "the correct keys are saved");
 		});
 
 		QUnit.test("with invalidateCache", async function(assert) {
@@ -1154,16 +978,11 @@ sap.ui.define([
 			assert.strictEqual(aFlexObjects.length, 5, "five changes are returned");
 			assert.strictEqual(this.oFlexStateUpdateStub.callCount, 1, "the FlexState is updated");
 			assert.strictEqual(this.oFlexStateGetResponseStub.callCount, 1, "the FlexState is called to load the data");
-			assert.strictEqual(Object.keys(this.oChangePersistence._mChangesEntries).length, 5, "the changes were saved");
 		});
 
 		QUnit.test("with includeCtrlVariants", async function(assert) {
 			const aFlexObjects = await this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true});
 			assert.strictEqual(aFlexObjects.length, 6, "six changes are returned");
-			assert.strictEqual(Object.keys(this.oChangePersistence._mChangesEntries).length, 6, "the changes were saved");
-			assert.deepEqual(Object.keys(this.oChangePersistence._mChangesEntries), [
-				"customerUI", "customerUI2", "userUI", "customerVariant", "userFav", "userVariant"
-			], "the correct keys are saved");
 		});
 
 		QUnit.test("with includeCtrlVariants and currentLayer set to USER", async function(assert) {
@@ -1171,9 +990,6 @@ sap.ui.define([
 				includeCtrlVariants: true, currentLayer: Layer.USER
 			});
 			assert.strictEqual(aUserFlexObjects.length, 3, "three changes are returned");
-			assert.deepEqual(Object.keys(this.oChangePersistence._mChangesEntries), [
-				"userUI", "userFav", "userVariant"
-			], "the correct keys are saved");
 		});
 
 		QUnit.test("with includeCtrlVariants and currentLayer set to CUSTOMER", async function(assert) {
@@ -1181,9 +997,6 @@ sap.ui.define([
 				includeCtrlVariants: true, currentLayer: Layer.CUSTOMER
 			});
 			assert.strictEqual(aCustomerFlexObjects.length, 3, "three changes are returned");
-			assert.deepEqual(Object.keys(this.oChangePersistence._mChangesEntries), [
-				"customerUI", "customerUI2", "customerVariant"
-			], "the correct keys are saved");
 		});
 	});
 
@@ -1203,7 +1016,6 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.fl.ChangePersistence addChange", {
 		beforeEach() {
-			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(FlexState, "getAppDescriptorChanges").returns([]);
 			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 			this._mComponentProperties = {
@@ -1218,11 +1030,13 @@ sap.ui.define([
 					oComponent.createId("sap.ui.fl.qunit.integration.testComponentReuse")
 				);
 				this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
+				return FlQUnitUtils.initializeFlexStateWithData(sandbox, "saveChangeScenario");
 			}.bind(this));
 		},
 		afterEach() {
 			this._oAppComponentInstance.destroy();
 			sandbox.restore();
+			FlexState.clearState();
 		}
 	}, function() {
 		QUnit.test("getOpenDependentChangesForControl", function(assert) {
@@ -1232,7 +1046,11 @@ sap.ui.define([
 				idIsLocal: false
 			}, this._oAppComponentInstance);
 			assert.equal(oCheckDependenciesStub.callCount, 1, "the function was called once");
-			assert.deepEqual(oCheckDependenciesStub.lastCall.args[0], this.oChangePersistence._mChanges, "the changes map was passed");
+			assert.deepEqual(
+				oCheckDependenciesStub.lastCall.args[0],
+				this.oChangePersistence.getDependencyMapForComponent(),
+				"the dependency map was passed"
+			);
 			assert.equal(oCheckDependenciesStub.lastCall.args[1], "anotherId", "the resolved ID was passed");
 			assert.equal(oCheckDependenciesStub.lastCall.args[2], this._oAppComponentInstance, "the app component instance was passed");
 		});
@@ -1240,7 +1058,7 @@ sap.ui.define([
 		QUnit.test("'addChangeAndUpdateDependencies' function is called", function(assert) {
 			var oChange = createChange("fileNameChange0");
 			this.oChangePersistence.addChangeAndUpdateDependencies(this._oComponentInstance, oChange);
-			assert.strictEqual(this.oChangePersistence._mChanges.aChanges[0].getId(),
+			assert.strictEqual(this.oChangePersistence.getDependencyMapForComponent().aChanges[0].getId(),
 				oChange.getId(), "then the change is added to the change persistence");
 		});
 
@@ -1252,17 +1070,17 @@ sap.ui.define([
 			this.oChangePersistence.addChangeAndUpdateDependencies(this._oComponentInstance, oChange1);
 			this.oChangePersistence.addChangeAndUpdateDependencies(this._oComponentInstance, oChangeInBetween, oChange0);
 			assert.strictEqual(
-				this.oChangePersistence._mChanges.aChanges[0].getId(),
+				this.oChangePersistence.getDependencyMapForComponent().aChanges[0].getId(),
 				oChange0.getId(),
 				"then the first change is added to the change persistence on first position"
 			);
 			assert.strictEqual(
-				this.oChangePersistence._mChanges.aChanges[1].getId(),
+				this.oChangePersistence.getDependencyMapForComponent().aChanges[1].getId(),
 				oChangeInBetween.getId(),
 				"then the third change is added to the change persistence on second position"
 			);
 			assert.strictEqual(
-				this.oChangePersistence._mChanges.aChanges[2].getId(),
+				this.oChangePersistence.getDependencyMapForComponent().aChanges[2].getId(),
 				oChange1.getId(),
 				"then the second change is added to the change persistence on third position"
 			);
@@ -1306,7 +1124,7 @@ sap.ui.define([
 
 			var oAddDirtyChangeSpy = sandbox.spy(this.oChangePersistence, "addDirtyChange");
 			var oAddRunTimeCreatedChangeAndUpdateDependenciesSpy =
-				sandbox.stub(this.oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
+				sandbox.stub(this.oChangePersistence, "_addRunTimeCreatedChangeToDependencyMap");
 
 			var newChange1 = this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
 			var newChange2 = this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
@@ -1330,18 +1148,14 @@ sap.ui.define([
 			assert.equal(
 				oAddRunTimeCreatedChangeAndUpdateDependenciesSpy.callCount,
 				3,
-				"_addRunTimeCreatedChangeAndUpdateDependencies is called three times"
+				"_addRunTimeCreatedChangeToDependencyMap is called three times"
 			);
 			aChanges = this.oChangePersistence._aDirtyChanges;
-			var mChangesEntries = this.oChangePersistence._mChangesEntries;
 			assert.ok(aChanges);
 			assert.strictEqual(aChanges.length, 3);
 			assert.strictEqual(aChanges[0], newChange1);
-			assert.strictEqual(mChangesEntries.Gizorillus1, newChange1);
 			assert.strictEqual(aChanges[1], newChange2);
-			assert.strictEqual(mChangesEntries.Gizorillus2, newChange2);
 			assert.strictEqual(aChanges[2], newChange3);
-			assert.strictEqual(mChangesEntries.Gizorillus3, newChange3);
 		});
 
 		QUnit.test("When call addChanges with 3 changes, 3 new changes are returned and the dependencies map also got updated", function(assert) {
@@ -1375,7 +1189,7 @@ sap.ui.define([
 
 			var oAddDirtyChangesSpy = sandbox.spy(this.oChangePersistence, "addDirtyChanges");
 			var oAddRunTimeCreatedChangeAndUpdateDependenciesSpy
-				= sandbox.stub(this.oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
+				= sandbox.stub(this.oChangePersistence, "_addRunTimeCreatedChangeToDependencyMap");
 
 			var aNewChanges = this.oChangePersistence.addChanges(aChangeContents, this._oAppComponentInstance);
 
@@ -1387,25 +1201,21 @@ sap.ui.define([
 			assert.equal(
 				oAddRunTimeCreatedChangeAndUpdateDependenciesSpy.callCount,
 				3,
-				"_addRunTimeCreatedChangeAndUpdateDependencies is called three times"
+				"_addRunTimeCreatedChangeToDependencyMap is called three times"
 			);
 			var aChanges = this.oChangePersistence._aDirtyChanges;
-			var mChangesEntries = this.oChangePersistence._mChangesEntries;
 			assert.ok(aChanges);
 			assert.strictEqual(aChanges.length, 3);
 			assert.strictEqual(aChanges[0], aNewChanges[0]);
-			assert.strictEqual(mChangesEntries.Gizorillus1, aNewChanges[0]);
 			assert.strictEqual(aChanges[1], aNewChanges[1]);
-			assert.strictEqual(mChangesEntries.Gizorillus2, aNewChanges[1]);
 			assert.strictEqual(aChanges[2], aNewChanges[2]);
-			assert.strictEqual(mChangesEntries.Gizorillus3, aNewChanges[2]);
 		});
 
 		QUnit.test("Shall add propagation listener on the app component if an embedded component is passed", function(assert) {
 			var oChangeContent = FlexObjectFactory.createFromFileContent({layer: ""});
 			var done = assert.async();
 			sandbox.stub(this.oChangePersistence, "addDirtyChange").returns(oChangeContent);
-			sandbox.stub(this.oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
+			sandbox.stub(this.oChangePersistence, "_addRunTimeCreatedChangeToDependencyMap");
 			sandbox.stub(Utils, "getAppComponentForControl")
 			.callThrough()
 			.withArgs(this._oComponentInstance)
@@ -1667,16 +1477,16 @@ sap.ui.define([
 					return false;
 				}
 			});
-			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+			const aChanges = addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
+				aChanges[0].setState(States.LifecycleState.PERSISTED);
+				aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 
 				var aFilenames = [
-					this.oChangePersistence._mChanges.aChanges[0].getId(),
-					this.oChangePersistence._mChanges.aChanges[1].getId()
+					aChanges[0].getId(),
+					aChanges[1].getId()
 				];
 				var oChangeContent = {
 					fileName: "NewFileName",
@@ -1724,15 +1534,15 @@ sap.ui.define([
 					return false;
 				}
 			});
-			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+			const aChanges = addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
+				aChanges[0].setState(States.LifecycleState.PERSISTED);
+				aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 
-				var aFilenames = [this.oChangePersistence._mChanges.aChanges[0].getId(), "newDraftFileName"];
+				var aFilenames = [aChanges[0].getId(), "newDraftFileName"];
 				var oChangeContent = {
 					fileName: "NewFileName",
 					layer: Layer.CUSTOMER,
@@ -1766,7 +1576,7 @@ sap.ui.define([
 			.then(function() {
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oCondenserStub.callCount, 2, "the condenser was called");
-				assert.equal(this.oCondenserStub.lastCall.args[1].length, 3, "tree changes were passed to the condenser");
+				assert.equal(this.oCondenserStub.lastCall.args[1].length, 3, "three changes were passed to the condenser");
 			}.bind(this));
 		});
 
@@ -1782,8 +1592,6 @@ sap.ui.define([
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 
@@ -1944,8 +1752,8 @@ sap.ui.define([
 			});
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence.getDependencyMapForComponent().aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence.getDependencyMapForComponent().aChanges[1].setState(States.LifecycleState.PERSISTED);
 				this.oCondenserStub.resetHistory();
 
 				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, false, false, false, false, true, Layer.VENDOR);
@@ -1978,8 +1786,8 @@ sap.ui.define([
 				}
 			);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence.getDependencyMapForComponent().aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence.getDependencyMapForComponent().aChanges[1].setState(States.LifecycleState.PERSISTED);
 
 				addTwoChanges(
 					this.oChangePersistence,
@@ -2097,8 +1905,8 @@ sap.ui.define([
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence.getDependencyMapForComponent().aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence.getDependencyMapForComponent().aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 1);
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
 
@@ -2127,8 +1935,8 @@ sap.ui.define([
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence.getDependencyMapForComponent().aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence.getDependencyMapForComponent().aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 1);
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
 
@@ -2151,8 +1959,8 @@ sap.ui.define([
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
-				this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
-				this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence.getDependencyMapForComponent().aChanges[0].setState(States.LifecycleState.PERSISTED);
+				this.oChangePersistence.getDependencyMapForComponent().aChanges[1].setState(States.LifecycleState.PERSISTED);
 				assert.equal(this.oWriteStub.callCount, 1);
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
 
@@ -2160,7 +1968,7 @@ sap.ui.define([
 				return this.oChangePersistence.saveDirtyChanges(
 					this._oComponentInstance,
 					false,
-					[this.oChangePersistence._mChanges.aChanges[2]]
+					[this.oChangePersistence.getDependencyMapForComponent().aChanges[2]]
 				);
 			}.bind(this))
 			.then(function() {
@@ -2196,8 +2004,8 @@ sap.ui.define([
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 			await this.oChangePersistence.saveDirtyChanges(this._oComponentInstance);
 
-			this.oChangePersistence._mChanges.aChanges[0].setState(States.LifecycleState.PERSISTED);
-			this.oChangePersistence._mChanges.aChanges[1].setState(States.LifecycleState.PERSISTED);
+			this.oChangePersistence.getDependencyMapForComponent().aChanges[0].setState(States.LifecycleState.PERSISTED);
+			this.oChangePersistence.getDependencyMapForComponent().aChanges[1].setState(States.LifecycleState.PERSISTED);
 			assert.equal(this.oWriteStub.callCount, 0);
 			assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 			assert.equal(oUpdateStorageResponseStub.callCount, 2, "both changes got added");
@@ -2419,7 +2227,7 @@ sap.ui.define([
 
 		QUnit.test("Shall add and remove changes to the cache depending upon change category", async function(assert) {
 			var aSavedChanges = [];
-			sandbox.stub(DependencyHandler, "addRuntimeChangeAndUpdateDependencies");
+			sandbox.stub(DependencyHandler, "addRuntimeChangeToMap");
 			var oChangeContent1 = {
 				content: {
 					title: "variant 0"

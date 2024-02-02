@@ -1,0 +1,56 @@
+
+{
+	"sap.app": {
+		"id": "card.explorer.object.imageWithOverlay",
+		"type": "card",
+		"title": "Sample of an Object Card with Image with Overlay",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"header": {
+			"title": "Object Card with Image with Overlay",
+			"visible": false
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"type": "Image",
+							"src": "./images/natureAndChildren.jpg",
+							"fullWidth": true,
+							"height": "200px",
+							"imageFit": "cover",
+							"imagePosition": "center",
+							"overlay": {
+								"supertitle": "Sun, May 28",
+								"title": "Hello, John",
+								"subTitle": "Today will be a good day!",
+								"textColor": "#fff",
+								"verticalPosition": "Center",
+								"background": "linear-gradient(90deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0))"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

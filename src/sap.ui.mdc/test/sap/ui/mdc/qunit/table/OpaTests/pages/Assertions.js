@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/matchers/Visible",
 	"sap/ui/mdc/enums/TableType"
 ], function(
 	/** @type sap.ui.core.Core */ Library,
@@ -22,7 +21,6 @@ sap.ui.define([
 	/** @type sap.ui.test.matchers.Ancestor */ Ancestor,
 	/** @type sap.ui.test.matchers.Properties */ Properties,
 	/** @type sap.ui.test.matchers.PropertyStrictEquals */ PropertyStrictEquals,
-	/** @type sap.ui.test.matchers.Visible */ Visible,
 	/** @type sap.ui.mdc.enums.TableType */ TableType) {
 	"use strict";
 
@@ -789,25 +787,29 @@ sap.ui.define([
 		 *
 		 * @function
 		 * @name iShouldSeeColumnSorted
-		 * @param {sap.ui.mdc.Table} oControl Instance of the MDCTable
-		 * @param {String|sap.ui.mdc.table.Column} vColumn Header name or control instance of the column
+		 * @param {String|sap.ui.mdc.Table} vTable Id or instance of the table
+		 * @param {String|sap.ui.mdc.table.Column} vColumn Header name or instance of the column
 		 * @param {Boolean} bDescending Sorting direction is descending
 		 */
-		iShouldSeeColumnSorted: function(oControl, vColumn, bDescending) {
-			const aSortConditions = oControl.getSortConditions().sorters;
+		iShouldSeeColumnSorted: function(vTable, vColumn, bDescending) {
+			return waitForTable.call(this, vTable, {
+				success: function(oTable) {
+					const aSortConditions = oTable.getSortConditions().sorters;
 
-			for (let i = 0; i < aSortConditions.length; i++) {
-				if (typeof vColumn === 'object' && aSortConditions[i].name === vColumn.getHeader() && aSortConditions[i].descending === bDescending) {
-					Opa5.assert.equal(aSortConditions[i].name, vColumn.getHeader(), "Column " + vColumn + " has sorting condition");
-					Opa5.assert.equal(aSortConditions[i].descending, bDescending, "Column " + vColumn + " is sorted " + ((bDescending) ? "descending" : "ascending"));
-					return;
-				} else if (aSortConditions[i].descending === bDescending && aSortConditions[i].name === vColumn){
-					Opa5.assert.equal(aSortConditions[i].name, vColumn, "Column " + vColumn + "has sorting condition");
-					Opa5.assert.equal(aSortConditions[i].descending, bDescending, "Column " + vColumn + "is sorted " + ((bDescending) ? "descending" : "ascending"));
-					return;
+					for (let i = 0; i < aSortConditions.length; i++) {
+						if (typeof vColumn === 'object' && aSortConditions[i].name === vColumn.getHeader() && aSortConditions[i].descending === bDescending) {
+							Opa5.assert.equal(aSortConditions[i].name, vColumn.getHeader(), "Column " + vColumn + " has sorting condition");
+							Opa5.assert.equal(aSortConditions[i].descending, bDescending, "Column " + vColumn + " is sorted " + ((bDescending) ? "descending" : "ascending"));
+							return;
+						} else if (aSortConditions[i].descending === bDescending && aSortConditions[i].name === vColumn){
+							Opa5.assert.equal(aSortConditions[i].name, vColumn, "Column " + vColumn + "has sorting condition");
+							Opa5.assert.equal(aSortConditions[i].descending, bDescending, "Column " + vColumn + "is sorted " + ((bDescending) ? "descending" : "ascending"));
+							return;
+						}
+					}
+					Opa5.assert.notOk(true, "Either no sorting conditions were found or no conditions are matching the function parameters");
 				}
-			}
-			Opa5.assert.notOk(true, "Either no sorting conditions were found or no conditions are matching the function parameters");
+			});
 		},
 
 		/**

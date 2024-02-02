@@ -26,6 +26,11 @@ sap.ui.define([
 							{
 								start: UI5Date.getInstance(2017, 0, 24),
 								type: "NonWorking"
+							},
+							{
+								start: UI5Date.getInstance(2017, 0, 22),
+								type: "Type10",
+								secondaryType: "Working"
 							}
 						],
 						appointments: [
@@ -464,6 +469,11 @@ sap.ui.define([
 						}
 					],
 					specialDates: [
+						{
+							start: UI5Date.getInstance("2017", "0", "15"),
+							end: UI5Date.getInstance("2017", "0", "15"),
+							type: "Working"
+						},
 						{
 							start: UI5Date.getInstance("2017", "0", "16"),
 							end: UI5Date.getInstance("2017", "0", "18"),

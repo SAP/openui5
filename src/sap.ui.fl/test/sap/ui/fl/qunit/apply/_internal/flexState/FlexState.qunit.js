@@ -110,7 +110,7 @@ sap.ui.define([
 				reference: sReference,
 				componentId: sComponentId
 			});
-			var oDummyFlexObject = { test: "test" };
+			var oDummyFlexObject = FlexObjectFactory.createUIChange({id: "dummyChange"});
 			this.oCheckUpdateSelectorStub.reset();
 			FlexState.addDirtyFlexObject(sReference, oDummyFlexObject);
 			assert.deepEqual(
@@ -146,7 +146,7 @@ sap.ui.define([
 				reference: sReference,
 				componentId: sComponentId
 			});
-			var oDummyFlexObject = { test: "test" };
+			var oDummyFlexObject = FlexObjectFactory.createUIChange({id: "dummyChange"});
 			this.oCheckUpdateSelectorStub.reset();
 			FlexState.addDirtyFlexObject(sReference, oDummyFlexObject);
 			assert.deepEqual(
@@ -182,7 +182,10 @@ sap.ui.define([
 				reference: sReference,
 				componentId: sComponentId
 			});
-			var aDummyFlexObjects = [{ test: "test" }, { test2: "test2" }];
+			var aDummyFlexObjects = [
+				FlexObjectFactory.createUIChange({id: "dummyChange1"}),
+				FlexObjectFactory.createUIChange({id: "dummyChange2"})
+			];
 			this.oCheckUpdateSelectorStub.reset();
 			FlexState.addDirtyFlexObjects(sReference, aDummyFlexObjects);
 			assert.deepEqual(
@@ -214,8 +217,8 @@ sap.ui.define([
 				componentId: sComponentId
 			});
 			var aDummyFlexObjects = [
-				{ test: "test", getLayer: () => "USER" },
-				{ test2: "test2", getLayer: () => "USER" }
+				FlexObjectFactory.createUIChange({id: "dummyChange1", layer: "USER"}),
+				FlexObjectFactory.createUIChange({id: "dummyChange2", layer: "USER"})
 			];
 			this.oCheckUpdateSelectorStub.reset();
 			sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationLayer: Layer.CUSTOMER});
@@ -249,8 +252,8 @@ sap.ui.define([
 				componentId: sComponentId
 			});
 			var aDummyFlexObjects = [
-				{ test: "test", getLayer: () => "CUSTOMER" },
-				{ test2: "test2", getLayer: () => "VENDOR" }
+				FlexObjectFactory.createUIChange({id: "dummyChange1", layer: "CUSTOMER"}),
+				FlexObjectFactory.createUIChange({id: "dummyChange2", layer: "VENDOR"})
 			];
 			this.oCheckUpdateSelectorStub.reset();
 			sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationLayer: Layer.VENDOR});

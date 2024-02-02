@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	sinon,
+	FlexState,
 	ManifestUtils,
 	FlexObjectFactory,
 	States,
@@ -46,7 +48,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Reset/Restore", {
-		beforeEach() {
+		async beforeEach() {
 			this.oFooElement = new VBox("fooElement");
 			this.oBarElement = new VBox("barElement");
 			this.oElement = new VBox("parentElement", {
@@ -64,11 +66,13 @@ sap.ui.define([
 				createChange("foo2", "fooElement")
 			];
 			aChanges[0].setState(States.LifecycleState.PERSISTED);
+			await FlexState.initialize({reference: "MyComponent"});
 			this.oChangePersistence.addChangeAndUpdateDependencies(this.oComponent, aChanges[0]);
 			this.oChangePersistence.addDirtyChange(aChanges[1]);
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").returns(this.oChangePersistence);
 		},
 		afterEach() {
+			FlexState.clearState();
 			sandbox.restore();
 			this.oElement.destroy();
 		}

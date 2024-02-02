@@ -65,16 +65,6 @@ sap.ui.define([
 	var ElementOverlay = Overlay.extend("sap.ui.dt.ElementOverlay", {
 		metadata: {
 			library: "sap.ui.dt",
-			associations: {
-				/**
-				 * Array of plugins that set editable to true
-				 */
-				editableByPlugins: {
-					type: "any[]",
-					multiple: true,
-					singularName: "editableByPlugin"
-				}
-			},
 			aggregations: {
 				/**
 				 * Stores all aggregation binding template related overlays if available
@@ -113,6 +103,13 @@ sap.ui.define([
 				editable: {
 					type: "boolean",
 					defaultValue: false
+				},
+				/**
+				 * Map of plugins that set editable to true
+				 */
+				editableByPlugins: {
+					type: "object",
+					defaultValue: {}
 				},
 				/**
 				 * All overlays inside the relevant container within the same aggregations

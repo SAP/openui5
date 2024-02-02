@@ -1,0 +1,46 @@
+<mvc:View
+	xmlns:mdc="sap.ui.mdc"
+    xmlns:mdcTable="sap.ui.mdc.table"
+    xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:variants="sap.ui.fl.variants"
+	controllerName="sap.ui.mdc.tableOpaTests.appODataV4Hierarchy.Controller">
+    <App>
+        <Page showHeader="false">
+            <mdc:Table
+                id="mdcTable"
+                header="Products"
+                delegate='\{ "name": "sap/ui/mdc/tableOpaTests/appODataV4Hierarchy/TableDelegate", "payload": \{ "collectionName": "EMPLOYEES" \} \}'
+                p13nMode="Column,Sort,Filter"
+                showRowCount="false"
+                selectionMode="Multi"
+                sortConditions="{
+                    sorters:[{
+                        name: 'AGE', 
+                        descending:false
+                    }]
+                }">
+                <mdc:type>
+                    <mdc:table.TreeTableType rowCountMode="Fixed"/>
+                </mdc:type>
+                <mdc:variant>
+                    <variants:VariantManagement id="mdcTable-vm" for="mdcTable"/>
+                </mdc:variant>
+                <mdc:columns autoResizeColumn="true">
+                    <mdcTable:Column id="mdcTable-ID" header="ID" propertyKey="ID">
+                        <Text text="{ID}"/>
+                    </mdcTable:Column>
+                    <mdcTable:Column id="mdcTable-Name" header="Name" propertyKey="Name">
+                        <Text text="{Name}"/>
+                    </mdcTable:Column>
+                    <mdcTable:Column id="mdcTable-Age" header="Age" propertyKey="AGE">
+                        <Text text="{AGE}"/>
+                    </mdcTable:Column>
+                    <mdcTable:Column id="mdcTable-ManagerID" header="Manager's ID" propertyKey="MANAGER_ID">
+                        <Text text="{MANAGER_ID}"/>
+                    </mdcTable:Column>
+                </mdc:columns>
+            </mdc:Table>
+        </Page>
+    </App>
+</mvc:View>

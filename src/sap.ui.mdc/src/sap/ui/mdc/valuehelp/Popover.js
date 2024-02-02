@@ -41,7 +41,34 @@ sap.ui.define([
 			interfaces: [
 				"sap.ui.mdc.valuehelp.ITypeaheadContainer", "sap.ui.mdc.valuehelp.IDialogContainer", "sap.ui.core.PopupInterface"
 			],
-			properties: {},
+			properties: {
+				/**
+				 * Controls the possibility to open this popover container by clicking on a connected control, even if no content enforces it.
+				 *
+				 * <b>Note:</b> By default, a type-ahead is only shown to provide suggestions when users enter input in a connected control.
+				 * This property enables scenarios where popovers need to be shown earlier (for example, recommendations or recently entered values).
+				 * See also {@link module:sap/ui/mdc/ValueHelpDelegate.showTypeahead showTypeahead}
+				 * @since 1.110.0
+				 * @deprecated As of version 1.121.0, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.shouldOpenOnClick shouldOpenOnClick}
+				 */
+				opensOnClick: {
+					type: "boolean",
+					defaultValue: false
+				},
+				/**
+				 * Controls the possibility to open this popover container by focussing on a connected control.
+				 *
+				 * <b>Note:</b> By default, a type-ahead is only shown to provide suggestions when users enter input in a connected control.
+				 * This property enables scenarios where popovers need to be shown earlier (for example, recommendations or recently entered values).
+				 * See also {@link module:sap/ui/mdc/ValueHelpDelegate.showTypeahead showTypeahead}
+				 * @since 1.112.0
+				 * @deprecated As of version 1.121.0, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.shouldOpenOnFocus shouldOpenOnFocus}
+				 */
+				opensOnFocus: {
+					type: "boolean",
+					defaultValue: false
+				}
+			},
 			defaultAggregation: "content"
 		}
 	});

@@ -1641,7 +1641,11 @@ sap.ui.define([
 	IconTabHeader.prototype.ontouchstart = function(oEvent) {
 		var oTargetTouch = oEvent.targetTouches[0];
 		// store touch state
-		this._iActiveTouch = oTargetTouch.identifier;
+		if (oEvent.which === 3) { // when the event is a right-click
+			return;
+		} else {
+			this._iActiveTouch = oTargetTouch.identifier;
+		}
 	};
 
 	/**

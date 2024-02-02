@@ -209,7 +209,19 @@ sap.ui.define([
 							"src": "/images/grass.jpg",
 							"alt": "Picture of grass",
 							"tooltip": "Green grass",
-							"fullWidth": true
+							"fullWidth": true,
+							"height": "200px",
+							"imageFit": "cover",
+							"imagePosition": "center",
+							"overlay": {
+								"supertitle": "Sun, May 28",
+								"title": "Hello, John",
+								"subTitle": "Today will be a good day!",
+								"textColor": "#fff",
+								"verticalPosition": "Center",
+								"horizontalPosition": "End",
+								"background": "rgb(34, 38, 43, 0.4)"
+							}
 						}
 					]
 				}
@@ -1026,16 +1038,28 @@ sap.ui.define([
 		assert.equal(aGroups[2].getItems()[6].getItems()[0].getText(), oData.company.email, "Should have correct item value.");
 		assert.equal(aGroups[2].getItems()[8].getItems()[0].getText(), "newmail@example.com", "Should have correct item value.");
 		assert.equal(aGroups[2].getItems()[10].getItems()[0].getText(), oData.company.website, "Should have correct item value.");
+
 		// Rating Indicator
 		assert.ok(aGroups[2].getItems()[12].isA("sap.m.RatingIndicator"), "RatingIndicator is rendered.");
 		assert.equal(aGroups[2].getItems()[12].getMaxValue(), 7, "RatingIndicator's maxValue is correctly set.");
 		assert.equal(aGroups[2].getItems()[12].getValue(), 4.5, "RatingIndicator's value is correctly set.");
 		assert.equal(aGroups[2].getItems()[12].getVisualMode(), "Full", "RatingIndicator's visualMode is correctly set.");
+
 		// Image
-		assert.ok(aGroups[2].getItems()[13].isA("sap.m.Image"), "Image is rendered.");
-		assert.equal(aGroups[2].getItems()[13].getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/grass.jpg", "Image's source is correctly set.");
-		assert.equal(aGroups[2].getItems()[13].getAlt(), "Picture of grass", "Image's alt text is correctly set.");
+		assert.ok(aGroups[2].getItems()[13].isA("sap.ui.core.Control"), "Image with overlay is rendered.");
+		assert.equal(aGroups[2].getItems()[13].getAggregation("image").getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/grass.jpg", "Image's source is correctly set.");
+		assert.equal(aGroups[2].getItems()[13].getAggregation("image").getAlt(), "Picture of grass", "Image's alt text is correctly set.");
 		assert.equal(aGroups[2].getItems()[13].getTooltip(), "Green grass", "Image's tooltip is correctly set.");
+		assert.equal(aGroups[2].getItems()[13].getSupertitle(), "Sun, May 28", "Image's supertitle is correctly set.");
+		assert.equal(aGroups[2].getItems()[13].getTitle(), "Hello, John", "Image's title is correctly set.");
+		assert.equal(aGroups[2].getItems()[13].getSubTitle(), "Today will be a good day!", "Image's subtitle is correctly set.");
+		assert.equal(aGroups[2].getItems()[13].getVerticalPosition(), "Center", "Image's verticalPosition is correctly set.");
+		assert.equal(aGroups[2].getItems()[13].getHorizontalPosition(), "End", "Image's horizontalPosition is correctly set.");
+		assert.equal(aGroups[2].getItems()[13].getTextColor(), "#fff", "Image's textColor is correctly set.");
+		assert.equal(aGroups[2].getItems()[13].getBackground(), "rgb(34, 38, 43, 0.4)", "Image's background is correctly set.");
+		assert.equal(aGroups[2].getItems()[13].getAggregation("image").getHeight(), "200px", "Image's height is correctly set.");
+		assert.equal(aGroups[2].getItems()[13].getAggregation("image").getBackgroundSize(), "cover", "Image's imageFit is correctly set.");
+		assert.equal(aGroups[2].getItems()[13].getAggregation("image").getBackgroundPosition(), "center", "Image's imagePosition is correctly set.");
 	});
 
 	QUnit.test("Spacing between groups are correctly calculated", async function (assert) {

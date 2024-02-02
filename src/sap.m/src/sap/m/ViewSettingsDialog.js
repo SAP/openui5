@@ -2851,7 +2851,7 @@ function(
 
 		if (this.getTitle()) { // custom title
 			oTitleLabel.setText(this.getTitle());
-		} else { // default title
+		} else if (this._hasSubHeader()) { // default title if necessary
 			oTitleLabel.setText(this._rb.getText("VIEWSETTINGS_TITLE"));
 		}
 

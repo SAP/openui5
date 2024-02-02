@@ -590,7 +590,9 @@ sap.ui.define([
 
 		if (typeof oElement === "string") { // backwards compatibility, should be dropped in future releases (>rel-1.54)
 			sClassName = oElement;
-			Log.error("sap.ui.dt.DesignTime#getDesignTimeMetadataFor / Function getDesignTimeMetadataFor() should be called with element instance");
+			Log.error(
+				"sap.ui.dt.DesignTime#getDesignTimeMetadataFor / Function getDesignTimeMetadataFor() should be called with element instance"
+			);
 		} else {
 			sClassName = oElement.getMetadata().getName();
 		}
@@ -830,7 +832,8 @@ sap.ui.define([
 	};
 
 	DesignTime.prototype._createAggregationOverlay = function(sAggregationName, oElement, mAggregationMetadata, bIsTemplateAggregation) {
-		// TODO: Aggregation overlays should be registered at the same time as their ElementOverlays (currently they are registered *before*)
+		// TODO: Aggregation overlays should be registered at the same time as their ElementOverlays
+		// (currently they are registered *before*)
 		return new AggregationOverlay({
 			aggregationName: sAggregationName,
 			element: oElement,
@@ -874,7 +877,8 @@ sap.ui.define([
 			createElementOverlay({
 				element: oElement,
 				isRoot: mParams.root,
-				visible: typeof mParams.visible !== "boolean" || mParams.visible, // TODO: check why defaultValue doesn't work if "undefined" specified
+				// TODO: check why defaultValue doesn't work if "undefined" specified
+				visible: typeof mParams.visible !== "boolean" || mParams.visible,
 				isPartOfTemplate: mParams.isPartOfTemplate,
 				metadataScope: this.getScope(),
 				designTimeMetadata: (
@@ -973,11 +977,29 @@ sap.ui.define([
 			aAggregationNames = _difference(aAggregationNames, aTemplateAggregationNames);
 		}
 
-		return this._createChildrenOverlays(oElementOverlay, mParentAggregationMetadata, aTemplateAggregationNames, bIsPartOfTemplate, mAggregationBindingTemplates)
-		.then(this._createChildrenOverlays.bind(this, oElementOverlay, mParentAggregationMetadata, aAggregationNames, bIsCloneInsideTemplate));
+		return this._createChildrenOverlays(
+			oElementOverlay,
+			mParentAggregationMetadata,
+			aTemplateAggregationNames,
+			bIsPartOfTemplate,
+			mAggregationBindingTemplates
+		)
+		.then(this._createChildrenOverlays.bind(
+			this,
+			oElementOverlay,
+			mParentAggregationMetadata,
+			aAggregationNames,
+			bIsCloneInsideTemplate
+		));
 	};
 
-	DesignTime.prototype._createChildrenOverlays = function(oElementOverlay, mParentAggregationMetadata, aAggregationNames, bIsPartOfTemplate, mAggregationBindingTemplates) {
+	DesignTime.prototype._createChildrenOverlays = function(
+		oElementOverlay,
+		mParentAggregationMetadata,
+		aAggregationNames,
+		bIsPartOfTemplate,
+		mAggregationBindingTemplates
+	) {
 		var bIsTemplateAggregation = !isEmptyObject(mAggregationBindingTemplates);
 		// Nested template inside a clone of another template
 		if (bIsTemplateAggregation && !bIsPartOfTemplate) {
@@ -993,7 +1015,12 @@ sap.ui.define([
 					mParentAggregationMetadata
 				);
 
-				var oAggregationOverlay = this._createAggregationOverlay(sAggregationName, oElement, mAggregationMetadata, bIsTemplateAggregation);
+				var oAggregationOverlay = this._createAggregationOverlay(
+					sAggregationName,
+					oElement,
+					mAggregationMetadata,
+					bIsTemplateAggregation
+				);
 				OverlayRegistry.register(oAggregationOverlay);
 
 				var aChildrenElements;

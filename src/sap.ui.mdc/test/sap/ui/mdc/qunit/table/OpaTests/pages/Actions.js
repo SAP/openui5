@@ -7,8 +7,6 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/matchers/Ancestor",
-	"sap/ui/test/matchers/Descendant",
 	"test-resources/sap/ui/mdc/testutils/opa/table/waitForTable",
 	"test-resources/sap/ui/mdc/testutils/opa/table/Actions",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
@@ -20,10 +18,8 @@ sap.ui.define([
 	/** @type sap.ui.test.Opa5 */ Opa5,
 	/** @type sap.ui.test.actions.Press */ Press,
 	/** @type sap.ui.test.matchers.PropertyStrictEquals */ PropertyStrictEquals,
-	/** @type sap.ui.test.matchers.Ancestor */ Ancestor,
-	/** @type sap.ui.test.matchers.Descendant */ Descendant,
 	/** @type sap.ui.test.Opa5 */ waitForTable,
-	/** @type sap.ui.test.Opa5 */ TablePublicActions,
+	/** @type sap.ui.test.Opa5 */ TableActions,
 	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
 	/** @type sap.ui.test.actions.Drag */ Drag,
 	/** @type sap.ui.test.actions.Drop */ Drop,
@@ -254,9 +250,7 @@ sap.ui.define([
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
-		iPressShowMoreButton: function(oControl) {
-			return TablePublicActions.iExpandTableData.call(this, oControl);
-		},
+		iPressShowMoreButton: TableActions.iExpandTableData,
 
 		/**
 		 * Performs a Press action on {@link sap.m.SegmentedButtonItem}
@@ -268,9 +262,7 @@ sap.ui.define([
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
-		iPressShowLessButton: function(oControl) {
-			return TablePublicActions.iCollapseTableData.call(this, oControl);
-		},
+		iPressShowLessButton: TableActions.iCollapseTableData,
 
 		/**
 		 * Performs a Press action on {@link sap.m.Button}
@@ -384,9 +376,7 @@ sap.ui.define([
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
-		iFillInExportSettingsDialog: function(oControl, mSettings) {
-			return TablePublicActions.iExportToExcel.call(this, oControl, mSettings);
-		},
+		iFillInExportSettingsDialog: TableActions.iExportToExcel,
 
 		/**
 		 * Changes the {@link sap.ui.mdc.Table#multiSelectMode} property.
@@ -822,6 +812,38 @@ sap.ui.define([
 				}),
 				actions: new Press()
 			});
-		}
+		},
+
+		/**
+		 * Selects all visible rows available in the MDCTable.
+		 *
+		 * @function
+		 * @name iSelectAllRows
+		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+		 * @returns {Promise} OPA waitFor
+		 */
+		iSelectAllRows: TableActions.iSelectAllRows,
+
+		/**
+		 * Removes all selections from the MDCTable.
+		 *
+		 * @function
+		 * @name iClearSelection
+		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+		 * @returns {Promise} OPA waitFor
+		 */
+		iClearSelection: TableActions.iClearSelection,
+
+		/**
+		 * Selects one or multiple rows.
+		 *
+		 * @function
+		 * @name iSelectRows
+		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+		 * @param {Number} iStartIndex Index from which the selection starts
+		 * @param {Number} iEndIndex Index up to the selection ends
+		 * @returns {Promise} OPA waitFor
+		 */
+		iSelectRows: TableActions.iSelectRows
 	};
 });

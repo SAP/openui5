@@ -2,7 +2,7 @@
 * ${copyright}
 */
 
-// Provides control sap.ui.integration.controls.ActionsToolbar
+// Provides control sap.ui.integration.controls.LinkWithIcon
 sap.ui.define([
 	"./LinkWithIconRenderer",
 	"sap/ui/integration/library",

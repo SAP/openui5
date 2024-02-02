@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/base/util/restricted/_intersection",
 	"sap/m/InstanceManager",
 	"sap/ui/core/Element",
 	"sap/ui/dt/OverlayRegistry",
@@ -12,7 +11,6 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/Utils"
 ], function(
-	_intersection,
 	InstanceManager,
 	Element,
 	OverlayRegistry,
@@ -71,7 +69,9 @@ sap.ui.define([
 		var aSharedMultiSelectionPlugins = aMultiSelectionRequiredPlugins.slice();
 
 		aElementOverlays.forEach(function(oElementOverlay) {
-			aSharedMultiSelectionPlugins = _intersection(aSharedMultiSelectionPlugins, oElementOverlay.getEditableByPlugins());
+			aSharedMultiSelectionPlugins = aSharedMultiSelectionPlugins.filter(function(sPlugin) {
+				return oElementOverlay.getEditableByPlugins()[sPlugin];
+			});
 		});
 
 		return aSharedMultiSelectionPlugins.length > 0;

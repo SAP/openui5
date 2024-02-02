@@ -560,12 +560,18 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				fileType: "change"
 			});
+			const oUIChangeWithVariantReference = FlexObjectFactory.createUIChange({
+				id: "someUIChange",
+				layer: Layer.CUSTOMER,
+				fileType: "change",
+				variantReference: "foo"
+			});
 			const oDataSelector = VariantManagementState.getVariantManagementMap();
 			const oClearCacheSpy = sandbox.spy(oDataSelector, "_clearCache");
 			oDataSelector.checkUpdate(
 				{ reference: sReference },
 				[
-					{ type: "removeFlexObject", updatedObject: oUIChangeWithoutVariantReference},
+					{ type: "removeFlexObject", updatedObject: oUIChangeWithVariantReference},
 					{ type: "anotherType", updatedObject: oUIChangeWithoutVariantReference}
 				]
 			);

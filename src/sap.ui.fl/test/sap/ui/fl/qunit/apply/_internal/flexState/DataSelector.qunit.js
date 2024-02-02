@@ -2,11 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	DataSelector,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -161,8 +159,8 @@ sap.ui.define([
 				baz: "baz"
 			};
 			this.oExecuteStub = sandbox.stub();
-			this.oExecuteStub.callsFake(function(oData, sParameter) {
-				return this.oExpectedResult[sParameter];
+			this.oExecuteStub.callsFake(function(oData, mParameters) {
+				return this.oExpectedResult[mParameters.sampleKey];
 			}.bind(this));
 			this.oDataSelector = new DataSelector({
 				executeFunction: this.oExecuteStub,
@@ -177,13 +175,13 @@ sap.ui.define([
 		QUnit.test("when a parameterized selector is created", function(assert) {
 			this.oExecuteStub
 			.onFirstCall()
-			.callsFake(function(oData, sParameter) {
-				assert.strictEqual(
-					sParameter,
-					"foo",
+			.callsFake(function(oData, mParameters) {
+				assert.deepEqual(
+					mParameters,
+					{ sampleKey: "foo" },
 					"then the execute function is called with the parameter value for the respective getter call"
 				);
-				return this.oExpectedResult[sParameter];
+				return this.oExpectedResult[mParameters.sampleKey];
 			}.bind(this));
 			assert.strictEqual(
 				this.oDataSelector.get({ sampleKey: "foo" }),
@@ -243,12 +241,12 @@ sap.ui.define([
 			this.oDataSelector.get({ sampleKey: "foo" });
 			this.oDataSelector.get({ sampleKey: "baz" });
 			assert.strictEqual(
-				this.oExecuteStub.withArgs(undefined, "foo").callCount,
+				this.oExecuteStub.withArgs(undefined, {sampleKey: "foo"}).callCount,
 				2,
 				"then the cache is cleared for the provided parameter"
 			);
 			assert.strictEqual(
-				this.oExecuteStub.withArgs(undefined, "baz").callCount,
+				this.oExecuteStub.withArgs(undefined, {sampleKey: "baz"}).callCount,
 				1,
 				"then the cache is not cleared for other parameters"
 			);
@@ -285,8 +283,8 @@ sap.ui.define([
 			};
 
 			this.oGrandParentExecuteStub = sandbox.stub();
-			this.oGrandParentExecuteStub.callsFake(function(oData, sParameter) {
-				return this.oExpectedResult[sParameter];
+			this.oGrandParentExecuteStub.callsFake(function(oData, mParameters) {
+				return this.oExpectedResult[mParameters.grandParentSampleKey];
 			}.bind(this));
 			this.oGrandParentDataSelector = new DataSelector({
 				executeFunction: this.oGrandParentExecuteStub,
@@ -303,8 +301,8 @@ sap.ui.define([
 			});
 
 			this.oExecuteStub = sandbox.stub();
-			this.oExecuteStub.callsFake(function(oData, sParameter) {
-				return oData[sParameter];
+			this.oExecuteStub.callsFake(function(oData, mParameters) {
+				return oData[mParameters.sampleKey];
 			});
 			this.oDataSelector = new DataSelector({
 				parentDataSelector: this.oParentDataSelector,
@@ -423,8 +421,8 @@ sap.ui.define([
 				baz: "baz"
 			};
 
-			this.oGrandParentExecuteStub = sandbox.stub().callsFake(function(oData, sParameter) {
-				return this.oExpectedResult[sParameter];
+			this.oGrandParentExecuteStub = sandbox.stub().callsFake(function(oData, mParameters) {
+				return this.oExpectedResult[mParameters.grandParentSampleKey];
 			}.bind(this));
 			this.oGrandParentInvalidationStub = sandbox.stub().returns(true);
 			this.oGrandParentDataSelector = new DataSelector({
@@ -434,8 +432,8 @@ sap.ui.define([
 			});
 			this.oGrandParentClearCacheSpy = sandbox.spy(this.oGrandParentDataSelector, "_clearCache");
 
-			this.oParentExecuteStub = sandbox.stub().callsFake(function(oData, sParameter) {
-				return oData[sParameter];
+			this.oParentExecuteStub = sandbox.stub().callsFake(function(oData, mParameters) {
+				return oData[mParameters.parentSampleKey];
 			});
 			this.oParentInvalidationStub = sandbox.stub().returns(true);
 			this.oParentDataSelector = new DataSelector({
@@ -446,8 +444,8 @@ sap.ui.define([
 			});
 			this.oParentClearCacheSpy = sandbox.spy(this.oParentDataSelector, "_clearCache");
 
-			this.oExecuteStub = sandbox.stub().callsFake(function(oData, sParameter) {
-				return oData[sParameter];
+			this.oExecuteStub = sandbox.stub().callsFake(function(oData, mParameters) {
+				return oData[mParameters.sampleKey];
 			});
 			this.oInvalidationStub = sandbox.stub().returns(true);
 			this.oDataSelector = new DataSelector({
@@ -577,6 +575,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

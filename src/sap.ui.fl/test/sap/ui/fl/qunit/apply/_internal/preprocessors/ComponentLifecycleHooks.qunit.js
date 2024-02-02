@@ -164,7 +164,6 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Obtains the componentId from component instance and propagates even if there are no changes for the component", function(assert) {
-			sandbox.stub(ChangePersistence.prototype, "loadChangesMapForComponent").resolves({});
 			var oClearStub = sandbox.stub(FlexState, "rebuildFilteredResponse");
 
 			return ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {asyncHints: true, id: "differentComponentId"})
@@ -213,11 +212,6 @@ sap.ui.define([
 			QUnit.test(sName, function(assert) {
 				assert.expect(5);
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl");
-				sandbox.stub(FlexControllerFactory, "createForControl").returns({
-					_oChangePersistence: {
-						loadChangesMapForComponent: sandbox.stub().resolves()
-					}
-				});
 				var oExistingModel;
 				sandbox.stub(this.oAppComponent, "setModel").callsFake(function(oModel, sModelName) {
 					assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then VariantModel was set on the AppComponent with the correct name");
@@ -263,7 +257,6 @@ sap.ui.define([
 		QUnit.test("when getChangesAndPropagate() is called for two embedded components in parallel with no preexisting VariantModel on its application component", function(assert) {
 			assert.expect(6);
 			sandbox.spy(this.oAppComponent, "setModel");
-			sandbox.stub(ChangePersistence.prototype, "loadChangesMapForComponent").resolves(function() {});
 
 			var oComponent = {
 				setModel: function(oModelSet, sModelName) {
@@ -330,13 +323,6 @@ sap.ui.define([
 			this.oCreateVariantModelStub = sandbox.stub(ComponentLifecycleHooks, "_createVariantModel").returns({
 				initialize: sandbox.stub()
 			});
-			FlexControllerFactory._instanceCache[sMockComponentName] = {
-				_oChangePersistence: {
-					loadChangesMapForComponent() {
-						return Promise.resolve();
-					}
-				}
-			};
 
 			this.oLoadLibStub = sandbox.stub(Lib, "load").resolves();
 		},

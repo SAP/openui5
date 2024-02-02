@@ -290,8 +290,7 @@ sap.ui.define([
 
 	BasePlugin.prototype._isEditableByPlugin = function(oOverlay, bSibling) {
 		var sPluginName = this._retrievePluginName(bSibling);
-		var aPluginList = oOverlay.getEditableByPlugins();
-		return aPluginList.indexOf(sPluginName) > -1;
+		return !!oOverlay.getEditableByPlugins()[sPluginName];
 	};
 
 	BasePlugin.prototype.registerElementOverlay = function(oOverlay) {
@@ -363,18 +362,27 @@ sap.ui.define([
 	};
 
 	BasePlugin.prototype.removeFromPluginsList = function(oOverlay, bSibling) {
-		var sName = this._retrievePluginName(bSibling);
-		oOverlay.removeEditableByPlugin(sName);
-		if (!oOverlay.getEditableByPlugins().length) {
+		const sName = this._retrievePluginName(bSibling);
+		const mEditableByPlugins = oOverlay.getEditableByPlugins();
+		oOverlay.setEditableByPlugins({
+			...mEditableByPlugins,
+			[sName]: false
+		});
+
+		// If there are no more plugins registered on the overlay, set editable to false
+		if (!Object.values(oOverlay.getEditableByPlugins()).some(Boolean)) {
 			oOverlay.setEditable(false);
 		}
 	};
 
 	BasePlugin.prototype.addToPluginsList = function(oOverlay, bSibling) {
-		var sName = this._retrievePluginName(bSibling);
-		var aPluginList = oOverlay.getEditableByPlugins();
-		if (aPluginList.indexOf(sName) === -1) {
-			oOverlay.addEditableByPlugin(sName);
+		const sName = this._retrievePluginName(bSibling);
+		const mEditableByPlugins = oOverlay.getEditableByPlugins();
+		if (!mEditableByPlugins[sName]) {
+			oOverlay.setEditableByPlugins({
+				...mEditableByPlugins,
+				[sName]: true
+			});
 			oOverlay.setEditable(true);
 		}
 	};

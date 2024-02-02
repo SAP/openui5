@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>MDCTable with ODataV4 (Flat)</title>
+    <meta charset="utf-8">
+
+    <script
+            id='sap-ui-bootstrap'
+            src='../../../../../../../../resources/sap-ui-core.js'
+            data-sap-ui-theme='sap_horizon'
+            data-sap-ui-libs='sap.m'
+            data-sap-ui-preload="async"
+            data-sap-ui-async="true"
+            data-sap-ui-compatVersion="edge"
+            data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
+            data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'
+            data-sap-ui-resourceroots='{
+                "appODataV4Flat": "./",
+				"sap.ui.mdc.tableOpaTests": "../../../../../../../../test-resources/sap/ui/mdc/qunit/table/OpaTests",
+				"sap.ui.mdc.testutils": "../../../../../../../../test-resources/sap/ui/mdc/testutils",
+				"delegates": "../../../../../../../../test-resources/sap/ui/mdc/delegates"
+			}'>
+    </script>
+</head>
+
+<body class="sapUiBody sapUiSizeCozy">
+    <div data-sap-ui-component data-name="appODataV4Flat" data-id="container" data-settings='{"id" : "appODataV4Flat"}'></div>
+</body>
+
+</html>

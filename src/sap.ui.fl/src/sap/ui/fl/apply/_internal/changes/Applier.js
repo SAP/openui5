@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/Utils"
 ], function(
 	Log,
@@ -19,6 +20,7 @@ sap.ui.define([
 	FlexCustomData,
 	Utils,
 	DependencyHandler,
+	UIChangesState,
 	FlUtils
 ) {
 	"use strict";
@@ -78,7 +80,7 @@ sap.ui.define([
 		return mPropertyBag.modifier.targets === "xmlTree";
 	}
 
-	function checkAndAdjustChangeStatus(oControl, oChange, mChangesMap, oFlexController, mPropertyBag) {
+	function checkAndAdjustChangeStatus(oControl, oChange, mPropertyBag) {
 		// in case of changes in templates, the original control is not always available at this point
 		// example: rename on a control created by a change inside a template
 		var oOriginalControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag).control;
@@ -88,13 +90,11 @@ sap.ui.define([
 		var bIsCurrentlyAppliedOnControl = oOriginalControl
 			&& FlexCustomData.hasChangeApplyFinishedCustomData(oOriginalControl, oChange, oModifier);
 		var bChangeStatusAppliedFinished = oChange.isApplyProcessFinished();
-		var oAppComponent = mPropertyBag.appComponent;
 		if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
 			// if a change was already processed and is not applied anymore, then the control was destroyed and recreated.
 			// In this case we need to recreate/copy the dependencies if we are applying in JS
 			if (!isXmlModifier(mPropertyBag)) {
-				var fnCheckFunction = Utils.checkIfDependencyIsStillValid.bind(null, oAppComponent, oModifier, mChangesMap);
-				oFlexController._oChangePersistence.copyDependenciesFromInitialChangesMap(oChange, fnCheckFunction, oAppComponent);
+				UIChangesState.copyDependenciesFromCompleteDependencyMap(oChange, mPropertyBag.appComponent);
 			}
 			oChange.setInitialApplyState();
 		} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
@@ -332,20 +332,19 @@ sap.ui.define([
 		},
 
 		/**
-		 * Gets the changes map and gets all changes for that control from the map, then, depending on
+		 * Gets the dependency map and gets all changes for that control from the map, then, depending on
 		 * dependencies, directly applies the change or saves the callback to apply in the dependency.
 		 *
-		 * @param {function} fnGetChangesMap - Function which resolves with the changes map
 		 * @param {object} oAppComponent - Component instance that is currently loading
-		 * @param {sap.ui.fl.oFlexController} oFlexController - Instance of FlexController
+		 * @param {string} sReference - Flex reference
 		 * @param {sap.ui.core.Control} oControl Instance of the control to which changes should be applied
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Resolves as soon as all changes for the control are applied
 		 */
-		applyAllChangesForControl(fnGetChangesMap, oAppComponent, oFlexController, oControl) {
+		applyAllChangesForControl(oAppComponent, sReference, oControl) {
 			// the changes have to be queued synchronously
-			var mChangesMap = fnGetChangesMap();
+			const oDependencyMap = UIChangesState.getLiveDependencyMap(sReference);
 			var sControlId = oControl.getId();
-			var aChangesForControl = mChangesMap.mChanges[sControlId] || [];
+			var aChangesForControl = oDependencyMap.mChanges[sControlId] || [];
 			var mPropertyBag = {
 				modifier: JsControlTreeModifier,
 				appComponent: oAppComponent,
@@ -353,7 +352,7 @@ sap.ui.define([
 			};
 
 			aChangesForControl.forEach(function(oChange) {
-				checkAndAdjustChangeStatus(oControl, oChange, mChangesMap, oFlexController, mPropertyBag);
+				checkAndAdjustChangeStatus(oControl, oChange, mPropertyBag);
 				if (!oChange.isApplyProcessFinished() && !oChange._ignoreOnce) {
 					oChange.setQueuedForApply();
 				}
@@ -363,11 +362,11 @@ sap.ui.define([
 			oLastPromise = oLastPromise.then(function(oControl, mPropertyBag) {
 				var aPromiseStack = [];
 				var sControlId = oControl.getId();
-				var aChangesForControl = mChangesMap.mChanges[sControlId] || [];
+				var aChangesForControl = oDependencyMap.mChanges[sControlId] || [];
 				var bControlWithDependencies;
 
-				if (mChangesMap.mControlsWithDependencies[sControlId]) {
-					DependencyHandler.removeControlsDependencies(mChangesMap, sControlId);
+				if (oDependencyMap.mControlsWithDependencies[sControlId]) {
+					DependencyHandler.removeControlsDependencies(oDependencyMap, sControlId);
 					bControlWithDependencies = true;
 				}
 
@@ -381,22 +380,22 @@ sap.ui.define([
 					if (oChange._ignoreOnce) {
 						delete oChange._ignoreOnce;
 					} else if (oChange.isApplyProcessFinished()) {
-						DependencyHandler.resolveDependenciesForChange(mChangesMap, oChange.getId(), sControlId);
-					} else if (!mChangesMap.mDependencies[oChange.getId()]) {
+						DependencyHandler.resolveDependenciesForChange(oDependencyMap, oChange.getId(), sControlId);
+					} else if (!oDependencyMap.mDependencies[oChange.getId()]) {
 						aPromiseStack.push(function() {
 							return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag).then(function() {
-								DependencyHandler.resolveDependenciesForChange(mChangesMap, oChange.getId(), sControlId);
+								DependencyHandler.resolveDependenciesForChange(oDependencyMap, oChange.getId(), sControlId);
 							});
 						});
 					} else {
 						var fnCallback = Applier.applyChangeOnControl.bind(Applier, oChange, oControl, mPropertyBag);
-						DependencyHandler.addChangeApplyCallbackToDependency(mChangesMap, oChange.getId(), fnCallback);
+						DependencyHandler.addChangeApplyCallbackToDependency(oDependencyMap, oChange.getId(), fnCallback);
 					}
 				});
 
 				if (aChangesForControl.length || bControlWithDependencies) {
 					return FlUtils.execPromiseQueueSequentially(aPromiseStack).then(function() {
-						return DependencyHandler.processDependentQueue(mChangesMap, oAppComponent, sControlId);
+						return DependencyHandler.processDependentQueue(oDependencyMap, oAppComponent, sControlId);
 					});
 				}
 				return undefined;
@@ -438,7 +437,7 @@ sap.ui.define([
 				.then(function(oChangeHandler) {
 					mPropertyBag.changeHandler = oChangeHandler;
 					oChange.setQueuedForApply();
-					checkAndAdjustChangeStatus(oControl, oChange, undefined, undefined, mPropertyBag);
+					checkAndAdjustChangeStatus(oControl, oChange, mPropertyBag);
 
 					if (!oChange.isApplyProcessFinished()) {
 						if (typeof mPropertyBag.changeHandler.onAfterXMLChangeProcessing === "function") {

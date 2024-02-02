@@ -1210,6 +1210,44 @@ sap.ui.define([
 		assert.strictEqual(oSelectSpy.lastCall.args[0].previousKey, "key1", "first filter key is passed as previousKey select event arg");
 	});
 
+	QUnit.test("Right Click", function (assert) {
+		// Arrange
+		this.oITH.addItem(
+			new IconTabFilter({
+				icon: "sap-icon://instance",
+				key: "key1"
+			})
+		).addItem(
+			new IconTabFilter({
+				icon: "sap-icon://instance",
+				key: "key2"
+			})
+		);
+		this.oITH.setSelectedKey("key1");
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		// Act
+		var oMockEvent = {
+			which: 3,
+			target: this.oITH.getAggregation("items")[1].$(),
+			targetTouches: {
+				0: {
+					identifier: 0,
+					target: this.oITH.getAggregation("items")[1].$()
+				},
+				length: 1
+			}
+		};
+
+		this.oITH.ontouchstart(oMockEvent);
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		var iActiveTouch = this.oITH._iActiveTouch;
+
+		// Assert
+		assert.strictEqual(iActiveTouch, undefined, "Active touch is not defined when using right click");
+	});
+
 	QUnit.module("Focusing");
 
 	QUnit.test("Focused index on focus leave", function(assert) {

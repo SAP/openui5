@@ -80,10 +80,6 @@ sap.ui.define([
 					type : CalendarDayType.NonWorking
 				}));
 
-				oCal1.addSpecialDate(new DateTypeRange({
-					startDate : UI5Date.getInstance(oRefDate.setDate(25)),
-					type : CalendarDayType.NonWorking
-				}));
 				oCal2.addSpecialDate(new DateTypeRange({
 					startDate : UI5Date.getInstance(oRefDate.setDate(22)),
 					type : CalendarDayType.Type03,
@@ -92,12 +88,17 @@ sap.ui.define([
 
 				oCal2.addSpecialDate(new DateTypeRange({
 					startDate : UI5Date.getInstance(oRefDate.setDate(24)),
-					type : CalendarDayType.NonWorking
+					type : CalendarDayType.Working
 				}));
 
 				oCal2.addSpecialDate(new DateTypeRange({
 					startDate : UI5Date.getInstance(oRefDate.setDate(24)),
 					type : CalendarDayType.Type03
+				}));
+
+				oCal1.addSpecialDate(new DateTypeRange({
+					startDate : UI5Date.getInstance(oRefDate.setDate(25)),
+					type : CalendarDayType.Working
 				}));
 
 			} else {

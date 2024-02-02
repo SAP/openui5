@@ -97,11 +97,12 @@ sap.ui.define([
 	 * @param {sap.ui.rta.RuntimeAuthoring} oRta - Instance of the RuntimeAuthoring class
 	 * @param {object} mPayload - Property Bag
 	 * @param {string} mPayload.overlayId
+	 * @returns {Promise<object|null>} Resolves with the overlay info
 	 */
-	function getOverlayInfo(oRta, mPayload) {
+	async function getOverlayInfo(oRta, mPayload) {
 		var oOverlay = Element.getElementById(mPayload.overlayId);
 		if (!oOverlay) {
-			return;
+			return null;
 		}
 		var oElement = oOverlay.getElement();
 
@@ -110,27 +111,30 @@ sap.ui.define([
 			removeSelectionHighlight();
 		}
 
-		return Promise.all(oOverlay.getEditableByPlugins().map(function(sPluginName) {
+		const mEditableByPlugins = oOverlay.getEditableByPlugins();
+		const aEditableByPlugins = Object.keys(mEditableByPlugins)
+		.filter(function(sPluginName) {
+			return mEditableByPlugins[sPluginName];
+		});
+
+		const aPlugins = await Promise.all(aEditableByPlugins.map(async function(sPluginName) {
 			var oInstance = getPluginByName(oRta, sPluginName);
 			var bIsSibling = isPluginForSibling(sPluginName);
 
-			return getPluginChangeHandler(oInstance, oOverlay, oRta)
-			.then(function(oChangeHandler) {
-				return {
-					name: sPluginName,
-					isAvailable: oInstance.isAvailable([oOverlay], bIsSibling),
-					hasChangeHandler: !!oChangeHandler
-				};
-			});
-		}))
-		.then(function(aPlugins) {
+			const oChangeHandler = await getPluginChangeHandler(oInstance, oOverlay, oRta);
 			return {
-				elementId: oElement.getId(),
-				elementControlType: oElement.getMetadata().getName(),
-				overlayId: oOverlay.getId(),
-				plugins: aPlugins
+				name: sPluginName,
+				isAvailable: oInstance.isAvailable([oOverlay], bIsSibling),
+				hasChangeHandler: !!oChangeHandler
 			};
-		});
+		}));
+
+		return {
+			elementId: oElement.getId(),
+			elementControlType: oElement.getMetadata().getName(),
+			overlayId: oOverlay.getId(),
+			plugins: aPlugins
+		};
 	}
 
 	/*

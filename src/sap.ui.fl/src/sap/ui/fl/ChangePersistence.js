@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_union",
-	"sap/base/util/merge",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
@@ -13,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -22,11 +22,9 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Utils",
-	"sap/ui/performance/Measurement"
+	"sap/ui/fl/Utils"
 ], function(
 	union,
-	merge,
 	Log,
 	JsControlTreeModifier,
 	Component,
@@ -35,6 +33,7 @@ sap.ui.define([
 	FlexObjectFactory,
 	States,
 	DependencyHandler,
+	UIChangesState,
 	VariantManagementState,
 	DataSelector,
 	FlexState,
@@ -44,8 +43,7 @@ sap.ui.define([
 	Storage,
 	Layer,
 	LayerUtils,
-	Utils,
-	Measurement
+	Utils
 ) {
 	"use strict";
 
@@ -79,12 +77,6 @@ sap.ui.define([
 	var ChangePersistence = function(mComponent) {
 		this._mComponent = mComponent;
 
-		this._mChanges = DependencyHandler.createEmptyDependencyMap();
-		this._bChangesMapCreated = false;
-
-		// _mChangesInitial contains a clone of _mChanges to recreated dependencies if changes need to be reapplied
-		this._mChangesInitial = merge({}, this._mChanges);
-
 		if (!this._mComponent || !this._mComponent.name) {
 			Log.error("The Control does not belong to an SAPUI5 component. Personalization and changes for this control might not work as expected.");
 			throw new Error("Missing component name.");
@@ -92,7 +84,6 @@ sap.ui.define([
 
 		this._aDirtyChanges = [];
 		this._oMessagebundle = undefined;
-		this._mChangesEntries = {};
 		oVariantIndependentUIChangesDataSelector.clearCachedResult({reference: this._mComponent.name});
 	};
 
@@ -119,7 +110,6 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] Indicates that changes shall be loaded without layer filtering
 	 * @param {boolean} [mPropertyBag.includeCtrlVariants] - Indicates that control variant changes shall be included
 	 * @param {string} [mPropertyBag.cacheKey] Key to validate the cache entry stored on client side
-	 * @param {sap.ui.core.Component} [mPropertyBag.component] - Component instance
 	 * @param {string} [mPropertyBag.version] Number of the version to retrieve changes for
 	 * @param {boolean} bInvalidateCache - should the cache be invalidated
 	 * @returns {Promise} Promise resolving with an array of changes
@@ -134,47 +124,23 @@ sap.ui.define([
 			return [];
 		}
 
+		// TODO: remove and use UIChangesState
 		let aRelevantUIChanges = oVariantIndependentUIChangesDataSelector.get({reference: this._mComponent.name});
 
 		if (!mPropertyBag.includeCtrlVariants) {
-			aRelevantUIChanges = aRelevantUIChanges.concat(VariantManagementState.getInitialChanges({reference: this._mComponent.name}));
+			aRelevantUIChanges = aRelevantUIChanges.concat(
+				VariantManagementState.getInitialChanges({reference: this._mComponent.name})
+			);
 		} else {
-			aRelevantUIChanges = aRelevantUIChanges.concat(VariantManagementState.getVariantDependentFlexObjects(this._mComponent.name));
+			aRelevantUIChanges = aRelevantUIChanges.concat(
+				VariantManagementState.getVariantDependentFlexObjects(this._mComponent.name)
+			);
 		}
 
 		if (mPropertyBag.currentLayer) {
 			aRelevantUIChanges = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aRelevantUIChanges, mPropertyBag.currentLayer);
 		}
-
-		aRelevantUIChanges.forEach(function(oFlexObject) {
-			this._mChangesEntries[oFlexObject.getId()] = oFlexObject;
-		}.bind(this));
 		return aRelevantUIChanges;
-	};
-
-	/**
-	 * Calls the back end asynchronously and fetches all changes for the component
-	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
-	 * @param {object} oAppComponent - Component instance used to prepare the IDs (e.g. local)
-	 * @returns {Promise} Promise resolving with a getter for the changes map
-	 * @public
-	 */
-	ChangePersistence.prototype.loadChangesMapForComponent = function(oAppComponent) {
-		return this.getChangesForComponent({component: oAppComponent}).then(createChangeMap.bind(this));
-
-		function createChangeMap(aChanges) {
-			Measurement.start("fl.createDependencyMap", "Measurement of creating initial dependency map");
-			// Since starting RTA does not recreate ChangePersistence instance, resets changes map is required to filter personalized changes
-			this._mChanges = DependencyHandler.createEmptyDependencyMap();
-
-			aChanges.forEach(this.addChangeAndUpdateDependencies.bind(this, oAppComponent));
-
-			this._mChangesInitial = merge({}, this._mChanges);
-
-			Measurement.end("fl.createDependencyMap", "Measurement of creating initial dependency map");
-			this._bChangesMapCreated = true;
-			return this.getChangesMapForComponent.bind(this);
-		}
 	};
 
 	/**
@@ -186,81 +152,32 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of all open dependent changes for the control
 	 */
 	ChangePersistence.prototype.getOpenDependentChangesForControl = function(oSelector, oAppComponent) {
-		return DependencyHandler.getOpenDependentChangesForControl(this._mChanges, JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent), oAppComponent);
-	};
-
-	function getInitialDependencyClone(oChange) {
-		var mInitialDependencies = merge({}, this._mChangesInitial.mDependencies);
-		return mInitialDependencies[oChange.getId()];
-	}
-
-	function copyDependencies(oInitialDependency, aNewValidDependencies, oAppComponent, oChange) {
-		var sControlId;
-		var aNewValidControlDependencies = [];
-		oInitialDependency.controlsDependencies.forEach(function(oDependentControlSelector) {
-			// if the control is already available we don't need to add a dependency to it
-			if (!JsControlTreeModifier.bySelector(oDependentControlSelector, oAppComponent)) {
-				sControlId = JsControlTreeModifier.getControlIdBySelector(oDependentControlSelector, oAppComponent);
-				aNewValidControlDependencies.push(oDependentControlSelector);
-				this._mChanges.mControlsWithDependencies[sControlId] ||= [];
-				if (!this._mChanges.mControlsWithDependencies[sControlId].includes(oChange.getId())) {
-					this._mChanges.mControlsWithDependencies[sControlId].push(oChange.getId());
-				}
-			}
-		}.bind(this));
-
-		oInitialDependency.dependencies = aNewValidDependencies;
-		oInitialDependency.controlsDependencies = aNewValidControlDependencies;
-		if (aNewValidDependencies.length || aNewValidControlDependencies.length) {
-			this._mChanges.mDependencies[oChange.getId()] = oInitialDependency;
-		}
-	}
-
-	/**
-	 * This function copies the initial dependencies (before any changes got applied and dependencies got deleted) for the given change to the mChanges map
-	 * Also checks if the dependency is still valid in a callback
-	 * This function is used in the case that controls got destroyed and recreated
-	 *
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange The change whose dependencies should be copied
-	 * @param {function} fnDependencyValidation this function is called to check if the dependency is still valid
-	 * @param {sap.ui.core.Component} oAppComponent Application component instance that is currently loading
-	 * @returns {object} Returns the mChanges object with the updated dependencies
-	 */
-	ChangePersistence.prototype.copyDependenciesFromInitialChangesMap = function(oChange, fnDependencyValidation, oAppComponent) {
-		var oInitialDependency = getInitialDependencyClone.call(this, oChange);
-		if (oInitialDependency) {
-			var aNewValidDependencies = [];
-			oInitialDependency.dependencies.forEach(function(sChangeId) {
-				if (fnDependencyValidation(sChangeId)) {
-					this._mChanges.mDependentChangesOnMe[sChangeId] ||= [];
-					this._mChanges.mDependentChangesOnMe[sChangeId].push(oChange.getId());
-					aNewValidDependencies.push(sChangeId);
-				}
-			}.bind(this));
-			copyDependencies.call(this, oInitialDependency, aNewValidDependencies, oAppComponent, oChange);
-		}
-		return this._mChanges;
+		return DependencyHandler.getOpenDependentChangesForControl(
+			this.getDependencyMapForComponent(),
+			JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent),
+			oAppComponent
+		);
 	};
 
 	/**
-	 * Adds a new change into changes map positioned right after the referenced change and updates the change dependencies
+	 * Adds a new change into dependency map positioned right after the referenced change and updates the change dependencies
 	 *
 	 * @param {sap.ui.core.Component} oAppComponent - Application component for the view
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} [oReferenceChange] - Reference change. New change is positioned right after this one in the changes map
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} [oReferenceChange] - Reference change. New change is positioned right after this one in the dependency map
 	 */
 	ChangePersistence.prototype.addChangeAndUpdateDependencies = function(oAppComponent, oChange, oReferenceChange) {
 		// the change status should always be initial when it gets added to the map / dependencies
 		// if the component gets recreated the status of the change might not be initial
 		oChange.setInitialApplyState();
 		if (oReferenceChange) {
-			DependencyHandler.insertChange(oChange, this._mChanges, oReferenceChange);
+			DependencyHandler.insertChange(oChange, this.getDependencyMapForComponent(), oReferenceChange);
 		}
-		DependencyHandler.addChangeAndUpdateDependencies(oChange, oAppComponent, this._mChanges);
+		DependencyHandler.addChangeAndUpdateDependencies(oChange, oAppComponent, this.getDependencyMapForComponent());
 	};
 
-	ChangePersistence.prototype._addRunTimeCreatedChangeAndUpdateDependencies = function(oAppComponent, oChange) {
-		DependencyHandler.addRuntimeChangeAndUpdateDependencies(oChange, oAppComponent, this._mChanges, this._mChangesInitial);
+	ChangePersistence.prototype._addRunTimeCreatedChangeToDependencyMap = function(oAppComponent, oChange) {
+		DependencyHandler.addRuntimeChangeToMap(oChange, oAppComponent, this.getDependencyMapForComponent());
 	};
 
 	/**
@@ -268,8 +185,8 @@ sap.ui.define([
 	 * @return {Object<string,object>} mChanges mapping with changes sorted by their selector ids
 	 * @public
 	 */
-	ChangePersistence.prototype.getChangesMapForComponent = function() {
-		return this._mChanges;
+	ChangePersistence.prototype.getDependencyMapForComponent = function() {
+		return UIChangesState.getLiveDependencyMap(this._mComponent.name);
 	};
 
 	/**
@@ -282,7 +199,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.getAllUIChanges = function(mPropertyBag) {
 		var aChanges = union(
-			this.getChangesMapForComponent().aChanges,
+			this.getDependencyMapForComponent().aChanges,
 			mPropertyBag.includeDirtyChanges && this.getDirtyChanges()
 		).filter(function(oChange) {
 			return (
@@ -292,15 +209,6 @@ sap.ui.define([
 			);
 		});
 		return aChanges;
-	};
-
-	/**
-	 * Checks if the changes map for the component has been created or not.
-	 * @return {boolean} <code>true</code> if the changes map has been created
-	 * @public
-	 */
-	ChangePersistence.prototype.isChangeMapCreated = function() {
-		return this._bChangesMapCreated;
 	};
 
 	/**
@@ -333,8 +241,7 @@ sap.ui.define([
 	};
 
 	function finalizeChangeCreation(oChange, oAppComponent) {
-		this._addRunTimeCreatedChangeAndUpdateDependencies(oAppComponent, oChange);
-		this._mChangesEntries[oChange.getId()] = oChange;
+		this._addRunTimeCreatedChangeToDependencyMap(oAppComponent, oChange);
 		this._addPropagationListener(oAppComponent);
 	}
 
@@ -426,9 +333,7 @@ sap.ui.define([
 			var bNoFlPropagationListenerAttached = oAppComponent.getPropagationListeners().every(fnCheckIsNotFlPropagationListener);
 
 			if (bNoFlPropagationListenerAttached) {
-				var oFlexControllerFactory = sap.ui.require("sap/ui/fl/FlexControllerFactory");
-				var oFlexController = oFlexControllerFactory.create(this._mComponent.name);
-				var fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, this.getChangesMapForComponent.bind(this), oAppComponent, oFlexController);
+				var fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, oAppComponent, this._mComponent.name);
 				fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
 				oAppComponent.addPropagationListener(fnPropagationListener);
 			}
@@ -504,7 +409,7 @@ sap.ui.define([
 		if (!aDirtyChanges.length && !bCondenseAnyLayer) {
 			return [];
 		}
-		var aPersistedAndSameLayerChanges = this._mChanges.aChanges.filter(function(oChange) {
+		var aPersistedAndSameLayerChanges = this.getDependencyMapForComponent().aChanges.filter(function(oChange) {
 			if (sLayer === Layer.CUSTOMER && aDraftFilenames) {
 				return oChange.getState() === States.LifecycleState.PERSISTED && aDraftFilenames.includes(oChange.getId());
 			}
@@ -820,7 +725,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deletes a change object from the internal map.
+	 * Deletes a change object from the dependency map.
 	 *
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change which has to be removed from the mapping
 	 * @param {boolean} [bRunTimeCreatedChange] set if the change was created at runtime
@@ -828,8 +733,10 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype._deleteChangeInMap = function(oChange, bRunTimeCreatedChange) {
 		var sChangeKey = oChange.getId();
-		DependencyHandler.removeChangeFromMap(this._mChanges, sChangeKey);
-		DependencyHandler.removeChangeFromDependencies(bRunTimeCreatedChange ? this._mChangesInitial : this._mChanges, sChangeKey);
+		DependencyHandler.removeChangeFromMap(this.getDependencyMapForComponent(), sChangeKey);
+		if (!bRunTimeCreatedChange) {
+			DependencyHandler.removeChangeFromDependencies(this.getDependencyMapForComponent(), sChangeKey);
+		}
 	};
 
 	function isLocalAndInLayer(sLayer, oObject) {
@@ -879,14 +786,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Collect changes from the internal map by names
+	 * Collect changes from the dependency map by names
 	 *
 	 * @param {string[]} aNames Names of changes
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges Array of changes with corresponding names
 	 * @private
 	 */
 	ChangePersistence.prototype._getChangesFromMapByNames = function(aNames) {
-		return this._mChanges.aChanges.filter(function(oChange) {
+		return this.getDependencyMapForComponent().aChanges.filter(function(oChange) {
 			return aNames.indexOf(oChange.getId()) !== -1;
 		});
 	};

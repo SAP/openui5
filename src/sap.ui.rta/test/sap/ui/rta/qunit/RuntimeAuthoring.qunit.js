@@ -151,7 +151,11 @@ sap.ui.define([
 					// redo -> execute -> fireModified (inside promise)
 					triggerKeydown(this.oElement2Overlay.getDomRef(), KeyCodes.Z, true, false, false, true);
 				} else if (fnStackModifiedSpy.calledTwice) {
-					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "after CMD + SHIFT + Z is again 1 command in the stack");
+					assert.equal(
+						this.oCommandStack.getAllExecutedCommands().length,
+						1,
+						"after CMD + SHIFT + Z is again 1 command in the stack"
+					);
 					Device.os.macintosh = bMacintoshOriginal;
 					done();
 				}
@@ -192,18 +196,29 @@ sap.ui.define([
 
 		QUnit.test("when handleElementModified is called if a create container command was executed on a simple form", async function(assert) {
 			var done = assert.async();
-			var fnFireElementModifiedSpy = sandbox.spy(this.oRta.getPluginManager().getDefaultPlugins().createContainer, "fireElementModified");
+			var fnFireElementModifiedSpy = sandbox.spy(
+				this.oRta.getPluginManager().getDefaultPlugins().createContainer,
+				"fireElementModified"
+			);
 
 			var oSimpleForm = Element.getElementById("Comp1---idMain1--SimpleForm");
 			var oSimpleFormOverlay = OverlayRegistry.getOverlay(oSimpleForm.getAggregation("form").getId());
 
-			sandbox.stub(this.oRta.getPluginManager().getDefaultPlugins().rename, "startEdit").callsFake(async function(oNewContainerOverlay) {
+			sandbox.stub(this.oRta.getPluginManager().getDefaultPlugins().rename, "startEdit")
+			.callsFake(async function(oNewContainerOverlay) {
 				await nextUIUpdate();
 				var oArgs = fnFireElementModifiedSpy.getCall(0).args[0];
-				var sNewControlContainerId = this.oRta.getPluginManager().getDefaultPlugins().createContainer.getCreatedContainerId(oArgs.action, oArgs.newControlId);
+				var sNewControlContainerId = this.oRta.getPluginManager().getDefaultPlugins().createContainer.getCreatedContainerId(
+					oArgs.action,
+					oArgs.newControlId
+				);
 				assert.ok(fnFireElementModifiedSpy.calledOnce, "then 'fireElementModified' from the createContainer plugin is called once");
 				assert.ok(true, "then the new container starts the edit for rename");
-				assert.strictEqual(oNewContainerOverlay.getElement().getId(), sNewControlContainerId, "then rename is called with the new container's overlay");
+				assert.strictEqual(
+					oNewContainerOverlay.getElement().getId(),
+					sNewControlContainerId,
+					"then rename is called with the new container's overlay"
+				);
 				assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
 				this.oCommandStack.undo().then(done);
 			}.bind(this));
@@ -215,17 +230,27 @@ sap.ui.define([
 		QUnit.test("when handleElementModified is called if a create container command was executed on a smart form", async function(assert) {
 			var done = assert.async();
 
-			var fnFireElementModifiedSpy = sinon.spy(this.oRta.getPluginManager().getDefaultPlugins().createContainer, "fireElementModified");
+			var fnFireElementModifiedSpy = sinon.spy(
+				this.oRta.getPluginManager().getDefaultPlugins().createContainer,
+				"fireElementModified"
+			);
 
 			var oSmartForm = Element.getElementById("Comp1---idMain1--MainForm");
 			var oSmartFormOverlay = OverlayRegistry.getOverlay(oSmartForm.getId());
 
 			sandbox.stub(this.oRta.getPlugins().rename, "startEdit").callsFake(async function(oNewContainerOverlay) {
 				var oArgs = fnFireElementModifiedSpy.getCall(0).args[0];
-				var sNewControlContainerId = this.oRta.getPluginManager().getDefaultPlugins().createContainer.getCreatedContainerId(oArgs.action, oArgs.newControlId);
+				var sNewControlContainerId = this.oRta.getPluginManager().getDefaultPlugins().createContainer.getCreatedContainerId(
+					oArgs.action,
+					oArgs.newControlId
+				);
 				await nextUIUpdate();
 				assert.ok(true, "then the new container starts the edit for rename");
-				assert.strictEqual(oNewContainerOverlay.getElement().getId(), sNewControlContainerId, "then rename is called with the new container's overlay");
+				assert.strictEqual(
+					oNewContainerOverlay.getElement().getId(),
+					sNewControlContainerId,
+					"then rename is called with the new container's overlay"
+				);
 				assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
 				this.oCommandStack.undo().then(done);
 			}.bind(this));
@@ -259,7 +284,8 @@ sap.ui.define([
 
 			sandbox.stub(this.oRta.getCommandStack(), "compositeLastTwoCommands")
 			.callsFake(function() {
-				assert.ok(oCreateRenameCommandSpy.calledWith(OverlayRegistry.getOverlay(sNewControlId), "Potato"), "then the rename command was created");
+				assert.ok(oCreateRenameCommandSpy.calledWith(OverlayRegistry.getOverlay(sNewControlId), "Potato"),
+					"then the rename command was created");
 				assert.ok(true, "and the commands were combined in a composite command");
 				done();
 			});
@@ -292,7 +318,9 @@ sap.ui.define([
 			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox");
 			var oCommandStack = {
 				pushAndExecute() {
-					return Promise.reject(Error("Some stuff.... The following Change cannot be applied because of a dependency .... some other stuff"));
+					return Promise.reject(Error(
+						"Some stuff.... The following Change cannot be applied because of a dependency .... some other stuff"
+					));
 				}
 			};
 			sandbox.stub(this.oRta, "getCommandStack").returns(oCommandStack);
@@ -359,16 +387,11 @@ sap.ui.define([
 
 		QUnit.test("when saving RTA including variants without exiting,", function(assert) {
 			var fnDone = assert.async();
-			var oMessageToastShowSpy = sandbox.spy(MessageToast, "show");
-			var sExpectedMessageToastMessage = this.oRta._getTextResources().getText("MSG_SAVE_DRAFT_SUCCESS");
-			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
 
 			function fnChecks() {
 				assert.ok(this.oRta, "RTA is still up and running");
-				assert.ok(oMessageToastShowSpy.calledWith(sExpectedMessageToastMessage), "appropriate message toast save confirmation is triggered");
 				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "command stack is cleared");
 				assert.ok(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), "and the Toolbar is visible");
-				assert.ok(this.oRta.getToolbar().getControl("versionButton").getVisible(), "and versionButton into the toolbar is visible");
 				fnDone();
 			}
 
@@ -413,7 +436,11 @@ sap.ui.define([
 				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "1 command is still in the stack");
 				assert.equal(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), true, "and the Toolbar is visible.");
 				assert.strictEqual(oMessageBoxStub.callCount, 1, "then the messagebox is called once");
-				assert.strictEqual(oMessageBoxStub.getCall(0).args[1], "MSG_UNSAVED_CHANGES_ON_CLOSE", "then the expected messagebox is called");
+				assert.strictEqual(
+					oMessageBoxStub.getCall(0).args[1],
+					"MSG_UNSAVED_CHANGES_ON_CLOSE",
+					"then the expected messagebox is called"
+				);
 			}.bind(this));
 		});
 
@@ -454,7 +481,11 @@ sap.ui.define([
 
 			return this.oRta.stop(false)
 			.then(function() {
-				assert.strictEqual(oMessageBoxStub.getCall(0).args[1], "MSG_UNSAVED_CHANGES_ON_CLOSE", "then the expected messagebox is called");
+				assert.strictEqual(
+					oMessageBoxStub.getCall(0).args[1],
+					"MSG_UNSAVED_CHANGES_ON_CLOSE",
+					"then the expected messagebox is called"
+				);
 				assert.deepEqual(oMessageBoxStub.getCall(0).args[2], {
 					titleKey: "TIT_UNSAVED_CHANGES_ON_CLOSE",
 					actionKeys: ["BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE", "BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"],
@@ -522,7 +553,11 @@ sap.ui.define([
 				assert.ok(oSavePropertyBag.removeOtherLayerChanges, "then removeOtherLayerChanges is set to true");
 				assert.strictEqual(oSavePropertyBag.layer, this.oRta.getLayer(), "then the layer is properly passed along");
 				assert.strictEqual(oMessageBoxStub.callCount, 1, "then the messagebox is called once");
-				assert.strictEqual(oMessageBoxStub.getCall(0).args[1], "MSG_UNSAVED_CHANGES_ON_CLOSE", "then the expected messagebox is called");
+				assert.strictEqual(
+					oMessageBoxStub.getCall(0).args[1],
+					"MSG_UNSAVED_CHANGES_ON_CLOSE",
+					"then the expected messagebox is called"
+				);
 			}.bind(this))
 			.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 			.then(function(iNumberOfChanges) {

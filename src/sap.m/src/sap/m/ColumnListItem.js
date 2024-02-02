@@ -170,7 +170,9 @@ sap.ui.define([
 				onsapup: this.onsapup,
 				onsapdown: this.onsapdown,
 				oncontextmenu: this.oncontextmenu,
-				onkeydown: this.onkeydown
+				onkeydown: this.onkeydown,
+				onfocusin: this.onfocusin,
+				onfocusout: this.onfocusout
 			}, this).setParent(this, null, true);
 		}
 
@@ -239,28 +241,41 @@ sap.ui.define([
 		return oBundle.getText("ACC_CTR_TYPE_ROW");
 	};
 
-	ColumnListItem.prototype.getContentAnnouncement = function(oBundle) {
-		var oTable = this.getTable();
+	ColumnListItem.prototype.getContentAnnouncementOfCell = function(oColumn) {
+		return getAnnouncementForColumn(oColumn, this.getCells(), false);
+	};
+
+	function getAnnouncementForColumn(oColumn, aCells, bIncludeHeader) {
+		const oCell = aCells[oColumn.getInitialOrder()];
+		let sOutput = ListItemBase.getAccessibilityText(oCell, true);
+
+		if (bIncludeHeader) {
+			const oHeader = oColumn.getHeader();
+			if (oHeader && oHeader.getVisible()) {
+				sOutput = ListItemBase.getAccessibilityText(oHeader) + " " + sOutput;
+			}
+		}
+		return sOutput;
+	}
+
+	ColumnListItem.prototype.getContentAnnouncementOfPopin = function() {
+		const aCells = this.getCells();
+		const aOutput = this.getTable()._getVisiblePopin().map(function(oColumn) {
+			return getAnnouncementForColumn(oColumn, aCells, true);
+		});
+
+		return aOutput.filter(Boolean).join(" . ").trim();
+	};
+
+	ColumnListItem.prototype.getContentAnnouncement = function() {
+		const oTable = this.getTable();
 		if (!oTable) {
 			return;
 		}
 
-		var aOutput = [],
-			aCells = this.getCells(),
-			aColumns = oTable.getRenderedColumns();
-
-		aColumns.forEach(function(oColumn) {
-			var oCell = aCells[oColumn.getInitialOrder()];
-			if (!oCell) {
-				return;
-			}
-
-			var oHeader = oColumn.getHeader();
-			if (oHeader && oHeader.getVisible()) {
-				aOutput.push(ListItemBase.getAccessibilityText(oHeader) + " " + ListItemBase.getAccessibilityText(oCell, true));
-			} else {
-				aOutput.push(ListItemBase.getAccessibilityText(oCell, true));
-			}
+		const aCells = this.getCells();
+		const aOutput = oTable.getRenderedColumns().map(function(oColumn) {
+			return getAnnouncementForColumn(oColumn, aCells, true);
 		});
 
 		return aOutput.filter(Boolean).join(" . ").trim();
@@ -285,7 +300,31 @@ sap.ui.define([
 			this.$().children(".sapMListTblCellDup").find(":sapTabbable").attr("tabindex", -1);
 		}
 
+		const oTable = this.getTable();
+		const oTarget = oEvent.target;
+		if (oTarget.classList.contains("sapMListTblCell")) {
+			const oColumn = Element.getElementById(oTarget.getAttribute("data-sap-ui-column"));
+			oTable.updateInvisibleText(this.getContentAnnouncementOfCell(oColumn));
+			oEvent.setMarked("contentAnnouncementGenerated");
+		} else if (oTarget.classList.contains("sapMListTblSubCnt")) {
+			oTable.updateInvisibleText(this.getContentAnnouncementOfPopin());
+			oEvent.setMarked("contentAnnouncementGenerated");
+		}
+
 		ListItemBase.prototype.onfocusin.apply(this, arguments);
+	};
+
+	ColumnListItem.prototype.onfocusout = function(oEvent) {
+		if (oEvent.isMarked()) {
+			return;
+		}
+
+		const oTarget = oEvent.target;
+		if (oTarget.matches(".sapMListTblCell") || oTarget.matches(".sapMListTblSubCnt")) {
+			this.getTable().removeInvisibleTextAssociation(oTarget);
+		}
+
+		ListItemBase.prototype.onfocusout.apply(this, arguments);
 	};
 
 	ColumnListItem.prototype.onsapenter = ColumnListItem.prototype.onsapspace = function(oEvent) {

@@ -2016,11 +2016,11 @@ function(
 	};
 
 	// this gets called when the focus is on the item or its content
-	ListBase.prototype.onItemFocusIn = function(oItem, oFocusedControl) {
+	ListBase.prototype.onItemFocusIn = function(oItem, oFocusedControl, oEvent) {
 		// focus and scroll handling for sticky elements
 		this._handleStickyItemFocus(oItem.getDomRef());
 
-		if (oItem !== oFocusedControl ||
+		if (oItem !== oFocusedControl || oEvent.isMarked("contentAnnouncementGenerated") ||
 			!ControlBehavior.isAccessibilityEnabled()) {
 			return;
 		}
@@ -2048,9 +2048,13 @@ function(
 	};
 
 	ListBase.prototype.onItemFocusOut = function(oItem) {
-		var oInvisibleText = ListBase.getInvisibleText(),
-			$ItemDomRef = jQuery(oItem.getDomRef());
-		$ItemDomRef.removeAriaLabelledBy(oInvisibleText.getId());
+		this.removeInvisibleTextAssociation(oItem.getDomRef());
+	};
+
+	ListBase.prototype.removeInvisibleTextAssociation = function(oDomRef) {
+		const oInvisibleText = ListBase.getInvisibleText(),
+			$FocusedItem = jQuery(oDomRef || document.activeElement);
+		$FocusedItem.removeAriaLabelledBy(oInvisibleText.getId());
 	};
 
 	ListBase.prototype.updateInvisibleText = function(sText, oItemDomRef, bPrepend) {

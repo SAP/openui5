@@ -1,20 +1,22 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/changes/Utils",
-	"sap/ui/fl/apply/_internal/flexState/changes/ExtensionPointState",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
-	"sap/m/Panel",
 	"sap/base/Log",
+	"sap/m/Panel",
+	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/ui/fl/apply/_internal/flexState/changes/ExtensionPointState",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	ChangesUtils,
-	ExtensionPointState,
-	ChangePersistenceFactory,
-	UIChange,
-	Panel,
 	Log,
+	Panel,
+	ChangesUtils,
+	UIChange,
+	ExtensionPointState,
+	FlexState,
+	ChangePersistenceFactory,
 	sinon
 ) {
 	"use strict";
@@ -35,12 +37,10 @@ sap.ui.define([
 			getChangesForComponent() {
 				return Promise.resolve(aChanges || []);
 			},
-			isChangeMapCreated() {
-				return bChangeMapCreated || false;
-			},
 			addChangeAndUpdateDependencies: fnAddChangeAndUpadateDependencies || function() {}
 		};
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").returns(oChangePersistence);
+		sandbox.stub(FlexState, "isInitialized").returns(bChangeMapCreated);
 		return oChangePersistence;
 	}
 

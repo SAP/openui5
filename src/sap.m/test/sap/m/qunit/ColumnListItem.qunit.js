@@ -263,8 +263,8 @@ sap.ui.define([
 		column1.setDemandPopin();
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
-		assert.equal(sut.getCells()[0].getAriaLabelledBy().indexOf(column1Header.getId()), -1, "no ariaLabelledBy association found");
-		assert.equal(sut2.getCells()[0].getAriaLabelledBy().indexOf(column1Header.getId()), -1, "no ariaLabelledBy association found");
+		assert.equal(sut.getCells()[0].getAriaLabelledBy(), column1Header.getId(), "expected and the only ariaLabelledBy association found");
+		assert.equal(sut2.getCells()[0].getAriaLabelledBy(), column1Header.getId(), "expected and the only ariaLabelledBy association found");
 
 		//Cleanup
 		table.destroy();

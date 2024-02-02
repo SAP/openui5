@@ -518,14 +518,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("shouldOpenOnFocus", async function(assert) {
+
+		oPopover.setOpensOnFocus(true);
 		let bShouldOpen = await oPopover.shouldOpenOnFocus();
 		assert.ok(bShouldOpen, "shouldOpenOnFocus enabled by container property");
 
+		oPopover.setOpensOnFocus(false);
 		bShouldOpen = await oPopover.shouldOpenOnFocus();
 		assert.notOk(bShouldOpen, "shouldOpenOnFocus disabled by container property");
+
 	});
 
 	QUnit.test("shouldOpenOnClick", async function(assert) {
+
 		sinon.stub(oContent, "shouldOpenOnClick").returns(true);
 
 		let bShouldOpen = await oPopover.shouldOpenOnClick();
@@ -533,13 +538,16 @@ sap.ui.define([
 		assert.ok(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content called");
 		oContent.shouldOpenOnClick.reset();
 
+		oPopover.setOpensOnClick(true);
 		bShouldOpen = await oPopover.shouldOpenOnClick();
 		assert.ok(bShouldOpen, "shouldOpenOnClick enabled by container property");
 		assert.notOk(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content not called, when opensOnClick is set");
 
+		oPopover.setOpensOnClick(false);
 		bShouldOpen = await oPopover.shouldOpenOnClick();
 		assert.notOk(bShouldOpen, "shouldOpenOnClick disabled by container property");
 		assert.notOk(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content not called, when opensOnClick is set");
+
 	});
 
 	QUnit.test("shouldOpenOnNavigate", function(assert) {

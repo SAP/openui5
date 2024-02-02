@@ -1,0 +1,50 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.object.imageAndOverlayWithFooter",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Object",
+		"header": {
+			"icon": {
+				"src": "sap-icon://business-objects-experience"
+			},
+			"title": "Object Card",
+			"subTitle": "With Image and Footer"
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"label": "Name",
+							"value": "Ivan"
+						},
+						{
+							"label": "Surname",
+							"value": "Petrov"
+						},
+						{
+							"type": "Image",
+							"src": "../../images/grass.jpg",
+							"fullWidth": true,
+							"overlay": {
+								"title": "Some title",
+								"textColor": "#fff"
+							}
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Send Reminder",
+					"buttonType": "Accept"
+				}
+			]
+		}
+	}
+}

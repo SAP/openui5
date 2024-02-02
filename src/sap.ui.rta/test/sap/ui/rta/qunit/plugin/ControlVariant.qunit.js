@@ -213,8 +213,11 @@ sap.ui.define([
 			assert.strictEqual(this.oObjectPageLayoutOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to ObjectPageLayout Overlay from the id of VariantManagement control");
 			assert.strictEqual(this.oVariantManagementOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to VariantManagement control itself");
 			assert.notOk(this.oLayoutOuterOverlay.getVariantManagement(), "then no VariantManagement reference set to an element outside element not a part of the associated control");
-			assert.deepEqual(this.oVariantManagementOverlay.getEditableByPlugins(), [this.oControlVariantPlugin.getMetadata().getName()],
-				"then VariantManagement is marked as editable by ControlVariant plugin");
+			assert.strictEqual(
+				this.oVariantManagementOverlay.getEditableByPlugins()[this.oControlVariantPlugin.getMetadata().getName()],
+				true,
+				"then VariantManagement is marked as editable by ControlVariant plugin"
+			);
 		});
 
 		QUnit.test("when isVariantSwitchAvailable is called with VariantManagement overlay", function(assert) {
@@ -722,8 +725,11 @@ sap.ui.define([
 			assert.notOk(this.oLayoutOuterOverlay.getVariantManagement(), "then no VariantManagement reference set to an element outside element not a part of the associated control");
 			assert.notOk(this.oFlexBox1Overlay.getVariantManagement(), "then no VariantManagement reference set to an element outside element not a part of the associated control");
 			assert.notOk(this.oButton1Overlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to ObjectPageLayout Overlay from the id of VariantManagement control");
-			assert.deepEqual(this.oVariantManagementOverlay.getEditableByPlugins(), [this.oControlVariantPlugin.getMetadata().getName()],
-				"then VariantManagement is marked as editable by ControlVariant plugin");
+			assert.strictEqual(
+				this.oVariantManagementOverlay.getEditableByPlugins()[this.oControlVariantPlugin.getMetadata().getName()],
+				true,
+				"then VariantManagement is marked as editable by ControlVariant plugin"
+			);
 		});
 	});
 
