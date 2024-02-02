@@ -72,6 +72,8 @@ function(
 			const oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 
 			const checkPositions = () => {
+				assert.ok(this.oSection.getDomRef(), "Section is placed on DOM tree");
+				assert.ok(oSectionOverlay.getDomRef(), "Section overlay is placed on the DOM tree");
 				assert.deepEqual(
 					Math.ceil(oSectionOverlay.getDomRef().getBoundingClientRect().top),
 					Math.ceil(this.oSection.getDomRef().getBoundingClientRect().top),
@@ -95,9 +97,13 @@ function(
 				fnDone();
 			};
 
-			this.oDesignTime.attachEventOnce("synced", async () => {
+			this.oDesignTime.attachEventOnce("synced", () => {
 				oSectionOverlay.attachEventOnce("geometryChanged", checkPositions);
-				await nextUIUpdate();
+				assert.ok(true, "DesignTime synced after Section was set to visible");
+				// Normally the change on the section should trigger the DesignTime update,
+				// but sometimes the control doesn't change the DOM when "setVisible" is
+				// set to "true" - so we force a re-render by scrolling.
+				this.oLayout.scrollToSection(this.oSection.getId());
 			});
 
 			this.oSection.setVisible(true);
