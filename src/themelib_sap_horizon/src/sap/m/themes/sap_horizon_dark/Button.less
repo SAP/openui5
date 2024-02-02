@@ -10,7 +10,7 @@
 }
 
 .sapMBtnEmphasized {
-	font-weight: @sapUiButtonEmphasizedFontWeight;
+	font-family: @sapUiFontBoldFamily;
 }
 
 .sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive),
@@ -43,12 +43,6 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	position: relative;
 	border-radius: @sapUiButtonBorderCornerRadius;
 	text-shadow: none;
-	&.sapMBtnCritical,
-	&.sapMBtnNegative,
-	&.sapMBtnSuccess,
-	&.sapMBtnNeutral {
-		font-weight: bold;
-	}
 }
 
 /* ------------------- */
