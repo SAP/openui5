@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
@@ -14,7 +13,7 @@ sap.ui.define([
 	"sap/m/IllustratedMessage",
 	"sap/m/Button",
 	"sap/ui/core/InvisibleMessage"
-], function(Localization, MLibrary, Core, Library, Locale, LocaleData, Theming, ThemeParameters, IllustratedMessage, Button, InvisibleMessage) {
+], function(Localization, MLibrary, Library, Locale, LocaleData, Theming, ThemeParameters, IllustratedMessage, Button, InvisibleMessage) {
 	"use strict";
 	/*global Intl*/
 
@@ -342,32 +341,28 @@ sap.ui.define([
 			return pGetSelectAllPopover;
 		}
 
-		pGetSelectAllPopover = Promise.all(
-			[new Promise(function(fnResolve) {
-				sap.ui.require([
-					"sap/m/Popover",
-					"sap/m/Bar",
-					"sap/m/HBox",
-					"sap/m/Title",
-					"sap/ui/core/Icon",
-					"sap/ui/core/library",
-					"sap/m/Text"
-				], function(Popover, Bar, HBox, Title, Icon, coreLib, Text) {
-					fnResolve({
-						Popover: Popover,
-						Bar: Bar,
-						HBox: HBox,
-						Title: Title,
-						Icon: Icon,
-						coreLib: coreLib,
-						Text: Text
-					});
+		pGetSelectAllPopover = (new Promise(function(fnResolve) {
+			sap.ui.require([
+				"sap/m/Popover",
+				"sap/m/Bar",
+				"sap/m/HBox",
+				"sap/m/Title",
+				"sap/ui/core/Icon",
+				"sap/ui/core/library",
+				"sap/m/Text"
+			], function(Popover, Bar, HBox, Title, Icon, coreLib, Text) {
+				fnResolve({
+					Popover: Popover,
+					Bar: Bar,
+					HBox: HBox,
+					Title: Title,
+					Icon: Icon,
+					coreLib: coreLib,
+					Text: Text
 				});
-			}),
-			Core.getLibraryResourceBundle('sap.m', true)
-		]).then(function(aResult) {
-			var oModules = aResult[0];
-			var oResourceBundle = aResult[1];
+			});
+		})).then(function(oModules) {
+			var oResourceBundle = Library.getResourceBundleFor("sap.m");
 			var sIconColor = oModules.coreLib.IconColor.Critical,
 			sTitleLevel = oModules.coreLib.TitleLevel.H2;
 
@@ -496,6 +491,23 @@ sap.ui.define([
 		return !Util.isEmpty(oBinding)
 			&& (!oBinding?.getDownloadUrl
 				|| (oBinding.isResolved() && oBinding.getDownloadUrl() !== null));
+	};
+
+	/**
+	 * Informs whether the current theme is fully applied already.
+	 * Replacement for Core#isThemeApplied
+	 *
+	 * @private
+	 * @since 1.121
+	 */
+	Util.isThemeApplied = function() {
+		var bIsApplied = false;
+		var fnOnThemeApplied = function() {
+			bIsApplied = true;
+		};
+		Theming.attachApplied(fnOnThemeApplied); // Will be called immediately when theme is applied
+		Theming.detachApplied(fnOnThemeApplied);
+		return bIsApplied;
 	};
 
 	return Util;
