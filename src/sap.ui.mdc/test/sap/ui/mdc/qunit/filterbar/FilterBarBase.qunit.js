@@ -717,6 +717,15 @@ sap.ui.define([
 
     });
 
+    QUnit.test("Make sure that _onModifications will always resolve current appliances", function(assert){
+        this.oFilterBarBase._addConditionChange(new Promise(function(){}, function(){}));
+
+        assert.ok(this.oFilterBarBase._oApplyingChanges instanceof Promise, "The appliance promise has been provided");
+
+        return this.oFilterBarBase._onModifications([]).then(function(){
+            assert.equal(this.oFilterBarBase._oApplyingChanges, null, "The appliance promise has been reset");
+        }.bind(this));
+    });
 
 	QUnit.test("check variantSwitch for non filterbar & for filterbar", function(assert) {
 
