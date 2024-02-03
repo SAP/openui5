@@ -2440,6 +2440,21 @@ function(
 		}.bind(this)));
 	});
 
+	QUnit.test("setShowHeaderContent updates the toggle header buttons", function (assert) {
+		// Arrange
+		var oObjectPage = new ObjectPageLayout({
+				headerTitle: new ObjectPageDynamicHeaderTitle(),
+				headerContent: new Button({
+					text: "Button"
+				}),
+				showHeaderContent: false
+			}),
+			updateToggleHeaderVisualIndicatorsSpy = this.spy(oObjectPage, "_updateToggleHeaderVisualIndicators");
+
+		oObjectPage.setShowHeaderContent(true);
+		assert.ok(updateToggleHeaderVisualIndicatorsSpy.calledOnce, "buttons visibility is updated");
+	});
+
 	QUnit.module("ObjectPage API: Header", {
 		beforeEach: async function() {
 			this.oObjectPageLayout = new ObjectPageLayout();
