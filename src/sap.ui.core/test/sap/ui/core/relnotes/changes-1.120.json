@@ -715,5 +715,15 @@
         "text": " sap.ui.model.analytics.AnalyticalBinding: handle properties of type Edm.time in grouping"
       }
     ]
+  },
+  "1.120.6": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "e6ce2912af430cea8ae775464d9c588f1433704a",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#submitChangesWithHeaders: ensure change requests use custom headers"
+      }
+    ]
   }
 }

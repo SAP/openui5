@@ -619,5 +619,26 @@
         ]
       }
     ]
+  },
+  "1.120.6": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "66ec56e9f81371a5a792b8a6f93fb0525f487d93",
+        "type": "FIX",
+        "text": " sap.m.Popover: Apply additional padding on FF"
+      },
+      {
+        "id": "568a694aa556130646a528904732706de15e1a6e",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Fields of Between operation are now in correct order",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000484112024"
+          }
+        ]
+      }
+    ]
   }
 }

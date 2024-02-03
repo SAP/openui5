@@ -83,5 +83,15 @@
         ]
       }
     ]
+  },
+  "1.120.6": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "bc98a5792c04317ff2ec04d3178d4d89bcf12690",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adding padding when two calendars are next to each other"
+      }
+    ]
   }
 }

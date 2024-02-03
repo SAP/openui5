@@ -46,5 +46,15 @@
         ]
       }
     ]
+  },
+  "1.120.6": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "1b32076da6fabca3882b7c094c2a38dca61813d6",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix collapsing header"
+      }
+    ]
   }
 }

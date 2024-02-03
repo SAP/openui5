@@ -164,5 +164,21 @@
         ]
       }
     ]
+  },
+  "1.120.6": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "d589eebe056dc50b09fc8a11f0b063056e076571",
+        "type": "FIX",
+        "text": " P13nBuilder: Add button is now visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500011174622023"
+          }
+        ]
+      }
+    ]
   }
 }
