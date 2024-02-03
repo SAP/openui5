@@ -280,7 +280,7 @@ sap.ui.define([
 			placement: library.PlacementType.VerticalPreferredBottom,
 			content: new AssociativeControl({control: this, height: true}),
 			horizontalScrolling: false,
-			verticalScrolling: false,
+			verticalScrolling: true, //Temporary Solution until UX design for a proper overflow of all areas in the menu exists
 			afterClose: [this._onPopoverAfterClose, this]
 		});
 		this.addDependent(this._oPopover);

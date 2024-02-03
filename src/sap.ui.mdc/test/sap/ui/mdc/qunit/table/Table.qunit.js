@@ -30,7 +30,6 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/ui/mdc/odata/TypeMap",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
 	"sap/ui/mdc/ActionToolbar",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
@@ -62,7 +61,8 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/m/plugins/ContextMenuSetting"
+	"sap/m/plugins/ContextMenuSetting",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	TableQUnitUtils,
 	Element,
@@ -92,7 +92,6 @@ sap.ui.define([
 	CoreLibrary,
 	MLibrary,
 	ODataTypeMap,
-	nextUIUpdate,
 	TestModificationHandler,
 	ActionToolbar,
 	ActionToolbarAction,
@@ -123,7 +122,8 @@ sap.ui.define([
 	OperatorName,
 	Menu,
 	MenuItem,
-	ContextMenuSetting
+	ContextMenuSetting,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -4246,6 +4246,67 @@ sap.ui.define([
 				const oCell = this.oTable._oTable.getRows()[0].getDomRef("col0");
 				oCell.focus();
 				jQuery(oCell).trigger("contextmenu");
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("Context Menu - preventDefault", function(assert) {
+		const done = assert.async();
+		assert.expect(4);
+		const oModel = new JSONModel();
+		oModel.setData({
+			testPath: [
+				{}, {}, {}, {}, {}
+			]
+		});
+
+		this.oTable.destroy();
+		this.oTable = new Table({
+			delegate: {
+				name: sDelegatePath,
+				payload: {
+					collectionPath: "/testPath"
+				}
+			},
+			type: new GridTableType()
+		});
+
+		this.oTable.setModel(oModel);
+		this.oTable.addColumn(new Column({
+			header: "test",
+			template: new Text()
+		}));
+
+		this.oTable.placeAt("qunit-fixture");
+		const fnBeforeOpenContextMenu = sinon.spy(this.oTable, "_onBeforeOpenContextMenu");
+
+		this.oTable.setContextMenu(new Menu({
+			items: [
+				new MenuItem({text: "Test B"})
+			]
+		}));
+
+		nextUIUpdate().then(() => {
+			return TableQUnitUtils.waitForBinding(this.oTable);
+		}).then(function() {
+			this.oTable.attachEventOnce("beforeOpenContextMenu", function(oEvent) {
+				oEvent.preventDefault();
+			});
+
+			this.oTable._oTable.attachEventOnce("rowsUpdated", function() {
+				let oCell = this.oTable._oTable.getRows()[0].getDomRef("col0");
+				oCell.focus();
+				jQuery(oCell).trigger("contextmenu");
+				assert.equal(fnBeforeOpenContextMenu.callCount, 1, "beforeOpenContextMenu event is fired and _onBeforeOpenContextMenu is called");
+				assert.notOk(this.oTable._oContextMenu.isOpen(), "ContextMenu open is prevented");
+
+				oCell = this.oTable._oTable.getRows()[0].getDomRef("col0");
+				oCell.focus();
+				jQuery(oCell).trigger("contextmenu");
+				assert.ok(this.oTable._oContextMenu.isOpen(), "ContextMenu open is not prevented");
+				assert.equal(fnBeforeOpenContextMenu.callCount, 2,  "beforeOpenContextMenu event is fired and _onBeforeOpenContextMenu is called");
+				fnBeforeOpenContextMenu.restore();
+				done();
 			}.bind(this));
 		}.bind(this));
 	});

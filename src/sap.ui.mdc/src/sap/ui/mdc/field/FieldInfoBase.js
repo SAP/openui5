@@ -83,33 +83,34 @@ sap.ui.define([
 	/**
 	 * Opens the info panel in the control created by <code>Field</code>.
 	 * @param {sap.ui.core.Control} oControl Optional control reference to which the popover is
+	 * @param {sap.ui.base.Event} oEvent Object of the event that gets fired by the <code>onPress</code> event of the link in <code>Field</code>
 	 * attached. By default the parent is used as reference.
 	 * @returns {Promise} <code>Promise</code> that is resolved once the popover has been created
 	 * @public
 	 */
-	FieldInfoBase.prototype.open = function(oControl) {
+	FieldInfoBase.prototype.open = async function(oControl, oEvent) {
 		oControl = oControl ? oControl : this.getParent();
 		if (!oControl) {
 			throw new Error("sap.ui.mdc.field.FieldInfoBase: popover can not be open because the control is undefined");
 		}
 		// Avoid creation of a new popover instance if the same triggerable control is triggered again.
-		const oPopover = this.getDependents().find((oDependent) => {
+		let oPopover = this.getDependents().find((oDependent) => {
 			return oDependent.isA("sap.m.ResponsivePopover");
 		});
 		if (oPopover && oPopover.isOpen()) {
 			return Promise.resolve();
 		}
-		return this.checkDirectNavigation().then((bNavigated) => {
-			return bNavigated ? Promise.resolve() : this.createPopover().then((oPopover) => {
-				if (oPopover) {
-					oPopover.openBy(oControl);
-
-					oPopover.attachAfterOpen(() => {
-						this.firePopoverAfterOpen();
-					});
-				}
-			});
-		});
+		const bNavigate = await this.checkDirectNavigation(oEvent);
+		if (bNavigate === false) {
+			oPopover = await this.createPopover();
+			if (oPopover) {
+				oPopover.openBy(oControl);
+				oPopover.attachAfterOpen(() => {
+					this.firePopoverAfterOpen();
+				});
+			}
+		}
+		return Promise.resolve();
 	};
 
 	// ----------------------- Abstract methods --------------------------------------------
@@ -153,7 +154,6 @@ sap.ui.define([
 	 */
 	FieldInfoBase.prototype.createPopover = function() {
 		let oPopover;
-
 		return this.getContent(() => {
 			return oPopover;
 		}).then((oPanel) => {
@@ -177,16 +177,16 @@ sap.ui.define([
 			return new Promise((resolve, reject) => {
 				sap.ui.require([
 					'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'
-				], (FlexRuntimeInfoAPI) => {
+				], async (FlexRuntimeInfoAPI) => {
 					if (FlexRuntimeInfoAPI.isFlexSupported({ element: oPanel })) {
-						FlexRuntimeInfoAPI.waitForChanges({ element: oPanel }).then(() => {
-							oPopover.addAriaLabelledBy(oPanel.getContentTitle ? oPanel.getContentTitle() : "");
-							resolve(oPopover);
-						});
-					} else if (oPanel) {
-						oPopover.addAriaLabelledBy(oPanel.getContentTitle ? oPanel.getContentTitle() : "");
-						resolve(oPopover);
+						await FlexRuntimeInfoAPI.waitForChanges({ element: oPanel });
 					}
+					if (this.retrievePopoverTitle) {
+						const { sTitle, oLabelledByControl } = await this.retrievePopoverTitle(oPanel);
+						oPopover.setTitle(sTitle);
+						oPopover.addAriaLabelledBy(oLabelledByControl);
+					}
+					resolve(oPopover);
 				});
 			});
 		});

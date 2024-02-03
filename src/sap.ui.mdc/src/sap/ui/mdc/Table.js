@@ -1133,7 +1133,7 @@ sap.ui.define([
 
 	Table.prototype._onBeforeOpenContextMenu = function(oEvent) {
 		const oEventParameters = this._getType().getContextMenuParameters(oEvent);
-		this.fireBeforeOpenContextMenu(oEventParameters);
+		!this.fireBeforeOpenContextMenu(oEventParameters) && oEvent.preventDefault();
 	};
 
 	Table.prototype.getContextMenu = function() {

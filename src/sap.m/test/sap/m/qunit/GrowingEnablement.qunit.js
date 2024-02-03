@@ -712,10 +712,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Trigger button size should be adapted with dummy column is rendered", function(assert) {
-		var oTableDomRef = this.oTable.getDomRef(),
+		const done = assert.async();
+		window.setTimeout(() => {
+			var oTableDomRef = this.oTable.getDomRef(),
 			oTriggerDomRef = this.oTable.getDomRef("trigger"),
 			oDummyColDomRef = this.oTable.getDomRef("tblHeadDummyCell");
-		assert.ok(oTriggerDomRef.clientWidth - oTableDomRef.clientWidth - oDummyColDomRef.clientWidth < 2, "Trigger button width correctly adapted");
+			assert.ok(oTriggerDomRef.clientWidth - oTableDomRef.clientWidth - oDummyColDomRef.clientWidth < 2, "Trigger button width correctly adapted");
+			done();
+		});
 	});
 
 	QUnit.test("Trigger button size should take the full table width when table has popins and dummy column", function(assert) {
@@ -725,9 +729,13 @@ sap.ui.define([
 		oColumn.setDemandPopin(true);
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
-		var oTableDomRef = this.oTable.getDomRef(),
-			oTriggerDomRef = this.oTable.getDomRef("trigger");
-		assert.equal(oTableDomRef.clientWidth, oTriggerDomRef.clientWidth, "Table width === Trigger button width");
+		const done = assert.async();
+		window.setTimeout(() => {
+			var oTableDomRef = this.oTable.getDomRef(),
+				oTriggerDomRef = this.oTable.getDomRef("trigger");
+			assert.equal(oTableDomRef.clientWidth, oTriggerDomRef.clientWidth, "Table width === Trigger button width");
+			done();
+		});
 	});
 
 	QUnit.module("Group item mapping", {

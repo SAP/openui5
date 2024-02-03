@@ -250,9 +250,23 @@ sap.ui.define([
 	Link.prototype.getContent = async function(fnGetAutoClosedControl) {
 		const oLinkItemsPromise = this.retrieveLinkItems();
 		const oAdditionalContentPromise = this.retrieveAdditionalContent();
-		const oPanelIdPromise = this.retrievePanelId();
-		const [aLinkItems, aAdditionalContent, sPanelId] = await Promise.all([oLinkItemsPromise, oAdditionalContentPromise, oPanelIdPromise]);
+		const [aLinkItems, aAdditionalContent] = await Promise.all([oLinkItemsPromise, oAdditionalContentPromise]);
 
+		return this._getContent(aLinkItems, aAdditionalContent, fnGetAutoClosedControl, Panel);
+	};
+
+	/**
+	 * Internal function to calculate the content of the <code>Popover</code>
+	 * @param {sap.ui.mdc.link.LinkItem[]} aLinkItems The <code>LinkItem</code> instances that are displayed on the <code>Popover</code>.
+	 * @param {sap.ui.core.Control[]} aAdditionalContent The <code>AdditionalContent</code> that is displayed on the <code>Popover</code>.
+	 * @param {Function} fnGetAutoClosedControl Function returning the <code>Popover</code> instance
+	 * @param {sap.ui.mdc.link.Panel | sap.ui.comp.navpopover.Panel} PanelClass Class of the <code>Panel</code> that is to be created
+	 * @private
+	 * @ui5-restricted sap.ui.comp
+	 * @returns {Promise<sap.ui.mdc.link.Panel>} Content that is displayed on the <code>Popover</code>
+	 */
+	Link.prototype._getContent = async function(aLinkItems, aAdditionalContent, fnGetAutoClosedControl, PanelClass) {
+		const sPanelId = await this.retrievePanelId();
 		this._setConvertedLinkItems(aLinkItems);
 		const aMLinkItems = this._getInternalModel().getProperty("/linkItems");
 		const aMBaselineLinkItems = this._getInternalModel().getProperty("/baselineLinkItems");
@@ -268,10 +282,10 @@ sap.ui.define([
 			oExistingPanel.destroy();
 		}
 
-		const oPanel = new Panel(sPanelId, {
+		const oPanel = new PanelClass(sPanelId, {
 			enablePersonalization: this.getEnablePersonalization(), // brake the binding chain
 			items: aMBaselineLinkItems.map((oMLinkItem) => {
-				return new PanelItem(oMLinkItem.key, {
+				const oPanelItem = new PanelItem(oMLinkItem.key, {
 					text: oMLinkItem.text,
 					description: oMLinkItem.description,
 					href: oMLinkItem.href,
@@ -280,6 +294,9 @@ sap.ui.define([
 					icon: oMLinkItem.icon,
 					visible: true
 				});
+
+				oPanelItem.setText(oMLinkItem.text);
+				return oPanelItem;
 			}),
 			additionalContent: oPanelAdditionalContent,
 			beforeSelectionDialogOpen: function() {
@@ -293,7 +310,8 @@ sap.ui.define([
 				}
 			},
 			beforeNavigationCallback: this._beforeNavigationCallback.bind(this),
-			metadataHelperPath: "sap/ui/mdc/Link"
+			metadataHelperPath: "sap/ui/mdc/Link",
+			onNavigationCallback: this._onNavigationCallback.bind(this)
 		});
 		oPanel.setModel(new JSONModel({
 			metadata: jQuery.extend(true, [], this._getInternalModel().getProperty("/linkItems")),
@@ -305,22 +323,23 @@ sap.ui.define([
 		return oPanel;
 	};
 
-	Link.prototype.checkDirectNavigation = function() {
+
+	Link.prototype.checkDirectNavigation = async function(oEvent) {
 		const oLinkItemsPromise = this.retrieveLinkItems();
 		const oAdditionalContentPromise = this.retrieveAdditionalContent();
-		return Promise.all([oLinkItemsPromise, oAdditionalContentPromise]).then((values) => {
-			const aLinkItems = values[0];
-			const aAdditionalContent = values[1];
+		const [aLinkItems, aAdditionalContent] = await Promise.all([oLinkItemsPromise, oAdditionalContentPromise]);
+		this._setConvertedLinkItems(aLinkItems);
+		const aMLinkItems = this._getInternalModel().getProperty("/linkItems");
 
-			this._setConvertedLinkItems(aLinkItems);
-			const aMLinkItems = this._getInternalModel().getProperty("/linkItems");
-
-			if (aMLinkItems.length === 1 && !aAdditionalContent.length) {
+		if (aMLinkItems.length === 1 && !aAdditionalContent.length) {
+			const bNavigate = await this._beforeNavigationCallback(oEvent);
+			if (bNavigate) {
+				this._onNavigationCallback(aMLinkItems[0]);
 				Panel.navigate(aMLinkItems[0].href);
-				return Promise.resolve(true);
 			}
-			return Promise.resolve(false);
-		});
+			return bNavigate;
+		}
+		return false;
 	};
 
 	/**
@@ -448,11 +467,20 @@ sap.ui.define([
 
 	// ----------------------- sap/ui/mdc/LinkDelegate function calls ----------------------------------------------
 
+	/**
+	 * @private
+	 * @param {sap.ui.mdc.link.Panel} oPanel Instance of the <code>Panel</code>
+	 * @returns {Promise<string>} Generated title for the popover
+	 */
+	Link.prototype.retrievePopoverTitle = async function(oPanel) {
+		const oControlDelegate = await this.awaitControlDelegate();
+		return oControlDelegate.fetchPopoverTitle(this, oPanel);
+	};
 
 	/**
 	 * Generates an ID for the panel of the <code>Link</code> control. The result depends on whether the <code>Link</code> control supports flexibility.
 	 * @private
-	 * @returns {string} Generated ID of the panel
+	 * @returns {Promise<string>} Generated ID of the panel
 	 */
 	Link.prototype.retrievePanelId = async function() {
 		if (this.awaitControlDelegate()) {
@@ -605,6 +633,23 @@ sap.ui.define([
 		return Promise.resolve();
 	};
 
+	/**
+	 * Proxy function for the <code>onNavigationCallback</code> of the panel.
+	 * @private
+	 * @param {sap.m.Link|sap.ui.mdc.LinkItem} oLink <code>Link</code> control that is clicked or corresponding <code>LinkItem</code>
+	 */
+	Link.prototype._onNavigationCallback = async function(oLink) {
+		try {
+			const oDelegate = await this.awaitControlDelegate();
+			if (oDelegate.onNavigationCallback) { // currently only available on SmartLinkDelegate
+				// don't return anything as we just want to call event handlings in the <code>SmartLink</code>
+				oDelegate.onNavigationCallback(this, oLink);
+			}
+		} catch (e) {
+			SapBaseLog.error("mdc.Link _onNavigationCallback: control delegate is not set - could not load onNavigationCallback from delegate.");
+		}
+	};
+
 	// ------------------------------------- General internal methods ----------------------------------------------
 
 	/**
@@ -631,7 +676,8 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control} Associated sourceControl
 	 */
 	Link.prototype._getSourceControl = function() {
-		return typeof this.getSourceControl() === "string" ? Element.getElementById(this.getSourceControl()) : this.getSourceControl();
+		const vSourceControlAssociation = this.getAssociation("sourceControl");
+		return vSourceControlAssociation && typeof vSourceControlAssociation === "string" ? Element.getElementById(vSourceControlAssociation) : this.getSourceControl();
 	};
 
 	return Link;

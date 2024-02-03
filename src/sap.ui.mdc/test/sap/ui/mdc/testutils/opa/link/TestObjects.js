@@ -110,7 +110,11 @@ sap.ui.define([
 				* Creates an assumption that there is an open popover for a given <code>sap.ui.mdc.Link</code>.
 				*/
 				iShouldSeeAPopover: function(oLinkIdentifier) {
-					return linkAssertions.iShouldSeeAPopover.call(this, oLinkIdentifier);
+					return waitForLink.call(this, oLinkIdentifier, {
+						success: function(oLink) {
+							return linkAssertions.iShouldSeeAPopover.call(this, oLink);
+						}
+					});
 				},
 				/**
 				 * Opa5 test action
@@ -122,7 +126,11 @@ sap.ui.define([
 				 * Creates an assumption that there is an open popover for a given <code>sap.ui.mdc.Link</code> and checks that all given links defined in <code>aLinks</code> are on that popover in a defined order.
 				 */
 				iShouldSeeLinksOnPopover: function(oLinkIdentifier, aLinks) {
-					return linkAssertions.iShouldSeeLinksOnPopover.call(this, oLinkIdentifier, aLinks);
+					return waitForLink.call(this, oLinkIdentifier, {
+						success: function(oLink) {
+							return linkAssertions.iShouldSeeLinksOnPopover.call(this, oLink, aLinks);
+						}
+					});
 				},
 				/**
 				 * Opa5 test action

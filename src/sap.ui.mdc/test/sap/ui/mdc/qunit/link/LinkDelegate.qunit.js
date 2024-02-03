@@ -17,7 +17,7 @@ sap.ui.define([
 		})
 	];
 
-	QUnit.test("Default values for delegate calls", function(assert) {
+	QUnit.test("Default values for delegate calls", async function(assert) {
 		const done = assert.async(5);
 
 		LinkDelegate.fetchLinkItems().then(function(aLinkItems) {
@@ -51,10 +51,14 @@ sap.ui.define([
 		});
 
 		assert.equal(LinkDelegate.getPanelId(new Link("link_test")), "link_test-idInfoPanel", "Correct id returned for panel");
+
+		const { sTitle, oLabelledByControl } = await LinkDelegate.fetchPopoverTitle();
+		assert.equal(sTitle, "", "No title returned");
+		assert.equal(oLabelledByControl, undefined, "No labelledByControl returned");
 	});
 
-	QUnit.test("Function call parameters", function(assert) {
-		const done = assert.async(6);
+	QUnit.test("Function call parameters", async function(assert) {
+		const done = assert.async(7);
 		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
@@ -63,9 +67,9 @@ sap.ui.define([
 				}
 			}
 		});
-
 		const oBindingContext = oLink._getControlBindingContext();
 		const oInfoLog = oLink._getInfoLog();
+
 
 		const fnCheckFetchLinkItems = function(oDelegate) {
 			const oSpyFetchLinkItems = sinon.spy(oDelegate, "fetchLinkItems");
@@ -125,15 +129,25 @@ sap.ui.define([
 			});
 		};
 
-		oLink.awaitControlDelegate().then(function() {
-			const oDelegate = oLink.getControlDelegate();
+		const fnCheckFetchPopoverTitle = async function(oDelegate) {
+			const oSpyCheckFetchPopoverTitle = sinon.spy(oDelegate, "fetchPopoverTitle");
+			const oPanel = await oLink.getContent();
+			const { sTitle, oLabelledByControl } = await oLink.retrievePopoverTitle(oPanel);
 
-			fnCheckFetchLinkItems(oDelegate);
-			fnCheckFetchLinkType(oDelegate);
-			fnCheckFetchAdditionalContent(oDelegate);
-			fnCheckModifyLinkItems(oDelegate);
-			fnCheckBeforeNavigationCallback(oDelegate);
-			fnCheckGetPanelId(oDelegate);
-		});
+			assert.ok(oSpyCheckFetchPopoverTitle.alwaysCalledWith(oLink, oPanel), "fetchPopoverTitle called with correct parameters");
+			assert.equal(sTitle, undefined, "Correct Title returned");
+			assert.equal(oLabelledByControl, LinkDelegate._getLabelledByControl(oPanel), "Correct labelledByControl returned");
+			done();
+		};
+
+		const oDelegate = await oLink.awaitControlDelegate();
+
+		fnCheckFetchLinkItems(oDelegate);
+		fnCheckFetchLinkType(oDelegate);
+		fnCheckFetchAdditionalContent(oDelegate);
+		fnCheckModifyLinkItems(oDelegate);
+		fnCheckBeforeNavigationCallback(oDelegate);
+		fnCheckGetPanelId(oDelegate);
+		fnCheckFetchPopoverTitle(oDelegate);
 	});
 });

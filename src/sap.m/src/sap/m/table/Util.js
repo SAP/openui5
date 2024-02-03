@@ -22,7 +22,7 @@ sap.ui.define([
 	 * Provides utility functions for tables.
 	 *
 	 * @namespace
-	 * @alias module:sap/m/table/Util
+	 * @alias sap.m.table.Util
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.96.0
@@ -245,7 +245,7 @@ sap.ui.define([
 	 * @param {int} [mSettings.padding=1.0625] The sum of column padding(1rem) and border(1px) in rem
 	 * @param {float} [mSettings.gap=0] The additional content width in rem
 	 * @param {boolean} [mSettings.headerGap=false] Whether icons in the header should be taken into account
-	 * @param {boolean} [mSettings.truncateLabel=true] Whether the header of the column can be truncated or not
+	 * @param {boolean} [mSettings.truncateLabel=true] Whether the header of the column can be truncated in the boundaries of <code>minWidth</code> and <code>maxWidth</code>
 	 * @param {boolean} [mSettings.verticalArrangement=false] Whether the fields are arranged vertically
 	 * @param {boolean} [mSettings.required=false] Indicates the state of the column header as defined by the <code>required</code> property
 	 * @param {int} [mSettings.defaultWidth=8] The default column content width when type check fails

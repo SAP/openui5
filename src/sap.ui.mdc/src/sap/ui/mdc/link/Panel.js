@@ -70,6 +70,14 @@ sap.ui.define([
 				 */
 				beforeNavigationCallback: {
 					type: "function"
+				},
+				/**
+				 * Function that is called when the navigation happens. This function is used mainly inside the <code>SmartLink</code> control to provide
+				 * its <code>navigate</code> and <code>innerNavigate</code> event handlings. The function will be called with the <code>Event</code> that
+				 * is provided by the <code>press</code> handling of the given <code>Link</code> control.
+				 */
+				onNavigationCallback: {
+					type: "function"
 				}
 			},
 			aggregations: {
@@ -115,15 +123,7 @@ sap.ui.define([
 	Panel.prototype.init = function() {
 		Control.prototype.init.call(this);
 
-		Engine.getInstance().register(this, {
-			controller: {
-				LinkItems: new LinkPanelController({ control: this })
-			}
-		});
-
-		AdaptationMixin.call(Panel.prototype);
-
-		Engine.getInstance().defaultProviderRegistry.attach(this, "Global");
+		this._registerP13n();
 
 		sap.ui.require([
 			this.getMetadataHelperPath() || "sap/ui/mdc/Link"
@@ -138,8 +138,7 @@ sap.ui.define([
 			countItemsWithoutIcon: 0,
 
 			// Additionally the property 'icon' can be modified in 'runtimeItems'.
-			runtimeItems: [],
-			contentTitle: ""
+			runtimeItems: []
 		});
 		oModel.setDefaultBindingMode(BindingMode.TwoWay);
 		oModel.setSizeLimit(1000);
@@ -177,6 +176,18 @@ sap.ui.define([
 		iSeparatorIndex = 1,
 		iLinkAreaIndex = 2,
 		iFooterAreaIndex = 3;
+
+	Panel.prototype._registerP13n = function() {
+		Engine.getInstance().register(this, {
+			controller: {
+				LinkItems: new LinkPanelController({ control: this })
+			}
+		});
+
+		AdaptationMixin.call(Panel.prototype);
+
+		Engine.getInstance().defaultProviderRegistry.attach(this, "Global");
+	};
 
 	Panel.prototype._createContent = function() {
 		const oVerticalLayoutContent = [];
@@ -331,9 +342,18 @@ sap.ui.define([
 			oEvent.preventDefault();
 			this.getBeforeNavigationCallback()(oEvent).then((bNavigate) => {
 				if (bNavigate) {
+					this._onNavigate(oLink);
 					Panel.navigate(sHref);
 				}
 			});
+		} else {
+			this._onNavigate(oLink);
+		}
+	};
+
+	Panel.prototype._onNavigate = function(oLink) {
+		if (this.getOnNavigationCallback()) {
+			this.getOnNavigationCallback()(oLink);
 		}
 	};
 
@@ -388,7 +408,7 @@ sap.ui.define([
 	};
 
 	Panel._getVisibleItems = function(aMItems) {
-		return aMItems.filter(function(oItem) {
+		return aMItems.filter((oItem) => {
 			return oItem.id !== undefined && oItem.visible;
 		});
 	};
@@ -505,19 +525,7 @@ sap.ui.define([
 					Log.error("The '" + oChanges.name + "' of PanelItem is not supported yet.");
 			}
 		}
-		this._updateContentTitle();
 	}
-
-	Panel.prototype.getContentTitle = function() {
-		const oModel = this._getInternalModel();
-		const oContentTitle = oModel.getProperty("/contentTitle");
-		if (oContentTitle) {
-			return oContentTitle;
-		} else {
-			this._updateContentTitle();
-			return this.getContentTitle();
-		}
-	};
 
 	Panel.prototype.getCurrentState = function() {
 		const aItems = [];
@@ -566,23 +574,6 @@ sap.ui.define([
 				return aItems;
 			}
 		});
-	};
-
-	Panel.prototype._updateContentTitle = function() {
-		const oModel = this._getInternalModel();
-		const aAdditionalContent = this._getAdditionalContentArea().getItems();
-		let oContentTitle = this._getPersonalizationButton();
-
-		if (aAdditionalContent.length > 0) {
-			oContentTitle = aAdditionalContent[0];
-		} else {
-			const aLinkControls = this._getLinkControls();
-			if (aLinkControls.length > 0) {
-				oContentTitle = aLinkControls[0];
-			}
-		}
-
-		oModel.setProperty("/contentTitle", oContentTitle);
 	};
 
 	Panel.prototype._getAdditionalContentArea = function() {
