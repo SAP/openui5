@@ -112,6 +112,16 @@ sap.ui.define([
 		}
 	};
 
+	AnalyticalContent.prototype.applyConfiguration = function () {
+		var oConfiguration = this.getParsedConfiguration();
+
+		if (!oConfiguration) {
+			return;
+		}
+
+		this._createChart();
+	};
+
 	/**
 	 * @override
 	 */
@@ -160,7 +170,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalContent.prototype.onDataChanged = function () {
-		this._createChart();
+		this._updateChart();
 		var oChart = this.getAggregation("_content");
 
 		if (oChart) {
@@ -202,10 +212,7 @@ sap.ui.define([
 			},
 			height: "100%",
 			width: "100%",
-			vizType: ChartTypes[oResolvedConfiguration.chartType] || oResolvedConfiguration.chartType,
-			vizProperties: this._getVizProperties(oResolvedConfiguration),
-			dataset: this._getDataset(oConfiguration, oResolvedConfiguration),
-			feeds: this._getFeeds(oResolvedConfiguration)
+			vizType: ChartTypes[oResolvedConfiguration.chartType] || oResolvedConfiguration.chartType
 		});
 
 		this.setAggregation("_content", oChart);
@@ -214,6 +221,25 @@ sap.ui.define([
 		if (oResolvedConfiguration.popover && oResolvedConfiguration.popover.active) {
 			this._attachPopover();
 		}
+	};
+
+	AnalyticalContent.prototype._updateChart = function () {
+		var oConfiguration = this.getParsedConfiguration();
+		var oChart = this.getAggregation("_content");
+		var oResolvedConfiguration = BindingResolver.resolveValue(oConfiguration, this, "/");
+
+		if (!oChart) {
+			return;
+		}
+
+		oChart.destroyDataset().destroyFeeds();
+
+		oChart.applySettings({
+			vizProperties: this._getVizProperties(oResolvedConfiguration),
+			dataset: this._getDataset(oConfiguration, oResolvedConfiguration),
+			feeds: this._getFeeds(oResolvedConfiguration),
+			vizType: ChartTypes[oResolvedConfiguration.chartType] || oResolvedConfiguration.chartType
+		});
 	};
 
 	AnalyticalContent.prototype._attachActions = function (oConfiguration) {

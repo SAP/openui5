@@ -231,7 +231,9 @@ sap.ui.define([
 						},
 						"sap.card": {
 							"type": "Analytical",
-							"content": { }
+							"content": {
+								"chartType": "Line"
+							}
 						}
 					}
 				});
