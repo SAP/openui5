@@ -4,7 +4,6 @@
 
 // Provides control sap.m.Table.
 sap.ui.define([
-	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/core/ControlBehavior",
 	"./library",
@@ -24,7 +23,7 @@ sap.ui.define([
     // jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Selectors"
 ],
-	function(KeyCodes, Core, ControlBehavior, library, ListBase, ListItemBase, CheckBox, TableRenderer, BaseObject, ResizeHandler, PasteHelper, jQuery, ListBaseRenderer, Icon, Util, Library, Log) {
+	function(Core, ControlBehavior, library, ListBase, ListItemBase, CheckBox, TableRenderer, BaseObject, ResizeHandler, PasteHelper, jQuery, ListBaseRenderer, Icon, Util, Library, Log) {
 	"use strict";
 
 
@@ -441,7 +440,7 @@ sap.ui.define([
 			}
 		}
 
-		if (this._bCheckLastColumnWidth && Core.isThemeApplied()) {
+		if (this._bCheckLastColumnWidth && Util.isThemeApplied()) {
 			window.requestAnimationFrame(this._checkLastColumnWidth.bind(this));
 		}
 	};
