@@ -11,24 +11,24 @@ sap.ui.define(["sap/ui/thirdparty/URI"], function(URI) {
 		// compiling a single RegExp seems a less readable option
 		// so bellow are the patterns for individual Demokit sections
 		aDemokitPaths = [
-			/^\/controls/,
-			/^\/group/,
-			/^\/entity/,
-			/^\/sample/,
-			/^\/downloads/,
-			/^\/api/,
-			/^\/topic/,
-			/^\/liveEditor/,
-			/^\/sitemap\//,
+			/^(\/)?controls/,
+			/^(\/)?group/,
+			/^(\/)?entity/,
+			/^(\/)?sample/,
+			/^(\/)?downloads/,
+			/^(\/)?api/,
+			/^(\/)?topic/,
+			/^(\/)?liveEditor/,
+			/^(\/)?sitemap\//,
 			/\/sitemap$/,
-			/^\/demoapps/,
-			/^\/tools/,
-			/^\/news\//,
+			/^(\/)?demoapps/,
+			/^(\/)?tools/,
+			/^(\/)?news\//,
 			/\/news$/,
-			/^\/search\//,
-			/^\/license[.]txt/,
-			/^\/docs\/guide/,
-			/^\/docs\/api\/symbols/
+			/^(\/)?search\//,
+			/^(\/)?license[.]txt/,
+			/^(\/)?docs\/guide/,
+			/^(\/)?docs\/api\/symbols/
 		];
 
 	function pathMatchesDemokitRoute (path) {
