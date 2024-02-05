@@ -805,5 +805,15 @@
         ]
       }
     ]
+  },
+  "1.84.42": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "ba32f98463419ef23b9209abbe9fae7e4600db03",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/ODataMetadata#_getPropertyMetadata: fix for complex type property"
+      }
+    ]
   }
 }

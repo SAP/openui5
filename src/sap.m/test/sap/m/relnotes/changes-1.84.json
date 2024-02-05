@@ -2180,5 +2180,32 @@
         ]
       }
     ]
+  },
+  "1.84.42": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "d8e3a28c6715a7c8859db982f876f938a4a76f04",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Arrow has hover state now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009692332023"
+          }
+        ]
+      },
+      {
+        "id": "bfe6f485d953a856c368c73b0f543f9ad86706d6",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Overflow in content area is now scrollable in Internet Explorer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380140393"
+          }
+        ]
+      }
+    ]
   }
 }
