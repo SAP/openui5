@@ -10,7 +10,7 @@ sap.ui.define([
 		const aPropertyInfo = [];
 		JSONPropertyInfo.forEach(function(oPI) {
 			let oFilterBarPropertyInfo;
-			if (oPI.name.match(/Region|Country|Location/)) {
+			if (oPI.key.match(/Region|Country|Location/)) {
 				oFilterBarPropertyInfo = Object.assign({}, oPI);
 				delete oFilterBarPropertyInfo.sortable;
 				aPropertyInfo.push(oFilterBarPropertyInfo);
