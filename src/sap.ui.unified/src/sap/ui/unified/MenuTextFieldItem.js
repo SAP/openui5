@@ -127,7 +127,7 @@ sap.ui.define([
 			// icon/check column
 			rm.openStart("div").class("sapUiMnuItmIco").openEnd();
 
-			oIcon = oItem._getIcon(oItem);
+			oIcon = oItem._getIcon();
 
 			rm.renderControl(oIcon);
 

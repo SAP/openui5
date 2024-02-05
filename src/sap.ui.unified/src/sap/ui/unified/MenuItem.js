@@ -105,13 +105,13 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library', 'sap/ui/co
 		rm.openEnd();
 		rm.close("div");
 
-		if (oItem.getIcon() && oItem._getIcon) {
+		if (oItem.getIcon()) {
 			// icon/check column
 			rm.openStart("div");
 			rm.class("sapUiMnuItmIco");
 			rm.openEnd();
 
-			oIcon = oItem._getIcon(oItem);
+			oIcon = oItem._getIcon();
 			rm.renderControl(oIcon);
 
 			rm.close("div");
