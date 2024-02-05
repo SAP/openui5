@@ -1,7 +1,17 @@
 {
   "1.121.0": {
-    "date": "January 2024",
+    "date": "February 2024",
     "notes": [
+      {
+        "id": "94531bdd2322022ba075b558db56bf05d0e7c531",
+        "type": "FIX",
+        "text": " FilterField: show more link if typeahead autoclose used"
+      },
+      {
+        "id": "4f60841eaa5aba3f9a8b829fe5d3037e359e4882",
+        "type": "FEATURE",
+        "text": " Field: decide if ValueHelp opens on focus or click via Delegate"
+      },
       {
         "id": "8f88625b7f5aef4bf84c24141eaed36a7a8775e4",
         "type": "FEATURE",

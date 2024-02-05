@@ -1,7 +1,12 @@
 {
   "1.121.0": {
-    "date": "January 2024",
+    "date": "February 2024",
     "notes": [
+      {
+        "id": "3ff4e4eec8907edd2bae163391f1e0f0c242eee9",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust external label references"
+      },
       {
         "id": "271d30e502ac8b9cdd81132928aa1f75a7cfbefd",
         "type": "FEATURE",

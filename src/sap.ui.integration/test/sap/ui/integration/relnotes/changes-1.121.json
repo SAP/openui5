@@ -1,7 +1,22 @@
 {
   "1.121.0": {
-    "date": "January 2024",
+    "date": "February 2024",
     "notes": [
+      {
+        "id": "f5a3d2a28750163ce299a8daf2e0ce7857dbc190",
+        "type": "FIX",
+        "text": " Integration Card: Object Status icon in Table and Object Card is correctly positioned"
+      },
+      {
+        "id": "c3fe1b67f157d02ca5385116af978ebe05cad450",
+        "type": "FEATURE",
+        "text": ": Integration Cards: Image with text overlay can be used in the Object Card"
+      },
+      {
+        "id": "961015bc58cbc8b5d94bc19f484b280f2613f300",
+        "type": "FIX",
+        "text": " Integration cards: Analytical card now correctly fires \"ready\" event"
+      },
       {
         "id": "1479513499e9b7d9c313e44a3588033034b0c2f0",
         "type": "FIX",

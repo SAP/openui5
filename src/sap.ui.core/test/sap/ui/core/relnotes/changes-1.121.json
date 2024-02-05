@@ -1,7 +1,38 @@
 {
   "1.121.0": {
-    "date": "January 2024",
+    "date": "February 2024",
     "notes": [
+      {
+        "id": "0e7c738c2afdf2e90e3f61314eb1ef49a5ddee9b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMetaModel#getODataValueLists: fetch missing metadata"
+      },
+      {
+        "id": "69a508ea884573e329d687ff35477a31850a5d24",
+        "type": "FIX",
+        "text": " core/Lib: Improve Error Message reg. Pseudo Modules"
+      },
+      {
+        "id": "babc6fb595fa918ed800c99da6922fb9086b8b66",
+        "type": "FIX",
+        "text": " sap.ui.core.ShortcutHintsMixin: additional defensive check in onAfterRendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "fa763a40b8f410962fc89ade0d33120703d76615",
+        "type": "FIX",
+        "text": " sap/base/i18n/ResourceBundle: Enable caching of .properties files also for varying URLs that resolve to the same URL"
+      },
+      {
+        "id": "a339c97e893ed5460c6c8db35ffb9761011bfbeb",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2/v4.ODataModel ignoreAnnotationsFromMetadata is no longer experimental"
+      },
       {
         "id": "fc35cf7f776c6ebcd9c058fbc0bf5cc5db2d685d",
         "type": "FEATURE",

@@ -1,7 +1,53 @@
 {
   "1.121.0": {
-    "date": "January 2024",
+    "date": "February 2024",
     "notes": [
+      {
+        "id": "0ff22e27287183a4c852c6cc29ac88afb12fe0ca",
+        "type": "FIX",
+        "text": " ColumnMenu: Provide a proper overflow handling"
+      },
+      {
+        "id": "aca237fec63797fdbc489078deceec642f838afb",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: added possibility to select a day with a space"
+      },
+      {
+        "id": "e76e2132a9402f682df38997433cba02f152e12d",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: 'View Settings' title is not visible on entering the filter details page"
+      },
+      {
+        "id": "ce99a79ce95af5eb60b0a04bf276bb6727d26cf3",
+        "type": "FIX",
+        "text": " sap.m.IconTabHeader: Right click no longer triggers unnecessary events"
+      },
+      {
+        "id": "d8caa0b4cdc986d295c98bd90ceee9b139049e14",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Fields of Between operation are now in correct order",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000484112024"
+          }
+        ]
+      },
+      {
+        "id": "aa9705386a0536eec473d4fb04085be4383cd18d",
+        "type": "FEATURE",
+        "text": " sap.m.IllustratedMessage: New illustration type"
+      },
+      {
+        "id": "0c62fe9799b40d9ecf92f534b6490590e2801931",
+        "type": "FEATURE",
+        "text": " sap.m.IllustratedMessage: New illustration type"
+      },
+      {
+        "id": "01e35a7f360633d1d8ea90b8ddad4a11116b97a1",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed incorrect ACC reading of required sap.m.Select"
+      },
       {
         "id": "0b6e37609b266b56e208ae3386d6b1b23211fd3b",
         "type": "FEATURE",

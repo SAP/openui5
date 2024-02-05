@@ -1,7 +1,12 @@
 {
   "1.121.0": {
-    "date": "January 2024",
+    "date": "February 2024",
     "notes": [
+      {
+        "id": "c3fe1b67f157d02ca5385116af978ebe05cad450",
+        "type": "FEATURE",
+        "text": ": Integration Cards: Image with text overlay can be used in the Object Card"
+      },
       {
         "id": "c188e7912a15d0abc346d87abf9e82b01ca98053",
         "type": "FEATURE",
