@@ -4,10 +4,11 @@
 sap.ui.define([
 	"./PluginBase",
 	"sap/base/i18n/Localization",
+	"sap/base/util/deepEqual",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Element",
 	"sap/base/Log"
-], function (PluginBase, Localization, KeyCodes, Element, Log) {
+], function (PluginBase, Localization, deepEqual, KeyCodes, Element, Log) {
 	"use strict";
 
 	var DIRECTION = {
@@ -267,15 +268,31 @@ sap.ui.define([
 	 * Determines whether cells are selectable or not.
 	 *
 	 * @private
+	 * @returns {boolean} Whether cells are selectable or not
 	 * @ui5-restricted sap.m.plugins.CopyProvider
 	 */
 	CellSelector.prototype.isSelectable = function() {
 		return this.isActive() ? this.getConfig("isSupported", this.getControl()) : false;
 	};
 
+	/**
+	 * Determines whether there is a cell selection or not.
+	 *
+	 * @private
+	 * @returns {boolean} Whether there is a cell selection or not
+	 * @ui5-restricted sap.m.plugins.CopyProvider
+	 */
+	CellSelector.prototype.hasSelection = function() {
+		return Boolean(this._bSelecting && this._oSession?.mSource);
+	};
+
 	CellSelector.prototype._onSelectableChange = function() {
-		const oCopyProvider = this.getPlugin("sap.m.plugins.CopyProvider");
-		oCopyProvider?.onCellSelectorSelectableChange(this.isSelectable());
+		this.getPlugin("sap.m.plugins.CopyProvider")?.onCellSelectorSelectableChange(this);
+	};
+
+	CellSelector.prototype._onSelectionChange = function() {
+		/* @ui5-restricted sap.m.plugins.CopyProvider */
+		this.fireEvent("selectionChange");
 	};
 
 	CellSelector.prototype._registerEvents = function() {
@@ -683,8 +700,11 @@ sap.ui.define([
 
 		this._drawSelection(mBounds);
 
-		this._oSession.mSource = mFrom;
-		this._oSession.mTarget = mTo;
+		if (!deepEqual(this._oSession.mSource, mFrom) || !deepEqual(this._oSession.mTarget, mTo)) {
+			this._oSession.mSource = mFrom;
+			this._oSession.mTarget = mTo;
+			this._onSelectionChange();
+		}
 	};
 
 	/**
@@ -836,8 +856,12 @@ sap.ui.define([
 	CellSelector.prototype.removeSelection = function () {
 		this._clearSelection();
 
+		const bSelectionChange = this._oSession?.mSource || this._oSession?.mTarget;
 		this._bSelecting = false;
 		this._oSession = { cellRefs: [] };
+		if (bSelectionChange) {
+			this._onSelectionChange();
+		}
 	};
 
 	/**

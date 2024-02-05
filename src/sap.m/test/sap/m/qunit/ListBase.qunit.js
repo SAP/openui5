@@ -432,6 +432,10 @@ sap.ui.define([
 			oList.attachEventOnce("selectionChange", function(e) {
 				assert.ok(!e.getParameter("selectAll"), "selectAll parameter is false when the 1st item is selected");
 			});
+			oList.attachEventOnce("itemSelectedChange", function(e) {
+				assert.ok(e.getParameter("selected"), "the list item is selected");
+				assert.equal(e.getParameter("listItem"), oList.getItems()[0], "the first list item is selected");
+			});
 			oList.getItems()[0].getModeControl().$().trigger("tap");
 
 			oList.attachEventOnce("selectionChange", function(e) {
@@ -446,14 +450,25 @@ sap.ui.define([
 			oList.getItems()[0].focus();
 			qutils.triggerEvent("keydown", document.activeElement, {code: "KeyA", ctrlKey: true});
 
-			var oSelectionChangeSpy = this.spy();
+			const oSelectionChangeSpy = this.spy();
+			const oItemSelectedChangeSpy = this.spy();
 			oList.attachSelectionChange(oSelectionChangeSpy);
+			oList.attachEvent("itemSelectedChange", oItemSelectedChangeSpy);
+
 			oList.selectAll();
 			assert.strictEqual(oSelectionChangeSpy.callCount, 0, "selectAll is not fired via public API call");
+			assert.strictEqual(oItemSelectedChangeSpy.callCount, oList.getItems().length, "itemSelectedChange is triggered for every item after selectAll");
 
+			oItemSelectedChangeSpy.resetHistory();
 			oList.removeSelections();
+			assert.strictEqual(oItemSelectedChangeSpy.callCount, oList.getItems().length, "itemSelectedChange is triggered for every item after removeSelections");
+
 			oList.selectAll(true);
-			assert.strictEqual(oSelectionChangeSpy.callCount, 1, "selectAll is fired via true parameter call");
+			assert.strictEqual(oSelectionChangeSpy.callCount, 1, "selectAll fired a selectionChange event via true parameter call");
+			oSelectionChangeSpy.resetHistory();
+
+			oList.removeSelections(true, true);
+			assert.strictEqual(oSelectionChangeSpy.callCount, 1, "selectAll fired a removeSelections event via true parameter call");
 		});
 
 		/**

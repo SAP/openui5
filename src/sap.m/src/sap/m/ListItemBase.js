@@ -816,6 +816,9 @@ function(
 		// set the property and do not invalidate
 		this.setProperty("selected", bSelected, true);
 
+		// let the list know the selected property is changed
+		this.informList("AfterSelectedChange", bSelected);
+
 		return this;
 	};
 
