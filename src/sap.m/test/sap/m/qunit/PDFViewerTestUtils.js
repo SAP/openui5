@@ -76,7 +76,6 @@ sap.ui.define([
 
 			var oComponentOptions = {
 				source: "{/source}",
-				isTrustedSource: true,
 				loaded: function () {
 					if (bExpectLoad) {
 						assert.ok(true, "'loaded' event correctly fired");
