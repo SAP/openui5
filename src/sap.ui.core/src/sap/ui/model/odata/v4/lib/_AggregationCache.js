@@ -1480,8 +1480,17 @@ sap.ui.define([
 			fnDataRequested) {
 		var that = this;
 
-		return this.oFirstLevel.read(iStart, iLength + iPrefetchLength, 0, oGroupLock,
-				fnDataRequested)
+		// "before and after the given range"
+		if (iStart > iPrefetchLength) {
+			iLength += iPrefetchLength;
+			iStart -= iPrefetchLength;
+		} else {
+			iLength += iStart;
+			iStart = 0;
+		}
+		iLength += iPrefetchLength;
+
+		return this.oFirstLevel.read(iStart, iLength, 0, oGroupLock, fnDataRequested)
 			.then(function (oResult) {
 				// Note: this code must be idempotent, it might well run twice!
 				var oGrandTotal,
