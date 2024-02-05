@@ -4143,7 +4143,7 @@ sap.ui.define([
 	 */
 	PlanningCalendarRowTimeline.prototype._isNonWorkingInterval = function (iInterval, aNonWorkingItems, iStartOffset, iNonWorkingMax) {
 		const oRow = Element.getElementById(this.getAssociation("row")),
-			oDate = CalendarDate.fromLocalJSDate(this._getStartDate().getJSDate()),
+			oDate = CalendarDate.fromUTCDate(this._getStartDate().getJSDate()),
 			oRowSpecialDates = oRow._getSpecialDates(),
 			oPCSpecialDates = oRow.getParent()._getSpecialDates();
 
