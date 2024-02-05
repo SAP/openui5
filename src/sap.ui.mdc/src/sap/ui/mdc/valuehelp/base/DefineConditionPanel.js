@@ -566,6 +566,41 @@ sap.ui.define([
 						}
 					}
 
+					let bInvalid = false;
+					if (oOperator.valueTypes.length === 0 || oOperator.valueTypes[0] === OperatorValueType.Static) {
+						// check for duplicate static operators
+						for (let i = 0; i < aConditions.length; i++) {
+							if (i !== iIndex && sKey === aConditions[i].operator) {
+								bInvalid = true;
+								oCondition.invalid = true;
+								bUpdate = true;
+								oField.setValueState(ValueState.Error);
+								oField.setValueStateText(oMessageBundle.getText("field.CONDITION_ALREADY_EXIST", [sKey]));
+								break;
+							}
+						}
+					}
+					if (oOperatorOld.valueTypes.length === 0 || oOperatorOld.valueTypes[0] === OperatorValueType.Static) {
+						// check if still duplicates
+						let iFirstIndex = -1;
+						let bDuplicates = false;
+						for (let i = 0; i < aConditions.length; i++) {
+							if (sOldKey === aConditions[i].operator) {
+								if (iFirstIndex < 0) {
+									iFirstIndex = i;
+								} else {
+									// still duplicates -> keep error
+									bDuplicates = true;
+									break;
+								}
+							}
+						}
+						if (!bDuplicates && iFirstIndex >= 0) {
+							delete aConditions[iFirstIndex].invalid;
+							bUpdate = true;
+						}
+					}
+
 					if (iIndex >= 0 && oOperator.valueDefaults) {
 						// sets the default values for the operator back to default, if the condition is inital or the value is null
 						oCondition.values.forEach((value, index) => {
@@ -588,7 +623,7 @@ sap.ui.define([
 						}
 					}
 
-					if (oCondition.invalid) {
+					if (oCondition.invalid && !bInvalid) {
 						delete oCondition.invalid;
 						bUpdate = true;
 					}
@@ -778,6 +813,7 @@ sap.ui.define([
 		oField._sOldKey = sOldKey; // to know in change event
 
 		let iIndex = 0;
+		let oCondition;
 
 		// if type of operator changed -> remove binding and create it new later on
 		if (sKey && sOldKey) {
@@ -841,7 +877,7 @@ sap.ui.define([
 
 		if (!sKey) { // TODO: remove? Because cannot longer happen as Field don't allow empty input because of used data type constraints
 			// key must not be empty
-			let oCondition = oField.getBindingContext("$this").getObject();
+			oCondition = oField.getBindingContext("$this").getObject();
 			if (oCondition) { // condition might be deleted before Field instance is deleted
 				const aConditions = this.getConditions();
 				iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
@@ -1647,6 +1683,8 @@ sap.ui.define([
 		if (oOperatorField.getValueState() === ValueState.Error && !oCondition.invalid) {
 			// remove error and show right value
 			oOperatorField.setValue(oOperatorField.getValue());
+			oOperatorField.setValueState(ValueState.None);
+			oOperatorField.setValueStateText();
 		}
 		iIndex++;
 
@@ -1799,6 +1837,25 @@ sap.ui.define([
 				}
 			}
 
+			if (!bInvalid) {
+				// check for duplicates
+				const aConditions = this.getConditions();
+				const sConditionPath = oBindingContext.getPath(); // Path to condition of the active control
+				const iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition
+				for (let i = 0; i < aConditions.length; i++) {
+					if (i !== iIndex && FilterOperatorUtil.compareConditions(oCondition, aConditions[i])) {
+						bInvalid = true;
+						oField.setValueState(ValueState.Error);
+						oField.setValueStateText(oMessageBundle.getText("field.CONDITION_ALREADY_EXIST", [oCondition.values[0]]));
+						if (oField2 && oField2.getMetadata().getAllProperties().valueState) {
+							oField2.setValueState(ValueState.Error);
+							oField2.setValueStateText(oMessageBundle.getText("field.CONDITION_ALREADY_EXIST", [oCondition.values[1]]));
+						}
+						break;
+					}
+				}
+			}
+
 		}
 
 		// check if at least one condition has an error
@@ -1829,9 +1886,29 @@ sap.ui.define([
 			bInvalid = false;
 			for (i = 0; i < aContent.length; i++) {
 				const oControl = aContent[i];
-				if (oControl.hasOwnProperty("_iValueIndex") && ((oControl instanceof Field && oControl.isInvalidInput()) || (Control.getValueState && oControl.getValueState() === ValueState.Error))) {
+				if (oControl.hasOwnProperty("_iValueIndex") && ((oControl instanceof Field && oControl.isInvalidInput()) || (oControl.getValueState && oControl.getValueState() === ValueState.Error))) {
+					if (oControl instanceof Field && !oControl.isInvalidInput()) { // TODO: how to check for custom control? (Maybe we need a marker for duplicates)
+						// might be a duplicate-error - check if still occurs
+						let bDuplicates = false;
+						const oBindingContext = oControl.getBindingContext("$condition");
+						const oCondition = oBindingContext.getObject();
+						const aConditions = this.getConditions();
+						const sConditionPath = oBindingContext.getPath(); // Path to condition of the active control
+						const iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition
+						for (let i = 0; i < aConditions.length; i++) {
+							if (i !== iIndex && FilterOperatorUtil.compareConditions(oCondition, aConditions[i])) {
+								bDuplicates = true;
+								break;
+							}
+						}
+						if (!bDuplicates) {
+							oControl.setValueState(ValueState.None);
+							oControl.setValueStateText();
+							continue;
+						}
+					}
+
 					bInvalid = true;
-					break;
 				}
 			}
 		}
