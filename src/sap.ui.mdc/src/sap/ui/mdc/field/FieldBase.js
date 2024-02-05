@@ -2989,6 +2989,7 @@ sap.ui.define([
 				oContent.setDOMValue(""); // as value property of MultiInput control might still be empty during typing. So setValue (via Binding) doesn't updates DOM-value (as no change is recognized).
 				this._sFilterValue = "";
 				this._bIgnoreInputValue = false; // just clean up
+				this._oFocusInHelp = undefined; // user input not longer from interest
 			} else {
 				this._bIgnoreInputValue = true; // after something is selected, the value just stays for filtering -> don't use to create token
 			}
@@ -3000,7 +3001,6 @@ sap.ui.define([
 			}
 		}
 
-		this._oFocusInHelp = undefined; // user input not longer from interest
 		const aConditionsOld = this.getConditions();
 
 		if (!deepEqual(aConditions, aConditionsOld)) {
