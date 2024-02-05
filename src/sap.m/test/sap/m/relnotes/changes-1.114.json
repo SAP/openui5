@@ -687,5 +687,15 @@
         ]
       }
     ]
+  },
+  "1.114.16": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "67533276a0ccfeefe5e7717e57fec527e1ed7550",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: Doesn't throw error when the binding type is string."
+      }
+    ]
   }
 }
