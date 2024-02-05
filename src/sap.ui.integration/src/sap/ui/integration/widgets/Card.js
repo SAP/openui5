@@ -714,13 +714,12 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.onBeforeRendering = function () {
-
 		var oCardContent = this.getCardContent();
 		if (oCardContent && oCardContent.isA("sap.ui.integration.cards.BaseContent")) {
 			oCardContent.setDesign(this.getDesign());
 		}
 
-		if (this.getDataMode() !== CardDataMode.Active) {
+		if (this._getActualDataMode() !== CardDataMode.Active) {
 			return;
 		}
 
@@ -744,7 +743,7 @@ sap.ui.define([
 
 		var oCardDomRef = this.getDomRef();
 
-		if (this.getDataMode() === CardDataMode.Auto) {
+		if (this._getActualDataMode() === CardDataMode.Auto) {
 			this._oCardObserver.observe(oCardDomRef);
 		} else {
 			this._oCardObserver.unobserve(oCardDomRef);
@@ -1162,7 +1161,7 @@ sap.ui.define([
 	 * @experimental Since 1.65. The API might change.
 	 */
 	Card.prototype.refresh = function () {
-		if (this.getDataMode() === CardDataMode.Active) {
+		if (this._getActualDataMode() === CardDataMode.Active) {
 			this._bApplyManifest = true;
 			this.invalidate();
 		}
@@ -3021,6 +3020,16 @@ sap.ui.define([
 			Log.info("'mockData' configuration is missing, but the card 'previewMode' is 'MockData'. Abstract mode will be used instead.", this);
 			this.setProperty("previewMode", CardPreviewMode.Abstract);
 		}
+	};
+
+	Card.prototype._getActualDataMode = function () {
+		var sDataMode = this.getDataMode();
+
+		if (sDataMode === CardDataMode.Auto && this._oCardObserver.isIntersected()) {
+			return CardDataMode.Active;
+		}
+
+		return sDataMode;
 	};
 
 	return Card;
