@@ -190,13 +190,19 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("when calling applyChange with JsControlTreeModifier", function (assert) {
+	QUnit.test("when calling applyChange and revertChange with JsControlTreeModifier", function (assert) {
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		//Call CUT
 		return this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag)
-			.then(function() {
-				assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
-			}.bind(this));
+		.then(function() {
+			assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
+
+			return UnhideSimpleForm.revertChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag);
+		}.bind(this))
+		.then(function() {
+			[this.oLabel1, this.oInput1].forEach(function(oControl) {
+				assert.strictEqual(oControl.getVisible(), true, "one field is still visible");
+			});
+		}.bind(this));
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a change containing a local Id", function (assert) {
