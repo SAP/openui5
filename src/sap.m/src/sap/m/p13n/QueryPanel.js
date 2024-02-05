@@ -110,15 +110,18 @@ sap.ui.define([
 		this._oListControl.getItems().forEach((oItem) => {
 			const sKey = this._getControlFromRow(oItem)._key;
 			if (sKey) {
-				const oField = this._getP13nModel().getProperty("/items").find((o) => {
+				const oField = this._getP13nModel().getProperty("/items")?.find((o) => {
 					return o.name == sKey;
 				});
-				aItems.push(oField);
+
+				if (oField) {
+					aItems.push(oField);
+				}
 			}
 		});
 
 		if (!bOnlyActive) {
-			this._getP13nModel().getProperty("/items").forEach((oItem) => {
+			this._getP13nModel().getProperty("/items")?.forEach((oItem) => {
 				if (aItems.indexOf(oItem) === -1) {
 					aItems.push(oItem);
 				}

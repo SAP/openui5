@@ -250,4 +250,11 @@ sap.ui.define([
 		assert.ok(this.oQueryPanel._oListControl.getItems()[0].getContent()[0].getContent()[0].getEnabled(), "The first select control is enabled");//First select control is enabled
 		assert.notOk(this.oQueryPanel._oListControl.getItems()[1].getContent()[0].getContent()[0].getEnabled(), "The second select control is disabled");//Higher rows than the query limit are disabled
 	});
+
+	QUnit.test("Check that #getP13nData will work regardless if there are no items present", function(assert) {
+		this.oQueryPanel.setP13nData([]);
+		const p13nData = this.oQueryPanel.getP13nData();
+
+		assert.deepEqual(p13nData, [], "An empty array is an allowed value as p13nData");
+	});
 });
