@@ -20,7 +20,7 @@ sap.ui.define([
 				ignore: true
 			}
 		},
-		getStableElements: function (oField) {
+		getStableElements: function(oField) {
 			if (!oField.getFieldInfo()) {
 				return [];
 			}
@@ -42,7 +42,7 @@ sap.ui.define([
 				"sap.ui.mdc": {
 					name: "info.POPOVER_DEFINE_LINKS",
 					isEnabled: (oControl) => !!oControl.getFieldInfo(),
-					handler: function (oControl, mPropertyBag) {
+					handler: function(oControl, mPropertyBag) {
 						const oFieldInfo = oControl.getFieldInfo();
 						return oFieldInfo.getContent().then((oPanel) => {
 							oFieldInfo.addDependent(oPanel);
@@ -50,10 +50,10 @@ sap.ui.define([
 							return FlexRuntimeInfoAPI.waitForChanges({
 								element: oPanel
 							}).then(() => {
-								mPropertyBag.fnAfterClose = function () {
+								mPropertyBag.fnAfterClose = function() {
 									oPanel.destroy();
 								};
-								const fnGetChanges = function () {
+								const fnGetChanges = function() {
 									return Engine.getInstance().getRTASettingsActionHandler(oPanel, mPropertyBag, "LinkItems").then((aChanges) => {
 										aChanges.forEach((oChange) => {
 											const vSelectorElement = oChange.selectorElement;
@@ -62,7 +62,7 @@ sap.ui.define([
 											const oAppComponent = Utils.getAppComponentForControl(oControl);
 											oChange.selectorControl = {
 												id: typeof vSelectorElement === "string" ? vSelectorElement : vSelectorElement.getId(),
-												controlType: vSelectorElement === oPanel ? "sap.ui.mdc.link.Panel" : "sap.ui.mdc.link.PanelItem",
+												controlType: vSelectorElement === oPanel ? oPanel.getMetadata().getName() : "sap.ui.mdc.link.PanelItem",
 												appComponent: oAppComponent
 											};
 										});
@@ -89,10 +89,10 @@ sap.ui.define([
 			}
 		},
 		tool: {
-			start: function (oField) {
+			start: function(oField) {
 				oField.getFieldInfo()?.setEnablePersonalization(false);
 			},
-			stop: function (oField) {
+			stop: function(oField) {
 				oField.getFieldInfo()?.setEnablePersonalization(true);
 			}
 		}
