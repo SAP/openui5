@@ -1323,6 +1323,9 @@ sap.ui.define([
 				this._bMultiDateSelectWithArrow = true;
 			} else if (oEvent.which === KeyCodes.SPACE && !oEvent.shiftKey && bMultiDateSelection) {
 				this._bMultiDateSelect = true;
+			} else if (oEvent.which === KeyCodes.SPACE && !oEvent.shiftKey) {
+				this.removeAllSelectedDates();
+				this._bMultiDateSelect = true;
 			}
 			this._fireSelectionEvent(oEvent);
 			// Prevent scrolling
