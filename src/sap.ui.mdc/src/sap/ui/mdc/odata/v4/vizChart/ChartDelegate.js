@@ -812,6 +812,10 @@ sap.ui.define([
 									};
 								}
 
+								if (oPropertyInfo.unitPath) {
+									oMeasureSettings.unitBinding = oPropertyInfo.unitPath;
+								}
+
 								const oMeasure = new Measure(oMeasureSettings);
 
 								aVisibleMeasures.push(oMeasure);
@@ -835,16 +839,24 @@ sap.ui.define([
 
 						aInResultDimensions.forEach((sInResultDim) => {
 
-							aInResultPromises.push(this._getPropertyInfosByName(sInResultDim, oChart).then((oPropertyInfos) => {
-								const sName = this.getInternalChartNameFromPropertyNameAndKind(oPropertyInfos.name, "groupable", oChart);
+							aInResultPromises.push(this._getPropertyInfosByName(sInResultDim, oChart).then((oPropertyInfo) => {
+								const sName = this.getInternalChartNameFromPropertyNameAndKind(oPropertyInfo.name, "groupable", oChart);
 
-								const oDim = new Dimension({
+								const oDimension = new Dimension({
 									name: sName,
-									label: oPropertyInfos.label
+									label: oPropertyInfo.label,
+									textFormatter: this.formatText.bind(oPropertyInfo)
 								});
 
+								if (oPropertyInfo.textProperty) {
+									oDimension.setTextProperty(oPropertyInfo.textProperty);
+									oDimension.setDisplayText(true);
+								}
+
+								this._getChart(oChart).addDimension(oDimension);
+
 								this._getState(oChart).inResultDimensions.push(sName);
-								this._getChart(oChart).addDimension(oDim);
+
 							}));
 
 						});
@@ -1471,6 +1483,9 @@ sap.ui.define([
 			};
 		}
 
+		if (oPropertyInfo.unitPath) {
+			oMeasureSettings.unitBinding = oPropertyInfo.unitPath;
+		}
 
 		return new Measure(oMeasureSettings);
 	};
