@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/thirdparty/sinon-4"
@@ -13,6 +14,7 @@ sap.ui.define([
 	JsObjectConnector,
 	Loader,
 	ManifestUtils,
+	LrepConnector,
 	ApplyStorage,
 	Version,
 	sinon
@@ -393,6 +395,31 @@ sap.ui.define([
 				assert.equal(oResult.changes.changes.length, 1, "one change was loaded");
 				var oChange = oResult.changes.changes[0];
 				assert.equal(oChange.otherDummy, true, "the change dummy data is correctly loaded");
+			});
+		});
+	});
+
+	QUnit.module("Load variant author name", {
+		beforeEach() {},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("When load variant author name is triggered", function(assert) {
+			const oBackEndResult = {
+				compVariants: {
+					comp_id1: "comp_name1"
+				},
+				variants: {
+					id1: "name1"
+				}
+			};
+			const oStubloadVariantsAuthors = sandbox.stub(ApplyStorage, "loadVariantsAuthors").resolves(oBackEndResult);
+
+			return Loader.loadVariantsAuthors("test.app").then(function(oResult) {
+				assert.deepEqual(oResult, oBackEndResult, "then result is get from LRep back end");
+				assert.ok(oStubloadVariantsAuthors.calledOnce, "then correct function of storage is called");
+				assert.equal(oStubloadVariantsAuthors.getCall(0).args[0], "test.app", "with correct reference");
 			});
 		});
 	});

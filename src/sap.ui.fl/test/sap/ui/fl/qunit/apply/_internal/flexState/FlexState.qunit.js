@@ -363,6 +363,21 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("When variant author name data is loaded", function(assert) {
+			const oStubLoadVariant = sandbox.stub(Loader, "loadVariantsAuthors").resolves(
+				{
+					id1: "name1",
+					id2: "name2"
+				}
+			);
+			return FlexState.getVariantsAuthorsNames({reference: sReference})
+			.then(function(mMapUserIdName) {
+				assert.equal(mMapUserIdName.id1, "name1");
+				assert.equal(mMapUserIdName.id2, "name2");
+				assert.ok(oStubLoadVariant.calledOnce);
+			});
+		});
+
 		QUnit.test("When the storage response includes variants that reference an unavailable parent variant", function(assert) {
 			sandbox.stub(Loader, "loadFlexData").resolves(merge(
 				{},

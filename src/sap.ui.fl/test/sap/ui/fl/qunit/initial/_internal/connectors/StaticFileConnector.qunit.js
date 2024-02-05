@@ -139,6 +139,13 @@ sap.ui.define([
 				assert.equal(oResult.variants[0].dummy6, true, "the variant dummy data is correctly loaded");
 			});
 		});
+
+		QUnit.test("given loadVariantsAuthors is called", function(assert) {
+			return StaticFileConnector.loadVariantsAuthors().then(function() {
+			}).catch((sError) => {
+				assert.equal(sError, "loadVariantsAuthors is not implemented", "correct error is returned");
+			});
+		});
 	});
 
 	QUnit.done(function() {

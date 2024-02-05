@@ -59,6 +59,10 @@ sap.ui.define([
 				}.bind(null, mPropertyBag.flexReference));
 			}
 			return Promise.resolve({});
+		},
+
+		loadVariantsAuthors() {
+			return Promise.reject("loadVariantsAuthors is not implemented");
 		}
 	});
 });

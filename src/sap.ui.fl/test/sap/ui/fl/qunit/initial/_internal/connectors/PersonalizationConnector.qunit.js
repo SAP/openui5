@@ -108,6 +108,13 @@ sap.ui.define([
 				assert.deepEqual(oResponse, mExpectedFeatures, "the settings object is returned correctly");
 			});
 		});
+
+		QUnit.test("given loadVariantsAuthors is called", function(assert) {
+			return PersonalizationConnector.loadVariantsAuthors().then(function() {
+			}).catch((sError) => {
+				assert.equal(sError, "loadVariantsAuthors is not implemented", "correct error is returned");
+			});
+		});
 	});
 
 	QUnit.done(function() {

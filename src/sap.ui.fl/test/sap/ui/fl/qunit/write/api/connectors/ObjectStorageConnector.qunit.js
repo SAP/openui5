@@ -239,6 +239,13 @@ sap.ui.define([
 				});
 			});
 
+			QUnit.test("given loadVariantsAuthors is called", function(assert) {
+				return ObjectStorageConnector.loadVariantsAuthors().then(function() {
+				}).catch((sError) => {
+					assert.equal(sError, "loadVariantsAuthors is not implemented", "correct error is returned");
+				});
+			});
+
 			QUnit.test("when getFlexInfo is called without changes present", function(assert) {
 				return oConnector.getFlexInfo({storage: oConnector.storage}).then(function(oFlexInfo) {
 					var oExpectedFlexInfo = {

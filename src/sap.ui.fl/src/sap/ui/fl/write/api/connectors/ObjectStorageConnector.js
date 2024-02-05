@@ -332,6 +332,13 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
+		loadVariantsAuthors() {
+			return Promise.reject("loadVariantsAuthors is not implemented");
+		},
+
+		/**
+		 * @inheritDoc
+		 */
 		getFlexInfo(mPropertyBag) {
 			mPropertyBag.storage = this.storage;
 			return ObjectStorageUtils.getAllFlexObjects(mPropertyBag).then(function(aFlexObjects) {

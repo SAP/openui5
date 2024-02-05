@@ -40,6 +40,18 @@ sap.ui.define([], function() {
 		 */
 		loadFeatures() {
 			return Promise.reject("loadFeatures is not implemented");
+		},
+
+		/**
+		 * Get the names of variants' authors.
+		 *
+		 * @param {object} mPropertyBag - Property bag
+		 * @param {string} mPropertyBag.reference - Flexibility reference
+		 * @param {string} [mPropertyBag.url] - Configured URL for the connector
+		 * @returns {Promise<object>} Resolves with a map between variant IDs and their authors' names containing the data for the flex features
+		 */
+		loadVariantsAuthors() {
+			return Promise.reject("loadVariantsAuthors is not implemented");
 		}
 	};
 

@@ -97,6 +97,7 @@ sap.ui.define([
 				isContextSharingEnabled: true,
 				isPublicFlVariantEnabled: false,
 				isVariantPersonalizationEnabled: true,
+				isVariantAuthorNameAvailable: false,
 				isLocalResetEnabled: false,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
@@ -115,7 +116,7 @@ sap.ui.define([
 			return Storage.loadFeatures().then(function(oResponse) {
 				assert.strictEqual(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
 				assert.strictEqual(oJsObjectConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
-				assert.strictEqual(oLogResolveSpy.callCount, 2, "the logAndResolveDefault called once");
+				assert.strictEqual(oLogResolveSpy.callCount, 2, "the logAndResolveDefault called twice");
 				assert.deepEqual(oResponse, oExpectedResponse, "response was merged even with one connector failing");
 			});
 		});
@@ -179,6 +180,7 @@ sap.ui.define([
 				isContextSharingEnabled: false,
 				isPublicFlVariantEnabled: false,
 				isVariantPersonalizationEnabled: true,
+				isVariantAuthorNameAvailable: false,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
 				draft: {},
@@ -191,9 +193,91 @@ sap.ui.define([
 			};
 
 			return Storage.loadFeatures().then(function(mFeatures) {
-				assert.strictEqual(Object.keys(mFeatures).length, Object.keys(DEFAULT_FEATURES).length, "only 12 feature was provided");
+				assert.strictEqual(Object.keys(mFeatures).length, Object.keys(DEFAULT_FEATURES).length, "only 13 feature was provided");
 				assert.strictEqual(mFeatures.isProductiveSystem, true, "the property was overruled by the second connector");
 			});
+		});
+	});
+
+	QUnit.module("Given Storage when loadVariantsAuthors is called", {
+		beforeEach() {
+			this.url = "/some/url";
+			LrepConnector.xsrfToken = "123";
+			PersonalizationConnector.xsrfToken = "123";
+		},
+		afterEach() {
+			LrepConnector.xsrfToken = undefined;
+			PersonalizationConnector.xsrfToken = undefined;
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("without reference param", function(assert) {
+			return Storage.loadVariantsAuthors().then(function() {
+			}).catch((sError) => {
+				assert.equal(sError, "No reference was provided", "correct error is returned");
+			});
+		});
+
+		QUnit.test("with a failing connector", function(assert) {
+			var oLrepConnectorLoadFeaturesStub = sandbox.stub(LrepConnector, "loadVariantsAuthors").resolves({id1: "name1"});
+			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadVariantsAuthors").rejects({});
+
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
+				{
+					connector: "LrepConnector",
+					url: this.url,
+					layers: []
+				}, {
+					connector: "JsObjectConnector",
+					layers: [Layer.CUSTOMER]
+				}, {
+					connector: "PersonalizationConnector",
+					url: this.url,
+					layers: [Layer.USER]
+				}
+			]);
+
+			var oExpectedResponse = {
+				id1: "name1"
+			};
+			var oLogResolveSpy = sandbox.spy(StorageUtils, "logAndResolveDefault");
+
+			return Storage.loadVariantsAuthors("reference").then(function(oResponse) {
+				assert.strictEqual(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadVariantsAuthors was triggered once");
+				assert.strictEqual(oJsObjectConnectorLoadFeaturesStub.callCount, 1, "the loadVariantsAuthors was triggered once");
+				assert.strictEqual(oLogResolveSpy.callCount, 3, "the logAndResolveDefault called three time");
+				assert.deepEqual(oResponse, oExpectedResponse, "response was merged even with one connector failing");
+			});
+		});
+
+		QUnit.test("then merges the response of the connectors", function(assert) {
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
+				{connector: "LrepConnector", url: this.url},
+				{connector: "JsObjectConnector"}
+			]);
+
+			const oLrepConnectorLoadFeaturesStub = sandbox.stub(LrepConnector, "loadVariantsAuthors").resolves({
+				id1: "name1",
+				id2: "name2"
+			});
+			const oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadVariantsAuthors").resolves({
+				id3: "name3"
+			});
+
+			const oExpectedResponse = {
+				id1: "name1",
+				id2: "name2",
+				id3: "name3"
+			};
+			return Storage.loadVariantsAuthors("reference").then(function(oResponse) {
+				assert.strictEqual(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadVariantsAuthors was triggered once");
+				const oLrepConnectorCallArgs = oLrepConnectorLoadFeaturesStub.getCall(0).args[0];
+				assert.deepEqual(oLrepConnectorCallArgs, {url: this.url, reference: "reference"}, "the url was passed");
+				assert.strictEqual(oJsObjectConnectorLoadFeaturesStub.callCount, 1, "the loadVariantsAuthors was triggered once");
+				var oJsObjectConnectorCallArgs = oJsObjectConnectorLoadFeaturesStub.getCall(0).args[0];
+				assert.deepEqual(oJsObjectConnectorCallArgs.url, undefined, "no url was passed");
+				assert.deepEqual(oResponse, oExpectedResponse, "response was merged correctly");
+			}.bind(this));
 		});
 	});
 

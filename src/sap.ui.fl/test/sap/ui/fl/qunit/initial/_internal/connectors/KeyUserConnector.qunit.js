@@ -195,6 +195,13 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "with correct method");
 			});
 		});
+
+		QUnit.test("given loadVariantsAuthors is called", function(assert) {
+			return KeyUserConnector.loadVariantsAuthors().then(function() {
+			}).catch((sError) => {
+				assert.equal(sError, "loadVariantsAuthors is not implemented", "correct error is returned");
+			});
+		});
 	});
 
 	QUnit.done(function() {

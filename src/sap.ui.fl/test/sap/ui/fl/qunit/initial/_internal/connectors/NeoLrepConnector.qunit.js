@@ -34,6 +34,13 @@ sap.ui.define([
 				assert.deepEqual(oResponse, oExpectedResponse, "loadFeatures response flow is correct");
 			});
 		});
+
+		QUnit.test("given loadVariantsAuthors is called", function(assert) {
+			return NeoLrepConnector.loadVariantsAuthors().then(function() {
+			}).catch((sError) => {
+				assert.equal(sError, "loadVariantsAuthors is not implemented", "correct error is returned");
+			});
+		});
 	});
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
