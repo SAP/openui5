@@ -30,6 +30,7 @@ sap.ui.define([
 		dependencies : ["sap.ui.core", "sap.m"],
 		designtime: "sap/tnt/designtime/library.designtime",
 		types: [
+			"sap.tnt.IllustratedMessageType",
 			"sap.tnt.RenderMode"
 		],
 		interfaces: [
