@@ -42,10 +42,14 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format(12345.12345, "EUR"), "12,345.12\xa0EUR", "12345.12345");
 		assert.strictEqual(oFormat.format(1234567890, "EUR"), "1,234,567,890.00\xa0EUR", "1234567890");
 		assert.strictEqual(oFormat.format(-123.23, "EUR"), "-123.23\xa0EUR", "-123.23");
+		assert.strictEqual(oFormat.format(1.23e+9, "EUR"), "1,230,000,000.00\xa0EUR", "1.23e+9");
+		assert.strictEqual(oFormat.format(1.23e-9, "EUR"), "0.00\xa0EUR", "1.23e-9");
+		assert.strictEqual(oFormat.format(-1.23e+9, "EUR"), "-1,230,000,000.00\xa0EUR", "-1.23e+9");
+		assert.strictEqual(oFormat.format(-1.23e-9, "EUR"), "0.00\xa0EUR", "-1.23e-9");
 		assert.strictEqual(oFormat.format("1.23e+9", "EUR"), "1,230,000,000.00\xa0EUR", "1.23e+9");
 		assert.strictEqual(oFormat.format("1.23e-9", "EUR"), "0.00\xa0EUR", "1.23e-9");
 		assert.strictEqual(oFormat.format("-1.23e+9", "EUR"), "-1,230,000,000.00\xa0EUR", "-1.23e+9");
-		assert.strictEqual(oFormat.format("-1.23e-9", "EUR"), "-0.00\xa0EUR", "-1.23e-9");
+		assert.strictEqual(oFormat.format("-1.23e-9", "EUR"), "0.00\xa0EUR", "-1.23e-9");
 		assert.strictEqual(oFormat.format("1.2345e+2", "EUR"), "123.45\xa0EUR", "1.2345e+2");
 		assert.strictEqual(oFormat.format("12345e-2", "EUR"), "123.45\xa0EUR", "12345e-2");
 		assert.strictEqual(oFormat.format("-1.2345e+2", "EUR"), "-123.45\xa0EUR", "-1.2345e+2");
