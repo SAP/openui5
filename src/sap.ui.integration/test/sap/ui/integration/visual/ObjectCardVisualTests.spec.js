@@ -20,18 +20,18 @@ describe("sap.ui.integration.ObjectCardVisualTests", function () {
 		"cardImageOnly",
 		"cardJustImage",
 		"cardImageOnlyWithFooter",
-		"cardImageAndOverlayWithFooter2",
+		"cardImgOvWithFooter2",
 		"cardImageWithFooter",
-		"cardImageAndOverlayWithFooter",
+		"cardImgOvWithFooter",
 		"cardImageNoHeaderNoFooter",
-		"cardImageAndOverlayNoHeaderNoFooter",
+		"cardImgOvNoHeaderNoFooter",
 		"cardJustImageWithOverlay",
-		"cardJustImageWithOverlayTextPosition",
-		"cardJustImageWithOverlayGradient",
-		"justImageWithOverlayImagePosition",
-		"justImageWithOverlayNotFullWidth",
-		"justImageWithOverlayCalcHeight",
-		"justImageWithOverlayImgHeight"
+		"cardImgOvTextPosition",
+		"cardImgOverlayGradient",
+		"cardImgOvImagePosition",
+		"cardImgOvNotFullWidth",
+		"cardImgOvCalcHeight",
+		"cardImgOvImgHeight"
 	];
 
 	it("Object Card", function () {
