@@ -17,12 +17,14 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
+	"sap/ui/core/ShortcutHintsMixin",
+	"sap/ui/Device",
 	"sap/m/MessageToast",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"test-resources/sap/ui/mdc/qunit/QUnitUtils",
 	"test-resources/sap/ui/mdc/qunit/table/QUnitUtils"
-], function(ClipboardUtils, Text, Table, Column, ColumnListItem, GridTable, GridColumn, MultiSelectionPlugin, MDCTable, MDCColumn, PluginBase, CopyProvider, CellSelector, JSONModel, Filter, CustomData, Core, coreLib, MessageToast, QUnitUtils, KeyCodes, MDCQUnitUtils, MDCTableQUnitUtils) {
+], function(ClipboardUtils, Text, Table, Column, ColumnListItem, GridTable, GridColumn, MultiSelectionPlugin, MDCTable, MDCColumn, PluginBase, CopyProvider, CellSelector, JSONModel, Filter, CustomData, Core, coreLib, ShortcutHintsMixin, Device, MessageToast, QUnitUtils, KeyCodes, MDCQUnitUtils, MDCTableQUnitUtils) {
 
 	"use strict";
 	/*global sinon, QUnit */
@@ -372,10 +374,23 @@ sap.ui.define([
 	});
 
 	QUnit.test("Copy-Button", function(assert) {
+		const done = assert.async();
 		const sText = coreLib.getResourceBundleFor("sap.m").getText("COPYPROVIDER_COPY");
+		const fnShortcutHintsMixinSpy = sinon.spy(ShortcutHintsMixin, "addConfig");
 		const oCopyButton = this.oCopyProvider.getCopyButton();
+		const oBundle = coreLib.getResourceBundleFor("sap.m");
 		assert.equal(oCopyButton.getTooltip(), sText, "Copy Button Tooltip");
 		assert.equal(oCopyButton.getText(), sText, "Copy Button Text");
+		setTimeout(() => {
+			assert.ok(ShortcutHintsMixin.isControlRegistered(oCopyButton.getId()), "ShortcutHintsMixin is registered for the Copy Button");
+			assert.ok(fnShortcutHintsMixinSpy.calledWithExactly(
+				this.oCopyProvider.getCopyButton(),
+				sinon.match({ message: oBundle.getText(Device.os.macintosh ? "COPYPROVIDER_SHORTCUT_MAC" : "COPYPROVIDER_SHORTCUT_WIN") }),
+				this.oCopyProvider.getParent()
+			), "ShortcutHintsMixin config of the Copy Button is correct");
+			fnShortcutHintsMixinSpy.restore();
+			done();
+		});
 	});
 
 	QUnit.test("Copy button visibility", async function(assert) {
