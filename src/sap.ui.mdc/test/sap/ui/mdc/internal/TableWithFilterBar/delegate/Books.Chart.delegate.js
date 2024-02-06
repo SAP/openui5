@@ -173,7 +173,7 @@ sap.ui.define([
 
 					var oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
 
-					if (sKey === "modifiedAt" || sKey === "createdAt") {
+					if (sKey === "modifiedAt" || sKey === "createdAt" || sKey === "currency_code") {
 						oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] = true;
 					}
 

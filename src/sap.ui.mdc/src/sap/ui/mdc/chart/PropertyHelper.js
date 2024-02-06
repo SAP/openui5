@@ -66,6 +66,9 @@ sap.ui.define([
 				},
 				textFormatter : {
 					type: "object"
+				},
+				unitPath : {
+					type: "string"
 				}
 			});
 		}

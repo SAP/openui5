@@ -156,7 +156,8 @@ sap.ui.define([
 					aggregationMethod: sAggregationMethod,
 					maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo[sKey]?.allowedExpressions) ? -1 : 1,
 					dataType: oObj.$Type,
-					datapoint: null //To be implemented by FE
+					datapoint: null, //To be implemented by FE
+					unitPath: (sAggregationMethod + sKey) === "minprice" ? "currency_code" : ""
 				});
 			});
 		}
