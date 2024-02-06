@@ -6,8 +6,8 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	"use strict";
 
 	/**
+	 * Multi-select mode of the table.
 	 *
-	 * Enumeration of the <code>multiSelectMode</code> in <code>ListBase</code>.
 	 * @enum {string}
 	 * @private
 	 * @alias sap.ui.mdc.enums.TableMultiSelectMode
@@ -16,13 +16,15 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	 */
 	const TableMultiSelectMode = {
 		/**
-		 * Renders the <code>selectAll</code> checkbox (default behavior).
+		 * The table shows a Select All checkbox
+		 *
 		 * @public
 		 */
 		Default: "Default",
 
 		/**
-		 * Renders the <code>clearAll</code> icon.
+		 * The table shows a Clear All icon
+		 *
 		 * @public
 		 */
 		ClearAll: "ClearAll"

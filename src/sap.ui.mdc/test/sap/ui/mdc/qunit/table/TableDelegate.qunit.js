@@ -110,9 +110,9 @@ sap.ui.define([
 			});
 			this.oTable.placeAt("qunit-fixture");
 			this.oType = this.oTable.getType();
-			await nextUIUpdate();
 
-			return this.oTable.initialized();
+			await this.oTable.initialized();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -250,22 +250,37 @@ sap.ui.define([
 		}.bind(this);
 
 		return fnTest(TableType.Table, {
+			p13nModes: ["Column", "Sort", "Filter"],
 			"export": true,
-			"expandAll": false,
-			"collapseAll": false
+			expandAllRows: false,
+			collapseAllRows: false
 		}).then(function() {
 			return fnTest(TableType.TreeTable, {
+				p13nModes: ["Column", "Sort", "Filter"],
 				"export": true,
-				"expandAll": false,
-				"collapseAll": false
+				expandAllRows: false,
+				collapseAllRows: false
 			});
 		}).then(function() {
 			return fnTest(TableType.ResponsiveTable, {
+				p13nModes: ["Column", "Sort", "Filter", "Group"],
 				"export": true,
-				"expandAll": false,
-				"collapseAll": false
+				expandAllRows: false,
+				collapseAllRows: false
 			});
 		});
+	});
+
+	QUnit.test("#expandAllRows", function(assert) {
+		assert.throws(() => {
+			TableDelegate.expandAllRows(this.oTable);
+		}, Error("Unsupported operation: TableDelegate.expandAllRows"));
+	});
+
+	QUnit.test("#collapseAllRows", function(assert) {
+		assert.throws(() => {
+			TableDelegate.collapseAllRows(this.oTable);
+		}, Error("Unsupported operation: TableDelegate.collapseAllRows"));
 	});
 
 	QUnit.module("Selection", {

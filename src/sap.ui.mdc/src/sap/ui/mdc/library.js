@@ -1120,7 +1120,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.60
-	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.TableRowAction}
+	 * @deprecated As of version 1.115, replaced by {@link sap.ui.mdc.enums.TableRowActionType}
 	 */
 	thisLib.RowAction = {
 		/**

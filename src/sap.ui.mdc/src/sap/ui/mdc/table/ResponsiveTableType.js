@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/mdc/enums/TableGrowingMode",
-	"sap/ui/mdc/enums/TableRowAction"
+	"sap/ui/mdc/enums/TableRowActionType"
 ], (
 	TableTypeBase,
 	PersonalizationUtils,
@@ -25,7 +25,7 @@ sap.ui.define([
 	Element,
 	Library,
 	GrowingMode,
-	TableRowAction
+	RowActionType
 ) => {
 	"use strict";
 
@@ -52,10 +52,11 @@ sap.ui.define([
 				 */
 				growingMode: {
 					type: "sap.ui.mdc.enums.TableGrowingMode",
+					group: "Behavior",
 					defaultValue: GrowingMode.Basic
 				},
 				/**
-				 * Specifies whether the Show / Hide Details button for the <code>ResponsiveTable</code> scenario is shown.
+				 * Specifies whether the Show / Hide Details button is shown.
 				 *
 				 * If the available screen space gets too narrow, the columns configured with <code>High</code> and <code>Medium</code> importance
 				 * move to the pop-in area, while the columns with <code>Low</code> importance are hidden.<br>
@@ -67,17 +68,18 @@ sap.ui.define([
 				 */
 				showDetailsButton: {
 					type: "boolean",
-					group: "Misc",
+					group: "Behavior",
 					defaultValue: false
 				},
 				/**
 				 * Defines which columns are hidden instead of moved into the pop-in area depending on their importance.
-				 * See {@link sap.m.Column#getImportance} and {@link sap.m.Table#getHiddenInPopin} for more details.
+				 * See {@link sap.ui.mdc.table.ResponsiveColumnSettings#getImportance} for more details.
 				 *
-				 * <b>Note:</b> To hide columns based on their importance, it's mandatory to set <code>showDetailsButton="true"</code>.<br>
-				 * If no priority is given, the default configuration of {@link sap.ui.mdc.table.ResponsiveTableType#getShowDetailsButton} is
-				 * used.<br> If this property is changed after the <code>Table</code> has been initialized, the new changes take effect only when the
-				 * Show / Hide Details button is pressed a second time.
+				 * <b>Note:</b> To hide columns based on their importance, it's mandatory to set <code>showDetailsButton</code> to
+				 * <code>true</code>.<br>
+				 * If no importance is given, a device-dependent default configuration is used.<br>
+				 * If this property is changed after the table has been initialized, the new changes take effect only when the Show / Hide Details
+				 * button is pressed a second time.
 				 *
 				 * @since 1.86
 				 */
@@ -260,10 +262,10 @@ sap.ui.define([
 		if (fnVisibleFormatter) {
 			vRowType.formatter = function(sValue) {
 				const bVisible = fnVisibleFormatter(sValue);
-				return bVisible ? TableRowAction.Navigation : sType;
+				return bVisible ? RowActionType.Navigation : sType;
 			};
 		} else {
-			vRowType = vRowType ? TableRowAction.Navigation : sType;
+			vRowType = vRowType ? RowActionType.Navigation : sType;
 		}
 
 		// Depending on whether the property is bound, either bind or set

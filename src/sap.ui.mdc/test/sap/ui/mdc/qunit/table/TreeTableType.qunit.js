@@ -78,18 +78,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getSupportedP13nModes", function(assert) {
-		const oTable = this.createTable();
-
-		assert.deepEqual(oTable.getType().getSupportedP13nModes(), [
-			TableP13nMode.Column,
-			TableP13nMode.Sort,
-			TableP13nMode.Filter,
-			TableP13nMode.Group, // The delegate is responsible to forbid this
-			TableP13nMode.Aggregate // The delegate is responsible to forbid this
-		]);
-	});
-
 	QUnit.test("Fix column count", function(assert) {
 		const oTable = this.createTable({
 			type: new TreeTableType({fixedColumnCount: 1})

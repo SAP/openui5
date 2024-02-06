@@ -10,8 +10,6 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>ColumnSettings</code>.
 	 *
-	 * Provides a number of general settings that are supported by both {@link sap.m.Column} and {@link sap.ui.table.Column}.
-	 *
 	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
 	 * @param {object} [mSettings] Initial settings for the new object
 	 *

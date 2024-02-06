@@ -6,8 +6,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	"use strict";
 
 	/**
-	 *
-	 * Defines the personalization mode of the table.
+	 * Personalization mode of the table.
 	 *
 	 * @enum {string}
 	 * @alias sap.ui.mdc.enums.TableP13nMode
@@ -16,31 +15,31 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	 */
 	const TableP13nMode = {
 		/**
-		 * Column personalization is enabled.
+		 * Columns can be shown, hidden and reordered
 		 *
 		 * @public
 		 */
 		Column: "Column",
 		/**
-		 * Sort personalization is enabled.
+		 * The table can be sorted
 		 *
 		 * @public
 		 */
 		Sort: "Sort",
 		/**
-		 * Filter personalization is enabled.
+		 * The table can be filtered
 		 *
 		 * @public
 		 */
 		Filter: "Filter",
 		/**
-		 * Group personalization is enabled.
+		 * The table can be grouped
 		 *
 		 * @public
 		 */
 		Group: "Group",
 		/**
-		 * Aggregation personalization is enabled.
+		 * The table can be aggregated
 		 *
 		 * @public
 		 */
