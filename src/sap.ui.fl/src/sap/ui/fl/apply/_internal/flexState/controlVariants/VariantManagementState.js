@@ -143,7 +143,7 @@ sap.ui.define([
 			favorite: oVariantInstance.getFavorite(),
 			executeOnSelect: oVariantInstance.getExecuteOnSelection(),
 			visible: oVariantInstance.getVisible(),
-			author: oVariantInstance.getSupportInformation().user,
+			author: oVariantInstance.getAuthor(),
 			contexts: oVariantInstance.getContexts(),
 			isStandardVariant: oVariantInstance.getStandardVariant()
 		};

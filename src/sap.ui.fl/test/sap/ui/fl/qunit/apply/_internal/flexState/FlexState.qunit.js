@@ -363,21 +363,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When variant author name data is loaded", function(assert) {
-			const oStubLoadVariant = sandbox.stub(Loader, "loadVariantsAuthors").resolves(
-				{
-					id1: "name1",
-					id2: "name2"
-				}
-			);
-			return FlexState.getVariantsAuthorsNames({reference: sReference})
-			.then(function(mMapUserIdName) {
-				assert.equal(mMapUserIdName.id1, "name1");
-				assert.equal(mMapUserIdName.id2, "name2");
-				assert.ok(oStubLoadVariant.calledOnce);
-			});
-		});
-
 		QUnit.test("When the storage response includes variants that reference an unavailable parent variant", function(assert) {
 			sandbox.stub(Loader, "loadFlexData").resolves(merge(
 				{},
@@ -459,7 +444,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when initialize is called without a reference and with a componentID", function(assert) {
-			var oMockResponse = {changes: merge(StorageUtils.getEmptyFlexDataResponse(), {foo: "FlexResponse"})};
+			var oMockResponse = {changes: merge(StorageUtils.getEmptyFlexDataResponse(), {foo: "FlexResponse"}), authors: {}};
 			this.oLoadFlexDataStub.resolves(oMockResponse);
 
 			var oExpectedResponse = Object.assign({}, oMockResponse);

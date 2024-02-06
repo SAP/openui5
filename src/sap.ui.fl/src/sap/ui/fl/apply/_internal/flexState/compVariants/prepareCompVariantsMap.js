@@ -29,7 +29,7 @@ sap.ui.define([
 		return mMap[sPersistencyKey];
 	}
 
-	function initialize(mMap, sPersistencyKey, aVariants, sSVMControlId) {
+	function initialize(mMap, mAuthors, sPersistencyKey, aVariants, sSVMControlId) {
 		aVariants ||= [];
 		var mMapOfKey = getOrCreate(mMap, sPersistencyKey);
 		mMapOfKey.controlId = sSVMControlId;
@@ -44,7 +44,7 @@ sap.ui.define([
 				id: oVariant.id,
 				persisted: false
 			}, oVariant);
-			oVariantInstance = CompVariantMerger.createVariant(sPersistencyKey, oVariantInstance);
+			oVariantInstance = CompVariantMerger.createVariant(sPersistencyKey, oVariantInstance, mAuthors);
 			mMapOfKey.byId[oVariant.id] = oVariantInstance;
 			return oVariantInstance;
 		});
@@ -52,11 +52,11 @@ sap.ui.define([
 		return mMapOfKey;
 	}
 
-	function buildSectionMap(mCompSection, sSubSection, mCompVariants) {
+	function buildSectionMap(mCompSection, sSubSection, mCompVariants, mAuthors) {
 		var aFlexObjects = mCompSection[sSubSection].map(function(oCompVariantChangeDefinition) {
 			var oFlexObject;
 			if (sSubSection === "variants") {
-				oFlexObject = FlexObjectFactory.createCompVariant(oCompVariantChangeDefinition);
+				oFlexObject = FlexObjectFactory.createCompVariant(oCompVariantChangeDefinition, mAuthors);
 			} else {
 				oFlexObject = FlexObjectFactory.createFromFileContent(oCompVariantChangeDefinition, UpdatableChange);
 			}
@@ -101,12 +101,12 @@ sap.ui.define([
 
 		// provide the function for fl-internal consumers reuse
 		mCompVariants._getOrCreate = getOrCreate.bind(undefined, mCompVariants);
-		mCompVariants._initialize = initialize.bind(undefined, mCompVariants);
+		mCompVariants._initialize = initialize.bind(undefined, mCompVariants, mPropertyBag.storageResponse.authors);
 
 		// check for the existence due to test mocks
 		if (mPropertyBag.storageResponse.changes.comp) {
 			["variants", "changes", "defaultVariants", "standardVariants"].forEach(function(sSection) {
-				buildSectionMap(mPropertyBag.storageResponse.changes.comp, sSection, mCompVariants);
+				buildSectionMap(mPropertyBag.storageResponse.changes.comp, sSection, mCompVariants, mPropertyBag.storageResponse.authors);
 			});
 		}
 

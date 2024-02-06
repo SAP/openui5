@@ -208,6 +208,7 @@ sap.ui.define([
 		QUnit.test("does not store the default executeOnSelection and favorite and contexts", function(assert) {
 			var sPersistencyKey = "persistency.key";
 			sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
+			sandbox.stub(Settings.getInstanceOrUndef(), "getUserId").returns("currentUser");
 			var mPropertyBag = {
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey,
