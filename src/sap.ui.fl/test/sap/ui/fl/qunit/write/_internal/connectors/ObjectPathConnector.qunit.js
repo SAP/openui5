@@ -114,6 +114,13 @@ sap.ui.define([
 				assert.deepEqual(oSettings, oReturnedSettings, "the settings are correct");
 			});
 		});
+
+		QUnit.test("given loadVariantsAuthors is called", function(assert) {
+			return ObjectPathConnector.loadVariantsAuthors().then(function() {
+			}).catch((sError) => {
+				assert.equal(sError, "loadVariantsAuthors is not implemented", "correct error is returned");
+			});
+		});
 	});
 
 	QUnit.done(function() {

@@ -62,6 +62,12 @@ sap.ui.define([
 				 */
 				variantId: {
 					type: "string"
+				},
+				/**
+				 * Variant author
+				 */
+				author: {
+					type: "string"
 				}
 			}
 		},
@@ -72,6 +78,7 @@ sap.ui.define([
 			if (!this.getVariantId()) {
 				this.setVariantId(this.getId());
 			}
+			this.setAuthor(this.getSupportInformation().user || "");
 		}
 	});
 

@@ -4093,6 +4093,9 @@ sap.ui.define([
 			if (oHeaderContent) {
 				oHeaderContent.setProperty("visible", bShow);
 			}
+			if (bShow) {
+				this._updateToggleHeaderVisualIndicators();
+			}
 		}
 		return this;
 	};

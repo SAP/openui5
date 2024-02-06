@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/library",
 	"sap/ui/core/theming/Parameters",
+	"sap/ui/core/Theming",
 	"sap/ui/core/Icon",
 	"sap/ui/core/Lib",
 	"sap/ui/model/ChangeReason",
@@ -32,6 +33,7 @@ sap.ui.define([
 	ResizeHandler,
 	coreLibrary,
 	ThemeParameters,
+	Theming,
 	Icon,
 	Lib,
 	ChangeReason,
@@ -1494,6 +1496,23 @@ sap.ui.define([
 			mThemeParameters.deleteIcon = mParams["_sap_ui_table_DeleteIcon"];
 			mThemeParameters.clearSelectionIcon = mParams["_sap_ui_table_ClearSelectionIcon"];
 			mThemeParameters.navIndicatorWidth = getPixelValue("_sap_ui_table_NavIndicatorWidth");
+		},
+
+		/**
+		 * Informs whether the current theme is fully applied already.
+		 * Replacement for Core#isThemeApplied.
+		 * see also sap/m/table/Util#isThemeApplied
+		 *
+		 * @since 1.121
+		 */
+		isThemeApplied: function() {
+			var bIsApplied = false;
+			var fnOnThemeApplied = function() {
+				bIsApplied = true;
+			};
+			Theming.attachApplied(fnOnThemeApplied); // Will be called immediately when theme is applied
+			Theming.detachApplied(fnOnThemeApplied);
+			return bIsApplied;
 		},
 
 		/**

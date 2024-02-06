@@ -33,6 +33,7 @@ sap.ui.define([
 		isPublicLayerAvailable: false,
 		isLocalResetEnabled: false,
 		isZeroDowntimeUpgradeRunning: false,
+		isVariantAuthorNameAvailable: false,
 		system: "",
 		client: ""
 	};

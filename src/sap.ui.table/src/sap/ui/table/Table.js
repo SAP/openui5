@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/Device",
-	"sap/ui/core/AnimationMode",
 	"sap/ui/core/Control",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/util/PasteHelper",
@@ -31,12 +30,11 @@ sap.ui.define([
 	"./plugins/SelectionModelSelection",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
-	"sap/ui/core/Core",
+	"sap/ui/core/AnimationMode",
 	"sap/ui/core/library"
 ], function(
 	Localization,
 	Device,
-	AnimationMode,
 	Control,
 	ControlBehavior,
 	PasteHelper,
@@ -62,7 +60,7 @@ sap.ui.define([
 	SelectionModelSelectionPlugin,
 	jQuery,
 	Log,
-	Core,
+	AnimationMode,
 	CoreLibrary
 ) {
 	"use strict";
@@ -777,7 +775,7 @@ sap.ui.define([
 
 		this._nDevicePixelRatio = window.devicePixelRatio;
 
-		if (Core.isThemeApplied()) {
+		if (TableUtils.isThemeApplied()) {
 			TableUtils.readThemeParameters();
 		}
 
@@ -1239,7 +1237,7 @@ sap.ui.define([
 
 		var oDomRef = this.getDomRef();
 
-		if (this._bInvalid || !oDomRef || !Core.isThemeApplied() || oDomRef.offsetWidth === 0) {
+		if (this._bInvalid || !oDomRef || !TableUtils.isThemeApplied() || oDomRef.offsetWidth === 0) {
 			return;
 		}
 

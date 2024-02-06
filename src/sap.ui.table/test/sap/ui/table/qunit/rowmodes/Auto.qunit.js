@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/CreationRow",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/core/Core",
 	"sap/ui/Device"
 ], function(
 	TableQUnitUtils,
@@ -22,7 +21,6 @@ sap.ui.define([
 	Column,
 	CreationRow,
 	TableUtils,
-	Core,
 	Device
 ) {
 	"use strict";
@@ -322,7 +320,7 @@ sap.ui.define([
 	});
 
 	RowsUpdatedTest.test("Render when theme not applied", function(assert) {
-		var oIsThemeApplied = sinon.stub(Core, "isThemeApplied").returns(false);
+		var oIsThemeApplied = sinon.stub(TableUtils, "isThemeApplied").returns(false);
 		this.createTable();
 		return this.checkRowsUpdated(assert, []).then(() => {
 			this.resetRowsUpdatedSpy();

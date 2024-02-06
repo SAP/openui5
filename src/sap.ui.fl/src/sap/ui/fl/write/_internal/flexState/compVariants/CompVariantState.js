@@ -6,7 +6,9 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/restricted/_pick",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariantRevertData",
@@ -24,7 +26,9 @@ sap.ui.define([
 	_omit,
 	_pick,
 	Element,
+	Lib,
 	Layer,
+	LayerUtils,
 	Utils,
 	CompVariant,
 	CompVariantRevertData,
@@ -414,6 +418,10 @@ sap.ui.define([
 		setAuthor(oChangeSpecificData);
 		var oFileContent = Object.assign({}, oChangeSpecificData, _omit(mPropertyBag, "changeSpecificData"));
 		var oFlexObject = FlexObjectFactory.createCompVariant(oFileContent);
+		// Variant created from application runtime has "You" as author name
+		if (!LayerUtils.isDeveloperLayer(oFlexObject.getLayer())) {
+			oFlexObject.setAuthor(Lib.getResourceBundleFor("sap.ui.fl").getText("VARIANT_SELF_OWNER_NAME"));
+		}
 
 		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
 		var oMapOfPersistencyKey = mCompVariantsMap._getOrCreate(mPropertyBag.persistencyKey);

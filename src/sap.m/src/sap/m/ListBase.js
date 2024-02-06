@@ -1194,6 +1194,14 @@ function(
 		this._updateSelectedPaths(oListItem, bSelected);
 	};
 
+	// this gets called after the selected property of the ListItem is changed
+	ListBase.prototype.onItemAfterSelectedChange = function(oListItem, bSelected) {
+		this.fireEvent("itemSelectedChange", {
+			listItem: oListItem,
+			selected: bSelected
+		});
+	};
+
 	/*
 	 * Returns items container DOM reference
 	 * @protected

@@ -4,20 +4,24 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/Control",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
+	"sap/ui/fl/registry/Settings",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Utils,
 	LayerUtils,
 	SmartVariantManagementApplyAPI,
+	CompVariantMerger,
 	UIComponent,
 	Control,
 	FlexState,
 	LrepConnector,
+	Settings,
 	LoaderExtensions,
 	sinon
 ) {
@@ -46,6 +50,12 @@ sap.ui.define([
 			this.oControl.getPersonalizableControlPersistencyKey = function() {
 				return sPersistencyKey;
 			};
+			this.oControl.updateAuthors = function() {};
+			const oStubSettings = sandbox.stub(Settings, "getInstance").resolves({
+				isVariantAuthorNameAvailable() {
+					return false;
+				}
+			});
 
 			var mFlexData = LoaderExtensions.loadResource({
 				dataType: "json",
@@ -172,6 +182,7 @@ sap.ui.define([
 					some: "property",
 					another: "value"
 				}, "and the variants content was updated");
+				assert.ok(oStubSettings.calledOnce, "settings inside exchangeAuthorsNames is called when variants list not empty");
 			});
 		});
 

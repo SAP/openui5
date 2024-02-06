@@ -158,9 +158,9 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/core/IconPool'],
 	};
 
 
-	MenuItemBase.prototype._getIcon = function(oItem) {
+	MenuItemBase.prototype._getIcon = function() {
 		return IconPool.createControlByURI({
-			src: oItem.getIcon(),
+			src: this.getIcon(),
 			useIconTooltip: false
 		});
 	};

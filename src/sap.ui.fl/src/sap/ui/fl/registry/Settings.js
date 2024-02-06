@@ -327,6 +327,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether full names of variants' authors are available or not.
+	 *
+	 * @returns {boolean} <code>true</code> if personalization of variants is enabled
+	 */
+	Settings.prototype.isVariantAuthorNameAvailable = function() {
+		return this._getBooleanProperty("isVariantAuthorNameAvailable");
+	};
+
+	/**
 	 * Checks whether condensing of changes is enabled for the used backend.
 	 *
 	 * @returns {boolean} <code>true</code> if condensing of changes is enabled

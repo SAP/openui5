@@ -44,6 +44,27 @@ sap.ui.define([
 			sandbox.verifyAndRestore();
 		}
 	}, function() {
+		QUnit.test("given a mock server, when loadVariantsAuthors is triggered", function(assert) {
+			var oServerResponse = {
+				variants: {
+					id1: "name1"
+				},
+				compVariants: {
+					id2: "name2"
+				}
+			};
+
+			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oServerResponse));
+			var mPropertyBag = {url: "/sap/bc/lrep", reference: "test.app"};
+			var sUrl = "/sap/bc/lrep/variants/authors/test.app";
+
+			return LrepConnector.loadVariantsAuthors(mPropertyBag).then(function(oResponse) {
+				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
+				assert.equal(sandbox.server.getRequest(0).url, sUrl, "Url is correct");
+				assert.deepEqual(oResponse, oServerResponse, "loadVariantsAuthors response is correct");
+			});
+		});
+
 		QUnit.test("given a mock server, when loadFeatures is triggered without a public layer available", function(assert) {
 			var oServerResponse = {
 				isKeyUser: true,
@@ -243,6 +264,9 @@ sap.ui.define([
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", adaptationId: "id_1234", version: "0"}).then(function() {
 				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?version=0&adaptationId=id_1234&sap-language=EN", "and the URL was correct");
 				assert.equal(oStubLoadModule.callCount, 1, "loadModule triggered");
+				return LrepConnector.loadVariantsAuthors({url: "/sap/bc/lrep", reference: "reference"}).then(function() {
+					assert.equal(this.oXHR.url, "/sap/bc/lrep/variants/authors/reference?version=0&adaptationId=id_1234&sap-language=EN", "then the subsequence get variants authors inherit correct parameters");
+				}.bind(this));
 			}.bind(this));
 		});
 

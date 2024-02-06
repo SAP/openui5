@@ -3,11 +3,15 @@
  */
 
 sap.ui.define([
+	"sap/base/util/merge",
+	"sap/base/util/restricted/_pick",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
-	"sap/base/util/restricted/_pick"
+	"sap/ui/fl/interfaces/BaseLoadConnector"
 ], function(
+	merge,
+	_pick,
 	InitialUtils,
-	_pick
+	BaseConnector
 ) {
 	"use strict";
 
@@ -20,7 +24,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.initial._internal.connectors, sap.ui.fl.write._internal.connectors
 	 */
-	return {
+	const BackendConnector = merge({}, BaseConnector, {
 		xsrfToken: undefined,
 		settings: undefined,
 		/**
@@ -84,5 +88,7 @@ sap.ui.define([
 				return oResponse;
 			});
 		}
-	};
+	});
+
+	return BackendConnector;
 });

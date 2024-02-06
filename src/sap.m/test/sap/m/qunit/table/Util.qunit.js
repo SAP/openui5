@@ -373,4 +373,35 @@ sap.ui.define([
 
 		Util.isEmpty.restore();
 	});
+
+	QUnit.test("isThemeApplied", function(assert) {
+		var done = assert.async();
+		var sCurrentTheme;
+		var iPass = 0;
+
+		var fnThemeChanged = (oEvent) => {
+			var sTheme = oEvent.theme;
+
+			if (iPass == 0) {
+				sCurrentTheme = Theming.getTheme();
+				iPass++;
+				assert.strictEqual(sTheme, sCurrentTheme, "Initial: Correct current Theme: " + sTheme);
+				assert.ok(Util.isThemeApplied(), sTheme + " is applied");
+				Theming.setTheme("sap_horizon_hcb");
+				assert.notOk(Util.isThemeApplied(), "sap_horizon_hcb is not applied after setTheme");
+			} else if (iPass == 1) {
+				iPass++;
+				assert.strictEqual(sTheme, "sap_horizon_hcb", "After Change: Correct current Theme: " + sTheme);
+				assert.ok(Util.isThemeApplied(), sTheme + " is applied");
+				Theming.setTheme(sCurrentTheme);
+				assert.notOk(Util.isThemeApplied(), sCurrentTheme + " is not applied after setTheme");
+			} else {
+				assert.strictEqual(sTheme, sCurrentTheme, "Final: Correct current Theme: " + sTheme);
+				Theming.detachApplied(fnThemeChanged);
+				done();
+			}
+		};
+
+		Theming.attachApplied(fnThemeChanged);
+	});
 });

@@ -68,10 +68,32 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns whether provided layer is a customer dependent layer.
+		 * Returns whether provided layer is PUBLIC or CUSTOMER layer.
 		 *
-		 * @param {string} sLayerName layer name
-		 * @returns {boolean} true if provided layer is customer dependent layer else false
+		 * @param {string} sLayerName - Layer name
+		 * @returns {boolean} true if provided layer is either PUBLIC or CUSTOMER layer
+		 * @restricted sap.ui.fl
+		 */
+		isPublicOrCustomerLayer(sLayerName) {
+			return ([Layer.PUBLIC, Layer.CUSTOMER].indexOf(sLayerName) > -1);
+		},
+
+		/**
+		 * Returns whether provided layer is USER or a customer-dependent layer.
+		 *
+		 * @param {string} sLayerName - Layer name
+		 * @returns {boolean} true if provided layer is either USER or a customer-dependent layer
+		 * @restricted sap.ui.fl
+		 */
+		isUserOrCustomerDependentLayer(sLayerName) {
+			return LayerUtils.isOverLayer(sLayerName, Layer.PARTNER);
+		},
+
+		/**
+		 * Returns whether provided layer is a customer-dependent layer.
+		 *
+		 * @param {string} sLayerName - Layer name
+		 * @returns {boolean} true if provided layer is customer-dependent layer else false
 		 * @public
 		 */
 		isCustomerDependentLayer(sLayerName) {

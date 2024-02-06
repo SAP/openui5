@@ -28,11 +28,11 @@ generate | Generates CLDR files based on the downloaded packages
 
 ```sh
 npm run generate-cldr <argument>
-# e.g.: npm run generate-cldr download
+# e.g.: npm run generate-cldr generate
 ```
 
 ## Upgrade CLDR Version
-To upgrade to a newer CLDR version pick a valid version number from [Unicode CLDR](https://cldr.unicode.org/).  
+To upgrade to a newer CLDR version pick a valid version number from [Unicode CLDR](https://cldr.unicode.org/).<br>
 Simply change the configured `CLDR_VERSION` in `openui5/lib/cldr-openui5/cli.js` and generate new CLDR files as described above.
 
 ## Tests
@@ -40,4 +40,34 @@ Starts static ESLint code checks and generator tests which are defined in `openu
 ```sh
 # via openui5/lib/cldr-openui5
 npm test
+```
+
+## Mocha tests
+To run the package's mocha tests use the `npm run mocha` command.
+To run a specific mocha test use the
+
+```sh
+npm run mocha -- --grep '<string contained in a 'describe' or 'it' in a mocha test file>'
+```
+
+command. The string part passed to the flag has to be case sensitive.
+E.g:
+
+```js
+// Example from Generator.mocha.js
+describe("Generator.js", function () {
+
+	it("constructor", function () {
+		// Test some stuff
+	});
+
+	it("private members", function () {
+		// Test some stuff
+	});
+});
+```
+
+```sh
+npm run mocha -- --grep 'Generator.js' # Runs all tests under describe("Generator.js", ...)
+npm run mocha -- --grep 'private members' # Runs the test with the title 'private members'
 ```

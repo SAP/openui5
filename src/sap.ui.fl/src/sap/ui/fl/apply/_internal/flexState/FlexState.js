@@ -116,6 +116,8 @@ sap.ui.define([
 		flexObjects: {}
 	};
 
+	const _mVariantsAuthorsData = {};
+
 	function prepareChangeDefinitions(sStorageResponseKey, vStorageResponsePart) {
 		var fnPreparation = {
 			comp() {
@@ -616,6 +618,7 @@ sap.ui.define([
 		if (sReference) {
 			delete _mInstances[sReference];
 			delete _mInitPromises[sReference];
+			delete _mVariantsAuthorsData[sReference];
 			oFlexObjectsDataSelector.clearCachedResult({ reference: sReference });
 			// TODO: get rid of the following deletes as soon as the change state
 			// is migrated from changePersistenceFactory to the FlexState
@@ -830,6 +833,10 @@ sap.ui.define([
 
 	FlexState.getComponentData = function(sReference) {
 		return _mInstances[sReference] && _mInstances[sReference].componentData;
+	};
+
+	FlexState.getVariantsAuthorsNames = async function(sReference) {
+		return _mVariantsAuthorsData[sReference] ||= await Loader.loadVariantsAuthors(sReference); // eslint-disable-line require-atomic-updates, no-return-assign
 	};
 
 	return FlexState;

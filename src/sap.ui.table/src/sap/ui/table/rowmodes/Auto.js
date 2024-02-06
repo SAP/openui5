@@ -5,13 +5,11 @@ sap.ui.define([
 	"../utils/TableUtils",
 	"./RowMode",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	TableUtils,
 	RowMode,
 	Device,
-	Core,
 	jQuery
 ) {
 	"use strict";
@@ -468,7 +466,7 @@ sap.ui.define([
 		var oTable = this.getTable();
 		var oTableDomRef = oTable ? oTable.getDomRef() : null;
 
-		if (!oTable || oTable._bInvalid || !oTableDomRef || !Core.isThemeApplied()) {
+		if (!oTable || oTable._bInvalid || !oTableDomRef || !TableUtils.isThemeApplied()) {
 			signalEndTableUpdate(this);
 			return;
 		}

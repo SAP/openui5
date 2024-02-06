@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/compVariants/exchangeAuthorsNames",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
 ], function(
+	exchangeAuthorsNames,
 	CompVariantMerger,
 	CompVariantUtils,
 	FlexState,
@@ -38,7 +40,7 @@ sap.ui.define([
 
 	function getCompEntities(mPropertyBag) {
 		var oControl = mPropertyBag.control;
-		var oVMControl = (oControl.getVariantManagement && oControl.getVariantManagement()) || oControl;
+		var oVMControl = oControl.getVariantManagement?.() || oControl;
 		var sSVMControlId = oVMControl.getId();
 		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
 
@@ -127,6 +129,9 @@ sap.ui.define([
 				mPropertyBag.control
 			);
 			mMergedCompVariants.defaultVariantId = sDefaultVariantId;
+			if (mMergedCompVariants.variants.length) {
+				exchangeAuthorsNames(mPropertyBag.control, mMergedCompVariants.variants);
+			}
 			return mMergedCompVariants;
 		},
 

@@ -115,6 +115,24 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("LayerUtils.isPublicOrCustomerLayer", function() {
+		QUnit.test("isPublicOrCustomerLayer", function(assert) {
+			assert.ok(LayerUtils.isPublicOrCustomerLayer(Layer.CUSTOMER), "'CUSTOMER' layer is detected as customer dependent");
+			assert.ok(LayerUtils.isPublicOrCustomerLayer(Layer.PUBLIC), "'CUSTOMER_BASE' layer is detected as customer dependent");
+			assert.notOk(LayerUtils.isPublicOrCustomerLayer(Layer.USER), "'USER' layer is not PUBLIC or CUSTOMER");
+		});
+	});
+
+	QUnit.module("LayerUtils.isUserOrCustomerDependentLayer", function() {
+		QUnit.test("isUserOrCustomerDependentLayer", function(assert) {
+			assert.ok(LayerUtils.isUserOrCustomerDependentLayer(Layer.CUSTOMER), "'CUSTOMER' layer is detected as customer dependent");
+			assert.ok(LayerUtils.isUserOrCustomerDependentLayer(Layer.PUBLIC), "'CUSTOMER_BASE' layer is detected as customer dependent");
+			assert.ok(LayerUtils.isUserOrCustomerDependentLayer(Layer.USER), "'USER' layer is detected as user or customer dependent");
+			assert.ok(LayerUtils.isUserOrCustomerDependentLayer(Layer.CUSTOMER_BASE), "'CUSTOMER_BASE' layer is detected as user or customer dependent");
+			assert.notOk(LayerUtils.isUserOrCustomerDependentLayer(Layer.PARTNER), "'PARTNER' layer is not user or customer dependent");
+		});
+	});
+
 	QUnit.module("LayerUtils.isLayerFilteringRequired", {
 		afterEach() {
 			FlexInfoSession.removeByReference();

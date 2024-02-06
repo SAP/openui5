@@ -541,6 +541,13 @@ sap.ui.define([
 				}
 			},
 
+			"apply/_internal/flexState/compVariants/exchangeAuthorsNames": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/exchangeAuthorsNames"]
+				}
+			},
+
 			"apply/_internal/flexState/compVariants/prepareCompVariantsMap": {
 				group: "Apply Internal",
 				coverage: {

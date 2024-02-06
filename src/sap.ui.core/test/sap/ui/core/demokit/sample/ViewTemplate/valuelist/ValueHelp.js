@@ -35,42 +35,45 @@ sap.ui.define([
 					oMetaModel = oModel.getMetaModel(),
 					sAbsolutePath = oModel.resolve(oBinding.getPath(), oBinding.getContext()),
 					that = this;
-				oMetaModel.loaded().then(function () {
-					var oContext = oMetaModel.getMetaContext(sAbsolutePath);
-					if (oContext.getProperty("sap:value-list")) {
-						oMetaModel.getODataValueLists(oContext)
-							.then(function (mValueList) {
-								var oValueList = mValueList[that.getQualifier()];
-								that._parameters = [];
-								oValueList.Parameters.forEach(function (oParameter) {
-									// put parameters written back to entity at the beginning
-									if (oParameter.LocalDataProperty) {
-										that._parameters.unshift(
-											oParameter.ValueListProperty.String);
-									} else {
-										that._parameters.push(oParameter.ValueListProperty.String);
-									}
+				if (!this.bValueHelpDetermined) {
+					this.bValueHelpDetermined = true;
+					oMetaModel.loaded().then(function () {
+						var oContext = oMetaModel.getMetaContext(sAbsolutePath);
+						if (oContext.getProperty("sap:value-list")) {
+							oMetaModel.getODataValueLists(oContext)
+								.then(function (mValueList) {
+									var oValueList = mValueList[that.getQualifier()];
+									that._parameters = [];
+									oValueList.Parameters.forEach(function (oParameter) {
+										// put parameters written back to entity at the beginning
+										if (oParameter.LocalDataProperty) {
+											that._parameters.unshift(
+												oParameter.ValueListProperty.String);
+										} else {
+											that._parameters.push(oParameter.ValueListProperty.String);
+										}
+									});
+									that._collectionPath = oValueList.CollectionPath.String;
+									that._collectionLabel = oValueList.Label
+										? oValueList.Label.String
+										: that._collectionPath;
+									that._valueListDetails = "ValueList"
+										+ (that.getQualifier() !== "" ? "#" + that.getQualifier() : "")
+										+ "\n"
+										+ JSON.stringify(oValueList, undefined, 2);
+									that.updateDetails();
+									that.setShowValueHelp(true);
+									that.setEditable(true);
 								});
-								that._collectionPath = oValueList.CollectionPath.String;
-								that._collectionLabel = oValueList.Label
-									? oValueList.Label.String
-									: that._collectionPath;
-								that._valueListDetails = "ValueList"
-									+ (that.getQualifier() !== "" ? "#" + that.getQualifier() : "")
-									+ "\n"
-									+ JSON.stringify(oValueList, undefined, 2);
-								that.updateDetails();
-								that.setShowValueHelp(true);
-								that.setEditable(true);
-							});
-					} else {
-						that.setTooltip("No value help");
-					}
-				}, function (oError) {
-					MessageBox.alert(oError.message, {
-						icon : MessageBox.Icon.ERROR,
-						title : "Error"});
-				});
+						} else {
+							that.setTooltip("No value help");
+						}
+					}, function (oError) {
+						MessageBox.alert(oError.message, {
+							icon : MessageBox.Icon.ERROR,
+							title : "Error"});
+					});
+				}
 				Input.prototype.onBeforeRendering.call(this);
 			},
 

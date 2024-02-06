@@ -36,6 +36,9 @@ sap.ui.define([
 				oResult.response.isContextSharingEnabled = false;
 				return oResult.response;
 			});
+		},
+		loadVariantsAuthors() {
+			return Promise.reject("loadVariantsAuthors is not implemented");
 		}
 	});
 });

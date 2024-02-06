@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
+	"sap/ui/core/Theming",
 	"sap/ui/table/RowSettings",
 	"sap/ui/base/Object",
 	"sap/base/i18n/ResourceBundle",
@@ -29,6 +30,7 @@ sap.ui.define([
 	TableLibrary,
 	CoreLibrary,
 	Control,
+	Theming,
 	RowSettings,
 	BaseObject,
 	ResourceBundle,
@@ -1379,6 +1381,37 @@ sap.ui.define([
 		assert.deepEqual(oWeakMapFacade(oKeyB), {}, "Value of key B was not changed");
 
 		assert.deepEqual(TableUtils.createWeakMapFacade()(oKeyA), {}, "New value object created vor key A in another WeakMap");
+	});
+
+	QUnit.test("isThemeApplied", function(assert) {
+		var done = assert.async();
+		var sCurrentTheme;
+		var iPass = 0;
+
+		var fnThemeChanged = (oEvent) => {
+			var sTheme = oEvent.theme;
+
+			if (iPass == 0) {
+				sCurrentTheme = Theming.getTheme();
+				iPass++;
+				assert.strictEqual(sTheme, sCurrentTheme, "Initial: Correct current Theme: " + sTheme);
+				assert.ok(TableUtils.isThemeApplied(), sTheme + " is applied");
+				Theming.setTheme("sap_horizon_hcb");
+				assert.notOk(TableUtils.isThemeApplied(), "sap_horizon_hcb is not applied after setTheme");
+			} else if (iPass == 1) {
+				iPass++;
+				assert.strictEqual(sTheme, "sap_horizon_hcb", "After Change: Correct current Theme: " + sTheme);
+				assert.ok(TableUtils.isThemeApplied(), sTheme + " is applied");
+				Theming.setTheme(sCurrentTheme);
+				assert.notOk(TableUtils.isThemeApplied(), sCurrentTheme + " is not applied after setTheme");
+			} else {
+				assert.strictEqual(sTheme, sCurrentTheme, "Final: Correct current Theme: " + sTheme);
+				Theming.detachApplied(fnThemeChanged);
+				done();
+			}
+		};
+
+		Theming.attachApplied(fnThemeChanged);
 	});
 
 	QUnit.module("Resize Handler", {

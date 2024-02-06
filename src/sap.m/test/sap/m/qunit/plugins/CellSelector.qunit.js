@@ -217,10 +217,15 @@ sap.ui.define([
 			assert.equal(oSelection.columns.length, 0, "Selection contains 0 column");
 			assert.equal(oSelection.rows.length, 0, "Selection contains 0 rows");
 
+			const fnSelectionChangeSpy = sinon.spy();
+			this.oCellSelector.attachEvent("selectionChange", fnSelectionChangeSpy);
+
 			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
 			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
 			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
 			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
+			assert.equal(fnSelectionChangeSpy.callCount, 1);
+			fnSelectionChangeSpy.reset();
 
 			oSelection = this.oCellSelector.getSelection();
 			assert.equal(oSelection.columns.length, 1, "Selection contains one column");
@@ -230,14 +235,20 @@ sap.ui.define([
 
 			qutils.triggerKeydown(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
 			qutils.triggerKeyup(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
+			assert.equal(fnSelectionChangeSpy.callCount, 1);
+			fnSelectionChangeSpy.reset();
 
 			oCell = getCell(this.oTable, 1, 1);
 			qutils.triggerKeydown(oCell, KeyCodes.ARROW_DOWN, true, false, false);
 			qutils.triggerKeyup(oCell, KeyCodes.ARROW_DOWN, true, false, false);
+			assert.equal(fnSelectionChangeSpy.callCount, 1);
+			fnSelectionChangeSpy.reset();
 
 			oCell = getCell(this.oTable, 2, 1);
 			qutils.triggerKeydown(oCell, KeyCodes.ARROW_DOWN, true, false, false);
 			qutils.triggerKeyup(oCell, KeyCodes.ARROW_DOWN, true, false, false);
+			assert.equal(fnSelectionChangeSpy.callCount, 1);
+			fnSelectionChangeSpy.reset();
 
 			oSelection = this.oCellSelector.getSelection();
 			assert.equal(oSelection.columns.length, 2, "Selection contains 2 columns");
@@ -290,6 +301,14 @@ sap.ui.define([
 			assert.equal(oSelection.rows.length, 2, "Selection contains only 2 rows (Group Header with V2)");
 			assert.equal(oSelection.rows[0], oBinding.getContextByIndex(2), "Selection contains context of third row");
 			assert.equal(oSelection.rows[1], oBinding.getContextByIndex(3), "Selection contains context of fourth row");
+
+			this.oCellSelector.removeSelection();
+			assert.equal(fnSelectionChangeSpy.callCount, 1);
+			fnSelectionChangeSpy.reset();
+
+			this.oCellSelector.removeSelection();
+			assert.equal(fnSelectionChangeSpy.callCount, 0);
+			fnSelectionChangeSpy.reset();
 
 			done();
 		});
