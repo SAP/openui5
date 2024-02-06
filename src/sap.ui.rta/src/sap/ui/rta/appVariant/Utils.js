@@ -30,7 +30,7 @@ function(
 		var oUShellContainer = FlUtils.getUshellContainer();
 		return oUShellContainer.getServiceAsync("Navigation")
 		.then(function(oNavigationService) {
-			return oNavigationService.getLinks(oNavigationParams);
+			return oNavigationService.getLinks([oNavigationParams]);
 		})
 		.catch(function(vError) {
 			throw new Error(`Error retrieving ushell service Navigation: ${vError}`);
