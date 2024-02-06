@@ -82,48 +82,6 @@
 										size='1.5rem'
 										width='3rem'
 										height='3rem'
-										src="sap-icon://palette"
-										backgroundColor="#FFD0E7"
-										color="#AA0808" />
-									<Link text='{i18n>infoBTPVD}'
-										wrapping="true"
-										emphasized="true"
-										class='sapUiSmallMarginBegin'
-										href='https://wiki.one.int.sap/wiki/display/CPDesign/Iconography' />
-								</HBox>
-								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
-									<core:Icon
-										size='1.5rem'
-										width='3rem'
-										height='3rem'
-										src="sap-icon://e-care"
-										backgroundColor="#EBF5CB"
-										color="#256F3A" />
-									<Link text='{i18n>infoVisualCore}'
-										wrapping="true"
-										emphasized="true"
-										class='sapUiSmallMarginBegin'
-										href='https://wiki.one.int.sap/wiki/display/visualcore/SAP-icon+Updates' />
-								</HBox>
-								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
-									<core:Icon
-										size='1.5rem'
-										width='3rem'
-										height='3rem'
-										src="sap-icon://e-care"
-										backgroundColor="#EAECEE"
-										color="#556B82" />
-									<Link text='{i18n>infoVisualCoreOld}'
-										wrapping="true"
-										emphasized="true"
-										class='sapUiSmallMarginBegin'
-										href='https://wiki.one.int.sap/wiki/pages/viewpage.action?pageId=2708692528/' />
-								</HBox>
-								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
-									<core:Icon
-										size='1.5rem'
-										width='3rem'
-										height='3rem'
 										src="sap-icon://sap-logo-shape"
 										backgroundColor="#D1EFFF"
 										color="#0057D2" />
@@ -152,34 +110,6 @@
 										size='1.5rem'
 										width='3rem'
 										height='3rem'
-										src="sap-icon://person-placeholder"
-										backgroundColor="#FFDBE7"
-										color="#BA066C" />
-									<Link text='{i18n>infoPSIconography}'
-										wrapping="true"
-										emphasized="true"
-										class='sapUiSmallMarginBegin'
-										href='https://wiki.one.int.sap/wiki/display/uxc/UXC-013' />
-								</HBox>
-								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
-									<core:Icon
-										size='1.5rem'
-										width='3rem'
-										height='3rem'
-										src="sap-icon://person-placeholder"
-										backgroundColor="#FFDCF3"
-										color="#A100C2" />
-									<Link text='{i18n>infoPSSemantics}'
-										wrapping="true"
-										emphasized="true"
-										class='sapUiSmallMarginBegin'
-										href='https://wiki.one.int.sap/wiki/display/uxc/UXC-019' />
-								</HBox>
-								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
-									<core:Icon
-										size='1.5rem'
-										width='3rem'
-										height='3rem'
 										src="sap-icon://sap-ui5"
 										backgroundColor="#FFF3B8"
 										color="#A45D00" />
@@ -187,7 +117,7 @@
 										wrapping="true"
 										emphasized="true"
 										class='sapUiSmallMarginBegin'
-										href='https://openui5.hana.ondemand.com/topic/21ea0ea94614480d9a910b2e93431291' />
+										href='https://sapui5.hana.ondemand.com/#/topic/21ea0ea94614480d9a910b2e93431291' />
 								</HBox>
 								<HBox visible="{= ${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
 									<core:Icon
