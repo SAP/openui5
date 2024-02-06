@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	var PREFIX = "/flex/all";
-	var API_VERSION = "/v1";
+	var API_VERSION = "/v3";
 	const ROOT = `${PREFIX}/${API_VERSION}`;
 
 	/**
