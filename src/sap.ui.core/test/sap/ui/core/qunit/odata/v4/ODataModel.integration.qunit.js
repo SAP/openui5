@@ -33081,15 +33081,26 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
-	// Scenario: Determine the parent of a node in a hierarchy where a preceding sibling is not
-	// yet loaded, but the parent is found. Determine the parent of a node where the parent is not
-	// yet loaded and request this parent.
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 3. Create a new
+	// child ("Iota") inserted below "Beta"; create a new child node ("Rho") inserted below "Alpha"
+	// on the UI, but the rank is the last position in the hierarchy. Scroll to "Delta" and expand
+	// the node "Delta".
+	// Determine the parent of a node ("Delta") where a preceding sibling is not yet loaded, but the
+	// parent is found.
+	// Scroll to "Kappa" and collapse "Kappa". Scroll to "Omicron". Determine the parent of a
+	// node ("Omicron") where the parent ("Xi") is not yet loaded and request this parent.
+	// Scroll to "Xi" and see that it is inserted on the right position.
 	// JIRA: CPOUI5ODATAV4-2378
 	QUnit.test("Recursive Hierarchy: getParent/requestParent with expandTo > 1",
 			async function (assert) {
-		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sUrl = "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
+				+ ",NodeProperty='_/NodeID',Levels=3)";
+		const sSelect = "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,"
+				+ "_/DistanceFromRoot,_/DrillState,_/NodeID";
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
 		const sView = `
-<t:Table id="table" rows="{path : '/EMPLOYEES',
+<t:Table id="table" rows="{path : '/Artists',
 		parameters : {
 			$$aggregation : {
 				expandTo : 3,
@@ -33097,37 +33108,50 @@ make root = ${bMakeRoot}`;
 		}}" threshold="0" visibleRowCount="2">
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
-	<Text text="{ID}"/>
+	<Text text="{ArtistID}"/>
 	<Text text="{Name}"/>
 </t:Table>`;
 
 		// 0 Alpha
 		//  1 Beta
-		//    2 Gamma // not loaded
-		//    3 Delta
-		//    4 Epsilon
-		//  5 Zeta // not loaded
-		//    6 Eta
-		//    7 Theta
+		//    1.1 Gamma // not loaded
+		//    1.2 Delta // expanded later
+		//      1.2.1 Epsilon
+		//      1.2.2 Zeta
+		//      1.2.3 Eta // not loaded
+		//    1.3 Theta
+		//    1.4 Iota // created
+		//  2 Kappa // collapsed later
+		//    2.1 Lambda
+		//    2.2 Mu
+		//  3 Nu
+		//  4 Xi // not loaded parent
+		//    4.1 Omicron
+		//    4.2 Pi
+		//  5 Rho // created
 
-		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
-					+ ",NodeProperty='ID',Levels=3)"
-				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-				+ "&$count=true&$skip=0&$top=2", {
-				"@odata.count" : "8",
+		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "12",
 				value : [{
-					DescendantCount : "7",
-					DistanceFromRoot : "0",
-					DrillState : "expanded",
-					ID : "0",
-					Name : "Alpha"
+					ArtistID : "0",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "11",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "0,false"
+					}
 				}, {
-					DescendantCount : "3",
-					DistanceFromRoot : "1",
-					DrillState : "expanded",
-					ID : "1",
-					Name : "Beta"
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					}
 				}]
 			});
 
@@ -33135,108 +33159,394 @@ make root = ${bMakeRoot}`;
 
 		const oTable = this.oView.byId("table");
 		checkTable("initial page", assert, oTable, [
-			"/EMPLOYEES('0')",
-			"/EMPLOYEES('1')"
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)"
 		], [
 			[true, 1, "0", "Alpha"],
 			[true, 2, "1", "Beta"]
-		], 8);
+		], 12);
+		const oAlpha = oTable.getRows()[0].getBindingContext();
 		const oBeta = oTable.getRows()[1].getBindingContext();
 
-		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
-					+ ",NodeProperty='ID',Levels=3)"
-				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-				+ "&$skip=3&$top=2", {
+		this.expectRequest({
+				method : "POST",
+				url : "Artists",
+				payload : {
+					"BestFriend@odata.bind" : "Artists(ArtistID='1',IsActiveEntity=false)",
+					Name : "Iota"
+				}
+			}, {
+				ArtistID : "1.4",
+				IsActiveEntity : false,
+				Name : "Iota",
+				_ : null // not available w/ RAP for a non-hierarchical request
+			})
+			.expectRequest(sUrl + "&$filter=ArtistID eq '1.4' and IsActiveEntity eq false"
+				+ "&$select=_/Limited_Rank,_/NodeID", {
 				value : [{
-					DescendantCount : "0",
-					DistanceFromRoot : "2",
-					DrillState : "leaf",
-					ID : "3",
-					Name : "Delta"
-				}, {
-					DescendantCount : "0",
-					DistanceFromRoot : "2",
-					DrillState : "leaf",
-					ID : "4",
-					Name : "Epsilon"
+					_ : {
+						Limited_Rank : "5",
+						NodeID : "1.4,false"
+					}
 				}]
 			});
 
-		oTable.setFirstVisibleRow(3);
+		// code under test
+		const oIota = oAlpha.getBinding().create({
+			"@$ui5.node.parent" : oBeta,
+			Name : "Iota"
+		}, /*bSkipRefresh*/true);
 
-		await this.waitForChanges(assert, "scroll to 3 (Delta)");
+		await Promise.all([
+			oIota.created(),
+			this.waitForChanges(assert, "create node 1.4 (Iota)")
+		]);
 
-		checkTable("after scroll to 3 (Delta)", assert, oTable, [
-			"/EMPLOYEES('0')",
-			"/EMPLOYEES('1')",
-			"/EMPLOYEES('3')",
-			"/EMPLOYEES('4')"
+		checkTable("after create 1.4 (Iota)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)"
 		], [
-			[undefined, 3, "3", "Delta"],
-			[undefined, 3, "4", "Epsilon"]
-		], 8);
+			[true, 1, "0", "Alpha"],
+			[true, 2, "1", "Beta"]
+		], 13);
+
+		this.expectRequest({
+				method : "POST",
+				url : "Artists",
+				payload : {
+					"BestFriend@odata.bind" : "Artists(ArtistID='0',IsActiveEntity=false)",
+					Name : "Rho"
+				}
+			}, {
+				ArtistID : "5",
+				IsActiveEntity : false,
+				Name : "Rho",
+				_ : null // not available w/ RAP for a non-hierarchical request
+			})
+			.expectRequest(sUrl + "&$filter=ArtistID eq '5' and IsActiveEntity eq false"
+				+ "&$select=_/Limited_Rank,_/NodeID", {
+				value : [{
+					_ : {
+						Limited_Rank : "13",
+						NodeID : "5,false"
+					}
+				}]
+			});
+
+		// code under test
+		const oRho = oAlpha.getBinding().create({
+			"@$ui5.node.parent" : oAlpha,
+			Name : "Rho"
+		}, /*bSkipRefresh*/true);
+
+		await Promise.all([
+			oRho.created(),
+			this.waitForChanges(assert, "create node 5 (Rho)")
+		]);
+
+		checkTable("after create 5 (Rho)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='5',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)"
+		], [
+			[true, 1, "0", "Alpha"],
+			[undefined, 2, "5", "Rho"]
+		], 14);
+
+		this.expectRequest(sUrl + sSelect + "&$skip=3&$top=2", {
+				value : [{
+					ArtistID : "1.2",
+					IsActiveEntity : false,
+					Name : "Delta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "collapsed",
+						NodeID : "1.2,false"
+					}
+				}, {
+					ArtistID : "1.3",
+					IsActiveEntity : false,
+					Name : "Theta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "1.3,false"
+					}
+				}]
+			});
+
+		oTable.setFirstVisibleRow(5);
+
+		await this.waitForChanges(assert, "scroll to 1.2 (Delta)");
+
+		checkTable("after scroll to 1.2 (Delta)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='5',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3',IsActiveEntity=false)"
+		], [
+			[false, 3, "1.2", "Delta"],
+			[undefined, 3, "1.3", "Theta"]
+		], 14);
 		const oDelta = oTable.getRows()[0].getBindingContext();
 
-		// code under test
-		assert.strictEqual(oDelta.getParent(), oBeta);
-
-		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
-					+ ",NodeProperty='ID',Levels=3)"
-				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-				+ "&$skip=6&$top=2", {
+		this.expectRequest("Artists?$apply=descendants("
+					+ "$root/Artists,OrgChart,_/NodeID,"
+					+ "filter(ArtistID eq '1.2' and IsActiveEntity eq false),1)"
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
+				+ "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "3",
 				value : [{
-					DescendantCount : "0",
-					DistanceFromRoot : "2",
-					DrillState : "leaf",
-					ID : "6",
-					Name : "Eta"
+					ArtistID : "1.2.1",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						// ensures that collapsed nodes in group level caches are considered
+						DrillState : "collapsed",
+						NodeID : "1.2.1,false"
+					}
 				}, {
-					DescendantCount : "0",
-					DistanceFromRoot : "2",
-					DrillState : "leaf",
-					ID : "7",
-					Name : "Theta"
+					ArtistID : "1.2.2",
+					IsActiveEntity : false,
+					Name : "Zeta",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "1.2.2,false"
+					}
 				}]
 			});
 
-		oTable.setFirstVisibleRow(6);
+		// code under test
+		oDelta.expand();
 
-		await this.waitForChanges(assert, "scroll to 6 (Eta)");
+		await this.waitForChanges(assert, "expand 1.2 (Delta)");
 
-		checkTable("after scroll to 6 (Eta)", assert, oTable, [
-			"/EMPLOYEES('0')",
-			"/EMPLOYEES('1')",
-			"/EMPLOYEES('3')",
-			"/EMPLOYEES('4')",
-			"/EMPLOYEES('6')",
-			"/EMPLOYEES('7')"
+		checkTable("after expand 1.2 (Delta)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='5',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3',IsActiveEntity=false)"
 		], [
-			[undefined, 3, "6", "Eta"],
-			[undefined, 3, "7", "Theta"]
-		], 8);
-		const oEta = oTable.getRows()[0].getBindingContext();
+			[true, 3, "1.2", "Delta"],
+			[false, 4, "1.2.1", "Epsilon"]
+		], 17);
 
 		// code under test
-		assert.strictEqual(oEta.getParent(), undefined);
+		assert.strictEqual(oDelta.getParent(), oBeta, "Delta's parent is Beta");
 
-		this.expectRequest("EMPLOYEES?$apply=ancestors("
-					+ "$root/EMPLOYEES,OrgChart,ID,filter(ID eq '6'),1)"
-				+ "&$select=ID,Name", {
-			value : [{
-				ID : "5",
-				Name : "Zeta"
-			}]
+		this.expectRequest(sUrl + sSelect + "&$skip=6&$top=2", {
+				value : [{
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Kappa",
+					_ : {
+						DescendantCount : "2",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "2,false"
+					}
+				}, {
+					ArtistID : "2.1",
+					IsActiveEntity : false,
+					Name : "Lambda",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "2.1,false"
+					}
+				}]
+			});
+
+		oTable.setFirstVisibleRow(10);
+
+		await this.waitForChanges(assert, "scroll to 2 (Kappa)");
+
+		checkTable("after scroll to 2 (Eta)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='5',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)",
+			"/Artists(ArtistID='2.1',IsActiveEntity=false)"
+		], [
+			[true, 2, "2", "Kappa"],
+			[undefined, 3, "2.1", "Lambda"]
+		], 17);
+		const oKappa = oTable.getRows()[0].getBindingContext();
+
+		this.expectRequest(sUrl + sSelect + "&$skip=9&$top=1", {
+				value : [{
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "Nu",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						NodeID : "3,false"
+					}
+				}]
+			});
+		oKappa.collapse();
+
+		await this.waitForChanges(assert, "collapse 2 (Kappa)");
+
+		checkTable("after collapse 2 (oKappa)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='5',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)",
+			"/Artists(ArtistID='3',IsActiveEntity=false)"
+		], [
+			[false, 2, "2", "Kappa"],
+			[undefined, 2, "3", "Nu"]
+		], 15);
+
+		this.expectRequest(sUrl + sSelect + "&$skip=11&$top=2", {
+				value : [{
+					ArtistID : "4.1",
+					IsActiveEntity : false,
+					Name : "Omicron",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "4.1,false"
+					}
+				}, {
+					ArtistID : "4.2",
+					IsActiveEntity : false,
+					Name : "Pi",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "4.2,false"
+					}
+				}]
+			});
+
+		oTable.setFirstVisibleRow(13);
+
+		await this.waitForChanges(assert, "scroll to 4.1 (Omicron)");
+
+		checkTable("after scroll to 4.1 (Omicron)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='5',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)",
+			"/Artists(ArtistID='3',IsActiveEntity=false)",
+			"/Artists(ArtistID='4.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='4.2',IsActiveEntity=false)"
+		], [
+			[undefined, 3, "4.1", "Omicron"],
+			[undefined, 3, "4.2", "Pi"]
+		], 15);
+		const oOmicron = oTable.getRows()[0].getBindingContext();
+
+		// code under test
+		assert.strictEqual(oOmicron.getParent(), undefined);
+
+		this.expectRequest({
+				batchNo : 11,
+				url : "Artists?$apply=ancestors("
+						+ "$root/Artists,OrgChart,_/NodeID,"
+						+ "filter(ArtistID eq '4.1' and IsActiveEntity eq false),1)"
+					+ "&$select=ArtistID,IsActiveEntity,Name"
+			}, {
+				value : [{
+					ArtistID : "4",
+					IsActiveEntity : false,
+					Name : "Xi"
+				}]
+			})
+			.expectRequest({
+				batchNo : 12,
+				url : sUrl + "&$filter=ArtistID eq '4' and IsActiveEntity eq false"
+					+ "&$select=_/DescendantCount,_/DistanceFromRoot,_/DrillState,"
+						+ "_/Limited_Rank,_/NodeID"
+			}, {
+				value : [{
+					_ : {
+						DescendantCount : "2",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						Limited_Rank : "10", // Edm.Int64
+						NodeID : "4,false"
+					}
+				}]
+			});
+
+		// code under test
+		const oXi = await oOmicron.requestParent();
+
+		assert.strictEqual(oXi.getIndex(), 12);
+		assert.strictEqual(oXi.getPath(), "/Artists(ArtistID='4',IsActiveEntity=false)");
+		assert.deepEqual(oXi.getObject(), {
+			ArtistID : "4",
+			IsActiveEntity : false,
+			Name : "Xi",
+			"@$ui5.node.isExpanded" : true,
+			"@$ui5.node.level" : 2,
+			_ : {
+				NodeID : "4,false"
+			}
 		});
 
-		// code under test
-		const oZeta = await oEta.requestParent();
+		assert.strictEqual(oOmicron.getParent(), oXi);
+		// Pi has the same parent as Omicron, no additional request is needed
+		assert.strictEqual(oTable.getRows()[1].getBindingContext().getParent(), oXi);
 
-		assert.strictEqual(oZeta.getPath(), "/EMPLOYEES('5')");
-		assert.deepEqual(oZeta.getObject(), {ID : "5", Name : "Zeta"});
-		assert.strictEqual(oZeta.getIndex(), undefined);
-});
+		oTable.setFirstVisibleRow(12);
+
+		await resolveLater(); // table update takes a moment
+
+		checkTable("after scroll to 4 (Xi)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='5',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)",
+			"/Artists(ArtistID='3',IsActiveEntity=false)",
+			"/Artists(ArtistID='4',IsActiveEntity=false)",
+			"/Artists(ArtistID='4.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='4.2',IsActiveEntity=false)"
+		], [
+			[true, 2, "4", "Xi"],
+			[undefined, 3, "4.1", "Omicron"]
+		], 15);
+
+		assert.strictEqual(oXi, oTable.getRows()[0].getBindingContext());
+	});
 
 	//*********************************************************************************************
 	// Scenario: Show the single root node of a recursive hierarchy and expand it. Not all children

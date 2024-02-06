@@ -8808,12 +8808,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchOrGetParent: index of parent is not known", function (assert) {
+	QUnit.test("fetchOrGetParent: index of parent is not known", async function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		const oNode = {iIndex : 42};
 		oBinding.aContexts[42] = oNode;
 		oBinding.oCache = {
-			fetchParent : mustBeMocked,
+			fetchParentIndex : mustBeMocked,
 			getParentIndex : mustBeMocked
 		};
 
@@ -8829,22 +8829,13 @@ sap.ui.define([
 		this.mock(oBinding.oCache).expects("getParentIndex").withExactArgs(42)
 			.returns(undefined);
 		this.mock(oBinding).expects("lockGroup").withExactArgs().returns("~oGroupLock~");
-		this.mock(oBinding.oCache).expects("fetchParent").withExactArgs(42, "~oGroupLock~")
-			.returns(SyncPromise.resolve("~oResult~"));
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/path");
-		this.mock(_Helper).expects("getPrivateAnnotation")
-			.withExactArgs("~oResult~", "predicate")
-			.returns("('bar')");
-		this.mock(Context).expects("create")
-			.withExactArgs(this.oModel, oBinding, "/resolved/path('bar')")
-			.returns("~oParentContext~");
+		this.mock(oBinding.oCache).expects("fetchParentIndex").withExactArgs(42, "~oGroupLock~")
+			.returns(SyncPromise.resolve("~iParentIndex~"));
+		this.mock(oBinding).expects("requestContexts").withExactArgs("~iParentIndex~", 1)
+			.resolves(["~oParentContext~"]);
 
 		// code under test
-		return oBinding.fetchOrGetParent(oNode, true).then(function (oResult) {
-			assert.strictEqual(oResult, "~oParentContext~");
-			assert.strictEqual(oBinding.mPreviousContextsByPath["/resolved/path('bar')"],
-				"~oParentContext~");
-		});
+		assert.strictEqual(await oBinding.fetchOrGetParent(oNode, true), "~oParentContext~");
 	});
 
 	//*********************************************************************************************

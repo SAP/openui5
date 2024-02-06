@@ -1883,7 +1883,7 @@ sap.ui.define([
 	  * @param {boolean} [bAllowRequest]
 	 *   Whether it is allowed to send a GET request to fetch the parent node's data
 	 * @returns {sap.ui.model.odata.v4.Context|null|undefined|
-	 *     Promise<sap.ui.model.odata.v4.Context>|sap.ui.base.SyncPromise}
+	 *     Promise<sap.ui.model.odata.v4.Context>}
 	 *   <ul>
 	 *     <li> The parent node if already known,
 	 *     <li> <code>null</code> if the given node is a root node and thus has no parent,
@@ -1911,20 +1911,17 @@ sap.ui.define([
 			return null;
 		}
 
-		if (iParentIndex === undefined && bAllowRequest) {
-			return this.oCache.fetchParent(oNode.iIndex, this.lockGroup()).then((oResult) => {
-				const sPath = this.getResolvedPath()
-					+ _Helper.getPrivateAnnotation(oResult, "predicate");
-				const oParentContext = Context.create(this.oModel, this, sPath);
-				this.mPreviousContextsByPath[sPath] = oParentContext;
-
-				return oParentContext;
-			});
+		const requestContext = (iIndex) => {
+			return this.requestContexts(iIndex, 1).then((aResult) => aResult[0]);
+		};
+		if (bAllowRequest) {
+			if (iParentIndex === undefined) {
+				return this.oCache.fetchParentIndex(oNode.iIndex, this.lockGroup())
+					.then(requestContext);
+			}
+			return requestContext(iParentIndex);
 		}
-
-		return bAllowRequest
-			? this.requestContexts(iParentIndex, 1).then((aResult) => aResult[0])
-			: this.aContexts[iParentIndex];
+		return this.aContexts[iParentIndex];
 	};
 
 	/**
