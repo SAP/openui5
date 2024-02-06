@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/initial/_internal/Storage"
+	"sap/ui/fl/initial/_internal/Storage",
+	"sap/ui/fl/registry/Settings"
 ], function(
 	ManagedObject,
 	ManifestUtils,
-	ApplyStorage
+	ApplyStorage,
+	Settings
 ) {
 	"use strict";
 
@@ -158,8 +160,10 @@ sap.ui.define([
 		 * @param {string} sReference - Flex reference of application
 		 * @returns {Promise<object>} Resolving with a list of maps between user's ID and name
 		 */
-		loadVariantsAuthors(sReference) {
-			return ApplyStorage.loadVariantsAuthors(sReference);
+		async loadVariantsAuthors(sReference) {
+			// Loading settings to check the naming feature availability and prepare access to current user during naming exchange
+			const oSettings = await Settings.getInstance();
+			return oSettings?.isVariantAuthorNameAvailable() ? ApplyStorage.loadVariantsAuthors(sReference) : {};
 		}
 	};
 });

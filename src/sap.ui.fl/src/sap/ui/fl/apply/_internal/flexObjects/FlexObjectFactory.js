@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/ui/fl/apply/_internal/flexObjects/getVariantAuthor",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
@@ -25,6 +26,7 @@ sap.ui.define([
 	FlVariant,
 	States,
 	UIChange,
+	getVariantAuthor,
 	Settings,
 	Layer,
 	LayerUtils,
@@ -189,6 +191,7 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.layer] - See {@link sap.ui.fl.apply._internal.flexObjects.FlexObject}
 	 * @param {string} [mPropertyBag.reference] - See {@link sap.ui.fl.apply._internal.flexObjects.FlexObject.FlexObjectMetadata}
 	 * @param {string} [mPropertyBag.generator] - See {@link sap.ui.fl.apply._internal.flexObjects.FlexObject.SupportInformation}
+	 * @param {object} [mPropertyBag.authors] - Map of user IDs to full names
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlVariant} Variant instance
 	 */
 	FlexObjectFactory.createFlVariant = function(mPropertyBag) {
@@ -203,7 +206,10 @@ sap.ui.define([
 				type: "XFLD"
 			}
 		};
-		return new FlVariant(mProperties);
+
+		const oFlVariant = new FlVariant(mProperties);
+		oFlVariant.setAuthor(getVariantAuthor(oFlVariant, mPropertyBag.authors));
+		return oFlVariant;
 	};
 
 	/**
@@ -234,10 +240,10 @@ sap.ui.define([
 	 * @param {object} [oFileContent.executeOnSelection] - see above
 	 *
 	 * @param {string} [oFileContent.persistencyKey] - see <code>sap.ui.fl.apply._internal.flexObjects.CompVariant</code>
-	 *
+	 * @param {object} [mAuthors] - Map of user IDs and users' names which is used to determine author of the variant
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} Created comp variant object
 	 */
-	FlexObjectFactory.createCompVariant = function(oFileContent) {
+	FlexObjectFactory.createCompVariant = function(oFileContent, mAuthors) {
 		oFileContent.generator ||= "FlexObjectFactory.createCompVariant";
 		oFileContent.user = ObjectPath.get("support.user", oFileContent);
 		var mCompVariantContent = createBasePropertyBag(oFileContent);
@@ -261,7 +267,9 @@ sap.ui.define([
 			);
 		}
 
-		return new CompVariant(mCompVariantContent);
+		const oCompVariant = new CompVariant(mCompVariantContent);
+		oCompVariant.setAuthor(getVariantAuthor(oCompVariant, mAuthors));
+		return oCompVariant;
 	};
 
 	return FlexObjectFactory;
