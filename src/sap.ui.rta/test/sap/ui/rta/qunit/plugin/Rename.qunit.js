@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
@@ -36,6 +37,7 @@ sap.ui.define([
 	Title,
 	DesignTime,
 	OverlayRegistry,
+	OverlayUtil,
 	DOMUtil,
 	KeyCodes,
 	ChangesWriteAPI,
@@ -458,6 +460,13 @@ sap.ui.define([
 				this.oRenamePlugin.stopEdit(this.oLayoutOverlay);
 				assert.ok(this.oLayoutOverlay.getSelected(), "then the overlay is still selected");
 			}.bind(this));
+		});
+
+		QUnit.test("when the Label gets renamed but the Plugin is busy", function(assert) {
+			var oSetFistParentMovableStub = sinon.stub(OverlayUtil, "setFirstParentMovable");
+			this.oRenamePlugin.setBusy(true);
+			this.oRenamePlugin.startEdit(this.oLayoutOverlay);
+			assert.deepEqual(oSetFistParentMovableStub.callCount, 0, "edit wasn't started because plugin is busy");
 		});
 
 		QUnit.test("when the designtime provides custom text mutators", function(assert) {
