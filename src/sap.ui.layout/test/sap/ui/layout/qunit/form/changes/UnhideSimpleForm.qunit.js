@@ -153,15 +153,18 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("when calling applyChange with JsControlTreeModifier", function (assert) {
+	QUnit.test("when calling applyChange and revertChange with JsControlTreeModifier", async function (assert) {
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		return UnhideSimpleForm.applyChange(this.oChange, this.oSimpleForm, this.mPropertyBag)
-		.then(function() {
-			assert.strictEqual(this.oChange.getContent().elementSelector.id, "Label0", "sUnhideId has been added to the change");
-			assert.ok(this.oChange.getContent().elementSelector.idIsLocal, "the id is a local id");
-			assert.strictEqual(this.oChange.getDependentControl("elementSelector", this.mPropertyBag).getId(), this.oLabel0.getId(), "elementSelector is part of dependent selector");
-			assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
-		}.bind(this));
+		await UnhideSimpleForm.applyChange(this.oChange, this.oSimpleForm, this.mPropertyBag);
+		assert.strictEqual(this.oChange.getContent().elementSelector.id, "Label0", "sUnhideId has been added to the change");
+		assert.ok(this.oChange.getContent().elementSelector.idIsLocal, "the id is a local id");
+		assert.strictEqual(this.oChange.getDependentControl("elementSelector", this.mPropertyBag).getId(), this.oLabel0.getId(), "elementSelector is part of dependent selector");
+		assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
+
+		await UnhideSimpleForm.revertChange(this.oChange, this.oSimpleForm, this.mPropertyBag);
+		[this.oLabel1, this.oInput1].forEach((oControl) => {
+			assert.strictEqual(oControl.getVisible(), true, "one field is still visible");
+		});
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
