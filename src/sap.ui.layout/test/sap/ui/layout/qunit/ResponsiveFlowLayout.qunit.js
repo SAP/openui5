@@ -45,8 +45,9 @@ sap.ui.define([
 			$layout.css("width", "300px");
 			await nextUIUpdate();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oRFL.destroy();
+			await nextUIUpdate();
 		}
 	});
 
