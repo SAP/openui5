@@ -270,7 +270,7 @@ sap.ui.define([
 
 					sText = sanitizeHTML(sText, {
 						uriRewriter: function (sUrl) {
-							if (bStatic && URLUtil.hasSEOOptimizedFormat("/" + sUrl)) {
+							if (bStatic && URLUtil.hasSEOOptimizedFormat(sUrl)) {
 								sUrl = URLUtil.convertToNonSEOFormat(sUrl).replace(/^\//, "");
 							}
 							return sUrl;
