@@ -10,11 +10,12 @@ sap.ui.define([
 	"./_GroupLock",
 	"./_Helper",
 	"./_MinMaxHelper",
+	"./_TreeState",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/ODataUtils"
-], function (_AggregationHelper, _Cache, _ConcatHelper, _GroupLock, _Helper, _MinMaxHelper, Log,
-		SyncPromise, ODataUtils) {
+], function (_AggregationHelper, _Cache, _ConcatHelper, _GroupLock, _Helper, _MinMaxHelper,
+		_TreeState, Log, SyncPromise, ODataUtils) {
 	"use strict";
 
 	//*********************************************************************************************
@@ -114,6 +115,10 @@ sap.ui.define([
 		} else if (fnLeaves) {
 			_ConcatHelper.enhanceCache(that.oFirstLevel, oAggregation, [fnLeaves, fnCount]);
 		}
+		this.oTreeState = new _TreeState(oAggregation.$NodeProperty);
+		// Whether this cache is a unified cache, using oFirstLevel with ExpandLevels instead of
+		// separate group level caches
+		this.bUnifiedCache = false;
 	}
 
 	// make _AggregationCache a _Cache, but actively disinherit some critical methods
@@ -374,6 +379,7 @@ sap.ui.define([
 		const oGroupNode = this.getValue(sGroupNodePath);
 		const oCollapsed = _AggregationHelper.getCollapsedObject(oGroupNode);
 		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode, oCollapsed);
+		this.oTreeState.collapse(oGroupNode);
 
 		const aElements = this.aElements;
 		const iIndex = aElements.indexOf(oGroupNode);
@@ -420,6 +426,9 @@ sap.ui.define([
 			// Note: "descendants" refers to LimitedDescendantCount and counts descendants within
 			// "top pyramid" only!
 			iGroupNodeLevel = this.oAggregation.expandTo;
+		}
+		if (this.bUnifiedCache) {
+			iGroupNodeLevel = Infinity;
 		}
 		const aElements = this.aElements;
 		for (i = iIndex + 1; i < aElements.length; i += 1) {
@@ -625,7 +634,9 @@ sap.ui.define([
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise<number>}
-	 *   A promise that is resolved with the number of nodes at the next level
+	 *   A promise that is resolved with the number of nodes at the next level, 0 if the node or
+	 *   one of its parent is collapsed again before the response arrived, or -1 if the cache needs
+	 *   to be refreshed (a unified cache)
 	 *
 	 * @public
 	 * @see #collapse
@@ -642,6 +653,7 @@ sap.ui.define([
 			// Note: this also prevents a 2nd expand of the same node
 			_Helper.updateAll(this.mChangeListeners, vGroupNodeOrPath, oGroupNode,
 				_AggregationHelper.getOrCreateExpandedObject(this.oAggregation, oGroupNode));
+			this.oTreeState.expand(oGroupNode);
 		} // else: no update needed!
 
 		if (aSpliced) {
@@ -687,6 +699,9 @@ sap.ui.define([
 				}
 			});
 			return SyncPromise.resolve(iCount);
+		}
+		if (this.bUnifiedCache) {
+			return SyncPromise.resolve(-1); // refresh needed
 		}
 
 		let oCache = _Helper.getPrivateAnnotation(oGroupNode, "cache");
@@ -762,6 +777,7 @@ sap.ui.define([
 			// Note: typeof vGroupNodeOrPath === "string"
 			_Helper.updateAll(that.mChangeListeners, vGroupNodeOrPath, oGroupNode,
 				_AggregationHelper.getCollapsedObject(oGroupNode));
+			that.oTreeState.collapse(oGroupNode);
 
 			throw oError;
 		});
@@ -1457,7 +1473,9 @@ sap.ui.define([
 				for (j = 0; j < that.aElements.$count; j += 1) {
 					if (!that.aElements[j]) {
 						that.aElements[j] = _AggregationHelper.createPlaceholder(
-							that.oAggregation.expandTo > 1 ? /*don't know*/0 : 1,
+							that.oAggregation.expandTo > 1 || that.bUnifiedCache
+								? /*don't know*/0
+								: 1,
 							j - iOffset, that.oFirstLevel);
 					}
 				}
@@ -1668,13 +1686,19 @@ sap.ui.define([
 		});
 
 		this.oAggregation = oAggregation;
-		this.sDownloadUrl = _Cache.prototype.getDownloadUrl.call(this, "");
 		// "super" call (like @borrows ...)
 		this.oFirstLevel.reset.call(this, aKeptElementPredicates, sGroupId, mQueryOptions);
-		if (sGroupId) {
+		// reset modifies the cache's query options => recalculate the download URL
+		this.sDownloadUrl = _Cache.prototype.getDownloadUrl.call(this, "");
+		if (sGroupId) { // sGroupId means we are in a side-effects refresh
 			this.oBackup.oCountPromise = this.oCountPromise;
 			this.oBackup.oFirstLevel = this.oFirstLevel;
+			this.oBackup.bUnifiedCache = this.bUnifiedCache;
+			this.bUnifiedCache = true;
+		} else {
+			this.oTreeState.reset();
 		}
+		this.oAggregation.$ExpandLevels = this.oTreeState.getExpandLevels();
 		this.oCountPromise = undefined;
 		if (mQueryOptions.$count) {
 			this.oCountPromise = new SyncPromise(function (resolve) {
@@ -1701,6 +1725,7 @@ sap.ui.define([
 		if (bReally) {
 			this.oCountPromise = this.oBackup.oCountPromise;
 			this.oFirstLevel = this.oBackup.oFirstLevel;
+			this.bUnifiedCache = this.oBackup.bUnifiedCache;
 		}
 		// "super" call (like @borrows ...)
 		this.oFirstLevel.restore.call(this, bReally);

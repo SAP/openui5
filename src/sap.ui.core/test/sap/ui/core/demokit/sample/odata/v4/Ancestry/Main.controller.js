@@ -115,6 +115,10 @@ sap.ui.define([
 			this.initMessagePopover("table");
 		},
 
+		onRefresh : function () {
+			this.byId("table").getBinding("rows").refresh();
+		},
+
 		onSort : function () {
 			var sNewIcon,
 				oSorter;
@@ -140,6 +144,10 @@ sap.ui.define([
 
 			this.getView().getModel("ui").setProperty("/sIcon", sNewIcon);
 			this.byId("table").getBinding("rows").sort(oSorter);
+		},
+
+		onSynchronize : function () {
+			this.byId("table").getBinding("rows").getHeaderContext().requestSideEffects([""]);
 		}
 	});
 });

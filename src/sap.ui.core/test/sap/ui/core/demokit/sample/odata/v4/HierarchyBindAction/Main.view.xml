@@ -20,7 +20,9 @@
 				</m:Select>
 				<m:ToolbarSpacer/>
 				<m:Button icon="sap-icon://create" press=".onCreateRoot" tooltip="Create New Root"/>
-				<m:Button icon="sap-icon://synchronize" press="onSynchronize" tooltip="Synchronize"/>
+				<m:Button icon="sap-icon://refresh" press="onRefresh" tooltip="Refresh"/>
+				<m:Button icon="sap-icon://synchronize" press="onSynchronize"
+					tooltip="Synchronize"/>
 			</m:Toolbar>
 		</extension>
 		<rowMode>
