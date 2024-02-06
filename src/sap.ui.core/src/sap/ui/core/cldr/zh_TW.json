@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "43.0.0",
-	"__buildtime": "2023-09-28T11:39:07.908Z",
+	"__version": "44.0.0",
+	"__buildtime": "2024-01-12T14:24:50.280Z",
 	"languages": {
 		"aa": "阿法文",
 		"ab": "阿布哈茲文",
@@ -65,6 +65,7 @@
 		"bfd": "富特文",
 		"bfq": "巴達加文",
 		"bg": "保加利亞文",
+		"bgc": "哈里亞納文",
 		"bgn": "西俾路支文",
 		"bho": "博傑普爾文",
 		"bi": "比斯拉馬文",
@@ -127,7 +128,7 @@
 		"crs": "塞席爾克里奧爾法文",
 		"cs": "捷克文",
 		"csb": "卡舒布文",
-		"csw": "沼澤克里語",
+		"csw": "沼澤克里文",
 		"cu": "宗教斯拉夫文",
 		"cv": "楚瓦什文",
 		"cy": "威爾斯文",
@@ -216,7 +217,7 @@
 		"guz": "古西文",
 		"gv": "曼島文",
 		"gwi": "圭契文",
-		"ha": "豪撒文",
+		"ha": "豪薩文",
 		"hai": "海達文",
 		"hak": "客家話",
 		"haw": "夏威夷文",
@@ -228,7 +229,7 @@
 		"hif": "斐濟印地文",
 		"hil": "希利蓋農文",
 		"hit": "赫梯文",
-		"hmn": "孟文",
+		"hmn": "苗語",
 		"ho": "西里莫圖土文",
 		"hr": "克羅埃西亞文",
 		"hsb": "上索布文",
@@ -352,7 +353,7 @@
 		"lzz": "拉茲文",
 		"mad": "馬都拉文",
 		"maf": "馬法文",
-		"mag": "馬加伊文",
+		"mag": "摩揭陀文",
 		"mai": "邁蒂利文",
 		"mak": "望加錫文",
 		"man": "曼丁哥文",
@@ -408,7 +409,7 @@
 		"niu": "紐埃文",
 		"njo": "阿沃那加文",
 		"nl": "荷蘭文",
-		"nl_BE": "佛蘭芒文",
+		"nl_BE": "法蘭德斯文",
 		"nmg": "夸西奧文",
 		"nn": "耐諾斯克挪威文",
 		"nnh": "恩甘澎文",
@@ -797,6 +798,8 @@
 		"Sidd": "悉曇文字",
 		"Sind": "信德文",
 		"Sinh": "錫蘭文",
+		"Sogd": "粟特文",
+		"Sogo": "古粟特文",
 		"Sora": "索朗桑朋文字",
 		"Soyo": "索永布文字",
 		"Sund": "巽他文",
@@ -989,6 +992,8 @@
 		"IM": "曼島",
 		"IN": "印度",
 		"IO": "英屬印度洋領地",
+		"IO-alt-biot": "英屬印度洋領地",
+		"IO-alt-chagos": "查哥斯群島",
 		"IQ": "伊拉克",
 		"IR": "伊朗",
 		"IS": "冰島",
@@ -1156,10 +1161,10 @@
 			"short": "y/M/d"
 		},
 		"timeFormats": {
-			"full": "Bh:mm:ss [zzzz]",
-			"long": "Bh:mm:ss [z]",
-			"medium": "Bh:mm:ss",
-			"short": "Bh:mm"
+			"full": "ah:mm:ss [zzzz]",
+			"long": "ah:mm:ss [z]",
+			"medium": "ah:mm:ss",
+			"short": "ah:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1} {0}",
@@ -1702,10 +1707,10 @@
 			"short": "Gy/M/d"
 		},
 		"timeFormats": {
-			"full": "Bh:mm:ss [zzzz]",
-			"long": "Bh:mm:ss [z]",
-			"medium": "Bh:mm:ss",
-			"short": "Bh:mm"
+			"full": "ah:mm:ss [zzzz]",
+			"long": "ah:mm:ss [z]",
+			"medium": "ah:mm:ss",
+			"short": "ah:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1}{0}",
@@ -2237,10 +2242,10 @@
 			"short": "Gy/M/d"
 		},
 		"timeFormats": {
-			"full": "Bh:mm:ss [zzzz]",
-			"long": "Bh:mm:ss [z]",
-			"medium": "Bh:mm:ss",
-			"short": "Bh:mm"
+			"full": "ah:mm:ss [zzzz]",
+			"long": "ah:mm:ss [z]",
+			"medium": "ah:mm:ss",
+			"short": "ah:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1}{0}",
@@ -2792,10 +2797,10 @@
 			"short": "G y/M/d"
 		},
 		"timeFormats": {
-			"full": "Bh:mm:ss [zzzz]",
-			"long": "Bh:mm:ss [z]",
-			"medium": "Bh:mm:ss",
-			"short": "Bh:mm"
+			"full": "ah:mm:ss [zzzz]",
+			"long": "ah:mm:ss [z]",
+			"medium": "ah:mm:ss",
+			"short": "ah:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1}{0}",
@@ -3327,10 +3332,10 @@
 			"short": "Gy/M/d"
 		},
 		"timeFormats": {
-			"full": "Bh:mm:ss [zzzz]",
-			"long": "Bh:mm:ss [z]",
-			"medium": "Bh:mm:ss",
-			"short": "Bh:mm"
+			"full": "ah:mm:ss [zzzz]",
+			"long": "ah:mm:ss [z]",
+			"medium": "ah:mm:ss",
+			"short": "ah:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1}{0}",
@@ -4781,6 +4786,12 @@
 			"10p-24": {
 				"unitPrefixPattern": "{0} 麼米"
 			},
+			"10p-27": {
+				"unitPrefixPattern": "{0} 戎米"
+			},
+			"10p-30": {
+				"unitPrefixPattern": "{0} 奎米"
+			},
 			"10p1": {
 				"unitPrefixPattern": "{0} 公丈"
 			},
@@ -4810,6 +4821,12 @@
 			},
 			"10p24": {
 				"unitPrefixPattern": "{0} 佑米"
+			},
+			"10p27": {
+				"unitPrefixPattern": "{0} 羅米"
+			},
+			"10p30": {
+				"unitPrefixPattern": "{0} 巋米"
 			},
 			"1024p1": {
 				"unitPrefixPattern": "Ki{0}"
@@ -5186,10 +5203,6 @@
 				"displayName": "dpi",
 				"unitPattern-count-other": "{0} dpi"
 			},
-			"graphics-dot": {
-				"displayName": "px",
-				"unitPattern-count-other": "{0} px"
-			},
 			"length-earth-radius": {
 				"displayName": "R⊕",
 				"unitPattern-count-other": "{0} R⊕"
@@ -5443,6 +5456,10 @@
 				"displayName": "節",
 				"unitPattern-count-other": "{0} 節"
 			},
+			"speed-beaufort": {
+				"displayName": "蒲福風級",
+				"unitPattern-count-other": "蒲福風級 {0} 級"
+			},
 			"temperature-generic": {
 				"displayName": "°",
 				"unitPattern-count-other": "{0}°"
@@ -5618,9 +5635,9 @@
 		}
 	},
 	"lenient-scope-number": {
-		"minusSign": "-‐‒–⁻₋−➖﹣－",
-		"commaSign": ",،٫⹁、︐︑﹐﹑，､",
-		"plusSign": "+⁺₊➕﬩﹢＋"
+		"minusSign": "-－﹣ ‐‑‒–−⁻₋➖",
+		"commaSign": ",，﹐︐ ⹁،٫、﹑､︑",
+		"plusSign": "+＋﬩﹢⁺₊ ➕"
 	},
 	"currencyFormat-sap-short": {
 		"1000-other": "0",

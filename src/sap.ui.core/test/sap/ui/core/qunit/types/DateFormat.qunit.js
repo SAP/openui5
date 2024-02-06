@@ -4833,7 +4833,7 @@ sap.ui.define([
 		// code under test: format option 'format'
 		oFormat = DateFormat.createInstance({interval: true, intervalDelimiter: "_", format: "yM"}, oLocale, oInfo);
 
-		assert.strictEqual(oFormat.intervalPatterns[0], "MM/y'_'MM/y");
+		assert.strictEqual(oFormat.intervalPatterns[0], "M/y'_'M/y");
 
 		// code under test: format option 'pattern'
 		oFormat = DateFormat.createInstance({interval: true, intervalDelimiter: "_", pattern: "foo"}, oLocale, oInfo);

@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "43.0.0",
-	"__buildtime": "2023-09-28T11:39:07.908Z",
+	"__version": "44.0.0",
+	"__buildtime": "2024-01-12T14:24:50.280Z",
 	"languages": {
 		"aa": "アファル語",
 		"ab": "アブハズ語",
@@ -65,6 +65,7 @@
 		"bfd": "バフット語",
 		"bfq": "バダガ語",
 		"bg": "ブルガリア語",
+		"bgc": "ハリヤーンウィー語",
 		"bgn": "西バローチー語",
 		"bho": "ボージュプリー語",
 		"bi": "ビスラマ語",
@@ -231,7 +232,6 @@
 		"hax": "南部ハイダ語",
 		"he": "ヘブライ語",
 		"hi": "ヒンディー語",
-		"hi_Latn": "ヒンディー語 (ラテン文字)",
 		"hi_Latn-alt-variant": "インド英語 (ヒングリッシュ)",
 		"hif": "フィジー・ヒンディー語",
 		"hil": "ヒリガイノン語",
@@ -988,6 +988,8 @@
 		"IM": "マン島",
 		"IN": "インド",
 		"IO": "英領インド洋地域",
+		"IO-alt-biot": "英領インド洋地域",
+		"IO-alt-chagos": "チャゴス諸島",
 		"IQ": "イラク",
 		"IR": "イラン",
 		"IS": "アイスランド",
@@ -4874,6 +4876,12 @@
 			"10p-24": {
 				"unitPrefixPattern": "y{0}"
 			},
+			"10p-27": {
+				"unitPrefixPattern": "r{0}"
+			},
+			"10p-30": {
+				"unitPrefixPattern": "q{0}"
+			},
 			"10p1": {
 				"unitPrefixPattern": "da{0}"
 			},
@@ -4903,6 +4911,12 @@
 			},
 			"10p24": {
 				"unitPrefixPattern": "Y{0}"
+			},
+			"10p27": {
+				"unitPrefixPattern": "R{0}"
+			},
+			"10p30": {
+				"unitPrefixPattern": "Q{0}"
 			},
 			"1024p1": {
 				"unitPrefixPattern": "Ki{0}"
@@ -5393,7 +5407,7 @@
 				"unitPattern-count-other": "{0} L☉"
 			},
 			"mass-tonne": {
-				"displayName": "トン",
+				"displayName": "t",
 				"unitPattern-count-other": "{0} t"
 			},
 			"mass-kilogram": {
@@ -5536,6 +5550,10 @@
 				"displayName": "ノット",
 				"unitPattern-count-other": "{0} kn"
 			},
+			"speed-beaufort": {
+				"displayName": "風力階級",
+				"unitPattern-count-other": "B {0}"
+			},
 			"temperature-generic": {
 				"displayName": "°",
 				"unitPattern-count-other": "{0}°"
@@ -5650,8 +5668,8 @@
 				"unitPattern-count-other": "{0} pt"
 			},
 			"volume-cup": {
-				"displayName": "カップ",
-				"unitPattern-count-other": "{0} カップ"
+				"displayName": "カップ - 米国",
+				"unitPattern-count-other": "{0} カップ - 米国"
 			},
 			"volume-fluid-ounce": {
 				"displayName": "液量オンス",
@@ -5662,12 +5680,12 @@
 				"unitPattern-count-other": "{0} fl oz Imp"
 			},
 			"volume-tablespoon": {
-				"displayName": "大さじ",
-				"unitPattern-count-other": "大さじ {0}"
+				"displayName": "テーブルスプーン",
+				"unitPattern-count-other": "{0} tbsp"
 			},
 			"volume-teaspoon": {
-				"displayName": "小さじ",
-				"unitPattern-count-other": "小さじ {0}"
+				"displayName": "ティースプーン",
+				"unitPattern-count-other": "{0} tsp"
 			},
 			"volume-barrel": {
 				"displayName": "バレル",
@@ -5701,6 +5719,78 @@
 				"displayName": "英クォート",
 				"unitPattern-count-other": "{0} qt Imp."
 			},
+			"length-rin": {
+				"displayName": "厘",
+				"unitPattern-count-other": "{0} 厘"
+			},
+			"length-sun": {
+				"displayName": "寸",
+				"unitPattern-count-other": "{0} 寸"
+			},
+			"length-shaku-length": {
+				"displayName": "尺",
+				"unitPattern-count-other": "{0} 尺"
+			},
+			"length-shaku-cloth": {
+				"displayName": "鯨尺",
+				"unitPattern-count-other": "{0} 鯨尺"
+			},
+			"length-ken": {
+				"displayName": "間",
+				"unitPattern-count-other": "{0} 間"
+			},
+			"length-jo-jp": {
+				"displayName": "丈",
+				"unitPattern-count-other": "{0} 丈"
+			},
+			"length-ri-jp": {
+				"displayName": "里",
+				"unitPattern-count-other": "{0} 里"
+			},
+			"area-bu-jp": {
+				"displayName": "歩",
+				"unitPattern-count-other": "{0} 歩"
+			},
+			"area-se-jp": {
+				"displayName": "畝",
+				"unitPattern-count-other": "{0} 畝"
+			},
+			"area-cho": {
+				"displayName": "町",
+				"unitPattern-count-other": "{0} 町"
+			},
+			"volume-kosaji": {
+				"displayName": "小さじ",
+				"unitPattern-count-other": "小さじ {0}"
+			},
+			"volume-osaji": {
+				"displayName": "大さじ",
+				"unitPattern-count-other": "大さじ {0}"
+			},
+			"volume-cup-jp": {
+				"displayName": "カップ",
+				"unitPattern-count-other": "{0} カップ"
+			},
+			"volume-shaku": {
+				"displayName": "勺",
+				"unitPattern-count-other": "{0} 勺"
+			},
+			"volume-sai": {
+				"displayName": "才",
+				"unitPattern-count-other": "{0} 才"
+			},
+			"volume-to-jp": {
+				"displayName": "斗",
+				"unitPattern-count-other": "{0} 斗"
+			},
+			"volume-koku": {
+				"displayName": "石",
+				"unitPattern-count-other": "{0} 石"
+			},
+			"mass-fun": {
+				"displayName": "分 - 質量",
+				"unitPattern-count-other": "{0} 分 - 質量"
+			},
 			"coordinateUnit": {
 				"displayName": "方位",
 				"east": "東経{0}",
@@ -5711,9 +5801,9 @@
 		}
 	},
 	"lenient-scope-number": {
-		"minusSign": "-‒⁻₋−➖﹣－",
-		"commaSign": ",،٫、︐︑﹐﹑，､",
-		"plusSign": "+⁺₊➕﬩﹢＋"
+		"minusSign": "-－﹣ ‑‒−⁻₋➖",
+		"commaSign": ",，﹐︐ ،٫、､﹑︑",
+		"plusSign": "+＋﬩﹢⁺₊ ➕"
 	},
 	"currencyFormat-sap-short": {
 		"1000-other": "0",

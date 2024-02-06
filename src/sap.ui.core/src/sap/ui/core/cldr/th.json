@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "43.0.0",
-	"__buildtime": "2023-09-28T11:39:07.908Z",
+	"__version": "44.0.0",
+	"__buildtime": "2024-01-12T14:24:50.280Z",
 	"languages": {
 		"aa": "อะฟาร์",
 		"ab": "อับฮาเซีย",
@@ -64,6 +64,7 @@
 		"bfd": "บาฟัต",
 		"bfq": "พทคะ",
 		"bg": "บัลแกเรีย",
+		"bgc": "หริยนวี",
 		"bgn": "บาลูจิตะวันตก",
 		"bho": "โภชปุรี",
 		"bi": "บิสลามา",
@@ -992,6 +993,8 @@
 		"IM": "เกาะแมน",
 		"IN": "อินเดีย",
 		"IO": "บริติชอินเดียนโอเชียนเทร์ริทอรี",
+		"IO-alt-biot": "บริติชอินเดียนโอเชียนเทร์ริทอรี",
+		"IO-alt-chagos": "หมู่เกาะชากอส",
 		"IQ": "อิรัก",
 		"IR": "อิหร่าน",
 		"IS": "ไอซ์แลนด์",
@@ -1684,10 +1687,10 @@
 				"abbreviated": {
 					"midnight": "เที่ยงคืน",
 					"noon": "เที่ยง",
-					"morning1": "ในตอนเช้า",
-					"afternoon1": "ในตอนบ่าย",
+					"morning1": "ตอนเช้า",
+					"afternoon1": "ตอนบ่าย",
 					"afternoon2": "บ่าย",
-					"evening1": "ในตอนเย็น",
+					"evening1": "ตอนเย็น",
 					"evening2": "ค่ำ",
 					"night1": "กลางคืน"
 				},
@@ -2233,10 +2236,10 @@
 				"abbreviated": {
 					"midnight": "เที่ยงคืน",
 					"noon": "เที่ยง",
-					"morning1": "ในตอนเช้า",
-					"afternoon1": "ในตอนบ่าย",
+					"morning1": "ตอนเช้า",
+					"afternoon1": "ตอนบ่าย",
 					"afternoon2": "บ่าย",
-					"evening1": "ในตอนเย็น",
+					"evening1": "ตอนเย็น",
 					"evening2": "ค่ำ",
 					"night1": "กลางคืน"
 				},
@@ -2788,10 +2791,10 @@
 				"abbreviated": {
 					"midnight": "เที่ยงคืน",
 					"noon": "เที่ยง",
-					"morning1": "ในตอนเช้า",
-					"afternoon1": "ในตอนบ่าย",
+					"morning1": "ตอนเช้า",
+					"afternoon1": "ตอนบ่าย",
 					"afternoon2": "บ่าย",
-					"evening1": "ในตอนเย็น",
+					"evening1": "ตอนเย็น",
 					"evening2": "ค่ำ",
 					"night1": "กลางคืน"
 				},
@@ -3346,10 +3349,10 @@
 				"abbreviated": {
 					"midnight": "เที่ยงคืน",
 					"noon": "เที่ยง",
-					"morning1": "ในตอนเช้า",
-					"afternoon1": "ในตอนบ่าย",
+					"morning1": "ตอนเช้า",
+					"afternoon1": "ตอนบ่าย",
 					"afternoon2": "บ่าย",
-					"evening1": "ในตอนเย็น",
+					"evening1": "ตอนเย็น",
 					"evening2": "ค่ำ",
 					"night1": "กลางคืน"
 				},
@@ -3894,10 +3897,10 @@
 				"abbreviated": {
 					"midnight": "เที่ยงคืน",
 					"noon": "เที่ยง",
-					"morning1": "ในตอนเช้า",
-					"afternoon1": "ในตอนบ่าย",
+					"morning1": "ตอนเช้า",
+					"afternoon1": "ตอนบ่าย",
 					"afternoon2": "บ่าย",
-					"evening1": "ในตอนเย็น",
+					"evening1": "ตอนเย็น",
 					"evening2": "ค่ำ",
 					"night1": "กลางคืน"
 				},
@@ -4861,6 +4864,12 @@
 			"10p-24": {
 				"unitPrefixPattern": "ยอกโต{0}"
 			},
+			"10p-27": {
+				"unitPrefixPattern": "รอนโต{0}"
+			},
+			"10p-30": {
+				"unitPrefixPattern": "เควกโต{0}"
+			},
 			"10p1": {
 				"unitPrefixPattern": "เดคา{0}"
 			},
@@ -4890,6 +4899,12 @@
 			},
 			"10p24": {
 				"unitPrefixPattern": "ยอตตะ{0}"
+			},
+			"10p27": {
+				"unitPrefixPattern": "รอนนะ{0}"
+			},
+			"10p30": {
+				"unitPrefixPattern": "เควตตะ{0}"
 			},
 			"1024p1": {
 				"unitPrefixPattern": "กิบิ{0}"
@@ -5523,6 +5538,10 @@
 				"displayName": "นอต",
 				"unitPattern-count-other": "{0} นอต"
 			},
+			"speed-beaufort": {
+				"displayName": "Bft",
+				"unitPattern-count-other": "B {0}"
+			},
 			"temperature-generic": {
 				"displayName": "°",
 				"unitPattern-count-other": "{0}°"
@@ -5698,9 +5717,9 @@
 		}
 	},
 	"lenient-scope-number": {
-		"minusSign": "-‒⁻₋−➖﹣－",
-		"commaSign": ",،٫、︐︑﹐﹑，､",
-		"plusSign": "+⁺₊➕﬩﹢＋"
+		"minusSign": "-﹣－‑‒ −⁻₋➖",
+		"commaSign": ",︐﹐，،٫、︑﹑､",
+		"plusSign": "+＋﬩﹢⁺₊ ➕"
 	},
 	"currencyFormat-sap-short": {
 		"1000-other": "0K ¤",

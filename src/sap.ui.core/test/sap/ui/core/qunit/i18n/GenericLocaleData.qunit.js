@@ -256,8 +256,8 @@ sap.ui.define([
 			assert.equal(oLocaleData.getCustomDateTimePattern("yMMMMdd"), "dd. MMMM y", "datetime format 'yMMMMdd'");
 			assert.equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 			assert.equal(oLocaleData.getNumberSymbol("group"), ".", "group separator");
-			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-‒⁻₋−➖﹣－", "Should return the correct minusSign symbols");
-			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+⁺₊➕﬩﹢＋", "Should return the correct plusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-－﹣ ‑‒−⁻₋➖", "Should return the correct minusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+＋﬩﹢⁺₊ ➕", "Should return the correct plusSign symbols");
 			assert.equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week");
 			assert.equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 			assert.equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
@@ -286,8 +286,8 @@ sap.ui.define([
 			assert.equal(oLocaleData.getDateTimePattern("long"), "{1}, {0}", "datetime pattern \"long\"");
 			assert.equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 			assert.equal(oLocaleData.getNumberSymbol("group"), ".", "group separator");
-			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+⁺₊➕﬩﹢＋", "Should return the correct plusSign symbols");
-			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-‒⁻₋−➖﹣－", "Should return the correct minusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+＋﬩﹢⁺₊ ➕", "Should return the correct plusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-－﹣ ‑‒−⁻₋➖", "Should return the correct minusSign symbols");
 		},
 
 		en_GB: function customTests_en_GB(assert, oLocaleData) {
@@ -317,9 +317,9 @@ sap.ui.define([
 			assert.equal(oLocaleData.getCustomDateTimePattern("yMMd"), "dd/MM/y", "datetime format \"yMMd\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("yMMMw"), "MMM y ('week': w)", "datetime format \"yMMMw\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("yMdHms"), "dd/MM/y, HH:mm:ss", "datetime format \"yMdHms\"");
-			assert.equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdHms"), "EEEE, d MMMM y, HH:mm:ss",
+			assert.equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdHms"), "EEEE d MMMM y, HH:mm:ss",
 				"datetime format \"yMMMMdEEEEHms\"");
-			assert.equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdJms"), "EEEE, d MMMM y, HH:mm:ss",
+			assert.equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdJms"), "EEEE d MMMM y, HH:mm:ss",
 				"datetime format \"yMMMMdEEEEJms\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("ydHs"), "y ('day': d), HH ('second': s)", "datetime format \"ydHs\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("km"), "HH:mm", "datetime format \"km\"");
@@ -379,8 +379,8 @@ sap.ui.define([
 			assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", { Second: true }), "dd/MM/y, HH:mm", "interval format \"yMdjm\", { Second: true }");
 			assert.equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
 			assert.equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
-			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-‐‒–⁻₋−➖﹣－", "Should return the correct plusSign symbols");
-			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+⁺₊➕﬩﹢＋", "Should return the correct minusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-－﹣ ‐‑‒–−⁻₋➖", "Should return the correct plusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+＋﬩﹢⁺₊ ➕", "Should return the correct minusSign symbols");
 			assert.equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week"); // TODO decide 0 or 1
 			assert.equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 			assert.equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
@@ -390,10 +390,10 @@ sap.ui.define([
 
 		en_ZA: function customTests_en_ZA(assert, oLocaleData) {
 			assert.equal(oLocaleData.getDatePattern("medium"), "dd MMM y", "date pattern \"medium\"");
-			assert.equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
-			assert.equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
-			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-‐‒–⁻₋−➖﹣－", "Should return the correct minusSign symbols");
-			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+⁺₊➕﬩﹢＋", "Should return the correct plusSign symbols");
+			assert.equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
+			assert.equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
+			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-－﹣ ‐‑‒–−⁻₋➖", "Should return the correct minusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+＋﬩﹢⁺₊ ➕", "Should return the correct plusSign symbols");
 		},
 
 		en_US: function customTests_en_US(assert, oLocaleData) {
@@ -443,8 +443,8 @@ sap.ui.define([
 			assert.equal(oLocaleData.getCustomDateTimePattern("ydHs"), "y ('jour': d) HH 'h' ('seconde': s)", "datetime format \"ydHs\"");
 			assert.equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 			assert.equal(oLocaleData.getNumberSymbol("group"), "\u202f", "group separator");
-			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-‒⁻₋−➖﹣－", "Should return the correct minusSign symbols");
-			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+⁺₊➕﬩﹢＋", "Should return the correct plusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-－﹣ ‑‒−⁻₋➖", "Should return the correct minusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+＋﬩﹢⁺₊ ➕", "Should return the correct plusSign symbols");
 		},
 
 		ja_JP: function customTests_ja_JP(assert, oLocaleData) {
@@ -477,8 +477,8 @@ sap.ui.define([
 			assert.equal(oLocaleData.getCustomIntervalPattern("MMMd", { Day: true }), "M月d日～d日", "interval format \"MMMd\", { Day: true }");
 			assert.equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
 			assert.equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
-			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-‒⁻₋−➖﹣－", "Should return the correct minusSign symbols");
-			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+⁺₊➕﬩﹢＋", "Should return the correct plusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-－﹣ ‑‒−⁻₋➖", "Should return the correct minusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+＋﬩﹢⁺₊ ➕", "Should return the correct plusSign symbols");
 			assert.ok(oLocaleData.getCalendarWeek("wide", 0).toLowerCase().indexOf("week") === -1, "calendar week should be translated");
 		},
 
@@ -539,8 +539,8 @@ sap.ui.define([
 				"interval format \"jm\", { Hour: true }");
 			assert.equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 			assert.equal(oLocaleData.getNumberSymbol("group"), ".", "group separator");
-			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-‒⁻₋−➖﹣－", "Should return the correct minusSign symbols");
-			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+⁺₊➕﬩﹢＋", "Should return the correct plusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-－﹣ ‑‒−⁻₋➖", "Should return the correct minusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+＋﬩﹢⁺₊ ➕", "Should return the correct plusSign symbols");
 			assert.equal(oLocaleData.getPluralCategories().length, 3, "four plural forms");
 			assert.equal(oLocaleData.getPluralCategories()[0], "one", "special plural form for one");
 			assert.equal(oLocaleData.getPluralCategory("0"), "other", "plural category many for 0");
@@ -603,8 +603,8 @@ sap.ui.define([
 				"interval format \"jm\", { Hour: true }");
 			assert.equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 			assert.equal(oLocaleData.getNumberSymbol("group"), ".", "group separator");
-			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-‒⁻₋−➖﹣－", "Should return the correct minusSign symbols");
-			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+⁺₊➕﬩﹢＋", "Should return the correct plusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-－﹣ ‑‒−⁻₋➖", "Should return the correct minusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+＋﬩﹢⁺₊ ➕", "Should return the correct plusSign symbols");
 			assert.equal(oLocaleData.getPluralCategories().length, 3, "four plural forms");
 			assert.equal(oLocaleData.getPluralCategories()[0], "one", "special plural form for one");
 			assert.equal(oLocaleData.getPluralCategory("0"), "other", "plural category many for 0");
@@ -671,8 +671,8 @@ sap.ui.define([
 				"interval format \"jm\", { Hour: true }");
 			assert.equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 			assert.equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
-			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-‒⁻₋−➖﹣－", "Should return the correct minusSign symbols");
-			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+⁺₊➕﬩﹢＋", "Should return the correct plusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-－﹣ ‑‒−⁻₋➖", "Should return the correct minusSign symbols");
+			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+＋﬩﹢⁺₊ ➕", "Should return the correct plusSign symbols");
 			assert.equal(oLocaleData.getPluralCategories().length, 4, "four plural forms");
 			assert.equal(oLocaleData.getPluralCategories()[0], "one", "special plural form for one");
 			assert.equal(oLocaleData.getPluralCategory("0"), "many", "plural category many for 0");

@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "43.0.0",
-	"__buildtime": "2023-09-28T11:39:07.908Z",
+	"__version": "44.0.0",
+	"__buildtime": "2024-01-12T14:24:50.280Z",
 	"languages": {
 		"aa": "афарский",
 		"ab": "абхазский",
@@ -52,6 +52,7 @@
 		"bez": "бена",
 		"bfd": "бафут",
 		"bg": "болгарский",
+		"bgc": "харианви",
 		"bgn": "западный белуджский",
 		"bho": "бходжпури",
 		"bi": "бислама",
@@ -906,6 +907,8 @@
 		"IM": "о-в Мэн",
 		"IN": "Индия",
 		"IO": "Британская территория в Индийском океане",
+		"IO-alt-biot": "Британская территория в Индийском океане",
+		"IO-alt-chagos": "архипелаг Чагос",
 		"IQ": "Ирак",
 		"IR": "Иран",
 		"IS": "Исландия",
@@ -4680,52 +4683,28 @@
 	},
 	"decimalFormat-short": {
 		"1000-one": "0 тыс'.'",
-		"1000-few": "0 тыс'.'",
-		"1000-many": "0 тыс'.'",
 		"1000-other": "0 тыс'.'",
 		"10000-one": "00 тыс'.'",
-		"10000-few": "00 тыс'.'",
-		"10000-many": "00 тыс'.'",
 		"10000-other": "00 тыс'.'",
 		"100000-one": "000 тыс'.'",
-		"100000-few": "000 тыс'.'",
-		"100000-many": "000 тыс'.'",
 		"100000-other": "000 тыс'.'",
 		"1000000-one": "0 млн",
-		"1000000-few": "0 млн",
-		"1000000-many": "0 млн",
 		"1000000-other": "0 млн",
 		"10000000-one": "00 млн",
-		"10000000-few": "00 млн",
-		"10000000-many": "00 млн",
 		"10000000-other": "00 млн",
 		"100000000-one": "000 млн",
-		"100000000-few": "000 млн",
-		"100000000-many": "000 млн",
 		"100000000-other": "000 млн",
 		"1000000000-one": "0 млрд",
-		"1000000000-few": "0 млрд",
-		"1000000000-many": "0 млрд",
 		"1000000000-other": "0 млрд",
 		"10000000000-one": "00 млрд",
-		"10000000000-few": "00 млрд",
-		"10000000000-many": "00 млрд",
 		"10000000000-other": "00 млрд",
 		"100000000000-one": "000 млрд",
-		"100000000000-few": "000 млрд",
-		"100000000000-many": "000 млрд",
 		"100000000000-other": "000 млрд",
 		"1000000000000-one": "0 трлн",
-		"1000000000000-few": "0 трлн",
-		"1000000000000-many": "0 трлн",
 		"1000000000000-other": "0 трлн",
 		"10000000000000-one": "00 трлн",
-		"10000000000000-few": "00 трлн",
-		"10000000000000-many": "00 трлн",
 		"10000000000000-other": "00 трлн",
 		"100000000000000-one": "000 трлн",
-		"100000000000000-few": "000 трлн",
-		"100000000000000-many": "000 трлн",
 		"100000000000000-other": "000 трлн"
 	},
 	"scientificFormat": {
@@ -4906,6 +4885,12 @@
 			"10p-24": {
 				"unitPrefixPattern": "и{0}"
 			},
+			"10p-27": {
+				"unitPrefixPattern": "р{0}"
+			},
+			"10p-30": {
+				"unitPrefixPattern": "кв{0}"
+			},
 			"10p1": {
 				"unitPrefixPattern": "да{0}"
 			},
@@ -4936,6 +4921,12 @@
 			"10p24": {
 				"unitPrefixPattern": "И{0}"
 			},
+			"10p27": {
+				"unitPrefixPattern": "Р{0}"
+			},
+			"10p30": {
+				"unitPrefixPattern": "Кв{0}"
+			},
 			"1024p1": {
 				"unitPrefixPattern": "Ки{0}"
 			},
@@ -4965,16 +4956,10 @@
 			},
 			"power2": {
 				"compoundUnitPattern1": "{0}²",
-				"compoundUnitPattern1-count-one": "{0}²",
-				"compoundUnitPattern1-count-few": "{0}²",
-				"compoundUnitPattern1-count-many": "{0}²",
 				"compoundUnitPattern1-count-other": "{0}²"
 			},
 			"power3": {
 				"compoundUnitPattern1": "{0}³",
-				"compoundUnitPattern1-count-one": "{0}³",
-				"compoundUnitPattern1-count-few": "{0}³",
-				"compoundUnitPattern1-count-many": "{0}³",
 				"compoundUnitPattern1-count-other": "{0}³"
 			},
 			"times": {
@@ -5010,23 +4995,14 @@
 			},
 			"angle-degree": {
 				"displayName": "°",
-				"unitPattern-count-one": "{0}°",
-				"unitPattern-count-few": "{0}°",
-				"unitPattern-count-many": "{0}°",
 				"unitPattern-count-other": "{0}°"
 			},
 			"angle-arc-minute": {
 				"displayName": "′",
-				"unitPattern-count-one": "{0}′",
-				"unitPattern-count-few": "{0}′",
-				"unitPattern-count-many": "{0}′",
 				"unitPattern-count-other": "{0}′"
 			},
 			"angle-arc-second": {
 				"displayName": "″",
-				"unitPattern-count-one": "{0}″",
-				"unitPattern-count-few": "{0}″",
-				"unitPattern-count-many": "{0}″",
 				"unitPattern-count-other": "{0}″"
 			},
 			"area-square-kilometer": {
@@ -5134,9 +5110,6 @@
 			},
 			"concentr-permillion": {
 				"displayName": "ppm",
-				"unitPattern-count-one": "{0} ppm",
-				"unitPattern-count-few": "{0} ppm",
-				"unitPattern-count-many": "{0} ppm",
 				"unitPattern-count-other": "{0} ppm"
 			},
 			"concentr-percent": {
@@ -5413,13 +5386,6 @@
 				"unitPattern-count-many": "{0} кал",
 				"unitPattern-count-other": "{0} кал"
 			},
-			"energy-foodcalorie": {
-				"displayName": "ккал",
-				"unitPattern-count-one": "{0} ккал",
-				"unitPattern-count-few": "{0} ккал",
-				"unitPattern-count-many": "{0} ккал",
-				"unitPattern-count-other": "{0} ккал"
-			},
 			"energy-kilojoule": {
 				"displayName": "кДж",
 				"unitPattern-count-one": "{0} кДж",
@@ -5569,9 +5535,6 @@
 			},
 			"length-earth-radius": {
 				"displayName": "R⊕",
-				"unitPattern-count-one": "{0} R⊕",
-				"unitPattern-count-few": "{0} R⊕",
-				"unitPattern-count-many": "{0} R⊕",
 				"unitPattern-count-other": "{0} R⊕"
 			},
 			"length-kilometer": {
@@ -5721,9 +5684,6 @@
 			},
 			"length-solar-radius": {
 				"displayName": "R☉",
-				"unitPattern-count-one": "{0} R☉",
-				"unitPattern-count-few": "{0} R☉",
-				"unitPattern-count-many": "{0} R☉",
 				"unitPattern-count-other": "{0} R☉"
 			},
 			"light-lux": {
@@ -5749,9 +5709,6 @@
 			},
 			"light-solar-luminosity": {
 				"displayName": "L☉",
-				"unitPattern-count-one": "{0} L☉",
-				"unitPattern-count-few": "{0} L☉",
-				"unitPattern-count-many": "{0} L☉",
 				"unitPattern-count-other": "{0} L☉"
 			},
 			"mass-tonne": {
@@ -5844,16 +5801,10 @@
 			},
 			"mass-earth-mass": {
 				"displayName": "M⊕",
-				"unitPattern-count-one": "{0} M⊕",
-				"unitPattern-count-few": "{0} M⊕",
-				"unitPattern-count-many": "{0} M⊕",
 				"unitPattern-count-other": "{0} M⊕"
 			},
 			"mass-solar-mass": {
 				"displayName": "M☉",
-				"unitPattern-count-one": "{0} M☉",
-				"unitPattern-count-few": "{0} M☉",
-				"unitPattern-count-many": "{0} M☉",
 				"unitPattern-count-other": "{0} M☉"
 			},
 			"mass-grain": {
@@ -6003,11 +5954,15 @@
 				"unitPattern-count-many": "{0} уз",
 				"unitPattern-count-other": "{0} уз"
 			},
+			"speed-beaufort": {
+				"displayName": "Бфт",
+				"unitPattern-count-one": "{0} Бфт",
+				"unitPattern-count-few": "{0} Бфт",
+				"unitPattern-count-many": "{0} Бфт",
+				"unitPattern-count-other": "{0} Бфт"
+			},
 			"temperature-generic": {
 				"displayName": "°",
-				"unitPattern-count-one": "{0}°",
-				"unitPattern-count-few": "{0}°",
-				"unitPattern-count-many": "{0}°",
 				"unitPattern-count-other": "{0}°"
 			},
 			"temperature-celsius": {
@@ -6026,9 +5981,6 @@
 			},
 			"temperature-kelvin": {
 				"displayName": "K",
-				"unitPattern-count-one": "{0} K",
-				"unitPattern-count-few": "{0} K",
-				"unitPattern-count-many": "{0} K",
 				"unitPattern-count-other": "{0} K"
 			},
 			"torque-pound-force-foot": {
@@ -6298,9 +6250,9 @@
 		}
 	},
 	"lenient-scope-number": {
-		"minusSign": "-‒⁻₋−➖﹣－",
-		"commaSign": ",،٫、︐︑﹐﹑，､",
-		"plusSign": "+⁺₊➕﬩﹢＋"
+		"minusSign": "-－﹣ ‑‒−⁻₋➖",
+		"commaSign": ",，﹐︐ ،٫、﹑､︑",
+		"plusSign": "+＋﬩﹢⁺₊ ➕"
 	},
 	"currencyFormat-sap-short": {
 		"1000-one": "0 тыс'.' ¤",
