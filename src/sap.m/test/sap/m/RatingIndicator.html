@@ -43,8 +43,8 @@
 		</style>
 
 		<script>
-		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
+				"sap/ui/core/Core",
 				"sap/ui/core/IconPool",
 				"sap/ui/core/Item",
 				"sap/ui/model/json/JSONModel",
@@ -66,7 +66,8 @@
 				"sap/m/Select",
 				"sap/m/Table",
 				"sap/m/VBox"
-			], function (IconPool, Item, JSONModel, App, Bar, Button, CheckBox, Column, ColumnListItem, ComboBox, HBox, Input, InputListItem, FlexItemData, Label, List, Page, RatingIndicator, Select, Table, VBox){
+			], async function (Core, IconPool, Item, JSONModel, App, Bar, Button, CheckBox, Column, ColumnListItem, ComboBox, HBox, Input, InputListItem, FlexItemData, Label, List, Page, RatingIndicator, Select, Table, VBox){
+				await Core.ready();
 
 				var oCommonUseCasesLabel = new Label({text:'Most common use cases:'}).addStyleClass("TestPageHeaderLabel");
 
@@ -714,7 +715,6 @@
 				oApp.addPage(oRatingPage);
 				oApp.placeAt("body");
 			});
-		});
 		</script>
 	</head>
 

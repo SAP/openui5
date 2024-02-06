@@ -8,14 +8,14 @@ sap.ui.define([
 	'sap/m/Label',
 	'sap/m/Page',
 	'sap/m/RatingIndicator',
-	'sap/ui/core/Core',
+	'sap/ui/qunit/utils/nextUIUpdate',
 	'sap/ui/core/IconPool',
 	'sap/m/library',
 	'sap/ui/events/KeyCodes',
 	'sap/ui/dom/includeStylesheet',
 	'sap/ui/thirdparty/jquery',
 	'require'
-], function(Element, Library, qutils, createAndAppendDiv, App, Label, Page, RatingIndicator, Core, IconPool, mobileLibrary, KeyCodes, includeStylesheet, jQuery, require) {
+], function(Element, Library, qutils, createAndAppendDiv, App, Label, Page, RatingIndicator, nextUIUpdate, IconPool, mobileLibrary, KeyCodes, includeStylesheet, jQuery, require) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -217,11 +217,11 @@ sap.ui.define([
 		assert.strictEqual(oRating8.$().length, 0, 'The rating is not visible on' + oRating8);
 	});
 
-	QUnit.test("setting displayOnly", function (assert) {
+	QUnit.test("setting displayOnly", async function (assert) {
 		var oRating = new RatingIndicator({});
 
 		oRating.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// initial assertion
 		assert.strictEqual(oRating.$().hasClass("sapMRIDisplayOnly"), false, 'Initially the control does not have class "sapMRIDisplayOnly" on ' + oRating);
@@ -230,7 +230,7 @@ sap.ui.define([
 
 		// act
 		oRating.setDisplayOnly(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertion
 		assert.strictEqual(oRating.$().hasClass("sapMRIDisplayOnly"), true, 'The control have class "sapMRIDisplayOnly" on ' + oRating);
@@ -241,13 +241,13 @@ sap.ui.define([
 		oRating.destroy();
 	});
 
-	QUnit.test("setting editable", function (assert) {
+	QUnit.test("setting editable", async function (assert) {
 		var oRating = new RatingIndicator({
 			value: 3
 		});
 
 		oRating.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// initial assertion
 		assert.strictEqual(oRating.getEditable(), true, 'The Editable property is false on ' + oRating);
@@ -258,7 +258,7 @@ sap.ui.define([
 
 		// act
 		oRating.setEditable(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertion
 		assert.strictEqual(oRating.getEditable(), false, 'The Editable property is true on ' + oRating);
@@ -271,11 +271,11 @@ sap.ui.define([
 		oRating.destroy();
 	});
 
-	QUnit.test("setting enabled", function(assert) {
+	QUnit.test("setting enabled", async function(assert) {
 		var oRating = new RatingIndicator({});
 
 		oRating.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// initial assertion
 		assert.strictEqual(oRating.$().hasClass("sapMRIDisabled"), false, 'Initially the control does not have class "sapMRIDisabled" on ' + oRating);
@@ -284,7 +284,7 @@ sap.ui.define([
 
 		// act
 		oRating.setEnabled(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertion
 		assert.strictEqual(oRating.$().hasClass("sapMRIDisabled"), true, 'The control have class "sapMRIDisabled" on ' + oRating);
@@ -297,8 +297,8 @@ sap.ui.define([
 
 	QUnit.module("Methods");
 
-	QUnit.test("getter / setter", function (assert) {
-		Core.applyChanges();
+	QUnit.test("getter / setter", async function (assert) {
+		await nextUIUpdate();
 
 		// 0
 		assert.strictEqual(oRating0.getValue(), 0, "The rating value is 0 on " + oRating0);
@@ -378,7 +378,7 @@ sap.ui.define([
 		oRating.destroy();
 	});
 
-	QUnit.test("setValue()", function(assert) {
+	QUnit.test("setValue()", async function(assert) {
 		// Arrange
 		var oRating1 = new RatingIndicator({
 			value: "3.125E-01"
@@ -389,7 +389,7 @@ sap.ui.define([
 
 		oRating1.placeAt("content");
 		oRating2.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oRating1.getValue(), 0.5, "The value is  valid and correctly formatted");
@@ -398,7 +398,7 @@ sap.ui.define([
 		// Act
 		oRating2.setValue("abv");
 		oRating2.setValue("3.125E-01");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oRating1.getValue(), 0.5, "The value is not changed because it is not a valid one.");
@@ -409,7 +409,7 @@ sap.ui.define([
 		oRating2.destroy();
 	});
 
-	QUnit.test("Popover should be in compact mode if one of it's parents is compact", function (assert) {
+	QUnit.test("Popover should be in compact mode if one of it's parents is compact", async function (assert) {
 		var oRating = new RatingIndicator({
 			value: 5
 		});
@@ -419,7 +419,7 @@ sap.ui.define([
 
 		// System under Test
 		oRating.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oRating._getDensityMode(), "Cozy", "The density mode is Cozy");
 
@@ -438,7 +438,7 @@ sap.ui.define([
 		jQuery("body").addClass("sapUiSizeCondensed");
 		assert.strictEqual(oRating2._getDensityMode(), "Condensed", "The density mode is set in the body and is Condensed");
 		oRating2.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 		jQuery("body").removeClass("sapUiSizeCondensed");
 		jQuery("html").addClass("sapUiSizeCozy");
 
@@ -619,14 +619,14 @@ sap.ui.define([
 		oRating.destroy();
 	});
 
-	QUnit.test("NUMBER keys", function (assert) {
+	QUnit.test("NUMBER keys", async function (assert) {
 
 		//Arrange
 		var oRating = new RatingIndicator({maxValue: 6});
 
 		// System under Test
 		oRating.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oRating.$().trigger("focus"); // set focus on RatingIndicator
 
@@ -707,7 +707,7 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
-	QUnit.test("Required property handling", function(assert) {
+	QUnit.test("Required property handling", async function(assert) {
 		// Arrange
 		var oRI = new RatingIndicator("ratingIndicator", {value: 5, maxValue: 10}),
 		oRIRequired = new RatingIndicator("ratingIndicator1", {value: 1, maxValue: 3, required: true}),
@@ -718,7 +718,7 @@ sap.ui.define([
 		oRIRequired.placeAt("content");
 		oLabel.placeAt("content");
 		oRI.placeAt("content");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oRIRequiredDomRef = oRIRequired.getDomRef(),
 		oRIDomRef = oRI.getDomRef(),

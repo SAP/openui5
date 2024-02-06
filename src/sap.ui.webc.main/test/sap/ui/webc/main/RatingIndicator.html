@@ -13,22 +13,23 @@
 		}'>
 	</script>
 	<style>
-		.sapUiBody {
+		#body.sapUiBody {
 			height: 100vh;
 			overflow: hidden;
 		}
 	</style>
 
 	<script>
-		sap.ui.getCore().attachInit(function() {
 			sap.ui.require([
+				"sap/ui/core/Core",
 				"sap/ui/webc/main/RatingIndicator",
 				"sap/ui/webc/main/Toast",
 				"sap/ui/webc/main/Title",
 				"sap/ui/webc/fiori/Bar",
 				"sap/ui/webc/fiori/Page",
 				"sap/ui/webc/main/Label"
-			], function(
+			], async function(
+				Core,
 				RatingIndicator,
 				Toast,
 				Title,
@@ -36,6 +37,8 @@
 				Page,
 				Label
 			) {
+
+				await Core.ready();
 
 				var oVerticalLayout = new sap.ui.layout.VerticalLayout({
 					content: [
@@ -125,7 +128,6 @@
 
 				oPage.placeAt("body");
 			});
-		});
 	</script>
 </head>
 
