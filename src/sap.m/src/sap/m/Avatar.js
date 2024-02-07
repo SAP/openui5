@@ -766,7 +766,7 @@ sap.ui.define([
 				var iAvatarWidth = $this[0].offsetWidth,
 				iInitialsHolderWidth = this.$oInitialsHolder[0].offsetWidth;
 
-				if (iInitialsHolderWidth > iAvatarWidth) {
+				if (iInitialsHolderWidth >= iAvatarWidth) {
 					this._wideInitialsIcon();
 				}
 			}
