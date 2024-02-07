@@ -1,6 +1,7 @@
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	"sap/ui/core/UIComponent",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/type/Currency", // to have it loaded
 	"sap/ui/model/odata/type/Decimal", // to have it loaded
 	"sap/ui/model/odata/type/Date", // to have it loaded
@@ -13,10 +14,12 @@ sap.ui.define([
 	"sap/ui/mdc/field/ConditionsType", // as used in XML view
 	"testutils/link/FakeUShellConnector",
 	"sap/base/util/LoaderExtensions",
-	"sap/m/routing/Router" // make sure Router is loaded
+	"sap/m/routing/Router", // make sure Router is loaded
+	"sap/ui/Device"
 ], function (
 	ManagedObject,
 	UIComponent,
+	JSONModel,
 	ODataCurrencyType,
 	ODataDecimalType,
 	ODataDateType,
@@ -29,7 +32,8 @@ sap.ui.define([
 	ConditionsType,
 	FakeUShellConnector,
 	LoaderExtensions,
-	Router
+	Router,
+	Device
 ) {
 	"use strict";
 
@@ -50,6 +54,12 @@ sap.ui.define([
 		init : function () {
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
+
+			// set device model
+			const oDeviceModel = new JSONModel(Device);
+			oDeviceModel.setDefaultBindingMode("OneWay");
+			this.setModel(oDeviceModel, "device");
+
 			this.getRouter().initialize();
 			this.__initFakeUShellConnector();
 		},

@@ -32,7 +32,8 @@ sap.ui.define([
 	'sap/ui/model/ValidateException',
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
-	'sap/ui/events/KeyCodes'
+	'sap/ui/events/KeyCodes',
+	'sap/ui/Device'
 ], (
 	Element,
 	Library,
@@ -64,7 +65,8 @@ sap.ui.define([
 	ValidateException,
 	ManagedObjectModel,
 	ManagedObjectObserver,
-	KeyCodes
+	KeyCodes,
+	Device
 ) => {
 	"use strict";
 
@@ -953,7 +955,7 @@ sap.ui.define([
 
 	FieldBase.prototype._redirectFocus = function(oEvent, oValueHelp) {
 		const oSource = oEvent.srcControl;
-		if (oValueHelp.isOpen() && (!this.getContentFactory().isMeasure() || (oSource.getShowValueHelp && oSource.getShowValueHelp()))) {
+		if (!Device.system.phone && oValueHelp.isOpen() && (!this.getContentFactory().isMeasure() || (oSource.getShowValueHelp && oSource.getShowValueHelp()))) {
 			oSource.addStyleClass("sapMFocus"); // to show focus outline again after navigation
 			oValueHelp.removeFocus();
 		}
@@ -961,13 +963,24 @@ sap.ui.define([
 
 	FieldBase.prototype.ontap = function(oEvent) {
 
+		if (oEvent.isMarked("tokenTap")) {
+			return; // only open if taped into input area (MultiInput case)
+		}
+
 		// in "Select"-case the suggestion help should open on click into field
 		const oValueHelp = _getValueHelp.call(this);
 		const oSuggestControl = this.getControlForSuggestion();
 		if (this.getEditMode() === FieldEditMode.Editable && oValueHelp && containsOrEquals(oSuggestControl.getDomRef(), oEvent.target)) {
+			if (!this._bConnected) {
+				_connectValueHelp.call(this); // as on phone triggered without focus
+			}
+			const bTapBeforeFocus = !_isFocused.call(this); // on thone the Focus event is triggered async after the Tap event
 			if (!oValueHelp.isOpen()) {
 				oValueHelp.shouldOpenOnClick().then((bShouldOpen) => {
-					if (bShouldOpen && !this.isFieldDestroyed() && _isFocused.call(this) && !oValueHelp.isOpen()) {
+					if (bShouldOpen && !this.isFieldDestroyed() && (bTapBeforeFocus || _isFocused.call(this)) && !oValueHelp.isOpen()) {
+						if (bTapBeforeFocus) {
+							oSuggestControl.focus(); // if focus not already set (on phone) set it now before the popover opens
+						}
 						_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
 					}
 				});

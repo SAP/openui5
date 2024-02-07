@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/odata/type/String",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/Device"
 ], function (
 		ValueHelp,
 		ValueHelpDelegate,
@@ -29,7 +30,8 @@ sap.ui.define([
 		FormatException,
 		ParseException,
 		StringType,
-		nextUIUpdate
+		nextUIUpdate,
+		Device
 	) {
 	"use strict";
 
@@ -1168,6 +1170,52 @@ sap.ui.define([
 		sinon.spy(oValueHelp, "close");
 		oContainer.fireCancel({});
 		assert.ok(oValueHelp.close.called, "ValueHelp close called");
+
+	});
+
+	let oDeviceStub;
+	QUnit.module("Phone support", {
+		beforeEach: async function() {
+			const oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
+			oDeviceStub = sinon.stub(Device, "system").value(oSystem);
+
+			oContainer = new Container("C1", {
+				title: "Test"
+			});
+			oValueHelp = new ValueHelp("F1-H", {
+				typeahead: oContainer,
+				delegate: {name: "sap/ui/mdc/ValueHelpDelegate", payload: {x: "X"}},
+				disconnect: _myDisconnectHandler,
+				navigated: _myNavigateHandler,
+				typeaheadSuggested: _myTypeaheadHandler,
+				select: _mySelectHandler,
+				closed: _myClosedHandler
+			});
+			await _initFields();
+		},
+		afterEach: function () {
+			_teardown();
+			oDeviceStub.restore();
+		}
+	});
+
+	QUnit.test("shouldOpenOnFocus", function(assert) {
+
+		sinon.stub(oContainer, "shouldOpenOnFocus").returns(true);
+		assert.ok(oValueHelp.shouldOpenOnFocus(), "if only typeahed opening on focus in phone mode");
+
+
+	});
+
+	QUnit.test("shouldOpenOnClick", function(assert) {
+
+		sinon.stub(oContainer, "shouldOpenOnClick").returns(true);
+		assert.ok(oValueHelp.shouldOpenOnClick(), "if only typeahed no opening on click in phone mode");
 
 	});
 

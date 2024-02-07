@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
-	'sap/ui/mdc/enums/ValueHelpPropagationReason'
+	'sap/ui/mdc/enums/ValueHelpPropagationReason',
+	'sap/ui/Device'
 ], (
 	Element,
 	PromiseMixin,
@@ -19,7 +20,8 @@ sap.ui.define([
 	ValueHelpSelectionType,
 	ManagedObjectModel,
 	ManagedObjectObserver,
-	ValueHelpPropagationReason
+	ValueHelpPropagationReason,
+	Device
 ) => {
 	"use strict";
 
@@ -1078,7 +1080,7 @@ sap.ui.define([
 		const oDialog = this.getDialog();
 
 		if (bPreferTypeahead) {
-			return (bUseAsValueHelp || oDialog) && oTypeahead || oDialog;
+			return (bUseAsValueHelp || oDialog || Device.system.phone) && oTypeahead || oDialog; // on phone open typeahead on click/focus even if not defined as ValueHelp
 		} else {
 			return oDialog || bUseAsValueHelp && oTypeahead;
 		}

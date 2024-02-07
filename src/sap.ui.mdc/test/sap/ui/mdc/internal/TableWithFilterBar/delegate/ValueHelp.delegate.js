@@ -3,12 +3,13 @@
  */
 
 sap.ui.define([
-	"delegates/odata/v4/ValueHelpDelegate",
+	'delegates/odata/v4/ValueHelpDelegate',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
-	'sap/base/util/deepEqual'
+	'sap/base/util/deepEqual',
+	'sap/ui/Device'
 ], function(
-	ODataV4ValueHelpDelegate, FilterOperatorUtil, ValueHelpSelectionType, deepEqual
+	ODataV4ValueHelpDelegate, FilterOperatorUtil, ValueHelpSelectionType, deepEqual, Device
 ) {
 	"use strict";
 
@@ -142,6 +143,15 @@ sap.ui.define([
 		}
 
 		return ODataV4ValueHelpDelegate.retrieveContent.apply(this, arguments);
+	};
+
+	ValueHelpDelegate.updateBindingInfo = function(oValueHelp, oContent, oBindingInfo) {
+		ODataV4ValueHelpDelegate.updateBindingInfo(oValueHelp, oContent, oBindingInfo);
+
+		const oContainer = oContent.getParent();
+		if (Device.system.phone && oBindingInfo.length && oContainer.isA("sap.ui.mdc.valuehelp.Popover")){
+			delete oBindingInfo.length; // on phone do not limit typeahead
+		}
 	};
 
 	return ValueHelpDelegate;
