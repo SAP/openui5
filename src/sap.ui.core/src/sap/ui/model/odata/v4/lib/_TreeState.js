@@ -23,15 +23,21 @@ sap.ui.define([
 		// maps predicate to node id and number of levels to expand
 		oPredicate2ExpandLevels = new Map();
 
+		// @see #getOutOfPlace
+		oOutOfPlace = undefined;
+
 		/**
 		 * Constructor for a new _TreeState.
 		 * The tree state is only kept if a <code>sNodeProperty</code> is given.
 		 *
 		 * @param {string} [sNodeProperty] - The path to the node id property
+		 * @param {function(object):string} fnGetKeyFilter
+		 *   A function to calculate a node's key filter
 		 *
 		 * @public
 		 */
-		constructor(sNodeProperty) {
+		constructor(sNodeProperty, fnGetKeyFilter) {
+			this.fnGetKeyFilter = fnGetKeyFilter;
 			this.sNodeProperty = sNodeProperty;
 		}
 
@@ -111,12 +117,40 @@ sap.ui.define([
 		}
 
 		/**
+		 * Returns information about a current out-of-place node.
+		 *
+		 * @returns {{nodeFilter : string, parentFilter : string?}|undefined}
+		 *   The current out-of-place infos, or <code>undefined</code> if no node is out of place
+		 *
+		 * @public
+		 */
+		getOutOfPlace() {
+			return this.oOutOfPlace;
+		}
+
+		/**
 		 * Resets the tree state.
 		 *
 		 * @public
 		 */
 		reset() {
 			this.oPredicate2ExpandLevels.clear();
+			this.oOutOfPlace = undefined;
+		}
+
+		/**
+		 * Makes the node out of place.
+		 *
+		 * @param {object} oNode - The node
+		 * @param {object} [oParent] - The parent, unless the node is a root
+		 *
+		 * @public
+		 */
+		setOutOfPlace(oNode, oParent) {
+			this.oOutOfPlace = {nodeFilter : this.fnGetKeyFilter(oNode)};
+			if (oParent) {
+				this.oOutOfPlace.parentFilter = this.fnGetKeyFilter(oParent);
+			}
 		}
 	}
 

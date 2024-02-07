@@ -4367,6 +4367,30 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("createContexts: reuse a created context in a RH", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+		const oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", 42,
+			SyncPromise.resolve());
+
+		oBinding.mPreviousContextsByPath = {
+			"/EMPLOYEES('1')" : oCreatedContext
+		};
+		this.mock(Context).expects("create").never();
+		this.mock(oBinding).expects("destroyPreviousContextsLater").withExactArgs([]);
+		this.mock(oCreatedContext).expects("destroy").never();
+		this.mock(oCreatedContext).expects("checkUpdate").withExactArgs();
+
+		// code under test
+		oBinding.createContexts(0, [{
+			"@$ui5._" : {context : "n/a", predicate : "('1')"}
+		}]);
+
+		assert.strictEqual(oBinding.aContexts[0], oCreatedContext);
+		assert.strictEqual(oCreatedContext.getModelIndex(), 0);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("createContexts: reuse created from 'context' annotation", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", -1,

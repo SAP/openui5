@@ -2358,4 +2358,76 @@ sap.ui.define([
 		assert.strictEqual(aSpliced.$stale, true);
 		assert.deepEqual(oElement, {"@$ui5._" : {spliced : []}}, "nothing else");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getQueryOptionsForOutOfPlaceNodesData", function (assert) {
+		const oOutOfPlace = {nodeFilter : "~nodeFilter~", parentFilter : "~parentFilter~"};
+		const oAggregation = {hierarchyQualifier : "X", search : "~search~"};
+		const sAggregationJSON = JSON.stringify(oAggregation);
+		const mQueryOptions = {
+			$$filterBeforeAggregate : "~filterBeforeAggregate~",
+			$filter : "~filter~",
+			$orderby : "~orderby~",
+			custom : "~custom~"
+		};
+		const sQueryOptionsJSON = JSON.stringify(mQueryOptions);
+
+		this.mock(_AggregationHelper).expects("buildApply")
+			.callsFake(function (oAggregation0, mQueryOptions0, iLevel) {
+				assert.deepEqual(oAggregation0, {hierarchyQualifier : "X"});
+				assert.deepEqual(mQueryOptions0, {
+					$$filterBeforeAggregate : "~parentFilter~",
+					custom : "~custom~"
+				});
+				assert.strictEqual(iLevel, 1);
+
+				mQueryOptions0.$apply = "~apply~";
+				return mQueryOptions0;
+			});
+
+		// code under test
+		const mResult = _AggregationHelper.getQueryOptionsForOutOfPlaceNodesData(oOutOfPlace,
+			oAggregation, mQueryOptions);
+
+		assert.deepEqual(mResult, {
+			$$filterBeforeAggregate : "~parentFilter~",
+			$apply : "~apply~",
+			$filter : "~nodeFilter~",
+			$top : 1,
+			custom : "~custom~"
+		});
+		assert.strictEqual(JSON.stringify(oAggregation), sAggregationJSON, "unchanged");
+		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getQueryOptionsForOutOfPlaceNodesRank", function (assert) {
+		const oOutOfPlace = {nodeFilter : "~nodeFilter~", parentFilter : "~parentFilter~"};
+		const oAggregation = {
+			$DistanceFromRoot : "~$DistanceFromRoot~",
+			$LimitedRank : "~$LimitedRank~"
+		};
+		const mQueryOptions = {
+			$apply : "~apply~",
+			$count : "~count~",
+			$filter : "~filter~",
+			$orderby : "~orderby~",
+			$select : "~select~",
+			custom : "~custom~"
+		};
+		const sQueryOptionsJSON = JSON.stringify(mQueryOptions);
+
+		// code under test
+		const mResult = _AggregationHelper.getQueryOptionsForOutOfPlaceNodesRank(oOutOfPlace,
+			oAggregation, mQueryOptions);
+
+		assert.deepEqual(mResult, {
+			$apply : "~apply~",
+			$filter : "~parentFilter~ or ~nodeFilter~",
+			$select : ["~$DistanceFromRoot~", "~$LimitedRank~"],
+			$top : 2,
+			custom : "~custom~"
+		});
+		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
+	});
 });

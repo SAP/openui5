@@ -1071,9 +1071,10 @@ sap.ui.define([
 				sPredicate = _Helper.getPrivateAnnotation(aResults[i], "predicate");
 				sContextPath = sPath + (sPredicate || "/" + i$skipIndex);
 				oContext = this.mPreviousContextsByPath[sContextPath];
-				if (oContext && (!oContext.created() || oContext.isEffectivelyKeptAlive())) {
+				if (oContext && (!oContext.created() || oContext.isEffectivelyKeptAlive()
+						|| this.mParameters.$$aggregation?.hierarchyQualifier)) {
 					// reuse the previous context, unless it is created (and persisted), but not
-					// kept alive
+					// kept alive; always reuse created contexts in a recursive hierarchy
 					delete this.mPreviousContextsByPath[sContextPath];
 					oContext.iIndex = i$skipIndex;
 					oContext.checkUpdate();
