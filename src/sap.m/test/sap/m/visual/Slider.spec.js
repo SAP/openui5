@@ -65,7 +65,7 @@ describe("sap.m.Slider", function() {
 
 	it("should show hide some tickmarks when Slider is resized", function() {
 		browser.executeScript('document.getElementById("__slider12").scrollIntoView()').then(function() {
-			browser.executeScript('sap.ui.getCore().byId("__slider12").setWidth("20%")').then(function() {
+			browser.executeScript('sap.ui.core.Element.getElementById("__slider12").setWidth("20%")').then(function() {
 				element(by.id("__slider12-handle")).click();
 				expect(takeScreenshot()).toLookAs("slider-tickmarks-and-labels-resized");
 			});
@@ -74,7 +74,7 @@ describe("sap.m.Slider", function() {
 
 	it("should show the same amount of tickmarks after the size is back to the initial", function() {
 		browser.executeScript('document.getElementById("__slider12").scrollIntoView()').then(function() {
-			browser.executeScript('sap.ui.getCore().byId("__slider12").setWidth("70%")').then(function() {
+			browser.executeScript('sap.ui.core.Element.getElementById("__slider12").setWidth("70%")').then(function() {
 				element(by.id("__slider12-handle")).click();
 				expect(takeScreenshot()).toLookAs("slider-tickmarks-and-labels-resized2");
 			});
