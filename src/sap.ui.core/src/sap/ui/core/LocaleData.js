@@ -21,11 +21,19 @@ sap.ui.define([
 
 	var rCIgnoreCase = /c/i,
 		rEIgnoreCase = /e/i,
-		/*
-		* With the upgrade of the CLDR to version 41 some unit keys have changed.
-		* For compatibility reasons this map is used for formatting units.
-		* It maps a legacy unit key to its renamed key.
-		*/
+		/**
+		 * With the upgrade of the CLDR to version 41 some unit keys have changed.
+		 * For compatibility reasons this map is used for formatting units.
+		 * It maps a legacy unit key to its renamed key.
+		 *
+		 * @deprecated As of version 1.122.0, this map is no longer maintained and stays for compatibility reasons
+		 *   only. Reason for the depreciation: The assumption of homogeneous unit keys in the CLDR data has been proven
+		 *   wrong. Additionally, it is unclear if, those CLDR unit keys are actually used. Implementing a complex logic
+		 *   to maintain potentially unused entries did not seem reasonable. Therefore, it was decided to deprecate this
+		 *   feature.
+		 *   This map was last updated with CLDR V43, in 1.119.0.
+		 * @private
+		 */
 		mLegacyUnit2CurrentUnit = {
 			"acceleration-meter-per-second-squared": "acceleration-meter-per-square-second",
 			"concentr-milligram-per-deciliter": "concentr-milligram-ofglucose-per-deciliter",
