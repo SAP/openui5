@@ -25,7 +25,6 @@ sap.ui.define([
 
 		var oOptions = {
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
-			"isTrustedSource": true,
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired");
 				loadDone();
@@ -67,7 +66,6 @@ sap.ui.define([
 
 		var oOptions = {
 			"source": sourcePath1,
-			"isTrustedSource": true,
 			"loaded": fnLoadDone1Handler,
 			"error": function () {
 				assert.ok(false, "Error callback should not be called");
@@ -108,52 +106,6 @@ sap.ui.define([
 			.then(runThirdRendering)
 			.then(TestUtils.wait(5000))
 			.then(runFourthRendering);
-	});
-
-	QUnit.test("Test proeprty:isTrustedSource = true", function (assert) {
-		assert.expect(2);
-		var loadDone = assert.async();
-
-		var oOptions = {
-			"displayType": "Embedded",
-			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
-			"isTrustedSource": true,
-			"loaded": function () {
-				assert.equal(oPdfViewer.getDisplayType(), "Embedded", "displayTye remains to be Embedded");
-				assert.ok(true, "'Load' event fired");
-				loadDone();
-			},
-			"error": function () {
-				assert.ok(false, "'Error' event should not be fired");
-			}
-		};
-
-		oPdfViewer = TestUtils.createPdfViewer(oOptions);
-		TestUtils.renderPdfViewer(oPdfViewer);
-	});
-
-	QUnit.test("Test proeprty:isTrustedSource = false", function (assert) {
-		assert.expect(3);
-		var loadDone = assert.async();
-
-		var oOptions = {
-			"displayType": "Embedded",
-			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
-			"isTrustedSource": false
-		};
-
-		oPdfViewer = TestUtils.createPdfViewer(oOptions);
-		oPdfViewer.addEventDelegate({
-			onBeforeRendering: function() {
-				assert.equal(oPdfViewer.getDisplayType(), "Link", "displayType changed to Link");
-			},
-			onAfterRendering: function() {
-				assert.equal(oPdfViewer.getDisplayType(), "Embedded", "displayType reset back to initial");
-				assert.ok(oPdfViewer.getDomRef().querySelectorAll("#" + oPdfViewer.getId() + "-toolbarDownloadButton").length === 1, "Download button is displayed in Link mode");
-				loadDone();
-			}
-		});
-		TestUtils.renderPdfViewer(oPdfViewer);
 	});
 
 });

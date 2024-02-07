@@ -50,7 +50,6 @@ sap.ui.define([
 
 		var oOptions = {
 			source: "{/source}",
-			isTrustedSource: true,
 			title: sTitle,
 			loaded: function () {
 				assert.ok(true, "'loaded' event fired");
@@ -94,7 +93,6 @@ sap.ui.define([
 		var oOptions = {
 			showDownloadButton: false,
 			source: "{/source}",
-			isTrustedSource: true,
 			title: sTitle,
 			loaded: function () {
 				assert.ok(true, "'loaded' event fired");
@@ -134,7 +132,6 @@ sap.ui.define([
 
 		var oOptions = {
 			showDownloadButton: false,
-			isTrustedSource: true,
 			source: "{/source}",
 			loaded: function () {
 				assert.ok(true, "'loaded' event fired");
@@ -164,7 +161,6 @@ sap.ui.define([
 
 		var oOptions = {
 			showDownloadButton: "{/showDownloadButton}",
-			isTrustedSource: true,
 			source: "{/source}",
 			loaded: function () {
 				assert.ok(true, "'loaded' event fired");
@@ -267,7 +263,6 @@ sap.ui.define([
 
 		var oOptions = {
 			source: "{/source}",
-			isTrustedSource: true,
 			title: sTitle
 		};
 

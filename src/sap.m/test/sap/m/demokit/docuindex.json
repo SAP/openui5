@@ -2090,7 +2090,7 @@
 		{
 		  "id": "sap.m.sample.PDFViewerMultiple",
 		  "name": "PDF Viewer - Two PDF Documents",
-		  "description": "Two PDF viewer frames displayed side by side. The second frame has the property isTrustedSource set to false which opens the PDF viewer with the displayType set to Link"
+		  "description": "Two PDF viewer frames displayed side by side."
 		},
 		{
 		  "id": "sap.m.sample.FlexBoxOpposingAlignment",

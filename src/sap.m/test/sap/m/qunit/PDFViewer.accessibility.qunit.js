@@ -26,7 +26,6 @@ sap.ui.define([
 			oOptions = {
 			"title": sExpectedTitleText,
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
-			"isTrustedSource": true,
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired");
 				assert.equal(oPDFViewer.getDomRef().querySelector("#" + oPDFViewer.getId() + "-iframe").getAttribute("aria-label"),
@@ -60,7 +59,6 @@ sap.ui.define([
 
 		var oOptions = {
 			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
-			"isTrustedSource": true,
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired");
 				checkPopupContent();

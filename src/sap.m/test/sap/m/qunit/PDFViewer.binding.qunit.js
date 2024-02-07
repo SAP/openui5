@@ -30,7 +30,6 @@ sap.ui.define([
 
 		var oOptions = {
 			source: "{/source}",
-			isTrustedSource: true,
 			loaded: function () {
 				assert.ok(true, "'loaded' event fired");
 				loadDone();
@@ -66,7 +65,6 @@ sap.ui.define([
 
 		var oOptions = {
 			source: "{/source}",
-			isTrustedSource: true,
 			loaded: fnLoadHandler1,
 			error: function () {
 				assert.ok(false, "'error' event should not be fired");
@@ -117,7 +115,6 @@ sap.ui.define([
 
 		var oOptions = {
 			source: "{/source}",
-			isTrustedSource: true,
 			loaded: fnLoadHandler1,
 			error: function () {
 				assert.ok(false, "'error' event should not be fired");
