@@ -3,6 +3,11 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "3e307450be6ee1a4298610a2793fbf213d7aa460",
+        "type": "FEATURE",
+        "text": " Integration Cards: Remove message when previewMode fallbacks from MockData to Abstract"
+      },
+      {
         "id": "f5a3d2a28750163ce299a8daf2e0ce7857dbc190",
         "type": "FIX",
         "text": " Integration Card: Object Status icon in Table and Object Card is correctly positioned"

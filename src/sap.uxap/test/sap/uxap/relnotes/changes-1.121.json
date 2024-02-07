@@ -3,6 +3,11 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "d46ad37e12b4c7368555713597600ae7828545d8",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Collapse button visibility fixed"
+      },
+      {
         "id": "5862076fc6add34c46b2fcf45163ef67d3b721bb",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Fix collapsing header"

@@ -3,6 +3,21 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "e9c41724de841e30ec58986f16c57b554ec8f91c",
+        "type": "FEATURE",
+        "text": " Test Starter: Support resource-roots configuration"
+      },
+      {
+        "id": "4d41a586a648bc47bb34361a232b87cd25aba4f0",
+        "type": "FEATURE",
+        "text": " CLDR Upgrade to version 44"
+      },
+      {
+        "id": "9affd9e26ca5df82644dd5d7440aa792825cad25",
+        "type": "FEATURE",
+        "text": " sap/ui/core/format/NumberFormat.js: support rounding of numbers given as string"
+      },
+      {
         "id": "0e7c738c2afdf2e90e3f61314eb1ef49a5ddee9b",
         "type": "FIX",
         "text": " sap.ui.model.odata.ODataMetaModel#getODataValueLists: fetch missing metadata"

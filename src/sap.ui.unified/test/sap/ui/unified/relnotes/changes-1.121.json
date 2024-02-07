@@ -3,6 +3,11 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "ed33ba066b0f84b33e5b802d8b96becace4afbe4",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: improve anouncement info"
+      },
+      {
         "id": "3ff4e4eec8907edd2bae163391f1e0f0c242eee9",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: adjust external label references"

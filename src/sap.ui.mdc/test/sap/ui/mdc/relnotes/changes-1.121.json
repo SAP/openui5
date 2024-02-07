@@ -3,6 +3,11 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "afd3ed1c0a860fe47ca242832fb41ab74a21379d",
+        "type": "FEATURE",
+        "text": " ValueHelp: phone support for typeahead"
+      },
+      {
         "id": "94531bdd2322022ba075b558db56bf05d0e7c531",
         "type": "FIX",
         "text": " FilterField: show more link if typeahead autoclose used"

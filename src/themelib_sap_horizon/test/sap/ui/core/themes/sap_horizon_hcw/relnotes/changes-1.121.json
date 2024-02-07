@@ -3,6 +3,22 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "ce96d379bfc147fc2f7eb5ae25016710cb440e06",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Correctly displayed in none active List Item"
+      },
+      {
+        "id": "08576c8e0102e86f1f6aa2ce79f5245d01e61572",
+        "type": "FIX",
+        "text": " sap.m.Button: Emphasized button is displayed correctly now in horizon theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370117689"
+          }
+        ]
+      },
+      {
         "id": "c188e7912a15d0abc346d87abf9e82b01ca98053",
         "type": "FEATURE",
         "text": " sap.f.ShellBar: Search and copilot reworked"

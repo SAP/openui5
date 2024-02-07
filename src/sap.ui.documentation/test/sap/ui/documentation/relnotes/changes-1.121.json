@@ -3,6 +3,11 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "0419f2cadff4821418aebe62c1502b2ab17ba2af",
+        "type": "FIX",
+        "text": " DemoKit: Identification of relative SEO-optimized URLs corrected"
+      },
+      {
         "id": "647819bcb2bb537af0690b97a80eaf961862e448",
         "type": "FIX",
         "text": " Demo Kit: Fix broken links"

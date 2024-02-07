@@ -3,6 +3,11 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "ce96d379bfc147fc2f7eb5ae25016710cb440e06",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Correctly displayed in none active List Item"
+      },
+      {
         "id": "5d573f5e3dc08cbf5cd5252de567faad89b4dc49",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: Status with icon and text overflows correctly now",
