@@ -58,15 +58,14 @@ sap.ui.define([
 		 */
 		SinglePlanningCalendarMonthView.prototype.getScrollEntityCount = function(oStartDate, iOffset) {
 			var oNewDate = CalendarDate.fromLocalJSDate(oStartDate),
-				iMonth = oStartDate.getMonth() + iOffset,
-				iSign = iOffset > 0 ? 1 : -1;
+				iMonth = oStartDate.getMonth() + iOffset;
 
 			oNewDate.setMonth(iMonth);
 
 			// re-adjust if we skipped one month, because it has no such
 			// day(31 Jan -> 31 Feb -> 3 March)
 			while ((iMonth + 12) % 12 !== oNewDate.getMonth()) {
-				oNewDate.setDate(oNewDate.getDate() - iSign);
+				oNewDate.setDate(oNewDate.getDate() - 1);
 			}
 			return Math.abs(CalendarUtils._daysBetween(oNewDate, CalendarDate.fromLocalJSDate(oStartDate)));
 		};
