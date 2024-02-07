@@ -32,8 +32,9 @@
                 "sap/ui/core/ComponentContainer",
                 "sap/ui/core/Component",
                 "sap/ui/documentation/library",
-                "sap/base/Log"
-            ], function (Core, ComponentContainer, Component, library, Log) {
+                "sap/base/Log",
+                "sap/base/i18n/Localization"
+            ], function (Core, ComponentContainer, Component, library, Log, Localization) {
                 var setDensityClass = function(sDensityClass) {
                     var sBodyDensityClass = Array.prototype.find.call(document.body.classList, function(el){
                         return el.includes("sapUiSize");
@@ -158,7 +159,7 @@
                                     data: {
                                         "density": document.body.classList[1],
                                         "theme": Core.getConfiguration().getTheme(),
-                                        "RTL": Core.getConfiguration().getRTL()
+                                        "RTL": Localization.getRTL()
                                     }
                                 });
                                 } else if (eMessage.data.reason === "set") {

@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/util/Storage",
 	"sap/ui/documentation/sdk/controller/util/Highlighter",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"sap/base/i18n/Localization"
 ], function(
 	EventBus,
 	jQuery,
@@ -29,7 +30,8 @@ sap.ui.define([
 	Sorter,
 	Storage,
 	Highlighter,
-	Fragment
+	Fragment,
+	Localization
 ) {
 		"use strict";
 
@@ -165,7 +167,7 @@ sap.ui.define([
 						this._oViewSettings.densityMode = COZY;
 				}
 
-				this._oViewSettings.rtl = this._oCore.getConfiguration().getRTL();
+				this._oViewSettings.rtl = Localization.getRTL();
 
 				// Keep default settings for density mode up to date
 				this._oDefaultSettings.densityMode = this._oViewSettings.densityMode;
