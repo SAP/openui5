@@ -939,7 +939,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	];
 
 	/**
-	 * Version: tz 2023c (excluding backzone)
+	 * Version: tz 2023d (excluding backzone)
 	 * The IANA time zones are also available in a parsable format under:
 	 * https://github.com/eggert/tz
 	 *

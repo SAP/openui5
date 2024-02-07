@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "43.0.0",
-	"__buildtime": "2023-09-28T11:39:07.908Z",
+	"__version": "44.0.0",
+	"__buildtime": "2024-01-12T14:24:50.280Z",
 	"languages": {
 		"aa": "Afar",
 		"ab": "Abkhazia",
@@ -50,6 +50,7 @@
 		"bez": "Bena",
 		"bfd": "Bafut",
 		"bg": "Bulgaria",
+		"bgc": "Haryanvi",
 		"bgn": "Balochi Barat",
 		"bho": "Bhojpuri",
 		"bi": "Bislama",
@@ -169,7 +170,7 @@
 		"gor": "Gorontalo",
 		"grc": "Greek Purba",
 		"gsw": "Jerman Switzerland",
-		"gu": "Gujerat",
+		"gu": "Gujarat",
 		"guz": "Gusii",
 		"gv": "Manx",
 		"gwi": "Gwichʼin",
@@ -367,6 +368,7 @@
 		"pt_PT": "Portugis Eropah",
 		"qu": "Quechua",
 		"quc": "Kʼicheʼ",
+		"raj": "Rajasthani",
 		"rap": "Rapanui",
 		"rar": "Rarotonga",
 		"rhg": "Rohingya",
@@ -821,6 +823,8 @@
 		"IM": "Isle of Man",
 		"IN": "India",
 		"IO": "Wilayah Lautan Hindi British",
+		"IO-alt-biot": "Wilayah Lautan Hindi British",
+		"IO-alt-chagos": "Kepulauan Chagos",
 		"IQ": "Iraq",
 		"IR": "Iran",
 		"IS": "Iceland",
@@ -2061,7 +2065,7 @@
 			"0": "H"
 		},
 		"era-narrow": {
-			"0": "AH"
+			"0": "H"
 		}
 	},
 	"ca-japanese": {
@@ -4558,6 +4562,12 @@
 			"10p-24": {
 				"unitPrefixPattern": "y{0}"
 			},
+			"10p-27": {
+				"unitPrefixPattern": "r{0}"
+			},
+			"10p-30": {
+				"unitPrefixPattern": "q{0}"
+			},
 			"10p1": {
 				"unitPrefixPattern": "da{0}"
 			},
@@ -4587,6 +4597,12 @@
 			},
 			"10p24": {
 				"unitPrefixPattern": "Y{0}"
+			},
+			"10p27": {
+				"unitPrefixPattern": "R{0}"
+			},
+			"10p30": {
+				"unitPrefixPattern": "Q{0}"
 			},
 			"1024p1": {
 				"unitPrefixPattern": "Ki{0}"
@@ -4811,7 +4827,7 @@
 			"duration-quarter": {
 				"displayName": "sk",
 				"unitPattern-count-other": "{0} sk",
-				"perUnitPattern": "{0}/q"
+				"perUnitPattern": "{0}/sk"
 			},
 			"duration-month": {
 				"displayName": "bulan",
@@ -4964,8 +4980,8 @@
 				"unitPattern-count-other": "{0} dpi"
 			},
 			"graphics-dot": {
-				"displayName": "px",
-				"unitPattern-count-other": "{0} px"
+				"displayName": "bintik",
+				"unitPattern-count-other": "{0} bintik"
 			},
 			"length-earth-radius": {
 				"displayName": "R⊕",
@@ -5220,6 +5236,10 @@
 				"displayName": "kn",
 				"unitPattern-count-other": "{0} kn"
 			},
+			"speed-beaufort": {
+				"displayName": "Bft",
+				"unitPattern-count-other": "B {0}"
+			},
 			"temperature-generic": {
 				"displayName": "°",
 				"unitPattern-count-other": "{0}°"
@@ -5395,9 +5415,9 @@
 		}
 	},
 	"lenient-scope-number": {
-		"minusSign": "-‒⁻₋−➖﹣－",
-		"commaSign": ",،٫、︐︑﹐﹑，､",
-		"plusSign": "+⁺₊➕﬩﹢＋"
+		"minusSign": "-－﹣ ‑‒−⁻₋➖",
+		"commaSign": ",，﹐︐ ،٫、﹑､︑",
+		"plusSign": "+＋﬩﹢⁺₊ ➕"
 	},
 	"currencyFormat-sap-short": {
 		"1000-other": "0K ¤",

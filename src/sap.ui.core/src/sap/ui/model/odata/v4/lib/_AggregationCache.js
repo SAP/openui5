@@ -10,11 +10,12 @@ sap.ui.define([
 	"./_GroupLock",
 	"./_Helper",
 	"./_MinMaxHelper",
+	"./_TreeState",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/ODataUtils"
-], function (_AggregationHelper, _Cache, _ConcatHelper, _GroupLock, _Helper, _MinMaxHelper, Log,
-		SyncPromise, ODataUtils) {
+], function (_AggregationHelper, _Cache, _ConcatHelper, _GroupLock, _Helper, _MinMaxHelper,
+		_TreeState, Log, SyncPromise, ODataUtils) {
 	"use strict";
 
 	//*********************************************************************************************
@@ -114,6 +115,10 @@ sap.ui.define([
 		} else if (fnLeaves) {
 			_ConcatHelper.enhanceCache(that.oFirstLevel, oAggregation, [fnLeaves, fnCount]);
 		}
+		this.oTreeState = new _TreeState(oAggregation.$NodeProperty);
+		// Whether this cache is a unified cache, using oFirstLevel with ExpandLevels instead of
+		// separate group level caches
+		this.bUnifiedCache = false;
 	}
 
 	// make _AggregationCache a _Cache, but actively disinherit some critical methods
@@ -374,6 +379,7 @@ sap.ui.define([
 		const oGroupNode = this.getValue(sGroupNodePath);
 		const oCollapsed = _AggregationHelper.getCollapsedObject(oGroupNode);
 		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode, oCollapsed);
+		this.oTreeState.collapse(oGroupNode);
 
 		const aElements = this.aElements;
 		const iIndex = aElements.indexOf(oGroupNode);
@@ -420,6 +426,9 @@ sap.ui.define([
 			// Note: "descendants" refers to LimitedDescendantCount and counts descendants within
 			// "top pyramid" only!
 			iGroupNodeLevel = this.oAggregation.expandTo;
+		}
+		if (this.bUnifiedCache) {
+			iGroupNodeLevel = Infinity;
 		}
 		const aElements = this.aElements;
 		for (i = iIndex + 1; i < aElements.length; i += 1) {
@@ -625,7 +634,9 @@ sap.ui.define([
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise<number>}
-	 *   A promise that is resolved with the number of nodes at the next level
+	 *   A promise that is resolved with the number of nodes at the next level, 0 if the node or
+	 *   one of its parent is collapsed again before the response arrived, or -1 if the cache needs
+	 *   to be refreshed (a unified cache)
 	 *
 	 * @public
 	 * @see #collapse
@@ -642,6 +653,7 @@ sap.ui.define([
 			// Note: this also prevents a 2nd expand of the same node
 			_Helper.updateAll(this.mChangeListeners, vGroupNodeOrPath, oGroupNode,
 				_AggregationHelper.getOrCreateExpandedObject(this.oAggregation, oGroupNode));
+			this.oTreeState.expand(oGroupNode);
 		} // else: no update needed!
 
 		if (aSpliced) {
@@ -687,6 +699,9 @@ sap.ui.define([
 				}
 			});
 			return SyncPromise.resolve(iCount);
+		}
+		if (this.bUnifiedCache) {
+			return SyncPromise.resolve(-1); // refresh needed
 		}
 
 		let oCache = _Helper.getPrivateAnnotation(oGroupNode, "cache");
@@ -762,24 +777,26 @@ sap.ui.define([
 			// Note: typeof vGroupNodeOrPath === "string"
 			_Helper.updateAll(that.mChangeListeners, vGroupNodeOrPath, oGroupNode,
 				_AggregationHelper.getCollapsedObject(oGroupNode));
+			that.oTreeState.collapse(oGroupNode);
 
 			throw oError;
 		});
 	};
 
 	/**
-	 * Returns a promise to be resolved with an OData object for the requested parent node.
+	 * Returns a promise to be resolved with the index for the requested parent node. The
+	 * parent is also added to the correct position in this cache.
 	 *
 	 * @param {number} iIndex
 	 *   The index of the child node
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the requests with
-	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise to be resolved with the requested data of the parent.
+	 * @returns {Promise<number>}
+	 *   A promise to be resolved with the requested index of the parent.
 	 *
 	 * @public
 	 */
-	_AggregationCache.prototype.fetchParent = function (iIndex, oGroupLock) {
+	_AggregationCache.prototype.fetchParentIndex = function (iIndex, oGroupLock) {
 		const sFilter = _Helper.getKeyFilter(this.aElements[iIndex], this.oAggregation.$metaPath,
 			this.getTypes());
 		const mQueryOptions = Object.assign({}, this.mQueryOptions);
@@ -791,18 +808,31 @@ sap.ui.define([
 		const sQueryString = this.sResourcePath
 			+ this.oRequestor.buildQueryString(/*sMetaPath*/null, mQueryOptions);
 
-		return SyncPromise.all([
-			this.oRequestor.request("GET", sQueryString, oGroupLock),
-			this.fetchTypes()
-		]).then((aResults) => {
-			const oParent = aResults[0].value[0];
-			this.visitResponse(oParent, aResults[1],
-				_Helper.getMetaPath(_Helper.buildPath(this.sMetaPath, "")));
+		return this.oRequestor.request("GET", sQueryString, oGroupLock).then(async (oResult) => {
+			const oParent = oResult.value[0];
+			_Helper.setPrivateAnnotation(oParent, "parent", this.oFirstLevel);
+			const aSelect = [
+				this.oAggregation.$DistanceFromRoot,
+				this.oAggregation.$DrillState,
+				this.oAggregation.$LimitedDescendantCount
+			];
+			const [iRank] = await Promise.all([
+				this.requestRank(oParent, oGroupLock),
+				this.requestProperties(oParent, aSelect, oGroupLock, true),
+				this.requestNodeProperty(oParent, oGroupLock)
+			]);
 
-			this.aElements.$byPredicate[_Helper.getPrivateAnnotation(oParent, "predicate")]
-				= oParent;
+			this.oFirstLevel.calculateKeyPredicate(oParent,
+				this.getTypes(), _Helper.getMetaPath(_Helper.buildPath(this.sMetaPath, "")));
 
-			return oParent;
+			const iParentIndex = this.getArrayIndex(iRank);
+			this.addElements(oParent, iParentIndex, this.oFirstLevel, iRank);
+
+			// poor man's #replaceElement to replace undefined w/ oParent
+			this.oFirstLevel.removeElement(iRank);
+			this.oFirstLevel.restoreElement(iRank, oParent);
+
+			return iParentIndex;
 		});
 	};
 
@@ -880,6 +910,40 @@ sap.ui.define([
 		aAllElements.$count = this.aElements.$count;
 
 		return aAllElements;
+	};
+
+	/**
+	 * Returns the index in <code>aElements</code> for a given rank. The given (limited preorder)
+	 * rank does not reflect the correct position of a node in the cache. On the one hand nodes
+	 * within group level caches or out of place nodes (e.g. created or moved nodes) are causing
+	 * that the position of the node to be inserted is further down, on the other hand collapsed
+	 * nodes in the first level cache are causing that the insert position is further up.
+	 *
+	 * @param {number} iRank
+	 *   The (limited preorder) rank of a node
+	 * @returns {number}
+	 *   The array index
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.getArrayIndex = function (iRank) {
+		let iIndex = iRank;
+		for (let i = 0; i < iIndex; i += 1) {
+			const oNode = this.aElements[i];
+			if (oNode["@$ui5.node.isExpanded"] === false) {
+				// descendants of collapsed nodes in oFirstLevel are reducing the rank in the list;
+				// descendants of nodes in group level caches must NOT be taken into account, these
+				// nodes have no private Annotation for the descendants
+				iIndex -= _Helper.getPrivateAnnotation(oNode, "descendants", 0);
+			}
+			// nodes of group level caches or out of place nodes must be taken into account
+			if (_Helper.getPrivateAnnotation(oNode, "parent") !== this.oFirstLevel
+					|| _Helper.getPrivateAnnotation(oNode, "rank") > iRank) {
+				iIndex += 1;
+			}
+		}
+
+		return iIndex;
 	};
 
 	/**
@@ -1457,7 +1521,9 @@ sap.ui.define([
 				for (j = 0; j < that.aElements.$count; j += 1) {
 					if (!that.aElements[j]) {
 						that.aElements[j] = _AggregationHelper.createPlaceholder(
-							that.oAggregation.expandTo > 1 ? /*don't know*/0 : 1,
+							that.oAggregation.expandTo > 1 || that.bUnifiedCache
+								? /*don't know*/0
+								: 1,
 							j - iOffset, that.oFirstLevel);
 					}
 				}
@@ -1586,11 +1652,7 @@ sap.ui.define([
 			return; // already available
 		}
 
-		const oResult
-			= await this.requestProperties(oElement, [this.oAggregation.$NodeProperty], oGroupLock);
-
-		_Helper.inheritPathValue(this.oAggregation.$NodeProperty.split("/"), oResult, oElement,
-			true);
+		await this.requestProperties(oElement, [this.oAggregation.$NodeProperty], oGroupLock, true);
 	};
 
 	/**
@@ -1601,12 +1663,16 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   An original lock for the group ID to be used for the GET request, to be cloned via
 	 *   {@link sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
-	 * @returns {Promise<number>}
-	 *   A promise which is resolved with the result object, or rejected in case of an error
+	 * @param {boolean} [bInheritResult]
+	 *   Whether the result is inherited in the given element
+	 * @returns {Promise<object|void>}
+	 *   A promise which is resolved without a defined result in case <code>bInheritResult</code> is
+	 *   set to <code>true</code>, or with the result object, or rejected in case of an error
 	 *
 	 * @private
 	 */
-	_AggregationCache.prototype.requestProperties = async function (oElement, aSelect, oGroupLock) {
+	_AggregationCache.prototype.requestProperties = async function (oElement, aSelect, oGroupLock,
+			bInheritResult) {
 		const sMetaPath = this.oAggregation.$metaPath;
 		const mQueryOptions = {
 			$apply : _Helper.getPrivateAnnotation(oElement, "parent").getQueryOptions().$apply,
@@ -1617,8 +1683,15 @@ sap.ui.define([
 		const oResult = await this.oRequestor.request("GET", sResourcePath,
 			oGroupLock.getUnlockedCopy(), undefined, undefined, undefined, undefined, sMetaPath,
 			undefined, false, {$select : aSelect}, this);
+		const oRequestedProperties = oResult.value[0];
 
-		return oResult.value[0];
+		if (bInheritResult) {
+			aSelect.forEach((sPath) => {
+				_Helper.inheritPathValue(sPath.split("/"), oRequestedProperties, oElement, true);
+			});
+		} else {
+			return oRequestedProperties;
+		}
 	};
 
 	/**
@@ -1668,13 +1741,19 @@ sap.ui.define([
 		});
 
 		this.oAggregation = oAggregation;
-		this.sDownloadUrl = _Cache.prototype.getDownloadUrl.call(this, "");
 		// "super" call (like @borrows ...)
 		this.oFirstLevel.reset.call(this, aKeptElementPredicates, sGroupId, mQueryOptions);
-		if (sGroupId) {
+		// reset modifies the cache's query options => recalculate the download URL
+		this.sDownloadUrl = _Cache.prototype.getDownloadUrl.call(this, "");
+		if (sGroupId) { // sGroupId means we are in a side-effects refresh
 			this.oBackup.oCountPromise = this.oCountPromise;
 			this.oBackup.oFirstLevel = this.oFirstLevel;
+			this.oBackup.bUnifiedCache = this.bUnifiedCache;
+			this.bUnifiedCache = true;
+		} else {
+			this.oTreeState.reset();
 		}
+		this.oAggregation.$ExpandLevels = this.oTreeState.getExpandLevels();
 		this.oCountPromise = undefined;
 		if (mQueryOptions.$count) {
 			this.oCountPromise = new SyncPromise(function (resolve) {
@@ -1701,6 +1780,7 @@ sap.ui.define([
 		if (bReally) {
 			this.oCountPromise = this.oBackup.oCountPromise;
 			this.oFirstLevel = this.oBackup.oFirstLevel;
+			this.bUnifiedCache = this.oBackup.bUnifiedCache;
 		}
 		// "super" call (like @borrows ...)
 		this.oFirstLevel.restore.call(this, bReally);

@@ -35,6 +35,7 @@ sap.ui.define([
 				 */
 				rowCountMode: {
 					type: "sap.ui.mdc.enums.TableRowCountMode",
+					group: "Behavior",
 					defaultValue: TableRowCountMode.Auto
 				},
 				/**
@@ -44,6 +45,7 @@ sap.ui.define([
 				 */
 				rowCount: {
 					type: "int",
+					group: "Appearance",
 					defaultValue: 10
 				},
 				/**
@@ -63,6 +65,7 @@ sap.ui.define([
 				 */
 				selectionLimit: {
 					type: "int",
+					group: "Behavior",
 					defaultValue: 200
 				},
 				/**
@@ -70,13 +73,15 @@ sap.ui.define([
 				 */
 				showHeaderSelector: {
 					type: "boolean",
+					group: "Appearance",
 					defaultValue: true
 				},
 				/**
-				 * Defines the number of fixed columns in the inner table.
+				 * Defines the number of fixed columns.
 				 */
 				fixedColumnCount: {
 					type: "int",
+					group: "Appearance",
 					defaultValue: 0
 				}
 			}

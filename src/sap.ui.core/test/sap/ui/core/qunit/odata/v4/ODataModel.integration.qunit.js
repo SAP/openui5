@@ -202,7 +202,7 @@ sap.ui.define([
 		}
 
 		let iExpandTo = oListBinding.getAggregation().expandTo || 1;
-		if (iExpandTo >= Number.MAX_SAFE_INTEGER) {
+		if (iExpandTo >= Number.MAX_SAFE_INTEGER || oListBinding.oCache.bUnifiedCache) {
 			iExpandTo = 99; // avoid "Invalid array length" :-)
 		}
 		for (let i = 0; i <= iExpandTo; i += 1) {
@@ -2176,7 +2176,7 @@ sap.ui.define([
 					// methods it must be possible to insert the ETag from the header
 					|| (vRequest.method === "GET" ? null : {});
 			vRequest.url = vRequest.url.replaceAll(/[ "\[\]{}]/g,
-				(s) => `%${s.charCodeAt(0).toString(16).padStart(2, 0)}`);
+				(s) => `%${s.charCodeAt(0).toString(16).padStart(2, 0).toUpperCase()}`);
 			if (vResponse && !(vResponse instanceof Error || vResponse instanceof Promise
 					|| typeof vResponse === "function")) { // vResponse may be inspected
 				if (rCountTrue.test(vRequest.url)) { // $count=true
@@ -31312,6 +31312,852 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A hierarchy has an initial expandTo=1 and three visible rows. Expand and collapse
+	// various nodes and request side effects.
+	// (1) Expand Alpha (1 child Beta)
+	// (2) Request side effects -> Alpha gets a bonus item Delta
+	// (3) Expand Beta (1 child Gamma)
+	// (4) Check getDownloadUrl
+	// (5) Collapse Alpha
+	// (6) Expand Alpha (no request, Beta is still expanded)
+	// (7) Collapse Alpha
+	// (8) Request side effects -> swap position of Alpha and Epsilon
+	// (9) Expand Alpha -> Child Beta is expanded too, Beta and Delta swap positions
+	// (10) Scroll down, Gamma becomes visible
+	// JIRA: CPOUI5ODATAV4-2032
+	QUnit.test("Recursive Hierarchy: side-effects refresh (expandTo=1)", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
+		const baseUrl = (sExpandLevels) => sFriend.slice(1)
+			+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID',Levels=1"
+			+ (sExpandLevels ? ",ExpandLevels=" + sExpandLevels : "") + ")";
+		const sSelect = "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID";
+		const sFullSelect = "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,"
+			+ "_/DistanceFromRoot,_/DrillState,_/NodeID";
+		const sView = `
+<t:Table id="table" rows="{path : '/Artists(ArtistID=\\'99\\',IsActiveEntity=false)/_Friend',
+		parameters : {
+			$$aggregation : {
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="3">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ArtistID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha (collapsed)
+		// 5 Epsilon
+		this.expectRequest(baseUrl() + sSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "2",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DrillState : "collapsed",
+						NodeID : "1,false"
+					}
+				}, {
+					ArtistID : "5",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "5,false"
+					}
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oBinding = oTable.getBinding("rows");
+		checkTable("initial page", assert, oTable, [
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='5',IsActiveEntity=false)"
+		], [
+			[false, 1, "1", "Alpha"],
+			[undefined, 1, "5", "Epsilon"]
+		]);
+
+		const oAlpha = oTable.getRows()[0].getBindingContext();
+
+		// 1 Alpha
+		//   2 Beta (collapsed)
+		// 5 Epsilon
+		this.expectRequest(sFriend.slice(1) + "?$apply=descendants($root/Artists"
+				+ "(ArtistID='99',IsActiveEntity=false)/_Friend,OrgChart,_/NodeID,"
+				+ "filter(ArtistID eq '1' and IsActiveEntity eq false),1)"
+				+ sSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "1",
+				value : [{
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DrillState : "collapsed",
+						NodeID : "2,false"
+					}
+				}]
+			});
+
+		oAlpha.expand();
+
+		await this.waitForChanges(assert, "(1) expand Alpha");
+
+		checkTable("after (1)", assert, oTable, [
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='2',IsActiveEntity=false)",
+			sFriend + "(ArtistID='5',IsActiveEntity=false)"
+		], [
+			[true, 1, "1", "Alpha"],
+			[false, 2, "2", "Beta"],
+			[undefined, 1, "5", "Epsilon"]
+		]);
+
+		const oBeta = oTable.getRows()[1].getBindingContext();
+
+		// 1 Alpha
+		//   2 Beta (collapsed)
+		//   4 Delta (via side effect)
+		// 5 Epsilon
+		this.expectRequest(baseUrl('[{"NodeID":"1,false","Levels":1}]')
+				+ sFullSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "4",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "2",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "collapsed",
+						NodeID : "2,false"
+					}
+				}, {
+					ArtistID : "4",
+					IsActiveEntity : false,
+					Name : "Delta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						NodeID : "4,false"
+					}
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "(2) request side effects")
+		]);
+
+		checkTable("after (2)", assert, oTable, [
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='2',IsActiveEntity=false)",
+			sFriend + "(ArtistID='4',IsActiveEntity=false)"
+		], [
+			[true, 1, "1", "Alpha"],
+			[false, 2, "2", "Beta"],
+			[undefined, 2, "4", "Delta"]
+		], 4);
+
+		// 1 Alpha
+		//   2 Beta
+		//     3 Gamma
+		//   4 Delta
+		// 5 Epsilon
+		this.expectRequest(
+				baseUrl('[{"NodeID":"1,false","Levels":1},{"NodeID":"2,false","Levels":1}]')
+				+ sFullSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "5",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "2,false"
+					}
+				}, {
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "Gamma",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "3,false"
+					}
+				}]
+			});
+
+		// code under test: side-effects expand
+		oBeta.expand();
+
+		await this.waitForChanges(assert, "(3) expand Beta");
+
+		checkTable("after (3)", assert, oTable, [
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='2',IsActiveEntity=false)",
+			sFriend + "(ArtistID='3',IsActiveEntity=false)"
+		], [
+			[true, 1, "1", "Alpha"],
+			[true, 2, "2", "Beta"],
+			[undefined, 3, "3", "Gamma"]
+		], 5);
+
+		assert.strictEqual(oBinding.getDownloadUrl(),
+			"/special/cases/" + sFriend.slice(1)
+			+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root"
+			+ "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend,HierarchyQualifier='OrgChart'"
+			+ ",NodeProperty='_/NodeID')"
+			+ "&$select=ArtistID,IsActiveEntity,Name,_/DistanceFromRoot,_/DrillState,_/NodeID",
+			"(4) getDownloadUrl");
+
+		// 1 Alpha (collapsed)
+		// 5 Epsilon
+		this.expectRequest(
+				baseUrl('[{"NodeID":"1,false","Levels":1},{"NodeID":"2,false","Levels":1}]')
+				+ sFullSelect + "&$skip=4&$top=1", {
+				value : [{
+					ArtistID : "5",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "leaf",
+						NodeID : "5,false"
+					}
+				}]
+			});
+
+		// code under test: collapse in unified cache
+		oAlpha.collapse();
+
+		await this.waitForChanges(assert, "(5) collapse Alpha");
+
+		checkTable("after (5)", assert, oTable, [
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='5',IsActiveEntity=false)"
+		], [
+			[false, 1, "1", "Alpha"],
+			[undefined, 1, "5", "Epsilon"]
+		]);
+
+		// 1 Alpha
+		//   2 Beta
+		//     3 Gamma
+		//   4 Delta
+		// 5 Epsilon
+
+		// code under test: expand and insert spliced children
+		oAlpha.expand();
+
+		await this.waitForChanges(assert, "(6) expand Alpha");
+
+		checkTable("after (6)", assert, oTable, [
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='2',IsActiveEntity=false)",
+			sFriend + "(ArtistID='3',IsActiveEntity=false)",
+			sFriend + "(ArtistID='5',IsActiveEntity=false)"
+		], [
+			[true, 1, "1", "Alpha"],
+			[true, 2, "2", "Beta"],
+			[undefined, 3, "3", "Gamma"]
+		], 5);
+
+		// 1 Alpha (collapsed)
+		// 5 Epsilon
+
+		// code under test: collapse in unified cache
+		oAlpha.collapse();
+
+		await this.waitForChanges(assert, "(7) collapse Alpha");
+
+		checkTable("after (7)", assert, oTable, [
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='5',IsActiveEntity=false)"
+		], [
+			[false, 1, "1", "Alpha"],
+			[undefined, 1, "5", "Epsilon"]
+		]);
+
+		// 5 Epsilon
+		// 1 Alpha (collapsed)
+		this.expectRequest(baseUrl('[{"NodeID":"2,false","Levels":1}]')
+				+ sFullSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "2",
+				value : [{
+					ArtistID : "5",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "leaf",
+						NodeID : "5,false"
+					}
+				}, {
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "collapsed",
+						NodeID : "1,false"
+					}
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "(8) request side effects")
+		]);
+
+		checkTable("after (8)", assert, oTable, [
+			sFriend + "(ArtistID='5',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1',IsActiveEntity=false)"
+		], [
+			[undefined, 1, "5", "Epsilon"],
+			[false, 1, "1", "Alpha"]
+		]);
+
+		// 5 Epsilon
+		// 1 Alpha
+		//   4 Delta
+		//   2 Beta
+		//     3 Gamma
+		this.expectRequest(
+				baseUrl('[{"NodeID":"2,false","Levels":1},{"NodeID":"1,false","Levels":1}]')
+				+ sFullSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "5",
+				value : [{
+					ArtistID : "5",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "leaf",
+						NodeID : "5,false"
+					}
+				}, {
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					}
+				}, {
+					ArtistID : "4",
+					IsActiveEntity : false,
+					Name : "Delta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						NodeID : "4,false"
+					}
+				}]
+			});
+
+		// code under test
+		oAlpha.expand();
+
+		await this.waitForChanges(assert, "(9) expand Alpha");
+
+		checkTable("after (9)", assert, oTable, [
+			sFriend + "(ArtistID='5',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='4',IsActiveEntity=false)"
+		], [
+			[undefined, 1, "5", "Epsilon"],
+			[true, 1, "1", "Alpha"],
+			[undefined, 2, "4", "Delta"]
+		], 5);
+
+		// 5 Epsilon
+		// 1 Alpha
+		//   4 Delta
+		//   2 Beta
+		//     3 Gamma
+		this.expectRequest(
+				baseUrl('[{"NodeID":"2,false","Levels":1},{"NodeID":"1,false","Levels":1}]')
+				+ sFullSelect + "&$skip=3&$top=2", {
+				value : [{
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "2,false"
+					}
+				}, {
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "Gamma",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "3,false"
+					}
+				}]
+			});
+
+		// code under test
+		oTable.setFirstVisibleRow(2);
+
+		await this.waitForChanges(assert, "(10) scroll down");
+
+		checkTable("after (10)", assert, oTable, [
+			sFriend + "(ArtistID='5',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='4',IsActiveEntity=false)",
+			sFriend + "(ArtistID='2',IsActiveEntity=false)",
+			sFriend + "(ArtistID='3',IsActiveEntity=false)"
+		], [
+			[undefined, 2, "4", "Delta"],
+			[true, 2, "2", "Beta"],
+			[undefined, 3, "3", "Gamma"]
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: A hierarchy has an initial expandTo=1 and three visible rows. Expand and collapse
+	// various nodes and request side effects.
+	// (1) Collapse Beta -> Alpha, Beta, Delta
+	// (2) Request side effects -> Delta is removed -> Alpha, Beta, Epsilon
+	// (3) Collapse Alpha -> Alpha, Epsilon
+	// (4) Check getDownloadUrl
+	// (5) Expand Alpha (no Request, Beta is still collapsed)
+	// (6) Collapse Alpha
+	// (7) Request side effects -> swap position of Alpha and Epsilon
+	// (8) Expand Alpha -> Beta is still collapsed
+	// (9) Expand Beta -> ExpandLevels is removed from TopLevels
+	// JIRA: CPOUI5ODATAV4-2032
+	QUnit.test("Recursive Hierarchy: side-effects refresh (expand all)", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
+		const baseUrl = (sExpandLevels) => sFriend.slice(1)
+			+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID'"
+			+ (sExpandLevels ? ",ExpandLevels=" + sExpandLevels : "") + ")";
+		const sSelect = "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,"
+			+ "_/DistanceFromRoot,_/DrillState,_/NodeID";
+		const sView = `
+<t:Table id="table" rows="{path : '/Artists(ArtistID=\\'99\\',IsActiveEntity=false)/_Friend',
+		parameters : {
+			$$aggregation : {
+				expandTo : 1E16,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="3">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ArtistID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		//   2 Beta
+		//     3 Gamma
+		//   4 Delta
+		// 5 Epsilon
+		this.expectRequest(baseUrl() + sSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "5",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "2,false"
+					}
+				}, {
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "Gamma",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "3,false"
+					}
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oBinding = oTable.getBinding("rows");
+		checkTable("initial page", assert, oTable, [
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='2',IsActiveEntity=false)",
+			sFriend + "(ArtistID='3',IsActiveEntity=false)"
+		], [
+			[true, 1, "1", "Alpha"],
+			[true, 2, "2", "Beta"],
+			[undefined, 3, "3", "Gamma"]
+		], 5);
+
+		// Note: this context is later destroyed by a refresh while Alpha is collapsed
+		let oBeta = oTable.getRows()[1].getBindingContext();
+
+		// 1 Alpha
+		//   2 Beta (collapsed)
+		//     3 Gamma (spliced)
+		//   4 Delta
+		// 5 Epsilon
+		this.expectRequest(baseUrl()
+				+ "&$select=ArtistID,IsActiveEntity,Name,"
+				+ "_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID"
+				+ "&$skip=3&$top=1", {
+				value : [{
+					ArtistID : "4",
+					IsActiveEntity : false,
+					Name : "Delta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						NodeID : "4,false"
+					}
+				}]
+			});
+
+		// code under test
+		oBeta.collapse();
+
+		await this.waitForChanges(assert, "(1) collapse Beta");
+
+		checkTable("after (1)", assert, oTable, [
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='2',IsActiveEntity=false)",
+			sFriend + "(ArtistID='4',IsActiveEntity=false)"
+		], [
+			[true, 1, "1", "Alpha"],
+			[false, 2, "2", "Beta"],
+			[undefined, 2, "4", "Delta"]
+		], 4);
+
+		// 1 Alpha
+		//   2 Beta (collapsed)
+		// 5 Epsilon
+		this.expectRequest(baseUrl('[{"NodeID":"2,false","Levels":0}]')
+				+ sSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "3",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "collapsed",
+						NodeID : "2,false"
+					}
+				}, {
+					ArtistID : "5",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "leaf",
+						NodeID : "5,false"
+					}
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "(2) request side effects")
+		]);
+
+		checkTable("after (2)", assert, oTable, [
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='2',IsActiveEntity=false)",
+			sFriend + "(ArtistID='5',IsActiveEntity=false)"
+		], [
+			[true, 1, "1", "Alpha"],
+			[false, 2, "2", "Beta"],
+			[undefined, 1, "5", "Epsilon"]
+		]);
+
+		// 1 Alpha (collapsed)
+		//   2 Beta (spliced)
+		// 5 Epsilon
+
+		const oAlpha = oTable.getRows()[0].getBindingContext();
+		// code under test
+		oAlpha.collapse();
+
+		await this.waitForChanges(assert, "(3) collapse Alpha");
+
+		checkTable("after (3)", assert, oTable, [
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='5',IsActiveEntity=false)"
+		], [
+			[false, 1, "1", "Alpha"],
+			[undefined, 1, "5", "Epsilon"]
+		]);
+
+		assert.strictEqual(
+			oBinding.getDownloadUrl(),
+			"/special/cases/" + baseUrl()
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/DistanceFromRoot,_/DrillState,_/NodeID",
+			"(4) getDownloadUrl");
+
+		// 1 Alpha
+		//   2 Beta (collapsed)
+		// 5 Epsilon
+
+		// code under test
+		oAlpha.expand();
+
+		await this.waitForChanges(assert, "(5) expand Alpha");
+
+		checkTable("after (5)", assert, oTable, [
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='2',IsActiveEntity=false)",
+			sFriend + "(ArtistID='5',IsActiveEntity=false)"
+		], [
+			[true, 1, "1", "Alpha"],
+			[false, 2, "2", "Beta"],
+			[undefined, 1, "5", "Epsilon"]
+		]);
+
+		// 1 Alpha (collapsed)
+		//   2 Beta (spliced)
+		// 5 Epsilon
+
+		// code under test
+		oAlpha.collapse();
+
+		await this.waitForChanges(assert, "(6) collapse Alpha");
+
+		checkTable("after (6)", assert, oTable, [
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='5',IsActiveEntity=false)"
+		], [
+			[false, 1, "1", "Alpha"],
+			[undefined, 1, "5", "Epsilon"]
+		]);
+
+		// 5 Epsilon
+		// 1 Alpha (collapsed)
+		this.expectRequest(
+			baseUrl('[{"NodeID":"2,false","Levels":0},{"NodeID":"1,false","Levels":0}]')
+			+ sSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "2",
+				value : [{
+					ArtistID : "5",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "leaf",
+						NodeID : "5,false"
+					}
+				}, {
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "collapsed",
+						NodeID : "1,false"
+					}
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "(7) request side effects")
+		]);
+
+		checkTable("after (7)", assert, oTable, [
+			sFriend + "(ArtistID='5',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1',IsActiveEntity=false)"
+		], [
+			[undefined, 1, "5", "Epsilon"],
+			[false, 1, "1", "Alpha"]
+		]);
+
+		// 5 Epsilon
+		// 1 Alpha
+		//   2 Beta (collapsed)
+		this.expectRequest(baseUrl('[{"NodeID":"2,false","Levels":0}]')
+				+ sSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "3",
+				value : [{
+					ArtistID : "5",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "leaf",
+						NodeID : "5,false"
+					}
+				}, {
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "collapsed",
+						NodeID : "2,false"
+					}
+				}]
+			});
+
+		// code under test
+		oAlpha.expand();
+
+		await this.waitForChanges(assert, "(8) expand Alpha");
+
+		checkTable("after (8)", assert, oTable, [
+			sFriend + "(ArtistID='5',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='2',IsActiveEntity=false)"
+		], [
+			[undefined, 1, "5", "Epsilon"],
+			[true, 1, "1", "Alpha"],
+			[false, 2, "2", "Beta"]
+		]);
+
+		oBeta = oTable.getRows()[2].getBindingContext();
+
+		// 5 Epsilon
+		// 1 Alpha
+		//   2 Beta
+		//     3 Gamma
+		this.expectRequest(baseUrl() + sSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "4",
+				value : [{
+					ArtistID : "5",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "leaf",
+						NodeID : "5,false"
+					}
+				}, {
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "2",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "2,false"
+					}
+				}]
+			});
+
+		// code under test
+		oBeta.expand();
+
+		await this.waitForChanges(assert, "(9) expand Beta");
+
+		checkTable("after (9)", assert, oTable, [
+			sFriend + "(ArtistID='5',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='2',IsActiveEntity=false)"
+		], [
+			[undefined, 1, "5", "Epsilon"],
+			[true, 1, "1", "Alpha"],
+			[true, 2, "2", "Beta"]
+		], 4);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Expand all levels of a recursive hierarchy and move a node with descendants (not
 	// yet fully loaded) to another parent. Although it is shown as the new parent's first child on
 	// UI, it is actually inserted between older siblings on the server. Still, paging works!
@@ -32220,15 +33066,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Determine the parent of a node in a hierarchy where a preceding sibling is not
-	// yet loaded, but the parent is found. Determine the parent of a node where the parent is not
-	// yet loaded and request this parent.
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 3. Create a new
+	// child ("Iota") inserted below "Beta"; create a new child node ("Rho") inserted below "Alpha"
+	// on the UI, but the rank is the last position in the hierarchy. Scroll to "Delta" and expand
+	// the node "Delta".
+	// Determine the parent of a node ("Delta") where a preceding sibling is not yet loaded, but the
+	// parent is found.
+	// Scroll to "Kappa" and collapse "Kappa". Scroll to "Omicron". Determine the parent of a
+	// node ("Omicron") where the parent ("Xi") is not yet loaded and request this parent.
+	// Scroll to "Xi" and see that it is inserted on the right position.
 	// JIRA: CPOUI5ODATAV4-2378
 	QUnit.test("Recursive Hierarchy: getParent/requestParent with expandTo > 1",
 			async function (assert) {
-		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sUrl = "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
+				+ ",NodeProperty='_/NodeID',Levels=3)";
+		const sSelect = "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,"
+				+ "_/DistanceFromRoot,_/DrillState,_/NodeID";
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
 		const sView = `
-<t:Table id="table" rows="{path : '/EMPLOYEES',
+<t:Table id="table" rows="{path : '/Artists',
 		parameters : {
 			$$aggregation : {
 				expandTo : 3,
@@ -32236,37 +33093,50 @@ sap.ui.define([
 		}}" threshold="0" visibleRowCount="2">
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
-	<Text text="{ID}"/>
+	<Text text="{ArtistID}"/>
 	<Text text="{Name}"/>
 </t:Table>`;
 
 		// 0 Alpha
 		//  1 Beta
-		//    2 Gamma // not loaded
-		//    3 Delta
-		//    4 Epsilon
-		//  5 Zeta // not loaded
-		//    6 Eta
-		//    7 Theta
+		//    1.1 Gamma // not loaded
+		//    1.2 Delta // expanded later
+		//      1.2.1 Epsilon
+		//      1.2.2 Zeta
+		//      1.2.3 Eta // not loaded
+		//    1.3 Theta
+		//    1.4 Iota // created
+		//  2 Kappa // collapsed later
+		//    2.1 Lambda
+		//    2.2 Mu
+		//  3 Nu
+		//  4 Xi // not loaded parent
+		//    4.1 Omicron
+		//    4.2 Pi
+		//  5 Rho // created
 
-		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
-					+ ",NodeProperty='ID',Levels=3)"
-				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-				+ "&$count=true&$skip=0&$top=2", {
-				"@odata.count" : "8",
+		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "12",
 				value : [{
-					DescendantCount : "7",
-					DistanceFromRoot : "0",
-					DrillState : "expanded",
-					ID : "0",
-					Name : "Alpha"
+					ArtistID : "0",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "11",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "0,false"
+					}
 				}, {
-					DescendantCount : "3",
-					DistanceFromRoot : "1",
-					DrillState : "expanded",
-					ID : "1",
-					Name : "Beta"
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "1,false"
+					}
 				}]
 			});
 
@@ -32274,108 +33144,394 @@ sap.ui.define([
 
 		const oTable = this.oView.byId("table");
 		checkTable("initial page", assert, oTable, [
-			"/EMPLOYEES('0')",
-			"/EMPLOYEES('1')"
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)"
 		], [
 			[true, 1, "0", "Alpha"],
 			[true, 2, "1", "Beta"]
-		], 8);
+		], 12);
+		const oAlpha = oTable.getRows()[0].getBindingContext();
 		const oBeta = oTable.getRows()[1].getBindingContext();
 
-		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
-					+ ",NodeProperty='ID',Levels=3)"
-				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-				+ "&$skip=3&$top=2", {
+		this.expectRequest({
+				method : "POST",
+				url : "Artists",
+				payload : {
+					"BestFriend@odata.bind" : "Artists(ArtistID='1',IsActiveEntity=false)",
+					Name : "Iota"
+				}
+			}, {
+				ArtistID : "1.4",
+				IsActiveEntity : false,
+				Name : "Iota",
+				_ : null // not available w/ RAP for a non-hierarchical request
+			})
+			.expectRequest(sUrl + "&$filter=ArtistID eq '1.4' and IsActiveEntity eq false"
+				+ "&$select=_/Limited_Rank,_/NodeID", {
 				value : [{
-					DescendantCount : "0",
-					DistanceFromRoot : "2",
-					DrillState : "leaf",
-					ID : "3",
-					Name : "Delta"
-				}, {
-					DescendantCount : "0",
-					DistanceFromRoot : "2",
-					DrillState : "leaf",
-					ID : "4",
-					Name : "Epsilon"
+					_ : {
+						Limited_Rank : "5",
+						NodeID : "1.4,false"
+					}
 				}]
 			});
 
-		oTable.setFirstVisibleRow(3);
+		// code under test
+		const oIota = oAlpha.getBinding().create({
+			"@$ui5.node.parent" : oBeta,
+			Name : "Iota"
+		}, /*bSkipRefresh*/true);
 
-		await this.waitForChanges(assert, "scroll to 3 (Delta)");
+		await Promise.all([
+			oIota.created(),
+			this.waitForChanges(assert, "create node 1.4 (Iota)")
+		]);
 
-		checkTable("after scroll to 3 (Delta)", assert, oTable, [
-			"/EMPLOYEES('0')",
-			"/EMPLOYEES('1')",
-			"/EMPLOYEES('3')",
-			"/EMPLOYEES('4')"
+		checkTable("after create 1.4 (Iota)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)"
 		], [
-			[undefined, 3, "3", "Delta"],
-			[undefined, 3, "4", "Epsilon"]
-		], 8);
+			[true, 1, "0", "Alpha"],
+			[true, 2, "1", "Beta"]
+		], 13);
+
+		this.expectRequest({
+				method : "POST",
+				url : "Artists",
+				payload : {
+					"BestFriend@odata.bind" : "Artists(ArtistID='0',IsActiveEntity=false)",
+					Name : "Rho"
+				}
+			}, {
+				ArtistID : "5",
+				IsActiveEntity : false,
+				Name : "Rho",
+				_ : null // not available w/ RAP for a non-hierarchical request
+			})
+			.expectRequest(sUrl + "&$filter=ArtistID eq '5' and IsActiveEntity eq false"
+				+ "&$select=_/Limited_Rank,_/NodeID", {
+				value : [{
+					_ : {
+						Limited_Rank : "13",
+						NodeID : "5,false"
+					}
+				}]
+			});
+
+		// code under test
+		const oRho = oAlpha.getBinding().create({
+			"@$ui5.node.parent" : oAlpha,
+			Name : "Rho"
+		}, /*bSkipRefresh*/true);
+
+		await Promise.all([
+			oRho.created(),
+			this.waitForChanges(assert, "create node 5 (Rho)")
+		]);
+
+		checkTable("after create 5 (Rho)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='5',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)"
+		], [
+			[true, 1, "0", "Alpha"],
+			[undefined, 2, "5", "Rho"]
+		], 14);
+
+		this.expectRequest(sUrl + sSelect + "&$skip=3&$top=2", {
+				value : [{
+					ArtistID : "1.2",
+					IsActiveEntity : false,
+					Name : "Delta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "collapsed",
+						NodeID : "1.2,false"
+					}
+				}, {
+					ArtistID : "1.3",
+					IsActiveEntity : false,
+					Name : "Theta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "1.3,false"
+					}
+				}]
+			});
+
+		oTable.setFirstVisibleRow(5);
+
+		await this.waitForChanges(assert, "scroll to 1.2 (Delta)");
+
+		checkTable("after scroll to 1.2 (Delta)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='5',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3',IsActiveEntity=false)"
+		], [
+			[false, 3, "1.2", "Delta"],
+			[undefined, 3, "1.3", "Theta"]
+		], 14);
 		const oDelta = oTable.getRows()[0].getBindingContext();
 
-		// code under test
-		assert.strictEqual(oDelta.getParent(), oBeta);
-
-		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
-					+ ",NodeProperty='ID',Levels=3)"
-				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-				+ "&$skip=6&$top=2", {
+		this.expectRequest("Artists?$apply=descendants("
+					+ "$root/Artists,OrgChart,_/NodeID,"
+					+ "filter(ArtistID eq '1.2' and IsActiveEntity eq false),1)"
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
+				+ "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "3",
 				value : [{
-					DescendantCount : "0",
-					DistanceFromRoot : "2",
-					DrillState : "leaf",
-					ID : "6",
-					Name : "Eta"
+					ArtistID : "1.2.1",
+					IsActiveEntity : false,
+					Name : "Epsilon",
+					_ : {
+						// ensures that collapsed nodes in group level caches are considered
+						DrillState : "collapsed",
+						NodeID : "1.2.1,false"
+					}
 				}, {
-					DescendantCount : "0",
-					DistanceFromRoot : "2",
-					DrillState : "leaf",
-					ID : "7",
-					Name : "Theta"
+					ArtistID : "1.2.2",
+					IsActiveEntity : false,
+					Name : "Zeta",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "1.2.2,false"
+					}
 				}]
 			});
 
-		oTable.setFirstVisibleRow(6);
+		// code under test
+		oDelta.expand();
 
-		await this.waitForChanges(assert, "scroll to 6 (Eta)");
+		await this.waitForChanges(assert, "expand 1.2 (Delta)");
 
-		checkTable("after scroll to 6 (Eta)", assert, oTable, [
-			"/EMPLOYEES('0')",
-			"/EMPLOYEES('1')",
-			"/EMPLOYEES('3')",
-			"/EMPLOYEES('4')",
-			"/EMPLOYEES('6')",
-			"/EMPLOYEES('7')"
+		checkTable("after expand 1.2 (Delta)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='5',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3',IsActiveEntity=false)"
 		], [
-			[undefined, 3, "6", "Eta"],
-			[undefined, 3, "7", "Theta"]
-		], 8);
-		const oEta = oTable.getRows()[0].getBindingContext();
+			[true, 3, "1.2", "Delta"],
+			[false, 4, "1.2.1", "Epsilon"]
+		], 17);
 
 		// code under test
-		assert.strictEqual(oEta.getParent(), undefined);
+		assert.strictEqual(oDelta.getParent(), oBeta, "Delta's parent is Beta");
 
-		this.expectRequest("EMPLOYEES?$apply=ancestors("
-					+ "$root/EMPLOYEES,OrgChart,ID,filter(ID eq '6'),1)"
-				+ "&$select=ID,Name", {
-			value : [{
-				ID : "5",
-				Name : "Zeta"
-			}]
+		this.expectRequest(sUrl + sSelect + "&$skip=6&$top=2", {
+				value : [{
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Kappa",
+					_ : {
+						DescendantCount : "2",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "2,false"
+					}
+				}, {
+					ArtistID : "2.1",
+					IsActiveEntity : false,
+					Name : "Lambda",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "2.1,false"
+					}
+				}]
+			});
+
+		oTable.setFirstVisibleRow(10);
+
+		await this.waitForChanges(assert, "scroll to 2 (Kappa)");
+
+		checkTable("after scroll to 2 (Eta)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='5',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)",
+			"/Artists(ArtistID='2.1',IsActiveEntity=false)"
+		], [
+			[true, 2, "2", "Kappa"],
+			[undefined, 3, "2.1", "Lambda"]
+		], 17);
+		const oKappa = oTable.getRows()[0].getBindingContext();
+
+		this.expectRequest(sUrl + sSelect + "&$skip=9&$top=1", {
+				value : [{
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "Nu",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						NodeID : "3,false"
+					}
+				}]
+			});
+		oKappa.collapse();
+
+		await this.waitForChanges(assert, "collapse 2 (Kappa)");
+
+		checkTable("after collapse 2 (oKappa)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='5',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)",
+			"/Artists(ArtistID='3',IsActiveEntity=false)"
+		], [
+			[false, 2, "2", "Kappa"],
+			[undefined, 2, "3", "Nu"]
+		], 15);
+
+		this.expectRequest(sUrl + sSelect + "&$skip=11&$top=2", {
+				value : [{
+					ArtistID : "4.1",
+					IsActiveEntity : false,
+					Name : "Omicron",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "4.1,false"
+					}
+				}, {
+					ArtistID : "4.2",
+					IsActiveEntity : false,
+					Name : "Pi",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "4.2,false"
+					}
+				}]
+			});
+
+		oTable.setFirstVisibleRow(13);
+
+		await this.waitForChanges(assert, "scroll to 4.1 (Omicron)");
+
+		checkTable("after scroll to 4.1 (Omicron)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='5',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)",
+			"/Artists(ArtistID='3',IsActiveEntity=false)",
+			"/Artists(ArtistID='4.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='4.2',IsActiveEntity=false)"
+		], [
+			[undefined, 3, "4.1", "Omicron"],
+			[undefined, 3, "4.2", "Pi"]
+		], 15);
+		const oOmicron = oTable.getRows()[0].getBindingContext();
+
+		// code under test
+		assert.strictEqual(oOmicron.getParent(), undefined);
+
+		this.expectRequest({
+				batchNo : 11,
+				url : "Artists?$apply=ancestors("
+						+ "$root/Artists,OrgChart,_/NodeID,"
+						+ "filter(ArtistID eq '4.1' and IsActiveEntity eq false),1)"
+					+ "&$select=ArtistID,IsActiveEntity,Name"
+			}, {
+				value : [{
+					ArtistID : "4",
+					IsActiveEntity : false,
+					Name : "Xi"
+				}]
+			})
+			.expectRequest({
+				batchNo : 12,
+				url : sUrl + "&$filter=ArtistID eq '4' and IsActiveEntity eq false"
+					+ "&$select=_/DescendantCount,_/DistanceFromRoot,_/DrillState,"
+						+ "_/Limited_Rank,_/NodeID"
+			}, {
+				value : [{
+					_ : {
+						DescendantCount : "2",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						Limited_Rank : "10", // Edm.Int64
+						NodeID : "4,false"
+					}
+				}]
+			});
+
+		// code under test
+		const oXi = await oOmicron.requestParent();
+
+		assert.strictEqual(oXi.getIndex(), 12);
+		assert.strictEqual(oXi.getPath(), "/Artists(ArtistID='4',IsActiveEntity=false)");
+		assert.deepEqual(oXi.getObject(), {
+			ArtistID : "4",
+			IsActiveEntity : false,
+			Name : "Xi",
+			"@$ui5.node.isExpanded" : true,
+			"@$ui5.node.level" : 2,
+			_ : {
+				NodeID : "4,false"
+			}
 		});
 
-		// code under test
-		const oZeta = await oEta.requestParent();
+		assert.strictEqual(oOmicron.getParent(), oXi);
+		// Pi has the same parent as Omicron, no additional request is needed
+		assert.strictEqual(oTable.getRows()[1].getBindingContext().getParent(), oXi);
 
-		assert.strictEqual(oZeta.getPath(), "/EMPLOYEES('5')");
-		assert.deepEqual(oZeta.getObject(), {ID : "5", Name : "Zeta"});
-		assert.strictEqual(oZeta.getIndex(), undefined);
-});
+		oTable.setFirstVisibleRow(12);
+
+		await resolveLater(); // table update takes a moment
+
+		checkTable("after scroll to 4 (Xi)", assert, oTable, [
+			"/Artists(ArtistID='0',IsActiveEntity=false)",
+			"/Artists(ArtistID='5',IsActiveEntity=false)",
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
+			"/Artists(ArtistID='1.3',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)",
+			"/Artists(ArtistID='3',IsActiveEntity=false)",
+			"/Artists(ArtistID='4',IsActiveEntity=false)",
+			"/Artists(ArtistID='4.1',IsActiveEntity=false)",
+			"/Artists(ArtistID='4.2',IsActiveEntity=false)"
+		], [
+			[true, 2, "4", "Xi"],
+			[undefined, 3, "4.1", "Omicron"]
+		], 15);
+
+		assert.strictEqual(oXi, oTable.getRows()[0].getBindingContext());
+	});
 
 	//*********************************************************************************************
 	// Scenario: Show the single root node of a recursive hierarchy and expand it. Not all children

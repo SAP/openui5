@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "43.0.0",
-	"__buildtime": "2023-09-28T11:39:07.908Z",
+	"__version": "44.0.0",
+	"__buildtime": "2024-01-12T14:24:50.280Z",
 	"languages": {
 		"aa": "Afar",
 		"ab": "Abkhazian",
@@ -390,7 +390,7 @@
 		"mgo": "Metaʼ",
 		"mh": "Marshallese",
 		"mi": "Māori",
-		"mic": "Mi'kmaq",
+		"mic": "Mi'kmaw",
 		"min": "Minangkabau",
 		"mk": "Macedonian",
 		"ml": "Malayalam",
@@ -643,6 +643,7 @@
 		"vi": "Vietnamese",
 		"vls": "West Flemish",
 		"vmf": "Main-Franconian",
+		"vmw": "Makhuwa",
 		"vo": "Volapük",
 		"vot": "Votic",
 		"vro": "Võro",
@@ -1051,6 +1052,8 @@
 		"IM": "Isle of Man",
 		"IN": "India",
 		"IO": "British Indian Ocean Territory",
+		"IO-alt-biot": "British Indian Ocean Territory",
+		"IO-alt-chagos": "Chagos Archipelago",
 		"IQ": "Iraq",
 		"IR": "Iran",
 		"IS": "Iceland",
@@ -1216,8 +1219,8 @@
 		"dateFormats": {
 			"full": "EEEE, d MMMM y",
 			"long": "d MMMM y",
-			"medium": "d/MM/y",
-			"short": "d/MM/yy"
+			"medium": "d MMM y",
+			"short": "dd/MM/y"
 		},
 		"timeFormats": {
 			"full": "h:mm:ss a zzzz",
@@ -1673,7 +1676,7 @@
 					"pm"
 				],
 				"narrow": [
-					"am",
+					"AM",
 					"pm"
 				],
 				"wide": [
@@ -1753,8 +1756,8 @@
 		"dateFormats": {
 			"full": "EEEE, d MMMM y G",
 			"long": "d MMMM y G",
-			"medium": "d/MM/y G",
-			"short": "d/MM/y GGGGG"
+			"medium": "d MMM y G",
+			"short": "dd/MM/y GGGGG"
 		},
 		"timeFormats": {
 			"full": "h:mm:ss a zzzz",
@@ -1775,7 +1778,7 @@
 				"E": "ccc",
 				"EBhm": "E h:mm B",
 				"EBhms": "E h:mm:ss B",
-				"Ed": "E d",
+				"Ed": "d E",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
 				"Ehms": "E h:mm:ss a",
@@ -1791,8 +1794,8 @@
 				"Hm": "HH:mm",
 				"hms": "h:mm:ss a",
 				"Hms": "HH:mm:ss",
-				"M": "LL",
-				"Md": "d/M",
+				"M": "L",
+				"Md": "dd/MM",
 				"MEd": "E dd/MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
@@ -1801,8 +1804,8 @@
 				"ms": "mm:ss",
 				"y": "y G",
 				"yyyy": "y G",
-				"yyyyM": "MM/y GGGGG",
-				"yyyyMd": "d/MM/y G",
+				"yyyyM": "M/y GGGGG",
+				"yyyyMd": "dd/MM/y GGGGG",
 				"yyyyMEd": "E, dd/MM/y GGGGG",
 				"yyyyMMM": "MMM y G",
 				"yyyyMMMd": "d MMM y G",
@@ -2198,7 +2201,7 @@
 					"pm"
 				],
 				"narrow": [
-					"am",
+					"AM",
 					"pm"
 				],
 				"wide": [
@@ -2734,7 +2737,7 @@
 					"pm"
 				],
 				"narrow": [
-					"am",
+					"AM",
 					"pm"
 				],
 				"wide": [
@@ -3268,7 +3271,7 @@
 					"pm"
 				],
 				"narrow": [
-					"am",
+					"AM",
 					"pm"
 				],
 				"wide": [
@@ -3796,7 +3799,7 @@
 					"pm"
 				],
 				"narrow": [
-					"am",
+					"AM",
 					"pm"
 				],
 				"wide": [
@@ -4876,6 +4879,12 @@
 			"10p-24": {
 				"unitPrefixPattern": "y{0}"
 			},
+			"10p-27": {
+				"unitPrefixPattern": "r{0}"
+			},
+			"10p-30": {
+				"unitPrefixPattern": "q{0}"
+			},
 			"10p1": {
 				"unitPrefixPattern": "da{0}"
 			},
@@ -4906,6 +4915,12 @@
 			"10p24": {
 				"unitPrefixPattern": "Y{0}"
 			},
+			"10p27": {
+				"unitPrefixPattern": "R{0}"
+			},
+			"10p30": {
+				"unitPrefixPattern": "Q{0}"
+			},
 			"1024p1": {
 				"unitPrefixPattern": "Ki{0}"
 			},
@@ -4935,10 +4950,12 @@
 			},
 			"power2": {
 				"compoundUnitPattern1": "{0}²",
+				"compoundUnitPattern1-count-one": "{0}²",
 				"compoundUnitPattern1-count-other": "{0}²"
 			},
 			"power3": {
 				"compoundUnitPattern1": "{0}³",
+				"compoundUnitPattern1-count-one": "{0}³",
 				"compoundUnitPattern1-count-other": "{0}³"
 			},
 			"times": {
@@ -5363,11 +5380,13 @@
 				"unitPattern-count-other": "{0} dpi"
 			},
 			"graphics-dot": {
+				"displayName": "dots",
 				"unitPattern-count-one": "{0} dot",
 				"unitPattern-count-other": "{0} dots"
 			},
 			"length-earth-radius": {
-				"displayName": "R⊕",
+				"displayName": "earth radius",
+				"unitPattern-count-one": "{0} R⊕",
 				"unitPattern-count-other": "{0} R⊕"
 			},
 			"length-kilometer": {
@@ -5486,11 +5505,13 @@
 				"unitPattern-count-other": "{0} lx"
 			},
 			"light-candela": {
-				"displayName": "cd",
+				"displayName": "candela",
+				"unitPattern-count-one": "{0} cd",
 				"unitPattern-count-other": "{0} cd"
 			},
 			"light-lumen": {
-				"displayName": "lm",
+				"displayName": "lumen",
+				"unitPattern-count-one": "{0} lm",
 				"unitPattern-count-other": "{0} lm"
 			},
 			"light-solar-luminosity": {
@@ -5573,7 +5594,7 @@
 				"unitPattern-count-other": "{0} M☉"
 			},
 			"mass-grain": {
-				"displayName": "grain",
+				"displayName": "grains",
 				"unitPattern-count-one": "{0} grains",
 				"unitPattern-count-other": "{0} grains"
 			},
@@ -5683,7 +5704,8 @@
 				"unitPattern-count-other": "B {0}"
 			},
 			"temperature-generic": {
-				"displayName": "°",
+				"displayName": "deg. temp.",
+				"unitPattern-count-one": "{0}°",
 				"unitPattern-count-other": "{0}°"
 			},
 			"temperature-celsius": {
@@ -5862,7 +5884,7 @@
 				"unitPattern-count-other": "{0} dstspn"
 			},
 			"volume-drop": {
-				"displayName": "drop",
+				"displayName": "drops",
 				"unitPattern-count-one": "{0} drops",
 				"unitPattern-count-other": "{0} drops"
 			},
@@ -5872,12 +5894,12 @@
 				"unitPattern-count-other": "{0} drams"
 			},
 			"volume-jigger": {
-				"displayName": "jigger",
+				"displayName": "jiggers",
 				"unitPattern-count-one": "{0} jigger",
 				"unitPattern-count-other": "{0} jiggers"
 			},
 			"volume-pinch": {
-				"displayName": "pinch",
+				"displayName": "pinches",
 				"unitPattern-count-one": "{0} pinches",
 				"unitPattern-count-other": "{0} pinches"
 			},
@@ -5885,6 +5907,11 @@
 				"displayName": "qt",
 				"unitPattern-count-one": "{0} qt",
 				"unitPattern-count-other": "{0} qt"
+			},
+			"pressure-gasoline-energy-density": {
+				"displayName": "gas-equiv",
+				"unitPattern-count-one": "{0} gas-equiv",
+				"unitPattern-count-other": "{0} gas-equiv"
 			},
 			"coordinateUnit": {
 				"displayName": "direction",
@@ -5896,9 +5923,9 @@
 		}
 	},
 	"lenient-scope-number": {
-		"minusSign": "-‐‒–⁻₋−➖﹣－",
-		"commaSign": ",،٫⹁、︐︑﹐﹑，､",
-		"plusSign": "+⁺₊➕﬩﹢＋"
+		"minusSign": "-－﹣ ‐‑‒–−⁻₋➖",
+		"commaSign": ",，﹐︐ ⹁،٫、﹑､︑",
+		"plusSign": "+＋﬩﹢⁺₊ ➕"
 	},
 	"currencyFormat-sap-short": {
 		"1000-one": "0K ¤",

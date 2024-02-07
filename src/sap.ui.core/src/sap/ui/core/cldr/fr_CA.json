@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "43.0.0",
-	"__buildtime": "2023-09-28T11:39:07.908Z",
+	"__version": "44.0.0",
+	"__buildtime": "2024-01-12T14:24:50.280Z",
 	"languages": {
 		"aa": "afar",
 		"ab": "abkhaze",
@@ -64,6 +64,7 @@
 		"bfd": "bafut",
 		"bfq": "badaga",
 		"bg": "bulgare",
+		"bgc": "haryanvi",
 		"bgn": "baloutchi occidental",
 		"bho": "bhodjpouri",
 		"bi": "bichelamar",
@@ -108,8 +109,8 @@
 		"chr": "cherokee",
 		"chy": "cheyenne",
 		"ckb": "kurde central",
-		"ckb_alt-menu": "sorani",
-		"ckb_alt-variant": "kurde central",
+		"ckb_alt-menu": "kurde central",
+		"ckb_alt-variant": "sorani",
 		"clc": "chilcotin",
 		"cnr": "Monténégrin",
 		"co": "corse",
@@ -872,7 +873,7 @@
 		"BJ": "Bénin",
 		"BL": "Saint-Barthélemy",
 		"BM": "Bermudes",
-		"BN": "Brunei",
+		"BN": "Brunéi",
 		"BO": "Bolivie",
 		"BQ": "Pays-Bas caribéens",
 		"BR": "Brésil",
@@ -881,7 +882,7 @@
 		"BV": "île Bouvet",
 		"BW": "Botswana",
 		"BY": "Bélarus",
-		"BZ": "Belize",
+		"BZ": "Bélize",
 		"CA": "Canada",
 		"CC": "îles Cocos (Keeling)",
 		"CD": "Congo-Kinshasa",
@@ -963,7 +964,9 @@
 		"IL": "Israël",
 		"IM": "île de Man",
 		"IN": "Inde",
-		"IO": "territoire britannique de l’océan Indien",
+		"IO": "Territoire britannique de l’océan Indien",
+		"IO-alt-biot": "territoire britannique de l’océan Indien",
+		"IO-alt-chagos": "archipel Chagos",
 		"IQ": "Irak",
 		"IR": "Iran",
 		"IS": "Islande",
@@ -977,7 +980,7 @@
 		"KH": "Cambodge",
 		"KI": "Kiribati",
 		"KM": "Comores",
-		"KN": "Saint-Christophe-et-Niévès",
+		"KN": "Saint‑Kitts‑et‑Nevis",
 		"KP": "Corée du Nord",
 		"KR": "Corée du Sud",
 		"KW": "Koweït",
@@ -1106,7 +1109,7 @@
 		"UZ": "Ouzbékistan",
 		"VA": "Cité du Vatican",
 		"VC": "Saint-Vincent-et-les Grenadines",
-		"VE": "Venezuela",
+		"VE": "Vénézuéla",
 		"VG": "îles Vierges britanniques",
 		"VI": "îles Vierges américaines",
 		"VN": "Vietnam",
@@ -1171,9 +1174,9 @@
 				"hmv": "h 'h' mm a v",
 				"Hmv": "HH 'h' mm v",
 				"M": "L",
-				"Md": "M-d",
-				"MEd": "E M-d",
-				"MMd": "MM-d",
+				"Md": "MM-dd",
+				"MEd": "E MM-dd",
+				"MMd": "MM-dd",
 				"MMdd": "MM-dd",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
@@ -1292,7 +1295,7 @@
 					"H": "H 'h' – H 'h' v"
 				},
 				"M": {
-					"M": "M – M"
+					"M": "MM – MM"
 				},
 				"Md": {
 					"d": "MM-dd – MM-dd",
@@ -1310,7 +1313,7 @@
 					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
-					"d": "E d – E d MMM",
+					"d": "E d MMM – E d MMM",
 					"M": "E d MMM – E d MMM"
 				},
 				"y": {
@@ -1340,7 +1343,7 @@
 					"y": "d MMM y – d MMM y"
 				},
 				"yMMMEd": {
-					"d": "E d – E d MMM y",
+					"d": "E d MMM – E d MMM y",
 					"M": "E d MMM – E d MMM y",
 					"y": "E d MMM y – E d MMM y"
 				},
@@ -1605,7 +1608,7 @@
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
+					"evening1": "du soir",
 					"night1": "mat."
 				},
 				"wide": {
@@ -1623,15 +1626,15 @@
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
-					"night1": "nuit"
+					"evening1": "du soir",
+					"night1": "du mat."
 				},
 				"narrow": {
 					"midnight": "minuit",
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
+					"evening1": "du soir",
 					"night1": "mat."
 				},
 				"wide": {
@@ -2133,7 +2136,7 @@
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
+					"evening1": "du soir",
 					"night1": "mat."
 				},
 				"wide": {
@@ -2151,15 +2154,15 @@
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
-					"night1": "nuit"
+					"evening1": "du soir",
+					"night1": "du mat."
 				},
 				"narrow": {
 					"midnight": "minuit",
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
+					"evening1": "du soir",
 					"night1": "mat."
 				},
 				"wide": {
@@ -2187,7 +2190,7 @@
 			"full": "EEEE d MMMM y G",
 			"long": "d MMMM y G",
 			"medium": "d MMM y G",
-			"short": "dd/MM/y GGGGG"
+			"short": "yy-MM-dd GGGGG"
 		},
 		"timeFormats": {
 			"full": "HH 'h' mm 'min' ss 's' zzzz",
@@ -2666,7 +2669,7 @@
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
+					"evening1": "du soir",
 					"night1": "mat."
 				},
 				"wide": {
@@ -2684,15 +2687,15 @@
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
-					"night1": "nuit"
+					"evening1": "du soir",
+					"night1": "du mat."
 				},
 				"narrow": {
 					"midnight": "minuit",
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
+					"evening1": "du soir",
 					"night1": "mat."
 				},
 				"wide": {
@@ -3203,7 +3206,7 @@
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
+					"evening1": "du soir",
 					"night1": "mat."
 				},
 				"wide": {
@@ -3221,15 +3224,15 @@
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
-					"night1": "nuit"
+					"evening1": "du soir",
+					"night1": "du mat."
 				},
 				"narrow": {
 					"midnight": "minuit",
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
+					"evening1": "du soir",
 					"night1": "mat."
 				},
 				"wide": {
@@ -3257,7 +3260,7 @@
 			"full": "EEEE d MMMM y G",
 			"long": "d MMMM y G",
 			"medium": "d MMM y G",
-			"short": "dd/MM/y GGGGG"
+			"short": "yy-MM-dd GGGGG"
 		},
 		"timeFormats": {
 			"full": "HH 'h' mm 'min' ss 's' zzzz",
@@ -3728,7 +3731,7 @@
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
+					"evening1": "du soir",
 					"night1": "mat."
 				},
 				"wide": {
@@ -3746,15 +3749,15 @@
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
-					"night1": "nuit"
+					"evening1": "du soir",
+					"night1": "du mat."
 				},
 				"narrow": {
 					"midnight": "minuit",
 					"noon": "midi",
 					"morning1": "mat.",
 					"afternoon1": "après-midi",
-					"evening1": "soir",
+					"evening1": "du soir",
 					"night1": "mat."
 				},
 				"wide": {
@@ -4789,6 +4792,12 @@
 			"10p-24": {
 				"unitPrefixPattern": "y{0}"
 			},
+			"10p-27": {
+				"unitPrefixPattern": "r{0}"
+			},
+			"10p-30": {
+				"unitPrefixPattern": "q{0}"
+			},
 			"10p1": {
 				"unitPrefixPattern": "da{0}"
 			},
@@ -4819,6 +4828,12 @@
 			"10p24": {
 				"unitPrefixPattern": "Y{0}"
 			},
+			"10p27": {
+				"unitPrefixPattern": "R{0}"
+			},
+			"10p30": {
+				"unitPrefixPattern": "Q{0}"
+			},
 			"1024p1": {
 				"unitPrefixPattern": "Ki{0}"
 			},
@@ -4848,12 +4863,10 @@
 			},
 			"power2": {
 				"compoundUnitPattern1": "{0}²",
-				"compoundUnitPattern1-count-one": "{0}²",
 				"compoundUnitPattern1-count-other": "{0}²"
 			},
 			"power3": {
 				"compoundUnitPattern1": "{0}³",
-				"compoundUnitPattern1-count-one": "{0}³",
 				"compoundUnitPattern1-count-other": "{0}³"
 			},
 			"times": {
@@ -4881,17 +4894,14 @@
 			},
 			"angle-degree": {
 				"displayName": "°",
-				"unitPattern-count-one": "{0}°",
 				"unitPattern-count-other": "{0}°"
 			},
 			"angle-arc-minute": {
 				"displayName": "′",
-				"unitPattern-count-one": "{0}′",
 				"unitPattern-count-other": "{0}′"
 			},
 			"angle-arc-second": {
 				"displayName": "″",
-				"unitPattern-count-one": "{0}″",
 				"unitPattern-count-other": "{0}″"
 			},
 			"area-square-kilometer": {
@@ -5010,9 +5020,9 @@
 				"unitPattern-count-other": "{0} mi/gal"
 			},
 			"consumption-mile-per-gallon-imperial": {
-				"displayName": "mi/gal Imp",
-				"unitPattern-count-one": "{0} mi/gal Imp",
-				"unitPattern-count-other": "{0} mi/gal Imp"
+				"displayName": "mi/gal imp.",
+				"unitPattern-count-one": "{0} mi/gal imp.",
+				"unitPattern-count-other": "{0} mi/gal imp."
 			},
 			"digital-petabyte": {
 				"displayName": "Po",
@@ -5173,7 +5183,6 @@
 				"unitPattern-count-other": "{0} cal"
 			},
 			"energy-foodcalorie": {
-				"displayName": "kcal",
 				"unitPattern-count-one": "{0} kcal",
 				"unitPattern-count-other": "{0} kcal"
 			},
@@ -5268,23 +5277,22 @@
 				"unitPattern-count-other": "{0} px/po"
 			},
 			"graphics-dot-per-centimeter": {
-				"displayName": "ppcm",
-				"unitPattern-count-one": "{0} ppcm",
-				"unitPattern-count-other": "{0} ppcm"
+				"displayName": "pt/cm",
+				"unitPattern-count-one": "{0} pt/cm",
+				"unitPattern-count-other": "{0} pt/cm"
 			},
 			"graphics-dot-per-inch": {
-				"displayName": "ppp",
-				"unitPattern-count-one": "{0} ppp",
-				"unitPattern-count-other": "{0} ppp"
+				"displayName": "pt/po",
+				"unitPattern-count-one": "{0} pt/po",
+				"unitPattern-count-other": "{0} pt/po"
 			},
 			"graphics-dot": {
-				"displayName": "p",
-				"unitPattern-count-one": "{0} p",
-				"unitPattern-count-other": "{0} p"
+				"displayName": "pt",
+				"unitPattern-count-one": "{0} pt",
+				"unitPattern-count-other": "{0} pt"
 			},
 			"length-earth-radius": {
 				"displayName": "R⊕",
-				"unitPattern-count-one": "{0} R⊕",
 				"unitPattern-count-other": "{0} R⊕"
 			},
 			"length-kilometer": {
@@ -5369,7 +5377,6 @@
 			},
 			"length-furlong": {
 				"displayName": "fur",
-				"unitPattern-count-one": "{0} fur",
 				"unitPattern-count-other": "{0} fur"
 			},
 			"length-fathom": {
@@ -5404,12 +5411,10 @@
 			},
 			"light-candela": {
 				"displayName": "cd",
-				"unitPattern-count-one": "{0} cd",
 				"unitPattern-count-other": "{0} cd"
 			},
 			"light-lumen": {
 				"displayName": "lm",
-				"unitPattern-count-one": "{0} lm",
 				"unitPattern-count-other": "{0} lm"
 			},
 			"light-solar-luminosity": {
@@ -5451,7 +5456,6 @@
 			},
 			"mass-stone": {
 				"displayName": "st",
-				"unitPattern-count-one": "{0} st",
 				"unitPattern-count-other": "{0} st"
 			},
 			"mass-pound": {
@@ -5596,9 +5600,13 @@
 				"unitPattern-count-one": "{0} nd",
 				"unitPattern-count-other": "{0} nd"
 			},
+			"speed-beaufort": {
+				"displayName": "Bft",
+				"unitPattern-count-one": "{0} Bf",
+				"unitPattern-count-other": "{0} Bf"
+			},
 			"temperature-generic": {
 				"displayName": "°",
-				"unitPattern-count-one": "{0}°",
 				"unitPattern-count-other": "{0}°"
 			},
 			"temperature-celsius": {
@@ -5696,7 +5704,6 @@
 			},
 			"volume-pint-metric": {
 				"displayName": "mpt",
-				"unitPattern-count-one": "{0} mpt",
 				"unitPattern-count-other": "{0} mpt"
 			},
 			"volume-cup-metric": {
@@ -5803,17 +5810,17 @@
 			},
 			"coordinateUnit": {
 				"displayName": "direction",
-				"east": "{0} E",
-				"north": "{0} N",
-				"south": "{0} S",
-				"west": "{0} O"
+				"east": "{0} E.",
+				"north": "{0} N.",
+				"south": "{0} S.",
+				"west": "{0} O."
 			}
 		}
 	},
 	"lenient-scope-number": {
-		"minusSign": "-‒⁻₋−➖﹣－",
-		"commaSign": ",،٫、︐︑﹐﹑，､",
-		"plusSign": "+⁺₊➕﬩﹢＋"
+		"minusSign": "-－﹣ ‑‒−⁻₋➖",
+		"commaSign": ",，﹐︐ ،٫、﹑､︑",
+		"plusSign": "+＋﬩﹢⁺₊ ➕"
 	},
 	"currencyFormat-sap-short": {
 		"1000-one": "0 k ¤",

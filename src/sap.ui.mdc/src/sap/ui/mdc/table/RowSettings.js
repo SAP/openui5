@@ -37,7 +37,7 @@ sap.ui.define([
 				 * Valid values for the <code>highlight</code> property are values of the enumerations {@link sap.ui.core.MessageType} or
 				 * {@link sap.ui.core.IndicationColor}.
 				 *
-				 * Accessibility support is provided through the associated {@link sap.ui.mdc.table.RowSettings#setHighlightText highlightText} property.
+				 * Accessibility support is provided with the {@link sap.ui.mdc.table.RowSettings#setHighlightText highlightText} property.
 				 * If the <code>highlight</code> property is set to a value of {@link sap.ui.core.MessageType}, the <code>highlightText</code>
 				 * property does not need to be set because a default text is used. However, the default text can be overridden by setting the
 				 * <code>highlightText</code> property.
@@ -52,17 +52,17 @@ sap.ui.define([
 				highlightText: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
-				 * The navigated state of a row.
-				 *
-				 * If set to <code>true</code>, a navigation indicator is displayed at the end of the row.
+				 * The navigated state of a row. The navigation indicator is displayed at the end of a row.
 				 */
 				navigated: { type: "boolean", group: "Appearance", defaultValue: false }
 			},
 			aggregations: {
 				/**
-				 * The available actions for a row.
+				 * The actions that appear at the end of a row.
 				 *
-				 * rowActions cannot be bound with a factory. Additionally, {@link sap.m.Table} only works with row actions of type navigation.
+				 * <b>Note:</b> This aggregation cannot be bound with a factory.<br>
+				 * If the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}, only the <code>Navigation</code> row action type
+				 * is supported.
 				 */
 				rowActions: { type: "sap.ui.mdc.table.RowActionItem", multiple: true }
 			}

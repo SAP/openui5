@@ -263,33 +263,27 @@ sap.ui.define([
 		}
 	}
 
-	/* load controller class
+	/**
+	 * Loads a controller class or a controller-extension
 	 *
 	 * @param {string} sName the controller name
+	 * @param {string} sViewId the ID of the View to which the loaded controller/extensions should be connected
 	 * @param {boolean} bAsync Load async or not
 	 * @return {sap.ui.core.mvc.Controller | Promise} oController <code>Promise</code> in case of asynchronous loading
 	 *           or <code>undefined</code> in case of synchronous loading
 	 */
-	function loadControllerClass(sName, bAsync) {
+	function loadControllerClass(sName, sViewId, bAsync) {
 		if (!sName) {
 			throw new Error("Controller name ('sName' parameter) is required");
 		}
 
-		var sControllerName = sName.replace(/\./g, "/") + ".controller",
-			ControllerClass = resolveClass(sap.ui.require(sControllerName));
-
-		function resolveClass(ControllerClass) {
-			if (ControllerClass) {
-				return ControllerClass;
-			} else if (mRegistry[sName]) {
-				return Controller;
-			} else {}
-		}
+		const sControllerName = sName.replace(/\./g, "/") + ".controller";
+		let ControllerClass = sap.ui.require(sControllerName);
 
 		return new Promise(function(resolve, reject) {
 			if (!ControllerClass) {
 				sap.ui.require([sControllerName], function (ControllerClass) {
-					resolve(resolveClass(ControllerClass));
+					resolve(ControllerClass);
 				}, reject);
 			} else {
 				resolve(ControllerClass);
@@ -375,7 +369,7 @@ sap.ui.define([
 		 */
 		function fnGetExtensionController(bAsync, sControllerName) {
 			if (bAsync) {
-				return loadControllerClass(sControllerName, true).then(function(oExtControllerDef) {
+				return loadControllerClass(sControllerName, sViewId, true).then(function(oExtControllerDef) {
 					// loadControllerClass resolves with the base sap/ui/core/mvc/Controller class,
 					// in case 'sControllerName' is not a module but was defined with sap.ui.controller("...", {})
 					oExtControllerDef = mRegistry[sControllerName] || oExtControllerDef;
@@ -397,7 +391,7 @@ sap.ui.define([
 			} else {
 				// sync load Controller extension if necessary
 				if (!mRegistry[sControllerName] && !sap.ui.require(sControllerName)) {
-					loadControllerClass(sControllerName);
+					loadControllerClass(sControllerName, sViewId);
 				}
 
 				// retrieve legacy controller from registry
@@ -487,7 +481,7 @@ sap.ui.define([
 		if (!oControllerImpl) {
 			// controller *instantiation*
 			if (bAsync) {
-				return loadControllerClass(sName, bAsync)
+				return loadControllerClass(sName, sViewId, bAsync)
 					.then(function(ControllerClass) {
 						return instantiateController(ControllerClass, sName);
 					})
@@ -499,7 +493,7 @@ sap.ui.define([
 						return oController;
 					});
 			} else {
-				ControllerClass = loadControllerClass(sName, bAsync);
+				ControllerClass = loadControllerClass(sName, sViewId, bAsync);
 				oController = instantiateController(ControllerClass, sName);
 				oController = Controller.applyExtensions(oController, sName, sOwnerId, sViewId, bAsync);
 				//if controller is created via the factory all extensions are already mixed in

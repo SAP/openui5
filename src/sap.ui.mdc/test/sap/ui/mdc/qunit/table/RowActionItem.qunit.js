@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/mdc/table/ResponsiveTableType",
 	"sap/ui/mdc/table/RowSettings",
 	"sap/ui/mdc/table/RowActionItem",
-	"sap/ui/mdc/enums/TableRowAction",
+	"sap/ui/mdc/enums/TableRowActionType",
 	"sap/ui/mdc/table/Column",
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel"
@@ -22,7 +22,7 @@ sap.ui.define([
 	ResponsiveTableType,
 	RowSettings,
 	RowActionItem,
-	TableRowAction,
+	RowActionType,
 	Column,
 	Text,
 	JSONModel
@@ -60,7 +60,7 @@ sap.ui.define([
 			rowSettings: new RowSettings({
 				rowActions: [
 					new RowActionItem({
-						type: TableRowAction.Navigation,
+						type: RowActionType.Navigation,
 						text: "My custom action",
 						icon: "sap-icon://accept",
 						visible: true
@@ -91,7 +91,7 @@ sap.ui.define([
 			rowSettings: new RowSettings({
 				rowActions: [
 					new RowActionItem({
-						type: TableRowAction.Navigation
+						type: RowActionType.Navigation
 					})
 				]
 			})
@@ -146,7 +146,7 @@ sap.ui.define([
 			rowSettings: new RowSettings({
 				rowActions: [
 					new RowActionItem({
-						type: TableRowAction.Navigation
+						type: RowActionType.Navigation
 					})
 				]
 			})

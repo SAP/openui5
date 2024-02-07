@@ -479,6 +479,8 @@ sap.ui.define([
 		 * 	The text property used for the dimension
 		 * @property {object} [textFormatter]
 		 * 	The text formatter object which can be used to format the textProperty
+		 * @property {object} [unitPath]
+		 *  The name of the unit property which will be used to display and format measure values with a unit value on a selectionDetails popover
 		 * @public
 		 */
 

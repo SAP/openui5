@@ -4,13 +4,14 @@ sap.ui.define([
 	"sap/m/OverflowToolbarButton",
 	"sap/ui/Device",
 	"sap/ui/core/Lib",
+	"sap/ui/core/ShortcutHintsMixin",
 	"sap/m/plugins/PasteProvider",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/HTML",
 	"sap/ui/core/Icon",
 	"sap/m/Popover"
-], function(Table, Button, OverflowToolbarButton, Device, coreLib, PasteProvider, Element, nextUIUpdate) {
+], function(Table, Button, OverflowToolbarButton, Device, coreLib, ShortcutHintsMixin, PasteProvider, Element, nextUIUpdate) {
 
 	"use strict";
 	/*global sinon, QUnit, ClipboardEvent, DataTransfer */
@@ -37,8 +38,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Defaults", function(assert) {
-		var oPlugin = new PasteProvider();
-		var oButton = new Button({
+		const done = assert.async();
+		const fnShortcutHintsMixinSpy = sinon.spy(ShortcutHintsMixin, "addConfig");
+		const oBundle = coreLib.getResourceBundleFor("sap.m");
+		const oTable = new Table();
+		const oPlugin = new PasteProvider({
+			pasteFor: oTable.getId()
+		});
+		const oButton = new Button({
 			dependents: oPlugin
 		});
 		oButton.placeAt("qunit-fixture");
@@ -50,6 +57,17 @@ sap.ui.define([
 
 		oPlugin.setEnabled(false);
 		assert.notOk(oButton.hasListeners("press"));
+
+		setTimeout(() => {
+			assert.ok(ShortcutHintsMixin.isControlRegistered(oButton.getId()), "ShortcutHintsMixin is registered for the Button");
+			assert.ok(fnShortcutHintsMixinSpy.calledWithExactly(
+				oButton,
+				sinon.match({ message: oBundle.getText(Device.os.macintosh ? "PASTEPROVIDER_SHORTCUT_MAC" : "PASTEPROVIDER_SHORTCUT_WIN") }),
+				oTable
+			), "ShortcutHintsMixin config of the Button is correct");
+			fnShortcutHintsMixinSpy.restore();
+			done();
+		});
 	});
 
 	QUnit.module("PasteProvider", {

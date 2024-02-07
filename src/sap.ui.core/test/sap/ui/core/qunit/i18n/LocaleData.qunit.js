@@ -803,8 +803,8 @@ sap.ui.define([
 		var sMinusSymbols = oLocaleData.getLenientNumberSymbols("minusSign");
 		var sPlusSymbols = oLocaleData.getLenientNumberSymbols("plusSign");
 
-		assert.strictEqual(sMinusSymbols, "\x2d\u2010\u2012\u2013\u207b\u208b\u2212\u2796\ufe63\uff0d", "Should match the minus symbols default");
-		assert.strictEqual(sPlusSymbols, "\x2b\u207a\u208a\u2795\ufb29\ufe62\uff0b", "Should match the plus symbols default");
+		assert.strictEqual(sMinusSymbols, "-－﹣ ‐‑‒–−⁻₋➖", "Should match the minus symbols default");
+		assert.strictEqual(sPlusSymbols, "+＋﬩﹢⁺₊ ➕", "Should match the plus symbols default");
 	});
 
 	//*********************************************************************************************

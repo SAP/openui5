@@ -207,7 +207,7 @@ sap.ui.define([
 			mAccProps = {
 				role: "listitem",
 				labelledby: {
-					value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
+					value: InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_ALL_DAY_PREFIX"),
 					append: true
 				},
 				// Prevents aria-selected from being added on the Blocker appointment
@@ -324,7 +324,7 @@ sap.ui.define([
 			oRm.icon("sap-icon://arrow-right", aClasses, { title: null, role: "img" });
 		}
 
-		oRm.openStart("span", sId + "-Descr");
+		oRm.openStart("span", sId  + "-Descr");
 		oRm.class("sapUiInvisibleText");
 		oRm.openEnd(); // span element
 		oRm.text(oControl._getAppointmentAnnouncementInfo(oBlocker));
@@ -541,14 +541,14 @@ sap.ui.define([
 		}
 
 		if (sTitle) {
-			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Title";
+			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-" + iColumn + "_" + iIndex + "-Title";
 		}
 
 		// Put start/end information after the title
-		mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Descr";
+		mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-" + iColumn + "_" + iIndex + "-Descr";
 
 		if (sText) {
-			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Text";
+			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-" + iColumn + "_" + iIndex + "-Text";
 		}
 
 		if (oAppointment.getTentative()) {
@@ -660,7 +660,7 @@ sap.ui.define([
 		oRm.openEnd();
 
 		if (sTitle) {
-			oRm.openStart("span", sId + "-Title");
+			oRm.openStart("span", sId + "-" + iColumn + "_" + iIndex + "-Title");
 			oRm.class("sapUiCalendarAppTitle");
 			oRm.openEnd(); // span element
 			oRm.text(sTitle, true);
@@ -668,7 +668,7 @@ sap.ui.define([
 		}
 
 		if (sText) {
-			oRm.openStart("span", sId + "-Text");
+			oRm.openStart("span", sId + "-" + iColumn + "_" + iIndex + "-Text");
 			oRm.class("sapUiCalendarAppText");
 			oRm.openEnd(); // span element
 			oRm.text(sText, true);
@@ -694,7 +694,7 @@ sap.ui.define([
 		// 	sAriaText = sAriaText + "; " + this.getAriaTextForType(sType, aTypes);
 		// }
 
-		oRm.openStart("span", sId + "-Descr");
+		oRm.openStart("span", sId + "-" + iColumn + "_" + iIndex + "-Descr");
 		oRm.class("sapUiInvisibleText");
 		oRm.openEnd(); // span element
 		oRm.text(oControl._getAppointmentAnnouncementInfo(oAppointment));

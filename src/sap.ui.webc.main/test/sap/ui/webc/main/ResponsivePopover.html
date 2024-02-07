@@ -14,15 +14,16 @@
 	</script>
 
 	<script>
-		sap.ui.getCore().attachInit(function() {
 			sap.ui.require([
+				"sap/ui/core/Core",
 				"sap/ui/webc/main/ResponsivePopover",
 				"sap/ui/webc/main/Button",
 				"sap/m/Text",
 				"sap/m/FlexBox"
-			], function(
-				ResponsivePopover, Button, Text, FlexBox
+			], async function(
+				Core, ResponsivePopover, Button, Text, FlexBox
 			) {
+				await Core.ready();
 				var oPopover0Button = new Button({
 					text: "Show Popover",
 					click: function(oEvent) {
@@ -84,7 +85,6 @@
 				});
 				oPopover1.placeAt("testControl");
 			});
-		});
 	</script>
 </head>
 

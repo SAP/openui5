@@ -1350,7 +1350,11 @@ sap.ui.define([
 		if (oOldCache && oOldCache.getResourcePath() === sResourcePath
 				&& oOldCache.$deepResourcePath === sDeepResourcePath) {
 			aKeepAlivePredicates = this.getKeepAlivePredicates();
-			if (this.iCreatedContexts || this.iDeletedContexts || aKeepAlivePredicates.length) {
+			if (this.iCreatedContexts || this.iDeletedContexts || aKeepAlivePredicates.length
+					// the cache in a recursive hierarchy must be reused (to keep the tree state)
+					// but immediately after #setAggregation it might still be a _CollectionCache
+					|| this.mParameters.$$aggregation?.hierarchyQualifier
+					&& oOldCache instanceof _AggregationCache) {
 				// Note: #inheritQueryOptions as called below should not matter in case of own
 				// requests, which are a precondition for kept-alive elements
 				oOldCache.reset(aKeepAlivePredicates, sGroupId, mQueryOptions,
@@ -1505,6 +1509,9 @@ sap.ui.define([
 				this.fireDataRequested();
 			}
 		).then((iCount) => {
+			if (iCount < 0) { // side-effects expand
+				return this.requestSideEffects(this.getGroupId(), [""]);
+			}
 			if (iCount) {
 				this.insertGap(oContext.getModelIndex(), iCount);
 				if (!bSilent) {
@@ -1876,7 +1883,7 @@ sap.ui.define([
 	  * @param {boolean} [bAllowRequest]
 	 *   Whether it is allowed to send a GET request to fetch the parent node's data
 	 * @returns {sap.ui.model.odata.v4.Context|null|undefined|
-	 *     Promise<sap.ui.model.odata.v4.Context>|sap.ui.base.SyncPromise}
+	 *     Promise<sap.ui.model.odata.v4.Context>}
 	 *   <ul>
 	 *     <li> The parent node if already known,
 	 *     <li> <code>null</code> if the given node is a root node and thus has no parent,
@@ -1904,20 +1911,17 @@ sap.ui.define([
 			return null;
 		}
 
-		if (iParentIndex === undefined && bAllowRequest) {
-			return this.oCache.fetchParent(oNode.iIndex, this.lockGroup()).then((oResult) => {
-				const sPath = this.getResolvedPath()
-					+ _Helper.getPrivateAnnotation(oResult, "predicate");
-				const oParentContext = Context.create(this.oModel, this, sPath);
-				this.mPreviousContextsByPath[sPath] = oParentContext;
-
-				return oParentContext;
-			});
+		const requestContext = (iIndex) => {
+			return this.requestContexts(iIndex, 1).then((aResult) => aResult[0]);
+		};
+		if (bAllowRequest) {
+			if (iParentIndex === undefined) {
+				return this.oCache.fetchParentIndex(oNode.iIndex, this.lockGroup())
+					.then(requestContext);
+			}
+			return requestContext(iParentIndex);
 		}
-
-		return bAllowRequest
-			? this.requestContexts(iParentIndex, 1).then((aResult) => aResult[0])
-			: this.aContexts[iParentIndex];
+		return this.aContexts[iParentIndex];
 	};
 
 	/**

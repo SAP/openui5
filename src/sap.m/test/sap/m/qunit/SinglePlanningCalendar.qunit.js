@@ -1778,19 +1778,25 @@ sap.ui.define([
 				legend: oLegend
 			}),
 			oSPCGrid = oSPC.getAggregation("_grid"),
-			// Expecting start/end information to look like this: "Start Time: *date here*; End Time: *date here*"
-			sAnnouncement = oSPCGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": " +
-							oSPCGrid._oFormatStartEndInfoAria.format(oStartDate) + "; " +
-							oSPCGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": " +
-							oSPCGrid._oFormatStartEndInfoAria.format(oEndDate) + "; ";
+			sFormattedStartDay = oSPCGrid._oFormatStartEndInfoAria.format(oStartDate),
+			sFormattedEndDay = oSPCGrid._oFormatStartEndInfoAria.format(oEndDate),
+			// Expecting aria information to look like this: "From: *date here* To *date here*, TypeX"
+			sAnnouncement = oSPCGrid._oUnifiedRB.getText("CALENDAR_APPOINTMENT_INFO", [
+				sFormattedStartDay,
+				sFormattedEndDay
+			]),
+			sAnnouncement2 = oSPCGrid._oUnifiedRB.getText("CALENDAR_APPOINTMENT_INFO", [
+				sFormattedStartDay,
+				sFormattedEndDay
+			]);
 
 		oSPC.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
 		// Assert
-		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sAnnouncement + oLegendItem.getText(),
+		assert.strictEqual(jQuery("#test-appointment-1_0-Descr").html(), sAnnouncement + ", " + oLegendItem.getText(),
 			"Information for appointment's start/end date + legend is present in the DOM");
-		assert.strictEqual(jQuery("#test-appointment2-Descr").html(), sAnnouncement + oAppointmentWithNoCorresspondingLegendItem.getType(),
+		assert.strictEqual(jQuery("#test-appointment2-1_1-Descr").html(), sAnnouncement2 + ", " + oAppointmentWithNoCorresspondingLegendItem.getType(),
 			"When the appointment has no corresponding legend item, its own type goes to the aria");
 		assert.ok(oAppointment.$().attr("aria-labelledby") !== -1, "The appointment has reference to that information");
 
@@ -1799,8 +1805,63 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		// Assert
-		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sAnnouncement + oAppointment.getType(),
+		assert.strictEqual(jQuery("#test-appointment-1_0-Descr").html(), sAnnouncement + ", " + oAppointment.getType(),
 			"when the legend is destroyed, the aria contains the correct info");
+
+		// Clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("All Day and Multi Day appointment information", async function (assert) {
+		// Prepare
+		var oCalendarStartDate = UI5Date.getInstance(2018, 11, 24),
+			oStartDate = UI5Date.getInstance(2018, 11, 24),
+			oEndDate = UI5Date.getInstance(2018, 11, 24),
+			oEndDateMulti = UI5Date.getInstance(2018, 11, 26),
+			oAllDayAppointment = new CalendarAppointment("test-appointment", {
+				title: "Appointment",
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: "Type01"
+			}),
+			oMultiDayAppointment = new CalendarAppointment("test-appointment2", {
+				title: "Appointment",
+				startDate: oStartDate,
+				endDate: oEndDateMulti,
+				type: "Type02"
+			}),
+			oSPC = new SinglePlanningCalendar({
+				startDate: oCalendarStartDate,
+				appointments: [
+					oAllDayAppointment,
+					oMultiDayAppointment
+				]
+			}),
+			oSPCGrid = oSPC.getAggregation("_grid"),
+			// Expecting information to look like this: "From *date here*, TypeX"
+			sAnnouncementShort = oSPCGrid._oUnifiedRB.getText("CALENDAR_ALL_DAY_INFO", [
+				oSPCGrid._oFormatAriaFullDayCell.format(oStartDate)
+			]),
+			// Expecting information to look like this: "From *date here*, To *date here*, TypeX"
+			sAnnouncementLong = oSPCGrid._oUnifiedRB.getText("CALENDAR_APPOINTMENT_INFO", [
+				oSPCGrid._oFormatAriaFullDayCell.format(oStartDate),
+				oSPCGrid._oFormatAriaFullDayCell.format(oEndDateMulti)
+			]),
+			sAllDayAreaLabelId = InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_ALL_DAY_PREFIX");
+
+		oSPC.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sAnnouncementShort + ", " + oAllDayAppointment.getType(),
+			"Information for all-day appointments is formatted correctly and present in the DOM");
+		assert.ok(oAllDayAppointment.$().attr("aria-labelledby").indexOf(sAllDayAreaLabelId) > -1,
+			"All-Day appointment has appropriate hidden label");
+
+		assert.strictEqual(jQuery("#test-appointment2-Descr").html(), sAnnouncementLong + ", " + oMultiDayAppointment.getType(),
+			"Information for all-day appointments spanning multiple days is formatted correctly and present in the DOM");
+		assert.ok(oMultiDayAppointment.$().attr("aria-labelledby").indexOf(sAllDayAreaLabelId) > -1,
+			"All-Day spanning multiple days appointment has appropriate hidden label");
 
 		// Clean up
 		oSPC.destroy();
@@ -2084,7 +2145,7 @@ sap.ui.define([
 				startDate: oCalendarStartDate,
 				appointments: [oAppointment, oBlocker]
 			}),
-			sBlockerLabelId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
+			sBlockerLabelId = InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_ALL_DAY_PREFIX"),
 			$oBlockerRef,
 			sHiddenSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 

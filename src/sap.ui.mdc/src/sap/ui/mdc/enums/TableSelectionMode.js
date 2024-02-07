@@ -6,8 +6,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	"use strict";
 
 	/**
-	 *
-	 * Defines the mode of the table.
+	 * Selection mode of the table.
 	 *
 	 * @enum {string}
 	 * @alias sap.ui.mdc.enums.TableSelectionMode
@@ -16,23 +15,28 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	 */
 	const TableSelectionMode = {
 		/**
-		 * No rows/items can be selected (default).
+		 * No row selection available
+		 *
 		 * @public
 		 */
 		None: "None",
 		/**
-		 * Only one row/item can be selected at a time.
+		 * Only one row can be selected at a time
+		 *
 		 * @public
 		 */
 		Single: "Single",
 		/**
-		 * Only one row/item can be selected at a time. Should be used for navigation scenarios to indicate the navigated row/item. If this selection
-		 * mode is used, no <code>rowPress</code> event is fired.
+		 * Only one row can be selected at a time. The selection column is not shown. Instead, the user can press the row to select it.
+		 *
+		 * <b>Note:</b> If this selection mode is used, the table does not fire the <code>rowPress</code> event
+		 *
 		 * @public
 		 */
 		SingleMaster: "SingleMaster",
 		/**
-		 * Multiple rows/items can be selected at a time.
+		 * Multiple rows can be selected at a time
+		 *
 		 * @public
 		 */
 		Multi: "Multi"

@@ -18,6 +18,8 @@
 				<m:Button icon="sap-icon://create" press=".onCreateRoot" tooltip="Create New Root"/>
 				<m:Button icon="sap-icon://synchronize" id="synchronize" press="onSynchronize"
 					tooltip="Synchronize"/>
+				<m:Button icon="sap-icon://refresh" press="onRefresh"
+					tooltip="Refresh, while keeping tree state"/>
 			</m:Toolbar>
 		</extension>
 		<rowMode>
@@ -105,6 +107,8 @@
 					tooltip="Create New Root"/>
 				<m:Button icon="sap-icon://synchronize" id="synchronizeTreeTable"
 					press="onSynchronizeTreeTable" tooltip="SynchronizeTreeTable"/>
+				<m:Button icon="sap-icon://refresh" press="onRefreshTreeTable"
+					tooltip="Refresh, while keeping tree state"/>
 			</m:Toolbar>
 		</extension>
 		<rowMode>

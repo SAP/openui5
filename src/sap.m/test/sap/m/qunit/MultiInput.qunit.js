@@ -3399,6 +3399,79 @@ sap.ui.define([
 		oMI.destroy();
 	});
 
+	QUnit.test('Selected items dialog, when showSuggestion is false', function(assert) {
+		var oFakeEvent = {
+			target: {id: null}, isMarked: function () {}
+		};
+		// system under test
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		//arrange
+		var oMI = new MultiInput({
+			showSuggestion: false
+		}).placeAt("qunit-fixture");
+
+		oMI.setTokens([
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"})
+		]);
+		oMI.setWidth("300px");
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		//act
+		oMI.ontap(oFakeEvent);
+		this.clock.tick(1);
+
+		//assert
+		assert.ok(oMI._getSuggestionsPopover().isOpen(), "Tokens dialog should be open");
+
+		//clean up
+		oMI.destroy();
+	});
+
+	QUnit.test('One long token, when showSuggestion is false', function(assert) {
+		var oFakeEvent = {
+			target: {id: null}, isMarked: function () {}
+		};
+		// system under test
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		//arrange
+		var oMI = new MultiInput({
+			showSuggestion: false
+		}).placeAt("qunit-fixture");
+
+		oMI.setTokens([
+			new Token({text: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"})
+		]);
+		oMI.setWidth("200px");
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		//act
+		oMI.ontap(oFakeEvent);
+		this.clock.tick(1);
+
+		//assert
+		assert.ok(oMI._getSuggestionsPopover().isOpen(), "Tokens dialog should be open");
+
+		//clean up
+		oMI.destroy();
+	});
+
 	QUnit.test("Token's list + token deletion", function(assert) {
 		var aListItems,
 			oToken = new Token({text: "XXXX"}),

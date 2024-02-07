@@ -13,6 +13,7 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/URLUtil"], function (UR
 				},
 				"SEO_FORMAT": {
 					"NON_VERSIONED": BASE_URL + "topic/99ac68a5b1c3416ab5c84c99fefa250d",
+					"NON_VERSIONED_RELATIVE": "topic/99ac68a5b1c3416ab5c84c99fefa250d",
 					"VERSIONED": BASE_URL + "1.71.0/topic/99ac68a5b1c3416ab5c84c99fefa250d"
 				}
 			},
@@ -66,6 +67,7 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/URLUtil"], function (UR
 
 	QUnit.test("hasSEOOptimizedFormat", function (assert) {
 		assert.ok(URLUtil.hasSEOOptimizedFormat(URLS.DOCUMENTATION_SECTION.SEO_FORMAT.NON_VERSIONED));
+		assert.ok(URLUtil.hasSEOOptimizedFormat(URLS.DOCUMENTATION_SECTION.SEO_FORMAT.NON_VERSIONED_RELATIVE));
 		assert.ok(URLUtil.hasSEOOptimizedFormat(URLS.DOCUMENTATION_SECTION.SEO_FORMAT.VERSIONED));
 
 		assert.notOk(URLUtil.hasSEOOptimizedFormat(URLS.DOCUMENTATION_SECTION.NON_SEO_FORMAT.NON_VERSIONED));

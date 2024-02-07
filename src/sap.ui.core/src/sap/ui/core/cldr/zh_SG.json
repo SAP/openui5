@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "43.0.0",
-	"__buildtime": "2023-09-28T11:39:07.908Z",
+	"__version": "44.0.0",
+	"__buildtime": "2024-01-12T14:24:50.280Z",
 	"languages": {
 		"aa": "阿法尔语",
 		"ab": "阿布哈西亚语",
@@ -53,6 +53,7 @@
 		"bez": "贝纳语",
 		"bfd": "巴非特语",
 		"bg": "保加利亚语",
+		"bgc": "哈里亚纳语",
 		"bgn": "西俾路支语",
 		"bho": "博杰普尔语",
 		"bi": "比斯拉马语",
@@ -431,6 +432,7 @@
 		"rap": "拉帕努伊语",
 		"rar": "拉罗汤加语",
 		"rhg": "罗兴亚语",
+		"rif": "里夫语",
 		"rm": "罗曼什语",
 		"rn": "隆迪语",
 		"ro": "罗马尼亚语",
@@ -446,7 +448,7 @@
 		"sah": "萨哈语",
 		"sam": "萨马利亚阿拉姆语",
 		"saq": "桑布鲁语",
-		"sas": "萨萨克文",
+		"sas": "萨萨克语",
 		"sat": "桑塔利语",
 		"sba": "甘拜语",
 		"sbp": "桑古语",
@@ -469,6 +471,7 @@
 		"si": "僧伽罗语",
 		"sid": "悉达摩语",
 		"sk": "斯洛伐克语",
+		"skr": "色莱基语",
 		"sl": "斯洛文尼亚语",
 		"slh": "南卢舒特种子语",
 		"sm": "萨摩亚语",
@@ -525,6 +528,7 @@
 		"tpi": "托克皮辛语",
 		"tr": "土耳其语",
 		"trv": "赛德克语",
+		"trw": "托尔瓦利语",
 		"ts": "聪加语",
 		"tsi": "钦西安语",
 		"tt": "鞑靼语",
@@ -592,7 +596,7 @@
 		"Adlm": "阿德拉姆文",
 		"Afak": "阿法卡文",
 		"Aghb": "高加索阿尔巴尼亚文",
-		"Ahom": "Ahom",
+		"Ahom": "阿豪姆文",
 		"Arab": "阿拉伯文",
 		"Arab-alt-variant": "波斯阿拉伯文",
 		"Aran": "波斯体",
@@ -945,6 +949,8 @@
 		"IM": "马恩岛",
 		"IN": "印度",
 		"IO": "英属印度洋领地",
+		"IO-alt-biot": "英属印度洋领地",
+		"IO-alt-chagos": "查戈斯群岛",
 		"IQ": "伊拉克",
 		"IR": "伊朗",
 		"IS": "冰岛",
@@ -1161,7 +1167,7 @@
 				"MMMMdd": "M月d日",
 				"ms": "mm:ss",
 				"y": "y年",
-				"yM": "y年M月",
+				"yM": "y/M",
 				"yMd": "y年M月d日",
 				"yMEd": "y年M月d日，E",
 				"yMEEEEd": "y年M月d日EEEE",
@@ -1257,17 +1263,17 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "v ah:mm至ah:mm",
-					"h": "v ah:mm至h:mm",
-					"m": "v ah:mm至h:mm"
+					"a": "vah:mm至ah:mm",
+					"h": "vah:mm至h:mm",
+					"m": "vah:mm至h:mm"
 				},
 				"Hmv": {
 					"H": "vHH:mm–HH:mm",
 					"m": "vHH:mm–HH:mm"
 				},
 				"hv": {
-					"a": "v ah时至ah时",
-					"h": "v ah时至h时"
+					"a": "vah时至ah时",
+					"h": "vah时至h时"
 				},
 				"Hv": {
 					"H": "vHH–HH"
@@ -3407,8 +3413,8 @@
 					"m": "v ah:mm至h:mm"
 				},
 				"Hmv": {
-					"H": "v HH:mm – HH:mm",
-					"m": "v HH:mm – HH:mm"
+					"H": "vHH:mm–HH:mm",
+					"m": "vHH:mm–HH:mm"
 				},
 				"hv": {
 					"a": "v ah时至ah时",
@@ -3421,12 +3427,12 @@
 					"M": "M–M月"
 				},
 				"Md": {
-					"d": "M/d – M/d",
-					"M": "M/d – M/d"
+					"d": "M-d至M-d",
+					"M": "M-d至M-d"
 				},
 				"MEd": {
-					"d": "M/dE至M/dE",
-					"M": "M/dE至M/dE"
+					"d": "M-dE至M-dE",
+					"M": "M-dE至M-dE"
 				},
 				"MMM": {
 					"M": "MMM – MMM"
@@ -3436,25 +3442,25 @@
 					"M": "M月d日至M月d日"
 				},
 				"MMMEd": {
-					"d": "M月d日E至d日E",
+					"d": "M月d日E至M月d日E",
 					"M": "M月d日E至M月d日E"
 				},
 				"y": {
 					"y": "Gy–y年"
 				},
 				"yM": {
-					"M": "Gy年M月至M月",
+					"M": "y年M月至y年M月",
 					"y": "Gy年M月至y年M月"
 				},
 				"yMd": {
-					"d": "Gy/M/d – y/M/d",
-					"M": "Gy/M/d – y/M/d",
-					"y": "Gy/M/d – y/M/d"
+					"d": "d/M/y至d/M/y",
+					"M": "d/M/y至d/M/y",
+					"y": "d/M/y至d/M/y"
 				},
 				"yMEd": {
-					"d": "Gy/M/dE至y/M/dE",
-					"M": "Gy/M/dE至y/M/dE",
-					"y": "Gy/M/dE至y/M/dE"
+					"d": "d/M/yE至d/M/yE",
+					"M": "d/M/yE至d/M/yE",
+					"y": "d/M/yE至d/M/yE"
 				},
 				"yMMM": {
 					"M": "Gy年M月至M月",
@@ -4416,7 +4422,7 @@
 			"Eucla": "尤克拉",
 			"Hobart": "霍巴特",
 			"Lindeman": "林德曼",
-			"Lord_Howe": "豪勋爵",
+			"Lord_Howe": "豪勋爵岛",
 			"Melbourne": "墨尔本",
 			"Perth": "珀斯",
 			"Sydney": "悉尼",
@@ -4715,6 +4721,12 @@
 			"10p-24": {
 				"unitPrefixPattern": "y{0}"
 			},
+			"10p-27": {
+				"unitPrefixPattern": "r{0}"
+			},
+			"10p-30": {
+				"unitPrefixPattern": "q{0}"
+			},
 			"10p1": {
 				"unitPrefixPattern": "da{0}"
 			},
@@ -4744,6 +4756,12 @@
 			},
 			"10p24": {
 				"unitPrefixPattern": "Y{0}"
+			},
+			"10p27": {
+				"unitPrefixPattern": "R{0}"
+			},
+			"10p30": {
+				"unitPrefixPattern": "Q{0}"
 			},
 			"1024p1": {
 				"unitPrefixPattern": "Ki{0}"
@@ -5038,7 +5056,7 @@
 			},
 			"energy-foodcalorie": {
 				"displayName": "大卡",
-				"unitPattern-count-other": "{0}大卡"
+				"unitPattern-count-other": "{0} Cal"
 			},
 			"energy-kilojoule": {
 				"displayName": "千焦",
@@ -5121,8 +5139,8 @@
 				"unitPattern-count-other": "{0} dpi"
 			},
 			"graphics-dot": {
-				"displayName": "px",
-				"unitPattern-count-other": "{0} px"
+				"displayName": "点",
+				"unitPattern-count-other": "{0}点"
 			},
 			"length-earth-radius": {
 				"displayName": "R⊕",
@@ -5377,6 +5395,10 @@
 				"displayName": "kn",
 				"unitPattern-count-other": "{0} kn"
 			},
+			"speed-beaufort": {
+				"displayName": "Bft",
+				"unitPattern-count-other": "B {0}"
+			},
 			"temperature-generic": {
 				"displayName": "°",
 				"unitPattern-count-other": "{0}°"
@@ -5552,9 +5574,9 @@
 		}
 	},
 	"lenient-scope-number": {
-		"minusSign": "-‒⁻₋−➖﹣－",
-		"commaSign": ",،٫、︐︑﹐﹑，､",
-		"plusSign": "+⁺₊➕﬩﹢＋"
+		"minusSign": "-－﹣ ‑‒−⁻₋➖",
+		"commaSign": ",，﹐︐ ،٫、﹑､︑",
+		"plusSign": "+＋﬩﹢⁺₊ ➕"
 	},
 	"currencyFormat-sap-short": {
 		"1000-other": "0",

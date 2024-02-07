@@ -31,13 +31,17 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	/*global Set */
-
 	const TableMap = new window.WeakMap(); // To store table-related information for easy access in the delegate.
 
 	/**
-	 * Delegate for {@link sap.ui.mdc.Table} and <code>ODataV4</code>.
-	 * Enables additional analytical capabilities.
+	 * Base delegate for {@link sap.ui.mdc.Table} and <code>ODataV4</code>.
+	 *
+	 * Extend this object in your project to use all functionalities of the table. For more information, please see
+	 * {@link module:sap/ui/mdc/TableDelegate}.
+	 *
+	 * <b>Note:</b> This base delegate supports the <code>p13nMode</code> <code>Aggregate</code> only if the table type is
+	 * {@link sap.ui.mdc.table.GridTableType GridTable}, and the <code>p13nMode</code> <code>Group</code> is not supported if the table type is
+	 * {@link sap.ui.mdc.table.TreeTableType TreeTable}. This cannot be changed in your delegate implementation.
 	 *
 	 * @author SAP SE
 	 * @namespace
@@ -62,21 +66,6 @@ sap.ui.define([
 	Delegate.getPropertyHelperClass = function() {
 		return V4AnalyticsPropertyHelper;
 	};
-
-	/**
-	 * Provides hook to update the binding info object that is used to bind the table to the model.
-	 *
-	 * Delegate objects that implement this method must ensure that at least the <code>path</code> key of the binding info is provided.
-	 * <b>Note:</b> To remove a binding info parameter, the value must be set to <code>undefined</code>. For more information, see
-	 * {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters}.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
-	 * @function
-	 * @name module:sap/ui/mdc/odata/v4/TableDelegate.updateBindingInfo
-	 * @abstract
-	 */
-	//Delegate.updateBindingInfo = function(oTable, oBindingInfo) { };
 
 	/**
 	 * @inheritDoc
@@ -114,19 +103,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the row binding of the table if possible, rebinds otherwise.
+	 * Updates the binding of the table with the binding info object returned from
+	 * {@link module:sap/ui/mdc/TableDelegate.updateBindingInfo updateBindingInfo}. If an update is not possible, it rebinds the table.
 	 *
-	 * Compares the current and previous state of the table to detect whether rebinding is necessary or not.
-	 * The diffing happens for the sorters, filters, aggregation, parameters, and the path of the binding.
-	 * Other {@link sap.ui.base.ManagedObject.AggregationBindingInfo binding info} keys like <code>events</code>,
-	 * <code>model</code>... must be provided in the {@link #updateBindingInfo updateBindingInfo} method always,
-	 * and those keys must not be changed conditionally.
+	 * Compares the current and previous state of the table to detect whether rebinding is necessary.
+	 * The diffing is done for the sorters, filters, aggregation, parameters, and the path of the binding.
+	 * Other {@link sap.ui.base.ManagedObject.AggregationBindingInfo binding info} keys, such as <code>events</code> or <code>model</code>, must be
+	 * provided in <code>updateBindingInfo</code>, and those keys must not be changed conditionally.
+	 *
+	 * <b>Note:</b> To remove a binding info parameter, the value must be set to <code>undefined</code> in
+	 * <code>updateBindingInfo</code>. For more information, see {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters}.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model.
-	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instance of the table
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table
+	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instance of the table that can be used to update the binding and avoid a rebind
 	 * @param {object} [mSettings] Additional settings
-	 * @param {boolean} [mSettings.forceRefresh] Indicates that the binding has to be refreshed even if <code>oBindingInfo</code> has not been changed
+	 * @param {boolean} [mSettings.forceRefresh] Indicates that the binding has to be refreshed even if the binding info has not changed
+	 * @see rebind
 	 * @protected
 	 * @override
 	 */
@@ -175,13 +168,12 @@ sap.ui.define([
 		TableDelegate.rebind.apply(this, arguments);
 	};
 
-
 	/**
 	 * @inheritDoc
 	 */
-	Delegate.expandAll = function(oTable) {
-		if (!this.getSupportedFeatures(oTable).expandAll) {
-			return;
+	Delegate.expandAllRows = function(oTable) {
+		if (!this.getSupportedFeatures(oTable).expandAllRows) {
+			throw Error("Unsupported operation: Not supported for the current table type");
 		}
 
 		const oRowBinding = oTable.getRowBinding();
@@ -193,9 +185,9 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	Delegate.collapseAll = function(oTable) {
-		if (!this.getSupportedFeatures(oTable).collapseAll) {
-			return;
+	Delegate.collapseAllRows = function(oTable) {
+		if (!this.getSupportedFeatures(oTable).collapseAllRows) {
+			throw Error("Unsupported operation: Not supported for the current table type");
 		}
 
 		const oRowBinding = oTable.getRowBinding();
@@ -208,31 +200,25 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Delegate.getSupportedFeatures = function(oTable) {
-		const oSupportedFeatures = TableDelegate.getSupportedFeatures.apply(this, arguments);
+		const mSupportedFeatures = TableDelegate.getSupportedFeatures.apply(this, arguments);
 		const bIsTreeTable = oTable._isOfType(TableType.TreeTable);
 
-		return Object.assign(oSupportedFeatures, {
-			expandAll: bIsTreeTable,
-			collapseAll: bIsTreeTable
-		});
-	};
-
-	/**
-	 * @inheritDoc
-	 */
-	Delegate.getSupportedP13nModes = function(oTable) {
-		const aSupportedModes = TableDelegate.getSupportedP13nModes.apply(this, arguments);
-
 		if (oTable._isOfType(TableType.Table)) {
-			if (!aSupportedModes.includes(P13nMode.Group)) {
-				aSupportedModes.push(P13nMode.Group);
+			const aP13nModes = mSupportedFeatures.p13nModes;
+
+			if (!aP13nModes.includes(P13nMode.Group)) {
+				aP13nModes.push(P13nMode.Group);
 			}
-			if (!aSupportedModes.includes(P13nMode.Aggregate)) {
-				aSupportedModes.push(P13nMode.Aggregate);
+			if (!aP13nModes.includes(P13nMode.Aggregate)) {
+				aP13nModes.push(P13nMode.Aggregate);
 			}
 		}
 
-		return aSupportedModes;
+		return {
+			...mSupportedFeatures,
+			expandAllRows: bIsTreeTable,
+			collapseAllRows: bIsTreeTable
+		};
 	};
 
 	Delegate.validateState = function(oTable, oState, sKey) {

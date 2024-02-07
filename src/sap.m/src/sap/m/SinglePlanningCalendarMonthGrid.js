@@ -293,10 +293,10 @@ sap.ui.define([
 			this._handleMorePress = this._handleMorePress.bind(this);
 			this._oDateFormat = DateFormat.getDateTimeInstance({ pattern: "YYYYMMdd" });
 			this._oFormatAriaApp = DateFormat.getDateTimeInstance({
-				pattern: "EEEE dd/MM/YYYY 'at' " + this._getCoreLocaleData().getTimePattern("medium")
+				pattern: "EEEE, MMMM d, yyyy 'at' " + this._getCoreLocaleData().getTimePattern("medium")
 			});
 			this._oFormatAriaFullDayCell = DateFormat.getDateTimeInstance({
-				pattern: "EEEE dd/MM/YYYY"
+				pattern: "EEEE, MMMM d, yyyy"
 			});
 
 			this.setStartDate(UI5Date.getInstance());
@@ -1264,14 +1264,52 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getAppointmentAnnouncementInfo = function(oAppointment) {
-			var oUnifiedRB = Library.getResourceBundleFor("sap.ui.unified"),
-				sStartTime = oUnifiedRB.getText("CALENDAR_START_TIME"),
-				sEndTime = oUnifiedRB.getText("CALENDAR_END_TIME"),
-				sFormattedStartDate = this._oFormatAriaApp.format(oAppointment.getStartDate()),
-				sFormattedEndDate = this._oFormatAriaApp.format(oAppointment.getEndDate()),
-				sAppInfo = sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate;
+			var oStartDate = oAppointment.getStartDate(),
+				oEndDate = oAppointment.getEndDate(),
+				bFullDay =  this._isAllDayAppointment(oStartDate, oEndDate),
+				bSingleDay =  this._isSingleDayAppointment(oStartDate, oEndDate),
+				sLegendInfo = PlanningCalendarLegend.findLegendItemForItem(Element.getElementById(this._sLegendId), oAppointment),
+				sFormattedDate;
 
-			return sAppInfo + "; " + PlanningCalendarLegend.findLegendItemForItem(Element.getElementById(this._sLegendId), oAppointment);
+			if (bFullDay && bSingleDay) {
+				sFormattedDate = this._oUnifiedRB.getText("CALENDAR_ALL_DAY_INFO", [this._oFormatAriaFullDayCell.format(oStartDate)]);
+			} else if (bFullDay) {
+				sFormattedDate = this._oUnifiedRB.getText( "CALENDAR_APPOINTMENT_INFO", [
+					this._oFormatAriaFullDayCell.format(oStartDate),
+					this._oFormatAriaFullDayCell.format(oEndDate)
+				]);
+			} else {
+				sFormattedDate = this._oUnifiedRB.getText( "CALENDAR_APPOINTMENT_INFO", [
+					this._oFormatAriaApp.format(oStartDate),
+					this._oFormatAriaApp.format(oEndDate)
+				]);
+			}
+
+			return sFormattedDate + ", " + sLegendInfo;
+		};
+
+		/**
+		 * Returns whether an appointment starts at 00:00 and ends in 00:00 on any day in the future.
+		 *
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oAppStartDate - Start date of the appointment
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oAppEndDate - End date of the appointment
+		 * @returns {boolean}
+		 * @private
+		 */
+		SinglePlanningCalendarMonthGrid.prototype._isAllDayAppointment = function(oAppStartDate, oAppEndDate) {
+			return CalendarUtils._isMidnight(oAppStartDate) && CalendarUtils._isMidnight(oAppEndDate);
+		};
+
+		/**
+		 * Returns whether an appointment starts and ends on the same day.
+		 *
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oAppStartDate - Start date of the appointment
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oAppEndDate - End date of the appointment
+		 * @returns {boolean}
+		 * @private
+		 */
+		SinglePlanningCalendarMonthGrid.prototype._isSingleDayAppointment = function(oAppStartDate, oAppEndDate) {
+			return !oAppEndDate || oAppStartDate.getDate() === oAppEndDate.getDate();
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getMaxAppointments = function() {

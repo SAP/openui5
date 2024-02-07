@@ -256,7 +256,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Constructor for a new <code>MDCTable</code>.
+	 * Constructor for a new <code>Table</code>.
 	 *
 	 * @param {string} [sId] Optional ID for the new control; generated automatically if no non-empty ID is given
 	 * <b>Note:</b> The optional ID can be omitted, no matter whether <code>mSettings</code> is given or not.
@@ -265,6 +265,9 @@ sap.ui.define([
 	 * A metadata-driven table to simplify the usage of existing tables, such as the <code>ResponsiveTable</code> and <code>GridTable</code>
 	 * controls. The metadata needs to be provided via the {@link module:sap/ui/mdc/TableDelegate TableDelegate} implementation as
 	 * {@link sap.ui.mdc.table.PropertyInfo}.
+	 *
+	 * <b>Note:</b> Read and write access to internal elements is not permitted. Such elements are, for example, the inner table including its
+	 * children. This is independent of how access was gained. Internal elements and their types are subject to change without notice.
 	 *
 	 * @extends sap.ui.mdc.Control
 	 * @author SAP SE
@@ -288,18 +291,20 @@ sap.ui.define([
 				width: {
 					type: "sap.ui.core.CSSSize",
 					group: "Dimension",
-					defaultValue: null,
-					invalidate: true
+					defaultValue: null
 				},
 
 				/**
-				 * Personalization options for the table.<br>
-				 * <b>Note:</b> The order of the options does not influence the position on the UI.
+				 * Personalization options for the table.
+				 *
+				 * <b>Note:</b> Whether a personalization option is supported depends on the used delegate. Please refer to the documentation of the
+				 * individual delegates. The order of the provided options does not influence their order on the UI.
 				 *
 				 * @since 1.62
 				 */
 				p13nMode: {
 					type: "sap.ui.mdc.enums.TableP13nMode[]",
+					group: "Behavior",
 					defaultValue: []
 				},
 
@@ -307,16 +312,19 @@ sap.ui.define([
 				 * Object related to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
 				 * The object has the following properties:
 				 * <ul>
-				 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module</li>
+				 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module. The used delegate module must inherit from
+				 *      {@link module:sap/ui/mdc/TableDelegate TableDelegate}</li>.
 				 * 	<li><code>payload</code> (optional) defines application-specific information that can be used in the given delegate</li>
 				 * </ul>
 				 * <i>Sample delegate object:</i>
 				 * <pre><code>{
-				 * 	name: "sap/ui/mdc/BaseDelegate",
+				 * 	name: "sap/ui/mdc/TableDelegate",
 				 * 	payload: {}
 				 * }</code></pre>
+				 *
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
 				 * Do not bind or modify the module. This property can only be configured during control initialization.
+				 *
 				 * @experimental
 				 */
 				delegate: {
@@ -328,8 +336,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Semantic level of the header.
-				 * For more information, see {@link sap.m.Title#setLevel}.
+				 * Semantic level of the header. For more information, see {@link sap.m.Title#setLevel}.
 				 *
 				 * @since 1.84
 				 */
@@ -340,8 +347,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines style of the header.
-				 * For more information, see {@link sap.m.Title#setTitleStyle}.
+				 * Defines style of the header. For more information, see {@link sap.m.Title#setTitleStyle}.
+				 *
 				 * @experimental Internal use only
 				 * @ui5-restricted sap.fe
 				 * @since 1.116
@@ -356,16 +363,17 @@ sap.ui.define([
 				 */
 				autoBindOnInit: {
 					type: "boolean",
-					group: "Misc",
+					group: "Behavior",
 					defaultValue: true
 				},
 
 				/**
-				 * Header text that is shown in the table.
+				 * Header text that is shown in the table. The header must always be set to comply with accessibility standards, even if other
+				 * settings make the header invisible.
 				 */
 				header: {
 					type: "string",
-					group: "Misc",
+					group: "Appearance",
 					defaultValue: null
 				},
 
@@ -377,19 +385,17 @@ sap.ui.define([
 				 */
 				headerVisible: {
 					type: "boolean",
-					group: "Misc",
+					group: "Appearance",
 					defaultValue: true
 				},
 
 				/**
-				 * If no tooltip has been provided for a column, the column header text will automatically be applied
-				 * as a tooltip for the column.
+				 * If no tooltip has been provided for a column, the column header text will automatically be applied as a tooltip for the column.
 				 *
 				 * @since 1.115
 				 */
 				useColumnLabelsAsTooltips: {
 					type: "boolean",
-					group: "Misc",
 					defaultValue: false
 				},
 
@@ -397,35 +403,42 @@ sap.ui.define([
 				 * Selection mode of the table. Specifies whether single or multiple rows can be selected and how the selection can be extended. It
 				 * may also influence the visual appearance.
 				 *
-				 * With the {@link sap.ui.mdc.table.GridTableType GridTableType} and server-side models, range selections, including Select All, only
-				 * work properly if the count is known. Make sure the model/binding is configured to request the count from the service.
+				 * <b>Note:</b> With the {@link sap.ui.mdc.table.GridTableType GridTable} and server-side models, range selections, including
+				 * Select All, only work properly if the count is known. Please refer to the documentation of the used model for information on
+				 * requesting the count, for example, {@link sap.ui.model.odata.v4.ODataModel}.
 				 */
 				selectionMode: {
 					type: "sap.ui.mdc.enums.TableSelectionMode",
+					group: "Behavior",
 					defaultValue: TableSelectionMode.None
 				},
 
 				/**
-				 * Determines whether the number of rows is shown along with the header text. If set to <code>false</code>, the number of rows is not
-				 * shown on the user interface.<br>
-				 * <b>Note:</b><br>
-				 * For better performance dedicated OData requests should not be sent. The count mode must be configured either in the model or in the
-				 * binding of the table.<br>
-				 * This property can only be used if the back-end service supports row count.
+				 * Determines whether the number of rows is shown along with the header text.
+				 *
+				 * <b>Note:</b> Whether this feature can be used depends on whether the model used and the data service can provide a count. Please
+				 * refer to the documentation of the used model for information on requesting the count, for example,
+				 * {@link sap.ui.model.odata.v4.ODataModel}.
 				 */
 				showRowCount: {
 					type: "boolean",
-					group: "Misc",
+					group: "Appearance",
 					defaultValue: true
 				},
 
 				/**
-				 * Number of records to be requested from the model. If the <code>type</code> property is set to <code>ResponsiveTable</code>, then it
-				 * refers to the {@link sap.m.ListBase#getGrowingThreshold growingThreshold} property of <code>ResponsiveTable</code>. If the
-				 * <code>type</code> property is set to <code>Table</code>, then it refers to the {@link sap.ui.table.Table#getThreshold threshold}
-				 * property of <code>GridTable</code>.<br>
-				 * <b>Note:</b> This property only takes effect if it is set to a positive integer value. Otherwise the table uses the default value
-				 * of the corresponding table types.
+				 * Number of records to be requested from the model.
+				 *
+				 * If the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}, the threshold defines the number of rows that
+				 * are displayed initially, and the number of rows that are added when the table grows
+				 * ({@link sap.ui.mdc.table.ResponsiveTableType#getGrowingMode growingMode}).
+				 *
+				 * If the table type is {@link sap.ui.mdc.table.GridTableType GridTable}, the threshold defines how many additional (not yet visible)
+				 * data records from the back-end system are pre-fetched. If the <code>threshold</code> is lower than the number of visible rows, the
+				 * number of visible rows is used as the <code>threshold</code>. If the value is 0, thresholding is disabled.
+				 *
+				 * <b>Note:</b> This property only takes effect if it is set to a positive integer value. Otherwise the table uses a type-dependent
+				 * default value.
 				 *
 				 * @since 1.63
 				 */
@@ -438,8 +451,8 @@ sap.ui.define([
 				/**
 				 * Defines the sort conditions.
 				 *
-				 * <b>Note</b>: This property must not be bound.<br>
-				 * <b>Note:</b> This property is used exclusively for handling SAPUI5 flexibility changes. Do not use it otherwise.
+				 * <b>Note:</b> This property must not be bound.<br>
+				 * This property is used exclusively for handling SAPUI5 flexibility changes. Do not use it otherwise.
 				 *
 				 * @since 1.73
 				 */
@@ -450,8 +463,8 @@ sap.ui.define([
 				/**
 				 * Defines the filter conditions.
 				 *
-				 * <b>Note</b>: This property must not be bound.<br>
-				 * <b>Note:</b> This property is used exclusively for handling SAPUI5 flexibility changes. Do not use it otherwise.
+				 * <b>Note:</b> This property must not be bound.<br>
+				 * This property is used exclusively for handling SAPUI5 flexibility changes. Do not use it otherwise.
 				 *
 				 * @since 1.80.0
 				 */
@@ -463,8 +476,8 @@ sap.ui.define([
 				/**
 				 * Defines the group conditions.
 				 *
-				 * <b>Note</b>: This property must not be bound.<br>
-				 * <b>Note:</b> This property is used exclusively for handling SAPUI5 flexibility changes. Do not use it otherwise.
+				 * <b>Note:</b> This property must not be bound.<br>
+				 * This property is used exclusively for handling SAPUI5 flexibility changes. Do not use it otherwise.
 				 *
 				 * @since 1.87
 				 */
@@ -475,8 +488,8 @@ sap.ui.define([
 				/**
 				 * Defines the aggregate conditions.
 				 *
-				 * <b>Note</b>: This property must not be bound.<br>
-				 * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes. Do not use it otherwise.
+				 * <b>Note:</b> This property must not be bound.<br>
+				 * This property is exclusively used for handling SAPUI5 flexibility changes. Do not use it otherwise.
 				 *
 				 * @since 1.87
 				 */
@@ -485,13 +498,19 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines whether the table data export is enabled.
-				 * To use the export functionality, the {@link sap.ui.export} library is required.
+				 * Determines whether the data export is enabled.
+				 *
+				 * The delegate can customize the export result with the <code>exportSettings</code> field in the
+				 * {@link sap.ui.mdc.table.PropertyInfo PropertyInfo}.
+				 *
+				 * <b>Note:</b> To use the export functionality, the {@link sap.ui.export} library is required, otherwise an error message is
+				 * displayed when the user presses the Export button.
 				 *
 				 * @since 1.75
 				 */
 				enableExport: {
 					type: "boolean",
+					group: "Behavior",
 					defaultValue: false
 				},
 
@@ -521,7 +540,7 @@ sap.ui.define([
 				 */
 				showPasteButton: {
 					type: "boolean",
-					group: "Behavior",
+					group: "Appearance",
 					defaultValue: false
 				},
 
@@ -537,13 +556,14 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the multi-selection mode for the control.
-				 * If this property is set to the <code>Default</code> value, the <code>ResponsiveTable</code> type control renders the Select All
-				 * checkbox in the column header, otherwise the Deselect All icon is rendered.
+				 * Defines the multi-selection mode.
 				 *
-				 * This property is used with the <code>selectionMode="Multi"</code>.
-				 *
-				 * <b>Note:</b> This property has currently no effect for table types other than <code>ResponsiveTable</code> type. This is subject to change in future.
+				 * <b>Note:</b> This property has no effect in the following cases:
+				 * <ul>
+				 * 	<li>Table type is not {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}. This is subject to change in the
+				 *      future.</li>
+				 * 	<li>Selection mode is not <code>Multi</code>.</li>
+				 * </ul>
 				 *
 				 * @since 1.93
 				 */
@@ -554,16 +574,16 @@ sap.ui.define([
 				},
 
 				/**
-				 * Enables automatic column width calculation based on metadata information if set to <code>true</code>.
-				 * The column width calculation takes the type, column label, referenced properties, and many other metadata parameters into account.
-				 * Providing a more precise <code>maxLength</code> value for the <code>String</code> type or <code>precision</code> value for numeric
-				 * types can help this algorithm to produce better results.
-				 * The calculated column widths can have a minimum of 3rem and a maximum of 20rem.
+				 * Enables automatic column width calculation. The column width calculation takes the type, column label, referenced properties, and
+				 * other information into account. The calculated column widths can have a minimum of 3rem and a maximum of 20rem.
 				 *
-				 * <b>Note:</b> To customize the automatic column width calculation, the <code>visualSettings.widthSettings</code> key of the
-				 * <code>PropertyInfo</code> can be used. To avoid the heuristic column width calculation for a particular column, the
-				 * <code>visualSettings.widthSettings</code> key of the <code>PropertyInfo</code> must be set to <code>null</code>. This feature has
-				 * no effect if the <code>width</code> property of the column is bound or its value is set.
+				 * The delegate can customize the automatic column width calculation with the <code>visualSettings.widthSettings</code> field in the
+				 * {@link sap.ui.mdc.table.PropertyInfo PropertyInfo}. To disable the heuristic column width calculation for a particular column, the
+				 * <code>visualSettings.widthSettings</code> field can be set to <code>null</code>.
+				 * Providing a more precise <code>maxLength</code> value for the <code>String</code> type or <code>precision</code> value for numeric
+				 * types can help the algorithm to produce better results.
+				 *
+				 * <b>Note:</b> The column width is not calculated if the <code>width</code> property of the column is bound or its value is set.
 				 *
 				 * @since 1.95
 				 */
@@ -617,6 +637,7 @@ sap.ui.define([
 				 *
 				 * @since 1.121
 				 */
+
 				hideToolbar: {
 					type: "boolean",
 					group: "Appearance",
@@ -641,10 +662,10 @@ sap.ui.define([
 				},
 				/**
 				 * Columns of the table.
-				 * <b>Note:</b>
-				 * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
-				 * Any changes of the initial aggregation content might result in undesired effects.
-				 * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
+				 *
+				 * <b>Note:</b> This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not
+				 * bindable. Any changes of the initial aggregation content might result in unwanted effects. Changes of the aggregation have to be
+				 * made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
 				 */
 				columns: {
 					type: "sap.ui.mdc.table.Column",
@@ -653,6 +674,7 @@ sap.ui.define([
 
 				/**
 				 * This row can be used for user input to create new data if {@link sap.ui.mdc.enums.TableType TableType} is "<code>Table</code>".
+				 *
 				 * <b>Note:</b> Once the binding supports creating transient records, this aggregation will be removed.
 				 *
 				 * @experimental Do not use
@@ -664,11 +686,11 @@ sap.ui.define([
 				},
 
 				/**
-				 * Additional/external actions available for the table.
-				 * <b>Note:</b>
-				 * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
-				 * Any changes of the initial aggregation content might result in undesired effects.
-				 * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
+				 * Additional actions that will be available in the toolbar.
+				 *
+				 * <b>Note:</b> This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not
+				 * bindable. Any changes of the initial aggregation content might result in undesired effects. Changes of the aggregation have to be
+				 * made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
 				 */
 				actions: {
 					type: "sap.ui.core.Control",
@@ -688,7 +710,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Additional <code>Filter</code> for the table.
+				 * Additional control for filtering that will be available in the toolbar.
 				 */
 				quickFilter: {
 					type: "sap.ui.core.Control",
@@ -718,22 +740,27 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the custom visualization if there is no data to show in the table.
+				 * Defines the custom visualization if there is no data to show.
 				 *
 				 * <b>Note:</b> If {@link sap.m.IllustratedMessage} control is set for the <code>noData</code> aggregation and its
 				 * {@link sap.m.IllustratedMessage#getTitle title} property is not set then the table automatically offers a no data text with
 				 * fitting {@link sap.m.IllustratedMessage.IllustratedMessageType illustration}.
+				 *
 				 * @since 1.106
 				 */
 				noData: {type: "sap.ui.core.Control", multiple: false, altTypes: ["string"]},
 
 				/**
-				 * Defines an aggregation for the <code>CopyProvider</code> plugin that provides copy to clipboard capabilities for the selected rows of the table and creates a Copy button for the toolbar of the table.
-				 * To disable the copy function of the table, including the Copy button in the toolbar, the <code>enabled</code> property of the <code>CopyProvider</code> must be set to <code>false</code>.
-				 * To hide the Copy button from the toolbar, the <code>visible</code> property of the <code>CopyProvider</code> must be set to <code>false</code>.
+				 * Defines an aggregation for the <code>CopyProvider</code> plugin that provides copy to clipboard capabilities for the selected rows
+				 * and creates a Copy button for the toolbar. To disable the copy function, including the Copy button in the toolbar, the
+				 * <code>enabled</code> property of the <code>CopyProvider</code> must be set to <code>false</code>. To hide the Copy button from the
+				 * toolbar, the <code>visible</code> property of the <code>CopyProvider</code> must be set to <code>false</code>.
 				 *
-				 * <b>Note:</b> The {@link sap.m.plugins.CopyProvider#extractData extractData} property of the <code>CopyProvider</code> must not be managed by the application.
-				 * <b>Note:</b> The <code>CopyProvider</code> requires a secure context to access the clipboard API. If the context is not secure, the plugin will not be added, and the copy button will not be generated.
+				 * <b>Note:</b> The {@link sap.m.plugins.CopyProvider#extractData extractData} property of the <code>CopyProvider</code> must not be
+				 * managed by the application.<br>
+				 * The <code>CopyProvider</code> requires a secure context to access the clipboard API. If the context is not secure, the plugin will
+				 * not be added, and the Copy button will not be generated.
+				 *
 				 * @since 1.114
 				 */
 				copyProvider: {
@@ -742,17 +769,18 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the context menu for the table rows.
+				 * Defines the context menu for the rows.
 				 *
 				 * @since 1.118
 				 */
 				contextMenu: {type: "sap.ui.core.IContextMenu", multiple: false},
 
 				/**
-				 * Defines an aggregation for the <code>CellSelector</code> plugin that provides cell selection capabilities to the table.
+				 * Defines an aggregation for the <code>CellSelector</code> plugin that provides cell selection capabilities.
 				 *
-				 * <b>Note:</b> The <code>CellSelector</code> is currently only available in combination with the <code>GridTableType</code>. Please refer to
-				 * {@link sap.m.plugins.CellSelector} see the addiditional restrictions.
+				 * <b>Note:</b> The <code>CellSelector</code> is currently only available in combination with the
+				 * {@link sap.ui.mdc.table.GridTableType GridTable}. Please refer to {@link sap.m.plugins.CellSelector} for additional restrictions.
+				 *
 				 * @since 1.119
 				 */
 				cellSelector: {
@@ -765,7 +793,8 @@ sap.ui.define([
 				 * Control or object that enables the table to do filtering, such as {@link sap.ui.mdc.FilterBar}. See also
 				 * {@link sap.ui.mdc.IFilter}.
 				 *
-				 * Automatic filter generation only works in combination with a <code>sap.ui.mdc.FilterBar</code>.
+				 * <b>Note:</b> By default, automatic filter generation only works in combination with a <code>sap.ui.mdc.FilterBar</code>, see also
+				 * {@link module:sap/ui/mdc/TableDelegate.getFilters}.
 				 */
 				filter: {
 					type: "sap.ui.mdc.IFilter",
@@ -774,7 +803,7 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * This event is fired when a row in the table is pressed.
+				 * This event is fired when a row is pressed.
 				 */
 				rowPress: {
 					parameters: {
@@ -787,7 +816,7 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * This event is fired when the selection in the table is changed.
+				 * This event is fired when the selection is changed.
 				 */
 				selectionChange: {
 					parameters: {
@@ -850,6 +879,7 @@ sap.ui.define([
 				},
 				/**
 				 * This event is fired when the user requests the context menu for the table.
+				 *
 				 * @since 1.117
 				 */
 				beforeOpenContextMenu: {
@@ -863,7 +893,8 @@ sap.ui.define([
 						},
 						/**
 						 * The column used for the context menu
-						 * <b>Note:</b> The column parameter can be empty when opened in a popin area for responsiveTable type.
+						 *
+						 * <b>Note:</b> This parameter can be undefined if the area where the context menu opens is not related to a column instance.
 						 */
 						column: {type: "sap.ui.mdc.table.Column"}
 					}
@@ -991,7 +1022,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a <code>Promise</code> that resolves once the table has been initialized after the creation and changing of its type.
+	 * Returns a <code>Promise</code> that resolves after the table has been initialized, and after it has been created or its type has been changed.
 	 *
 	 * @returns {Promise} A <code>Promise</code> that resolves after the table has been initialized
 	 * @public
@@ -1158,7 +1189,7 @@ sap.ui.define([
 	 *
 	 * @param {number} iIndex The index of the row that should be scrolled into the visible area
 	 * @since 1.76
-	 * @returns {Promise} A <code>Promise</code> that resolves after the table scrolls to the row with the given index
+	 * @returns {Promise} A <code>Promise</code> that resolves after the table has been scrolled to the row with the given index
 	 * @public
 	 */
 	Table.prototype.scrollToIndex = function(iIndex) {
@@ -1744,7 +1775,8 @@ sap.ui.define([
 	Table.prototype._initializeContent = function() {
 		const oType = this._getType();
 		const aInitPromises = [
-			this.awaitControlDelegate(), oType.loadModules()
+			this.awaitControlDelegate(),
+			oType.loadModules()
 		];
 
 		if (this.isFilteringEnabled()) {
@@ -1757,6 +1789,8 @@ sap.ui.define([
 			if (this.isDestroyed()) {
 				return Promise.reject("Destroyed");
 			}
+
+			// TODO: Cache Delegate.getSupportedFeatures and use only cached feature information in the table.
 
 			this._updateAdaptation();
 
@@ -2157,7 +2191,7 @@ sap.ui.define([
 		let aSupportedP13nModes = getIntersection(Object.keys(TableP13nMode), this._getType().getSupportedP13nModes());
 
 		if (this.isControlDelegateInitialized()) {
-			aSupportedP13nModes = getIntersection(aSupportedP13nModes, this.getControlDelegate().getSupportedP13nModes(this));
+			aSupportedP13nModes = getIntersection(aSupportedP13nModes, this.getControlDelegate().getSupportedFeatures(this).p13nModes);
 		}
 
 		return aSupportedP13nModes;
@@ -2279,7 +2313,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._isCollapseAllEnabled = function() {
-		return this.isControlDelegateInitialized() && this.getControlDelegate().getSupportedFeatures(this).collapseAll;
+		return this.isControlDelegateInitialized() && this.getControlDelegate().getSupportedFeatures(this).collapseAllRows;
 	};
 
 	/**
@@ -2294,7 +2328,7 @@ sap.ui.define([
 		if (bNeedCollapseAllButton && !this._oCollapseAllButton) {
 			this._oCollapseAllButton = TableSettings.createExpandCollapseAllButton(this.getId(), [
 				function() {
-					this.getControlDelegate().collapseAll(this);
+					this.getControlDelegate().collapseAllRows(this);
 				}, this
 			], false);
 		}
@@ -2312,7 +2346,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._isExpandAllEnabled = function() {
-		return this.isControlDelegateInitialized() && this.getControlDelegate().getSupportedFeatures(this).expandAll;
+		return this.isControlDelegateInitialized() && this.getControlDelegate().getSupportedFeatures(this).expandAllRows;
 	};
 
 	/**
@@ -2327,7 +2361,7 @@ sap.ui.define([
 		if (bNeedExpandAllButton && !this._oExpandAllButton) {
 			this._oExpandAllButton = TableSettings.createExpandCollapseAllButton(this.getId(), [
 				function() {
-					this.getControlDelegate().expandAll(this);
+					this.getControlDelegate().expandAllRows(this);
 				}, this
 			], true);
 		}

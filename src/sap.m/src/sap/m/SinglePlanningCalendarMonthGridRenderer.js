@@ -271,12 +271,16 @@ sap.ui.define([
 			sText = oAppointment.getText(),
 			sIcon = oAppointment.getIcon(),
 			sId = oAppointment.getId(),
+			oStartDate = oAppointment.getStartDate(),
+			oEndDate = oAppointment.getEndDate(),
+			bIsFullDay = !oEndDate || oControl._isAllDayAppointment(oStartDate, oEndDate),
+			oValue = bIsFullDay ? InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_ALL_DAY_PREFIX") : InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
 			bDraggable = oAppointment.getParent().getEnableAppointmentsDragAndDrop(),
 			oToday = oDay && oDay.isSame(CalendarDate.fromLocalJSDate(UI5Date.getInstance())),
 			mAccProps = {
 				role: "listitem",
 				labelledby: {
-					value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
+					value: oValue,
 					append: true
 				},
 				// Prevents aria-selected from being added on the appointment
@@ -288,7 +292,6 @@ sap.ui.define([
 			iAppStartDateIndex = oControl._findStartDateIndex(aCells, app, oControl._iStartDayOffset),
 			bFirstRenderedDayIsAfterStart = app._nextDay > iAppStartDateIndex,
 			oNextDate = aCells[app._nextDay],
-			oEndDate = app.end,
 			iAppNextDateColumn = oControl._getDateColumn(aCells, oNextDate, iColumns),
 			iAppNextDateRow = oControl._getDateRow(aCells, oNextDate, iColumns),
 			bNextDateIsWithinRow = iAppNextDateRow === iRow,
@@ -305,7 +308,6 @@ sap.ui.define([
 					bFirstRenderedDayIsAfterStart = app._nextDay > iAppStartDateIndex;
 					iColumn = iAppNextDateColumn;
 					iRight = iColumns - iAppNextDateColumn + 1 - iWidth;
-					oEndDate = app.data.getEndDate();
 					oEndCalendarDate = CalendarDate.fromLocalJSDate(oEndDate);
 					iAppEndDateColumn = oControl._getDateColumn(aCells, oEndCalendarDate, iColumns);
 
@@ -339,14 +341,14 @@ sap.ui.define([
 		iRight = iRight < 0 ? 0 : iRight;
 
 		if (sTitle) {
-			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Title";
+			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-" + iColumn + "_" + iRow + "-Title";
 		}
 
 		// Put start/end information after the title
-		mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Descr";
+		mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-" + iColumn + "_" + iRow + "-Descr";
 
 		if (sText) {
-			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Text";
+			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-" + iColumn + "_" + iRow + "-Text";
 		}
 
 		if (oAppointment.getTentative()) {
@@ -441,7 +443,7 @@ sap.ui.define([
 			oRm.icon("sap-icon://arrow-right", aClasses, { title: null, role: "img" });
 		}
 
-		oRm.openStart("span", sId + "-Descr");
+		oRm.openStart("span", sId + "-" + iColumn + "_" + iRow + "-Descr");
 		oRm.class("sapUiInvisibleText");
 		oRm.openEnd(); // span element
 		oRm.text(oControl._getAppointmentAnnouncementInfo(oAppointment));

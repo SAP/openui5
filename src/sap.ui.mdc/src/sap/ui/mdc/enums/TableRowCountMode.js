@@ -6,8 +6,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	"use strict";
 
 	/**
-	 *
-	 * Defines the row count mode of the GridTable.
+	 * Row count mode of the table.
 	 *
 	 * @enum {string}
 	 * @alias sap.ui.mdc.enums.TableRowCountMode
@@ -16,13 +15,13 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	 */
 	const TableRowCountMode = {
 		/**
-		 * The table automatically fills the height of the surrounding container.
+		 * The table automatically fills the height of the surrounding container
 		 *
 		 * @public
 		 */
 		Auto: "Auto",
 		/**
-		 * The table always has as many rows as defined in the <code>rowCount</code> property of <code>GridTableType</code>.
+		 * A fixed number of rows is shown
 		 *
 		 * @public
 		 */

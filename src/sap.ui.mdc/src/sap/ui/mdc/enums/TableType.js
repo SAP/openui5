@@ -6,8 +6,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	"use strict";
 
 	/**
-	 *
-	 * Defines the type of table used in the MDC table.
+	 * Type of the table.
 	 *
 	 * @enum {string}
 	 * @alias sap.ui.mdc.enums.TableType
@@ -16,20 +15,20 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	 */
 	const TableType = {
 		/**
-		 * Grid table ({@link sap.ui.table.Table} control) is used (default)
+		 * Equivalent to the default configuration of {@link sap.ui.mdc.table.GridTableType}
 		 *
 		 * @public
 		 */
 		Table: "Table",
 		/**
-		 * Tree table ({@link sap.ui.table.TreeTable} control) is used.
+		 * Equivalent to the default configuration of {@link sap.ui.mdc.table.TreeTableType}
 		 *
 		 * @private
 		 * @experimental
 		 */
 		TreeTable: "TreeTable",
 		/**
-		 * Responsive table ({@link sap.m.Table} control) is used.
+		 * Equivalent to the default configuration of {@link sap.ui.mdc.table.ResponsiveTableType}
 		 *
 		 * @public
 		 */

@@ -1445,8 +1445,8 @@ sap.ui.define([
 		},
 		before: function(){
 			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable2" p13nMode="Column,Sort,Filter,Group,Aggregate"></mdc:Table></mvc:View>';
-			TableDelegate.getSupportedP13nModes = function() {
-				return ["Column","Sort","Filter","Group", "Aggregate"];
+			TableDelegate.getSupportedFeatures = function() {
+				return {p13nModes: ["Column", "Sort", "Filter", "Group", "Aggregate"]};
 			};
 			return createAppEnvironment(sTableView, "StateDiff").then(function(mCreatedApp){
 				TableDelegate.fetchProperties = fetchProperties;

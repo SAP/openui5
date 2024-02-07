@@ -6,8 +6,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	"use strict";
 
 	/**
-	 *
-	 * Defines the growing options of the responsive table.
+	 * Growing mode of the table.
 	 *
 	 * @enum {string}
 	 * @alias sap.ui.mdc.enums.TableGrowingMode
@@ -16,19 +15,20 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	 */
 	const TableGrowingMode = {
 		/**
-		 * Growing does not take place (<code>growing</code> is not set in the responsive table)
+		 * A fixed number of rows is shown
 		 *
 		 * @public
 		 */
 		None: "None",
 		/**
-		 * Basic growing takes place (<code>growing</code> is set in the responsive table)
+		 * A More is shown with which the user can request to load more rows
 		 *
 		 * @public
 		 */
 		Basic: "Basic",
 		/**
-		 * Growing with <code>scroll</code> takes place (<code>growing</code> and <code>growingScrollToLoad</code> are set in the responsive table)
+		 * Either the user requests to load more rows by scrolling down, or the More button is displayed if no scrolling is required because the
+		 * table is fully visible
 		 *
 		 * @public
 		 */

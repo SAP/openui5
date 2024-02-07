@@ -837,22 +837,22 @@ function(
 	/**
 	 * Selects or deselects the given list item.
 	 *
-	 * @param {sap.m.ListItemBase} oListItem
-	 *         The list item whose selection to be changed. This parameter is mandatory.
-	 * @param {boolean} [bSelect=true]
-	 *         Sets selected status of the list item
-	 * @type this
+	 * @param {sap.m.ListItemBase} oListItem The list item whose selection is changed
+	 * @param {boolean} [bSelect=true] Sets selected status of the list item provided
+	 * @param {boolean} [bFireEvent=false] Determines whether the <code>selectionChange</code> event is fired by this method call (as of version 1.121)
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	ListBase.prototype.setSelectedItem = function(oListItem, bSelect, bFireEvent) {
 		if (this.indexOfItem(oListItem) < 0) {
 			Log.warning("setSelectedItem is called without valid ListItem parameter on " + this);
-			return;
+			return this;
 		}
 		if (this._bSelectionMode) {
 			oListItem.setSelected((bSelect === undefined) ? true : !!bSelect);
 			bFireEvent && this._fireSelectionChangeEvent([oListItem]);
 		}
+		return this;
 	};
 
 
@@ -927,17 +927,17 @@ function(
 	/**
 	 * Removes visible selections of the current selection mode.
 	 *
-	 * @param {boolean} bAll
-	 *         Since version 1.16.3. This control keeps old selections after filter or sorting. Set this parameter "true" to remove all selections.
-	 * @type this
+	 * @param {boolean} [bAll=false] If the <code>rememberSelection</code> property is set to <code>true</code>, this control preserves selections after filtering or sorting. Set this parameter to <code>true</code> to remove all selections (as of version 1.16)
+	 * @param {boolean} [bFireEvent=false] Determines whether the <code>selectionChange</code> event is fired by this method call (as of version 1.121)
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
-	ListBase.prototype.removeSelections = function(bAll, bFireEvent, bDetectBinding) {
+	ListBase.prototype.removeSelections = function(bAll, bFireEvent, _bDetectBinding) {
 		var aChangedListItems = [];
 		this._oSelectedItem = null;
 		if (bAll) {
 			this._aSelectedPaths = [];
-			if (!bDetectBinding) {
+			if (!_bDetectBinding) {
 				const oBinding = this.getBinding("items");
 				const aContexts = oBinding?.getAllCurrentContexts?.() || [];
 				aContexts[0]?.setSelected && aContexts.forEach((oContext) => oContext.setSelected(false));
@@ -949,7 +949,7 @@ function(
 			}
 
 			// if the selected property is two-way bound then we do not need to update the selection
-			if (bDetectBinding && oItem.isSelectedBoundTwoWay()) {
+			if (_bDetectBinding && oItem.isSelectedBoundTwoWay()) {
 				return;
 			}
 
@@ -971,7 +971,8 @@ function(
 	 * <b>Note:</b> If <code>growing</code> is enabled, only the visible items in the list are selected.
 	 * Since version 1.93, the items are not selected if <code>getMultiSelectMode=ClearAll</code>.
 	 *
-	 * @type this
+	 * @param {boolean} [bFireEvent=false] Determines whether the <code>selectionChange</code> event is fired by this method call (as of version 1.121)
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @since 1.16
 	 */

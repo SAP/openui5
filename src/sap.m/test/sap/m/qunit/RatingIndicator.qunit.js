@@ -8,14 +8,14 @@ sap.ui.define([
 	'sap/m/Label',
 	'sap/m/Page',
 	'sap/m/RatingIndicator',
+	'sap/ui/qunit/utils/nextUIUpdate',
 	'sap/ui/core/IconPool',
 	'sap/m/library',
 	'sap/ui/events/KeyCodes',
 	'sap/ui/dom/includeStylesheet',
-	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/thirdparty/jquery',
 	'require'
-], function(Element, Library, qutils, createAndAppendDiv, App, Label, Page, RatingIndicator, IconPool, mobileLibrary, KeyCodes, includeStylesheet, nextUIUpdate, jQuery, require) {
+], function(Element, Library, qutils, createAndAppendDiv, App, Label, Page, RatingIndicator, nextUIUpdate, IconPool, mobileLibrary, KeyCodes, includeStylesheet, jQuery, require) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -217,7 +217,7 @@ sap.ui.define([
 		assert.strictEqual(oRating8.$().length, 0, 'The rating is not visible on' + oRating8);
 	});
 
-	QUnit.test("setting displayOnly", async function(assert) {
+	QUnit.test("setting displayOnly", async function (assert) {
 		var oRating = new RatingIndicator({});
 
 		oRating.placeAt("content");
@@ -241,7 +241,7 @@ sap.ui.define([
 		oRating.destroy();
 	});
 
-	QUnit.test("setting editable", async function(assert) {
+	QUnit.test("setting editable", async function (assert) {
 		var oRating = new RatingIndicator({
 			value: 3
 		});
@@ -297,7 +297,7 @@ sap.ui.define([
 
 	QUnit.module("Methods");
 
-	QUnit.test("getter / setter", async function(assert) {
+	QUnit.test("getter / setter", async function (assert) {
 		await nextUIUpdate();
 
 		// 0
@@ -409,7 +409,7 @@ sap.ui.define([
 		oRating2.destroy();
 	});
 
-	QUnit.test("Popover should be in compact mode if one of it's parents is compact", async function(assert) {
+	QUnit.test("Popover should be in compact mode if one of it's parents is compact", async function (assert) {
 		var oRating = new RatingIndicator({
 			value: 5
 		});
@@ -619,7 +619,7 @@ sap.ui.define([
 		oRating.destroy();
 	});
 
-	QUnit.test("NUMBER keys", async function(assert) {
+	QUnit.test("NUMBER keys", async function (assert) {
 
 		//Arrange
 		var oRating = new RatingIndicator({maxValue: 6});

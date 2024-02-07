@@ -2,10 +2,6 @@
  * ${copyright}
  */
 
-// ---------------------------------------------------------------------------------------
-// Helper class used to help create content in the table/column and fill relevant metadata
-// ---------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------
 sap.ui.define([
 	"./AggregationBaseDelegate",
 	"sap/ui/mdc/mixin/delegate/FilterIntegrationDefault",
@@ -32,7 +28,29 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Base delegate for {@link sap.ui.mdc.Table}.
+	 * Base delegate for {@link sap.ui.mdc.Table}. Extend this object in your project to use all functionalities of the table. This base delegate
+	 * already meets some requirements of certain features. Others need to be met by your delegate implementation.
+	 *
+	 * The following methods need to be added or overridden in your delegate. Please also see the documentation of the methods to learn about their
+	 * default implementation and what you need to implement.
+	 * <ul>
+	 *   <li><code>Basic prerequisites</code></li>
+	 *   <ul>
+	 *     <li>{@link module:sap/ui/mdc/TableDelegate.fetchProperties fetchProperties}</li>
+	 *     <li>{@link module:sap/ui/mdc/TableDelegate.updateBindingInfo updateBindingInfo}</li>
+	 *   </ul>
+	 *   <li>Column personalization (related to <code>p13nMode</code> <code>Column</code>)</li>
+	 *   <ul>
+	 *     <li>{@link module:sap/ui/mdc/TableDelegate.addItem addItem}</li>
+	 *   <li>Filter personalization (related to <code>p13nMode</code> <code>Filter</code>)</li>
+	 *   <ul>
+	 *     <li>{@link module:sap/ui/mdc/TableDelegate.getFilterDelegate getFilterDelegate}</li>
+	 *   </ul>
+	 * </ul>
+	 *
+	 * <b>Note:</b> This base delegate does not support the <code>p13nMode</code> <code>Aggregate</code>, and the <code>p13nMode</code>
+	 * <code>Group</code> is only supported if the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}. This cannot be
+	 * changed in your delegate implementation.
 	 *
 	 * @author SAP SE
 	 * @namespace
@@ -46,21 +64,57 @@ sap.ui.define([
 	const TableDelegate = Object.assign({}, AggregationBaseDelegate, FilterIntegrationDefault);
 
 	/**
-	 * Returns filters to be applied when updating the table's binding based on the
-	 * filter conditions of the table itself and it's associated {@link sap.ui.mdc.IFilterSource IFilterSource}.
+	 * Retrieves information about the relevant properties.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @returns {sap.ui.model.Filter[]} Array of filters
+	 * By default, this method returns a <code>Promise</code> that resolves with an empty array.
+	 *
+	 * @name module:sap/ui/mdc/TableDelegate.fetchProperties
 	 * @function
-	 * @name module:sap/ui/mdc/TableDelegate.getFilters
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @returns {Promise<sap.ui.mdc.table.PropertyInfo[]>} A <code>Promise</code> that resolves with the property information
 	 * @protected
 	 */
 
 	/**
-	 * Provides a hook to update the binding info object that is used to bind the table to the model.
+	 * Central hook that is called to add columns to the table when the state is applied, for example, when SAPUI5 flexibility changes are applied.
+	 * During preprocessing, this method is called without the <code>mPropertyBag</code> parameter, and <code>oTable</code> is an XML node.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
+	 * By default, this method does not create a column and just returns a <code>Promise</code> that resolves without a value.
+	 *
+	 * @name module:sap/ui/mdc/TableDelegate.addItem
+	 * @function
+	 * @param {sap.ui.mdc.Table | Element} oTable Instance of the table or an XML node representing the table during preprocessing
+	 * @param {string} sPropertyName The property name
+	 * @param {Object} [mPropertyBag] Instance of a property bag from the SAPUI5 flexibility API
+	 * @returns {Promise<sap.ui.mdc.table.Column>} A <code>Promise</code> that resolves with a column
+	 * @abstract
+	 * @protected
+	 */
+
+	/**
+	 * Returns filters to be applied when updating the table's binding based on the filter conditions of the table itself and its associated
+	 * {@link sap.ui.mdc.IFilterSource IFilterSource}.
+	 *
+	 * By default, filters for the associated filter source are only generated for a <code>sap.ui.mdc.FilterBar</code>.
+	 *
+	 * @name module:sap/ui/mdc/TableDelegate.getFilters
+	 * @function
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @returns {sap.ui.model.Filter[]} Array of filters
+	 * @protected
+	 */
+
+	/**
+	 * Updates the binding info object that is used to bind the table in {@link module:sap/ui/mdc/TableDelegate.updateBinding updateBinding}.
+	 *
+	 * By default, filters and sorters are added to the binding info. Please see {@link module:sap/ui/mdc/TableDelegate.getFilters getFilters},
+	 * {@link module:sap/ui/mdc/TableDelegate.getSorters getSorters}, and {@link module:sap/ui/mdc/TableDelegate.getGroupSorter getGroupSorter} for
+	 * more details.
+	 *
+	 * <b>Note:</b> Any other required information, such as the path, must be additionally provided by your delegate implementation.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info
 	 * @protected
 	 */
 	TableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
@@ -90,10 +144,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a new sorter for the grouping functionality.
+	 * Returns a sorter for the grouping functionality to be applied when updating the table's binding based on the group conditions of the table.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @returns {sap.ui.model.Sorter | undefined} New sorter
+	 * <b>Note:</b> No sorter must be returned if the table type, for example, {@link sap.ui.mdc.table.GridTableType GridTable}, cannot be grouped
+	 * this way.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @returns {sap.ui.model.Sorter | undefined} The sorter or <code>undefined</code> if there is no group condition or if it cannot be applied
 	 * @protected
 	 */
 	TableDelegate.getGroupSorter = function(oTable) {
@@ -124,10 +181,10 @@ sap.ui.define([
 	/**
 	 * Formats the title text of a group header row of the table.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @param {sap.ui.model.Context} oContext Binding context
-	 * @param {string} sProperty The name of the grouped property
-	 * @returns {string | undefined} The group header title. If <code>undefined</code> is returned, the default group header title is set.
+	 * @param {string} sProperty Name of the grouped property
+	 * @returns {string} The group header title
 	 * @protected
 	 */
 	TableDelegate.formatGroupHeader = function(oTable, oContext, sProperty) {
@@ -146,10 +203,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the sort conditions that are used when updating the table's binding.
+	 * Returns sorters to be applied when updating the table's binding based on the sort conditions of the table.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @returns {sap.ui.model.Sorter[]} Sort Conditions
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @returns {sap.ui.model.Sorter[]} Array of sorters
 	 * @protected
 	 */
 	TableDelegate.getSorters = function(oTable) {
@@ -185,10 +242,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Rebinds the table.
+	 * Rebinds the table with the binding info object returned from {@link module:sap/ui/mdc/TableDelegate.updateBindingInfo updateBindingInfo}.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object used to bind the table
+	 * @see updateBinding
 	 * @protected
 	 */
 	TableDelegate.rebind = function(oTable, oBindingInfo) {
@@ -197,11 +255,12 @@ sap.ui.define([
 
 	/**
 	 * Returns the filter delegate of the table that provides basic filter functionality, such as adding filter fields.
-	 * <b>Note:</b> The functionality provided in this delegate acts as a subset of a <code>FilterBarDelegate</code> to enable the table for inbuilt
-	 * filtering.
 	 *
-	 * @example <caption>Example usage of <code>getFilterDelegate</code></caption>
-	 * oFilterDelegate = {
+	 * <b>Note:</b> The functionality provided in this delegate acts as a subset of a <code>FilterBarDelegate</code> to enable the table for
+	 * inbuilt filtering.<br>
+	 *
+	 * @example
+	 * TableDelegate.getFilterDelegate = {
 	 * 		addItem: function() {
 	 * 			var oFilterFieldPromise = new Promise(...);
 	 * 			return oFilterFieldPromise;
@@ -213,11 +272,15 @@ sap.ui.define([
 	TableDelegate.getFilterDelegate = function() {
 		return {
 			/**
-			 * Creates an instance of a <code>sap.ui.mdc.FilterField</code>.
+			 * Creates an instance of a {@link sap.ui.mdc.FilterField FilterField}.
+			 *
+			 * By default, this method does not create a <code>FilterField</code> and returns a <code>Promise</code> that resolves with
+			 * <code>null</code>.
 			 *
 			 * @param {sap.ui.mdc.Table} oTable Instance of the table
 			 * @param {string} sPropertyName The property name
-			 * @returns {Promise<sap.ui.mdc.FilterField>} A promise that resolves with an instance of <code>sap.ui.mdc.FilterField</code>.
+			 * @returns {Promise<sap.ui.mdc.FilterField>}
+			 *     A <code>Promise</code> that resolves with an instance of <code>sap.ui.mdc.FilterField</code>.
 			 * @see sap.ui.mdc.AggregationBaseDelegate#addItem
 			 */
 			addItem: function(oTable, sPropertyName) {
@@ -228,12 +291,14 @@ sap.ui.define([
 			 * This method is called during the appliance of the add condition change.
 			 * The intention is to update the propertyInfo property.
 			 *
-			 * @param {sap.ui.mdc.Control} oControl - the instance of the mdc control
-			 * @param {string} sPropertyName The name of a property
-			 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility change API
-			 * @returns {Promise} Promise that is resolved once the propertyInfo property has been updated
+			 * By default, this method does not add the condition and returns a <code>Promise</code> that resolves without a value.
+			 *
+			 * @param {sap.ui.mdc.Table} oTable Instance of the table
+			 * @param {string} sPropertyName The property name
+			 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility API
+			 * @returns {Promise} A <code>Promise</code> that resolves once the properyInfo property has been updated
 			 */
-			addCondition: function(oControl, sPropertyName, mPropertyBag) {
+			addCondition: function(oTable, sPropertyName, mPropertyBag) {
 				return Promise.resolve();
 			},
 
@@ -241,22 +306,26 @@ sap.ui.define([
 			 * This method is called during the appliance of the remove condition change.
 			 * The intention is to update the propertyInfo property.
 			 *
-			 * @param {sap.ui.mdc.Control} oControl - the instance of the mdc control
-			 * @param {string} sPropertyName The name of a property
-			 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility change API
-			 * @returns {Promise} Promise that is resolved once the propertyInfo property has been updated
+			 * By default, this method does not remove the condition and returns a <code>Promise</code> that resolves without a value.
+			 *
+			 * @param {sap.ui.mdc.Table} oTable Instance of the table
+			 * @param {string} sPropertyName The property name
+			 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility API
+			 * @returns {Promise} A <code>Promise</code> that resolves once the properyInfo property has been updated
 			 */
-			removeCondition: function(oControl, sPropertyName, mPropertyBag) {
+			removeCondition: function(oTable, sPropertyName, mPropertyBag) {
 				return Promise.resolve();
 			}
 		};
 	};
 
 	/**
-	 * Returns the feature set for exporting data in the MDC Table.
+	 * Returns the feature set for exporting data in the table.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @returns {Promise} Export capabilities with specific features
+	 * By default, this method returns basic <code>sap.ui.export.FileType.XLSX</code> capabilities.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @returns {Promise<object>} A <code>Promise</code> that resolves with an object as specified in {@link sap.ui.export.ExportHandler}
 	 * @protected
 	 */
 	TableDelegate.fetchExportCapabilities = function(oTable) {
@@ -264,57 +333,54 @@ sap.ui.define([
 	};
 
 	/**
-	 * Expands all nodes.
+	 * Expands all rows.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @throws {Error} If the delegate does not support this operation
 	 * @protected
 	 */
-	TableDelegate.expandAll = function(oTable) {
-		throw Error("Unsupported operation: TableDelegate does not support #expandAll");
+	TableDelegate.expandAllRows = function(oTable) {
+		throw Error("Unsupported operation: TableDelegate.expandAllRows");
 	};
 
 	/**
-	 * Collapses all nodes.
+	 * Collapses all rows.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @throws {Error} If the delegate does not support this operation
 	 * @protected
 	 */
-	TableDelegate.collapseAll = function(oTable) {
-		throw Error("Unsupported operation: TableDelegate does not support #collapseAll");
+	TableDelegate.collapseAllRows = function(oTable) {
+		throw Error("Unsupported operation: TableDelegate.collapseAllRows");
 	};
 
 	/**
-	 * Gets the features that are supported by the combination of this delegate and the current table state (e.g. type).
+	 * Gets the information which features this delegate supports. It may also depend on the table's state (for example, the type). This method is
+	 * called during table initialization.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable
-	 * @returns {object} The supported features
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @returns {{p13nModes: sap.ui.mdc.enums.TableP13nMode[], export: boolean, expandAllRows: boolean, collapseAllRows: boolean}}
+	 *     Feature support information
 	 * @private
 	 */
 	TableDelegate.getSupportedFeatures = function(oTable) {
+		const aSupportedP13nModes = [TableP13nMode.Column, TableP13nMode.Sort, TableP13nMode.Filter];
+
+		if (oTable._isOfType(TableType.ResponsiveTable)) {
+			aSupportedP13nModes.push(TableP13nMode.Group);
+		}
+
 		return {
+			p13nModes: aSupportedP13nModes,
 			"export": true,
-			expandAll: false,
-			collapseAll: false
+			expandAllRows: false,
+			collapseAllRows: false
 		};
 	};
 
 	/**
-	 * Gets the p13n modes that are supported by the combination of this delegate and the current table state (e.g. type).
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table.
-	 * @returns {sap.ui.mdc.enums.TableP13nMode[]} The supported p13n modes.
-	 * @private
+	 * @inheritDoc
 	 */
-	TableDelegate.getSupportedP13nModes = function(oTable) {
-		const aSupportedModes = [TableP13nMode.Column, TableP13nMode.Sort, TableP13nMode.Filter];
-
-		if (oTable._isOfType(TableType.ResponsiveTable)) {
-			aSupportedModes.push(TableP13nMode.Group);
-		}
-
-		return aSupportedModes;
-	};
-
 	TableDelegate.validateState = function(oTable, oState, sKey) {
 		if (sKey == "Filter" && oTable._oMessageFilter) {
 			const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
@@ -331,8 +397,8 @@ sap.ui.define([
 	 * This is called after the table has loaded the necessary libraries and modules and initialized its content, but before it resolves its
 	 * <code>initialized</code> Promise. It can be used to make changes to the content as part of the initialization.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @returns {Promise} A promise that resolves after the content is initialized
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @returns {Promise} A <code>Promise</code> that resolves after the content has been initialized
 	 * @private
 	 */
 	TableDelegate.initializeContent = function(oTable) {
@@ -340,11 +406,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * This is called after the table has loaded the necessary libraries and modules and initialized its content, but before it resolves its
+	 * This is called after the table has loaded the necessary libraries and modules and initialized its selection, but before it resolves its
 	 * <code>initialized</code> Promise. It can be used to make changes to the selection as part of the initialization.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @returns {Promise} A promise that resolves after the content is initialized
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @returns {Promise} A <code>Promise</code> that resolves after the selection has been initialized
 	 * @private
 	 */
 	TableDelegate.initializeSelection = function(oTable) {
@@ -447,12 +513,12 @@ sap.ui.define([
 	}
 
 	/**
-	 * Provides the possibility to set a selection state for the MDC table programmatically
+	 * Provides the possibility to set a selection state for the table programmatically.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @param {array<sap.ui.model.Context>} aContexts The set of contexts which should be flagged as selected
 	 * @private
-	 * @throws {Error} When the delegate cannot support the table/select configuration.
+	 * @throws {Error} If the delegate cannot support the table/select configuration.
 	 */
 	TableDelegate.setSelectedContexts = function(oTable, aContexts) {
 		if (oTable._isOfType(TableType.ResponsiveTable)) {
@@ -507,7 +573,7 @@ sap.ui.define([
 	/**
 	 * Clears the selection.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @private
 	 */
 	TableDelegate.clearSelection = function(oTable) {

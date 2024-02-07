@@ -124,8 +124,12 @@ sap.ui.define([
 			}
 		},
 
+		onRefresh : function () {
+			this.byId("table").getBindingContext().refresh();
+		},
+
 		onSynchronize : function () {
-			this.byId("table").getBinding("rows").getHeaderContext().requestSideEffects(["*"]);
+			this.byId("table").getBinding("rows").getHeaderContext().requestSideEffects([""]);
 		}
 	});
 });

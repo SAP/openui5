@@ -179,6 +179,14 @@ sap.ui.define([
 			} // else: invalid value (has not reached model)
 		},
 
+		onRefresh : function () {
+			this.byId("table").getBinding("rows").getHeaderContext().requestSideEffects([""]);
+		},
+
+		onRefreshTreeTable : function () {
+			this.byId("treeTable").getBinding("rows").getHeaderContext().requestSideEffects([""]);
+		},
+
 		onSynchronize : function () {
 			this.byId("table").getBinding("rows").getHeaderContext().requestSideEffects(["*"]);
 		},

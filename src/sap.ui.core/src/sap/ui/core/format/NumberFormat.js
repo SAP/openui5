@@ -57,6 +57,11 @@ sap.ui.define([
 	const rNumPlaceHolder = /0+(\.0+)?/;
 	// Regex for checking that the given string only consists of '0' characters
 	const rOnlyZeros = /^0+$/;
+	// A regular expresssion that can be used to remove a leading "-" from a number representing zero,
+	// e.g. "-0", or "-0.00"; $1 contains the number without the leading "-"
+	const rRemoveMinusFromZero = /^-(0(?:.0+)?)$/;
+	// A regular expression that can be used to remove trailing zeros from a number
+	const rTrailingZeros = /0+$/;
 
 	/*
 	 * Is used to validate existing grouping separators.
@@ -139,25 +144,127 @@ sap.ui.define([
 		HALF_AWAY_FROM_ZERO: "HALF_AWAY_FROM_ZERO"
 	};
 
-	var mRoundingFunction = {};
-	mRoundingFunction[mRoundingMode.FLOOR] = Math.floor;
-	mRoundingFunction[mRoundingMode.CEILING] = Math.ceil;
-	mRoundingFunction[mRoundingMode.TOWARDS_ZERO] = function(nValue) {
-		return nValue > 0 ? Math.floor(nValue) : Math.ceil(nValue);
+	/**
+	 * Adds the summand given as a number to an integer given as a string.
+	 *
+	 * @param {string} sInteger A positive or negative integer number as string
+	 * @param {int} iSummand An integer between -9 and 9 to be added to the given integer
+	 * @returns {string} The sum of the two numbers as a string
+	 *
+	 * @private
+	 */
+	NumberFormat.add = function(sInteger, iSummand) {
+		const bNegative = sInteger[0] === "-";
+		if (bNegative) {
+			sInteger = sInteger.slice(1);
+			iSummand = -iSummand;
+		}
+		const aDigits = sInteger.split("").map(Number);
+		const iLastIndex = aDigits.length - 1;
+		aDigits[iLastIndex] += iSummand;
+		for (let i = iLastIndex; i >= 0; i -= 1) {
+			if (aDigits[i] >= 10) {
+				aDigits[i] = aDigits[i] % 10;
+				if (i === 0) {
+					aDigits.unshift(1);
+					break;
+				}
+				aDigits[i - 1] += 1;
+			} else if (aDigits[i] < 0 && i > 0) {
+				aDigits[i] = 10 + aDigits[i];
+				aDigits[i - 1] -= 1;
+				if (i === 1 && aDigits[0] === 0) {
+					aDigits.shift();
+					break;
+				}
+			} else {
+				break;
+			}
+		}
+		if (bNegative) {
+			aDigits[0] = -aDigits[0];
+		}
+		return aDigits.join("");
 	};
-	mRoundingFunction[mRoundingMode.AWAY_FROM_ZERO] = function(nValue) {
-		return nValue > 0 ? Math.ceil(nValue) : Math.floor(nValue);
+
+	/**
+	 * Rounds the given number up to the smallest integer greater than or equal to the given number.
+	 *
+	 * @param {number|string} vNumber
+	 *   The number to be rounded up; it has at least one digit in front of the decimal point in case of type "string"
+	 * @returns {number|string}
+	 *   The smallest integer greater than or equal to the given number; the returned type is the same as the type of
+	 *   the given number
+	 */
+	function ceil(vNumber) {
+		if (typeof vNumber === "number") {
+			return Math.ceil(vNumber);
+		}
+
+		const [sIntegerPart, sFractionPart = "0"] = vNumber.split(".");
+		return rOnlyZeros.test(sFractionPart) || sIntegerPart[0] === "-"
+			? sIntegerPart
+			: NumberFormat.add(sIntegerPart, 1);
+	}
+
+	/**
+	 * Rounds the given number down to the largest integer less than or equal to the given number.
+	 *
+	 * @param {number|string} vNumber
+	 *   The number to be rounded down; it has at least one digit in front of the decimal point in case of type "string"
+	 * @returns {number|string}
+	 *   The largest integer less than or equal to the given number; the returned type is the same as the type of the
+	 *   given number
+	 */
+	function floor(vNumber) {
+		if (typeof vNumber === "number") {
+			return Math.floor(vNumber);
+		}
+
+		const [sIntegerPart, sFractionPart = "0"] = vNumber.split(".");
+		return rOnlyZeros.test(sFractionPart) || sIntegerPart[0] !== "-"
+			? sIntegerPart
+			: NumberFormat.add(sIntegerPart, -1);
+	}
+
+	/**
+	 * Adds 0.5 to or subtracts 0.5 from the given number.
+	 *
+	 * @param {number|string} vNumber
+	 *   The number to be increased or decreased by 0.5
+	 * @param {boolean} bIncrease
+	 *   Whether to increase the number by 0.5; otherwise the number is decreased by 0.5
+	 * @returns {number|string}
+	 *   The number increased or decreased by 0.5; the returned type is the same as the type of the given number
+	 */
+	function increaseOrDecreaseByHalf(vNumber, bIncrease) {
+		if (typeof vNumber === "number") {
+			return bIncrease ? vNumber + 0.5 : vNumber - 0.5;
+		}
+
+		vNumber = NumberFormat._shiftDecimalPoint(vNumber, 1);
+		vNumber = NumberFormat.add(vNumber.split(".")[0], bIncrease ? 5 : -5);
+		return NumberFormat._shiftDecimalPoint(vNumber, -1);
+	}
+
+	const mRoundingFunction = {
+		[mRoundingMode.FLOOR]: floor,
+		[mRoundingMode.CEILING]: ceil,
+		[mRoundingMode.TOWARDS_ZERO]: (vNumber) => (vNumber > 0 ? floor(vNumber) : ceil(vNumber)),
+		[mRoundingMode.AWAY_FROM_ZERO]: (vNumber) => (vNumber > 0 ? ceil(vNumber) : floor(vNumber)),
+		[mRoundingMode.HALF_TOWARDS_ZERO]: (vNumber) => {
+			const bPositive = vNumber > 0;
+			vNumber = increaseOrDecreaseByHalf(vNumber, !bPositive);
+			return bPositive ? ceil(vNumber) : floor(vNumber);
+		},
+		[mRoundingMode.HALF_AWAY_FROM_ZERO]: (vNumber) => {
+			const bPositive = vNumber > 0;
+			vNumber = increaseOrDecreaseByHalf(vNumber, bPositive);
+			return bPositive ? floor(vNumber) : ceil(vNumber);
+		},
+		[mRoundingMode.HALF_FLOOR]: (vNumber) => ceil(increaseOrDecreaseByHalf(vNumber, false)),
+		[mRoundingMode.HALF_CEILING]: (vNumber) => floor(increaseOrDecreaseByHalf(vNumber, true))
 	};
-	mRoundingFunction[mRoundingMode.HALF_TOWARDS_ZERO] = function(nValue) {
-		return nValue > 0 ? Math.ceil(nValue - 0.5) : Math.floor(nValue + 0.5);
-	};
-	mRoundingFunction[mRoundingMode.HALF_AWAY_FROM_ZERO] = function(nValue) {
-		return nValue > 0 ? Math.floor(nValue + 0.5) : Math.ceil(nValue - 0.5);
-	};
-	mRoundingFunction[mRoundingMode.HALF_FLOOR] = function(nValue) {
-		return Math.ceil(nValue - 0.5);
-	};
-	mRoundingFunction[mRoundingMode.HALF_CEILING] = Math.round;
 
 	NumberFormat.RoundingMode = mRoundingMode;
 
@@ -377,12 +484,14 @@ sap.ui.define([
 	 *   <code>maxFractionDigits</code> format option allows.
 	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO]
-	 *   specifies the rounding behavior for discarding the digits after the maximum fraction digits
-	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
+	 *   Specifies the rounding behavior for discarding the digits after the maximum fraction digits
+	 *   defined by <code>maxFractionDigits</code>.
 	 *   This can be assigned
 	 *   <ul>
 	 *     <li>by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode},</li>
-	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the number of decimal digits that should be reserved.</li>
+	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the
+	 *         number of decimal digits that should be reserved. <b>Using a function is deprecated since 1.121.0</b>;
+	 *         string based numbers are not rounded via this custom function.</li>
 	 *   </ul>
 	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortened format string. If this isn't specified, the 'decimals' options is used
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
@@ -469,12 +578,14 @@ sap.ui.define([
 	 *   <code>maxFractionDigits</code> format option allows.
 	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=TOWARDS_ZERO]
-	 *   specifies the rounding behavior for discarding the digits after the maximum fraction digits
-	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
+	 *   Specifies the rounding behavior for discarding the digits after the maximum fraction digits
+	 *   defined by <code>maxFractionDigits</code>.
 	 *   This can be assigned
 	 *   <ul>
 	 *     <li>by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode},</li>
-	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the number of decimal digits that should be reserved.</li>
+	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the
+	 *         number of decimal digits that should be reserved. <b>Using a function is deprecated since 1.121.0</b>;
+	 *         string based numbers are not rounded via this custom function.</li>
 	 *   </ul>
 	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortened format string. If this isn't specified, the 'decimals' options is used
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
@@ -605,12 +716,14 @@ sap.ui.define([
 	 *   <code>maxFractionDigits</code> format option allows.
 	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO]
-	 *   specifies the rounding behavior for discarding the digits after the maximum fraction digits
-	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
+	 *   Specifies the rounding behavior for discarding the digits after the maximum fraction digits
+	 *   defined by <code>maxFractionDigits</code>.
 	 *   This can be assigned
 	 *   <ul>
 	 *     <li>by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode},</li>
-	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the number of decimal digits that should be reserved.</li>
+	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the
+	 *         number of decimal digits that should be reserved. <b>Using a function is deprecated since 1.121.0</b>;
+	 *         string based numbers are not rounded via this custom function.</li>
 	 *   </ul>
 	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortened format string. If this isn't specified, the 'decimals' options is used
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
@@ -734,12 +847,14 @@ sap.ui.define([
 	 *   <code>maxFractionDigits</code> format option allows.
 	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO]
-	 *   specifies the rounding behavior for discarding the digits after the maximum fraction digits
-	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
+	 *   Specifies the rounding behavior for discarding the digits after the maximum fraction digits
+	 *   defined by <code>maxFractionDigits</code>.
 	 *   This can be assigned
 	 *   <ul>
 	 *     <li>by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode},</li>
-	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the number of decimal digits that should be reserved.</li>
+	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the
+	 *         number of decimal digits that should be reserved. <b>Using a function is deprecated since 1.121.0</b>;
+	 *         string based numbers are not rounded via this custom function.</li>
 	 *   </ul>
 	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimals in the shortened
 	 *   format string. If this option isn't specified, the 'decimals' option is used instead.
@@ -831,12 +946,14 @@ sap.ui.define([
 	 *   <code>maxFractionDigits</code> format option allows.
 	 *   If decimals are not preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO]
-	 *   specifies the rounding behavior for discarding the digits after the maximum fraction digits
-	 *   defined by maxFractionDigits. Rounding will only be applied if the passed value is of type <code>number</code>.
+	 *   Specifies the rounding behavior for discarding the digits after the maximum fraction digits
+	 *   defined by <code>maxFractionDigits</code>.
 	 *   This can be assigned
 	 *   <ul>
 	 *     <li>by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode},</li>
-	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the number of decimal digits that should be reserved.</li>
+	 *     <li>via a function that is used for rounding the number and takes two parameters: the number itself, and the
+	 *         number of decimal digits that should be reserved. <b>Using a function is deprecated since 1.121.0</b>;
+	 *         string based numbers are not rounded via this custom function.</li>
 	 *   </ul>
 	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortened format string. If this isn't specified, the 'decimals' options is used
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
@@ -1418,7 +1535,8 @@ sap.ui.define([
 		// If the number of fraction digits are equal or less than oOptions.maxFractionDigits, the
 		// number isn't changed. After this operation, the number of fraction digits is
 		// equal or less than oOptions.maxFractionDigits.
-		if (typeof vValue === "number" && !oOptions.preserveDecimals) {
+		if ((typeof vValue === "number" || typeof vValue === "string" && typeof oOptions.roundingMode !== "function")
+				&& !oOptions.preserveDecimals) {
 			vValue = rounding(vValue, oOptions.maxFractionDigits, oOptions.roundingMode);
 		}
 
@@ -2038,10 +2156,22 @@ sap.ui.define([
 		}
 	};
 
-	NumberFormat._shiftDecimalPoint = function(vValue, iStep) {
-		if (typeof iStep !== "number") {
-			return NaN;
-		}
+	/**
+	 * Moves the decimal seperator of the given number by the given steps to the right or left.
+	 *
+	 * @param {number|string} vValue
+	 *   The number
+	 * @param {int} iStep
+	 *   The number of decimal places to shift the "."; positive values shift to the right, negative values shift to the
+	 *   left
+	 * @param {boolean} bNormalize
+	 *   Whether the result is normalized if <code>vValue</code> is of type "string"; that means whether trailing zeros
+	 *   are removed and whether scientific notation is resolved to a decimal string without exponent
+	 * @returns {number|string|null}
+	 *   The number with shifted decimal point; or <code>null</code> if the given value is neither of type "number", nor
+	 *   of type "string"
+	 */
+	NumberFormat._shiftDecimalPoint = function(vValue, iStep, bNormalize) {
 		var sMinus = "";
 		var aExpParts = vValue.toString().toLowerCase().split("e");
 
@@ -2054,7 +2184,7 @@ sap.ui.define([
 
 			return +(aExpParts[0] + "e" + iStep);
 		} else if (typeof vValue === "string") {
-			if (parseFloat(vValue) === 0 && iStep >= 0) {
+			if (!bNormalize && parseFloat(vValue) === 0 && iStep >= 0) {
 				// input "00000" should become "0"
 				// input "000.000" should become "0.000" to keep precision of decimals
 				// input "1e-1337" should remain "1e-1337" in order to keep the precision
@@ -2105,9 +2235,11 @@ sap.ui.define([
 
 			sInt = vValue.substring(0, iAfterMovePos);
 			sDecimal = vValue.substring(iAfterMovePos);
-
 			// remove unnecessary leading zeros
 			sInt = sInt.replace(rLeadingZeros, "$1$2");
+			if (bNormalize) {
+				sDecimal = sDecimal.replace(rTrailingZeros, "");
+			}
 
 			return sMinus + sInt + (sDecimal ? ("." + sDecimal) : "");
 		} else {
@@ -2574,54 +2706,60 @@ sap.ui.define([
 		return iInt;
 	}
 
-	function rounding(fValue, iMaxFractionDigits, sRoundingMode) {
-		if (typeof fValue !== "number") {
-			return NaN;
-		}
-
-		sRoundingMode = sRoundingMode || NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO;
+	/**
+	 * Rounds the given value by the given number of fraction digits based on the given rounding mode.
+	 *
+	 * @param {number|string} vValue
+	 *   The number to be rounded, may be a string or a number; has to be of type number if a custom rounding function
+	 *   is used
+	 * @param {int|string} iMaxFractionDigits
+	 *   The maximum number of fraction digits
+	 * @param {sap.ui.core.format.NumberFormat.RoundingMode|function(number,int):number} vRoundingMode
+	 *   The rounding mode or a custom function for rounding which is called with the number and the number of decimal
+	 *   digits that should be reserved; <b>using a function is deprecated since 1.121.0</b>; string based numbers are
+	 *   not rounded via this custom function.
+	 * @returns {number|string}
+	 *   The rounded value; the returned type is the same as the type of the given <code>vValue</code>
+	 */
+	function rounding(vValue, iMaxFractionDigits, vRoundingMode) {
+		vRoundingMode = vRoundingMode || NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO;
 		iMaxFractionDigits = parseInt(iMaxFractionDigits);
 
 		// only round if it is required (number of fraction digits is bigger than the maxFractionDigits option)
-		var sValue = "" + fValue;
+		var sValue = "" + vValue;
 		if (!isScientificNotation(sValue)) {
 			var iIndexOfPoint = sValue.indexOf(".");
 			if (iIndexOfPoint < 0) {
-				return fValue;
+				return vValue;
 			}
 			if (sValue.substring(iIndexOfPoint + 1).length <= iMaxFractionDigits) {
-				return fValue;
+				return vValue;
 			}
 		}
 
-		if (typeof sRoundingMode === "function") {
+		if (typeof vRoundingMode === "function") {
 			// Support custom function for rounding the number
-			fValue = sRoundingMode(fValue, iMaxFractionDigits);
+			vValue = vRoundingMode(vValue, iMaxFractionDigits);
 		} else {
 			// The NumberFormat.RoundingMode had all values in lower case before and later changed all values to upper case
 			// to match the key according to the UI5 guideline for defining enum. Therefore it's needed to support both
 			// lower and upper cases. Here checks whether the value has only lower case letters and converts it all to upper
 			// case if so.
-			if (sRoundingMode.match(/^[a-z_]+$/)) {
-				sRoundingMode = sRoundingMode.toUpperCase();
+			if (vRoundingMode.match(/^[a-z_]+$/)) {
+				vRoundingMode = vRoundingMode.toUpperCase();
 			}
 
-			if (!iMaxFractionDigits) {
-				return mRoundingFunction[sRoundingMode](fValue);
+			// 1. Move the decimal point to right by maxFactionDigits; e.g. 1.005 with maxFractionDigits 2 => 100.5
+			vValue = NumberFormat._shiftDecimalPoint(vValue, iMaxFractionDigits, true);
+			// 2. Use the rounding function to round the first digit after decimal point; e.g. ceil(100.5) => 101
+			vValue = mRoundingFunction[vRoundingMode](vValue);
+			// 3. Finally move the decimal point back to the original position; e.g. by 2 digits => 1.01
+			vValue = NumberFormat._shiftDecimalPoint(vValue, -iMaxFractionDigits, true);
+			if (typeof vValue === "string") {
+				vValue = vValue.replace(rRemoveMinusFromZero, "$1");
 			}
-
-			// First move the decimal point towards right by maxFactionDigits
-			// Then using the rounding function to round the first digit after decimal point
-			// In the end, move the decimal point back to the original position
-			//
-			// For example rounding 1.005 by maxFractionDigits 2
-			// 	1. Move the decimal point to right by 2 digits, result 100.5
-			// 	2. Using the round function, for example, Math.round(100.5) = 101
-			// 	3. Move the decimal point back by 2 digits, result 1.01
-			fValue = NumberFormat._shiftDecimalPoint(mRoundingFunction[sRoundingMode](NumberFormat._shiftDecimalPoint(fValue, iMaxFractionDigits)), -iMaxFractionDigits);
 		}
-
-		return fValue;
+		return vValue;
 	}
 
 	function quote(sRegex) {

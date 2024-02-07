@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "43.0.0",
-	"__buildtime": "2023-09-28T11:39:07.908Z",
+	"__version": "44.0.0",
+	"__buildtime": "2024-01-12T14:24:50.280Z",
 	"languages": {
 		"aa": "afar",
 		"ab": "abkhaze",
@@ -64,6 +64,7 @@
 		"bfd": "bafut",
 		"bfq": "badaga",
 		"bg": "bulgare",
+		"bgc": "haryanvi",
 		"bgn": "baloutchi occidental",
 		"bho": "bhodjpouri",
 		"bi": "bichelamar",
@@ -964,6 +965,8 @@
 		"IM": "Île de Man",
 		"IN": "Inde",
 		"IO": "Territoire britannique de l’océan Indien",
+		"IO-alt-biot": "Territoire britannique de l’océan Indien",
+		"IO-alt-chagos": "Archipel des Chagos",
 		"IQ": "Irak",
 		"IR": "Iran",
 		"IS": "Islande",
@@ -1633,7 +1636,7 @@
 					"night1": "nuit"
 				},
 				"wide": {
-					"midnight": "minuit",
+					"midnight": "min.",
 					"noon": "midi",
 					"morning1": "matin",
 					"afternoon1": "après-midi",
@@ -1657,10 +1660,10 @@
 	},
 	"ca-islamic": {
 		"dateFormats": {
-			"full": "EEEE d MMMM y G",
+			"full": "EEEE, d MMMM y G",
 			"long": "d MMMM y G",
 			"medium": "d MMM y G",
-			"short": "dd/MM/y GGGGG"
+			"short": "dd.MM.y GGGGG"
 		},
 		"timeFormats": {
 			"full": "HH.mm:ss 'h' zzzz",
@@ -1698,8 +1701,8 @@
 				"hms": "h:mm:ss a",
 				"Hms": "HH:mm:ss",
 				"M": "L",
-				"Md": "dd/MM",
-				"MEd": "E dd/MM",
+				"Md": "dd.MM.",
+				"MEd": "E, dd.MM.",
 				"MMdd": "dd.MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
@@ -2162,7 +2165,7 @@
 					"night1": "nuit"
 				},
 				"wide": {
-					"midnight": "minuit",
+					"midnight": "min.",
 					"noon": "midi",
 					"morning1": "matin",
 					"afternoon1": "après-midi",
@@ -2183,10 +2186,10 @@
 	},
 	"ca-japanese": {
 		"dateFormats": {
-			"full": "EEEE d MMMM y G",
+			"full": "EEEE, d MMMM y G",
 			"long": "d MMMM y G",
 			"medium": "d MMM y G",
-			"short": "dd/MM/y GGGGG"
+			"short": "dd.MM.y GGGGG"
 		},
 		"timeFormats": {
 			"full": "HH.mm:ss 'h' zzzz",
@@ -2696,7 +2699,7 @@
 					"night1": "nuit"
 				},
 				"wide": {
-					"midnight": "minuit",
+					"midnight": "min.",
 					"noon": "midi",
 					"morning1": "matin",
 					"afternoon1": "après-midi",
@@ -3234,7 +3237,7 @@
 					"night1": "nuit"
 				},
 				"wide": {
-					"midnight": "minuit",
+					"midnight": "min.",
 					"noon": "midi",
 					"morning1": "matin",
 					"afternoon1": "après-midi",
@@ -3255,10 +3258,10 @@
 	},
 	"ca-buddhist": {
 		"dateFormats": {
-			"full": "EEEE d MMMM y G",
+			"full": "EEEE, d MMMM y G",
 			"long": "d MMMM y G",
 			"medium": "d MMM y G",
-			"short": "dd/MM/y GGGGG"
+			"short": "dd.MM.y GGGGG"
 		},
 		"timeFormats": {
 			"full": "HH.mm:ss 'h' zzzz",
@@ -3760,7 +3763,7 @@
 					"night1": "nuit"
 				},
 				"wide": {
-					"midnight": "minuit",
+					"midnight": "min.",
 					"noon": "midi",
 					"morning1": "matin",
 					"afternoon1": "après-midi",
@@ -4321,7 +4324,7 @@
 			"St_Thomas": "Saint-Thomas",
 			"St_Vincent": "Saint-Vincent",
 			"Swift_Current": "Swift Current",
-			"Tegucigalpa": "Tégucigalpa",
+			"Tegucigalpa": "Tegucigalpa",
 			"Thule": "Thulé",
 			"Thunder_Bay": "Thunder Bay",
 			"Tijuana": "Tijuana",
@@ -4813,6 +4816,12 @@
 			"10p-24": {
 				"unitPrefixPattern": "y{0}"
 			},
+			"10p-27": {
+				"unitPrefixPattern": "r{0}"
+			},
+			"10p-30": {
+				"unitPrefixPattern": "q{0}"
+			},
 			"10p1": {
 				"unitPrefixPattern": "da{0}"
 			},
@@ -4843,6 +4852,12 @@
 			"10p24": {
 				"unitPrefixPattern": "Y{0}"
 			},
+			"10p27": {
+				"unitPrefixPattern": "R{0}"
+			},
+			"10p30": {
+				"unitPrefixPattern": "Q{0}"
+			},
 			"1024p1": {
 				"unitPrefixPattern": "Ki{0}"
 			},
@@ -4872,12 +4887,10 @@
 			},
 			"power2": {
 				"compoundUnitPattern1": "{0}²",
-				"compoundUnitPattern1-count-one": "{0}²",
 				"compoundUnitPattern1-count-other": "{0}²"
 			},
 			"power3": {
 				"compoundUnitPattern1": "{0}³",
-				"compoundUnitPattern1-count-one": "{0}³",
 				"compoundUnitPattern1-count-other": "{0}³"
 			},
 			"times": {
@@ -4905,17 +4918,14 @@
 			},
 			"angle-degree": {
 				"displayName": "°",
-				"unitPattern-count-one": "{0}°",
 				"unitPattern-count-other": "{0}°"
 			},
 			"angle-arc-minute": {
 				"displayName": "′",
-				"unitPattern-count-one": "{0}′",
 				"unitPattern-count-other": "{0}′"
 			},
 			"angle-arc-second": {
 				"displayName": "″",
-				"unitPattern-count-one": "{0}″",
 				"unitPattern-count-other": "{0}″"
 			},
 			"area-square-kilometer": {
@@ -5197,9 +5207,8 @@
 				"unitPattern-count-other": "{0} cal"
 			},
 			"energy-foodcalorie": {
-				"displayName": "kcal",
-				"unitPattern-count-one": "{0} kcal",
-				"unitPattern-count-other": "{0} kcal"
+				"unitPattern-count-one": "{0} kcal",
+				"unitPattern-count-other": "{0}  kcal"
 			},
 			"energy-kilojoule": {
 				"displayName": "kJ",
@@ -5308,7 +5317,6 @@
 			},
 			"length-earth-radius": {
 				"displayName": "R⊕",
-				"unitPattern-count-one": "{0} R⊕",
 				"unitPattern-count-other": "{0} R⊕"
 			},
 			"length-kilometer": {
@@ -5393,7 +5401,6 @@
 			},
 			"length-furlong": {
 				"displayName": "fur",
-				"unitPattern-count-one": "{0} fur",
 				"unitPattern-count-other": "{0} fur"
 			},
 			"length-fathom": {
@@ -5428,12 +5435,10 @@
 			},
 			"light-candela": {
 				"displayName": "cd",
-				"unitPattern-count-one": "{0} cd",
 				"unitPattern-count-other": "{0} cd"
 			},
 			"light-lumen": {
 				"displayName": "lm",
-				"unitPattern-count-one": "{0} lm",
 				"unitPattern-count-other": "{0} lm"
 			},
 			"light-solar-luminosity": {
@@ -5475,7 +5480,6 @@
 			},
 			"mass-stone": {
 				"displayName": "st",
-				"unitPattern-count-one": "{0} st",
 				"unitPattern-count-other": "{0} st"
 			},
 			"mass-pound": {
@@ -5620,9 +5624,13 @@
 				"unitPattern-count-one": "{0} nd",
 				"unitPattern-count-other": "{0} nd"
 			},
+			"speed-beaufort": {
+				"displayName": "Bft",
+				"unitPattern-count-one": "{0} Bft",
+				"unitPattern-count-other": "{0} Bft"
+			},
 			"temperature-generic": {
 				"displayName": "°",
-				"unitPattern-count-one": "{0}°",
 				"unitPattern-count-other": "{0}°"
 			},
 			"temperature-celsius": {
@@ -5720,7 +5728,6 @@
 			},
 			"volume-pint-metric": {
 				"displayName": "mpt",
-				"unitPattern-count-one": "{0} mpt",
 				"unitPattern-count-other": "{0} mpt"
 			},
 			"volume-cup-metric": {
@@ -5752,7 +5759,6 @@
 			},
 			"volume-quart": {
 				"displayName": "qt",
-				"unitPattern-count-one": "{0} qt",
 				"unitPattern-count-other": "{0} qt"
 			},
 			"volume-pint": {
@@ -5835,9 +5841,9 @@
 		}
 	},
 	"lenient-scope-number": {
-		"minusSign": "-‒⁻₋−➖﹣－",
-		"commaSign": ",،٫、︐︑﹐﹑，､",
-		"plusSign": "+⁺₊➕﬩﹢＋"
+		"minusSign": "-－﹣ ‑‒−⁻₋➖",
+		"commaSign": ",，﹐︐ ،٫、﹑､︑",
+		"plusSign": "+＋﬩﹢⁺₊ ➕"
 	},
 	"currencyFormat-sap-short": {
 		"1000-one": "0 k ¤",
