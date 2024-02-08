@@ -1116,8 +1116,12 @@ sap.ui.define([
 			});
 
 		// code under test
-		assert.strictEqual(await oCache.fetchParentIndex(23, "~GroupLock~"), "~iIndex~");
+		const oPromise = oCache.fetchParentIndex(23, "~GroupLock~");
+		const oPromise0 = oCache.fetchParentIndex(23, "~GroupLock~");
 
+		assert.strictEqual(oPromise, oPromise0, "same promise");
+		assert.ok(oPromise instanceof SyncPromise);
+		assert.strictEqual(await oPromise, "~iIndex~");
 		assert.strictEqual(JSON.stringify(oCache.mQueryOptions), sQueryOptions, "unchanged");
 	});
 
