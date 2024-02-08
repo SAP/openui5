@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/util/Resources",
 	"./config/sampleForwardingConfig",
 	"sap/base/strings/capitalize",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/base/i18n/Localization"
 ], function(
 	Element,
 	EventBus,
@@ -44,7 +45,8 @@ sap.ui.define([
 	ResourcesUtil,
 	sampleForwardingConfig,
 	capitalize,
-	Configuration
+	Configuration,
+	Localization
 ) {
 		"use strict";
 
@@ -73,7 +75,7 @@ sap.ui.define([
 					showNewTab: false,
 					rtaLoaded: false,
 					density: this.getOwnerComponent().getContentDensityClass(),
-					rtl: oConfiguration.getRTL(),
+					rtl: Localization.getRTL(),
 					theme: oConfiguration.getTheme(),
 					showWarning: false
 				});
