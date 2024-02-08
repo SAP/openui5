@@ -41,39 +41,51 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{sInteger: "0", iSummand: 5, sResult: "5"},
-	{sInteger: "0", iSummand: 1, sResult: "1"},
-	{sInteger: "0", iSummand: -1, sResult: "-1"},
-	{sInteger: "0", iSummand: -5, sResult: "-5"},
-	{sInteger: "1", iSummand: 5, sResult: "6"},
-	{sInteger: "1", iSummand: 1, sResult: "2"},
-	{sInteger: "1", iSummand: -1, sResult: "0"},
-	{sInteger: "1", iSummand: -5, sResult: "-4"},
-	{sInteger: "9", iSummand: 5, sResult: "14"},
-	{sInteger: "9", iSummand: 1, sResult: "10"},
-	{sInteger: "9", iSummand: -1, sResult: "8"},
-	{sInteger: "9", iSummand: -5, sResult: "4"},
-	{sInteger: "10", iSummand: 5, sResult: "15"},
-	{sInteger: "10", iSummand: 1, sResult: "11"},
-	{sInteger: "10", iSummand: -1, sResult: "9"},
-	{sInteger: "10", iSummand: -5, sResult: "5"},
-	{sInteger: "-1", iSummand: 5, sResult: "4"},
-	{sInteger: "-1", iSummand: 1, sResult: "0"},
-	{sInteger: "-1", iSummand: -1, sResult: "-2"},
-	{sInteger: "-1", iSummand: -5, sResult: "-6"},
-	{sInteger: "-9", iSummand: 5, sResult: "-4"},
-	{sInteger: "-9", iSummand: 1, sResult: "-8"},
-	{sInteger: "-9", iSummand: -1, sResult: "-10"},
-	{sInteger: "-9", iSummand: -5, sResult: "-14"},
-	{sInteger: "-10", iSummand: 5, sResult: "-5"},
-	{sInteger: "-10", iSummand: 1, sResult: "-9"},
-	{sInteger: "-10", iSummand: -1, sResult: "-11"},
-	{sInteger: "-10", iSummand: -5, sResult: "-15"}
+	{sDecimal: "0", iSummand: 5, sResult: "5"},
+	{sDecimal: "0", iSummand: 1, sResult: "1"},
+	{sDecimal: "0", iSummand: -1, sResult: "-1"},
+	{sDecimal: "0", iSummand: -5, sResult: "-5"},
+	{sDecimal: "1", iSummand: 5, sResult: "6"},
+	{sDecimal: "1", iSummand: 1, sResult: "2"},
+	{sDecimal: "1", iSummand: -1, sResult: "0"},
+	{sDecimal: "1", iSummand: -5, sResult: "-4"},
+	{sDecimal: "9", iSummand: 5, sResult: "14"},
+	{sDecimal: "9", iSummand: 1, sResult: "10"},
+	{sDecimal: "9", iSummand: -1, sResult: "8"},
+	{sDecimal: "9", iSummand: -5, sResult: "4"},
+	{sDecimal: "10", iSummand: 5, sResult: "15"},
+	{sDecimal: "10", iSummand: 1, sResult: "11"},
+	{sDecimal: "10", iSummand: -1, sResult: "9"},
+	{sDecimal: "10", iSummand: -5, sResult: "5"},
+	{sDecimal: "-1", iSummand: 5, sResult: "4"},
+	{sDecimal: "-1", iSummand: 1, sResult: "0"},
+	{sDecimal: "-1", iSummand: -1, sResult: "-2"},
+	{sDecimal: "-1", iSummand: -5, sResult: "-6"},
+	{sDecimal: "-9", iSummand: 5, sResult: "-4"},
+	{sDecimal: "-9", iSummand: 1, sResult: "-8"},
+	{sDecimal: "-9", iSummand: -1, sResult: "-10"},
+	{sDecimal: "-9", iSummand: -5, sResult: "-14"},
+	{sDecimal: "-10", iSummand: 5, sResult: "-5"},
+	{sDecimal: "-10", iSummand: 1, sResult: "-9"},
+	{sDecimal: "-10", iSummand: -1, sResult: "-11"},
+	{sDecimal: "-10", iSummand: -5, sResult: "-15"},
+	{sDecimal: "0.123456", iSummand: 5, sResult: "5.123456"},
+	{sDecimal: "-0.123456", iSummand: 5, sResult: "4.876544"},
+	{sDecimal: "0.123456", iSummand: -5, sResult: "-4.876544"},
+	{sDecimal: "-0.123456", iSummand: -5, sResult: "-5.123456"},
+	{sDecimal: "5.123456", iSummand: 5, sResult: "10.123456"},
+	{sDecimal: "-5.123456", iSummand: 5, sResult: "-0.123456"},
+	{sDecimal: "5.123456", iSummand: -5, sResult: "0.123456"},
+	{sDecimal: "-5.123456", iSummand: -5, sResult: "-10.123456"},
+	{sDecimal: "-4.123456", iSummand: 5, sResult: "0.876544"},
+	{sDecimal: "4.123456", iSummand: -5, sResult: "-0.876544"},
+	{sDecimal: "-2.123456", iSummand: 5, sResult: "2.876544"},
+	{sDecimal: "2.123456", iSummand: -5, sResult: "-2.876544"}
 ].forEach((oFixture) => {
-	const {sInteger, iSummand, sResult} = oFixture;
-	QUnit.test(`add: (${sInteger}) + (${iSummand}) = ${sResult}`, function (assert) {
+	const {sDecimal, iSummand, sResult} = oFixture;
+	QUnit.test(`add: (${sDecimal}) + (${iSummand}) = ${sResult}`, function (assert) {
 		// code under test
-		assert.strictEqual(NumberFormat.add(sInteger, iSummand), sResult);
+		assert.strictEqual(NumberFormat.add(sDecimal, iSummand), sResult);
 	});
 });
 
@@ -1293,6 +1305,12 @@ sap.ui.define([
 
 		assert.strictEqual(oFormat.format(getNumber("-35.855", bAsNumber)), "-35.85", "-35.855");
 		assert.strictEqual(oFormat.format(getNumber("-1.005", bAsNumber)), "-1", "-1.005");
+
+		oFormat = NumberFormat.getFloatInstance({
+			maxFractionDigits: 0,
+			roundingMode: NumberFormat.RoundingMode.HALF_TOWARDS_ZERO
+		});
+		assert.strictEqual(oFormat.format(getNumber("-.567", bAsNumber)), "-1", "-.567");
 	});
 });
 
@@ -1325,6 +1343,12 @@ sap.ui.define([
 
 		assert.strictEqual(oFormat.format(getNumber("-35.855", bAsNumber)), "-35.85", "-35.855");
 		assert.strictEqual(oFormat.format(getNumber("-1.005", bAsNumber)), "-1", "-1.005");
+
+		oFormat = NumberFormat.getFloatInstance({
+			maxFractionDigits: 0,
+			roundingMode: NumberFormat.RoundingMode.HALF_CEILING
+		});
+		assert.strictEqual(oFormat.format(getNumber("-.567", bAsNumber)), "-1", "-.567");
 	});
 });
 
