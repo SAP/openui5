@@ -1630,7 +1630,8 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.refreshKeptElements = function (oGroupLock, fnOnRemove) {
 		// "super" call (like @borrows ...)
-		return this.oFirstLevel.refreshKeptElements.call(this, oGroupLock, fnOnRemove, true);
+		const fnSuper = this.oFirstLevel.refreshKeptElements;
+		return fnSuper.call(this, oGroupLock, fnOnRemove, true);
 	};
 
 	/**
@@ -1742,7 +1743,8 @@ sap.ui.define([
 
 		this.oAggregation = oAggregation;
 		// "super" call (like @borrows ...)
-		this.oFirstLevel.reset.call(this, aKeptElementPredicates, sGroupId, mQueryOptions);
+		const fnSuper = this.oFirstLevel.reset;
+		fnSuper.call(this, aKeptElementPredicates, sGroupId, mQueryOptions);
 		// reset modifies the cache's query options => recalculate the download URL
 		this.sDownloadUrl = _Cache.prototype.getDownloadUrl.call(this, "");
 		if (sGroupId) { // sGroupId means we are in a side-effects refresh
@@ -1783,7 +1785,8 @@ sap.ui.define([
 			this.bUnifiedCache = this.oBackup.bUnifiedCache;
 		}
 		// "super" call (like @borrows ...)
-		this.oFirstLevel.restore.call(this, bReally);
+		const fnSuper = this.oFirstLevel.restore;
+		fnSuper.call(this, bReally);
 	};
 
 	/**
