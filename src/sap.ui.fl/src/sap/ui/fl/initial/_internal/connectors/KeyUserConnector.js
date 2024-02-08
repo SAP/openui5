@@ -36,13 +36,13 @@ sap.ui.define([
 		},
 		isLanguageInfoRequired: true,
 		loadFeatures(mPropertyBag) {
-			return BackendConnector.loadFeatures.call(KeyUserConnector, mPropertyBag).then(function(oFeatures) {
+			return BackendConnector.loadFeatures.call(this, mPropertyBag).then(function(oFeatures) {
 				oFeatures.isContextSharingEnabled = true;
 				return oFeatures;
 			});
 		},
 		loadFlexData(mPropertyBag) {
-			return BackendConnector.sendRequest.call(KeyUserConnector, mPropertyBag).then(function(oResult) {
+			return BackendConnector.sendRequest.call(this, mPropertyBag).then(function(oResult) {
 				oResult.contents.map(function(oContent, iIndex, oResult) {
 					oResult[iIndex].changes = (oContent.changes || []).concat(oContent.compVariants);
 				});
