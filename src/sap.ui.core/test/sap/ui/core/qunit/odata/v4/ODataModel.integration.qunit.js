@@ -33978,7 +33978,7 @@ make root = ${bMakeRoot}`;
 				+ ",NodeProperty='ID',Levels=1)&$select=DrillState,ID"
 			: "$count=true&$select=ID";
 		const sView = `
-<t:Table id="table" rows="{path : '/EMPLOYEES', parameters : ${sParameters}}"
+<t:Table firstVisibleRow="30" id="table" rows="{path : '/EMPLOYEES', parameters : ${sParameters}}"
 		threshold="5" visibleRowCount="3">
 	<Text id="id" text="{ID}"/>
 </t:Table>`;
@@ -34032,12 +34032,12 @@ make root = ${bMakeRoot}`;
 			}
 		};
 
-		expect(0, 0, 8); // 3 visible, 5 after
+		expect(30, 25, 13); // 5 before, 3 visible, 5 after
 
 		await this.createView(assert, sView, oModel);
 
 		oTable = this.oView.byId("table");
-		await scroll(30, 25, 13); // 5 before, 3 visible, 5 after
+
 		// forward
 		await scroll(31);
 		await scroll(32);
