@@ -349,16 +349,16 @@ sap.ui.define([
 		assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
 		assert.strictEqual(oListBinding.getLength(), iExpectedLength || aExpectedPaths.length,
 			sTitle);
-		const aAllCurrentContexts = oListBinding.getAllCurrentContexts();
+		const aAllExistingContexts = oListBinding._getAllExistingContexts();
 		aExpectedPaths.forEach((vExpectedPath, i) => {
 			if (typeof vExpectedPath !== "string") {
-				if (vExpectedPath !== aAllCurrentContexts[i]) {
+				if (vExpectedPath !== aAllExistingContexts[i]) {
 					assert.ok(false, `${sTitle}: Context not same @${i}: ${vExpectedPath}`);
 				}
 				aExpectedPaths[i] = vExpectedPath.getPath();
 			}
 		});
-		assert.deepEqual(aAllCurrentContexts.map(getNormalizedPath), aExpectedPaths);
+		assert.deepEqual(aAllExistingContexts.map(getNormalizedPath), aExpectedPaths);
 
 		aExpectedContent = aExpectedContent.map(function (aTexts) {
 			return aTexts.map(function (vText) {
@@ -27405,8 +27405,7 @@ sap.ui.define([
 			checkTable("root expanded", assert, oTable, [
 				"/EMPLOYEES('0')",
 				"/EMPLOYEES('1')",
-				"/EMPLOYEES('2')",
-				"/EMPLOYEES('3')"
+				"/EMPLOYEES('2')"
 			], [
 				[true, 1, "0", "", "Alpha", 60],
 				[false, 2, "1", "0", "Beta", 55],
@@ -27443,14 +27442,12 @@ sap.ui.define([
 			// code under test (JIRA: CPOUI5ODATAV4-2558)
 			const oZeta0 = oGamma.getSibling(); // Note: new context created here
 
-			// BEWARE: calls #getAllCurrentContexts!
 			checkTable("initially collapsed node expanded", assert, oTable, [
 				"/EMPLOYEES('0')",
 				"/EMPLOYEES('1')",
 				"/EMPLOYEES('1.1')",
 				"/EMPLOYEES('1.2')",
-				"/EMPLOYEES('2')",
-				"/EMPLOYEES('3')"
+				"/EMPLOYEES('2')"
 			], [
 				[true, 1, "0", "", "Alpha", 60],
 				[true, 2, "1", "0", "Beta", 55],
@@ -27514,7 +27511,7 @@ sap.ui.define([
 				[undefined, 2, "3", "0", "Lambda", 57],
 				[false, 2, "4", "0", "Mu", 58],
 				[false, 2, "5", "0", "Xi", 59]
-			]);
+			], 8);
 
 			// code under test
 			oRoot.collapse();
@@ -28372,7 +28369,6 @@ sap.ui.define([
 				"/EMPLOYEES('C')",
 				"/EMPLOYEES('1')",
 				"/EMPLOYEES('2')",
-				"/EMPLOYEES('3')",
 				"/EMPLOYEES('9')"
 			], [
 				[undefined, 1, "B", "", "Beth, not Beta", 170],
@@ -28654,8 +28650,7 @@ sap.ui.define([
 				"/EMPLOYEES('3')",
 				"/EMPLOYEES('4')",
 				"/EMPLOYEES('4.1')",
-				"/EMPLOYEES('4.1.1')",
-				"/EMPLOYEES('4.1.1.1')"
+				"/EMPLOYEES('4.1.1')"
 			], [
 				[undefined, 2, "2", "0", "Kappa", 56],
 				[undefined, 2, "3", "0", "Lambda", 57],
@@ -32604,11 +32599,6 @@ sap.ui.define([
 			"/EMPLOYEES('1')",
 			"/EMPLOYEES('In3')",
 			"/EMPLOYEES('Out4')",
-			"/EMPLOYEES('In2')",
-			"/EMPLOYEES('Out3')",
-			"/EMPLOYEES('1.1')",
-			"/EMPLOYEES('Out5')",
-			"/EMPLOYEES('2')",
 			"/EMPLOYEES('3')",
 			"/EMPLOYEES('4')",
 			"/EMPLOYEES('5')"
@@ -32617,7 +32607,7 @@ sap.ui.define([
 			[true, 2, "Beta"],
 			[undefined, 3, "In3"],
 			[undefined, 3, "Out4"]
-		]);
+		], 15);
 	});
 
 	//*********************************************************************************************
@@ -35950,12 +35940,7 @@ sap.ui.define([
 		checkTable("after (3)", assert, oTable, [
 			`/${sFriend}(ArtistID='1',IsActiveEntity=false)`,
 			`/${sFriend}(ArtistID='13',IsActiveEntity=false)`,
-			`/${sFriend}(ArtistID='16',IsActiveEntity=false)`,
-			`/${sFriend}(ArtistID='12',IsActiveEntity=false)`,
-			`/${sFriend}(ArtistID='11',IsActiveEntity=false)`,
-			`/${sFriend}(ArtistID='2',IsActiveEntity=false)`,
-			`/${sFriend}(ArtistID='14',IsActiveEntity=false)`,
-			`/${sFriend}(ArtistID='15',IsActiveEntity=false)`
+			`/${sFriend}(ArtistID='16',IsActiveEntity=false)`
 		], [
 			[true, 1, "1", "Alpha*"],
 			[true, 2, "13", "New3*"],
@@ -36584,8 +36569,7 @@ sap.ui.define([
 		checkTable("after (10)", assert, oTable, [
 			`/${sFriend}(ArtistID='3',IsActiveEntity=false)`,
 			`/${sFriend}(ArtistID='15',IsActiveEntity=false)`,
-			`/${sFriend}(ArtistID='13',IsActiveEntity=false)`,
-			`/${sFriend}(ArtistID='16',IsActiveEntity=false)`
+			`/${sFriend}(ArtistID='13',IsActiveEntity=false)`
 		], [
 			[true, 1, "3", "Gamma**"],
 			[undefined, 2, "15", "New5**"],
@@ -36906,12 +36890,8 @@ sap.ui.define([
 		]);
 
 		checkTable("after (3)", assert, oTable, [
-			"/EMPLOYEES('7')",
-			"/EMPLOYEES('6')",
 			"/EMPLOYEES('1')",
-			"/EMPLOYEES('8')",
-			"/EMPLOYEES('2')",
-			"/EMPLOYEES('3')"
+			"/EMPLOYEES('8')"
 		], [
 			[true, 1, "Alpha*"],
 			[undefined, 2, "Theta*"]
@@ -38380,12 +38360,11 @@ make root = ${bMakeRoot}`;
 		checkTable("after expand Alpha", assert, oTable, [
 			"/EMPLOYEES('1')",
 			"/EMPLOYEES('2')",
-			"/EMPLOYEES('3')",
 			"/EMPLOYEES('4')"
 		], [
 			[true, 1, "Alpha"],
 			[undefined, 2, "Beta"]
-		]);
+		], 4);
 		const oBeta = oListBinding.getCurrentContexts()[1];
 
 		this.expectRequest({
@@ -39675,7 +39654,6 @@ make root = ${bMakeRoot}`;
 		checkTable("after expand 0 (Alpha)", assert, oTable, [
 			"/EMPLOYEES('0')",
 			"/EMPLOYEES('1')",
-			"/EMPLOYEES('2')",
 			"/EMPLOYEES('9')"
 		], [
 			[true, 1, "0", "Alpha"],
@@ -39736,7 +39714,8 @@ make root = ${bMakeRoot}`;
 		], [
 			[undefined, 2, "3", "Delta"],
 			[undefined, 2, "4", "Epsilon"]
-		]);
+		], 6);
+
 		assert.strictEqual(oDelta, oTable.getRows()[0].getBindingContext());
 
 		// code under test
@@ -39759,6 +39738,13 @@ make root = ${bMakeRoot}`;
 		await Promise.all([
 			oDelta.getBinding().getHeaderContext().requestSideEffects(["Name"]),
 			this.waitForChanges(assert, "request side effects for name")
+		]);
+
+		// #getAllCurrentContexts simulates rerendering after #requestSideEffects and ensures that
+		// Alpha will be destroyed because it is not visible anymore
+		assert.deepEqual(oTable.getBinding("rows").getAllCurrentContexts().map(getPath), [
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')"
 		]);
 
 		checkTable("after requestSideEffects", assert, oTable, [
@@ -39997,6 +39983,13 @@ make root = ${bMakeRoot}`;
 			this.waitForChanges(assert, "request side effects for name")
 		]);
 
+		// #getAllCurrentContexts simulates rerendering after #requestSideEffects and ensures that
+		// Eta will be destroyed because it is not visible anymore
+		assert.deepEqual(oTable.getBinding("rows").getAllCurrentContexts().map(getPath), [
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		]);
+
 		checkTable("after requestSideEffects", assert, oTable, [
 			"/EMPLOYEES('5')",
 			"/EMPLOYEES('6')"
@@ -40026,6 +40019,7 @@ make root = ${bMakeRoot}`;
 		]);
 
 		assert.notStrictEqual(oResult, oAlpha, "Alpha was destroyed by side effect");
+		assert.strictEqual(oAlpha.getModel(), undefined, "Alpha was destroyed by side effect");
 		assert.strictEqual(oResult.getPath(), "/EMPLOYEES('0')");
 		assert.strictEqual(oResult.iIndex, 0);
 
@@ -40509,7 +40503,6 @@ make root = ${bMakeRoot}`;
 			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
-			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.3',IsActiveEntity=false)"
 		], [
 			[true, 3, "1.2", "Delta"],
@@ -40554,7 +40547,6 @@ make root = ${bMakeRoot}`;
 			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
-			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.3',IsActiveEntity=false)",
 			"/Artists(ArtistID='2',IsActiveEntity=false)",
 			"/Artists(ArtistID='2.1',IsActiveEntity=false)"
@@ -40588,7 +40580,6 @@ make root = ${bMakeRoot}`;
 			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
-			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.3',IsActiveEntity=false)",
 			"/Artists(ArtistID='2',IsActiveEntity=false)",
 			"/Artists(ArtistID='3',IsActiveEntity=false)"
@@ -40632,7 +40623,6 @@ make root = ${bMakeRoot}`;
 			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
-			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.3',IsActiveEntity=false)",
 			"/Artists(ArtistID='2',IsActiveEntity=false)",
 			"/Artists(ArtistID='3',IsActiveEntity=false)",
@@ -40719,7 +40709,6 @@ make root = ${bMakeRoot}`;
 			"/Artists(ArtistID='1.4',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.2',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.2.1',IsActiveEntity=false)",
-			"/Artists(ArtistID='1.2.2',IsActiveEntity=false)",
 			"/Artists(ArtistID='1.3',IsActiveEntity=false)",
 			"/Artists(ArtistID='2',IsActiveEntity=false)",
 			"/Artists(ArtistID='3',IsActiveEntity=false)",
@@ -41108,6 +41097,13 @@ make root = ${bMakeRoot}`;
 			[undefined, 2, "etag3.1", "3", "Delta #1", "3,false", "Delta's Friend"],
 			[true, 2, "etag4.1", "4", "Epsilon #1", "4,false", "Epsilon's Friend"]
 		], 7);
+
+		// #getAllCurrentContexts simulates rerendering after #requestSideEffects and ensures that
+		// Beta will be destroyed because it is not visible anymore
+		assert.deepEqual(oTable.getBinding("rows").getAllCurrentContexts().map(getPath), [
+			sFriend + "(ArtistID='3',IsActiveEntity=false)",
+			sFriend + "(ArtistID='4',IsActiveEntity=false)"
+		]);
 
 		this.expectRequest(sBaseUrl + sSelect + sExpand + "&$skip=0&$top=2", {
 				value : [{
@@ -41706,8 +41702,7 @@ make root = ${bMakeRoot}`;
 			checkTable("after expand", assert, oTable, [
 				"/Artists(ArtistID='0',IsActiveEntity=false)",
 				"/Artists(ArtistID='1',IsActiveEntity=false)",
-				"/Artists(ArtistID='2',IsActiveEntity=false)",
-				"/Artists(ArtistID='3',IsActiveEntity=false)"
+				"/Artists(ArtistID='2',IsActiveEntity=false)"
 			], [
 				[true, 1, "0", "Alpha"],
 				[undefined, 2, "1", "Beta"],
@@ -41809,8 +41804,7 @@ make root = ${bMakeRoot}`;
 				"/Artists(ArtistID='12',IsActiveEntity=false)",
 				"/Artists(ArtistID='11',IsActiveEntity=false)",
 				"/Artists(ArtistID='1',IsActiveEntity=false)",
-				"/Artists(ArtistID='2',IsActiveEntity=false)",
-				"/Artists(ArtistID='3',IsActiveEntity=false)"
+				"/Artists(ArtistID='2',IsActiveEntity=false)"
 			], [
 				[true, 1, "0", "Alpha"],
 				[undefined, 2, "12", "Second new child"],
@@ -58531,9 +58525,10 @@ make root = ${bMakeRoot}`;
 			{value : [{Note : "Note 42", SalesOrderID : "42"}]});
 
 		// code under test
-		oBinding.getHeaderContext().requestSideEffects([""]);
-
-		await this.waitForChanges(assert, "requestSideEffects");
+		await Promise.all([
+			oBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "requestSideEffects")
+		]);
 
 		checkTable(sMethod, assert, oTable, [
 			"/SalesOrderList($uid=...)",
@@ -58549,6 +58544,8 @@ make root = ${bMakeRoot}`;
 			case "changeParameters":
 				// code under test
 				oBinding.changeParameters({$search : "covfefe"});
+
+				await resolveLater(); // table update takes a moment
 				break;
 
 			case "filter":
