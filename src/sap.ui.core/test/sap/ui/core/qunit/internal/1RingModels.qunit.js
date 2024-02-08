@@ -50,7 +50,9 @@ sap.ui.require([
 		//TODO: get test running in 1RingModels.qunit; tests don't run independently - refactoring
 		// needed, currently they depend on the language en_US
 		// "sap/ui/core/qunit/types/DateFormat.qunit",
-		// "sap/ui/core/qunit/types/NumberFormat.qunit",
+		"sap/ui/core/qunit/types/NumberFormat.qunit",
+		//TODO: get test running in 1RingModels.qunit; tests don't run independently - refactoring
+		// needed, currently they depend on the language en_US
 		// "sap/ui/core/qunit/types/NumberFormatCurrencies.qunit",
 		// "sap/ui/core/qunit/types/NumberFormatCurrenciesTrailing.qunit",
 		"sap/ui/core/qunit/types/Date.qunit",
