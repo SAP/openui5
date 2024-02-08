@@ -379,7 +379,7 @@ sap.ui.define([
 				return null;
 			}
 
-			if (this.getUseFirstMatch()) {
+			if (this.getUseFirstMatch() && !oConfig.exactMatch) {
 				const oContext = this.getValueHelpDelegate().getFirstMatch(this.getValueHelpInstance(), this, oConfig);
 				if (oContext) {
 					const oOriginalItem = _getItemFromContext.call(this, oContext);

@@ -120,7 +120,11 @@ sap.ui.define([
 		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: -1});
 		const oCondition1 = Condition.createCondition(OperatorName.EQ, ["Test1"]);
 		const oCondition2 = Condition.createCondition(OperatorName.EQ, ["Test2"]);
-		const sResult = oConditionsType.formatValue([oCondition1, oCondition2]);
+		let sResult = oConditionsType.formatValue([oCondition1, oCondition2]);
+		assert.equal(sResult, "Test1" + oResourceBundle.getText("field.SEPARATOR") + "Test2", "Result of formatting"); // if only one operator, symbol is hidden
+
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ, OperatorName.GT], maxConditions: -1});
+		sResult = oConditionsType.formatValue([oCondition1, oCondition2]);
 		assert.equal(sResult, "=Test1" + oResourceBundle.getText("field.SEPARATOR") + "=Test2", "Result of formatting");
 
 	});
@@ -649,7 +653,6 @@ sap.ui.define([
 			oUnitConditionsType = new ConditionsType({
 				valueType: oUnitType,
 				operators: [OperatorName.EQ],
-				hideOperator: true,
 				originalDateType: oOriginalType,
 				additionalType: oValueType,
 				maxConditions: 1,

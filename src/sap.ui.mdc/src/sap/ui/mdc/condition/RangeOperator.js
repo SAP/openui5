@@ -42,7 +42,13 @@ sap.ui.define([
 		const RangeOperator = Operator.extend("sap.ui.mdc.condition.RangeOperator", /** @lends sap.ui.mdc.condition.RangeOperator.prototype */ {
 			constructor: function(oConfiguration) {
 				oConfiguration.filterOperator = "RANGE"; // No default operator for the filter exist
-				oConfiguration.tokenParse = oConfiguration.tokenParse || "^#tokenText#$";
+				if (oConfiguration.valueTypes && oConfiguration.valueTypes.length > 0) {
+					oConfiguration.tokenTest = oConfiguration.tokenTest || "^#tokenText#$";
+					oConfiguration.tokenParse = oConfiguration.tokenParse || "^#tokenText#$|^(.+)?$"; // if text not entered take everything as just argument might be entered
+					oConfiguration.tokenParseMatchIndex = 1;
+				} else {
+					oConfiguration.tokenParse = oConfiguration.tokenParse || "^#tokenText#$";
+				}
 				oConfiguration.tokenFormat = oConfiguration.tokenFormat || "#tokenText#";
 
 				Operator.apply(this, arguments);

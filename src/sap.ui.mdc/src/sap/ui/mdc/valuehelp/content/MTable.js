@@ -456,7 +456,8 @@ sap.ui.define([
 			if (!bPending) {
 				const oTable = this.getTable();
 				const oContainer = oTable.getParent()?.getParent();
-				if (oTable.getItems().length > 0 &&
+				if (!oConfig.exactMatch &&
+					oTable.getItems().length > 0 &&
 					this.getUseFirstMatch() &&
 					oContainer?.isOpen()) {
 					oResult = this._oFirstItemResult.filterValue === oConfig.value ? this._oFirstItemResult.result : undefined;

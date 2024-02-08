@@ -2628,16 +2628,21 @@ sap.ui.define([
 
 							if (this._vLiveChangeValue) {
 								// use EQ operator
-								const oOperator = FilterOperatorUtil.getEQOperator();
-								const aParts = oOperator.getValues(this._vLiveChangeValue, sDisplay, true);
-								if (aParts[0]) {
-									this._sFilterValue = aParts[0];
-									if (aParts[1]) {
-										this._sFilterValue = this._sFilterValue + " ";
+								const oOperator = FilterOperatorUtil.getEQOperator(aOperators);
+								const bHideOperator = this.getContentFactory().getHideOperator();
+								const bSymbolEntered = bHideOperator ? false : oOperator.test(this._vLiveChangeValue); // if operator always hidden symbol is always part of text
+								const aParts = oOperator.getValues(this._vLiveChangeValue, sDisplay, true, bHideOperator);
+								if (aParts) {
+									if (aParts[0]) {
+										this._sFilterValue = aParts[0];
+									} else if (aParts[1]) {
+										this._sFilterValue = aParts[1];
 									}
+								} else {
+									this._sFilterValue = "";
 								}
-								if (aParts[1]) {
-									this._sFilterValue = this._sFilterValue + aParts[1];
+								if (bSymbolEntered) {
+									this._bPreventAutocomplete = true; // if symbol is used -> no autocomplete
 								}
 							}
 
