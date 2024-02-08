@@ -153,17 +153,21 @@ sap.ui.define([
 		this._oUseDelegateItemsPromise = undefined;
 		this._oUseDelegateAdditionalContentPromise = undefined;
 
+		const fnDestroy = (vElement) => {
+			if (Array.isArray(vElement)) {
+				vElement.forEach(fnDestroy);
+			} else {
+				vElement.destroy();
+			}
+		};
+
 		if (this._aLinkItems) {
-			this._aLinkItems.forEach((oLinkItem) => {
-				oLinkItem.destroy();
-			});
+			this._aLinkItems.forEach(fnDestroy);
 			this._aLinkItems = undefined;
 		}
 
 		if (this._aAdditionalContent) {
-			this._aAdditionalContent.forEach((oLinkItem) => {
-				oLinkItem.destroy();
-			});
+			this._aAdditionalContent.forEach(fnDestroy);
 			this._aAdditionalContent = undefined;
 		}
 

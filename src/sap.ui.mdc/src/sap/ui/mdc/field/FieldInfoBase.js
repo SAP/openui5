@@ -6,12 +6,14 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/mdc/Element',
 	'sap/m/library',
-	'sap/m/ResponsivePopover'
+	'sap/m/ResponsivePopover',
+	'sap/base/Log'
 ], (
 	Device,
 	Element,
 	mobileLibrary,
-	ResponsivePopover
+	ResponsivePopover,
+	Log
 ) => {
 	"use strict";
 
@@ -94,15 +96,14 @@ sap.ui.define([
 			throw new Error("sap.ui.mdc.field.FieldInfoBase: popover can not be open because the control is undefined");
 		}
 		// Avoid creation of a new popover instance if the same triggerable control is triggered again.
-		let oPopover = this.getDependents().find((oDependent) => {
-			return oDependent.isA("sap.m.ResponsivePopover");
-		});
-		if (oPopover && oPopover.isOpen()) {
+		const oDependentPopover = this.getPopover();
+		if (oDependentPopover && oDependentPopover.isOpen()) {
 			return Promise.resolve();
 		}
+
 		const bNavigate = await this.checkDirectNavigation(oEvent);
 		if (bNavigate === false) {
-			oPopover = await this.createPopover();
+			const oPopover = await this.createPopover();
 			if (oPopover) {
 				oPopover.openBy(oControl);
 				oPopover.attachAfterOpen(() => {
@@ -152,43 +153,67 @@ sap.ui.define([
 	 * @returns {Promise} <code>Promise</code> with a popover as result
 	 * @private
 	 */
-	FieldInfoBase.prototype.createPopover = function() {
-		let oPopover;
-		return this.getContent(() => {
-			return oPopover;
-		}).then((oPanel) => {
-			oPopover = new ResponsivePopover(this.getId() + "-popover", {
-				contentWidth: "380px",
-				horizontalScrolling: false,
-				showHeader: Device.system.phone,
-				placement: PlacementType.Auto,
-				content: [
-					oPanel
-				],
-				afterClose: function(oEvent) {
-					if (oEvent.getSource()) {
-						oEvent.getSource().destroy();
-					}
+	FieldInfoBase.prototype.createPopover = async function() {
+		try {
+			const oPanel = await this.getContent(() => {
+				return this.getPopover();
+			});
+			return this._createPopover(oPanel);
+		} catch (oException) {
+			Log.error(oException);
+			return this._createPopover(undefined);
+		}
+	};
+
+	/**
+	 *	Creates a new {@link sap.m.ResponsivePopover}
+	 * @param {sap.ui.core.Control} oPanel Instance of the <code>Panel</code> that is displayed on the <code>Popover/code>.
+	 * @returns {Promise<sap.m.ResponsivePopover>} <code>Promise</code> with a popover as result
+	 * @private
+	 */
+	FieldInfoBase.prototype._createPopover = function(oPanel) {
+		const oPopover = new ResponsivePopover(this.getId() + "-popover", {
+			contentWidth: "380px",
+			horizontalScrolling: false,
+			showHeader: Device.system.phone,
+			placement: PlacementType.Auto,
+			content: [
+				oPanel
+			],
+			afterClose: function(oEvent) {
+				if (oEvent.getSource()) {
+					oEvent.getSource().destroy();
 				}
-			});
+			}
+		});
 
-			this.addDependent(oPopover);
+		this.addDependent(oPopover);
 
-			return new Promise((resolve, reject) => {
-				sap.ui.require([
-					'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'
-				], async (FlexRuntimeInfoAPI) => {
-					if (FlexRuntimeInfoAPI.isFlexSupported({ element: oPanel })) {
-						await FlexRuntimeInfoAPI.waitForChanges({ element: oPanel });
-					}
-					if (this.retrievePopoverTitle) {
-						const { sTitle, oLabelledByControl } = await this.retrievePopoverTitle(oPanel);
-						oPopover.setTitle(sTitle);
-						oPopover.addAriaLabelledBy(oLabelledByControl);
-					}
-					resolve(oPopover);
-				});
+		return new Promise((resolve, reject) => {
+			sap.ui.require([
+				'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'
+			], async (FlexRuntimeInfoAPI) => {
+				if (FlexRuntimeInfoAPI.isFlexSupported({ element: oPanel })) {
+					await FlexRuntimeInfoAPI.waitForChanges({ element: oPanel });
+				}
+				if (this.retrievePopoverTitle) {
+					const { sTitle, oLabelledByControl } = await this.retrievePopoverTitle(oPanel);
+					oPopover.setTitle(sTitle);
+					oPopover.addAriaLabelledBy(oLabelledByControl);
+				}
+				resolve(oPopover);
 			});
+		});
+	};
+
+	/**
+	 * Gets the current {@link sap.m.ResponsivePopover} of the <code>FieldInfo</code>
+	 * @returns {sap.m.ResponsivePopover|undefined} Instance of the <code>Popover/code> or <code>undefined</code>.
+	 * @private
+	 */
+	FieldInfoBase.prototype.getPopover = function() {
+		return this.getDependents().find((oDependent) => {
+			return oDependent.isA("sap.m.ResponsivePopover");
 		});
 	};
 

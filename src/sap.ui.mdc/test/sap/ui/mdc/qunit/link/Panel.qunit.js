@@ -403,8 +403,11 @@ sap.ui.define([
 				assert.equal(fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 2).getCustomData()[0].getValue(), "#CInternal", "Correct internal href");
 
 				fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 0).firePress();
+				setTimeout(function() {
+					assert.equal(window.location.href, sBaseUrl + "#AInternal", "Navigation happened with internalHref");
 
-				done();
+					done();
+				}, 50);
 			});
 		}.bind(this));
 	});
