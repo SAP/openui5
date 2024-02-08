@@ -522,6 +522,7 @@ sap.ui.define([
 		DynamicDateRange.prototype.init = function() {
 			var bValueHelpDecorative = !Device.support.touch || Device.system.desktop ? true : false;
 			this._oInput = new DynamicDateRangeInput(this.getId() + "-input", {
+				valueHelpIconSrc: IconPool.getIconURI("sap-icon://check-availability"),
 				valueHelpRequest: this._toggleOpen.bind(this),
 				showSuggestion: true,
 				suggest: this._handleSuggest.bind(this)
