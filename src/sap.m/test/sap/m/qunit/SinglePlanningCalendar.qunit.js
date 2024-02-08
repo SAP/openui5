@@ -2219,6 +2219,50 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("Backward/Forward navigation in month view", async function (assert) {
+		// Prepare
+		var oSPC = new SinglePlanningCalendar({
+				startDate: new Date("2023-12-31"),
+				views: [
+					new SinglePlanningCalendarMonthView()
+				]
+			}).placeAt("qunit-fixture");
+
+		await nextUIUpdate();
+
+		// Act - simulate backward navigation
+		oSPC._applyArrowsLogic(true);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSPC.getStartDate().toDateString(), new Date("2023-11-30").toDateString(), "The calendar start date is correct after backward navigation");
+
+		// Act - simulate again backward navigation
+		oSPC._applyArrowsLogic(true);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSPC.getStartDate().toDateString(), new Date("2023-10-30").toDateString(), "The calendar start date is correct after backward navigation");
+
+		// Act - simulate forward navigation
+		oSPC.setStartDate(new Date("2023-12-31"));
+		oSPC._applyArrowsLogic();
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSPC.getStartDate().toDateString(), new Date("2024-01-31").toDateString(), "The calendar start date is correct after forward navigation");
+
+		// Act - simulate again forward navigation
+		oSPC._applyArrowsLogic();
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSPC.getStartDate().toDateString(), new Date("2024-02-29").toDateString(), "The calendar start date is correct after forward navigation");
+
+		// Clean up
+		oSPC.destroy();
+	});
+
 	QUnit.module("Visibility of actions toolbar", {
 		beforeEach: async function () {
 			this.oSPC = new SinglePlanningCalendar().placeAt("qunit-fixture");

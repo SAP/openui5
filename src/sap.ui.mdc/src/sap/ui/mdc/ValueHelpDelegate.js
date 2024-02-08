@@ -10,12 +10,14 @@ sap.ui.define([
 	"sap/ui/mdc/BaseDelegate",
 	"sap/ui/model/FilterType",
 	"sap/ui/mdc/enums/ConditionValidated",
-	'sap/ui/mdc/condition/FilterConverter'
+	"sap/ui/mdc/condition/FilterConverter",
+	"sap/ui/Device"
 ], (
 	BaseDelegate,
 	FilterType,
 	ConditionValidated,
-	FilterConverter
+	FilterConverter,
+	Device
 ) => {
 	"use strict";
 
@@ -75,6 +77,11 @@ sap.ui.define([
 	 * @public
 	 */
 	ValueHelpDelegate.showTypeahead = function(oValueHelp, oContent) {
+		if (Device.system.phone) {
+			// on phone also open typeahead if no filter is set or no result is found
+			return true;
+		}
+
 		if (!oContent || (oContent.isA("sap.ui.mdc.valuehelp.base.FilterableListContent") && !oContent.getFilterValue())) { // Do not show non-existing content or suggestions without filterValue
 			return false;
 		} else if (oContent.isA("sap.ui.mdc.valuehelp.base.ListContent")) { // All List-like contents should have some data to show
@@ -355,12 +362,28 @@ sap.ui.define([
 	ValueHelpDelegate.shouldOpenOnClick = function(oValueHelp, oContainer) {
 		let bShouldOpenOnClick = false;
 
-		/**
-		 *  @deprecated since 1.121.0
-		 */
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
-			const oContent = oContainer._getContent();
-			bShouldOpenOnClick = oContainer.isPropertyInitial("opensOnClick") ? !!oContent && oContent.shouldOpenOnClick() : oContainer.getOpensOnClick(); //If opensOnClick is not explicitly set,  the content's preference is used instead.
+			if (Device.system.phone && (!oContainer.isSingleSelect() || !oContainer.isDialog())) {
+				// on phones open:
+				// - always for multi-select fields
+				// - for singleSelect only if typeahead is not used as ValueHelp (ComboBox don't opens on click)
+				bShouldOpenOnClick = true;
+			} else {
+				let bUseConent = true;
+
+				/**
+				 *  @deprecated since 1.121.0
+				 */
+				if (!oContainer.isPropertyInitial("opensOnClick")) {
+					bUseConent = false;
+					bShouldOpenOnClick = oContainer.getOpensOnClick();
+				}
+
+				if (bUseConent) {
+					const oContent = oContainer._getContent();
+					bShouldOpenOnClick = !!oContent && oContent.shouldOpenOnClick(); //If opensOnClick-property is not explicitly set, the content's preference is used instead.
+				}
+			}
 		}
 
 		return Promise.resolve(bShouldOpenOnClick);

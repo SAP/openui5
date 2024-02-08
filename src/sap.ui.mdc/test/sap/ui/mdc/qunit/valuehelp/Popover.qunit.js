@@ -9,25 +9,35 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/Popover",
 	"sap/ui/mdc/valuehelp/base/Content",
 	"sap/ui/mdc/condition/Condition",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/library",
 	"sap/m/Toolbar",
 	"sap/m/Input",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/Device",
+	"sap/ui/core/IconPool",
+	"sap/ui/model/ParseException"
 ], function (
 		ValueHelpDelegate,
 		Popover,
 		Content,
 		Condition,
+		ConditionValidated,
+		OperatorName,
 		ValueHelpSelectionType,
 		Icon,
 		JSONModel,
 		mLibrary,
 		Toolbar,
 		Input,
-		nextUIUpdate
+		nextUIUpdate,
+		Device,
+		IconPool,
+		ParseException
 	) {
 	"use strict";
 
@@ -62,6 +72,16 @@ sap.ui.define([
 		},
 		awaitControlDelegate: function () {
 			return Promise.resolve();
+		},
+		getId: function () {
+			return "VH1";
+		},
+		sFilterValue: "",
+		setFilterValue: function(sFilterValue) {
+			oValueHelp.filterValue = sFilterValue;
+		},
+		getFilterValue: function() {
+			return oValueHelp.filterValue;
 		},
 		bDelegateInitialized: true
 	};
@@ -721,5 +741,581 @@ sap.ui.define([
 
 	// TODO: Test Operator determination on Content
 	// TODO: Test condition creation on Content
+
+	let oDeviceStub;
+	QUnit.module("Phone support", {
+		beforeEach: async function() {
+			const oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
+			oDeviceStub = sinon.stub(Device, "system").value(oSystem);
+
+			oValueHelpConfig = {maxConditions: -1};
+			oModel = new JSONModel({
+				_config: oValueHelpConfig,
+				// filterValue: "X",
+				conditions: [Condition.createItemCondition("X", "Text")]
+			});
+
+			oContentField = new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
+			oContent = new Content("Content1");
+			sinon.stub(oContent, "getContent").returns(oContentField);
+
+			oPopover = new Popover("P1", {
+				content: oContent
+			}).setModel(oModel, "$valueHelp");
+			sinon.stub(oPopover, "getParent").returns(oValueHelp);
+			oField = new Icon("I2", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
+			oField.getFocusElementForValueHelp = function(bTypeahed) { // fake
+				return oField;
+			};
+			oField.placeAt("content");
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			_teardown();
+			oDeviceStub.restore();
+		}
+	});
+
+	QUnit.test("getContainerControl (multi-select)", function(assert) {
+
+		oPopover.setTitle("Test");
+
+		const oContainer = oPopover.getContainerControl();
+
+		if (oContainer) {
+			const fnDone = assert.async();
+			oContainer.then(function(oContainer) {
+				assert.ok(oContainer, "Container returned");
+				assert.ok(oContainer.isA("sap.m.Dialog"), "Container is sap.m.Dialog");
+				assert.equal(oContainer.getStretch(), true, "stretch");
+				assert.equal(oContainer.getHorizontalScrolling(), false, "horizontalScrolling");
+
+				const oCloseButton = oContainer.getBeginButton();
+				assert.ok(oCloseButton, "close-button exist");
+				assert.ok(oCloseButton && oCloseButton.isA("sap.m.Button"), "close-button is Button");
+
+				const oCustomHeaderBar = oContainer.getCustomHeader();
+				assert.ok(oCustomHeaderBar, "header-bar exist");
+				assert.ok(oCustomHeaderBar && oCustomHeaderBar.isA("sap.m.Bar"), "header-bar is Bar");
+				const aContentMiddle = oCustomHeaderBar.getContentMiddle();
+				assert.equal(aContentMiddle && aContentMiddle.length, 1, "ContentMiddle returned");
+				const oTitle = aContentMiddle && aContentMiddle[0];
+				assert.ok(oTitle, "title exist");
+				assert.ok(oTitle && oTitle.isA("sap.m.Title"), "title is Title");
+				assert.equal(oTitle && oTitle.getText(), "Test", "Title text");
+				assert.equal(oTitle && oTitle.getLevel(), "H1", "Title level");
+				const aContentRight = oCustomHeaderBar.getContentRight();
+				assert.equal(aContentRight && aContentRight.length, 1, "ContentRight returned");
+				const oCancelButton = aContentRight && aContentRight[0];
+				assert.ok(oCancelButton, "cancel-button exist");
+				assert.ok(oCancelButton && oCancelButton.isA("sap.m.Button"), "cancel-button is Button");
+				assert.equal(oCancelButton && oCancelButton.getIcon(), IconPool.getIconURI("decline"), "cancel-button is Icon");
+
+				const oSubHeaderBar = oContainer.getSubHeader();
+				assert.ok(oSubHeaderBar, "subHeader-bar exist");
+				assert.ok(oSubHeaderBar && oSubHeaderBar.isA("sap.m.Toolbar"), "subHeader-bar is Toolbar");
+				const aSubHeaderContent = oSubHeaderBar.getContent();
+				assert.equal(aSubHeaderContent && aSubHeaderContent.length, 2, "SubHeaderContent returned");
+				const oInput = aSubHeaderContent[0];
+				assert.ok(oInput, "Input exist");
+				assert.ok(oInput && oInput.isA("sap.m.Input"), "Input is Input");
+				assert.notOk(oInput && oInput.getValue(), "Input value");
+				assert.equal(oInput && oInput.getWidth(), "100%", "Input width");
+				assert.equal(oInput && oInput.getShowValueStateMessage(), false, "Input showValueStateMessage");
+				assert.equal(oInput && oInput.getShowValueHelp(), false, "Input showValueHelp");
+				assert.equal(oContainer.getInitialFocus(), oInput && oInput.getId(), "initial focus");
+				const oShowConditionsButton = aSubHeaderContent[1];
+				assert.ok(oShowConditionsButton, "show-conditions-button exist");
+				assert.ok(oShowConditionsButton && oShowConditionsButton.isA("sap.m.ToggleButton"), "show-conditions-button is ToggleButton");
+				assert.equal(oShowConditionsButton && oShowConditionsButton.getIcon(), IconPool.getIconURI("multiselect-all"), "show-conditions-button Icon");
+
+				const aDialogContent = oContainer.getContent();
+				assert.equal(aDialogContent && aDialogContent.length, 2, "Dialog content");
+				const oValueStateHeader = aDialogContent && aDialogContent[0];
+				assert.ok(oValueStateHeader && oValueStateHeader.isA("sap.m.ValueStateHeader"), "ValueStateHeader is first content");
+				const oScrollContainer = aDialogContent && aDialogContent[1];
+				assert.ok(oScrollContainer && oScrollContainer.isA("sap.m.ScrollContainer"), "ScrollContainer is second content");
+
+				// call again
+				oContainer = oPopover.getContainerControl();
+				assert.ok(oContainer.isA("sap.m.Dialog"), "sap.m.Dialog directly returned on second call");
+				fnDone();
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
+
+	});
+
+	QUnit.test("getContainerControl (single-select)", function(assert) {
+
+		oValueHelpConfig.maxConditions = 1;
+		oPopover.setTitle("Test");
+
+		sinon.stub(oPopover, "hasDialog").returns(true); // to enable valueHelp icon
+
+		const oContainer = oPopover.getContainerControl();
+
+		if (oContainer) {
+			const fnDone = assert.async();
+			oContainer.then(function(oContainer) {
+				setTimeout(function() { // as setting value on input might be async
+					assert.ok(oContainer, "Container returned");
+					assert.ok(oContainer.isA("sap.m.Dialog"), "Container is sap.m.Dialog");
+					assert.equal(oContainer.getStretch(), true, "stretch");
+					assert.equal(oContainer.getHorizontalScrolling(), false, "horizontalScrolling");
+
+					const oCloseButton = oContainer.getBeginButton();
+					assert.ok(oCloseButton && oCloseButton.isA("sap.m.Button"), "close-button is Button");
+
+					const oCustomHeaderBar = oContainer.getCustomHeader();
+					assert.ok(oCustomHeaderBar && oCustomHeaderBar.isA("sap.m.Bar"), "header-bar is Bar");
+					const aContentMiddle = oCustomHeaderBar.getContentMiddle();
+					assert.equal(aContentMiddle && aContentMiddle.length, 1, "ContentMiddle returned");
+					const oTitle = aContentMiddle && aContentMiddle[0];
+					assert.ok(oTitle && oTitle.isA("sap.m.Title"), "title is Title");
+					assert.equal(oTitle && oTitle.getText(), "Test", "Title text");
+					assert.equal(oTitle && oTitle.getLevel(), "H1", "Title level");
+					const aContentRight = oCustomHeaderBar.getContentRight();
+					assert.equal(aContentRight && aContentRight.length, 1, "ContentRight returned");
+					const oCancelButton = aContentRight && aContentRight[0];
+					assert.ok(oCancelButton && oCancelButton.isA("sap.m.Button"), "cancel-button is Button");
+					assert.equal(oCancelButton && oCancelButton.getIcon(), IconPool.getIconURI("decline"), "cancel-button is Icon");
+
+					const oSubHeaderBar = oContainer.getSubHeader();
+					assert.ok(oSubHeaderBar && oSubHeaderBar.isA("sap.m.Toolbar"), "subHeader-bar is Toolbar");
+					const aSubHeaderContent = oSubHeaderBar.getContent();
+					assert.equal(aSubHeaderContent && aSubHeaderContent.length, 1, "SubHeaderContent returned");
+					const oInput = aSubHeaderContent[0];
+					assert.ok(oInput, "Input exist");
+					assert.ok(oInput && oInput.isA("sap.m.Input"), "Input is Input");
+					assert.equal(oInput && oInput.getValue(), "X", "Input value");
+					assert.equal(oInput && oInput.getWidth(), "100%", "Input width");
+					assert.equal(oInput && oInput.getShowValueStateMessage(), false, "Input showValueStateMessage");
+					assert.equal(oInput && oInput.getShowValueHelp(), true, "Input showValueHelp");
+					assert.equal(oContainer.getInitialFocus(), oInput && oInput.getId(), "initial focus");
+
+					const aDialogContent = oContainer.getContent();
+					assert.equal(aDialogContent && aDialogContent.length, 2, "Dialog content");
+					const oValueStateHeader = aDialogContent && aDialogContent[0];
+					assert.ok(oValueStateHeader && oValueStateHeader.isA("sap.m.ValueStateHeader"), "ValueStateHeader is first content");
+					assert.notOk(oValueStateHeader.getVisible(), "ValueStateHeader not visible");
+					const oScrollContainer = aDialogContent && aDialogContent[1];
+					assert.ok(oScrollContainer && oScrollContainer.isA("sap.m.ScrollContainer"), "ScrollContainer is second content");
+
+					fnDone();
+				}, 0);
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
+
+	});
+
+	QUnit.test("open / close", function(assert) {
+
+		let iOpened = 0;
+		let sItemId;
+		oPopover.attachEvent("opened", function(oEvent) {
+			iOpened++;
+			sItemId = oEvent.getParameter("itemId");
+		});
+		let iClosed = 0;
+		oPopover.attachEvent("closed", function(oEvent) {
+			iClosed++;
+		});
+
+		sinon.stub(oContent, "onShow").returns("MyItem");
+		sinon.spy(oContent, "onHide");
+		sinon.spy(oPopover, "_openContainerByTarget");
+		oContent.getContentHeight = function () {
+			return 100;
+		};
+
+		const oPromise = oPopover.open(Promise.resolve());
+		assert.ok(oPromise instanceof Promise, "open returns promise");
+
+		if (oPromise) {
+			const fnDone = assert.async();
+			oPromise.then(function() {
+				setTimeout(function() { // wait until open
+					assert.equal(iOpened, 1, "Opened event fired once");
+					assert.equal(sItemId, "MyItem", "Opened event returns itemId");
+					const oContainer = oPopover.getAggregation("_container");
+					assert.notOk(oPopover._openContainerByTarget.called, "_openContainerByTarget was not called.");
+					assert.ok(oContainer.isA("sap.m.Dialog"), "Container is sap.m.Dialog");
+					assert.ok(oContainer.isOpen(), "sap.m.Dialog is open");
+					const aDialogContent = oContainer.getContent();
+					const oScrollContainer = aDialogContent && aDialogContent[1];
+					const oShownContent = oScrollContainer.getContent()[0];
+					assert.ok(oShownContent.isA("sap.m.List"), "Tokenlist shown");
+					assert.equal(oShownContent.getMode(), "Delete", "List mode");
+					const aItems = oShownContent.getItems();
+					assert.equal(aItems.length, 1, "one item");
+					assert.equal(aItems[0].getTitle(), "X", "Text of item");
+					// assert.ok(aItems[0].getSelected(), "Item is selected");
+					assert.equal(aItems[0].getType(), "Active", "Type of item");
+					assert.ok(oContent.onShow.calledOnce, "Content onShow called");
+					assert.equal(oPopover.getDomRef(), oContainer.getDomRef(), "DomRef of sap.m.Dialog returned");
+					assert.equal(oPopover.getUIAreaForContent(), oContainer.getUIArea(), "getUIAreaForContent returns UiArea of sap.m.Dialog");
+
+					oPopover.close();
+					setTimeout(function() { // wait until closed
+						assert.equal(iClosed, 1, "Closed event fired once");
+						assert.notOk(oContainer.isOpen(), "sap.m.Dialog is not open");
+						assert.ok(oContent.onHide.calledOnce, "Content onHide called");
+						oContent.onShow.restore();
+						oContent.onHide.restore();
+						oPopover._openContainerByTarget.restore();
+						fnDone();
+					}, iPopoverDuration);
+				}, iPopoverDuration);
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called");
+				oContent.onShow.restore();
+				oContent.onHide.restore();
+				oPopover._openContainerByTarget.restore();
+				fnDone();
+			});
+		}
+
+	});
+
+	QUnit.test("Cancel Button", function(assert) {
+
+		let iCancel = 0;
+		oPopover.attachEvent("cancel", function(oEvent) {
+			iCancel++;
+		});
+
+		oContent.getContentHeight = function () {
+			return 100;
+		};
+
+		const oPromise = oPopover.open(Promise.resolve());
+
+		if (oPromise) {
+			const fnDone = assert.async();
+			oPromise.then(function() {
+				setTimeout(function() { // wait until open
+					const oContainer = oPopover.getAggregation("_container");
+					const oCustomHeaderBar = oContainer.getCustomHeader();
+					const aContentRight = oCustomHeaderBar.getContentRight();
+					const oCancelButton = aContentRight && aContentRight[0];
+					oCancelButton.firePress(); // simulate press
+					assert.equal(iCancel, 1, "Cancel event fired once");
+
+					oPopover.close();
+					setTimeout(function() { // wait until closed
+						fnDone();
+					}, iPopoverDuration);
+				}, iPopoverDuration);
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
+
+	});
+
+	QUnit.test("Input interaction (multi-select)", function(assert) {
+
+		let iSelect = 0;
+		let sSelectType;
+		let aSelectConditions;
+		oPopover.attachEvent("select", function(oEvent) {
+			iSelect++;
+			sSelectType = oEvent.getParameter("type");
+			aSelectConditions = oEvent.getParameter("conditions");
+		});
+		let iConfirm = 0;
+		let bConfirmClose;
+		oPopover.attachEvent("confirm", function(oEvent) {
+			iConfirm++;
+			bConfirmClose = oEvent.getParameter("close");
+		});
+
+		oContent.getContentHeight = function () {
+			return 100;
+		};
+
+		const oPromise = oPopover.open(Promise.resolve());
+
+		if (oPromise) {
+			const fnDone = assert.async();
+			oPromise.then(function() {
+				setTimeout(function() { // wait until open
+					const oContainer = oPopover.getAggregation("_container");
+					const oSubHeaderBar = oContainer.getSubHeader();
+					const aSubHeaderContent = oSubHeaderBar.getContent();
+					const oInput = aSubHeaderContent[0];
+					const aDialogContent = oContainer.getContent();
+					const oValueStateHeader = aDialogContent && aDialogContent[0];
+
+					oInput._$input.val("A");
+					oInput.fireLiveChange({value: "A"});
+					assert.equal(oValueHelp.getFilterValue(), "A", "FilterValue set");
+					assert.equal(iSelect, 0, "Select event not fired");
+
+					oInput.fireSubmit({value: "A"});
+					setTimeout(function() { // as parsing might be async
+						assert.equal(iSelect, 1, "Select event fired");
+						assert.equal(sSelectType, ValueHelpSelectionType.Add, "Select type");
+						const oCondition = Condition.createCondition(OperatorName.EQ, ["A"], undefined, undefined, ConditionValidated.NotValidated);
+						assert.deepEqual(aSelectConditions, [oCondition], "Selected condition");
+						assert.equal(iConfirm, 1, "Confirm event fired once");
+						assert.ok(bConfirmClose, "Close on confirm event set");
+
+						iSelect = 0;
+						iConfirm = 0;
+						oInput._$input.val("");
+						oInput.fireSubmit({value: ""});
+						assert.equal(iSelect, 0, "Select event not fired");
+						assert.equal(iConfirm, 1, "Confirm event fired once");
+						assert.ok(bConfirmClose, "Close on confirm event set");
+
+						iSelect = 0;
+						iConfirm = 0;
+						sinon.stub(oPopover._oInputConditionType, "parseValue").throws(new ParseException("MyError"));
+						oInput._$input.val("Y");
+						oInput.fireSubmit({value: "Y"});
+						setTimeout(function() { // as parsing might be async
+							assert.equal(iSelect, 0, "Select event not fired");
+							assert.equal(iConfirm, 0, "Confirm event not fired");
+							assert.equal(oInput.getValueState(), "Error", "ValueState on Input");
+							assert.equal(oInput.getValueStateText(), "MyError", "ValueStateText on Input");
+							assert.equal(oValueStateHeader.getValueState(), "Error", "ValueState on ValueStateHeader");
+							assert.equal(oValueStateHeader.getText(), "MyError", "Text on ValueStateHeader");
+							assert.ok(oValueStateHeader.getVisible(), "ValueStateHeader visible");
+
+							oPopover.close();
+							setTimeout(function() { // wait until closed
+								fnDone();
+							}, iPopoverDuration);
+						}, 0);
+					}, 0);
+				}, iPopoverDuration);
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
+
+	});
+
+	QUnit.test("Input interaction (single-select)", function(assert) {
+
+		oValueHelpConfig.maxConditions = 1;
+		sinon.stub(oPopover, "hasDialog").returns(true); // to enable valueHelp icon
+
+		let iSelect = 0;
+		let sSelectType;
+		let aSelectConditions;
+		oPopover.attachEvent("select", function(oEvent) {
+			iSelect++;
+			sSelectType = oEvent.getParameter("type");
+			aSelectConditions = oEvent.getParameter("conditions");
+		});
+		let iConfirm = 0;
+		let bConfirmClose;
+		oPopover.attachEvent("confirm", function(oEvent) {
+			iConfirm++;
+			bConfirmClose = oEvent.getParameter("close");
+		});
+		let iRequestSwitchToDialog = 0;
+		oPopover.attachEvent("requestSwitchToDialog", function(oEvent) {
+			iRequestSwitchToDialog++;
+		});
+
+		oContent.getContentHeight = function () {
+			return 100;
+		};
+
+		const oPromise = oPopover.open(Promise.resolve());
+
+		if (oPromise) {
+			const fnDone = assert.async();
+			oPromise.then(function() {
+				setTimeout(function() { // wait until open
+					const oContainer = oPopover.getAggregation("_container");
+					const oSubHeaderBar = oContainer.getSubHeader();
+					const aSubHeaderContent = oSubHeaderBar.getContent();
+					const oInput = aSubHeaderContent[0];
+					oInput._$input.val("A");
+					oInput.fireSubmit({value: "A"});
+					setTimeout(function() { // as parsing might be async
+						assert.equal(iSelect, 1, "Select event fired");
+						assert.equal(sSelectType, ValueHelpSelectionType.Set, "Select type");
+						const oCondition = Condition.createCondition(OperatorName.EQ, ["A"], undefined, undefined, ConditionValidated.NotValidated);
+						assert.deepEqual(aSelectConditions, [oCondition], "Selected condition");
+						assert.equal(iConfirm, 1, "Confirm event fired once");
+						assert.ok(bConfirmClose, "Close on confirm event set");
+
+						iSelect = 0;
+						iConfirm = 0;
+						oInput._$input.val("");
+						oInput.fireSubmit({value: ""});
+						assert.equal(iSelect, 1, "Select event fired");
+						assert.equal(sSelectType, ValueHelpSelectionType.Set, "Select type");
+						assert.deepEqual(aSelectConditions, [], "Selected condition");
+						assert.equal(iConfirm, 1, "Confirm event fired once");
+						assert.ok(bConfirmClose, "Close on confirm event set");
+
+						oInput.fireValueHelpRequest();
+						assert.equal(iRequestSwitchToDialog, 1, "RequestSwitchToDialog event fired");
+
+						oPopover.close();
+						setTimeout(function() { // wait until closed
+							fnDone();
+						}, iPopoverDuration);
+					}, 0);
+				}, iPopoverDuration);
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
+
+	});
+
+	QUnit.test("OK Button", function(assert) {
+
+		oContent.getContentHeight = function () {
+			return 100;
+		};
+
+		const oPromise = oPopover.open(Promise.resolve());
+
+		if (oPromise) {
+			const fnDone = assert.async();
+			oPromise.then(function() {
+				setTimeout(function() { // wait until open
+					const oContainer = oPopover.getAggregation("_container");
+					const oSubHeaderBar = oContainer.getSubHeader();
+					const aSubHeaderContent = oSubHeaderBar.getContent();
+					const oInput = aSubHeaderContent[0];
+					oInput.setValue("A");
+					sinon.spy(oInput, "fireSubmit");
+					const oCloseButton = oContainer.getBeginButton();
+					oCloseButton.firePress(); // simulate press
+
+					assert.ok(oInput.fireSubmit.calledOnce, "Input submit called"); // as OK shoulf behave similar to Input Enter-Press
+					assert.equal(oInput.fireSubmit.args[0][0].value, "A", "Input submit called with value");
+
+					oPopover.close();
+					setTimeout(function() { // wait until closed
+						fnDone();
+					}, iPopoverDuration);
+				}, iPopoverDuration);
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
+
+	});
+
+	QUnit.test("Token List", function(assert) {
+
+		let iSelect = 0;
+		let sSelectType;
+		let aSelectConditions;
+		oPopover.attachEvent("select", function(oEvent) {
+			iSelect++;
+			sSelectType = oEvent.getParameter("type");
+			aSelectConditions = oEvent.getParameter("conditions");
+		});
+
+		oContent.getContentHeight = function () {
+			return 100;
+		};
+
+		const oPromise = oPopover.open(Promise.resolve());
+
+		if (oPromise) {
+			const fnDone = assert.async();
+			oPromise.then(function() {
+				setTimeout(function() { // wait until open
+					const oContainer = oPopover.getAggregation("_container");
+					const oSubHeaderBar = oContainer.getSubHeader();
+					const aSubHeaderContent = oSubHeaderBar.getContent();
+					const oShowConditionsButton = aSubHeaderContent[1];
+					const aDialogContent = oContainer.getContent();
+					const oScrollContainer = aDialogContent && aDialogContent[1];
+
+					oShowConditionsButton.firePress({pressed: false});
+					let oShownContent = oScrollContainer.getContent()[0];
+					assert.equal(oShownContent, oContentField, "Content of ScrollContainer");
+
+					oShowConditionsButton.firePress({pressed: true});
+					oShownContent = oScrollContainer.getContent()[0];
+					assert.ok(oShownContent.isA("sap.m.List"), "Tokenlist shown");
+					assert.equal(oShownContent.getMode(), "Delete", "List mode");
+					const aItems = oShownContent.getItems();
+					assert.equal(aItems.length, 1, "one item");
+					assert.equal(aItems[0].getTitle(), "X", "Text of item");
+					// assert.ok(aItems[0].getSelected(), "Item is selected");
+					assert.equal(aItems[0].getType(), "Active", "Type of item");
+
+					aItems[0].getDeleteControl(true).firePress(); // simulate delete
+					assert.equal(iSelect, 1, "Select event fired");
+					assert.equal(sSelectType, ValueHelpSelectionType.Remove, "Select type");
+					const oCondition = Condition.createItemCondition("X", "Text");
+					assert.deepEqual(aSelectConditions, [oCondition], "Selected condition");
+
+					oPopover.close();
+					setTimeout(function() { // wait until closed
+						fnDone();
+					}, iPopoverDuration);
+				}, iPopoverDuration);
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
+
+	});
+
+	QUnit.test("shouldOpenOnClick", async function(assert) {
+
+		sinon.stub(oContent, "shouldOpenOnClick").returns(false);
+		let bShouldOpen = await oPopover.shouldOpenOnClick();
+		assert.ok(bShouldOpen, "shouldOpenOnClick always enabled for Multi-Select");
+		assert.notOk(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content not called");
+
+		oValueHelpConfig.maxConditions = 1;
+		sinon.stub(oPopover, "isDialog").returns(false);
+		bShouldOpen = await oPopover.shouldOpenOnClick();
+		assert.ok(bShouldOpen, "shouldOpenOnClick always enabled for Single-Select if not used as Dialog");
+		assert.notOk(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content not called");
+
+		oPopover.isDialog.returns(true);
+		bShouldOpen = await oPopover.shouldOpenOnClick();
+		assert.notOk(bShouldOpen, "shouldOpenOnClick used value of content");
+		assert.ok(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content called");
+
+	});
+
+	QUnit.test("isTypeaheadSupported", function(assert) {
+
+		sinon.stub(oContent, "isSearchSupported").returns(true);
+		sinon.stub(oPopover, "isDialog").returns(false);
+
+		assert.ok(oPopover.isTypeaheadSupported(), "for Multi-selection take configuration of content");
+
+		oPopover.isDialog.returns(true);
+		assert.notOk(oPopover.isTypeaheadSupported(), "for Multi-selection not supported if used as Dialog");
+
+		oValueHelpConfig.maxConditions = 1;
+		assert.notOk(oPopover.isTypeaheadSupported(), "for Single-selection not supported");
+
+	});
 
 });

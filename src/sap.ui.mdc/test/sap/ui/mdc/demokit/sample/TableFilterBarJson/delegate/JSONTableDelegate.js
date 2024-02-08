@@ -16,25 +16,25 @@ sap.ui.define([
 	const JSONTableDelegate = Object.assign({}, TableDelegate, JSONBaseDelegate);
 
 	JSONTableDelegate.fetchProperties = async () =>
-		JSONPropertyInfo.filter((oPI) => oPI.name !== "$search");
+		JSONPropertyInfo.filter((oPI) => oPI.key !== "$search");
 
 	const _createColumn = (sId, oPropertyInfo) => {
-		const sPropertyName = oPropertyInfo.name;
+		const sPropertyKey = oPropertyInfo.key;
 		return new Column(sId, {
-			propertyKey: sPropertyName,
+			propertyKey: sPropertyKey,
 			header: oPropertyInfo.label,
 			template: new Text({
 				text: {
-					path: "mountains>" + sPropertyName,
+					path: "mountains>" + sPropertyKey,
 					type: oPropertyInfo.dataType
 				}
 			})
 		});
 	};
 
-	JSONTableDelegate.addItem = async (oTable, sPropertyName) => {
-		const oPropertyInfo = JSONPropertyInfo.find((oPI) => oPI.name === sPropertyName);
-		const sId = oTable.getId() + "---col-" + sPropertyName;
+	JSONTableDelegate.addItem = async (oTable, sPropertyKey) => {
+		const oPropertyInfo = JSONPropertyInfo.find((oPI) => oPI.key === sPropertyKey);
+		const sId = oTable.getId() + "---col-" + sPropertyKey;
 		return Element.getElementById(sId) ?? (await _createColumn(sId, oPropertyInfo));
 	};
 
