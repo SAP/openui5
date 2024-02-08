@@ -145,15 +145,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds the summand given as a number to an integer given as a string.
+	 * Adds the summand given as a number to an decimal given as a string.
 	 *
-	 * @param {string} sInteger A positive or negative integer number as string
-	 * @param {int} iSummand An integer between -9 and 9 to be added to the given integer
+	 * @param {string} sDecimal A positive or negative decimal number as string
+	 * @param {int} iSummand An integer between -9 and 9 to be added to the given decimal number
 	 * @returns {string} The sum of the two numbers as a string
 	 *
 	 * @private
 	 */
-	NumberFormat.add = function(sInteger, iSummand) {
+	NumberFormat.add = function (sDecimal, iSummand) {
+		const aParts = sDecimal.split(".");
+		let sInteger = aParts[0];
+		const sFractionPart = aParts[1];
 		const bNegative = sInteger[0] === "-";
 		if (bNegative) {
 			sInteger = sInteger.slice(1);
@@ -184,7 +187,31 @@ sap.ui.define([
 		if (bNegative) {
 			aDigits[0] = -aDigits[0];
 		}
-		return aDigits.join("");
+		let sResult = aDigits.join("");
+		if (!sFractionPart) {
+			return sResult;
+		}
+
+		// If sResult is 0, the sign may be lost and has to be restored, e.g. "-5.123" + 5 => -5 + 5 = 0 => "-0.123"
+		sResult = sResult === "0" && bNegative ? "-0" : sResult;
+		const sResultSign = sResult[0] === "-" ? "-" : "";
+		// If both signs are equal, the fraction part can simply be appended
+		if (bNegative === !!sResultSign) {
+			return sResult + "." + sFractionPart;
+		}
+
+		// If the signs are different, aDigits contains only one digit which is different from zero; to compute the
+		// result, the result sign has to be kept, the integer part is the absolute sResult reduced by one, and the
+		// fractional part is (1 - fractional part), e.g. "2.123" - 5 => 2 - 5 = -3 => sign = "-", integer part is
+		// |-3| - 1 = 2 and fractional part is 1 - 0.123 = 0.877 without the leading "0." => "-2.877"
+		const aFractionDigits = sFractionPart.split("").map(Number);
+		for (let i = aFractionDigits.length - 1; i >= 0; i -= 1) {
+			aFractionDigits[i] = 10 - aFractionDigits[i];
+			if (i > 0) {
+				aFractionDigits[i - 1] += 1;
+			}
+		}
+		return sResultSign + (Math.abs(aDigits[0]) - 1) + "." + aFractionDigits.join("");
 	};
 
 	/**
@@ -243,7 +270,7 @@ sap.ui.define([
 		}
 
 		vNumber = NumberFormat._shiftDecimalPoint(vNumber, 1);
-		vNumber = NumberFormat.add(vNumber.split(".")[0], bIncrease ? 5 : -5);
+		vNumber = NumberFormat.add(vNumber, bIncrease ? 5 : -5);
 		return NumberFormat._shiftDecimalPoint(vNumber, -1);
 	}
 
