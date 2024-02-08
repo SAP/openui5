@@ -1465,15 +1465,15 @@ sap.ui.define([
 				iPass++;
 				assert.strictEqual(sTheme, sCurrentTheme, "Initial: Correct current Theme: " + sTheme);
 				assert.ok(TableUtils.isThemeApplied(), sTheme + " is applied");
-				Theming.setTheme("sap_horizon_hcb");
+				// use an artifical theme because a real theme might already in the cache and is then applied sync
+				// (next check would fail depending on the scenario).
+				Theming.setTheme("my_dummy_theme");
 				assert.notOk(TableUtils.isThemeApplied(), "sap_horizon_hcb is not applied after setTheme");
 			} else if (iPass == 1) {
 				iPass++;
-				assert.strictEqual(sTheme, "sap_horizon_hcb", "After Change: Correct current Theme: " + sTheme);
+				assert.strictEqual(sTheme, "my_dummy_theme", "After Change: Correct current Theme: " + sTheme);
 				assert.ok(TableUtils.isThemeApplied(), sTheme + " is applied");
-				Theming.setTheme(sCurrentTheme);
-				//TBD Seems to be unstable
-				//assert.notOk(TableUtils.isThemeApplied(), sCurrentTheme + " is not applied after setTheme");
+				Theming.setTheme(sCurrentTheme); // Just reset theme back to the standard one to cleanup for later tests
 			} else {
 				assert.strictEqual(sTheme, sCurrentTheme, "Final: Correct current Theme: " + sTheme);
 				Theming.detachApplied(fnThemeChanged);
