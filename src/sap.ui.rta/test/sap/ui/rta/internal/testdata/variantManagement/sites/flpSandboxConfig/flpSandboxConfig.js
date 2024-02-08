@@ -7,9 +7,6 @@
 		bootstrapPlugins: {
 			RuntimeAuthoringPlugin: {
 				component: "sap.ushell.plugins.rta"
-			},
-			PersonalizePlugin: {
-				component: "sap.ushell.plugins.rta-personalize"
 			}
 		},
 		renderers: {

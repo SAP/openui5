@@ -40,7 +40,6 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/toolbar/Fiori",
 	"sap/ui/rta/toolbar/FioriLike",
-	"sap/ui/rta/toolbar/Personalization",
 	"sap/ui/rta/toolbar/Standalone",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
 	"sap/ui/rta/util/PluginManager",
@@ -87,7 +86,6 @@ sap.ui.define([
 	CommandStack,
 	FioriToolbar,
 	FioriLikeToolbar,
-	PersonalizationToolbar,
 	StandaloneToolbar,
 	ChangeVisualization,
 	PluginManager,
@@ -514,12 +512,8 @@ sap.ui.define([
 			this._oDesignTime.addRootElement(this._oRootControl);
 
 			Overlay.getOverlayContainer().get(0).classList.add("sapUiRta");
-			if (this.getLayer() === Layer.USER) {
-				Overlay.getOverlayContainer().get(0).classList.add("sapUiRtaPersonalize");
-			} else {
-				// RTA Visual Improvements
-				document.body.classList.add("sapUiRtaMode");
-			}
+			// RTA Visual Improvements
+			document.body.classList.add("sapUiRtaMode");
 			this._oDesignTime.getSelectionManager().attachChange(function(oEvent) {
 				this.fireSelectionChange({selection: oEvent.getParameter("selection")});
 			}, this);
@@ -563,8 +557,7 @@ sap.ui.define([
 		checkToolbarAndExecuteFunction.call(this, "setBusy", true);
 		try {
 			await waitForPendingActions.call(this);
-			const sLayer = this.getLayer();
-			if (sLayer !== Layer.USER && !bSkipSave && this.canSave()) {
+			if (!bSkipSave && this.canSave()) {
 				const sAction = await showSaveConfirmation.call(this);
 				if (sAction === MessageBox.Action.CANCEL) {
 					bUserCancelled = true;
@@ -823,12 +816,8 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.restore = function() {
 		const sLayer = this.getLayer();
-		const sMessageKey = sLayer === Layer.USER
-			? "FORM_PERS_RESET_MESSAGE_PERSONALIZATION"
-			: "FORM_PERS_RESET_MESSAGE";
-		const sTitleKey = sLayer === Layer.USER
-			? "BTN_RESTORE"
-			: "FORM_PERS_RESET_TITLE";
+		const sMessageKey = "FORM_PERS_RESET_MESSAGE";
+		const sTitleKey = "FORM_PERS_RESET_TITLE";
 
 		this.getPluginManager().handleStopCutPaste();
 
@@ -1420,7 +1409,6 @@ sap.ui.define([
 			return;
 		}
 
-		const bUserLayer = this.getLayer() === Layer.USER;
 		const oProperties = {
 			rtaInformation: {
 				flexSettings: this.getFlexSettings(),
@@ -1429,29 +1417,25 @@ sap.ui.define([
 			},
 			textResources: this._getTextResources(),
 			restore: this.restore.bind(this),
-			exit: this.stop.bind(this, false, bUserLayer)
+			exit: this.stop.bind(this, false, false)
 		};
 
-		if (!bUserLayer) {
-			oProperties.publishVersion = onPublishVersion.bind(this);
-			oProperties.undo = this.undo.bind(this);
-			oProperties.redo = this.redo.bind(this);
-			oProperties.modeChange = onModeChange.bind(this);
-			oProperties.activate = onActivate.bind(this);
-			oProperties.discardDraft = onDiscardDraft.bind(this);
-			oProperties.switchVersion = onSwitchVersion.bind(this);
-			oProperties.switchAdaptation = onSwitchAdaptation.bind(this);
-			oProperties.deleteAdaptation = onDeleteAdaptation.bind(this);
-			oProperties.openChangeCategorySelectionPopover = this.getChangeVisualization
-				? this.getChangeVisualization().openChangeCategorySelectionPopover.bind(this.getChangeVisualization())
-				: function() {};
-			oProperties.save = saveOnly.bind(this);
-		}
+		oProperties.publishVersion = onPublishVersion.bind(this);
+		oProperties.undo = this.undo.bind(this);
+		oProperties.redo = this.redo.bind(this);
+		oProperties.modeChange = onModeChange.bind(this);
+		oProperties.activate = onActivate.bind(this);
+		oProperties.discardDraft = onDiscardDraft.bind(this);
+		oProperties.switchVersion = onSwitchVersion.bind(this);
+		oProperties.switchAdaptation = onSwitchAdaptation.bind(this);
+		oProperties.deleteAdaptation = onDeleteAdaptation.bind(this);
+		oProperties.openChangeCategorySelectionPopover = this.getChangeVisualization
+			? this.getChangeVisualization().openChangeCategorySelectionPopover.bind(this.getChangeVisualization())
+			: function() {};
+		oProperties.save = saveOnly.bind(this);
 
 		let oToolbar;
-		if (bUserLayer) {
-			oToolbar = new PersonalizationToolbar(oProperties);
-		} else if (Utils.isOriginalFioriToolbarAccessible()) {
+		if (Utils.isOriginalFioriToolbarAccessible()) {
 			oToolbar = new FioriToolbar(oProperties);
 		} else if (Utils.getFiori2Renderer()) {
 			oToolbar = new FioriLikeToolbar(oProperties);
