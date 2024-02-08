@@ -119,6 +119,15 @@ sap.ui.define([
 		};
 		this.oColSearch._oSearchField.fireLiveChange(oFakeEvent);
 		assert.equal(this.oColSearch.oVariantList.getItems().length, 10, "all items should be avaiable/visible after search in the list");
+		assert.ok(!this.oColSearch.oNodataTextLayout.getVisible(), "no data illustrated message should not be visible");
+
+		oFakeEvent = {
+			newValue: "X"
+		};
+		this.oColSearch._oSearchField.fireLiveChange(oFakeEvent);
+		assert.ok(!this.oColSearch.oVariantList.getVisible(), "list should not be visible after search");
+		assert.ok(this.oColSearch.oNodataTextLayout.getVisible(), "no data illustrated message should be visible");
+		assert.equal(this.oColSearch._oNoDataFoundIllustratedMessage.getTitle(), this.oColSearch.oRb.getText("COL_SEARCH_SEL_NODATA_FOUND"), "no data found title should be displayed");
 	});
 
 	QUnit.test("testing open popover via keyboard", async function(assert) {

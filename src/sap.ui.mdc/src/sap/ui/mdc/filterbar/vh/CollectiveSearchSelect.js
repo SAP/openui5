@@ -82,6 +82,9 @@ sap.ui.define([
 		this.setShowFooter(false);
 		this.setProperty("_selectStategyForSameItem", false);
 
+		this._createIllustratedMessages();
+		this._oNoDataFoundIllustratedMessage.setTitle(this.oRb.getText("COL_SEARCH_SEL_NODATA_FOUND"));
+
 		this.oVariantPopoverTrigger.setTooltip(this.oRb.getText("COL_SEARCH_TRIGGER_TT"));
 	};
 

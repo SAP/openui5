@@ -41,6 +41,7 @@ sap.ui.define([
 	"sap/m/OverflowToolbarLayoutData",
 	"sap/m/VBox",
 	'sap/m/HBox',
+	"sap/m/IllustratedMessage",
 	"sap/ui/events/KeyCodes",
 	'sap/base/Log',
 	"sap/ui/core/library",
@@ -83,6 +84,7 @@ sap.ui.define([
 	OverflowToolbarLayoutData,
 	VBox,
 	HBox,
+	IllustratedMessage,
 	KeyCodes,
 	Log,
 	coreLibrary,
@@ -110,9 +112,6 @@ sap.ui.define([
 
 	// shortcut for sap.m.ListKeyboardMode
 	var ListKeyboardMode = mobileLibrary.ListKeyboardMode;
-
-	// shortcut for sap.m.FlexJustifyContent
-	var FlexJustifyContent = mobileLibrary.FlexJustifyContent;
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -1134,11 +1133,36 @@ sap.ui.define([
 		this.oErrorVariantPopOver.openBy(this.oVariantLayout);
 	};
 
+	VariantManagement.prototype._createIllustratedMessages = function() {
+
+		if (!this._oNoDataIllustratedMessage || this._oNoDataIllustratedMessage.bIsDestroyed) {
+			this._oNoDataIllustratedMessage = new IllustratedMessage({
+				title: this._oRb.getText("VARIANT_MANAGEMENT_NODATA"),
+				description: this._oRb.getText("VARIANT_MANAGEMENT_NODATA_DESCR"),
+				enableVerticalResponsiveness: true,
+				illustrationSize: "Auto",
+				illustrationType: mobileLibrary.IllustratedMessageType.SimpleEmptyList
+			});
+		}
+		if (!this._oNoDataFoundIllustratedMessage || this._oNoDataFoundIllustratedMessage.bIsDestroyed) {
+			this._oNoDataFoundIllustratedMessage = new IllustratedMessage({
+				title: this._oRb.getText("VARIANT_MANAGEMENT_NODATA_FOUND"),
+				description: this._oRb.getText("VARIANT_MANAGEMENT_NODATA_FOUND_DESCR"),
+				enableVerticalResponsiveness: true,
+				illustrationSize: "Auto",
+				illustrationType: mobileLibrary.IllustratedMessageType.NoSearchResults
+			});
+			this._oNoDataFoundIllustratedMessage.addStyleClass("sapMVarMngmtIllustratedMessage");
+		}
+	};
+
 	// My Views List
 	VariantManagement.prototype._createVariantList = function() {
 		if (this.oVariantPopOver) {
 			return;
 		}
+
+		this._createIllustratedMessages();
 
 		this.oVariantManageBtn = new Button(this.getId() + "-manage", {
 			text: this._oRb.getText("VARIANT_MANAGEMENT_MANAGE"),
@@ -1235,17 +1259,13 @@ sap.ui.define([
 		this.oVariantListInvisibleText.toStatic();
 		this.oVariantList.addAriaLabelledBy(this.oVariantListInvisibleText);
 
-
-		this.oVariantListNoDataText = new Text(this.getId() + "-no-data-text", { text: this._oRb.getText("VARIANT_MANAGEMENT_NODATA") });
-		this.oNodataTextLayout = new HBox(this.getId() + "-no-data", {
+		this.oNodataTextLayout = new VBox(this.getId() + "-no-data", {
 			visible: {
 				path: "/hasNoData",
 				model: VariantManagement.INNER_MODEL_NAME
 			},
-			justifyContent: FlexJustifyContent.Center,
-			enableScrolling: false,
 			fitContainer: true,
-			items: [this.oVariantListNoDataText]
+			items: [this._oNoDataFoundIllustratedMessage]
 		});
 
 		var oItemTemplate = new Item({
@@ -1295,6 +1315,7 @@ sap.ui.define([
 			titleAlignment: "Auto",
 			contentWidth: "400px",
 			placement: PlacementType.VerticalPreferredBottom,
+			resizable: true,
 			content: [
 				this.oVariantSelectionPage
 			],
@@ -1381,7 +1402,8 @@ sap.ui.define([
 		oListBinding.filter(this._getFilters());
 
 		if (this.oVariantList.getItems().length < 1) {
-			this.oVariantListNoDataText.setText(this._oRb.getText("VARIANT_MANAGEMENT_NODATA"));
+			this.oNodataTextLayout.removeAllItems();
+			this.oNodataTextLayout.addItem(this._oNoDataIllustratedMessage);
 		}
 
 		this.oVariantSelectionPage.setShowSubHeader(this.oVariantList.getItems().length > 9);
@@ -1419,7 +1441,13 @@ sap.ui.define([
 		oVariantList.getBinding("items").filter(this._getFilters(oFilter));
 
 		if (oVariantList.getItems().length < 1) {
-			this.oVariantListNoDataText.setText(this._oRb.getText("VARIANT_MANAGEMENT_NODATA_FOUND"));
+			if ((this.oNodataTextLayout.getItems().length === 0) || (this.oNodataTextLayout.getItems().length > 0) && (this.oNodataTextLayout.getItems()[0] !== this._oNoDataFoundIllustratedMessage)) {
+				if (!this._oNoDataFoundIllustratedMessage.hasStyleClass("sapMVarMngmtIllustratedMessage")) {
+					this._oNoDataFoundIllustratedMessage.toggleStyleClass("sapMVarMngmtIllustratedMessage");
+				}
+				this.oNodataTextLayout.removeAllItems();
+				this.oNodataTextLayout.addItem(this._oNoDataFoundIllustratedMessage);
+			}
 		}
 	};
 
@@ -1957,7 +1985,10 @@ sap.ui.define([
 		oManagementTable.getBinding("items").filter(aFilters);
 
         if (this.oManagementTable.getItems().length < 1) {
-			this.oManagementTable.setNoDataText(this._oRb.getText("VARIANT_MANAGEMENT_NODATA_FOUND"));
+			if (this._oNoDataFoundIllustratedMessage.hasStyleClass("sapMVarMngmtIllustratedMessage")) {
+				this._oNoDataFoundIllustratedMessage.toggleStyleClass("sapMVarMngmtIllustratedMessage");
+			}
+			this.oManagementTable.setNoData(this._oNoDataFoundIllustratedMessage);
 		}
 
 		this._bRebindRequired = true;
@@ -1970,11 +2001,13 @@ sap.ui.define([
 	VariantManagement.prototype._createManagementDialog = function() {
 		if (!this.oManagementDialog || this.oManagementDialog.bIsDestroyed) {
 
+			this._createIllustratedMessages();
+
 			this.oManagementTable = new Table(this.getId() + "-managementTable", {
 				contextualWidth: "Auto",
 				fixedLayout: false,
 				growing: true,
-				noDataText: this._oRb.getText("VARIANT_MANAGEMENT_NODATA"),
+				noData: this._oNoDataIllustratedMessage,
 				keyboardMode: ListKeyboardMode.Navigation,
 				columns: [
 					new Column({
@@ -2397,7 +2430,7 @@ sap.ui.define([
 		}
 
         if (this.oManagementTable.getItems().length < 1) {
-			this.oManagementTable.setNoDataText(this._oRb.getText("VARIANT_MANAGEMENT_NODATA"));
+			this.oManagementTable.setNoData(this._oNoDataIllustratedMessage);
 		}
 
 		this.oManagementDialog.open();
@@ -3006,6 +3039,9 @@ sap.ui.define([
 		this._oSearchFieldOnMgmtDialog = undefined;
 		this._sDefaultKey = undefined;
 		this._oCtrlRef = undefined;
+
+		this._oNoDataIllustratedMessage = undefined;
+		this._oNoDataFoundIllustratedMessage = undefined;
 
 		oModel = this.getModel(VariantManagement.INNER_MODEL_NAME);
 		if (oModel) {
