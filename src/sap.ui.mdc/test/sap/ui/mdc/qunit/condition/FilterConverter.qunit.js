@@ -9,8 +9,11 @@ sap.ui.define([
 		"sap/ui/mdc/condition/ConditionModel",
 		"sap/ui/mdc/condition/Condition",
 		"sap/ui/mdc/condition/FilterConverter",
-		"sap/ui/mdc/enums/OperatorName"
-		], function(ConditionModel, Condition, FilterConverter, OperatorName) {
+		"sap/ui/mdc/enums/OperatorName",
+		"sap/ui/mdc/condition/FilterOperatorUtil",
+		"sap/ui/mdc/enums/OperatorOverwrite",
+		"sap/ui/model/Filter"
+		], function(ConditionModel, Condition, FilterConverter, OperatorName, FilterOperatorUtil, OperatorOverwrite, Filter) {
 	"use strict";
 
 	let oCM;
@@ -148,7 +151,7 @@ sap.ui.define([
 		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 2, "two filters must be returned on top level");
 		assert.strictEqual(filter.sOperator, "Any", "Filter with Any operator exist");
-		assert.strictEqual(result, "(fieldPath1 Any ((L1/foo EQ 'foo' or L1/foo BT '1'...'100') and L1/foo NE 'bar') and fieldPath2/foo EQ 'bar')", "result contains the expected Any filter");
+		assert.strictEqual(result, "(L1:fieldPath1 Any ((L1/foo EQ 'foo' or L1/foo BT '1'...'100') and L1/foo NE 'bar') and fieldPath2/foo EQ 'bar')", "result contains the expected Any filter");
 
 	});
 
@@ -175,7 +178,7 @@ sap.ui.define([
 
 		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 2, "two filters must be returned on top level");
-		assert.strictEqual(result, "(fieldPath1 Any (L1/foo EQ 'foo1' or L1/foo EQ 'foo2') and fieldPath2 Any (L1/bar EQ 'bar1' or L1/bar EQ 'bar2'))", "result contains the expected Any filter");
+		assert.strictEqual(result, "(L1:fieldPath1 Any (L1/foo EQ 'foo1' or L1/foo EQ 'foo2') and L1:fieldPath2 Any (L1/bar EQ 'bar1' or L1/bar EQ 'bar2'))", "result contains the expected Any filter");
 
 	});
 
@@ -190,7 +193,42 @@ sap.ui.define([
 
 		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 2, "two filters must be returned on top level");
-		assert.strictEqual(result, "(fieldPath1 All (L1/foo EQ 'foo1' or L1/foo EQ 'foo2') and fieldPath2 All (L1/bar EQ 'bar1' or L1/bar EQ 'bar2'))", "result contains the expected Any filter");
+		assert.strictEqual(result, "(L1:fieldPath1 All (L1/foo EQ 'foo1' or L1/foo EQ 'foo2') and L1:fieldPath2 All (L1/bar EQ 'bar1' or L1/bar EQ 'bar2'))", "result contains the expected Any filter");
+
+	});
+
+	QUnit.test("FilterConverter.createFilters: testing Empty operation for Any conditions", function(assert) {
+		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.Empty, []));
+		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.EQ, ["foo"]));
+
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+
+		const result = FilterConverter.prettyPrintFilters(oFilter);
+		assert.strictEqual(result, "L1:fieldPath1 Any (L1/foo EQ '' or L1/foo EQ 'foo')", "result contains the expected Any filter");
+
+	});
+
+	QUnit.test("FilterConverter.createFilters: testing Nullable Empty operation for Any conditions", function(assert) {
+		const oEmptyOp = FilterOperatorUtil.getOperator(OperatorName.Empty);
+		oEmptyOp.overwrite(OperatorOverwrite.getModelFilter,
+			function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+				return new Filter({
+					filters: [new Filter({ path: sFieldPath, operator: "EQ", value1: "" }), new Filter({ path: sFieldPath, operator: "EQ", value1: null })],
+					and: false
+				});
+			}
+		);
+
+		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.Empty, []));
+		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.EQ, ["foo"]));
+		oCM.addCondition("fieldPath2+/bar", Condition.createCondition(OperatorName.Empty, []));
+		oCM.addCondition("fieldPath2+/bar", Condition.createCondition(OperatorName.EQ, ["bar2"]));
+
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+
+		const result = FilterConverter.prettyPrintFilters(oFilter);
+		assert.strictEqual(oFilter.aFilters.length, 2, "two filters must be returned on top level");
+		assert.strictEqual(result, "(L1:fieldPath1 Any ((L1/foo EQ '' or L1/foo EQ 'null') or L1/foo EQ 'foo') and L1:fieldPath2 All ((L1/bar EQ '' or L1/bar EQ 'null') or L1/bar EQ 'bar2'))", "result contains the expected Any filter");
 
 	});
 
