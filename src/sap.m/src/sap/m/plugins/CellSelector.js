@@ -130,12 +130,6 @@ sap.ui.define([
 			this._deregisterEvents();
 			this._registerEvents();
 		},
-		onsapspace: function (oEvent) {
-			if (!this._isSelectableCell(oEvent.target)) {
-				return;
-			}
-			this._startSelection(oEvent, false);
-		},
 		onsapupmodifiers: function(oEvent) {
 			this._onsaparrowmodifiers(oEvent, DIRECTION.ROW, -1, 0);
 		},
@@ -165,7 +159,13 @@ sap.ui.define([
 			}
 
 			var mBounds = this._bSelecting ? this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget) : undefined;
-			if (isKeyCombination(oEvent, KeyCodes.SPACE, true, false)) {
+			if (isKeyCombination(oEvent, KeyCodes.SPACE, false, false)) {
+				if (!this._isSelectableCell(oEvent.target)) {
+					return;
+				}
+				this._startSelection(oEvent, false);
+				oEvent.setMarked(); // mark event to prevent ui.Table from focusing interactive elements
+			} else if (isKeyCombination(oEvent, KeyCodes.SPACE, true, false)) {
 				if (this._inSelection(oEvent.target)) {
 					var oInfo = this.getConfig("getCellInfo", this.getControl(), oEvent.target);
 					this.getConfig("selectRows", this.getControl(), mBounds.from.rowIndex, mBounds.to.rowIndex, oInfo.rowIndex);
