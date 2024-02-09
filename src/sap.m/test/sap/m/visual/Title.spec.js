@@ -3,6 +3,13 @@
 describe("sap.m.Title", function() {
 	"use strict";
 
+	function setSelectedKey(sId, sKey) {
+		browser.executeScript(function (sId, sKey) {
+			var Element = sap.ui.require("sap/ui/core/Element");
+			Element.getElementById(sId).setSelectedKey(sKey);
+		}, sId, sKey);
+	}
+
 	// initial loading
 	it("should load test page", function () {
 		expect(takeScreenshot()).toLookAs("0_initial");
@@ -27,42 +34,42 @@ describe("sap.m.Title", function() {
 	// different types of align
 	it("should visualize title with text-align: begin", function () {
 		var	title = element(by.id("title1"));
-		browser.executeScript("sap.ui.getCore().byId('setting4_align').setSelectedKey('Begin');");
+		setSelectedKey("setting4_align", "Begin");
 
 		expect(takeScreenshot(title)).toLookAs("2_align_begin");
 	});
 
 	it("should visualize title with text-align: end", function () {
 		var	title = element(by.id("title1"));
-		browser.executeScript("sap.ui.getCore().byId('setting4_align').setSelectedKey('End');");
+		setSelectedKey("setting4_align", "End");
 
 		expect(takeScreenshot(title)).toLookAs("3_align_end");
 	});
 
 	it("should visualize title with text-align: left", function () {
 		var	title = element(by.id("title1"));
-		browser.executeScript("sap.ui.getCore().byId('setting4_align').setSelectedKey('Left');");
+		setSelectedKey("setting4_align", "Left");
 
 		expect(takeScreenshot(title)).toLookAs("4_align_left");
 	});
 
 	it("should visualize title with text-align: right", function () {
 		var	title = element(by.id("title1"));
-		browser.executeScript("sap.ui.getCore().byId('setting4_align').setSelectedKey('Right');");
+		setSelectedKey("setting4_align", "Right");
 
 		expect(takeScreenshot(title)).toLookAs("5_align_right");
 	});
 
 	it("should visualize title with text-align: center", function () {
 		var	title = element(by.id("title1"));
-		browser.executeScript("sap.ui.getCore().byId('setting4_align').setSelectedKey('Center');");
+		setSelectedKey("setting4_align", "Center");
 
 		expect(takeScreenshot(title)).toLookAs("6_align_center");
 	});
 
 	it("should visualize title with text-align: initial", function () {
 		var	title = element(by.id("title1"));
-		browser.executeScript("sap.ui.getCore().byId('setting4_align').setSelectedKey('Initial');");
+		setSelectedKey("setting4_align", "Initial");
 
 		expect(takeScreenshot(title)).toLookAs("7_align_initial");
 	});
@@ -90,47 +97,44 @@ describe("sap.m.Title", function() {
 	// different text directions
 	it("text direction: ltr", function () {
 		var	oContent = element(by.id("content-mixed-texts"));
-		browser.executeScript("sap.ui.getCore().byId('setting_dir').setSelectedKey('LTR');");
+		setSelectedKey("setting_dir", "LTR");
 
 		expect(takeScreenshot(oContent)).toLookAs("12_dir_ltr");
 	});
 
 	it("text direction: rtl", function () {
-		var	oContent = element(by.id("content-mixed-texts"));
-		browser.executeScript("sap.ui.getCore().byId('setting_dir').setSelectedKey('RTL');");
+		var oContent = element(by.id("content-mixed-texts"));
+		setSelectedKey("setting_dir", "RTL");
 
 		expect(takeScreenshot(oContent)).toLookAs("13_dir_rtl");
 	});
 
 	it("text direction: default (auto)", function () {
-		var	oContent = element(by.id("content-mixed-texts"));
-		browser.executeScript("sap.ui.getCore().byId('setting_dir').setSelectedKey('Inherit');");
+		var oContent = element(by.id("content-mixed-texts"));
+		setSelectedKey("setting_dir", "Inherit");
 
 		expect(takeScreenshot(oContent)).toLookAs("11_dir_auto");
 	});
 
 	it("text direction and text align: default", function () {
-		var	oContent = element(by.id("content-mixed-texts"));
-
-		browser.executeScript("sap.ui.getCore().byId('setting2_width').setValue('800px');");
+		var oContent = element(by.id("content-mixed-texts"));
+		setSelectedKey("setting2_width", "800px");
 
 		expect(takeScreenshot(oContent)).toLookAs("14_dir_and_align_default");
 	});
 
 	it("text direction and text align: default", function () {
-		var	oContent = element(by.id("content-mixed-texts"));
-
-		browser.executeScript("sap.ui.getCore().byId('setting_dir').setSelectedKey('RTL');");
-		browser.executeScript("sap.ui.getCore().byId('setting4_align').setSelectedKey('Begin');");
+		var oContent = element(by.id("content-mixed-texts"));
+		setSelectedKey("setting_dir", "RTL");
+		setSelectedKey("setting4_align", "Begin");
 
 		expect(takeScreenshot(oContent)).toLookAs("15_dir_and_align_rtl_begin");
 	});
 
 	it("text direction and text align: default", function () {
-		var	oContent = element(by.id("content-mixed-texts"));
-
-		browser.executeScript("sap.ui.getCore().byId('setting_dir').setSelectedKey('RTL');");
-		browser.executeScript("sap.ui.getCore().byId('setting4_align').setSelectedKey('End');");
+		var oContent = element(by.id("content-mixed-texts"));
+		setSelectedKey("setting_dir", "RTL");
+		setSelectedKey("setting4_align", "End");
 
 		expect(takeScreenshot(oContent)).toLookAs("16_dir_and_align_rtl_end");
 	});

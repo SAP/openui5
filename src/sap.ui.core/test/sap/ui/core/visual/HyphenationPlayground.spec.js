@@ -63,8 +63,11 @@ describe("sap.ui.core.HyphenationPlayground", function() {
 		it("should visualize hyphenation for language: " + sLang, function () {
 			var oText = element(by.id("hyph-" + sLang));
 
-			browser.executeScript("sap.ui.getCore().byId('formWithTexts-" + sLang + "').setWidth('" + aFormWidth[sLang] + "')");
-			browser.executeScript("document.getElementById('formWithTexts-" + sLang + "').scrollIntoView()");
+			browser.executeScript(function (sId, width) {
+				var Element = sap.ui.require("sap/ui/core/Element");
+				Element.getElementById(sId).setWidth(width);
+				document.getElementById(sId).scrollIntoView();
+				}, 'formWithTexts-' + sLang, aFormWidth[sLang]);
 
 			expect(takeScreenshot(oText)).toLookAs(n + "_thirdParty_language_" + sLang);
 		});
