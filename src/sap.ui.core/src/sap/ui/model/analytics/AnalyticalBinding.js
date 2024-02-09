@@ -2901,7 +2901,9 @@ sap.ui.define([
 				}
 			}
 			if (iCurrentAnalyticalInfoVersion != that.iAnalyticalInfoVersionNumber) {
-				// discard responses for outdated analytical infos
+				// discard responses for outdated analytical infos but fire dataReceived event
+				// because it is expected that dataRequested and dataReceived events are sent as pairs
+				that.fireDataReceived();
 				return;
 			}
 
