@@ -2196,7 +2196,7 @@ sap.ui.define([
 			var sFirstChar = aExpParts[0].charAt(0);
 			sMinus = sFirstChar === "-" ? sFirstChar : "";
 
-			if (sMinus) {
+			if (sMinus || sFirstChar === "+") {
 				aExpParts[0] = aExpParts[0].slice(1);
 			}
 
