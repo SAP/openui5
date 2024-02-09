@@ -39,7 +39,9 @@ sap.ui.define([
 					iMajor,
 					iMinor,
 					sVersion,
-					oVersions;
+					oVersions,
+					aNeoAppVersions = this._oNeoAppVersions || [],
+					versionFormat = new RegExp(/^(\d+\.)?(\d+\.)?(\*|\d+)$/);
 
 				if (!(oAppInfo)) {
 					return;
@@ -63,7 +65,10 @@ sap.ui.define([
 					items : []
 				};
 
-				oVersions.items = this._oNeoAppVersions.reduce(function(result, oVersion) {
+				oVersions.items = aNeoAppVersions.reduce(function(result, oVersion) {
+					if (!versionFormat.test(oVersion.target.version)) {
+						return result;
+					}
 					var sMajorMinorVersion = oVersion.target.version.split(".")[0] + "." + oVersion.target.version.split(".")[1];
 
 					if (!result.some((o) => o.key == sMajorMinorVersion)) {
