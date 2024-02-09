@@ -1082,5 +1082,45 @@ sap.ui.define([
 
 			done();
 		}.bind(this), 2000);
+
+	});
+
+
+	QUnit.module("User interaction", {
+		beforeEach: async function(assert) {
+			this.oAnchorBar = new AnchorBar();
+			this.clock = sinon.useFakeTimers();
+			for (var i = 0; i < 20; i++) {
+				this.oAnchorBar.addContent(new Button({text: "Section " + i}));
+			}
+
+			this.oAnchorBar.placeAt('qunit-fixture');
+			await nextUIUpdate(this.clock);
+			this.clock.tick(iRenderingDelay);
+		},
+		afterEach: function () {
+			this.oAnchorBar.destroy();
+			this.oAnchorBar = null;
+		}
+	});
+	QUnit.test("Select opening popover", async function (assert) {
+		//Arrange
+		var	oSelect;
+		await nextUIUpdate(this.clock);
+		this.clock.tick(iRenderingDelay);
+		oSelect = this.oAnchorBar.getAggregation("_select");
+
+		// Act
+		oSelect.focus();
+		QUnitUtils.triggerEvent("tap", oSelect.getFocusDomRef());
+		this.clock.tick(iRenderingDelay);
+
+		//Assert
+		assert.ok(this.oAnchorBar._activeButton === undefined, "AnchorBar doesn`t call Toolbar _getActiveButton() anymore");
+
+		//Clean up
+		oSelect.focus();
+		QUnitUtils.triggerEvent("tap", oSelect.getFocusDomRef());
+
 	});
 });
