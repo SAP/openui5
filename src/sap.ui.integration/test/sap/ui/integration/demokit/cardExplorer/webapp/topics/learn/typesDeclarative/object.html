@@ -1101,6 +1101,22 @@
 						<td>1.121</td>
 					</tr>
 					<tr>
+						<td>padding</td>
+						<td>string</td>
+						<td>""</td>
+						<td>No</td>
+						<td>
+							Set to "MediumStart" to have medium size padding in the beginning of the texts.
+							<br>
+							<b>Note:</b> Only available option is "MediumStart".
+							<b>Note:</b>
+							Use only with "horizontalPosition" property set to "Start".
+							If the "horizontalPosition" is "Center" and the "padding" is "MediumStart", the texts will not be centered, because of the added padding.
+						</td>
+						<td>1.62</td>
+						<td>1.122</td>
+					</tr>
+					<tr>
 						<td>textColor</td>
 						<td>string</td>
 						<td>""</td>
@@ -1112,6 +1128,19 @@
 							<b>Note:</b> The card developer is responsible for the contrast ratio - right text color and overlay background effect should be set.</td>
 						<td>1.61</td>
 						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>textFilter</td>
+						<td>string</td>
+						<td>""</td>
+						<td>No</td>
+						<td>The CSS filter which will be applied to the text.
+							<br>
+							<b>Note:</b> If set, the colors in the filter would not be themeable (will stay the same as provided with this property and won't change with the theme).
+							<br>
+							<b>Note:</b> The card developer is responsible for the contrast ratio in combination between text color, filter and image.</td>
+						<td>1.62</td>
+						<td>1.122</td>
 					</tr>
 					<tr>
 						<td>background</td>
