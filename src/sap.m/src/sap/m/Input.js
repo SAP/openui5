@@ -227,6 +227,7 @@ function(
 				 * <strong>Note:</strong> The property is deprecated, as it creates unnecessary usability and accessibility restrictions. The decision to deprecate it is based on the fact that it serves no purpose to have an input field where the user cannot type.
 				 * This property restricts even the paste functionality, which can be useful, e.g. the needed info is already in the clipboard.
 				 * If the user's input needs to match specific predefined values, the application should validate the input against the set of values and provide feedback to the user or use other mechanism for selection, where freestyle input is not allowed by design (Select, SelectDialog, etc).
+				 * <strong>Note:</strong> Please note that there is no direct replacement for this property.
 				 * @since 1.21.0
 				 * @deprecated As of version 1.119 The property valueHelpOnly should not be used anymore
 				 */
