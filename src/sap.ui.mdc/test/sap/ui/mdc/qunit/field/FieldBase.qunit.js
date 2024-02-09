@@ -4178,6 +4178,7 @@ sap.ui.define([
 		assert.equal(aConditions.length, 2, "two conditions in Codition model");
 		assert.equal(aConditions[1] && aConditions[1].values[0], "I3", "condition value");
 		assert.equal(aConditions[1] && aConditions[1].values[1], "Item 3", "condition description");
+		assert.equal(iSubmitCount, 0, "submit event not fired");
 
 		iLiveCount = 0;
 		oValueHelp.getItemForValue.resetHistory();
@@ -4250,6 +4251,7 @@ sap.ui.define([
 		assert.equal(aConditions.length, 1, "one conditions in Codition model");
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I3", "condition value");
 		assert.equal(aConditions[0] && aConditions[0].values[1], "Item 3", "condition description");
+		assert.equal(iSubmitCount, 0, "submit event not fired");
 
 		qutils.triggerEvent("tap", oContent.getFocusDomRef().id);
 		assert.ok(oContent.hasStyleClass("sapMFocus"), "Focus outline restored");
