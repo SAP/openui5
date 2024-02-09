@@ -791,49 +791,57 @@ sap.ui.define([
 	 *   The index of the child node
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the requests with
-	 * @returns {Promise<number>}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the requested index of the parent.
 	 *
 	 * @public
 	 */
 	_AggregationCache.prototype.fetchParentIndex = function (iIndex, oGroupLock) {
-		const sFilter = _Helper.getKeyFilter(this.aElements[iIndex], this.oAggregation.$metaPath,
-			this.getTypes());
-		const mQueryOptions = Object.assign({}, this.mQueryOptions);
+		const oNode = this.aElements[iIndex];
+		let oPromise = _Helper.getPrivateAnnotation(oNode, "parentIndexPromise");
+		if (oPromise) {
+			return oPromise;
+		}
 
+		const sFilter = _Helper.getKeyFilter(oNode, this.oAggregation.$metaPath, this.getTypes());
+		const mQueryOptions = Object.assign({}, this.mQueryOptions);
 		mQueryOptions.$apply = "ancestors($root" + this.oAggregation.$path
 			+ "," + this.oAggregation.hierarchyQualifier + "," + this.oAggregation.$NodeProperty
 			+ ",filter(" + sFilter + "),1)";
-
 		const sQueryString = this.sResourcePath
 			+ this.oRequestor.buildQueryString(/*sMetaPath*/null, mQueryOptions);
 
-		return this.oRequestor.request("GET", sQueryString, oGroupLock).then(async (oResult) => {
-			const oParent = oResult.value[0];
-			_Helper.setPrivateAnnotation(oParent, "parent", this.oFirstLevel);
-			const aSelect = [
-				this.oAggregation.$DistanceFromRoot,
-				this.oAggregation.$DrillState,
-				this.oAggregation.$LimitedDescendantCount
-			];
-			const [iRank] = await Promise.all([
-				this.requestRank(oParent, oGroupLock),
-				this.requestProperties(oParent, aSelect, oGroupLock, true),
-				this.requestNodeProperty(oParent, oGroupLock)
-			]);
+		oPromise = this.oRequestor.request("GET", sQueryString, oGroupLock)
+			.then(async (oResult) => {
+				const oParent = oResult.value[0];
+				_Helper.setPrivateAnnotation(oParent, "parent", this.oFirstLevel);
+				const aSelect = [
+					this.oAggregation.$DistanceFromRoot,
+					this.oAggregation.$DrillState,
+					this.oAggregation.$LimitedDescendantCount
+				];
+				const [iRank] = await Promise.all([
+					this.requestRank(oParent, oGroupLock),
+					this.requestProperties(oParent, aSelect, oGroupLock, true),
+					this.requestNodeProperty(oParent, oGroupLock)
+				]);
 
-			this.oFirstLevel.calculateKeyPredicate(oParent,
-				this.getTypes(), _Helper.getMetaPath(_Helper.buildPath(this.sMetaPath, "")));
+				this.oFirstLevel.calculateKeyPredicate(oParent,
+					this.getTypes(), _Helper.getMetaPath(_Helper.buildPath(this.sMetaPath, "")));
 
-			const iParentIndex = this.getArrayIndex(iRank);
-			this.addElements(oParent, iParentIndex, this.oFirstLevel, iRank);
+				const iParentIndex = this.getArrayIndex(iRank);
+				this.addElements(oParent, iParentIndex, this.oFirstLevel, iRank);
 
-			// poor man's #replaceElement to replace undefined w/ oParent
-			this.oFirstLevel.removeElement(iRank);
-			this.oFirstLevel.restoreElement(iRank, oParent);
+				// poor man's #replaceElement to replace undefined w/ oParent
+				this.oFirstLevel.removeElement(iRank);
+				this.oFirstLevel.restoreElement(iRank, oParent);
 
-			return iParentIndex;
-		});
+				return iParentIndex;
+			});
+		oPromise = SyncPromise.resolve(oPromise);
+		_Helper.setPrivateAnnotation(oNode, "parentIndexPromise", oPromise);
+
+		return oPromise;
 	};
 
 	/**
