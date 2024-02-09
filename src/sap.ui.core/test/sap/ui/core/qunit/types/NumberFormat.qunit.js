@@ -1115,6 +1115,7 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format(getNumber("-.0005", bAsNumber)), "-0.001", "-.0005");
 		assert.strictEqual(oFormat.format(getNumber("-.0004", bAsNumber)), "0", "-.0004");
 		assert.strictEqual(oFormat.format(getNumber("-.0000000004", bAsNumber)), "0", "-.0000000004");
+		assert.strictEqual(oFormat.format(getNumber("+7.0001e+2", bAsNumber)), "700.01", "+7.0001e+2");
 
 		oFormat = NumberFormat.getFloatInstance({
 			maxFractionDigits: 2
