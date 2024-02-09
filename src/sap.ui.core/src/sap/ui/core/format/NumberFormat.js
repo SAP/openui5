@@ -1354,9 +1354,13 @@ sap.ui.define([
 	/**
 	 * Format a number according to the given format options.
 	 *
-	 * @param {number|array} vValue the number to format or an array which contains the number to format and the sMeasure parameter
-	 * @param {string} [sMeasure] an optional unit which has an impact on formatting currencies and units
-	 * @return {string} the formatted output value
+	 * @param {number|string|array} vValue
+	 *   The number to format as a number or a string, such as <code>1234.45</code> or <code>"-1234.45"</code>, or an
+	 *   array which contains both the number to format as a number or a string and the <code>sMeasure</code> parameter
+	 * @param {string} [sMeasure]
+	 *   An optional unit which has an impact on formatting currencies and units
+	 * @returns {string}
+	 *   The formatted value
 	 * @public
 	 */
 	NumberFormat.prototype.format = function(vValue, sMeasure) {
