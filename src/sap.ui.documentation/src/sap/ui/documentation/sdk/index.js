@@ -28,15 +28,15 @@
             type: "LOAD"
         });
             sap.ui.require([
-                "sap/base/i18n/Localization",
                 "sap/ui/core/Core",
                 "sap/ui/core/ComponentContainer",
                 "sap/ui/core/Component",
                 "sap/ui/core/Lib",
                 "sap/ui/core/Theming",
                 "sap/ui/documentation/library",
-                "sap/base/Log"
-            ], function(Localization, Core, ComponentContainer, Component, Library, Theming, library, Log) {
+                "sap/base/Log",
+                "sap/base/i18n/Localization"
+            ], function(Core, ComponentContainer, Component, Library, Theming, library, Log, Localization) {
                 var setDensityClass = function(sDensityClass) {
                     var sBodyDensityClass = Array.prototype.find.call(document.body.classList, function(el){
                         return el.includes("sapUiSize");

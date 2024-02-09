@@ -4,7 +4,6 @@
 
 
 sap.ui.define([
-	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
 	"sap/ui/core/EventBus",
 	"sap/ui/core/Theming",
@@ -23,9 +22,9 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/documentation/sdk/util/Resources",
 	"./config/sampleForwardingConfig",
-	"sap/base/strings/capitalize"
+	"sap/base/strings/capitalize",
+	"sap/base/i18n/Localization"
 ], function(
-	Localization,
 	Element,
 	EventBus,
 	Theming,
@@ -44,7 +43,8 @@ sap.ui.define([
 	Fragment,
 	ResourcesUtil,
 	sampleForwardingConfig,
-	capitalize
+	capitalize,
+	Localization
 ) {
 		"use strict";
 

@@ -262,7 +262,7 @@ sap.ui.define([
 						const aParseText = oOperator.parse.apply(oOperator, oTest.parseArgs || [sFormattedText, oTest.type]);
 						const sParseText = Array.isArray(aParseText) ? aParseText.join("") : aParseText; // also test undefined result
 						const sTestText = Array.isArray(oTest.parseArgs) ? oTest.parseArgs[0] : sFormattedText;
-						assert.strictEqual(sParseText, oTest.parsedValue, "Parsing: Operator " + sOperator + " has parsed correctly from " + sTestText + " to " + sParseText);
+						assert.strictEqual(sParseText, oTest.parsedValue, "Parsing: Operator " + sOperator + " has parsed correctly from " + sTestText + " to " + oTest.parsedValue);
 					} catch (oException) {
 						assert.ok(oTest.exception, "Exception fired in parsing");
 					}
@@ -271,7 +271,7 @@ sap.ui.define([
 					let oCondition;
 					try {
 						oCondition = oOperator.getCondition.apply(oOperator, oTest.parseArgs || [sFormattedText, oTest.type]);
-						if (oTest.condition) {
+						if (oTest.hasOwnProperty("condition")) {
 							assert.deepEqual(oCondition, oTest.condition, "getCondition: Operator " + sOperator + " returns oCondition instance");
 
 							// create the model filter instance of the condition
@@ -372,7 +372,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createCondition(OperatorName.EQ, ["Test"]), undefined, undefined],
 						formatValue: "=Test",
-						parseArgs: ["Test", undefined, FieldDisplay.Value, true],
+						parseArgs: ["Test", undefined, FieldDisplay.Value, true, undefined, undefined, undefined, true],
 						parsedValue: "Test",
 						condition: Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -382,19 +382,20 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createItemCondition("Test"), undefined, FieldDisplay.Value],
 						formatValue: "=Test",
-						parseArgs: ["Test", undefined, FieldDisplay.Value, true],
+						parseArgs: ["Test", undefined, FieldDisplay.Value, false, undefined, undefined, undefined, false],
 						parsedValue: "Test",
-						condition: Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						condition: null, // condition only created without operator symbol if operator is hidden ot it is the default operator
 						isEmpty: false,
-						valid: true,
+						exception: true,
+						valid: false,
 						filter: {path: "test", operator: FilterOperator.EQ, value1: "Test"}
 					},
 					{
 						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, FieldDisplay.Description],
 						formatValue: "desc",
-						parseArgs: ["=desc", undefined, FieldDisplay.Description],
-						parsedValue: "desc",
-						condition: Condition.createCondition(OperatorName.EQ, [undefined, "desc"], undefined, undefined, ConditionValidated.NotValidated),
+						parseArgs: ["==desc", undefined, FieldDisplay.Description],
+						parsedValue: "=desc",
+						condition: Condition.createCondition(OperatorName.EQ, [undefined, "=desc"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true
 					},
@@ -478,8 +479,8 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createCondition(OperatorName.EQ, ["="])],
 						formatValue: "==",
-						parsedValue: undefined,
-						isEmpty: true,
+						parsedValue: "=",
+						isEmpty: false,
 						valid: true
 					},
 					{
@@ -571,8 +572,10 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NE, ["="])],
 						formatValue: "!(==)",
-						parsedValue: undefined,
-						isEmpty: true,
+						parseArgs: ["!=="],
+						parsedValue: "=",
+						condition: Condition.createCondition(OperatorName.NE, ["="], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
 						valid: true
 					},
 					{
@@ -903,8 +906,29 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createCondition(OperatorName.StartsWith, ["*"]), oStringType, FieldDisplay.Description],
 						formatValue: "**",
-						parsedValue: undefined,
+						parsedValue: "*",
+						condition: null,
 						isEmpty: true,
+						valid: true,
+						type: oStringType
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.StartsWith, ["*"]), oStringType, FieldDisplay.Description],
+						formatValue: "**",
+						parseArgs: ["**", oStringType, FieldDisplay.Description, true, undefined, undefined, undefined, false],
+						parsedValue: "*",
+						condition: Condition.createCondition(OperatorName.StartsWith, ["*"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						type: oStringType
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.StartsWith, ["*"]), oStringType, FieldDisplay.Description],
+						formatValue: "**",
+						parseArgs: ["**", oStringType, FieldDisplay.Description, true, undefined, undefined, undefined, true],
+						parsedValue: "**",
+						condition: Condition.createCondition(OperatorName.StartsWith, ["**"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
 						valid: true,
 						type: oStringType
 					},
@@ -943,7 +967,9 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NotStartsWith, ["*"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(**)",
-						parsedValue: undefined,
+						parseArgs: ["!**", oStringType, FieldDisplay.Description],
+						parsedValue: "*",
+						condition: null,
 						isEmpty: true,
 						valid: true,
 						type: oStringType
@@ -1400,7 +1426,7 @@ sap.ui.define([
 			}],
 			[OperatorName.LASTDAYS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.LASTDAYS, [4])],
-				formatValue: mdcMessageBundle.getText("operators.LASTDAYS.tokenText", 4),
+				formatValue: mdcMessageBundle.getText("operators.LASTDAYS.tokenText", [4]),
 				//parseArgs: ["Last 4 days"],
 				parsedValue: "4",
 				condition: Condition.createCondition(OperatorName.LASTDAYS, [4], undefined, undefined, ConditionValidated.NotValidated),
@@ -1527,7 +1553,7 @@ sap.ui.define([
 			}],
 			[OperatorName.NEXTDAYS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.NEXTDAYS, [3])],
-				formatValue: mdcMessageBundle.getText("operators.NEXTDAYS.tokenText", 3),
+				formatValue: mdcMessageBundle.getText("operators.NEXTDAYS.tokenText", [3]),
 				//parseArgs: ["Next 3 days"],
 				parsedValue: "3",
 				condition: Condition.createCondition(OperatorName.NEXTDAYS, [3], undefined, undefined, ConditionValidated.NotValidated),
@@ -1549,7 +1575,7 @@ sap.ui.define([
 			}],
 			[OperatorName.NEXTHOURS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.NEXTHOURS, [2])],
-				formatValue: mdcMessageBundle.getText("operators.NEXTHOURS.tokenText", 2),
+				formatValue: mdcMessageBundle.getText("operators.NEXTHOURS.tokenText", [2]),
 				parsedValue: "2",
 				condition: Condition.createCondition(OperatorName.NEXTHOURS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
@@ -1560,7 +1586,7 @@ sap.ui.define([
 			}],
 			[OperatorName.LASTHOURS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.LASTHOURS, [2])],
-				formatValue: mdcMessageBundle.getText("operators.LASTHOURS.tokenText", 2),
+				formatValue: mdcMessageBundle.getText("operators.LASTHOURS.tokenText", [2]),
 				parsedValue: "2",
 				condition: Condition.createCondition(OperatorName.LASTHOURS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
@@ -1571,7 +1597,7 @@ sap.ui.define([
 			}],
 			[OperatorName.NEXTMINUTES]: [{
 				formatArgs: [Condition.createCondition(OperatorName.NEXTMINUTES, [2])],
-				formatValue: mdcMessageBundle.getText("operators.NEXTMINUTES.tokenText", 2),
+				formatValue: mdcMessageBundle.getText("operators.NEXTMINUTES.tokenText", [2]),
 				parsedValue: "2",
 				condition: Condition.createCondition(OperatorName.NEXTMINUTES, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
@@ -1582,7 +1608,7 @@ sap.ui.define([
 			}],
 			[OperatorName.LASTMINUTES]: [{
 				formatArgs: [Condition.createCondition(OperatorName.LASTMINUTES, [2])],
-				formatValue: mdcMessageBundle.getText("operators.LASTMINUTES.tokenText", 2),
+				formatValue: mdcMessageBundle.getText("operators.LASTMINUTES.tokenText", [2]),
 				parsedValue: "2",
 				condition: Condition.createCondition(OperatorName.LASTMINUTES, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
@@ -1620,7 +1646,7 @@ sap.ui.define([
 			}],
 			[OperatorName.LASTWEEKS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.LASTWEEKS, [2])],
-				formatValue: mdcMessageBundle.getText("operators.LASTWEEKS.tokenText", 2),
+				formatValue: mdcMessageBundle.getText("operators.LASTWEEKS.tokenText", [2]),
 				parsedValue: "2",
 				condition: Condition.createCondition(OperatorName.LASTWEEKS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
@@ -1641,7 +1667,7 @@ sap.ui.define([
 			}],
 			[OperatorName.NEXTWEEKS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.NEXTWEEKS, [13])],
-				formatValue: mdcMessageBundle.getText("operators.NEXTWEEKS.tokenText", 13),
+				formatValue: mdcMessageBundle.getText("operators.NEXTWEEKS.tokenText", [13]),
 				parsedValue: "13",
 				condition: Condition.createCondition(OperatorName.NEXTWEEKS, [13], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
@@ -1690,7 +1716,7 @@ sap.ui.define([
 			}],
 			[OperatorName.LASTMONTHS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.LASTMONTHS, [2])],
-				formatValue: mdcMessageBundle.getText("operators.LASTMONTHS.tokenText", 2),
+				formatValue: mdcMessageBundle.getText("operators.LASTMONTHS.tokenText", [2]),
 				parsedValue: "2",
 				condition: Condition.createCondition(OperatorName.LASTMONTHS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
@@ -1711,7 +1737,7 @@ sap.ui.define([
 			}],
 			[OperatorName.NEXTMONTHS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.NEXTMONTHS, [13])],
-				formatValue: mdcMessageBundle.getText("operators.NEXTMONTHS.tokenText", 13),
+				formatValue: mdcMessageBundle.getText("operators.NEXTMONTHS.tokenText", [13]),
 				parsedValue: "13",
 				condition: Condition.createCondition(OperatorName.NEXTMONTHS, [13], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
@@ -1791,7 +1817,7 @@ sap.ui.define([
 			}],
 			[OperatorName.LASTQUARTERS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.LASTQUARTERS, [2])],
-				formatValue: mdcMessageBundle.getText("operators.LASTQUARTERS.tokenText", 2),
+				formatValue: mdcMessageBundle.getText("operators.LASTQUARTERS.tokenText", [2]),
 				parsedValue: "2",
 				condition: Condition.createCondition(OperatorName.LASTQUARTERS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
@@ -1812,7 +1838,7 @@ sap.ui.define([
 			}],
 			[OperatorName.NEXTQUARTERS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.NEXTQUARTERS, [13])],
-				formatValue: mdcMessageBundle.getText("operators.NEXTQUARTERS.tokenText", 13),
+				formatValue: mdcMessageBundle.getText("operators.NEXTQUARTERS.tokenText", [13]),
 				parsedValue: "13",
 				condition: Condition.createCondition(OperatorName.NEXTQUARTERS, [13], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
@@ -1861,7 +1887,7 @@ sap.ui.define([
 			}],
 			[OperatorName.LASTYEARS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.LASTYEARS, [2])],
-				formatValue: mdcMessageBundle.getText("operators.LASTYEARS.tokenText", 2),
+				formatValue: mdcMessageBundle.getText("operators.LASTYEARS.tokenText", [2]),
 				parsedValue: "2",
 				condition: Condition.createCondition(OperatorName.LASTYEARS, [2], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
@@ -1882,7 +1908,7 @@ sap.ui.define([
 			}],
 			[OperatorName.NEXTYEARS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.NEXTYEARS, [13])],
-				formatValue: mdcMessageBundle.getText("operators.NEXTYEARS.tokenText", 13),
+				formatValue: mdcMessageBundle.getText("operators.NEXTYEARS.tokenText", [13]),
 				parsedValue: "13",
 				condition: Condition.createCondition(OperatorName.NEXTYEARS, [13], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
@@ -2232,7 +2258,8 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(operatorWithSpecialCharacters.tokenParse, "^\\+foo (\\d+) operator$", "tokenParse has the expected format \+foo");
+		assert.equal(operatorWithSpecialCharacters.tokenTest, "^\\+foo (\\d+) operator$", "tokenTest has the expected format \+foo");
+		assert.equal(operatorWithSpecialCharacters.tokenParse, "^\\+foo (\\d+) operator$|^(.+)?$", "tokenParse has the expected format \+foo");
 		assert.equal(operatorWithSpecialCharacters.tokenFormat, "+foo {0} operator", "tokenFormat has the expected format +foo");
 	});
 
@@ -2248,7 +2275,8 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(operatorWithSpecialCharacters.tokenParse, "^foo (\\d+) operator$", "tokenParse has the expected format for the placeholder");
+		assert.equal(operatorWithSpecialCharacters.tokenTest, "^foo (\\d+) operator$", "tokenTest has the expected format for the placeholder");
+		assert.equal(operatorWithSpecialCharacters.tokenParse, "^foo (\\d+) operator$|^(.+)?$", "tokenParse has the expected format for the placeholder");
 		assert.equal(operatorWithSpecialCharacters.tokenFormat, "foo $0 operator", "tokenFormat has the expected format for the placeholder");
 
 		operatorWithSpecialCharacters = new RangeOperator({
@@ -2262,7 +2290,8 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(operatorWithSpecialCharacters.tokenParse, "^foo (\\d+) operator$", "tokenParse has the expected format for the placeholder");
+		assert.equal(operatorWithSpecialCharacters.tokenTest, "^foo (\\d+) operator$", "tokenTest has the expected format for the placeholder");
+		assert.equal(operatorWithSpecialCharacters.tokenParse, "^foo (\\d+) operator$|^(.+)?$", "tokenParse has the expected format for the placeholder");
 		assert.equal(operatorWithSpecialCharacters.tokenFormat, "foo 0$ operator", "tokenFormat has the expected format for the placeholder");
 
 		operatorWithSpecialCharacters = new RangeOperator({
@@ -2276,7 +2305,8 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(operatorWithSpecialCharacters.tokenParse, "^foo (\\d+) operator$", "tokenParse has the expected format for the placeholder");
+		assert.equal(operatorWithSpecialCharacters.tokenTest, "^foo (\\d+) operator$", "tokenTest has the expected format for the placeholder");
+		assert.equal(operatorWithSpecialCharacters.tokenParse, "^foo (\\d+) operator$|^(.+)?$", "tokenParse has the expected format for the placeholder");
 		assert.equal(operatorWithSpecialCharacters.tokenFormat, "foo {0} operator", "tokenFormat has the expected format for the placeholder");
 	});
 

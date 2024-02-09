@@ -67,6 +67,13 @@ sap.ui.define([
 	 * @param {string} oConfiguration.tokenParse The string representation of the regular expression that is used by the operator to parse a value
 	 *                 to eliminate the operator and get the data string. A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the
 	 *                 <code>oConfiguration.tokenText</code> property if given.
+	 * @param {string} [oConfiguration.tokenParseMatchIndex] The index in the matching result where the parsed value is stored.
+	 *                 If a RegExp contains an or-condition the result could be on different positions, so the matching index is used as start index. The first rsult starting with this index is taken.
+	 *                 If the index is not set, the content of the last entry is used as result.
+	 * @param {string} [oConfiguration.tokenTest] The string representation of the regular expression that is used to test if the given text meets the operator.
+	 *                 A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the
+	 *                 <code>oConfiguration.tokenText</code> property if given.
+	 * 				   <br>If not provided, the <code>tokenParse</code> regular expression is used.
 	 * @param {string} oConfiguration.tokenFormat The string representation that is used by the operator to format a value
 	 *                 into an output string. For the value placeholder <code>{0}</code> and <code>{1}</code> are used.
 	 *                 A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the <code>oConfiguration.tokenText</code> property if given.
@@ -173,6 +180,24 @@ sap.ui.define([
 					sRegExp = escapeRegExp(this.tokenText); // operator without value
 				}
 				this.tokenParseRegExp = new RegExp(sRegExp, "i");
+				if (oConfiguration.tokenTest) {
+					sTokenText = escapeRegExp(this.tokenText);
+
+					this.tokenTest = oConfiguration.tokenTest.replace(/#tokenText#/g, sTokenText);
+					for (let i = 0; i < this.valueTypes.length; i++) {
+						const sReplace = this.paramTypes ? this.paramTypes[i] : this.valueTypes[i];
+						// the regexp will replace placeholder like $0, 0$ and {0}
+						// the four \ are required, because the excapeRegExp will escape existing \\
+						this.tokenTest = this.tokenTest.replace(new RegExp("\\\\\\$" + i + "|" + i + "\\\\\\$" + "|" + "\\\\\\{" + i + "\\\\\\}", "g"), sReplace);
+					}
+					this.tokenTestRegExp = new RegExp(this.tokenTest, "i");
+				} else {
+					this.tokenTestRegExp = this.tokenParseRegExp;
+				}
+				this.hiddenOperatorRegExp = new RegExp("^(.+)$", "is"); // empty is not valid (also allown line-breaks and tabs)
+				if (oConfiguration.tokenParseMatchIndex) {
+					this.tokenParseMatchIndex = oConfiguration.tokenParseMatchIndex;
+				}
 
 				// create token formatter
 				if (oConfiguration.tokenFormat) {
@@ -198,6 +223,8 @@ sap.ui.define([
 					this.group.text = oMessageBundle.getText("VALUEHELP.OPERATOR.GROUP" + this.group.id);
 				}
 			}
+
+			this.symbol = oConfiguration.symbol;
 		},
 		destroy: function() {
 			this._oMethodOverwrites = null;
@@ -358,7 +385,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
 	 * @param {sap.ui.model.Type} [oType] Data type
 	 * @param {sap.ui.mdc.enums.FieldDisplay} [sDisplay] Display mode
-	 * @param {boolean} [bHideOperator=false] If set, only the value output is returned without any visible operator
+	 * @param {boolean} [bHideOperator=false] If set, the operator must not be visible for the user, so only the formatted value is shown
 	 * @param {sap.ui.model.Type[]} [aCompositeTypes] Additional types used for each part of a <code>CompositeType</code>
 	 * @param {sap.ui.model.Type} [oAdditionalType] Data type for additional value
 	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>oAdditionalType</code> is a <code>CompositeType</code>)
@@ -444,6 +471,9 @@ sap.ui.define([
 	/**
 	 * Parses a text.
 	 *
+	 * Parsing doesn't check operator validity. For checking if the text is valid for the operator use the {@link #test} function.
+	 * Parsing just extracts the real text(s) from the given text and removes the operator information.
+	 *
 	 * @param {string} sText Text
 	 * @param {sap.ui.model.Type} oType Data type
 	 * @param {sap.ui.mdc.enums.FieldDisplay} sDisplayFormat Display format
@@ -451,15 +481,16 @@ sap.ui.define([
 	 * @param {sap.ui.model.Type[]} [aCompositeTypes] Additional types used for each part of a <code>CompositeType</code>
 	 * @param {sap.ui.model.Type} [oAdditionalType] Data type for additional value
 	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>oAdditionalType</code> is a <code>CompositeType</code>)
+	 * @param {boolean} [bHideOperator=false] If set, the operator must not be visible for the user, so if the user enters it, it is part of the text
 	 * @returns {any[]} array of values
 	 * @throws {sap.ui.model.ParseException} if the text cannot be parsed
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	Operator.prototype.parse = function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
+	Operator.prototype.parse = function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, bHideOperator) {
 
-		const aValues = this.getValues(sText, sDisplayFormat, bDefaultOperator);
+		const aValues = this.getValues(sText, sDisplayFormat, bDefaultOperator, bHideOperator);
 		let aResult; // might remain undefined - if no match
 		if (aValues) {
 			aResult = [];
@@ -476,7 +507,7 @@ sap.ui.define([
 					oUseType = this._createLocalType(this.valueTypes[i], oType);
 				}
 				try {
-					if (this.valueTypes[i] !== OperatorValueType.Static) {
+					if (this.valueTypes[i] !== OperatorValueType.Static && aValues.length > i) {
 						let vValue;
 						if (oUseType && aValues[i] !== undefined) { // a value needs to be given
 							vValue = this._parseValue(aValues[i], oUseType, aUseCompositeTypes);
@@ -689,7 +720,7 @@ sap.ui.define([
 	 */
 	Operator.prototype.test = function(sText) {
 
-		return this.tokenParseRegExp.test(sText);
+		return this.tokenTestRegExp.test(sText);
 
 	};
 
@@ -701,29 +732,39 @@ sap.ui.define([
 	 * @param {string} sText Text
 	 * @param {sap.ui.mdc.enums.FieldDisplay} sDisplayFormat Display format
 	 * @param {boolean} bDefaultOperator If true, operator is used as default. In this case parsing without operator also works
+	 * @param {boolean} [bHideOperator=false] If set, the operator must not be visible for the user, so if the user enters it, it is part of the text
 	 * @returns {string[]} array of value parts without operator sign
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.77.0
 	 */
-	Operator.prototype.getValues = function(sText, sDisplayFormat, bDefaultOperator) {
+	Operator.prototype.getValues = function(sText, sDisplayFormat, bDefaultOperator, bHideOperator) {
 
-		const aMatch = sText.match(this.tokenParseRegExp);
+		const regExp = bHideOperator ? this.hiddenOperatorRegExp : this.tokenParseRegExp; // if operator symbol is not used -> use complete text
+		const aMatch = sText.match(regExp); // as RegExp might be complex and return longer arry we take the last value(s)
 		let aValues;
-		if (aMatch || (bDefaultOperator && sText)) {
+		if (aMatch) {
+			const iLength = aMatch.length;
 			aValues = [];
 			for (let i = 0; i < this.valueTypes.length; i++) {
-				let sValue;
-				if (aMatch) {
-					sValue = aMatch[i + 1];
-				} else if (bDefaultOperator) {
-					if (i > 0) {
-						break; // in default case only use the text as one entry
+				const iMatchIndex = this.tokenParseMatchIndex ? this.tokenParseMatchIndex + i : iLength - this.valueTypes.length + i;
+				if (iMatchIndex > 0) {
+					for (let j = iMatchIndex; j < aMatch.length; j++) { // as RegExp could contain and or-condition the result might be on different places
+						if (aMatch[j] !== undefined) {
+							const sValue = aMatch[j];
+							aValues.push(sValue);
+							break;
+						}
 					}
-					sValue = sText;
 				}
-				aValues.push(sValue);
+
+
+
+				// if (aMatch.length >= i && aMatch[iMatchIndex] !== undefined) { // there is a text found for this part
+				// 	const sValue = aMatch[iMatchIndex];
+				// 	aValues.push(sValue);
+				// }
 			}
 		}
 
@@ -741,22 +782,23 @@ sap.ui.define([
 	 * @param {sap.ui.model.Type[]} [aCompositeTypes] Additional types used for each part of a <code>CompositeType</code>
 	 * @param {sap.ui.model.Type} [oAdditionalType] Data type for additional value
 	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>oAdditionalType</code> is a <code>CompositeType</code>)
+	 * @param {boolean} [bHideOperator=false] If set, the operator must not be visible for the user, so if the user enters it, it is part of the text
 	 * @returns {sap.ui.mdc.condition.ConditionObject} The condition for the text
 	 * @throws {sap.ui.model.ParseException} if the text cannot be parsed
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	Operator.prototype.getCondition = function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
+	Operator.prototype.getCondition = function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, bHideOperator) {
 
-		if (this.test(sText) || (bDefaultOperator && sText && this.hasRequiredValues())) {
-			const aValues = this.parse(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes);
-			if (aValues.length == this.valueTypes.length || this.valueTypes[0] === OperatorValueType.Static ||
-				(aValues.length === 1 && this.valueTypes.length === 2 && !this.valueTypes[1])) { // EQ also valid without description
+		if (this.test(sText) || ((bDefaultOperator || bHideOperator) && sText && this.hasRequiredValues())) {
+			const aValues = this.parse(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, bHideOperator);
+			if ((aValues && aValues.length === this.valueTypes.length) || this.valueTypes[0] === OperatorValueType.Static ||
+				(aValues && aValues.length === 1 && this.valueTypes.length === 2 && !this.valueTypes[1])) { // EQ also valid without description
 				const oCondition = Condition.createCondition(this.name, aValues);
 				this.checkValidated(oCondition);
 				return oCondition;
-			} else {
+			} else if (aValues && aValues.length > 0) { // only symbol entered leads to no text -> it's not an error
 				throw new ParseException("Parsed value don't meet operator");
 			}
 		}
@@ -804,9 +846,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates an object containing information to compare conditions.
+	 * Checks if the operator requires values. (Static operators, like TODAY, don't have values.)
 	 *
-	 * @returns {boolean} Object with check information
+	 * @returns {boolean} <code>true</code> if value is reqired
 	 * @private
 	 * @since: 1.90.0
 	 */

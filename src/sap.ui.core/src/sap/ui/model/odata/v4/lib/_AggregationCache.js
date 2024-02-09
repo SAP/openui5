@@ -1480,8 +1480,17 @@ sap.ui.define([
 			fnDataRequested) {
 		var that = this;
 
-		return this.oFirstLevel.read(iStart, iLength + iPrefetchLength, 0, oGroupLock,
-				fnDataRequested)
+		// "before and after the given range"
+		if (iStart > iPrefetchLength) {
+			iLength += iPrefetchLength;
+			iStart -= iPrefetchLength;
+		} else {
+			iLength += iStart;
+			iStart = 0;
+		}
+		iLength += iPrefetchLength;
+
+		return this.oFirstLevel.read(iStart, iLength, 0, oGroupLock, fnDataRequested)
 			.then(function (oResult) {
 				// Note: this code must be idempotent, it might well run twice!
 				var oGrandTotal,
@@ -1630,7 +1639,8 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.refreshKeptElements = function (oGroupLock, fnOnRemove) {
 		// "super" call (like @borrows ...)
-		return this.oFirstLevel.refreshKeptElements.call(this, oGroupLock, fnOnRemove, true);
+		const fnSuper = this.oFirstLevel.refreshKeptElements;
+		return fnSuper.call(this, oGroupLock, fnOnRemove, true);
 	};
 
 	/**
@@ -1742,7 +1752,8 @@ sap.ui.define([
 
 		this.oAggregation = oAggregation;
 		// "super" call (like @borrows ...)
-		this.oFirstLevel.reset.call(this, aKeptElementPredicates, sGroupId, mQueryOptions);
+		const fnSuper = this.oFirstLevel.reset;
+		fnSuper.call(this, aKeptElementPredicates, sGroupId, mQueryOptions);
 		// reset modifies the cache's query options => recalculate the download URL
 		this.sDownloadUrl = _Cache.prototype.getDownloadUrl.call(this, "");
 		if (sGroupId) { // sGroupId means we are in a side-effects refresh
@@ -1783,7 +1794,8 @@ sap.ui.define([
 			this.bUnifiedCache = this.oBackup.bUnifiedCache;
 		}
 		// "super" call (like @borrows ...)
-		this.oFirstLevel.restore.call(this, bReally);
+		const fnSuper = this.oFirstLevel.restore;
+		fnSuper.call(this, bReally);
 	};
 
 	/**

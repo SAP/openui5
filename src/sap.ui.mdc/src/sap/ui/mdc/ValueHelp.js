@@ -819,6 +819,7 @@ sap.ui.define([
 	 * @property {boolean} checkKey If set, the value help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
 	 * @property {boolean} checkDescription If set, the value help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
 	 * @property {boolean} [caseSensitive] If set, the check is done case-sensitively
+	 * @property {boolean} [exactMatch] If set, only exact matches are requested and no suggestions
 	 * @property {sap.ui.core.Control} control Instance of the calling control
 	 * @public
 	 */

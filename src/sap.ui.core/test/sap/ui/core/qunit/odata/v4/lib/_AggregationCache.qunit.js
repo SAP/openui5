@@ -1530,53 +1530,87 @@ sap.ui.define([
 [{
 	bHasGrandTotal : false,
 	iFirstLevelIndex : 0,
-	iFirstLevelLength : 3
+	iFirstLevelLength : 3,
+	iExpectedStart : 0,
+	iExpectedLength : 23
 }, {
 	bHasGrandTotal : true,
 	iFirstLevelIndex : 0,
-	iFirstLevelLength : 2
+	iFirstLevelLength : 2,
+	iExpectedStart : 0,
+	iExpectedLength : 22
 }, {
 	bHasGrandTotal : true,
 	grandTotalAtBottomOnly : false,
 	iFirstLevelIndex : 0,
-	iFirstLevelLength : 2
+	iFirstLevelLength : 2,
+	iExpectedStart : 0,
+	iExpectedLength : 22
 }, {
 	bHasGrandTotal : true,
 	grandTotalAtBottomOnly : true,
 	iFirstLevelIndex : 0,
-	iFirstLevelLength : 1
+	iFirstLevelLength : 1,
+	iExpectedStart : 0,
+	iExpectedLength : 21
 }, {
 	bHasGrandTotal : false,
 	iFirstLevelIndex : 10,
-	iFirstLevelLength : 3
+	iFirstLevelLength : 3,
+	iExpectedStart : 0,
+	iExpectedLength : 33
+}, {
+	bHasGrandTotal : false,
+	iFirstLevelIndex : 20,
+	iFirstLevelLength : 1,
+	iExpectedStart : 0,
+	iExpectedLength : 41
+}, {
+	bHasGrandTotal : false,
+	iFirstLevelIndex : 21,
+	iFirstLevelLength : 1,
+	iExpectedStart : 1,
+	iExpectedLength : 41
 }, {
 	bHasGrandTotal : true,
 	iFirstLevelIndex : 9,
-	iFirstLevelLength : 3
+	iFirstLevelLength : 3,
+	iExpectedStart : 0,
+	iExpectedLength : 32
 }, {
 	bHasGrandTotal : true,
 	grandTotalAtBottomOnly : false,
 	iFirstLevelIndex : 9,
-	iFirstLevelLength : 3
+	iFirstLevelLength : 3,
+	iExpectedStart : 0,
+	iExpectedLength : 32
 }, {
 	bHasGrandTotal : true,
 	grandTotalAtBottomOnly : true,
 	iFirstLevelIndex : 10,
-	iFirstLevelLength : 3
+	iFirstLevelLength : 3,
+	iExpectedStart : 0,
+	iExpectedLength : 33
 }, {
 	bHasGrandTotal : true,
 	iFirstLevelIndex : 0,
-	iFirstLevelLength : 42
+	iFirstLevelLength : 42,
+	iExpectedStart : 0,
+	iExpectedLength : 62
 }, {
 	iExpandTo : 2,
 	iLevel : 0, // symbolic level for generic initial placeholders inside top pyramid
 	iFirstLevelIndex : 10,
-	iFirstLevelLength : 3
+	iFirstLevelLength : 3,
+	iExpectedStart : 0,
+	iExpectedLength : 33
 }, {
 	bUnifiedCache : true,
 	iLevel : 0, // symbolic level for generic initial placeholders inside top pyramid
 	iFirstLevelIndex : 10,
-	iFirstLevelLength : 3
+	iFirstLevelLength : 3,
+	iExpectedStart : 0,
+	iExpectedLength : 33
 }].forEach(function (oFixture, i) {
 	QUnit.test("readFirst: #" + i, function (assert) {
 		var oAggregation = { // filled before by buildApply
@@ -1589,13 +1623,12 @@ sap.ui.define([
 			oAggregationHelperMock = this.mock(_AggregationHelper),
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
 			oCacheMock = this.mock(oCache),
+			iExpectedLength = oFixture.iExpectedLength,
 			iExpectedLevel = "iLevel" in oFixture ? oFixture.iLevel : 1, // cf. createPlaceholder
-			iFirstLevelIndex = oFixture.iFirstLevelIndex,
-			iFirstLevelLength = oFixture.iFirstLevelLength,
+			iExpectedStart = oFixture.iExpectedStart,
 			oGrandTotal = {},
 			oGrandTotalCopy = {},
 			iOffset = oFixture.bHasGrandTotal && oFixture.grandTotalAtBottomOnly !== true ? 1 : 0,
-			iPrefetchLength = 20,
 			oReadResult = {
 				value : []
 			},
@@ -1614,13 +1647,12 @@ sap.ui.define([
 			oCache.oGrandTotalPromise = SyncPromise.resolve(oGrandTotal);
 			_Helper.setPrivateAnnotation(oGrandTotal, "copy", oGrandTotalCopy);
 		}
-		for (i = 0; i < Math.min(iFirstLevelLength + iPrefetchLength, 42); i += 1) {
+		for (i = 0; i < Math.min(iExpectedLength, 42); i += 1) {
 			oReadResult.value.push({});
 		}
 		oReadResult.value.$count = 42;
 		this.mock(oCache.oFirstLevel).expects("read")
-			.withExactArgs(iFirstLevelIndex, iFirstLevelLength + iPrefetchLength, 0,
-				"~oGroupLock~", "~fnDataRequested~")
+			.withExactArgs(iExpectedStart, iExpectedLength, 0, "~oGroupLock~", "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oReadResult)));
 		if (oFixture.bHasGrandTotal) {
 			switch (oFixture.grandTotalAtBottomOnly) {
@@ -1646,30 +1678,30 @@ sap.ui.define([
 			}
 		}
 		oCacheMock.expects("addElements")
-			.withExactArgs(sinon.match.same(oReadResult.value), iFirstLevelIndex + iOffset,
-				sinon.match.same(oCache.oFirstLevel), iFirstLevelIndex)
+			.withExactArgs(sinon.match.same(oReadResult.value), iExpectedStart + iOffset,
+				sinon.match.same(oCache.oFirstLevel), iExpectedStart)
 			.callsFake(addElements); // so that oCache.aElements is actually filled
 		// expect placeholders before and after real read results
-		for (i = 0; i < iFirstLevelIndex; i += 1) {
+		for (i = 0; i < iExpectedStart; i += 1) {
 			oAggregationHelperMock.expects("createPlaceholder")
 				.withExactArgs(iExpectedLevel, i, sinon.match.same(oCache.oFirstLevel))
 				.returns("~placeholder~" + i);
 		}
-		for (i = iFirstLevelIndex + iFirstLevelLength + iPrefetchLength; i < 42; i += 1) {
+		for (i = iExpectedStart + iExpectedLength; i < 42; i += 1) {
 			oAggregationHelperMock.expects("createPlaceholder")
 				.withExactArgs(iExpectedLevel, i, sinon.match.same(oCache.oFirstLevel))
 				.returns("~placeholder~" + i);
 		}
 
 		// code under test
-		return oCache.readFirst(iFirstLevelIndex, iFirstLevelLength, iPrefetchLength,
-				"~oGroupLock~", "~fnDataRequested~")
+		return oCache.readFirst(oFixture.iFirstLevelIndex, oFixture.iFirstLevelLength,
+				/*iPrefetchLength*/20, "~oGroupLock~", "~fnDataRequested~")
 			.then(function () {
 				// check placeholders before and after real read results
-				for (i = 0; i < iFirstLevelIndex; i += 1) {
+				for (i = 0; i < iExpectedStart; i += 1) {
 					assert.strictEqual(oCache.aElements[iOffset + i], "~placeholder~" + i);
 				}
-				for (i = iFirstLevelIndex + iFirstLevelLength + iPrefetchLength; i < 42; i += 1) {
+				for (i = iExpectedStart + iExpectedLength; i < 42; i += 1) {
 					assert.strictEqual(oCache.aElements[iOffset + i], "~placeholder~" + i);
 				}
 

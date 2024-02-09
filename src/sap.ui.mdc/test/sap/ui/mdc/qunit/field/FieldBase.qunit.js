@@ -3818,6 +3818,7 @@ sap.ui.define([
 			context: {inParameters: undefined, outParameters: undefined, payload: undefined},
 			control: oField,
 			dataType: oField.getContentFactory().retrieveDataType(),
+			exactMatch: true,
 			exception: FormatException,
 			bindingContext: undefined
 		};
@@ -3981,6 +3982,7 @@ sap.ui.define([
 				context: {inParameters: undefined, outParameters: undefined, payload: undefined},
 				control: oField,
 				dataType: oField.getContentFactory().retrieveDataType(),
+				exactMatch: true,
 				exception: FormatException,
 				bindingContext: undefined
 			};
@@ -4336,7 +4338,7 @@ sap.ui.define([
 					oContent.fireLiveChange({ value: "B (C)" });
 
 					setTimeout(function() { // to wait for Promises and opening
-						assert.equal(oValueHelp.getFilterValue(), "C B", "FilterValue set");
+						assert.equal(oValueHelp.getFilterValue(), "C", "FilterValue set");
 
 						sinon.stub(oValueHelp, "isOpen").returns(true); // as it not really opens without content
 						sinon.stub(ValueHelpDelegate, "showTypeahead").returns(false); // to fake closing on empty input
@@ -4415,6 +4417,8 @@ sap.ui.define([
 			checkDescription: true,
 			control: oField,
 			dataType: oField.getContentFactory().retrieveDataType(),
+			exactMatch: true,
+			caseSensitive: true,
 			exception: ParseException,
 			bindingContext: undefined
 		};
@@ -4438,7 +4442,7 @@ sap.ui.define([
 		oField.focus(); // as ValueHelp is connected with focus
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent && aContent.length > 0 && aContent[0];
-		oContent._$input.val("=Invalid");
+		oContent._$input.val("Invalid");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 		const oConfig = {
@@ -4449,6 +4453,8 @@ sap.ui.define([
 			checkDescription: true,
 			control: oField,
 			dataType: oField.getContentFactory().retrieveDataType(),
+			exactMatch: false,
+			caseSensitive: undefined,
 			exception: ParseException,
 			bindingContext: undefined
 		};
@@ -4456,10 +4462,10 @@ sap.ui.define([
 		setTimeout(function() { // to wait for update of valueState via Model
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
-			assert.equal(sValue, "=Invalid", "change event value");
+			assert.equal(sValue, "Invalid", "change event value");
 			assert.notOk(bValid, "change event not valid");
 			assert.equal(oContent.getValueState(), "Error", "ValueState set");
-			assert.equal(oContent.getValueStateText(), "Value \"=Invalid\" does not exist.", "ValueState text");
+			assert.equal(oContent.getValueStateText(), "Value \"Invalid\" does not exist.", "ValueState text");
 			let aConditions = oValueHelp.getConditions();
 			assert.equal(aConditions.length, 1, "Condition set on ValueHelp");
 			assert.equal(aConditions[0] && aConditions[0].values[0], "I2", "condition value");
@@ -4518,6 +4524,8 @@ sap.ui.define([
 			checkDescription: true,
 			control: oField,
 			dataType: oField.getContentFactory().retrieveDataType(),
+			exactMatch: false,
+			caseSensitive: undefined,
 			exception: ParseException,
 			bindingContext: undefined
 		};
@@ -4786,27 +4794,28 @@ sap.ui.define([
 		assert.ok(oPromise, "Promise returned");
 		assert.ok(oField.hasPendingUserInput(), "user interaction after ENTER");
 		oPromise.then(function(vResult) {
-			assert.notOk(true, "Promise must not be resolved");
+			assert.ok(true, "Promise must be resolved");
 
-			FilterOperatorUtil.getDefaultOperator.restore();
-			fnDone();
-		}).catch(function(oException) {
-			assert.ok(true, "Promise must be rejected");
-			assert.equal(oException.message, "InvalidValue");
-			assert.notOk(oValueHelp.onControlChange.called, "onControlChange not called on ValueHelp");
 			setTimeout(function() { // for model update
 				setTimeout(function() { // for ManagedObjectModel update
-					assert.equal(oContent.getValueState(), "Error", "ValueState set");
-					assert.equal(oContent.getValueStateText(), "InvalidValue", "ValueStateText");
+					assert.equal(oContent.getValueState(), "None", "ValueState set");
+					assert.equal(oContent.getValueStateText(), "", "ValueStateText");
 					let aConditions = oCM.getConditions("Name");
-					assert.equal(aConditions.length, 1, "one condition in Codition model");
+					assert.equal(aConditions.length, 2, "two condition in Codition model");
 					assert.equal(aConditions[0] && aConditions[0].values[0], "I2", "condition value");
+					assert.equal(aConditions[1] && aConditions[1].operator, OperatorName.EQ, "condition operator");
+					assert.equal(aConditions[1] && aConditions[1].values[0], "Invalid", "condition value");
+					assert.equal(aConditions[1] && aConditions[1].validated, ConditionValidated.NotValidated, "condition not validated");
 					aConditions = oValueHelp.getConditions();
-					assert.equal(aConditions.length, 1, "Conditions set on ValueHelp");
+					assert.equal(aConditions.length, 2, "Conditions set on ValueHelp");
 					assert.equal(aConditions[0] && aConditions[0].values[0], "I2", "condition value");
+					assert.equal(aConditions[1] && aConditions[1].operator, OperatorName.EQ, "condition operator");
+					assert.equal(aConditions[1] && aConditions[1].values[0], "Invalid", "condition value");
+					assert.equal(aConditions[1] && aConditions[1].validated, ConditionValidated.NotValidated, "condition not validated");
 					assert.ok(oValueHelp.close.called, "close called");
 					assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
 					assert.notOk(oField.hasPendingUserInput(), "no user interaction after Promise rejected");
+					assert.ok(oValueHelp.onControlChange.called, "onControlChange called on ValueHelp");
 
 					// use default operator
 					vGetItemsForValue = undefined;
@@ -4825,15 +4834,15 @@ sap.ui.define([
 								assert.equal(oContent.getValueState(), "None", "ValueState set");
 								assert.equal(oContent.getValueStateText(), "", "ValueStateText");
 								aConditions = oValueHelp.getConditions();
-								assert.equal(aConditions.length, 2, "Conditions set on ValueHelp");
-								assert.equal(aConditions[1] && aConditions[1].operator, OperatorName.Contains, "condition operator");
-								assert.equal(aConditions[1] && aConditions[1].values[0], "Invalid", "condition value");
+								assert.equal(aConditions.length, 3, "Conditions set on ValueHelp");
+								assert.equal(aConditions[1] && aConditions[2].operator, OperatorName.Contains, "condition operator");
+								assert.equal(aConditions[1] && aConditions[2].values[0], "Invalid", "condition value");
 								assert.ok(oValueHelp.close.called, "close called");
 								aConditions = oCM.getConditions("Name");
 								assert.deepEqual(vResult, aConditions, "Promise result");
-								assert.equal(aConditions.length, 2, "one condition in Codition model");
-								assert.equal(aConditions[1] && aConditions[1].operator, OperatorName.Contains, "condition operator");
-								assert.equal(aConditions[1] && aConditions[1].values[0], "Invalid", "condition value");
+								assert.equal(aConditions.length, 3, "thtee conditions in Codition model");
+								assert.equal(aConditions[1] && aConditions[2].operator, OperatorName.Contains, "condition operator");
+								assert.equal(aConditions[1] && aConditions[2].values[0], "Invalid", "condition value");
 								assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
 
 								// allow "invalid" entry
@@ -4851,15 +4860,17 @@ sap.ui.define([
 											assert.equal(oContent.getValueState(), "None", "ValueState set");
 											assert.equal(oContent.getValueStateText(), "", "ValueState text");
 											aConditions = oValueHelp.getConditions();
-											assert.equal(aConditions.length, 3, "Conditions set on ValueHelp");
-											assert.equal(aConditions[2] && aConditions[2].operator, OperatorName.EQ, "condition operator");
-											assert.equal(aConditions[2] && aConditions[2].values[0], "Unknown", "condition value");
+											assert.equal(aConditions.length, 4, "Conditions set on ValueHelp");
+											assert.equal(aConditions[2] && aConditions[3].operator, OperatorName.EQ, "condition operator");
+											assert.equal(aConditions[2] && aConditions[3].values[0], "Unknown", "condition value");
+											assert.equal(aConditions[1] && aConditions[3].validated, ConditionValidated.NotValidated, "condition not validated");
 											assert.ok(oValueHelp.close.called, "close called");
 											aConditions = oCM.getConditions("Name");
 											assert.deepEqual(vResult, aConditions, "Promise result");
-											assert.equal(aConditions.length, 3, "three conditions in Codition model");
-											assert.equal(aConditions[2] && aConditions[2].operator, OperatorName.EQ, "condition operator");
-											assert.equal(aConditions[2] && aConditions[2].values[0], "Unknown", "condition value");
+											assert.equal(aConditions.length, 4, "four conditions in Codition model");
+											assert.equal(aConditions[2] && aConditions[3].operator, OperatorName.EQ, "condition operator");
+											assert.equal(aConditions[2] && aConditions[3].values[0], "Unknown", "condition value");
+											assert.equal(aConditions[1] && aConditions[3].validated, ConditionValidated.NotValidated, "condition not validated");
 											assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
 
 											// validation error
@@ -4884,9 +4895,9 @@ sap.ui.define([
 														assert.equal(oContent.getValueState(), "Error", "ValueState set");
 														assert.ok(oContent.getValueStateText().startsWith("Enter a valid value"), "ValueStateText");
 														aConditions = oCM.getConditions("Name");
-														assert.equal(aConditions.length, 3, "three conditions in Codition model");
+														assert.equal(aConditions.length, 4, "four conditions in Codition model");
 														aConditions = oValueHelp.getConditions();
-														assert.equal(aConditions.length, 3, "Conditions set on ValueHelp");
+														assert.equal(aConditions.length, 4, "Conditions set on ValueHelp");
 														assert.equal(oField._aAsyncChanges.length, 0, "no async changes stored in Field");
 
 														FilterOperatorUtil.getDefaultOperator.restore();
@@ -4912,6 +4923,10 @@ sap.ui.define([
 					});
 				}, 0);
 			}, 0);
+		}).catch(function(oException) {
+			assert.notOk(true, "Promise must not be rejected");
+			FilterOperatorUtil.getDefaultOperator.restore();
+			fnDone();
 		});
 
 	});
@@ -5417,7 +5432,23 @@ sap.ui.define([
 
 							oValueHelp.close(); // to be sure
 							oIconContent.destroy();
-							fnDone();
+
+							oContent._$input.val("=I");
+							oContent.fireLiveChange({ value: "=I" }); // with operator symbol autocomplete should be deactivated
+
+							setTimeout(function() { // to wait for Promises and opening
+								oCondition = Condition.createItemCondition("I1", "Item1");
+								oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", caseSensitive: false});
+								assert.equal(oContent._$input.val(), "=I", "Output text");
+								// jQuery Plugin "cursorPos"
+								assert.equal(oContent._$input.cursorPos(), 2, "CursorPosition");
+								assert.equal(oContent.getFocusDomRef().selectionStart, 2, "Selection start");
+								assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
+
+								oValueHelp.close(); // to be sure
+								oIconContent.destroy();
+								fnDone();
+							}, 400);
 						}, 400);
 					}, 400);
 				}, 400);
