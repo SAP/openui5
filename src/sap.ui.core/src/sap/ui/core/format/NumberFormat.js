@@ -86,8 +86,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Specifies a rounding behavior for numerical operations capable of discarding precision. Each rounding mode in this object indicates how the least
-	 * significant returned digits of rounded result is to be calculated.
+	 * Specifies a rounding behavior for numerical operations capable of discarding precision. Each rounding mode in
+	 * this object indicates how the least significant returned digits of rounded result are to be calculated.
 	 *
 	 * @public
 	 * @enum {string}
@@ -95,49 +95,61 @@ sap.ui.define([
 	 */
 	var mRoundingMode = {
 		/**
-		 * Rounding mode to round towards negative infinity
+		 * Rounding mode to round towards negative infinity; examples of rounding results to one fractional digit: 0.51
+		 * is rounded to 0.5, and -0.51 is rounded to -0.6.
 		 * @public
 		 * @type {string}
 		 */
 		FLOOR: "FLOOR",
 		/**
-		 * Rounding mode to round towards positive infinity
+		 * Rounding mode to round towards positive infinity; examples of rounding results to one fractional digit: 0.51
+		 * is rounded to 0.6, and -0.51 is rounded to -0.5.
 		 * @public
 		 * @type {string}
 		 */
 		CEILING: "CEILING",
 		/**
-		 * Rounding mode to round towards zero
+		 * Rounding mode to round towards zero; examples of rounding results to one fractional digit: 0.59 is rounded to
+		 * 0.5, and -0.59 is rounded to -0.5.
 		 * @public
 		 * @type {string}
 		 */
 		TOWARDS_ZERO: "TOWARDS_ZERO",
 		/**
-		 * Rounding mode to round away from zero
+		 * Rounding mode to round away from zero; examples of rounding results to one fractional digit: 0.51 is rounded
+		 * to 0.6, and -0.51 is rounded to -0.6.
 		 * @public
 		 * @type {string}
 		 */
 		AWAY_FROM_ZERO: "AWAY_FROM_ZERO",
 		/**
-		 * Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards negative infinity.
+		 * Rounding mode to round towards the nearest neighbor, unless both neighbors are equidistant, in which case
+		 * round towards negative infinity; examples of rounding results to one fractional digit: 0.54 or 0.46 are
+		 * rounded to 0.5, -0.54 or -0.46 are rounded to -0.5, 0.55 is rounded to 0.5, and -0.55 is rounded to -0.6.
 		 * @public
 		 * @type {string}
 		 */
 		HALF_FLOOR: "HALF_FLOOR",
 		/**
-		 * Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards positive infinity.
+		 * Rounding mode to round towards the nearest neighbor, unless both neighbors are equidistant, in which case
+		 * round towards positive infinity; examples of rounding results to one fractional digit: 0.54 or 0.46 are
+		 * rounded to 0.5, -0.54 or -0.46 are rounded to -0.5, 0.55 is rounded to 0.6, and -0.55 is rounded to -0.5.
 		 * @public
 		 * @type {string}
 		 */
 		HALF_CEILING: "HALF_CEILING",
 		/**
-		 * Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards zero.
+		 * Rounding mode to round towards the nearest neighbor, unless both neighbors are equidistant, in which case
+		 * round towards zero; examples of rounding results to one fractional digit: 0.54 or 0.46 are rounded to 0.5,
+		 * -0.54 or -0.46 are rounded to -0.5, 0.55 is rounded to 0.5, and -0.55 is rounded to -0.5.
 		 * @public
 		 * @type {string}
 		 */
 		HALF_TOWARDS_ZERO: "HALF_TOWARDS_ZERO",
 		/**
-		 * Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round away from zero.
+		 * Rounding mode to round towards the nearest neighbor unless, both neighbors are equidistant, in which case
+		 * round away from zero; examples of rounding results to one fractional digit: 0.54 or 0.46 are rounded to 0.5,
+		 * -0.54 or -0.46 are rounded to -0.5, 0.55 is rounded to 0.6, and -0.55 is rounded to -0.6.
 		 * @public
 		 * @type {string}
 		 */
