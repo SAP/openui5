@@ -2,13 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/library",
 	"sap/ui/base/Object"
-], function (library, BaseObject) {
+], function (BaseObject) {
 	"use strict";
-
-	// Shortcut to sap.ui.integration.library.CardDataMode
-	var CardDataMode = library.CardDataMode;
 
 	/**
 	 * Constructor for a new <code>CardObserver</code>.
@@ -56,6 +52,7 @@ sap.ui.define([
 			this._oObserver = new window.IntersectionObserver(function (oEntries) {
 				oEntries.forEach(function (oEntry) {
 					if (oEntry.isIntersecting) {
+						this._bIsIntersected = true;
 						this.loadManifest();
 					}
 				}.bind(this), {
@@ -81,6 +78,7 @@ sap.ui.define([
 
 			this._oObserver.observe(oDomRef);
 			this._oObservedDomRef = oDomRef;
+			this._bIsIntersected = false;
 		}
 	};
 
@@ -101,8 +99,17 @@ sap.ui.define([
 	 */
 	CardObserver.prototype.loadManifest = function () {
 		var oCardDomRef = this._oCard.getDomRef();
-		this._oCard.setDataMode(CardDataMode.Active);
 		this.unobserve(oCardDomRef);
+
+		this._oCard.refresh();
+	};
+
+	/*
+	 * @ui5-restricted sap.ui.integration
+	 * @private
+	 */
+	CardObserver.prototype.isIntersected = function () {
+		return this._bIsIntersected;
 	};
 
 	return CardObserver;
