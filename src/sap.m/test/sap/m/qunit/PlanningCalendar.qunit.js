@@ -2861,24 +2861,24 @@ sap.ui.define([
 		// Prepare
 		var oPC = new PlanningCalendar({
 				builtInViews: ["Day", "OneMonth", "Week"],
-				startDate: new Date(2023, 10, 1),
+				startDate: UI5Date.getInstance(2023, 10, 1),
 				specialDates: [
 					new DateTypeRange({
-						startDate: new Date(2023, 10, 1),
-						endDate: new Date(2023, 10, 3),
+						startDate: UI5Date.getInstance(2023, 10, 1),
+						endDate: UI5Date.getInstance(2023, 10, 3),
 						type: "Type06",
 						secondaryType: "Working"
 					}),
 					new DateTypeRange({
-						startDate: new Date(2023, 10, 2),
+						startDate: UI5Date.getInstance(2023, 10, 2),
 						type: "NonWorking"
 					}),
 					new DateTypeRange({
-						startDate: new Date(2023, 10, 4),
+						startDate: UI5Date.getInstance(2023, 10, 4),
 						type: "Working"
 					}),
 					new DateTypeRange({
-						startDate: new Date(2023, 10, 6),
+						startDate: UI5Date.getInstance(2023, 10, 6),
 						type: "NonWorking"
 					})
 				],
@@ -2888,19 +2888,19 @@ sap.ui.define([
 						title: "One",
 						specialDates: [
 							new DateTypeRange({
-								startDate: new Date(2023, 10, 2),
+								startDate: UI5Date.getInstance(2023, 10, 2),
 								type: "NonWorking"
 							}),
 							new sap.ui.unified.DateTypeRange({
-								startDate: new Date(2023, 10, 3),
+								startDate: UI5Date.getInstance(2023, 10, 3),
 								type: "Working"
 							}),
 							new DateTypeRange({
-								startDate: new Date(2023, 10, 4),
+								startDate: UI5Date.getInstance(2023, 10, 4),
 								type: "NonWorking"
 							}),
 							new DateTypeRange({
-								startDate: new Date(2023, 10, 5),
+								startDate: UI5Date.getInstance(2023, 10, 5),
 								type: "Working"
 							})
 						]
