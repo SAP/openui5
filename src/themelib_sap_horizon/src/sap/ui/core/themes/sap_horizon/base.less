@@ -1,11 +1,11 @@
 // /**
-// * Copyright (c) 2012-2023 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 1.23061.0
-// * data:{"sModified":"2023-12-13T07:44:04Z"}
+// * Copyright (c) 2012-2024 SAP SE or an SAP affiliate company. All rights reserved.
+// * Theming Engine 8.0.2
+// * data:{"sModified":"2024-02-07T13:08:58Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_horizon/base.less (Version 11.10.0) *******************/
+/******************* FILE /Base/baseLib/sap_horizon/base.less (Version 11.12.0) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -795,6 +795,10 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapShell_Assistant_ForegroundColor: @sapAssistant_Color1;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapShell_Category_1_Background: #0057d2;
 @sapShell_Category_1_BorderColor: @sapShell_Category_1_Background;
 @sapShell_Category_1_TextColor: contrast(@sapShell_Category_1_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
@@ -904,6 +908,78 @@
 @sapShell_Category_16_BorderColor: @sapShell_Category_16_Background;
 @sapShell_Category_16_TextColor: contrast(@sapShell_Category_16_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapShell_Category_16_TextShadow: 0 0 0.0625rem contrast(@sapShell_Category_16_TextColor, fade(darken(@sapContent_ShadowColor, 100), 70), @sapContent_ContrastShadowColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Color1: #5d36ff;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Color2: #a100c2;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_BackgroundGradient: linear-gradient(@sapAssistant_Color1, @sapAssistant_Color2);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Background: @sapAssistant_Color1;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_BorderColor: @sapAssistant_Color1;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_TextColor: contrast(@sapAssistant_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Hover_Background: darken(@sapAssistant_Color1, 20);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Hover_BorderColor: @sapAssistant_Hover_Background;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Hover_TextColor: contrast(@sapAssistant_Hover_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Active_Background: @sapButton_Active_Background;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Active_BorderColor: contrast(@sapAssistant_Active_Background, @sapAssistant_Color1, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Active_TextColor: contrast(@sapAssistant_Active_Background, @sapAssistant_Color1, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Question_Background: lighten(@sapAssistant_Background, 34.3);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Question_BorderColor: @sapAssistant_Question_Background;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Question_TextColor: contrast(@sapAssistant_Question_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Answer_Background: @sapNeutralBackground;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Answer_BorderColor: @sapAssistant_Answer_Background;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Answer_TextColor: contrast(@sapAssistant_Answer_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 // [Protected "!true"]

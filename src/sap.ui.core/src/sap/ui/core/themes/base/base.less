@@ -1,11 +1,11 @@
 // /**
-// * Copyright (c) 2012-2023 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 1.23061.0
-// * data:{"sModified":"2023-12-13T07:44:03Z"}
+// * Copyright (c) 2012-2024 SAP SE or an SAP affiliate company. All rights reserved.
+// * Theming Engine 8.0.2
+// * data:{"sModified":"2024-02-07T13:08:58Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/baseTheme/base.less (Version 11.10.0) *******************/
+/******************* FILE /Base/baseLib/baseTheme/base.less (Version 11.12.0) *******************/
 
 
 // [Label "Brand Color"]
@@ -1513,6 +1513,15 @@
 // [Type "color"]
 @sapShell_NeutralColor: @sapDefault_Color;
 
+// [Label "Shell Assistant Foreground Color"]
+// [Description "The foreground color of the SAP assistant (Joule) within the shell bar."]
+// [TranslationKey "sapShell_Assistant_FgClr"]
+// [Tags "Base", "Shell", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Shell"]
+// [Type "color"]
+@sapShell_Assistant_ForegroundColor: @sapDefault_Color;
+
 // [Label "Shell Category 1 Background Color"]
 // [Description "The background color of shell elements of category 1."]
 // [Tags "Base", "Shell", "Color", "Protected"]
@@ -2056,6 +2065,152 @@
 // [Category "Shell", "Category"]
 // [Type "boxShadow"]
 @sapShell_Category_16_TextShadow: @sapDefault_Color;
+
+// [Label "Assistant Color"]
+// [Description "The color of the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_Color1: @sapDefault_Color;
+
+// [Label "Assistant Color 2"]
+// [Description "Color 2 of the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_Color2: @sapDefault_Color;
+
+// [Label "Assistant Background Gradient"]
+// [Description "The gradient of the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Image", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "image"]
+@sapAssistant_BackgroundGradient: @sapDefault_URI;
+
+// [Label "Assistant Background"]
+// [Description "The background color of the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_Background: @sapDefault_Color;
+
+// [Label "Assistant Border Color"]
+// [Description "The border color of the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_BorderColor: @sapDefault_Color;
+
+// [Label "Assistant Text Color"]
+// [Description "The text color of the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_TextColor: @sapDefault_Color;
+
+// [Label "Assistant Hover Background"]
+// [Description "The hover state background color of the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_Hover_Background: @sapDefault_Color;
+
+// [Label "Assistant Hover Border Color"]
+// [Description "The hover state border color of the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_Hover_BorderColor: @sapDefault_Color;
+
+// [Label "Assistant Hover Text Color"]
+// [Description "The hover state text color of the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_Hover_TextColor: @sapDefault_Color;
+
+// [Label "Assistant Active Background Color"]
+// [Description "The active state background color of the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_Active_Background: @sapDefault_Color;
+
+// [Label "Assistant Active Border Color"]
+// [Description "The active state border color of the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_Active_BorderColor: @sapDefault_Color;
+
+// [Label "Assistant Active Text Color"]
+// [Description "The active state text color of the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_Active_TextColor: @sapDefault_Color;
+
+// [Label "Assistant Question Background Color"]
+// [Description "The question background color used in the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+// [TranslationKey "sapAssistant_Question_Bg"]
+@sapAssistant_Question_Background: @sapDefault_Color;
+
+// [Label "Assistant Question Border Color"]
+// [Description "The question border color used in the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+// [TranslationKey "sapAssistant_Question_BrdClr"]
+@sapAssistant_Question_BorderColor: @sapDefault_Color;
+
+// [Label "Assistant Question Text Color"]
+// [Description "The question text color used in the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_Question_TextColor: @sapDefault_Color;
+
+// [Label "Assistant Answer Background Color"]
+// [Description "The answer background color used in the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_Answer_Background: @sapDefault_Color;
+
+// [Label "Assistant Answer Border Color"]
+// [Description "The answer border color used in the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_Answer_BorderColor: @sapDefault_Color;
+
+// [Label "Assistant Answer Text Color"]
+// [Description "The answer text color used in the SAP assistant (Joule)."]
+// [Tags "Base", "Assistant", "Color", "Protected"]
+// [Protected "true"]
+// [Category "Assistant"]
+// [Type "color"]
+@sapAssistant_Answer_TextColor: @sapDefault_Color;
 
 // [Label "Avatar 1 Background Color"]
 // [Description "The background color of type-1 avatars."]
@@ -7956,13 +8111,13 @@ src: @sapFontUrl_72Mono_Bold_full_woff2 format('woff2'), @sapFontUrl_72Mono_Bold
 }
 .sapCss_SvgIconBase();
 /*</SAP_FREETEXT_LESS>*/// /**
-// * Copyright (c) 2012-2023 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 1.23061.0
-// * data:{"sModified":"2023-12-13T07:44:03Z"}
+// * Copyright (c) 2012-2024 SAP SE or an SAP affiliate company. All rights reserved.
+// * Theming Engine 8.0.2
+// * data:{"sModified":"2024-02-07T13:08:58Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_belize_hcw/base.less (Version 11.10.0) *******************/
+/******************* FILE /Base/baseLib/sap_belize_hcw/base.less (Version 11.12.0) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -8803,6 +8958,10 @@ src: @sapFontUrl_72Mono_Bold_full_woff2 format('woff2'), @sapFontUrl_72Mono_Bold
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapShell_NeutralColor: @sapNeutralColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapShell_Assistant_ForegroundColor: @sapShell_Selected_TextColor;
 @sapShell_Category_1_Background: @sapHC_StandardBackground;
 
 // [Tags "!Protected"]
@@ -8915,6 +9074,78 @@ src: @sapFontUrl_72Mono_Bold_full_woff2 format('woff2'), @sapFontUrl_72Mono_Bold
 @sapShell_Category_16_BorderColor: #1e592f;
 @sapShell_Category_16_TextColor: contrast(@sapShell_Category_16_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapShell_Category_16_TextShadow: none;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Color1: @sapHC_StandardForeground;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Color2: @sapHC_StandardForeground;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_BackgroundGradient: linear-gradient(@sapBackgroundColor, @sapBackgroundColor);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Background: @sapHC_StandardBackground;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_BorderColor: @sapHC_StandardForeground;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_TextColor: contrast(@sapAssistant_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Hover_Background: @sapButton_Hover_Background;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Hover_BorderColor: @sapButton_Hover_BorderColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Hover_TextColor: contrast(@sapAssistant_Hover_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Active_Background: @sapButton_Active_Background;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Active_BorderColor: @sapButton_Active_BorderColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Active_TextColor: contrast(@sapAssistant_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Question_Background: @sapAssistant_Background;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Question_BorderColor: @sapAssistant_BorderColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Question_TextColor: contrast(@sapAssistant_Question_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Answer_Background: @sapHC_ReducedBackground;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Answer_BorderColor: @sapAssistant_BorderColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapAssistant_Answer_TextColor: contrast(@sapAssistant_Answer_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
