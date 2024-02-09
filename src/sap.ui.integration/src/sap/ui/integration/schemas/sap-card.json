@@ -1760,8 +1760,16 @@
               "description": "The horizontal alignment of the texts",
               "type": "string"
             },
+            "padding": {
+              "description": "Set to 'MediumStart' to have medium size padding in the beginning of the texts.",
+              "type": "string"
+            },
             "textColor": {
               "description": "The color of the texts",
+              "type": "string"
+            },
+            "textFilter": {
+              "description": "The CSS filter which will be applied to the text.",
               "type": "string"
             },
             "background": {
