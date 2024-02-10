@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.demo.db.controller.App"
+	controllerName="ui5.databinding.controller.App"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:form="sap.ui.layout.form"
@@ -19,7 +19,7 @@
 		<content>
 			<l:HorizontalLayout>
 				<l:VerticalLayout>
-					<Label labelFor="address" text="{i18n>address}:"/>
+					<Label labelFor="address" text="{i18n>address}" showColon="true"/>
 					<FormattedText class="sapUiSmallMarginBottom"
 						htmlText="{/address/street}&lt;br&gt;{/address/zip} {/address/city}&lt;br&gt;{/address/country}"
 						id="address" width="200px"/>
@@ -33,7 +33,7 @@
 						text="{i18n>sendEmail}"/>
 				</l:VerticalLayout>
 				<l:VerticalLayout>
-					<Label labelFor="salesAmount" text="{i18n>salesAmount}:"/>
+					<Label labelFor="salesAmount" text="{i18n>salesAmount}" showColon="true"/>
 					<Input description="{/currencyCode}" enabled="{/enabled}" id="salesAmount"
 						value="{
 							parts: [
@@ -56,8 +56,8 @@
 				factory: '.productListFactory'
 			}">
 			<dependents>
-				<core:Fragment fragmentName="sap.ui.demo.db.view.ProductSimple" type="XML"/>
-				<core:Fragment fragmentName="sap.ui.demo.db.view.ProductExtended" type="XML"/>
+				<core:Fragment fragmentName="ui5.databinding.view.ProductSimple" type="XML"/>
+				<core:Fragment fragmentName="ui5.databinding.view.ProductExtended" type="XML"/>
 			</dependents>
 		</List>
 	</Panel>

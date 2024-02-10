@@ -1883,7 +1883,7 @@ sap.ui.define([
 	  * @param {boolean} [bAllowRequest]
 	 *   Whether it is allowed to send a GET request to fetch the parent node's data
 	 * @returns {sap.ui.model.odata.v4.Context|null|undefined|
-	 *     Promise<sap.ui.model.odata.v4.Context>}
+	 *     Promise<sap.ui.model.odata.v4.Context>|sap.ui.base.SyncPromise}
 	 *   <ul>
 	 *     <li> The parent node if already known,
 	 *     <li> <code>null</code> if the given node is a root node and thus has no parent,

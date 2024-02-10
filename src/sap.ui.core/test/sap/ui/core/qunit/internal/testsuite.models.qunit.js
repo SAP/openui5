@@ -94,15 +94,6 @@ sap.ui.define(function() {
 				}
 			},
 
-			NumberFormat : {
-				// not in 1RingModels.qunit because test has to be refactored
-				title : "sap.ui.core.format.NumberFormat",
-				module : ["test-resources/sap/ui/core/qunit/types/NumberFormat.qunit"],
-				ui5 : {
-					language : "en-US"
-				}
-			},
-
 			NumberFormatCurrencies : {
 				// not in 1RingModels.qunit because test has to be refactored
 				title : "sap.ui.core.format.NumberFormatCurrencies",

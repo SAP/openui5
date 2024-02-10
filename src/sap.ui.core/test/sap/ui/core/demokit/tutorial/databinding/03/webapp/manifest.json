@@ -1,5 +1,38 @@
 {
+	"_version": "1.60.0",
 	"sap.app": {
-		"id": "ui5.databinding"
+		"id": "ui5.databinding",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.120.0",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"models": {
+			"": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "./model/data.json"
+			}
+		},
+		"rootView": {
+			"viewName": "ui5.databinding.view.App",
+			"type": "XML",
+			"id": "app"
+		}
 	}
 }

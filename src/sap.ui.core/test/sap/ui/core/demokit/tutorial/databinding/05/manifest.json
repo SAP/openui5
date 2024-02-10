@@ -8,10 +8,11 @@
 				"iframe": "webapp/index.html",
 				"stretch": true,
 				"files": [
-					"webapp/view/App.view.xml",
+					"webapp/Component.js",
 					"webapp/index.html",
-					"webapp/index.js",
 					"webapp/manifest.json",
+					"webapp/model/data.json",
+					"webapp/view/App.view.xml",
 					"ui5.yaml",
 					"package.json"
 				]

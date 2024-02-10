@@ -88,20 +88,26 @@ sap.ui.define([
 				// var sOperator = FilterOperator.Any;
 				// var sPattern = "*/";
 				const sVariable = "L1";
-				let aSections, sNavPath, sPropertyPath;
 
-				if (oFilter.sPath && oFilter.sPath.indexOf(sPattern) > -1) {
-					aSections = oFilter.sPath.split(sPattern);
+				// in case of nested inner filters call the convertAnyAllFilters for all sub filters.
+				if (!oFilter.sPath && oFilter.aFilters) {
+					let oFilterParam;
+					oFilter.aFilters.forEach((oFilter) => { oFilterParam = convertAnyAllFilter(oFilter, sOperator, sPattern);} );
+					return oFilterParam || false;
+				}
 
+				if (oFilter.sPath?.indexOf(sPattern) > -1) {
+					const aSections = oFilter.sPath.split(sPattern);
 					if (aSections.length === 2) {
-						sNavPath = aSections[0];
-						sPropertyPath = aSections[1];
+						const [sNavPath, sPropertyPath] = aSections;
 						oFilter.sPath = sVariable + "/" + sPropertyPath;
 
+						// the Any/All filter parameter for all filters of one condition
 						return {
 							path: sNavPath,
 							operator: sOperator,
-							variable: sVariable
+							variable: sVariable,
+							condition: null  // this will be set later with the filter statement for all ANY/ALL filters
 						};
 					} else {
 						throw new Error("FilterConverter: not supported binding " + oFilter.sPath);
@@ -211,9 +217,9 @@ sap.ui.define([
 					oFilter = new Filter({ filters: aLocalIncludeFilters, and: false });
 				}
 
-				// merge Include-filter and all NE-filter into the Overallfilter, they will be AND added to the result
+				// merge include-filter and all exclude-filter into the Overallfilter, they will be AND added to the result
 				if (oFilter) {
-					aLocalExcludeFilters.unshift(oFilter); // add in-filters to the beginning (better to read)
+					aLocalExcludeFilters.unshift(oFilter); // add include-filters to the beginning (better to read)
 				}
 
 				oNewFilter = undefined;
@@ -223,7 +229,7 @@ sap.ui.define([
 					oNewFilter = new Filter({ filters: aLocalExcludeFilters, and: true }); // to have all filters for differents path AND grouped
 				}
 
-				// support for Any or All filters - update the Any/ALl Filter in the OverAllFilters array
+				// support for Any or All filters - update the Any/All Filter in the OverAllFilters array
 				if (oAnyOrAllFilterParam) {
 					// oAnyOrAllFilterParam.path = NavPath,
 					// oAnyOrAllFilterParam.operator = "Any/All",
@@ -269,7 +275,7 @@ sap.ui.define([
 				return "(" + sRes + ")";
 			} else {
 				if (oFilter.sOperator === FilterOperator.Any || oFilter.sOperator === FilterOperator.All) {
-					sRes = oFilter.sPath + " " + oFilter.sOperator + " " + FilterConverter.prettyPrintFilters(oFilter.oCondition);
+					sRes = oFilter.sVariable + ":" + oFilter.sPath + " " + oFilter.sOperator + " " + FilterConverter.prettyPrintFilters(oFilter.oCondition);
 				} else {
 					if (oFilter.bCaseSensitive === false) {
 						sRes = "tolower(" + oFilter.sPath + ") " + oFilter.sOperator + " tolower('" + oFilter.oValue1 + "')";

@@ -33076,6 +33076,8 @@ sap.ui.define([
 	// node ("Omicron") where the parent ("Xi") is not yet loaded and request this parent.
 	// Scroll to "Xi" and see that it is inserted on the right position.
 	// JIRA: CPOUI5ODATAV4-2378
+	//
+	// Second requestParent returns the same context (JIRA: CPOUI5ODATAV4-2467).
 	QUnit.test("Recursive Hierarchy: getParent/requestParent with expandTo > 1",
 			async function (assert) {
 		const sUrl = "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -33488,8 +33490,14 @@ sap.ui.define([
 			});
 
 		// code under test
-		const oXi = await oOmicron.requestParent();
+		const [oXi, oXi0] = await Promise.all([
+			oOmicron.requestParent(),
+			oOmicron.requestParent(),
+			this.waitForChanges(assert, "request parent of 4.1 (Omicron)")
+		]);
 
+		assert.strictEqual(oXi0, oXi,
+			"CPOUI5ODATAV4-2467: second request returns the same context");
 		assert.strictEqual(oXi.getIndex(), 12);
 		assert.strictEqual(oXi.getPath(), "/Artists(ArtistID='4',IsActiveEntity=false)");
 		assert.deepEqual(oXi.getObject(), {

@@ -238,6 +238,7 @@ sap.ui.define([
 
 	QUnit.test("Close button should not be forwarded to an internal aggregation Toolbar", async function (assert) {
 		this.stub(Device, "system").value({ phone: true, desktop: false });
+		this.clock = sinon.useFakeTimers();
 
 		var oToolbar = new Toolbar(),
 			oResponsivePopover = new ResponsivePopover({
@@ -255,8 +256,8 @@ sap.ui.define([
 
 		// Open the ResponsivePopover
 		oResponsivePopover.openBy(this.oButton);
-		await nextUIUpdate();
-
+		await nextUIUpdate(this.clock);
+		this.clock.tick(500);
 		assert.ok(true, "does not throw an exception");
 		assert.strictEqual(oToolbar.getContent().length, 0, "no content should be added to the Toolbar");
 
@@ -390,6 +391,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResponsivePopover should pass the data from the binded model to the inner control", function (assert) {
+		this.clock = sinon.useFakeTimers();
+
 		// Arrange
 		this.oResponsivePopover = new ResponsivePopover();
 		this.oResponsivePopover.setModel(oSimpleJSONModel);
@@ -400,6 +403,7 @@ sap.ui.define([
 
 		// Act
 		this.oResponsivePopover.openBy(this.oButton);
+		this.clock.tick(500);
 		// Assert
 		assert.equal(this.oResponsivePopover._oControl.getTitle(), "Title", "Title should be passed to inner popover");
 	});
@@ -465,11 +469,14 @@ sap.ui.define([
 	//================================================================================
 
 	QUnit.test("ResponsivePopover with aria-modal attribute set to true", function (assert) {
+		this.clock = sinon.useFakeTimers();
+
 		// Arrange
 		var oResponsivePopover = new ResponsivePopover();
 
 		// Act
 		oResponsivePopover.openBy(this.oButton);
+		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(oResponsivePopover.getDomRef().getAttribute('aria-modal'), "true", 'aria-modal attribute is true');
 	});

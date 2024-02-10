@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.demo.db.controller.App"
+	controllerName="ui5.databinding.controller.App"
 	xmlns="sap.m"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:l="sap.ui.layout"
@@ -17,7 +17,7 @@
 	<Panel headerText="{i18n>panel2HeaderText}" class="sapUiResponsiveMargin" width="auto">
 		<content>
 			<l:VerticalLayout>
-				<Label labelFor="address" text="{i18n>address}:"/>
+				<Label labelFor="address" text="{i18n>address}" showColon="true"/>
 				<FormattedText class="sapUiSmallMarginBottom"
 					htmlText="{/address/street}&lt;br&gt;{/address/zip} {/address/city}&lt;br&gt;{/address/country}"
 					id="address" width="200px"/>
