@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Element", 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/CalendarLegendRenderer', 'sap/ui/unified/library', "sap/base/Log", "sap/ui/core/date/UI5Date", "sap/ui/base/Object"], function(Element, CalendarUtils, CalendarDate, CalendarLegendRenderer, library, Log, UI5Date, BaseObject) {
+sap.ui.define(["sap/ui/core/Element", 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/CalendarLegendRenderer', 'sap/ui/unified/library', "sap/base/Log", "sap/ui/core/date/UI5Date"], function(Element, CalendarUtils, CalendarDate, CalendarLegendRenderer, library, Log, UI5Date) {
 	"use strict";
 
 
@@ -203,7 +203,7 @@ MonthsRowRenderer.getHelper = function(oMonthsRow, oDate){
 	if (sLegendId) {
 		var oLegend = Element.getElementById(sLegendId);
 		if (oLegend) {
-			if (!(BaseObject.isObjectA(oLegend, "sap.ui.unified.CalendarLegend"))) {
+			if (!(oLegend instanceof sap.ui.unified.CalendarLegend)) {
 				throw new Error(oLegend + " is not an sap.ui.unified.CalendarLegend. " + oMonthsRow);
 			}
 			oHelper.oLegend = oLegend;

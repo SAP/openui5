@@ -23,8 +23,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/RuleSetLoader",
 	"sap/ui/support/supportRules/RuleSerializer",
-	"sap/ui/support/library",
-	"sap/ui/base/Object"
+	"sap/ui/support/library"
 ], function(
 	Log,
 	ManagedObject,
@@ -46,8 +45,7 @@ sap.ui.define([
 	constants,
 	RuleSetLoader,
 	RuleSerializer,
-	library,
-	BaseObject
+	library
 ) {
 	"use strict";
 
@@ -581,7 +579,7 @@ sap.ui.define([
 			var element = oContextElements[elementId],
 				parent = coreElements[elementId] == undefined ? undefined : coreElements[elementId].getParent();
 
-			if (BaseObject.isObjectA(coreElements[elementId], "sap.ui.core.ComponentContainer")) {
+			if (coreElements[elementId] instanceof sap.ui.core.ComponentContainer) {
 				var componentContainer = coreElements[elementId],
 					componentId = componentContainer.getComponent();
 
@@ -631,7 +629,7 @@ sap.ui.define([
 		copyElementsFromCoreObject(this._oExecutionScope.getElements());
 
 		this._oExecutionScope.getElements().forEach(function (element) {
-			if (BaseObject.isObjectA(element, "sap.ui.core.ComponentContainer")) {
+			if (element instanceof sap.ui.core.ComponentContainer) {
 				var componentId = element.getComponent(),
 					component = ComponentRegistry.get(componentId);
 				if (component) {
