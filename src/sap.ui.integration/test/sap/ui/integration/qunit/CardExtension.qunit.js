@@ -5,17 +5,13 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/Extension",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"qunit/testResources/nextCardReadyEvent",
-	"sap/m/IllustratedMessageType",
-	"sap/m/IllustrationPool"
-], function(
+	"qunit/testResources/nextCardReadyEvent"
+], function (
 	Log,
 	Card,
 	Extension,
 	nextUIUpdate,
-	nextCardReadyEvent,
-	IllustratedMessageType,
-	IllustrationPool
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -619,7 +615,7 @@ sap.ui.define([
 		var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
 
 		// Assert
-		assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.SimpleError, "The no data message type set by expression binding is correct");
+		assert.strictEqual(oMessage.getIllustrationType(), sap.m.IllustratedMessageType.SimpleError, "The no data message type set by expression binding is correct");
 		assert.strictEqual(oMessage.getDescription(), "Test", "The no data message description set by expression binding is correct");
 		assert.strictEqual(oMessage.getTitle(), "No Data", "The no data message title set by expression binding is correct");
 		assert.strictEqual(oMessage.getIllustrationSize(), "Auto", "The no data message size set by expression binding is correct");
@@ -633,7 +629,7 @@ sap.ui.define([
 		};
 
 		// register tnt illustration set
-		IllustrationPool.registerIllustrationSet(oTntSet, false);
+		sap.m.IllustrationPool.registerIllustrationSet(oTntSet, false);
 
 		this.oCard.setManifest({
 			"sap.app": {

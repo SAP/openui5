@@ -2872,7 +2872,7 @@ sap.ui.define([
 								startDate: new Date(2023, 10, 2),
 								type: "NonWorking"
 							}),
-							new DateTypeRange({
+							new sap.ui.unified.DateTypeRange({
 								startDate: new Date(2023, 10, 3),
 								type: "Working"
 							}),
