@@ -1,14 +1,6 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser*/
-
-describe("sap.m.IconTabBarGeneric3", function() {
+/*global it,element,by,takeScreenshot,expect,browser,module*/
+(function() {
 	"use strict";
-
-	browser.testrunner.currentSuite.meta.controlName = 'sap.m.IconTabBar';
-
-	// initial loading
-	it("should load test page", function(){
-		expect(takeScreenshot()).toLookAs("0_initial");
-	});
 
 	var fnRunAllCases = function(sType){
 		it("should see Text only IconTabBar with sub filters (Two click areas)", function() {
@@ -58,8 +50,8 @@ describe("sap.m.IconTabBarGeneric3", function() {
 		});
 
 		// focus
-		it("should focus the first filter icon when I simulate click on it", function() {
-			element(by.id("itf1a")).click();
+		it("should focus the tenth filter icon when I simulate click on it", function() {
+			element(by.id("itf10a")).click();
 			browser.executeScript("document.getElementById('itb1a').scrollIntoView()").then(function() {
 				expect(takeScreenshot()).toLookAs(sType + "_6_filter_focus");
 			});
@@ -138,13 +130,5 @@ describe("sap.m.IconTabBarGeneric3", function() {
 
 	};
 
-	//check tabDensityMode property = Cozy
-	fnRunAllCases("Coz");
-
-	//check tabDensityMode property = Compact
-	it("should scroll to top", function() {
-		browser.executeScript("document.getElementById('densityModeBox').scrollIntoView()");
-		element(by.id("densityModeBox")).click();
-	});
-	fnRunAllCases("Comp");
-});
+	module.exports = fnRunAllCases;
+})();
