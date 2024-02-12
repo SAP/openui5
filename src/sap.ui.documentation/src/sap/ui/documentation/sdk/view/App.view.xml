@@ -242,10 +242,10 @@
 							text="{i18n>APP_TABHEADER_ITEM_DEMO_APPS}">
 						</IconTabFilter>
 						<IconTabFilter
-							id="toolsTab"
-							key="tools"
+							id="resourcesTab"
+							key="resources"
 							icon="sap-icon://wrench"
-							text="{i18n>APP_TABHEADER_ITEM_TOOLS}">
+							text="{i18n>APP_TABHEADER_ITEM_RESOURCES}">
 						</IconTabFilter>
 					</items>
 				</IconTabHeader>
@@ -281,9 +281,9 @@
 						icon="sap-icon://grid"
 						text="{i18n>APP_TABHEADER_ITEM_DEMO_APPS}" />
 					<tnt:NavigationListItem
-						key="tools"
+						key="resources"
 						icon="sap-icon://wrench"
-						text="{i18n>APP_TABHEADER_ITEM_TOOLS}">
+						text="{i18n>APP_TABHEADER_ITEM_RESOURCES}">
 					</tnt:NavigationListItem>
 				</tnt:NavigationList>
 			</tnt:SideNavigation>

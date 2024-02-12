@@ -306,7 +306,14 @@
 					"pattern": "tools",
 					"name": "tools",
 					"target": [
-						"tools"
+						"resources"
+					]
+				},
+				{
+					"pattern": "resources",
+					"name": "resources",
+					"target": [
+						"resources"
 					]
 				},
 				{
@@ -444,10 +451,10 @@
 					"viewLevel": 2,
 					"viewId": "demoApps"
 				},
-				"tools": {
-					"viewName": "Tools",
+				"resources": {
+					"viewName": "Resources",
 					"viewLevel": 2,
-					"viewId": "tools"
+					"viewId": "resources"
 				},
 				"news": {
 					"viewName": "News",

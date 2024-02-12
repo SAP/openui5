@@ -81,12 +81,12 @@
 
 			<l:HorizontalLayout class="sapUiDemoKitSitemapLinksWrapper sapUiResponsiveMargin" allowWrapping="true">
 				<l:VerticalLayout width="100%">
-					<Title titleStyle="H3" text="{i18n>APP_TABHEADER_ITEM_TOOLS}"></Title>
+					<Title titleStyle="H3" text="{i18n>APP_TABHEADER_ITEM_RESOURCES}"></Title>
 				</l:VerticalLayout>
 				<l:HorizontalLayout
 					class="sapUiDemoKitSitemapLinksWrapper"
 					allowWrapping="true"
-					content="{/tools}"
+					content="{/resources}"
 				>
 					<l:VerticalLayout class="sapUiContentPadding sapUiDemoKitSitemapLink">
 						<Link tooltip="{name}" href="{href}" text="{name}"></Link>

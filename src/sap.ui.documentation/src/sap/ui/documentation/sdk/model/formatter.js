@@ -256,7 +256,7 @@ sap.ui.define([
 			 * @returns {string} the formatted link
 			 */
 			formatHttpHrefForNewWindow: function (sHref) {
-				if (window['sap-ui-documentation-static'] && !/^https?:\/\//.test(sHref)) {
+				if (sHref && window['sap-ui-documentation-static'] && !/^https?:\/\//.test(sHref)) {
 					sHref = "#/" + sHref;
 				}
 				return sHref;
@@ -287,7 +287,7 @@ sap.ui.define([
 			 * @returns {boolean} true if the card is visible
 			 * @protected
 			 */
-			formatToolCardVisibility: function (oData) {
+			formatResourceCardVisibility: function (oData) {
 				if (!oData) {
 					return false;
 				}
