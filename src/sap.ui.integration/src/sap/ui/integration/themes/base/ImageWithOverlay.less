@@ -22,7 +22,6 @@
 
 		.sapMText {
 			line-height: 1.5rem;
-			font-weight: 700;
 
 			&.sapUiIntImgWithOverlayTitle {
 				font-size:  1.75rem;
@@ -31,13 +30,17 @@
 			}
 		}
 	}
+
+	&.sapUiIntImageWithOverlayPaddingMediumStart .sapUiIntImgWithOverlayLayout {
+		padding-inline-start: @sapUiMarginMedium;
+	}
 }
 
 .sapFCardObjectGroup {
 	.sapUiIntImageWithOverlay.sapFCardObjectImageFullWidth.sapFCardObjectImage:only-child {
 		height:  ~"calc(100% + 32px)";
 	}
-	
+
 	.sapUiIntImageWithOverlay:not(.sapFCardObjectImageFullWidth):only-child .sapUiIntImgWithOverlayImg {
 		max-height: 100%;
 	}
