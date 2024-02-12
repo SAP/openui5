@@ -873,6 +873,38 @@ sap.ui.define([
 			oCard.destroy();
 		});
 
+		QUnit.test("Attribute data-sap-ui-card-id when sap.app/id is undefined", async function (assert) {
+			// Arrange
+			var oCard = new Card();
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextUIUpdate();
+
+			// Assert
+			assert.notOk(oCard.getDomRef().dataset["sapUiCardId"], "Attribute is not there when sap.app/id is not there");
+
+			// Clean up
+			oCard.destroy();
+		});
+
+		QUnit.test("Attribute data-sap-ui-card-id when sap.app/id is defined", async function (assert) {
+			// Arrange
+			var oCard = new Card({
+				manifest: oManifest_ListCard
+			});
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(oCard);
+
+			// Assert
+			assert.strictEqual(oCard.getDomRef().dataset["sapUiCardId"], "my.card.qunit.test.ListCard", "Attribute is correct when sap.app/id is there");
+
+			// Clean up
+			oCard.destroy();
+		});
+
 		QUnit.test("Register module path for card with manifest as object, without baseUrl", async function (assert) {
 			// Arrange
 			var oCard = new Card({
