@@ -453,5 +453,21 @@
         ]
       }
     ]
+  },
+  "1.108.25": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "4425d72ab18a95a8ff8ed1769c915d6bb37a464d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Adjust header buttons display.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280132535"
+          }
+        ]
+      }
+    ]
   }
 }

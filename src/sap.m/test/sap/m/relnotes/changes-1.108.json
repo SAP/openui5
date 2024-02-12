@@ -1523,5 +1523,37 @@
         ]
       }
     ]
+  },
+  "1.108.25": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "f09326fddc9c89b5d5c148df59cff77784667168",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: fix error on opening Popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280180459"
+          }
+        ]
+      },
+      {
+        "id": "a2f1ca39dba0daa03ad6661571870b5b2aa69a20",
+        "type": "FIX",
+        "text": " sap.m.Popover: Fix hiding of popover due to re-rendering"
+      },
+      {
+        "id": "0377bfc7e641b68c6afe29518ca15caead6ba75c",
+        "type": "FIX",
+        "text": " sap.m.DraftIndicator: JSDoc corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370142834"
+          }
+        ]
+      }
+    ]
   }
 }

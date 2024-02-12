@@ -551,5 +551,35 @@
         ]
       }
     ]
+  },
+  "1.108.25": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "ef21c2de2f9556ba42a69e2c2367c31f111cc70d",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: fire data received event if request is aborted"
+      },
+      {
+        "id": "18959c07b50aa597fcee134b302c9903eafbc129",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#submitChangesWithHeaders: ensure change requests use custom headers"
+      },
+      {
+        "id": "66ae832bc34bbd487ad65da4af0122b6ece757eb",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/ODataMetadata#_getPropertyMetadata: fix for complex type property"
+      },
+      {
+        "id": "0829f8981073afa755d45e86217070392c82aa8a",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataTreeBinding: Fix grouping of Application filters in OperationMode.Server"
+      },
+      {
+        "id": "8d3abeeaa116abf24e36e4856227a2456b0cfc69",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: handle properties of type Edm.time in grouping"
+      }
+    ]
   }
 }
