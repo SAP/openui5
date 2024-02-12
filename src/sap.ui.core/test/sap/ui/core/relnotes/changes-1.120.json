@@ -725,5 +725,15 @@
         "text": " sap.ui.model.odata.v2.ODataModel#submitChangesWithHeaders: ensure change requests use custom headers"
       }
     ]
+  },
+  "1.120.7": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "6d2db90fba1522329085efc0679d4dc433ed7365",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMetaModel#getODataValueLists: fetch missing metadata"
+      }
+    ]
   }
 }

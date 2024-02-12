@@ -640,5 +640,15 @@
         ]
       }
     ]
+  },
+  "1.120.7": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "a5fe04ab80934052fbb26c1479d7b3ea7da34ed6",
+        "type": "FIX",
+        "text": " ColumnMenu: Provide a proper overflow handling"
+      }
+    ]
   }
 }
