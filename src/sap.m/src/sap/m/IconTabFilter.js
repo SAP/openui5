@@ -514,6 +514,7 @@ sap.ui.define([
 				.attr("aria-disabled", true);
 		}
 
+		oRM.attr("tabindex", "-1");
 		if (!this._isOverflow()) {
 			oRM.attr("aria-selected", false);
 		}

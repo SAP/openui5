@@ -524,7 +524,7 @@ sap.ui.define([
 		// Arrange
 		var oIconTabBar = new IconTabBar({
 			items: [
-				new IconTabFilter({
+				new IconTabFilter("itf1", {
 					icon: "sap-icon://task"
 				}),
 				new IconTabSeparator()
@@ -539,6 +539,7 @@ sap.ui.define([
 		// Assert
 		assert.ok(oIconTabBar.$().hasClass("sapMITB"), "IconTabBar has class sapMITB");
 		assert.ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBFilter"), "First IconTabBarFilter has class sapMITBFilter");
+		assert.ok(document.querySelector('#itf1').getAttribute("tabindex"), "-1", "IconTabSeparator should always have a set tabindex");
 		assert.ok(!oIconTabBar.getItems()[0].$().hasClass("sapMITBSep"), "First IconTabBarFilter does not have class sapMITBSep");
 		assert.ok(oIconTabBar.getItems()[1].$().hasClass("sapMITBSep"), "IconTabSeparator has class sapMITBSep");
 		assert.ok(!oIconTabBar.getItems()[1].$().hasClass("sapMITBFilter"), "IconTabSeparator does not have class sapMITBFilter");
