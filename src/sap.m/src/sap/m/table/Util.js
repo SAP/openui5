@@ -8,12 +8,17 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
+	"sap/ui/core/syncStyleClass",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
 	"sap/m/IllustratedMessage",
 	"sap/m/Button",
+	"sap/m/CustomListItem",
+	"sap/m/HBox",
+	"sap/m/ResponsivePopover",
+	"sap/m/Text",
 	"sap/ui/core/InvisibleMessage"
-], function(Localization, MLibrary, Library, Locale, LocaleData, Theming, ThemeParameters, IllustratedMessage, Button, InvisibleMessage) {
+], function(Localization, MLibrary, Library, Locale, LocaleData, syncStyleClass, Theming, ThemeParameters, IllustratedMessage, Button, CustomListItem, HBox, ResponsivePopover, Text, InvisibleMessage) {
 	"use strict";
 	/*global Intl*/
 
@@ -522,6 +527,98 @@ sap.ui.define([
 		Theming.detachApplied(fnOnThemeApplied);
 		return bIsApplied;
 	};
+
+	/**
+	 * Creates or updates a popover with an embedded list control showing accumulated values and units of a column
+	 * @param {sap.m.ResponsivePopover | string} vPopover Pass an ID to create a new popover or pass an existing popover to update it. The popover instance must have been created by this util and must not have been modified
+	 * @param {object} mSettings Settings object containing various binding infos needed to create or update the popover and it's contents
+	 * @param {sap.ui.core.Control} mSettings.control Control whose style is synced to the popover
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} mSettings.itemsBindingInfo Containing the binding information for the items (e. g. path, filters, selected parameters)
+	 * @param {sap.ui.base.ManagedObject.PropertyBindingInfo} mSettings.amountBindingInfo Amount value used in popover
+	 * @param {sap.ui.base.ManagedObject.PropertyBindingInfo} mSettings.unitBindingInfo Unit used in popover
+	 * @param {boolean} [mSettings.grandTotal] Whether the popover is related to a grand total. By default, the popover is configured as if it is related to a subtotal
+	 * @returns {Promise<sap.m.ResponsivePopover>} Popover control with the embedded list
+	 * @private
+	 * @ui5-restricted sap.fe
+	 */
+	Util.createOrUpdateMultiUnitPopover = async function(vPopover, mSettings) {
+		const oResourceBundle = Library.getResourceBundleFor("sap.m.table");
+		let oPopover;
+
+		if (typeof vPopover === "object") {
+			oPopover = vPopover;
+		}
+
+		if (!oPopover) {
+			oPopover = await createMultiUnitPopover(vPopover);
+		}
+
+		const oDetailsList = oPopover.getContent()[0];
+		const oItemsTemplate = oDetailsList.getBindingInfo("items")?.template || createItemTemplate();
+		const oItems = oItemsTemplate.getContent()[0].getItems();
+
+		oItems[0].bindText(mSettings.amountBindingInfo);
+		oItems[1].bindText(mSettings.unitBindingInfo);
+
+		oDetailsList.bindItems({
+			...mSettings.itemsBindingInfo,
+			templateShareable: true,
+			template: oItemsTemplate
+		});
+
+		syncStyleClass("sapUiSizeCompact", mSettings.control, oPopover);
+
+		if (mSettings.grandTotal) {
+			oPopover.setTitle(oResourceBundle.getText("TABLE_MULTI_TOTAL_TITLE"));
+			oPopover.setPlacement("VerticalPreferredTop");
+		} else {
+			oPopover.setTitle(oResourceBundle.getText("TABLE_MULTI_GROUP_TITLE"));
+			oPopover.setPlacement("VerticalPreferredBottom");
+		}
+
+		return oPopover;
+	};
+
+	async function createMultiUnitPopover(sId) {
+		const List = await new Promise((resolve) => {
+			sap.ui.require(["sap/m/List"], resolve);
+		}); // Avoid cyclic dependency
+
+		return new ResponsivePopover(sId, {
+			content: new List(sId + "-detailsList", {
+				showSeparators: "None",
+				ariaLabelledBy: sId + "-title"
+			}).addStyleClass("sapUiContentPadding")
+		}).addStyleClass("sapMMultiUnitPopover");
+	}
+
+	function createItemTemplate() {
+		var oAmountText = new Text({
+			textDirection: "LTR",
+			wrapping: false,
+			textAlign: "End"
+		}).addStyleClass("sapMMultiUnitPopoverAmount");
+
+		var oUnitText = new Text({
+			textDirection: "LTR",
+			wrapping: false,
+			textAlign: "End",
+			width: "3em"
+		}).addStyleClass("sapMMultiUnitPopoverUnit");
+
+		return new CustomListItem({
+			content: [
+				new HBox({
+					renderType: "Bare",
+					justifyContent: "End",
+					items: [
+						oAmountText,
+						oUnitText
+					]
+				})
+			]
+		});
+	}
 
 	return Util;
 });
