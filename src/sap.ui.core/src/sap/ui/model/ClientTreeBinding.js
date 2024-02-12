@@ -22,9 +22,12 @@ sap.ui.define([
 	 * @param {sap.ui.model.Model} oModel Model instance that this binding is created for and that it belongs to
 	 * @param {string} sPath Binding path pointing to the tree / array that should be bound; syntax is defined by subclasses
 	 * @param {sap.ui.model.Context} [oContext=null] Context object for this binding, mandatory when when a relative binding path is given
-	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aApplicationFilters=null] Predefined application filter, either a single instance or an array
+	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} [aApplicationFilters=[]]
+	 *   The filters to be used initially with type {@link sap.ui.model.FilterType.Application}; call {@link #filter} to
+	 *   replace them
 	 * @param {object} [mParameters=null] Additional model specific parameters as defined by subclasses; this class does not introduce any own parameters
-	 * @param {sap.ui.model.Sorter[]} [aSorters=null] Predefined sorter/s contained in an array (optional)
+	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} [aSorters=[]]
+	 *   The sorters used initially; call {@link #sort} to replace them
 	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
 	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
 	 *   <code>aApplicationFilters</code> together with other filters
@@ -262,10 +265,14 @@ sap.ui.define([
 	 * results of all groups are ANDed.
 	 *
 	 * @see sap.ui.model.TreeBinding.prototype.filter
-	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters Single filter object or an array of filter objects
-	 * @param {sap.ui.model.FilterType} [sFilterType] Type of the filter to be adjusted; if no type
-	 *   is given, any previously configured application filters are cleared, and the given filters
-	 *   are used as control filters
+	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} [aFilters=[]]
+	 *   The filters to use; in case of type {@link sap.ui.model.FilterType.Application} this replaces the filters given
+	 *   in {@link sap.ui.model.ClientModel#bindTree}; a falsy value is treated as an empty array and thus removes all
+	 *   filters of the specified type
+	 * @param {sap.ui.model.FilterType} [sFilterType]
+	 *   The type of the filter to replace; if no type is given, all filters previously configured with type
+	 *   {@link sap.ui.model.FilterType.Application} are cleared, and the given filters are used as filters of type
+	 *   {@link sap.ui.model.FilterType.Control}
 	 * @return {this} <code>this</code> to facilitate method chaining
 	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
 	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
@@ -378,7 +385,9 @@ sap.ui.define([
 	 * The tree will be sorted level by level. So the nodes are NOT sorted absolute, but relative to
 	 * their parent node, to keep the hierarchy untouched.
 	 *
-	 * @param {sap.ui.model.Sorter[]} aSorters An array of Sorter instances which will be applied
+	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} [aSorters=[]]
+	 *   The sorters to use; they replace the sorters given in {@link sap.ui.model.ClientModel#bindTree}; a falsy value
+	 *   is treated as an empty array and thus removes all sorters
 	 *
 	 * @return {this} Returns <code>this</code> to facilitate method chaining
 	 * @public
