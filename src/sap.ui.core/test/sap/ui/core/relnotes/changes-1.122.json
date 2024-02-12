@@ -1,0 +1,22 @@
+{
+  "1.122.0": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "865dd56b2de487c8db9b981a9b491bf3edb265b0",
+        "type": "FIX",
+        "text": " sap/ui/core/format/NumberFormat.format: fix rounding for positive scientific notation numbers"
+      },
+      {
+        "id": "293174e84c1cb572347ce2b119e8c50e919b2526",
+        "type": "FIX",
+        "text": " sap/ui/core/format/NumberFormat.RoundingMode: improve JSDoc"
+      },
+      {
+        "id": "61f4c1d27ab2de2a9639b41fb57aa0ca8a4bbc15",
+        "type": "FIX",
+        "text": " sap/ui/core/format/NumberFormat#format: Fix rounding of \"-.567\""
+      }
+    ]
+  }
+}

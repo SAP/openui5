@@ -1,0 +1,23 @@
+{
+  "1.122.0": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "5527dfc2f65e7d32b79e171dc1c81f9672138100",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Logic fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370016503"
+          }
+        ]
+      },
+      {
+        "id": "a879c1920e16c8d0bbab2af68f3dc05fba6de42d",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: revert icon change"
+      }
+    ]
+  }
+}
