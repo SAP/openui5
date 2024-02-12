@@ -665,6 +665,192 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("duplicate conditions", function(assert) {
+
+		oModel.setData({
+			conditions: {
+				Name: [
+					   Condition.createCondition(OperatorName.BT, ["A", "B"], undefined, undefined, ConditionValidated.NotValidated),
+					   Condition.createCondition(OperatorName.BT, ["C", "D"], undefined, undefined, ConditionValidated.NotValidated)
+					   ]
+			}
+		});
+
+		const fnDone = assert.async();
+
+		setTimeout(async function () { // for model update
+			await nextUIUpdate();
+			const oGrid = Element.getElementById("DCP1--conditions");
+			const aContent = oGrid.getContent();
+			const oField1 = aContent[2];
+			const oField2 = aContent[3];
+			const oButton = aContent[4];
+			const oField3 = aContent[7];
+			const oField4 = aContent[8];
+			const oButton2 = aContent[9];
+
+			oField1.focus();
+			setTimeout(async function() { // for FieldGroup delay
+				jQuery(oField1.getFocusDomRef()).val("C");
+				qutils.triggerKeydown(oField1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+				jQuery(oField2.getFocusDomRef()).val("D");
+				qutils.triggerKeydown(oField2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+				oButton.focus(); // to leave FieldGroup
+				await nextUIUpdate();
+				setTimeout(function() { // for FieldGroup delay
+					assert.equal(oField1.getValueState(), "Error", "first Field has Error state");
+					assert.ok(oField1.getValueStateText(), "first Field has Error state text");
+					assert.equal(oField2.getValueState(), "Error", "second Field has Error state");
+					assert.ok(oField2.getValueStateText(), "second Field has Error state text");
+					assert.notOk(oDefineConditionPanel.getInputOK(), "InputOK not set");
+
+					oField1.focus();
+					setTimeout(async function() { // for fieldGroup delay
+						jQuery(oField1.getFocusDomRef()).val("A");
+						qutils.triggerKeydown(oField1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+						oButton.focus(); // to leave FieldGroup
+						await nextUIUpdate();
+						setTimeout(function() { // for FieldGroup delay
+
+							assert.equal(oField1.getValueState(), "None", "first Field has no Error state");
+							assert.notOk(oField1.getValueStateText(), "first Field has no Error state text");
+							assert.equal(oField2.getValueState(), "None", "second Field has no Error state");
+							assert.notOk(oField2.getValueStateText(), "second Field has no Error state text");
+							assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set");
+
+							oField3.focus();
+							setTimeout(async function() { // for FieldGroup delay
+								jQuery(oField3.getFocusDomRef()).val("A");
+								qutils.triggerKeydown(oField1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+								oButton2.focus(); // to leave FieldGroup
+								await nextUIUpdate();
+								setTimeout(function() { // for FieldGroup delay
+
+									assert.equal(oField3.getValueState(), "Error", "first Field has Error state");
+									assert.ok(oField3.getValueStateText(), "first Field has Error state text");
+									assert.equal(oField4.getValueState(), "Error", "second Field has Error state");
+									assert.ok(oField4.getValueStateText(), "second Field has Error state text");
+									assert.notOk(oDefineConditionPanel.getInputOK(), "InputOK not set");
+
+									oField1.focus();
+									setTimeout(async function() { // for fieldGroup delay
+										jQuery(oField1.getFocusDomRef()).val("B");
+										qutils.triggerKeydown(oField1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+										oButton.focus(); // to leave FieldGroup
+										await nextUIUpdate();
+										setTimeout(function() { // for FieldGroup delay
+											assert.equal(oField3.getValueState(), "None", "first Field has no Error state");
+											assert.notOk(oField3.getValueStateText(), "first Field has no Error state text");
+											assert.equal(oField4.getValueState(), "None", "second Field has no Error state");
+											assert.notOk(oField4.getValueStateText(), "second Field has no Error state text");
+											assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set");
+
+											fnDone();
+										}, 0);
+									}, 0);
+								}, 0);
+							}, 0);
+						}, 0);
+					}, 0);
+				}, 0);
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("duplicate static conditions", function(assert) {
+
+		oModel.setData({
+			conditions: {
+				Name: [
+					   Condition.createCondition(OperatorName.Empty, [], undefined, undefined, ConditionValidated.NotValidated),
+					   Condition.createCondition(OperatorName.NotEmpty, [], undefined, undefined, ConditionValidated.NotValidated)
+					   ]
+			}
+		});
+
+		const fnDone = assert.async();
+		setTimeout(async function () { // wait for rendering
+			await nextUIUpdate();
+			const oOperatorField1 = Element.getElementById("DCP1--0-operator-inner");
+			const oOperatorField2 = Element.getElementById("DCP1--1-operator-inner");
+			oOperatorField2.setValue(OperatorName.Empty);
+			oOperatorField2.fireChange({value: OperatorName.Empty});
+
+			setTimeout(function () { // as model update is async
+				setTimeout(function () { // as parsing is async
+					setTimeout(function () { // as model update is async
+						setTimeout(async function () { // as row update is async
+							await nextUIUpdate();
+							let aConditions = oDefineConditionPanel.getConditions();
+							assert.equal(aConditions[1].operator, OperatorName.Empty, "Operator set on condition");
+							assert.equal(oOperatorField2.getValueState(), "Error", "Operator Field has Error state");
+							assert.ok(oOperatorField2.getValueStateText(), "Operator Field has Error state text");
+							assert.notOk(oDefineConditionPanel.getInputOK(), "InputOK not set");
+
+							oOperatorField2.setValue(OperatorName.NotEmpty);
+							oOperatorField2.fireChange({value: OperatorName.NotEmpty});
+
+							setTimeout(function () { // as model update is async
+								setTimeout(function () { // as parsing is async
+									setTimeout(function () { // as model update is async
+										setTimeout(async function () { // as row update is async
+											await nextUIUpdate();
+											aConditions = oDefineConditionPanel.getConditions();
+											assert.equal(aConditions[1].operator, OperatorName.NotEmpty, "Operator set on condition");
+											assert.equal(oOperatorField2.getValueState(), "None", "Operator Field has no Error state");
+											assert.notOk(oOperatorField2.getValueStateText(), "Operator Field has no Error state text");
+											assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set");
+
+											oOperatorField1.setValue(OperatorName.NotEmpty);
+											oOperatorField1.fireChange({value: OperatorName.NotEmpty});
+
+											setTimeout(function () { // as model update is async
+												setTimeout(function () { // as parsing is async
+													setTimeout(function () { // as model update is async
+														setTimeout(async function () { // as row update is async
+															await nextUIUpdate();
+															let aConditions = oDefineConditionPanel.getConditions();
+															assert.equal(aConditions[0].operator, OperatorName.NotEmpty, "Operator set on condition");
+															assert.equal(oOperatorField1.getValueState(), "Error", "Operator Field has Error state");
+															assert.ok(oOperatorField1.getValueStateText(), "Operator Field has Error state text");
+															assert.notOk(oDefineConditionPanel.getInputOK(), "InputOK not set");
+
+															oOperatorField2.setValue(OperatorName.Empty);
+															oOperatorField2.fireChange({value: OperatorName.Empty});
+
+															setTimeout(function () { // as model update is async
+																setTimeout(function () { // as parsing is async
+																	setTimeout(function () { // as model update is async
+																		setTimeout(async function () { // as row update is async
+																			await nextUIUpdate();
+																			aConditions = oDefineConditionPanel.getConditions();
+																			assert.equal(aConditions[1].operator, OperatorName.Empty, "Operator set on condition");
+																			assert.equal(oOperatorField1.getValueState(), "None", "Operator Field has no Error state");
+																			assert.notOk(oOperatorField1.getValueStateText(), "Operator Field has no Error state text");
+																			assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set");
+
+																			fnDone();
+																		}, 0);
+																	}, 0);
+																}, 0);
+															}, 0);
+														}, 0);
+													}, 0);
+												}, 0);
+											}, 0);
+										}, 0);
+									}, 0);
+								}, 0);
+							}, 0);
+						}, 0);
+					}, 0);
+				}, 0);
+			}, 0);
+		}, 0);
+
+	});
+
 	let oCustomOperator;
 
 	QUnit.module("Custom Operator", {
