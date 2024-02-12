@@ -750,7 +750,8 @@ sap.ui.require([
 						new SegmentedButtonItem({key: "C1", text: "1 1 1 1"}),
 						new SegmentedButtonItem({key: "C2", text: "1 2 2 2"}),
 						new SegmentedButtonItem({key: "C3", text: "1 2 3 3"}),
-						new SegmentedButtonItem({key: "C4", text: "1 2 3 4"})
+						new SegmentedButtonItem({key: "C4", text: "1 2 3 4"}),
+						new SegmentedButtonItem({key: "C5", text: "1 3 4 6"})
 					],
 					selectionChange: function(oEvent) {
 						var oItem = oEvent.getParameter("item");
@@ -766,6 +767,9 @@ sap.ui.require([
 							break;
 						case "C4":
 							oLayout6.setColumnsM(2).setColumnsL(3).setColumnsXL(4);
+							break;
+						case "C5":
+							oLayout6.setColumnsM(3).setColumnsL(4).setColumnsXL(6);
 							break;
 						default:
 							break;
