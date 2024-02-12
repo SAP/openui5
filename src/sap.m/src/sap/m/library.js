@@ -6175,6 +6175,30 @@ sap.ui.define([
 		});
 	}
 
+	/**
+	 * @typedef {object} sap.m.VariantManagementRename
+	 * @description An object type that represents the {@link sap.m.VariantManagement} <code>manage</code>-event property <code>rename</code>.
+	 * @public
+	 * @property {string} key the variant key.
+	 * @property {string} name the new title of the variant.
+	 */
+
+	/**
+	 * @typedef {object} sap.m.VariantManagementExe
+	 * @description An object type that represents the {@link sap.m.VariantManagement} <code>manage</code>-event property <code>exe</code>.
+	 * @public
+	 * @property {string} key the variant key.
+	 * @property {boolean} exe flag describing the associated Appy Automatically indicator.
+	 */
+
+	/**
+	 * @typedef {object} sap.m.VariantManagementFav
+	 * @description An object type that represents the {@link sap.m.VariantManagement} <code>manage</code>-event property <code>fav</code>.
+	 * @public
+	 * @property {string} key the variant key.
+	 * @property {boolean} visible flag describing the associated Favorite indicator.
+	 */
+
 	// ES6 constant represents the maximum safe integer
 	if (!Number.MAX_SAFE_INTEGER) {
 		Number.MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
