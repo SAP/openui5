@@ -1,0 +1,33 @@
+<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.uxap">
+
+	<ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageHeader objectTitle="Subsection background transparency"/>
+		</headerTitle>
+
+		<sections>
+			<ObjectPageSection showTitle="false">
+				<subSections>
+
+					<ObjectPageSubSection title="Subsection with transparent background:"
+						class="sapUxAPObjectPageSubSectionTransparentBackground">
+						<blocks>
+							<m:List>
+								<m:StandardListItem title="subsection content"/>
+							</m:List>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="Subsection with regular background:">
+						<blocks>
+							<m:List>
+								<m:StandardListItem title="subsection content"/>
+							</m:List>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>
