@@ -1635,6 +1635,7 @@ sap.ui.define([
 						.reportStateMessages(that.sResourcePath, {}, [sPath + sPredicate]);
 					fnOnRemove(false);
 				} else if (bRemoveFromCollection) {
+					_Helper.copySelected(aElements.$byPredicate[sPredicate], aReadResult[0]);
 					that.removeElement(iIndex, sPredicate, aElements, sPath);
 					// element no longer in cache -> re-insert via replaceElement
 					that.replaceElement(aElements, undefined, sPredicate, aReadResult[0],
@@ -1781,6 +1782,7 @@ sap.ui.define([
 		var oOldElement, sTransientPredicate;
 
 		if (iIndex === undefined) { // kept-alive element not in the list
+			// might be undefined because it was removed in #refreshSingleWithRemove already
 			oOldElement = aElements.$byPredicate[sPredicate];
 			aElements.$byPredicate[sPredicate] = oElement;
 		} else {
@@ -1795,6 +1797,9 @@ sap.ui.define([
 				aElements.$byPredicate[sTransientPredicate] = oElement;
 				_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
 			}
+		}
+		if (oOldElement) {
+			_Helper.copySelected(oOldElement, oElement);
 		}
 		_Helper.restoreUpdatingProperties(oOldElement, oElement);
 

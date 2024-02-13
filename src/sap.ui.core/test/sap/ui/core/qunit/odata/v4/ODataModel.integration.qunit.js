@@ -5029,6 +5029,8 @@ sap.ui.define([
 	// No request is added to the queue and ODataModel#hasPendingChanges and
 	// ODataListBinding#hasPendingChanges work as expected.
 	// JIRA: CPOUI5ODATAV4-36
+	//
+	// Selecting a context does not interfere with reset (JIRA: CPOUI5ODATAV4-1944).
 	QUnit.test("create an entity and immediately reset changes (no UI) V4-36", function (assert) {
 		var // use autoExpandSelect so that the cache is created asynchronously
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
@@ -5036,7 +5038,10 @@ sap.ui.define([
 
 		return this.createView(assert, "", oModel).then(function () {
 			var oListBindingWithoutUI = oModel.bindList("/SalesOrderList"),
-				oCreatedPromise = oListBindingWithoutUI.create({}, true).created();
+				oContext = oListBindingWithoutUI.create({}, true),
+				oCreatedPromise = oContext.created();
+
+			oContext.setSelected(true);
 
 			// This error is unavoidable as #fetchValue runs right after creating the context, but
 			// fails as the context is deleted already.
@@ -5205,8 +5210,10 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-12
 	//
 	// "Select all" is reset by #filter (JIRA: CPOUI5ODATAV4-1943).
+	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
 	QUnit.test("Relative ODLB inherits parent ODCB's query options on filter", function (assert) {
 		var oBinding,
+			oHeaderContext,
 			oModel,
 			sView = '\
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'42\\\')\',\
@@ -5247,7 +5254,21 @@ sap.ui.define([
 			var sResourceUrl = "EMPLOYEES('42')/EMPLOYEE_2_EQUIPMENTS?$orderby=ID&$select=Name&c1=a"
 					+ "&c2=b&$filter=EQUIPMENT_2_PRODUCT/SupplierIdentifier%20eq%202";
 
-			oBinding.getHeaderContext().setSelected(true); // "select all"
+			oHeaderContext = oBinding.getHeaderContext();
+			assert.deepEqual(oHeaderContext.getObject(), {
+				"@$ui5.context.isSelected" : false,
+				$count : 3
+			}, "JIRA: CPOUI5ODATAV4-1944");
+
+			oHeaderContext.setSelected(true); // "select all"
+
+			assert.deepEqual(oHeaderContext.getObject(), {
+				"@$ui5.context.isSelected" : true,
+				$count : 3
+			}, "JIRA: CPOUI5ODATAV4-1944");
+			assert.ok(oHeaderContext.isSelected());
+			assert.ok(oHeaderContext.getProperty("@$ui5.context.isSelected"),
+				"JIRA: CPOUI5ODATAV4-1944");
 
 			that.expectRequest(sResourceUrl + "&$skip=0&$top=100", {
 					value : [
@@ -5261,11 +5282,13 @@ sap.ui.define([
 			oBinding.filter(
 				new Filter("EQUIPMENT_2_PRODUCT/SupplierIdentifier", FilterOperator.EQ, 2));
 
-			assert.notOk(oBinding.getHeaderContext().isSelected(), "JIRA: CPOUI5ODATAV4-1943");
-
+			assert.notOk(oHeaderContext.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
+			assert.notOk(oHeaderContext.getProperty("@$ui5.context.isSelected"),
+				"JIRA: CPOUI5ODATAV4-1944");
 			assert.throws(function () {
 				oBinding.getDownloadUrl();
 			}, new Error("Result pending"));
+
 			return Promise.all([
 				oBinding.requestDownloadUrl().then(function (sDownloadUrl) {
 					assert.strictEqual(sDownloadUrl, sTeaBusi + sResourceUrl);
@@ -5273,6 +5296,11 @@ sap.ui.define([
 				}),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			assert.deepEqual(oHeaderContext.getObject(""), {
+				"@$ui5.context.isSelected" : false,
+				$count : 2
+			}, "JIRA: CPOUI5ODATAV4-1944");
 		});
 	});
 
@@ -6901,6 +6929,7 @@ sap.ui.define([
 	//
 	// Test oHeaderContext.getObject() and oHeaderContext.setProperty("$count")
 	// JIRA: CPOUI5ODATAV4-1404
+	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
 	QUnit.test("ODLB: $count and filter()", function (assert) {
 		var oHeaderContext,
 			oTable,
@@ -6928,8 +6957,10 @@ sap.ui.define([
 
 			// JIRA: CPOUI5ODATAV4-1404
 			assert.strictEqual(oHeaderContext.getProperty("$count"), 2);
-			assert.deepEqual(oHeaderContext.getObject(), {$count : 2});
-			assert.deepEqual(oHeaderContext.getObject(""), {$count : 2});
+			assert.deepEqual(oHeaderContext.getObject(),
+				{"@$ui5.context.isSelected" : false, $count : 2}, "JIRA: CPOUI5ODATAV4-1944");
+			assert.deepEqual(oHeaderContext.getObject(""),
+				{"@$ui5.context.isSelected" : false, $count : 2}, "JIRA: CPOUI5ODATAV4-1944");
 
 			that.expectChange("count", "2");
 			assert.strictEqual(oTableBinding.getCount(), 2);
@@ -6970,7 +7001,7 @@ sap.ui.define([
 			return Promise.all([
 				// code under test - request the header data while filter is still running
 				oHeaderContext.requestObject().then(function (oResult) {
-					assert.deepEqual(oResult, {$count : 1});
+					assert.deepEqual(oResult, {"@$ui5.context.isSelected" : false, $count : 1});
 				}),
 				that.waitForChanges(assert)
 			]);
@@ -7103,6 +7134,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1098
 	//
 	// "Select all" is reset by #changeParameters (JIRA: CPOUI5ODATAV4-1943).
+	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
 	QUnit.test("ODLB: $count and changeParameters()", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
@@ -7135,7 +7167,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			oTableBinding.getHeaderContext().setSelected(true); // "select all"
+			const oHeaderContext = oTableBinding.getHeaderContext();
+			oHeaderContext.setSelected(true); // "select all"
 
 			that.expectRequest("SalesOrderList?$expand=SO_2_BP&$select=SalesOrderID"
 					+ "&$filter=SalesOrderID gt '0500000001'&$skip=0&$top=100",
@@ -7151,7 +7184,9 @@ sap.ui.define([
 				$select : "SalesOrderID"
 			});
 
-			assert.notOk(oTableBinding.getHeaderContext().isSelected(), "JIRA: CPOUI5ODATAV4-1943");
+			assert.notOk(oHeaderContext.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
+			assert.notOk(oHeaderContext.getProperty("@$ui5.context.isSelected"),
+				"JIRA: CPOUI5ODATAV4-1944");
 
 			return that.waitForChanges(assert);
 		});
@@ -7362,7 +7397,8 @@ sap.ui.define([
 			var fnResolve,
 				oRowContext = that.oView.byId("list").getItems()[1].getBindingContext();
 
-			oTable.getBinding("items").getHeaderContext().setSelected(true);
+			const oHeaderContext = oTable.getBinding("items").getHeaderContext();
+			oHeaderContext.setSelected(true);
 
 			that.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20",
@@ -7390,8 +7426,9 @@ sap.ui.define([
 			return Promise.all([
 				oTable.setBindingContext(oRowContext),
 				resolveLater(function () {
-					assert.notOk(oTable.getBinding("items").getHeaderContext().isSelected(),
-						"JIRA: CPOUI5ODATAV4-1943");
+					assert.notOk(oHeaderContext.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
+					assert.notOk(oHeaderContext.getProperty("@$ui5.context.isSelected"),
+						"JIRA: CPOUI5ODATAV4-1944");
 
 					resolveLater(fnResolve); // must not respond before requestSideEffects
 					return oRowContext.requestSideEffects(["SO_2_SOITEM"]);
@@ -19322,6 +19359,7 @@ sap.ui.define([
 	//
 	// Selection on contexts which are deleted and restored (JIRA: CPOUI5ODATAV4-1943).
 	// Selection is cleared on successful deletion (JIRA: CPOUI5ODATAV4-2053).
+	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
 [
 	{desc : "submit", success : true},
 	{desc : "reset via model", resetViaModel : true},
@@ -19434,9 +19472,15 @@ sap.ui.define([
 			oContext4.setSelected(true);
 
 			assert.strictEqual(oContext2.toString(), "/SalesOrderList('2')[1;selected]");
+			assert.ok(oContext2.getProperty("@$ui5.context.isSelected"),
+				"JIRA: CPOUI5ODATAV4-1944");
 
 			oPromise2 = oContext2.delete();
 			oPromise4 = oContext4.delete();
+
+			assert.notOk(oContext2.isSelected(), "selection hidden while deleted");
+			assert.ok(oContext2.getProperty("@$ui5.context.isSelected"),
+				"selection still remembered");
 
 			assert.throws(function () {
 				// code under test (JIRA: CPOUI5ODATAV4-1943)
@@ -19445,6 +19489,8 @@ sap.ui.define([
 			// code under test (JIRA: CPOUI5ODATAV4-1943)
 			oContext2.setSelected(false);
 			assert.notOk(oContext2.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
+			assert.notOk(oContext2.getProperty("@$ui5.context.isSelected"),
+				"JIRA: CPOUI5ODATAV4-1944");
 
 			assert.ok(oBinding.hasPendingChanges());
 			assert.ok(oModel.hasPendingChanges());
@@ -19562,12 +19608,16 @@ sap.ui.define([
 					assert.ok(oFixture.success);
 					assert.ok(oContext4.isDeleted());
 					assert.notOk(oContext4.isSelected(), "JIRA: CPOUI5ODATAV4-2053");
+					assert.notOk(oContext4.getProperty("@$ui5.context.isSelected"),
+						"JIRA: CPOUI5ODATAV4-1944");
 				}, function (oError) {
 					assert.notOk(oFixture.success);
 					assert.ok(oError.canceled);
 					assert.notOk(oContext4.hasPendingChanges());
 					assert.notOk(oContext4.isDeleted());
 					assert.ok(oContext4.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
+					assert.ok(oContext4.getProperty("@$ui5.context.isSelected"),
+						"JIRA: CPOUI5ODATAV4-1944");
 					assert.strictEqual(oContext4.getProperty("SalesOrderID"), "4");
 				}),
 				oModel.submitBatch("update"),
@@ -20073,6 +20123,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1638
 	//
 	// Selection is hidden, but kept while deleted (JIRA: CPOUI5ODATAV4-2053).
+	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
 	QUnit.test("CPOUI5ODATAV4-1638: ODLB: deferred delete w/ isKeepAlive fails", function (assert) {
 		var oBinding,
 			oKeptContext1,
@@ -20141,6 +20192,8 @@ sap.ui.define([
 			oRowContext.setSelected(true);
 			oRowPromise = oRowContext.delete("doNotSubmit");
 			assert.notOk(oRowContext.isSelected(), "selection hidden while deleted");
+			assert.ok(oRowContext.getProperty("@$ui5.context.isSelected"),
+				"selection still remembered");
 
 			// code under test (JIRA: CPOUI5ODATAV4-2053)
 			assert.notOk(oBinding.getAllCurrentContexts().includes(oRowContext),
@@ -20223,10 +20276,8 @@ sap.ui.define([
 		}).then(function () {
 			assertIDs(["3", "1", "4", "5"]);
 			that.checkMoreButton(assert, "[4/7]");
-			assert.deepEqual(oKeptContext1.getObject(),
-				{GrossAmount : "3", SalesOrderID : "1"});
-			assert.deepEqual(oKeptContext2.getObject(),
-				{GrossAmount : "6", SalesOrderID : "6"});
+			assert.deepEqual(oKeptContext1.getObject(), {GrossAmount : "3", SalesOrderID : "1"});
+			assert.deepEqual(oKeptContext2.getObject(), {GrossAmount : "6", SalesOrderID : "6"});
 
 			that.expectRequest("SalesOrderList?$count=true&$filter=LifecycleStatus eq 'N'"
 					+ "&$select=GrossAmount,SalesOrderID&$orderby=GrossAmount&$skip=0&$top=4", {
@@ -20245,6 +20296,8 @@ sap.ui.define([
 			assert.notOk(oRowContext.hasPendingChanges());
 			assert.notOk(oRowContext.isDeleted());
 			assert.ok(oRowContext.isSelected(), "selection hidden, but kept while deleted");
+			assert.ok(oRowContext.getProperty("@$ui5.context.isSelected"),
+				"JIRA: CPOUI5ODATAV4-1944");
 
 			return Promise.all([
 				checkCanceled(assert, oRowPromise),
@@ -20254,11 +20307,9 @@ sap.ui.define([
 			assertIDs(["2", "3", "1", "4"]);
 			that.checkMoreButton(assert, "[4/8]");
 			assert.deepEqual(oRowContext.getObject(),
-				{GrossAmount : "1", SalesOrderID : "2"});
-			assert.deepEqual(oKeptContext1.getObject(),
-				{GrossAmount : "3", SalesOrderID : "1"});
-			assert.deepEqual(oKeptContext2.getObject(),
-				{GrossAmount : "6", SalesOrderID : "6"});
+				{"@$ui5.context.isSelected" : true, GrossAmount : "1", SalesOrderID : "2"});
+			assert.deepEqual(oKeptContext1.getObject(), {GrossAmount : "3", SalesOrderID : "1"});
+			assert.deepEqual(oKeptContext2.getObject(), {GrossAmount : "6", SalesOrderID : "6"});
 		});
 	});
 
@@ -25192,6 +25243,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1849
 	//
 	// Selection on header and root context (JIRA: CPOUI5ODATAV4-1943).
+	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
+	//
 	// Use $count (JIRA: CPOUI5ODATAV4-1855).
 	// Old vs. new format of RecursiveHierarchy annotation (JIRA: CPOUI5ODATAV4-2401).
 	//
@@ -25234,6 +25287,7 @@ sap.ui.define([
 			},
 			$count : true
 		}}" threshold="0" visibleRowCount="3">
+	<Text text="{= %{@$ui5.context.isSelected} }"/>
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text text="{BestFriend/Name}"/>
@@ -25314,9 +25368,7 @@ sap.ui.define([
 			checkTable("root is leaf", assert, oTable, [
 				"/Artists(ArtistID='0',IsActiveEntity=true)"
 			], [
-				[undefined, 1, "Friend #01"],
-				["", "", ""],
-				["", "", ""]
+				["", undefined, 1, "Friend #01"]
 			]);
 			assert.strictEqual(oListBinding.getCount(), 1, "count of nodes"); // code under test
 			assert.deepEqual(oRoot.getObject(), {
@@ -25336,17 +25388,24 @@ sap.ui.define([
 
 			// code under test
 			assert.notOk(oRoot.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
+			assert.notOk(oRoot.getProperty("@$ui5.context.isSelected"),
+				"JIRA: CPOUI5ODATAV4-1944");
 			assert.notOk(oHeaderContext.isSelected());
+			assert.notOk(oHeaderContext.getProperty("@$ui5.context.isSelected"));
 
 			// code under test
 			oRoot.setSelected(true);
 			assert.ok(oRoot.isSelected());
+			assert.ok(oRoot.getProperty("@$ui5.context.isSelected"), "JIRA: CPOUI5ODATAV4-1944");
+
 			assert.strictEqual(oRoot.toString(),
 				"/Artists(ArtistID='0',IsActiveEntity=true)[0;selected]");
 
 			// code under test
 			oHeaderContext.setSelected(true);
 			assert.ok(oHeaderContext.isSelected());
+			assert.ok(oHeaderContext.getProperty("@$ui5.context.isSelected"),
+				"JIRA: CPOUI5ODATAV4-1944");
 
 			that.expectChange("count", "1");
 
@@ -25355,6 +25414,12 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "$count");
 		}).then(function () {
+			checkTable("selected root", assert, oTable, [
+				"/Artists(ArtistID='0',IsActiveEntity=true)"
+			], [
+				[true, undefined, 1, "Friend #01"]
+			]);
+
 			assert.strictEqual(oListBinding.getCount(), 1, "count of nodes"); // code under test
 
 			that.expectRequest("Artists(ArtistID='0',IsActiveEntity=true)?$select=defaultChannel", {
@@ -25448,9 +25513,7 @@ sap.ui.define([
 			checkTable("side effect: BestFriend/Name for all rows", assert, oTable, [
 				"/Artists(ArtistID='0',IsActiveEntity=true)"
 			], [
-				[undefined, 1, "Friend #01 (updated)"],
-				["", "", ""],
-				["", "", ""]
+				[true, undefined, 1, "Friend #01 (updated)"]
 			]);
 			assert.strictEqual(oListBinding.getCount(), 1, "count of nodes"); // code under test
 
@@ -25495,9 +25558,7 @@ sap.ui.define([
 			checkTable("after side effect", assert, oTable, [
 				"/Artists(ArtistID='0',IsActiveEntity=true)"
 			], [
-				[undefined, 1, "Friend #01 (updated)"],
-				["", "", ""],
-				["", "", ""]
+				[true, undefined, 1, "Friend #01 (updated)"]
 			]);
 			assert.strictEqual(oListBinding.getCount(), 1, "count of nodes"); // code under test
 			assert.strictEqual(oRoot.getProperty("defaultChannel"), "260", "360 has been ignored");
@@ -25577,14 +25638,13 @@ sap.ui.define([
 				"/Artists(ArtistID='1',IsActiveEntity=true)",
 				"/Artists(ArtistID='0',IsActiveEntity=true)"
 			], [
-				[false, 1, ""],
-				["", "", ""],
-				["", "", ""]
+				["", false, 1, ""]
 			], 1);
 			assert.strictEqual(oListBinding.getCount(), 3, "count of nodes"); // code under test
 			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
 				"still kept alive");
 			assert.deepEqual(oKeptAliveNode.getObject(), {
+					"@$ui5.context.isSelected" : true,
 					"@odata.etag" : "etag0.4",
 					ArtistID : "0",
 					BestFriend : {
@@ -25639,9 +25699,7 @@ sap.ui.define([
 				"/Artists(ArtistID='1',IsActiveEntity=true)",
 				"/Artists(ArtistID='0',IsActiveEntity=true)"
 			], [
-				[false, 1, ""],
-				["", "", ""],
-				["", "", ""]
+				["", false, 1, ""]
 			], 1);
 			assert.strictEqual(oListBinding.getCount(), 3, "count of nodes"); // code under test
 			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
@@ -25678,13 +25736,14 @@ sap.ui.define([
 				"/Artists(ArtistID='1',IsActiveEntity=true)",
 				"/Artists(ArtistID='0',IsActiveEntity=true)"
 			], [
-				[true, 1, ""],
-				[false, 2, "Friend #01 (updated once more)"],
-				["", "", ""]
+				["", true, 1, ""],
+				[true, false, 2, "Friend #01 (updated once more)"],
+				["", "", "", ""]
 			]);
 			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
 				"still kept alive");
 			assert.deepEqual(oKeptAliveNode.getObject(), {
+					"@$ui5.context.isSelected" : true,
 					"@$ui5.node.isExpanded" : false,
 					"@$ui5.node.level" : 2,
 					"@odata.etag" : "etag0.4",
@@ -25770,14 +25829,16 @@ sap.ui.define([
 				"/Artists(ArtistID='0',IsActiveEntity=true)",
 				"/Artists(ArtistID='2',IsActiveEntity=true)"
 			], [
-				[true, 1, "Friend #01 (no more)"],
-				[true, 2, ""],
-				[undefined, 3, ""]
+				["", true, 1, "Friend #01 (no more)"],
+				[true, true, 2, ""],
+				["", undefined, 3, ""]
 			]);
 			assert.strictEqual(oListBinding.getCount(), 3, "count of nodes"); // code under test
 			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
 				"still kept alive");
+			assert.ok(oKeptAliveNode.isSelected());
 			assert.deepEqual(oKeptAliveNode.getObject(), {
+					"@$ui5.context.isSelected" : true,
 					"@$ui5.node.isExpanded" : true,
 					"@$ui5.node.level" : 2,
 					"@odata.etag" : "etag0.4",
@@ -25790,7 +25851,6 @@ sap.ui.define([
 					},
 					defaultChannel : "460"
 				}, "after expandTo");
-			assert.ok(oKeptAliveNode.isSelected());
 
 			// no additional request for same aggregation data
 			// code under test (BCP: 2370045709)
@@ -29832,6 +29892,8 @@ sap.ui.define([
 	// "Refresh single" for stale elements; keep same context instance for created nodes throughout
 	// collapse and side effects.
 	// JIRA: CPOUI5ODATAV4-2374
+	//
+	// Selection survives a move (JIRA: CPOUI5ODATAV4-1944)
 	QUnit.test("Recursive Hierarchy: create new children, move 'em", function (assert) {
 		var oBeta, oBetaCreated, oGamma, oGammaCreated, oListBinding, oNewRoot, fnRespond, oRoot,
 			oTable;
@@ -30019,6 +30081,7 @@ sap.ui.define([
 				Name : "Gamma"
 			}, /*bSkipRefresh*/true);
 			oGammaCreated = oGamma.created();
+			oGamma.setSelected(true);
 
 			assert.strictEqual(oGamma.getIndex(), 1);
 
@@ -30086,7 +30149,9 @@ sap.ui.define([
 			checkCreatedPersisted(assert, oBeta, oBetaCreated);
 
 			assert.strictEqual(oGamma.getIndex(), 2);
+			assert.ok(oGamma.isSelected());
 			assert.deepEqual(oGamma.getObject(), {
+				"@$ui5.context.isSelected" : true,
 				"@$ui5.context.isTransient" : false,
 				"@$ui5.node.level" : 3,
 				"@odata.etag" : "etag2.1", // updated
@@ -30137,6 +30202,7 @@ sap.ui.define([
 
 			assert.strictEqual(oGamma.getIndex(), 1);
 			assert.deepEqual(oGamma.getObject(), {
+				"@$ui5.context.isSelected" : true,
 				"@$ui5.context.isTransient" : false,
 				"@$ui5.node.level" : 2,
 				"@odata.etag" : "etag2.2", // updated
@@ -30238,6 +30304,7 @@ sap.ui.define([
 
 			assert.strictEqual(oGamma.getIndex(), 1);
 			assert.deepEqual(oGamma.getObject(), {
+				"@$ui5.context.isSelected" : true,
 				"@$ui5.context.isTransient" : false,
 				"@$ui5.node.level" : 2,
 				"@odata.etag" : "etag2.3",
@@ -30305,6 +30372,7 @@ sap.ui.define([
 
 			assert.strictEqual(oGamma.getIndex(), 1);
 			assert.deepEqual(oGamma.getObject(), {
+				"@$ui5.context.isSelected" : true,
 				"@$ui5.context.isTransient" : false,
 				"@$ui5.node.isExpanded" : true,
 				"@$ui5.node.level" : 2,
@@ -49268,6 +49336,8 @@ make root = ${bMakeRoot}`;
 				"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-9007199254740991;deleted]",
 				"Context#toString: deleted");
 			assert.notOk(oContext2.isSelected(), "JIRA: CPOUI5ODATAV4-2053");
+			assert.notOk(oContext2.getProperty("@$ui5.context.isSelected"),
+				"JIRA: CPOUI5ODATAV4-1944");
 
 			return Promise.all([
 				checkCanceled(assert, oContext2.created()),
@@ -49281,6 +49351,10 @@ make root = ${bMakeRoot}`;
 				"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-9007199254740991;destroyed]",
 				"Context#toString: destroyed");
 			assert.notOk(oContext2.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
+			assert.throws(() => {
+				oContext2.getProperty("@$ui5.context.isSelected");
+				// TypeError("Cannot read properties of undefined (reading 'checkSuspended')")
+			}, "Binding already gone (JIRA: CPOUI5ODATAV4-1944)");
 
 			that.expectChange("count", "3")
 				.expectChange("note", [,, "Note 3"])
@@ -50924,11 +50998,14 @@ make root = ${bMakeRoot}`;
 	// Refresh a kept-alive context that is not part of the collection (B1). After refresh this
 	// context is not in the collection and has new data (A1).
 	// JIRA: CPOUI5ODATAV4-366
+	//
+	// Selection and data binding for selection (JIRA: CPOUI5ODATAV4-1943, CPOUI5ODATAV4-1944).
 	QUnit.test("CPOUI5ODATAV4-366: Context#refresh on a context that is not in the collection"
 			+ "; after refresh that context is not in the collection", function (assert) {
-		var that = this;
+		var oKeptContext,
+			that = this;
 
-		return this.createKeepAliveScenario(assert, true).then(function (oKeptContext) {
+		return this.createKeepAliveScenario(assert, true).then(function (oKeptContext0) {
 			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '1'"
 					+ "&$select=GrossAmount,Note,SalesOrderID", {
 					value : [{GrossAmount : "199", Note : "After refresh", SalesOrderID : "1"}]
@@ -50940,10 +51017,20 @@ make root = ${bMakeRoot}`;
 					value : [/*does not matter*/]
 				});
 
+			oKeptContext = oKeptContext0;
+
+			// code under test
+			oKeptContext.setSelected(true);
+
 			// code under test
 			oKeptContext.refresh(undefined, true);
 
 			return that.waitForChanges(assert, "(3)");
+		}).then(function () {
+			// code under test
+			assert.ok(oKeptContext.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
+			assert.ok(oKeptContext.getProperty("@$ui5.context.isSelected"),
+				"JIRA: CPOUI5ODATAV4-1944");
 		});
 	});
 
@@ -53437,6 +53524,8 @@ make root = ${bMakeRoot}`;
 				// code under test (& clean up)
 				oModel.resetChanges("doNotSubmit");
 				assert.notOk(oCreationRowContext.isSelected(), "already destroyed");
+				// binding is already destroyed
+				// assert.notOk(oCreationRowContext.getProperty("@$ui5.context.isSelected"));
 				assert.strictEqual(oCreationRowContext.created(), undefined, "already destroyed");
 
 				return Promise.all([
@@ -55312,6 +55401,8 @@ make root = ${bMakeRoot}`;
 	// context outside the collection. Refresh a single selected context inside the collection with
 	// removal from the collection, but still implicitly kept alive.
 	// JIRA: CPOUI5ODATAV4-2053
+	//
+	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
 [
 	"changeParameters", "filter", "refresh", "resume", "sideEffectsRefresh", "sort"
 ].forEach(function (sMethod) {
@@ -55321,6 +55412,7 @@ make root = ${bMakeRoot}`;
 			oContext_01,
 			oContext_03,
 			oExpectedNewObject = {
+				"@$ui5.context.isSelected" : true,
 				"@$ui5.context.isTransient" : false,
 				MEMBER_COUNT : 0,
 				Team_Id : "NEW"
@@ -55484,6 +55576,7 @@ make root = ${bMakeRoot}`;
 			assert.strictEqual(aAllContexts[2], oCreatedContext, "implicitly kept alive");
 			assert.ok(oContext_01.isSelected());
 			assert.deepEqual(oContext_01.getObject(), {
+				"@$ui5.context.isSelected" : true,
 				MEMBER_COUNT : 9,
 				Name : "Team #1",
 				Team_Id : "TEAM_01"
@@ -55536,12 +55629,14 @@ make root = ${bMakeRoot}`;
 			assert.deepEqual(oCreatedContext.getObject(), oExpectedNewObject);
 			assert.ok(oContext_01.isSelected());
 			assert.deepEqual(oContext_01.getObject(), {
+				"@$ui5.context.isSelected" : true,
 				MEMBER_COUNT : 9,
 				Name : "pending",
 				Team_Id : "TEAM_01"
 			});
 			assert.ok(oContext_03.isSelected());
 			assert.deepEqual(oContext_03.getObject(), {
+				"@$ui5.context.isSelected" : true,
 				MEMBER_COUNT : 11,
 				Team_Id : "TEAM_03"
 			});
@@ -55640,6 +55735,8 @@ make root = ${bMakeRoot}`;
 			assert.strictEqual(aAllContexts[0], oContext_01);
 			assert.strictEqual(aAllContexts[1], oCreatedContext, "implicitly kept alive");
 			assert.ok(oCreatedContext.isSelected());
+			assert.ok(oCreatedContext.getProperty("@$ui5.context.isSelected"),
+				"JIRA: CPOUI5ODATAV4-1944");
 			assert.strictEqual(oCreatedContext.isTransient(), false, "created");
 			delete oExpectedNewObject["@$ui5.context.isTransient"]; //TODO bug?!
 			assert.deepEqual(oCreatedContext.getObject(), oExpectedNewObject);
@@ -55716,6 +55813,8 @@ make root = ${bMakeRoot}`;
 		}).then(function () {
 			if (bCancelCreation) { // creation already canceled
 				assert.notOk(oCreatedContext.isSelected(), "destroyed");
+				// binding is already destroyed
+				// assert.notOk(oCreatedContext.getProperty("@$ui5.context.isSelected"));
 				assert.strictEqual(oCreatedContext.getModel(), undefined, "destroyed");
 
 				return;
@@ -55758,6 +55857,8 @@ make root = ${bMakeRoot}`;
 			return that.waitForChanges(assert, "ODLB#destroyPreviousContextsLater");
 		}).then(function () {
 			assert.notOk(oCreatedContext.isSelected(), "destroyed");
+			// binding is already destroyed
+			// assert.notOk(oCreatedContext.getProperty("@$ui5.context.isSelected"));
 			assert.strictEqual(oCreatedContext.getModel(), undefined, "destroyed");
 		});
 	});
@@ -55767,6 +55868,8 @@ make root = ${bMakeRoot}`;
 	// Scenario: Create a new context, save and select it. Have it drop out of the collection via a
 	// refresh of the single context or the whole binding. See that it is not destroyed.
 	// JIRA: CPOUI5ODATAV4-2053
+	//
+	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
 [false, true].forEach(function (bSingle) {
 	var sTitle = "CPOUI5ODATAV4-2053: removeCreated, w/o UI on top; bSingle=" + bSingle;
 
@@ -55802,6 +55905,13 @@ make root = ${bMakeRoot}`;
 				that.waitForChanges(assert, "create")
 			]);
 		}).then(function () {
+			assert.deepEqual(oCreatedContext.getObject(), {
+				"@$ui5.context.isSelected" : true,
+				"@$ui5.context.isTransient" : false,
+				MEMBER_COUNT : 1,
+				Team_Id : "NEW"
+			});
+
 			that.expectRequest("TEAMS?$filter=Team_Id eq 'NEW'", {
 					value : [{MEMBER_COUNT : 2, Team_Id : "NEW"}]
 				});
@@ -55829,9 +55939,11 @@ make root = ${bMakeRoot}`;
 			assert.strictEqual(oCreatedContext.isTransient(), false, "created");
 			assert.deepEqual(oCreatedContext.getObject(), bSingle ? {
 				//TODO "@$ui5.context.isTransient" : false,
+				"@$ui5.context.isSelected" : true,
 				MEMBER_COUNT : 2,
 				Team_Id : "NEW"
 			} : {
+				"@$ui5.context.isSelected" : true,
 				"@$ui5.context.isTransient" : false,
 				MEMBER_COUNT : 2,
 				Team_Id : "NEW"
