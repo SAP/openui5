@@ -389,7 +389,7 @@ function(
 
 	Toolbar.prototype.onsapspace = function(oEvent) {
 		// Prevent browser scrolling in case of SPACE key
-		if (!this.getActive() || oEvent.srcControl === this._activeButton) {
+		if ((!this.getActive() && oEvent.isMarked()) || oEvent.srcControl === this._activeButton) {
 			oEvent.preventDefault();
 		}
 	};
