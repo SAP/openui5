@@ -2776,6 +2776,9 @@ sap.ui.define([
 				return vValue;
 			}
 			if (sValue.substring(iIndexOfPoint + 1).length <= iMaxFractionDigits) {
+				if (typeof vValue === "string") {
+					vValue = NumberFormat._shiftDecimalPoint(vValue, 0, true);
+				}
 				return vValue;
 			}
 		}
