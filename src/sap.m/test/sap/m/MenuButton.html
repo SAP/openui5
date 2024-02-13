@@ -339,6 +339,16 @@ var oMenu22 = new sap.m.Menu({
 			}
 		});
 
+		var oMenuButtonLong1 = new sap.m.MenuButton('mblong1', {
+			text: "Menu Button in Regular mode with long text",
+			buttonMode: sap.m.MenuButtonMode.Regular
+		});
+
+		var oMenuButtonLong2 = new sap.m.MenuButton('mblong2', {
+			text: "Menu Button in Split mode with long text",
+			buttonMode: sap.m.MenuButtonMode.Split
+		});
+
         var oMenu6 = new sap.m.Menu({
             title: "random 6",
             itemSelected: function(oEvent) {
@@ -651,6 +661,8 @@ var oMenu22 = new sap.m.Menu({
                 oLabel3,
                 oMenuButton3,
 				oMenuButton4,
+                oMenuButtonLong1,
+                oMenuButtonLong2,
 
                 oLabel6,
                 oMenuButton6,
@@ -807,7 +819,7 @@ var oMenu22 = new sap.m.Menu({
                             ]
                         }).addStyleClass("sapContrast")
                     ]
-                }), 
+                }),
                 new sap.m.CustomListItem({
                     id: "customListItem3",
                     content: [

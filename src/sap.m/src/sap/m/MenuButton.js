@@ -88,7 +88,6 @@ sap.ui.define([
 
 					/**
 					 * Defines the width of the <code>MenuButton</code>.
-					 * <br/><b>Note:</b>As per visual design this width can be maximum of 12rem (192px).
 					 */
 					width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
 
