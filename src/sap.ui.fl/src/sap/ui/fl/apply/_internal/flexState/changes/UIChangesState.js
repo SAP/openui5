@@ -180,6 +180,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks the current dependencies map for any open (unresolved) dependencies belonging to the given control
+	 * and returns the open dependent changes.
+	 *
+	 * @param {object} oSelector - Selector of the control
+	 * @param {sap.ui.core.UIComponent} oAppComponent - Application component instance that is currently loading
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of all open dependent changes for the control
+	 */
+	UIChangesState.getOpenDependentChangesForControl = function(oSelector, oAppComponent) {
+		const sReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
+		return DependencyHandler.getOpenDependentChangesForControl(
+			UIChangesState.getLiveDependencyMap(sReference),
+			JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent),
+			oAppComponent
+		);
+	};
+
+	/**
 	 * Returns all UI Changes.
 	 *
 	 * @param {string} sReference - Flex reference
