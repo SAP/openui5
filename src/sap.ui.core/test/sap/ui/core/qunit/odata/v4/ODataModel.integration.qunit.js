@@ -33092,7 +33092,8 @@ make root = ${bMakeRoot}`;
 	// Scroll to "Xi" and see that it is inserted on the right position.
 	// JIRA: CPOUI5ODATAV4-2378
 	//
-	// Second requestParent returns the same context (JIRA: CPOUI5ODATAV4-2467).
+	// Second #requestParent on the same node returns the same context (JIRA: CPOUI5ODATAV4-2467).
+	// #requestParent on adjacent children returns the same context (JIRA: CPOUI5ODATAV4-2467).
 	QUnit.test("Recursive Hierarchy: getParent/requestParent with expandTo > 1",
 			async function (assert) {
 		const sUrl = "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -33470,9 +33471,11 @@ make root = ${bMakeRoot}`;
 			[undefined, 3, "4.2", "Pi"]
 		], 15);
 		const oOmicron = oTable.getRows()[0].getBindingContext();
+		const oPi = oTable.getRows()[1].getBindingContext();
 
 		// code under test
 		assert.strictEqual(oOmicron.getParent(), undefined);
+		assert.strictEqual(oPi.getParent(), undefined);
 
 		this.expectRequest({
 				batchNo : 11,
@@ -33505,13 +33508,16 @@ make root = ${bMakeRoot}`;
 			});
 
 		// code under test
-		const [oXi, oXi0] = await Promise.all([
+		const [oXi, oXi0, oXi1] = await Promise.all([
+			oPi.requestParent(),
 			oOmicron.requestParent(),
 			oOmicron.requestParent(),
-			this.waitForChanges(assert, "request parent of 4.1 (Omicron)")
+			this.waitForChanges(assert, "request parent of 4.1 (Omicron) and 4.2 (Pi)")
 		]);
 
 		assert.strictEqual(oXi0, oXi,
+			"CPOUI5ODATAV4-2467: request parent of 4.2 (Pi) returns the same context");
+		assert.strictEqual(oXi0, oXi1,
 			"CPOUI5ODATAV4-2467: second request returns the same context");
 		assert.strictEqual(oXi.getIndex(), 12);
 		assert.strictEqual(oXi.getPath(), "/Artists(ArtistID='4',IsActiveEntity=false)");
