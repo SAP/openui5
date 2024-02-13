@@ -720,6 +720,7 @@ sap.ui.define([
 			assert.strictEqual(oGrid.getSelectedDates().length, 0, "no days initially added");
 
 			//act
+			oGrid.onmousedown(oFakeEvent);
 			oGrid.onmouseup(oFakeEvent);
 			await nextUIUpdate(this.clock);
 
@@ -728,7 +729,7 @@ sap.ui.define([
 			for (i = iCellIndexStartWeek; i < iCellIndexEndWeek; i++) {
 				assert.ok(oGrid.$().find('.sapMSPCMonthDay')[i].classList.contains("sapMSPCMonthDaySelected"), i + " cell is selected");
 			}
-
+			assert.strictEqual(oGrid._oItemNavigation.getFocusedIndex(), iCellIndexStartWeek, "The first day of the selected week should receive focus");
 			//clean up
 			oGrid.destroy();
 		});

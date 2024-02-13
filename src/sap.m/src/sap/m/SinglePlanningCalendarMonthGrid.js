@@ -471,6 +471,21 @@ sap.ui.define([
 			this._fireSelectionEvent(oEvent);
 		};
 
+		/**
+		 * Handles the <code>mousedown</code> event on the grid.
+		 *
+		 * @param {jQuery.Event} oEvent The event object
+		 */
+		SinglePlanningCalendarMonthGrid.prototype.onmousedown = function(oEvent) {
+			if (!oEvent.target.classList.contains("sapMSPCMonthWeekNumber")) {
+				return;
+			}
+
+			const oFirstSiblingElement = oEvent.originalEvent.target.nextSibling.children[0];
+			const iIndex =  this._aGridCells.indexOf(oFirstSiblingElement);
+			this._oItemNavigation.focusItem(iIndex);
+		};
+
 		SinglePlanningCalendarMonthGrid.prototype._rangeSelection = function(oStartDate) {
 			var oCurrentDate = UI5Date.getInstance(oStartDate),
 				_bSelectWeek = false,
