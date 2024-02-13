@@ -3,10 +3,12 @@
 sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/integration/widgets/Card",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	library,
 	Card,
+	nextUIUpdate,
 	nextCardReadyEvent
 ) {
 	"use strict";
@@ -96,4 +98,51 @@ sap.ui.define([
 	});
 
 
+	QUnit.module("Tile Component Card", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				width: "800px",
+				manifest: "test-resources/sap/ui/integration/qunit/manifests/component/tileComponent/manifest.json"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+		}
+	});
+
+	QUnit.test("Method tileSetVisible is called", async function (assert) {
+		const oCard = this.oCard;
+
+		await nextCardReadyEvent(oCard);
+		await nextUIUpdate();
+
+		const oComponent = oCard.getCardContent().getAggregation("_content").getComponentInstance();
+
+		assert.ok(oComponent.tileVisible, "The component.tileSetVisible was called and is true.");
+	});
+
+	QUnit.test("Method tileRefresh is called on refreshData", async function (assert) {
+		const oCard = this.oCard;
+
+		await nextCardReadyEvent(oCard);
+		await nextUIUpdate();
+
+		const oComponent = oCard.getCardContent().getAggregation("_content").getComponentInstance();
+
+		oCard.refreshData();
+		assert.ok(oComponent.tileRefreshWasCalled, "The component.tileRefresh was called.");
+	});
+
+	QUnit.test("Custom componentData is passed to component", async function (assert) {
+		const oCard = this.oCard;
+
+		await nextCardReadyEvent(oCard);
+		await nextUIUpdate();
+
+		const oComponent = oCard.getCardContent().getAggregation("_content").getComponentInstance();
+
+		assert.strictEqual(oComponent.getComponentData().properties.abc, "321", "The component.getComponentData().properties are correct.");
+	});
 });

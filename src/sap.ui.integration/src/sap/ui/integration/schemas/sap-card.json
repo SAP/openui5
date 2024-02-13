@@ -142,6 +142,10 @@
           "additionalProperties": {
             "$ref": "#/definitions/Configuration.NoData"
           }
+        },
+        "componentData": {
+          "description": "[Experimental] Object which will be passed to the component as 'componentData'",
+          "type": "object"
         }
       }
     },
