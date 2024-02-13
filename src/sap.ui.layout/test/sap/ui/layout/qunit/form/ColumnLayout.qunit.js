@@ -589,8 +589,8 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 5, 1, false, false, 1, false, true, 1, false, false, 1, false, true);
 	});
 
-	QUnit.test("Five containers - set columns (XL 6 columns)", async function(assert) {
-		oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(6);
+	QUnit.test("Five containers - set columns (M 3, L 4, XL 6 columns)", async function(assert) {
+		oColumnLayout.setColumnsM(3).setColumnsL(4).setColumnsXL(6);
 		await addContainer("FC2");
 		await addContainer("FC3");
 		await addContainer("FC4");
@@ -604,13 +604,13 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, true, false, 1, true, false, 1, true, false);
 
 		$Container = jQuery("#FC3");
-		checkContainerClasses(assert, $Container, 3, 1, false, false, 1, false, true, 1, true, false, 1, true, false);
+		checkContainerClasses(assert, $Container, 3, 1, false, false, 1, true, false, 1, true, false, 1, true, false);
 
 		$Container = jQuery("#FC4");
-		checkContainerClasses(assert, $Container, 4, 1, false, false, 1, false, false, 1, false, true, 1, true, false);
+		checkContainerClasses(assert, $Container, 4, 1, false, false, 1, false, true, 1, true, false, 1, true, false);
 
 		$Container = jQuery("#FC5");
-		checkContainerClasses(assert, $Container, 5, 1, false, false, 1, false, true, 1, false, false, 1, true, false);
+		checkContainerClasses(assert, $Container, 5, 1, false, false, 1, false, false, 1, false, true, 1, true, false);
 	});
 
 	QUnit.test("ColumnContainerData - One container", async function(assert) {
