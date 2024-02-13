@@ -192,7 +192,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("filterChangeByView", {
+	QUnit.module("isChangeInView", {
 		beforeEach() {
 			this.oAppComponent = new UIComponent("app");
 		},
@@ -237,26 +237,26 @@ sap.ui.define([
 					idIsLocal: true
 				}
 			});
-			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange1), true, "the change belongs to the view");
-			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange2), true, "the change belongs to the view");
-			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange3), false, "the changes does not belong to the view");
-			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange4), true, "the change belongs to the view");
-			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange5), false, "");
+			assert.strictEqual(ChangeUtils.isChangeInView(mPropertyBag, oChange1), true, "the change belongs to the view");
+			assert.strictEqual(ChangeUtils.isChangeInView(mPropertyBag, oChange2), true, "the change belongs to the view");
+			assert.strictEqual(ChangeUtils.isChangeInView(mPropertyBag, oChange3), false, "the changes does not belong to the view");
+			assert.strictEqual(ChangeUtils.isChangeInView(mPropertyBag, oChange4), true, "the change belongs to the view");
+			assert.strictEqual(ChangeUtils.isChangeInView(mPropertyBag, oChange5), false, "");
 
 			mPropertyBag.viewId = "app---view2";
-			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange1), false, "the changes does not belong to the view");
-			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange2), false, "the changes does not belong to the view");
-			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange3), false, "the changes does not belong to the view");
-			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange4), false, "the changes does not belong to the view");
-			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange5), true, "the change belongs to the view");
+			assert.strictEqual(ChangeUtils.isChangeInView(mPropertyBag, oChange1), false, "the changes does not belong to the view");
+			assert.strictEqual(ChangeUtils.isChangeInView(mPropertyBag, oChange2), false, "the changes does not belong to the view");
+			assert.strictEqual(ChangeUtils.isChangeInView(mPropertyBag, oChange3), false, "the changes does not belong to the view");
+			assert.strictEqual(ChangeUtils.isChangeInView(mPropertyBag, oChange4), false, "the changes does not belong to the view");
+			assert.strictEqual(ChangeUtils.isChangeInView(mPropertyBag, oChange5), true, "the change belongs to the view");
 		});
 
 		QUnit.test("without proper selector", function(assert) {
 			var oChange1 = new UIChange({});
-			assert.strictEqual(ChangeUtils.filterChangeByView({}, oChange1), false, "the changes does not belong to the view");
+			assert.strictEqual(ChangeUtils.isChangeInView({}, oChange1), false, "the changes does not belong to the view");
 
 			oChange1.setSelector({});
-			assert.strictEqual(ChangeUtils.filterChangeByView({}, oChange1), false, "the changes does not belong to the view");
+			assert.strictEqual(ChangeUtils.isChangeInView({}, oChange1), false, "the changes does not belong to the view");
 		});
 
 		QUnit.test("with changes having a viewSelector", function(assert) {
@@ -289,9 +289,9 @@ sap.ui.define([
 					}
 				}
 			});
-			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange1), true, "the change belongs to the view");
-			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange2), true, "the change belongs to the view");
-			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange3), false, "the changes does not belong to the view");
+			assert.strictEqual(ChangeUtils.isChangeInView(mPropertyBag, oChange1), true, "the change belongs to the view");
+			assert.strictEqual(ChangeUtils.isChangeInView(mPropertyBag, oChange2), true, "the change belongs to the view");
+			assert.strictEqual(ChangeUtils.isChangeInView(mPropertyBag, oChange3), false, "the changes does not belong to the view");
 		});
 	});
 

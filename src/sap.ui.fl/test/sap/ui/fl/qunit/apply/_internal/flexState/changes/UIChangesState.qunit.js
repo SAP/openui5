@@ -64,8 +64,12 @@ sap.ui.define([
 				selector: { id: "controlId1" },
 				variantReference: "foo"
 			};
+			this.oChange6 = {
+				fileName: "fileNameChange6",
+				selector: { persistencyKey: "persistencyKey1" }
+			};
 			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {
-				changes: [this.oChange1, this.oChange2],
+				changes: [this.oChange1, this.oChange2, this.oChange6],
 				variantDependentControlChanges: [this.oChange3, this.oChange4, this.oChange5]
 			});
 		},
@@ -259,16 +263,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("getAllUIChanges", function(assert) {
-			assert.strictEqual(UIChangesState.getAllUIChanges(sReference).length, 5, "all changes are returned");
+			assert.strictEqual(UIChangesState.getAllUIChanges(sReference).length, 6, "all changes are returned");
 
 			FlexState.addDirtyFlexObject(sReference, FlexObjectFactory.createUIChange({}));
-			assert.strictEqual(UIChangesState.getAllUIChanges(sReference).length, 6, "the dirty change is now also part of the return");
+			assert.strictEqual(UIChangesState.getAllUIChanges(sReference).length, 7, "the dirty change is now also part of the return");
 
 			FlexState.addDirtyFlexObject(sReference, FlexObjectFactory.createAppDescriptorChange({}));
-			assert.strictEqual(UIChangesState.getAllUIChanges(sReference).length, 6, "the app descriptor change is not returned");
+			assert.strictEqual(UIChangesState.getAllUIChanges(sReference).length, 7, "the app descriptor change is not returned");
 
 			FlexState.addDirtyFlexObject(sReference, FlexObjectFactory.createUIChange({variantReference: "foo"}));
-			assert.strictEqual(UIChangesState.getAllUIChanges(sReference).length, 7, "the var dependent change is returned");
+			assert.strictEqual(UIChangesState.getAllUIChanges(sReference).length, 8, "the var dependent change is returned");
+		});
+
+		QUnit.test("getAllApplicableUIChanges", function(assert) {
+			const aAllApplicableUIChanges = UIChangesState.getAllApplicableUIChanges(sReference);
+			assert.strictEqual(aAllApplicableUIChanges.length, 5, "all UIChanges are returned");
 		});
 
 		QUnit.test("getOpenDependentChangesForControl with the given test data", function(assert) {

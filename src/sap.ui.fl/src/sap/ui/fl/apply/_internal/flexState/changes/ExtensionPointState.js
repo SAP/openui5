@@ -47,7 +47,7 @@ sap.ui.define([
 		if (oChange.getSelector().name !== mPropertyBag.extensionPointName) {
 			return false;
 		}
-		return ChangesUtils.filterChangeByView(mPropertyBag, oChange);
+		return ChangesUtils.isChangeInView(mPropertyBag, oChange);
 	}
 
 	function isValidForRuntimeOnlyChanges(oChange, mExtensionPointInfo) {

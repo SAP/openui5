@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/changes/Applier",
-	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
@@ -29,7 +28,6 @@ sap.ui.define([
 	JsControlTreeModifier,
 	Component,
 	Applier,
-	ChangesUtils,
 	FlexObjectFactory,
 	States,
 	DependencyHandler,
@@ -193,35 +191,6 @@ sap.ui.define([
 			);
 		});
 		return aChanges;
-	};
-
-	/**
-	 * Gets the changes for the given view id. The complete view prefix has to match.
-	 *
-	 * Example:
-	 * Change has selector id:
-	 * view1--view2--controlId
-	 *
-	 * Will match for view:
-	 * view1--view2
-	 *
-	 * Will not match for view:
-	 * view1
-	 * view1--view2--view3
-	 *
-	 * @param {object} mPropertyBag contains additional data that are needed for reading of changes
-	 * @param {string} mPropertyBag.viewId - id of the view
-	 * @param {string} mPropertyBag.name - name of the view
-	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component for the view
-	 * @param {string} mPropertyBag.componentId - responsible component's id for the view
-	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - responsible modifier
-	 * @returns {Promise} resolving with an array of changes
-	 * @public
-	 */
-	ChangePersistence.prototype.getChangesForView = function(mPropertyBag) {
-		return this.getChangesForComponent(mPropertyBag).then(function(aChanges) {
-			return aChanges.filter(ChangesUtils.filterChangeByView.bind(undefined, mPropertyBag));
-		});
 	};
 
 	function finalizeChangeCreation(oChange, oAppComponent) {
