@@ -76,7 +76,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Util.calcTypeWidth = (function() {
-		const oTimezones = LocaleData.getInstance(new Locale(Localization.getLanguageTag())).getTimezoneTranslations();
 		let sLongestTimezone;
 		var fBooleanWidth = 0;
 		var aDateParameters = [2023, 9, 26, 22, 47, 58, 999];
@@ -87,6 +86,7 @@ sap.ui.define([
 
 		const getLongestTimezone = function() {
 			if (!sLongestTimezone) {
+				const oTimezones = LocaleData.getInstance(new Locale(Localization.getLanguageTag())).getTimezoneTranslations();
 				[sLongestTimezone] = Object.entries(oTimezones).reduce(([sTimezone, iLength], [sKey, sValue]) => {
 					return typeof sValue === "string" && sValue.length > iLength ? [sKey, sValue.length] : [sTimezone, iLength];
 				}, ["", 0]);
