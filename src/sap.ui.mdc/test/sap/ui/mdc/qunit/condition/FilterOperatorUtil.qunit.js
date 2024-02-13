@@ -1089,15 +1089,16 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createCondition(OperatorName.BT, [null, "b"])],
 						formatValue: "...b",
-						parsedValue: undefined, //TODO: parse what can be formatted
+						parsedValue: "b",
+						condition: null,
 						isEmpty: true,
 						valid: true
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.BT, ["a"])],
 						formatValue: "a...",
-						parsedValue: undefined, //TODO: parse what can be formatted
-						isEmpty: true,
+						parsedValue: "a",
+						condition: null,
 						valid: false
 					},
 					{
@@ -1144,7 +1145,8 @@ sap.ui.define([
 						formatArgs: [Condition.createCondition(OperatorName.NOTBT, [null, "b"])],
 						formatValue: "!(...b)",
 						parseArgs: ["!...b"],
-						parsedValue: undefined, //TODO: parse what can be formatted
+						parsedValue: "b",
+						condition: null,
 						isEmpty: true,
 						valid: true
 					},
@@ -1152,7 +1154,8 @@ sap.ui.define([
 						formatArgs: [Condition.createCondition(OperatorName.NOTBT, ["a"])],
 						formatValue: "!(a...)",
 						parseArgs: ["!a..."],
-						parsedValue: undefined, //TODO: parse what can be formatted
+						parsedValue: "a",
+						condition: null,
 						isEmpty: true,
 						valid: false
 					},

@@ -45,7 +45,6 @@ sap.ui.define([
 				if (oConfiguration.valueTypes && oConfiguration.valueTypes.length > 0) {
 					oConfiguration.tokenTest = oConfiguration.tokenTest || "^#tokenText#$";
 					oConfiguration.tokenParse = oConfiguration.tokenParse || "^#tokenText#$|^(.+)?$"; // if text not entered take everything as just argument might be entered
-					oConfiguration.tokenParseMatchIndex = 1;
 				} else {
 					oConfiguration.tokenParse = oConfiguration.tokenParse || "^#tokenText#$";
 				}

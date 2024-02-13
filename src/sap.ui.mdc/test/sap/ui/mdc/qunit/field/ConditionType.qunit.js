@@ -1559,7 +1559,6 @@ sap.ui.define([
 			filterOperator: FilterOperator.Contains,
 			tokenTest: "^\\*(.*)\\*$",
 			tokenParse: "^\\*(.+)?\\*$|^([^\\*]?.*[^\\*]?)$",
-			tokenParseMatchIndex: 1,
 			tokenFormat: "*{0}*",
 			valueTypes: [OperatorValueType.Self],
 			validateInput: false
