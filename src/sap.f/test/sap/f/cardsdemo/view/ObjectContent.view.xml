@@ -99,7 +99,7 @@
 				width="auto"
 				class="sapUiTinyMargin" />
 			<w:Card
-				id="cardImageAndOverlayWithFooter2"
+				id="cardImgOvWithFooter2"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageAndOverlayWithFooter2.json"
 				width="auto"
 				class="sapUiTinyMargin" />
@@ -109,7 +109,7 @@
 				width="auto"
 				class="sapUiTinyMargin" />
 			<w:Card
-				id="cardImageAndOverlayWithFooter"
+				id="cardImgOvWithFooter"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageAndOverlayWithFooter.json"
 				width="auto"
 				class="sapUiTinyMargin" />
@@ -119,7 +119,7 @@
 				width="400px"
 				class="sapUiTinyMargin" />
 				<w:Card
-			id="cardImageAndOverlayNoHeaderNoFooter"
+			id="cardImgOvNoHeaderNoFooter"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/imageAndOverlayNoHeaderAndNoFooter.json"
 				width="400px"
 				class="sapUiTinyMargin" />
@@ -135,36 +135,36 @@
 				class="sapUiTinyMargin" />
 			<VBox width="500px">
 				<w:Card
-					id="cardJustImageWithOverlayTextPosition"
+					id="cardImgOvTextPosition"
 					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/justImageWithOverlayTextPosition.json"
 					width="auto"
 					class="sapUiTinyMargin" />
 			</VBox>
 			<w:Card
-				id="cardJustImageWithOverlayGradient"
+				id="cardImgOverlayGradient"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/justImageWithOverlayGradient.json"
 				width="600px"
 				height="200px"
 				class="sapUiTinyMargin" />
 			<w:Card
-				id="justImageWithOverlayImagePosition"
+				id="cardImgOvImagePosition"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/justImageWithOverlayImagePosition.json"
 				width="600px"
 				height="200px"
 				class="sapUiTinyMargin" />
 			<w:Card
-				id="justImageWithOverlayNotFullWidth"
+				id="cardImgOvNotFullWidth"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/justImageWithOverlayNotFullWidth.json"
 				width="600px"
 				height="200px"
 				class="sapUiTinyMargin" />
 			<w:Card
-				id="justImageWithOverlayCalcHeight"
+				id="cardImgOvCalcHeight"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/justImageWithOverlayCalcHeight.json"
 				width="600px"
 				class="sapUiTinyMargin" />
 			<w:Card
-				id="justImageWithOverlayImgHeight"
+				id="cardImgOvImgHeight"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/justImageWithOverlayImgHeight.json"
 				width="600px"
 				class="sapUiTinyMargin" />
