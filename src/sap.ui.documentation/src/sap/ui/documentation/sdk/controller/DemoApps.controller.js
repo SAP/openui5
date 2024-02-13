@@ -42,7 +42,7 @@ sap.ui.define([
 				var oModel = new JSONModel(aDemoApps);
 				this.setModel(oModel);
 
-				this.addCategoryClassToGridItems("sapUiDemoKitDemoAppsMainContent");
+				this.addCategoryClassToGridItems("sapUiDemoKitDemoAppsMain");
 			}.bind(this));
 		},
 
@@ -65,7 +65,7 @@ sap.ui.define([
 		 */
 		addCategoryClassToGridItems(gridId) {
 			this.byId(gridId).getItems().forEach(function(gridItem) {
-				var cssClass = gridItem.data("demo-apps-category");
+				var cssClass = gridItem.data("demoAppsCategoryClass");
 				gridItem.addStyleClass(cssClass);
 			});
 		},

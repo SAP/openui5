@@ -447,10 +447,9 @@ sap.ui.define([
 					parameters: {
 						/**
 						 * List of changed variants.
-						 * Each entry contains a <code>key</code> (the variant key)  and a <code>name</code> (the new title of the variant).
 						 */
 						renamed: {
-							type: "object[]"
+							type: "sap.m.VariantManagementRename[]"
 						},
 
 						/**
@@ -462,18 +461,16 @@ sap.ui.define([
 
 						/**
 						 * List of variant keys and the associated Execute on Selection indicator.
-						 * Each entry contains a <code>key</code> (the variant key) and an <code>exe</code> flag describing the intention.
 						 */
 						exe: {
-							type: "object[]"
+							type: "sap.m.VariantManagementExe[]"
 						},
 
 						/**
 						 * List of variant keys and the associated favorite indicator.
-						 * Each entry contains a <code>key</code> (the variant key) and a <code>visible</code> flag describing the intention.
 						 */
 						fav: {
-							type: "object[]"
+							type: "sap.m.VariantManagementFav[]"
 						},
 
 						/**

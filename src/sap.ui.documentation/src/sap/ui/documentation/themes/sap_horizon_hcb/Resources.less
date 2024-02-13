@@ -1,0 +1,22 @@
+.sapUiDemokit .sapUiDemoKitResourcesPage {
+	.sapUiDemoKitResourcesIntroCard.sapFCard {
+		background: @sapUiTileBackground;
+	}
+
+	.sapUiDemoKitResourcesMain {
+		[class*="sapUiDemoKitResourcesCategory"]
+		.sapUiDemoKitResourcesRegularCard.sapFCard {
+			.sapUiDemoKitCardHeader.sapFCardHeader {
+				background-color: @sapUiTileBackground;
+
+				&:hover {
+					background-color: @sapActiveColor;
+				}
+
+				.sapFAvatar:not(.sapMAvatarPressed):not(.sapMAvatarDisabled):hover {
+					background-color: unset;
+				}
+			}
+		}
+	}
+}

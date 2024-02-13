@@ -17,8 +17,13 @@ sap.ui.define([
 
 	ImageWithOverlayRenderer.render = function(oRm, oControl) {
 		oRm.openStart("div", oControl)
-			.class("sapUiIntImageWithOverlay")
-			.openEnd();
+			.class("sapUiIntImageWithOverlay");
+
+		if (oControl.getPadding() === "MediumStart") {
+			oRm.class("sapUiIntImageWithOverlayPaddingMediumStart");
+		}
+
+		oRm.openEnd();
 		oRm.renderControl(oControl.getAggregation("image"));
 		oRm.renderControl(oControl._getTextsLayout());
 		oRm.close("div");

@@ -1,8 +1,9 @@
 .sapUiDemokit .sapUiDemoKitDemoAppsPage {
-	.sapFCard.sapUiDemoKitDemoAppsMainHeaderCard {
+	.sapUiDemoKitDemoAppsIntroCard.sapFCard {
 		background: @sapUiTileBackground;
 
 		.sapFCardHeader .sapFCardHeaderText {
+
 			.sapFCardTitle,
 			.sapFCardSubtitle {
 				color: @sapUiTileTextColor;
@@ -10,20 +11,33 @@
 		}
 	}
 
-	.sapFCard.sapUiDemoKitDemoAppsCommonCard {
-		.sapFCardHeader {
-			background-color: @sapUiTileBackground;
+	.sapUiDemoKitDemoAppsMain {
+		[class*="sapUiDemoKitDemoAppsCategory"] .sapUiDemoKitDemoAppsRegularCard.sapFCard {
+			.sapUiDemoKitCardHeader.sapFCardHeader {
+				background-color: @sapUiTileBackground;
 
-			.sapFCardHeaderText .sapMLnk.sapUiDemoKitDemoAppsCardHeaderLink {
-				color: @sapUiTileTextColor;
-
-				&:visited {
-					color: @sapUiTileTextColor;
+				&:hover {
+					background-color: @sapActiveColor;
 				}
-			}
 
-			.sapFCardHeaderImage .sapFCardIcon.sapFAvatar .sapUiIcon {
-				color: @sapUiTileTextColor;
+				.sapFCardHeaderText {
+
+					.sapFCardTitle,
+					.sapFCardSubtitle {
+						color: @sapUiTileTextColor;
+					}
+				}
+
+				.sapFCardHeaderImage .sapFCardIcon.sapFAvatar {
+
+					&:not(.sapMAvatarPressed):not(.sapMAvatarDisabled):hover {
+						background-color: unset;
+					}
+
+					.sapUiIcon {
+						color: @sapUiTileTextColor;
+					}
+				}
 			}
 		}
 	}

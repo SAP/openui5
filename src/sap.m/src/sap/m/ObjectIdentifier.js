@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
 	'./ObjectIdentifierRenderer',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/m/Image"
 ],
 function(
 	library,
@@ -31,7 +32,8 @@ function(
 	Device,
 	ManagedObject,
 	ObjectIdentifierRenderer,
-	KeyCodes
+	KeyCodes,
+	Image
 ) {
 	"use strict";
 
@@ -242,7 +244,7 @@ function(
 			id : sImageId + "-icon",
 			size : sSize,
 			useIconTooltip : false
-		}, sap.m.Image);
+		}, Image);
 
 		oImage.setSrc(sURI);
 

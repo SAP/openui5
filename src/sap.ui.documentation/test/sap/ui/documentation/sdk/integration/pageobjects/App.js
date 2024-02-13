@@ -49,11 +49,11 @@ sap.ui.define([
 					});
 				},
 
-				iPressTheToolsTabButton : function() {
+				iPressTheResourcesTabButton : function() {
 					return this.waitFor({
-						id: "toolsTab",
+						id: "resourcesTab",
 						actions: new Press(),
-						errorMessage: "No toolsTab button found"
+						errorMessage: "No resourcesTab button found"
 					});
 				}
 

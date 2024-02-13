@@ -22,7 +22,8 @@ sap.ui.require([
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Boolean",
 	"sap/ui/core/Item",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/m/ScrollContainer"
 ], function(
 	Element,
 	JSONModel,
@@ -47,7 +48,8 @@ sap.ui.require([
 	StringType,
 	BooleanType,
 	Item,
-	Core
+	Core,
+	ScrollContainer
 ) {
 	"use strict";
 
@@ -169,7 +171,7 @@ sap.ui.require([
 				new Text({text: "Additional attribute metadata", visible: "{/helperSettingsEnabled}"}),
 				oAdditionalAttributesInput,
 				new Text({text: "Attribute metadata"}),
-				new sap.m.ScrollContainer({content: oAttributeMetadataText, vertical: true})
+				new ScrollContainer({content: oAttributeMetadataText, vertical: true})
 			],
 			gridTemplateRows: "auto auto auto auto 1fr {= ${/helperSettingsEnabled} ? 'auto 2fr' : ''}"
 		});
@@ -211,7 +213,7 @@ sap.ui.require([
 					id: "TestPage",
 					enableScrolling: false,
 					title: "Test Page",
-					headerContent: new sap.m.Button({
+					headerContent: new Button({
 						text: "Attribute Overview",
 						press: function() {
 							oApp.to("AttributeOverview", "slide");
@@ -231,7 +233,7 @@ sap.ui.require([
 				new Page({
 					id: "AttributeOverview",
 					title: "Attribute Overview",
-					headerContent: new sap.m.Button({
+					headerContent: new Button({
 						text: "Test Page",
 						press: function() {
 							oApp.to("TestPage", "slide");

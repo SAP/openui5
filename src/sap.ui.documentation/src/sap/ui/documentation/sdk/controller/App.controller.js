@@ -1710,7 +1710,7 @@ sap.ui.define([
 				{ key: "api", 		text: oResourceBundle.getText("APP_TABHEADER_ITEM_API_REFERENCE") },
 				{ key: "controls", 	text: oResourceBundle.getText("APP_TABHEADER_ITEM_SAMPLES") },
 				{ key: "demoapps", 	text: oResourceBundle.getText("APP_TABHEADER_ITEM_DEMO_APPS") },
-				{ key: "tools", 	text: oResourceBundle.getText("APP_TABHEADER_ITEM_TOOLS") }
+				{ key: "resources", text: oResourceBundle.getText("APP_TABHEADER_ITEM_RESOURCES") }
 			];
 
 			var selectedItem = items.find(function (item) { return item.key === sKey; });

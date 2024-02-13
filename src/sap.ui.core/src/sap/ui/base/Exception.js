@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides a filter for list bindings
+// Provides a base exception class
 sap.ui.define(function() {
 	"use strict";
 

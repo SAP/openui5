@@ -3,9 +3,9 @@
 	xmlns="sap.m"
 	xmlns:f="sap.f"
 	xmlns:card="sap.f.cards"
+	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:grid="sap.ui.layout.cssgrid"
-	xmlns:core="sap.ui.core"
 	xmlns:custom="sap.ui.documentation"
 	displayBlock="true"
 	height="100%">
@@ -13,17 +13,19 @@
 	<ScrollContainer
 		class="sapUiDemoKitDemoAppsPage"
 		id="sapUiDemoKitDemoAppsPage"
-		width="100%"
-		height="100%"
 		vertical="true"
-		horizontal="false">
+		horizontal="false"
+		width="100%"
+		height="100%">
 
 		<VBox class="sapUiMediumMargin sapUiLargeMarginBottom">
-			<f:Card class="sapUiDemoKitDemoAppsMainHeaderCard">
+			<f:Card class="sapUiDemoKitDemoAppsIntroCard">
 				<f:header>
 					<card:Header
 						title="{i18n>DEMO_APPS_TITLE}"
-						subtitle="{= ${versionData>/isOpenUI5} ? ${i18n>DEMO_APPS_SUBTITLE_OPENUI5} : ${i18n>DEMO_APPS_SUBTITLE_SAPUI5} }"
+						subtitle="{= ${versionData>/isOpenUI5}
+							? ${i18n>DEMO_APPS_SUBTITLE_OPENUI5}
+							: ${i18n>DEMO_APPS_SUBTITLE_SAPUI5} }"
 						subtitleMaxLines="5" />
 				</f:header>
 				<f:content>
@@ -32,7 +34,7 @@
 			</f:Card>
 		</VBox>
 
-		<grid:CSSGrid class="sapUiDemoKitDemoAppsLayoutPaddingBeginEnd sapUiDemoKitDemoAppsLayoutPaddingBottom">
+		<grid:CSSGrid class="sapUiDemoKitDemoAppsPaddingBeginEnd sapUiDemoKitDemoAppsPaddingBottom">
 			<!-- Page Content Ratio Config -->
 			<grid:customLayout>
 				<grid:GridResponsiveLayout>
@@ -49,8 +51,8 @@
 			</grid:customLayout>
 
 			<grid:items>
-				<!-- #1 Page Main Content -->
-				<grid:CSSGrid id="sapUiDemoKitDemoAppsMainContent" class="sapUiDemoKitDemoAppsMainContent"
+				<!-- Main -->
+				<grid:CSSGrid id="sapUiDemoKitDemoAppsMain" class="sapUiDemoKitDemoAppsMain"
 					items="{/demoAppsByCategory}">
 					<grid:customLayout>
 						<grid:GridBasicLayout gridRowGap="3rem" />
@@ -63,9 +65,10 @@
 
 						<grid:customData>
 							<core:CustomData
-								key="demo-apps-category"
-								value="{ path: 'categoryId', formatter: '.formatter.getDemoAppsCategoryClass' }"
-								writeToDom="true" />
+								key="demoAppsCategoryClass"
+								value="{
+									path: 'categoryId',
+									formatter: '.formatter.getDemoAppsCategoryClass' }" />
 						</grid:customData>
 
 						<Title
@@ -99,12 +102,13 @@
 								</grid:GridResponsiveLayout>
 							</grid:customLayout>
 
-							<f:Card class="sapUiDemoKitDemoAppsCommonCard">
+							<f:Card class="sapUiDemoKitDemoAppsRegularCard">
 								<f:header>
-									<custom:DemoAppsCardHeader href="{ref}" hrefText="{name}" iconSrc="{= 'sap-icon://' + ${icon} }" />
+									<custom:DemoKitCardHeader title="{name}" href="{ref}"
+										iconSrc="{= 'sap-icon://' + ${icon} }" />
 								</f:header>
 								<f:content>
-									<VBox class="sapUiDemoKitDemoAppsCardContentPadding" wrap="Wrap">
+									<VBox class="sapUiDemoKitDemoAppsContentPadding" wrap="Wrap">
 										<Text class="sapUiSmallMarginBottom" text="{desc}" >
 											<layoutData>
 												<FlexItemData growFactor="1" />
@@ -140,18 +144,17 @@
 						</grid:CSSGrid>
 					</grid:CSSGrid>
 
-				</grid:CSSGrid>
-				<!-- #1 Page Main Content End -->
+				</grid:CSSGrid> <!-- Main Container End-->
 
-				<!-- #2 Page Aside Content -->
-				<grid:CSSGrid id="sapUiDemoKitDemoAppsAsideContent" class="sapUiDemoKitDemoAppsAsideContent">
-					<VBox class="sapUiDemoKitDemoAppsAsideContentDesktop">
+				<!-- Aside -->
+				<grid:CSSGrid id="sapUiDemoKitDemoAppsAside" class="sapUiDemoKitDemoAppsAside">
+					<VBox class="sapUiDemoKitDemoAppsAsideDesktop" wrap="Wrap">
 						<f:Card class="sapUiDemoKitDemoAppsAsideCard">
 							<f:header>
 								<card:Header title="{i18n>DEMO_APPS_DOWNLOAD_OVERVIEW}" />
 							</f:header>
 							<f:content>
-								<List class="sapUiDemoKitDemoAppsDownloadListContentPadding" items="{/demoApps}" showSeparators="None">
+								<List items="{/demoApps}" showSeparators="None">
 									<InputListItem visible="{= !!${config} }" label="{name}">
 										<customData>
 											<core:CustomData key="config" value="{config}" />
@@ -164,7 +167,7 @@
 						</f:Card>
 					</VBox>
 
-					<VBox class="sapUiDemoKitDemoAppsAsideContentMobile" wrap="Wrap">
+					<VBox class="sapUiDemoKitDemoAppsAsideMobile" wrap="Wrap">
 						<Panel class="sapUiDemoKitDemoAppsAsidePanel" expandable="true" headerText="{i18n>DEMO_APPS_DOWNLOAD_OVERVIEW}">
 							<List items="{/demoApps}" showSeparators="None">
 								<InputListItem visible="{= !!${config} }" label="{name}">
@@ -177,14 +180,11 @@
 							</List>
 						</Panel>
 					</VBox>
-				</grid:CSSGrid>
-				<!-- #2 Page Aside Content End -->
+				</grid:CSSGrid> <!-- Aside Container End-->
 
 			</grid:items>
-
 		</grid:CSSGrid>
 
 		<core:Fragment fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
 	</ScrollContainer>
-
 </mvc:View>

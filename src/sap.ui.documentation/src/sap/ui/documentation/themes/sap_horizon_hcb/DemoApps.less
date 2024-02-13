@@ -1,11 +1,22 @@
 .sapUiDemokit .sapUiDemoKitDemoAppsPage {
-	.sapFCard.sapUiDemoKitDemoAppsMainHeaderCard {
+	.sapUiDemoKitDemoAppsIntroCard.sapFCard {
 		background: @sapUiTileBackground;
 	}
 
-	.sapFCard.sapUiDemoKitDemoAppsCommonCard {
-		.sapFCardHeader {
-			background-color: @sapUiTileBackground;
+	.sapUiDemoKitDemoAppsMain {
+		[class*="sapUiDemoKitDemoAppsCategory"]
+		.sapUiDemoKitDemoAppsRegularCard.sapFCard {
+			.sapUiDemoKitCardHeader.sapFCardHeader {
+				background-color: @sapUiTileBackground;
+
+				&:hover {
+					background-color: @sapActiveColor;
+				}
+
+				.sapFAvatar:not(.sapMAvatarPressed):not(.sapMAvatarDisabled):hover {
+					background-color: unset;
+				}
+			}
 		}
 	}
 }

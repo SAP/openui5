@@ -16,3 +16,9 @@
 .sapUiSizeCompact .cozyLabel {
 	padding-top: 0.5rem;
 }
+
+.sapMLabel.labelGen3 {
+	font-weight: bold;
+	padding: 2rem 1rem 1rem;
+	width: auto;
+}

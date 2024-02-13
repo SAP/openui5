@@ -43,7 +43,7 @@ sap.ui.define([
 			"sap.ui.documentation.ParamText",
 			"sap.ui.documentation.Search",
 			"sap.ui.documentation.TitleLink",
-			"sap.ui.documentation.DemoAppsCardHeader"
+			"sap.ui.documentation.DemoKitCardHeader"
 		],
 		elements: [
 			"sap.ui.documentation.Row",

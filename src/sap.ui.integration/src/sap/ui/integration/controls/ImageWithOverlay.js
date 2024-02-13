@@ -72,11 +72,20 @@ sap.ui.define([
 				 */
 				textColor: {type: "string", group: "Misc", defaultValue: "" },
 				/**
+				 * Defines the CSS filter for the text.
+				 * Note: The card developer is responsible for the contrast ratio - right text color and overlay background effect should be set
+				 */
+				textFilter: {type: "string", group: "Misc", defaultValue: "" },
+				/**
 				 * Defines the color of the background, which is placed under the texts and over the image.
 				 * Note: If set, the text background color would not be themeable (will stay the same as provided with this property and won't change with the theme).
 				 * Note: The card developer is responsible for the contrast ratio - right text color and overlay background effect should be set
 				 */
-				background: {type: "string", group: "Misc", defaultValue: "" }
+				background: {type: "string", group: "Misc", defaultValue: "" },
+				/**
+				 * Set to <code>MediumStart</code> to have medium size inline padding at the start of the overlay.
+				 */
+				padding: {type: "string", group: "Misc", defaultValue: "" }
 			},
 			aggregations: {
 				image: { type: "sap.m.Image", multiple: false },
@@ -110,15 +119,21 @@ sap.ui.define([
 		Control.prototype.onAfterRendering.apply(this, arguments);
 
 		var sTextColor = this.getTextColor(),
+			sTextFilter = this.getTextFilter(),
 			sBackground = this.getBackground(),
 			aOverlayTexts;
 
-		if (sTextColor) {
+		if (sTextColor || sTextFilter) {
 			aOverlayTexts = this.getDomRef().getElementsByClassName("sapMText");
 
 			for (let i = 0; i < aOverlayTexts.length; i++) {
 				const text = aOverlayTexts[i];
-				text.style.color = sTextColor;
+				if (sTextColor) {
+					text.style.color = sTextColor;
+				}
+				if (sTextFilter) {
+					text.style.filter = sTextFilter;
+				}
 			}
 		}
 

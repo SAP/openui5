@@ -283,8 +283,10 @@ sap.ui.define([
 		}
 
 	};
+
 	/**
 	 * @restricted
+	 * @param {string} sPath - The path to be parsed.
 	 */
 	DocumentationRouter.prototype.parsePath = function (sPath) {
 		if (sPath === "#") {
@@ -300,11 +302,11 @@ sap.ui.define([
 		this.parse(sPath);
 
 		// Add new URL history and update URL
-		if (window['sap-ui-documentation-static']) {
-			window.history.pushState({},undefined,"#/" + sPath);
-		} else {
-			window.history.pushState({},undefined, sPath);
+		if (sPath && window['sap-ui-documentation-static'] && !sPath.startsWith("#/")) {
+			sPath = "#/" + sPath;
 		}
+
+		window.history.pushState({}, undefined, sPath);
 	};
 
 	DocumentationRouter.prototype.mouseDownClickHandler = function (oEvent) {
