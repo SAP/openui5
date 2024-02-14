@@ -78,10 +78,14 @@ sap.ui.define([
 				var oController = oView.getController();
 
 				//check lifecycle hooks
-				assert.equal(oController.onInit(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
-				assert.equal(oController.onExit(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
-				assert.equal(oController.onBeforeRendering(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
-				assert.equal(oController.onAfterRendering(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+				oController.onInit();
+				assert.equal(oController._onInitCalled, true, "Controller method implementation was not replaced");
+				oController.onExit();
+				assert.equal(oController._onExitCalled, true, "Controller method implementation was not replaced");
+				oController.onBeforeRendering();
+				assert.equal(oController._onBeforeRenderingCalled, true, "Controller method implementation was not replaced");
+				oController.onAfterRendering();
+				assert.equal(oController._onAfterRenderingCalled, true, "Controller method implementation was not replaced");
 
 				//other methods
 				assert.equal(oController.method1(), "aString", "Controller method has a return, i.e. method implementation was not replaced");

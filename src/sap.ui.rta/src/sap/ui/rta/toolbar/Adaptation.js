@@ -99,8 +99,8 @@ sap.ui.define([
 		this._mSizeLimits = {
 			switchToIcons: undefined
 		};
-		this._pFragmentLoaded = Base.prototype.init.apply(this, aArgs)
-		.then(function() {
+		Base.prototype.init.apply(this, aArgs);
+		this._pFragmentLoaded = this._pFragmentLoaded.then(function() {
 			this._onResize = this._onResize.bind(this);
 			window.addEventListener("resize", this._onResize);
 			this._aIntersectionObservers = [];
@@ -110,10 +110,6 @@ sap.ui.define([
 	Adaptation.prototype._calculateWindowWidth = function(aEntries) {
 		var iSectionWidth = aEntries[0].intersectionRect.width;
 		return (iSectionWidth * 2) + this._iSwitcherToolbarWidth + 80/* toolbar padding */;
-	};
-
-	Adaptation.prototype.onFragmentLoaded = function() {
-		return this._pFragmentLoaded;
 	};
 
 	Adaptation.prototype.exit = function(...aArgs) {

@@ -79,6 +79,7 @@ sap.ui.define([
 			}
 			// notify Elements via a pseudo browser event (onLocalizationChanged)
 			if (oObject.isA("sap.ui.core.Element")) {
+				oBrowserEvent._bNoReturnValue = true; // localizationChanged handler aren't allowed to return any value, mark for future fatal throw.
 				oObject._handleEvent(oBrowserEvent);
 			}
 		}

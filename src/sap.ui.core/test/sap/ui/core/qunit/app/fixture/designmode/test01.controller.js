@@ -6,19 +6,19 @@ sap.ui.define([
 
 	// lifecycle hooks
 		onInit : function() {
-			return "aString";
+			this._onInitCalled = true;
 		},
 
 		onExit : function(){
-			return "aString";
+			this._onExitCalled = true;
 		},
 
 		onBeforeRendering : function(){
-			return "aString";
+			this._onBeforeRenderingCalled = true;
 		},
 
 		onAfterRendering : function(){
-			return "aString";
+			this._onAfterRenderingCalled = true;
 		},
 
 	//other methods
