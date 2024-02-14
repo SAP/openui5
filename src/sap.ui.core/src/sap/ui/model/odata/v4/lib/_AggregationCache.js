@@ -254,6 +254,7 @@ sap.ui.define([
 					throw new Error("Modified on client and on server: "
 						+ that.sResourcePath + sPredicate);
 				} // else: ETag changed, ignore kept element!
+				_Helper.copySelected(oKeptElement, oElement);
 			}
 
 			if (sPredicate) {
@@ -785,7 +786,8 @@ sap.ui.define([
 
 	/**
 	 * Returns a promise to be resolved with the index for the requested parent node. The
-	 * parent is also added to the correct position in this cache.
+	 * parent is also added to the correct position in this cache. Must only be called if
+	 * {@link #getParentIndex} returns <code>undefined</code>.
 	 *
 	 * @param {number} iIndex
 	 *   The index of the child node
@@ -797,7 +799,21 @@ sap.ui.define([
 	 * @public
 	 */
 	_AggregationCache.prototype.fetchParentIndex = function (iIndex, oGroupLock) {
+		const iNodeLevel = this.aElements[iIndex]["@$ui5.node.level"];
+		// find adjacent sibling with smallest index
+		for (let i = iIndex; i >= 0; i -= 1) {
+			const iCandidateLevel = this.aElements[i]["@$ui5.node.level"];
+			if (iCandidateLevel === 0) {
+				// Note: level 0 means "don't know" for initial *placeholders* of 1st level cache!
+				break;
+			}
+			if (iCandidateLevel === iNodeLevel) {
+				iIndex = i;
+			}
+			// iCandidateLevel < iNodeLevel: parent index found here => MUST not happen
+		}
 		const oNode = this.aElements[iIndex];
+
 		let oPromise = _Helper.getPrivateAnnotation(oNode, "parentIndexPromise");
 		if (oPromise) {
 			return oPromise;

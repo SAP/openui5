@@ -1062,8 +1062,14 @@ sap.ui.define([
 		const sQueryOptions = JSON.stringify(oCache.mQueryOptions);
 
 		this.mock(oCache).expects("getTypes").returns("~Types~").twice();
-		const oNode = {};
+		const oNode = {"@$ui5.node.level" : 3};
+		oCache.aElements[20] = {"@$ui5.node.level" : 0};
+		oCache.aElements[21] = {"@$ui5.node.level" : 4};
+		oCache.aElements[22] = {"@$ui5.node.level" : 4};
 		oCache.aElements[23] = oNode;
+		oCache.aElements[24] = {"@$ui5.node.level" : 4};
+		oCache.aElements[25] = {"@$ui5.node.level" : 5};
+		oCache.aElements[26] = {"@$ui5.node.level" : 3};
 		this.mock(_Helper).expects("getKeyFilter").withExactArgs(oNode, "~metaPath~", "~Types~")
 			.returns("~Key~");
 		this.mock(this.oRequestor).expects("buildQueryString")
@@ -1116,10 +1122,14 @@ sap.ui.define([
 			});
 
 		// code under test
-		const oPromise = oCache.fetchParentIndex(23, "~GroupLock~");
+		const oPromise = oCache.fetchParentIndex(26, "~GroupLock~");
 		const oPromise0 = oCache.fetchParentIndex(23, "~GroupLock~");
+		const oPromise1 = oCache.fetchParentIndex(26, "~GroupLock~");
+		const oPromise2 = oCache.fetchParentIndex(23, "~GroupLock~");
 
 		assert.strictEqual(oPromise, oPromise0, "same promise");
+		assert.strictEqual(oPromise, oPromise1, "same promise");
+		assert.strictEqual(oPromise, oPromise2, "same promise");
 		assert.ok(oPromise instanceof SyncPromise);
 		assert.strictEqual(await oPromise, "~iIndex~");
 		assert.strictEqual(JSON.stringify(oCache.mQueryOptions), sQueryOptions, "unchanged");
@@ -3443,6 +3453,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement), sinon.match.same(oKeptElement));
 		this.mock(oCache).expects("hasPendingChangesForPath").exactly(bIgnore ? 1 : 0)
 			.withExactArgs("(1)").returns(false);
+		this.mock(_Helper).expects("copySelected").withExactArgs(sinon.match.same(oKeptElement),
+			sinon.match.same(oElement));
 
 		// code under test
 		oCache.addElements(oElement, 1, "~parent~", 42);

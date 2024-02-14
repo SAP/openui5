@@ -632,7 +632,8 @@ sap.ui.define([
 	  * @classdesc An <code>int</code> type that defines how many columns a <code>Form</code> control using
 	  * the <code>ColumnLayout</code> as layout can have if it has large size
 	  *
-	  * Allowed values are numbers from 1 to 3.
+	  * Allowed values are numbers from 1 to 4.
+	  * <b>Note:</b> In versions lower than 1.122 only 3 columns are allowed.
 	  *
 	  * @final
 	  * @namespace
@@ -641,7 +642,7 @@ sap.ui.define([
 	  */
 	 thisLib.form.ColumnsL = DataType.createType('sap.ui.layout.form.ColumnsL', {
 		 isValid : function(vValue) {
-			 if (vValue > 0 && vValue <= 3) {
+			 if (vValue > 0 && vValue <= 4) {
 				 return true;
 			 } else {
 				 return false;
@@ -656,7 +657,8 @@ sap.ui.define([
 	  * @classdesc An <code>int</code> type that defines how many columns a <code>Form</code> control using
 	  * the <code>ColumnLayout</code> as layout can have if it has medium size
 	  *
-	  * Allowed values are numbers from 1 to 2.
+	  * Allowed values are numbers from 1 to 3.
+	  * <b>Note:</b> In versions lower than 1.122 only 2 columns are allowed.
 	  *
 	  * @final
 	  * @namespace
@@ -665,7 +667,7 @@ sap.ui.define([
 	  */
 	 thisLib.form.ColumnsM = DataType.createType('sap.ui.layout.form.ColumnsM', {
 		 isValid : function(vValue) {
-			 if (vValue > 0 && vValue <= 2) {
+			 if (vValue > 0 && vValue <= 3) {
 				 return true;
 			 } else {
 				 return false;

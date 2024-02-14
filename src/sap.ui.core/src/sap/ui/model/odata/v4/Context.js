@@ -576,6 +576,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the selected state for this context.
+	 *
+	 * @param {boolean} bSelected
+	 *   Whether this context is to be selected
+	 *
+	 * @private
+	 * @see #setSelected
+	 */
+	Context.prototype.doSetSelected = function (bSelected) {
+		this.bSelected = bSelected;
+		if (this.oBinding) {
+			this.oBinding.onKeepAliveChanged(this); // selected contexts are effectively kept alive
+		}
+	};
+
+	/**
 	 * Expands the group node that this context points to.
 	 *
 	 * @throws {Error}
@@ -663,9 +679,12 @@ sap.ui.define([
 	 *   in case cached values are asked for, but not found
 	 *
 	 * @private
+	 * @see #getObject
+	 * @see #getProperty
 	 */
 	Context.prototype.fetchValue = function (sPath, oListener, bCached) {
-		var oBinding = this.oBinding;
+		var oBinding = this.oBinding,
+			that = this;
 
 		if (this.iIndex === iVIRTUAL) {
 			return SyncPromise.resolve(); // no cache access for virtual contexts
@@ -677,9 +696,14 @@ sap.ui.define([
 			if (!sPath) {
 				return oBinding.fetchValue(this.sPath + "/$count", oListener, bCached)
 					.then(function (iCount) {
-						return {$count : iCount};
-					});
-			} else if (sPath !== "$count") {
+						return {
+							"@$ui5.context.isSelected" : that.bSelected,
+							$count : iCount
+						};
+				});
+			} else if (sPath === "@$ui5.context.isSelected") {
+				return SyncPromise.resolve(this.bSelected);
+			} else if (sPath !== "$count" && sPath !== "@$ui5.context.isSelected") {
 				throw new Error("Invalid header path: " + sPath);
 			}
 		}
@@ -849,8 +873,8 @@ sap.ui.define([
 	 * Returns <code>undefined</code> if the data is not (yet) available; no request is triggered.
 	 * Use {@link #requestObject} for asynchronous access.
 	 *
-	 * The header context of a list binding only delivers <code>$count</code> (wrapped in an object
-	 * if <code>sPath</code> is "").
+	 * The header context of a list binding only delivers <code>$count</code> and
+	 * <code>@$ui5.context.isSelected</code> (wrapped in an object if <code>sPath</code> is "").
 	 *
 	 * @param {string} [sPath=""]
 	 *   A path relative to this context
@@ -858,7 +882,7 @@ sap.ui.define([
 	 *   The requested value
 	 * @throws {Error}
 	 *   If the context's root binding is suspended or if the context is a header context and the
-	 *   path is neither empty nor "$count".
+	 *   path is neither empty, "$count", nor "@ui5.context.isSelected".
 	 *
 	 * @public
 	 * @see sap.ui.model.Context#getObject
@@ -912,7 +936,8 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li> the context's root binding is suspended,
 	 *     <li> the value is not primitive,
-	 *     <li> or the context is a header context and the path is not "$count"
+	 *     <li> or the context is a header context and the path is not "$count" or
+	 *        "@ui5.context.isSelected".
 	 *   </ul>
 	 *
 	 * @public
@@ -1155,7 +1180,9 @@ sap.ui.define([
 
 	/**
 	 * Tells whether this context is currently selected, but not {@link #delete deleted} on the
-	 * client.
+	 * client. Since 1.122.0 the selection state can also be accessed via instance annotation
+	 * "@$ui5.context.isSelected" at the entity. Note that the annotation does not take the deletion
+	 * state into account.
 	 *
 	 * @returns {boolean} Whether this context is currently selected
 	 *
@@ -1374,8 +1401,8 @@ sap.ui.define([
 	 * Note that the function clones the result. Modify values via
 	 * {@link sap.ui.model.odata.v4.Context#setProperty}.
 	 *
-	 * The header context of a list binding only delivers <code>$count</code> (wrapped in an object
-	 * if <code>sPath</code> is "").
+	 * The header context of a list binding only delivers <code>$count</code> and
+	 * <code>@$ui5.context.isSelected</code> (wrapped in an object if <code>sPath</code> is "").
 	 *
 	 * In case of a {@link sap.ui.model.odata.v4.ODataContextBinding#getBoundContext context
 	 * binding's bound context} that hasn't requested its data yet, this method causes an initial
@@ -1392,7 +1419,7 @@ sap.ui.define([
 	 *   A promise on the requested value
 	 * @throws {Error}
 	 *   If the context's root binding is suspended, or if the context is a header context and the
-	 *   path is neither empty nor "$count"
+	 *   path is neither empty, "$count", nor "@$ui5.context.isSelected".
 	 *
 	 * @public
 	 * @see #getBinding
@@ -1448,7 +1475,7 @@ sap.ui.define([
 	 *   given property paths that format corresponding to the properties' EDM types and constraints
 	 * @returns {Promise<any>}
 	 *   A promise on the requested value or values; it is rejected if a value is not primitive or
-	 *   if the context is a header context and a path is not "$count"
+	 *   if the context is a header context and a path is not "$count" or "@$ui5.context.isSelected"
 	 * @throws {Error}
 	 *   If the context's root binding is suspended
 	 *
@@ -2092,7 +2119,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines whether this context is currently selected. If the preconditions of
+	 * Sets whether this context is currently selected. If the preconditions of
 	 * {@link #setKeepAlive} hold, a best effort is made to implicitly keep a selected context alive
 	 * in order to preserve the selection state. While a context is currently
 	 * {@link #delete deleted} on the client, it does not appear as {@link #isSelected selected}.
@@ -2116,10 +2143,15 @@ sap.ui.define([
 		if (bSelected && this.isDeleted()) {
 			throw new Error("Must not select a deleted entity: " + this);
 		}
-		this.bSelected = bSelected;
-		if (this.oBinding) {
-			this.oBinding.onKeepAliveChanged(this); // selected contexts are effectively kept alive
+		if (bSelected !== this.bSelected) {
+			this.withCache((oCache, sPath) => {
+				if (this.oBinding) {
+					oCache.setProperty("@$ui5.context.isSelected", bSelected, sPath);
+				} // else: context already destroyed
+			}, "");
 		}
+
+		this.doSetSelected(bSelected);
 	};
 
 	/**

@@ -932,7 +932,7 @@ sap.ui.define([
 				return;
 			}
 
-			oContext.setSelected(false);
+			oContext.doSetSelected(false);
 			that.removeCreated(oContext);
 			return Promise.resolve().then(function () {
 				// Fire the change asynchronously so that Cache#delete is finished and #getContexts
@@ -2719,7 +2719,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the header context which allows binding to <code>$count</code>.
+	 * Returns the header context which allows binding to <code>$count</code> or
+	 * <code>@$ui5.context.isSelected</code>.
 	 *
 	 * @returns {sap.ui.model.odata.v4.Context|null}
 	 *   The header context or <code>null</code> if the binding is relative and has no context

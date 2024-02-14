@@ -917,8 +917,10 @@ sap.ui.define([
 		assert.strictEqual(oDefaultFloat.format("123.456789e-2"), "1.23456789", "123.456789e-2");
 		assert.strictEqual(oDefaultFloat.format("-123456.789e+2"), "-12,345,678.9", "-123456.789e+2");
 		assert.strictEqual(oDefaultFloat.format("-123.456789e-2"), "-1.23456789", "-123.456789e-2");
-		assert.strictEqual(oDefaultFloat.format("1000.00"), "1,000.00", "1000.00");
-		assert.strictEqual(oDefaultFloat.format("1000.0000"), "1,000.0000", "1000.0000");
+		assert.strictEqual(oDefaultFloat.format(1000.00), "1,000", "1000.00");
+		assert.strictEqual(oDefaultFloat.format("1000.00"), "1,000", "1000.00");
+		assert.strictEqual(oDefaultFloat.format(1000.0000), "1,000", "1000.0000");
+		assert.strictEqual(oDefaultFloat.format("1000.0000"), "1,000", "1000.0000");
 		assert.strictEqual(oDefaultFloat.format("123456789.123456789"), "123,456,789.123456789",
 			"123456789.123456789 (string)");
 		// Due to IEEE_754 (Binary Floating-Point Arithmetic)
@@ -1019,8 +1021,10 @@ sap.ui.define([
 		assert.strictEqual(oFloatFormat.format(12345.12345), "12.345,12345", "12345.12345");
 		assert.strictEqual(oFloatFormat.format(1234567890), "1.234.567.890", "1234567890");
 		assert.strictEqual(oFloatFormat.format(-123.23), "-123,23", "-123.23");
-		assert.strictEqual(oFloatFormat.format("1000.00"), "1.000,00", "1000.00");
-		assert.strictEqual(oFloatFormat.format("1000.0000"), "1.000,0000", "1000.0000");
+		assert.strictEqual(oFloatFormat.format("1000.00"), "1.000", "1000.00");
+		assert.strictEqual(oFloatFormat.format(1000.00), "1.000", "1000.00");
+		assert.strictEqual(oFloatFormat.format("1000.0000"), "1.000", "1000.0000");
+		assert.strictEqual(oFloatFormat.format(1000.0000), "1.000", "1000.0000");
 	});
 
 	//*********************************************************************************************
@@ -1217,7 +1221,9 @@ sap.ui.define([
 		assert.strictEqual(oCustomFloat.format(12345.12345), "????,1235", "12345.12345");
 		assert.strictEqual(oCustomFloat.format(-123.23), "-123,23", "-123.23");
 		assert.strictEqual(oCustomFloat.format("1000.00"), "1000,00", "1000.00");
-		assert.strictEqual(oCustomFloat.format("1000.0000"), "1000,0000", "1000.0000");
+		assert.strictEqual(oCustomFloat.format(1000.00), "1000,00", "1000.00");
+		assert.strictEqual(oCustomFloat.format("1000.0000"), "1000,00", "1000.0000");
+		assert.strictEqual(oCustomFloat.format(1000.0000), "1000,00", "1000.0000");
 
 	});
 
@@ -1239,6 +1245,10 @@ sap.ui.define([
 	number: "2.11", others: "2.11"
 }, {
 	number: "2", others: "2"
+}, {
+	number: "2.0", others: "2"
+}, {
+	number: "2.00000", others: "2"
 }, {
 	number: "-.1230", others: "-0.123"
 }, {
@@ -1406,8 +1416,10 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format("123.456789e-2", "mass-kilogram"), "1.23456789 kg", "123.456789e-2");
 		assert.strictEqual(oFormat.format("-123456.789e+2", "mass-kilogram"), "-12,345,678.9 kg", "-123456.789e+2");
 		assert.strictEqual(oFormat.format("-123.456789e-2", "mass-kilogram"), "-1.23456789 kg", "-123.456789e-2");
-		assert.strictEqual(oFormat.format("1000.00", "mass-kilogram"), "1,000.00 kg", "1000.00");
-		assert.strictEqual(oFormat.format("1000.0000", "mass-kilogram"), "1,000.0000 kg", "1000.0000");
+		assert.strictEqual(oFormat.format("1000.00", "mass-kilogram"), "1,000 kg", "1000.00");
+		assert.strictEqual(oFormat.format(1000.00, "mass-kilogram"), "1,000 kg", "1000.00");
+		assert.strictEqual(oFormat.format("1000.0000", "mass-kilogram"), "1,000 kg", "1000.0000");
+		assert.strictEqual(oFormat.format(1000.0000, "mass-kilogram"), "1,000 kg", "1000.0000");
 		// Due to IEEE_754 (Binary Floating-Point Arithmetic)
 		// JavaScript can only represent the number 123456789.123456789 as 123456789.12345679
 		// eslint-disable-next-line no-loss-of-precision

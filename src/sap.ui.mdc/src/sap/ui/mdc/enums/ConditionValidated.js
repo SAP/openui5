@@ -9,7 +9,7 @@ sap.ui.define(() => {
 	/**
 	 * Enumeration of the validated state of conditions
 	 *
-	 * If a <code>Condition</code> is chosen from a field help or validated against a field help
+	 * If a <code>Condition</code> is chosen from a value help or validated against a value help
 	 * it is set to be validated. In this case the corresponding item in the value help is
 	 * shown as selected.
 	 *

@@ -272,7 +272,7 @@ sap.ui.define([
 			new SyncPromise(function (resolve) {
 				fnResolve = resolve;
 			}));
-		oContext.setSelected(bSelected);
+		oContext.bSelected = bSelected;
 
 		// code under test
 		assert.strictEqual(oContext.toString(), bSelected
@@ -403,24 +403,28 @@ sap.ui.define([
 			},
 			oContext = Context.create(null, oBinding, "/foo");
 
+		oContext.bSelected = "~selected~";
+
 		this.mock(oBinding).expects("getHeaderContext").withExactArgs().returns(oContext);
 		this.mock(oBinding).expects("fetchValue")
 			.withExactArgs("/foo/$count", "~listener~", "bCached")
 			.returns(SyncPromise.resolve(Promise.resolve(42)));
 
 		return oContext.fetchValue(sPath, "~listener~", "bCached").then(function (oResult) {
-			assert.deepEqual(oResult, {$count : 42});
+			assert.deepEqual(oResult,
+				{"@$ui5.context.isSelected" : "~selected~", $count : 42});
 		});
 	});
 });
 
 	//*********************************************************************************************
 [false, true].forEach(function (bAutoExpandSelect) {
-	["$count", "/foo/$count"].forEach(function (sPath) {
+	["$count", "/foo/$count", "@$ui5.context.isSelected", "/foo/@$ui5.context.isSelected"]
+			.forEach(function (sPath) {
 		var sTitle = "fetchValue: header context, autoExpandSelect=" + bAutoExpandSelect
 				+ ", path=" + sPath;
 
-	QUnit.test(sTitle + sPath, function (assert) {
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
 				fetchValue : function () {},
 				getBaseForPathReduction : function () {},
@@ -436,20 +440,27 @@ sap.ui.define([
 			},
 			oContext = Context.create(oModel, oBinding, "/foo");
 
-		this.mock(oBinding).expects("getHeaderContext").withExactArgs().returns(oContext);
-		this.mock(oModel).expects("resolve")
-			.withExactArgs("$count", sinon.match.same(oContext)).returns("/~");
-		if (bAutoExpandSelect) {
-			this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs().returns("/base");
-			this.mock(oMetaModel).expects("getReducedPath").withExactArgs("/~", "/base")
-				.returns("/reduced");
-		}
-		this.mock(oBinding).expects("fetchValue")
-			.withExactArgs(bAutoExpandSelect ? "/reduced" : "/~", "~listener~", "bCached")
-			.returns(SyncPromise.resolve(Promise.resolve(42)));
+		oContext.bSelected = "~selected~";
 
-		return oContext.fetchValue(sPath, "~listener~", "bCached").then(function (iCount) {
-			assert.deepEqual(iCount, 42);
+		this.mock(oBinding).expects("getHeaderContext").withExactArgs().returns(oContext);
+		if (sPath.includes("$count")) {
+			this.mock(oModel).expects("resolve")
+				.withExactArgs("$count", sinon.match.same(oContext)).returns("/~");
+			if (bAutoExpandSelect) {
+				this.mock(oBinding).expects("getBaseForPathReduction")
+					.withExactArgs().returns("/base");
+				this.mock(oMetaModel).expects("getReducedPath")
+					.withExactArgs("/~", "/base").returns("/reduced");
+			}
+			this.mock(oBinding).expects("fetchValue")
+				.withExactArgs(bAutoExpandSelect ? "/reduced" : "/~", "~listener~", "bCached")
+				.returns(SyncPromise.resolve(Promise.resolve(42)));
+		} else {
+			this.mock(oBinding).expects("fetchValue").never();
+		}
+
+		return oContext.fetchValue(sPath, "~listener~", "bCached").then(function (vValue) {
+			assert.strictEqual(vValue, sPath.includes("$count") ? 42 : "~selected~");
 		});
 	});
 	});
@@ -1195,7 +1206,7 @@ sap.ui.define([
 			oExpectation,
 			bSelected = !!oFixture.groupId;
 
-		oContext.setSelected(bSelected);
+		oContext.bSelected = bSelected;
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
@@ -4352,34 +4363,74 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setSelected", function (assert) {
+	QUnit.test("setSelected", function () {
+		const oBinding = {
+			getHeaderContext : function () {}
+		};
+		const oCache = {
+			setProperty : function () {}
+		};
+		const oCacheMock = this.mock(oCache);
 		// Note: oBinding is optional, it might already be missing in certain cases!
-		var oContext = Context.create({/*oModel*/}, /*oBinding*/undefined, "/some/path", 42),
-			oContextMock = this.mock(oContext);
-
-		// code under test
-		assert.strictEqual(oContext.isSelected(), false);
+		const oContext = Context.create({/*oModel*/}, oBinding, "/some/path", 42);
+		const oContextMock = this.mock(oContext);
 
 		oContextMock.expects("isDeleted").withExactArgs().returns(false);
+		oContextMock.expects("withCache")
+			.withExactArgs(sinon.match.func, "")
+			.callsFake((fnProcessor) => {
+				oCacheMock.expects("setProperty")
+					.withExactArgs("@$ui5.context.isSelected", "~selected~", "~sPath~");
+
+				return fnProcessor(oCache, "~sPath~");
+			});
+		oContextMock.expects("doSetSelected").withExactArgs("~selected~");
 
 		// code under test
+		oContext.setSelected("~selected~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setSelected: special cases", function () {
+		const oBinding = {
+			getHeaderContext : function () {}
+		};
+		const oCache = {
+			setProperty : function () {}
+		};
+		const oCacheMock = this.mock(oCache);
+		const oContext = Context.create({/*oModel*/}, oBinding, "/some/path", 42);
+		const oContextMock = this.mock(oContext);
+
+		oContextMock.expects("isDeleted").withExactArgs().returns(false);
+		oContextMock.expects("withCache")
+			.withExactArgs(sinon.match.func, "")
+			.callsFake((fnProcessor) => {
+				oContext.oBinding = undefined;
+				oCacheMock.expects("setProperty").never();
+
+				return fnProcessor(oCache, "~sPath~");
+			});
+		oContextMock.expects("doSetSelected").withExactArgs(true);
+
+		// code under test - binding destroyed
 		oContext.setSelected(true);
 
-		assert.strictEqual(oContext.isSelected(), true);
+		oContextMock.expects("withCache").never();
+		oContextMock.expects("doSetSelected").withExactArgs(false);
 
-		oContextMock.expects("isDeleted").withExactArgs().returns(false);
-
-		// code under test
-		assert.strictEqual(oContext.toString(), "/some/path[42;selected]");
-
-		// Note: no addt' call to #isDeleted!
-
-		// code under test
+		// code under test - flag unchanged
 		oContext.setSelected(false);
+	});
 
-		assert.strictEqual(oContext.isSelected(), false);
+	//*********************************************************************************************
+	QUnit.test("setSelected: error handling", function (assert) {
+		const oBinding = {
+			getHeaderContext : function () {}
+		};
+		let oContext = Context.create({/*oModel*/}, oBinding, "/some/path", 42);
 
-		oContextMock.expects("isDeleted").thrice().withExactArgs().returns(true);
+		this.mock(oContext).expects("isDeleted").thrice().withExactArgs().returns(true); // toString
 
 		assert.throws(function () {
 			// code under test
@@ -4393,6 +4444,31 @@ sap.ui.define([
 			// code under test
 			oContext.setSelected(false);
 		}, new Error("Unsupported context: " + oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doSetSelected", function (assert) {
+		// Note: oBinding is optional, it might already be missing in certain cases!
+		let oContext = Context.create({/*oModel*/}, /*oBinding*/undefined, "/some/path", 42);
+
+		// code under test
+		assert.strictEqual(oContext.isSelected(), false);
+
+		// code under test
+		oContext.doSetSelected(true);
+
+		assert.strictEqual(oContext.isSelected(), true);
+
+		// code under test
+		assert.strictEqual(oContext.toString(), "/some/path[42;selected]");
+
+		// code under test
+		oContext.doSetSelected(false);
+
+		assert.strictEqual(oContext.isSelected(), false);
+
+		// code under test
+		assert.strictEqual(oContext.toString(), "/some/path[42]");
 
 		oContext = Context.create({/*oModel*/}, {
 			getHeaderContext : true,
@@ -4402,11 +4478,11 @@ sap.ui.define([
 		this.mock(oContext.oBinding).expects("onKeepAliveChanged")
 			.withExactArgs(sinon.match.same(oContext))
 			.callsFake(function () {
-				assert.strictEqual(oContext.bSelected, "~bSelected~");
+				assert.strictEqual(oContext.bSelected, "~selected~");
 			});
 
 		// code under test
-		oContext.setSelected("~bSelected~");
+		oContext.doSetSelected("~selected~");
 	});
 
 	//*********************************************************************************************
@@ -4436,7 +4512,7 @@ sap.ui.define([
 			},
 			oHeaderContext = Context.create({/*oModel*/}, oBinding, "/TEAMS");
 
-		oHeaderContext.setSelected(true);
+		oHeaderContext.bSelected = true;
 		this.mock(_Helper).expects("isDataAggregation").never();
 
 		// code under test
@@ -4457,7 +4533,7 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oContext.isEffectivelyKeptAlive(), false);
 
-		oContext.setSelected(true);
+		oContext.bSelected = true;
 		oBindingMock.expects("isRelative").withExactArgs().returns(false);
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
@@ -4502,7 +4578,7 @@ sap.ui.define([
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, sContextPath);
 
-		oContext.setSelected(true);
+		oContext.bSelected = true;
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 
@@ -4521,7 +4597,7 @@ sap.ui.define([
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/TEAMS('1')");
 
-		oContext.setSelected(true);
+		oContext.bSelected = true;
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(true);
 
@@ -4539,7 +4615,7 @@ sap.ui.define([
 		};
 		const oContext = Context.create({/*oModel*/}, oBinding, "/SalesOrderList('0')/Messages/0");
 
-		oContext.setSelected(true);
+		oContext.bSelected = true;
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 

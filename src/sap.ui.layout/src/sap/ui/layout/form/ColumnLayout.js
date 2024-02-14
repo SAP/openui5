@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @class
 	 * The <code>ColumnLayout</code> control renders a {@link sap.ui.layout.form.Form Form} control in a column-based responsive way.
 	 * Depending on its size, the {@link sap.ui.layout.form.Form Form} control is divided into one or more columns.
-	 * (XL - max. 4 columns, L - max. 3 columns, M -  max. 2 columns and S - 1 column.)
+	 * (XL - max. 6 columns, L - max. 4 columns, M -  max. 3 columns and S - 1 column.)
 	 *
 	 * The {@link sap.ui.layout.form.FormContainer FormContainer} elements are spread out to the columns depending on the number of {@link sap.ui.layout.form.FormContainer FormContainer}
 	 * elements and their size. For example, if there are 4 columns and 2 {@link sap.ui.layout.form.FormContainer FormContainer} elements,

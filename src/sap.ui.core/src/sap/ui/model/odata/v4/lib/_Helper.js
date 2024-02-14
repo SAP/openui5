@@ -3033,6 +3033,21 @@ sap.ui.define([
 		},
 
 		/**
+		 * Sets "@$ui5.context.isSelected" in <code>oTarget</code> to true if it is true in
+		 * <code>oSource</code>.
+		 *
+		 * @param {object} oSource - The source object
+		 * @param {object} oTarget - The target object
+		 *
+		 * @public
+		 */
+		copySelected : function (oSource, oTarget) {
+			if (oSource["@$ui5.context.isSelected"] === true) {
+				oTarget["@$ui5.context.isSelected"] = true;
+			}
+		},
+
+		/**
 		 * Creates the query options for a child binding with the meta path given by its base
 		 * meta path and relative meta path. Adds the key properties to $select of all expanded
 		 * navigation properties. Requires that metadata for the meta path is already loaded so

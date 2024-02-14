@@ -564,6 +564,7 @@ sap.ui.define([
 
 		onsapbackspace: _handleKeybordEvent,
 		onkeydown: _handleKeybordEvent,
+		onsapenter: _handleEnterBefore,
 		onchange: _handleContentOnchange,
 		onsapfocusleave: _handleContentOnsapfocusleave,
 		onpaste: _handlePaste
@@ -1091,6 +1092,15 @@ sap.ui.define([
 		// to be implemented by Field and FilterField
 	};
 
+	function _handleEnterBefore(oEvent) {
+
+		// if input comes from navigation ENTER must just confirm it but not fire a submit event (like if entry would be choosen via click in suggestion)
+		if (this._oNavigateCondition) {
+			oEvent.setMarked("MDCNavigated");
+		}
+
+	}
+
 	function _handleEnter(oEvent) {
 
 		const sEditMode = this.getEditMode();
@@ -1099,7 +1109,7 @@ sap.ui.define([
 			this._bDirty = false; // as user might change value back to original one no change event might be fired
 		}
 
-		if (ContentFactory._getEditable(sEditMode) && (this.hasListeners("submit") || this._bPendingChange)) {
+		if (ContentFactory._getEditable(sEditMode) && (!oEvent.isMarked || !oEvent.isMarked("MDCNavigated")) && (this.hasListeners("submit") || this._bPendingChange)) {
 			// collect all pending promises for ENTER, only if all resolved it's not pending. (Normally there should be only one.)
 			let oPromise = _getAsyncPromise.call(this);
 			let bPending = false;

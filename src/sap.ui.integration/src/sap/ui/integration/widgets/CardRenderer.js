@@ -9,7 +9,8 @@ sap.ui.define([
 	"use strict";
 
 	var MANIFEST_PATHS = {
-		TYPE: "/sap.card/type"
+		TYPE: "/sap.card/type",
+		APP_ID: "/sap.app/id"
 	};
 	var CardDesign = library.CardDesign;
 	var CardPreviewMode = library.CardPreviewMode;
@@ -44,6 +45,10 @@ sap.ui.define([
 			}
 
 			oRm.class("sapUiIntCard" + oCard.getDisplayVariant());
+
+			if (oCardManifest && oCardManifest.get(MANIFEST_PATHS.APP_ID)) {
+				oRm.attr("data-sap-ui-card-id", oCardManifest.get(MANIFEST_PATHS.APP_ID));
+			}
 		},
 
 		/**

@@ -5415,6 +5415,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("copySelected", function (assert) {
+		let oTarget = {"@$ui5.context.isSelected" : false};
+
+		// code under test
+		_Helper.copySelected({foo : true, "@$ui5.context.isSelected" : true}, oTarget);
+
+		assert.deepEqual(oTarget, {"@$ui5.context.isSelected" : true});
+
+		oTarget = {};
+
+		// code under test
+		_Helper.copySelected({foo : true, "@$ui5.context.isSelected" : false}, oTarget);
+
+		assert.deepEqual(oTarget, {});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("makeUpdateData", function (assert) {
 		assert.deepEqual(_Helper.makeUpdateData(["Age"], 42), {Age : 42});
 		assert.deepEqual(_Helper.makeUpdateData(["Address", "City"], "Walldorf"),
