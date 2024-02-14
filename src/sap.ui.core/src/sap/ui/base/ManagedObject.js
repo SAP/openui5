@@ -10,6 +10,7 @@ sap.ui.define([
 	"./Object",
 	"./BindingInfo",
 	"sap/ui/util/ActivityDetection",
+	"sap/ui/util/_enforceNoReturnValue",
 	"sap/base/future",
 	"sap/base/util/ObjectPath",
 	"sap/base/Log",
@@ -26,6 +27,7 @@ sap.ui.define([
 	BaseObject,
 	BindingInfo,
 	ActivityDetection,
+	_enforceNoReturnValue,
 	future,
 	ObjectPath,
 	Log,
@@ -526,7 +528,7 @@ sap.ui.define([
 
 					// Call init method here instead of specific Controls constructor.
 					if (that.init) {
-						that.init();
+						_enforceNoReturnValue(that.init(), /*mLogInfo=*/{ name: "init", component: that.getId()}); // 'init' hook isn't allowed to return any values.
 					}
 
 					// apply the settings
@@ -3007,7 +3009,7 @@ sap.ui.define([
 		}
 
 		if (this.exit) {
-			this.exit();
+			_enforceNoReturnValue(this.exit(), /*mLogInfo=*/{ name: "exit", component: this.getId() }); // 'exit' hook isn't allowed to return any values.
 		}
 
 		// TODO: generic concept for exit hooks?

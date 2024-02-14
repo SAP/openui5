@@ -747,11 +747,14 @@ sap.ui.define([
 	 * Subclasses of Control should override this hook to implement any necessary actions before the rendering.
 	 *
 	 * @param {jQuery.Event} oEvent onBeforeRendering event object
+	 * @returns {void|undefined} This hook method must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
+	 * 	This implies that, for instance, no async function returning a Promise should be used.
 	 * @protected
 	 */
-	Control.prototype.onBeforeRendering = function(oEvent) {
+	Control.prototype.onBeforeRendering = function() {
 		// Before adding any implementation, please remember that this method was first implemented in release 1.54.
 		// Therefore, many subclasses will not call this method at all.
+		return undefined;
 	};
 
 	/**
@@ -762,11 +765,14 @@ sap.ui.define([
 	 * Subclasses of Control should override this hook to implement any necessary actions after the rendering.
 	 *
 	 * @param {jQuery.Event} oEvent onAfterRendering event object
+	 * @returns {void|undefined} This hook method must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
+	 * 	This implies that, for instance, no async function returning a Promise should be used.
 	 * @protected
 	 */
-	Control.prototype.onAfterRendering = function(oEvent) {
+	Control.prototype.onAfterRendering = function() {
 		// Before adding any implementation, please remember that this method was first implemented in release 1.54.
 		// Therefore, many subclasses will not call this method at all.
+		return undefined;
 	};
 
 	/**
