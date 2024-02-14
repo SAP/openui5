@@ -267,7 +267,7 @@ sap.ui.define([
 		 * @returns {Promise<string>} The promise
 		 */
 		getBundleText: function(sI18nKey, aPlaceholderValues){
-			return this.getBundleTextByModel(sI18nKey, this.getModel("i18n"), aPlaceholderValues);
+			return this.getBundleTextByModel(sI18nKey, this.getOwnerComponent().getModel("i18n"), aPlaceholderValues);
 		},
 
 		_handleWindowResize: function (oDevice) {
