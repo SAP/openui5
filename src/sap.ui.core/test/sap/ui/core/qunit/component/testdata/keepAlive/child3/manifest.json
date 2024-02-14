@@ -1,0 +1,54 @@
+{
+	"sap.app": {
+		"id": "testdata.keepAlive.child3"
+	},
+	"sap.ui5": {
+		"keepAlive": {
+			"supported": true
+		},
+		"dependencies": {
+			"libs": {}
+		},
+		"rootView": {
+			"viewName": "testdata.keepAlive.child3.App",
+			"type": "XML",
+			"async": true,
+			"id": "appView"
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"path": "testdata.keepAlive.child3",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"async": true
+			},
+			"routes": [
+				{
+					"name": "home",
+					"pattern": "",
+					"target": "homeTarget"
+				},
+				{
+					"name": "other",
+					"pattern": "other",
+					"target": "otherTarget"
+				}
+			],
+			"targets": {
+				"homeTarget": {
+					"type": "View",
+					"id": "homeView",
+					"name": "Home"
+				},
+				"otherTarget": {
+					"type": "View",
+					"id": "otherView",
+					"name": "Other"
+				}
+			}
+		}
+	}
+}

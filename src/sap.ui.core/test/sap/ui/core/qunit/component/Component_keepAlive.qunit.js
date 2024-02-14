@@ -1,6 +1,7 @@
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/Component"
-], function (Component) {
+], function (Log, Component) {
 	"use strict";
 	/*global QUnit, sinon*/
 
@@ -598,6 +599,33 @@ sap.ui.define([
 				// Clean-Up
 				oComponent.destroy();
 			});
+		});
+	});
+
+	QUnit.test("'onActivate/onDeactivate' should not return a value", async function(assert) {
+		window.aPromises = []; // see testdata.keepAlive.child3.Component.js
+		const oComponent = await Component.create({
+			id: "component",
+			name: "testdata.keepAlive.child3"
+		});
+
+		await fnWaitUntilHomeRouteMatched(oComponent);
+		assert.ok(oComponent.isActive(), "Component: Initially, the component is active");
+
+		const oFatalLogSpy = sinon.spy(Log, "fatal");
+		const oErrorLogSpy = sinon.spy(Log, "error");
+		oComponent.deactivate();
+		await Promise.allSettled(window.aPromises);
+		assert.notOk(oComponent.isActive(), "Component: The component is not active after deactivate()");
+		assert.ok(oFatalLogSpy.getCall(0).calledWith("[FUTURE FATAL] The registered Event Listener 'onDeactivate' must not have a return value."), "The 'onDeactivate' should not return a value.");
+
+		oComponent.activate();
+		assert.ok(oComponent.isActive(), "Component: The component is active after activate()");
+		assert.ok(oFatalLogSpy.getCall(1).calledWith("[FUTURE FATAL] The registered Event Listener 'onActivate' must not have a return value."), "The 'onActivate' should not return a value.");
+
+		await Promise.resolve(() => {
+			assert.ok(oErrorLogSpy.getCall(0).calledWith("The registered Event Listener 'onDeactivate' of 'component' failed."), "The rejected Promise is caught successfully");
+			oErrorLogSpy.restore();
 		});
 	});
 });

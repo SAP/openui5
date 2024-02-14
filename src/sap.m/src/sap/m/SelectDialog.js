@@ -578,15 +578,12 @@ function(
 	* Is called after renderer is finished to show the busy state
 	* @override
 	* @protected
-	* @returns {this} <code>this</code> pointer for chaining
 	*/
 	SelectDialog.prototype.onAfterRendering = function () {
 		if (this._bInitBusy && this._bFirstRender) {
 			this._setBusy(true);
 			this._bInitBusy = false;
 		}
-
-		return this;
 	};
 
 	/**

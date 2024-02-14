@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/F6Navigation",
+	"sap/ui/util/_enforceNoReturnValue",
 	"./RenderManager",
 	"./EnabledPropagator",
 	"./ElementRegistry",
@@ -31,6 +32,7 @@ sap.ui.define([
 		assert,
 		jQuery,
 		F6Navigation,
+		_enforceNoReturnValue,
 		RenderManager,
 		EnabledPropagator,
 		ElementRegistry,
@@ -334,14 +336,20 @@ sap.ui.define([
 		}
 
 		each(this.aBeforeDelegates);
+
 		if ( oEvent.isImmediateHandlerPropagationStopped() ) {
 			return;
 		}
 		if ( this[sHandlerName] ) {
-			this[sHandlerName](oEvent);
+			if (oEvent._bNoReturnValue) {
+				// fatal throw if listener isn't allowed to have a return value
+				_enforceNoReturnValue(this[sHandlerName](oEvent), /*mLogInfo=*/{ name: sHandlerName, component: this.getId() });
+			} else {
+				this[sHandlerName](oEvent);
+			}
 		}
-		each(this.aDelegates);
 
+		each(this.aDelegates);
 	};
 
 
@@ -353,11 +361,19 @@ sap.ui.define([
 	 *
 	 * Subclasses of Element should override this hook to implement any necessary initialization.
 	 *
+	 * @returns {void|undefined} This hook method must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
+	 * 	This implies that, for instance, no async function returning a Promise should be used.
+	 *
+	 * 	<b>Note:</b> While the return type is currently <code>void|undefined</code>, any
+	 *	implementation of this hook must not return anything but undefined. Any other
+	 * 	return value will cause an error log in this version of UI5 and will fail in future
+	 * 	major versions of UI5.
 	 * @protected
 	 */
 	Element.prototype.init = function() {
 		// Before adding any implementation, please remember that this method was first implemented in release 1.54.
 		// Therefore, many subclasses will not call this method at all.
+		return undefined;
 	};
 
 	/**
@@ -382,11 +398,19 @@ sap.ui.define([
 	 * For a more detailed description how to to use the exit hook, see Section
 	 * {@link topic:d4ac0edbc467483585d0c53a282505a5 exit() Method} in the documentation.
 	 *
+	 * @returns {void|undefined} This hook method must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
+	 * 	This implies that, for instance, no async function returning a Promise should be used.
+	 *
+	 * 	<b>Note:</b> While the return type is currently <code>void|undefined</code>, any
+	 *	implementation of this hook must not return anything but undefined. Any other
+	 * 	return value will cause an error log in this version of UI5 and will fail in future
+	 * 	major versions of UI5.
 	 * @protected
 	 */
 	Element.prototype.exit = function() {
 		// Before adding any implementation, please remember that this method was first implemented in release 1.54.
 		// Therefore, many subclasses will not call this method at all.
+		return undefined;
 	};
 
 	/**
@@ -1956,6 +1980,7 @@ sap.ui.define([
 		var oJQueryEvent = jQuery.Event("ThemeChanged");
 		oJQueryEvent.theme = oEvent.theme;
 		ElementRegistry.forEach(function(oElement) {
+			oJQueryEvent._bNoReturnValue = true; // themeChanged handler aren't allowed to have any retun value. Mark for future fatal throw.
 			oElement._handleEvent(oJQueryEvent);
 		});
 	});
