@@ -3536,6 +3536,9 @@ sap.ui.define([
 			"/TEAMS/0" : "tea_busi.TEAM"
 		},
 		editUrl : "TEAMS(~0)"
+	}, { // client-side annotation
+		path : "/TEAMS('42')|@$ui5.context.isSelected",
+		editUrl : "TEAMS('42')"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchUpdateData: " + oFixture.path, function (assert) {
 			var i = oFixture.path.indexOf("|"),

@@ -84,7 +84,7 @@
 									<Text text="Amount"/>
 								</Column>
 								<Column width="4em"/>
-								<Column width="2em" />
+								<Column width="4em" />
 							</columns>
 							<ColumnListItem id="highlight">
 								<core:Icon id="productState"
@@ -119,13 +119,9 @@
 									tooltip="{= %{@$ui5.context.isInactive} === 1
 											? 'Reset'
 											: 'Delete Product' }"/>
-								<core:Icon id="productSelection"
-										   src="{= %{@$ui5.context.isSelected}
-											? 'sap-icon://flag-2'
-											: null }"
-										   tooltip="{= %{@$ui5.context.isSelected}
-											? 'Selected'
-											: '' }"
+								<CheckBox id="productSelection"
+										selected="{path : '@$ui5.context.isSelected',
+										targetType: 'any'}"
 								/>
 							</ColumnListItem>
 						</Table>
