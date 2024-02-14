@@ -964,6 +964,14 @@ sap.ui.define([
 		if (!this._bDragging || this._bDragCanceled || oEvent.isMarked("delayedMouseEvent")) {
 			return;
 		}
+
+		const sTargetTag = oEvent.target.tagName.toLowerCase();
+		const bIsEditable = oEvent.target.isContentEditable;
+
+		if (sTargetTag === "input" || sTargetTag === "textarea" || sTargetTag === "select" || bIsEditable) {
+			return;
+		}
+
 		// mark the event for components that need to know if the event was handled by the carousel
 		oEvent.setMarked();
 
