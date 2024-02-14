@@ -76,7 +76,7 @@ sap.ui.define([
 				initiallyVisible: {
 					type: "boolean",
 					defaultValue: false
-				}
+				},
 				// ER: LinkItem should not have the visible property.
 				// The visibility should be modified either via default logic defined by UX like
 				// * show only less 10 links
@@ -87,6 +87,16 @@ sap.ui.define([
 				// 	type: "boolean",
 				// 	defaultValue: true
 				// }
+				/**
+				 * Callback for <code>press</code> event.
+				 * @private
+				 * @since 1.122.0
+				 * @ui5-restricted sap.ui.comp
+				 */
+				press: {
+					type: "object",
+					defaultValue: null
+				}
 			}
 		}
 	});
