@@ -268,6 +268,28 @@
 	 */
 	let fnIgnorePreload;
 
+	/**
+	 * Whether the loader should try to load the debug variant
+	 * of a module.
+	 * This takes the standard and partial debug mode into account.
+	 *
+	 * @param {string} sModuleName Name of the module to be loaded
+	 * @returns {boolean} Whether the debug variant should be loaded
+	 */
+	function shouldLoadDebugVariant(sModuleName) {
+		if (fnIgnorePreload) {
+			// if preload is ignored (= partial debug mode), load the debug module first
+			if (fnIgnorePreload(sModuleName)) {
+				return true;
+			} else {
+				// partial debug mode is active, but not for this module
+				return false;
+			}
+		} else {
+			// no debug mode or standard debug mode
+			return bDebugSources;
+		}
+	}
 
 	// ---- internal state ------------------------------------------------------------------------
 
@@ -1633,7 +1655,8 @@
 		oModule.async = bAsync;
 
 		// if debug is enabled, try to load debug module first
-		const aExtensions = bDebugSources ? ["-dbg", ""] : [""];
+		const aExtensions = shouldLoadDebugVariant(sModuleName) ? ["-dbg", ""] : [""];
+
 		if ( !bAsync ) {
 
 			for (let i = 0; i < aExtensions.length && oModule.state !== LOADED; i++) {
@@ -1678,7 +1701,7 @@
 
 			oModule.url = getResourcePath(oSplitName.baseID, aExtensions[0] + oSplitName.subType);
 			// in debug mode, fall back to the non-dbg source, otherwise try the same source again (for SSO re-connect)
-			const sAltUrl = bDebugSources ? getResourcePath(oSplitName.baseID, aExtensions[1] + oSplitName.subType) : oModule.url;
+			const sAltUrl = aExtensions.length === 2 ? getResourcePath(oSplitName.baseID, aExtensions[1] + oSplitName.subType) : oModule.url;
 
 			if ( log.isLoggable() ) {
 				log.debug(sLogPrefix + "loading '" + sModuleName + "' from '" + oModule.url + "' (using <script>)");
