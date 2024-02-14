@@ -349,13 +349,15 @@ sap.ui.define([
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
 			this.fnWaitAsyncSpy = sinon.spy(_autoWaiterAsync, "waitAsync");
-			this.fnConfigSpy = sinon.spy(_autoWaiterAsync, "extendConfig");
+			this.fnConfigAsyncWaiterSpy = sinon.spy(_autoWaiterAsync, "extendConfig");
+			this.fnConfigWaiterSpy = sinon.spy(_autoWaiter, "extendConfig");
 			this.fnHasToWaitStub = sinon.stub(_autoWaiter, "hasToWait");
 		},
 		afterEach: function () {
 			this.clock.restore();
 			this.fnWaitAsyncSpy.restore();
-			this.fnConfigSpy.restore();
+			this.fnConfigAsyncWaiterSpy.restore();
+			this.fnConfigWaiterSpy.restore();
 			this.fnHasToWaitStub.restore();
 		}
 	});
@@ -367,7 +369,7 @@ sap.ui.define([
 		RecordReplay.waitForUI5({timeout: 10000, interval: 100}).then(function () {
 			assert.ok(this.fnHasToWaitStub.called, "Should call autoWaiter");
 			assert.ok(!_autoWaiter.hasToWait(), "Should wait for processing to end");
-			assert.ok(this.fnConfigSpy.calledOnce, "Should configure polling parameters");
+			assert.ok(this.fnConfigAsyncWaiterSpy.calledOnce, "Should configure polling parameters");
 			assert.ok(this.fnWaitAsyncSpy.calledOnce, "Should poll for autoWaiter conditions to be met");
 		}.bind(this)).catch(function (error) {
 			assert.ok(false, "Should not reach here" + error);
@@ -392,5 +394,12 @@ sap.ui.define([
 		});
 
 		this.clock.tick(200);
+	});
+
+	QUnit.test("Should apply default values when parameters values ommited", function (assert) {
+		RecordReplay.waitForUI5({timeout: 10000, interval: 100});
+		assert.ok(this.fnConfigWaiterSpy.calledWithMatch({timeout: 10000, interval: 100}), "the custom values are applied");
+		RecordReplay.waitForUI5().catch(function() {}); // ignore error for calling waitForUI5 twice sychronously
+		assert.ok(this.fnConfigWaiterSpy.calledWithMatch({timeout: 15000, interval: 400}), "the default values are applied");
 	});
 });
