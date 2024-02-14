@@ -47810,6 +47810,8 @@ make root = ${bMakeRoot}`;
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
+					batchNo : 2,
+					changeSetNo : 1,
 					headers : {
 						Prefer : "handling=strict"
 					},
@@ -47820,6 +47822,8 @@ make root = ${bMakeRoot}`;
 					"Preference-Applied" : "handling=strict"
 				})
 				.expectRequest({
+					batchNo : 2,
+					changeSetNo : 1,
 					headers : {
 						Prefer : "handling=strict"
 					},
@@ -47828,6 +47832,8 @@ make root = ${bMakeRoot}`;
 					payload : {}
 				}/*response does not matter*/)
 				.expectRequest({
+					batchNo : 2,
+					changeSetNo : 1,
 					headers : {
 						Prefer : "handling=strict"
 					},
@@ -47851,6 +47857,8 @@ make root = ${bMakeRoot}`;
 		}).then(function () {
 			if (bConfirm) {
 				that.expectRequest({
+						batchNo : 3,
+						changeSetNo : 1,
 						method : "POST",
 						url : "SalesOrderList('0')/" + sAction,
 						payload : {}
@@ -47859,6 +47867,8 @@ make root = ${bMakeRoot}`;
 						SalesOrderID : "0"
 					})
 					.expectRequest({
+						batchNo : 3,
+						changeSetNo : 1,
 						method : "POST",
 						url : "SalesOrderList('1')/" + sAction,
 						payload : {}
@@ -47867,6 +47877,8 @@ make root = ${bMakeRoot}`;
 						SalesOrderID : "1"
 					})
 					.expectRequest({
+						batchNo : 3,
+						changeSetNo : 1,
 						method : "POST",
 						url : "SalesOrderList('2')/" + sAction,
 						payload : {}
