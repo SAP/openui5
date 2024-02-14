@@ -447,6 +447,9 @@ sap.ui.define([
 					language: "en_US"
 				}
 			},
+			/**
+			 * @deprecated Since version 1.38.0.
+			 */
 			FeedContent: {
 				title: "Test Page for sap.m.FeedContent",
 				coverage: {

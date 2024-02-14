@@ -334,6 +334,9 @@ sap.ui.define([
 		assert.ok(oFeedList.getItems()[4].oAvatar.$().hasClass("sapFAvatarS"), "Avatar has class sapAvatarS applied");
 		assert.equal(oFeedList.getItems()[4].oAvatar.$().css("font-size"), "32px", "Avatar icon font size is 2 rem");
 	});
+	/**
+	 * @deprecated Since version 1.121
+	 */
 	QUnit.test("Default src - icon color", function (assert) {
 		this.oNonActiveItem = oFeedList.getItems().filter(function(oListItem) {
 			return !oListItem.getIconActive();
@@ -1155,6 +1158,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated Since version 1.121
+	 */
 	QUnit.test("When the theme is 'sap_belize' and the device is not a phone, the CSS contrast class 'sapContrast' is set on the ActionSheet's popover .", function (assert) {
 		// Arrange
 		var oPopover = new Popover();
@@ -1182,6 +1188,9 @@ sap.ui.define([
 		Device.system.phone = bOriginSystemPhone;
 	});
 
+	/**
+	 * @deprecated Since version 1.121
+	 */
 	QUnit.test("When the theme is 'sap_belize_plus' and the device is not a phone, the CSS contrast class 'sapContrastPlus' is set on the ActionSheet's popover.", function (assert) {
 		// Arrange
 		var oPopover = new Popover();
