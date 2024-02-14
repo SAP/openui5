@@ -92,7 +92,8 @@
 					"sap.uxap.sample.ObjectPageSubSectionMultiView",
 					"sap.uxap.sample.ObjectPageSubSectionSized",
 					"sap.uxap.sample.ObjectPageSubSectionWithActions",
-					"sap.uxap.sample.ObjectPageSubSectionHiddenTitle"
+					"sap.uxap.sample.ObjectPageSubSectionHiddenTitle",
+					"sap.uxap.sample.ObjectPageSubSectionBackground"
 				]
 			},
 			{
@@ -153,6 +154,11 @@
 				"id": "sap.uxap.sample.ObjectPageSubSectionHiddenTitle",
 				"name": "Subsection with hidden title",
 				"description": "Example of a subsection with showTitle property set to false."
+			},
+			{
+				"id": "sap.uxap.sample.ObjectPageSubSectionBackground",
+				"name": "Subsection with transparent background",
+				"description": "This example uses the 'sapUxAPObjectPageSubSectionTransparentBackground' CSS class to set transparent background."
 			},
 			{
 				"id": "sap.uxap.sample.ObjectPageSection",
