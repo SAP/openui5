@@ -257,24 +257,27 @@ sap.ui.define([
 			sLayer
 		))
 		.then(function(oResult) {
-			if (bDraft && oResult && oResult.response) {
-				var vChangeDefinition = oResult.response;
-				var aDraftFilenames = [];
-				if (Array.isArray(vChangeDefinition)) {
-					vChangeDefinition.forEach(function(change) {
-						aDraftFilenames.push(change.fileName);
-					});
-					// the reference and layer of all items are the same
-					[vChangeDefinition] = vChangeDefinition;
+			if (oResult && bDraft) {
+				var mPropertyBag = {
+					reference: this._sComponentName,
+					layer: Layer.CUSTOMER // only the customer layer has draft active
+				};
+				if (oResult.response && oResult.response.length > 0) {
+					var aDraftFilenames = [];
+					if (Array.isArray(oResult.response)) {
+						oResult.response.forEach(function(change) {
+							aDraftFilenames.push(change.fileName);
+						});
+					}
+					mPropertyBag.draftFilenames = aDraftFilenames;
+					Versions.onAllChangesSaved(mPropertyBag);
+				} else {
+					// need to update version model when condensing send post request with a delete change and afterwards call flex/data request with right version parameter
+					return Versions.updateModelFromBackend(mPropertyBag);
 				}
-				Versions.onAllChangesSaved({
-					reference: vChangeDefinition.reference,
-					layer: vChangeDefinition.layer,
-					draftFilenames: aDraftFilenames
-				});
 			}
 			return oResult;
-		});
+		}.bind(this));
 	};
 
 	/**

@@ -323,7 +323,7 @@ sap.ui.define([
 				});
 			});
 
-			QUnit.test("when condense is called with a single update", function(assert) {
+			QUnit.test("when condense is called with a single update and then a single delete", function(assert) {
 				var oNewChange1 = {
 					creation: "2022-05-05T12:57:32.229Z",
 					fileName: "oChange5",
@@ -358,8 +358,23 @@ sap.ui.define([
 					}
 				};
 
-				return oConnector.condense(mPropertyBag)
+				var mPropertyBagDelete = {
+					layer: Layer.CUSTOMER,
+					reference: "sap.ui.fl.test",
+					allChanges: aFlexObjects,
+					condensedChanges: aFlexObjects,
+					flexObjects: {
+						namespace: "",
+						layer: "",
+						"delete": {
+							change: [
+								"oChange5"
+							]
+						}
+					}
+				};
 
+				return oConnector.condense(mPropertyBag)
 				.then(function() {
 					return oConnector.loadFlexData({reference: "sap.ui.fl.test", version: Version.Number.Draft});
 				})
@@ -377,6 +392,14 @@ sap.ui.define([
 							assert.equal(mFlexObject.changeDefinition.fileName[0], "oChange5", "the draft filename is correct");
 						}
 					});
+					return oConnector.condense(mPropertyBagDelete);
+				})
+				.then(function(aResponses) {
+					assert.strictEqual(aResponses.response.length, 0, "there is no change in the condense response");
+					return ObjectStorageUtils.getAllFlexObjects({storage: oConnector.storage});
+				})
+				.then(function(aList) {
+					assert.strictEqual(aList.length, 0, "there is no change in the storage");
 				});
 			});
 		});

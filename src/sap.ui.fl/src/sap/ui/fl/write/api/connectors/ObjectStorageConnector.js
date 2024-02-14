@@ -388,6 +388,22 @@ sap.ui.define([
 				var vFlexObject = this.storage._itemsStoredAsObjects ? oFileContent : JSON.stringify(oFileContent);
 				aPromises.push(this.storage.setItem(oItemToSet.key, vFlexObject));
 			}.bind(this));
+			// discard draft when last draft change is delete
+			if (mFeatures.isVersioningEnabled && mPropertyBag.layer === Layer.CUSTOMER
+				&& oCondenseInformation.delete && Object.keys(oCondenseInformation.delete).length !== 0) {
+				const aVersions = await this.versions.load.call(this, mPropertyBag);
+				if (aVersions.length) {
+					const oDraftVersion = aVersions.find((oVersion) => oVersion.isDraft);
+					Object.values(oCondenseInformation.delete).forEach(function(aChangeIds) {
+						aChangeIds.forEach(function(sChangeId) {
+							oDraftVersion.filenames = oDraftVersion.filenames.filter(function(filename) { return filename !== sChangeId; });
+						});
+					});
+					if (!oDraftVersion.filenames.length) {
+						await this.versions.discardDraft.call(this, mPropertyBag);
+					}
+				}
+			}
 			return Promise.all(aPromises).then(function() {
 				return Promise.resolve({response: aResponse});
 			});
