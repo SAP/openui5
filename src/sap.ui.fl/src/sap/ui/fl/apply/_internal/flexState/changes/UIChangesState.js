@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/base/util/merge",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/changes/Utils",
@@ -13,7 +12,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
 ], (
-	includes,
 	merge,
 	JsControlTreeModifier,
 	Utils,
@@ -55,7 +53,7 @@ sap.ui.define([
 				const sControlId = JsControlTreeModifier.getControlIdBySelector(oDependentControlSelector, oAppComponent);
 				aNewValidControlDependencies.push(oDependentControlSelector);
 				oDependencyMap.mControlsWithDependencies[sControlId] ||= [];
-				if (!includes(oDependencyMap.mControlsWithDependencies[sControlId], oChange.getId())) {
+				if (!oDependencyMap.mControlsWithDependencies[sControlId].includes(oChange.getId())) {
 					oDependencyMap.mControlsWithDependencies[sControlId].push(oChange.getId());
 				}
 			}

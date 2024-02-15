@@ -194,6 +194,7 @@ sap.ui.define([
 	 */
 	RecordReplay.waitForUI5 = function (oOptions) {
 		oOptions = oOptions || {};
+		_autoWaiterAsync.resetConfig();
 		_autoWaiterAsync.extendConfig(oOptions);
 		return new Promise(function (resolve, reject) {
 			_autoWaiterAsync.waitAsync(function (sError) {

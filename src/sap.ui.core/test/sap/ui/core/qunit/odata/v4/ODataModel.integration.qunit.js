@@ -47795,6 +47795,8 @@ sap.ui.define([
 
 			return this.createView(assert, sView, oModel).then(function () {
 				that.expectRequest({
+						batchNo : 2,
+						changeSetNo : 1,
 						headers : {
 							Prefer : "handling=strict"
 						},
@@ -47805,6 +47807,8 @@ sap.ui.define([
 						"Preference-Applied" : "handling=strict"
 					})
 					.expectRequest({
+						batchNo : 2,
+						changeSetNo : 1,
 						headers : {
 							Prefer : "handling=strict"
 						},
@@ -47813,6 +47817,8 @@ sap.ui.define([
 						payload : {}
 					}/*response does not matter*/)
 					.expectRequest({
+						batchNo : 2,
+						changeSetNo : 1,
 						headers : {
 							Prefer : "handling=strict"
 						},
@@ -47836,6 +47842,8 @@ sap.ui.define([
 			}).then(function () {
 				if (bConfirm) {
 					that.expectRequest({
+							batchNo : 3,
+							changeSetNo : 1,
 							method : "POST",
 							url : "SalesOrderList('0')/" + sAction,
 							payload : {}
@@ -47844,6 +47852,8 @@ sap.ui.define([
 							SalesOrderID : "0"
 						})
 						.expectRequest({
+							batchNo : 3,
+							changeSetNo : 1,
 							method : "POST",
 							url : "SalesOrderList('1')/" + sAction,
 							payload : {}
@@ -47852,6 +47862,8 @@ sap.ui.define([
 							SalesOrderID : "1"
 						})
 						.expectRequest({
+							batchNo : 3,
+							changeSetNo : 1,
 							method : "POST",
 							url : "SalesOrderList('2')/" + sAction,
 							payload : {}

@@ -307,6 +307,9 @@ sap.ui.define([
 		assert.strictEqual(document.getElementById("generic-tile-focus").parentNode, oTileElement, "The tile content is a child of the link.");
 	});
 
+	/**
+	 * @deprecated Since version 1.121
+	 */
 	QUnit.test("GenericTile border rendered - HCB", function(assert) {
 		var done = assert.async();
 		this.applyTheme("sap_hcb", async function() {
@@ -322,6 +325,9 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	/**
+	 * @deprecated Since version 1.121
+	 */
 	QUnit.test("GenericTile focus rendered - HCB", function(assert) {
 		var done = assert.async();
 		this.applyTheme("sap_hcb", async function() {
@@ -333,6 +339,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated Since version 1.121
+	 */
 	QUnit.test("GenericTile border rendered - Belize", function(assert) {
 		var done = assert.async();
 		this.applyTheme("sap_belize", async function() {
@@ -348,6 +357,9 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	/**
+	 * @deprecated Since version 1.121
+	 */
 	QUnit.test("GenericTile focus and hover overlay rendered - Belize", function(assert) {
 		var done = assert.async();
 		this.applyTheme("sap_belize", async function() {
@@ -364,6 +376,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated Since version 1.121
+	 */
 	QUnit.test("GenericTile focus and hover overlay rendered - Fiori 3", function(assert) {
 		var done = assert.async();
 		this.applyTheme("sap_fiori_3", async function() {
@@ -384,6 +399,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated Since version 1.121
+	 */
 	QUnit.test("GenericTile does not expand on focus - theme hcb", function(assert) {
 		var $tile = this.oGenericTile.$();
 

@@ -25,7 +25,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Core",
-	"sap/ui/core/Theming"
+	"sap/ui/core/Theming",
+	"./LinkTileContent"
 ], function(
 	library,
 	Localization,
@@ -49,7 +50,8 @@ sap.ui.define([
 	coreLibrary,
 	InvisibleText,
 	Core,
-	Theming
+	Theming,
+	LinkTileContent
 ) {
 	"use strict";
 	var frameTypes = library.FrameType;
@@ -296,7 +298,7 @@ sap.ui.define([
 				 * LinkTileContent is being added to the GenericTile, it is advised to use in TwoByOne frameType
 				 * @since 1.120
 				 */
-				linkTileContents: {type: "sap.m.LinkTileContent", multiple: true, singularName: "linkTileContent"},
+				linkTileContents: {type: "sap.m.LinkTileContent", multiple: true, singularName: "linkTileContent", defaultClass: LinkTileContent},
 
 				/**
 				 * Action buttons added in ActionMode.

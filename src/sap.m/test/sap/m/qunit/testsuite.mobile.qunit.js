@@ -462,17 +462,6 @@ sap.ui.define([
 				}
 			},
 
-			FeedContent: {
-				title: "Test Page for sap.m.FeedContent",
-				coverage: {
-					only: "//sap\/m\/FeedContent.*/"
-				},
-				ui5: {
-					language: "en-US",
-					libs: "sap.ui.core,sap.m"
-				}
-			},
-
 			FeedInput: {
 				title: "Test Page for sap.m.FeedInput",
 				coverage: {

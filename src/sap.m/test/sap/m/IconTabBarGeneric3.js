@@ -17,7 +17,7 @@ function(App, IconTabBar, IconTabFilter, IconTabSeparator, Input, Label, Library
 	"use strict";
 
 	// shortcut for sap.ui.core.IconColor
-	var IconColor = coreLibrary.IconColor;
+	const IconColor = coreLibrary.IconColor;
 
 	// shortcut for sap.m.TabsOverflowMode
 	var TabsOverflowMode = Library.TabsOverflowMode;

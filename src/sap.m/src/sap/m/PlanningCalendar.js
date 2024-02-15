@@ -828,6 +828,7 @@ sap.ui.define([
 				}.bind(this));
 				this._rowHeaderPressEventKeyboard = oRowHeader.on("keydown", function (oEvent) {
 					if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
+						oEvent.preventDefault();
 						var oRowListItem = Element.closestTo(oEvent.currentTarget),
 							oRow = getRow(oRowListItem),
 							sRowHeaderId = oRowListItem.getAggregation("cells")[0].getId();

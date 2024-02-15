@@ -73,6 +73,9 @@ sap.ui.define([
 	 * situations where the sub-section contains a control that has “100%” height, for example,
 	 * <code>sap.ui.table.Table</code> with <code>visibleRowCountMode</code> set to <code>Auto</code>.
 	 *
+	 * As of version 1.122, applications can set transparent background to subsections
+	 * by adding the <code>sapUxAPObjectPageSubSectionTransparentBackground</code> class to the subsection.
+	 *
 	 * <b>Note:</b> This control is intended to be used only as part of the <code>ObjectPageLayout</code>.
 	 *
 	 * @extends sap.uxap.ObjectPageSectionBase
