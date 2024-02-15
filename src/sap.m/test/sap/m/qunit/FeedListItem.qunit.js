@@ -20,8 +20,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
-], function(Theming, qutils, jQuery, FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar, ActionSheet, App, Page, Device, FormattedText, IconPool, library, Log, KeyCodes, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
+], function(Theming, qutils, jQuery, FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar, ActionSheet, App, Page, Device, FormattedText, IconPool, library, Log, KeyCodes, oCore, Element) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -546,6 +547,12 @@ sap.ui.define([
 		oSpy.restore();
 	});
 	QUnit.module("Events");
+
+	QUnit.test("Focus on the FeedListItem", function(assert) {
+		var oFeedListItem = oFeedList.getItems()[0];
+		oFeedListItem.$().trigger("tap");
+		assert.ok(oFeedListItem.$()[0].attributes["aria-labelledby"], "aria-labelledby property has been added on focus");
+	});
 
 	QUnit.test("Press Icon", function (assert) {
 		// Arrange

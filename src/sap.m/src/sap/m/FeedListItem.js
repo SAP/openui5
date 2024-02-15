@@ -16,7 +16,9 @@ sap.ui.define([
 	"sap/m/AvatarSize",
 	"sap/ui/core/Theming",
 	"sap/ui/util/openWindow",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Lib",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Element"
 ],
 function(
 	ListItemBase,
@@ -32,7 +34,9 @@ function(
 	AvatarSize,
 	Theming,
 	openWindow,
-	CoreLib
+	CoreLib,
+	InvisibleText,
+	Element
 	) {
 	"use strict";
 
@@ -263,6 +267,7 @@ function(
 	 */
 	FeedListItem._sTextShowMore = FeedListItem._oRb.getText("TEXT_SHOW_MORE");
 	FeedListItem._sTextShowLess = FeedListItem._oRb.getText("TEXT_SHOW_LESS");
+	FeedListItem._sTextListItem = FeedListItem._oRb.getText("LIST_ITEM");
 
 	FeedListItem.prototype.init = function() {
 		ListItemBase.prototype.init.apply(this);
@@ -273,6 +278,10 @@ function(
 			icon: "sap-icon://overflow",
 			press: [ this._onActionButtonPress, this ]
 		}), true);
+		//Setting invisible text
+		this._oInvisibleText = new InvisibleText();
+		this._oInvisibleText.toStatic();
+		this._oInvisibleText.setText(FeedListItem._sTextListItem);
 	};
 
 	/**
@@ -394,6 +403,9 @@ function(
 		if (this._oLinkControl) {
 			this._oLinkControl.destroy();
 		}
+		if (this._oInvisibleText){
+			this._oInvisibleText.destroy();
+		}
 		if (this.oAvatar) {
 			this.oAvatar.destroy();
 		}
@@ -445,8 +457,13 @@ function(
         if ( oItem instanceof FeedListItem ) {
             oItemDomRef.setAttribute("aria-posinset", mPosition.posInset);
             oItemDomRef.setAttribute("aria-setsize", mPosition.setSize);
-        }
+			this.addAriaLabelledBy(this._oInvisibleText.getId());
+		}
 	};
+
+	FeedListItem.prototype.onfocusout = function(oEvent){
+			this.removeAriaLabelledBy(this._oInvisibleText.getId());
+		};
 
 	/**
 	 * Lazy load feed icon image.
