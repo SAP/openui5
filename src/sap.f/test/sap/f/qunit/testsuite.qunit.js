@@ -268,6 +268,11 @@ sap.ui.define(function () {
 				sinon: false,
 				module: "./designtime/DynamicPageTitle.qunit"
 			},
+			"Designtime-GridContainer": {
+				group: "Designtime",
+				sinon: false,
+				module: "./designtime/GridContainer.qunit"
+			},
 			"Designtime-Library": {
 				group: "Designtime",
 				sinon: false,
