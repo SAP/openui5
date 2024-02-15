@@ -864,8 +864,7 @@ sap.ui.define([
 
 		QUnit.test("format relative date without modifying the input date object", function (assert) {
 			var oDateFormat = DateFormat.getDateInstance({
-				relative: true,
-				relativeScale: "auto"
+				relative: true
 			});
 			var oDate = UI5Date.getInstance("2020-08-17T21:59:00Z");
 			var beforeMs = oDate.getTime();
@@ -2966,7 +2965,6 @@ sap.ui.define([
 				aTestData.forEach(function (oTestData) {
 					var oDateTime = DateFormat.getDateTimeInstance({
 						relative: true,
-						relativeScale: "auto",
 						relativeStyle: sStyle
 					});
 
@@ -3936,7 +3934,7 @@ sap.ui.define([
 			var sResult = oIntervalFormat.format([oDate1, oDate2]);
 			assert.strictEqual(sResult, "Apr 11\u2009\u2013\u200912, 2017", "Different dates are formatted correctly");
 
-			var sResult = oIntervalFormat.format([oDate1, oDate1]);
+			sResult = oIntervalFormat.format([oDate1, oDate1]);
 			assert.strictEqual(sResult, "Apr 11, 2017", "Single Date if formatted correctly afterwards");
 		});
 
