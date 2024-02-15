@@ -116,9 +116,9 @@ sap.ui.define([
 				}
 			};
 
-			PDFViewer.prototype._initPlaceholderMessagePageControl = function () {
+			PDFViewer.prototype._initErrorPlaceholderMessagePageControl = function () {
 				var that = this,
-				sPlaceholderMessagePageFactoryFunctionName = "getPlaceholderMessagePageControl";
+				sPlaceholderMessagePageFactoryFunctionName = "getErrorPlaceholderMessagePageControl";
 
 				this._objectsRegister[sPlaceholderMessagePageFactoryFunctionName] = function () {
 					var oMessagePage = new MessagePage({
@@ -129,7 +129,6 @@ sap.ui.define([
 
 					that._objectsRegister[sPlaceholderMessagePageFactoryFunctionName] = function () {
 						oMessagePage.setText(that._getMessagePageErrorMessage());
-
 						return oMessagePage;
 					};
 
@@ -234,6 +233,23 @@ sap.ui.define([
 					return oButton;
 				};
 
+			};
+
+			PDFViewer.prototype._getNonTrustedSourceMessage = function () {
+				var oButtonContent = this._objectsRegister.getPopupDownloadButtonControl(),
+					oMessagePage = this.getAggregation("_nonTrustedMessagePage");
+
+				if (!oMessagePage) {
+					oMessagePage = new MessagePage({
+						showHeader: false,
+						text: this._getLibraryResourceBundle().getText("PDF_VIEWER_NONTRUSTEDSOURCEMESSAGE_TITLE"),
+						icon: "sap-icon://download",
+						buttons: [oButtonContent],
+						description: ""
+					});
+					this.setAggregation("_nonTrustedMessagePage", oMessagePage);
+				}
+				return oMessagePage;
 			};
 		}
 	};

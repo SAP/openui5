@@ -3,8 +3,8 @@
 sap.ui.define([
 	"./PDFViewerTestUtils",
 	"sap/m/PDFViewerRenderer",
-	"sap/ui/Device"
-], function (TestUtils, PDFViewerRenderer, Device) {
+	"sap/ui/core/Core"
+], function (TestUtils, PDFViewerRenderer, Core) {
 	"use strict";
 
 	var oPdfViewer = null;
@@ -133,8 +133,7 @@ sap.ui.define([
 		TestUtils.renderPdfViewer(oPdfViewer);
 	});
 
-	QUnit.test("Test proeprty:isTrustedSource = false", function (assert) {
-		assert.expect(3);
+	QUnit.test("Test property:isTrustedSource = false", function (assert) {
 		var loadDone = assert.async();
 
 		var oOptions = {
@@ -144,16 +143,40 @@ sap.ui.define([
 		};
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
-		oPdfViewer.addEventDelegate({
-			onBeforeRendering: function() {
-				assert.equal(oPdfViewer.getDisplayType(), "Link", "displayType changed to Link");
-			},
+		var oEventDelegate = {
 			onAfterRendering: function() {
-				assert.equal(oPdfViewer.getDisplayType(), "Embedded", "displayType reset back to initial");
+				assert.equal(oPdfViewer.getDisplayType(), "Embedded", "displayType is set to Embedded");
+				assert.ok(oPdfViewer.getDomRef().querySelector(".sapMPDFViewerNonTrustedMessage"), "NonTrustedSource Class is present");
+				assert.ok(Core.byId(oPdfViewer.getDomRef().querySelector(".sapMPDFViewerNonTrustedMessage").children[0].id).isA("sap.m.MessagePage"), "Message is created");
 				assert.ok(oPdfViewer.getDomRef().querySelectorAll("#" + oPdfViewer.getId() + "-toolbarDownloadButton").length === 1, "Download button is displayed in Link mode");
+				oPdfViewer.removeEventDelegate(oEventDelegate);
 				loadDone();
 			}
-		});
+		};
+		oPdfViewer.addEventDelegate(oEventDelegate);
+		TestUtils.renderPdfViewer(oPdfViewer);
+	});
+
+	QUnit.test("Test property:isTrustedSource = false and displayType = Link", function (assert) {
+		var loadDone = assert.async();
+
+		var oOptions = {
+			"displayType": "Link",
+			"source": "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
+			"isTrustedSource": false
+		};
+
+		oPdfViewer = TestUtils.createPdfViewer(oOptions);
+		var oEventDelegate = {
+			onAfterRendering: function() {
+				assert.equal(oPdfViewer.getDisplayType(), "Link", "displayType is set to Link");
+				assert.notOk(oPdfViewer.getDomRef().querySelector(".sapMPDFViewerNonTrustedMessage"), "NonTrustedSource Class is not created");
+				assert.ok(oPdfViewer.getDomRef().querySelectorAll("#" + oPdfViewer.getId() + "-toolbarDownloadButton").length === 1, "Download button is displayed in Link mode");
+				oPdfViewer.removeEventDelegate(oEventDelegate);
+				loadDone();
+			}
+		};
+		oPdfViewer.addEventDelegate(oEventDelegate);
 		TestUtils.renderPdfViewer(oPdfViewer);
 	});
 
