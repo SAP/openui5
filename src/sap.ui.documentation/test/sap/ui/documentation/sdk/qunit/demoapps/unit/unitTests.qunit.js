@@ -1,13 +1,13 @@
 /*global QUnit*/
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function () {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"test/model/formatter"
+], function (Core) {
 	"use strict";
 
-	sap.ui.require([
-		"test/model/formatter"
-	], function () {
+	Core.ready().then(function () {
 		QUnit.start();
 	});
-
 });
