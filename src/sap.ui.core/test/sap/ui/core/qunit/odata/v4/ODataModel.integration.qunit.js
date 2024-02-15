@@ -33149,6 +33149,426 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2. First visible
+	// row starts at 2 (Gamma). Scroll to "Zeta". Determine the parent node of "Delta" and "Eta"
+	// with #requestParent. A side effect for a structural property does not lead to trouble, same
+	// for a side-effects refresh.
+	// JIRA: CPOUI5ODATAV4-2467
+	QUnit.test("Recursive Hierarchy: #requestParent for non-adjacent children",
+			async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+			+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+			+ ",NodeProperty='ID',Levels=2)";
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {expandTo : 2, hierarchyQualifier : 'OrgChart'}
+		}}" firstVisibleRow="2" threshold="0" visibleRowCount="2">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text id="id" text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha // not loaded
+		//   1 Beta // not loaded
+		//   2 Gamma
+		//   3 Delta
+		//   4 Epsilon // not loaded
+		//   5 Zeta
+		//   6 Eta
+		this.expectRequest(sUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=2&$top=2", {
+				"@odata.count" : "7",
+				value : [{
+					DescendantCount : 0,
+					DistanceFromRoot : 1,
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Gamma"
+				}, {
+					DescendantCount : 0,
+					DistanceFromRoot : 1,
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Delta"
+				}]
+			})
+			.expectChange("id", [,, "2", "3"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')"
+		], [
+			[undefined, 2, "2", "Gamma"],
+			[undefined, 2, "3", "Delta"]
+		], 7);
+		const oDelta = oTable.getRows()[1].getBindingContext();
+
+		this.expectRequest(sUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$skip=5&$top=2", {
+				value : [{
+					DescendantCount : 0,
+					DistanceFromRoot : 1,
+					DrillState : "leaf",
+					ID : "5",
+					Name : "Zeta"
+				}, {
+					DescendantCount : 0,
+					DistanceFromRoot : 1,
+					DrillState : "leaf",
+					ID : "6",
+					Name : "Eta"
+				}]
+			})
+			.expectChange("id", [,,,,, "5", "6"]);
+
+		oTable.setFirstVisibleRow(5);
+
+		await this.waitForChanges(assert, "scroll to 5 (Zeta)");
+
+		checkTable("after scroll to 5 (Zeta)", assert, oTable, [
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		], [
+			[undefined, 2, "5", "Zeta"],
+			[undefined, 2, "6", "Eta"]
+		], 7);
+		const oZeta = oTable.getRows()[0].getBindingContext();
+		const oEta = oTable.getRows()[1].getBindingContext();
+
+		this.expectRequest({
+				batchNo : 3,
+				url : "EMPLOYEES?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '2'),1)"
+					+ "&$select=ID,Name"
+			}, {
+				value : [{
+					ID : "0",
+					Name : "Alpha"
+				}]
+			})
+			.expectRequest({
+				batchNo : 3,
+				url : "EMPLOYEES?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '5'),1)"
+					+ "&$select=ID,Name"
+			}, {
+				value : [{
+					ID : "0",
+					Name : "Alpha"
+				}]
+			})
+			.expectRequest({
+				batchNo : 4,
+				url : sUrl + "&$filter=ID eq '0'"
+					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,LimitedRank"
+			}, {
+				value : [{
+					DescendantCount : "6",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					LimitedRank : "0"
+				}]
+			});
+
+		// code under test
+		const [oAlpha, oAlpha0] = await Promise.all([
+			oDelta.requestParent(),
+			oEta.requestParent(),
+			this.waitForChanges(assert, "request parent of 3 (Delta) and 6 (Eta)")
+		]);
+
+		assert.strictEqual(oAlpha, oAlpha0, "same context");
+		assert.strictEqual(oAlpha.getPath(), "/EMPLOYEES('0')");
+		assert.strictEqual(oAlpha.iIndex, 0);
+		assert.deepEqual(oAlpha.getObject(), {
+			"@$ui5.node.isExpanded" : true,
+			"@$ui5.node.level" : 1,
+			ID : "0",
+			Name : "Alpha"
+		});
+
+		assert.strictEqual(oZeta.getParent(), oAlpha);
+		assert.strictEqual(oEta.getParent(), oAlpha);
+		assert.strictEqual(oDelta.getParent(), oAlpha);
+
+		this.expectRequest("EMPLOYEES?$select=ID,Name&$filter=ID eq '5' or ID eq '6'&$top=2", {
+				value : [{
+					DrillState : "leaf",
+					ID : "5",
+					Name : "Zeta"
+				}, {
+					DrillState : "leaf",
+					ID : "6",
+					Name : "Eta"
+				}]
+			});
+
+		await Promise.all([
+			oEta.getBinding().getHeaderContext().requestSideEffects(["Name"]),
+			this.waitForChanges(assert, "request side effects for name")
+		]);
+
+		checkTable("after requestSideEffects", assert, oTable, [
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')"
+		], [
+			[undefined, 2, "5", "Zeta"],
+			[undefined, 2, "6", "Eta"]
+		], 7);
+
+		// code under test
+		assert.strictEqual(oEta.getParent(), undefined);
+
+		this.expectRequest(sUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$skip=0&$top=1", {
+				value : [{
+					DescendantCount : "6",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}]
+			});
+
+		// code under test
+		const [oResult] = await Promise.all([
+			oEta.requestParent(),
+			this.waitForChanges(assert, "request parent of 6 (Eta)")
+		]);
+
+		assert.notStrictEqual(oResult, oAlpha, "Alpha was destroyed by side effect");
+		assert.strictEqual(oResult.getPath(), "/EMPLOYEES('0')");
+		assert.strictEqual(oResult.iIndex, 0);
+
+		this.expectRequest(sUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=5&$top=2", {
+				"@odata.count" : "7",
+				value : [{
+					DescendantCount : 0,
+					DistanceFromRoot : 1,
+					DrillState : "leaf",
+					ID : "5",
+					Name : "Zeta"
+				}, {
+					DescendantCount : 0,
+					DistanceFromRoot : 1,
+					DrillState : "leaf",
+					ID : "6",
+					Name : "Eta"
+				}]
+			});
+
+		await Promise.all([
+			oEta.getBinding().getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "request side effects refresh")
+		]);
+
+		this.expectRequest({
+				url : "EMPLOYEES?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '5'),1)"
+					+ "&$select=ID,Name"
+			}, {
+				value : [{
+					ID : "1",
+					Name : "Beta"
+				}]
+			})
+			.expectRequest({
+				url : sUrl + "&$filter=ID eq '1'"
+					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,LimitedRank"
+			}, {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					LimitedRank : "1"
+				}]
+			});
+
+		// code under test
+		const [oBeta] = await Promise.all([
+			oEta.requestParent(),
+			this.waitForChanges(assert, "request parent of 6 (Eta)")
+		]);
+
+		assert.strictEqual(oBeta.getPath(), "/EMPLOYEES('1')");
+		assert.strictEqual(oBeta.iIndex, 1);
+		assert.deepEqual(oBeta.getObject(), {
+			"@$ui5.node.level" : 2,
+			ID : "1",
+			Name : "Beta"
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2. First visible
+	// row starts at 2 (Gamma). Request "Beta" as a keep alive context. Scroll to "Zeta". Determine
+	// the parent node of "Delta" and "Eta" in an interleaved fashion and see that it is "Beta".
+	// JIRA: CPOUI5ODATAV4-2467
+	QUnit.test("Recursive Hierarchy: #requestParent interleaved", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+			+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+			+ ",NodeProperty='ID',Levels=2)";
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {expandTo : 2, hierarchyQualifier : 'OrgChart'}
+		}}" firstVisibleRow="2" threshold="0" visibleRowCount="2">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text id="id" text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha // not loaded
+		// 1 Beta // not loaded
+		//   2 Gamma
+		//   3 Delta
+		//   4 Epsilon // not loaded
+		//   5 Zeta
+		//   6 Eta
+		this.expectRequest(sUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=2&$top=2", {
+				"@odata.count" : "7",
+				value : [{
+					DescendantCount : 0,
+					DistanceFromRoot : 1,
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Gamma"
+				}, {
+					DescendantCount : 0,
+					DistanceFromRoot : 1,
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Delta"
+				}]
+			})
+			.expectChange("id", [,, "2", "3"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')"
+		], [
+			[undefined, 2, "2", "Gamma"],
+			[undefined, 2, "3", "Delta"]
+		], 7);
+		const oDelta = oTable.getRows()[1].getBindingContext();
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID", {ID : "1"});
+
+		const oBeta = oDelta.getBinding().getKeepAliveContext("/EMPLOYEES('1')");
+
+		await this.waitForChanges(assert, "keep alive 1 (Beta)");
+
+		this.expectRequest(sUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$skip=5&$top=2", {
+				value : [{
+					DescendantCount : 0,
+					DistanceFromRoot : 1,
+					DrillState : "leaf",
+					ID : "5",
+					Name : "Zeta"
+				}, {
+					DescendantCount : 0,
+					DistanceFromRoot : 1,
+					DrillState : "leaf",
+					ID : "6",
+					Name : "Eta"
+				}]
+			})
+			.expectChange("id", [,,,,, "5", "6"]);
+
+		oTable.setFirstVisibleRow(5);
+
+		await this.waitForChanges(assert, "scroll to 5 (Zeta)");
+
+		checkTable("after scroll to 5 (Zeta)", assert, oTable, [
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('6')",
+			"/EMPLOYEES('1')"
+		], [
+			[undefined, 2, "5", "Zeta"],
+			[undefined, 2, "6", "Eta"]
+		], 7);
+		const oEta = oTable.getRows()[1].getBindingContext();
+		assert.strictEqual(oBeta.iIndex, undefined, "still unknown");
+
+		let fnResolve;
+		this.expectRequest({
+				url : "EMPLOYEES?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '2'),1)"
+					+ "&$select=ID,Name"
+			}, new Promise(function (resolve) {
+				fnResolve = resolve.bind(null, {
+					value : [{
+						ID : "1",
+						Name : "Beta"
+					}]
+				});
+			}));
+
+		// code under test
+		const oBetaPromise = oDelta.requestParent();
+
+		await this.waitForChanges(assert, "request parent of 3 (Delta)");
+
+		this.expectRequest({
+				url : "EMPLOYEES?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '5'),1)"
+					+ "&$select=ID,Name"
+			}, {
+				value : [{
+					ID : "1",
+					Name : "Beta"
+				}]
+			})
+			.expectRequest({
+				url : sUrl + "&$filter=ID eq '1'"
+					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,LimitedRank"
+			}, {
+				value : [{
+					DescendantCount : "5",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					LimitedRank : "1"
+				}]
+			});
+
+		const [oBeta0] = await Promise.all([
+			// code under test
+			oEta.requestParent(),
+			this.waitForChanges(assert, "request parent of 6 (Eta)")
+		]);
+
+		assert.strictEqual(oBeta0, oBeta, "keep alive context reused");
+		assert.strictEqual(oBeta.getPath(), "/EMPLOYEES('1')");
+		assert.strictEqual(oBeta.iIndex, 1);
+		assert.deepEqual(oBeta.getObject(), {
+			"@$ui5.node.isExpanded" : true,
+			"@$ui5.node.level" : 1,
+			ID : "1",
+			Name : "Beta"
+		});
+
+		fnResolve();
+
+		assert.strictEqual(await oBetaPromise, oBeta, "same context");
+
+		assert.strictEqual(oDelta.getParent(), oBeta);
+		assert.strictEqual(oEta.getParent(), oBeta);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 3. Create a new
 	// child ("Iota") inserted below "Beta"; create a new child node ("Rho") inserted below "Alpha"
 	// on the UI, but the rank is the last position in the hierarchy. Scroll to "Delta" and expand

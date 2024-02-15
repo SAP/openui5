@@ -801,7 +801,7 @@ sap.ui.define([
 	_AggregationCache.prototype.fetchParentIndex = function (iIndex, oGroupLock) {
 		const iNodeLevel = this.aElements[iIndex]["@$ui5.node.level"];
 		// find adjacent sibling with smallest index
-		for (let i = iIndex; i >= 0; i -= 1) {
+		for (let i = iIndex - 1; i >= 0; i -= 1) {
 			const iCandidateLevel = this.aElements[i]["@$ui5.node.level"];
 			if (iCandidateLevel === 0) {
 				// Note: level 0 means "don't know" for initial *placeholders* of 1st level cache!
@@ -830,6 +830,14 @@ sap.ui.define([
 		oPromise = this.oRequestor.request("GET", sQueryString, oGroupLock)
 			.then(async (oResult) => {
 				const oParent = oResult.value[0];
+				const oCandidate = this.aElements.$byPredicate[
+					_Helper.getKeyPredicate(oParent, this.sMetaPath, this.getTypes())];
+				const iCandidateRank
+					= oCandidate && _Helper.getPrivateAnnotation(oCandidate, "rank");
+				if (iCandidateRank !== undefined) { // parent already inside collection
+					return this.getArrayIndex(iCandidateRank);
+				}
+
 				_Helper.setPrivateAnnotation(oParent, "parent", this.oFirstLevel);
 				const aSelect = [
 					this.oAggregation.$DistanceFromRoot,
@@ -842,17 +850,21 @@ sap.ui.define([
 					this.requestNodeProperty(oParent, oGroupLock)
 				]);
 
-				this.oFirstLevel.calculateKeyPredicate(oParent,
-					this.getTypes(), _Helper.getMetaPath(_Helper.buildPath(this.sMetaPath, "")));
+				this.oFirstLevel.calculateKeyPredicate(oParent, this.getTypes(), this.sMetaPath);
 
 				const iParentIndex = this.getArrayIndex(iRank);
-				this.addElements(oParent, iParentIndex, this.oFirstLevel, iRank);
+				if (_Helper.getPrivateAnnotation(this.aElements[iParentIndex], "placeholder")) {
+					this.addElements(oParent, iParentIndex, this.oFirstLevel, iRank);
 
-				// poor man's #replaceElement to replace undefined w/ oParent
-				this.oFirstLevel.removeElement(iRank);
-				this.oFirstLevel.restoreElement(iRank, oParent);
+					// poor man's #replaceElement to replace undefined w/ oParent
+					this.oFirstLevel.removeElement(iRank);
+					this.oFirstLevel.restoreElement(iRank, oParent);
+				} // else: parent already inside collection
 
 				return iParentIndex;
+			})
+			.finally(() => { // Note: the parent's *array* index can easily change
+				_Helper.deletePrivateAnnotation(oNode, "parentIndexPromise");
 			});
 		oPromise = SyncPromise.resolve(oPromise);
 		_Helper.setPrivateAnnotation(oNode, "parentIndexPromise", oPromise);
