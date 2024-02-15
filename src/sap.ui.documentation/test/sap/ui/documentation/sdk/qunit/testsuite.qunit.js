@@ -106,6 +106,11 @@ sap.ui.define([], function() {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/controller/util/XML2JSONUtils"]
 				}
+			},
+			"SubApiDetailController": {
+				coverage: {
+					only : ["sap/ui/documentation/sdk/controller/SubApiDetail.controller"]
+				}
 			}
 			// "Forwarding": {
 			// 	coverage: {
