@@ -20,30 +20,46 @@ sap.ui.define([
 					});
 				},
 				iSelectActionWithItem: function (sText, sAction) {
+					this.iShowContextMenuItem(sText);
+					this.iPressContextMenuAction(sAction);
+				},
+				iShowContextMenuItem: function(sText) {
 					this.waitFor({
 						matchers: [
 							function () {
 								return Opa5.getContext().recorderWindow.jQuery("tag:contains(" + sText + ")");
-							},
-							function ($item) {
-								var mOffset = $item.offset();
-								if (!mOffset) {
-									Opa5.assert.ok(mOffset, "Cannot get offset of item " + $item + ". Maybe the recorder is not loaded?");
-								}
-								// workaround for limitations for right click in iframe
-								Opa5.getContext().recorderWindow.sap.ui.testrecorder.interaction.ContextMenu.show({
-									domElementId: $item.parent().attr("data-id"),
-									location: {
-										x: $item.offset().left,
-										y: $item.offset().top
-									},
-									withEvents: true,
-									items: {
-										highlight: false
-									}
+							}
+						],
+						success: function ($item) {
+							var mOffset = $item.offset();
+							if (!mOffset) {
+								Opa5.assert.ok(mOffset, "Cannot get offset of item " + $item + ". Maybe the recorder is not loaded?");
+							}
+							// workaround for limitations for right click in iframe
+							this.iWaitForPromise(new Promise(function (success) {
+								Opa5.getContext().recorderWindow.sap.ui.require(["sap/ui/testrecorder/interaction/ContextMenu"],
+									function (ContextMenu) {
+										ContextMenu.show({
+											domElementId: $item.parent().attr("data-id"),
+											location: {
+												x: $item.offset().left,
+												y: $item.offset().top
+											},
+											withEvents: true,
+											items: {
+												highlight: false
+											}
+										});
+									success();
 								});
-								return true;
-							},
+							}));
+						},
+						errorMessage: "Cannot find context menu item"
+					});
+				},
+				iPressContextMenuAction: function(sAction) {
+					this.waitFor({
+						matchers: [
 							function () {
 								return Opa5.getContext().recorderWindow.jQuery("div:contains(" + sAction + "):last");
 							}
@@ -53,7 +69,7 @@ sap.ui.define([
 						},
 						errorMessage: "Cannot find context menu item"
 					});
-				}
+				  }
 			},
 
 			assertions: {

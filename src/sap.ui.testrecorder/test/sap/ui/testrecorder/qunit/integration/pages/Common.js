@@ -29,23 +29,14 @@ sap.ui.define([
 			// start the recorder programmatically, instead of waiting for the url param to be read,
 			// so that the recorder will also be started when the browser tab isn't active
 			this.waitFor({
-				timeout: 30,
-				check: function () {
-					Opa5.getContext()._getRecorderControls = function () {
-						Opa5.assert.ok(false, "Could not get recorder utils. Maybe the recorder is not loaded?");
-						return [];
-					};
-					// wait for the recorder to load
-					if (Opa5.getWindow().sap.ui.require("sap/ui/testrecorder/Recorder")) {
-						return true;
-					} else {
-						Opa5.getWindow().sap.ui.require(["sap/ui/testrecorder/Recorder"]);
-						return false;
-					}
-				},
 				success: function () {
 					// start the recorder
-					Opa5.getWindow().sap.ui.testrecorder.Recorder.start([]);
+					this.iWaitForPromise(new Promise(function (success) {
+						Opa5.getWindow().sap.ui.require(["sap/ui/testrecorder/Recorder"], function (Recorder) {
+							Recorder.start([]);
+							success();
+						});
+					}));
 					return this.waitFor({
 						timeout: 30,
 						matchers: [

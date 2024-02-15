@@ -12,31 +12,42 @@ sap.ui.define([
 			baseClass: Common,
 			actions: {
 				iActOnControl:  function (mSelector, sAction) {
+					this.iShowContextMenu(mSelector);
+					this.iPressContextMenuActions(sAction);
+				},
+				iShowContextMenu: function (mSelector) {
 					this.waitFor(jQuery.extend({}, mSelector, {
-						success: function (aControl) {
+						success: function(aControl) {
 							var oControl = Array.isArray(aControl) ? aControl[0] : aControl;
 							var oDom = oControl.$();
-							return this.waitFor({
-								matchers: [function () {
-									// workaround for limitations for right click in iframe
-									Opa5.getWindow().sap.ui.testrecorder.interaction.ContextMenu.show({
-										domElementId: oControl.getId(),
-										location: {
-											x: oDom.offset().left,
-											y: oDom.offset().top
-										}
-									});
-									return true;
-								}, function () {
-									return Opa5.getJQuery()("div:contains(" + sAction + "):last");
-								}],
-								actions: function ($item) {
-									$item.trigger("click");
-								},
-								errorMessage: "Cannot find context menu item"
-							});
+							return this.iWaitForPromise(new Promise(function (success) {
+								Opa5.getWindow().sap.ui.require(["sap/ui/testrecorder/interaction/ContextMenu"],
+									function (ContextMenu) {
+										ContextMenu.show({
+											domElementId: oControl.getId(),
+											location: {
+												x: oDom.offset().left,
+												y: oDom.offset().top
+											}
+										});
+									success();
+								});
+							}));
 						}
 					}));
+				},
+				iPressContextMenuActions: function (sAction) {
+					this.waitFor({
+						matchers: [
+							function () {
+								return Opa5.getJQuery()("div:contains(" + sAction + "):last");
+							}
+						],
+						actions: function ($item) {
+							$item.trigger("click");
+						},
+						errorMessage: "Cannot find context menu item"
+					});
 				},
 				iEnterText: function (mSelector, sText) {
 					this.waitFor(jQuery.extend({}, mSelector, {
