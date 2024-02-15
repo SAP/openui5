@@ -10860,7 +10860,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach((bCreated) => {
-	[-1, +1, 0].forEach((iDirection) => { // child is before or after parent (or right in place)
+	[-1, +1, 0].forEach((iDirection) => { // child starts before or after target (or right in place)
 		[false, true].forEach((bIsExpanded) => {
 			[1, 4].forEach((iCount) => {
 				[1, Number.MAX_SAFE_INTEGER, 1E16].forEach((iExpandTo) => {
@@ -10868,24 +10868,27 @@ sap.ui.define([
 	const sTitle = `move: created=${bCreated}, direction=${iDirection}, expanded=${bIsExpanded},
 child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 
-	if (bMakeRoot && (iDirection < 0 || iCount > 1)) {
+	if (bMakeRoot && (iDirection < 0 && iExpandTo === 1 || iCount > 1)) {
 		return;
 	}
 
 	QUnit.test(sTitle, function (assert) {
 		const iParentIndex = bMakeRoot ? -1 : 42;
-		let iChildIndex = iParentIndex + 1;
+		let iNewIndex = iExpandTo > 1 ? 42 : iParentIndex + 1;
+		let iOldIndex = iNewIndex;
 		if (iDirection < 0) {
-			iChildIndex = 23;
+			iOldIndex = 23;
 		} else if (iDirection > 0) {
-			iChildIndex = 64;
+			iOldIndex = 64;
 		}
 		const oChildContext = {
-			iIndex : iChildIndex,
+			iIndex : iOldIndex,
 			created : mustBeMocked,
 			getCanonicalPath : mustBeMocked,
+			getModelIndex : mustBeMocked,
 			isExpanded : mustBeMocked,
-			setCreatedPersisted : mustBeMocked
+			setCreatedPersisted : mustBeMocked,
+			setPersisted : mustBeMocked
 		};
 		this.mock(oChildContext).expects("isExpanded").withExactArgs().returns(bIsExpanded);
 		this.mock(oChildContext).expects("getCanonicalPath").withExactArgs().returns("/~child~");
@@ -10916,31 +10919,35 @@ child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 			.returns(new SyncPromise((resolve) => {
 				setTimeout(() => {
 					if (oParentContext) {
-						this.mock(oParentContext).expects("getModelIndex")
-							.exactly(iCount > 1 ? 1 : 0).withExactArgs().returns("~iModelIndex~");
+						this.mock(oParentContext).expects("getModelIndex").atLeast(0)
+							.withExactArgs().returns(iParentIndex);
 					}
 					this.mock(oBinding).expects("insertGap").exactly(iCount > 1 ? 1 : 0)
-						.withExactArgs("~iModelIndex~", iCount - 1);
+						.withExactArgs(iParentIndex, iCount - 1);
 					for (let i = 0; i < 100; i += 1) {
 						if (i % 5) {
 							oBinding.aContexts[i] = {iIndex : i};
 						} // else: leave some gaps ;-)
 					}
-					oBinding.aContexts[iChildIndex] = oChildContext;
-					if (oParentContext) {
+					this.mock(oChildContext).expects("getModelIndex").withExactArgs()
+						.returns(iOldIndex);
+					oBinding.aContexts[iOldIndex] = oChildContext;
+					if (oParentContext && iExpandTo === 1) {
 						oBinding.aContexts[iParentIndex] = oParentContext;
 					}
 					this.mock(oChildContext).expects("created").withExactArgs()
 						.returns(bCreated ? {/*Promise*/} : undefined);
 					this.mock(oChildContext).expects("setCreatedPersisted")
-						.exactly(bCreated || iExpandTo > 1 ? 0 : 1).withExactArgs();
+						.exactly(!bCreated && iExpandTo === 1 ? 1 : 0).withExactArgs();
+					this.mock(oChildContext).expects("setPersisted")
+						.exactly(bCreated && iExpandTo > 1 ? 1 : 0).withExactArgs();
 					this.mock(oBinding).expects("expand").exactly(bIsExpanded ? 1 : 0)
 						.withExactArgs(sinon.match.same(oChildContext))
 						.returns(SyncPromise.resolve());
 					this.mock(oBinding).expects("_fireChange").exactly(bIsExpanded ? 0 : 1)
 						.withExactArgs({reason : ChangeReason.Change});
 
-					resolve(iCount);
+					resolve(iExpandTo > 1 ? [iCount, iNewIndex] : [iCount]);
 				}, 0);
 			}));
 
@@ -10950,12 +10957,15 @@ child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 		assert.strictEqual(oSyncPromise.isPending(), true);
 
 		return oSyncPromise.then(function (vResult) {
-			const iNewParentIndex = iDirection < 0 ? iParentIndex - 1 : iParentIndex;
 			assert.strictEqual(vResult, undefined, "without a defined result");
-			if (oParentContext) {
-				assert.strictEqual(oBinding.aContexts[iNewParentIndex], oParentContext);
+			if (iExpandTo === 1) {
+				const iNewParentIndex = iDirection < 0 ? iParentIndex - 1 : iParentIndex;
+				if (oParentContext) {
+					assert.strictEqual(oBinding.aContexts[iNewParentIndex], oParentContext);
+				}
+				iNewIndex = iNewParentIndex + 1;
 			}
-			assert.strictEqual(oBinding.aContexts[iNewParentIndex + 1], oChildContext);
+			assert.strictEqual(oBinding.aContexts[iNewIndex], oChildContext);
 			for (let i = 0; i < 100; i += 1) {
 				if (oBinding.aContexts[i]) {
 					assert.strictEqual(oBinding.aContexts[i].iIndex, i, `iIndex @ ${i}`);
@@ -11030,13 +11040,15 @@ child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 			iIndex : 43,
 			created : mustBeMocked,
 			getCanonicalPath : mustBeMocked,
+			getModelIndex : mustBeMocked,
 			isExpanded : mustBeMocked
 		};
 		this.mock(oChildContext).expects("isExpanded").withExactArgs().returns(true);
 		this.mock(oChildContext).expects("getCanonicalPath").withExactArgs().returns("/~child~");
 		const oParentContext = {
 			iIndex : 42,
-			getCanonicalPath : mustBeMocked
+			getCanonicalPath : mustBeMocked,
+			getModelIndex : mustBeMocked
 		};
 		this.mock(oParentContext).expects("getCanonicalPath").withExactArgs().returns("/~parent~");
 		const oBinding = this.bindList("/EMPLOYEES");
@@ -11053,10 +11065,10 @@ child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 		};
 		oBinding.oCache = oCache;
 		this.mock(oCache).expects("move").withExactArgs("~oGroupLock~", "~child~", "~parent~")
-			.returns(SyncPromise.resolve(1));
+			.returns(SyncPromise.resolve([1]));
 		this.mock(oBinding).expects("insertGap").never();
-		oBinding.aContexts[43] = oChildContext;
-		oBinding.aContexts[42] = oParentContext;
+		this.mock(oChildContext).expects("getModelIndex").withExactArgs().returns(43);
+		this.mock(oParentContext).expects("getModelIndex").withExactArgs().returns(42);
 		this.mock(oChildContext).expects("created").withExactArgs().returns(true);
 		this.mock(oBinding).expects("expand")
 			.withExactArgs(sinon.match.same(oChildContext))

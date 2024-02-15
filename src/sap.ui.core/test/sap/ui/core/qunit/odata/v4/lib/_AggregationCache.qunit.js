@@ -4567,7 +4567,7 @@ new parent was expanded before = ${bSpliced}, make root = ${bMakeRoot}`;
 
 		assert.strictEqual(oSyncPromise.isPending(), true);
 
-		return oSyncPromise.then(function (iResult) {
+		return oSyncPromise.then(function ([iResult]) {
 				assert.strictEqual(iResult, !bParentIsLeaf ? "~iResult~" : 1);
 				assert.deepEqual(oCache.aElements, bParentIsLeaf
 					 ? ["a", "~oOldParent~", "d", "e", "f", "g", oParentNode, oChildNode, "i"]
@@ -4685,6 +4685,8 @@ make root = ${bMakeRoot}`;
 	}
 
 	QUnit.test(sTitle, async function (assert) {
+		var oUpdateExistingExpectation;
+
 		const oCache = _AggregationCache.create(this.oRequestor, "n/a", "", {}, {
 				$ParentNavigationProperty : "myParent",
 				expandTo : Number.MAX_SAFE_INTEGER,
@@ -4694,8 +4696,9 @@ make root = ${bMakeRoot}`;
 			"@$ui5.node.isExpanded" : bNewParentExpanded,
 			"@$ui5.node.level" : 9
 		};
+		// Note: oParentNode's index in aElements MUST not matter!
 		oCache.aElements
-			= ["a", "~oOldParent~", "~oChildNode~", "d", "e", "f", "g", oParentNode, "i"];
+			= ["a", "~oOldParent~", "~oChildNode~", "d", "e", "f", "g", "h", "i"];
 		oCache.aElements.$byPredicate = {
 			"('23')" : "~oChildNode~",
 			"('42')" : oParentNode
@@ -4716,9 +4719,12 @@ make root = ${bMakeRoot}`;
 				}, {"myParent@odata.bind" : bMakeRoot ? null : "Foo('42')"},
 				/*fnSubmit*/null, /*fnCancel*/sinon.match.func)
 			.resolves({"@odata.etag" : "etag"});
-		const oUpdateExistingExpectation = oHelperMock.expects("updateExisting")
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('23')", "~oChildNode~",
-				{"@odata.etag" : "etag", "@$ui5.node.level" : bMakeRoot ? 1 : 10});
+		oCacheMock.expects("expand").exactly(bNewParentExpanded === false ? 1 : 0)
+			.withExactArgs(_GroupLock.$cached, "('42')").returns(SyncPromise.resolve(47));
+		oHelperMock.expects("updateAll")
+			.exactly(oParentNode && bNewParentExpanded === undefined ? 1 : 0)
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('42')",
+				sinon.match.same(oParentNode), {"@$ui5.node.isExpanded" : true});
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs("~oChildNode~", "descendants", 0).returns(4);
 		oCacheMock.expects("adjustDescendantCount")
@@ -4726,48 +4732,40 @@ make root = ${bMakeRoot}`;
 			.callsFake(function () {
 				assert.notOk(oUpdateExistingExpectation.called, "old level needed!");
 				assert.deepEqual(oCache.aElements,
-					["a", "~oOldParent~", "~oChildNode~", "d", "e", "f", "g", oParentNode, "i"],
-					"not spliced yet");
-			});
-		oCacheMock.expects("shiftRank").withExactArgs(2, -(4 + 1))
-			.callsFake(function () {
-				assert.deepEqual(oCache.aElements,
-					["a", "~oOldParent~", "~oChildNode~", "d", "e", "f", "g", oParentNode, "i"],
+					["a", "~oOldParent~", "~oChildNode~", "d", "e", "f", "g", "h", "i"],
 					"not spliced yet");
 			});
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs("~oChildNode~", "rank").returns("~rank~");
+		const oShiftRankForMoveExpectation = oCacheMock.expects("shiftRankForMove")
+			.withExactArgs("~rank~", 4 + 1, 17);
 		this.mock(oCache.oFirstLevel).expects("move").withExactArgs("~rank~", 17, 4 + 1);
-		const oSetRankExpectation = oHelperMock.expects("setPrivateAnnotation")
-			.withExactArgs("~oChildNode~", "rank", 17);
-		oCacheMock.expects("expand").exactly(bNewParentExpanded === false ? 1 : 0)
-			.withExactArgs(_GroupLock.$cached, "('42')").returns(SyncPromise.resolve(47));
-		oCacheMock.expects("shiftRank").withExactArgs(7, +(4 + 1))
-			.callsFake(function () {
-				assert.ok(oSetRankExpectation.called, "new rank needed");
-				assert.deepEqual(oCache.aElements,
-					["a", "~oOldParent~", "d", "e", "f", "g", oParentNode, "~oChildNode~", "i"],
-					"already moved");
+		oUpdateExistingExpectation = oHelperMock.expects("updateExisting")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('23')", "~oChildNode~", {
+				"@odata.etag" : "etag",
+				"@$ui5.node.level" : bMakeRoot ? 1 : 10,
+				"@$ui5.context.isTransient" : undefined
 			});
+		oHelperMock.expects("setPrivateAnnotation").withExactArgs("~oChildNode~", "rank", 17);
+		const oGetArrayIndexExpectation = oCacheMock.expects("getArrayIndex").withExactArgs(17)
+			.returns(7);
 		oCacheMock.expects("adjustDescendantCount")
 			.withExactArgs("~oChildNode~", 7, +(4 + 1))
 			.callsFake(function () {
 				assert.deepEqual(oCache.aElements,
-					["a", "~oOldParent~", "d", "e", "f", "g", oParentNode, "~oChildNode~", "i"],
+					["a", "~oOldParent~", "d", "e", "f", "g", "h", "~oChildNode~", "i"],
 					"already moved");
 			});
-		oHelperMock.expects("updateAll")
-			.exactly(oParentNode && bNewParentExpanded === undefined ? 1 : 0)
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('42')",
-				sinon.match.same(oParentNode), {"@$ui5.node.isExpanded" : true});
 
 		// code under test
-		const iResult
+		const [iResult, iNewIndex]
 			= await oCache.move("~oGroupLock~", "Foo('23')", bMakeRoot ? undefined : "Foo('42')");
 
 		assert.strictEqual(iResult, bNewParentExpanded === false ? 47 + 1 : 1);
+		assert.strictEqual(iNewIndex, 7);
 		assert.deepEqual(oCache.aElements,
-			["a", "~oOldParent~", "d", "e", "f", "g", oParentNode, "~oChildNode~", "i"]);
+			["a", "~oOldParent~", "d", "e", "f", "g", "h", "~oChildNode~", "i"]);
+		assert.ok(oShiftRankForMoveExpectation.calledBefore(oGetArrayIndexExpectation));
 	});
 	});
 });
@@ -5131,6 +5129,49 @@ make root = ${bMakeRoot}`;
 		check(); // unchanged
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("shiftRankForMove", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+
+		function setup(aRanks) {
+			return aRanks.map(function (iRank) {
+				return {"@$ui5._" : {rank : iRank}};
+			});
+		}
+
+		// Note: order does not really matter
+		// "The subtree itself is unaffected and may, but need not be present."
+		// 2: subtree's root node, 3: missing, 4: part of subtree
+		oCache.aElements = setup([0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11]);
+
+		function expect(aExpectedRanks) {
+			assert.deepEqual(
+				oCache.aElements.map((oElement) => oElement["@$ui5._"].rank),
+				aExpectedRanks
+			);
+		}
+
+		// code under test
+		oCache.shiftRankForMove(2, 3, 2);
+
+		expect([0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11]);
+
+		// code under test
+		oCache.shiftRankForMove(2, 3, 7);
+
+		expect([0, 1, 2, 4, 5 - 3, 6 - 3, 7 - 3, 8 - 3, 9 - 3, 10, 11]);
+
+		// 7: subtree's root node, 8: missing, 9: part of subtree
+		oCache.aElements = setup([0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11]);
+
+		// code under test
+		oCache.shiftRankForMove(7, 3, 2);
+
+		expect([0, 1, 2 + 3, 3 + 3, 4 + 3, 5 + 3, 6 + 3, 7, 9, 10, 11]);
+	});
 
 	//*********************************************************************************************
 [true, false].forEach((bInheritResult) => {

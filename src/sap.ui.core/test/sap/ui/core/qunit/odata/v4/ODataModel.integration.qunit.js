@@ -267,6 +267,20 @@ sap.ui.define([
 	}
 
 	/**
+	 * Checks that the given context looks "persisted, not created".
+	 *
+	 * @param {object} assert - The QUnit assert object
+	 * @param {sap.ui.model.odata.v4.Context} oContext - A context
+	 */
+	function checkPersisted(assert, oContext) {
+		assert.strictEqual(oContext.created(), undefined, "persisted, not created");
+		assert.strictEqual(oContext.getProperty("@$ui5.context.isTransient"), undefined);
+		assert.strictEqual(oContext.isTransient(), undefined);
+		// Note: due to cloning, undefined values are dropped anyway
+		// assert.notOk("@$ui5.context.isTransient" in oContext.getObject());
+	}
+
+	/**
 	 * Checks the selection state of the given context.
 	 *
 	 * @param {object} assert - The QUnit assert object
@@ -29949,6 +29963,10 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 			oRoot = oTable.getRows()[0].getBindingContext();
 			oListBinding = oRoot.getBinding();
+			assert.throws(function () {
+				// code under test
+				oListBinding.getHeaderContext().move();
+			}, new Error("Cannot move " + sFriend));
 
 			checkTable("root is leaf", assert, oTable, [
 				sFriend + "(ArtistID='0',IsActiveEntity=false)"
@@ -29990,6 +30008,10 @@ sap.ui.define([
 				Name : "Beta"
 			}, /*bSkipRefresh*/true);
 			oBetaCreated = oBeta.created();
+			assert.throws(function () {
+				// code under test
+				oBeta.move();
+			}, new Error("Cannot move " + oBeta), "too early");
 
 			return Promise.all([
 				checkCanceled(assert, oLostChild.created()),
@@ -30573,10 +30595,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Create a new node when all levels are expanded, observe a GET for LimitedRank. The
-	// created node is inserted on the second sibling position on back end, but is shown on the
-	// client on first position. Use a filter and a search as well as a sort order. Before creation,
-	// a sibling is collapsed and after creation it is expanded again. The root is collapsed and
-	// immediately expanded again. Finally, the new node is deleted again.
+	// created node is inserted on the second sibling position on back end and is shown on the
+	// client "in place" (JIRA: CPOUI5ODATAV4-2466). Use a filter and a search as well as a sort
+	// order. Before creation, a sibling is collapsed and after creation it is expanded again. The
+	// root is collapsed and immediately expanded again. Finally, the new node is deleted again.
 	// JIRA: CPOUI5ODATAV4-2393
 	//
 	// Before deletion, the new node is maybe moved to make it a root (JIRA: CPOUI5ODATAV4-2400)
@@ -31001,9 +31023,10 @@ make root = ${bMakeRoot}`;
 				this.waitForChanges(assert, "make New a root node")
 			]);
 
+			checkPersisted(assert, oNewChild);
+
 			await this.checkAllContexts("after make New a root node", assert, oListBinding,
 				["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name", "_/NodeID"], [
-					[undefined, 1, "9", "New", "9,false"],
 					[undefined, 1, "8", "Aleph", "8,false"],
 					[true, 1, "0", "Alpha", "0,false"],
 					[undefined, 2, "1", "Beta", "1,false"],
@@ -31014,16 +31037,24 @@ make root = ${bMakeRoot}`;
 					[undefined, 3, "5.1", "Eta", "5.1,false"],
 					[undefined, 3, "5.2", "Theta", "5.2,false"],
 					[undefined, 2, "6", "Iota", "6,false"],
-					[undefined, 2, "7", "Kappa", "7,false"]
+					[undefined, 2, "7", "Kappa", "7,false"],
+					[undefined, 1, "9", "New", "9,false"]
 				]);
 		}
 
 		this.expectRequest("DELETE Artists(ArtistID='8',IsActiveEntity=false)")
 			.expectRequest("DELETE Artists(ArtistID='9',IsActiveEntity=false)");
 
-		await Promise.all([
+		// code under test
+		const oDeleteNewRootPromise = oNewRoot.delete();
+
+		assert.throws(function () {
 			// code under test
-			oNewRoot.delete(),
+			oNewRoot.move();
+		}, new Error("Cannot move " + oNewRoot), "too late");
+
+		await Promise.all([
+			oDeleteNewRootPromise,
 			// code under test
 			oNewChild.delete(),
 			this.waitForChanges(assert, "delete New")
@@ -33578,8 +33609,8 @@ make root = ${bMakeRoot}`;
 
 	//*********************************************************************************************
 	// Scenario: Expand all levels of a recursive hierarchy and move a node with descendants (not
-	// yet fully loaded) to another parent. Although it is shown as the new parent's first child on
-	// UI, it is actually inserted between older siblings on the server. Still, paging works!
+	// yet fully loaded) to another parent. It is inserted between older siblings on the server and
+	// is shown on the client "in place" (JIRA: CPOUI5ODATAV4-2466). Still, paging works!
 	// Collapse the new parent and later its root to check that their "descendants" is correct.
 	// A new root (Beth) is created with a new child (Gimel) and moved to Aleph, but their
 	// LimitedRank does not change. Then Gimel is moved to Aleph, thus Beth becomes a leaf again.
@@ -33741,8 +33772,8 @@ make root = ${bMakeRoot}`;
 		//     3.1 Theta
 		//     3.2 Iota
 		//     1 Beta (moved...)
-		//       1.1 Gamma
-		//         1.1.1 Delta (loaded later)
+		//       1.1 Gamma <-- first visible row
+		//         1.1.1 Delta (loaded soon)
 		//         1.1.2 Epsilon (loaded soon)
 		//     3.3 Kappa (loaded later)
 		//   4 Lambda (loaded later)
@@ -33771,9 +33802,19 @@ make root = ${bMakeRoot}`;
 			})
 			.expectRequest({
 				batchNo : 4,
-				url : sReadUrl + "&$skip=8&$top=1"
+				url : sReadUrl + "&$skip=7&$top=2"
 			}, {
 				value : [{
+					ArtistID : "1.1.1",
+					IsActiveEntity : false,
+					Name : "Delta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "4",
+						DrillState : "leaf",
+						NodeID : "1.1.1,false"
+					}
+				}, {
 					ArtistID : "1.1.2",
 					IsActiveEntity : false,
 					Name : "Epsilon",
@@ -33796,15 +33837,16 @@ make root = ${bMakeRoot}`;
 		checkTable("after move", assert, oTable, [
 			sFriend + "(ArtistID='0',IsActiveEntity=false)",
 			sFriend + "(ArtistID='3',IsActiveEntity=false)",
+			sFriend + "(ArtistID='3.1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='3.2',IsActiveEntity=false)",
 			sFriend + "(ArtistID='1',IsActiveEntity=false)",
 			sFriend + "(ArtistID='1.1',IsActiveEntity=false)",
-			sFriend + "(ArtistID='1.1.2',IsActiveEntity=false)",
-			sFriend + "(ArtistID='3.1',IsActiveEntity=false)",
-			sFriend + "(ArtistID='3.2',IsActiveEntity=false)"
+			sFriend + "(ArtistID='1.1.1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1.1.2',IsActiveEntity=false)"
 		], [
-			[undefined, 5, "1.1.2", "Epsilon"],
-			[undefined, 3, "3.1", "Theta"], // Note: on UI, Beta is shown as 1st child of Eta!
-			[undefined, 3, "3.2", "Iota"]
+			[true, 4, "1.1", "Gamma"],
+			[undefined, 5, "1.1.1", "Delta"],
+			[undefined, 5, "1.1.2", "Epsilon"]
 		], 12);
 
 		assert.strictEqual(oBeta.isTransient(), undefined, "unchanged");
@@ -33832,19 +33874,6 @@ make root = ${bMakeRoot}`;
 						DistanceFromRoot : "1",
 						DrillState : "leaf",
 						NodeID : "2,false"
-					}
-				}]
-			})
-			.expectRequest(sReadUrl + "&$skip=7&$top=1", {
-				value : [{
-					ArtistID : "1.1.1",
-					IsActiveEntity : false,
-					Name : "Delta",
-					_ : {
-						DescendantCount : "0",
-						DistanceFromRoot : "4",
-						DrillState : "leaf",
-						NodeID : "1.1.1,false"
 					}
 				}]
 			})
@@ -33887,12 +33916,12 @@ make root = ${bMakeRoot}`;
 				[true, 1, "0", "Alpha"],
 				[undefined, 2, "2", "Zeta"],
 				[true, 2, "3", "Eta"],
+				[undefined, 3, "3.1", "Theta"],
+				[undefined, 3, "3.2", "Iota"],
 				[true, 3, "1", "Beta"],
 				[true, 4, "1.1", "Gamma"],
 				[undefined, 5, "1.1.1", "Delta"],
 				[undefined, 5, "1.1.2", "Epsilon"],
-				[undefined, 3, "3.1", "Theta"], // Note: on UI, Beta is shown as 1st child of Eta!
-				[undefined, 3, "3.2", "Iota"],
 				[undefined, 3, "3.3", "Kappa"],
 				[undefined, 2, "4", "Lambda"],
 				[undefined, 1, "9", "Aleph"]
@@ -33972,6 +34001,7 @@ make root = ${bMakeRoot}`;
 		]);
 
 		assert.deepEqual(oBeth.getObject("_"), {NodeID : "10,false"});
+		checkCreatedPersisted(assert, oBeth, oBethCreated);
 
 		await this.checkAllContexts("after create new root Beth", assert, oListBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
@@ -33981,7 +34011,6 @@ make root = ${bMakeRoot}`;
 			]);
 
 		const oAleph = oTable.getRows()[2].getBindingContext();
-		checkCreatedPersisted(assert, oBeth, oBethCreated);
 
 		this.expectRequest({
 				method : "POST",
@@ -34022,6 +34051,7 @@ make root = ${bMakeRoot}`;
 		]);
 
 		assert.deepEqual(oGimel.getObject("_"), {NodeID : "10.1,false"});
+		checkCreatedPersisted(assert, oGimel, oGimelCreated);
 
 		await this.checkAllContexts("after create new child Gimel", assert, oListBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
@@ -34030,8 +34060,6 @@ make root = ${bMakeRoot}`;
 				[false, 1, "0", "Alpha"],
 				[undefined, 1, "9", "Aleph"]
 			]);
-
-		checkCreatedPersisted(assert, oGimel, oGimelCreated);
 
 		// 0 Alpha
 		//   2 Zeta
@@ -34076,6 +34104,9 @@ make root = ${bMakeRoot}`;
 			this.waitForChanges(assert, "move Beth to Aleph")
 		]);
 
+		checkPersisted(assert, oBeth);
+		checkCreatedPersisted(assert, oGimel, oGimelCreated);
+
 		// Note: #checkAllContexts will check #getIndex for all nodes
 		await this.checkAllContexts("after move Beth to Aleph", assert, oListBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
@@ -34084,9 +34115,6 @@ make root = ${bMakeRoot}`;
 				[true, 2, "10", "Beth"],
 				[undefined, 3, "10.1", "Gimel"]
 			]);
-
-		checkCreatedPersisted(assert, oBeth, oBethCreated);
-		checkCreatedPersisted(assert, oGimel, oGimelCreated);
 
 		this.expectRequest({
 				batchNo : 11,
@@ -34117,20 +34145,18 @@ make root = ${bMakeRoot}`;
 			this.waitForChanges(assert, "move Gimel to Aleph")
 		]);
 
+		checkPersisted(assert, oGimel);
+
 		// Note: #checkAllContexts will check #getIndex for all nodes
 		await this.checkAllContexts("after move Gimel to Aleph", assert, oListBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
 				[false, 1, "0", "Alpha"],
 				[true, 1, "9", "Aleph"],
-				[undefined, 2, "10.1", "Gimel"],
-				[undefined, 2, "10", "Beth"] // last child has gone
+				[undefined, 2, "10", "Beth"], // last child has gone
+				[undefined, 2, "10.1", "Gimel"]
 			]);
 
-		checkCreatedPersisted(assert, oBeth, oBethCreated);
-		checkCreatedPersisted(assert, oGimel, oGimelCreated);
-
 		// 0 Alpha
-		//   10.1 Gimel (moved to here)
 		//   2 Zeta
 		//   3 Eta (still collapsed)
 		//     3.1 Theta
@@ -34140,6 +34166,7 @@ make root = ${bMakeRoot}`;
 		//         1.1.1 Delta
 		//         1.1.2 Epsilon
 		//     3.3 Kappa
+		//   10.1 Gimel (moved to here)
 		//   4 Lambda
 		// 9 Aleph
 		//   10 Beth
@@ -34160,8 +34187,8 @@ make root = ${bMakeRoot}`;
 					+ "&$select=_/" + sLimitedRank
 			}, {
 				value : [{
-					_ : { // Note: same rank on UI as on server
-						[sLimitedRank] : "1" // Edm.Int64
+					_ : {
+						[sLimitedRank] : "10" // Edm.Int64
 					}
 				}]
 			});
@@ -34176,15 +34203,16 @@ make root = ${bMakeRoot}`;
 		await this.checkAllContexts("after move Gimel to collapsed Alpha", assert, oListBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
 				[true, 1, "0", "Alpha"], // auto-expanded
-				[undefined, 2, "10.1", "Gimel"],
 				[undefined, 2, "2", "Zeta"],
 				[false, 2, "3", "Eta"], // still collapsed
+				[undefined, 2, "10.1", "Gimel"],
 				[undefined, 2, "4", "Lambda"],
 				[true, 1, "9", "Aleph"],
 				[undefined, 2, "10", "Beth"]
 			]);
 
-		oEta = oListBinding.getAllCurrentContexts()[3];
+		oEta = oListBinding.getAllCurrentContexts()[2];
+		assert.strictEqual(oEta.getProperty("Name"), "Eta", "double check that index was right");
 
 		// code under test
 		oEta.expand();
@@ -34192,22 +34220,23 @@ make root = ${bMakeRoot}`;
 		await this.checkAllContexts("after expand all again", assert, oListBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
 				[true, 1, "0", "Alpha"],
-				[undefined, 2, "10.1", "Gimel"],
 				[undefined, 2, "2", "Zeta"],
 				[true, 2, "3", "Eta"],
+				[undefined, 3, "3.1", "Theta"],
+				[undefined, 3, "3.2", "Iota"],
 				[true, 3, "1", "Beta"],
 				[true, 4, "1.1", "Gamma"],
 				[undefined, 5, "1.1.1", "Delta"],
 				[undefined, 5, "1.1.2", "Epsilon"],
-				[undefined, 3, "3.1", "Theta"],
-				[undefined, 3, "3.2", "Iota"],
 				[undefined, 3, "3.3", "Kappa"],
+				[undefined, 2, "10.1", "Gimel"],
 				[undefined, 2, "4", "Lambda"],
 				[true, 1, "9", "Aleph"],
 				[undefined, 2, "10", "Beth"]
 			]);
 
-		oBeta = oListBinding.getAllCurrentContexts()[4];
+		oBeta = oListBinding.getAllCurrentContexts()[5];
+		assert.strictEqual(oBeta.getProperty("Name"), "Beta", "double check that index was right");
 
 		if (bMakeRoot) {
 			this.expectRequest({
@@ -34247,12 +34276,12 @@ make root = ${bMakeRoot}`;
 					[undefined, 3, "1.1.1", "Delta"],
 					[undefined, 3, "1.1.2", "Epsilon"],
 					[true, 1, "0", "Alpha"],
-					[undefined, 2, "10.1", "Gimel"],
 					[undefined, 2, "2", "Zeta"],
 					[true, 2, "3", "Eta"],
 					[undefined, 3, "3.1", "Theta"],
 					[undefined, 3, "3.2", "Iota"],
 					[undefined, 3, "3.3", "Kappa"],
+					[undefined, 2, "10.1", "Gimel"],
 					[undefined, 2, "4", "Lambda"],
 					[true, 1, "9", "Aleph"],
 					[undefined, 2, "10", "Beth"]

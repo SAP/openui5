@@ -90,6 +90,10 @@ sap.ui.define([
 			// code under test
 			oContext.setCreatedPersisted();
 		}, new Error("Already 'created', currently transient: true"));
+		assert.throws(function () {
+			// code under test
+			oContext.setPersisted();
+		}, new Error("Not 'created persisted'"));
 
 		fnResolve("bar");
 		return oCreatedPromise.then(function () {
@@ -104,6 +108,7 @@ sap.ui.define([
 		// code under test
 		oContext.setCreatedPersisted();
 
+		assert.strictEqual(oContext.isInactive(), undefined);
 		assert.strictEqual(oContext.isTransient(), false);
 		assert.ok(oContext.created() instanceof Promise);
 
@@ -115,6 +120,25 @@ sap.ui.define([
 		return oContext.created().then(function (vResult) {
 			assert.strictEqual(vResult, undefined);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setPersisted", function (assert) {
+		const oContext
+			= Context.create({/*oModel*/}, {/*oBinding*/}, "/foo", 42, SyncPromise.resolve());
+		oContext.bInactive = false; // "was created in an inactive state and has been activated"
+
+		// code under test
+		oContext.setPersisted();
+
+		assert.strictEqual(oContext.isInactive(), undefined);
+		assert.strictEqual(oContext.isTransient(), undefined);
+		assert.strictEqual(oContext.created(), undefined);
+
+		assert.throws(function () {
+			// code under test
+			oContext.setPersisted();
+		}, new Error("Not 'created persisted'"));
 	});
 
 	//*********************************************************************************************
@@ -2126,8 +2150,11 @@ sap.ui.define([
 		const oBinding = {
 			move : mustBeMocked
 		};
-		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
+		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42);
 		let bResolved = false;
+		this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oContext).expects("isAncestorOf").withExactArgs(i ? null : "~oParent~")
 			.returns(false);
 		this.mock(oBinding).expects("move")
@@ -2169,21 +2196,29 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("move: fails", function (assert) {
-		const oBinding = {
-			move : mustBeMocked
-		};
-		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
-
-		const oContextMock = this.mock(oContext);
-		oContextMock.expects("isAncestorOf").withExactArgs("~oParent~").returns(true);
+	QUnit.test("move: Unsupported parent context", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
+		this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("isAncestorOf").withExactArgs("~oParent~").returns(true);
 
 		assert.throws(function () {
 			// code under test
 			oContext.move({parent : "~oParent~"});
 		}, new Error("Unsupported parent context: ~oParent~"));
+	});
 
-		oContextMock.expects("isAncestorOf").withExactArgs("~oParent~").returns(false);
+	//*********************************************************************************************
+	QUnit.test("move: fails", function (assert) {
+		const oBinding = {
+			move : mustBeMocked
+		};
+		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42);
+		this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("isAncestorOf").withExactArgs("~oParent~").returns(false);
 		this.mock(oBinding).expects("move").withExactArgs(sinon.match.same(oContext), "~oParent~")
 			.returns(SyncPromise.reject("~error~"));
 
@@ -2196,6 +2231,44 @@ sap.ui.define([
 		}, function (vError) {
 			assert.strictEqual(vError, "~error~");
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("move: Cannot move; deleted", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
+		// Note: cannot easily mock #toString which calls #isDeleted etc.
+		this.mock(oContext).expects("isDeleted").withExactArgs().atLeast(1).returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oContext.move();
+		}, new Error("Cannot move " + oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("move: Cannot move; transient", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
+		// Note: cannot easily mock #toString which calls #isDeleted etc.
+		this.mock(oContext).expects("isDeleted").withExactArgs().atLeast(1).returns(false);
+		this.mock(oContext).expects("isTransient").withExactArgs().atLeast(1).returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oContext.move();
+		}, new Error("Cannot move " + oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("move: Cannot move; outside collection", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')");
+		// Note: cannot easily mock #toString which calls #isDeleted etc.
+		this.mock(oContext).expects("isDeleted").withExactArgs().atLeast(1).returns(false);
+		this.mock(oContext).expects("isTransient").withExactArgs().atLeast(1).returns(false);
+
+		assert.throws(function () {
+			// code under test
+			oContext.move();
+		}, new Error("Cannot move " + oContext));
 	});
 
 	//*********************************************************************************************

@@ -1283,25 +1283,17 @@ sap.ui.define([
 				/*fnSubmit*/null, function fnCancel() { /*nothing to do*/ }),
 			oReadPromise
 		]).then(([oPatchResult, iPreorderRank]) => {
-			const updateChildNode = () => {
+			const updateChildNode = (oAdditional = {}) => {
 				// update the cache with the PATCH response (Note: "@odata.etag" is optional!)
 				_Helper.updateExisting(this.mChangeListeners, sChildPredicate, oChildNode, {
 					"@odata.etag" : oPatchResult["@odata.etag"],
-					"@$ui5.node.level" : oParentNode ? oParentNode["@$ui5.node.level"] + 1 : 1
+					"@$ui5.node.level" : oParentNode ? oParentNode["@$ui5.node.level"] + 1 : 1,
+					...oAdditional
 				});
 			};
-			const iOldIndex = this.aElements.indexOf(oChildNode);
 			let iResult = 1;
 
 			if (this.oAggregation.expandTo > 1) {
-				const iOffset = _Helper.getPrivateAnnotation(oChildNode, "descendants", 0) + 1;
-				this.adjustDescendantCount(oChildNode, iOldIndex, -iOffset);
-				this.shiftRank(iOldIndex, -iOffset);
-				this.aElements.splice(iOldIndex, 1);
-				this.oFirstLevel.move(_Helper.getPrivateAnnotation(oChildNode, "rank"),
-					iPreorderRank, iOffset);
-				updateChildNode();
-				_Helper.setPrivateAnnotation(oChildNode, "rank", iPreorderRank);
 				switch (oParentNode ? oParentNode["@$ui5.node.isExpanded"] : true) {
 					case false:
 						iResult = this.expand(_GroupLock.$cached, sParentPredicate).unwrap() + 1;
@@ -1313,14 +1305,24 @@ sap.ui.define([
 						_Helper.updateAll(this.mChangeListeners, sParentPredicate, oParentNode,
 							{"@$ui5.node.isExpanded" : true}); // not a leaf anymore
 				}
-				const iNewIndex = this.aElements.indexOf(oParentNode) + 1; // 0 w/o oParentNode :-)
+				// Note: iOldIndex might be affected by #expand above
+				const iOldIndex = this.aElements.indexOf(oChildNode);
+				const iOffset = _Helper.getPrivateAnnotation(oChildNode, "descendants", 0) + 1;
+				this.adjustDescendantCount(oChildNode, iOldIndex, -iOffset);
+				this.aElements.splice(iOldIndex, 1);
+				const iOldRank = _Helper.getPrivateAnnotation(oChildNode, "rank");
+				this.shiftRankForMove(iOldRank, iOffset, iPreorderRank);
+				this.oFirstLevel.move(iOldRank, iPreorderRank, iOffset);
+				updateChildNode({"@$ui5.context.isTransient" : undefined});
+				_Helper.setPrivateAnnotation(oChildNode, "rank", iPreorderRank);
+				const iNewIndex = this.getArrayIndex(iPreorderRank);
 				this.aElements.splice(iNewIndex, 0, oChildNode);
-				this.shiftRank(iNewIndex, +iOffset);
 				this.adjustDescendantCount(oChildNode, iNewIndex, +iOffset);
 
-				return iResult;
+				return [iResult, iNewIndex];
 			}
 
+			const iOldIndex = this.aElements.indexOf(oChildNode);
 			// remove original element from its cache's collection
 			const oOldParentCache = _Helper.getPrivateAnnotation(oChildNode, "parent");
 			oOldParentCache.removeElement(_Helper.getPrivateAnnotation(oChildNode, "rank", 0),
@@ -1379,7 +1381,7 @@ sap.ui.define([
 				}
 			}
 
-			return iResult;
+			return [iResult];
 		});
 	};
 
@@ -2028,6 +2030,35 @@ sap.ui.define([
 				break; // no use in searching further
 			}
 		}
+	};
+
+	/**
+	 * Shifts the rank (aka. $skip index) of all other nodes or placeholders affected by the move of
+	 * a subtree of the given size from the given old to the given new rank. The subtree itself is
+	 * unaffected and may, but need not be present.
+	 *
+	 * @param {number} iOldRank - The old rank of the subtree's root node
+	 * @param {number} iSize - Size of subtree (number of moving elements)
+	 * @param {number} iNewRank - The new rank of the subtree's root node
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.shiftRankForMove = function (iOldRank, iSize, iNewRank) {
+		if (iOldRank < iNewRank) {
+			this.aElements.forEach((oElement) => {
+				const iRank = _Helper.getPrivateAnnotation(oElement, "rank");
+				if (iOldRank + iSize <= iRank && iRank < iNewRank + iSize) {
+					_Helper.setPrivateAnnotation(oElement, "rank", iRank - iSize);
+				}
+			});
+		} else if (iNewRank < iOldRank) {
+			this.aElements.forEach((oElement) => {
+				const iRank = _Helper.getPrivateAnnotation(oElement, "rank");
+				if (iNewRank <= iRank && iRank < iOldRank) {
+					_Helper.setPrivateAnnotation(oElement, "rank", iRank + iSize);
+				}
+			});
+		} // iOldRank === iNewRank => nothing to do
 	};
 
 	/**
