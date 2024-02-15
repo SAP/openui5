@@ -33,36 +33,51 @@ sap.ui.define([
 					});
 				},
 				iSelectActionWithItem: function (sText, sAction) {
-					this.waitFor({
-						matchers: [
-							function () {
-								return Opa5.getJQuery()("tag:contains(" + sText + ")");
-							},
-							function ($item) {
-								// workaround for limitations for right click in iframe
-								Opa5.getWindow().sap.ui.testrecorder.interaction.ContextMenu.show({
-									domElementId: $item.parent().attr("data-id"),
-									location: {
-										x: $item.offset().left,
-										y: $item.offset().top
-									},
-									withEvents: true,
-									items: {
-										highlight: false
-									}
-								});
-								return true;
-							},
-							function () {
-								return Opa5.getJQuery()("div:contains(" + sAction + "):last");
-							}
-						],
-						actions: function ($item) {
-							$item.trigger("click");
-						},
-						errorMessage: "Cannot find context menu item"
-					});
-				}
+					this.iShowContextMenuItem(sText);
+					this.iPressContextMenuAction(sAction);
+				},
+				iShowContextMenuItem: function(sText) {
+				  this.waitFor({
+					  matchers: [
+						  function () {
+							  return Opa5.getJQuery()("tag:contains(" + sText + ")");
+						  }
+					  ],
+					  success: function ($item) {
+						  this.iWaitForPromise(new Promise(function (success) {
+							  Opa5.getWindow().sap.ui.require(["sap/ui/testrecorder/interaction/ContextMenu"],
+								  function (ContextMenu) {
+									  ContextMenu.show({
+										  domElementId: $item.parent().attr("data-id"),
+										  location: {
+											  x: $item.offset().left,
+											  y: $item.offset().top
+										  },
+										  withEvents: true,
+										  items: {
+											  highlight: false
+										  }
+									  });
+								  success();
+							  });
+						  }));
+					  },
+					  errorMessage: "Cannot find context menu item"
+				  });
+			  },
+			  iPressContextMenuAction: function(sAction) {
+				this.waitFor({
+					matchers: [
+						function () {
+							return Opa5.getJQuery()("div:contains(" + sAction + "):last");
+						}
+					],
+					actions: function ($item) {
+						$item.trigger("click");
+					},
+					errorMessage: "Cannot find context menu item"
+				});
+			  }
 			},
 
 			assertions: {
