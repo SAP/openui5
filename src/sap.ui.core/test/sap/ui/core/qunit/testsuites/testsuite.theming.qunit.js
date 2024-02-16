@@ -62,7 +62,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			"ThemeParameters_legacyAPIs": {
 				title: "sap.ui.core.theming.Parameters",
 				ui5: {
-					theme: "sap_hcb"
+					theme: "sap_horizon_hcb"
 				},
 				qunit: {
 					reorder: false
@@ -80,7 +80,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			ThemeParameters: {
 				title: "sap.ui.core.theming.Parameters - Async Only",
 				ui5: {
-					theme: "sap_hcb"
+					theme: "sap_horizon_hcb"
 				},
 				qunit: {
 					reorder: false
@@ -94,7 +94,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			"ThemeHelper": {
 				title: "sap.ui.core.theming.ThemeHelper",
 				ui5: {
-					theme: "sap_hcb"
+					theme: "sap_horizon_hcb"
 				},
 				qunit: {
 					reorder: false

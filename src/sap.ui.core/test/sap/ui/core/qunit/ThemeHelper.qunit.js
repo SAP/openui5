@@ -17,7 +17,7 @@ sap.ui.define([
 				assert.deepEqual(oMetadata, {
 					"Path": "UI5.sample/path",
 					"PathPattern": "/%UI5%/sample/%pattern%.css",
-					"Extends": ["sap_hcb","base"],
+					"Extends": ["sap_horizon_hcb","base"],
 					"Version": {
 						"Build": "1.0.0",
 						"Source": "1.0.0",

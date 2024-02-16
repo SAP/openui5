@@ -1,0 +1,4 @@
+/* Inline Theming Metadata */
+.sapThemeMetaData-UI5-testlibs-themeParameters-lib12 {
+	background-image: url('data:text/plain;utf-8,{"Path": "UI5.sample/path", "PathPattern": "/%UI5%/sample/%pattern%.css", "Extends": ["sap_horizon_hcb","base"], "Version": { "Build":"1.0.0", "Source": "1.0.0", "Engine": "1.0.0"}}');
+  }
