@@ -34,7 +34,9 @@ sap.ui.define([
 	QUnit.test("expand/collapse", function (assert) {
 		const oTreeState = new _TreeState("~sNodeProperty~");
 
-		this.mock(_Helper).expects("drillDown").thrice()
+		this.mock(_Helper).expects("getPrivateAnnotation").thrice()
+			.withExactArgs("~oNode~", "predicate").returns("~predicate~");
+		this.mock(_Helper).expects("drillDown").twice()
 			.withExactArgs("~oNode~", "~sNodeProperty~")
 			.returns("~sNodeId~");
 
@@ -42,13 +44,13 @@ sap.ui.define([
 		oTreeState.expand("~oNode~");
 
 		assert.deepEqual(mapContent(oTreeState.oExpandLevels),
-			[["~sNodeId~", {NodeID : "~sNodeId~", Levels : 1}]]);
+			[["~predicate~", {NodeID : "~sNodeId~", Levels : 1}]]);
 
 		// code under test
 		oTreeState.expand("~oNode~");
 
 		assert.deepEqual(mapContent(oTreeState.oExpandLevels),
-			[["~sNodeId~", {NodeID : "~sNodeId~", Levels : 1}]]);
+			[["~predicate~", {NodeID : "~sNodeId~", Levels : 1}]]);
 
 		// code under test
 		oTreeState.collapse("~oNode~");
@@ -60,7 +62,9 @@ sap.ui.define([
 	QUnit.test("collapse/expand", function (assert) {
 		const oTreeState = new _TreeState("~sNodeProperty~");
 
-		this.mock(_Helper).expects("drillDown").thrice()
+		this.mock(_Helper).expects("getPrivateAnnotation").thrice()
+			.withExactArgs("~oNode~", "predicate").returns("~predicate~");
+		this.mock(_Helper).expects("drillDown").twice()
 			.withExactArgs("~oNode~", "~sNodeProperty~")
 			.returns("~sNodeId~");
 
@@ -68,13 +72,13 @@ sap.ui.define([
 		oTreeState.collapse("~oNode~");
 
 		assert.deepEqual(mapContent(oTreeState.oExpandLevels),
-			[["~sNodeId~", {NodeID : "~sNodeId~", Levels : 0}]]);
+			[["~predicate~", {NodeID : "~sNodeId~", Levels : 0}]]);
 
 		// code under test
 		oTreeState.collapse("~oNode~");
 
 		assert.deepEqual(mapContent(oTreeState.oExpandLevels),
-			[["~sNodeId~", {NodeID : "~sNodeId~", Levels : 0}]]);
+			[["~predicate~", {NodeID : "~sNodeId~", Levels : 0}]]);
 
 		// code under test
 		oTreeState.expand("~oNode~");
@@ -87,10 +91,9 @@ sap.ui.define([
 		const oTreeState = new _TreeState("~sNodeProperty~");
 
 		oTreeState.oExpandLevels.set("foo", "bar");
-		oTreeState.oExpandLevels.set("~sNodeId~", "~");
-		this.mock(_Helper).expects("drillDown")
-			.withExactArgs("~oNode~", "~sNodeProperty~")
-			.returns("~sNodeId~");
+		oTreeState.oExpandLevels.set("~predicate~", "~");
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs("~oNode~", "predicate").returns("~predicate~");
 
 		// code under test
 		oTreeState.delete("~oNode~");
