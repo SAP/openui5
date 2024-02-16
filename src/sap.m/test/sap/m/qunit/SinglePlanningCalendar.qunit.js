@@ -2222,7 +2222,7 @@ sap.ui.define([
 	QUnit.test("Backward/Forward navigation in month view", async function (assert) {
 		// Prepare
 		var oSPC = new SinglePlanningCalendar({
-				startDate: new Date("2023-12-31"),
+				startDate: UI5Date.getInstance(2023,11,31),//"2023-12-31"
 				views: [
 					new SinglePlanningCalendarMonthView()
 				]
@@ -2235,29 +2235,29 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		// Assert
-		assert.strictEqual(oSPC.getStartDate().toDateString(), new Date("2023-11-30").toDateString(), "The calendar start date is correct after backward navigation");
+		assert.strictEqual(oSPC.getStartDate().toDateString(), UI5Date.getInstance(2023,10,30).toDateString(), "The calendar start date is correct after backward navigation");
 
 		// Act - simulate again backward navigation
 		oSPC._applyArrowsLogic(true);
 		await nextUIUpdate();
 
 		// Assert
-		assert.strictEqual(oSPC.getStartDate().toDateString(), new Date("2023-10-30").toDateString(), "The calendar start date is correct after backward navigation");
+		assert.strictEqual(oSPC.getStartDate().toDateString(), UI5Date.getInstance(2023,9,30).toDateString(), "The calendar start date is correct after backward navigation");
 
 		// Act - simulate forward navigation
-		oSPC.setStartDate(new Date("2023-12-31"));
+		oSPC.setStartDate(UI5Date.getInstance(2023,11,31));
 		oSPC._applyArrowsLogic();
 		await nextUIUpdate();
 
 		// Assert
-		assert.strictEqual(oSPC.getStartDate().toDateString(), new Date("2024-01-31").toDateString(), "The calendar start date is correct after forward navigation");
+		assert.strictEqual(oSPC.getStartDate().toDateString(), UI5Date.getInstance(2024,0,31).toDateString(), "The calendar start date is correct after forward navigation");
 
 		// Act - simulate again forward navigation
 		oSPC._applyArrowsLogic();
 		await nextUIUpdate();
 
 		// Assert
-		assert.strictEqual(oSPC.getStartDate().toDateString(), new Date("2024-02-29").toDateString(), "The calendar start date is correct after forward navigation");
+		assert.strictEqual(oSPC.getStartDate().toDateString(), UI5Date.getInstance(2024,1,29).toDateString(), "The calendar start date is correct after forward navigation");
 
 		// Clean up
 		oSPC.destroy();
