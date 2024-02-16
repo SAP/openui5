@@ -7246,12 +7246,12 @@ sap.ui.define([
 			if (typeof vProperties === "object" && !Array.isArray(vProperties)) {
 				oEntity = merge(oEntity, vProperties);
 			}
-			sEntityType = "" + oEntityMetadata.entityType;
+			sEntityType = oEntityMetadata.entityType;
 			oEntitySetMetadata = that.oMetadata._getEntitySetByType(oEntityMetadata);
 			sUID = uid();
 			sKey = oEntitySetMetadata.name + "('" + sUID + "')";
 			sEntityUri = that.sServiceUrl + '/' + sKey;
-			if (sDeepPath && bIsCollection) {
+			if (bIsCollection) {
 				sDeepPath = sDeepPath + "('" + sUID + "')";
 			}
 			if (bDeepCreate) {
