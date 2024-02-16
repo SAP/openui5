@@ -724,6 +724,86 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_Analytical_ChartNavigation = {
+		"_version": "1.14.0",
+		"sap.app": {
+			"id": "test.cards.analytical.card9",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Analytical",
+			"header": {
+				"title": "Project Cloud Transformation",
+				"subTitle": "Revenue"
+			},
+			"content": {
+				"chartType": "Line",
+				"data": {
+					"json": [
+							{
+								"Week": "CW14",
+								"Revenue": 431000.22,
+								"Cost": 230000.00
+							},
+							{
+								"Week": "CW15",
+								"Revenue": 494000.30,
+								"Cost": 238000.00
+							},
+							{
+								"Week": "CW16",
+								"Revenue": 491000.17,
+								"Cost": 221000.00
+							}
+					],
+					"path": "/"
+				},
+				"actionableArea": "Chart",
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"url": "https://www.sap.com/revenue?week={Week}"
+						}
+					}
+				],
+				"dimensions": [
+					{
+						"name": "Weeks",
+						"value": "{Week}"
+					}
+				],
+				"measures": [
+					{
+						"name": "Revenue",
+						"value": "{Revenue}"
+					},
+					{
+						"name": "Costs",
+						"value": "{Cost}"
+					}
+				],
+				"feeds": [
+					{
+						"uid": "valueAxis",
+						"type": "Measure",
+						"values": [
+							"Revenue",
+							"Costs"
+						]
+					},
+					{
+						"uid": "categoryAxis",
+						"type": "Dimension",
+						"values": [
+							"Weeks"
+						]
+					}
+				]
+			}
+		}
+	};
+
 	var oManifest_Analytical_Global_Card_Data = {
 		"sap.app": {"id": "sap.fe", "type": "card"},
 		"sap.ui": {"technology": "UI5"},
@@ -1198,6 +1278,54 @@ sap.ui.define([
 			// Assert
 			assert.notOk(oCardContent.$().hasClass("sapFCardSectionClickable"), "Content area shouldn't have class 'sapFCardSectionClickable'");
 			assert.notOk(oCardContent._getVizProperties(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself should be interactive");
+		});
+
+		QUnit.test("Navigation path is correctly resolved", async function (assert) {
+			// Arrange
+			this.oCard.setManifest(oManifest_Analytical_ChartNavigation);
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			const oContent = this.oCard.getCardContent(),
+				oChart = oContent.getAggregation("_content");
+			const oStubOpenUrl = sinon.stub(window, "open").callsFake(function () {});
+
+			// Act
+			oChart.fireSelectData({
+				data: [
+					{
+						target: {
+							__data__: {
+								"measureNames": "Revenue",
+								"_context_row_number": 1,
+								"Weeks": "CW15",
+								"Revenue": 494000.3
+							}
+						},
+						data: {
+							"measureNames": "Revenue",
+							"_context_row_number": 1,
+							"Weeks": "CW15",
+							"Revenue": 494000.3
+						}
+					}
+				]
+			});
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(oStubOpenUrl.calledOnce, "Window.open is called exactly once to initiate navigation");
+
+			// Arrange
+			const  aExecuteArgs = oStubOpenUrl.getCall(0).args,
+				sResolvedUrl = aExecuteArgs[0],
+				sExpectedUrl = "https://www.sap.com/revenue?week=CW15";
+
+			// Assert
+			assert.strictEqual(sResolvedUrl, sExpectedUrl, "Url is resolved with correct path");
+
+			// Cleanup
+			oStubOpenUrl.restore();
 		});
 
 		QUnit.module("Popover", {
