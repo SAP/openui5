@@ -2018,10 +2018,11 @@ sap.ui.define([
 	 * @param {string} sPath The binding path in the model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path.
-	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters]
-	 *   Initial sort order, can be either a sorter or an array of sorters.
-	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters]
-	 *   Predefined filters, can be either a filter or an array of filters.
+	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} [aSorters=[]]
+	 *   The sorters used initially; call {@link sap.ui.model.odata.v2.ODataListBinding#sort} to replace them
+	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} [aFilters=[]]
+	 *   The filters to be used initially with type {@link sap.ui.model.FilterType.Application}; call
+	 *   {@link sap.ui.model.odata.v2.ODataListBinding#filter} to replace them
 	 * @param {object} [mParameters] A map which contains additional parameters for the binding.
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode]
 	 *   Defines the count mode of the binding; if not specified, the default count mode of the
@@ -2101,8 +2102,8 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.OperationMode}.
 	 *
 	 * <h4>OperationMode.Server</h4>
-	 * Filtering on the <code>ODataTreeBinding</code> is only supported with
-	 * {@link sap.ui.model.FilterType.Application application filters}. Be aware that this applies
+	 * Filtering on the <code>ODataTreeBinding</code> is only supported with filters of type
+	 * {@link sap.ui.model.FilterType.Application}. Be aware that this applies
 	 * only to filters which do not prevent the creation of a hierarchy. So filtering on a property
 	 * (e.g. a "Customer") is fine, as long as the application ensures that the responses from the
 	 * back end are sufficient to create a valid hierarchy on the client. Subsequent paging requests
@@ -2127,9 +2128,10 @@ sap.ui.define([
 	 *   The binding path, either absolute or relative to a given <code>oContext</code>
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The parent context which is required as base for a relative path
-	 * @param {sap.ui.model.Filter | sap.ui.model.Filter[]} [vFilters]
-	 *   The application filters to be used initially; depending on the operation mode, there are
-	 *   restrictions for using filters, see above
+	 * @param {sap.ui.model.Filter | sap.ui.model.Filter[]} [vFilters=[]]
+	 *   The filters to be used initially with type {@link sap.ui.model.FilterType.Application}; call
+	 *   {@link sap.ui.model.odata.v2.ODataTreeBinding#filter} to replace them; depending on the operation mode, there
+	 *   are restrictions for using filters; see above
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters
 	 * @param {boolean} [mParameters.transitionMessagesOnly=false]
@@ -2218,8 +2220,8 @@ sap.ui.define([
 	 *   <b>Deprecated: since 1.44</b> The use of navigation properties to build up the hierarchy
 	 *   structure is deprecated. It is recommended to use the hierarchy annotations mentioned above
 	 *   instead.
-	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
-	 *   The dynamic sorters to be used initially
+	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} [vSorters=[]]
+	 *   The sorters used initially; call {@link sap.ui.model.odata.v2.ODataTreeBinding#sort} to replace them
 	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
 	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
 	 *   <code>vFilters</code> together with other filters

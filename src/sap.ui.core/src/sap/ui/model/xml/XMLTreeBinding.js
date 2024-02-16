@@ -16,8 +16,12 @@ sap.ui.define(['sap/ui/model/ClientTreeBinding', "sap/base/util/each"],
 	 * @param {sap.ui.model.xml.XMLModel} [oModel]
 	 * @param {string} Path pointing to the tree or array that should be bound
 	 * @param {object} [oContext] Context object for this binding
-	 * @param {array} [aFilters] Predefined filters contained in an array
+	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} [aFilters=[]]
+	 *   The filters to be used initially with type {@link sap.ui.model.FilterType.Application}; call {@link #filter} to
+	 *   replace them
 	 * @param {object} [mParameters] Additional model-specific parameters
+	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} [aSorters=[]]
+	 *   The sorters used initially; call {@link #sort} to replace them
 	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
 	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
 	 *   <code>aFilters</code> together with other filters

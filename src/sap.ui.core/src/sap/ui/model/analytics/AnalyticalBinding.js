@@ -230,10 +230,11 @@ sap.ui.define([
 	 *   The path pointing to the tree / array that should be bound
 	 * @param {object} [oContext=null]
 	 *   The context object for this data binding
-	 * @param {array} [aSorter=null]
-	 *   An array of predefined sorters
-	 * @param {array} [aFilters=null]
-	 *   An array of predefined filters
+	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} [aSorters=[]]
+	 *   The sorters used initially; call {@link #sort} to replace them
+	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} [aFilters=[]]
+	 *   The filters to be used initially with type {@link sap.ui.model.FilterType.Application}; call {@link #filter} to
+	 *   replace them
 	 * @param {object} [mParameters=null]
 	 *   A map containing additional binding parameters; for the <code>AnalyticalBinding</code> this
 	 *   parameter is mandatory
@@ -988,8 +989,10 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.filter
-	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter}
-	 *            aFilter an Array of sap.ui.model.Filter objects or a single Filter instance.
+	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} [aFilters=[]]
+	 *   The filters to use; in case of type {@link sap.ui.model.FilterType.Application} this replaces the filters
+	 *   given in {@link sap.ui.model.odata.v2.ODataModel#bindList}; a falsy value is treated as an empty array and thus
+	 *   removes all filters of the specified type
 	 * @param {sap.ui.model.FilterType}
 	 *            [sFilterType=sap.ui.model.FilterType.Control] Type of the filter which should be adjusted.
 	 * @return {this}
@@ -1061,8 +1064,9 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.sort
-	 * @param {sap.ui.model.Sorter|array}
-	 *            aSorter a sorter object or an array of sorter objects which define the sort order.
+	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} [aSorter=[]]
+	 *   The sorters to use; they replace the sorters given in {@link sap.ui.model.odata.v2.ODataModel#bindList}; a
+	 *   falsy value is treated as an empty array and thus removes all sorters
 	 * @return {this}
 	 *            returns <code>this</code> to facilitate method chaining.
 	 *
