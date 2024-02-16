@@ -26,6 +26,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Element",
 	"sap/ui/core/date/UI5Date",
+	"sap/ui/model/type/DateInterval",
 	"sap/ui/dom/jquery/cursorPos"
 ], function(
 	Formatting,
@@ -53,7 +54,8 @@ sap.ui.define([
 	Log,
 	jQuery,
 	Element,
-	UI5Date
+	UI5Date,
+	DateInterval
 ) {
 	"use strict";
 
@@ -626,14 +628,11 @@ sap.ui.define([
 			}),
 			oDRS = new DateRangeSelection({
 				value: {
-					type: "sap.ui.model.type.DateInterval",
+					type: new DateInterval({format: "yMEd"}),
 					parts: [
 						{ path: "/start" },
 						{ path: "/end" }
-					],
-					formatOptions: {
-						format: "yMEd"
-					}
+					]
 				}
 			}),
 			oFakeEvent = {
@@ -1096,8 +1095,7 @@ sap.ui.define([
 		//act
 		this.sut.bindValue({
 			parts:[{path:'/OrderDate'}, {path:'/ShippedDate'}],
-			type: 'sap.ui.model.type.DateInterval',
-			formatOptions: {format: "yMEd"}
+			type: new DateInterval({format: "yMEd"})
 		});
 
 		//assert
@@ -1285,7 +1283,7 @@ sap.ui.define([
 			oDSR4 = new DateRangeSelection({
 				value: {
 					path: "value",
-					type: "sap.ui.model.type.DateInterval"
+					type: new DateInterval()
 				}
 			}).placeAt('qunit-fixture');
 
@@ -1310,10 +1308,7 @@ sap.ui.define([
 			oDSR4 = new DateRangeSelection({
 				value: {
 					path: "value",
-					type: "sap.ui.model.type.DateInterval",
-					formatOptions: {
-						UTC: true
-					}
+					type: new DateInterval({UTC: true})
 				}
 			}).placeAt('qunit-fixture');
 
@@ -1340,16 +1335,11 @@ sap.ui.define([
 			}),
 			oDRS = new DateRangeSelection({
 				value: {
-					type: "sap.ui.model.type.DateInterval",
+					type: new DateInterval({source: {pattern: "timestamp"}}),
 					parts: [
 							{ path: "/start" },
 							{ path: "/end" }
-					],
-					formatOptions: {
-						source: {
-							pattern: "timestamp"
-						}
-					}
+					]
 				}
 			}),
 			oNormalizeResult,
@@ -1384,16 +1374,15 @@ sap.ui.define([
 			}),
 			oDRS = new DateRangeSelection({
 				value: {
-					type: "sap.ui.model.type.DateInterval",
-					parts: [
-							{ path: "/start" },
-							{ path: "/end" }
-					],
-					formatOptions: {
+					type: new DateInterval({
 						source: {
 							pattern: "yyyy-MM-dd"
 						}
-					}
+					}),
+					parts: [
+							{ path: "/start" },
+							{ path: "/end" }
+					]
 				}
 			}),
 			oSpy;
