@@ -127,8 +127,11 @@ sap.ui.define(function () {
 			"misc/silentEventBus": {
 				title: "QUnit Tests for 'silent event bus usage' rules"
 			},
-			"model/modelSupport": {
-				title: "QUnit Tests for model rules"
+			"model/bindingPathSyntaxValidation": {
+				title: "QUnit Tests for model rule: bindingPathSyntaxValidation"
+			},
+			"model/selectUsedInBoundAggregation": {
+				title: "QUnit Tests for model rule: selectUsedInBoundAggregation"
 			}
 		}
 	};
