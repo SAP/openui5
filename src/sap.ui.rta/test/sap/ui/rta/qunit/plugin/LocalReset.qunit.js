@@ -160,7 +160,7 @@ sap.ui.define([
 			assert.strictEqual(this.oLocalResetPlugin._isEditable(this.oSimpleFormOverlay), true, "... then _isEditable is called, then it returns true");
 		});
 
-		QUnit.test("when handler and getMenuItems is called for an overlay with localReset action designTime metadata, and isEnabled property is boolean", function(assert) {
+		QUnit.test("when handler and getMenuItems is called for an overlay with localReset action designTime metadata, and isEnabled property is boolean", async function(assert) {
 			sandbox.stub(LocalResetAPI, "isResetEnabled").returns(true);
 
 			this.oSimpleFormOverlay.setDesignTimeMetadata({
@@ -173,25 +173,42 @@ sap.ui.define([
 
 			sandbox.stub(this.oLocalResetPlugin, "isAvailable")
 			.onFirstCall().returns(true)
-			.onSecondCall().returns(false);
-			var oHandlerStub = sandbox.stub(this.oLocalResetPlugin, "handler");
-			var oIsEnabledSpy = sandbox.spy(this.oLocalResetPlugin, "isEnabled");
+			.onSecondCall().returns(true);
+			const oHandlerStub = sandbox.stub(this.oLocalResetPlugin, "handler");
+			const oIsEnabledSpy = sandbox.spy(this.oLocalResetPlugin, "isEnabled");
 
-			assert.strictEqual(this.oLocalResetPlugin.isEnabled([this.oSimpleFormOverlay]), false, "... then isEnabled is called, then it returns correct value");
-			assert.strictEqual(oIsEnabledSpy.args[0][0][0].getId(), this.oSimpleFormOverlay.getId(), "... and isEnabled is called with the correct overlay");
-			assert.strictEqual(this.oLocalResetPlugin._isEditable(this.oSimpleFormOverlay), true, "... then _isEditable is called, then it returns true");
+			assert.strictEqual(
+				this.oLocalResetPlugin.isEnabled([this.oSimpleFormOverlay]),
+				false, "... then isEnabled is called, then it returns correct value"
+			);
+			assert.strictEqual(
+				oIsEnabledSpy.args[0][0][0].getId(),
+				 this.oSimpleFormOverlay.getId(),
+				 "... and isEnabled is called with the correct overlay");
+			assert.strictEqual(
+				this.oLocalResetPlugin._isEditable(this.oSimpleFormOverlay),
+				true,
+				"... then _isEditable is called, then it returns true"
+			);
 			assert.strictEqual(this.oLocalResetPlugin.getActionName(), "localReset", "... then getActionName returns the correct name");
 
-			var aMenuItems = this.oLocalResetPlugin.getMenuItems([this.oSimpleFormOverlay]);
+			const aMenuItems = await this.oLocalResetPlugin.getMenuItems([this.oSimpleFormOverlay]);
 			assert.strictEqual(aMenuItems[0].id, "CTX_LOCAL_RESET", "'getMenuItems' returns the context menu item for the plugin");
 
 			aMenuItems[0].handler([this.oSimpleFormOverlay]);
 			assert.deepEqual(oHandlerStub.args[0][0], [this.oSimpleFormOverlay], "the 'handler' method is called with the right overlays");
 
 			aMenuItems[0].enabled([this.oSimpleFormOverlay]);
-			assert.strictEqual(oIsEnabledSpy.args[1][0][0].getId(), this.oSimpleFormOverlay.getId(), "the 'isEnabled' function is called with the correct overlay");
+			assert.strictEqual(
+				oIsEnabledSpy.args[1][0][0].getId(), this.oSimpleFormOverlay.getId(),
+				 "the 'isEnabled' function is called with the correct overlay"
+				 );
 
-			assert.strictEqual(this.oLocalResetPlugin.getMenuItems([this.oSimpleFormOverlay]).length, 0, "and if the plugin is not enabled, no menu entries are returned");
+			assert.strictEqual(
+				(await this.oLocalResetPlugin.getMenuItems([this.oSimpleFormOverlay])).length,
+				0,
+				"and if the plugin is not enabled, no menu entries are returned"
+			);
 		});
 
 		QUnit.test("when the isEnabled check is called with an element where changeOnRelevantContainer is true", function(assert) {

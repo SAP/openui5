@@ -21,9 +21,11 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/RenameHandler",
 	"sap/ui/rta/plugin/Rename",
+	"sap/ui/rta/plugin/Selection",
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/qunit/QUnitUtils",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Button,
@@ -46,9 +48,11 @@ sap.ui.define([
 	Plugin,
 	RenameHandler,
 	RenamePlugin,
+	SelectionPlugin,
 	Utils,
 	jQuery,
 	sinon,
+	QUnitUtils,
 	RtaQunitUtils
 ) {
 	"use strict";
@@ -104,8 +108,12 @@ sap.ui.define([
 			var done = assert.async();
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
+			const oCommandFactory = new CommandFactory();
 			this.oRenamePlugin = new RenamePlugin({
-				commandFactory: new CommandFactory()
+				commandFactory: oCommandFactory
+			});
+			const oSelectionPlugin = new SelectionPlugin({
+				commandFactory: oCommandFactory
 			});
 			this.oFormContainer0 = new FormContainer("formContainer0", {});
 			this.oFormContainer = new FormContainer("formContainer", {
@@ -126,7 +134,7 @@ sap.ui.define([
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oForm],
-				plugins: [this.oRenamePlugin]
+				plugins: [this.oRenamePlugin, oSelectionPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -156,6 +164,33 @@ sap.ui.define([
 
 			assert.strictEqual(aSelection, this.oRenamePlugin._aSelection, "then the arrays of selection are equal");
 			assert.strictEqual(this.oRenamePlugin._aSelection.length, 1, "then the array of selection has only one selected overlay");
+		});
+
+		QUnit.test("when the rename is triggered via double click", function(assert) {
+			const fnDone = assert.async();
+
+			// Simulate that editableByPlugin was not evaluated yet
+			const oEditableByPluginStub = sandbox.stub(this.oRenamePlugin, "_isEditableByPlugin").returns(undefined);
+			sandbox.stub(this.oRenamePlugin, "evaluateEditable").callsFake(() => {
+				assert.ok(true, "then the evaluateEditable function is called");
+				oEditableByPluginStub.restore();
+				return Promise.resolve();
+			});
+
+			sandbox.stub(this.oRenamePlugin, "startEdit").callsFake((oOverlay) => {
+				assert.strictEqual(
+					oOverlay,
+					this.oFormContainerOverlay,
+					"then the startEdit function is called with the correct overlay"
+				);
+				fnDone();
+			});
+
+			// Simulate a realistic human-user double click
+			QUnitUtils.triggerEvent("click", this.oFormContainerOverlay.getDomRef());
+			setTimeout(() => {
+				QUnitUtils.triggerEvent("click", this.oFormContainerOverlay.getDomRef());
+			}, 50);
 		});
 
 		QUnit.test("when _isEditable is called", function(assert) {
@@ -278,20 +313,28 @@ sap.ui.define([
 			this.oRenamePlugin.registerElementOverlay(this.oFormContainerOverlay);
 		});
 
-		QUnit.test("when retrieving the context menu item", function(assert) {
-			var bIsAvailable = true;
+		QUnit.test("when retrieving the context menu item", async function(assert) {
+			let bIsAvailable = true;
 			sandbox.stub(this.oRenamePlugin, "isAvailable").callsFake(function(aElementOverlays) {
-				assert.equal(aElementOverlays[0], this.oFormContainerOverlay, "the 'available' function calls isAvailable with the correct overlay");
+				assert.equal(
+					aElementOverlays[0],
+					this.oFormContainerOverlay,
+					"the 'available' function calls isAvailable with the correct overlay"
+				);
 				return bIsAvailable;
 			}.bind(this));
 			sandbox.stub(this.oRenamePlugin, "startEdit").callsFake(function(oOverlay) {
 				assert.deepEqual(oOverlay, this.oFormContainerOverlay, "the 'startEdit' method is called with the right overlay");
 			}.bind(this));
 			sandbox.stub(this.oRenamePlugin, "isEnabled").callsFake(function(aElementOverlays) {
-				assert.equal(aElementOverlays[0], this.oFormContainerOverlay, "the 'enabled' function calls isEnabled with the correct overlay");
+				assert.equal(
+					aElementOverlays[0],
+					this.oFormContainerOverlay,
+					"the 'enabled' function calls isEnabled with the correct overlay"
+				);
 			}.bind(this));
 
-			var aMenuItems = this.oRenamePlugin.getMenuItems([this.oFormContainerOverlay]);
+			const aMenuItems = await this.oRenamePlugin.getMenuItems([this.oFormContainerOverlay]);
 			assert.equal(aMenuItems[0].id, "CTX_RENAME", "'getMenuItems' returns the context menu item for the plugin");
 
 			this.oFormContainerOverlay.setSelected(true);
@@ -300,7 +343,7 @@ sap.ui.define([
 
 			bIsAvailable = false;
 			assert.equal(
-				this.oRenamePlugin.getMenuItems([this.oFormContainerOverlay]).length,
+				(await this.oRenamePlugin.getMenuItems([this.oFormContainerOverlay])).length,
 				0,
 				"and if plugin is not available for the overlay, no menu items are returned"
 			);
@@ -471,58 +514,58 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when retrieving the rename context menu item, with no action on the responsible element", function(assert) {
-			addResponsibleElement(this.oLayoutOverlay.getDesignTimeMetadata(), this.oVerticalLayout, this.oButton);
+		QUnit.test("when retrieving the rename context menu item, with no action on the responsible element", async function(assert) {
+			addResponsibleElement(this.oLayoutOverlay.getDesignTimeMetadata(), this.oButton, this.oInnerButton);
 
-			var aMenuItems = this.oRenamePlugin.getMenuItems([this.oLayoutOverlay]);
+			const aMenuItems = await this.oRenamePlugin.getMenuItems([this.oButtonOverlay]);
 			assert.equal(aMenuItems[0].id, "CTX_RENAME", "then rename menu item was returned");
 
 			// simulate actions on all overlays, except the responsible element
 			sandbox.stub(this.oRenamePlugin, "getAction")
 			.returns(true)
-			.withArgs(this.oButtonOverlay)
+			.withArgs(this.oInnerButtonOverlay)
 			.returns(false);
 
-			var bIsEnabled = aMenuItems[0].enabled([this.oLayoutOverlay]);
+			const bIsEnabled = aMenuItems[0].enabled([this.oButtonOverlay]);
 			assert.equal(bIsEnabled, false, "then the menu item was disabled");
 		});
 
-		QUnit.test("when retrieving an enabled action on target overlay, with an enabled action on the responsible element", function(assert) {
-			var oLayoutDesignTimeMetadata = this.oLayoutOverlay.getDesignTimeMetadata();
-			addResponsibleElement(oLayoutDesignTimeMetadata, this.oVerticalLayout, this.oButton);
-			oLayoutDesignTimeMetadata.getData().actions.rename.isEnabled = function() {return true;};
-			var oGetAssociatedDomRefSpy = sandbox.spy(oLayoutDesignTimeMetadata, "getAssociatedDomRef");
+		QUnit.test("when retrieving an enabled action on target overlay, with an enabled action on the responsible element", async function(assert) {
+			var oButtonDesignTimeMetadata = this.oButtonOverlay.getDesignTimeMetadata();
+			addResponsibleElement(oButtonDesignTimeMetadata, this.oButton, this.oInnerButton);
+			oButtonDesignTimeMetadata.getData().actions.rename.isEnabled = function() {return true;};
+			var oGetAssociatedDomRefSpy = sandbox.spy(oButtonDesignTimeMetadata, "getAssociatedDomRef");
 
-			var aMenuItems = this.oRenamePlugin.getMenuItems([this.oLayoutOverlay]);
+			var aMenuItems = await this.oRenamePlugin.getMenuItems([this.oButtonOverlay]);
 			assert.equal(aMenuItems[0].id, "CTX_RENAME", "then rename menu item was returned");
 
-			var bIsEnabled = aMenuItems[0].enabled([this.oLayoutOverlay]);
-			assert.ok(oGetAssociatedDomRefSpy.calledWith(this.oVerticalLayout), "then the associated domRef was checked from the target overlay");
+			var bIsEnabled = aMenuItems[0].enabled([this.oButtonOverlay]);
+			assert.ok(oGetAssociatedDomRefSpy.calledWith(this.oButton), "then the associated domRef was checked from the target overlay");
 			assert.equal(oGetAssociatedDomRefSpy.callCount, 1, "then domRef check was only done for the target overlay");
 			assert.equal(bIsEnabled, true, "then the menu item was enabled");
 		});
 
-		QUnit.test("when retrieving a disabled action on target overlay, with an enabled action on the responsible element", function(assert) {
-			var oLayoutDesignTimeMetadata = this.oLayoutOverlay.getDesignTimeMetadata();
-			addResponsibleElement(oLayoutDesignTimeMetadata, this.oVerticalLayout, this.oButton);
-			oLayoutDesignTimeMetadata.getData().actions.rename.isEnabled = function() {return false;};
+		QUnit.test("when retrieving a disabled action on target overlay, with an enabled action on the responsible element", async function(assert) {
+			const oButtonDesignTimeMetadata = this.oButtonOverlay.getDesignTimeMetadata();
+			addResponsibleElement(oButtonDesignTimeMetadata, this.oButton, this.oInnerButton);
+			oButtonDesignTimeMetadata.getData().actions.rename.isEnabled = function() {return false;};
 
-			var aMenuItems = this.oRenamePlugin.getMenuItems([this.oLayoutOverlay]);
+			const aMenuItems = await this.oRenamePlugin.getMenuItems([this.oButtonOverlay]);
 			assert.equal(aMenuItems[0].id, "CTX_RENAME", "then rename menu item was returned");
 
-			var bIsEnabled = aMenuItems[0].enabled([this.oLayoutOverlay]);
+			const bIsEnabled = aMenuItems[0].enabled([this.oButtonOverlay]);
 			assert.equal(bIsEnabled, false, "then the menu item was disabled");
 		});
 
-		QUnit.test("when retrieving an action on target overlay with no dom ref in DT, with an enabled action on the responsible element", function(assert) {
-			var oLayoutDesignTimeMetadata = this.oLayoutOverlay.getDesignTimeMetadata();
-			addResponsibleElement(oLayoutDesignTimeMetadata, this.oVerticalLayout, this.oButton);
-			oLayoutDesignTimeMetadata.getData().actions.rename.domRef = undefined;
+		QUnit.test("when retrieving an action on target overlay with no dom ref in DT, with an enabled action on the responsible element", async function(assert) {
+			const oButtonDesignTimeMetadata = this.oButtonOverlay.getDesignTimeMetadata();
+			addResponsibleElement(oButtonDesignTimeMetadata, this.oButton, this.oInnerButton);
+			oButtonDesignTimeMetadata.getData().actions.rename.domRef = undefined;
 
-			var aMenuItems = this.oRenamePlugin.getMenuItems([this.oLayoutOverlay]);
+			const aMenuItems = await this.oRenamePlugin.getMenuItems([this.oButtonOverlay]);
 			assert.equal(aMenuItems[0].id, "CTX_RENAME", "then rename menu item was returned");
 
-			var bIsEnabled = aMenuItems[0].enabled([this.oLayoutOverlay]);
+			const bIsEnabled = aMenuItems[0].enabled([this.oButtonOverlay]);
 			assert.equal(bIsEnabled, false, "then the menu item was disabled");
 		});
 

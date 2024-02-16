@@ -319,23 +319,35 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when retrieving the context menu item", function(assert) {
-			assert.expect(6);
+		QUnit.test("when retrieving the context menu item", async function(assert) {
+			assert.expect(7);
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 
 			var bIsAvailable = true;
-			sandbox.stub(this.oSplitPlugin, "isAvailable").callsFake(function(aElementOverlays) {
-				assert.equal(aElementOverlays[0].getId(), this.oButton1Overlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
+			sandbox.stub(this.oSplitPlugin, "isAvailable")
+			.callsFake(function(aElementOverlays) {
+				assert.equal(
+					aElementOverlays[0].getId(),
+					this.oButton1Overlay.getId(),
+					"the 'available' function calls isAvailable with the correct overlay"
+				);
 				return bIsAvailable;
 			}.bind(this));
 			sandbox.stub(this.oSplitPlugin, "handleSplit").callsFake(function(oElementOverlay) {
-				assert.deepEqual(oElementOverlay.getId(), this.oButton1Overlay.getId(), "the 'handleSplit' method is called with the right overlay");
+				assert.deepEqual(
+					oElementOverlay.getId(),
+					this.oButton1Overlay.getId(),
+					"the 'handleSplit' method is called with the right overlay");
 			}.bind(this));
 			sandbox.stub(this.oSplitPlugin, "isEnabled").callsFake(function(aElementOverlays) {
-				assert.equal(aElementOverlays[0].getId(), this.oButton1Overlay.getId(), "the 'enabled' function calls isEnabled with the correct element overlay");
+				assert.equal(
+					aElementOverlays[0].getId(),
+					this.oButton1Overlay.getId(),
+					"the 'enabled' function calls isEnabled with the correct element overlay"
+				);
 			}.bind(this));
 
-			var aMenuItems = this.oSplitPlugin.getMenuItems([this.oButton1Overlay]);
+			const aMenuItems = await this.oSplitPlugin.getMenuItems([this.oButton1Overlay]);
 			assert.equal(aMenuItems[0].id, "CTX_UNGROUP_FIELDS", "'getMenuItems' returns the context menu item for the plugin");
 
 			aMenuItems[0].handler([this.oButton1Overlay], { contextElement: this.oButton1 });
@@ -343,7 +355,7 @@ sap.ui.define([
 
 			bIsAvailable = false;
 			assert.equal(
-				this.oSplitPlugin.getMenuItems([this.oButton1Overlay]).length,
+				(await this.oSplitPlugin.getMenuItems([this.oButton1Overlay])).length,
 				0,
 				"and if plugin is not available for the overlay, no menu items are returned"
 			);

@@ -156,7 +156,11 @@ sap.ui.define([
 
 		QUnit.test("when Overlays are registered/deregistered and _isEditableByPlugin method is called", function(assert) {
 			assert.notOk(this.oButtonOverlay.getEditable(), "then the Overlay is not editable");
-			assert.notOk(this.oPlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
+			assert.strictEqual(
+				this.oPlugin._isEditableByPlugin(this.oButtonOverlay),
+				undefined,
+				"then the overlay is not editable by this plugin and the result indicates that the check didn't run yet (undefined)"
+			);
 			assert.notOk(this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
 
 			this.oPlugin.registerElementOverlay(this.oButtonOverlay);
@@ -202,7 +206,11 @@ sap.ui.define([
 			);
 			assert.ok(this.oButtonOverlay.getEditable(), "then the Overlay is editable");
 			assert.ok(this.oPlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is editable by this plugin");
-			assert.notOk(this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay), "then the overlay is not editable by this plugin");
+			assert.strictEqual(
+				this.oRemovePlugin._isEditableByPlugin(this.oButtonOverlay),
+				false,
+				"then the overlay is not editable by this plugin and the result is explicitly false"
+			);
 
 			this.oPlugin.deregisterElementOverlay(this.oButtonOverlay);
 			assert.strictEqual(

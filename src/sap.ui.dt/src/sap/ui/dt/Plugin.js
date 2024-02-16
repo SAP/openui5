@@ -375,7 +375,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.group A group for buttons which should be grouped together in the MiniMenu
 	 * @return {object[]} Returns an array with the object containing the required data for a context menu item
 	 */
-	Plugin.prototype._getMenuItems = function(aElementOverlays, mPropertyBag) {
+	Plugin.prototype._getMenuItems = async function(aElementOverlays, mPropertyBag) {
 		var oMenuItem = this.enhanceItemWithResponsibleElement({
 			id: mPropertyBag.pluginId,
 			handler: this.handler.bind(this),
@@ -388,8 +388,15 @@ sap.ui.define([
 		var aResponsibleElementOverlays = oMenuItem.responsible || aElementOverlays;
 		var oResponsibleElementOverlay = aResponsibleElementOverlays[0];
 
+		if (this._isEditableByPlugin(oResponsibleElementOverlay) === undefined) {
+			// The responsibleElement editableByPlugin state was not evaluated yet e.g. because it
+			// has no visible geometry, thus evaluateEditable now
+			await this.evaluateEditable(aResponsibleElementOverlays, { onRegistration: false });
+		}
 		var mAction = this.getAction(oResponsibleElementOverlay);
-		if (!mAction || !this.isAvailable(aResponsibleElementOverlays)) {
+		// For most plugins, the action must be available on the responsible element and the element overlay
+		// because the element overlay is where the action is executed, e.g. rename in anchor bar
+		if (!mAction || !this.isAvailable(aResponsibleElementOverlays) || !this.isAvailable(aElementOverlays)) {
 			return [];
 		}
 
