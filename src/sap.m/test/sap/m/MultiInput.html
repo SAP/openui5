@@ -944,6 +944,29 @@
 						})
 					});
 
+					var oMultiInputWithValidation = new sap.m.MultiInput("multiInputWithValidation", {
+						filterSuggests: false ,
+							value: "{/value}",
+							suggestionItems: [
+								new sap.ui.core.Item({
+									key: "1",
+									text: "Token 1"
+								}),
+								new sap.ui.core.Item({
+									key: "2",
+									text: "Token 2"
+								}),
+								new sap.ui.core.Item({
+									key: "3",
+									text: "Token 3"
+								})
+							]
+					});
+
+					oMultiInputWithValidation.addValidator(function (args) {
+						return new sap.m.Token({text: args.text});
+					});
+
 					//*******************************
 					var theCompactMode= new sap.m.CheckBox("compactMode", {
 						selected: false,
@@ -1022,7 +1045,9 @@
 							new Label("stickySuggestionsLabel", {text: "MultiInput with sticky suggestions header", labelFor: "multiInputWithStickySuggestions"}),
 							oMultiInputWithStickySuggestions,
 							new Label("longSuggestionsLabel", {text: "MultiInput with small width and long suggestions", width:"100%", labelFor: "mi-long-sugg-small-width"}),
-							oSuggMultiInputPopoverWidth
+							oSuggMultiInputPopoverWidth,
+							new Label("multiInputWithValidationLabel", {text: "MultiInput with validation", width:"100%", labelFor: "multiInputWithValidation"}),
+							oMultiInputWithValidation
 						]
 					}).addStyleClass("sapUiContentPadding");
 
