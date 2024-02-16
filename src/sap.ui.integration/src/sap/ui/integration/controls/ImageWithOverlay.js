@@ -5,12 +5,16 @@
 // Provides control sap.ui.integration.controls.ImageWithOverlay
 sap.ui.define([
 	"./ImageWithOverlayRenderer",
+	"sap/ui/core/AnimationMode",
+	"sap/ui/core/ControlBehavior",
 	"sap/m/Text",
 	"sap/ui/core/Control",
 	"sap/m/VBox",
 	"sap/m/library"
 ], function (
 	ImageWithOverlayRenderer,
+	AnimationMode,
+	ControlBehavior,
 	Text,
 	Control,
 	VBox,
@@ -85,7 +89,12 @@ sap.ui.define([
 				/**
 				 * Set to <code>MediumStart</code> to have medium size inline padding at the start of the overlay.
 				 */
-				padding: {type: "string", group: "Misc", defaultValue: "" }
+				padding: {type: "string", group: "Misc", defaultValue: "" },
+				/*
+				 * Defines the animation that should be used to show up the overlay. Possible values are <code>None</code>(default), and <code>FadeIn</code>.
+				 * Note: this property will take effect only if <code>animationMode</code> is set to <code>full</code>
+				 */
+				animation: {type: "string", group: "Misc", defaultValue: "None" }
 			},
 			aggregations: {
 				image: { type: "sap.m.Image", multiple: false },
@@ -102,6 +111,7 @@ sap.ui.define([
 	 */
 	ImageWithOverlay.prototype.onBeforeRendering = function () {
 		Control.prototype.onBeforeRendering.apply(this, arguments);
+		var sAnimationMode = ControlBehavior.getAnimationMode();
 
 		this._getSupertitleText().setText(this.getSupertitle());
 		this._getTitleText().setText(this.getTitle());
@@ -109,6 +119,14 @@ sap.ui.define([
 
 		this._getTextsLayout().setJustifyContent(this.getVerticalPosition())
 			.setAlignItems(this.getHorizontalPosition());
+
+		if (sAnimationMode === AnimationMode.full && this.getAnimation() === "FadeIn") {
+			this.getImage()?.attachLoad(() => {
+				this.addStyleClass("sapUiIntImgWithOverlayLoaded");
+			});
+		} else {
+			this.addStyleClass("sapUiIntImgWithOverlayNoAnimation");
+		}
 	};
 
 	/**

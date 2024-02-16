@@ -1775,6 +1775,10 @@
             "background": {
               "description": "The background behind the texts and over the image",
               "type": "string"
+            },
+            "animation": {
+              "description": "Defines the animation that should be used to show up the overlay.",
+              "type": "string"
             }
           }
         }
