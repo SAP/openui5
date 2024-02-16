@@ -156,6 +156,7 @@ sap.ui.define(
 					setTimeout(function () {
 						if (oPopup._getOpenByDomRef()) {
 							oPopup._fnOrientationChange();
+							oPopup._storeScrollPosition();
 							oPopup.oPopup._applyPosition();
 						}
 					}, 0);
