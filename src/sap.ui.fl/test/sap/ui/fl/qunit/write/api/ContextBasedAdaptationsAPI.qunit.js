@@ -64,6 +64,9 @@ sap.ui.define([
 			},
 			isSystemWithTransports() {
 				return false;
+			},
+			isVariantAuthorNameAvailable() {
+				return false;
 			}
 		});
 	}

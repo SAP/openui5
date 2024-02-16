@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Manifest,
@@ -17,6 +18,7 @@ sap.ui.define([
 	LrepConnector,
 	ApplyStorage,
 	Version,
+	Settings,
 	sinon
 ) {
 	"use strict";
@@ -405,7 +407,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When load variant author name is triggered", function(assert) {
+		QUnit.test("When load variant author name is triggered and feature is not available", function(assert) {
 			const oBackEndResult = {
 				compVariants: {
 					comp_id1: "comp_name1"
@@ -414,6 +416,33 @@ sap.ui.define([
 					id1: "name1"
 				}
 			};
+			sandbox.stub(Settings, "getInstance").resolves({
+				isVariantAuthorNameAvailable() {
+					return false;
+				}
+			});
+			const oStubloadVariantsAuthors = sandbox.stub(ApplyStorage, "loadVariantsAuthors").resolves(oBackEndResult);
+
+			return Loader.loadVariantsAuthors("test.app").then(function(oResult) {
+				assert.deepEqual(oResult, {}, "then empty result is returned");
+				assert.notOk(oStubloadVariantsAuthors.calledOnce, "then correct function of storage is not called");
+			});
+		});
+
+		QUnit.test("When load variant author name is triggered and feature is available", function(assert) {
+			const oBackEndResult = {
+				compVariants: {
+					comp_id1: "comp_name1"
+				},
+				variants: {
+					id1: "name1"
+				}
+			};
+			sandbox.stub(Settings, "getInstance").resolves({
+				isVariantAuthorNameAvailable() {
+					return true;
+				}
+			});
 			const oStubloadVariantsAuthors = sandbox.stub(ApplyStorage, "loadVariantsAuthors").resolves(oBackEndResult);
 
 			return Loader.loadVariantsAuthors("test.app").then(function(oResult) {

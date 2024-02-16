@@ -110,6 +110,7 @@ sap.ui.define([
 		sandbox.stub(Loader, "loadFlexData").resolves({
 			changes: merge(StorageUtils.getEmptyFlexDataResponse(), oData || {})
 		});
+		sandbox.stub(Loader, "loadVariantsAuthors").resolves({});
 		await FlexState.initialize({
 			reference: sReference
 		});
