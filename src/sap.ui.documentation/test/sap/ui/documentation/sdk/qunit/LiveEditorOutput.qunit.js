@@ -34,17 +34,14 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				'        });',
 
 			// uses latest api to create the view asynchronously
-			sIndexJs_v1 = 'sap.ui.getCore().attachInit(function () {\n' +
-				'            sap.ui.require(["sap/ui/core/mvc/XMLView"], function(XMLView) {\n' +
-				'                 XMLView.create(\n' +
-				'                     {' +
-				'                       id: "myView1",' +
-				'                       viewName: "HelloWorld.App"}).then(function(myView) {\n' +
-				'                     myView.placeAt("content");\n' +
-				'                 });\n' +
-				'            });\n' +
-				'         });\n',
-
+			sIndexJs_v1 = `sap.ui.require(["sap/ui/core/mvc/XMLView"], function(XMLView) {
+				XMLView.create({
+					id: "myView1",
+					viewName: "HelloWorld.App"
+				}).then(function(myView) {
+					myView.placeAt("content");
+				});
+			});`,
 			// uses legacy api to create the view synchronously
 			sIndexJs_v2 = 'sap.ui.getCore().attachInit(function () {\n' +
 				'       sap.ui.xmlview({\n' +
@@ -63,20 +60,18 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				'    });\n',
 
 			// throws error in a seaprate task to test error handling
-			sIndexJs_v4 =
-				'    sap.ui.getCore().attachInit(function () {\n' +
-				'       setTimeout(function() {\n' +
-				'          throw new Error("TestErrorMessage");\n' +
-				'       }, 200);\n' +
-				'    });\n',
+			sIndexJs_v4 = `sap.ui.require([], function() {
+				setTimeout(function() {
+					throw new Error("TestErrorMessage");
+				}, 200);
+			});`,
 
 			// throws error in a micro task to test error handling
-			sIndexJs_v5 =
-				'    sap.ui.getCore().attachInit(function () {\n' +
-				'       Promise.resolve().then(function() {\n' +
-				'          throw new Error("TestErrorMessage");\n' +
-				'       });\n' +
-				'    });\n';
+			sIndexJs_v5 = `sap.ui.require([], function() {
+				Promise.resolve().then(function() {
+					throw new Error("TestErrorMessage");
+				});
+			});`;
 
 		/**
 		 * Waits for a UI5 object with the given id to be created in the frame window
@@ -89,18 +84,25 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 			return new Promise(function(resolve, reject) {
 
 				function _checkObjectCreated() {
-					var oCore = oFrameWindow && oFrameWindow.sap && oFrameWindow.sap.ui.getCore && oFrameWindow.sap.ui.getCore(),
-						oObject = oCore && oCore.byId(sId);
-					if (oObject) {
-						resolve(oObject);
-						return;
+					if (oFrameWindow && oFrameWindow.sap && oFrameWindow.sap.ui && oFrameWindow.sap.ui.require) {
+						oFrameWindow.sap.ui.require(["sap/ui/core/Element" ], function(Element) {
+							var oObject = Element.getElementById(sId);
+							if (oObject) {
+								resolve(oObject);
+								return;
+							}
+							if (iChecksCount++ > 300) {
+								reject();
+							}
+							setTimeout(_checkObjectCreated, 10);
+						});
+					} else {
+						if (iChecksCount++ > 300) {
+							reject();
+						}
+						setTimeout(_checkObjectCreated, 10);
 					}
-					if (iChecksCount++ > 300) {
-						reject();
-					}
-					setTimeout(_checkObjectCreated, 10);
 				}
-
 				_checkObjectCreated();
 			});
 		}
