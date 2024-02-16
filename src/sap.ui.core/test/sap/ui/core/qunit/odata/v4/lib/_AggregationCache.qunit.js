@@ -3739,6 +3739,7 @@ sap.ui.define([
 		const oHelperMock = this.mock(_Helper);
 
 		function setupMocks(iRange) {
+			oHelperMock.expects("hasPrivateAnnotation").never();
 			for (let i = 0; i < iRange; i += 1) {
 				const oNode = oCache.aElements[i];
 				oHelperMock.expects("getPrivateAnnotation")
@@ -3762,6 +3763,23 @@ sap.ui.define([
 			oCache.getArrayIndex(oFixture.iRank), oFixture.iIndex);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getArrayIndex: throws Error without rank", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
+				{hierarchyQualifier : "X"});
+
+		oCache.aElements = [{
+			"@$ui5._" : { // no private annotation "rank"
+				parent : oCache.oFirstLevel
+			}
+		}];
+
+		assert.throws(function () {
+			// code under test
+			oCache.getArrayIndex(1);
+		}, new Error("Missing rank"));
+	});
 
 	//*********************************************************************************************
 	QUnit.test("getParentIndex", function (assert) {
