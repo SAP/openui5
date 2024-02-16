@@ -131,7 +131,7 @@ sap.ui.define([
 		/**
 		 * The <code>change</code> event is fired, when the configuration options are changed.
 		 * For the event parameters please refer to {@link module:sap/base/i18n/Formatting$ChangeEvent
-		 * Formattin$ChangeEvent}.
+		 * Formatting$ChangeEvent}.
 		 *
 		 * @name module:sap/base/i18n/Formatting.change
 		 * @event

@@ -304,11 +304,12 @@ sap.ui.define([
 				}
 			},
 
-			scrollToEntity: function (sSectionId, sSubSectionTitle) {
+			scrollToEntity: function (sSectionId, sEntityId) {
 
 				var aFilteredSubSections,
 					aSubSections,
-					oSection;
+					oSection,
+					sSubSectionTitle;
 
 				if (!sSectionId) {
 					return;
@@ -323,10 +324,10 @@ sap.ui.define([
 				}
 
 				// If we have a target sub-section we will scroll to it else we will scroll directly to the section
-				if (sSubSectionTitle) {
+				if (sEntityId) {
 					// Let's ignore case when searching for the section especially like in this case
 					// where sSubSectionTitle comes from the URL
-					sSubSectionTitle = sSubSectionTitle.toLowerCase();
+					sSubSectionTitle = formatter.apiRefEntityName(sEntityId).toLowerCase();
 
 					aSubSections = oSection.getSubSections();
 					aFilteredSubSections = aSubSections.filter(function (oSubSection) {

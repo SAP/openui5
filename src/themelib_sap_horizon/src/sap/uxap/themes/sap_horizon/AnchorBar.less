@@ -112,6 +112,60 @@ html.sap-desktop .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltPressed:not
 	}
 }
 
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMSBArrow .sapMBtnInner,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMSBArrow .sapMBtnInner {
+	box-sizing: content-box;
+    overflow: visible;
+    width: 1.5rem;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    line-height: 1.5rem;
+	position: relative;
+	&:after {
+		content: "";
+		width: 0.0625rem;
+		height: 0.625rem;
+		position: absolute;
+		background-color: @sapUiContentLabelColor;
+		top: 50%;
+		transform: translateY(-50%);
+		left: 0;
+	}
+}
+
+.sapUxAPAnchorBarButton .sapMSB .sapMSBArrow {
+	top: 50%;
+    transform: translateY(-50%);
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMBarChild .sapMSBArrow .sapMBtnInner .sapMBtnIcon,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMBarChild .sapMSBArrow .sapMBtnInner .sapMBtnIcon {
+	box-sizing: content-box;
+    overflow: visible;
+    width: 1.5rem;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    line-height: 1.5rem;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMSBArrow:hover .sapMBtnInner,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMSBArrow:hover .sapMBtnInner {
+	.sapMBtnIcon {
+		background-color: @sapUiButtonHoverBackground;
+		box-shadow: inset 0 0 0 1px @sapUiButtonHoverBorderColor;
+		border-radius: 0.25rem;
+	}
+	&::after {
+		display: none;
+	}
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMMenuBtn .sapMSB .sapMSBText.sapMSBTextIE,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMMenuBtn .sapMSB .sapMSBText:not(.sapMSBTextIE) .sapMBtnInner {
+	margin-right: 1rem;
+}
+
+
 .sapUxAPObjectPageNavigation {
 	position: relative;
 }
@@ -183,6 +237,9 @@ html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 		.sapMBtnContent,
 		.sapUiIcon {
 			color: @sapUiContentSelectedTextColor;
+		}
+		.sapMBtnInner::after {
+			background-color: @sapUiContentSelectedTextColor;
 		}
 
 		&::after {
@@ -372,4 +429,9 @@ html.sap-desktop .sapUxAPAnchorBarButton .sapMBtn:focus .sapMBtnInner::before {
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMBtn + .sapMBtn .sapMBtnInner *,
 .sapUxAPAnchorBar .sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive) > .sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnDefault .sapMBtnContent{
 	color: @sapUiContentSelectedTextColor;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMBtn + .sapMBtn .sapMBtnInner:after,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton:hover .sapMBtn + .sapMBtn .sapMBtnInner:after {
+	background-color: @sapUiContentSelectedTextColor;
 }

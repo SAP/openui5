@@ -67,9 +67,6 @@ sap.ui.define([
 	 * @param {string} oConfiguration.tokenParse The string representation of the regular expression that is used by the operator to parse a value
 	 *                 to eliminate the operator and get the data string. A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the
 	 *                 <code>oConfiguration.tokenText</code> property if given.
-	 * @param {string} [oConfiguration.tokenParseMatchIndex] The index in the matching result where the parsed value is stored.
-	 *                 If a RegExp contains an or-condition the result could be on different positions, so the matching index is used as start index. The first rsult starting with this index is taken.
-	 *                 If the index is not set, the content of the last entry is used as result.
 	 * @param {string} [oConfiguration.tokenTest] The string representation of the regular expression that is used to test if the given text meets the operator.
 	 *                 A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the
 	 *                 <code>oConfiguration.tokenText</code> property if given.
@@ -195,9 +192,6 @@ sap.ui.define([
 					this.tokenTestRegExp = this.tokenParseRegExp;
 				}
 				this.hiddenOperatorRegExp = new RegExp("^(.+)$", "is"); // empty is not valid (also allown line-breaks and tabs)
-				if (oConfiguration.tokenParseMatchIndex) {
-					this.tokenParseMatchIndex = oConfiguration.tokenParseMatchIndex;
-				}
 
 				// create token formatter
 				if (oConfiguration.tokenFormat) {
@@ -742,29 +736,18 @@ sap.ui.define([
 	Operator.prototype.getValues = function(sText, sDisplayFormat, bDefaultOperator, bHideOperator) {
 
 		const regExp = bHideOperator ? this.hiddenOperatorRegExp : this.tokenParseRegExp; // if operator symbol is not used -> use complete text
-		const aMatch = sText.match(regExp); // as RegExp might be complex and return longer arry we take the last value(s)
+		let aMatch = sText.match(regExp); // as RegExp might be complex and return longer arry we take the last value(s)
 		let aValues;
 		if (aMatch) {
-			const iLength = aMatch.length;
+			aMatch.splice(0,1); // remove match part
+			aMatch = aMatch.filter((oMatch) => oMatch !== undefined); // as RegExp could contain an OR operation what leads to empty parts
 			aValues = [];
 			for (let i = 0; i < this.valueTypes.length; i++) {
-				const iMatchIndex = this.tokenParseMatchIndex ? this.tokenParseMatchIndex + i : iLength - this.valueTypes.length + i;
-				if (iMatchIndex > 0) {
-					for (let j = iMatchIndex; j < aMatch.length; j++) { // as RegExp could contain and or-condition the result might be on different places
-						if (aMatch[j] !== undefined) {
-							const sValue = aMatch[j];
-							aValues.push(sValue);
-							break;
-						}
-					}
+				const iMatchIndex = aMatch.length - this.valueTypes.length + i; // use last matches as first match might just be the operator
+				if (aMatch.length >= i) { // there is a text found for this part
+					const sValue = aMatch[iMatchIndex];
+					aValues.push(sValue);
 				}
-
-
-
-				// if (aMatch.length >= i && aMatch[iMatchIndex] !== undefined) { // there is a text found for this part
-				// 	const sValue = aMatch[iMatchIndex];
-				// 	aValues.push(sValue);
-				// }
 			}
 		}
 

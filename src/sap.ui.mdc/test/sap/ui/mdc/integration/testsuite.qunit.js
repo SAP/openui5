@@ -151,7 +151,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				sinon: false
 			},
 			"Field": {
-				page: "test-resources/sap/ui/mdc/integration/Field/testsuite.qunit.html",
+				page: "test-resources/sap/ui/mdc/integration/field/testsuite.qunit.html",
 				sinon: false
 			}
 		}

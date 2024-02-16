@@ -80,6 +80,64 @@ sap.ui.define([
 		await nextUIUpdate();
 	});
 
+	QUnit.test("Test for not showing carousel arrows", function (assert) {
+		// arrange
+		const oAssociatedPreviewDialog = new FilePreviewDialog({
+			showCarouselArrows: false
+		});
+
+		this.oUploadSetwithTable.setPreviewDialog(oAssociatedPreviewDialog);
+		var oItem = this.oUploadSetwithTable.getItems()[0];
+
+		var fnDone = assert.async();
+
+		// act
+		this.oUploadSetwithTable._openFilePreview(oItem);
+
+		//assert
+		oAssociatedPreviewDialog.attachEventOnce("beforePreviewDialogOpen", function (oEvent) {
+			var oPreviewDialogRef = oEvent.getSource();
+
+			oPreviewDialogRef._oDialog.attachEventOnce("afterOpen", function (oEvent) {
+				var oBeginButton = oPreviewDialogRef._oDialog.getButtons()[1];
+				oBeginButton.firePress();
+				fnDone();
+			});
+
+			assert.equal(oPreviewDialogRef?._oCarousel?.getShowPageIndicator(), false, "File Preview Dialog with no carousel arrows.");
+		});
+
+	});
+
+	QUnit.test("Test for showing carousel arrows", function (assert) {
+		// arrange
+		const oAssociatedPreviewDialog = new FilePreviewDialog({
+			showCarouselArrows: true
+		});
+
+		this.oUploadSetwithTable.setPreviewDialog(oAssociatedPreviewDialog);
+		var oItem = this.oUploadSetwithTable.getItems()[0];
+
+		var fnDone = assert.async();
+
+		// act
+		this.oUploadSetwithTable._openFilePreview(oItem);
+
+		//assert
+		oAssociatedPreviewDialog.attachEventOnce("beforePreviewDialogOpen", function (oEvent) {
+			var oPreviewDialogRef = oEvent.getSource();
+
+			oPreviewDialogRef._oDialog.attachEventOnce("afterOpen", function (oEvent) {
+				var oBeginButton = oPreviewDialogRef._oDialog.getButtons()[1];
+				oBeginButton.firePress();
+				fnDone();
+			});
+
+			assert.equal(oPreviewDialogRef?._oCarousel?.getShowPageIndicator(), true, "File Preview Dialog with carousel arrows.");
+		});
+
+	});
+
 	return Library.load("sap.suite.ui.commons")
 		.then(function (assert) {
 			QUnit.module("Supported media type", {

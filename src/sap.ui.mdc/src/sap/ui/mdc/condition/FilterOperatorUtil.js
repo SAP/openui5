@@ -233,7 +233,8 @@ sap.ui.define([
 				name: OperatorName.BT,
 				alias: { Date: "DATERANGE", DateTime: "DATETIMERANGE" },
 				filterOperator: ModelOperator.BT,
-				tokenParse: "^([^!].*)\\.\\.\\.(.+)$", // TODO: does this work?? At least also matches crap like ".....". I guess validation of value types needs to get rid of those.
+				tokenTest: "^([^!].*)\\.\\.\\.(.+)$", // TODO: does this work?? At least also matches crap like ".....". I guess validation of value types needs to get rid of those.
+				tokenParse: "^(.*)\\.\\.\\.(.*)$|^(.+)$",
 				tokenFormat: "{0}...{1}",
 				valueTypes: [OperatorValueType.Self, OperatorValueType.Self],
 				validate: function(aValues, oType) {
@@ -263,7 +264,8 @@ sap.ui.define([
 			notBetween: new Operator({
 				name: OperatorName.NOTBT,
 				filterOperator: ModelOperator.NB,
-				tokenParse: "^!(.+)\\.\\.\\.(.+)$",
+				tokenTest: "^!(.+)\\.\\.\\.(.+)$",
+				tokenParse: "^!(.*)\\.\\.\\.(.*)$|^(.+)$",
 				tokenFormat: "!({0}...{1})",
 				valueTypes: [OperatorValueType.Self, OperatorValueType.Self],
 				exclude: true,
@@ -357,7 +359,6 @@ sap.ui.define([
 				// tokenParse: "^>=(.+)$",
 				tokenTest: "^>=(.+)?$",
 				tokenParse: "^(>=)?(.+)?$",
-				tokenParseMatchIndex: 2,
 				tokenFormat: ">={0}",
 				valueTypes: [OperatorValueType.Self]
 			}),
@@ -370,7 +371,6 @@ sap.ui.define([
 				// tokenParse: "^!>=(.+)$",
 				tokenTest: "^!>=(.+)?$",
 				tokenParse: "^(!>=)?(.+)?$",
-				tokenParseMatchIndex: 2,
 				tokenFormat: "!(>={0})",
 				valueTypes: [OperatorValueType.Self],
 				exclude: true
@@ -384,7 +384,6 @@ sap.ui.define([
 				// tokenParse: "^([^!\\*]+.*)\\*$",
 				tokenTest: "^([^!\\*]+.*)\\*$",
 				tokenParse: "^(.+)\\*$|^(.*[^\\*])$",
-				tokenParseMatchIndex: 1,
 				tokenFormat: "{0}*",
 				valueTypes: [OperatorValueType.SelfNoParse]
 			}),
@@ -397,7 +396,6 @@ sap.ui.define([
 				// tokenParse: "^!([^\\*].*)\\*$",
 				tokenTest: "^!([^\\*].*)\\*$",
 				tokenParse: "^!?(.+)\\*$|^(.*[^\\*])$",
-				tokenParseMatchIndex: 1,
 				tokenFormat: "!({0}*)",
 				valueTypes: [OperatorValueType.SelfNoParse],
 				exclude: true
@@ -436,7 +434,6 @@ sap.ui.define([
 				// tokenParse: "^\\*(.*)\\*$",
 				tokenTest: "^\\*(.*)\\*$",
 				tokenParse: "^\\*(.+)?\\*$|^([^\\*]?.*[^\\*]?)$",
-				tokenParseMatchIndex: 1,
 				tokenFormat: "*{0}*",
 				valueTypes: [OperatorValueType.SelfNoParse]
 			}),
@@ -449,7 +446,6 @@ sap.ui.define([
 				// tokenParse: "^!\\*(.*)\\*$",
 				tokenTest: "^!\\*(.*)\\*$",
 				tokenParse: "^!\\*(.+)?\\*$|^!?(.+)$",
-				tokenParseMatchIndex: 1,
 				tokenFormat: "!(*{0}*)",
 				valueTypes: [OperatorValueType.SelfNoParse],
 				exclude: true
@@ -463,7 +459,6 @@ sap.ui.define([
 				// tokenParse: "^!=(.+)$",
 				tokenTest: "^!=(.+)?$",
 				tokenParse: "^(!=)?(.+)?$",
-				tokenParseMatchIndex: 2,
 				tokenFormat: "!(={0})",
 				valueTypes: [OperatorValueType.Self],
 				exclude: true

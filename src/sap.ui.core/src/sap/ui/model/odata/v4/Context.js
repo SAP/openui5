@@ -908,8 +908,8 @@ sap.ui.define([
 	 *     <li> this context is not part of a recursive hierarchy.
 	 *   </ul>
 	 *
-	 * @experimental As of version 1.120.0
 	 * @public
+	 * @since 1.122.0
 	 */
 	Context.prototype.getParent = function () {
 		if (!this.oBinding.fetchOrGetParent) {
@@ -1437,8 +1437,6 @@ sap.ui.define([
 	 * Requests the parent node (in case of a recursive hierarchy; see
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}).
 	 *
-	 * Note: <strong>DO NOT</strong> call {@link #setKeepAlive} on the resulting context!
-	 *
 	 * @returns {Promise<sap.ui.model.odata.v4.Context|null>} A promise which:
 	 *   <ul>
 	 *     <li> Resolves if successful with either the parent node or <code>null</code> for a root
@@ -1451,9 +1449,9 @@ sap.ui.define([
 	 *     <li> this context is not part of a recursive hierarchy.
 	 *    </ul>
 	 *
-	 * @experimental As of version 1.120.0
 	 * @public
 	 * @see #getParent
+	 * @since 1.122.0
 	 */
 	Context.prototype.requestParent = function () {
 		if (!this.oBinding.fetchOrGetParent) {
