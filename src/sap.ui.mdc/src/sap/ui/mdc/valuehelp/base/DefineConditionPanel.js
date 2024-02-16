@@ -1843,7 +1843,7 @@ sap.ui.define([
 				const sConditionPath = oBindingContext.getPath(); // Path to condition of the active control
 				const iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition
 				for (let i = 0; i < aConditions.length; i++) {
-					if (i !== iIndex && FilterOperatorUtil.compareConditions(oCondition, aConditions[i])) {
+					if (i !== iIndex && !oCondition.isEmpty && FilterOperatorUtil.compareConditions(oCondition, aConditions[i])) {
 						bInvalid = true;
 						oField.setValueState(ValueState.Error);
 						oField.setValueStateText(oMessageBundle.getText("field.CONDITION_ALREADY_EXIST", [oCondition.values[0]]));
@@ -1896,7 +1896,7 @@ sap.ui.define([
 						const sConditionPath = oBindingContext.getPath(); // Path to condition of the active control
 						const iIndex = parseInt(sConditionPath.split("/")[2]); // index of current condition
 						for (let i = 0; i < aConditions.length; i++) {
-							if (i !== iIndex && FilterOperatorUtil.compareConditions(oCondition, aConditions[i])) {
+							if (i !== iIndex && !oCondition.isEmpty && FilterOperatorUtil.compareConditions(oCondition, aConditions[i])) {
 								bDuplicates = true;
 								break;
 							}
