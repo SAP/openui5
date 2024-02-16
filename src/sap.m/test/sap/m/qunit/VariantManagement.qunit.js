@@ -526,7 +526,7 @@ sap.ui.define([
 		this.oVM.onclick();
 		assert.ok(!this.oVM.oVariantList.getVisible(), "list is invisible");
 		assert.ok(this.oVM.oNodataTextLayout.getVisible(), "no data text is visible");
-		assert.equal(this.oVM.oVariantListNoDataText.getText(), this.oVM._oRb.getText("VARIANT_MANAGEMENT_NODATA"), "expected text found");
+		assert.equal(this.oVM.oNodataTextLayout.getItems()[0], this.oVM._oNoDataIllustratedMessage, "expected illustrated message found");
 
 		this.oVM.addItem(new VariantItem({key: "1", title:"View1"}));
 
@@ -552,7 +552,7 @@ sap.ui.define([
 		this.oVM._triggerSearch(oEvent, this.oVM.oVariantList);
 		assert.ok(!this.oVM.oVariantList.getVisible(), "list is invisible");
 		assert.ok(this.oVM.oNodataTextLayout.getVisible(), "no data text is visible");
-		assert.equal(this.oVM.oVariantListNoDataText.getText(), this.oVM._oRb.getText("VARIANT_MANAGEMENT_NODATA_FOUND"), "expected text found");
+		assert.equal(this.oVM.oNodataTextLayout.getItems()[0], this.oVM._oNoDataFoundIllustratedMessage, "expected illustrated message found");
 
 		sSearchText = "View";
 		this.oVM._triggerSearch(oEvent, this.oVM.oVariantList);
@@ -563,8 +563,7 @@ sap.ui.define([
 		this.oVM.onclick();
 		assert.ok(!this.oVM.oVariantList.getVisible(), "list is invisible");
 		assert.ok(this.oVM.oNodataTextLayout.getVisible(), "no data text is visible");
-		assert.equal(this.oVM.oVariantListNoDataText.getText(), this.oVM._oRb.getText("VARIANT_MANAGEMENT_NODATA"), "expected text found");
-
+		assert.equal(this.oVM.oNodataTextLayout.getItems()[0], this.oVM._oNoDataIllustratedMessage, "expected illustrated message found");
 	});
 
 	QUnit.module("VariantManagement SaveAs dialog", {
