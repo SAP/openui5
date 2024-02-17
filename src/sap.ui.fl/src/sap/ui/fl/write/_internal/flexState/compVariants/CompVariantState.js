@@ -418,10 +418,6 @@ sap.ui.define([
 		setAuthor(oChangeSpecificData);
 		var oFileContent = Object.assign({}, oChangeSpecificData, _omit(mPropertyBag, "changeSpecificData"));
 		var oFlexObject = FlexObjectFactory.createCompVariant(oFileContent);
-		// Variant created from application runtime has "You" as author name
-		if (!LayerUtils.isDeveloperLayer(oFlexObject.getLayer())) {
-			oFlexObject.setAuthor(Lib.getResourceBundleFor("sap.ui.fl").getText("VARIANT_SELF_OWNER_NAME"));
-		}
 
 		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
 		var oMapOfPersistencyKey = mCompVariantsMap._getOrCreate(mPropertyBag.persistencyKey);

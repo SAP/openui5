@@ -378,8 +378,8 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when Controls of different type with same change type are specified", function(assert) {
-			assert.expect(9);
+		QUnit.test("when Controls of different type with same change type are specified", async function(assert) {
+			assert.expect(10);
 			fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
 			fnSetOverlayDesigntimeMetadata(this.oButton6Overlay, DEFAULT_DTM);
 			sandbox.stub(Utils, "checkSourceTargetBindingCompatibility").returns(true);
@@ -395,25 +395,40 @@ sap.ui.define([
 				"isEnabled is called and returns true"
 			);
 
-			var bIsAvailable = true;
+			let bIsAvailable = true;
 
 			sinon.stub(this.oCombinePlugin, "isAvailable").callsFake(function(aElementOverlays) {
-				assert.equal(aElementOverlays[0].getId(), this.oButton6Overlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
+				assert.equal(
+					aElementOverlays[0].getId(),
+					this.oButton6Overlay.getId(),
+					"the 'available' function calls isAvailable with the correct overlay"
+				);
 				return bIsAvailable;
 			}.bind(this));
 			sinon.stub(this.oCombinePlugin, "handleCombine").callsFake(function(aElementOverlays, oCombineElement) {
-				assert.equal(aElementOverlays[0].getId(), this.oButton6Overlay.getId(), "the 'handler' method is called with the right overlay");
-				assert.equal(oCombineElement.getId(), this.oButton6.getId(), "the 'handler' method is called with the right combine element");
+				assert.equal(
+					aElementOverlays[0].getId(),
+					this.oButton6Overlay.getId(),
+					"the 'handler' method is called with the right overlay"
+				);
+				assert.equal(
+					oCombineElement.getId(),
+					this.oButton6.getId(),
+					"the 'handler' method is called with the right combine element"
+				);
 			}.bind(this));
 
-			var aMenuItems = this.oCombinePlugin.getMenuItems([this.oButton6Overlay]);
+			const aMenuItems = await this.oCombinePlugin.getMenuItems([this.oButton6Overlay]);
 			assert.equal(aMenuItems[0].id, "CTX_GROUP_FIELDS", "'getMenuItems' returns the context menu item for the plugin");
 
 			aMenuItems[0].handler([this.oButton6Overlay], { contextElement: this.oButton6 });
 			aMenuItems[0].enabled([this.oButton6Overlay]);
 
 			bIsAvailable = false;
-			assert.equal(this.oCombinePlugin.getMenuItems([this.oButton6Overlay]).length, 0, "and if plugin is not available for the overlay, no menu items are returned");
+			assert.equal(
+				(await this.oCombinePlugin.getMenuItems([this.oButton6Overlay])).length,
+				0,
+				"and if plugin is not available for the overlay, no menu items are returned");
 		});
 
 		QUnit.test("when Controls of different type with different change type are specified", function(assert) {

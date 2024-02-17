@@ -3160,6 +3160,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		bIntervalSelect = false;
+		bStartDateChange = false;
 		oIntervalStartDate = undefined;
 		oIntervalEndDate = undefined;
 
@@ -3169,6 +3170,7 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(bIntervalSelect, "intervalSelect fired");
+		assert.ok(bStartDateChange, "startDateChange fired");
 		assert.equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201503010000", "interval start date returned");
 		assert.equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201503012359", "interval end date returned");
 		assert.ok(!jQuery("#PC1-OneMonthsRow-20150301").hasClass("sapUiCalItemSel"), "interval not longer selected");

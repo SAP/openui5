@@ -660,12 +660,13 @@ sap.ui.define([
 			openDialogAndCheckContent(this._oVM, assert);
 		});
 
-		QUnit.test("Checking create management dialog, when dialog is already destroyed", function(assert) {
+		QUnit.test("Checking create management dialog, when dialog is already destroyed", async function(assert) {
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this._oVM._createManagementDialog();
 
 			this.oVariantManagement.getManageDialog().destroy();
+			await nextUIUpdate();
 
 			this._oVM._createManagementDialog();
 

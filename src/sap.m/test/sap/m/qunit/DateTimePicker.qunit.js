@@ -23,6 +23,8 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/date/UI5Date",
+	"sap/ui/model/odata/type/DateTimeWithTimezone",
+	"sap/ui/model/odata/type/DateTimeOffset",
 	// load all required calendars in advance
 	"sap/ui/core/date/Islamic"
 ], function(
@@ -48,7 +50,9 @@ sap.ui.define([
 	KeyCodes,
 	DateRange,
 	ManagedObjectObserver,
-	UI5Date
+	UI5Date,
+	DateTimeWithTimezone,
+	DateTimeOffset
 ) {
 	"use strict";
 
@@ -1430,13 +1434,13 @@ sap.ui.define([
 			}),
 			oDTP = new DateTimePicker({
 				value: {
-					type: "sap.ui.model.odata.type.DateTimeWithTimezone",
+					type: new DateTimeWithTimezone(),
 					parts: [{
 						path: "/date",
-						type: "sap.ui.model.odata.type.DateTimeOffset"
+						type: new DateTimeOffset()
 					}, {
 						path: "/timezone",
-						type: "sap.ui.model.odata.type.String"
+						type: new TypeString()
 					}]
 				}
 			});
@@ -1479,13 +1483,13 @@ sap.ui.define([
 		}),
 		oDTP = new DateTimePicker({
 			value: {
-				type: "sap.ui.model.odata.type.DateTimeWithTimezone",
+				type: new DateTimeWithTimezone(),
 				parts: [{
 					path: "/date",
-					type: "sap.ui.model.odata.type.DateTimeOffset"
+					type: new DateTimeOffset()
 				}, {
 					path: "/timezone",
-					type: "sap.ui.model.odata.type.String"
+					type: new TypeString()
 				}]
 			}
 		});
@@ -1517,14 +1521,14 @@ sap.ui.define([
 				value: {
 					parts: [{
 							path: '/valueDTP',
-							type: 'sap.ui.model.odata.type.DateTimeOffset'
+							type: new DateTimeOffset()
 						},
 						{
 							path: '/timezoneDTP',
-							type: 'sap.ui.model.odata.type.String'
+							type: new TypeString()
 						}
 					],
-					type: 'sap.ui.model.odata.type.DateTimeWithTimezone'
+					type: new DateTimeWithTimezone()
 				}
 			}).setModel(oModel),
 			oInputRef;
@@ -1662,7 +1666,8 @@ sap.ui.define([
 			var oDTP9 = new DateTimePicker("DTP9", {
 				value: {
 					path: "/dateValue",
-					type: "sap.ui.model.odata.type.String"}
+					type: new TypeString()
+				}
 			}).placeAt("content");
 			assert.ok(true, "DateTimePicker doesn't throw error when the binding type is string.");
 		} catch (e) {

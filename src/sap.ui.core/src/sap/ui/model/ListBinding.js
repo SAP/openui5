@@ -23,10 +23,11 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 		 *   Binding path for this binding; a relative path will be resolved relative to a given context
 		 * @param {sap.ui.model.Context} oContext
 		 *   Context to be used to resolve a relative path
-		 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters]
-		 *   Initial sort order (can be either a sorter or an array of sorters)
-		 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters]
-		 *   Predefined filter/s (can be either a filter or an array of filters)
+		 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} [aSorters=[]]
+		 *   The sorters used initially; call {@link #sort} to replace them
+		 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} [aFilters=[]]
+		 *   The filters to be used initially with type {@link sap.ui.model.FilterType.Application}; call {@link #filter} to
+		 *   replace them
 		 * @param {object} [mParameters]
 		 *   Additional, implementation-specific parameters that should be used by the new list binding;
 		 *   this base class doesn't define any parameters, check the API reference for the concrete
@@ -154,11 +155,12 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 		 * Please use either the automatic grouping of filters (where applicable) or explicit
 		 * AND/OR filters, as a mixture of both is not supported.
 		 *
-		 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters
-		 *   Single filter object or an array of filter objects
-		 * @param {sap.ui.model.FilterType} [sFilterType=undefined]
-		 *   Type of the filter which should be adjusted; if no type is given, the behavior depends on
-		 *   the model implementation
+		 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} [aFilters=[]]
+		 *   The filters to use; in case of type {@link sap.ui.model.FilterType.Application} this replaces the filters given
+		 *   in {@link sap.ui.model.Model#bindList}; a falsy value is treated as an empty array and thus removes all filters
+		 *   of the specified type
+		 * @param {sap.ui.model.FilterType} [sFilterType]
+		 *   The type of the filter to replace; if no type is given, the behavior depends on the model implementation
 		 * @return {this}
 		 *   Returns <code>this</code> to facilitate method chaining
 		 *
@@ -182,8 +184,9 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 		 *
 		 * @function
 		 * @name sap.ui.model.ListBinding.prototype.sort
-		 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} aSorters
-		 *   The Sorter object or an array of sorters which defines the sort order
+		 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} [aSorters=[]]
+		 *   The sorters to use; they replace the sorters given in {@link sap.ui.model.Model#bindList}; a falsy value is
+		 *   treated as an empty array and thus removes all sorters
 		 * @return {this}
 		 *   Returns <code>this</code> to facilitate method chaining
 		 * @public

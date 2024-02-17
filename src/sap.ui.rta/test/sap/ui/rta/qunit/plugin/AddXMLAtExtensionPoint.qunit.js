@@ -204,8 +204,8 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when getMenuItem is called", function(assert) {
-			var aMenuItems = this.oAddXmlAtExtensionPointPlugin.getMenuItems([this.oPanelOverlay]);
+		QUnit.test("when getMenuItem is called", async function(assert) {
+			const aMenuItems = await this.oAddXmlAtExtensionPointPlugin.getMenuItems([this.oPanelOverlay]);
 			assert.strictEqual(
 				aMenuItems[0].id,
 				"CTX_ADDXML_AT_EXTENSIONPOINT",

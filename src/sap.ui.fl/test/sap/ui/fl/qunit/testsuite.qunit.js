@@ -437,6 +437,13 @@ sap.ui.define([
 				}
 			},
 
+			"apply/_internal/flexObjects/getVariantAuthor": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexObjects/getVariantAuthor"]
+				}
+			},
+
 			"apply/_internal/flexObjects/UIChange": {
 				group: "Apply Internal",
 				coverage: {
@@ -538,13 +545,6 @@ sap.ui.define([
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/flexState/appDescriptorChanges/prepareAppDescriptorMap"]
-				}
-			},
-
-			"apply/_internal/flexState/compVariants/exchangeAuthorsNames": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/exchangeAuthorsNames"]
 				}
 			},
 

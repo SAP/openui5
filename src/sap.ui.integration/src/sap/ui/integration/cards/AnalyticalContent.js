@@ -255,8 +255,10 @@ sap.ui.define([
 
 			this._oActions.setBindingPathResolver(function (oEvent) {
 				var iIndex = oEvent.getParameter("data")[0].data._context_row_number;
-				return this.getBindingContext().getPath() + "/" + iIndex;
+				var sPath = this.getBindingContext().getPath();
+				return sPath !== "/" ? sPath + "/" + iIndex : sPath + iIndex;
 			}.bind(this));
+
 		} else {
 			oActionConfig.eventName = "press";
 		}

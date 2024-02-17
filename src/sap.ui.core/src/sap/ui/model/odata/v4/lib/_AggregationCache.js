@@ -959,6 +959,8 @@ sap.ui.define([
 	 *   The (limited preorder) rank of a node
 	 * @returns {number}
 	 *   The array index
+	 * @throws {Error}
+	 *   If a node w/o rank is encountered within the first level cache
 	 *
 	 * @private
 	 */
@@ -973,9 +975,16 @@ sap.ui.define([
 				iIndex -= _Helper.getPrivateAnnotation(oNode, "descendants", 0);
 			}
 			// nodes of group level caches or out of place nodes must be taken into account
-			if (_Helper.getPrivateAnnotation(oNode, "parent") !== this.oFirstLevel
-					|| _Helper.getPrivateAnnotation(oNode, "rank") > iRank) {
+			if (_Helper.getPrivateAnnotation(oNode, "parent") !== this.oFirstLevel) {
 				iIndex += 1;
+			} else {
+				const iNodeRank = _Helper.getPrivateAnnotation(oNode, "rank");
+				if (iNodeRank === undefined) {
+					throw new Error("Missing rank");
+				}
+				if (iNodeRank > iRank) {
+					iIndex += 1;
+				}
 			}
 		}
 

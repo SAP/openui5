@@ -692,7 +692,9 @@ sap.ui.define([
 			var clock = sinon.useFakeTimers();
 			clock.tick(1000);
 			await nextUIUpdate();
-
+			// If the content is not set to a bigger width, the anchor bar will collapse
+			// and the anchor bar buttons are not rendered, thus evaluateEditable is not calculated
+			document.getElementById("content").style.width = "1000px";
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oObjectPageLayout,
 				showToolbars: false

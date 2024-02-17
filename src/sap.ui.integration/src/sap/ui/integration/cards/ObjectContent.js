@@ -919,6 +919,7 @@ sap.ui.define([
 				textFilter: oItem.overlay.textFilter,
 				background: oItem.overlay.background,
 				padding: oItem.overlay.padding,
+				animation: oItem.overlay.animation,
 				visible: BindingHelper.reuse(vVisible)
 			}).addStyleClass("sapFCardObjectImage");
 

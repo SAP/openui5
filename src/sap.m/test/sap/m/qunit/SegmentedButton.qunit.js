@@ -1634,6 +1634,7 @@ sap.ui.define([
 
 		// Clean
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	/* Module Select Mode */
@@ -1665,6 +1666,7 @@ sap.ui.define([
 		assert.ok(oSegmentedButton.getDomRef(), "SegmentedButton should be rendered");
 
 		oSegmentedButton.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	QUnit.module("SegmentedButton in communicates changes in its aggregated items/buttons");

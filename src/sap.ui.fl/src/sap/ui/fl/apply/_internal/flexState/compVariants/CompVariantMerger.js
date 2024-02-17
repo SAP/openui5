@@ -69,7 +69,7 @@ sap.ui.define([
 			The variant '${oVariant.getId()}'was not modified'`);
 	}
 
-	function createVariant(sPersistencyKey, oVariantInput) {
+	function createVariant(sPersistencyKey, oVariantInput, mAuthors) {
 		var oVariantData = {
 			fileName: oVariantInput.fileName,
 			variantId: oVariantInput.id || CompVariant.STANDARD_VARIANT_ID,
@@ -97,7 +97,7 @@ sap.ui.define([
 			oVariantData.adaptationId = oVariantInput.adaptationId;
 		}
 
-		return FlexObjectFactory.createCompVariant(oVariantData);
+		return FlexObjectFactory.createCompVariant(oVariantData, mAuthors);
 	}
 
 	function applyChangeOnVariant(oVariant, oChange) {
@@ -212,11 +212,12 @@ sap.ui.define([
 		 *
 		 * @param {string} sPersistencyKey - Key of the variant management
 		 * @param {object} oVariantInput - Standard Variant or non-persisted Variants like oData variant
+		 * @param {object} mAuthors - Map of user IDs to full names
 		 *
 		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The created variant object
 		 */
-		createVariant(sPersistencyKey, oVariantInput) {
-			return createVariant(sPersistencyKey, oVariantInput);
+		createVariant(sPersistencyKey, oVariantInput, mAuthors) {
+			return createVariant(sPersistencyKey, oVariantInput, mAuthors);
 		},
 		applyChangeOnVariant
 	};

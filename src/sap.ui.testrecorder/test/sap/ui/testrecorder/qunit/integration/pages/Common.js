@@ -66,12 +66,19 @@ sap.ui.define([
 								}
 							}
 						],
-						success: function () {
+						success: function() {
 							// save the plugin for later (to check recorder's controls)
-							var oRecorderOpaPlugin = new (Opa5.getContext().recorderWindow.sap.ui.test.OpaPlugin)();
-							Opa5.assert.ok(oRecorderOpaPlugin, "Should load Opa plugin instance in recorder frame");
-							Opa5.getContext().recorderOpaPlugin = oRecorderOpaPlugin;
-							Opa5.getContext()._getRecorderControls = oRecorderOpaPlugin._getFilteredControls.bind(oRecorderOpaPlugin);
+							this.iWaitForPromise(new Promise(function(success) {
+							  Opa5.getContext().recorderWindow.sap.ui.require([
+								"sap/ui/test/OpaPlugin"
+							  ], function(OpaPlugin) {
+								Opa5.getContext().recorderOpaPlugin = new OpaPlugin();
+								Opa5.getContext()._getRecorderControls = Opa5.getContext().recorderOpaPlugin._getFilteredControls.bind(
+								  Opa5.getContext().recorderOpaPlugin
+								);
+								success();
+							  });
+							}));
 						},
 						errorMessage: "Cannot setup test recorder iframe"
 					});

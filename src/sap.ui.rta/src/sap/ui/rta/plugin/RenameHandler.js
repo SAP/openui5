@@ -56,9 +56,22 @@ sap.ui.define([
 		/**
 		 * @override
 		 */
-		_manageClickEvent(vEventOrElement) {
-			var oOverlay = vEventOrElement.getSource ? vEventOrElement.getSource() : vEventOrElement;
-			if (oOverlay.isSelected() && this.isRenameAvailable(oOverlay) && this.isRenameEnabled([oOverlay])) {
+		async _manageClickEvent(vEventOrElement) {
+			const oOverlay = vEventOrElement.getSource ? vEventOrElement.getSource() : vEventOrElement;
+			const oResponsibleElementOverlay = this.getResponsibleElementOverlay(oOverlay) || oOverlay;
+			if (this._isEditableByPlugin(oResponsibleElementOverlay) === undefined) {
+				// The responsibleElement editableByPlugin state was not evaluated yet e.g. because it
+				// has no visible geometry, thus evaluateEditable now
+				// This async check leads to a slight delay where the second click is not registered
+				// which shouldn't be a problem since a human user needs > 100ms to click twice
+				await this.evaluateEditable([oResponsibleElementOverlay], { onRegistration: false });
+			}
+			if (
+				oOverlay.isSelected()
+				&& this.isRenameAvailable(oOverlay)
+				&& this.isRenameAvailable(oResponsibleElementOverlay)
+				&& this.isRenameEnabled([oOverlay])
+			) {
 				oOverlay.attachBrowserEvent("click", RenameHandler._onClick, this);
 			} else {
 				oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);

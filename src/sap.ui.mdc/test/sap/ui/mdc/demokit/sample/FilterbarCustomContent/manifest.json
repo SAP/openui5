@@ -1,0 +1,61 @@
+{
+	"sap.app": {
+		"id": "mdc.sample",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"title": "MDC Sample",
+		"description": "MDC Sample Application",
+		"dataSources": {}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
+					"controller/Controller.controller.js",
+					"controls/CustomMultiInput.js",
+					"controls/CustomSegmentedButton.js",
+					"delegate/FilterBarDelegate.js",
+					"model/metadata/JSONPropertyInfo.js",
+					"view/View.view.xml",
+					"manifest.json"
+				]
+			}
+		},
+		"flexEnabled": false,
+		"resourceRoots": {
+            "mdc.sample": "./"
+        },
+		"dependencies": {
+			"minUI5Version": "1.120.0",
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.fl" : {"lazy" : false},
+				"sap.ui.mdc": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"handleValidation": true,
+		"models": {},
+		"rootView": {
+			"viewName": "mdc.sample.view.View",
+			"type": "XML",
+			"async": true,
+			"id": "sample"
+		}
+	}
+}

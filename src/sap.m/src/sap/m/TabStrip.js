@@ -30,7 +30,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
+	"sap/ui/core/Theming",
 	"sap/ui/base/Object",
 	// jQuery Plugin "scrollLeftRTL"
 	"sap/ui/dom/jquery/scrollLeftRTL"
@@ -63,7 +63,7 @@ function(
 	Log,
 	jQuery,
 	KeyCodes,
-	Core,
+	Theming,
 	BaseObject
 ) {
 		"use strict";
@@ -269,6 +269,8 @@ function(
 			this._iMaxOffsetLeft = null;
 			this._scrollable = null;
 			this._oTouchStartX = null;
+			this._bThemeApplied = false;
+			this._handleThemeAppliedBound = this._handleThemeApplied.bind(this);
 
 			if (!Device.system.phone) {
 				this._oScroller = new ScrollEnablement(this, this.getId() + "-tabs", {
@@ -335,8 +337,8 @@ function(
 				this._adjustScrolling();
 
 				if (this.getSelectedItem()) {
-					if (!Core.isThemeApplied()) {
-						Core.attachThemeChanged(this._handleInititalScrollToItem, this);
+					if (!this._bThemeApplied) {
+						Theming.attachApplied(this._handleThemeAppliedBound);
 					} else {
 						this._handleInititalScrollToItem();
 					}
@@ -359,7 +361,6 @@ function(
 			if (oItem && oItem.$().length > 0) { // check if the item is already in the DOM
 				this._scrollIntoView(oItem, 500);
 			}
-			Core.detachThemeChanged(this._handleInititalScrollToItem, this);
 		};
 
 		/**
@@ -1197,6 +1198,12 @@ function(
 					}
 				}
 			}
+		};
+
+		TabStrip.prototype._handleThemeApplied = function () {
+			this._bThemeApplied = true;
+			this._handleInititalScrollToItem();
+			Theming.detachApplied(this._handleThemeAppliedBound);
 		};
 
 		/**

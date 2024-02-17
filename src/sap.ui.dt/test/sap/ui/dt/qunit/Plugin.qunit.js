@@ -323,8 +323,14 @@ sap.ui.define([
 			this.oPlugin.isEnabled = function() {
 				return true;
 			};
+			this.oPlugin._isEditableByPlugin = function() {
+				return true;
+			};
 			this.oPlugin.getActionName = function() {
 				return "dummyActionName";
+			};
+			this.oPlugin.evaluateEditable = function() {
+				return Promise.resolve();
 			};
 			this.fnGetResponsibleElement = function() {};
 			this.fnGetAction = function() {};
@@ -355,15 +361,15 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("with no designTimeMetadata", function(assert) {
+		QUnit.test("with no designTimeMetadata", async function(assert) {
 			assert.equal(
-				this.oPlugin._getMenuItems([this.oOverlay], {}).length,
+				(await this.oPlugin._getMenuItems([this.oOverlay], {})).length,
 				0,
 				"then an an empty array is returned"
 			);
 		});
 
-		QUnit.test("when there is a defined action name", function(assert) {
+		QUnit.test("when there is a defined action name", async function(assert) {
 			this.fnGetAction = function() {
 				return {
 					name: "dummyActionName"
@@ -373,7 +379,7 @@ sap.ui.define([
 				return sName;
 			};
 
-			var mMenuItem = this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "dummyPluginId", rank: 10})[0];
+			const mMenuItem = (await this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "dummyPluginId", rank: 10}))[0];
 
 			assert.equal(mMenuItem.id, "dummyPluginId", "the method returns the right ID for the menu item");
 			assert.equal(mMenuItem.text, "dummyActionName", "the method returns the right text when it is defined in DT Metadata");
@@ -382,19 +388,19 @@ sap.ui.define([
 			assert.ok(mMenuItem.enabled(), "enabled function is properly returned");
 		});
 
-		QUnit.test("when there is an undefined action name", function(assert) {
+		QUnit.test("when there is an undefined action name", async function(assert) {
 			this.fnGetAction = function() {
 				return {};
 			};
 
 			assert.equal(
-				this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"})[0].text,
+				(await this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"}))[0].text,
 				Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_RENAME"),
 				"then default text is returned in the menu item"
 			);
 		});
 
-		QUnit.test("when there is action name defined as a function", function(assert) {
+		QUnit.test("when there is action name defined as a function", async function(assert) {
 			this.fnGetAction = function() {
 				return {
 					name(oElement) {
@@ -404,13 +410,13 @@ sap.ui.define([
 			};
 
 			assert.equal(
-				this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_DUMMY_ID"})[0].text,
+				(await this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_DUMMY_ID"}))[0].text,
 				"dummyElementname",
 				"then correct text is returned in the menu item"
 			);
 		});
 
-		QUnit.test("when the plugin is not available", function(assert) {
+		QUnit.test("when the plugin is not available", async function(assert) {
 			this.fnGetAction = function() {
 				return {};
 			};
@@ -418,17 +424,17 @@ sap.ui.define([
 				return false;
 			};
 			assert.equal(
-				this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_DUMMY_ID"}).length,
+				(await this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_DUMMY_ID"})).length,
 				0,
 				"then no menu items are returned"
 			);
 		});
 
-		QUnit.test("when an action is enabled on a responsible element's overlay and _getMenuItems() is called", function(assert) {
+		QUnit.test("when an action is enabled on a responsible element's overlay and _getMenuItems() is called", async function(assert) {
 			assert.expect(4);
 			this.oPlugin.isAvailable = sandbox.stub();
-			var oResponsibleElement = new Button("responsibleElement");
-			var oResponsibleElementOverlay = {
+			const oResponsibleElement = new Button("responsibleElement");
+			const oResponsibleElementOverlay = {
 				getElement() {
 					return oResponsibleElement;
 				},
@@ -452,13 +458,13 @@ sap.ui.define([
 				return true;
 			};
 
-			// when action is not available on the source overlay
-			// but it is available on the responsible element overlay
+			// when action is available on the source overlay
+			// and it is available on the responsible element overlay
 			this.oPlugin.isAvailable
-			.withArgs([this.oOverlay]).returns(false)
+			.withArgs([this.oOverlay]).returns(true)
 			.withArgs([oResponsibleElementOverlay]).returns(true);
 
-			var aMenuItems = this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"});
+			const aMenuItems = await this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"});
 			assert.equal(
 				aMenuItems[0].text,
 				Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_RENAME"),
@@ -469,8 +475,7 @@ sap.ui.define([
 				"then the responsible element overlay was attached to the menu item");
 		});
 
-		QUnit.test("when an action is enabled on a responsible element's overlay, but disabled on the source overlay and _getMenuItems() is called", function(assert) {
-			assert.expect(3);
+		QUnit.test("when an action is enabled on a responsible element's overlay, but disabled on the source overlay and _getMenuItems() is called", async function(assert) {
 			this.oPlugin.isAvailable = sandbox.stub();
 			var oResponsibleElement = new Button("responsibleElement");
 			var oResponsibleElementOverlay = {
@@ -496,17 +501,29 @@ sap.ui.define([
 			// when action is not available on the source overlay
 			// but it is available on the responsible element overlay
 			this.oPlugin.isAvailable
-			.withArgs([oResponsibleElementOverlay]).returns(false)
-			.withArgs([this.oOverlay]).returns(true);
+			.withArgs([oResponsibleElementOverlay]).returns(true)
+			.withArgs([this.oOverlay]).returns(false);
 
-			var aMenuItems = this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"});
-			assert.equal(
-				aMenuItems[0].text,
-				Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_RENAME"),
-				"then the menu item from the responsible element is returned"
-			);
-			oResponsibleElement.destroy();
-			assert.strictEqual(aMenuItems[0].responsible, undefined, "then there was no attached responsible element");
+			var aMenuItems = await this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"});
+			assert.strictEqual(aMenuItems.length, 0, "then the action is not available");
+		});
+
+		QUnit.test("when the evaluateEditable check didn't run before the getMenuItems call", async function(assert) {
+			this.fnGetAction = function() {
+				return {
+					name: "dummyActionName"
+				};
+			};
+
+			const oEditableByPluginStub = sandbox.stub(this.oPlugin, "_isEditableByPlugin").returns(undefined);
+			const oEvaluateEditableStub = sandbox.stub(this.oPlugin, "evaluateEditable").callsFake(() => {
+				oEditableByPluginStub.restore();
+				return Promise.resolve();
+			});
+
+			const aMenuItems = (await this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "dummyPluginId", rank: 10}));
+			assert.strictEqual(oEvaluateEditableStub.callCount, 1, "then the evaluateEditable check is executed");
+			assert.strictEqual(aMenuItems.length, 1, "then the action is available");
 		});
 	});
 

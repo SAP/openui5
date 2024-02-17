@@ -234,7 +234,7 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay[]} aOverlays Array of overlays to be checked
 	 * @param {object} mPropertyBag Map of additional information to be passed to isEditable
 	 */
-	BasePlugin.prototype.evaluateEditable = function(aOverlays, mPropertyBag) {
+	BasePlugin.prototype.evaluateEditable = async function(aOverlays, mPropertyBag) {
 		// If there are busy plugins, do not evaluate
 		// When the action is finished, if the affected controls are modified, the evaluation will be done anyway
 		if (!mPropertyBag.onRegistration &&
@@ -247,13 +247,12 @@ sap.ui.define([
 		var aPromises = aOverlays.reduce(_handleEditableByPlugin.bind(this, mPropertyBag), []);
 
 		if (aPromises.length) {
-			Promise.all(aPromises)
-			.then(function() {
+			try {
+				await Promise.all(aPromises);
 				this.setProcessingStatus(false);
-			}.bind(this))
-			.catch(function() {
+			} catch (error) {
 				this.setProcessingStatus(false);
-			}.bind(this));
+			}
 		} else {
 			this.setProcessingStatus(false);
 		}
@@ -290,7 +289,7 @@ sap.ui.define([
 
 	BasePlugin.prototype._isEditableByPlugin = function(oOverlay, bSibling) {
 		var sPluginName = this._retrievePluginName(bSibling);
-		return !!oOverlay.getEditableByPlugins()[sPluginName];
+		return oOverlay.getEditableByPlugins()[sPluginName];
 	};
 
 	BasePlugin.prototype.registerElementOverlay = function(oOverlay) {

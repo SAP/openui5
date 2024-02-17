@@ -72,6 +72,7 @@
 					"sap.ui.mdc.demokit.sample.MultiValueField",
 					"sap.ui.mdc.demokit.sample.LinkPayloadJson",
 					"sap.ui.mdc.demokit.sample.FilterbarTypes",
+					"sap.ui.mdc.demokit.sample.FilterbarCustomContent",
 					"sap.ui.mdc.demokit.sample.TableJson"
 				]
 			}
@@ -196,6 +197,11 @@
 				"id": "sap.ui.mdc.demokit.sample.FilterbarTypes",
 				"name": "Different FilterField types in a FilterBar",
 				"description": "A filter bar with multiple filter fields of different data types"
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.FilterbarCustomContent",
+				"name": "A FilterBar with custom controls",
+				"description": "A filter bar that uses custom controls for filtering content."
 			},
 			{
 				"id": "sap.ui.mdc.demokit.sample.TableJson",

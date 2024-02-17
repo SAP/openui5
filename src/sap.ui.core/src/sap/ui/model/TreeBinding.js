@@ -25,12 +25,13 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 		 *         sPath Path pointing to the tree / array that should be bound
 		 * @param {object}
 		 *         [oContext=null] Context object for this binding (optional)
-		 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]}
-		 *         [aFilters=null] Predefined filter or an array of filters (optional)
+		 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} [aFilters=[]]
+		 *   The filters to be used initially with type {@link sap.ui.model.FilterType.Application}; call {@link #filter} to
+		 *   replace them
 		 * @param {string}
 		 *         [mParameters=null] Additional model specific parameters (optional)
-		 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]}
-		 *         [aSorters=null] Predefined sorter or an array of sorters (optional)
+		 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} [aSorters=[]]
+		 *   The sorters used initially; call {@link #sort} to replace them
 		 * @throws {Error} If the {@link sap.ui.model.Filter.NONE} filter instance is contained in
 		 *   <code>aFilters</code> together with other filters
 		 * @public

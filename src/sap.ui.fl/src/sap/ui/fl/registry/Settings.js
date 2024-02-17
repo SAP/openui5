@@ -114,6 +114,7 @@ sap.ui.define([
 					isPublicLayerAvailable: false,
 					isLocalResetEnabled: false,
 					isVariantAdaptationEnabled: false,
+					isVariantAuthorNameAvailable: false,
 					versioning: {},
 					_bFlexChangeMode: false,
 					_bFlexibilityAdaptationButtonAllowed: false

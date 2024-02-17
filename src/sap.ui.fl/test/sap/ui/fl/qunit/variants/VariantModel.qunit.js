@@ -1055,7 +1055,7 @@ sap.ui.define([
 					assert.ok(oNewVariant.change, "then the property was added correctly");
 					assert.ok(oNewVariant.remove, "then the property was added correctly");
 					assert.strictEqual(oNewVariant.sharing, this.oModel.sharing.PUBLIC, "then the property was added correctly");
-					assert.strictEqual(oNewVariant.author, bVendorLayer ? "SAP" : "test user", "then the author is set correctly");
+					assert.strictEqual(oNewVariant.author, bVendorLayer ? "SAP" : oResourceBundle.getText("VARIANT_SELF_OWNER_NAME"), "then the author is set correctly");
 					assert.strictEqual(
 						aChanges[0].getId(), "potato",
 						"then the returned variant is the duplicate variant"

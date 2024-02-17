@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @private
 	 */
 	class _TreeState {
-		// maps node id to number of levels to expand
+		// maps predicate to node id and number of levels to expand
 		oExpandLevels = new Map();
 
 		/**
@@ -47,12 +47,14 @@ sap.ui.define([
 				return;
 			}
 
-			const sId = _Helper.drillDown(oNode, this.sNodeProperty);
-			const oExpandLevel = this.oExpandLevels.get(sId);
+			const sPredicate = _Helper.getPrivateAnnotation(oNode, "predicate");
+			const oExpandLevel = this.oExpandLevels.get(sPredicate);
 			if (oExpandLevel && oExpandLevel.Levels) {
-				this.oExpandLevels.delete(sId);
+				this.oExpandLevels.delete(sPredicate);
 			} else {
-				this.oExpandLevels.set(sId, {NodeID : sId, Levels : 0});
+				// must have NodeId as the node may be missing when calling #getExpandLevels
+				const sNodeId = _Helper.drillDown(oNode, this.sNodeProperty);
+				this.oExpandLevels.set(sPredicate, {NodeID : sNodeId, Levels : 0});
 			}
 		}
 
@@ -68,8 +70,8 @@ sap.ui.define([
 				return;
 			}
 
-			const sId = _Helper.drillDown(oNode, this.sNodeProperty);
-			this.oExpandLevels.delete(sId);
+			const sPredicate = _Helper.getPrivateAnnotation(oNode, "predicate");
+			this.oExpandLevels.delete(sPredicate);
 		}
 
 		/**
@@ -84,12 +86,14 @@ sap.ui.define([
 				return;
 			}
 
-			const sId = _Helper.drillDown(oNode, this.sNodeProperty);
-			const oExpandLevel = this.oExpandLevels.get(sId);
+			const sPredicate = _Helper.getPrivateAnnotation(oNode, "predicate");
+			const oExpandLevel = this.oExpandLevels.get(sPredicate);
 			if (oExpandLevel && !oExpandLevel.Levels) {
-				this.oExpandLevels.delete(sId);
+				this.oExpandLevels.delete(sPredicate);
 			} else {
-				this.oExpandLevels.set(sId, {NodeID : sId, Levels : 1});
+				// must have NodeId as the node may be missing when calling #getExpandLevels
+				const sNodeId = _Helper.drillDown(oNode, this.sNodeProperty);
+				this.oExpandLevels.set(sPredicate, {NodeID : sNodeId, Levels : 1});
 			}
 		}
 

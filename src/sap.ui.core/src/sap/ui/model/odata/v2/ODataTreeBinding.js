@@ -36,8 +36,9 @@ sap.ui.define([
 	 *   The binding path, either absolute or relative to a given <code>oContext</code>
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The parent context which is required as base for a relative path
-	 * @param {sap.ui.model.Filter | sap.ui.model.Filter[]} [vFilters]
-	 *   The application filters to be used initially
+	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} [vFilters=[]]
+	 *   The filters to be used initially with type {@link sap.ui.model.FilterType.Application}; call {@link #filter} to
+	 *   replace them
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters
 	 * @param {boolean} [mParameters.transitionMessagesOnly=false]
@@ -87,8 +88,8 @@ sap.ui.define([
 	 * @param {object} [mParameters.navigation]
 	 *   <b>Deprecated since 1.44:</b> A map describing the navigation properties between entity
 	 *   sets, which is used for constructing and paging the tree
-	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
-	 *   The dynamic sorters to be used initially
+	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} [vSorters=[]]
+	 *   The sorters used initially; call {@link #sort} to replace them
 	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
 	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
 	 *   <code>vFilters</code> together with other filters
@@ -1593,11 +1594,12 @@ sap.ui.define([
 	 * For more information, see {@link sap.ui.model.odata.v2.ODataModel#bindTree}.
 	 * <b>Note:</b> {@link sap.ui.model.odata.OperationMode.Auto} is deprecated since 1.102.0.
 	 *
-	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} aFilters
-	 *   Filter or array of filters to apply
-	 * @param {sap.ui.model.FilterType} sFilterType
-	 *   Type of the filter which should be adjusted. If it is not given,
-	 *   the type <code>FilterType.Control</code> is assumed
+	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} [aFilters=[]]
+	 *   The filters to use; in case of type {@link sap.ui.model.FilterType.Application} this replaces the filters given
+	 *   in {@link sap.ui.model.odata.v2.ODataModel#bindTree}; a falsy value is treated as an empty array and thus
+	 *   removes all filters of the specified type
+	 * @param {sap.ui.model.FilterType} [sFilterType=sap.ui.model.FilterType.Control]
+	 *   The type of the filter to replace
 	 * @param {boolean} [bReturnSuccess]
 	 *   Whether to return <code>true</code> or <code>false</code>, instead of <code>this</code>,
 	 *   depending on whether the filtering has been done
@@ -1772,8 +1774,9 @@ sap.ui.define([
 	 * applied locally on the client.
 	 * <b>Note:</b> {@link sap.ui.model.odata.OperationMode.Auto} is deprecated since 1.102.0.
 	 *
-	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} aSorters
-	 *   The Sorter or an Array of sap.ui.model.Sorter instances
+	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} [aSorters=[]]
+	 *   The sorters to use; they replace the sorters given in {@link sap.ui.model.odata.v2.ODataModel#bindTree}; a
+	 *   falsy value is treated as an empty array and thus removes all sorters
 	 * @param {boolean} [bReturnSuccess]
 	 *   Whether to return <code>true</code> or <code>false</code>, instead of <code>this</code>,
 	 *   depending on whether the sorting has been done
