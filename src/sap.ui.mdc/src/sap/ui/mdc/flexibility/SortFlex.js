@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/mdc/flexibility/Util",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/changeHandler/condenser/Classification",
-	"sap/ui/fl/changeHandler/common/ChangeCategories"
-], (merge, Util, FLChangeHandlerBase, CondenserClassification, ChangeCategories) => {
+	"sap/ui/fl/changeHandler/common/ChangeCategories",
+	"./helpers/addKeyOrName"
+], (merge, Util, FLChangeHandlerBase, CondenserClassification, ChangeCategories, addKeyOrName) => {
 	"use strict";
 
 	const fFinalizeSortChange = function(oChange, oControl, oSortContent, bIsRevert) {
@@ -24,14 +25,15 @@ sap.ui.define([
 		return new Promise((resolve, reject) => {
 			const bIsRevert = (sChangeReason === Util.REVERT);
 			const oModifier = mPropertyBag.modifier;
-			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
+			const oChangeContent = addKeyOrName(bIsRevert ? oChange.getRevertData() : oChange.getContent());
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
 				.then((oSortConditions) => {
 					const aValue = oSortConditions ? oSortConditions.sorters : [];
 
 					const oSortContent = {
-						name: oChangeContent.key || oChangeContent.name,
+						key: oChangeContent.key,
+						name: oChangeContent.key,
 						descending: oChangeContent.descending
 					};
 
@@ -55,7 +57,7 @@ sap.ui.define([
 		return new Promise((resolve, reject) => {
 			const oModifier = mPropertyBag.modifier;
 			const bIsRevert = (sChangeReason === Util.REVERT);
-			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
+			const oChangeContent = addKeyOrName(bIsRevert ? oChange.getRevertData() : oChange.getContent());
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
 				.then((oSortConditions) => {
@@ -67,7 +69,7 @@ sap.ui.define([
 					}
 
 					const aFoundValue = aValue.filter((o) => {
-						return o.name === oChangeContent.name;
+						return addKeyOrName(o).key === oChangeContent.key;
 					});
 					const iIndex = aValue.indexOf(aFoundValue[0]);
 
@@ -96,14 +98,14 @@ sap.ui.define([
 		return new Promise((resolve, reject) => {
 			const bIsRevert = (sChangeReason === Util.REVERT);
 			const oModifier = mPropertyBag.modifier;
-			const oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
+			const oChangeContent = addKeyOrName(bIsRevert ? oChange.getRevertData() : oChange.getContent());
 			Promise.resolve()
 				.then(oModifier.getProperty.bind(oModifier, oControl, "sortConditions"))
 				.then((oSortConditions) => {
 					const aValue = oSortConditions ? oSortConditions.sorters : [];
 
 					const aFoundValue = aValue.filter((o) => {
-						return o.name === oChangeContent.name;
+						return addKeyOrName(o).key === oChangeContent.key;
 					});
 
 					//remove the item from the 'sortConditions' array, insert it at the new position
@@ -127,11 +129,11 @@ sap.ui.define([
 		});
 	};
 	const fGetChangeVisualizationInfo = function(oChange, oAppComponent) {
-		const oChangeContent = oChange.getContent();
+		const oChangeContent = addKeyOrName(oChange.getContent());
 		const oChart = oAppComponent.byId(oChange.getSelector().id);
 		const mVersionInfo = { descriptionPayload: {} };
 		let sKey;
-		const aArgs = [oChangeContent.key || oChangeContent.name];
+		const aArgs = [oChangeContent.key];
 
 		if (oChange.getChangeType() === "addSort") {
 			mVersionInfo.descriptionPayload.category = ChangeCategories.ADD;
@@ -151,7 +153,7 @@ sap.ui.define([
 			aArgs.push(oChangeContent.index);
 		}
 
-		const oProperty = oChart?.getPropertyHelper()?.getProperty(oChangeContent.name);
+		const oProperty = oChart?.getPropertyHelper()?.getProperty(oChangeContent.key);
 		if (oProperty) {
 			aArgs.splice(0, 1, oProperty.label);
 		}
@@ -170,7 +172,7 @@ sap.ui.define([
 		revert: fRemoveSort,
 		getCondenserInfo: function(oChange, mPropertyBag) {
 			return {
-				affectedControl: { id: oChange.getContent().name },
+				affectedControl: { id: addKeyOrName(oChange.getContent()).key },
 				affectedControlIdProperty: "name",
 				targetContainer: oChange.getSelector(),
 				targetAggregation: "sorters",
@@ -192,7 +194,7 @@ sap.ui.define([
 		revert: fAddSort,
 		getCondenserInfo: function(oChange, mPropertyBag) {
 			return {
-				affectedControl: { id: oChange.getContent().name },
+				affectedControl: { id: addKeyOrName(oChange.getContent()).key },
 				affectedControlIdProperty: "name",
 				targetContainer: oChange.getSelector(),
 				targetAggregation: "sorters",
@@ -214,7 +216,7 @@ sap.ui.define([
 		revert: fMoveSort,
 		getCondenserInfo: function(oChange, mPropertyBag) {
 			return {
-				affectedControl: { id: oChange.getContent().name },
+				affectedControl: { id: addKeyOrName(oChange.getContent()).key },
 				affectedControlIdProperty: "name",
 				targetContainer: oChange.getSelector(),
 				targetAggregation: "sorters",

@@ -522,6 +522,7 @@ sap.ui.define([
 			sId = oItem && oItem.getId();
 			if (oItem.getVisible()) {
 				aItems.push({
+					key: sId,
 					name: sId
 				});
 			}

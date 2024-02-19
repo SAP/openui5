@@ -5279,12 +5279,12 @@ sap.ui.define([
 			propertyKey: "test"
 		}));
 		assert.deepEqual(this.oTable.getCurrentState(), {
-			items: [{name: "test"}]
+			items: [{key: "test", name: "test"}]
 		}, "Add a column");
 
 		this.oTable.setP13nMode(["Column", "Sort"]);
 		assert.deepEqual(this.oTable.getCurrentState(), {
-			items: [{name: "test"}],
+			items: [{key: "test", name: "test"}],
 			sorters: []
 		}, "Activate 'Sort'");
 
@@ -5292,20 +5292,20 @@ sap.ui.define([
 			sorters: aSortConditions
 		});
 		assert.deepEqual(this.oTable.getCurrentState(), {
-			items: [{name: "test"}],
+			items: [{key: "test", name: "test"}],
 			sorters: aSortConditions
 		}, "Set sort conditions");
 
 		this.oTable.setP13nMode(["Column", "Sort", "Filter"]);
 		assert.deepEqual(this.oTable.getCurrentState(), {
-			items: [{name: "test"}],
+			items: [{key: "test", name: "test"}],
 			sorters: aSortConditions,
 			filter:  {}
 		}, "Activate 'Filter'");
 
 		this.oTable.setFilterConditions(oFilterConditions);
 		assert.deepEqual(this.oTable.getCurrentState(), {
-			items: [{name: "test"}],
+			items: [{key: "test", name: "test"}],
 			sorters: aSortConditions,
 			filter: oFilterConditions
 		}, "Set filter conditions");
@@ -5313,7 +5313,7 @@ sap.ui.define([
 		this.oTable.setP13nMode(["Column", "Filter"]);
 		assert.deepEqual(this.oTable.getCurrentState(), {
 			items: [{
-				name: "test"
+				key: "test", name: "test"
 			}],
 			filter: oFilterConditions
 		}, "Deactivate 'Sort'");

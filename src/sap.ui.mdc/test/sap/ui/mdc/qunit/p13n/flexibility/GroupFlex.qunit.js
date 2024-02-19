@@ -11,7 +11,7 @@ sap.ui.define([
 				"id": "comp---view--myTable"
 			},
 			"content": {
-				"name": "Category",
+				"key": "Category",
 				"index": 0
 			}
 		};
@@ -24,7 +24,7 @@ sap.ui.define([
 				"id": "comp---view--myTable"
 			},
 			"content": {
-				"name": "Category",
+				"key": "Category",
 				"index": 0
 			}
 		};
@@ -76,7 +76,7 @@ sap.ui.define([
 				const aGroupings = ogroupConditions.groupLevels;
 
 				assert.equal(aGroupings.length, 1, "one grouping has been created");
-				assert.equal(aGroupings[0].name, "Category", "correct grouping has been created");
+				assert.equal(aGroupings[0].key, "Category", "correct grouping has been created");
 
 				done();
 			}.bind(this));
@@ -103,7 +103,7 @@ sap.ui.define([
 				const aGroupings = ogroupConditions.groupLevels;
 
 				assert.equal(aGroupings.length, 1, "one grouping has been created");
-				assert.equal(aGroupings[0].name, "Category", "correct grouping has been created");
+				assert.equal(aGroupings[0].key, "Category", "correct grouping has been created");
 
 				//create removeGroup
 				const oRemoveContent = fCreateremoveGroupDefintion();
@@ -149,7 +149,7 @@ sap.ui.define([
 				const aGroupings = ogroupConditions.groupLevels;
 
 				assert.equal(aGroupings.length, 1, "one grouping has been created");
-				assert.equal(aGroupings[0].name, "Category", "correct grouping has been created");
+				assert.equal(aGroupings[0].key, "Category", "correct grouping has been created");
 
 				//create removeGroup
 				const oRemoveContent = {
@@ -158,7 +158,7 @@ sap.ui.define([
 						id: "comp---view--myTable"
 					},
 					content: {
-						name: "someNonExistingPropertyName"
+						key: "someNonExistingPropertyName"
 					}
 				};
 				return ChangesWriteAPI.create({
@@ -190,7 +190,7 @@ sap.ui.define([
 		this.oTable.setGroupConditions({
 			groupLevels: [
 				{
-					"name": "Category"
+					"key": "Category"
 				}
 			]
 		});

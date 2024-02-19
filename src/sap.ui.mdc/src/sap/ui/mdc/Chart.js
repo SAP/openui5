@@ -1538,9 +1538,11 @@ sap.ui.define([
 		Chart.prototype._getVisibleProperties = function() {
 			const aProperties = [];
 			this.getItems().forEach((oItem) => {
+				const sPropertyKey = oItem.getPropertyKey();
 				aProperties.push({
-					name: oItem.getPropertyKey(),
-					role: oItem.getRole()
+					key: sPropertyKey,
+					name: sPropertyKey,
+					role: oItem.getRole() // TODO: not part of sap.ui.mdc.State?
 				});
 
 			});
