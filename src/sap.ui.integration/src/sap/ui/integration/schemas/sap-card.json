@@ -505,6 +505,10 @@
           "description": "[Experimental] Represents the Close button when a card is opened by the ShowCard action.",
           "$ref": "#/definitions/closeButton"
         },
+        "wrappingType": {
+          "description": "[Experimental] The wrapping type for texts inside the header.",
+          "$ref": "#/definitions/wrappingType"
+        },
         "visible": {
           "description": "[Experimental] Visibility of the header",
           "$ref": "#/definitions/visibility"
@@ -630,6 +634,10 @@
         "closeButton": {
           "description": "[Experimental] Represents the Close button when a card is opened by the ShowCard action.",
           "$ref": "#/definitions/closeButton"
+        },
+        "wrappingType": {
+          "description": "[Experimental] The wrapping type for texts inside the header.",
+          "$ref": "#/definitions/wrappingType"
         },
         "visible": {
           "description": "[Experimental] Visibility of the header",
@@ -3896,6 +3904,22 @@
         {
           "type": "boolean",
           "default": true
+        },
+        {
+          "$ref": "#/definitions/simpleBinding"
+        }
+      ]
+    },
+    "wrappingType": {
+      "description": "The wrapping type for texts",
+      "type": "string",
+      "oneOf": [
+        {
+          "enum": [
+            "Normal",
+            "Hyphenated"
+          ],
+          "default": "Normal"
         },
         {
           "$ref": "#/definitions/simpleBinding"

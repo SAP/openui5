@@ -161,6 +161,11 @@
 						<f:GridContainerItemLayoutData columns="4" />
 					</w:layoutData>
 				</w:Card>
+				<w:Card id="hyphenated" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample6.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
 			</f:GridContainer>
 		</Panel>
 	</Page>

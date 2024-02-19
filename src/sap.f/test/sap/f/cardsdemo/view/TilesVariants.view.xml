@@ -21,6 +21,7 @@
 			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card7" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample4.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card9" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample5.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card21" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample6.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card31" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample7.json" class="sapUiSmallMargin"/>
 		</Panel>
 		<Panel headerText="Tiles Standard Wide 4x2" class="sapUiSmallMargin">
 			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample1.json" class="sapUiSmallMargin"/>
@@ -29,6 +30,7 @@
 			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card8" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample4.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card10" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample5.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card22" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample6.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card32" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample7.json" class="sapUiSmallMargin"/>
 		</Panel>
 		<Panel headerText="Tiles Flat 2x1" class="sapUiSmallMargin">
 			<w:Card displayVariant="TileFlat" width="176px" height="84px" id="card11" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample1.json" class="sapUiSmallMargin"/>
@@ -37,6 +39,7 @@
 			<w:Card displayVariant="TileFlat" width="176px" height="84px" id="card17" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample4.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileFlat" width="176px" height="84px" id="card19" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample5.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileFlat" width="176px" height="84px" id="card23" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample6.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileFlat" width="176px" height="84px" id="card33" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample7.json" class="sapUiSmallMargin"/>
 		</Panel>
 		<Panel headerText="Tiles Flat Wide 4x1" class="sapUiSmallMargin">
 			<w:Card displayVariant="TileFlatWide" width="360px" height="84px" id="card14" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample1.json" class="sapUiSmallMargin"/>
@@ -45,6 +48,7 @@
 			<w:Card displayVariant="TileFlatWide" width="360px" height="84px" id="card18" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample4.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileFlatWide" width="360px" height="84px" id="card20" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample5.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileFlatWide" width="360px" height="84px" id="card24" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample6.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileFlatWide" width="360px" height="84px" id="card34" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample7.json" class="sapUiSmallMargin"/>
 		</Panel>
 	</Page>
 </mvc:View>

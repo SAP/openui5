@@ -71,6 +71,11 @@
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample4.json"
 				width="320px"
 				class="sapUiSmallMargin" />
+			<w:Card
+				id="hyphenated"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample7.json"
+				width="320px"
+				class="sapUiSmallMargin" />
 		</Panel>
 	</Page>
 </mvc:View>
