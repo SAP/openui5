@@ -124,12 +124,14 @@ sap.ui.define([
 				getAggregation: function() {
 					return {
 						hierarchyQualifier: "ExampleQualifier",
-						expandTo: 4
+						expandTo: this._iExpandTo
 					};
 				},
 				setAggregation: function(oAggregation) {
+					this._iExpandTo = oAggregation?.expandTo;
 					return;
-				}
+				},
+				refresh: function() {}
 			};
 			this.fnGetBinding.returns(this.oBinding);
 		},
@@ -246,21 +248,41 @@ sap.ui.define([
 	});
 
 	QUnit.test("#collapseAll", function(assert) {
-		var oSpy = sinon.spy(this.oBinding, "setAggregation");
+		var oSetAggregationSpy = sinon.spy(this.oBinding, "setAggregation");
+		var oRefreshSpy = sinon.spy(this.oBinding, "refresh");
 
 		this.oProxy.collapseAll();
+		assert.ok(oSetAggregationSpy.calledOnceWithExactly({hierarchyQualifier: "ExampleQualifier", expandTo: 1}),
+			"Binding#setAggregation called with the correct parameters if expandTo changes");
+		assert.ok(oRefreshSpy.notCalled, "Binding#refresh not called if expandTo changes");
 
-		assert.ok(oSpy.calledOnceWithExactly({hierarchyQualifier: "ExampleQualifier", expandTo: 1}), "setAggregation was called with correct parameters");
-		oSpy.restore();
+		oSetAggregationSpy.resetHistory();
+		oRefreshSpy.resetHistory();
+		this.oProxy.collapseAll();
+		assert.ok(oSetAggregationSpy.notCalled, "Binding#setAggregation not called if expandTo doesn't change");
+		assert.ok(oRefreshSpy.calledOnceWithExactly(), "Binding#refresh called if expandTo doesn't change");
+
+		oSetAggregationSpy.restore();
+		oRefreshSpy.restore();
 	});
 
 	QUnit.test("#expandToLevel", function(assert) {
-		var oSpy = sinon.spy(this.oBinding, "setAggregation");
+		var oSetAggregationSpy = sinon.spy(this.oBinding, "setAggregation");
+		var oRefreshSpy = sinon.spy(this.oBinding, "refresh");
 
 		this.oProxy.expandToLevel(2);
+		assert.ok(oSetAggregationSpy.calledOnceWithExactly({hierarchyQualifier: "ExampleQualifier", expandTo: 2}),
+			"Binding#setAggregation called with the correct parameters if expandTo changes");
+		assert.ok(oRefreshSpy.notCalled, "Binding#refresh not called if expandTo changes");
 
-		assert.ok(oSpy.calledOnceWithExactly({hierarchyQualifier: "ExampleQualifier", expandTo: 2}), "setAggregation was called with correct parameters");
-		oSpy.restore();
+		oSetAggregationSpy.resetHistory();
+		oRefreshSpy.resetHistory();
+		this.oProxy.expandToLevel(2);
+		assert.ok(oSetAggregationSpy.notCalled, "Binding#setAggregation not called if expandTo doesn't change");
+		assert.ok(oRefreshSpy.calledOnceWithExactly(), "Binding#refresh called if expandTo doesn't change");
+
+		oSetAggregationSpy.restore();
+		oRefreshSpy.restore();
 	});
 
 	/**

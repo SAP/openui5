@@ -403,16 +403,23 @@ sap.ui.define([
 		 * @function
 		 * @name iCheckBindingLength
 		 * @param {String|sap.ui.mdc.Table} vControl Id or control instance of the MDCTable
-		 * @param {Number} iRowNumber Number of expected visible rows
+		 * @param {Number} iLength Number of expected visible rows
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
-		iCheckBindingLength: function(vControl, iRowNumber) {
+		iCheckBindingLength: function(vControl, iLength) {
 			return waitForTable.call(this, vControl, {
 				success: function(oTable) {
-					Opa5.assert.equal(oTable.getRowBinding().getLength(), iRowNumber, "All expected " + iRowNumber + " rows are visible");
-				},
-				errorMessage: "No table found"
+					return this.waitFor({
+						check: function() {
+							return oTable.getRowBinding().getLength() === iLength;
+						},
+						success: function() {
+							Opa5.assert.ok(true, `Binding length is (${iLength})`);
+						},
+						errorMessage: `Binding length (expected: ${iLength}, actual: ${oTable.getRowBinding().getLength()})`
+					});
+				}
 			});
 		},
 
@@ -1001,6 +1008,31 @@ sap.ui.define([
 					});
 				},
 				errorMessage: "Could not find VariantManagement"
+			});
+		},
+
+		/**
+		 * Checks the content of a row.
+		 *
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
+		 * @param {object} mConfig Used to find the row to expand
+		 * @param {int} mConfig.index Index of the row in the aggregation of the inner table
+		 * @param {string} mConfig.path Path of the property
+		 * @param {string} mConfig.value Value of the property
+		 * @param {function(sap.ui.table.Row | sap.m.ColumnListItem, sap.ui.model.Context)} [mConfig.check]
+	 	 *     If a custom check function is provided, <code>path</code>, and <code>value</code> are obsolete
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iCheckRowData: function(vTable, mConfig) {
+			return Util.waitForRow.call(this, vTable, {
+				index: mConfig.index,
+				path: mConfig.path,
+				value: mConfig.value,
+				check: mConfig.check,
+				success: function(oTable, oRow) {
+					Opa5.assert.ok(true, `The row content at index ${mConfig.index} is as expected`);
+				}
 			});
 		}
 	};

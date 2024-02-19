@@ -176,10 +176,7 @@ sap.ui.define([
 			throw Error("Unsupported operation: Not supported for the current table type");
 		}
 
-		const oRowBinding = oTable.getRowBinding();
-		if (oRowBinding) {
-			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), { expandTo: Number.MAX_SAFE_INTEGER }));
-		}
+		expandRowsToLevel(oTable, Number.MAX_SAFE_INTEGER);
 	};
 
 	/**
@@ -190,11 +187,24 @@ sap.ui.define([
 			throw Error("Unsupported operation: Not supported for the current table type");
 		}
 
-		const oRowBinding = oTable.getRowBinding();
-		if (oRowBinding) {
-			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), { expandTo: 1 }));
-		}
+		expandRowsToLevel(oTable, 1);
 	};
+
+	function expandRowsToLevel(oTable, iLevel) {
+		const oBinding = oTable.getRowBinding();
+
+		if (!oBinding) {
+			return;
+		}
+
+		const bIsSameLevel = oBinding.getAggregation()?.expandTo === iLevel;
+
+		if (bIsSameLevel) {
+			oBinding.refresh();
+		} else {
+			oBinding.setAggregation({...oBinding.getAggregation(), ...{expandTo: iLevel}});
+		}
+	}
 
 	/**
 	 * @inheritDoc
