@@ -3,6 +3,11 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "e33652ab10d0d823f66d7a39cef1064fe7b8505d",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Space event prevention remove"
+      },
+      {
         "id": "821ccd4fc57098f5f472241a515c10395b91d3c7",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendar: fixed backward/forward navigation in month view"

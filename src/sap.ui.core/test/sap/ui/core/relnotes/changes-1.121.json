@@ -3,6 +3,21 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "95e9c4803cec884eacb24c74090d362e6f0da509",
+        "type": "FIX",
+        "text": " sap/ui/core/format/NumberFormat#format: remove trailing decimal zeros"
+      },
+      {
+        "id": "7e0f723e2458178efc90ede18a72a5f431b3f70a",
+        "type": "FIX",
+        "text": " sap/ui/core/format/NumberFormat.format: fix rounding for positive scientific notation numbers"
+      },
+      {
+        "id": "68a5c713682b710055e19e937b55035eb64c279e",
+        "type": "FIX",
+        "text": " sap/ui/core/format/NumberFormat#format: Fix rounding of \"-.567\""
+      },
+      {
         "id": "e9c41724de841e30ec58986f16c57b554ec8f91c",
         "type": "FEATURE",
         "text": " Test Starter: Support resource-roots configuration"
