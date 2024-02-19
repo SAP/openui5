@@ -2207,5 +2207,15 @@
         ]
       }
     ]
+  },
+  "1.84.43": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "16d8058ebb2d600773d37f1631d353bf57e4e56a",
+        "type": "FIX",
+        "text": " We've introduced the isTrustedSource property as a security enhancement for the PDFViewer control as detailed in the API reference"
+      }
+    ]
   }
 }
