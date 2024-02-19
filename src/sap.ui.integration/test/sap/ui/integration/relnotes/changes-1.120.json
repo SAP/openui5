@@ -63,5 +63,15 @@
         ]
       }
     ]
+  },
+  "1.120.8": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "866c751c8a073c3e442b8e121030f15223eb72ca",
+        "type": "FIX",
+        "text": " Integration Cards: Remove scrollbar from snack layer when not needed"
+      }
+    ]
   }
 }
