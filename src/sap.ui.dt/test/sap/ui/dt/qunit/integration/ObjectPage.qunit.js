@@ -2,10 +2,11 @@
 
 sap.ui.define([
 	"sap/m/Button",
+	"sap/m/Title",
 	"sap/m/VBox",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/uxap/ObjectPageHeader",
+	"sap/uxap/ObjectPageDynamicHeaderTitle",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
@@ -13,10 +14,11 @@ sap.ui.define([
 ],
 function(
 	Button,
+	Title,
 	VBox,
 	DesignTime,
 	OverlayRegistry,
-	ObjectPageHeader,
+	ObjectPageDynamicHeaderTitle,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
@@ -45,8 +47,8 @@ function(
 			this.oLayout = new ObjectPageLayout("layout", {
 				height: "600px",
 				sections: [this.oSection, this.oSection2],
-				headerTitle: new ObjectPageHeader({
-					objectTitle: "Title"
+				headerTitle: new ObjectPageDynamicHeaderTitle({
+					heading: new Title({ text: "Title"})
 				})
 			});
 			this.oVBox = new VBox({
@@ -100,10 +102,6 @@ function(
 			this.oDesignTime.attachEventOnce("synced", () => {
 				oSectionOverlay.attachEventOnce("geometryChanged", checkPositions);
 				assert.ok(true, "DesignTime synced after Section was set to visible");
-				// Normally the change on the section should trigger the DesignTime update,
-				// but sometimes the control doesn't change the DOM when "setVisible" is
-				// set to "true" - so we force a re-render by scrolling.
-				this.oLayout.scrollToSection(this.oSection.getId());
 			});
 
 			this.oSection.setVisible(true);
