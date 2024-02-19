@@ -1,0 +1,12 @@
+{
+  "1.122.0": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "780795c01412d4c2e2b7d095e090ce07bc6e06a3",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fix alignment in Tables"
+      }
+    ]
+  }
+}

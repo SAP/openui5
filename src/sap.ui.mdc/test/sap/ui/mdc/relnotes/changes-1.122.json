@@ -1,0 +1,17 @@
+{
+  "1.122.0": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "21ddc4518947dab830294cb3adc07eed3dc19e04",
+        "type": "FIX",
+        "text": " BT operator: no error if wrong input"
+      },
+      {
+        "id": "e224818cff7c11db692d3eb3151ba65bca16adf1",
+        "type": "FIX",
+        "text": " Field, FilterField: Enter after arrow navigation"
+      }
+    ]
+  }
+}

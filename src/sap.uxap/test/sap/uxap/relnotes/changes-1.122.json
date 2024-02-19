@@ -3,6 +3,11 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "4a8cf40d7b5cec37729eb08429d56be9c128be1b",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageSubSection: New CSS class for background transparency"
+      },
+      {
         "id": "5527dfc2f65e7d32b79e171dc1c81f9672138100",
         "type": "FIX",
         "text": " sap.m.Toolbar: Logic fixed",

@@ -3,6 +3,53 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "38b057ca1a63ccad825869982b79782fc317e32e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Fire startDateChange event date from another month",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370094258"
+          }
+        ]
+      },
+      {
+        "id": "81ea25f522cd95745d09ba583940cf61248d834e",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Resolve issue preventing text selection with mouse"
+      },
+      {
+        "id": "e18998d6ad704a1e9f0f9105caa2f0319d61f413",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Space press no longer scrolls"
+      },
+      {
+        "id": "be8a1f5acf642759bdef3d03eefd3ce710b183d9",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Space event prevention remove"
+      },
+      {
+        "id": "88b563d35a84cf3cbd13b8114fabec7a53f7281f",
+        "type": "FEATURE",
+        "text": " sap.m.MenuButton: Removed maximum width of the MenuButton"
+      },
+      {
+        "id": "6732b9f1edaf5db840df7914cf625ffd399736ff",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSliders: are aligned correctly on tablet",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370095697"
+          }
+        ]
+      },
+      {
+        "id": "ed60e5f61c11dfab9a4fd6b317c097623ddf94e6",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: The JS Date is being replaced with UI5Date"
+      },
+      {
         "id": "5527dfc2f65e7d32b79e171dc1c81f9672138100",
         "type": "FIX",
         "text": " sap.m.Toolbar: Logic fixed",

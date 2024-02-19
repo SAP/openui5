@@ -3,6 +3,16 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "780795c01412d4c2e2b7d095e090ce07bc6e06a3",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fix alignment in Tables"
+      },
+      {
+        "id": "dd5a4c7ad17484faaf80debe8d17d6aa34562f6d",
+        "type": "FEATURE",
+        "text": " sap.uxap.AnchorBar: Separator added"
+      },
+      {
         "id": "194c2eb74d4b90f9c313ca65f1ef9eb41b0f3528",
         "type": "FIX",
         "text": " sap.m.ObjectNumber: Correctly displayed in Table with horizon HCW theme"

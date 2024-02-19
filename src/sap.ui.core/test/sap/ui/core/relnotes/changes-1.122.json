@@ -3,6 +3,27 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "62d8756de9f3215a2cb3faf83a99af2d604fe37f",
+        "type": "FIX",
+        "text": " ui5loader: Prevent unrelated -dbg requests in partial debug mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370120131"
+          }
+        ]
+      },
+      {
+        "id": "6c3f58f44ecaf06dd3b6f8c3b7b955105864dff8",
+        "type": "FIX",
+        "text": " sap.ui.test.RecordReplay: Configuration initialization corrected"
+      },
+      {
+        "id": "a2afc6467234682a143166a8048fe0d54cee2805",
+        "type": "FIX",
+        "text": " sap/ui/core/format/NumberFormat#format: remove trailing decimal zeros"
+      },
+      {
         "id": "865dd56b2de487c8db9b981a9b491bf3edb265b0",
         "type": "FIX",
         "text": " sap/ui/core/format/NumberFormat.format: fix rounding for positive scientific notation numbers"
