@@ -47,6 +47,7 @@ sap.ui.define(function () {
 					useFakeTimers: true
 				}
 			},
+			"cards/util/addTooltipIfTruncated": {},
 			"DynamicPage": {
 				coverage: {
 					only: ["sap/f/DynamicPage"]

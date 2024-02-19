@@ -142,6 +142,7 @@ sap.ui.define([
 
 	HeaderFactory.prototype._setTileDefaults = function (oHeader, mConfiguration) {
 		oHeader.setProperty("useTileLayout", true);
+		oHeader.setProperty("useTooltips", true);
 
 		const oCard = this._oCard;
 		const bIsFlatTile = [CardDisplayVariant.TileFlat, CardDisplayVariant.TileFlatWide].indexOf(oCard.getDisplayVariant()) > -1;
@@ -160,6 +161,12 @@ sap.ui.define([
 			if (!mConfiguration.subtitleMaxLines) {
 				oHeader.setSubtitleMaxLines(1);
 			}
+		}
+
+		if (oHeader.isA("sap.f.cards.NumericHeader")) {
+			oHeader.getSideIndicators().forEach((oSideIndicator) => {
+				oSideIndicator.setProperty("useTooltips", true);
+			});
 		}
 	};
 

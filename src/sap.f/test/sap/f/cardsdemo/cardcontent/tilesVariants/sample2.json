@@ -13,7 +13,9 @@
 					}
 			},
 			"title": "{title}",
+			"titleMaxLines": 1,
 			"subTitle": "{subTitle}",
+			"subTitleMaxLines": 1,
 			"icon": {
 				"src": "{numericIndicator/iconSrc}"
 			},
@@ -23,7 +25,7 @@
 			},
 			"sideIndicators": [
 				{
-					"title": "Target",
+					"title": "Target which has a Very Long Text",
 					"number": "{kpiInfos/kpi/target/number}",
 					"unit": "{kpiInfos/kpi/target/unit}"
 				},
@@ -34,8 +36,7 @@
 				}
 			],
 			"details": {
-				"text": "{kpiInfos/kpi/details}",
-				"state": "Warning"
+				"text": "{kpiInfos/kpi/details}"
 			},
 			"actions": [
 				{

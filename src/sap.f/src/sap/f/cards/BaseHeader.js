@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/library",
 	"sap/m/library",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/f/cards/util/addTooltipIfTruncated"
 ], function (
 	Control,
 	IntervalTrigger,
@@ -18,7 +19,8 @@ sap.ui.define([
 	UniversalDate,
 	coreLibrary,
 	mLibrary,
-	Text
+	Text,
+	addTooltipIfTruncated
 ) {
 	"use strict";
 
@@ -108,7 +110,13 @@ sap.ui.define([
 				 * @public
 				 * @experimental Since 1.122 this feature is experimental and the API may change.
 				 */
-				wrappingType : {type: "sap.m.WrappingType", group : "Appearance", defaultValue : WrappingType.Normal}
+				wrappingType : {type: "sap.m.WrappingType", group : "Appearance", defaultValue : WrappingType.Normal},
+
+				/**
+				 * Defines if tooltips should be shown for truncated texts.
+				 * @private
+				 */
+				useTooltips: { type: "boolean", visibility: "hidden", defaultValue: false}
 			},
 			aggregations: {
 				/**
@@ -169,6 +177,7 @@ sap.ui.define([
 		if (aBannerLines) {
 			aBannerLines.forEach((oText) => {
 				oText.setTextAlign(TextAlign.End);
+				oText.setWrapping(false);
 			});
 		}
 	};
@@ -179,6 +188,10 @@ sap.ui.define([
 		if (oToolbar) {
 			oToolbar.addEventDelegate(this._oToolbarDelegate, this);
 		}
+
+		this.getBannerLines()?.forEach((oText) => {
+			this._enhanceText(oText);
+		});
 	};
 
 	BaseHeader.prototype.getFocusDomRef = function () {
@@ -410,6 +423,17 @@ sap.ui.define([
 		var oToolbar = this.getToolbar();
 
 		return oToolbar && oToolbar.getDomRef() && oToolbar.getDomRef().contains(oElement);
+	};
+
+	/**
+	 * When the option <code>useTooltips</code> is set to <code>true</code> - enhances the given text with a tooltip if the text is truncated.
+	 * @private
+	 * @param {sap.m.Text} oText The text control.
+	 */
+	BaseHeader.prototype._enhanceText = function (oText) {
+		if (this.getProperty("useTooltips")) {
+			addTooltipIfTruncated(oText);
+		}
 	};
 
 	return BaseHeader;

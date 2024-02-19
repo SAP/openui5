@@ -37,10 +37,10 @@
 			"editor": "dt/Configuration",
 			"parameters": {
 				"title" : {
-					"value": "List Card with Top {{parameters.maxItems}} Products"
+					"value": "List Card with Top {{parameters.maxItems}} Products and a Long Title which Truncates when on Several Lines"
 				},
 				"subTitle": {
-					"value": "These are the top sellers this month"
+					"value": "These are the top sellers this month and long subtitle which truncates when on several lines"
 				},
 				"iconSrc": {
 					"value": "sap-icon://desktop-mobile"
