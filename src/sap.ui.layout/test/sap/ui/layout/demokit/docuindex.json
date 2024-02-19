@@ -39,7 +39,7 @@
 					"sap.ui.layout.sample.Form_Column_oneGroup234",
 					"sap.ui.layout.sample.Form_Column_twoGroups234",
 					"sap.ui.layout.sample.Form_Column_threeGroups234",
-					"sap.ui.layout.sample.Form_Column_threeGroups236"
+					"sap.ui.layout.sample.Form_Column_threeGroups346"
 				]
 			},
 			{
@@ -61,7 +61,7 @@
 					"sap.ui.layout.sample.SimpleForm_Column_oneGroup234",
 					"sap.ui.layout.sample.SimpleForm_Column_twoGroups234",
 					"sap.ui.layout.sample.SimpleForm_Column_threeGroups234",
-					"sap.ui.layout.sample.SimpleForm_Column_threeGroups236"
+					"sap.ui.layout.sample.SimpleForm_Column_threeGroups346"
 				]
 			},
 			{
@@ -244,9 +244,9 @@
 				"description": "Form with three groups in a fullscreen app (with 2 columns in M, 3 columns in L, and 4 columns in XL size)."
 			},
 			{
-				"id": "sap.ui.layout.sample.Form_Column_threeGroups236",
-				"name": "Fullscreen – six groups using ColumnLayout with up to 6 columns",
-				"description": "Form with three groups in a fullscreen app (with 2 columns in M, 3 columns in L, and 6 columns in XL size)."
+				"id": "sap.ui.layout.sample.Form_Column_threeGroups346",
+				"name": "Fullscreen – three groups using ColumnLayout with up to 6 columns",
+				"description": "Form with three groups in a fullscreen app (with 3 columns in M, 4 columns in L, and 6 columns in XL size)."
 			},
 			{
 				"id": "sap.ui.layout.sample.HorizontalLayout",
@@ -319,9 +319,9 @@
 				"description": "Form with three groups in a fullscreen app (with 2 columns in M, 3 columns in L, and 4 columns in XL size)."
 			},
 			{
-				"id": "sap.ui.layout.sample.SimpleForm_Column_threeGroups236",
+				"id": "sap.ui.layout.sample.SimpleForm_Column_threeGroups346",
 				"name": "Fullscreen – three groups using ColumnLayout with up to 6 columns",
-				"description": "Form with three groups in a fullscreen app (with 2 columns in M, 3 columns in L, and 6 columns in XL size)."
+				"description": "Form with three groups in a fullscreen app (with 3 columns in M, 4 columns in L, and 6 columns in XL size)."
 			},
 			{
 				"id": "sap.ui.layout.sample.FixFlexVertical",
