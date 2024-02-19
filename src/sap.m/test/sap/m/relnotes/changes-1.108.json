@@ -1555,5 +1555,26 @@
         ]
       }
     ]
+  },
+  "1.108.26": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "b9b600c5a3c1ce146d053c6887e11dbb08a889ee",
+        "type": "FIX",
+        "text": " We've introduced the isTrustedSource property as a security enhancement for the PDFViewer control as detailed in the API reference"
+      },
+      {
+        "id": "64e071c743c722f05f92efca0f48f4407fe31012",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Escape text value when creating tokens with validator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370068095"
+          }
+        ]
+      }
+    ]
   }
 }
