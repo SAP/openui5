@@ -20,6 +20,23 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.chart.DrillBreadcrumbs
 	 */
 	const DrillBreadcrumbs = Breadcrumbs.extend("sap.ui.mdc.chart.DrillBreadcrumbs", {
+		metadata: {
+			library: "sap.ui.mdc",
+			properties: {
+			},
+			aggregations: {
+			},
+			associations: {
+			},
+			events: {
+				linkPressed: {
+					parameters: {
+						key: { type: "string" },
+						index: { type: "int"}
+					}
+				}
+			}
+		},
 		renderer: {
 			apiVersion: 2
 		}
@@ -35,72 +52,49 @@ sap.ui.define([
 	/**
 	 * Updates the breadcrumbs shown on the MDC Chart
 	 *
-	 * @param {sap.ui.mdc.Chart} oChart the MDC Chart to update the breadcrumbs on
-	 * @param {*} oDrillableItems the drillable items
+	 * @param {array} aDrillableItems the drillable items
 	 *
 	 * @experimental
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	DrillBreadcrumbs.prototype.updateDrillBreadcrumbs = function(oChart, oDrillableItems) {
+	DrillBreadcrumbs.prototype.update = function(aDrillableItems) {
 
-		const newLinks = [];
+		const aLinks = [];
+
+		// Show/Hide Breadcrumbs
+		this.setVisible(aDrillableItems?.length > 0);
 
 		// When chart is bound to non-aggregated entity there is no drill-stack
 		// existing
-		if (oDrillableItems) {
-
+		if (aDrillableItems?.length > 0) {
 			// Reverse array to display right order of crumbs
-			oDrillableItems.reverse();
+			aDrillableItems.reverse();
 
-			if (oDrillableItems.length > 0) {
-				oDrillableItems.forEach(function(dim, index, array) {
+			aDrillableItems.forEach(function(oItem, index) {
 
-					// show breadcrumbs
-					//If Breadcrumbs were set invisible for no drill stack, they need to be set visible again
-					this.setVisible(true);
+				// Set current drill position in breadcrumb control
+				if (index == 0) {
+					this.setCurrentLocationText(oItem.text);
+				} else {
+					aLinks.push(this._createLink(oItem.key, oItem.text)); //note the links are added in an incorrect order need to reverse
+				}
 
-					// use the last entry of each drill-stack entry to built
-					// up the drill-path
-					const sDimText = dim.getLabel();
-					const sDimKey = dim.getPropertyKey();
-
-					// Set current drill position in breadcrumb control
-					if (index == 0) {
-						this.setCurrentLocationText(sDimText);
-					} else {
-
-						const oCrumbSettings = {
-							dimensionKey: sDimKey,
-							dimensionText: sDimText
-						};
-
-						const oCrumb = this._createCrumb(oChart, oCrumbSettings);
-						newLinks.push(oCrumb); //note the links are added in an incorrect order need to reverse
-					}
-
-				}, this);
-			} else {
-				// Show no text on breadcrumb if stack contains only one
-				// entry with no dimension at all (all dims are shown)
-
-				// hide breadcrumbs
-				this.setVisible(false);
-
-			}
-
+			}, this);
+		} else {
+			this.setCurrentLocationText("");
 		}
 
 		const currLinks = this.getLinks();
-		newLinks.reverse();
+		aLinks.reverse();
 		let diff = false;
 
-		if (currLinks.length !== newLinks.length) {
+		if (currLinks.length !== aLinks.length) {
 			diff = true;
 		} else {
 
-			for (let i = 0; i < newLinks.length; i++) {
-				if (newLinks[i].getText() != currLinks[i].getText()) {
+			for (let i = 0; i < aLinks.length; i++) {
+				if (aLinks[i].getText() != currLinks[i].getText()) {
 					diff = true;
 					break;
 				}
@@ -114,8 +108,8 @@ sap.ui.define([
 				this.destroyLinks();
 			}
 
-			for (let i = 0; i < newLinks.length; i++) {
-				this.addLink(newLinks[i]);
+			for (let i = 0; i < aLinks.length; i++) {
+				this.addLink(aLinks[i]);
 			}
 		}
 
@@ -136,52 +130,21 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Creates a breadcrumb with given settings
-	 * @param oChart the chart the breadcrumb is for
-	 * @param oCrumbSettings settings for the breadcrumb
-	 *
-	 * @returns {sap.m.Link} the created breadcrumb
-	 *
-	 * @experimental
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
-	 */
-	DrillBreadcrumbs.prototype._createCrumb = function(oChart, oCrumbSettings) {
+	DrillBreadcrumbs.prototype._createLink = function(sKey, sText) {
 
-		const oCrumb = new Link({
-			text: oCrumbSettings.dimensionText,
-			press: function onCrumbPressed(oControlEvent) {
-				const iLinkIndex = this.indexOfLink(oControlEvent.getSource());
-
-				// get drill-path which was drilled-up and needs to be removed from mdc chart
-				const aCurrentDrillStack = oChart.getControlDelegate().getDrillableItems(oChart),
-					aDrilledItems = aCurrentDrillStack.slice(iLinkIndex + 1);
-
-				//TODO: Why do we need this?
-				//this._oInnerChart.fireDeselectData();
-
+		const oLink = new Link({
+			text: sText,
+			press: function (oEvent) {
+				const oLink = oEvent.getSource();
+				const iIndex = this.indexOfLink(oLink);
+				this.fireLinkPressed({ key: oLink.data().key, index: iIndex });
 				this._bSetFocus = true;
-
-				const aFlexItemChanges = aDrilledItems.map((oDrillItem) => {
-					return {
-						name: oDrillItem.getPropertyKey(),
-						visible: false
-					};
-				});
-
-				oChart.getEngine().createChanges({
-					control: oChart,
-					key: "Item",
-					state: aFlexItemChanges
-				});
-
 			}.bind(this)
 		});
 
 		// unique dimension key is needed to remove the item from the mdc chart aggregation on drilling up
-		oCrumb.data("key", oCrumbSettings.dimensionKey);
-		return oCrumb;
+		oLink.data("key", sKey);
+		return oLink;
 	};
 
 	return DrillBreadcrumbs;

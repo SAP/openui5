@@ -204,8 +204,8 @@ sap.ui.define([
             return waitForMDCChartWithId.call(this, sId, {
                 success: function(oMDCChart){
                     this.waitFor({
-                        controlType: "sap.ui.mdc.chart.ChartTypeButton",
-                        matchers: new Ancestor(oMDCChart),
+                        controlType: "sap.ui.mdc.chart.SelectionButton",
+                        id: sId + "--toolbar-btnChartType",
                         actions: new Press(),
                         success: function(){
                             if (oSettings && typeof oSettings.success === "function") {

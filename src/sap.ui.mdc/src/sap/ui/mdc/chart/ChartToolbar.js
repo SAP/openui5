@@ -9,7 +9,8 @@ sap.ui.define([
 		"sap/m/OverflowToolbarButton",
 		"sap/m/OverflowToolbarToggleButton",
 		"sap/m/Title",
-		"sap/ui/mdc/chart/ChartTypeButton",
+		"sap/ui/mdc/chart/SelectionButton",
+		"sap/ui/mdc/chart/SelectionButtonItem",
 		"./ChartSelectionDetails",
 		"sap/ui/core/InvisibleText",
 		"sap/m/OverflowToolbarLayoutData",
@@ -25,7 +26,8 @@ sap.ui.define([
 		OverflowButton,
 		OverflowToggleButton,
 		Title,
-		ChartTypeButton,
+		SelectionButton,
+		SelectionButtonItem,
 		ChartSelectionDetails,
 		InvisibleText,
 		OverflowToolbarLayoutData,
@@ -126,19 +128,75 @@ sap.ui.define([
 			const aP13nMode = oChart.getP13nMode() || [];
 
 			if (aP13nMode.indexOf("Item") > -1 && (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(ChartToolbarActionType.DrillDownUp) < 0)) {
-				this._oDrillDownBtn = new OverflowButton(oChart.getId() + "-drillDown", {
+				this._oDrillDownBtn = new SelectionButton(this.getId() + "-drillDown", {
 					icon: "sap-icon://drill-down",
 					tooltip: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
 					text: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
+					title: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
+
+					noDataTitle: MDCRb.getText("chart.NO_DRILLABLE_DIMENSION"),
+					noDataDescription: MDCRb.getText("chart.NO_DRILLABLE_DIMENSION_DESC"),
+					noDataType: sap.m.IllustratedMessageType.NoDimensionsSet,
+					searchPlaceholder: MDCRb.getText("chart.CHART_DRILLDOWN_SEARCH"),
+					searchEnabled: true,
+					sortEnabled: true,
+					sorted: "ascending",
+
 					enabled: false,
+					type: "Transparent",
 					ariaHasPopup: AriaHasPopup.ListBox,
 					layoutData: new OverflowToolbarLayoutData({
 						closeOverflowOnInteraction: false
 					}),
-					press: function(oEvent) {
-						oChart._showDrillDown(this._oDrillDownBtn);
-					}.bind(this)
+					beforeOpen: function(oEvent) {
+						const oViewByBtn = oEvent.getSource();
+						oViewByBtn.removeAllItems();
+						oViewByBtn.setSelectedItemKey("");
+
+						const fnGetDrillStackDimensions = function(oChart) {
+							const aDrillStack = oChart.getControlDelegate().getDrillStack(oChart);
+							const aStackDimensions = [];
+
+							aDrillStack.forEach((oStackEntry) => {
+								// loop over nested dimension arrays
+								oStackEntry.dimension.forEach((sDimension) => {
+									if (sDimension != null && sDimension != "" && aStackDimensions.indexOf(sDimension) == -1) {
+										aStackDimensions.push(sDimension);
+									}
+								});
+							});
+
+							return aStackDimensions;
+						};
+
+						const pSortedDimensionsPromise = oChart.getControlDelegate().getSortedDimensions(oChart);
+						return pSortedDimensionsPromise.then((aSortedDimensions) => {
+							// Ignore currently applied dimensions from drill-stack for selection
+							const aIgnoreDimensions = fnGetDrillStackDimensions(oChart);
+							aSortedDimensions = aSortedDimensions.filter((oDimension) => { return aIgnoreDimensions.indexOf(oDimension.name) < 0; });
+
+							aSortedDimensions.forEach((oDimension) => {
+								// oData.items.push({ text: oDimension.label, id: oDimension.name });
+								this._oDrillDownBtn.addItem(new SelectionButtonItem({key: oDimension.name, text: oDimension.label}));
+							});
+							oViewByBtn._createModel(); // in this case the beforeOPen is not able to provide all item syncron
+						});
+					}.bind(this),
+					itemSelected: function(oEvent) {
+						const sDimensionName = oEvent.getParameter("item").key;
+
+						//Call flex to capture current state before adding an item to the chart aggregation
+						oChart.getEngine().createChanges({
+							control: oChart,
+							key: "Item",
+							state: [{
+								name: sDimensionName,
+								position: oChart.getItems().length
+							}]
+						});
+					}
 				});
+
 				this.addEnd(this._oDrillDownBtn);
 				this._chartInternalButtonsToEnable.push(this._oDrillDownBtn);
 			}
@@ -217,14 +275,67 @@ sap.ui.define([
 			}
 
 			if (oChart._getTypeBtnActive()) {
-				this._oChartTypeBtn = new ChartTypeButton(this.getId() + "-btnChartType", {
-					type: "Transparent",
+				const sChartType = oChart.getChartType();
+
+				this._oChartTypeBtn = new SelectionButton(this.getId() + "-btnChartType", {
+					chartType: sChartType,
+
+					title: MDCRb.getText("chart.CHART_TYPELIST_TEXT"),
+					noDataTitle: MDCRb.getText("chart.NO_CHART_TYPES_AVAILABLE"),
+					noDataDescription: MDCRb.getText("chart.NO_CHART_TYPES_AVAILABLE_ACTION"),
+					noDataType: sap.m.IllustratedMessageType.AddDimensions,
+					searchPlaceholder: MDCRb.getText("chart.CHART_TYPE_SEARCH"),
+					searchEnabled: true,
+					sortEnabled: true,
+
 					enabled: false,
+					type: "Transparent",
 					ariaHasPopup: AriaHasPopup.ListBox,
 					layoutData: new OverflowToolbarLayoutData({
 						closeOverflowOnInteraction: false
 					}),
-					chart: oChart
+					beforeOpen: function(oEvent) {
+						const oChartTypeBtn = oEvent.getSource();
+						// use this to update the available ChartTypes
+						const aAvailableChartTypes = oChart.getAvailableChartTypes();
+						oChartTypeBtn.removeAllItems();
+						aAvailableChartTypes.forEach(function(oChartType) {
+							oChartTypeBtn.addItem(
+								new SelectionButtonItem({key: oChartType.key, text: oChartType.text, icon: oChartType.icon})
+							);
+						});
+					},
+					itemSelected: function(oEvent) {
+						const oChartTypeBtn = oEvent.getSource();
+						const sChartType = oEvent.getParameter("item").key;
+
+						const oChartTypeInfo = oChart.getChartTypeInfo();
+						const aAvailableChartTypes = oChart.getAvailableChartTypes();
+						const oChartType = aAvailableChartTypes.filter((o) => {return o.key === sChartType; })[0];
+
+						oChartTypeBtn.setText(oChartType.text);
+						oChartTypeBtn.setTooltip(oChartTypeInfo.text);
+						oChartTypeBtn.setIcon(oChartType.icon);
+
+						//TODO should be done in the chart, the control should only raise an event
+						sap.ui.require([
+							"sap/ui/mdc/flexibility/Chart.flexibility"
+						], (ChartFlex) => {
+
+							oChart.getEngine().createChanges({
+								control: oChart,
+								key: "Type",
+								state: {
+									properties: {
+										chartType: sChartType
+									}
+								}
+							}).then((vResult) => {
+								oChart.getControlDelegate().requestToolbarUpdate(oChart);
+							});
+
+						});
+					}
 				});
 				this.addEnd(this._oChartTypeBtn);
 				this._chartInternalButtonsToEnable.push(this._oChartTypeBtn);
@@ -309,10 +420,12 @@ sap.ui.define([
 				this._chartInternalButtonsToEnable.forEach((oBtn) => {
 					oBtn.setEnabled(true);
 				});
+				delete this._chartInternalButtonsToEnable;
 
 				this._toolbarInitialUpdated = true;
 			}
 
+			//TODO do we have to attach the SelectionHandler in every call or only once?
 			const oSelectionHandler = oChart.getSelectionHandler();
 			if (oSelectionHandler && oChart.getShowSelectionDetails()) {
 				this._oChartSelectionDetails.attachSelectionHandler(oSelectionHandler.eventId, oSelectionHandler.listener);
