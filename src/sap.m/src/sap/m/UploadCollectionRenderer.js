@@ -34,7 +34,7 @@ sap.ui.define(['./ListItemBaseRenderer'], function(ListItemBaseRenderer) {
 		var oUploadCollection = oControl.getParent();
 		oRm.openStart("li", oUploadCollection._oList.getId("nodata"));
 		oRm.attr("tabindex", "0");
-		oRm.attr("role", "option");
+		oRm.attr("role", "listitem");
 		ListItemBaseRenderer.addFocusableClasses.call(ListItemBaseRenderer, oRm);
 		oRm.class("sapMLIB");
 		oRm.class("sapMUCNoDataPage");
