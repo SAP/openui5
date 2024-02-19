@@ -1,12 +1,16 @@
 /* global QUnit */
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function() {
-	"use strict";
+sap.ui.require(
+    [
+        "sap/ui/core/Core",
+        "sap/ui/demo/bulletinboard/test/integration/AllJourneys"
+    ],
+    async function (Core, ComponentContainer) {
+        "use strict";
 
-	sap.ui.require([
-		"sap/ui/demo/bulletinboard/test/integration/AllJourneys"
-	], function() {
-		QUnit.start();
-	});
-});
+		await Core.ready();
+
+        QUnit.start();
+    }
+);
