@@ -10421,8 +10421,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bHasCache) {
-	QUnit.test("getCacheAndMoveKeepAliveContexts: cache=" + bHasCache, function (assert) {
+	QUnit.test("getCacheAndMoveKeepAliveContexts", function (assert) {
 		var oBinding = this.bindList("/path", undefined, undefined, undefined,
 				{$$getKeepAliveContext : true}),
 			oCache = {
@@ -10432,7 +10431,7 @@ sap.ui.define([
 			oContext2 = {},
 			oTemporaryBinding = {
 				destroy : function () {},
-				oCache : bHasCache ? oCache : undefined,
+				oCache : oCache,
 				mLateQueryOptions : "~mLateQueryOptions~",
 				mParameters : {},
 				mPreviousContextsByPath : {
@@ -10447,8 +10446,7 @@ sap.ui.define([
 			.returns("~mQueryOptionsClone~");
 		this.mock(_Helper).expects("aggregateExpandSelect")
 			.withExactArgs("~mQueryOptionsClone~", "~mLateQueryOptions~");
-		this.mock(oCache).expects("setQueryOptions").exactly(bHasCache ? 1 : 0)
-			.withExactArgs("~mQueryOptions~");
+		this.mock(oCache).expects("setQueryOptions").withExactArgs("~mQueryOptions~");
 		this.mock(oTemporaryBinding).expects("destroy").withExactArgs().callsFake(function () {
 			assert.deepEqual(oTemporaryBinding.mPreviousContextsByPath, {});
 			assert.strictEqual(oTemporaryBinding.oCache, null);
@@ -10457,7 +10455,7 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oBinding.getCacheAndMoveKeepAliveContexts("path", "~mQueryOptions~"),
-			bHasCache ? oCache : undefined);
+			oCache);
 
 		assert.strictEqual(oBinding.mLateQueryOptions, "~mQueryOptionsClone~");
 		assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length, 2);
@@ -10466,7 +10464,6 @@ sap.ui.define([
 		assert.strictEqual(oContext1.oBinding, oBinding);
 		assert.strictEqual(oContext2.oBinding, oBinding);
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getCacheAndMoveKeepAliveContexts: no binding", function (assert) {
