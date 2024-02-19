@@ -110,6 +110,7 @@ module.exports = [
 	"Text.spec.js",
 	"TextArea.spec.js",
 	"TimePicker.spec.js",
+	"TimePickerVisualPart2.spec.js",
 	"Title.spec.js",
 	"ToggleButtonStandaloneVisual.spec.js",
 	"Token.spec.js",
