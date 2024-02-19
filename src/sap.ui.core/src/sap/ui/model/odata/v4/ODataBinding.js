@@ -552,9 +552,11 @@ sap.ui.define([
 						oError.canceled = true;
 						throw oError;
 					}
-					that.oFetchCacheCallToken = undefined; // cleanup
-					return that.createAndSetCache(mQueryOptions, sResourcePath, oContext,
-						sGroupId, oCallToken.oOldCache);
+					return that.oModel.waitForKeepAliveBinding(that).then(function () {
+						that.oFetchCacheCallToken = undefined; // cleanup
+						return that.createAndSetCache(mQueryOptions, sResourcePath, oContext,
+							sGroupId, oCallToken.oOldCache);
+					});
 				});
 			}
 
