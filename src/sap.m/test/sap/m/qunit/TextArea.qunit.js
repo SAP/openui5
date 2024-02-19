@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/InputBase",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery",
 	// provides jQuery.fn.cursorPos
@@ -20,7 +20,7 @@ sap.ui.define([
 	Device,
 	JSONModel,
 	InputBase,
-	core,
+	nextUIUpdate,
 	coreLibrary,
 	jQuery
 ) {
@@ -34,11 +34,11 @@ sap.ui.define([
 
 	QUnit.module("");
 
-	QUnit.test("Should render TextArea correctly", function(assert) {
+	QUnit.test("Should render TextArea correctly", async function(assert) {
 		var sut = new TextArea(),
 			oCounter;
 		sut.placeAt("qunit-fixture");
-		core.applyChanges();
+		await nextUIUpdate();
 
 		// check rendered
 		var $container = jQuery("div.sapMTextArea");
@@ -59,13 +59,13 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Should render TextArea correctly when _adjustContainerDimensions is called before the DOM is ready", function(assert) {
+	QUnit.test("Should render TextArea correctly when _adjustContainerDimensions is called before the DOM is ready", async function(assert) {
 		var sut = new TextArea();
 
 		// act
 		sut._adjustContainerDimensions();
 		sut.placeAt("qunit-fixture");
-		core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(sut.getDomRef(), "TextArea rendered");
@@ -74,10 +74,10 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Should inherit from InputBase", function(assert) {
+	QUnit.test("Should inherit from InputBase", async function(assert) {
 		var sut = new TextArea();
 		sut.placeAt("qunit-fixture");
-		core.applyChanges();
+		await nextUIUpdate();
 
 		// check input base classes are assigned
 		var $container = jQuery("div.sapMInputBase");
@@ -93,7 +93,7 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Should configure control and set properties correctly", function(assert) {
+	QUnit.test("Should configure control and set properties correctly", async function(assert) {
 		var config = {
 				rows : 10,
 				cols : 50,
@@ -124,21 +124,21 @@ sap.ui.define([
 			sut = new TextArea(config);
 
 		sut.placeAt("qunit-fixture");
-		core.applyChanges();
+		await nextUIUpdate();
 
 		// check assigned properties
 		testprops(config);
 
 		// check setter functions
 		sut.applySettings(setters);
-		core.applyChanges();
+		await nextUIUpdate();
 		testprops(setters);
 
 		//Cleanup
 		sut.destroy();
 	});
 
-	QUnit.test("Should configure control without it being rendered", function(assert) {
+	QUnit.test("Should configure control without it being rendered", async function(assert) {
 		var oConfig = {
 				rows : 10,
 				cols : 50,
@@ -158,29 +158,27 @@ sap.ui.define([
 			getAppliedValues = function(oSetters) {
 				var mExpectedValue, mActualValue;
 
-				Object.getOwnPropertyNames(oSetters).forEach(function(sKey) {
+				Object.getOwnPropertyNames(oSetters).forEach(async function(sKey) {
 					var oProperty = TextArea.getMetadata().getProperty(sKey);
 					mExpectedValue = oSetters[sKey];
 					mActualValue = oProperty.get(oTextArea);
 
 					assert.strictEqual(mActualValue, mExpectedValue, "The correct value is applied for property " + sKey);
-					core.applyChanges();
+					await nextUIUpdate();
 				});
 			},
 			oTextArea = new TextArea(oConfig);
 
-		core.applyChanges();
-
 		// check setter functions
 		oTextArea.applySettings(oSetters);
-		core.applyChanges();
+		await nextUIUpdate();
 		getAppliedValues(oSetters);
 
 		//Cleanup
 		oTextArea.destroy();
 	});
 
-	QUnit.test("Should react on touchstart/move for INSIDE_SCROLLABLE_WITHOUT_FOCUS behaviour", function(assert) {
+	QUnit.test("Should react on touchstart/move for INSIDE_SCROLLABLE_WITHOUT_FOCUS behaviour", async function(assert) {
 		// turn on touch support during this test
 		this.stub(Device.support, "touch").value(true);
 
@@ -208,7 +206,7 @@ sap.ui.define([
 		});
 
 		sut.placeAt("qunit-fixture");
-		core.applyChanges();
+		await nextUIUpdate();
 		var $textarea = jQuery("textarea");
 
 		// check touchstart
@@ -240,8 +238,8 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("change event should be fired when last known and dom value are not same", function(assert) {
-
+	QUnit.test("change event should be fired when last known and dom value are not same", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sInitValue = "Test";
 		var oTA = new TextArea({
@@ -250,7 +248,7 @@ sap.ui.define([
 
 		// arrange
 		oTA.placeAt("content");
-		core.applyChanges();
+		await nextUIUpdate(this.clock);
 		var oTADomRef = oTA.getFocusDomRef();
 		var fnFireChangeSpy = this.spy(oTA, "fireChange");
 
@@ -282,9 +280,11 @@ sap.ui.define([
 
 		// cleanup
 		oTA.destroy();
+		this.clock.runAll();
+		this.clock.restore();
 	});
 
-	QUnit.test("Live change event should be fired in case of value is reverted with escape", function(assert) {
+	QUnit.test("Live change event should be fired in case of value is reverted with escape", async function(assert) {
 		// system under test
 		var sInitValue = "Test";
 		var oTA = new TextArea({
@@ -294,7 +294,7 @@ sap.ui.define([
 
 		// arrange
 		oTA.placeAt("content");
-		core.applyChanges();
+		await nextUIUpdate();
 		var oTADomRef = oTA.getFocusDomRef();
 
 		// act
@@ -314,7 +314,8 @@ sap.ui.define([
 		oTA.destroy();
 	});
 
-	QUnit.test("valueLiveUpdate", function(assert) {
+	QUnit.test("valueLiveUpdate", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 
 		var oModel = new JSONModel({value : ""});
 		var oTA = new TextArea({
@@ -324,7 +325,7 @@ sap.ui.define([
 		// arrange
 		oTA.setModel(oModel);
 		oTA.placeAt("content");
-		core.applyChanges();
+		await nextUIUpdate(this.clock);
 		var fnChangeSpy = this.spy(oTA, "fireChange");
 
 		oTA.focus();
@@ -352,12 +353,14 @@ sap.ui.define([
 
 		// cleanup
 		oTA.destroy();
+		this.clock.runAll();
+		this.clock.restore();
 	});
 
 	QUnit.module("Accessibility");
-	QUnit.test("DOM aria properties", function(assert) {
+	QUnit.test("DOM aria properties", async function(assert) {
 		var oTA = new TextArea().placeAt("content");
-		core.applyChanges();
+		await nextUIUpdate();
 
 		var $TA = jQuery(oTA.getFocusDomRef());
 		assert.strictEqual($TA.attr("role"), undefined, "Control role is not set. It causes issues with Jaws");
@@ -367,12 +370,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Encoding");
-	QUnit.test("carriage return should be converted correctly during rendering", function(assert) {
+	QUnit.test("carriage return should be converted correctly during rendering", async function(assert) {
 		var sValue = " \ntest\ntest\n\n";
 		var oTA = new TextArea({
 			value : sValue
 		}).placeAt("content");
-		core.applyChanges();
+		await nextUIUpdate();
 
 		oTA.focus();
 		assert.strictEqual(oTA.getValue(), sValue, "API value is correct");
@@ -382,23 +385,25 @@ sap.ui.define([
 
 	QUnit.module("Growing");
 
-	QUnit.test("after setValue the height is adjusted", function(assert) {
+	QUnit.test("after setValue the height is adjusted", async function(assert) {
 		var sLongText = new Array(1000).join("text ");
 		var oTA = new TextArea({
 			growing: true,
 			width: "100%"
 		}).placeAt("content");
-		core.applyChanges();
+		await nextUIUpdate();
 
 		var iInitialHeight = oTA.getFocusDomRef().clientHeight;
 
 		oTA.setValue(sLongText);
-		core.applyChanges();
+
 		assert.ok(oTA.getFocusDomRef().clientHeight >= iInitialHeight, "TextArea height is adjusted");
 		oTA.destroy();
 	});
 
-	QUnit.test("height is adjust on resize event", function(assert) {
+	QUnit.test("height is adjust on resize event", async function(assert) {
+		this.clock = sinon.useFakeTimers();
+
 		var fnOnResizeSpy,
 			sLongText = new Array(1000).join("text "),
 			oTA = new TextArea({
@@ -409,7 +414,7 @@ sap.ui.define([
 		oTA._updateOverflow();
 		assert.ok(true,  "_updateOverflow is pass successfully when the control is not rendered");
 
-		core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		fnOnResizeSpy = this.spy(oTA, "_resizeHandler");
 
@@ -419,9 +424,12 @@ sap.ui.define([
 		assert.ok(oTA._sResizeListenerId, "TextArea has resize handler");
 		assert.strictEqual(fnOnResizeSpy.callCount, 1, "The resize handler was called once");
 		oTA.destroy();
+
+		this.clock.runAll();
+		this.clock.restore();
 	});
 
-	QUnit.test("line height", function(assert) {
+	QUnit.test("line height", async function(assert) {
 		var sLongText = new Array(10).join("text "),
 			oTA = new TextArea({
 				value: sLongText,
@@ -431,14 +439,14 @@ sap.ui.define([
 		assert.notOk(oTA._getLineHeight(), "_getLineHeight should return null, when there is no dom ref");
 
 		oTA.placeAt('content');
-		core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(!isNaN(oTA._getLineHeight()), "_getLineHeight should be a number");
 
 		oTA.destroy();
 	});
 
-	QUnit.test("maxHeight should be defined if maxLines is set", function(assert) {
+	QUnit.test("maxHeight should be defined if maxLines is set", async function(assert) {
 		var sLongText = new Array(1000).join("text ");
 		var oTA = new TextArea({
 			value: sLongText,
@@ -446,7 +454,7 @@ sap.ui.define([
 			growingMaxLines: 5,
 			width: "100%"
 		}).placeAt("content");
-		core.applyChanges();
+		await nextUIUpdate();
 
 		oTA.focus();
 		assert.ok(oTA.getFocusDomRef().scrollHeight > oTA.getFocusDomRef().offsetHeight, "There is scroll bar. Whole content is not visible");
@@ -454,7 +462,7 @@ sap.ui.define([
 		oTA.destroy();
 	});
 
-	QUnit.test("Grow and shrink properly", function(assert) {
+	QUnit.test("Grow and shrink properly", async function(assert) {
 		var sLongText = new Array(1000).join("text ");
 		var shortText = "Lorem ipsulum";
 		var oTA = new TextArea({
@@ -463,7 +471,7 @@ sap.ui.define([
 			growingMaxLines: 5,
 			width: "100%"
 		}).placeAt("content");
-		core.applyChanges();
+		await nextUIUpdate();
 
 		var oDOMRef = oTA.getDomRef();
 		var oTextAreaDOMRef = oTA.getDomRef('inner');
@@ -472,7 +480,7 @@ sap.ui.define([
 
 		//Act
 		oTA.setValue(shortText);
-		core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.ok(oMirrorDiv, "A mirror div container should be created");
@@ -483,7 +491,7 @@ sap.ui.define([
 
 		//Act
 		oTA.setValue(sLongText);
-		core.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oMirrorDiv.innerHTML.replace('&nbsp;', ''), sLongText, "The mirror div should have the same text as an inner html");
@@ -494,12 +502,12 @@ sap.ui.define([
 		oTA.destroy();
 	});
 
-	QUnit.test("Sync properties: growing + width + cols", function (assert) {
+	QUnit.test("Sync properties: growing + width + cols", async function (assert) {
 		var oTextArea = new TextArea({
 				growing: true,
 				cols: 80
 			}).placeAt("content");
-		core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oTextArea.getDomRef("hidden").style.width, "40rem", "Width properly calculated");
@@ -508,7 +516,7 @@ sap.ui.define([
 
 		// Act
 		oTextArea.setWidth("200px");
-		core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oTextArea.$().width(), 200, "Width property takes over the cols");
@@ -517,7 +525,7 @@ sap.ui.define([
 		// Act
 		oTextArea.setWidth(null);
 		oTextArea.setGrowing(false);
-		core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.notEqual(oTextArea.$().width(), 200, "TextArea resizes to default dimesnions");
@@ -525,7 +533,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Paste");
-	QUnit.test("Test the paste at the end of the text", function (assert) {
+	QUnit.test("Test the paste at the end of the text", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oCounter, oCounterStyle,
 				sInitValue = "This is test text. ",
@@ -541,7 +550,7 @@ sap.ui.define([
 
 		// arrange
 		oTA.placeAt("content");
-		core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		oCounter = oTA.$("counter");
 		oCounterStyle = window.getComputedStyle(oCounter[0]);
@@ -563,7 +572,7 @@ sap.ui.define([
 		oTA.setValue(oTA.getValue() + sPasteText);
 		this.clock.tick(10);
 		qutils.triggerEvent("input", oTA);
-		core.applyChanges();
+		await nextUIUpdate(this.clock);
 
 		// assertions
 		assert.strictEqual(oTA.getValue(), "This is test text. Additional text is added", "The Textarea value is correct");
@@ -577,10 +586,12 @@ sap.ui.define([
 
 		// cleanup
 		oTA.destroy();
+		this.clock.runAll();
+		this.clock.restore();
 	});
 
 	QUnit.module("Counter");
-	QUnit.test("Test counter behaviour on showExceededText value changed", function (assert) {
+	QUnit.test("Test counter behaviour on showExceededText value changed", async function (assert) {
 		// system under test
 		var sInitValue = "This is test text.",
 				iMaxLength = 6,
@@ -596,7 +607,7 @@ sap.ui.define([
 		// arrange
 		oTA.setValue(sInitValue);
 		oTA.placeAt("content");
-		core.applyChanges();
+		await nextUIUpdate();
 		oTA.onfocusin();
 
 		oCounter = oTA.$("counter");
@@ -608,7 +619,7 @@ sap.ui.define([
 
 		// arrange
 		oTA.setShowExceededText(true);
-		core.applyChanges();
+		await nextUIUpdate();
 		oCounter = oTA.$("counter");
 
 		// assertions
@@ -618,7 +629,7 @@ sap.ui.define([
 
 		//arrange
 		oTA.setValue(sInitValue);
-		core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(oTA.getValue(), sInitValue, "The TextArea value is correct");
 		assert.strictEqual(oCounter[0].innerText, oBundle.getText(sMessageBundleKey + "_EXCEEDED", 12), "The counter is empty");
 		assert.strictEqual(oTA.$("inner")[0].hasAttribute("aria-labelledby"), true, "The TextArea has got an aria-labelledby attribute");
@@ -626,7 +637,7 @@ sap.ui.define([
 
 		// arrange
 		oTA.setShowExceededText(false);
-		core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oTA.getValue(), sInitValue.substring(0, iMaxLength), "The TextArea value is correct");
@@ -638,7 +649,7 @@ sap.ui.define([
 		oTA.destroy();
 	});
 
-	QUnit.test("valueState with showExceededText = true without binding", function (assert) {
+	QUnit.test("valueState with showExceededText = true without binding", async function (assert) {
 		var sInitValue = "Text",
 			iMaxLength = 40,
 			sValueState = "Error",
@@ -657,7 +668,7 @@ sap.ui.define([
 
 		// arrange
 		oTA.placeAt("content");
-		core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oTA.getValue(), sInitValue, "The TextArea value is correct");
@@ -670,7 +681,7 @@ sap.ui.define([
 		oTA.setValue("This is test text.");
 		//fireLiveChange not "input" event because in inputBase onInput: for IE the event is marked as invalid on event simulation
 		oTA.fireLiveChange();
-		core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oTA.getValue(), "This is test text.", "The TextArea value is correct");
@@ -683,7 +694,7 @@ sap.ui.define([
 		oTA.destroy();
 	});
 
-	QUnit.test("valueState with showExceededText = true with binding", function (assert) {
+	QUnit.test("valueState with showExceededText = true with binding", async function (assert) {
 		// system under test
 		var iMaxLength = 40,
 			oTA = new TextArea({
@@ -705,7 +716,7 @@ sap.ui.define([
 		oTA.setModel(oModel);
 
 		oTA.placeAt("content");
-		core.applyChanges();
+		await nextUIUpdate();
 		//fireLiveChange not "input" event because in inputBase onInput: for IE the event is marked as invalid on event simulation
 		oTA.fireLiveChange();
 
@@ -729,7 +740,7 @@ sap.ui.define([
 		oTA.destroy();
 	});
 
-	QUnit.test("showExceededText = false on phone", function (assert) {
+	QUnit.test("showExceededText = false on phone", async function (assert) {
 		// system under test
 		var oDeviceStub = this.stub(Device, "system").value({
 				desktop: false,
@@ -747,13 +758,13 @@ sap.ui.define([
 			});
 
 		oTextArea.placeAt("content");
-		core.applyChanges();
+		await nextUIUpdate();
 
 		var $textarea = jQuery("textarea");
 
 		//Act
 		$textarea.val(sInitValue).trigger("input");
-		core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oTextArea.getValue(), sInitValue.substring(0, iMaxLength), "The TextArea value is correct");
@@ -763,5 +774,4 @@ sap.ui.define([
 		oTextArea.destroy();
 		oDeviceStub.restore();
 	});
-
 });
