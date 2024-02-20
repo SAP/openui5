@@ -4,8 +4,10 @@
 /* =================================== */
 
 .sapMColorPalette .sapMColorPaletteSquare:hover > div,
+.sapMColorPalette .sapMColorPaletteSquare.sapMColorPaletteSquareSelected > div,
 .sapMColorPalette .sapMColorPaletteSquare,
 html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare:hover > div,
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare.sapMColorPaletteSquareSelected > div,
 html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
 	border-radius: 0.25rem;
 }
@@ -26,7 +28,8 @@ html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
 		border: 0.125rem solid @sapUiButtonLiteBackground;
 		pointer-events: none;
 	}
-	&:hover {
+	&:hover,
+	&.sapMColorPaletteSquareSelected {
 		border: 0;
 		> div {
 			border: 0.125rem solid @sapUiContentForegroundBorderColor;

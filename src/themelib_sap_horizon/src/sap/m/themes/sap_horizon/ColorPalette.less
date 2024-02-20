@@ -8,7 +8,8 @@
 
 html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
 	border-radius: 0.25rem;
-	&:hover {
+	&:hover,
+	&.sapMColorPaletteSquareSelected {
 		border-radius: 0.4375rem;
 		margin: 0.0625rem;
 		width: 2.25rem;
@@ -56,7 +57,8 @@ html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare:focus {
 		bottom: -0.3125rem;
 		right: -0.3125rem;
 	}
-	&:hover {
+	&:hover,
+	&.sapMColorPaletteSquareSelected {
 		&:after {
 			display: block;
 			border: 0.0625rem solid @sapUiContentContrastFocusColor;
@@ -110,12 +112,15 @@ html:not(.sap-phone) .sapUiSizeCompact .sapMColorPalette {
 			line-height: 2rem;
 		}
 	}
-	.sapMColorPaletteSquare:hover {
-		margin: 0.0625rem;
-		width: 1.625rem;
-		height: 1.625rem;
+	.sapMColorPaletteSquare {
+		&:hover,
+		&.sapMColorPaletteSquareSelected {
+			margin: 0.0625rem;
+			width: 1.625rem;
+			height: 1.625rem;
+		}
 	}
-	.sapMColorPaletteSquare:focus:not(:hover):before {
+	.sapMColorPaletteSquare:focus:not(:hover):not(.sapMColorPaletteSquareSelected):before {
 		top: -0.25rem;
 		left: -0.25rem;
 		bottom: -0.25rem;
