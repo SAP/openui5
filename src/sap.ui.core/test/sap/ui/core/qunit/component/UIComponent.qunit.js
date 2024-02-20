@@ -838,7 +838,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Check if all resources were loaded", function(assert) {
+	/**
+	 * @deprecated
+	 */
+	QUnit.test("Check if all resources were loaded - JSONView", function(assert) {
 		var oManifest = {
 			"sap.app" : {
 				"id" : "app"
@@ -885,37 +888,25 @@ sap.ui.define([
 				}
 			}
 		};
-		this.setRespondedManifest(oManifest, "scenario1");
+		this.setRespondedManifest(oManifest, "scenario1json");
 
 		var requireSpy = this.requireSpy;
-		sap.ui.define("manifestModules/scenario1/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("manifestModules.scenario1.Component", {
+		sap.ui.define("manifestModules/scenario1json/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("manifestModules.scenario1json.Component", {
 				metadata: {
 					manifest: "json"
 				},
 				constructor: function() {
-					/**
-					 * @deprecated as of version 1.120
-					 */
 					assert.ok(requireSpy.calledWith(["sap/ui/core/mvc/JSONView"]), "JSONView type required");
 					assert.ok(requireSpy.calledWith(["sap/ui/model/resource/ResourceModel"]), "ResourceModel required");
 					assert.ok(requireSpy.calledWith(["sap/ui/core/routing/Router"]), "Router loaded");
-					/**
-					 * @deprecated as of version 1.48
-					 */
 					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/ODataModel"]), "ODataModel required");
 					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/v2/ODataModel"]), "ODataModel v2 required");
 					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/v4/ODataModel"]), "ODataModel v4 required");
 
-					/**
-					 * @deprecated as of version 1.120
-					 */
 					assert.ok(sap.ui.require("sap/ui/core/mvc/JSONView"), "JSONView type loaded");
 					assert.ok(sap.ui.require("sap/ui/model/resource/ResourceModel"), "ResourceModel loaded");
 					assert.ok(sap.ui.require("sap/ui/core/routing/Router"), "Router loaded");
-					/**
-					 * @deprecated as of version 1.48
-					 */
 					assert.ok(sap.ui.require("sap/ui/model/odata/ODataModel"), "ODataModel loaded");
 					assert.ok(sap.ui.require("sap/ui/model/odata/v2/ODataModel"), "ODataModel v2 loaded");
 					assert.ok(sap.ui.require("sap/ui/model/odata/v4/ODataModel"), "ODataModel v4 loaded");
@@ -926,10 +917,82 @@ sap.ui.define([
 		});
 
 		return Component.create({
-			name: "manifestModules.scenario1",
+			name: "manifestModules.scenario1json",
 			manifest: true
-		}).then(function(oInstance) {
-			// console.error("instance here", oInstance);
+		});
+	});
+
+	QUnit.test("Check if all resources were loaded - XMLView", function(assert) {
+		var oManifest = {
+			"sap.app" : {
+				"id" : "app"
+			},
+			"sap.ui5": {
+				"rootView": {
+					"viewName": "someRootView",
+					"type": "XML",
+					"id": "app"
+				},
+				"models": {
+					"i18n": {
+						"type": "sap.ui.model.resource.ResourceModel",
+						"uri": "i18n/i18n.properties"
+					},
+					"odm2": {
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "./some/odata/service"
+					},
+					"odm4": {
+						"type": "sap.ui.model.odata.v4.ODataModel",
+						"uri": "./some/odata/service/"
+					}
+				},
+				"routing": {
+					"config": {
+						"viewType": "XML",
+						"controlId": "app"
+					},
+					"routes": [
+						{
+							"pattern": "",
+							"name": "overview",
+							"target": "overview"
+						}
+					]
+				}
+			}
+		};
+		this.setRespondedManifest(oManifest, "scenario1xml");
+
+		var requireSpy = this.requireSpy;
+		sap.ui.define("manifestModules/scenario1xml/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("manifestModules.scenario1xml.Component", {
+				metadata: {
+					manifest: "json"
+				},
+				constructor: function() {
+					assert.ok(requireSpy.calledWith(["sap/ui/core/mvc/XMLView"]), "XMLView type required");
+					assert.ok(requireSpy.calledWith(["sap/ui/model/resource/ResourceModel"]), "ResourceModel required");
+					assert.ok(requireSpy.calledWith(["sap/ui/core/routing/Router"]), "Router loaded");
+
+					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/v2/ODataModel"]), "ODataModel v2 required");
+					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/v4/ODataModel"]), "ODataModel v4 required");
+
+					assert.ok(sap.ui.require("sap/ui/core/mvc/XMLView"), "XMLView type loaded");
+					assert.ok(sap.ui.require("sap/ui/model/resource/ResourceModel"), "ResourceModel loaded");
+					assert.ok(sap.ui.require("sap/ui/core/routing/Router"), "Router loaded");
+
+					assert.ok(sap.ui.require("sap/ui/model/odata/v2/ODataModel"), "ODataModel v2 loaded");
+					assert.ok(sap.ui.require("sap/ui/model/odata/v4/ODataModel"), "ODataModel v4 loaded");
+
+					UIComponent.apply(this, arguments);
+				}
+			});
+		});
+
+		return Component.create({
+			name: "manifestModules.scenario1xml",
+			manifest: true
 		});
 	});
 
