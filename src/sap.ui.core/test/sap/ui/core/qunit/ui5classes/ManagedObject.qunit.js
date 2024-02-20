@@ -617,6 +617,28 @@ sap.ui.define([
 		oModel.setProperty("/value", "testvalue");
 	});
 
+	QUnit.test("Bind property OneWay - isPropertyBeingUpdated", function(assert) {
+		assert.strictEqual(this.obj.isPropertyBeingUpdated("value"), false, "'isPropertyBeingUpdated' returns false before the property is bound");
+		this.obj.bindProperty("value", {
+			path: "/value",
+			mode: "OneWay"
+		});
+
+		assert.strictEqual(this.obj.isPropertyBeingUpdated("value"), false, "'isPropertyBeingUpdated' returns false when there's no change for the bound property");
+
+		assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+		assert.equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+
+		this.stub(this.obj, "setProperty").callsFake(() => {
+			assert.strictEqual(this.obj.isPropertyBeingUpdated("value"), true, "'isPropertyBeingUpdated' returns true during the property value update");
+		});
+
+		oModel.setProperty("/value", "newvalue");
+		assert.equal(this.obj.setProperty.callCount, 1, "Setter is called");
+		// restore
+		oModel.setProperty("/value", "testvalue");
+	});
+
 	QUnit.test("Bind property TwoWay", function(assert) {
 		this.obj.bindProperty("value", {
 			path: "/value",
