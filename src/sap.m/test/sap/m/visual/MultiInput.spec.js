@@ -15,6 +15,7 @@ describe('sap.m.MultiInput', function() {
 		element(by.id("compactMode")).click();
 	});
 
+
 	//MultiInpuit with custom validatior
 	it("should focus on MultiInpuit with custom validatior", function () {
 		element(by.id("multiInputCustomValidator-inner")).click();
@@ -197,5 +198,15 @@ describe('sap.m.MultiInput', function() {
 
 				expect(takeScreenshot()).toLookAs("suggestions_popover_margins");
 			});
+		});
+
+		it("Should visualize MultiInput with the expected token selected", function () {
+			var oMultiInput = element(by.id("multiInputWithValidation"));
+			browser.executeScript('document.getElementById("multiInputWithValidation").scrollIntoView()').then(function() {
+				oMultiInput.click();
+				browser.actions().sendKeys("1").perform();
+				element(by.css("#multiInputWithValidation-popup-list-listUl li:nth-child(3)")).click();
+			});
+			expect(takeScreenshot()).toLookAs("focusout-expected-token-selected");
 		});
 });
