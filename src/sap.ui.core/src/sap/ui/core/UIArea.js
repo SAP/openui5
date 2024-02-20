@@ -271,7 +271,11 @@ sap.ui.define([
 	 * @param {Element} oRootNode
 	 *            the hosting DOM node for this instance of <code>UIArea</code>.
 	 * @public
-	 * @deprecated as of version 1.107.0
+	 * @deprecated As of version 1.107, without a replacement. Applications should
+	 *    not create or modify <code>UIArea</code>s programmatically. THey should only
+	 *    assign controls to them, by using {@link sap.ui.core.Control.prototype.placeAt
+	 *    Control.prototype.placeAt} or use the API of a <code>UIArea</code> as reachable
+	 *    via {@link sap.ui.core.Control.prototype.getUIArea Control.prototype.getUIArea}.
 	 */
 	UIArea.prototype.setRootNode = function(oRootNode) {
 		this._setRootNode(oRootNode);
@@ -1423,12 +1427,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Registry of all <code>sap.ui.core.Element</code>s that currently exist.
+	 * Registry of all <code>sap.ui.core.UIArea</code>s that currently exist.
 	 *
 	 * @namespace sap.ui.core.UIArea.registry
 	 * @public
 	 * @since 1.107
-	 * @deprecated As of version 1.120
+	 * @deprecated As of version 1.120, without a replacement. Applications should
+	 *    not be interested in the set of all <code>UIArea</code>s. They should only
+	 *    assign controls to them, by using {@link sap.ui.core.Control.prototype.placeAt
+	 *    Control.prototype.placeAt} or use the API of a <code>UIArea</code> as reachable
+	 *    via {@link sap.ui.core.Control.prototype.getUIArea Control.prototype.getUIArea}.
 	 */
 	UIArea.registry = UIAreaRegistry;
 
@@ -1439,7 +1447,11 @@ sap.ui.define([
 	 * @readonly
 	 * @name sap.ui.core.UIArea.registry.size
 	 * @public
-	 * @deprecated As of version 1.120
+	 * @deprecated As of version 1.120, without a replacement. Applications should
+	 *    not be interested in the set of all <code>UIArea</code>s. They should only
+	 *    assign controls to them, by using {@link sap.ui.core.Control.prototype.placeAt
+	 *    Control.prototype.placeAt} or use the API of a <code>UIArea</code> as reachable
+	 *    via {@link sap.ui.core.Control.prototype.getUIArea Control.prototype.getUIArea}.
 	 */
 
 	/**
@@ -1458,45 +1470,11 @@ sap.ui.define([
 	 * @name sap.ui.core.UIArea.registry.all
 	 * @function
 	 * @public
-	 * @deprecated As of version 1.120
-	 */
-
-	/**
-	 * Return an object with all instances of <code>sap.ui.core.UIArea</code>,
-	 * keyed by their ID.
-	 *
-	 * Each call creates a new snapshot object. Depending on the size of the UI,
-	 * this operation therefore might be expensive. Consider to use the <code>forEach</code>
-	 * or <code>filter</code> method instead of executing similar operations on the returned
-	 * object.
-	 *
-	 * <b>Note</b>: The returned object is created by a call to <code>Object.create(null)</code>,
-	 * and therefore lacks all methods of <code>Object.prototype</code>, e.g. <code>toString</code> etc.
-	 *
-	 * @returns {Object<sap.ui.core.ID,sap.ui.core.UIArea>} Object with all UIAreas, keyed by their ID
-	 * @name sap.ui.core.UIArea.registry.all
-	 * @function
-	 * @public
-	 * @deprecated As of version 1.120
-	 */
-
-	/**
-	 * Return an object with all instances of <code>sap.ui.core.UIArea</code>,
-	 * keyed by their ID.
-	 *
-	 * Each call creates a new snapshot object. Depending on the size of the UI,
-	 * this operation therefore might be expensive. Consider to use the <code>forEach</code>
-	 * or <code>filter</code> method instead of executing similar operations on the returned
-	 * object.
-	 *
-	 * <b>Note</b>: The returned object is created by a call to <code>Object.create(null)</code>,
-	 * and therefore lacks all methods of <code>Object.prototype</code>, e.g. <code>toString</code> etc.
-	 *
-	 * @returns {Object<sap.ui.core.ID,sap.ui.core.UIArea>} Object with all UIAreas, keyed by their ID
-	 * @name sap.ui.core.UIArea.registry.all
-	 * @function
-	 * @public
-	 * @deprecated As of version 1.120
+	 * @deprecated As of version 1.120, without a replacement. Applications should
+	 *    not be interested in the set of all <code>UIArea</code>s. They should only
+	 *    assign controls to them, by using {@link sap.ui.core.Control.prototype.placeAt
+	 *    Control.prototype.placeAt} or use the API of a <code>UIArea</code> as reachable
+	 *    via {@link sap.ui.core.Control.prototype.getUIArea Control.prototype.getUIArea}.
 	 */
 
 	/**
@@ -1510,7 +1488,11 @@ sap.ui.define([
 	 * @name sap.ui.core.UIArea.registry.get
 	 * @function
 	 * @public
-	 * @deprecated As of version 1.120
+	 * @deprecated As of version 1.120, without a replacement. Applications should
+	 *    not be interested in the set of all <code>UIArea</code>s. They should only
+	 *    assign controls to them, by using {@link sap.ui.core.Control.prototype.placeAt
+	 *    Control.prototype.placeAt} or use the API of a <code>UIArea</code> as reachable
+	 *    via {@link sap.ui.core.Control.prototype.getUIArea Control.prototype.getUIArea}.
 	 */
 
 	/**
@@ -1545,7 +1527,11 @@ sap.ui.define([
 	 * @name sap.ui.core.UIArea.registry.forEach
 	 * @function
 	 * @public
-	 * @deprecated As of version 1.120
+	 * @deprecated As of version 1.120, without a replacement. Applications should
+	 *    not be interested in the set of all <code>UIArea</code>s. They should only
+	 *    assign controls to them, by using {@link sap.ui.core.Control.prototype.placeAt
+	 *    Control.prototype.placeAt} or use the API of a <code>UIArea</code> as reachable
+	 *    via {@link sap.ui.core.Control.prototype.getUIArea Control.prototype.getUIArea}.
 	 */
 
 	/**
@@ -1584,7 +1570,11 @@ sap.ui.define([
 	 * @name sap.ui.core.UIArea.registry.filter
 	 * @function
 	 * @public
-	 * @deprecated As of version 1.120
+	 * @deprecated As of version 1.120, without a replacement. Applications should
+	 *    not be interested in the set of all <code>UIArea</code>s. They should only
+	 *    assign controls to them, by using {@link sap.ui.core.Control.prototype.placeAt
+	 *    Control.prototype.placeAt} or use the API of a <code>UIArea</code> as reachable
+	 *    via {@link sap.ui.core.Control.prototype.getUIArea Control.prototype.getUIArea}.
 	 */
 
 	_LocalizationHelper.registerForUpdate("UIAreas", UIAreaRegistry.all);
