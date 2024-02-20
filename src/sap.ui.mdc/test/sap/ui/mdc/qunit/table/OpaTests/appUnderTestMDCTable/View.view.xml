@@ -18,7 +18,26 @@
                 delegate='\{ "name": "sap/ui/mdc/tableOpaTests/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
                 selectionMode="Multi"
                 p13nMode="Column,Sort,Filter,Group"
-                enableAutoColumnWidth="true">
+                enableAutoColumnWidth="true"
+                propertyInfo='[\{
+                    "key": "Name",
+                    "path": "Name",
+                    "label": "Name",
+                    "dataType": "Edm.String",
+                    "constraints": \{
+                        "isDigitSequence": false,
+                        "maxLength": 30
+                    \}
+                \},\{
+                    "key": "SupplierName",
+                    "path": "SupplierName",
+                    "label": "SupplierName",
+                    "dataType": "Edm.String",
+                    "constraints": \{
+                        "isDigitSequence": false,
+                        "maxLength": 30
+                    \}
+                \}]'>
                 <mdc:type>
                     <mdc:table.ResponsiveTableType detailsButtonSetting="Low,None" showDetailsButton="true" />
                 </mdc:type>
