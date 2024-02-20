@@ -37,8 +37,8 @@ sap.ui.define([
 	 *   lib5 (js)
 	 */
 	var EXPECTATIONS = {
-		'none':	[ 'none', 'none', 'none', 'none', 'none' ],
-		'js':   [ 'js', 'jserror', 'js', 'none', 'js' ]
+		'none':	[ 'none', 'none', 'none' ],
+		'js':   [ 'js', 'jserror', 'js' ]
 	};
 
 	var match = /(?:[?&])sap-ui-xx-libraryPreloadFiles=([^&]*)(?:&|$)/.exec(window.location.search);
@@ -69,12 +69,10 @@ sap.ui.define([
 		// Main question: log early (place where an error is detected first) or log late (where the most significant context can be given)
 		this.spy(privateLoaderAPI.logger, 'error');
 
-		var vResult = sap.ui.getCore().loadLibraries([
+		var vResult = Library._load([
 			'testlibs.scenario7.lib1', // both, not configured
 			'testlibs.scenario7.lib2', // json, not configured
-			'testlibs.scenario7.lib3', // js, not configured
-			{ name: 'testlibs.scenario7.lib4', json: true }, // json, configured
-			{ name: 'testlibs.scenario7.lib5', json: false } // js, configured
+			'testlibs.scenario7.lib3'  // js, not configured
 		]);
 
 		return vResult.then(function() {
@@ -89,7 +87,7 @@ sap.ui.define([
 					return sinon.match(new RegExp("scenario7\\/" + lib + "\\/library" + suffix));
 				}
 				var matcherLibPreloadJS = matcher("-preload\\.js$");
-				var matcherLibPreloadJSON = matcher("-preload\\.json$");
+
 				var matcherLibraryModule = "testlibs/scenario7/" + lib + "/library";
 				var matcherLibraryResource = matcher("\\.js$");
 
@@ -97,16 +95,13 @@ sap.ui.define([
 
 				if ( expected === 'none' ) {
 					assert.ok(privateLoaderAPI.loadJSResourceAsync.neverCalledWith(matcherLibPreloadJS), "library-preload.js should not have been requested for '" + lib + "'");
-					assert.ok(XMLHttpRequest.prototype.open.neverCalledWith("GET", matcherLibPreloadJSON), "library-preload.json should not have been requested for '" + lib + "'");
 					assert.ok(sap.ui.require.load.calledWith(sinon.match.any, matcherLibraryResource, matcherLibraryModule), "library.js should have been loaded for '" + lib + "'");
 				} else if ( expected === 'js' ) {
 					assert.ok(privateLoaderAPI.loadJSResourceAsync.calledWith(matcherLibPreloadJS), "library-preload.js should have been loaded for '" + lib + "'");
-					assert.ok(XMLHttpRequest.prototype.open.neverCalledWith("GET", matcherLibPreloadJSON), "library-preload.json should not have been requested for '" + lib + "'");
 					assert.ok(sap.ui.require.load.neverCalledWith(sinon.match.any, matcherLibraryResource, matcherLibraryModule), "library.js should not have been requested for '" + lib + "'");
 				} else if ( expected === 'jserror' ) {
 					assert.ok(privateLoaderAPI.loadJSResourceAsync.calledWith(matcherLibPreloadJS), "library-preload.js should have been requested for '" + lib + "'");
 					assert.ok(privateLoaderAPI.logger.error.calledWith(matcher("-preload\\.js").and(sinon.match(/failed to load/))), "error should have been logged for failing request");
-					assert.ok(XMLHttpRequest.prototype.open.neverCalledWith("GET", matcherLibPreloadJSON), "library-preload.json should not have been loaded for '" + lib + "'");
 					assert.ok(sap.ui.require.load.calledWith(sinon.match.any, matcherLibraryResource, matcherLibraryModule), "library.js should have been loaded for '" + lib + "'");
 				} else {
 					assert.ok(false, "[test code broken] unhandled expectation " + expected);
