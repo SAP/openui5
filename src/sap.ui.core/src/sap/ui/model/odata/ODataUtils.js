@@ -521,7 +521,7 @@ sap.ui.define([
 	 *
 	 * @param {any} vValue The value to format
 	 * @param {string} sType The EDM type (e.g. Edm.Decimal)
-	 * @param {boolean} bCaseSensitive Whether strings gets compared case sensitive or not
+	 * @param {boolean} [bCaseSensitive=true] Whether strings gets compared case sensitive or not
 	 * @param {string} [sFractionalSeconds] The fractional seconds to be appended to the given value in case it is a
 	 *   <code>Date<code>
 	 * @return {string} The formatted value
