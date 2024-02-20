@@ -1948,7 +1948,6 @@ sap.ui.define([
 					isProductiveSystem: false
 				})
 			);
-			return FlexState.initialize({reference: "a.reference"});
 		},
 		afterEach() {
 			sandbox.restore();

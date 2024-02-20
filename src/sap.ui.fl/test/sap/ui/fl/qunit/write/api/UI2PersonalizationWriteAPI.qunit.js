@@ -52,7 +52,6 @@ sap.ui.define([
 			this.oDeletePersonalizationStub = sandbox.stub(UI2PersonalizationState, "deletePersonalization");
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(this.oAppComponent);
-			sandbox.stub(FlexState, "initialize").resolves();
 		},
 		afterEach() {
 			sandbox.restore();

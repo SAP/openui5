@@ -112,7 +112,8 @@ sap.ui.define([
 		});
 		sandbox.stub(Loader, "loadVariantsAuthors").resolves({});
 		await FlexState.initialize({
-			reference: sReference
+			reference: sReference,
+			componentId: sReference
 		});
 	};
 

@@ -44,7 +44,7 @@ sap.ui.define([
 		oSpyRegisterExtensionPoint = sandbox.spy(ExtensionPointRegistry, "registerExtensionPoint");
 
 		if (bSync) {
-			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "sap.ui.fl.qunit.extensionPoint.testApp",
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "sap.ui.fl.qunit.extensionPoint.testAppLegacy",
 				{changes: createChanges("sap.ui.fl.qunit.extensionPoint.testAppLegacy")});
 			oComponent = sap.ui.component({ // legacy-relevant: Sync creation of component
 				name: "sap.ui.fl.qunit.extensionPoint.testAppLegacy",
