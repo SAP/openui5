@@ -1771,7 +1771,8 @@ sap.ui.define([
 					oProperty = bInsideAnnotation ? {} : oType[sPropertyName];
 					if (!oProperty) {
 						if (sPropertyName.includes("@")) {
-							if (sPropertyName.includes("@$ui5.")) {
+							if (sPropertyName.includes("@$ui5.")
+									&& sPropertyName !== "@$ui5.context.isSelected") {
 								error("Read-only path must not be updated");
 							}
 							bInsideAnnotation = true;

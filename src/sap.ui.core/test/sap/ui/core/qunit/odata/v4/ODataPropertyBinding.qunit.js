@@ -317,6 +317,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("bindProperty: client-side annotation", function (assert) {
+		// code under test
+		const oBinding = this.oModel.bindProperty("@$ui5.context.isSelected",
+			this.oModel.createBindingContext("/n/a"));
+
+		assert.strictEqual(oBinding.bNoPatch, true);
+	});
+
+	//*********************************************************************************************
 	[{
 		sInit : "base", sTarget : undefined
 	}, {
