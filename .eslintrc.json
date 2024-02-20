@@ -51,7 +51,7 @@
 		"no-unsafe-negation": ["error", {"enforceForOrderingRelations": true}],
 		"no-unsafe-optional-chaining": ["error", {"disallowArithmeticOperators": true}],
 		"no-useless-backreference": "error",
-		"require-atomic-updates": "error",
+		"require-atomic-updates": ["error", {"allowProperties": true}],
 		"use-isnan": "error",
 		"valid-typeof": ["error", {"requireStringLiterals": true}],
 
