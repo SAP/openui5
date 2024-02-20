@@ -27,7 +27,8 @@
 					"controller/BlockBaseEventing.controller.js",
 					"controller/EventingBlock.controller.js",
 					"controller/blocks/EventingBlock.js",
-					"manifest.json"
+					"manifest.json",
+					"styles.css"
 				]
 			}
 		}
