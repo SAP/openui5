@@ -321,8 +321,7 @@ sap.ui.define([
 				var iIndexOld = this.getSelectedIndex();
 				// if a radio button in the group is focused is true, otherwise - false
 				var hasFocusedRadioButton = this.getDomRef() && this.getDomRef().contains(document.activeElement);
-				// if radio button group has buttons and one of them is selected is true, otherwise - false
-				var isRadioGroupSelected = !!(this.aRBs && this.aRBs[iSelectedIndex]);
+				var isRadioGroupSelected = this.aRBs && this.aRBs[iSelectedIndex] && this.aRBs[iSelectedIndex].getDomRef();
 				var iFocusedIndex;
 
 				if (iSelectedIndex < -1) {
