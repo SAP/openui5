@@ -1086,7 +1086,8 @@ sap.ui.define([
 						ready : function () { return SyncPromise.resolve(); }
 					},
 					mUriParameters : {},
-					getReporter : getForbiddenReporter
+					getReporter : getForbiddenReporter,
+					waitForKeepAliveBinding : mustBeMocked
 				},
 				sPath : "/absolute",
 				bRelative : false
@@ -1108,10 +1109,15 @@ sap.ui.define([
 			.returns(false);
 		oBindingMock.expects("fetchResourcePath").withExactArgs(undefined)
 			.returns(SyncPromise.resolve("absolute"));
-		oBindingMock.expects("createAndSetCache")
-			.withExactArgs(sinon.match.same(mLocalQueryOptions), "absolute", undefined,
-				"~sGroupId~", sinon.match.same(oOldCache))
-			.returns(oNewCache);
+		this.mock(oBinding.oModel).expects("waitForKeepAliveBinding")
+			.withExactArgs(sinon.match.same(oBinding))
+			.callsFake(async function () {
+				await "next tick";
+				oBindingMock.expects("createAndSetCache")
+					.withExactArgs(sinon.match.same(mLocalQueryOptions), "absolute", undefined,
+						"~sGroupId~", sinon.match.same(oOldCache))
+					.returns(oNewCache);
+			});
 
 		// code under test
 		oBinding.fetchCache(oContext, bIgnoreParentCache, undefined, "~sGroupId~");
@@ -1141,7 +1147,8 @@ sap.ui.define([
 							ready : function () { return SyncPromise.resolve(); }
 						},
 						mUriParameters : {},
-						getReporter : getForbiddenReporter
+						getReporter : getForbiddenReporter,
+						waitForKeepAliveBinding : mustBeMocked
 					},
 					sPath : "relative",
 					bRelative : true
@@ -1172,12 +1179,17 @@ sap.ui.define([
 			oBindingMock.expects("fetchResourcePath")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(oResourcePathPromise);
-			oBindingMock.expects("createAndSetCache")
-				.withExactArgs(sinon.match.same(mLocalQueryOptions), "resourcePath",
-					sinon.match.same(oContext), undefined, null)
+			this.mock(oBinding.oModel).expects("waitForKeepAliveBinding")
+				.withExactArgs(sinon.match.same(oBinding))
 				.callsFake(function () {
-					oBinding.oCache = oCache;
-					return oCache;
+					oBindingMock.expects("createAndSetCache")
+						.withExactArgs(sinon.match.same(mLocalQueryOptions), "resourcePath",
+							sinon.match.same(oContext), undefined, null)
+						.callsFake(function () {
+							oBinding.oCache = oCache;
+							return oCache;
+						});
+					return SyncPromise.resolve();
 				});
 
 			// code under test
@@ -1209,14 +1221,16 @@ sap.ui.define([
 				oModel : {
 					oRequestor : oRequestor,
 					mUriParameters : {},
-					getReporter : getForbiddenReporter
+					getReporter : getForbiddenReporter,
+					waitForKeepAliveBinding : mustBeMocked
 				},
 				sPath : "/absolute",
 				bRelative : false
 			}),
 			oBindingMock = this.mock(oBinding),
 			oCache = {},
-			mLocalQueryOptions = {};
+			mLocalQueryOptions = {},
+			that = this;
 
 		oBindingMock.expects("fetchOrGetQueryOptionsForOwnCache")
 			.withExactArgs(undefined, undefined)
@@ -1233,10 +1247,20 @@ sap.ui.define([
 					.returns(false);
 				oBindingMock.expects("fetchResourcePath").withExactArgs(undefined)
 					.returns(SyncPromise.resolve("absolute"));
+				let bWaitedForKeepAliveBinding = false;
+				that.mock(oBinding.oModel).expects("waitForKeepAliveBinding")
+					.withExactArgs(sinon.match.same(oBinding))
+					.callsFake(function () {
+						bWaitedForKeepAliveBinding = true;
+						return SyncPromise.resolve();
+					});
 				oBindingMock.expects("createAndSetCache")
 					.withExactArgs(sinon.match.same(mLocalQueryOptions), "absolute", undefined,
 						undefined, null)
-					.returns(oCache);
+					.callsFake(function () {
+						assert.strictEqual(bWaitedForKeepAliveBinding, true);
+						return oCache;
+					});
 			})));
 
 		// code under test
@@ -1407,7 +1431,8 @@ sap.ui.define([
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
 					},
-					mUriParameters : {}
+					mUriParameters : {},
+					waitForKeepAliveBinding : mustBeMocked
 				},
 				sPath : "relative",
 				mParameters : {$$canonicalPath : true},
@@ -1455,6 +1480,9 @@ sap.ui.define([
 		oBindingMock.expects("fetchResourcePath")
 			.withExactArgs(sinon.match.same(oContext1))
 			.returns(SyncPromise.resolve(Promise.resolve("resourcePath1")));
+		this.mock(oBinding.oModel).expects("waitForKeepAliveBinding")
+			.withExactArgs(sinon.match.same(oBinding))
+			.returns(SyncPromise.resolve());
 		oBindingMock.expects("createAndSetCache")
 			.withExactArgs(sinon.match.same(mLocalQueryOptions), "resourcePath1",
 				sinon.match.same(oContext1), "~sGroupId~", sinon.match.same(oOldCache))
