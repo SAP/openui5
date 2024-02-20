@@ -26,13 +26,13 @@ sap.ui.define([
 				 * The dateValue which is expected.
 				 */
 				dateValue: {
-					type: "Date"
+					type: "object"
 				},
 				/**
 				 * The secondDateValie which is expected.
 				 */
 				 secondDateValue: {
-					type: "Date"
+					type: "object"
 				}
 			}
 		},

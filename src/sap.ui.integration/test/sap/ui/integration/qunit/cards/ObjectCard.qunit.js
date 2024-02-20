@@ -18,7 +18,7 @@ sap.ui.define([
 	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	Log,
-	coreAnimationMode,
+	CoreAnimationMode,
 	mLibrary,
 	ControlBehavior,
 	Library,
@@ -42,7 +42,7 @@ sap.ui.define([
 	var AvatarColor = mLibrary.AvatarColor;
 	var CardActionType = library.CardActionType;
 	var ValueState = coreLibrary.ValueState;
-	var AnimationMode = coreAnimationMode;
+	var AnimationMode = CoreAnimationMode;
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 

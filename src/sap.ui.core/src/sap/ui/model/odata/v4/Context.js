@@ -2117,10 +2117,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets whether this context is currently selected. If the preconditions of
-	 * {@link #setKeepAlive} hold, a best effort is made to implicitly keep a selected context alive
-	 * in order to preserve the selection state. While a context is currently
-	 * {@link #delete deleted} on the client, it does not appear as {@link #isSelected selected}.
+	 * Sets whether this context is currently selected. While a context is currently
+	 * {@link #delete deleted} on the client, it does not appear as {@link #isSelected selected}. If
+	 * the preconditions of {@link #setKeepAlive} hold, a best effort is made to implicitly keep a
+	 * selected context alive in order to preserve the selection state. Once the selection is no
+	 * longer needed, for example because you perform an operation on this context which logically
+	 * removes it from its list, you need to reset the selection.
 	 *
 	 * <b>Note:</b> It is unsafe to keep a reference to a context instance which is not
 	 * {@link #isKeepAlive kept alive}.

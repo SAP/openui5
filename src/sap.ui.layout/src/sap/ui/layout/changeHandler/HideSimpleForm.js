@@ -274,12 +274,9 @@ sap.ui.define([
 			});
 	};
 
-	HideForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {
+	HideForm.getChangeVisualizationInfo = function(oChange) {
 		var oSelector = oChange.getContent().elementSelector;
-		var oElement = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
-		var oDisplaySelector = oChange.getChangeType() === "removeSimpleFormGroup"
-			? oElement.getParent().getId()
-			: oElement.getParent().getParent().getId();
+		var oDisplaySelector = oChange.getSelector();
 		return {
 			affectedControls: [oSelector],
 			displayControls: [oDisplaySelector],

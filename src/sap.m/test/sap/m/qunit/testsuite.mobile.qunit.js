@@ -1833,10 +1833,7 @@ sap.ui.define([
 			},
 
 			TextArea: {
-				title: "Test Page for sap.m.TextArea",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "Test Page for sap.m.TextArea"
 			},
 
 			TileContent: {

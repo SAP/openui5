@@ -10,11 +10,11 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'./library',
 	'sap/ui/core/library',
-	'sap/ui/core/Core',
 	'sap/ui/events/KeyCodes',
 	'sap/ui/Device',
 	"sap/base/security/encodeXML",
 	'./TextAreaRenderer',
+	"sap/ui/core/Theming",
 	"sap/ui/thirdparty/jquery"
 ],
 function(
@@ -24,11 +24,11 @@ function(
 	ResizeHandler,
 	library,
 	coreLibrary,
-	oCore,
 	KeyCodes,
 	Device,
 	encodeXML,
 	TextAreaRenderer,
+	Theming,
 	jQuery
 ) {
 	"use strict";
@@ -311,16 +311,15 @@ function(
 			fLineHeight,
 			fMaxHeight,
 			oStyle;
-
 		// The CSS rules might not hve been applied yet and the getComputedStyle function might not return the proper values. So, wait for the theme to be applied properly
 		// The check for loaded libraries is to ensure that sap.m has been loaded. TextArea's CSS sources would be loaded along with the library
 		if (!oLoadedLibraries || !oLoadedLibraries['sap.m']) {
-			oCore.attachThemeChanged(this._setGrowingMaxHeight.bind(this));
+			Theming.attachApplied(this._setGrowingMaxHeight.bind(this));
 			return;
 		}
 
 		// After it's been executed, we need to release the resources
-		oCore.detachThemeChanged(this._setGrowingMaxHeight);
+		Theming.detachApplied(this._setGrowingMaxHeight);
 
 		oStyle = window.getComputedStyle(oHiddenDiv);
 

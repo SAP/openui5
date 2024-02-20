@@ -5,7 +5,7 @@
 // Provides control sap.m.IconTabFilter.
 sap.ui.define([
 	"./library",
-	"./AccButton",
+	"sap/ui/core/Icon",
 	"./IconTabFilterExpandButtonBadge",
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Lib",
@@ -23,7 +23,7 @@ sap.ui.define([
 	"sap/m/ImageHelper"
 ], function(
 	library,
-	AccButton,
+	Icon,
 	IconTabFilterExpandButtonBadge,
 	Localization,
 	Library,
@@ -48,9 +48,6 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
-	// shortcut for sap.m.ButtonType
-	var ButtonType = library.ButtonType;
-
 	// shortcut for sap.m.PlacementType
 	var PlacementType = library.PlacementType;
 
@@ -68,9 +65,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.IconColor
 	var IconColor = coreLibrary.IconColor;
-
-	// shortcut for sap.ui.core.aria.HasPopup
-	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	/**
 	 * The time between tab activation and the disappearance of the badge.
@@ -188,10 +182,10 @@ sap.ui.define([
 			items : {type : "sap.m.IconTab", multiple : true, singularName : "item"},
 
 			/**
-			 * The expand button if there are sub filters
+			 * The expand icon if there are sub filters
 			 * @since 1.77
 			 */
-			_expandButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"},
+			_expandIcon : {type : "sap.ui.core.Icon", multiple : false, visibility : "hidden"},
 
 			/**
 			 * The badge of the expand button
@@ -286,10 +280,10 @@ sap.ui.define([
 			this._oPopover = null;
 		}
 
-		if (this._oExpandButton) {
-			this._oExpandButton.removeEventDelegate(this._oDragEventDelegate);
-			this._oExpandButton.destroy();
-			this._oExpandButton = null;
+		if (this._oExpandIcon) {
+			this._oExpandIcon.removeEventDelegate(this._oDragEventDelegate);
+			this._oExpandIcon.destroy();
+			this._oExpandIcon = null;
 		}
 
 		this.removeEventDelegate(this._oDragEventDelegate);
@@ -433,7 +427,7 @@ sap.ui.define([
 		}
 
 		var bHasIconTabBar = oIconTabHeader._isInsideIconTabBar(),
-			mAriaParams = { role: "tab" },
+			mAriaParams = { role: "tab"},
 			sId = this.getId(),
 			sCount = this.getCount(),
 			sText = this.getText(),
@@ -452,12 +446,12 @@ sap.ui.define([
 			mAriaParams.role = "button";
 		}
 
-		if (bHasIconTabBar) {
-			mAriaParams.controls = oIconTabBar.getId() + "-content";
+		if (this.getItems().length && bIsSelectable) {
+			mAriaParams.haspopup = "menu";
 		}
 
-		if (this.getItems().length) {
-			mAriaParams.roledescription = oResourceBundle.getText("ICONTABFILTER_SPLIT_TAB");
+		if (bHasIconTabBar) {
+			mAriaParams.controls = oIconTabBar.getId() + "-content";
 		}
 
 		if (sText.length ||
@@ -651,7 +645,9 @@ sap.ui.define([
 				.openEnd()
 			.close("span");
 
-			oRM.renderControl(this._getExpandButton());
+			oRM.openStart("span", this.getId() + "-expandButton").class("sapMITBFilterExpandBtn").openEnd();
+				oRM.renderControl(this._getExpandIcon());
+			oRM.close("span");
 		}
 
 		oRM.renderControl(this.getAggregation("_expandButtonBadge"));
@@ -891,23 +887,21 @@ sap.ui.define([
 	 * based on whether or not the IconTabFilter is selectable.
 	 * @private
 	 */
-	IconTabFilter.prototype._getExpandButton = function () {
-		this._oExpandButton = this.getAggregation("_expandButton");
+	IconTabFilter.prototype._getExpandIcon = function () {
+		this._oExpandIcon = this.getAggregation("_expandIcon");
 
-		if (!this._oExpandButton) {
-			this._oExpandButton = new AccButton(this.getId() + "-expandButton", {
-				type: ButtonType.Transparent,
-				icon: IconPool.getIconURI("slim-arrow-down"),
+		if (!this._oExpandIcon) {
+			this._oExpandIcon = new Icon(this.getId() + "-expandIcon", {
+				src: IconPool.getIconURI("slim-arrow-down"),
 				tooltip: oResourceBundle.getText("ICONTABHEADER_OVERFLOW_MORE"),
-				tabIndex: "-1",
-				ariaHasPopup: AriaHasPopup.Menu,
+				noTabStop: true,
 				press: this._expandButtonPress.bind(this)
-			}).addStyleClass("sapMITBFilterExpandBtn");
+			}).addStyleClass("sapMITBFilterExpandIcon");
 
-			this.setAggregation("_expandButton", this._oExpandButton);
+			this.setAggregation("_expandIcon", this._oExpandIcon);
 		}
 
-		return this._oExpandButton;
+		return this._oExpandIcon;
 	};
 
 	/**

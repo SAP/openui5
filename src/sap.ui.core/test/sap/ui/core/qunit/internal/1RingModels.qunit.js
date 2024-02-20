@@ -65,11 +65,8 @@ sap.ui.require([
 		// ***************************************************************************************
 		// sap.ui.core.rules.Model.support - tests are contained in testsuite.rule.qunit.js
 		// ***************************************************************************************
-		//TODO: get test running in 1RingModels.qunit; breaks ODataModel.integration.qunit when
-		//  sap.ui.table.* controls are used due to a support rule for this library leading to error
-		//  log
-		//  "Support rule with the id gridTableAccessibleLabel should have an audience."
-		// "sap/ui/core/qunit/rule/model/modelSupport.qunit",
+		"sap/ui/core/qunit/rule/model/bindingPathSyntaxValidation.qunit",
+		"sap/ui/core/qunit/rule/model/selectUsedInBoundAggregation.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.model.* - tests are contained in testsuite.databinding.qunit.js

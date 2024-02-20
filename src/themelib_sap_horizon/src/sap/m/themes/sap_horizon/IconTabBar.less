@@ -163,6 +163,8 @@
 // =========== Shell ===========
 @_sap_m_IconTabBar_ShellHeaderShadow: @sapUiShellShadow;
 @_sap_m_IconTabBar_ShellSelectedTextColor: @sapUiShellNavigationSelectedTextColor;
+@_sap_m_IconTabBar_Filter_Expand_Shell_BackgroundColor_Hover: @sapUiButtonHoverBackground;
+@_sap_m_IconTabBar_Filter_Expand_Shell_BorderColor_Hover: @sapUiButtonHoverBorderColor;
 
 
 /* Head Container */
@@ -214,10 +216,6 @@
 		margin-top: 1.0625rem;
 	}
 
-	.sapMITBFilterExpandBtn:hover .sapMBtnInner {
-		border-radius: 0.25rem;
-	}
-
 
 	//More Button
 	.sapMITHStartOverflow,
@@ -249,7 +247,7 @@
 	}
 
 	//Arrow button
-	.sapMITBFilterWithItems .sapMITBFilterExpandBtn .sapMBtnIcon  {
+	.sapMITBFilterWithItems .sapMITBFilterExpandBtn .sapUiIcon  {
 		color: @sapUiBaseText;
 	}
 }
@@ -351,19 +349,19 @@
 /* Tab Filter Item */
 
 .sapMITH:not(.sapMITBTextOnly) .sapMITBHorizontal {
-	.sapMBtn {
+	.sapMITBFilterExpandBtn {
 		margin-bottom: 0.9375rem;
 	}
 }
 
 .sapMITH:not(.sapMITBTextOnly):not(.sapMITBNoText) .sapMITBVertical {
-	.sapMBtn {
+	.sapMITBFilterExpandBtn {
 		margin-bottom: 1.875rem;
 	}
 }
 
 .sapMITBNoText.sapMITH {
-	.sapMBtn {
+	.sapMITBFilterExpandBtn {
 		margin-bottom: 0.9375rem;
 	}
 }
@@ -372,8 +370,8 @@
 	.sapMITBFilterExpandBtnSeparator {
 		margin-top: 1.3125rem;
 	}
-	.sapMBtn {
-		margin-top: 0.4375rem;
+	.sapMITBFilterExpandBtn {
+		margin-top: 0.25rem;
 	}
 }
 
@@ -386,7 +384,7 @@
 		.sapMITBFilterExpandBtnSeparator {
 			border-color: @sapUiContentSelectedForegroundColor;
 		}
-		.sapMBtnIcon {
+		.sapMITBFilterExpandIcon {
 			color: @_sap_m_IconTabBar_SelectedTextColor !important;
 		}
 	}
@@ -399,7 +397,7 @@
 			color: @sapUiNeutralText;
 		}
 		.sapMITBFilterExpandBtn:hover{
-			.sapMBtnIcon {
+			.sapMITBFilterExpandIcon {
 				color: @sapUiNeutralText;
 			}
 		}
@@ -416,7 +414,7 @@
 			color: @sapUiPositiveText;
 		}
 		.sapMITBFilterExpandBtn:hover{
-			.sapMBtnIcon {
+			.sapMITBFilterExpandIcon {
 				color: @sapUiPositiveText !important;
 			}
 		}
@@ -433,7 +431,7 @@
 			color: @sapUiNegativeText;
 		}
 		.sapMITBFilterExpandBtn:hover{
-			.sapMBtnIcon {
+			.sapMITBFilterExpandIcon {
 				color: @sapUiNegativeText;
 			}
 		}
@@ -450,7 +448,7 @@
 			color: @sapUiCriticalText;
 		}
 		.sapMITBFilterExpandBtn:hover{
-			.sapMBtnIcon {
+			.sapMITBFilterExpandIcon {
 				color: @sapUiCriticalText;
 			}
 		}
@@ -472,8 +470,8 @@
 		border-color: @sapUiBaseText;
 	}
 
-	.sapMBtnIcon {
-		color: @sapUiBaseText !important;
+	.sapMITBFilterExpandIcon {
+		color: @sapUiBaseText;
 	}
 }
 
@@ -485,7 +483,7 @@
 	}
 
 	.sapMITBFilterExpandBtn:hover {
-		.sapMBtnIcon {
+		.sapMITBFilterExpandIcon {
 			color: @sapUiBaseText;
 		}
 	}
@@ -499,7 +497,7 @@
 		border-color: @sapUiNeutralText;
 	}
 
-	.sapMBtnIcon {
+	.sapMITBFilterExpandIcon {
 		color: @sapUiNeutralText !important;
 	}
 }
@@ -512,7 +510,7 @@
 		border-color: @sapUiPositiveText;
 	}
 
-	.sapMBtnIcon {
+	.sapMITBFilterExpandIcon {
 		color: @sapUiPositiveText !important;
 	}
 }
@@ -525,7 +523,7 @@
 		border-color: @sapUiNegativeText;
 	}
 
-	.sapMBtnIcon {
+	.sapMITBFilterExpandIcon {
 		color: @sapUiNegativeText !important;
 	}
 }
@@ -538,7 +536,7 @@
 		border-color: @sapUiCriticalText;
 	}
 
-	.sapMBtnIcon {
+	.sapMITBFilterExpandIcon {
 		color: @sapUiCriticalText !important;
 	}
 }
@@ -548,7 +546,7 @@
 		.sapMITBFilterExpandBtnSeparator {
 			border-color: @sapUiNeutralElement;
 		}
-		.sapMBtnIcon {
+		.sapMITBFilterExpandIcon {
 			color: @sapUiNeutralElement !important;
 		}
 	}
@@ -557,7 +555,7 @@
 		.sapMITBFilterExpandBtnSeparator {
 			border-color: @sapUiPositiveElement;
 		}
-		.sapMBtnIcon {
+		.sapMITBFilterExpandIcon {
 			color: @sapUiPositiveElement !important;
 		}
 	}
@@ -566,7 +564,7 @@
 		.sapMITBFilterExpandBtnSeparator {
 			border-color: @sapUiNegativeElement;
 		}
-		.sapMBtnIcon {
+		.sapMITBFilterExpandIcon {
 			color: @sapUiNegativeElement !important;
 		}
 	}
@@ -574,7 +572,7 @@
 		.sapMITBFilterExpandBtnSeparator {
 			border-color: @sapUiCriticalElement;
 		}
-		.sapMBtnIcon {
+		.sapMITBFilterExpandIcon {
 			color: @sapUiCriticalElement !important;
 		}
 	}
@@ -830,7 +828,7 @@ html.sap-desktop {
 	color:  @sapUiShellNavigationSelectedColor;
   }
 
-  .sapMITBSelected:not(sapMITBDisabled)  .sapMITBContentArrow::after {
+  .sapMITBSelected:not(.sapMITBDisabled)  .sapMITBContentArrow::after {
 	background: @sapUiShellNavigationSelectedColor;
   }
 
