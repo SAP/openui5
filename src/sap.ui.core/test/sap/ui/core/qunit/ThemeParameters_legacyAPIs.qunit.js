@@ -66,11 +66,11 @@ sap.ui.define([
 
 	function checkLibraryParametersJsonRequestForLib(sLibNumber) {
 		return performance.getEntriesByType("resource").filter(function (oResource) {
-			return oResource.name.endsWith("themeParameters/lib" + sLibNumber + "/themes/sap_hcb/library-parameters.json");
+			return oResource.name.endsWith("themeParameters/lib" + sLibNumber + "/themes/sap_horizon_hcb/library-parameters.json");
 		});
 	}
 	function createLinkElement (sId, bBase) {
-		var sUrl = sap.ui.require.toUrl("test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters/lib17/themes/" + (bBase ? "base" : "sap_hcb") + "/library.css");
+		var sUrl = sap.ui.require.toUrl("test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters/lib17/themes/" + (bBase ? "base" : "sap_horizon_hcb") + "/library.css");
 		return includeStylesheet({
 			url: sUrl,
 			id: bBase ? sId : undefined
@@ -177,7 +177,7 @@ sap.ui.define([
 	QUnit.test("After Theme Change", function(assert) {
 		var done = assert.async();
 		var fnContinue = function(oEvent) {
-			if (oEvent.theme === "sap_hcb") {
+			if (oEvent.theme === "sap_horizon_hcb") {
 				Theming.detachApplied(fnContinue);
 				done();
 			}
@@ -190,7 +190,7 @@ sap.ui.define([
 
 				Theming.detachApplied(fnAssertApplied);
 				Theming.attachApplied(fnContinue);
-				Theming.setTheme("sap_hcb");
+				Theming.setTheme("sap_horizon_hcb");
 			}
 		};
 
@@ -344,9 +344,9 @@ sap.ui.define([
 				url1: sPath + "/testdata/libraries/themeParameters/lib4/img1.jpg",
 				url2: sPath + "/testdata/libraries/themeParameters/lib4/foo/img2.jpg",
 				url3: sPath + "/testdata/libraries/themeParameters/lib4/foo/bar/img3.jpg",
-				url4: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_hcb/",
-				url5: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_hcb/",
-				url6: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_hcb/",
+				url4: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/",
+				url5: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/",
+				url6: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/",
 				url7: "blob:http://example.com/6e88648c-00e1-4512-9695-5b702d8455b4",
 				url8: "data:text/plain;utf-8,foo",
 				url9: {
@@ -360,9 +360,9 @@ sap.ui.define([
 			assert.equal(Parameters.get("sapUiThemeParamUrl1"), "url('" + expected.url1 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/img1.jpg'.");
 			assert.equal(Parameters.get("sapUiThemeParamUrl2"), "url('" + expected.url2 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/foo/img2.jpg'.");
 			assert.equal(Parameters.get("sapUiThemeParamUrl3"), "url('" + expected.url3 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/foo/bar/img3.jpg'.");
-			assert.equal(Parameters.get("sapUiThemeParamUrl4"), "url('" + expected.url4 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_hcb/'.");
-			assert.equal(Parameters.get("sapUiThemeParamUrl5"), "url('" + expected.url5 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_hcb/'.");
-			assert.equal(Parameters.get("sapUiThemeParamUrl6"), "url('" + expected.url6 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_hcb/'.");
+			assert.equal(Parameters.get("sapUiThemeParamUrl4"), "url('" + expected.url4 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/'.");
+			assert.equal(Parameters.get("sapUiThemeParamUrl5"), "url('" + expected.url5 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/'.");
+			assert.equal(Parameters.get("sapUiThemeParamUrl6"), "url('" + expected.url6 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/'.");
 			assert.equal(Parameters.get("sapUiThemeParamUrl7"), "url('" + expected.url7 + "')", "Relative URL should be resolved correctly 'blob:http://example.com/6e88648c-00e1-4512-9695-5b702d8455b4'.");
 			assert.equal(Parameters.get("sapUiThemeParamUrl8"), "url('" + expected.url8 + "')", "Relative URL should be resolved correctly 'data:text/plain;utf-8,foo'.");
 			assert.equal(Parameters.get("sapUiThemeParamUrl9"), expected.url9.plain, "'none' should stay as defined");
@@ -640,7 +640,7 @@ sap.ui.define([
 		};
 
 		var fnApplied = function (oEvent) {
-			if (oEvent.theme === "sap_hcb") {
+			if (oEvent.theme === "sap_horizon_hcb") {
 				Theming.detachApplied(fnApplied);
 
 				sap.ui.getCore().loadLibraries(["testlibs.themeParameters.lib14"]).then(function () {
@@ -651,7 +651,7 @@ sap.ui.define([
 							assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#efefef", "sapUiThemeParamForLib13 must be defined as '#efefef' for theme 'base'");
 
 							Theming.attachApplied(fnContinue);
-							Theming.setTheme("sap_hcb");
+							Theming.setTheme("sap_horizon_hcb");
 						}
 					});
 					assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#fefefe", "sapUiThemeParamForLib13 must be defined as '#fefefe' for theme 'hcb'");
