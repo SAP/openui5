@@ -1899,5 +1899,20 @@
         ]
       }
     ]
+  },
+  "1.96.27": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "6d8a378a15ca581aea7744c60539b6fd416b675a",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Avoid double value validation"
+      },
+      {
+        "id": "c18e24a085f07154ad40a5540b7cecce54f79ab1",
+        "type": "FIX",
+        "text": " We've introduced the isTrustedSource property as a security enhancement for the PDFViewer control as detailed in the API reference"
+      }
+    ]
   }
 }

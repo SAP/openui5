@@ -779,5 +779,15 @@
         "text": " sap.ui.model.odata.v2.ODataTreeBinding: Fix grouping of Application filters in OperationMode.Server"
       }
     ]
+  },
+  "1.96.27": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "06908b821a00e17d7d541cbedd14101393e80d48",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/ODataMetadata#_getPropertyMetadata: fix for complex type property"
+      }
+    ]
   }
 }
