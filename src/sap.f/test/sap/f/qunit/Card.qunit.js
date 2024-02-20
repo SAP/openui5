@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/Lib"
 ],
 function (
 	Card,
@@ -34,7 +35,8 @@ function (
 	QUnitUtils,
 	nextUIUpdate,
 	KeyCodes,
-	UI5Date
+	UI5Date,
+	Library
 ) {
 	"use strict";
 
@@ -176,7 +178,7 @@ function (
 		var oNow = UI5Date.getInstance(),
 			oNowUniversalDate = new UniversalDate(oNow),
 			oDateFormat = DateFormat.getDateTimeInstance({relative: true}),
-			sTextNow = oDateFormat.format(oNowUniversalDate),
+			sTextNow = Library.getResourceBundleFor("sap.f").getText("CARD_HEADER_DATETIMESTAMP_NOW"),
 			sText1Minute,
 			oHeader = new CardHeader({
 				dataTimestamp: oNow.toISOString()

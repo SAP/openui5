@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/base/security/encodeURL",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/model/Sorter"
-], function(encodeURL, Filter, FilterOperator, Sorter) {
+	"sap/ui/model/Sorter",
+	"sap/ui/model/odata/ODataUtils"
+], function(encodeURL, Filter, FilterOperator, Sorter, ODataUtils) {
 	"use strict";
 
 	/**
@@ -3055,16 +3056,12 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_renderPropertyFilterValue : function(sFilterValue, sPropertyEDMTypeName) {
+		_renderPropertyFilterValue : function (sFilterValue, sPropertyEDMTypeName, sFractionalSeconds) {
 			if (sPropertyEDMTypeName === "Edm.Time" && rOnlyDigits.test(sFilterValue)) {
 				sFilterValue = {ms : parseInt(sFilterValue), __edmType : "Edm.Time"};
 			}
 
-			// initial implementation called odata4analytics.helper.renderPropertyFilterValue,
-			// which had problems with locale-specific input values
-			// this is handled in the ODataModel
-			return encodeURL(
-					this._oModel.getODataModel().formatValue(sFilterValue, sPropertyEDMTypeName));
+			return encodeURL(ODataUtils._formatValue(sFilterValue, sPropertyEDMTypeName, true, sFractionalSeconds));
 		},
 
 		/**
@@ -3080,17 +3077,26 @@ sap.ui.define([
 		},
 
 		/**
+		 * Adds the given filter to <code>this._aConditionUI5Filter</code> if it is not yet contained.
+		 *
+		 * @param {sap.ui.model.Filter} oFilter The filter to add
 		 * @private
 		 */
-		_addCondition : function(sProperty, sOperator, oValue1, oValue2) {
+		_addCondition : function (oFilter) {
+			const {sPath, sOperator, oValue1, oValue2, sFractionalSeconds1, sFractionalSeconds2} = oFilter;
 			// make sure that the condition is new
-			for ( var i = -1, oUI5Filter; (oUI5Filter = this._aConditionUI5Filter[++i]) !== undefined;) {
-				if (oUI5Filter.sPath == sProperty && oUI5Filter.sOperator == sOperator && oUI5Filter.oValue1 == oValue1
-						&& oUI5Filter.oValue2 == oValue2) {
-					return;
-				}
+			const bExists = this._aConditionUI5Filter.some((oFilter0) =>
+				oFilter0.sPath === sPath
+				&& oFilter0.sOperator === sOperator
+				// coercion really necessary? For dates and Edm.Time objects the equality operator
+				// does not prevent duplicates
+				&& oFilter0.oValue1 == oValue1
+				&& oFilter0.oValue2 == oValue2
+				&& oFilter0.sFractionalSeconds1 === sFractionalSeconds1
+				&& oFilter0.sFractionalSeconds2 === sFractionalSeconds2);
+			if (!bExists) {
+				this._aConditionUI5Filter.push(oFilter);
 			}
-			this._aConditionUI5Filter.push(new Filter(sProperty, sOperator, oValue1, oValue2));
 		},
 
 		/**
@@ -3106,22 +3112,28 @@ sap.ui.define([
 		 * Multiple conditions on the same property are combined with a logical OR first, and in a second step conditions for
 		 * different properties are combined with a logical AND.
 		 *
-		 * @param {string}
-		 *            sPropertyName The name of the property bound in the condition
-		 * @param {sap.ui.model.FilterOperator}
-		 *            sOperator operator used for the condition
-		 * @param {object}
-		 *            oValue value to be used for this condition
-		 * @param {object}
-		 *            oValue2 (optional) as second value to be used for this condition
-		 * @throws Exception
-		 *             if the property is unknown or not filterable
+		 * @param {string|sap.ui.model.Filter} vPropertyNameOrFilter
+		 *   The name of the property or a {@link sap.ui.model.Filter} instance
+		 * @param {sap.ui.model.FilterOperator} [sOperator]
+		 *   The operator of the condition, only used if <code>vPropertyNameOrFilter</code> is a string
+		 * @param {object} [oValue]
+		 *   The value of the condition, only used if <code>vPropertyNameOrFilter</code> is a string
+		 * @param {object} [oValue2]
+		 *   The second value of the condition, only used if <code>vPropertyNameOrFilter</code> is a string
 		 * @returns {sap.ui.model.analytics.odata4analytics.FilterExpression} This object for method chaining
+		 * @throws Exception
+		 *   If the property is unknown or not filterable
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.FilterExpression#addCondition
 		 */
-		addCondition : function(sPropertyName, sOperator, oValue, oValue2) {
+		addCondition : function (vPropertyNameOrFilter, sOperator, oValue, oValue2) {
+			let sPropertyName = vPropertyNameOrFilter;
+			let oFilter;
+			if (typeof vPropertyNameOrFilter === "object") {
+				sPropertyName = vPropertyNameOrFilter.sPath;
+				oFilter = vPropertyNameOrFilter;
+			}
 			var oProperty = this._oEntityType.findPropertyByName(sPropertyName);
 			if (oProperty == null) {
 				throw "Cannot add filter condition for unknown property name " + sPropertyName; // TODO
@@ -3130,7 +3142,7 @@ sap.ui.define([
 			if (((aFilterablePropertyNames ? Array.prototype.indexOf.call(aFilterablePropertyNames, sPropertyName) : -1)) === -1) {
 				throw "Cannot add filter condition for not filterable property name " + sPropertyName; // TODO
 			}
-			this._addCondition(sPropertyName, sOperator, oValue, oValue2);
+			this._addCondition(oFilter || new Filter(sPropertyName, sOperator, oValue, oValue2));
 			return this;
 		},
 
@@ -3189,20 +3201,20 @@ sap.ui.define([
 				throw "Cannot add filter condition for not filterable property name " + sPropertyName; // TODO
 			}
 			for ( var i = -1, oValue; (oValue = aValues[++i]) !== undefined;) {
-				this._addCondition(sPropertyName, FilterOperator.EQ, oValue);
+				this._addCondition(new Filter(sPropertyName, FilterOperator.EQ, oValue));
 			}
 			return this;
 		},
 
 		/**
-		 * Add an array of UI5 filter conditions to the filter expression.
+		 * Adds an array of UI5 filter conditions to the filter expression.
 		 *
 		 * The UI5 filter condition is combined with the other given conditions using a logical AND. This method
 		 * is particularly useful for passing forward already created UI5 filter arrays.
 		 *
-		 * @param {sap.ui.model.Filter[]}
-		 *            aUI5Filter Array of UI5 filter objects
+		 * @param {sap.ui.model.Filter[]} aUI5Filter Array of UI5 filter objects
 		 * @returns {sap.ui.model.analytics.odata4analytics.FilterExpression} This object for method chaining
+		 * @throws Exception If the given aUI5Filter is not an array
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.FilterExpression#addUI5FilterConditions
@@ -3227,7 +3239,7 @@ sap.ui.define([
 				this._addUI5FilterArray(aUI5Filter);
 			} else {
 				for (var j = 0; j < aUI5Filter.length; j++) {
-							this.addCondition(aUI5Filter[j].sPath, aUI5Filter[j].sOperator, aUI5Filter[j].oValue1, aUI5Filter[j].oValue2);
+					this.addCondition(aUI5Filter[j]);
 				}
 			}
 			return this;
@@ -3299,48 +3311,50 @@ sap.ui.define([
 		 *
 		 * @param {string} oUI5Filter The filter object to render (must not be a multi filter)
 		 * @returns {string} The $filter value for the given UI5 filter
+		 * @throws Exception If the given <code>oUI5Filter.sPath</code> is not the name of a property of this
+		 *   filter's expression entity type
 		 * @private
 		 */
 		renderUI5Filter : function(oUI5Filter) {
-			var sFilterExpression = null,
-				oProperty = this._oEntityType.findPropertyByName(oUI5Filter.sPath);
+			const {sPath, sOperator, oValue1, oValue2, sFractionalSeconds1, sFractionalSeconds2} = oUI5Filter;
+			let sFilterExpression = null;
+			const oProperty = this._oEntityType.findPropertyByName(sPath);
 
 			if (oProperty == null) {
-				throw "Cannot add filter condition for unknown property name " + oUI5Filter.sPath; // TODO
+				throw "Cannot add filter condition for unknown property name " + sPath; // TODO
 			}
 
-			switch (oUI5Filter.sOperator) {
+			switch (sOperator) {
 			case FilterOperator.BT:
-				sFilterExpression = "(" + oUI5Filter.sPath + " ge "
-					+ this._renderPropertyFilterValue(oUI5Filter.oValue1, oProperty.type)
-					+ " and " + oUI5Filter.sPath + " le "
-					+ this._renderPropertyFilterValue(oUI5Filter.oValue2, oProperty.type)
+				sFilterExpression = "(" + sPath + " ge "
+					+ this._renderPropertyFilterValue(oValue1, oProperty.type, sFractionalSeconds1)
+					+ " and " + sPath + " le "
+					+ this._renderPropertyFilterValue(oValue2, oProperty.type, sFractionalSeconds2)
 					+ ")";
 				break;
 			case FilterOperator.NB:
-				sFilterExpression = "(" + oUI5Filter.sPath + " lt "
-					+ this._renderPropertyFilterValue(oUI5Filter.oValue1, oProperty.type)
-					+ " or " + oUI5Filter.sPath + " gt "
-					+ this._renderPropertyFilterValue(oUI5Filter.oValue2, oProperty.type)
+				sFilterExpression = "(" + sPath + " lt "
+					+ this._renderPropertyFilterValue(oValue1, oProperty.type, sFractionalSeconds1)
+					+ " or " + sPath + " gt "
+					+ this._renderPropertyFilterValue(oValue2, oProperty.type, sFractionalSeconds2)
 					+ ")";
 				break;
 			case FilterOperator.Contains:
 			case FilterOperator.NotContains:
-				sFilterExpression = (oUI5Filter.sOperator[0] === "N" ? "not " : "") + "substringof("
-					+ this._renderPropertyFilterValue(oUI5Filter.oValue1, "Edm.String")
-					+ "," +  oUI5Filter.sPath + ")";
+				sFilterExpression = (sOperator[0] === "N" ? "not " : "") + "substringof("
+					+ this._renderPropertyFilterValue(oValue1, "Edm.String")
+					+ "," +  sPath + ")";
 				break;
 			case FilterOperator.StartsWith:
 			case FilterOperator.EndsWith:
 			case FilterOperator.NotStartsWith:
 			case FilterOperator.NotEndsWith:
-				sFilterExpression = oUI5Filter.sOperator.toLowerCase().replace("not", "not ") + "("
-					+ oUI5Filter.sPath + ","
-					+ this._renderPropertyFilterValue(oUI5Filter.oValue1, "Edm.String") + ")";
+				sFilterExpression = sOperator.toLowerCase().replace("not", "not ") + "(" + sPath + ","
+					+ this._renderPropertyFilterValue(oValue1, "Edm.String") + ")";
 				break;
 			default:
-				sFilterExpression = oUI5Filter.sPath + " " + oUI5Filter.sOperator.toLowerCase()
-					+ " " + this._renderPropertyFilterValue(oUI5Filter.oValue1, oProperty.type);
+				sFilterExpression = sPath + " " + sOperator.toLowerCase()
+					+ " " + this._renderPropertyFilterValue(oValue1, oProperty.type, sFractionalSeconds1);
 			}
 
 			return sFilterExpression;

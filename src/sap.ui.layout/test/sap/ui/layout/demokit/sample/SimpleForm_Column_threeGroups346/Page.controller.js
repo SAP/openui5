@@ -5,7 +5,7 @@ sap.ui.define([
 	], function(Fragment, Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.ui.layout.sample.Form_Column_threeGroups236.Page", {
+	var PageController = Controller.extend("sap.ui.layout.sample.SimpleForm_Column_threeGroups346.Page", {
 
 		onInit: function (oEvent) {
 
@@ -70,7 +70,7 @@ sap.ui.define([
 			if (!pFormFragment) {
 				pFormFragment = Fragment.load({
 					id: oView.getId(),
-					name: "sap.ui.layout.sample.Form_Column_threeGroups236." + sFragmentName
+					name: "sap.ui.layout.sample.SimpleForm_Column_threeGroups346." + sFragmentName
 				});
 				this._formFragments[sFragmentName] = pFormFragment;
 			}

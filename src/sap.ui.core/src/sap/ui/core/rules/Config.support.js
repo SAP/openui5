@@ -243,7 +243,7 @@ sap.ui.define([
 			href: 'https://sdk.openui5.org/topic/8521ad1955f340f9a6207d615c88d7fd'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var mComponents = null;
+			var mComponents = oCoreFacade.getComponents();
 			var mComponentReuseUsage = {};
 			var bComponentLazyKnown = false;
 
@@ -290,7 +290,7 @@ sap.ui.define([
 			href: 'https://sdk.openui5.org/topic/346599f0890d4dfaaa11c6b4ffa96312'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var mComponents = null;
+			var mComponents = oCoreFacade.getComponents();
 			var mComponentUsage = {};
 			var bComponentUsagesUsed = false;
 
@@ -340,7 +340,7 @@ sap.ui.define([
 			href: 'https://sdk.openui5.org/topic/26ba6a5c1e5c417f8b21cce1411dba2c'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var mComponents = null;
+			var mComponents = oCoreFacade.getComponents();
 			var mComponentsWithRelevantModels = {};
 			var bModelPreloadKnown = false;
 
@@ -395,7 +395,7 @@ sap.ui.define([
 			href: 'https://sdk.openui5.org/api/sap.ui.model.odata.v4.ODataModel'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var mComponents = null;
+			var mComponents = oCoreFacade.getComponents();
 
 			Object.keys(mComponents).forEach(function(sComponentId) {
 				var oManifest = mComponents[sComponentId].getManifest(),

@@ -9,9 +9,10 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/analytics/odata4analytics",
 	"sap/ui/model/analytics/ODataModelAdapter",
+	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v2/ODataModel"
-], function (Log, isEmptyObject, o4aFakeService, Filter, FilterOperator, odata4analytics,
-		ODataModelAdapter, ODataModel) {
+], function (Log, isEmptyObject, o4aFakeService, Filter, FilterOperator, odata4analytics, ODataModelAdapter,
+		ODataUtils, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -434,6 +435,108 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_addCondition: prevent duplicates", function (assert) {
+		const oFilter0 = {};
+		const oFilterExpression = this.oQueryResultRequest.getFilterExpression();
+		const aFilterProperties = ["sPath", "sOperator", "oValue1", "oValue2", "sFractionalSeconds1",
+			"sFractionalSeconds2"];
+
+		aFilterProperties.forEach((sProperty) => {
+			oFilter0[sProperty] = "~" + sProperty;
+			oFilterExpression.clear();
+
+			// code under test (first filter)
+			oFilterExpression._addCondition(oFilter0);
+
+			assert.strictEqual(oFilterExpression._aConditionUI5Filter.length, 1);
+			assert.strictEqual(oFilterExpression._aConditionUI5Filter[0], oFilter0);
+
+			const oFilter1 = Object.assign({}, oFilter0); // clone oFilter0
+
+			// code under test (cloned filter not added)
+			oFilterExpression._addCondition(oFilter1);
+
+			assert.strictEqual(oFilterExpression._aConditionUI5Filter.length, 1);
+			assert.strictEqual(oFilterExpression._aConditionUI5Filter[0], oFilter0);
+
+			// code under test (equal filter, but differnt in another property, not added)
+			oFilter1["notRelevantProperty"] = "~notRelevantProperty";
+			oFilterExpression._addCondition(oFilter1);
+
+			assert.strictEqual(oFilterExpression._aConditionUI5Filter.length, 1);
+			assert.strictEqual(oFilterExpression._aConditionUI5Filter[0], oFilter0);
+
+			// code under test (different filter property value)
+			oFilter1[sProperty] += "-other";
+			oFilterExpression._addCondition(oFilter1);
+
+			assert.strictEqual(oFilterExpression._aConditionUI5Filter.length, 2);
+			assert.strictEqual(oFilterExpression._aConditionUI5Filter[0], oFilter0);
+			assert.strictEqual(oFilterExpression._aConditionUI5Filter[1], oFilter1);
+		});
+	});
+
+	//*********************************************************************************************
+	[[{sPath: "~path"}], ["~path", "~operator", "~value1", "~value2"]].forEach((aArguments, i) => {
+		QUnit.test("addCondition: via " + (i ? "Filter arguments" : "Filter object"), function (assert) {
+			const oFilterExpression = this.oQueryResultRequest.getFilterExpression();
+			const oFilterExpressionMock = sinon.mock(oFilterExpression);
+			oFilterExpressionMock.expects("_addCondition")
+				.withExactArgs(i === 0
+					? sinon.match.same(aArguments[0])
+					: sinon.match({sPath: "~path", sOperator: "~operator", oValue1: "~value1", oValue2: "~value2"}));
+			const oEntityTypeMock = sinon.mock(oFilterExpression._oEntityType);
+			oEntityTypeMock.expects("findPropertyByName").withExactArgs("~path").returns("~path");
+			oEntityTypeMock.expects("getFilterablePropertyNames").withExactArgs().returns(["~path"]);
+
+			// code under test
+			assert.strictEqual(oFilterExpression.addCondition(...aArguments), oFilterExpression);
+
+			oEntityTypeMock.verify();
+			oFilterExpressionMock.verify();
+		});
+	});
+
+	//*********************************************************************************************
+	[["~path"], [{sPath: "~path"}]].forEach((aArguments, i) => {
+		QUnit.test("addCondition: fails, unknow property name, " + i, function (assert) {
+			const oFilterExpression = this.oQueryResultRequest.getFilterExpression();
+			const oFilterExpressionMock = sinon.mock(oFilterExpression);
+			oFilterExpressionMock.expects("_addCondition").never();
+			const oEntityTypeMock = sinon.mock(oFilterExpression._oEntityType);
+			oEntityTypeMock.expects("findPropertyByName").withExactArgs("~path").returns(null);
+
+			assert.throws(() => {
+				// code under test
+				oFilterExpression.addCondition(...aArguments);
+			}, /Cannot add filter condition for unknown property name ~path/);
+
+			oEntityTypeMock.verify();
+			oFilterExpressionMock.verify();
+		});
+	});
+
+	//*********************************************************************************************
+	[["~path"], [{sPath: "~path"}]].forEach((aArguments, i) => {
+		QUnit.test("addCondition: fails, not filterable property name, " + i, function (assert) {
+			const oFilterExpression = this.oQueryResultRequest.getFilterExpression();
+			const oFilterExpressionMock = sinon.mock(oFilterExpression);
+			oFilterExpressionMock.expects("_addCondition").never();
+			const oEntityTypeMock = sinon.mock(oFilterExpression._oEntityType);
+			oEntityTypeMock.expects("findPropertyByName").withExactArgs("~path").returns("~path");
+			oEntityTypeMock.expects("getFilterablePropertyNames").withExactArgs().returns([]);
+
+			assert.throws(() => {
+				// code under test
+				oFilterExpression.addCondition(...aArguments);
+			}, /Cannot add filter condition for not filterable property name ~path/);
+
+			oEntityTypeMock.verify();
+			oFilterExpressionMock.verify();
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Create filter expressions on the query result", function (assert) {
 		var oQueryResultRequest = this.oQueryResultRequest,
 			oFilterExpression = oQueryResultRequest.getFilterExpression(),
@@ -445,11 +548,16 @@ sap.ui.define([
 			sEntriesURI;
 
 		oFilterExpression.addCondition("CostCenter", FilterOperator.EQ, "100-1000");
-		oFilterExpression.addSetCondition("Currency", [
-			"EUR", "USD", "GBP"
-		]);
-		oFilterExpression.addCondition("CostCenter", FilterOperator.BT, "100-1000",
-			"200-3000");
+		const oAddConditionSpy = this.spy(oFilterExpression, "_addCondition");
+		oFilterExpression.addSetCondition("Currency", ["EUR", "USD", "GBP"]);
+		assert.strictEqual(oAddConditionSpy.callCount, 3);
+		assert.ok(oAddConditionSpy.firstCall
+			.calledWithExactly(sinon.match({sPath: "Currency", sOperator: "EQ", oValue1: "EUR"})));
+		assert.ok(oAddConditionSpy.secondCall
+			.calledWithExactly(sinon.match({sPath: "Currency", sOperator: "EQ", oValue1: "USD"})));
+		assert.ok(oAddConditionSpy.thirdCall
+			.calledWithExactly(sinon.match({sPath: "Currency", sOperator: "EQ", oValue1: "GBP"})));
+		oFilterExpression.addCondition("CostCenter", FilterOperator.BT, "100-1000", "200-3000");
 
 		sRefFilterOptionString = "(CostCenter eq %27100-1000%27 or (CostCenter ge %27100-1000%27"
 			+ " and CostCenter le %27200-3000%27)) and (Currency eq %27EUR%27 or Currency eq"
@@ -757,6 +865,31 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("addUI5FilterConditions (empty array)", function (assert) {
+		const oFilterExpression = this.oQueryResultRequest.getFilterExpression();
+		const oFilterExpressionMock = this.mock(oFilterExpression);
+		oFilterExpressionMock.expects("_addUI5FilterArray").never();
+		oFilterExpressionMock.expects("addCondition").never();
+
+		// code under test
+		assert.strictEqual(oFilterExpression.addUI5FilterConditions([]), oFilterExpression);
+
+		oFilterExpressionMock.verify();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addUI5FilterConditions (no filter array)", function (assert) {
+		const oFilterExpression = this.oQueryResultRequest.getFilterExpression();
+
+		[undefined, 1, {}].forEach((vArgument) => {
+			assert.throws(() => {
+				// code under test
+				oFilterExpression.addUI5FilterConditions(vArgument);
+			}, /Argument is not an array/);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Combining with some simple condition", function (assert) {
 		var oQueryResultRequest = this.oQueryResultRequest,
 			oFilterExpression = oQueryResultRequest.getFilterExpression(),
@@ -802,13 +935,21 @@ sap.ui.define([
 			sRefSetURI,
 			sSetURI;
 
-		oFilterExpression.addUI5FilterConditions([
-			oMultiFilter
-		]);
-		oFilterExpression.addUI5FilterConditions([
+		const oAddConditionSpy = this.spy(oFilterExpression, "addCondition");
+		const oAddUI5FilterArraySpy = this.spy(oFilterExpression, "_addUI5FilterArray");
+		const aMultifilter = [oMultiFilter];
+		oFilterExpression.addUI5FilterConditions(aMultifilter);
+		const aUI5FilterArrayIn = [
 			new Filter("CostCenter", FilterOperator.EQ, "100-1000"),
 			new Filter("CostCenter", FilterOperator.EQ, "100-1100")
-		]);
+		];
+		oFilterExpression.addUI5FilterConditions(aUI5FilterArrayIn);
+
+		assert.strictEqual(oAddConditionSpy.callCount, 2);
+		assert.ok(oAddConditionSpy.firstCall.calledWithExactly(sinon.match.same(aUI5FilterArrayIn[0])));
+		assert.ok(oAddConditionSpy.secondCall.calledWithExactly(sinon.match.same(aUI5FilterArrayIn[1])));
+		assert.strictEqual(oAddUI5FilterArraySpy.callCount, 1);
+		assert.ok(oAddUI5FilterArraySpy.firstCall.calledWithExactly(sinon.match.same(aMultifilter)));
 
 		aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
 		assert.ok((aUI5FilterArray instanceof Array
@@ -1721,6 +1862,115 @@ sap.ui.define([
 		oEntityTypeMock.verify();
 		oHierarchyDimensionMock.verify();
 		oMeasureMock.verify();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_renderPropertyFilterValue", function (assert) {
+		const oDataUtilsMock = sinon.mock(ODataUtils);
+		oDataUtilsMock.expects("_formatValue")
+			.withExactArgs("~sFilterValue", "~sPropertyEDMTypeName", true, "~sFractionalSeconds")
+			.returns("~unecoded Value");
+
+		// code under test
+		assert.strictEqual(new odata4analytics.FilterExpression()._renderPropertyFilterValue("~sFilterValue",
+			"~sPropertyEDMTypeName", "~sFractionalSeconds"), "%7eunecoded%20Value");
+
+		oDataUtilsMock.verify();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_renderPropertyFilterValue, Edm.Time", function (assert) {
+		const oDataUtilsMock = sinon.mock(ODataUtils);
+		oDataUtilsMock.expects("_formatValue")
+			.withExactArgs({ms : 42, __edmType : "Edm.Time"}, "Edm.Time", true, "~sFractionalSeconds")
+			.returns("~unecoded Value");
+
+		// code under test
+		assert.strictEqual(new odata4analytics.FilterExpression()._renderPropertyFilterValue("42", "Edm.Time",
+			"~sFractionalSeconds"), "%7eunecoded%20Value");
+
+		oDataUtilsMock.verify();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_renderPropertyFilterValue, Edm.Time but not only digits", function (assert) {
+		const oDataUtilsMock = sinon.mock(ODataUtils);
+		oDataUtilsMock.expects("_formatValue")
+			.withExactArgs("42notOnlyDigits", "Edm.Time", true, "~sFractionalSeconds")
+			.returns("~unecoded Value");
+
+		// code under test
+		assert.strictEqual(new odata4analytics.FilterExpression()._renderPropertyFilterValue("42notOnlyDigits",
+			"Edm.Time", "~sFractionalSeconds"), "%7eunecoded%20Value");
+
+		oDataUtilsMock.verify();
+	});
+
+	//*********************************************************************************************
+	[
+		{sOperator: FilterOperator.BT, sExpectedResult: "(~sPath ge ~renderedValue1 and ~sPath le ~renderedValue2)"},
+		{sOperator: FilterOperator.NB, sExpectedResult: "(~sPath lt ~renderedValue1 or ~sPath gt ~renderedValue2)"},
+		{sOperator: FilterOperator.Contains, sExpectedResult: "substringof(~renderedValue1,~sPath)"},
+		{sOperator: FilterOperator.NotContains, sExpectedResult: "not substringof(~renderedValue1,~sPath)"},
+		{sOperator: FilterOperator.StartsWith, sExpectedResult: "startswith(~sPath,~renderedValue1)"},
+		{sOperator: FilterOperator.EndsWith, sExpectedResult: "endswith(~sPath,~renderedValue1)"},
+		{sOperator: FilterOperator.NotStartsWith, sExpectedResult: "not startswith(~sPath,~renderedValue1)"},
+		{sOperator: FilterOperator.NotEndsWith, sExpectedResult: "not endswith(~sPath,~renderedValue1)"},
+		{sOperator: "OtherOperator", sExpectedResult: "~sPath otheroperator ~renderedValue1"}
+	].forEach((oFixture) => {
+		QUnit.test("renderUI5Filter: " + oFixture.sOperator, function (assert) {
+			const oFilter = {
+				sPath: "~sPath",
+				sOperator : oFixture.sOperator,
+				oValue1 : "~sValue1",
+				oValue2 : "~sValue2",
+				sFractionalSeconds1 : "~sFractionalSeconds1",
+				sFractionalSeconds2 : "~sFractionalSeconds1"
+			};
+			const oProperty = {type : "~sEDMTypeName"};
+			const oEntityType = {findPropertyByName : function () {}};
+			const oFilterExpression = new odata4analytics.FilterExpression(undefined, undefined, oEntityType);
+			const oFilterExpressionMock = sinon.mock(oFilterExpression);
+			const oEntityMock = sinon.mock(oFilterExpression._oEntityType);
+			oEntityMock.expects("findPropertyByName").withExactArgs(oFilter.sPath).returns(oProperty);
+			const aStringOperators = [FilterOperator.Contains, FilterOperator.NotContains, FilterOperator.StartsWith,
+				FilterOperator.EndsWith, FilterOperator.NotStartsWith, FilterOperator.NotEndsWith];
+			if (aStringOperators.includes(oFixture.sOperator)) {
+				oFilterExpressionMock.expects("_renderPropertyFilterValue")
+					.withExactArgs(oFilter.oValue1, "Edm.String")
+					.returns("~renderedValue1");
+			} else {
+				oFilterExpressionMock.expects("_renderPropertyFilterValue")
+					.withExactArgs(oFilter.oValue1, oProperty.type, oFilter.sFractionalSeconds1)
+					.returns("~renderedValue1");
+			}
+			if ([FilterOperator.BT, FilterOperator.NB].includes(oFixture.sOperator)) {
+				oFilterExpressionMock.expects("_renderPropertyFilterValue")
+					.withExactArgs(oFilter.oValue2, oProperty.type, oFilter.sFractionalSeconds2)
+					.returns("~renderedValue2");
+			}
+
+			// code under test
+			assert.strictEqual(oFilterExpression.renderUI5Filter(oFilter), oFixture.sExpectedResult);
+
+			oEntityMock.verify();
+			oFilterExpressionMock.verify();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("renderUI5Filter: fails", function (assert) {
+		const oEntityType = {findPropertyByName : function () {}};
+		const oFilterExpression = new odata4analytics.FilterExpression(undefined, undefined, oEntityType);
+		const oEntityMock = sinon.mock(oFilterExpression._oEntityType);
+		oEntityMock.expects("findPropertyByName").withExactArgs("~sPath").returns(null);
+
+		// code under test
+		assert.throws(function () {
+			oFilterExpression.renderUI5Filter({sPath: "~sPath"});
+		}, /Cannot add filter condition for unknown property name ~sPath/);
+
+		oEntityMock.verify();
 	});
 
 	//*********************************************************************************************

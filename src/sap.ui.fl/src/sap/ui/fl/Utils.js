@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/util/restricted/_isEqual",
 	"sap/base/Log",
-	"sap/ui/base/SyncPromise",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/util/reflection/BaseTreeModifier",
 	"sap/ui/core/Component",
@@ -23,7 +22,6 @@ sap.ui.define([
 	uid,
 	isEqual,
 	Log,
-	SyncPromise,
 	ManagedObject,
 	BaseTreeModifier,
 	Component,
@@ -491,73 +489,6 @@ sap.ui.define([
 			return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
 		},
 
-		// eslint-disable-next-line object-shorthand
-		FakePromise: function(vInitialValue, vError, sInitialPromiseIdentifier) {
-			Utils.FakePromise.fakePromiseIdentifier = "sap.ui.fl.Utils.FakePromise";
-			this.vValue = vInitialValue;
-			this.vError = vError;
-			this.bContinueWithFakePromise = arguments.length < 3 || (sInitialPromiseIdentifier === Utils.FakePromise.fakePromiseIdentifier);
-
-			var fnResolveOrReject = function(vParam, fn) {
-				try {
-					var vResolve = fn(vParam, Utils.FakePromise.fakePromiseIdentifier);
-					if (SyncPromise.isThenable(vResolve)) {
-						return vResolve;
-					}
-					return new Utils.FakePromise(vResolve);
-				} catch (oError) {
-					var vReject = oError;
-					return new Utils.FakePromise(undefined, vReject);
-				}
-			};
-
-			/**
-			 * <code>then</code> function as for promise (es6)
-			 * @param {function} fnSuccess - Resolve handler
-			 * @param {function} fnError - Reject handler
-			 * @returns {sap.ui.fl.Utils.FakePromise|Promise} <code>FakePromise</code> if no promise is returned by the resolve handler
-			 * @private
-			 * @ui5-restricted sap.ui.fl, sap.ui.rta, ui5 internal tests
-			 */
-			Utils.FakePromise.prototype.then = function(fnSuccess, fnError) {
-				if (!this.bContinueWithFakePromise) {
-					return Promise.resolve(fnSuccess(this.vValue));
-				}
-
-				if (!this.vError) {
-					return fnResolveOrReject(this.vValue, fnSuccess);
-				} else if (fnError) {
-					return fnResolveOrReject(this.vError, fnError);
-				}
-				return this;
-			};
-
-			/**
-			 * <code>catch</code> function as for promise (es6)
-			 * @param {function} fn - Rejection handler
-			 * @returns {sap.ui.fl.Utils.FakePromise|Promise} <code>FakePromise</code> if no promise is returned by the rejection handler
-			 *
-			 * @private
-			 * @ui5-restricted sap.ui.fl, sap.ui.rta
-			 */
-			Utils.FakePromise.prototype.catch = function(fn) {
-				if (!this.bContinueWithFakePromise) {
-					return Promise.reject(fn(this.vError));
-				}
-
-				if (this.vError) {
-					return fnResolveOrReject(this.vError, fn);
-				}
-				return this;
-			};
-
-			if (this.vValue instanceof Promise ||
-				this.vValue instanceof Utils.FakePromise) {
-				return this.vValue;
-			}
-			return undefined;
-		},
-
 		/**
 		 * Function that gets a specific change from a map of changes.
 		 *
@@ -666,15 +597,15 @@ sap.ui.define([
 		 * @param {string} sServiceName UShell service name (e.g. "URLParsing")
 		 * @returns {Promise<object|undefined>} Returns UShell service if available or undefined
 		 */
-		 getUShellService(sServiceName) {
-			if (sServiceName) {
-				const oUShellContainer = this.getUshellContainer();
-				if (oUShellContainer) {
-					return oUShellContainer.getServiceAsync(sServiceName);
-				}
-			}
-			return Promise.resolve();
-		},
+		getUShellService(sServiceName) {
+		   if (sServiceName) {
+			   const oUShellContainer = this.getUshellContainer();
+			   if (oUShellContainer) {
+				   return oUShellContainer.getServiceAsync(sServiceName);
+			   }
+		   }
+		   return Promise.resolve();
+	   },
 
 		/**
 		 * Gets the requested UShell Services from Ushell container, if container is available.
@@ -688,7 +619,6 @@ sap.ui.define([
 			}
 			return mServices;
 		}
-
 	};
 	return Utils;
 });

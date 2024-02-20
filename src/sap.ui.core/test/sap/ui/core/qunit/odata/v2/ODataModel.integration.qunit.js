@@ -9977,6 +9977,76 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: AnalyticalBinding filtering by Edm.DateTime property with precision > 3
+	// JIRA: CPOUI5MODELS-1582
+	QUnit.test("AnalyticalBinding: Filtering Edm.DateTime property with precision > 3", function (assert) {
+		const oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS");
+		const sView = '\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
+		<Label text="CompanyCode"/>\
+		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="Customer">\
+		<Label text="Customer"/>\
+		<t:template><Text text="{Customer}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text wrapping="false" text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
+</t:AnalyticalTable>';
+
+		return this.createView(assert, sView, oModel).then(() => {
+			const sExpectedFilter = "&$filter=((ChangedAt%20ge%20datetime%272020-02-01T15%3a30%3a02.456123%27%20"
+				+ "and%20ChangedAt%20le%20datetime%272020-02-01T18%3a45%3a02.456789%27))";
+			this.expectHeadRequest()
+				.expectRequest({ // count request
+					encodeRequestUri : false,
+					requestUri : "Items?$select=CompanyCode,Customer" + sExpectedFilter
+						+ "&$top=0&$inlinecount=allpages"
+				}, {__count : "1", results : []})
+				.expectRequest({ // first level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+					+ "$select=CompanyCode,AmountInCompanyCodeCurrency,Currency" + sExpectedFilter
+					+ "&$orderby=CompanyCode%20asc&$top=14&$inlinecount=allpages"
+				}, {
+					results : [getFarCustomerLineItem("A0")]
+				})
+				.expectRequest({ // grand total request
+					encodeRequestUri : false,
+					requestUri : "Items?$select=AmountInCompanyCodeCurrency,Currency" + sExpectedFilter
+						+ "&$top=100&$inlinecount=allpages"
+				}, {
+					__count : 1,
+					results : [{
+						__metadata : {uri : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items(grandTotal)"},
+						AmountInCompanyCodeCurrency : "140",
+						Currency : "USD"
+					}]
+				});
+			const oFilter = new Filter("ChangedAt", FilterOperator.BT, new Date(Date.UTC(2020, 1, 1, 15, 30, 2, 456)),
+				new Date(Date.UTC(2020, 1, 1, 18, 45, 2, 456)));
+			oFilter.appendFractionalSeconds1("123");
+			oFilter.appendFractionalSeconds2("789");
+
+			// code under test
+			this.oView.byId("table").bindRows({
+				path : "/Items",
+				parameters : {
+					autoExpandMode : "Sequential",
+					numberOfExpandedLevels : 0,
+					useBatchRequests : true
+				},
+				filters : [oFilter]
+			});
+
+			return this.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: If a request for an AnalyticalBinding is cancelled because the analytical info has
 	// been updated before the request was processed, a "dataReceived" event has to be fired. Table
 	// counts the "dataRequested" and "dataReceived" event to show a busy indicator, so the number

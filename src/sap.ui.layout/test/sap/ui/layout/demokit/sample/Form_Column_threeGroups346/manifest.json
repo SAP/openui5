@@ -1,13 +1,13 @@
 {
 	"sap.app": {
-		"id": "sap.ui.layout.sample.Form_Column_threeGroups236",
+		"id": "sap.ui.layout.sample.Form_Column_threeGroups346",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.ui.layout.sample.Form_Column_threeGroups236.Page",
+			"viewName": "sap.ui.layout.sample.Form_Column_threeGroups346.Page",
 			"type": "XML",
 			"async": true
 		},

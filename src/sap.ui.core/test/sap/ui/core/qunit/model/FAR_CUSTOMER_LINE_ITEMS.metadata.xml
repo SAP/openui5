@@ -31,6 +31,8 @@
 				<!-- property which is neither a dimension nor a measure nor an associated property
 					of a dimension or a measure -->
 				<Property Name="OrdinaryProperty" Type="Edm.String"/>
+				<!-- property for testing filtering Edm.DateTime properties with precision > 3-->
+				<Property Name="ChangedAt" Type="Edm.DateTime" Precision="7"/>
 			</EntityType>
 			<EntityType Name="Foo">
 				<Key>

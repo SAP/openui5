@@ -27,7 +27,7 @@ sap.ui.define([], function() {
 	*/
 	Utils.getDefaultVariantId = (mCompVariantsMap) => {
 		const aDefaultVariantChanges = mCompVariantsMap.defaultVariants;
-		const oChange = aDefaultVariantChanges.toReversed().find((oChange) => {
+		const oChange = [...aDefaultVariantChanges].reverse().find((oChange) => {
 			return mCompVariantsMap.variants.some((oVariant) => {
 				return oChange?.getContent().defaultVariantName === oVariant.getId();
 			});

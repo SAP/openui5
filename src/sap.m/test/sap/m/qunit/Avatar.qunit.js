@@ -313,6 +313,24 @@ sap.ui.define([
 		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), "When initials inside sap.m.Avatar are overflwing, default icon should be shown after theme is changed");
 	});
 
+	QUnit.test("Avatar with three initials, having the same width as the control", async function(assert) {
+		this.oAvatar.setInitials("WWW");
+		this.oAvatar.setDisplaySize("S");
+		await nextUIUpdate();
+
+		var $oAvatar = this.oAvatar.$();
+		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), "When the initials holder inside sap.m.Avatar has the same width as the control, default icon should be shown after redering");
+	});
+
+	QUnit.test("Avatar with three initials, having the same width as the control", function (assert) {
+		this.oAvatar.setInitials("WWW");
+		this.oAvatar.setDisplaySize("S");
+		this.oAvatar.onThemeChanged();
+
+		var $oAvatar = this.oAvatar.$();
+		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), "When the initials holder inside sap.m.Avatar has the same width as the control, default icon should be shown after theme is changed");
+	});
+
 	QUnit.test("Avatar with initials consisting of accented characters", async function(assert) {
 		this.oAvatar.setInitials("ÌÒ");
 		await nextUIUpdate();
