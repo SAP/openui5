@@ -1481,10 +1481,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.Shell"
 			},
 			SimpleFixFlex: {
-				title: "Test Page for sap.m.SimpleFixFlex",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "Test Page for sap.m.SimpleFixFlex"
 			},
 			SinglePlanningCalendar: {
 				title: "QUnit Page for sap.m.SinglePlanningCalendar",
