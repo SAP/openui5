@@ -611,7 +611,7 @@ sap.ui.define([
 				 * @since 1.111
 				 */
 				propertyInfo: {
-					type: "object[]",
+					type: "object",
 					defaultValue: []
 				},
 
