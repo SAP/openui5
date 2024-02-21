@@ -812,10 +812,7 @@ sap.ui.define([
 				title: "QUnit tests: sap.m.MessageToast"
 			},
 			MessageView: {
-				title: "QUnit Page for sap.m.MessageView",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "QUnit Page for sap.m.MessageView"
 			},
 			MultiComboBox: {
 				title: "QUnit tests: sap.m.MultiComboBox",
