@@ -26,8 +26,8 @@ sap.ui.define([
 
 		assert.ok(oTreeState instanceof _TreeState);
 		assert.strictEqual(oTreeState.sNodeProperty, "~sNodeProperty~");
-		assert.ok(oTreeState.oExpandLevels instanceof Map);
-		assert.deepEqual(mapContent(oTreeState.oExpandLevels), []);
+		assert.ok(oTreeState.oPredicate2ExpandLevels instanceof Map);
+		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels), []);
 	});
 
 	//*********************************************************************************************
@@ -43,19 +43,19 @@ sap.ui.define([
 		// code under test
 		oTreeState.expand("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oExpandLevels),
+		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels),
 			[["~predicate~", {NodeID : "~sNodeId~", Levels : 1}]]);
 
 		// code under test
 		oTreeState.expand("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oExpandLevels),
+		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels),
 			[["~predicate~", {NodeID : "~sNodeId~", Levels : 1}]]);
 
 		// code under test
 		oTreeState.collapse("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oExpandLevels), []);
+		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels), []);
 	});
 
 	//*********************************************************************************************
@@ -71,34 +71,34 @@ sap.ui.define([
 		// code under test
 		oTreeState.collapse("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oExpandLevels),
+		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels),
 			[["~predicate~", {NodeID : "~sNodeId~", Levels : 0}]]);
 
 		// code under test
 		oTreeState.collapse("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oExpandLevels),
+		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels),
 			[["~predicate~", {NodeID : "~sNodeId~", Levels : 0}]]);
 
 		// code under test
 		oTreeState.expand("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oExpandLevels), []);
+		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels), []);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("delete", function (assert) {
 		const oTreeState = new _TreeState("~sNodeProperty~");
 
-		oTreeState.oExpandLevels.set("foo", "bar");
-		oTreeState.oExpandLevels.set("~predicate~", "~");
+		oTreeState.oPredicate2ExpandLevels.set("foo", "bar");
+		oTreeState.oPredicate2ExpandLevels.set("~predicate~", "~");
 		this.mock(_Helper).expects("getPrivateAnnotation")
 			.withExactArgs("~oNode~", "predicate").returns("~predicate~");
 
 		// code under test
 		oTreeState.delete("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oExpandLevels), [["foo", "bar"]]);
+		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels), [["foo", "bar"]]);
 	});
 
 	//*********************************************************************************************
@@ -106,13 +106,13 @@ sap.ui.define([
 	QUnit.test(sMethod + ": no sNodeProperty", function (assert) {
 		const oTreeState = new _TreeState();
 
-		oTreeState.oExpandLevels.set("foo", "bar");
+		oTreeState.oPredicate2ExpandLevels.set("foo", "bar");
 		this.mock(_Helper).expects("drillDown").never();
 
 		// code under test
 		oTreeState[sMethod]("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oExpandLevels), [["foo", "bar"]]);
+		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels), [["foo", "bar"]]);
 	});
 });
 
@@ -123,8 +123,8 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oTreeState.getExpandLevels(), undefined);
 
-		oTreeState.oExpandLevels.set("foo", {bar : 42});
-		oTreeState.oExpandLevels.set("baz", {qux : 23});
+		oTreeState.oPredicate2ExpandLevels.set("foo", {bar : 42});
+		oTreeState.oPredicate2ExpandLevels.set("baz", {qux : 23});
 
 		// code under test
 		assert.strictEqual(oTreeState.getExpandLevels(), '[{"bar":42},{"qux":23}]');
@@ -132,6 +132,6 @@ sap.ui.define([
 		// code under test
 		oTreeState.reset();
 
-		assert.deepEqual(mapContent(oTreeState.oExpandLevels), []);
+		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels), []);
 	});
 });
