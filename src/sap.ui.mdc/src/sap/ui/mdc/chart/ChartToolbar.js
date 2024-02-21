@@ -139,7 +139,7 @@ sap.ui.define([
 					noDataType: sap.m.IllustratedMessageType.NoDimensionsSet,
 					searchPlaceholder: MDCRb.getText("chart.CHART_DRILLDOWN_SEARCH"),
 					searchEnabled: true,
-					sortEnabled: true,
+					sortEnabled: false,
 					sorted: "ascending",
 
 					enabled: false,
@@ -179,6 +179,7 @@ sap.ui.define([
 								// oData.items.push({ text: oDimension.label, id: oDimension.name });
 								this._oDrillDownBtn.addItem(new SelectionButtonItem({key: oDimension.name, text: oDimension.label}));
 							});
+							oViewByBtn.setSearchEnabled(aSortedDimensions.length >= 7);
 							oViewByBtn._createModel(); // in this case the beforeOPen is not able to provide all item syncron
 						});
 					}.bind(this),
@@ -286,7 +287,7 @@ sap.ui.define([
 					noDataType: sap.m.IllustratedMessageType.AddDimensions,
 					searchPlaceholder: MDCRb.getText("chart.CHART_TYPE_SEARCH"),
 					searchEnabled: true,
-					sortEnabled: true,
+					sortEnabled: false,
 
 					enabled: false,
 					type: "Transparent",
@@ -299,11 +300,12 @@ sap.ui.define([
 						// use this to update the available ChartTypes
 						const aAvailableChartTypes = oChart.getAvailableChartTypes();
 						oChartTypeBtn.removeAllItems();
-						aAvailableChartTypes.forEach(function(oChartType) {
+						aAvailableChartTypes.forEach((oChartType) => {
 							oChartTypeBtn.addItem(
 								new SelectionButtonItem({key: oChartType.key, text: oChartType.text, icon: oChartType.icon})
 							);
 						});
+						oChartTypeBtn.setSearchEnabled(aAvailableChartTypes.length >= 7);
 					},
 					itemSelected: function(oEvent) {
 						const oChartTypeBtn = oEvent.getSource();
