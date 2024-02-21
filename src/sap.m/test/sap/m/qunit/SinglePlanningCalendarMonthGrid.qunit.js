@@ -436,7 +436,7 @@ sap.ui.define([
 			await nextUIUpdate(this.clock);
 
 			// act
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[14], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[14], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
 			await nextUIUpdate(this.clock);
 
 			// assert
@@ -444,7 +444,7 @@ sap.ui.define([
 			assert.strictEqual(oGrid.getSelectedDates().length, 1, "selectedDates is added");
 
 			// act
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[17], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[17], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
 			await nextUIUpdate(this.clock);
 
 			// assert
@@ -454,7 +454,7 @@ sap.ui.define([
 
 			// act
 			oGrid.setDateSelectionMode(SinglePlanningCalendarSelectionMode.SingleSelect);
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[3], srcControl: oGrid, metaKey: false, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[3], srcControl: oGrid, metaKey: false, originalEvent: {type: "click"}});
 			await nextUIUpdate(this.clock);
 
 			// assert
@@ -482,7 +482,7 @@ sap.ui.define([
 			assert.strictEqual(oGrid.getSelectedDates().length, 2, "two days were initially added");
 
 			// act
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[14], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[14], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
 			await nextUIUpdate(this.clock);
 
 			// assert
@@ -490,7 +490,7 @@ sap.ui.define([
 			assert.strictEqual(oGrid.getSelectedDates().length, 1, "one day is removed");
 
 			// act
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[17], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[17], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
 			await nextUIUpdate(this.clock);
 
 			// assert
@@ -513,7 +513,7 @@ sap.ui.define([
 			await nextUIUpdate(this.clock);
 
 			// act
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDayNumber')[14], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDayNumber')[14], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
 			await nextUIUpdate(this.clock);
 
 			// assert
@@ -521,7 +521,7 @@ sap.ui.define([
 			assert.strictEqual(oGrid.getSelectedDates().length, 1, "selectedDates is added");
 
 			// act
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDayNumber')[17], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDayNumber')[17], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
 			await nextUIUpdate(this.clock);
 
 			// assert
@@ -531,7 +531,7 @@ sap.ui.define([
 
 			// act
 			oGrid.setDateSelectionMode(SinglePlanningCalendarSelectionMode.SingleSelect);
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[3], srcControl: oGrid, metaKey: false, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[3], srcControl: oGrid, metaKey: false, originalEvent: {type: "click"}});
 			await nextUIUpdate(this.clock);
 
 			assert.strictEqual(oGrid.getSelectedDates().length, 1, "selectedDates is only one");
@@ -557,7 +557,7 @@ sap.ui.define([
 			assert.strictEqual(oGrid.getSelectedDates().length, 2, "two days were initially added");
 
 			// act
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDayNumber')[14], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDayNumber')[14], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
 			await nextUIUpdate(this.clock);
 
 			// assert
@@ -565,7 +565,7 @@ sap.ui.define([
 			assert.strictEqual(oGrid.getSelectedDates().length, 1, "one day is removed");
 
 			// act
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDayNumber')[17], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDayNumber')[17], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
 			await nextUIUpdate(this.clock);
 
 			// assert
@@ -720,7 +720,7 @@ sap.ui.define([
 			assert.strictEqual(oGrid.getSelectedDates().length, 0, "no days initially added");
 
 			//act
-			oGrid.ontap(oFakeEvent);
+			oGrid.onmouseup(oFakeEvent);
 			await nextUIUpdate(this.clock);
 
 			//assert
@@ -776,7 +776,7 @@ sap.ui.define([
 			assert.strictEqual(oGrid.getSelectedDates().length, 9, "nine days were originally added");
 
 			//act
-			oGrid.ontap(oFakeEvent);
+			oGrid.onmouseup(oFakeEvent);
 			await nextUIUpdate(this.clock);
 
 			//assert
