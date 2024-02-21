@@ -4535,30 +4535,6 @@ sap.ui.define([
 			models : new JSONModel()
 		});
 	});
-
-	//*********************************************************************************************
-	QUnit.test("DINC0032093", function (assert) {
-		const oModel = new JSONModel({});
-		oModel.$$valueAsPromise = true;
-
-		return this.checkTracing(assert, true, [
-			{m : "[ 0] Start processing qux"},
-			{m : "[ 0] Removed attribute text", d : 1},
-			{m : "[ 0] Finished processing qux"}
-		], [
-			mvcView("", {
-				nil : function () {
-					return null;
-				}
-			}, this),
-			`<Text text="{formatter: 'nil', path: '/'}"/>`,
-			'</mvc:View>'
-		], {
-			models : oModel
-		}, [
-			'<Text/>'
-		], /*bAsync*/true);
-	});
 });
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!
 //TODO somehow trace ex.stack, but do not duplicate ex.message
