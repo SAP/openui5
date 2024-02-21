@@ -249,5 +249,9 @@
 	};
 
 	setupBeforeQUnit();
-	sap.ui.define("sap/ui/test/qunitPause", [], qunitPause, true);
+	sap.ui.loader._.defineModuleSync("sap/ui/test/qunitPause.js", qunitPause);
+	/** @deprecated */
+	sap.ui.test ??= {};
+	/** @deprecated */
+	sap.ui.test.qunitPause = qunitPause;
 }());
