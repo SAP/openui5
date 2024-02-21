@@ -6,7 +6,7 @@
 	<script src="shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 			src="../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m, sap.ui.table">
 	</script>
 	<style>
 		#standalone-panel .sapMObjectMarker {
@@ -128,11 +128,66 @@
 			]
 		});
 
+		var oUITable = new sap.ui.table.Table({
+		columns : [
+			new sap.ui.table.Column({
+				name : "ID2",
+				label : new sap.m.Label({
+					text : "Object Marker with press event"
+				}),
+				template : new sap.m.ObjectMarker({
+					type : "{type}",
+					press: function(oEvent) {
+						sap.m.MessageToast.show(oEvent.getParameter("type") + " marker pressed!");
+					}
+				})
+			}),
+			new sap.ui.table.Column({
+				name : "ID3",
+				label : new sap.m.Label({
+					text : "Object Marker"
+				}),
+				hAlign:"End",
+				template : new sap.m.ObjectMarker({
+					type : "{type}"
+				})
+			}),
+			new sap.ui.table.Column({
+				name : "ID4",
+				label : new sap.m.Label({
+					text : "Object Marker"
+				}),
+				template : new sap.m.ObjectMarker({
+					type : "{type}"
+				})
+			})
+		]
+	});
+
+	var aTData = [
+		{type : "Flagged"},
+		{type : "Draft"},
+		{type : "Unsaved"},
+		{type : "Favorite"}
+	];
+
+	oUITable.setModel(new sap.ui.model.json.JSONModel(aTData));
+
+	oUITable.bindAggregation("rows", {
+		path : "/"
+	});
+
+	var oUITablePanel = new sap.m.Panel({
+			headerText: "In a sap.ui.table.Table usecase",
+			content: oUITable
+		});
+
 		var oPage = new sap.m.Page("page", {
 			title:"Object Marker",
 			content: [
 				oStandalonePanel,
-				oTablePanel
+				oTablePanel,
+				oUITablePanel
 			]
 		});
 
