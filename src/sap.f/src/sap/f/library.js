@@ -132,6 +132,11 @@ sap.ui.define(["sap/ui/base/DataType",
 				"sap.f.DynamicPageTitle" : "sap/f/flexibility/DynamicPageTitle",
 				"sap.f.semantic.SemanticPage" : {
 					"moveControls": "default"
+				},
+				"sap.f.GridContainer": {
+					"moveControls": "default",
+					"hideControl": "default",
+					"unhideControl": "default"
 				}
 			},
 			//Configuration used for rule loading of Support Assistant
