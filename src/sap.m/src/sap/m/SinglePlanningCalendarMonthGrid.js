@@ -458,11 +458,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * Handles the <code>tap</code> event on the grid.
+		 * Handles the <code>mouseup</code> event on the grid.
 		 *
 		 * @param {jQuery.Event} oEvent The event object
 		 */
-		SinglePlanningCalendarMonthGrid.prototype.ontap = function(oEvent) {
+		SinglePlanningCalendarMonthGrid.prototype.onmouseup = function(oEvent) {
 			var bMultiDateSelection = SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode();
 			if (!bMultiDateSelection && !(oEvent.metaKey || oEvent.ctrlKey)) {
 				this.removeAllSelectedDates();
