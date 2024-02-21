@@ -36,6 +36,8 @@ sap.ui.define([
 		MessageType = library.MessageType,
 		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
+	function mustBeMocked() { throw new Error("Must be mocked"); }
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel", {
 		beforeEach : function () {
@@ -2901,6 +2903,43 @@ sap.ui.define([
 		assert.strictEqual(oModel.releaseKeepAliveBinding("/EMPLOYEES"), "~oBinding~");
 
 		assert.notOk("/EMPLOYEES" in oModel.mKeepAliveBindingsByPath);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("waitForKeepAliveBinding", function (assert) {
+		const oModel = this.createModel("", {autoExpandSelect : true});
+
+		oModel.mKeepAliveBindingsByPath["/EMPLOYEES"] = {
+			oCachePromise : "~oCachePromise~"
+		};
+
+		// code under test
+		assert.strictEqual(oModel.waitForKeepAliveBinding({}), SyncPromise.resolve());
+
+		const oBinding0 = {
+			mParameters : {} // just having parameters is not sufficient
+		};
+
+		// code under test
+		assert.strictEqual(oModel.waitForKeepAliveBinding(oBinding0), SyncPromise.resolve());
+
+		const oBinding1 = {
+			mParameters : {$$getKeepAliveContext : true},
+			getResolvedPath : mustBeMocked
+		};
+		this.mock(oBinding1).expects("getResolvedPath").withExactArgs().returns("/EMPLOYEES");
+
+		// code under test
+		assert.strictEqual(oModel.waitForKeepAliveBinding(oBinding1), "~oCachePromise~");
+
+		const oBinding2 = {
+			mParameters : {$$getKeepAliveContext : true},
+			getResolvedPath : mustBeMocked
+		};
+		this.mock(oBinding2).expects("getResolvedPath").withExactArgs().returns("/TEAMS");
+
+		// code under test
+		assert.strictEqual(oModel.waitForKeepAliveBinding(oBinding2), SyncPromise.resolve());
 	});
 
 	//*********************************************************************************************

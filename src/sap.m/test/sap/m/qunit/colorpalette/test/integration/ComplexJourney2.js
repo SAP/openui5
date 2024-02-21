@@ -74,7 +74,7 @@ sap.ui.define([
 				//Assume closed ColorPalettePopover from previous test
 				opaTest("More colors...: Open the 'ColorPicker' using [TAB] key", function (Given, When, Then) {
 					When.iOpenComplexControlDefaultsColorPalettePopover();
-					Then.complexControlDefaultsColorPalettePopoverShouldBeOpen();
+					Then.complexControlDefaultsColorPalettePopoverShouldBeOpenAndFocusedOnColor("rgb(242,242,242)");
 					When.iPressKeyOnATargetId(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_MORECOLORS_ID, KeyCodes.TAB);
 					Then.complexControlDefaultsColorPalettePopoverShouldBeClosedAndFocusShouldBeOn(COMPONENT_VIEW_PREFFIX + COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_OPENER_ID);
 				});
@@ -85,7 +85,7 @@ sap.ui.define([
 					//The control also gives the consumer the possibility to configure the output format of the color only RGB or HSL (if mode is HSL set) in the 'change' event.
 					//This is the actual reason of the test to select a color using the HEX format (#f2f2f2) as an input and expects the output of the same color in in RGB format rgb(242,242,242)
 					When.iOpenComplexControlDefaultsColorPalettePopover();
-					Then.complexControlDefaultsColorPalettePopoverShouldBeOpen();
+					Then.complexControlDefaultsColorPalettePopoverShouldBeOpenAndFocusedOnColor("rgb(242,242,242)");
 					When.iPressKeyOnATargetId(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_MORECOLORS_ID, KeyCodes.ENTER);
 					//Expect the old valid color to be preserved when confirm invalid value
 					When.iChangeTheColorPickerColor("invalidcolor").and.iConfirmNewColorSelection();

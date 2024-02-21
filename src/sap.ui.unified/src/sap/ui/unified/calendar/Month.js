@@ -983,7 +983,7 @@ sap.ui.define([
 
 	/*
 	 * Checks if a given date is enabled
-	 * beside the disabledDates aggregation the min. and max. date of the Calendar are used
+	 * aside from the disabledDates aggregation the min. and max. dates are also checked
 	 * @param {sap.ui.unified.calendar.CalendarDate} oDate the date to check
 	 * @returns {boolean} Flag if enabled
 	 * @private
@@ -996,12 +996,9 @@ sap.ui.define([
 		var aDisabledDates = this.getDisabledDates();
 		var oTimeStamp = oDate.toUTCJSDate().getTime();
 		var sCalendarType = this._getPrimaryCalendarType();
-		var oParent = this.getParent();
 
-		if (oParent && oParent._oMinDate && oParent._oMaxDate) {
-			if (oTimeStamp < oParent._oMinDate.valueOf() || oTimeStamp > oParent._oMaxDate.valueOf()) {
-				return false;
-			}
+		if ((this._oMinDate && oTimeStamp < this._oMinDate) || (this._oMaxDate && oTimeStamp > this._oMaxDate)) {
+			return false;
 		}
 
 		for ( var i = 0; i < aDisabledDates.length; i++) {
@@ -1667,7 +1664,7 @@ sap.ui.define([
 
 		const bIsRegionUS = oLocaleData.firstDayStartsFirstWeek();
 
-		const bStartsInFirstMonth = this._oDate.getMonth() === 0;
+		const bStartsInFirstMonth = this._getDate().getMonth() === 0;
 		const bEndsInFirstMonth = oEndDate.getMonth() === 0;
 		const bEndsInSecondMonth = oEndDate.getMonth() === 1;
 

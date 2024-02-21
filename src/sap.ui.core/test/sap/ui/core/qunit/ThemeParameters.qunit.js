@@ -52,11 +52,11 @@ sap.ui.define([
 
 	function checkLibraryParametersJsonRequestForLib(sLibNumber) {
 		return performance.getEntriesByType("resource").filter(function (oResource) {
-			return oResource.name.endsWith("themeParameters/lib" + sLibNumber + "/themes/sap_hcb/library-parameters.json");
+			return oResource.name.endsWith("themeParameters/lib" + sLibNumber + "/themes/sap_horizon_hcb/library-parameters.json");
 		});
 	}
 	function createLinkElement (sId, bBase) {
-		var sUrl = sap.ui.require.toUrl("test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters/lib17/themes/" + (bBase ? "base" : "sap_hcb") + "/library.css");
+		var sUrl = sap.ui.require.toUrl("test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters/lib17/themes/" + (bBase ? "base" : "sap_horizon_hcb") + "/library.css");
 		return includeStylesheet({
 			url: sUrl,
 			id: bBase ? sId : undefined
@@ -283,7 +283,7 @@ sap.ui.define([
 		};
 
 		var fnApplied = async function (oEvent) {
-			if (oEvent.theme === "sap_hcb") {
+			if (oEvent.theme === "sap_horizon_hcb") {
 				Theming.detachApplied(fnApplied);
 
 				await Library.load({name: "testlibs.themeParameters.lib14"});
@@ -295,7 +295,7 @@ sap.ui.define([
 						assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#efefef", "sapUiThemeParamForLib13 must be defined as '#efefef' for theme 'base'");
 
 						Theming.attachApplied(fnContinue);
-						Theming.setTheme("sap_hcb");
+						Theming.setTheme("sap_horizon_hcb");
 					}
 				});
 				assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#fefefe", "sapUiThemeParamForLib13 must be defined as '#fefefe' for theme 'hcb'");

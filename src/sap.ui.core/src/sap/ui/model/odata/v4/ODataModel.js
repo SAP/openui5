@@ -2821,6 +2821,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Waits until the temporary keep-alive binding matching the given binding has created its
+	 * cache, if required and there is such a binding.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataBinding} oBinding
+	 *   The binding that possibly needs the cache of a temporary keep-alive binding
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise which is resolved without a defined result when that cache is available
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.waitForKeepAliveBinding = function (oBinding) {
+		if (oBinding.mParameters?.$$getKeepAliveContext) {
+			// $$canonicalPath is not allowed, binding path and resource path are (almost) identical
+			const oTemporaryBinding = this.mKeepAliveBindingsByPath[oBinding.getResolvedPath()];
+			if (oTemporaryBinding) {
+				return oTemporaryBinding.oCachePromise;
+			}
+		}
+		return SyncPromise.resolve();
+	};
+
+	/**
 	 * Iterates over this model's unresolved bindings and calls the function with the given name on
 	 * each unresolved binding, passing the given parameter. Iteration stops if a function call on
 	 * some unresolved binding returns a truthy value.

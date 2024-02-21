@@ -120,7 +120,7 @@ sap.ui.define([
 				//Assume closed ColorPalettePopover from previous test
 				opaTest("Select a predefined color using the [SPACE] key", function (Given, When, Then) {
 					When.iOpenComplexControlDefaultsColorPalettePopover();
-					Then.complexControlDefaultsColorPalettePopoverShouldBeOpen();
+					Then.complexControlDefaultsColorPalettePopoverShouldBeOpenAndFocusedOnColor("gold");
 					When.iPressKeyOnAColorSwatch("darkorange", KeyCodes.SPACE);
 					Then.colorSelectEventParamsShouldMatch({
 						defaultAction: false,
@@ -132,7 +132,7 @@ sap.ui.define([
 				//Assume closed ColorPalettePopover from previous test
 				opaTest("Select a predefined color using the [ENTER] key", function (Given, When, Then) {
 					When.iOpenComplexControlDefaultsColorPalettePopover();
-					Then.complexControlDefaultsColorPalettePopoverShouldBeOpen();
+					Then.complexControlDefaultsColorPalettePopoverShouldBeOpenAndFocusedOnColor("darkorange");
 					When.iPressKeyOnAColorSwatch("indianred", KeyCodes.ENTER);
 					Then.colorSelectEventParamsShouldMatch({
 						defaultAction: false,
@@ -144,7 +144,7 @@ sap.ui.define([
 				//Assume closed ColorPalettePopover from previous test
 				opaTest("Select a predefined color using the [TAB] key", function (Given, When, Then) {
 					When.iOpenComplexControlDefaultsColorPalettePopover();
-					Then.complexControlDefaultsColorPalettePopoverShouldBeOpen();
+					Then.complexControlDefaultsColorPalettePopoverShouldBeOpenAndFocusedOnColor("indianred");
 					When.iPressKeyOnAColorSwatch("darkmagenta", KeyCodes.TAB);
 					Then.colorSelectEventParamsShouldMatch({
 						defaultAction: false,

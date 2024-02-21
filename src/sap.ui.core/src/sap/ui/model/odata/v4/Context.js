@@ -475,6 +475,16 @@ sap.ui.define([
 			}
 			throw new Error("Must not modify a deleted entity: " + this);
 		}
+
+		if (sPath === "@$ui5.context.isSelected") {
+			this.setSelected(vValue);
+
+			if (oGroupLock) {
+				oGroupLock.unlock();
+				oGroupLock = null;
+			}
+		}
+
 		if (oGroupLock && this.isTransient() && !this.isInactive()) {
 			oValue = this.getValue();
 			oPromise = oValue && _Helper.getPrivateAnnotation(oValue, "transient");
@@ -2042,7 +2052,10 @@ sap.ui.define([
 	/**
 	 * Sets a new value for the property identified by the given path. The path is relative to this
 	 * context and is expected to point to a structural property with primitive type or, since
-	 * 1.85.0, to an instance annotation.
+	 * 1.85.0, to an instance annotation. Since 1.122.0 the client-side annotation
+	 * "@$ui5.context.isSelected" can be given as a path. Note: Writing to a client-side
+	 * annotation never triggers a PATCH request, even if <code>sGroupId</code> is given.
+	 * Thus, reverting the value of this annotation cannot be done via {@link #resetChanges}.
 	 *
 	 * @param {string} sPath
 	 *   A path relative to this context
@@ -2050,7 +2063,8 @@ sap.ui.define([
 	 *   The new value which must be primitive
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the PATCH request; if not specified, the update group ID for
-	 *   the context's binding is used, see {@link #getUpdateGroupId}. Since 1.74.0, you can use
+	 *   the context's binding is used, see {@link #getUpdateGroupId}. When writing to a client-side
+	 *   annotation, <code>null</code> is used automatically. Since 1.74.0, you can use
 	 *   <code>null</code> to prevent the PATCH request.
 	 * @param {boolean} [bRetry]
 	 *   Since 1.85.0, if <code>true</code> the property is not reset if the PATCH request failed.

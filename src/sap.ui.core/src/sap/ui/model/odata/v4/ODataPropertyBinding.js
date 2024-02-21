@@ -99,6 +99,9 @@ sap.ui.define([
 			this.sGroupId = undefined;
 			this.bNoPatch = false;
 		}
+		if (this.sPath === "@$ui5.context.isSelected") {
+			this.bNoPatch = true;
+		}
 		this.oCheckUpdateCallToken = undefined;
 		this.oContext = oContext;
 		this.bHasDeclaredType = undefined; // whether the binding info declares a type
@@ -734,7 +737,10 @@ sap.ui.define([
 	 * be updated on the server, an error is logged to the console and added to the message manager
 	 * as a technical message. Unless preconditions fail synchronously, a
 	 * {@link sap.ui.model.odata.v4.ODataModel#event:propertyChange 'propertyChange'} event is
-	 * fired and provides a promise on the outcome of the asynchronous operation.
+	 * fired and provides a promise on the outcome of the asynchronous operation. Since 1.122.0
+	 * this method allows updates to the client-side annotation "@$ui5.context.isSelected". Note:
+	 * Changing the value of a client-side annotation never triggers a PATCH request, no matter
+	 * which <code>sGroupId</code> is given. Thus, it cannot be reverted via {@link #resetChanges}.
 	 *
 	 * @param {any} vValue
 	 *   The new value which must be primitive
@@ -742,7 +748,8 @@ sap.ui.define([
 	 *   The group ID to be used for this update call; if not specified, the update group ID for
 	 *   this binding (or its relevant parent binding) is used, see {@link #getUpdateGroupId}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
-	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
+	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}. When writing to a client-side
+	 *   annotation, this parameter is ignored.
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> the binding's root binding is suspended.

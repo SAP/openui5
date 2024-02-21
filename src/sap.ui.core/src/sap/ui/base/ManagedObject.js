@@ -3470,6 +3470,23 @@ sap.ui.define([
 	ManagedObject.prototype._unbindProperty = logError.bind(null, "_unbindProperty");
 
 	/**
+	 * Find out whether the given property is being updated. This occurs when the corresponding data in the model for
+	 * the given property is changed. The method can be used to determine if the setter of a property is called
+	 * from a model update.
+	 *
+	 * When the given property isn't bound at all, <code>false</code> is returned.
+	 *
+	 * @param {string} sName the name of the property
+	 * @return {boolean} Whether the given property is being updated
+	 * @private
+	 * @ui5-restricted sap.m
+	 */
+	ManagedObject.prototype.isPropertyBeingUpdated = function(sName) {
+		const oBindingInfo = this.getBindingInfo(sName);
+		return !!(oBindingInfo?.skipModelUpdate);
+	};
+
+	/**
 	 * Generic method which is called, whenever a property binding is changed.
 	 *
 	 * This method gets the external format from the property binding and applies

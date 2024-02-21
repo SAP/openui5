@@ -97,14 +97,21 @@ sap.ui.define([],
 			assert.expect(2);
 
 			var onMessage = function (oMessage) {
-				if (oMessage.data.type === "INIT") {
-					window.removeEventListener("message", onMessage);
-					assert.ok(oMessage.data.config.sample, "Component is created");
-					assert.ok(oSpy.calledWith(oCallParams), 'Component create has been called');
-					done();
-				} else if (oMessage.data.type === "LOAD") {
-					oSpy = this.spy(oFrame.contentWindow.sap.ui.core.Component, "create");
-				}
+				oFrame.contentWindow.sap.ui.require([
+					"sap/ui/core/Component"
+				], function (Component) {
+					if (oMessage.data.type === "INIT") {
+						window.removeEventListener("message", onMessage);
+						assert.ok(oMessage.data.config.sample, "Component is created");
+						assert.ok(
+							oSpy.calledWith(oCallParams),
+							"Component create has been called"
+						);
+						done();
+					} else if (oMessage.data.type === "LOAD") {
+						oSpy = this.spy(Component, "create");
+					}
+				}.bind(this));
 			}.bind(this);
 
 			window.addEventListener("message", onMessage);

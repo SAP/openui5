@@ -203,6 +203,24 @@ sap.ui.define([
 					errorMessage: "ColorPalettePopover was NOT successfully opened."
 				});
 			},
+			complexControlDefaultsColorPalettePopoverShouldBeOpenAndFocusedOnColor: function (sExpectedColorToBeDocumentActiveElement) {
+				var oComplexControlDefaultsColorPalettePopover = null;
+				return this.waitFor({
+					autoWait: false,
+					viewName: "Home",
+					check: function () {
+						oComplexControlDefaultsColorPalettePopover = Element.getElementById(COMPLEX_CONTROLDEFAULTS_COLORPALETTEPOPOVER_ID);
+						//ComplexControlDefaultsColorPopoverPalette is rendered in UI area and visible
+						return oComplexControlDefaultsColorPalettePopover.$().length === 1 && oComplexControlDefaultsColorPalettePopover.$().is(":visible");
+					},
+					success: function () {
+						Opa5.assert.ok(true, "The ColorPalettePopover is opened");
+						this.complexControlDefaultsColorPalettePopoverShouldRenderAllChildControls();
+						this.documentActiveSwatchShouldBe(sExpectedColorToBeDocumentActiveElement);
+					},
+					errorMessage: "ColorPalettePopover was NOT successfully opened."
+				});
+			},
 			complexControlDefaultsColorPalettePopoverColorPickerShouldBeOpen: function () {
 				var oComplexControlDefaultsColorPalettePopoverColorPicker = null;
 				return this.waitFor({

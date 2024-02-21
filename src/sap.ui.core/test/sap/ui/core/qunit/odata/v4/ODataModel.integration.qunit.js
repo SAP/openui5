@@ -473,6 +473,22 @@ sap.ui.define([
 	}
 
 	/**
+	 * Sets the "selected" property for the given context.
+	 *
+	 * @param {boolean} bUseAnnotation - If <code>true</code>, setProperty with the client-side
+	 *   annotation is used for selection; otherwise, the context's setSelected method is used.
+	 * @param {sap.ui.model.odata.v4.Context} oContext - A context
+	 * @param {boolean} bSelected - The new "selected" state
+	 */
+	function setSelected(bUseAnnotation, oContext, bSelected) {
+		if (bUseAnnotation) {
+			oContext.setProperty("@$ui5.context.isSelected", bSelected);
+		} else {
+			oContext.setSelected(bSelected);
+		}
+	}
+
+	/**
 	 * Creates a test with the given title and executes viewStart with the given parameters.
 	 *
 	 * @param {string} sTitle The title of the test case
@@ -51993,9 +52009,11 @@ sap.ui.define([
 	// requested.
 	//
 	// Do likewise for selection which implicitly keeps alive (JIRA: CPOUI5ODATAV4-2053).
+	// Select via setSelected and setting the client-side annotation (JIRA: CPOUI5ODATAV4-1944).
 	[false, true].forEach(function (bImplicitly) {
-		var sTitle = "CPOUI5ODATAV4-488: Refresh w/" + (bImplicitly ? " implicitly" : "")
-				+ " kept-alive context";
+		[false, true].forEach(function (bUseAnnotation) {
+			var sTitle = "CPOUI5ODATAV4-488: Refresh w/" + (bImplicitly ? " implicitly" : "")
+					+ " kept-alive context, selection via annotation= " + bUseAnnotation;
 
 		QUnit.test(sTitle, function (assert) {
 			var oKeptContext,
@@ -52013,9 +52031,9 @@ sap.ui.define([
 				// 2nd kept-alive context (CPOUI5ODATAV4-579)
 				oKeptContext2 = oTable.getItems()[0].getBindingContext();
 				if (bImplicitly) {
-					oKeptContext.setSelected(true);
+					setSelected(bUseAnnotation, oKeptContext, true);
 					oKeptContext.setKeepAlive(false);
-					oKeptContext2.setSelected(true);
+					setSelected(bUseAnnotation, oKeptContext2, true);
 					checkSelected(assert, oKeptContext, true);
 					checkSelected(assert, oKeptContext2, true);
 				} else {
@@ -52074,7 +52092,7 @@ sap.ui.define([
 				var oKeptContext3 = oTable.getItems()[1].getBindingContext();
 
 				if (bImplicitly) {
-					oKeptContext3.setSelected(true);
+					setSelected(bUseAnnotation, oKeptContext3, true);
 					checkSelected(assert, oKeptContext3, true);
 				} else {
 					// 3rd kept-alive ontext (CPOUI5ODATAV4-579)
@@ -52174,8 +52192,10 @@ sap.ui.define([
 
 				that.oView.byId("objectPage").setBindingContext(null);
 				oKeptContext.setKeepAlive(false);
-				oKeptContext.setSelected(false);
-				checkSelected(assert, oKeptContext, bImplicitly ? false : undefined);
+				setSelected(bUseAnnotation, oKeptContext, false);
+				// in case of !bImplicitly and !bUseAnnotation oKeptContext was never selected.
+				// the annotation stays undefined if it is set (repeatedly) to false then.
+				checkSelected(assert, oKeptContext, bImplicitly || bUseAnnotation ? false : undefined);
 
 				return Promise.all([
 					// code under test
@@ -52210,6 +52230,7 @@ sap.ui.define([
 			}).then(function () {
 				assert.strictEqual(oKeptContext2.getProperty("GrossAmount"), "149.5");
 			});
+		});
 		});
 	});
 
@@ -56280,7 +56301,9 @@ sap.ui.define([
 	//
 	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
 	[false, true].forEach(function (bSingle) {
-		var sTitle = "CPOUI5ODATAV4-2053: removeCreated, w/o UI on top; bSingle=" + bSingle;
+		[false, true].forEach(function (bUseAnnotation) {
+		var sTitle = "CPOUI5ODATAV4-2053: removeCreated, w/o UI on top; bSingle=" + bSingle
+			+ ", selection via annotation=" + bUseAnnotation;
 
 		QUnit.test(sTitle, function (assert) {
 			var oBinding,
@@ -56307,7 +56330,9 @@ sap.ui.define([
 				oCreatedContext = oBinding.create({MEMBER_COUNT : 0, Team_Id : "NEW"}, true);
 
 				// code under test
-				oCreatedContext.setSelected(true);
+				setSelected(bUseAnnotation, oCreatedContext, true);
+
+				assert.ok(oCreatedContext.isSelected());
 
 				return Promise.all([
 					oCreatedContext.created(),
@@ -56359,6 +56384,7 @@ sap.ui.define([
 					Team_Id : "NEW"
 				});
 			});
+		});
 		});
 	});
 
@@ -61537,6 +61563,50 @@ sap.ui.define([
 			oModel.delete("/SalesOrderList('6')", "$direct"),
 			this.waitForChanges(assert)
 		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Set a context to selected using a property binding to the client-side annotation
+	// "@$ui5.context.isSelected".
+	// JIRA: CPOUI5ODATAV4-1944
+	QUnit.test("Set context selected via annotation & property binding", async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{/SalesOrderList}">
+	<Text id="id" text="{SalesOrderID}"/>
+	<Input id="selected" value="{path : '@$ui5.context.isSelected', targetType: 'any'}"/>
+</Table>`;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1"},
+					{SalesOrderID : "2"}
+				]
+			})
+			.expectChange("id", ["1", "2"])
+			.expectChange("selected", [undefined, undefined]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oPropertyBinding = this.oView.byId("table").getItems()[0].getCells()[1]
+			.getBinding("value");
+		const oContext = oPropertyBinding.getContext();
+
+		this.expectChange("selected", [true]);
+
+		// code under test
+		oPropertyBinding.setValue(true);
+		checkSelected(assert, oContext, true);
+
+		await this.waitForChanges(assert);
+
+		this.expectChange("selected", [false]);
+
+		// code under test
+		oPropertyBinding.setValue(false);
+		checkSelected(assert, oContext, false);
+
+		await this.waitForChanges(assert);
 	});
 
 	//*********************************************************************************************

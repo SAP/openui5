@@ -3059,6 +3059,54 @@ sap.ui.define([
 	});
 });
 
+	//********************************************************************************************
+[false, true].forEach((bGroupLock) => {
+	QUnit.test("doSetProperty: @$ui5.context.isSelected, group lock=" + bGroupLock, function () {
+		const oBinding = {doSetProperty : mustBeMocked, getResolvedPath : mustBeMocked};
+		const oMetaModel = {fetchUpdateData : mustBeMocked};
+		const oModel = {getMetaModel : () => oMetaModel};
+		const oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')");
+
+		this.mock(oContext).expects("isDeleted").twice().withExactArgs().returns(false);
+		this.mock(oContext).expects("setSelected").withExactArgs("~bSelected~");
+		this.mock(oContext).expects("isTransient").never();
+		this.mock(oContext).expects("withCache")
+			.withExactArgs(sinon.match.func, "@$ui5.context.isSelected", false, true)
+			.callsFake((fnProcessor) => {
+				const oCache = {setProperty : mustBeMocked, update : mustBeMocked};
+				this.mock(oBinding).expects("doSetProperty")
+					.withExactArgs("/cache/path", "~bSelected~", /*oGroupLock*/null);
+				this.mock(oMetaModel).expects("fetchUpdateData")
+					.withExactArgs("@$ui5.context.isSelected", sinon.match.same(oContext), true)
+					.returns(SyncPromise.resolve({
+						entityPath : "/entity/path",
+						propertyPath : "@$ui5.context.isSelected"
+					}));
+				this.mock(oBinding).expects("getResolvedPath").withExactArgs()
+					.returns("/resolved/binding/path");
+				this.mock(_Helper).expects("getRelativePath")
+					.withExactArgs("/entity/path", "/resolved/binding/path")
+					.returns("helper/path");
+				this.mock(oCache).expects("setProperty")
+					.withExactArgs("@$ui5.context.isSelected", "~bSelected~", "helper/path",
+						undefined)
+					.resolves();
+				this.mock(oCache).expects("update").never();
+
+				return fnProcessor(oCache, "/cache/path", oBinding);
+			});
+
+		let oGroupLock = null;
+		if (bGroupLock) {
+			oGroupLock = {unlock : mustBeMocked};
+			this.mock(oGroupLock).expects("unlock").withExactArgs();
+		}
+
+		// code under test
+		oContext.doSetProperty("@$ui5.context.isSelected", "~bSelected~", oGroupLock);
+	});
+});
+
 	//*********************************************************************************************
 [function (_assert, _oModelMock, _oBinding, _oBindingMock, _fnErrorCallback, _fnPatchSent,
 		_fnIsKeepAlive, oError) {

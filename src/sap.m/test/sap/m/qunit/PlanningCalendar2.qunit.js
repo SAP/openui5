@@ -7,8 +7,8 @@ sap.ui.define([
 	"sap/ui/core/Locale",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
@@ -44,8 +44,8 @@ sap.ui.define([
 	Locale,
 	qutils,
 	createAndAppendDiv,
-	JSONModel,
 	nextUIUpdate,
+	JSONModel,
 	CalendarDate,
 	DateRange,
 	DateTypeRange,
@@ -3156,5 +3156,129 @@ sap.ui.define([
 
 		// Destroy
 		oPC.destroy();
+	});
+
+	QUnit.module("PC with min/max dates", {
+		beforeEach: function () {
+			this.oPC = createPlanningCalendar("BoundedPC");
+			this.oPC.setFirstDayOfWeek(0);
+
+			this.oMinDate = UI5Date.getInstance(2017, 0, 10);
+			this.oMaxDate = UI5Date.getInstance(2017, 1, 24);
+
+			this.oPC.setMinDate(this.oMinDate);
+			this.oPC.setMaxDate(this.oMaxDate);
+
+			this.oStartDayOfWeek = UI5Date.getInstance(2017, 0, 8);
+			this.oStartDayOfMonth = UI5Date.getInstance(2017, 0, 1);
+		},
+		afterEach: function () {
+			this.oPC.destroy();
+		},
+		prepareTest: async function (sTargetElementId) {
+			this.oPC.placeAt(sTargetElementId);
+			await nextUIUpdate();
+		}
+	});
+
+	QUnit.test("start date is correct in Week view", async function(assert) {
+		// Arrange
+		var oStartDate, oRow;
+
+		this.oPC.setViewKey(CalendarIntervalType.Week);
+
+		// Act
+		this.oPC.placeAt("bigUiArea");
+		await nextUIUpdate();
+
+		oStartDate = this.oPC.getStartDate().getTime();
+		oRow = this.oPC.getAggregation("table").getInfoToolbar().getContent()[1];
+
+		// Assert
+		assert.strictEqual(oStartDate, this.oStartDayOfWeek.getTime(), "Start date is set to the beginning of the week (prior to min date)");
+		assert.strictEqual(oRow.getStartDate().getTime(), oStartDate, "Start date of WeeksRow matches");
+		assert.ok(jQuery("#BoundedPC-WeeksRow-20170108").hasClass("sapUiCalItemDsbl"), "First day of week is disabled because it is out of bounds");
+	});
+
+	QUnit.test("start is correct in OneMonth view (pc view)", async function(assert) {
+		// Arrange
+		var oStartDate, oRow;
+
+		this.oPC.setViewKey(CalendarIntervalType.OneMonth);
+
+		// Act
+		this.oPC.placeAt("bigUiArea");
+		await nextUIUpdate();
+
+		oStartDate = this.oPC.getStartDate().getTime();
+		oRow = this.oPC.getAggregation("table").getInfoToolbar().getContent()[1];
+
+		// Assert
+		assert.strictEqual(oStartDate, this.oStartDayOfMonth.getTime(), "Start date is set to the beginning of the week");
+		assert.strictEqual(oRow.getStartDate().getTime(), oStartDate, "Start date of WeeksRow matches");
+		assert.ok(jQuery("#BoundedPC-OneMonthsRow-20170101").hasClass("sapUiCalItemDsbl"), "First day of month is disabled because it is out of bounds");
+	});
+
+	QUnit.test("start & selected date is correct in OneMonth view (mobile view)", async function(assert) {
+		// Arrange
+		var oStartDate, oRow;
+
+		this.oPC.setViewKey(CalendarIntervalType.OneMonth);
+
+		// Act
+		this.oPC.placeAt("smallUiArea");
+		await nextUIUpdate();
+
+		oStartDate = this.oPC.getStartDate().getTime();
+		oRow = this.oPC.getAggregation("table").getInfoToolbar().getContent()[1];
+
+		// Assert
+		assert.strictEqual(oStartDate, this.oStartDayOfMonth.getTime(), "Start date is set to the beginning of the week");
+		assert.strictEqual(oRow.getStartDate().getTime(), oStartDate, "Start date of WeeksRow matches");
+		assert.ok(jQuery("#BoundedPC-OneMonthsRow-20170101").hasClass("sapUiCalItemDsbl"), "First day of month is disabled because it is out of bounds");
+
+		assert.strictEqual(this.oPC._oOneMonthsRow.getSelectedDates()[0].getStartDate().getTime(), this.oMinDate.getTime(), "Selected date in months row is set to min date");
+	});
+
+	QUnit.test("changing from OneMonth (pc) to Days view", async function(assert) {
+		// Arrange
+		this.oPC.setViewKey(CalendarIntervalType.OneMonth);
+		this.oPC.placeAt("bigUiArea");
+		await nextUIUpdate();
+
+		// Act
+		this.oPC.setViewKey(CalendarIntervalType.Day);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(this.oPC.getStartDate().getTime(), this.oMinDate.getTime(), "Start date is set to min date in Days view");
+	});
+
+	QUnit.test("changing from OneMonth (pc) to Weeks view", async function(assert) {
+		// Arrange
+		this.oPC.setViewKey(CalendarIntervalType.OneMonth);
+		this.oPC.placeAt("bigUiArea");
+		await nextUIUpdate();
+
+		// Act
+		this.oPC.setViewKey(CalendarIntervalType.Week);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(this.oPC.getStartDate().getTime(), this.oStartDayOfWeek.getTime(), "Start date is set to the beginning of the week (prior to min day)");
+	});
+
+	QUnit.test("changing from Weeks to OneMonth (pc)", async function(assert) {
+		// Arrange
+		this.oPC.setViewKey(CalendarIntervalType.OneMonth);
+		this.oPC.placeAt("bigUiArea");
+		await nextUIUpdate();
+
+		// Act
+		this.oPC.setViewKey(CalendarIntervalType.Week);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(this.oPC.getStartDate().getTime(), this.oStartDayOfWeek.getTime(), "Start date is set to the beginning of the week (prior to min day)");
 	});
 });
