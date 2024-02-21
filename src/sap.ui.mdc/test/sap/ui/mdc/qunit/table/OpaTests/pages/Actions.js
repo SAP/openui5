@@ -166,6 +166,9 @@ sap.ui.define([
 						id: oTable.getId() + "-expandAll",
 						controlType: "sap.m.Button",
 						actions: new Press(),
+						success: function() {
+							Opa5.assert.ok(true, "Pressed Expand All Rows button");
+						},
 						errorMessage: "Could not press Expand Button"
 					});
 				}
@@ -188,8 +191,73 @@ sap.ui.define([
 						id: oTable.getId() + "-collapseAll",
 						controlType: "sap.m.Button",
 						actions: new Press(),
+						success: function() {
+							Opa5.assert.ok(true, "Pressed Collapse All Rows button");
+						},
 						errorMessage: "Could not press Collapse Button"
 					});
+				}
+			});
+		},
+
+		/**
+		 * Emulates a press action on the element in a row that expands the row.
+		 *
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
+		 * @param {object} mConfig Used to find the row to expand
+		 * @param {int} mConfig.index Index of the row in the aggregation of the inner table
+		 * @param {string} mConfig.path Path of the property
+		 * @param {string} mConfig.value Value of the property
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iPressExpandRowButton: function(vTable, mConfig) {
+			return Util.waitForRow.call(this, vTable, {
+				index: mConfig.index,
+				path: mConfig.path,
+				value: mConfig.value,
+				success: function(oTable, oRow) {
+					if (oTable._isOfType(TableType.Table, true)) {
+						if (oRow.isExpanded()) {
+							throw new Error("The row is already expanded");
+						}
+						const sIdSuffix = oTable._isOfType(TableType.Table) ? "groupHeader" : "treeicon";
+						new Press({idSuffix: sIdSuffix}).executeOn(oRow);
+						Opa5.assert.ok(true, "Pressed Expand Row button for " + JSON.stringify(mConfig));
+					} else {
+						throw new Error("The current table type does not support expanding rows");
+					}
+				}
+			});
+		},
+
+		/**
+		 * Emulates a press action on the element in a row that collapses the row.
+		 *
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
+		 * @param {object} mConfig Used to find the row to expand
+		 * @param {int} mConfig.index Index of the row in the aggregation of the inner table
+		 * @param {string} mConfig.path Path of the property
+		 * @param {string} mConfig.value Value of the property
+		 * @returns {Promise} OPA waitFor
+		 * @private
+		 */
+		iPressCollapseRowButton: function(vTable, mConfig) {
+			return Util.waitForRow.call(this, vTable, {
+				index: mConfig.index,
+				path: mConfig.path,
+				value: mConfig.value,
+				success: function(oTable, oRow) {
+					if (oTable._isOfType(TableType.Table, true)) {
+						if (!oRow.isExpanded()) {
+							throw new Error("The row is already collapsed");
+						}
+						const sIdSuffix = oTable._isOfType(TableType.Table) ? "groupHeader" : "treeicon";
+						new Press({idSuffix: sIdSuffix}).executeOn(oRow);
+						Opa5.assert.ok(true, "Pressed Collapse Row button for " + JSON.stringify(mConfig));
+					} else {
+						throw new Error("The current table type does not support collapsing rows");
+					}
 				}
 			});
 		},

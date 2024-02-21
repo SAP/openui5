@@ -1605,33 +1605,44 @@ sap.ui.define([
 	});
 
 	QUnit.test("#expandAllRows", function(assert) {
-		const fnTest = function(sTableType, bSupportsExpandAll) {
+		const fnTest = async (sTableType, bSupportsExpandAll) => {
 			const pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
-			return pInit.then(function(oTable) {
-				sinon.stub(oTable, "getRowBinding").returns({
-					setAggregation: function(oObject) {
-						assert.equal(oObject.expandTo, Number.MAX_SAFE_INTEGER, sTableType + ": setAggregation called with expandTo: Number.MAX_SAFE_INTEGER");
-						assert.equal(oObject.test, "Test", sTableType + ": test property not changed");
-					},
-					getAggregation: function(oObject) {
-						return {expandTo: 1, test: "Test"};
-					}
-				});
-				const oSetAggregationSpy = sinon.spy(oTable.getRowBinding(), "setAggregation");
+			const oTable = await pInit;
+			let iExpandTo = 1;
 
-				if (bSupportsExpandAll) {
-					oTable.getControlDelegate().expandAllRows(oTable);
-					assert.ok(oSetAggregationSpy.calledOnce, sTableType + ": setAggregation was called");
-				} else {
-					assert.throws(() => {
-						oTable.getControlDelegate().expandAllRows(oTable);
-					}, Error("Unsupported operation: Not supported for the current table type"));
-				}
-
-				oTable.getRowBinding.restore();
-				oSetAggregationSpy.restore();
+			sinon.stub(oTable, "getRowBinding").returns({
+				setAggregation: sinon.stub().callsFake((oObject) => {
+					assert.equal(oObject.expandTo, Number.MAX_SAFE_INTEGER,
+						sTableType + ": Binding#setAggregation called with expandTo: Number.MAX_SAFE_INTEGER");
+					assert.equal(oObject.test, "Test", sTableType + ": test property not changed");
+					iExpandTo = Number.MAX_SAFE_INTEGER;
+				}),
+				getAggregation: sinon.stub().callsFake(() => {
+					return {expandTo: iExpandTo, test: "Test"};
+				}),
+				refresh: sinon.stub()
 			});
-		}.bind(this);
+
+			if (bSupportsExpandAll) {
+				const oBinding = oTable.getRowBinding();
+
+				oTable.getControlDelegate().expandAllRows(oTable);
+				assert.ok(oBinding.setAggregation.calledOnce, sTableType + ": Binding#setAggregation called once if expandTo changes");
+				assert.ok(oBinding.refresh.notCalled, sTableType + ": Binding#refresh not called if expandTo changes");
+
+				oBinding.setAggregation.resetHistory();
+				oBinding.refresh.resetHistory();
+				oTable.getControlDelegate().expandAllRows(oTable);
+				assert.ok(oBinding.setAggregation.notCalled, sTableType + ": Binding#setAggregation not called if expandTo doesn't change");
+				assert.ok(oBinding.refresh.calledOnceWithExactly(), sTableType + ": Binding#refresh called once if expandTo doesn't change");
+			} else {
+				assert.throws(() => {
+					oTable.getControlDelegate().expandAllRows(oTable);
+				}, Error("Unsupported operation: Not supported for the current table type"), sTableType + ": Throws an error");
+			}
+
+			oTable.getRowBinding.restore();
+		};
 
 		return fnTest(TableType.TreeTable, true).then(function() {
 			return fnTest(TableType.Table, false);
@@ -1641,33 +1652,43 @@ sap.ui.define([
 	});
 
 	QUnit.test("#collapseAllRows", function(assert) {
-		const fnTest = function(sTableType, bSupportsCollapseAll) {
+		const fnTest = async (sTableType, bSupportsCollapseAll) => {
 			const pInit = this.oTable ? this.oTable.setType(sTableType).initialized() : this.initTable({type: sTableType});
-			return pInit.then(function(oTable) {
-				sinon.stub(oTable, "getRowBinding").returns({
-					setAggregation: function(oObject) {
-						assert.equal(oObject.expandTo, 1, "setAggregation called with expandTo: 1");
-						assert.equal(oObject.test, "Test", "test property not changed");
-					},
-					getAggregation: function(oObject) {
-						return {expandTo: 12, test: "Test"};
-					}
-				});
-				const oSetAggregationSpy = sinon.spy(oTable.getRowBinding(), "setAggregation");
+			const oTable = await pInit;
+			let iExpandTo = 2;
 
-				if (bSupportsCollapseAll) {
-					oTable.getControlDelegate().collapseAllRows(oTable);
-					assert.ok(oSetAggregationSpy.calledOnce, sTableType + ": setAggregation was called");
-				} else {
-					assert.throws(() => {
-						oTable.getControlDelegate().collapseAllRows(oTable);
-					}, Error("Unsupported operation: Not supported for the current table type"));
-				}
-
-				oTable.getRowBinding.restore();
-				oSetAggregationSpy.restore();
+			sinon.stub(oTable, "getRowBinding").returns({
+				setAggregation: sinon.stub().callsFake((oObject) => {
+					assert.equal(oObject.expandTo, 1, "setAggregation called with expandTo: 1");
+					assert.equal(oObject.test, "Test", "test property not changed");
+					iExpandTo = 1;
+				}),
+				getAggregation: sinon.stub().callsFake(() => {
+					return {expandTo: iExpandTo, test: "Test"};
+				}),
+				refresh: sinon.stub()
 			});
-		}.bind(this);
+
+			if (bSupportsCollapseAll) {
+				const oBinding = oTable.getRowBinding();
+
+				oTable.getControlDelegate().collapseAllRows(oTable);
+				assert.ok(oBinding.setAggregation.calledOnce, sTableType + ": Binding#setAggregation called once if expandTo changes");
+				assert.ok(oBinding.refresh.notCalled, sTableType + ": Binding#refresh not called if expandTo changes");
+
+				oBinding.setAggregation.resetHistory();
+				oBinding.refresh.resetHistory();
+				oTable.getControlDelegate().collapseAllRows(oTable);
+				assert.ok(oBinding.setAggregation.notCalled, sTableType + ": Binding#setAggregation not called if expandTo doesn't change");
+				assert.ok(oBinding.refresh.calledOnceWithExactly(), sTableType + ": Binding#refresh called once if expandTo doesn't change");
+			} else {
+				assert.throws(() => {
+					oTable.getControlDelegate().collapseAllRows(oTable);
+				}, Error("Unsupported operation: Not supported for the current table type"), sTableType + ": Throws an error");
+			}
+
+			oTable.getRowBinding.restore();
+		};
 
 		return fnTest(TableType.TreeTable, true).then(function() {
 			return fnTest(TableType.Table, false);
