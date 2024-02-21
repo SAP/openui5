@@ -1,6 +1,7 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	'sap/ui/qunit/QUnitUtils',
 	"sap/f/FlexibleColumnLayout",
 	"sap/f/FlexibleColumnLayoutAccessibleLandmarkInfo",
 	"sap/f/FlexibleColumnLayoutSemanticHelper",
@@ -8,10 +9,12 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Core",
 	"sap/ui/core/ResizeHandler",
+	'sap/ui/events/KeyCodes',
 	"sap/f/library"
 ],
 function (
 	$,
+	QUnitUtils,
 	FlexibleColumnLayout,
 	FlexibleColumnLayoutAccessibleLandmarkInfo,
 	FlexibleColumnLayoutSemanticHelper,
@@ -19,6 +22,7 @@ function (
 	Button,
 	Core,
 	ResizeHandler,
+	KeyCodes,
 	library
 ) {
 	"use strict";
@@ -43,15 +47,20 @@ function (
 			TwoColumnsMidExpanded: 2
 		};
 
-	(function clearStoredResizeInfo() {
+	// clear the stored resized column % widths upon changing the container width (e.g. the QUnitFixture width)
+	// to prevent using the same stored % widths after switching to the new QUnitFixture width,
+	// as the stored column % widths may then resolve to new px values that break constaints (e.g.
+	// min-column-width constraint)
+	function clearStoredResizeInfo() {
 		Object.keys(library.LayoutType).forEach(function(sLayoutType) {
 			var sItem1 = FlexibleColumnLayout.STORAGE_PREFIX_DESKTOP + "-" + sLayoutType;
 			var sItem2 = FlexibleColumnLayout.STORAGE_PREFIX_TABLET + "-" + sLayoutType;
 			window.localStorage.removeItem(sItem1);
 			window.localStorage.removeItem(sItem2);
 		});
+	}
 
-	})();
+	clearStoredResizeInfo();
 
 	var fnCreatePage = function (sId, oContent) {
 		return new Page(sId, {
@@ -138,10 +147,11 @@ function (
 		},
 		afterEach: function () {
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
-			$("#" + sQUnitFixture).width("auto");
+			$("#" + sQUnitFixture).width("");
 			Core.getConfiguration().setAnimationMode(this.sOldAnimationMode);
 			this.oFCL.destroy();
-		}
+		},
+		after: clearStoredResizeInfo
 	});
 
 	QUnit.test("Instantiation", function (assert) {
@@ -491,10 +501,11 @@ function (
 		},
 		afterEach: function () {
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
-			$("#" + sQUnitFixture).width("auto");
+			$("#" + sQUnitFixture).width("");
 			Core.getConfiguration().setAnimationMode(this.sOldAnimationMode);
 			this.oFCL.destroy();
-		}
+		},
+		after: clearStoredResizeInfo
 	});
 
 	QUnit.test("Layout: OneColumn", function (assert) {
@@ -636,7 +647,7 @@ function (
 
 		dragSeparator("end", -100, this.oFCL);
 		assertSeparatorVisibility(assert, this.oFCL, 1, 1);
-		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1); // End column is back */
+		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1); // End column is back
 		assert.equal(this.oFCL.getLayout(), LT.ThreeColumnsMidExpanded);
 
 		this.clock.restore();
@@ -650,9 +661,10 @@ function (
 		},
 		afterEach: function () {
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
-			$("#" + sQUnitFixture).width("auto");
+			$("#" + sQUnitFixture).width("");
 			this.oFCL.destroy();
-		}
+		},
+		after: clearStoredResizeInfo
 	});
 
 	QUnit.test("Layout: OneColumn", function (assert) {
@@ -1453,6 +1465,60 @@ function (
 				"removeEventDelegate is called with the exact: _" + sColumnName + "ColumnFocusOutDelegate function.");
 			this[sSpyName] = null;
 		}, this);
+	});
+
+	QUnit.module("Keyboard Handling", {
+		beforeEach: function () {
+			this.oFCL = oFactory.createFCL({
+				layout: LT.TwoColumnsBeginExpanded
+			});
+			this.beginSeparatorDOM = this.oFCL._oColumnSeparators.begin[0];
+			this.beginColumnDOM = this.oFCL._$columns.begin[0];
+			this.midColumnDOM = this.oFCL._$columns.mid[0];
+			this.beginColumnInitialWidth = this.beginColumnDOM.offsetWidth;
+		}, afterEach: function () {
+			this.oFCL.destroy();
+			this.beginSeparatorDOM = null;
+			this.beginColumnDOM = null;
+			this.midColumnDOM = null;
+			this.beginColumnInitialWidth = null;
+		}
+	});
+
+	QUnit.test("Left arrow", function (assert) {
+		QUnitUtils.triggerKeydown(this.beginSeparatorDOM, KeyCodes.ARROW_LEFT);
+		assert.strictEqual(this.beginColumnDOM.offsetWidth, this.beginColumnInitialWidth - 20,
+			"Column's width should be 20 pixels less");
+	});
+
+	QUnit.test("Right arrow", function (assert) {
+		QUnitUtils.triggerKeydown(this.beginSeparatorDOM, KeyCodes.ARROW_RIGHT);
+		assert.strictEqual(this.beginColumnDOM.offsetWidth, this.beginColumnInitialWidth + 20,
+			"Column's width should be 20 pixels bigger");
+	});
+
+	QUnit.test("Shift + Left arrow", function (assert) {
+		QUnitUtils.triggerKeydown(this.beginSeparatorDOM, KeyCodes.ARROW_LEFT, true);
+		assert.strictEqual(this.beginColumnDOM.offsetWidth, this.beginColumnInitialWidth - 1,
+			"Column's width should be 1 pixel less");
+	});
+
+	QUnit.test("Shift + Right arrow", function (assert) {
+		QUnitUtils.triggerKeydown(this.beginSeparatorDOM, KeyCodes.ARROW_RIGHT, true);
+		assert.strictEqual(this.beginColumnDOM.offsetWidth, this.beginColumnInitialWidth + 1,
+			"Column's width should be 1 pixel bigger");
+	});
+
+	QUnit.test("Home", function (assert) {
+		QUnitUtils.triggerKeydown(this.beginSeparatorDOM, KeyCodes.HOME);
+		assert.strictEqual(this.beginColumnDOM.offsetWidth, FlexibleColumnLayout.COLUMN_MIN_WIDTH,
+			"Begin column should have the minimal allowed width");
+	});
+
+	QUnit.test("End", function (assert) {
+		QUnitUtils.triggerKeydown(this.beginSeparatorDOM, KeyCodes.END);
+		assert.strictEqual(this.midColumnDOM.offsetWidth, FlexibleColumnLayout.COLUMN_MIN_WIDTH,
+			"Mid column should have the minimal allowed width");
 	});
 
 	QUnit.module("columnResize", {
