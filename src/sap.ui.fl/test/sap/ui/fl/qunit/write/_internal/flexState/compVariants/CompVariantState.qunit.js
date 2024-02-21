@@ -166,6 +166,7 @@ sap.ui.define([
 			expectedLayer: Layer.USER
 		}].forEach(function(oTestData) {
 			QUnit.test(oTestData.testName, function(assert) {
+				const oAddStub = sandbox.stub(FlexState, "addDirtyFlexObject");
 				var sPersistencyKey = "persistency.key";
 				var mPropertyBag = Object.assign({
 					persistencyKey: sPersistencyKey
@@ -177,6 +178,7 @@ sap.ui.define([
 				var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
 				var mCompVariantsMapForPersistencyKey = mCompVariantsMap[mPropertyBag.persistencyKey];
 
+				assert.strictEqual(oAddStub.callCount, 1, "the change was added to the FlexState");
 				assert.strictEqual(
 					mCompVariantsMapForPersistencyKey[oTestData.targetCategory].length,
 					1,
@@ -590,6 +592,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Given setDefault is called twice and adaptationId is not provided", function(assert) {
+			const oAddStub = sandbox.stub(FlexState, "addDirtyFlexObject");
 			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isVersioningEnabled() {
@@ -607,6 +610,7 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				layer: Layer.CUSTOMER
 			});
+			assert.strictEqual(oAddStub.callCount, 1, "the change was added to the FlexState");
 			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId1);
 			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants.length, 1, "the change was stored into the map");
 			assert.strictEqual(
@@ -629,6 +633,7 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				layer: Layer.CUSTOMER
 			});
+			assert.strictEqual(oAddStub.callCount, 1, "no new change was added to the FlexState");
 			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId2, "the change content was updated");
 			assert.strictEqual(
 				oCompVariantStateMapForPersistencyKey.defaultVariants[0],
@@ -886,6 +891,7 @@ sap.ui.define([
 				reference: sComponentId
 			}).then(function() {
 				this.oVariant = CompVariantState.addVariant(this.oVariantData);
+				this.oAddStub = sandbox.stub(FlexState, "addDirtyFlexObject");
 			}.bind(this));
 		},
 		afterEach() {
@@ -906,6 +912,7 @@ sap.ui.define([
 				name: "newName",
 				visible: false
 			});
+			assert.strictEqual(this.oAddStub.callCount, 0, "no new change was added to the FlexState");
 			assert.strictEqual(this.oVariant.getLayer(), Layer.VENDOR, "the layer of the variant is VENDOR");
 			assert.strictEqual(this.oVariant.getSupportInformation().user, "SAP", "the author is SAP");
 			assert.strictEqual(this.oVariant.getFavorite(), false, "the favorite was set to false for the variant");
@@ -928,6 +935,7 @@ sap.ui.define([
 				adaptationId: "test-AdaptationId1",
 				forceCreate: true
 			});
+			assert.strictEqual(this.oAddStub.callCount, 1, "the change was added to the FlexState");
 			assert.strictEqual(this.oVariant.getLayer(), Layer.VENDOR, "the layer of the variant is VENDOR");
 			assert.strictEqual(this.oVariant.getSupportInformation().user, "SAP", "the author is SAP");
 			assert.strictEqual(this.oVariant.getFavorite(), false, "the favorite was set to false for the variant");
@@ -953,6 +961,7 @@ sap.ui.define([
 				contexts: {foo: "bar"},
 				name: "newName"
 			});
+			assert.strictEqual(this.oAddStub.callCount, 1, "the change was added to the FlexState");
 			assert.strictEqual(this.oVariant.getChanges().length, 1, "then one variant change was created");
 			assert.ok(oApplyChangesOnVariantSpy.called, "then the change is applied on the variant");
 			assert.strictEqual(this.oVariant.getFavorite(), false, "the favorite was changed in the variant by the applied change");
@@ -973,6 +982,7 @@ sap.ui.define([
 				contexts: {foo: "bar"},
 				name: "newName"
 			});
+			assert.strictEqual(this.oAddStub.callCount, 1, "the change was added to the FlexState");
 			assert.strictEqual(this.oVariant.getFavorite(), false, "the favorite is first set to false by the applied change");
 			assert.strictEqual(this.oVariant.getName(), "newName", "the variant name is correct");
 			assert.deepEqual(this.oVariant.getContexts(), {foo: "bar"}, "the contexts are correct");
@@ -985,6 +995,7 @@ sap.ui.define([
 				content: oUpdatedContent,
 				layer: Layer.USER
 			});
+			assert.strictEqual(this.oAddStub.callCount, 1, "no new change was added to the FlexState");
 			assert.strictEqual(this.oVariant.getFavorite(), true, "then the favorite is set to true by the updated change");
 			assert.strictEqual(this.oVariant.getChanges().length, 1, "only one change was written - it gets updated");
 			assert.strictEqual(
@@ -1414,12 +1425,14 @@ sap.ui.define([
 			assert.strictEqual(oVariant.getChanges()[0].getContent().favorite, false, "the updated change sets favorite to false");
 			assert.strictEqual(oVariant.getFavorite(), false, "favorite is set to false");
 
+			const oRemoveStub = sandbox.stub(FlexState, "removeDirtyFlexObject");
 			CompVariantState.revert({
 				id: oVariant.getVariantId(),
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
 			});
 
+			assert.strictEqual(oRemoveStub.callCount, 0, "no change was removed from the FlexState");
 			assert.strictEqual(
 				oVariant.getChanges()[0].getContent().executeOnSelection,
 				true,
@@ -1551,6 +1564,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given a variant in another layer was updated and reverted multiple times (update, update, revert, update, revert, revert)", function(assert) {
+			const oRemoveStub = sandbox.stub(FlexState, "removeDirtyFlexObject");
 			var oWriteStub = sandbox.stub(Storage, "write").resolves();
 
 			this.oVariantData.changeSpecificData.layer = Layer.CUSTOMER_BASE;
@@ -1614,6 +1628,7 @@ sap.ui.define([
 					reference: sComponentId,
 					persistencyKey: this.sPersistencyKey
 				});
+				assert.strictEqual(oRemoveStub.callCount, 1, "one change was removed from the FlexState");
 				assert.strictEqual(oVariant.getRevertData().length, 1, "one revert data entry is present");
 				assert.strictEqual(oVariant.getState(), States.LifecycleState.PERSISTED, "the variant has the correct state");
 				assert.strictEqual(oVariant.getFavorite(), true, "the favorite flag was set correctly");
@@ -1651,6 +1666,7 @@ sap.ui.define([
 					reference: sComponentId,
 					persistencyKey: this.sPersistencyKey
 				});
+				assert.strictEqual(oRemoveStub.callCount, 2, "another change was removed from the FlexState");
 				assert.strictEqual(oVariant.getRevertData().length, 1, "one revert data entry is present");
 				assert.strictEqual(oVariant.getState(), States.LifecycleState.PERSISTED, "the variant has the correct state");
 				assert.strictEqual(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
@@ -1664,6 +1680,7 @@ sap.ui.define([
 					reference: sComponentId,
 					persistencyKey: this.sPersistencyKey
 				});
+				assert.strictEqual(oRemoveStub.callCount, 3, "another change was removed from the FlexState");
 				assert.strictEqual(oVariant.getFavorite(), true, "the favorite flag was set correctly");
 				assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data entries are present");
 				assert.strictEqual(oVariant.getState(), States.LifecycleState.PERSISTED, "the variant has the correct state");
