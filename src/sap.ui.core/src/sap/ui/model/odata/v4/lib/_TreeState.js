@@ -21,7 +21,7 @@ sap.ui.define([
 	 */
 	class _TreeState {
 		// maps predicate to node id and number of levels to expand
-		oExpandLevels = new Map();
+		oPredicate2ExpandLevels = new Map();
 
 		/**
 		 * Constructor for a new _TreeState.
@@ -48,13 +48,13 @@ sap.ui.define([
 			}
 
 			const sPredicate = _Helper.getPrivateAnnotation(oNode, "predicate");
-			const oExpandLevel = this.oExpandLevels.get(sPredicate);
+			const oExpandLevel = this.oPredicate2ExpandLevels.get(sPredicate);
 			if (oExpandLevel && oExpandLevel.Levels) {
-				this.oExpandLevels.delete(sPredicate);
+				this.oPredicate2ExpandLevels.delete(sPredicate);
 			} else {
 				// must have NodeId as the node may be missing when calling #getExpandLevels
 				const sNodeId = _Helper.drillDown(oNode, this.sNodeProperty);
-				this.oExpandLevels.set(sPredicate, {NodeID : sNodeId, Levels : 0});
+				this.oPredicate2ExpandLevels.set(sPredicate, {NodeID : sNodeId, Levels : 0});
 			}
 		}
 
@@ -71,7 +71,7 @@ sap.ui.define([
 			}
 
 			const sPredicate = _Helper.getPrivateAnnotation(oNode, "predicate");
-			this.oExpandLevels.delete(sPredicate);
+			this.oPredicate2ExpandLevels.delete(sPredicate);
 		}
 
 		/**
@@ -87,13 +87,13 @@ sap.ui.define([
 			}
 
 			const sPredicate = _Helper.getPrivateAnnotation(oNode, "predicate");
-			const oExpandLevel = this.oExpandLevels.get(sPredicate);
+			const oExpandLevel = this.oPredicate2ExpandLevels.get(sPredicate);
 			if (oExpandLevel && !oExpandLevel.Levels) {
-				this.oExpandLevels.delete(sPredicate);
+				this.oPredicate2ExpandLevels.delete(sPredicate);
 			} else {
 				// must have NodeId as the node may be missing when calling #getExpandLevels
 				const sNodeId = _Helper.drillDown(oNode, this.sNodeProperty);
-				this.oExpandLevels.set(sPredicate, {NodeID : sNodeId, Levels : 1});
+				this.oPredicate2ExpandLevels.set(sPredicate, {NodeID : sNodeId, Levels : 1});
 			}
 		}
 
@@ -106,7 +106,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getExpandLevels() {
-			const aExpandLevels = [...this.oExpandLevels.values()];
+			const aExpandLevels = [...this.oPredicate2ExpandLevels.values()];
 			return aExpandLevels.length ? JSON.stringify(aExpandLevels) : undefined;
 		}
 
@@ -116,7 +116,7 @@ sap.ui.define([
 		 * @public
 		 */
 		reset() {
-			this.oExpandLevels.clear();
+			this.oPredicate2ExpandLevels.clear();
 		}
 	}
 
