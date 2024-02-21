@@ -140,6 +140,10 @@ sap.ui.define([
 
 	async function loadVariantsAuthorsFromConnectors(sReference, aConnectors) {
 		const aResponses = await Promise.all(aConnectors.map(function(oConnectorConfig) {
+			// Tolerance for connectors that do not have loadFeature implemented
+			if (!oConnectorConfig?.loadConnectorModule?.loadVariantsAuthors) {
+				return Promise.resolve(StorageUtils.logAndResolveDefault({}, oConnectorConfig, "loadVariantsAuthors"));
+			}
 			const oConnectorSpecificPropertyBag = Object.assign({reference: sReference}, {
 				url: oConnectorConfig.url
 			});
