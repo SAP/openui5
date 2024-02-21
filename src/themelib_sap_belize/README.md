@@ -3,6 +3,9 @@
 # @openui5/themelib_sap_belize
 Runtime resources of the [OpenUI5](https://github.com/SAP/openui5) Theme Library **sap_belize**.
 
+## Deprecation
+**This library is deprecated since 1.120.2 and should not be used for new projects.**
+
 ## Usage
 Add this library as a dependency to your UI5 project by using [UI5 Tooling](https://sap.github.io/ui5-tooling/):
 
