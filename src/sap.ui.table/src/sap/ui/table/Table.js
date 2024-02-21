@@ -2404,6 +2404,8 @@ sap.ui.define([
 				Math.min(mRowCounts.fixedTop + mRowCounts.scrollable, Math.max(this._getTotalRowCount() - mRowCounts.fixedBottom, 0)));
 		}
 
+        this._adjustToTotalRowCount();
+
 		return aContexts;
 	};
 
