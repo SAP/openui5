@@ -1,0 +1,88 @@
+<mvc:View
+	height="100%"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:ce="sap.ui.codeeditor"
+	controllerName="mdc.sample.controller.Mountains"
+	>
+
+	<f:DynamicPage id="page">
+		<f:header>
+			<f:DynamicPageHeader pinnable="true">
+				<mdc:FilterBar
+					id="mountainsFilterbar"
+					delegate="{ name: 'mdc/sample/delegate/JSONFilterBarDelegate', payload: {}}"
+					p13nMode = "Item,Value"
+					filtersChanged="handleFiltersChanged"
+					showAdaptFiltersButton="false">
+					<mdc:filterItems>
+						<!-- Rank - Custom operator -->
+						<mdc:FilterField
+							label="Rank (Custom operator)"
+							propertyKey="rank"
+							dataType="sap.ui.model.type.Integer"
+							conditions="{$filters>/conditions/rank}"
+							delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}"
+							operators="SRANGE,NOTSRANGE,EQ">
+						</mdc:FilterField>
+						<mdc:FilterField
+							label="First ascent (Custom operator)"
+							propertyKey="first_ascent"
+							dataType="sap.ui.model.type.Date"
+							conditions="{$filters>/conditions/first_ascent}"
+							delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}"
+							maxConditions="1"
+							operators="MYNEXTDAYS,EQ">
+						</mdc:FilterField>
+
+					</mdc:filterItems>
+				</mdc:FilterBar>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<VBox width="100%">
+				<VBox>
+					<Title text="Conditions"/>
+					<Label text="Editor height (px)" labelFor="inputText" />
+					<Slider
+						id="inputText"
+						value="{/editorHeight}"
+						min="100"
+						enableTickmarks="true"
+						max="800"
+						step="50"
+						class="sapUiMediumMarginBottom"/>
+				</VBox>
+				<HBox width="100%">
+					<VBox width="50%">
+						<Text text="The following JSON is the output of the FilterField's conditions." class="sapUiSmallMarginBottom" />
+						<ce:CodeEditor
+							type="json"
+							value="{/conditionsText}"
+							editable="false"
+							width="100%"
+							height="{
+								path: '/editorHeight',
+								formatter: '.formatter.formatHeight'
+							}" />
+					</VBox>
+					<VBox width="50%">
+						<Text text="The following text is the output of the FilterField's model filter." class="sapUiSmallMarginBottom" />
+						<ce:CodeEditor
+							type="text"
+							value="{/modelFilterText}"
+							editable="false"
+							width="100%"
+							height="{
+								path: '/editorHeight',
+								formatter: '.formatter.formatHeight'
+							}" />
+					</VBox>
+				</HBox>
+			</VBox>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>
