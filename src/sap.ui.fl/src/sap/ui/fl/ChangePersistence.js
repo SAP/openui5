@@ -144,22 +144,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks the current dependencies map for any open (unresolved) dependencies belonging to the given control
-	 * and returns the IDs of the open dependent changes.
-	 *
-	 * @param {object} oSelector selector of the control
-	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of all open dependent changes for the control
-	 */
-	ChangePersistence.prototype.getOpenDependentChangesForControl = function(oSelector, oAppComponent) {
-		return DependencyHandler.getOpenDependentChangesForControl(
-			this.getDependencyMapForComponent(),
-			JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent),
-			oAppComponent
-		);
-	};
-
-	/**
 	 * Adds a new change into dependency map positioned right after the referenced change and updates the change dependencies
 	 *
 	 * @param {sap.ui.core.Component} oAppComponent - Application component for the view

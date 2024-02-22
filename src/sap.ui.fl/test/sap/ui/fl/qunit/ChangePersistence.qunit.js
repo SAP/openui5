@@ -1039,22 +1039,6 @@ sap.ui.define([
 			FlexState.clearState();
 		}
 	}, function() {
-		QUnit.test("getOpenDependentChangesForControl", function(assert) {
-			var oCheckDependenciesStub = sandbox.stub(DependencyHandler, "getOpenDependentChangesForControl");
-			this.oChangePersistence.getOpenDependentChangesForControl({
-				id: "anotherId",
-				idIsLocal: false
-			}, this._oAppComponentInstance);
-			assert.equal(oCheckDependenciesStub.callCount, 1, "the function was called once");
-			assert.deepEqual(
-				oCheckDependenciesStub.lastCall.args[0],
-				this.oChangePersistence.getDependencyMapForComponent(),
-				"the dependency map was passed"
-			);
-			assert.equal(oCheckDependenciesStub.lastCall.args[1], "anotherId", "the resolved ID was passed");
-			assert.equal(oCheckDependenciesStub.lastCall.args[2], this._oAppComponentInstance, "the app component instance was passed");
-		});
-
 		QUnit.test("'addChangeAndUpdateDependencies' function is called", function(assert) {
 			var oChange = createChange("fileNameChange0");
 			this.oChangePersistence.addChangeAndUpdateDependencies(this._oComponentInstance, oChange);

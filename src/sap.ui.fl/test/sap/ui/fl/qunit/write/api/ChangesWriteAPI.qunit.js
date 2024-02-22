@@ -11,13 +11,13 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
@@ -34,13 +34,13 @@ sap.ui.define([
 	Applier,
 	Reverter,
 	States,
+	UIChangesState,
 	DescriptorChangeFactory,
 	Settings,
 	ChangeHandlerStorage,
 	AppVariantInlineChangeFactory,
 	ChangesWriteAPI,
 	ContextBasedAdaptationsAPI,
-	ChangePersistenceFactory,
 	Layer,
 	FlexUtils,
 	sinon,
@@ -52,13 +52,6 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 	var sReturnValue = "returnValue";
 	var oComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Control---demo--test");
-
-	function mockFlexController(oControl, oReturn) {
-		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl")
-		.throws("invalid parameters for flex persistence function")
-		.withArgs(oControl)
-		.returns(oReturn);
-	}
 
 	QUnit.module("Given ChangesWriteAPI", {
 		beforeEach() {
@@ -263,10 +256,6 @@ sap.ui.define([
 
 			sandbox.stub(Applier, "applyChangeOnControl").resolves(sReturnValue);
 
-			mockFlexController(mPropertyBag.element, {
-				getOpenDependentChangesForControl() {return [];}
-			});
-
 			return ChangesWriteAPI.apply(mPropertyBag).then(function(sValue) {
 				assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
 			});
@@ -302,9 +291,7 @@ sap.ui.define([
 			];
 			var oFlResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
-			mockFlexController(mPropertyBag.element, {
-				getOpenDependentChangesForControl() {return aDependentChanges;}
-			});
+			sandbox.stub(UIChangesState, "getOpenDependentChangesForControl").returns(aDependentChanges);
 
 			return ChangesWriteAPI.apply(mPropertyBag).catch(function(oError) {
 				assert.equal(oApplyStub.callCount, 1, "the change got applied");
