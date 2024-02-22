@@ -95,7 +95,6 @@ sap.ui.define([
 
 			await FlexState.getStorageResponse(sReference);
 		} catch (oError) {
-			// FIXME the CompVariantState causes an exception in the save scenario,
 			Log.warning("Problem during ChangePersistence.prototype.getChangesForComponent");
 		}
 	}
