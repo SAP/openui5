@@ -22,9 +22,9 @@ sap.ui.define([
 	"sap/ui/dt/DesignTimeStatus",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/Plugin",
-	"sap/ui/dt/plugin/TabHandling",
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/plugin/DragDrop",
+	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/Util",
 	"qunit/MetadataTestUtil",
@@ -54,9 +54,9 @@ sap.ui.define([
 	DesignTimeStatus,
 	ElementUtil,
 	Plugin,
-	TabHandling,
 	ContextMenuPlugin,
 	DragDrop,
+	ToolHooks,
 	ElementDesignTimeMetadata,
 	DtUtil,
 	MetadataTestUtil,
@@ -169,12 +169,12 @@ sap.ui.define([
 
 	QUnit.module("Given a Designtime with plugins", {
 		beforeEach() {
-			this.oTabHandlingPlugin = new TabHandling();
 			this.oContextMenuPlugin = new ContextMenuPlugin();
 			this.oDragDropPlugin = new DragDrop();
+			this.oToolHooks = new ToolHooks();
 			this.oDesignTime = new DesignTime({
 				plugins: [
-					this.oTabHandlingPlugin, this.oContextMenuPlugin, this.oDragDropPlugin
+					this.oToolHooks, this.oContextMenuPlugin, this.oDragDropPlugin
 				]
 			});
 		},
@@ -184,7 +184,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when several plugins are busy", function(assert) {
 			var done = assert.async();
-			this.oTabHandlingPlugin.setBusy(true);
+			this.oToolHooks.setBusy(true);
 			this.oContextMenuPlugin.setBusy(true);
 
 			assert.strictEqual(this.oDesignTime.getBusyPlugins().length, 2, "two plugins are busy");
@@ -194,7 +194,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 
-			this.oTabHandlingPlugin.setBusy(false);
+			this.oToolHooks.setBusy(false);
 			this.oContextMenuPlugin.setBusy(false);
 		});
 
@@ -774,14 +774,14 @@ sap.ui.define([
 
 		QUnit.test("when a plugin is added, a new Overlay is created and the DesignTime is destroyed", async function(assert) {
 			var fnDone = assert.async();
-			var oTabHandlingPlugin = new TabHandling();
-			var oRegisterPluginSpy = sandbox.spy(oTabHandlingPlugin, "registerElementOverlay");
-			var oDeregisterPluginSpy = sandbox.spy(oTabHandlingPlugin, "deregisterElementOverlay");
+			var oToolHooksPlugin = new ToolHooks();
+			var oRegisterPluginSpy = sandbox.spy(oToolHooksPlugin, "registerElementOverlay");
+			var oDeregisterPluginSpy = sandbox.spy(oToolHooksPlugin, "deregisterElementOverlay");
 
-			this.oDesignTime.addPlugin(oTabHandlingPlugin);
+			this.oDesignTime.addPlugin(oToolHooksPlugin);
 			assert.strictEqual(oRegisterPluginSpy.called, true, "then the registerElementOverlay method for the plugin was called");
 
-			var oPluginSpy = sandbox.spy(oTabHandlingPlugin, "callElementOverlayRegistrationMethods");
+			var oPluginSpy = sandbox.spy(oToolHooksPlugin, "callElementOverlayRegistrationMethods");
 
 			var oButton = new Button();
 			this.oOuterLayout.addContent(oButton);
@@ -801,20 +801,20 @@ sap.ui.define([
 
 		QUnit.test("when plugins are inserted and removed", function(assert) {
 			var done = assert.async(6);
-			var oTabHandlingPlugin = new TabHandling();
+			var oToolHooksPlugin = new ToolHooks();
 			var oContextMenuPlugin = new ContextMenuPlugin();
 			var oDragDropPlugin = new DragDrop();
-			var oRegisterElementOverlay = sandbox.spy(oTabHandlingPlugin, "registerElementOverlay");
+			var oRegisterElementOverlay = sandbox.spy(oToolHooksPlugin, "registerElementOverlay");
 			var oTaskManagerAddSpy = sandbox.spy(this.oDesignTime._oTaskManager, "add");
 
 			assert.equal(this.oDesignTime.getPlugins().length, 0, "initially there are no plugins on the design time");
 
-			this.oDesignTime.addPlugin(oTabHandlingPlugin);
+			this.oDesignTime.addPlugin(oToolHooksPlugin);
 			DtUtil.waitForSynced(this.oDesignTime, done)()
 			.then(function() {
 				assert.equal(oRegisterElementOverlay.callCount, 4,
-					"then the tabHandlingPlugin registration is called before designtime is synced");
-				assert.equal(oTaskManagerAddSpy.calledWith({ type: "pluginInProcess", plugin: oTabHandlingPlugin.getMetadata().getName()}), true,
+					"then the plugin registration is called before designtime is synced");
+				assert.equal(oTaskManagerAddSpy.calledWith({ type: "pluginInProcess", plugin: oToolHooksPlugin.getMetadata().getName()}), true,
 					"then on addPlugin the taskManager is used with tasks from 'pluginInProcess' type");
 				this.oDesignTime.insertPlugin(oContextMenuPlugin, 0);
 				return DtUtil.waitForSynced(this.oDesignTime, done)();
@@ -837,8 +837,8 @@ sap.ui.define([
 			.then(function() {
 				assert.equal(this.oDesignTime.getPlugins().length, 2,
 					"after removing one, two plugins remain in design time");
-				assert.strictEqual(this.oDesignTime.getPlugins()[1], oTabHandlingPlugin,
-					"the TabHandlingPlugin plugin is in the right position of the aggregation");
+				assert.strictEqual(this.oDesignTime.getPlugins()[1], oToolHooksPlugin,
+					"the toolHooks plugin is in the right position of the aggregation");
 				this.oDesignTime.removeAllPlugins();
 				return DtUtil.waitForSynced(this.oDesignTime, done)();
 			}.bind(this))
@@ -2524,9 +2524,9 @@ sap.ui.define([
 		QUnit.test("registration order", function(assert) {
 			assert.expect(6);
 			var fnDone = assert.async();
-			var oTabHandlingPlugin = new TabHandling();
+			var oToolHooksPlugin = new ToolHooks();
 			var oElementOverlayCreatedSpy = sandbox.spy();
-			var oRegisterElementOverlaySpy = sandbox.stub(oTabHandlingPlugin, "registerElementOverlay")
+			var oRegisterElementOverlaySpy = sandbox.stub(oToolHooksPlugin, "registerElementOverlay")
 			.onFirstCall().callsFake(function() {
 				assert.ok(OverlayRegistry.getOverlay(this.oButton1), "then button overlay is already registered in the overlayRegistry");
 				assert.ok(OverlayRegistry.getOverlay(this.oLayout), "then layout overlay is already registered in the overlayRegistry");
@@ -2538,7 +2538,7 @@ sap.ui.define([
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout],
-				plugins: [oTabHandlingPlugin],
+				plugins: [oToolHooksPlugin],
 				elementOverlayCreated: oElementOverlayCreatedSpy
 			});
 
@@ -2551,8 +2551,8 @@ sap.ui.define([
 
 		QUnit.test("when control is destroyed before its overlay is released to external world", async function(assert) {
 			var fnDone = assert.async();
-			var oTabHandlingPlugin = new TabHandling();
-			var oRegisterElementOverlaySpy = sandbox.spy(oTabHandlingPlugin, "registerElementOverlay");
+			var oToolHooksPlugin = new ToolHooks();
+			var oRegisterElementOverlaySpy = sandbox.spy(oToolHooksPlugin, "registerElementOverlay");
 			var oElementOverlayCreatedSpy = sandbox.spy();
 			var oElementOverlayDestroyedSpy = sandbox.spy();
 
@@ -2577,7 +2577,7 @@ sap.ui.define([
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout],
-				plugins: [oTabHandlingPlugin],
+				plugins: [oToolHooksPlugin],
 				elementOverlayCreated: oElementOverlayCreatedSpy,
 				elementOverlayDestroyed: oElementOverlayDestroyedSpy
 			});
@@ -2591,13 +2591,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when createOverlay() is called as a public function, then the resolved overlay (and its children) should be registered properly", function(assert) {
-			var oTabHandlingPlugin = new TabHandling();
-			var oRegisterElementOverlaySpy = sandbox.spy(oTabHandlingPlugin, "registerElementOverlay");
+			var oToolHooksPlugin = new ToolHooks();
+			var oRegisterElementOverlaySpy = sandbox.spy(oToolHooksPlugin, "registerElementOverlay");
 			var oElementOverlayCreatedSpy = sandbox.spy();
 			var oElementOverlayDestroyedSpy = sandbox.spy();
 
 			this.oDesignTime = new DesignTime({
-				plugins: [oTabHandlingPlugin],
+				plugins: [oToolHooksPlugin],
 				elementOverlayCreated: oElementOverlayCreatedSpy,
 				elementOverlayDestroyed: oElementOverlayDestroyedSpy
 			});
