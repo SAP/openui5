@@ -120,15 +120,29 @@ sap.ui.define(['./SimpleType'],
 	 * model messages to the attached control. Prerequisite is that the corresponding binding
 	 * supports this feature, see {@link sap.ui.model.Binding#supportsIgnoreMessages}.
 	 *
-	 * @return {number[]}
+	 * @return {int[]}
 	 *   An array of indices that determine which parts of this type shall not propagate their model
-	 *   messages to the attached control
+	 *   messages to the attached control; an empty array is returned by default
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#supportsIgnoreMessages
 	 * @since 1.82.0
 	 */
 	CompositeType.prototype.getPartsIgnoringMessages = function () {
+		return [];
+	};
+
+	/**
+	 * Gets the indices of the binding parts for which this type requires the binding's type for formatting
+	 * or parsing. An empty array is returned by default. Subclasses need to overwrite this function if they
+	 * are interested in type changes of the corresponding binding part.
+	 *
+	 * @returns {int[]}
+	 *   The indices of the parts with a relevant type for this composite type
+	 *
+	 * @see #processPartTypes
+	 */
+	CompositeType.prototype.getPartsListeningToTypeChanges = function () {
 		return [];
 	};
 
