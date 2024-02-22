@@ -73,6 +73,7 @@ sap.ui.define([
 		// check is only executed once and influenced by technical parameters
 		// Default is set via applyVariantManagementChange instead
 		return aCtrlVariantManagementChanges
+		.slice()
 		.reverse()
 		.map((oVariantManagementChange) => {
 			return oVariantManagementChange.getContent().defaultVariant;
