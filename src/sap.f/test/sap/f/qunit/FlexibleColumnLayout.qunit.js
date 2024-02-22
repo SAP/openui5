@@ -99,9 +99,14 @@ function(
 	 * @param {int} iEndVisible - whether we expect the end column to be visible or not
 	 */
 	var assertColumnsVisibility = function(assert, oFCL, iBeginVisible, iMidVisible, iEndVisible) {
-		var bBeginOK = (parseInt(oFCL.$("beginColumn")[0].style.width) > 0) === !!iBeginVisible,
-			bMidOK = (parseInt(getComputedStyle(oFCL.$("midColumn")[0]).width) > 0) === !!iMidVisible,
-			bEndOK = (parseInt(oFCL.$("endColumn")[0].style.width) > 0) === !!iEndVisible;
+		var bBeginOK =
+		(!oFCL.$("beginColumn").hasClass("sapFFCLColumnHidden")) ===
+		!!iBeginVisible,
+	  bMidOK =
+		(!oFCL.$("midColumn").hasClass("sapFFCLColumnHidden")) ===
+		!!iMidVisible,
+	  bEndOK =
+		(!oFCL.$("endColumn").hasClass("sapFFCLColumnHidden") === !!iEndVisible);
 
 		assert.ok(bBeginOK, "The begin column is " + (iBeginVisible ? "" : " not ") +  " visible");
 		assert.ok(bMidOK, "The mid column is " + (iMidVisible ? "" : " not ") +  " visible");
