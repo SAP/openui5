@@ -155,4 +155,28 @@ describe("sap.m.ComboBox", function() {
 			expect(takeScreenshot()).toLookAs("combobox_dropdown_closed_non_group");
 		});
 	});
+
+	// Selected item into view
+	it("should show the selected item when picker is open", function() {
+		var oComboBox = element(by.id("box_default"));
+		var oComboBoxArrow = element(by.id("box_default-arrow"));
+
+		browser.executeScript('document.getElementById("box_default").scrollIntoView()').then(function() {
+			oComboBox.click();
+
+			// Should open suggestions and select the last one
+			browser.actions().sendKeys("Y").perform();
+			expect(takeScreenshot()).toLookAs("box_default");
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ENTER).perform();
+
+			//should open the suggestons dropdown again showing the selected one
+			oComboBoxArrow.click();
+
+			expect(takeScreenshot()).toLookAs("cb_selected_item_into_view");
+
+			//should close the suggestions dropdown
+			oComboBoxArrow.click();
+		});
+	});
 });
