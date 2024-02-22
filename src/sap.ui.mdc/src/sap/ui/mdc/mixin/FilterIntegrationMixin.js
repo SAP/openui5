@@ -182,13 +182,16 @@ sap.ui.define([
 	/**
 	 * Executes a rebind considering the provided external and inbuilt filtering.
 	 *
+	 * @returns {Promise}
+	 *     A <code>Promise</code> that resolves after rebind is executed, and rejects if
+	 *     rebind cannot be executed, for example because there are invalid filters.
 	 * @public
 	 * @since 1.98
 	 */
 	FilterIntegrationMixin.rebind = function() {
 
 		if (this.bIsDestroyed) {
-			return;
+			return Promise.reject("Destroyed");
 		}
 
 		//check for internal and external filtering before triggering a rebind
@@ -210,20 +213,15 @@ sap.ui.define([
 				});
 			}
 
-			Promise.all([
+			return Promise.all([
 				pOuterFilterSearch, pInnerFilterSearch
 			]).then(() => {
-				this._rebind();
-			}, () => {
-
-				//TODO:
-				//Do some stuff in case something gets rejected
-
+				return this._rebind();
 			});
 		} else {
 
 			//No Filter source provided --> rebind immediately
-			this._rebind();
+			return this._rebind();
 		}
 
 	};

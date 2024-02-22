@@ -61,6 +61,7 @@ sap.ui.define([
 		 * @class The <code>Chart</code> control creates a chart based on metadata and the configuration specified.<br>
 		 * <b>Note:</b> The inner chart needs to be assigned <code>ChartDelegate</code>.
 		 * @extends sap.ui.mdc.Control
+		 * @borrows sap.ui.mdc.mixin.FilterIntegrationMixin.rebind as #rebind
 		 * @author SAP SE
 		 * @version ${version}
 		 * @constructor
@@ -441,9 +442,6 @@ sap.ui.define([
 
 		const MDCRb = Library.getResourceBundleFor("sap.ui.mdc");
 
-		/**
-		 * @borrows sap.ui.mdc.mixin.FilterIntegrationMixin.rebind as #rebind
-		 */
 		FilterIntegrationMixin.call(Chart.prototype);
 
 		/**
@@ -881,9 +879,10 @@ sap.ui.define([
 		 * Rebinds the inner chart instance by calling oDelegate.rebind
 		 *
 		 * @param {boolean} [bForceRefresh] Indicates that the binding must be refreshed regardless of any <code>bindingInfo</code> change
+		 * @returns {Promise} A <code>Promise</code> that resolves after rebind is executed
 		 * @private
 		 */
-		Chart.prototype._rebind = function(bForceRefresh) {
+		Chart.prototype._rebind = async function(bForceRefresh) {
 
 			if (!this._bInnerChartReady) {
 				//TODO: This can lead to a race conditition when the "Go" button is pressed while the inner chart still intializes
@@ -891,10 +890,7 @@ sap.ui.define([
 				//this._initInnerControls();
 
 				//Wait with rebind until inner chart is ready
-				this.initialized().then(() => {
-					this._rebind(bForceRefresh);
-				});
-				return;
+				await this.initialized();
 			}
 
 			this.setBusy(true);
@@ -1322,9 +1318,9 @@ sap.ui.define([
 			return bRebindRequired;
 		};
 
-		Chart.prototype._onModifications = function(aAffectedP13nControllers) {
+		Chart.prototype._onModifications = async function(aAffectedP13nControllers) {
 			if (fCheckIfRebindIsRequired(aAffectedP13nControllers)) {
-				this.rebind();
+				await this.rebind();
 			}
 		};
 

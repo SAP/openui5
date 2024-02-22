@@ -227,7 +227,7 @@ sap.ui.define([
 
     });
 
-    QUnit.test("Check 'rebind' functionality - no filter association, but inbuilt enabled", function(assert) {
+    QUnit.test("Check 'rebind' functionality - no filter association, but inbuilt enabled", async function(assert) {
 
         bInbuiltEnabled = true;
 
@@ -238,32 +238,45 @@ sap.ui.define([
         };
 
         const oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
+        const oIternalFilterSpy = sinon.spy(oInternalFilter, "validate");
 
-        oSomeInstance.rebind();
+        await oSomeInstance.rebind();
 
         assert.equal(oRetrieveInnerSpy.callCount, 1, "Filter Promise fetched");
+        assert.equal(oIternalFilterSpy.callCount, 1, "Internal filter validated");
 
     });
 
-    QUnit.test("Check 'rebind' functionality - no filter association, inbuilt not enabled", function(assert) {
+    QUnit.test("Check 'rebind' functionality - no filter association, inbuilt not enabled", async function(assert) {
 
         bInbuiltEnabled = false;
 
         const oInternalFilter = new FilterBarBase();
 
-        oSomeInstance.retrieveInbuiltFilter = function() {
-            return Promise.resolve(oInternalFilter);
-        };
+        oSomeInstance.retrieveInbuiltFilter = sinon.stub().resolves(oInternalFilter);
+        oSomeInstance._rebind = sinon.stub().resolves("_rebind-someResult");
 
-        const oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
+        await oSomeInstance.rebind().then((sResult) => {
+            assert.strictEqual(sResult, "_rebind-someResult", "#rebind resolves if #_rebind resolves");
+        }).catch(() => {
+            assert.ok(false, "#rebind resolves if #_rebind resolves");
+        }).finally(() => {
+            assert.equal(oSomeInstance.retrieveInbuiltFilter.callCount, 0, "Filter Promise not fetched");
+            assert.equal(oSomeInstance._rebind.callCount, 1, "#_rebind called once");
+        });
 
-        oSomeInstance.rebind();
-
-        assert.equal(oRetrieveInnerSpy.callCount, 0, "Filter Promise not fetched");
-
+        // eslint-disable-next-line require-atomic-updates
+        oSomeInstance._rebind = sinon.stub().rejects(new Error("_rebind-someError"));
+        await oSomeInstance.rebind().then(() => {
+            assert.ok(false, "#rebind rejects if #_rebind rejects");
+        }).catch((oError) => {
+            assert.deepEqual(oError, new Error("_rebind-someError"),"#rebind rejects if #_rebind rejects");
+        }).finally(() => {
+            assert.equal(oSomeInstance._rebind.callCount, 1, "#_rebind called once");
+        });
     });
 
-    QUnit.test("Check 'rebind' functionality - both (internal/external) enabled", function(assert) {
+    QUnit.test("Check 'rebind' functionality - both (internal/external) enabled", async function(assert) {
 
         bInbuiltEnabled = true;
 
@@ -272,18 +285,50 @@ sap.ui.define([
 
         oSomeInstance.setFilter(oExternalFilter);
 
-        oSomeInstance.retrieveInbuiltFilter = function() {
-            return Promise.resolve(oInternalFilter);
-        };
+        oExternalFilter.validate = sinon.stub().resolves("externalFilter#validate-someResult");
+        oSomeInstance.retrieveInbuiltFilter = sinon.stub().resolves(oInternalFilter);
+        oInternalFilter.validate = sinon.stub().resolves("internalFilter#validate-someResult");
+        oSomeInstance._rebind = sinon.stub().resolves("_rebind-someResult");
 
-        const oExternalFilterSpy = sinon.spy(oExternalFilter, "validate");
-        const oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
+        await oSomeInstance.rebind().then((sResult) => {
+            assert.strictEqual(sResult, "_rebind-someResult", "#rebind resolves if #_rebind resolves");
+        }).catch(() => {
+            assert.ok(false, "#rebind resolves if #_rebind resolves");
+        }).finally(() => {
+            assert.equal(oSomeInstance._rebind.callCount, 1, "#_rebind called once if all filters are valid");
+        });
 
-        oSomeInstance.rebind();
+        // eslint-disable-next-line require-atomic-updates
+        oSomeInstance._rebind = sinon.stub().rejects(new Error("_rebind-someError"));
+        await oSomeInstance.rebind().then(() => {
+            assert.ok(false, "#rebind rejects if #_rebind rejects");
+        }).catch((oError) => {
+            assert.deepEqual(oError, new Error("_rebind-someError"),"#rebind rejects if #_rebind rejects");
+        }).finally(() => {
+            assert.equal(oSomeInstance._rebind.callCount, 1, "#_rebind called once if all filters are valid");
+        });
 
-        assert.equal(oExternalFilterSpy.callCount, 1, "Filter Promise fetched");
-        assert.equal(oRetrieveInnerSpy.callCount, 1, "Filter Promise fetched");
+        oExternalFilter.validate = sinon.stub().rejects(new Error("externalFilter#validate-someError"));
+        // eslint-disable-next-line require-atomic-updates
+        oSomeInstance._rebind = sinon.stub().resolves("_rebind-someResult");
+        await oSomeInstance.rebind().then(() => {
+            assert.ok(false, "#rebind rejects if external filters are invalid");
+        }).catch((oError) => {
+            assert.deepEqual(oError, new Error("externalFilter#validate-someError"), "#rebind rejects if external filters are invalid");
+        }).finally(() => {
+            assert.equal(oSomeInstance._rebind.callCount, 0, "#_rebind not called if external filters are invalid");
+        });
 
+        oExternalFilter.validate = sinon.stub().resolves("externalFilter#validate-someResult");
+        oInternalFilter.validate = sinon.stub().rejects(new Error("internalFilter#validate-someError"));
+        oSomeInstance._rebind.resetHistory();
+        await oSomeInstance.rebind().then(() => {
+            assert.ok(false, "#rebind rejects if internal filters are invalid");
+        }).catch((oError) => {
+            assert.deepEqual(oError, new Error("internalFilter#validate-someError"), "#rebind rejects if internal filters are invalid");
+        }).finally(() => {
+            assert.equal(oSomeInstance._rebind.callCount, 0, "#_rebind not called if internal filters are invalid");
+        });
     });
 
     QUnit.test("Hooks", function(assert) {
