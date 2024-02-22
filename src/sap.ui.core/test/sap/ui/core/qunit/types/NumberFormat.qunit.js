@@ -1805,6 +1805,32 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format(1120.3, "cats"), "1.120,30000 Cats", "formatted with 5 decimals - de");
 	});
 
+	//*********************************************************************************************
+	QUnit.test("Unit formatOptions: take min of maxFractionDigits and decimals", function (assert) {
+		const oFormatOptions = {
+			customUnits : {cats : {"unitPattern-count-other" : "{0} Cats", decimals : 3}},
+			maxFractionDigits : 4
+		};
+
+		// code under test: decimals < maxFractionDigits
+		assert.strictEqual(NumberFormat.getUnitInstance(oFormatOptions).format(1234.5678, "cats"), "1,234.568 Cats");
+
+		// code under test: maxFractionDigits < decimals
+		oFormatOptions.maxFractionDigits = 2;
+		assert.strictEqual(NumberFormat.getUnitInstance(oFormatOptions).format(1234.567, "cats"), "1,234.57 Cats");
+
+		// code under test: decimals undefined
+		oFormatOptions.maxFractionDigits = 1;
+		oFormatOptions.customUnits.cats.decimals = undefined;
+		assert.strictEqual(NumberFormat.getUnitInstance(oFormatOptions).format(1234.56789, "cats"), "1,234.6 Cats");
+
+		// code under test: maxFractionDigits undefined
+		oFormatOptions.maxFractionDigits = undefined;
+		oFormatOptions.customUnits.cats.decimals = 1;
+		assert.strictEqual(NumberFormat.getUnitInstance(oFormatOptions).format(1234.56789, "cats"), "1,234.6 Cats");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Unit parse custom pattern", function (assert) {
 		var oLocale = new Locale("en");
 		var oFormat = NumberFormat.getUnitInstance({
