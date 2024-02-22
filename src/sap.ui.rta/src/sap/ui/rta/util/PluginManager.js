@@ -6,14 +6,11 @@ sap.ui.define([
 	"sap/base/util/values",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/plugin/ContextMenu",
-	"sap/ui/dt/plugin/TabHandling",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
-	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
-	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/rta/plugin/iframe/AddIFrame",
 	"sap/ui/rta/plugin/Combine",
 	"sap/ui/rta/plugin/CompVariant",
@@ -35,14 +32,11 @@ sap.ui.define([
 	values,
 	ManagedObject,
 	ContextMenuPlugin,
-	TabHandlingPlugin,
 	ToolHooksPlugin,
 	Layer,
 	Settings,
 	CommandFactory,
 	AdditionalElementsPlugin,
-	AdditionalElementsDialog,
-	AdditionalElementsAnalyzer,
 	AddIFramePlugin,
 	CombinePlugin,
 	CompVariantPlugin,
@@ -109,7 +103,7 @@ sap.ui.define([
 	 * Returns (and creates) the default plugins of PluginManager
 	 *
 	 * These are AdditionalElements, ContextMenu, CreateContainer, CutPaste,
-	 * DragDrop, Remove, Rename, Selection, Settings, TabHandling
+	 * DragDrop, Remove, Rename, Selection, Settings
 	 *
 	 * Method uses a local cache to hold the default plugins: Then on multiple access
 	 * always the same instances get returned.
@@ -184,8 +178,6 @@ sap.ui.define([
 			});
 
 			this._mDefaultPlugins.contextMenu = new ContextMenuPlugin();
-
-			this._mDefaultPlugins.tabHandling = new TabHandlingPlugin();
 
 			this._mDefaultPlugins.stretch = new StretchPlugin();
 
