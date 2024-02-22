@@ -50,14 +50,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Handles the press event of an aside list item.
+		 * Handles the press event of the card action button.
 		 * Formats and opens the URL in a new window if it starts with "topic/".
 		 *
 		 * @param {sap.ui.base.Event} oEvent - The event object.
 		 */
-		onAsideListItemPress: function (oEvent) {
-			var oItem = oEvent.getSource().getParent(),
-				sUrl = oItem.data("href");
+		onButtonPress: function (oEvent) {
+			var sUrl = oEvent.getSource().data("href");
 
 			if (!sUrl) { return; }
 

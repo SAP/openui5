@@ -18,19 +18,16 @@
 	.sapUiDemoKitResourcesPage {
 
 		// Utilities
-		.sapUiDemoKitResourcesContentPadding {
-			padding: 1rem;
+		.sapUiDemoKitResourcesLayoutSpacing {
+			padding: 0 2rem 3rem 2rem;
 		}
 
-		.sapUiDemoKitResourcesPaddingBeginEnd {
-			padding: 0 2rem;
+		.sapUiDemoKitResourcesIntroCardSpacing {
+			margin: 2rem 2rem 3rem 2rem;
 		}
 
-		.sapUiDemoKitResourcesPaddingBottom {
-			padding-bottom: 3rem;
-		}
-
-		.sapUiDemoKitResourcesContentRowGap {
+		.sapUiDemoKitResourcesCardContentSpacing {
+			padding: 1rem 1rem .5rem 1rem;
 			row-gap: .5rem;
 		}
 
@@ -89,40 +86,13 @@
 			}
 
 			.sapUiDemoKitResourcesRegularCard.sapFCard {
-				.sapUiDemoKitCardHeader.sapFCardHeader {
+				.sapFCardHeader {
 					background-color: @resourcesRegularCardHeaderBgColor;
-					transition: background-color 200ms ease;
-					text-decoration: none;
-
-					&:hover {
-						background-color: lighten(@resourcesRegularCardHeaderBgColor, 5%);
-
-						.sapFCardHeaderText {
-							.sapFCardTitle {
-								::after {
-									visibility: visible;
-									opacity: 1;
-								}
-							}
-						}
-					}
 
 					.sapFCardHeaderText {
 						.sapFCardTitle {
 							font-size: @sapMFontLargeSize;
 							color: @resourcesCardHeaderTextColor;
-							cursor: pointer;
-
-							::after {
-								font-family: SAP-icons;
-								font-size: .8rem;
-								content: "\e05a";
-								vertical-align: middle;
-								visibility: hidden;
-								opacity: 0;
-								transition: all 200ms ease;
-								margin-left: .5rem;
-							}
 						}
 					}
 
@@ -134,12 +104,8 @@
 
 			.sapUiDemoKitResourcesCategoryFeatured {
 				.sapUiDemoKitResourcesRegularCard.sapFCard {
-					.sapUiDemoKitCardHeader.sapFCardHeader {
+					.sapFCardHeader {
 						background-color: @resourcesFeaturedCardHeaderBgColor;
-
-						&:hover {
-							background-color: lighten(@resourcesFeaturedCardHeaderBgColor, 5%);
-						}
 					}
 				}
 			}
@@ -189,6 +155,14 @@
 		}
 
 		@media screen and (max-width: 63.9375em) {
+			.sapUiDemoKitResourcesLayoutSpacing {
+				padding: 0 1rem 1rem 1rem;
+			}
+
+			.sapUiDemoKitResourcesIntroCardSpacing {
+				margin: 1rem 1rem 2rem 1rem;
+			}
+
 			.sapUiDemoKitResourcesAside {
 				order: -1;
 				margin-top: 0;
