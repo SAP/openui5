@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <title>sap.m.Page - Accessibility</title>
+    <title>sap.m.Page</title>
 
     <script src="shared-config.js"></script>
     <script src="../../../resources/sap-ui-core.js"
@@ -77,11 +77,12 @@
         ];
 
 
-        for (var i = 0; i < 4; i++) {
+        for (var i = 0; i < 10; i++) {
             var sapPanel = new sap.m.Panel({
-                content: new sap.m.Text({
-                    text: sText + sText
-                })
+                content: [
+                    new sap.m.Text({ text: sText + sText}),
+                    new sap.m.Button("button" + i, {text: "Test"})
+                ]
             });
             aContent.push(sapPanel);
         }
