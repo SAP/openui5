@@ -458,21 +458,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when stopping rta in personalization mode,", function(assert) {
-			var oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
-			var oSerializeToLrepSpy = sandbox.spy(this.oRta, "_serializeToLrep");
-			var oMessageBoxSpy = sandbox.stub(RtaUtils, "showMessageBox");
-			sandbox.stub(this.oRta, "getLayer").returns(Layer.USER);
-			return this.oRta.stop(false, false)
-			.then(function() {
-				var oSavePropertyBag = oSaveSpy.getCall(0).args[0];
-				assert.ok(oSavePropertyBag.removeOtherLayerChanges, "then removeOtherLayerChanges is set to true");
-				assert.strictEqual(oSavePropertyBag.layer, Layer.USER, "then the layer is properly passed along");
-				assert.ok(oMessageBoxSpy.notCalled, "then the messagebox is not called (personalization always saves)");
-				assert.ok(oSerializeToLrepSpy.called, "then _serializeToLrep is called");
-			});
-		});
-
 		QUnit.test("when stopping rta with changes and choosing not to save them on the dialog,", function(assert) {
 			var oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
 			var oCheckReloadOnExitSpy = sandbox.spy(ReloadManager, "checkReloadOnExit");

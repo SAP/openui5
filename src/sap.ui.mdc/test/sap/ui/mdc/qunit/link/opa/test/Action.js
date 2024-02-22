@@ -78,30 +78,7 @@ sap.ui.define([
 				errorMessage: "Did not find the 'OK' button"
 			});
 		},
-		iPressOnRtaResetButton: function() {
-			return this.waitFor({
-				controlType: "sap.m.Button",
-				matchers: new PropertyStrictEquals({
-					name: "text",
-					value: TestUtil.getTextFromResourceBundle("sap.ui.rta", "BTN_RESTORE")
-				}),
-				actions: new Press(),
-				success: function(aButtons) {
-					Opa5.assert.equal(aButtons.length, 1, "'Reset' button found");
-					this.waitFor({
-						controlType: "sap.m.Button",
-						matchers: new PropertyStrictEquals({
-							name: "text",
-							value: TestUtil.getTextFromResourceBundle("sap.ui.rta", "BTN_FREP_OK")
-						}),
-						actions: new Press(),
-						success: function(aButtons) {
-							Opa5.assert.equal(aButtons.length, 1, "'OK' button of the warning dialog found");
-						}
-					});
-				}
-			});
-		},
+
 		iConfirmTheNavigation: function() {
 			return this.waitFor({
 				controlType: "sap.m.Dialog",

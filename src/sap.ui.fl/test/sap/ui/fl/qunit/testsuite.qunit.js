@@ -533,12 +533,6 @@ sap.ui.define([
 					}
 				}
 			},
-			"apply/_internal/preprocessors/EventHistory": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/preprocessors/EventHistory"]
-				}
-			},
 			"apply/_internal/preprocessors/RegistrationDelegator": {
 				group: "Apply Internal",
 				coverage: {

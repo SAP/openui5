@@ -286,11 +286,10 @@ sap.ui.define([
 	 * Reloads the app inside FLP or standalone by removing max layer / draft parameter;
 	 *
 	 * @param {object} oReloadInfo - Information needed for the reload
-	 * @param {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 	 * @param {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
 	 */
 	ReloadManager.handleReloadOnExit = function(oReloadInfo) {
-		if (oReloadInfo.layer !== Layer.USER && oReloadInfo.reloadMethod !== mReloadMethods.NOT_NEEDED) {
+		if (oReloadInfo.reloadMethod !== mReloadMethods.NOT_NEEDED) {
 			oReloadInfo.removeVersionParameter = true;
 			ReloadManager.triggerReload(oReloadInfo);
 		}
