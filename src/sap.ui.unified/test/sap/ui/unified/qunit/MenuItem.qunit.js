@@ -114,4 +114,21 @@ sap.ui.define([
 		assert.ok(true, "mouseover event does not lead to an exception");
 
 	});
+
+	QUnit.module("Misc");
+
+	QUnit.test("set custom image as icon", function (assert) {
+		// Arrange
+		var oIcon,
+			oMenuItem = new MenuItem({
+				text: "Menu Item",
+				icon: "https://openui5.org/7726d076e89ac67994e0a4d96106d534/B_OpenUI5_H.svg"
+			});
+
+		// Act
+		oIcon = oMenuItem._getIcon();
+
+		// Assert
+		assert.ok(oIcon, "Icon with custom image was successfully created");
+	});
 });
