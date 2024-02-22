@@ -203,6 +203,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @since 1.110
+	 * @deprecated As of version 1.110, as it is an integral part of the already deprecated {@link sap.ui.commons.BorderLayout}.
 	 */
 
 	/**

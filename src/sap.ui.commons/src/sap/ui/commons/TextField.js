@@ -701,6 +701,8 @@ sap.ui.define([
 	 * @property {string} [id] ID of the component
 	 * @property {sap.ui.commons.UserInputInfo | null} [userinput] User input
 	 * @protected
+	 * @since 1.110
+	 * @deprecated As of version 1.110, as it is an integral part of the already deprecated {@link sap.ui.commons.TextField}.
 	 */
 
 	/*

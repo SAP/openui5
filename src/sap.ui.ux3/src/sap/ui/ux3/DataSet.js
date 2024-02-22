@@ -423,7 +423,7 @@ sap.ui.define([
 	/**
 	 * Creates a view switch button
 	 *
-	 * @param {sap.m.Element} oView View
+	 * @param {sap.ui.ux3.DataSetView} oView DataSet view
 	 * @param {int} iIndex Index of view
 	 * @returns {sap.m.Button} viewSwitch instance
 	 * @protected
