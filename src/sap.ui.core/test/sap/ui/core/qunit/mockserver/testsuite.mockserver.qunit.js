@@ -36,8 +36,7 @@ sap.ui.define([
 	Object.keys(oCommonTests).forEach(function (name) {
 		oTestSuite.tests[name + "1"] = merge({}, oCommonTests[name], {
 			qunit: {
-				version: 2,
-				reorder: false
+				version: 2
 			},
 			sinon: {
 				version: 1
@@ -57,8 +56,7 @@ sap.ui.define([
 				}
 			},
 			qunit: {
-				version: 2,
-				reorder: false
+				version: 2
 			},
 			sinon: {
 				version: 4
