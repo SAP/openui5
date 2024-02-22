@@ -13,7 +13,7 @@ sap.ui.define([ "sap/ui/core/Lib", "sap/ui/model/ParseException", "sap/ui/model/
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.table.Table, sap.m.Table, sap.m.plugins.PasteProvider
+	 * @ui5-restricted sap.ui.table.Table, sap.m.Table, sap.m.plugins.PasteProvider, sap.m.MultiInput, sap.ui.mdc.FieldBase, sap.ui.comp.smarttable.SmartTable
 	 * @alias sap.ui.core.util.PasteHelper
 	 */
 
