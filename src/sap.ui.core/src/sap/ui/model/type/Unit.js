@@ -134,6 +134,10 @@ sap.ui.define([
 			oFormatOptionsMerged = extend({}, this.oFormatOptions, oFormatArgs);
 		}
 
+		if (this.iScale >= 0) {
+			// ensures that amount scale wins over the decimals for the unit
+			oFormatOptionsMerged = extend({}, oFormatOptionsMerged, {maxFractionDigits: this.iScale});
+		}
 		// Only subclasses of the Unit type use a NumberFormat instance cache.
 		// By default a new NumberFormat instance is created everytime.
 		if (this.getMetadata().getClass() !== Unit) {
@@ -240,6 +244,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the indices of the binding parts for which this type requires the binding's type for formatting or parsing.
+	 * If for example the type of the amount part is a {@link sap.ui.model.odata.type.Decimal} with a
+	 * <code>scale</scale> constraint less than the unit part's decimal places, then the amount's scale is
+	 * used.
+	 *
+	 * @returns {int[]}
+	 *   The indices of the parts with a relevant type for this composite type, or an empty array if
+	 *   the format option <code>showNumber</code> is falsy
+	 *
+	 * @override sap.ui.model.CompositeType#getPartsListeningToTypeChanges
+	 * @see #processPartTypes
+	 */
+	Unit.prototype.getPartsListeningToTypeChanges = function () {
+		// Only the first part is of interest because it may have a type with another scale than the
+		// decimal places for the unit part
+		return this.bShowNumber ? [0] : [];
+	};
+
+	/**
 	 * Parse a string value to an array containing measure and unit. Parsing of other
 	 * internal types than 'string' is not supported by the Unit type.
 	 * In case a source format has been defined, after parsing the Unit is formatted
@@ -279,6 +302,20 @@ sap.ui.define([
 			vResult = this.oInputFormat.format(vResult);
 		}
 		return vResult;
+	};
+
+	/**
+	 * Processes the types of this composite type's parts. Remembers the <code>scale</code>
+	 * constraint of the amount part's type to consider it while formatting.
+	 *
+	 * @param {sap.ui.model.SimpleType[]} aPartTypes The types of the composite binding parts
+	 *
+	 * @override sap.ui.model.CompositeType#processPartTypes
+	 * @protected
+	 * @since 1.122.0
+	 */
+	Unit.prototype.processPartTypes = function (aPartTypes) {
+		this.iScale = aPartTypes[0]?.oConstraints?.scale;
 	};
 
 	Unit.prototype.validateValue = function(vValue) {
