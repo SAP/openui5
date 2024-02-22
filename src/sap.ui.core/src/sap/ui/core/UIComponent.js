@@ -12,8 +12,7 @@ sap.ui.define([
 	'./UIComponentMetadata',
 	'./mvc/Controller',
 	'./mvc/View',
-	'sap/base/future',
-	'sap/base/Log'
+	'sap/base/future'
 ],
 	function(
 		ManagedObject,
@@ -24,8 +23,7 @@ sap.ui.define([
 		UIComponentMetadata,
 		Controller,
 		View,
-		future,
-		Log
+		future
 	) {
 	"use strict";
 
@@ -286,7 +284,6 @@ sap.ui.define([
 	 * @protected
 	 */
 	UIComponent.prototype.init = function() {
-
 		var that = this;
 		var oPreprocessors = {};
 		var vRootControl;
@@ -345,11 +342,6 @@ sap.ui.define([
 					that._oTargets._setRootViewId(vId);
 				}
 			}
-		}
-
-		function logDeprecationError(sClassName) {
-			Log.error(`The routing related class '${sClassName}' was loaded synchronously as a result of a synchronous Component creation. Resolving a class in this fashion is deprecated. ` +
-			          `Please use the asynchronous Component.create() factory instead and ensure all non-default routing relevant classes are maintained in the manifest.json.`);
 		}
 
 		// create the routing

@@ -33,21 +33,6 @@ sap.ui.define([
 
 	var mChanges;
 
-	function _collect() {
-		mChanges = mChanges || { __count : 0};
-		mChanges.__count++;
-		return mChanges;
-	}
-
-	function _endCollect() {
-		if ( mChanges && (--mChanges.__count) === 0 ) {
-			var mChangesToReport = mChanges;
-			delete mChanges.__count;
-			mChanges = undefined;
-			undefined;
-		}
-	}
-
 	// ---- Configuration state and init ----
 
 	/**
@@ -162,12 +147,6 @@ sap.ui.define([
 	 * @member
 	 */
 	Configuration.AnimationMode = AnimationMode;
-
-	function check(bCondition, sMessage) {
-		if ( !bCondition ) {
-			throw new Error(sMessage);
-		}
-	}
 
 	//enable Eventing
 	Localization.attachChange(function(oEvent) {

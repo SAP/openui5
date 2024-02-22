@@ -58,8 +58,7 @@ function(
 	});
 
     QUnit.test("DrillBreadcrumbs _createCrumb", function(assert) {
-		const oCrumbSettings = {dimensionKey: "testKey", dimensionText: "testText"};
-        const oCrumb = this.oMDCDrillBreadcrumbs._createCrumb(null, oCrumbSettings);
+        const oCrumb = this.oMDCDrillBreadcrumbs._createLink("testKey", "testText");
 
         assert.ok(oCrumb, "Crumb was created");
         assert.ok(oCrumb.data().hasOwnProperty("key"), "Custom data contains key field");
@@ -69,23 +68,30 @@ function(
 	});
 
     QUnit.test("DrillBreadcrumbs updateDrillBreadcrumbs", function(assert) {
-        let oDrillableItems = [new ChartItem({label: "label1", name: "name1"}), new ChartItem({label: "label2", name:"name2"})];
-        assert.ok(this.oMDCDrillBreadcrumbs.getLinks().length === 0, "No links present initially");
+        let oDrillableItems = [{text: "label1", key: "name1"}, {text: "label2", key:"name2"}];
 
-        this.oMDCDrillBreadcrumbs.updateDrillBreadcrumbs(null, oDrillableItems);
+		assert.ok(this.oMDCDrillBreadcrumbs.getLinks().length === 0, "No links present initially");
+
+        this.oMDCDrillBreadcrumbs.update(oDrillableItems);
         assert.ok(this.oMDCDrillBreadcrumbs.getLinks().length === 1, "One link present");
         assert.ok(this.oMDCDrillBreadcrumbs.getLinks()[0].getText() === "label1", "Link has correct text set");
+		assert.equal(this.oMDCDrillBreadcrumbs.getCurrentLocationText(), "label2", "CurrentLocationText is correct");
+		assert.ok(this.oMDCDrillBreadcrumbs.getVisible(), "Breadcrumbs is visible");
 
-        oDrillableItems = [new ChartItem({label: "label1", name: "name1"}), new ChartItem({label: "label2", name:"name2"}),  new ChartItem({label: "label3", name:"name3"})];
+        oDrillableItems = [{text: "label1", key: "name1"}, {text: "label2", key:"name2"}, {text: "label3", key:"name3"}];
 
-        this.oMDCDrillBreadcrumbs.updateDrillBreadcrumbs(null, oDrillableItems);
+        this.oMDCDrillBreadcrumbs.update(oDrillableItems);
         assert.ok(this.oMDCDrillBreadcrumbs.getLinks().length === 2, "Two links present");
         assert.ok(this.oMDCDrillBreadcrumbs.getLinks()[1].getText() === "label2", "Link has correct text set");
         assert.ok(this.oMDCDrillBreadcrumbs.getLinks()[0].getText() === "label1", "Link has correct text set");
+		assert.equal(this.oMDCDrillBreadcrumbs.getCurrentLocationText(), "label3", "CurrentLocationText is correct");
+		assert.ok(this.oMDCDrillBreadcrumbs.getVisible(), "Breadcrumbs is visible");
 
         oDrillableItems = [];
-        this.oMDCDrillBreadcrumbs.updateDrillBreadcrumbs(null, oDrillableItems);
+        this.oMDCDrillBreadcrumbs.update(oDrillableItems);
         assert.ok(this.oMDCDrillBreadcrumbs.getLinks().length === 0, "No links present");
+		assert.equal(this.oMDCDrillBreadcrumbs.getCurrentLocationText(), "", "CurrentLocationText is correct");
+		assert.notOk(this.oMDCDrillBreadcrumbs.getVisible(), "Breadcrumbs is NOT visible");
 
 	});
 

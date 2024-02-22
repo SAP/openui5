@@ -1388,8 +1388,8 @@ sap.ui.define([
 						return oSyncPromiseResolved;
 					}
 					return oPromise.then(function (vValue) {
-						if (vValue === null || vValue === undefined) {
-							// if the formatter returns null, the value may become undefined
+						if (vValue === undefined) {
+							// if the formatter returns null, the value becomes undefined
 							// (the default value of _With.any)
 							debug(oElement, "Removed attribute", oAttribute.name);
 							oElement.removeAttributeNode(oAttribute);

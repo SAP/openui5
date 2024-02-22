@@ -3027,10 +3027,6 @@ sap.ui.define([
 			}
 			that.fireDataReceived();
 		}
-
-		function fnUpdateHandle(oRequestHandle) {
-			that._registerNewRequestHandle(iRequestHandleId, oRequestHandle);
-		}
 	};
 
 	/**

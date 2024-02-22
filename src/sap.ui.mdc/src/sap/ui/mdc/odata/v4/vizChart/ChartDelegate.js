@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/base/Log",
 	'sap/ui/mdc/util/FilterUtil',
 	'sap/ui/mdc/odata/v4/util/DelegateUtil',
-	"sap/ui/mdc/chart/ChartTypeButton",
 	"sap/ui/mdc/chart/Item",
 	"sap/ui/model/Sorter",
 	"sap/ui/mdc/chart/ChartImplementationContainer",
@@ -30,7 +29,6 @@ sap.ui.define([
 	Log,
 	FilterUtil,
 	DelegateUtil,
-	ChartTypeButton,
 	MDCChartItem,
 	Sorter,
 	ChartImplementationContainer,
@@ -1113,6 +1111,41 @@ sap.ui.define([
 
 	};
 
+	ChartDelegate.mMatchingIcon = {
+		"bar": "sap-icon://horizontal-bar-chart",
+		"bullet": "sap-icon://horizontal-bullet-chart",
+		"bubble": "sap-icon://bubble-chart",
+		"column": "sap-icon://vertical-bar-chart",
+		"combination": "sap-icon://business-objects-experience",
+		"dual_bar": "sap-icon://horizontal-bar-chart",
+		"dual_column": "sap-icon://vertical-bar-chart",
+		"dual_combination": "sap-icon://business-objects-experience",
+		"dual_horizontal_combination": "sap-icon://business-objects-experience",
+		"dual_horizontal_stacked_combination": "sap-icon://business-objects-experience",
+		"dual_line": "sap-icon://line-chart",
+		"dual_stacked_bar": "sap-icon://full-stacked-chart",
+		"dual_stacked_column": "sap-icon://vertical-stacked-chart",
+		"dual_stacked_combination": "sap-icon://business-objects-experience",
+		"donut": "sap-icon://donut-chart",
+		"heatmap": "sap-icon://heatmap-chart",
+		"horizontal_stacked_combination": "sap-icon://business-objects-experience",
+		"line": "sap-icon://line-chart",
+		"pie": "sap-icon://pie-chart",
+		"scatter": "sap-icon://scatter-chart",
+		"stacked_bar": "sap-icon://full-stacked-chart",
+		"stacked_column": "sap-icon://vertical-stacked-chart",
+		"stacked_combination": "sap-icon://business-objects-experience",
+		"treemap": "sap-icon://Chart-Tree-Map", // probably has to change
+		"vertical_bullet": "sap-icon://vertical-bullet-chart",
+		"100_dual_stacked_bar": "sap-icon://full-stacked-chart",
+		"100_dual_stacked_column": "sap-icon://vertical-stacked-chart",
+		"100_stacked_bar": "sap-icon://full-stacked-chart",
+		"100_stacked_column": "sap-icon://full-stacked-column-chart",
+		"waterfall": "sap-icon://vertical-waterfall-chart",
+		"horizontal_waterfall": "sap-icon://horizontal-waterfall-chart"
+	};
+
+
 	/**
 	 * Returns the current chart type in form:
 	 * {
@@ -1134,7 +1167,7 @@ sap.ui.define([
 			oChartResourceBundle = Library.getResourceBundleFor("sap.chart.messages");
 
 		const mInfo = {
-			icon: ChartTypeButton.mMatchingIcon[sType],
+			icon: ChartDelegate.mMatchingIcon[sType],
 			text: oMDCResourceBundle.getText("chart.CHART_TYPE_TOOLTIP", [
 				oChartResourceBundle.getText("info/" + sType)
 			])
@@ -1164,7 +1197,7 @@ sap.ui.define([
 				const sType = aAvailableChartTypes[i].chart;
 				aChartTypes.push({
 					key: sType,
-					icon: ChartTypeButton.mMatchingIcon[sType],
+					icon: ChartDelegate.mMatchingIcon[sType],
 					text: oChartResourceBundle.getText("info/" + sType)
 				});
 			}

@@ -39,7 +39,7 @@ sap.ui.define([
 		SortController,
 		ChartTypeController,
 		ManagedObjectObserver,
-		Breadcrumbs,
+		DrillBreadcrumbs,
 		ActionToolbarAction,
 		coreLibrary,
 		KeyCodes,
@@ -50,7 +50,6 @@ sap.ui.define([
 	) => {
 		"use strict";
 
-		let DrillStackHandler;
 		const { TitleLevel } = coreLibrary;
 
 		/**
@@ -768,8 +767,30 @@ sap.ui.define([
 		Chart.prototype._createBreadcrumbs = function() {
 			let _oBreadcrumbs = this.getAggregation("_breadcrumbs");
 			if (!_oBreadcrumbs && !this._bIsDestroyed) {
-				_oBreadcrumbs = new Breadcrumbs(this.getId() + "--breadcrumbs");
-				_oBreadcrumbs.updateDrillBreadcrumbs(this, this.getControlDelegate().getDrillableItems(this));
+				_oBreadcrumbs = new DrillBreadcrumbs(this.getId() + "--breadcrumbs", {
+					linkPressed: function(oEvent) {
+						const index = oEvent.getParameter("index");
+
+						// get drill-path which was drilled-up and needs to be removed from mdc chart
+						const aCurrentDrillStack = this.getControlDelegate().getDrillableItems(this);
+						const aDrilledItems = aCurrentDrillStack.slice(index + 1);
+						const aFlexItemChanges = aDrilledItems.map((oDrillItem) => {
+							return {
+								name: oDrillItem.getPropertyKey(),
+								visible: false
+							};
+						});
+
+						this.getEngine().createChanges({
+							control: this,
+							key: "Item",
+							state: aFlexItemChanges
+						});
+
+					}.bind(this)
+				});
+				const aItems = this.getControlDelegate().getDrillableItems(this).map(function(oItem) { return { key: oItem.getPropertyKey(), text: oItem.getLabel() }; });
+				_oBreadcrumbs.update(aItems);
 				this.setAggregation("_breadcrumbs", _oBreadcrumbs);
 			}
 		};
@@ -852,7 +873,8 @@ sap.ui.define([
 			this._rebind();
 
 			//Update the breadcrumbs after an MDC Item change
-			this.getAggregation("_breadcrumbs").updateDrillBreadcrumbs(this, this.getControlDelegate().getDrillableItems(this));
+			const aItems = this.getControlDelegate().getDrillableItems(this).map(function(oItem) { return { key: oItem.getPropertyKey(), text: oItem.getLabel() }; });
+			this.getAggregation("_breadcrumbs").update(aItems);
 		};
 
 		/**
@@ -1071,48 +1093,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Shows the drill-down popover for selection a dimension to drill down to.
-		 *
-		 * @param {sap.m.Button} oDrillBtn reference to the drill down button for loacation of the popover
-		 * @returns {Promise} show dril stack promise
-		 *
-		 * @private
-		 */
-		Chart.prototype._showDrillDown = function(oDrillBtn) {
-			if (!this.oDrillPopover) {
-				if (DrillStackHandler) {
-
-					this.oDrillPopover = DrillStackHandler.createDrillDownPopover(this);
-					this.oDrillPopover.attachAfterClose(() => {
-						delete this.oDrillPopover;
-					});
-
-					return DrillStackHandler.showDrillDownPopover(this, oDrillBtn);
-				}
-
-				return new Promise((resolve, reject) => {
-					sap.ui.require([
-						"sap/ui/mdc/chart/DrillStackHandler"
-					], (DrillStackHandlerLoaded) => {
-						DrillStackHandler = DrillStackHandlerLoaded;
-
-						this.oDrillPopover = DrillStackHandler.createDrillDownPopover(this);
-						this.oDrillPopover.attachAfterClose(() => {
-							delete this.oDrillPopover;
-						});
-
-						DrillStackHandler.showDrillDownPopover(this, oDrillBtn)
-							.then((oDrillDownPopover) => {
-								resolve(oDrillDownPopover);
-							});
-					});
-				});
-			} else if (this.oDrillPopover) {
-				this.oDrillPopover.close();
-			}
-		};
-
-		/**
 		 * If some properties are set on the MDC chart while the inner chart is not yet initialized, they need to eb set after initialaization.
 		 * This methods gets called after inner chart is ready and takes care of that
 		 *
@@ -1157,6 +1137,14 @@ sap.ui.define([
 		 */
 		Chart.prototype.setChartType = function(sChartType) {
 			this.setProperty("chartType", sChartType);
+
+			const oToolbar = this.getAggregation("_toolbar");
+			if (oToolbar?._oChartTypeBtn) {
+				oToolbar._oChartTypeBtn.setSelectedItemKey(sChartType);
+				const oChartTypeInfo = this.getChartTypeInfo();
+				oToolbar._oChartTypeBtn.setTooltip(oChartTypeInfo.text);
+				oToolbar._oChartTypeBtn.setIcon(oChartTypeInfo.icon);
+			}
 
 			try {
 				this.getControlDelegate().setChartType(this, sChartType);

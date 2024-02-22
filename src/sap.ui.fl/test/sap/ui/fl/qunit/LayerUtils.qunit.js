@@ -19,17 +19,6 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	function getURLParsingService(mParsedShellHash) {
-		return {
-			getHash() {
-				return "";
-			},
-			parseShellHash() {
-				return mParsedShellHash;
-			}
-		};
-	}
-
 	QUnit.module("sap.ui.fl.LayerUtils", {
 		beforeEach() {
 			Settings._instance = new Settings({});

@@ -10,24 +10,6 @@ sap.ui.define([
 
 	var privateLoaderAPI = sap.ui.loader._;
 
-	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
-		var aMethodNames = null,
-			result = true,
-			sMethod;
-
-		for (var i in aMethodNames) {
-			sMethod = aMethodNames[i];
-			result = result && oObject[sMethod] != undefined;
-			if (result){
-				continue;
-			}
-			if (bFailEarly && !result){
-				break;
-			}
-		}
-		return result;
-	}
-
 	// custom assertion
 	QUnit.assert.equalControls = function(actual, expected, message) {
 		this.ok(actual === expected, message);

@@ -221,6 +221,7 @@ sap.ui.define([
 		QUnit.test("with a failing connector", function(assert) {
 			var oLrepConnectorLoadFeaturesStub = sandbox.stub(LrepConnector, "loadVariantsAuthors").resolves({id1: "name1"});
 			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadVariantsAuthors").rejects({});
+			delete PersonalizationConnector.loadVariantsAuthors;
 
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{

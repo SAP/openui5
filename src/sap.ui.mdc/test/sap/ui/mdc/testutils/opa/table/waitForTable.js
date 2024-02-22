@@ -31,8 +31,6 @@ sap.ui.define([
 			id: sTableId,
 			controlType: "sap.ui.mdc.Table",
 			success: function(oTable) {
-				Opa5.assert.ok('The mdc.Table was found');
-
 				if (oSettings && typeof oSettings.success === "function") {
 					/*
 					 * If neither the Id nor the control instance of the MDCTable is passed as parameter

@@ -56,7 +56,11 @@ sap.ui.define([
 				 * @private
 				 */
 				iShouldSeeATable: function(vTable) {
-					return waitForTable.call(this, vTable);
+					return waitForTable.call(this, vTable, {
+						success: function() {
+							Opa5.assert.ok(true, "I see the table");
+						}
+					});
 				}
 			}
 		},

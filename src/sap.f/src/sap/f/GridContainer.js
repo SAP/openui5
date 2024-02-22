@@ -353,7 +353,8 @@ sap.ui.define([
 					}
 				}
 			},
-			dnd: { draggable: false, droppable: true }
+			dnd: { draggable: false, droppable: true },
+			designtime: "sap/f/designtime/GridContainer.designtime"
 		},
 
 		renderer: GridContainerRenderer

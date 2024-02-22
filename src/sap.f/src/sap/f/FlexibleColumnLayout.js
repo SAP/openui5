@@ -1161,7 +1161,8 @@ sap.ui.define([
 	 */
 	FlexibleColumnLayout.prototype._getVisibleColumnsForLayout = function (sLayout) {
 		return FlexibleColumnLayout.COLUMN_ORDER.filter(function (sColumn) {
-			return this._getColumnSizeForLayout(sColumn, sLayout) > 0;
+			// Different than 0, as when we are storing the begin column size, it may happen that it's too big, leading to a negative size of the mid column
+			return this._getColumnSizeForLayout(sColumn, sLayout) !== 0;
 		}, this);
 	};
 
@@ -1998,6 +1999,7 @@ sap.ui.define([
 
 		if (this._isValidWidthDistributionForLayout(sNewWidthsDistribution, sNewLayout)) {
 			this._getLocalStorage().put(sNewLayout, sNewWidthsDistribution);
+			this._getLocalStorage().put("begin", oColumnPercentWidths.begin);
 		}
 	};
 
@@ -2976,7 +2978,9 @@ sap.ui.define([
 	 */
 	FlexibleColumnLayout.prototype._getColumnWidthDistributionForLayout = function (sLayout, bAsIntArray, iMaxColumnsCount) {
 		var sColumnWidthDistribution = this._getLocalStorage(iMaxColumnsCount).get(sLayout),
-			vResult;
+			iBeginWidth = this._getLocalStorage(iMaxColumnsCount).get("begin"),
+			vResult,
+			vResultAsArray;
 
 		iMaxColumnsCount || (iMaxColumnsCount = this.getMaxColumnsCount());
 
@@ -2991,14 +2995,31 @@ sap.ui.define([
 			vResult = this._getDefaultColumnWidthDistributionForLayout(sLayout, iMaxColumnsCount);
 		}
 
+		vResultAsArray = vResult.split("/");
+
+		iBeginWidth = normalizeBeginColumnWidth(iBeginWidth, sLayout);
+
+		// Used stored begin column width, if not fullscreen layout and the begin column should be shown
+		if (iBeginWidth && !this._isFullScreenLayout(sLayout) && parseInt(vResultAsArray[0]) !== 0) {
+			vResultAsArray[0] = iBeginWidth;
+			vResultAsArray = vResultAsArray.map(function (sColumnWidth) {
+				return parseFloat(sColumnWidth);
+			});
+			normalizeColumnPercentWidths(vResultAsArray);
+		}
+
 		if (bAsIntArray) {
-			vResult = vResult.split("/").map(function (sColumnWidth) {
+			vResult = vResultAsArray.map(function (sColumnWidth) {
 				return Math.round(parseFloat(sColumnWidth));
 			});
 			normalizeColumnPercentWidths(vResult);
 		}
 
-		return vResult;
+		if (bAsIntArray) {
+			return vResult;
+		} else {
+			return vResultAsArray.join("/");
+		}
 	};
 
 	/**
@@ -3405,6 +3426,19 @@ sap.ui.define([
 		}
 	}
 
+	/**
+	 * Ensures width of begin column is correct for specific layouts
+	 *
+	 * @param {number} iBeginWidth
+	 * @param {string} sLayout
+	 */
+	function normalizeBeginColumnWidth(iBeginWidth, sLayout) {
+		if ((sLayout === LT.ThreeColumnsMidExpanded ||  sLayout == LT.ThreeColumnsEndExpanded) && Math.floor(iBeginWidth) >= 33) {
+			return 32;
+		}
+
+		return iBeginWidth;
+	}
 
 	return FlexibleColumnLayout;
 

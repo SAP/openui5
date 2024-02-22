@@ -156,13 +156,6 @@ sap.ui.define([
 
 	}
 
-	function getTestControlHtml(sId, sAdditionalHTML) {
-		if (!sAdditionalHTML){
-			sAdditionalHTML = "";
-		}
-		return "<div id=\"" + sId + "\" data-sap-ui=\"" + sId + "\" data-sap-ui-render=\"\"" + sAdditionalHTML + ">[" + sId + "]</div>";
-	}
-
 	function checkControlsInDom(assert, aControls, sTargetId, bExpectExisting) {
 		for (var i = 0; i < aControls.length; i++) {
 			var $ControlRef = aControls[i].$();

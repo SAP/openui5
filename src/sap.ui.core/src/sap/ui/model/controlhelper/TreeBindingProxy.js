@@ -389,10 +389,13 @@ sap.ui.define(["sap/base/assert", "sap/base/Log"], function (assert, Log) {
 	}
 
 	function expandToV4(oBinding, iLevel) {
-		var oAggregation = Object.assign(oBinding.getAggregation(), {
-			expandTo: iLevel
-		});
-		oBinding.setAggregation(oAggregation);
+		const bIsSameLevel = oBinding.getAggregation()?.expandTo === iLevel;
+
+		if (bIsSameLevel) {
+			oBinding.refresh();
+		} else {
+			oBinding.setAggregation({...oBinding.getAggregation(), ...{expandTo: iLevel}});
+		}
 	}
 
 	/**

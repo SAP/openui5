@@ -48,7 +48,7 @@ sap.ui.define([
 				success: function(aPopovers) {
 					Opa5.assert.ok(aPopovers.length, "Dialogs were found");
 
-					var oDialog = aPopovers.filter(function(oDialog){return (oDialog.getId().toLowerCase().includes("btncharttypepopover"));})[0];
+					var oDialog = aPopovers.filter(function(oDialog){return (oDialog.getId().includes("btnChartType-btnSelectionButtonPopover-popover"));})[0];
 					Opa5.assert.ok(oDialog, "Chart Type dialog is opened");
 				},
 				errorMessage: "No Dialogs found"
@@ -84,7 +84,7 @@ sap.ui.define([
 				success: function(aPopovers) {
 					Opa5.assert.ok(aPopovers.length, "Dialogs were found");
 
-					var oDialog = aPopovers.filter(function(oDialog){return (oDialog.getId().includes("drilldownPopover"));})[0];
+					var oDialog = aPopovers.filter(function(oDialog){return (oDialog.getId().includes("-drillDown-"));})[0];
 					Opa5.assert.ok(oDialog, "Drilldown dialog is opened");
 				},
 				errorMessage: "No Dialogs found"

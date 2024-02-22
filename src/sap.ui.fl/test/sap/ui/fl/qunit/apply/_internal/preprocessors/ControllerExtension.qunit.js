@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/ControllerExtension",
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -13,7 +12,6 @@ sap.ui.define([
 	VariantManagementState,
 	ManifestUtils,
 	ControllerExtension,
-	Layer,
 	Utils,
 	sinon
 ) {
@@ -22,26 +20,6 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	var sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
-
-	function createCodeExtChangeContent(oInput) {
-		return Object.assign({
-			fileName: "id_1436877480596_108",
-			namespace: "ui.s2p.mm.purchorder.approve",
-			fileType: "change",
-			layer: Layer.CUSTOMER,
-			creation: "20150720131919",
-			changeType: "codeExt",
-			reference: "<sap-app-id> or <component name>",
-			selector: {
-				controllerName: sControllerName
-			},
-			conditions: {},
-			support: {
-				generator: "WebIde",
-				user: "VIOL"
-			}
-		}, oInput);
-	}
 
 	QUnit.module("sap.ui.fl.ControllerExtension", {
 		beforeEach() {

@@ -511,7 +511,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * If there's no items binding, attach the MessageView to the sap.ui.getCore().getMessageManager().getMessageModel()
+	 * If there's no items binding, attach the MessageView to the sap.ui.core.Messaging.getMessageModel()
 	 *
 	 * @private
 	 * @ui5-restricted sap.m.MessagePopover

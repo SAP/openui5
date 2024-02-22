@@ -9,11 +9,11 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/MessageItem",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/library",
 	"sap/m/Link",
 	"sap/ui/core/message/Message",
-	"sap/ui/core/InvisibleText",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/core/InvisibleText"
 ], function(
 	Element,
 	Library,
@@ -24,11 +24,11 @@ sap.ui.define([
 	Button,
 	MessageItem,
 	JSONModel,
+	nextUIUpdate,
 	coreLibrary,
 	Link,
 	Message,
-	InvisibleText,
-	nextUIUpdate
+	InvisibleText
 ) {
 	"use strict";
 
@@ -38,10 +38,17 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
+	function runAllFakeTimersAndRestore(oClock) {
+		if (!oClock) {
+			return;
+		}
 
+		oClock.runAll();
+		oClock.restore();
+	}
 
 	QUnit.module("Public API", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			var that = this;
 
 			this.oMessageView = new MessageView();
@@ -136,7 +143,7 @@ sap.ui.define([
 			});
 
 			this.oButton.placeAt("qunit-fixture");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			this.oButton.firePress();
 		},
@@ -160,10 +167,13 @@ sap.ui.define([
 			this.oMockupData = null;
 
 			this.server.restore();
+
+			runAllFakeTimersAndRestore(this.clock);
 		}
 	});
 
 	QUnit.test("setDescription() property", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var testItemIndex = 4;
 
 		// A total of 6 assertions are expected
@@ -213,6 +223,7 @@ sap.ui.define([
 
 		this.oButton.firePress();
 		this.clock.tick(500);
+		this.clock.restore();
 	});
 
 	QUnit.test("setBusy should set the busy state to MessageView", function (assert) {
@@ -226,6 +237,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Busy indicator should be shown", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var done = assert.async(),
 				that = this;
 
@@ -242,6 +254,7 @@ sap.ui.define([
 		});
 
 		this.clock.tick(500);
+		this.clock.restore();
 	});
 
 	QUnit.test("Items getter", function (assert) {
@@ -268,16 +281,17 @@ sap.ui.define([
 		assert.strictEqual(iInterListItemCounter, iMPItemCounter, "Internal listItem's counter should be the same as MessageItems's counter");
 	});
 
-	QUnit.test("setGroupItems() property", function(assert) {
+	QUnit.test("setGroupItems() property", async function(assert) {
 		this.oMessageView.setGroupItems(true);
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oMessageView._oLists.all.getItems().length, 7, "Item should be 7");
 		assert.ok(this.oMessageView._oLists.all.getItems()[0].isA("sap.m.GroupHeaderListItem"), "Item should be GroupHeaderItem");
 	});
 
-	QUnit.test("_restoreItemsType should not throw an exception when there the groupItems property is set to true", function (assert) {
+	QUnit.test("_restoreItemsType should not throw an exception when there the groupItems property is set to true", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		var oRestoreItemsTypeSpy = sinon.spy(this.oMessageView, "_restoreItemsType");
 
@@ -288,8 +302,7 @@ sap.ui.define([
 		this.oMessageView.navigateBack();
 
 		this.clock.tick(500);
-
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		try {
 			oRestoreItemsTypeSpy.apply(this.oMessageView);
@@ -356,6 +369,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("The items in the list should have info state set according to the message type", function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var aItems;
 
 		this.oDialog.open();
@@ -369,6 +383,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("MessageView should restore the focus and items type on back navigation", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		var oItems, focusSpy, restoreItemTypeSpy, setItemTypeSpy,
 			sLongTitle = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod" +
@@ -408,6 +423,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("MessageItems type Navigation when there is Description, else Inactive", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oDialog.open();
 		this.clock.tick(500);
 
@@ -417,14 +433,14 @@ sap.ui.define([
 		assert.ok(aItems[1].getType() === "Inactive" && !aItems[1].getDescription(), "An item without description should have type Inactive");
 	});
 
-	QUnit.test("custom button aggregation", function (assert) {
+	QUnit.test("custom button aggregation", async function (assert) {
 		var customButton = new Button({
 			text: "custom btn"
 		});
 
 		this.oMessageView.setHeaderButton(customButton);
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		this.oDialog.open();
 
@@ -434,9 +450,10 @@ sap.ui.define([
 		customButton.destroy();
 	});
 
-	QUnit.test("showDetailsPageHeader property", function(assert) {
+	QUnit.test("showDetailsPageHeader property", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oMessageView.setShowDetailsPageHeader(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oDialog.open();
 		this.clock.tick(500);
@@ -444,23 +461,24 @@ sap.ui.define([
 		assert.notOk(this.oMessageView._detailsPage.getShowHeader(), "Header show not be shown");
 	});
 
-	QUnit.test("Active Items: Link is created", function (assert) {
+	QUnit.test("Active Items: Link is created", async function (assert) {
 		var oFirstItem = this.oMessageView.getItems()[0];
 		var oLinkInitSpy = this.spy(Link.prototype, "init");
 
 		oFirstItem.setActiveTitle(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(oLinkInitSpy.called, "link should be initialized");
 	});
 
-	QUnit.test("Active Item: Details page should contain a link", function (assert) {
+	QUnit.test("Active Item: Details page should contain a link", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oFirstMessageItem = this.oMessageView.getItems()[0];
 		var oFirstListItem = this.oMessageView._oLists.all.getItems()[0];
 		var oDetailsFirstContent;
 
 		oFirstMessageItem.setActiveTitle(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oMessageView._navigateToDetails(oFirstMessageItem, oFirstListItem, "slide", false);
 		this.clock.tick(300);
@@ -471,14 +489,15 @@ sap.ui.define([
 		assert.ok(oDetailsFirstContent.hasStyleClass("sapMMsgViewTitleText"), "Link should have 'sapMMsgViewTitleText' css class");
 	});
 
-	QUnit.test("Active Item: Details page link should fire event", function (assert) {
+	QUnit.test("Active Item: Details page link should fire event", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oFirstMessageItem = this.oMessageView.getItems()[0];
 		var oFirstListItem = this.oMessageView._oLists.all.getItems()[0];
 		var oActiveTitlePressStub = this.stub(this.oMessageView, "fireActiveTitlePress");
 		var oDetailsLink;
 
 		oFirstMessageItem.setActiveTitle(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oMessageView._navigateToDetails(oFirstMessageItem, oFirstListItem, "slide", false);
 		this.clock.tick(300);
@@ -492,12 +511,13 @@ sap.ui.define([
 		assert.ok(oActiveTitlePressStub.calledWithExactly({ item: oFirstMessageItem }), "event should be called with the message item");
 	});
 
-	QUnit.test("Active Items: Press is propagated from Link to MessageItem", function (assert) {
+	QUnit.test("Active Items: Press is propagated from Link to MessageItem", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oFirstItem = this.oMessageView.getItems()[0];
 		var oActiveTitlePressStub = this.stub(this.oMessageView, "fireActiveTitlePress");
 
 		oFirstItem.setActiveTitle(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// fire press of the link of a MessageListItem
 		this.oMessageView._oLists.all.getItems()[0].getLink().firePress();
@@ -507,13 +527,14 @@ sap.ui.define([
 		assert.ok(oActiveTitlePressStub.calledWithExactly({ item: oFirstItem }), "event should be called with the message item");
 	});
 
-	QUnit.test("ActiveTitlePress should be fired on ALT + Enter", function(assert)  {
+	QUnit.test("ActiveTitlePress should be fired on ALT + Enter", async function(assert)  {
+		this.clock = sinon.useFakeTimers();
 		assert.expect(1);
 		var oFirstItem = this.oMessageView.getItems()[0];
 		var oActiveTitlePressStub = this.stub(this.oMessageView, 'fireActiveTitlePress');
 
 		oFirstItem.setActiveTitle(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oFirstItem.focus();
 		qutils.triggerKeydown(this.oMessageView._oLists.all.getItems()[0], "Enter", false, true, false);
@@ -526,7 +547,8 @@ sap.ui.define([
 		assert.notOk(this.oMessageView._oLists.all.getItems()[0].getLink(), "Inactive Item should not have a link");
 	});
 
-	QUnit.test("Markup Description: Markup in the description should be scaped", function (assert) {
+	QUnit.test("Markup Description: Markup in the description should be scaped", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var sDescription = 'Second Error message description   {http://blblbl} ';
 
 		this.oModel.setProperty("/messages", [{
@@ -538,7 +560,7 @@ sap.ui.define([
 			markupDescription: true
 		}]);
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oDialog.open();
 		this.clock.tick(500);
@@ -548,7 +570,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Core integration", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			var that = this;
 
 			var oModel = new JSONModel({
@@ -566,7 +588,7 @@ sap.ui.define([
 					})
 			);
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			this.oMessageView = new MessageView();
 
@@ -587,7 +609,7 @@ sap.ui.define([
 
 			this.oButton.placeAt("qunit-fixture");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			this.oButton.firePress();
 		},
@@ -614,7 +636,8 @@ sap.ui.define([
 		assert.equal(this.oMessageView.getItems().length, 1, "The message should be one - from MessageManager");
 	});
 
-	QUnit.test("When all messages from model are removed, MessageView / Popover should return to home page", function (assert) {
+	QUnit.test("When all messages from model are removed, MessageView / Popover should return to home page", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oMessageView = new MessageView().placeAt("qunit-fixture");
 		var fnAddMessage = function() {
 			Messaging.addMessages(
@@ -632,7 +655,7 @@ sap.ui.define([
 
 		fnClearMessages();
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		// store pages
@@ -640,19 +663,20 @@ sap.ui.define([
 		assert.strictEqual(oMessageView._listPage, oMessageViewCurrentPage, "List Page should be visible");
 
 		fnAddMessage();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// store pages
 		oMessageViewCurrentPage = oMessageView._navContainer.getCurrentPage();
 		assert.strictEqual(oMessageView._detailsPage, oMessageViewCurrentPage, "Details Page should be visible");
 
 		fnClearMessages();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// store pages
 		oMessageViewCurrentPage = oMessageView._navContainer.getCurrentPage();
 		assert.strictEqual(oMessageView._listPage, oMessageViewCurrentPage, "List Page should be visible");
 
+		runAllFakeTimersAndRestore(this.clock);
 		oMessageView.destroy();
 	});
 
@@ -678,28 +702,30 @@ sap.ui.define([
 			this.oDialog.close();
 			this.oDialog.destroy();
 			this.oMessageView.destroy();
+			runAllFakeTimersAndRestore(this.clock);
 		}
 	});
 
-	QUnit.test("Contains only one message with short title should stay in list view", function (assert) {
+	QUnit.test("Contains only one message with short title should stay in list view", async function (assert) {
 		var oNavigateStub = this.stub(this.oMessageView, "_navigateToDetails");
 
 		this.oMessageView.addItem(new MessageItem({
 			title: "Short title."
 		}));
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		this.oDialog.open();
 
 		assert.notOk(oNavigateStub.called, "Navigation to details has not been triggered");
 	});
 
-	QUnit.test("Contains only one message with long title should stay go details view", function (assert) {
+	QUnit.test("Contains only one message with long title should stay go details view", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oNavigateStub = this.stub(this.oMessageView, "_navigateToDetails");
 		this.oMessageView.addItem(new MessageItem({
 			title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
 		}));
 		this.oDialog.open();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		assert.ok(oNavigateStub.called, "Navigation to details had been triggered");
 
@@ -710,7 +736,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("HTML representation", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			var that = this;
 
 			this.oMessageView = new MessageView();
@@ -729,7 +755,7 @@ sap.ui.define([
 
 			this.oButton.placeAt("qunit-fixture");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oDialog.close();
@@ -745,6 +771,8 @@ sap.ui.define([
 			this.oMessageView = null;
 
 			this.oButton = null;
+
+			runAllFakeTimersAndRestore(this.clock);
 		}
 	});
 
@@ -756,7 +784,8 @@ sap.ui.define([
 		assert.notStrictEqual(oDomRef.className.indexOf("sapMMsgView"), -1, "sapMMsgView class should present on the HTML element");
 	});
 
-	QUnit.test("MessageItem's with truncated title", function (assert) {
+	QUnit.test("MessageItem's with truncated title", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oItems,
 			sLongTitle = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod" +
 				"tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam," +
@@ -778,7 +807,7 @@ sap.ui.define([
 			title: "dummy item"
 		}));
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oDialog.open();
 		this.clock.tick(500);
@@ -790,7 +819,7 @@ sap.ui.define([
 		assert.strictEqual(oItems[2].getType(), "Inactive", "The third item should be inactive type");
 	});
 
-	QUnit.test("MessageItem with active title - propagation to MessageListItems", function (assert) {
+	QUnit.test("MessageItem with active title - propagation to MessageListItems", async function (assert) {
 		var oFirstMessageItem = new MessageItem({
 			activeTitle: true,
 			type: "Error"
@@ -808,7 +837,7 @@ sap.ui.define([
 
 		this.oMessageView.placeAt("qunit-fixture");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oFirstListItem = this.oMessageView._oLists.all.getItems()[0];
 
@@ -816,7 +845,8 @@ sap.ui.define([
 		assert.strictEqual(oFirstListItem.getLink().$().attr("aria-describedby"), oFirstListItem.getLinkAriaDescribedBy().getId(), "Describedby of the title and the MessageListItem itself should be the same");
 	});
 
-	QUnit.test("MessageItem with active title - Details page", function (assert) {
+	QUnit.test("MessageItem with active title - Details page", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oFirstMessageItem = new MessageItem({
 			activeTitle: true,
 			type: "Error"
@@ -834,7 +864,7 @@ sap.ui.define([
 
 		this.oMessageView.placeAt("qunit-fixture");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oFirstListItem = this.oMessageView._oLists.all.getItems()[0];
 
 		this.oMessageView._navigateToDetails(oFirstMessageItem, oFirstListItem, "slide", false);
@@ -845,7 +875,7 @@ sap.ui.define([
 		assert.ok(oDetailsTitle.getAriaDescribedBy().indexOf(oFirstListItem.getId() + "-link") > -1, "Details title should be described by the item's link");
 	});
 
-	QUnit.test("MessageItem with active title - Message Bundle Texts - Error", function (assert) {
+	QUnit.test("MessageItem with active title - Message Bundle Texts - Error", async function (assert) {
 		var oFirstMessageItem = new MessageItem({
 			type: "Error"
 		}), oBundle, sContentAnnouncementLocation, sContentAnnouncementDescription, sAnnouncement;
@@ -853,7 +883,7 @@ sap.ui.define([
 		this.oMessageView.addItem(oFirstMessageItem);
 		this.oMessageView.placeAt("qunit-fixture");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oBundle = Library.getResourceBundleFor("sap.m");
 		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_ERROR");
@@ -865,7 +895,7 @@ sap.ui.define([
 		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
 
 		oFirstMessageItem.setActiveTitle(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
 
@@ -873,7 +903,7 @@ sap.ui.define([
 		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
 
 		oFirstMessageItem.setDescription("description");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
 
@@ -881,7 +911,7 @@ sap.ui.define([
 		assert.ok(sAnnouncement.indexOf(sContentAnnouncementDescription) > -1, "Message List Item should include information for description");
 	});
 
-	QUnit.test("MessageItem with active title - Message Bundle Texts - Warning", function (assert) {
+	QUnit.test("MessageItem with active title - Message Bundle Texts - Warning", async function (assert) {
 		var oFirstMessageItem = new MessageItem({
 			type: "Warning"
 		}), oBundle, sContentAnnouncementLocation, sContentAnnouncementDescription, sAnnouncement;
@@ -889,7 +919,7 @@ sap.ui.define([
 		this.oMessageView.addItem(oFirstMessageItem);
 		this.oMessageView.placeAt("qunit-fixture");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oBundle = Library.getResourceBundleFor("sap.m");
 		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_WARNING");
@@ -901,7 +931,7 @@ sap.ui.define([
 		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
 
 		oFirstMessageItem.setActiveTitle(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
 
@@ -909,7 +939,7 @@ sap.ui.define([
 		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
 
 		oFirstMessageItem.setDescription("description");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
 
@@ -917,7 +947,7 @@ sap.ui.define([
 		assert.ok(sAnnouncement.indexOf(sContentAnnouncementDescription) > -1, "Message List Item should include information for description");
 	});
 
-	QUnit.test("MessageItem with active title - Message Bundle Texts - Information", function (assert) {
+	QUnit.test("MessageItem with active title - Message Bundle Texts - Information", async function (assert) {
 		var oFirstMessageItem = new MessageItem({
 			type: "Information"
 		}), oBundle, sContentAnnouncementLocation, sContentAnnouncementDescription, sAnnouncement;
@@ -925,7 +955,7 @@ sap.ui.define([
 		this.oMessageView.addItem(oFirstMessageItem);
 		this.oMessageView.placeAt("qunit-fixture");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oBundle = Library.getResourceBundleFor("sap.m");
 		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_INFORMATION");
@@ -937,7 +967,7 @@ sap.ui.define([
 		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
 
 		oFirstMessageItem.setActiveTitle(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
 
@@ -945,7 +975,7 @@ sap.ui.define([
 		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
 
 		oFirstMessageItem.setDescription("description");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
 
@@ -953,7 +983,7 @@ sap.ui.define([
 		assert.ok(sAnnouncement.indexOf(sContentAnnouncementDescription) > -1, "Message List Item should include information for description");
 	});
 
-	QUnit.test("MessageItem with active title - Message Bundle Texts - Success", function (assert) {
+	QUnit.test("MessageItem with active title - Message Bundle Texts - Success", async function (assert) {
 		var oFirstMessageItem = new MessageItem({
 			type: "Success"
 		}), oBundle, sContentAnnouncementLocation, sContentAnnouncementDescription, sAnnouncement;
@@ -961,7 +991,7 @@ sap.ui.define([
 		this.oMessageView.addItem(oFirstMessageItem);
 		this.oMessageView.placeAt("qunit-fixture");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oBundle = Library.getResourceBundleFor("sap.m");
 		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_SUCCESS");
@@ -973,7 +1003,7 @@ sap.ui.define([
 		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
 
 		oFirstMessageItem.setActiveTitle(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
 
@@ -981,7 +1011,7 @@ sap.ui.define([
 		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
 
 		oFirstMessageItem.setDescription("description");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
 
@@ -989,7 +1019,7 @@ sap.ui.define([
 		assert.ok(sAnnouncement.indexOf(sContentAnnouncementDescription) > -1, "Message List Item should include information for description");
 	});
 
-	QUnit.test("Role and aria-label attribute should be rendered correctly", function (assert) {
+	QUnit.test("Role and aria-label attribute should be rendered correctly", async function (assert) {
 		// Arrange
 		var oFirstMessageItem = new MessageItem({
 			type: "Error"
@@ -998,13 +1028,13 @@ sap.ui.define([
 
 		this.oMessageView.addItem(oFirstMessageItem);
 		this.oMessageView.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oMessageView.getDomRef().getAttribute("aria-label"), oResourceBundle.getText("MESSAGE_VIEW_ARIA_LABEL"), "The text for the aria-label attribute is set correctly");
 		assert.strictEqual(this.oMessageView.getDomRef().tagName.toLowerCase(), "section", "The root element is with role section.");
 	});
 
-	QUnit.test("SegmentedButton aria-labelledby attribute should be rendered correctly", function (assert) {
+	QUnit.test("SegmentedButton aria-labelledby attribute should be rendered correctly", async function (assert) {
 		//Arrange
 		var oMessageView = new MessageView("msgView", {
 			items: [
@@ -1028,7 +1058,7 @@ sap.ui.define([
 		var	oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		oMessageView.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MESSAGEVIEW_SEGMENTED_BTN_DESCRIPTION"),
 		oInvisibleText = Element.getElementById(sInvisibleTextId);
@@ -1042,7 +1072,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Binding", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			var that = this;
 
 			this.oButton2 = new Button({text: "Press me"});
@@ -1075,7 +1105,7 @@ sap.ui.define([
 
 			this.oButton2.placeAt("qunit-fixture");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oDialog2.close();
@@ -1089,12 +1119,16 @@ sap.ui.define([
 			this.oDialog2 = null;
 
 			this.oButton2 = null;
+
+			runAllFakeTimersAndRestore(this.clock);
 		}
 	});
 
 	QUnit.test("Updating item's binding should update its property", function (assert) {
 
+		this.clock = sinon.useFakeTimers();
 		this.oMessageView2.getModel().setProperty("/0/message", "Two");
+
 		this.clock.tick(500);
 		this.oDialog2.open();
 
@@ -1102,6 +1136,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("No segmented button filter when not needed", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oDialog2.open();
 
 		this.clock.tick(500);
@@ -1131,27 +1166,27 @@ sap.ui.define([
 		assert.strictEqual(this.oMessageView2._listPage.getShowHeader(), true, "Header should be shown when there is a custom header button even if segmented button is hidden after closing the dialog container");
 	});
 
-	QUnit.test("Removing all items", function (assert) {
+	QUnit.test("Removing all items", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var tempObject = {
 			message: "test"
 		};
 
 		this.oDialog2.open();
-
 		this.clock.tick(500);
 
 		this.oMessageView2.getModel().setData(null);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oMessageView2.getModel().setData(tempObject);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		assert.ok(this.oMessageView2.getItems().length);
 
 		tempObject = null;
 	});
 
-	QUnit.test("Prevent auto binding to the sap.ui.getCore().getMessageManager() when there's a model", function (assert) {
+	QUnit.test("Prevent auto binding to the sap.ui.core.Messaging when there's a model", async function (assert) {
 		// Setup
 		var oMessageView = new MessageView({
 				items: {
@@ -1165,7 +1200,7 @@ sap.ui.define([
 
 		oMessageView.setModel(new JSONModel());
 		oMessageView.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		var oMessage = new Message({
@@ -1178,7 +1213,7 @@ sap.ui.define([
 			validation: false
 		});
 		Messaging.addMessages(oMessage);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oMessageView.getItems().length, 0, "If the MessagePopover is bound to a model, the MessageView should not bind to the MessageManager");
@@ -1189,12 +1224,12 @@ sap.ui.define([
 		Messaging.removeAllMessages();
 	});
 
-	QUnit.test("Auto bind to the sap.ui.getCore().getMessageManager() when there are items or binding", function (assert) {
+	QUnit.test("Auto bind to the sap.ui.core.Messaging when there are items or binding", async function (assert) {
 		// Setup
 		var oMessageView = new MessageView();
 
 		oMessageView.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		var oMessage = new Message({
@@ -1207,7 +1242,7 @@ sap.ui.define([
 			validation: false
 		});
 		Messaging.addMessages(oMessage);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oMessageView.getItems().length, 1, "If the MessagePopover is not bound to a model, the MessageView should bind to the MessageManager");
@@ -1221,7 +1256,7 @@ sap.ui.define([
 
 
 	QUnit.module("Interaction", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oMessageView = new MessageView({
 				items: [
 					new MessageItem({
@@ -1233,7 +1268,7 @@ sap.ui.define([
 
 			this.oMessageView.placeAt("qunit-fixture");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oMessageView.destroy();
@@ -1244,7 +1279,7 @@ sap.ui.define([
 		assert.strictEqual(this.oMessageView._navContainer.getCurrentPage().getId(), this.oMessageView._detailsPage.getId(), "Details page should be initially shown if item is just one");
 	});
 
-	QUnit.test("Auto navigate even with grouped item", function (assert) {
+	QUnit.test("Auto navigate even with grouped item", async function (assert) {
 		// Setup
 		var oMessageView = new MessageView({
 			items: [
@@ -1260,7 +1295,7 @@ sap.ui.define([
 
 		// Act
 		oMessageView.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oSpy.firstCall.args[0].isA("sap.m.MessageListItem"), "The Navigation happens against the correct element.");
@@ -1268,7 +1303,7 @@ sap.ui.define([
 		oMessageView.destroy();
 	});
 
-	QUnit.test("Navigation should invalidate page content without navigation back and forward", function (assert) {
+	QUnit.test("Navigation should invalidate page content without navigation back and forward", async function (assert) {
 		var oItem = new MessageItem({
 			title: "Test",
 			description: "Test Description"
@@ -1281,13 +1316,13 @@ sap.ui.define([
 
 		// Act
 		oMessageView.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oMessageView._navContainer.getCurrentPage(), oMessageView._detailsPage, "Details page should be visible");
 		assert.strictEqual(oSpy.callCount, 1, "Navigation should be performed once");
 
 		oItem.setDescription("Test");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oMessageView._detailsPage.getContent()[1].getText(), oItem.getDescription(), "Description should be changed");
 		assert.strictEqual(oMessageView._navContainer.getCurrentPage(), oMessageView._detailsPage, "Details page should be visible");
@@ -1297,7 +1332,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Aggregation Binding", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oMessageView = new MessageView();
 
 			var oTemplate = new MessageItem({
@@ -1336,7 +1371,7 @@ sap.ui.define([
 
 			this.oMessageView.placeAt("qunit-fixture");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oMessageView.destroy();
@@ -1361,7 +1396,7 @@ sap.ui.define([
 		assert.strictEqual(oFirstListItem.getInfoState(), this.oMessageView._mapInfoState(oFirstMessageItem.getType()), "MessageListItem infoState should be present and mapped correctly");
 	});
 
-	QUnit.test("MessageListItem should not throw an exception when only subtitle is set", function (assert) {
+	QUnit.test("MessageListItem should not throw an exception when only subtitle is set", async function (assert) {
 		var oMV = new MessageView({
 			items: [
 				new MessageItem({
@@ -1370,14 +1405,14 @@ sap.ui.define([
 			]
 		}).placeAt("qunit-fixture");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(true, "No exception has been thrown");
 
 		oMV.destroy();
 	});
 
-	QUnit.test("Escaping brackets", function (assert) {
+	QUnit.test("Escaping brackets", async function (assert) {
 		// set up
 		var oMessageTemplate, aMockMessages, oModel,
 			oMessageView, oDialog, oButton;
@@ -1418,7 +1453,7 @@ sap.ui.define([
 			}
 		}).placeAt("qunit-fixture");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oButton.firePress();
@@ -1437,7 +1472,7 @@ sap.ui.define([
 
 	QUnit.module("Filtering");
 
-	QUnit.test("Filter message & model change integration", function (assert) {
+	QUnit.test("Filter message & model change integration", async function (assert) {
 		//Setup
 		var oModel = new JSONModel([{
 			"message": "Enter a valid number",
@@ -1469,7 +1504,7 @@ sap.ui.define([
 						})
 			}
 		}).setModel(oModel, "message").placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//Assert
 		assert.ok(oMessageView._oLists['all'].getVisible(), "The list with all items is visible");
@@ -1477,7 +1512,7 @@ sap.ui.define([
 
 		//Act
 		oMessageView._oSegmentedButton.getButtons()[2].firePress();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//Assert
 		assert.ok(!oMessageView._oLists['all'].getVisible(), "The list with all items is NOT visible");
@@ -1487,7 +1522,7 @@ sap.ui.define([
 		var aData = oMessageView.getModel("message").getData();
 		aData.pop(); //Throw out the "Warning" item
 		oMessageView.getModel("message").setData(aData);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(oMessageView._oLists['all'].getVisible(), "The list with all items is visible");
 		assert.ok(!oMessageView._oLists['warning'].getVisible(), "The 'Warning' list/section is NOT visible");
@@ -1496,7 +1531,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Checks the sorting order when groupItems=true", function (assert) {
+	QUnit.test("Checks the sorting order when groupItems=true", async function (assert) {
 		// Setup
 		var oModel = new JSONModel([
 			{
@@ -1541,7 +1576,7 @@ sap.ui.define([
 						})
 			}
 		}).setModel(oModel, "message").placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oMessageView._oLists["all"].getAggregation('items')[2].getTitle(), "Test2", "The third item in the list should be correct");
@@ -1550,7 +1585,7 @@ sap.ui.define([
 		oMessageView.destroy();
 	});
 
-	QUnit.test("Checks the sorting after filtering when groupItems=true", function (assert) {
+	QUnit.test("Checks the sorting after filtering when groupItems=true", async function (assert) {
 		// Setup
 		var oModel = new JSONModel([
 			{
@@ -1594,7 +1629,7 @@ sap.ui.define([
 						})
 			}
 		}).setModel(oModel, "message").placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oMessageView._oLists["error"].getAggregation('items')[1].getTitle(), "Test2", "The second [error] list item should be error");
@@ -1604,7 +1639,7 @@ sap.ui.define([
 		oMessageView.destroy();
 	});
 
-	QUnit.test("Filter messages then show all the messages again", function (assert) {
+	QUnit.test("Filter messages then show all the messages again", async function (assert) {
 		//Setup
 		var oModel = new JSONModel([{
 			"message": "Enter a valid number",
@@ -1641,7 +1676,7 @@ sap.ui.define([
 			}
 		}).setModel(oModel, "message").placeAt("qunit-fixture");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var oAll = oMessageView._oLists['all'],
 		oError = oMessageView._oLists['error'],
@@ -1655,7 +1690,7 @@ sap.ui.define([
 
 		//Act
 		oMessageView._oSegmentedButton.getButtons()[1].firePress();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//Assert
 		assert.ok(oError.getVisible(), "The 'Error' list/section is visible");
@@ -1663,7 +1698,7 @@ sap.ui.define([
 
 		//Act
 		oMessageView._oSegmentedButton.getButtons()[2].firePress();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//Assert
 		assert.ok(oWarning.getVisible(), "The 'Warning' list/section is visible");
@@ -1671,7 +1706,7 @@ sap.ui.define([
 
 		//Act
 		oMessageView._oSegmentedButton.getButtons()[1].firePress();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//Assert
 		assert.ok(oError.getVisible(), "The 'Error' list/section is visible");
@@ -1679,7 +1714,7 @@ sap.ui.define([
 
 		//Act
 		oMessageView._oSegmentedButton.getButtons()[0].firePress();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//Assert
 		assert.ok(oAll.getVisible(), "The list with all messages is visible");

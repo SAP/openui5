@@ -26,7 +26,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/VersionInfo",
 	"sap/ui/base/EventProvider",
-	"sap/ui/base/Interface",
 	"sap/ui/base/Object",
 	"sap/ui/base/syncXHRFix",
 	"sap/ui/core/support/Hotkeys",
@@ -70,7 +69,6 @@ sap.ui.define([
 		Device,
 		VersionInfo,
 		EventProvider,
-		Interface,
 		BaseObject,
 		syncXHRFix,
 		Hotkeys,
@@ -1130,17 +1128,6 @@ sap.ui.define([
 			var oLib = Library._get(sLibraryName || "sap.ui.core", true /* bCreate */);
 			return oLib._loadResourceBundle(sLocale, !bAsync);
 		};
-
-		// ---- UIArea and Rendering -------------------------------------------------------------------------------------
-
-		function placeControlAt(oDomRef, oControl) {
-			assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
-			assert(oControl instanceof Interface || BaseObject.isObjectA(oControl, "sap.ui.core.Control"), "oControl must be a Control or Interface");
-
-			if (oControl) {
-				oControl.placeAt(oDomRef, "only");
-			}
-		}
 
 		/**
 		* Attaches event handler <code>fnFunction</code> to the {@link #event:ThemeChanged ThemeChanged} event
