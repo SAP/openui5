@@ -84,13 +84,35 @@
 
 /* Align RadioButton in Form with other controls */
 .sapUiForm.sapUiFormEdit-CTX{
-	.sapMRbG .sapMRbBLabel {
-		padding-left: @_sap_m_RadioButtonGroup_PaddingLeftLabel_Form;
+	.sapMRbG{
+		.sapMRbBLabel {
+			padding-left: @_sap_m_RadioButtonGroup_PaddingLeftLabel_Form;
+		}
+
+		.sapMRbGCol{
+			flex-grow: 0;
+			padding-left: 0.5rem; // to align to spaced between Form cells
+		}
+
+		.sapMRbGCol:first-child{
+			padding-left: 0;
+		}
 	}
 
 	.sapMRbG[dir=rtl] .sapMRbBLabel {
 		padding-left: 0;
 		padding-right: @_sap_m_RadioButtonGroup_PaddingLeftLabel_Form;
+	}
+
+	.sapMRbG.sapMRbG1Row{
+		.sapMRb{
+			padding-left: 0;
+			margin-left: 0.5rem; // to align to spaced between Form cells
+		}
+
+		.sapMRb:first-child{
+			margin-left: 0;
+		}
 	}
 }
 
