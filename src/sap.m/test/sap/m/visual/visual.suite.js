@@ -56,6 +56,7 @@ module.exports = [
 	"OverflowToolbar.spec.js",
 	"OverflowToolbarInRTE.spec.js",
 	"Page.spec.js",
+	"PageFloatingFooter.spec.js",
 	"PageWithResponsivePaddings.spec.js",
 	"Panel.spec.js",
 	"PlanningCalendar.spec.js",
