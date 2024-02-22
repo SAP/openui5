@@ -12,6 +12,8 @@ sap.ui.define([
 	/*eslint camelcase: 0 */
 	"use strict";
 
+	const mustBeMocked = function () { throw new Error("Must be mocked"); };
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._AggregationHelper", {
 		beforeEach : function () {
@@ -2361,11 +2363,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getQueryOptionsForOutOfPlaceNodesData", function (assert) {
-		const oOutOfPlace = {nodeFilter : "~nodeFilter~", parentFilter : "~parentFilter~"};
+		const oOutOfPlace = {
+			nodeFilters : ["~node2Filter~", "~node1Filter~", "~node3Filter~"],
+			parentFilter : "~parentFilter~"
+		};
+		const sOutOfPlaceJSON = JSON.stringify(oOutOfPlace);
 		const oAggregation = {hierarchyQualifier : "X", search : "~search~"};
 		const sAggregationJSON = JSON.stringify(oAggregation);
 		const mQueryOptions = {
 			$$filterBeforeAggregate : "~filterBeforeAggregate~",
+			$count : "~count~",
 			$filter : "~filter~",
 			$orderby : "~orderby~",
 			custom : "~custom~"
@@ -2392,20 +2399,27 @@ sap.ui.define([
 		assert.deepEqual(mResult, {
 			$$filterBeforeAggregate : "~parentFilter~",
 			$apply : "~apply~",
-			$filter : "~nodeFilter~",
-			$top : 1,
+			$filter : "~node1Filter~ or ~node2Filter~ or ~node3Filter~",
+			$top : 3,
 			custom : "~custom~"
 		});
 		assert.strictEqual(JSON.stringify(oAggregation), sAggregationJSON, "unchanged");
+		assert.strictEqual(JSON.stringify(oOutOfPlace), sOutOfPlaceJSON, "unchanged");
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getQueryOptionsForOutOfPlaceNodesRank", function (assert) {
-		const oOutOfPlace = {nodeFilter : "~nodeFilter~", parentFilter : "~parentFilter~"};
+		const oOutOfPlace = {
+			nodeFilters : ["~node2Filter~", "~node1Filter~", "~node3Filter~"],
+			parentFilter : "~parentFilter~"
+		};
+		const sOutOfPlaceJSON = JSON.stringify(oOutOfPlace);
 		const oAggregation = {
 			$DistanceFromRoot : "~$DistanceFromRoot~",
-			$LimitedRank : "~$LimitedRank~"
+			$LimitedRank : "~$LimitedRank~",
+			$metaPath : "~$metaPath~",
+			$fetchMetadata : mustBeMocked
 		};
 		const mQueryOptions = {
 			$apply : "~apply~",
@@ -2417,17 +2431,26 @@ sap.ui.define([
 		};
 		const sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
+		this.mock(oAggregation).expects("$fetchMetadata").withExactArgs("~$metaPath~/")
+			.returns(SyncPromise.resolve("~$metadata~"));
+		this.mock(_Helper).expects("selectKeyProperties")
+			.withExactArgs(sinon.match.object, "~$metadata~")
+			.callsFake(function (mQueryOptions) {
+				mQueryOptions.$select.push("~key~");
+			});
+
 		// code under test
 		const mResult = _AggregationHelper.getQueryOptionsForOutOfPlaceNodesRank(oOutOfPlace,
 			oAggregation, mQueryOptions);
 
 		assert.deepEqual(mResult, {
 			$apply : "~apply~",
-			$filter : "~parentFilter~ or ~nodeFilter~",
-			$select : ["~$DistanceFromRoot~", "~$LimitedRank~"],
-			$top : 2,
+			$filter : "~parentFilter~ or ~node1Filter~ or ~node2Filter~ or ~node3Filter~",
+			$select : ["~$DistanceFromRoot~", "~$LimitedRank~", "~key~"],
+			$top : 4,
 			custom : "~custom~"
 		});
+		assert.strictEqual(JSON.stringify(oOutOfPlace), sOutOfPlaceJSON, "unchanged");
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
 	});
 });

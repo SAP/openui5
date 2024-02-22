@@ -5551,29 +5551,74 @@ make root = ${bMakeRoot}`;
 			hierarchyQualifier : "X",
 			$LimitedRank : "~LimitedRank~"
 		});
-		oCache.aElements = ["foo", "~parent~", "bar", "~nodePlaceholder~"];
+		oCache.aElements = ["foo", "~parent~", "~node2~", "bar", "~node1Placeholder~",
+			 "~node3Placeholder~"];
+		oCache.aElements.$byPredicate = {"~predicate2~" : "~node2~"};
 		const oRankResult = {
-			value : ["~parentRankResult~", "~nodeRankResult~"]
+			value : ["~parentRankResult~", "~node2RankResult~", "~node3RankResult~",
+				"~node1RankResult~"]
 		};
 		const oOutOfPlaceNodeResult = {
-			value : ["~nodeData~"]
+			value : ["~node1Data~", "~node2Data~", "~node3Data~"]
 		};
-
+		const oCacheMock = this.mock(oCache);
+		const oFirstLevelMock = this.mock(oCache.oFirstLevel);
 		const oHelperMock = this.mock(_Helper);
-		oHelperMock.expects("merge").withExactArgs("~nodeData~", "~nodeRankResult~")
-			.returns("~node~");
-		oHelperMock.expects("drillDown").withExactArgs("~node~", "~LimitedRank~").returns("3");
+
+		oCacheMock.expects("getTypes").atLeast(1).withExactArgs().returns("~types~");
+		// oRankResult
+		oHelperMock.expects("getKeyPredicate")
+			.withExactArgs("~parentRankResult~", "/Foo", "~types~")
+			.returns("~parentPredicate~");
+		oHelperMock.expects("getKeyPredicate")
+			.withExactArgs("~node2RankResult~", "/Foo", "~types~")
+			.returns("~predicate2~");
+		oHelperMock.expects("getKeyPredicate")
+			.withExactArgs("~node3RankResult~", "/Foo", "~types~")
+			.returns("~predicate3~");
+		oHelperMock.expects("getKeyPredicate")
+			.withExactArgs("~node1RankResult~", "/Foo", "~types~")
+			.returns("~predicate1~");
+		// "~node1Data~"
+		oHelperMock.expects("getKeyPredicate").withExactArgs("~node1Data~", "/Foo", "~types~")
+			.returns("~predicate1~");
+		oHelperMock.expects("merge").withExactArgs("~node1Data~", "~node1RankResult~");
+		oHelperMock.expects("drillDown").withExactArgs("~node1Data~", "~LimitedRank~").returns("4");
+		oFirstLevelMock.expects("calculateKeyPredicate")
+			.withExactArgs("~node1Data~", "~types~", "/Foo");
+		oCacheMock.expects("insertNode").withExactArgs("~node1Data~", 4)
+			.callsFake(function () {
+				oCache.aElements.$byPredicate["~predicate1~"] = "~node1Data~";
+			});
+		// "~node2Data~"
+		oHelperMock.expects("getKeyPredicate").withExactArgs("~node2Data~", "/Foo", "~types~")
+			.returns("~predicate2~");
+		// "~node3Data~"
+		oHelperMock.expects("getKeyPredicate").withExactArgs("~node3Data~", "/Foo", "~types~")
+			.returns("~predicate3~");
+		oHelperMock.expects("merge").withExactArgs("~node3Data~", "~node3RankResult~");
+		oHelperMock.expects("drillDown").withExactArgs("~node3Data~", "~LimitedRank~").returns("5");
+		oFirstLevelMock.expects("calculateKeyPredicate")
+			.withExactArgs("~node3Data~", "~types~", "/Foo");
+		oCacheMock.expects("insertNode").withExactArgs("~node3Data~", 5)
+			.callsFake(function () {
+				oCache.aElements.$byPredicate["~predicate3~"] = "~node3Data~";
+			});
+		// move nodes
 		oHelperMock.expects("drillDown").withExactArgs("~parentRankResult~", "~LimitedRank~")
 			.returns("1");
-		this.mock(oCache).expects("getTypes").withExactArgs().returns("~types~");
-		this.mock(oCache.oFirstLevel).expects("calculateKeyPredicate")
-			.withExactArgs("~node~", "~types~", "/Foo");
-		this.mock(oCache).expects("insertNode").withExactArgs("~node~", 3);
+		this.mock(oCache.oTreeState).expects("getOutOfPlace").withExactArgs()
+			.returns({
+				// the order is important: node2 is not moved, moving node3 shifts the location of
+				// node1 which must be searched again (aElements.indexOf(...))
+				nodePredicates : ["~predicate2~", "~predicate3~", "~predicate1~"]
+			});
 
 		// code under test
 		oCache.handleOutOfPlaceNodes([oRankResult, oOutOfPlaceNodeResult]);
 
-		assert.deepEqual(oCache.aElements, ["foo", "~parent~", "~node~", "bar"]);
+		assert.deepEqual(oCache.aElements,
+			["foo", "~parent~", "~node1Data~", "~node3Data~", "~node2~", "bar"]);
 	});
 
 	//*********************************************************************************************

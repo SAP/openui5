@@ -942,12 +942,14 @@ sap.ui.define([
 			// with $$filterBeforeAggregate the data is requested with descendants(...) instead of
 			// TopLevels(...)
 			mQueryOptions.$$filterBeforeAggregate = oOutOfPlace.parentFilter;
-			// filter/sorter are not relevant for the data request
+			// count/filter/sorter are not relevant for the data request
+			delete mQueryOptions.$count;
 			delete mQueryOptions.$filter;
 			delete mQueryOptions.$orderby;
 			mQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions, 1);
-			mQueryOptions.$filter = oOutOfPlace.nodeFilter;
-			mQueryOptions.$top = 1;
+			const aNodeFilters = oOutOfPlace.nodeFilters.toSorted();
+			mQueryOptions.$filter = aNodeFilters.join(" or ");
+			mQueryOptions.$top = aNodeFilters.length;
 
 			return mQueryOptions;
 		},
@@ -969,13 +971,16 @@ sap.ui.define([
 		 */
 		getQueryOptionsForOutOfPlaceNodesRank : function (oOutOfPlace, oAggregation,
 				mQueryOptions) {
+			const aNodeFilters = oOutOfPlace.nodeFilters.toSorted();
 			mQueryOptions = Object.assign({}, mQueryOptions, {
-				$filter : `${oOutOfPlace.parentFilter} or ${oOutOfPlace.nodeFilter}`,
+				$filter : `${oOutOfPlace.parentFilter} or ${aNodeFilters.join(" or ")}`,
 				$select : [oAggregation.$DistanceFromRoot, oAggregation.$LimitedRank],
-				$top : 2
+				$top : aNodeFilters.length + 1
 			});
 			delete mQueryOptions.$count;
 			delete mQueryOptions.$orderby;
+			_Helper.selectKeyProperties(mQueryOptions,
+				oAggregation.$fetchMetadata(oAggregation.$metaPath + "/").getResult());
 
 			return mQueryOptions;
 		},
