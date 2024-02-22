@@ -46,7 +46,16 @@
 	"type": "destination",
 	"label": "label of Northwind defined in dt",
 	"editable": false,
-	"visible": true
+	"visible": true,
+	"sorter": [{
+		"path": "name",
+		"descending": true
+	}],
+	"filter": {
+		"path": "name",
+		"operator": "Contains",
+		"value1": "t"
+	}
 }</pre>
 
 			<h2 id="createfile">Create a Configuration Module and Register it in the Card Manifest</h2>
