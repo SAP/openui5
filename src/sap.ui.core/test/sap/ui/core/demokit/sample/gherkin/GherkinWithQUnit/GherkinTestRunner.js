@@ -1,9 +1,5 @@
 /* global QUnit */
-window.QUnit = {
-	config: {
-		autostart: false
-	}
-};
+window.QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/ui/test/gherkin/qUnitTestHarness",
