@@ -1109,4 +1109,55 @@ function(Element, nextUIUpdate, jQuery, Core, XMLView, library, ObjectPageLayout
 
 		assert.equal(oSection._getGrid(), null, "destroyed section does not recreate the grid");
 	});
+
+	QUnit.module("Properties", {
+		beforeEach : async function() {
+			this.oObjectPageLayout = new ObjectPageLayout({
+				sections: [
+					new ObjectPageSection({
+						title: "Section 2",
+						anchorBarButtonColor: "Positive",
+						subSections: [
+							new ObjectPageSubSection({
+								blocks: [
+									new sap.m.Panel({
+										content: [new Text({text: "Content1"})]
+									})]
+							})
+						]
+					}),
+					new ObjectPageSection({
+						title: "Section 1",
+						subSections: [
+							new ObjectPageSubSection({
+								blocks: [
+									new sap.m.Panel({
+										content: [new Text({text: "Content2"})]
+									})]
+							})
+						]
+					})
+				]
+
+			});
+
+			this.oObjectPageLayout.placeAt("content");
+			await nextUIUpdate();
+
+		},
+		afterEach : function() {
+			this.oObjectPageLayout.destroy();
+		}
+	});
+
+	QUnit.test("anchorBarButtonColor property", function (assert) {
+		var oObjectPage = this.oObjectPageLayout,
+			oAnchorBar = oObjectPage.getAggregation("_anchorBar"),
+			oAnchorBarBtn = oAnchorBar.getContent()[0],
+			oSection = oObjectPage.getAggregation("sections")[0],
+			sExpectedStyleClass = "sapUxAPAnchorBarButtonColor" + oSection.getProperty("anchorBarButtonColor");
+
+		assert.ok(oAnchorBarBtn.hasStyleClass(sExpectedStyleClass), "The anchorBarButtonColor property is correctly set and color is applied to the anchorbar button");
+
+	});
 });
