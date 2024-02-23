@@ -2946,7 +2946,6 @@ sap.ui.define([
 			sBaseUrl = oParameters.baseUrl,
 			oData = oParameters.data,
 			oChildCard = this._createCard({
-				width: oParameters.width,
 				host: this.getHostInstance(),
 				parameters: oParameters.parameters,
 				referenceId: this.getReferenceId()
