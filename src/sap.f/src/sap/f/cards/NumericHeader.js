@@ -295,11 +295,13 @@ sap.ui.define([
 
 		this._getTitle()
 			.setText(this.getTitle())
-			.setMaxLines(this.getTitleMaxLines());
+			.setMaxLines(this.getTitleMaxLines())
+			.setWrappingType(this.getWrappingType());
 
 		this._getSubtitle()
 			.setText(this.getSubtitle())
-			.setMaxLines(this.getSubtitleMaxLines());
+			.setMaxLines(this.getSubtitleMaxLines())
+			.setWrappingType(this.getWrappingType());
 
 		this._getUnitOfMeasurement().setText(this.getUnitOfMeasurement());
 
@@ -322,7 +324,8 @@ sap.ui.define([
 		} else {
 			this._createDetails()
 				.setText(this.getDetails())
-				.setMaxLines(this.getDetailsMaxLines());
+				.setMaxLines(this.getDetailsMaxLines())
+				.setWrappingType(this.getWrappingType());
 		}
 
 		this._getNumericIndicators()

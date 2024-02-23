@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/library",
+	"sap/m/library",
 	"sap/m/Text"
 ], function (
 	Control,
@@ -16,6 +17,7 @@ sap.ui.define([
 	DateFormat,
 	UniversalDate,
 	coreLibrary,
+	mLibrary,
 	Text
 ) {
 	"use strict";
@@ -23,11 +25,13 @@ sap.ui.define([
 	/**
 	 * @const int The refresh interval for dataTimestamp in ms.
 	 */
-	var DATA_TIMESTAMP_REFRESH_INTERVAL = 60000;
+	const DATA_TIMESTAMP_REFRESH_INTERVAL = 60000;
 
-	var oResourceBundle = Library.getResourceBundleFor("sap.f");
+	const oResourceBundle = Library.getResourceBundleFor("sap.f");
 
-	var TextAlign = coreLibrary.TextAlign;
+	const TextAlign = coreLibrary.TextAlign;
+
+	const WrappingType = mLibrary.WrappingType;
 
 	/**
 	 * Constructor for a new <code>BaseHeader</code>.
@@ -97,7 +101,14 @@ sap.ui.define([
 				 *
 				 * @private
 				 */
-				headingLevel: { type: "string", visibility: "hidden", defaultValue: "3"}
+				headingLevel: { type: "string", visibility: "hidden", defaultValue: "3"},
+
+				/**
+				 * Defines the type of text wrapping to be used inside the header. This applies to title, subtitle and details texts of the header.
+				 * @public
+				 * @experimental Since 1.122 this feature is experimental and the API may change.
+				 */
+				wrappingType : {type: "sap.m.WrappingType", group : "Appearance", defaultValue : WrappingType.Normal}
 			},
 			aggregations: {
 				/**

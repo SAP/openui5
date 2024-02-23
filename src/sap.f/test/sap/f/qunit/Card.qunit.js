@@ -40,9 +40,10 @@ function (
 ) {
 	"use strict";
 
-	var DOM_RENDER_LOCATION = "qunit-fixture";
-	var AvatarColor = mLibrary.AvatarColor;
-	var ValueColor = mLibrary.ValueColor;
+	const DOM_RENDER_LOCATION = "qunit-fixture";
+	const AvatarColor = mLibrary.AvatarColor;
+	const ValueColor = mLibrary.ValueColor;
+	const WrappingType = mLibrary.WrappingType;
 
 	/**
 	 * In each test using fake timers, it might happen that a rendering task is queued by
@@ -294,6 +295,49 @@ function (
 
 		// Assert
 		assert.strictEqual(!!oHeader.$().find(".sapFCardHeaderImage").length, false, "Icon is not visible");
+
+		// Clean up
+		oHeader.destroy();
+	});
+
+	QUnit.test("Header Hyphenation", async function (assert) {
+		// Arrange
+		const oHeader = new CardHeader({
+				title: "pneumonoultramicroscopicsilicovolcanoconiosis",
+				subtitle: "pneumonoultramicroscopicsilicovolcanoconiosis",
+				wrappingType: WrappingType.Hyphenated
+			});
+
+		// Act
+		oHeader.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.strictEqual(oHeader.getAggregation("_title").getWrappingType(), WrappingType.Hyphenated, "Title has correct wrappingType");
+		assert.strictEqual(oHeader.getAggregation("_subtitle").getWrappingType(), WrappingType.Hyphenated, "Subtitle has correct wrappingType");
+
+		// Clean up
+		oHeader.destroy();
+	});
+
+	QUnit.test("Numeric Header Hyphenation", async function (assert) {
+		// Arrange
+		const oHeader = new CardNumericHeader({
+				title: "pneumonoultramicroscopicsilicovolcanoconiosis",
+				subtitle: "pneumonoultramicroscopicsilicovolcanoconiosis",
+				details: "pneumonoultramicroscopicsilicovolcanoconiosis",
+				detailsMaxLines: 2,
+				wrappingType: WrappingType.Hyphenated
+			});
+
+		// Act
+		oHeader.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.strictEqual(oHeader.getAggregation("_title").getWrappingType(), WrappingType.Hyphenated, "Title has correct wrappingType");
+		assert.strictEqual(oHeader.getAggregation("_subtitle").getWrappingType(), WrappingType.Hyphenated, "Subtitle has correct wrappingType");
+		assert.strictEqual(oHeader.getAggregation("_details").getWrappingType(), WrappingType.Hyphenated, "Details text has correct wrappingType");
 
 		// Clean up
 		oHeader.destroy();

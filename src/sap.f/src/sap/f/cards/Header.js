@@ -230,11 +230,13 @@ sap.ui.define([
 
 		this._getTitle()
 			.setText(this.getTitle())
-			.setMaxLines(this.getTitleMaxLines());
+			.setMaxLines(this.getTitleMaxLines())
+			.setWrappingType(this.getWrappingType());
 
 		this._getSubtitle()
 			.setText(this.getSubtitle())
-			.setMaxLines(this.getSubtitleMaxLines());
+			.setMaxLines(this.getSubtitleMaxLines())
+			.setWrappingType(this.getWrappingType());
 
 		this._getAvatar()
 			.setDisplayShape(this.getIconDisplayShape())
