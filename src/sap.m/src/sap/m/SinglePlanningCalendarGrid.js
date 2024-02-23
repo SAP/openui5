@@ -1468,27 +1468,25 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarGrid.prototype._toggleMarkCell = function (oStartDate, oColumnGridHeaderCell) {
-			var oUTCDate = oStartDate.toUTCJSDate();
 			if (!this._checkDateSelected(oStartDate)){
 				if (oColumnGridHeaderCell && !oColumnGridHeaderCell.classList.contains("sapUiCalItemSel")) {
 					oColumnGridHeaderCell.classList.add("sapUiCalItemSel");
 				}
-				this.addAggregation("selectedDates", new DateRange({startDate: oUTCDate}));
-			} else {
-				var aSelectedDates = this.getAggregation("selectedDates");
-				oColumnGridHeaderCell && oColumnGridHeaderCell.classList.remove("sapUiCalItemSel");
-				if (!aSelectedDates) {
-					return;
-				}
+				this.addAggregation("selectedDates", new DateRange({startDate: oStartDate.toLocalJSDate()}));
+				return;
+			}
 
-				for (var i = 0; i < aSelectedDates.length; i++){
-					var oUTCStartDate = UI5Date.getInstance(Date.UTC(0, 0, 1));
-					var oSlectStartDate = aSelectedDates[i].getStartDate();
-					oUTCStartDate.setUTCFullYear(oSlectStartDate.getFullYear(), oSlectStartDate.getMonth(), oSlectStartDate.getDate());
-					if (oUTCStartDate.getTime() === oUTCDate.getTime()) {
-						this.removeAggregation("selectedDates", i);
-						break;
-					}
+			var aSelectedDates = this.getAggregation("selectedDates");
+			oColumnGridHeaderCell && oColumnGridHeaderCell.classList.remove("sapUiCalItemSel");
+			if (!aSelectedDates) {
+				return;
+			}
+
+			for (var i = 0; i < aSelectedDates.length; i++){
+				var oSelectStartDate = aSelectedDates[i].getStartDate();
+				if (CalendarDate.fromLocalJSDate(oSelectStartDate).isSame(CalendarDate.fromLocalJSDate(oStartDate))) {
+					this.removeAggregation("selectedDates", i);
+					break;
 				}
 			}
 		};
