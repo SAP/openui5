@@ -234,6 +234,7 @@ function(Element, nextUIUpdate, jQuery, Core, Label, Text, ObjectPageDynamicHead
 		done = assert.async(),
 		bResizeListenerCalled = false;
 
+		oObjectPageLayout.removeAllHeaderContent();
 		oObjectPageLayout.addHeaderContent(oResizableControl);
 
 		// proxy the resize listener to check if called
