@@ -23,8 +23,8 @@ sap.ui.define([
 		// maps predicate to node id and number of levels to expand
 		mPredicate2ExpandLevels = {};
 
-		// @see #getOutOfPlace
-		oOutOfPlace = undefined;
+		// @see #getOutOfPlaceGroupedByParent
+		mParentPredicate2OutOfPlace = {};
 
 		/**
 		 * Constructor for a new _TreeState.
@@ -117,15 +117,17 @@ sap.ui.define([
 		}
 
 		/**
-		 * Returns information about the out-of-place nodes.
+		 * Returns information about the out-of-place nodes grouped by parent.
 		 *
-		 * @returns {{nodeFilters : string[], nodePredicates : string[], parentFilter : string?}|undefined}
-		 *   The current out-of-place infos, or <code>undefined</code> if no node is out of place
+		 * @returns {Array<{nodeFilters : string[], nodePredicates : string[], parentFilter : string?, parentPredicate : string?}>}
+		 *   A list of out-of-place nodes grouped by parent. Each entry contains all out-of-place
+		 *   nodes for a parent (root nodes if parentFilter and parentPredicate are undefined) in
+		 *   the order in which they were created.
 		 *
 		 * @public
 		 */
-		getOutOfPlace() {
-			return this.oOutOfPlace;
+		getOutOfPlaceGroupedByParent() {
+			return Object.values(this.mParentPredicate2OutOfPlace);
 		}
 
 		/**
@@ -135,7 +137,7 @@ sap.ui.define([
 		 */
 		reset() {
 			this.mPredicate2ExpandLevels = {};
-			this.oOutOfPlace = undefined;
+			this.mParentPredicate2OutOfPlace = {};
 		}
 
 		/**
@@ -147,10 +149,20 @@ sap.ui.define([
 		 * @public
 		 */
 		setOutOfPlace(oNode, oParent) {
-			this.oOutOfPlace ??= {nodeFilters : [], nodePredicates : []};
-			this.oOutOfPlace.parentFilter = oParent && this.fnGetKeyFilter(oParent);
-			this.oOutOfPlace.nodeFilters.push(this.fnGetKeyFilter(oNode));
-			this.oOutOfPlace.nodePredicates.push(_Helper.getPrivateAnnotation(oNode, "predicate"));
+			const sParentPredicate = oParent && _Helper.getPrivateAnnotation(oParent, "predicate");
+			let oOutOfPlace = this.mParentPredicate2OutOfPlace[sParentPredicate];
+			if (!oOutOfPlace) {
+				this.mParentPredicate2OutOfPlace[sParentPredicate] = oOutOfPlace = {
+					nodeFilters : [],
+					nodePredicates : []
+				};
+				if (oParent) {
+					oOutOfPlace.parentFilter = this.fnGetKeyFilter(oParent);
+					oOutOfPlace.parentPredicate = sParentPredicate;
+				}
+			}
+			oOutOfPlace.nodeFilters.push(this.fnGetKeyFilter(oNode));
+			oOutOfPlace.nodePredicates.push(_Helper.getPrivateAnnotation(oNode, "predicate"));
 		}
 	}
 

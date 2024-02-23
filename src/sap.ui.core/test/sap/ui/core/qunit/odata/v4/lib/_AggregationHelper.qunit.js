@@ -2410,11 +2410,14 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getQueryOptionsForOutOfPlaceNodesRank", function (assert) {
-		const oOutOfPlace = {
+		const aOutOfPlaceByParent = [{
 			nodeFilters : ["~node2Filter~", "~node1Filter~", "~node3Filter~"],
-			parentFilter : "~parentFilter~"
-		};
-		const sOutOfPlaceJSON = JSON.stringify(oOutOfPlace);
+			parentFilter : "~parent1Filter~"
+		}, {
+			nodeFilters : ["~node4Filter~", "~node5Filter~"],
+			parentFilter : "~parent2Filter~"
+		}];
+		const sOutOfPlaceByParentJSON = JSON.stringify(aOutOfPlaceByParent);
 		const oAggregation = {
 			$DistanceFromRoot : "~$DistanceFromRoot~",
 			$LimitedRank : "~$LimitedRank~",
@@ -2440,17 +2443,19 @@ sap.ui.define([
 			});
 
 		// code under test
-		const mResult = _AggregationHelper.getQueryOptionsForOutOfPlaceNodesRank(oOutOfPlace,
-			oAggregation, mQueryOptions);
+		const mResult = _AggregationHelper.getQueryOptionsForOutOfPlaceNodesRank(
+			aOutOfPlaceByParent, oAggregation, mQueryOptions);
 
 		assert.deepEqual(mResult, {
 			$apply : "~apply~",
-			$filter : "~parentFilter~ or ~node1Filter~ or ~node2Filter~ or ~node3Filter~",
+			$filter : "~node1Filter~ or ~node2Filter~ or ~node3Filter~ or ~node4Filter~"
+				+ " or ~node5Filter~ or ~parent1Filter~ or ~parent2Filter~",
 			$select : ["~$DistanceFromRoot~", "~$LimitedRank~", "~key~"],
-			$top : 4,
+			$top : 7,
 			custom : "~custom~"
 		});
-		assert.strictEqual(JSON.stringify(oOutOfPlace), sOutOfPlaceJSON, "unchanged");
+		assert.strictEqual(
+			JSON.stringify(aOutOfPlaceByParent), sOutOfPlaceByParentJSON, "unchanged");
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
 	});
 });

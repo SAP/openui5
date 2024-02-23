@@ -501,6 +501,7 @@ sap.ui.define([
 		if (oParentNode && oParentNode["@$ui5.node.isExpanded"] === undefined) {
 			_Helper.updateAll(this.mChangeListeners, sParentPredicate, oParentNode,
 				{"@$ui5.node.isExpanded" : true}); // not a leaf anymore
+			this.oTreeState.expand(oParentNode);
 		}
 
 		const iLevel = oParentNode
@@ -1086,13 +1087,13 @@ sap.ui.define([
 	 * {@link #requestOutOfPlaceNodes}.
 	 *
 	 * @param {object[]} aResults
-	 *   An array containing two objects. The first object provides Rank and DistanceFromRoot (for
-	 *   the parent and all out-of-place nodes, in this order). The second object provides the full
-	 *   data of the out-of-place nodes.
+	 *   An array containing at least two objects. The first object provides Rank and
+	 *   DistanceFromRoot for all out-of-place nodes and all parents (in no particular order). The
+	 *   following objects provide the full data of the out-of-place nodes (grouped by parent).
 	 *
 	 * @private
 	 */
-	_AggregationCache.prototype.handleOutOfPlaceNodes = function ([oRankResult, oNodeResult]) {
+	_AggregationCache.prototype.handleOutOfPlaceNodes = function ([oRankResult, ...aNodeResults]) {
 		if (!oRankResult) {
 			return;
 		}
@@ -1107,25 +1108,24 @@ sap.ui.define([
 		});
 
 		// import data
-		oNodeResult.value.forEach((oNode) => {
-			const sPredicate = getPredicate(oNode);
-			if (this.aElements.$byPredicate[sPredicate]) {
-				return; // already read with the in-place request
-			}
-			_Helper.merge(oNode, mPredicate2RankResult[sPredicate]);
-			// Note: overridden by _AggregationCache.calculateKeyPredicateRH
-			this.oFirstLevel.calculateKeyPredicate(oNode, this.getTypes(), this.sMetaPath);
-			// insert at rank position to ensure correct placeholder is replaced
-			this.insertNode(oNode, getRank(oNode));
+		aNodeResults.forEach((oNodeResult) => {
+			oNodeResult.value.forEach((oNode) => {
+				const sPredicate = getPredicate(oNode);
+				if (this.aElements.$byPredicate[sPredicate]) {
+					return; // already read with the in-place request
+				}
+				_Helper.merge(oNode, mPredicate2RankResult[sPredicate]);
+				// Note: overridden by _AggregationCache.calculateKeyPredicateRH
+				this.oFirstLevel.calculateKeyPredicate(oNode, this.getTypes(), this.sMetaPath);
+				// insert at rank position to ensure correct placeholder is replaced
+				this.insertNode(oNode, getRank(oNode));
+			});
 		});
 
 		// move the out-of-place nodes below their parent in creation order
-		const iParentRank = getRank(oRankResult.value[0]);
-		this.oTreeState.getOutOfPlace().nodePredicates.forEach((sPredicate) => {
-			const oNode = this.aElements.$byPredicate[sPredicate];
-			const iNodeIndex = this.aElements.indexOf(oNode);
-			this.aElements.splice(iNodeIndex, 1);
-			this.aElements.splice(iParentRank + 1, 0, oNode);
+		this.oTreeState.getOutOfPlaceGroupedByParent().forEach((oOutOfPlace) => {
+			this.moveOutOfPlaceNodes(getRank(mPredicate2RankResult[oOutOfPlace.parentPredicate]),
+				oOutOfPlace.nodePredicates);
 		});
 	};
 
@@ -1379,6 +1379,26 @@ sap.ui.define([
 			}
 
 			return iResult;
+		});
+	};
+
+	/**
+	 * Moves the out-of-place nodes below the given parent in creation order.
+	 *
+	 * @param {number} iParentRank - The parent's rank
+	 * @param {string[]} aOutOfPlacePredicates - The predicates of the out-of-place nodes
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.moveOutOfPlaceNodes = function (iParentRank,
+			aOutOfPlacePredicates) {
+		const iParentIndex = this.aElements.findIndex(
+			(oNode) => _Helper.getPrivateAnnotation(oNode, "rank") === iParentRank);
+		aOutOfPlacePredicates.forEach((sNodePredicate) => {
+			const oNode = this.aElements.$byPredicate[sNodePredicate];
+			const iNodeIndex = this.aElements.indexOf(oNode);
+			this.aElements.splice(iNodeIndex, 1);
+			this.aElements.splice(iParentIndex + 1, 0, oNode);
 		});
 	};
 
@@ -1795,8 +1815,8 @@ sap.ui.define([
 	 * @see #handleOutOfPlaceNodes
 	 */
 	_AggregationCache.prototype.requestOutOfPlaceNodes = function (oGroupLock) {
-		const oOutOfPlace = this.oTreeState.getOutOfPlace();
-		if (!oOutOfPlace) {
+		const aOutOfPlaceByParent = this.oTreeState.getOutOfPlaceGroupedByParent();
+		if (!aOutOfPlaceByParent.length) {
 			return [];
 		}
 
@@ -1808,15 +1828,17 @@ sap.ui.define([
 				oGroupLock.getUnlockedCopy()));
 		};
 
-		// read the rank of the out-of-place node and its parent
-		let mQueryOptions = _AggregationHelper.getQueryOptionsForOutOfPlaceNodesRank(oOutOfPlace,
-			this.oAggregation, this.oFirstLevel.getQueryOptions());
+		// read the rank of the out-of-place nodes and their parents
+		let mQueryOptions = _AggregationHelper.getQueryOptionsForOutOfPlaceNodesRank(
+			aOutOfPlaceByParent, this.oAggregation, this.oFirstLevel.getQueryOptions());
 		request(mQueryOptions);
 
-		// read the out-of-place node
-		mQueryOptions = _AggregationHelper.getQueryOptionsForOutOfPlaceNodesData(oOutOfPlace,
-			this.oAggregation, this.mQueryOptions);
-		request(mQueryOptions);
+		// read the out-of-place nodes
+		aOutOfPlaceByParent.forEach((oOutOfPlace) => {
+			mQueryOptions = _AggregationHelper.getQueryOptionsForOutOfPlaceNodesData(oOutOfPlace,
+				this.oAggregation, this.mQueryOptions);
+			request(mQueryOptions);
+		});
 
 		return aOutOfPlacePromises;
 	};
