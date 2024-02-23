@@ -1,12 +1,14 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/Layer"
 ], function(
+	ObjectStorageConnector,
 	ObjectStorageUtils,
 	JsObjectConnector,
 	SessionStorageConnector,
@@ -338,6 +340,25 @@ sap.ui.define([
 	parameterizedTest(SessionStorageConnector, SessionStorageConnector, "SessionStorage");
 	// LocalStorage behaves similar to Session storage and we rely on this to not run into issues with parallel tests interfering in the LocalStorageTests
 	// parameterizedTest(LocalStorageConnector, LocalStorageWriteConnector, "LocalStorage");
+
+	QUnit.module("loadFeatures and loadAuthorVariants", {
+		beforeEach() {},
+		afterEach() {}
+	}, function() {
+		QUnit.test("given loadFeatures is called", function(assert) {
+			return ObjectStorageConnector.loadFeatures().then(function() {
+			}).catch((sError) => {
+				assert.equal(sError, "loadFeatures is not implemented", "correct error is returned");
+			});
+		});
+
+		QUnit.test("given loadFeatures is called", function(assert) {
+			return ObjectStorageConnector.loadVariantsAuthors().then(function() {
+			}).catch((sError) => {
+				assert.equal(sError, "loadVariantsAuthors is not implemented", "correct error is returned");
+			});
+		});
+	});
 
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";

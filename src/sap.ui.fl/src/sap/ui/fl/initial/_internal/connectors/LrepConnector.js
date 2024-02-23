@@ -3,15 +3,19 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/initial/_internal/connectors/Utils",
-	"sap/ui/fl/Utils",
+	"sap/base/util/merge",
+	"sap/base/util/restricted/_pick",
 	"sap/ui/dom/includeScript",
-	"sap/base/util/restricted/_pick"
+	"sap/ui/fl/initial/_internal/connectors/Utils",
+	"sap/ui/fl/interfaces/BaseLoadConnector",
+	"sap/ui/fl/Utils"
 ], function(
-	Utils,
-	FlexUtils,
+	merge,
+	_pick,
 	includeScript,
-	_pick
+	Utils,
+	BaseConnector,
+	FlexUtils
 ) {
 	"use strict";
 
@@ -33,7 +37,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.initial._internal.Storage, sap.ui.fl.write._internal.Storage, sap.ui.fl.write._internal.transport
 	 */
-	return {
+	return merge({}, BaseConnector, {
 		layers: [
 			"ALL"
 		],
@@ -182,5 +186,5 @@ sap.ui.define([
 				return oResult.response;
 			});
 		}
-	};
+	});
 });

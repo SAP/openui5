@@ -3,11 +3,15 @@
  */
 
 sap.ui.define([
+	"sap/base/util/merge",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
-	"sap/ui/fl/initial/_internal/StorageUtils"
+	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/fl/interfaces/BaseLoadConnector"
 ], function(
+	merge,
 	ObjectStorageUtils,
-	StorageUtils
+	StorageUtils,
+	BaseConnector
 ) {
 	"use strict";
 
@@ -31,7 +35,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal.Storage, sap.ui.fl.write._internal.Storage, SAP Web IDE
 	 */
-	var ObjectStorageConnector = {
+	var ObjectStorageConnector = merge({}, BaseConnector, {
 		/**
 		 * can be either window.sessionStorage or window.localStorage
 		 */
@@ -57,7 +61,7 @@ sap.ui.define([
 				return StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
 			});
 		}
-	};
+	});
 
 	ObjectStorageConnector.storage = ObjectStorageConnector.oStorage;
 
