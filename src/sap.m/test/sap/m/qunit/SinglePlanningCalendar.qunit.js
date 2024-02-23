@@ -2222,7 +2222,7 @@ sap.ui.define([
 	QUnit.test("Backward/Forward navigation in month view", async function (assert) {
 		// Prepare
 		var oSPC = new SinglePlanningCalendar({
-				startDate: UI5Date.getInstance(2023,11,31),//"2023-12-31"
+				startDate: UI5Date.getInstance(2023,11,31),
 				views: [
 					new SinglePlanningCalendarMonthView()
 				]
