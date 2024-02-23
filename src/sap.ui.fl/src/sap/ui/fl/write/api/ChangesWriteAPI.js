@@ -14,12 +14,12 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Utils"
 ], function(
 	_omit,
@@ -33,12 +33,12 @@ sap.ui.define([
 	Reverter,
 	FlexObjectFactory,
 	States,
+	UIChangesState,
 	ManifestUtils,
 	DescriptorChangeFactory,
 	ChangeHandlerStorage,
 	ContextBasedAdaptationsAPI,
 	AppVariantInlineChangeFactory,
-	ChangePersistenceFactory,
 	Utils
 ) {
 	"use strict";
@@ -187,8 +187,10 @@ sap.ui.define([
 		// TODO: Descriptor apply function
 		return Applier.applyChangeOnControl(mPropertyBag.change, mPropertyBag.element, _omit(mPropertyBag, ["element", "change"]))
 		.then(function(oResult) {
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.element);
-			var aDependentChanges = oChangePersistence.getOpenDependentChangesForControl(mPropertyBag.change.getSelector(), mPropertyBag.appComponent);
+			var aDependentChanges = UIChangesState.getOpenDependentChangesForControl(
+				JsControlTreeModifier.getControlIdBySelector(mPropertyBag.change.getSelector(), mPropertyBag.appComponent),
+				mPropertyBag.appComponent
+			);
 			if (aDependentChanges.length > 0) {
 				return ChangesWriteAPI.revert({
 					change: mPropertyBag.change,

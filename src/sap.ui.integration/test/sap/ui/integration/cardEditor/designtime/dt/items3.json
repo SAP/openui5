@@ -875,9 +875,39 @@
 		"label": "local destination label defined in dt",
 		"editable": false
 	},
+	"destLabel.destination": {
+		"type": "destination",
+		"sorter": [{
+			"path": "name"
+		}]
+	},
+	"destLabelTrans.destination": {
+		"type": "destination",
+		"sorter": [{
+			"path": "name",
+			"descending": true
+		}],
+		"filter": {
+			"path": "name",
+			"operator": "Contains",
+			"value1": "2"
+		}
+	},
 	"northwind.destination": {
 		"type": "destination",
 		"label": "northwind destination label defined in dt",
-		"allowSettings": true
+		"allowSettings": true,
+		"filter": {
+			"filters": [{
+				"path": "name",
+				"operator": "StartsWith",
+				"value1": "P"
+			},{
+				"path": "name",
+				"operator": "EndsWith",
+				"value1": "s"
+			}],
+			"and": true
+		}
 	}
 }

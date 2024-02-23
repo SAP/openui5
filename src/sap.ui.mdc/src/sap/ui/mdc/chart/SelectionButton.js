@@ -9,14 +9,15 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/model/Filter",
 	"sap/ui/model/Sorter",
-	"sap/ui/model/json/JSONModel"
-], (OverflowToolbarButton, ButtonRenderer, mobileLibrary, IllustratedMessage, Library, Filter, Sorter, JSONModel) => {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/Device"
+], (OverflowToolbarButton, ButtonRenderer, mobileLibrary, IllustratedMessage, Library, Filter, Sorter, JSONModel, Device) => {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
 	const { PlacementType } = mobileLibrary;
 
-	let ResponsivePopover, List, SearchField, ToggleButton, Bar, StandardListItem, InvisibleText, Device, oRb;
+	let ResponsivePopover, List, SearchField, ToggleButton, Bar, StandardListItem, InvisibleText, oRb;
 
 	const SelectionButton = OverflowToolbarButton.extend("sap.ui.mdc.chart.SelectionButton", {
 		metadata: {
@@ -82,6 +83,18 @@ sap.ui.define([
 		this.attachPress(this.openPopover.bind(this));
 	};
 
+	SelectionButton.prototype.setSearchEnabled = function(bEnabled) {
+		this.setProperty("searchEnabled", bEnabled);
+		this._updateHeader();
+		return this;
+	};
+
+	SelectionButton.prototype.setSortEnabled = function(bEnabled) {
+		this.setProperty("sortEnabled", bEnabled);
+		this._updateHeader();
+		return this;
+	};
+
 	/**
 	 * Shows popover to select items
 	 *
@@ -102,9 +115,8 @@ sap.ui.define([
 						"sap/m/ToggleButton",
 						"sap/m/Bar",
 						"sap/m/StandardListItem",
-						"sap/ui/core/InvisibleText",
-						"sap/ui/Device"
-					], (ResponsivePopoverLoaded, ListLoaded, SearchFieldLoaded, ToggleButtonLoaded, BarLoaded, StandardListItemLoaded, InvisibleTextLoaded, DeviceLoaded) => {
+						"sap/ui/core/InvisibleText"
+					], (ResponsivePopoverLoaded, ListLoaded, SearchFieldLoaded, ToggleButtonLoaded, BarLoaded, StandardListItemLoaded, InvisibleTextLoaded) => {
 						ResponsivePopover = ResponsivePopoverLoaded;
 						List = ListLoaded;
 						SearchField = SearchFieldLoaded;
@@ -112,7 +124,6 @@ sap.ui.define([
 						Bar = BarLoaded;
 						StandardListItem = StandardListItemLoaded;
 						InvisibleText = InvisibleTextLoaded;
-						Device = DeviceLoaded;
 						if (!oRb) {
 							Library.load({ name: "sap.ui.mdc" }).then(() => {
 								oRb = Library.getResourceBundleFor("sap.ui.mdc");
@@ -273,11 +284,25 @@ sap.ui.define([
 
 		oPopover.addContent(oList);
 
+		this._updateHeader(oPopover);
+
+		return oPopover;
+	};
+
+	SelectionButton.prototype._updateHeader = function(oPopover) {
+		oPopover = oPopover || this.oPopover;
+		let oBar = oPopover?.getSubHeader();
+		if (!oBar && Device.system.phone) {
+			oBar = oPopover?.getContent();
+		}
+		if (!oBar) {
+			return;
+		}
+		const [oSearchField, oSortBtn] = oBar.getContentMiddle();
+
 		oSearchField.setVisible(this.getSearchEnabled());
 		oSortBtn.setVisible(this.getSortEnabled());
 		oBar.setVisible(this.getSearchEnabled() || this.getSortEnabled());
-
-		return oPopover;
 	};
 
 	SelectionButton.prototype._createModel = function() {

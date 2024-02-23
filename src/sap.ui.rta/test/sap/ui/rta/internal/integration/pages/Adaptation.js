@@ -40,9 +40,8 @@ sap.ui.define([
 						actions: new Press()
 					});
 				},
-				iPressOnAdaptUi(bPersonalize) {
-					const sButtonType = bPersonalize ? "PERSONALIZE" : "RTA";
-					const sId = `${sButtonType}_Plugin_ActionButton`;
+				iPressOnAdaptUi() {
+					const sId = "RTA_Plugin_ActionButton";
 					return this.waitFor({
 						controlType: "sap.m.StandardListItem",
 						matchers(oListItem) {
@@ -384,48 +383,7 @@ sap.ui.define([
 						}
 					});
 				},
-				// Only for UI Personalization. Please do not use in UI Adaptation tests
-				iPressOnRemoveSection(sSectionId) {
-					return this.waitFor({
-						controlType: "sap.ui.dt.ElementOverlay",
-						matchers(oOverlay) {
-							return oOverlay.getElement().getId() === sSectionId;
-						},
-						success(aOverlays) {
-							const oOverlay = aOverlays[0];
-							const sQueryString = `#${oOverlay.getId()}-DeleteIcon`;
-							oOverlay.getDomRef().querySelector(sQueryString).click();
-						},
-						errorMessage: "Did not find the Remove Button on the section"
-					});
-				},
-				// Only for UI Personalization. Please do not use in UI Adaptation tests
-				iPressOnAddSection(sSectionId) {
-					return this.waitFor({
-						controlType: "sap.ui.dt.ElementOverlay",
-						matchers(oOverlay) {
-							return oOverlay.getElement().getId() === sSectionId;
-						},
-						success(aOverlays) {
-							const oOverlay = aOverlays[0];
-							const sQueryString = `#${oOverlay.getId()}-AddButton`;
-							oOverlay.getDomRef().querySelector(sQueryString).click();
-						},
-						errorMessage: "Did not find the Add Button on the section"
-					});
-				},
-				iExitRtaPersonalizationMode() {
-					const oResources = Lib.getResourceBundleFor("sap.ui.rta");
-					return this.waitFor({
-						controlType: "sap.m.Button",
-						matchers(oButton) {
-							return oButton.getParent().getDomRef && oButton.getParent().getDomRef() && oButton.getParent().getDomRef().classList.contains("sapUiRtaToolbar")
-								&& oButton.getParent().getDomRef().classList.contains("type_personalization")
-								&& oButton.getProperty("text") === oResources.getText("BTN_DONE");
-						},
-						actions: new Press()
-					});
-				},
+
 				enableAndDeleteLrepLocalStorageAfterRta() {
 					return this.waitFor({
 						check() {

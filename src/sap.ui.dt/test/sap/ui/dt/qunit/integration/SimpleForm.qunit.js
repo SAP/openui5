@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/plugin/TabHandling",
 	"sap/ui/dt/plugin/MouseSelection",
 	"sap/ui/dt/plugin/CutPaste",
 	"sap/ui/core/mvc/XMLView",
@@ -18,7 +17,6 @@ sap.ui.define([
 ], function(
 	DesignTime,
 	OverlayRegistry,
-	TabHandling,
 	MouseSelection,
 	CutPaste,
 	XMLView,
@@ -50,14 +48,13 @@ sap.ui.define([
 
 					await nextUIUpdate();
 
-					var oTabHandlingPlugin = new TabHandling();
 					var oSelectionPlugin = new MouseSelection();
 					this.oCutPaste = new CutPaste({
 						movableTypes: aMovableTypes
 					});
 
 					this.oDesignTime = new DesignTime({
-						plugins: [oTabHandlingPlugin, oSelectionPlugin, this.oCutPaste],
+						plugins: [oSelectionPlugin, this.oCutPaste],
 						rootElements: [oView]
 					});
 

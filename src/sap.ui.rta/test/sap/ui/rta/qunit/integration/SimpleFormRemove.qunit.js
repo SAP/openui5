@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/plugin/TabHandling",
 	"sap/ui/dt/plugin/MouseSelection",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/command/CommandFactory",
@@ -17,7 +16,6 @@ sap.ui.define([
 	XMLView,
 	DesignTime,
 	OverlayRegistry,
-	TabHandlingPlugin,
 	MouseSelectionPlugin,
 	RemovePlugin,
 	CommandFactory,
@@ -60,7 +58,6 @@ sap.ui.define([
 
 					await nextUIUpdate();
 
-					var oTabHandlingPlugin = new TabHandlingPlugin();
 					var oSelectionPlugin = new MouseSelectionPlugin();
 
 					oRemove = new RemovePlugin({
@@ -68,7 +65,7 @@ sap.ui.define([
 					});
 
 					oDesignTime = new DesignTime({
-						plugins: [oTabHandlingPlugin, oSelectionPlugin, oRemove],
+						plugins: [oSelectionPlugin, oRemove],
 						rootElements: [oView]
 					});
 

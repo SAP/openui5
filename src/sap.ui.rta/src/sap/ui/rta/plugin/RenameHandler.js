@@ -92,6 +92,9 @@ sap.ui.define([
 		 * @public
 		 */
 		startEdit(mPropertyBag) {
+			if (this.getBusy()) {
+				return;
+			}
 			this.setBusy(true);
 			this._oEditedOverlay = mPropertyBag.overlay;
 
@@ -144,7 +147,6 @@ sap.ui.define([
 				if (!isNaN(iControlForWrapperWidth)) {
 					var iEditableControlWidth = parseInt(this._oEditableControlDomRef.offsetWidth);
 					var iEditableControlParentWidth = parseInt(_oEditableControlParentDomRef.offsetWidth);
-
 					iWidthDifference = iControlForWrapperWidth - iEditableControlWidth;
 
 					var aCHildren = Array.from(_oEditableControlParentDomRef.children);

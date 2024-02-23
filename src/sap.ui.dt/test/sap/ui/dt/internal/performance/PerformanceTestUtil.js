@@ -1,6 +1,5 @@
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/plugin/TabHandling",
 	"sap/ui/dt/plugin/ControlDragDrop",
 	"sap/ui/dt/plugin/MouseSelection",
 	"sap/ui/dt/plugin/CutPaste",
@@ -18,7 +17,6 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	DesignTime,
-	TabHandling,
 	ControlDragDrop,
 	MouseSelection,
 	CutPaste,
@@ -110,7 +108,6 @@ sap.ui.define([
 
 				var MOVABLE_TYPES = ["sap.ui.layout.VerticalLayout", "sap.m.Button", "sap.m.Label", "sap.m.DatePicker", "sap.m.Slider", "sap.m.RatingIndicator"];
 
-				var oTabHandlingPlugin = new TabHandling();
 				var oSelectionPlugin = new MouseSelection();
 				var oControlDragPlugin = new ControlDragDrop({
 					draggableTypes: MOVABLE_TYPES
@@ -123,7 +120,6 @@ sap.ui.define([
 
 				var oDesignTime = new DesignTime({
 					plugins: [
-						oTabHandlingPlugin,
 						oSelectionPlugin,
 						oCutPastePlugin,
 						oControlDragPlugin,

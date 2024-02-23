@@ -840,9 +840,6 @@ sap.ui.define([
 
 			MessagePopover: {
 				title: "QUnit Page for sap.m.MessagePopover",
-				sinon: {
-					useFakeTimers: true
-				},
 				ui5: {
 					theme: "sap_horizon"
 				}
@@ -1559,10 +1556,7 @@ sap.ui.define([
 			},
 
 			SimpleFixFlex: {
-				title: "Test Page for sap.m.SimpleFixFlex",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "Test Page for sap.m.SimpleFixFlex"
 			},
 
 			SinglePlanningCalendar: {

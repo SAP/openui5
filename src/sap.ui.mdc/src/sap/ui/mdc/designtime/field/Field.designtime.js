@@ -21,7 +21,7 @@ sap.ui.define([
 			}
 		},
 		getStableElements: function(oField) {
-			if (!oField.getFieldInfo()) {
+			if (!oField?.getFieldInfo()) {
 				return [];
 			}
 			const oFieldInfo = oField.getFieldInfo();

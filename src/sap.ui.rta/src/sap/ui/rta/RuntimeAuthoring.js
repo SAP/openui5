@@ -40,7 +40,6 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/toolbar/Fiori",
 	"sap/ui/rta/toolbar/FioriLike",
-	"sap/ui/rta/toolbar/Personalization",
 	"sap/ui/rta/toolbar/Standalone",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
 	"sap/ui/rta/util/PluginManager",
@@ -87,7 +86,6 @@ sap.ui.define([
 	CommandStack,
 	FioriToolbar,
 	FioriLikeToolbar,
-	PersonalizationToolbar,
 	StandaloneToolbar,
 	ChangeVisualization,
 	PluginManager,
@@ -311,7 +309,7 @@ sap.ui.define([
 	 * Returns (and creates) the default plugins of RuntimeAuthoring
 	 *
 	 * These are AdditionalElements, ContextMenu, CreateContainer, CutPaste,
-	 * DragDrop, Remove, Rename, Selection, Settings, TabHandling
+	 * DragDrop, Remove, Rename, Selection, Settings
 	 *
 	 * Method uses a local cache to hold the default plugins: Then on multiple access
 	 * always the same instances get returned.
@@ -406,7 +404,7 @@ sap.ui.define([
 			// Also Check if the application has an available draft and if yes, reload with those changes.
 			const bReloadTriggered = await ReloadManager.handleReloadOnStart({
 				layer: this.getLayer(),
-				selector: this.getRootControlInstance(),
+				selector: oRootControl,
 				versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled"),
 				developerMode: this.getFlexSettings().developerMode,
 				adaptationId: this._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id")
@@ -415,8 +413,8 @@ sap.ui.define([
 				// FLP Plugin reacts on this error string and doesn't pass the error on the UI
 				throw Error("Reload triggered");
 			}
-			PersistenceWriteAPI.setAdaptationLayer(this.getLayer(), this.getRootControlInstance());
-			const oFlexInfoSession = PersistenceWriteAPI.getResetAndPublishInfoFromSession(this.getRootControlInstance());
+			PersistenceWriteAPI.setAdaptationLayer(this.getLayer(), oRootControl);
+			const oFlexInfoSession = PersistenceWriteAPI.getResetAndPublishInfoFromSession(oRootControl);
 			this.bInitialResetEnabled = !!oFlexInfoSession.isResetEnabled;
 
 			this._oSerializer = new LREPSerializer({commandStack: this.getCommandStack(), rootControl: this.getRootControl()});
@@ -435,7 +433,7 @@ sap.ui.define([
 			if (this.getShowToolbars()) {
 				// Create ToolsMenu
 				const mButtonsAvailability = await getToolbarButtonsVisibility(
-					this.getRootControlInstance(), this.getLayer(), this._oSerializer
+					oRootControl, this.getLayer(), this._oSerializer
 				);
 				await createToolsMenu.call(this, mButtonsAvailability);
 			}
@@ -457,6 +455,7 @@ sap.ui.define([
 			if (this.getChangeVisualization) {
 				this.getChangeVisualization()._oDesignTime = this._oDesignTime;
 			}
+			setBlockedOnRootElements.call(this, true);
 
 			// PopupManager sets the toolbar to already open popups' autoCloseAreas
 			// Since at this point the toolbar is not available, it waits for RTA to start,
@@ -476,7 +475,7 @@ sap.ui.define([
 			jQuery(document).on("keydown", this.fnKeyDown);
 			this.fnOnPersonalizationChangeCreation = onPersonalizationChangeCreation.bind(this);
 			ControlPersonalizationWriteAPI.attachChangeCreation(
-				this.getRootControlInstance(),
+				oRootControl,
 				this.fnOnPersonalizationChangeCreation
 			);
 			await checkFlexEnabled.call(this);
@@ -514,12 +513,8 @@ sap.ui.define([
 			this._oDesignTime.addRootElement(this._oRootControl);
 
 			Overlay.getOverlayContainer().get(0).classList.add("sapUiRta");
-			if (this.getLayer() === Layer.USER) {
-				Overlay.getOverlayContainer().get(0).classList.add("sapUiRtaPersonalize");
-			} else {
-				// RTA Visual Improvements
-				document.body.classList.add("sapUiRtaMode");
-			}
+			// RTA Visual Improvements
+			document.body.classList.add("sapUiRtaMode");
 			this._oDesignTime.getSelectionManager().attachChange(function(oEvent) {
 				this.fireSelectionChange({selection: oEvent.getParameter("selection")});
 			}, this);
@@ -563,8 +558,7 @@ sap.ui.define([
 		checkToolbarAndExecuteFunction.call(this, "setBusy", true);
 		try {
 			await waitForPendingActions.call(this);
-			const sLayer = this.getLayer();
-			if (sLayer !== Layer.USER && !bSkipSave && this.canSave()) {
+			if (!bSkipSave && this.canSave()) {
 				const sAction = await showSaveConfirmation.call(this);
 				if (sAction === MessageBox.Action.CANCEL) {
 					bUserCancelled = true;
@@ -600,6 +594,7 @@ sap.ui.define([
 			}
 		}
 		checkToolbarAndExecuteFunction.call(this, "setBusy", false);
+		setBlockedOnRootElements.call(this, false);
 		if (!bUserCancelled) {
 			this._sStatus = STOPPED;
 			document.body.classList.remove("sapUiRtaMode");
@@ -653,13 +648,12 @@ sap.ui.define([
 	RuntimeAuthoring.prototype.setMode = function(sNewMode) {
 		const sCurrentMode = this.getMode();
 		if (sCurrentMode !== sNewMode) {
-			const oTabHandlingPlugin = this.getPluginManager().getPlugin("tabHandling");
 			const oSelectionPlugin = this.getPluginManager().getPlugin("selection");
 
-			// Switch between another mode and navigation -> toggle overlay & App-TabIndex enablement
+			// Switch between another mode and navigation -> toggle blocked on root controls
 			if (sCurrentMode === "navigation" || sNewMode === "navigation") {
 				this._oDesignTime.setEnabled(sNewMode !== "navigation");
-				oTabHandlingPlugin[(sNewMode === "navigation") ? "restoreTabIndex" : "removeTabIndex"]();
+				setBlockedOnRootElements.call(this, sCurrentMode === "navigation");
 			}
 
 			const oChangeVisualization = this.getChangeVisualization?.();
@@ -674,7 +668,6 @@ sap.ui.define([
 				this.getPluginManager().handleStopCutPaste();
 			}
 
-			oTabHandlingPlugin[(sNewMode === "adaptation") ? "restoreOverlayTabIndex" : "removeOverlayTabIndex"]();
 			oSelectionPlugin.setIsActive(!(sNewMode === "visualization"));
 
 			Overlay.getOverlayContainer().toggleClass("sapUiRtaVisualizationMode", (sNewMode === "visualization"));
@@ -721,6 +714,7 @@ sap.ui.define([
 			this.removeDependent(sDependentKey);
 		}.bind(this));
 
+		setBlockedOnRootElements.call(this, false);
 		if (this._oDesignTime) {
 			this._oDesignTime.destroy();
 			this._oDesignTime = null;
@@ -823,12 +817,8 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.restore = function() {
 		const sLayer = this.getLayer();
-		const sMessageKey = sLayer === Layer.USER
-			? "FORM_PERS_RESET_MESSAGE_PERSONALIZATION"
-			: "FORM_PERS_RESET_MESSAGE";
-		const sTitleKey = sLayer === Layer.USER
-			? "BTN_RESTORE"
-			: "FORM_PERS_RESET_TITLE";
+		const sMessageKey = "FORM_PERS_RESET_MESSAGE";
+		const sTitleKey = "FORM_PERS_RESET_TITLE";
 
 		this.getPluginManager().handleStopCutPaste();
 
@@ -916,6 +906,14 @@ sap.ui.define([
 		window.onbeforeunload = this._oldUnloadHandler;
 		return undefined;
 	};
+
+	// the blocked property makes the elements unreachable via mouse or keyboard
+	function setBlockedOnRootElements(bBlocked) {
+		this._oDesignTime?.getRootElements().forEach((oRootElement) => {
+			const oUiElement = oRootElement.isA("sap.ui.core.Component") ? oRootElement.getRootControl() : oRootElement;
+			oUiElement?.setBlocked(bBlocked);
+		});
+	}
 
 	async function checkFlexEnabled() {
 		const sUriParam = new URLSearchParams(window.location.search).get("sap-ui-rta-skip-flex-validation");
@@ -1420,7 +1418,6 @@ sap.ui.define([
 			return;
 		}
 
-		const bUserLayer = this.getLayer() === Layer.USER;
 		const oProperties = {
 			rtaInformation: {
 				flexSettings: this.getFlexSettings(),
@@ -1429,29 +1426,25 @@ sap.ui.define([
 			},
 			textResources: this._getTextResources(),
 			restore: this.restore.bind(this),
-			exit: this.stop.bind(this, false, bUserLayer)
+			exit: this.stop.bind(this, false, false)
 		};
 
-		if (!bUserLayer) {
-			oProperties.publishVersion = onPublishVersion.bind(this);
-			oProperties.undo = this.undo.bind(this);
-			oProperties.redo = this.redo.bind(this);
-			oProperties.modeChange = onModeChange.bind(this);
-			oProperties.activate = onActivate.bind(this);
-			oProperties.discardDraft = onDiscardDraft.bind(this);
-			oProperties.switchVersion = onSwitchVersion.bind(this);
-			oProperties.switchAdaptation = onSwitchAdaptation.bind(this);
-			oProperties.deleteAdaptation = onDeleteAdaptation.bind(this);
-			oProperties.openChangeCategorySelectionPopover = this.getChangeVisualization
-				? this.getChangeVisualization().openChangeCategorySelectionPopover.bind(this.getChangeVisualization())
-				: function() {};
-			oProperties.save = saveOnly.bind(this);
-		}
+		oProperties.publishVersion = onPublishVersion.bind(this);
+		oProperties.undo = this.undo.bind(this);
+		oProperties.redo = this.redo.bind(this);
+		oProperties.modeChange = onModeChange.bind(this);
+		oProperties.activate = onActivate.bind(this);
+		oProperties.discardDraft = onDiscardDraft.bind(this);
+		oProperties.switchVersion = onSwitchVersion.bind(this);
+		oProperties.switchAdaptation = onSwitchAdaptation.bind(this);
+		oProperties.deleteAdaptation = onDeleteAdaptation.bind(this);
+		oProperties.openChangeCategorySelectionPopover = this.getChangeVisualization
+			? this.getChangeVisualization().openChangeCategorySelectionPopover.bind(this.getChangeVisualization())
+			: function() {};
+		oProperties.save = saveOnly.bind(this);
 
 		let oToolbar;
-		if (bUserLayer) {
-			oToolbar = new PersonalizationToolbar(oProperties);
-		} else if (Utils.isOriginalFioriToolbarAccessible()) {
+		if (Utils.isOriginalFioriToolbarAccessible()) {
 			oToolbar = new FioriToolbar(oProperties);
 		} else if (Utils.getFiori2Renderer()) {
 			oToolbar = new FioriLikeToolbar(oProperties);

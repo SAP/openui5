@@ -270,6 +270,21 @@ sap.ui.define([
 			FlexState.addDirtyFlexObject(sReference, FlexObjectFactory.createUIChange({variantReference: "foo"}));
 			assert.strictEqual(UIChangesState.getAllUIChanges(sReference).length, 7, "the var dependent change is returned");
 		});
+
+		QUnit.test("getOpenDependentChangesForControl with the given test data", function(assert) {
+			const aOpenDependentChanges = UIChangesState.getOpenDependentChangesForControl(
+				{ id: "controlId1" }, oAppComponent
+			);
+			assert.strictEqual(aOpenDependentChanges.length, 2, "initially there are two open dependencies");
+		});
+
+		QUnit.test("getOpenDependentChangesForControl with an empty map", function(assert) {
+			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(DependencyHandler.createEmptyDependencyMap());
+			const aOpenDependentChanges = UIChangesState.getOpenDependentChangesForControl(
+				{ id: "controlId1" }, oAppComponent
+			);
+			assert.strictEqual(aOpenDependentChanges.length, 0, "then there are no dependencies found");
+		});
 	});
 
 	QUnit.done(function() {

@@ -38,11 +38,6 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("in USER layer", function(assert) {
-			ReloadManager.handleReloadOnExit({layer: Layer.USER});
-			assert.strictEqual(this.oReloadStub.callCount, 0, "the reload method was not called");
-		});
-
 		QUnit.test("with reloadMethod NOT_NEEDED", function(assert) {
 			ReloadManager.handleReloadOnExit({reloadMethod: mReloadMethods.NOT_NEEDED});
 			assert.strictEqual(this.oReloadStub.callCount, 0, "the reload method was not called");
@@ -492,19 +487,6 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("with USER layer", function(assert) {
-			FlexRuntimeInfoAPI.getFlexReference.returns("flexReference");
-			ReloadManager.enableAutomaticStart(Layer.USER, {});
-			var sValue = window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.USER}`);
-			assert.strictEqual(sValue, "flexReference", "the value is correct");
-			assert.strictEqual(ReloadManager.needsAutomaticStart(Layer.USER), true, "restart is needed in the USER layer");
-			assert.strictEqual(ReloadManager.needsAutomaticStart(Layer.CUSTOMER), false, "restart is not needed in a different layer");
-
-			ReloadManager.disableAutomaticStart(Layer.USER);
-			assert.strictEqual(ReloadManager.needsAutomaticStart(Layer.USER), false, "restart is not needed in the USER layer");
-			assert.strictEqual(ReloadManager.needsAutomaticStart(Layer.CUSTOMER), false, "restart is not needed in a different layer");
-		});
-
 		QUnit.test("without reference", function(assert) {
 			ReloadManager.enableAutomaticStart(Layer.CUSTOMER, {});
 			window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.CUSTOMER}`);

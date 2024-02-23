@@ -860,35 +860,6 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("When restore function is called in the USER layer", function(assert) {
-			var oDeleteChangesStub = sandbox.stub(PersistenceWriteAPI, "reset").resolves();
-			this.oRta.setFlexSettings({
-				layer: Layer.USER
-			});
-			var sPersResetMessageKey = "FORM_PERS_RESET_MESSAGE_PERSONALIZATION";
-			var sPersResetTitleKey = "BTN_RESTORE";
-
-			return this.oRta.restore().then(function() {
-				assert.equal(this.oShowMessageBoxStub.callCount, 1, "then the message box was shown");
-				assert.equal(this.oShowMessageBoxStub.lastCall.args[1], sPersResetMessageKey, "then the message key is correct");
-				assert.notEqual(oTextResources.getText(sPersResetMessageKey), sPersResetMessageKey, "then the message text is available on the resource file");
-				assert.equal(this.oShowMessageBoxStub.lastCall.args[2].titleKey, sPersResetTitleKey, "then the title key is correct");
-				assert.notEqual(oTextResources.getText(sPersResetTitleKey), sPersResetTitleKey, "then the message text is available on the resource file");
-				assert.equal(oDeleteChangesStub.callCount, 1, "then _deleteChanges was called");
-				assert.equal(this.oEnableRestartStub.callCount, 1, "then restart was enabled...");
-				assert.equal(this.oEnableRestartStub.lastCall.args[0], Layer.USER, "for the correct layer");
-
-				this.oShowMessageBoxStub.reset();
-				this.oShowMessageBoxStub.resolves(MessageBox.Action.CANCEL);
-				return this.oRta.restore();
-			}.bind(this))
-			.then(function() {
-				assert.equal(this.oShowMessageBoxStub.callCount, 1, "then the message box was shown");
-				assert.equal(oDeleteChangesStub.callCount, 1, "then _deleteChanges was not called again");
-				assert.equal(this.oEnableRestartStub.callCount, 1, "then restart was not  enabled again");
-			}.bind(this));
-		});
-
 		QUnit.test("when calling restore successfully", function(assert) {
 			assert.expect(4);
 			var oRemoveStub = sandbox.spy(this.oRta.getCommandStack(), "removeAllCommands");

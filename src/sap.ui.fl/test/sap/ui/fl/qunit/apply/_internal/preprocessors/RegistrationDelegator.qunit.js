@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ExtensionPoint",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/_internal/preprocessors/EventHistory",
 	"sap/ui/fl/apply/_internal/preprocessors/RegistrationDelegator",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
@@ -19,7 +18,6 @@ sap.ui.define([
 	Component,
 	ExtensionPoint,
 	ManifestUtils,
-	EventHistory,
 	RegistrationDelegator,
 	ChangeHandlerRegistration,
 	DelegateMediatorAPI,
@@ -43,7 +41,6 @@ sap.ui.define([
 			var oRegisterPredefinedChangeHandlersStub = sandbox.stub(ChangeHandlerRegistration, "registerPredefinedChangeHandlers");
 			var oRegisterExtensionProviderStub = sandbox.stub(MvcController, "registerExtensionProvider");
 			var oRegisterXMLPreprocessorStub = sandbox.stub(XMLView, "registerPreprocessor");
-			var oRegisterEventListenerStub = sandbox.stub(EventHistory, "start");
 			var oRegisterExtensionPointProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
 			var oRegisterDefaultDelegateStub = sandbox.stub(DelegateMediatorAPI, "registerDefaultDelegate");
 
@@ -57,7 +54,6 @@ sap.ui.define([
 				assert.ok(Component._fnLoadComponentCallback, "load component event handler is registered.");
 				assert.equal(oRegisterExtensionProviderStub.callCount, 1, "Extension provider called.");
 				assert.equal(oRegisterXMLPreprocessorStub.callCount, 1, "XML preprocessor called.");
-				assert.equal(oRegisterEventListenerStub.callCount, 1, "Event Listener called.");
 				assert.equal(oRegisterExtensionPointProviderStub.callCount, 1, "ExtensionPoint called.");
 				assert.equal(oRegisterDefaultDelegateStub.callCount, 1, "DefaultDelegate called.");
 				assert.ok(Component._fnPreprocessManifest);

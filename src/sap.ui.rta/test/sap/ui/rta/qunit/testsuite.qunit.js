@@ -509,18 +509,6 @@ sap.ui.define([
 					only: ["sap/ui/rta/plugin/DragDrop"]
 				}
 			},
-			"plugin/EasyAdd": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/EasyAdd"]
-				}
-			},
-			"plugin/EasyRemove": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/EasyRemove"]
-				}
-			},
 			"plugin/LocalReset": {
 				group: "Plugin",
 				coverage: {

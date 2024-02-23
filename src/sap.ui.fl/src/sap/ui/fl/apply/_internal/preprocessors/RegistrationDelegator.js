@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/core/ExtensionPoint",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Preprocessor",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/_internal/preprocessors/EventHistory",
 	"sap/ui/fl/apply/_internal/preprocessors/ComponentLifecycleHooks",
 	"sap/ui/fl/apply/_internal/DelegateMediator",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
@@ -26,7 +25,6 @@ sap.ui.define([
 	ExtensionPoint,
 	Preprocessor,
 	ManifestUtils,
-	EventHistory,
 	ComponentLifecycleHooks,
 	DelegateMediator,
 	DelegateMediatorAPI,
@@ -71,10 +69,6 @@ sap.ui.define([
 		}
 	}
 
-	function registerEventListener() {
-		EventHistory.start();
-	}
-
 	function registerDescriptorChangeHandler() {
 		Component._fnPreprocessManifest = Preprocessor.preprocessManifest;
 	}
@@ -107,7 +101,6 @@ sap.ui.define([
 	 * @public
 	 */
 	RegistrationDelegator.registerAll = function() {
-		registerEventListener();
 		registerChangeHandlers();
 		registerLoadComponentEventHandler();
 		registerExtensionProvider();

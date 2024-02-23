@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/SuggestionsPopover",
 	'sap/m/List',
@@ -11,12 +10,12 @@ sap.ui.define([
 	"sap/m/ComboBox",
 	"sap/m/MultiComboBox",
 	"sap/m/GroupHeaderListItem",
-	"sap/ui/core/Item"
+	"sap/ui/core/Item",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 	Device,
 	qutils,
 	KeyCodes,
-	nextUIUpdate,
 	jQuery,
 	SuggestionsPopover,
 	List,
@@ -24,12 +23,13 @@ sap.ui.define([
 	ComboBox,
 	MultiComboBox,
 	GroupHeaderListItem,
-	Item
+	Item,
+	nextUIUpdate
 ) {
 	"use strict";
 
 	QUnit.module("Highlighting", {
-		before: async function() {
+		before: async function () {
 			this.oSuggestionsPopover = new SuggestionsPopover();
 			await nextUIUpdate();
 		},
@@ -66,7 +66,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("initContent", {
-		beforeEach: async function() {
+		beforeEach: async function () {
 			this.oSuggestionsPopover = new SuggestionsPopover();
 			await nextUIUpdate();
 		},
@@ -76,7 +76,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_onsaparrowkey should not be called when we have composition characters", async function(assert) {
+	QUnit.test("_onsaparrowkey should not be called when we have composition characters", async function (assert) {
 		// Arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -107,7 +107,7 @@ sap.ui.define([
 
 	QUnit.module("mobile");
 
-	QUnit.test("On mobile the sapUiNoContentPadding class is added to the picker.", async function(assert) {
+	QUnit.test("On mobile the sapUiNoContentPadding class is added to the picker.", async function (assert) {
 		var oComboBox, oSuggestionsPopover;
 
 		// Arrange
@@ -135,7 +135,7 @@ sap.ui.define([
 		oSuggestionsPopover.destroy();
 	});
 
-	QUnit.test("ComboBox: The following condition is met: height != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", async function(assert) {
+	QUnit.test("ComboBox: The following condition is met: height != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", async function (assert) {
 		var oComboBox;
 
 		// Arrange
@@ -162,7 +162,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("MultiComboBox: The following condition is met: height != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", async function(assert) {
+	QUnit.test("MultiComboBox: The following condition is met: height != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", async function (assert) {
 		var oMultiComboBox;
 
 		// Arrange
@@ -189,7 +189,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Get the proper list", async function(assert) {
+	QUnit.test("Get the proper list", async function (assert) {
 		var oSuggPopover, oInput;
 
 		// Arrange
@@ -217,7 +217,7 @@ sap.ui.define([
 		oSuggPopover.destroy();
 	});
 
-	QUnit.test("Navigating through GroupItems should deselect items from the list", async function(assert) {
+	QUnit.test("Navigating through GroupItems should deselect items from the list", async function (assert) {
 		var oSuggPopover, oInput, oListItem, oList, oListSpy;
 
 		// Setup
