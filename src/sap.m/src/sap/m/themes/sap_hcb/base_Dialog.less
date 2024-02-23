@@ -40,8 +40,7 @@
 	display: flex !important;
 	flex-direction: column;
 	opacity: 0;
-	-webkit-transition: opacity .15s, left 0.2s, top 0.2s;
-	transition: opacity .15s, left 0.2s, top 0.2s;
+	transition: opacity .15s;
 	border-radius: @sapUiElementBorderCornerRadius;
 	box-shadow: @sapUiContentShadow3;
 
@@ -283,11 +282,6 @@ html.sap-desktop .sapMDialog {
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	user-select: none;
-}
-
-.sapDialogDisableTransition {
-	transition: none;
-	-webkit-transition: none;
 }
 
 .sapMDialogResizeHandler {
