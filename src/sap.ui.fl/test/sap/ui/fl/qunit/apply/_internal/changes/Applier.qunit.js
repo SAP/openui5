@@ -1056,8 +1056,13 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("does not call the changeHandler if the change is currently being applied and succeeds", function(assert) {
+		QUnit.test("does not call the changeHandler if the change is currently being applied and succeeds", async function(assert) {
+			let fnResolveFromOutside;
+			const oChangeHandlerCalledPromise = new Promise(function(fnResolve) {
+				fnResolveFromOutside = fnResolve;
+			});
 			const fnDelayedPromise = new Promise(function(fnResolve) {
+				fnResolveFromOutside();
 				setTimeout(function() {
 					fnResolve();
 				}, 0);
@@ -1065,6 +1070,7 @@ sap.ui.define([
 			this.oChangeHandlerApplyChangeStub.returns(fnDelayedPromise);
 
 			const oFirstPromise = Applier.applyChangeOnControl(this.oChange, this.oControl, this.mPropertyBag);
+			await oChangeHandlerCalledPromise;
 			const oSecondPromise = Applier.applyChangeOnControl(this.oChange, this.oControl, this.mPropertyBag);
 			return Promise.all([oFirstPromise, oSecondPromise]).then(function(aReturn) {
 				assert.strictEqual(aReturn[0].success, true, "the first promise returns success=true");
@@ -1073,8 +1079,13 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("does not call the changeHandler if the change is currently being applied and fails", function(assert) {
+		QUnit.test("does not call the changeHandler if the change is currently being applied and fails", async function(assert) {
+			let fnResolveFromOutside;
+			const oChangeHandlerCalledPromise = new Promise(function(fnResolve) {
+				fnResolveFromOutside = fnResolve;
+			});
 			const fnDelayedPromise = new Promise(function(fnResolve, fnReject) {
+				fnResolveFromOutside();
 				setTimeout(function() {
 					fnReject(new Error("foo"));
 				}, 0);
@@ -1082,6 +1093,7 @@ sap.ui.define([
 			this.oChangeHandlerApplyChangeStub.returns(fnDelayedPromise);
 
 			const oFirstPromise = Applier.applyChangeOnControl(this.oChange, this.oControl, this.mPropertyBag);
+			await oChangeHandlerCalledPromise;
 			const oSecondPromise = Applier.applyChangeOnControl(this.oChange, this.oControl, this.mPropertyBag);
 			return Promise.all([oFirstPromise, oSecondPromise]).then(function(aReturn) {
 				assert.strictEqual(this.oErrorStub.callCount, 1, "an Error was logged");
