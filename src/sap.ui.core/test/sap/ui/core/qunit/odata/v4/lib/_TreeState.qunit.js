@@ -9,6 +9,7 @@ sap.ui.define([
 	"use strict";
 
 	const mapContent = (oMap) => [...oMap.entries()];
+	const mustBeMocked = function () { throw new Error("Must be mocked"); };
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._TreeState", {
@@ -22,12 +23,15 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("constructor", function (assert) {
 		// code under test
-		const oTreeState = new _TreeState("~sNodeProperty~");
+		const oTreeState = new _TreeState("~sNodeProperty~", "~fnGetKeyFilter~");
 
 		assert.ok(oTreeState instanceof _TreeState);
 		assert.strictEqual(oTreeState.sNodeProperty, "~sNodeProperty~");
+		assert.strictEqual(oTreeState.fnGetKeyFilter, "~fnGetKeyFilter~");
 		assert.ok(oTreeState.oPredicate2ExpandLevels instanceof Map);
 		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels), []);
+		assert.ok("oOutOfPlace" in oTreeState);
+		assert.strictEqual(oTreeState.oOutOfPlace, undefined);
 	});
 
 	//*********************************************************************************************
@@ -119,6 +123,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getExpandLevels/reset", function (assert) {
 		const oTreeState = new _TreeState("~sNodeProperty~");
+		oTreeState.oOutOfPlace = "~oOutOfPlace~";
 
 		// code under test
 		assert.strictEqual(oTreeState.getExpandLevels(), undefined);
@@ -133,5 +138,49 @@ sap.ui.define([
 		oTreeState.reset();
 
 		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels), []);
+		assert.strictEqual(oTreeState.oOutOfPlace, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setOutOfPlace/getOutOfPlace (w/ parent)", function (assert) {
+		const fnGetKeyFilter = mustBeMocked;
+		const oTreeState = new _TreeState("~sNodeProperty~", fnGetKeyFilter);
+
+		// code under test
+		assert.strictEqual(oTreeState.getOutOfPlace(), undefined);
+
+		const oTreeStateMock = this.mock(oTreeState);
+		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oNode~").returns("~nodeFilter~");
+		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oParent~")
+			.returns("~parentFilter~");
+
+		// code under test
+		oTreeState.setOutOfPlace("~oNode~", "~oParent~");
+
+		// code under test
+		assert.deepEqual(oTreeState.getOutOfPlace(), {
+			nodeFilter : "~nodeFilter~",
+			parentFilter : "~parentFilter~"
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setOutOfPlace/getOutOfPlace (w/o parent)", function (assert) {
+		const fnGetKeyFilter = mustBeMocked;
+		const oTreeState = new _TreeState("~sNodeProperty~", fnGetKeyFilter);
+
+		// code under test
+		assert.strictEqual(oTreeState.getOutOfPlace(), undefined);
+
+		this.mock(oTreeState).expects("fnGetKeyFilter").withExactArgs("~oNode~")
+			.returns("~nodeFilter~");
+
+		// code under test
+		oTreeState.setOutOfPlace("~oNode~");
+
+		// code under test
+		assert.deepEqual(oTreeState.getOutOfPlace(), {
+			nodeFilter : "~nodeFilter~"
+		});
 	});
 });

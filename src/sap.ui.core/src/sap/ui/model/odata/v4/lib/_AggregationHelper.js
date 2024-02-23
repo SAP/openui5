@@ -920,6 +920,67 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates the query options for requesting the data (all required $selects for UI) of
+		 * out-of-place nodes.
+		 *
+		 * @param {object} oOutOfPlace
+		 *   Out-of-place node information containing key filters
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for data aggregation; see {@link .buildApply}
+		 * @param {object} mQueryOptions
+		 *   A map of key-value pairs representing the query string; it is not modified
+		 * @returns {object}
+		 *   The created query options
+		 *
+		 * @public
+		 */
+		getQueryOptionsForOutOfPlaceNodesData : function (oOutOfPlace, oAggregation,
+				mQueryOptions) {
+			oAggregation = Object.assign({}, oAggregation);
+			delete oAggregation.search;
+			mQueryOptions = Object.assign({}, mQueryOptions);
+			// with $$filterBeforeAggregate the data is requested with descendants(...) instead of
+			// TopLevels(...)
+			mQueryOptions.$$filterBeforeAggregate = oOutOfPlace.parentFilter;
+			// filter/sorter are not relevant for the data request
+			delete mQueryOptions.$filter;
+			delete mQueryOptions.$orderby;
+			mQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions, 1);
+			mQueryOptions.$filter = oOutOfPlace.nodeFilter;
+			mQueryOptions.$top = 1;
+
+			return mQueryOptions;
+		},
+
+		/**
+		 * Creates the query options for requesting the rank of all out-of-place nodes and their
+		 * parents based on the current hierarchy transformation.
+		 *
+		 * @param {object} oOutOfPlace
+		 *   Out-of-place node information containing key filters
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for data aggregation; see {@link .buildApply}
+		 * @param {object} mQueryOptions
+		 *   A map of key-value pairs representing the query string; it is not modified
+		 * @returns {object}
+		 *   The created query options
+		 *
+		 * @public
+		 */
+		getQueryOptionsForOutOfPlaceNodesRank : function (oOutOfPlace, oAggregation,
+				mQueryOptions) {
+			mQueryOptions = Object.assign({}, mQueryOptions, {
+				$filter : `${oOutOfPlace.parentFilter} or ${oOutOfPlace.nodeFilter}`,
+				$select : [oAggregation.$DistanceFromRoot, oAggregation.$LimitedRank],
+				$top : 2
+			});
+			delete mQueryOptions.$count;
+			delete mQueryOptions.$orderby;
+
+			return mQueryOptions;
+		},
+
+		/**
 		 * Tells whether grand total values are needed for at least one aggregatable property.
 		 *
 		 * @param {object} [mAggregate]

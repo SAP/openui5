@@ -115,7 +115,8 @@ sap.ui.define([
 		} else if (fnLeaves) {
 			_ConcatHelper.enhanceCache(that.oFirstLevel, oAggregation, [fnLeaves, fnCount]);
 		}
-		this.oTreeState = new _TreeState(oAggregation.$NodeProperty);
+		this.oTreeState = new _TreeState(oAggregation.$NodeProperty,
+			(oNode) => _Helper.getKeyFilter(oNode, this.sMetaPath, this.getTypes()));
 		// Whether this cache is a unified cache, using oFirstLevel with ExpandLevels instead of
 		// separate group level caches
 		this.bUnifiedCache = false;
@@ -544,6 +545,8 @@ sap.ui.define([
 				= oEntityData;
 			// Note: #calculateKeyPredicateRH doesn't know better :-(
 			oEntityData["@$ui5.node.level"] = iLevel;
+			// Note: key predicate required
+			this.oTreeState.setOutOfPlace(oEntityData, oParentNode);
 
 			if (oCache === this.oFirstLevel && this.oAggregation.expandTo > 1) {
 				const [iRank] = await Promise.all([
@@ -850,15 +853,12 @@ sap.ui.define([
 					this.requestNodeProperty(oParent, oGroupLock)
 				]);
 
+				// Note: overridden by _AggregationCache.calculateKeyPredicateRH
 				this.oFirstLevel.calculateKeyPredicate(oParent, this.getTypes(), this.sMetaPath);
 
 				const iParentIndex = this.getArrayIndex(iRank);
 				if (_Helper.getPrivateAnnotation(this.aElements[iParentIndex], "placeholder")) {
-					this.addElements(oParent, iParentIndex, this.oFirstLevel, iRank);
-
-					// poor man's #replaceElement to replace undefined w/ oParent
-					this.oFirstLevel.removeElement(iRank);
-					this.oFirstLevel.restoreElement(iRank, oParent);
+					this.insertNode(oParent, iRank, iParentIndex);
 				} // else: parent already inside collection
 
 				return iParentIndex;
@@ -1079,6 +1079,58 @@ sap.ui.define([
 			return oSyncPromise.getResult();
 		}
 		oSyncPromise.caught();
+	};
+
+	/**
+	 * Moves the nodes out of place after a refresh based on the requests from
+	 * {@link #requestOutOfPlaceNodes}.
+	 *
+	 * @param {object[]} aResults
+	 *   An array containing two objects. The first object provides Rank and DistanceFromRoot (for
+	 *   the parent and the out-of-place node itself, in this order). The second object provides the
+	 *   full data of the out-of-place node.
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.handleOutOfPlaceNodes = function ([oRankResult, oNodeResult]) {
+		if (!oRankResult) {
+			return;
+		}
+
+		const getRank = (oNode) => Number.parseInt(
+			_Helper.drillDown(oNode, this.oAggregation.$LimitedRank));
+
+		const oNode = _Helper.merge(oNodeResult.value[0], oRankResult.value[1]);
+		const iNodeRank = getRank(oNode);
+		const iParentRank = getRank(oRankResult.value[0]);
+
+		// Note: overridden by _AggregationCache.calculateKeyPredicateRH
+		this.oFirstLevel.calculateKeyPredicate(oNode, this.getTypes(), this.sMetaPath);
+		// insert at rank position to ensure correct placeholder is replaced
+		this.insertNode(oNode, iNodeRank);
+		// move the out-of-place node below its parent
+		this.aElements.splice(iNodeRank, 1);
+		this.aElements.splice(iParentRank + 1, 0, oNode);
+	};
+
+	/**
+	 * Inserts a node at the given position into <code>aElements</code> and
+	 * <code>oFirstLevel.aElements</code>.
+	 *
+	 * @param {object} oNode
+	 *   The node to be inserted
+	 * @param {number} iRank
+	 *   The rank of the node
+	 * @param {number} [iInsertIndex]
+	 *   The insertion index within aElements in case it differs from iRank
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.insertNode = function (oNode, iRank, iInsertIndex = iRank) {
+		this.addElements(oNode, iInsertIndex, this.oFirstLevel, iRank);
+		// poor man's #replaceElement to replace undefined w/ oParent
+		this.oFirstLevel.removeElement(iRank);
+		this.oFirstLevel.restoreElement(iRank, oNode);
 	};
 
 	/**
@@ -1535,8 +1587,10 @@ sap.ui.define([
 		}
 		iLength += iPrefetchLength;
 
-		return this.oFirstLevel.read(iStart, iLength, 0, oGroupLock, fnDataRequested)
-			.then(function (oResult) {
+		return SyncPromise.all([
+				this.oFirstLevel.read(iStart, iLength, 0, oGroupLock, fnDataRequested),
+				...this.requestOutOfPlaceNodes(oGroupLock)
+			]).then(function ([oResult, ...aOutOfPlaceResults]) {
 				// Note: this code must be idempotent, it might well run twice!
 				var oGrandTotal,
 					oGrandTotalCopy,
@@ -1581,6 +1635,8 @@ sap.ui.define([
 							j - iOffset, that.oFirstLevel);
 					}
 				}
+
+				that.handleOutOfPlaceNodes(aOutOfPlaceResults);
 			});
 	};
 
@@ -1708,6 +1764,45 @@ sap.ui.define([
 		}
 
 		await this.requestProperties(oElement, [this.oAggregation.$NodeProperty], oGroupLock, true);
+	};
+
+	/**
+	 * Creates and returns the request promises for out-of-place nodes, so that they can later be
+	 * moved to their out-of-place position in the cache.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group to associate the requests with
+	 * @returns {Promise[]}
+	 *   The request promises
+	 *
+	 * @private
+	 * @see #handleOutOfPlaceNodes
+	 */
+	_AggregationCache.prototype.requestOutOfPlaceNodes = function (oGroupLock) {
+		const oOutOfPlace = this.oTreeState.getOutOfPlace();
+		if (!oOutOfPlace) {
+			return [];
+		}
+
+		const aOutOfPlacePromises = [];
+		const request = (mQueryOptions) => {
+			const sResourcePath = this.sResourcePath
+				+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
+			aOutOfPlacePromises.push(this.oRequestor.request("GET", sResourcePath,
+				oGroupLock.getUnlockedCopy()));
+		};
+
+		// read the rank of the out-of-place node and its parent
+		let mQueryOptions = _AggregationHelper.getQueryOptionsForOutOfPlaceNodesRank(oOutOfPlace,
+			this.oAggregation, this.oFirstLevel.getQueryOptions());
+		request(mQueryOptions);
+
+		// read the out-of-place node
+		mQueryOptions = _AggregationHelper.getQueryOptionsForOutOfPlaceNodesData(oOutOfPlace,
+			this.oAggregation, this.mQueryOptions);
+		request(mQueryOptions);
+
+		return aOutOfPlacePromises;
 	};
 
 	/**
