@@ -241,10 +241,21 @@ sap.ui.define([
 		return library.Importance.Low;
 	};
 
+	/**@deprecated */
 	ObjectPageSection.prototype.connectToModels = function () {
 		this.getSubSections().forEach(function (oSubSection) {
 			oSubSection.connectToModels();
 		});
+	};
+
+	ObjectPageSection.prototype.connectToModelsAsync = function () {
+		var pAll  = [];
+
+		this.getSubSections().forEach(function (oSubSection) {
+			pAll.push(oSubSection.connectToModelsAsync());
+		});
+
+		return Promise.all(pAll);
 	};
 
 	ObjectPageSection.prototype._allowPropagationToLoadedViews = function (bAllow) {
