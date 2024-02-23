@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,takeScreenshot,expect,browser*/
 
 describe('sap.m.RadioButtonGroup', function() {
 	"use strict";
@@ -32,11 +32,18 @@ describe('sap.m.RadioButtonGroup', function() {
 		expect(takeScreenshot(group3)).toLookAs('4_cutting_3_columns');
 	});
 
+	it('should visualize groups with vertically aligned columns', function () {
+		browser.executeScript("document.getElementById('vbRbg31').scrollIntoView()").then(function() {
+			expect(takeScreenshot(element(by.id("vbRbg31")))).toLookAs("4_31_v_align_columns");
+		});
+	});
+
 	// 2 columns 200px width
 	it('should visualize group with 2 columns 200px width', function () {
-		element(by.id('sample2')).click();
-		var group3a = element(by.id('RBG3a'));
-		expect(takeScreenshot(group3a)).toLookAs('5_cutting_2_columns');
+		browser.executeScript("document.getElementById('sample2').scrollIntoView()").then(function() {
+			element(by.id('sample2')).click();
+			expect(takeScreenshot(element(by.id("RBG3a")))).toLookAs("5_cutting_2_columns");
+		});
 	});
 
 	// value state error in  4 columns

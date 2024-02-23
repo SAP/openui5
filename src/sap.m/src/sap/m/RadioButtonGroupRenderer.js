@@ -90,11 +90,6 @@ sap.ui.define([
 			}
 		}
 
-		if (iColumns > 1 && iColumns != aVisibleRBs.length) {
-			// dummy Column to avoid big spaces between RadioButtons in Safari
-			oRM.openStart("div").class("sapMRbGDummy").openEnd().close("div");
-		}
-
 		oRM.close("div");
 	};
 
