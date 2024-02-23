@@ -401,7 +401,7 @@ sap.ui.define([
 
 			var mChangesCopy = merge({}, this.mDependencyMap);
 			var oProcessSpy = sandbox.spy(DependencyHandler, "processDependentQueue");
-			DependencyHandler.processDependentQueue(this.mDependencyMap, this.oAppComponent).then(function() {
+			return DependencyHandler.processDependentQueue(this.mDependencyMap, this.oAppComponent).then(function() {
 				assert.equal(oProcessSpy.callCount, 1, "the function was only called once");
 				assert.deepEqual(this.mDependencyMap, mChangesCopy, "the changes map is still the same");
 			}.bind(this));
