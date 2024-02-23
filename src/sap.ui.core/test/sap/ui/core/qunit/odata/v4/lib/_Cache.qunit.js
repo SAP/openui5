@@ -13252,7 +13252,8 @@ sap.ui.define([
 
 			oCacheMock.expects("hasPendingChangesForPath")
 				.exactly("key" in oElement || oElement.bChanges ? 1 : 0)
-				.withExactArgs(sPredicate).returns(oElement.bChanges);
+				.withExactArgs(sPredicate, "~bIgnorePendingChanges~")
+				.returns(oElement.bChanges);
 			oHelperMock.expects("getKeyFilter").exactly("key" in oElement ? 1 : 0)
 				.withExactArgs(sinon.match.same(oElement), oCache.sMetaPath,
 					sinon.match.same(mTypes))
@@ -13312,7 +13313,8 @@ sap.ui.define([
 			});
 
 		// code under test
-		return oCache.refreshKeptElements(oGroupLock, fnOnRemove, oFixture.bDropApply)
+		return oCache.refreshKeptElements(oGroupLock, fnOnRemove, oFixture.bDropApply,
+			"~bIgnorePendingChanges~")
 		.then(function (oResult) {
 			var mByPredicateAfterRefresh = {},
 				iCallCount = 0;
@@ -13338,6 +13340,25 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("refreshKeptElements w/ deleteted element", function (assert) {
+		const oCache = _Cache.create(this.oRequestor, "Employees", {});
+
+		oCache.aElements.$byPredicate["('Foo')"] = {
+			"@$ui5.context.isDeleted" : true,
+			"@$ui5._" : {predicate : "('Foo')"}
+		};
+
+		this.mock(oCache).expects("hasPendingChangesForPath").never();
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
+		this.mock(oCache).expects("getTypes").never();
+		this.mock(oCache.oRequestor).expects("request").never();
+
+		// code under test
+		assert.strictEqual(oCache.refreshKeptElements({/*GroupLock*/}, {/*fnOnRemove*/}),
+			undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("refreshKeptElements w/o kept-alive element", function (assert) {
 		var oCache = _Cache.create(this.oRequestor, "Employees", {});
 
@@ -13346,7 +13367,8 @@ sap.ui.define([
 		this.mock(oCache.oRequestor).expects("request").never();
 
 		// code under test
-		assert.deepEqual(oCache.refreshKeptElements({/*GroupLock*/}), undefined);
+		assert.strictEqual(oCache.refreshKeptElements({/*GroupLock*/}, {/*fnOnRemove*/}),
+			undefined);
 	});
 
 	//*********************************************************************************************

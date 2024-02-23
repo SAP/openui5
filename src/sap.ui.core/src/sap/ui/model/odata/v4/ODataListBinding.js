@@ -3478,7 +3478,8 @@ sap.ui.define([
 				} else {
 					that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/true,
 						bKeepCacheOnError ? sGroupId : undefined);
-					oKeptElementsPromise = that.refreshKeptElements(sGroupId);
+					oKeptElementsPromise = that.refreshKeptElements(sGroupId,
+						/*bIgnorePendingChanges*/ bKeepCacheOnError);
 					if (that.iCurrentEnd > 0) {
 						oPromise = that.createRefreshPromise(
 							/*bPreventBubbling*/bKeepCacheOnError
@@ -3537,13 +3538,15 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The effective group ID
+	 * @param {boolean} bIgnorePendingChanges
+	 *   Whether kept elements are refreshed although there are pending changes.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a defined result, or rejected with an error if the
 	 *   refresh fails.
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.refreshKeptElements = function (sGroupId) {
+	ODataListBinding.prototype.refreshKeptElements = function (sGroupId, bIgnorePendingChanges) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
@@ -3557,7 +3560,7 @@ sap.ui.define([
 					if (iIndex >= 0) { // Note: implies oContext.created()
 						that.removeCreated(oContext);
 					}
-				});
+				}, false, bIgnorePendingChanges);
 		}).catch(function (oError) {
 			that.oModel.reportError("Failed to refresh kept-alive elements", sClassName, oError);
 			throw oError;
