@@ -241,10 +241,14 @@ sap.ui.define([
 		return library.Importance.Low;
 	};
 
-	ObjectPageSection.prototype.connectToModels = function () {
+	ObjectPageSection.prototype.connectToModelsAsync = function () {
+		var pAll  = [];
+
 		this.getSubSections().forEach(function (oSubSection) {
-			oSubSection.connectToModels();
+			pAll.push(oSubSection.connectToModelsAsync());
 		});
+
+		return Promise.all(pAll);
 	};
 
 	ObjectPageSection.prototype._allowPropagationToLoadedViews = function (bAllow) {

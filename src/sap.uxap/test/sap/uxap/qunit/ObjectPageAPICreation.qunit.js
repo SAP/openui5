@@ -3584,6 +3584,7 @@ function(
 
 	QUnit.test("BCP:1870470695/1970034947 - check _updateMedia is called initially when ObjectPage has correct size", async function (assert) {
 		var oObjectPage = new ObjectPageLayout({}),
+			oStub = this.stub(oObjectPage, "_initRangeSet").callsFake(function () {}), // Do not count call from initRangeSet, as it may or may not be already called, making test unstable.
 			oUpdateMediaSpy = this.spy(oObjectPage, "_updateMedia"),
 			oGetWidthSpy = this.spy(oObjectPage, "_getWidth"),
 			done = assert.async();
@@ -3591,8 +3592,9 @@ function(
 		assert.expect(2);
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-				assert.strictEqual(oUpdateMediaSpy.callCount, 3, "_updateMedia is called on after rendering and after DOM ready to ensure coorect size classes are set");
+				assert.strictEqual(oUpdateMediaSpy.callCount, 2, "_updateMedia is called on after rendering and after DOM ready to ensure coorect size classes are set");
 				assert.strictEqual(oGetWidthSpy.callCount, 2, "_getWidth is called once on after rendering and once after DOM ready");
+				oStub.restore();
 				oObjectPage.destroy();
 				done();
 		});

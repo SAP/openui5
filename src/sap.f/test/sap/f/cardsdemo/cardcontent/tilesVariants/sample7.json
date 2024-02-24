@@ -1,25 +1,19 @@
 {
 	"sap.app": {
-		"id": "cardsdemo.tilesVariants.sample6",
+		"id": "cardsdemo.tilesVariants.sample7",
 		"type": "card"
 	},
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"type": "Numeric",
 			"data": {
 				"request": {
-					"url": "./data6.json"
+					"url": "./data7.json"
 					}
 			},
 			"title": "{title}",
 			"subTitle": "{subTitle}",
 			"wrappingType": "Hyphenated",
-			"unitOfMeasurement": "{unitOfMeasurement}",
-			"details": {
-				"text": "{details/text}"
-			},
-			"detailsMaxLines": 2,
 			"actions": [
 				{
 					"type": "Navigation",

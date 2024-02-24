@@ -81,7 +81,7 @@
 		"cheerio": "1.0.0-rc.12",
 		"cookie": "^0.4.2",
 		"decompress": "^4.2.1",
-		"eslint": "^8.55.0",
+		"eslint": "^8.56.0",
 		"glob": "^7.2.3",
 		"http-proxy": "^1.18.1",
 		"karma": "^6.4.2",

@@ -527,13 +527,23 @@ sap.ui.define([
 		assert.strictEqual(sAvatarParamValue, this.oAvatar._iCacheBustingValue.toString(), "Avatar is rendered with correct query parameter");
 	});
 
-	QUnit.test("Avatar's internal preloaded Image has correct url when used in cache busting context", function (assert) {
+	QUnit.test("Avatar's internal preloaded Image has correct url when used in cache busting context", async function(assert) {
+
 		// Arrange
+		var oStub = this.stub(this.oAvatar, "_onImageLoad").callsFake(function () {
+			return true;
+		});
+
+		// Act
+		this.oAvatar.invalidate();
+		await nextUIUpdate();
+
 		var sAvatarUrl = this.oAvatar.$().find(".sapFAvatarImageHolder")[0].style.backgroundImage;
 
 		if (this.oAvatar.preloadedImage) {
 			// Assert
 			assert.strictEqual(this.oAvatar.preloadedImage.src, sAvatarUrl.replace(/url\(\"(.*)\"\)/, "$1"), "Preloaded image has correct src");
+			oStub.resetHistory();
 		}
 	});
 

@@ -216,7 +216,7 @@ sap.ui.define([
 		assert.equal(document.activeElement, this.token2.getDomRef(), "Token2 is focused after navigation.");
 	});
 
-	QUnit.test("Pressing delete icon", async function(assert) {
+	QUnit.test("Pressing delete icon", async function (assert) {
 		// arrange
 		var fnFireDeleteSpy = this.spy(this.token1, "fireDelete");
 

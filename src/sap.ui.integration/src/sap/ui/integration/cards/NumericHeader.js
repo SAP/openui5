@@ -61,7 +61,8 @@ sap.ui.define([
 				subtitle: mConfiguration.subTitle,
 				subtitleMaxLines: mConfiguration.subTitleMaxLines,
 				dataTimestamp: mConfiguration.dataTimestamp,
-				visible: mConfiguration.visible
+				visible: mConfiguration.visible,
+				wrappingType: mConfiguration.wrappingType
 			};
 
 			if (mConfiguration.status && mConfiguration.status.text && !mConfiguration.status.text.format) {

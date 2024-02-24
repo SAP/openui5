@@ -1,6 +1,7 @@
 
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
@@ -15,9 +16,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(Element, Library1, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel, nextUIUpdate, jQuery) {
+], function(nextUIUpdate, Element, Library1, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -40,12 +40,12 @@ sap.ui.define([
 		assert.strictEqual(this.tokenizer.getScrollWidth(), 0, 'Scroll width should be 0 when control is not rendered');
 	});
 
-	QUnit.test("scrollToEnd after tokenizer is rendered", function(assert) {
+	QUnit.test("scrollToEnd after tokenizer is rendered", async function(assert) {
 		var fnScrollToEndSpy = this.spy(this.tokenizer, "scrollToEnd");
 
 		//arrange
 		this.tokenizer.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(fnScrollToEndSpy.callCount, "scrollToEnd was called");
@@ -101,12 +101,12 @@ sap.ui.define([
 		assert.equal(this.tokenizer.getTokens().length, 0, "Tokenizer contains 0 tokens");
 	});
 
-	QUnit.test("removeAllTokens should call setFirstTokenTruncated with 'false'.", function(assert) {
+	QUnit.test("removeAllTokens should call setFirstTokenTruncated with 'false'.", async function(assert) {
 		var oSpy = this.spy(this.tokenizer, "setFirstTokenTruncated");
 
 		// Act
 		this.tokenizer.removeAllTokens();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
@@ -125,15 +125,15 @@ sap.ui.define([
 		assert.strictEqual(oScrollToEndSpy.callCount, 1, "scrollToEnd was called.");
 	});
 
-	QUnit.test("DestroyTokens should call setFirstTokenTruncated with 'false'", function (assert) {
+	QUnit.test("DestroyTokens should call setFirstTokenTruncated with 'false'", async function (assert) {
 		// arrange
 		this.tokenizer.addToken(new Token());
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		var oSpy = this.spy(this.tokenizer, "setFirstTokenTruncated");
 
 		// Act
 		this.tokenizer.destroyTokens();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
@@ -141,7 +141,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("updateTokens should call setFirstTokenTruncated with 'false'.", function(assert) {
+	QUnit.test("updateTokens should call setFirstTokenTruncated with 'false'.", async function(assert) {
 		var oSpy = this.spy(this.tokenizer, "setFirstTokenTruncated");
 
 		// Arrange
@@ -149,7 +149,7 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer.updateAggregation("tokens");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
@@ -212,7 +212,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("token editable in tokenizer", function(assert) {
+	QUnit.test("token editable in tokenizer", async function(assert) {
 		var oToken1 = new Token({text:"Dente", editable: false}),
 			oToken2 = new Token({text:"Friese", editable: false}),
 			oToken3 = new Token({text:"Mann", editable: true});
@@ -221,14 +221,14 @@ sap.ui.define([
 			this.tokenizer.addToken(oToken);
 		}, this);
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oToken1.$().hasClass("sapMTokenReadOnly"), true, "token1 is not editable");
 		assert.equal(oToken2.$().hasClass("sapMTokenReadOnly"), true, "token2 is not editable");
 		assert.equal(oToken3.$().hasClass("sapMTokenReadOnly"), false, "token3 is editable");
 	});
 
-	QUnit.test("checks if onsapmodifiers prevents broser navigation", function(assert) {
+	QUnit.test("checks if onsapmodifiers prevents broser navigation", async function(assert) {
 		this.stub(Device, "os").value({
 			windows: true,
 			macintosh: false
@@ -243,19 +243,19 @@ sap.ui.define([
 		};
 
 		oTokenizer.onsappreviousmodifiers(oFakeEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(oSpy.called, "onsappreviousmodifiers should not call onsapprevious on arrow left + alt");
 
 		oTokenizer.onsapnextmodifiers(oFakeEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(oNextSpy.called, "onsapnextmodifiers should not call onsapnext on arrow right + alt");
 
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("checks if onsappreviousmodifiers prevents broser navigation", function(assert) {
+	QUnit.test("checks if onsappreviousmodifiers prevents broser navigation", async function(assert) {
 		this.stub(Device, "os").value({
 			windows: false,
 			macintosh: true
@@ -270,12 +270,12 @@ sap.ui.define([
 		};
 
 		oTokenizer.onsappreviousmodifiers(oFakeEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(oSpy.called, "onsappreviousmodifiers should not call onsapprevious on arrow left + cmnd");
 
 		oTokenizer.onsapnextmodifiers(oFakeEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(oNextSpy.called, "onsapnextmodifiers should not call onsapnext on arrow right + alt");
 
@@ -284,7 +284,7 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("selected token is visible after select with left arrow", function(assert) {
+	QUnit.test("selected token is visible after select with left arrow", async function(assert) {
 		var oSpecialToken = new Token({text: "Token 5", key: "0005"}),
 			oMultiInput = new MultiInput({
 				width: '800px',
@@ -300,7 +300,7 @@ sap.ui.define([
 			});
 
 		oMultiInput.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var oTokenizerDomRef = oMultiInput.$().find('.sapMTokenizer')[0];
 
@@ -322,7 +322,7 @@ sap.ui.define([
 		oMultiInput.destroy();
 	});
 
-	QUnit.test("test setEditable=false Tokenizer with editable tokens", function(assert) {
+	QUnit.test("test setEditable=false Tokenizer with editable tokens", async function(assert) {
 		var aFirstToken,
 			aSecondToken;
 
@@ -333,7 +333,7 @@ sap.ui.define([
 		aFirstToken = this.tokenizer.getTokens()[0];
 		aSecondToken = this.tokenizer.getTokens()[1];
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//assert
 		assert.ok(aFirstToken.getDomRef('icon'), 'First token has icon');
@@ -342,14 +342,14 @@ sap.ui.define([
 		//act
 		this.tokenizer.setEditable(false);
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//assert
 		assert.strictEqual(aFirstToken.$('icon').css('display'), 'none', 'First token icon is invisible');
 		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
 	});
 
-	QUnit.test("_getPixelWidth", function(assert) {
+	QUnit.test("_getPixelWidth", async function(assert) {
 		// Arrange
 		var oToken1 = new Token({text:"Token 1"}),
 			oToken2 = new Token({text:"Token 1"}),
@@ -360,7 +360,7 @@ sap.ui.define([
 		[oToken1, oToken2].forEach(function(oToken) {
 			this.tokenizer.addToken(oToken);
 		}, this);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		iPaddingLeft = parseInt(this.tokenizer.$().css("padding-left"));
 		sTokenizerWidth = this.tokenizer._getPixelWidth();
 
@@ -369,7 +369,7 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer.setMaxWidth("3rem");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		sTokenizerWidth = this.tokenizer._getPixelWidth();
 
 		// Assert
@@ -377,7 +377,7 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer.setMaxWidth("99px");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		sTokenizerWidth = this.tokenizer._getPixelWidth();
 
 		// Assert
@@ -397,7 +397,7 @@ sap.ui.define([
 		assert.ok(true, "No exception is thrown");
 	});
 
-	QUnit.test("Handle mapping between List items and Tokens on Token deletion", function (assert) {
+	QUnit.test("Handle mapping between List items and Tokens on Token deletion", async function (assert) {
 		// Setup
 		var aItems, oItem, oToken,
 			oModel = new JSONModel({
@@ -421,7 +421,7 @@ sap.ui.define([
 
 		var oTokenDeleteSpy = this.spy(oTokenizer, "fireTokenDelete");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		oModel.setData({
@@ -432,10 +432,10 @@ sap.ui.define([
 		});
 
 		oTokenizer._handleNMoreIndicatorPress();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oTokenizer._handleListItemDelete(oEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		aItems = oTokenizer._getTokensList().getItems();
@@ -479,7 +479,7 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("Handle firePress event mapping between List items and Tokens on n-more item pressed", function (assert) {
+	QUnit.test("Handle firePress event mapping between List items and Tokens on n-more item pressed", async function (assert) {
 		// Setup
 		var aItems, oItem, oToken, oFirstItemPressFiredSpy,
 			oModel = new JSONModel({
@@ -501,10 +501,10 @@ sap.ui.define([
 				}
 			};
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oTokenizer._handleNMoreIndicatorPress();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		aItems = oTokenizer._getTokensList().getItems();
 		oItem = aItems[0];
@@ -512,7 +512,7 @@ sap.ui.define([
 		oFirstItemPressFiredSpy = this.spy(oToken, "firePress");
 
 		oTokenizer._handleListItemPress(oEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oFirstItemPressFiredSpy.called, "pressed event fired on the correct token since corresponding list item pressed");
@@ -522,19 +522,19 @@ sap.ui.define([
 	});
 
 	QUnit.module("Setters", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.tokenizer = new Tokenizer();
 
 			this.tokenizer.placeAt("content");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
 		}
 	});
 
-	QUnit.test("setEditable", function (assert) {
+	QUnit.test("setEditable", async function (assert) {
 		var oToken;
 		this.tokenizer.addToken(new Token({text: "Token 1", key: "0001"}));
 
@@ -543,68 +543,68 @@ sap.ui.define([
 		assert.ok(oToken.getProperty("editableParent"), "Token's parent is editable");
 
 		this.tokenizer.setEditable(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(this.tokenizer.getEditable(), false, "The property of the Tokenizer was set.");
 		assert.strictEqual(oToken.getProperty("editableParent"), false, "The editableParent property of the Token was correctly set");
 	});
 
-	QUnit.test("setWidth and setPixelWidth", function(assert) {
+	QUnit.test("setWidth and setPixelWidth", async function(assert) {
 		var WIDTH = 300,
 			S_WIDTH = "200px";
 
 		// act
 		this.tokenizer.setWidth(S_WIDTH);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(this.tokenizer.getDomRef().style.width, S_WIDTH, "Tokenizer width is set to " + S_WIDTH);
 
 		// act
 		this.tokenizer.setPixelWidth("400px");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(this.tokenizer.getDomRef().style.width, S_WIDTH, "Tokenizer width remains " + S_WIDTH);
 
 		// act
 		this.tokenizer.setPixelWidth(WIDTH);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(this.tokenizer.getDomRef().style.width, WIDTH + "px", "Tokenizer width is set to 300px");
 	});
 
-	QUnit.test("setMaxWidth", function(assert) {
+	QUnit.test("setMaxWidth", async function(assert) {
 		var MAX_WIDTH = "300px";
 
 		// act
 		this.tokenizer.setMaxWidth(MAX_WIDTH);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(this.tokenizer.getDomRef().style.maxWidth, MAX_WIDTH, "Tokenizer max-width is set to " + MAX_WIDTH);
 	});
 
-	QUnit.test("setMaxWidth in adjustable tokenizer calls _adjustTokensVisibility", function(assert) {
+	QUnit.test("setMaxWidth in adjustable tokenizer calls _adjustTokensVisibility", async function(assert) {
 		var MAX_WIDTH = "300px";
 		this.tokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 		this.tokenizer.addToken(new Token({key:"XXX", text: "XXX"}));
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		var spy = this.spy(Tokenizer.prototype, "_adjustTokensVisibility");
 		this.tokenizer.setMaxWidth(MAX_WIDTH);
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(spy.callCount, 1, "tokenizer's _adjustTokensVisibility was called once");
 	});
 
-	QUnit.test("setEnabled", function(assert) {
+	QUnit.test("setEnabled", async function(assert) {
 		// act
 		this.tokenizer.setEnabled(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(this.tokenizer.$().hasClass("sapMTokenizerDisabled"), "Tokenizer's dom has class sapMTokenizerDisabled");
@@ -641,7 +641,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Pressing delete icon when Tokenizer is disabled", function(assert) {
+	QUnit.test("Pressing delete icon when Tokenizer is disabled", async function(assert) {
 		// arrange
 		var oFireDeleteSpy,
 			oToken = new Token({text: "test"});
@@ -649,7 +649,7 @@ sap.ui.define([
 		oFireDeleteSpy = this.spy(oToken, "fireDelete");
 		this.tokenizer.addToken(oToken);
 		this.tokenizer.setEnabled(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oToken.getAggregation("deleteIcon").firePress();
@@ -659,7 +659,7 @@ sap.ui.define([
 		assert.ok(!oToken.bIsDestroyed, "Token1 is NOT destroyed");
 	});
 
-	QUnit.test("Pressing delete icon should fire delete event with cancel bubbling", function(assert) {
+	QUnit.test("Pressing delete icon should fire delete event with cancel bubbling", async function(assert) {
 		// arrange
 		var oFireDeleteSpy,
 			oToken = new Token({text: "test"});
@@ -670,7 +670,7 @@ sap.ui.define([
 
 		oFireDeleteSpy = this.spy(oToken, "fireDelete");
 		this.tokenizer.addToken(oToken);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oToken.getAggregation("deleteIcon").firePress();
@@ -680,7 +680,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Keyboard handling", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.tokenizer = new Tokenizer("t", {
 				tokens : [
 					new Token("t1", { text : "Token 1", selected : true}),
@@ -691,7 +691,7 @@ sap.ui.define([
 
 			this.tokenizer.placeAt("content");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
@@ -906,7 +906,7 @@ sap.ui.define([
 		assert.equal(this.tokenizer.getSelectedTokens().length, 2, "Token selection is not changed");
 	});
 
-	QUnit.test("_selectRange(true)", function(assert) {
+	QUnit.test("_selectRange(true)", async function(assert) {
 		var oTokenizer = new Tokenizer().placeAt("content"),
 			aSelectedTokens,
 			oSecondToken = new Token("tok1");
@@ -919,7 +919,7 @@ sap.ui.define([
 			oTokenizer.addToken(oToken);
 		}, this);
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oSecondToken.focus();
@@ -935,7 +935,7 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("RIGHT_ARROW + invisible token", function(assert) {
+	QUnit.test("RIGHT_ARROW + invisible token", async function(assert) {
 		// arrange
 		var oTokenizer = new Tokenizer({
 			tokens: [
@@ -944,18 +944,18 @@ sap.ui.define([
 				new Token({text: "Token3", visible: true})
 			]
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oTokenizer.getTokens()[0].focus();
 		qutils.triggerKeydown(oTokenizer.getTokens()[0].getDomRef(), KeyCodes.ARROW_RIGHT);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oTokenizer.getTokens()[2].getDomRef(), document.activeElement, "The navigation was successful.");
 	});
 
-	QUnit.test("LEFT_ARROW + invisible token", function(assert) {
+	QUnit.test("LEFT_ARROW + invisible token", async function(assert) {
 		// arrange
 		var oTokenizer = new Tokenizer({
 			tokens: [
@@ -964,48 +964,48 @@ sap.ui.define([
 				new Token({text: "Token3", visible: true})
 			]
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oTokenizer.getTokens()[2].focus();
 		qutils.triggerKeydown(oTokenizer.getTokens()[2].getDomRef(), KeyCodes.ARROW_LEFT);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oTokenizer.getTokens()[0].getDomRef(), document.activeElement, "The navigation was successful.");
 	});
 
-	QUnit.test("Should render tabindex only if there are no tokens ", function(assert) {
+	QUnit.test("Should render tabindex only if there are no tokens ", async function(assert) {
 		// Arrange
 		var oTokenizer = new Tokenizer({}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oTokenizer.getDomRef().hasAttribute("tabindex"), false, "tabindex is not rendererd");
 
 		oTokenizer.addToken(new Token("token"));
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oTokenizer.getDomRef().hasAttribute("tabindex"), true, "tabindex is rendererd");
 
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("Should set _bShouldRenderTabIndex to false", function(assert) {
+	QUnit.test("Should set _bShouldRenderTabIndex to false", async function(assert) {
 		var oTokenizer = new Tokenizer({}).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oTokenizer._bShouldRenderTabIndex, null, "_bShouldRenderTabIndex is defined and asigned to null");
 
 		oTokenizer.setShouldRenderTabIndex(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oTokenizer._bShouldRenderTabIndex, false, "_bShouldRenderTabIndex is not set");
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("_selectRange(false)", function(assert) {
+	QUnit.test("_selectRange(false)", async function(assert) {
 		var oTokenizer = new Tokenizer().placeAt("content"),
 			aSelectedTokens,
 			oSecondToken = new Token("tok1");
@@ -1018,7 +1018,7 @@ sap.ui.define([
 			oTokenizer.addToken(oToken);
 		}, this);
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oSecondToken.focus();
@@ -1034,7 +1034,7 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("onsapend", function(assert) {
+	QUnit.test("onsapend", async function(assert) {
 		var oEvent = new jQuery.Event(),
 			aTokens,
 			oTokenizer = new Tokenizer({
@@ -1043,7 +1043,7 @@ sap.ui.define([
 
 		aTokens = oTokenizer.getTokens();
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oTokenizer.onsapend(oEvent);
@@ -1055,13 +1055,13 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("onsaphome", function(assert) {
+	QUnit.test("onsaphome", async function(assert) {
 		var oEvent = new jQuery.Event(),
 			oTokenizer = new Tokenizer({
 				tokens: [new Token(), new Token(), new Token()]
 			}).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oTokenizer.onsaphome(oEvent);
@@ -1073,15 +1073,15 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("onsaphome + hidden tokens", function(assert) {
+	QUnit.test("onsaphome + hidden tokens", async function(assert) {
 		var oEvent = new jQuery.Event(),
 			oTokenizer = new Tokenizer({
 				tokens: [new Token(), new Token(), new Token()]
 			}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oTokenizer.getTokens()[0].addStyleClass("sapMHiddenToken");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oTokenizer.onsaphome(oEvent);
@@ -1133,7 +1133,7 @@ sap.ui.define([
 
 
 	QUnit.module("Token selection", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.t1 = new Token({ text : "Token 1"});
 			this.t3 = new Token({ text : "Token 3", selected : true});
 			this.t5 = new Token({ text : "Token 5"});
@@ -1149,7 +1149,7 @@ sap.ui.define([
 
 			this.tokenizer.placeAt("content");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
@@ -1174,12 +1174,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Copy and paste", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.tokenizer = new Tokenizer();
 
 			this.tokenizer.placeAt("content");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
@@ -1187,22 +1187,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("parsing for copy and paste", function(assert) {
-		var text1 = "1\r\n2\r\n3",
+		let text1 = "1\r\n2\r\n3",
 			aTextArray1 = this.tokenizer._parseString(text1);
 
 		assert.equal(aTextArray1[0], "1", "text separated");
 		assert.equal(aTextArray1[1], "2", "text separated");
 		assert.equal(aTextArray1[2], "3", "text separated");
 
-		var text1 = "1 2\n2+4\r3)\t(/&%$)";
-		var aTextArray1 = this.tokenizer._parseString(text1);
+		text1 = "1 2\n2+4\r3)\t(/&%$)";
+		aTextArray1 = this.tokenizer._parseString(text1);
 
 		assert.equal(aTextArray1[0], "1 2", "text separated");
 		assert.equal(aTextArray1[1], "2+4", "text separated");
 		assert.equal(aTextArray1[2], "3)\t(/&%$)", "text separated");
 	});
 
-	QUnit.test("Copy to clipboard", function(assert) {
+	QUnit.test("Copy to clipboard", async function(assert) {
 		assert.expect(6);
 		var oAddListenerSpy = this.spy(document, "addEventListener"),
 			oExecCommandSpy = this.spy(document, "execCommand"),
@@ -1248,7 +1248,7 @@ sap.ui.define([
 		for (var i = 0; i < 4; i++) {
 			this.tokenizer.addToken(new Token({text: "Token " + i, key: "000" + i}));
 		}
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		this.tokenizer.focus();
 		this.tokenizer.selectAllTokens(true);
@@ -1283,7 +1283,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Basic: ", function(assert) {
+	QUnit.test("Basic: ", async function(assert) {
 		var aTokens, oIndicator, iHiddenTokens = 0;
 		this.tokenizer = new Tokenizer({
 			maxWidth:"200px",
@@ -1295,14 +1295,14 @@ sap.ui.define([
 		});
 
 		this.tokenizer.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		aTokens = this.tokenizer.getTokens();
 		aTokens.forEach(function(oToken, iIndex){
 			assert.strictEqual(oToken.$().hasClass("sapMHiddenToken"), false, "Token on position " +  iIndex +  " is visible");
 		});
 
 		this.tokenizer.setRenderMode(TokenizerRenderMode.Narrow);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		aTokens = this.tokenizer.getTokens();
 		aTokens.forEach(function(oToken){
@@ -1316,7 +1316,7 @@ sap.ui.define([
 		assert.strictEqual(oIndicator.innerHTML, oRb.getText("MULTIINPUT_SHOW_MORE_TOKENS", iHiddenTokens), "N-more label's text is correct.");
 
 		this.tokenizer.setRenderMode(TokenizerRenderMode.Loose);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		aTokens = this.tokenizer.getTokens();
 		aTokens.forEach(function(oToken, iIndex) {
@@ -1324,7 +1324,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Small containers usage (N Items):", function(assert) {
+	QUnit.test("Small containers usage (N Items):", async function(assert) {
 		var aTokens, oIndicator;
 		this.tokenizer = new Tokenizer({
 			maxWidth: "100px",
@@ -1335,11 +1335,11 @@ sap.ui.define([
 		});
 
 		this.tokenizer.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		this.tokenizer.setRenderMode(TokenizerRenderMode.Narrow);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		aTokens = this.tokenizer.getTokens();
@@ -1359,7 +1359,7 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("N-More label + Invalidation", function(assert) {
+	QUnit.test("N-More label + Invalidation", async function(assert) {
 		var oTokenizer = new Tokenizer({
 			maxWidth: "100px",
 			tokens: [
@@ -1369,18 +1369,18 @@ sap.ui.define([
 		});
 
 		oTokenizer.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oTokenizer.setRenderMode(TokenizerRenderMode.Narrow);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oTokenizer._oIndicator.hasClass("sapUiHidden"), "The indicator label is shown.");
 
 		// act
 		oTokenizer.invalidate();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oTokenizer._oIndicator.hasClass("sapUiHidden"), "The indicator label is still shown.");
@@ -1391,11 +1391,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Tokenizer ARIA", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.tokenizer = new Tokenizer();
 
 			this.tokenizer.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
@@ -1406,35 +1406,35 @@ sap.ui.define([
 		assert.strictEqual(this.tokenizer.$().attr("role"), "listbox", "Tokenizer has role listbox");
 	});
 
-	QUnit.test("aria-hidden attribute", function(assert) {
+	QUnit.test("aria-hidden attribute", async function(assert) {
 		var token1 = new Token();
 
 		assert.strictEqual(this.tokenizer.$().attr("aria-hidden"), "true", "aria-hidden attribute should be presented when no token.");
 
 		this.tokenizer.addToken(token1);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(this.tokenizer.$().attr("aria-hidden"), "aria-hidden attribute should not be presented when there are tokens.");
 	});
 
-	QUnit.test("aria-readonly attribute", function(assert) {
+	QUnit.test("aria-readonly attribute", async function(assert) {
 		// Assert
 		assert.ok(!this.tokenizer.$().attr("aria-readonly"), "Tokenizer has no aria-readonly attribute");
 
 		// Act
 		this.tokenizer.setEditable(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.tokenizer.$().attr("aria-readonly"), "true", "Tokenizer has aria-readonly attribute set.");
 	});
 
-	QUnit.test("posinset and setsize ARIA attributes are set on the Tokens", function(assert) {
+	QUnit.test("posinset and setsize ARIA attributes are set on the Tokens", async function(assert) {
 		var token1, token2;
 
 		this.tokenizer.addToken(token1 = new Token("t1"));
 		this.tokenizer.addToken(token2 = new Token("t2"));
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(token1.$().attr("aria-posinset"), "Token 1 has aria-posinset attribute");
 		assert.ok(token2.$().attr("aria-posinset"), "Token 2 has aria-posinset attribute");
@@ -1447,15 +1447,15 @@ sap.ui.define([
 		assert.strictEqual(token2.$().attr("aria-setsize"), "2", "Token has correct aria-setsize attribute");
 	});
 
-	QUnit.test("posinset and setsize ARIA attributes are correct after removing token", function(assert) {
+	QUnit.test("posinset and setsize ARIA attributes are correct after removing token", async function(assert) {
 		var token1, token2;
 
 		this.tokenizer.addToken(token1 = new Token());
 		this.tokenizer.addToken(token2 = new Token());
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		this.tokenizer.removeToken(token1);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(token2.$().attr("aria-setsize"), "1", "Token 2 has correct aria-setsize attribute");
 		assert.strictEqual(token2.$().attr("aria-posinset"), "1", "Token 2 has correct aria-posinset attribute");
@@ -1463,7 +1463,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("One token handling", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.tokenizer = new Tokenizer({
 				maxWidth: "100px",
 				tokens: [
@@ -1472,17 +1472,15 @@ sap.ui.define([
 			});
 
 			this.tokenizer.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
-
-			this.clock = sinon.useFakeTimers();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
-			this.clock.restore();
 		}
 	});
 
 	QUnit.test("setFirstTokenTruncated", function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oToken = this.tokenizer.getTokens()[0],
 			oSetTruncatedSpy = this.spy(oToken, "setTruncated"),
 			oAddStyleClassSpy = this.spy(this.tokenizer, "addStyleClass"),
@@ -1507,9 +1505,10 @@ sap.ui.define([
 		assert.strictEqual(oSetTruncatedSpy.calledWith(false), true, "Method called with correct parameter");
 		assert.strictEqual(oRemoveStyleClassSpy.callCount, 1, "The tokenizer's removeStyleClass method was called once.");
 		assert.strictEqual(oAddStyleClassSpy.calledWith("sapMTokenizerOneLongToken"), true, "Method called with correct parameter");
+		this.clock.restore();
 	});
 
-	QUnit.test("One token with later rebinding", function(assert) {
+	QUnit.test("One token with later rebinding", async function(assert) {
 		// Act
 		var oModel = new JSONModel({items: [{text: "token1"}]});
 		var oTokenizer = new Tokenizer({
@@ -1519,27 +1518,27 @@ sap.ui.define([
 				template: new Token({text: "{text}"})
 			}
 		}).placeAt("content").setModel(oModel);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(oTokenizer.hasStyleClass("sapMTokenizerOneLongToken"), "Tokenizer does not have one long token");
 
 		oTokenizer.setRenderMode(TokenizerRenderMode.Loose);
 		oModel.setData({items:[{text:"token1"},{text:"token2"},{text:"token3"}]});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(oTokenizer.hasStyleClass("sapMTokenizerOneLongToken"), "Tokenizer still does not have one long token");
 
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("Click on tokenizer should remove truncation", function(assert) {
+	QUnit.test("Click on tokenizer should remove truncation", async function(assert) {
 		// Arrange
 		var oToken = this.tokenizer.getTokens()[0],
 			oSpy = this.spy(this.tokenizer, "_togglePopup");
 
 		this.tokenizer._adjustTokensVisibility();
 		// await to set the truncation
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oToken.getTruncated(), "Token should be truncated");
@@ -1568,7 +1567,7 @@ sap.ui.define([
 		assert.ok(oSpy.calledWith(true), "Truncation function should be called with True value");
 	});
 
-	QUnit.test("Small container + One long truncated token should call setFirstTokenTruncated with false", function(assert) {
+	QUnit.test("Small container + One long truncated token should call setFirstTokenTruncated with false", async function(assert) {
 		// Arrange
 		var oSpy = this.spy(this.tokenizer, 'setFirstTokenTruncated');
 		this.tokenizer.setRenderMode(TokenizerRenderMode.Narrow);
@@ -1576,7 +1575,7 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer.setMaxWidth("500px");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oSpy.calledOnce, "Truncation function should be called once.");
@@ -1611,20 +1610,20 @@ sap.ui.define([
 		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), false, "hasOneTruncatedToken should return false");
 	});
 
-	QUnit.test("Removes token truncation after resize", function(assert) {
+	QUnit.test("Removes token truncation after resize", async function(assert) {
 		// Arrange
 		this.tokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 		this.tokenizer.setFirstTokenTruncated(true);
 
 		// Act
 		this.tokenizer.setMaxWidth("500px");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), false, "Token's truncation was removed.");
 
 		this.tokenizer.setMaxWidth("100px");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), true, "Token's truncation was set again after resize.");
 	});
@@ -1657,7 +1656,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Checks if Dialog opens", function (assert) {
+	QUnit.test("Checks if Dialog opens", async function (assert) {
 		this.stubPlatform();
 		var oTokenizer = this.createTokenizer();
 		var oOpenSpy = this.spy(Dialog.prototype, "open");
@@ -1665,22 +1664,22 @@ sap.ui.define([
 		oTokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 
 		oTokenizer.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oTokenizer._handleNMoreIndicatorPress();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(oOpenSpy.called, "Dialog is open");
 
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("Checks Dialog's default title", function (assert) {
+	QUnit.test("Checks Dialog's default title", async function (assert) {
 		this.stubPlatform();
 		var oTokenizer = this.createTokenizer();
 
 		oTokenizer.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var oRPO = oTokenizer.getTokensPopup();
 
@@ -1689,7 +1688,7 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("Checks Dialog's custom title", function (assert) {
+	QUnit.test("Checks Dialog's custom title", async function (assert) {
 		this.stubPlatform();
 		var oTokenizer = this.createTokenizer();
 		var sTitleText = "Custom Title";
@@ -1697,7 +1696,7 @@ sap.ui.define([
 		oTokenizer.addAriaLabelledBy(new Label({ text: sTitleText }));
 
 		oTokenizer.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var oRPO = oTokenizer.getTokensPopup();
 
@@ -1707,11 +1706,11 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("Checks if title is shown on desktop", function (assert) {
+	QUnit.test("Checks if title is shown on desktop", async function (assert) {
 		var oTokenizer = this.createTokenizer();
 
 		oTokenizer.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var oRPO = oTokenizer.getTokensPopup();
 

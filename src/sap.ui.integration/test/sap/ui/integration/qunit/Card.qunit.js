@@ -76,6 +76,7 @@ sap.ui.define([
 		var MessageType = coreLibrary.MessageType;
 		var CardDataMode = library.CardDataMode;
 		var CardBlockingMessageType = library.CardBlockingMessageType;
+		var WrappingType = mLibrary.WrappingType;
 
 		var oManifest_Header = {
 			"sap.app": {
@@ -1965,6 +1966,27 @@ sap.ui.define([
 			assert.strictEqual(oAvatarIcon.getSrc(), sProduct, "Should show 'sap-icon://product' when icon src is empty and the shape is 'Square'.");
 		});
 
+		QUnit.test("Header Hyphenation", async function (assert) {
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.headerHyphenation"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"wrappingType": "Hyphenated",
+						"title": "pneumonoultramicroscopicsilicovolcanoconiosis"
+					}
+				}
+			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.strictEqual(this.oCard.getCardHeader().getWrappingType(), WrappingType.Hyphenated, "Card Header has wrappingType: Hyphenated.");
+		});
+
 		QUnit.module("Numeric Header", {
 			beforeEach: function () {
 				this.oCard = new Card("somecard", {
@@ -2293,6 +2315,28 @@ sap.ui.define([
 				assert.notOk(oIndicator.getVisible(), "Card header sideIndicators are hidden");
 				assert.equal(oIndicator.getVisible(), oManifest_NumericHeader_SideIndicators["sap.card"].header.data.json["visibility"], "Card header side indicators visibility property value should be correct.");
 			});
+		});
+
+		QUnit.test("Numeric Header Hyphenation", async function (assert) {
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.headerHyphenation"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"type": "Numeric",
+						"wrappingType": "Hyphenated",
+						"title": "pneumonoultramicroscopicsilicovolcanoconiosis"
+					}
+				}
+			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.strictEqual(this.oCard.getCardHeader().getWrappingType(), WrappingType.Hyphenated, "Card Numeric Header has wrappingType: Hyphenated.");
 		});
 
 		QUnit.module("Footer", {

@@ -247,8 +247,7 @@ sap.ui.define([
 		BlockBase.prototype.setParent = function (oParent, sAggregationName, bSuppressInvalidate) {
 			Control.prototype.setParent.call(this, oParent, sAggregationName, bSuppressInvalidate);
 
-			if (oParent && oParent.isA("sap.uxap.ObjectPageSubSection")) {
-				this._bLazyLoading = true; //we activate the block lazy loading since we are within an objectPageLayout
+			if (oParent?.isA("sap.uxap.ObjectPageSubSection")) {
 				this._oParentObjectPageSubSection = oParent;
 			}
 		};
