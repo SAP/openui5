@@ -525,7 +525,7 @@ function(
 		oObjectPage.addHeaderContent(oHeaderContent);
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			setTimeout(function() {
-				var oHeaderContentDOM = document.querySelector('.sapUxAPObjectPageHeaderContent'),
+				var oHeaderContentDOM = oObjectPage._getHeaderContent().getDomRef(),
 				sPaddingTop = _pxToNumber(window.getComputedStyle(oHeaderContentDOM, null).getPropertyValue('padding-top')),
 				sPaddingBottom = _pxToNumber(window.getComputedStyle(oHeaderContentDOM, null).getPropertyValue('padding-bottom'));
 
