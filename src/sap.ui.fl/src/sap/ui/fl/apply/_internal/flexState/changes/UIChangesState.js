@@ -86,7 +86,7 @@ sap.ui.define([
 		parentDataSelector: oAllUIChangesDataSelector,
 		executeFunction(aFlexObjects) {
 			return aFlexObjects.filter((oFlexObject) => {
-				return !oFlexObject.getVariantReference();
+				return !oFlexObject.getVariantReference() && !oFlexObject.getSelector().persistencyKey;
 			});
 		},
 		checkInvalidation(mParameters, oUpdateInfo) {
@@ -137,6 +137,21 @@ sap.ui.define([
 		});
 
 		return oCombinedDepMap;
+	};
+
+	/**
+	 * Fetches all UIChanges that can be applied. This includes the UIChanges of any current FlVariant.
+	 * This excludes update changes for CompVariants
+	 *
+	 * @param {string} sReference - Flex Reference
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.UIChange[]} Returns all applicable UIChanges
+	 */
+	UIChangesState.getAllApplicableUIChanges = function(sReference) {
+		const aVMIndependentUIChanges = oVMIndependentUIChangesDataSelector.get({reference: sReference});
+		return aVMIndependentUIChanges.concat(VariantManagementState.getInitialChanges({
+			reference: sReference,
+			includeDirtyChanges: true
+		}));
 	};
 
 	/**

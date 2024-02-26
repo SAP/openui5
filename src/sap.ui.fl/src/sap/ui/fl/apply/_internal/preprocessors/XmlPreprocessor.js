@@ -6,22 +6,24 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/_internal/changes/Applier",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Utils",
 	"sap/base/Log"
 ], function(
 	merge,
 	XmlTreeModifier,
 	Component,
+	ChangesUtils,
+	UIChangesState,
 	FlexState,
 	ManifestUtils,
 	ControlVariantApplyAPI,
 	Applier,
-	ChangePersistenceFactory,
 	Utils,
 	Log
 ) {
@@ -41,6 +43,34 @@ sap.ui.define([
 	var XmlPreprocessor = function() {};
 
 	XmlPreprocessor.NOTAG = "<NoTag>";
+
+	/**
+	 * Gets the changes for the given view id. The complete view prefix has to match.
+	 *
+	 * Example:
+	 * Change has selector id:
+	 * view1--view2--controlId
+	 *
+	 * Will match for view:
+	 * view1--view2
+	 *
+	 * Will not match for view:
+	 * view1
+	 * view1--view2--view3
+	 *
+	 * @param {object} mPropertyBag contains additional data that are needed for reading of changes
+	 * @param {string} mPropertyBag.viewId - id of the view
+	 * @param {string} mPropertyBag.name - name of the view
+	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component for the view
+	 * @param {string} mPropertyBag.componentId - responsible component's id for the view
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - responsible modifier
+	 * @returns {Promise} resolving with an array of changes
+	 * @public
+	 */
+	function getChangesForView(mPropertyBag) {
+		const aAllApplicableUIChanges = UIChangesState.getAllApplicableUIChanges(mPropertyBag.reference);
+		return aAllApplicableUIChanges.filter(ChangesUtils.isChangeInView.bind(undefined, mPropertyBag));
+	}
 
 	/**
 	 * Asynchronous view processing method.
@@ -67,17 +97,18 @@ sap.ui.define([
 
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			if (!Utils.isApplication(oAppComponent.getManifestObject())) {
-				// we only consider components whose type is application. Otherwise, we might send request for components that can never have changes.
+				// we only consider components whose type is application to no send request for components that can never have changes
 				return oView;
 			}
 
+			const sReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 			const mPropertyBag = merge({
 				appComponent: oAppComponent,
 				modifier: XmlTreeModifier,
-				view: oView
+				view: oView,
+				reference: sReference
 			}, mProperties);
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
-			const aChanges = await oChangePersistence.getChangesForView(mPropertyBag);
+			const aChanges = getChangesForView(mPropertyBag);
 
 			await Applier.applyAllChangesForXMLView(mPropertyBag, aChanges);
 

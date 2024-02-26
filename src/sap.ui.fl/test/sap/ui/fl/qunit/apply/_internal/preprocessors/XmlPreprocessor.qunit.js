@@ -3,21 +3,25 @@
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/changes/Applier",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Component,
 	Applier,
+	UIChangesState,
 	FlexState,
 	ManifestUtils,
 	XmlPreprocessor,
 	ControlVariantApplyAPI,
 	Utils,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -175,6 +179,24 @@ sap.ui.define([
 				assert.deepEqual(oProcessedView, oView, "the original view is returned");
 				assert.strictEqual(oApplierStub.callCount, 0, "the applier was not called");
 			});
+		});
+
+		QUnit.test("applies all applicable changes", async function(assert) {
+			const oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, "myAppComponent");
+			const oApplierStub = sandbox.stub(Applier, "applyAllChangesForXMLView");
+			sandbox.stub(UIChangesState, "getAllApplicableUIChanges").returns([
+				{ getSelector: () => { return { id: "testView--foo" }; } },
+				{ getSelector: () => { return { id: "testView-bar" }; } },
+				{ getSelector: () => { return { id: "testView1--foo1" }; } },
+				{ getSelector: () => { return { id: "testView1-bar" }; }}
+			]);
+			await XmlPreprocessor.process({sId: "testView"}, {
+				id: "testView",
+				componentId: "myAppComponent"
+			});
+			assert.strictEqual(oApplierStub.lastCall.args[1].length, 1, "only one change was passed");
+			assert.strictEqual(oApplierStub.lastCall.args[0].reference, "myAppComponent", "the reference was added to the properties");
+			oAppComponent.destroy();
 		});
 	});
 

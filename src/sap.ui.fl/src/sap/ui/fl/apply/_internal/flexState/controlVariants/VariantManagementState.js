@@ -552,6 +552,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with the necessary properties
 	 * @param {string} mPropertyBag.reference - Component reference
 	 * @param {string} [mPropertyBag.vmReference] - Variant management reference
+	 * @param {string} [mPropertyBag.includeDirtyChanges] - Whether dirty changes should be included
 	 *
 	 * @returns {Array} All changes of current or default variants
 	 * @private
@@ -561,6 +562,7 @@ sap.ui.define([
 		var oVariantsMap = oVariantManagementMapDataSelector.get({
 			reference: mPropertyBag.reference
 		});
+		mPropertyBag.includeDirtyChanges = !!mPropertyBag.includeDirtyChanges;
 		return Object.keys(oVariantsMap).reduce(function(aInitialChanges, sVMReference) {
 			if (
 				(mPropertyBag.vmReference && mPropertyBag.vmReference === sVMReference)
@@ -568,8 +570,7 @@ sap.ui.define([
 			) {
 				var mArguments = Object.assign({}, mPropertyBag, {
 					vmReference: sVMReference,
-					vReference: oVariantsMap[sVMReference].currentVariant,
-					includeDirtyChanges: false
+					vReference: oVariantsMap[sVMReference].currentVariant
 				});
 
 				// Concatenate with the previous flex changes

@@ -63,7 +63,7 @@ sap.ui.define([
 			this.mPropertyBag = {
 				targetControl: this.oPanel
 			};
-			sandbox.stub(ChangesUtils, "filterChangeByView").returns(true);
+			sandbox.stub(ChangesUtils, "isChangeInView").returns(true);
 		},
 		afterEach() {
 			this.oPanel.destroy();
@@ -177,7 +177,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("with extension point changes exists", function(assert) {
-			var oViewFilterStub = sandbox.stub(ChangesUtils, "filterChangeByView").returns(true);
+			var oViewFilterStub = sandbox.stub(ChangesUtils, "isChangeInView").returns(true);
 			var aChanges = createChangeList(3, true/* is in initial state */, this.mExtensionPointInfo.name);
 			var oChangePersistence = mockChangePersistance(aChanges);
 			return ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, this.mPropertyBag)
