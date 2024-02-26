@@ -42,7 +42,6 @@ sap.ui.define([
 		var sSVMControlId = oVMControl.getId();
 		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
 
-		// TODO clarify why in a test we come here without an initialized FlexState (1980546095)
 		return FlexState.initialize({
 			reference: sReference,
 			componentData: {},

@@ -24,7 +24,8 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	deepClone,
 	LoaderExtensions,
@@ -50,7 +51,8 @@ sap.ui.define([
 	LayerUtils,
 	Utils,
 	JSONModel,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 
@@ -1297,7 +1299,7 @@ sap.ui.define([
 			],
 			stubVersionModel: Version.Number.Draft
 		}].forEach(function(mSetup) {
-			QUnit.test(mSetup.testName, function(assert) {
+			QUnit.test(mSetup.testName, async function(assert) {
 				sandbox.stub(Versions, "getVersionsModel").returns({
 					getProperty() {
 						return mSetup.stubVersionModel;
@@ -1305,7 +1307,7 @@ sap.ui.define([
 				});
 
 				sandbox.stub(Storage.versions, "load").resolves(mSetup.aReturnedVersions);
-				sandbox.stub(InitialStorage, "loadFlexData").resolves(mSetup.stubResponse);
+				await FlQUnitUtils.initializeFlexStateWithData(sandbox, "com.sap.app", mSetup.stubResponse);
 				var oStorageCreateStub = sandbox.stub(Storage.contextBasedAdaptation, "create").resolves({status: 201});
 
 				assert.notOk(ContextBasedAdaptationsAPI.hasAdaptationsModel(this.mPropertyBag),
@@ -1884,35 +1886,34 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given no CompVariant are present", function(assert) {
+		QUnit.test("Given no CompVariant are present", async function(assert) {
 			var oCompVariantFlexDataResponse = LoaderExtensions.loadResource({
 				dataType: "json",
 				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/contextBasedAdaptations/testMigrateCompVariants.json"),
 				async: false
 			});
 			oCompVariantFlexDataResponse.comp.variants = [];
-			sandbox.stub(InitialStorage, "loadFlexData").resolves(oCompVariantFlexDataResponse);
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "com.sap.app", oCompVariantFlexDataResponse);
 
 			return ContextBasedAdaptationsAPI.canMigrate(this.mPropertyBag).then(function(bCanMigrate) {
 				assert.strictEqual(bCanMigrate, false, "then no migration needed");
 			});
 		});
 
-		QUnit.test("Given no FLVariants are present", function(assert) {
+		QUnit.test("Given no FLVariants are present", async function(assert) {
 			var oFLVariantFlexDataResponse = LoaderExtensions.loadResource({
 				dataType: "json",
 				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/contextBasedAdaptations/testMigrateFLVariants.json"),
 				async: false
 			});
 			oFLVariantFlexDataResponse.variants = [];
-			sandbox.stub(InitialStorage, "loadFlexData").resolves(oFLVariantFlexDataResponse);
-
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "com.sap.app", oFLVariantFlexDataResponse);
 			return ContextBasedAdaptationsAPI.canMigrate(this.mPropertyBag).then(function(bCanMigrate) {
 				assert.strictEqual(bCanMigrate, false, "then no migration needed");
 			});
 		});
 
-		QUnit.test("Given no restricted CompVariants and at least one unrestricted CompVariant are present", function(assert) {
+		QUnit.test("Given no restricted CompVariants and at least one unrestricted CompVariant are present", async function(assert) {
 			var oCompVariantFlexDataResponse = LoaderExtensions.loadResource({
 				dataType: "json",
 				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/contextBasedAdaptations/testMigrateCompVariants.json"),
@@ -1929,13 +1930,13 @@ sap.ui.define([
 					oChange.content.contexts = {role: []};
 				}
 			});
-			sandbox.stub(InitialStorage, "loadFlexData").resolves(oCompVariantFlexDataResponse);
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "com.sap.app", oCompVariantFlexDataResponse);
 			return ContextBasedAdaptationsAPI.canMigrate(this.mPropertyBag).then(function(bCanMigrate) {
 				assert.strictEqual(bCanMigrate, false, "then no migration needed");
 			});
 		});
 
-		QUnit.test("Given no restricted FLVariants and at least one unrestricted FLVariants are present", function(assert) {
+		QUnit.test("Given no restricted FLVariants and at least one unrestricted FLVariants are present", async function(assert) {
 			var oFLVariantFlexDataResponse = LoaderExtensions.loadResource({
 				dataType: "json",
 				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/contextBasedAdaptations/testMigrateFLVariants.json"),
@@ -1948,7 +1949,7 @@ sap.ui.define([
 				return undefined;
 			});
 			oFLVariantFlexDataResponse.variantChanges = [];
-			sandbox.stub(InitialStorage, "loadFlexData").resolves(oFLVariantFlexDataResponse);
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "com.sap.app", oFLVariantFlexDataResponse);
 			// Stub getAllVariants to return variants that would be visible in an RTA environment only
 			var aMigrationLayers = [Layer.VENDOR, Layer.PARTNER, Layer.CUSTOMER_BASE, Layer.CUSTOMER];
 			var oGetAllVariantsStub = sandbox.stub(VariantManagementState, "getAllVariants");
@@ -2027,13 +2028,13 @@ sap.ui.define([
 			assert.strictEqual(aWrittenObjects.length, iTotal, "Written files has correct number");
 		}
 
-		QUnit.test("Given at least one restricted CompVariants and at least one unrestricted CompVariant are present", function(assert) {
+		QUnit.test("Given at least one restricted CompVariants and at least one unrestricted CompVariant are present", async function(assert) {
 			var oCompVariantFlexDataResponse = LoaderExtensions.loadResource({
 				dataType: "json",
 				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/contextBasedAdaptations/testMigrateCompVariants.json"),
 				async: false
 			});
-			sandbox.stub(InitialStorage, "loadFlexData").resolves(oCompVariantFlexDataResponse);
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "com.sap.app", oCompVariantFlexDataResponse);
 			this.oCreateContextBasedAdaptationStub = sandbox.stub(Storage.contextBasedAdaptation, "create").resolves({status: 201});
 			this.oWriteChangesStub = sandbox.stub(Storage, "write").resolves("Success");
 
@@ -2127,13 +2128,13 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given at least one restricted FLVariants and at least one unrestricted FLVariant are present", function(assert) {
+		QUnit.test("Given at least one restricted FLVariants and at least one unrestricted FLVariant are present", async function(assert) {
 			var oFLVariantFlexDataResponse = LoaderExtensions.loadResource({
 				dataType: "json",
 				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/contextBasedAdaptations/testMigrateFLVariants.json"),
 				async: false
 			});
-			sandbox.stub(InitialStorage, "loadFlexData").resolves(oFLVariantFlexDataResponse);
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "com.sap.app", oFLVariantFlexDataResponse);
 			this.oCreateContextBasedAdaptationStub = sandbox.stub(Storage.contextBasedAdaptation, "create").resolves({status: 201});
 			this.oWriteChangesStub = sandbox.stub(Storage, "write").resolves("Success");
 

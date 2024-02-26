@@ -4,26 +4,25 @@
 
 // Provides object sap.ui.fl.apply._internal.extensionPoint.Processor
 sap.ui.define([
+	"sap/base/util/merge",
+	"sap/ui/base/DesignTime",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/extensionPoint/Registry",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/changes/ExtensionPointState",
-	"sap/ui/fl/Utils",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/base/SyncPromise",
-	"sap/base/util/merge",
-	"sap/ui/base/DesignTime"
-],
-function(
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/Utils"
+], function(
+	merge,
+	DesignTime,
+	SyncPromise,
+	JsControlTreeModifier,
 	Applier,
 	ExtensionPointRegistry,
-	FlexState,
 	ExtensionPointState,
-	Utils,
-	JsControlTreeModifier,
-	SyncPromise,
-	merge,
-	DesignTime
+	ManifestUtils,
+	Utils
 ) {
 	"use strict";
 
@@ -107,10 +106,10 @@ function(
 		mPropertyBag.modifier = JsControlTreeModifier;
 		mPropertyBag.viewId = oExtensionPoint.view.getId();
 		mPropertyBag.componentId = oAppComponent.getId();
+		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 
 		return Processor.registerExtensionPoint(mExtensionPointInfo)
-		.then(FlexState.initialize.bind(FlexState, mPropertyBag))
-		// enhance exiting extension point changes with mExtensionPointInfo
+		// enhance existing extension point changes with mExtensionPointInfo
 		.then(ExtensionPointState.enhanceExtensionPointChanges.bind(ExtensionPointState, mPropertyBag, oExtensionPoint))
 		.then(Processor.createDefaultContent.bind(this, oExtensionPoint, bSkipInsertContent, applyExtensionPoint))
 		.then(Processor.addDefaultContentToExtensionPointInfo.bind(this, mExtensionPointInfo, bSkipInsertContent));

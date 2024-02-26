@@ -43,16 +43,6 @@ sap.ui.define([
 	 */
 	var FlexObjectState = {};
 
-	function initFlexStateAndSetReference(mPropertyBag) {
-		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
-		return FlexState.initialize({
-			componentId: mPropertyBag.componentId || Utils.getAppComponentForControl(mPropertyBag.selector).getId(),
-			reference: mPropertyBag.reference,
-			componentData: {},
-			manifest: {}
-		});
-	}
-
 	function getCompVariantEntities(mPropertyBag) {
 		var mCompEntities = FlexState.getCompVariantsMap(mPropertyBag.reference);
 		var aEntities = [];
@@ -193,13 +183,10 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.version] - The version for which the objects are retrieved
 	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
 	 */
-	FlexObjectState.getFlexObjects = function(mPropertyBag) {
-		return initFlexStateAndSetReference(mPropertyBag)
-		.then(function() {
-			return getChangePersistenceEntities(mPropertyBag);
-		}).then(function(aChangePersistenceEntities) {
-			return getCompVariantEntities(mPropertyBag).concat(aChangePersistenceEntities);
-		});
+	FlexObjectState.getFlexObjects = async function(mPropertyBag) {
+		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
+		const aChangePersistenceEntities = await getChangePersistenceEntities(mPropertyBag);
+		return getCompVariantEntities(mPropertyBag).concat(aChangePersistenceEntities);
 	};
 
 	/**

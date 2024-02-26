@@ -57,13 +57,7 @@ sap.ui.define([
 
 	QUnit.module("add", {
 		beforeEach() {
-			return Settings.getInstance()
-			.then(function() {
-				return FlexState.initialize({
-					componentId: sComponentId,
-					reference: sComponentId
-				});
-			});
+			return Settings.getInstance();
 		},
 		afterEach() {
 			FlexState.clearState(sComponentId);
@@ -280,18 +274,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("persist", {
-		beforeEach() {
-			FlexState.clearState(sComponentId);
-
-			return Promise.all([
-				FlexState.initialize({
-					componentId: sComponentId,
-					reference: sComponentId
-				}),
-				Settings.getInstance()
-			]);
-		},
 		afterEach() {
+			FlexState.clearState(sComponentId);
 			sandbox.restore();
 		}
 	}, function() {
@@ -581,12 +565,6 @@ sap.ui.define([
 			this.sPersistencyKey = "persistency.key";
 			this.sVariantId1 = "variantId1";
 			this.sVariantId2 = "variantId2";
-		},
-		beforeEach() {
-			return FlexState.initialize({
-				componentId: sComponentId,
-				reference: sComponentId
-			});
 		},
 		afterEach() {
 			FlexState.clearState(sComponentId);
@@ -885,12 +863,7 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey
 			};
 
-			return FlexState.initialize({
-				componentId: sComponentId,
-				reference: sComponentId
-			}).then(function() {
-				this.oVariant = CompVariantState.addVariant(this.oVariantData);
-			}.bind(this));
+			this.oVariant = CompVariantState.addVariant(this.oVariantData);
 		},
 		afterEach() {
 			FlexState.clearState(sComponentId);
@@ -1090,10 +1063,6 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
 			};
-			return FlexState.initialize({
-				componentId: sComponentId,
-				reference: sComponentId
-			}).then(Settings.getInstance);
 		},
 		afterEach() {
 			FlexState.clearState(sComponentId);
@@ -1416,10 +1385,6 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
 			};
-			return FlexState.initialize({
-				componentId: sComponentId,
-				reference: sComponentId
-			}).then(Settings.getInstance);
 		},
 		afterEach() {
 			FlexState.clearState(sComponentId);
@@ -1789,13 +1754,6 @@ sap.ui.define([
 	QUnit.module("overrideStandardVariant", {
 		before() {
 			this.sPersistencyKey = "persistency.key";
-			FlexState.clearState(sComponentId);
-		},
-		beforeEach() {
-			return FlexState.initialize({
-				componentId: sComponentId,
-				reference: sComponentId
-			}).then(Settings.getInstance);
 		},
 		afterEach() {
 			FlexState.clearState(sComponentId);
@@ -2009,14 +1967,7 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey
 			};
 
-			FlexState.clearState(sComponentId);
-
-			return FlexState.initialize({
-				componentId: sComponentId,
-				reference: sComponentId
-			}).then(function() {
-				this.oVariant = CompVariantState.addVariant(oVariantData);
-			}.bind(this));
+			this.oVariant = CompVariantState.addVariant(oVariantData);
 		},
 		afterEach() {
 			FlexState.clearState(sComponentId);
