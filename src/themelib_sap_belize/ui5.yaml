@@ -2,6 +2,7 @@
 specVersion: "3.0"
 type: theme-library
 metadata:
+  deprecated: true
   name: themelib_sap_belize
   copyright: |-
    OpenUI5
