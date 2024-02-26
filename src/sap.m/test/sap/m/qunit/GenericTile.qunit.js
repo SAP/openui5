@@ -226,6 +226,7 @@ sap.ui.define([
 						nullifyValue: true,
 						formatterValue: false,
 						valueColor: ValueColor.Good,
+						withMargin: false,
 						icon: "sap-icon://customer-financial-fact-sheet"
 					})
 				}),
@@ -304,6 +305,10 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		this.fnWithRenderAsserts(assert);
+	});
+
+	QUnit.test("Numeric Content rendering", function(assert) {
+		assert.ok(this.oGenericTile.mAggregations.tileContent[0].mAggregations.content.getDomRef().classList.value, "sapMNCValue WithoutMargin Good Loaded", "NumericContent assigned properly in the tile");
 	});
 
 	QUnit.test("GenericTile not rendered with link when in action mode", function(assert) {
