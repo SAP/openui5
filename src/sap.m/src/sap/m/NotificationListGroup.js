@@ -241,21 +241,16 @@ function(
 	 * @private
 	 */
 	NotificationListGroup.prototype._getGroupTitleInvisibleText = function() {
-
 		var readUnreadText = this.getUnread() ? UNREAD_TEXT : READ_TEXT,
-			priorityText,
 			priority = this.getPriority(),
-			counterText,
 			ariaTexts = [readUnreadText];
 
-			if (priority !== Priority.None) {
-				priorityText = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_PRIORITY', priority);
-				ariaTexts.push(priorityText);
-			}
+		if (priority !== Priority.None) {
+			ariaTexts.push(RESOURCE_BUNDLE.getText("NOTIFICATION_LIST_GROUP_PRIORITY", [priority]));
+		}
 
 		if (this.getShowItemsCounter()) {
-			counterText = RESOURCE_BUNDLE.getText("LIST_ITEM_COUNTER", [this._getVisibleItemsCount()]);
-			ariaTexts.push(counterText);
+			ariaTexts.push(RESOURCE_BUNDLE.getText("LIST_ITEM_COUNTER", [this._getVisibleItemsCount()]));
 		}
 
 		return this._groupTitleInvisibleText.setText(ariaTexts.join(' '));
