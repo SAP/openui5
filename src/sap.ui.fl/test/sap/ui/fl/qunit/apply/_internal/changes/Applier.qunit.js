@@ -17,9 +17,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
@@ -41,9 +41,9 @@ sap.ui.define([
 	DependencyHandler,
 	UIChangesState,
 	FlexState,
+	ManifestUtils,
 	FlexObjectFactory,
 	ChangeHandlerBase,
-	FlexController,
 	Layer,
 	FlUtils,
 	sinon,
@@ -84,7 +84,6 @@ sap.ui.define([
 				this.oControl = new Control("someId");
 				this.oAnotherControl = new Control("someOtherId");
 			}.bind(this));
-			this.oFlexController = new FlexController("testScenarioComponent");
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl").callsFake(function() {
 				return Promise.resolve({success: true});
 			});
@@ -1172,6 +1171,30 @@ sap.ui.define([
 				assert.notOk(oResult.success, "success in the return object is set to false");
 				assert.strictEqual(oResult.error.message, sNotApplicableMessage1);
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
+			}.bind(this));
+		});
+
+		QUnit.test("applyAllChangesForControl with control recreation and open processing", function(assert) {
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testScenarioComponent");
+			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+				mChanges: {
+					label: [this.oChange]
+				},
+				mDependencies: {},
+				mDependentChangesOnMe: {}
+			}));
+			this.oControl._bApplierTest = "foo";
+			return Applier.applyAllChangesForControl(this.oAppComponent, "testScenarioComponent", this.oControl)
+			.then(function() {
+				Applier.applyAllChangesForControl(this.oAppComponent, "testScenarioComponent", this.oControl);
+				this.oControl.destroy();
+				const oNewControl = new Label("label");
+				oNewControl._bApplierTest = "bar";
+				return Applier.applyAllChangesForControl(this.oAppComponent, "testScenarioComponent", oNewControl);
+			}.bind(this))
+			.then(function() {
+				assert.strictEqual(this.oChangeHandlerApplyChangeStub.getCall(0).args[1]._bApplierTest, "foo", "first call: old control");
+				assert.strictEqual(this.oChangeHandlerApplyChangeStub.getCall(1).args[1]._bApplierTest, "bar", "second call: new control");
 			}.bind(this));
 		});
 	});
