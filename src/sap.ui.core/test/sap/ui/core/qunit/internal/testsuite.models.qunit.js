@@ -355,6 +355,53 @@ sap.ui.define(function() {
 				ui5 : {
 					language : "en-US"
 				}
+			},
+
+			// *************************************************************************
+			// Tests considering MockServer
+			// *************************************************************************
+			// contained in testsuite.mockserver.qunit.js
+			MockServerSinon1: {
+				title: "sap.ui.core.util.MockServer (Sinon: V1)",
+				module: ["test-resources/sap/ui/core/qunit/mockserver/MockServer.qunit"],
+				sinon: 1,
+				ui5: {
+					libs: ["sap.m"]
+				}
+			},
+			MockServerFeatureSinon1: {
+				title: "sap.ui.core.util.MockServer (Sinon: V1): given data and complex filter features",
+				module: ["test-resources/sap/ui/core/qunit/mockserver/MockServerFeature.qunit"],
+				sinon: 1
+			},
+			MockServerAPFSinon1: {
+				title: "sap.ui.core.util.MockServer (Sinon: V1): APF model",
+				module: ["test-resources/sap/ui/core/qunit/mockserver/MockServerAPF.qunit"],
+				sinon: 1
+			},
+			DraftEnabledMockServerSinon1: {
+				title: "sap.ui.core.util.DraftEnabledMockServer (Sinon: V1)",
+				module: ["test-resources/sap/ui/core/qunit/mockserver/DraftEnabledMockServer.qunit"],
+				sinon: 1
+			},
+			MockServer: {
+				title: "sap.ui.core.util.MockServer (Sinon: V4)",
+				module: ["test-resources/sap/ui/core/qunit/mockserver/MockServer.qunit"],
+				ui5: {
+					libs: ["sap.m"]
+				}
+			},
+			MockServerFeature: {
+				title: "sap.ui.core.util.MockServer (Sinon: V4): given data and complex filter features",
+				module: ["test-resources/sap/ui/core/qunit/mockserver/MockServerFeature.qunit"]
+			},
+			MockServerAPF: {
+				title: "sap.ui.core.util.MockServer (Sinon: V4): APF model",
+				module: ["test-resources/sap/ui/core/qunit/mockserver/MockServerAPF.qunit"]
+			},
+			DraftEnabledMockServer: {
+				title: "sap.ui.core.util.DraftEnabledMockServer (Sinon: V4)",
+				module: ["test-resources/sap/ui/core/qunit/mockserver/DraftEnabledMockServer.qunit"]
 			}
 		}
 	};
