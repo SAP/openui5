@@ -120,28 +120,7 @@ sap.ui.define([
 	 *   <mvc:View> tag
 	 */
 	function mvcView(sPrefix, mRequiredModules, that) {
-		var sAlias,
-			mAlias2Path = {},
-			sFakePath,
-			sView = `<mvc:View`
-				+ ` xmlns="sap.ui.core"`
-				+ ` xmlns:mvc="sap.ui.core.mvc"`
-				+ ` xmlns:` + (sPrefix || `template`)
-					+ `="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"`;
-
-		if (mRequiredModules) {
-			for (sAlias in mRequiredModules) {
-				sFakePath = `foo/` + sAlias;
-				mAlias2Path[sAlias] = sFakePath;
-				that.expectRequire(true, [sFakePath], function () {
-					return [mRequiredModules[sAlias]];
-				});
-			}
-
-			return sView
-				+ ` template:require="` + JSON.stringify(mAlias2Path).replaceAll(`"`, `'`) + `">`;
-		}
-		return sView + `>`;
+		return templateRequire(`<mvc:View>`, sPrefix, mRequiredModules, that);
 	}
 
 	/**
@@ -168,6 +147,43 @@ sap.ui.define([
 			};
 
 		return XMLPreprocessor.process(oViewContent, oViewInfo, mSettings);
+	}
+
+	/**
+	 * Decorates the given tag with namespace definitions and requires modules. Takes care of self
+	 * closing tags.
+	 *
+	 * @param {string} sTag
+	 *   some XML tag
+	 * @param {string} [sPrefix="template"]
+	 *   the prefix for the template namespace
+	 * @param {Object<string,object>} [mRequiredModules]
+	 *   map from alias to module content which should be required
+	 * @param {object} [that]
+	 *   the test context
+	 * @returns {string}
+	 *   <mvc:View> tag
+	 */
+	function templateRequire(sTag, sPrefix, mRequiredModules, that) {
+		sPrefix ||= `template`;
+		const sSuffix = sTag.endsWith(`/>`) ? `/>` : `>`;
+		sTag = sTag.slice(0, -sSuffix.length)
+			+ ` xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"`
+			+ ` xmlns:${sPrefix}="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"`;
+
+		if (mRequiredModules) {
+			const mAlias2Path = {};
+			for (const sAlias in mRequiredModules) {
+				mAlias2Path[sAlias] = typeof mRequiredModules[sAlias] === `string`
+				? mRequiredModules[sAlias]
+				: `foo/` + sAlias;
+			}
+			that.expectRequire(true, Object.values(mAlias2Path), function () {
+				return Object.values(mRequiredModules);
+			});
+			sTag += ` ${sPrefix}:require="${JSON.stringify(mAlias2Path).replaceAll(`"`, `'`)}"`;
+		}
+		return sTag + sSuffix;
 	}
 
 	/**
@@ -812,8 +828,11 @@ sap.ui.define([
 		);
 	});
 
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
 	//*********************************************************************************************
-	QUnit.test(`XML with template:if test='{formatter:...}'`, function (assert) {
+	QUnit.test(`@deprecated XML with template:if test='{formatter:...}'`, function (assert) {
 		window.foo = {
 			Helper : {
 				not : function (oRawValue) {
@@ -833,10 +852,34 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test(`XML with template:if test='{formatter:...}'`, function (assert) {
+		return this.check(assert, [
+			mvcView(``, {
+				foo : {
+					Helper : {
+						not : function (oRawValue) {
+							return !oRawValue;
+						}
+					}
+				}
+			}, this),
+			`<template:if test="{formatter: 'foo.Helper.not', path:'/flag'}">`,
+			`<In id="flag"/>`,
+			`</template:if>`,
+			`</mvc:View>`
+		], {
+			models : new JSONModel({flag : false})
+		});
+	});
+
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
+	//*********************************************************************************************
 	[{
 		aViewContent : [
 			mvcView(),
-			`<template:if test="` + `{formatter: 'foo.Helper.fail', path:'/flag'}` + `">`,
+			`<template:if test="{formatter: 'foo.Helper.fail', path:'/flag'}">`,
 			`<Out/>`,
 			`</template:if>`,
 			`</mvc:View>`
@@ -850,7 +893,7 @@ sap.ui.define([
 	}, {
 		aViewContent : [
 			mvcView(),
-			`<Fragment fragmentName="` + `{formatter: 'foo.Helper.fail', path:'/flag'}`
+			`<Fragment fragmentName="{formatter: 'foo.Helper.fail', path:'/flag'}`
 				+ `" type="XML"/>`,
 			`</mvc:View>`
 		],
@@ -858,7 +901,7 @@ sap.ui.define([
 	}, {
 		aViewContent : [
 			mvcView(),
-			`<ExtensionPoint name="` + `{formatter: 'foo.Helper.fail', path:'/flag'}` + `"/>`,
+			`<ExtensionPoint name="{formatter: 'foo.Helper.fail', path:'/flag'}"/>`,
 			`</mvc:View>`
 		],
 		bAsIs : true // view remains "as is"
@@ -867,7 +910,7 @@ sap.ui.define([
 			var aViewContent = oFixture.aViewContent,
 				vExpected = oFixture.bAsIs ? [aViewContent[1]] : undefined;
 
-			QUnit.test(aViewContent[1] + `, exception in formatter, warn = ` + bWarn,
+			QUnit.test(`@deprecated ${aViewContent[1]}, exception in formatter, warn = ${bWarn}`,
 				function (assert) {
 					var oError = new Error(`deliberate failure`);
 
@@ -904,6 +947,71 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		aViewContent : [
+			`<template:if test="{formatter: 'foo.Helper.fail', path:'/flag'}">`,
+			`<Out/>`,
+			`</template:if>`,
+			`</mvc:View>`
+		],
+		aDebugMessages : [
+			{m : `[ 0] Start processing qux`},
+			{m : `[ 1] test == undefined --> false`, d : 1},
+			{m : `[ 1] Finished`, d : 3},
+			{m : `[ 0] Finished processing qux`}
+		]
+	}, {
+		aViewContent : [
+			`<Fragment fragmentName="{formatter: 'foo.Helper.fail', path:'/flag'}`
+				+ `" type="XML"/>`,
+			`</mvc:View>`
+		],
+		bAsIs : true // view remains "as is"
+	}, {
+		aViewContent : [
+			`<ExtensionPoint name="{formatter: 'foo.Helper.fail', path:'/flag'}"/>`,
+			`</mvc:View>`
+		],
+		bAsIs : true // view remains "as is"
+	}].forEach(function (oFixture) {
+		[false, true].forEach(function (bWarn) {
+			var aViewContent = [...oFixture.aViewContent],
+				vExpected = oFixture.bAsIs ? [aViewContent[0]] : undefined;
+
+			QUnit.test(aViewContent[0] + `, exception in formatter, warn = ` + bWarn,
+				function (assert) {
+					this.mock(Component).expects(`getCustomizing`).never();
+					if (!bWarn) {
+						Log.setLevel(Log.Level.ERROR, sComponent);
+					}
+					warn(this.oLogMock,
+							sinon.match(/\[ \d\] Error in formatter: Error: deliberate failure/),
+							aViewContent[0])
+						.exactly(bWarn ? 1 : 0); // do not construct arguments in vain!
+					aViewContent.unshift(mvcView(``, {
+						foo : {
+							Helper : {
+								fail : function () {
+									throw new Error(`deliberate failure`);
+								}
+							}
+						}
+					}, this));
+
+					if (bWarn && oFixture.aDebugMessages) {
+						return this.checkTracing(assert, true, oFixture.aDebugMessages,
+							aViewContent, {models : new JSONModel({flag : true})}, vExpected);
+					}
+
+					return this.check(assert, aViewContent, {
+						models : new JSONModel({flag : true})
+					}, vExpected);
+				}
+			);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		aViewContent : [
 			mvcView(),
 			`<template:if test="{unrelated>/some/path}">`,
 			`<Out/>`,
@@ -913,7 +1021,7 @@ sap.ui.define([
 	}, {
 		aViewContent : [
 			mvcView(),
-			`<template:if test="` + `{path:'/some/path',formatter:'.someMethod'}` + `">`,
+			`<template:if test="{path:'/some/path',formatter:'.someMethod'}">`,
 			`<Out/>`,
 			`</template:if>`,
 			`</mvc:View>`
@@ -922,8 +1030,8 @@ sap.ui.define([
 	}, {
 		aViewContent : [
 			mvcView(),
-			`<template:if test="` + `{path:'/some/path',formatter:'.someMethod'}`
-				+ `{path:'/some/path',formatter:'foo.bar'}` + `">`,
+			`<template:if test="{path:'/some/path',formatter:'.someMethod'}`
+				+ `{path:'/some/path',formatter:'foo.bar'}">`,
 			`<Out/>`,
 			`</template:if>`,
 			`</mvc:View>`
@@ -979,18 +1087,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test(`Do not process nested template:ifs if not necessary`, function (assert) {
-		window.foo = {
-			Helper : {
+	QUnit.test(`Don't process nested template:ifs if not necessary`, function (assert) {
+		return this.check(assert, [
+			mvcView(``, {
 				forbidden : function () {
 					assert.ok(false, `formatter MUST not be called!`);
 				}
-			}
-		};
-		return this.check(assert, [
-			mvcView(),
+			}, this),
 			`<template:if test="false">`,
-			`<template:if test="{formatter: 'foo.Helper.forbidden', path:'/flag'}"/>`,
+			`<template:if test="{formatter: 'forbidden', path:'/flag'}"/>`,
 			`</template:if>`,
 			`</mvc:View>`
 		], {
@@ -1245,8 +1350,11 @@ sap.ui.define([
 		]);
 	});
 
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
 	//*********************************************************************************************
-	QUnit.test(`binding resolution`, function (assert) {
+	QUnit.test(`@deprecated binding resolution`, function (assert) {
 		window.foo = {
 			Helper : {
 				help : function (vRawValue) {
@@ -1270,7 +1378,7 @@ sap.ui.define([
 			`<Label text="A \\{ is a special character"/>`, // escaping MUST NOT be changed!
 			`<Text text="{unrelated>/some/path}"/>`, // unrelated binding MUST NOT be changed!
 			// avoid warning "Function name(s) .someMethod not found"
-			`<Text text="` + `{path:'/some/path',formatter:'.someMethod'}` + `"/>`,
+			`<Text text="{path:'/some/path',formatter:'.someMethod'}"/>`,
 			`<html:img src="{formatter: 'foo.Helper.help',`
 				+ ` path: '/com.sap.vocabularies.UI.v1.HeaderInfo/TypeImageUrl'}"/>`,
 			`</mvc:View>`
@@ -1297,9 +1405,64 @@ sap.ui.define([
 			`<Label text="A \\{ is a special character"/>`,
 			// Note: XML serializer outputs &gt; encoding...
 			`<Text text="{unrelated&gt;/some/path}"/>`,
-			`<Text text="` + `{path:'/some/path',formatter:'.someMethod'}` + `"/>`,
+			`<Text text="{path:'/some/path',formatter:'.someMethod'}"/>`,
 			// TODO is this the expected behaviour? And what about text nodes?
 			`<html:img src="/coco/apps/main/img/Icons/product_48.png"/>`
+		]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test(`binding resolution`, function (assert) {
+		return this.check(assert, [
+			mvcView(``, {
+				Helper : {
+					help : function (vRawValue) {
+						return vRawValue.String || `{` + vRawValue.Path + `}`;
+					},
+					nil : function () {
+						return null;
+					}
+				}
+			}, this).replace(`>`, ` xmlns:html="http://www.w3.org/1999/xhtml">`),
+			`<!-- some comment node -->`, // to test skipping of none ELEMENT_NODES while visiting
+			`<Label text="{formatter: 'Helper.help',`
+				+ ` path: '/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label'}"/>`,
+			`<Text maxLines="{formatter: 'Helper.nil',`
+				+ ` path: '/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value'}"`
+				+ ` text="{formatter: 'Helper.help',`
+				+ ` path: '/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value'}"/>`,
+			`<Label text="A \\{ is a special character"/>`, // escaping MUST NOT be changed!
+			`<Text text="{unrelated>/some/path}"/>`, // unrelated binding MUST NOT be changed!
+			// avoid error "formatter function .someMethod not found!"
+			`<Text text="{path:'/some/path',formatter:'.someMethod'}"/>`,
+			`<Text text="{formatter: 'Helper.help',`
+				+ ` path: '/com.sap.vocabularies.UI.v1.HeaderInfo/TypeImageUrl'}"/>`,
+			`</mvc:View>`
+		], {
+			models : new JSONModel({
+				"com.sap.vocabularies.UI.v1.HeaderInfo" : {
+					TypeImageUrl : {
+						String : `/coco/apps/main/img/Icons/product_48.png`
+					},
+					Title : {
+						Label : {
+							String : `Customer`
+						},
+						Value : {
+							Path : `CustomerName`
+						}
+					}
+				}
+			})
+		}, [
+			`<!-- some comment node -->`,
+			`<Label text="Customer"/>`,
+			`<Text text="{CustomerName}"/>`, // "maxLines" has been removed
+			`<Label text="A \\{ is a special character"/>`,
+			// Note: XML serializer outputs &gt; encoding...
+			`<Text text="{unrelated&gt;/some/path}"/>`,
+			`<Text text="{path:'/some/path',formatter:'.someMethod'}"/>`,
+			`<Text text="/coco/apps/main/img/Icons/product_48.png"/>`
 		]);
 	});
 
@@ -1356,9 +1519,12 @@ sap.ui.define([
 	 * //[object String]: ManagedObject#getProperty unwraps String values
 	 */
 
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
 	//*********************************************************************************************
 	[false, true].forEach(function (bDebug) {
-		var sTitle = `binding resolution: interface to formatter, debug = ` + bDebug;
+		var sTitle = `@deprecated binding resolution: interface to formatter, debug = ` + bDebug;
 
 		QUnit.test(sTitle, function (assert) {
 			var oModel = new JSONModel({
@@ -1668,7 +1834,320 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bDebug) {
-		QUnit.test(`binding resolution, exception in formatter, debug = ` + bDebug,
+		var sTitle = `binding resolution: interface to formatter, debug = ` + bDebug;
+
+		QUnit.test(sTitle, function (assert) {
+			var oModel = new JSONModel({
+					somewhere : {
+						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
+							Title : {
+								Label : {
+									String : `Customer`
+								},
+								Value : {
+									Path : `CustomerName`
+								}
+							}
+						}
+					}
+				}),
+				that = this;
+
+			/*
+			 * Check interface.
+			 *
+			 * @param {object} oInterface
+			 * @param {string} sExpectedPath
+			 */
+			function checkInterface(oInterface, sExpectedPath) {
+				assert.throws(function () {
+					oInterface.getInterface();
+				}, /Missing path/);
+				assert.throws(function () {
+					oInterface.getInterface(0);
+				}, /Not the root formatter of a composite binding/);
+				assert.strictEqual(oInterface.getInterface(`String`).getPath(),
+					sExpectedPath + `/String`);
+				assert.strictEqual(oInterface.getInterface(`/absolute/path`).getPath(),
+					`/absolute/path`);
+				assert.strictEqual(
+					oInterface.getInterface(`/absolute`).getInterface(`path`).getPath(),
+					`/absolute/path`);
+
+				assert.strictEqual(oInterface.getModel(), oModel);
+				assert.strictEqual(oInterface.getPath(), sExpectedPath);
+				//TODO getPath("foo/bar")? Note: getPath("/absolute/path") does not make sense!
+
+				assert.strictEqual(oInterface.getSetting(`bindTexts`), true, `settings`);
+				assert.throws(function () {
+					oInterface.getSetting(`bindingContexts`);
+				}, /Illegal argument: bindingContexts/);
+				assert.throws(function () {
+					oInterface.getSetting(`models`);
+				}, /Illegal argument: models/);
+			}
+
+			/*
+			 * Dummy formatter function.
+			 *
+			 * @param {object} oInterface
+			 * @param {any} vRawValue
+			 * @returns {string}
+			 */
+			function help(oInterface, vRawValue) {
+				var sExpectedPath = vRawValue.String
+						? `/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label`
+						: `/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value`;
+
+				checkInterface(oInterface, sExpectedPath);
+
+				return vRawValue.String || `{` + vRawValue.Path + `}`;
+			}
+			help.requiresIContext = true;
+
+			/*
+			 * Check interface to ith part.
+			 *
+			 * @param {object} oInterface
+			 * @param {number} i
+			 */
+			function checkInterfaceForPart(oInterface, i) {
+				var oInterface2Part,
+					oModel = oInterface.getModel(i);
+
+				// interface to ith part
+				oInterface2Part = oInterface.getInterface(i);
+
+				// Note: methods of oInterface2Part will ignore a further index like 42
+				// just like they always did except for the root formatter of a
+				// composite binding
+				assert.strictEqual(oInterface2Part.getModel(), oModel);
+				assert.strictEqual(oInterface2Part.getModel(42), oModel);
+				assert.strictEqual(oInterface2Part.getPath(), oInterface.getPath(i));
+				assert.strictEqual(oInterface2Part.getPath(42), oInterface.getPath(i));
+
+				assert.throws(function () {
+					oInterface2Part.getInterface();
+				}, /Missing path/);
+				assert.throws(function () {
+					oInterface2Part.getInterface(0);
+				}, /Not the root formatter of a composite binding/);
+				assert.strictEqual(oInterface2Part.getInterface(undefined, `foo/bar`).getPath(),
+					oInterface.getPath(i) + `/foo/bar`);
+				assert.strictEqual(oInterface2Part.getInterface(`foo/bar`).getPath(),
+					oInterface.getPath(i) + `/foo/bar`);
+				assert.strictEqual(
+					oInterface2Part.getInterface(`foo`).getInterface(`bar`).getPath(),
+					oInterface.getPath(i) + `/foo/bar`);
+				assert.strictEqual(
+					oInterface2Part.getInterface(undefined, `/absolute/path`).getPath(),
+					`/absolute/path`);
+				assert.strictEqual(oInterface2Part.getInterface(`/absolute/path`).getPath(),
+					`/absolute/path`);
+
+				assert.strictEqual(oInterface.getSetting(`bindTexts`), true, `settings`);
+				assert.throws(function () {
+					oInterface.getSetting(`bindingContexts`);
+				}, /Illegal argument: bindingContexts/);
+				assert.throws(function () {
+					oInterface.getSetting(`models`);
+				}, /Illegal argument: models/);
+
+				// drill-down into ith part relatively
+				oInterface2Part = oInterface.getInterface(i, `String`);
+
+				assert.strictEqual(oInterface2Part.getModel(), oModel);
+				assert.strictEqual(oInterface2Part.getPath(), oInterface.getPath(i) + `/String`);
+				assert.strictEqual(oInterface2Part.getSetting(`bindTexts`), true, `settings`);
+
+				try {
+					that.mock(oModel).expects(`createBindingContext`).callThrough();
+
+					// "drill-down" into ith part with absolute path
+					oInterface2Part = oInterface.getInterface(i, `/absolute/path`);
+
+					assert.strictEqual(oInterface2Part.getModel(), oModel);
+					assert.strictEqual(oInterface2Part.getPath(), `/absolute/path`);
+					assert.strictEqual(oInterface2Part.getSetting(`bindTexts`), true, `settings`);
+				} finally {
+					oModel.createBindingContext.restore();
+				}
+
+				try {
+					// simulate a model which creates the context asynchronously
+					that.mock(oModel).expects(`createBindingContext`).twice();
+
+					oInterface2Part = oInterface.getInterface(i, `String`);
+
+					assert.ok(false, `getInterface() MUST throw error for async contexts`);
+				} catch (e) {
+					assert.strictEqual(e.message,
+						`Model could not create binding context synchronously: ` + oModel);
+				} finally {
+					oModel.createBindingContext.restore();
+				}
+			}
+
+			/*
+			 * Dummy formatter function for a composite binding to test access to ith part.
+			 *
+			 * @param {object} oInterface
+			 * @param {any} [vRawValue]
+			 * @returns {string}
+			 */
+			function formatParts(oInterface, vRawValue) {
+				var i, aResult;
+
+				/*
+				 * Formats the given raw value as either label or value.
+				 * @param {object} o
+				 * @returns {string}
+				 */
+				function formatLabelOrValue(o) {
+					return o.String ? `[` + o.String + `]` : `{` + o.Path + `}`;
+				}
+
+				try {
+					// access both getModel and getPath to test robustness
+					if (oInterface.getModel() || oInterface.getPath()) {
+						checkInterface(oInterface,
+							`/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label`);
+
+						return formatLabelOrValue(vRawValue);
+					}
+
+					// root formatter for a composite binding
+					aResult = [];
+					assert.throws(function () {
+						oInterface.getInterface();
+					}, /Invalid index of part: undefined/);
+					assert.throws(function () {
+						oInterface.getInterface(-1);
+					}, /Invalid index of part: -1/);
+					assert.strictEqual(oInterface.getModel(), undefined,
+						`exactly as documented`);
+					assert.strictEqual(oInterface.getPath(), undefined,
+						`exactly as documented`);
+
+					// "probe for the smallest non-negative integer"
+					// access both getModel and getPath to test robustness
+					for (i = 0; oInterface.getModel(i) || oInterface.getPath(i); i += 1) {
+						checkInterfaceForPart(oInterface, i);
+
+						aResult.push(formatLabelOrValue(
+							oInterface.getModel(i).getProperty(oInterface.getPath(i))
+						));
+					}
+
+					assert.strictEqual(oInterface._slice(0, i), oInterface);
+					assert.strictEqual(oInterface._slice(0, i + 1), oInterface);
+
+					assert.throws(function () {
+						oInterface.getInterface(i);
+					}, new RegExp(`Invalid index of part: ` + i));
+					assert.strictEqual(oInterface.getModel(i), undefined,
+						`exactly as documented`);
+					assert.strictEqual(oInterface.getPath(i), undefined,
+						`exactly as documented`);
+					return aResult.join(` `);
+				} catch (e) {
+					assert.ok(false, e.stack || e);
+					return undefined;
+				}
+			}
+			formatParts.requiresIContext = true;
+
+			/*
+			 * Dummy formatter function to check that only <code>requiresIContext = true</code>
+			 * counts.
+			 *
+			 * @param {any} vRawValue
+			 * @returns {string}
+			 */
+			function other() {
+				assert.strictEqual(arguments.length, 1);
+			}
+			other.requiresIContext = `ignored`;
+
+			return this.checkTracing(assert, bDebug, [
+				{m : `[ 0] Start processing qux`},
+				{m : `[ 0] undefined = /somewhere/com.sap.vocabularies.UI.v1.HeaderInfo`},
+				{m : `[ 0] Removed attribute text`, d : 1},
+				{m : `[ 0] text = Customer`, d : 2},
+				{m : `[ 0] text = Value: {CustomerName}`, d : 3},
+				{m : `[ 0] text = Customer: {CustomerName}`, d : 4},
+				{m : `[ 0] Binding not ready for attribute text`, d : 5},
+				{m : `[ 0] text = [Customer] {CustomerName}`, d : 6},
+				{m : `[ 0] text = [Customer]`, d : 7},
+				{m : `[ 0] text = Customer: {CustomerName}`, d : 8},
+				{m : `[ 0] text = [Customer] {CustomerName}`, d : 9},
+				{m : `[ 0] text = Customer: [Customer] {CustomerName}`, d : 10},
+				{m : `[ 0] text = Customer - [Customer] {CustomerName}`, d : 11},
+				{m : `[ 0] text = [Customer] {CustomerName} - Customer`, d : 12},
+				{m : `[ 0] Finished processing qux`}
+			], [
+				mvcView(``, {
+					foo : {
+						Helper : {
+							formatParts : formatParts,
+							help : help,
+							other : other
+						}
+					}
+				}, this),
+				`<Text text="{formatter: 'foo.Helper.other', path: 'Title/Label'}"/>`,
+				`<Text text="{formatter: 'foo.Helper.help', path: 'Title/Label'}"/>`,
+				`<Text text="Value: {formatter: 'foo.Helper.help', path: 'Title/Value'}"/>`,
+				`<Text text="{formatter: 'foo.Helper.help', path: 'Title/Label'}`
+					+ `: {formatter: 'foo.Helper.help', path: 'Title/Value'}"/>`,
+				`<Text text="{unrelated>/some/path}"/>`,
+				`<Text text="{parts: [{path: 'Title/Label'}, {path: 'Title/Value'}],`
+					+ ` formatter: 'foo.Helper.formatParts'}"/>`,
+				`<Text text="{formatter: 'foo.Helper.formatParts', path: 'Title/Label'}"/>`,
+				// check that requiresIContext works inside expression binding
+				`<Text text="{= \${Title/Label/String} + ': '`
+					+ `+ \${formatter: 'foo.Helper.help', path: 'Title/Value'} }"/>`,
+				`<Text text="{= \${parts: [{path: 'Title/Label'}, {path: 'Title/Value'}],`
+					+ ` formatter: 'foo.Helper.formatParts'} }"/>`,
+				`<Text text="{= \${Title/Label/String} + ': '`
+					+ ` + \${parts: [{path: 'Title/Label'}, {path: 'Title/Value'}],`
+					+ ` formatter: 'foo.Helper.formatParts'} }"/>`,
+				`<Text text="{= \${formatter: 'foo.Helper.help', path: 'Title/Label'}`
+					+ ` + ' - ' + \${parts: [{path: 'Title/Label'}, {path: 'Title/Value'}],`
+					+ ` formatter: 'foo.Helper.formatParts'} }"/>`,
+				`<Text text="{= \${parts: [{path: 'Title/Label'}, {path: 'Title/Value'}],`
+					+ ` formatter: 'foo.Helper.formatParts'} + ' - '`
+					+ ` + \${formatter: 'foo.Helper.help', path: 'Title/Label'} }"/>`,
+				`</mvc:View>`
+			], {
+				models : oModel,
+				bindingContexts : oModel.createBindingContext(
+						`/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo`),
+				bindTexts : true
+			}, [
+				`<Text/>`,
+				`<Text text="Customer"/>`,
+				`<Text text="Value: {CustomerName}"/>`,
+				`<Text text="Customer: {CustomerName}"/>`,
+				// Note: XML serializer outputs &gt; encoding...
+				`<Text text="{unrelated&gt;/some/path}"/>`,
+				`<Text text="[Customer] {CustomerName}"/>`,
+				`<Text text="[Customer]"/>`,
+				`<Text text="Customer: {CustomerName}"/>`,
+				`<Text text="[Customer] {CustomerName}"/>`,
+				`<Text text="Customer: [Customer] {CustomerName}"/>`,
+				`<Text text="Customer - [Customer] {CustomerName}"/>`,
+				`<Text text="[Customer] {CustomerName} - Customer"/>`
+			]);
+		});
+	});
+
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
+	//*********************************************************************************************
+	[false, true].forEach(function (bDebug) {
+		QUnit.test(`@deprecated binding resolution, exception in formatter, debug = ` + bDebug,
 			function (assert) {
 				window.foo = {
 						Helper : {
@@ -1690,6 +2169,46 @@ sap.ui.define([
 					`<In text="{formatter: 'foo.Helper.fail',`
 						+ ` path: '/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label'}"/>`,
 					`<In text="{formatter: 'foo.Helper.fail',`
+						+ ` path: '/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value'}"/>`,
+					`</mvc:View>`
+				], {
+					models : new JSONModel({
+						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
+							Title : {
+								Label : {
+									String : `Customer`
+								},
+								Value : {
+									Path : `CustomerName`
+								}
+							}
+						}
+					})
+				});
+			}
+		);
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bDebug) {
+		QUnit.test(`binding resolution, exception in formatter, debug = ` + bDebug,
+			function (assert) {
+				return this.checkTracing(assert, bDebug, [
+					{m : `[ 0] Start processing qux`},
+					{m : `[ 0] Error in formatter of attribute text Error: deliberate failure`,
+						d : 1},
+					{m : `[ 0] Error in formatter of attribute text Error: deliberate failure`,
+						d : 2},
+					{m : `[ 0] Finished processing qux`}
+				], [
+					mvcView(``, {
+						fail : function () {
+							throw new Error(`deliberate failure`);
+						}
+					}, this),
+					`<In text="{formatter: 'fail',`
+						+ ` path: '/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label'}"/>`,
+					`<In text="{formatter: '.fail',` // leading dot makes no difference here
 						+ ` path: '/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value'}"/>`,
 					`</mvc:View>`
 				], {
@@ -2320,7 +2839,7 @@ sap.ui.define([
 	QUnit.test(`template:repeat, startIndex & length`, function (assert) {
 		return this.check(assert, [
 			mvcView(),
-			`<template:repeat list="` + `{path:'/items',startIndex:1,length:2}` + `">`,
+			`<template:repeat list="{path:'/items',startIndex:1,length:2}">`,
 			`<In src="{src}"/>`,
 			`</template:repeat>`,
 			`</mvc:View>`
@@ -2514,7 +3033,10 @@ sap.ui.define([
 		], `Missing variable name for {0}`);
 	});
 
-	[/**@deprecated As of version 1.120.0*/false, true].forEach(function (bAsync) {
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
+	[false, true].forEach(function (bAsync) {
 		[false, true].forEach(function (bDebug) {
 			//**************************************************************************************
 			QUnit.test(`@deprecated fragment support incl. template:require, async = ` + bAsync
@@ -2523,9 +3045,9 @@ sap.ui.define([
 					sTextElement = `<Text xmlns="sap.ui.core" xmlns:template=`
 						+ `"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"`
 						+ ` template:require="` + sModuleName + `" text="`
-						+ `{formatter: 'foo.Helper.bar', path: '/flag'}` + `"/>`,
+						+ `{formatter: 'foo.Helper.bar', path: '/flag'}"/>`,
 					sFragmentXml = xml(assert, [sTextElement]),
-					aURNs = [`sap/ui/core/sample/ViewTemplate/scenario/Helper`];
+					aURNs = [sModuleName.replaceAll(`.`, `/`)];
 
 				this.expectLoad(bAsync, `myFragment`, sFragmentXml);
 				this.expectRequire(bAsync, aURNs, function () {
@@ -2564,9 +3086,6 @@ sap.ui.define([
 			});
 
 			//**************************************************************************************
-			/**
-			 * @deprecated As of version 1.120.0
-			 */
 			QUnit.test(`@deprecated fragment with FragmentDefinition incl. template:require`
 					+ `, async = ` + bAsync + `, debug = ` + bDebug, function (assert) {
 				var aModuleNames = [
@@ -2579,7 +3098,7 @@ sap.ui.define([
 							+ `"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"`
 							+ ` template:require="` + aModuleNames.join(` `) + `">`,
 						`<Text id="first" text="`
-							+ `{formatter: 'foo.Helper.bar', path: '/flag'}` + `"/>`,
+							+ `{formatter: 'foo.Helper.bar', path: '/flag'}"/>`,
 						`<Fragment fragmentName="innerFragment" type="XML"/>`,
 						`<In id="last"/>`,
 						`</FragmentDefinition>`
@@ -2634,36 +3153,66 @@ sap.ui.define([
 
 	//**************************************************************************************
 	[false, true].forEach(function (bDebug) {
-		//**************************************************************************************
+		QUnit.test(`fragment support incl. template:require, debug = ` + bDebug, function (assert) {
+			const sTextElement = templateRequire(
+				`<Text text="{formatter: 'MyHelper.bar', path: '/flag'}"/>`, ``, {
+					MyHelper : {
+						bar : function (vValue) {
+							return `*` + vValue + `*`;
+						}
+					}
+				}, this);
+
+			this.expectLoad(true, `myFragment`, xml(assert, [sTextElement]));
+			this.expectLoad(true, `yetAnotherFragment`,
+				xml(assert, [`<In xmlns="sap.ui.core"/>`]));
+			return this.checkTracing(assert, bDebug, [
+					{m : `[ 0] Start processing qux`},
+					{m : `[ 1] fragmentName = myFragment`, d : 1},
+					{m : `[ 1] text = *true*`, d : sTextElement},
+					{m : `[ 1] Finished`, d : `</Fragment>`},
+					{m : `[ 1] fragmentName = yetAnotherFragment`, d : 4},
+					{m : `[ 1] Finished`, d : `</Fragment>`},
+					{m : `[ 0] Finished processing qux`}
+				], [
+					mvcView(),
+					`<Fragment fragmentName="myFragment" type="XML">`,
+					`<template:error />`, // this must not be processed!
+					`</Fragment>`,
+					`<Fragment fragmentName="yetAnotherFragment" type="XML"/>`,
+					`</mvc:View>`
+				], {
+					models : new JSONModel({flag : true})
+				}, [
+					`<Text template:require="" text="*true*"/>`,
+					`<In/>`
+				], true);
+		});
+	});
+
+	//**************************************************************************************
+	[false, true].forEach(function (bDebug) {
 		var sTitle = `fragment with FragmentDefinition incl. template:require, debug = `
 			+ bDebug;
 
 		QUnit.test(sTitle, function (assert) {
-			var mModuleNames = {
-					MyHelper : `foo.Helper`,
-					Helper : `sap.ui.core.sample.ViewTemplate.scenario.Helper`,
-					AnnotationHelper : `sap.ui.model.odata.AnnotationHelper`
-				},
-				aFragmentContent = [
-					`<FragmentDefinition xmlns="sap.ui.core" xmlns:template=`
-					+ `"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"`
-					+ ` template:require="`
-					+ JSON.stringify(mModuleNames).replaceAll(`"`, `'`) + `">`,
-					`<Text id="first" text="`
-						+ `{formatter: 'MyHelper.bar', path: '/flag'}` + `"/>`,
-					`<Fragment fragmentName="innerFragment" type="XML"/>`,
-					`<In id="last"/>`,
-					`</FragmentDefinition>`
-				];
-
-			this.expectLoad(true, `myFragment`, xml(assert, aFragmentContent));
-			this.expectRequire(true, Object.values(mModuleNames), function () {
-					return [{
+			const aFragmentContent = [
+				templateRequire(`<FragmentDefinition>`, ``, {
+					MyHelper : {
 						bar : function (vValue) {
 							return `*` + vValue + `*`;
 						}
-					}, {}, {}];
-				});
+					},
+					Helper : `sap/ui/core/sample/ViewTemplate/scenario/Helper`,
+					AnnotationHelper : `sap/ui/model/odata/AnnotationHelper`
+				}, this),
+				`<Text id="first" text="{formatter: 'MyHelper.bar', path: '/flag'}"/>`,
+				`<Fragment fragmentName="innerFragment" type="XML"/>`,
+				`<In id="last"/>`,
+				`</FragmentDefinition>`
+			];
+
+			this.expectLoad(true, `myFragment`, xml(assert, aFragmentContent));
 			this.expectLoad(true, `innerFragment`,
 				xml(assert, [`<In xmlns="sap.ui.core" id="inner"/>`]));
 			this.expectLoad(true, `yetAnotherFragment`,
@@ -3422,42 +3971,92 @@ sap.ui.define([
 		XMLPreprocessor.plugIn(fnVisitor, `foo`, `Bar`);
 	});
 
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
+	//*********************************************************************************************
+	QUnit.test(`@deprecated plugIn, sLocalName: Bar`, function (assert) {
+		var fnVisitor = this.stub().returns(SyncPromise.resolve()),
+			oXml = xml(assert, [
+				mvcView(),
+				`<f:Bar xmlns:f="foo"`
+					+ ` attribute="{path: '/', formatter: 'foo.Helper.forbidden'}"/>`,
+				`<f:Baz xmlns:f="foo"/>`, // must not trigger visitor!
+				`</mvc:View>`
+			]);
+
+		window.foo = {
+			Helper : {
+				forbidden : function () {
+					assert.ok(false, `formatter MUST not be called!`);
+				}
+			}
+		};
+
+		try {
+			XMLPreprocessor.plugIn(fnVisitor, `foo`, `Bar`);
+			// must not override other visitors
+			XMLPreprocessor.plugIn(fnVisitor, `foo`, `Invalid`);
+
+			process(oXml, {models : new JSONModel()});
+		} finally {
+			// remove old visitors
+			// Q: should we delete from mVisitors? A: No, we cannot observe it anyway...
+			XMLPreprocessor.plugIn(null, `foo`, `Bar`);
+			XMLPreprocessor.plugIn(null, `foo`, `Invalid`);
+		}
+
+		assert.strictEqual(fnVisitor.callCount, 1);
+		assert.ok(fnVisitor.alwaysCalledWithExactly(
+			oXml.firstChild,
+			{
+				find : sinon.match.func,
+				getContext : sinon.match.func,
+				getResult : sinon.match.func,
+				getSettings : sinon.match.func,
+				getViewInfo : sinon.match.func,
+				insertFragment : sinon.match.func,
+				visitAttribute : sinon.match.func,
+				visitAttributes : sinon.match.func,
+				visitChildNodes : sinon.match.func,
+				visitNode : sinon.match.func,
+				with : sinon.match.func
+			}), fnVisitor.printf(`%C`));
+	});
+
 	//*********************************************************************************************
 	[{
 		aContent : [
-			mvcView(),
 			`<f:Bar xmlns:f="foo"`
-				+ ` attribute="{path: '/', formatter: 'foo.Helper.forbidden'}"/>`,
+				+ ` attribute="{path: '/', formatter: 'forbidden'}"/>`,
 			`<f:Baz xmlns:f="foo"/>`, // must not trigger visitor!
 			`</mvc:View>`
 		],
 		sLocalName : `Bar`
 	}, {
 		aContent : [
-			mvcView(),
 			`<f:Bar xmlns:f="foo"/>`,
 			`</mvc:View>`
 		],
 		sLocalName : undefined
 	}].forEach(function (oFixture) {
-		QUnit.test(`plugIn, sLocalName: ` + oFixture.sLocalName, function (assert) {
+		QUnit.test(`plugIn, sLocalName: ` + oFixture.sLocalName, async function (assert) {
 			var fnVisitor = this.stub().returns(SyncPromise.resolve()),
-				oXml = xml(assert, oFixture.aContent); // <mvc:View>
-
-			window.foo = {
-				Helper : {
-					forbidden : function () {
-						assert.ok(false, `formatter MUST not be called!`);
-					}
-				}
-			};
+				oXml = xml(assert, [
+					mvcView(``, {
+						forbidden : function () {
+							assert.ok(false, `formatter MUST not be called!`);
+						}
+					}, this),
+					...oFixture.aContent
+				]);
 
 			try {
 				XMLPreprocessor.plugIn(fnVisitor, `foo`, oFixture.sLocalName);
 				// must not override other visitors
 				XMLPreprocessor.plugIn(fnVisitor, `foo`, `Invalid`);
 
-				process(oXml, {models : new JSONModel()});
+				await process(oXml, {models : new JSONModel()}, /*bAsync*/true);
 			} finally {
 				// remove old visitors
 				// Q: should we delete from mVisitors? A: No, we cannot observe it anyway...
@@ -4212,8 +4811,11 @@ sap.ui.define([
 		], true);
 	});
 
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
 	//*********************************************************************************************
-	QUnit.test(`async binding resolution`, function (assert) {
+	QUnit.test(`@deprecated async binding resolution`, function (assert) {
 		var aViewContent = [
 				mvcView(),
 				`<In id="{async>/foo}" text="{async>/missing}" tooltip="{async>/bar}">`,
@@ -4245,6 +4847,80 @@ sap.ui.define([
 				}
 			}
 		};
+
+		return this.checkTracing(assert, true, [
+			{m : `[ 0] Start processing qux`},
+			// Note: we have to wait for this value before we continue ("stop & go")
+			{m : `[ 0] id = 5`, d : 1},
+			// Note: removal of attributes is reason to iterate over a shallow copy
+			{m : `[ 0] Removed attribute text`,
+				d : `<In id="5" text="{async>/missing}" tooltip="{async>/bar}">`},
+			// Note: this needs to come last, though bar is loaded faster than foo
+			{m : `[ 0] tooltip = 0`, d : `<In id="5" tooltip="{async>/bar}">`},
+			// Note: this must come after all of the parent's attributes have been resolved (DFS)
+			{m : `[ 0] text = world`, d : 2},
+			{m : `[ 0] Error in formatter of attribute text Error: Epic fail`, d : 4},
+			{m : `[ 0] text = *world*sap.ui.core.util._with`, d : 5},
+			{m : `[ 0] text = *sync*sap.ui.core.util._with`, d : 6},
+			{m : `[ 0] text = world,/sync=sync,/flag=true`, d : 7},
+			{m : `[ 0] text = hello, *world*sap.ui.model.json.JSONPropertyBinding`, d : 8},
+			{m : `[ 0] Finished processing qux`}
+		], aViewContent, {
+			models : {
+				async : asyncModel({
+					bar : 0,
+					fail : new Error(`Epic fail`),
+					// Note: careful with setTimeout's delay, about 4ms seems to be "minimum"
+					foo : 5,
+					hello : `world`,
+					sync : `sync`
+				}),
+				sync : new JSONModel({flag : true})
+			}
+		}, [
+			`<In id="5" tooltip="0">`,
+			`<Text text="world"/>`,
+			`</In>`,
+			// Note: XML serializer outputs &gt; encoding...
+			`<Text text=\"{async&gt;/fail}\"/>`,
+			`<Text text="*world*sap.ui.core.util._with"/>`,
+			`<Text text="*sync*sap.ui.core.util._with"/>`,
+			`<Text text="world,/sync=sync,/flag=true"/>`,
+			`<Text text="hello, *world*sap.ui.model.json.JSONPropertyBinding"/>`
+		], true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test(`async binding resolution`, function (assert) {
+		var aViewContent = [
+				mvcView(``, {
+					Helper : {
+						// this: on top-level, the control; in a part, the binding
+						join : function () {
+							return Array.prototype.join.apply(arguments);
+						},
+						path : function (vValue) {
+							return this.getPath() + `=` + vValue;
+						},
+						star : function (vValue) {
+							return `*` + vValue + `*` + this.getMetadata().getName();
+						}
+					}
+				}, this),
+				`<In id="{async>/foo}" text="{async>/missing}" tooltip="{async>/bar}">`,
+				`<Text text="{async>/hello}"/>`,
+				`</In>`,
+				`<Text text="{async>/fail}"/>`,
+				`<Text text="{formatter: 'Helper.star', path: 'async>/hello'}"/>`,
+				`<Text text="{formatter: 'Helper.star', path: 'async>/sync'}"/>`,
+				`<Text text="{formatter: 'Helper.join', parts: [{path: 'async>/hello'}, `
+					+ `{formatter: 'Helper.path', path: 'async>/sync'}, `
+					+ `{formatter: 'Helper.path', path: 'sync>/flag'}]}"/>`,
+				// Note: this requires "textFragments" to be preserved
+				`<Text text="{= 'hello, '`
+					+ ` + \${formatter: 'Helper.star', path: 'async>/hello'} }"/>`,
+				`</mvc:View>`
+			];
 
 		return this.checkTracing(assert, true, [
 			{m : `[ 0] Start processing qux`},
@@ -4334,9 +5010,13 @@ sap.ui.define([
 		}, undefined, true);
 	});
 
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
 	//*********************************************************************************************
 [false, true].forEach(function (bAllAvailable) {
-	QUnit.test(`async require on view level, all available: ` + bAllAvailable, function (assert) {
+	QUnit.test(`@deprecated async require on view level, all available: ` + bAllAvailable,
+			function (assert) {
 		var oHelper = {
 				bar : function (vValue) {
 					return `*` + vValue + `*`;
@@ -4368,16 +5048,47 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test(`async require on view level`, function (assert) {
+		return this.checkTracing(assert, true, [
+			{m : `[ 0] Start processing qux`},
+			{m : `[ 0] text = *true*`, d : 1},
+			{m : `[ 0] Finished processing qux`}
+		], [
+			mvcView(``, {
+				bar : function (vValue) {
+					return `*` + vValue + `*`;
+				}
+			}, this),
+			`<Text text="{formatter: 'bar', path: '/flag'}"/>`,
+			`</mvc:View>`
+		], {
+			models : new JSONModel({flag : true})
+		}, [
+			`<Text text="*true*"/>`
+		], true);
+	});
+
+	//*********************************************************************************************
 	QUnit.test(`AMD require on view and fragment level`, function (assert) {
 		var aFragmentContent = [
-				`<FragmentDefinition xmlns="sap.ui.core" xmlns:template=`
-					+ `"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"`
-					+ ` template:require="{Helper : 'bar/Helper'}">`,
-				`<Text text="{formatter: 'Helper.bar', path: '/flag'}"/>`,
+				templateRequire(`<FragmentDefinition>`, ``, {
+					MyHelper : {
+						bar : function (vValue) {
+							return `%` + vValue + `%`;
+						}
+					}
+				}, this),
+				`<Text text="{formatter: 'MyHelper.bar', path: '/flag'}"/>`,
 				`</FragmentDefinition>`
 			],
 			aViewContent = [
-				mvcView(`t`).replace(`>`, ` t:require="{Helper : 'foo/Helper'}">`),
+				mvcView(`t`, {
+					Helper : {
+						bar : function (vValue) {
+							return `*` + vValue + `*`;
+						}
+					}
+				}, this),
 				`<t:alias name="bar" value="Helper.bar">`,
 				`<Fragment fragmentName="myFragment" type="XML"/>`,
 				`<Text text="{formatter: 'bar', path: '/flag'}"/>`,
@@ -4385,25 +5096,7 @@ sap.ui.define([
 				`</mvc:View>`
 			];
 
-		this.expectRequire(true, [`foo/Helper`], function () {
-			var oHelper = {
-					bar : function (vValue) {
-						return `*` + vValue + `*`;
-					}
-				};
-
-			return [oHelper];
-		});
 		this.expectLoad(true, `myFragment`, xml(assert, aFragmentContent));
-		this.expectRequire(true, [`bar/Helper`], function () {
-			var oHelper = {
-					bar : function (vValue) {
-						return `%` + vValue + `%`;
-					}
-				};
-
-			return [oHelper];
-		});
 
 		return this.checkTracing(assert, true, [
 			{m : `[ 0] Start processing qux`},
@@ -4529,8 +5222,11 @@ sap.ui.define([
 		}, []);
 	});
 
+	/**
+	 * @deprecated As of version 1.120.0
+	 */
 	//*********************************************************************************************
-	QUnit.test(`Async formatter in sync view`, function (assert) {
+	QUnit.test(`@deprecated Async formatter in sync view`, function (assert) {
 		window.foo = function () {
 			return Promise.resolve();
 		};
