@@ -222,16 +222,20 @@ sap.ui.define([
 			});
 		});
 
-		function _runSaveAllAndAssumeVersionsCall(assert, vResponse, nParentVersion, nCallCount) {
+		function _runSaveAllAndAssumeVersionsCall(assert, vResponse, nParentVersion, nCallCount, nCallCountUpdate) {
 			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
 				persistedVersion: nParentVersion
 			}));
 			var oVersionsStub = sandbox.stub(Versions, "onAllChangesSaved");
+			var oVersionsUpdateStub = sandbox.stub(Versions, "updateModelFromBackend");
 			var oResult = vResponse ? {response: vResponse} : undefined;
 			sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves(oResult);
 			return this.oFlexController.saveAll(oComponent, undefined, nParentVersion !== false).then(function() {
 				assert.equal(oVersionsStub.callCount, nCallCount);
-				if (nParentVersion === Version.Number.Draft && vResponse) {
+				if (nCallCountUpdate) {
+					assert.equal(oVersionsUpdateStub.callCount, nCallCountUpdate);
+				}
+				if (nParentVersion === Version.Number.Draft && vResponse && nCallCount) {
 					assert.equal(oVersionsStub.args[0][0].draftFilenames.length, vResponse.length);
 				}
 			});
@@ -250,15 +254,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("when saveAll is called with draft and no change was saved", function(assert) {
-			return _runSaveAllAndAssumeVersionsCall.call(this, assert, undefined, Version.Number.Draft, 0);
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, undefined, Version.Number.Draft, 0, 0);
 		});
 
 		QUnit.test("when saveAll is called with draft and a change was saved", function(assert) {
-			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component", fileName: "draftname"}], Version.Number.Draft, 1);
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component", fileName: "draftname"}], Version.Number.Draft, 1, 0);
+		});
+
+		QUnit.test("when saveAll is called with draft and the last change is delete", function(assert) {
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [], Version.Number.Draft, 0, 1);
 		});
 
 		QUnit.test("when saveAll is called with draft and multiple changes were saved", function(assert) {
-			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component", fileName: "draftname"}, {fileName: "secDraftname"}], Version.Number.Draft, 1);
+			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component", fileName: "draftname"}, {fileName: "secDraftname"}], Version.Number.Draft, 1, 0);
 		});
 
 		QUnit.test("when saveSequenceOfDirtyChanges is called with an array of changes", async function(assert) {
