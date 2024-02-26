@@ -40,7 +40,7 @@ sap.ui.define([],
 			{
 				"id": "fpmExplorer",
 				"text": "Flexible Programming Model Explorer",
-				"href": "test-resources/sap/fe/core/fpmExplorer/index.html",
+				"href": "test-resources/sap/fe/core/fpmExplorer/index.html#/overview/introduction",
 				"isDistributionScope": true,
 				"hideOnPhone": true
 			},
