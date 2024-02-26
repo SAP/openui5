@@ -2,10 +2,9 @@ sap.ui.define([
 	"sap/f/GridContainer",
 	"sap/f/GridContainerItemLayoutData",
 	"sap/m/App",
-	"sap/m/GenericTile",
 	"sap/m/Page",
 	"sap/ui/integration/widgets/Card"
-], function(GridContainer, GridContainerItemLayoutData, App, GenericTile, Page, Card) {
+], function(GridContainer, GridContainerItemLayoutData, App, Page, Card) {
 	"use strict";
 
 	var oListCardInteractive_Manifest = {
@@ -142,16 +141,10 @@ sap.ui.define([
 		layoutData: new GridContainerItemLayoutData({ minRows: 2, columns: 3 })
 	});
 
-	var oGenericTile = new GenericTile({
-		header:"Sales Fulfillment Application Title",
-		layoutData: new GridContainerItemLayoutData({ minRows: 2, columns: 2 })
-	});
-
 	var oGridContainer = new GridContainer({
 		items: [
 			oListCardInteractive,
-			oListCard,
-			oGenericTile
+			oListCard
 		]
 	}).addStyleClass("sapUiSmallMargin");
 
