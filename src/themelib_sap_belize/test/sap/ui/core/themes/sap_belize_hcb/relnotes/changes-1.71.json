@@ -105,5 +105,15 @@
         ]
       }
     ]
+  },
+  "1.71.63": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "a3edf112a97e6e6021cab48ea9e14dd9b1dfd1a9",
+        "type": "FIX",
+        "text": " sap.m.Page: Focus element is scrolled into view"
+      }
+    ]
   }
 }

@@ -3867,5 +3867,20 @@
         ]
       }
     ]
+  },
+  "1.71.63": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "a3edf112a97e6e6021cab48ea9e14dd9b1dfd1a9",
+        "type": "FIX",
+        "text": " sap.m.Page: Focus element is scrolled into view"
+      },
+      {
+        "id": "6c948d6e50c7bd07f3c9976be32fc6b500ab36fe",
+        "type": "FIX",
+        "text": " We've introduced the isTrustedSource property as a security enhancement for the PDFViewer control as detailed in the API reference"
+      }
+    ]
   }
 }
