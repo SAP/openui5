@@ -3,6 +3,16 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "8e5ab7057fe87c22891dedd5ed3b15a8bd1177f5",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Updated the line height"
+      },
+      {
+        "id": "f1a54577e164e9f14b9f8571e9e01e66baee9ac3",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalette: add selected state"
+      },
+      {
         "id": "780795c01412d4c2e2b7d095e090ce07bc6e06a3",
         "type": "FIX",
         "text": " sap.m.Toolbar: Fix alignment in Tables"

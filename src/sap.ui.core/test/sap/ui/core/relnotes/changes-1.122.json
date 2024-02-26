@@ -3,6 +3,11 @@
     "date": "February 2024",
     "notes": [
       {
+        "id": "fca7af817b577085eb767af05d9cb949c0e0f54a",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context#setSelected: remember to reset selection again"
+      },
+      {
         "id": "62d8756de9f3215a2cb3faf83a99af2d604fe37f",
         "type": "FIX",
         "text": " ui5loader: Prevent unrelated -dbg requests in partial debug mode",
@@ -37,6 +42,11 @@
         "id": "61f4c1d27ab2de2a9639b41fb57aa0ca8a4bbc15",
         "type": "FIX",
         "text": " sap/ui/core/format/NumberFormat#format: Fix rounding of \"-.567\""
+      },
+      {
+        "id": "f361e8aba12638258df71272f9d8df86c44991d7",
+        "type": "FIX",
+        "text": " core/ShortcutHelper: Ensure handling of KeyboardEvents only"
       }
     ]
   }
