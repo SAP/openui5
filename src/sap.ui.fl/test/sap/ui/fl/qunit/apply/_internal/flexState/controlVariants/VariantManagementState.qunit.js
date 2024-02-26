@@ -231,44 +231,101 @@ sap.ui.define([
 		});
 
 		QUnit.test("when there are variant management changes", function(assert) {
-			var oVariantManagementChange = FlexObjectFactory.createUIChange({
-				id: "setDefaultVariantChange",
-				layer: Layer.CUSTOMER,
-				changeType: "setDefault",
-				fileType: "ctrl_variant_management_change",
-				selector: {
-					id: sVariantManagementReference
-				},
-				content: {
-					defaultVariant: "customVariant"
-				}
-			});
 			stubFlexObjectsSelector([
 				createVariant({
 					variantReference: sVariantManagementReference,
 					fileName: "customVariant"
 				}),
-				oVariantManagementChange
+				createVariant({
+					variantReference: "fooVM",
+					variantManagementReference: "fooVM",
+					fileName: "fooCustomVariant"
+				}),
+				createVariant({
+					variantReference: "fooCustomVariant",
+					variantManagementReference: "fooVM",
+					fileName: "fooCustomVariant2"
+				}),
+				FlexObjectFactory.createUIChange({
+					id: "setDefaultVariantChange11",
+					layer: Layer.CUSTOMER,
+					changeType: "setDefault",
+					fileType: "ctrl_variant_management_change",
+					selector: {
+						id: sVariantManagementReference
+					},
+					content: {
+						defaultVariant: "customVariant"
+					}
+				}), FlexObjectFactory.createUIChange({
+					id: "setDefaultVariantChange12",
+					layer: Layer.CUSTOMER,
+					changeType: "setDefault",
+					fileType: "ctrl_variant_management_change",
+					selector: {
+						id: sVariantManagementReference
+					},
+					content: {
+						defaultVariant: sVariantManagementReference
+					}
+				}), FlexObjectFactory.createUIChange({
+					id: "setDefaultVariantChange21",
+					layer: Layer.CUSTOMER,
+					changeType: "setDefault",
+					fileType: "ctrl_variant_management_change",
+					selector: {
+						id: "fooVM"
+					},
+					content: {
+						defaultVariant: "fooCustomVariant"
+					}
+				}), FlexObjectFactory.createUIChange({
+					id: "setDefaultVariantChange22",
+					layer: Layer.CUSTOMER,
+					changeType: "setDefault",
+					fileType: "ctrl_variant_management_change",
+					selector: {
+						id: "fooVM"
+					},
+					content: {
+						defaultVariant: "fooCustomVariant2"
+					}
+				})
 			]);
 
-			var oVMData = VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference];
+			var oVMData = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
 			assert.strictEqual(
-				oVMData.currentVariant,
-				"customVariant",
+				oVMData[sVariantManagementReference].currentVariant,
+				sVariantManagementReference,
 				"then the change is applied and the current variant is changed"
 			);
 			assert.strictEqual(
-				oVMData.defaultVariant,
-				"customVariant",
+				oVMData[sVariantManagementReference].defaultVariant,
+				sVariantManagementReference,
 				"then the change is applied and the default variant is changed"
 			);
 			assert.strictEqual(
-				oVMData.variantManagementChanges[0],
-				oVariantManagementChange,
-				"then the change is returned as part of the variant management map"
+				oVMData[sVariantManagementReference].variantManagementChanges.length,
+				2,
+				"then 2 changes are returned as part of the variant management map"
 			);
 			assert.strictEqual(
-				VariantManagementState.getVariantDependentFlexObjects({reference: sReference}).length, 2,
+				oVMData.fooVM.currentVariant,
+				"fooCustomVariant2",
+				"then the change is applied and the current variant is changed"
+			);
+			assert.strictEqual(
+				oVMData.fooVM.defaultVariant,
+				"fooCustomVariant2",
+				"then the change is applied and the default variant is changed"
+			);
+			assert.strictEqual(
+				oVMData.fooVM.variantManagementChanges.length,
+				2,
+				"then 2 changes are returned as part of the variant management map"
+			);
+			assert.strictEqual(
+				VariantManagementState.getVariantDependentFlexObjects({reference: sReference}).length, 7,
 				"all changes are returned"
 			);
 		});
