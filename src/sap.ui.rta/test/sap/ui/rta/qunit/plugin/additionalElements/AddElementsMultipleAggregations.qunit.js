@@ -4,18 +4,18 @@ sap.ui.define([
 	"sap/m/Bar",
 	"sap/m/Button",
 	"sap/m/Page",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
+	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
+	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
+	"sap/ui/rta/plugin/Plugin",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/ElementUtil",
-	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
-	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
-	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
-	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate"
@@ -23,26 +23,26 @@ sap.ui.define([
 	Bar,
 	Button,
 	Page,
+	DesignTime,
+	ElementUtil,
+	OverlayRegistry,
 	VerticalLayout,
+	CommandFactory,
+	AddElementsDialog,
+	AdditionalElementsAnalyzer,
+	AdditionalElementsPlugin,
+	RTAPlugin,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
-	DesignTime,
-	OverlayRegistry,
-	ElementUtil,
-	CommandFactory,
-	AdditionalElementsPlugin,
-	AdditionalElementsAnalyzer,
-	AddElementsDialog,
-	RTAPlugin,
 	sinon,
 	RtaQunitUtils,
 	nextUIUpdate
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
-	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
+	const sandbox = sinon.createSandbox();
+	const oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	// PseudoPublicParent (VerticalLayout)
 	// 	oBar (Bar)
@@ -79,7 +79,7 @@ sap.ui.define([
 	QUnit.module("Given a control with multiple aggregations containing compatible hidden elements", {
 		beforeEach(assert) {
 			givenBarWithButtons.call(this);
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oPlugin = new AdditionalElementsPlugin({
 				commandFactory: new CommandFactory()
@@ -109,9 +109,21 @@ sap.ui.define([
 
 			return this.oPlugin.showAvailableElements(false, "contentLeft", [this.oBarOverlay])
 			.then(function() {
-				assert.equal(this.oDialogSetElementsSpy.args[0][0].length, 2, "then two elements are returned");
-				assert.equal(this.oDialogSetElementsSpy.args[0][0][0].label, "InvisibleLeft", "then the invisible button on the contentLeft is returned");
-				assert.equal(this.oDialogSetElementsSpy.args[0][0][1].label, "InvisibleRight", "then the invisible button on the contentRight is also returned");
+				assert.equal(
+					this.oDialogSetElementsSpy.args[0][0].length,
+					2,
+					"then two elements are returned"
+				);
+				assert.equal(
+					this.oDialogSetElementsSpy.args[0][0][0].label,
+					"InvisibleLeft",
+					"then the invisible button on the contentLeft is returned"
+				);
+				assert.equal(
+					this.oDialogSetElementsSpy.args[0][0][1].label,
+					"InvisibleRight",
+					"then the invisible button on the contentRight is also returned"
+				);
 			}.bind(this));
 		});
 
@@ -121,9 +133,21 @@ sap.ui.define([
 
 			return this.oPlugin.showAvailableElements(true, "contentLeft", [this.oVisibleLeftButtonOverlay])
 			.then(function() {
-				assert.equal(this.oDialogSetElementsSpy.args[0][0].length, 2, "then two elements are returned");
-				assert.equal(this.oDialogSetElementsSpy.args[0][0][0].label, "InvisibleLeft", "then the invisible button on the contentLeft is returned");
-				assert.equal(this.oDialogSetElementsSpy.args[0][0][1].label, "InvisibleRight", "then the invisible button on the contentRight is also returned");
+				assert.equal(
+					this.oDialogSetElementsSpy.args[0][0].length,
+					2,
+					"then two elements are returned"
+				);
+				assert.equal(
+					this.oDialogSetElementsSpy.args[0][0][0].label,
+					"InvisibleLeft",
+					"then the invisible button on the contentLeft is returned"
+				);
+				assert.equal(
+					this.oDialogSetElementsSpy.args[0][0][1].label,
+					"InvisibleRight",
+					"then the invisible button on the contentRight is also returned"
+				);
 			}.bind(this));
 		});
 
@@ -134,14 +158,26 @@ sap.ui.define([
 
 			return this.oPlugin.showAvailableElements(true, "contentMiddle", [this.oVisibleMiddleButton1Overlay])
 			.then(function() {
-				assert.equal(this.oDialogSetElementsSpy.args[0][0].length, 2, "then two elements are returned");
-				assert.equal(this.oDialogSetElementsSpy.args[0][0][0].label, "InvisibleLeft", "then the invisible button on the contentLeft is returned");
-				assert.equal(this.oDialogSetElementsSpy.args[0][0][1].label, "InvisibleRight", "then the invisible button on the contentRight is also returned");
+				assert.equal(
+					this.oDialogSetElementsSpy.args[0][0].length,
+					2,
+					"then two elements are returned"
+				);
+				assert.equal(
+					this.oDialogSetElementsSpy.args[0][0][0].label,
+					"InvisibleLeft",
+					"then the invisible button on the contentLeft is returned"
+				);
+				assert.equal(
+					this.oDialogSetElementsSpy.args[0][0][1].label,
+					"InvisibleRight",
+					"then the invisible button on the contentRight is also returned"
+				);
 			}.bind(this));
 		});
 
-		QUnit.test("when getting the available elements after all available elements were displayed and then one is hidden again", function(assert) {
-			var done = assert.async();
+		QUnit.test("when getting the available elements after all available elements were displayed and then one is hidden again", async function(assert) {
+			const done = assert.async();
 			sandbox.stub(this.oDialog, "open").returns(Promise.reject());
 			this.oDialogSetElementsSpy = sandbox.spy(this.oDialog, "setElements");
 
@@ -150,26 +186,31 @@ sap.ui.define([
 				fnCallback();
 			});
 
-			this.oInvisibleLeftButton.setVisible(true);
-
+			await nextUIUpdate();
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oPlugin.showAvailableElements(true, "contentLeft", [this.oVisibleLeftButtonOverlay])
 				.then(function() {
 					assert.equal(this.oDialogSetElementsSpy.args[0][0].length, 1, "then the element made visible is not returned");
-					this.oInvisibleLeftButton.setVisible(false);
 					this.oDesignTime.attachEventOnce("synced", function() {
 						this.oPlugin.showAvailableElements(true, "contentLeft", [this.oVisibleLeftButtonOverlay])
 						.then(function() {
-							assert.equal(this.oDialogSetElementsSpy.args[1][0].length, 2, "then the element is available again after made invisible");
+							assert.equal(
+								this.oDialogSetElementsSpy.args[1][0].length,
+								2,
+								"then the element is available again after made invisible"
+							);
 							done();
 						}.bind(this));
 					}.bind(this));
+					this.oInvisibleLeftButton.setVisible(false);
 				}.bind(this));
 			}.bind(this));
+
+			this.oInvisibleLeftButton.setVisible(true);
 		});
 
 		QUnit.test("when adding the InvisibleRightButton to the contentLeft aggregation clicking on the Bar", function(assert) {
-			var done = assert.async();
+			const done = assert.async();
 			sandbox.stub(this.oDialog, "open").returns(Promise.resolve());
 			this.oDialogGetSelectedElementsStub = sandbox.stub(this.oDialog, "getSelectedElements")
 			.callsFake(function() {
@@ -178,10 +219,14 @@ sap.ui.define([
 			this.oDialogSetElementsSpy = sandbox.spy(this.oDialog, "setElements");
 
 			function executeAssertions(oEvent) {
-				var oCompositeCommand = oEvent.getParameter("command");
+				const oCompositeCommand = oEvent.getParameter("command");
 				assert.equal(oCompositeCommand.getCommands().length, 2, "then two commands are created in a composite command");
 				assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
-				assert.equal(oCompositeCommand.getCommands()[0].getElement().sId, "InvisibleRightButton", "then InvisibleRightButton is revealed");
+				assert.equal(
+					oCompositeCommand.getCommands()[0].getElement().sId,
+					"InvisibleRightButton",
+					"then InvisibleRightButton is revealed"
+				);
 				assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
 				assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].element.sId,
 					"InvisibleRightButton",
@@ -200,7 +245,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when adding the InvisibleRightButton to the contentLeft aggregation clicking on an element of the aggregation", function(assert) {
-			var done = assert.async();
+			const done = assert.async();
 			sandbox.stub(this.oDialog, "open").returns(Promise.resolve());
 			this.oDialogGetSelectedElementsStub = sandbox.stub(this.oDialog, "getSelectedElements")
 			.callsFake(function() {
@@ -209,10 +254,14 @@ sap.ui.define([
 			this.oDialogSetElementsSpy = sandbox.spy(this.oDialog, "setElements");
 
 			function executeAssertions(oEvent) {
-				var oCompositeCommand = oEvent.getParameter("command");
+				const oCompositeCommand = oEvent.getParameter("command");
 				assert.equal(oCompositeCommand.getCommands().length, 2, "then two commands are created in a composite command");
 				assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
-				assert.equal(oCompositeCommand.getCommands()[0].getElement().sId, "InvisibleRightButton", "then InvisibleRightButton is revealed");
+				assert.equal(
+					oCompositeCommand.getCommands()[0].getElement().sId,
+					"InvisibleRightButton",
+					"then InvisibleRightButton is revealed"
+				);
 				assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
 				assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].element.sId,
 					"InvisibleRightButton",
@@ -230,12 +279,12 @@ sap.ui.define([
 			return this.oPlugin.showAvailableElements(true, "contentLeft", [this.oVisibleLeftButtonOverlay]);
 		});
 
-		QUnit.test("when getting the available elements for the contentRight aggregation and this aggregation is not valid for the middle button which was made invisible", function(assert) {
-			var done = assert.async();
+		QUnit.test("when getting the available elements for the contentRight aggregation and this aggregation is not valid for the middle button which was made invisible", async function(assert) {
+			const done = assert.async();
 			sandbox.stub(this.oDialog, "open").returns(Promise.reject());
 			this.oDialogSetElementsSpy = sandbox.spy(this.oDialog, "setElements");
 			this.oVisibleRightButtonOverlay = OverlayRegistry.getOverlay(this.oVisibleRightButton);
-			var bWasCalled = false;
+			let bWasCalled = false;
 
 			this.oIsValidForAggregationStub = sandbox.stub(ElementUtil, "isValidForAggregation");
 			this.oIsValidForAggregationStub.withArgs(this.oBar, "contentRight")
@@ -247,18 +296,27 @@ sap.ui.define([
 				return true;
 			});
 
-			this.oVisibleMiddleButton1.setVisible(false);
-
+			await nextUIUpdate();
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oPlugin.showAvailableElements(true, "contentRight", [this.oVisibleRightButtonOverlay])
 				.then(function() {
 					assert.ok(bWasCalled, "isValidForAggregation is called");
 					assert.equal(this.oDialogSetElementsSpy.args[0][0].length, 2, "then two elements are returned");
-					assert.equal(this.oDialogSetElementsSpy.args[0][0][0].label, "InvisibleLeft", "then the invisible button on the contentLeft is returned");
-					assert.equal(this.oDialogSetElementsSpy.args[0][0][1].label, "InvisibleRight", "then the invisible button on the contentRight is also returned");
+					assert.equal(
+						this.oDialogSetElementsSpy.args[0][0][0].label,
+						"InvisibleLeft",
+						"then the invisible button on the contentLeft is returned"
+					);
+					assert.equal(
+						this.oDialogSetElementsSpy.args[0][0][1].label,
+						"InvisibleRight",
+						"then the invisible button on the contentRight is also returned"
+					);
 					done();
 				}.bind(this));
 			}.bind(this));
+
+			this.oVisibleMiddleButton1.setVisible(false);
 		});
 	});
 
@@ -320,7 +378,7 @@ sap.ui.define([
 	QUnit.module("Given an ObjectPage with headerContent and one hidden section", {
 		beforeEach(assert) {
 			givenObjectPageWithHeaderAndSections.call(this);
-			var done = assert.async();
+			const done = assert.async();
 			this.oDialog = new AddElementsDialog();
 
 			this.oPlugin = new AdditionalElementsPlugin({
