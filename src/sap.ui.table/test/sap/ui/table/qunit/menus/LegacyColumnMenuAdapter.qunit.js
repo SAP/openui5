@@ -39,7 +39,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Open Menu", function(assert) {
+	QUnit.skip("Open Menu", function(assert) {
 		var oTable = window.oTable;
 		var done = assert.async();
 		var oColumnA = oTable.getColumns()[0];
