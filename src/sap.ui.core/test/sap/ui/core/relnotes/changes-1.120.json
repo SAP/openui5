@@ -735,5 +735,15 @@
         "text": " sap.ui.model.odata.ODataMetaModel#getODataValueLists: fetch missing metadata"
       }
     ]
+  },
+  "1.120.9": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "f1669d0372de9bd3c797eb6b1acf0428ac766beb",
+        "type": "FIX",
+        "text": " core/Lib: Improve Error Message reg. Pseudo Modules"
+      }
+    ]
   }
 }

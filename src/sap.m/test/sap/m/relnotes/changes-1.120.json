@@ -650,5 +650,30 @@
         "text": " ColumnMenu: Provide a proper overflow handling"
       }
     ]
+  },
+  "1.120.9": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "b08d750025f3fe72e860619132df2693cb2719c7",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Focus of IconTabFilter is not changing"
+      },
+      {
+        "id": "5f29681f5dbfa334ab4df7119ad5eb358ac244f5",
+        "type": "FIX",
+        "text": " sap.m.Page: Focus element is scrolled into view"
+      },
+      {
+        "id": "53fc3d76b8d57286d5cfafb1e1e18b6abe7d4667",
+        "type": "FIX",
+        "text": " We've introduced the isTrustedSource property as a security enhancement for the PDFViewer control as detailed in the API reference"
+      },
+      {
+        "id": "90764641612976faf551f636f719204b8a989337",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Resolve issue preventing text selection with mouse"
+      }
+    ]
   }
 }

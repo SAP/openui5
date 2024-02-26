@@ -164,5 +164,15 @@
         ]
       }
     ]
+  },
+  "1.120.9": {
+    "date": "February 2024",
+    "notes": [
+      {
+        "id": "a9f363c382b6a2c807f466944fb19c11893d946f",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Updated the line height"
+      }
+    ]
   }
 }
