@@ -4682,6 +4682,13 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		}
 	});
 
+	QUnit.test("No border has been applied", function(assert) {
+		this.fnCreateGridContainer("1rem");
+		var aItems = this.oGrid.getItems();
+		aItems[0].$().trigger("tap");
+		assert.ok(aItems[0].$().css("border"), "No extra thick border line in focus");
+	});
+
 	QUnit.test("Checking if the width has been applied only for TwoByOne and TwoByHalf tiles when the gap is 1rem", function (assert) {
 		// Arrange
 		this.fnCreateGridContainer("1rem");
