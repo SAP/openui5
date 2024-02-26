@@ -197,13 +197,7 @@ sap.ui.define([
 			return;
 		}
 
-		const bIsSameLevel = oBinding.getAggregation()?.expandTo === iLevel;
-
-		if (bIsSameLevel) {
-			oBinding.refresh();
-		} else {
-			oBinding.setAggregation({...oBinding.getAggregation(), ...{expandTo: iLevel}});
-		}
+		oBinding.setAggregation({...oBinding.getAggregation(), ...{expandTo: iLevel}});
 	}
 
 	/**
