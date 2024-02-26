@@ -2410,10 +2410,13 @@ sap.ui.define([
 			var oDateRange = oEvent.getParameter("dateRange"),
 				oStartDate = UI5Date.getInstance(oDateRange.getStartDate()),
 				oEndDate = UI5Date.getInstance(oDateRange.getEndDate()),
-				oDP = oEvent.getSource();
+				oDP = oEvent.getSource(),
+				oLastDayOfWeekOne = oStartDate.getDate() + 6,
+				oLastDayOfWeekFour = oEndDate.getDate() - 14;
 
-			oStartDate.setDate(oStartDate.getDate() + 6); // ensure that the special date is always in the displayed
-			oEndDate.setDate(oEndDate.getDate() - 6); // month, otherwise it would not be rendered
+			// To ensure the special dates are always rendered set them to the last day of weeks 1 and 4
+			oStartDate.setDate(oLastDayOfWeekOne);
+			oEndDate.setDate(oLastDayOfWeekFour);
 			this.oStartDate = oStartDate;
 			this.oEndDate = oEndDate;
 

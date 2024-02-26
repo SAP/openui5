@@ -1465,7 +1465,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Month.prototype._getVisibleDays = function (oStartDate, bIncludeBCDates) {
-		var iNextMonth,
+		var iDaysInSixWeeks = 42,
 			oDay,
 			oCalDate,
 			iDaysOldMonth,
@@ -1495,8 +1495,7 @@ sap.ui.define([
 		}
 
 		oDay = new CalendarDate(oFirstDay);
-		iNextMonth = (oStartDate.getMonth() + 1) % 12;
-		do {
+		for (let i = 0; i < iDaysInSixWeeks; i++) {
 			iYear = oDay.getYear();
 			oCalDate = new CalendarDate(oDay, this._getPrimaryCalendarType());
 			if (bIncludeBCDates && iYear < 1) {
@@ -1507,7 +1506,7 @@ sap.ui.define([
 				this._aVisibleDays.push(oCalDate);
 			}
 			oDay.setDate(oDay.getDate() + 1);
-		} while (oDay.getMonth() !== iNextMonth || oDay.getDay() !== iFirstDayOfWeek);
+		}
 
 		return this._aVisibleDays;
 	};
