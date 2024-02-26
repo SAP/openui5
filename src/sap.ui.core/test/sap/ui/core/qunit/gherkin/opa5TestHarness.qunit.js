@@ -5,7 +5,7 @@
 /* eslint-disable quotes */
 /* global QUnit,sinon */
 
-sap.ui.define([
+sap.ui.require([
 	"sap/ui/test/gherkin/opa5TestHarness",
 	"sap/ui/test/gherkin/StepDefinitions",
 	"sap/ui/test/opaQunit",
