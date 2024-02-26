@@ -165,33 +165,33 @@ sap.ui.define([
 					new ColumnListItem({
 						cells: [
 							new MText({text: "Regular"}),
-							new Link({text: "Something", href: "https://www.sap.com"}),
-							new Link({text: "Something"}),
-							new Link({text: "Something", href: "https://www.sap.com", enabled: false})
+							new Link({text: "Something", href: "https://www.sap.com", wrapping: true}),
+							new Link({text: "Something", wrapping: true}),
+							new Link({text: "Something", href: "https://www.sap.com", wrapping: true, enabled: false})
 						]
 					}),
 					new ColumnListItem({
 						cells: [
 							new MText({text: "Subtle"}),
-							new Link({text: "Something", href: "https://www.sap.com", subtle: true}),
-							new Link({text: "Something", subtle: true}),
-							new Link({text: "Something", href: "https://www.sap.com", subtle: true, enabled: false})
+							new Link({text: "Something", href: "https://www.sap.com", wrapping: true, subtle: true}),
+							new Link({text: "Something", wrapping: true, subtle: true}),
+							new Link({text: "Something", href: "https://www.sap.com", wrapping: true, subtle: true, enabled: false})
 						]
 					}),
 					new ColumnListItem({
 						cells: [
 							new MText({text: "Emphasized"}),
-							new Link({text: "Something", href: "https://www.sap.com", emphasized: true}),
-							new Link({text: "Something", emphasized: true}),
-							new Link({text: "Something", href: "https://www.sap.com", emphasized: true, enabled: false})
+							new Link({text: "Something", href: "https://www.sap.com", wrapping: true, emphasized: true}),
+							new Link({text: "Something", wrapping: true, emphasized: true}),
+							new Link({text: "Something", href: "https://www.sap.com", wrapping: true, emphasized: true, enabled: false})
 						]
 					}),
 					new ColumnListItem({
 						cells: [
 							new MText({text: "Combined"}),
-							new Link({text: "Something", href: "https://www.sap.com", subtle: true, emphasized: true}),
-							new Link({text: "Something", subtle: true, emphasized: true}),
-							new Link({text: "Something", href: "https://www.sap.com", subtle: true, emphasized: true, enabled: false})
+							new Link({text: "Something", href: "https://www.sap.com", wrapping: true, subtle: true, emphasized: true}),
+							new Link({text: "Something", wrapping: true, subtle: true, emphasized: true}),
+							new Link({text: "Something", href: "https://www.sap.com", wrapping: true, subtle: true, emphasized: true, enabled: false})
 						]
 					})
 				]

@@ -8,10 +8,7 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/m/Title",
 	"sap/m/Input",
-	"sap/m/Table",
-	"sap/m/Column",
 	"sap/m/DateTimeInput",
-	"sap/m/ColumnListItem",
 	"sap/m/VBox",
 	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
@@ -30,10 +27,7 @@ sap.ui.define([
 	Select,
 	Title,
 	Input,
-	Table,
-	Column,
 	DateTimeInput,
-	ColumnListItem,
 	VBox,
 	Item,
 	JSONModel,
@@ -131,7 +125,6 @@ sap.ui.define([
 				labelFor: "DTI3"
 			}).addStyleClass("sapUiSmallMarginTop"),
 			new DateTimeInput("DTI3", {
-				placeholder : "DateTime",
 				type : DateTimeInputType.DateTime,
 				change : handleChange
 			}),
