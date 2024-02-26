@@ -1,6 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"./QUnitUtils",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
@@ -9,11 +10,13 @@ sap.ui.define([
 	"sap/ui/mdc/table/utils/Personalization",
 	"test-resources/sap/ui/mdc/delegates/TableDelegate",
 	"sap/m/table/columnmenu/Item",
+	"sap/m/table/Util",
 	"sap/m/Text",
 	"sap/m/plugins/ColumnResizer",
 	"sap/ui/performance/trace/FESRHelper"
 ], function(
 	TableQUnitUtils,
+	qutils,
 	nextUIUpdate,
 	Element,
 	Library,
@@ -22,6 +25,7 @@ sap.ui.define([
 	PersonalizationUtils,
 	TableDelegate,
 	ItemBase,
+	TableUtil,
 	Text,
 	ColumnResizer,
 	FESRHelper
@@ -45,8 +49,13 @@ sap.ui.define([
 			this.oTable = new Table({
 				columns: [
 					new Column({
-						header: "test",
-						propertyKey: "test",
+						header: "A",
+						propertyKey: "A",
+						template: new Text()
+					}),
+					new Column({
+						header: "B",
+						propertyKey: "B",
 						template: new Text()
 					})
 				],
@@ -60,10 +69,17 @@ sap.ui.define([
 
 			TableQUnitUtils.stubPropertyInfos(this.oTable, [
 				{
-					name: "test",
-					label: "Test",
+					name: "A",
+					label: "A",
 					dataType: "String",
-					path: "test"
+					path: "A"
+				},
+				{
+					name: "B",
+					label: "B",
+					dataType: "String",
+					path: "B",
+					sortable: false
 				}
 			]);
 
@@ -137,6 +153,43 @@ sap.ui.define([
 				});
 			})
 		]);
+	});
+
+	QUnit.test("Accessibility", function(assert) {
+		const oTable = this.oTable;
+
+		oTable.setP13nMode([
+			"Sort"
+		]);
+		oTable._setShowP13nButton(false);
+
+		function triggerClickAndWaitBeforeOpen(oColumn) {
+			const oMenu = oColumn.getHeaderMenuInstance();
+			const oColumnDomRef = oColumn.getDomRef();
+			oColumnDomRef.focus();
+			qutils.triggerMouseEvent(oColumnDomRef, "mousedown", null, null, null, null, 0);
+			qutils.triggerMouseEvent(oColumnDomRef, "click");
+
+			return new Promise(function(resolve) {
+				oMenu.attachEventOnce("beforeOpen", function() {
+					return wait(0).then(resolve);
+				});
+			});
+		}
+
+		const fnAnnounceEmptyColumnMenu = sinon.spy(TableUtil, "announceEmptyColumnMenu");
+		assert.equal(oTable.getColumns()[0].getInnerColumn().getDomRef().getAttribute("aria-haspopup"), "dialog", "aria-haspopup = dialog");
+		assert.equal(oTable.getColumns()[1].getInnerColumn().getDomRef().getAttribute("aria-haspopup"), "dialog", "aria-haspopup = dialog");
+
+		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
+			assert.ok(fnAnnounceEmptyColumnMenu.notCalled, "Column menu has items => announceEmptyColumnMenu not called");
+
+			const oColumn = oTable.getColumns()[1].getInnerColumn();
+			return triggerClickAndWaitBeforeOpen(oColumn);
+		}).then(function() {
+			assert.ok(fnAnnounceEmptyColumnMenu.calledOnce, "Column menu is empty => announceEmptyColumnMenu called once");
+			fnAnnounceEmptyColumnMenu.restore();
+		});
 	});
 
 	QUnit.module("QuickActionContainer", {
