@@ -46,6 +46,9 @@ module.exports = [
 	"MenuButton.spec.js",
 	"MenuButtonMenuPosition.spec.js",
 	"MessageBox.spec.js",
+	/**
+	 * @deprecated since version 1.112
+	 */
 	"MessagePage.spec.js",
 	"MessagePopover.spec.js",
 	"MessageStrip.spec.js",
