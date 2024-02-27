@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="Quickstart.App"
+	controllerName="ui5.quickstart.App"
 	displayBlock="true"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
