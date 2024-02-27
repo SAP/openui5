@@ -8,7 +8,6 @@ sap.ui.define([
 ], function (Log, _Helper, _TreeState) {
 	"use strict";
 
-	const mapContent = (oMap) => [...oMap.entries()];
 	const mustBeMocked = function () { throw new Error("Must be mocked"); };
 
 	//*********************************************************************************************
@@ -28,8 +27,7 @@ sap.ui.define([
 		assert.ok(oTreeState instanceof _TreeState);
 		assert.strictEqual(oTreeState.sNodeProperty, "~sNodeProperty~");
 		assert.strictEqual(oTreeState.fnGetKeyFilter, "~fnGetKeyFilter~");
-		assert.ok(oTreeState.oPredicate2ExpandLevels instanceof Map);
-		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels), []);
+		assert.deepEqual(oTreeState.mPredicate2ExpandLevels, {});
 		assert.ok("oOutOfPlace" in oTreeState);
 		assert.strictEqual(oTreeState.oOutOfPlace, undefined);
 	});
@@ -47,19 +45,19 @@ sap.ui.define([
 		// code under test
 		oTreeState.expand("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels),
-			[["~predicate~", {NodeID : "~sNodeId~", Levels : 1}]]);
+		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
+			{"~predicate~" : {NodeID : "~sNodeId~", Levels : 1}});
 
 		// code under test
 		oTreeState.expand("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels),
-			[["~predicate~", {NodeID : "~sNodeId~", Levels : 1}]]);
+		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
+			{"~predicate~" : {NodeID : "~sNodeId~", Levels : 1}});
 
 		// code under test
 		oTreeState.collapse("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels), []);
+		assert.deepEqual(oTreeState.mPredicate2ExpandLevels, {});
 	});
 
 	//*********************************************************************************************
@@ -75,34 +73,34 @@ sap.ui.define([
 		// code under test
 		oTreeState.collapse("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels),
-			[["~predicate~", {NodeID : "~sNodeId~", Levels : 0}]]);
+		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
+			{"~predicate~" : {NodeID : "~sNodeId~", Levels : 0}});
 
 		// code under test
 		oTreeState.collapse("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels),
-			[["~predicate~", {NodeID : "~sNodeId~", Levels : 0}]]);
+		assert.deepEqual(oTreeState.mPredicate2ExpandLevels,
+			{"~predicate~" : {NodeID : "~sNodeId~", Levels : 0}});
 
 		// code under test
 		oTreeState.expand("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels), []);
+		assert.deepEqual(oTreeState.mPredicate2ExpandLevels, {});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("delete", function (assert) {
 		const oTreeState = new _TreeState("~sNodeProperty~");
 
-		oTreeState.oPredicate2ExpandLevels.set("foo", "bar");
-		oTreeState.oPredicate2ExpandLevels.set("~predicate~", "~");
+		oTreeState.mPredicate2ExpandLevels["foo"] = "bar";
+		oTreeState.mPredicate2ExpandLevels["~predicate~"] = "~";
 		this.mock(_Helper).expects("getPrivateAnnotation")
 			.withExactArgs("~oNode~", "predicate").returns("~predicate~");
 
 		// code under test
 		oTreeState.delete("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels), [["foo", "bar"]]);
+		assert.deepEqual(oTreeState.mPredicate2ExpandLevels, {foo : "bar"});
 	});
 
 	//*********************************************************************************************
@@ -110,13 +108,13 @@ sap.ui.define([
 	QUnit.test(sMethod + ": no sNodeProperty", function (assert) {
 		const oTreeState = new _TreeState();
 
-		oTreeState.oPredicate2ExpandLevels.set("foo", "bar");
+		oTreeState.mPredicate2ExpandLevels["foo"] = "bar";
 		this.mock(_Helper).expects("drillDown").never();
 
 		// code under test
 		oTreeState[sMethod]("~oNode~");
 
-		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels), [["foo", "bar"]]);
+		assert.deepEqual(oTreeState.mPredicate2ExpandLevels, {foo : "bar"});
 	});
 });
 
@@ -128,8 +126,8 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oTreeState.getExpandLevels(), undefined);
 
-		oTreeState.oPredicate2ExpandLevels.set("foo", {bar : 42});
-		oTreeState.oPredicate2ExpandLevels.set("baz", {qux : 23});
+		oTreeState.mPredicate2ExpandLevels["foo"] = {bar : 42};
+		oTreeState.mPredicate2ExpandLevels["baz"] = {qux : 23};
 
 		// code under test
 		assert.strictEqual(oTreeState.getExpandLevels(), '[{"bar":42},{"qux":23}]');
@@ -137,7 +135,7 @@ sap.ui.define([
 		// code under test
 		oTreeState.reset();
 
-		assert.deepEqual(mapContent(oTreeState.oPredicate2ExpandLevels), []);
+		assert.deepEqual(oTreeState.mPredicate2ExpandLevels, {});
 		assert.strictEqual(oTreeState.oOutOfPlace, undefined);
 	});
 
