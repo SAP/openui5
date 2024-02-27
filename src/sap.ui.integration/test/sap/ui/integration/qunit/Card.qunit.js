@@ -2565,6 +2565,9 @@ sap.ui.define([
 			assert.ok(oHeaderDomRef.querySelector(".sapUiIntBlockingMsg"), "error element is rendered in the header");
 		});
 
+		/**
+		 * @deprecated As of version 1.119
+		 */
 		QUnit.test("Error is logged when binding syntax is not 'complex'", function (assert) {
 			// Arrange
 			var oLogSpy = this.spy(Log, "error");

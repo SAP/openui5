@@ -758,6 +758,9 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	Card.prototype.startManifestProcessing = function () {
+		/**
+		 * @deprecated As of version 1.119
+		 */
 		if (!Utils.isBindingSyntaxComplex()) {
 			this._logSevereError(
 				"Cannot parse manifest. Complex binding syntax is not enabled - " +
