@@ -117,9 +117,9 @@ sap.ui.define([
 		}
 
 		/**
-		 * Returns information about a current out-of-place node.
+		 * Returns information about the out-of-place nodes.
 		 *
-		 * @returns {{nodeFilter : string, parentFilter : string?}|undefined}
+		 * @returns {{nodeFilters : string[], nodePredicates : string[], parentFilter : string?}|undefined}
 		 *   The current out-of-place infos, or <code>undefined</code> if no node is out of place
 		 *
 		 * @public
@@ -147,10 +147,10 @@ sap.ui.define([
 		 * @public
 		 */
 		setOutOfPlace(oNode, oParent) {
-			this.oOutOfPlace = {nodeFilter : this.fnGetKeyFilter(oNode)};
-			if (oParent) {
-				this.oOutOfPlace.parentFilter = this.fnGetKeyFilter(oParent);
-			}
+			this.oOutOfPlace ??= {nodeFilters : [], nodePredicates : []};
+			this.oOutOfPlace.parentFilter = oParent && this.fnGetKeyFilter(oParent);
+			this.oOutOfPlace.nodeFilters.push(this.fnGetKeyFilter(oNode));
+			this.oOutOfPlace.nodePredicates.push(_Helper.getPrivateAnnotation(oNode, "predicate"));
 		}
 	}
 
