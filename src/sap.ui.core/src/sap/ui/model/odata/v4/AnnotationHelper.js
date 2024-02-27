@@ -97,6 +97,8 @@ sap.ui.define([
 			 *     Since 1.78.0, both "edm:Path" and "edm:PropertyPath" are also supported if
 			 *     <code>vRawValue</code> is the path itself, and not the object wrapping it.
 			 * </ul>
+			 * <b>Note: Import the <code>sap/ui/model/odata/ODataExpressionAddons</code> module when
+			 * using 14.5.1 or 14.5.3</b>
 			 *
 			 * <h3>$AnnotationPath and $Path</h3>
 			 * If <code>oDetails.context.getPath()</code> contains a single "$AnnotationPath" or
