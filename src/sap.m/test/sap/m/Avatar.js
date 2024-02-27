@@ -82,7 +82,7 @@ sap.ui.define([
 						badgeIcon: "sap-icon://zoom-in",
 						badgeTooltip: "Zoom in",
 						press: onAvatarPress
-					}),
+					}).addStyleClass("sapUiTinyMarginTop"),
 					new Avatar({
 						ariaLabelledBy: 'avatar_label',
 						tooltip: "M size Avatar",
