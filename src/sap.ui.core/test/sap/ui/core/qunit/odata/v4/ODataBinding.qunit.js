@@ -300,7 +300,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestRefresh: success", function (assert) {
+[false, true].forEach((bRoot) => {
+	QUnit.test(`requestRefresh: success, root = ${bRoot}`, function (assert) {
 		var oBinding = new ODataBinding({
 				oModel : {},
 				refreshInternal : function () {}
@@ -308,7 +309,10 @@ sap.ui.define([
 			oPromise,
 			bRefreshed = false;
 
-		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
+		if (!bRoot) {
+			oBinding.mParameters = {$$ownRequest : true};
+		}
+		this.mock(oBinding).expects("isRoot").exactly(bRoot ? 1 : 0).withExactArgs().returns(true);
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
 		this.mock(_Helper).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "groupId", true)
@@ -329,6 +333,7 @@ sap.ui.define([
 			assert.ok(bRefreshed);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("requestRefresh: reject", function (assert) {
@@ -385,10 +390,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestRefresh: not refreshable", function (assert) {
+[false, true].forEach((bHasParams) => {
+	QUnit.test(`requestRefresh: not refreshable, but has params=${bHasParams}`, function (assert) {
 		var oBinding = new ODataBinding({
 				oModel : {}
 			});
+
+		if (bHasParams) {
+			oBinding.mParameters = {}; // no $$ownRequest here!
+		}
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
 
@@ -396,6 +406,7 @@ sap.ui.define([
 			oBinding.requestRefresh();
 		}, new Error("Refresh on this binding is not supported"));
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("requestRefresh: pending changes", function (assert) {

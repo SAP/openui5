@@ -39785,6 +39785,8 @@ make root = ${bMakeRoot}`;
 	// Scenario: Modify a property within a list binding with $$patchWithoutSideEffects, then modify
 	// in a context binding that inherits the parameter
 	// CPOUI5UISERVICESV3-1684
+	//
+	// Refresh of a relative context binding w/ $$ownRequest (JIRA: CPOUI5ODATAV4-2500)
 	QUnit.test("$$patchWithoutSideEffects in list binding and inherited", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
@@ -39847,6 +39849,19 @@ make root = ${bMakeRoot}`;
 			that.oView.byId("formNote").getBinding("value").setValue("Note (entered)");
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+					"@odata.etag" : "ETag2",
+					Note : "Note (refreshed)",
+					SalesOrderID : "42"
+				})
+				.expectChange("formNote", "Note (refreshed)");
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getObjectBinding().requestRefresh(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -55987,6 +56002,7 @@ make root = ${bMakeRoot}`;
 	// JIRA: CPOUI5ODATAV4-1409
 	//
 	// Add refresh (JIRA: CPOUI5ODATAV4-1382) and side-effects refresh (JIRA: CPOUI5ODATAV4-1384)
+	// and a refresh of a relative binding w/ $$ownRequest (JIRA: CPOUI5ODATAV4-2500)
 	//
 	// Show that a created persisted can stay kept-alive during refresh (JIRA: CPOUI5ODATAV4-1386)
 [
@@ -56108,14 +56124,6 @@ make root = ${bMakeRoot}`;
 					break;
 
 				case "refresh":
-					if (bRelative) {
-						assert.throws(function () {
-							// code under test
-							oBinding.refresh();
-						}, new Error("Refresh on this binding is not supported"));
-					}
-
-					// Note: expect no request for "objectPage" as there's no ODPrB there!
 					that.expectRequest(sTeams + "?$select=Name,Team_Id&$filter=Team_Id eq 'TEAM_A'",
 							oResultA)
 						// Note: GET not yet processed, binding still "empty"
@@ -56123,10 +56131,7 @@ make root = ${bMakeRoot}`;
 						.expectRequest(sTeams + "?$select=Name,Team_Id&$skip=0&$top=2", oResult);
 
 					// code under test
-					oPromise = (bRelative
-						? that.oView.byId("objectPage").getObjectBinding()
-						: oBinding
-						).requestRefresh();
+					oPromise = oBinding.requestRefresh();
 					break;
 
 				case "resume":
