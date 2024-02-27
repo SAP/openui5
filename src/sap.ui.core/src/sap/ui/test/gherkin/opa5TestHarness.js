@@ -5,12 +5,6 @@
 /* global QUnit */
 /* eslint-disable no-eval */
 
-// Load synchronously to avoid QUnit issue where tests run before QUnit is loaded
-// Only load QUnit if it has not been loaded via script tag
-if (!window.QUnit || !window.QUnit.test) {
-	sap.ui.requireSync("sap/ui/thirdparty/qunit"); // legacy-relevant - sync fallback when caller did not load QUnit
-}
-
 // put qunit-coverage last so library files don't get measured
 sap.ui.define([
 	"sap/base/Log",

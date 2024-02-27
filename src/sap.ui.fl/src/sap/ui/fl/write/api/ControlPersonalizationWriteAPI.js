@@ -105,7 +105,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		add(mPropertyBag) {
+		async add(mPropertyBag) {
 			if (!mPropertyBag.changes.length) {
 				return Promise.resolve([]);
 			}
@@ -208,19 +208,14 @@ sap.ui.define([
 			// Make sure to first create and add all changes so that change handlers
 			// that rely on change batching in the applier can wait for them, e.g.
 			// when adding multiple columns at once to a MDC table
-			return FlexState.initialize({
-				componentId: oAppComponent.getId()
-			}).then(function() {
-				return createChanges()
-				.then(applyChanges)
-				.then(function() {
-					(mChangeCreationListeners[sFlexReference] || [])
-					.forEach(function(fnCallback) {
-						fnCallback(aSuccessfulChanges);
-					});
-					return aSuccessfulChanges;
-				});
+			const aChanges = await createChanges();
+			await applyChanges(aChanges);
+
+			(mChangeCreationListeners[sFlexReference] || [])
+			.forEach(function(fnCallback) {
+				fnCallback(aSuccessfulChanges);
 			});
+			return aSuccessfulChanges;
 		},
 
 		/**

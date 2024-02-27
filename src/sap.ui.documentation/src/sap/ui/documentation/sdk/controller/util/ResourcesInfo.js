@@ -11,9 +11,7 @@ sap.ui.define([], function () {
 		{
 			"id": "iconExplorer",
 			"text": "Icon Explorer",
-			"href": "test-resources/sap/m/demokit/iconExplorer/webapp/index.html",
-			"viewDocHref": "topic/21ea0ea94614480d9a910b2e93431291",
-			"runUnitTestsHref": "test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"
+			"href": "test-resources/sap/m/demokit/iconExplorer/webapp/index.html"
 		},
 		{
 			"id": "accessibilityGuide",
@@ -26,22 +24,17 @@ sap.ui.define([], function () {
 		{
 			"id": "tooling",
 			"text": "UI5 Tooling",
-			"href": "https://sap.github.io/ui5-tooling/stable",
-			"gettingStartedHref": "https://sap.github.io/ui5-tooling/stable/pages/GettingStarted",
-			"cliDocHref": "https://sap.github.io/ui5-tooling/stable/pages/CLI"
+			"href": "https://github.com/SAP/ui5-tooling"
 		},
 		{
 			"id": "fioriTools",
 			"text": "SAP Fiori tools",
-			"href": "https://help.sap.com/viewer/product/SAP_FIORI_tools/Latest/en-US",
-			"viewDocHref": "https://help.sap.com/viewer/17d50220bcd848aa854c9c182d65b699/Latest/en-US"
+			"href": "https://help.sap.com/docs/SAP_FIORI_tools"
 		},
 		{
 			"id": "cardExplorer",
 			"text": "Card Explorer",
-			"href": "test-resources/sap/ui/integration/demokit/cardExplorer/index.html",
-			"viewDocHref": "test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html",
-			"samplesHref": "test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/explore/list"
+			"href": "test-resources/sap/ui/integration/demokit/cardExplorer/index.html"
 		},
 		{
 			"id": "fpmExplorer",
@@ -53,16 +46,14 @@ sap.ui.define([], function () {
 		{
 			"id": "businessAppStudio",
 			"text": "SAP Business Application Studio",
-			"href": "https://www.sap.com/appstudio",
-			"viewDocHref": "https://help.sap.com/docs/bas"
+			"href": "https://pages.community.sap.com/topics/business-application-studio"
 		},
 
 		// #3 Category: Customising
 		{
 			"id": "themeDesigner",
 			"text": "UI Theme Designer",
-			"href": "https://www.sap.com/community/topics/ui-theme-designer.html",
-			"viewDocHref": "https://help.sap.com/docs/btp/ui-theme-designer/ui-theme-designer"
+			"href": "https://pages.community.sap.com/topics/ui-theme-designer"
 		},
 		{
 			"id": "themeParameterToolbox",
@@ -72,16 +63,14 @@ sap.ui.define([], function () {
 		{
 			"id": "flexibility",
 			"text": "SAPUI5 Flexibility",
-			"href": "topic/a8e55aa2f8bc4127923b20685a6d1621"
+			"href": "https://help.sap.com/docs/UI5_FLEXIBILITY"
 		},
 
 		// #4 Category: Troubleshooting
 		{
 			"id": "inspector",
 			"text": "UI5 Inspector",
-			"href": "https://sap.github.io/ui5-inspector/",
-			"viewDocHref": "topic/b24e72443eb34d0fb7bf6940f2d697eb",
-			"viewSourceHref": "https://github.com/SAP/ui5-inspector"
+			"href": "https://sap.github.io/ui5-inspector/"
 		},
 		{
 			"id": "supportAssistant",
@@ -98,9 +87,8 @@ sap.ui.define([], function () {
 		},
 		{
 			"id": "wdi5",
-			"text": "WebdriverIO for UI5",
-			"href": "https://ui5-community.github.io/wdi5/#/",
-			"gettingStartedHref": "https://ui5-community.github.io/wdi5/#/installation"
+			"text": "wdi5",
+			"href": "https://ui5-community.github.io/wdi5/#/"
 		}
 	];
 

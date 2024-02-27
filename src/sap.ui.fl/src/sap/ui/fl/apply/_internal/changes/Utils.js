@@ -122,7 +122,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance to check
 		 * @returns {boolean} <code>true</code> if the change belongs to the given view
 		 */
-		filterChangeByView(mPropertyBag, oChange) {
+		isChangeInView(mPropertyBag, oChange) {
 			var oModifier = mPropertyBag.modifier;
 			var oAppComponent = mPropertyBag.appComponent;
 			var oSelector = oChange.getSelector();

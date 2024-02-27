@@ -4,12 +4,6 @@
 
 /* global QUnit */
 
-// Load synchronously to avoid QUnit issue where tests run before QUnit is loaded
-// Only load QUnit if it has not been loaded via script tag
-if (!window.QUnit || !window.QUnit.test) {
-	sap.ui.requireSync("sap/ui/thirdparty/qunit"); // legacy-relevant - sync fallback when caller did not load QUnit
-}
-
 // put qunit-coverage last so library files don't get measured  (we load StepDefinitions, even though we don't have to,
 // so that it doesn't appear in the code coverage list, knowing that the user will need to load it)
 sap.ui.define([

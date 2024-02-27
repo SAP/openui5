@@ -53,9 +53,6 @@ sap.ui.define([
 				throw new Error("not all mandatory properties were provided for the storage of the personalization");
 			}
 
-			await FlexState.initialize({
-				componentId: mPropertyBag.selector.getId()
-			});
 			await UI2PersonalizationState.setPersonalization(_omit(mPropertyBag, ["selector"]));
 		},
 
@@ -83,9 +80,6 @@ sap.ui.define([
 				throw new Error("not all mandatory properties were provided for the deletion of the personalization");
 			}
 
-			await FlexState.initialize({
-				componentId: mPropertyBag.selector.getId()
-			});
 			await UI2PersonalizationState.deletePersonalization(
 				mPropertyBag.reference,
 				mPropertyBag.containerKey,

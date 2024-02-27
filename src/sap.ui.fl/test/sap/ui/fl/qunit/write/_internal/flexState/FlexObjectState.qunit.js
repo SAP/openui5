@@ -94,10 +94,6 @@ sap.ui.define([
 				}
 			});
 			this.oAppComponent = new Component(sComponentId);
-			return FlexState.initialize({
-				componentId: sComponentId,
-				reference: sReference
-			});
 		},
 		afterEach() {
 			SessionStorageConnector.reset({

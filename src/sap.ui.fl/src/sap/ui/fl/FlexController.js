@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -25,6 +26,7 @@ sap.ui.define([
 	Reverter,
 	URLHandler,
 	States,
+	UIChangesState,
 	FlexState,
 	ControlVariantApplyAPI,
 	JsControlTreeModifier,
@@ -162,7 +164,7 @@ sap.ui.define([
 	 * @param {string[]} mPropertyBag.changeTypes - An array containing the change types that should be considered
 	 * @returns {Promise} Resolves when all changes on the control have been processed
 	 */
-	FlexController.prototype._waitForChangesToBeApplied = async function(mPropertyBag) {
+	FlexController.prototype._waitForChangesToBeApplied = function(mPropertyBag) {
 		function filterChanges(oChange) {
 			return !oChange.isCurrentProcessFinished()
 			&& (mPropertyBag.changeTypes.length === 0 || mPropertyBag.changeTypes.includes(oChange.getChangeType()));
@@ -170,12 +172,9 @@ sap.ui.define([
 
 		const oControl = mPropertyBag.selector.id && Element.getElementById(mPropertyBag.selector.id) || mPropertyBag.selector;
 		const oAppComponent = mPropertyBag.selector.appComponent || Utils.getAppComponentForControl(oControl);
-		await FlexState.initialize({
-			componentId: oAppComponent.getId()
-		});
 
 		mPropertyBag.changeTypes ||= [];
-		var mChangesMap = this._oChangePersistence.getDependencyMapForComponent();
+		var mChangesMap = UIChangesState.getLiveDependencyMap(this._sComponentName);
 		var aPromises = [];
 		var mDependencies = Object.assign({}, mChangesMap.mDependencies);
 		var {mChanges} = mChangesMap;
@@ -257,24 +256,27 @@ sap.ui.define([
 			sLayer
 		))
 		.then(function(oResult) {
-			if (bDraft && oResult && oResult.response) {
-				var vChangeDefinition = oResult.response;
-				var aDraftFilenames = [];
-				if (Array.isArray(vChangeDefinition)) {
-					vChangeDefinition.forEach(function(change) {
-						aDraftFilenames.push(change.fileName);
-					});
-					// the reference and layer of all items are the same
-					[vChangeDefinition] = vChangeDefinition;
+			if (oResult && bDraft) {
+				var mPropertyBag = {
+					reference: this._sComponentName,
+					layer: Layer.CUSTOMER // only the customer layer has draft active
+				};
+				if (oResult.response && oResult.response.length > 0) {
+					var aDraftFilenames = [];
+					if (Array.isArray(oResult.response)) {
+						oResult.response.forEach(function(change) {
+							aDraftFilenames.push(change.fileName);
+						});
+					}
+					mPropertyBag.draftFilenames = aDraftFilenames;
+					Versions.onAllChangesSaved(mPropertyBag);
+				} else {
+					// need to update version model when condensing send post request with a delete change and afterwards call flex/data request with right version parameter
+					return Versions.updateModelFromBackend(mPropertyBag);
 				}
-				Versions.onAllChangesSaved({
-					reference: vChangeDefinition.reference,
-					layer: vChangeDefinition.layer,
-					draftFilenames: aDraftFilenames
-				});
 			}
 			return oResult;
-		});
+		}.bind(this));
 	};
 
 	/**

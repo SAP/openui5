@@ -73,7 +73,7 @@ sap.ui.define([
 			api: "API Reference - " + MAIN_WEB_PAGE_TITLE,
 			controls: "Samples - " + MAIN_WEB_PAGE_TITLE,
 			demoapps: "Demo Apps - " + MAIN_WEB_PAGE_TITLE,
-			tools: "Tools - " + MAIN_WEB_PAGE_TITLE,
+			resources: "Resources - " + MAIN_WEB_PAGE_TITLE,
 			home: MAIN_WEB_PAGE_TITLE
 		};
 

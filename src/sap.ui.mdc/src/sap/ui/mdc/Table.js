@@ -2602,6 +2602,8 @@ sap.ui.define([
 				if (this._oQuickActionContainer.hasQuickActions() || this._oItemContainer.hasItems()) {
 					this._oColumnHeaderMenu.openBy(oInnerColumn, true);
 					PersonalizationUtils.detectUserPersonalizationCompletion(this, this._oColumnHeaderMenu);
+				} else {
+					MTableUtil.announceEmptyColumnMenu();
 				}
 			});
 		});

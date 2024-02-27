@@ -1,0 +1,105 @@
+<mvc:View
+	controllerName="sap.f.dynamicpage.controller.Main"
+	displayBlock="true"
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:layout="sap.ui.layout"
+	xmlns:f="sap.f"
+>
+	<App>
+		<f:DynamicPage id="dynamicPageId">
+			<!-- DynamicPage Title -->
+			<f:title>
+				<f:DynamicPageTitle id="dynamicPageTitleId">
+					<f:heading>
+						<Title text="Header Title" />
+					</f:heading>
+					<f:breadcrumbs>
+						<Breadcrumbs>
+							<Link text="Home" />
+							<Link text="Page 1" />
+							<Link text="Page 2" />
+							<Link text="Page 3" />
+							<Link text="Page 4" />
+							<Link text="Page 5" />
+						</Breadcrumbs>
+					</f:breadcrumbs>
+					<f:expandedContent>
+						<Label
+							text="This is an expanded subheading, which is long enough to show how now it occupies all available space
+							and is not limited to the width of the heading aggregation, which previously led to visual degradations" />
+					</f:expandedContent>
+					<f:snappedContent>
+						<Label
+							text="This is a snapped subheading, which is long enough to show how now it occupies all available space
+							and is not limited to the width of the heading aggregation, which previously led to visual degradations"
+							class="sapUiSmallMarginBottom" />
+					</f:snappedContent>
+					<f:content>
+						<GenericTag text="Shortage expected" status="Warning">
+							<ObjectNumber number="100" unit="EUR" emphasized="false" state="Warning" />
+						</GenericTag>
+					</f:content>
+					<f:actions>
+						<Button
+							text="Edit"
+							type="Emphasized"
+							press="toggleAreaPriority" />
+						<Button
+							text="Delete"
+							type="Transparent" />
+						<Button
+							text="Copy"
+							type="Transparent" />
+						<Button
+							text="Toggle Footer"
+							type="Transparent"
+							press="onToggleFooter" />
+						<Button
+							icon="sap-icon://action"
+							type="Transparent" />
+					</f:actions>
+				</f:DynamicPageTitle>
+			</f:title>
+
+			<!-- DynamicPage Header -->
+			<f:header>
+				<f:DynamicPageHeader pinnable="true" id="dynamicPageHeaderId">
+					<f:content>
+						<VBox fitContainer="true">
+							<Button text="Solid Background Design" press="onSetSolidBackground" />
+							<Button text="Transparent Background Design"
+								press="onSetTransparentBackground" />
+							<Button text="Translucent Background Design"
+								press="onSetTranslucentBackground" />
+						</VBox>
+					</f:content>
+				</f:DynamicPageHeader>
+			</f:header>
+
+			<!-- DynamicPage Content -->
+			<f:content>
+				<layout:DynamicSideContent id="idDynamicGanttChartSideContent"
+					containerQuery="false" showSideContent="false" sideContentPosition="End">
+					<layout:mainContent>
+						<Button text="Test" />
+					</layout:mainContent>
+					<layout:sideContent>
+						<Page title="test" />
+					</layout:sideContent>
+				</layout:DynamicSideContent>
+			</f:content>
+
+			<!-- DynamicPage Footer -->
+			<f:footer>
+				<OverflowToolbar>
+					<ToolbarSpacer />
+					<Button type="Accept" text="Accept" />
+					<Button type="Reject" text="Reject" />
+				</OverflowToolbar>
+			</f:footer>
+		</f:DynamicPage>
+	</App>
+</mvc:View>

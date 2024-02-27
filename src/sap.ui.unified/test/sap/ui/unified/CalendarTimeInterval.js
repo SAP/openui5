@@ -397,7 +397,7 @@ sap.ui.define([
 		vertical: true,
 		content: [new SelectList("LB",{
 			width: "10rem",
-			ariaLabelledBy: [oSelectListLabel]
+			ariaLabelledBy: [oLabel3, oSelectListLabel]
 		})]
 	});
 

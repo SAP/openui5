@@ -507,18 +507,7 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 0, "no prepare function was called");
-				assert.throws(
-					function() {
-						FlexState.getAppDescriptorChanges(sReference);
-					},
-					"the getAppDescriptorChanges function throws an error"
-				);
-				assert.throws(
-					function() {
-						FlexState.getVariantsState(sReference);
-					},
-					"the getVariantsState function throws an error"
-				);
+				assert.strictEqual(FlexState.getAppDescriptorChanges(sReference), "appDescriptorChanges", "the prepare is called");
 			}.bind(this));
 		});
 
@@ -548,53 +537,6 @@ sap.ui.define([
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
 				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 1, "get flex info session was not triggered again");
 			}.bind(this));
-		});
-
-		QUnit.test("when clearState is called with and without reference", function(assert) {
-			var sReference2 = "second.reference";
-			var sReference3 = "third.reference";
-			return FlexState.initialize({
-				reference: sReference,
-				component: {},
-				componentId: sComponentId
-			})
-			.then(FlexState.initialize.bind(null, {
-				reference: sReference2,
-				componentId: sComponentId
-			}))
-			.then(function() {
-				assert.ok(FlexState.getCompVariantsMap(sReference), "before clearState state1 is available");
-				assert.ok(FlexState.getCompVariantsMap(sReference2), "before clearState state2 is available");
-				FlexState.clearState(sReference);
-				assert.throws(
-					function() {
-						FlexState.getCompVariantsMap({reference: sReference});
-					},
-					"after clearState(1) there is no state1 anymore"
-				);
-				assert.ok(FlexState.getCompVariantsMap(sReference2), "after clearState(1) state2 is still there");
-			})
-			.then(FlexState.initialize.bind(null, {
-				reference: sReference3,
-				componentId: sComponentId
-			}))
-			.then(function() {
-				assert.ok(FlexState.getCompVariantsMap(sReference2), "before clearState state2 is available");
-				assert.ok(FlexState.getCompVariantsMap(sReference3), "before clearState state3 is available");
-				FlexState.clearState();
-				assert.throws(
-					function() {
-						FlexState.getCompVariantsMap({reference: sReference});
-					},
-					"after clearState() there is no state2 anymore"
-				);
-				assert.throws(
-					function() {
-						FlexState.getCompVariantsMap({reference: sReference});
-					},
-					"after clearState() there is no state3 anymore"
-				);
-			});
 		});
 
 		QUnit.test("when clearState is called while there are dirty changes", function(assert) {
@@ -875,6 +817,33 @@ sap.ui.define([
 				assert.equal(oUnfilteredStorageResponse.changes.changes.length, 1, "there is one changes");
 			});
 		});
+
+		QUnit.test("when initialize is called with an emptyState already available", async function(assert) {
+			var mResponse = merge(
+				{},
+				mEmptyResponse,
+				{
+					changes: {
+						changes: [{
+							fileType: "change",
+							changeType: "propertyChange",
+							layer: LayerUtils.getCurrentLayer()
+						}]
+					}
+				}
+			);
+			this.oApplyStorageLoadFlexDataStub.resolves(mResponse.changes);
+			// this will create an emptyState
+			FlexState.getRuntimeOnlyData(sReference);
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			});
+			assert.equal(this.oLoaderSpy.callCount, 1, "loader is called once");
+			assert.equal(this.oApplyStorageLoadFlexDataStub.callCount, 1, "storage loadFlexData is called once");
+			const aFlexObjects = FlexState.getFlexObjectsDataSelector().get({reference: sReference});
+			assert.equal(aFlexObjects.length, 1, "there is one change");
+		});
 	});
 
 	QUnit.module("Fake Standard Variants", {
@@ -971,13 +940,16 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("new change is updated (e.g. after a save)", function(assert) {
-			var oDataSelectorUpdateSpy;
-			return FlexState.initialize({
-				reference: sReference,
-				componentId: this.sComponentId
-			})
-			.then(function() {
+		[true, false].forEach((bInitFlexState) => {
+			const sName = `new change is updated (e.g. after a save)${bInitFlexState ? " with initialized FlexState" : ""}`;
+			QUnit.test(sName, async function(assert) {
+				var oDataSelectorUpdateSpy;
+				if (bInitFlexState) {
+					await FlexState.initialize({
+						reference: sReference,
+						componentId: this.sComponentId
+					});
+				}
 				// New change created in runtime
 				var oNewChange = FlexObjectFactory.createFromFileContent({
 					fileName: "change1",
@@ -1007,15 +979,12 @@ sap.ui.define([
 					}
 				));
 				oDataSelectorUpdateSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "checkUpdate");
-				return FlexState.update({
+				await FlexState.update({
 					reference: sReference,
 					componentId: this.sComponentId,
 					manifest: {},
 					componentData: {}
 				});
-			}.bind(this))
-			.then(function() {
-				// TODO: Replace with getUIChanges when map is properly initialized?
 				var aChanges = FlexState.getFlexObjectsDataSelector().get({reference: sReference});
 				assert.strictEqual(aChanges[0].getRevertData(), "revertData", "then the runtime information is still available");
 				assert.strictEqual(

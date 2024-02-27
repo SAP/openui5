@@ -399,18 +399,13 @@ sap.ui.define([
 					}
 				}));
 
-				return FlexState.initialize({
-					reference: sReference,
-					componentId: oAppComponent.getId(),
-					manifest: {},
-					componentData: {}
-				}).then(SmartVariantManagementApplyAPI.loadVariants.bind(undefined, {
+				return SmartVariantManagementApplyAPI.loadVariants({
 					control: oControl,
 					standardVariant: {
 						name: "sStandardVariantTitle"
 					},
 					variants: aVariants
-				})).then(function() {
+				}).then(function() {
 					testData.updateVariantPropertyBag.control = oControl;
 					return SmartVariantManagementWriteAPI.updateVariant(testData.updateVariantPropertyBag);
 				}).then(function(oVariant) {
@@ -715,19 +710,13 @@ sap.ui.define([
 					}
 				));
 
-				return FlexState.initialize({
-					reference: sReference,
-					componentId: oAppComponent.getId(),
-					manifest: {},
-					componentData: {}
-				})
-				.then(SmartVariantManagementApplyAPI.loadVariants.bind(undefined, {
+				return SmartVariantManagementApplyAPI.loadVariants({
 					control: oControl,
 					standardVariant: {
 						name: "sStandardVariantTitle"
 					},
 					variants: aVariants
-				}))
+				})
 				.then(function() {
 					testData.updateVariantPropertyBag.control = oControl;
 					return SmartVariantManagementWriteAPI.updateVariant(testData.updateVariantPropertyBag);
@@ -805,16 +794,11 @@ sap.ui.define([
 					},
 					getUserId() {}
 				});
-				return FlexState.initialize({
-					reference: sReference,
-					componentId: oAppComponent.getId(),
-					manifest: {},
-					componentData: {}
-				}).then(SmartVariantManagementApplyAPI.loadVariants.bind(undefined, {
+				return SmartVariantManagementApplyAPI.loadVariants({
 					control: oControl,
 					standardVariant: {},
 					variants: []
-				})).then(function() {
+				}).then(function() {
 					return SmartVariantManagementWriteAPI.updateVariant({
 						control: oControl,
 						layer: Layer.VENDOR,
@@ -1101,12 +1085,7 @@ sap.ui.define([
 					componentId: "__component0",
 					manifest: {},
 					componentData: {}
-				}).then(FlexState.update.bind(undefined, {
-					reference: sReference,
-					componentId: "__component0",
-					manifest: {},
-					componentData: {}
-				})).then(Settings.getInstance)
+				}).then(Settings.getInstance)
 				.then(function() {
 					switch (testData.details) {
 						case "a new name for a variant":
@@ -1297,12 +1276,6 @@ sap.ui.define([
 				manifest: {},
 				componentData: {}
 			})
-			.then(FlexState.update.bind(undefined, {
-				reference: sReference,
-				componentId: "__component0",
-				manifest: {},
-				componentData: {}
-			}))
 			.then(function() {
 				return SmartVariantManagementWriteAPI.removeVariant({
 					reference: sReference,

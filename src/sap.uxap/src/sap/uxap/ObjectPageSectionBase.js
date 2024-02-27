@@ -215,7 +215,7 @@ sap.ui.define([
 	ObjectPageSectionBase.prototype._resetLayoutData = function (aGridItems) {
 		aGridItems.forEach(function (oItem) {
 			// There might be cases when the content of the SubSection is not yet unstashed (created) and it is still the ObjectPageLazyLoader
-			if (oItem.getLayoutData?.()) {
+			if (oItem?.getLayoutData?.()) {
 				oItem.destroyLayoutData();
 			}
 		}, this);

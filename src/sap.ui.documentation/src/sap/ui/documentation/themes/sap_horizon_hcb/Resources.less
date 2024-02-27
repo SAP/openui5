@@ -4,17 +4,19 @@
 	}
 
 	.sapUiDemoKitResourcesMain {
-		[class*="sapUiDemoKitResourcesCategory"]
-		.sapUiDemoKitResourcesRegularCard.sapFCard {
-			.sapUiDemoKitCardHeader.sapFCardHeader {
+		.sapUiDemoKitResourcesCardContentSpacing {
+			padding: 1rem;
+		}
+
+		[class*="sapUiDemoKitResourcesCategory"] .sapUiDemoKitResourcesRegularCard.sapFCard {
+			.sapFCardHeader {
 				background-color: @sapUiTileBackground;
 
-				&:hover {
-					background-color: @sapActiveColor;
-				}
+				.sapFCardHeaderImage .sapFCardIcon.sapFAvatar {
 
-				.sapFAvatar:not(.sapMAvatarPressed):not(.sapMAvatarDisabled):hover {
-					background-color: unset;
+					&:not(.sapMAvatarPressed):not(.sapMAvatarDisabled):hover {
+						background-color: unset;
+					}
 				}
 			}
 		}

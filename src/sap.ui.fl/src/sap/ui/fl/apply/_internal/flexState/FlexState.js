@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/requireAsync"
 ], function(
@@ -36,6 +37,7 @@ sap.ui.define([
 	Loader,
 	ManifestUtils,
 	FlexInfoSession,
+	StorageUtils,
 	LayerUtils,
 	requireAsync
 ) {
@@ -74,6 +76,7 @@ sap.ui.define([
 	 * 				liveDependencyMap: {...}
 	 * 			}
 	 * 		}
+	 * 		emptyState: <boolean>,
 	 *		partialFlexState: <boolean>,
 	 *		componentId: "<componentId>",
 	 *		componentData: {...}
@@ -203,7 +206,7 @@ sap.ui.define([
 
 	function getInstanceEntryOrThrowError(sReference, sMapName) {
 		if (!_mInstances[sReference]) {
-			throw new Error("State is not yet initialized");
+			initializeEmptyState(sReference);
 		}
 
 		if (!_mInstances[sReference].preparedMaps[sMapName]) {
@@ -304,7 +307,7 @@ sap.ui.define([
 	function initializeNewInstance(mPropertyBag) {
 		var sReference = mPropertyBag.reference;
 		var bDataUpdated = false;
-		if (!_mInstances[sReference].componentData) {
+		if (!_mInstances[sReference].componentData && mPropertyBag.componentId) {
 			var oComponent = Component.getComponentById(mPropertyBag.componentId);
 			_mInstances[sReference].componentData = oComponent ? oComponent.getComponentData() : mPropertyBag.componentData;
 			bDataUpdated = true;
@@ -354,8 +357,6 @@ sap.ui.define([
 		_mInitPromises[mPropertyBag.reference] = Loader.loadFlexData(mPropertyBag)
 		.then(async (mResponse) => {
 			mResponse.authors = await Loader.loadVariantsAuthors(mPropertyBag.reference);
-			return mResponse;
-		}).then((mResponse) => {
 			// The following line is used by the Flex Support Tool to set breakpoints - please adjust the tool if you change it!
 			_mInstances[mPropertyBag.reference] = merge({}, {
 				unfilteredStorageResponse: mResponse,
@@ -392,7 +393,6 @@ sap.ui.define([
 			mInitProperties.partialFlexData = merge({}, oFlexInstance.unfilteredStorageResponse.changes);
 			mInitProperties.reInitialize = true;
 		}
-		return mInitProperties;
 	}
 
 	function checkComponentId(mInitProperties) {
@@ -401,7 +401,6 @@ sap.ui.define([
 		if (!mInitProperties.reInitialize && sFlexInstanceComponentId !== mInitProperties.componentId) {
 			mInitProperties.reInitialize = true;
 		}
-		return mInitProperties;
 	}
 
 	// TODO: get rid of the following module dependencies as soon as the change state
@@ -415,9 +414,25 @@ sap.ui.define([
 		});
 	}
 
-	// TODO: the additional safeguard for the runtimePersistence will not be necessary after the FlexState.initialize rework
+	function initializeEmptyState(sReference) {
+		_mInstances[sReference] = {
+			unfilteredStorageResponse: { changes: StorageUtils.getEmptyFlexDataResponse() },
+			storageResponse: { changes: StorageUtils.getEmptyFlexDataResponse() },
+			preparedMaps: {},
+			emptyState: true,
+			// this makes sure that a proper initialize will still work as expected
+			reInitialize: true,
+			componentId: ""
+		};
+		_mInitPromises[sReference] = Promise.resolve();
+		initializeNewInstance({ reference: sReference });
+	}
+
 	FlexState.getRuntimeOnlyData = function(sReference) {
-		return _mInstances[sReference]?.runtimePersistence?.runtimeOnlyData || {};
+		if (!_mInstances[sReference]) {
+			initializeEmptyState(sReference);
+		}
+		return _mInstances[sReference].runtimePersistence.runtimeOnlyData;
 	};
 
 	/**
@@ -436,30 +451,24 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.partialFlexState=false] - if true state is initialized partially and does not include flex bundles
 	 * @returns {Promise<undefined>} Resolves a promise as soon as FlexState is initialized
 	 */
-	FlexState.initialize = function(mPropertyBag) {
-		return Promise.all([
-			lazyLoadModules()
-		])
-		.then(function() {
-			enhancePropertyBag(mPropertyBag);
-			var sFlexReference = mPropertyBag.reference;
+	FlexState.initialize = async function(mPropertyBag) {
+		await lazyLoadModules();
+		const mProperties = merge({}, mPropertyBag);
+		enhancePropertyBag(mProperties);
+		var sFlexReference = mProperties.reference;
 
-			if (_mInitPromises[sFlexReference]) {
-				return _mInitPromises[sFlexReference]
-				.then(checkPartialFlexState.bind(null, mPropertyBag))
-				.then(checkComponentId)
-				.then(function(mEvaluatedProperties) {
-					return mEvaluatedProperties.reInitialize
-						? loadFlexData(mEvaluatedProperties)
-						: _mInstances[sFlexReference].unfilteredStorageResponse;
-				});
+		if (_mInitPromises[sFlexReference]) {
+			await _mInitPromises[sFlexReference];
+			checkPartialFlexState(mProperties);
+			checkComponentId(mProperties);
+			if (mProperties.reInitialize) {
+				await loadFlexData(mProperties);
 			}
+		} else {
+			await loadFlexData(mProperties);
+		}
 
-			return loadFlexData(mPropertyBag);
-		})
-		.then(function(mPropertyBag) {
-			initializeNewInstance(mPropertyBag);
-		}.bind(null, mPropertyBag));
+		initializeNewInstance(mProperties);
 	};
 
 	/**
@@ -505,7 +514,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.adaptationId] - Context-based adaptation for which the state should be updated
 	 * @returns {Promise<undefined>} Resolves when the data is loaded and the runtime persistence is updated
 	 */
-	FlexState.update = function(mPropertyBag) {
+	FlexState.update = async function(mPropertyBag) {
 		enhancePropertyBag(mPropertyBag);
 		var sReference = mPropertyBag.reference;
 		var oCurrentRuntimePersistence = _mInstances[sReference].runtimePersistence;
@@ -519,19 +528,17 @@ sap.ui.define([
 			_oChangePersistenceFactory._instanceCache[sReference].removeDirtyChanges();
 		}
 
-		return (_mInitPromises[sReference] || Promise.resolve())
-		.then(loadFlexData.bind(this, mPropertyBag))
-		.then(function() {
-			_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
-			var bUpdated = updateRuntimePersistence(
-				sReference,
-				_mInstances[sReference].storageResponse,
-				oCurrentRuntimePersistence
-			);
-			if (bUpdated) {
-				oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
-			}
-		});
+		await _mInitPromises[sReference];
+		await loadFlexData(mPropertyBag);
+		_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
+		var bUpdated = updateRuntimePersistence(
+			sReference,
+			_mInstances[sReference].storageResponse,
+			oCurrentRuntimePersistence
+		);
+		if (bUpdated) {
+			oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
+		}
 	};
 
 	function getChangeCategory(oChangeDefinition) {
@@ -617,9 +624,6 @@ sap.ui.define([
 
 	FlexState.clearState = function(sReference) {
 		if (sReference) {
-			delete _mInstances[sReference];
-			delete _mInitPromises[sReference];
-			oFlexObjectsDataSelector.clearCachedResult({ reference: sReference });
 			// TODO: get rid of the following deletes as soon as the change state
 			// is migrated from changePersistenceFactory to the FlexState
 			if (
@@ -628,6 +632,9 @@ sap.ui.define([
 			) {
 				_oChangePersistenceFactory._instanceCache[sReference].removeDirtyChanges();
 			}
+			delete _mInstances[sReference];
+			delete _mInitPromises[sReference];
+			oFlexObjectsDataSelector.clearCachedResult({ reference: sReference });
 		} else {
 			_mInstances = {};
 			_mInitPromises = {};
@@ -713,6 +720,9 @@ sap.ui.define([
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oFlexObject - Flexibility object
 	 */
 	FlexState.addDirtyFlexObject = function(sReference, oFlexObject) {
+		if (!_mInstances[sReference]) {
+			initializeEmptyState(sReference);
+		}
 		const sAdaptationLayer = FlexInfoSession.getByReference(sReference)?.adaptationLayer;
 		const bFlexObjectsOverAdaptationLayer = !!sAdaptationLayer
 			&& LayerUtils.isOverLayer(oFlexObject.getLayer(), sAdaptationLayer);
@@ -736,6 +746,9 @@ sap.ui.define([
 	 * @param {array.<sap.ui.fl.apply._internal.flexObjects.FlexObject>} aFlexObjects - Flexibility objects
 	 */
 	FlexState.addDirtyFlexObjects = function(sReference, aFlexObjects) {
+		if (!_mInstances[sReference]) {
+			initializeEmptyState(sReference);
+		}
 		const sAdaptationLayer = FlexInfoSession.getByReference(sReference)?.adaptationLayer;
 		aFlexObjects = !sAdaptationLayer ? aFlexObjects : aFlexObjects
 		.filter((oFlexObject) => !LayerUtils.isOverLayer(oFlexObject.getLayer(), sAdaptationLayer));
