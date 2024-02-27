@@ -1,4 +1,4 @@
-/*global assert */
+/*global QUnit */
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/test/gherkin/StepDefinitions",
@@ -10,7 +10,7 @@ sap.ui.define([
 	var Steps = StepDefinitions.extend("GherkinWithQUnit.Steps", {
 		init: function() {
 			this.register(/^I expect (\d+?) assertions?$/i, function(sNumAssertions) {
-				assert.expect(parseInt(sNumAssertions));
+				QUnit.expect(parseInt(sNumAssertions));
 			});
 			this.register(/^that quantum phenomena exist at the macroscopic level$/i, function() {
 				this.bMacroQuanta = true;
@@ -23,7 +23,7 @@ sap.ui.define([
 			});
 			this.register(/^I should expect a (live|dead) barista$/i, function(sAlive) {
 				var bExpectedToBeAlive = (sAlive === "live");
-				assert.strictEqual(oCodeUnderTest.isAlive(this.bFlaskBroken), bExpectedToBeAlive,
+				QUnit.strictEqual(oCodeUnderTest.isAlive(this.bFlaskBroken), bExpectedToBeAlive,
 					"Verified barista is " + sAlive);
 			});
 			this.register(/^coffee is an incredibly expensive luxury$/i, function() {
@@ -33,7 +33,7 @@ sap.ui.define([
 				oCodeUnderTest.addToRunningTotal(sCoffeeType);
 			});
 			this.register(/^my running total should be \$([\d\.]+?)$/i, function(sRunningTotal) {
-				assert.strictEqual(oCodeUnderTest.getRunningTotal(), parseFloat(sRunningTotal),
+				QUnit.strictEqual(oCodeUnderTest.getRunningTotal(), parseFloat(sRunningTotal),
 					"Verified running total: $" + sRunningTotal);
 			});
 			this.register(/^I look at the coffee price list$/i, function() {
@@ -43,7 +43,7 @@ sap.ui.define([
 				aDataTable = DataTableUtils.toTable(aDataTable, "camelCase");
 				aDataTable.forEach(function(oCoffee) {
 					var fCost = parseFloat(oCoffee.cost.substring(1));
-					assert.strictEqual(this.oCoffeePriceList[oCoffee.coffeeType], fCost,
+					QUnit.strictEqual(this.oCoffeePriceList[oCoffee.coffeeType], fCost,
 						"Verified " + oCoffee.coffeeType + " " + fCost);
 				}, this);
 			});
