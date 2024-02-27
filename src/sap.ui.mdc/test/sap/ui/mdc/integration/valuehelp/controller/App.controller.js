@@ -36,9 +36,8 @@ sap.ui.define([
 		{path: "sap.ui.v4demo.view.OPA-4", text: "OPA: Dialog with Default FilterBar Configuration", maxConditions: 1},
 		{path: "sap.ui.v4demo.view.OPA-5", footer: "sap.ui.v4demo.view.OPA-5-Footer",  text: "OPA: ValueHelps With Complex Keys", maxConditions: -1, maxConditionsToggleEnabled: true},
 		{path: "sap.ui.v4demo.view.OPA-6", text: "OPA: Popover.opensOnClick", maxConditions: 1},
-		{path: "sap.ui.v4demo.view.OPA-7", text: "OPA: Popover.opensOnFocus", maxConditions: 1}
-
-
+		{path: "sap.ui.v4demo.view.OPA-7", text: "OPA: Popover.opensOnFocus", maxConditions: 1},
+		{path: "sap.ui.v4demo.view.FirstMatch", text: "Explore: ValueHelpDelegate.getFirstMatch", maxConditions: 1}
 	];
 
 	return Controller.extend("sap.ui.v4demo.controller.App", {
@@ -110,6 +109,25 @@ sap.ui.define([
 					{key: "02", text: "Division 02 for 1030 10", salesOrganization: "1030", distributionChannel: "10"},
 					{key: "02", text: "Division 02 for 1030 20", salesOrganization: "1030", distributionChannel: "20"}
 				],
+
+				firstMatch: {
+					data: [
+
+						{key: "-", text: "Automatic"},
+						{key: "Automatic", text: "-"},
+
+						{key: "-", text: "automatic"},
+						{key: "automatic", text: "-"},
+
+						{key: "-", text: "Auto"},
+						{key: "Auto", text: "-"},
+
+						{key: "-", text: "auto"},
+						{key: "auto", text: "-"}
+					],
+					caseSensitive: false,
+					display: "Value"
+				},
 
 				// Relevant for SalesOrganization Fragment END
 
@@ -184,8 +202,12 @@ sap.ui.define([
 
 		onOpensOnClickChange: function (oEvent) {
 			this.oJSONModel.setProperty("opensOnClick", !!oEvent.getParameter("state"));
-		}
+		},
 
 		// Relevant for Typeahead Fragment END
+
+		onFirstMatchDataChange: function (oEvent) {
+			this.oJSONModel.setProperty("/firstMatch/data", JSON.parse(oEvent.getParameter("value")));
+		}
 	});
 });

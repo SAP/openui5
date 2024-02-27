@@ -245,7 +245,7 @@ sap.ui.define([
 	 * @param {string} sDescription FormattedText of the description
 	 * @param {boolean} bKeyMatch If <code>true</code> the key matches to the user input
 	 * @param {boolean} bDescriptionMatch If <code>true</code> the description matches to the user input
-	 * @returns {string} Output text
+	 * @returns {string|boolean} Output text or boolean true, if the autocomplete value should be accepted without modifying the visible input
 	 * @since: 1.121.0
 	 * @public
 	 */

@@ -941,6 +941,18 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Temporarily highlights a typeahead item identified by it's id.
+	 * Navigation events or other updates may lead to the item no longer being highlighted.
+	 *
+	 * @param {string} sHighlightId control id of the item to be highlighted
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.ValueHelp
+	 */
+	Container.prototype.setHighlightId = function(sHighlightId) {
+
+	};
+
 	Container.prototype.exit = function() {
 		this._oObserver.disconnect();
 		this._oObserver = undefined;

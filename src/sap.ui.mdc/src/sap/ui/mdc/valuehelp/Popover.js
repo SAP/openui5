@@ -769,6 +769,10 @@ sap.ui.define([
 
 	};
 
+	Popover.prototype.setHighlightId = function(sHighlightId) {
+		return this._getContent()?.setHighlightId?.(sHighlightId);
+	};
+
 	Popover.prototype.exit = function() {
 		if (this._oCurrentContent) {
 			if (!this._oCurrentContent.isDestroyed()) {

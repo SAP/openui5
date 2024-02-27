@@ -1219,4 +1219,9 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("setHighlightId", function(assert) {
+		sinon.spy(oContainer, "setHighlightId");
+		oValueHelp.setHighlightId("x");
+		assert.ok(oContainer.setHighlightId.calledWith("x"), "ValueHelp.setHighlightId calls Container.setHighlightId with argument");
+	});
 });

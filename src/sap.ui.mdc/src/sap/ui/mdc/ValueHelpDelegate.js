@@ -12,18 +12,29 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/condition/Condition",
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
+	'sap/ui/model/FilterProcessor',
 	"sap/ui/mdc/condition/FilterConverter",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/mdc/enums/FieldDisplay"
 ], (
 	BaseDelegate,
 	FilterType,
 	ConditionValidated,
 	OperatorName,
 	Condition,
+	Filter,
+	FilterOperator,
+	FilterProcessor,
 	FilterConverter,
-	Device
+	Device,
+	FieldDisplay
 ) => {
 	"use strict";
+
+	const _applyFilters = (aItems, oFilter) => FilterProcessor.apply(aItems, oFilter, (oBindingContext, sPath) => oBindingContext && oBindingContext.getProperty(sPath))?.[0];
+
 
 	/**
 	 * Delegate for {@link sap.ui.mdc.ValueHelp}.
@@ -54,7 +65,7 @@ sap.ui.define([
 	 * @returns {Promise} <code>Promise</code> that is resolved if all content is available
 	 * @public
 	 */
-	ValueHelpDelegate.retrieveContent = function(oValueHelp, oContainer, sContentId) {
+	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer, sContentId) {
 		return Promise.resolve();
 	};
 
@@ -67,7 +78,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if <code>$search</code> is supported
 	 * @public
 	 */
-	ValueHelpDelegate.isSearchSupported = function(oValueHelp, oContent, oListBinding) {
+	ValueHelpDelegate.isSearchSupported = function (oValueHelp, oContent, oListBinding) {
 		return false;
 	};
 
@@ -80,7 +91,7 @@ sap.ui.define([
 	 * @since 1.110.0
 	 * @public
 	 */
-	ValueHelpDelegate.showTypeahead = function(oValueHelp, oContent) {
+	ValueHelpDelegate.showTypeahead = function (oValueHelp, oContent) {
 		if (Device.system.phone) {
 			// on phone also open typeahead if no filter is set or no result is found
 			return true;
@@ -106,7 +117,7 @@ sap.ui.define([
 	 * @since 1.110.0
 	 * @public
 	 */
-	ValueHelpDelegate.updateBindingInfo = function(oValueHelp, oContent, oBindingInfo) {
+	ValueHelpDelegate.updateBindingInfo = function (oValueHelp, oContent, oBindingInfo) {
 		oBindingInfo.parameters = {};
 		oBindingInfo.filters = this.getFilters(oValueHelp, oContent);
 	};
@@ -120,7 +131,7 @@ sap.ui.define([
 	 * @since 1.121
 	 * @protected
 	 */
-	ValueHelpDelegate.getFilters = function(oValueHelp, oContent) {
+	ValueHelpDelegate.getFilters = function (oValueHelp, oContent) {
 
 		const oFilterBar = oContent.getActiveFilterBar();
 		const oConditions = oFilterBar ? oFilterBar.getConditions() : oContent._oInitialFilterConditions || {};
@@ -151,7 +162,7 @@ sap.ui.define([
 	 * @since 1.110.0
 	 * @public
 	 */
-	ValueHelpDelegate.updateBinding = function(oValueHelp, oListBinding, oBindingInfo, oContent) {
+	ValueHelpDelegate.updateBinding = function (oValueHelp, oListBinding, oBindingInfo, oContent) {
 		oListBinding.filter(oBindingInfo.filters, FilterType.Application);
 		if (oListBinding.isSuspended()) {
 			oListBinding.resume();
@@ -172,7 +183,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @deprecated (since 1.110.0) - replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.updateBindingInfo updateBindingInfo}
 	 */
-	ValueHelpDelegate.adjustSearch = function(oValueHelp, bTypeahead, sSearch) {
+	ValueHelpDelegate.adjustSearch = function (oValueHelp, bTypeahead, sSearch) {
 		return sSearch;
 	};
 
@@ -185,7 +196,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.model.ListBinding>} <code>Promise</code> that is resolved if search is executed
 	 * @public
 	 */
-	ValueHelpDelegate.executeFilter = function(oValueHelp, oListBinding, iRequestedItems) {
+	ValueHelpDelegate.executeFilter = function (oValueHelp, oListBinding, iRequestedItems) {
 		return Promise.resolve(oListBinding);
 	};
 
@@ -199,7 +210,7 @@ sap.ui.define([
 	 * @returns {boolean|Promise<boolean>} <code>Promise</code> that is resolved once <code>ListBinding</code> has been updated
 	 * @public
 	 */
-	ValueHelpDelegate.checkListBindingPending = function(oValueHelp, oListBinding, iRequestedItems) {
+	ValueHelpDelegate.checkListBindingPending = function (oValueHelp, oListBinding, iRequestedItems) {
 		if (!oListBinding || oListBinding.isSuspended()) {
 			return false;
 		}
@@ -220,7 +231,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.101.0
 	 */
-	ValueHelpDelegate.onConditionPropagation = function(oValueHelp, sReason, oConfig) {
+	ValueHelpDelegate.onConditionPropagation = function (oValueHelp, sReason, oConfig) {
 
 	};
 
@@ -242,7 +253,7 @@ sap.ui.define([
 	 * @since 1.101.0
 	 * @deprecated (since 1.106.0) - replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.getFilterConditions getFilterConditions}
 	 */
-	ValueHelpDelegate.getInitialFilterConditions = function(oValueHelp, oContent, oControl) {
+	ValueHelpDelegate.getInitialFilterConditions = function (oValueHelp, oContent, oControl) {
 
 		const oConditions = {};
 		return oConditions;
@@ -279,7 +290,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.118.0
 	 */
-	ValueHelpDelegate.findConditionsForContext = function(oValueHelp, oContent, oContext, aConditions) {
+	ValueHelpDelegate.findConditionsForContext = function (oValueHelp, oContent, oContext, aConditions) {
 		const vKey = oContext.getObject(oContent.getKeyPath());
 		return aConditions.filter((oCondition) => {
 			return oCondition.validated === ConditionValidated.Validated && vKey === oCondition.values[0];
@@ -301,7 +312,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.101.0
 	 */
-	ValueHelpDelegate.modifySelectionBehaviour = function(oValueHelp, oContent, oChange) {
+	ValueHelpDelegate.modifySelectionBehaviour = function (oValueHelp, oContent, oChange) {
 		return oChange;
 	};
 
@@ -317,7 +328,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.101.0
 	 */
-	ValueHelpDelegate.createConditionPayload = function(oValueHelp, oContent, aValues, oContext) {
+	ValueHelpDelegate.createConditionPayload = function (oValueHelp, oContent, aValues, oContext) {
 		return undefined;
 	};
 
@@ -331,7 +342,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.101.0
 	 */
-	ValueHelpDelegate.getTypesForConditions = function(oValueHelp, oContent, oConditions) { // TODO: MDC.Table add UI.Table support
+	ValueHelpDelegate.getTypesForConditions = function (oValueHelp, oContent, oConditions) { // TODO: MDC.Table add UI.Table support
 		const oConditionTypes = {};
 		const oListBindingInfo = oContent && oContent.getListBindingInfo();
 
@@ -361,7 +372,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.106.0
 	 */
-	ValueHelpDelegate.getFilterConditions = function(oValueHelp, oContent, oConfig) {
+	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
 		if (this.getInitialFilterConditions) {
 			return this.getInitialFilterConditions(oValueHelp, oContent, (oConfig && oConfig.control) || (oContent && oContent.getControl()));
 		}
@@ -370,7 +381,20 @@ sap.ui.define([
 
 	/**
 	 * Returns the content that is used for the autocomplete feature and for user input, if the entered text
-	 * leads to more than one filter result.<br/>By default, this method returns the first entry of a set of relevant contexts of the given {@link sap.ui.mdc.valuehelp.base.ListContent ListContent}.
+	 * leads to more than one filter result.
+	 *
+	 * By default, this method searches and returns an entry from a set of relevant contexts of the given {@link sap.ui.mdc.valuehelp.base.ListContent ListContent}.
+	 *
+	 * To determine which columns are relevant for the search, the currently active displayMode {@link sap.ui.mdc.enums.FieldDisplay Display} of the connected control will be used.
+	 * While a 'Value' configuration will lead to a 'key'-only search, 'DescriptionValue' leads to searching 'description' first and 'key' afterwards. Other modes work accordingly.
+	 *
+	 * For each relevant column all items are searched for an exact match first and again with a startsWith filter afterwards, if necessary.
+	 *
+	 * If the caseSensitive property is disabled, the letter case of the user's input and the corresponding column value are completely ignored. Whichever entry comes first, wins.
+	 *
+	 *
+	 *
+	 * {@link sap.ui.mdc.valuehelp.base.ListContent ListContent}
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.ListContent} oContent <code>ValueHelp</code> content instance
@@ -379,8 +403,49 @@ sap.ui.define([
 	 * @public
 	 * @since 1.120.0
 	 */
-	ValueHelpDelegate.getFirstMatch = function(oValueHelp, oContent, oConfig) {
-		return oContent.getRelevantContexts(oConfig)[0];
+	ValueHelpDelegate.getFirstMatch = function (oValueHelp, oContent, oConfig) {
+
+		let oResult;
+		const aRelevantContexts = oContent.getListBinding(oConfig)?.getCurrentContexts();
+		const sInputValue = oConfig.value;
+
+		if (sInputValue && aRelevantContexts?.length) {
+			const bCaseSensitive = oConfig.hasOwnProperty("caseSensitive") ? oConfig.caseSensitive : oContent.getCaseSensitive();
+			const sKeyPath = oContent.getKeyPath();
+			const sDescriptionPath = oConfig.checkDescription && oContent.getDescriptionPath();
+
+			let aSearchFields;
+			switch (oValueHelp.getDisplay()) {
+				case FieldDisplay.Description:
+					aSearchFields = [sDescriptionPath];
+					break;
+				case FieldDisplay.DescriptionValue:
+					aSearchFields = [sDescriptionPath, sKeyPath];
+					break;
+				case FieldDisplay.ValueDescription:
+					aSearchFields = [sKeyPath, sDescriptionPath];
+					break;
+				default:
+					aSearchFields = [sKeyPath];
+					break;
+			}
+			aSearchFields = aSearchFields.filter((oEntry) => !!oEntry);
+
+			for (const sPath of aSearchFields) {
+					const aFilters = [
+						new Filter({ path: sPath, operator: FilterOperator.EQ, value1: sInputValue, caseSensitive: bCaseSensitive }),
+						new Filter({ path: sPath, operator: FilterOperator.StartsWith, value1: sInputValue, caseSensitive: bCaseSensitive })
+					];
+					for (const oFilter of aFilters) {
+						oResult = _applyFilters(aRelevantContexts, oFilter);
+						if (oResult) {
+							return oResult;
+						}
+					}
+			}
+		}
+
+		return oResult;
 	};
 
 	/**
@@ -394,7 +459,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.121.0
 	 */
-	ValueHelpDelegate.isFilteringCaseSensitive = function(oValueHelp, oContent) {
+	ValueHelpDelegate.isFilteringCaseSensitive = function (oValueHelp, oContent) {
 		return oContent.getCaseSensitive();
 	};
 
@@ -410,7 +475,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.121.0
 	 */
-	ValueHelpDelegate.shouldOpenOnFocus = function(oValueHelp, oContainer) {
+	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
 		let bShouldOpenOnFocus = false;
 
 		/**
@@ -435,7 +500,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.121.0
 	 */
-	ValueHelpDelegate.shouldOpenOnClick = function(oValueHelp, oContainer) {
+	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
 		let bShouldOpenOnClick = false;
 
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {

@@ -209,16 +209,18 @@ sap.ui.define([
 			return Promise.resolve(oExistingFilterField);
 		}
 
+		const {operators, ...oConstructorSettings} = DelegateCache.merge({
+			dataType: oProperty.dataType,
+			conditions: "{$filters>/conditions/" + sName + '}',
+			propertyKey: sName,
+			required: oProperty.required,
+			label: oProperty.label || oProperty.name,
+			maxConditions: oProperty.maxConditions,
+			delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}
+		}, DelegateCache.get(oFilterBar, oProperty.name, "$Filters"));
+
 		return Promise.resolve()
-			.then(oModifier.createControl.bind(oModifier, "sap.ui.mdc.FilterField", oAppComponent, oView, sId, DelegateCache.merge({
-				dataType: oProperty.dataType,
-				conditions: "{$filters>/conditions/" + sName + '}',
-				propertyKey: sName,
-				required: oProperty.required,
-				label: oProperty.label || oProperty.name,
-				maxConditions: oProperty.maxConditions,
-				delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}
-			}, DelegateCache.get(oFilterBar, oProperty.name, "$Filters")))).then(function(oFilterField) {
+			.then(oModifier.createControl.bind(oModifier, "sap.ui.mdc.FilterField", oAppComponent, oView, sId, oConstructorSettings)).then(function(oFilterField) {
 				if (oProperty.fieldHelp) {
 
 					var sFieldHelp = oProperty.fieldHelp;
@@ -230,11 +232,11 @@ sap.ui.define([
 					oModifier.setAssociation(oFilterField, "valueHelp", sFieldHelp);
 				}
 
-				if (oProperty.filterOperators) {
+				if (operators) {
 					if (oFilterBar.getId) {
-						oModifier.setProperty(oFilterField, "operators", oProperty.filterOperators);
+						oModifier.setProperty(oFilterField, "operators", operators);
 					} else {
-						oModifier.setProperty(oFilterField, "operators", oProperty.filterOperators.join(','));
+						oModifier.setProperty(oFilterField, "operators", operators.join(','));
 					}
 				}
 

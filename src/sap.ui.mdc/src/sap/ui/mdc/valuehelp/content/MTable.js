@@ -101,7 +101,9 @@ sap.ui.define([
 		this._oMResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		this._iNavigateIndex = -1; // initially nothing is navigated
-		this._oFirstItemResult = {};
+
+		this._sHighlightId = undefined;
+
 	};
 
 	MTable.prototype.getValueHelpIcon = function() {
@@ -121,12 +123,9 @@ sap.ui.define([
 			const aItems = oTable.getItems();
 			const aConditions = this.getConditions();
 			const bHideSelection = this.isSingleSelect() && !FilterableListContent.prototype.isSingleSelect.apply(this); // if table is in single selection but Field allows multiple values, don't select items
-			const bUseFirstMatch = this.getUseFirstMatch() && this.isTypeahead() && !!this.getFilterValue() && this._iNavigateIndex === -1 && !!this._oFirstItemResult.result && ((this.isSingleSelect() && aConditions.length === 0) || !this.isSingleSelect());
-			const oFirstItem = this._oFirstItemResult.result;
 
 			aItems.forEach((oItem) => {
 				const oItemContext = this._getListItemBindingContext(oItem);
-				const oItemFromContext = this.isValueHelpDelegateInitialized() ? this.getItemFromContext(oItemContext) : { key: undefined };
 				if (bHideSelection) {
 					oItem.setSelected(false);
 				} else {
@@ -134,12 +133,9 @@ sap.ui.define([
 				}
 				if (oItem.getSelected() && this.isTypeahead() && this.isSingleSelect()) { // show selected item as focused if open in single-selection
 					oItem.addStyleClass("sapMLIBFocused");
-				} else if (oTable.indexOfItem(oItem) === this._iNavigateIndex || (bUseFirstMatch && oItemFromContext.key === oFirstItem.key)) { // show navigated item or first match as selected
+				} else if (oTable.indexOfItem(oItem) === this._iNavigateIndex || (oItem.getId() === this._sHighlightId)) { // show navigated item or first match as selected
 					oItem.addStyleClass("sapMLIBFocused")
 						.addStyleClass("sapMLIBSelected");
-					if ((bUseFirstMatch && oItemFromContext.key === oFirstItem.key)) {
-						this._oFirstItemResult.index = this._oTable.indexOfItem(oItem);
-					}
 				} else {
 					oItem.removeStyleClass("sapMLIBFocused")
 						.removeStyleClass("sapMLIBSelected");
@@ -175,6 +171,8 @@ sap.ui.define([
 			this.setProperty("conditions", [], true);
 			this._iNavigateIndex = -1;
 		}
+
+		this._sHighlightId = undefined;
 
 		const applyAfterPromise = function() {
 			if (!this.isDestroyed()) {
@@ -231,14 +229,7 @@ sap.ui.define([
 		}).finally(() => {
 			const oLatestApplyFiltersPromise = this._retrievePromise("applyFilters");
 			oLatestApplyFiltersPromise?.getInternalPromise().then((bApplyFilters) => {
-				const oBindingContext = this.getValueHelpDelegate().getFirstMatch(this.getValueHelpInstance(), this);
-				const bCaseSensitive = this.getValueHelpDelegate().isFilteringCaseSensitive(this.getValueHelpInstance(), this);
-				this._oFirstItemResult = {
-					result: this.getItemFromContext(oBindingContext),
-					filterValue: this.getFilterValue(),
-					index: -1
-				};
-				_fireTypeaheadSuggested.call(this, oBindingContext, bCaseSensitive);
+				this._handleFirstMatchSuggest(this._oTable.getItems());
 			});
 			return oLatestApplyFiltersPromise && oLatestApplyFiltersPromise.getInternalPromise(); // re-fetching the applyFilters promise, in case filterValue was changed during the filtering and a parallel run was triggered
 		});
@@ -322,8 +313,8 @@ sap.ui.define([
 			let oSelectedItem;
 			if (this._iNavigateIndex >= 0) {
 				oSelectedItem = oTable.getItems()[this._iNavigateIndex];
-			} else if (this._oFirstItemResult && this._oFirstItemResult.index >= 0) {
-				oSelectedItem = oTable.getItems()[this._oFirstItemResult.index];
+			} else if (this._sHighlightId) {
+				oSelectedItem = oTable.getItems().find((oItem) => oItem.getId() === this._sHighlightId);
 			} else {
 				oSelectedItem = oTable.getSelectedItem();
 			}
@@ -454,19 +445,12 @@ sap.ui.define([
 		const oPromise2 = oDelegate && oDelegate.getFilterConditions(oValueHelp, this, oConfig);
 
 		return Promise.all([oPromise1, oPromise2]).then((aResult) => {
-			const bPending = aResult[0];
-			const oConditions = aResult[1];
+			const [bPending, oConditions] = aResult;
+
 			let oResult;
 
 			if (!bPending) {
 				const oTable = this.getTable();
-				const oContainer = oTable.getParent()?.getParent();
-				if (!oConfig.exactMatch &&
-					oTable.getItems().length > 0 &&
-					this.getUseFirstMatch() &&
-					oContainer?.isOpen()) {
-					oResult = this._oFirstItemResult.filterValue === oConfig.value ? this._oFirstItemResult.result : undefined;
-				}
 				if (!oResult) {
 					oResult = _filterItems.call(this, oConfig, oTable.getItems(), oConditions);
 				}
@@ -662,7 +646,7 @@ sap.ui.define([
 		const bSingleSelect = this.isSingleSelect();
 		const oTable = this._getTable();
 		const aItems = oTable.getItems();
-		const iNavigateIndex = this._iNavigateIndex >= 0 ? this._iNavigateIndex : this._oFirstItemResult?.index; // use first match as initial entry
+		const iNavigateIndex = this._iNavigateIndex < 0 && this._sHighlightId ? aItems.findIndex((oItem) => oItem.getId() === this._sHighlightId) : this._iNavigateIndex;  // use highlight item as initial entry
 		const oSelectedItem = iNavigateIndex >= 0 ? aItems[iNavigateIndex] : bSingleSelect && oTable.getSelectedItem(); // in MultiSelect, selected item makes no sense
 		const iItems = aItems.length;
 		let iSelectedIndex = 0;
@@ -697,6 +681,8 @@ sap.ui.define([
 		} else {
 			bSearchForNext = iStep >= 0;
 		}
+
+		this.setHighlightId();
 
 		if (!bIsOpen) { // if closed, ignore headers
 			const fSkipGroupHeader = function() {
@@ -831,6 +817,31 @@ sap.ui.define([
 		};
 	};
 
+	MTable.prototype._handleFirstMatchSuggest = function () {
+		const bTypeahead = this.isTypeahead();
+		const aItems = this._oTable?.getItems();
+		const sFilterValue = this.getFilterValue();
+		const bUseFirstMatch = this.getUseFirstMatch();
+
+		if (bTypeahead && bUseFirstMatch && aItems?.length && sFilterValue) {
+			const oValueHelpDelegate = this.getValueHelpDelegate();
+			const oFirstMatchContext = oValueHelpDelegate.getFirstMatch(this.getValueHelpInstance(), this, {
+				value: this.getFilterValue(),
+				checkDescription: !!this.getDescriptionPath(),
+				control: this.getControl(),
+				caseSensitive: this.getCaseSensitive()
+			});
+
+			if (oFirstMatchContext) {
+				const oValueHelpItem = this.getItemFromContext(oFirstMatchContext);
+				const bCaseSensitive = oValueHelpDelegate.isFilteringCaseSensitive(this.getValueHelpInstance(), this);
+				const oCondition = this.createCondition(oValueHelpItem.key, oValueHelpItem.description, oValueHelpItem.payload);
+				const oListItem = aItems.find((oItem) => this._getListItemBindingContext(oItem) === oFirstMatchContext);
+				this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: oListItem?.getId(), caseSensitive: bCaseSensitive });
+			}
+		}
+	};
+
 	function _getSAPMResourceBundle() {
 		if (!this._oResourceBundleM) {
 			this._oResourceBundleM = Library.getResourceBundleFor("sap.m"); // sap.m is always loaded
@@ -948,8 +959,8 @@ sap.ui.define([
 		}
 
 		if (oChanges.name === "table") {
+			this._sHighlightId = undefined;
 			const oTable = oChanges.child;
-			this._oFirstItemResult = {};
 
 			if (oChanges.mutation === "remove") {
 				this._oObserver.unobserve(oTable);
@@ -1040,10 +1051,8 @@ sap.ui.define([
 	};
 
 	MTable.prototype.onConnectionChange = function() {
-
+		this._sHighlightId = undefined;
 		this._iNavigateIndex = -1; // initially nothing is navigated
-		this._oFirstItemResult = {};
-
 	};
 
 	MTable.prototype.exit = function() {
@@ -1058,34 +1067,16 @@ sap.ui.define([
 			"_oMResourceBundle",
 			"_oResourceBundle",
 			"_oTableDelegate",
-			"_oFirstItemResult"
+			"_sHighlightId"
 		]);
 
 		FilterableListContent.prototype.exit.apply(this, arguments);
 	};
 
-	MTable.prototype.getRelevantContexts = function(oConfig) {
-		return this.getListBinding().getCurrentContexts();
+	MTable.prototype.setHighlightId = function (sHighlightId) {
+		this._sHighlightId = sHighlightId;
+		_updateSelection.call(this);
 	};
-
-	function _fireTypeaheadSuggested(oBindingContext, bCaseSensitive) {
-		if (!this.isTypeahead() || !this.getUseFirstMatch() || !this._oFirstItemResult || !this._oFirstItemResult.result || !this._oFirstItemResult.filterValue) {
-			return;
-		}
-
-		const oCondition = this.createCondition(this._oFirstItemResult.result.key, this._oFirstItemResult.result.description, this._oFirstItemResult.result.payload);
-		const aItems = this._oTable.getItems();
-		let sItemId;
-
-		for (const oItem of aItems) {
-			if (this._getListItemBindingContext(oItem) === oBindingContext) {
-				sItemId = oItem.getId();
-				break;
-			}
-		}
-
-		this.fireTypeaheadSuggested({ condition: oCondition, filterValue: this._oFirstItemResult.filterValue, itemId: sItemId, caseSensitive: bCaseSensitive });
-	}
 
 	return MTable;
 });

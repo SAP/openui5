@@ -640,6 +640,12 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("setHighlightId", function(assert) {
+		sinon.spy(oContent, "setHighlightId");
+		oPopover.setHighlightId("x");
+		assert.ok(oContent.setHighlightId.calledWith("x"), "Container setHighlightId calls Content.setHighlightId with argument");
+	});
+
 
 	QUnit.module("popover valuehelp assigned to Input ", {
 		beforeEach: async function() {
@@ -1317,5 +1323,4 @@ sap.ui.define([
 		assert.notOk(oPopover.isTypeaheadSupported(), "for Single-selection not supported");
 
 	});
-
 });
