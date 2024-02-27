@@ -190,7 +190,7 @@ sap.ui.define([
 		for (var i = 0; i < aColumns.length; i++) {
 			// If column menus of other columns are open, close them.
 			if (aColumns[i] !== oColumn) {
-				this._closeColumnContextMenu(oColumn);
+				this._closeColumnContextMenu(aColumns[i]);
 			}
 		}
 
