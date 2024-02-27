@@ -34,10 +34,8 @@ sap.ui.define([
 	const TableMap = new window.WeakMap(); // To store table-related information for easy access in the delegate.
 
 	/**
-	 * Base delegate for {@link sap.ui.mdc.Table} and <code>ODataV4</code>.
-	 *
-	 * Extend this object in your project to use all functionalities of the table. For more information, please see
-	 * {@link module:sap/ui/mdc/TableDelegate}.
+	 * Base delegate for {@link sap.ui.mdc.Table} and <code>ODataV4</code>. Extend this object in your project to use all functionalities of the
+	 * table. For more information, please see {@link module:sap/ui/mdc/TableDelegate}.
 	 *
 	 * <b>Note:</b> This base delegate supports the <code>p13nMode</code> <code>Aggregate</code> only if the table type is
 	 * {@link sap.ui.mdc.table.GridTableType GridTable}, and the <code>p13nMode</code> <code>Group</code> is not supported if the table type is

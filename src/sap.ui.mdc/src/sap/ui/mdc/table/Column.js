@@ -55,7 +55,14 @@ sap.ui.define([
 					defaultValue: null
 				},
 				/**
-				 * Defines the minimum width of the column.
+				 * Defines the minimum width of the column. This property only takes effect if the column has a flexible <code>width</code>, for
+				 * example, a percentage value. The user can resize the column to a smaller width if
+				 * {@link sap.ui.mdc.Table#getEnableColumnResize column resizing} is enabled in the table.
+				 *
+				 * <b>Note:</b> If the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}, the property is used to influence
+				 * the pop-in behavior: If the accumulated width of all columns is bigger than the width of the table, then the least important column
+				 * is moved into the pop-in area. For more information, see
+				 * {@link sap.ui.mdc.table.ResponsiveColumnSettings#getImportance ResponsiveColumnSettings}.
 				 *
 				 * @since 1.80
 				 */
@@ -70,7 +77,8 @@ sap.ui.define([
 				 * @since 1.80
 				 */
 				header: {
-					type: "string"
+					type: "string",
+					group: "Appearance"
 				},
 				/**
 				 * Defines whether the column header is visible.
@@ -79,7 +87,7 @@ sap.ui.define([
 				 */
 				headerVisible: {
 					type: "boolean",
-					group: "Misc",
+					group: "Appearance",
 					defaultValue: true
 				},
 				/**
@@ -89,6 +97,7 @@ sap.ui.define([
 				 */
 				hAlign: {
 					type: "sap.ui.core.HorizontalAlign",
+					group: "Appearance",
 					defaultValue: "Begin"
 				},
 				/**
@@ -130,6 +139,7 @@ sap.ui.define([
 				 */
 				required: {
 					type: "boolean",
+					group: "Appearance",
 					defaultValue: false
 				}
 			},
