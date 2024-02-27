@@ -63,6 +63,15 @@ sap.ui.define([
 		assert.equal(this.oQuickTotal.getLabel(), sLabel, "QuickTotal label is correct.");
 	});
 
+	QUnit.test("setLabel on QuickTotalItem", function(assert) {
+		var ooQuickTotalItem = this.oQuickTotal.getItems()[0];
+		ooQuickTotalItem.setLabel("New label");
+		assert.equal(ooQuickTotalItem.getLabel(), "New label", "New QuickTotalItem label is correct");
+
+		var oToggleButton = this.oQuickTotal.getDependents()[0];
+		assert.strictEqual(oToggleButton.getText(), ooQuickTotalItem.getLabel(), "QuickTotalItem's ToggleButton label is updated correctly");
+	});
+
 	QUnit.test("Content", function(assert) {
 		var aContent = this.oQuickTotal.getContent();
 		assert.ok(aContent, "The quick total has content");
