@@ -13,6 +13,7 @@ sap.ui.define([
 	"use strict";
 
 	const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+
 	const LinkPanelController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.LinkPanelController", {
 		constructor: function() {
 			BaseController.apply(this, arguments);
@@ -54,6 +55,10 @@ sap.ui.define([
 		return Promise.resolve(oSelectionPanel);
 	};
 
+	LinkPanelController.prototype._navigate = function(sHref) {
+		this.getAdaptationControl().getMetadata()._oClass.navigate(sHref);
+	};
+
 	LinkPanelController.prototype._onLinkPressed = function(oEvent) {
 		const oSource = oEvent.getParameter("oSource");
 		const oPanel = this.getAdaptationControl();
@@ -64,7 +69,7 @@ sap.ui.define([
 			oPanel.getBeforeNavigationCallback()(oEvent).then((bNavigate) => {
 				if (bNavigate) {
 					oPanel._onNavigate(oSource);
-					oPanel.getMetadata()._oClass.navigate(sHref);
+					this._navigate(sHref);
 				}
 			});
 		} else {
@@ -77,7 +82,7 @@ sap.ui.define([
 				onClose: function(oAction) {
 					if (oAction === MessageBox.Action.YES) {
 						oPanel._onNavigate(oSource);
-						oPanel.getMetadata()._oClass.navigate(sHref);
+						this._navigate(sHref);
 					}
 				},
 				styleClass: this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""

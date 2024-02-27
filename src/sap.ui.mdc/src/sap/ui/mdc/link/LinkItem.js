@@ -28,29 +28,34 @@ sap.ui.define([
 				 * Unique key of the <code>LinkItem</code> that is used for personalization.
 				 */
 				key: {
-					type: "string"
+					type: "string",
+					defaultValue: undefined
 				},
 				/**
 				 * Text of the <code>Link</code> that is displayed.
 				 */
 				text: {
-					type: "string"
+					type: "string",
+					defaultValue: null
 				},
 				/**
 				 * Defines the additional text of the item.
 				 */
 				description: {
-					type: "string"
+					type: "string",
+					defaultValue: undefined
 				},
 				/**
-				 * Destination link for a navigation operation in external format (used when opening in new tab).
+				 * Destination link for a navigation operation in external format (used when opening in new tab) using the <code>hrefForExternal</code> method of the CrossApplicationNavigation service.
 				 */
 				href: {
-					type: "string"
+					type: "string",
+					defaultValue: null
 				},
 				/**
 				 * Destination link for a navigation operation in internal format provided by the SAP Fiori launchpad (used when navigation happens
-				 * programmatically).
+				 * programmatically). Only for internal use
+				 * @protected
 				 */
 				internalHref: {
 					type: "string",
@@ -58,6 +63,8 @@ sap.ui.define([
 				},
 				/**
 				 * Determines the target of the <code>Link</code> and has to be used as the <code>target</code> of an html anchor.
+				 * The standard values for the <code>target</code> property are: _self, _top, _blank, _parent, _search. Alternatively, a frame name
+				 * can be entered. This property is only used if the <code>href</code> property is set.
 				 */
 				target: {
 					type: "string",
