@@ -4574,7 +4574,7 @@ sap.ui.define([
 				`<In id="flag"/>`,
 				`</template:if>`,
 				`<ExtensionPoint name="{path: 'unrelated>/', type: 'sap.ui.model.type.Boolean'}"/>`,
-				 // NO warning "Constant test condition" (yet); "_type" must be ignored
+				 // warning "Constant test condition"; "_type" must be ignored
 				`<template:if test="{_type: 'Constant', value : false}">`,
 				`<Out/>`,
 				`</template:if>`,
@@ -4585,13 +4585,14 @@ sap.ui.define([
 			];
 		warn(this.oLogMock, `[ 1] Function name(s) .notFound not found`, aViewContent[2]);
 		warn(this.oLogMock, `[ 0] Binding not ready`, aViewContent[11]);
-		//TODO? warn(this.oLogMock, `[ 0] Constant test condition`, aViewContent[12]);
+		warn(this.oLogMock, `[ 1] Constant test condition`, aViewContent[12]);
 
 		return this.checkTracing(assert, true, [
 			{m : `[ 0] Start processing qux`},
 			{m : `[ 0] Binding not ready for attribute text`, d : 1},
 			{m : `[ 1] test == false --> false`, d : 2},
 			{m : `[ 1] Finished`, d : 4},
+			// Note: BindingParser.complexParser|expression turns constant values into strings
 			{m : `[ 1] test == "false" --> false`, d : 5},
 			{m : `[ 1] Finished`, d : 7},
 			{m : `[ 1] test == true --> true`, d : 8},
@@ -4617,7 +4618,29 @@ sap.ui.define([
 			assert.strictEqual(oAverageSpy.callCount, oEndSpy.callCount);
 		});
 	});
-	//TODO static binding for "Constant test condition" with type?!
+
+	//*********************************************************************************************
+	QUnit.test(`static binding for "Constant test condition" with type`, function (assert) {
+		this.oSapUiMock.expects(`require`).on(sap.ui).atLeast(0) // only for the 1st run
+			.withArgs([`sap/ui/model/type/Boolean`]).callThrough();
+		const aViewContent = [
+			mvcView(),
+			// async type loading must not make a difference here!
+			`<template:if test="{type: 'sap.ui.model.type.Boolean', value : false}">`,
+			`<Out/>`,
+			`</template:if>`,
+			`</mvc:View>`
+		];
+		warn(this.oLogMock, `[ 1] Constant test condition`, aViewContent[1]);
+
+		return this.checkTracing(assert, true, [
+			{m : `[ 0] Start processing qux`},
+			// Note: w/o MOBS, MO turns constant values into strings
+			{m : sinon.match(/\[ 1\] test == "?false"? --> false/), d : 1},
+			{m : `[ 1] Finished`, d : 3},
+			{m : `[ 0] Finished processing qux`}
+		], aViewContent, {/*Look Ma, no models!*/}, [/*no output*/], /*bAsync*/true);
+	});
 
 	//*********************************************************************************************
 	QUnit.test(`DINC0032093, DINC0074061`, function (assert) {
