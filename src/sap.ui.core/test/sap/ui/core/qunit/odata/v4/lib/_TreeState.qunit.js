@@ -29,6 +29,7 @@ sap.ui.define([
 		assert.strictEqual(oTreeState.fnGetKeyFilter, "~fnGetKeyFilter~");
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels, {});
 		assert.deepEqual(oTreeState.getOutOfPlaceGroupedByParent(), []);
+		assert.deepEqual(oTreeState.getOutOfPlaceCount(), 0);
 	});
 
 	//*********************************************************************************************
@@ -138,7 +139,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setOutOfPlace/getOutOfPlaceGroupedByParent/reset", function (assert) {
+	QUnit.test("out of place", function (assert) {
 		const fnGetKeyFilter = mustBeMocked;
 		const oTreeState = new _TreeState("~sNodeProperty~", fnGetKeyFilter);
 
@@ -164,6 +165,7 @@ sap.ui.define([
 			parentFilter : "~parent1Filter~",
 			parentPredicate : "~parent1Predicate~"
 		}]);
+		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 1);
 
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oParent2~", "predicate")
 			.returns("~parent2Predicate~");
@@ -187,6 +189,7 @@ sap.ui.define([
 			parentFilter : "~parent2Filter~",
 			parentPredicate : "~parent2Predicate~"
 		}]);
+		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 2);
 
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oParent1~", "predicate")
 			.returns("~parent1Predicate~");
@@ -209,6 +212,7 @@ sap.ui.define([
 			parentFilter : "~parent2Filter~",
 			parentPredicate : "~parent2Predicate~"
 		}]);
+		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 3);
 
 		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oNode4~").returns("~node4Filter~");
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oNode4~", "predicate")
@@ -238,5 +242,6 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(oTreeState.getOutOfPlaceGroupedByParent(), []);
+		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 0);
 	});
 });

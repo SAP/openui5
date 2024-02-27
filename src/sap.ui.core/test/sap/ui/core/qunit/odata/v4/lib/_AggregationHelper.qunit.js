@@ -2362,13 +2362,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getQueryOptionsForOutOfPlaceNodesData", function (assert) {
+	QUnit.test("getQueryOptionsForOutOfPlaceNodesData: below parent", function (assert) {
 		const oOutOfPlace = {
 			nodeFilters : ["~node2Filter~", "~node1Filter~", "~node3Filter~"],
 			parentFilter : "~parentFilter~"
 		};
 		const sOutOfPlaceJSON = JSON.stringify(oOutOfPlace);
-		const oAggregation = {hierarchyQualifier : "X", search : "~search~"};
+		const oAggregation = {
+			expandTo : 99,
+			hierarchyQualifier : "X",
+			search : "~search~",
+			$ExpandLevels : "~$ExpandLevels~"
+		};
 		const sAggregationJSON = JSON.stringify(oAggregation);
 		const mQueryOptions = {
 			$$filterBeforeAggregate : "~filterBeforeAggregate~",
@@ -2381,7 +2386,7 @@ sap.ui.define([
 
 		this.mock(_AggregationHelper).expects("buildApply")
 			.callsFake(function (oAggregation0, mQueryOptions0, iLevel) {
-				assert.deepEqual(oAggregation0, {hierarchyQualifier : "X"});
+				assert.deepEqual(oAggregation0, {expandTo : 1, hierarchyQualifier : "X"});
 				assert.deepEqual(mQueryOptions0, {
 					$$filterBeforeAggregate : "~parentFilter~",
 					custom : "~custom~"
@@ -2409,13 +2414,61 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getQueryOptionsForOutOfPlaceNodesData: root nodes", function (assert) {
+		const oOutOfPlace = {
+			nodeFilters : ["~node2Filter~", "~node1Filter~", "~node3Filter~"]
+		};
+		const sOutOfPlaceJSON = JSON.stringify(oOutOfPlace);
+		const oAggregation = {
+			expandTo : 99,
+			hierarchyQualifier : "X",
+			search : "~search~",
+			$ExpandLevels : "~$ExpandLevels~"
+		};
+		const sAggregationJSON = JSON.stringify(oAggregation);
+		const mQueryOptions = {
+			$count : "~count~",
+			$filter : "~filter~",
+			$orderby : "~orderby~",
+			custom : "~custom~"
+		};
+		const sQueryOptionsJSON = JSON.stringify(mQueryOptions);
+
+		this.mock(_AggregationHelper).expects("buildApply")
+			.callsFake(function (oAggregation0, mQueryOptions0, iLevel) {
+				assert.deepEqual(oAggregation0, {expandTo : 1, hierarchyQualifier : "X"});
+				assert.deepEqual(mQueryOptions0, {custom : "~custom~"});
+				assert.strictEqual(iLevel, 1);
+
+				mQueryOptions0.$apply = "~apply~";
+				return mQueryOptions0;
+			});
+
+		// code under test
+		const mResult = _AggregationHelper.getQueryOptionsForOutOfPlaceNodesData(oOutOfPlace,
+			oAggregation, mQueryOptions);
+
+		assert.deepEqual(mResult, {
+			$apply : "~apply~",
+			$filter : "~node1Filter~ or ~node2Filter~ or ~node3Filter~",
+			$top : 3,
+			custom : "~custom~"
+		});
+		assert.strictEqual(JSON.stringify(oAggregation), sAggregationJSON, "unchanged");
+		assert.strictEqual(JSON.stringify(oOutOfPlace), sOutOfPlaceJSON, "unchanged");
+		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getQueryOptionsForOutOfPlaceNodesRank", function (assert) {
 		const aOutOfPlaceByParent = [{
-			nodeFilters : ["~node2Filter~", "~node1Filter~", "~node3Filter~"],
+			nodeFilters : ["~node2Filter~", "~node1Filter~"],
 			parentFilter : "~parent1Filter~"
 		}, {
 			nodeFilters : ["~node4Filter~", "~node5Filter~"],
 			parentFilter : "~parent2Filter~"
+		}, {
+			nodeFilters : ["~node3Filter~"]
 		}];
 		const sOutOfPlaceByParentJSON = JSON.stringify(aOutOfPlaceByParent);
 		const oAggregation = {
