@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon*/
 
 sap.ui.define([
 	"sap/ui/core/Core",
@@ -9,7 +9,8 @@ function (Core, JSONModel, XMLView) {
 
 	// global vars
 	var	oConfigModel = new JSONModel(),
-		oConfigModelNoTitles = new JSONModel();
+		oConfigModelNoTitles = new JSONModel(),
+		iLoadingDelay = 2500;
 
 	oConfigModel.loadData("test-resources/sap/uxap/qunit/model/OPLazyLoadingWithTabs.json", {}, false);
 	oConfigModelNoTitles.loadData("test-resources/sap/uxap/qunit/model/OPLazyLoadingWithTabsNoTitles.json", {}, false);
@@ -83,13 +84,8 @@ function (Core, JSONModel, XMLView) {
 			oObjectPageLayout.scrollToSection(aSections[iIndex].getId());
 			aLoadedSections.push(iIndex);
 			Core.applyChanges();
-
-			return new Promise((resolve, reject) => {
-				setTimeout(() => {
-					fnAssertTabsAreLoaded(assert, aSections, aLoadedSections);
-					resolve();
-				  }, 500);
-			});
+			testContext.clock.tick(iLoadingDelay);
+			fnAssertTabsAreLoaded(assert, aSections, aLoadedSections);
 		};
 
 
@@ -99,6 +95,7 @@ function (Core, JSONModel, XMLView) {
 	QUnit.module("ObjectPage with tabs - lazy loading", {
 		beforeEach: function (assert) {
 			var done = assert.async();
+			this.clock = sinon.useFakeTimers();
 			XMLView.create({
 				id: "UxAP-27_ObjectPageConfig",
 				viewName: "view.UxAP-27_ObjectPageConfig"
@@ -115,6 +112,7 @@ function (Core, JSONModel, XMLView) {
 		},
 		afterEach: function () {
 			this.oView.destroy();
+			this.clock.restore();
 		}
 	});
 
@@ -125,25 +123,24 @@ function (Core, JSONModel, XMLView) {
 		var oObjectPageLayout = this.oComponentContainer.getObjectPageLayoutInstance(),
 			oData = oConfigModel.getData(),
 			aSections = oObjectPageLayout.getSections(),
-			aLoadedSections = [0],
-			fnDone = assert.async(),
-			pAll = [];
+			aLoadedSections = [0];
 
 		fnLoadMoreBlocks(oData);
 		oConfigModel.setData(oData);
 
 		Core.applyChanges();
-		setTimeout(function () {
-			// Expect the first section to be loaded by default
-			fnAssertTabsAreLoaded(assert, aSections, aLoadedSections);
+		this.clock.tick(iLoadingDelay);
 
-			// expect each section to load when selected
-			for (var i = 1; i < aSections.length; i++) {
-				pAll.push(fnTestSection(oObjectPageLayout, i, aLoadedSections, assert, this));
-			}
+		// Expect the first section to be loaded by default
+		fnAssertTabsAreLoaded(assert, aSections, aLoadedSections);
 
-			Promise.all(pAll).then(() => fnDone());
-		}.bind(this), 1000);
+		// expect each section to load when selected
+		for (var i = 1; i < aSections.length; i++) {
+			fnTestSection(oObjectPageLayout, i, aLoadedSections, assert, this);
+		}
+
+		// cleanup
+		oObjectPageLayout.destroy();
 	});
 
 	/**
@@ -152,37 +149,30 @@ function (Core, JSONModel, XMLView) {
 	QUnit.test("loading only the selected section/tab", function (assert) {
 		var oObjectPageLayout = this.oView.byId("objectPageContainer").getObjectPageLayoutInstance(),
 			oData = oConfigModel.getData(),
-			aSections = oObjectPageLayout.getSections(),
-			fnDone = assert.async();
+			aSections = oObjectPageLayout.getSections();
 
 		fnLoadMoreBlocks(oData);
 		oConfigModel.setData(oData);
 
 		Core.applyChanges();
-		setTimeout(function () {
-			// load some tab > bottom subSection
-			var targetSubSection = aSections[2].getSubSections()[1],
-				precedingSubSection = aSections[2].getSubSections()[0];
-			oObjectPageLayout.scrollToSection(targetSubSection.getId(), 0);
-			Core.applyChanges();
+		this.clock.tick(iLoadingDelay);
 
-			setTimeout(function () {
-				assert.ok(fnSubSectionIsloaded(targetSubSection), "target subsection is loaded");
-				assert.ok(!fnSubSectionIsloaded(precedingSubSection), "preceding subsection is not loaded");
+		// load some tab > bottom subSection
+		var targetSubSection = aSections[2].getSubSections()[1],
+			precedingSubSection = aSections[2].getSubSections()[0];
+		oObjectPageLayout.scrollToSection(targetSubSection.getId(), 0);
+		Core.applyChanges();
+		this.clock.tick(iLoadingDelay);
+		assert.ok(fnSubSectionIsloaded(targetSubSection), "target subsection is loaded");
+		assert.ok(!fnSubSectionIsloaded(precedingSubSection), "preceding subsection is not loaded");
 
-				// load next tab > top subSection
-				targetSubSection = aSections[3].getSubSections()[0];
-				oObjectPageLayout.scrollToSection(targetSubSection.getId(), 0);
-				Core.applyChanges();
-
-				setTimeout(function () {
-					assert.ok(fnSubSectionIsloaded(targetSubSection),"target subsection is loaded");
-					assert.ok(!fnSubSectionIsloaded(precedingSubSection), "preceding subsection is still not loaded");
-
-					fnDone();
-				}, 500);
-			}, 500);
-		}, 1000);
+		// load next tab > top subSection
+		targetSubSection = aSections[3].getSubSections()[0];
+		oObjectPageLayout.scrollToSection(targetSubSection.getId(), 0);
+		Core.applyChanges();
+		this.clock.tick(iLoadingDelay);
+		assert.ok(fnSubSectionIsloaded(targetSubSection),"target subsection is loaded");
+		assert.ok(!fnSubSectionIsloaded(precedingSubSection), "preceding subsection is still not loaded");
 	});
 
 	/**
@@ -193,28 +183,25 @@ function (Core, JSONModel, XMLView) {
 		var oObjectPageLayout = this.oView.byId("objectPageContainer").getObjectPageLayoutInstance(),
 			oData = oConfigModelNoTitles.getData(),
 			aSections = oObjectPageLayout.getSections(),
-			fnDone = assert.async(),
 			oTargetSection;
 
 		fnLoadMoreBlocks(oData);
 		oConfigModel.setData(oData);
 
 		Core.applyChanges();
+		this.clock.tick(iLoadingDelay);
 
-		setTimeout(function () {
-			// Act
-			oTargetSection = aSections[6];
-			oObjectPageLayout.scrollToSection(oTargetSection.getId(), 0, undefined, true); // Simulate click on IconTabBar
-			Core.applyChanges();
+		// Act
+		oTargetSection = aSections[6];
+		oObjectPageLayout.scrollToSection(oTargetSection.getId(), 0, undefined, true); // Simulate click on IconTabBar
+		Core.applyChanges();
+		this.clock.tick(iLoadingDelay);
 
-			setTimeout(function () {
-				// Assert
-				assert.ok(fnSubSectionIsloaded(oTargetSection.getSubSections()[0]),"target subsection is loaded");
-				assert.ok(oObjectPageLayout._grepCurrentTabSectionBases().length === 2, "Section and SubSection are returned");
+		// Assert
+		assert.ok(fnSubSectionIsloaded(oTargetSection.getSubSections()[0]),"target subsection is loaded");
+		assert.ok(oObjectPageLayout._grepCurrentTabSectionBases().length === 2, "Section and SubSection are returned");
 
-				// Cleanup
-				fnDone();
-			}, 500);
-		}, 1000);
+		// Cleanup
+		oObjectPageLayout.destroy();
 	});
 });
