@@ -22,6 +22,7 @@ sap.ui.define(["sap/ui/thirdparty/URI"], function(URI) {
 			/^(\/)?sitemap\//,
 			/\/sitemap$/,
 			/^(\/)?demoapps/,
+			/^(\/)?resources$/,
 			/^(\/)?tools/,
 			/^(\/)?news\//,
 			/\/news$/,
