@@ -52,6 +52,7 @@ sap.ui.define([
 		if (oQuickGroup) {
 			oQuickGroup._updateContent();
 		}
+		return this;
 	};
 
 	return QuickGroupItem;
