@@ -209,6 +209,10 @@ sap.ui.define([
 		return vData;
 	};
 
+	/**
+	 * @deprecated As of version 1.119
+	 * @returns {boolean} Whether binding syntax is complex.
+	 */
 	Utils.isBindingSyntaxComplex = function () {
 		if (Utils._isBindingSyntaxComplex === undefined) {
 			Utils._isBindingSyntaxComplex = getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") >= 0;
