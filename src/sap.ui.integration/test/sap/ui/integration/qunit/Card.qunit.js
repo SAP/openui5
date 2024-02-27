@@ -906,6 +906,43 @@ sap.ui.define([
 			oCard.destroy();
 		});
 
+		QUnit.test("Card with manifest as object, without baseUrl", async function (assert) {
+			// Arrange
+			var oCard = new Card({
+					manifest: {
+						"sap.app": {
+							"id": "my.card.qunit.test.NoBaseUrl",
+							"i18n": "./i18n/i18n.properties"
+						},
+						"sap.card": {
+							"type": "List",
+							"header": {
+								"title": "Test No Base URL"
+							},
+							"content": {
+								"item": {
+									"title": "item1"
+								}
+							}
+						}
+					}
+				}),
+				fnManifestLoadI18NSpy = sinon.spy(CardManifest.prototype, "loadI18n"),
+				fnErrorSpy = sinon.spy(Log, "error");
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(oCard);
+
+			// Assert
+			assert.ok(fnManifestLoadI18NSpy.called, "Load of translation files is called.");
+			assert.ok(fnErrorSpy.notCalled, "There is no error logged for missing base url.");
+
+			// Clean up
+			oCard.destroy();
+			fnErrorSpy.restore();
+		});
+
 		QUnit.test("Register module path for card with manifest as object, without baseUrl", async function (assert) {
 			// Arrange
 			var oCard = new Card({
