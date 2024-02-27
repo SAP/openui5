@@ -3252,6 +3252,10 @@ sap.ui.define([
 	ObjectPageLayout.prototype._onMediaRangeChange = function () {
 		var iCurrentWidth = this._getMediaContainerWidth();
 
+		if (!iCurrentWidth) {
+			return;
+		}
+
 		if (this._hasDynamicTitle()) {
 			this._updateMedia(iCurrentWidth, ObjectPageLayout.DYNAMIC_HEADERS_MEDIA); // Update media classes when ObjectPageDynamicHeaderTitle is used.
 		}
