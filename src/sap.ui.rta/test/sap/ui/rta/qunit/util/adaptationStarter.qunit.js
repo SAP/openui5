@@ -338,6 +338,7 @@ sap.ui.define([
 
 		QUnit.test("When RuntimeAuthoring.start rejects with a reload", function(assert) {
 			sandbox.stub(ReloadManager, "handleReloadOnStart").returns(true);
+			sandbox.stub(FlexUtils, "getUshellContainer").returns();
 			this.oRtaStartStub.restore();
 			return adaptationStarter({
 				rootControl: oAppComponent,
