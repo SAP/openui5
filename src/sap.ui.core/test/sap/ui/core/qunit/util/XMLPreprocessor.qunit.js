@@ -342,9 +342,10 @@ sap.ui.define([
 			this.oXMLTemplateProcessorMock.expects(`loadTemplatePromise`).never();
 
 			this.oSapUiMock = this.mock(sap.ui);
-			// @see sap.ui.base.Event#init
+			// @see sap.ui.base.Event#init: "sap/ui/core/Messaging"
+			// also "sap/ui/model/type/Boolean" ends up here
 			this.oSapUiMock.expects(`require`).on(sap.ui).atLeast(0)
-				.withExactArgs(`sap/ui/core/Messaging`).callThrough();
+				.withExactArgs(sinon.match.string).callThrough();
 		},
 
 		/**
@@ -760,9 +761,6 @@ sap.ui.define([
 		QUnit.test(`@deprecated XML with template:if test='{/flag}', truthy, async = false, flag = `
 				+ oFlag,
 			function (assert) {
-				this.oSapUiMock.expects(`require`).on(sap.ui)
-					.atLeast(0) // only for the 1st run
-					.withArgs(`sap/ui/model/type/Boolean`).callThrough();
 				return this.check(assert, [
 					mvcView(`t`),
 					`<t:if test="{path: '/flag', type: 'sap.ui.model.type.Boolean'}">`,
@@ -958,22 +956,24 @@ sap.ui.define([
 		]
 	}].forEach(function (oFixture) {
 		[false, true].forEach(function (bWarn) {
-			var aViewContent = oFixture.aViewContent,
-				vExpected = oFixture.vExpected && oFixture.vExpected.slice();
+			[false, true].forEach(function (bAsync) {
+				var aViewContent = oFixture.aViewContent,
+					vExpected = oFixture.vExpected && oFixture.vExpected.slice();
 
-			QUnit.test(aViewContent[1] + `, warn = ` + bWarn, function (assert) {
-				this.mock(Component).expects(`getCustomizing`).never();
-				if (!bWarn) {
-					Log.setLevel(Log.Level.ERROR, sComponent);
-				}
-				warn(this.oLogMock,
-						oFixture.sMessage || sinon.match(/\[ \d\] Binding not ready/),
-						aViewContent[1])
-					.exactly(bWarn ? 1 : 0); // do not construct arguments in vain!
+	QUnit.test(aViewContent[1] + `, warn = ` + bWarn + `, async = ` + bAsync, function (assert) {
+		this.mock(Component).expects(`getCustomizing`).never();
+		if (!bWarn) {
+			Log.setLevel(Log.Level.ERROR, sComponent);
+		}
+		warn(this.oLogMock,
+				oFixture.sMessage || sinon.match(/\[ \d\] Binding not ready/),
+				aViewContent[1])
+			.exactly(bWarn ? 1 : 0); // do not construct arguments in vain!
 
-				return this.check(assert, aViewContent, {
-					models : new JSONModel()
-				}, vExpected);
+		return this.check(assert, aViewContent, {
+			models : new JSONModel()
+		}, vExpected, bAsync);
+	});
 			});
 		});
 	});
@@ -1269,7 +1269,7 @@ sap.ui.define([
 				+ ` path: '/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value'}"/>`,
 			`<Label text="A \\{ is a special character"/>`, // escaping MUST NOT be changed!
 			`<Text text="{unrelated>/some/path}"/>`, // unrelated binding MUST NOT be changed!
-			// avoid error "formatter function .someMethod not found!"
+			// avoid warning "Function name(s) .someMethod not found"
 			`<Text text="` + `{path:'/some/path',formatter:'.someMethod'}` + `"/>`,
 			`<html:img src="{formatter: 'foo.Helper.help',`
 				+ ` path: '/com.sap.vocabularies.UI.v1.HeaderInfo/TypeImageUrl'}"/>`,
@@ -4153,7 +4153,7 @@ sap.ui.define([
 				`</template:if>`,
 				`</template:with>`, // context goes out of scope
 				`</template:alias>`, // alias goes out of scope
-				`<Text text="{here>flag}"/>`,
+				`<Label text="{here>flag}"/>`,
 				`<Label text="{formatter: '.bar', path: '/'}"/>`,
 				`</mvc:View>`
 			];
@@ -4541,6 +4541,117 @@ sap.ui.define([
 		], `Async formatter in sync view in {path: '/', formatter: 'foo'} of {0}`, {
 			models : new JSONModel()
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test(`Code coverage for binding info's wait/resolved`, function (assert) {
+		const oAverageSpy = this.spy(Measurement, `average`)
+			.withArgs(`sap.ui.core.util.XMLPreprocessor/getResolvedBinding`);
+		const oEndSpy = this.spy(Measurement, `end`)
+			.withArgs(`sap.ui.core.util.XMLPreprocessor/getResolvedBinding`);
+		this.oSapUiMock.expects(`require`).on(sap.ui).atLeast(0) // only for the 1st run
+			.withArgs([`sap/ui/model/type/Boolean`]).callThrough();
+
+		const aViewContent = [
+				mvcView(``, {
+					join : function () {
+						return Array.prototype.join.call(arguments, `, `);
+					}
+				}, this),
+				// avoid warning "Function name(s) .missing not found"
+				`<Label text="{formatter: '.missing', path: '/'`
+					+ `, type: 'sap.ui.model.type.Boolean'}"/>`,
+				// binding not ready => false
+				`<template:if test="{formatter:'.notFound', path: '/'`
+					+ `, type: 'sap.ui.model.type.Boolean'}">`,
+				`<Out/>`,
+				`</template:if>`,
+				// automatically expected warning "Constant test condition" (@see #check)
+				`<template:if test="{= false }">`,
+				`<Out/>`,
+				`</template:if>`,
+				`<template:if test="{path: '/flag', type: 'sap.ui.model.type.Boolean'}">`,
+				`<In id="flag"/>`,
+				`</template:if>`,
+				`<ExtensionPoint name="{path: 'unrelated>/', type: 'sap.ui.model.type.Boolean'}"/>`,
+				 // NO warning "Constant test condition" (yet); "_type" must be ignored
+				`<template:if test="{_type: 'Constant', value : false}">`,
+				`<Out/>`,
+				`</template:if>`,
+				`<Label text="{formatter: 'join'`
+					+ `, parts: [{value: 'Hello'}, {value: 'world!'}]}"/>`,
+				`<Label text="{_type: 'Constant', value : 5}"/>`,
+				`</mvc:View>`
+			];
+		warn(this.oLogMock, `[ 1] Function name(s) .notFound not found`, aViewContent[2]);
+		warn(this.oLogMock, `[ 0] Binding not ready`, aViewContent[11]);
+		//TODO? warn(this.oLogMock, `[ 0] Constant test condition`, aViewContent[12]);
+
+		return this.checkTracing(assert, true, [
+			{m : `[ 0] Start processing qux`},
+			{m : `[ 0] Binding not ready for attribute text`, d : 1},
+			{m : `[ 1] test == false --> false`, d : 2},
+			{m : `[ 1] Finished`, d : 4},
+			{m : `[ 1] test == "false" --> false`, d : 5},
+			{m : `[ 1] Finished`, d : 7},
+			{m : `[ 1] test == true --> true`, d : 8},
+			{m : `[ 1] Finished`, d : 10},
+			{m : `[ 0] Binding not ready for attribute name`, d : 11},
+			{m : `[ 1] test == false --> false`, d : 12},
+			{m : `[ 1] Finished`, d : 14},
+			{m : `[ 0] text = Hello, world!`, d : 15},
+			{m : `[ 0] text = 5`, d : 16},
+			{m : `[ 0] Finished processing qux`}
+		], aViewContent, {
+			models : new JSONModel({flag : true})
+		}, [
+			aViewContent[1], // <Label .../>
+			aViewContent[9], // <In .../>
+			// Note: XML serializer outputs &gt; encoding...
+			aViewContent[11].replace(`>`, `&gt;`), // <ExtensionPoint .../>
+			`<Label text="Hello, world!"/>`,
+			`<Label text="5"/>`
+		], /*bAsync*/true)
+		.finally(function () {
+			// Note: each attribute of <mvc:View> or <In> is also counted here...
+			assert.strictEqual(oAverageSpy.callCount, oEndSpy.callCount);
+		});
+	});
+	//TODO static binding for "Constant test condition" with type?!
+
+	//*********************************************************************************************
+	QUnit.test(`DINC0032093, DINC0074061`, function (assert) {
+		const oModel = new JSONModel({});
+		oModel.$$valueAsPromise = true;
+		this.oSapUiMock.expects(`require`).on(sap.ui).atLeast(0) // only for the 1st run
+			.withArgs([`sap/ui/model/type/Boolean`]).callThrough();
+
+		return this.checkTracing(assert, true, [
+			{m : `[ 0] Start processing qux`},
+			{m : `[ 0] Binding not ready for attribute text`, d : 1},
+			{m : `[ 0] Binding not ready for attribute text`, d : 2},
+			{m : `[ 0] Removed attribute text`, d : 3},
+			{m : `[ 0] Finished processing qux`}
+		], [
+			mvcView(``, {
+				nil : function () {
+					return null;
+				}
+			}, this),
+			`<Text text="{missing>/flag}"/>`,
+			// async type loading must not make a difference here!
+			`<Text text="{path: 'missing>/flag', type: 'sap.ui.model.type.Boolean'}"/>`,
+			// async view and model with $$valueAsPromise must not make a difference here!
+			`<Text text="{formatter: 'nil', path: '/'}"/>`,
+			`</mvc:View>`
+		], {
+			models : oModel
+		}, [
+			// Note: XML serializer outputs &gt; encoding...
+			`<Text text="{missing&gt;/flag}"/>`,
+			`<Text text="{path: 'missing&gt;/flag', type: 'sap.ui.model.type.Boolean'}"/>`,
+			`<Text/>`
+		], /*bAsync*/true);
 	});
 });
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!
