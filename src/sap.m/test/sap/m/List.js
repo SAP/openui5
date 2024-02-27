@@ -899,6 +899,7 @@ sap.ui.define([
 			inset : true,
 			showUnread: true,
 			headerText : "Dynamic Button",
+			headerLevel: "H2",
 			swipeContent : new Button({
 				text : "Approve",
 				type : "Accept",
@@ -971,6 +972,7 @@ sap.ui.define([
 		}), oSwipeList2 = new List({
 			inset : true,
 			headerText : "Combined Swipe Content HBox with Images",
+			headerLevel: "H2",
 			footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services.",
 			swipeContent : new HBox({
 				items:[
@@ -998,6 +1000,7 @@ sap.ui.define([
 		}), oSwipeList3 = new List({
 			inset : true,
 			headerText : "Swipe Event Combination",
+			headerLevel: "H2",
 			swipeContent : new Button({
 				text : "Swipe Button",
 				type: "Reject",
@@ -1655,6 +1658,7 @@ sap.ui.define([
 				backgroundDesign: "Solid",
 				'delete': deleteItem,
 				headerText : "Travel [StandardListThumb]",
+				headerLevel: "H2",
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
@@ -1664,6 +1668,7 @@ sap.ui.define([
 				showUnread: true,
 				'delete': deleteItem,
 				headerText : "Travel [StandardListIcon]",
+				headerLevel: "H2",
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
@@ -1673,6 +1678,7 @@ sap.ui.define([
 				//showUnread: true,
 				'delete': deleteItem,
 				headerText : "Travel [StandardListIconA]",
+				headerLevel: "H2",
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
@@ -1682,6 +1688,7 @@ sap.ui.define([
 				//showUnread: true,
 				'delete': deleteItem,
 				headerText : "Travel [StandardListIconDA]",
+				headerLevel: "H2",
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
@@ -1691,6 +1698,7 @@ sap.ui.define([
 				//showUnread: true,
 				'delete': deleteItem,
 				headerText : "Travel [StandardListTitle]",
+				headerLevel: "H2",
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
@@ -1700,6 +1708,7 @@ sap.ui.define([
 				//showUnread: true,
 				'delete': deleteItem,
 				headerText : "Travel [StandardListNoImage]",
+				headerLevel: "H2",
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
@@ -1709,6 +1718,7 @@ sap.ui.define([
 				//showUnread: true,
 				'delete': deleteItem,
 				headerText : "Travel [StandardListAvatar]",
+				headerLevel: "H2",
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
@@ -1718,6 +1728,7 @@ sap.ui.define([
 				showUnread: true,
 				'delete': deleteItem,
 				headerText : "Travel [DisplayList]",
+				headerLevel: "H2",
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
@@ -1727,6 +1738,7 @@ sap.ui.define([
 				//showUnread: true,
 				'delete': deleteItem,
 				headerText : "Travel [InputList]",
+				headerLevel: "H2",
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
@@ -1737,6 +1749,7 @@ sap.ui.define([
 				showSeparators: "None",
 				'delete': deleteItem,
 				headerText : "Travel [CustomList]",
+				headerLevel: "H2",
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
@@ -1806,6 +1819,7 @@ sap.ui.define([
 				inset : false,
 				'delete': deleteItem,
 				headerText : "Travel [List-Mode: Single]",
+				headerLevel: "H2",
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services.",
 				mode : ListMode.None
 			});
@@ -1816,6 +1830,7 @@ sap.ui.define([
 				inset : false,
 				'delete': deleteItem,
 				headerText : "Travel [HtmlList]",
+				headerLevel: "H2",
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
@@ -1826,6 +1841,7 @@ sap.ui.define([
 				showSeparators: "None",
 				'delete': deleteItem,
 				headerText : "Travel [No Data List]",
+				headerLevel: "H2",
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
