@@ -384,13 +384,13 @@ Copyright: 2017 Wei Song and Oliver Nightingale
 License: MIT
 Comment: these files belong to: Elasticlunr
 
-Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/*
-Copyright: 2008-2017 SpryMedia Ltd
+Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-2.0.1/*
+Copyright: SpryMedia Ltd
 License: MIT
 Comment: these files belong to: DataTables
 
-Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/*
-Copyright: 2016 SpryMedia Ltd
+Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/*
+Copyright: SpryMedia Ltd
 License: MIT
 Comment: these files belong to: Buttons extension for DataTables
 

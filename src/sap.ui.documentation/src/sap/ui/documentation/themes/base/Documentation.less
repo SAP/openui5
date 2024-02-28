@@ -748,7 +748,7 @@ html.sap-tablet:not(.sap-desktop) {
         color: @sapBrandColor;
     }
 
-    .dataTables_wrapper {
+    .dt-container {
         .sapUiDocumentationDatatableFilterWrapper {
             padding: 0.3rem;
         }
@@ -760,9 +760,10 @@ html.sap-tablet:not(.sap-desktop) {
             background: transparent;
         }
         .dt-buttons {
-            height: 30px;
             .dt-button {
-                height: 100%;
+                margin-bottom: 0;
+                color: @sapUiBaseText;
+                //background-color: @sapUiBaseBG;
             }
         }
         .pagingWrapper {
@@ -782,7 +783,7 @@ html.sap-tablet:not(.sap-desktop) {
 
         .dataTables_length {
             margin-left: 0.5rem;
-            margin-top: 0.5rem;
+            margin-top: 0.25rem;
         }
 
         .datatable {
@@ -804,6 +805,33 @@ html.sap-tablet:not(.sap-desktop) {
 			}
         }
     }
+	div.dt-button-collection,
+	.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+
+		background: @sapUiBaseBG;
+        color: @sapUiBaseText;
+        border-color: darken(@sapUiListTableGroupHeaderBorderColor, 10);
+    }
+
+	table.dataTable thead > tr > th.dt-orderable-asc span.dt-column-order:before,
+	table.dataTable thead > tr > th.dt-orderable-asc span.dt-column-order:after,
+	table.dataTable thead > tr > th.dt-orderable-desc span.dt-column-order:before,
+	table.dataTable thead > tr > th.dt-orderable-desc span.dt-column-order:after,
+	table.dataTable thead > tr > th.dt-ordering-asc span.dt-column-order:before,
+	table.dataTable thead > tr > th.dt-ordering-asc span.dt-column-order:after,
+	table.dataTable thead > tr > th.dt-ordering-desc span.dt-column-order:before,
+	table.dataTable thead > tr > th.dt-ordering-desc span.dt-column-order:after,
+	table.dataTable thead > tr > td.dt-orderable-asc span.dt-column-order:before,
+	table.dataTable thead > tr > td.dt-orderable-asc span.dt-column-order:after,
+	table.dataTable thead > tr > td.dt-orderable-desc span.dt-column-order:before,
+	table.dataTable thead > tr > td.dt-orderable-desc span.dt-column-order:after,
+	table.dataTable thead > tr > td.dt-ordering-asc span.dt-column-order:before,
+	table.dataTable thead > tr > td.dt-ordering-asc span.dt-column-order:after,
+	table.dataTable thead > tr > td.dt-ordering-desc span.dt-column-order:before,
+	table.dataTable thead > tr > td.dt-ordering-desc span.dt-column-order:after {
+		opacity: 0.3;
+	}
+
 }
 
 .line-through {

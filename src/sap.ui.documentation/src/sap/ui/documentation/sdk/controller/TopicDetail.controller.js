@@ -81,25 +81,26 @@ sap.ui.define([
 					includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/highlight.js/highlight.js" });
 				}
 
-				includeStylesheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/css/dataTables.jqueryui.css");
-				includeStylesheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/css/buttons.jqueryui.css");
+				includeStylesheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-2.0.1/css/dataTables.jqueryui.css");
+				includeStylesheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-2.0.1/css/dataTables.jqueryui.css");
+				includeStylesheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/css/buttons.jqueryui.css");
+				includeStylesheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/css/buttons.dataTables.css");
 
 				// order is important
-				includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/js/jquery.dataTables.js" })
+				includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-2.0.1/js/dataTables.js" })
 					.then(function () {
-						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/js/dataTables.jqueryui.js" });
+						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-2.0.1/js/dataTables.jqueryui.js" });
+					}).then(function () {
+						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/js/dataTables.buttons.js" });
 					})
 					.then(function () {
-						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/dataTables.buttons.js" });
+						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/js/buttons.jqueryui.js" });
 					})
 					.then(function () {
-						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/buttons.jqueryui.js" });
+						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/js/buttons.html5.js" });
 					})
 					.then(function () {
-						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/buttons.html5.js" });
-					})
-					.then(function () {
-						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/buttons.colVis.js" });
+						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/js/buttons.colVis.js" });
 					})
 					.then(function () {
 						dataTablesConfigURL = ResourcesUtil.getResourceOriginPath(oConfig.docuPath + 'dataTablesConfig.json');
@@ -378,11 +379,14 @@ sap.ui.define([
 
 			_enableDataTable: function (oTable) {
 				var sTableId = oTable.id,
-					oConfig = this._getDataTableConfig(sTableId),
+					oConfig = Object.assign(this._getDataTableConfig(sTableId), { responsive: true, layout: {
+						topStart: {
+							buttons: ['colvis', 'pageLength']
+						}}}),
 					oDataTable;
 
 				if (oConfig) {
-					oDataTable = new DataTable().init(sTableId, oTable, oConfig);
+					oDataTable = jQuery('#' + sTableId).DataTable(oConfig);
 					this._getDataTableHelper().addDatatable(oDataTable);
 				}
 

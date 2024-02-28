@@ -8,9 +8,7 @@ sap.ui.define([], function () {
 	return {
 		getPreset: function () {
 			return {
-				"dom": '<"fg-toolbar ui-toolbar ui-widget-header ui-helper-clearfix ui-corner-tl ui-corner-tr"<"searchWrapper"f>l<"pagingWrapper"p>t>' +
-					't' +
-					'<"fg-toolbar ui-toolbar ui-widget-header ui-helper-clearfix ui-corner-bl ui-corner-br"ip>',
+				"dom": '',
 				"buttons": [  { extend: 'colvis' } ],
 				"lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
 				"sapTableId": "",

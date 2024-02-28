@@ -49,15 +49,15 @@
         <copyright>2017 Wei Song and Oliver Nightingale</copyright>
         <pattern>sap/ui/documentation/sdk/thirdparty/elasticlunr.js</pattern>
       </lib>
-      <lib name="datatables" displayName="DataTables" npmName="datatables.net-dt" version="1.10.15" hash="702f56c7e7a339c93e63db3d576f032a" homepage="https://datatables.net/" id="73555000106100009470">
+      <lib name="datatables" displayName="DataTables" npmName="datatables.net-dt" version="2.0.1" hash="290472b66e1c910ae1505c299a40a319" homepage="https://datatables.net/" id="73554900106100300066">
         <license url="https://datatables.net/license/" type="MIT" />
-        <copyright>2008-2017 SpryMedia Ltd</copyright>
-        <pattern>sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/*</pattern>
+        <copyright>SpryMedia Ltd</copyright>
+        <pattern>sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-2.0.1/*</pattern>
       </lib>
-      <lib name="datatables-buttons" displayName="Buttons extension for DataTables" npmName="datatables.net-buttons-dt" version="1.4.0" hash="c3c07a5f8257b9d47102459789b372eb" homepage="https://datatables.net/extensions/buttons/" id="73555000106100007649">
+      <lib name="datatables-buttons" displayName="Buttons extension for DataTables" npmName="datatables.net-buttons-dt" version="3.0.0" hash="8266856cadc3cad4f2d80e56cc566af8" homepage="https://datatables.net/extensions/buttons/" id="73554900106100285921">
         <license url="https://datatables.net/license/" type="MIT" />
-        <copyright>2016 SpryMedia Ltd</copyright>
-        <pattern>sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/*</pattern>
+        <copyright>SpryMedia Ltd</copyright>
+        <pattern>sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/*</pattern>
         <!-- not in PPMS because it is a sub-module of DataTables -->
       </lib>
     </thirdparty>

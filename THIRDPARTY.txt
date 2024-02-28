@@ -363,17 +363,17 @@ License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/elasticlunr.js
 
-Component: DataTables, version: 1.10.15
-Copyright: 2008-2017 SpryMedia Ltd
+Component: DataTables, version: 2.0.1
+Copyright: SpryMedia Ltd
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/*
+Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-2.0.1/*
 
-Component: Buttons extension for DataTables, version: 1.4.0
-Copyright: 2016 SpryMedia Ltd
+Component: Buttons extension for DataTables, version: 3.0.0
+Copyright: SpryMedia Ltd
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/*
+Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/*
 
 
 Library: sap.ui.integration:
