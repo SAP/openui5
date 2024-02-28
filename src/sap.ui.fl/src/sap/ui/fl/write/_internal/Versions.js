@@ -69,9 +69,17 @@ sap.ui.define([
 		});
 	}
 
+	function _isPublishVersionEnabled(aVersions, sDisplayedVersion) {
+		if (sDisplayedVersion !== Version.Number.Original && sDisplayedVersion !== Version.Number.Draft) {
+			return aVersions.some(function(oVersion) {
+				return oVersion.version === sDisplayedVersion && oVersion.isPublished === false;
+			});
+		}
+		return false;
+	}
+
 	function _prepareVersionsModel(bVersioningEnabled, aVersions, oVersionsModel) {
 		var sPersistedBasisForDisplayedVersion;
-		var bPublishVersionEnabled = false;
 		var sActiveVersion = Version.Number.Original;
 		var bBackendDraft = _doesDraftExistInVersions(aVersions);
 		var aDraftFilenames = [];
@@ -95,16 +103,11 @@ sap.ui.define([
 				} else {
 					oVersion.type = Version.Type.Inactive;
 				}
-				// If the current selected version is not yet published, enable the publish button
-				// Original versions are not part of back end response, so publish button is not enabled by default value
-				if ((oVersion.version === sPersistedBasisForDisplayedVersion) && (oVersion.isPublished === false)) {
-					bPublishVersionEnabled = true;
-				}
 			}
 		});
 
 		if (oVersionsModel) {
-			oVersionsModel.setProperty("/publishVersionEnabled", bPublishVersionEnabled);
+			oVersionsModel.setProperty("/publishVersionEnabled", _isPublishVersionEnabled(aVersions, sPersistedBasisForDisplayedVersion));
 			oVersionsModel.setProperty("/versioningEnabled", bVersioningEnabled);
 			oVersionsModel.setProperty("/versions", aVersions);
 			oVersionsModel.setProperty("/backendDraft", bBackendDraft);
@@ -125,7 +128,7 @@ sap.ui.define([
 					oURLParsingService
 				);
 				return new JSONModel({
-					publishVersionEnabled: bPublishVersionEnabled,
+					publishVersionEnabled: _isPublishVersionEnabled(aVersions, sUrlVersionParameter || sPersistedBasisForDisplayedVersion),
 					versioningEnabled: bVersioningEnabled,
 					versions: aVersions,
 					backendDraft: bBackendDraft,

@@ -1159,15 +1159,21 @@ sap.ui.define([
 				activateEnabled: true,
 				activeVersion: "1",
 				persistedVersion: "1",
-				displayedVersion: "1",
+				displayedVersion: "2",
 				draftFilenames: ["draftFilename"]
 			});
 			sandbox.stub(Versions, "hasVersionsModel").returns(true);
 			sandbox.stub(Versions, "getVersionsModel").returns(oVersionsModel);
 			var aNewVersions = [
 				{
+					version: "2",
+					isPublished: true,
+					activatedBy: "qunit",
+					activatedAt: "a while ago"
+				},
+				{
 					version: "1",
-					isPublished: false,
+					isPublished: true,
 					activatedBy: "qunit",
 					activatedAt: "a while ago"
 				}
@@ -1177,15 +1183,15 @@ sap.ui.define([
 			return Versions.updateModelFromBackend(mPropertyBag).then(function(oVersionModel) {
 				var oData = oVersionModel.getData();
 				assert.deepEqual(oData.draftFilenames, [], "without draft filenames");
-				assert.equal(oData.publishVersionEnabled, true, "publishVersionEnabled is true");
+				assert.equal(oData.publishVersionEnabled, false, "publishVersionEnabled is false");
 				assert.equal(oData.versioningEnabled, true, "versioningEnabled is true");
 				assert.equal(oData.backendDraft, false, "backendDraft is false");
 				assert.equal(oData.dirtyChanges, false, "dirtyChanges is false");
 				assert.equal(oData.draftAvailable, false, "draftAvailable is false");
 				assert.equal(oData.activateEnabled, false, "activateEnabled is false");
-				assert.equal(oData.activeVersion, "1", "activeVersion is correct");
-				assert.equal(oData.persistedVersion, "1", "persistedVersion is correct");
-				assert.equal(oData.displayedVersion, "1", "displayedVersion is correct");
+				assert.equal(oData.activeVersion, "2", "activeVersion is correct");
+				assert.equal(oData.persistedVersion, "2", "persistedVersion is correct");
+				assert.equal(oData.displayedVersion, "2", "displayedVersion is correct");
 			});
 		});
 
