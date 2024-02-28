@@ -3,12 +3,15 @@
 /* Belize High Contrast White theme  */
 /* ================================= */
 
+@_sap_m_Page_FloatinFooterHeight: 3rem;
+
 .sapMPageWithFloatingFooter {
 	> .sapMPageFooter {
 		opacity: 1;
 	}
 }
 
-.sapMPageWithFloatingFooter .sapMIBar-CTX.sapMFooter-CTX {
+.sapMPageWithFloatingFooter .sapMPageFloatingFooter .sapMIBar-CTX.sapMFooter-CTX {
 	box-shadow: @sapUiShadowLevel2;
+	border: none;
 }
