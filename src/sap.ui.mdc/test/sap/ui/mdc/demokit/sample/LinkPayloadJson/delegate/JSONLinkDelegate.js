@@ -59,7 +59,7 @@ sap.ui.define([
 					content: new Text({ text: "Do you want to navigate?" }),
 					beginButton: new Button({
 						type: ButtonType.Emphasized,
-						text: "Ok",
+						text: "Navigate",
 						press: function () {
 							this.oApproveDialog.close();
 							return resolve(true);
@@ -82,10 +82,10 @@ sap.ui.define([
 		const sProductId = oLink.getPayload()?.product ?? "product1";
 		const oFirstLink = new LinkItem({
 			key: oLink.getId() + "link01",
-			text: `{products>/${sProductId}/productId}`,
+			text: `Product`,
 			description: `{products>/${sProductId}/name}`,
 			icon: `{products>/${sProductId}/image}`,
-			href: "#link01",
+			href: "/",
 			initiallyVisible: true
 		});
 
@@ -100,7 +100,7 @@ sap.ui.define([
 				key: oLink.getId() + "link02",
 				text: "Second Link",
 				description: "This is a second link",
-				href: "#link02"
+				href: "#/controls"
 			})
 		];
 		return Promise.resolve(aLinkItems);

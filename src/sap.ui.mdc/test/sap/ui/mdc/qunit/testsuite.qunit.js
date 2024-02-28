@@ -277,6 +277,11 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 			"TypeMap Testsuite": {
 				group: "util",
 				page: "test-resources/sap/ui/mdc/qunit/typemap/testsuite.typemap.qunit.html"
+			},
+			"Smoke Testsuite": {
+				title: "Smoke Testsuite",
+				group: "Testsuite",
+				page: "test-resources/sap/ui/mdc/smoke/testsuite.qunit.html"
 			}
 		}
 	};
