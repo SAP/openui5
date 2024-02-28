@@ -30,21 +30,21 @@ sap.ui.define([
 			Layer.USER
 		],
 		ROUTES: {
-			CHANGES: `${InitialConnector.ROOT}/changes/`,
+			CHANGES: `${InitialConnector.ROOT}/changes`,
 			SETTINGS: `${InitialConnector.ROOT}/settings`,
 			TOKEN: `${InitialConnector.ROOT}/settings`,
 			VERSIONS: {
-				GET: `${InitialConnector.ROOT}/versions/`,
-				ACTIVATE: `${InitialConnector.ROOT}/versions/activate/`,
-				DISCARD: `${InitialConnector.ROOT}/versions/draft/`,
-				PUBLISH: `${InitialConnector.ROOT}/versions/publish/`
+				GET: `${InitialConnector.ROOT}/versions`,
+				ACTIVATE: `${InitialConnector.ROOT}/versions/activate`,
+				DISCARD: `${InitialConnector.ROOT}/versions/draft`,
+				PUBLISH: `${InitialConnector.ROOT}/versions/publish`
 			},
 			TRANSLATION: {
 				UPLOAD: `${InitialConnector.ROOT}/translation/texts`,
-				DOWNLOAD: `${InitialConnector.ROOT}/translation/texts/`,
-				GET_SOURCELANGUAGE: `${InitialConnector.ROOT}/translation/sourcelanguages/`
+				DOWNLOAD: `${InitialConnector.ROOT}/translation/texts`,
+				GET_SOURCELANGUAGE: `${InitialConnector.ROOT}/translation/sourcelanguages`
 			},
-			CONTEXTS: `${InitialConnector.ROOT}/contexts/`
+			CONTEXTS: `${InitialConnector.ROOT}/contexts`
 		}
 	});
 

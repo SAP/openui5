@@ -44,23 +44,23 @@ sap.ui.define([
 			assert.throws(function() {Utils.getUrl(sRoute, mPropertyBag, mParameters);}, "without all necessary parameters then an error is thrown");
 			sRoute = "sRoute";
 			mPropertyBag.url = "url";
-			var sExpectedUrl = "urlsRoute";
+			var sExpectedUrl = "url/sRoute";
 			assert.deepEqual(Utils.getUrl(sRoute, mPropertyBag, mParameters), sExpectedUrl, "the right url is returned");
 			mPropertyBag.cacheKey = "cacheKey";
-			sExpectedUrl = "urlsRoute~cacheKey~/";
-			assert.deepEqual(Utils.getUrl(sRoute, mPropertyBag, mParameters), sExpectedUrl, "with a cacheKey then the right url is returned");
-			mPropertyBag.fileName = "fileName";
-			sExpectedUrl = "urlsRoute~cacheKey~/fileName";
+			sExpectedUrl = "url/sRoute/~cacheKey~";
+			assert.deepEqual(Utils.getUrl(`${sRoute}/`, mPropertyBag, mParameters), sExpectedUrl, "with a cacheKey then the right url is returned");
+			mPropertyBag.fileName = "/fileName";
+			sExpectedUrl = "url/sRoute/~cacheKey~/fileName";
 			assert.deepEqual(Utils.getUrl(sRoute, mPropertyBag, mParameters), sExpectedUrl, "with a fileName then the right url is returned");
 			mPropertyBag.reference = "reference";
-			sExpectedUrl = "urlsRoute~cacheKey~/reference";
+			sExpectedUrl = "url/sRoute/~cacheKey~/reference";
 			assert.deepEqual(Utils.getUrl(sRoute, mPropertyBag, mParameters), sExpectedUrl, "with a reference then the right url is returned");
 
 			mParameters = {
 				parameter1: "parameter1",
 				parameter2: "parameter2"
 			};
-			sExpectedUrl = "urlsRoute~cacheKey~/reference?parameter1=parameter1&parameter2=parameter2";
+			sExpectedUrl = "url/sRoute/~cacheKey~/reference?parameter1=parameter1&parameter2=parameter2";
 			assert.deepEqual(Utils.getUrl(sRoute, mPropertyBag, mParameters), sExpectedUrl, "with parameters then the right url is returned");
 		});
 	});

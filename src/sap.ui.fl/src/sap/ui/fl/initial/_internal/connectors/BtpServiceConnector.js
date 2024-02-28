@@ -33,7 +33,7 @@ sap.ui.define([
 		],
 		ROOT,
 		ROUTES: {
-			DATA: `${ROOT}/data/`,
+			DATA: `${ROOT}/data`,
 			SETTINGS: `${ROOT}/settings`
 		}
 	});
