@@ -1,7 +1,6 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/integration/ActionDefinition",
 	"sap/ui/integration/Host",
@@ -10,7 +9,6 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function(
-	Core,
 	Library,
 	ActionDefinition,
 	Host,

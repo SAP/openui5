@@ -1,6 +1,6 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/core/AnimationMode", "sap/ui/core/ControlBehavior", "sap/ui/core/Core", "sap/ui/core/Configuration", "sap/ui/core/mvc/XMLView", "sap/m/OverflowToolbar", "sap/m/HBox", "sap/ui/qunit/utils/nextUIUpdate", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/uxap/ObjectPageSubSection"],
-function(AnimationMode, ControlBehavior, Core, Configuration, XMLView, OverflowToolbar, HBox, nextUIUpdate, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection) {
+sap.ui.define(["sap/ui/core/AnimationMode", "sap/ui/core/ControlBehavior", "sap/ui/core/mvc/XMLView", "sap/m/OverflowToolbar", "sap/m/HBox", "sap/ui/qunit/utils/nextUIUpdate", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/uxap/ObjectPageSubSection"],
+function(AnimationMode, ControlBehavior, XMLView, OverflowToolbar, HBox, nextUIUpdate, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection) {
 	"use strict";
 
 	//eslint-disable-next-line no-void

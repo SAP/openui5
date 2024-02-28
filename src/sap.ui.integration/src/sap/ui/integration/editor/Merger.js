@@ -3,12 +3,10 @@
  */
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core"
+	"sap/ui/model/json/JSONModel"
 ], function (
 	merge,
-	JSONModel,
-	Core
+	JSONModel
 ) {
 	"use strict";
 

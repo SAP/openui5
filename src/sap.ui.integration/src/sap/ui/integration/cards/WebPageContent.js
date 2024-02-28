@@ -5,13 +5,11 @@ sap.ui.define([
 	"sap/m/IllustratedMessageType",
 	"./BaseContent",
 	"./WebPageContentRenderer",
-	"sap/ui/core/Core",
 	"sap/ui/integration/util/BindingHelper"
 ], function (
 	IllustratedMessageType,
 	BaseContent,
 	WebPageContentRenderer,
-	Core,
 	BindingHelper
 ) {
 	"use strict";

@@ -3,13 +3,11 @@
 sap.ui.define([
 	"sap/ui/integration/cards/WebPageContent",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	WebPageContent,
 	Card,
-	Core,
 	nextUIUpdate,
 	nextCardReadyEvent
 ) {

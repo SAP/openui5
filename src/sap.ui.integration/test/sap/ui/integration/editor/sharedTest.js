@@ -123,8 +123,8 @@ function loadAllChanges() {
 }
 
 function loadLanguages() {
-	sap.ui.require(["sap/base/i18n/Localization", 'sap/base/util/LoaderExtensions', "sap/ui/core/Core"],
-	function (Localization, LoaderExtensions, Core) {
+	sap.ui.require(["sap/base/i18n/Localization", 'sap/base/util/LoaderExtensions'],
+	function (Localization, LoaderExtensions) {
 		//load the language list
 		var aLanguageList = LoaderExtensions.loadResource("sap/ui/integration/editor/languages.json", {
 			dataType: "json",

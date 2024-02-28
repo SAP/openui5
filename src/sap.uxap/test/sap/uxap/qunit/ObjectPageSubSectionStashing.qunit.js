@@ -2,12 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/Core",
 	"sap/ui/core/StashedControlSupport",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/uxap/ObjectPageLazyLoader"
 ],
-function(XMLView, Core, StashedSupport, nextUIUpdate, ObjectPageLazyLoader) {
+function(XMLView, StashedSupport, nextUIUpdate, ObjectPageLazyLoader) {
 	"use strict";
 
 	QUnit.module("Stashing Tests", {

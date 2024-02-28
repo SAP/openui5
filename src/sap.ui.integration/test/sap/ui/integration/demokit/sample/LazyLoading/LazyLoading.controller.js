@@ -3,10 +3,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
 	"sap/f/GridContainerItemLayoutData"
-], function (Controller, JSONModel, RequestDataProvider, sinon, Core, Card, GridContainerItemLayoutData) {
+], function (Controller, JSONModel, RequestDataProvider, sinon, Card, GridContainerItemLayoutData) {
 	"use strict";
 	var aSamples = [
 		{

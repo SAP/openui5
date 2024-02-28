@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Lib",
@@ -24,7 +23,6 @@ sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/ChangeCategories",
 	"sap/ui/rta/util/changeVisualization/ChangeStates"
 ], function(
-	Core,
 	Element,
 	Fragment,
 	Lib,

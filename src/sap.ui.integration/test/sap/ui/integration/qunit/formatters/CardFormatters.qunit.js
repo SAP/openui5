@@ -1,13 +1,11 @@
 /* global QUnit */
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	Card,
-	Core,
 	UI5Date,
 	nextUIUpdate,
 	nextCardReadyEvent

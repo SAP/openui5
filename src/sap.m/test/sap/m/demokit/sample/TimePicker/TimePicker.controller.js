@@ -1,10 +1,9 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/library',
-	'sap/ui/core/Core',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/date/UI5Date'
-	], function(Controller, coreLibrary, Core, JSONModel, UI5Date) {
+	], function(Controller, coreLibrary, JSONModel, UI5Date) {
 		"use strict";
 
 		var ValueState = coreLibrary.ValueState;

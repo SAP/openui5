@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/base/util/deepExtend",
-	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/Host",
 	"sap/ui/integration/cards/BaseListContent",
@@ -10,7 +9,6 @@ sap.ui.define([
 	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	deepExtend,
-	Core,
 	Card,
 	Host,
 	BaseListContent,
