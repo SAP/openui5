@@ -1,7 +1,6 @@
 sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
 	"sap/f/DynamicPageHeader",
@@ -24,7 +23,6 @@ sap.ui.define([
 	function(
 		Library,
 		$,
-		Core,
 		DynamicPage,
 		DynamicPageTitle,
 		DynamicPageHeader,

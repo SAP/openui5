@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/ui/rta/plugin/RTAElementMover",
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/thirdparty/sinon-4',
-	"sap/ui/core/Core",
 	"sap/ui/dom/getFirstEditableInput"
 ], function(
 	nextUIUpdate,
@@ -34,7 +33,6 @@ sap.ui.define([
 	RTAElementMover,
 	OverlayRegistry,
 	sinon,
-	oCore,
 	getFirstEditableInput
 ) {
 	"use strict";

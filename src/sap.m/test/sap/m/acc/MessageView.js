@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
-	"sap/m/App",
-	"sap/ui/core/Core"
+	"sap/m/App"
 ], function(
 	Log,
 	JSONModel,
@@ -30,8 +29,7 @@ sap.ui.define([
 	Page,
 	Toolbar,
 	ToolbarSpacer,
-	App,
-	oCore
+	App
 ) {
 	"use strict";
 

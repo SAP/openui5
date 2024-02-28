@@ -4,12 +4,11 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/Device",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/Core",
 	"sap/ui/core/Supportability",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/testlib/TestButton"
-], function(Log, Localization, ResourceBundle, Device, SyncPromise, Core, Supportability, BindingMode,
+], function(Log, Localization, ResourceBundle, Device, SyncPromise, Supportability, BindingMode,
 		ResourceModel, TestButton) {
 	/*global sinon, QUnit*/
 	/*eslint no-new: 0 */

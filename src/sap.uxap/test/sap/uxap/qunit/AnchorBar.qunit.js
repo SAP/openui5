@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	'./ObjectPageLayoutUtils',
 	"sap/ui/Device",
-	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
@@ -18,7 +17,7 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	// jQuery Plugin "scrollLeftRTL"
 	"sap/ui/dom/jquery/scrollLeftRTL"
-], function(Library, nextUIUpdate, jQuery, QUnitUtils, KeyCodes, utils, Device, Core, InvisibleText, XMLView, JSONModel, AnchorBar, Button, Text, Localization) {
+], function(Library, nextUIUpdate, jQuery, QUnitUtils, KeyCodes, utils, Device, InvisibleText, XMLView, JSONModel, AnchorBar, Button, Text, Localization) {
 	"use strict";
 
 	var iRenderingDelay = 2000,

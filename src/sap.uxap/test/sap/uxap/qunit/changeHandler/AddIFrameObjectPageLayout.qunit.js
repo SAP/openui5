@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/ui/util/XMLHelper",
-	"sap/ui/core/Core",
 	"sap/ui/core/Component",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
@@ -20,7 +19,6 @@ sap.ui.define([
 	ObjectPageLayout,
 	ObjectPageSection,
 	XMLHelper,
-	oCore,
 	Component,
 	nextUIUpdate,
 	FlexTestAPI

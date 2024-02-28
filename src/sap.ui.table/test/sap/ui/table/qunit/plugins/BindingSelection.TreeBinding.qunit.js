@@ -4,14 +4,12 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/library",
-	"sap/ui/core/util/MockServer",
-	"sap/ui/core/Core"
+	"sap/ui/core/util/MockServer"
 ], function(
 	TableQUnitUtils,
 	TreeTable,
 	library,
-	MockServer,
-	Core
+	MockServer
 ) {
 	"use strict";
 

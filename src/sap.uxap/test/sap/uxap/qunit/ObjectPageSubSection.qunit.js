@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/XMLView",
@@ -23,7 +22,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/ui/core/HTML"
 ],
-function(Element, nextUIUpdate, $, Core, Control, coreLibrary, XMLView, Log, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, Title, HTML) {
+function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, Log, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, Title, HTML) {
 	"use strict";
 
 	var TitleLevel = coreLibrary.TitleLevel;

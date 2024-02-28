@@ -3,10 +3,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/isEmptyObject",
-	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView"
 ],
-function(nextUIUpdate, $, isEmptyObject, Core, XMLView) {
+function(nextUIUpdate, $, isEmptyObject,  XMLView) {
 	"use strict";
 
 	QUnit.module("aat_UxAP-330");

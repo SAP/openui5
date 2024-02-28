@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Link",
@@ -14,7 +13,7 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/ui/Device"
 ],
-function(Library, $, KeyCodes, Core, nextUIUpdate, QUtils, Link, Text, BreadCrumbs, Icon, Item, Select, Device) {
+function(Library, $, KeyCodes, nextUIUpdate, QUtils, Link, Text, BreadCrumbs, Icon, Item, Select, Device) {
 	"use strict";
 
 	var	oFactory = {

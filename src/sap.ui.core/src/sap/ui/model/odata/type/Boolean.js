@@ -8,9 +8,7 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
-	"sap/ui/model/odata/type/ODataType",
-	//  provides sap.ui.getCore()
-	"sap/ui/core/Core"
+	"sap/ui/model/odata/type/ODataType"
 ], function(Log, Library, FormatException, ParseException, ValidateException, ODataType) {
 	"use strict";
 

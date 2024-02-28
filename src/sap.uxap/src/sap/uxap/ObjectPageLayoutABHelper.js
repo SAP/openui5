@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Object",
-	"sap/ui/core/Core",
 	"sap/ui/core/CustomData",
 	"sap/ui/base/ManagedObjectObserver",
 	"./AnchorBar",
@@ -16,7 +15,7 @@ sap.ui.define([
 	"sap/m/MenuItem",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/InvisibleText"
-], function(Element, jQuery, BaseObject, Core, CustomData, ManagedObjectObserver, AnchorBar, Button, MenuButton, Menu, MenuItem, IconPool, InvisibleText) {
+], function(Element, jQuery, BaseObject, CustomData, ManagedObjectObserver, AnchorBar, Button, MenuButton, Menu, MenuItem, IconPool, InvisibleText) {
 	"use strict";
 
 	var ABHelper = BaseObject.extend("sap.uxap._helpers.AB", {

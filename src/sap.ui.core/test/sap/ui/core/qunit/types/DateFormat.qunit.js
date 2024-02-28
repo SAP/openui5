@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/library",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Supportability",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/test/TestUtils",
@@ -21,7 +20,7 @@ sap.ui.define([
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/Persian"
 ], function(Log, Formatting, Localization, extend, DateFormat, FormatUtils, Locale, LocaleData,
-		UniversalDate, UI5Date, library, Configuration, Supportability, CalendarWeekNumbering, TestUtils) {
+		UniversalDate, UI5Date, library, Supportability, CalendarWeekNumbering, TestUtils) {
 	"use strict";
 	/* eslint-disable max-nested-callbacks */
 	/*global QUnit, sinon */
