@@ -490,7 +490,7 @@ sap.ui.define([
 				_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 				that.visitResponse(oCreatedEntity, aResult[1],
 					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
-					sPath + sTransientPredicate, bKeepTransientPath);
+					sPath + sTransientPredicate, bKeepTransientPath, undefined, true);
 				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
 				if (sPredicate) {
 					_Helper.setPrivateAnnotation(oEntityData, "predicate", sPredicate);
