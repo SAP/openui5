@@ -82,10 +82,11 @@ sap.ui.define([
 	let bIsOpen = true;
 	let bIsTypeahead = true;
 	let iMaxConditions = -1;
+	let oScrollContainer = null;
 
 	const oContainer = { //to fake Container
 		getScrollDelegate: function() {
-			return null;
+			return oScrollContainer;
 		},
 		isOpen: function() {
 			return bIsOpen;
@@ -129,6 +130,9 @@ sap.ui.define([
 		},
 		hasDialog: function() {
 			return true;
+		},
+		getDomRef: function() {
+			return oTable?.getDomRef();
 		}
 	};
 
@@ -186,7 +190,26 @@ sap.ui.define([
 		bIsOpen = true;
 		bIsTypeahead = true;
 		iMaxConditions = -1;
+		if (oScrollContainer) {
+			oScrollContainer.getContent.restore();
+			oScrollContainer.destroy();
+			oScrollContainer = null;
+			delete oContainer.getUIAreaForContent;
+		}
 	};
+
+	async function _renderScrollContainer() {
+
+		oScrollContainer = new ScrollContainer(); // to test scrolling
+		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
+		oContainer.getUIAreaForContent = function() {
+			return oScrollContainer.getUIArea();
+		};
+		oScrollContainer.placeAt("content"); // render ScrollContainer
+		await nextUIUpdate();
+		sinon.spy(oTable, "scrollToIndex");
+
+	}
 
 	const _fakeV4Binding = function (oListBinding) {
 		oListBinding = oListBinding || oTable.getBinding("items");
@@ -321,6 +344,7 @@ sap.ui.define([
 				oButton.firePress();
 				assert.equal(iSwitchToDialog, 1, "requestSwitchToDialog event fired");
 
+				oFooterContent.destroy();
 				fnDone();
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
@@ -1168,6 +1192,21 @@ sap.ui.define([
 	let sNavigateItemId;
 	let bNavigateLeaveFocus;
 
+	function _attachNavigated() {
+
+		iNavigate = 0;
+		oNavigateCondition = undefined;
+		sNavigateItemId = undefined;
+		bNavigateLeaveFocus = undefined;
+		oMTable.attachEvent("navigated", function(oEvent) {
+			iNavigate++;
+			oNavigateCondition = oEvent.getParameter("condition");
+			sNavigateItemId = oEvent.getParameter("itemId");
+			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
+		});
+
+	}
+
 	function _checkNavigatedItem(assert, oTable, iNavigatedIndex, iSelectedIndex, oCondition, bLeaveFocus) {
 
 		const aItems = oTable.getItems();
@@ -1189,7 +1228,7 @@ sap.ui.define([
 		}
 
 		assert.equal(iNavigate, 1, "Navigated Event fired");
-		if (!bLeaveFocus) {
+		if (!bLeaveFocus && iNavigatedIndex >= 0) {
 			if (bIsOpen) {
 				assert.ok(oTable.scrollToIndex.calledWith(iNavigatedIndex), "Table scrolled to item");
 			}
@@ -1215,26 +1254,9 @@ sap.ui.define([
 	QUnit.test("navigate", async function(assert) {
 
 		bIsOpen = true; // test for open navigation (for closed is tested later)
-		const oScrollContainer = new ScrollContainer(); // to test scrolling
-		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
-		oContainer.getUIAreaForContent = function() {
-			return oScrollContainer.getUIArea();
-		};
-		oScrollContainer.placeAt("content"); // render ScrollContainer
-		await nextUIUpdate();
-		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
-		sinon.spy(oTable, "scrollToIndex");
+		await _renderScrollContainer();
 
-		iNavigate = 0;
-		oNavigateCondition = undefined;
-		sNavigateItemId = undefined;
-		bNavigateLeaveFocus = undefined;
-		oMTable.attachEvent("navigated", function(oEvent) {
-			iNavigate++;
-			oNavigateCondition = oEvent.getParameter("condition");
-			sNavigateItemId = oEvent.getParameter("itemId");
-			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
-		});
+		_attachNavigated();
 
 		oMTable.setConditions([]);
 		oMTable.onShow(); // to update selection and scroll
@@ -1256,26 +1278,68 @@ sap.ui.define([
 		oMTable.navigate(-1);
 		_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false);
 
+		// first match -> navigation starts there
+		oTable.getItems()[2].setSelected(false); // initialize
+		oMTable.onConnectionChange(); // simulate new assignment
+		oMTable.setConditions([]);
+		oMTable._oFirstItemResult = {
+			result: oTable.getItems()[0],
+			filterValue: "",
+			index: 0
+		};
+		oMTable.navigate(1);
+		_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I2", "Item 2"), false);
+
 		oMTable.onHide();
 		assert.notOk(oTable.hasStyleClass("sapMListFocus"), "Table removed style class sapMListFocus");
 
-		oScrollContainer.getContent.restore();
-		oScrollContainer.destroy();
-		delete oContainer.getUIAreaForContent;
-		oContainer.getScrollDelegate.restore();
+	});
+
+	QUnit.test("navigate to footer button", async function(assert) {
+
+		oTable.bindItems({path: "/items", template: oItemTemplate, length: 10});
+		_attachNavigated();
+
+		await _renderScrollContainer();
+
+		const oContainerConfig = oMTable.getContainerConfig();
+		const oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
+		const oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
+
+		if (oFooterContent) {
+			const fnDone = assert.async();
+			oFooterContent.then(async function(oFooterContent) {
+				oFooterContent.placeAt("content"); // render Footer
+				await nextUIUpdate();
+				const aToolbarContent = oFooterContent.getContent();
+				const oButton = aToolbarContent[1];
+				sinon.spy(oButton, "focus");
+
+				oMTable.setConditions([]);
+				oMTable.onShow(); // to update selection and scroll
+				oMTable._iNavigateIndex = 2; // fake last item navigated
+				oMTable.navigate(1);
+				_checkNavigatedItem(assert, oTable, -1, -1, undefined, false);
+				assert.ok(oButton.focus.called, "Button focused");
+				sinon.stub(oContainer, "getDomRef").returns(undefined); // to fake focus in field (outside Popover)
+
+				qutils.triggerKeydown(oButton.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
+				_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false);
+
+				oContainer.getDomRef.restore();
+				oFooterContent.destroy();
+				fnDone();
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+				fnDone();
+			});
+		}
 
 	});
 
 	QUnit.test("navigate for multi-value", async function(assert) {
 
-		const oScrollContainer = new ScrollContainer(); // to test scrolling
-		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
-		oContainer.getUIAreaForContent = function() {
-			return oScrollContainer.getUIArea();
-		};
-		oScrollContainer.placeAt("content"); // render ScrollContainer
-		await nextUIUpdate();
-		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
+		await _renderScrollContainer();
 
 		oTable.setMode(ListMode.MultiSelect);
 		oMTable.setConfig({
@@ -1284,16 +1348,7 @@ sap.ui.define([
 		});
 		sinon.spy(oTable, "focus");
 
-		iNavigate = 0;
-		oNavigateCondition = undefined;
-		sNavigateItemId = undefined;
-		bNavigateLeaveFocus = undefined;
-		oMTable.attachEvent("navigated", function(oEvent) {
-			iNavigate++;
-			oNavigateCondition = oEvent.getParameter("condition");
-			sNavigateItemId = oEvent.getParameter("itemId");
-			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
-		});
+		_attachNavigated();
 		let iSelect = 0;
 		let aConditions;
 		let sType;
@@ -1307,13 +1362,15 @@ sap.ui.define([
 			iConfirm++;
 		});
 
+		const aItems = oTable.getItems();
+		sinon.spy(aItems[0], "focus");
+
 		oMTable.setConditions([]);
 		oMTable.onShow(); // to update selection and scroll
 		oMTable.navigate(1);
-		assert.ok(oTable.focus.called, "Table focused");
+		assert.ok(aItems[0].focus.called, "First item focused");
 		assert.equal(iNavigate, 0, "Navigated Event not fired");
 
-		const aItems = oTable.getItems();
 		qutils.triggerKeydown(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 		assert.equal(iNavigate, 1, "Navigate event fired");
 		assert.notOk(oNavigateCondition, "Navigate condition");
@@ -1333,10 +1390,59 @@ sap.ui.define([
 		assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
 		assert.equal(iConfirm, 1, "confirm event fired");
 
-		oScrollContainer.getContent.restore();
-		oScrollContainer.destroy();
-		delete oContainer.getUIAreaForContent;
-		oContainer.getScrollDelegate.restore();
+	});
+
+	QUnit.test("navigate to footer button (multi-value)", async function(assert) {
+
+		oTable.bindItems({path: "/items", template: oItemTemplate, length: 10});
+		_attachNavigated();
+
+		await _renderScrollContainer();
+
+		oTable.setMode(ListMode.MultiSelect);
+		oMTable.setConfig({
+			maxConditions: -1,
+			operators: [OperatorName.EQ, OperatorName.BT]
+		});
+
+		const aItems = oTable.getItems();
+		sinon.spy(aItems[2], "focus");
+
+		const oContainerConfig = oMTable.getContainerConfig();
+		const oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
+		const oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
+
+		if (oFooterContent) {
+			const fnDone = assert.async();
+			oFooterContent.then(async function(oFooterContent) {
+				oFooterContent.placeAt("content"); // render Footer
+				await nextUIUpdate();
+				const aToolbarContent = oFooterContent.getContent();
+				const oButton = aToolbarContent[1];
+				sinon.spy(oButton, "focus");
+
+				oMTable.setConditions([]);
+				oMTable.onShow(); // to update selection and scroll
+				oMTable.navigate(3);
+				assert.ok(aItems[2].focus.called, "3rd item focused");
+				assert.equal(iNavigate, 0, "Navigated Event not fired");
+
+				qutils.triggerKeydown(aItems[2].getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
+				assert.equal(iNavigate, 0, "Navigated Event not fired");
+				assert.ok(oButton.focus.called, "Button focused");
+
+				aItems[2].focus.reset();
+				qutils.triggerKeydown(oButton.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
+				assert.ok(aItems[2].focus.called, "3rd item focused");
+				assert.equal(iNavigate, 0, "Navigated Event not fired");
+
+				oFooterContent.destroy();
+				fnDone();
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+				fnDone();
+			});
+		}
 
 	});
 
@@ -1354,18 +1460,7 @@ sap.ui.define([
 		oTable.bindItems({path: '/items', suspended: true, sorter: oSorter, template: oItemTemplate});
 		const oListBinding = oTable.getBinding("items");
 
-
-
-		iNavigate = 0;
-		oNavigateCondition = undefined;
-		sNavigateItemId = undefined;
-		bNavigateLeaveFocus = undefined;
-		oMTable.attachEvent("navigated", function(oEvent) {
-			iNavigate++;
-			oNavigateCondition = oEvent.getParameter("condition");
-			sNavigateItemId = oEvent.getParameter("itemId");
-			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
-		});
+		_attachNavigated();
 
 		oMTable.setConditions([]);
 		oModel.checkUpdate(true); // force model update
@@ -1425,29 +1520,11 @@ sap.ui.define([
 
 		_fakeV4Binding(oListBinding);
 
-		const oScrollContainer = new ScrollContainer(); // to test scrolling
-		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
-		oContainer.getUIAreaForContent = function() {
-			return oScrollContainer.getUIArea();
-		};
-		oScrollContainer.placeAt("content"); // render ScrollContainer
-		await nextUIUpdate();
-		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
-		sinon.spy(oTable, "scrollToIndex");
+		await _renderScrollContainer();
 
 		_fakeV4Binding();
 
-		iNavigate = 0;
-		oNavigateCondition = undefined;
-		sNavigateItemId = undefined;
-		bNavigateLeaveFocus = undefined;
-		oMTable.attachEvent("navigated", function(oEvent) {
-			iNavigate++;
-			oNavigateCondition = oEvent.getParameter("condition");
-			sNavigateItemId = oEvent.getParameter("itemId");
-			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
-		});
-
+		_attachNavigated();
 
 		oMTable.setConditions([]);
 		oMTable.onShow(); // to simulate Open
@@ -1502,10 +1579,6 @@ sap.ui.define([
 
 			oMTable.onHide();
 
-			oScrollContainer.getContent.restore();
-			oScrollContainer.destroy();
-			delete oContainer.getUIAreaForContent;
-			oContainer.getScrollDelegate.restore();
 			fnDone();
 		}, 0);
 
