@@ -89,7 +89,7 @@ sap.ui.define([
 				new CalendarLegendItem("T8", {type: CalendarDayType.Type08, text: "My Type 8"}),
 				new CalendarLegendItem("T9", {type: CalendarDayType.Type09, text: "My Type 9"}),
 				new CalendarLegendItem("T10", {type: CalendarDayType.Type10, text: "My Type 10"})
-				]
+			]
 	});
 
 	var oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd"});
@@ -567,9 +567,9 @@ sap.ui.define([
 		aMonths = jQuery("#Cal2-content").children(".sapUiCalMonthView");
 		oCalItems = jQuery(aMonths[0]).find(".sapUiCalItem");
 
-		assert.equal(oCalItems.length, 35, "Calendar2: number of displayed days");
+		assert.equal(oCalItems.length, 42, "Calendar2: number of displayed days");
 		assert.equal(jQuery(oCalItems[0]).attr("data-sap-day"), "20101206", "Calendar2: first displayed day");
-		assert.equal(jQuery(oCalItems[oCalItems.length - 1]).attr("data-sap-day"), "20110109", "Calendar2: last displayed day");
+		assert.equal(jQuery(oCalItems[oCalItems.length - 1]).attr("data-sap-day"), "20110116", "Calendar2: last displayed day");
 		assert.equal(jQuery("#Cal2--Head-B1").text(), "Muharram", "Muharram shown");
 		assert.equal(jQuery("#Cal2--Head-B2").text(), "1432 AH", "year 1432 shown");
 		qutils.triggerEvent("click", "Cal2--Head-B1");
@@ -994,7 +994,7 @@ sap.ui.define([
 
 		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20101129", "first displayed day");
 		assert.ok(jQuery(aDays[0]).hasClass("sapUiCalItemOtherMonth"), "first displayed day is in other month");
-		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20110102", "last displayed day");
+		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20110109", "last displayed day");
 		assert.ok(jQuery(aDays[aDays.length - 1]).hasClass("sapUiCalItemOtherMonth"), "last displayed day is in other month");
 		assert.equal(iStartDateChangeFired, 1, "startdateChange event fired");
 		assert.equal(oFormatYyyymmdd.format(this.oCal2.getStartDate()), "20101201", "Start date");
@@ -1029,8 +1029,8 @@ sap.ui.define([
 		aDays = jQuery(aMonths[0]).find(".sapUiCalItem");
 		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20110627", "first displayed day");
 		assert.ok(jQuery(aDays[0]).hasClass("sapUiCalItemOtherMonth"), "first displayed day is in other month");
-		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20110731", "last displayed day");
-		assert.ok(!jQuery(aDays[aDays.length - 1]).hasClass("sapUiCalItemOtherMonth"), "last displayed day is not in other month");
+		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20110807", "last displayed day");
+		assert.ok(jQuery(aDays[aDays.length - 1]).hasClass("sapUiCalItemOtherMonth"), "last displayed day is in other month");
 		assert.equal(iStartDateChangeFired, 1, "startdateChange event fired");
 		assert.equal(oFormatYyyymmdd.format(this.oCal2.getStartDate()), "20110701", "Start date");
 
@@ -1054,7 +1054,7 @@ sap.ui.define([
 		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20141125", "first displayed day");
 
 		aDays = jQuery(aMonths[1]).find(".sapUiCalItem");
-		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20150202", "last displayed day");
+		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20150209", "last displayed day");
 		qutils.triggerEvent("click", "Cal3--Head-next");
 		oCore.applyChanges();
 		assert.equal(jQuery("#Cal3--Head-B1").text(), "Januar", "january shown again");
@@ -1066,7 +1066,7 @@ sap.ui.define([
 		aDays = jQuery(aMonths[0]).find(".sapUiCalItem");
 		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20141230", "first displayed day");
 		aDays = jQuery(aMonths[1]).find(".sapUiCalItem");
-		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20150302", "last displayed day");
+		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20150309", "last displayed day");
 
 		// creat event and spy on it on space press
 		var oEvent = jQuery.Event("sapspace");
@@ -1134,8 +1134,8 @@ sap.ui.define([
 
 		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "19981228", "first displayed day");
 		assert.ok(jQuery(aDays[0]).hasClass("sapUiCalItemOtherMonth"), "first displayed day is in other month");
-		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "19990131", "last displayed day");
-		assert.ok(!jQuery(aDays[aDays.length - 1]).hasClass("sapUiCalItemOtherMonth"), "last displayed day is not in other month");
+		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "19990207", "last displayed day");
+		assert.ok(jQuery(aDays[aDays.length - 1]).hasClass("sapUiCalItemOtherMonth"), "last displayed day is in other month");
 		assert.equal(iStartDateChangeFired, 1, "startdateChange event fired");
 		assert.equal(oFormatYyyymmdd.format(this.oCal2.getStartDate()), "19990101", "Start date");
 

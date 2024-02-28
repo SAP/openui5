@@ -215,8 +215,8 @@ sap.ui.define([
 			this.assertByDate(
 				createCalendarDate(2016, 10, 1, true),
 				createCalendarDate(2016, 9, 30, true),
-				createCalendarDate(2016, 11, 3, true),
-				35,
+				createCalendarDate(2016, 11, 10, true),
+				42,
 				"November 2016",
 				false,
 				assert
@@ -227,8 +227,8 @@ sap.ui.define([
 			this.assertByDate(
 				createCalendarDate(2016, 11, 1, true),
 				createCalendarDate(2016, 10, 27, true),
-				createCalendarDate(2016, 11, 31, true),
-				35,
+				createCalendarDate(2017, 0, 7, true),
+				42,
 				"December 2016",
 				false,
 				assert
@@ -239,21 +239,9 @@ sap.ui.define([
 			this.assertByDate(
 				createCalendarDate(2017, 0, 1, true),
 				createCalendarDate(2017, 0, 1, true),
-				createCalendarDate(2017, 1, 4, true),
-				35,
+				createCalendarDate(2017, 1, 11, true),
+				42,
 				"January 2017",
-				false,
-				assert
-			);
-		});
-
-		QUnit.test("Only days corresponding to the current month", function (assert) {
-			this.assertByDate(
-				createCalendarDate(2015, 1, 1, true),
-				createCalendarDate(2015, 1, 1, true),
-				createCalendarDate(2015, 1, 28, true),
-				28,
-				"February 2015",
 				false,
 				assert
 			);
@@ -263,8 +251,8 @@ sap.ui.define([
 			this.assertByDate(
 				createCalendarDate(1, 0, 1, true),
 				createCalendarDate(1, 0, 1, true),
-				createCalendarDate(1, 1, 3, true),
-				34,
+				createCalendarDate(1, 1, 10, true),
+				41,
 				"January 0001",
 				false,
 				assert
@@ -275,8 +263,8 @@ sap.ui.define([
 			this.assertByDate(
 				createCalendarDate(1, 0, 1, true),
 				createCalendarDate(0, 11, 31, true),
-				createCalendarDate(1, 1, 3, true),
-				35,
+				createCalendarDate(1, 1, 10, true),
+				42,
 				"January 0001",
 				true,
 				assert

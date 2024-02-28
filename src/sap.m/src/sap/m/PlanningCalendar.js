@@ -1319,15 +1319,9 @@ sap.ui.define([
 	 * @public
 	 */
 	PlanningCalendar.prototype.getVisibleIntervalsCount = function () {
-		var sViewKey = this.getViewKey();
-		if ((sViewKey === CalendarIntervalType.OneMonth || sViewKey === "OneMonth") && this._iSize < 2) {
-			var oFirstVisibleDate = CalendarUtils.getFirstDateOfWeek(CalendarUtils._createUniversalUTCDate(this.getStartDate(), this._getPrimaryCalendarType(), false)),
-				oFirstDateInLastWeek = CalendarUtils.getFirstDateOfWeek(CalendarUtils._createUniversalUTCDate(this._dateNav.getEnd(), this._getPrimaryCalendarType(), false)),
-				oLastVisibleDate = UI5Date.getInstance(oFirstDateInLastWeek.getTime());
-
-			oLastVisibleDate.setDate(oLastVisibleDate.getDate() + 6);
-
-			return ((oLastVisibleDate.getTime() - oFirstVisibleDate.getTime()) / 86400000) + 1;
+		if (this._isOneMonthView(this.getViewKey()) && this._iSize < 2) {
+			const aVisibleDays = this._oOneMonthsRow._getVisibleDays();
+			return aVisibleDays.length;
 		} else {
 			return this._getIntervals(this._getView(this.getViewKey()));
 		}
