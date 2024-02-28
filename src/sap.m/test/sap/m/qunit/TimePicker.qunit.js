@@ -1802,10 +1802,11 @@ sap.ui.define([
 		beforeEach : function() {
 			this._defaultFormatter = DateFormat.getTimeInstance({style: "medium", strictParsing: true, relative: false});
 		},
-		typeAndCheckValueForDisplayFormat: async function(sDisplayFormat, sInput, sExpectedValue) {
+		typeAndCheckValueForDisplayFormat: async function(sDisplayFormat, sInput, sExpectedValue, sMaskMode) {
 			//system under test
 			var tp = new TimePicker({
-				displayFormat: sDisplayFormat
+				displayFormat: sDisplayFormat,
+				maskMode: sMaskMode
 			});
 
 			//arrange
@@ -1847,12 +1848,14 @@ sap.ui.define([
 
 	QUnit.test("allows input of valid time string - style short", async function(assert) {
 		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
-		await this.typeAndCheckValueForDisplayFormat("short", "1215a", "12:15\u202fAM");
+		await this.typeAndCheckValueForDisplayFormat("short", "1215a", "12:15\u202fAM", TimePickerMaskMode.Enforce);
+		await this.typeAndCheckValueForDisplayFormat("short", "1215a", "", TimePickerMaskMode.On);
 	});
 
 	QUnit.test("allows input of valid time string - style medium", async function(assert) {
 		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
-		await this.typeAndCheckValueForDisplayFormat("medium", "12159a", "12:15:09\u202fAM");
+		await this.typeAndCheckValueForDisplayFormat("medium", "12159a", "12:15:09\u202fAM", TimePickerMaskMode.Enforce);
+		await this.typeAndCheckValueForDisplayFormat("medium", "12159a", "", TimePickerMaskMode.On);
 	});
 
 
@@ -1861,40 +1864,48 @@ sap.ui.define([
 	//first number in hour
 	//no leading zero
 	QUnit.test("1 for first hour digit is valid - h format, pos 0", async function(assert) {
-		await this.typeAndCheckValueForDisplayFormat("h:mm", "115", "11:5-"); //not " 1:15"
+		await this.typeAndCheckValueForDisplayFormat("h:mm", "115", "11:5-", TimePickerMaskMode.Enforce); //not " 1:15"
+		await this.typeAndCheckValueForDisplayFormat("h:mm", "115", "", TimePickerMaskMode.On);
 	});
 
 	QUnit.test("2 for first hour digit are preceded by space - h format, pos 0", async function(assert) {
-		await this.typeAndCheckValueForDisplayFormat("h:mm", "215", " 2:15");
+		await this.typeAndCheckValueForDisplayFormat("h:mm", "215", " 2:15", TimePickerMaskMode.Enforce);
+		await this.typeAndCheckValueForDisplayFormat("h:mm", "215", "", TimePickerMaskMode.On);
 	});
 
 	QUnit.test("numbers > 2 for first hour digit are preceded by space - h format, pos 0", async function(assert) {
-		await this.typeAndCheckValueForDisplayFormat("h:mm", "315", " 3:15");
+		await this.typeAndCheckValueForDisplayFormat("h:mm", "315", " 3:15", TimePickerMaskMode.Enforce);
+		await this.typeAndCheckValueForDisplayFormat("h:mm", "315", "", TimePickerMaskMode.On);
 	});
 
 
 
 	QUnit.test("2 for first hour digit is valid - H format, pos 0", async function(assert) {
-		await this.typeAndCheckValueForDisplayFormat("H:mm", "215", "21:5-"); //not " 2:15"
+		await this.typeAndCheckValueForDisplayFormat("H:mm", "215", "21:5-", TimePickerMaskMode.Enforce); //not " 2:15"
+		await this.typeAndCheckValueForDisplayFormat("H:mm", "215", "", TimePickerMaskMode.On); //not " 2:15"
 	});
 
 	QUnit.test("numbers > 2 for first hour digit are preceded by space - H format, pos 0", async function(assert) {
-		await this.typeAndCheckValueForDisplayFormat("H:mm", "315", " 3:15");
+		await this.typeAndCheckValueForDisplayFormat("H:mm", "315", " 3:15", TimePickerMaskMode.Enforce);
+		await this.typeAndCheckValueForDisplayFormat("H:mm", "315", "", TimePickerMaskMode.On);
 	});
 
 
 	QUnit.test("space is valid for hours - H format, pos 0", async function(assert) {
-		await this.typeAndCheckValueForDisplayFormat("H:mm", " 115", " 1:15"); //not "11:5-"
+		await this.typeAndCheckValueForDisplayFormat("H:mm", " 115", " 1:15", TimePickerMaskMode.Enforce); //not "11:5-"
+		await this.typeAndCheckValueForDisplayFormat("H:mm", " 115", "", TimePickerMaskMode.On); //not "11:5-"
 	});
 
 	//...could have more of those
 
 	QUnit.test("0 is replaced with space for hours - h format, pos 0", async function(assert) {
-		await this.typeAndCheckValueForDisplayFormat("h:mm", "0115", " 1:15");
+		await this.typeAndCheckValueForDisplayFormat("h:mm", "0115", " 1:15", TimePickerMaskMode.Enforce);
+		await this.typeAndCheckValueForDisplayFormat("h:mm", "0115", "", TimePickerMaskMode.On);
 	});
 
 	QUnit.test("0 is preceeded with space for hours - H format, pos 0", async function(assert) {
-		await this.typeAndCheckValueForDisplayFormat("H:mm", "0115", " 0:11");
+		await this.typeAndCheckValueForDisplayFormat("H:mm", "0115", " 0:11", TimePickerMaskMode.Enforce);
+		await this.typeAndCheckValueForDisplayFormat("H:mm", "0115", "", TimePickerMaskMode.On);
 	});
 
 
@@ -1948,11 +1959,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("do not allow numbers > 2 for 2nd number in hour if 1st === 1 - h format", async function(assert) {
-		await this.typeAndCheckValueForDisplayFormat("h:mm", "13", "1-:--");
+		await this.typeAndCheckValueForDisplayFormat("h:mm", "13", "1-:--", TimePickerMaskMode.Enforce);
+		await this.typeAndCheckValueForDisplayFormat("h:mm", "13", "", TimePickerMaskMode.On);
 	});
 
 	QUnit.test("allow numbers <= 2 for 2nd number in hour if 1st === 1 - h format", async function(assert) {
-		await this.typeAndCheckValueForDisplayFormat("h:mm", "12", "12:--");
+		await this.typeAndCheckValueForDisplayFormat("h:mm", "12", "12:--", TimePickerMaskMode.Enforce);
+		await this.typeAndCheckValueForDisplayFormat("h:mm", "12", "", TimePickerMaskMode.On);
 	});
 
 	QUnit.test("do not allow numbers > 3 for 2nd number in hour if 1st === 2 - HH format", async function(assert) {
@@ -1964,11 +1977,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("do not allow numbers > 3 for 2nd number in hour if 1st === 2 - H format", async function(assert) {
-		await this.typeAndCheckValueForDisplayFormat("H:mm", "24", "2-:--");
+		await this.typeAndCheckValueForDisplayFormat("H:mm", "24", "2-:--", TimePickerMaskMode.Enforce);
+		await this.typeAndCheckValueForDisplayFormat("H:mm", "24", "", TimePickerMaskMode.On);
 	});
 
 	QUnit.test("allow numbers <= 3 for 2nd number in hour if 1st === 2 - H format", async function(assert) {
-		await this.typeAndCheckValueForDisplayFormat("H:mm", "23", "23:--");
+		await this.typeAndCheckValueForDisplayFormat("H:mm", "23", "23:--", TimePickerMaskMode.Enforce);
+		await this.typeAndCheckValueForDisplayFormat("H:mm", "23", "", TimePickerMaskMode.On);
 	});
 
 	//first number in minutes
@@ -2570,12 +2585,23 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_isMaskEnabled returns true if maskMode is 'On'", async function (assert) {
+	QUnit.test("_isMaskEnabled returns true if maskMode is 'On' if the display format is of fixed width ", async function (assert) {
 		// prepare
-		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.On; });
+		const oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.On; });
+		let bFixWidthPattern = true;
+		const sDisplayFormat = this.oTp._getDisplayFormatPattern().toLowerCase();
+		const sSymbolPart = sDisplayFormat.replaceAll("hh", "").replaceAll("mm","").replaceAll("ss","").replaceAll("a","");
+		const bHasIncorrectPatternHours = sSymbolPart.includes("h");
+		const bHasIncorrectPatternMinutes = sSymbolPart.includes("m");
+		const bHasIncorrectPatternSeconds = sSymbolPart.includes("s");
+		const bHasIncorrectPatternSymbol = sSymbolPart.includes("a") || sSymbolPart.includes("b");
+		if (bHasIncorrectPatternHours || bHasIncorrectPatternMinutes || bHasIncorrectPatternSeconds || bHasIncorrectPatternSymbol) {
+			bFixWidthPattern = false;
+		}
+
 		await nextUIUpdate(this.clock);
 		// assert
-		assert.ok(this.oTp._isMaskEnabled(), "mask should be enabled if maskMode is 'On'");
+		assert.strictEqual(this.oTp._isMaskEnabled(),bFixWidthPattern, "The mask should be enabled if the 'maskMode' is set to 'On' and the display format is of fixed width.");
 		await nextUIUpdate(this.clock);
 		// cleanup
 		oGetMaskModeStub.restore();
@@ -2588,6 +2614,17 @@ sap.ui.define([
 
 		// assert
 		assert.ok(!this.oTp._isMaskEnabled(), "mask should be disabled if maskMode is 'Off'");
+
+		// cleanup
+		oGetMaskModeStub.restore();
+	});
+
+	QUnit.test("_isMaskEnabled returns true if maskMode is 'Enforce', regardless of whether the display format is of fixed length", function (assert) {
+		// prepare
+		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.Enforce; });
+
+		// assert
+		assert.ok(this.oTp._isMaskEnabled(), "mask should be enabled if maskMode is 'Enforce'");
 
 		// cleanup
 		oGetMaskModeStub.restore();
@@ -2625,9 +2662,9 @@ sap.ui.define([
 		oGetMaskModeStub.restore();
 	});
 
-	QUnit.test("onfocusin event should call _applyMask and _positionCaret if maskMode is 'On'", function (assert) {
+	QUnit.test("onfocusin event should call _applyMask and _positionCaret if maskMode is 'Enforce'", function (assert) {
 		// prepare
-		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.On; }),
+		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.Enforce; }),
 			oApplyMaskSpy = this.spy(this.oTp, "_applyMask"),
 			oPositionCaret = this.spy(this.oTp, "_positionCaret");
 
@@ -2695,9 +2732,9 @@ sap.ui.define([
 		oGetMaskModeStub.restore();
 	});
 
-	QUnit.test("setValue method should call _applyRules if maskMode is 'On'", function (assert) {
+	QUnit.test("setValue method should call _applyRules if maskMode is 'Enforce'", function (assert) {
 		// prepare
-		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.On; }),
+		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.Enforce; }),
 			oApplyRulesSpy = this.spy(this.oTp, "_applyRules");
 
 		// act
@@ -2772,9 +2809,9 @@ sap.ui.define([
 		oGetMaskModeStub.restore();
 	});
 
-	QUnit.test("onkeydown event should call _keyDownHandler if maskMode is 'On'", function (assert) {
+	QUnit.test("onkeydown event should call _keyDownHandler if maskMode is 'Enforce'", function (assert) {
 		// prepare
-		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.On; }),
+		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.Enforce; }),
 				oKeyDownHandlerSpy = this.spy(this.oTp, "_keyDownHandler");
 
 		// act
@@ -2804,9 +2841,9 @@ sap.ui.define([
 		oGetMaskModeStub.restore();
 	});
 
-	QUnit.test("onfocusout event should call closeValueStateMessage and _inputCompletedHandler if maskMode is 'On'", function (assert) {
+	QUnit.test("onfocusout event should call closeValueStateMessage and _inputCompletedHandler if maskMode is 'Enforce'", function (assert) {
 		// prepare
-		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.On; }),
+		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.Enforce; }),
 			oCloseValueStateMessageSpy = this.spy(this.oTp, "closeValueStateMessage"),
 			oInputCompletedHandlerSpy = this.spy(this.oTp, "_inputCompletedHandler");
 
@@ -2839,9 +2876,9 @@ sap.ui.define([
 		oGetMaskModeStub.restore();
 	});
 
-	QUnit.test("oninput event should call _applyMask and _positionCaret if maskMode is 'On'", function (assert) {
+	QUnit.test("oninput event should call _applyMask and _positionCaret if maskMode is 'Enforce'", function (assert) {
 		// prepare
-		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.On; }),
+		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.Enforce; }),
 			oApplyMaskSpy = this.spy(this.oTp, "_applyMask"),
 			oPositionCaretSpy = this.spy(this.oTp, "_positionCaret");
 
@@ -2877,9 +2914,9 @@ sap.ui.define([
 		oGetMaskModeStub.restore();
 	});
 
-	QUnit.test("onkeypress event should call _keyPressHandler if maskMode is 'On'", function (assert) {
+	QUnit.test("onkeypress event should call _keyPressHandler if maskMode is 'Enforce'", function (assert) {
 		// prepare
-		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.On; }),
+		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.Enforce; }),
 			okeyPressHandlerSpy = this.spy(this.oTp, "_keyPressHandler");
 
 		// act
@@ -2909,9 +2946,9 @@ sap.ui.define([
 		oGetMaskModeStub.restore();
 	});
 
-	QUnit.test("onkeydown event should call _keyDownHandler if maskMode is 'On'", function (assert) {
+	QUnit.test("onkeydown event should call _keyDownHandler if maskMode is 'Enforce'", function (assert) {
 		// prepare
-		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.On; }),
+		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.Enforce; }),
 			oKeyDownHandler = this.spy(this.oTp, "_keyDownHandler");
 
 		// act
@@ -3496,7 +3533,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("liveChange fires on direct typing", async function (assert){
-		var oTP = new TimePicker(),
+		var oTP = new TimePicker({
+			maskMode: TimePickerMaskMode.Enforce
+		}),
 			spyLiveChange = this.spy(oTP, "fireLiveChange");
 
 		oTP.placeAt("qunit-fixture");
