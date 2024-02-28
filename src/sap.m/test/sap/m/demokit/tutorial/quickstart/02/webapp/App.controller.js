@@ -1,11 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast"
-], function (Controller, MessageToast) {
+], (Controller, MessageToast) => {
 	"use strict";
 
-	return Controller.extend("Quickstart.App", {
-		onPress : function () {
+	return Controller.extend("ui5.quickstart.App", {
+		onPress() {
 			MessageToast.show("Hello App!");
 		}
 	});

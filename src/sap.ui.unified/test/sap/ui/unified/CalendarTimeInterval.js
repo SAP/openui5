@@ -285,7 +285,7 @@ sap.ui.define([
 		fields: [
 			new Input("TF-max",{
 				editable: true,
-				width: "10rem",
+				width: "20rem",
 				placeholder: "yyyyMMddHHmmss",
 				change: function(oEvent){
 					var sValue = oEvent.getParameter('newValue');
@@ -396,7 +396,7 @@ sap.ui.define([
 		height: "10rem",
 		vertical: true,
 		content: [new SelectList("LB",{
-			width: "10rem",
+			width: "20rem",
 			ariaLabelledBy: [oLabel3, oSelectListLabel]
 		})]
 	});

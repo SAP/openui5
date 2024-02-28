@@ -1087,8 +1087,8 @@ sap.ui.define([
 	 *
 	 * @param {object[]} aResults
 	 *   An array containing two objects. The first object provides Rank and DistanceFromRoot (for
-	 *   the parent and the out-of-place node itself, in this order). The second object provides the
-	 *   full data of the out-of-place node.
+	 *   the parent and all out-of-place nodes, in this order). The second object provides the full
+	 *   data of the out-of-place nodes.
 	 *
 	 * @private
 	 */
@@ -1097,20 +1097,36 @@ sap.ui.define([
 			return;
 		}
 
-		const getRank = (oNode) => Number.parseInt(
-			_Helper.drillDown(oNode, this.oAggregation.$LimitedRank));
+		const getPredicate
+			= (oNode) => _Helper.getKeyPredicate(oNode, this.sMetaPath, this.getTypes());
+		const getRank
+			= (oNode) => Number.parseInt(_Helper.drillDown(oNode, this.oAggregation.$LimitedRank));
+		const mPredicate2RankResult = {};
+		oRankResult.value.forEach((oNode) => {
+			mPredicate2RankResult[getPredicate(oNode)] = oNode;
+		});
 
-		const oNode = _Helper.merge(oNodeResult.value[0], oRankResult.value[1]);
-		const iNodeRank = getRank(oNode);
+		// import data
+		oNodeResult.value.forEach((oNode) => {
+			const sPredicate = getPredicate(oNode);
+			if (this.aElements.$byPredicate[sPredicate]) {
+				return; // already read with the in-place request
+			}
+			_Helper.merge(oNode, mPredicate2RankResult[sPredicate]);
+			// Note: overridden by _AggregationCache.calculateKeyPredicateRH
+			this.oFirstLevel.calculateKeyPredicate(oNode, this.getTypes(), this.sMetaPath);
+			// insert at rank position to ensure correct placeholder is replaced
+			this.insertNode(oNode, getRank(oNode));
+		});
+
+		// move the out-of-place nodes below their parent in creation order
 		const iParentRank = getRank(oRankResult.value[0]);
-
-		// Note: overridden by _AggregationCache.calculateKeyPredicateRH
-		this.oFirstLevel.calculateKeyPredicate(oNode, this.getTypes(), this.sMetaPath);
-		// insert at rank position to ensure correct placeholder is replaced
-		this.insertNode(oNode, iNodeRank);
-		// move the out-of-place node below its parent
-		this.aElements.splice(iNodeRank, 1);
-		this.aElements.splice(iParentRank + 1, 0, oNode);
+		this.oTreeState.getOutOfPlace().nodePredicates.forEach((sPredicate) => {
+			const oNode = this.aElements.$byPredicate[sPredicate];
+			const iNodeIndex = this.aElements.indexOf(oNode);
+			this.aElements.splice(iNodeIndex, 1);
+			this.aElements.splice(iParentRank + 1, 0, oNode);
+		});
 	};
 
 	/**

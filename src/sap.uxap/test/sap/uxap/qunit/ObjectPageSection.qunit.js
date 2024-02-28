@@ -838,21 +838,6 @@ function(Element, nextUIUpdate, jQuery, Core, XMLView, library, ObjectPageLayout
 		assert.equal(oInvalidateSpy.callCount, 0, "section is not invalidated");
 	});
 
-	QUnit.test("Async unstashing", function (assert) {
-
-		// Setup
-		var oSection = this.oObjectPageLayout.getSections()[0],
-			oSpyConnectToModels = this.spy(ObjectPageSubSection.prototype, "connectToModelsAsync"),
-			oSpyUnstash = this.spy(ObjectPageSubSection.prototype, "_unStashControlsAsync");
-
-		// Act
-		oSection.connectToModelsAsync();
-
-		// Check
-		assert.strictEqual(oSpyConnectToModels.callCount, 3, "connectToModelsAsync is called on each SubSection");
-		assert.strictEqual(oSpyUnstash.callCount, 3, "_unStashControlsAsync is called on each SubSection");
-	});
-
 	QUnit.module("SubSection promoted");
 
 	QUnit.test("Showing SubSection changes 'sapUxAPObjectPageSubSectionPromoted' class", async function(assert) {

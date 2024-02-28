@@ -629,7 +629,12 @@ function(Core, nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPage
 			done = assert.async();
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-			oObjectPage.setSelectedSection(oThirdSection.getId());
+			setTimeout(function () {
+				oObjectPage.setSelectedSection(oThirdSection.getId());
+			}, 500);
+		});
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			setTimeout(function () {
 				oObjectPage.removeSection(oFirstSection);
 				setTimeout(function () {
@@ -638,8 +643,8 @@ function(Core, nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPage
 					assert.strictEqual(iScrollPositionAfterRemove, iExpectedPositionAfterRemove, "scrollPosition is correct");
 					oFirstSection.destroy();
 					done();
-				}, 1000); // throttling delay
-			}, 1000); //dom calc delay
+				}, 500); // throttling delay
+			}, 500); //dom calc delay
 		});
 	});
 
@@ -846,7 +851,6 @@ function(Core, nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPage
 				assert.ok(oSpy.notCalled, "subSectionEnteredViewPortEvent is not fired before _connectModelsForSections");
 
 				oStub.restore();
-				return Promise.all([]);
 			}),
 			oSpy;
 

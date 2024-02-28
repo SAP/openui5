@@ -1766,6 +1766,8 @@ sap.ui.define([
 	 *   A list of all dependent bindings, never <code>null</code>
 	 *
 	 * @private
+	 * @since 1.122.0
+	 * @ui5-restricted sap.fe
 	 */
 	ODataModel.prototype.getDependentBindings = function (oParent) {
 		return this.aAllBindings.filter(function (oBinding) {

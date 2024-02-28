@@ -618,7 +618,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started for Object Page...", {
-		async before() {
+		before() {
 			// View
 			// 	Page
 			// 		ObjectPageLayout
@@ -690,11 +690,10 @@ sap.ui.define([
 			});
 			oEmbeddedPage.addContent(this.oObjectPageLayout);
 			var clock = sinon.useFakeTimers();
-			clock.tick(1000);
-			await nextUIUpdate();
 			// If the content is not set to a bigger width, the anchor bar will collapse
 			// and the anchor bar buttons are not rendered, thus evaluateEditable is not calculated
 			document.getElementById("content").style.width = "1000px";
+			clock.tick(1000);
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oObjectPageLayout,
 				showToolbars: false

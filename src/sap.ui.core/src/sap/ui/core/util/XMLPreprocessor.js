@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/base/util/deepExtend",
 	"sap/base/util/JSTokenizer",
 	"sap/base/util/ObjectPath",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
@@ -17,8 +18,9 @@ sap.ui.define([
 	"sap/ui/model/CompositeBinding",
 	"sap/ui/model/Context",
 	"sap/ui/performance/Measurement"
-], function (Log, deepExtend, JSTokenizer, ObjectPath, BindingParser, ManagedObject, SyncPromise,
-		Component, XMLTemplateProcessor, BindingMode, CompositeBinding, Context, Measurement) {
+], function (Log, deepExtend, JSTokenizer, ObjectPath, BindingInfo, BindingParser, ManagedObject,
+		SyncPromise, Component, XMLTemplateProcessor, BindingMode, CompositeBinding, Context,
+		Measurement) {
 	"use strict";
 
 	var sNAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1",
@@ -350,7 +352,8 @@ sap.ui.define([
 	 * @param {sap.ui.core.util._with} oWithControl
 	 *   the "with" control
 	 * @param {object} oBindingInfo
-	 *   the binding info
+	 *   the binding info which must be "ready" (because it refers only to models which are
+	 *   available) and normalized via {@link sap.ui.base.BindingIfo.createProperty}
 	 * @param {object} mSettings
 	 *   map/JSON-object with initial property values, etc.
 	 * @param {object} oScope
@@ -359,8 +362,7 @@ sap.ui.define([
 	 *   whether async processing is allowed
 	 * @returns {sap.ui.base.SyncPromise|null}
 	 *   a sync promise which resolves with the property value or is rejected with a corresponding
-	 *   error (for example, an error thrown by a formatter), or <code>null</code> in case the
-	 *   binding is not ready (because it refers to a model which is not available)
+	 *   error (for example, an error thrown by a formatter)
 	 */
 	function getAny(oWithControl, oBindingInfo, mSettings, oScope, bAsync) {
 		var bValueAsPromise = false;
@@ -376,13 +378,8 @@ sap.ui.define([
 		 */
 		function prepare(oInfo, i) {
 			var fnFormatter = oInfo.formatter,
-				oModel,
-				sModelName = oInfo.model;
-
-			if (oInfo.path && oInfo.path.indexOf(">") > 0) {
-				sModelName = oInfo.path.slice(0, oInfo.path.indexOf(">"));
-			}
-			oModel = oWithControl.getModel(sModelName);
+				sModelName = oInfo.model,
+				oModel = oWithControl.getModel(sModelName);
 
 			if (fnFormatter && fnFormatter.requiresIContext === true) {
 				fnFormatter = oInfo.formatter
@@ -411,15 +408,11 @@ sap.ui.define([
 		}
 
 		try {
-			if (oBindingInfo.parts) {
-				oBindingInfo.parts.forEach(prepare);
-			}
+			oBindingInfo.parts.forEach(prepare);
 			prepare(oBindingInfo);
 
 			oWithControl.bindProperty("any", oBindingInfo);
-			return oWithControl.getBinding("any")
-				? SyncPromise.resolve(oWithControl.getAny())
-				: null;
+			return SyncPromise.resolve(oWithControl.getAny());
 		} catch (e) {
 			return SyncPromise.reject(e);
 		} finally {
@@ -1111,67 +1104,68 @@ sap.ui.define([
 				 */
 				function getResolvedBinding(sValue, oElement, oWithControl, bMandatory,
 						fnCallIfConstant) {
-					let vParseResult;
+					try {
+						Measurement.average(sPerformanceGetResolvedBinding, "", aPerformanceCategories);
 
-					function resolveBinding(vBindingInfo) {
-						let oPromise;
+						let vBindingInfo;
+						try {
+							vBindingInfo = BindingParser.complexParser(sValue, oScope, bMandatory, true,
+								true, true, null, /*bResolveTypesAsync*/!oViewInfo.sync);
+						} catch (e) {
+							return SyncPromise.reject(e);
+						}
+
+						let oTypesPromise;
+						if (vBindingInfo) {
+							if (!oViewInfo.sync) {
+								if (vBindingInfo.wait) {
+									oTypesPromise = SyncPromise.resolve(vBindingInfo.resolved);
+								}
+								vBindingInfo = vBindingInfo.bindingInfo;
+							}
+							if (typeof vBindingInfo === "string") {
+								fnCallIfConstant?.();
+								return SyncPromise.resolve(vBindingInfo);
+							}
+							vBindingInfo = BindingInfo.createProperty(vBindingInfo);
+						} else { // in case there is no binding and nothing to unescape
+							fnCallIfConstant?.();
+							return SyncPromise.resolve(sValue);
+						}
 
 						if (vBindingInfo.functionsNotFound) {
 							if (bMandatory) {
 								warn(oElement, "Function name(s)",
 									vBindingInfo.functionsNotFound.join(", "), "not found");
 							}
-							Measurement.end(sPerformanceGetResolvedBinding);
 							return null; // treat incomplete bindings as unrelated
 						}
 
-						if (typeof vBindingInfo === "object") {
-							oPromise = getAny(oWithControl, vBindingInfo, mSettings, oScope,
-								!oViewInfo.sync);
-							if (bMandatory && !oPromise) {
+						const bReady = vBindingInfo.parts.every((oPart) => {
+							return oPart.value !== undefined || oWithControl.getModel(oPart.model);
+						});
+						if (!bReady) {
+							if (bMandatory) {
 								warn(oElement, "Binding not ready");
-							} else if (oViewInfo.sync && oPromise && oPromise.isPending()) {
+							}
+							return null;
+						}
+
+						if (!oTypesPromise) {
+							const oPromise = getAny(oWithControl, vBindingInfo, mSettings, oScope,
+								!oViewInfo.sync);
+							if (oViewInfo.sync && oPromise.isPending()) {
 								error("Async formatter in sync view in " + sValue + " of ", oElement);
 							}
-						} else {
-							oPromise = SyncPromise.resolve(vBindingInfo);
-							if (fnCallIfConstant) { // string
-								fnCallIfConstant();
-							}
+							return oPromise;
 						}
+
+						return oTypesPromise.then(function () {
+							return getAny(oWithControl, vBindingInfo, mSettings, oScope, true);
+						});
+					} finally {
 						Measurement.end(sPerformanceGetResolvedBinding);
-
-						return oPromise;
 					}
-
-					Measurement.average(sPerformanceGetResolvedBinding, "", aPerformanceCategories);
-					if (oViewInfo.sync) {
-						try {
-							vParseResult
-							= BindingParser.complexParser(sValue, oScope, bMandatory, true, true, true)
-								|| sValue; // in case there is no binding and nothing to unescape
-						} catch (e) {
-							return SyncPromise.reject(e);
-						}
-						return resolveBinding(vParseResult);
-					}
-
-					try {
-						vParseResult
-							= BindingParser.complexParser(sValue, oScope, bMandatory, true, true, true,
-								null, true);
-					} catch (e) {
-						return SyncPromise.reject(e);
-					}
-					if (!vParseResult) { // no binding and nothing to unescape
-						return resolveBinding(sValue);
-					}
-					if (!vParseResult.wait) { // nothing to wait for
-						return resolveBinding(vParseResult.bindingInfo);
-					}
-					return vParseResult.resolved.then(function (/*no results*/) {
-						return resolveBinding(vParseResult.bindingInfo);
-					});
 				}
 
 				/**
@@ -1393,8 +1387,8 @@ sap.ui.define([
 						return oSyncPromiseResolved;
 					}
 					return oPromise.then(function (vValue) {
-						if (vValue === undefined) {
-							// if the formatter returns null, the value becomes undefined
+						if (vValue === null || vValue === undefined) {
+							// if the formatter returns null, the value may become undefined
 							// (the default value of _With.any)
 							debug(oElement, "Removed attribute", oAttribute.name);
 							oElement.removeAttributeNode(oAttribute);

@@ -5,7 +5,6 @@
 // Provides the real core class sap.ui.core.Core of SAPUI5
 sap.ui.define([
 	"./AnimationMode",
-	"./Configuration",
 	"./ControlBehavior",
 	"./ElementRegistry",
 	"./ElementMetadata",
@@ -48,7 +47,6 @@ sap.ui.define([
 ],
 	function(
 		AnimationMode,
-		Configuration,
 		ControlBehavior,
 		ElementRegistry,
 		ElementMetadata,
@@ -1052,17 +1050,6 @@ sap.ui.define([
 			// notify the listeners via a control event
 			_oEventProvider && _oEventProvider.fireEvent(Core.M_EVENTS.ThemeChanged, BaseEvent.getParameters(oEvent));
 		});
-
-		/**
-		 * Returns the Configuration of the Core.
-		 *
-		 * @return {sap.ui.core.Configuration} the Configuration of the current Core.
-		 * @public
-		 * @deprecated As of Version 1.120. Please see {@link sap.ui.core.Configuration Configuration} for the corrsponding replacements.
-		 */
-		Core.prototype.getConfiguration = function () {
-			return Configuration;
-		};
 
 		/**
 		 * Retrieves a resource bundle for the given library and locale.

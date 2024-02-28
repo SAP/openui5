@@ -1104,16 +1104,16 @@ sap.ui.define([
 	ObjectPageLayout.prototype._preloadSectionsOnBeforeFirstRendering = function () {
 		var aToLoad = this._getSectionsToPreloadOnBeforeFirstRendering();
 
-		this._connectModelsForSections(aToLoad).then(function () {
-			// early notify that subSections are being loaded
-			if (this.getEnableLazyLoading()) {
-				aToLoad.forEach(function (subSection) {
-					this.fireEvent("subSectionPreload", {
-						subSection: subSection
-					});
-				}, this);
-			}
-		}.bind(this));
+		this._connectModelsForSections(aToLoad);
+
+		// early notify that subSections are being loaded
+		if (this.getEnableLazyLoading()) {
+			aToLoad.forEach(function (subSection) {
+				this.fireEvent("subSectionPreload", {
+					subSection: subSection
+				});
+			}, this);
+		}
 	};
 
 	/**
@@ -2360,7 +2360,6 @@ sap.ui.define([
 
 		if (!this.getEnableLazyLoading() && this.getUseIconTabBar()) {
 			aToLoad = (oTargetSection instanceof ObjectPageSection) ? oTargetSection : oTargetSection.getParent();
-
 			this._connectModelsForSections([aToLoad]);
 		}
 
@@ -2372,19 +2371,19 @@ sap.ui.define([
 			if (Device.system.desktop) {
 				//on desktop we delay the call to have the preload done during the scrolling animation
 				setTimeout(function () {
-					this._doConnectModelsForSections(aToLoad);
+					this._connectModelsForSections(aToLoad);
+
+					this._fireSubSectionEnteredViewPortEvent(aToLoad);
 				}.bind(this), 50);
 			} else {
 				//on device, do the preload first then scroll.
 				//doing anything during the scrolling animation may
 				//trouble animation and lazy loading on slow devices.
-				this._doConnectModelsForSections(aToLoad);
+				this._connectModelsForSections(aToLoad);
+
+				this._fireSubSectionEnteredViewPortEvent(aToLoad);
 			}
 		}
-	};
-
-	ObjectPageLayout.prototype._doConnectModelsForSections = function (aToLoad) {
-		this._connectModelsForSections(aToLoad).then(() => this._fireSubSectionEnteredViewPortEvent(aToLoad));
 	};
 
 	ObjectPageLayout.prototype._fireSubSectionEnteredViewPortEvent = function (aToLoad) {
@@ -3246,6 +3245,10 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._onMediaRangeChange = function () {
 		var iCurrentWidth = this._getMediaContainerWidth();
+
+		if (!iCurrentWidth) {
+			return;
+		}
 
 		if (this._hasDynamicTitle()) {
 			this._updateMedia(iCurrentWidth, ObjectPageLayout.DYNAMIC_HEADERS_MEDIA); // Update media classes when ObjectPageDynamicHeaderTitle is used.
@@ -4293,14 +4296,10 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._connectModelsForSections = function (aSections) {
-		var pAll = [];
-
 		aSections = aSections || [];
 		aSections.forEach(function (oSection) {
-			pAll.push(oSection.connectToModelsAsync());
+			oSection.connectToModels();
 		});
-
-		return Promise.all(pAll);
 	};
 
 	ObjectPageLayout.prototype._getHeightRelatedParameters = function () {

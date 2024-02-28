@@ -1,0 +1,22 @@
+.vBoxSelectTestPage {
+    margin: 0.5rem 1rem 0rem 1rem;
+}
+
+.vBoxSelectTestPage > .sapMFlexItem {
+    margin-bottom: 0.5rem;
+}
+
+.labelResult {
+    margin-top: 2rem;
+}
+
+.vBoxSelectTestPageWithWhiteBackground {
+    background-color: #ffffff;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    margin: 1rem 2rem 0 2rem;
+}
+
+.labelSelectTestPageHeader {
+    margin: 1rem 2rem 0 2rem;
+}

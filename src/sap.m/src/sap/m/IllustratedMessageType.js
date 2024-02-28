@@ -6,7 +6,7 @@ sap.ui.define([], function () {
 	"use strict";
 
 	/**
-	 * Available <code>Illustration</code> types for the {@link sap.f.IllustratedMessage} control.
+	 * Available <code>Illustration</code> types for the {@link sap.m.IllustratedMessage} control.
 	 *
 	 * @enum {string}
 	 * @public

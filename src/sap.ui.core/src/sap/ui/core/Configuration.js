@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/base/util/Version",
 	"sap/ui/base/Object",
-	"sap/ui/core/AnimationMode",
-	"sap/ui/core/getCompatibilityVersion"
+	"sap/ui/core/AnimationMode"
 ], function(
 	BaseEvent,
 	Log,
@@ -18,13 +17,11 @@ sap.ui.define([
 	Localization,
 	Version,
 	BaseObject,
-	AnimationMode,
-	getCompatibilityVersion
+	AnimationMode
 ) {
 	"use strict";
 
 	var oVersion = new Version("${version}");
-	var oFormatSettings;
 
 	// Lazy dependency to core
 	var Core;
@@ -103,20 +100,9 @@ sap.ui.define([
 			return oVersion;
 		},
 
-		getCompatibilityVersion : getCompatibilityVersion,
+		getCompatibilityVersion : undefined/*getCompatibilityVersion*/,
 		getLanguagesDeliveredWithCore : Localization.getLanguagesDeliveredWithCore,
-		getSupportedLanguages : Localization.getSupportedLanguages,
-
-		/**
-		 * Returns a configuration object that bundles the format settings of UI5.
-		 *
-		 * @returns {sap.ui.core.Configuration.FormatSettings} A FormatSettings object.
-		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting Formatting} instead.
-		 */
-		getFormatSettings : function() {
-			return oFormatSettings;
-		}
+		getSupportedLanguages : Localization.getSupportedLanguages
 	});
 
 	/**

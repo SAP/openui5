@@ -15,8 +15,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Localization,
 	nextUIUpdate,
@@ -31,8 +30,7 @@ sap.ui.define([
 	Element,
 	ResizeHandler,
 	InvisibleText,
-	jQuery,
-	oCore
+	jQuery
 ) {
 	"use strict";
 
@@ -482,8 +480,6 @@ sap.ui.define([
 
 	function testAlsoForRTL(sName, fnTest) {
 		QUnit.test(sName, async function (assert) {
-			var config = oCore.getConfiguration();
-
 			//turn on rtl for this test
 			this.stub(Localization, "getRTL").callsFake(function() {
 				return false;
@@ -493,8 +489,6 @@ sap.ui.define([
 		});
 
 		QUnit.test(sName + " RTL", async function (assert) {
-			var config = oCore.getConfiguration();
-
 			//turn on rtl for this test
 			this.stub(Localization, "getRTL").callsFake(function() {
 				return true;

@@ -17,8 +17,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Dialog",
 	"sap/base/Log",
-	"sap/ui/util/Mobile",
-	"sap/ui/core/Core"
+	"sap/ui/util/Mobile"
 ], function(
 	ControlBehavior,
 	Element,
@@ -37,8 +36,7 @@ sap.ui.define([
 	Text,
 	Dialog,
 	Log,
-	Mobile,
-	Core
+	Mobile
 ) {
 	"use strict";
 
@@ -1977,7 +1975,6 @@ sap.ui.define([
 				pages: [oPage1, oPage2]
 			}),
 			fnDone = assert.async(),
-			oCoreConfiguration = Core.getConfiguration(),
 			oStub = sinon.stub(ControlBehavior, "getAnimationMode").returns("none"),
 			oSpy = sinon.spy(window, "setTimeout");
 

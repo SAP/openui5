@@ -989,7 +989,6 @@ sap.ui.define([
 				this._applyExtraHeight();
 			}
 		}.bind(this);
-
 		jQuery(window).on("resize", fnCheckMedia);
 		fnCheckMedia();
 	};

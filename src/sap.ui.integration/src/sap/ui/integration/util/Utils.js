@@ -3,14 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/getCompatibilityVersion",
 	"sap/ui/core/Locale",
 	"sap/base/strings/formatMessage",
 	'sap/base/util/isPlainObject',
 	"sap/base/Log",
 	"sap/ui/core/date/UI5Date"
-], function (
-	getCompatibilityVersion,
+], function(
 	Locale,
 	formatMessage,
 	isPlainObject,
@@ -207,14 +205,6 @@ sap.ui.define([
 		}
 
 		return vData;
-	};
-
-	Utils.isBindingSyntaxComplex = function () {
-		if (Utils._isBindingSyntaxComplex === undefined) {
-			Utils._isBindingSyntaxComplex = getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") >= 0;
-		}
-
-		return Utils._isBindingSyntaxComplex;
 	};
 
 	/**

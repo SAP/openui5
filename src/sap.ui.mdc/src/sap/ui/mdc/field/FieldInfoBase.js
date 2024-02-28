@@ -104,7 +104,7 @@ sap.ui.define([
 		const bNavigate = await this.checkDirectNavigation(oEvent);
 		if (bNavigate === false) {
 			const oPopover = await this.createPopover();
-			if (oPopover) {
+			if (oPopover && !this.isDestroyed() && !oControl.isDestroyed()) {
 				oPopover.openBy(oControl);
 				oPopover.attachAfterOpen(() => {
 					this.firePopoverAfterOpen();

@@ -26,6 +26,9 @@ sap.ui.define([
 	"use strict";
 
 	var oLastPromise = (FlUtils.FakePromise ? new FlUtils.FakePromise() : Promise.resolve());
+	const oPendingProcessesOnControl = {};
+
+	var Applier = {};
 
 	/**
 	 * Formats the log message by replacing placeholders with values and logging the message.
@@ -262,227 +265,244 @@ sap.ui.define([
 		}
 	}
 
-	var Applier = {
-		/**
-		 * Sets a specific precondition, which has to be fulfilled before applying all changes on control.
-		 *
-		 * @param {Promise} oPromise - Promise which is resolved when precondition fulfilled
-		 */
-		addPreConditionForInitialChangeApplying(oPromise) {
-			oLastPromise = oLastPromise.then(function() {
-				return oPromise;
-			});
-		},
+	function processControl(oControl, mPropertyBag, oDependencyMap, oAppComponent) {
+		const aPromiseStack = [];
+		const sControlId = oControl.getId();
+		const aChangesForControl = oDependencyMap.mChanges[sControlId] || [];
+		let bControlWithDependencies;
 
-		/**
-		 * Applying a specific change on the passed control, if it is not already applied.
-		 *
-		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change object which should be applied on the passed control
-		 * @param {sap.ui.core.Control} oControl - Control which is the target of the passed change
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {object} mPropertyBag.view - View to process
-		 * @param {object} mPropertyBag.modifier - Polymorph reuse operations handling the changes on the given view type
-		 * @param {object} mPropertyBag.appDescriptor - App descriptor containing the metadata of the current application
-		 * @param {object} mPropertyBag.appComponent - Component instance that is currently loading
-		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario
-		 */
-		applyChangeOnControl(oChange, oControl, mPropertyBag) {
-			var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
-			var pHandlerPromise = mPropertyBag.changeHandler
-				? Promise.resolve(mPropertyBag.changeHandler)
-				: Utils.getChangeHandler(oChange, mControl, mPropertyBag);
+		if (oDependencyMap.mControlsWithDependencies[sControlId]) {
+			DependencyHandler.removeControlsDependencies(oDependencyMap, sControlId);
+			bControlWithDependencies = true;
+		}
 
-			return pHandlerPromise.then(function(oChangeHandler) {
-				checkPreconditions(oChange, mPropertyBag);
-				return oChangeHandler;
-			})
-
-			.then(function(oChangeHandler) {
-				if (oChange.hasApplyProcessStarted()) {
-					// wait for the change to be finished and then clean up the status and queue
-					return oChange.addPromiseForApplyProcessing().then(function(oResult) {
-						oChange.markSuccessful();
-						return oResult;
-					});
-				} else if (!oChange.isApplyProcessFinished()) {
-					return (FlUtils.FakePromise ? new FlUtils.FakePromise() : Promise.resolve()).then(function() {
-						oChange.startApplying();
-						return oChangeHandler.applyChange(oChange, mControl.control, mPropertyBag);
-					})
-					.then(function(oInitializedControl) {
-						return handleAfterApply(oChange, mControl, oInitializedControl, mPropertyBag);
-					})
-					.catch(function(oError) {
-						return handleAfterApplyError(oError, oChange, mControl, mPropertyBag);
-					});
-				}
-
-				// make sure that everything that goes with finishing the apply process is done, even though the change was already applied
-				var oResult = {success: true};
-				oChange.markSuccessful(oResult);
-				return oResult;
-			})
-
-			.catch(function(oError) {
-				return {
-					success: false,
-					error: oError
-				};
-			});
-		},
-
-		/**
-		 * Gets the dependency map and gets all changes for that control from the map, then, depending on
-		 * dependencies, directly applies the change or saves the callback to apply in the dependency.
-		 *
-		 * @param {object} oAppComponent - Component instance that is currently loading
-		 * @param {string} sReference - Flex reference
-		 * @param {sap.ui.core.Control} oControl Instance of the control to which changes should be applied
-		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Resolves as soon as all changes for the control are applied
-		 */
-		applyAllChangesForControl(oAppComponent, sReference, oControl) {
-			// the changes have to be queued synchronously
-			const oDependencyMap = UIChangesState.getLiveDependencyMap(sReference);
-			var sControlId = oControl.getId();
-			var aChangesForControl = oDependencyMap.mChanges[sControlId] || [];
-			var mPropertyBag = {
-				modifier: JsControlTreeModifier,
-				appComponent: oAppComponent,
-				view: FlUtils.getViewForControl(oControl)
-			};
-
-			aChangesForControl.forEach(function(oChange) {
-				checkAndAdjustChangeStatus(oControl, oChange, mPropertyBag);
-				if (!oChange.isApplyProcessFinished() && !oChange._ignoreOnce) {
-					oChange.setQueuedForApply();
-				}
-			});
-
-			// make sure that the current control waits for the previous control to be processed
-			oLastPromise = oLastPromise.then(function(oControl, mPropertyBag) {
-				var aPromiseStack = [];
-				var sControlId = oControl.getId();
-				var aChangesForControl = oDependencyMap.mChanges[sControlId] || [];
-				var bControlWithDependencies;
-
-				if (oDependencyMap.mControlsWithDependencies[sControlId]) {
-					DependencyHandler.removeControlsDependencies(oDependencyMap, sControlId);
-					bControlWithDependencies = true;
-				}
-
-				aChangesForControl.forEach(function(oChange) {
-					// in the ExtensionPoint scenario changes can get cloned,
-					// in case of a template change the original selector has to be adjusted
-					if (oChange.originalSelectorToBeAdjusted) {
-						adjustOriginalSelector(oChange, oControl, oAppComponent);
-						delete oChange.originalSelectorToBeAdjusted;
-					}
-					if (oChange._ignoreOnce) {
-						delete oChange._ignoreOnce;
-					} else if (oChange.isApplyProcessFinished()) {
-						DependencyHandler.resolveDependenciesForChange(oDependencyMap, oChange.getId(), sControlId);
-					} else if (!oDependencyMap.mDependencies[oChange.getId()]) {
-						aPromiseStack.push(function() {
-							return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag).then(function() {
-								DependencyHandler.resolveDependenciesForChange(oDependencyMap, oChange.getId(), sControlId);
-							});
-						});
-					} else {
-						var fnCallback = Applier.applyChangeOnControl.bind(Applier, oChange, oControl, mPropertyBag);
-						DependencyHandler.addChangeApplyCallbackToDependency(oDependencyMap, oChange.getId(), fnCallback);
-					}
-				});
-
-				if (aChangesForControl.length || bControlWithDependencies) {
-					return FlUtils.execPromiseQueueSequentially(aPromiseStack).then(function() {
-						return DependencyHandler.processDependentQueue(oDependencyMap, oAppComponent, sControlId);
-					});
-				}
-				return undefined;
-			}.bind(null, oControl, mPropertyBag));
-
-			return oLastPromise;
-		},
-
-		/**
-		 * Looping over all retrieved flexibility changes and applying them onto the targeted control within the view.
-		 *
-		 * @param {object} mPropertyBag - Collection of cross-functional attributes
-		 * @param {object} mPropertyBag.view - View to process
-		 * @param {string} mPropertyBag.viewId - ID of the processed view
-		 * @param {string} mPropertyBag.appComponent - Application component instance responsible for the view
-		 * @param {object} mPropertyBag.modifier - Polymorph reuse operations handling the changes on the given view type
-		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges List of flexibility changes on controls for the current processed view
-		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario including view object in both cases
-		 */
-		applyAllChangesForXMLView(mPropertyBag, aChanges) {
-			if (!Array.isArray(aChanges)) {
-				var sErrorMessage = `No list of changes was passed for processing the flexibility on view: ${mPropertyBag.view}.`;
-				Log.error(sErrorMessage, undefined, "sap.ui.fl.apply._internal.changes.Applier");
-				aChanges = [];
+		aChangesForControl.forEach(function(oChange) {
+			// in the ExtensionPoint scenario changes can get cloned,
+			// in case of a template change the original selector has to be adjusted
+			if (oChange.originalSelectorToBeAdjusted) {
+				adjustOriginalSelector(oChange, oControl, oAppComponent);
+				delete oChange.originalSelectorToBeAdjusted;
 			}
-
-			var aOnAfterXMLChangeProcessingHandlers = [];
-			mPropertyBag.failedSelectors = [];
-
-			return aChanges.reduce(function(oPreviousPromise, oChange) {
-				var oControl;
-				return oPreviousPromise
-				.then(checkControlAndDependentSelectorControls.bind(null, oChange, mPropertyBag))
-				.then(function(oReturnedControl) {
-					oControl = oReturnedControl;
-					var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
-					return Utils.getChangeHandler(oChange, mControl, mPropertyBag);
-				})
-				.then(function(oChangeHandler) {
-					mPropertyBag.changeHandler = oChangeHandler;
-					oChange.setQueuedForApply();
-					checkAndAdjustChangeStatus(oControl, oChange, mPropertyBag);
-
-					if (!oChange.isApplyProcessFinished()) {
-						if (typeof mPropertyBag.changeHandler.onAfterXMLChangeProcessing === "function") {
-							registerOnAfterXMLChangeProcessingHandler(
-								aOnAfterXMLChangeProcessingHandlers,
-								mPropertyBag.changeHandler,
-								oControl
-							);
-						}
-						return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag);
-					}
-					return {success: true};
-				})
-				.then(function(oReturn) {
-					if (!oReturn.success) {
-						throw Error(oReturn.error);
-					}
-				})
-				.catch(function(oError) {
-					oChange.getDependentSelectorList().forEach(function(oDependentControlSelector) {
-						if (FlUtils.indexOfObject(mPropertyBag.failedSelectors, oDependentControlSelector) === -1) {
-							mPropertyBag.failedSelectors.push(oDependentControlSelector);
-						}
+			if (oChange._ignoreOnce) {
+				delete oChange._ignoreOnce;
+			} else if (oChange.isApplyProcessFinished()) {
+				DependencyHandler.resolveDependenciesForChange(oDependencyMap, oChange.getId(), sControlId);
+			} else if (!oDependencyMap.mDependencies[oChange.getId()]) {
+				aPromiseStack.push(function() {
+					return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag).then(function() {
+						DependencyHandler.resolveDependenciesForChange(oDependencyMap, oChange.getId(), sControlId);
 					});
-					logApplyChangeError(oError, oChange);
 				});
-			}, (FlUtils.FakePromise ? new FlUtils.FakePromise() : Promise.resolve()))
+			} else {
+				const fnCallback = Applier.applyChangeOnControl.bind(Applier, oChange, oControl, mPropertyBag);
+				DependencyHandler.addChangeApplyCallbackToDependency(oDependencyMap, oChange.getId(), fnCallback);
+			}
+		});
+
+		if (aChangesForControl.length || bControlWithDependencies) {
+			return FlUtils.execPromiseQueueSequentially(aPromiseStack)
 			.then(function() {
-				delete mPropertyBag.failedSelectors;
-
-				// Once all changes for a control are processed, call the
-				// onAfterXMLChangeProcessing hooks of all involved change handlers
-				aOnAfterXMLChangeProcessingHandlers.forEach(function(mHandler) {
-					mHandler.controls.forEach(function(oControl) {
-						try {
-							mHandler.handler.onAfterXMLChangeProcessing(oControl, mPropertyBag);
-						} catch (oError) {
-							Log.error("Error during onAfterXMLChangeProcessing", oError);
-						}
-					});
-				});
-
-				return mPropertyBag.view;
+				return DependencyHandler.processDependentQueue(oDependencyMap, oAppComponent, sControlId);
+			})
+			.then(function() {
+				oPendingProcessesOnControl[sControlId].shift().resolveFunction();
 			});
 		}
+		oPendingProcessesOnControl[sControlId].shift().resolveFunction();
+	}
+
+	/**
+	 * Sets a specific precondition, which has to be fulfilled before applying all changes on control.
+	 *
+	 * @param {Promise} oPromise - Promise which is resolved when precondition fulfilled
+	 */
+	Applier.addPreConditionForInitialChangeApplying = function(oPromise) {
+		oLastPromise = oLastPromise.then(function() {
+			return oPromise;
+		});
+	};
+
+	/**
+	 * Applies a specific change on the passed control, if it is not already applied.
+	 *
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change object which should be applied on the passed control
+	 * @param {sap.ui.core.Control} oControl - Control which is the target of the passed change
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {object} mPropertyBag.view - View to process
+	 * @param {object} mPropertyBag.modifier - Polymorph reuse operations handling the changes on the given view type
+	 * @param {object} mPropertyBag.appDescriptor - App descriptor containing the metadata of the current application
+	 * @param {object} mPropertyBag.appComponent - Component instance that is currently loading
+	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario
+	 */
+	Applier.applyChangeOnControl = function(oChange, oControl, mPropertyBag) {
+		var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
+		var pHandlerPromise = mPropertyBag.changeHandler
+			? Promise.resolve(mPropertyBag.changeHandler)
+			: Utils.getChangeHandler(oChange, mControl, mPropertyBag);
+
+		return pHandlerPromise.then(function(oChangeHandler) {
+			checkPreconditions(oChange, mPropertyBag);
+			return oChangeHandler;
+		})
+
+		.then(function(oChangeHandler) {
+			if (oChange.hasApplyProcessStarted()) {
+				// wait for the change to be finished and then clean up the status and queue
+				return oChange.addPromiseForApplyProcessing().then(function(oResult) {
+					oChange.markSuccessful();
+					return oResult;
+				});
+			} else if (!oChange.isApplyProcessFinished()) {
+				return (FlUtils.FakePromise ? new FlUtils.FakePromise() : Promise.resolve()).then(function() {
+					oChange.startApplying();
+					return oChangeHandler.applyChange(oChange, mControl.control, mPropertyBag);
+				})
+				.then(function(oInitializedControl) {
+					return handleAfterApply(oChange, mControl, oInitializedControl, mPropertyBag);
+				})
+				.catch(function(oError) {
+					return handleAfterApplyError(oError, oChange, mControl, mPropertyBag);
+				});
+			}
+
+			// make sure that everything that goes with finishing the apply process is done, even though the change was already applied
+			var oResult = {success: true};
+			oChange.markSuccessful(oResult);
+			return oResult;
+		})
+
+		.catch(function(oError) {
+			return {
+				success: false,
+				error: oError
+			};
+		});
+	};
+
+	/**
+	 * Gets the dependency map and gets all changes for that control from the map, then, depending on
+	 * dependencies, directly applies the change or saves the callback to apply in the dependency.
+	 *
+	 * @param {object} oAppComponent - Component instance that is currently loading
+	 * @param {string} sReference - Flex reference
+	 * @param {sap.ui.core.Control} oControl Instance of the control to which changes should be applied
+	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Resolves as soon as all changes for the control are applied
+	 */
+	Applier.applyAllChangesForControl = async function(oAppComponent, sReference, oControl) {
+		// the changes have to be queued synchronously
+		// scenario 1: n controls get created, for all this function is called synchronously. Changes have to be queued synchronously
+		// scenario 2: control gets recreated, the changes for the new control have to be queued after the processing of the old control
+		const oDependencyMap = UIChangesState.getLiveDependencyMap(sReference);
+		var sControlId = oControl.getId();
+		var aChangesForControl = oDependencyMap.mChanges[sControlId] || [];
+		var mPropertyBag = {
+			modifier: JsControlTreeModifier,
+			appComponent: oAppComponent,
+			view: FlUtils.getViewForControl(oControl)
+		};
+
+		// if there are still changes being processed for the current control, wait for the last of them to be finished
+		if (oPendingProcessesOnControl[sControlId]?.length) {
+			await oPendingProcessesOnControl[sControlId][oPendingProcessesOnControl[sControlId].length - 1].promise;
+		}
+
+		aChangesForControl.forEach(function(oChange) {
+			checkAndAdjustChangeStatus(oControl, oChange, mPropertyBag);
+			if (!oChange.isApplyProcessFinished() && !oChange._ignoreOnce) {
+				oChange.setQueuedForApply();
+			}
+		});
+
+		oPendingProcessesOnControl[sControlId] ||= [];
+		const oNewPromise = {};
+		oNewPromise.promise = new Promise(function(resolve) {
+			oNewPromise.resolveFunction = resolve;
+		});
+		oPendingProcessesOnControl[sControlId].push(oNewPromise);
+
+		// make sure that the current control waits for the previous control to be processed
+		oLastPromise = oLastPromise.then(processControl.bind(undefined, oControl, mPropertyBag, oDependencyMap, oAppComponent));
+		return oLastPromise;
+	};
+
+	/**
+	 * Loops over all retrieved flexibility changes and applies them onto the targeted control within the view.
+	 *
+	 * @param {object} mPropertyBag - Collection of cross-functional attributes
+	 * @param {object} mPropertyBag.view - View to process
+	 * @param {string} mPropertyBag.viewId - ID of the processed view
+	 * @param {string} mPropertyBag.appComponent - Application component instance responsible for the view
+	 * @param {object} mPropertyBag.modifier - Polymorph reuse operations handling the changes on the given view type
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges List of flexibility changes on controls for the current processed view
+	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario including view object in both cases
+	 */
+	Applier.applyAllChangesForXMLView = function(mPropertyBag, aChanges) {
+		if (!Array.isArray(aChanges)) {
+			var sErrorMessage = `No list of changes was passed for processing the flexibility on view: ${mPropertyBag.view}.`;
+			Log.error(sErrorMessage, undefined, "sap.ui.fl.apply._internal.changes.Applier");
+			aChanges = [];
+		}
+
+		var aOnAfterXMLChangeProcessingHandlers = [];
+		mPropertyBag.failedSelectors = [];
+
+		return aChanges.reduce(function(oPreviousPromise, oChange) {
+			var oControl;
+			return oPreviousPromise
+			.then(checkControlAndDependentSelectorControls.bind(null, oChange, mPropertyBag))
+			.then(function(oReturnedControl) {
+				oControl = oReturnedControl;
+				var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
+				return Utils.getChangeHandler(oChange, mControl, mPropertyBag);
+			})
+			.then(function(oChangeHandler) {
+				mPropertyBag.changeHandler = oChangeHandler;
+				oChange.setQueuedForApply();
+				checkAndAdjustChangeStatus(oControl, oChange, mPropertyBag);
+
+				if (!oChange.isApplyProcessFinished()) {
+					if (typeof mPropertyBag.changeHandler.onAfterXMLChangeProcessing === "function") {
+						registerOnAfterXMLChangeProcessingHandler(
+							aOnAfterXMLChangeProcessingHandlers,
+							mPropertyBag.changeHandler,
+							oControl
+						);
+					}
+					return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag);
+				}
+				return {success: true};
+			})
+			.then(function(oReturn) {
+				if (!oReturn.success) {
+					throw Error(oReturn.error);
+				}
+			})
+			.catch(function(oError) {
+				oChange.getDependentSelectorList().forEach(function(oDependentControlSelector) {
+					if (FlUtils.indexOfObject(mPropertyBag.failedSelectors, oDependentControlSelector) === -1) {
+						mPropertyBag.failedSelectors.push(oDependentControlSelector);
+					}
+				});
+				logApplyChangeError(oError, oChange);
+			});
+		}, (FlUtils.FakePromise ? new FlUtils.FakePromise() : Promise.resolve()))
+		.then(function() {
+			delete mPropertyBag.failedSelectors;
+
+			// Once all changes for a control are processed, call the
+			// onAfterXMLChangeProcessing hooks of all involved change handlers
+			aOnAfterXMLChangeProcessingHandlers.forEach(function(mHandler) {
+				mHandler.controls.forEach(function(oControl) {
+					try {
+						mHandler.handler.onAfterXMLChangeProcessing(oControl, mPropertyBag);
+					} catch (oError) {
+						Log.error("Error during onAfterXMLChangeProcessing", oError);
+					}
+				});
+			});
+
+			return mPropertyBag.view;
+		});
 	};
 	return Applier;
 });

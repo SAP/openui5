@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/f/FlexibleColumnLayoutSemanticHelper",
 	"sap/m/Page",
 	"sap/m/Button",
-	"sap/ui/core/Core",
 	"sap/ui/core/ResizeHandler",
 	'sap/ui/events/KeyCodes',
 	"sap/f/library"
@@ -24,7 +23,6 @@ function(
 	FlexibleColumnLayoutSemanticHelper,
 	Page,
 	Button,
-	Core,
 	ResizeHandler,
 	KeyCodes,
 	library
@@ -1208,7 +1206,6 @@ function(
 	QUnit.test("FCL does not have animations with animationMode=minimal", function(assert){
 		// arrange
 		var oSpy = this.spy(this.oFCL._oAnimationEndListener, "waitForColumnResizeEnd"),
-			oConfiguration = Core.getConfiguration(),
 			sOriginalAnimationMode = ControlBehavior.getAnimationMode();
 
 		ControlBehavior.setAnimationMode("minimal");

@@ -35,7 +35,6 @@ sap.ui.define([
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/util/CardObserver",
 	"sap/m/IllustratedMessageType",
-	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/util/ParameterMap",
 	"sap/ui/integration/util/Measurement"
 ], function(
@@ -72,7 +71,6 @@ sap.ui.define([
 	CardActions,
 	CardObserver,
 	IllustratedMessageType,
-	Utils,
 	ParameterMap,
 	Measurement
 ) {
@@ -735,14 +733,6 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	Card.prototype.startManifestProcessing = function () {
-		if (!Utils.isBindingSyntaxComplex()) {
-			this._logSevereError(
-				"Cannot parse manifest. Complex binding syntax is not enabled - " +
-				"To enable it, set the 'compatVersion' configuration option to 'edge', e.g.: data-sap-ui-compatVersion='edge' - " +
-				"sap.ui.integration.widgets.Card"
-			);
-		}
-
 		if (this._bApplyManifest || this._bApplyParameters) {
 			this._clearReadyState();
 			this._initReadyState();
