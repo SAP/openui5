@@ -1,0 +1,344 @@
+<mvc:View
+	controllerName="sap.uxap.ObjectPageWithDynamicHeader.controller.Main"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:layout="sap.ui.layout"
+	displayBlock="true"
+	height="100%">
+	<m:App>
+		<ObjectPageLayout id="ObjectPageLayout"
+			showTitleInHeaderContent="true"
+			alwaysShowContentHeader="false"
+			showHeaderContent="true"
+			useIconTabBar="true"
+			isChildPage="true">
+			<headerTitle>
+				<ObjectPageDynamicHeaderTitle id="OPL-header-hitle">
+					<heading>
+						<m:Input width="500px"
+							value="This is a very long Header Title in an input [HEADING AGGR]" />
+						<!-- <m:Title text="This is a title [HEADING]"/> -->
+					</heading>
+					<breadcrumbs>
+						<m:Breadcrumbs>
+							<m:Link text='Link1' />
+							<m:Link text='Link1' />
+							<m:Link text='Link1' />
+							<m:Link text='Link1' />
+							<m:Link text='Link1' />
+						</m:Breadcrumbs>
+					</breadcrumbs>
+					<expandedContent>
+						<!-- <m:Text text="This is a subheading [EXP]"/> -->
+					</expandedContent>
+					<snappedContent>
+						<m:HBox>
+							<m:Avatar class="sapUiTinyMargin"
+								src="../../sap/f/images/Woman_avatar_02.png"
+								displaySize="L">
+							</m:Avatar>
+							<m:Text class="sapUiTinyMargin"
+								text="This is an image with a long subheading [SNAPPED CONTENT AGGR]" />
+						</m:HBox>
+					</snappedContent>
+					<content>
+						<m:OverflowToolbar>
+							<m:content>
+								<m:Button text="KPI 1" />
+								<m:Button text="KPI 2" />
+								<m:Button text="KPI 3" />
+								<m:Button text="KPI 4" />
+								<m:Button text="KPI 5" />
+								<m:Button text="KPI 6" />
+							</m:content>
+						</m:OverflowToolbar>
+					</content>
+					<actions>
+						<m:ToggleButton
+							id="toggleHeaderOnTitleClick"
+							text="ToggleOnTitleClick">
+							<m:layoutData>
+								<m:OverflowToolbarLayoutData priority="NeverOverflow" />
+							</m:layoutData>
+						</m:ToggleButton>
+						<m:ToggleButton
+							id="toggleUseIconTabBar"
+							text="ToggleUseIconTabBar">
+							<m:layoutData>
+								<m:OverflowToolbarLayoutData priority="NeverOverflow" />
+							</m:layoutData>
+						</m:ToggleButton>
+						<m:ToggleButton
+							id="toggleFooter"
+							text="Toggle Footer"
+							type="Transparent">
+							<m:layoutData>
+								<m:OverflowToolbarLayoutData priority="NeverOverflow" />
+							</m:layoutData>
+						</m:ToggleButton>
+						<m:Button
+							text="Delete"
+							type="Transparent" />
+						<m:Button
+							text="Copy"
+							type="Transparent" />
+						<m:Button
+							icon="sap-icon://action"
+							type="Transparent" />
+					</actions>
+				</ObjectPageDynamicHeaderTitle>
+			</headerTitle>
+			<headerContent>
+				<m:Avatar class="sapUiTinyMargin"
+					src="../../sap/f/images/Woman_avatar_02.png"
+					displaySize="XL">
+				</m:Avatar>
+				<layout:VerticalLayout class="sapUiTinyMargin">
+					<m:Link text="denise-smith" />
+					<m:Button text="To detail detail" press="handleDetailPress" />
+					<m:Link text="DeniseSmith@sap.com" />
+					<layout:HorizontalLayout>
+					</layout:HorizontalLayout>
+				</layout:VerticalLayout>
+				<m:Text class="sapUiTinyMargin" width="200px"
+					text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win." />
+				<layout:VerticalLayout class="sapUiTinyMargin">
+					<m:Label text="Profile completion" />
+					<m:ProgressIndicator
+						percentValue="30"
+						displayValue="30%"
+						showValue="true"
+						state="None" />
+				</layout:VerticalLayout>
+				<layout:HorizontalLayout allowWrapping="true">
+					<layout:VerticalLayout id="executionOptionsHeader" class="sapUiMediumMarginEnd">
+						<layout:layoutData>
+							<ObjectPageHeaderLayoutData showSeparatorAfter="true" />
+						</layout:layoutData>
+						<m:ObjectStatus class="sapUiTinyMarginBottom" title="Document Types"
+							text="Sales Documents" />
+						<m:ObjectStatus class="sapUiTinyMarginBottom" title="Execution Method"
+							text="Available-to-Promise" visible="true" />
+						<m:ObjectStatus title="Checking As"
+							text="Sales Order (Business Scenario: A)" />
+					</layout:VerticalLayout>
+					<layout:VerticalLayout class="sapUiMediumMarginEnd">
+						<layout:layoutData>
+							<ObjectPageHeaderLayoutData showSeparatorAfter="true" />
+						</layout:layoutData>
+						<m:ObjectStatus class="sapUiTinyMarginBottom" title="Exception Behavior"
+							text="Stop Failed Material-Plant Combinations" />
+						<m:ObjectAttribute class="sapUiTinyMarginBottom"
+							title="Fallback Variant Name"
+							text="AC_NEW_VARIANT2_LONG_LONG_LONG"
+							active="true" press="onNavigateToFallbackVariantPress" visible="true" />
+						<m:ObjectAttribute class="sapUiTinyMarginBottom"
+							title="Fallback Variant Name"
+							text="AC_NEW_VARIANT2_LONG_LONG_LONG"
+							active="false" visible="true" />
+						<m:ObjectStatus title="Fallback Behavior" visible="true"
+							text="Trigger Fallback for Failed Material-Plant Combinations" />
+					</layout:VerticalLayout>
+					<layout:VerticalLayout>
+						<layout:layoutData>
+							<ObjectPageHeaderLayoutData showSeparatorAfter="true" />
+						</layout:layoutData>
+						<m:ObjectAttribute class="sapUiTinyMarginBottom" title="Global Segment Name"
+							text="PAL_FBD1711_SO_BEFORE_15102017"
+							active="true" visible="true" />
+						<m:ObjectStatus class="sapUiTinyMarginBottom" title="Remaining Items"
+							text="Ignore" visible="true" />
+					</layout:VerticalLayout>
+				</layout:HorizontalLayout>
+			</headerContent>
+			<sections>
+				<ObjectPageSection id="goalsSection" title="Table">
+					<subSections>
+						<ObjectPageSubSection id="goalsSubSection" title=" "
+							class="sapUxAPObjectPageSubSectionFitContainer">
+							<blocks>
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+
+				<ObjectPageSection id="personalSection" title="Personal">
+					<subSections>
+						<ObjectPageSubSection id="connectSubSection" title="Connect">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+								<m:Button text="To detail detail" press="handleDetailPress" />
+								<m:Button text="To detail detail" press="handleDetailPress" />
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+
+						<ObjectPageSubSection id="paymentSubSection" title="Payment information">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+							<moreBlocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</moreBlocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+
+				<ObjectPageSection title="Section3">
+					<subSections>
+						<ObjectPageSubSection id="section3subSection" title="Another Table"
+							class="sapUxAPObjectPageSubSectionFitContainer">
+							<blocks>
+
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+
+				<ObjectPageSection title="Section4">
+					<subSections>
+						<ObjectPageSubSection title="Subsection4.1">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection title="Subsection4.2">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+
+				<ObjectPageSection title="Section5">
+					<subSections>
+						<ObjectPageSubSection title="Subsection5.1">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection title="Subsection5.2">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+
+				<ObjectPageSection title="Section6">
+					<subSections>
+						<ObjectPageSubSection title="Subsection6.1">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection title="Subsection6.2">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+
+				<ObjectPageSection title="Section7">
+					<subSections>
+						<ObjectPageSubSection title="Subsection7.1">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection title="Subsection7.2">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+
+				<ObjectPageSection title="Section8">
+					<subSections>
+						<ObjectPageSubSection title="Subsection8.1">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection title="Subsection8.2">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+
+				<ObjectPageSection title="Section9">
+					<subSections>
+						<ObjectPageSubSection title="Subsection9.1">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection title="Subsection9.2">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+
+				<ObjectPageSection title="Section10">
+					<subSections>
+						<ObjectPageSubSection title="Subsection10.1">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection title="Subsection10.2">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+
+				<ObjectPageSection title="Section11">
+					<subSections>
+						<ObjectPageSubSection title="Subsection11.1">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection title="Subsection11.2">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+
+				<ObjectPageSection title="Section12">
+					<subSections>
+						<ObjectPageSubSection title="Subsection12.1">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection title="Subsection12.2">
+							<blocks>
+								<m:Button text="To detail detail" press="handleDetailPress" />
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+
+			</sections>
+			<footer>
+				<m:OverflowToolbar>
+					<m:ToolbarSpacer />
+					<m:Button type="Accept" text="Accept" />
+					<m:Button type="Reject" text="Reject" />
+				</m:OverflowToolbar>
+			</footer>
+		</ObjectPageLayout>
+	</m:App>
+</mvc:View>

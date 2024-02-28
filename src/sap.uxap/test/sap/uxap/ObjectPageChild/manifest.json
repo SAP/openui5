@@ -1,0 +1,24 @@
+{
+	"sap.app": {
+		"type": "application",
+		"id": "sap.uxap.ObjectPageChild",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"rootView": {
+			"viewName": "sap.uxap.ObjectPageChild.view.Main",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		}
+	}
+}

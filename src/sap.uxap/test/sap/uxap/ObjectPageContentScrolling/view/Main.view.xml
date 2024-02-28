@@ -1,0 +1,76 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:sample="sap.uxap.testblocks.multiview"
+	xmlns:m="sap.m"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	height="100%">
+	<m:App>
+		<ObjectPageLayout id="ObjectPageLayout" selectedSection="firstSection">
+
+			<headerTitle>
+				<ObjectPageHeader id="ObjectPageHeader"
+					objectTitle="Header Title">
+				</ObjectPageHeader>
+			</headerTitle>
+	
+			<headerContent>
+				<ObjectPageHeaderContent id="ObjectPageHeaderContent">
+					<content>
+						<m:Text text="Header Content" />
+					</content>
+				</ObjectPageHeaderContent>
+			</headerContent>
+	
+			<sections>
+				<ObjectPageSection id="firstSection" title="First Section">
+					<subSections>
+						<ObjectPageSubSection id="subsection1-1" title="subSection 1-1"
+							class="mysubsectiontotest">
+							<blocks>
+								<sample:MultiViewBlock />
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection id="subsection1-2" title="subSection 1-2"
+							class="mysubsectiontotest">
+							<blocks>
+								<sample:MultiViewBlock />
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+	
+				<ObjectPageSection id="secondSection" title="Second Section">
+					<subSections>
+						<ObjectPageSubSection id="subsection2-1" title="subSection 2-1"
+							class="mysubsectiontotest">
+							<blocks>
+								<sample:MultiViewBlock />
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection id="subsection2-2" title="subSection 2-2"
+							class="mysubsectiontotest">
+							<blocks>
+								<sample:MultiViewBlock />
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+	
+				<ObjectPageSection id="thirdSection" title="Third Section">
+					<subSections>
+						<ObjectPageSubSection id="subsection3-1" title="subSection 3-1"
+							class="mysubsectiontotest">
+							<blocks>
+								<sample:MultiViewBlock />
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+	
+				<ObjectPageSection id="fourthSection" title="Fourth section without subsection">
+				</ObjectPageSection>
+			</sections>
+		</ObjectPageLayout>
+	</m:App>
+</mvc:View>
