@@ -1,0 +1,73 @@
+{
+    "_version": "1.1.0",
+    "sap.flp": {
+        "type": "tile",
+        "tileSize": "1x1"
+    },
+    "sap.app": {
+        "id": "sap.ushell.demotiles.cdm.contractStatusTile",
+        "_version": "1.0.0",
+        "type": "card",
+        "applicationVersion": {
+            "version": "1.0.0"
+        },
+        "title": "Custom Dynamic App Launcher",
+        "description": "Custom Tile",
+        "tags": {
+            "keywords": []
+        },
+        "ach": "CA-UI2-INT-FE",
+        "crossNavigation": {
+            "inbounds": {
+                "Action-contractStatusTile": {
+                    "semanticObject": "Action",
+                    "action": "contractStatusTile",
+                    "signature": {
+                        "parameters": {}
+                    }
+                }
+            }
+        }
+    },
+    "sap.ui": {
+        "_version": "1.1.0",
+        "icons": {
+            "icon": "sap-icon://favorite"
+        },
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "sap.ui5": {
+        "_version": "1.1.0",
+        "componentName": "sap.ushell.demotiles.cdm.contractStatusTile",
+        "dependencies": {
+            "minUI5Version": "1.38",
+            "libs": {
+                "sap.m": {}
+            }
+        },
+        "models": {},
+        "rootView": {},
+        "handleValidation": false
+    },
+    "custom.namespace.of.tile": {
+        "backgroundImageRelativeToComponent": "custom_tile.png"
+    },
+    "sap.card": {
+		"type": "Component",
+        "configuration": {
+            "componentData": {
+                "properties": {
+                    "abc": "321"
+                }
+            }
+        },
+		"header": {
+			"title": "Contract Status Tile",
+            "visible": false
+		}
+	}
+}

@@ -1,0 +1,16 @@
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
+	"use strict";
+
+	var Component = UIComponent.extend("test.manifest.component.tileComponent.Component", {
+		tileSetVisible: function (bIsVisible) {
+			this.tileVisible = bIsVisible;
+		},
+		tileRefresh: function () {
+			this.tileRefreshWasCalled = true;
+		}
+	});
+
+	return Component;
+
+});
