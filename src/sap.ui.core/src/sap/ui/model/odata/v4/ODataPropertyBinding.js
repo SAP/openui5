@@ -336,7 +336,8 @@ sap.ui.define([
 			});
 			if (bForceUpdate && vValue.isFulfilled()) {
 				if (vType && vType.isFulfilled && vType.isFulfilled()) {
-					this.oType = vType.getResult();
+					PropertyBinding.prototype.setType
+						.call(this, vType.getResult(), this.sInternalType);
 				}
 				this.vValue = vValue.getResult();
 			}
@@ -350,7 +351,7 @@ sap.ui.define([
 
 			if (oCallToken === that.oCheckUpdateCallToken) { // latest call to checkUpdateInternal
 				that.oCheckUpdateCallToken = undefined;
-				that.oType = oType;
+				PropertyBinding.prototype.setType.call(that, oType, that.sInternalType);
 				if (oCallToken.forceUpdate || that.vValue !== vValue) {
 					that.bInitial = false;
 					that.vValue = vValue;
@@ -685,7 +686,7 @@ sap.ui.define([
 						// Note: this.oType => this.sReducedPath
 						&& _Helper.getMetaPath(this.oModel.resolve(this.sPath, oContext))
 							!== _Helper.getMetaPath(this.sReducedPath)) {
-						this.oType = undefined;
+						PropertyBinding.prototype.setType.call(this, undefined, this.sInternalType);
 					}
 					this.sReducedPath = undefined;
 				}
