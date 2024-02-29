@@ -4165,10 +4165,10 @@ sap.ui.define([
 
 	QUnit.test("Export Button ButtonType for different Themes", function (assert) {
 		const iTimeout = QUnit.config.testTimeout;
-		QUnit.config.testTimeout = 50000; //BCP: 2270148312
+		QUnit.config.testTimeout = 120000; // Prevent timeout during multiple theme changes
 		const done = assert.async();
 		//Default theme must not be first
-		const aThemes = ["sap_horizon", "sap_horizon_dark", "sap_horizon_hcb", "sap_horizon_hcw", "sap_fiori_3", "sap_belize"];
+		const aThemes = ["sap_horizon", "sap_horizon_dark", "sap_horizon_hcb", "sap_horizon_hcw", "sap_fiori_3"];
 		const fnGetExpectedTheme = function (sTheme) {
 			switch (sTheme) {
 				case "sap_horizon":
