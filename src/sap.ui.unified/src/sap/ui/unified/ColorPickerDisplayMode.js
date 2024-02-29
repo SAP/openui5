@@ -3,7 +3,7 @@
  */
 
 // Provides type sap.ui.unified.ColorPickerDisplayMode
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 	/**
@@ -35,6 +35,8 @@ sap.ui.define([], function() {
 		Simplified : "Simplified"
 
 	};
+
+	DataType.registerEnum("sap.ui.unified.ColorPickerDisplayMode", ColorPickerDisplayMode);
 
 	return ColorPickerDisplayMode;
 
