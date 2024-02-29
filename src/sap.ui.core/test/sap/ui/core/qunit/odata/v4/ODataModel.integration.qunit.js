@@ -40192,6 +40192,82 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: Modifying a property of a kept-alive element in a list with
+	// $$patchWithoutSideEffects, triggers a side-effects refresh. The PATCH request does change the
+	// ETag of the kept-alive element. The list refresh request does only add unknown properties
+	// to the kept-alive element, but does not take over changed properties. The refresh for the
+	// kept-alive element must do this.
+	// SNOW: DINC0072978
+	QUnit.test("requestSideEffects with modified keep alive element", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{path : '/TEAMS', parameters : {$$patchWithoutSideEffects : true}}">
+	<Input id="name" value="{Name}"/>
+	<Text id="budget" text="{Budget}"/>
+</Table>`;
+
+		this.expectRequest("TEAMS?$select=Budget,Name,Team_Id&$skip=0&$top=100", {
+				value : [{
+					"@odata.etag" : "etag1.0",
+					Team_Id : "TEAM_01",
+					Name : "Team 01",
+					Budget : "0"
+				}]
+			})
+			.expectChange("name", ["Team 01"])
+			.expectChange("budget", ["0"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oBinding = this.oView.byId("table").getBinding("items");
+		const oKeptContext = oBinding.getCurrentContexts()[0];
+		oKeptContext.setKeepAlive(true);
+
+		this.expectChange("name", ["New Team"])
+			.expectRequest({
+				batchNo : 2,
+				headers : {
+					"If-Match" : "etag1.0",
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				url : "TEAMS('TEAM_01')",
+				payload : {Name : "New Team"}
+			}, null, {ETag : "etag1.1"}) // no response required
+			.expectRequest({
+				batchNo : 2,
+				url : "TEAMS?$select=Budget,Name,Team_Id&$filter=Team_Id eq 'TEAM_01'"
+			}, {
+				value : [{
+					"@odata.etag" : "etag1.1",
+					Budget : "42",
+					Name : "New Team",
+					Team_Id : "TEAM_01"
+				}]
+			})
+			.expectRequest({
+				batchNo : 2,
+				url : "TEAMS?$select=Budget,Name,Team_Id&$skip=0&$top=100"
+			}, {
+				value : [{
+					"@odata.etag" : "etag1.1",
+					Budget : "n/a",
+					Name : "n/a",
+					Team_Id : "TEAM_01"
+				}]
+			})
+			.expectChange("budget", ["42"]); // "side effect"
+
+		const aTableRows = this.oView.byId("table").getItems();
+		aTableRows[0].getCells()[0].getBinding("value").setValue("New Team");
+
+		return Promise.all([
+			oBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert)
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: read side effects which affect dependent bindings; add some unnecessary context
 	// bindings
 	QUnit.test("requestSideEffects: dependent bindings #2", function (assert) {
