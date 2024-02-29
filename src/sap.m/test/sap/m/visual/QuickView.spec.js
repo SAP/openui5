@@ -22,10 +22,13 @@ describe('sap.m.QuickView', function() {
 
 	// initial loading
 	it('should load test page', function () {
-		browser.executeScript("return sap.ui.Device.system.phone;")
-			.then(function (response) {
-				bPhone = response;
-			});
+		browser.executeScript(function() {
+			var Device = sap.ui.require("sap/ui/Device");
+			return Device.system.phone;
+		})
+		.then(function (response) {
+			bPhone = response;
+		});
 
 		expect(takeScreenshot()).toLookAs('0_initial');
 	});

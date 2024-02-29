@@ -8,11 +8,11 @@
 <script id="sap-ui-bootstrap"
 	src="../../../../resources/sap-ui-core.js"
 	data-sap-ui-libs="sap.m, sap.ui.codeeditor"
-	data-sap-ui-theme="sap_horizon"
 	data-sap-ui-async="true"
-	data-sap-ui-oninit="module:test/codeeditor/index"
+	data-sap-ui-compatVersion="edge"
+	data-sap-ui-onInit="module:local/CodeEditor"
 	data-sap-ui-resourceroots='{
-		"test.codeeditor": "./"
+		"local": "./"
 	}'>
 </script>
 
@@ -20,53 +20,17 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="utf-8">
 		<title>Hello World App</title>
-		<script
-			id="sap-ui-bootstrap"
-			src="../../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_belize"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-preload="async">
-		<&sol;script>
-		<script>
-			sap.ui.getCore().attachInit(function () {
-				// create a mobile app and display page1 initially
-				var app = new sap.m.App("myApp", {
-					initialPage: "page1"
-				});
-
-				// create the first page
-				var page1 = new sap.m.Page("page1", {
-					title: "Hello World",
-					showNavButton: false,
-					content: new sap.m.Button({
-						text: "Go to Page 2",
-						press: function () {
-							// navigate to page2
-							app.to("page2");
-						}
-					})
-				});
-
-				// create the second page with a back button
-				var page2 = new sap.m.Page("page2", {
-					title: "Hello Page 2",
-					showNavButton: true,
-					navButtonPress: function () {
-						// go back to the previous page
-						app.back();
-					}
-				});
-
-				// add both pages to the app
-				app.addPage(page1).addPage(page2);
-				// place the app into the HTML document
-				app.placeAt("content");
-			});
-		<&sol;script>
 	</head>
-	<body class="sapUiBody" id="content">
+		
+	<body>
+		<form>
+			<label for="fname">First name:</label><br>
+			<input id="fname" value="John"><br>
+			<label for="lname">Last name:</label><br>
+			<input id="lname" value="Doe"><br><br>
+			<input value="Submit">
+		  </form> 
 	</body>
 </html>
 </script>

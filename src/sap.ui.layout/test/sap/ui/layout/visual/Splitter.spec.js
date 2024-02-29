@@ -6,10 +6,12 @@ describe("sap.ui.layout.Splitter", function () {
 	var bDesktop = null;
 
 	it("should load test page", function () {
-		browser.executeScript(
-			"return sap.ui.Device.system.desktop;")
-			.then(function (response) {
-				bDesktop = response;
+		browser.executeScript(function() {
+			var Device = sap.ui.require("sap/ui/Device");
+			return Device.system.desktop;
+		})
+		.then(function (response) {
+			bDesktop = response;
 		});
 		expect(takeScreenshot(element(by.id("mySplitter")))).toLookAs("0_initial");
 	});

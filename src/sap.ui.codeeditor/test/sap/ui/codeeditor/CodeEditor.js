@@ -7,6 +7,7 @@ sap.ui.loader.config({
 });
 
 sap.ui.require([
+	"sap/ui/base/ManagedObject",
 	"sap/ui/codeeditor/CodeEditor",
 	"sap/m/App",
 	"sap/m/Page",
@@ -16,7 +17,8 @@ sap.ui.require([
 	"sap/ui/core/Item",
 	"sap/ui/codeeditor/js/ace/ace",
 	"sap/ui/codeeditor/js/ace/ext-themelist"
-], function (
+],  function (
+	ManagedObject,
 	CodeEditor,
 	App,
 	Page,
@@ -40,7 +42,7 @@ sap.ui.require([
 
 	var oCodeEditor = new CodeEditor({
 		type: "html",
-		value: mValues["html"],
+		value: ManagedObject.escapeSettingsValue(mValues["html"]),
 		height: "auto",
 		maxLines: 70,
 		tooltip: "Code editor control"
