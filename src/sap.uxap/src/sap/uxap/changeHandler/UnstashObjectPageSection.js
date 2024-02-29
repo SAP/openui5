@@ -38,15 +38,10 @@ sap.ui.define([
 		var aAffectedControls = [oStashedElementSelector];
 		var aDisplayControls = [oStashedElementSelector];
 
-		oAnchorBar.getAggregation("content").forEach(function(oAnchorBarItem) {
-			oAnchorBarItem.getAggregation("customData").some(function(oCustomData) {
-				if (
-					oCustomData.getKey() === "sectionId" &&
-					oStashedElement.getId() === oCustomData.getProperty("value")
-				) {
-					aDisplayControls.push(oAnchorBarItem.getId());
-				}
-			});
+		oAnchorBar.getAggregation("items").forEach(function(oAnchorBarItem) {
+			if (oStashedElement.getId() === oAnchorBarItem.getKey()) {
+				aDisplayControls.push(oAnchorBarItem.getId());
+			}
 		});
 
 		return {

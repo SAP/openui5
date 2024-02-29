@@ -173,14 +173,14 @@
 												"elements": [
 													{
 														"id": "objPage-anchBar",
-														"technicalName": "sap.uxap.AnchorBar",
+														"technicalName": "sap.m.IconTabHeader",
 														"editable": true,
 														"type": "element",
 														"visible": false,
 														"elements": [
 															{
 															"id": "objPage-anchBar",
-															"technicalName": "content",
+															"technicalName": "items",
 															"editable": false,
 															"type": "aggregation"
 															}
