@@ -613,6 +613,9 @@ sap.ui.define([
 
 	QUnit.test("Badge is removed from the cloned item in the select list", function (assert) {
 		// Arrange
+		this.clock.restore();
+		const done = assert.async();
+		const BADGE_ANIMATION_DURATION = 3000;
 		var oNestedItem  = new IconTabFilter({
 				text: "Nested",
 				key: "Nested",
@@ -626,30 +629,39 @@ sap.ui.define([
 				items: [oNestedItem]
 			});
 
+		this.oITH.placeAt("qunit-fixture");
 		this.oITH.addItem(oRootTab);
 		Core.applyChanges();
 		oRootTab._expandButtonPress();
 
-		var oFakeEvent = {
-			srcControl: oNestedItem,
-			preventDefault: function () {}
-		};
+		oRootTab._oPopover.attachEventOnce("afterOpen", () => {
+			oRootTab._oPopover.attachEventOnce("afterClose", () => {
+				oRootTab._expandButtonPress(); // open the list again while the badge is still there
+				oRootTab._oPopover.attachEventOnce("afterOpen", () => {
+					// Assert
+					assert.ok(oRootTab.getAggregation("_expandButtonBadge")._isBadgeAttached, "Badge is shown on the root tab");
+					assert.ok(oNestedItem._oCloneInList._isBadgeAttached, "Badge is shown on the item in the SelectList");
 
-		// Act
-		oRootTab._getSelectList().ontap(oFakeEvent);
-		oRootTab._expandButtonPress(); // open the list again while the badge is still there
+					// Wait for the badge hiding animation to complete
+					setTimeout(() => {
+						// Assert
+						assert.notOk(oRootTab.getAggregation("_expandButtonBadge")._isBadgeAttached, "Badge is removed from the root tab");
+						assert.strictEqual(oNestedItem._oCloneInList, null, "Badge is removed from the item in the SelectList");
 
-		// Assert
-		assert.ok(oRootTab.getAggregation("_expandButtonBadge")._isBadgeAttached, "Badge is shown on the root tab");
-		assert.ok(oNestedItem._oCloneInList._isBadgeAttached, "Badge is shown on the item in the SelectList");
+						done();
+					}, BADGE_ANIMATION_DURATION);
+				});
+			});
 
-		// Act
-		var oItemCloneInList = oNestedItem._oCloneInList;
-		this.clock.tick(4000);
+			var oFakeEvent = {
+				srcControl: oNestedItem,
+				preventDefault: function () {}
+			};
 
-		// Assert
-		assert.notOk(oRootTab.getAggregation("_expandButtonBadge")._isBadgeAttached, "Badge is removed from the root tab");
-		assert.notOk(oItemCloneInList._isBadgeAttached, "Badge is removed from the item in the SelectList");
+			// Act
+			oRootTab._getSelectList().ontap(oFakeEvent);
+		});
+
 	});
 
 	QUnit.module("Badges - double click area tabs", {

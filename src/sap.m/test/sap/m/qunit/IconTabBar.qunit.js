@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Theming",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/IconTabBar",
 	"sap/m/IconTabFilter",
 	"sap/m/IconTabSeparator",
@@ -33,6 +34,7 @@ sap.ui.define([
 	Theming,
 	qutils,
 	createAndAppendDiv,
+	nextUIUpdate,
 	IconTabBar,
 	IconTabFilter,
 	IconTabSeparator,
@@ -2585,11 +2587,36 @@ sap.ui.define([
 		oSelectList._oItemNavigation.setSelectedIndex(5);
 		oSelectList.getItems()[0]._getRealTab().setVisible(false);
 		oOverflowButton._closePopover();
+		this.clock.tick(500);
 		oOverflowButton._expandButtonPress();
 		this.clock.tick(500);
 
 		// Assert - check initial focus again
 		assert.strictEqual(oOverflowButton._oPopover.getInitialFocus(), oSelectList.getVisibleItems()[0].getId(), "The first visible item in the Select List should be focused.");
+	});
+
+	QUnit.test("Popover should be closed when empty area in the header is clicked", async function (assert) {
+		// Arrange
+		this.clock.restore();
+		const done = assert.async();
+		const oIconTabHeader = this.oIconTabBar.getAggregation("_header");
+		const oItem = oIconTabHeader.getItems()[1];
+
+		oItem.addItem(new IconTabFilter());
+		await nextUIUpdate();
+		oItem.$().trigger("focusin");
+		oIconTabHeader._oItemNavigation.setSelectedIndex(1);
+		oItem.$("expandIcon").trigger("click");
+
+		// Act
+		oItem._oPopover.attachAfterClose(() => {
+			assert.ok(true, "Popover is closed after it was focused out");
+
+			done();
+		});
+
+		// Act
+		oIconTabHeader.$().trigger("focusin");
 	});
 
 	QUnit.module("ARIA", {

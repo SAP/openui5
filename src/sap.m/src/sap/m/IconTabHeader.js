@@ -464,6 +464,12 @@ sap.ui.define([
 		this._oItemNavigation.setFocusedIndex(iIndex);
 	};
 
+	IconTabHeader.prototype._onItemNavigationBeforeFocus = function (oEvent) {
+		if (oEvent.getParameter("event").target === this.getDomRef()) {
+			Element.getElementById(this._oItemNavigation.getItemDomRefs()[oEvent.getParameter("index")].getAttribute("id"))._closePopover();
+		}
+	};
+
 	/**
 	 * Returns all tab filters, without the tab separators.
 	 * @private
@@ -716,6 +722,7 @@ sap.ui.define([
 			this._oItemNavigation = new ItemNavigation()
 				.setCycling(false)
 				.attachEvent(ItemNavigation.Events.FocusLeave, this._onItemNavigationFocusLeave, this)
+				.attachEvent(ItemNavigation.Events.BeforeFocus, this._onItemNavigationBeforeFocus, this)
 				.setDisabledModifiers({
 					sapnext : ["alt", "meta"],
 					sapprevious : ["alt", "meta"]

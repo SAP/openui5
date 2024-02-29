@@ -949,7 +949,7 @@ sap.ui.define([
 				placement: PlacementType.VerticalPreferredBottom
 			}).addStyleClass("sapMITBFilterPopover");
 
-			this._oPopover.attachBeforeClose(function () {
+			this._oPopover.attachAfterClose(function () {
 				this._getSelectList().destroyItems();
 			}, this);
 
