@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/util/Storage",
 	"sap/ui/documentation/sdk/controller/util/Highlighter",
 	"sap/ui/core/Fragment",
-	"sap/base/i18n/Localization"
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Theming"
 ], function(
 	EventBus,
 	jQuery,
@@ -31,7 +32,8 @@ sap.ui.define([
 	Storage,
 	Highlighter,
 	Fragment,
-	Localization
+	Localization,
+	Theming
 ) {
 		"use strict";
 
@@ -140,12 +142,14 @@ sap.ui.define([
 				//DOM rendering delay value is minimal by default, but some function may increase it if that function calls intensive DOM operation
 				// (e.g. RTL change, that leads to new CSS to be requested and applied on entire DOM)
 				this._iDomRenderingDelay = 0; // (ms)
+				this._fnBoundScrollToSelectedListItem = this._scrollToSelectedListItem.bind(this);
+				this._fnBoundOnLocalizationChange = this._onLocalizationChange.bind(this);
 				this._getList().addEventDelegate({
 					onAfterRendering : function() {
-						setTimeout(this._scrollToSelectedListItem.bind(this), this._iDomRenderingDelay);
+						setTimeout(this._fnBoundScrollToSelectedListItem, this._iDomRenderingDelay);
 					}}, this);
-				this._oCore.attachThemeChanged(this._scrollToSelectedListItem, this); // theme change requires us to restore scroll position
-				this._oCore.attachLocalizationChanged(this._onLocalizationChange, this);
+				Theming.attachApplied(this._fnBoundScrollToSelectedListItem); // theme change requires us to restore scroll position
+				Localization.attachChange(this._fnBoundOnLocalizationChange);
 
 				// Subscribe to view event to apply to it the current configuration
 				this._oView.addEventDelegate({
@@ -317,7 +321,7 @@ sap.ui.define([
 				this._toggleListItem(oItemToSelect, true);
 
 				if (!this._bNavToEntityViaList) {
-					setTimeout(this._scrollToSelectedListItem.bind(this), 0);
+					setTimeout(this._fnBoundScrollToSelectedListItem, 0);
 				}
 				this._bNavToEntityViaList = false;
 			},
@@ -432,8 +436,8 @@ sap.ui.define([
 			 * @override
 			 */
 			onExit: function() {
-				this._oCore.detachThemeChanged(this._scrollToSelectedListItem, this);
-				this._oCore.detachLocalizationChanged(this._onLocalizationChange, this);
+				Theming.detachApplied(this._fnBoundScrollToSelectedListItem);
+				Localization.detachChange(this._fnBoundOnLocalizationChange);
 				this.highlighter.destroy();
 			},
 
