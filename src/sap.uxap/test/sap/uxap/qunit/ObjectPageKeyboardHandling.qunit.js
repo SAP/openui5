@@ -5,8 +5,6 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
-	"sap/ui/core/Configuration",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
@@ -16,7 +14,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/dom/jquery/Focusable" /* jQuery Plugin "firstFocusableDomRef" */
 ],
-function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar, ObjectPageSubSection) {
+function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar, ObjectPageSubSection) {
 	"use strict";
 
 	var sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton";

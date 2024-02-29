@@ -354,7 +354,7 @@ sap.ui.define([
 				}
 			} else {
 				oCore.attachThemeChanged(fnThemeApplied.bind(this));
-				oCore.applyTheme(sTheme);
+				Theming.setTheme(sTheme);
 			}
 
 			function fnThemeApplied(oEvent) {

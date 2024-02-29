@@ -1,7 +1,6 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/ui/integration/util/ServiceDataProvider",
 	"sap/ui/integration/util/DataProvider",
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/ui/core/Supportability",
 	"qunit/testResources/nextCardReadyEvent"
 ], function (
-	Core,
 	DataProviderFactory,
 	ServiceDataProvider,
 	DataProvider,

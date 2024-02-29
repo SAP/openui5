@@ -1,12 +1,11 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
-	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/unified/library",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/core/date/UI5Date"
-], function(Controller, JSONModel, Core, CoreLibrary, UnifiedLibrary, DateTypeRange, UI5Date) {
+], function(Controller, JSONModel, CoreLibrary, UnifiedLibrary, DateTypeRange, UI5Date) {
 	"use strict";
 	var CalendarDayType = UnifiedLibrary.CalendarDayType,
 		ValueState = CoreLibrary.ValueState;

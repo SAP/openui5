@@ -50,10 +50,10 @@ sap.ui.define([
 			oDay,
 			sDate,
 			iCount = 0,
-			iExpectedDaysInMonth = 35 - iExpectedDaysOfOtherMonthBefore - iExpectedDaysOfOtherMonthAfter,
+			iExpectedDaysInMonth = 42 - iExpectedDaysOfOtherMonthBefore - iExpectedDaysOfOtherMonthAfter,
 			oDate = new UniversalDate(UniversalDate.UTC(iExpectedYear, iExpectedMonth - 1, 1));
 
-		assert.equal(aDays.length, 35, "Calendar shows 35 days");
+		assert.equal(aDays.length, 42, "Calendar shows 42 days");
 
 		for (var i = 0; i < 35; i++) {
 			oDay = aDays[i];
@@ -143,15 +143,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("20150701", async function(assert) {
-		await checkDate("20150701", 14, 9, 1436, 4, 1, assert);
+		await checkDate("20150701", 14, 9, 1436, 4, 8, assert);
 	});
 
 	QUnit.test("20140701", async function(assert) {
-		await checkDate("20140701", 3, 9, 1435, 0, 5, assert);
+		await checkDate("20140701", 3, 9, 1435, 0, 12, assert);
 	});
 
 	QUnit.test("20150805", async function(assert) {
-		await checkDate("20150805", 19, 10, 1436, 6, 0, assert);
+		await checkDate("20150805", 19, 10, 1436, 6, 7, assert);
 	});
 
 	QUnit.module("Navigation to next/previous Month", {

@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
 	"sap/uxap/library",
 	"sap/uxap/ObjectPageLayout",
@@ -14,7 +13,7 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/m/Button"
 ],
-function(Element, nextUIUpdate, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase, Text, MessageStrip, Button) {
+function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase, Text, MessageStrip, Button) {
 	"use strict";
 	var Importance = library.Importance;
 

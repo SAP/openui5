@@ -1,14 +1,13 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/jquery"
 ],
-function(Core, nextUIUpdate, ObjectPageLayout, ObjectPageSection, XMLView, $) {
+function(nextUIUpdate, ObjectPageLayout, ObjectPageSection, XMLView, $) {
 	"use strict";
 
 	var sRoleAttribute = "role",

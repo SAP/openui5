@@ -17,7 +17,8 @@ sap.ui.define([
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/base/Log',
 	'sap/ui/core/Element',
-	'sap/ui/Device'
+	'sap/ui/Device',
+	'sap/ui/dom/containsOrEquals'
 ], (
 	Library,
 	FilterableListContent,
@@ -33,7 +34,8 @@ sap.ui.define([
 	ValueHelpSelectionType,
 	Log,
 	Element,
-	Device
+	Device,
+	containsOrEquals
 ) => {
 	"use strict";
 
@@ -640,23 +642,29 @@ sap.ui.define([
 		const oListBinding = this.getListBinding();
 
 		if (!oListBinding || !oListBinding.getLength()) {
-			return _checkListBindingPending.call(this).then((bPending) => {
+			_checkListBindingPending.call(this).then((bPending) => {
 				if (!bPending && oListBinding.getLength() !== 0) { // if no items - no navigation is possible
-					return this.navigate(iStep);
+					this.navigate(iStep);
 				}
-				return false;
 			});
+			return;
 		}
 
+		const bSingleSelect = this.isSingleSelect();
 		const oTable = this._getTable();
-
 		const aItems = oTable.getItems();
-		const oSelectedItem = this._iNavigateIndex >= 0 ? aItems[this._iNavigateIndex] : oTable.getSelectedItem();
+		const iNavigateIndex = this._iNavigateIndex >= 0 ? this._iNavigateIndex : this._oFirstItemResult?.index; // use first match as initial entry
+		const oSelectedItem = iNavigateIndex >= 0 ? aItems[iNavigateIndex] : bSingleSelect && oTable.getSelectedItem(); // in MultiSelect, selected item makes no sense
 		const iItems = aItems.length;
 		let iSelectedIndex = 0;
 		let bLeaveFocus = false;
 
-		if (oSelectedItem) {
+		if (iStep === 9999) {
+			// this will only move the selection to the last known item
+			iSelectedIndex = iItems - 1;
+		} else if (iStep === -9999) {
+			iSelectedIndex = 0;
+		} else if (oSelectedItem) {
 			iSelectedIndex = aItems.indexOf(oSelectedItem);
 			iSelectedIndex = iSelectedIndex + iStep;
 		} else if (iStep >= 0) {
@@ -665,48 +673,33 @@ sap.ui.define([
 			iSelectedIndex = iItems + iStep;
 		}
 
-		if (iStep === 9999) {
-			// this will only move the selection to the last known item
-			iSelectedIndex = iItems - 1;
-		}
-		if (iStep === -9999) {
-			iSelectedIndex = 0;
-		}
-
-		if (this.getMaxConditions() !== 1) {
-			// in case of multiToken field the focus can be set to the table and the navigation will be handled by the focused table control.
-			if (this.getParent().isOpen() && oTable.getMode() === ListMode.MultiSelect) {
-				//TODO cursorUp and the new iSelectedIndex will not be handled correct when we give the focus to the table.
-				oTable.focus();
-				return;
-			}
-		}
-
-		oTable.addStyleClass("sapMListFocus"); // to show focus outline on navigated item
-
 		let bSearchForNext;
+		let bEndReached = false;
 		if (iSelectedIndex < 0) { //TODO on a single value mTable we only navigate up to index 0. We can not set the focus on the captions/header
 			iSelectedIndex = 0;
 			bSearchForNext = true;
 			bLeaveFocus = true;
 		} else if (iSelectedIndex >= iItems - 1) {
+			if (iSelectedIndex >= iItems) {
+				bEndReached = true;
+			}
 			iSelectedIndex = iItems - 1;
 			bSearchForNext = false;
 		} else {
 			bSearchForNext = iStep >= 0;
 		}
 
-		const fSkipGroupHeader = function() {
-			while (aItems[iSelectedIndex] && aItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) { // ignore group headers
-				if (bSearchForNext) {
-					iSelectedIndex++;
-				} else {
-					iSelectedIndex--;
-				}
-			}
-		};
-
 		if (!bIsOpen) { // if closed, ignore headers
+			const fSkipGroupHeader = function() {
+				while (aItems[iSelectedIndex] && aItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) { // ignore group headers
+					if (bSearchForNext) {
+						iSelectedIndex++;
+					} else {
+						iSelectedIndex--;
+					}
+				}
+			};
+
 			fSkipGroupHeader();
 			if (iSelectedIndex < 0 || iSelectedIndex > iItems - 1) {
 				// find last not groupable item
@@ -715,7 +708,26 @@ sap.ui.define([
 				iSelectedIndex = iSelectedIndex < 0 ? 0 : iItems - 1;
 				fSkipGroupHeader();
 			}
+		} else if (!bSingleSelect) {
+			// in case of multiToken field the focus can be set to the table and the navigation will be handled by the focused table control.
+			if (aItems[iSelectedIndex]) {
+				aItems[iSelectedIndex].focus();
+			} else {
+				oTable.focus();
+			}
+			return;
+		} else if (bEndReached && this._oShowAllItemsButton) { // got to "show all items"
+			if (oSelectedItem) {
+				oSelectedItem.setSelected(false);
+				oSelectedItem.removeStyleClass("sapMLIBFocused").removeStyleClass("sapMLIBSelected");
+			}
+			this._iNavigateIndex = -1;
+			this.fireNavigated({ condition: undefined, itemId: undefined, leaveFocus: false });
+			this._oShowAllItemsButton.focus();
+			return;
 		}
+
+		oTable.addStyleClass("sapMListFocus"); // to show focus outline on navigated item
 
 		const oItem = aItems[iSelectedIndex];
 		if (oItem) {
@@ -833,16 +845,61 @@ sap.ui.define([
 
 							if (bDialogExist && oBindingInfo && oBindingInfo.length && !Device.system.phone) {
 								return loadModules(["sap/m/Button", "sap/m/Toolbar", "sap/m/ToolbarSpacer"]).then((aModules) => {
-									const Button = aModules[0];
-									const Toolbar = aModules[1];
-									const ToolbarSpacer = aModules[2];
-									const oShowAllItemsButton = new Button(this.getId() + "-showAllItems", {
+									const [Button, Toolbar, ToolbarSpacer] = aModules;
+
+									const oShowAllButtonDelegate = {
+										onsapup(oEvent) {
+											const oTable = this._getTable();
+											if (oTable.getMode() === ListMode.MultiSelect) {
+												// in Multi-Select mode, focus last item
+												const aItems = oTable.getItems();
+												if (aItems.length > 0) {
+													oEvent.stopPropagation();
+													oEvent.stopImmediatePropagation(true);
+													oEvent.preventDefault();
+													this._bFocusTable = true;
+													aItems[aItems.length - 1].focus();
+												}
+											} else {
+												// in Single-Select mode, navigate back to last item
+												oEvent.stopPropagation();
+												oEvent.stopImmediatePropagation(true);
+												oEvent.preventDefault();
+												this.navigate(9999);
+											}
+										},
+										onsapfocusleave(oEvent) {
+											const oFocusedControl = oEvent.relatedControlId && Element.getElementById(oEvent.relatedControlId);
+											const oContainer = this.getParent();
+											if (oContainer && oFocusedControl && containsOrEquals(oContainer.getDomRef(), oFocusedControl.getFocusDomRef())) { // focus still on Popover
+												oEvent.stopPropagation();
+												oEvent.stopImmediatePropagation(true);
+												oEvent.preventDefault();
+												const oTable = this._getTable();
+												if (oTable.getMode() === ListMode.MultiSelect) {
+													// go back to field (to break out of the focus-cycle on popover)
+													if (!this._bFocusTable) { // not focused via arrow-up
+														const oContainer = this.getParent();
+														const oControl = oContainer?.getControl();
+														oControl?.focus();
+													}
+													delete this._bFocusTable;
+												} else {
+													// Single-Select mode -> navigate to first item
+													this.navigate(-9999);
+												}
+											}
+										}
+									};
+
+									this._oShowAllItemsButton = new Button(this.getId() + "-showAllItems", {
 										text: this._oMResourceBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"),
 										press: function() {
 											this.fireRequestSwitchToDialog();
 										}.bind(this)
 									});
-									const aToolbarContent = [new ToolbarSpacer(this.getId() + "-Spacer")].concat(oShowAllItemsButton);
+									this._oShowAllItemsButton.addDelegate(oShowAllButtonDelegate, true, this);
+									const aToolbarContent = [new ToolbarSpacer(this.getId() + "-Spacer")].concat(this._oShowAllItemsButton);
 									const oFooter = new Toolbar(this.getId() + "-TB", {
 										content: aToolbarContent
 									});
@@ -937,7 +994,18 @@ sap.ui.define([
 					}
 				}
 				break;
-			default:
+			case "sapnext":
+				if (oItem.isA("sap.m.ListItemBase") && this._oShowAllItemsButton) {
+					const aItems = oTable.getItems();
+					if (aItems.indexOf(oItem) === aItems.length - 1) { // end reached, focus show-all to behave similar to single-select
+						oEvent.preventDefault();
+						oEvent.stopPropagation();
+						oEvent.stopImmediatePropagation(true);
+						this._oShowAllItemsButton.focus();
+					}
+				}
+				break;
+				default:
 				break;
 		}
 	};

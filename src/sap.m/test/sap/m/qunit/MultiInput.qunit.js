@@ -167,6 +167,22 @@ sap.ui.define([
 		assert.equal(this.multiInput1.getAggregation("asdf"), null, "asdf is invalid aggregation");
 	});
 
+	QUnit.test("_initTokenizer should be called on init", function(assert) {
+		// Arrange
+		var fnSpy = this.spy(MultiInput.prototype, "_initTokenizer"),
+			oMultiInput = new MultiInput();
+
+		oMultiInput.placeAt("qunit-fixture");
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		// Assert
+		assert.equal(fnSpy.callCount, 1, "_initTokenizer is called on init");
+
+		// Cleanup
+		oMultiInput.destroy();
+		fnSpy.restore();
+	});
+
 	QUnit.test("clone", function(assert) {
 		//arrange
 		var TEXT = "text",

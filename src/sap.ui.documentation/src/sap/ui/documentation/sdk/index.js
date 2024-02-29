@@ -167,7 +167,7 @@
                                 } else if (eMessage.data.reason === "set") {
                                     setDensityClass(eMessage.data.data.density);
                                     Localization.setRTL(eMessage.data.data.RTL);
-                                    Core.applyTheme(eMessage.data.data.theme);
+                                    Theming.setTheme(eMessage.data.data.theme);
                                 }
                             }
                         });

@@ -287,7 +287,7 @@ function(
 				}
 			} else {
 				Core.attachThemeChanged(fnThemeApplied.bind(this));
-				Core.applyTheme(sTheme);
+				Theming.setTheme(sTheme);
 			}
 
 			function fnThemeApplied(oEvent) {

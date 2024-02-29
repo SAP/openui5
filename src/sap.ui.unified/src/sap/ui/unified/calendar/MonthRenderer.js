@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/base/Log",
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/date/UI5Date',
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/CalendarUtils",
 	"sap/ui/core/Locale"
 ], function(
@@ -29,7 +28,6 @@ sap.ui.define([
 	Log,
 	InvisibleText,
 	UI5Date,
-	Configuration,
 	CalendarDateUtils,
 	Locale
 ) {

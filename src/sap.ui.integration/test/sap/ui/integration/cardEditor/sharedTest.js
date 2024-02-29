@@ -68,7 +68,7 @@ var baseUrl = document.location.pathname.substring(0, document.location.pathname
 	};
 
 function switchTheme(oSelect) {
-	sap.ui.getCore().applyTheme(oSelect.options[oSelect.selectedIndex].value);
+	sap.ui.getCore().applyTheme(oSelect.options[oSelect.selectedIndex].value)/*Not inside AMD call*/;
 }
 
 function switchLanguage(oSelect) {
@@ -185,8 +185,8 @@ function loadAllChanges() {
 }
 
 function loadLanguages() {
-	sap.ui.require(["sap/base/i18n/Localization", 'sap/base/util/LoaderExtensions', "sap/ui/core/Core"],
-	function (Localization, LoaderExtensions, Core) {
+	sap.ui.require(["sap/base/i18n/Localization", 'sap/base/util/LoaderExtensions'],
+	function (Localization, LoaderExtensions) {
 		//load the language list
 		var aLanguageList = LoaderExtensions.loadResource("sap/ui/integration/editor/languages.json", {
 			dataType: "json",

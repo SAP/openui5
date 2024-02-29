@@ -6,7 +6,6 @@
 sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Icon",
 	"sap/ui/core/Lib",
@@ -30,7 +29,6 @@ sap.ui.define([
 ], function(
 	Device,
 	Control,
-	Core,
 	Element,
 	Icon,
 	Library,

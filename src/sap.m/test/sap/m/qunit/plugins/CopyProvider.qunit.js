@@ -682,6 +682,7 @@ sap.ui.define([
 		assert.ok(oNewCellSelector.hasListeners("selectionChange"), "Selection change event is registered for the new CellSelector");
 
 		QUnitUtils.triggerKeydown(oCell, KeyCodes.SPACE);
+		QUnitUtils.triggerKeyup(oCell, KeyCodes.SPACE);
 		assert.ok(oCopyButton.getEnabled(), "The copy button is enabled with cell selection");
 
 		QUnitUtils.triggerKeydown(oCell, KeyCodes.ESCAPE);

@@ -38,7 +38,6 @@ sap.ui.define([
 	'./StandardDynamicDateOption',
 	'./library',
 	'sap/ui/thirdparty/jquery',
-	'sap/ui/core/Configuration',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/core/CustomData',
 	/* jQuery Plugin "firstFocusableDomRef"*/
@@ -78,7 +77,6 @@ sap.ui.define([
 	StandardDynamicDateOption,
 	library,
 	jQuery,
-	Configuration,
 	CalendarUtils,
 	CustomData
 ) {

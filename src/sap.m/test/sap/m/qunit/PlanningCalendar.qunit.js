@@ -1116,14 +1116,14 @@ sap.ui.define([
 		assert.equal(this.oPC.$().outerWidth(), "600", "width is set to 600px"); // this is only for check that width of the screen is set to 600 px
 
 		iVisibleIntervals = jQuery("#PC3-OneMonthsRow .sapUiCalItem").length;
-		assert.equal(iVisibleIntervals, 35, "days are 35");
+		assert.equal(iVisibleIntervals, 42, "42 days are rendered");
 
 		oEndDate = UI5Date.getInstance(this.oPC.getStartDate().getTime());
 		oEndDate.setMonth(oEndDate.getMonth() + 1);
 		oEndDate.setDate(oEndDate.getDate() - 1);
 		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
 
-		assert.equal(this.oPC.getVisibleIntervalsCount(), 35, "correct number of shown intervals");
+		assert.equal(this.oPC.getVisibleIntervalsCount(), 42, "correct number of shown intervals");
 	});
 
 	QUnit.test("checks for the number of days on big screen", async function(assert) {

@@ -3,9 +3,8 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/f/cards/loading/PlaceholderBaseRenderer"
-], function (Control, Core, PlaceholderBaseRenderer) {
+], function (Control, PlaceholderBaseRenderer) {
 	"use strict";
 
 

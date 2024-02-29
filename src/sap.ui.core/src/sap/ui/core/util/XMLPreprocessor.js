@@ -1151,6 +1151,12 @@ sap.ui.define([
 							return null;
 						}
 
+						const bStaticOnly
+							= vBindingInfo.parts.every((oPart) => oPart.value !== undefined);
+						if (bStaticOnly) {
+							fnCallIfConstant?.();
+						}
+
 						if (!oTypesPromise) {
 							const oPromise = getAny(oWithControl, vBindingInfo, mSettings, oScope,
 								!oViewInfo.sync);

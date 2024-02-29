@@ -1,6 +1,6 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/core/Core", "sap/ui/core/mvc/XMLView", "sap/ui/qunit/utils/nextUIUpdate"],
-function(Core, XMLView, nextUIUpdate) {
+sap.ui.define(["sap/ui/core/mvc/XMLView", "sap/ui/qunit/utils/nextUIUpdate"],
+function(XMLView, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("aat_UxAP-162", {

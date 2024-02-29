@@ -118,6 +118,7 @@ sap.ui.define([
 
 			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
 			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
 			assert.equal(oBinding.getAllCurrentContexts().length, this.oTable.getThreshold() + this.oTable.getRowMode().getRowCount());
 
 			qutils.triggerKeyup(oCell, KeyCodes.SPACE, false, false, true /* Ctrl */); // enlarge selection to all rows and cells
@@ -160,11 +161,13 @@ sap.ui.define([
 			var oSelectCellsSpy = sinon.spy(this.oCellSelector, "_selectCells");
 			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
 			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
 			assert.equal(oSelectCellsSpy.callCount, 0, "No cells are selected");
 			assert.deepEqual(this.oCellSelector.getSelectionRange(), null);
 
 			oConfig.setEnabled(false);
 			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
 			assert.equal(oSelectCellsSpy.callCount, 1, "Cells have been selected");
 			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
 
@@ -178,7 +181,7 @@ sap.ui.define([
 			});
 			this.oTable.addDragDropConfig(oDropInfo);
 
-			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
 			assert.equal(oSelectCellsSpy.callCount, 1, "Cells have been selected");
 			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
 
@@ -193,6 +196,7 @@ sap.ui.define([
 		this.oTable.attachEventOnce("rowsUpdated", () => {
 			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
 			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
 			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
 
 			this.oCellSelector.removeSelection();
@@ -394,7 +398,8 @@ sap.ui.define([
 				assert.equal(oSelection.rows.length, 0, "No cells selected (rows)");
 				assert.equal(oSelection.columns.length, 0, "No cells selected (columns)");
 
-				qutils.triggerKeydown(oCell, KeyCodes.SPACE);
+				qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+				qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
 
 				oSelection = this.oCellSelector.getSelection();
 				assert.equal(oSelection.rows.length, 1, "1 cell selected (rows)");

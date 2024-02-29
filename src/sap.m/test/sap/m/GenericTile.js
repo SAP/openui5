@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/m/Switch",
 	"sap/m/TextArea",
 	"sap/m/TileContent",
-	"sap/ui/core/Core",
 	"sap/ui/core/Item",
 	"sap/ui/core/Theming",
 	"sap/ui/core/Title",
@@ -40,7 +39,6 @@ sap.ui.define([
 	Switch,
 	TextArea,
 	TileContent,
-	oCore,
 	Item,
 	Theming,
 	Title,
@@ -615,7 +613,7 @@ sap.ui.define([
 	var oSizeBtn = new Button("size-button", {
 		press : function(oEvent) {
 			var sTheme = Theming.getTheme();
-			oCore.applyTheme(sTheme);
+			Theming.setTheme(sTheme);
 			var url = window.location.href;
 			//Popup dimensions issue in chrome while using noopener: Chromium bug id=1011688
 			window.open(url, "", "height=900,width=370,top=0,left=0,toolbar=no,menubar=no,noopener,noreferrer");

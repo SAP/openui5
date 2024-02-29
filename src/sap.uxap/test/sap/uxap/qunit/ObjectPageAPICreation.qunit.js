@@ -3591,7 +3591,7 @@ function(
 		assert.expect(2);
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-				assert.strictEqual(oUpdateMediaSpy.callCount, 3, "_updateMedia is called on after rendering and after DOM ready to ensure coorect size classes are set");
+				assert.strictEqual(oUpdateMediaSpy.callCount, 2, "_updateMedia is called on after rendering and after DOM ready to ensure coorect size classes are set");
 				assert.strictEqual(oGetWidthSpy.callCount, 2, "_getWidth is called once on after rendering and once after DOM ready");
 				oObjectPage.destroy();
 				done();

@@ -17,7 +17,7 @@ sap.ui.define(function () {
 			},
 
 			DesignMode_controllerDeactivated: {
-				title: "Tests for sap/ui/core/Configuration: DesignMode (XMLView) - DesignMode on, Controller Deactivated",
+				title: "Tests for sap/ui/base/Designtime: DesignMode (XMLView) - DesignMode on, Controller Deactivated",
 				ui5: {
 					"xx-designMode": true,
 					"xx-suppressDeactivationOfControllerCode": false
@@ -25,7 +25,7 @@ sap.ui.define(function () {
 			},
 
 			DesignMode_suppressedDeactivation: {
-				title: "Tests for sap/ui/core/Configuration: DesignMode (XMLView) - DesignMode on, Suppress Deactivation of Controller Code",
+				title: "Tests for sap/ui/base/Designtime: DesignMode (XMLView) - DesignMode on, Suppress Deactivation of Controller Code",
 				ui5: {
 					"xx-designMode": true,
 					"xx-suppressDeactivationOfControllerCode": true

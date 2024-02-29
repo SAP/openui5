@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/f/GridNavigationMatrix",
 	"sap/f/library",
 	"sap/m/GenericTile",
-	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
@@ -16,7 +15,6 @@ sap.ui.define([
 	GridNavigationMatrix,
 	fLibrary,
 	GenericTile,
-	Core,
 	KeyCodes,
 	nextUIUpdate,
 	jQuery

@@ -122,15 +122,15 @@ sap.ui.define([
 	QUnit.module("Dates");
 
 	QUnit.test("20150701", function(assert) {
-		checkDate("20150701", 1, 7, 27, 235, "Heisei", 31, 3, 3, 1, assert);
+		checkDate("20150701", 1, 7, 27, 235, "Heisei", 31, 3, 3, 8, assert);
 	});
 
 	QUnit.test("19890102", function(assert) {
-		checkDate("19890102", 2, 1, 64, 234, "Shōwa", 31, 1, 0, 4, assert);
+		checkDate("19890102", 2, 1, 64, 234, "Shōwa", 31, 1, 0, 11, assert);
 	});
 
 	QUnit.test("19890202", function(assert) {
-		checkDate("19890202", 2, 2, 1, 235, "Heisei", 28, 4, 3, 4, assert);
+		checkDate("19890202", 2, 2, 1, 235, "Heisei", 28, 4, 3, 11, assert);
 	});
 
 
