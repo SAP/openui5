@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/core/message/ControlMessageProcessor",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/Messaging",
+	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/Model",
 	"sap/ui/model/json/JSONModel",
@@ -13,9 +14,26 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Label",
 	"sap/ui/model/odata/ODataMessageParser",
-	'sap/ui/qunit/utils/createAndAppendDiv',
+	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/test/TestUtils"
-], function(coreLibrary, ControlMessageProcessor, Message, Messaging, FormatException, Model, JSONModel, MessageModel, TypeInteger, TypeString, Input, Label, ODataMessageParser, createAndAppendDiv, TestUtils) {
+], function(
+	coreLibrary,
+	ControlMessageProcessor,
+	Message,
+	Messaging,
+	UIAreaRegistry,
+	FormatException,
+	Model,
+	JSONModel,
+	MessageModel,
+	TypeInteger,
+	TypeString,
+	Input,
+	Label,
+	ODataMessageParser,
+	createAndAppendDiv,
+	TestUtils
+) {
 	"use strict";
 
 	// create content div
@@ -126,28 +144,36 @@ sap.ui.define([
 		});
 	};
 
-	var initModel = function(sType) {
-		if (sType === "json") {
-			oModel = new JSONModel();
-			var oData = {
-				form: {
-					firstname: "Fritz",
-					lastname: "Heiner",
-					street: "im",
-					nr: 1,
-					zip: "12345"
-				}
-			};
-			oModel.setData(oData);
-		}
-		sap.ui.getCore().setModel(oModel);
+	var initModel = function() {
+		oModel = new JSONModel();
+		var oData = {
+			form: {
+				firstname: "Fritz",
+				lastname: "Heiner",
+				street: "im",
+				nr: 1,
+				zip: "12345"
+			}
+		};
+		oModel.setData(oData);
 		createControls();
+		UIAreaRegistry.get("content").setModel(oModel);
 	};
 
 	QUnit.module("Messaging", {
 		beforeEach : function() {
-			initModel("json");
+			initModel();
 			oControlProcessor = new ControlMessageProcessor();
+
+			this.dataStateChanged = function(oBinding) {
+				return new Promise((resolve, reject) => {
+					function onDataStateChanged() {
+						oBinding.detachAggregatedDataStateChange(onDataStateChanged);
+						resolve(oBinding.getDataState().getChanges());
+					}
+					oBinding.attachAggregatedDataStateChange(onDataStateChanged);
+				});
+			};
 		},
 
 		afterEach : function() {
@@ -181,43 +207,30 @@ sap.ui.define([
 		assert.ok(oMessageModel.getObject('/')[0] === oMessage, 'MessageModel: message instance ok');
 	});
 
-	QUnit.test("removeMessage", function(assert) {
-		var done = assert.async();
-		var oMessageModel = Messaging.getMessageModel();
-		var oMessage = createMessage();
+	QUnit.test("removeMessage", async function(assert) {
+		const oMessageModel = Messaging.getMessageModel();
+		const oMessage = createMessage();
+		const oBinding = oInput1.getBinding("value");
+
 		Messaging.addMessages(oMessage);
-		spyDataState(oInput1, function(sName, oDataState) {
-				assert.ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
-				assert.ok(oInput1.getValueState() === ValueState.None, 'Input: ValueState set correctly');
-				assert.ok(oInput1.getValueStateText() === '', 'Input: ValueStateText set correctly');
-			done();
-			}
-		);
+		await this.dataStateChanged(oBinding);
+
 		Messaging.removeMessages(oMessage);
 		assert.ok(oMessageModel.getObject('/').length == 0, 'No Messages in Model');
+		await this.dataStateChanged(oBinding);
+
+		const aMessages = oBinding.getDataState().getMessages();
+
+		assert.ok(!aMessages || aMessages.length == 0, 'Message propagated to control - remove');
+		assert.ok(oInput1.getValueState() === ValueState.None, 'Input: ValueState set correctly');
+		assert.ok(oInput1.getValueStateText() === '', 'Input: ValueStateText set correctly');
 	});
 
-	QUnit.test("removeAllMessages", function(assert) {
-		var done = assert.async();
-		var oMessageModel = Messaging.getMessageModel();
-		var oMessage = createMessage('mt1','/form/lastname');
-		var oMessage2 = createMessage('mt2');
-		var oMessage3 = createMessage('mt3');
-
-		spyDataState(oInput1, function(sName, oDataState) {
-				assert.ok(oDataState.getMessages().length == 2, 'Message propagated to control - 2');
-				assert.ok(oInput1.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
-				assert.ok(oInput1.getValueStateText() === 'mt2', 'Input: ValueStateText set correctly');
-			}
-		);
-
-		spyDataState(oInput2,
-			function(sName, oDataState) {
-				assert.ok(oDataState.getMessages().length == 1, 'Message propagated to control - 1');
-				assert.ok(oInput2.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
-				assert.ok(oInput2.getValueStateText() === 'mt1', 'Input: ValueStateText set correctly');
-			}
-		);
+	QUnit.test("removeAllMessages", async function(assert) {
+		const oMessageModel = Messaging.getMessageModel();
+		const oMessage = createMessage('mt1','/form/lastname');
+		const oMessage2 = createMessage('mt2');
+		const oMessage3 = createMessage('mt3');
 
 		Messaging.addMessages([oMessage,oMessage2,oMessage3]);
 		assert.ok(Array.isArray(oMessageModel.getObject('/')), 'Message added to Model');
@@ -226,108 +239,105 @@ sap.ui.define([
 		assert.equal(oMessageModel.getObject('/')[1].message,'mt2', 'MessageModel: message2 instance ok');
 		assert.equal(oMessageModel.getObject('/')[2].message,'mt3', 'MessageModel: message3 instance ok');
 
-		setTimeout(function() {
-			spyDataState(oInput1, function(sName, oDataState) {
-				assert.ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
-				assert.ok(oInput1.getValueState() === ValueState.None, 'Input: ValueState set correctly');
-				assert.ok(oInput1.getValueStateText() === '', 'Input: ValueStateText set correctly');
-			});
-			spyDataState(oInput2, function(sName, oDataState) {
-				assert.ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
-				assert.ok(oInput2.getValueState() === ValueState.None, 'Input: ValueState set correctly');
-				assert.ok(oInput2.getValueStateText() === '', 'Input: ValueStateText set correctly');
-				done();
-			});
-			Messaging.removeAllMessages();
-			assert.ok(oMessageModel.getObject('/').length == 0, 'No Messages in Model');
-		}, 0);
+		const oBinding1 = oInput1.getBinding("value");
+		const oBinding2 = oInput2.getBinding("value");
+		const oDataState1 = oBinding1.getDataState();
+		const oDataState2 = oBinding2.getDataState();
+
+		await Promise.all([this.dataStateChanged(oBinding1), this.dataStateChanged(oBinding2)]);
+
+		assert.ok(oDataState1.getMessages().length == 2, 'Message propagated to control - 2');
+		assert.ok(oInput1.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
+		assert.ok(oInput1.getValueStateText() === 'mt2', 'Input: ValueStateText set correctly');
+
+		assert.ok(oDataState2.getMessages().length == 1, 'Message propagated to control - 1');
+		assert.ok(oInput2.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
+		assert.ok(oInput2.getValueStateText() === 'mt1', 'Input: ValueStateText set correctly');
+
+		Messaging.removeAllMessages();
+		await Promise.all([this.dataStateChanged(oBinding1), this.dataStateChanged(oBinding2)]);
+
+		assert.ok(!oDataState1.getMessages() || oDataState1.getMessages().length == 0, 'Message propagated to control - remove');
+		assert.ok(oInput1.getValueState() === ValueState.None, 'Input: ValueState set correctly');
+		assert.ok(oInput1.getValueStateText() === '', 'Input: ValueStateText set correctly');
+
+		assert.ok(!oDataState2.getMessages() || oDataState2.getMessages().length == 0, 'Message propagated to control - remove');
+		assert.ok(oInput2.getValueState() === ValueState.None, 'Input: ValueState set correctly');
+		assert.ok(oInput2.getValueStateText() === '', 'Input: ValueStateText set correctly');
 	});
 
-	QUnit.test("parseError", function(assert) {
-		var done = assert.async();
+	QUnit.test("parseError", async function(assert) {
+		const oBinding = oZip.getBinding("value");
+		const oDataState = oBinding.getDataState();
 		Messaging.registerObject(oZip, true);
-		TestUtils.withNormalizedMessages(function() {
-			spyDataState(oZip, function(sName, oDataState) {
-				assert.ok(oDataState.getMessages().length == 1, 'ParseError Message propagated to control');
-				assert.ok(oZip.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
-				assert.equal(oZip.getValueStateText(), "EnterInt", 'Input: ValueStateText set correctly');
-			});
+
+		TestUtils.withNormalizedMessages(() => {
 			oZip.setValue('bbb');
 		});
-		setTimeout(function() {
-			spyDataState(oZip, function(sName, oDataState) {
-				assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
-				assert.ok(oZip.getValueState() === ValueState.None, 'Input: ValueState set correctly');
-				assert.ok(oZip.getValueStateText() === '', 'Input: ValueStateText set correctly');
-				Messaging.unregisterObject(oZip);
-				done();
-			});
-			oZip.setValue('123');
-		}, this);
+		await this.dataStateChanged(oBinding);
+		assert.ok(oDataState.getMessages().length == 1, 'ParseError Message propagated to control');
+		assert.ok(oZip.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
+		assert.equal(oZip.getValueStateText(), "EnterInt", 'Input: ValueStateText set correctly');
+
+		oZip.setValue('123');
+		await this.dataStateChanged(oBinding);
+
+		assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
+		assert.ok(oZip.getValueState() === ValueState.None, 'Input: ValueState set correctly');
+		assert.ok(oZip.getValueStateText() === '', 'Input: ValueStateText set correctly');
+		Messaging.unregisterObject(oZip);
 	});
 
-	QUnit.test("validationError", function(assert) {
-		var done = assert.async();
+	QUnit.test("validationError", async function(assert) {
+		const oBinding = oStreet.getBinding("value");
+		const oDataState = oBinding.getDataState();
 		Messaging.registerObject(oStreet, true);
-		TestUtils.withNormalizedMessages(function() {
-			spyDataState(oStreet, function(sName, oDataState) {
-				assert.ok(oDataState.getMessages().length == 1, 'Validation Message propagated to control');
-				assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
-				assert.equal(oStreet.getValueStateText(), "String.MaxLength 5", 'Input: ValueStateText set correctly');
-			});
+
+		TestUtils.withNormalizedMessages(() => {
 			oStreet.setValue('am Busche');
 		});
-		setTimeout(function() {
-			spyDataState(oStreet, function(sName, oDataState) {
-				assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
-				assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly');
-				assert.ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly');
-				Messaging.unregisterObject(oStreet);
-				done();
-			});
-			oStreet.setValue('Busch');
-		}, this);
+		await this.dataStateChanged(oBinding);
+		assert.ok(oDataState.getMessages().length == 1, 'Validation Message propagated to control');
+		assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
+		assert.equal(oStreet.getValueStateText(), "String.MaxLength 5", 'Input: ValueStateText set correctly');
+
+		oStreet.setValue('Busch');
+		await this.dataStateChanged(oBinding);
+
+		assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
+		assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly');
+		assert.ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly');
+		Messaging.unregisterObject(oStreet);
 	});
 
-	QUnit.test("validationError - multiple input", function(assert) {
-		var done = assert.async();
+	QUnit.test("validationError - multiple input", async function(assert) {
+		const oBinding = oStreet.getBinding("value");
 		Messaging.registerObject(oStreet, true);
 
-		TestUtils.withNormalizedMessages(function() {
-			spyDataState(oStreet, function(sName, oDataState) {
-				assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
-				assert.equal(oStreet.getValueStateText(), "String.MaxLength 5", 'Input: ValueStateText set correctly');
-			});
+		TestUtils.withNormalizedMessages(() => {
 			oStreet.setValue('am Busche');
 		});
+		await this.dataStateChanged(oBinding);
+		assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
+		assert.equal(oStreet.getValueStateText(), "String.MaxLength 5", 'Input: ValueStateText set correctly');
 
-		setTimeout(function() {
-			spyDataState(oStreet, function(sName, oDataState) {
-				assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly');
-				assert.ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly');
-			});
-			oStreet.setValue('Busch');
+		oStreet.setValue('Busch');
+		await this.dataStateChanged(oBinding);
+		assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly');
+		assert.ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly');
 
-			setTimeout(function() {
-				TestUtils.withNormalizedMessages(function() {
-					spyDataState(oStreet, function(sName, oDataState) {
-						assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
-						assert.equal(oStreet.getValueStateText(), "String.MaxLength 5", 'Input: ValueStateText set correctly');
-					});
-					oStreet.setValue('am Busche');
-				});
+		TestUtils.withNormalizedMessages(() => {
+			oStreet.setValue('am Busche');
+		});
+		await this.dataStateChanged(oBinding);
+		assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
+		assert.equal(oStreet.getValueStateText(), "String.MaxLength 5", 'Input: ValueStateText set correctly');
 
-				setTimeout(function() {
-					spyDataState(oStreet, function(sName, oDataState) {
-						assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly');
-						assert.ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly');
-						Messaging.unregisterObject(oStreet);
-						done();
-					});
-					oStreet.setValue('Busch');
-				}, 0);
-			}, 0);
-		}, 0);
+		oStreet.setValue('Busch');
+		await this.dataStateChanged(oBinding);
+		assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly');
+		assert.ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly');
+		Messaging.unregisterObject(oStreet);
 	});
 
 	QUnit.test("AdditionalText property on message for different labels", function(assert) {
@@ -547,24 +557,33 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("Bugfixes");
+	QUnit.module("Bugfixes", {
+		beforeEach() {
+			this.dataStateChanged = function(oBinding) {
+				return new Promise((resolve, reject) => {
+					function onDataStateChanged() {
+						oBinding.detachAggregatedDataStateChange(onDataStateChanged);
+						resolve(oBinding.getDataState().getChanges());
+					}
+					oBinding.attachAggregatedDataStateChange(onDataStateChanged);
+				});
+			};
+		}
+	});
 
-	QUnit.test("Messaging: Message sorting", function(assert) {
+	QUnit.test("Messaging: Message sorting", async function(assert) {
 		assert.expect(3);
-		var done = assert.async();
-		var aCorrectOrder = [ MessageType.Error, MessageType.Error, MessageType.Warning, MessageType.Success, MessageType.Information ];
+		const aCorrectOrder = [ MessageType.Error, MessageType.Error, MessageType.Warning, MessageType.Success, MessageType.Information ];
 
-
-
-		var oModel = new JSONModel();
-		var oInput = new Input({
+		const oModel = new JSONModel();
+		const oInput = new Input({
 			value: "{/test}"
 		});
 		oInput.setModel(oModel);
 		Messaging.registerObject(oInput);
 
-
-		var aMessages = [ new Message({
+		const oBinding = oInput.getBinding("value");
+		const aMessages = [ new Message({
 			type: MessageType.Information,
 			id: "test-info",
 			processor: oModel,
@@ -591,46 +610,43 @@ sap.ui.define([
 			target: "/test"
 		})];
 
-
 		// CHeck direct call to private method
-		var aMessageCopy = aMessages.slice(0);
-		var oModelSpy = this.spy(oModel, "setMessages");
+		let aMessageCopy = aMessages.slice(0);
+		const oModelSpy = this.spy(oModel, "setMessages");
 		Messaging.addMessages(aMessageCopy);
 		aMessageCopy = oModelSpy.getCall(0).args[0]["/test"];
-		var aNewOrder = aMessageCopy.map(function(oM) { return oM.type; });
+		const aNewOrder = aMessageCopy.map(function(oM) { return oM.type; });
 		assert.deepEqual(aNewOrder, aCorrectOrder, "Sorted messages are in the correct order (Highest severity first)");
 		oModelSpy.restore();
 
-
 		Messaging.removeAllMessages();
-		var bCorrectOrder = false;
+		let bCorrectOrder = false;
 		oInput.refreshDataState = function(sName, oDataState) {
-			var aPropagatedMessages = oDataState.getMessages();
-			var aNewOrder = aPropagatedMessages.map(function(oM) { return oM.type; });
+			const aPropagatedMessages = oDataState.getMessages();
+			const aNewOrder = aPropagatedMessages.map(function(oM) { return oM.type; });
 
 			bCorrectOrder = JSON.stringify(aNewOrder) == JSON.stringify(aCorrectOrder);
 		};
 
 		Messaging.addMessages(aMessages);
-
 		assert.ok(!bCorrectOrder, "Messages have not been propagated synchronously");
 
-		setTimeout(function() {
-			assert.ok(bCorrectOrder, "Messages have been propagated asynchronously and are correctly sorted");
-			Messaging.removeMessages(aMessages);
-			oInput.destroy();
-			done();
-		}, 0);
+		await this.dataStateChanged(oBinding);
+
+		assert.ok(bCorrectOrder, "Messages have been propagated asynchronously and are correctly sorted");
+		Messaging.removeMessages(aMessages);
+		oInput.destroy();
 	});
 
-	QUnit.test("Message: Change Message Processor", function(assert) {
+	QUnit.test("Message: Change Message Processor", async function(assert) {
 		assert.expect(4);
-		var done = assert.async();
 
-		var oModel = new JSONModel();
-		var oInput = new Input("inputField01", {
+		const oModel = new JSONModel();
+		const oInput = new Input("inputField01", {
 			value: "{/test}"
 		});
+
+
 		oInput.setModel(oModel);
 		Messaging.registerObject(oInput);
 
@@ -641,29 +657,27 @@ sap.ui.define([
 			target: "/test"
 		}));
 
+		const oBinding = oInput.getBinding("value");
+		await this.dataStateChanged(oBinding);
 
-		setTimeout(function() {
-			var aMessages = oInput.getBinding("value").getDataState().getMessages();
-			assert.equal(aMessages.length, 1, "The message was propagated through the binding");
-			assert.ok(aMessages[0].getMessageProcessor() instanceof Model, "The message is processed by a model");
+		let aMessages = oInput.getBinding("value").getDataState().getMessages();
+		assert.equal(aMessages.length, 1, "The message was propagated through the binding");
+		assert.ok(aMessages[0].getMessageProcessor() instanceof Model, "The message is processed by a model");
 
-			var oMessage = aMessages[0];
+		const oMessage = aMessages[0];
+		Messaging.removeMessages(oMessage);
+		oMessage.setMessageProcessor(new ControlMessageProcessor());
+		oMessage.setTargets(["inputField01/test"]);
+		Messaging.addMessages(oMessage);
 
-			Messaging.removeMessages(oMessage);
-			oMessage.setMessageProcessor(new ControlMessageProcessor());
-			oMessage.setTargets(["inputField01/test"]);
-			Messaging.addMessages(oMessage);
+		await this.dataStateChanged(oBinding);
 
-			setTimeout(function() {
-				aMessages = oInput.getBinding("value").getDataState().getMessages();
-				assert.equal(aMessages.length, 0, "The message was not propagated through the binding");
-				assert.ok(oMessage.getMessageProcessor() instanceof ControlMessageProcessor, "The message is processed by the ControlMessageProcessor");
+		aMessages = oInput.getBinding("value").getDataState().getMessages();
+		assert.equal(aMessages.length, 0, "The message was not propagated through the binding");
+		assert.ok(oMessage.getMessageProcessor() instanceof ControlMessageProcessor, "The message is processed by the ControlMessageProcessor");
 
-				oInput.destroy();
-				Messaging.removeMessages(oMessage);
-				done();
-			}, 0);
-		}, 0);
+		oInput.destroy();
+		Messaging.removeMessages(oMessage);
 
 	});
 

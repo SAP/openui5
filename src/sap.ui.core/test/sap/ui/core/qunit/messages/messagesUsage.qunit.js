@@ -38,7 +38,7 @@ sap.ui.define([
 			var pCompContRendered = Component.create({
 				name: "components"
 			}).then(function(oComponent) {
-				new ComponentContainer("CompCont", {
+				return new ComponentContainer("CompCont", {
 					component: oComponent
 				}).placeAt("content");
 			});
@@ -47,7 +47,7 @@ sap.ui.define([
 				name: "components.enabled",
 				handleValidation: true
 			}).then(function(oComponent) {
-				new ComponentContainer("CompCont2", {
+				return new ComponentContainer("CompCont2", {
 					component: oComponent
 				}).placeAt("content");
 			});
@@ -56,35 +56,17 @@ sap.ui.define([
 				name: "components.disabled",
 				handleValidation: true // Note: same setting in component metadata overrides this
 			}).then(function(oComponent) {
-				new ComponentContainer("CompCont3", {
+				return new ComponentContainer("CompCont3", {
 					component: oComponent
 				}).placeAt("content");
 			});
 
-			this.initModel = function() {
-				this.oModel = new JSONModel();
-				var oData = {
-					form: {
-						firstname: "Fritz",
-						lastname: "Heiner",
-						street: "im",
-						nr: 1,
-						zip: "12345"
-					}
-				};
-				this.oModel.setData(oData);
-				sap.ui.getCore().setModel(this.oModel);
-			};
-
-			return Promise.all([pCompContRendered, pCompContEnabledRendered, pCompContDisabledRendered]).then(nextUIUpdate);
-		},
-
-		beforeEach : function() {
-			this.initModel();
-		},
-
-		afterEach : function() {
-			this.oModel.destroy();
+			return Promise.all([
+				pCompContRendered, pCompContEnabledRendered, pCompContDisabledRendered
+			]).then((aComponentContainers) => {
+				this.aComponentContainers = aComponentContainers;
+				return nextUIUpdate();
+			});
 		}
 	});
 
@@ -103,7 +85,7 @@ sap.ui.define([
 				assert.ok(oCompZip.getValueState() === library.ValueState.Error, 'Input: ValueState set correctly');
 				assert.equal(oCompZip.getValueStateText(), "String.MaxLength 5", 'Input: ValueStateText set correctly');
 			});
-			sap.ui.getCore().attachValidationError(oCoreValHandler);
+			this.aComponentContainers[1].attachValidationError(oCoreValHandler);
 			oCompZip.setValue('123456');
 		}.bind(this));
 
@@ -115,7 +97,7 @@ sap.ui.define([
 				done();
 			});
 			oCompZip.setValue('12345');
-			sap.ui.getCore().detachValidationError(oCoreValHandler);
+			this.aComponentContainers[1].detachValidationError(oCoreValHandler);
 		}.bind(this), 0);
 	});
 
@@ -129,10 +111,10 @@ sap.ui.define([
 			}
 		};
 		oCompZip.getBinding("value").attachDataStateChange(oValHandler);
-		sap.ui.getCore().attachValidationError(oValHandler);
+		this.aComponentContainers[2].attachValidationError(oValHandler);
 		oCompZip.setValue('123456');
 		assert.ok(isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
-		sap.ui.getCore().detachValidationError(oValHandler);
+		this.aComponentContainers[2].detachValidationError(oValHandler);
 	});
 
 	QUnit.test("component handle validation undefined", function(assert) {
@@ -146,10 +128,10 @@ sap.ui.define([
 		};
 		var oValHandler = function(oEvent) {
 			assert.ok(true,oEvent.sId);
-			sap.ui.getCore().detachValidationError(oValHandler);
+			this.aComponentContainers[0].detachValidationError(oValHandler, this);
 		};
 		oCompZip.getBinding("value").attachDataStateChange(oChangeHandler);
-		sap.ui.getCore().attachValidationError(oValHandler);
+		this.aComponentContainers[0].attachValidationError(oValHandler, this);
 		oCompZip.setValue('123456');
 		assert.ok(isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 	});
