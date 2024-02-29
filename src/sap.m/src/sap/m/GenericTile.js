@@ -964,6 +964,7 @@ sap.ui.define([
 				this._applyExtraHeight();
 			}
 		}.bind(this);
+
 		jQuery(window).on("resize", fnCheckMedia);
 		fnCheckMedia();
 	};
@@ -2067,7 +2068,7 @@ GenericTile.prototype._isNavigateActionEnabled = function() {
 	 * @returns {boolean} - true if the GenericTile is in ActionMode
 	 */
 	GenericTile.prototype._isActionMode = function () {
-		return this.getFrameType() === FrameType.TwoByOne && this.getMode() === GenericTileMode.ActionMode && this.getActionButtons().length;
+		return this.getFrameType() === FrameType.TwoByOne && this.getMode() === GenericTileMode.ActionMode;
 	};
 
 	/**
@@ -2142,7 +2143,7 @@ GenericTile.prototype._isNavigateActionEnabled = function() {
 		var bIsActionButtonPressed = false,
 		bIsNavigateActionPressed = false;
 
-		if (oTile._isActionMode()) {
+		if (oTile._isActionMode() && oTile.getActionButtons().length > 0) {
             var oActionsContainerNode = document.querySelector('[id="'  + oTile.getId() + "-actionButtons" + '"]');
             bIsActionButtonPressed = oActionsContainerNode && oActionsContainerNode !== event.target &&  oActionsContainerNode.contains(event.target);
         }

@@ -166,7 +166,7 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile"],
 			sFooterTxt = oControl._getFooterText(oRm, oControl),
 			oTile = oControl.getParent();
 
-		if (oTile instanceof GenericTile && (oTile._isNavigateActionEnabled() || oTile._isActionMode())) {
+		if (oTile instanceof GenericTile && (oTile._isNavigateActionEnabled())) {
 			oRm.openStart("div", oTile.getId() + "-footer-container");
 			oRm.class("sapMTileFtrCnt");
 			oRm.openEnd();
@@ -180,17 +180,7 @@ sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile"],
 		oRm.text(sFooterTxt);
 		oRm.close("div");
 
-		if (oTile instanceof GenericTile && oTile._isActionMode()) {
-			//Render Action Buttons, only in ActionMode and in TwoByOne frame type
-			oRm.openStart("div", oTile.getId() + "-actionButtons");
-			oRm.class("sapMGTActionModeContainer");
-			oRm.openEnd();
-			oTile.getActionButtons().forEach(function (oActionButton) {
-				oRm.renderControl(oActionButton);
-			});
-			oRm.close("div");
-			oRm.close("div");
-		} else if (oTile instanceof GenericTile && oTile._isNavigateActionEnabled()) {
+		if (oTile instanceof GenericTile && oTile._isNavigateActionEnabled()) {
 			oRm.openStart("div", oTile.getId() + "-navigateActionContainer");
 			oRm.class("sapMTileNavContainer");
 			oRm.openEnd();

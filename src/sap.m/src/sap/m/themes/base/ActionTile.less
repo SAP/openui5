@@ -15,6 +15,7 @@
     box-sizing: border-box;
     user-select: none;
     vertical-align: top;
+    text-decoration: none;
     .sapMGTHdrContent {
         padding: 0;
         height: 3rem;
@@ -26,6 +27,11 @@
             line-height: 1.5rem;
             cursor: pointer;
         }
+    }
+    .sapMGTActionModeContainer {
+        position: absolute;
+        bottom: 0.9em;
+        right: 1rem;
     }
 }
 
@@ -123,7 +129,7 @@
      right: 1rem;
     }
     &.sapMATHideActionButton {
-        .sapMATActionModeContainer {
+        .sapMGTActionModeContainer {
             display: none;
         }
     }
@@ -254,16 +260,23 @@
     }
 }
 
-.sapMAT.sapMATSituationCard:focus {
+.sapMAT:focus {
     .sapMGTFocusDiv{
-        position: absolute;
-        border: 2px solid @sapContent_FocusColor;
-        border-radius:  1.25rem;
-        inset: 0px;
+        position: absolute !important;
         pointer-events: none;
+        inset: 0;
+        z-index: 2;
+        border-radius: @sapTile_BorderCornerRadius;
+        border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
     }
+
     .sapMATFocusDiv{
-        border-radius:  1.25rem;
+        position: absolute !important;
+        pointer-events: none;
+        inset: 0;
+        z-index: 2;
+        border-radius: @sapTile_BorderCornerRadius;
+        border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
     }
  }
 
