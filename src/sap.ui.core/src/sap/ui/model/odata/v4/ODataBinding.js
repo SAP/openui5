@@ -1207,7 +1207,9 @@ sap.ui.define([
 	 * group ID and notifies the control that new data is available.
 	 *
 	 * Refresh is supported for bindings which are not relative to an
-	 * {@link sap.ui.model.odata.v4.Context}.
+	 * {@link sap.ui.model.odata.v4.Context}, as well as (since 1.122.0) for bindings with the
+	 * <code>$$ownRequest</code> parameter (see {@link sap.ui.model.odata.v4.ODataModel#bindList}
+	 * and {@link sap.ui.model.odata.v4.ODataModel#bindContext})
 	 *
 	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
 	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
@@ -1392,7 +1394,7 @@ sap.ui.define([
 	 * @since 1.87.0
 	 */
 	ODataBinding.prototype.requestRefresh = function (sGroupId) {
-		if (!this.isRoot()) {
+		if (!this.mParameters?.$$ownRequest && !this.isRoot()) {
 			throw new Error("Refresh on this binding is not supported");
 		}
 		if (this.hasPendingChanges(true)) {
