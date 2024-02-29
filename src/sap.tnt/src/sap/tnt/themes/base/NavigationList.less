@@ -514,6 +514,11 @@
 		padding: 0.5rem;
 	}
 
+	.sapUiMnuItmSbMnu:empty {
+		min-width: initial;
+		padding-inline-end: initial;
+	}
+
 	// parent menu
 	&:not(.sapUiSubmenu) .sapUiMnuLst .sapUiMnuItm  {
 		font-weight: @_sap_tnt_NavigationList_GroupTextWeight;
@@ -521,13 +526,10 @@
 		.sapUiMnuItmIco {
 			position: relative !important;
 			width: auto;
-			padding-inline: 0 0.5rem;
 
 			.sapUiIcon {
 				color: @_sap_tnt_NavigationList_IconColor;
 				display: block;
-				width: 1rem;
-				height: 1rem;
 			}
 		}
 
@@ -539,6 +541,13 @@
 			width: 0.75rem;
 			height: 100%;
 			padding-inline-start: 0.5rem;
+			padding-inline-end: 0;
+			min-width: inherit;
+			min-height: inherit;
+
+			&:empty {
+				min-width: 0.75rem;
+			}
 
 			.sapUiIconMirrorInRTL::after {
 				content: "\e1ed";
@@ -602,6 +611,13 @@
 			}
 		}
 	}
+
+	.sapUiMnuItmIco {
+		min-width: 1rem;
+		max-width: 1rem;
+		padding-inline-end: 0.5rem;
+	}
+
 }
 
 .sapTntNLMenu.sapUiMnu.sapUiSubmenu {
@@ -610,12 +626,9 @@
 			.sapUiMnuItmIco {
 				position: relative !important;
 				width: auto;
-				padding-inline: 0 0.5rem;
 				.sapUiIcon {
 					color: @_sap_tnt_NavigationList_IconColor;
 					display: block;
-					width: 1rem;
-					height: 1rem;
 				}
 			}
 			.sapTntNLIExtLinkOverflowIcon {

@@ -140,11 +140,6 @@ sap.ui.define([
 			this._renderLinkTag(rm);
 		}
 
-		rm.openStart("div");
-		rm.class("sapUiMnuItmL");
-		rm.openEnd();
-		rm.close("div");
-
 		if (oItem.getIcon() && oItem._getIcon) {
 			// icon/check column
 			rm.openStart("div");
@@ -187,12 +182,6 @@ sap.ui.define([
 			const oIcon = this._getExternalLinkIcon();
 			rm.renderControl(oIcon);
 		}
-
-		// Right border
-		rm.openStart("div");
-		rm.class("sapUiMnuItmR");
-		rm.openEnd();
-		rm.close("div");
 
 		// End of external link "a" tag
 		if (this.getHref()) {

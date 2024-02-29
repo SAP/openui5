@@ -21,4 +21,11 @@ describe("sap.ui.unified.MenuVisual", function() {
 
 		expect(takeScreenshot(oButton1)).toLookAs("focus_returned_to_domRef");
 	});
+
+	it('Menu with shortcut texts', function () {
+		var oButton3 = element(by.id("B3"));
+
+		oButton3.click();
+		expect(takeScreenshot(element(by.id("shortcutsMenu")))).toLookAs("unified_menu_items_shortcuts");
+	});
 });

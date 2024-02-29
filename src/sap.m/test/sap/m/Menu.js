@@ -32,6 +32,7 @@ sap.ui.define([
 	oMenu.addItem(new MenuItem({
 		text: "fridge",
 		icon: "sap-icon://fridge",
+		shortcutText: "Alt + F4",
 		items: [
 			new MenuItem({
 				text: "accidental leave",
@@ -230,4 +231,59 @@ sap.ui.define([
 	});
 
 	oButton2.placeAt("body");
+
+	// Menu with shortcuts/additional text
+
+	var oMenu3 = new Menu({
+			items: [
+
+				new MenuItem({
+					text: "New",
+					icon: "sap-icon://create",
+					shortcutText: "Ctrl + N"
+				}),
+
+				new MenuItem({
+					text: "Open",
+					icon: "sap-icon://open-folder",
+					shortcutText: "Ctrl + O"
+				}),
+
+				new MenuItem({
+					text: "Save",
+					shortcutText: "Ctrl + Shift + S",
+					items: [
+						new MenuItem({
+							text: "Save Locally",
+							icon: "sap-icon://save",
+							shortcutText: "Ctrl + S"
+						}),
+						new MenuItem({
+							text: "Save to Cloud",
+							icon: "sap-icon://upload-to-cloud",
+							shortcutText: "Alt + S"
+						})
+					]
+				}),
+
+				new MenuItem({
+					text: "Delete",
+					shortcutText: "Ctrl + D"
+				}),
+
+				new MenuItem({
+					text: "Close",
+					icon: "sap-icon://decline",
+					shortcutText: "Ctrl + X"
+				})
+			]
+		});
+
+	var oButton3 = new MenuButton({
+			text: "File Menu",
+			menu: oMenu3
+		});
+
+	oButton3.placeAt("body");
+
 });
