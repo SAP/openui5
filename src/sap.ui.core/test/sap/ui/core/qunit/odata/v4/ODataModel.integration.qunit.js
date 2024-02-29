@@ -21123,11 +21123,11 @@ sap.ui.define([
 	// without children. Hence the binding doesn't trigger a request, but its lock must be released.
 	QUnit.test("ODCB: delayed refresh", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
-			sView = '\
-<FlexBox binding="{/BusinessPartnerList(\'0100000000\')}">\
-	<Text id="company" text="{CompanyName}"/>\
-</FlexBox>\
-<FlexBox binding="{/SalesOrderList}"/>',
+			sView = `
+<FlexBox binding="{/BusinessPartnerList('0100000000')}">
+	<Text id="company" text="{CompanyName}"/>
+</FlexBox>
+<FlexBox binding="{/SalesOrderList('1')}"/>`,
 			that = this;
 
 		this.expectRequest("BusinessPartnerList('0100000000')"
