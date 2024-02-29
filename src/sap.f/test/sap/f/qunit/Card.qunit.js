@@ -45,6 +45,9 @@ function (
 	const ValueColor = mLibrary.ValueColor;
 	const WrappingType = mLibrary.WrappingType;
 
+	const sLongText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum congue libero ut blandit faucibus. Phasellus sed urna id tortor consequat accumsan eget at leo. Cras quis arcu magna.";
+
+
 	/**
 	 * In each test using fake timers, it might happen that a rendering task is queued by
 	 * creating a fake timer. Without an appropriate clock.tick call, this timer might not execute
@@ -151,6 +154,67 @@ function (
 
 		// Assert
 		assert.strictEqual(oHeader.$("unitOfMeasurement").width(), iWidth, "The unitOfMeasurement is not truncated");
+
+		// Clean up
+		oCard.destroy();
+	});
+
+	QUnit.test("Default header tooltips", async function (assert) {
+
+		// Arrange
+		const oHeader = new CardHeader({
+				title: sLongText,
+				subtitle: sLongText
+			}),
+			oCard = new Card({
+				width: "300px",
+				header: oHeader
+			});
+
+		oHeader.setProperty("useTooltips", true);
+
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		// Act
+		QUnitUtils.triggerMouseEvent(oHeader.getDomRef("title-inner"), "mouseover");
+		QUnitUtils.triggerMouseEvent(oHeader.getDomRef("subtitle-inner"), "mouseover");
+
+		// Assert
+		assert.strictEqual(oHeader.getDomRef("title-inner").title, sLongText, "The title has correct tooltip");
+		assert.strictEqual(oHeader.getDomRef("subtitle-inner").title, sLongText, "The subtitle has correct tooltip");
+
+		// Clean up
+		oCard.destroy();
+	});
+
+	QUnit.test("Numeric header tooltips", async function (assert) {
+
+		// Arrange
+		const oHeader = new CardNumericHeader({
+				title: sLongText,
+				subtitle: sLongText,
+				details: sLongText
+			}),
+			oCard = new Card({
+				width: "300px",
+				header: oHeader
+			});
+
+		oHeader.setProperty("useTooltips", true);
+
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		// Act
+		QUnitUtils.triggerMouseEvent(oHeader.getDomRef("title-inner"), "mouseover");
+		QUnitUtils.triggerMouseEvent(oHeader.getDomRef("subtitle-inner"), "mouseover");
+		QUnitUtils.triggerMouseEvent(oHeader.getDomRef("details"), "mouseover");
+
+		// Assert
+		assert.strictEqual(oHeader.getDomRef("title-inner").title, sLongText, "The title has correct tooltip");
+		assert.strictEqual(oHeader.getDomRef("subtitle-inner").title, sLongText, "The subtitle has correct tooltip");
+		assert.strictEqual(oHeader.getDomRef("details").title, sLongText, "The subtitle has correct tooltip");
 
 		// Clean up
 		oCard.destroy();

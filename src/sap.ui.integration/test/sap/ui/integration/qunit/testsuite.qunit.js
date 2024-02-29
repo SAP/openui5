@@ -53,6 +53,7 @@ sap.ui.define([
 					'./CardDesigntime.qunit'
 				]
 			},
+			"CardAsTile": { },
 			"CardCleanup": { },
 			"CardPagination": { },
 			"CardLoading": {

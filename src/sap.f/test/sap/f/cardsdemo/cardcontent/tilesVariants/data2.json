@@ -1,6 +1,6 @@
 {
-	"title": "Top 5 Products Sales",
-	"subTitle": "By Average Price",
+	"title": "Top 5 Products Sales and a Long Title",
+	"subTitle": "By Average Price and very very long subtitle",
 	"numericIndicator": {
 		"iconSrc": "sap-icon://line-charts",
 		"number": "1762",
@@ -19,9 +19,9 @@
 			"deviation": {
 				"number": 25
 			},
-			"details": "Q1, 2019",
-			"appShortcut": "App Shortcut",
-			"systemInfo": "System Info"
+			"details": "Q1, 2019 and long details which have to truncate",
+			"appShortcut": "App Shortcut very long app shortcutApp",
+			"systemInfo": "System Info very long system info"
 		}
 	}
 }
