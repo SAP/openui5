@@ -17,7 +17,7 @@ sap.ui.define([
 	"use strict";
 
 	function asV2Requestor(oRequestor) {
-		oRequestor.oModelInterface = oRequestor.oModelInterface || {};
+		oRequestor.oModelInterface ??= {};
 		asV2Requestor0(oRequestor);
 	}
 

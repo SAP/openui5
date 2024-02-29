@@ -55,9 +55,7 @@ sap.ui.define([
 		Promise.resolve().then(function () {
 			jqXHR.resolve(oPayload, sTextStatus, { // mock jqXHR for success handler
 				getResponseHeader : function (sName) {
-					mResponseHeaders = mResponseHeaders || {
-							"OData-Version" : "4.0"
-						};
+					mResponseHeaders ??= {"OData-Version" : "4.0"};
 					// Note: getResponseHeader treats sName case insensitive!
 					switch (sName) {
 						case "Content-Type":

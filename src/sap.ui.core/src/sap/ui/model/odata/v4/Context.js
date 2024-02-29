@@ -1783,7 +1783,7 @@ sap.ui.define([
 		}, []);
 		aPathsForBinding = _Helper.filterPaths(aPathsForModel, aPathsForBinding);
 
-		sGroupId = sGroupId || this.getUpdateGroupId();
+		sGroupId ??= this.getUpdateGroupId();
 
 		return Promise.resolve(
 			SyncPromise.resolve(

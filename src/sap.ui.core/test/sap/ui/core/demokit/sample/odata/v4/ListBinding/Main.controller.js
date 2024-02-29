@@ -214,10 +214,8 @@ sap.ui.define([
 			var oView = this.getView(),
 				oTeamContext = oView.byId("TeamDetails").getBindingContext();
 
-			if (!this.oChangeManager) {
-				this.oChangeManager = oView.getModel("parameterContext").bindContext(
+			this.oChangeManager ??= oView.getModel("parameterContext").bindContext(
 					"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam(...)");
-			}
 
 			// operation is bound switch the context
 			this.oChangeManager.setContext(oTeamContext);

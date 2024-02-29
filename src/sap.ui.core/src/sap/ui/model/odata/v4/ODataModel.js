@@ -256,7 +256,7 @@ sap.ui.define([
 	 *   annotation file cannot be merged into the service metadata, if an unsupported value for
 	 *   <code>odataVersion</code> is given.
 	 */
-	function constructor(mParameters) {
+	function constructor(mParameters = {}) {
 		var sGroupId,
 			oGroupProperties,
 			sLanguageTag = Localization.getLanguageTag().toString(),
@@ -271,7 +271,6 @@ sap.ui.define([
 		// do not pass any parameters to Model
 		Model.call(this);
 
-		mParameters = mParameters || {};
 		// @deprecated As of Version 1.110.0
 		if ("synchronizationMode" in mParameters && mParameters.synchronizationMode !== "None") {
 			throw new Error("Synchronization mode must be 'None'");
@@ -1469,7 +1468,7 @@ sap.ui.define([
 		}
 
 		if (bIsBound) {
-			sResourcePath = sResourcePath && sResourcePath.split("?")[0]; // remove query string
+			sResourcePath &&= sResourcePath.split("?")[0]; // remove query string
 			aTargets = [resolveTarget(oRawMessage.target)];
 			if (oRawMessage.additionalTargets) {
 				oRawMessage.additionalTargets.forEach(function (sTarget) {
@@ -1556,7 +1555,7 @@ sap.ui.define([
 			]);
 		}
 		_Helper.checkGroupId(sGroupId, false, true);
-		sGroupId = sGroupId || this.getUpdateGroupId();
+		sGroupId ??= this.getUpdateGroupId();
 		if (this.isApiGroup(sGroupId)) {
 			throw new Error("Illegal update group ID: " + sGroupId);
 		}
@@ -1706,7 +1705,7 @@ sap.ui.define([
 		}
 		this.mPath2DataRequestedCount[sPath] -= 1;
 		// first error wins
-		this.mPath2DataReceivedError[sPath] = this.mPath2DataReceivedError[sPath] || oError;
+		this.mPath2DataReceivedError[sPath] ??= oError;
 		if (this.mPath2DataRequestedCount[sPath] === 0) {
 			this.fireEvent("dataReceived", this.mPath2DataReceivedError[sPath]
 				? {error : this.mPath2DataReceivedError[sPath], path : sPath}
@@ -2013,7 +2012,8 @@ sap.ui.define([
 	 * @public
 	 * @since 1.99.0
 	 */
-	ODataModel.prototype.getKeepAliveContext = function (sPath, bRequestMessages, mParameters) {
+	ODataModel.prototype.getKeepAliveContext = function (sPath, bRequestMessages,
+			mParameters = {}) {
 		var oListBinding,
 			aListBindings,
 			sListPath;
@@ -2024,7 +2024,6 @@ sap.ui.define([
 		if (sPath[0] !== "/") {
 			throw new Error("Not a list context path to an entity: " + sPath);
 		}
-		mParameters = mParameters || {};
 		// Only excess parameters are rejected here; the correctness is checked by ODLB
 		Object.keys(mParameters).forEach(function (sParameter) {
 			if (sParameter.startsWith("sap-") && !sParameter.startsWith("sap-valid-")
@@ -2639,7 +2638,7 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	ODataModel.prototype.resetChanges = function (sGroupId) {
-		sGroupId = sGroupId || this.sUpdateGroupId;
+		sGroupId ??= this.sUpdateGroupId;
 		this.checkBatchGroupId(sGroupId);
 
 		if (this.isAutoGroup(sGroupId)) {

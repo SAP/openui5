@@ -294,12 +294,12 @@ sap.ui.define([
 			}
 
 			mQueryOptions = Object.assign({}, mQueryOptions);
-			oAggregation.groupLevels = oAggregation.groupLevels || [];
+			oAggregation.groupLevels ??= [];
 			bIsLeafLevel = !iLevel || iLevel > oAggregation.groupLevels.length;
 
-			oAggregation.group = oAggregation.group || {};
+			oAggregation.group ??= {};
 			oAggregation.groupLevels.forEach(function (sGroup) {
-				oAggregation.group[sGroup] = oAggregation.group[sGroup] || {};
+				oAggregation.group[sGroup] ??= {};
 			});
 			aGroupBy = bIsLeafLevel
 				? Object.keys(oAggregation.group).sort().filter(function (sGroup) {
@@ -310,7 +310,7 @@ sap.ui.define([
 				aGroupBy = oAggregation.groupLevels.concat(aGroupBy);
 			}
 
-			oAggregation.aggregate = oAggregation.aggregate || {};
+			oAggregation.aggregate ??= {};
 			aAliases = Object.keys(oAggregation.aggregate).sort();
 			if (iLevel === 1 && !bFollowUp) {
 				aAliases.filter(function (sAlias) {
@@ -456,12 +456,10 @@ sap.ui.define([
 				if (mQueryOptions.$select) {
 					let sPropertyPath = oAggregation["$" + sProperty];
 					if (!sPropertyPath) {
-						if (!mRecursiveHierarchy) {
-							mRecursiveHierarchy = oAggregation.$fetchMetadata(oAggregation.$metaPath
-									+ "/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#"
-									+ oAggregation.hierarchyQualifier
-								).getResult();
-						}
+						mRecursiveHierarchy ??= oAggregation.$fetchMetadata(oAggregation.$metaPath
+								+ "/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#"
+								+ oAggregation.hierarchyQualifier
+							).getResult();
 
 						sPropertyPath = oAggregation["$" + sProperty]
 							= mRecursiveHierarchy[sProperty + "Property"]?.$PropertyPath
