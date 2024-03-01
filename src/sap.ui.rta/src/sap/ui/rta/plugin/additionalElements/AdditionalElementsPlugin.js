@@ -65,15 +65,45 @@ sap.ui.define([
 		}
 	}
 
-	async function handleExtensibility(oControl) {
+	async function loadExtensibilityInfo(oControl) {
 		await FieldExtensibility.onControlSelected(oControl);
 		const bExtensibilityEnabled = await FieldExtensibility.isExtensibilityEnabled(oControl);
 
 		if (bExtensibilityEnabled) {
 			await isServiceUpToDate(oControl);
-			return FieldExtensibility.getExtensionData(oControl);
+			const oExtensibilityInfo = await FieldExtensibility.getExtensionData(oControl);
+			if (oExtensibilityInfo) {
+				oExtensibilityInfo.UITexts = await FieldExtensibility.getTexts() || {};
+			}
+			return oExtensibilityInfo;
 		}
 		return undefined;
+	}
+
+	// Configure the dialog elements related to extensibility
+	function configureExtensibility(bOverlayIsSibling) {
+		const oExtensibilityInfo = this.getExtensibilityInfo(bOverlayIsSibling);
+		if (!oExtensibilityInfo) {
+			this.getDialog().setCustomFieldButtonVisible(false);
+			return;
+		}
+		const aExtensibilityOptions = oExtensibilityInfo.UITexts?.options;
+		if (!aExtensibilityOptions) {
+			// Legacy implementation (CustomFieldButton) does not have "options" in the UI Texts
+			const oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+			oExtensibilityInfo.UITexts.options = [
+				{
+					actionKey: undefined,
+					text: oTextResources.getText("BTN_ADDITIONAL_ELEMENTS_CREATE_CUSTOM_FIELDS"),
+					tooltip: oExtensibilityInfo.UITexts.tooltip
+				}
+			];
+		}
+
+		this.getDialog().setExtensibilityOptions(oExtensibilityInfo);
+		this.getDialog().detachEvent("triggerExtensibilityAction", this._onTriggerExtensibilityAction, this);
+		this.getDialog().attachEvent("triggerExtensibilityAction", bOverlayIsSibling, this._onTriggerExtensibilityAction, this);
+		this.getDialog().addExtensibilityInfo(oExtensibilityInfo);
 	}
 
 	/**
@@ -258,19 +288,7 @@ sap.ui.define([
 
 			.then(function(aCollectedElements) {
 				aAllElements = aCollectedElements;
-				// getAllElements() also sets the extensibility info
-				var oExtensibilityInfo = this.getExtensibilityInfo(bOverlayIsSibling);
-				this.getDialog().setCustomFieldEnabled(!!oExtensibilityInfo);
-				if (oExtensibilityInfo) {
-					this.getDialog().detachEvent("openCustomField", this._onOpenCustomField, this);
-					this.getDialog().attachEvent("openCustomField", bOverlayIsSibling, this._onOpenCustomField, this);
-					this.getDialog().setCustomFieldButtonVisible(true);
-					return this.getDialog().addExtensionData(oExtensibilityInfo.extensionData);
-				}
-				return this.getDialog().setCustomFieldButtonVisible(false);
-			}.bind(this))
-
-			.then(function() {
+				configureExtensibility.call(this, bOverlayIsSibling);
 				var oAggregationWithElements = aAllElements.filter(function(mElementsPerAggregation) {
 					return mElementsPerAggregation.aggregation === sAggregationName;
 				})[0];
@@ -335,9 +353,14 @@ sap.ui.define([
 		},
 
 		// Function called when custom field button was pressed
-		_onOpenCustomField(oEvent, bOverlayIsSibling) {
-			var sRtaStyleClassName = Utils.getRtaStyleClassName();
-			return FieldExtensibility.onTriggerCreateExtensionData(this.getExtensibilityInfo(bOverlayIsSibling), sRtaStyleClassName);
+		_onTriggerExtensibilityAction(oEvent, bOverlayIsSibling) {
+			const sRtaStyleClassName = Utils.getRtaStyleClassName();
+			const sActionKey = oEvent.getParameters().actionKey;
+			return FieldExtensibility.onTriggerCreateExtensionData(
+				this.getExtensibilityInfo(bOverlayIsSibling),
+				sRtaStyleClassName,
+				sActionKey
+			);
 		},
 
 		/**
@@ -438,7 +461,7 @@ sap.ui.define([
 					});
 				});
 				if (bCheckExtensibility) {
-					return handleExtensibility(mParents.parent);
+					return loadExtensibilityInfo(mParents.parent);
 				}
 				return undefined;
 			})

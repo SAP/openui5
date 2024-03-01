@@ -102,6 +102,29 @@ sap.ui.define([
 	/**
 	 * Retrieves the necessary texts.
 	 *
+	 * The result should have the following structure
+	 * Scenario 1 Legacy: Create Custom Field
+	 * {
+	 * 	headerText: string, // Header text for the business contexts
+	 * 	tooltip: string // Tooltip for the button
+	 * }
+	 *
+	 * Scenario 2: Potentially multiple options
+	 * {
+	 * 	headerText: string, // Header text for the business contexts
+	 * 	buttonText: string, // Text for the MenuButton
+	 * 	tooltip: string, // Tooltip for the MenuButton
+	 * 	options:
+	 * 	[
+	 * 		{
+	 * 			actionKey: string, // MenuItem unique key (e.g. for Uri assignment)
+	 * 			text: string, // Text for the MenuItem, for a single option this becomes the button text
+	 * 			tooltip: string // Tooltip for the MenuItem, for a single option this becomes the button tooltip
+	 * 		},
+	 * 		...
+	 * 	]
+	 * }
+	 *
 	 * @returns {Promise<object>} - Object with <code>tooltip</code> and <code>headerText</code>
 	 */
 	FieldExtensibility.getTexts = function() {
@@ -110,12 +133,18 @@ sap.ui.define([
 
 	/**
 	 * Retrieves the extension data.
-	 *
-	 * @returns {Promise<object>} All necessary information about the extension data. This will be passed to <code>FieldExtensibility.onTriggerCreateExtensionData</code>
+	 * The extension data should have the following format:
+	 * [
+	 * 	{
+	 * 		businessContext: "string",
+	 * 		description: "string",
+	 * 		...
+	 * 	},
+	 * 	...
+	 * ]
+	 * @returns {Promise<object>} An object containing the <code>extensionData</code> array. This will be passed to <code>FieldExtensibility.onTriggerCreateExtensionData</code>
 	 */
 	FieldExtensibility.getExtensionData = function() {
-		// TODO: currently the return value must be an object that includes .BusinessContexts in order to be shown in the Dialog.
-		// Will be changed in a follow up
 		return callFunctionInImplementation("getExtensionData");
 	};
 
@@ -124,10 +153,11 @@ sap.ui.define([
 	 *
 	 * @param {object} oExtensibilityInfo - Information about the extension data. Should be the return value of <code>FieldExtensibility.getExtensionData</code>
 	 * @param {string} sRtaStyleClassName - CSS style class that should be added to any dialogs
+	 * @param {string} sActionKey - Key for the mapping of specific actions (e.g. which URI to open for given extension data)
 	 * @returns {Promise} Resolves with the return value of the function in the implementation
 	 */
-	FieldExtensibility.onTriggerCreateExtensionData = function(oExtensibilityInfo, sRtaStyleClassName) {
-		return callFunctionInImplementation("onTriggerCreateExtensionData", oExtensibilityInfo, sRtaStyleClassName);
+	FieldExtensibility.onTriggerCreateExtensionData = function(oExtensibilityInfo, sRtaStyleClassName, sActionKey) {
+		return callFunctionInImplementation("onTriggerCreateExtensionData", oExtensibilityInfo, sRtaStyleClassName, sActionKey);
 	};
 
 	// Resets the current scenario for testing purposes

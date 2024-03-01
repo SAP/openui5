@@ -1,21 +1,19 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/Element",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
-	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariant",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/App",
 	"sap/m/MessageBox",
-	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/EventBus"
+	"sap/ui/core/mvc/XMLView"
 ], function(
 	UIComponent,
+	Element,
 	ABAPAccess,
-	ABAPExtensibilityVariant,
 	JSONModel,
 	App,
 	MessageBox,
-	XMLView,
-	EventBus
+	XMLView
 ) {
 	"use strict";
 
@@ -61,6 +59,10 @@ sap.ui.define([
 		_enableExtensibility() {
 			var aExtensionData;
 			ABAPAccess.getExtensionData = function(sServiceUri, sEntityTypeName, sEntitySetName) {
+				if (Element.getElementById("application-masterDetail-display-component---idMain1--ExtensionDataRadioButtonGroup")
+				.getSelectedIndex() === 3) {
+					return Promise.resolve(undefined);
+				}
 				aExtensionData = [{ businessContext: `${sEntityTypeName} EntityTypeContext`, description: "Other BusinessContext description" }, { businessContext: `${sEntitySetName} EntitySetContext`, description: "Some BusinessContext description"}];
 				return Promise.resolve({
 					extensionData: aExtensionData,
@@ -70,8 +72,67 @@ sap.ui.define([
 				});
 			};
 
-			ABAPExtensibilityVariant.prototype.getNavigationUri = function() {
-				return Promise.resolve("./extensibilityTool.html");
+			ABAPAccess.getTexts = function() {
+				let oExtensionData;
+				switch (
+					Element.getElementById("application-masterDetail-display-component---idMain1--ExtensionDataRadioButtonGroup")
+					.getSelectedIndex()
+				) {
+					// Scenario 1: ExtensionData with Options
+					case 0:
+						oExtensionData = {
+							tooltip: "Create",
+							buttonText: "Create",
+							headerText: "Multiple Options",
+							options: [
+								{
+									actionKey: "CustomField",
+									text: "Create Custom Field",
+									tooltip: "Create Custom Field in the Model"
+								},
+								{
+									actionKey: "CustomLogic",
+									text: "Create Custom Logic",
+									tooltip: "Create Custom Logic in the Model"
+								}
+							]
+						};
+						break;
+					// Scenario 2: ExtensionData with one Option
+					case 1:
+						oExtensionData = {
+							headerText: "One Option",
+							tooltip: "Add Custom Tooltip",
+							buttonText: "Create",
+							options: [
+								{
+									actionKey: "OneOptionCustomField",
+									text: "Create Custom Field",
+									tooltip: "only one option tooltip"
+								}
+							]
+						};
+						break;
+					// Scenario 3 (Legacy): ExtensionData with no Options
+					case 2:
+						oExtensionData = {
+							headerText: "No Options",
+							tooltip: "Legacy Tooltip"
+						};
+						break;
+					default:
+						oExtensionData = {};
+						break;
+				}
+				return Promise.resolve(oExtensionData);
+			};
+
+			ABAPAccess.onTriggerCreateExtensionData = function(oExtensibilityInfo, sRtaStyleClassName, sActionKey) {
+				MessageBox.information(`
+					Header Text: ${oExtensibilityInfo.UITexts.headerText}
+					Style Class: ${sRtaStyleClassName}
+					Uri Action Key: ${sActionKey}
+				`);
 			};
 
 			var oUshellContainer = sap.ui.require("sap/ushell/Container");
@@ -80,10 +141,6 @@ sap.ui.define([
 					return Promise.resolve(true);
 				};
 			}
-
-			EventBus.getInstance().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
-				MessageBox.warning("Service Outdated, Please restart the UI - In real world other dialog will come up, that can restart the UI");
-			});
 		}
 	});
 });

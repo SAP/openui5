@@ -1738,13 +1738,14 @@ sap.ui.define([
 
 	QUnit.module("Given an app that is field extensible enabled...", {
 		async beforeEach(assert) {
+			this.oRTATexts = Library.getResourceBundleFor("sap.ui.rta");
 			registerControlsForChanges();
 			this.STUB_EXTENSIBILITY_BUSINESS_CTXT = {
 				extensionData: [{
 					BusinessContext: "some context",
 					description: "some description"
 				}], // BusinessContext API returns this structure
-				serviceName: "servive name",
+				serviceName: "service name",
 				serviceVersion: "some dummy ServiceVersion",
 				entityType: "Header"
 			};
@@ -1755,7 +1756,7 @@ sap.ui.define([
 				},
 				params: {
 					extensionData: ["some context"], // Custom Field App expects list of strings
-					serviceName: "servive name",
+					serviceName: "service name",
 					serviceVersion: "some dummy ServiceVersion",
 					entityType: "Header"
 				}
@@ -1867,7 +1868,34 @@ sap.ui.define([
 			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 
 			assert.ok(oGetExtensionDataStub.notCalled, "then custom field enabling should not be asked");
-			assert.equal(this.oDialog.getCustomFieldEnabled(), false, "then in the dialog custom field is disabled");
+			assert.equal(this.oDialog.getCustomFieldButtonVisible(), false, "then in the dialog custom field is disabled");
+		});
+
+		QUnit.test("When showAvailableElements is called with legacy extension data", async function(assert) {
+			const oExtensibilityInfo = {headerText: "Legacy", tooltip: "LegacyTooltip" };
+			const oExtensibilityOptions = {
+				actionKey: undefined,
+				text: this.oRTATexts.getText("BTN_ADDITIONAL_ELEMENTS_CREATE_CUSTOM_FIELDS"),
+				tooltip: "LegacyTooltip"
+			};
+			const sAggregationName = "contentLeft";
+			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
+			sandbox.stub(FieldExtensibility, "getExtensionData").resolves(this.STUB_EXTENSIBILITY_BUSINESS_CTXT);
+			sandbox.stub(FieldExtensibility, "getTexts").resolves(oExtensibilityInfo);
+			const oOverlay = await createOverlayWithAggregationActions.call(this, {
+				add: {
+					delegate: {
+						changeType: "addFields"
+					}
+				}
+			}, ON_CHILD);
+			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
+			assert.equal(this.oDialog.getCustomFieldButtonVisible(), true, "then in the dialog custom field is enabled");
+			assert.deepEqual(
+				this.oDialog.getExtensibilityOptions()[0],
+				oExtensibilityOptions,
+				"then the legacy extensibility options are set correctly"
+			);
 		});
 
 		QUnit.test("when addViaDelegate action is available and simulating a click on open custom field", async function(assert) {
@@ -1898,12 +1926,11 @@ sap.ui.define([
 				"addViaDelegate is dependent on up to date service, it should be called with a control"
 			);
 			var oBCContainer = Element.getElementById(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
-			assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
+			assert.equal(this.oDialog.getCustomFieldButtonVisible(), true, "then in the dialog custom field is enabled");
 			assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
 			assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
 
-			// Simulate custom field button pressed, should trigger openNewWindow
-			this.oDialog.fireOpenCustomField();
+			this.oDialog.fireTriggerExtensibilityAction();
 		});
 
 		QUnit.test("when addViaDelegate action is available and showAvailableElements is called 3 times and simulating a click on open custom field the last time", async function(assert) {
@@ -1934,9 +1961,9 @@ sap.ui.define([
 
 			assert.strictEqual(oSetServiceValidStub.callCount, 0, "the service is valid already");
 			assert.equal(
-				this.oDialog.getCustomFieldEnabled(),
+				this.oDialog.getCustomFieldButtonVisible(),
 				true,
-				"then in the dialog custom field is enabled"
+				"then in the dialog custom field button is visible"
 			);
 			var oBCContainer = Element.getElementById(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
 			assert.equal(
@@ -1951,8 +1978,7 @@ sap.ui.define([
 			);
 			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
-			// Simulate custom field button pressed, should trigger openNewWindow
-			this.oDialog.fireOpenCustomField();
+			this.oDialog.fireTriggerExtensibilityAction();
 		});
 
 		QUnit.test("when getAllElements is called for sibling overlay,", async function(assert) {
