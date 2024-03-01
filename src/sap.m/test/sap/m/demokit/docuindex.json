@@ -3157,7 +3157,7 @@
 		{
 		  "id": "sap.m.sample.TableOutdated",
 		  "name": "Table - Outdated Data",
-		  "description": "You can use the 'showOverlay' property to indicate that the table data is no longer up to date. When the user modifies the filter values of the table, this results in displaying an overlay, which disables operations on the table. Once the user chooses 'Search', the filter values and table data are synchronized again and the overlay is removed."
+		  "description": "You can use the 'showOverlay' property to indicate that the table data is no longer up to date. When the user modifies the filter values of the table, this results in displaying an overlay, which disables operations on the table. Once the user chooses 'Filter', the filter values and table data are synchronized again and the overlay is removed."
 		},
 		{
 		  "id": "sap.m.sample.TableBreadcrumb",

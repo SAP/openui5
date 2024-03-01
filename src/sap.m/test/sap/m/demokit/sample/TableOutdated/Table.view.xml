@@ -17,9 +17,11 @@
 		<ToolbarSpacer/>
 
 		<SegmentedButton enabled="false">
-			<Button icon="sap-icon://settings" />
-			<Button icon="sap-icon://settings" />
-			<Button icon="sap-icon://settings" />
+			<items>
+				<SegmentedButtonItem icon="sap-icon://settings" />
+				<SegmentedButtonItem icon="sap-icon://settings" />
+				<SegmentedButtonItem icon="sap-icon://settings" />
+			</items>
 		</SegmentedButton>
 
 	</OverflowToolbar>
