@@ -13,8 +13,7 @@
 				"sap.ui.core": {},
 				"sap.ui.mdc": {},
 				"sap.ui.table": {},
-				"sap.ui.fl": {},
-				"sap.ui.export": {}
+				"sap.ui.fl": {}
 			}
 		}
 	}

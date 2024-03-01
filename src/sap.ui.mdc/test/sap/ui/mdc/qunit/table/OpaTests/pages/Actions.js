@@ -113,37 +113,27 @@ sap.ui.define([
 		/**
 		 * Emulates a click action on the check box of one or multiple rows to select them.
 		 *
-		 * @function
-		 * @name iClickOnRowSelectCheckBox
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
 		 * @param {Number} iStartIndex Index from which the selection starts
 		 * @param {Number} iEndIndex Index up to the selection ends
 		 * @returns {Promise} OPA waitFor
-		 * @private
 		 */
-		iClickOnRowSelectCheckBox: function(oControl, iStartIndex, iEndIndex) {
-			return waitForTable.call(this, oControl, {
-				success: function(oTable) {
-					let iIndex = iStartIndex;
-					const oInnerTable = oTable._oTable;
-
-					if (oTable._isOfType(TableType.ResponsiveTable)) {
-						for (iIndex; iIndex <= iEndIndex; iIndex++) {
-							this.waitFor({
-								id: oInnerTable.getItems()[iIndex].getId() + "-selectMulti",
-								controlType: "sap.m.CheckBox",
-								actions: new Press(),
-								errorMessage: "Did not find the check box"
-							});
-						}
-					} else {
-						for (iIndex; iIndex <= iEndIndex; iIndex++) {
+		iClickOnRowSelectCheckBox: function(vTable, iStartIndex, iEndIndex) {
+			for (let iIndex = iStartIndex; iIndex <= iEndIndex; iIndex++) {
+				Util.waitForRow.call(this, vTable, {
+					index: iIndex,
+					success: function(oTable, oRow) {
+						if (oTable._isOfType(TableType.Table, true)) {
 							new Press({idSuffix: "innerTable-rowsel" + iIndex}).executeOn(oTable);
+						} else {
+							new Press({idSuffix: "selectMulti"}).executeOn(oRow);
 						}
+						Opa5.assert.ok(true, "Pressed selection checkbox on row with index " + iIndex);
 					}
-				},
-				errorMessage: "No table found"
-			});
+				});
+			}
+
+			return this;
 		},
 
 		/**
@@ -202,16 +192,14 @@ sap.ui.define([
 		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
 		 * @param {object} mConfig Used to find the row to expand
 		 * @param {int} mConfig.index Index of the row in the aggregation of the inner table
-		 * @param {string} mConfig.path Path of the property
-		 * @param {string} mConfig.value Value of the property
+		 * @param {object} mConfig.data Information about the data, where the key is the path in the rows binding context
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
 		iPressExpandRowButton: function(vTable, mConfig) {
 			return Util.waitForRow.call(this, vTable, {
 				index: mConfig.index,
-				path: mConfig.path,
-				value: mConfig.value,
+				data: mConfig.data,
 				success: function(oTable, oRow) {
 					if (oTable._isOfType(TableType.Table, true)) {
 						if (oRow.isExpanded()) {
@@ -233,16 +221,14 @@ sap.ui.define([
 		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
 		 * @param {object} mConfig Used to find the row to expand
 		 * @param {int} mConfig.index Index of the row in the aggregation of the inner table
-		 * @param {string} mConfig.path Path of the property
-		 * @param {string} mConfig.value Value of the property
+		 * @param {object} mConfig.data Information about the data, where the key is the path in the rows binding context
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
 		iPressCollapseRowButton: function(vTable, mConfig) {
 			return Util.waitForRow.call(this, vTable, {
 				index: mConfig.index,
-				path: mConfig.path,
-				value: mConfig.value,
+				data: mConfig.data,
 				success: function(oTable, oRow) {
 					if (oTable._isOfType(TableType.Table, true)) {
 						if (!oRow.isExpanded()) {

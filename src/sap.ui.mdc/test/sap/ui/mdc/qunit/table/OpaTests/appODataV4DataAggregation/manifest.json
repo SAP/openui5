@@ -1,0 +1,47 @@
+{
+	"sap.app": {
+		"id": "sap.ui.mdc.table.OpaTests.appODataV4DataAggregation",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {
+			"default": {
+				"uri": "/odata/v4/sap.fe.managepartners.ManagePartnersService/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
+				}
+			}
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"id": "MyView",
+			"viewName": "sap.ui.mdc.table.OpaTests.appODataV4DataAggregation.View",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.mdc": {},
+				"sap.ui.table": {},
+				"sap.ui.fl": {}
+			}
+		},
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"earlyRequests": true,
+					"operationMode": "Server"
+				},
+				"type": "sap.ui.core.sample.odata.v4.DataAggregation.SandboxModel"
+			}
+		}
+	}
+}

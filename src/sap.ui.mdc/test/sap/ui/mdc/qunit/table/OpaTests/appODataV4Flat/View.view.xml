@@ -11,7 +11,10 @@
             <mdc:Table
                 id="mdcTable"
                 header="Products"
-                delegate='\{ "name": "sap/ui/mdc/table/OpaTests/appODataV4Flat/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
+                delegate="{
+                    name: 'sap/ui/mdc/table/OpaTests/appODataV4Flat/TableDelegate', 
+                    payload: {collectionName: 'ProductList'}
+                }"
                 p13nMode="Column,Sort,Filter,Group"
                 showPasteButton="true"
                 enableExport="true"

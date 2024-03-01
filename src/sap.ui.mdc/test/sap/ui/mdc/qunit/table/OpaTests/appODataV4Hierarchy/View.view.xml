@@ -10,7 +10,10 @@
             <mdc:Table
                 id="mdcTable"
                 header="Products"
-                delegate='\{ "name": "sap/ui/mdc/table/OpaTests/appODataV4Hierarchy/TableDelegate", "payload": \{ "collectionName": "EMPLOYEES" \} \}'
+                delegate="{
+                    name: 'sap/ui/mdc/table/OpaTests/appODataV4Hierarchy/TableDelegate', 
+                    payload: {collectionName: 'EMPLOYEES'}
+                }"
                 p13nMode="Column,Sort,Filter"
                 showRowCount="false"
                 selectionMode="Multi"
@@ -26,7 +29,7 @@
                 <mdc:variant>
                     <variants:VariantManagement id="mdcTable-vm" for="mdcTable"/>
                 </mdc:variant>
-                <mdc:columns autoResizeColumn="true">
+                <mdc:columns>
                     <mdcTable:Column id="mdcTable-ID" header="ID" propertyKey="ID">
                         <Text text="{ID}"/>
                     </mdcTable:Column>
