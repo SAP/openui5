@@ -1483,6 +1483,18 @@ function(
 									wrapperId: sControlId,
 									fnCreate: function(bSync) {
 										var bPrevAsync = bAsync;
+
+										/**
+										 * To stay compatible with legacy factories in 1.x, if the view was originally created sync,
+										 * we don't switch to async processing here, even if the unstash() is called async.
+										 * @deprecated
+										 */
+										if (bAsync === false) {
+											bSync = true;
+										}
+
+										// temporarily switch the stashed subtree to async=false in case the unstash() operation is triggered sync.
+										// the scoped var bAsync applies to everything contained in this view, the original value is restored after the unstash operation
 										bAsync = !bSync;
 
 										try {

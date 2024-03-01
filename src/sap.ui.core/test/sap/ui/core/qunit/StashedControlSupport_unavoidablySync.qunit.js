@@ -703,4 +703,23 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 			StashedControlSupport.mixInto(XMLView);
 		});
 	});
+
+	QUnit.module("Mixed scenario: Sync XMLView, Async unstash", {});
+
+	QUnit.test("View creation", async function(assert) {
+		const oView = sap.ui.xmlview({viewName: "test.StashedControlSupport_unavoidablySync"});
+
+		// controls are not yet created
+		assert.notOk(oView.byId("text1"), "stashed control 1 is not yet created");
+		assert.notOk(oView.byId("text2"), "stashed control 2 is not yet created");
+
+		await oView.byId("LazyLoadedSubSectionStashed").unstash(true);
+
+		// controls should be available after unstashing
+		assert.equal(oView.byId("text1").getVisible(), true, "stashed control 1 is visible");
+		assert.equal(oView.byId("text1").getProperty("text"), "primary text", "Text for stashed control 1 is correct");
+
+		assert.equal(oView.byId("text2").getVisible(), false, "stashed control 2 is invisible");
+		assert.equal(oView.byId("text2").getProperty("text"), "alternative text", "Text for stashed control 2 is correct");
+	});
 });
