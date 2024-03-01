@@ -4,7 +4,7 @@ sap.ui.define([
 	/** @type sap.ui.core.mvc.Controller */ Controller) {
 	"use strict";
 
-	return Controller.extend("sap.ui.mdc.tableOpaTests.appODataV4Flat.Controller", {
+	return Controller.extend("sap.ui.mdc.table.OpaTests.appODataV4Flat.Controller", {
 		onInit: function() {
 		},
 

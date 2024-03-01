@@ -8,12 +8,12 @@ sap.ui.define([
 	/** @type sap.ui.thirdparty.sinon */ sinon) {
 	"use strict";
 
-	return ManagedObject.extend("sap.ui.mdc.tableOpaTests.mockserver.mockServer", {
+	return ManagedObject.extend("sap.ui.mdc.table.OpaTests.mockserver.mockServer", {
 
 		started: null,
 		init: function() {
 			let mockData, metadata;
-			const sLocalServicePath = sap.ui.require.toUrl("sap/ui/mdc/tableOpaTests/mockserver");
+			const sLocalServicePath = sap.ui.require.toUrl("sap/ui/mdc/table/OpaTests/mockserver");
 
 			this.started = jQuery.get(sLocalServicePath + "/ProductList.json").then(function(data, status, jqXHR) {
 				mockData = data;

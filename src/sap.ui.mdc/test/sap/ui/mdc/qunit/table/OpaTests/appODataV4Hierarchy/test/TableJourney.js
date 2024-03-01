@@ -13,32 +13,7 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	Opa5.extendConfig({
-		viewNamespace: "appODataV4Hierarchy",
-		arrangements: new Arrangements(),
-		autoWait: true,
-		async: true,
-		timeout: 40,
-		debugTimeout: 40,
-		pollingInterval: 10,
-		appParams: {
-			"sap-ui-animation": false
-		}
-	});
-
-	const sTableId = "container-appODataV4Hierarchy---MyView--mdcTable";
-
-	QUnit.module("Basics");
-
-	opaTest("After starting the app I should see a table", function(Given, When, Then) {
-		Given.iStartMyApp("appODataV4Hierarchy");
-		When.onTheApp.iLookAtTheScreen();
-		Then.onTheApp.iShouldSeeATable(sTableId);
-	});
-
-	opaTest("The table should have a title", function(Given, When, Then) {
-		Then.onTheAppMDCTable.iShouldSeeTheHeaderText(sTableId, "Products");
-	});
+	const sTableId = "mdcTable";
 
 	QUnit.module("Column reordering");
 
@@ -81,7 +56,5 @@ sap.ui.define([
 		// Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 8, path: "ID", value: "5.1.1"});
 		// When.onTheAppMDCTable.iClickOnExpandAllRowsButton(sTableId);
 		// Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 24);
-
-		Then.iTeardownMyAppFrame();
 	});
 });

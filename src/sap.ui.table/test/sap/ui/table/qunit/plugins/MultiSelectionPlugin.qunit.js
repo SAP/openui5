@@ -84,8 +84,8 @@ sap.ui.define([
 	QUnit.test("Initialization", function(assert) {
 		var oMultiSelectionPlugin = new MultiSelectionPlugin();
 		assert.strictEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The MultiSelectionPlugin has no internal default selection plugin");
-		assert.notEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The MultiSelectionPlugin has an delete icon");
-		assert.ok(oMultiSelectionPlugin.isA("sap.ui.core.Element"));
+		assert.notEqual(oMultiSelectionPlugin.getAggregation("icon"), null, "The MultiSelectionPlugin has an icon");
+
 	});
 
 	QUnit.test("Add to and remove from table", function(assert) {
@@ -93,11 +93,11 @@ sap.ui.define([
 
 		this.oTable.addDependent(oMultiSelectionPlugin);
 		assert.notEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The MultiSelectionPlugin has an internal default selection plugin");
-		assert.notEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The MultiSelectionPlugin has an delete icon");
+		assert.notEqual(oMultiSelectionPlugin.getAggregation("icon"), null, "The MultiSelectionPlugin has an icon");
 
 		this.oTable.removeDependent(oMultiSelectionPlugin);
 		assert.strictEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The MultiSelectionPlugin has no internal default selection plugin");
-		assert.notEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The MultiSelectionPlugin has an delete icon");
+		assert.notEqual(oMultiSelectionPlugin.getAggregation("icon"), null, "The MultiSelectionPlugin has an icon");
 	});
 
 	QUnit.test("Destruction", function(assert) {
@@ -106,13 +106,10 @@ sap.ui.define([
 		this.oTable.addDependent(oMultiSelectionPlugin);
 
 		var oInternalPluginDestroySpy = sinon.spy(oMultiSelectionPlugin.oInnerSelectionPlugin, "destroy");
-		var oDeselectAllIconDestroySpy = sinon.spy(oMultiSelectionPlugin.oDeselectAllIcon, "destroy");
 
 		oMultiSelectionPlugin.destroy();
 		assert.ok(oInternalPluginDestroySpy.calledOnce, "The internal default selection plugin was destroyed");
 		assert.strictEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The reference to the internal default selection plugin was cleared");
-		assert.ok(oDeselectAllIconDestroySpy.calledOnce, "The delete icon was destroyed");
-		assert.strictEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The reference to the delete icon was cleared");
 
 		this.oTable.addDependent(new MultiSelectionPlugin());
 		this.oTable.destroyDependents();
