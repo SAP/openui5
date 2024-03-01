@@ -298,10 +298,14 @@ sap.ui.define([
 			.setMaxLines(this.getTitleMaxLines())
 			.setWrappingType(this.getWrappingType());
 
+		this._enhanceText(this._getTitle());
+
 		this._getSubtitle()
 			.setText(this.getSubtitle())
 			.setMaxLines(this.getSubtitleMaxLines())
 			.setWrappingType(this.getWrappingType());
+
+		this._enhanceText(this._getSubtitle());
 
 		this._getUnitOfMeasurement().setText(this.getUnitOfMeasurement());
 
@@ -326,6 +330,8 @@ sap.ui.define([
 				.setText(this.getDetails())
 				.setMaxLines(this.getDetailsMaxLines())
 				.setWrappingType(this.getWrappingType());
+
+			this._enhanceText(this._getDetails());
 		}
 
 		this._getNumericIndicators()
@@ -378,6 +384,7 @@ sap.ui.define([
 				wrapping: true,
 				maxLines: this.getTitleMaxLines()
 			});
+
 			this.setAggregation("_title", oControl);
 		}
 
@@ -399,6 +406,7 @@ sap.ui.define([
 				wrapping: true,
 				maxLines: this.getSubtitleMaxLines()
 			});
+
 			this.setAggregation("_subtitle", oControl);
 		}
 

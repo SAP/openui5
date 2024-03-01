@@ -19,7 +19,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var CardPreviewMode = library.CardPreviewMode;
+	const CardPreviewMode = library.CardPreviewMode;
+
+	const CardDataMode = library.CardDataMode;
 
 	/**
 	 * Constructor for a new <code>Component</code> Card Content.
@@ -58,45 +60,79 @@ sap.ui.define([
 		}
 	};
 
+	ComponentContent.prototype.onAfterRendering = function () {
+		if (this._oComponent?.tileSetVisible) {
+			const oCard = this.getCardInstance();
+			const isActive = oCard?._getActualDataMode() === CardDataMode.Active;
+
+			// custom tiles temporary: pass the active/visible state
+			this._oComponent.tileSetVisible(isActive);
+		}
+	};
+
+	ComponentContent.prototype.refreshData = function () {
+		BaseContent.prototype.refreshData.apply(this, arguments);
+
+		if (this._oComponent?.tileRefresh) {
+			// custom tiles temporary: pass refresh data
+			this._oComponent.tileRefresh();
+		}
+	};
+
+	ComponentContent.prototype.exit = function () {
+		BaseContent.prototype.exit.apply(this, arguments);
+		this._oComponent = null;
+	};
+
 	ComponentContent.prototype.applyConfiguration = function () {
-		var oConfiguration = this.getParsedConfiguration();
+		const oCard = this.getCardInstance();
+		const oConfiguration = this.getParsedConfiguration();
 
 		if (!oConfiguration) {
 			return;
 		}
 
-		if (this.getCardInstance().getPreviewMode() === CardPreviewMode.Abstract) {
+		if (oCard.getPreviewMode() === CardPreviewMode.Abstract) {
 			// TODO _updated event is always needed, so that the busy indicator knows when to stop. We should review this for contents which do not have data.
 			this.fireEvent("_actionContentReady");
 			return;
 		}
 
-		var oContainer = new ComponentContainer({
+		const oContainer = new ComponentContainer({
 			manifest: oConfiguration.componentManifest,
 			async: true,
 			settings: {
-				componentData: {
-					"__sapUiIntegration_card": this.getCardInstance()
-				}
+				componentData: this._prepareComponentData()
 			},
-			componentCreated: function () {
+			componentCreated: (oEvent) => {
+				this._oComponent = oEvent.getParameter("component");
+
 				// TODO _updated event is always needed, so that the busy indicator knows when to stop. We should review this for contents which do not have data.
 				this.fireEvent("_actionContentReady");
 				this.fireEvent("_updated");
-			}.bind(this),
-			componentFailed: function () {
-				var oCard = this.getCardInstance();
-
+			},
+			componentFailed: () => {
 				this.fireEvent("_actionContentReady");
 				this.handleError({
 					illustrationType: IllustratedMessageType.ErrorScreen,
 					title: oCard.getTranslatedText("CARD_DATA_LOAD_ERROR"),
 					description: "Card content failed to create component"
 				});
-			}.bind(this)
+			}
 		});
 
 		this.setAggregation("_content", oContainer);
+	};
+
+	ComponentContent.prototype._prepareComponentData = function () {
+		const oCard = this.getCardInstance();
+		const oManifestComponentData = oCard.getManifestEntry("/sap.card/configuration/componentData");
+
+		const oComponentData = oManifestComponentData || {};
+
+		oComponentData["__sapUiIntegration_card"] = oCard;
+
+		return oComponentData;
 	};
 
 	return ComponentContent;

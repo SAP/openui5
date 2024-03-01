@@ -114,7 +114,7 @@ sap.ui.require([
 								success: function(aDynamicDateRanges) {
 									Opa5.assert.ok(aDynamicDateRanges.length === 1, "sap.m.DynamicDateRange found with properties: " + JSON.stringify(oDynamicDateRangeProperties));
 									this.waitFor({
-										controlType: "sap.m.internal.DynamicDateRangeInput",
+										controlType: "sap.m.Input", // DynamicDateRangeInput inherits from Input, but is not defined as own module
 										properties: {
 											value: oDynamicDateRangeProperties.innerControlValue
 										},

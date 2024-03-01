@@ -18,26 +18,13 @@
 			data-sap-ui-async="true"
 			data-sap-ui-compatVersion="edge"
 			data-sap-ui-libs="sap.ui.layout, sap.m"
+			data-sap-ui-onInit="module:local/CSSGridVisualTests"
 			data-sap-ui-resourceroots='{
+				"local": "./",
 				"sap.ui.layout.cssgrid.gridplayground": "./cssgrid/gridplayground"
 			}'
 			data-sap-ui-theme="sap_horizon"
 			>
-		</script>
-		<script>
-			sap.ui.getCore().attachInit(function () {
-				sap.ui.require([
-					"sap/ui/core/ComponentContainer"
-				], function (ComponentContainer) {
-					new ComponentContainer({
-						name: "sap.ui.layout.cssgrid.gridplayground",
-						async: true,
-						settings: {
-							id: "gridplayground"
-						}
-					}).placeAt("content");
-				});
-			});
 		</script>
 	</head>
 

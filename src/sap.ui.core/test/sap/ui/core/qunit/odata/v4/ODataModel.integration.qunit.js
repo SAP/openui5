@@ -21108,11 +21108,11 @@ sap.ui.define([
 	// without children. Hence the binding doesn't trigger a request, but its lock must be released.
 	QUnit.test("ODCB: delayed refresh", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
-			sView = '\
-<FlexBox binding="{/BusinessPartnerList(\'0100000000\')}">\
-	<Text id="company" text="{CompanyName}"/>\
-</FlexBox>\
-<FlexBox binding="{/SalesOrderList}"/>',
+			sView = `
+<FlexBox binding="{/BusinessPartnerList('0100000000')}">
+	<Text id="company" text="{CompanyName}"/>
+</FlexBox>
+<FlexBox binding="{/SalesOrderList('1')}"/>`,
 			that = this;
 
 		this.expectRequest("BusinessPartnerList('0100000000')"
@@ -39770,6 +39770,8 @@ sap.ui.define([
 	// Scenario: Modify a property within a list binding with $$patchWithoutSideEffects, then modify
 	// in a context binding that inherits the parameter
 	// CPOUI5UISERVICESV3-1684
+	//
+	// Refresh of a relative context binding w/ $$ownRequest (JIRA: CPOUI5ODATAV4-2500)
 	QUnit.test("$$patchWithoutSideEffects in list binding and inherited", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
@@ -39832,6 +39834,19 @@ sap.ui.define([
 			that.oView.byId("formNote").getBinding("value").setValue("Note (entered)");
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+					"@odata.etag" : "ETag2",
+					Note : "Note (refreshed)",
+					SalesOrderID : "42"
+				})
+				.expectChange("formNote", "Note (refreshed)");
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getObjectBinding().requestRefresh(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -40159,6 +40174,82 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Modifying a property of a kept-alive element in a list with
+	// $$patchWithoutSideEffects, triggers a side-effects refresh. The PATCH request does change the
+	// ETag of the kept-alive element. The list refresh request does only add unknown properties
+	// to the kept-alive element, but does not take over changed properties. The refresh for the
+	// kept-alive element must do this.
+	// SNOW: DINC0072978
+	QUnit.test("requestSideEffects with modified keep alive element", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{path : '/TEAMS', parameters : {$$patchWithoutSideEffects : true}}">
+	<Input id="name" value="{Name}"/>
+	<Text id="budget" text="{Budget}"/>
+</Table>`;
+
+		this.expectRequest("TEAMS?$select=Budget,Name,Team_Id&$skip=0&$top=100", {
+				value : [{
+					"@odata.etag" : "etag1.0",
+					Team_Id : "TEAM_01",
+					Name : "Team 01",
+					Budget : "0"
+				}]
+			})
+			.expectChange("name", ["Team 01"])
+			.expectChange("budget", ["0"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oBinding = this.oView.byId("table").getBinding("items");
+		const oKeptContext = oBinding.getCurrentContexts()[0];
+		oKeptContext.setKeepAlive(true);
+
+		this.expectChange("name", ["New Team"])
+			.expectRequest({
+				batchNo : 2,
+				headers : {
+					"If-Match" : "etag1.0",
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				url : "TEAMS('TEAM_01')",
+				payload : {Name : "New Team"}
+			}, null, {ETag : "etag1.1"}) // no response required
+			.expectRequest({
+				batchNo : 2,
+				url : "TEAMS?$select=Budget,Name,Team_Id&$filter=Team_Id eq 'TEAM_01'"
+			}, {
+				value : [{
+					"@odata.etag" : "etag1.1",
+					Budget : "42",
+					Name : "New Team",
+					Team_Id : "TEAM_01"
+				}]
+			})
+			.expectRequest({
+				batchNo : 2,
+				url : "TEAMS?$select=Budget,Name,Team_Id&$skip=0&$top=100"
+			}, {
+				value : [{
+					"@odata.etag" : "etag1.1",
+					Budget : "n/a",
+					Name : "n/a",
+					Team_Id : "TEAM_01"
+				}]
+			})
+			.expectChange("budget", ["42"]); // "side effect"
+
+		const aTableRows = this.oView.byId("table").getItems();
+		aTableRows[0].getCells()[0].getBinding("value").setValue("New Team");
+
+		return Promise.all([
+			oBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert)
+		]);
 	});
 
 	//*********************************************************************************************
@@ -55972,6 +56063,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1409
 	//
 	// Add refresh (JIRA: CPOUI5ODATAV4-1382) and side-effects refresh (JIRA: CPOUI5ODATAV4-1384)
+	// and a refresh of a relative binding w/ $$ownRequest (JIRA: CPOUI5ODATAV4-2500)
 	//
 	// Show that a created persisted can stay kept-alive during refresh (JIRA: CPOUI5ODATAV4-1386)
 	[
@@ -56093,14 +56185,6 @@ sap.ui.define([
 						break;
 
 					case "refresh":
-						if (bRelative) {
-							assert.throws(function () {
-								// code under test
-								oBinding.refresh();
-							}, new Error("Refresh on this binding is not supported"));
-						}
-
-						// Note: expect no request for "objectPage" as there's no ODPrB there!
 						that.expectRequest(sTeams + "?$select=Name,Team_Id&$filter=Team_Id eq 'TEAM_A'",
 								oResultA)
 							// Note: GET not yet processed, binding still "empty"
@@ -56108,10 +56192,7 @@ sap.ui.define([
 							.expectRequest(sTeams + "?$select=Name,Team_Id&$skip=0&$top=2", oResult);
 
 						// code under test
-						oPromise = (bRelative
-							? that.oView.byId("objectPage").getObjectBinding()
-							: oBinding
-							).requestRefresh();
+						oPromise = oBinding.requestRefresh();
 						break;
 
 					case "resume":

@@ -22,6 +22,7 @@
 			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card9" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample5.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card21" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample6.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card31" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample7.json" class="sapUiSmallMargin"/>
+			<w:Card design="Transparent" displayVariant="TileStandard" width="176px" height="176px" id="card41" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/contractStatusTile/manifest.json" class="sapUiSmallMargin"/>
 		</Panel>
 		<Panel headerText="Tiles Standard Wide 4x2" class="sapUiSmallMargin">
 			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample1.json" class="sapUiSmallMargin"/>

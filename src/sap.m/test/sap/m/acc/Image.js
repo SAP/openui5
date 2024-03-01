@@ -62,7 +62,6 @@ sap.ui.define([
 
 	new MImage({
 		src: "../images/SAPLogo.jpg",
-		alt: "test image",
 		width: "36px",
 		height: "46px",
 		mode: ImageMode.Background,

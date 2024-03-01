@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/f/ProductSwitch",
 	"sap/f/ProductSwitchItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/Page"
-], function(App, ProductSwitch, ProductSwitchItem, JSONModel, Page) {
+	"sap/m/Page",
+	"sap/m/MessageToast"
+], function(App, ProductSwitch, ProductSwitchItem, JSONModel, Page, MessageToast) {
 	"use strict";
 
 	var oModel = new JSONModel();
@@ -87,11 +88,16 @@ sap.ui.define([
 		target: "{target}"
 	});
 
+	function fnChange (oEvent) {
+		MessageToast.show("Change event was fired from " + oEvent.getParameter("itemPressed").getId());
+	}
+
 	var productSwitch = new ProductSwitch("productSwitch", {
 		items: {
 			path: "/items",
 			template: oItemTemplate
-		}
+		},
+		change: fnChange
 	});
 
 	var oPage = new Page("page", {

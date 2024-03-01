@@ -2027,7 +2027,7 @@ sap.ui.define([
 		this.destroyAggregation("_content");
 		this._ariaText.setText(sAriaText);
 
-		if (!oContentManifest || this.isTileDisplayVariant()) {
+		if (this._shouldIgnoreContent()) {
 			this.fireEvent("_contentReady");
 			return;
 		}
@@ -2070,6 +2070,33 @@ sap.ui.define([
 		return aTileVariants.indexOf(this.getDisplayVariant()) > -1;
 	};
 
+	/**
+	 * Checks if this is a Component Card. Manifest must be loaded for that check.
+	 * @private
+	 * @returns {boolean} True if this is a Component Card.
+	 */
+	Card.prototype._isComponentCard = function () {
+		const sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE);
+
+		return sCardType?.toLowerCase() === "component";
+	};
+
+	/**
+	 * Checks if the content section should be ignored.
+	 * @private
+	 * @returns {boolean} True if the content section should be ignored.
+	 */
+	Card.prototype._shouldIgnoreContent = function () {
+		if (this._isComponentCard()) {
+			return false;
+		}
+
+		const bIsTile = this.isTileDisplayVariant();
+		const bHasNoContent = !this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
+
+		return bIsTile || bHasNoContent;
+	};
+
 	Card.prototype.createHeader = function () {
 		var oManifestHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER),
 			oHeaderFactory = new HeaderFactory(this);
@@ -2101,7 +2128,7 @@ sap.ui.define([
 
 	Card.prototype.getContentManifest = function () {
 		var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE),
-			bIsComponent = sCardType && sCardType.toLowerCase() === "component",
+			bIsComponent = this._isComponentCard(),
 			oContentManifest = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
 			bHasContent = !!oContentManifest;
 
@@ -2160,8 +2187,6 @@ sap.ui.define([
 	 */
 	Card.prototype._handleError = function (mErrorInfo) {
 		var sLogMessage = mErrorInfo.requestErrorParams ? mErrorInfo.requestErrorParams.message : mErrorInfo.title,
-			oContentSection = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-			bIsComponentCard = this._oCardManifest.get(MANIFEST_PATHS.TYPE) === "Component",
 			oContent = this.getCardContent(),
 			mMessageSettings;
 
@@ -2174,7 +2199,7 @@ sap.ui.define([
 			mMessageSettings = ErrorHandler.configureErrorInfo(mErrorInfo, this);
 		}
 
-		if (!this.isTileDisplayVariant() && (oContentSection || bIsComponentCard)) {
+		if (!this._shouldIgnoreContent()) {
 			if (oContent && oContent.isA("sap.ui.integration.cards.BaseContent")) {
 				this.showBlockingMessage(mMessageSettings);
 			} else { // case where error ocurred during content creation

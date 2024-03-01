@@ -51,6 +51,8 @@ sap.ui.define(function () {
 				}
 			},
 
+			"cards/util/addTooltipIfTruncated": {},
+
 			"DynamicPage": {
 				coverage: {
 					only: ["sap/f/DynamicPage"]

@@ -3,6 +3,12 @@
 describe("sap.m.SelectDialog", function () {
 	"use strict";
 
+	function closeDialog(sId) {
+		browser.executeScript(function (sId) {
+			var Element = sap.ui.require("sap/ui/core/Element");
+			Element.getElementById(sId).close();
+		}, sId);
+	}
 	it("Should load test page", function () {
 		element(by.id("page-title")).click();
 		expect(takeScreenshot()).toLookAs("initial");
@@ -11,26 +17,26 @@ describe("sap.m.SelectDialog", function () {
 	it("Should open SelectDialog with Dialog Binding & List Binding & width set to 30rem", function () {
 		element(by.id("Button2")).click();
 		expect(takeScreenshot(element(by.id("SelectDialog2-dialog")))).toLookAs("select-dialog-1");
-		browser.executeScript("sap.ui.getCore().byId('SelectDialog2-dialog').close();");
+		closeDialog("SelectDialog2-dialog");
 	});
 
 	it("Should open SelectDialog with already initialized binding", function () {
 		element(by.id("Button3")).click();
 		element(by.id("SelectDialog3-dialog-title")).click();
 		expect(takeScreenshot(element(by.id("SelectDialog3-dialog")))).toLookAs("select-dialog-2");
-		browser.executeScript("sap.ui.getCore().byId('SelectDialog3-dialog').close();");
+		closeDialog("SelectDialog3-dialog");
 	});
 
 	it("Should open SelectDialog with web service and binding before opening the dialog", function () {
 		element(by.id("Button4")).click();
 		expect(takeScreenshot(element(by.id("SelectDialog4-dialog")))).toLookAs("select-dialog-3");
-		browser.executeScript("sap.ui.getCore().byId('SelectDialog4-dialog').close();");
+		closeDialog("SelectDialog4-dialog");
 	});
 
 	it("Should open SelectDialog with web service pre-filtered by \"id\" and binding before opening the dialog", function () {
 		element(by.id("Button4a")).click();
 		expect(takeScreenshot(element(by.id("SelectDialog4a-dialog")))).toLookAs("select-dialog-4");
-		browser.executeScript("sap.ui.getCore().byId('SelectDialog4a-dialog').close();");
+		closeDialog("SelectDialog4a-dialog");
 	});
 
 	it("Open SelectDialog with late binding in MultiSelect prefiltered by \"ad\" mode with 1000px width", function () {
@@ -67,7 +73,11 @@ describe("sap.m.SelectDialog", function () {
 		element(by.id("Button12")).click();
 		//fake an image to have enough time to render the dialog items and make the actual one
 		expect(takeScreenshot(element(by.id("SelectDialog12-dialog"))));
-		browser.executeScript("sap.ui.getCore().byId('SelectDialog12').getItems()[sap.ui.getCore().byId('SelectDialog12').getItems().length - 1].getDomRef().scrollIntoView();");
+
+		browser.executeScript(function () {
+			var Element = sap.ui.require("sap/ui/core/Element");
+			Element.getElementById("SelectDialog12").getItems()[Element.getElementById('SelectDialog12').getItems().length - 1].getDomRef().scrollIntoView();
+		});
 		expect(takeScreenshot(element(by.id("SelectDialog12-dialog")))).toLookAs("sticky-info-toolbar");
 		element(by.id("SelectDialog12-ok")).click();
 	});

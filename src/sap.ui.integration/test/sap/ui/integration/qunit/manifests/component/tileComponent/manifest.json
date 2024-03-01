@@ -1,0 +1,29 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "test.manifest.component.tileComponent",
+		"type": "card"
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "test.manifest.component.tileComponent.View",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		}
+	},
+	"sap.card": {
+		"type": "Component",
+		"configuration": {
+			"componentData": {
+				"properties": {
+					"abc": "321"
+				}
+			}
+		},
+		"header": {
+			"title": "Custom Tile Test",
+			"visible": false
+		}
+	}
+}

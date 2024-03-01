@@ -16,13 +16,23 @@ describe("sap.f.GridListVisualTests", function () {
 		}, sKey);
 	}
 
+	function scrollIntoView () {
+		return browser.executeScript(function () {
+			var Element = sap.ui.require("sap/ui/core/Element");
+			Element.getElementById('__component0---app--page').scrollTo(0);
+		});
+	}
+
 	function takePictureOfContent (sPictureTitle) {
 		var oContent = element(by.css(".sapMITBContainerContent"));
 		expect(takeScreenshot(oContent)).toLookAs(sPictureTitle);
 	}
 
 	it("should visualize GridList with basic layout", function () {
-		browser.executeScript("return sap.ui.Device.system.desktop;")
+		browser.executeScript(function() {
+			var Device = sap.ui.require("sap/ui/Device");
+			return Device.system.desktop;
+		})
 			.then(function (response) {
 				bDesktop = response;
 			});
@@ -66,7 +76,7 @@ describe("sap.f.GridListVisualTests", function () {
 	});
 
 	it("should visualize growing GridList with GridBoxLayout and Grouping", function () {
-		browser.executeScript("sap.ui.getCore().byId('__component0---app--page').scrollTo(0)").then(function () {
+		scrollIntoView().then(function () {
 			goToIconTabFilter("GridList4a");
 		}).then(function () {
 			takePictureOfContent("4A_growing");
@@ -90,7 +100,7 @@ describe("sap.f.GridListVisualTests", function () {
 	});
 
 	it("should visualize GridList grouping with auto row height", function () {
-		browser.executeScript("sap.ui.getCore().byId('__component0---app--page').scrollTo(0)").then(function () {
+		scrollIntoView().then(function () {
 			goToIconTabFilter("GridList5");
 		}).then(function () {
 			takePictureOfContent("5_grouping1");

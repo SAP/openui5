@@ -25,7 +25,10 @@ describe("sap.ui.layout.CSSGridVisualTests", function () {
 	}
 
 	function setSize (sId, iWidth) {
-		browser.executeScript("sap.ui.getCore().byId('" + sId + "').setWidth('" + iWidth + "');");
+		browser.executeScript(function(sId, iWidth) {
+			var Element = sap.ui.require("sap/ui/core/Element");
+			Element.getElementById(sId).setWidth(iWidth);
+		}, sId, iWidth);
 	}
 
 	function scrollIntoView (sId) {
@@ -33,7 +36,10 @@ describe("sap.ui.layout.CSSGridVisualTests", function () {
 	}
 
 	function expandPanel (sId) {
-		browser.executeScript("sap.ui.getCore().byId('" + sId + "').setExpanded(true);");
+		browser.executeScript(function(sId) {
+			var Element = sap.ui.require("sap/ui/core/Element");
+			Element.getElementById(sId).setExpanded(true);
+		}, sId);
 	}
 
 	function takeAllSizePictures(sViewPrefix, sGridId, sPanelId, sPictureTitle) {
@@ -46,42 +52,49 @@ describe("sap.ui.layout.CSSGridVisualTests", function () {
 
 		expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_grid_XL_" + sPictureTitle);
 
-		browser.executeScript(
-			"return sap.ui.Device.system.desktop;")
-			.then(function (bDesktop) {
-				if (bDesktop) {
-					setSize(sFullPanelId, mSizes.L);
-					expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_grid_L_" + sPictureTitle);
+		browser.executeScript(function() {
+			var Device = sap.ui.require("sap/ui/Device");
+			return Device.system.desktop;
+		})
+		.then(function (bDesktop) {
+			if (bDesktop) {
+				setSize(sFullPanelId, mSizes.L);
+				expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_grid_L_" + sPictureTitle);
 
-					setSize(sFullPanelId, mSizes.M);
-					expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_grid_M_" + sPictureTitle);
+				setSize(sFullPanelId, mSizes.M);
+				expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_grid_M_" + sPictureTitle);
 
-					setSize(sFullPanelId, mSizes.S);
-					expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_grid_S_" + sPictureTitle);
-				}
+				setSize(sFullPanelId, mSizes.S);
+				expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_grid_S_" + sPictureTitle);
+			}
 		});
 
 		// Checking containerQuery property of GridResponsiveLayout
 		if (sPanelId == "breakContainer") {
 			setSize(sFullPanelId, "100%");
 
-			browser.executeScript("sap.ui.getCore().byId('" + sFullGridId + "').getCustomLayout().setContainerQuery(false);");
+			browser.executeScript(function(sId) {
+				var Element = sap.ui.require("sap/ui/core/Element");
+				Element.getElementById(sId).getCustomLayout().setContainerQuery(false);
+			}, sFullGridId);
 
 			expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_containerQuery_grid_XL_" + sPictureTitle);
 
-			browser.executeScript(
-				"return sap.ui.Device.system.desktop;")
-				.then(function (bDesktop) {
-					if (bDesktop) {
-						setSize(sFullPanelId, mSizes.L);
-						expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_containerQuery_grid_L_" + sPictureTitle);
+			browser.executeScript(function() {
+				var Device = sap.ui.require("sap/ui/Device");
+				return Device.system.desktop;
+			})
+			.then(function (bDesktop) {
+				if (bDesktop) {
+					setSize(sFullPanelId, mSizes.L);
+					expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_containerQuery_grid_L_" + sPictureTitle);
 
-						setSize(sFullPanelId, mSizes.M);
-						expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_containerQuery_grid_M_" + sPictureTitle);
+					setSize(sFullPanelId, mSizes.M);
+					expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_containerQuery_grid_M_" + sPictureTitle);
 
-						setSize(sFullPanelId, mSizes.S);
-						expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_containerQuery_grid_S_" + sPictureTitle);
-					}
+					setSize(sFullPanelId, mSizes.S);
+					expect(takeScreenshot(oGrid)).toLookAs(iPictureIndex++ + "_containerQuery_grid_S_" + sPictureTitle);
+				}
 			});
 		}
 	}

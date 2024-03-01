@@ -88,10 +88,10 @@ sap.ui.define(function() {
 				}
 			},
 
+			/* Commented out until unstable voter issue are fixed.
 			TooltipBase: {
 				title: "sap.ui.core.TooltipBase"
-			},
-
+			},*/
 			"util/SelectionModel": {
 				title: "sap.ui.core.SelectionModel"
 			}

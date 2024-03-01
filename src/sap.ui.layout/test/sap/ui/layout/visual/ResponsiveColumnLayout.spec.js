@@ -10,7 +10,11 @@ describe("sap.ui.layout.ResponsiveColumnLayout", function () {
 	});
 
 	it("should visualize CSSGrid with ResponsiveColumnLayout after resizing", function () {
-		browser.executeScript("sap.ui.getCore().byId('panelContainer').setWidth('1000px');");
+
+		browser.executeScript(function () {
+			var Element = sap.ui.require("sap/ui/core/Element");
+			Element.getElementById("panelContainer").setWidth("1000px");
+		});
 		expect(takeScreenshot()).toLookAs("1_ResponsiveColumnLayoutResized");
 	});
 });

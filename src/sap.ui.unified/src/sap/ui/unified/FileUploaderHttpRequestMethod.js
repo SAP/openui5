@@ -3,7 +3,7 @@
  */
 
 // Provides type sap.ui.unified.FileUploaderHttpRequestMethod
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 	/**
@@ -29,6 +29,8 @@ sap.ui.define([], function() {
 		Put : "PUT"
 
 	};
+
+	DataType.registerEnum("sap.ui.unified.FileUploaderHttpRequestMethod", FileUploaderHttpRequestMethod);
 
 	return FileUploaderHttpRequestMethod;
 

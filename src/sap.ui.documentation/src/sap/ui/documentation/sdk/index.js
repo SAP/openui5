@@ -23,6 +23,14 @@
         }
     };
 
+    const loadComponentModule = function(sCompName) {
+        return new Promise((resolve) => {
+            const componentModule =
+                `${sCompName.replace(/\./g, "/")}/Component`;
+            sap.ui.require([componentModule], resolve, resolve);
+        });
+    };
+
     window.onInit = function() {
         postMessageToOrigin({
             type: "LOAD"
@@ -84,7 +92,7 @@
                     loadInfo(),
                     Library.load("sap.ui.fl"),
                     Library.load("sap.ui.rta")
-                ]).then(function(){
+                ]).then(async function(){
 
                     Log.info("Samples paths added successfully");
                     var sCompId = 'sampleComp-' + sSampleId;
@@ -114,6 +122,9 @@
                             }
                         });
                     });
+
+                    // preprocessing: load Component.js before the factory call to prevent 404s to the "Component-preload.js" (does not exist in demokit samples)
+                    await loadComponentModule(sCompName);
 
                     Component.create({
                         id: sCompId,

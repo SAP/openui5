@@ -6,8 +6,10 @@ describe("sap.ui.layout.ResponsiveSplitter", function () {
 	var bDesktop = false;
 
 	it("should load test page", function () {
-		browser.executeScript(
-			"return sap.ui.Device.system.desktop;")
+		browser.executeScript(function() {
+			var Device = sap.ui.require("sap/ui/Device");
+			return Device.system.desktop;
+		})
 		.then(function (response) {
 			bDesktop = response;
 		});
@@ -31,7 +33,11 @@ describe("sap.ui.layout.ResponsiveSplitter", function () {
 
 	it("should visualize paginator", function () {
 		if (bDesktop) {
-			browser.executeScript("sap.ui.getCore().byId('responsiveSplitter').setWidth('500px');");
+			browser.executeScript(function() {
+				var Element = sap.ui.require("sap/ui/core/Element");
+				Element.getElementById("responsiveSplitter").setWidth("500px");
+			});
+
 			expect(takeScreenshot()).toLookAs("3_responsivesplitter_with_paginator");
 		}
 	});

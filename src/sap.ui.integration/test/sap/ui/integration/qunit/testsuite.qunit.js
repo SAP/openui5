@@ -53,6 +53,7 @@ sap.ui.define([
 				]
 			},
 
+			"CardAsTile": { },
 			"CardCleanup": { },
 			"CardPagination": { },
 
