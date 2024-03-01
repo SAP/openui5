@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/base/util/each",
 	"sap/base/util/restricted/_debounce",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"sap/ui/integration/util/Utils"
 ], function (
 	Localization,
 	BaseField,
@@ -35,7 +36,8 @@ sap.ui.define([
 	VBox,
 	each,
 	_debounce,
-	deepClone
+	deepClone,
+	Utils
 ) {
 	"use strict";
 	var REGEXP_PARAMETERS = /parameters\.([^\}\}]+)/g;
@@ -234,7 +236,7 @@ sap.ui.define([
 							//add current change into translation texts
 							var oControl = oEvent.getSource();
 							var sValue = oControl.getValue();
-							var sLanguage =  Localization.getLanguage().replaceAll('_', '-');
+							var sLanguage = Utils._language;
 							oControl.getParent().setTranslationValueInTexts(sLanguage, oConfig.manifestpath, sValue);
 						}
 					}
@@ -529,7 +531,7 @@ sap.ui.define([
 				}
 			}
 			translatedValue.status = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED");
-			if (translatedValue.key === oResourceBundle.sLocale.replaceAll('_', '-')) {
+			if (translatedValue.key === Utils._language) {
 				translatedValue.editable = false;
 			}
 		});
@@ -546,7 +548,7 @@ sap.ui.define([
 					translatedValue.value = oField.getTranslationValueInTexts(translatedValue.key, oConfig.manifestpath);
 					translatedValue.status = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_UPDATED");
 				}
-				if (translatedValue.key === oResourceBundle.sLocale.replaceAll('_', '-')) {
+				if (translatedValue.key === Utils._language) {
 					translatedValue.value = oControl.getValue();
 					oTranslatedValues.currentLanguage = translatedValue;
 				} else {

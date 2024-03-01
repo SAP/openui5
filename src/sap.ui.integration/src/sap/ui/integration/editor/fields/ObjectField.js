@@ -484,7 +484,7 @@ sap.ui.define([
 											sTranslationKeyInCellValue = that.getTranslationKey(oValue);
 										if (oSettings.translatable || sTranslationKeyInCellValue) {
 											if (oBindingContext && oBindingContext.getObject() && oBindingContext.getObject()._dt) {
-												oTranslationValue = that.getTranslationValueInTexts(oResourceBundle.sLocale.replaceAll('_', '-'), oBindingContext.getObject()._dt._uuid, oSettings.property);
+												oTranslationValue = that.getTranslationValueInTexts(Utils._language, oBindingContext.getObject()._dt._uuid, oSettings.property);
 												if (oTranslationValue) {
 													return oTranslationValue;
 												}
@@ -1727,7 +1727,7 @@ sap.ui.define([
 					oTempTranslatedValue.originValue = oTempTranslatedValue.value;
 				}
 			}
-			if (oTempTranslatedValue.key === oResourceBundle.sLocale.replaceAll('_', '-')) {
+			if (oTempTranslatedValue.key === Utils._language) {
 				oTempTranslatedValue.description += " (" + oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_CURRENTLANGUAGE") + ")";
 				aTempTranslatedLanguages.unshift(oTempTranslatedValue);
 			} else {
@@ -1760,7 +1760,6 @@ sap.ui.define([
 		var that = this;
 		var sParameterId = that.getParameterId();
 		var oResourceBundle = that.getResourceBundle();
-		var sCurrentLanugae = oResourceBundle.sLocale.replaceAll('_', '-');
 		var sIdPrefix = bIsInTranslationPopover ? sParameterId + "_control_translation_popover" : sParameterId + "_control_objectdetails_popover_translation_page";
 		var oSaveTranslationButton = new Button(sIdPrefix + "_save_btn", {
 			type: "Emphasized",
@@ -1786,7 +1785,7 @@ sap.ui.define([
 				if (aUpdatedLanguages.length > 0) {
 					that._oUpdatedTranslations = that._oUpdatedTranslations || {};
 					that._oUpdatedTranslations[sTranslationKey] = aUpdatedLanguages;
-					if (aUpdatedLanguages.includes(sCurrentLanugae)) {
+					if (aUpdatedLanguages.includes(Utils._language)) {
 						bUpdateDependentFieldsAndPreview = true;
 					}
 				}

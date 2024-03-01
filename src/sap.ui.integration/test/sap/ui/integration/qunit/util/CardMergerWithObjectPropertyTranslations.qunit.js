@@ -139,7 +139,7 @@ sap.ui.define([
 		":errors": false
 	};
 	var _oContentChangeBase = {
-		":layer": 0,
+		":layer": 5,
 		":errors": false
 	};
 	var _sManifestPath = "/sap.card/configuration/parameters/object/value";

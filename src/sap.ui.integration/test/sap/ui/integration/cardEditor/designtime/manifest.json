@@ -58,6 +58,9 @@
 				"cardTitle": {
 					"value": "Card Title Default"
 				},
+				"stringWithVisualizationFragment": {
+					"value": "StringValue in visualization"
+				},
 				"string": {
 					"value": "StringValue"
 				},
