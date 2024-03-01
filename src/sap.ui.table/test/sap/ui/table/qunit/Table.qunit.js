@@ -103,8 +103,6 @@ sap.ui.define([
 
 	var SortOrder = CoreLibrary.SortOrder;
 	var SelectionMode = library.SelectionMode;
-	var VisibleRowCountMode = library.VisibleRowCountMode;
-	var NavigationMode = library.NavigationMode;
 	var SharedDomRef = library.SharedDomRef;
 	var ToolbarDesign = MLibrary.ToolbarDesign;
 	var ToolbarStyle = MLibrary.ToolbarStyle;
@@ -489,7 +487,7 @@ sap.ui.define([
 		oTable.setVisibleRowCount(Infinity);
 		assert.ok(oTable.getVisibleRowCount() !== Infinity, "visibleRowCount cannot be Inifinity, this must have been ignored");
 		assert.equal(oTable.getVisibleRowCount(), 8, "Visisble Row Count is still 8");
-		oTable.setVisibleRowCountMode(VisibleRowCountMode.Auto);
+		oTable.setVisibleRowCountMode("Auto");
 		assert.equal(fnError.callCount, 0, "Error was not logged so far");
 		oTable.setVisibleRowCount(15);
 		assert.ok(oTable.getVisibleRowCount() !== 15,
@@ -1359,6 +1357,9 @@ sap.ui.define([
 		assert.ok(oColumn.getMenu() === oCustomMenu, "Custom menu equals set column menu");
 	});
 
+	/**
+	 * @deprecated As of version 1.117
+	 */
 	QUnit.module("Column filtering", {
 		beforeEach: function() {
 			createTable({
@@ -1403,10 +1404,13 @@ sap.ui.define([
 		oColumn._openHeaderMenu(oColumn.getDomRef());
 	});
 
+	/**
+	 * @deprecated As of version 1.38
+	 */
 	QUnit.test("After initialization", function(assert) {
-		assert.equal(oTable.getNavigationMode(), NavigationMode.Scrollbar, "NavigationMode defaulted to Scrollbar");
-		oTable.setNavigationMode(NavigationMode.Paginator);
-		assert.equal(oTable.getNavigationMode(), NavigationMode.Scrollbar,
+		assert.equal(oTable.getNavigationMode(), "Scrollbar", "NavigationMode defaulted to Scrollbar");
+		oTable.setNavigationMode("Paginator");
+		assert.equal(oTable.getNavigationMode(), "Scrollbar",
 			"NavigationMode defaulted to Scrollbar after explicitly setting it to Paginator");
 	});
 
@@ -4356,7 +4360,7 @@ sap.ui.define([
 	 * @deprecated As of version 1.119
 	 */
 	QUnit.test("Table Resize", function(assert) {
-		oTable.setVisibleRowCountMode(VisibleRowCountMode.Auto);
+		oTable.setVisibleRowCountMode("Auto");
 		oCore.applyChanges();
 
 		var done = assert.async();
