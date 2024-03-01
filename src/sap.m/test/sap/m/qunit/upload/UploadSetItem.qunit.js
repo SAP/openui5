@@ -529,6 +529,14 @@ sap.ui.define([
 		assert.strictEqual(oItem._getFileNameEdit().getProperty("maxLength"), 0, "Input field maxLength is 0");
 	});
 
+	QUnit.test("UploadSet Items contains href link", function (assert) {
+		const aItems = this.oUploadSet.getItems();
+
+		aItems.forEach((oItem) => {
+			assert.equal(oItem._getFileNameLink().getHref(), oItem.getUrl(), "UploadSet Item conatins href link");
+		});
+	});
+
 	QUnit.module("UploadSetItem Accessibility Tests", {
 		beforeEach: function () {
 			this.fnSpy = this.spy(Element.prototype, "setTooltip");
@@ -559,6 +567,15 @@ sap.ui.define([
 		var oItem = this.oUploadSet.getItems()[0];
 		oItem._oListItem.focus();
 		assert.ok(oItem._oListItem.getDomRef().getAttribute("aria-labelledby"), "The description is being read out");
+	});
+
+	QUnit.test("Uploadset items href link read out", function (assert) {
+		//Assert
+		var aItems = this.oUploadSet.getItems();
+		aItems.forEach((oItem) => {
+			oItem._oListItem.focus();
+			assert.ok(oItem._getFileNameLink().getDomRef().getAttribute("href"), "The href link is being read out");
+		});
 	});
 
 	QUnit.module("UploadSetItems now accespts markersAsStatus aggregation", {
