@@ -350,7 +350,7 @@
 						var oCode = mSamples[oSelect.getSelectedKey() || Object.keys(mSamples)[0]].code;
 						var oCodeSample = document.getElementById("codesample");
 						oCodeSample.innerHTML = JSON.stringify(oCode, null, "\t");
-						window.hljs.highlightBlock(oCodeSample);
+						window.hljs.highlightElement(oCodeSample);
 					}
 					oSelect._showSampleCode();
 					oSelect.placeAt("sampleselect");
