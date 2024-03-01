@@ -512,4 +512,29 @@ sap.ui.define([
 		assert.strictEqual(this.oCard.getCardHeader().getWrappingType(), WrappingType.Hyphenated, "Card Numeric Header has wrappingType: Hyphenated.");
 	});
 
+	QUnit.test("Numeric Header empty 'details' text given as object", async function (assert) {
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.headerHyphenation"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"title": "Title",
+					"details": {
+						"text": ""
+					}
+				}
+			}
+		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(this.oCard.getCardHeader().getDetails(), "", "Target 'details' property is empty string.");
+		assert.notOk(this.oCard.getCardHeader().getDomRef().querySelector(".sapFCardHeaderDetails"), "Details are not rendered.");
+	});
+
 });
