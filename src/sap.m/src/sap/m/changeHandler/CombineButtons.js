@@ -226,15 +226,11 @@ sap.ui.define([
 			})
 			.then(function(oCreatedMenu){
 				oMenu = oCreatedMenu;
-				return oModifier.attachEvent(
-					oMenu,
+				oCreatedMenu.attachEvent(
 					"itemSelected",
 					"sap.m.changeHandler.CombineButtons.pressHandler",
-					null,
 					CombineButtons.pressHandler
 				);
-			})
-			.then(function(){
 				return fnHandleMenuItems(
 					aButtons,
 					oModifier,
