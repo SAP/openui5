@@ -38,7 +38,10 @@
 				// {"multiline": true} doesn't match our style
 				"array-bracket-newline": ["error", "consistent"],
 				"array-bracket-spacing": "error",
+				"block-scoped-var": "error", // override "warn"
 				"block-spacing": "error",
+				"camelcase": "error", // override "warn"
+				"class-methods-use-this": "error",
 				"comma-spacing": "error",
 				"comma-style": ["error", "last"],
 				"computed-property-spacing": "error",
@@ -48,12 +51,19 @@
 				"jsx-quotes": "error", // let's see...
 				"key-spacing": ["error", {"beforeColon": true}],
 				"lines-between-class-members": "error",
+				"max-classes-per-file": "error",
+				"new-cap": "error", // override "warn"
+				"no-await-in-loop": "error",
 				"no-else-return": "error",
 				"no-lonely-if": "error", // override "warn"
 				"no-multiple-empty-lines": ["error", {"max": 1}],
 				"no-multi-spaces": "error",
+				"no-new": "error", // override "warn"
+				"no-redeclare": "error", // override "warn"
 				"no-tabs": ["error", {"allowIndentationTabs": true}],
 				"no-unneeded-ternary": ["error", {"defaultAssignment": false}],
+				"no-unused-expressions": "error", // override "warn"
+				"no-use-before-define": "error", // override "warn"
 				"no-whitespace-before-property": "error",
 				"nonblock-statement-body-position": "error", // @see "curly": ["error", "all"]
 				// "multiline" doesn't match our style
@@ -70,10 +80,13 @@
 				],
 				"quote-props": ["error", "as-needed", {"numbers": true}],
 				"quotes": ["error", "double", {"avoidEscape": true}],
+				"semi-spacing": "error", // override "warn"
+				"sort-imports": "error",
 				"space-before-blocks": "error",
 				"space-before-function-paren": ["error", {"named": "never"}],
 				"space-in-parens": "error",
-				"switch-colon-spacing": "error"
+				"switch-colon-spacing": "error",
+				"template-curly-spacing": "error"
 
 				// "array-element-newline": "off", // "consistent" doesn't match our style
 				// "capitalized-comments": "off", // cannot treat line & block comments differently

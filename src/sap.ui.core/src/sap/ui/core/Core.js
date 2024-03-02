@@ -1165,36 +1165,6 @@ sap.ui.define([
 			_oEventProvider.fireEvent(Core.M_EVENTS.ThemeScopingChanged, BaseEvent.getParameters(oEvent));
 		});
 
-		/**
-		 * Register a listener for the {@link #event:localizationChanged localizationChanged} event.
-		 *
-		 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
-		 * if specified, otherwise it will be bound to a dummy event provider object.
-		 *
-		 * @param {function} fnFunction Callback to be called when the event occurs
-		 * @param {object} [oListener] Context object to call the function on
-		 * @public
-		 * @deprecated since 1.118. Please use {@link module:sap/base/i18n/Localization.attachChange Localization.attachChange} instead.
-		 */
-		Core.prototype.attachLocalizationChanged = function(fnFunction, oListener) {
-			_oEventProvider.attachEvent(Core.M_EVENTS.LocalizationChanged, fnFunction, oListener);
-		};
-
-		/**
-		 * Unregister a listener from the {@link #event:localizationChanged localizationChanged} event.
-		 *
-		 * The listener will only be unregistered if the same function/context combination
-		 * is given as in the call to <code>attachLocalizationListener</code>.
-		 *
-		 * @param {function} fnFunction Callback to be deregistered
-		 * @param {object} [oListener] Context object on which the given function had to be called
-		 * @public
-		 * @deprecated since 1.118. Please use {@link module:sap/base/i18n/Localization.detachChange Localization.detachChange} instead.
-		 */
-		Core.prototype.detachLocalizationChanged = function(fnFunction, oListener) {
-			_oEventProvider.detachEvent(Core.M_EVENTS.LocalizationChanged, fnFunction, oListener);
-		};
-
 		Library.attachLibraryChanged(function(oEvent) {
 			// notify registered Core listeners
 			_oEventProvider.fireEvent(Core.M_EVENTS.LibraryChanged, oEvent.getParameters());

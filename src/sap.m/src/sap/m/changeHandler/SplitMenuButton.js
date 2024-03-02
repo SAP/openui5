@@ -144,10 +144,8 @@ sap.ui.define([
 							});
 						})
 						.then(function(){
-							return oModifier.attachEvent(
-								oButton,
+							oButton.attachEvent(
 								"press",
-								"sap.m.changeHandler.SplitMenuButton.pressHandler",
 								{
 									selector: oModifier.getSelector(oMenuItem, oAppComponent),
 									appComponentId: oAppComponent.getId(),
@@ -155,8 +153,6 @@ sap.ui.define([
 								},
 								SplitMenuButton.pressHandler
 							);
-						})
-						.then(function(){
 							return oModifier.insertAggregation(oParent, sParentAggregation, oButton, iAggregationIndex + iIndex, oView);
 						});
 				}, Promise.resolve());

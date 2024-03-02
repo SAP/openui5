@@ -1067,7 +1067,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Method not supported
+	 * Method not supported, use {@link #bindList} with <code>mParameters.$$aggregation</code>
+	 * instead.
 	 *
 	 * @param {string} _sPath
 	 * @param {sap.ui.model.Context} [_oContext]

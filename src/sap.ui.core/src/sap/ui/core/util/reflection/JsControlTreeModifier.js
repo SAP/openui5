@@ -568,32 +568,6 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		attachEvent: function (oObject, sEventName, sFunctionPath, vData, fnCallback) {
-			return new Promise(function (fnResolve, fnReject) {
-				if (typeof fnCallback !== "function") {
-					fnReject(new Error("Can't attach event: fnCallback parameter missing or not a function"));
-				}
-				fnResolve(oObject.attachEvent(sEventName, vData, fnCallback));
-			});
-		},
-
-		/**
-		 * @inheritDoc
-		 */
-		detachEvent: function (oObject, sEventName, sFunctionPath, fnCallback) {
-			return new Promise(function (fnResolve, fnReject) {
-				if (typeof fnCallback !== "function") {
-					fnReject(new Error("Can't detach event: fnCallback parameter missing or not a function"));
-				}
-				// EventProvider.detachEvent doesn't accept vData parameter, therefore it might lead
-				// to a situation when an incorrect event listener is detached.
-				fnResolve(oObject.detachEvent(sEventName, fnCallback));
-			});
-		},
-
-		/**
-		 * @inheritDoc
-		 */
 		bindAggregation: function (oControl, sAggregationName, oBindingInfo) {
 			return Promise.resolve(oControl.bindAggregation(sAggregationName, oBindingInfo));
 		},

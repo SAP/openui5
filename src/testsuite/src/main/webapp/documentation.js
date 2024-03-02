@@ -1,9 +1,4 @@
-sap.ui.define([
-	"sap/m/Page",
-	"sap/ui/core/ComponentContainer",
-	"sap/ui/documentation/sdk/controller/util/APIInfo",
-	"sap/ui/documentation/sdk/Component"
-], async (Page, ComponentContainer, APIInfo, SDKComponent) => {
+sap.ui.define([], async () => {
 	"use strict";
 
 	async function fetchHead(url) {
@@ -41,28 +36,35 @@ sap.ui.define([
 	var oUrlParams = new URLSearchParams(document.location.search);
 	config.visibility = oUrlParams.get("visibility") || "external";
 
+	sap.ui.require([
+		"sap/m/Page",
+		"sap/ui/core/ComponentContainer",
+		"sap/ui/documentation/sdk/controller/util/APIInfo",
+		"sap/ui/documentation/sdk/Component"
+	], (Page, ComponentContainer, APIInfo, SDKComponent) => {
+		// apply collected information
+		if ( typeof config.apiInfoRoot === 'string' ) {
+			APIInfo._setRoot(config.apiInfoRoot);
+		} else {
+			window['sap-ui-documentation-hideApiSection'] = true;
+		}
+		if ( typeof config.docuPath === 'string' ) {
+			SDKComponent.getMetadata().getManifest()["sap.ui5"]["config"]["docuPath"] = config.docuPath;
+		} else {
+			window['sap-ui-documentation-hideTopicSection'] = true;
+		}
 
-	if ( typeof config.apiInfoRoot === 'string' ) {
-		APIInfo._setRoot(config.apiInfoRoot);
-	} else {
-		window['sap-ui-documentation-hideApiSection'] = true;
-	}
-	if ( typeof config.docuPath === 'string' ) {
-		SDKComponent.getMetadata().getManifest()["sap.ui5"]["config"]["docuPath"] = config.docuPath;
-	} else {
-		window['sap-ui-documentation-hideTopicSection'] = true;
-	}
-
-	// initialize the UI component
-	new Page({
-		showHeader : false,
-		content : new ComponentContainer({
-			height : "100%",
-			name : "sap.ui.documentation.sdk",
-			manifest: true,
-			settings : {
-				id : "sdk"
-			}
-		})
-	}).placeAt("content");
+		// initialize the UI component
+		new Page({
+			showHeader : false,
+			content : new ComponentContainer({
+				height : "100%",
+				name : "sap.ui.documentation.sdk",
+				manifest: true,
+				settings : {
+					id : "sdk"
+				}
+			})
+		}).placeAt("content");
+	});
 });

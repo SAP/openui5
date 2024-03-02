@@ -850,62 +850,6 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		attachEvent: function(oNode, sEventName, sFunctionPath, vData, fnCallback) {
-			if (typeof fnCallback !== "function") {
-				return Promise.reject(new Error("Can't attach event: fnCallback parameter missing or not a function"));
-			}
-			return XmlTreeModifier.getProperty(oNode, sEventName)
-				.then(function (sValue) {
-					sValue = sValue || "";
-					var aEventHandlers = EventHandlerResolver.parse(sValue);
-					var sEventHandler = sFunctionPath;
-					var aParams = ["$event"];
-
-					if (vData) {
-						aParams.push(JSON.stringify(vData));
-					}
-
-					sEventHandler += "(" + aParams.join(",") + ")";
-
-					if (!aEventHandlers.includes(sEventHandler)) {
-						aEventHandlers.push(sEventHandler);
-					}
-
-					oNode.setAttribute(sEventName, aEventHandlers.join(";"));
-				});
-		},
-
-		/**
-		 * @inheritDoc
-		 */
-		detachEvent: function(oNode, sEventName, sFunctionPath, fnCallback) {
-			if (typeof fnCallback !== "function") {
-				return Promise.reject(new Error("Can't detach event: fnCallback parameter missing or not a function"));
-			}
-			return XmlTreeModifier.getProperty(oNode, sEventName)
-				.then(function (sValue) {
-					sValue = sValue || "";
-					var aEventHandlers = EventHandlerResolver.parse(sValue);
-
-					var iEventHandlerIndex =  aEventHandlers.findIndex(function (sEventHandler) {
-						return sEventHandler.includes(sFunctionPath);
-					});
-
-					if (iEventHandlerIndex > -1) {
-						aEventHandlers.splice(iEventHandlerIndex, 1);
-					}
-
-					if (aEventHandlers.length) {
-						oNode.setAttribute(sEventName, aEventHandlers.join(";"));
-					} else {
-						oNode.removeAttribute(sEventName);
-					}
-				});
-		},
-
-		/**
-		 * @inheritDoc
-		 */
 		bindAggregation: function (oNode, sAggregationName, vBindingInfos, oView) {
 			return Promise.resolve()
 				.then(function () {
