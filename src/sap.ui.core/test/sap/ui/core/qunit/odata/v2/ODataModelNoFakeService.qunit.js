@@ -288,6 +288,40 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[{
+	sUrl : "$metadata",
+	mAllParams : {"f oo" : "qux"}
+}, {
+	sUrl : "$metadata?a%20b=c%20d&e+f=g+h&i j=k l&m?n=o?p&q/r=s/t&u",
+	mAllParams : {"a b" : "c d", "e f" : "g h", "f oo": "qux", "i j" : "k l", "m?n" : "o?p", "q/r" : "s/t", "u" : ""}
+}, {
+	sUrl : "/$metadata?f%20oo=b+ar#bar=baz",
+	mAllParams : {"f oo" : "b ar"}
+}, {
+	sUrl : "https://xyz.com/ServiceUrl/$metadata?foo=b+ar#bar=baz",
+	mAllParams : {"foo" : "b ar", "f oo" : "qux"},
+	sTargetUrl : "https://xyz.com/ServiceUrl/$metadata"
+}].forEach(({sUrl, mAllParams, sTargetUrl}, i) => {
+	QUnit.test("_createMetadataUrl: " + i, function (assert) {
+		const oModel = {
+			mMetadataUrlParams : {"f oo" : "qux"},
+			sServiceUrl : "/ServiceUrl",
+			_addUrlParams : function () {}
+		};
+
+		this.mock(ODataUtils).expects("_createUrlParamsArray").withExactArgs(mAllParams).returns("~aMetadataUrlParams");
+		this.mock(oModel).expects("_addUrlParams")
+			.withExactArgs(sTargetUrl || "/ServiceUrl/$metadata", "~aMetadataUrlParams")
+			.returns("~sUrl");
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype._createMetadataUrl.call(oModel, sUrl), "~sUrl");
+
+		assert.deepEqual(oModel.mMetadataUrlParams, {"f oo" : "qux"});
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("_read: updateAggregatedMessages and bSideEffects are passed to _createRequest",
 			function (assert) {
 		var bCanonicalRequest = "{boolean} bCanonicalRequest",
