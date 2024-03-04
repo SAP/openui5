@@ -81,6 +81,9 @@ sap.ui.define([
 
 				/**
 				 * Indicates if the item is visible.
+				 *
+				 * <b>Note:</b> This property should not be used by applications, if the variant management control is either
+				 * {@link sap.ui.comp.smartvariants.SmartVariantManagement <code>SmartVariantManagement</code>} or {@link sap.ui.fl.variants.VariantManagement <code>VariantManagement</code>}.<br>
 				 */
 				visible: {
 					type: "boolean",
