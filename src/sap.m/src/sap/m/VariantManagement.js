@@ -912,7 +912,7 @@ sap.ui.define([
 	 * Assignes the key of the <i>Standard</i> variant.
 	 *
 	 * @private
-	 * @restricted sap.ui.mdc, sap.ui.comp
+	 * @restricted sap.ui.fl, sap.ui.comp
 	 * @param {string} sValue describing the key of the standard variant
 	 */
 	VariantManagement.prototype.setStandardVariantKey = function(sValue) {
@@ -922,7 +922,7 @@ sap.ui.define([
 	VariantManagement.prototype._getFirstVisibleVariant = function() {
 		var aItems = this._getItems();
 		for (var i = 0; i < aItems.length; i++) {
-			if (aItems[i].getVisible()) {
+			if (!this._isItemDeleted(aItems[i])) {
 				if (this.getSupportFavorites()) {
 					if (aItems[i].getFavorite()) {
 						return aItems[i].getKey();
@@ -2381,7 +2381,7 @@ sap.ui.define([
 			]
 		});
 
-		if (this._getDeletedItems() && this._getDeletedItems().indexOf(oItem.getKey()) > -1) {
+		if (this._isItemDeleted(oItem)) {
 			oListItem.setVisible(false);
 		}
 
@@ -2595,15 +2595,16 @@ sap.ui.define([
 		}
 
 		this.getItems().forEach(function(oItem) {
+			const bDeleted = this._isItemDeleted(oItem);
 
-			if (!oItem.getVisible()) {
+			if (bDeleted) {
 				if (!oVariantInfo.deleted) {
 					oVariantInfo.deleted = [];
 				}
 				oVariantInfo.deleted.push(oItem.getKey());
 			}
 
-			if (oItem.getVisible() && (oItem.getFavorite() !== oItem._getOriginalFavorite())) {
+			if (!bDeleted && (oItem.getFavorite() !== oItem._getOriginalFavorite())) {
 				if (!oVariantInfo.fav) {
 					oVariantInfo.fav = [];
 				}
@@ -2611,7 +2612,7 @@ sap.ui.define([
 				oItem._setOriginalFavorite(oItem.getFavorite());
 			}
 
-			if (oItem.getVisible() && (oItem.getTitle() !== oItem._getOriginalTitle())) {
+			if (!bDeleted && (oItem.getTitle() !== oItem._getOriginalTitle())) {
 				if (!oVariantInfo.renamed) {
 					oVariantInfo.renamed = [];
 				}
@@ -2619,7 +2620,7 @@ sap.ui.define([
 				oItem._setOriginalTitle(oItem.getTitle());
 			}
 
-			if (oItem.getVisible()  && (oItem.getExecuteOnSelect() !== oItem._getOriginalExecuteOnSelect())) {
+			if (!bDeleted && (oItem.getExecuteOnSelect() !== oItem._getOriginalExecuteOnSelect())) {
 				if (!oVariantInfo.exe) {
 					oVariantInfo.exe = [];
 				}
@@ -2627,7 +2628,7 @@ sap.ui.define([
 				oItem._setOriginalExecuteOnSelect(oItem.getExecuteOnSelect());
 			}
 
-			if (oItem.getVisible() && this._hasContextsChanged(oItem)) {
+			if (!bDeleted && this._hasContextsChanged(oItem)) {
 				if (!oVariantInfo.contexts) {
 					oVariantInfo.contexts = [];
 				}
@@ -2660,12 +2661,6 @@ sap.ui.define([
 
 		if (this._getDeletedItems().length > 0) {
 			this._bRebindRequired = true;
-			this._getDeletedItems().forEach(function(sKey) {
-				var oItem = this._getItemByKey(sKey);
-				if (oItem) {
-					oItem.setVisible(false);
-				}
-			}.bind(this));
 		}
 
 		if (this._getRenamedItems().length > 0) {
@@ -2725,13 +2720,21 @@ sap.ui.define([
 		}
 	};
 
+	VariantManagement.prototype._isItemDeleted = function(oItem) {
+		const aItemsDeleted = this._getDeletedItems();
+		if (!oItem || !aItemsDeleted) {
+			return false;
+		}
+		return (aItemsDeleted.indexOf(oItem.getKey()) > -1);
+	};
+
 	VariantManagement.prototype._anyInErrorStateManageTable = function(oManagementTable) {
 		var bInError = false;
 
 		if (oManagementTable) {
-			oManagementTable.getItems().some(function(oItem) {
-				if (oItem.getVisible()) {
-					var oInput = oItem.getCells()[VariantManagement.COLUMN_NAME_IDX];
+			oManagementTable.getItems().some(function(oRow) {
+				if (oRow.getVisible()) {
+					var oInput = oRow.getCells()[VariantManagement.COLUMN_NAME_IDX];
 					if (oInput && oInput.getValueState && (oInput.getValueState() === ValueState.Error)) {
 						bInError = true;
 					}
