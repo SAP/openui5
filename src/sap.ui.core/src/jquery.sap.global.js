@@ -34,22 +34,6 @@ sap.ui.define([
 	jQuery /* , ui5loaderAutoconfig, jquerySapStubs */) {
 	"use strict";
 
-	/**
- 	 * Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
-	 * See also <a href="http://api.jquery.com/jQuery/">jQuery</a> for details.<br/>
-	 * Although these functions appear as static ones, they are meant to be used on jQuery instances.<br/>
-	 * If not stated differently, the functions follow the fluent interface paradigm and return the jQuery instance for chaining of statements.
-	 *
-	 * Example for usage of an instance method:
-	 * <pre>
-	 *   var oRect = jQuery("#myDiv").rect();
-	 *   alert("Top Position: " + oRect.top);
-	 * </pre>
-	 *
-	 * @namespace jQuery
-	 * @public
-	 */
-
 	if ( !jQuery ) {
 		throw new Error("Loading of jQuery failed");
 	}
