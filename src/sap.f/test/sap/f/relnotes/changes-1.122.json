@@ -1,7 +1,12 @@
 {
   "1.122.0": {
-    "date": "February 2024",
+    "date": "March 2024",
     "notes": [
+      {
+        "id": "3a3d40cf130a1bdec5e52d57eb8328c9657f91ae",
+        "type": "FIX",
+        "text": " sap.f.ProductSwitch: Acc sample improved"
+      },
       {
         "id": "4b289703fdfc614d5c0e9d0c26040d4c763348d4",
         "type": "FEATURE",

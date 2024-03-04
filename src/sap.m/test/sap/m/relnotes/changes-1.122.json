@@ -1,7 +1,47 @@
 {
   "1.122.0": {
-    "date": "February 2024",
+    "date": "March 2024",
     "notes": [
+      {
+        "id": "0059352bad01968cb309ad24a0af410cc07e1646",
+        "type": "FIX",
+        "text": " sap.m.IconTabHeader: Close tab popover when the header area is clicked"
+      },
+      {
+        "id": "d902cc0120aaa6337ed103efbfcadc433867cea0",
+        "type": "FIX",
+        "text": " sap.m.Page:  Visual tests ownership added"
+      },
+      {
+        "id": "148c07e6dfd42bf7668e6d69f7275a471a521544",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: always render 6 weeks"
+      },
+      {
+        "id": "9ae9386e7827052b75f1f0e29fdd753f9b61fe5c",
+        "type": "FIX",
+        "text": " sap.m.Image: Acc sample improved"
+      },
+      {
+        "id": "f9e86dae897989107155f96c8a1b764bbf6ae322",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: focus visible in sap.ui.table.Table"
+      },
+      {
+        "id": "5e3df42bf0f085cda018391a6ecfe526f272fabb",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: selectAll button alignment"
+      },
+      {
+        "id": "9593c7963c5f31c06e10b6f560304083d1648c0d",
+        "type": "FIX",
+        "text": " Form: missing spaces in RadioButtonGroup"
+      },
+      {
+        "id": "7dcef696d02b924a246e482c10a64e4f33c012c3",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: There is no error when destroying and adding radio buttons on select"
+      },
       {
         "id": "c99989e301672f948b6b3e0ea624e222ff7dec67",
         "type": "FIX",
