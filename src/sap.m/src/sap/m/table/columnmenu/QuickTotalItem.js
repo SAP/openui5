@@ -52,6 +52,7 @@ sap.ui.define([
 		if (oQuickTotal) {
 			oQuickTotal._updateContent();
 		}
+		return this;
 	};
 
 	return QuickTotalItem;

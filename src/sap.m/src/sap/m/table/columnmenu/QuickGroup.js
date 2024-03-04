@@ -142,8 +142,8 @@ sap.ui.define([
 			oButton.setPressed(oItem.getGrouped());
 		}
 
-		for (var i = aItems.length; i < aContent.length; i++) {
-			aContent[i].destroy();
+		for (var j = aItems.length; j < aContent.length; j++) {
+			aContent[j].destroy();
 		}
 	};
 

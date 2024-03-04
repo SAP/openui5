@@ -62,6 +62,15 @@ sap.ui.define([
 		assert.equal(this.oQuickGroup.getLabel(), sLabel, "QuickGroup label is correct.");
 	});
 
+	QUnit.test("setLabel on QuickGroupItem", function(assert) {
+		var oQuickGroupItem = this.oQuickGroup.getItems()[0];
+		oQuickGroupItem.setLabel("New label");
+		assert.equal(oQuickGroupItem.getLabel(), "New label", "New QuickGroupItem label is correct");
+
+		var oToggleButton = this.oQuickGroup.getDependents()[0];
+		assert.strictEqual(oToggleButton.getText(), oQuickGroupItem.getLabel(), "QuickGroupItem's ToggleButton label is updated correctly");
+	});
+
 	QUnit.test("Content", function(assert) {
 		var aContent = this.oQuickGroup.getContent();
 		assert.ok(aContent, "The quick group has content");
