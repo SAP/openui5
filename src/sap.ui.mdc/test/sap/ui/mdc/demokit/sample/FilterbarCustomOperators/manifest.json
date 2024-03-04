@@ -25,6 +25,7 @@
 					"delegate/JSONFilterBarDelegate.js",
 					"model/metadata/JSONPropertyInfo.js",
 					"view/Mountains.view.xml",
+					"Operators.js",
 					"manifest.json"
 				]
 			}

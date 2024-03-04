@@ -382,8 +382,34 @@ sap.ui.define([
 					});
 				}
 			});
-		}
+		},
 
+		iPressTheAdaptFiltersShowValuesButton: function () {
+			return this.waitFor({
+				controlType: "sap.m.Dialog",
+				matchers: {
+					ancestor: {
+						controlType: "sap.ui.mdc.FilterBar",
+						visible: false
+					}
+				},
+				success:function(aAdaptFiltersPanel) {
+					Opa5.assert.equal(aAdaptFiltersPanel.length, 1, "Adapt Filters Panel found");
+					const sAdaptFiltersResourceBundleButtonText = Utils.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_SHOW_VALUE");
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						properties: {
+							text: sAdaptFiltersResourceBundleButtonText
+						},
+						matchers: new Ancestor(aAdaptFiltersPanel[0]),
+						actions: new Press(),
+						success : function(aBtn) {
+							Opa5.assert.equal(aBtn.length, 1, "Show Values button pressed");
+						}
+					});
+				}
+			});
+		}
     };
 
 	return oActions;
