@@ -70,6 +70,9 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> Set the right selection mode (multiple selection or single selection) as it cannot be determined automatically
 				 * for every case. (For type-ahead and also for multi-value {@link sap.ui.mdc.FilterField FilterField} controls, only single selection from the table might be wanted.)
+				 *
+				 * <b>Note:</b> In phone mode, the popover or dialog might be rendered differently than in desktop mode.
+				 * So here the configuration for column sizes or table sizes might be different. Please configure sizes depending on the used device.
 				 */
 				table: {
 					type: "sap.m.Table",
