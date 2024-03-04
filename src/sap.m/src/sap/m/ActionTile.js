@@ -30,9 +30,10 @@ sap.ui.define([
 	*
 	* @author SAP SE
 	* @version ${version}
-	* @since 1.107.0
 	*
-	* @private
+	* @public
+	* @experimental since 1.122
+	* @since 1.122
 	* @alias sap.m.ActionTile
 	*/
 
