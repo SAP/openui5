@@ -5,57 +5,15 @@
 
 		<script src="../../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-xx-bindingSyntax="complex"
-				data-sap-ui-preload="async"
-				data-sap-ui-compatVersion="edge"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-no-conflict="true"
+				data-sap-ui-on-init="module:dt/Report"
 				data-sap-ui-libs="sap.ui.dt,sap.m"
-				data-sap-ui-resourceroots='{"dt": "./"}'
+				data-sap-ui-resource-roots='{
+					"dt": "./"
+				}'
 				src="../../../../../resources/sap-ui-core.js">
-		</script>
-		<script>
-
-			sap.ui.getCore().attachInit(function () {
-				sap.ui.require([
-					'sap/ui/dt/enablement/report/Table',
-					'sap/ui/dt/enablement/report/Statistic',
-					'sap/ui/dt/enablement/report/LibraryReport',
-					'dt/Page',
-					'dt/Bar',
-					'dt/CustomListItem'
-				], function (
-					Table,
-					Statistic,
-					LibraryReport,
-					Page,
-					Bar,
-					CustomListItem
-				) {
-
-
-					var oLibraryReport = new LibraryReport({
-						libraryName : "sap.m",
-						testData : {
-							"sap.m.Bar" : Bar,
-							"sap.m.Page" : Page,
-							"sap.m.CustomListItem" : CustomListItem
-						}
-					});
-
-					oLibraryReport.run().then(function(oData) {
-						oStatisticReport = new Statistic({
-							data: oData
-						});
-						oStatisticReport.placeAt("content");
-
-						var oReport = new Table({
-							data: oData
-						});
-						oReport.placeAt("content");
-					});
-				});
-		});
-
 		</script>
 	</head>
 	<body class="sapUiBody">
