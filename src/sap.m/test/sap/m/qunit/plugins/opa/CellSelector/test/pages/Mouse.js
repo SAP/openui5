@@ -36,7 +36,7 @@ sap.ui.define([
 	// Emulates a mousemove event
 	function mousemove(oTable, oTarget, oParams) {
 		const oCellSelector = Util.getCellSelector(oTable);
-		const oEvent = Object.assign({ target: oTarget, preventDefault: () => {} }, oParams);
+		const oEvent = Object.assign({ target: oTarget, preventDefault: () => {}, stopImmediatePropagation: () => {} }, oParams);
 		oCellSelector._onmousemove(oEvent);
 	}
 
