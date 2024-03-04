@@ -28,12 +28,13 @@ sap.ui.define([
 			oFilterField.removeOperator(OperatorName.NOTLE);
 			oFilterField.removeOperator(OperatorName.NOTGT);
 			oFilterField.removeOperator(OperatorName.NOTGE);
+			oFilterField.removeOperator(OperatorName.Empty);
 
 			oFilterField.addOperator("CustomDateEmpty");
 
 			// var aDateOperators = FilterOperatorUtil.getOperatorsForType("Date");
 			// var aNewDateOperators = aDateOperators.filter(function(val) {
-			// 	return ["LT", "GT", "NE", "NOTBT", "NOTLT", "NOTLE", "NOTGT", "NOTGE"].indexOf(val) === -1;
+			// 	return ["Empty", "LT", "GT", "NE", "NOTBT", "NOTLT", "NOTLE", "NOTGT", "NOTGE"].indexOf(val) === -1;
 			//   });
 			// aNewDateOperators.push("CustomDateEmpty");
 			// oFilterField.setOperators(aNewDateOperators);

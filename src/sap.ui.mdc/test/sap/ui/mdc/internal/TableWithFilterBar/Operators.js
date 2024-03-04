@@ -249,7 +249,22 @@ sap.ui.define([
 		tokenParse: "^<#tokenText#>$",
 		tokenFormat: "<#tokenText#>",
 		valueTypes: [],
-		group: {id : 0, text: "Single Dates"},
+
+		/*
+		DynamicDateRangeGroups https://sapui5untested.int.sap.eu2.hana.ondemand.com/demokit/?sap-ui-xx-columnmenu=true#/api/sap.m.DynamicDateRangeGroups
+		* 1 - Single Dates
+		* 2 - Date Ranges
+		* 3 - Weeks
+		* 4 - Months
+		* 5 - Quarters
+		* 6 - Years
+		*/
+		// group: undefined, // when group is not specified; default behavior include/exclude group with id 1 and 2 will be created
+		group: {id : 1}, // place operator into existing group 1 'Single Dates'
+		// group: {id : 2, text: "new Group"},  // insert a new group with id 2. existing group 2 will be shifted to 3, 4....
+		// group: {id : 10, text: "new Group at the end"},  // adds a new group with id 10 and text "new Group as the end" to the end
+		// this only works for FilterFields with custom operators when maxConditions=1 and not NONE valueHelp is assigned to the FilterField.
+
 		getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 			var isNullable = false;
 			//TODO Check if the Date type is nullable
@@ -279,6 +294,7 @@ sap.ui.define([
 		tokenFormat: "!(<#tokenText#>)",
 		valueTypes: [],
 		exclude: true,
+		group: {id : 1},
 		getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 			var isNullable = false;
 			if (oType) {
