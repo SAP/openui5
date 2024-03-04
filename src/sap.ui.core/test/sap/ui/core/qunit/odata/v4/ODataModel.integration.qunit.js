@@ -62043,9 +62043,15 @@ make root = ${bMakeRoot}`;
 	// Scenario: Set a context to selected using a property binding to the client-side annotation
 	// "@$ui5.context.isSelected".
 	// JIRA: CPOUI5ODATAV4-1944
-	QUnit.test("Set context selected via annotation & property binding", async function (assert) {
+	//
+	// Select a header context via all three possible ways: setSelected and write to the annotation
+	// via context or property binding. Swap the context of the "selectAll" property binding and
+	// check if change listeners are correctly removed.
+	// JIRA: CPOUI5ODATAV4-2493
+	QUnit.test("Selection on header context and row context", async function (assert) {
 		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
 		const sView = `
+<Input id="selectAll" value="{path: '@$ui5.context.isSelected', targetType: 'any'}"/>
 <Table id="table" items="{/SalesOrderList}">
 	<Text id="id" text="{SalesOrderID}"/>
 	<Input id="selected" value="{path : '@$ui5.context.isSelected', targetType: 'any'}"/>
@@ -62053,12 +62059,12 @@ make root = ${bMakeRoot}`;
 
 		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
 				value : [
-					{SalesOrderID : "1"},
-					{SalesOrderID : "2"}
+					{SalesOrderID : "1"}
 				]
 			})
-			.expectChange("id", ["1", "2"])
-			.expectChange("selected", [undefined, undefined]);
+			.expectChange("selectAll")
+			.expectChange("id", ["1"])
+			.expectChange("selected", [undefined]);
 
 		await this.createView(assert, sView, oModel);
 
@@ -62070,15 +62076,75 @@ make root = ${bMakeRoot}`;
 
 		// code under test
 		oPropertyBinding.setValue(true);
-		checkSelected(assert, oContext, true);
 
+		checkSelected(assert, oContext, true);
 		await this.waitForChanges(assert);
 
 		this.expectChange("selected", [false]);
 
 		// code under test
 		oPropertyBinding.setValue(false);
+
 		checkSelected(assert, oContext, false);
+		await this.waitForChanges(assert);
+
+		const oHeaderContext = this.oView.byId("table").getBinding("items").getHeaderContext();
+		const oSelectAllInput = this.oView.byId("selectAll");
+		oSelectAllInput.setBindingContext(oHeaderContext);
+		const oSelectAllBinding = oSelectAllInput.getBinding("value");
+
+		this.expectChange("selectAll", true);
+
+		// code under test
+		oSelectAllBinding.setValue(true);
+
+		checkSelected(assert, oHeaderContext, true);
+		await this.waitForChanges(assert);
+
+		this.expectChange("selectAll", false);
+
+		// code under test
+		oSelectAllBinding.setValue(false);
+
+		checkSelected(assert, oHeaderContext, false);
+		await this.waitForChanges(assert);
+
+		this.expectChange("selectAll", true);
+
+		// code under test
+		oHeaderContext.setProperty("@$ui5.context.isSelected", true);
+
+		checkSelected(assert, oHeaderContext, true);
+		await this.waitForChanges(assert);
+
+		this.expectChange("selectAll", false);
+
+		// code under test
+		oHeaderContext.setProperty("@$ui5.context.isSelected", false);
+
+		checkSelected(assert, oHeaderContext, false);
+		await this.waitForChanges(assert);
+
+		this.expectChange("selectAll", true);
+
+		// code under test
+		oHeaderContext.setSelected(true);
+
+		checkSelected(assert, oHeaderContext, true);
+		await this.waitForChanges(assert);
+
+		this.expectChange("selectAll", false);
+
+		// code under test
+		oHeaderContext.setSelected(false);
+
+		checkSelected(assert, oHeaderContext, false);
+		await this.waitForChanges(assert);
+
+		oSelectAllInput.setBindingContext(oContext);
+
+		// code under test - change listener is deregistered, no change expected
+		oHeaderContext.setSelected(true);
 
 		await this.waitForChanges(assert);
 	});

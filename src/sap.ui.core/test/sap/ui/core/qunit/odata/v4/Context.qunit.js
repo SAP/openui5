@@ -407,13 +407,28 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("getHeaderContext").withExactArgs().returns(oContext);
 		this.mock(oBinding).expects("fetchValue")
-			.withExactArgs("/foo/$count", "~listener~", "bCached")
+			.withExactArgs("/foo/$count", null, "bCached")
 			.returns(SyncPromise.resolve(Promise.resolve(42)));
 
-		return oContext.fetchValue(sPath, "~listener~", "bCached").then(function (oResult) {
+		return oContext.fetchValue(sPath, null, "bCached").then(function (oResult) {
 			assert.deepEqual(oResult,
 				{"@$ui5.context.isSelected" : "~selected~", $count : 42});
 		});
+	});
+});
+
+	//*********************************************************************************************
+[undefined, "", "/foo"].forEach(function (sPath) {
+	const sTitle = "fetchValue: header context; error case, path=" + JSON.stringify(sPath);
+
+	QUnit.test(sTitle, function (assert) {
+		const oContext = Context.create(null, {
+			getHeaderContext : () => oContext
+		}, "/foo");
+
+		assert.throws(function () {
+			oContext.fetchValue(sPath, "~listener~");
+		}, new Error("Cannot register change listener for header context object"));
 	});
 });
 
@@ -456,7 +471,15 @@ sap.ui.define([
 				.withExactArgs(bAutoExpandSelect ? "/reduced" : "/~", "~listener~", "bCached")
 				.returns(SyncPromise.resolve(Promise.resolve(42)));
 		} else {
+			assert.notOk(oContext.mChangeListeners);
+
 			this.mock(oBinding).expects("fetchValue").never();
+			this.mock(_Helper).expects("addByPath")
+				.withExactArgs(sinon.match.object, "", "~listener~")
+				.callsFake((mChangeListeners) => {
+					assert.strictEqual(mChangeListeners, oContext.mChangeListeners);
+					assert.deepEqual(mChangeListeners, {});
+				});
 		}
 
 		return oContext.fetchValue(sPath, "~listener~", "bCached").then(function (vValue) {
@@ -1561,6 +1584,7 @@ sap.ui.define([
 		}
 		oContext.bKeepAlive = "~bKeepAlive~";
 		oContext.oDeletePromise = "~oDeletePromise~";
+		oContext.mChangeListeners = "~mChangeListeners~";
 		oContext.setNewGeneration();
 		iGeneration = oContext.getGeneration(true);
 
@@ -1585,6 +1609,7 @@ sap.ui.define([
 		assert.strictEqual(oContext.isInactive(), undefined);
 		assert.strictEqual(oContext.isTransient(), undefined);
 		assert.strictEqual(oContext.toString(), "/EMPLOYEES/42[42;destroyed]");
+		assert.notOk("mChangeListeners" in oContext);
 
 		if (bfnOnBeforeDestroy) {
 			assert.ok(bCallbackCalled);
@@ -3064,9 +3089,10 @@ sap.ui.define([
 	QUnit.test("doSetProperty: @$ui5.context.isSelected, group lock=" + bGroupLock, function () {
 		const oBinding = {doSetProperty : mustBeMocked, getResolvedPath : mustBeMocked};
 		const oMetaModel = {fetchUpdateData : mustBeMocked};
-		const oModel = {getMetaModel : () => oMetaModel};
+		const oModel = {getMetaModel : mustBeMocked};
 		const oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')");
 
+		this.mock(oModel).expects("getMetaModel").returns(oMetaModel);
 		this.mock(oContext).expects("isDeleted").twice().withExactArgs().returns(false);
 		this.mock(oContext).expects("setSelected").withExactArgs("~bSelected~");
 		this.mock(oContext).expects("isTransient").never();
@@ -3106,6 +3132,24 @@ sap.ui.define([
 		oContext.doSetProperty("@$ui5.context.isSelected", "~bSelected~", oGroupLock);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("doSetProperty: header context and @$ui5.context.isSelected", function (assert) {
+		const oBinding = {getHeaderContext : mustBeMocked};
+		const oModel = {
+			getMetaModel : function () {}
+		};
+		const oHeaderContext = Context.create(oModel, oBinding, "/ProductList");
+
+		this.mock(oHeaderContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oHeaderContext).expects("setSelected").withExactArgs("~bSelected~");
+		this.mock(oBinding).expects("getHeaderContext").returns(oHeaderContext);
+
+		assert.strictEqual(
+			// code under test
+			oHeaderContext.doSetProperty("@$ui5.context.isSelected", "~bSelected~", null),
+			SyncPromise.resolve());
+	});
 
 	//*********************************************************************************************
 [function (_assert, _oModelMock, _oBinding, _oBindingMock, _fnErrorCallback, _fnPatchSent,
@@ -4411,42 +4455,40 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setSelected", function () {
-		const oBinding = {
-			getHeaderContext : function () {}
-		};
-		const oCache = {
-			setProperty : function () {}
-		};
-		const oCacheMock = this.mock(oCache);
+[false, true].forEach(function (bHasChangeListeners) {
+	QUnit.test("setSelected: with change listeners=" + bHasChangeListeners, function () {
+		const oCache = {setProperty : mustBeMocked};
+		const oBinding = {getHeaderContext : "~function~"};
 		// Note: oBinding is optional, it might already be missing in certain cases!
 		const oContext = Context.create({/*oModel*/}, oBinding, "/some/path", 42);
-		const oContextMock = this.mock(oContext);
+		if (bHasChangeListeners) {
+			oContext.mChangeListeners = "~mChangeListeners~";
+		}
 
-		oContextMock.expects("isDeleted").withExactArgs().returns(false);
-		oContextMock.expects("withCache")
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(_Helper).expects("fireChange").exactly(bHasChangeListeners ? 1 : 0)
+			.withExactArgs("~mChangeListeners~", "", "~selected~");
+		this.mock(oContext).expects("withCache")
 			.withExactArgs(sinon.match.func, "")
 			.callsFake((fnProcessor) => {
-				oCacheMock.expects("setProperty")
+				this.mock(oCache).expects("setProperty")
 					.withExactArgs("@$ui5.context.isSelected", "~selected~", "~sPath~");
 
 				return fnProcessor(oCache, "~sPath~");
 			});
-		oContextMock.expects("doSetSelected").withExactArgs("~selected~");
+		this.mock(oContext).expects("doSetSelected").withExactArgs("~selected~");
 
 		// code under test
 		oContext.setSelected("~selected~");
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("setSelected: special cases", function () {
 		const oBinding = {
 			getHeaderContext : function () {}
 		};
-		const oCache = {
-			setProperty : function () {}
-		};
-		const oCacheMock = this.mock(oCache);
+		const oCache = {};
 		const oContext = Context.create({/*oModel*/}, oBinding, "/some/path", 42);
 		const oContextMock = this.mock(oContext);
 
@@ -4455,7 +4497,6 @@ sap.ui.define([
 			.withExactArgs(sinon.match.func, "")
 			.callsFake((fnProcessor) => {
 				oContext.oBinding = undefined;
-				oCacheMock.expects("setProperty").never();
 
 				return fnProcessor(oCache, "~sPath~");
 			});
@@ -4464,7 +4505,7 @@ sap.ui.define([
 		// code under test - binding destroyed
 		oContext.setSelected(true);
 
-		oContextMock.expects("withCache").never();
+		// no additional calls to withCache
 		oContextMock.expects("doSetSelected").withExactArgs(false);
 
 		// code under test - flag unchanged
@@ -4743,6 +4784,32 @@ sap.ui.define([
 		assert.throws(function () {
 			oContext.getAndRemoveCollection("relative/path");
 		}, "~oError~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deregisterChangeListener", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+		let oListener = {
+			getPath : () => "foo"
+		};
+
+		// code under test
+		assert.strictEqual(oContext.deregisterChangeListener(), false, "no mChangeListeners");
+
+		oContext.mChangeListeners = {};
+
+		// code under test
+		assert.strictEqual(oContext.deregisterChangeListener(oListener), false, "wrong path");
+
+		oListener = {
+			getPath : () => "@$ui5.context.isSelected"
+		};
+		this.mock(_Helper).expects("removeByPath")
+			.withExactArgs(sinon.match.same(oContext.mChangeListeners), "",
+				sinon.match.same(oListener));
+
+		// code under test
+		assert.strictEqual(oContext.deregisterChangeListener(oListener), true);
 	});
 
 	//*********************************************************************************************

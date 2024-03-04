@@ -251,6 +251,10 @@ sap.ui.define([
 				oProductsBinding ? oProductsBinding.getHeaderContext() : null,
 				"headerContext0"
 			);
+			this.byId("productsSelect").setBindingContext(
+				oProductsBinding ? oProductsBinding.getHeaderContext() : null,
+				"headerContext0"
+			);
 		},
 
 		onRefresh : function () {

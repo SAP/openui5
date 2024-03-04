@@ -371,11 +371,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deregisters the binding as change listener from its cache or operation binding ($Parameter).
+	 * Deregisters the binding as change listener from its context if applicable. If not, it will be
+	 * deregistered from the cache or operation binding ($Parameter).
 	 *
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.deregisterChangeListener = function () {
+		if (this.bRelative && this.oContext?.deregisterChangeListener?.(this)) {
+			return;
+		}
 		if (this.sReducedPath) {
 			this.doDeregisterChangeListener(this.sReducedPath, this);
 		}
