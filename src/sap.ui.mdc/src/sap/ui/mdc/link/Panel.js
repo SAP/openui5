@@ -70,14 +70,6 @@ sap.ui.define([
 				 */
 				beforeNavigationCallback: {
 					type: "function"
-				},
-				/**
-				 * Function that is called when the navigation happens. This function is used mainly inside the <code>SmartLink</code> control to provide
-				 * its <code>navigate</code> and <code>innerNavigate</code> event handlings. The function will be called with the <code>Event</code> that
-				 * is provided by the <code>press</code> handling of the given <code>Link</code> control.
-				 */
-				onNavigationCallback: {
-					type: "function"
 				}
 			},
 			aggregations: {
@@ -335,26 +327,27 @@ sap.ui.define([
 	Panel.prototype.onPressLink = function(oEvent) {
 		const oLink = oEvent.getSource();
 		const bCtrlKeyPressed = oEvent.getParameters().ctrlKey || oEvent.getParameters().metaKey;
-		if (this.getBeforeNavigationCallback() && oLink && oLink.getTarget() !== "_blank" && !bCtrlKeyPressed) {
-			// Fall back to using href property when there is no internalHref
-			const bUseInternalHref = oLink && oLink.getCustomData() && oLink.getCustomData()[0] && oLink.getCustomData()[0].getValue();
-			const sHref = bUseInternalHref ? oLink.getCustomData()[0].getValue() : oLink.getHref();
-			oEvent.preventDefault();
-			this.getBeforeNavigationCallback()(oEvent).then((bNavigate) => {
-				if (bNavigate) {
-					this._onNavigate(oLink);
-					Panel.navigate(sHref);
-				}
-			});
-		} else {
-			this._onNavigate(oLink);
+		const bNavigateNewTab = oLink?.getTarget() === "_blank" || bCtrlKeyPressed;
+		if (bNavigateNewTab) {
+			return;
 		}
-	};
 
-	Panel.prototype._onNavigate = function(oLink) {
-		if (this.getOnNavigationCallback()) {
-			this.getOnNavigationCallback()(oLink);
+		oEvent.preventDefault();
+		const fnBeforeNavigationCallback = this.getBeforeNavigationCallback();
+		if (!fnBeforeNavigationCallback) {
+			Log.error("sap.ui.mdc.link.Panel: beforeNavigationCallback not set");
+			return;
 		}
+
+		// Fall back to using href property when there is no internalHref
+		const sInternalHref = oLink?.getCustomData()?.[0]?.getValue();
+		const sHref = sInternalHref?.length ? sInternalHref : oLink.getHref();
+		fnBeforeNavigationCallback(oEvent).then((bNavigate) => {
+			if (bNavigate) {
+				Panel.navigate(sHref);
+			}
+		});
+
 	};
 
 	Panel.oNavigationPromise = undefined;

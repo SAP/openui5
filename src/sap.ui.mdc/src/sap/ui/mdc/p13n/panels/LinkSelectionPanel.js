@@ -32,15 +32,15 @@ sap.ui.define([
 				multiSelectMode: {
 					type: "sap.m.MultiSelectMode",
 					defaultValue: MultiSelectMode.Default
+				},
+				/**
+				 * This function is called when a Link on the SelectionPanel is pressed.
+				 */
+				linkPressed: {
+					type: "object"
 				}
 			},
-			library: "sap.ui.mdc",
-			/**
-			 * This event is fired when a Link on the SelectionPanel is pressed.
-			 */
-			events: {
-				linkPressed: {}
-			}
+			library: "sap.ui.mdc"
 		},
 		renderer: {
 			apiVersion: 2
@@ -48,6 +48,22 @@ sap.ui.define([
 	});
 
 	LinkSelectionPanel.prototype._getListTemplate = function() {
+		const oLink = new Link({
+			tooltip: "{" + this.P13N_MODEL + ">tooltip}",
+			text: "{" + this.P13N_MODEL + ">text}",
+			href: "{" + this.P13N_MODEL + ">href}",
+			target: "{" + this.P13N_MODEL + ">target}",
+			customData: new CustomData({
+				key: "internalHref",
+				value: "{" + this.P13N_MODEL + ">internalHref}"
+			}),
+			wrapping: true
+		});
+		const fnLinkPressed = this.getLinkPressed();
+		if (fnLinkPressed) {
+			oLink.attachPress(fnLinkPressed);
+		}
+
 		return new ColumnListItem({
 			selected: "{" + this.P13N_MODEL + ">" + this.PRESENCE_ATTRIBUTE + "}",
 			type: ListType.Active,
@@ -56,18 +72,8 @@ sap.ui.define([
 					items: [
 						new VBox({
 							items: [
-								new Link({
-									tooltip: "{" + this.P13N_MODEL + ">tooltip}",
-									text: "{" + this.P13N_MODEL + ">text}",
-									href: "{" + this.P13N_MODEL + ">href}",
-									target: "{" + this.P13N_MODEL + ">target}",
-									press: this._onLinkPressed.bind(this),
-									customData: new CustomData({
-										key: "internalHref",
-										value: "{" + this.P13N_MODEL + ">internalHref}"
-									}),
-									wrapping: true
-								}), new Text({
+								oLink,
+								new Text({
 									text: "{" + this.P13N_MODEL + ">description}",
 									visible: "{= ${" + this.P13N_MODEL + ">description} ? true:false}"
 								})
@@ -97,14 +103,6 @@ sap.ui.define([
 		oSearchField.getLayoutData().setMaxWidth(undefined);
 
 		return oSearchField;
-	};
-
-	LinkSelectionPanel.prototype._onLinkPressed = function(oEvent) {
-		const bCtrlKeyPressed = oEvent.getParameters().ctrlKey || oEvent.getParameters().metaKey;
-		if (oEvent.getSource().getTarget() !== "_blank" && !bCtrlKeyPressed) {
-			oEvent.preventDefault();
-			this.fireLinkPressed(oEvent);
-		}
 	};
 
 	LinkSelectionPanel.prototype._filterList = function(bShowSelected, sSarch) {
