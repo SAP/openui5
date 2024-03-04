@@ -15,13 +15,14 @@ sap.ui.define([
 	 * Constructor for a new TileAttribute.
 	 *
 	 * @class
-	 * Holds details of an attribute used in the ActionTile.
+	 * Holds detail of an attribute used in the ActionTile.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @constructor
-	 * @private
-	 * @since 1.107.0
+	 * @public
+	 * @experimental since 1.122
+	 * @since 1.122
 	 * @alias sap.m.TileAttribute
 	 */
 

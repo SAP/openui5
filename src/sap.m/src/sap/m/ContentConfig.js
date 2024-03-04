@@ -23,8 +23,9 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
-	 * @private
-	 * @since 1.121
+	 * @public
+	 * @experimental since 1.122
+	 * @since 1.122
 	 * @alias sap.m.ContentConfig
 	 */
 	const ContentConfig = Element.extend("sap.m.ContentConfig",{

@@ -26,9 +26,10 @@ sap.ui.define([
      *
      * @author SAP SE
      * @version ${version}
-     * @since 1.107.0
+     * @since 1.122
      *
-     * @private
+     * @public
+     * @experimental since 1.122
      * @alias sap.m.ActionTileContent
     */
 
@@ -36,6 +37,9 @@ sap.ui.define([
         metadata: {
             library: "sap.m",
             aggregations : {
+                /**
+                 * Holds detail of an attribute used in the ActionTile.
+                 */
                 attributes: { type: "sap.m.TileAttribute", multiple: true, singularName: "attribute"}
             },
 			events: {
@@ -70,7 +74,7 @@ sap.ui.define([
 						 *
 						 * @since 1.121
 						 */
-						link: { type: "sap.m.link" }
+						link: { type: "sap.m.Link" }
 					}
 				}
 			}
