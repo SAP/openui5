@@ -551,12 +551,12 @@ sap.ui.define([
 		 * Detaches all event listeners that were attached from the outline service and performs a clean up.
 		 */
 		oOutline.destroy = function() {
-			oRta._oDesignTime.detachEvent("elementOverlayCreated", this._updatesHandler, this);
-			oRta._oDesignTime.detachEvent("elementOverlayAdded", this._updatesHandler, this);
-			oRta._oDesignTime.detachEvent("elementOverlayMoved", this._updatesHandler, this);
-			oRta._oDesignTime.detachEvent("elementOverlayDestroyed", this._updatesHandler, this);
-			oRta._oDesignTime.detachEvent("elementPropertyChanged", this._updatesHandler, this);
-			oRta._oDesignTime.detachEvent("elementOverlayEditableChanged", this._updatesHandler, this);
+			oRta._oDesignTime?.detachEvent("elementOverlayCreated", this._updatesHandler, this);
+			oRta._oDesignTime?.detachEvent("elementOverlayAdded", this._updatesHandler, this);
+			oRta._oDesignTime?.detachEvent("elementOverlayMoved", this._updatesHandler, this);
+			oRta._oDesignTime?.detachEvent("elementOverlayDestroyed", this._updatesHandler, this);
+			oRta._oDesignTime?.detachEvent("elementPropertyChanged", this._updatesHandler, this);
+			oRta._oDesignTime?.detachEvent("elementOverlayEditableChanged", this._updatesHandler, this);
 			delete this.aUpdates;
 			delete this.sStatus;
 		};
