@@ -32805,12 +32805,12 @@ make root = ${bMakeRoot}`;
 	//*********************************************************************************************
 	// Scenario: A hierarchy has two visible rows, expandTo 2, and first visible row 2.
 	// (1) Collapse Gamma
-	// (2) Create two root nodes Zeta and Eta which the server puts at the end
+	// (2) Create root nodes Zeta and Eta which the server puts at the end; create Theta below Alpha
 	// (3) Side-effects refresh (-> unified cache; after having read the in-place data, the created
 	//     nodes are moved to the front and the in-place range is shifted)
 	// (4) Check all contexts
 	// JIRA: CPOUI5ODATAV4-2454
-	QUnit.test("Recursive Hierarchy: out of place, root nodes", async function (assert) {
+	QUnit.test("Recursive Hierarchy: out of place, root, expandTo > 1", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sCountUrl = "EMPLOYEES/$count?$filter=AGE gt 20&custom=foo&$search=covfefe";
 		const sFilterSearchPrefix = "ancestors($root/EMPLOYEES,OrgChart,ID,filter(AGE gt 20)"
@@ -32819,8 +32819,8 @@ make root = ${bMakeRoot}`;
 			+ "?custom=foo&$apply=" + sFilterSearchPrefix + "orderby(ENTRYDATE)"
 			+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
 			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)";
-		const sUrlWithExpandLevels = sUrl.slice(0, -1)
-			+ ",ExpandLevels=" + JSON.stringify([{NodeID : "3", Levels : 0}]) + ")";
+		const sUrlWithExpandLevels = sUrl.slice(0, -1) + ",ExpandLevels="
+			+ JSON.stringify([{NodeID : "3", Levels : 0}, {NodeID : "1", Levels : 1}]) + ")";
 		const sView = `
 <t:Table id="table" firstVisibleRow="2" rows="{path : '/EMPLOYEES',
 		parameters : {
@@ -32840,6 +32840,7 @@ make root = ${bMakeRoot}`;
 </t:Table>`;
 
 		// 1 Alpha
+		//   8 Theta (created)
 		// 2 Beta
 		// 3 Gamma (first visible row)
 		//   4 Delta
@@ -32921,7 +32922,7 @@ make root = ${bMakeRoot}`;
 					Name : "Beta"
 				}]
 			})
-			.expectRequest(sUrl.replace("custom=foo&", "")
+			.expectRequest(sUrl.replace("custom=foo&", "") //TODO: add custom params to rank request
 				+ "&$filter=ID eq '6'&$select=LimitedRank",
 				{value : [{LimitedRank : "5"}]});
 
@@ -32935,7 +32936,7 @@ make root = ${bMakeRoot}`;
 		this.expectRequest(
 				{method : "POST", url : "EMPLOYEES?custom=foo", payload : {Name : "Eta"}},
 				{ID : "7", Name : "Eta"})
-			.expectRequest(sUrl.replace("custom=foo&", "")
+			.expectRequest(sUrl.replace("custom=foo&", "") //TODO: add custom params to rank request
 				+ "&$filter=ID eq '7'&$select=LimitedRank",
 				{value : [{LimitedRank : "6"}]});
 
@@ -32946,32 +32947,62 @@ make root = ${bMakeRoot}`;
 			this.waitForChanges(assert, "(2b) create Eta")
 		]);
 
+		this.expectRequest({
+				method : "POST",
+				url : "EMPLOYEES?custom=foo",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('1')",
+					Name : "Theta"
+				}
+			}, {ID : "8", Name : "Theta"})
+			.expectRequest(sUrl.replace("custom=foo&", "") //TODO: add custom params to rank request
+				+ "&$filter=ID eq '8'&$select=LimitedRank",
+				{value : [{LimitedRank : "1"}]});
+
+		const oAlpha = oTable.getRows()[0].getBindingContext();
+		const oTheta = oBinding.create({
+			"@$ui5.node.parent" : oAlpha,
+			Name : "Theta"
+		}, /*bSkipRefresh*/true);
+
+		await Promise.all([
+			oTheta.created(),
+			this.waitForChanges(assert, "(2c) create Theta")
+		]);
+
 		checkTable("after (2)", assert, oTable, [
 			"/EMPLOYEES('7')",
 			"/EMPLOYEES('6')",
 			"/EMPLOYEES('1')",
+			"/EMPLOYEES('8')",
 			"/EMPLOYEES('2')",
 			"/EMPLOYEES('3')",
 			"/EMPLOYEES('5')"
 		], [
-			[undefined, 1, "Alpha"],
-			[undefined, 1, "Beta"]
+			[true, 1, "Alpha"],
+			[undefined, 2, "Theta"]
 		]);
 
-		this.expectRequest(sCountUrl, 7)
+		this.expectRequest(sCountUrl, 8)
 			.expectRequest({
-				batchNo : 7,
+				batchNo : 9,
 				url : sUrlWithExpandLevels
 					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
 					+ "&$count=true&$skip=0&$top=4"
 			}, {
-				"@odata.count" : "6",
+				"@odata.count" : "7",
 				value : [{
-					DescendantCount : "0",
+					DescendantCount : "1",
 					DistanceFromRoot : "0",
-					DrillState : "leaf",
+					DrillState : "expanded",
 					ID : "1",
 					Name : "Alpha*"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "8",
+					Name : "Theta*"
 				}, {
 					DescendantCount : "0",
 					DistanceFromRoot : "0",
@@ -32984,36 +33015,43 @@ make root = ${bMakeRoot}`;
 					DrillState : "collapsed",
 					ID : "3",
 					Name : "Gamma*"
+				}]
+			})
+			.expectRequest({
+				batchNo : 9,
+				url : sUrlWithExpandLevels
+					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
+					+ "&$filter=ID eq '1' or ID eq '6' or ID eq '7' or ID eq '8'&$top=4"
+			}, {
+				value : [{
+					DescendantCount : "1",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					LimitedRank : "0"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "8",
+					LimitedRank : "1"
 				}, {
 					DescendantCount : "0",
 					DistanceFromRoot : "0",
 					DrillState : "leaf",
-					ID : "5",
-					Name : "Epsilon*"
-				}]
-			})
-			.expectRequest({
-				batchNo : 7,
-				url : sUrlWithExpandLevels
-					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
-					+ "&$filter=ID eq '6' or ID eq '7'&$top=2"
-			}, {
-				value : [{
-					DescendantCount : "0",
-					DistanceFromRoot : "0",
-					DrillState : "leaf",
 					ID : "6",
-					LimitedRank : "4"
+					LimitedRank : "5"
 				}, {
 					DescendantCount : "0",
 					DistanceFromRoot : "0",
 					DrillState : "leaf",
 					ID : "7",
-					LimitedRank : "5"
+					LimitedRank : "6"
 				}]
 			})
 			.expectRequest({
-				batchNo : 7,
+				batchNo : 9,
+				// Important: this request contains no Levels=2 and no ExpandLevels
 				url : "EMPLOYEES?custom=foo&$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
 					+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
 					+ ",NodeProperty='ID',Levels=1)"
@@ -33024,6 +33062,17 @@ make root = ${bMakeRoot}`;
 					{ID : "6", Name : "Zeta*"},
 					{ID : "7", Name : "Eta*"}
 				]
+			})
+			.expectRequest({
+				batchNo : 9,
+				// Important: this request contains no Levels=2 and no ExpandLevels
+				url : "EMPLOYEES?custom=foo&$apply=descendants($root/EMPLOYEES"
+					+ ",OrgChart,ID,filter(ID eq '1'),1)"
+					+ "&$select=ID,Name"
+					+ "&$filter=ID eq '8'"
+					+ "&$top=1"
+			}, {
+				value : [{ID : "8", Name : "Theta*"}]
 			});
 
 		await Promise.all([
@@ -33035,19 +33084,32 @@ make root = ${bMakeRoot}`;
 			"/EMPLOYEES('7')",
 			"/EMPLOYEES('6')",
 			"/EMPLOYEES('1')",
+			"/EMPLOYEES('8')",
 			"/EMPLOYEES('2')",
-			"/EMPLOYEES('3')",
-			"/EMPLOYEES('5')"
+			"/EMPLOYEES('3')"
 		], [
-			[undefined, 1, "Alpha*"],
-			[undefined, 1, "Beta*"]
-		]);
+			[true, 1, "Alpha*"],
+			[undefined, 2, "Theta*"]
+		], 7);
+
+		this.expectRequest(sUrlWithExpandLevels
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$skip=4&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "5",
+					Name : "Epsilon*"
+				}]
+			});
 
 		await this.checkAllContexts("(4) check all contexts", assert, oBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "Name"], [
 				[undefined, 1, "Eta*"],
 				[undefined, 1, "Zeta*"],
-				[undefined, 1, "Alpha*"],
+				[true, 1, "Alpha*"],
+				[undefined, 2, "Theta*"],
 				[undefined, 1, "Beta*"],
 				[false, 1, "Gamma*"],
 				[undefined, 1, "Epsilon*"]
