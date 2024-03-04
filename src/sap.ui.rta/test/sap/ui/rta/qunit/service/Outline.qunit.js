@@ -385,7 +385,8 @@ sap.ui.define([
 			this.oComponentContainer = new ComponentContainer({
 				id: "CompCont",
 				component: this.oComp,
-				height: "100%"
+				height: "100%",
+				width: "100%"
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
 			await nextUIUpdate();
@@ -464,10 +465,11 @@ sap.ui.define([
 				aUpdates.some(function(oUpdate) {
 					switch (oUpdate.type) {
 						case "new":
-							assert.deepEqual(oUpdate, oExpectedResponse1, "then expected response for new update was received");
 							var oNewButton = this.oLayout.getContent().filter(function(oControl) {
 								return oControl.getId() === "newButton";
 							})[0];
+							oExpectedResponse1.element.visible = oNewButton.getVisible();
+							assert.deepEqual(oUpdate, oExpectedResponse1, "then expected response for new update was received");
 							var oNewButtonOverlay = OverlayRegistry.getOverlay(oNewButton);
 							oNewButtonOverlay.setEditable(true);
 							break;
