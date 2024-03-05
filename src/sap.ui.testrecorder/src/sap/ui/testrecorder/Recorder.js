@@ -63,12 +63,11 @@ sap.ui.define([
 		try {
 			if (window.self !== window.top) {
 				// in our case it kind of makes sense to have a recorder per iframe, so only prevent nested recorders
-				var sTestRecorderFrameId = "#sap-ui-test-recorder-frame";
-				if (window.top.$ && window.top.$(sTestRecorderFrameId).length && window.top.$(sTestRecorderFrameId)[0].contentWindow === window.self) {
+				if (window.top.document.getElementById("sap-ui-test-recorder-frame")?.contentWindow === window.self) {
 					return true;
-				} else {
-					return false;
 				}
+
+				return false;
 			}
 		} catch (e) {
 			// Access to window.top might be blocked if so the page is inside an iframe.
