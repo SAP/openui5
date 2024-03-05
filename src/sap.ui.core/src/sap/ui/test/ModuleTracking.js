@@ -20,6 +20,7 @@
 	var Log,
 		sClassName = "sap.ui.base.SyncPromise",
 		iNo = 0,
+		rSearchParamWithoutValue = /(=)(?=&|$)/g,
 		mUncaughtById = {},
 		mUncaughtPromise2Reason = new Map();
 
@@ -341,12 +342,57 @@
 					}
 				});
 
+			const oParams = new URLSearchParams(document.location.search);
+
+			// add a button to clear the filter
+			if (oParams.has("filter")) {
+				const oClearFilter = document.createElement("button");
+
+				oClearFilter.innerText = "\u2715"; // X
+				oClearFilter.addEventListener("click", (ev) => {
+					ev.preventDefault();
+
+					oParams.delete("filter");
+					document.location.search = oParams.toString()
+						.replace(rSearchParamWithoutValue, '');
+
+				});
+				document.querySelector(".qunit-filter button")
+					.insertAdjacentElement("beforeBegin", oClearFilter);
+			}
+
+			// Add a hover effect to buttons (colors inspired by QUnit's own CSS)
+			const oStyle = document.createElement('style');
+			oStyle.innerText = `
+				button:hover {
+					background-color: #DDD !important;
+				}
+				button:focus {
+					box-shadow: 0 0 0 2px rgba(94, 116, 11, 0.5) !important;
+				}
+			`;
+			document.head.appendChild(oStyle);
+
 			// remember which lines have been covered initially, at load time
 			saveInitialCoverage();
 		});
 
 		QUnit.done(() => {
 			filterCoverage();
+
+			// "Run all tests" in "Rerunning selected tests" case: Same href as document, but remove
+			// testId
+			const oParams = new URLSearchParams(document.location.search);
+			if (oParams.has("moduleId")) {
+				const oClearFilter = document.querySelector("#qunit-clearFilter");
+				if (oClearFilter) {
+					oParams.delete("testId");
+					const oRunModulesURL = new URL(document.location.href);
+					oRunModulesURL.search = oParams.toString()
+						.replace(rSearchParamWithoutValue, '');
+					oClearFilter.href = oRunModulesURL;
+				}
+			}
 		});
 	}
 }());
