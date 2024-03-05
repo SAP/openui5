@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/base/strings/formatMessage",
 	'sap/base/util/isPlainObject',
 	"sap/base/Log",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	"sap/base/i18n/Localization"
 ], function(
 	Locale,
 	formatMessage,
 	isPlainObject,
 	Log,
-	UI5Date
+	UI5Date,
+	Localization
 ) {
 	"use strict";
 
@@ -27,6 +29,48 @@ sap.ui.define([
 	 * @alias sap.ui.integration.util.Utils
 	 */
 	var Utils = { };
+
+	/**
+	 * Currently WZ language list does not match the one used by Card Editor
+	 * Need to mapping the different languages
+	 * key/value:  language_code_in_WZ/language_code_in_CE
+	 * NOTES: skip the languages which does not match between Card Editor and UI5, eg: cy-GB/cy, nb-NO/no, sr-RS/sh
+	 */
+	Utils.languageMapping = {
+		//"cy": "cy-GB",
+		"da-DK": "da",
+		"hi-IN": "hi",
+		"hu-HU": "hu",
+		"id-ID": "id",
+		"ms-MY": "ms",
+		"nl-NL": "nl",
+		//"no-NO": "nb-NO",
+		"pl-PL": "pl",
+		"ro-RO": "ro",
+		//"sh": "sr-RS",
+		"th-TH": "th"
+	};
+
+	/**
+	 * Get localization language
+	 * @returns {string} language code
+	 */
+	Utils.getLocalizationLanguage = function() {
+		var language = Localization.getLanguage().replaceAll('_', '-');
+		return Utils.languageMapping[language] || language;
+	};
+
+	Utils._language = Utils.getLocalizationLanguage();
+
+	/**
+	 * Refresh language
+	 */
+	Utils.refreshLocalizationLanguage = function() {
+		Utils._language = Utils.getLocalizationLanguage();
+	};
+
+	// listen to localizationChange event and update Utils._language
+	Localization.attachChange(Utils.refreshLocalizationLanguage);
 
 	/**
 	 * Check if given string is a JSON.

@@ -734,7 +734,7 @@ sap.ui.define([
 				if (sConf === DEMOKIT_CONFIGURATION_LANGUAGE) {
 					Localization.setLanguage(DEMOKIT_DEFAULT_LANGUAGE);
 				} else if (sConf === DEMOKIT_CONFIGURATION_APPEARANCE) {
-					this._updateAppearance(ThemePicker._getTheme().auto);
+					this._updateAppearance("auto");
 				}
 			}, this);
 

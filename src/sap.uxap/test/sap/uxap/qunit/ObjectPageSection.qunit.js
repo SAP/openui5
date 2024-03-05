@@ -11,9 +11,10 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSectionBase",
 	"sap/m/Text",
 	"sap/m/MessageStrip",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/m/Panel"
 ],
-function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase, Text, MessageStrip, Button) {
+function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase, Text, MessageStrip, Button, Panel) {
 	"use strict";
 	var Importance = library.Importance;
 
@@ -1122,5 +1123,56 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 		oSection.destroy();
 
 		assert.equal(oSection._getGrid(), null, "destroyed section does not recreate the grid");
+	});
+
+	QUnit.module("Properties", {
+		beforeEach : async function() {
+			this.oObjectPageLayout = new ObjectPageLayout({
+				sections: [
+					new ObjectPageSection({
+						title: "Section 2",
+						anchorBarButtonColor: "Positive",
+						subSections: [
+							new ObjectPageSubSection({
+								blocks: [
+									new Panel({
+										content: [new Text({text: "Content1"})]
+									})]
+							})
+						]
+					}),
+					new ObjectPageSection({
+						title: "Section 1",
+						subSections: [
+							new ObjectPageSubSection({
+								blocks: [
+									new Panel({
+										content: [new Text({text: "Content2"})]
+									})]
+							})
+						]
+					})
+				]
+
+			});
+
+			this.oObjectPageLayout.placeAt("content");
+			await nextUIUpdate();
+
+		},
+		afterEach : function() {
+			this.oObjectPageLayout.destroy();
+		}
+	});
+
+	QUnit.test("anchorBarButtonColor property", function (assert) {
+		var oObjectPage = this.oObjectPageLayout,
+			oAnchorBar = oObjectPage.getAggregation("_anchorBar"),
+			oAnchorBarBtn = oAnchorBar.getContent()[0],
+			oSection = oObjectPage.getAggregation("sections")[0],
+			sExpectedStyleClass = "sapUxAPAnchorBarButtonColor" + oSection.getProperty("anchorBarButtonColor");
+
+		assert.ok(oAnchorBarBtn.hasStyleClass(sExpectedStyleClass), "The anchorBarButtonColor property is correctly set and color is applied to the anchorbar button");
+
 	});
 });

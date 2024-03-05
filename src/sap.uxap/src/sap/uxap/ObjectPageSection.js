@@ -15,7 +15,8 @@ sap.ui.define([
 	"./ObjectPageSubSection",
 	"./library",
 	"sap/m/library",
-	"./ObjectPageSectionRenderer"
+	"./ObjectPageSectionRenderer",
+	"sap/ui/core/library"
 ], function(
 	ObjectPageSectionBase,
 	Device,
@@ -28,12 +29,16 @@ sap.ui.define([
 	ObjectPageSubSection,
 	library,
 	mobileLibrary,
-	ObjectPageSectionRenderer
-) {
+	ObjectPageSectionRenderer,
+	coreLibrary
+	) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
+
+	// shortcut for sap.ui.core.IconColor
+	var IconColor = coreLibrary.IconColor;
 
 	/**
 	 * Constructor for a new <code>ObjectPageSection</code>.
@@ -74,7 +79,15 @@ sap.ui.define([
 				/**
 				* Determines whether the Section title wraps on multiple lines, when the available space is not enough.
 				*/
-				wrapTitle: {type: "boolean", group: "Appearance", defaultValue: false}
+				wrapTitle: {type: "boolean", group: "Appearance", defaultValue: false},
+
+				/**
+				 * Specifies the text color of each button inside the AnchorBar.
+				 *
+				 * The color can be chosen from the icon colors (https://ui5.sap.com/#/api/sap.ui.core.IconColor%23overview).
+				 * Possible semantic colors are: Neutral, Positive, Critical, Negative.
+				 */
+				anchorBarButtonColor : {type : "sap.ui.core.IconColor", group : "Appearance", defaultValue : IconColor.Default}
 			},
 			defaultAggregation: "subSections",
 			aggregations: {
@@ -280,6 +293,21 @@ sap.ui.define([
 		this._resetLayoutData(aChildren);
 
 		this._assignLayoutData(aChildren, oLayoutConfig);
+
+		return this;
+	};
+
+	ObjectPageSection.prototype.setAnchorBarButtonColor = function(value) {
+		var sSectionId = this.getId(),
+			oParent = this.getParent();
+
+		if (value !== this.getProperty("anchorBarButtonColor")) {
+			this.setProperty("anchorBarButtonColor", value, true);
+		}
+
+		if (oParent && oParent.getDomRef() && oParent._updateAnchorBarButtonColor) {
+			oParent._updateAnchorBarButtonColor(sSectionId);
+		}
 
 		return this;
 	};

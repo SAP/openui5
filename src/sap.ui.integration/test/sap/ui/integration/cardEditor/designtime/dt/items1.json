@@ -21,6 +21,17 @@
 		"visibleToUser": true,
 		"description": "{i18n>TRANSLATED_DESCRIPTION_CARDTITLE}",
 		"cols": 1,
+		"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+	},
+	"stringWithVisualizationFragment": {
+		"manifestpath": "/sap.card/configuration/parameters/stringWithVisualizationFragment/value",
+		"type": "string",
+		"required": true,
+		"label": "String with visualization fragment",
+		"allowDynamicValues": true,
+		"editableToUser": false,
+		"visibleToUser": true,
+		"cols": 1,
 		"testJS": "sap/ui5/test/cardeditor/listcard/dt/TestJs1",
 		"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?",
 		"visualization": {

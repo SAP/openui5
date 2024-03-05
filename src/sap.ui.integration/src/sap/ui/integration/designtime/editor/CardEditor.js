@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/integration/library",
 	"sap/ui/integration/designtime/editor/CardPreview",
-	"sap/base/util/extend"
+	"sap/base/util/extend",
+	"sap/ui/integration/util/Utils"
 ], function(
 	Element,
 	Library,
@@ -25,13 +26,13 @@ sap.ui.define([
 	ResourceModel,
 	library,
 	CardPreview,
-	extend
+	extend,
+	Utils
 ) {
 	"use strict";
 
-	var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
-
-	var CardDataMode = library.CardDataMode;
+	var CardDataMode = library.CardDataMode,
+		CONTEXT_ENTRIES;
 	/**
 	 * Constructor for a new <code>Card Editor</code>.
 	 *
@@ -290,56 +291,65 @@ sap.ui.define([
 	CardEditor.prototype._mergeContextData = function (oContextData) {
 		var oData = {};
 		//empty entry
-		oData["empty"] = CardEditor._contextEntries.empty;
+		oData["empty"] = CONTEXT_ENTRIES.empty;
 		//custom entries
 		for (var n in oContextData) {
 			oData[n] = oContextData[n];
 		}
 		//editor internal
-		oData["card.internal"] = CardEditor._contextEntries["card.internal"];
+		oData["card.internal"] = CONTEXT_ENTRIES["card.internal"];
 		return oData;
 	};
 
-	//create static context entries
-	CardEditor._contextEntries =
-	{
-		empty: {
-			label: oResourceBundle.getText("CARDEDITOR_CONTEXT_EMPTY_VAL"),
-			type: "string",
-			description: oResourceBundle.getText("CARDEDITOR_CONTEXT_EMPTY_DESC"),
-			placeholder: "",
-			value: ""
-		},
-		"card.internal": {
-			label: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_INTERNAL_VAL"),
-			todayIso: {
+	//init context entries
+	CardEditor.initContextEntries = function() {
+		return {
+			empty: {
+				label: Editor.oResourceBundle.getText("CARDEDITOR_CONTEXT_EMPTY_VAL"),
 				type: "string",
-				label: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_VAL"),
-				description: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_DESC"),
-				tags: [],
-				placeholder: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_VAL"),
-				customize: ["format.dataTime"],
-				value: "{{parameters.TODAY_ISO}}"
+				description: Editor.oResourceBundle.getText("CARDEDITOR_CONTEXT_EMPTY_DESC"),
+				placeholder: "",
+				value: ""
 			},
-			nowIso: {
-				type: "string",
-				label: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_VAL"),
-				description: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_DESC"),
-				tags: [],
-				placeholder: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_VAL"),
-				customize: ["dateFormatters"],
-				value: "{{parameters.NOW_ISO}}"
-			},
-			currentLanguage: {
-				type: "string",
-				label: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
-				description: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
-				tags: ["technical"],
-				customize: ["languageFormatters"],
-				placeholder: oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
-				value: "{{parameters.LOCALE}}"
+			"card.internal": {
+				label: Editor.oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_INTERNAL_VAL"),
+				todayIso: {
+					type: "string",
+					label: Editor.oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_VAL"),
+					description: Editor.oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_DESC"),
+					tags: [],
+					placeholder: Editor.oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_TODAY_VAL"),
+					customize: ["format.dataTime"],
+					value: "{{parameters.TODAY_ISO}}"
+				},
+				nowIso: {
+					type: "string",
+					label: Editor.oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_VAL"),
+					description: Editor.oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_DESC"),
+					tags: [],
+					placeholder: Editor.oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_NOW_VAL"),
+					customize: ["dateFormatters"],
+					value: "{{parameters.NOW_ISO}}"
+				},
+				currentLanguage: {
+					type: "string",
+					label: Editor.oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
+					description: Editor.oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
+					tags: ["technical"],
+					customize: ["languageFormatters"],
+					placeholder: Editor.oResourceBundle.getText("CARDEDITOR_CONTEXT_CARD_LANG_VAL"),
+					value: "{{parameters.LOCALE}}"
+				}
 			}
-		}
+		};
+	};
+
+	//create static context entries
+	CONTEXT_ENTRIES = CardEditor.initContextEntries();
+
+	//change static members if language changed
+	CardEditor.prototype._applyLanguageChange = function () {
+		CONTEXT_ENTRIES = CardEditor.initContextEntries();
 	};
 
 	return CardEditor;

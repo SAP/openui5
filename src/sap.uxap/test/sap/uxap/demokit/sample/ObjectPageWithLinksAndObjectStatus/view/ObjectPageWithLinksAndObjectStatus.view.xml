@@ -155,7 +155,7 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection titleUppercase="false" id="goalsSection" title="2014 Goals Plan">
+			<ObjectPageSection anchorBarButtonColor="Negative" titleUppercase="false" id="goalsSection" title="2014 Goals Plan">
 				<subSections>
 					<ObjectPageSubSection id="goalsSectionSS1" titleUppercase="false">
 						<blocks>
@@ -165,7 +165,7 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection titleUppercase="false" id="personalSection" title="Personal" importance="Medium">
+			<ObjectPageSection anchorBarButtonColor="Positive" titleUppercase="false" id="personalSection" title="Personal" importance="Medium">
 				<subSections>
 					<ObjectPageSubSection id="personalSectionSS1" title="Connect" titleUppercase="false">
 						<blocks>
@@ -187,7 +187,7 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection titleUppercase="false" id="employmentSection" title="Employment">
+			<ObjectPageSection anchorBarButtonColor="Critical" titleUppercase="false" id="employmentSection" title="Employment">
 				<subSections>
 					<ObjectPageSubSection id="employmentSectionSS1" title="Job information" titleUppercase="false">
 						<blocks>

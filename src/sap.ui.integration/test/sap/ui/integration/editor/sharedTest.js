@@ -29,14 +29,26 @@ var baseUrl = document.location.pathname.substring(0, document.location.pathname
 	};
 
 function switchTheme(oSelect) {
-	sap.ui.getCore().applyTheme(oSelect.options[oSelect.selectedIndex].value)/*Not inside AMD call*/;
+	sap.ui.require(["sap/ui/core/Theming"], function(Theming) {
+		Theming.setTheme(oSelect.options[oSelect.selectedIndex].value);
+	});
 }
 
 function switchLanguage(oSelect) {
-	this._sLanguage = oSelect.options[oSelect.selectedIndex].value;
-	sap.ui.getCore().getConfiguration();
-	updateAllLayerEditor();
-	loadAllChanges();
+	sap.ui.require([
+		"sap/base/i18n/Localization",
+		'sap/base/util/LoaderExtensions',
+		"sap/ui/integration/util/Utils"
+	], function (
+		Localization,
+		LoaderExtensions,
+		Utils
+	) {
+		this._sLanguage = oSelect.options[oSelect.selectedIndex].value;
+		Localization.setLanguage(this._sLanguage);
+		updateAllLayerEditor();
+		loadAllChanges();
+	});
 }
 
 function switchTranslationLanguageForOnlyMode(oSelect) {
@@ -123,8 +135,15 @@ function loadAllChanges() {
 }
 
 function loadLanguages() {
-	sap.ui.require(["sap/base/i18n/Localization", 'sap/base/util/LoaderExtensions'],
-	function (Localization, LoaderExtensions) {
+	sap.ui.require([
+		"sap/base/i18n/Localization",
+		'sap/base/util/LoaderExtensions',
+		"sap/ui/integration/util/Utils"
+	], function (
+		Localization,
+		LoaderExtensions,
+		Utils
+	) {
 		//load the language list
 		var aLanguageList = LoaderExtensions.loadResource("sap/ui/integration/editor/languages.json", {
 			dataType: "json",
@@ -133,39 +152,69 @@ function loadLanguages() {
 		});
 		var sCurrentLanguage =  Localization.getLanguage().replaceAll('_', '-');
 		var oLanguageSelect = document.getElementById("languageSelect");
-		if (!oLanguageSelect) return;
-		for (var sLanguage in aLanguageList) {
-			var oOption = document.createElement("OPTION");
-			oOption.text = aLanguageList[sLanguage];
-			oOption.value = sLanguage;
-			if (sLanguage === sCurrentLanguage) {
-				oOption.selected = true;
+		if (oLanguageSelect) {
+			for (var sLanguage in aLanguageList) {
+				var oOption = document.createElement("OPTION");
+				oOption.text = aLanguageList[sLanguage];
+				oOption.value = sLanguage;
+				if (sLanguage === sCurrentLanguage) {
+					oOption.selected = true;
+				}
+				oLanguageSelect.add(oOption);
 			}
-			oLanguageSelect.add(oOption);
+			for (var sLanguage in Utils.languageMapping) {
+				var oOption = document.createElement("OPTION");
+				oOption.text =  sLanguage + "/" + Utils.languageMapping[sLanguage];
+				oOption.value = sLanguage;
+				if (sLanguage === sCurrentLanguage) {
+					oOption.selected = true;
+				}
+				oLanguageSelect.add(oOption);
+			}
 		}
 		var oTranslationLanguageSelectForOnlyMode = document.getElementById("translationLanguageSelectForOnlyMode");
-		if (!oTranslationLanguageSelectForOnlyMode) return;
-		var sTranslationLanguageForOnlyMode = this._sTranslationLanguageForOnlyMode || "ru";
-		for (var sLanguage in aLanguageList) {
-			var oOption = document.createElement("OPTION");
-			oOption.text = aLanguageList[sLanguage];
-			oOption.value = sLanguage;
-			if (sLanguage === sTranslationLanguageForOnlyMode) {
-				oOption.selected = true;
+		if (oTranslationLanguageSelectForOnlyMode) {
+			var sTranslationLanguageForOnlyMode = this._sTranslationLanguageForOnlyMode || "ru";
+			for (var sLanguage in aLanguageList) {
+				var oOption = document.createElement("OPTION");
+				oOption.text = aLanguageList[sLanguage];
+				oOption.value = sLanguage;
+				if (sLanguage === sTranslationLanguageForOnlyMode) {
+					oOption.selected = true;
+				}
+				oTranslationLanguageSelectForOnlyMode.add(oOption);
 			}
-			oTranslationLanguageSelectForOnlyMode.add(oOption);
+			for (var sLanguage in Utils.languageMapping) {
+				var oOption = document.createElement("OPTION");
+				oOption.text =  sLanguage + "/" + Utils.languageMapping[sLanguage];
+				oOption.value = sLanguage;
+				if (sLanguage === sTranslationLanguageForOnlyMode) {
+					oOption.selected = true;
+				}
+				oTranslationLanguageSelectForOnlyMode.add(oOption);
+			}
 		}
 		var oTranslationLanguageSelectForAllMode = document.getElementById("translationLanguageSelectForAllMode");
-		if (!oTranslationLanguageSelectForAllMode) return;
-		var sTranslationLanguageForAllMode = this._sTranslationLanguageForAllMode || "ru";
-		for (var sLanguage in aLanguageList) {
-			var oOption = document.createElement("OPTION");
-			oOption.text = aLanguageList[sLanguage];
-			oOption.value = sLanguage;
-			if (sLanguage === sTranslationLanguageForAllMode) {
-				oOption.selected = true;
+		if (oTranslationLanguageSelectForAllMode) {
+			var sTranslationLanguageForAllMode = this._sTranslationLanguageForAllMode || "ru";
+			for (var sLanguage in aLanguageList) {
+				var oOption = document.createElement("OPTION");
+				oOption.text = aLanguageList[sLanguage];
+				oOption.value = sLanguage;
+				if (sLanguage === sTranslationLanguageForAllMode) {
+					oOption.selected = true;
+				}
+				oTranslationLanguageSelectForAllMode.add(oOption);
 			}
-			oTranslationLanguageSelectForAllMode.add(oOption);
+			for (var sLanguage in Utils.languageMapping) {
+				var oOption = document.createElement("OPTION");
+				oOption.text =  sLanguage + "/" + Utils.languageMapping[sLanguage];
+				oOption.value = sLanguage;
+				if (sLanguage === sTranslationLanguageForAllMode) {
+					oOption.selected = true;
+				}
+				oTranslationLanguageSelectForAllMode.add(oOption);
+			}
 		}
 	});
 }

@@ -730,6 +730,50 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("getInResultPropertyKeys", async function(assert) {
+		const oTable = this.oTable;
+
+		await oTable.initialized();
+		const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
+		const oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
+
+		oTable.getControlDelegate().getInResultPropertyKeys = function() {
+			return ["Value"];
+		};
+
+		oTable.setAggregateConditions({
+			SalesAmount: {}
+		});
+
+		await oTable.rebind();
+
+		assert.ok(oSetAggregation.calledOnceWithExactly({
+			visible: ["Name", "Country", "Value"],
+			groupLevels: [],
+			grandTotal: ["SalesAmount"],
+			subtotals: ["SalesAmount"],
+			columnState: createColumnStateIdMap(oTable, [
+				{subtotals: false, grandTotal: false},
+				{subtotals: false, grandTotal: false},
+				{subtotals: false, grandTotal: false},
+				{subtotals: true, grandTotal: true},
+				{subtotals: true, grandTotal: true},
+				{subtotals: true, grandTotal: true},
+				{subtotals: true, grandTotal: true},
+				{subtotals: true, grandTotal: true},
+				{subtotals: true, grandTotal: true},
+				{subtotals: false, grandTotal: false}
+			]),
+			search: undefined
+		}), "Plugin#setAggregationInfo called with the right getInResultPropertyKeys");
+
+		oTable.setP13nMode(["Column"]);
+
+		const oBindingInfo = {};
+		oTable.getControlDelegate().updateBindingInfo(oTable, oBindingInfo);
+		assert.deepEqual(oBindingInfo, {parameters: {$select: ["Value"]}, sorter: [], filters: [], path: "/ProductList"}, "Correct $select parameter in bindingInfo from aInResultPropertyKeys");
+	});
+
 	QUnit.module("Tests with specific propertyInfos", {
 		before: function() {
 			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{

@@ -2,15 +2,15 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/i18n/Localization",
 	"sap/base/util/merge",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"sap/ui/integration/util/Utils"
 ], function (
-	Localization,
 	merge,
 	JSONModel,
-	deepClone
+	deepClone,
+	Utils
 ) {
 	"use strict";
 
@@ -25,7 +25,7 @@ sap.ui.define([
 			});
 		},
 		mergeTextsChanges: function (oModel, oTexts, oDesigntime) {
-			var sLanguage =  Localization.getLanguage().replaceAll('_', '-');
+			var sLanguage =  Utils._language;
 			if (oTexts && oTexts.hasOwnProperty(sLanguage)) {
 				var oTranslation = oTexts[sLanguage];
 				for (var sManifestPath in oTranslation) {
@@ -62,7 +62,7 @@ sap.ui.define([
 						var iLayer = oChange.hasOwnProperty(":layer") ? oChange[":layer"] : 1000;
 						// for changes from translation layer, we use them as the translations of current languages
 						if (iLayer === CardMerger.layers["translation"]) {
-							var sLanguage = Localization.getLanguage().replaceAll('_', '-');
+							var sLanguage = Utils._language;
 							var oTranslationChange = {
 								"texts": {}
 							};

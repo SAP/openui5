@@ -341,6 +341,24 @@ sap.ui.define([
 				sinon: false
 			},
 
+			"util/CardMergerWithOPTForUnMatchLanguages": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/CardMerger"
+					]
+				},
+				sinon: false
+			},
+
+			"util/CardMergerWithStringForUnMatchLanguages": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/CardMerger"
+					]
+				},
+				sinon: false
+			},
+
 			"util/CardObserver": {
 				coverage: {
 					only: [
@@ -2767,6 +2785,176 @@ sap.ui.define([
 			},
 
 			"editor/i18nAsObject/MultiLanguages02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/StringField/AdminMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/StringField/ContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/StringField/ContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/StringField/AllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/StringField/AllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/StringField/TranslationMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/StringField/TranslationMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/ObjectField/AdminMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/ObjectField/ContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/ObjectField/ContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/ObjectField/AllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/ObjectField/AllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/ObjectListField/AdminMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/ObjectListField/ContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/ObjectListField/ContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/ObjectListField/AllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/unMatchLanguages/ObjectListField/AllMode02": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [

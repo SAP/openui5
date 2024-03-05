@@ -41,7 +41,10 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b> This base delegate supports the <code>p13nMode</code> <code>Aggregate</code> only if the table type is
 	 * {@link sap.ui.mdc.table.GridTableType GridTable}, and the <code>p13nMode</code> <code>Group</code> is not supported if the table type is
-	 * {@link sap.ui.mdc.table.TreeTableType TreeTable}. This cannot be changed in your delegate implementation.
+	 * {@link sap.ui.mdc.table.TreeTableType TreeTable}. This cannot be changed in your delegate implementation.<br>
+	 * If the table type is {@link sap.ui.mdc.table.GridTableType GridTable}, and <code>p13nMode</code> <code>Group</code> or <code>p13nMode</code>
+	 * <code>Aggregate</code> is enabled, only groupable or aggregatable properties are loaded from the back end. Also, the path of a property must
+	 * not contain a <code>NavigationProperty</code>.
 	 *
 	 * @author SAP SE
 	 * @namespace
@@ -51,6 +54,18 @@ sap.ui.define([
 	 * @since 1.85
 	 */
 	const Delegate = Object.assign({}, TableDelegate);
+
+	/**
+	 * Retrieves information about the relevant properties.
+	 *
+	 * By default, this method returns a <code>Promise</code> that resolves with an empty array.
+	 *
+	 * @name module:sap/ui/mdc/odata/v4/TableDelegate.fetchProperties
+	 * @function
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @returns {Promise<sap.ui.mdc.odata.v4.TablePropertyInfo[]>} A <code>Promise</code> that resolves with the property information
+	 * @protected
+	 */
 
 	Delegate.getTypeMap = function(oPayload) {
 		return ODataV4TypeMap;
@@ -70,6 +85,22 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
+	Delegate.updateBindingInfo = function(oTable, oBindingInfo) {
+		TableDelegate.updateBindingInfo.apply(this, arguments);
+
+		if (!isAnalyticsEnabled(oTable)) {
+			const aInResultPropertyKeys = getInResultPropertyKeys(oTable);
+
+			if (aInResultPropertyKeys.length > 0) {
+				const oPropertyHelper = oTable.getPropertyHelper();
+				oBindingInfo.parameters.$select = aInResultPropertyKeys.map((sKey) => oPropertyHelper.getProperty(sKey).path);
+			}
+		}
+	};
+
+	/**
+	 * @inheritDoc
+	 */
 	Delegate.getGroupSorter = function(oTable) {
 		const oGroupedProperty = oTable._getGroupedProperties()[0];
 
@@ -77,7 +108,7 @@ sap.ui.define([
 			return undefined;
 		}
 
-		if (!getVisiblePropertyNames(oTable).includes(oGroupedProperty.name)) {
+		if (!getVisiblePropertyKeys(oTable).includes(oGroupedProperty.name)) {
 			// Suppress grouping by non-visible property.
 			return undefined;
 		}
@@ -91,10 +122,10 @@ sap.ui.define([
 	Delegate.getSorters = function(oTable) {
 		let aSorters = TableDelegate.getSorters.apply(this, arguments);
 
-		// Sorting by a property that is not in the aggregation info (sorting by a property that is not requested) causes a backend error.
+		// Sorting by a property that is not in the aggregation info (sorting by a property that is not requested) causes a back end error.
 		if (isAnalyticsEnabled(oTable)) {
 			const oPropertyHelper = oTable.getPropertyHelper();
-			const aVisiblePropertyPaths = getVisiblePropertyNames(oTable).map((sPropertyName) => oPropertyHelper.getProperty(sPropertyName).path);
+			const aVisiblePropertyPaths = getVisiblePropertyKeys(oTable).map((sPropertyName) => oPropertyHelper.getProperty(sPropertyName).path);
 
 			aSorters = aSorters.filter((oSorter) => aVisiblePropertyPaths.includes(oSorter.sPath));
 		}
@@ -201,6 +232,30 @@ sap.ui.define([
 	}
 
 	/**
+	 * Returns the keys of properties that should always be included in the result of the collection requested from the back end. This information is
+	 * applied when updating the table's binding.
+	 *
+	 * By default, this method returns an empty array.
+	 *
+	 * <b>Note:</b> If properties are provided in the table's {@link sap.ui.mdc.Table propertyInfo} property, the properties whose keys are returned
+	 * by this method must be included, otherwise they may not be in included the result.<br>
+	 * The path of a property must not be empty.<br>
+	 * If a property is complex, the properties it references are taken into account.<br>
+	 * If <code>autoExpandSelect</code> of the {@link sap.ui.model.odata.v4.ODataModel} is not enabled, this method must return an empty array.
+	 * If the table type is {@link sap.ui.mdc.table.GridTableType GridTable} and <code>p13nMode</code> <code>Group</code> or <code>p13nMode</code>
+	 * <code>Aggregate</code> is enabled, referenced properties, for example, properties that are referenced via <code>text</code> or
+	 * <code>unit</code>, are also included in the result. Please also see the restrictions in the description of the {@link module:sap/ui/mdc/odata/v4/TableDelegate TableDelegate}.<br>
+	 * For more information about properties, see {@link sap.ui.mdc.odata.v4.TablePropertyInfo PropertyInfo}.
+	 *
+	 * @param {sap.ui.mdc.Table} Instance of the table
+	 * @returns {string[]} Property keys
+	 * @protected
+	 */
+	Delegate.getInResultPropertyKeys = function(oTable) {
+		return [];
+	};
+
+	/**
 	 * @inheritDoc
 	 */
 	Delegate.getSupportedFeatures = function(oTable) {
@@ -225,6 +280,9 @@ sap.ui.define([
 		};
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	Delegate.validateState = function(oTable, oState, sKey) {
 		const oBaseValidationResult = TableDelegate.validateState.apply(this, arguments);
 		let oValidationResult;
@@ -456,44 +514,35 @@ sap.ui.define([
 			return;
 		}
 
-		const aGroupLevels = oTable._getGroupedProperties().map((mGroupLevel) => {
-			return mGroupLevel.name;
-		});
+		const aInResultPropertyKeys = Array.from(new Set([
+			...getVisiblePropertyKeys(oTable),
+			...getInResultPropertyKeys(oTable)
+		]));
+		const aGroupLevels = oTable._getGroupedProperties().map((mGroupLevel) => mGroupLevel.name);
 		const aAggregates = Object.keys(oTable._getAggregatedProperties());
-		const sSearch = oBindingInfo ? oBindingInfo.parameters["$search"] : undefined;
+		const mColumnState = getColumnState(oTable, aAggregates);
+		const sSearch = oBindingInfo?.parameters["$search"];
 
 		if (sSearch) {
 			delete oBindingInfo.parameters["$search"];
 		}
 
-		const oAggregationInfo = {
-			visible: getVisiblePropertyNames(oTable),
+		oPlugin.setAggregationInfo({
+			visible: aInResultPropertyKeys,
 			groupLevels: aGroupLevels,
 			grandTotal: aAggregates,
 			subtotals: aAggregates,
-			columnState: getColumnState(oTable, aAggregates),
+			columnState: mColumnState,
 			search: sSearch
-		};
-
-		oPlugin.setAggregationInfo(oAggregationInfo);
+		});
 	}
 
-	function getVisiblePropertyNames(oTable) {
-		const oVisiblePropertiesSet = new Set();
+	function getVisiblePropertyKeys(oTable) {
+		return getSimplePropertyKeys(oTable, oTable.getColumns());
+	}
 
-		oTable.getColumns().forEach((oColumn) => {
-			const oProperty = oTable.getPropertyHelper().getProperty(oColumn.getPropertyKey());
-
-			if (!oProperty) {
-				return;
-			}
-
-			oProperty.getSimpleProperties().forEach((oProperty) => {
-				oVisiblePropertiesSet.add(oProperty.name);
-			});
-		});
-
-		return Array.from(oVisiblePropertiesSet);
+	function getInResultPropertyKeys(oTable) {
+		return getSimplePropertyKeys(oTable, oTable.getControlDelegate().getInResultPropertyKeys(oTable));
 	}
 
 	function getColumnState(oTable, aAggregatedPropertyNames) {
@@ -537,7 +586,25 @@ sap.ui.define([
 		return mColumnState;
 	}
 
-	// TODO: Move this to TablePropertyHelper (or even base PropertyHelper - another variant of getSimpleProperties?)
+	// TODO: Move this to TablePropertyHelper for reuse?
+	/**
+	 * Gets the keys of simple properties. For complex properties, the keys of the simple properties, which they reference, are collected. Keys of
+	 * properties that are not known to the property helper are filtered out and do not trigger a <code>fetchProperties</code> call.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @param {string[] | sap.ui.mdc.table.Column[]} vKeys The keys or the columns from which the keys are obtained
+	 * @returns {string[]} Keys of simply properties
+	 */
+	function getSimplePropertyKeys(oTable, vKeys) {
+		const oPropertyHelper = oTable.getPropertyHelper();
+		const aKeys = typeof vKeys[0] === "object" ? vKeys.map((oColumn) => oColumn.getPropertyKey()) : vKeys;
+
+		return Array.from(new Set(aKeys.flatMap((sKey) => {
+			return oPropertyHelper.getProperty(sKey)?.getSimpleProperties().map((oProperty) => oProperty.key) || [];
+		})));
+	}
+
+	// TODO: Move this to TablePropertyHelper for reuse?
 	function getColumnProperties(oTable, oColumn) {
 		const oProperty = oTable.getPropertyHelper().getProperty(oColumn.getPropertyKey());
 

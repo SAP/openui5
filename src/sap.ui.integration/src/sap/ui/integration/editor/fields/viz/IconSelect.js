@@ -22,7 +22,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/CheckBox",
 	"sap/m/SegmentedButton",
-	"sap/m/SegmentedButtonItem"
+	"sap/m/SegmentedButtonItem",
+	"sap/ui/integration/util/Utils"
 ], function(
 	Localization,
 	Element,
@@ -44,11 +45,12 @@ sap.ui.define([
 	Text,
 	CheckBox,
 	SegmentedButton,
-	SegmentedButtonItem
+	SegmentedButtonItem,
+	Utils
 ) {
 	"use strict";
 
-	var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration"),
+	var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration", Utils._language),
 		aDefaultIcons,
 		oLoadDefaultIconPromise,
 		// disable below flag to wait for WZ supporting TNT and Business Suite icons later
@@ -223,8 +225,8 @@ sap.ui.define([
 	};
 
 	IconSelect.prototype.onInit = function () {
-		if (oResourceBundle && oResourceBundle.sLocale !== Localization.getLanguage()) {
-			oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
+		if (oResourceBundle && oResourceBundle.sLocale !== Utils._language) {
+			oResourceBundle = Library.getResourceBundleFor("sap.ui.integration", Utils._language);
 		}
 		if (!this._oIconModel) {
 			this._initIconModel();

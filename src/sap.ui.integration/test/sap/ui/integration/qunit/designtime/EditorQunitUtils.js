@@ -180,5 +180,35 @@ sap.ui.define([
 		});
 	};
 
+	EditorQunitUtils.getRandomElementsOfArray = function(aArray, count) {
+		var result = [];
+		for (var i = 0; i < count; i++) {
+			if (aArray.length === 0) {
+				break;
+			}
+			var randomIndex = Math.floor(Math.random() * aArray.length);
+			result.push(aArray[randomIndex]);
+			aArray.splice(randomIndex, 1);
+		}
+		return result;
+	};
+
+	EditorQunitUtils.getRandomPropertiesOfObject = function(oObject, count) {
+		var aKeys = Object.keys(oObject);
+		if (aKeys.length <= 3 || (count && count >= aKeys.length)) {
+			return oObject;
+		}
+		if (!count || count < 0) {
+			count = count || aKeys.length / 3;
+			count = count > 2 ? count : 3;
+		}
+		var aSubKeys = EditorQunitUtils.getRandomElementsOfArray(aKeys, count);
+		var oSubObject = {};
+		aSubKeys.forEach(function(sKey) {
+			oSubObject[sKey] = oObject[sKey];
+		});
+		return oSubObject;
+	};
+
 	return EditorQunitUtils;
 });
