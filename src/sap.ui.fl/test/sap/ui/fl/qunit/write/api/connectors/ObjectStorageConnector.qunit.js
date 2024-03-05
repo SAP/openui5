@@ -182,12 +182,16 @@ sap.ui.define([
 				return removeFlexObjectsFromStorage(oConnector.storage);
 			}
 		}, function() {
-			QUnit.test("when write is called with various changes", function(assert) {
+			QUnit.test("when write is called with various changes, first called original version, then called draft version", function(assert) {
 				return saveListWithConnector(oConnector, values(oTestData))
 				.then(function() {
 					return Promise.all([assertFileWritten(assert, oConnector.storage, oTestData, " was written")]);
 				})
 				.then(function() {
+					return oConnector.loadFlexData({reference: "sap.ui.fl.test", version: Version.Number.Original});
+				})
+				.then(function(aResponses) {
+					assert.strictEqual(aResponses.length, 0, "the response is empty when called original version");
 					return oConnector.loadFlexData({reference: "sap.ui.fl.test", version: Version.Number.Draft});
 				})
 				.then(function(aFlexData) {

@@ -469,8 +469,7 @@ sap.ui.define([
 				const aVersions = await this.versions.load.call(this, mPropertyBag);
 				// default is always the latest non-draft
 				sVersionId ||= aVersions.find((oVersion) => !oVersion.isDraft)?.id;
-
-				while (sVersionId) {
+				while (sVersionId && sVersionId !== Version.Number.Original) {
 					const oVersion = aVersions.find(findVersion.bind(undefined, sVersionId));
 					aVersionChain.push(oVersion.id);
 					sVersionId = oVersion.parentVersion;
