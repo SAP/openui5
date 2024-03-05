@@ -61,10 +61,10 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {string} sKey The property key identifying a property entry
-	 * @returns {object} A single property
+	 * @returns {sap.m.p13n.MetadataObject | undefined} A single property
 	 */
 	MetadataHelper.prototype.getProperty = function(sKey) {
-		return this._aProperties.find(function(oProp){
+		return this._aProperties.find((oProp) => {
 			return oProp.key === sKey;
 		});
 	};
