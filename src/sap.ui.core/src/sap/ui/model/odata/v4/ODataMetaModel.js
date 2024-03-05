@@ -2857,7 +2857,7 @@ sap.ui.define([
 	 * with a dot, which is stripped before lookup; see the <code>&lt;template:alias></code>
 	 * instruction for XML Templating. In case of an absolute name, it is searched in
 	 * <code>mParameters.scope</code> first and then in the global namespace. (Using the global
-	 * namespace is @deprecated as of version 1.120.3). The names "requestCurrencyCodes" and
+	 * namespace is deprecated as of version 1.120.3). The names "requestCurrencyCodes" and
 	 * "requestUnitsOfMeasure" default to {@link #requestCurrencyCodes} and
 	 * {@link #requestUnitsOfMeasure} resp. if not present in <code>mParameters.scope</code>. This
 	 * function is called with the current object (or primitive value) and additional details and
