@@ -662,7 +662,8 @@ sap.ui.define([
 	 */
 	Link.prototype._getSourceControl = function() {
 		const vSourceControlAssociation = this.getAssociation("sourceControl");
-		return vSourceControlAssociation && typeof vSourceControlAssociation === "string" ? Element.getElementById(vSourceControlAssociation) : this.getSourceControl();
+		const oSourceControl = vSourceControlAssociation && typeof vSourceControlAssociation === "string" ? Element.getElementById(vSourceControlAssociation) : vSourceControlAssociation;
+		return  oSourceControl ?? this.getSourceControl();
 	};
 
 	return Link;
