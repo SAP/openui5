@@ -349,7 +349,7 @@ sap.ui.define([
 			/**
 			 * Adds a route to the router.
 			 *
-			 * @param {sap.ui.core.routing.$RouteSettings} oConfig Configuration object for the route @see sap.ui.core.routing.Route#constructor
+			 * @param {sap.ui.core.routing.$RouteSettings} oConfig Configuration object for the route, see {@link sap.ui.core.routing.Route#constructor}
 			 * @param {sap.ui.core.routing.Route} oParent The parent route - if a parent route is given, the <code>routeMatched</code> event of this route will also trigger the <code>routeMatched</code> of the parent and it will also create the view of the parent (if provided).
 			 * @public
 			 */
