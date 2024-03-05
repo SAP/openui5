@@ -358,7 +358,7 @@ sap.ui.define([
 					});
 				}
 				oFilterBar.setBasicSearchField(this._oSearchField);
-				oExistingBasicSearchField.setConditions([]);
+				// oExistingBasicSearchField.setConditions([]);
 			} else if (oExistingBasicSearchField) {
 				if (bSearchSupported) {
 					//oExistingBasicSearchField.setConditions([]); // initialize search field

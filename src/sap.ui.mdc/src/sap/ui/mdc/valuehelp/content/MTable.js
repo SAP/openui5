@@ -1069,7 +1069,7 @@ sap.ui.define([
 	};
 
 	function _fireTypeaheadSuggested(oBindingContext, bCaseSensitive) {
-		if (!this.getUseFirstMatch() || !this._oFirstItemResult || !this._oFirstItemResult.result || !this._oFirstItemResult.filterValue) {
+		if (!this.isTypeahead() || !this.getUseFirstMatch() || !this._oFirstItemResult || !this._oFirstItemResult.result || !this._oFirstItemResult.filterValue) {
 			return;
 		}
 
