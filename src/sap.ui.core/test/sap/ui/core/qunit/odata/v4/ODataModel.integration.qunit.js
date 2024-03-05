@@ -32678,7 +32678,8 @@ make root = ${bMakeRoot}`;
 						NodeID : "3,false"
 					}
 				}]
-			}).expectRequest(
+			})
+			.expectRequest(
 				baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/NodeID"
@@ -32754,6 +32755,248 @@ make root = ${bMakeRoot}`;
 			[false, 1, "3", "Gamma**"],
 			[undefined, 1, "4", "Delta**"]
 		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: A hierarchy has two visible rows, expandTo 2, and first visible row 2.
+	// (1) Collapse Gamma
+	// (2) Create two root nodes Zeta and Eta which the server puts at the end
+	// (3) Side-effects refresh (-> unified cache; after having read the in-place data, the created
+	//     nodes are moved to the front and the in-place range is shifted)
+	// (4) Check all contexts
+	// JIRA: CPOUI5ODATAV4-2454
+	QUnit.test("Recursive Hierarchy: out of place, root nodes", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sCountUrl = "EMPLOYEES/$count?$filter=AGE gt 20&custom=foo&$search=covfefe";
+		const sFilterSearchPrefix = "ancestors($root/EMPLOYEES,OrgChart,ID,filter(AGE gt 20)"
+			+ "/search(covfefe),keep start)/";
+		const sUrl = "EMPLOYEES"
+			+ "?custom=foo&$apply=" + sFilterSearchPrefix + "orderby(ENTRYDATE)"
+			+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)";
+		const sUrlWithExpandLevels = sUrl.slice(0, -1)
+			+ ",ExpandLevels=" + JSON.stringify([{NodeID : "3", Levels : 0}]) + ")";
+		const sView = `
+<t:Table id="table" firstVisibleRow="2" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 2,
+				hierarchyQualifier : 'OrgChart',
+				search : 'covfefe'
+			},
+			$count : true,
+			$filter : 'AGE gt 20',
+			$orderby : 'ENTRYDATE',
+			custom : 'foo'
+		}}" threshold="0" visibleRowCount="2">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		// 2 Beta
+		// 3 Gamma (first visible row)
+		//   4 Delta
+		// 5 Epsilon (w/o this, the first visible row would be decreased)
+		// 6 Zeta (created)
+		// 7 Eta (created)
+		this.expectRequest(sCountUrl, 5)
+			.expectRequest(sUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=2&$top=2", {
+				"@odata.count" : "5",
+				value : [{
+					DescendantCount : "1",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "3",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "4",
+					Name : "Delta"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oBinding = oTable.getBinding("rows");
+		const oGamma = oTable.getRows()[0].getBindingContext();
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')"
+		], [
+			[true, 1, "Gamma"],
+			[undefined, 2, "Delta"]
+		], 5);
+
+		this.expectRequest(sUrl
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name&$skip=4&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "5",
+					Name : "Epsilon"
+				}]
+			});
+
+		oGamma.collapse();
+
+		await this.waitForChanges(assert, "(1) collapse Gamma");
+
+		checkTable("after (1)", assert, oTable, [
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('5')"
+		], [
+			[false, 1, "Gamma"],
+			[undefined, 1, "Epsilon"]
+		], 4);
+
+		this.expectRequest(
+				{method : "POST", url : "EMPLOYEES?custom=foo", payload : {Name : "Zeta"}},
+				{ID : "6", Name : "Zeta"})
+			// Beta becomes visible, but oFirstLevel reads more due to the transient element Zeta
+			.expectRequest(sUrl
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name&$skip=0&$top=2", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}]
+			})
+			.expectRequest(sUrl.replace("custom=foo&", "")
+				+ "&$filter=ID eq '6'&$select=LimitedRank",
+				{value : [{LimitedRank : "5"}]});
+
+		const oZeta = oBinding.create({Name : "Zeta"}, /*bSkipRefresh*/true);
+
+		await Promise.all([
+			oZeta.created(), // must not interleave two creates
+			this.waitForChanges(assert, "(2a) create Zeta")
+		]);
+
+		this.expectRequest(
+				{method : "POST", url : "EMPLOYEES?custom=foo", payload : {Name : "Eta"}},
+				{ID : "7", Name : "Eta"})
+			.expectRequest(sUrl.replace("custom=foo&", "")
+				+ "&$filter=ID eq '7'&$select=LimitedRank",
+				{value : [{LimitedRank : "6"}]});
+
+		const oEta = oBinding.create({Name : "Eta"}, /*bSkipRefresh*/true);
+
+		await Promise.all([
+			oEta.created(),
+			this.waitForChanges(assert, "(2b) create Eta")
+		]);
+
+		checkTable("after (2)", assert, oTable, [
+			"/EMPLOYEES('7')",
+			"/EMPLOYEES('6')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('5')"
+		], [
+			[undefined, 1, "Alpha"],
+			[undefined, 1, "Beta"]
+		]);
+
+		this.expectRequest(sCountUrl, 7)
+			.expectRequest({
+				batchNo : 7,
+				url : sUrlWithExpandLevels
+					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+					+ "&$count=true&$skip=0&$top=4"
+			}, {
+				"@odata.count" : "6",
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "1",
+					Name : "Alpha*"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta*"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "collapsed",
+					ID : "3",
+					Name : "Gamma*"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "5",
+					Name : "Epsilon*"
+				}]
+			})
+			.expectRequest({
+				batchNo : 7,
+				url : sUrlWithExpandLevels + "&$select=DistanceFromRoot,ID,LimitedRank"
+					+ "&$filter=ID eq '6' or ID eq '7'&$top=2"
+			}, {
+				value : [
+					{DistanceFromRoot : "0", ID : "6", LimitedRank : "4"},
+					{DistanceFromRoot : "0", ID : "7", LimitedRank : "5"}
+				]
+			})
+			.expectRequest({
+				batchNo : 7,
+				url : "EMPLOYEES?custom=foo&$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
+					+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=1)"
+					+ "&$select=DrillState,ID,Name"
+					+ "&$filter=ID eq '6' or ID eq '7'&$top=2"
+			}, {
+				value : [
+					{DrillState : "leaf", ID : "6", Name : "Zeta*"},
+					{DrillState : "leaf", ID : "7", Name : "Eta*"}
+				]
+			});
+
+		await Promise.all([
+			oBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "(3) side-effects refresh")
+		]);
+
+		checkTable("after (3)", assert, oTable, [
+			"/EMPLOYEES('7')",
+			"/EMPLOYEES('6')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('5')"
+		], [
+			[undefined, 1, "Alpha*"],
+			[undefined, 1, "Beta*"]
+		]);
+
+		await this.checkAllContexts("(4) check all contexts", assert, oBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "Name"], [
+				[undefined, 1, "Eta*"],
+				[undefined, 1, "Zeta*"],
+				[undefined, 1, "Alpha*"],
+				[undefined, 1, "Beta*"],
+				[false, 1, "Gamma*"],
+				[undefined, 1, "Epsilon*"]
+			]);
 	});
 
 	//*********************************************************************************************

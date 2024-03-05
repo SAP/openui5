@@ -1122,9 +1122,10 @@ sap.ui.define([
 			});
 		});
 
-		// move the out-of-place nodes below their parent in creation order
 		this.oTreeState.getOutOfPlaceGroupedByParent().forEach((oOutOfPlace) => {
-			this.moveOutOfPlaceNodes(getRank(mPredicate2RankResult[oOutOfPlace.parentPredicate]),
+			// move the out-of-place nodes in creation order
+			const oParentRankResult = mPredicate2RankResult[oOutOfPlace.parentPredicate];
+			this.moveOutOfPlaceNodes(oParentRankResult && getRank(oParentRankResult),
 				oOutOfPlace.nodePredicates);
 		});
 	};
@@ -1383,17 +1384,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Moves the out-of-place nodes below the given parent in creation order.
+	 * Moves the out-of-place nodes below the given parent in the given order. Moves to the start if
+	 * there is no parent.
 	 *
-	 * @param {number} iParentRank - The parent's rank
+	 * @param {number} [iParentRank]
+	 *   The parent's rank or <code>undefined</code> if there is no parent
 	 * @param {string[]} aOutOfPlacePredicates - The predicates of the out-of-place nodes
 	 *
 	 * @private
 	 */
 	_AggregationCache.prototype.moveOutOfPlaceNodes = function (iParentRank,
 			aOutOfPlacePredicates) {
-		const iParentIndex = this.aElements.findIndex(
-			(oNode) => _Helper.getPrivateAnnotation(oNode, "rank") === iParentRank);
+		const iParentIndex = iParentRank === undefined
+			? -1
+			: this.aElements.findIndex(
+				(oNode) => _Helper.getPrivateAnnotation(oNode, "rank") === iParentRank);
 		aOutOfPlacePredicates.forEach((sNodePredicate) => {
 			const oNode = this.aElements.$byPredicate[sNodePredicate];
 			const iNodeIndex = this.aElements.indexOf(oNode);
@@ -1613,7 +1618,12 @@ sap.ui.define([
 			fnDataRequested) {
 		var that = this;
 
-		// "before and after the given range"
+		iLength += iPrefetchLength; // "after the given range"
+
+		// "before the given range"
+		// after a side-effects refresh out-of-place nodes may shift the visible range, we have
+		// to read as many nodes before this range to be on the safe side
+		iPrefetchLength += this.oTreeState.getOutOfPlaceCount();
 		if (iStart > iPrefetchLength) {
 			iLength += iPrefetchLength;
 			iStart -= iPrefetchLength;
@@ -1621,7 +1631,6 @@ sap.ui.define([
 			iLength += iStart;
 			iStart = 0;
 		}
-		iLength += iPrefetchLength;
 
 		return SyncPromise.all([
 				this.oFirstLevel.read(iStart, iLength, 0, oGroupLock, fnDataRequested),

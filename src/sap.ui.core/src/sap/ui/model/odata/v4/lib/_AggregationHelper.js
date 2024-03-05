@@ -921,7 +921,8 @@ sap.ui.define([
 
 		/**
 		 * Creates the query options for requesting the data (all required $selects for UI) of
-		 * out-of-place nodes.
+		 * out-of-place nodes. The result is also used to check whether they still have the same
+		 * parent (resp. still are root).
 		 *
 		 * @param {object} oOutOfPlace
 		 *   Out-of-place node information containing key filters
@@ -937,11 +938,15 @@ sap.ui.define([
 		getQueryOptionsForOutOfPlaceNodesData : function (oOutOfPlace, oAggregation,
 				mQueryOptions) {
 			oAggregation = Object.assign({}, oAggregation);
+			oAggregation.expandTo = 1;
 			delete oAggregation.search;
+			delete oAggregation.$ExpandLevels;
 			mQueryOptions = Object.assign({}, mQueryOptions);
-			// with $$filterBeforeAggregate the data is requested with descendants(...) instead of
-			// TopLevels(...)
-			mQueryOptions.$$filterBeforeAggregate = oOutOfPlace.parentFilter;
+			if (oOutOfPlace.parentFilter) {
+				// with $$filterBeforeAggregate the data is requested with descendants(...) instead
+				// of TopLevels(...)
+				mQueryOptions.$$filterBeforeAggregate = oOutOfPlace.parentFilter;
+			}
 			// count/filter/sorter are not relevant for the data request
 			delete mQueryOptions.$count;
 			delete mQueryOptions.$filter;
@@ -973,7 +978,9 @@ sap.ui.define([
 				mQueryOptions) {
 			const aNodeFilters = [];
 			aOutOfPlaceByParent.forEach(function (oOutOfPlace) {
-				aNodeFilters.push(oOutOfPlace.parentFilter);
+				if (oOutOfPlace.parentFilter) {
+					aNodeFilters.push(oOutOfPlace.parentFilter);
+				}
 				aNodeFilters.push(...oOutOfPlace.nodeFilters);
 			});
 			mQueryOptions = Object.assign({}, mQueryOptions, {
