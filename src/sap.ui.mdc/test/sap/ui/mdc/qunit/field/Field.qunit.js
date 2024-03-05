@@ -1640,6 +1640,39 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("initialization of value", async function(assert) {
+
+		oField.setValue([1, "USD", oCurrencyCodeList]);
+		oField.setEditMode(FieldEditMode.EditableDisplay); // to have only one control -> update not only on change event
+		oField.placeAt("content");
+		await nextUIUpdate();
+
+		sinon.spy(oField, "setProperty");
+
+		oField.setValue([null, null, oCurrencyCodeList]);
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated once");
+		assert.deepEqual(oField.getValue(), [null, null, oCurrencyCodeList], "Value");
+
+		oField.setValue([1, "USD", oCurrencyCodeList]);
+		oField.setProperty.reset();
+		oField.setValue([null, null, null]);
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated once");
+		assert.deepEqual(oField.getValue(), [null, null, null], "Value");
+
+		oField.setValue([1, "USD", oCurrencyCodeList]);
+		oField.setProperty.reset();
+		oField.setValue([null, "", oCurrencyCodeList]);
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated once");
+		assert.deepEqual(oField.getValue(), [null, "", oCurrencyCodeList], "Value");
+
+		oField.setValue([1, "USD", oCurrencyCodeList]);
+		oField.setProperty.reset();
+		oField.setValue([undefined, undefined, oCurrencyCodeList]);
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated once");
+		assert.deepEqual(oField.getValue(), [undefined, undefined, oCurrencyCodeList], "Value");
+
+	});
+
 	QUnit.test("update while user input pending", async function(assert) {
 
 		// simulates OutParameter sets unit while user alredy types number
