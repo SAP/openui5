@@ -1914,5 +1914,20 @@
         "text": " We've introduced the isTrustedSource property as a security enhancement for the PDFViewer control as detailed in the API reference"
       }
     ]
+  },
+  "1.96.28": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "1e7cd54cb049b9652a88b5168c2471ff1d7e2f01",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Focus of IconTabFilter is not changing"
+      },
+      {
+        "id": "e1939e10e6ebfa3634be4df8a025b94f54da2ae4",
+        "type": "FIX",
+        "text": " sap.m.Page: Focus element is scrolled into view"
+      }
+    ]
   }
 }
