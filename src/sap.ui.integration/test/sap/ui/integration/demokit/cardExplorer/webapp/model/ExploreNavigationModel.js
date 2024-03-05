@@ -648,6 +648,48 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Popover Actions',
+								key: 'popoverActions',
+								experimental: true,
+								settings: {
+									rows: 5,
+									columns: 4
+								},
+								files: [
+									{
+										url: '/samples/analytical/popoverActions/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/analytical/popoverActions/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							},
+							{
+								title: 'Popover Extension Actions',
+								key: 'popoverExtensionActions',
+								experimental: true,
+								settings: {
+									rows: 5,
+									columns: 4
+								},
+								files: [
+									{
+										url: '/samples/analytical/popoverExtensionActions/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/analytical/popoverExtensionActions/ChartExtension.js',
+										name: 'ChartExtension.js',
+										key: 'ChartExtension.js'
+									}
+								]
+							},
+							{
 								title: 'Column with Time Axis',
 								key: 'timeAxis',
 								settings: {

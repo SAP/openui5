@@ -1073,6 +1073,28 @@
                   "$ref": "#/definitions/simpleBinding"
                 }
               ]
+            },
+            "actionsStrip": {
+              "description": "Defines actions items that can be triggered when the action button is pressed",
+              "type": "array",
+              "maxItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "actions": {
+                    "description": "Defines actions that will be triggered when the action button is pressed",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/action"
+                    }
+                  },
+                  "text": {
+                    "type": "string",
+                    "description": "The action button text"
+                  }
+                }
+              }
             }
           }
         }

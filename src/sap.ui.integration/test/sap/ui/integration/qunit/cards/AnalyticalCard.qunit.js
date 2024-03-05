@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
-	"../services/SampleServices"
+	"../services/SampleServices",
+	"sap/ui/qunit/QUnitUtils"
 ], function (
 	Library,
 	AnalyticalContent,
@@ -17,7 +18,8 @@ sap.ui.define([
 	CardActions,
 	nextUIUpdate,
 	nextCardReadyEvent,
-	SampleServices
+	SampleServices,
+	QUnitUtils
 ) {
 	"use strict";
 
@@ -706,7 +708,16 @@ sap.ui.define([
 					}
 				],
 				"popover": {
-					"active": true
+					"active": true,
+					"actionsStrip": [{
+						"text": "Action for {Store Name}",
+						"actions": [{
+							"type": "Navigation",
+							"parameters": {
+								"url": "https://www.sap.com/{Store Name}"
+							}
+						}]
+					}]
 				},
 				"data": {
 					"json": [
@@ -1338,7 +1349,7 @@ sap.ui.define([
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
 			},
 			afterEach: function () {
-				this.oCard.destroy();
+				// this.oCard.destroy();
 				this.oCard = null;
 			}
 		});
@@ -1352,6 +1363,51 @@ sap.ui.define([
 			var oCardContent = this.oCard.getCardContent();
 			// Assert
 			assert.notOk(oCardContent._getVizProperties(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself should be interactive");
+		});
+
+		QUnit.test("Chart popover actions", async function (assert) {
+			// Act
+			this.oCard.setManifest(oManifest_Analytical_Popover);
+
+			await nextCardReadyEvent(this.oCard);
+			const oCardContent = this.oCard.getCardContent();
+
+			await new Promise((resolve) => {
+				oCardContent.getAggregation("_content").attachEventOnce("renderComplete", resolve);
+			});
+
+			// Arrange
+			const oSetActionItemSpy = sinon.spy(oCardContent._oPopover, "setActionItems");
+			const sActionText = "Action for A&A";
+			const oStubOpenUrl = sinon.stub(window, "open").callsFake(function () {});
+
+			oCardContent.getAggregation("_content").fireSelectData({
+				data: [{
+					target: {
+						__data__: {
+							"Store Name": "A&A",
+							"Revenue": 1564235.29,
+							"_context_row_number": 1
+						}
+					},
+					data: {
+						"Store Name": "A&A",
+						"Revenue": 1564235.29,
+						"_context_row_number": 1
+					}
+				}]
+			});
+
+			// Assert
+			assert.ok(oSetActionItemSpy.calledOnce, "'setActions' on the popover is called" );
+			assert.strictEqual(oCardContent._oPopover.getActionItems()[0].text, sActionText, "Action is properly set and resolved");
+
+			oCardContent._oPopover.getActionItems()[0].press();
+
+			assert.ok(oStubOpenUrl.calledOnce, "Window.open is called exactly once to initiate navigation");
+			assert.ok(oStubOpenUrl.calledWith("https://www.sap.com/A&A"), "Url is resolved with correct path");
+
+			oStubOpenUrl.restore();
 		});
 
 	}).catch(function () {
