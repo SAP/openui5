@@ -24,7 +24,7 @@ sap.ui.define(function() {
 	 * @alias sap.ui.model.analytics.BatchResponseCollector
 	 * @constructor
 	 * @public
-	 * @param {object} [mParams] optional Setup-Parameter, @see BatchResponseCollector#setup
+	 * @param {object} [mParams] optional Setup-Parameter, see {@link #setup}
 	 */
 	function BatchResponseCollector(mParams) {
 		if (mParams) {
