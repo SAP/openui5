@@ -1,13 +1,18 @@
-/* global QUnit */
+/* global QUnit*/
 
 sap.ui.define([
 	"sap/ui/integration/util/Utils",
-	"sap/ui/integration/util/BindingHelper"
+	"sap/ui/integration/util/BindingHelper",
+	"sap/base/util/deepEqual",
+	"sap/base/i18n/Localization"
 ], function (
 	Utils,
-	BindingHelper
+	BindingHelper,
+	deepEqual,
+	Localization
 ) {
 	"use strict";
+	QUnit.config.reorder = false;
 
 	QUnit.module("Utils.timeoutPromise()");
 
@@ -211,5 +216,70 @@ sap.ui.define([
 		var oResult = Utils.getStatusTextBindingInfo(oIncorrectFormatterFromManifest);
 
 		assert.strictEqual(BindingHelper.isBindingInfo(oResult), false, "binding info was not generated");
+	});
+
+	QUnit.module("language");
+
+	QUnit.test("check languageMapping", function (assert) {
+		assert.ok(deepEqual(Utils.languageMapping, {
+			//"cy": "cy-GB",
+			"da-DK": "da",
+			"hi-IN": "hi",
+			"hu-HU": "hu",
+			"id-ID": "id",
+			"ms-MY": "ms",
+			"nl-NL": "nl",
+			//"no-NO": "nb-NO",
+			"pl-PL": "pl",
+			"ro-RO": "ro",
+			//"sh": "sr-RS",
+			"th-TH": "th"
+		}), "languageMapping object ok");
+	});
+
+	QUnit.test("Language changing", function (assert) {
+		// Arrange
+		var done = assert.async();
+		Localization.setLanguage("en");
+		assert.equal(Utils._language, "en", "language en ok");
+		Localization.setLanguage("fr_CA");
+		var pPromise = new Promise(function (resolve, reject) {
+			setTimeout(function () {
+				assert.equal(Utils._language, "fr-CA", "language fr_CA mapping to fr-CA ok");
+				resolve();
+			}, 1000);
+		});
+
+		// Act
+		this.clock.tick(2000);
+
+		// Assert
+		pPromise.then(function () {
+			done();
+		});
+	});
+
+	Object.keys(Utils.languageMapping).forEach(function(sWZLanguage) {
+		QUnit.test("Language changing - " + sWZLanguage, function (assert) {
+			// Arrange
+			var done = assert.async();
+			Localization.setLanguage("en");
+			assert.equal(Utils._language, "en", "language en ok");
+			Localization.setLanguage(sWZLanguage);
+			var pPromise = new Promise(function (resolve, reject) {
+				setTimeout(function () {
+					assert.equal(Utils._language, Utils.languageMapping[sWZLanguage], "language " + sWZLanguage + " mapping to " + Utils.languageMapping[sWZLanguage] + " ok");
+					resolve();
+				}, 1000);
+			});
+
+			// Act
+			this.clock.tick(2000);
+
+			// Assert
+			pPromise.then(function () {
+				done();
+			});
+		});
 	});
 });

@@ -92,7 +92,7 @@ sap.ui.define([
 		renderer: null // Dialog-like control without renderer
 	});
 
-	var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration"),
+	var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration", Utils._language),
 		oCurrentModel,
 		bCancel,
 		oCurrentInstance = null,
@@ -122,6 +122,9 @@ sap.ui.define([
 	};
 
 	Settings.prototype.open = function (oControl, oReferrer, oEditor, oHost, oParent, fnApply, fnCancel) {
+		if (oResourceBundle && oResourceBundle.sLocale !== Utils._language) {
+			oResourceBundle = Library.getResourceBundleFor("sap.ui.integration", Utils._language);
+		}
 		var oCurrentData = this.getModel("currentSettings").getData(),
 			sParameterId = oParent.getParameterId();
 		//prepare fields in key
@@ -579,7 +582,7 @@ sap.ui.define([
 		oDynamicValueField.addStyleClass("selectvariable");
 
 		var selectDynamicValueLabel = new Label(sParameterId + "_settings_popover_dynamicvalue_label", {
-			text: "Select a dynamic value"
+			text: oResourceBundle.getText("EDITOR_MORE_DYNAMICVALUES_SELECT_DYNAMIC_VALUE")
 		});
 		oDynamicValueField.addAriaLabelledBy(selectDynamicValueLabel);
 		var oVBox = new VBox({

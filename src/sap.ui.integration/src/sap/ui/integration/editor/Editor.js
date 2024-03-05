@@ -115,9 +115,9 @@ sap.ui.define([
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g,
 		REGEXP_PARAMETERS = /\{\{parameters\.([^\}\}]+)/g,
 		CONTEXT_TIMEOUT = 5000,
-		oResourceBundle = Library.getResourceBundleFor("sap.ui.integration"),
 		MessageStripId = "_strip",
-		MODULE_PREFIX = "module:";
+		MODULE_PREFIX = "module:",
+		CONTEXT_ENTRIES;
 
 	/**
 	 * Constructor for a new <code>Editor</code>.
@@ -143,7 +143,7 @@ sap.ui.define([
 			library: "sap.ui.integration",
 			properties: {
 				/**
-				 * admin, content, translation
+				 * admin, content, translation, all
 				 * Used to control the editors capabilities
 				 */
 				mode: {
@@ -859,13 +859,18 @@ sap.ui.define([
 			}
 		}
 	});
+
 	/**
 		 * Init of the editor
 		 */
 	Editor.prototype.init = function () {
+		if (Editor.oResourceBundle && Editor.oResourceBundle.sLocale !== Utils._language) {
+			Editor.oResourceBundle = Library.getResourceBundleFor("sap.ui.integration", Utils._language);
+			this._applyLanguageChange();
+		}
 		this._ready = false;
 		this._aFieldReadyPromise = [];
-		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
+		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.integration", Utils._language);
 		this._appliedLayerManifestChanges = [];
 		this._currentLayerManifestChanges = {};
 		this._mDestinationDataProviders = {};
@@ -1104,13 +1109,11 @@ sap.ui.define([
 			return;
 		}
 
-		var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 		var oResourceModel = new ResourceModel({
-			bundle: oResourceBundle
+			bundle: this._oResourceBundle
 		});
 
 		this.setModel(oResourceModel, "i18n");
-		this._oResourceBundle = oResourceBundle;
 		this._defaultTranslationsLoaded = true;
 	};
 
@@ -1795,13 +1798,13 @@ sap.ui.define([
 	Editor.prototype._mergeContextData = function (oContextData) {
 		var oData = {};
 		//empty entry
-		oData["empty"] = Editor._contextEntries.empty;
+		oData["empty"] = CONTEXT_ENTRIES.empty;
 		//custom entries
 		for (var n in oContextData) {
 			oData[n] = oContextData[n];
 		}
 		//editor internal
-		oData["editor.internal"] = Editor._contextEntries["editor.internal"];
+		oData["editor.internal"] = CONTEXT_ENTRIES["editor.internal"];
 		return oData;
 	};
 
@@ -2621,7 +2624,7 @@ sap.ui.define([
 			return;
 		}
 		var oNewLabel = null;
-		var sLanguage = Localization.getLanguage().replaceAll('_', '-');
+		var sLanguage = Utils._language;
 		if (sMode === "translation") {
 			if (oConfig.type !== "string") {
 				return;
@@ -2906,7 +2909,7 @@ sap.ui.define([
 		if (oSettings.form && oSettings.form.items) {
 			oItems = oSettings.form.items;
 			//get current language
-			var sLanguage = this._language || this.getLanguage() || Localization.getLanguage().replaceAll('_', '-');
+			var sLanguage = this._language || this.getLanguage() || Utils._language;
 			if (this.getMode() === "translation") {
 				//add top panel of translation editor
 				this._addItem({
@@ -3475,47 +3478,59 @@ sap.ui.define([
 		return sItemKey;
 	};
 
-	//create static context entries
-	Editor._contextEntries =
-	{
-		empty: {
-			label: oResourceBundle.getText("EDITOR_CONTEXT_EMPTY_VAL"),
-			type: "string",
-			description: oResourceBundle.getText("EDITOR_CONTEXT_EMPTY_DESC"),
-			placeholder: "",
-			value: ""
-		},
-		"editor.internal": {
-			label: oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_INTERNAL_VAL"),
-			todayIso: {
+	Editor.oResourceBundle = Library.getResourceBundleFor("sap.ui.integration", Utils._language);
+
+	//init context entries
+	Editor.initContextEntries = function () {
+		return {
+			empty: {
+				label: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EMPTY_VAL"),
 				type: "string",
-				label: oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_TODAY_VAL"),
-				description: oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_TODAY_DESC"),
-				tags: [],
-				placeholder: oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_TODAY_VAL"),
-				customize: ["format.dataTime"],
-				value: "{{parameters.TODAY_ISO}}"
+				description: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EMPTY_DESC"),
+				placeholder: "",
+				value: ""
 			},
-			nowIso: {
-				type: "string",
-				label: oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_NOW_VAL"),
-				description: oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_NOW_DESC"),
-				tags: [],
-				placeholder: oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_NOW_VAL"),
-				customize: ["dateFormatters"],
-				value: "{{parameters.NOW_ISO}}"
-			},
-			currentLanguage: {
-				type: "string",
-				label: oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_LANG_VAL"),
-				description: oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_LANG_VAL"),
-				tags: ["technical"],
-				customize: ["languageFormatters"],
-				placeholder: oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_LANG_VAL"),
-				value: "{{parameters.LOCALE}}"
+			"editor.internal": {
+				label: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_INTERNAL_VAL"),
+				todayIso: {
+					type: "string",
+					label: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_TODAY_VAL"),
+					description: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_TODAY_DESC"),
+					tags: [],
+					placeholder: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_TODAY_VAL"),
+					customize: ["format.dataTime"],
+					value: "{{parameters.TODAY_ISO}}"
+				},
+				nowIso: {
+					type: "string",
+					label: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_NOW_VAL"),
+					description: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_NOW_DESC"),
+					tags: [],
+					placeholder: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_NOW_VAL"),
+					customize: ["dateFormatters"],
+					value: "{{parameters.NOW_ISO}}"
+				},
+				currentLanguage: {
+					type: "string",
+					label: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_LANG_VAL"),
+					description: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_LANG_VAL"),
+					tags: ["technical"],
+					customize: ["languageFormatters"],
+					placeholder: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_LANG_VAL"),
+					value: "{{parameters.LOCALE}}"
+				}
 			}
-		}
+		};
 	};
+
+	//create static context entries
+	CONTEXT_ENTRIES = Editor.initContextEntries();
+
+	//change static members if language changed
+	Editor.prototype._applyLanguageChange = function () {
+		CONTEXT_ENTRIES = Editor.initContextEntries();
+	};
+
 	//map of language strings in their actual language representation, initialized in Editor.init
 	Editor._oLanguages = {};
 
