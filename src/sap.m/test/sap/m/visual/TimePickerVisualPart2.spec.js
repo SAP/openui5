@@ -3,6 +3,8 @@
 describe("sap.m.TimePickerVisualPart2", function() {
 	"use strict";
 
+	browser.testrunner.currentSuite.meta.controlName = 'sap.m.TimePicker';
+
 	var iDefaultTimeout = 50000; // timeout for test execution in milliseconds
 
 	// 12 hours clock
