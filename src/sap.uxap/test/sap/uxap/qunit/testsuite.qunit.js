@@ -180,6 +180,9 @@ sap.ui.define(function () {
 					only: ["sap/uxap/ObjectPageThrottledTask"]
 				}
 			},
+			/**
+			 * @deprecated since 1.122
+			 */
 			"ObjectPageWithLazyLoadingTabs": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageWithLazyLoadingTabs"]
