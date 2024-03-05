@@ -183,9 +183,9 @@ sap.ui.define([
 				},
 
 				/**
-				 *  Indicates that contexts functionality is supported.
-				 * <b>Note:</b>
-				 * This property is used internally for SAPUI5 Adaptation scenario.
+				 *  Indicates that contexts functionality is supported.<br>
+				 * <b>Note:</b> This property is used internally by the SAPUI5 flexibility layer.
+				 * @restricted sap.ui.fl, sap.ui.comp
 				 */
 				supportContexts: {
 					type: "boolean",
@@ -313,10 +313,10 @@ sap.ui.define([
 				 * Renders the name of the variant as a text.
 				 * The name of the variant is usually rendered as {@link sap.m.Title}
 				 * but there are use cases - related to accessibility requirements - where the
-				 * rendering should be done using {@link sap.m.Text} instead.
+				 * rendering should be done using {@link sap.m.Text} instead.<br>
 				 * <b>Note:</b>
-				 * If the name of the variant is rendered as <code>sap.m.Text</code>, all the <code>sap.m.Title</code>-
-				 * specific information (<code>headerLevel</code> and <code>titleStyle</code>) is ignored.
+				 * If the name of the variant is rendered as <code>sap.m.Text</code>, all the <code>sap.m.Title</code>
+				 * specific information like <code>level</code> and <code>titleStyle</code> is ignored.
 				 *
 				 * @since 1.118
 				 */
@@ -410,15 +410,16 @@ sap.ui.define([
 						},
 
 						/**
-						 * Array describing the contexts.
-						 * <b>Note:</b> It is only used internally by the SAPUI5 flexibility layer.
+						 * Array describing the contexts.<br>
+						 * <b>Note:</b> This property is used internally by the SAPUI5 flexibility layer.
+						 * @restricted sap.ui.fl, sap.ui.comp
 						 */
 						contexts: {
 							type: "object[]"
 						},
 
 						/**
-						 * Indicates the check box state for 'Create Tile'.
+						 * Indicates the check box state for 'Create Tile'.<br>
 						 * <b>Note:</b>
 						 * This event parameter is used only internally.
 						 */
@@ -481,8 +482,9 @@ sap.ui.define([
 
 						/**
 						 * List of variant keys and the associated contexts array.
-						 * Each entry contains a <code>key</code> (the variant key) and a <code>contexts</code> array describing the contexts.
-						 * <b>Note:</b> It is only used internally by the SAPUI5 flexibility layer.
+						 * Each entry contains a <code>key</code> (the variant key) and a <code>contexts</code> array describing the contexts.<br>
+						 * <b>Note:</b> This property is used internally by the SAPUI5 flexibility layer.
+						 * @restricted sap.ui.fl, sap.ui.comp
 						 */
 						contexts: {
 							type: "object[]"
@@ -615,7 +617,7 @@ sap.ui.define([
  	 * Special handling of the rendering the apply automatically control in <i>Manage Views</i>
 	 * @returns {string} Value of the private property
 	 * @private
-	 * @restricted sap.ui.mdc, sap.ui.comp
+	 * @restricted sap.ui.fl, sap.ui.comp
  	 */
 	VariantManagement.prototype.getDisplayTextForExecuteOnSelectionForStandardVariant = function() {
 		return this.getProperty("_displayTextForExecuteOnSelectionForStandardVariant");
@@ -625,7 +627,7 @@ sap.ui.define([
 	 * @param {string} sValue to be displayed
 	 * @returns {string} the current instance
 	 * @private
-	 * @restricted sap.ui.mdc, sap.ui.comp
+	 * @restricted sap.ui.fl, sap.ui.comp
  	 */
 	VariantManagement.prototype.setDisplayTextForExecuteOnSelectionForStandardVariant = function(sValue) {
 		this.setProperty("_displayTextForExecuteOnSelectionForStandardVariant", sValue);
@@ -634,9 +636,9 @@ sap.ui.define([
 	/**
  	 * Special handling of the rendering of this control.
 	 * @param {boolean} bValue defines the intended rendering
-	 * @returns {sap.ui.m.VariantManagement} the current instance
+	 * @returns {sap.m.VariantManagement} the current instance
 	 * @private
-	 * @restricted sap.ui.mdc, sap.ui.comp
+	 * @restricted sap.ui.fl, sap.ui.comp
  	 */
 	VariantManagement.prototype.setShowAsText = function(bValue) {
 		this.setProperty("_showAsText", bValue);
@@ -648,7 +650,7 @@ sap.ui.define([
  	 * Special handling of the rendering of this control.
 	 * @returns {boolean} the current intend
 	 * @private
-	 * @restricted sap.ui.mdc, sap.ui.comp
+	 * @restricted sap.ui.fl, sap.ui.comp
  	 */
 	VariantManagement.prototype.getShowAsText = function() {
 		return this.getProperty("_showAsText");
@@ -3039,6 +3041,13 @@ sap.ui.define([
 		this._oSearchFieldOnMgmtDialog = undefined;
 		this._sDefaultKey = undefined;
 		this._oCtrlRef = undefined;
+
+		if (this._oNoDataIllustratedMessage && !this._oNoDataIllustratedMessage.bIsDestroyed) {
+			this._oNoDataIllustratedMessage.destroy();
+		}
+		if (this._oNoDataFoundIllustratedMessage && !this._oNoDataFoundIllustratedMessage.bIsDestroyed) {
+			this._oNoDataFoundIllustratedMessage.destroy();
+		}
 
 		this._oNoDataIllustratedMessage = undefined;
 		this._oNoDataFoundIllustratedMessage = undefined;
