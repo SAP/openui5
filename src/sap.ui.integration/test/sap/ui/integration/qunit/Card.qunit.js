@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/m/BadgeCustomData",
 	"sap/m/MessageStrip",
 	"sap/ui/integration/util/DataProviderFactory",
-	"sap/m/library",
 	"sap/base/util/deepExtend",
 	"sap/base/util/LoaderExtensions",
 	"sap/m/HBox",
@@ -54,7 +53,6 @@ sap.ui.define([
 		BadgeCustomData,
 		MessageStrip,
 		DataProviderFactory,
-		mLibrary,
 		deepExtend,
 		LoaderExtensions,
 		HBox,
@@ -72,31 +70,9 @@ sap.ui.define([
 
 		var DOM_RENDER_LOCATION = "qunit-fixture";
 
-		var AvatarColor = mLibrary.AvatarColor;
 		var MessageType = coreLibrary.MessageType;
 		var CardDataMode = library.CardDataMode;
 		var CardBlockingMessageType = library.CardBlockingMessageType;
-		var WrappingType = mLibrary.WrappingType;
-
-		var oManifest_Header = {
-			"sap.app": {
-				"id": "test.card.card1"
-			},
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"title": "L3 Request list content Card",
-					"subTitle": "Card subtitle",
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"status": {
-						"text": "100 of 200"
-					},
-					"dataTimestamp": "2021-03-18T12:00:00Z"
-				}
-			}
-		};
 
 		var oManifest_ListCard = {
 			"sap.app": {
@@ -431,217 +407,6 @@ sap.ui.define([
 			}
 		};
 
-		var oManifest_AvatarHeader = {
-			"sap.app": {
-				"id": "test.card.card8"
-			},
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"actions": [
-						{
-							"type": "Navigation",
-							"url": "https://www.sap.com"
-						}
-					],
-					"title": "L3 Request list content Card",
-					"subTitle": "Card subtitle",
-					"icon": {
-						"initials": "AJ",
-						"shape": "Circle",
-						"alt": "Some alternative text", // Will be ignored as its not present in the Avatar control atm.
-						"color": "#FF0000" // Will be ignored as its not present in the Avatar control atm.
-					},
-					"status": {
-						"text": "100 of 200"
-					}
-				}
-			}
-		};
-
-		var oManifest_NumericHeader = {
-			"sap.app": {
-				"id": "test.card.card9"
-			},
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"type": "Numeric",
-					"data": {
-						"json": {
-							"n": "56",
-							"u": "%",
-							"trend": "Up",
-							"valueColor": "Good"
-						}
-					},
-					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
-					"unitOfMeasurement": "EUR",
-					"mainIndicator": {
-						"number": "{n}",
-						"unit": "{u}",
-						"trend": "{trend}",
-						"state": "{valueColor}"
-					},
-					"dataTimestamp": "2021-03-18T12:00:00Z",
-					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-					"sideIndicators": [
-						{
-							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
-							"number": "3252.234",
-							"unit": "K"
-						},
-						{
-							"title": "Long Deviation Long Deviation",
-							"number": "22.43",
-							"unit": "%"
-						}
-					]
-				}
-			}
-		};
-
-		var oManifest_NumericHeader_MainIndicator = {
-			"sap.app": {
-				"id": "test.card.mainIndicator"
-			},
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"type": "Numeric",
-					"data": {
-						"json": {
-							"visibility": false,
-							"n": "56",
-							"u": "%",
-							"trend": "Up",
-							"valueColor": "Good"
-						}
-					},
-					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
-					"unitOfMeasurement": "EUR",
-					"mainIndicator": {
-						"visible": "{visibility}",
-						"number": "{n}",
-						"unit": "{u}",
-						"trend": "{trend}",
-						"state": "{valueColor}"
-					},
-					"dataTimestamp": "2021-03-18T12:00:00Z",
-					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-					"sideIndicators": [
-						{
-							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
-							"number": "3252.234",
-							"unit": "K"
-						},
-						{
-							"title": "Long Deviation Long Deviation",
-							"number": "22.43",
-							"unit": "%"
-						}
-					]
-				}
-			}
-		};
-
-		var oManifest_NumericHeader_SideIndicators = {
-			"sap.app": {
-				"id": "test.card.mainIndicator"
-			},
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"type": "Numeric",
-					"data": {
-						"json": {
-							"visibility": false,
-							"n": "56",
-							"u": "%",
-							"trend": "Up",
-							"valueColor": "Good"
-						}
-					},
-					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
-					"unitOfMeasurement": "EUR",
-					"mainIndicator": {
-						"number": "{n}",
-						"unit": "{u}",
-						"trend": "{trend}",
-						"state": "{valueColor}"
-					},
-					"dataTimestamp": "2021-03-18T12:00:00Z",
-					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-					"sideIndicators": [
-						{
-							"visible": "{visibility}",
-							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
-							"number": "3252.234",
-							"unit": "K"
-						},
-						{
-							"visible": "{visibility}",
-							"title": "Long Deviation Long Deviation",
-							"number": "22.43",
-							"unit": "%"
-						}
-					]
-				}
-			}
-		};
-
-		var oManifest_NumericHeader2 = {
-			"sap.app": {
-				"id": "test.card.card10"
-			},
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"type": "Numeric",
-					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
-					"unitOfMeasurement": "EUR",
-					"mainIndicator": {
-						"number": "56",
-						"unit": "%",
-						"trend": "Up",
-						"state": "Good"
-					},
-					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-					"sideIndicators": [
-						{
-							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
-							"number": "3252.234",
-							"unit": "K"
-						},
-						{
-							"title": "Long Deviation Long Deviation",
-							"number": "22.43",
-							"unit": "%"
-						}
-					]
-				}
-			}
-		};
-
-		var oManifest_NumericHeader_OnlyTitleAndSubtitle = {
-			"sap.app": {
-				"id": "test.card.card11"
-			},
-			"sap.card": {
-				"type": "List",
-				"header": {
-					"type": "Numeric",
-					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
-					"unitOfMeasurement": "EUR"
-				}
-			}
-		};
-
 		var oManifest_ComponentCardAllInOne = {
 			"_version": "1.12.0",
 			"sap.app": {
@@ -671,24 +436,6 @@ sap.ui.define([
 					},
 					"item": {
 						"title": "{cities>name}"
-					}
-				}
-			}
-		};
-
-		var oManifest_DefaultHeader_NoContent = {
-			"sap.app": {
-				"id": "test.card.card16",
-				"type": "card"
-			},
-			"sap.card": {
-				"type": "Object",
-				"header": {
-					"title": "Header Title",
-					"data": {
-						"request": {
-							"url": "fake-url"
-						}
 					}
 				}
 			}
@@ -1497,885 +1244,6 @@ sap.ui.define([
 			this.oCard.showMessage();
 		});
 
-		QUnit.module("Default Header", {
-			beforeEach: async function () {
-				this.oCard = new Card({
-					width: "400px",
-					height: "600px"
-				});
-
-				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				await nextUIUpdate();
-			},
-			afterEach: function () {
-				this.oCard.destroy();
-				this.oCard = null;
-			}
-		});
-
-		QUnit.test("Default Header initialization", async function (assert) {
-			// Arrange
-			this.oCard.setManifest(oManifest_Header);
-			await nextUIUpdate();
-
-			// Assert
-			assert.notOk(this.oCard.getAggregation("_header"), "Card header should be empty.");
-			assert.notOk(this.oCard.getAggregation("_content"), "Card content should be empty.");
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			var oHeader = this.oCard.getAggregation("_header");
-			assert.ok(oHeader, "Card should have header.");
-			assert.ok(oHeader.getDomRef(), "Card header should be created and rendered.");
-			assert.ok(oHeader.getAggregation("_title") && oHeader.getAggregation("_title").getDomRef(), "Card header title should be created and rendered.");
-			assert.ok(oHeader.getAggregation("_subtitle") && oHeader.getAggregation("_subtitle").getDomRef(), "Card header subtitle should be created and rendered.");
-			assert.ok(oHeader.getAggregation("_avatar") && oHeader.getAggregation("_avatar").getDomRef(), "Card header avatar should be created and rendered.");
-			assert.ok(oHeader.getAggregation("_dataTimestamp") && oHeader.getAggregation("_dataTimestamp").getDomRef(), "Card header dataTimestamp should be created and rendered.");
-
-
-			assert.equal(oHeader.getAggregation("_title").getText(), oManifest_Header["sap.card"].header.title, "Card header title should be correct.");
-			assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest_Header["sap.card"].header.subTitle, "Card header subtitle should be correct.");
-			assert.equal(oHeader.getAggregation("_avatar").getSrc(), oManifest_Header["sap.card"].header.icon.src, "Card header icon src should be correct.");
-			assert.equal(oHeader.getStatusText(), oManifest_Header["sap.card"].header.status.text, "Card header status should be correct.");
-			assert.equal(oHeader.getDataTimestamp(), oManifest_Header["sap.card"].header.dataTimestamp, "Card header dataTimestamp should be correct.");
-		});
-
-		QUnit.test("Default Header Avatar", async function (assert) {
-			this.oCard.setManifest(oManifest_AvatarHeader);
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			var oHeader = this.oCard.getAggregation("_header");
-			assert.notOk(oHeader.getAggregation("_avatar").getSrc(), "Card header icon src should be empty.");
-			assert.equal(oHeader.getAggregation("_avatar").getDisplayShape(), "Circle", "Card header icon shape should be 'Circle'.");
-			assert.equal(oHeader.getAggregation("_avatar").getInitials(), "AJ", "Card header initials should be 'AJ'.");
-		});
-
-		QUnit.test("Default Header Avatar initials with deprecated 'text' property", async function (assert) {
-			// Act
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.cardDeprecatedInitialsTextProperty"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"icon": {
-							"text": "AJ"
-						}
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			var oHeader = this.oCard.getAggregation("_header");
-			assert.equal(oHeader.getAggregation("_avatar").getInitials(), "AJ", "Card header initials should be correctly set with deprecated 'text' property.");
-		});
-
-		QUnit.test("'backgroundColor' when there is icon src", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.backgroundColorWithIconSrc"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"icon": {
-							"src": "sap-icon://accept"
-						}
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oAvatar = this.oCard.getAggregation("_header").getAggregation("_avatar");
-
-			// Assert
-			assert.strictEqual(oAvatar.getBackgroundColor(), AvatarColor.Transparent, "Background should be 'Transparent' when there is only icon.");
-		});
-
-		QUnit.test("'backgroundColor' when there are initials", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.backgroundColorWithInitials"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"icon": {
-							"initials": "SI"
-						}
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oAvatar = this.oCard.getAggregation("_header").getAggregation("_avatar"),
-			sExpected = oAvatar.getMetadata().getPropertyDefaults().backgroundColor;
-
-			// Assert
-			assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should be default value when there are initials.");
-		});
-
-		QUnit.test("'statusText' set with binding", async function (assert) {
-			// Arrange
-			var oManifest = {
-					"sap.app": {
-						"id": "my.card.test"
-					},
-					"sap.card": {
-						"type": "List",
-						"header": {
-							"data": {
-								"json": {
-									"statusText": "2 of 10"
-								}
-							},
-							"status": {
-								"text": "{/statusText}"
-							}
-						}
-					}
-				};
-
-			this.oCard.setManifest(oManifest);
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oHeader = this.oCard.getCardHeader();
-
-			// Assert
-			assert.strictEqual(oHeader.getStatusText(), oManifest["sap.card"].header.data.json.statusText, "Status text binding should be resolved.");
-		});
-
-		QUnit.test("hidden header", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.hiddenHeader"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"visible": false,
-						"title": "Card title"
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
-		});
-
-		QUnit.test("hidden header with binding", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.hiddenHeader"
-				},
-				"sap.card": {
-					"type": "List",
-					"data": {
-						"json": {
-							"headerVisible": false
-						}
-					},
-					"header": {
-						"visible": "{/headerVisible}",
-						"title": "Card title"
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
-		});
-
-		QUnit.test("Header icon when visible property is set to false", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.hiddenHeader"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"data": {
-							"json": {
-								"iconVisible": false
-							}
-						},
-						"title": "Card title",
-						"icon": {
-							"src": "",
-							"visible": "{iconVisible}",
-							"shape": "Circle"
-						}
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			assert.notOk(this.oCard.getCardHeader().getIconVisible(), "Card Header icon is hidden.");
-		});
-
-		QUnit.test("Header icon when visible property is not set", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.hiddenHeader"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"title": "Card title",
-						"icon": {
-							"src": "",
-							"shape": "Circle"
-						}
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			assert.ok(this.oCard.getCardHeader().getIconVisible(), "Card Header icon is not hidden.");
-		});
-
-		QUnit.test("Hidden header icon if visible property is set to true", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.hiddenHeader"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"data": {
-							"json": {
-								"iconVisible": true
-							}
-						},
-						"title": "Card title",
-						"icon": {
-							"src": "",
-							"visible": "{iconVisible}",
-							"shape": "Circle"
-						}
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			assert.ok(this.oCard.getCardHeader().getIconVisible(), "Card Header icon is not hidden.");
-		});
-
-		QUnit.test("Header icon not visible when src set to IconFormatter.SRC_FOR_HIDDEN_ICON", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.hiddenIconWithSrc"
-				},
-				"sap.card": {
-					"type": "List",
-					"data": {
-						"json": {
-							"iconVisible": true
-						}
-					},
-					"configuration": {
-						"parameters": {
-							"iconSrc": {
-								"value": "SRC_FOR_HIDDEN_ICON"
-							}
-						}
-					},
-					"header": {
-						"title": "Card header icon should be hidden",
-						"icon": {
-							"src": "{parameters>/iconSrc/value}",
-							"visible": "{iconVisible}"
-						}
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			assert.notOk(this.oCard.getCardHeader().shouldShowIcon(), "Card Header icon should not be shown.");
-		});
-
-		QUnit.test("Header status text when visible property is set to false", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.hiddenStatus"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"data": {
-							"json": {
-								"statusVisible": false
-							}
-						},
-						"title": "Card title",
-						"status": {
-							"text": "4 of 20",
-							"visible": "{statusVisible}"
-						}
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			assert.notOk(this.oCard.getCardHeader().getStatusVisible(), "Card Header status text is hidden.");
-		});
-
-		QUnit.test("Header status when visible property is set to true", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.hiddenStatus"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"data": {
-							"json": {
-								"statusVisible": true
-							}
-						},
-						"title": "Card title",
-						"status": {
-							"text": "4 of 20",
-							"visible": "{statusVisible}"
-						}
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			assert.ok(this.oCard.getCardHeader().getStatusVisible(), "Card Header status text is not hidden.");
-		});
-
-		QUnit.test("Default header icon when src is empty string and shape is 'Circle'", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.defaultHeaderIcon"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"title": "Card title",
-						"icon": {
-							"src": "",
-							"shape": "Circle"
-						}
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
-				sPersonPlaceHolder = "sap-icon://person-placeholder";
-
-			// Assert
-			assert.strictEqual(oAvatarIcon.getSrc(), sPersonPlaceHolder, "Should show 'sap-icon://person-placeholder' when icon src is empty and the shape is 'Circle'.");
-		});
-
-		QUnit.test("Default header icon when src is empty string and shape is 'Square'", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.defaultHeaderIcon"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"title": "Card title",
-						"icon": {
-							"src": "",
-							"shape": "Square"
-						}
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
-				sProduct = "sap-icon://product";
-
-			// Assert
-			assert.strictEqual(oAvatarIcon.getSrc(), sProduct, "Should show 'sap-icon://product' when icon src is empty and the shape is 'Square'.");
-		});
-
-		QUnit.test("Default header icon when src is empty string and shape is 'Circle' with binding", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.defaultHeaderIcon"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"data": {
-							"json": {
-								"Icon": "",
-								"Shape": "Circle"
-							}
-						},
-						"title": "Card title",
-						"icon": {
-							"src": "{Icon}",
-							"shape": "{Shape}"
-						}
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
-				sPersonPlaceHolder = "sap-icon://person-placeholder";
-
-			// Assert
-			assert.strictEqual(oAvatarIcon.getSrc(), sPersonPlaceHolder, "Should show 'sap-icon://person-placeholder' when icon src is empty and the shape is 'Circle'.");
-		});
-
-		QUnit.test("Default header icon when src is empty string and shape is 'Square' with binding", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.defaultHeaderIcon"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"data": {
-							"json": {
-								"Icon": "",
-								"Shape": "Square"
-							}
-						},
-						"title": "Card title",
-						"icon": {
-							"src": "{Icon}",
-							"shape": "{Shape}"
-						}
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oAvatarIcon = this.oCard.getCardHeader()._getAvatar()._getIcon(),
-				sProduct = "sap-icon://product";
-
-			// Assert
-			assert.strictEqual(oAvatarIcon.getSrc(), sProduct, "Should show 'sap-icon://product' when icon src is empty and the shape is 'Square'.");
-		});
-
-		QUnit.test("Header Hyphenation", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.headerHyphenation"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"wrappingType": "Hyphenated",
-						"title": "pneumonoultramicroscopicsilicovolcanoconiosis"
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			assert.strictEqual(this.oCard.getCardHeader().getWrappingType(), WrappingType.Hyphenated, "Card Header has wrappingType: Hyphenated.");
-		});
-
-		QUnit.module("Numeric Header", {
-			beforeEach: function () {
-				this.oCard = new Card("somecard", {
-					width: "400px",
-					height: "600px"
-				});
-
-				this.oCard.placeAt(DOM_RENDER_LOCATION);
-			},
-			afterEach: function () {
-				this.oCard.destroy();
-				this.oCard = null;
-			}
-		});
-
-		QUnit.test("'statusText' set with binding", async function (assert) {
-			// Arrange
-			var oManifest = {
-					"sap.app": {
-						"id": "my.card.test"
-					},
-					"sap.card": {
-						"type": "List",
-						"header": {
-							"type": "Numeric",
-							"data": {
-								"json": {
-									"statusText": "2 of 10"
-								}
-							},
-							"status": {
-								"text": "{/statusText}"
-							}
-						}
-					}
-				};
-
-			this.oCard.setManifest(oManifest);
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oHeader = this.oCard.getCardHeader();
-
-			// Assert
-			assert.strictEqual(oHeader.getStatusText(),  oManifest["sap.card"].header.data.json.statusText, "Status text binding should be resolved.");
-		});
-
-		QUnit.test("Numeric Header generic", async function (assert) {
-			this.oCard.setManifest(oManifest_NumericHeader);
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			var oHeader = this.oCard.getAggregation("_header");
-			assert.ok(oHeader.getDomRef(), "Card Numeric header should be rendered.");
-
-			// Assert properties
-			assert.equal(oHeader.getAggregation("_title").getText(), oManifest_NumericHeader["sap.card"].header.title, "Card header title should be correct.");
-			assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest_NumericHeader["sap.card"].header.subTitle, "Card header subtitle should be correct.");
-			assert.equal(oHeader.getAggregation("_unitOfMeasurement").getText(), oManifest_NumericHeader["sap.card"].header.unitOfMeasurement, "Card header unitOfMeasurement should be correct.");
-			assert.equal(oHeader.getAggregation("_details").getText(), oManifest_NumericHeader["sap.card"].header.details, "Card header details should be correct.");
-			assert.equal(oHeader.getDataTimestamp(), oManifest_NumericHeader["sap.card"].header.dataTimestamp, "Card header dataTimestamp should be correct.");
-		});
-
-		QUnit.test("Numeric Header main indicator with json data", async function (assert) {
-			this.oCard.setManifest(oManifest_NumericHeader);
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oHeader = this.oCard.getAggregation("_header"),
-				oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
-
-			// Assert aggregation mainIndicator
-			assert.ok(oMainIndicator.getDomRef(), "Card header main indicator aggregation should be set and rendered");
-			assert.equal(oMainIndicator.getValue(), oManifest_NumericHeader["sap.card"].header.data.json["n"], "Card header main indicator value should be correct.");
-			assert.equal(oMainIndicator.getScale(), oManifest_NumericHeader["sap.card"].header.data.json["u"], "Card header main indicator scale should be correct.");
-			assert.equal(oMainIndicator.getIndicator(), oManifest_NumericHeader["sap.card"].header.data.json["trend"], "Card header main indicator indicator should be correct.");
-			assert.equal(oMainIndicator.getValueColor(), oManifest_NumericHeader["sap.card"].header.data.json["valueColor"], "Card header main indicator valueColor should be correct.");
-		});
-
-		QUnit.test("Numeric Header main indicator without 'data'", async function (assert) {
-			this.oCard.setManifest(oManifest_NumericHeader2);
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oHeader = this.oCard.getAggregation("_header"),
-				oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
-
-			// Assert aggregation _mainIndicator
-			assert.ok(oMainIndicator.getDomRef(), "Card header main indicator aggregation should be set and rendered");
-			assert.equal(oMainIndicator.getValue(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.number, "Card header main indicator value should be correct.");
-			assert.equal(oMainIndicator.getScale(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.unit, "Card header main indicator scale should be correct.");
-			assert.equal(oMainIndicator.getIndicator(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.trend, "Card header main indicator indicator should be correct.");
-			assert.equal(oMainIndicator.getValueColor(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.state, "Card header main indicator valueColor should be correct.");
-		});
-
-		QUnit.test("Numeric Header side indicators", async function (assert) {
-			this.oCard.setManifest(oManifest_NumericHeader);
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oHeader = this.oCard.getAggregation("_header");
-
-			// Assert aggregation sideIndicators
-			assert.ok(oHeader.getAggregation("sideIndicators"), "Card header side indicators should be set.");
-			assert.equal(oHeader.getAggregation("sideIndicators").length, oManifest_NumericHeader["sap.card"].header.sideIndicators.length, "Card header should have two side indicators.");
-
-			oHeader.getAggregation("sideIndicators").forEach(function (oIndicator, iIndex) {
-				var oSideIndicator = oManifest_NumericHeader["sap.card"].header.sideIndicators[iIndex];
-				assert.ok(oIndicator.getDomRef(), "Card header sideIndicators one should be rendered.");
-				assert.equal(oIndicator.getTitle(), oSideIndicator.title, "Card header side indicator " + iIndex + " title should be correct.");
-				assert.equal(oIndicator.getNumber(), oSideIndicator.number, "Card header side indicator " + iIndex + " number should be correct.");
-				assert.equal(oIndicator.getUnit(), oSideIndicator.unit, "Card header side indicator " + iIndex + " unit should be correct.");
-			});
-		});
-
-		QUnit.test("Numeric Header with no Details and no Indicators (Main and Side)", async function (assert) {
-			this.oCard.setManifest(oManifest_NumericHeader_OnlyTitleAndSubtitle);
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			assert.equal(document.getElementsByClassName("sapFCardHeaderDetails").length, 0, "Card header Details are not rendered.");
-			assert.equal(document.getElementsByClassName("sapFCardNumericIndicators").length, 0, "Card header Indicators are not rendered.");
-			assert.equal(document.getElementsByClassName("sapFCardNumericIndicatorsMain").length, 0, "Card header Main Indicator is not rendered.");
-			assert.equal(document.getElementsByClassName("sapFCardNumericIndicatorsSide").length, 0, "Card header Side Indicator is not rendered.");
-		});
-
-		QUnit.test("hidden header", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.hiddenHeader"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"type": "Numeric",
-						"visible": false,
-						"title": "Card title"
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
-		});
-
-		QUnit.test("hidden header with binding", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.hiddenHeader"
-				},
-				"sap.card": {
-					"type": "List",
-					"data": {
-						"json": {
-							"headerVisible": false
-						}
-					},
-					"header": {
-						"type": "Numeric",
-						"visible": "{/headerVisible}",
-						"title": "Card title"
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
-		});
-
-		QUnit.test("Numeric header main indicator visibility", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.mainIndicator"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"type": "Numeric",
-						"data": {
-							"json": {
-								"n": "56",
-								"u": "%",
-								"trend": "Up",
-								"valueColor": "Good"
-							}
-						},
-						"title": "Card title",
-						"subTitle": "Card subtitle",
-						"unitOfMeasurement": "EUR",
-						"mainIndicator": {
-							"visible": false,
-							"number": "{n}",
-							"unit": "{u}",
-							"trend": "{trend}",
-							"state": "{valueColor}"
-						},
-						"dataTimestamp": "2021-03-18T12:00:00Z",
-						"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-						"sideIndicators": [
-							{
-								"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
-								"number": "3252.234",
-								"unit": "K"
-							},
-							{
-								"title": "Long Deviation Long Deviation",
-								"number": "22.43",
-								"unit": "%"
-							}
-						]
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oHeader = this.oCard.getAggregation("_header"),
-				oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
-
-			// Assert aggregation mainIndicator
-			assert.notOk(oMainIndicator.getVisible(), "Card header main indicator is hidden");
-			assert.notOk(oMainIndicator.getDomRef(), "Card header main indicator should not be rendered if invisible");
-		});
-
-		QUnit.test("Numeric header side indicators visibility", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.mainIndicator"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"type": "Numeric",
-						"data": {
-							"json": {
-								"n": "56",
-								"u": "%",
-								"trend": "Up",
-								"valueColor": "Good"
-							}
-						},
-						"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-						"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
-						"unitOfMeasurement": "EUR",
-						"mainIndicator": {
-							"number": "{n}",
-							"unit": "{u}",
-							"trend": "{trend}",
-							"state": "{valueColor}"
-						},
-						"dataTimestamp": "2021-03-18T12:00:00Z",
-						"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
-						"sideIndicators": [
-							{
-								"visible": false,
-								"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
-								"number": "3252.234",
-								"unit": "K"
-							},
-							{
-								"visible": false,
-								"title": "Long Deviation Long Deviation",
-								"number": "22.43",
-								"unit": "%"
-							}
-						]
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oHeader = this.oCard.getAggregation("_header");
-			var oSideIndicators = oHeader.getAggregation("sideIndicators");
-
-			// Assert
-			oSideIndicators.forEach(function (oIndicator, iIndex) {
-				assert.notOk(oIndicator.getDomRef(), "Card header sideIndicators shouldn't be rendered if invisible.");
-				assert.notOk(oIndicator.getVisible(), "Card header sideIndicators are hidden");
-			});
-		});
-
-		QUnit.test("Numeric header main indicator visibility with binding", async function (assert) {
-			this.oCard.setManifest(oManifest_NumericHeader_MainIndicator);
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oHeader = this.oCard.getAggregation("_header"),
-				oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
-
-			// Assert aggregation mainIndicator
-			assert.notOk(oMainIndicator.getVisible(), "Card header main indicator is hidden");
-			assert.notOk(oMainIndicator.getDomRef(), "Card header main indicator should not be rendered if invisible");
-			assert.equal(oHeader.getNumberVisible(), oManifest_NumericHeader_MainIndicator["sap.card"].header.data.json["visibility"], "Card header main indicator visibility property value should be correct.");
-		});
-
-		QUnit.test("Numeric header side indicators visibility with binding", async function (assert) {
-			this.oCard.setManifest(oManifest_NumericHeader_SideIndicators);
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oHeader = this.oCard.getAggregation("_header");
-			var oSideIndicators = oHeader.getAggregation("sideIndicators");
-
-			// Assert
-			oSideIndicators.forEach(function (oIndicator, iIndex) {
-				assert.notOk(oIndicator.getDomRef(), "Card header sideIndicators shouldn't be rendered if invisible.");
-				assert.notOk(oIndicator.getVisible(), "Card header sideIndicators are hidden");
-				assert.equal(oIndicator.getVisible(), oManifest_NumericHeader_SideIndicators["sap.card"].header.data.json["visibility"], "Card header side indicators visibility property value should be correct.");
-			});
-		});
-
-		QUnit.test("Numeric Header Hyphenation", async function (assert) {
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.headerHyphenation"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"type": "Numeric",
-						"wrappingType": "Hyphenated",
-						"title": "pneumonoultramicroscopicsilicovolcanoconiosis"
-					}
-				}
-			});
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			// Assert
-			assert.strictEqual(this.oCard.getCardHeader().getWrappingType(), WrappingType.Hyphenated, "Card Numeric Header has wrappingType: Hyphenated.");
-		});
-
 		QUnit.module("Footer", {
 			beforeEach: function () {
 				this.oCard = new Card("somecard", {
@@ -2508,6 +1376,33 @@ sap.ui.define([
 		});
 
 		QUnit.test("Generic Interactive", async function (assert) {
+			var oManifest_AvatarHeader = {
+				"sap.app": {
+					"id": "test.card.card8"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"actions": [
+							{
+								"type": "Navigation",
+								"url": "https://www.sap.com"
+							}
+						],
+						"title": "L3 Request list content Card",
+						"subTitle": "Card subtitle",
+						"icon": {
+							"initials": "AJ",
+							"shape": "Circle",
+							"alt": "Some alternative text", // Will be ignored as its not present in the Avatar control atm.
+							"color": "#FF0000" // Will be ignored as its not present in the Avatar control atm.
+						},
+						"status": {
+							"text": "100 of 200"
+						}
+					}
+				}
+			};
 			this.oCard.setManifest(oManifest_AvatarHeader);
 
 			await nextCardReadyEvent(this.oCard);
@@ -2527,6 +1422,49 @@ sap.ui.define([
 		});
 
 		QUnit.test("Numeric Header", async function (assert) {
+			var oManifest_NumericHeader = {
+				"sap.app": {
+					"id": "test.card.card9"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"type": "Numeric",
+						"data": {
+							"json": {
+								"n": "56",
+								"u": "%",
+								"trend": "Up",
+								"valueColor": "Good"
+							}
+						},
+						"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+						"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+						"unitOfMeasurement": "EUR",
+						"mainIndicator": {
+							"number": "{n}",
+							"unit": "{u}",
+							"trend": "{trend}",
+							"state": "{valueColor}"
+						},
+						"dataTimestamp": "2021-03-18T12:00:00Z",
+						"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+						"sideIndicators": [
+							{
+								"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
+								"number": "3252.234",
+								"unit": "K"
+							},
+							{
+								"title": "Long Deviation Long Deviation",
+								"number": "22.43",
+								"unit": "%"
+							}
+						]
+					}
+				}
+			};
+
 			this.oNumericHeaderCard.setManifest(oManifest_NumericHeader);
 
 			await nextCardReadyEvent(this.oNumericHeaderCard);
@@ -2591,7 +1529,23 @@ sap.ui.define([
 		});
 
 		QUnit.test("In a card with no content, the error is rendered in the header", async function (assert) {
-			this.oCard.setManifest(oManifest_DefaultHeader_NoContent);
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.card16",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "Object",
+					"header": {
+						"title": "Header Title",
+						"data": {
+							"request": {
+								"url": "fake-url"
+							}
+						}
+					}
+				}
+			});
 
 			await nextCardReadyEvent(this.oCard);
 			await nextUIUpdate();
