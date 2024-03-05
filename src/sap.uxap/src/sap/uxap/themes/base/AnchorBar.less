@@ -357,3 +357,28 @@ html[data-sap-ui-browser^="ed"] {
 		border: 0 none;
 	}
 }
+
+// Styles needed for the anchorBarButtonColor property
+.sapMIBar.sapUxAPAnchorBar .sapMBarChild.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonColorPositive:hover:not(.sapMBtnDisabled) .sapMBtnInner .sapMBtnContent > bdi,
+.sapMIBar.sapUxAPAnchorBar .sapMBarChild.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonColorPositive .sapMBtnInner .sapMBtnContent,
+.sapUiSizeCompact .sapMIBar.sapUxAPAnchorBar .sapMBarChild.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonColorPositive .sapMBtnInner .sapMBtnContent  {
+	color: @sapUiPositiveText;
+}
+
+.sapMIBar.sapUxAPAnchorBar .sapMBarChild.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonColorNegative:hover:not(.sapMBtnDisabled) .sapMBtnInner .sapMBtnContent > bdi,
+.sapMIBar.sapUxAPAnchorBar .sapMBarChild.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonColorNegative .sapMBtnInner .sapMBtnContent,
+.sapUiSizeCompact .sapMIBar.sapUxAPAnchorBar .sapMBarChild.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonColorNegative .sapMBtnInner .sapMBtnContent {
+	color: @sapUiNegativeText;
+}
+
+.sapMIBar.sapUxAPAnchorBar .sapMBarChild.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonColorCritical:hover:not(.sapMBtnDisabled) .sapMBtnInner .sapMBtnContent > bdi,
+.sapMIBar.sapUxAPAnchorBar .sapMBarChild.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonColorCritical .sapMBtnInner .sapMBtnContent,
+.sapUiSizeCompact .sapMIBar.sapUxAPAnchorBar .sapMBarChild.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonColorCritical .sapMBtnInner .sapMBtnContent  {
+	color: @sapUiCriticalText;
+}
+
+.sapMIBar.sapUxAPAnchorBar .sapMBarChild.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonColorNeutral:hover:not(.sapMBtnDisabled) .sapMBtnInner .sapMBtnContent > bdi,
+.sapMIBar.sapUxAPAnchorBar .sapMBarChild.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonColorNeutral .sapMBtnInner .sapMBtnContent,
+.sapUiSizeCompact .sapMIBar.sapUxAPAnchorBar .sapMBarChild.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonColorNeutral .sapMBtnInner .sapMBtnContent   {
+	color: @sapUiNeutralText;
+}

@@ -669,6 +669,7 @@ sap.ui.define([
 		// anchorbar management
 		this._bInternalAnchorBarVisible = true;
 		this._oVisibleSubSections = 0;
+		this._initialABButtonsColorUpdateDone = false;
 
 		this._$footerWrapper = [];                  //dom reference to the floating footer wrapper
 		this._$opWrapper = [];                      //dom reference to the header for Dark mode background image scrolling scenario
@@ -1240,6 +1241,14 @@ sap.ui.define([
 
 		// Attach expand button event
 		this._handleExpandButtonPressEventLifeCycle(true);
+
+		if (!this._initialABButtonsColorUpdateDone) {
+			this.getSections().forEach((section) => {
+				var sSectionId = section.getId();
+				this._updateAnchorBarButtonColor(sSectionId);
+			});
+			this._initialABButtonsColorUpdateDone = true;
+		}
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
@@ -1563,6 +1572,32 @@ sap.ui.define([
 				this._sScrolledSectionId = null;
 				this._updateSelectionOnScroll(0);
 			}
+		}
+	};
+
+	ObjectPageLayout.prototype._updateAnchorBarButtonColor = function(sSectionId) {
+		if (!this.getDomRef()) {
+			return;
+		}
+
+		this.оАnchorbar = this._oABHelper._getAnchorBar();
+		this.оАnchorbarButtons = this.оАnchorbar.getAggregation("content");
+		this.oOPSections = this.getSections();
+
+		if (this.оАnchorbarButtons) {
+			this.оАnchorbarButtons.forEach((btn, index) => {
+				const sUniqueKey = btn.getCustomData().find((data) => data.getKey() === "sectionId").getValue();
+				if (sUniqueKey === sSectionId) {
+					const sNewStyleClass = "sapUxAPAnchorBarButtonColor" + this.oOPSections[index].getProperty("anchorBarButtonColor");
+					// Remove the old style class and add the new one
+					btn.aCustomStyleClasses.forEach((sStyleClass) => {
+						if (sStyleClass.startsWith("sapUxAPAnchorBarButtonColor")) {
+							btn.removeStyleClass(sStyleClass);
+						}
+					});
+					btn.addStyleClass(sNewStyleClass);
+				}
+			});
 		}
 	};
 
