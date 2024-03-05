@@ -10,13 +10,6 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>ResponsiveColumnSettings</code>.
 	 *
-	 * Provides the following settings that are supported by the {@link sap.m.Column}:
-	 *
-	 * <ul>
-	 *	<li>importance</li>
-	 *	<li>mergeFunction</li>
-	 * </ul>
-	 *
 	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
 	 * @param {object} [mSettings] Initial settings for the new object
 	 *
@@ -29,7 +22,6 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.table.ResponsiveColumnSettings
 	 * @since 1.110
 	 */
-
 	const ResponsiveColumnSettings = ColumnSettings.extend("sap.ui.mdc.table.ResponsiveColumnSettings", {
 		metadata: {
 			library: "sap.ui.mdc",
@@ -40,9 +32,9 @@ sap.ui.define([
 				 *
 				 * Columns are moved to the pop-in area in the following order:
 				 * <ul>
-				 * 	<li>With importance <code>High</code>: moved last</li>
-				 * 	<li>With importance <code>Medium</code> or <code>None</code>: moved second</li>
-				 * 	<li>With importance <code>Low</code>: moved first</li>
+				 *   <li>With importance <code>High</code>: moved last</li>
+				 *   <li>With importance <code>Medium</code> or <code>None</code>: moved second</li>
+				 *   <li>With importance <code>Low</code>: moved first</li>
 				 * </ul>
 				 *
 				 * @since 1.110
@@ -62,7 +54,7 @@ sap.ui.define([
 				 */
 				mergeFunction: {
 					type: "string",
-					group: "Misc"
+					group: "Appearance"
 				}
 			}
 		}
