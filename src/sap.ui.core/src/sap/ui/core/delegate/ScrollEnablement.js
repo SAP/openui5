@@ -48,9 +48,9 @@ sap.ui.define([
 		 * @param {object} oConfig the configuration of the scroll delegate
 		 * @param {boolean} [oConfig.horizontal=false] Whether the element should be scrollable horizontally
 		 * @param {boolean} [oConfig.vertical=false] Whether the element should be scrollable vertically
-		 * @param {boolean} [oConfig.zynga=false] @deprecated since 1.42, the parameter has no effect
-		 * @param {boolean} [oConfig.iscroll=false] @deprecated since 1.42, the parameter has no effect
-		 * @param {boolean} [oConfig.preventDefault=false] @deprecated since 1.42, the parameter has no effect
+		 * @param {boolean} [oConfig.zynga=false] Deprecated since 1.42, the parameter has no effect
+		 * @param {boolean} [oConfig.iscroll=false] Deprecated since 1.42, the parameter has no effect
+		 * @param {boolean} [oConfig.preventDefault=false] Deprecated since 1.42, the parameter has no effect
 		 * @param {boolean} [oConfig.nonTouchScrolling=false] If true, the delegate will also be active to allow touch like scrolling with the mouse on non-touch platforms.
 		 * @param {string} [oConfig.scrollContainerId=""] Native scrolling does not need content wrapper. In this case, ID of the container element should be provided.
 		 *
