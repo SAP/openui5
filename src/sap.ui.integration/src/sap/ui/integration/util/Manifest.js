@@ -95,7 +95,8 @@ sap.ui.define([
 				if (sBaseUrl) {
 					mOptions.baseUrl = sBaseUrl;
 				} else {
-					Log.error("If baseUrl is not provided when the manifest is an object, the relative resources cannot be loaded.", "sap.ui.integration.widgets.Card");
+					mOptions.baseUrl = "/";
+					Log.info("Property baseUrl is not provided and manifest URL is unknown. Relative resources may not be loaded correctly.", "sap.ui.integration.widgets.Card");
 				}
 
 				this._registerManifestModulePath(oManifestJson, sBaseUrl || "/");
@@ -228,19 +229,16 @@ sap.ui.define([
 	Manifest.prototype.load = function (mSettings) {
 
 		if (!mSettings || !mSettings.manifestUrl) {
-			// When the manifest JSON is already set and there is a base URL, try to load i18n files.
-			if (this._sBaseUrl && this._oManifest) {
+			if (this._oManifest) {
+				// When the manifest JSON is already set try to load i18n files.
 				return this.loadI18n().then(function () {
 					this.processManifest();
 				}.bind(this));
-			} else {
-				if (this._oManifest) {
-					this.processManifest();
-				}
-				return new Promise(function (resolve) {
-					resolve();
-				});
 			}
+
+			return new Promise(function (resolve) {
+				resolve();
+			});
 		}
 
 		return CoreManifest.load({
