@@ -1142,7 +1142,7 @@ sap.ui.define([
 				}
 
 				const oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
-				return oColumn && getCellDOM(oRow.getCells(), oColumn.getIndex(), this.selectableCells);
+				return oColumn && getCellDOM(oRow.getCells(), mPosition.colIndex, this.selectableCells);
 			},
 			/**
 			 * Retrieve cell information for a given DOM element.
