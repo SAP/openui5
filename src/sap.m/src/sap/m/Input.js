@@ -217,8 +217,9 @@ function(
 				filterSuggests : {type : "boolean", group : "Behavior", defaultValue : true},
 
 				/**
-				 * If set, the value of this parameter will control the horizontal size of the suggestion list to display more data. This allows suggestion lists to be wider than the input field if there is enough space available. By default, the suggestion list is always as wide as the input field.
-				 * <b>Note:</b> The value will be ignored if the actual width of the input field is larger than the specified parameter value.
+				 * If set, this parameter will control the horizontal size of the suggestion list to display more data. By default, the suggestion list has a minimum width equal to the input field's width and a maximum width of 640px.
+				 * This property allows the suggestion list to contract or expand based on available space, potentially exceeding 640px.
+				 * <b>Note:</b> If the actual width of the input field exceeds the specified parameter value, the value will be ignored.
 				 * @since 1.21.1
 				 */
 				maxSuggestionWidth : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},

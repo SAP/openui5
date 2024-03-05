@@ -50,21 +50,25 @@
 }
 
 .sapMPluginsCellSelectorSelected {
-	background-color: @sapList_SelectionBackgroundColor;
+	background-color: @sapList_Hover_SelectionBackground;
+}
+
+.sapMLIBSelected > .sapMPluginsCellSelectorSelected {
+	border-bottom: @sapList_BorderWidth @sapList_SelectionBorderColor solid !important;
 }
 
 .sapMPluginsCellSelectorTop {
-	border-top: 0.0625rem @sapList_SelectionBorderColor solid !important;
+	border-top: @sapList_BorderWidth @sapList_SelectionBorderColor solid !important;
 }
 
 .sapMPluginsCellSelectorRight {
-	border-right: 0.0625rem @sapList_SelectionBorderColor solid !important;
+	border-right: @sapList_BorderWidth @sapList_SelectionBorderColor solid !important;
 }
 
 .sapMPluginsCellSelectorBottom {
-	border-bottom: 0.0625rem @sapList_SelectionBorderColor solid !important;
+	border-bottom: @sapList_BorderWidth @sapList_SelectionBorderColor solid !important;
 }
 
 .sapMPluginsCellSelectorLeft {
-	border-left: 0.0625rem @sapList_SelectionBorderColor solid !important;
+	border-left: @sapList_BorderWidth @sapList_SelectionBorderColor solid !important;
 }

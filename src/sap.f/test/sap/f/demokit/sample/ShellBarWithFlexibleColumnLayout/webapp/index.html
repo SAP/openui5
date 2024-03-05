@@ -2,37 +2,19 @@
 <html style="height: 100%;">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>SAPUI5 Navigation</title>
 		<script
 				id="sap-ui-bootstrap"
 				src="../../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
 				data-sap-ui-libs="sap.m"
-				data-sap-ui-bindingSyntax="complex"
-				data-sap-ui-compatVersion="edge"
-				data-sap-ui-resourceroots='{
+				data-sap-ui-resource-roots='{
 					"sap.f.ShellBarWithFlexibleColumnLayout": "./",
 					"sap.ui.demo.mock": "../../../../../../../test-resources/sap/ui/documentation/sdk/"
-				}'>
-		</script>
-
-		<script>
-			sap.ui.getCore().attachInit(function () {
-				sap.ui.require([
-					"sap/ui/core/ComponentContainer"
-				], function (ComponentContainer) {
-
-					new ComponentContainer({
-						name : 'sap.f.ShellBarWithFlexibleColumnLayout',
-						height : "100%",
-						settings : {
-							id : "sap.f.ShellBarWithFlexibleColumnLayout"
-						}
-					}).placeAt('content');
-				});
-			});
-		</script>
-
+				}'
+		></script>
 	</head>
 	<body class="sapUiBody sapUiSizeCompact" id="content">
 	</body>

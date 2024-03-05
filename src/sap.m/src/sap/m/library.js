@@ -1984,18 +1984,19 @@ sap.ui.define([
 	  * Defines the rendering type of the TileAttribute
 	  *
 	  * @enum {string}
-	  * @since 1.121
-	  * @private
+	  * @since 1.122
+	  * @experimental since 1.122
+	  * @public
 	  */
 	 thisLib.ContentConfigType = {
 		 /**
 		  * Renders a text inside the TileAttribute
-		  * @private
+		  * @public
 		  */
 		 Text: "Text",
 		 /**
 		  * Renders a link inside the TileAttribute
-		  * @private
+		  * @public
 		  */
 		 Link: "Link"
 	 };

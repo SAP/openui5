@@ -1,17 +1,14 @@
-sap.ui.require([
-	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Core"
+sap.ui.define([
+	"sap/ui/core/ComponentContainer"
 ], function(
-	ComponentContainer,
-	Core
+	ComponentContainer
 ) {
 	"use strict";
 
-	Core.ready(function() {
-		new ComponentContainer({
-			height: "100%",
-			width: "100%",
-			name: "cp.opa.test.app"
-		}).placeAt("content");
-	});
+	new ComponentContainer({
+		height: "100%",
+		width: "100%",
+		name: "cp.opa.test.app",
+		manifest: true
+	}).placeAt("content");
 });

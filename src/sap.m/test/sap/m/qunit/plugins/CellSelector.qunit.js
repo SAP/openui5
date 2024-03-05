@@ -182,6 +182,7 @@ sap.ui.define([
 			this.oTable.addDragDropConfig(oDropInfo);
 
 			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
+			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
 			assert.equal(oSelectCellsSpy.callCount, 1, "Cells have been selected");
 			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
 
@@ -204,7 +205,7 @@ sap.ui.define([
 
 			this.oCellSelector.exit();
 			this.oCellSelector.removeSelection();
-			assert.deepEqual(this.oCellSelector._oSession, { cellRefs: [] }, "Session has been cleared");
+			assert.deepEqual(this.oCellSelector._oSession, { cellRefs: [], cellTypes: [] }, "Session has been cleared");
 
 			done();
 		});
@@ -345,7 +346,7 @@ sap.ui.define([
 		this.oTable.addDependent(this.oCellSelector);
 		var done = assert.async();
 
-		const oEvent = {target: null, preventDefault: () => {}};
+		const oEvent = {target: null, preventDefault: () => {}, stopImmediatePropagation: () => {}};
 		const oSelectCellsSpy = sinon.spy(this.oCellSelector, "_selectCells");
 
 		this.oTable.attachEventOnce("rowsUpdated", () => {

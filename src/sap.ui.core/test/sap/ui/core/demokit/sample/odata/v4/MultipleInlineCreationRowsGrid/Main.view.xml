@@ -65,6 +65,10 @@
 										text="{headerContext0>$count} Products"/>
 									<Button id="resetProducts" icon="sap-icon://reset"
 										press="onResetChangesForProducts" tooltip="Reset Products"/>
+									<CheckBox id="productsSelect"
+										selected="{path : 'headerContext0>@$ui5.context.isSelected',
+											targetType: 'any'}"
+									/>
 								</Toolbar>
 							</headerToolbar>
 							<columns>

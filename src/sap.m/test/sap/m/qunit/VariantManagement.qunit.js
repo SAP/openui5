@@ -147,6 +147,17 @@ sap.ui.define([
 		assert.ok(this.oVM.getTitle().isA("sap.m.Title"), "expected type 'sap.m.Title'.");
 	});
 
+	QUnit.test("VariantManagement check _IsItemDeleted", function(assert) {
+		var oVMI1 = new VariantItem({key: "1", title:"One"});
+		var oVMI2 = new VariantItem({key: "2", title:"Two"});
+
+		this.oVM._clearDeletedItems();
+		this.oVM._addDeletedItem(oVMI1);
+
+		assert.ok(this.oVM._isItemDeleted(oVMI1), "item is deleted.");
+		assert.ok(!this.oVM._isItemDeleted(oVMI2), "item is not deleted.");
+	});
+
 	QUnit.module("VariantManagement variantlist", {
 		beforeEach: async function() {
 			this.oVM = new VariantManagement();

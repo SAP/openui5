@@ -182,7 +182,7 @@ sap.ui.define([
 								this._oDrillDownBtn.addItem(new SelectionButtonItem({key: oDimension.name, text: oDimension.label}));
 							});
 							oViewByBtn.setSearchEnabled(aSortedDimensions.length >= 7);
-							oViewByBtn._createModel(); // in this case the beforeOPen is not able to provide all item syncron
+							oViewByBtn._openPopover(); // in this case the beforeOpen is not able to provide all item syncron
 						});
 					}.bind(this),
 					itemSelected: function(oEvent) {
@@ -283,6 +283,7 @@ sap.ui.define([
 				this._oChartTypeBtn = new SelectionButton(this.getId() + "-btnChartType", {
 					chartType: sChartType,
 
+					text: MDCRb.getText("chart.CHART_TYPELIST_TEXT"),
 					title: MDCRb.getText("chart.CHART_TYPELIST_TEXT"),
 					noDataTitle: MDCRb.getText("chart.NO_CHART_TYPES_AVAILABLE"),
 					noDataDescription: MDCRb.getText("chart.NO_CHART_TYPES_AVAILABLE_ACTION"),

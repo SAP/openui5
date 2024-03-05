@@ -958,8 +958,8 @@ sap.ui.define([
 		 * Creates the query options for requesting the rank of all out-of-place nodes and their
 		 * parents based on the current hierarchy transformation.
 		 *
-		 * @param {object} oOutOfPlace
-		 *   Out-of-place node information containing key filters
+		 * @param {object[]} aOutOfPlaceByParent
+		 *   Out-of-place node information containing key filters grouped by parent
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for data aggregation; see {@link .buildApply}
 		 * @param {object} mQueryOptions
@@ -969,13 +969,17 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		getQueryOptionsForOutOfPlaceNodesRank : function (oOutOfPlace, oAggregation,
+		getQueryOptionsForOutOfPlaceNodesRank : function (aOutOfPlaceByParent, oAggregation,
 				mQueryOptions) {
-			const aNodeFilters = oOutOfPlace.nodeFilters.toSorted();
+			const aNodeFilters = [];
+			aOutOfPlaceByParent.forEach(function (oOutOfPlace) {
+				aNodeFilters.push(oOutOfPlace.parentFilter);
+				aNodeFilters.push(...oOutOfPlace.nodeFilters);
+			});
 			mQueryOptions = Object.assign({}, mQueryOptions, {
-				$filter : `${oOutOfPlace.parentFilter} or ${aNodeFilters.join(" or ")}`,
+				$filter : aNodeFilters.sort().join(" or "),
 				$select : [oAggregation.$DistanceFromRoot, oAggregation.$LimitedRank],
-				$top : aNodeFilters.length + 1
+				$top : aNodeFilters.length
 			});
 			delete mQueryOptions.$count;
 			delete mQueryOptions.$orderby;

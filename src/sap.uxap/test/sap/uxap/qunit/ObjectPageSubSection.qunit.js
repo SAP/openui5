@@ -936,7 +936,7 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, Log, ObjectPag
 
 			// Setup: pick a subSection and unstash its blocks
 			oSubSection = this.objectPageSampleView.byId("subsection10");
-			oSubSection.connectToModels();
+			await oSubSection.connectToModelsAsync();
 			await nextUIUpdate();
 
 			oBlock = oSubSection.getBlocks()[0];
@@ -959,7 +959,7 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, Log, ObjectPag
 			oBlock.setVisible(true);
 
 			// Assert: _onBlocksChange listener should not be called if block is removed and its visibility is changed
-			assert.strictEqual(oObserverCallbackSpy.callCount, 0, "_onBlocksChange is not called, when blocks are removed");
+			assert.strictEqual(oObserverCallbackSpy.callCount, 0, "_onBlocksChange is not called, after blocks are removed");
 			done();
 		}.bind(this));
 	});

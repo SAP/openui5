@@ -41,13 +41,15 @@ sap.ui.define([
 	};
 
 	LinkPanelController.prototype.initAdaptationUI = function(oPropertyHelper) {
+		const oPanel = this.getAdaptationControl();
+
 		const oSelectionPanel = new SelectionPanel({
 			title: oResourceBundle.getText("info.SELECTION_DIALOG_ALIGNEDTITLE"),
 			showHeader: true,
 			fieldColumn: oResourceBundle.getText("info.SELECTION_DIALOG_COLUMNHEADER_WITHOUT_COUNT"),
 			enableCount: true,
 			enableReorder: false,
-			linkPressed: this._onLinkPressed.bind(this)
+			linkPressed: oPanel.onPressLink.bind(oPanel)
 		});
 		const oAdaptationData = this.mixInfoAndState(oPropertyHelper);
 		oSelectionPanel.setP13nData(oAdaptationData.items);
@@ -58,38 +60,6 @@ sap.ui.define([
 	LinkPanelController.prototype._navigate = function(sHref) {
 		this.getAdaptationControl().getMetadata()._oClass.navigate(sHref);
 	};
-
-	LinkPanelController.prototype._onLinkPressed = function(oEvent) {
-		const oSource = oEvent.getParameter("oSource");
-		const oPanel = this.getAdaptationControl();
-		const bUseInternalHref = !!(oSource && oSource.getCustomData() && oSource.getCustomData()[0].getValue());
-		const sHref = bUseInternalHref ? oSource.getCustomData()[0].getValue() : oSource.getHref();
-
-		if (oPanel.getBeforeNavigationCallback) {
-			oPanel.getBeforeNavigationCallback()(oEvent).then((bNavigate) => {
-				if (bNavigate) {
-					oPanel._onNavigate(oSource);
-					this._navigate(sHref);
-				}
-			});
-		} else {
-			MessageBox.show(Library.getResourceBundleFor("sap.ui.mdc").getText("info.SELECTION_DIALOG_LINK_VALIDATION_QUESTION"), {
-				icon: MessageBox.Icon.WARNING,
-				title: Library.getResourceBundleFor("sap.ui.mdc").getText("info.SELECTION_DIALOG_LINK_VALIDATION_TITLE"),
-				actions: [
-					MessageBox.Action.YES, MessageBox.Action.NO
-				],
-				onClose: function(oAction) {
-					if (oAction === MessageBox.Action.YES) {
-						oPanel._onNavigate(oSource);
-						this._navigate(sHref);
-					}
-				},
-				styleClass: this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
-			});
-		}
-	};
-
 	LinkPanelController.prototype._createAddRemoveChanges = function(aItems, oControl, vOperation, aDeltaAttributes) {
 		const aChanges = [];
 		for (let i = 0; i < aItems.length; i++) {

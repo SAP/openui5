@@ -347,6 +347,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Deregisters the given change listener if it is registered for its path. Note: This
+	 * method is for special cases with a header context and the path "@$ui5.context.isSelected"
+	 * and should not be confused with <code>Cache#deregisterChangeListener</code>.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} oListener - The listener to be removed
+	 * @returns {boolean} - If this function has handled the deregistering
+	 *
+	 * @private
+	 */
+	Context.prototype.deregisterChangeListener = function (oListener) {
+		if (this.mChangeListeners && oListener.getPath() === "@$ui5.context.isSelected") {
+			_Helper.removeByPath(this.mChangeListeners, "", oListener);
+			return true;
+		}
+		return false;
+	};
+
+	/**
 	 * Destroys this context, that is, it removes this context from all dependent bindings and drops
 	 * references to binding and model, so that the context cannot be used anymore; it keeps path
 	 * and index for debugging purposes.
@@ -371,6 +389,7 @@ sap.ui.define([
 			oDependentBinding.setContext(undefined);
 		});
 		this.oBinding = undefined;
+		delete this.mChangeListeners;
 		this.oCreatedPromise = undefined;
 		// keep oDeletePromise so that isDeleted does not unexpectedly become false
 		this.oSyncCreatePromise = undefined;
@@ -482,6 +501,9 @@ sap.ui.define([
 			if (oGroupLock) {
 				oGroupLock.unlock();
 				oGroupLock = null;
+			}
+			if (this.oBinding.getHeaderContext?.() === this) {
+				return SyncPromise.resolve();
 			}
 		}
 
@@ -687,6 +709,8 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the binding's <code>fetchValue</code> call; it is rejected
 	 *   in case cached values are asked for, but not found
+	 * @throws {Error} If this context is a header context and no or empty path is given and
+	 *   a listener is given.
 	 *
 	 * @private
 	 * @see #getObject
@@ -699,19 +723,27 @@ sap.ui.define([
 		if (this.iIndex === iVIRTUAL) {
 			return SyncPromise.resolve(); // no cache access for virtual contexts
 		}
-		if (oBinding.getHeaderContext && oBinding.getHeaderContext() === this) {
+		if (oBinding.getHeaderContext?.() === this) {
 			if (sPath && sPath.startsWith(this.sPath)) {
 				sPath = sPath.slice(this.sPath.length + 1);
 			}
 			if (!sPath) {
-				return oBinding.fetchValue(this.sPath + "/$count", oListener, bCached)
-					.then(function (iCount) {
-						return {
-							"@$ui5.context.isSelected" : that.bSelected,
-							$count : iCount
-						};
+				if (oListener) {
+					throw new Error("Cannot register change listener for header context object");
+				}
+				return oBinding.fetchValue(this.sPath + "/$count", null, bCached).then((iCount) => {
+					return {
+						"@$ui5.context.isSelected" : that.bSelected,
+						$count : iCount
+					};
 				});
 			} else if (sPath === "@$ui5.context.isSelected") {
+				// @$ui5.context.isSelected is a virtual property for header contexts and not part
+				// of the cache (in contrast to row contexts, where it is saved in the cache).
+				// Therefore, change listeners are saved and fired via the header context
+				this.mChangeListeners ??= {};
+				_Helper.addByPath(this.mChangeListeners, "", oListener);
+
 				return SyncPromise.resolve(this.bSelected);
 			} else if (sPath !== "$count" && sPath !== "@$ui5.context.isSelected") {
 				throw new Error("Invalid header path: " + sPath);
@@ -2158,6 +2190,9 @@ sap.ui.define([
 			throw new Error("Must not select a deleted entity: " + this);
 		}
 		if (bSelected !== this.bSelected) {
+			if (this.mChangeListeners) {
+				_Helper.fireChange(this.mChangeListeners, "", bSelected);
+			}
 			this.withCache((oCache, sPath) => {
 				if (this.oBinding) {
 					oCache.setProperty("@$ui5.context.isSelected", bSelected, sPath);

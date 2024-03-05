@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
-	"sap/base/util/UriParameters",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
@@ -22,9 +21,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONPropertyBinding",
 	"sap/ui/model/json/JSONTreeBinding",
 	"sap/ui/performance/Measurement"
-], function (Utils, Log, extend, isEmptyObject, UriParameters, BindingParser, ManagedObject,
-		SyncPromise, _Helper, BindingMode, ClientContextBinding, Context, FilterProcessor, MetaModel,
-		JSONListBinding, JSONModel, JSONPropertyBinding, JSONTreeBinding, Measurement) {
+], function (Utils, Log, extend, isEmptyObject, BindingParser, ManagedObject, SyncPromise, _Helper, BindingMode,
+		ClientContextBinding, Context, FilterProcessor, MetaModel, JSONListBinding, JSONModel, JSONPropertyBinding,
+		JSONTreeBinding, Measurement) {
 	"use strict";
 
 	/**
@@ -1268,10 +1267,10 @@ sap.ui.define([
 			oCodeListModel = oCodeListModelCache.oModel;
 
 			oReadPromise = new SyncPromise(function (fnResolve, fnReject) {
-				var oUriParams = UriParameters.fromURL(sMetaDataUrl),
-					sClient = oUriParams.get("sap-client"),
-					sLanguage = oUriParams.get("sap-language"),
-					mUrlParameters = {$skip : 0, $top : 5000}; // avoid server-driven paging
+				const oURLSearchParams = new URL(sMetaDataUrl, "https://localhost").searchParams;
+				const sClient = oURLSearchParams.get("sap-client");
+				const sLanguage = oURLSearchParams.get("sap-language");
+				const mUrlParameters = {$skip : 0, $top : 5000}; // avoid server-driven paging
 
 				if (sClient) {
 					mUrlParameters["sap-client"] = sClient;

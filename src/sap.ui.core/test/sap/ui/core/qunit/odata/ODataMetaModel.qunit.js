@@ -3922,9 +3922,6 @@ sap.ui.define([
 			oMetaModelMock.expects("_getOrCreateSharedModelCache")
 				.withExactArgs()
 				.returns(oCodeListModelCache);
-			this.mock(UriParameters).expects("fromURL")
-				.withExactArgs(oFixture.sMetadataUrl)
-				.callThrough();
 			oCodeListModelMock.expects("read").withExactArgs("/" + sCodeList, sinon.match.object)
 				.callsFake(function (sPath, mParams) {
 					assert.deepEqual(mParams.urlParameters, oFixture.mReadUrlParams);

@@ -32238,9 +32238,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: A hierarchy has an initial expandTo=1 and three visible rows.
 	// (1) Expand Alpha
-	// (2) Create New1, New2, New3 below Alpha
-	// (3) Side-effects refresh (-> unified cache, New2 is already read in-place, it is shifted when
-	//     moving New1 to its out-of-place position)
+	// (2) Create New1, New2, New3 below Alpha; create New4 below Beta; create New5 below Gamma
+	// (3) Side-effects refresh (-> unified cache; New2 is already read in-place, it is shifted when
+	//     moving New1 to its out-of-place position; Beta is already read in-place, but shifted
+	//     when moving New1 and New3; Gamma is only placeholder when moving New5)
 	// (4) Check all contexts
 	// (5) Refresh the binding (out of place is no longer kept, tree is collapsed again to 1 level)
 	// JIRA: CPOUI5ODATAV4-2454
@@ -32257,6 +32258,11 @@ sap.ui.define([
 			+ (sExpandLevels ? ",ExpandLevels=" + sExpandLevels : "") + ")";
 		const sCountUrl = sFriend.slice(1) + "/$count?$filter=IsActiveEntity eq false&custom=foo"
 			+ "&$search=covfefe";
+		const sExpandLevels = JSON.stringify([
+			{NodeID : "1,false", Levels : 1},
+			{NodeID : "2,false", Levels : 1},
+			{NodeID : "3,false", Levels : 1}
+		]);
 		const sView = `
 <t:Table id="table" rows="{path : '/Artists(ArtistID=\\'99\\',IsActiveEntity=false)/_Friend',
 		parameters : {
@@ -32276,17 +32282,20 @@ sap.ui.define([
 </t:Table>`;
 
 		// Server:                          UI:
-        // 1 Alpha                          1 Alpha
-        //   12 New2 (created)                13 New3 (created)
-        //    2 Beta                          12 New2 (created)
-        //   11 New1 (created)                11 New1 (created)
-        //   13 New3 (created)                 2 Beta
-        // 3 Gamma                          3 Gamma
-		this.expectRequest(sCountUrl, 3)
+		// 1 Alpha                          1 Alpha
+		//   12 New2 (created)                13 New3 (created)
+		//    2 Beta                          12 New2 (created)
+		//      14 New4 (created)             11 New1 (created)
+		//   11 New1 (created)                 2 Beta
+		//   13 New3 (created)                   14 New4 (created)
+		// 3 Gamma                          3 Gamma
+		//   15 New5 (created)                15 New5 (created)
+		// 4 Delta                          4 Delta
+		this.expectRequest(sCountUrl, 4)
 			.expectRequest(baseUrl()
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
 				+ "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "2",
+				"@odata.count" : "3",
 				value : [{
 					ArtistID : "1",
 					IsActiveEntity : false,
@@ -32303,6 +32312,14 @@ sap.ui.define([
 						DrillState : "leaf",
 						NodeID : "3,false"
 					}
+				}, {
+					ArtistID : "4",
+					IsActiveEntity : false,
+					Name : "Delta",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "4,false"
+					}
 				}]
 			});
 
@@ -32312,12 +32329,15 @@ sap.ui.define([
 		const oBinding = oTable.getBinding("rows");
 		checkTable("initial page", assert, oTable, [
 			sFriend + "(ArtistID='1',IsActiveEntity=false)",
-			sFriend + "(ArtistID='3',IsActiveEntity=false)"
+			sFriend + "(ArtistID='3',IsActiveEntity=false)",
+			sFriend + "(ArtistID='4',IsActiveEntity=false)"
 		], [
 			[false, 1, "1", "Alpha"],
-			[undefined, 1, "3", "Gamma"]
+			[undefined, 1, "3", "Gamma"],
+			[undefined, 1, "4", "Delta"]
 		]);
 		const oAlpha = oTable.getRows()[0].getBindingContext();
+		const oGamma = oTable.getRows()[1].getBindingContext();
 
 		this.expectRequest(sFriend.slice(1) + "?custom=foo&$apply=" + sFilterSearchPrefix
 				+ "descendants($root/" + sFriend.slice(1)
@@ -32344,15 +32364,17 @@ sap.ui.define([
 		checkTable("after (1)", assert, oTable, [
 			sFriend + "(ArtistID='1',IsActiveEntity=false)",
 			sFriend + "(ArtistID='2',IsActiveEntity=false)",
-			sFriend + "(ArtistID='3',IsActiveEntity=false)"
+			sFriend + "(ArtistID='3',IsActiveEntity=false)",
+			sFriend + "(ArtistID='4',IsActiveEntity=false)"
 		], [
 			[true, 1, "1", "Alpha"],
 			[undefined, 2, "2", "Beta"],
 			[undefined, 1, "3", "Gamma"]
 		]);
+		const oBeta = oTable.getRows()[1].getBindingContext();
 
-		const create = (sId, sName) => {
-			const sParentId = oAlpha.getProperty("ArtistID");
+		const create = (sId, sName, oParent) => {
+			const sParentId = oParent.getProperty("ArtistID");
 			this.expectRequest({
 				method : "POST",
 				url : sFriend.slice(1) + "?custom=foo",
@@ -32382,20 +32404,24 @@ sap.ui.define([
 			});
 
 			return oBinding.create({
-				"@$ui5.node.parent" : oAlpha,
+				"@$ui5.node.parent" : oParent,
 				Name : sName
 			}, /*bSkipRefresh*/true);
 		};
 
-		const oNew1 = create("11", "New1");
-		const oNew2 = create("12", "New2");
-		const oNew3 = create("13", "New3");
+		const oNew1 = create("11", "New1", oAlpha);
+		const oNew2 = create("12", "New2", oAlpha);
+		const oNew3 = create("13", "New3", oAlpha);
+		const oNew4 = create("14", "New4", oBeta);
+		const oNew5 = create("15", "New5", oGamma);
 
 		await Promise.all([
 			oNew1.created(),
 			oNew2.created(),
 			oNew3.created(),
-			this.waitForChanges(assert, "(2) create New1, New2, New3")
+			oNew4.created(),
+			oNew5.created(),
+			this.waitForChanges(assert, "(2) create nodes")
 		]);
 
 		checkTable("after (2)", assert, oTable, [
@@ -32404,28 +32430,31 @@ sap.ui.define([
 			sFriend + "(ArtistID='12',IsActiveEntity=false)",
 			sFriend + "(ArtistID='11',IsActiveEntity=false)",
 			sFriend + "(ArtistID='2',IsActiveEntity=false)",
-			sFriend + "(ArtistID='3',IsActiveEntity=false)"
+			sFriend + "(ArtistID='14',IsActiveEntity=false)",
+			sFriend + "(ArtistID='3',IsActiveEntity=false)",
+			sFriend + "(ArtistID='15',IsActiveEntity=false)",
+			sFriend + "(ArtistID='4',IsActiveEntity=false)"
 		], [
 			[true, 1, "1", "Alpha"],
 			[undefined, 2, "13", "New3"],
 			[undefined, 2, "12", "New2"]
 		]);
 
-		this.expectRequest(sCountUrl, 6)
+		this.expectRequest(sCountUrl, 9)
 			.expectRequest({
 				batchNo : 5,
-				url : baseUrl('[{"NodeID":"1,false","Levels":1}]')
+				url : baseUrl(sExpandLevels)
 					+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 					+ ",_/DrillState,_/NodeID"
 					+ "&$count=true&$skip=0&$top=3"
 			}, {
-				"@odata.count" : "6",
+				"@odata.count" : "9",
 				value : [{
 					ArtistID : "1",
 					IsActiveEntity : false,
 					Name : "Alpha*",
 					_ : {
-						DescendantCount : "4",
+						DescendantCount : "5",
 						DistanceFromRoot : "0",
 						DrillState : "expanded",
 						NodeID : "1,false"
@@ -32445,22 +32474,26 @@ sap.ui.define([
 					IsActiveEntity : false,
 					Name : "Beta*",
 					_ : {
-						DescendantCount : "0",
+						DescendantCount : "1",
 						DistanceFromRoot : "1",
-						DrillState : "leaf",
+						DrillState : "expanded",
 						NodeID : "2,false"
 					}
 				}]
 			})
 			.expectRequest({
 				batchNo : 5,
-				url : baseUrl('[{"NodeID":"1,false","Levels":1}]')
+				url : baseUrl(sExpandLevels)
 					+ "&$select=ArtistID,IsActiveEntity,_/DistanceFromRoot,_/Limited_Rank"
 					+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
 					+ " or ArtistID eq '11' and IsActiveEntity eq false"
 					+ " or ArtistID eq '12' and IsActiveEntity eq false"
 					+ " or ArtistID eq '13' and IsActiveEntity eq false"
-					+ "&$top=4"
+					+ " or ArtistID eq '14' and IsActiveEntity eq false"
+					+ " or ArtistID eq '15' and IsActiveEntity eq false"
+					+ " or ArtistID eq '2' and IsActiveEntity eq false"
+					+ " or ArtistID eq '3' and IsActiveEntity eq false"
+					+ "&$top=8"
 			}, {
 				value : [{
 					ArtistID : "1",
@@ -32477,18 +32510,46 @@ sap.ui.define([
 						Limited_Rank : "1"
 					}
 				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					_ : {
+						DistanceFromRoot : "n/a", // parent's DistanceFromRoot is not yet relevant
+						Limited_Rank : "2"
+					}
+				}, {
+					ArtistID : "14",
+					IsActiveEntity : false,
+					_ : {
+						DistanceFromRoot : "2",
+						Limited_Rank : "3"
+					}
+				}, {
 					ArtistID : "11",
 					IsActiveEntity : false,
 					_ : {
 						DistanceFromRoot : "1",
-						Limited_Rank : "3"
+						Limited_Rank : "4"
 					}
 				}, {
 					ArtistID : "13",
 					IsActiveEntity : false,
 					_ : {
 						DistanceFromRoot : "1",
-						Limited_Rank : "4"
+						Limited_Rank : "5"
+					}
+				}, {
+					ArtistID : "3",
+					IsActiveEntity : false,
+					_ : {
+						DistanceFromRoot : "n/a", // parent's DistanceFromRoot is not yet relevant
+						Limited_Rank : "6"
+					}
+				}, {
+					ArtistID : "15",
+					IsActiveEntity : false,
+					_ : {
+						DistanceFromRoot : "1",
+						Limited_Rank : "7"
 					}
 				}]
 			})
@@ -32527,6 +32588,42 @@ sap.ui.define([
 						NodeID : "13,false"
 					}
 				}]
+			})
+			.expectRequest({
+				batchNo : 5,
+				url : sFriend.slice(1) + "?custom=foo&$apply=descendants($root/" + sFriend.slice(1)
+					+ ",OrgChart,_/NodeID,filter(ArtistID eq '2' and IsActiveEntity eq false),1)"
+					+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
+					+ "&$filter=ArtistID eq '14' and IsActiveEntity eq false"
+					+ "&$top=1"
+			}, {
+				value : [{
+					ArtistID : "14",
+					IsActiveEntity : false,
+					Name : "New4*",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "14,false"
+					}
+				}]
+			})
+			.expectRequest({
+				batchNo : 5,
+				url : sFriend.slice(1) + "?custom=foo&$apply=descendants($root/" + sFriend.slice(1)
+					+ ",OrgChart,_/NodeID,filter(ArtistID eq '3' and IsActiveEntity eq false),1)"
+					+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
+					+ "&$filter=ArtistID eq '15' and IsActiveEntity eq false"
+					+ "&$top=1"
+			}, {
+				value : [{
+					ArtistID : "15",
+					IsActiveEntity : false,
+					Name : "New5*",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "15,false"
+					}
+				}]
 			});
 
 		await Promise.all([
@@ -32540,28 +32637,46 @@ sap.ui.define([
 			sFriend + "(ArtistID='13',IsActiveEntity=false)",
 			sFriend + "(ArtistID='12',IsActiveEntity=false)",
 			sFriend + "(ArtistID='11',IsActiveEntity=false)",
-			sFriend + "(ArtistID='2',IsActiveEntity=false)"
+			sFriend + "(ArtistID='2',IsActiveEntity=false)",
+			sFriend + "(ArtistID='14',IsActiveEntity=false)",
+			sFriend + "(ArtistID='15',IsActiveEntity=false)"
 		], [
 			[true, 1, "1", "Alpha*"],
 			[undefined, 2, "13", "New3*"],
 			[undefined, 2, "12", "New2*"]
-		], 6);
+		], 9);
 		assert.strictEqual(oBinding.getCurrentContexts()[1], oNew3);
 		assert.strictEqual(oBinding.getCurrentContexts()[2], oNew2);
 
-		this.expectRequest(baseUrl('[{"NodeID":"1,false","Levels":1}]')
+		this.expectRequest(baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/NodeID"
-				+ "&$skip=5&$top=1", {
+				+ "&$skip=6&$top=1", {
 				value : [{
 					ArtistID : "3",
 					IsActiveEntity : false,
 					Name : "Gamma*",
 					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "3,false"
+					}
+				}]
+			}).expectRequest(
+				baseUrl(sExpandLevels)
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
+				+ ",_/DrillState,_/NodeID"
+				+ "&$skip=8&$top=1", {
+				value : [{
+					ArtistID : "4",
+					IsActiveEntity : false,
+					Name : "Delta*",
+					_ : {
 						DescendantCount : "0",
 						DistanceFromRoot : "0",
 						DrillState : "leaf",
-						NodeID : "3,false"
+						NodeID : "4,false"
 					}
 				}]
 			});
@@ -32572,15 +32687,18 @@ sap.ui.define([
 				[undefined, 2, "13", "New3*"],
 				[undefined, 2, "12", "New2*"],
 				[undefined, 2, "11", "New1*"],
-				[undefined, 2, "2", "Beta*"],
-				[undefined, 1, "3", "Gamma*"]
+				[true, 2, "2", "Beta*"],
+				[undefined, 3, "14", "New4*"],
+				[true, 1, "3", "Gamma*"],
+				[undefined, 2, "15", "New5*"],
+				[undefined, 1, "4", "Delta*"]
 			]);
 
-		this.expectRequest(sCountUrl, 6)
+		this.expectRequest(sCountUrl, 9)
 			.expectRequest(baseUrl()
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
 				+ "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "2",
+				"@odata.count" : "3",
 				value : [{
 					ArtistID : "1",
 					IsActiveEntity : false,
@@ -32594,8 +32712,16 @@ sap.ui.define([
 					IsActiveEntity : false,
 					Name : "Gamma**",
 					_ : {
-						DrillState : "leaf",
+						DrillState : "collapsed",
 						NodeID : "3,false"
+					}
+				}, {
+					ArtistID : "4",
+					IsActiveEntity : false,
+					Name : "Delta**",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "4,false"
 					}
 				}]
 			});
@@ -32606,10 +32732,12 @@ sap.ui.define([
 
 		checkTable("after (5)", assert, oTable, [
 			sFriend + "(ArtistID='1',IsActiveEntity=false)",
-			sFriend + "(ArtistID='3',IsActiveEntity=false)"
+			sFriend + "(ArtistID='3',IsActiveEntity=false)",
+			sFriend + "(ArtistID='4',IsActiveEntity=false)"
 		], [
 			[false, 1, "1", "Alpha**"],
-			[undefined, 1, "3", "Gamma**"]
+			[false, 1, "3", "Gamma**"],
+			[undefined, 1, "4", "Delta**"]
 		]);
 	});
 
@@ -61935,13 +62063,15 @@ sap.ui.define([
 				method : "POST",
 				payload : {},
 				url : "SalesOrderList('1')/" + sAction
-			}).expectRequest({
+			})
+			.expectRequest({
 				method : "POST",
 				batchNo : 3,
 				groupId : "$single",
 				payload : {},
 				url : "SalesOrderList('2')/" + sAction
-			}).expectRequest({
+			})
+			.expectRequest({
 				batchNo : -4,
 				method : "POST",
 				payload : {},
@@ -62028,9 +62158,15 @@ sap.ui.define([
 	// Scenario: Set a context to selected using a property binding to the client-side annotation
 	// "@$ui5.context.isSelected".
 	// JIRA: CPOUI5ODATAV4-1944
-	QUnit.test("Set context selected via annotation & property binding", async function (assert) {
+	//
+	// Select a header context via all three possible ways: setSelected and write to the annotation
+	// via context or property binding. Swap the context of the "selectAll" property binding and
+	// check if change listeners are correctly removed.
+	// JIRA: CPOUI5ODATAV4-2493
+	QUnit.test("Selection on header context and row context", async function (assert) {
 		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
 		const sView = `
+<Input id="selectAll" value="{path: '@$ui5.context.isSelected', targetType: 'any'}"/>
 <Table id="table" items="{/SalesOrderList}">
 	<Text id="id" text="{SalesOrderID}"/>
 	<Input id="selected" value="{path : '@$ui5.context.isSelected', targetType: 'any'}"/>
@@ -62038,12 +62174,12 @@ sap.ui.define([
 
 		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
 				value : [
-					{SalesOrderID : "1"},
-					{SalesOrderID : "2"}
+					{SalesOrderID : "1"}
 				]
 			})
-			.expectChange("id", ["1", "2"])
-			.expectChange("selected", [undefined, undefined]);
+			.expectChange("selectAll")
+			.expectChange("id", ["1"])
+			.expectChange("selected", [undefined]);
 
 		await this.createView(assert, sView, oModel);
 
@@ -62055,15 +62191,75 @@ sap.ui.define([
 
 		// code under test
 		oPropertyBinding.setValue(true);
-		checkSelected(assert, oContext, true);
 
+		checkSelected(assert, oContext, true);
 		await this.waitForChanges(assert);
 
 		this.expectChange("selected", [false]);
 
 		// code under test
 		oPropertyBinding.setValue(false);
+
 		checkSelected(assert, oContext, false);
+		await this.waitForChanges(assert);
+
+		const oHeaderContext = this.oView.byId("table").getBinding("items").getHeaderContext();
+		const oSelectAllInput = this.oView.byId("selectAll");
+		oSelectAllInput.setBindingContext(oHeaderContext);
+		const oSelectAllBinding = oSelectAllInput.getBinding("value");
+
+		this.expectChange("selectAll", true);
+
+		// code under test
+		oSelectAllBinding.setValue(true);
+
+		checkSelected(assert, oHeaderContext, true);
+		await this.waitForChanges(assert);
+
+		this.expectChange("selectAll", false);
+
+		// code under test
+		oSelectAllBinding.setValue(false);
+
+		checkSelected(assert, oHeaderContext, false);
+		await this.waitForChanges(assert);
+
+		this.expectChange("selectAll", true);
+
+		// code under test
+		oHeaderContext.setProperty("@$ui5.context.isSelected", true);
+
+		checkSelected(assert, oHeaderContext, true);
+		await this.waitForChanges(assert);
+
+		this.expectChange("selectAll", false);
+
+		// code under test
+		oHeaderContext.setProperty("@$ui5.context.isSelected", false);
+
+		checkSelected(assert, oHeaderContext, false);
+		await this.waitForChanges(assert);
+
+		this.expectChange("selectAll", true);
+
+		// code under test
+		oHeaderContext.setSelected(true);
+
+		checkSelected(assert, oHeaderContext, true);
+		await this.waitForChanges(assert);
+
+		this.expectChange("selectAll", false);
+
+		// code under test
+		oHeaderContext.setSelected(false);
+
+		checkSelected(assert, oHeaderContext, false);
+		await this.waitForChanges(assert);
+
+		oSelectAllInput.setBindingContext(oContext);
+
+		// code under test - change listener is deregistered, no change expected
+		oHeaderContext.setSelected(true);
 
 		await this.waitForChanges(assert);
 	});

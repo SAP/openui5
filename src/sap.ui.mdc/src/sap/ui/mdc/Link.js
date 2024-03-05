@@ -314,8 +314,7 @@ sap.ui.define([
 				}
 			},
 			beforeNavigationCallback: this._beforeNavigationCallback.bind(this),
-			metadataHelperPath: "sap/ui/mdc/Link",
-			onNavigationCallback: this._onNavigationCallback.bind(this)
+			metadataHelperPath: "sap/ui/mdc/Link"
 		});
 		oPanel.setModel(new JSONModel({
 			metadata: jQuery.extend(true, [], this._getInternalModel().getProperty("/linkItems")),
@@ -338,7 +337,6 @@ sap.ui.define([
 		if (aMLinkItems.length === 1 && !aAdditionalContent.length) {
 			const bNavigate = await this._beforeNavigationCallback(oEvent);
 			if (bNavigate) {
-				this._onNavigationCallback(aMLinkItems[0]);
 				Panel.navigate(aMLinkItems[0].href);
 			}
 			return bNavigate;
@@ -635,23 +633,6 @@ sap.ui.define([
 		}
 		SapBaseLog.error("mdc.Link _beforeNavigationCallback: control delegate is not set - could not load beforeNavigationCallback from delegate.");
 		return Promise.resolve();
-	};
-
-	/**
-	 * Proxy function for the <code>onNavigationCallback</code> of the panel.
-	 * @private
-	 * @param {sap.m.Link|sap.ui.mdc.LinkItem} oLink <code>Link</code> control that is clicked or corresponding <code>LinkItem</code>
-	 */
-	Link.prototype._onNavigationCallback = async function(oLink) {
-		try {
-			const oDelegate = await this.awaitControlDelegate();
-			if (oDelegate.onNavigationCallback) { // currently only available on SmartLinkDelegate
-				// don't return anything as we just want to call event handlings in the <code>SmartLink</code>
-				oDelegate.onNavigationCallback(this, oLink);
-			}
-		} catch (e) {
-			SapBaseLog.error("mdc.Link _onNavigationCallback: control delegate is not set - could not load onNavigationCallback from delegate.");
-		}
 	};
 
 	// ------------------------------------- General internal methods ----------------------------------------------

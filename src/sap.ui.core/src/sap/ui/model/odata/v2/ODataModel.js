@@ -30,7 +30,6 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/util/merge",
 	"sap/base/util/uid",
-	"sap/base/util/UriParameters",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
@@ -54,13 +53,11 @@ sap.ui.define([
 	"sap/ui/thirdparty/datajs",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/util/isCrossOriginURL"
-], function(_CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding,
-		ODataTreeBinding, assert, Log, Localization, encodeURL, deepEqual, deepExtend, each,
-		extend, isEmptyObject, isPlainObject, merge, uid, UriParameters, SyncPromise,
-		coreLibrary, Messaging, Message, MessageParser, Supportability,  _Helper, BindingMode,
-		BaseContext, FilterProcessor, Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel,
-		ODataMessageParser,	ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData,
-		URI, isCrossOriginURL
+], function(_CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding, ODataTreeBinding,
+		assert, Log, Localization, encodeURL, deepEqual, deepExtend, each, extend, isEmptyObject, isPlainObject, merge,
+		uid, SyncPromise, coreLibrary, Messaging, Message, MessageParser, Supportability,  _Helper, BindingMode,
+		BaseContext, FilterProcessor, Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser,
+		ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData, URI, isCrossOriginURL
 ) {
 	"use strict";
 
@@ -1374,13 +1371,11 @@ sap.ui.define([
 			sUrl = this.sServiceUrl + sUrl;
 		}
 
-		var oUriParameters = UriParameters.fromURL(sUrl || window.location.href);
-		//UriParameters returns an array of values - we use the first one as
-		//we assume only one per key should be passed
 		var mAllParams = Object.assign({}, this.mMetadataUrlParams);
-		Array.from(oUriParameters.keys()).forEach(function(sKey) {
-			mAllParams[sKey] = oUriParameters.get(sKey);
-		});
+		const oURLSearchParams = new URL(sUrl, "https://localhost").searchParams;
+		for (const [sKey] of oURLSearchParams) {
+			mAllParams[sKey] = oURLSearchParams.get(sKey);
+		}
 		var aMetadataUrlParams = ODataUtils._createUrlParamsArray(mAllParams);
 		var aUrlParts = sUrl.split("?");
 		if (aUrlParts.length > 1) {

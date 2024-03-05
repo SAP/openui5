@@ -1,4 +1,4 @@
-/*global QUnit, sinon*/
+/*global QUnit */
 
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
@@ -9,8 +9,7 @@ function(JSONModel, nextUIUpdate) {
 
 	// global vars
 	var	oConfigModel = new JSONModel(),
-		oConfigModelNoTitles = new JSONModel(),
-		iLoadingDelay = 2500;
+		oConfigModelNoTitles = new JSONModel();
 
 	oConfigModel.loadData("test-resources/sap/uxap/qunit/model/OPLazyLoadingWithTabs.json", {}, false);
 	oConfigModelNoTitles.loadData("test-resources/sap/uxap/qunit/model/OPLazyLoadingWithTabsNoTitles.json", {}, false);
@@ -83,8 +82,13 @@ function(JSONModel, nextUIUpdate) {
 			var aSections = oObjectPageLayout.getSections();
 			oObjectPageLayout.scrollToSection(aSections[iIndex].getId());
 			aLoadedSections.push(iIndex);
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
-			testContext.clock.tick(iLoadingDelay);
-			fnAssertTabsAreLoaded(assert, aSections, aLoadedSections);
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
+
+			return new Promise((resolve, reject) => {
+				setTimeout(() => {
+					fnAssertTabsAreLoaded(assert, aSections, aLoadedSections);
+					resolve();
+				  }, 500);
+			});
 		};
 });

@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/m/Shell",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/uxap/BlockBase",
@@ -13,7 +12,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView"
 ],
-function(ComponentContainer, Shell, Core, Element, nextUIUpdate, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, View, XMLView) {
+function(ComponentContainer, Shell, Element, nextUIUpdate, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, View, XMLView) {
 	"use strict";
 
 	QUnit.module("BlockBase");
@@ -45,6 +44,7 @@ function(ComponentContainer, Shell, Core, Element, nextUIUpdate, BlockBase, Obje
 			assert.ok(oMainView && oMainController, "The main view and controller were successfully created");
 
 			oObjectPage = oMainView.byId("ObjectPageLayout");
+
 			oBlock = oObjectPage.getSections()[0].getSubSections()[0].getBlocks()[0];
 
 			assert.ok(oBlock, "The block was successfully created");
@@ -73,7 +73,7 @@ function(ComponentContainer, Shell, Core, Element, nextUIUpdate, BlockBase, Obje
 
 	});
 
-	QUnit.test("blocks are target of lazy loading feature", function (assert) {
+	QUnit.test("blocks are target of lazy loading feature", async function (assert) {
 
 		var fnGetBlock = function() {
 			return new BlockBase();
@@ -98,6 +98,9 @@ function(ComponentContainer, Shell, Core, Element, nextUIUpdate, BlockBase, Obje
 			var bShouldLazyLoad = oBlock._shouldLazyLoad();
 			assert.strictEqual(bShouldLazyLoad, bExpected, " The block " + oBlock.getId() + " is target of lazy loading " + bShouldLazyLoad);
 		};
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		await nextUIUpdate();
 
 		// Assert: the blocks ObejctPageSubSection are target of lazy laoding
 		aBlocksInsideSubSection.forEach(function(oBlock) {
@@ -206,9 +209,12 @@ function(ComponentContainer, Shell, Core, Element, nextUIUpdate, BlockBase, Obje
 
 		// Arrange
 		var oOPL = this.oObjectPageInfoView.byId("ObjectPageLayout"),
-		oTargetSubSection = oOPL.getSections()[0].getSubSections()[0],
-		oBlock = oTargetSubSection.getBlocks()[0],
-		fnUpdateBindingSpy = this.spy(oBlock, "updateBindings");
+			oTargetSubSection = oOPL.getSections()[0].getSubSections()[0],
+			oBlock = oTargetSubSection.getBlocks()[0],
+			fnUpdateBindingSpy = this.spy(oBlock, "updateBindings"),
+			fnDone = assert.async();
+
+		assert.expect(2);
 
 		// Act: explicitly connect the section models (lazy loading)
 		// _bConnect private boolean flag is mocked to "false" in order to target our test scenario
@@ -216,8 +222,11 @@ function(ComponentContainer, Shell, Core, Element, nextUIUpdate, BlockBase, Obje
 		oOPL._connectModelsForSections([oTargetSubSection]);
 
 		// Assert
-		assert.ok(fnUpdateBindingSpy.calledOnce, "updateBindings is called once only");
-		assert.ok(fnUpdateBindingSpy.calledWithExactly(true, null), "updateBindings is called with the correct arguments");
+		setTimeout(function () {
+			assert.ok(fnUpdateBindingSpy.calledOnce, "updateBindings is called once only");
+			assert.ok(fnUpdateBindingSpy.calledWithExactly(true, null), "updateBindings is called with the correct arguments");
+			fnDone();
+		}, 0);
 	});
 
 	QUnit.test("initView event is fired", function (assert) {

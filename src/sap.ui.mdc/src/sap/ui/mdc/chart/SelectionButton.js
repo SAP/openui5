@@ -101,8 +101,6 @@ sap.ui.define([
 	 * @private
 	 */
 	SelectionButton.prototype.openPopover = function(oEvent) {
-		const oButton = oEvent.getSource();
-
 		if (!this.oReadyPromise) {
 			this.oReadyPromise = new Promise((resolve) => {
 				if (ResponsivePopover) {
@@ -139,34 +137,45 @@ sap.ui.define([
 		}
 
 		this.oReadyPromise.then(() => {
-			this.fireBeforeOpen();
 
 			if (!this.oPopover) {
-				this.oPopover = this._createPopover();
-				this._createModel();
+				this.fireBeforeOpen();
 
-				// eslint-disable-next-line prefer-arrow-callback
-				this.oPopover.attachAfterOpen(function() {
-					// eslint-disable-next-line prefer-destructuring
-					const oList = this.oPopover.getContent()[1];
-					// eslint-disable-next-line prefer-destructuring
-					const oSelectedItem = oList.getItems().filter((oItem) => { return oItem.getSelected(); })[0];
-					oSelectedItem?.focus();
+				if (this.getItems().length === 0) {
+					//async filling of items: wait for a _openPopover call from the beforeOpen handler
+					return;
+				}
 
-				}.bind(this));
-
-				this.oPopover.attachAfterClose(() => {
-					this.oPopover.destroy();
-					delete this.oPopover;
-				});
-
-				return this.oPopover.openBy(oButton);
+				this._openPopover();
 
 			} else if (this.oPopover) {
 				this.oPopover.close();
 			}
 		});
 	};
+
+	SelectionButton.prototype._openPopover = function() {
+		this.oPopover = this._createPopover();
+		this._createModel();
+
+		// eslint-disable-next-line prefer-arrow-callback
+		this.oPopover.attachAfterOpen(function() {
+			// eslint-disable-next-line prefer-destructuring
+			const oList = this.oPopover.getContent()[1];
+			// eslint-disable-next-line prefer-destructuring
+			const oSelectedItem = oList.getItems().filter((oItem) => { return oItem.getSelected(); })[0];
+			oSelectedItem?.focus();
+
+		}.bind(this));
+
+		this.oPopover.attachAfterClose(() => {
+			this.oPopover.destroy();
+			delete this.oPopover;
+		});
+
+		this.oPopover.openBy(this);
+	};
+
 
 	/**
 	 * Creates the popover
