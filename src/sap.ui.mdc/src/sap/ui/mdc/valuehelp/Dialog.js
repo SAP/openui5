@@ -623,7 +623,7 @@ sap.ui.define([
 						showValueHelp: false,
 						editable: true,
 						ariaAttributes: { role: "listbox", aria: { readonly: true, roledescription: this._oResourceBundle.getText("valuehelp.TOKENIZER_ARIA_ROLE_DESCRIPTION") } },
-						ariaLabelledBy: this.oTokenizerPanel,
+						// ariaLabelledBy: this.oTokenizerPanel,
 						tokenUpdate: function(oEvent) {
 							if (oEvent.getParameter("removedTokens")) {
 								const aRemovedTokens = oEvent.getParameter("removedTokens");
@@ -656,6 +656,11 @@ sap.ui.define([
 
 						this.oTokenMultiInput._setValueVisible(); // make the input always invisible
 						this.oTokenMultiInput.setValue(""); // set the value to empty string
+
+						if (!this.bAddAriaLabelledOnlyOnce) {
+							this.bAddAriaLabelledOnlyOnce = true;
+							this.oTokenMultiInput.addAriaLabelledBy(this.oTokenizerPanel._getLabellingElementId());
+						}
 					}.bind(this);
 
 					_bindTokenizer.call(this, true);
@@ -665,11 +670,28 @@ sap.ui.define([
 							this.fireSelect({ type: ValueHelpSelectionType.Set, conditions: [] });
 
 							this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.REMOVEALLTOKEN_ANNOUNCE"), InvisibleMessageMode.Assertive);
+
+							//sets the focus to the Tokenizer field, because the RemoveAllBtn will be disabled
+							this.oTokenMultiInput.focus();
 						}.bind(this),
 						type: ButtonType.Transparent,
 						icon: "sap-icon://decline",
 						tooltip: "{$i18n>valuehelp.REMOVEALLTOKEN}",
-						layoutData: new FlexItemData({ growFactor: 0, baseSize: "2rem" })
+						layoutData: new FlexItemData({ growFactor: 0, baseSize: "2rem" }),
+						enabled: {
+							path: "$valueHelp>/conditions",
+							formatter: function(aConditions) {
+								let iCount = 0;
+
+								for (const oCondition of aConditions) {
+									if (oCondition.isEmpty !== true) {
+										iCount++;
+									}
+								}
+
+								return iCount > 0;
+							}
+						}
 					});
 					this.oRemoveAllBtn.addStyleClass("sapUiTinyMarginBegin");
 
