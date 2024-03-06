@@ -175,10 +175,12 @@ sap.ui.define([
 	 * the request can not successfully retrieve data from a different domain, subdomain, or protocol.
 	 *
 	 * @param {string} sURL A string containing the URL to which the request is sent.
-	 * @param {object | string} [oParameters] A map or string that is sent to the server with the request.
-	 * Data that is sent to the server is appended to the URL as a query string.
-	 * If the value of the data parameter is an object (map), it is converted to a string and
-	 * url-encoded before it is appended to the URL.
+	 * @param {object | string} [oParameters]
+	 *   A map or string that is sent to the server with the request. If the value of this parameter is a string, it
+	 *   must already be url-encoded.
+	 *   If the value of this parameter is an object (map), it is converted to a string and then url-encoded.
+	 *   The resulting string is appended to the URL if the HTTP request method cannot have a request body,
+	 *   e.g. for a GET request. Otherwise, the resulting string is added to the request body.
 	 * @param {boolean} [bAsync=true] <b>Deprecated as of Version 1.107</b>; always use asynchronous
 	 * loading for performance reasons. By default, all requests are sent asynchronously.
 	 * Synchronous requests may temporarily lock the browser, disabling any actions while
