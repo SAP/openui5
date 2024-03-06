@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"mdc/qunit/util/V4ServerHelper",
+	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Arrangement",
 	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary",
 	"test-resources/sap/ui/mdc/testutils/opa/Util"
 ], function(
 	Opa5,
-	ODataV4ServerHelper
+	ODataV4ServerHelper,
+	P13nArrangement
 ) {
 	"use strict";
 
@@ -36,8 +38,9 @@ sap.ui.define([
 		if (bServerAvailable) {
 
 			sap.ui.require([
-				"local/test/ListReportJourney"
+				"local/test/" + QUnit.urlParams.test
 			], function() {
+				new P13nArrangement().enableAndDeleteLrepLocalStorage();
 				QUnit.start();
 			});
 

@@ -43,7 +43,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				module: "./v4server/V4ServerIntegration.qunit",
 				sinon: false
 			},
-			"ListReportFLVM": {
+			"ListReportFlVMJourney": {
 				group: "TWFB",
 				loader: {
 					paths: {
@@ -57,7 +57,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					reorder: false
 				},
 				autostart: false, // tests are added asynchronously because the V4 server needs to be found first
-				module: "test-resources/sap/ui/mdc/integration/twfb/ListReportFLVM.qunit",
+				module: "test-resources/sap/ui/mdc/integration/twfb/OpaStarter.qunit",
 				sinon: false
 			},
 			"ListReportJourney": {
@@ -75,7 +75,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					reorder: false
 				},
 				autostart: false, // tests are added asynchronously because the V4 server needs to be found first
-				module: "test-resources/sap/ui/mdc/integration/twfb/ListReportJourney.qunit",
+				module: "test-resources/sap/ui/mdc/integration/twfb/OpaStarter.qunit",
 				sinon: false
 			},
 			"TestJourney": {
@@ -92,7 +92,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					reorder: false
 				},
 				autostart: false, // tests are added asynchronously because the V4 server needs to be found first
-				module: "test-resources/sap/ui/mdc/integration/twfb/TestJourney.qunit",
+				module: "test-resources/sap/ui/mdc/integration/twfb/OpaStarter.qunit",
 				sinon: false
 			},
 			"SelectFromListJourney": {
