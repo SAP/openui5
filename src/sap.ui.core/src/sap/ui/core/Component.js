@@ -1221,7 +1221,7 @@ sap.ui.define([
 	 * @param {string} [vUsage.id] ID of the nested component that is prefixed with <code>autoPrefixId</code>
 	 * @param {boolean} [vUsage.async=true] Indicates whether the component creation is done asynchronously (You should use synchronous creation only if really necessary, because this has a negative impact on performance.)
 	 * @param {object} [vUsage.settings] Settings for the nested component like for {#link sap.ui.component} or the component constructor
-	 * @param {object} [vUsage.componentData] Initial data of the component (@see sap.ui.core.Component#getComponentData)
+	 * @param {object} [vUsage.componentData] Initial data of the component, see {@link sap.ui.core.Component#getComponentData}
 	 * @return {sap.ui.core.Component|Promise<sap.ui.core.Component>} Component instance or Promise which will be resolved with the component instance (defaults to Promise / asynchronous behavior)
 	 * @public
 	 * @since 1.47.0

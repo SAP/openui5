@@ -198,6 +198,8 @@ sap.ui.define([
 			},
 
 			"cardbundle/CardStaticResources": {},
+			"cards/Header": {},
+			"cards/NumericHeader": {},
 			"cards/BaseContent": {},
 			"cards/AdaptiveCard": {},
 			"cards/AnalyticalCard": {},

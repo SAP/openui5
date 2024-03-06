@@ -2035,6 +2035,19 @@ sap.ui.define([
 			return this.bFocusoutDueRendering;
 		};
 
+		DynamicDateRangeInput.prototype.onsapshow = function(oEvent) {
+			if (!this.getEnabled() || !this.getEditable()) {
+				return;
+			}
+
+			this.bValueHelpRequested = true;
+			this._fireValueHelpRequest(false);
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+		};
+
+		DynamicDateRangeInput.prototype.onsaphide = DynamicDateRangeInput.prototype.onsapshow;
+
 		DynamicDateRangeInput.prototype.shouldSuggetionsPopoverOpenOnMobile = function(oEvent) {
 			var bIsClickedOnIcon = oEvent.srcControl instanceof Icon;
 			return this.isMobileDevice()

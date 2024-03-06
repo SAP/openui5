@@ -921,7 +921,8 @@ sap.ui.define([
 
 		/**
 		 * Creates the query options for requesting the data (all required $selects for UI) of
-		 * out-of-place nodes.
+		 * out-of-place nodes. The result is also used to check whether they still have the same
+		 * parent (resp. still are root).
 		 *
 		 * @param {object} oOutOfPlace
 		 *   Out-of-place node information containing key filters
@@ -937,11 +938,15 @@ sap.ui.define([
 		getQueryOptionsForOutOfPlaceNodesData : function (oOutOfPlace, oAggregation,
 				mQueryOptions) {
 			oAggregation = Object.assign({}, oAggregation);
+			oAggregation.expandTo = 1;
 			delete oAggregation.search;
+			delete oAggregation.$ExpandLevels;
 			mQueryOptions = Object.assign({}, mQueryOptions);
-			// with $$filterBeforeAggregate the data is requested with descendants(...) instead of
-			// TopLevels(...)
-			mQueryOptions.$$filterBeforeAggregate = oOutOfPlace.parentFilter;
+			if (oOutOfPlace.parentFilter) {
+				// with $$filterBeforeAggregate the data is requested with descendants(...) instead
+				// of TopLevels(...)
+				mQueryOptions.$$filterBeforeAggregate = oOutOfPlace.parentFilter;
+			}
 			// count/filter/sorter are not relevant for the data request
 			delete mQueryOptions.$count;
 			delete mQueryOptions.$filter;
@@ -950,6 +955,10 @@ sap.ui.define([
 			const aNodeFilters = oOutOfPlace.nodeFilters.toSorted();
 			mQueryOptions.$filter = aNodeFilters.join(" or ");
 			mQueryOptions.$top = aNodeFilters.length;
+			const iDrillStateIndex = mQueryOptions.$select.indexOf(oAggregation.$DrillState);
+			if (iDrillStateIndex >= 0) {
+				mQueryOptions.$select.splice(iDrillStateIndex, 1);
+			}
 
 			return mQueryOptions;
 		},
@@ -971,15 +980,24 @@ sap.ui.define([
 		 */
 		getQueryOptionsForOutOfPlaceNodesRank : function (aOutOfPlaceByParent, oAggregation,
 				mQueryOptions) {
-			const aNodeFilters = [];
+			const oNodeFilters = new Set();
 			aOutOfPlaceByParent.forEach(function (oOutOfPlace) {
-				aNodeFilters.push(oOutOfPlace.parentFilter);
-				aNodeFilters.push(...oOutOfPlace.nodeFilters);
+				if (oOutOfPlace.parentFilter) {
+					oNodeFilters.add(oOutOfPlace.parentFilter);
+				}
+				oOutOfPlace.nodeFilters.forEach(function (sNodeFilter) {
+					oNodeFilters.add(sNodeFilter);
+				});
 			});
 			mQueryOptions = Object.assign({}, mQueryOptions, {
-				$filter : aNodeFilters.sort().join(" or "),
-				$select : [oAggregation.$DistanceFromRoot, oAggregation.$LimitedRank],
-				$top : aNodeFilters.length
+				$filter : [...oNodeFilters].sort().join(" or "),
+				$select : [
+					oAggregation.$DistanceFromRoot,
+					oAggregation.$DrillState,
+					oAggregation.$LimitedDescendantCount,
+					oAggregation.$LimitedRank
+				],
+				$top : oNodeFilters.size
 			});
 			delete mQueryOptions.$count;
 			delete mQueryOptions.$orderby;

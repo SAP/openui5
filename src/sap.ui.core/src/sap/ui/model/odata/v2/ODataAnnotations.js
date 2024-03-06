@@ -463,7 +463,7 @@ sap.ui.define([
 	 * Parameters of the <code>failed</code> event.
 	 *
 	 * @typedef {object} sap.ui.model.odata.v2.ODataAnnotations.failedParameters
-	 * @property {Error[]} result An array of Errors (@see sap.ui.model.v2.ODataAnnotations#error) that occurred while
+	 * @property {Error[]} result An array of Errors, see {@link sap.ui.model.v2.ODataAnnotations#error} that occurred while
 	 *           loading a group of annotations
 	 * @public
 	 */

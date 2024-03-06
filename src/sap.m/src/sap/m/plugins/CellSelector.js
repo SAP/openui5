@@ -171,6 +171,11 @@ sap.ui.define([
 		onsapdownmodifiers: function(oEvent) {
 			this._onsaparrowmodifiers(oEvent, DIRECTION.ROW, 1, 0);
 		},
+		onsapspace: function(oEvent) {
+			if (isSelectableCell(oEvent.target, this.getConfig("selectableCells"))) {
+				oEvent.preventDefault(); // prevent event otherwise m.Table will scroll
+			}
+		},
 		onsapleftmodifiers: function(oEvent) {
 			this._onsaparrowmodifiers(oEvent, DIRECTION.COL, 0, -1);
 		},
@@ -267,6 +272,7 @@ sap.ui.define([
 
 	CellSelector.prototype.onLocalizationChanged = function() {
 		this._iRtl = getRTL();
+		this._iBtt = this.getConfig("isBottomToTop", this.getControl()) ? -1 : 1;
 		this.removeSelection();
 	};
 
@@ -275,6 +281,7 @@ sap.ui.define([
 		oControl.addDelegate(EventDelegate, false, this);
 
 		this._oSession = { cellRefs: [], cellTypes: [] };
+		this._iBtt = this.getConfig("isBottomToTop", this.getControl()) ? -1 : 1;
 		this._mTimeouts = {};
 		this._fnControlUpdate = function(oEvent) {
 			if (this._bScrolling) {
@@ -1142,7 +1149,7 @@ sap.ui.define([
 				}
 
 				const oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
-				return oColumn && getCellDOM(oRow.getCells(), oColumn.getIndex(), this.selectableCells);
+				return oColumn && getCellDOM(oRow.getCells(), mPosition.colIndex, this.selectableCells);
 			},
 			/**
 			 * Retrieve cell information for a given DOM element.
@@ -1426,7 +1433,7 @@ sap.ui.define([
 			getCellInfo: function (oTable, oTarget, mPrevious) {
 				const aColumns = this.getVisibleColumns(oTable);
 
-				const oColumn = Element.closestTo(`#${oTarget.getAttribute("data-sap-ui-column")}`);
+				const oColumn = Element.getElementById(oTarget.getAttribute("data-sap-ui-column"));
 				const sType = this.getCellType(oTable, oTarget);
 				let iColIndex = aColumns.indexOf(oColumn);
 
@@ -1451,7 +1458,7 @@ sap.ui.define([
 			 * @returns {string} cell type
 			 */
 			getCellType: function (oTable, oTarget) {
-				const oColumn = Element.closestTo(`#${oTarget.getAttribute("data-sap-ui-column")}`);
+				const oColumn = Element.getElementById(oTarget.getAttribute("data-sap-ui-column"));
 				const oItem = Element.closestTo(oTarget, true);
 
 				if (!oItem) {

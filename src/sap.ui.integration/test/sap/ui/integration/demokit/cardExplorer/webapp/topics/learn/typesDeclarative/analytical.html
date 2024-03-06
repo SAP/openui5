@@ -418,11 +418,63 @@
 						<td>false</td>
 						<td>No</td>
 						<td>
-							Whether the popover is active. If it's not it won't open.
+							Whether the popover is active. If it's not it won't open.<br>
 							<b>Note:</b> If there are actions attached, they will take precedence over the opening of the popover.
 						</td>
 						<td>1.34.0</td>
 						<td>1.92</td>
+					</tr>
+					<tr>
+						<td>actionsStrip</td>
+						<td><a href="#popoverActionStripItem">actionStripItem[]</a></td>
+						<td></td>
+						<td>No</td>
+						<td>
+							The action item that is rendered as an action button in the popover.
+							<br>
+							<b>Note:</b> Only a single item is supported.
+							<br>
+							<b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.62.0</td>
+						<td>1.122</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="popoverActionStripItem" class="boldBlock">Popover Action Strip Item Properties (Experimental)</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>text</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>
+							The text of the action button
+						</td>
+						<td>1.62.0</td>
+						<td>1.122</td>
+					</tr>
+					<tr>
+						<td>actions</td>
+						<td><a href="../../../index.html#/learn/actions" target="_parent">actions[]</a></td>
+						<td></td>
+						<td>No</td>
+						<td>
+							The action that is triggered when the action button is pressed.
+						</td>
+						<td>1.62.0</td>
+						<td>1.122</td>
 					</tr>
 				</table>
 			</div>

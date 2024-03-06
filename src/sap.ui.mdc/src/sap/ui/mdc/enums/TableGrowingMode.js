@@ -21,7 +21,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 		 */
 		None: "None",
 		/**
-		 * A More is shown with which the user can request to load more rows
+		 * A More button is shown with which the user can request to load more rows
 		 *
 		 * @public
 		 */

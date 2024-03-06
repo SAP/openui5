@@ -131,6 +131,18 @@ sap.ui.define([
 		}
 
 		/**
+		 * Returns the number of out-of-place nodes.
+		 * @returns {number} The number of out-of-place nodes
+		 *
+		 * @public
+		 */
+		getOutOfPlaceCount() {
+			return Object.values(this.mParentPredicate2OutOfPlace).reduce(
+				(iCount, oOutOfPlace) => iCount + oOutOfPlace.nodeFilters.length,
+			    0);
+		}
+
+		/**
 		 * Resets the tree state.
 		 *
 		 * @public

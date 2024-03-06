@@ -253,11 +253,10 @@ sap.ui.define([
 			oActionConfig.eventName = "selectData";
 			oActionConfig.actionControl = this.getAggregation("_content");
 
-			this._oActions.setBindingPathResolver(function (oEvent) {
-				var iIndex = oEvent.getParameter("data")[0].data._context_row_number;
-				var sPath = this.getBindingContext().getPath();
-				return sPath !== "/" ? sPath + "/" + iIndex : sPath + iIndex;
-			}.bind(this));
+			this._oActions.setBindingPathResolver((oEvent) => {
+				const sResolvedPath = this._getContextPath(oEvent);
+				return sResolvedPath;
+			});
 
 		} else {
 			oActionConfig.eventName = "press";
@@ -273,6 +272,26 @@ sap.ui.define([
 
 		this._oPopover = new Popover();
 		this._oPopover.connect(this.getAggregation("_content").getVizUid());
+		const oConfig = this.getParsedConfiguration();
+		const aActionsStrip = oConfig.popover.actionsStrip;
+
+		if (aActionsStrip && aActionsStrip[0]?.actions?.length) {
+			const oActionsStripItem = aActionsStrip[0];
+			const oChart = this.getAggregation("_content");
+
+			oChart.attachSelectData((oEvent) => {
+				const oResolvedPath = this._getContextPath(oEvent);
+				const oResolvedActionItem = BindingResolver.resolveValue(oActionsStripItem, this, oResolvedPath);
+
+				this._oPopover.setActionItems([{
+					type: 'action',
+					text: oResolvedActionItem.text,
+					press: () => {
+						this._oActions.fireAction(oChart, oResolvedActionItem.actions[0].type, oResolvedActionItem.actions[0].parameters);
+					}
+				}]);
+			});
+		}
 	};
 
 	/**
@@ -428,6 +447,18 @@ sap.ui.define([
 		return aFeeds.map(function (oFeed) {
 			return new FeedItem(oFeed);
 		});
+	};
+
+	/**
+	 * Get the resolved chart item path.
+	 * @private
+	 * @param {jQuery.Event} oEvent
+	 */
+
+	AnalyticalContent.prototype._getContextPath = function (oEvent) {
+		const iIndex = oEvent.getParameter("data")[0].data._context_row_number;
+		const sPath = this.getBindingContext().getPath();
+		return sPath !== "/" ? sPath + "/" + iIndex : sPath + iIndex;
 	};
 
 	return AnalyticalContent;

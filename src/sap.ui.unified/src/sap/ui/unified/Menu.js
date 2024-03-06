@@ -77,7 +77,7 @@ sap.ui.define([
 			properties : {
 				/**
 				 * When a menu is disabled none of its items can be selected by the user.
-				 * The enabled property of an item (@link sap.ui.unified.MenuItemBase#getEnabled) has no effect when the menu of the item is disabled.
+				 * The enabled property of an item {@link sap.ui.unified.MenuItemBase#getEnabled} has no effect when the menu of the item is disabled.
 				 */
 				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 

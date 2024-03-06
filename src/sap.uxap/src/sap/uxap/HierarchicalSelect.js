@@ -95,7 +95,13 @@ sap.ui.define([
 	 * Keyboard handling requirement to have the same behavior on [ENTER] key
 	 * as on [SPACE] key (namely, to toggle the open state the select dropdown)
 	 */
-	HierarchicalSelect.prototype.onsapenter = Select.prototype.ontap;
+	 HierarchicalSelect.prototype.onsapenter = function(oEvent) {
+		if (!this.getPicker().isOpen()) {
+			Select.prototype.ontap.call(this, oEvent);
+		} else {
+			Select.prototype.onsapenter.call(this, oEvent);
+		}
+	 };
 
 	/**
 	 * Keyboard handling of [UP], [PAGE-UP], [PAGE-DOWN], [HOME], [END] keys
