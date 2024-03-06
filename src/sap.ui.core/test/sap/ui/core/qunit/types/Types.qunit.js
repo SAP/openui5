@@ -2676,4 +2676,69 @@ sap.ui.define([
 		assert.strictEqual(oResult.message, oFixture.sResult);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("Unit: getPartsListeningToTypeChanges", function (assert) {
+		const oUnitType = {bShowNumber: true};
+
+		// code under test
+		assert.deepEqual(UnitType.prototype.getPartsListeningToTypeChanges.call(oUnitType), [0]);
+
+		oUnitType.bShowNumber = false;
+
+		// code under test
+		assert.deepEqual(UnitType.prototype.getPartsListeningToTypeChanges.call(oUnitType), []);
+	});
+
+	//*********************************************************************************************
+[
+	{iScale : undefined},
+	{iScale : -1},
+	{iScale : 0, bUseScale : true},
+	{iScale : 42, bUseScale : true}
+].forEach(({iScale, bUseScale}, i) => {
+	QUnit.test("Unit: _getInstance: consider iScale= " + iScale, function (assert) {
+		const oFormatOptionsByArgs = {foo : "byArgs"};
+		const oFormatOptionsByThis = {bar : "byThis"};
+		const oMetadata = {getClass() {}};
+		const oUnitType = {
+			oFormatOptions : oFormatOptionsByThis,
+			iScale : iScale,
+			createFormatOptions() {},
+			getMetadata : () => oMetadata
+		};
+
+		this.mock(oUnitType).expects("createFormatOptions").withExactArgs("~aArgs").returns(oFormatOptionsByArgs);
+		this.mock(oMetadata).expects("getClass")
+			.withExactArgs()
+			.returns(i % 2 ? UnitType : "~NotUnitType"); // alternate between UnitType and other class
+		this.mock(NumberFormat).expects("getUnitInstance")
+			.withExactArgs(bUseScale
+				? {foo : "byArgs", bar : "byThis", maxFractionDigits : iScale}
+				: {foo : "byArgs", bar : "byThis"})
+			.returns("~UnitInstance");
+
+		// code under test
+		assert.strictEqual(UnitType.prototype._getInstance.call(oUnitType, "~aArgs"), "~UnitInstance");
+	});
+});
+
+
+	//*********************************************************************************************
+[
+	{aTypes : []},
+	{aTypes : [{}]},
+	{aTypes : [{oConstraints : {}}]},
+	{aTypes : [{oConstraints : {scale : 24}}], iScale : 24},
+	{aTypes : [{oConstraints : {scale : 24}}, {oConstraints : {scale : 42}}], iScale : 24}
+].forEach(({aTypes, iScale}, i) => {
+	QUnit.test("Unit: processPartTypes, i=" + i, function (assert) {
+		const oUnitType = {};
+
+		// code under test
+		UnitType.prototype.processPartTypes.call(oUnitType, aTypes);
+
+		assert.strictEqual(oUnitType.iScale, iScale);
+	});
+});
 });

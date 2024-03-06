@@ -1455,6 +1455,9 @@ sap.ui.define([
 
 			// either take the decimals/precision on the custom units or fallback to the given format-options
 			oOptions.decimals = (mUnitPatterns && (typeof mUnitPatterns.decimals === "number" && mUnitPatterns.decimals >= 0)) ? mUnitPatterns.decimals : oOptions.decimals;
+			// if decimals and maxFractionDigits are set, then maxFractionDigits of the amount wins over the decimals
+			oOptions.decimals = oOptions.maxFractionDigits < oOptions.decimals
+				? oOptions.maxFractionDigits : oOptions.decimals;
 			oOptions.precision = (mUnitPatterns && (typeof mUnitPatterns.precision === "number" && mUnitPatterns.precision >= 0)) ? mUnitPatterns.precision : oOptions.precision;
 		}
 

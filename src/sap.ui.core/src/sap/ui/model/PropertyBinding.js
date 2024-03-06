@@ -4,14 +4,15 @@
 /*eslint-disable max-len */
 // Provides an abstract property binding.
 sap.ui.define([
-	'./Binding',
+	"./Binding",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/model/ChangeReason",
 	"sap/base/Log",
 	"sap/base/assert",
-	'./SimpleType', // convenience dependency for legacy code that uses global names
-	'./DataState' // convenience dependency for legacy code that uses global names
+	"./SimpleType", // convenience dependency for legacy code that uses global names
+	"./DataState" // convenience dependency for legacy code that uses global names
 ],
-	function(Binding, SyncPromise, Log, assert) {
+	function(Binding, SyncPromise, ChangeReason, Log, assert) {
 	"use strict";
 
 	/**
@@ -335,8 +336,13 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyBinding.prototype.setType = function(oType, sInternalType) {
+		const oOldType = this.oType;
 		this.oType = oType;
 		this.sInternalType = sInternalType;
+		if (this.fnTypeChangedCallback && oType && oOldType !== oType) {
+			this.fnTypeChangedCallback();
+			this._fireChange({reason: ChangeReason.Change});
+		}
 	};
 
 	/**
@@ -384,6 +390,17 @@ sap.ui.define([
 	 */
 	PropertyBinding.prototype.setBindingMode = function(sBindingMode) {
 		this.sMode = sBindingMode;
+	};
+
+	/**
+	 * Sets the callback which is called when the type of the binding is changed, if not supplied a
+	 * former callback is deregistered.
+	 *
+	 * @param {function} [fnTypeChangedCallback]
+	 *   The function to be called, if this binding's type changes
+	 */
+	PropertyBinding.prototype.registerTypeChanged = function (fnTypeChangedCallback) {
+		this.fnTypeChangedCallback = fnTypeChangedCallback;
 	};
 
 	/**
