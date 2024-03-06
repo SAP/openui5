@@ -67,9 +67,17 @@ sap.ui.define([
 		return oModel;
 	}
 
+	function _isPublishVersionEnabled(aVersions, sDisplayedVersion) {
+		if (sDisplayedVersion !== Version.Number.Original && sDisplayedVersion !== Version.Number.Draft) {
+			return aVersions.some(function(oVersion) {
+				return oVersion.version === sDisplayedVersion && oVersion.isPublished === false;
+			});
+		}
+		return false;
+	}
+
 	function _prepareVersionsModel(mPropertyBag) {
 		var sPersistedBasisForDisplayedVersion;
-		var bPublishVersionEnabled = false;
 		var sActiveVersion = Version.Number.Original;
 		var aVersions = mPropertyBag.versions;
 		var oVersionsModel = mPropertyBag.versionsModel;
@@ -95,16 +103,11 @@ sap.ui.define([
 				} else {
 					oVersion.type = Version.Type.Inactive;
 				}
-				// If the current selected version is not yet published, enable the publish button
-				// Original versions are not part of back end response, so publish button is not enabled by default value
-				if ((oVersion.version === sPersistedBasisForDisplayedVersion) && (oVersion.isPublished === false)) {
-					bPublishVersionEnabled = true;
-				}
 			}
 		});
 
 		if (oVersionsModel) {
-			oVersionsModel.setProperty("/publishVersionEnabled", bPublishVersionEnabled);
+			oVersionsModel.setProperty("/publishVersionEnabled", _isPublishVersionEnabled(aVersions, sPersistedBasisForDisplayedVersion));
 			oVersionsModel.setProperty("/versioningEnabled", mPropertyBag.versioningEnabled);
 			oVersionsModel.setProperty("/versions", aVersions);
 			oVersionsModel.setProperty("/backendDraft", bBackendDraft);
@@ -120,7 +123,7 @@ sap.ui.define([
 			// when a standalone app switch the version it always trigger a hard reload there the session version is needed
 			var oFlexInfoSession = FlexInfoSession.getByReference(mPropertyBag.reference);
 			return new JSONModel({
-				publishVersionEnabled: bPublishVersionEnabled,
+				publishVersionEnabled: _isPublishVersionEnabled(aVersions, oFlexInfoSession.version || sPersistedBasisForDisplayedVersion),
 				versioningEnabled: mPropertyBag.versioningEnabled,
 				versions: aVersions,
 				backendDraft: bBackendDraft,
