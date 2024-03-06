@@ -1705,7 +1705,8 @@ sap.ui.define([
 				oListItem1 = new CustomListItem({
 					content: oInput,
 					type: "Navigation",
-					press: fnPressSpy
+					press: fnPressSpy,
+					detailPress: fnDetailPressSpy
 				}),
 				oListItem2 = new StandardListItem({
 					type: "Detail",
@@ -1777,7 +1778,7 @@ sap.ui.define([
 			fnItemPressSpy.resetHistory();
 			fnPressSpy.resetHistory();
 
-			qutils.triggerKeydown(document.activeElement, "F2");
+			qutils.triggerEvent("keydown", document.activeElement, {code: "KeyE", ctrlKey: true});
 			assert.strictEqual(fnDetailPressSpy.callCount, 0, "DetailPress event is not called since first item has not Edit type");
 
 			qutils.triggerKeydown(document.activeElement, "DELETE");

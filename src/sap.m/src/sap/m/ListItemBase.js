@@ -1176,8 +1176,8 @@ function(
 			return;
 		}
 
-		// F2 fire detail event or handle editing
-		if (oEvent.code == "KeyE" && (oEvent.metaKey || oEvent.ctrlKey)) {
+		// Ctrl+E fires detail event or handle editing
+		if (this.getType().startsWith("Detail") && oEvent.code == "KeyE" && (oEvent.metaKey || oEvent.ctrlKey)) {
 			if (oEvent.target === this.getDomRef() && (this.hasListeners("detailPress") || this.hasListeners("detailTap"))) {
 				this.fireDetailTap();
 				this.fireDetailPress();
