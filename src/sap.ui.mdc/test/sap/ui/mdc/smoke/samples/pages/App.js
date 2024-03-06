@@ -6,11 +6,14 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Descendant",
+	"sap/ui/test/matchers/Sibling",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/EnterText",
 	"test-resources/sap/ui/mdc/testutils/opa/actions/TriggerEvent",
-	"sap/ui/core/Lib"
-], function(Opa5, PropertyStrictEquals, Ancestor, Descendant, Press, EnterText, TriggerEvent, Library) {
+	"sap/ui/core/Lib",
+	"test-resources/sap/ui/mdc/testutils/opa/table/waitForTable",
+	"test-resources/sap/ui/mdc/testutils/opa/p13n/waitForP13nDialog"
+], function(Opa5, PropertyStrictEquals, Ancestor, Descendant, Sibling, Press, EnterText, TriggerEvent, Library, waitForTable, waitForP13nDialog) {
 	"use strict";
 
 
@@ -178,6 +181,94 @@ sap.ui.define([
 					}
 
 					return fnPressKeyOnMultiInput.call(this);
+				},
+				/**
+				 * Retrieves the table instance by ID and forwards it to the provided callback function
+				 *
+				 * @function
+				 * @name iGetTheTableInstance
+				 * @param {String} sTableId Id of the table
+				 * @param {function(): sap.ui.mdc.Table} fnCallback Callback function with table instance
+				 * @returns {Promise} OPA waitFor
+				 * @private
+				 */
+				iGetTheTableInstance: function (sTableId, fnCallback) {
+					return waitForTable.call(this, sTableId, {
+						success: function(oTable) {
+							fnCallback(oTable);
+						}
+					});
+				},
+				iPressTheSettingsButtonOnTheTable: function (sTableId) {
+					return waitForTable.call(this, sTableId, {
+						success: function(oTable) {
+							return this.waitFor({
+								controlType: "sap.m.OverflowToolbarButton",
+								matchers: new Ancestor(oTable),
+								actions: new Press(),
+								errorMessage: "Did not find the settings button on the table"
+							});
+						}
+					});
+				},
+				iCloseTheP13nDialogWithOk: function() {
+					const sOkButton = oMDCBundle.getText("p13nDialog.OK");
+					return waitForP13nDialog.call(this, {
+						success: function(oP13nDialog) {
+							return this.waitFor({
+								controlType: "sap.m.Button",
+								matchers: [
+									new Ancestor(oP13nDialog),
+									new PropertyStrictEquals({
+										name: "text",
+										value: sOkButton
+									})
+								],
+								actions: new Press()
+								// success: function(aButtons) {
+								// 	Opa5.assert.ok(aButtons.length == 1, "Exactly one ok button was found");
+								// }
+							});
+						}
+					});
+				},
+				iToggleColumnWithLabel: function(sLabel) {
+					return waitForP13nDialog.call(this, {
+						success: function(oP13nDialog) {
+							return this.waitFor({
+								controlType: "sap.m.Label",
+								searchOpenDialogs: true,
+								matchers: new PropertyStrictEquals({
+									name: "text",
+									value: sLabel
+								}),
+								success: function(aLabels) {
+									Opa5.assert.ok(aLabels.length == 1, "Exactly one 'OK' button was found");
+									return this.waitFor({
+										controlType: "sap.m.ColumnListItem",
+										searchOpenDialogs: true,
+										matchers: [
+											new Descendant(aLabels[0])
+										],
+										success: function(aColumnListItem) {
+											Opa5.assert.ok(aColumnListItem.length == 1, "Exactly one ColumnListItem was found");
+											return this.waitFor({
+												controlType: "sap.m.CheckBox",
+												searchOpenDialogs: true,
+												matchers: [
+													new Ancestor(aColumnListItem[0])
+												],
+												success: function(aCheckBox) {
+													Opa5.assert.ok(aCheckBox.length == 1, "Exactly one CheckBox was found");
+												},
+												actions: new Press()
+											});
+										}
+									});
+								}
+							});
+						}
+					});
 				}
 			},
 			assertions: {
@@ -208,6 +299,54 @@ sap.ui.define([
 							});
 						},
 						errorMessage: "The slider was not found."
+					});
+				},
+				/**
+				 * Checks if a table is visible on the screen.
+				 *
+				 * @function
+				 * @name iShouldSeeATable
+				 * @param {String | sap.ui.mdc.Table} vTable Id or instance of the table
+				 * @returns {Promise} OPA waitFor
+				 * @private
+				 */
+				iShouldSeeATable: function(vTable) {
+					return waitForTable.call(this, vTable, {
+						success: function() {
+							Opa5.assert.ok(true, "I see the table");
+						}
+					});
+				},
+				iShouldSeeAP13nDialog() {
+					return waitForP13nDialog.call(this, {});
+				},
+				/**
+				 * Checks whether the MDC Table has a specific number of rows
+				 * @param {string|sap.ui.core.Control} vTable ID of Table or control instance
+				 * @param {number} iRowCount Count of rows
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeRows(vTable, iRowCount) {
+					return waitForTable.call(this, vTable, {
+						success(oTable) {
+							const aItems = oTable.getAggregation("_content").getItems();
+							Opa5.assert.equal(aItems.length, iRowCount, "I see correct amount of context-based adaptations");
+						}
+					});
+				},
+				/**
+				 * Checks whether the MDC Table has the 'More' button
+				 * @param {string} sTableId ID of Table
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeTheMoreButton: function(sTableId) {
+					return this.waitFor({
+						id: sTableId + "-innerTable-trigger",
+						controlType: "sap.m.CustomListItem",
+						success: function (oItem) {
+							Opa5.assert.ok(oItem, "'More' button is visible on the screen");
+						},
+						errorMessage: "No 'More' button found"
 					});
 				}
 			}

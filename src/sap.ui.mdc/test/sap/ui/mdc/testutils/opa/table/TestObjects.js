@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"../p13n/Actions",
 	"../p13n/Assertions",
-	"./Actions"
+	"./Actions",
+	"./Assertions"
 ], function(
 	Opa5,
 	p13nActions,
 	p13nAssertions,
-	TableActions
+	TableActions,
+	TableAssertions
 ) {
 	"use strict";
 
@@ -155,6 +157,20 @@ sap.ui.define([
 				 */
 				iCheckAvailableFilters: function(oControl, aFilters) {
 					return p13nAssertions.iCheckAvailableFilters.call(this, oControl, aFilters, TableActions.iOpenThePersonalizationDialog);
+				},
+				/**
+				 * OPA5 test assertion
+				 * 1. Checks the availability of a table with the provided ID or control.
+				 * 2. Gets the columns of the table.
+				 * 3. Checks whether the column labels equal the provided labels with the same order.
+				 * @memberof onTheMDCTable
+				 * @method iCheckColumnsInOrder
+				 * @param {string|sap.ui.core.Control} vTable ID of Table or control instance
+				 * @param {string[]} aColumnHeaders Labels of column headers
+				 * @returns {Promise} OPA waitFor
+				 */
+				iCheckColumnsInOrder: function(vTable, aColumnHeaders) {
+					return TableAssertions.iShouldSeeGivenColumnsWithHeader.call(this, vTable, aColumnHeaders);
 				}
 			}
 		}

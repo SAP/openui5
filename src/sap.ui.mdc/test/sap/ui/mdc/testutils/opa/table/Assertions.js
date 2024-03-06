@@ -61,8 +61,8 @@ sap.ui.define([
 			});
 		},
 		// Data Assertions
-		iShouldSeeGivenColumnsWithHeader: function(aColumnHeaders) {
-			return waitForTable.call(this, {
+		iShouldSeeGivenColumnsWithHeader: function(aColumnHeaders, vTable) {
+			const oSettings = {
 				success: function(oTable) {
 					var aColumns = oTable.getColumns();
 					QUnit.assert.equal(aColumns.length, aColumnHeaders.length, "The Table has " + aColumnHeaders.length + " Columns");
@@ -72,7 +72,13 @@ sap.ui.define([
 					});
 					QUnit.assert.deepEqual(aDisplayedColumns, aColumnHeaders, "The Table has the correct column headers");
 				}
-			});
+			};
+
+			if (!vTable) {
+				return waitForTable.call(this, oSettings);
+			}
+
+			return waitForTable.call(this, vTable, oSettings);
 		},
 		// Sort Dialog Assertions
 		iShouldSeeTheSortDialog: function() {
@@ -143,9 +149,9 @@ sap.ui.define([
 		},
 
 		/**
-		  * Checks whether the MDC Table has no active overlay
-		  * @returns {Promise} OPA waitFor
-		  */
+		 * Checks whether the MDC Table has no active overlay
+		 * @returns {Promise} OPA waitFor
+		 */
 		iShouldSeeNoOverlay: function() {
 			return waitForTable.call(this, {
 				success: function(oTable) {

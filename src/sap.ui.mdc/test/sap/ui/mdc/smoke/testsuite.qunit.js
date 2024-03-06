@@ -44,6 +44,10 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"FilterbarCustomContent": {
 				group: "Demokit samples",
 				sinon: false
+			},
+			"TableJson": {
+				group: "Demokit samples",
+				sinon: false
 			}
 		}
 	};
