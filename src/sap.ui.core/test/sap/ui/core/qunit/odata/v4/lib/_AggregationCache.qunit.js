@@ -735,10 +735,7 @@ sap.ui.define([
 	//*********************************************************************************************
 [undefined, {}].forEach(function (oParentGroupNode, i) {
 	QUnit.test("createGroupLevelCache: recursive hierarchy, #" + i, function (assert) {
-		var oAggregation = {
-				hierarchyQualifier : "X",
-				$metaPath : "/meta/path"
-			},
+		var oAggregation = {hierarchyQualifier : "X"},
 			oCache = {},
 			mCacheQueryOptions = {},
 			iLevel = oParentGroupNode ? 3 : 1,
@@ -756,7 +753,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oParentGroupNode), "filter").returns(undefined);
 			this.mock(oAggregationCache).expects("getTypes").withExactArgs().returns("~getTypes~");
 			this.mock(_Helper).expects("getKeyFilter")
-				.withExactArgs(sinon.match.same(oParentGroupNode), "/meta/path", "~getTypes~")
+				.withExactArgs(sinon.match.same(oParentGroupNode), "/Foo", "~getTypes~")
 				.returns("~filter~");
 		}
 		this.mock(_AggregationHelper).expects("getAllProperties").never();
@@ -1066,7 +1063,6 @@ sap.ui.define([
 			$DistanceFromRoot : "DistFromRoot",
 			$DrillState : "myDrillState",
 			$LimitedDescendantCount : "LtdDescendant_Count",
-			$metaPath : "~metaPath~",
 			$NodeProperty : "NodeID",
 			$path : "/path",
 			aggregate : {},
@@ -1087,7 +1083,7 @@ sap.ui.define([
 		oCache.aElements[25] = {"@$ui5.node.level" : 5};
 		oCache.aElements[26] = {"@$ui5.node.level" : 3};
 		const oHelperMock = this.mock(_Helper);
-		oHelperMock.expects("getKeyFilter").withExactArgs(oNode, "~metaPath~", "~Types~")
+		oHelperMock.expects("getKeyFilter").withExactArgs(oNode, "/Foo", "~Types~")
 			.returns("~Key~");
 		this.mock(this.oRequestor).expects("buildQueryString")
 			.withExactArgs(null, {$apply : "ancestors($root/path,X,NodeID,filter(~Key~),1)"})
@@ -1173,7 +1169,6 @@ sap.ui.define([
 			$DistanceFromRoot : "DistFromRoot",
 			$DrillState : "myDrillState",
 			$LimitedDescendantCount : "LtdDescendant_Count",
-			$metaPath : "~metaPath~",
 			$NodeProperty : "NodeID",
 			$path : "/path",
 			aggregate : {},
@@ -1188,7 +1183,7 @@ sap.ui.define([
 		const oNode = {};
 		oCache.aElements[22] = {"@$ui5.node.level" : 0};
 		oCache.aElements[23] = oNode;
-		this.mock(_Helper).expects("getKeyFilter").withExactArgs(oNode, "~metaPath~", "~Types~")
+		this.mock(_Helper).expects("getKeyFilter").withExactArgs(oNode, "/Foo", "~Types~")
 			.returns("~Key~");
 		this.mock(this.oRequestor).expects("buildQueryString")
 			.withExactArgs(null, {$apply : "ancestors($root/path,X,NodeID,filter(~Key~),1)"})
@@ -1231,7 +1226,6 @@ sap.ui.define([
 			$DistanceFromRoot : "DistFromRoot",
 			$DrillState : "myDrillState",
 			$LimitedDescendantCount : "LtdDescendant_Count",
-			$metaPath : "~metaPath~",
 			$NodeProperty : "NodeID",
 			$path : "/path",
 			aggregate : {},
@@ -1246,7 +1240,7 @@ sap.ui.define([
 		const oNode = {};
 		oCache.aElements[22] = {"@$ui5.node.level" : 0};
 		oCache.aElements[23] = oNode;
-		this.mock(_Helper).expects("getKeyFilter").withExactArgs(oNode, "~metaPath~", "~Types~")
+		this.mock(_Helper).expects("getKeyFilter").withExactArgs(oNode, "/Foo", "~Types~")
 			.returns("~Key~");
 		this.mock(this.oRequestor).expects("buildQueryString")
 			.withExactArgs(null, {$apply : "ancestors($root/path,X,NodeID,filter(~Key~),1)"})
@@ -5142,8 +5136,7 @@ make root = ${bMakeRoot}`;
 	QUnit.test("requestProperties: bInheritResult = " + bInheritResult, async function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X",
-			$LimitedRank : "~LimitedRank~",
-			$metaPath : "/meta/path"
+			$LimitedRank : "~LimitedRank~"
 		});
 		const oParentCache = {getQueryOptions : mustBeMocked};
 		const aSelect = ["path/to/property0", "path/to/property1"];
@@ -5165,9 +5158,9 @@ make root = ${bMakeRoot}`;
 			});
 		this.mock(oCache).expects("getTypes").withExactArgs().returns("~getTypes~");
 		oHelperMock.expects("getKeyFilter")
-			.withExactArgs("~oElement~", "/meta/path", "~getTypes~").returns("~filter~");
+			.withExactArgs("~oElement~", "/Foo", "~getTypes~").returns("~filter~");
 		this.mock(oCache.oRequestor).expects("buildQueryString")
-			.withExactArgs("/meta/path", {
+			.withExactArgs("/Foo", {
 				$apply : "A.P.P.L.E.",
 				$filter : "~filter~"
 			}, false, true)
@@ -5177,7 +5170,7 @@ make root = ${bMakeRoot}`;
 			.returns("~oGroupLockCopy~");
 		this.mock(oCache.oRequestor).expects("request")
 			.withExactArgs("GET", "Foo~queryString~", "~oGroupLockCopy~", undefined, undefined,
-				undefined, undefined, "/meta/path", undefined, false, {$select : aSelect},
+				undefined, undefined, "/Foo", undefined, false, {$select : aSelect},
 				sinon.match.same(oCache))
 			.resolves({
 				"@odata.context" : "n/a",
