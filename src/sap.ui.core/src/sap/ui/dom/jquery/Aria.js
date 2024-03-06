@@ -4,6 +4,25 @@
 sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
+	// Putting the following documentation into this module was an ambiguous choice, it could be in any jQuery plugin module.
+	/**
+ 	 * Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.
+	 *
+	 * If not stated differently, the functions follow the fluent interface paradigm and return the jQuery instance for chaining of statements.
+	 *
+	 * Example for usage of an instance method:
+	 * <pre>
+	 *   var oRect = jQuery("#myDiv").rect();
+	 *   alert("Top Position: " + oRect.top);
+	 * </pre>
+	 *
+	 * See also <a href="https://api.jquery.com/jQuery/">jQuery</a> for details.
+	 *
+	 * @namespace jQuery
+	 * @public
+	 * @ui5-module-override sap/ui/thirdparty/jquery
+	 */
+
 	/**
 	 * This module provides the following API:
 	 * <ul>
