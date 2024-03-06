@@ -3,6 +3,11 @@
     "date": "March 2024",
     "notes": [
       {
+        "id": "2d50599b7e25d634b9f09a60677c953e2711015b",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Scrollbar issue fixed"
+      },
+      {
         "id": "3a3d40cf130a1bdec5e52d57eb8328c9657f91ae",
         "type": "FIX",
         "text": " sap.f.ProductSwitch: Acc sample improved"

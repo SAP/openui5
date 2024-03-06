@@ -3,6 +3,16 @@
     "date": "March 2024",
     "notes": [
       {
+        "id": "ffed2938c83fa1be3b4f94d82580f38c7a495bc8",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Pressing Enter fixed"
+      },
+      {
+        "id": "2bd46b9239f72f262c2f55b7c7b7228ca4bff87c",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageSection: New property added"
+      },
+      {
         "id": "f82cba99988473c3ec9074d7e8ebd6863f80ecdb",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Unstable test corrected"

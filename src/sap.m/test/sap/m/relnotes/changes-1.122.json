@@ -3,6 +3,27 @@
     "date": "March 2024",
     "notes": [
       {
+        "id": "af133ee6706383d4dcd42540e8859f18af819793",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: ValueHelp is shown when interacting with keyboard"
+      },
+      {
+        "id": "19bddc23d244e0e10584edfa2cbf7edb39467282",
+        "type": "FIX",
+        "text": " m.VariantManagement: correction for deletion indicator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001798992024"
+          }
+        ]
+      },
+      {
+        "id": "78060b12df21d8fc5e594a64e4eb92c407747627",
+        "type": "FIX",
+        "text": " sap.m.Input: adjust maxSuggestionWidth property documentation"
+      },
+      {
         "id": "0059352bad01968cb309ad24a0af410cc07e1646",
         "type": "FIX",
         "text": " sap.m.IconTabHeader: Close tab popover when the header area is clicked"

@@ -3,6 +3,11 @@
     "date": "March 2024",
     "notes": [
       {
+        "id": "071b1c5d2a47cd40cb4a718340049c8521606e94",
+        "type": "FIX",
+        "text": " sap.ui.model.type.Unit: amount scale is used instead of unit's decimal places"
+      },
+      {
         "id": "fca7af817b577085eb767af05d9cb949c0e0f54a",
         "type": "FIX",
         "text": " sap.ui.model.odata.v4.Context#setSelected: remember to reset selection again"
