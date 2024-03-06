@@ -604,7 +604,7 @@ sap.ui.define([
 		}
 		if (oGroupNode) {
 			const sParentFilter = _Helper.getPrivateAnnotation(oGroupNode, "filter")
-				|| _Helper.getKeyFilter(oGroupNode, oAggregation.$metaPath, this.getTypes());
+				|| _Helper.getKeyFilter(oGroupNode, this.sMetaPath, this.getTypes());
 			// Note: parent filter is just eq/and, no need for parentheses, but
 			// $$filterBeforeAggregate is a black box! Put specific filter 1st for performance!
 			mQueryOptions.$$filterBeforeAggregate = sParentFilter
@@ -823,7 +823,7 @@ sap.ui.define([
 			return oPromise;
 		}
 
-		const sFilter = _Helper.getKeyFilter(oNode, this.oAggregation.$metaPath, this.getTypes());
+		const sFilter = _Helper.getKeyFilter(oNode, this.sMetaPath, this.getTypes());
 		const mQueryOptions = Object.assign({}, this.mQueryOptions);
 		mQueryOptions.$apply = "ancestors($root" + this.oAggregation.$path
 			+ "," + this.oAggregation.hierarchyQualifier + "," + this.oAggregation.$NodeProperty
@@ -1870,16 +1870,15 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.requestProperties = async function (oElement, aSelect, oGroupLock,
 			bInheritResult) {
-		const sMetaPath = this.oAggregation.$metaPath;
 		const mQueryOptions = {
 			$apply : _Helper.getPrivateAnnotation(oElement, "parent").getQueryOptions().$apply,
-			$filter : _Helper.getKeyFilter(oElement, sMetaPath, this.getTypes())
+			$filter : _Helper.getKeyFilter(oElement, this.sMetaPath, this.getTypes())
 		};
 		const sResourcePath = this.sResourcePath
-			+ this.oRequestor.buildQueryString(sMetaPath, mQueryOptions, false, true);
+			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
 		const oResult = await this.oRequestor.request("GET", sResourcePath,
-			oGroupLock.getUnlockedCopy(), undefined, undefined, undefined, undefined, sMetaPath,
-			undefined, false, {$select : aSelect}, this);
+			oGroupLock.getUnlockedCopy(), undefined, undefined, undefined, undefined,
+			this.sMetaPath, undefined, false, {$select : aSelect}, this);
 		const oRequestedProperties = oResult.value[0];
 
 		if (bInheritResult) {
