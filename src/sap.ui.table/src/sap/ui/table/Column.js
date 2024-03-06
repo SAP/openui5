@@ -583,13 +583,7 @@ sap.ui.define([
 			|| this.isFilterableByMenu()
 			|| this.isGroupableByMenu();
 
-		if (bHasOwnItems) {
-			return true;
-		}
-
-		return TableUtils.Hook.call(oTable, TableUtils.Hook.Keys.Column.MenuItemNotification, this).some(function(bValue) {
-			return bValue;
-		});
+		return bHasOwnItems;
 	};
 
 	/**
