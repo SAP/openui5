@@ -1211,7 +1211,7 @@ sap.ui.define([
 	 * <code>$$ownRequest</code> parameter (see {@link sap.ui.model.odata.v4.ODataModel#bindList}
 	 * and {@link sap.ui.model.odata.v4.ODataModel#bindContext})
 	 *
-	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
+	 * Note: When calling {@link #refresh} multiple times, the result of the request initiated by
 	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
 	 * to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given group ID.
 	 *

@@ -450,9 +450,9 @@ sap.ui.define([
 	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
 	 * is not. For additional property requests, the absolute path to the entity is also available.
 	 *
-	 * The 'dataReceived' event can be triggered by a binding or by additional property requests for
-	 * an entity that already has been requested. Events triggered by a binding may be bubbled up to
-	 * the model, while events triggered by additional property requests are fired directly by the
+	 * The 'dataReceived' event can be initiated by a binding or by additional property requests for
+	 * an entity that already has been requested. Events initiated by a binding may be bubbled up to
+	 * the model, while events initiated by additional property requests are fired directly by the
 	 * model.
 	 *
 	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
@@ -491,9 +491,9 @@ sap.ui.define([
 	 * For additional property requests, the absolute path to the entity is available as an event
 	 * parameter.
 	 *
-	 * The 'dataRequested' event can be triggered by a binding or by additional property requests
+	 * The 'dataRequested' event can be initiated by a binding or by additional property requests
 	 * for an entity that already has been requested.
-	 * Events triggered by a binding may be bubbled up to the model, while events triggered by
+	 * Events initiated by a binding may be bubbled up to the model, while events initiated by
 	 * additional property requests are fired directly by the model. Every GET request caused by
 	 * additional properties is causing one 'dataRequested' event.
 	 *
@@ -501,7 +501,7 @@ sap.ui.define([
 	 * <ul>
 	 *   <li> When a binding requests initial data, or a list binding requests data for additional
 	 *     rows, the event is fired at the binding and may be bubbled up to the model. This includes
-	 *     refreshes except those triggered by
+	 *     refreshes except those initiated by
 	 *     {@link sap.ui.model.odata.v4.Context#requestSideEffects}.
 	 *   <li> For additional property requests for an entity that already has been requested, the
 	 *     event is only fired at the model.
@@ -598,8 +598,8 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Adds a task that is guaranteed to run once, just before the next rendering without triggering
-	 * a rendering request. A watchdog ensures that the task is executed soon, even if no rendering
+	 * Adds a task that is guaranteed to run once, just before the next rendering without initiating
+	 * a rendering request. A watchdog ensures that the task is run soon, even if no rendering
 	 * occurs.
 	 *
 	 * @param {function} fnPrerenderingTask
@@ -748,7 +748,7 @@ sap.ui.define([
 	 *   path computed from its context's path for data service requests; only the value
 	 *   <code>true</code> is allowed.
 	 * @param {string} [mParameters.$$groupId]
-	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
+	 *   The group ID to be used for <b>read</b> requests initiated by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
@@ -767,7 +767,7 @@ sap.ui.define([
 	 *   service to return an ETag header for "204 No Content" responses. If not specified, the
 	 *   value of the parent binding is used.
 	 * @param {string} [mParameters.$$updateGroupId]
-	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
+	 *   The group ID to be used for <b>update</b> requests initiated by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
 	 *   or the model's update group ID is used, see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
@@ -830,7 +830,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [vSorters=[]]
 	 *   The dynamic sorters to be used initially. Call
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort} to replace them. Static sorters, as
-	 *   defined in the '$orderby' binding parameter, are always executed after the dynamic sorters.
+	 *   defined in the '$orderby' binding parameter, are always applied after the dynamic sorters.
 	 *   Supported since 1.39.0.
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [vFilters=[]]
 	 *   The dynamic {@link sap.ui.model.FilterType.Application application} filters to be used
@@ -901,7 +901,7 @@ sap.ui.define([
 	 *   1.99.0; since 1.113.0 it can be combined with <code>$$aggregation</code> for a recursive
 	 *   hierarchy.
 	 * @param {string} [mParameters.$$groupId]
-	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
+	 *   The group ID to be used for <b>read</b> requests initiated by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
@@ -958,7 +958,7 @@ sap.ui.define([
 	 *       </ul>
 	 *   </ul>
 	 * @param {string} [mParameters.$$updateGroupId]
-	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
+	 *   The group ID to be used for <b>update</b> requests initiated by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
 	 *   or the model's update group ID is used,
 	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
@@ -1032,7 +1032,7 @@ sap.ui.define([
 	 *   The value for the "5.1.7 System Query Option $search", if the path ends with a "$count"
 	 *   segment
 	 * @param {string} [mParameters.$$groupId]
-	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
+	 *   The group ID to be used for <b>read</b> requests initiated by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
@@ -1997,7 +1997,7 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.$$patchWithoutSideEffects]
 	 *   Whether implicit loading of side effects via PATCH requests is switched off
 	 * @param {string} [mParameters.$$updateGroupId]
-	 *   The group ID to be used for <b>update</b> requests triggered by the context's binding
+	 *   The group ID to be used for <b>update</b> requests initiated by the context's binding
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   The kept-alive context
 	 * @throws {Error} If
@@ -2202,7 +2202,7 @@ sap.ui.define([
 	/**
 	 * Creates a lock for the given group ID. Even an automatic {@link #submitBatch} has to wait
 	 * until all such locks are unlocked. The goal of such a lock is to wait with automatic PATCH
-	 * requests triggered by user input until an event handler is called and executes an action.
+	 * requests initiated by user input until an event handler is called and runs an action.
 	 *
 	 * @param {string} sGroupId
 	 *   A group ID
@@ -2241,7 +2241,7 @@ sap.ui.define([
 	 *
 	 * The goal of such a lock is to allow using an API that creates a request in a batch group and
 	 * immediately calling {@link #submitBatch} for this group. In such cases that request has to be
-	 * sent with the batch request triggered by {@link #submitBatch}, even if that request is
+	 * sent with the batch request initiated by {@link #submitBatch}, even if that request is
 	 * created later asynchronously. To achieve this, the API function creates a lock that blocks
 	 * the batch request until that request is created.
 	 *
@@ -2272,7 +2272,7 @@ sap.ui.define([
 	 * Refreshes the model by calling refresh on all bindings which have a change event handler
 	 * attached.
 	 *
-	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
+	 * Note: When calling {@link #refresh} multiple times, the result of the request initiated by
 	 * the last call determines the model's data; it is <b>independent</b> of the order of calls to
 	 * {@link #submitBatch} with the given group ID.
 	 *
@@ -2753,7 +2753,7 @@ sap.ui.define([
 	 * If the callback returns or resolves with <code>true</code>, the OData model remembers the
 	 * first sent $batch request. With the next model instantiation for the same key, this
 	 * remembered $batch request will be sent at the earliest point in time in order to have the
-	 * response already available when the first $batch request is triggered from the UI or the
+	 * response already available when the first $batch request is initiated from the UI or the
 	 * binding. If the returned promise is rejected, this error will be reported and the optimistic
 	 * batch will be disabled.
 	 *

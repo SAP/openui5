@@ -307,7 +307,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Applies the given map of parameters to this binding's parameters and triggers the
+	 * Applies the given map of parameters to this binding's parameters and initiates the
 	 * creation of a new cache if called with a change reason. Since 1.111.0, the header context is
 	 * deselected.
 	 *
@@ -424,7 +424,7 @@ sap.ui.define([
 
 	/**
 	 * The 'createCompleted' event is fired when the back end has responded to a POST request
-	 * triggered for a {@link #create} on this binding. For each 'createSent' event, a
+	 * initiated for a {@link #create} on this binding. For each 'createSent' event, a
 	 * 'createCompleted' event is fired.
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
@@ -443,7 +443,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'createSent' event is fired when a POST request triggered for a {@link #create} on this
+	 * The 'createSent' event is fired when a POST request initiated for a {@link #create} on this
 	 * binding is sent to the back end. For each 'createSent' event, a 'createCompleted' event is
 	 * fired.
 	 *
@@ -1934,7 +1934,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
 	 * @param {boolean} [bCached]
-	 *   Whether to return cached values only and not trigger a request
+	 *   Whether to return cached values only and not initiate a request
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>fetchValue</code> call; it is rejected in
 	 *   case cached values are asked for, but not found
@@ -2023,7 +2023,7 @@ sap.ui.define([
 	 *   this replaces the dynamic filters given in
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}. A nullish or missing value is treated as
 	 *   an empty array and thus removes all dynamic filters of the specified type. The filter
-	 *   executed on the list is created from the following parts, which are combined with a logical
+	 *   applied to the list is created from the following parts, which are combined with a logical
 	 *   'and':
 	 *   <ul>
 	 *     <li> Dynamic filters of type {@link sap.ui.model.FilterType.Application}
@@ -2520,7 +2520,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the contexts that were requested by a control last time. Does not trigger a data
+	 * Returns the contexts that were requested by a control last time. Does not initiate a data
 	 * request. In the time between the {@link #event:dataRequested 'dataRequested'} event and the
 	 * {@link #event:dataReceived 'dataReceived'} event, the resulting array contains
 	 * <code>undefined</code> at those indexes where the data is not yet available or has been
@@ -4441,7 +4441,7 @@ sap.ui.define([
 	 *   The dynamic sorters to be used; they replace the dynamic sorters given in
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}. A nullish or missing value is treated as
 	 *   an empty array and thus removes all dynamic sorters. Static sorters, as defined in the
-	 *   '$orderby' binding parameter, are always executed after the dynamic sorters.
+	 *   '$orderby' binding parameter, are always applied after the dynamic sorters.
 	 * @returns {this}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}

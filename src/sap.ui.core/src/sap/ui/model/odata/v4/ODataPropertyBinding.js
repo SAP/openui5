@@ -224,7 +224,7 @@ sap.ui.define([
 	 * type information.
 	 * If the binding's path cannot be resolved or if reading the binding's value fails or if the
 	 * value read is invalid (e.g. not a primitive value), the binding's value is reset to
-	 * <code>undefined</code>. As described above, this may trigger a change event depending on the
+	 * <code>undefined</code>. As described above, this may initiate a change event depending on the
 	 * previous value and the <code>bForceUpdate</code> parameter. In the end the data state is
 	 * checked (see {@link sap.ui.model.PropertyBinding#checkDataState}) even if there is no change
 	 * event. If there are multiple synchronous <code>checkUpdateInternal</code> calls the data
@@ -744,7 +744,7 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.ODataModel#event:propertyChange 'propertyChange'} event is
 	 * fired and provides a promise on the outcome of the asynchronous operation. Since 1.122.0
 	 * this method allows updates to the client-side annotation "@$ui5.context.isSelected". Note:
-	 * Changing the value of a client-side annotation never triggers a PATCH request, no matter
+	 * Changing the value of a client-side annotation never initiates a PATCH request, no matter
 	 * which <code>sGroupId</code> is given. Thus, it cannot be reverted via {@link #resetChanges}.
 	 *
 	 * @param {any} vValue

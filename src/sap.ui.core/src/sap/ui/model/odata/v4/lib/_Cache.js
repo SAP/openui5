@@ -3719,7 +3719,7 @@ sap.ui.define([
 		aKeptElementPredicates.forEach(function (sPredicate) {
 			that.aElements.$byPredicate[sPredicate] = mByPredicate[sPredicate];
 		});
-		// Beware: fireChange can trigger a read which must not be obsoleted
+		// Beware: fireChange can initiate a read which must not be obsoleted
 		this.aReadRequests?.forEach((oReadRequest) => {
 			oReadRequest.bObsolete = true;
 		});
@@ -3935,7 +3935,7 @@ sap.ui.define([
 	 *   The cache's original resource path to be used to build the target path for bound messages
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, the initial request must be
-	 *   done via {@link #post}. {@link #fetchValue} expects to have cache data, but may trigger
+	 *   done via {@link #post}. {@link #fetchValue} expects to have cache data, but may initiate
 	 *   requests for late properties. If <code>false<code>, {@link #post} throws an error.
 	 * @param {string} [sMetaPath]
 	 *   Optional meta path in case it cannot be derived from the given resource path
