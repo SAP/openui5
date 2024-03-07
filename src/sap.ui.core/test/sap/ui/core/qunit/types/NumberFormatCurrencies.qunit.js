@@ -255,6 +255,27 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format(2, "EUR"), "EUR" + "\xa0" + "2.000000", "fractions should set the decimals if not specified");
 	});
 
+	//*********************************************************************************************
+[// integrative tests for NumberFormat#getMaximalDecimals
+	{iDecimals: 3, iMaxFractionDigits: 4, iValue: 1234.5678, sExpected: "1,234.568\xa0BTC"},
+	{iDecimals: 3, iMaxFractionDigits: Infinity, iValue: 1234.5678, sExpected: "1,234.568\xa0BTC" },
+	{iDecimals: 3, iMaxFractionDigits: 2, iValue: 1234.567, sExpected: "1,234.57\xa0BTC" },
+	{iDecimals: undefined, iMaxFractionDigits: 1, iValue: 1234.56789, sExpected: "1,234.6\xa0BTC" },
+	{iDecimals: 1, iMaxFractionDigits: undefined, iValue: 1234.567, sExpected: "1,234.6\xa0BTC" }
+].forEach(({iDecimals, iMaxFractionDigits, iValue, sExpected}, i) => {
+	QUnit.test("Currency formatOptions: take min of maxFractionDigits and decimals: " + i, function (assert) {
+		const oFormatOptions = {customCurrencies: {BTC: {decimals: iDecimals}}, maxFractionDigits: iMaxFractionDigits};
+
+		this.mock(NumberFormat).expects("getMaximalDecimals").withExactArgs(sinon.match(oFormatOptions)).callThrough();
+
+		 // only for the iDecimals:undefined fixture: otherwise the default 2 by Locale.getCurrencyDigits wins
+		oFormatOptions.minFractionDigits = iDecimals === undefined && "~notUndefined";
+
+		// code under test
+		assert.strictEqual(NumberFormat.getCurrencyInstance(oFormatOptions).format(iValue, "BTC"), sExpected);
+	});
+});
+
 	QUnit.test("Currency format with sMeasure and showMeasure as symbol", function (assert) {
 		var oFormat = getCurrencyInstance({
 			currencyCode: false

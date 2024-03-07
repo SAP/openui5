@@ -706,6 +706,113 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("Currency: getPartsListeningToTypeChanges", function (assert) {
+		const oCurrencyType = {bShowNumber: true};
+
+		// code under test
+		assert.deepEqual(CurrencyType.prototype.getPartsListeningToTypeChanges.call(oCurrencyType), [0]);
+
+		oCurrencyType.bShowNumber = false;
+
+		// code under test
+		assert.deepEqual(CurrencyType.prototype.getPartsListeningToTypeChanges.call(oCurrencyType), []);
+	});
+
+	//*********************************************************************************************
+[
+	{aTypes:[]}, // no types
+	{aTypes:[{}]}, // no constraints
+	{aTypes:[{oConstraints:{}}]}, // no scale
+	{aTypes:[{oConstraints:{scale:24}}], expScale:24, expCreateFormats:1}, // consider scale
+	// only the first type is considered
+	{aTypes:[{oConstraints:{scale:24}}, {oConstraints:{scale:42}}], expScale:24, expCreateFormats:1},
+	// scale unchanged, no new formats
+	{aTypes:[{oConstraints:{scale:24}}], oldScale:24, expScale:24},
+	// scale reset, recreate formats
+	{aTypes:[{oConstraints:{}}], oldScale:24, expScale:undefined, expCreateFormats:1}
+].forEach(({aTypes, expScale, expCreateFormats, oldScale}, i) => {
+	QUnit.test("Currency: processPartTypes, i=" + i, function (assert) {
+		const oCurrencyType = {iScale: oldScale, _createFormats() {}};
+
+		this.mock(oCurrencyType).expects("_createFormats").withExactArgs().exactly(expCreateFormats || 0);
+
+		// code under test
+		CurrencyType.prototype.processPartTypes.call(oCurrencyType, aTypes);
+
+		assert.strictEqual(oCurrencyType.iScale, expScale);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{iScale : undefined, oFormatOptions : {}},
+	{iScale : -1, oFormatOptions : {}}, // edge case: negative scale
+	{iScale : 0, oFormatOptions : {}, oExpectedOptions : {maxFractionDigits : 0}}, // edge case: zero scale
+	{iScale : 42, oFormatOptions : {}, oExpectedOptions : {maxFractionDigits : 42}},
+	// oFormatOptions.maxFractionDigits in favor of iScale
+	{iScale : 42, oFormatOptions : {maxFractionDigits : 24}, oExpectedOptions : {maxFractionDigits : 24}},
+	// decimals scale="variable" is mapped to Infinity and also used in favor of iScale
+	{iScale : Infinity, oFormatOptions : {}, oExpectedOptions : {maxFractionDigits : Infinity}}
+].forEach(({iScale, oFormatOptions, oExpectedOptions}, i) => {
+	QUnit.test("Currency: _createFormats: consider iScale, " + i, function (assert) {
+		const oCurrencyType = {oFormatOptions : oFormatOptions, iScale : iScale};
+		this.mock(NumberFormat).expects("getCurrencyInstance")
+			.withExactArgs(oExpectedOptions ? oExpectedOptions : sinon.match.same(oCurrencyType.oFormatOptions))
+			.returns("~CurrencyInstance");
+
+		// code under test
+		CurrencyType.prototype._createFormats.call(oCurrencyType);
+
+		assert.strictEqual(oCurrencyType.oOutputFormat, "~CurrencyInstance");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("Currency: _createFormats: consider oFormatOptions.source", function (assert) {
+		const oFormatOptions = {};
+		const oCurrencyType = {oFormatOptions : oFormatOptions};
+		const oNumberFormatMock = this.mock(NumberFormat);
+
+		oNumberFormatMock.expects("getCurrencyInstance")
+			.withExactArgs(sinon.match.same(oCurrencyType.oFormatOptions))
+			.returns("~OutputCurrencyInstance");
+
+		// code under test (no input format options)
+		CurrencyType.prototype._createFormats.call(oCurrencyType);
+
+		assert.strictEqual(oCurrencyType.oOutputFormat, "~OutputCurrencyInstance");
+
+		oCurrencyType.oFormatOptions.source = {notEmptyObject : true};
+		oNumberFormatMock.expects("getCurrencyInstance")
+			.withExactArgs(sinon.match.same(oCurrencyType.oFormatOptions))
+			.returns("~OutputCurrencyInstance");
+		oNumberFormatMock.expects("getCurrencyInstance")
+			.withExactArgs(sinon.match.same(oFormatOptions.source))
+			.returns("~InputCurrencyInstance");
+
+		// code under test (non empty input format options)
+		CurrencyType.prototype._createFormats.call(oCurrencyType);
+
+		assert.strictEqual(oCurrencyType.oOutputFormat, "~OutputCurrencyInstance");
+		assert.strictEqual(oCurrencyType.oInputFormat, "~InputCurrencyInstance");
+
+		oCurrencyType.oFormatOptions.source = {/*empty object*/};
+		oNumberFormatMock.expects("getCurrencyInstance")
+			.withExactArgs(sinon.match.same(oCurrencyType.oFormatOptions))
+			.returns("~OutputCurrencyInstance");
+		oNumberFormatMock.expects("getCurrencyInstance")
+			.withExactArgs({groupingEnabled: false, groupingSeparator: ",", decimalSeparator: "."})
+			.returns("~InputCurrencyInstance");
+
+		// code under test (no input format options, create default input format)
+		CurrencyType.prototype._createFormats.call(oCurrencyType);
+
+		assert.strictEqual(oCurrencyType.oOutputFormat, "~OutputCurrencyInstance");
+		assert.strictEqual(oCurrencyType.oInputFormat, "~InputCurrencyInstance");
+		assert.deepEqual(oCurrencyType.oFormatOptions.source, {/*still empty object*/});
+	});
+
+	//*********************************************************************************************
 [{
 	oFormatOptions : {},
 	sResult : "Currency.Invalid"
