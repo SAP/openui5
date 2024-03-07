@@ -4,148 +4,268 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout
-		class="sapUiContentPadding"
 		width="100%">
-		<Label text="ObjectStatus with different value states" design="Bold" wrapping="true" class="sapUiSmallMarginTop"/>
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Unknown"
-			state="None" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Currently closed"
-			icon="sap-icon://information"
-			state="Information" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Product Shipped"
-			icon="sap-icon://sys-enter-2"
-			state="Success" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Product Missing"
-			icon="sap-icon://alert"
-			state="Warning" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Product Damaged"
-			icon="sap-icon://error"
-			state="Error" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Product Damaged"
-			state="Error" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			title="Product status"
-			text="Damaged"
-			active="true"
-			state="Error"
-			press="handleStatusPressed"
-			icon="sap-icon://error" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			title="Test"
-			active="true"
-			state="Error"
-			icon="sap-icon://error" />
+		<l:BlockLayout background="transparent">
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout class="sapUiContentPadding" width="100%">
+						<Label text="ObjectStatus with different value states" design="Bold" wrapping="true" class="sapUiSmallMarginTop"/>
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Unknown"
+							state="None" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Currently closed"
+							icon="sap-icon://information"
+							state="Information" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Product Shipped"
+							icon="sap-icon://sys-enter-2"
+							state="Success" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Product Missing"
+							icon="sap-icon://alert"
+							state="Warning" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Product Damaged"
+							icon="sap-icon://error"
+							state="Error" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Product Damaged"
+							state="Error" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							title="Product status"
+							text="Damaged"
+							active="true"
+							state="Error"
+							press="handleStatusPressed"
+							icon="sap-icon://error" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							title="Test"
+							active="true"
+							state="Error"
+							icon="sap-icon://error" />
+					</l:VerticalLayout>	
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout class="sapUiContentPadding" width="100%">
+						<Label text="Inverted ObjectStatus with different value states." design="Bold" wrapping="true" class="sapUiSmallMarginTop"/>
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Unknown"
+							inverted="true"
+							state="None" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Currently closed (click)"
+							inverted="true"
+							active="true"
+							icon="sap-icon://information"
+							state="Information" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Product Shipped"
+							inverted="true"
+							icon="sap-icon://sys-enter-2"
+							state="Success" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Product Missing"
+							inverted="true"
+							icon="sap-icon://alert"
+							state="Warning" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Product Damaged"
+							active="true"
+							inverted="true"
+							state="Error"
+							icon="sap-icon://error" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							active="true"
+							inverted="true"
+							state="Error"
+							icon="sap-icon://error" />
+					</l:VerticalLayout>	
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+		</l:BlockLayout>
 	</l:VerticalLayout>
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<Label text="ObjectStatus with different indication states" design="Bold" wrapping="true" class="sapUiSmallMarginTop"/>
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Indication 1"
-			state="Indication01" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Indication 2"
-			state="Indication02" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Indication 3"
-			state="Indication03" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Indication 4"
-			state="Indication04" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Indication 5"
-			state="Indication05" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Indication 6"
-			state="Indication06" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Indication 7"
-			state="Indication07" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Indication 8"
-			state="Indication08" />
-	</l:VerticalLayout>
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<Label text="Inverted ObjectStatus with different states and indication states." design="Bold" wrapping="true" class="sapUiSmallMarginTop"/>
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Unknown"
-			inverted="true"
-			state="None" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Inverted Indication1"
-			inverted="true"
-			state="Indication01" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Indication active"
-			inverted="true"
-			active="true"
-			state="Indication03" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Product Shipped"
-			inverted="true"
-			icon="sap-icon://sys-enter-2"
-			state="Success" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Currently closed (click)"
-			inverted="true"
-			active="true"
-			icon="sap-icon://information"
-			state="Information" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Product Damaged"
-			active="true"
-			inverted="true"
-			state="Error"
-			icon="sap-icon://error" />
-
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Inverted Indication6"
-			active="true"
-			inverted="true"
-			state="Indication06" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Inverted Indication7"
-			active="true"
-			inverted="true"
-			state="Indication07" />
-		<ObjectStatus
-			class="sapUiSmallMarginBottom"
-			text="Inverted Indication8"
-			active="true"
-			inverted="true"
-			state="Indication08" />
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<l:BlockLayout background="transparent">
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell>
+					<Label text="ObjectStatus with different indication states." design="Bold" wrapping="true" class="sapUiSmallMarginBottom"/>
+					<l:VerticalLayout width="100%">	
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Indication 1"
+							state="Indication01" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Indication 2"
+							state="Indication02" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Indication 3"
+							state="Indication03" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Indication 4 active"
+							active="true"
+							state="Indication04" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Indication 5"
+							state="Indication05" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Indication 6"
+							state="Indication06" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Indication 7"
+							state="Indication07" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Indication 8"
+							state="Indication08" />
+					</l:VerticalLayout>	
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<Label text="Inverted ObjectStatus with different indication states." design="Bold" wrapping="true" class="sapUiSmallMarginBottom"/>
+					<l:VerticalLayout width="100%">
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication1"
+							inverted="true"
+							state="Indication01" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication2"
+							inverted="true"
+							state="Indication02" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication3 active"
+							inverted="true"
+							active="true"
+							state="Indication03" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication4"
+							inverted="true"
+							state="Indication04" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication5 active"
+							inverted="true"
+							active="true"
+							state="Indication05" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication6 active"
+							active="true"
+							inverted="true"
+							icon="sap-icon://attachment"
+							state="Indication06" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication7 active"
+							active="true"
+							inverted="true"
+							state="Indication07" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication8 active"
+							active="true"
+							inverted="true"
+							state="Indication08" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication9 active"
+							active="true"
+							inverted="true"
+							state="Indication09" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication10"
+							inverted="true"
+							state="Indication10" />
+					</l:VerticalLayout>	
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout width="100%">
+						<Label text="Inverted ObjectStatus with different indication states." design="Bold" wrapping="true" class="sapUiSmallMarginBottom"/>
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication11"
+							inverted="true"
+							state="Indication11" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication12 active"
+							active="true"
+							inverted="true"
+							state="Indication12" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication13 active"
+							active="true"
+							inverted="true"
+							state="Indication13" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication14 active"
+							active="true"
+							inverted="true"
+							icon="sap-icon://notes"
+							state="Indication14" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication15 active"
+							active="true"
+							inverted="true"
+							state="Indication15" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication16"
+							inverted="true"
+							state="Indication16" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication17 active"
+							active="true"
+							inverted="true"
+							state="Indication17" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication18"
+							inverted="true"
+							state="Indication18" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication19 active"
+							active="true"
+							inverted="true"
+							state="Indication19" />
+						<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="Inverted Indication20"
+							inverted="true"
+							state="Indication20" />
+					</l:VerticalLayout>	
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+		</l:BlockLayout>
 	</l:VerticalLayout>
 	<l:VerticalLayout
 		class="sapUiContentPadding"
@@ -156,6 +276,12 @@
 			title="Product status"
 			text="Shipped"
 			state="Success"
+			icon="sap-icon://sys-enter-2" />
+		<ObjectStatus
+			class="sapMObjectStatusLarge"
+			text="Shipped"
+			state="Success"
+			inverted="true"
 			icon="sap-icon://sys-enter-2" />
 	</l:VerticalLayout>
 	<l:VerticalLayout
