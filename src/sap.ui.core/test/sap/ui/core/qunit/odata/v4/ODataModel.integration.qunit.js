@@ -32412,7 +32412,10 @@ sap.ui.define([
 					Name : sName
 				}, /*bSkipRefresh*/true);
 
-				await oContext.created();
+				await Promise.all([
+					oContext.created(),
+					this.waitForChanges(assert, `(2) create ${sName}`)
+				]);
 
 				return oContext;
 		};
@@ -32422,12 +32425,7 @@ sap.ui.define([
 		const oNew3 = await create("13", "New3", oAlpha);
 		await create("14", "New4", oBeta);
 		await create("15", "New5", oGamma);
-
-		await this.waitForChanges(assert, "(2a) create nodes");
-
-		const oNew6 = await create("16", "New6", oNew3);
-
-		await this.waitForChanges(assert, "(2b) create nested node");
+		const oNew6 = await create("16", "New6", oNew3); // nested below New3
 
 		checkTable("after (2)", assert, oTable, [
 			sFriend + "(ArtistID='1',IsActiveEntity=false)",

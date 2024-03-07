@@ -2,7 +2,9 @@ sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/library',
-		'sap/ui/core/date/UI5Date'
+		'sap/ui/core/date/UI5Date',
+		// load all required calendars in advance
+		'sap/ui/core/date/Islamic'
 	], function(Controller, DateFormat, coreLibrary, UI5Date) {
 	"use strict";
 

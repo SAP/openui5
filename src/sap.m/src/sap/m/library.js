@@ -280,8 +280,6 @@ sap.ui.define([
 		  "sap.m.MessageView",
 		  "sap.m.MessageStrip",
 		  "sap.m.MultiComboBox",
-		  /** @deprecated since 1.121 */
-		  "sap.m.MultiEditField",
 		  "sap.m.MultiInput",
 		  "sap.m.NavContainer",
 		  "sap.m.NewsContent",

@@ -148,8 +148,11 @@ sap.ui.define([
 
 				this._openPopover();
 
-			} else if (this.oPopover) {
+			} else if (this.oPopover?.isOpen()) {
 				this.oPopover.close();
+			} else {
+				this.oPopover.destroy();
+				delete this.oPopover;
 			}
 		});
 	};

@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/m/Avatar",
 	"sap/m/BusyDialog",
 	"sap/m/Button",
+	"sap/m/ToggleButton",
 	"sap/m/CustomListItem",
 	"sap/m/Dialog",
 	"sap/m/DisplayListItem",
@@ -36,6 +37,7 @@ sap.ui.define([
 	Avatar,
 	BusyDialog,
 	Button,
+	ToggleButton,
 	CustomListItem,
 	Dialog,
 	DisplayListItem,
@@ -104,7 +106,7 @@ sap.ui.define([
 				var page = this.getParent().getParent();
 				var list = page.getContent()[0];
 				showDialog(page, list);
-}
+			}
 		});
 	}
 
@@ -120,11 +122,12 @@ sap.ui.define([
 			content : [
 				new ToolbarSpacer(),
 				addFioriButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
-				new ToolbarSpacer() ]
+				new ToolbarSpacer()
+			]
 		})
 	});
 
@@ -182,7 +185,7 @@ sap.ui.define([
 			content : [
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -245,7 +248,7 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -295,7 +298,7 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -345,7 +348,7 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -395,7 +398,7 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -445,7 +448,7 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -495,7 +498,7 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -546,7 +549,7 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -596,7 +599,7 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -646,7 +649,7 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -696,7 +699,7 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -718,7 +721,7 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -753,7 +756,7 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -803,7 +806,7 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -849,7 +852,7 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
-				new Button({
+				new ToggleButton({
 					text : "Embedded",
 					press : switchStyle
 				}),
@@ -1612,16 +1615,17 @@ sap.ui.define([
 	var oItemTemplateHtml = new CustomListItem({
 		unread: "{unread}",
 		content: new HTML({
-			content: { parts: [
-								{path: "firstName"},
-								{path: "lastName"},
-								{path: "age"},
-								{path: "city"}
-							],
-			formatter: function(firstName, lastName, age, city) {
+			content: {
+				parts: [
+					{path: "firstName"},
+					{path: "lastName"},
+					{path: "age"},
+					{path: "city"}
+				],
+				formatter: function(firstName, lastName, age, city) {
 					return "<div style='padding: 1rem;'><div>Name: " + firstName + " " + lastName
-					+ "</div><div>Age: " + age + "</div><div>City: " + city + "</div></div>";
-			}
+						+ "</div><div>Age: " + age + "</div><div>City: " + city + "</div></div>";
+				}
 			}}),
 		type : "{type}",
 		press : handlePress
@@ -2229,7 +2233,7 @@ sap.ui.define([
 
 	function switchToSwipe(oList) {
 		if (!oList.data("swipe")) {
-			var btnTypes = ["Default", "Back", "Accept", "Reject", "Up"],
+			var btnTypes = ["Default", "Accept", "Reject"],
 				btnType = btnTypes[Math.floor(Math.random() * btnTypes.length)];
 
 			oList.setSwipeContent(new Button({

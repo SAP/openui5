@@ -48,7 +48,7 @@ GenericTileRenderer.render = function(oRm, oControl) {
 	var aLinkTileContent = oControl.getLinkTileContents();
 
 	// Render a link when URL is provided, not in action scope and the state is enabled
-	var bRenderLink = oControl.getUrl() && (!oControl._isInActionScope() || oControl.getMode() === GenericTileMode.IconMode) && sState !== LoadState.Disabled && !oControl._isNavigateActionEnabled() && !oControl._isActionMode();
+	var bRenderLink = oControl.getUrl() && (!oControl._isInActionScope() || oControl.getMode() === GenericTileMode.IconMode) && sState !== LoadState.Disabled && !oControl._isNavigateActionEnabled();
 
 	if (oControl._isInActionScope()) {
 		sScopeClass = encodeCSS("sapMGTScopeActions");
@@ -401,6 +401,16 @@ GenericTileRenderer.render = function(oRm, oControl) {
 		if (this._shouldRenderInfoContainer(oControl) && frameType === frameTypes.TwoByHalf) {
 			oRm.close("div");
 			this._renderInfoContainer(oRm, oControl);
+			oRm.close("div");
+		}
+		if (oControl._isActionMode() && oControl.getActionButtons().length > 0) {
+			//Render Action Buttons, only in ActionMode and in TwoByOne frame type
+			oRm.openStart("div", oControl.getId() + "-actionButtons");
+			oRm.class("sapMGTActionModeContainer");
+			oRm.openEnd();
+			oControl.getActionButtons().forEach(function (oActionButton) {
+				oRm.renderControl(oActionButton);
+			});
 			oRm.close("div");
 		}
 	}

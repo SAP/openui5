@@ -23,7 +23,7 @@
 							"src": "../../images/grass.jpg",
 							"fullWidth": true,
 							"overlay": {
-								"supertitle": "{=  format.date(Date.now(), {pattern: 'E, MMM d '})}",
+								"supertitle": "Wed, Mar 6",
 								"title": "Hello John, John, John, John and Steve!",
 								"verticalPosition": "Center",
 								"horizontalPosition": "Center",

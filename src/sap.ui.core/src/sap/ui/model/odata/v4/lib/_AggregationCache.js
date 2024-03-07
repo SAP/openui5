@@ -1623,7 +1623,7 @@ sap.ui.define([
 		// "before the given range"
 		// after a side-effects refresh out-of-place nodes may shift the visible range, we have
 		// to read as many nodes before this range to be on the safe side
-		iPrefetchLength += this.oTreeState.getOutOfPlaceCount();
+		iPrefetchLength = Math.max(iPrefetchLength, this.oTreeState.getOutOfPlaceCount());
 		if (iStart > iPrefetchLength) {
 			iLength += iPrefetchLength;
 			iStart -= iPrefetchLength;

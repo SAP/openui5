@@ -35,6 +35,7 @@ sap.ui.define(function () {
 					only: ["sap/uxap/AnchorBar"]
 				}
 			},
+
 			"BlockBase": {
 				coverage: {
 					only: ["sap/uxap/BlockBase"]
@@ -45,6 +46,7 @@ sap.ui.define(function () {
 					}
 				}
 			},
+
 			"BlockShowMore": {
 				coverage: {
 					only: ["sap/uxap/BlockShowMore"]
@@ -55,11 +57,13 @@ sap.ui.define(function () {
 					}
 				}
 			},
+
 			"BreadCrumbs": {
 				coverage: {
 					only: ["sap/uxap/BreadCrumbs"]
 				}
 			},
+
 			"ExploredSamples": {
 				loader: {
 					map: {
@@ -82,39 +86,47 @@ sap.ui.define(function () {
 				},
 				autostart: false
 			},
+
 			"EnforceSemanticRendering": {
 				title: "QUnit Page for Semantic Rendering Coverage"
 			},
+
 			"ObjectPageAPICreation": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageAPICreation"]
 				}
 			},
+
 			"ObjectPageContentScrolling": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageContentScrolling"]
 				}
 			},
+
 			"ObjectPageFloatingFooter": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageFloatingFooter"]
 				}
 			},
+
 			"ObjectPageFormLayout": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageFormLayout"]
 				}
 			},
+
 			"ObjectPageHeader": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageHeader"]
 				}
 			},
+
 			"ObjectPageHeaderContent": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageHeaderContent"]
 				}
 			},
+
 			"ObjectPageInXMLCreation": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageInXMLCreation"]
@@ -125,21 +137,25 @@ sap.ui.define(function () {
 					}
 				}
 			},
+
 			"ObjectPageKeyboardHandling": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageKeyboardHandling"]
 				}
 			},
+
 			"ObjectPageLazyLoading": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageLazyLoading"]
 				}
 			},
+
 			"ObjectPageModelMapping": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageModelMapping"]
 				}
 			},
+
 			"ObjectPageRules": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageRules"]
@@ -150,42 +166,40 @@ sap.ui.define(function () {
 					}
 				}
 			},
+
 			"ObjectPageScreenReaderSupport": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageScreenReaderSupport"]
 				}
 			},
+
 			"ObjectPageSection": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageSection"]
 				}
 			},
+
 			"ObjectPageState": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageState"]
 				}
 			},
+
 			"ObjectPageSubSection": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageSubSection"]
 				}
 			},
+
 			"ObjectPageSubSectionStashing": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageSubSectionStashing"]
 				}
 			},
+
 			"ObjectPageThrottledTask": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageThrottledTask"]
-				}
-			},
-			/**
-			 * @deprecated since 1.122
-			 */
-			"ObjectPageWithLazyLoadingTabs": {
-				coverage: {
-					only: ["sap/uxap/ObjectPageWithLazyLoadingTabs"]
 				}
 			},
 
@@ -217,36 +231,43 @@ sap.ui.define(function () {
 				sinon: false,
 				module: "./designtime/Library.qunit"
 			},
+
 			"Designtime-ObjectPageDynamicHeaderTitle": {
 				group: "Designtime",
 				sinon: false,
 				module: "./designtime/ObjectPageDynamicHeaderTitle.qunit"
 			},
+
 			"Designtime-ObjectPageHeader": {
 				group: "Designtime",
 				sinon: false,
 				module: "./designtime/ObjectPageHeader.qunit"
 			},
+
 			"Designtime-ObjectPageHeaderActionButton": {
 				group: "Designtime",
 				sinon: false,
 				module: "./designtime/ObjectPageHeaderActionButton.qunit"
 			},
+
 			"Designtime-ObjectPageLayout": {
 				group: "Designtime",
 				sinon: false,
 				module: "./designtime/ObjectPageLayout.qunit"
 			},
+
 			"Designtime-ObjectPageSection": {
 				group: "Designtime",
 				sinon: false,
 				module: "./designtime/ObjectPageSection.qunit"
 			},
+
 			"Designtime-ObjectPageSubSection": {
 				group: "Designtime",
 				sinon: false,
 				module: "./designtime/ObjectPageSubSection.qunit"
 			},
+
 			"Generic Testsuite": {
 				page: "test-resources/sap/uxap/qunit/testsuite.generic.qunit.html"
 			}

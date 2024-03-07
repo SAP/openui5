@@ -661,7 +661,7 @@ sap.ui.define([
 					Opa5.assert.ok(aTables.length == 1);
 					const oTable = aTables[0];
 					oTable.initialized().then(function(oTable){
-						Opa5.assert.deepEqual(oTable.getFilterConditions(), sap.ui.base.merge(oFilterConditions), "Table holds correct filterConditions");
+						Opa5.assert.equal(JSON.stringify(oTable.getFilterConditions()), JSON.stringify(oFilterConditions), "Table holds correct filterConditions");
 					});
 				}
 			});
